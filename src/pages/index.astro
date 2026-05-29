@@ -186,6 +186,81 @@
             position: static !important;
           }
 
+          /* ============================================================
+             LIGHTEN the API client (Scalar's dark "terminal" panel).
+             It lives inside .examples and forces its own dark theme via
+             --scalar-background-2 override. Reset to light.
+             ============================================================ */
+          .references-rendered .examples,
+          .references-rendered .examples .scalar-card,
+          .references-rendered .examples .scalar-card-content,
+          .references-rendered .examples .scalar-code-block,
+          .references-rendered .examples .scalar-card-header,
+          .references-rendered .examples .scalar-card-footer {
+            --scalar-background-1: #ffffff !important;
+            --scalar-background-2: #f7f7f8 !important;
+            --scalar-background-3: #ffffff !important;
+            --scalar-color-1: #0d0d0d !important;
+            --scalar-color-2: #404040 !important;
+            --scalar-color-3: #6b7280 !important;
+            background-color: #f7f7f8 !important;
+            color: #0d0d0d !important;
+            border-color: #e5e7eb !important;
+          }
+          /* Inner code area + scrollable content */
+          .references-rendered .examples .scalar-card-content,
+          .references-rendered .examples [class*="custom-scroll"] {
+            background-color: #ffffff !important;
+          }
+          /* Code block dark header bar (with "POST /v1/validate") */
+          .references-rendered .examples .scalar-code-block > [class*="bg-b-3"],
+          .references-rendered .examples .scalar-code-block > div:first-child {
+            background-color: #fafafa !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            color: #0d0d0d !important;
+          }
+          /* Line numbers stay subtle gray */
+          .references-rendered .examples .scalar-code-block .line-number,
+          .references-rendered .examples [class*="line-number"] {
+            color: #9ca3af !important;
+          }
+          /* Code text itself */
+          .references-rendered .examples .scalar-code-block pre,
+          .references-rendered .examples .scalar-code-block code,
+          .references-rendered .examples .scalar-code-block .line {
+            color: #1f2328 !important;
+            background-color: transparent !important;
+          }
+          /* Buttons in the footer — Ask AI Agent + Test Request */
+          .references-rendered .examples button {
+            background-color: #ffffff !important;
+            color: #0d0d0d !important;
+            border-color: #e5e7eb !important;
+          }
+          .references-rendered .examples button:hover {
+            background-color: #fafafa !important;
+          }
+          /* "Test Request" primary button stays coral */
+          .references-rendered .examples button[class*="primary"],
+          .references-rendered .examples .send-request-button {
+            background-color: var(--bh-coral) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+          }
+          .references-rendered .examples button[class*="primary"]:hover,
+          .references-rendered .examples .send-request-button:hover {
+            background-color: var(--bh-coral-hover) !important;
+          }
+          /* The "Shell Curl" language dropdown */
+          .references-rendered .examples [class*="dropdown"],
+          .references-rendered .examples [aria-haspopup="menu"] {
+            color: #0d0d0d !important;
+          }
+          /* Method badge inside the dark header (POST /v1/validate) — keep colored */
+          .references-rendered .examples [class*="method"] {
+            background-color: transparent !important;
+          }
+
           /* HIDE the Scalar marketing top-bar (Developer Tools / Configure
              / Share / Deploy) — pure distraction, not what OpenAI does. */
           .references-classic-header,
