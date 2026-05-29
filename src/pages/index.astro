@@ -1,0 +1,240 @@
+---
+// Scalar API Reference is the entire docs site. All prose lives in
+// public/api/openapi.yaml under tag descriptions + info.description.
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>bitHuman — Real-time avatar + voice docs</title>
+    <meta name="description" content="bitHuman puts a real-time, lip-synced talking avatar in your app. SDKs in Python, Swift, Kotlin, Flutter, plus a REST API and OpenAI-compatible voice endpoints." />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <script
+      is:inline
+      id="api-reference"
+      data-url="/api/openapi.yaml"
+      data-configuration={JSON.stringify({
+        // Built-in theme with the lightest possible chrome.
+        theme: 'default',
+        layout: 'modern',
+        darkMode: false,
+        forceDarkModeState: 'light',
+        hideDarkModeToggle: false,
+        showSidebar: true,
+        searchHotKey: 'k',
+        hideClientButton: false,
+        defaultHttpClient: { targetKey: 'shell', clientKey: 'curl' },
+        hiddenClients: [],
+        metaData: {
+          title: 'bitHuman — Real-time avatar + voice docs',
+          description: 'Real-time, lip-synced AI avatars + 31-language TTS. SDKs, REST API, integration guides.',
+          ogTitle: 'bitHuman docs',
+          ogDescription: 'Real-time avatar + voice platform — Python, Swift, Kotlin, Flutter, REST.',
+        },
+        favicon: '/favicon.png',
+        customCss: `
+          /* ============================================================
+             bitHuman Scalar theme — modern + clean, all light.
+             ============================================================ */
+          :root {
+            --scalar-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --scalar-font-code: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+            /* Neutral palette — pure white background, true black text */
+            --scalar-color-1: #0a0a0a;          /* primary text */
+            --scalar-color-2: #404040;          /* secondary text */
+            --scalar-color-3: #71717a;          /* tertiary text */
+            --scalar-color-accent: #0a0a0a;     /* accent / link color */
+
+            --scalar-background-1: #ffffff;     /* page background */
+            --scalar-background-2: #fafafa;     /* sidebar / card */
+            --scalar-background-3: #f5f5f7;     /* code block bg (LIGHT, not dark!) */
+            --scalar-background-accent: #0a0a0a;
+
+            --scalar-border-color: #e7e7e9;
+
+            /* Header */
+            --scalar-header-background-1: #ffffff;
+            --scalar-header-background-2: #ffffff;
+
+            /* Buttons */
+            --scalar-button-1: #0a0a0a;
+            --scalar-button-1-color: #ffffff;
+            --scalar-button-1-hover: #262626;
+
+            /* Method badges — colorful but flat */
+            --scalar-color-green: #16a34a;
+            --scalar-color-blue: #2563eb;
+            --scalar-color-orange: #ea580c;
+            --scalar-color-red: #dc2626;
+            --scalar-color-purple: #7c3aed;
+            --scalar-color-yellow: #ca8a04;
+          }
+
+          /* ============================================================
+             FORCE LIGHT CODE BLOCKS EVERYWHERE
+             Scalar's right-rail samples + inline code default to dark.
+             Override aggressively.
+             ============================================================ */
+
+          /* The right-rail code-sample panel (formerly dark) */
+          .scalar-card,
+          .scalar-card-section,
+          .scalar-card-header,
+          .scalar-card-footer,
+          .scalar-codeblock,
+          .references-rendered code,
+          .references-rendered pre,
+          pre.scalar-codeblock-pre,
+          .light-mode .scalar-card,
+          .light-mode .scalar-card-section,
+          .light-mode .scalar-card-header,
+          .light-mode .scalar-card-footer {
+            background: #fafafa !important;
+            color: #0a0a0a !important;
+          }
+
+          /* Code inside the right-rail "client" panel */
+          .examples,
+          .examples .scalar-card,
+          .examples .scalar-card-section,
+          .scalar-client-libraries,
+          .scalar-client-libraries pre,
+          .scalar-client-libraries code {
+            background: #fafafa !important;
+            color: #0a0a0a !important;
+            border-radius: 8px;
+          }
+
+          /* Syntax highlighting — light palette (think GitHub light) */
+          .hljs,
+          .hljs-built_in,
+          .hljs-symbol {
+            color: #24292f !important;
+            background: transparent !important;
+          }
+          .hljs-keyword,
+          .hljs-selector-tag,
+          .hljs-literal,
+          .hljs-section,
+          .hljs-link { color: #cf222e !important; }
+          .hljs-string,
+          .hljs-attr { color: #0a3069 !important; }
+          .hljs-number,
+          .hljs-meta { color: #0550ae !important; }
+          .hljs-comment,
+          .hljs-quote { color: #6e7781 !important; font-style: italic; }
+          .hljs-title,
+          .hljs-name,
+          .hljs-type { color: #8250df !important; }
+          .hljs-variable,
+          .hljs-template-variable { color: #953800 !important; }
+          .hljs-tag { color: #116329 !important; }
+
+          /* Inline code — soft gray pill */
+          code:not(pre code) {
+            background: #f3f3f5 !important;
+            color: #0a0a0a !important;
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-weight: 500;
+            border: none;
+          }
+
+          /* Code blocks in markdown body */
+          pre, .scalar-codeblock-pre {
+            background: #fafafa !important;
+            border: 1px solid var(--scalar-border-color) !important;
+            border-radius: 8px;
+            padding: 1rem !important;
+            font-size: 13.5px !important;
+            line-height: 1.55 !important;
+          }
+
+          /* ============================================================
+             Typography polish — OpenAI-restraint
+             ============================================================ */
+          .references-rendered h1,
+          .references-rendered h2,
+          .references-rendered h3 {
+            font-weight: 600;
+            letter-spacing: -0.015em;
+          }
+          .references-rendered h1 { font-size: 2rem; }
+          .references-rendered h2 { font-size: 1.375rem; margin-top: 2.5rem; }
+          .references-rendered h3 { font-size: 1.125rem; margin-top: 2rem; }
+
+          .references-rendered p,
+          .references-rendered li {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: var(--scalar-color-2);
+          }
+          .references-rendered a {
+            color: var(--scalar-color-1);
+            text-decoration: underline;
+            text-decoration-color: var(--scalar-color-3);
+            text-underline-offset: 2px;
+          }
+          .references-rendered a:hover {
+            text-decoration-color: var(--scalar-color-1);
+          }
+
+          /* Sidebar — quieter, OpenAI-style */
+          .sidebar,
+          aside.sidebar,
+          .scalar-sidebar {
+            background: #ffffff !important;
+            border-right: 1px solid var(--scalar-border-color);
+          }
+          .sidebar a,
+          .scalar-sidebar a {
+            color: var(--scalar-color-2);
+            font-size: 0.875rem;
+            border-radius: 6px;
+          }
+          .sidebar a:hover,
+          .scalar-sidebar a:hover {
+            color: var(--scalar-color-1);
+            background: #f5f5f7;
+          }
+          .sidebar a.active,
+          .scalar-sidebar a[aria-current],
+          .scalar-sidebar a.active {
+            color: var(--scalar-color-1) !important;
+            background: #f0f0f3 !important;
+            font-weight: 600;
+          }
+
+          /* Tighter tables */
+          .references-rendered table {
+            border-collapse: collapse;
+            font-size: 0.9rem;
+          }
+          .references-rendered th,
+          .references-rendered td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--scalar-border-color);
+            text-align: left;
+          }
+          .references-rendered th {
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--scalar-color-1);
+          }
+
+          /* Hide the Scalar branding (per their MIT terms — clean look) */
+          .scalar-footer-powered { opacity: 0.4; }
+        `,
+      })}
+    ></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  </body>
+</html>

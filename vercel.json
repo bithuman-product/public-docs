@@ -1,0 +1,28 @@
+{
+  "redirects": [
+    { "source": "/api/reference", "destination": "/", "permanent": false },
+    { "source": "/api/reference/", "destination": "/", "permanent": false },
+    { "source": "/introduction", "destination": "/", "permanent": false },
+    { "source": "/introduction/", "destination": "/", "permanent": false },
+    { "source": "/getting-started/quickstart", "destination": "/#tag/quickstart", "permanent": false },
+    { "source": "/getting-started/quickstart/", "destination": "/#tag/quickstart", "permanent": false },
+    { "source": "/getting-started/authentication", "destination": "/#tag/auth-guide", "permanent": false },
+    { "source": "/getting-started/authentication/", "destination": "/#tag/auth-guide", "permanent": false },
+    { "source": "/getting-started/models", "destination": "/#tag/models", "permanent": false },
+    { "source": "/getting-started/models/", "destination": "/#tag/models", "permanent": false },
+    { "source": "/getting-started/pricing", "destination": "/#tag/pricing", "permanent": false },
+    { "source": "/getting-started/pricing/", "destination": "/#tag/pricing", "permanent": false },
+    { "source": "/sdks/python", "destination": "/#tag/sdk-python", "permanent": false },
+    { "source": "/sdks/python/", "destination": "/#tag/sdk-python", "permanent": false },
+    { "source": "/sdks/swift", "destination": "/#tag/sdk-swift", "permanent": false },
+    { "source": "/sdks/swift/", "destination": "/#tag/sdk-swift", "permanent": false },
+    { "source": "/sdks/kotlin", "destination": "/#tag/sdk-kotlin", "permanent": false },
+    { "source": "/sdks/kotlin/", "destination": "/#tag/sdk-kotlin", "permanent": false },
+    { "source": "/guides/local-mode", "destination": "/#tag/local-mode", "permanent": false },
+    { "source": "/guides/local-mode/", "destination": "/#tag/local-mode", "permanent": false },
+    { "source": "/guides/building-avatars", "destination": "/#tag/building-avatars", "permanent": false },
+    { "source": "/guides/building-avatars/", "destination": "/#tag/building-avatars", "permanent": false },
+    { "source": "/guides/deployment", "destination": "/#tag/deployment", "permanent": false },
+    { "source": "/guides/deployment/", "destination": "/#tag/deployment", "permanent": false }
+  ]
+}
