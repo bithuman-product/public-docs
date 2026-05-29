@@ -77,7 +77,7 @@ Both methods return the same shape:
     "file_size": 1024000,
     "mime_type": "application/pdf",
     "asset_category": "docs",
-    "uploaded_at": "2025-01-15T10:30:00Z"
+    "uploaded_at": "2026-05-15T10:30:00Z"
   }
 }
 ```

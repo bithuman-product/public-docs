@@ -12,7 +12,7 @@ Embed an agent as an iframe — no SDK install, drop it on any page. The avatar 
 
 ```html
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515"
+  src="https://bithuman.ai/embed/A78WKV4515"
   allow="microphone *; camera *; autoplay *"
   style="width: 400px; height: 700px; border: none; border-radius: 12px;"
 ></iframe>
@@ -45,7 +45,7 @@ const { data: { token } } = await res.json();
 ```html
 <!-- BROWSER — pass the token in the iframe URL -->
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515?token=YOUR_TOKEN"
+  src="https://bithuman.ai/embed/A78WKV4515?token=YOUR_TOKEN"
   allow="microphone *; camera *; autoplay *"
   style="width: 400px; height: 700px; border: none;"
 ></iframe>

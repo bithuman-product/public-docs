@@ -12,7 +12,7 @@ Drop an agent onto any page as an iframe — no SDK install required:
 
 ```html
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515"
+  src="https://bithuman.ai/embed/A78WKV4515"
   allow="microphone; camera; autoplay"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
@@ -75,7 +75,7 @@ script tag):
 
 ```html
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515?token=THE_TOKEN"
+  src="https://bithuman.ai/embed/A78WKV4515?token=THE_TOKEN"
   allow="microphone; camera; autoplay"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>

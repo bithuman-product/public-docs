@@ -32,7 +32,7 @@ The fastest path is the embed, with the rendering mode set in the URL:
 
 ```html
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A74NWD9723?rendering_mode=browser"
+  src="https://bithuman.ai/embed/A74NWD9723?rendering_mode=browser"
   allow="microphone; autoplay"
   style="width:100%;height:100%;border:0">
 </iframe>

@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
 import Playground from "../components/Playground.astro";
+import WidgetDemo from "../components/WidgetDemo.astro";
 import caseStudies from "../data/case-studies.json";
 
 const featuredCases = caseStudies.slice(0, 3);
@@ -30,7 +31,7 @@ const stats = [
 ];
 
 const quickstart = [
-  { label: "CLI", lang: "bash", code: `brew install bithuman-cli
+  { label: "CLI", lang: "bash", code: `curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
 bithuman pull modern-court-jester
 bithuman run     # -> a live agent at http://127.0.0.1:8088` },
   { label: "Python", lang: "python", code: `from bithuman import AsyncBithuman
@@ -140,6 +141,18 @@ const examples = [
         <p>Pick an agent and model — the embed code updates live. Hit <strong>Launch</strong> to talk to it, right here.</p>
       </div>
       <div data-reveal><Playground /></div>
+    </div>
+  </section>
+
+  <!-- ===== EMBED WIDGET ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Embed anywhere</span>
+        <h2>Drop a chat widget on any site</h2>
+        <p>Two script tags add a floating agent — text, voice, and video. Try it right here.</p>
+      </div>
+      <div data-reveal><WidgetDemo /></div>
     </div>
   </section>
 
