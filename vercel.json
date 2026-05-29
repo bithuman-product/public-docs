@@ -1,17 +1,41 @@
 {
   "redirects": [
-    { "source": "/introduction", "destination": "/", "permanent": false },
-    { "source": "/getting-started/quickstart", "destination": "/api/quickstart", "permanent": false },
-    { "source": "/getting-started/authentication", "destination": "/api/authentication", "permanent": false },
-    { "source": "/getting-started/models", "destination": "/concepts/models", "permanent": false },
-    { "source": "/getting-started/pricing", "destination": "/guides/pricing", "permanent": false },
-    { "source": "/getting-started/cli", "destination": "/cli", "permanent": false },
-    { "source": "/sdks/python", "destination": "/sdk/python", "permanent": false },
-    { "source": "/sdks/swift", "destination": "/sdk/swift", "permanent": false },
-    { "source": "/sdks/kotlin", "destination": "/sdk/android", "permanent": false },
-    { "source": "/sdks/flutter", "destination": "/sdk", "permanent": false },
-    { "source": "/guides/local-mode", "destination": "/cli/local-mode", "permanent": false },
-    { "source": "/guides/deployment", "destination": "/guides", "permanent": false },
+    { "source": "/introduction", "destination": "/", "permanent": true },
+
+    { "source": "/getting-started/quickstart", "destination": "/api/quickstart", "permanent": true },
+    { "source": "/getting-started/authentication", "destination": "/api/authentication", "permanent": true },
+    { "source": "/getting-started/models", "destination": "/concepts/models", "permanent": true },
+    { "source": "/getting-started/pricing", "destination": "/guides/pricing", "permanent": true },
+    { "source": "/getting-started/cli", "destination": "/cli", "permanent": true },
+    { "source": "/getting-started/architecture", "destination": "/concepts/architecture", "permanent": true },
+    { "source": "/getting-started/compatibility", "destination": "/concepts/architecture", "permanent": true },
+    { "source": "/getting-started/device-matrix", "destination": "/downloads", "permanent": true },
+
+    { "source": "/sdks/python", "destination": "/sdk/python", "permanent": true },
+    { "source": "/sdks/swift", "destination": "/sdk/swift", "permanent": true },
+    { "source": "/sdks/kotlin", "destination": "/sdk/android", "permanent": true },
+    { "source": "/sdks/flutter", "destination": "/sdk", "permanent": true },
+    { "source": "/integrations/flutter", "destination": "/sdk", "permanent": true },
+
+    { "source": "/examples/overview", "destination": "/examples", "permanent": true },
+
+    { "source": "/guides/local-mode", "destination": "/cli/local-mode", "permanent": true },
+    { "source": "/guides/deployment", "destination": "/guides", "permanent": true },
+
+    { "source": "/api-reference", "destination": "/api/reference", "permanent": true },
+    { "source": "/api-reference/overview", "destination": "/api", "permanent": true },
+    { "source": "/api-reference/rate-limits", "destination": "/api/rate-limits", "permanent": true },
+    { "source": "/api-reference/errors", "destination": "/api/errors", "permanent": true },
+    { "source": "/api-reference/runtime-tokens", "destination": "/api/authentication", "permanent": true },
+    { "source": "/api-reference/credit-summaries", "destination": "/api/billing", "permanent": true },
+    { "source": "/api-reference/agent-generation", "destination": "/api/agents", "permanent": true },
+    { "source": "/api-reference/agent-management", "destination": "/api/agents", "permanent": true },
+    { "source": "/api-reference/agent-context", "destination": "/api/agents", "permanent": true },
+    { "source": "/api-reference/file-upload", "destination": "/api/files", "permanent": true },
+    { "source": "/api-reference/dynamics", "destination": "/api/dynamics", "permanent": true },
+    { "source": "/api-reference/voice", "destination": "/api/reference", "permanent": true },
+
+    { "source": "/roadmap", "destination": "/changelog", "permanent": true },
     { "source": "/use-cases", "destination": "/showcase", "permanent": false },
     { "source": "/api/voice", "destination": "/api", "permanent": false }
   ]
