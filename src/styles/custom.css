@@ -1,0 +1,74 @@
+/* bitHuman docs theme — monochrome base with coral accent.
+   Inspired by OpenAI / Stripe docs typography + restraint. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Brand */
+  --bh-coral: #FF5757;
+  --bh-coral-hover: #FF7474;
+  --bh-coral-soft: #FFEDED;
+
+  /* Override Starlight's accent palette to coral */
+  --sl-color-accent-low:  #FFEDED;
+  --sl-color-accent:      #FF5757;
+  --sl-color-accent-high: #B53A3A;
+
+  /* Tighten text colors for an OpenAI-grade neutral palette */
+  --sl-color-white:       #FFFFFF;
+  --sl-color-gray-1:      #FAFAFA;
+  --sl-color-gray-2:      #F4F4F5;
+  --sl-color-gray-3:      #E4E4E7;
+  --sl-color-gray-4:      #A1A1AA;
+  --sl-color-gray-5:      #71717A;
+  --sl-color-gray-6:      #3F3F46;
+  --sl-color-gray-7:      #27272A;
+  --sl-color-black:       #18181B;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low:  #3A1414;
+  --sl-color-accent:      #FF5757;
+  --sl-color-accent-high: #FFB3B3;
+}
+
+/* Typography — Inter as a faithful free substitute for OpenAISans */
+:root {
+  --sl-font:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --sl-font-system-mono:
+    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --sl-text-h1: 2.1rem;
+  --sl-line-height-headings: 1.2;
+}
+
+/* Hide the title (logo replaces it) */
+header.header .site-title span { display: none; }
+header.header .site-title img { height: 28px; width: auto; }
+
+/* Subtle hover on the sidebar */
+.sidebar a:hover { color: var(--bh-coral); }
+.sidebar a[aria-current='page'] {
+  color: var(--bh-coral);
+  background: var(--bh-coral-soft);
+}
+
+/* Cleaner card / pre-blocks */
+pre {
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+code:not(pre code) {
+  background: var(--sl-color-gray-2);
+  padding: 0.1rem 0.4rem;
+  border-radius: 5px;
+  font-size: 0.92em;
+}
+
+/* HTTP method badges on the auto-generated API pages */
+.openapi-method,
+.method-get    { color: #2563EB; }   /* blue */
+.method-post   { color: #16A34A; }   /* green */
+.method-put    { color: #D97706; }   /* amber */
+.method-delete { color: #DC2626; }   /* red */
+.method-patch  { color: #7C3AED; }   /* violet */

@@ -1,0 +1,185 @@
+---
+title: "Quickstart"
+description: "Your first talking avatar in 2 minutes with the bitHuman CLI — then the same thing in Python, Swift, or Kotlin."
+icon: "rocket"
+---
+
+The fastest path is the CLI: no code, no toolchain. Once it works,
+the [SDKs](/sdks/python) do the same thing in your language.
+
+
+For the full platform support matrix, pre-built wheels for every OS, and install commands for all 6 SDKs, see [**releases.bithuman.ai**](https://releases.bithuman.ai).
+
+
+## 1. Get credentials + a model
+
+
+  
+    [bithuman.ai → Developer → API Keys](https://www.bithuman.ai/#developer).
+    Copy the **API Secret**.
+  
+  
+    On [Explore](https://www.bithuman.ai/#explore), open the **⋮** menu
+    on any agent → **Download** to get an `.imx` file. (Or skip this —
+    the CLI fetches a sample on first run.)
+  
+
+
+## 2. Install the CLI
+
+Three install paths, same Rust binary:
+
+```bash
+# macOS Homebrew — recommended.
+brew install bithuman-product/bithuman/bithuman-cli
+
+# Universal installer — macOS + Linux, no Python required.
+curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
+
+# PyPI sibling wheel — Python-only environments.
+pip install 'bithuman-cli==2.3.0'
+```
+
+The CLI is published as the standalone [`bithuman-cli`](https://pypi.org/project/bithuman-cli/)
+wheel (Python 3.10–3.14, macOS arm64 + Linux x86_64 / aarch64). The
+sibling [`bithuman`](https://pypi.org/project/bithuman/) wheel is the
+Python **library** (`from bithuman import AsyncBithuman`) and does
+not ship the CLI as of 2.3.
+
+```bash
+export BITHUMAN_API_SECRET=your_api_secret    # avatar-runtime auth
+bithuman --version                              # confirms install
+bithuman doctor                                 # check creds, brain, caches
+bithuman list                                   # browse showcase avatars
+```
+
+
+**Library + CLI together.** Installing both `bithuman` and
+`bithuman-cli` side-by-side is supported — they share the same
+`libessence` engine. Most users only need one. See the
+[CLI reference](/getting-started/cli) for the full subcommand surface.
+
+
+## 3. Make it talk
+
+The fastest check needs no model file. Download a sample, then
+stand up the live avatar in your browser:
+
+```bash
+export OPENAI_API_KEY=sk-...                              # cloud brain
+bithuman pull modern-court-jester                          # any slug from `bithuman list`
+bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
+# → open the printed http://127.0.0.1:8088/<CODE> URL, grant mic, talk
+```
+
+Or skip the cloud entirely with the **on-device brain** — no API key,
+no outbound network, ~1.5 GB RAM:
+
+```bash
+pip install 'bithuman-cli[local]'
+BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
+```
+
+First run downloads ~860 MB of brain models from HuggingFace, ~90 s
+once. Subsequent runs warm-load in under a second. See [Local
+mode →](/guides/local-mode) for the stack details and tuning knobs.
+
+Or render an MP4 offline (no browser, no brain — just lipsync a WAV
+you have already):
+
+```bash
+bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
+  --audio speech.wav --output demo.mp4
+```
+
+Open `demo.mp4` — that's a lip-synced talking avatar, end to end.
+
+## Now in your language
+
+Same engine, same `.imx`, same `push audio → drain frames` shape:
+
+
+  
+    `pip install bithuman` — backends, agents, batch jobs.
+  
+  
+    SwiftPM `bitHumanKit` — native Mac / iPad / iPhone.
+  
+  
+    Maven `ai.bithuman:sdk` — native Android.
+  
+  
+    One Dart codebase — mac / iOS / Android.
+  
+
+
+The minimal streaming loop (Python shown; the others mirror it):
+
+```python
+import asyncio, os
+from bithuman import AsyncBithuman
+from bithuman.audio import float32_to_int16, load_audio
+
+async def main():
+    rt = await AsyncBithuman.create(
+        model_path="avatar.imx",
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+
+    pcm, sr = load_audio("speech.wav")
+    pcm = float32_to_int16(pcm)
+    chunk = sr // 100                       # 10 ms chunks
+    for i in range(0, len(pcm), chunk):
+        await rt.push_audio(pcm[i:i+chunk].tobytes(), sr, last_chunk=False)
+    await rt.flush()
+
+    async for frame in rt.run():
+        if frame.has_image:
+            image = frame.bgr_image         # numpy (H, W, 3) uint8
+        if frame.end_of_speech:
+            break
+    await rt.stop()
+
+asyncio.run(main())
+```
+
+| Concept | What it is |
+|---|---|
+| `AsyncBithuman` | The runtime. One per avatar session. |
+| `push_audio(bytes, sr, last_chunk)` | Feed 16-bit PCM; avatar lip-syncs live. |
+| `flush()` | Mark end of audio input. |
+| `run()` | Async generator yielding frames at 25 FPS. |
+| `frame` | `.bgr_image`, `.audio_chunk`, `.has_image`, `.end_of_speech`. |
+
+## Troubleshooting
+
+
+  
+    Confirm the full secret is set in the same shell, then verify:
+    ```bash
+    curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
+    ```
+  
+  
+    Push **PCM bytes** (`float32_to_int16()` first), call `flush()`
+    after all audio, and match the sample rate from `load_audio()`.
+  
+  
+    First load of an `.imx` warms the runtime and may upgrade the file
+    format. Keep the runtime alive between sessions in production.
+  
+
+
+## Next steps
+
+
+  
+    Essence vs Expression
+  
+  
+    Runnable code, every surface
+  
+  
+    Prompts, voice, image, video
+  
+
