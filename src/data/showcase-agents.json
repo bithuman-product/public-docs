@@ -69,17 +69,6 @@
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A01GYN2750?model=essence"
     },
     {
-      "code": "A02QCM0553",
-      "name": "Leo the Lion Learning Buddy",
-      "group": "essence",
-      "model": "essence",
-      "kind": "animal",
-      "gender": "masculine",
-      "category": "Uncategorized",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A02QCM0553/image_20260416_123254_881230.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A02QCM0553?model=essence"
-    },
-    {
       "code": "A00FRB8328",
       "name": "Mindful Puzzle Strategist",
       "group": "essence",
@@ -111,6 +100,17 @@
       "category": "Lifestyle",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A01FSP5051/image_20251122_060012_346934.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A01FSP5051?model=essence"
+    },
+    {
+      "code": "A52CHG8880",
+      "name": "Sarcastic Android Life Debugger",
+      "group": "essence",
+      "model": "essence",
+      "kind": "animal",
+      "gender": "masculine",
+      "category": "Fiction",
+      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A52CHG8880/image_20251122_053255_854135.jpg",
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A52CHG8880?model=essence"
     }
   ]
 }

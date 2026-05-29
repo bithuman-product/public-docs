@@ -68,6 +68,10 @@ button {
 @media (max-width: 760px) {
   .section { padding-block: var(--space-10); }
 }
+@media (max-width: 560px) {
+  .container { padding-inline: var(--space-4); }
+  .section { padding-block: var(--space-8); }
+}
 
 .eyebrow {
   display: inline-flex;
