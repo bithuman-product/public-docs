@@ -1,74 +1,151 @@
-/* bitHuman docs theme — monochrome base with coral accent.
-   Inspired by OpenAI / Stripe docs typography + restraint. */
+/* bitHuman docs — OpenAI-style neutral palette.
+   Pure white, pure black, no chromatic accent. Inspired by
+   developers.openai.com and platform.openai.com docs. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Brand */
-  --bh-coral: #FF5757;
-  --bh-coral-hover: #FF7474;
-  --bh-coral-soft: #FFEDED;
+  /* Override Starlight's accent palette to pure neutral black */
+  --sl-color-accent-low:  #f4f4f5;
+  --sl-color-accent:      #0a0a0a;
+  --sl-color-accent-high: #000000;
 
-  /* Override Starlight's accent palette to coral */
-  --sl-color-accent-low:  #FFEDED;
-  --sl-color-accent:      #FF5757;
-  --sl-color-accent-high: #B53A3A;
+  /* Tighter neutral grays */
+  --sl-color-white:       #ffffff;
+  --sl-color-gray-1:      #fafafa;
+  --sl-color-gray-2:      #f4f4f5;
+  --sl-color-gray-3:      #e5e5e5;
+  --sl-color-gray-4:      #a1a1aa;
+  --sl-color-gray-5:      #71717a;
+  --sl-color-gray-6:      #404040;
+  --sl-color-gray-7:      #1f1f1f;
+  --sl-color-black:       #0a0a0a;
 
-  /* Tighten text colors for an OpenAI-grade neutral palette */
-  --sl-color-white:       #FFFFFF;
-  --sl-color-gray-1:      #FAFAFA;
-  --sl-color-gray-2:      #F4F4F5;
-  --sl-color-gray-3:      #E4E4E7;
-  --sl-color-gray-4:      #A1A1AA;
-  --sl-color-gray-5:      #71717A;
-  --sl-color-gray-6:      #3F3F46;
-  --sl-color-gray-7:      #27272A;
-  --sl-color-black:       #18181B;
+  /* Backgrounds: pure white, no off-white tint */
+  --sl-color-bg:               #ffffff;
+  --sl-color-bg-nav:           #ffffff;
+  --sl-color-bg-sidebar:       #ffffff;
+  --sl-color-bg-inline-code:   #f4f4f5;
+  --sl-color-bg-accent:        #0a0a0a;
+
+  /* Text */
+  --sl-color-text:          #0a0a0a;
+  --sl-color-text-accent:   #0a0a0a;
+  --sl-color-text-invert:   #ffffff;
+
+  /* Hairline borders */
+  --sl-color-hairline:        #ececec;
+  --sl-color-hairline-light:  #f0f0f0;
+  --sl-color-hairline-shade:  #e5e5e5;
 }
 
 :root[data-theme='dark'] {
-  --sl-color-accent-low:  #3A1414;
-  --sl-color-accent:      #FF5757;
-  --sl-color-accent-high: #FFB3B3;
+  --sl-color-accent-low:  #1a1a1a;
+  --sl-color-accent:      #fafafa;
+  --sl-color-accent-high: #ffffff;
+
+  --sl-color-white:       #fafafa;
+  --sl-color-gray-1:      #e5e5e5;
+  --sl-color-gray-2:      #d4d4d4;
+  --sl-color-gray-3:      #a3a3a3;
+  --sl-color-gray-4:      #737373;
+  --sl-color-gray-5:      #525252;
+  --sl-color-gray-6:      #404040;
+  --sl-color-gray-7:      #1f1f1f;
+  --sl-color-black:       #0a0a0a;
+
+  --sl-color-bg:               #0a0a0a;
+  --sl-color-bg-nav:           #0a0a0a;
+  --sl-color-bg-sidebar:       #0a0a0a;
+  --sl-color-bg-inline-code:   #1f1f1f;
+  --sl-color-bg-accent:        #fafafa;
+
+  --sl-color-text:          #fafafa;
+  --sl-color-text-accent:   #fafafa;
+  --sl-color-text-invert:   #0a0a0a;
+
+  --sl-color-hairline:        #262626;
+  --sl-color-hairline-light:  #1f1f1f;
+  --sl-color-hairline-shade:  #2a2a2a;
 }
 
-/* Typography — Inter as a faithful free substitute for OpenAISans */
+/* Typography */
 :root {
   --sl-font:
     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --sl-font-system-mono:
     'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --sl-text-h1: 2.1rem;
+  --sl-text-h1: 2rem;
+  --sl-text-h2: 1.375rem;
+  --sl-text-h3: 1.125rem;
   --sl-line-height-headings: 1.2;
+  --sl-text-body: 0.95rem;
+  --sl-line-height: 1.65;
 }
 
-/* Hide the title (logo replaces it) */
-header.header .site-title span { display: none; }
-header.header .site-title img { height: 28px; width: auto; }
+/* Tighten headings — OpenAI uses very restrained type scale */
+.sl-markdown-content h1 { font-weight: 600; letter-spacing: -0.02em; margin-top: 0; }
+.sl-markdown-content h2 { font-weight: 600; letter-spacing: -0.015em; margin-top: 2.5rem; }
+.sl-markdown-content h3 { font-weight: 600; margin-top: 2rem; }
 
-/* Subtle hover on the sidebar */
-.sidebar a:hover { color: var(--bh-coral); }
+/* Sidebar — quieter, more like OpenAI's left rail */
+.sidebar-pane {
+  border-right: 1px solid var(--sl-color-hairline);
+}
+.sidebar nav ul {
+  font-size: 0.875rem;
+}
+.sidebar a {
+  color: var(--sl-color-gray-6);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+}
+.sidebar a:hover {
+  color: var(--sl-color-text);
+  background: var(--sl-color-gray-2);
+}
 .sidebar a[aria-current='page'] {
-  color: var(--bh-coral);
-  background: var(--bh-coral-soft);
+  color: var(--sl-color-text);
+  background: var(--sl-color-gray-2);
+  font-weight: 600;
 }
 
-/* Cleaner card / pre-blocks */
+/* Code blocks — softer than default Starlight */
 pre {
-  border-radius: 10px;
-  font-size: 13.5px;
-  line-height: 1.6;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  border: 1px solid var(--sl-color-hairline);
 }
 code:not(pre code) {
-  background: var(--sl-color-gray-2);
+  background: var(--sl-color-bg-inline-code);
   padding: 0.1rem 0.4rem;
-  border-radius: 5px;
-  font-size: 0.92em;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-weight: 500;
 }
 
-/* HTTP method badges on the auto-generated API pages */
-.openapi-method,
-.method-get    { color: #2563EB; }   /* blue */
-.method-post   { color: #16A34A; }   /* green */
-.method-put    { color: #D97706; }   /* amber */
-.method-delete { color: #DC2626; }   /* red */
-.method-patch  { color: #7C3AED; }   /* violet */
+/* Header — pure white, no shadow, hairline border */
+.header {
+  border-bottom: 1px solid var(--sl-color-hairline);
+  background: var(--sl-color-bg-nav);
+  box-shadow: none;
+}
+
+/* Logo size */
+header.header .site-title img { height: 24px; width: auto; }
+
+/* Quieter links in body */
+.sl-markdown-content a {
+  color: var(--sl-color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--sl-color-gray-3);
+  text-underline-offset: 2px;
+}
+.sl-markdown-content a:hover {
+  text-decoration-color: var(--sl-color-text);
+}
+
+/* Hide page-level breadcrumb noise; tighten right TOC */
+.right-sidebar { font-size: 0.875rem; }
+.right-sidebar a { color: var(--sl-color-gray-5); }
+.right-sidebar a:hover { color: var(--sl-color-text); }
