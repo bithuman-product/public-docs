@@ -9,7 +9,7 @@
       "gender": "feminine",
       "category": "Entertainment",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A74NWD9723/image_20251122_000244_372799.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A74NWD9723"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A74NWD9723?model=expression"
     },
     {
       "code": "A37QAW0225",
@@ -20,7 +20,7 @@
       "gender": "masculine",
       "category": "Entertainment",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A37QAW0225/image_20251122_095300_795835.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A37QAW0225"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A37QAW0225?model=expression"
     },
     {
       "code": "A43XYD7624",
@@ -31,7 +31,7 @@
       "gender": "feminine",
       "category": "Education",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A43XYD7624/image_20251122_050207_852823.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A43XYD7624"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A43XYD7624?model=expression"
     },
     {
       "code": "A23WJF0199",
@@ -42,7 +42,7 @@
       "gender": "masculine",
       "category": "Animals",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A23VKQ6520/default.jpg?",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A23WJF0199"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A23WJF0199?model=expression"
     },
     {
       "code": "A02GXF3393",
@@ -53,7 +53,7 @@
       "gender": "feminine",
       "category": "Entertainment",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A02GXF3393/image_20250818_040659_513784.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A02GXF3393"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A02GXF3393?model=expression"
     }
   ],
   "essence": [
@@ -66,7 +66,7 @@
       "gender": "feminine",
       "category": "Entertainment",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A01GYN2750/image_20251013_224528_802679.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A01GYN2750"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A01GYN2750?model=essence"
     },
     {
       "code": "A02QCM0553",
@@ -77,7 +77,7 @@
       "gender": "masculine",
       "category": "Uncategorized",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A02QCM0553/image_20260416_123254_881230.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A02QCM0553"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A02QCM0553?model=essence"
     },
     {
       "code": "A00FRB8328",
@@ -88,7 +88,7 @@
       "gender": "feminine",
       "category": "Lifestyle",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A00FRB8328/image_20251122_072524_193325.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A00FRB8328"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A00FRB8328?model=essence"
     },
     {
       "code": "A00DFX1195",
@@ -99,7 +99,7 @@
       "gender": "masculine",
       "category": "Education",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A00DFX1195/image_20251121_225204_834909.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A00DFX1195"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A00DFX1195?model=essence"
     },
     {
       "code": "A01FSP5051",
@@ -110,7 +110,7 @@
       "gender": "masculine",
       "category": "Lifestyle",
       "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A01FSP5051/image_20251122_060012_346934.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A01FSP5051"
+      "embed": "https://agent.viewer.bithuman.ai/api/embed/A01FSP5051?model=essence"
     }
   ]
 }

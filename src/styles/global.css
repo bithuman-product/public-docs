@@ -110,11 +110,15 @@ button {
   border: 1px solid var(--color-border);
 }
 
-/* subtle background grid for hero / section accents */
-.bg-grid {
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 44px 44px;
+/* Grid background removed for a cleaner look. Class kept as a no-op so existing
+   markup doesn't break; sections rely on whitespace + subtle surface tints. */
+.bg-grid { background-image: none; }
+
+/* Shiki dual-theme: code defaults to the light theme; switch to dark in dark mode. */
+html[data-theme="dark"] .astro-code,
+html[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
 }
 
 /* focus ring */

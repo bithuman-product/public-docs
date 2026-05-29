@@ -1,27 +1,27 @@
 ---
 import Base from "../../layouts/Base.astro";
-import ShowcaseGrid from "../../components/ShowcaseGrid.astro";
+import ShowcaseCarousel from "../../components/ShowcaseCarousel.astro";
 import data from "../../data/showcase-agents.json";
 
 const agents = [...data.expression, ...data.essence];
 ---
 
 <Base title="Showcase — bitHuman" description="Live, talkable demo agents built with bitHuman — Expression and Essence, human and animal.">
-  <section class="sc-hero bg-grid">
+  <section class="sc-hero">
     <div class="container">
       <span class="eyebrow">Showcase</span>
-      <h1>Built with bitHuman</h1>
+      <h1>Talk to a live agent</h1>
       <p class="lede">
-        Real, talkable agents running on the bitHuman engine. Click <strong>Try live</strong>
-        on any card to start a conversation — Expression animates a face at runtime,
-        Essence streams a pre-built identity.
+        Real, talkable agents running on the bitHuman engine. Swipe through and tap
+        <strong>Try live</strong> to start a conversation — Expression animates a face
+        at runtime, Essence streams a pre-built identity.
       </p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <ShowcaseGrid agents={agents} filters={true} />
+      <ShowcaseCarousel agents={agents} filters={true} />
     </div>
   </section>
 </Base>

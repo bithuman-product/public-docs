@@ -11,7 +11,7 @@ interface Props {
   title?: string;
 }
 const { tabs, title } = Astro.props;
-const uid = "ct-" + Math.abs(tabs.map((t) => t.label).join("").length * 7 + tabs.length * 31).toString(36) + "-" + tabs[0].label.toLowerCase().replace(/[^a-z0-9]/g, "");
+const themes = { light: "github-light", dark: "github-dark" } as const;
 ---
 
 <div class="codetabs" data-codetabs>
@@ -39,7 +39,7 @@ const uid = "ct-" + Math.abs(tabs.map((t) => t.label).join("").length * 7 + tabs
     {
       tabs.map((t, i) => (
         <div class:list={["ct-panel", { active: i === 0 }]} data-panel={i} data-raw={t.code}>
-          <Code code={t.code} lang={t.lang as any} theme="github-dark" />
+          <Code code={t.code} lang={t.lang as any} themes={themes} />
         </div>
       ))
     }
@@ -79,46 +79,46 @@ const uid = "ct-" + Math.abs(tabs.map((t) => t.label).join("").length * 7 + tabs
 
 <style>
   .codetabs {
-    border-radius: var(--r-xl);
+    border-radius: var(--r-lg);
     overflow: hidden;
     border: 1px solid var(--color-border);
     background: var(--color-code-bg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
   }
   .ct-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.35rem 0.5rem 0.35rem 0.6rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.3rem 0.45rem;
+    background: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-border);
   }
-  .ct-tabs { display: flex; gap: 0.15rem; flex-wrap: wrap; }
+  .ct-tabs { display: flex; gap: 0.12rem; flex-wrap: wrap; }
   .ct-tab {
-    padding: 0.35rem 0.7rem;
+    padding: 0.32rem 0.7rem;
     border: 0;
     border-radius: var(--r-md);
     background: none;
-    color: #9a9aa8;
+    color: var(--color-text-secondary);
     font-size: var(--ft-sm);
     font-weight: var(--fw-medium);
     transition: all var(--t-fast) var(--ease);
   }
-  .ct-tab:hover { color: #e6e6ec; }
-  .ct-tab.active { color: #fff; background: rgba(255, 255, 255, 0.08); }
+  .ct-tab:hover { color: var(--color-text); }
+  .ct-tab.active { color: var(--color-primary); background: var(--color-primary-soft); }
   .ct-copy {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.35rem 0.6rem;
+    padding: 0.32rem 0.6rem;
     border: 0;
     border-radius: var(--r-md);
     background: none;
-    color: #9a9aa8;
+    color: var(--color-text-tertiary);
     font-size: var(--ft-xs);
     transition: color var(--t-fast) var(--ease);
   }
-  .ct-copy:hover { color: #fff; }
+  .ct-copy:hover { color: var(--color-text); }
   .ct-panel { display: none; }
   .ct-panel.active { display: block; }
   .codetabs :global(pre) {
@@ -126,8 +126,7 @@ const uid = "ct-" + Math.abs(tabs.map((t) => t.label).join("").length * 7 + tabs
     padding: var(--space-5);
     overflow-x: auto;
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    line-height: 1.65;
-    background: transparent !important;
+    font-size: 0.84rem;
+    line-height: 1.7;
   }
 </style>

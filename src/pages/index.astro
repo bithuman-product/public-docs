@@ -2,273 +2,249 @@
 import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
-import LiveAvatar from "../components/LiveAvatar.astro";
-import ShowcaseGrid from "../components/ShowcaseGrid.astro";
+import ShowcaseCarousel from "../components/ShowcaseCarousel.astro";
 import showcaseData from "../data/showcase-agents.json";
 
-const heroAgent = showcaseData.expression[0];
 const featuredAgents = [
-  ...showcaseData.expression.slice(0, 3),
-  ...showcaseData.essence.slice(0, 3),
+  ...showcaseData.expression.slice(0, 4),
+  ...showcaseData.essence.slice(0, 4),
 ];
 
 const pillars = [
   {
     name: "API Platform",
     href: "/api",
-    desc: "Generate, manage, and animate avatars over REST. Voice & TTS, agents, dynamics, and embedding — one API at api.bithuman.ai.",
+    tag: "Generate, manage, and animate agents over REST — voice, dynamics, and embedding from one API.",
     icon: "M4 7h16M4 12h16M4 17h10",
-    points: ["Voice API (OpenAI-compatible)", "Agent generation & control", "Embed tokens & webhooks"],
   },
   {
     name: "CLI",
     href: "/cli",
-    desc: "Run a real-time avatar from a single command. Cloud or fully on-device, with a built-in local brain — no GPU required.",
+    tag: "Run a realtime visual agent from a single command — cloud or fully on-device, no GPU required.",
     icon: "M5 6l4 4-4 4M11 14h6",
-    points: ["brew · curl · pip install", "run · render · pull · doctor", "Local mode (offline)"],
   },
   {
     name: "Apps SDK",
     href: "/sdk",
-    desc: "Embed lifelike avatars natively in your app — Python, Swift (Apple), Android, and the browser, all on one engine.",
-    icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zM12 12l8-4.5M12 12v9M12 12L4 7.5",
-    points: ["Python · Swift · Kotlin · JS", "On-device or cloud rendering", "LiveKit real-time transport"],
+    tag: "Embed lifelike agents natively — Python, Swift, Android, and the browser, all on one engine.",
+    icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5",
   },
 ];
 
-const stats = [
-  { v: "25 FPS", l: "real-time lip-sync" },
-  { v: "<200ms", l: "first-frame latency" },
-  { v: "CPU → H100", l: "runs everywhere" },
-  { v: "30+ langs", l: "built-in voices" },
+const devices = [
+  "iPhone & iPad", "Android", "In the browser", "Raspberry Pi",
+  "MacBook & Mac mini", "Windows PC", "Linux & Jetson", "Cloud GPU",
 ];
 
 const quickstart = [
-  {
-    label: "CLI",
-    lang: "bash",
-    code: `# install the CLI (macOS / Linux)
-brew install bithuman-cli
-
-# pull a showcase avatar and go live
+  { label: "CLI", lang: "bash", code: `brew install bithuman-cli
 bithuman pull modern-court-jester
-bithuman run     # -> http://127.0.0.1:8088/<CODE>`,
-  },
-  {
-    label: "Python",
-    lang: "python",
-    code: `import asyncio
-from bithuman import AsyncBithuman
+bithuman run     # -> a live avatar at http://127.0.0.1:8088` },
+  { label: "Python", lang: "python", code: `from bithuman import AsyncBithuman
 
-async def main():
-    avatar = await AsyncBithuman.create(
-        api_secret="bh_...",          # from bithuman.ai/#developer
-        avatar_id="A56ZFX6217",
-    )
-    avatar.push_audio(pcm_bytes, 16000)
-    avatar.flush()
-    async for frame in avatar.run():
-        render(frame.bgr_image)        # HxWx3 BGR uint8 @ 25 FPS
+avatar = await AsyncBithuman.create(api_secret="bh_...", avatar_id="A74NWD9723")
+avatar.push_audio(pcm_bytes, 16000); avatar.flush()
+async for frame in avatar.run():
+    render(frame.bgr_image)        # animated face @ 25 FPS` },
+  { label: "Swift", lang: "swift", code: `import bitHumanKit
 
-asyncio.run(main())`,
-  },
-  {
-    label: "Swift",
-    lang: "swift",
-    code: `import bitHumanKit
-
-// On-device, Apple Silicon (M3+ / iPhone 16 Pro+)
-let avatar = try await Bithuman.createRuntime(
-    modelPath: imxURL,
-    apiKey: "bh_..."
-)
+let avatar = try await Bithuman.createRuntime(modelPath: imxURL, apiKey: "bh_...")
 for try await frame in avatar.run() {
-    view.render(frame.image)           // 25 FPS, sub-200ms
-}`,
-  },
-  {
-    label: "cURL",
-    lang: "bash",
-    code: `# Voice API - OpenAI-compatible drop-in
-curl https://api.bithuman.ai/v1/audio/speech \\
+    view.render(frame.image)       // on-device, sub-200ms
+}` },
+  { label: "cURL", lang: "bash", code: `curl https://api.bithuman.ai/v1/agent/A74NWD9723/speak \\
   -H "api-secret: $BITHUMAN_API_SECRET" \\
-  -H "Content-Type: application/json" \\
-  -d '{"model":"supertonic-3","voice":"aria",
-       "input":"Hello from bitHuman."}' \\
-  --output speech.wav`,
-  },
+  -d '{"text":"Hello from bitHuman."}'` },
 ];
 
 const useCases = [
-  { t: "Real-time avatars", d: "Audio in, lip-synced animated face out at 25 FPS.", img: "/images/animals/koala.jpg" },
-  { t: "Talking videos", d: "Generate scripted videos from any single face image.", img: "/images/animals/cat-hat.jpg" },
-  { t: "AI books", d: "Combine characters, narration, and imagery into stories.", img: "/images/animals/rainbow-creature.jpg" },
-  { t: "Embeddable apps", d: "Drop a live, talkable agent into any site or app.", img: "/images/animals/bunny-glasses.jpg" },
+  { t: "Realtime avatars", d: "Lifelike, lip-synced agents that respond live — at 25 FPS.", img: "/images/animals/koala.jpg" },
+  { t: "Talking videos", d: "Generate scripted videos from a single face image.", img: "/images/animals/cat-hat.jpg" },
+  { t: "AI books", d: "Characters, narration, and imagery woven into stories.", img: "/images/animals/rainbow-creature.jpg" },
+  { t: "Embeddable agents", d: "Drop a live, talkable agent into any app or page.", img: "/images/animals/bunny-glasses.jpg" },
 ];
 
-const models = [
-  {
-    name: "Essence",
-    tag: "Default",
-    d: "A pre-built identity packed in a portable .imx. Runs on CPU, Apple Silicon, and the browser (WASM) with low memory.",
-    points: ["CPU / Apple / WASM", "Lowest cost - 1 cr/min", "Ships in the SDK & CLI"],
-  },
-  {
-    name: "Expression",
-    tag: "Any face",
-    d: "Animates any portrait at runtime with AI facial dynamics. Needs an NVIDIA GPU or recent Apple Silicon.",
-    points: ["Animate any photo", "GPU or M3+ Mac / M4 iPad", "Cloud or self-hosted"],
-  },
+const caseStudies = [
+  { t: "One photo. Infinite cinema.", d: "Turn any portrait into a talking, expressive character.", href: "/use-cases", img: "/images/animals/capybara.jpg" },
+  { t: "AI books, alive", d: "Multi-character illustrated books that read themselves aloud.", href: "/use-cases", img: "/images/animals/fluffy-creature.jpg" },
+  { t: "Agents on the edge", d: "Kiosks and devices running fully offline on a Raspberry Pi.", href: "/use-cases", img: "/images/example-raspberry-pi-device.jpg" },
+];
+
+const examples = [
+  { t: "Hello, avatar (Python)", d: "Stream audio and render frames in ~20 lines.", href: "/examples/python-hello" },
+  { t: "Voice agent + avatar", d: "OpenAI Realtime voice chat with a live face.", href: "/examples/ai-conversation" },
+  { t: "REST in any language", d: "Generate and drive an agent over plain HTTP.", href: "/examples/rest-hello" },
 ];
 ---
 
 <Base>
-  <!-- ====================== HERO ====================== -->
-  <section class="hero bg-grid">
-    <div class="container hero-inner">
-      <div class="hero-copy" data-reveal>
-        <span class="eyebrow"><span class="ping"></span> New · Voice API + Browser (WASM) mode</span>
-        <h1>Audio in,<br /><span class="grad">lifelike avatar</span> out.</h1>
-        <p class="lede">
-          Build real-time, lip-synced AI avatars that run anywhere — from a
-          Raspberry Pi to an H100, on-device or in the cloud. One engine, one
-          API, every platform.
-        </p>
-        <div class="hero-cta">
-          <Button href="/api/quickstart" size="lg">Start building</Button>
-          <Button href="#quickstart" variant="secondary" size="lg">View quickstart</Button>
-        </div>
-        <div class="hero-stats">
-          {stats.map((s) => (
-            <div class="stat"><strong>{s.v}</strong><span>{s.l}</span></div>
-          ))}
-        </div>
+  <!-- ===== HERO (text-led, OpenAI-style) ===== -->
+  <section class="hero">
+    <div class="container">
+      <h1 data-reveal>Realtime visual agents,<br />on every device.</h1>
+      <p class="sub" data-reveal>
+        bitHuman is the most cost-effective way to build lifelike, lip-synced AI
+        agents — running on-device from a Raspberry Pi to an iPhone to the
+        browser. Best-in-class quality, up to <strong>10× cheaper</strong> than
+        the alternatives.
+      </p>
+      <div class="hero-cta" data-reveal>
+        <Button href="/api/quickstart" size="lg">Start building</Button>
+        <Button href="/showcase" variant="secondary" size="lg">Browse showcase</Button>
       </div>
-      <div class="hero-demo" data-reveal>
-        <LiveAvatar code={heroAgent.code} name={`Talk to ${heroAgent.name}`} poster={heroAgent.image} />
-      </div>
+
+      <!-- featured card -->
+      <a class="feature" href="/sdk" data-reveal>
+        <div class="feature-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="feature-body">
+          <strong>One engine, every platform.</strong>
+          <span>The same realtime avatar engine powers the CLI, every SDK, and the REST API — write once, run on-device or in the cloud.</span>
+        </div>
+        <span class="feature-go">Explore the SDKs →</span>
+      </a>
     </div>
   </section>
 
-  <!-- ====================== PILLARS ====================== -->
+  <!-- ===== PILLARS ===== -->
   <section class="section">
     <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Build with bitHuman</span>
-        <h2>Three ways to ship avatars</h2>
-        <p>Pick the surface that fits your stack — they all run on the same real-time engine.</p>
-      </div>
       <div class="pillars">
         {pillars.map((p) => (
           <a href={p.href} class="pillar" data-reveal>
-            <div class="pillar-ico">
-              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d={p.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            </div>
+            <div class="pillar-ico"><svg width="22" height="22" viewBox="0 0 24 24"><path d={p.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <h3>{p.name}</h3>
-            <p>{p.desc}</p>
-            <ul>
-              {p.points.map((pt) => (
-                <li><span class="dash"></span>{pt}</li>
-              ))}
-            </ul>
-            <span class="pillar-go">Explore <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7h7M7 4l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <p>{p.tag}</p>
+            <span class="pillar-go">Learn more →</span>
           </a>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ====================== QUICKSTART ====================== -->
-  <section id="quickstart" class="section quickstart">
+  <!-- ===== RUNS EVERYWHERE (positioning) ===== -->
+  <section class="section runs">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Runs everywhere</span>
+        <h2>One lightweight engine. Any device.</h2>
+        <p>From a $35 Raspberry Pi to an H100 — the same agent runs on-device, offline-capable, with no heavy GPU dependency. Cross-platform tools, a CLI, and native SDKs make it easy to ship.</p>
+      </div>
+      <div class="device-grid" data-reveal>
+        {devices.map((d) => <span class="device">{d}</span>)}
+      </div>
+      <div class="stat-row" data-reveal>
+        <div class="stat"><strong>25 FPS</strong><span>realtime lip-sync</span></div>
+        <div class="stat"><strong>&lt;200 ms</strong><span>first frame</span></div>
+        <div class="stat"><strong>10×</strong><span>cheaper than alternatives</span></div>
+        <div class="stat"><strong>On-device</strong><span>offline-capable</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== QUICKSTART ===== -->
+  <section class="section">
     <div class="container qs-grid">
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
-        <h2>Your first avatar in two minutes</h2>
-        <p class="muted">Install once, then stream audio and get animated frames back. Works the same from the CLI, Python, Swift, or plain REST.</p>
-        <div class="qs-links">
-          <Button href="/api/quickstart">Full quickstart</Button>
-          <Button href="/api/authentication" variant="ghost">Get an API key →</Button>
-        </div>
+        <h2>Your first agent in two minutes</h2>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST.</p>
+        <Button href="/api/quickstart">Full quickstart →</Button>
       </div>
-      <div class="qs-code" data-reveal>
-        <CodeTabs tabs={quickstart} title="Quickstart examples" />
-      </div>
+      <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
     </div>
   </section>
 
-  <!-- ====================== WHAT YOU CAN BUILD ====================== -->
+  <!-- ===== USE CASES ===== -->
   <section class="section">
     <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Use cases</span>
-        <h2>What you can build</h2>
-      </div>
-      <div class="usecases">
+      <div class="section-head" data-reveal><span class="eyebrow">Use cases</span><h2>What you can build</h2></div>
+      <div class="cards-4">
         {useCases.map((u) => (
-          <div class="usecase" data-reveal>
-            <div class="uc-img" style={`background-image:url(${u.img})`}></div>
-            <div class="uc-body">
-              <h3>{u.t}</h3>
-              <p>{u.d}</p>
-            </div>
+          <div class="ucard" data-reveal>
+            <div class="ucard-img" style={`background-image:url(${u.img})`}></div>
+            <div class="ucard-b"><h3>{u.t}</h3><p>{u.d}</p></div>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ====================== SHOWCASE ====================== -->
+  <!-- ===== SHOWCASE (swipe gallery) ===== -->
   <section class="section showcase-sec">
     <div class="container">
       <div class="section-head show-head" data-reveal>
-        <div>
-          <span class="eyebrow">Showcase</span>
-          <h2>Built with bitHuman</h2>
-          <p>Live demo agents and forkable reference apps.</p>
-        </div>
-        <Button href="/showcase" variant="secondary">Browse showcase</Button>
+        <div><span class="eyebrow">Showcase</span><h2>Talk to a live agent</h2><p>Swipe through real agents — tap <strong>Try live</strong> to start a conversation.</p></div>
+        <Button href="/showcase" variant="secondary">See all</Button>
       </div>
-      <div data-reveal>
-        <ShowcaseGrid agents={featuredAgents} />
+      <div data-reveal><ShowcaseCarousel agents={featuredAgents} /></div>
+    </div>
+  </section>
+
+  <!-- ===== MODELS ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal><span class="eyebrow">Models</span><h2>Essence &amp; Expression</h2><p>Two avatar models, one SDK. Start with Essence; reach for Expression to animate any face.</p></div>
+      <div class="cards-2">
+        <div class="mcard" data-reveal>
+          <div class="mcard-top"><h3>Essence</h3><span class="pill model-tag">Default</span></div>
+          <p>A pre-built identity in a portable .imx. Runs on CPU, Apple Silicon, and the browser (WASM) with low memory.</p>
+          <a class="mlink" href="/concepts/models">Learn more →</a>
+        </div>
+        <div class="mcard" data-reveal>
+          <div class="mcard-top"><h3>Expression</h3><span class="pill model-tag">Any face</span></div>
+          <p>Animates any portrait at runtime with AI facial dynamics. Runs on a GPU or recent Apple Silicon.</p>
+          <a class="mlink" href="/concepts/models">Learn more →</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ====================== MODELS ====================== -->
+  <!-- ===== CASE STUDIES ===== -->
   <section class="section">
     <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Models</span>
-        <h2>Essence & Expression</h2>
-        <p>Two avatar models, one SDK. Start with Essence; reach for Expression when you need to animate any face.</p>
+      <div class="section-head show-head" data-reveal>
+        <div><span class="eyebrow">Case studies</span><h2>Built with bitHuman</h2></div>
+        <Button href="/use-cases" variant="secondary">View all</Button>
       </div>
-      <div class="models">
-        {models.map((m) => (
-          <div class="model" data-reveal>
-            <div class="model-top">
-              <h3>{m.name}</h3>
-              <span class="pill model-tag">{m.tag}</span>
-            </div>
-            <p>{m.d}</p>
-            <ul>
-              {m.points.map((pt) => <li><span class="dash"></span>{pt}</li>)}
-            </ul>
-            <a class="model-link" href="/concepts/models">Learn more →</a>
-          </div>
+      <div class="cards-3">
+        {caseStudies.map((c) => (
+          <a class="bcard" href={c.href} data-reveal>
+            <div class="bcard-img" style={`background-image:url(${c.img})`}></div>
+            <div class="bcard-b"><h3>{c.t}</h3><p>{c.d}</p></div>
+          </a>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ====================== CTA BAND ====================== -->
+  <!-- ===== EXAMPLES ===== -->
   <section class="section">
     <div class="container">
-      <div class="cta-band bg-grid" data-reveal>
-        <h2>Ship your first avatar today</h2>
+      <div class="section-head show-head" data-reveal>
+        <div><span class="eyebrow">Examples</span><h2>Copy-paste starting points</h2></div>
+        <Button href="/examples" variant="secondary">All examples</Button>
+      </div>
+      <div class="cards-3">
+        {examples.map((e) => (
+          <a class="ecard" href={e.href} data-reveal>
+            <h3>{e.t}</h3><p>{e.d}</p><span class="mlink">Open →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="cta" data-reveal>
+        <h2>Ship your first visual agent today</h2>
         <p>Free tier — 99 credits a month, no card required.</p>
         <div class="cta-actions">
           <Button href="https://bithuman.ai/#developer" size="lg" external>Get your API key</Button>
-          <Button href="/examples" variant="secondary" size="lg">Explore examples</Button>
+          <Button href="/api/quickstart" variant="secondary" size="lg">Read the quickstart</Button>
         </div>
       </div>
     </div>
@@ -276,89 +252,75 @@ const models = [
 </Base>
 
 <style>
-  /* ---------- hero ---------- */
-  .hero { padding-block: var(--space-12) var(--space-10); border-bottom: 1px solid var(--color-border); position: relative; overflow: hidden; }
-  .hero-inner { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--space-8); align-items: center; }
-  .ping { width: 7px; height: 7px; border-radius: var(--r-full); background: var(--coral-500); display: inline-block; }
-  .hero h1 { font-size: clamp(2.6rem, 6vw, var(--fh-4xl)); margin-top: var(--space-4); }
-  .grad { background: linear-gradient(100deg, var(--coral-500), var(--coral-400)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .lede { margin-top: var(--space-5); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 36ch; }
+  .hero { padding-block: var(--space-12) var(--space-8); }
+  .hero h1 { font-size: clamp(2.7rem, 6vw, var(--fh-4xl)); max-width: 16ch; }
+  .hero .sub { margin-top: var(--space-5); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
   .hero-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
-  .hero-stats { display: flex; gap: var(--space-6); margin-top: var(--space-8); flex-wrap: wrap; }
-  .stat { display: flex; flex-direction: column; }
-  .stat strong { font-size: var(--fh-md); letter-spacing: -0.02em; }
-  .stat span { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-  .hero-demo { max-width: 380px; margin-left: auto; width: 100%; }
+  .feature { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .feature:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
+  .feature-badge { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); }
+  .feature-body { display: flex; flex-direction: column; gap: 0.2rem; }
+  .feature-body strong { font-size: var(--ft-lg); }
+  .feature-body span { color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .feature-go { margin-left: auto; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); white-space: nowrap; }
 
-  /* ---------- pillars ---------- */
   .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
   .pillar { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .pillar:hover { border-color: var(--color-primary); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .pillar:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .pillar-ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); margin-bottom: var(--space-4); }
   .pillar h3 { font-size: var(--fh-md); }
-  .pillar p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .pillar ul { list-style: none; padding: 0; margin: var(--space-4) 0 var(--space-5); display: grid; gap: 0.5rem; }
-  .pillar li { display: flex; align-items: center; gap: 0.6rem; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .dash { width: 14px; height: 2px; border-radius: 2px; background: var(--color-primary); flex: none; }
-  .pillar-go { margin-top: auto; display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-  .pillar:hover .pillar-go svg { transform: translateX(3px); transition: transform var(--t-fast) var(--ease); }
+  .pillar p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
+  .pillar-go { margin-top: var(--space-4); color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 
-  /* ---------- quickstart ---------- */
-  .quickstart { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
-  .qs-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: var(--space-8); align-items: center; }
+  .runs { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
+  .device-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: var(--space-2); }
+  .device { padding: 0.5rem 1rem; border-radius: var(--r-full); border: 1px solid var(--color-border); background: var(--color-surface); font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text-secondary); }
+  .stat-row { display: flex; gap: var(--space-8); margin-top: var(--space-8); flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; }
+  .stat strong { font-size: var(--fh-lg); letter-spacing: -0.02em; }
+  .stat span { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+
+  .qs-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--space-8); align-items: center; }
   .qs-copy h2 { font-size: var(--fh-xl); margin-top: var(--space-3); }
-  .qs-copy .muted { margin-top: var(--space-3); font-size: var(--ft-lg); }
-  .qs-links { display: flex; gap: var(--space-3); margin-top: var(--space-5); align-items: center; flex-wrap: wrap; }
+  .qs-copy .muted { margin: var(--space-3) 0 var(--space-5); font-size: var(--ft-lg); }
 
-  /* ---------- use cases ---------- */
-  .usecases { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
-  .usecase { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease); }
-  .usecase:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .uc-img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
-  .uc-body { padding: var(--space-4); }
-  .uc-body h3 { font-size: var(--ft-lg); }
-  .uc-body p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .cards-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
+  .cards-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .cards-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
+  .ucard, .bcard { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
+  .ucard:hover, .bcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .ucard-img, .bcard-img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
+  .ucard-b, .bcard-b { padding: var(--space-4); }
+  .ucard-b h3, .bcard-b h3 { font-size: var(--ft-lg); }
+  .ucard-b p, .bcard-b p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
 
-  /* ---------- showcase ---------- */
+  .mcard { padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
+  .mcard-top { display: flex; align-items: center; gap: var(--space-3); }
+  .mcard-top h3 { font-size: var(--fh-md); }
+  .model-tag { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
+  .mcard p { margin: var(--space-3) 0 var(--space-4); color: var(--color-text-secondary); }
+  .mlink { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
+
+  .ecard { display: block; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .ecard:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .ecard h3 { font-size: var(--ft-lg); }
+  .ecard p { margin: 0.35rem 0 var(--space-3); color: var(--color-text-secondary); font-size: var(--ft-sm); }
+
   .showcase-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
   .show-head { display: flex; justify-content: space-between; align-items: flex-end; max-width: none; gap: var(--space-5); }
-  .showcase { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
-  .show-card { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .show-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--color-border-strong); }
-  .show-img { aspect-ratio: 16/10; background-size: cover; background-position: center; position: relative; }
-  .show-live { position: absolute; top: 0.7rem; left: 0.7rem; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem; border-radius: var(--r-full); background: rgba(0,0,0,0.5); color: #fff; font-size: var(--ft-xs); font-weight: var(--fw-medium); backdrop-filter: blur(6px); }
-  .show-live .dot { width: 7px; height: 7px; border-radius: var(--r-full); background: #4ade80; }
-  .show-body { padding: var(--space-4); }
-  .show-body h3 { font-size: var(--ft-lg); }
-  .show-body p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .show-tags { display: flex; gap: 0.4rem; margin-top: var(--space-3); flex-wrap: wrap; }
 
-  /* ---------- models ---------- */
-  .models { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
-  .model { padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
-  .model-top { display: flex; align-items: center; gap: var(--space-3); }
-  .model-top h3 { font-size: var(--fh-md); }
-  .model-tag { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
-  .model p { margin-top: var(--space-3); color: var(--color-text-secondary); }
-  .model ul { list-style: none; padding: 0; margin: var(--space-4) 0; display: grid; gap: 0.5rem; }
-  .model li { display: flex; align-items: center; gap: 0.6rem; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .model-link { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-
-  /* ---------- cta band ---------- */
-  .cta-band { text-align: center; padding: var(--space-10) var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-3xl); background: var(--color-surface-2); }
-  .cta-band h2 { font-size: var(--fh-2xl); }
-  .cta-band p { margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--ft-lg); }
+  .cta { text-align: center; padding: var(--space-10) var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-3xl); background: var(--color-surface-2); }
+  .cta h2 { font-size: var(--fh-2xl); }
+  .cta p { margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--ft-lg); }
   .cta-actions { display: flex; gap: var(--space-3); justify-content: center; margin-top: var(--space-6); flex-wrap: wrap; }
 
-  /* ---------- responsive ---------- */
   @media (max-width: 980px) {
-    .hero-inner, .qs-grid { grid-template-columns: 1fr; }
-    .hero-demo { max-width: 340px; margin-inline: auto; }
-    .pillars, .usecases, .showcase { grid-template-columns: repeat(2, 1fr); }
-    .models { grid-template-columns: 1fr; }
+    .qs-grid { grid-template-columns: 1fr; }
+    .pillars, .cards-3 { grid-template-columns: 1fr; }
+    .cards-4 { grid-template-columns: repeat(2, 1fr); }
+    .cards-2 { grid-template-columns: 1fr; }
+    .feature { flex-direction: column; align-items: flex-start; }
+    .feature-go { margin-left: 0; }
   }
-  @media (max-width: 600px) {
-    .pillars, .usecases, .showcase { grid-template-columns: 1fr; }
-    .show-head { flex-direction: column; align-items: flex-start; }
-  }
+  @media (max-width: 600px) { .cards-4 { grid-template-columns: 1fr; } .show-head { flex-direction: column; align-items: flex-start; } }
 </style>
