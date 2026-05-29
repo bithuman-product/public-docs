@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
+import Playground from "../components/Playground.astro";
 import caseStudies from "../data/case-studies.json";
 
 const featuredCases = caseStudies.slice(0, 3);
@@ -26,7 +27,6 @@ const stats = [
   { v: "Realtime", l: "lifelike lip-sync" },
   { v: "100+ FPS", l: "up to 1000+ on high-end" },
   { v: "On-device", l: "works offline" },
-  { v: "10×", l: "cheaper than cloud" },
 ];
 
 const quickstart = [
@@ -131,6 +131,31 @@ const examples = [
     </div>
   </section>
 
+  <!-- ===== TRY IT (WYSIWYG playground) ===== -->
+  <section class="section tryit-sec">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Try it</span>
+        <h2>Edit, then launch a live agent</h2>
+        <p>Pick an agent and model — the embed code updates live. Hit <strong>Launch</strong> to talk to it, right here.</p>
+      </div>
+      <div data-reveal><Playground /></div>
+    </div>
+  </section>
+
+  <!-- ===== EXAMPLES ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head show-head" data-reveal>
+        <div><span class="eyebrow">Examples</span><h2>Copy-paste starting points</h2></div>
+        <Button href="/examples" variant="secondary">All examples</Button>
+      </div>
+      <div class="cards-3">
+        {examples.map((e) => (<a class="ecard" href={e.href} data-reveal><h3>{e.t}</h3><p>{e.d}</p><span class="mlink">Open →</span></a>))}
+      </div>
+    </div>
+  </section>
+
   <!-- ===== SHOWCASE (case studies) ===== -->
   <section class="section">
     <div class="container">
@@ -145,19 +170,6 @@ const examples = [
             <div class="bcard-b"><span class="pill">{c.category}</span><h3>{c.title}</h3><p>{c.summary}</p></div>
           </a>
         ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== EXAMPLES ===== -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head show-head" data-reveal>
-        <div><span class="eyebrow">Examples</span><h2>Copy-paste starting points</h2></div>
-        <Button href="/examples" variant="secondary">All examples</Button>
-      </div>
-      <div class="cards-3">
-        {examples.map((e) => (<a class="ecard" href={e.href} data-reveal><h3>{e.t}</h3><p>{e.d}</p><span class="mlink">Open →</span></a>))}
       </div>
     </div>
   </section>
@@ -217,7 +229,7 @@ const examples = [
   .mcard p { margin: var(--space-3) 0 var(--space-4); color: var(--color-text-secondary); }
   .mlink { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 
-  .quickstart-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
+  .tryit-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
   .qs-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--space-8); align-items: center; }
   .qs-copy h2 { font-size: var(--fh-xl); margin-top: var(--space-3); }
   .qs-copy .muted { margin: var(--space-3) 0 var(--space-5); font-size: var(--ft-lg); }
