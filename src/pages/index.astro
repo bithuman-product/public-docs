@@ -43,6 +43,9 @@
         hideClientButton: false,
         defaultHttpClient: { targetKey: 'shell', clientKey: 'curl' },
         hiddenClients: [],
+        // Auto-expand all operations so the docs read like a single page,
+        // not a tree of click-to-expand panels.
+        defaultOpenAllTags: true,
         metaData: {
           title: 'bitHuman — Real-time avatar + voice docs',
           description: 'Real-time, lip-synced AI avatars + 31-language TTS.',
@@ -161,19 +164,26 @@
             display: none !important;
           }
 
-          /* Endpoint-page grid: keep the right code samples but cap width */
+          /* Endpoint-page grid: STACK vertically (no more 3rd column).
+             Spec sits on top; code samples appear directly below at
+             FULL width with their built-in language tabs (curl, python,
+             node, etc.). No more truncation. */
           .references-rendered .section-columns.section-columns {
-            gap: 40px !important;
+            flex-direction: column !important;
+            gap: 24px !important;
           }
-          .references-rendered .section-column.section-column:first-child {
-            flex: 2 !important;
+          .references-rendered .section-column.section-column {
+            flex: 1 1 100% !important;
+            max-width: 100% !important;
             min-width: 0 !important;
-            max-width: none !important;
           }
-          .references-rendered .section-column.section-column:nth-of-type(2) {
-            flex: 1 !important;
-            max-width: 380px !important;
-            min-width: 0 !important;
+          /* Make the (formerly right-rail) code-sample panel full-width */
+          .references-rendered .section-column.section-column:nth-of-type(2) .sticky-cards,
+          .references-rendered .section-column.section-column:nth-of-type(2) .examples,
+          .references-rendered .section-column.section-column:nth-of-type(2) .operation-example-card {
+            max-width: 100% !important;
+            width: 100% !important;
+            position: static !important;
           }
 
           /* HIDE the Scalar marketing top-bar (Developer Tools / Configure
