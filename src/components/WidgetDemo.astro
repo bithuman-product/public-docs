@@ -1,91 +1,152 @@
 ---
 import { Code } from "astro:components";
 import data from "../data/showcase-agents.json";
-const agent = data.expression[0];
-const snippet = `<!-- Add to any site -->
-<script src="https://www.bithuman.ai/bithuman-web-gadget.js"></script>
-<script>
-  BitHumanGadget.init({
-    agentUrl: 'https://bithuman.ai/embed/${agent.code}',
-    position: 'bottom-right'   // text · voice · video chat
-  });
+const gadgetAgent = data.expression[0];
+const themes = { light: "github-light", dark: "github-dark" } as const;
+
+const gadgetSnippet = `<!-- Corner gadget — one line -->
+<script
+  src="https://www.bithuman.ai/bithuman-web-gadget.js"
+  data-agent-url="https://bithuman.ai/embed/${gadgetAgent.code}">
+</script>`;
+
+const chatSnippet = `<!-- Chat widget — one line -->
+<script
+  src="https://www.bithuman.ai/bithuman-chat-widget-v5.js"
+  data-agent-url="https://bithuman.ai/A54GKS4378">
 </script>`;
 ---
 
-<div class="wd" data-wd data-agent={agent.code} data-image={agent.image}>
-  <div class="wd-code">
-    <div class="wd-bar"><span class="wd-dots"><i></i><i></i><i></i></span><span class="wd-file">index.html</span></div>
-    <Code code={snippet} lang="html" themes={{ light: "github-light", dark: "github-dark" }} />
+<div class="wd" data-wd data-gadget-agent={gadgetAgent.code} data-gadget-image={gadgetAgent.image}>
+  <div class="wd-tabs" role="tablist">
+    <button class="wd-tab active" data-wt="gadget" role="tab">Corner gadget</button>
+    <button class="wd-tab" data-wt="chat" role="tab">Chat widget</button>
   </div>
-  <div class="wd-panel">
-    <div class="wd-illo">
-      <div class="wd-bubble"><img data-wd-img src={agent.image} alt={agent.name} /></div>
+
+  <div class="wd-pane active" data-wp="gadget">
+    <div class="wd-grid">
+      <div class="wd-code">
+        <div class="wd-bar"><span class="wd-dots"><i></i><i></i><i></i></span><span class="wd-file">index.html</span></div>
+        <Code code={gadgetSnippet} lang="html" themes={themes} />
+      </div>
+      <div class="wd-side">
+        <p class="wd-note">A draggable, resizable <strong>avatar bubble</strong> in the corner — tap to talk (voice &amp; video). Best for a quick, ambient presence.</p>
+        <div class="wd-actions">
+          <button class="wd-launch" data-wd-launch="gadget"><span class="dot"></span> Add it to this page</button>
+          <button class="wd-remove" data-wd-remove hidden>Remove</button>
+        </div>
+      </div>
     </div>
-    <p class="wd-note">A floating agent docks in the bottom-right — <strong>text, voice, and video</strong> chat, draggable and resizable.</p>
-    <div class="wd-actions">
-      <button class="wd-launch" data-wd-launch><span class="dot"></span> Add it to this page</button>
-      <button class="wd-remove" data-wd-remove hidden>Remove</button>
+  </div>
+
+  <div class="wd-pane" data-wp="chat">
+    <div class="wd-grid">
+      <div class="wd-code">
+        <div class="wd-bar"><span class="wd-dots"><i></i><i></i><i></i></span><span class="wd-file">index.html</span></div>
+        <Code code={chatSnippet} lang="html" themes={themes} />
+      </div>
+      <div class="wd-side">
+        <p class="wd-note">A full <strong>support-chat experience</strong> (the Ivoclar style) — text, voice, and video, with suggested questions and a welcome message. Best for help &amp; sales.</p>
+        <div class="wd-actions">
+          <button class="wd-launch" data-wd-launch="chat"><span class="dot"></span> Add it to this page</button>
+          <button class="wd-remove" data-wd-remove hidden>Remove</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
   document.querySelectorAll("[data-wd]").forEach((root) => {
-    const code = (root as HTMLElement).dataset.agent!;
-    const img = (root as HTMLElement).dataset.image!;
-    const launch = root.querySelector("[data-wd-launch]") as HTMLButtonElement;
-    const remove = root.querySelector("[data-wd-remove]") as HTMLButtonElement;
-    let loaded = false;
+    const el = root as HTMLElement;
+    const gCode = el.dataset.gadgetAgent!;
+    const gImg = el.dataset.gadgetImage!;
+    const loaded: Record<string, boolean> = {};
+    let active: string | null = null;
 
-    const initGadget = () => {
-      (window as any).BitHumanGadget?.init({
-        agentUrl: `https://bithuman.ai/embed/${code}`,
-        imageUrl: img,
-        buttonText: "Chat",
-        position: "bottom-right",
+    const W = () => window as any;
+    const inject = (src: string, key: string) =>
+      new Promise<void>((res) => {
+        if (loaded[key]) return res();
+        loaded[key] = true;
+        const s = document.createElement("script");
+        s.src = src;
+        s.onload = () => res();
+        document.body.appendChild(s);
       });
-      launch.hidden = true;
-      remove.hidden = false;
+    const destroyAll = () => {
+      W().BitHumanGadget?.destroy?.();
+      W().BitHumanChat?.destroy?.();
+      active = null;
+      root.querySelectorAll("[data-wd-remove]").forEach((b) => ((b as HTMLElement).hidden = true));
+      root.querySelectorAll("[data-wd-launch]").forEach((b) => ((b as HTMLElement).hidden = false));
     };
 
-    launch.addEventListener("click", () => {
-      if ((window as any).BitHumanGadget) return initGadget();
-      if (!loaded) {
-        loaded = true;
-        const s = document.createElement("script");
-        s.src = "https://www.bithuman.ai/bithuman-web-gadget.js";
-        s.onload = initGadget;
-        document.body.appendChild(s);
-      }
-    });
-    remove.addEventListener("click", () => {
-      (window as any).BitHumanGadget?.destroy?.();
-      remove.hidden = true;
-      launch.hidden = false;
-    });
+    const launchGadget = async () => {
+      destroyAll();
+      await inject("https://www.bithuman.ai/bithuman-web-gadget.js", "gadget");
+      W().BitHumanGadget?.init({ agentUrl: `https://bithuman.ai/embed/${gCode}`, imageUrl: gImg, buttonText: "Chat", position: "bottom-right" });
+      active = "gadget";
+    };
+    const launchChat = async () => {
+      destroyAll();
+      await inject("https://www.bithuman.ai/bithuman-chat-widget-v5.js", "chat");
+      W().BitHumanChat?.init({
+        agentUrl: "https://bithuman.ai/A54GKS4378",
+        theme: "light",
+        fabText: "Ask our AI assistant",
+        welcomeMessage: "Hi! I'm your assistant — how can I help you today?",
+        suggestedQuestions: ["What can bitHuman do?", "How do I get started?", "I need technical help"],
+        defaultChatMode: "text",
+      });
+      active = "chat";
+    };
+
+    // tabs
+    root.querySelectorAll(".wd-tab").forEach((tab) =>
+      tab.addEventListener("click", () => {
+        const k = (tab as HTMLElement).dataset.wt!;
+        root.querySelectorAll(".wd-tab").forEach((t) => t.classList.toggle("active", t === tab));
+        root.querySelectorAll(".wd-pane").forEach((p) => p.classList.toggle("active", (p as HTMLElement).dataset.wp === k));
+        destroyAll();
+      })
+    );
+    // launch / remove (per pane)
+    root.querySelectorAll("[data-wd-launch]").forEach((b) =>
+      b.addEventListener("click", async () => {
+        const k = (b as HTMLElement).dataset.wdLaunch!;
+        await (k === "gadget" ? launchGadget() : launchChat());
+        (b as HTMLElement).hidden = true;
+        (b.closest(".wd-actions")!.querySelector("[data-wd-remove]") as HTMLElement).hidden = false;
+      })
+    );
+    root.querySelectorAll("[data-wd-remove]").forEach((b) =>
+      b.addEventListener("click", () => destroyAll())
+    );
   });
 </script>
 
 <style>
-  .wd { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--space-5); align-items: stretch; }
+  .wd-tabs { display: inline-flex; gap: 0.2rem; padding: 0.25rem; border: 1px solid var(--color-border); border-radius: var(--r-full); margin-bottom: var(--space-5); }
+  .wd-tab { padding: 0.45rem 1rem; border: 0; border-radius: var(--r-full); background: none; color: var(--color-text-secondary); font-size: var(--ft-sm); font-weight: var(--fw-medium); }
+  .wd-tab.active { background: var(--color-primary); color: var(--color-on-primary); }
+  .wd-pane { display: none; }
+  .wd-pane.active { display: block; }
+  .wd-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--space-5); align-items: stretch; }
+  .wd-grid > * { min-width: 0; }
   .wd-code { border: 1px solid var(--color-border); border-radius: var(--r-lg); overflow: hidden; background: var(--color-code-bg); }
   .wd-bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.6rem; background: var(--color-surface-2); border-bottom: 1px solid var(--color-border); }
   .wd-dots { display: inline-flex; gap: 4px; }
   .wd-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--color-border-strong); }
   .wd-file { font-size: var(--ft-xs); color: var(--color-text-tertiary); font-family: var(--font-mono); }
   .wd-code :global(pre) { margin: 0; padding: var(--space-4); font-size: 0.8rem; line-height: 1.65; overflow-x: auto; }
-
-  .wd-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); text-align: center; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
-  .wd-illo { position: relative; width: 100%; min-height: 120px; display: flex; align-items: flex-end; justify-content: flex-end; }
-  .wd-bubble { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; border: 3px solid var(--color-surface); box-shadow: var(--shadow-glow); }
-  .wd-bubble img { width: 100%; height: 100%; object-fit: cover; }
-  .wd-note { color: var(--color-text-secondary); font-size: var(--ft-sm); max-width: 32ch; }
-  .wd-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+  .wd-side { display: flex; flex-direction: column; justify-content: center; gap: var(--space-4); padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
+  .wd-note { color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .wd-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
   .wd-launch { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border: 0; border-radius: var(--r-full); background: var(--color-primary); color: var(--color-on-primary); font-weight: var(--fw-medium); transition: all var(--t-fast) var(--ease); }
   .wd-launch:hover { background: var(--color-primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
   .wd-launch .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
   .wd-remove { padding: 0.7rem 1.1rem; border-radius: var(--r-full); border: 1px solid var(--color-border-strong); background: var(--color-surface); color: var(--color-text-secondary); font-weight: var(--fw-medium); }
   .wd-remove:hover { color: var(--color-text); }
-
-  @media (max-width: 860px) { .wd { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { .wd-grid { grid-template-columns: 1fr; } }
 </style>

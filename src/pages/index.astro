@@ -149,8 +149,8 @@ const examples = [
     <div class="container">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Embed anywhere</span>
-        <h2>Drop a chat widget on any site</h2>
-        <p>Two script tags add a floating agent — text, voice, and video. Try it right here.</p>
+        <h2>Drop an agent into any site</h2>
+        <p>One line of HTML adds a live agent — pick a corner gadget or a full chat widget, then try both right here.</p>
       </div>
       <div data-reveal><WidgetDemo /></div>
     </div>
@@ -243,7 +243,8 @@ const examples = [
   .mlink { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 
   .tryit-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
-  .qs-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--space-8); align-items: center; }
+  .qs-grid { display: grid; grid-template-columns: 0.8fr minmax(0, 1.2fr); gap: var(--space-8); align-items: center; }
+  .qs-grid > * { min-width: 0; }
   .qs-copy h2 { font-size: var(--fh-xl); margin-top: var(--space-3); }
   .qs-copy .muted { margin: var(--space-3) 0 var(--space-5); font-size: var(--ft-lg); }
 
