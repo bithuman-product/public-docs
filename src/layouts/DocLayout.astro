@@ -41,6 +41,12 @@ const groups = [...groupsMap.entries()].sort((a, b) => {
 
 const currentPath = "/" + entry.id.replace(/\/index$/, "").replace(/\.md$/, "");
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+// sequential prev/next across the section (in sidebar display order)
+const flatNav = groups.flatMap(([, items]) => items);
+const curIdx = flatNav.findIndex((e: any) => slugOf(e) === currentPath);
+const prevPage = curIdx > 0 ? flatNav[curIdx - 1] : null;
+const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1] : null;
 ---
 
 <Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description}>
@@ -81,6 +87,24 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
         {entry.data.description && <p class="doc-lede">{entry.data.description}</p>}
         <slot />
       </div>
+      {
+        (prevPage || nextPage) && (
+          <nav class="doc-pager">
+            {prevPage ? (
+              <a class="pager" href={slugOf(prevPage)}>
+                <span>← Previous</span>
+                <strong>{prevPage.data.label ?? prevPage.data.title}</strong>
+              </a>
+            ) : <span />}
+            {nextPage && (
+              <a class="pager next" href={slugOf(nextPage)}>
+                <span>Next →</span>
+                <strong>{nextPage.data.label ?? nextPage.data.title}</strong>
+              </a>
+            )}
+          </nav>
+        )
+      }
     </article>
 
     <!-- on-this-page TOC -->
@@ -129,6 +153,12 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   .doc-crumb a:hover { color: var(--color-primary); }
   .doc-crumb span { margin: 0 0.3rem; }
   .doc-lede { font-size: var(--ft-lg); color: var(--color-text-secondary); margin-top: 0 !important; }
+  .doc-pager { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
+  .pager { display: flex; flex-direction: column; gap: 0.2rem; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); transition: all var(--t-fast) var(--ease); max-width: 48%; }
+  .pager:hover { border-color: var(--color-primary); }
+  .pager.next { text-align: right; align-items: flex-end; margin-left: auto; }
+  .pager span { font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .pager strong { color: var(--color-primary); font-size: var(--ft-sm); }
   /* toc */
   .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--space-8); font-size: var(--ft-sm); }
   .toc-label { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }

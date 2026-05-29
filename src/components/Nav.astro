@@ -17,11 +17,13 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
 
 <header class="nav">
   <div class="nav-inner">
-    <a class="brand" href="/" aria-label="bitHuman home">
-      <img src="/images/bitHuman-logo-circle.png" alt="" width="24" height="24" />
-      <span>bitHuman</span>
-      <span class="brand-docs">docs</span>
-    </a>
+    <div class="brand">
+      <a class="brand-main" href="https://www.bithuman.ai" aria-label="bitHuman home">
+        <img src="/images/bitHuman-logo-circle.png" alt="bitHuman" width="24" height="24" />
+        <span>bitHuman</span>
+      </a>
+      <a class="brand-docs" href="/" aria-label="Docs home">docs</a>
+    </div>
 
     <nav class="nav-links" aria-label="Primary">
       {
@@ -91,7 +93,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     align-items: center;
     gap: var(--space-5);
   }
-  .brand {
+  .brand { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .brand-main {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -99,11 +102,13 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     font-size: var(--ft-lg);
     letter-spacing: -0.02em;
   }
-  .brand img { border-radius: 6px; }
+  .brand-main img { border-radius: 6px; }
   .brand-docs {
     font-weight: var(--fw-regular);
+    font-size: var(--ft-lg);
     color: var(--color-text-tertiary);
   }
+  .brand-docs:hover { color: var(--color-text); }
   .nav-links {
     display: flex;
     align-items: center;

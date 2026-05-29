@@ -1,34 +1,19 @@
 ---
 import Base from "../../layouts/Base.astro";
-import ShowcaseTheater from "../../components/ShowcaseTheater.astro";
-import data from "../../data/showcase-agents.json";
 import caseStudies from "../../data/case-studies.json";
-
-const agents = [...data.expression, ...data.essence];
 ---
 
-<Base title="Showcase — bitHuman" description="Live, talkable agents and real-world deployments built with bitHuman — Expression and Essence.">
+<Base title="Showcase — bitHuman" description="Real teams shipping realtime visual agents with bitHuman — museums, enterprise, retail, and more.">
   <section class="sc-hero">
     <div class="container">
       <span class="eyebrow">Showcase</span>
-      <h1>Talk to a live agent</h1>
-      <p class="lede">Swipe through real agents and tap <strong>Try live</strong> to start a conversation — Expression animates a face at runtime, Essence streams a pre-built identity.</p>
+      <h1>Built with bitHuman</h1>
+      <p class="lede">Real teams shipping realtime visual agents into the world — museums, enterprise customer care, retail, e-commerce, and live events.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <ShowcaseTheater agents={agents} filters={true} />
-    </div>
-  </section>
-
-  <section class="section deployments">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Case studies</span>
-        <h2>Real-world deployments</h2>
-        <p>How teams ship bitHuman agents into museums, enterprises, kiosks, and apps.</p>
-      </div>
       <div class="case-grid">
         {caseStudies.map((c) => (
           <a class="case-card" href={c.href} target={c.href?.startsWith("http") ? "_blank" : undefined} rel={c.href?.startsWith("http") ? "noopener" : undefined}>
@@ -37,6 +22,7 @@ const agents = [...data.expression, ...data.essence];
               {c.category && <span class="pill">{c.category}</span>}
               <h3>{c.title}</h3>
               <p>{c.summary}</p>
+              {c.org && <span class="case-org">{c.org}</span>}
             </div>
           </a>
         ))}
@@ -48,18 +34,15 @@ const agents = [...data.expression, ...data.essence];
 <style>
   .sc-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
   .sc-hero h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
-  .sc-hero .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 62ch; }
-  .deployments { background: var(--color-surface-2); border-top: 1px solid var(--color-border); }
-  .section-head { max-width: 720px; margin-bottom: var(--space-6); }
-  .section-head h2 { font-size: var(--fh-2xl); margin-top: var(--space-3); }
-  .section-head p { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
+  .sc-hero .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 64ch; }
   .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
-  .case-card { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .case-card { display: flex; flex-direction: column; border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: all var(--t-med) var(--ease); }
   .case-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--color-border-strong); }
-  .case-img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
-  .case-b { padding: var(--space-4); }
-  .case-b .pill { margin-bottom: var(--space-2); }
+  .case-img { aspect-ratio: 16/10; background-size: cover; background-position: center; background-color: var(--color-surface-3); }
+  .case-b { padding: var(--space-5); display: flex; flex-direction: column; flex: 1; }
+  .case-b .pill { align-self: flex-start; margin-bottom: var(--space-2); }
   .case-b h3 { font-size: var(--ft-lg); }
-  .case-b p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .case-b p { margin-top: 0.4rem; color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
+  .case-org { margin-top: var(--space-3); font-size: var(--ft-xs); color: var(--color-text-tertiary); font-weight: var(--fw-medium); }
   @media (max-width: 900px) { .case-grid { grid-template-columns: 1fr; } }
 </style>

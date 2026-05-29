@@ -2,14 +2,8 @@
 import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
-import ShowcaseTheater from "../components/ShowcaseTheater.astro";
-import showcaseData from "../data/showcase-agents.json";
 import caseStudies from "../data/case-studies.json";
 
-const featuredAgents = [
-  ...showcaseData.expression.slice(0, 4),
-  ...showcaseData.essence.slice(0, 4),
-];
 const featuredCases = caseStudies.slice(0, 3);
 
 const pillars = [
@@ -18,7 +12,22 @@ const pillars = [
   { name: "Apps SDK", href: "/sdk", tag: "Embed lifelike agents natively — Python, Swift, Android, and the browser, all on one engine.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
 ];
 
-const devices = ["iPhone & iPad", "Android", "In the browser", "Raspberry Pi", "MacBook & Mac mini", "Windows PC", "Linux & Jetson", "Cloud GPU"];
+// elegant device icons (line-art, theme-aware via currentColor)
+const devices = [
+  { label: "iPhone", svg: `<rect x="7" y="2" width="10" height="20" rx="2.5"/><line x1="10.5" y1="4.6" x2="13.5" y2="4.6"/>` },
+  { label: "Android", svg: `<path d="M5.5 11a6.5 6.5 0 0 1 13 0v6.5h-13z"/><line x1="7.5" y1="6" x2="6" y2="3.5"/><line x1="16.5" y1="6" x2="18" y2="3.5"/><circle cx="9.8" cy="10.5" r=".55" fill="currentColor" stroke="none"/><circle cx="14.2" cy="10.5" r=".55" fill="currentColor" stroke="none"/>` },
+  { label: "Raspberry Pi", svg: `<rect x="3" y="6" width="18" height="12" rx="1.5"/><rect x="5.5" y="9" width="4" height="4" rx=".5"/><line x1="12.5" y1="9.5" x2="18" y2="9.5"/><line x1="12.5" y1="12" x2="18" y2="12"/><line x1="12.5" y1="14.5" x2="18" y2="14.5"/>` },
+  { label: "Mac mini", svg: `<rect x="3" y="8" width="18" height="8" rx="1.5"/><circle cx="17" cy="12" r=".9"/>` },
+  { label: "Browser", svg: `<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><circle cx="6" cy="6.2" r=".5" fill="currentColor" stroke="none"/><circle cx="8" cy="6.2" r=".5" fill="currentColor" stroke="none"/>` },
+  { label: "Cloud", svg: `<path d="M7.5 18a4 4 0 0 1 .3-8 5 5 0 0 1 9.4-1A3.6 3.6 0 0 1 17 18z"/>` },
+];
+
+const stats = [
+  { v: "Realtime", l: "lifelike lip-sync" },
+  { v: "100+ FPS", l: "up to 1000+ on high-end" },
+  { v: "On-device", l: "works offline" },
+  { v: "10×", l: "cheaper than cloud" },
+];
 
 const quickstart = [
   { label: "CLI", lang: "bash", code: `brew install bithuman-cli
@@ -29,12 +38,12 @@ bithuman run     # -> a live agent at http://127.0.0.1:8088` },
 avatar = await AsyncBithuman.create(api_secret="bh_...", avatar_id="A74NWD9723")
 avatar.push_audio(pcm_bytes, 16000); avatar.flush()
 async for frame in avatar.run():
-    render(frame.bgr_image)        # animated face @ 25 FPS` },
+    render(frame.bgr_image)        # lifelike animated face, in realtime` },
   { label: "Swift", lang: "swift", code: `import bitHumanKit
 
 let avatar = try await Bithuman.createRuntime(modelPath: imxURL, apiKey: "bh_...")
 for try await frame in avatar.run() {
-    view.render(frame.image)       // on-device, sub-200ms
+    view.render(frame.image)       // on-device, realtime
 }` },
 ];
 
@@ -46,20 +55,29 @@ const examples = [
 ---
 
 <Base>
-  <!-- ===== HERO (centered, short) ===== -->
+  <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="container">
       <h1 data-reveal>Realtime visual agents</h1>
-      <p class="sub" data-reveal>Lifelike avatars that run on any device — best-in-class quality, up to <strong>10× cheaper</strong>.</p>
+      <p class="sub" data-reveal>Lifelike avatars that run anywhere.</p>
       <div class="hero-cta" data-reveal>
         <Button href="/api/quickstart" size="lg">Start building</Button>
         <Button href="/showcase" variant="secondary" size="lg">Browse showcase</Button>
       </div>
-      <a class="feature" href="/sdk" data-reveal>
-        <div class="feature-badge"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="feature-body"><strong>One engine, every platform.</strong><span>The same realtime avatar engine powers the CLI, every SDK, and the REST API — write once, run on-device or in the cloud.</span></div>
-        <span class="feature-go">Explore the SDKs →</span>
-      </a>
+
+      <!-- elegant device strip -->
+      <div class="devices" data-reveal>
+        {devices.map((d) => (
+          <div class="device">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><Fragment set:html={d.svg} /></svg>
+            <span>{d.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="hero-stats" data-reveal>
+        {stats.map((s) => (<div class="stat"><strong>{s.v}</strong><span>{s.l}</span></div>))}
+      </div>
     </div>
   </section>
 
@@ -83,12 +101,12 @@ const examples = [
       <div class="section-head" data-reveal>
         <span class="eyebrow">Two models, one SDK</span>
         <h2>Essence &amp; Expression</h2>
-        <p>bitHuman agents come in two flavors. Start with Essence; reach for Expression when you need to animate any face.</p>
+        <p>Start with Essence; reach for Expression when you need to animate any face.</p>
       </div>
       <div class="cards-2">
         <a class="mcard" href="/concepts/models" data-reveal>
           <div class="mcard-top"><h3>Essence</h3><span class="pill model-tag">Default · on-device</span></div>
-          <p>A pre-built identity in a portable .imx — lip-synced at 25 FPS on CPU, Apple Silicon, and the browser (WASM). Lowest cost, runs offline.</p>
+          <p>A pre-built identity in a portable .imx — runs in realtime on CPU, Apple Silicon, and the browser (WASM). Lowest cost, works offline.</p>
           <span class="mlink">Learn more →</span>
         </a>
         <a class="mcard" href="/concepts/models" data-reveal>
@@ -100,26 +118,8 @@ const examples = [
     </div>
   </section>
 
-  <!-- ===== RUNS EVERYWHERE ===== -->
-  <section class="section runs">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Runs everywhere</span>
-        <h2>One lightweight engine. Any device.</h2>
-        <p>From a $35 Raspberry Pi to an H100 — the same agent runs on-device, offline-capable, with no heavy GPU dependency. A CLI and native SDKs make it easy to ship.</p>
-      </div>
-      <div class="device-grid" data-reveal>{devices.map((d) => <span class="device">{d}</span>)}</div>
-      <div class="stat-row" data-reveal>
-        <div class="stat"><strong>25 FPS</strong><span>realtime lip-sync</span></div>
-        <div class="stat"><strong>&lt;200 ms</strong><span>first frame</span></div>
-        <div class="stat"><strong>10×</strong><span>cheaper than alternatives</span></div>
-        <div class="stat"><strong>On-device</strong><span>offline-capable</span></div>
-      </div>
-    </div>
-  </section>
-
   <!-- ===== QUICKSTART ===== -->
-  <section class="section">
+  <section class="section quickstart-sec">
     <div class="container qs-grid">
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
@@ -131,25 +131,20 @@ const examples = [
     </div>
   </section>
 
-  <!-- ===== SHOWCASE (live agents + real deployments) ===== -->
-  <section class="section showcase-sec">
+  <!-- ===== SHOWCASE (case studies) ===== -->
+  <section class="section">
     <div class="container">
       <div class="section-head show-head" data-reveal>
-        <div><span class="eyebrow">Showcase</span><h2>Talk to a live agent</h2><p>Swipe through real agents — tap <strong>Try live</strong> to start a conversation.</p></div>
+        <div><span class="eyebrow">Showcase</span><h2>Built with bitHuman</h2><p>Real teams shipping realtime visual agents into the world.</p></div>
         <Button href="/showcase" variant="secondary">See all</Button>
       </div>
-      <div data-reveal><ShowcaseTheater agents={featuredAgents} /></div>
-
-      <div class="show-cases" data-reveal>
-        <h3 class="show-cases-h">Real-world deployments</h3>
-        <div class="cards-3">
-          {featuredCases.map((c) => (
-            <a class="bcard" href="/showcase">
-              <div class="bcard-img" style={`background-image:url(${c.image})`}></div>
-              <div class="bcard-b"><span class="pill">{c.category}</span><h3>{c.title}</h3><p>{c.summary}</p></div>
-            </a>
-          ))}
-        </div>
+      <div class="cards-3">
+        {featuredCases.map((c) => (
+          <a class="bcard" href="/showcase" data-reveal>
+            <div class="bcard-img" style={`background-image:url(${c.image})`}></div>
+            <div class="bcard-b"><span class="pill">{c.category}</span><h3>{c.title}</h3><p>{c.summary}</p></div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
@@ -162,9 +157,7 @@ const examples = [
         <Button href="/examples" variant="secondary">All examples</Button>
       </div>
       <div class="cards-3">
-        {examples.map((e) => (
-          <a class="ecard" href={e.href} data-reveal><h3>{e.t}</h3><p>{e.d}</p><span class="mlink">Open →</span></a>
-        ))}
+        {examples.map((e) => (<a class="ecard" href={e.href} data-reveal><h3>{e.t}</h3><p>{e.d}</p><span class="mlink">Open →</span></a>))}
       </div>
     </div>
   </section>
@@ -185,17 +178,22 @@ const examples = [
 </Base>
 
 <style>
-  .hero { padding-block: var(--space-12) var(--space-8); text-align: center; }
+  .hero { padding-block: var(--space-12) var(--space-10); text-align: center; }
   .hero h1 { font-size: clamp(2.8rem, 7vw, var(--fh-4xl)); }
-  .hero .sub { margin: var(--space-5) auto 0; font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 50ch; }
+  .hero .sub { margin: var(--space-4) auto 0; font-size: var(--ft-xl); color: var(--color-text-secondary); }
   .hero-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; justify-content: center; }
-  .feature { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-8) auto 0; max-width: 760px; text-align: left; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .feature:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
-  .feature-badge { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); }
-  .feature-body { display: flex; flex-direction: column; gap: 0.2rem; }
-  .feature-body strong { font-size: var(--ft-lg); }
-  .feature-body span { color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .feature-go { margin-left: auto; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); white-space: nowrap; }
+
+  /* elegant device strip */
+  .devices { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-6); margin-top: var(--space-10); }
+  .device { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--color-text-tertiary); transition: color var(--t-fast) var(--ease); }
+  .device:hover { color: var(--color-primary); }
+  .device svg { width: 34px; height: 34px; }
+  .device span { font-size: var(--ft-xs); font-weight: var(--fw-medium); }
+
+  .hero-stats { display: flex; justify-content: center; gap: var(--space-8); margin-top: var(--space-10); flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; }
+  .stat strong { font-size: var(--fh-md); letter-spacing: -0.02em; }
+  .stat span { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
 
   .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
   .pillar { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
@@ -219,25 +217,15 @@ const examples = [
   .mcard p { margin: var(--space-3) 0 var(--space-4); color: var(--color-text-secondary); }
   .mlink { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 
-  .runs { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
-  .device-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-  .device { padding: 0.5rem 1rem; border-radius: var(--r-full); border: 1px solid var(--color-border); background: var(--color-surface); font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text-secondary); }
-  .stat-row { display: flex; gap: var(--space-8); margin-top: var(--space-8); flex-wrap: wrap; }
-  .stat { display: flex; flex-direction: column; }
-  .stat strong { font-size: var(--fh-lg); letter-spacing: -0.02em; }
-  .stat span { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-
+  .quickstart-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
   .qs-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--space-8); align-items: center; }
   .qs-copy h2 { font-size: var(--fh-xl); margin-top: var(--space-3); }
   .qs-copy .muted { margin: var(--space-3) 0 var(--space-5); font-size: var(--ft-lg); }
 
-  .showcase-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
   .show-head { display: flex; justify-content: space-between; align-items: flex-end; max-width: none; gap: var(--space-5); }
-  .show-cases { margin-top: var(--space-10); }
-  .show-cases-h { font-size: var(--fh-md); margin-bottom: var(--space-5); }
   .bcard { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
   .bcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .bcard-img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
+  .bcard-img { aspect-ratio: 16/10; background-size: cover; background-position: center; background-color: var(--color-surface-3); }
   .bcard-b { padding: var(--space-4); }
   .bcard-b .pill { margin-bottom: var(--space-2); }
   .bcard-b h3 { font-size: var(--ft-lg); }
@@ -257,8 +245,10 @@ const examples = [
     .qs-grid { grid-template-columns: 1fr; }
     .pillars, .cards-3 { grid-template-columns: 1fr; }
     .cards-2 { grid-template-columns: 1fr; }
-    .feature { flex-direction: column; align-items: flex-start; }
-    .feature-go { margin-left: 0; }
   }
-  @media (max-width: 600px) { .show-head { flex-direction: column; align-items: flex-start; } }
+  @media (max-width: 600px) {
+    .devices { gap: var(--space-5); }
+    .hero-stats { gap: var(--space-5); }
+    .show-head { flex-direction: column; align-items: flex-start; }
+  }
 </style>
