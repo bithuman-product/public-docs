@@ -1,580 +1,376 @@
 ---
-// bitHuman docs — Scalar API Reference with proper theming.
-// Targets REAL Scalar CSS variables + class names (verified against
-// the @scalar/api-reference bundle on jsdelivr).
+import Base from "../layouts/Base.astro";
+import Button from "../components/Button.astro";
+import CodeTabs from "../components/CodeTabs.astro";
+import LiveAvatar from "../components/LiveAvatar.astro";
+
+const pillars = [
+  {
+    name: "API Platform",
+    href: "/api",
+    desc: "Generate, manage, and animate avatars over REST. Voice & TTS, agents, dynamics, and embedding — one API at api.bithuman.ai.",
+    icon: "M4 7h16M4 12h16M4 17h10",
+    points: ["Voice API (OpenAI-compatible)", "Agent generation & control", "Embed tokens & webhooks"],
+  },
+  {
+    name: "CLI",
+    href: "/cli",
+    desc: "Run a real-time avatar from a single command. Cloud or fully on-device, with a built-in local brain — no GPU required.",
+    icon: "M5 6l4 4-4 4M11 14h6",
+    points: ["brew · curl · pip install", "run · render · pull · doctor", "Local mode (offline)"],
+  },
+  {
+    name: "Apps SDK",
+    href: "/sdk",
+    desc: "Embed lifelike avatars natively in your app — Python, Swift (Apple), Android, and the browser, all on one engine.",
+    icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zM12 12l8-4.5M12 12v9M12 12L4 7.5",
+    points: ["Python · Swift · Kotlin · JS", "On-device or cloud rendering", "LiveKit real-time transport"],
+  },
+];
+
+const stats = [
+  { v: "25 FPS", l: "real-time lip-sync" },
+  { v: "<200ms", l: "first-frame latency" },
+  { v: "CPU → H100", l: "runs everywhere" },
+  { v: "30+ langs", l: "built-in voices" },
+];
+
+const quickstart = [
+  {
+    label: "CLI",
+    lang: "bash",
+    code: `# install the CLI (macOS / Linux)
+brew install bithuman-cli
+
+# pull a showcase avatar and go live
+bithuman pull modern-court-jester
+bithuman run     # -> http://127.0.0.1:8088/<CODE>`,
+  },
+  {
+    label: "Python",
+    lang: "python",
+    code: `import asyncio
+from bithuman import AsyncBithuman
+
+async def main():
+    avatar = await AsyncBithuman.create(
+        api_secret="bh_...",          # from bithuman.ai/#developer
+        avatar_id="A56ZFX6217",
+    )
+    avatar.push_audio(pcm_bytes, 16000)
+    avatar.flush()
+    async for frame in avatar.run():
+        render(frame.bgr_image)        # HxWx3 BGR uint8 @ 25 FPS
+
+asyncio.run(main())`,
+  },
+  {
+    label: "Swift",
+    lang: "swift",
+    code: `import bitHumanKit
+
+// On-device, Apple Silicon (M3+ / iPhone 16 Pro+)
+let avatar = try await Bithuman.createRuntime(
+    modelPath: imxURL,
+    apiKey: "bh_..."
+)
+for try await frame in avatar.run() {
+    view.render(frame.image)           // 25 FPS, sub-200ms
+}`,
+  },
+  {
+    label: "cURL",
+    lang: "bash",
+    code: `# Voice API - OpenAI-compatible drop-in
+curl https://api.bithuman.ai/v1/audio/speech \\
+  -H "api-secret: $BITHUMAN_API_SECRET" \\
+  -H "Content-Type: application/json" \\
+  -d '{"model":"supertonic-3","voice":"aria",
+       "input":"Hello from bitHuman."}' \\
+  --output speech.wav`,
+  },
+];
+
+const useCases = [
+  { t: "Real-time avatars", d: "Audio in, lip-synced animated face out at 25 FPS.", img: "/images/animals/koala.jpg" },
+  { t: "Talking videos", d: "Generate scripted videos from any single face image.", img: "/images/animals/cat-hat.jpg" },
+  { t: "AI books", d: "Combine characters, narration, and imagery into stories.", img: "/images/animals/rainbow-creature.jpg" },
+  { t: "Embeddable apps", d: "Drop a live, talkable agent into any site or app.", img: "/images/animals/bunny-glasses.jpg" },
+];
+
+const showcase = [
+  { t: "Wise Pup", d: "On-device companion agent — runs offline on a Mac.", img: "/images/animals/sheepdog.jpg", tags: ["Essence", "On-device"] },
+  { t: "Trivia Host", d: "Interactive game-show host with live barge-in.", img: "/images/animals/capybara.jpg", tags: ["Voice", "Cloud"] },
+  { t: "Stage Coach Lena", d: "Real-time presentation & speaking coach.", img: "/images/animals/fluffy-creature.jpg", tags: ["Coaching", "Realtime"] },
+  { t: "CLI reference app", d: "One command to a live browser avatar with an embedded server.", img: "/images/animals/bunny-white.jpg", tags: ["CLI", "Rust"] },
+  { t: "Flutter app", d: "Cross-platform avatar app for macOS, iOS, iPad & Android.", img: "/images/animals/d7.jpg", tags: ["Flutter", "Essence"] },
+  { t: "macOS Expression", d: "Native app: drag-drop any face, on-device LLM + TTS.", img: "/images/animals/d12.jpg", tags: ["Swift", "Expression"] },
+];
+
+const models = [
+  {
+    name: "Essence",
+    tag: "Default",
+    d: "A pre-built identity packed in a portable .imx. Runs on CPU, Apple Silicon, and the browser (WASM) with low memory.",
+    points: ["CPU / Apple / WASM", "Lowest cost - 1 cr/min", "Ships in the SDK & CLI"],
+  },
+  {
+    name: "Expression",
+    tag: "Any face",
+    d: "Animates any portrait at runtime with AI facial dynamics. Needs an NVIDIA GPU or recent Apple Silicon.",
+    points: ["Animate any photo", "GPU or M3+ Mac / M4 iPad", "Cloud or self-hosted"],
+  },
+];
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>bitHuman — Real-time avatar + voice docs</title>
-    <meta name="description" content="Real-time, lip-synced AI avatars + 31-language TTS. SDKs in Python, Swift, Kotlin, Flutter, plus a REST API and OpenAI-compatible voice endpoints." />
 
-    <link rel="icon" type="image/png" href="/bithuman-mark.png" />
-    <link rel="apple-touch-icon" href="/bithuman-mark.png" />
+<Base>
+  <!-- ====================== HERO ====================== -->
+  <section class="hero bg-grid">
+    <div class="container hero-inner">
+      <div class="hero-copy" data-reveal>
+        <span class="eyebrow"><span class="ping"></span> New · Voice API + Browser (WASM) mode</span>
+        <h1>Audio in,<br /><span class="grad">lifelike avatar</span> out.</h1>
+        <p class="lede">
+          Build real-time, lip-synced AI avatars that run anywhere — from a
+          Raspberry Pi to an H100, on-device or in the cloud. One engine, one
+          API, every platform.
+        </p>
+        <div class="hero-cta">
+          <Button href="/api/quickstart" size="lg">Start building</Button>
+          <Button href="#quickstart" variant="secondary" size="lg">View quickstart</Button>
+        </div>
+        <div class="hero-stats">
+          {stats.map((s) => (
+            <div class="stat"><strong>{s.v}</strong><span>{s.l}</span></div>
+          ))}
+        </div>
+      </div>
+      <div class="hero-demo" data-reveal>
+        <LiveAvatar code="A56ZFX6217" name="Talk to a live avatar" poster="/images/example-agent-images.jpg" />
+      </div>
+    </div>
+  </section>
 
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="bitHuman" />
-    <meta property="og:title" content="bitHuman docs" />
-    <meta property="og:description" content="Real-time avatar + voice platform — Python, Swift, Kotlin, Flutter, REST." />
-    <meta property="og:image" content="https://docs.bithuman.ai/og-image.jpg" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@bithuman_ai" />
-    <meta name="twitter:image" content="https://docs.bithuman.ai/og-image.jpg" />
+  <!-- ====================== PILLARS ====================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Build with bitHuman</span>
+        <h2>Three ways to ship avatars</h2>
+        <p>Pick the surface that fits your stack — they all run on the same real-time engine.</p>
+      </div>
+      <div class="pillars">
+        {pillars.map((p) => (
+          <a href={p.href} class="pillar" data-reveal>
+            <div class="pillar-ico">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d={p.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </div>
+            <h3>{p.name}</h3>
+            <p>{p.desc}</p>
+            <ul>
+              {p.points.map((pt) => (
+                <li><span class="dash"></span>{pt}</li>
+              ))}
+            </ul>
+            <span class="pillar-go">Explore <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7h7M7 4l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <script
-      is:inline
-      id="api-reference"
-      data-url="/api/openapi.yaml"
-      data-configuration={JSON.stringify({
-        theme: 'default',
-        layout: 'modern',
-        darkMode: false,
-        forceDarkModeState: 'light',
-        hideDarkModeToggle: false,
-        showSidebar: true,
-        searchHotKey: 'k',
-        hideClientButton: false,
-        defaultHttpClient: { targetKey: 'shell', clientKey: 'curl' },
-        hiddenClients: [],
-        // Auto-expand all operations so the docs read like a single page,
-        // not a tree of click-to-expand panels.
-        defaultOpenAllTags: true,
-        metaData: {
-          title: 'bitHuman — Real-time avatar + voice docs',
-          description: 'Real-time, lip-synced AI avatars + 31-language TTS.',
-          ogTitle: 'bitHuman docs',
-          ogDescription: 'Real-time avatar + voice platform — Python, Swift, Kotlin, Flutter, REST.',
-        },
-        favicon: '/bithuman-mark.png',
-        customCss: `
-          /* ============================================================
-             bitHuman Scalar theme — uses VERIFIED Scalar CSS variables.
-             Coral red #FF5757 is the accent everywhere.
-             ============================================================ */
+  <!-- ====================== QUICKSTART ====================== -->
+  <section id="quickstart" class="section quickstart">
+    <div class="container qs-grid">
+      <div class="qs-copy" data-reveal>
+        <span class="eyebrow">Quickstart</span>
+        <h2>Your first avatar in two minutes</h2>
+        <p class="muted">Install once, then stream audio and get animated frames back. Works the same from the CLI, Python, Swift, or plain REST.</p>
+        <div class="qs-links">
+          <Button href="/api/quickstart">Full quickstart</Button>
+          <Button href="/api/authentication" variant="ghost">Get an API key →</Button>
+        </div>
+      </div>
+      <div class="qs-code" data-reveal>
+        <CodeTabs tabs={quickstart} title="Quickstart examples" />
+      </div>
+    </div>
+  </section>
 
-          :root {
-            /* === Brand === */
-            --bh-coral:        #FF5757;
-            --bh-coral-hover:  #FF7474;
-            --bh-coral-soft:   #FFEDED;
-            --bh-coral-deep:   #E04545;
+  <!-- ====================== WHAT YOU CAN BUILD ====================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Use cases</span>
+        <h2>What you can build</h2>
+      </div>
+      <div class="usecases">
+        {useCases.map((u) => (
+          <div class="usecase" data-reveal>
+            <div class="uc-img" style={`background-image:url(${u.img})`}></div>
+            <div class="uc-body">
+              <h3>{u.t}</h3>
+              <p>{u.d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
-            /* === Typography === */
-            --scalar-font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-            --scalar-font-code: 'JetBrains Mono', ui-monospace, monospace;
+  <!-- ====================== SHOWCASE ====================== -->
+  <section class="section showcase-sec">
+    <div class="container">
+      <div class="section-head show-head" data-reveal>
+        <div>
+          <span class="eyebrow">Showcase</span>
+          <h2>Built with bitHuman</h2>
+          <p>Live demo agents and forkable reference apps.</p>
+        </div>
+        <Button href="/showcase" variant="secondary">Browse showcase</Button>
+      </div>
+      <div class="showcase">
+        {showcase.map((s) => (
+          <a class="show-card" href="/showcase" data-reveal>
+            <div class="show-img" style={`background-image:url(${s.img})`}>
+              <span class="show-live"><span class="dot"></span>Live</span>
+            </div>
+            <div class="show-body">
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+              <div class="show-tags">{s.tags.map((t) => <span class="pill">{t}</span>)}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 
-            /* === Neutral palette === */
-            --scalar-color-1: #0d0d0d;
-            --scalar-color-2: #404040;
-            --scalar-color-3: #6b7280;
-            --scalar-color-accent: var(--bh-coral);
+  <!-- ====================== MODELS ====================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Models</span>
+        <h2>Essence & Expression</h2>
+        <p>Two avatar models, one SDK. Start with Essence; reach for Expression when you need to animate any face.</p>
+      </div>
+      <div class="models">
+        {models.map((m) => (
+          <div class="model" data-reveal>
+            <div class="model-top">
+              <h3>{m.name}</h3>
+              <span class="pill model-tag">{m.tag}</span>
+            </div>
+            <p>{m.d}</p>
+            <ul>
+              {m.points.map((pt) => <li><span class="dash"></span>{pt}</li>)}
+            </ul>
+            <a class="model-link" href="/concepts/models">Learn more →</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
-            --scalar-background-1: #ffffff;
-            --scalar-background-2: #fafafa;
-            --scalar-background-3: #f7f7f8;
-            --scalar-background-accent: var(--bh-coral-soft);
+  <!-- ====================== CTA BAND ====================== -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band bg-grid" data-reveal>
+        <h2>Ship your first avatar today</h2>
+        <p>Free tier — 99 credits a month, no card required.</p>
+        <div class="cta-actions">
+          <Button href="https://bithuman.ai/#developer" size="lg" external>Get your API key</Button>
+          <Button href="/examples" variant="secondary" size="lg">Explore examples</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
 
-            --scalar-border-color: #e5e7eb;
+<style>
+  /* ---------- hero ---------- */
+  .hero { padding-block: var(--space-12) var(--space-10); border-bottom: 1px solid var(--color-border); position: relative; overflow: hidden; }
+  .hero-inner { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--space-8); align-items: center; }
+  .ping { width: 7px; height: 7px; border-radius: var(--r-full); background: var(--coral-500); display: inline-block; }
+  .hero h1 { font-size: clamp(2.6rem, 6vw, var(--fh-4xl)); margin-top: var(--space-4); }
+  .grad { background: linear-gradient(100deg, var(--coral-500), var(--coral-400)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { margin-top: var(--space-5); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 36ch; }
+  .hero-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
+  .hero-stats { display: flex; gap: var(--space-6); margin-top: var(--space-8); flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; }
+  .stat strong { font-size: var(--fh-md); letter-spacing: -0.02em; }
+  .stat span { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+  .hero-demo { max-width: 380px; margin-left: auto; width: 100%; }
 
-            /* === Header (top bar) === */
-            --scalar-header-height: 60px;
-            --scalar-header-background-1: #ffffff;
-            --scalar-header-background-2: #ffffff;
-            --scalar-header-color-1: #0d0d0d;
-            --scalar-header-color-2: #6b7280;
-            --scalar-header-border-color: #e5e7eb;
-            --scalar-header-call-to-action-color: var(--bh-coral);
+  /* ---------- pillars ---------- */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .pillar { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .pillar:hover { border-color: var(--color-primary); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .pillar-ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); margin-bottom: var(--space-4); }
+  .pillar h3 { font-size: var(--fh-md); }
+  .pillar p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .pillar ul { list-style: none; padding: 0; margin: var(--space-4) 0 var(--space-5); display: grid; gap: 0.5rem; }
+  .pillar li { display: flex; align-items: center; gap: 0.6rem; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .dash { width: 14px; height: 2px; border-radius: 2px; background: var(--color-primary); flex: none; }
+  .pillar-go { margin-top: auto; display: inline-flex; align-items: center; gap: 0.4rem; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
+  .pillar:hover .pillar-go svg { transform: translateX(3px); transition: transform var(--t-fast) var(--ease); }
 
-            /* === SIDEBAR — properly themed with coral + indent === */
-            --scalar-sidebar-width: 280px;
-            --scalar-sidebar-padding: 12px;
-            --scalar-sidebar-indent: 16px;
-            --scalar-sidebar-indent-border: var(--scalar-border-color);
-            --scalar-sidebar-indent-border-active: var(--bh-coral);
-            --scalar-sidebar-indent-border-hover: var(--bh-coral-hover);
+  /* ---------- quickstart ---------- */
+  .quickstart { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
+  .qs-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: var(--space-8); align-items: center; }
+  .qs-copy h2 { font-size: var(--fh-xl); margin-top: var(--space-3); }
+  .qs-copy .muted { margin-top: var(--space-3); font-size: var(--ft-lg); }
+  .qs-links { display: flex; gap: var(--space-3); margin-top: var(--space-5); align-items: center; flex-wrap: wrap; }
 
-            --scalar-sidebar-background-1: #fafafa;
-            --scalar-sidebar-border-color: #e5e7eb;
+  /* ---------- use cases ---------- */
+  .usecases { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
+  .usecase { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease); }
+  .usecase:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .uc-img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
+  .uc-body { padding: var(--space-4); }
+  .uc-body h3 { font-size: var(--ft-lg); }
+  .uc-body p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
 
-            --scalar-sidebar-color-1: #0d0d0d;
-            --scalar-sidebar-color-2: #525252;
-            --scalar-sidebar-color-active: var(--bh-coral-deep);
+  /* ---------- showcase ---------- */
+  .showcase-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
+  .show-head { display: flex; justify-content: space-between; align-items: flex-end; max-width: none; gap: var(--space-5); }
+  .showcase { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .show-card { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .show-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--color-border-strong); }
+  .show-img { aspect-ratio: 16/10; background-size: cover; background-position: center; position: relative; }
+  .show-live { position: absolute; top: 0.7rem; left: 0.7rem; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem; border-radius: var(--r-full); background: rgba(0,0,0,0.5); color: #fff; font-size: var(--ft-xs); font-weight: var(--fw-medium); backdrop-filter: blur(6px); }
+  .show-live .dot { width: 7px; height: 7px; border-radius: var(--r-full); background: #4ade80; }
+  .show-body { padding: var(--space-4); }
+  .show-body h3 { font-size: var(--ft-lg); }
+  .show-body p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .show-tags { display: flex; gap: 0.4rem; margin-top: var(--space-3); flex-wrap: wrap; }
 
-            --scalar-sidebar-font-weight: 400;
-            --scalar-sidebar-font-weight-active: 600;
+  /* ---------- models ---------- */
+  .models { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
+  .model { padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
+  .model-top { display: flex; align-items: center; gap: var(--space-3); }
+  .model-top h3 { font-size: var(--fh-md); }
+  .model-tag { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
+  .model p { margin-top: var(--space-3); color: var(--color-text-secondary); }
+  .model ul { list-style: none; padding: 0; margin: var(--space-4) 0; display: grid; gap: 0.5rem; }
+  .model li { display: flex; align-items: center; gap: 0.6rem; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .model-link { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 
-            --scalar-sidebar-item-active-background: var(--bh-coral-soft);
-            --scalar-sidebar-item-hover-background: #f0f0f3;
-            --scalar-sidebar-item-hover-color: var(--bh-coral-deep);
+  /* ---------- cta band ---------- */
+  .cta-band { text-align: center; padding: var(--space-10) var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-3xl); background: var(--color-surface-2); }
+  .cta-band h2 { font-size: var(--fh-2xl); }
+  .cta-band p { margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--ft-lg); }
+  .cta-actions { display: flex; gap: var(--space-3); justify-content: center; margin-top: var(--space-6); flex-wrap: wrap; }
 
-            --scalar-sidebar-search-background: #ffffff;
-            --scalar-sidebar-search-border-color: #e5e7eb;
-            --scalar-sidebar-search-color: #0d0d0d;
-
-            /* === Buttons === */
-            --scalar-button-1: var(--bh-coral);
-            --scalar-button-1-color: #ffffff;
-            --scalar-button-1-hover: var(--bh-coral-hover);
-
-            /* === HTTP method badges === */
-            --scalar-color-green: #16a34a;
-            --scalar-color-blue: #2563eb;
-            --scalar-color-orange: #ea580c;
-            --scalar-color-red: var(--bh-coral);
-            --scalar-color-purple: #7c3aed;
-            --scalar-color-yellow: #ca8a04;
-
-            /* === Wider content === */
-            --scalar-content-max-width: 1200px;
-          }
-
-          /* ============================================================
-             LAYOUT — OpenAI-style dominant middle, no API client squish.
-
-             On prose-only sections (like the introduction), Scalar puts
-             "Server / Authentication / Client Libraries" panels in the
-             right rail. OpenAI's docs don't do this — the right rail
-             is just an "On this page" TOC. So we HIDE the right column
-             on prose sections; it still appears on endpoint pages
-             because those use a different DOM (sticky code samples).
-
-             For endpoint pages we cap the code-sample column width so
-             the spec column still dominates.
-             ============================================================ */
-
-          /* HIDE the introduction's right-rail API client panels
-             (Server / Authentication / Client Libraries) — these were
-             the source of the middle-column squish on prose pages. */
-          .references-rendered .introduction-card,
-          .references-rendered .sticky-cards {
-            display: none !important;
-          }
-          /* When the second .section-column is now empty, hide it
-             entirely so the prose column expands to the full width. */
-          .references-rendered .section-column.section-column:nth-of-type(2):empty,
-          .references-rendered .section-column.section-column:nth-of-type(2):has(.introduction-card),
-          .references-rendered .section-column.section-column:nth-of-type(2):has(.sticky-cards) {
-            display: none !important;
-          }
-
-          /* Endpoint-page grid: STACK vertically (no more 3rd column).
-             Spec sits on top; code samples appear directly below at
-             FULL width with their built-in language tabs (curl, python,
-             node, etc.). No more truncation. */
-          .references-rendered .section-columns.section-columns {
-            flex-direction: column !important;
-            gap: 24px !important;
-          }
-          .references-rendered .section-column.section-column {
-            flex: 1 1 100% !important;
-            max-width: 100% !important;
-            min-width: 0 !important;
-          }
-          /* Make the (formerly right-rail) code-sample panel full-width */
-          .references-rendered .section-column.section-column:nth-of-type(2) .sticky-cards,
-          .references-rendered .section-column.section-column:nth-of-type(2) .examples,
-          .references-rendered .section-column.section-column:nth-of-type(2) .operation-example-card {
-            max-width: 100% !important;
-            width: 100% !important;
-            position: static !important;
-          }
-
-          /* ============================================================
-             LIGHTEN the API client (Scalar's dark "terminal" panel).
-             It lives inside .examples and forces its own dark theme via
-             --scalar-background-2 override. Reset to light.
-             ============================================================ */
-          .references-rendered .examples,
-          .references-rendered .examples .scalar-card,
-          .references-rendered .examples .scalar-card-content,
-          .references-rendered .examples .scalar-code-block,
-          .references-rendered .examples .scalar-card-header,
-          .references-rendered .examples .scalar-card-footer {
-            --scalar-background-1: #ffffff !important;
-            --scalar-background-2: #f7f7f8 !important;
-            --scalar-background-3: #ffffff !important;
-            --scalar-color-1: #0d0d0d !important;
-            --scalar-color-2: #404040 !important;
-            --scalar-color-3: #6b7280 !important;
-            background-color: #f7f7f8 !important;
-            color: #0d0d0d !important;
-            border-color: #e5e7eb !important;
-          }
-          /* Inner code area + scrollable content */
-          .references-rendered .examples .scalar-card-content,
-          .references-rendered .examples [class*="custom-scroll"] {
-            background-color: #ffffff !important;
-          }
-          /* Code block dark header bar (with "POST /v1/validate") */
-          .references-rendered .examples .scalar-code-block > [class*="bg-b-3"],
-          .references-rendered .examples .scalar-code-block > div:first-child {
-            background-color: #fafafa !important;
-            border-bottom: 1px solid #e5e7eb !important;
-            color: #0d0d0d !important;
-          }
-          /* Line numbers stay subtle gray */
-          .references-rendered .examples .scalar-code-block .line-number,
-          .references-rendered .examples [class*="line-number"] {
-            color: #9ca3af !important;
-          }
-          /* Code text itself */
-          .references-rendered .examples .scalar-code-block pre,
-          .references-rendered .examples .scalar-code-block code,
-          .references-rendered .examples .scalar-code-block .line {
-            color: #1f2328 !important;
-            background-color: transparent !important;
-          }
-          /* Buttons in the footer — Ask AI Agent + Test Request */
-          .references-rendered .examples button {
-            background-color: #ffffff !important;
-            color: #0d0d0d !important;
-            border-color: #e5e7eb !important;
-          }
-          .references-rendered .examples button:hover {
-            background-color: #fafafa !important;
-          }
-          /* "Test Request" primary button stays coral */
-          .references-rendered .examples button[class*="primary"],
-          .references-rendered .examples .send-request-button {
-            background-color: var(--bh-coral) !important;
-            color: #ffffff !important;
-            border-color: transparent !important;
-          }
-          .references-rendered .examples button[class*="primary"]:hover,
-          .references-rendered .examples .send-request-button:hover {
-            background-color: var(--bh-coral-hover) !important;
-          }
-          /* The "Shell Curl" language dropdown */
-          .references-rendered .examples [class*="dropdown"],
-          .references-rendered .examples [aria-haspopup="menu"] {
-            color: #0d0d0d !important;
-          }
-          /* Method badge inside the dark header (POST /v1/validate) — keep colored */
-          .references-rendered .examples [class*="method"] {
-            background-color: transparent !important;
-          }
-
-          /* HIDE the Scalar marketing top-bar (Developer Tools / Configure
-             / Share / Deploy) — pure distraction, not what OpenAI does. */
-          .references-classic-header,
-          .references-classic-header-container,
-          .references-classic-header-content,
-          .references-developer-tools {
-            display: none !important;
-          }
-
-          /* ============================================================
-             TYPOGRAPHY — OpenAI-clean, generous
-             ============================================================ */
-
-          .references-rendered h1,
-          .references-rendered h2,
-          .references-rendered h3,
-          .references-rendered h4 {
-            font-weight: 600;
-            letter-spacing: -0.018em;
-            color: #0d0d0d;
-            line-height: 1.25;
-          }
-          .references-rendered h1 {
-            font-size: 2.25rem !important;
-            margin-top: 0;
-            margin-bottom: 1rem;
-            letter-spacing: -0.025em;
-          }
-          .references-rendered h2 {
-            font-size: 1.5rem !important;
-            margin-top: 3rem;
-            margin-bottom: 1rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
-          }
-          .references-rendered h3 {
-            font-size: 1.15rem !important;
-            margin-top: 2rem;
-            margin-bottom: 0.5rem;
-          }
-
-          .references-rendered p,
-          .references-rendered li {
-            font-size: 0.975rem;
-            line-height: 1.7;
-            color: #2c2c2c;
-          }
-          .references-rendered p { margin: 0.75rem 0; }
-          .references-rendered li { margin: 0.3rem 0; }
-
-          /* === Body links — coral === */
-          .references-rendered a {
-            color: var(--bh-coral-deep) !important;
-            text-decoration: underline;
-            text-decoration-color: var(--bh-coral-soft) !important;
-            text-underline-offset: 2.5px;
-            text-decoration-thickness: 1.5px;
-            transition: color 120ms ease, text-decoration-color 120ms ease;
-          }
-          .references-rendered a:hover {
-            color: var(--bh-coral) !important;
-            text-decoration-color: var(--bh-coral) !important;
-          }
-
-          /* === Tag heading — coral underline === */
-          .references-rendered h1::after {
-            content: '';
-            display: block;
-            width: 32px;
-            height: 3px;
-            background: var(--bh-coral);
-            margin-top: 0.75rem;
-            border-radius: 2px;
-          }
-
-          /* ============================================================
-             CODE BLOCKS — all light, GitHub-light syntax theme
-             ============================================================ */
-
-          .references-rendered pre,
-          .references-rendered code {
-            font-family: var(--scalar-font-code) !important;
-          }
-
-          .references-rendered pre {
-            background: #f7f7f8 !important;
-            border: 1px solid #e5e7eb !important;
-            border-radius: 8px;
-            padding: 1rem 1.25rem !important;
-            margin: 1.25rem 0 !important;
-            font-size: 13.5px !important;
-            line-height: 1.6 !important;
-            overflow-x: auto;
-            color: #0d0d0d !important;
-          }
-
-          .references-rendered code:not(pre code) {
-            background: #f3f3f5 !important;
-            color: #0d0d0d !important;
-            padding: 0.1em 0.4em;
-            border-radius: 4px;
-            font-size: 0.88em;
-            font-weight: 500;
-            border: none;
-          }
-
-          /* Highlight.js light theme override */
-          .hljs, .hljs-built_in, .hljs-symbol {
-            color: #1f2328 !important;
-            background: transparent !important;
-          }
-          .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-section, .hljs-link { color: #cf222e !important; }
-          .hljs-string, .hljs-attr { color: #0a3069 !important; }
-          .hljs-number, .hljs-meta { color: #0550ae !important; }
-          .hljs-comment, .hljs-quote { color: #6e7781 !important; font-style: italic; }
-          .hljs-title, .hljs-name, .hljs-type { color: #8250df !important; }
-          .hljs-variable, .hljs-template-variable { color: #953800 !important; }
-          .hljs-tag { color: #116329 !important; }
-
-          /* ============================================================
-             TABLES — clean grid
-             ============================================================ */
-          .references-rendered table {
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            margin: 1.25rem 0;
-            width: 100%;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
-          }
-          .references-rendered th,
-          .references-rendered td {
-            padding: 0.6rem 0.9rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-          }
-          .references-rendered th {
-            background: #fafafa;
-            font-weight: 600;
-            color: #0d0d0d;
-            font-size: 0.84rem;
-          }
-          .references-rendered tr:last-child td { border-bottom: none; }
-
-          /* ============================================================
-             BLOCKQUOTES → coral-bordered callout
-             ============================================================ */
-          .references-rendered blockquote {
-            margin: 1.25rem 0;
-            padding: 0.8rem 1.1rem;
-            background: var(--bh-coral-soft);
-            border-left: 3px solid var(--bh-coral);
-            border-radius: 0 8px 8px 0;
-            color: #404040;
-            font-size: 0.95rem;
-          }
-          .references-rendered blockquote p { margin: 0; }
-
-          /* ============================================================
-             CARD GRID — Scalar strips the class from anchor tags inside
-             markdown, so we use the .bh-cards container + descendant
-             selector .bh-cards > a (no class needed on each card).
-             ============================================================ */
-          .references-rendered .bh-cards {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 0.75rem;
-            margin: 1.5rem 0 2rem !important;
-          }
-          .references-rendered .bh-cards > a {
-            display: block !important;
-            padding: 1rem 1.15rem !important;
-            border: 1px solid #e5e7eb !important;
-            border-radius: 10px !important;
-            text-decoration: none !important;
-            transition: all 120ms ease;
-            background: #ffffff !important;
-            color: #0d0d0d !important;
-          }
-          .references-rendered .bh-cards > a:hover {
-            border-color: var(--bh-coral) !important;
-            background: var(--bh-coral-soft) !important;
-            transform: translateY(-1px);
-            text-decoration: none !important;
-          }
-          .references-rendered .bh-cards > a strong {
-            display: block;
-            font-size: 0.95rem;
-            margin-bottom: 0.3rem;
-            color: #0d0d0d !important;
-            font-weight: 600;
-          }
-          .references-rendered .bh-cards > a:hover strong {
-            color: var(--bh-coral-deep) !important;
-          }
-          .references-rendered .bh-cards > a span {
-            font-size: 0.85rem;
-            color: #6b7280 !important;
-            line-height: 1.45;
-          }
-
-          /* ============================================================
-             SIDEBAR custom branding — bitHuman wordmark.
-             Target the real .t-doc__sidebar selector.
-             ============================================================ */
-          .t-doc__sidebar { position: relative; padding-top: 60px !important; }
-          .t-doc__sidebar::before {
-            content: '';
-            display: block;
-            position: absolute;
-            top: 18px; left: 16px;
-            width: 28px; height: 28px;
-            background-image: url('/bithuman-mark.png');
-            background-size: 28px 28px;
-            background-repeat: no-repeat;
-            z-index: 10;
-          }
-          .t-doc__sidebar::after {
-            content: 'bitHuman';
-            position: absolute;
-            top: 22px; left: 56px;
-            font-family: var(--scalar-font);
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            color: #0d0d0d;
-            z-index: 10;
-            pointer-events: none;
-          }
-
-          /* ============================================================
-             SIDEBAR HIERARCHY — make group headings distinct (uppercase,
-             small, gray). Items stay regular weight, dark text.
-             OpenAI uses this exact treatment.
-             ============================================================ */
-
-          /* Group headings — Scalar renders them as a <div> with
-             .text-sidebar-c-2 + .font-bold. Make them small-caps gray
-             so they read as section labels, not items. */
-          .t-doc__sidebar .text-sidebar-c-2.font-bold {
-            font-size: 11px !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.08em !important;
-            text-transform: uppercase !important;
-            color: #6b7280 !important;
-            margin-top: 1.5rem !important;
-            margin-bottom: 0.4rem !important;
-          }
-          /* Hide any group heading's chevron / hover affordance */
-          .t-doc__sidebar .text-sidebar-c-2.font-bold svg { display: none; }
-
-          /* Items: regular weight, comfortable target size */
-          .t-doc__sidebar button {
-            font-size: 13.5px !important;
-            line-height: 1.4 !important;
-            padding-top: 0.35rem !important;
-            padding-bottom: 0.35rem !important;
-          }
-
-          /* Active sidebar item — coral text + coral-soft background */
-          .t-doc__sidebar button.bg-sidebar-b-active,
-          .t-doc__sidebar .bg-sidebar-b-active,
-          .t-doc__sidebar [aria-current="true"],
-          .t-doc__sidebar [aria-current="page"] {
-            background: var(--bh-coral-soft) !important;
-            color: var(--bh-coral-deep) !important;
-            font-weight: 600 !important;
-            border-radius: 6px;
-          }
-          .t-doc__sidebar .text-sidebar-c-active {
-            color: var(--bh-coral-deep) !important;
-          }
-          /* Coral indent border on active */
-          .t-doc__sidebar .bg-sidebar-indent-border-active {
-            background-color: var(--bh-coral) !important;
-          }
-
-          /* Hover state — gentler */
-          .t-doc__sidebar button:hover {
-            background: #f4f4f6 !important;
-            color: #0d0d0d !important;
-          }
-
-          /* ============================================================
-             HERO — make the coral really visible
-             ============================================================ */
-
-          /* The "Get a free API secret →" link gets pill-button styling */
-          .references-rendered .scalar-reference-intro-server + p > a[href*="bithuman.ai"],
-          .references-rendered p > a[href*="bithuman.ai/#developer"] {
-            display: inline-block;
-            background: var(--bh-coral);
-            color: #ffffff !important;
-            padding: 0.4rem 0.85rem;
-            border-radius: 6px;
-            text-decoration: none !important;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-top: 0.4rem;
-            transition: background 120ms ease;
-          }
-          .references-rendered p > a[href*="bithuman.ai/#developer"]:hover {
-            background: var(--bh-coral-hover);
-            color: #ffffff !important;
-          }
-
-          /* ============================================================
-             Scalar footer "Powered by" — quieter
-             ============================================================ */
-          .references-footer { opacity: 0.4; font-size: 11px; }
-        `,
-      })}
-    ></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
-  </body>
-</html>
+  /* ---------- responsive ---------- */
+  @media (max-width: 980px) {
+    .hero-inner, .qs-grid { grid-template-columns: 1fr; }
+    .hero-demo { max-width: 340px; margin-inline: auto; }
+    .pillars, .usecases, .showcase { grid-template-columns: repeat(2, 1fr); }
+    .models { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .pillars, .usecases, .showcase { grid-template-columns: 1fr; }
+    .show-head { flex-direction: column; align-items: flex-start; }
+  }
+</style>

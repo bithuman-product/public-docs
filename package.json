@@ -2,6 +2,9 @@
   "name": "public-docs",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "sync-openapi": "cp src/openapi/bithuman.yaml public/api/openapi.yaml",
     "predev": "npm run sync-openapi",

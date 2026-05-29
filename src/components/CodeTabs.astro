@@ -1,0 +1,133 @@
+---
+import { Code } from "astro:components";
+
+interface Tab {
+  label: string;
+  lang: string;
+  code: string;
+}
+interface Props {
+  tabs: Tab[];
+  title?: string;
+}
+const { tabs, title } = Astro.props;
+const uid = "ct-" + Math.abs(tabs.map((t) => t.label).join("").length * 7 + tabs.length * 31).toString(36) + "-" + tabs[0].label.toLowerCase().replace(/[^a-z0-9]/g, "");
+---
+
+<div class="codetabs" data-codetabs>
+  <div class="ct-bar">
+    <div class="ct-tabs" role="tablist" aria-label={title ?? "Code examples"}>
+      {
+        tabs.map((t, i) => (
+          <button
+            class:list={["ct-tab", { active: i === 0 }]}
+            role="tab"
+            aria-selected={i === 0 ? "true" : "false"}
+            data-tab={i}
+          >
+            {t.label}
+          </button>
+        ))
+      }
+    </div>
+    <button class="ct-copy" data-copy aria-label="Copy code">
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"></rect><path d="M3 11V3.5A1.5 1.5 0 0 1 4.5 2H11" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg>
+      <span>Copy</span>
+    </button>
+  </div>
+  <div class="ct-panels">
+    {
+      tabs.map((t, i) => (
+        <div class:list={["ct-panel", { active: i === 0 }]} data-panel={i} data-raw={t.code}>
+          <Code code={t.code} lang={t.lang as any} theme="github-dark" />
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("[data-codetabs]").forEach((root) => {
+    const tabs = root.querySelectorAll(".ct-tab");
+    const panels = root.querySelectorAll(".ct-panel");
+    tabs.forEach((tab) =>
+      tab.addEventListener("click", () => {
+        const idx = (tab as HTMLElement).dataset.tab;
+        tabs.forEach((t) => {
+          const on = (t as HTMLElement).dataset.tab === idx;
+          t.classList.toggle("active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        panels.forEach((p) =>
+          p.classList.toggle("active", (p as HTMLElement).dataset.panel === idx)
+        );
+      })
+    );
+    const copyBtn = root.querySelector("[data-copy]");
+    copyBtn?.addEventListener("click", async () => {
+      const active = root.querySelector(".ct-panel.active") as HTMLElement;
+      try {
+        await navigator.clipboard.writeText(active?.dataset.raw ?? "");
+        const label = copyBtn.querySelector("span")!;
+        const prev = label.textContent;
+        label.textContent = "Copied";
+        setTimeout(() => (label.textContent = prev), 1400);
+      } catch (e) {}
+    });
+  });
+</script>
+
+<style>
+  .codetabs {
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-code-bg);
+    box-shadow: var(--shadow-md);
+  }
+  .ct-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 0.5rem 0.35rem 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .ct-tabs { display: flex; gap: 0.15rem; flex-wrap: wrap; }
+  .ct-tab {
+    padding: 0.35rem 0.7rem;
+    border: 0;
+    border-radius: var(--r-md);
+    background: none;
+    color: #9a9aa8;
+    font-size: var(--ft-sm);
+    font-weight: var(--fw-medium);
+    transition: all var(--t-fast) var(--ease);
+  }
+  .ct-tab:hover { color: #e6e6ec; }
+  .ct-tab.active { color: #fff; background: rgba(255, 255, 255, 0.08); }
+  .ct-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    border: 0;
+    border-radius: var(--r-md);
+    background: none;
+    color: #9a9aa8;
+    font-size: var(--ft-xs);
+    transition: color var(--t-fast) var(--ease);
+  }
+  .ct-copy:hover { color: #fff; }
+  .ct-panel { display: none; }
+  .ct-panel.active { display: block; }
+  .codetabs :global(pre) {
+    margin: 0;
+    padding: var(--space-5);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    background: transparent !important;
+  }
+</style>

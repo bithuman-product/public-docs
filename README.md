@@ -1,38 +1,57 @@
-# bitHuman public docs
+# bitHuman developer docs
 
-Source for [docs.bithuman.ai](https://docs.bithuman.ai). Built with
-[Astro Starlight](https://starlight.astro.build/) — same framework
-OpenAI uses for [developers.openai.com](https://developers.openai.com/).
+Source for [docs.bithuman.ai](https://docs.bithuman.ai) — bitHuman's developer
+platform. A custom **Astro 6** site styled after
+[developers.openai.com](https://developers.openai.com/) (semantic design tokens,
+light/dark, Shiki code, brand coral `#FF5757` + Roboto). The embedded API
+reference is rendered with **Scalar** at `/api/reference`.
+
+> Status: **rebuild in progress.** The landing page + design system are live;
+> pillar/section pages are being migrated from the old Mintlify docs
+> (`bithuman-product/bithuman-sdk-public/docs`) and the OpenAPI prose tags.
 
 ## Local dev
 
 ```bash
+nvm use            # Node 22+ (Astro 6); see .nvmrc
 npm install
-npm run dev      # http://localhost:4321
+npm run dev        # http://localhost:4321
+npm run build      # static output -> dist/
 ```
-
-Requires **Node 22+** (uses Astro 6).
 
 ## Structure
 
 ```
 src/
-  content/docs/      Markdown pages (Get started, Guides, SDKs, Examples, ...)
-  openapi/           openapi.yaml — auto-renders to /api/operations/*
-  styles/            Custom theme (coral accent on monochrome)
-  assets/            Logo (light/dark)
+  layouts/Base.astro     Shell: head/SEO, nav, footer, theme init
+  components/            Nav, Footer, Button, CodeTabs (Shiki), LiveAvatar, Stub
+  styles/                tokens.css (design tokens, light/dark) + global.css
+  pages/
+    index.astro          Landing page (OpenAI-style: hero + pillars + showcase)
+    api/reference.astro  Scalar API reference (renders public/api/openapi.yaml)
+    {api,cli,sdk,...}/   Pillar + resource pages (stubs during migration)
+  openapi/bithuman.yaml  OpenAPI 3.1 spec -> synced to public/api/openapi.yaml
 public/
-  favicon.png        Site favicon
-  images/            Inline images referenced from Markdown
+  images/                Brand + agent imagery referenced across pages
 ```
 
-## Adding a new endpoint
+## Information architecture
 
-1. Edit `src/openapi/bithuman.yaml` (OpenAPI 3.1).
-2. `npm run build` — new page lands under `/api/operations/<operationId>/`.
+Three product pillars + resources, mirroring developers.openai.com:
 
-No hand-written API page maintenance.
+- **API Platform** (`/api`) — REST: agents, Voice/TTS, dynamics, embedding + the Scalar reference
+- **CLI** (`/cli`) — `bithuman` Rust binary, install, commands, local mode
+- **Apps SDK** (`/sdk`) — Python, Swift (Apple), Android (Kotlin), JS/TS
+- **Showcase** (`/showcase`) — live demo agents + forkable reference apps
+- **Resources** — Examples, Changelog, Downloads, Community
+
+## API reference
+
+The reference at `/api/reference` is generated from `src/openapi/bithuman.yaml`
+(OpenAPI 3.1) — `npm run sync-openapi` copies it to `public/api/openapi.yaml`
+(runs automatically on `dev`/`build`). Edit the spec; no hand-written endpoint pages.
 
 ## Deploy
 
-GitHub push → Vercel preview → DNS swap on `docs.bithuman.ai`.
+GitHub push → Vercel build (project `public-docs`) → preview URL. DNS for
+`docs.bithuman.ai` is swapped to this project only once the rebuild is approved.

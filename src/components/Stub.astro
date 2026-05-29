@@ -1,0 +1,48 @@
+---
+import Base from "../layouts/Base.astro";
+import Button from "./Button.astro";
+
+interface Props {
+  title: string;
+  kicker?: string;
+  intro?: string;
+}
+const { title, kicker = "Documentation", intro = "" } = Astro.props;
+---
+
+<Base title={`${title} — bitHuman docs`} description={intro}>
+  <section class="stub bg-grid">
+    <div class="container stub-inner">
+      <a class="back" href="/">← bitHuman docs</a>
+      <span class="eyebrow">{kicker}</span>
+      <h1>{title}</h1>
+      {intro && <p class="lede">{intro}</p>}
+      <span class="wip">🚧 This section is being migrated &amp; rebuilt</span>
+      <div class="stub-cta">
+        <Button href="/">Back to home</Button>
+        <Button href="/api/reference" variant="secondary">API reference</Button>
+        <Button href="https://discord.gg/ES953n7bPA" variant="ghost" external>Ask on Discord →</Button>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .stub { min-height: 62vh; display: flex; align-items: center; }
+  .stub-inner { max-width: 700px; padding-block: var(--space-12); }
+  .back { color: var(--color-text-tertiary); font-size: var(--ft-sm); }
+  .back:hover { color: var(--color-primary); }
+  .stub h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
+  .stub .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); }
+  .wip {
+    display: inline-block;
+    margin-top: var(--space-5);
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--r-full);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: var(--ft-sm);
+    font-weight: var(--fw-medium);
+  }
+  .stub-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; align-items: center; }
+</style>

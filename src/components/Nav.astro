@@ -1,0 +1,227 @@
+---
+const links = [
+  { label: "API Platform", href: "/api" },
+  { label: "CLI", href: "/cli" },
+  { label: "Apps SDK", href: "/sdk" },
+  { label: "Showcase", href: "/showcase" },
+];
+const resources = [
+  { label: "Examples", href: "/examples" },
+  { label: "Changelog", href: "/changelog" },
+  { label: "Downloads", href: "/downloads" },
+  { label: "Community", href: "/community" },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(href + "/");
+---
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/" aria-label="bitHuman home">
+      <img src="/images/bithuman-logo.png" alt="" width="22" height="22" />
+      <span>bitHuman</span>
+      <span class="brand-docs">docs</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      {
+        links.map((l) => (
+          <a href={l.href} class:list={["nav-link", { active: isActive(l.href) }]}>
+            {l.label}
+          </a>
+        ))
+      }
+      <div class="nav-dd">
+        <button class="nav-link dd-trigger" aria-haspopup="true" aria-expanded="false">
+          Resources
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"
+            ><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg
+          >
+        </button>
+        <div class="dd-menu">
+          {resources.map((r) => <a href={r.href}>{r.label}</a>)}
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" aria-label="Search" id="nav-search">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"
+          ><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg
+        >
+        <kbd>⌘K</kbd>
+      </button>
+      <button class="icon-btn" aria-label="Toggle theme" onclick="__bhToggleTheme()">
+        <svg class="i-sun" width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"
+          ><circle cx="10" cy="10" r="4" fill="currentColor"></circle><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M4 4l1.4 1.4M14.6 14.6 16 16M16 4l-1.4 1.4M5.4 14.6 4 16"></path></g></svg
+        >
+        <svg class="i-moon" width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"
+          ><path d="M16 11.5A6.5 6.5 0 0 1 8.5 4a6.5 6.5 0 1 0 7.5 7.5Z" fill="currentColor"></path></svg
+        >
+      </button>
+      <a class="btn-cta" href="https://bithuman.ai/#developer" target="_blank" rel="noopener">Get API key</a>
+      <button class="icon-btn menu-btn" aria-label="Menu" onclick="__bhToggleMenu()">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu">
+    {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    <div class="mm-sep"></div>
+    {resources.map((r) => <a href={r.href}>{r.label}</a>)}
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .nav-inner {
+    height: var(--nav-h);
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: var(--fw-bold);
+    font-size: var(--ft-lg);
+    letter-spacing: -0.02em;
+  }
+  .brand img { border-radius: 6px; }
+  .brand-docs {
+    font-weight: var(--fw-regular);
+    color: var(--color-text-tertiary);
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: var(--space-3);
+  }
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--r-md);
+    font-size: var(--ft-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-secondary);
+    background: none;
+    border: 0;
+    transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  }
+  .nav-link:hover { color: var(--color-text); background: var(--color-surface-2); }
+  .nav-link.active { color: var(--color-text); }
+  .nav-link.active::after {
+    content: "";
+  }
+  .nav-dd { position: relative; }
+  .dd-trigger svg { transition: transform var(--t-fast) var(--ease); }
+  .nav-dd:hover .dd-trigger svg { transform: rotate(180deg); }
+  .dd-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 180px;
+    padding: 0.4rem;
+    background: var(--color-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: all var(--t-fast) var(--ease);
+  }
+  .nav-dd:hover .dd-menu,
+  .nav-dd:focus-within .dd-menu { opacity: 1; visibility: visible; transform: none; }
+  .dd-menu a {
+    display: block;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--r-md);
+    font-size: var(--ft-sm);
+    color: var(--color-text-secondary);
+  }
+  .dd-menu a:hover { background: var(--color-surface-2); color: var(--color-text); }
+
+  .nav-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.55rem;
+    border-radius: var(--r-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    transition: all var(--t-fast) var(--ease);
+  }
+  .icon-btn:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+  .icon-btn kbd {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+  }
+  #nav-search { padding-inline: 0.6rem; }
+  .i-moon { display: none; }
+  :root[data-theme="dark"] .i-sun { display: none; }
+  :root[data-theme="dark"] .i-moon { display: block; }
+
+  .btn-cta {
+    padding: 0.5rem 0.95rem;
+    border-radius: var(--r-full);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: var(--ft-sm);
+    font-weight: var(--fw-medium);
+    transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  }
+  .btn-cta:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+
+  .menu-btn { display: none; }
+  .mobile-menu { display: none; }
+
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .menu-btn { display: inline-flex; }
+    #nav-search kbd, .btn-cta { display: none; }
+    .mobile-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: var(--space-3) var(--space-5) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--t-med) var(--ease);
+    }
+    :root.nav-open .mobile-menu { max-height: 70vh; }
+    .mobile-menu a {
+      padding: 0.7rem 0.5rem;
+      border-radius: var(--r-md);
+      color: var(--color-text-secondary);
+      font-weight: var(--fw-medium);
+    }
+    .mobile-menu a:hover { background: var(--color-surface-2); color: var(--color-text); }
+    .mm-sep { height: 1px; background: var(--color-border); margin: 0.4rem 0; }
+  }
+</style>

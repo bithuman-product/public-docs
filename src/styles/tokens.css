@@ -1,0 +1,169 @@
+/* ============================================================================
+   bitHuman docs — design tokens
+   Mirrors the developers.openai.com token architecture (raw ramps -> semantic
+   tokens), brand-swapped to bitHuman coral (#FF5757) + Roboto.
+   Light is default; dark via [data-theme="dark"] on <html>.
+   ========================================================================== */
+
+:root {
+  /* ---- raw neutral ramp ---- */
+  --gray-0: #ffffff;
+  --gray-50: #f7f7f8;
+  --gray-100: #ededf1;
+  --gray-200: #e3e3e8;
+  --gray-300: #d0d0d8;
+  --gray-400: #a8a8b3;
+  --gray-500: #8e8e9e;
+  --gray-600: #6b6b7b;
+  --gray-700: #4a4a55;
+  --gray-750: #3a3a43;
+  --gray-800: #27272d;
+  --gray-900: #18181c;
+  --gray-950: #0d0d0f;
+
+  /* ---- brand: coral ---- */
+  --coral-300: #ffb3a3;
+  --coral-400: #ff8a65;
+  --coral-500: #ff5757; /* primary */
+  --coral-600: #ec4747;
+  --coral-700: #c93a3a;
+  --coral-soft: #fff1ef;
+
+  /* ---- intent accents ---- */
+  --blue-500: #2f6bff;
+  --green-500: #18a058;
+  --amber-500: #f5a623;
+  --red-500: #e5484d;
+
+  /* ---- typography ---- */
+  --font-sans: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  /* heading scale */
+  --fh-xs: 1rem;
+  --fh-sm: 1.125rem;
+  --fh-md: 1.25rem;
+  --fh-lg: 1.5rem;
+  --fh-xl: 2rem;
+  --fh-2xl: 2.5rem;
+  --fh-3xl: 3rem;
+  --fh-4xl: 3.75rem;
+
+  /* text scale */
+  --ft-xs: 0.75rem;
+  --ft-sm: 0.875rem;
+  --ft-md: 1rem;
+  --ft-lg: 1.125rem;
+  --ft-xl: 1.25rem;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-normal: 1.6;
+
+  /* ---- radius ---- */
+  --r-xs: 0.25rem;
+  --r-sm: 0.375rem;
+  --r-md: 0.5rem;
+  --r-lg: 0.75rem;
+  --r-xl: 1rem;
+  --r-2xl: 1.25rem;
+  --r-3xl: 1.5rem;
+  --r-full: 9999px;
+
+  /* ---- spacing rhythm ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 6rem;
+  --space-16: 8rem;
+
+  /* ---- layout ---- */
+  --container: 1200px;
+  --container-wide: 1320px;
+  --nav-h: 60px;
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 120ms;
+  --t-med: 220ms;
+}
+
+/* ============================ LIGHT (default) ============================ */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: var(--gray-0);
+  --color-surface: var(--gray-0);
+  --color-surface-2: var(--gray-50);
+  --color-surface-3: var(--gray-100);
+  --color-elevated: var(--gray-0);
+
+  --color-text: #1d1d22;
+  --color-text-secondary: #5d5d6b;
+  --color-text-tertiary: #8e8e9e;
+  --color-text-inverse: var(--gray-0);
+
+  --color-border: var(--gray-200);
+  --color-border-strong: var(--gray-300);
+
+  --color-primary: var(--coral-500);
+  --color-primary-hover: var(--coral-400);
+  --color-primary-active: var(--coral-600);
+  --color-on-primary: #ffffff;
+  --color-primary-soft: var(--coral-soft);
+
+  --color-code-bg: #0e0e12;
+  --color-code-text: #e6e6ec;
+
+  --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.06), 0 1px 3px rgba(20, 20, 30, 0.04);
+  --shadow-md: 0 4px 16px rgba(20, 20, 30, 0.08), 0 1px 4px rgba(20, 20, 30, 0.04);
+  --shadow-lg: 0 12px 40px rgba(20, 20, 30, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(255, 87, 87, 0.18), 0 14px 50px rgba(255, 87, 87, 0.16);
+
+  --grid-line: rgba(20, 20, 30, 0.05);
+}
+
+/* ============================ DARK ============================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #0b0b0d;
+  --color-surface: #131316;
+  --color-surface-2: #1a1a1f;
+  --color-surface-3: #202027;
+  --color-elevated: #18181c;
+
+  --color-text: #f3f3f6;
+  --color-text-secondary: #aeaeba;
+  --color-text-tertiary: #7a7a88;
+  --color-text-inverse: #0b0b0d;
+
+  --color-border: #26262d;
+  --color-border-strong: #34343d;
+
+  --color-primary: #ff6f6f;
+  --color-primary-hover: #ff8a65;
+  --color-primary-active: #ff5757;
+  --color-on-primary: #1a0c0c;
+  --color-primary-soft: rgba(255, 87, 87, 0.12);
+
+  --color-code-bg: #0a0a0d;
+  --color-code-text: #e6e6ec;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 50px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 0 1px rgba(255, 111, 111, 0.25), 0 14px 60px rgba(255, 87, 87, 0.2);
+
+  --grid-line: rgba(255, 255, 255, 0.045);
+}

@@ -1,0 +1,124 @@
+---
+import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = "bitHuman — Developer Platform",
+  description = "Audio in, lifelike avatar out — in real time, on any device. Build with the bitHuman API, CLI, and Apps SDKs.",
+  image = "/images/bithuman-banner.jpg",
+} = Astro.props;
+
+const site = Astro.site ?? new URL("https://docs.bithuman.ai");
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.png" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Fonts: Roboto + Roboto Mono (bitHuman brand) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- No-FOUC theme init: set [data-theme] before paint -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("bh-theme");
+          if (!t)
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+        document.documentElement.classList.add("js");
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- theme toggle + scroll reveal -->
+    <script is:inline>
+      // Theme toggle
+      window.__bhToggleTheme = function () {
+        var el = document.documentElement;
+        var next = el.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        el.setAttribute("data-theme", next);
+        try {
+          localStorage.setItem("bh-theme", next);
+        } catch (e) {}
+      };
+      // Scroll reveal
+      (function () {
+        if (!("IntersectionObserver" in window)) return;
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                e.target.classList.add("in");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12 }
+        );
+        document.querySelectorAll("[data-reveal]").forEach(function (el) {
+          io.observe(el);
+        });
+      })();
+      // Mobile nav
+      window.__bhToggleMenu = function () {
+        document.documentElement.classList.toggle("nav-open");
+      };
+    </script>
+
+    <style>
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 200;
+        background: var(--color-primary);
+        color: var(--color-on-primary);
+        padding: 0.6rem 1rem;
+        border-radius: var(--r-md);
+      }
+      .skip-link:focus { left: 12px; top: 12px; }
+    </style>
+  </body>
+</html>
