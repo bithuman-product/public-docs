@@ -45,7 +45,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     </nav>
 
     <div class="nav-actions">
-      <button class="icon-btn" aria-label="Search" id="nav-search">
+      <button class="icon-btn" aria-label="Search" id="nav-search" onclick="window.__bhOpenSearch && window.__bhOpenSearch()">
         <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"
           ><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg
         >

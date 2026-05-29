@@ -1,0 +1,225 @@
+---
+title: "Python SDK"
+description: "On-device avatar runtime for Python — pip install bithuman. Backends, AI agents, batch render jobs, edge boxes. macOS arm64 + Linux x86_64 / aarch64."
+section: sdk
+group: "Languages"
+order: 10
+---
+
+## Overview
+
+`bithuman` is the Python SDK and the most popular surface for backend services,
+AI agents, batch render jobs, and edge boxes. Audio in (16-bit PCM), numpy BGR
+frames out at 25 FPS. The runtime and all native dependencies ship in the wheel
+— no compile step. This SDK is **GA**.
+
+## Install
+
+```bash
+pip install 'bithuman==2.3.0'
+```
+
+**Python 3.10–3.14** supported. Platforms: macOS arm64, Linux x86_64, Linux
+aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
+the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host.)
+
+> **Note** `pip install bithuman` is the **library** — `from bithuman import
+> AsyncBithuman`. For the command-line tool, install the sibling
+> [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) wheel or the
+> [Homebrew tap](/cli). Both share the same `libessence` engine.
+
+> **Note** The SDK returns frames as numpy BGR arrays and needs **no** OpenCV
+> itself. Only example scripts that *display* a window need `opencv-python` — it
+> is in each example's `requirements.txt`.
+
+Auth: export `BITHUMAN_API_SECRET`. Get a secret at [Developer → API
+Keys](https://www.bithuman.ai/#developer). See [authentication](/api/quickstart)
+for details.
+
+## 2.3 — slim wheel, CLI moved out
+
+Through 2.2, `pip install bithuman` bundled both the Python SDK and a `bithuman`
+CLI console-script. As of **2.3.0** the wheel is **library-only** (~5 MB) — the
+CLI moved to the sibling [`bithuman-cli`](https://pypi.org/project/bithuman-cli/)
+wheel. The runtime API (`AsyncBithuman`, `Bithuman`, `AudioChunk`, `VideoFrame`,
+…) is unchanged; code pinned to `bithuman==1.11.3` or any `2.x` runs on 2.3
+without edits.
+
+Also removed from the slim wheel: the leaf modules `bithuman.audio`
+(`load_audio`, `float32_to_int16`) and `bithuman.utils` (`FPSController`). They
+were tiny shims around `soundfile` / `time.monotonic`; applications inline them
+now (~15–30 LOC).
+
+## The streaming loop
+
+`AsyncBithuman` is the runtime — one instance per avatar session. Create it,
+push audio, drain frames:
+
+```python
+import asyncio, os
+from bithuman import AsyncBithuman
+
+async def main():
+    rt = await AsyncBithuman.create(
+        model_path="avatar.imx",
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+    print(rt.frame_width, "x", rt.frame_height)
+    await rt.stop()
+
+asyncio.run(main())
+```
+
+The full `push_audio` / `flush` / `run` loop — including loading a WAV into
+int16 PCM without the removed audio helpers — is documented once, canonically,
+in [audio streaming](/concepts/audio-streaming). Read that page for the
+copy-pasteable end-to-end example; everything below assumes you have it.
+
+| Concept | What it is |
+|---|---|
+| `AsyncBithuman` | The runtime. One per session. Keep it alive between turns in production. |
+| `push_audio(bytes, sr, last_chunk)` | Feed 16-bit PCM; the avatar lip-syncs live. |
+| `flush()` | Mark end of audio input. |
+| `run()` | Async generator yielding frames at 25 FPS. |
+| `interrupt()` | Cancel current playback (barge-in). |
+| `frame` | `.bgr_image`, `.audio_chunk`, `.has_image`, `.end_of_speech`, `.frame_index`. |
+
+`push_audio` and `run()` are independent — push as audio arrives (mic, TTS,
+WebRTC), drain frames on your render tick.
+
+`Bithuman` (no `Async`) is the threaded sync equivalent — same surface, no
+`await` — for batch scripts and notebooks. `Avatar` / `AsyncAvatar` remain as
+**soft-deprecated identity aliases** for pre-2.0 code (`Avatar is Bithuman`
+evaluates `True`); new code should use the `Bithuman` names.
+
+## Public API at a glance
+
+Top-level imports are the surface you build against:
+
+```python
+from bithuman import (
+    AsyncBithuman, Bithuman,              # runtime (async / sync)
+    AudioChunk, VideoFrame, VideoControl, # I/O types
+    Emotion, EmotionPrediction,           # emotion analysis
+    # exceptions
+    BithumanError,
+    ModelError, ModelLoadError, ModelNotFoundError, ModelSecurityError,
+    RuntimeNotReadyError,
+    TokenError, TokenExpiredError, TokenValidationError, TokenRequestError,
+    AccountStatusError,
+    # version metadata
+    __version__, __core_version__, __abi_version__,
+)
+```
+
+Controls let you drive idle behavior and actions out of band:
+
+```python
+await rt.push(VideoControl(action="wave"))
+await rt.push(VideoControl(target_video="idle"))
+```
+
+## Low-level API (advanced)
+
+For multi-tenant servers that share one set of model weights across many
+concurrent sessions, the wheel exposes the engine primitives directly:
+
+```python
+from bithuman import Fixture, Runtime, EP_AUTO, EP_CPU, EP_COREML
+
+fixture = Fixture.load("avatar.imx", api_secret="...")  # weights, load once
+runtime = Runtime(fixture, ep=EP_AUTO)                  # cheap per session
+```
+
+`EP_AUTO` / `EP_CPU` / `EP_COREML` / `EP_NNAPI` / `EP_QNN` select the ONNX
+Runtime execution provider. Most users should stick to `AsyncBithuman` /
+`Bithuman`, which wrap these for you.
+
+## Native acceleration
+
+The wheel ships a native extension `bithuman/_core.cpython-3X-<platform>.so` — a
+pybind11 binding to the shared `libessence` engine that also powers the Swift,
+Kotlin, and Rust SDKs. You never import `_core` directly; it loads automatically
+behind `AsyncBithuman`. `bithuman.__core_version__` reports the engine version;
+`bithuman.__abi_version__` reports the C ABI.
+
+## LiveKit voice agents
+
+For a real-time WebRTC voice agent with an avatar, use the LiveKit plugin
+instead of driving the runtime yourself:
+
+```bash
+pip install livekit-plugins-bithuman   # or: pip install bithuman[agent]
+```
+
+```python
+import os
+from livekit.plugins import bithuman
+
+avatar = bithuman.AvatarSession(
+    avatar_id=os.environ["BITHUMAN_AGENT_ID"],
+    api_secret=os.environ["BITHUMAN_API_SECRET"],
+)
+# attach to your AgentSession, then start it
+```
+
+`AvatarSession` is the single integration point — the same call works cloud or
+self-hosted. See the [LiveKit page](/sdk/livekit) for the full deploy path.
+
+## Fully on-device
+
+For private, no-cloud operation, install the `[local]` extra on the **CLI**
+package and set `BITHUMAN_LOCAL=1`. The conversation brain swaps from OpenAI
+Realtime to an entirely in-process stack (whisper.cpp + llama.cpp + Supertonic +
+Silero) — no API key, no outbound network. See [local mode](/cli/local-mode).
+
+## System requirements
+
+- **Python 3.10–3.14** (cp310–cp314 wheels ship for every supported platform).
+- **Essence**: any modern CPU, 4 GB RAM. macOS arm64 / Linux x86_64 / Linux aarch64.
+
+## Troubleshooting
+
+### `ModuleNotFoundError: No module named 'bithuman'`
+
+Not installed in the active environment — `pip install bithuman --upgrade` in
+the same venv you run from.
+
+### 401 / authentication failed
+
+Confirm `BITHUMAN_API_SECRET` is set in the running shell, then:
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+### Avatar shows but no lip movement
+
+Push **int16 PCM bytes** (clip float32 to ±1 and scale by 32767), call `flush()`
+after all audio, and pass the same sample rate you decoded with.
+
+### `ImportError: No module named 'bithuman.audio' / 'bithuman.utils'`
+
+Removed in 2.3.0. Inline `load_audio` / `float32_to_int16` / `FPSController` in
+your app — see [audio streaming](/concepts/audio-streaming) for the drop-in.
+
+### `objc: Class AVFFrameReceiver is implemented in both …/cv2/… and …/av/…`
+
+Both OpenCV and PyAV ship their own FFmpeg dylibs. Harmless if you depend on the
+headless variant; otherwise fix the variant explicitly:
+
+```bash
+pip uninstall -y opencv-python && pip install opencv-python-headless
+```
+
+### Slow first startup (30–60 s)
+
+First `.imx` load warms the runtime / upgrades the file format. Keep the runtime
+alive between sessions in production.
+
+## See also
+
+- [Audio streaming](/concepts/audio-streaming) — the canonical push/drain loop
+- [Models](/concepts/models) — Essence models and the `.imx` format
+- [LiveKit](/sdk/livekit) — WebRTC voice agents with a face
+- [CLI](/cli) — no-code render and live chat, same engine

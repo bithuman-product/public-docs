@@ -1,0 +1,145 @@
+---
+import Base from "./Base.astro";
+import "../styles/prose.css";
+import { SECTIONS, GROUP_ORDER, type SectionId } from "../config/nav.ts";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  entry: any;
+  all: any[];
+  headings: Heading[];
+}
+const { entry, all, headings } = Astro.props;
+const section: SectionId = entry.data.section;
+const meta = SECTIONS[section] ?? { label: "Docs", home: "/" };
+
+// build sidebar: same-section pages, grouped by `group`, ordered by `order`
+const slugOf = (e: any) => "/" + e.id.replace(/\/index$/, "").replace(/\.md$/, "");
+const inSection = all
+  .filter((e) => e.data.section === section && !e.data.draft)
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+
+const groupsMap = new Map<string, any[]>();
+for (const e of inSection) {
+  const g = e.data.group || "";
+  if (!groupsMap.has(g)) groupsMap.set(g, []);
+  groupsMap.get(g)!.push(e);
+}
+const explicitOrder = GROUP_ORDER[section] ?? [];
+const groups = [...groupsMap.entries()].sort((a, b) => {
+  const ia = explicitOrder.indexOf(a[0]);
+  const ib = explicitOrder.indexOf(b[0]);
+  if (ia !== -1 || ib !== -1) return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  const ma = Math.min(...a[1].map((e: any) => e.data.order ?? 100));
+  const mb = Math.min(...b[1].map((e: any) => e.data.order ?? 100));
+  return ma - mb;
+});
+
+const currentPath = "/" + entry.id.replace(/\/index$/, "").replace(/\.md$/, "");
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description}>
+  <div class="doc">
+    <!-- sidebar -->
+    <aside class="doc-side">
+      <div class="side-inner">
+        <a class="side-home" href={meta.home}>{meta.label}</a>
+        {
+          groups.map(([g, items]) => (
+            <div class="side-group">
+              {g && <p class="side-glabel">{g}</p>}
+              <ul>
+                {items.map((e: any) => {
+                  const href = slugOf(e);
+                  return (
+                    <li>
+                      <a href={href} class:list={["side-link", { active: href === currentPath }]}>
+                        {e.data.label ?? e.data.title}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </aside>
+
+    <!-- content -->
+    <article class="doc-main">
+      <div class="doc-crumb">
+        <a href="/">Docs</a> <span>/</span> <a href={meta.home}>{meta.label}</a>
+      </div>
+      <div class="prose">
+        <h1>{entry.data.title}</h1>
+        {entry.data.description && <p class="doc-lede">{entry.data.description}</p>}
+        <slot />
+      </div>
+    </article>
+
+    <!-- on-this-page TOC -->
+    <aside class="doc-toc">
+      {
+        toc.length > 0 && (
+          <nav aria-label="On this page">
+            <p class="toc-label">On this page</p>
+            <ul>
+              {toc.map((h) => (
+                <li class:list={[`toc-d${h.depth}`]}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .doc {
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr) 200px;
+    gap: var(--space-8);
+    padding-inline: var(--space-5);
+    align-items: start;
+  }
+  /* sidebar */
+  .doc-side { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; padding-block: var(--space-6); }
+  .side-home { display: block; font-weight: var(--fw-bold); font-size: var(--ft-md); margin-bottom: var(--space-4); }
+  .side-group { margin-bottom: var(--space-5); }
+  .side-glabel { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+  .side-group ul { list-style: none; padding: 0; margin: 0; }
+  .side-link { display: block; padding: 0.32rem 0.6rem; margin-left: -0.6rem; border-radius: var(--r-md); font-size: var(--ft-sm); color: var(--color-text-secondary); border-left: 2px solid transparent; }
+  .side-link:hover { color: var(--color-text); background: var(--color-surface-2); }
+  .side-link.active { color: var(--color-primary); font-weight: var(--fw-medium); background: var(--color-primary-soft); }
+  /* content */
+  .doc-main { padding-block: var(--space-8); min-width: 0; }
+  .doc-crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--space-4); }
+  .doc-crumb a { color: var(--color-text-tertiary); }
+  .doc-crumb a:hover { color: var(--color-primary); }
+  .doc-crumb span { margin: 0 0.3rem; }
+  .doc-lede { font-size: var(--ft-lg); color: var(--color-text-secondary); margin-top: 0 !important; }
+  /* toc */
+  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--space-8); font-size: var(--ft-sm); }
+  .toc-label { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+  .doc-toc ul { list-style: none; padding: 0; margin: 0; }
+  .doc-toc a { display: block; padding: 0.22rem 0; color: var(--color-text-tertiary); border-left: 2px solid transparent; padding-left: 0.6rem; }
+  .doc-toc a:hover { color: var(--color-text); }
+  .toc-d3 a { padding-left: 1.3rem; font-size: var(--ft-xs); }
+
+  @media (max-width: 1080px) { .doc { grid-template-columns: 230px minmax(0,1fr); } .doc-toc { display: none; } }
+  @media (max-width: 820px) {
+    .doc { grid-template-columns: 1fr; }
+    .doc-side { position: static; height: auto; border-bottom: 1px solid var(--color-border); }
+  }
+</style>

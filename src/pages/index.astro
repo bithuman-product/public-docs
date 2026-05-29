@@ -3,6 +3,14 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
 import LiveAvatar from "../components/LiveAvatar.astro";
+import ShowcaseGrid from "../components/ShowcaseGrid.astro";
+import showcaseData from "../data/showcase-agents.json";
+
+const heroAgent = showcaseData.expression[0];
+const featuredAgents = [
+  ...showcaseData.expression.slice(0, 3),
+  ...showcaseData.essence.slice(0, 3),
+];
 
 const pillars = [
   {
@@ -98,15 +106,6 @@ const useCases = [
   { t: "Embeddable apps", d: "Drop a live, talkable agent into any site or app.", img: "/images/animals/bunny-glasses.jpg" },
 ];
 
-const showcase = [
-  { t: "Wise Pup", d: "On-device companion agent — runs offline on a Mac.", img: "/images/animals/sheepdog.jpg", tags: ["Essence", "On-device"] },
-  { t: "Trivia Host", d: "Interactive game-show host with live barge-in.", img: "/images/animals/capybara.jpg", tags: ["Voice", "Cloud"] },
-  { t: "Stage Coach Lena", d: "Real-time presentation & speaking coach.", img: "/images/animals/fluffy-creature.jpg", tags: ["Coaching", "Realtime"] },
-  { t: "CLI reference app", d: "One command to a live browser avatar with an embedded server.", img: "/images/animals/bunny-white.jpg", tags: ["CLI", "Rust"] },
-  { t: "Flutter app", d: "Cross-platform avatar app for macOS, iOS, iPad & Android.", img: "/images/animals/d7.jpg", tags: ["Flutter", "Essence"] },
-  { t: "macOS Expression", d: "Native app: drag-drop any face, on-device LLM + TTS.", img: "/images/animals/d12.jpg", tags: ["Swift", "Expression"] },
-];
-
 const models = [
   {
     name: "Essence",
@@ -146,7 +145,7 @@ const models = [
         </div>
       </div>
       <div class="hero-demo" data-reveal>
-        <LiveAvatar code="A56ZFX6217" name="Talk to a live avatar" poster="/images/example-agent-images.jpg" />
+        <LiveAvatar code={heroAgent.code} name={`Talk to ${heroAgent.name}`} poster={heroAgent.image} />
       </div>
     </div>
   </section>
@@ -229,19 +228,8 @@ const models = [
         </div>
         <Button href="/showcase" variant="secondary">Browse showcase</Button>
       </div>
-      <div class="showcase">
-        {showcase.map((s) => (
-          <a class="show-card" href="/showcase" data-reveal>
-            <div class="show-img" style={`background-image:url(${s.img})`}>
-              <span class="show-live"><span class="dot"></span>Live</span>
-            </div>
-            <div class="show-body">
-              <h3>{s.t}</h3>
-              <p>{s.d}</p>
-              <div class="show-tags">{s.tags.map((t) => <span class="pill">{t}</span>)}</div>
-            </div>
-          </a>
-        ))}
+      <div data-reveal>
+        <ShowcaseGrid agents={featuredAgents} />
       </div>
     </div>
   </section>

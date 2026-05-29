@@ -1,0 +1,133 @@
+---
+// Showcase grid of real gallery agents. Each card lazy-loads a live, talkable
+// embed (agent.viewer.bithuman.ai) on click. Optional filter bar (model + type).
+interface Agent {
+  code: string;
+  name: string;
+  group: string;   // "expression" | "essence"
+  model: string;
+  kind: string;    // "human" | "animal"
+  gender: string;
+  category: string;
+  image: string;
+  embed: string;
+}
+interface Props {
+  agents: Agent[];
+  filters?: boolean;
+}
+const { agents, filters = false } = Astro.props;
+---
+
+{
+  filters && (
+    <div class="sg-filters" data-sg-filters>
+      <div class="sg-fgroup" data-facet="group">
+        <span class="sg-flabel">Set</span>
+        <button class="sg-chip active" data-val="all">All</button>
+        <button class="sg-chip" data-val="expression">Expression</button>
+        <button class="sg-chip" data-val="essence">Essence</button>
+      </div>
+      <div class="sg-fgroup" data-facet="kind">
+        <span class="sg-flabel">Type</span>
+        <button class="sg-chip active" data-val="all">All</button>
+        <button class="sg-chip" data-val="human">Human</button>
+        <button class="sg-chip" data-val="animal">Animal</button>
+      </div>
+    </div>
+  )
+}
+
+<div class="sg-grid" data-sg-grid>
+  {
+    agents.map((a) => (
+      <div class="sg-card" data-group={a.group} data-kind={a.kind} data-embed={a.embed}>
+        <div class="sg-media">
+          <img src={a.image} alt={a.name} loading="lazy" />
+          <button class="sg-play" type="button" aria-label={`Talk to ${a.name}`}>
+            <span class="dot" /> Try live
+          </button>
+          <span class="sg-badge">{a.group === "expression" ? "Expression" : "Essence"}</span>
+        </div>
+        <div class="sg-body">
+          <h3>{a.name}</h3>
+          <div class="sg-tags">
+            <span class="pill">{a.category}</span>
+            <span class="pill">{a.kind === "animal" ? "Animal" : "Human"}</span>
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</div>
+<p class="sg-empty" data-sg-empty hidden>No agents match these filters.</p>
+
+<script>
+  // lazy live embed
+  document.querySelectorAll("[data-sg-grid] .sg-card").forEach((card) => {
+    const btn = card.querySelector(".sg-play");
+    btn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      const src = (card as HTMLElement).dataset.embed!;
+      const media = card.querySelector(".sg-media")!;
+      const f = document.createElement("iframe");
+      f.src = src;
+      f.allow = "microphone; camera; autoplay; clipboard-write";
+      f.title = "bitHuman live avatar";
+      f.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0;";
+      media.appendChild(f);
+      card.classList.add("live");
+    });
+  });
+
+  // filters
+  const bar = document.querySelector("[data-sg-filters]");
+  if (bar) {
+    const state: Record<string, string> = { group: "all", kind: "all" };
+    bar.querySelectorAll(".sg-chip").forEach((chip) =>
+      chip.addEventListener("click", () => {
+        const grp = (chip.closest(".sg-fgroup") as HTMLElement).dataset.facet!;
+        state[grp] = (chip as HTMLElement).dataset.val!;
+        bar.querySelectorAll(`.sg-fgroup[data-facet="${grp}"] .sg-chip`).forEach((c) =>
+          c.classList.toggle("active", c === chip)
+        );
+        let shown = 0;
+        document.querySelectorAll("[data-sg-grid] .sg-card").forEach((card) => {
+          const el = card as HTMLElement;
+          const ok =
+            (state.group === "all" || el.dataset.group === state.group) &&
+            (state.kind === "all" || el.dataset.kind === state.kind);
+          el.style.display = ok ? "" : "none";
+          if (ok) shown++;
+        });
+        const empty = document.querySelector("[data-sg-empty]") as HTMLElement;
+        if (empty) empty.hidden = shown !== 0;
+      })
+    );
+  }
+</script>
+
+<style>
+  .sg-filters { display: flex; gap: var(--space-6); flex-wrap: wrap; margin-bottom: var(--space-6); }
+  .sg-fgroup { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .sg-flabel { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-right: 0.2rem; }
+  .sg-chip { padding: 0.35rem 0.8rem; border-radius: var(--r-full); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-secondary); font-size: var(--ft-sm); font-weight: var(--fw-medium); transition: all var(--t-fast) var(--ease); }
+  .sg-chip:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  .sg-chip.active { background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; }
+
+  .sg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-5); }
+  .sg-card { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
+  .sg-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .sg-media { position: relative; aspect-ratio: 1 / 1; background: var(--color-surface-3); overflow: hidden; }
+  .sg-media img { width: 100%; height: 100%; object-fit: cover; }
+  .sg-play { position: absolute; bottom: 0.7rem; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 1rem; border: 0; border-radius: var(--r-full); background: rgba(255,255,255,0.95); color: #111; font-weight: var(--fw-medium); font-size: var(--ft-sm); box-shadow: var(--shadow-md); transition: transform var(--t-fast) var(--ease); }
+  .sg-play:hover { transform: translateX(-50%) scale(1.04); }
+  .sg-play .dot { width: 7px; height: 7px; border-radius: var(--r-full); background: var(--coral-500); animation: pulse 1.8s infinite; }
+  .sg-card.live .sg-play, .sg-card.live .sg-badge { display: none; }
+  .sg-badge { position: absolute; top: 0.7rem; left: 0.7rem; padding: 0.25rem 0.6rem; border-radius: var(--r-full); background: rgba(0,0,0,0.5); color: #fff; font-size: var(--ft-xs); font-weight: var(--fw-medium); backdrop-filter: blur(6px); }
+  .sg-body { padding: var(--space-4); }
+  .sg-body h3 { font-size: var(--ft-lg); }
+  .sg-tags { display: flex; gap: 0.4rem; margin-top: var(--space-3); flex-wrap: wrap; }
+  .sg-empty { text-align: center; color: var(--color-text-secondary); padding: var(--space-8); }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,87,87,0.6); } 70% { box-shadow: 0 0 0 9px rgba(255,87,87,0); } 100% { box-shadow: 0 0 0 0 rgba(255,87,87,0); } }
+</style>

@@ -1,0 +1,110 @@
+---
+title: "Python — Hello, avatar"
+description: "Get a real-time on-device bitHuman avatar rendering in under 20 lines of Python."
+section: examples
+group: "Examples"
+order: 11
+---
+
+## Overview
+
+The smallest runnable Python program that drives a bitHuman avatar. Audio in, lip-synced video frames out, all on-device. Runs on macOS arm64, Linux x86_64, and Linux aarch64.
+
+The streaming contract — `push_audio` → `flush` → `run` — is documented in full in [Audio streaming](/concepts/audio-streaming). This page is the smallest end-to-end program built on it.
+
+## Prerequisites
+
+- Python 3.10+ (3.10–3.14 wheels). Use a virtualenv.
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer).
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install bithuman==2.3.0 soundfile
+export BITHUMAN_API_SECRET=your_secret
+```
+
+You also need two input files the script below references by name:
+
+- **`avatar.imx`** — an avatar model. Download one from [Explore](https://www.bithuman.ai/#explore), or run `bithuman pull modern-court-jester` once (the [CLI](/cli) caches it at `~/.cache/bithuman/showcase/modern-court-jester.imx` — copy it next to your script as `avatar.imx`).
+- **`speech.wav`** — any speech clip. Bring one from any TTS (ElevenLabs, OpenAI, the local-mode `SupertonicTTS` plugin, your own recording, …).
+
+## Minimal example
+
+```python
+# hello.py — minimal avatar render loop
+import asyncio, os
+import numpy as np
+import soundfile as sf
+from bithuman import AsyncBithuman
+
+# bithuman 2.3 is library-only — the old bithuman.audio helpers were
+# removed. Inline what we need: load a WAV, downmix to mono 16 kHz,
+# convert float32 → int16 PCM.
+def load_audio(path: str, target_sr: int = 16000) -> tuple[np.ndarray, int]:
+    audio, sr = sf.read(path, dtype="float32", always_2d=False)
+    if audio.ndim > 1:
+        audio = audio.mean(axis=1)
+    if sr != target_sr:
+        n = int(round(len(audio) * target_sr / sr))
+        audio = np.interp(
+            np.linspace(0, len(audio), n, endpoint=False),
+            np.arange(len(audio)), audio,
+        ).astype(np.float32)
+        sr = target_sr
+    return audio, sr
+
+def float32_to_int16(arr: np.ndarray) -> np.ndarray:
+    return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
+
+async def main():
+    runtime = await AsyncBithuman.create(
+        model_path="avatar.imx",
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+
+    pcm, sr = load_audio("speech.wav")
+    pcm = float32_to_int16(pcm)
+    chunk = sr // 100  # 10 ms per chunk
+    for i in range(0, len(pcm), chunk):
+        await runtime.push_audio(
+            pcm[i : i + chunk].tobytes(), sr, last_chunk=False,
+        )
+    await runtime.flush()
+
+    try:
+        async for frame in runtime.run():
+            if frame.has_image:
+                bgr = frame.bgr_image            # (H, W, 3) uint8 numpy array
+                # Encode it, display it, push it to a video sink — your choice.
+            if frame.end_of_speech:
+                break
+    finally:
+        await runtime.stop()
+
+asyncio.run(main())
+```
+
+Run it:
+
+```bash
+python hello.py
+```
+
+This program **prints nothing and exits 0** — it renders frames into `frame.bgr_image` but doesn't display them. That's expected; it's the minimal loop. To actually *see* the avatar, use the canonical example, which adds an OpenCV window + speaker playback:
+
+```bash
+git clone https://github.com/bithuman-product/bithuman-sdk-public.git
+cd bithuman-sdk-public/Examples/python/local-essence
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt      # incl. opencv — not bundled with the SDK
+python quickstart.py \
+  --model ~/.cache/bithuman/showcase/modern-court-jester.imx \
+  --audio-file speech.wav            # this example dir ships a speech.wav
+```
+
+## Where to go next
+
+- [local-essence project](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence) — the same loop with OpenCV display and speaker playback wired up.
+- [Audio streaming](/concepts/audio-streaming) — the canonical `push_audio` / `flush` / `run` contract in depth.
+- [Python SDK](/sdk/python) — full API surface, LiveKit agents, troubleshooting.
+- [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice chat driving the avatar.
