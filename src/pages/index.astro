@@ -1,5 +1,5 @@
 ---
-// bitHuman docs — Scalar API Reference, fully branded.
+// bitHuman docs — Scalar API Reference, OpenAI-inspired layout.
 // All prose + endpoints live in public/api/openapi.yaml.
 ---
 <!doctype html>
@@ -52,10 +52,10 @@
         favicon: '/bithuman-mark.png',
         customCss: `
           /* ============================================================
-             bitHuman Scalar theme — coral on white, modern + clean.
-             Coral #FF5757 used sparingly for accents; body stays neutral
-             so prose + code remain easy to read.
+             bitHuman docs — OpenAI-inspired layout
+             Dominant middle column, generous spacing, coral-on-white.
              ============================================================ */
+
           :root {
             /* Brand */
             --bh-coral:        #FF5757;
@@ -67,15 +67,15 @@
             --scalar-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             --scalar-font-code: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-            /* Neutral palette — pure white bg, true black text */
-            --scalar-color-1: #0a0a0a;          /* primary text */
-            --scalar-color-2: #404040;          /* secondary text */
-            --scalar-color-3: #71717a;          /* tertiary text */
+            /* Neutral palette */
+            --scalar-color-1: #0d0d0d;
+            --scalar-color-2: #404040;
+            --scalar-color-3: #6b7280;
             --scalar-color-accent: var(--bh-coral);
 
-            --scalar-background-1: #ffffff;     /* page background */
-            --scalar-background-2: #fafafa;     /* sidebar / card */
-            --scalar-background-3: #f5f5f7;     /* code block bg */
+            --scalar-background-1: #ffffff;
+            --scalar-background-2: #fafafa;
+            --scalar-background-3: #f5f5f7;
             --scalar-background-accent: var(--bh-coral-soft);
 
             --scalar-border-color: #e7e7e9;
@@ -84,7 +84,7 @@
             --scalar-header-background-1: #ffffff;
             --scalar-header-background-2: #ffffff;
 
-            /* Buttons — coral primary */
+            /* Buttons */
             --scalar-button-1: var(--bh-coral);
             --scalar-button-1-color: #ffffff;
             --scalar-button-1-hover: var(--bh-coral-hover);
@@ -96,10 +96,43 @@
             --scalar-color-red: var(--bh-coral);
             --scalar-color-purple: #7c3aed;
             --scalar-color-yellow: #ca8a04;
+
+            /* OpenAI-like dominant middle: maximize content width */
+            --scalar-content-max-width: 1080px;
           }
 
           /* ============================================================
-             Custom logo in the sidebar / header
+             3-COLUMN LAYOUT — OpenAI proportions
+             sidebar (~16%) | main (~72%) | right rail (~12% on endpoints)
+             ============================================================ */
+
+          /* Narrower sidebar */
+          .sidebar,
+          aside.sidebar,
+          .scalar-sidebar {
+            background: #fcfcfc !important;
+            border-right: 1px solid var(--scalar-border-color);
+            width: 260px !important;
+            min-width: 260px !important;
+            max-width: 260px !important;
+            padding-top: 0 !important;
+          }
+
+          /* Wider main content area */
+          .references-rendered,
+          .references-classic {
+            max-width: 100% !important;
+          }
+          .references-rendered section,
+          .references-rendered .section-container,
+          .references-rendered .reference-section {
+            max-width: 1080px !important;
+            padding-left: 3.5rem !important;
+            padding-right: 3.5rem !important;
+          }
+
+          /* ============================================================
+             Custom sidebar header — bitHuman wordmark + logo
              ============================================================ */
           .sidebar::before,
           .scalar-sidebar::before {
@@ -107,21 +140,20 @@
             display: block;
             background-image: url('/bithuman-mark.png');
             background-repeat: no-repeat;
-            background-size: 32px 32px;
+            background-size: 28px 28px;
             background-position: 1.25rem center;
-            height: 64px;
+            height: 60px;
             border-bottom: 1px solid var(--scalar-border-color);
             margin-bottom: 0.5rem;
           }
-          /* Brand wordmark next to the logo */
           .sidebar::after,
           .scalar-sidebar::after {
             content: 'bitHuman';
             position: absolute;
-            top: 21px;
-            left: 4rem;
+            top: 20px;
+            left: 3.75rem;
             font-family: var(--scalar-font);
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
             letter-spacing: -0.01em;
             color: var(--scalar-color-1);
@@ -130,133 +162,20 @@
           .sidebar, .scalar-sidebar { position: relative; }
 
           /* ============================================================
-             LIGHT CODE BLOCKS everywhere — Scalar defaults to dark on the
-             right-rail; force light with GitHub-light syntax.
+             Sidebar navigation — tighter, OpenAI-restrained
              ============================================================ */
-          .scalar-card,
-          .scalar-card-section,
-          .scalar-card-header,
-          .scalar-card-footer,
-          .scalar-codeblock,
-          .references-rendered code,
-          .references-rendered pre,
-          pre.scalar-codeblock-pre,
-          .light-mode .scalar-card,
-          .light-mode .scalar-card-section,
-          .light-mode .scalar-card-header,
-          .light-mode .scalar-card-footer,
-          .examples,
-          .examples .scalar-card,
-          .examples .scalar-card-section,
-          .scalar-client-libraries,
-          .scalar-client-libraries pre,
-          .scalar-client-libraries code {
-            background: #fafafa !important;
-            color: #0a0a0a !important;
-          }
-
-          .scalar-client-libraries {
-            border-radius: 8px;
-          }
-
-          /* Syntax highlighting — GitHub-light palette */
-          .hljs,
-          .hljs-built_in,
-          .hljs-symbol {
-            color: #24292f !important;
-            background: transparent !important;
-          }
-          .hljs-keyword,
-          .hljs-selector-tag,
-          .hljs-literal,
-          .hljs-section,
-          .hljs-link { color: #cf222e !important; }
-          .hljs-string,
-          .hljs-attr { color: #0a3069 !important; }
-          .hljs-number,
-          .hljs-meta { color: #0550ae !important; }
-          .hljs-comment,
-          .hljs-quote { color: #6e7781 !important; font-style: italic; }
-          .hljs-title,
-          .hljs-name,
-          .hljs-type { color: #8250df !important; }
-          .hljs-variable,
-          .hljs-template-variable { color: #953800 !important; }
-          .hljs-tag { color: #116329 !important; }
-
-          /* Inline code — soft gray pill */
-          code:not(pre code) {
-            background: #f3f3f5 !important;
-            color: #0a0a0a !important;
-            padding: 0.1em 0.4em;
-            border-radius: 4px;
-            font-size: 0.88em;
-            font-weight: 500;
-            border: none;
-          }
-
-          /* Code blocks in markdown body */
-          pre, .scalar-codeblock-pre {
-            background: #fafafa !important;
-            border: 1px solid var(--scalar-border-color) !important;
-            border-radius: 8px;
-            padding: 1rem !important;
-            font-size: 13.5px !important;
-            line-height: 1.55 !important;
-          }
-
-          /* ============================================================
-             Typography polish — OpenAI / Stripe restraint
-             ============================================================ */
-          .references-rendered h1,
-          .references-rendered h2,
-          .references-rendered h3 {
-            font-weight: 600;
-            letter-spacing: -0.015em;
-            color: var(--scalar-color-1);
-          }
-          .references-rendered h1 { font-size: 2rem; }
-          .references-rendered h2 { font-size: 1.375rem; margin-top: 2.5rem; }
-          .references-rendered h3 { font-size: 1.125rem; margin-top: 2rem; }
-
-          .references-rendered p,
-          .references-rendered li {
-            font-size: 0.95rem;
-            line-height: 1.65;
-            color: var(--scalar-color-2);
-          }
-
-          /* Links — coral with hover state */
-          .references-rendered a {
-            color: var(--bh-coral-deep);
-            text-decoration: underline;
-            text-decoration-color: var(--bh-coral-soft);
-            text-underline-offset: 2px;
-            transition: text-decoration-color 120ms ease;
-          }
-          .references-rendered a:hover {
-            color: var(--bh-coral);
-            text-decoration-color: var(--bh-coral);
-          }
-
-          /* Sidebar — quieter; coral on active */
-          .sidebar,
-          aside.sidebar,
-          .scalar-sidebar {
-            background: #ffffff !important;
-            border-right: 1px solid var(--scalar-border-color);
-          }
           .sidebar a,
           .scalar-sidebar a {
             color: var(--scalar-color-2);
-            font-size: 0.875rem;
-            border-radius: 6px;
+            font-size: 13.5px;
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem !important;
             transition: background 100ms ease, color 100ms ease;
           }
           .sidebar a:hover,
           .scalar-sidebar a:hover {
             color: var(--scalar-color-1);
-            background: #f5f5f7;
+            background: #f0f0f3;
           }
           .sidebar a.active,
           .scalar-sidebar a[aria-current],
@@ -267,70 +186,274 @@
             font-weight: 600;
           }
 
-          /* Sidebar group headers — small caps style */
+          /* Sidebar group headings — small caps */
           .scalar-sidebar-section h2,
-          .sidebar-group-title {
-            font-size: 0.75rem !important;
+          .sidebar-group-title,
+          .sidebar-heading,
+          .scalar-sidebar-group-title {
+            font-size: 11px !important;
             font-weight: 700 !important;
-            letter-spacing: 0.06em !important;
+            letter-spacing: 0.08em !important;
             text-transform: uppercase !important;
             color: var(--scalar-color-3) !important;
+            padding-left: 0.6rem !important;
+            margin-top: 1.5rem !important;
+            margin-bottom: 0.4rem !important;
           }
 
-          /* Tighter tables */
+          /* ============================================================
+             Typography — OpenAI's clean, generous treatment
+             ============================================================ */
+          .references-rendered h1,
+          .references-rendered h2,
+          .references-rendered h3,
+          .references-rendered h4 {
+            font-weight: 600;
+            letter-spacing: -0.018em;
+            color: var(--scalar-color-1);
+            line-height: 1.25;
+          }
+          .references-rendered h1 {
+            font-size: 2.25rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+          }
+          .references-rendered h2 {
+            font-size: 1.5rem;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--scalar-border-color);
+          }
+          .references-rendered h3 {
+            font-size: 1.15rem;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+          }
+          .references-rendered h4 {
+            font-size: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .references-rendered p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #2c2c2c;
+            margin: 0.75rem 0;
+          }
+          .references-rendered li {
+            font-size: 1rem;
+            line-height: 1.65;
+            color: #2c2c2c;
+            margin: 0.35rem 0;
+          }
+          .references-rendered ul,
+          .references-rendered ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+          }
+
+          /* Links — coral, underlined */
+          .references-rendered a {
+            color: var(--bh-coral-deep);
+            text-decoration: underline;
+            text-decoration-color: var(--bh-coral-soft);
+            text-underline-offset: 2.5px;
+            text-decoration-thickness: 1.5px;
+            transition: text-decoration-color 120ms ease;
+          }
+          .references-rendered a:hover {
+            color: var(--bh-coral);
+            text-decoration-color: var(--bh-coral);
+          }
+
+          /* ============================================================
+             Code blocks — clean light, GitHub-light syntax
+             ============================================================ */
+
+          /* Right-rail panel + inline code — force light */
+          .scalar-card,
+          .scalar-card-section,
+          .scalar-card-header,
+          .scalar-card-footer,
+          .scalar-codeblock,
+          .examples,
+          .examples .scalar-card,
+          .examples .scalar-card-section,
+          .scalar-client-libraries,
+          .scalar-client-libraries pre,
+          .scalar-client-libraries code,
+          pre.scalar-codeblock-pre,
+          .light-mode .scalar-card,
+          .light-mode .scalar-card-section,
+          .light-mode .scalar-card-header,
+          .light-mode .scalar-card-footer {
+            background: #f7f7f8 !important;
+            color: #0d0d0d !important;
+            border-color: var(--scalar-border-color) !important;
+          }
+          .scalar-client-libraries { border-radius: 8px; }
+
+          /* Body code blocks */
+          .references-rendered pre,
+          pre.scalar-codeblock-pre {
+            background: #f7f7f8 !important;
+            border: 1px solid var(--scalar-border-color) !important;
+            border-radius: 8px;
+            padding: 1rem 1.25rem !important;
+            margin: 1.25rem 0 !important;
+            font-size: 13.5px !important;
+            line-height: 1.6 !important;
+            font-family: var(--scalar-font-code) !important;
+            overflow-x: auto;
+          }
+
+          /* Inline code — soft gray pill */
+          .references-rendered code:not(pre code) {
+            background: #f3f3f5 !important;
+            color: #0d0d0d !important;
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-weight: 500;
+            border: none;
+          }
+
+          /* Syntax highlighting — GitHub-light palette */
+          .hljs, .hljs-built_in, .hljs-symbol {
+            color: #1f2328 !important;
+            background: transparent !important;
+          }
+          .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-section, .hljs-link { color: #cf222e !important; }
+          .hljs-string, .hljs-attr { color: #0a3069 !important; }
+          .hljs-number, .hljs-meta { color: #0550ae !important; }
+          .hljs-comment, .hljs-quote { color: #6e7781 !important; font-style: italic; }
+          .hljs-title, .hljs-name, .hljs-type { color: #8250df !important; }
+          .hljs-variable, .hljs-template-variable { color: #953800 !important; }
+          .hljs-tag { color: #116329 !important; }
+
+          /* ============================================================
+             Tables — OpenAI's clean grid style
+             ============================================================ */
           .references-rendered table {
             border-collapse: collapse;
-            font-size: 0.9rem;
-            margin: 1rem 0;
+            font-size: 0.92rem;
+            margin: 1.5rem 0;
+            width: 100%;
+            border: 1px solid var(--scalar-border-color);
+            border-radius: 8px;
+            overflow: hidden;
           }
           .references-rendered th,
           .references-rendered td {
-            padding: 0.5rem 0.75rem;
-            border-bottom: 1px solid var(--scalar-border-color);
+            padding: 0.65rem 0.9rem;
             text-align: left;
+            border-bottom: 1px solid var(--scalar-border-color);
           }
           .references-rendered th {
             background: #fafafa;
             font-weight: 600;
             color: var(--scalar-color-1);
+            font-size: 0.85rem;
+            letter-spacing: 0.01em;
           }
+          .references-rendered tr:last-child td { border-bottom: none; }
+          .references-rendered tbody tr:hover { background: #fafafa; }
 
-          /* HTTP method badges — keep coral for DELETE */
+          /* ============================================================
+             Buttons + interactive bits
+             ============================================================ */
           .show-api-client-button,
           button.show-api-client-button {
             background: var(--bh-coral) !important;
             color: #ffffff !important;
+            border-radius: 6px !important;
           }
           .show-api-client-button:hover,
           button.show-api-client-button:hover {
             background: var(--bh-coral-hover) !important;
           }
 
-          /* Search input + hotkey badge */
-          .scalar-sidebar-search input,
-          .sidebar-search input {
-            border-radius: 6px;
-            border-color: var(--scalar-border-color);
+          /* Hide default Scalar logo (we put ours in the sidebar) */
+          .references-header .scalar-icon-only-button img.scalar-logo {
+            display: none;
           }
 
-          /* Tag headings — gentle coral underline accent */
+          /* Quieter Scalar footer */
+          .scalar-footer-powered { opacity: 0.4; font-size: 11px; }
+
+          /* Tag heading — small coral underline accent */
           .reference-section-tag h1::after,
           .section-tag h1::after {
             content: '';
             display: block;
-            width: 32px;
+            width: 28px;
             height: 3px;
             background: var(--bh-coral);
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
             border-radius: 2px;
           }
 
-          /* Quieter "Powered by Scalar" footer */
-          .scalar-footer-powered { opacity: 0.4; font-size: 11px; }
+          /* ============================================================
+             "Card grid" pattern — bitHuman-style next-steps cards
+             Created by wrapping in our own .bh-cards div via markdown
+             ============================================================ */
+          .bh-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            margin: 1.5rem 0 !important;
+          }
+          .bh-card {
+            display: block !important;
+            padding: 1rem 1.1rem !important;
+            border: 1px solid var(--scalar-border-color) !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            transition: all 120ms ease;
+            background: #ffffff !important;
+            color: var(--scalar-color-1) !important;
+          }
+          .bh-card:hover {
+            border-color: var(--bh-coral) !important;
+            background: var(--bh-coral-soft) !important;
+            transform: translateY(-1px);
+            text-decoration: none !important;
+          }
+          .bh-card strong {
+            display: block;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            color: var(--scalar-color-1) !important;
+          }
+          .bh-card span {
+            font-size: 0.85rem;
+            color: var(--scalar-color-3) !important;
+          }
 
-          /* Hide the default Scalar header logo — we put ours in the sidebar */
-          .references-header .scalar-icon-only-button img.scalar-logo {
-            display: none;
+          /* ============================================================
+             Callout / info boxes via blockquote
+             ============================================================ */
+          .references-rendered blockquote {
+            margin: 1.5rem 0;
+            padding: 0.85rem 1.2rem;
+            background: #fafafa;
+            border-left: 3px solid var(--bh-coral);
+            border-radius: 0 8px 8px 0;
+            color: var(--scalar-color-2);
+            font-size: 0.95rem;
+          }
+          .references-rendered blockquote p { margin: 0; }
+
+          /* ============================================================
+             Tighten the top header
+             ============================================================ */
+          .references-header {
+            background: #ffffff !important;
+            border-bottom: 1px solid var(--scalar-border-color);
+            height: 60px;
           }
         `,
       })}
