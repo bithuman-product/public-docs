@@ -1,0 +1,29 @@
+---
+import Hub from "../../components/Hub.astro";
+
+const groups = [
+  {
+    label: "Get started",
+    featured: true,
+    cards: [
+      { title: "Install", desc: "One binary via brew, curl, or pip — macOS and Linux.", href: "/cli/install" },
+      { title: "Commands", desc: "init, run, render, info, pull, list, doctor — the full surface.", href: "/cli/commands" },
+    ],
+  },
+  {
+    label: "Guides",
+    cards: [
+      { title: "Configuration", desc: "Env vars, cache layout, and cloud vs on-device brain.", href: "/cli/configuration" },
+      { title: "Local mode", desc: "Run the whole stack offline — STT, LLM, TTS, all on-device.", href: "/cli/local-mode", badge: "Offline" },
+      { title: "Overview", desc: "What the CLI is and how it relates to the SDKs.", href: "/cli/overview" },
+    ],
+  },
+];
+---
+<Hub
+  eyebrow="CLI"
+  title="bitHuman CLI"
+  tagline="Run a realtime visual agent from a single command — cloud or fully on-device, with a built-in local brain. No GPU required."
+  ctas={[{ label: "Install the CLI", href: "/cli/install" }, { label: "Browse commands", href: "/cli/commands", variant: "secondary" }]}
+  groups={groups}
+/>

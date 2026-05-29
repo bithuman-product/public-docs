@@ -6,6 +6,22 @@ group: "Architecture"
 order: 5
 ---
 
+## The three layers
+
+bitHuman is one portable engine with thin language bindings on top and apps on top of that. Everything below reads the same [`.imx` model file](/concepts/avatars-imx) and produces byte-equivalent, lip-synced visual frames — on an iPhone, a Raspberry Pi, a MacBook, a browser, or a cloud GPU.
+
+<div class="bh-stack">
+  <div class="bh-layer"><div class="bh-l-title">Apps &amp; tools <span class="bh-tag">L3</span></div><div class="bh-l-sub">bitHuman CLI · reference apps (Mac, iPad, iPhone, Flutter) · LiveKit transport for WebRTC</div></div>
+  <div class="bh-layer"><div class="bh-l-title">Language SDKs <span class="bh-tag">L2</span></div><div class="bh-l-sub">Python · Swift · Kotlin · JS — thin, idiomatic bindings over the same engine</div></div>
+  <div class="bh-layer bh-accent"><div class="bh-l-title">libessence — the engine <span class="bh-tag">L1</span></div><div class="bh-l-sub">Portable C++ avatar renderer behind a stable C ABI. Statically linked into every SDK. macOS · iOS · Android · Linux · Windows · WASM</div></div>
+</div>
+
+Every layer drives the same pipeline — audio goes in, lip-synced visual frames come out at a steady 25 FPS:
+
+<div class="bh-flow"><span class="bh-node">16 kHz mono audio</span><span class="bh-sep">→</span><span class="bh-node">libessence engine</span><span class="bh-sep">→</span><span class="bh-node">25 FPS visual frames</span></div>
+
+Most developers integrate at the SDK layer (L2) — you never need to know what's underneath. The engine is statically linked into each SDK distribution, so there are no extra system libraries to install.
+
 ## What runs where
 
 bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in each language. All SDKs and the CLI read the same [`.imx` model file](/concepts/avatars-imx) and produce byte-equivalent frames. Third-party dependencies are bundled inside each distribution — your app's manifest only needs the bithuman dependency, never a transitive `onnxruntime` / `webp` / `livekit-server`.

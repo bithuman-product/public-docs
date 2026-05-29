@@ -1,0 +1,35 @@
+---
+import Hub from "../../components/Hub.astro";
+
+const groups = [
+  {
+    label: "Get started",
+    featured: true,
+    cards: [
+      { title: "Which SDK should I use?", desc: "On-device vs cloud, per-platform support, and the status of each binding.", href: "/sdk/overview" },
+      { title: "Python", desc: "pip install bithuman — the GA on-device runtime + cloud client.", href: "/sdk/python", badge: "GA" },
+    ],
+  },
+  {
+    label: "Languages",
+    cards: [
+      { title: "Swift (Apple)", desc: "iOS, iPadOS, macOS via SwiftPM. On-device, Apple Silicon.", href: "/sdk/swift", badge: "GA" },
+      { title: "Android (Kotlin)", desc: "On-device avatars on Android via Gradle.", href: "/sdk/android", badge: "Beta" },
+      { title: "JavaScript / TypeScript", desc: "Cloud client over LiveKit for web and Node.", href: "/sdk/javascript", badge: "Preview" },
+    ],
+  },
+  {
+    label: "Real-time",
+    cards: [
+      { title: "LiveKit transport", desc: "Connect an Apple app to a served or cloud agent — Session & Agent API.", href: "/sdk/livekit" },
+    ],
+  },
+];
+---
+<Hub
+  eyebrow="Apps SDK"
+  title="Apps SDK"
+  tagline="Embed lifelike, realtime visual agents natively in your app — on-device or over the cloud — from Python, Apple, Android, or the browser."
+  ctas={[{ label: "Which SDK?", href: "/sdk/overview" }, { label: "Browse showcase", href: "/showcase", variant: "secondary" }]}
+  groups={groups}
+/>

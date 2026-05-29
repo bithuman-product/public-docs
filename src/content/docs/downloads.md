@@ -135,7 +135,22 @@ Artifacts with **matching ABI** are interoperable even if their headline version
 
 ## Device and platform support
 
-Two avatar models, different hardware floors. For a side-by-side feature comparison, see [models](/concepts/models).
+Two avatar models, different hardware floors. For a side-by-side feature comparison, see [models](/concepts/models). At a glance, by device:
+
+| Device | Essence? | Expression? | SDKs |
+|---|---|---|---|
+| **iPhone 17 Pro+** | Yes | No (use Essence) | Swift |
+| **iPad Pro M4+** | Yes | Yes | Swift |
+| **Mac (Apple Silicon)** | Yes | Yes (M3+) | Swift, Python, CLI |
+| **Mac (Intel)** | Pending in 2.3 | No | — (use 1.x wheel) |
+| **Android (`arm64-v8a`)** | Yes | No | Kotlin |
+| **Browser (WASM)** | Yes | No | JavaScript / TS |
+| **Linux x86_64 / aarch64** | Yes (CPU) | Yes (NVIDIA GPU) | Python, CLI |
+| **Windows** | Pending (WSL2 today) | No | — |
+| **Raspberry Pi 4B / 5** | Near real-time | No | Python, CLI |
+| **bitHuman Cloud** | Managed | Managed | JS / TS, LiveKit |
+
+All hosts that run a given model produce identical, lip-synced visual frames — your device choice is about form factor, memory, and latency budget, not visual quality. The detailed per-model hardware floors follow.
 
 ### Essence
 

@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import ShowcaseCarousel from "../../components/ShowcaseCarousel.astro";
+import ShowcaseTheater from "../../components/ShowcaseTheater.astro";
 import data from "../../data/showcase-agents.json";
 
 const agents = [...data.expression, ...data.essence];
@@ -21,7 +21,7 @@ const agents = [...data.expression, ...data.essence];
 
   <section class="section">
     <div class="container">
-      <ShowcaseCarousel agents={agents} filters={true} />
+      <ShowcaseTheater agents={agents} filters={true} />
     </div>
   </section>
 </Base>

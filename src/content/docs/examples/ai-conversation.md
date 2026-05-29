@@ -6,74 +6,79 @@ group: "Examples"
 order: 15
 ---
 
-## Overview
+## Prerequisites
 
-A full voice-driven conversation: your mic feeds OpenAI Realtime, the AI's spoken reply drives a bitHuman avatar that lip-syncs in real time. Runs locally — no LiveKit server, no browser, no extra infrastructure.
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
+- An `OPENAI_API_KEY` (the brain) — from [openai.com](https://openai.com).
+- Python 3.10+ in a virtualenv. The example's `requirements.txt` pulls everything (the SDK ships no OpenCV; the display window needs it):
 
-## Quick start
-
-1. **Get accounts.**
-   - **bitHuman** — [www.bithuman.ai](https://www.bithuman.ai)
-   - **OpenAI** — [openai.com](https://openai.com)
-2. **Set environment.**
-   ```bash
-   export BITHUMAN_API_SECRET="your_secret"
-   export OPENAI_API_KEY="your_openai_key"
-   ```
-3. **Get the code and install deps.** Use a virtualenv — the example's `requirements.txt` pulls everything it needs (the SDK itself ships no OpenCV; the display window does).
-   ```bash
-   git clone https://github.com/bithuman-product/bithuman-sdk-public.git
-   cd bithuman-sdk-public/Examples/python/local-essence
-   python3 -m venv .venv && source .venv/bin/activate
-   pip install -r requirements.txt        # bithuman, openai, opencv, …
-   ```
-4. **Run.** You need an avatar `.imx`. Easiest: run `bithuman pull modern-court-jester` once (caches to `~/.cache/bithuman/showcase/modern-court-jester.imx`), or download one from [Explore](https://www.bithuman.ai/#explore).
-   ```bash
-   python conversation.py --model ~/.cache/bithuman/showcase/modern-court-jester.imx
-   ```
-   Speak into your mic. The AI responds, the avatar lip-syncs in real time. Press `Q` to quit. [View source on GitHub](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/Examples/python/local-essence/conversation.py).
-
-## What it does
-
-1. Captures audio from your microphone via `sounddevice`.
-2. Streams it to the **OpenAI Realtime API** for AI conversation.
-3. Pipes the AI's spoken reply into the bitHuman runtime.
-4. Avatar lip-syncs and appears in an OpenCV window.
-
-No LiveKit, no browser, no server-side WebRTC — everything runs on your machine. The audio path under the hood is the standard [push_audio / flush / run streaming contract](/concepts/audio-streaming).
-
-## Customize the personality
-
-```python
-agent = Agent(
-    instructions=(
-        "You are a helpful customer-service assistant. "
-        "Be friendly, professional, and solve problems quickly."
-    )
-)
+```bash
+git clone https://github.com/bithuman-product/bithuman-sdk-public.git
+cd bithuman-sdk-public/Examples/python/local-essence
+python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 ```
 
-Suggestions:
+- An avatar `.imx` model and a working mic. Get a model with `bithuman pull modern-court-jester` (caches to `~/.cache/bithuman/showcase/modern-court-jester.imx`) or from [Explore](https://www.bithuman.ai/#explore).
+- Everything runs locally — no LiveKit server, no browser, no server-side WebRTC.
 
-- **Tech support** — "You are a patient tech expert who explains things simply."
-- **Sales** — "You are an enthusiastic product advisor."
-- **Teacher** — "You are an encouraging tutor who makes learning fun."
+## Run it
 
-## Common issues
+1. Set both keys in the same shell (or copy `.env.example` to `.env` and fill it in).
 
-| Problem | Fix |
-|---|---|
-| Script won't start | Check `BITHUMAN_API_SECRET` and `OPENAI_API_KEY` are both set in the same shell. |
-| No mic input | Grant the terminal mic permission in System Settings → Privacy & Security → Microphone. |
-| Avatar shows but doesn't lip-sync | Check the WAV / mic format — `conversation.py` expects 24 kHz PCM from OpenAI Realtime. |
-| OpenAI rate limit | Your OpenAI account is throttled. Wait, retry, or upgrade your tier. |
+```bash
+export BITHUMAN_API_SECRET="your_secret" OPENAI_API_KEY="sk-..."
+```
 
-## Want it in the browser?
+2. Run the conversation, pointing at your model. Speak into your mic; press `Q` in the window to quit.
 
-For a full web-based setup with LiveKit + a browser UI, run the [Docker Compose stack](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-essence) and open `http://localhost:4202`.
+```bash
+python conversation.py --model ~/.cache/bithuman/showcase/modern-court-jester.imx
+```
+
+## What you'll see
+
+An OpenCV window opens with the avatar. Your mic streams to the **OpenAI Realtime API**, the AI's spoken reply pipes into the bitHuman runtime, and the avatar lip-syncs the answer in real time while you hear it through your speakers.
+
+## Full code
+
+The pipeline: mic → OpenAI Realtime (24 kHz PCM16) → `push_audio`/`flush` into the runtime → lip-synced frames + audio out. The runnable script (`conversation.py`) wires up the mic, speaker, and OpenCV window; the heart of it is below.
+
+```python
+# Configure the OpenAI Realtime session, then bridge its audio into bitHuman.
+async with client.beta.realtime.connect(model="gpt-4o-mini-realtime-preview") as conn:
+    await conn.session.update(session={
+        "instructions": "You are a friendly AI assistant. Keep responses concise.",
+        "input_audio_format": "pcm16",
+        "output_audio_format": "pcm16",
+        "turn_detection": {"type": "server_vad"},
+        "voice": "coral",
+    })
+
+    async for event in conn:
+        if event.type == "response.audio.delta":
+            # OpenAI speaks at 24 kHz — push straight into the avatar runtime.
+            await runtime.push_audio(base64.b64decode(event.delta), 24000, last_chunk=False)
+        elif event.type == "response.audio.done":
+            await runtime.flush()
+
+# Meanwhile, the render loop draws every frame and plays its synced audio:
+async for frame in runtime.run():
+    if frame.has_image:
+        cv2.imshow("bitHuman", frame.bgr_image)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+    if frame.audio_chunk:
+        speaker_buf.extend(frame.audio_chunk.array.tobytes())
+```
+
+Customize the personality by editing the `instructions` string — e.g. "You are a patient tech expert who explains things simply." or "You are an enthusiastic product advisor."
+
+Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence)
+
+> **Note** **Common issues.** Script won't start → both keys set in the same shell? No mic input → grant the terminal mic permission (macOS: System Settings → Privacy & Security → Microphone). Avatar shows but doesn't lip-sync → OpenAI Realtime audio is 24 kHz PCM16; pass `24000` to `push_audio`. **Want it in the browser instead?** Run the [cloud-essence Docker Compose stack](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-essence) and open `http://localhost:4202`.
 
 ## Next steps
 
 - [Python SDK](/sdk/python) — full API surface, LiveKit voice agents, troubleshooting.
-- [macos-voice project](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — fully on-device voice agent: speech never leaves your Mac.
-- [Audio streaming](/concepts/audio-streaming) — the streaming contract this example is built on.
+- [Audio streaming](/concepts/audio-streaming) — the `push_audio` / `flush` / `run` contract this example is built on.
+- [macos-voice example](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — fully on-device voice agent: speech never leaves your Mac.

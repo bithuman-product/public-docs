@@ -6,22 +6,23 @@ group: "Examples"
 order: 14
 ---
 
-## Overview
-
-This page is the minimum runnable Android program that drives the bitHuman avatar runtime on-device. Real-time lip-sync compositing on `arm64-v8a` phones and tablets, no cloud inference. Compatible with Android 10+ (API 29+).
-
-> **Note** The Android / Kotlin SDK is in **Beta**. The API surface shown here is stable enough to build on, but expect minor changes ahead of GA.
-
 ## Prerequisites
 
-- **Android Studio** with NDK 28.0.13004108, compile SDK 35.
-- An `arm64-v8a` test device (physical phone or arm64 emulator image).
-- A bitHuman API secret exported via env var or read by your app at startup. Sign in at [www.bithuman.ai → Developer → API Keys](https://www.bithuman.ai/#developer).
-- A `.imx` model file pushed to the device. The sample app uses `getExternalFilesDir(null)`; adapt to your storage scheme as needed.
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication). Read it from env or your app config at startup; never hardcode it.
+- **Android Studio** with NDK 28.0.13004108 and compile SDK 35. Add the dependency:
 
-## 1. Add the dependency
+```kotlin
+implementation("ai.bithuman:sdk:1.17.1")   // Maven Central
+```
 
-`app/build.gradle.kts`:
+- Device floor: an `arm64-v8a` device (physical phone or arm64 emulator image), **Android 10+ (API 29+)**. Inference is fully on-device — no cloud round-trip.
+- A `.imx` model file pushed to the device (the snippet reads from `getExternalFilesDir(null)`).
+
+> **Note** The Android / Kotlin SDK is in **Beta**. The API surface below is stable enough to build on, but expect minor changes ahead of GA. There is no standalone Android project under `Examples/` yet — this snippet is the canonical starting point; track the [Android SDK](/sdk/android) page for updates.
+
+## Run it
+
+1. In `app/build.gradle.kts`, restrict to `arm64-v8a` and add the dependency.
 
 ```kotlin
 android {
@@ -30,15 +31,25 @@ android {
         minSdk = 29
     }
 }
-
 dependencies {
     implementation("ai.bithuman:sdk:1.17.1")   // Maven Central
 }
 ```
 
-## 2. Compose frames into an `ImageView`
+2. Push your model and audio onto the device's app-private external dir (or adapt the paths in the code).
 
-The canonical snippet:
+```bash
+adb push sample-avatar.imx /sdcard/Android/data/com.example.bithumanhello/files/
+adb push speech.wav        /sdcard/Android/data/com.example.bithumanhello/files/
+```
+
+3. Drop the [Full code](#full-code) into `MainActivity.kt`, then Build and Run on the device.
+
+## What you'll see
+
+A full-screen `ImageView` shows the avatar lip-syncing to `speech.wav` — 16 kHz mono PCM in, lip-synced `Bitmap`s out at 25 fps, rendered entirely on the phone with no network inference.
+
+## Full code
 
 ```kotlin
 // MainActivity.kt — load model, compose frames, display them
@@ -72,12 +83,10 @@ class MainActivity : Activity() {
 }
 ```
 
-That's the whole loop: 16 kHz mono PCM in, lip-synced `Bitmap`s out at 25 fps, fully on-device.
+Full source: [Android SDK reference](/sdk/android) — no standalone `Examples/` project yet; the SDK page carries the canonical streaming snippets.
 
-## Where to go next
+## Next steps
 
-- [Kotlin SDK](/sdk/kotlin) — full walkthrough: API surface, streaming, `Fixture` + `Runtime`.
+- [Android SDK](/sdk/android) — full walkthrough: API surface, streaming, `Fixture` + `Runtime`.
 - [Audio streaming](/concepts/audio-streaming) — the streaming contract that backs `composeFromFile`.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.
-
-> **Note** A Flutter reference app (one Dart codebase across macOS, iOS, and Android) lives in the `bithuman-apps` repo. It is a reference app, not a published code SDK — see the [examples index](/examples) for where it fits.

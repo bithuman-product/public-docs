@@ -6,29 +6,53 @@ group: "Examples"
 order: 11
 ---
 
-## Overview
-
-The smallest runnable Python program that drives a bitHuman avatar. Audio in, lip-synced video frames out, all on-device. Runs on macOS arm64, Linux x86_64, and Linux aarch64.
-
-The streaming contract — `push_audio` → `flush` → `run` — is documented in full in [Audio streaming](/concepts/audio-streaming). This page is the smallest end-to-end program built on it.
-
 ## Prerequisites
 
-- Python 3.10+ (3.10–3.14 wheels). Use a virtualenv.
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer).
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
+- Python 3.10–3.14 (use a virtualenv). Install the library:
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
 pip install bithuman==2.3.0 soundfile
+```
+
+- Runs on macOS arm64 (M3+), Linux x86_64, and Linux aarch64 — fully on-device.
+- Two input files the script reads by name:
+  - **`avatar.imx`** — an avatar model. Run `bithuman pull modern-court-jester` once (the [CLI](/cli) caches it at `~/.cache/bithuman/showcase/modern-court-jester.imx`), then copy it next to your script as `avatar.imx`. Or download one from [Explore](https://www.bithuman.ai/#explore).
+  - **`speech.wav`** — any speech clip from any TTS (ElevenLabs, OpenAI, your own recording, …).
+
+## Run it
+
+1. Set your API secret in the same shell you'll run from.
+
+```bash
 export BITHUMAN_API_SECRET=your_secret
 ```
 
-You also need two input files the script below references by name:
+2. Save the [Full code](#full-code) below as `hello.py`, with `avatar.imx` and `speech.wav` beside it.
 
-- **`avatar.imx`** — an avatar model. Download one from [Explore](https://www.bithuman.ai/#explore), or run `bithuman pull modern-court-jester` once (the [CLI](/cli) caches it at `~/.cache/bithuman/showcase/modern-court-jester.imx` — copy it next to your script as `avatar.imx`).
-- **`speech.wav`** — any speech clip. Bring one from any TTS (ElevenLabs, OpenAI, the local-mode `SupertonicTTS` plugin, your own recording, …).
+3. Run it.
 
-## Minimal example
+```bash
+python hello.py
+```
+
+## What you'll see
+
+The program **prints nothing and exits 0**. It renders frames into `frame.bgr_image` but doesn't display them — that's the minimal loop, by design. To actually *watch* the avatar (OpenCV window + speaker playback), run the canonical example:
+
+```bash
+git clone https://github.com/bithuman-product/bithuman-sdk-public.git
+cd bithuman-sdk-public/Examples/python/local-essence
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt      # incl. opencv — not bundled with the SDK
+python quickstart.py \
+  --model ~/.cache/bithuman/showcase/modern-court-jester.imx \
+  --audio-file speech.wav            # this example dir ships a speech.wav
+```
+
+The streaming contract — `push_audio` → `flush` → `run` — is documented in full in [Audio streaming](/concepts/audio-streaming).
+
+## Full code
 
 ```python
 # hello.py — minimal avatar render loop
@@ -84,27 +108,10 @@ async def main():
 asyncio.run(main())
 ```
 
-Run it:
+Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence)
 
-```bash
-python hello.py
-```
+## Next steps
 
-This program **prints nothing and exits 0** — it renders frames into `frame.bgr_image` but doesn't display them. That's expected; it's the minimal loop. To actually *see* the avatar, use the canonical example, which adds an OpenCV window + speaker playback:
-
-```bash
-git clone https://github.com/bithuman-product/bithuman-sdk-public.git
-cd bithuman-sdk-public/Examples/python/local-essence
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt      # incl. opencv — not bundled with the SDK
-python quickstart.py \
-  --model ~/.cache/bithuman/showcase/modern-court-jester.imx \
-  --audio-file speech.wav            # this example dir ships a speech.wav
-```
-
-## Where to go next
-
-- [local-essence project](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence) — the same loop with OpenCV display and speaker playback wired up.
 - [Audio streaming](/concepts/audio-streaming) — the canonical `push_audio` / `flush` / `run` contract in depth.
 - [Python SDK](/sdk/python) — full API surface, LiveKit agents, troubleshooting.
 - [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice chat driving the avatar.

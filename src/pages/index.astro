@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
-import ShowcaseCarousel from "../components/ShowcaseCarousel.astro";
+import ShowcaseTheater from "../components/ShowcaseTheater.astro";
 import showcaseData from "../data/showcase-agents.json";
 
 const featuredAgents = [
@@ -81,13 +81,8 @@ const examples = [
   <!-- ===== HERO (text-led, OpenAI-style) ===== -->
   <section class="hero">
     <div class="container">
-      <h1 data-reveal>Realtime visual agents,<br />on every device.</h1>
-      <p class="sub" data-reveal>
-        bitHuman is the most cost-effective way to build lifelike, lip-synced AI
-        agents — running on-device from a Raspberry Pi to an iPhone to the
-        browser. Best-in-class quality, up to <strong>10× cheaper</strong> than
-        the alternatives.
-      </p>
+      <h1 data-reveal>Realtime visual agents</h1>
+      <p class="sub" data-reveal>Lifelike avatars that run on any device — best-in-class quality, up to <strong>10× cheaper</strong>.</p>
       <div class="hero-cta" data-reveal>
         <Button href="/api/quickstart" size="lg">Start building</Button>
         <Button href="/showcase" variant="secondary" size="lg">Browse showcase</Button>
@@ -178,7 +173,7 @@ const examples = [
         <div><span class="eyebrow">Showcase</span><h2>Talk to a live agent</h2><p>Swipe through real agents — tap <strong>Try live</strong> to start a conversation.</p></div>
         <Button href="/showcase" variant="secondary">See all</Button>
       </div>
-      <div data-reveal><ShowcaseCarousel agents={featuredAgents} /></div>
+      <div data-reveal><ShowcaseTheater agents={featuredAgents} /></div>
     </div>
   </section>
 
@@ -252,11 +247,11 @@ const examples = [
 </Base>
 
 <style>
-  .hero { padding-block: var(--space-12) var(--space-8); }
-  .hero h1 { font-size: clamp(2.7rem, 6vw, var(--fh-4xl)); max-width: 16ch; }
-  .hero .sub { margin-top: var(--space-5); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
-  .hero-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
-  .feature { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-8); padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .hero { padding-block: var(--space-12) var(--space-8); text-align: center; }
+  .hero h1 { font-size: clamp(2.8rem, 7vw, var(--fh-4xl)); }
+  .hero .sub { margin: var(--space-5) auto 0; font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 50ch; }
+  .hero-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; justify-content: center; }
+  .feature { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-8) auto 0; max-width: 760px; text-align: left; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
   .feature:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
   .feature-badge { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); }
   .feature-body { display: flex; flex-direction: column; gap: 0.2rem; }

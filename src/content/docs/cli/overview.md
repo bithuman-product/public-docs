@@ -3,7 +3,8 @@ title: "bitHuman CLI"
 description: "One Rust binary that runs the whole avatar stack — live browser avatar, offline render, model introspection — from a single command."
 section: cli
 group: "Get started"
-order: 1
+order: 0
+label: "Overview"
 ---
 
 ## One binary, the same engine as the SDKs

@@ -3,7 +3,8 @@ title: "SDKs"
 description: "Embed a real-time, lip-synced bitHuman avatar natively in your app — on-device or over the cloud — from Python, Apple, Android, or the browser."
 section: sdk
 group: "Overview"
-order: 1
+order: 0
+label: "Overview"
 ---
 
 ## One engine, one API, every language
@@ -25,15 +26,16 @@ it rather than repeating it.
 
 ## Which SDK should I use?
 
-- **[Python](/sdk/python)** — backend services, AI agents, batch render jobs,
-  edge boxes. The most popular surface. **GA.**
-- **[Swift / Apple](/sdk/swift)** — native Mac, iPad, and iPhone apps, fully
-  on-device. **GA.**
-- **[Android (Kotlin)](/sdk/android)** — native Android apps, on-device. **Beta.**
-- **[JavaScript / TypeScript](/sdk/javascript)** — browser and Node clients that
-  talk to a served or cloud avatar. **Preview.**
-- **[LiveKit (Apple + Python)](/sdk/livekit)** — connect a native app to a
-  server-hosted avatar over WebRTC, or deploy a Python voice agent with a face.
+Match your target platform to a binding. All four ship visual, lip-synced
+avatars; the difference is where they run and how mature each surface is.
+
+| Platform / target | SDK | On-device / cloud | Status |
+|---|---|---|---|
+| Backend, AI agents, batch render, edge boxes | **[Python](/sdk/python)** | On-device | **GA** |
+| Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **GA** |
+| Native Android apps | **[Android (Kotlin)](/sdk/android)** | On-device | **Beta** |
+| Browser & Node web clients | **[JavaScript / TS](/sdk/javascript)** | Cloud client | **Preview** |
+| Native app ↔ server avatar over WebRTC, or Python voice agent with a face | **[LiveKit (Apple + Python)](/sdk/livekit)** | Cloud / hybrid | Built on the GA bindings |
 
 If you are not sure, start with the [Python SDK](/sdk/python) or the no-code
 [CLI](/cli).
@@ -41,6 +43,11 @@ If you are not sure, start with the [Python SDK](/sdk/python) or the no-code
 ## On-device vs cloud
 
 bitHuman runs in two topologies. The same `.imx` and the same API work in both.
+
+<div class="bh-cols">
+  <div class="bh-cell"><strong>On-device</strong><br/>Runs on the user's machine, phone, or edge box. Private, low-latency, offline-capable. Python, Swift, Kotlin.</div>
+  <div class="bh-cell"><strong>Cloud</strong><br/>We host the GPU. Zero ops, ideal for web clients and sharing one avatar. JavaScript/TS, LiveKit.</div>
+</div>
 
 | | On-device | Cloud |
 |---|---|---|

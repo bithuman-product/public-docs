@@ -107,6 +107,24 @@ const ogImage = new URL(image, site).href;
       window.__bhToggleMenu = function () {
         document.documentElement.classList.toggle("nav-open");
       };
+      // Copy button on every prose code block
+      (function () {
+        document.querySelectorAll(".prose pre").forEach(function (pre) {
+          var code = pre.querySelector("code");
+          var text = (code ? code.innerText : pre.innerText);
+          var btn = document.createElement("button");
+          btn.className = "code-copy";
+          btn.type = "button";
+          btn.textContent = "Copy";
+          btn.addEventListener("click", function () {
+            navigator.clipboard.writeText(text).then(function () {
+              btn.textContent = "Copied";
+              setTimeout(function () { btn.textContent = "Copy"; }, 1400);
+            }).catch(function () {});
+          });
+          pre.appendChild(btn);
+        });
+      })();
     </script>
 
     <style>

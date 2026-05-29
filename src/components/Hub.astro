@@ -1,0 +1,82 @@
+---
+import Base from "../layouts/Base.astro";
+import Button from "./Button.astro";
+
+interface Card { title: string; desc: string; href: string; badge?: string; external?: boolean; }
+interface Group { label: string; featured?: boolean; cards: Card[]; }
+interface CTA { label: string; href: string; variant?: "primary" | "secondary"; external?: boolean; }
+interface Props {
+  eyebrow: string;
+  title: string;
+  tagline: string;
+  ctas?: CTA[];
+  groups: Group[];
+}
+const { eyebrow, title, tagline, ctas = [], groups } = Astro.props;
+---
+
+<Base title={`${title} — bitHuman docs`} description={tagline}>
+  <section class="hub-hero">
+    <div class="container">
+      <span class="eyebrow">{eyebrow}</span>
+      <h1>{title}</h1>
+      <p class="tagline">{tagline}</p>
+      {
+        ctas.length > 0 && (
+          <div class="hub-cta">
+            {ctas.map((c) => (
+              <Button href={c.href} variant={c.variant ?? "primary"} external={c.external}>{c.label}</Button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    groups.map((g) => (
+      <section class="hub-group">
+        <div class="container">
+          <h2 class="hub-glabel">{g.label}</h2>
+          <div class:list={["hub-cards", { featured: g.featured }]}>
+            {g.cards.map((c) => (
+              <a class="hub-card" href={c.href} target={c.external ? "_blank" : undefined} rel={c.external ? "noopener" : undefined}>
+                <div class="hc-top">
+                  <h3>{c.title}</h3>
+                  {c.badge && <span class="pill hc-badge">{c.badge}</span>}
+                </div>
+                <p>{c.desc}</p>
+                <span class="hc-go">{c.external ? "Open ↗" : "Read"} <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7h7M7 4l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .hub-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
+  .hub-hero h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
+  .hub-hero .tagline { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
+  .hub-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
+
+  .hub-group { padding-block: var(--space-8) 0; }
+  .hub-group:last-of-type { padding-bottom: var(--space-10); }
+  .hub-glabel { font-size: var(--ft-sm); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-4); font-weight: var(--fw-medium); }
+  .hub-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .hub-cards.featured { grid-template-columns: repeat(2, 1fr); }
+  .hub-card { display: flex; flex-direction: column; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .hub-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .featured .hub-card { padding: var(--space-6); }
+  .hc-top { display: flex; align-items: center; gap: var(--space-3); }
+  .hc-top h3 { font-size: var(--ft-lg); }
+  .featured .hc-top h3 { font-size: var(--fh-md); }
+  .hc-badge { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
+  .hub-card p { margin: var(--space-2) 0 var(--space-4); color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
+  .hc-go { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
+  .hub-card:hover .hc-go svg { transform: translateX(3px); transition: transform var(--t-fast) var(--ease); }
+
+  @media (max-width: 900px) { .hub-cards, .hub-cards.featured { grid-template-columns: 1fr; } }
+</style>

@@ -6,87 +6,86 @@ group: "Examples"
 order: 10
 ---
 
-## Overview
-
-The fastest way to try a real-time on-device avatar end-to-end. No code: install the `bithuman` CLI, check your host, and open a browser-served avatar on `localhost`. Audio is captured from your mic; lip-synced frames stream back over WebRTC.
-
 ## Prerequisites
 
-- macOS 26+ (Apple Silicon M3+) **or** Linux x86_64 / aarch64.
-- ~3 GB free disk for the showcase avatar, ~7 GB for the local brain stack.
-- A bitHuman API key (free tier works). Sign in at [www.bithuman.ai → Developer → API Keys](https://www.bithuman.ai/#developer).
-- Optional: `OPENAI_API_KEY` for the cloud brain. Skip the key and use `BITHUMAN_LOCAL=1` instead for the fully on-device brain.
-
-## 1. Install
-
-The CLI ships seven subcommands — `init`, `run`, `render`, `info`, `pull`, `list`, and `doctor`. See the [CLI reference](/cli) for the full surface.
-
-**macOS — Homebrew (recommended).** Pulls onnxruntime / hdf5 / jpeg-turbo / webp / ffmpeg.
+- A bitHuman API secret (free tier works) — get one at [Developer → API Keys](https://www.bithuman.ai/#developer). See [Authentication](/api/authentication) for how the key is used.
+- Install the CLI (one of):
 
 ```bash
-brew install bithuman-product/bithuman/bithuman-cli
+brew install bithuman-product/bithuman/bithuman-cli   # macOS, recommended
 ```
 
-**macOS / Linux — universal one-liner.**
+- Device floor: macOS 26+ on Apple Silicon (M3+) **or** Linux x86_64 / aarch64. ~3 GB free disk for the showcase avatar; ~5 GB more for the on-device brain.
+- Optional: an `OPENAI_API_KEY` for the cloud brain — or skip it entirely with `BITHUMAN_LOCAL=1` for a fully on-device, offline brain.
 
-```bash
-curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
-```
+> **Note** No Homebrew? Use the universal one-liner `curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh`, or `pip install bithuman-cli` in any Python 3.10–3.14 env. All three install the same Rust binary.
 
-**Any Python env (3.10–3.14).**
+## Run it
 
-```bash
-pip install bithuman-cli==2.3.0
-```
-
-Then sanity-check your host setup and API key presence:
+1. Set your API secret and sanity-check the host. `doctor` validates arch, OS, RAM, disk, the key, and brain availability — re-run it any time you change env vars.
 
 ```bash
 export BITHUMAN_API_SECRET=your_api_secret
 bithuman doctor
 ```
 
-`doctor` is idempotent — re-run it any time you change env vars or move the sample avatar.
-
-## 2. Pull a showcase avatar
+2. Download a showcase avatar into the local cache.
 
 ```bash
-bithuman list                          # browse the showcase catalog
-bithuman pull modern-court-jester      # downloads to ~/.cache/bithuman/showcase/
+bithuman pull modern-court-jester
 ```
 
-## 3. Browser-served voice chat (cloud brain)
+3. Start a browser-served voice chat with the cloud brain. Open the printed `http://127.0.0.1:8088/<CODE>` URL, grant mic permission, and talk.
 
 ```bash
 export OPENAI_API_KEY=sk-...
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-# → open the printed http://127.0.0.1:8088/<CODE> URL, grant mic, talk
 ```
 
-## 4. Browser-served voice chat (fully on-device brain)
+4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~5 GB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline.
 
 ```bash
 pip install 'bithuman-cli[local]'
 BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-First run downloads ~860 MB of brain models from HuggingFace, ~90 s once. Subsequent runs warm-load in under a second.
+## What you'll see
 
-## 5. Offline batch render
+A browser tab opens to a live, lip-synced avatar on `localhost`. Speak into your mic and the avatar answers and lip-syncs the reply in real time over WebRTC — all rendered on your own device.
+
+## Full code
+
+There is no code to write — the whole demo is four commands. The complete, copy-paste version:
 
 ```bash
-# Lipsync a WAV you already have into an MP4 — no browser, no brain.
+# 1. Install (macOS)
+brew install bithuman-product/bithuman/bithuman-cli
+
+# 2. Auth + host check
+export BITHUMAN_API_SECRET=your_api_secret
+bithuman doctor
+
+# 3. Pull a showcase avatar
+bithuman pull modern-court-jester
+
+# 4. Live voice chat in the browser (cloud brain)
+export OPENAI_API_KEY=sk-...
+bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
+```
+
+Want an offline MP4 instead of a live session? Lip-sync a WAV you already have:
+
+```bash
 bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
   --audio speech.wav --output rendered.mp4
 ```
 
-Default canvas is 1280×720 (letterboxed for non-matching fixture aspects). Use `--quality LOW|MEDIUM|HIGH` and `--fps` to tune. Stream raw BGR24 frames to stdout by passing `--output -`.
+> **Note** `bithuman render` ships on **Linux only** as of bithuman 2.3.0 / libessence ABI v7 — on macOS the encoder returns "not implemented". Workarounds: render in a manylinux Docker container, or use `bithuman run` and screen-record the browser tab. macOS render support is queued.
 
-> **Note** **macOS limitation.** As of bithuman 2.3.0 / libessence ABI v7, `bithuman render` ships on Linux only. On macOS the encoder returns "not implemented". Workarounds: run on Linux (a manylinux Docker container works), or use `bithuman run` and screen-record the browser tab. macOS support is queued.
+Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/cli)
 
-## Where to go next
+## Next steps
 
-- [CLI reference](/cli) — every subcommand, cache layout, exit codes.
+- [CLI reference](/cli) — every subcommand, cache layout, and flags.
 - [Python — Hello, avatar](/examples/python-hello) — the same engine, in ~20 lines of code.
-- [Swift SDK](/sdk/swift) — embed the same engine in a Mac / iPad / iPhone app.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.

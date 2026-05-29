@@ -97,3 +97,44 @@
   border: 1px solid var(--color-border);
   margin: var(--space-5) 0;
 }
+
+/* copy button injected on every code block (see Base.astro) */
+.prose pre { position: relative; }
+.prose .code-copy {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.5rem;
+  font-size: var(--ft-xs);
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-sm);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  cursor: pointer;
+}
+.prose pre:hover .code-copy { opacity: 1; }
+.prose .code-copy:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+
+/* ---- reusable diagram primitives (used in raw HTML inside Markdown) ---- */
+.bh-stack { display: flex; flex-direction: column; gap: 0.6rem; margin: var(--space-6) 0; }
+.bh-layer {
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  background: var(--color-surface-2);
+  padding: var(--space-4) var(--space-5);
+}
+.bh-layer .bh-l-title { font-weight: var(--fw-bold); display: flex; align-items: center; gap: 0.5rem; }
+.bh-layer .bh-l-sub { color: var(--color-text-secondary); font-size: var(--ft-sm); margin-top: 0.2rem; }
+.bh-layer.bh-accent { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.bh-tag { font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); border: 1px solid var(--color-border); border-radius: var(--r-full); padding: 0.05rem 0.5rem; }
+.bh-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem; }
+.bh-cols .bh-cell { border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface); padding: 0.7rem 0.85rem; font-size: var(--ft-sm); }
+.bh-flow { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: var(--space-5) 0; }
+.bh-flow .bh-node { border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface-2); padding: 0.5rem 0.8rem; font-size: var(--ft-sm); font-weight: var(--fw-medium); }
+.bh-flow .bh-sep { color: var(--color-primary); font-weight: var(--fw-bold); }

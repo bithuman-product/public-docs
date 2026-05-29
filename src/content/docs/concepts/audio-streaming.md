@@ -15,6 +15,10 @@ Every SDK and the runtime use the same shape — audio in, video out:
 
 That's the entire surface area. The same two calls drive both [Essence and Expression](/concepts/models), across Python, Swift, Kotlin, and the CLI.
 
+<div class="bh-flow"><span class="bh-node">push audio</span><span class="bh-sep">→</span><span class="bh-node">engine ticks</span><span class="bh-sep">→</span><span class="bh-node">pull frame</span><span class="bh-sep">→</span><span class="bh-node">render</span></div>
+
+You feed PCM in as fast as it arrives and drain visual frames out on a fixed 25 FPS clock — the engine buffers between the two so your audio source and your render loop never have to stay in lockstep.
+
 ## The minimal Python loop
 
 This is the canonical, copy-pasteable loop. Other pages link here rather than repeating it.

@@ -3,7 +3,8 @@ title: "API Platform"
 description: "REST API for generating avatars, synthesizing voice, driving live sessions, and embedding agents — from any language."
 section: api
 group: "Get started"
-order: 1
+order: 0
+label: "Overview"
 ---
 
 ## What the API does

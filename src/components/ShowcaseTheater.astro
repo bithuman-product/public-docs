@@ -1,0 +1,225 @@
+---
+// Movie-theater showcase: one large agent "screen" at a time on a dark stage.
+// Swipe / arrows / keyboard to move left-right. "Try live" fills the screen with
+// a live, talkable embed (?model=expression|essence from the data); it has a
+// close button AND auto-closes when swiped out of view. Optional fullscreen.
+interface Agent {
+  code: string; name: string; group: string; model: string;
+  kind: string; gender: string; category: string; image: string; embed: string;
+}
+interface Props { agents: Agent[]; filters?: boolean; }
+const { agents, filters = false } = Astro.props;
+---
+
+<div class="theater" data-theater>
+  {
+    filters && (
+      <div class="th-filters" data-th-filters>
+        <div class="th-fg" data-facet="group">
+          <button class="th-chip active" data-val="all">All</button>
+          <button class="th-chip" data-val="expression">Expression</button>
+          <button class="th-chip" data-val="essence">Essence</button>
+        </div>
+        <div class="th-fg" data-facet="kind">
+          <button class="th-chip active" data-val="all">All types</button>
+          <button class="th-chip" data-val="human">People</button>
+          <button class="th-chip" data-val="animal">Animals</button>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="th-stage">
+    <button class="th-arrow prev" data-th-prev aria-label="Previous agent">
+      <svg width="22" height="22" viewBox="0 0 20 20"><path d="M12 4l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div class="th-track" data-th-track>
+      {
+        agents.map((a) => (
+          <div class="th-slide" data-group={a.group} data-kind={a.kind} data-embed={a.embed}>
+            <div class="th-screen">
+              <img src={a.image} alt={a.name} loading="lazy" />
+              <span class="th-badge">{a.group === "expression" ? "Expression" : "Essence"}</span>
+              <button class="th-close" data-th-close aria-label="Close live demo">
+                <svg width="18" height="18" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+              <div class="th-overlay">
+                <h3>{a.name}</h3>
+                <p>{a.category} · {a.kind === "animal" ? "Animal" : "Human"}</p>
+                <button class="th-try" data-th-try><span class="dot"></span> Try live</button>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <button class="th-arrow next" data-th-next aria-label="Next agent">
+      <svg width="22" height="22" viewBox="0 0 20 20"><path d="M8 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div class="th-bar">
+    <span class="th-count" data-th-count>1 / {agents.length}</span>
+    <button class="th-full" data-th-full aria-label="Fullscreen">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Theater mode
+    </button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("[data-theater]").forEach((root) => {
+    const track = root.querySelector("[data-th-track]") as HTMLElement;
+    const stage = root.querySelector(".th-stage") as HTMLElement;
+    const slides = Array.from(root.querySelectorAll(".th-slide")) as HTMLElement[];
+    const counter = root.querySelector("[data-th-count]") as HTMLElement;
+
+    const visible = () => slides.filter((s) => s.style.display !== "none");
+    const openLive = (s: HTMLElement) => {
+      if (s.classList.contains("live")) return;
+      const screen = s.querySelector(".th-screen")!;
+      const f = document.createElement("iframe");
+      f.src = s.dataset.embed!;
+      f.allow = "microphone; camera; autoplay; clipboard-write";
+      f.title = "bitHuman live avatar";
+      f.className = "th-frame";
+      screen.appendChild(f);
+      s.classList.add("live");
+    };
+    const closeLive = (s: HTMLElement) => {
+      s.querySelector(".th-frame")?.remove();
+      s.classList.remove("live");
+    };
+
+    slides.forEach((s) => {
+      s.querySelector("[data-th-try]")?.addEventListener("click", () => openLive(s));
+      s.querySelector("[data-th-close]")?.addEventListener("click", () => closeLive(s));
+    });
+
+    const updateCount = () => {
+      const vis = visible();
+      const w = stage.getBoundingClientRect().width || 1;
+      const idx = Math.round(track.scrollLeft / w);
+      const cur = Math.min(vis.length, Math.max(1, idx + 1));
+      counter.textContent = `${cur} / ${vis.length}`;
+    };
+
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => {
+          const s = e.target as HTMLElement;
+          if (s.classList.contains("live") && e.intersectionRatio < 0.5) closeLive(s);
+        }),
+        { root: track, threshold: [0, 0.5, 0.9] }
+      );
+      slides.forEach((s) => io.observe(s));
+    }
+
+    const stepW = () => stage.getBoundingClientRect().width;
+    const go = (dir: number) => track.scrollBy({ left: dir * stepW(), behavior: "smooth" });
+    root.querySelector("[data-th-prev]")?.addEventListener("click", () => go(-1));
+    root.querySelector("[data-th-next]")?.addEventListener("click", () => go(1));
+    track.addEventListener("scroll", () => { window.requestAnimationFrame(updateCount); }, { passive: true });
+
+    // keyboard when the stage is hovered/focused
+    stage.tabIndex = 0;
+    stage.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
+    });
+
+    // fullscreen (theater mode)
+    root.querySelector("[data-th-full]")?.addEventListener("click", () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else (stage as any).requestFullscreen?.();
+    });
+
+    // filters
+    const bar = root.querySelector("[data-th-filters]");
+    if (bar) {
+      const state: Record<string, string> = { group: "all", kind: "all" };
+      bar.querySelectorAll(".th-chip").forEach((chip) =>
+        chip.addEventListener("click", () => {
+          const facet = (chip.closest(".th-fg") as HTMLElement).dataset.facet!;
+          state[facet] = (chip as HTMLElement).dataset.val!;
+          bar.querySelectorAll(`.th-fg[data-facet="${facet}"] .th-chip`).forEach((c) =>
+            c.classList.toggle("active", c === chip)
+          );
+          slides.forEach((s) => {
+            const ok =
+              (state.group === "all" || s.dataset.group === state.group) &&
+              (state.kind === "all" || s.dataset.kind === state.kind);
+            s.style.display = ok ? "" : "none";
+            if (!ok) closeLive(s);
+          });
+          track.scrollTo({ left: 0 });
+          updateCount();
+        })
+      );
+    }
+    updateCount();
+  });
+</script>
+
+<style>
+  .theater { width: 100%; }
+  .th-filters { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-5); justify-content: center; }
+  .th-fg { display: flex; gap: 0.3rem; }
+  .th-chip { padding: 0.35rem 0.85rem; border-radius: var(--r-full); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-secondary); font-size: var(--ft-sm); font-weight: var(--fw-medium); transition: all var(--t-fast) var(--ease); }
+  .th-chip:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  .th-chip.active { background: var(--color-text); color: var(--color-bg); border-color: transparent; }
+
+  .th-stage { position: relative; background: #08080b; border-radius: var(--r-3xl); padding: 0; box-shadow: var(--shadow-lg); }
+  .th-stage:fullscreen { border-radius: 0; display: flex; align-items: center; }
+  .th-track {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+    border-radius: var(--r-3xl); scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .th-track::-webkit-scrollbar { display: none; }
+  .th-stage:fullscreen .th-track { width: 100%; }
+  .th-slide { flex: 0 0 100%; scroll-snap-align: center; display: flex; justify-content: center; padding: var(--space-5); }
+  .th-screen {
+    position: relative; width: min(560px, 92%); height: clamp(420px, 68vh, 720px);
+    border-radius: var(--r-2xl); overflow: hidden; background: #111; box-shadow: var(--shadow-lg);
+  }
+  .th-stage:fullscreen .th-screen { height: 88vh; width: auto; aspect-ratio: 3/4; }
+  .th-screen img { width: 100%; height: 100%; object-fit: cover; }
+  .th-screen :global(.th-frame) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .th-overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 0.3rem; padding: var(--space-6);
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.78)); color: #fff;
+  }
+  .th-overlay h3 { color: #fff; font-size: var(--fh-lg); }
+  .th-overlay p { color: rgba(255,255,255,0.82); font-size: var(--ft-sm); }
+  .th-try {
+    align-self: flex-start; margin-top: var(--space-4); display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.4rem; border: 0; border-radius: var(--r-full); background: #fff; color: #111;
+    font-weight: var(--fw-medium); font-size: var(--ft-md); box-shadow: var(--shadow-md); transition: transform var(--t-fast) var(--ease);
+  }
+  .th-try:hover { transform: scale(1.04); }
+  .th-try .dot { width: 8px; height: 8px; border-radius: var(--r-full); background: var(--coral-500); animation: pulse 1.8s infinite; }
+  .th-badge { position: absolute; top: var(--space-4); left: var(--space-4); padding: 0.3rem 0.7rem; border-radius: var(--r-full); background: rgba(0,0,0,0.55); color: #fff; font-size: var(--ft-xs); font-weight: var(--fw-medium); backdrop-filter: blur(6px); }
+  .th-close { position: absolute; top: var(--space-4); right: var(--space-4); display: none; width: 36px; height: 36px; align-items: center; justify-content: center; border: 0; border-radius: var(--r-full); background: rgba(0,0,0,0.6); color: #fff; z-index: 2; }
+  .th-close:hover { background: rgba(0,0,0,0.85); }
+  .th-slide.live .th-overlay, .th-slide.live .th-badge { display: none; }
+  .th-slide.live .th-close { display: inline-flex; }
+
+  .th-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+    width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--r-full);
+    border: 0; background: rgba(255,255,255,0.14); color: #fff; backdrop-filter: blur(8px);
+    transition: background var(--t-fast) var(--ease);
+  }
+  .th-arrow:hover { background: rgba(255,255,255,0.28); }
+  .th-arrow.prev { left: var(--space-4); }
+  .th-arrow.next { right: var(--space-4); }
+
+  .th-bar { display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-4); }
+  .th-count { font-size: var(--ft-sm); color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
+  .th-full { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.4rem 0.8rem; border-radius: var(--r-full); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .th-full:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,87,87,0.6); } 70% { box-shadow: 0 0 0 9px rgba(255,87,87,0); } 100% { box-shadow: 0 0 0 0 rgba(255,87,87,0); } }
+</style>
