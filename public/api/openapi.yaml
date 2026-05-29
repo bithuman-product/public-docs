@@ -6,7 +6,7 @@ info:
     name: bitHuman Support
     url: https://discord.gg/ES953n7bPA
   x-logo:
-    url: https://docs.bithuman.ai/images/bithuman-logo.png
+    url: https://docs.bithuman.ai/bithuman-mark.png
   description: |
     Real-time, lip-synced AI avatars. Audio in, talking video out at
     25 FPS with sub-200 ms latency. Render on the cloud, on-device, or
@@ -24,7 +24,7 @@ info:
     Get a free API secret at
     [bithuman.ai → Developer → API Keys](https://www.bithuman.ai/#developer),
     then [walk the 2-minute Quickstart →](#tag/quickstart) or jump
-    straight into the [endpoints →](#tag/authentication-api).
+    straight into the [endpoints →](#tag/Voice).
 
     ## What you can build
 
@@ -32,7 +32,7 @@ info:
       (OpenAI-compatible drop-in) to synthesize speech in 31 languages.
     - **Animated avatars** — create an agent in the dashboard, then
       `POST /v1/agent/{code}/speak` to make it talk.
-    - **Generate new avatars** — `POST /v1/agent-generation` from a
+    - **Generate new avatars** — `POST /v1/agent/generate` from a
       prompt or your own portrait + voice samples.
     - **Embed in any app** — REST from any language, native SDKs in
       Python / Swift / Kotlin, drop-in LiveKit plugin for voice agents,
@@ -60,11 +60,16 @@ paths:
     post:
       operationId: validateApiSecret
       summary: Validate API secret
-      description: Verify that your API secret is valid and your account is active.
+      description: |
+        Verify that your API secret is valid and your account is active.
+
+        Always returns HTTP 200. Inspect the `valid` field in the body
+        to determine outcome — invalid or missing credentials yield
+        `{"valid": false}` rather than a 401.
       tags: [Authentication]
       responses:
         "200":
-          description: API secret is valid
+          description: Validation complete (check the `valid` field)
           content:
             application/json:
               schema:
@@ -73,8 +78,6 @@ paths:
                   valid:
                     type: boolean
                     example: true
-        "401":
-          $ref: "#/components/responses/Unauthorized"
 
   /v1/agent/generate:
     post:
@@ -156,7 +159,12 @@ paths:
       summary: Get agent generation status
       description: |
         Poll this endpoint to check generation progress. Status transitions:
-        `processing` → `ready` (success) or `failed` (error).
+        `processing` → `generating` → `completed` → `ready` (success) or `failed` (error).
+
+        **Keep polling past `generating` and `completed`** — those are
+        intermediate states, not terminal. Only `ready` and `failed`
+        mean polling should stop.
+
         Recommended polling interval: 5 seconds.
       tags: [Agent Generation]
       parameters:
@@ -251,12 +259,14 @@ paths:
                     type: boolean
                   data:
                     $ref: "#/components/schemas/Agent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
     post:
       operationId: updateAgent
-      summary: Update agent
-      description: Update an agent's system prompt.
+      summary: Update agent prompt
+      description: Update an existing agent's system prompt. The agent must already exist (use `POST /v1/agent/generate` to create one).
       tags: [Agent Management]
       parameters:
         - name: code
@@ -278,7 +288,7 @@ paths:
                   example: "You are a professional sales assistant."
       responses:
         "200":
-          description: Agent updated
+          description: Agent prompt updated
           content:
             application/json:
               schema:
@@ -290,10 +300,12 @@ paths:
                   updated:
                     type: boolean
                     example: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /v1/agent/{agent_code}/speak:
+  /v1/agent/{code}/speak:
     post:
       operationId: agentSpeak
       summary: Make agent speak
@@ -302,7 +314,7 @@ paths:
         The agent must be in at least one active LiveKit room.
       tags: [Agent Context]
       parameters:
-        - name: agent_code
+        - name: code
           in: path
           required: true
           schema:
@@ -341,10 +353,12 @@ paths:
                     type: integer
                     example: 1
                     description: Number of active rooms that received the message.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /v1/agent/{agent_code}/add-context:
+  /v1/agent/{code}/add-context:
     post:
       operationId: addContext
       summary: Add context to agent
@@ -353,7 +367,7 @@ paths:
         won't say this aloud, but will use the information in future responses.
       tags: [Agent Context]
       parameters:
-        - name: agent_code
+        - name: code
           in: path
           required: true
           schema:
@@ -393,6 +407,8 @@ paths:
                     type: string
                   delivered_to_rooms:
                     type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -528,16 +544,19 @@ paths:
               type: object
               required:
                 - agent_id
+                - fingerprint
               properties:
                 agent_id:
                   type: string
                   description: Agent code (e.g. A78WKV4515)
+                  example: "A78WKV4515"
                 fingerprint:
                   type: string
-                  description: Unique visitor identifier for session tracking
+                  description: Stable per-device hex string used for session tracking and per-visitor rate limiting. Required.
+                  example: "9f3c8b1a2d4e5f6789ab"
       responses:
         "200":
-          description: Token generated
+          description: Token generated. The returned `token` is a JWT (HS256-signed) with a 1-hour TTL.
           content:
             application/json:
               schema:
@@ -550,8 +569,10 @@ paths:
                     properties:
                       token:
                         type: string
+                        description: 1-hour JWT to pass as the `data-token` attribute on the embed widget script tag.
                       sid:
                         type: string
+                        description: Session identifier for tracking this embed instance.
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -574,14 +595,17 @@ paths:
                 agent_id:
                   type: string
                   example: "A91XMB7113"
+                image_url:
+                  type: string
+                  description: Source image URL. Optional — defaults to the agent's primary image if omitted.
                 duration:
                   type: integer
                   default: 5
                   description: Gesture duration in seconds.
                 model:
                   type: string
-                  enum: [quality, speed, auto]
-                  default: quality
+                  enum: [seedance, quality, speed, auto]
+                  default: seedance
                   description: Generation model variant.
       responses:
         "200":
@@ -1397,34 +1421,37 @@ tags:
       especially for nuanced facial expressions, but requires a GPU
       and more memory. Ships as a Docker image for self-hosted
       deployment, and is built into the Swift SDK on Apple Silicon
-      M3+ (auto-spawned `bithuman-expression-daemon`).
+      M3+ (Mac) and M4+ (iPad Pro) — auto-spawned
+      `bithuman-expression-daemon`.
 
       Pick Expression when you want:
 
       - Per-session custom faces (one user's portrait → their avatar)
       - The highest visual quality at close range
-      - Cloud GPU deployments (NVIDIA + TRT) or M3+ desktop apps
+      - Cloud GPU deployments (NVIDIA + TRT) or M3+ Mac / M4+ iPad apps
 
   - name: pricing
     x-displayName: Pricing
     description: |
       ## Pricing & credits
 
-      Free tier — **2,000 credits/month, no credit card**. Enough to
-      try every endpoint and run a few small avatar sessions.
+      Free tier — **99 credits/month, no credit card**. Enough to
+      try every endpoint and run a small avatar session.
 
-      Paid plans start at $20/month. Credits roll over within a billing
-      period. See [bithuman.ai/pricing](https://www.bithuman.ai/pricing)
-      for current rates.
+      Paid plans start at **$20/month (Creator)**. Credits roll over
+      within a billing period.
+      [**See current pricing →**](https://www.bithuman.ai/pricing)
 
       ### What costs credits
 
-      | Action | Approximate cost |
+      | Action | Cost |
       |---|---|
-      | Agent generation (one-time, per avatar) | ~50 credits |
-      | Live avatar session (Essence) | ~1 credit / minute |
-      | Live avatar session (Expression, cloud GPU) | ~3 credits / minute |
-      | TTS synthesis | ~0.1 credits / 100 chars |
+      | Agent generation (one-time, per avatar) | **250 credits** |
+      | Live avatar session — Essence (self-hosted) | **1 credit / minute** |
+      | Live avatar session — Essence (cloud) | **2 credits / minute** |
+      | Live avatar session — Expression (self-hosted) | **2 credits / minute** |
+      | Live avatar session — Expression (cloud) | **4 credits / minute** |
+      | TTS / voice synthesis | See [pricing page](https://www.bithuman.ai/pricing) for current rate |
       | File upload + dynamics generation | varies; see endpoint docs |
 
       ### What's free
@@ -1450,7 +1477,7 @@ tags:
       pip install bithuman --upgrade
       ```
 
-      Python 3.10+ on macOS arm64 and Linux x86_64 / aarch64. As of
+      Python 3.9–3.14, pre-built wheels for macOS arm64 and Linux x86_64 / aarch64 (macOS Intel + Windows via per-tag CI builds). As of
       2.3.0 this wheel is the **Python SDK library only** (~5 MB):
       runtime + LiveKit plugin glue. The `bithuman` CLI binary ships
       separately as `pip install bithuman-cli` or
@@ -1480,7 +1507,15 @@ tags:
 
       In Xcode: **File → Add Package Dependencies…** →
       `https://github.com/bithuman-product/bithuman-sdk-public.git` →
-      pick the latest tag.
+      pin to **0.8.1 or later** (older versions are unsupported).
+
+      ```swift
+      // Package.swift
+      .package(
+          url: "https://github.com/bithuman-product/bithuman-sdk-public.git",
+          from: "0.8.1"
+      )
+      ```
 
       ```swift
       import bitHumanKit
@@ -1559,15 +1594,15 @@ tags:
 
       ```bash
       pip install 'bithuman-cli[local]'
-      export BITHUMAN_API_KEY=...
+      export BITHUMAN_API_SECRET=...
       bithuman pull modern-court-jester
       BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
       ```
 
       The local stack ships:
 
-      - **STT** — whisper.cpp (small.en by default, configurable)
-      - **LLM** — llama.cpp + a GGUF model (Llama 3.1 8B by default)
+      - **STT** — whisper.cpp (`tiny.en` by default, configurable)
+      - **LLM** — llama.cpp + a GGUF model (`Qwen 2.5 0.5B-Instruct Q4_K_M` by default)
       - **TTS** — Supertonic (the same model bitHuman ships in
         production for `/v1/tts`)
       - **VAD** — Silero
@@ -1694,19 +1729,22 @@ tags:
 
       ### Browser embed
 
-      A floating text / voice / video avatar widget, one script tag:
+      Embed an agent as an iframe — no SDK install, drop it on any page:
 
       ```html
-      <script
-        src="https://embed.bithuman.ai/v1/widget.js"
-        data-agent-code="A78WKV4515"
-        data-api-secret="YOUR_PUBLIC_SECRET"
-      ></script>
+      <iframe
+        src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515"
+        allow="microphone; camera; autoplay"
+        style="width: 100%; height: 600px; border: 0;"
+      ></iframe>
       ```
 
-      Mint a short-lived embed token with
-      [`POST /v1/embed/request`](#tag/Embedding) and pass it as
-      `data-token` instead of a raw secret for browser-side embedding.
+      For per-visitor session tracking and rate limiting, mint a
+      short-lived embed token from your backend with
+      [`POST /v1/embed-tokens/request`](#tag/Embedding) and append it
+      as a query string (`?token=...`). The token is a 1-hour JWT —
+      do this on the server so your raw `api-secret` never lands in
+      browser JavaScript.
 
   ##########################################################################
   # Community
@@ -1761,4 +1799,9 @@ tags:
   - name: Embedding
     description: Mint short-lived tokens for website avatar embeds.
   - name: Dynamics
-    description: Generate and manage gesture animations.
+    description: |
+      Generate and manage conversational gesture animations (wave,
+      nod, laugh, idle motions) for an avatar. Generate them
+      asynchronously, then toggle on/off to make them the active model
+      for live sessions. Gestures trigger based on keyword mapping
+      during conversation.

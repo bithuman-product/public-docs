@@ -1,6 +1,6 @@
 ---
-// Scalar API Reference is the entire docs site. All prose lives in
-// public/api/openapi.yaml under tag descriptions + info.description.
+// bitHuman docs — Scalar API Reference, fully branded.
+// All prose + endpoints live in public/api/openapi.yaml.
 ---
 <!doctype html>
 <html lang="en">
@@ -8,8 +8,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>bitHuman — Real-time avatar + voice docs</title>
-    <meta name="description" content="bitHuman puts a real-time, lip-synced talking avatar in your app. SDKs in Python, Swift, Kotlin, Flutter, plus a REST API and OpenAI-compatible voice endpoints." />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="description" content="Real-time, lip-synced AI avatars + 31-language TTS. SDKs in Python, Swift, Kotlin, Flutter, plus a REST API and OpenAI-compatible voice endpoints." />
+
+    <link rel="icon" type="image/png" href="/bithuman-mark.png" />
+    <link rel="apple-touch-icon" href="/bithuman-mark.png" />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="bitHuman" />
+    <meta property="og:title" content="bitHuman docs" />
+    <meta property="og:description" content="Real-time avatar + voice platform — Python, Swift, Kotlin, Flutter, REST." />
+    <meta property="og:image" content="https://docs.bithuman.ai/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@bithuman_ai" />
+    <meta name="twitter:image" content="https://docs.bithuman.ai/og-image.jpg" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -20,7 +33,6 @@
       id="api-reference"
       data-url="/api/openapi.yaml"
       data-configuration={JSON.stringify({
-        // Built-in theme with the lightest possible chrome.
         theme: 'default',
         layout: 'modern',
         darkMode: false,
@@ -37,25 +49,34 @@
           ogTitle: 'bitHuman docs',
           ogDescription: 'Real-time avatar + voice platform — Python, Swift, Kotlin, Flutter, REST.',
         },
-        favicon: '/favicon.png',
+        favicon: '/bithuman-mark.png',
         customCss: `
           /* ============================================================
-             bitHuman Scalar theme — modern + clean, all light.
+             bitHuman Scalar theme — coral on white, modern + clean.
+             Coral #FF5757 used sparingly for accents; body stays neutral
+             so prose + code remain easy to read.
              ============================================================ */
           :root {
+            /* Brand */
+            --bh-coral:        #FF5757;
+            --bh-coral-hover:  #FF7474;
+            --bh-coral-soft:   #FFEDED;
+            --bh-coral-deep:   #E04545;
+
+            /* Typography */
             --scalar-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             --scalar-font-code: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-            /* Neutral palette — pure white background, true black text */
+            /* Neutral palette — pure white bg, true black text */
             --scalar-color-1: #0a0a0a;          /* primary text */
             --scalar-color-2: #404040;          /* secondary text */
             --scalar-color-3: #71717a;          /* tertiary text */
-            --scalar-color-accent: #0a0a0a;     /* accent / link color */
+            --scalar-color-accent: var(--bh-coral);
 
             --scalar-background-1: #ffffff;     /* page background */
             --scalar-background-2: #fafafa;     /* sidebar / card */
-            --scalar-background-3: #f5f5f7;     /* code block bg (LIGHT, not dark!) */
-            --scalar-background-accent: #0a0a0a;
+            --scalar-background-3: #f5f5f7;     /* code block bg */
+            --scalar-background-accent: var(--bh-coral-soft);
 
             --scalar-border-color: #e7e7e9;
 
@@ -63,27 +84,55 @@
             --scalar-header-background-1: #ffffff;
             --scalar-header-background-2: #ffffff;
 
-            /* Buttons */
-            --scalar-button-1: #0a0a0a;
+            /* Buttons — coral primary */
+            --scalar-button-1: var(--bh-coral);
             --scalar-button-1-color: #ffffff;
-            --scalar-button-1-hover: #262626;
+            --scalar-button-1-hover: var(--bh-coral-hover);
 
-            /* Method badges — colorful but flat */
+            /* HTTP method badges */
             --scalar-color-green: #16a34a;
             --scalar-color-blue: #2563eb;
             --scalar-color-orange: #ea580c;
-            --scalar-color-red: #dc2626;
+            --scalar-color-red: var(--bh-coral);
             --scalar-color-purple: #7c3aed;
             --scalar-color-yellow: #ca8a04;
           }
 
           /* ============================================================
-             FORCE LIGHT CODE BLOCKS EVERYWHERE
-             Scalar's right-rail samples + inline code default to dark.
-             Override aggressively.
+             Custom logo in the sidebar / header
              ============================================================ */
+          .sidebar::before,
+          .scalar-sidebar::before {
+            content: '';
+            display: block;
+            background-image: url('/bithuman-mark.png');
+            background-repeat: no-repeat;
+            background-size: 32px 32px;
+            background-position: 1.25rem center;
+            height: 64px;
+            border-bottom: 1px solid var(--scalar-border-color);
+            margin-bottom: 0.5rem;
+          }
+          /* Brand wordmark next to the logo */
+          .sidebar::after,
+          .scalar-sidebar::after {
+            content: 'bitHuman';
+            position: absolute;
+            top: 21px;
+            left: 4rem;
+            font-family: var(--scalar-font);
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--scalar-color-1);
+            pointer-events: none;
+          }
+          .sidebar, .scalar-sidebar { position: relative; }
 
-          /* The right-rail code-sample panel (formerly dark) */
+          /* ============================================================
+             LIGHT CODE BLOCKS everywhere — Scalar defaults to dark on the
+             right-rail; force light with GitHub-light syntax.
+             ============================================================ */
           .scalar-card,
           .scalar-card-section,
           .scalar-card-header,
@@ -95,12 +144,7 @@
           .light-mode .scalar-card,
           .light-mode .scalar-card-section,
           .light-mode .scalar-card-header,
-          .light-mode .scalar-card-footer {
-            background: #fafafa !important;
-            color: #0a0a0a !important;
-          }
-
-          /* Code inside the right-rail "client" panel */
+          .light-mode .scalar-card-footer,
           .examples,
           .examples .scalar-card,
           .examples .scalar-card-section,
@@ -109,10 +153,13 @@
           .scalar-client-libraries code {
             background: #fafafa !important;
             color: #0a0a0a !important;
+          }
+
+          .scalar-client-libraries {
             border-radius: 8px;
           }
 
-          /* Syntax highlighting — light palette (think GitHub light) */
+          /* Syntax highlighting — GitHub-light palette */
           .hljs,
           .hljs-built_in,
           .hljs-symbol {
@@ -159,13 +206,14 @@
           }
 
           /* ============================================================
-             Typography polish — OpenAI-restraint
+             Typography polish — OpenAI / Stripe restraint
              ============================================================ */
           .references-rendered h1,
           .references-rendered h2,
           .references-rendered h3 {
             font-weight: 600;
             letter-spacing: -0.015em;
+            color: var(--scalar-color-1);
           }
           .references-rendered h1 { font-size: 2rem; }
           .references-rendered h2 { font-size: 1.375rem; margin-top: 2.5rem; }
@@ -177,17 +225,21 @@
             line-height: 1.65;
             color: var(--scalar-color-2);
           }
+
+          /* Links — coral with hover state */
           .references-rendered a {
-            color: var(--scalar-color-1);
+            color: var(--bh-coral-deep);
             text-decoration: underline;
-            text-decoration-color: var(--scalar-color-3);
+            text-decoration-color: var(--bh-coral-soft);
             text-underline-offset: 2px;
+            transition: text-decoration-color 120ms ease;
           }
           .references-rendered a:hover {
-            text-decoration-color: var(--scalar-color-1);
+            color: var(--bh-coral);
+            text-decoration-color: var(--bh-coral);
           }
 
-          /* Sidebar — quieter, OpenAI-style */
+          /* Sidebar — quieter; coral on active */
           .sidebar,
           aside.sidebar,
           .scalar-sidebar {
@@ -199,6 +251,7 @@
             color: var(--scalar-color-2);
             font-size: 0.875rem;
             border-radius: 6px;
+            transition: background 100ms ease, color 100ms ease;
           }
           .sidebar a:hover,
           .scalar-sidebar a:hover {
@@ -207,16 +260,28 @@
           }
           .sidebar a.active,
           .scalar-sidebar a[aria-current],
-          .scalar-sidebar a.active {
-            color: var(--scalar-color-1) !important;
-            background: #f0f0f3 !important;
+          .scalar-sidebar a.active,
+          .sidebar-heading-link.active {
+            color: var(--bh-coral-deep) !important;
+            background: var(--bh-coral-soft) !important;
             font-weight: 600;
+          }
+
+          /* Sidebar group headers — small caps style */
+          .scalar-sidebar-section h2,
+          .sidebar-group-title {
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            color: var(--scalar-color-3) !important;
           }
 
           /* Tighter tables */
           .references-rendered table {
             border-collapse: collapse;
             font-size: 0.9rem;
+            margin: 1rem 0;
           }
           .references-rendered th,
           .references-rendered td {
@@ -230,8 +295,43 @@
             color: var(--scalar-color-1);
           }
 
-          /* Hide the Scalar branding (per their MIT terms — clean look) */
-          .scalar-footer-powered { opacity: 0.4; }
+          /* HTTP method badges — keep coral for DELETE */
+          .show-api-client-button,
+          button.show-api-client-button {
+            background: var(--bh-coral) !important;
+            color: #ffffff !important;
+          }
+          .show-api-client-button:hover,
+          button.show-api-client-button:hover {
+            background: var(--bh-coral-hover) !important;
+          }
+
+          /* Search input + hotkey badge */
+          .scalar-sidebar-search input,
+          .sidebar-search input {
+            border-radius: 6px;
+            border-color: var(--scalar-border-color);
+          }
+
+          /* Tag headings — gentle coral underline accent */
+          .reference-section-tag h1::after,
+          .section-tag h1::after {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 3px;
+            background: var(--bh-coral);
+            margin-top: 0.5rem;
+            border-radius: 2px;
+          }
+
+          /* Quieter "Powered by Scalar" footer */
+          .scalar-footer-powered { opacity: 0.4; font-size: 11px; }
+
+          /* Hide the default Scalar header logo — we put ours in the sidebar */
+          .references-header .scalar-icon-only-button img.scalar-logo {
+            display: none;
+          }
         `,
       })}
     ></script>
