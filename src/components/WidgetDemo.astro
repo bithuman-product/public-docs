@@ -30,6 +30,12 @@ const chatSnippet = `<!-- Chat widget — one line -->
         <Code code={gadgetSnippet} lang="html" themes={themes} />
       </div>
       <div class="wd-side">
+        <div class="wd-mock">
+          <span class="wd-mock-bar"><i></i><i></i><i></i><em>your site</em></span>
+          <div class="wd-mock-body wd-mock-gadget">
+            <div class="wd-bubble"><img src={gadgetAgent.image} alt="" /><span class="wd-bubble-tag">Chat</span></div>
+          </div>
+        </div>
         <p class="wd-note">A draggable, resizable <strong>avatar bubble</strong> in the corner — tap to talk (voice &amp; video). Best for a quick, ambient presence.</p>
         <div class="wd-actions">
           <button class="wd-launch" data-wd-launch="gadget"><span class="dot"></span> Add it to this page</button>
@@ -46,6 +52,17 @@ const chatSnippet = `<!-- Chat widget — one line -->
         <Code code={chatSnippet} lang="html" themes={themes} />
       </div>
       <div class="wd-side">
+        <div class="wd-mock">
+          <span class="wd-mock-bar"><i></i><i></i><i></i><em>your site</em></span>
+          <div class="wd-mock-body wd-mock-chat">
+            <div class="wd-chatcard">
+              <div class="wd-chat-head"><img src={gadgetAgent.image} alt="" /> AI assistant</div>
+              <div class="wd-chat-msg">Hi! How can I help you today?</div>
+              <div class="wd-chat-chips"><span>What can bitHuman do?</span><span>Get started</span></div>
+            </div>
+            <span class="wd-fab">Ask our AI assistant</span>
+          </div>
+        </div>
         <p class="wd-note">A full <strong>support-chat experience</strong> (the Ivoclar style) — text, voice, and video, with suggested questions and a welcome message. Best for help &amp; sales.</p>
         <div class="wd-actions">
           <button class="wd-launch" data-wd-launch="chat"><span class="dot"></span> Add it to this page</button>
@@ -148,5 +165,25 @@ const chatSnippet = `<!-- Chat widget — one line -->
   .wd-launch .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
   .wd-remove { padding: 0.7rem 1.1rem; border-radius: var(--r-full); border: 1px solid var(--color-border-strong); background: var(--color-surface); color: var(--color-text-secondary); font-weight: var(--fw-medium); }
   .wd-remove:hover { color: var(--color-text); }
+
+  /* preview mockups */
+  .wd-mock { border: 1px solid var(--color-border); border-radius: var(--r-lg); overflow: hidden; background: var(--color-surface-2); }
+  .wd-mock-bar { display: flex; align-items: center; gap: 4px; padding: 0.4rem 0.6rem; background: var(--color-surface-3); border-bottom: 1px solid var(--color-border); }
+  .wd-mock-bar i { width: 7px; height: 7px; border-radius: 50%; background: var(--color-border-strong); }
+  .wd-mock-bar em { margin-left: 0.4rem; font-style: normal; font-size: 0.6rem; color: var(--color-text-tertiary); font-family: var(--font-mono); }
+  .wd-mock-body { position: relative; height: 150px; padding: var(--space-3); display: flex; }
+  .wd-mock-gadget { align-items: flex-end; justify-content: flex-end; }
+  .wd-bubble { position: relative; }
+  .wd-bubble img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-surface); box-shadow: var(--shadow-md); }
+  .wd-bubble-tag { position: absolute; bottom: -3px; right: -3px; font-size: 0.55rem; font-weight: var(--fw-medium); background: var(--color-primary); color: #fff; padding: 1px 6px; border-radius: var(--r-full); }
+  .wd-mock-chat { flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 0.4rem; }
+  .wd-chatcard { width: 80%; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--r-md); padding: 0.5rem; box-shadow: var(--shadow-sm); }
+  .wd-chat-head { display: flex; align-items: center; gap: 0.35rem; font-size: 0.62rem; font-weight: var(--fw-bold); }
+  .wd-chat-head img { width: 16px; height: 16px; border-radius: 50%; object-fit: cover; }
+  .wd-chat-msg { margin-top: 0.35rem; font-size: 0.6rem; background: var(--color-surface-2); border-radius: var(--r-sm); padding: 0.3rem 0.4rem; color: var(--color-text-secondary); }
+  .wd-chat-chips { display: flex; gap: 0.25rem; margin-top: 0.35rem; flex-wrap: wrap; }
+  .wd-chat-chips span { font-size: 0.52rem; border: 1px solid var(--color-border); border-radius: var(--r-full); padding: 1px 5px; color: var(--color-text-tertiary); }
+  .wd-fab { font-size: 0.6rem; font-weight: var(--fw-medium); background: var(--color-primary); color: #fff; padding: 4px 9px; border-radius: var(--r-full); box-shadow: var(--shadow-sm); }
+
   @media (max-width: 860px) { .wd-grid { grid-template-columns: 1fr; } }
 </style>

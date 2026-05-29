@@ -1,6 +1,7 @@
 ---
-// WYSIWYG "Try it" playground: pick an agent + model on the left (the embed code
-// updates live), hit Launch, and the real agent runs in the preview on the right.
+// WYSIWYG "Try it" playground: pick an agent (custom dropdown with avatar icons)
+// + model on the left (the embed code updates live), hit Launch, and the real
+// agent runs in the preview on the right.
 import data from "../data/showcase-agents.json";
 const agents = [...data.expression, ...data.essence];
 const first = agents[0];
@@ -9,17 +10,31 @@ const first = agents[0];
 <div class="pg" data-pg>
   <div class="pg-left">
     <div class="pg-controls">
-      <label class="pg-field">
+      <div class="pg-field">
         <span>Agent</span>
-        <select data-pg-agent>
-          <optgroup label="Expression">
-            {data.expression.map((a) => <option value={a.code} data-image={a.image} data-name={a.name}>{a.name}</option>)}
-          </optgroup>
-          <optgroup label="Essence">
-            {data.essence.map((a) => <option value={a.code} data-image={a.image} data-name={a.name}>{a.name}</option>)}
-          </optgroup>
-        </select>
-      </label>
+        <div class="pg-combo" data-pg-combo>
+          <button type="button" class="pg-combo-btn" data-pg-btn aria-haspopup="listbox" aria-expanded="false"
+            data-code={first.code} data-image={first.image} data-model={first.group}>
+            <img class="pg-av" src={first.image} alt="" />
+            <span class="pg-combo-name">{first.name}</span>
+            <svg class="pg-chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="pg-combo-list" role="listbox" hidden>
+            <div class="pg-grp">Expression</div>
+            {data.expression.map((a) => (
+              <button type="button" class="pg-opt" role="option" data-code={a.code} data-image={a.image} data-name={a.name} data-model="expression">
+                <img class="pg-av" src={a.image} alt="" /><span>{a.name}</span>
+              </button>
+            ))}
+            <div class="pg-grp">Essence</div>
+            {data.essence.map((a) => (
+              <button type="button" class="pg-opt" role="option" data-code={a.code} data-image={a.image} data-name={a.name} data-model="essence">
+                <img class="pg-av" src={a.image} alt="" /><span>{a.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
       <div class="pg-field">
         <span>Model</span>
         <div class="pg-seg" data-pg-model>
@@ -38,9 +53,7 @@ const first = agents[0];
       <pre><code data-pg-code></code></pre>
     </div>
 
-    <button class="pg-run" data-pg-run>
-      <span class="dot"></span> Launch agent
-    </button>
+    <button class="pg-run" data-pg-run><span class="dot"></span> Launch agent</button>
   </div>
 
   <div class="pg-right">
@@ -56,53 +69,63 @@ const first = agents[0];
 
 <script>
   document.querySelectorAll("[data-pg]").forEach((root) => {
-    const sel = root.querySelector("[data-pg-agent]") as HTMLSelectElement;
+    const combo = root.querySelector("[data-pg-combo]")!;
+    const btn = root.querySelector("[data-pg-btn]") as HTMLElement;
+    const list = root.querySelector(".pg-combo-list") as HTMLElement;
     const seg = root.querySelector("[data-pg-model]")!;
     const codeEl = root.querySelector("[data-pg-code]") as HTMLElement;
     const poster = root.querySelector("[data-pg-poster]") as HTMLImageElement;
     const preview = root.querySelector("[data-pg-preview]")!;
-    let model = "expression";
+    let model = btn.dataset.model || "expression";
 
     const snippet = (code: string, m: string) =>
       `<iframe\n  src="https://bithuman.ai/embed/${code}?model=${m}"\n  allow="microphone; camera; autoplay"\n  style="width:100%;height:100%;border:0">\n</iframe>`;
 
+    const setModelUI = () =>
+      seg.querySelectorAll("button").forEach((b) => b.classList.toggle("active", (b as HTMLElement).dataset.val === model));
+
     const sync = () => {
-      const code = sel.value;
-      codeEl.textContent = snippet(code, model);
-      const opt = sel.selectedOptions[0];
-      if (opt?.dataset.image) poster.src = opt.dataset.image;
-      // reset any live preview when inputs change
+      codeEl.textContent = snippet(btn.dataset.code!, model);
+      poster.src = btn.dataset.image!;
       const f = preview.querySelector("iframe");
       if (f) { f.remove(); preview.classList.remove("live"); }
     };
 
-    sel.addEventListener("change", sync);
-    seg.querySelectorAll("button").forEach((b) =>
-      b.addEventListener("click", () => {
-        model = (b as HTMLElement).dataset.val!;
-        seg.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b));
-        sync();
+    // dropdown open/close
+    const open = (o: boolean) => { list.hidden = !o; btn.setAttribute("aria-expanded", o ? "true" : "false"); };
+    btn.addEventListener("click", () => open(list.hidden));
+    document.addEventListener("click", (e) => { if (!combo.contains(e.target as Node)) open(false); });
+    root.querySelectorAll(".pg-opt").forEach((opt) =>
+      opt.addEventListener("click", () => {
+        const o = opt as HTMLElement;
+        btn.dataset.code = o.dataset.code; btn.dataset.image = o.dataset.image;
+        (btn.querySelector(".pg-av") as HTMLImageElement).src = o.dataset.image!;
+        (btn.querySelector(".pg-combo-name") as HTMLElement).textContent = o.dataset.name!;
+        model = o.dataset.model!; setModelUI();
+        list.querySelectorAll(".pg-opt").forEach((x) => x.classList.toggle("sel", x === opt));
+        open(false); sync();
       })
+    );
+
+    seg.querySelectorAll("button").forEach((b) =>
+      b.addEventListener("click", () => { model = (b as HTMLElement).dataset.val!; setModelUI(); sync(); })
     );
 
     root.querySelector("[data-pg-run]")?.addEventListener("click", () => {
       const f = document.createElement("iframe");
-      f.src = `https://bithuman.ai/embed/${sel.value}?model=${model}`;
+      f.src = `https://bithuman.ai/embed/${btn.dataset.code}?model=${model}`;
       f.allow = "microphone; camera; autoplay; clipboard-write";
-      f.title = "bitHuman live agent";
-      f.className = "pg-frame";
+      f.title = "bitHuman live agent"; f.className = "pg-frame";
       preview.querySelector(".pg-frame")?.remove();
-      preview.appendChild(f);
-      preview.classList.add("live");
+      preview.appendChild(f); preview.classList.add("live");
     });
     root.querySelector("[data-pg-close]")?.addEventListener("click", () => {
-      preview.querySelector(".pg-frame")?.remove();
-      preview.classList.remove("live");
+      preview.querySelector(".pg-frame")?.remove(); preview.classList.remove("live");
     });
     root.querySelector("[data-pg-copy]")?.addEventListener("click", (e) => {
-      const btn = e.currentTarget as HTMLElement;
+      const b = e.currentTarget as HTMLElement;
       navigator.clipboard.writeText(codeEl.textContent ?? "").then(() => {
-        btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy"), 1400);
+        b.textContent = "Copied"; setTimeout(() => (b.textContent = "Copy"), 1400);
       }).catch(() => {});
     });
 
@@ -116,13 +139,21 @@ const first = agents[0];
   .pg-controls { display: flex; gap: var(--space-5); flex-wrap: wrap; }
   .pg-field { display: flex; flex-direction: column; gap: 0.4rem; }
   .pg-field > span { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
-  .pg-field select {
-    appearance: none; padding: 0.5rem 2rem 0.5rem 0.8rem; border-radius: var(--r-md);
-    border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);
-    font: inherit; font-size: var(--ft-sm); cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%238e8e9e' stroke-width='1.5'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 0.6rem center;
-  }
+  .pg-av { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; flex: none; }
+
+  /* custom agent dropdown */
+  .pg-combo { position: relative; }
+  .pg-combo-btn { display: inline-flex; align-items: center; gap: 0.5rem; min-width: 220px; padding: 0.4rem 0.6rem; border-radius: var(--r-md); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--ft-sm); cursor: pointer; }
+  .pg-combo-btn:hover { border-color: var(--color-border-strong); }
+  .pg-combo-name { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pg-chev { color: var(--color-text-tertiary); }
+  .pg-combo-list { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; width: 280px; max-height: 320px; overflow-y: auto; padding: 0.35rem; background: var(--color-elevated); border: 1px solid var(--color-border); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); }
+  .pg-grp { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); padding: 0.5rem 0.6rem 0.25rem; }
+  .pg-opt { display: flex; align-items: center; gap: 0.6rem; width: 100%; padding: 0.45rem 0.6rem; border: 0; border-radius: var(--r-md); background: none; color: var(--color-text); font: inherit; font-size: var(--ft-sm); text-align: left; cursor: pointer; }
+  .pg-opt:hover { background: var(--color-surface-2); }
+  .pg-opt.sel { background: var(--color-primary-soft); color: var(--color-primary); }
+  .pg-opt .pg-av { width: 28px; height: 28px; }
+
   .pg-seg { display: inline-flex; border: 1px solid var(--color-border); border-radius: var(--r-md); overflow: hidden; }
   .pg-seg button { padding: 0.5rem 0.9rem; border: 0; background: var(--color-surface); color: var(--color-text-secondary); font-size: var(--ft-sm); font-weight: var(--fw-medium); }
   .pg-seg button.active { background: var(--color-primary); color: var(--color-on-primary); }
@@ -132,7 +163,7 @@ const first = agents[0];
   .pg-dots { display: inline-flex; gap: 4px; }
   .pg-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--color-border-strong); }
   .pg-file { font-size: var(--ft-xs); color: var(--color-text-tertiary); font-family: var(--font-mono); }
-  .pg-copy { margin-left: auto; border: 0; background: none; color: var(--color-text-tertiary); font-size: var(--ft-xs); }
+  .pg-copy { margin-left: auto; border: 0; background: none; color: var(--color-text-tertiary); font-size: var(--ft-xs); cursor: pointer; }
   .pg-copy:hover { color: var(--color-text); }
   .pg-code pre { margin: 0; padding: var(--space-4); overflow-x: auto; flex: 1; }
   .pg-code code { font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.6; color: var(--color-text); white-space: pre; }
@@ -155,6 +186,7 @@ const first = agents[0];
   @media (max-width: 860px) {
     .pg { grid-template-columns: 1fr; }
     .pg-controls { gap: var(--space-4); }
+    .pg-combo-btn, .pg-combo-list { min-width: 0; width: 100%; }
     .pg-code { min-height: 150px; }
     .pg-preview { height: clamp(380px, 82vw, 460px); max-width: 360px; margin-inline: auto; }
   }
