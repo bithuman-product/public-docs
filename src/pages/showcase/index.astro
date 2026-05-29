@@ -2,20 +2,17 @@
 import Base from "../../layouts/Base.astro";
 import ShowcaseTheater from "../../components/ShowcaseTheater.astro";
 import data from "../../data/showcase-agents.json";
+import caseStudies from "../../data/case-studies.json";
 
 const agents = [...data.expression, ...data.essence];
 ---
 
-<Base title="Showcase — bitHuman" description="Live, talkable demo agents built with bitHuman — Expression and Essence, human and animal.">
+<Base title="Showcase — bitHuman" description="Live, talkable agents and real-world deployments built with bitHuman — Expression and Essence.">
   <section class="sc-hero">
     <div class="container">
       <span class="eyebrow">Showcase</span>
       <h1>Talk to a live agent</h1>
-      <p class="lede">
-        Real, talkable agents running on the bitHuman engine. Swipe through and tap
-        <strong>Try live</strong> to start a conversation — Expression animates a face
-        at runtime, Essence streams a pre-built identity.
-      </p>
+      <p class="lede">Swipe through real agents and tap <strong>Try live</strong> to start a conversation — Expression animates a face at runtime, Essence streams a pre-built identity.</p>
     </div>
   </section>
 
@@ -24,11 +21,45 @@ const agents = [...data.expression, ...data.essence];
       <ShowcaseTheater agents={agents} filters={true} />
     </div>
   </section>
+
+  <section class="section deployments">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Case studies</span>
+        <h2>Real-world deployments</h2>
+        <p>How teams ship bitHuman agents into museums, enterprises, kiosks, and apps.</p>
+      </div>
+      <div class="case-grid">
+        {caseStudies.map((c) => (
+          <a class="case-card" href={c.href} target={c.href?.startsWith("http") ? "_blank" : undefined} rel={c.href?.startsWith("http") ? "noopener" : undefined}>
+            <div class="case-img" style={`background-image:url(${c.image})`}></div>
+            <div class="case-b">
+              {c.category && <span class="pill">{c.category}</span>}
+              <h3>{c.title}</h3>
+              <p>{c.summary}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 </Base>
 
 <style>
   .sc-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
   .sc-hero h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
-  .sc-hero .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
-  .sc-hero .section, .section { padding-block: var(--space-8); }
+  .sc-hero .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 62ch; }
+  .deployments { background: var(--color-surface-2); border-top: 1px solid var(--color-border); }
+  .section-head { max-width: 720px; margin-bottom: var(--space-6); }
+  .section-head h2 { font-size: var(--fh-2xl); margin-top: var(--space-3); }
+  .section-head p { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
+  .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .case-card { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: all var(--t-med) var(--ease); }
+  .case-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--color-border-strong); }
+  .case-img { aspect-ratio: 16/10; background-size: cover; background-position: center; }
+  .case-b { padding: var(--space-4); }
+  .case-b .pill { margin-bottom: var(--space-2); }
+  .case-b h3 { font-size: var(--ft-lg); }
+  .case-b p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  @media (max-width: 900px) { .case-grid { grid-template-columns: 1fr; } }
 </style>

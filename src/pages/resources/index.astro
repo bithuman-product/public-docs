@@ -1,0 +1,37 @@
+---
+import Hub from "../../components/Hub.astro";
+
+const groups = [
+  {
+    label: "Get the SDK",
+    featured: true,
+    cards: [
+      { title: "Downloads", desc: "Install commands + the device & platform support matrix.", href: "/downloads" },
+      { title: "Changelog", desc: "Product-level release notes across the engine, SDKs, and API.", href: "/changelog" },
+    ],
+  },
+  {
+    label: "Learn",
+    cards: [
+      { title: "Examples", desc: "Runnable, copy-paste starting points for every SDK.", href: "/examples" },
+      { title: "Showcase", desc: "Live demo agents and real-world deployments.", href: "/showcase" },
+      { title: "Concepts", desc: "Models, the .imx format, streaming, and architecture.", href: "/concepts/models" },
+    ],
+  },
+  {
+    label: "Connect",
+    cards: [
+      { title: "Community", desc: "GitHub, Discord, status, and how to contribute.", href: "/community" },
+      { title: "Discord", desc: "Get help and share what you build.", href: "https://discord.gg/ES953n7bPA", external: true },
+      { title: "Status", desc: "Live service status for the bitHuman API.", href: "https://status.bithuman.ai", external: true },
+    ],
+  },
+];
+---
+<Hub
+  eyebrow="Resources"
+  title="Resources"
+  tagline="Everything around building with bitHuman — downloads, changelog, examples, and the community."
+  ctas={[{ label: "Downloads", href: "/downloads" }, { label: "Examples", href: "/examples", variant: "secondary" }]}
+  groups={groups}
+/>

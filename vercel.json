@@ -4,15 +4,15 @@
     { "source": "/getting-started/quickstart", "destination": "/api/quickstart", "permanent": false },
     { "source": "/getting-started/authentication", "destination": "/api/authentication", "permanent": false },
     { "source": "/getting-started/models", "destination": "/concepts/models", "permanent": false },
-    { "source": "/getting-started/pricing", "destination": "/downloads", "permanent": false },
+    { "source": "/getting-started/pricing", "destination": "/guides/pricing", "permanent": false },
     { "source": "/getting-started/cli", "destination": "/cli", "permanent": false },
-    { "source": "/sdks/python", "destination": "/sdk", "permanent": false },
-    { "source": "/sdks/swift", "destination": "/sdk", "permanent": false },
-    { "source": "/sdks/kotlin", "destination": "/sdk", "permanent": false },
+    { "source": "/sdks/python", "destination": "/sdk/python", "permanent": false },
+    { "source": "/sdks/swift", "destination": "/sdk/swift", "permanent": false },
+    { "source": "/sdks/kotlin", "destination": "/sdk/android", "permanent": false },
     { "source": "/sdks/flutter", "destination": "/sdk", "permanent": false },
-    { "source": "/guides/local-mode", "destination": "/cli", "permanent": false },
-    { "source": "/guides/building-avatars", "destination": "/api", "permanent": false },
-    { "source": "/guides/browser-rendering", "destination": "/sdk", "permanent": false },
-    { "source": "/guides/deployment", "destination": "/api", "permanent": false }
+    { "source": "/guides/local-mode", "destination": "/cli/local-mode", "permanent": false },
+    { "source": "/guides/deployment", "destination": "/guides", "permanent": false },
+    { "source": "/use-cases", "destination": "/showcase", "permanent": false },
+    { "source": "/api/voice", "destination": "/api", "permanent": false }
   ]
 }
