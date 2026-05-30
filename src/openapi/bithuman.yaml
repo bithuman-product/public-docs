@@ -728,9 +728,11 @@ paths:
       operationId: synthesizeSpeech
       summary: Synthesize speech from text
       description: |
-        Generates audio (WAV or PCM) from a text prompt using one of the
-        built-in voices. Supports 31 languages, per-request quality / speed
-        tuning, and optional sentence-by-sentence streaming.
+        Generates audio (WAV or PCM) from a text prompt. Pick a built-in voice
+        (`M1`-`F5`), tune it inline with `axes`, or pass a `voice_code` from the
+        [Voice Designer](https://www.bithuman.ai/voice). Supports 31 languages,
+        per-request quality / speed tuning, and optional sentence-by-sentence
+        streaming.
       tags: [Voice]
       requestBody:
         required: true
@@ -746,9 +748,30 @@ paths:
                   example: "Hello from bitHuman."
                 voice:
                   type: string
-                  description: Voice ID. Built-in voices are `M1`-`M5` (male) and `F1`-`F5` (female).
+                  description: Voice ID. Built-in voices are `M1`-`M5` (male) and `F1`-`F5` (female). List them with `GET /v1/voices`.
                   default: "M1"
                   example: "F1"
+                voice_code:
+                  type: string
+                  description: |
+                    A designed-voice handle from the [Voice Designer](https://www.bithuman.ai/voice).
+                    Expands server-side to a base voice + tuning, so you don't send `voice` / `axes`
+                    yourself. A UUID references a saved voice; a `bv1_…` code self-encodes the config.
+                    Takes precedence over `voice` when present.
+                  example: "f8fb5feb-8a19-435c-89e5-a286a03565ec"
+                axes:
+                  type: object
+                  description: |
+                    Inline voice tuning — the same semantic axes as `GET /v1/studio/axes`
+                    (`gender`, `pitch`, `rate`, `brightness`). Offsets are small (roughly −0.3…0.3);
+                    `0` is neutral. Ignored when `voice_code` is supplied.
+                  additionalProperties:
+                    type: number
+                  example:
+                    gender: 0.1
+                    pitch: 0.05
+                    rate: -0.1
+                    brightness: 0.2
                 language:
                   type: string
                   description: ISO-2 language code. 31 languages supported.
