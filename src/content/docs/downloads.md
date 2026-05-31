@@ -90,7 +90,7 @@ dependencies {
 }
 ```
 
-See the [Kotlin SDK guide](/sdk/kotlin).
+See the [Kotlin SDK guide](/sdk/android).
 
 ### JavaScript / TypeScript — Preview
 

@@ -10,7 +10,7 @@ order: 13
 
 `@bithuman/sdk` is the JavaScript / TypeScript client. It is **not** a local
 avatar engine — the engine runs on the server. The SDK talks to a running
-`bithuman serve` (self-hosted) or the bitHuman cloud over LiveKit and handles
+`bithuman run` (self-hosted) or the bitHuman cloud over LiveKit and handles
 dispatch, the room join, audio push, and an async-iterator over avatar frames.
 
 > **Warning** This SDK is **Preview (v0.1)**. Auth, dispatch, and the session
@@ -60,7 +60,7 @@ A thin client over LiveKit. It handles:
 - Audio push and end-of-speech signaling
 - An async-iterator over avatar frames
 
-Because the engine runs server-side, you need a reachable `bithuman serve`
+Because the engine runs server-side, you need a reachable `bithuman run`
 instance or a bitHuman cloud avatar. For self-hosting the server, see the
 deployment guides; for a managed avatar, see [LiveKit](/sdk/livekit).
 

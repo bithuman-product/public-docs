@@ -44,7 +44,7 @@ avatar = bithuman.AvatarSession(
 
 `AvatarSession` is the single integration point — the same call works against
 both LiveKit Cloud and a self-hosted LiveKit server, and bills at the
-[self-hosted or cloud rate](/concepts/pricing) depending on whether the avatar
+[self-hosted or cloud rate](/guides/pricing) depending on whether the avatar
 GPU is yours or ours.
 
 What you get:
@@ -139,4 +139,4 @@ the Python agent above — this client is the subscriber.
 - [SDK overview](/sdk) — on-device vs cloud
 - [Python SDK](/sdk/python) — the runtime the plugin wraps
 - [Swift SDK](/sdk/swift) — the on-device alternative for Apple
-- [Pricing](/concepts/pricing) — self-hosted vs cloud rates
+- [Pricing](/guides/pricing) — self-hosted vs cloud rates

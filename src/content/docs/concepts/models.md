@@ -66,7 +66,7 @@ bithuman run modern-court-jester.imx   # live browser-served avatar
 
 - [Python SDK](/sdk/python) — self-host on macOS arm64 + Linux x86_64 / aarch64.
 - [Swift SDK](/sdk/swift) — native Mac, iPad, iPhone apps.
-- [Kotlin SDK](/sdk/kotlin) — native Android apps (Beta).
+- [Kotlin SDK](/sdk/android) — native Android apps (Beta).
 - [bitHuman CLI](/cli) — no code, terminal or browser.
 - [REST API](/api/reference) — backend integration in any language.
 - [Cloud LiveKit plugin](/guides/deploy-livekit) — managed, no infrastructure.
@@ -105,7 +105,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ### Android app
 
-**Essence** via the [Kotlin SDK](/sdk/kotlin) (Beta).
+**Essence** via the [Kotlin SDK](/sdk/android) (Beta).
 
 ### Native Mac or iPad app with close-up dynamic faces
 

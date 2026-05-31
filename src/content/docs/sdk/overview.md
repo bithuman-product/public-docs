@@ -59,7 +59,7 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
 
 See [models](/concepts/models) for the Essence vs Expression comparison and
-[pricing](/concepts/pricing) for credit details.
+[pricing](/guides/pricing) for credit details.
 
 ## Status matrix
 
