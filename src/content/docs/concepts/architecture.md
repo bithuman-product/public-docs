@@ -83,7 +83,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 2.3.0 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
+| **v7** | libessence 2.3.0 | Adds `be_runtime_tick_compose_from_mel` (mel-driven compose). Backwards-compatible with v6 callers. |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK. |
 | v5 and earlier | pre-1.16 | Retired — synchronous compose only, no streaming. |
 
