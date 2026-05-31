@@ -126,7 +126,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.3.2** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 1.17.1 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v6 |
 | bithuman CLI (`bithuman`) | **2.3.0** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) · universal installer | v7 |
