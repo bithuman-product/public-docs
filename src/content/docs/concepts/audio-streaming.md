@@ -25,8 +25,22 @@ This is the canonical, copy-pasteable loop. Other pages link here rather than re
 
 ```python
 import asyncio, os
+import numpy as np
+import soundfile as sf
 from bithuman import AsyncBithuman
-from bithuman.audio import float32_to_int16, load_audio
+
+# bithuman 2.3 is library-only — the old bithuman.audio helpers were
+# removed. Inline what we need: load a WAV, downmix to mono, convert
+# float32 → int16 PCM. (The SDK resamples to 16 kHz internally, so the
+# loader can hand back any sample rate.)
+def load_audio(path: str) -> tuple[np.ndarray, int]:
+    audio, sr = sf.read(path, dtype="float32", always_2d=False)
+    if audio.ndim > 1:
+        audio = audio.mean(axis=1)
+    return audio, sr
+
+def float32_to_int16(arr: np.ndarray) -> np.ndarray:
+    return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
 
 async def main():
     rt = await AsyncBithuman.create(
@@ -62,7 +76,7 @@ To drive an avatar by [agent code](/concepts/avatars-imx) instead of a local fil
 | Sample rate | Any (the SDK auto-resamples) |
 | Chunk size | Anything; 10–40 ms is typical |
 
-Push raw `int16` PCM bytes plus the sample rate — the SDK resamples internally. `float32_to_int16` and `load_audio` are convenience helpers in `bithuman.audio`.
+Push raw `int16` PCM bytes plus the sample rate — the SDK resamples internally. The `load_audio` / `float32_to_int16` helpers are inlined in the loop above; the old `bithuman.audio` module was removed in the 2.3 slim wheel.
 
 ## Frame format
 

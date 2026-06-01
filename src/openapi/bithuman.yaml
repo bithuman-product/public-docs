@@ -1335,8 +1335,20 @@ tags:
 
       ```python
       import asyncio, os
+      import numpy as np
+      import soundfile as sf
       from bithuman import AsyncBithuman
-      from bithuman.audio import float32_to_int16, load_audio
+
+      # bithuman 2.3 is library-only; inline the former bithuman.audio
+      # helpers (the SDK resamples to 16 kHz internally).
+      def load_audio(path):
+          audio, sr = sf.read(path, dtype="float32", always_2d=False)
+          if audio.ndim > 1:
+              audio = audio.mean(axis=1)
+          return audio, sr
+
+      def float32_to_int16(arr):
+          return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
 
       async def main():
           rt = await AsyncBithuman.create(
@@ -1625,8 +1637,20 @@ tags:
 
       ```python
       import asyncio, os
+      import numpy as np
+      import soundfile as sf
       from bithuman import AsyncBithuman
-      from bithuman.audio import float32_to_int16, load_audio
+
+      # bithuman 2.3 is library-only; inline the former bithuman.audio
+      # helpers (the SDK resamples to 16 kHz internally).
+      def load_audio(path):
+          audio, sr = sf.read(path, dtype="float32", always_2d=False)
+          if audio.ndim > 1:
+              audio = audio.mean(axis=1)
+          return audio, sr
+
+      def float32_to_int16(arr):
+          return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
 
       async def main():
           rt = await AsyncBithuman.create(
