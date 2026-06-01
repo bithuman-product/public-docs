@@ -90,7 +90,7 @@ dependencies {
 }
 ```
 
-See the [Kotlin SDK guide](/sdk/kotlin).
+See the [Kotlin SDK guide](/sdk/android).
 
 ### JavaScript / TypeScript — Preview
 
@@ -126,7 +126,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.3.2** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 1.17.1 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v6 |
 | bithuman CLI (`bithuman`) | **2.3.0** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) · universal installer | v7 |
@@ -204,7 +204,7 @@ The engine ABI is the C surface `libessence` exposes to its language wrappers. N
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 2.3.0 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
+| **v7** | libessence 2.3.0 | Adds `be_runtime_tick_compose_from_mel` (mel-driven compose). Backwards-compatible with v6 callers. |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK above. |
 | v5 and earlier | pre-1.16 | Retired in production builds — synchronous tick-compose only, no streaming. |
 

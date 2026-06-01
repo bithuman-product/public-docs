@@ -127,8 +127,8 @@ concurrent sessions, the wheel exposes the engine primitives directly:
 ```python
 from bithuman import Fixture, Runtime, EP_AUTO, EP_CPU, EP_COREML
 
-fixture = Fixture.load("avatar.imx", api_secret="...")  # weights, load once
-runtime = Runtime(fixture, ep=EP_AUTO)                  # cheap per session
+fixture = Fixture("avatar.imx", preferred_ep=EP_AUTO)  # weights, load once
+runtime = Runtime(fixture)                             # cheap per session
 ```
 
 `EP_AUTO` / `EP_CPU` / `EP_COREML` / `EP_NNAPI` / `EP_QNN` select the ONNX

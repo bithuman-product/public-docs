@@ -73,7 +73,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.3.0 | PyPI | v7 |
+| Python SDK (`bithuman`) | 2.3.2 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | SwiftPM | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 1.17.1 | Maven Central | v6 |
 | Rust SDK (`bithuman-core`) | in-tree crate | source-only (not on crates.io) | v7 |
@@ -83,7 +83,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 2.3.0 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
+| **v7** | libessence 2.3.0 | Adds `be_runtime_tick_compose_from_mel` (mel-driven compose). Backwards-compatible with v6 callers. |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK. |
 | v5 and earlier | pre-1.16 | Retired — synchronous compose only, no streaming. |
 

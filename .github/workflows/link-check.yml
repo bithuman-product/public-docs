@@ -1,0 +1,37 @@
+name: Internal links
+
+# Catch dead in-site links before they ship. The round-2 docs audit found
+# several (e.g. /sdk/kotlin when the page is /sdk/android, /concepts/pricing
+# when it's /guides/pricing, /api/voice when it's /api/text-to-speech) — they
+# rot silently because nothing resolves them. scripts/check-internal-links.mjs
+# collects every valid route (content collection + explicit pages) and fails
+# if any markdown link to an internal /route doesn't resolve.
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'src/content/**'
+      - 'src/pages/**'
+      - 'scripts/check-internal-links.mjs'
+      - '.github/workflows/link-check.yml'
+  pull_request:
+    paths:
+      - 'src/content/**'
+      - 'src/pages/**'
+      - 'scripts/check-internal-links.mjs'
+      - '.github/workflows/link-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check internal links
+        run: node scripts/check-internal-links.mjs

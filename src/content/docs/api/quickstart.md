@@ -97,7 +97,7 @@ curl -X POST https://api.bithuman.ai/v1/tts \
   --output hello.wav
 ```
 
-See [Voice](/api/voice) for languages, voices, and streaming.
+See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
 
 ## Generate your own agent (optional)
 
