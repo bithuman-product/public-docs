@@ -43,15 +43,16 @@ the server. Source lives in the public SDK repo under
 ## Setup
 
 You need an API secret from the [Developer Dashboard](https://www.bithuman.ai/#developer).
-The server runs over stdio (the default MCP transport), so any client launches
-it the same way — the recommended launcher is [`uvx`](https://docs.astral.sh/uv/).
+The server is published on PyPI as [`bithuman-mcp`](https://pypi.org/project/bithuman-mcp/)
+and runs over stdio (the default MCP transport), so any client launches it the
+same way — the recommended launcher is [`uvx`](https://docs.astral.sh/uv/).
 
 ### Claude Code
 
 ```bash
 claude mcp add bithuman \
   -e BITHUMAN_API_SECRET=sk_your_secret \
-  -- uvx --from https://github.com/bithuman-product/bithuman-sdk-public.git#subdirectory=mcp bithuman-mcp
+  -- uvx bithuman-mcp
 ```
 
 ### Claude Desktop / generic JSON config
@@ -61,19 +62,15 @@ claude mcp add bithuman \
   "mcpServers": {
     "bithuman": {
       "command": "uvx",
-      "args": [
-        "--from",
-        "https://github.com/bithuman-product/bithuman-sdk-public.git#subdirectory=mcp",
-        "bithuman-mcp"
-      ],
+      "args": ["bithuman-mcp"],
       "env": { "BITHUMAN_API_SECRET": "sk_your_secret" }
     }
   }
 }
 ```
 
-You can also clone the repo and point `--from` at a local path, or
-`pip install ./mcp` and run the `bithuman-mcp` command directly.
+Or install it directly with `pip install bithuman-mcp` and run the
+`bithuman-mcp` command.
 
 ## Configuration
 
