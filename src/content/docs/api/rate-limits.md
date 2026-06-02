@@ -80,7 +80,7 @@ busy). See the full [error reference](/api/errors).
 
 ### Response headers
 
-Every `/v1` response carries your current rate-limit state, so you can throttle
+**Metered** endpoints carry your current rate-limit state, so you can throttle
 proactively instead of waiting for a `429`:
 
 | Header | Meaning |
@@ -90,6 +90,11 @@ proactively instead of waiting for a `429`:
 | `X-RateLimit-Reset` | Unix time when the bucket is fully refilled. |
 | `Retry-After` | (On `429` only) seconds to wait before retrying. |
 | `X-Request-Id` | Correlation id for the request — include it in support reports. |
+
+> **Note** The `X-RateLimit-*` headers appear on metered endpoints. Proxied or
+> streaming endpoints — for example raw TTS audio from `POST /v1/tts` — may omit
+> them, since the response body is a passthrough audio stream. Don't assume every
+> `/v1` response includes them; read them defensively.
 
 ## Recommended retry strategy
 

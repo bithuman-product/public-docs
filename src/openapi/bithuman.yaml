@@ -139,7 +139,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "402":
           description: Insufficient credits. Generation costs 250 credits — top up to continue. Returns error code `INSUFFICIENT_BALANCE`.
-        "422":
+        "400":
           $ref: "#/components/responses/ValidationError"
 
   /v1/agent/status/{agent_id}:
@@ -1547,21 +1547,24 @@ components:
 
   responses:
     BadRequest:
-      description: Malformed or invalid request
+      description: Missing required parameter or malformed request. The HTTP status equals `status_code` (400).
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              code: "BAD_REQUEST"
+              code: "MISSING_PARAM"
               message: "Missing required field: text"
               httpStatus: 400
             status: "error"
             status_code: 400
 
     Unauthorized:
-      description: Invalid or missing API secret
+      description: |
+        Authentication failed. `UNAUTHORIZED` when the `api-secret` header is
+        present but invalid; `MISSING_AUTH` when it is absent. The HTTP status
+        equals `status_code` (401).
       content:
         application/json:
           schema:
@@ -1589,7 +1592,7 @@ components:
             status_code: 404
 
     ValidationError:
-      description: Invalid request parameters
+      description: Body failed schema validation. The HTTP status equals `status_code` (400).
       content:
         application/json:
           schema:
@@ -1598,9 +1601,9 @@ components:
             error:
               code: "VALIDATION_ERROR"
               message: "Invalid request parameters"
-              httpStatus: 422
+              httpStatus: 400
             status: "error"
-            status_code: 422
+            status_code: 400
 
 x-tagGroups:
   - name: Get started

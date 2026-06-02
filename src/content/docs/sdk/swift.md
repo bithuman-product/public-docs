@@ -1,6 +1,6 @@
 ---
 title: "Swift SDK"
-description: "On-device, real-time, lip-synced avatars for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only. GA."
+description: "On-device, real-time, lip-synced avatars for iOS, iPadOS, and macOS. Apple Silicon only. Preview maturity."
 section: sdk
 group: "Languages"
 order: 11
@@ -8,129 +8,49 @@ order: 11
 
 ## Overview
 
-The Swift SDK drops a real-time, lip-synced avatar into a native Mac, iPad, or
-iPhone app. Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS.
-All inference runs **on-device**; a once-per-minute billing heartbeat meters
-avatar mode (audio-only is unmetered). This SDK is **GA**.
+On Apple platforms, bitHuman ships as two layers on the same on-device engine:
 
-> **Note** Swift has two surfaces today, both on the same `libessence` engine:
->
-> - **`bitHumanKit`** — the currently-**published** SwiftPM package. Full-stack
->   and on-device: a high-level `VoiceChat` agent (built-in STT + LLM + TTS) plus
->   a low-level streaming runtime. This is what you install today.
-> - **`Bithuman`** — a newer binding that maps directly onto the `libessence`
->   streaming engine (`Fixture` / `Runtime` / `pushAudio` / `pullFrame`). It is
->   **rolling out**; both are documented below.
+- **`Bithuman`** — the low-level SwiftPM package that binds directly to the
+  `libessence` streaming engine. Its surface is `Fixture` / `Runtime` / `Avatar`:
+  load weights once, drive a per-session runtime with audio in / composed BGR
+  frames out. This is the real rail.
+- **AvatarUIKit** — the app-layer renderer and view stack (from
+  [`bithuman-apps/avatar-ui-kit`](https://github.com/bithuman-product)). It wraps
+  `Bithuman` with SwiftUI/UIKit views and is what the `expression/{mac,ipad,iphone}`
+  sample apps build on. Use it when you want a drop-in avatar view instead of
+  managing frames yourself.
 
-It ships as a single binary XCFramework (macOS arm64 + iOS device + simulator)
-with **zero transitive SwiftPM dependencies** — everything is statically linked.
+Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS. All inference
+runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
+(audio-only is unmetered).
 
-## Install — `bitHumanKit` (published)
+> **Maturity** This rail is **preview**, not GA. The earlier dissolved
+> `bitHumanKit` package — with `Bithuman.createRuntime` and
+> `EssenceRuntime.frames()` — has been **removed**; do not use those APIs. The
+> `Bithuman` package and AvatarUIKit are still stabilizing.
 
-In Xcode: **File → Add Package Dependencies…** → paste the URL → pick the latest
-tag → attach `bitHumanKit` to your target.
+## Install
 
-```swift
-// Package.swift
-dependencies: [
-    .package(url: "https://github.com/bithuman-product/bithuman-sdk-public.git",
-             from: "0.8.1")
-],
-targets: [
-    .target(name: "MyApp",
-            dependencies: [.product(name: "bitHumanKit", package: "bithuman")])
-]
-```
+The `Bithuman` SwiftPM package links a binary XCFramework plus native engine
+dependencies — **ONNX Runtime (ORT), ffmpeg, and hdf5** are required at the
+install path. These are not zero-dependency: they are vendored/linked by the
+package and add transitive native libraries. Plan your build settings and binary
+size accordingly.
 
-The SwiftPM package was renamed `bithuman-sdk-public` → `bithuman` in Wave 8. The
-import stays `import bitHumanKit` — only the `package:` field changes. Do not pin
-below **0.8.1** (older versions are unsupported).
+In Xcode: **File → Add Package Dependencies…** → paste the repo URL → pick the
+latest tag → attach the `Bithuman` product (and AvatarUIKit, if you want the
+view layer) to your target.
 
-Auth: export `BITHUMAN_API_KEY` (Apple convention) or set
-`VoiceChatConfig.apiKey`. Get a secret at [Developer → API
-Keys](https://www.bithuman.ai/#developer).
+Auth: export `BITHUMAN_API_KEY` (Apple convention) or set the avatar config's
+`apiKey`. Get a secret at
+[Developer → API Keys](https://www.bithuman.ai/#developer). Audio-only voice runs
+keyless and unmetered.
 
-## Two API surfaces in `bitHumanKit`
+## The `Bithuman` libessence binding
 
-Both ship in the same package.
-
-- **`VoiceChat`** — high-level voice agent with built-in speech recognition,
-  LLM, and TTS. Fastest way to ship a talking on-device assistant.
-- **`Bithuman.createRuntime` + `EssenceRuntime.frames()`** — low-level
-  streaming: push your own PCM, pull `CGImage` frames. Use when you bring your
-  own audio (WebRTC, custom TTS).
-
-### Low-level streaming (bring your own audio)
-
-```swift
-import bitHumanKit
-
-let imxURL = Bundle.main.url(forResource: "avatar", withExtension: "imx")!
-let runtime = try await Bithuman.createRuntime(modelPath: imxURL)
-guard case .essence(let essence) = runtime else { return }
-
-// Drain frames at 25 fps → your SwiftUI view.
-Task {
-    for await frame in essence.frames() {
-        if let frame { renderer.present(frame) }
-    }
-}
-
-// Push 16 kHz mono PCM as it arrives.
-try await essence.pushAudio(pcmChunk)
-```
-
-This is the Apple expression of the [audio-streaming push/drain
-loop](/concepts/audio-streaming).
-
-### High-level voice agent (audio-only, unmetered)
-
-```swift
-import SwiftUI
-import bitHumanKit
-
-@MainActor
-final class Lifecycle: ObservableObject {
-    @Published var status = "booting…"
-    private var chat: VoiceChat?
-
-    func start() async {
-        var config = VoiceChatConfig()
-        config.localeIdentifier = "en-US"
-        config.systemPrompt = "You are a helpful assistant. One sentence per turn."
-        config.voice = .preset("Aiden")
-        do {
-            let chat = VoiceChat(config: config)
-            try await chat.start()
-            self.chat = chat
-            status = "live — talk to me"
-        } catch { status = "error: \(error.localizedDescription)" }
-    }
-}
-```
-
-Say "hello" — it transcribes, thinks, and replies via TTS. Fully offline, no API
-key for audio-only. To add the lip-synced avatar, set
-`config.avatar = AvatarConfig(modelPath:portraitPath:)` and host an
-`AvatarRendererView` — return the **same** renderer instance from both
-`makeXxxView` and `updateXxxView` (SwiftUI rebuilds the parent many times per
-second and the renderer must persist).
-
-## The `Bithuman` libessence binding (rolling out)
-
-The newer binding exposes the `libessence` streaming surface directly — the same
-`Fixture` / `Runtime` shape as the Python and Kotlin SDKs. Install via SwiftPM
-against the `bithuman-sdk` repo and import `Bithuman`:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/bithuman-product/bithuman-sdk", from: "1.16.0")
-],
-targets: [
-    .target(name: "MyApp",
-            dependencies: [.product(name: "Bithuman", package: "bithuman-sdk")])
-]
-```
+The `Bithuman` package exposes the `libessence` streaming surface directly — the
+same `Fixture` / `Runtime` shape as the Python and Kotlin SDKs, plus an `Avatar`
+type for the composed-frame path.
 
 Push PCM whenever it arrives; pull a composed BGR frame whenever you want one:
 
@@ -150,12 +70,15 @@ while runtime.ticksAvailable > 0 {
     _ = try bgr.withUnsafeMutableBufferPointer {
         try runtime.pullFrame(frameIdxHint: -1, frameOut: $0)
     }
-    // Hand `bgr` to SwiftUI / UIKit / AppKit.
+    // Hand `bgr` to SwiftUI / UIKit / AppKit — or let AvatarUIKit do it.
 }
 
 // At end-of-utterance / when the conversation pauses:
 try runtime.resetStream()
 ```
+
+This is the Apple expression of the [audio-streaming push/drain
+loop](/concepts/audio-streaming).
 
 For multi-conversation hosting, share a single `Fixture` (~344 MB) across many
 lightweight `Runtime`s (~36 MB each) — about 5.6× memory efficiency at N=10
@@ -169,8 +92,17 @@ let convoB  = try Runtime(fixture: fixture)
 ```
 
 The binding targets Swift 6 (strict-concurrency clean), swift-tools-version 6.0,
-and wraps `libessence` ABI v6. `BithumanInfo.libraryVersion` /
+and wraps `libessence` **ABI v7**. `BithumanInfo.libraryVersion` /
 `BithumanInfo.abiVersion` report the linked engine version.
+
+## App-layer: AvatarUIKit
+
+For a drop-in avatar view, build on **AvatarUIKit** rather than wiring frames by
+hand. It owns the renderer lifecycle and exposes SwiftUI/UIKit views; the
+`expression/{mac,ipad,iphone}` sample apps are the reference integrations. When
+hosting a renderer view, return the **same** renderer instance from both
+`makeXxxView` and `updateXxxView` — SwiftUI rebuilds the parent many times per
+second and the renderer must persist, or the avatar vanishes on re-render.
 
 ## Permissions + entitlements
 
@@ -181,7 +113,7 @@ and wraps `libessence` ABI v6. `BithumanInfo.libraryVersion` /
 <key>NSSpeechRecognitionUsageDescription</key><string>Recognise what you say.</string>
 ```
 
-Without these, `chat.start()` fails silently (the OS denies and remembers).
+Without these, mic / speech start fails silently (the OS denies and remembers).
 Sandboxed Mac apps also need `com.apple.security.device.audio-input` in
 `.entitlements`.
 
@@ -200,16 +132,15 @@ Sandboxed Mac apps also need `com.apple.security.device.audio-input` in
 
 ## Audio-only keyless mode
 
-The high-level `VoiceChat` agent runs fully on-device and **needs no API key for
-audio-only** use — STT, LLM, and TTS all run locally and audio-only mode is
-unmetered. You only need a key (and the billing heartbeat fires) once you add the
-lip-synced avatar.
+On-device voice chat (no lip-synced avatar) **needs no API key** — STT, LLM, and
+TTS all run locally and audio-only mode is unmetered. You only need a key (and the
+billing heartbeat fires) once you add the lip-synced avatar.
 
 ## Hardware floor
 
-The SDK gates this at runtime — under-spec devices get a polite refusal screen,
-not a half-loaded engine. Use `HardwareCheck.evaluate()` to branch your SwiftUI
-root and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
+Gate this at runtime — under-spec devices should get a polite refusal screen, not
+a half-loaded engine. Use `HardwareCheck.evaluate()` to branch your SwiftUI root
+and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
 
 | | Essence | Expression |
 |---|---|---|
@@ -217,14 +148,17 @@ root and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
 | **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 |
 | **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) — **preview**, on-device validation in progress |
 
-iPhone Expression ships in `bitHumanKit` (see the [iOS example](/examples/swift-ios-hello)) but is still being validated on-device — treat it as preview and prefer Essence for production iPhone builds today. Requires Xcode 26+ (older Xcodes reject the Swift 6 concurrency syntax).
+iPhone Expression ships in the `expression/iphone` sample app (see the
+[iOS example](/examples/swift-ios-hello)) but is still being validated on-device —
+treat it as preview and prefer Essence for production iPhone builds today.
+Requires Xcode 26+ (older Xcodes reject the Swift 6 concurrency syntax).
 Expression on Apple Silicon auto-spawns a `bithuman-expression-daemon`
 subprocess; on unsupported hardware it raises `ExpressionModelNotSupported` — not
 a crash. See [models](/concepts/models).
 
 ## Performance
 
-Measured on an M5 MacBook Pro (libessence 1.16.0, single conversation):
+Measured on an M5 MacBook Pro (libessence 1.19.1, single conversation):
 
 | Metric | Value |
 |---|---|
@@ -239,7 +173,7 @@ Comfortable headroom over the 25 FPS / 40 ms tick budget.
 
 ## Troubleshooting
 
-### `chat.start()` fails silently
+### Mic / speech start fails silently
 
 Missing `Info.plist` privacy strings — the OS denies mic / speech and caches the
 denial for the session.
@@ -251,7 +185,7 @@ be approved by Apple before it takes effect.
 
 ### Avatar disappears on re-render
 
-Return the **same** `AvatarRendererView` instance from both `makeXxxView` and
+Return the **same** renderer view instance from both `makeXxxView` and
 `updateXxxView`. SwiftUI rebuilds the parent constantly; a fresh renderer each
 time means a vanishing avatar.
 

@@ -29,7 +29,7 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 | Goal | Install | What you get |
 |---|---|---|
 | Embed in a Python app | `pip install bithuman` | Python SDK (library only, ~5 MB) |
-| Embed in a Swift app | SwiftPM `bitHumanKit` | Swift SDK + bundled libessence XCFramework |
+| Embed in a Swift app | SwiftPM `Bithuman` | Swift SDK + bundled libessence XCFramework |
 | Embed in an Android app | `ai.bithuman:sdk` (Maven Central) | Kotlin SDK + AAR (`arm64-v8a`) |
 | Run from the CLI on Mac | `brew install bithuman-cli` | bithuman CLI (single Rust binary) |
 | Run from the CLI in any Python env | `pip install bithuman-cli` | Same Rust binary, inside a Python wheel |
@@ -49,10 +49,10 @@ L3  Apps (consume the SDKs)
         |
         v builds on
 L2  bitHuman SDKs (language bindings)
-    Python · Swift (bitHumanKit) · Kotlin (ai.bithuman:sdk) · Rust (in-tree)
+    Python · Swift (Bithuman) · Kotlin (ai.bithuman:sdk) · Rust (in-tree)
         |
         v wraps
-L1  bitHuman Engine — libessence (cross-platform C++/Rust)
+L1  bitHuman Engine — libessence (cross-platform C++ behind a C ABI)
     Audio in: 16 kHz mono PCM   ·   Video out: 25 FPS BGR frames
     macOS · iOS · Android · Linux · Windows
 ```
@@ -73,18 +73,18 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.3.3 | PyPI | v7 |
-| Swift SDK (`bitHumanKit`) | 0.8.2 | SwiftPM | v7 |
-| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.3 | Maven Central | v7 |
-| Rust SDK (`bithuman`) | in-tree crate | source-only (not on crates.io) | v7 |
-| bithuman CLI | 2.3.4 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
+| Python SDK (`bithuman`) | 2.3.6 | PyPI | v7 |
+| Swift SDK (`Bithuman`) | 2.3.6 | SwiftPM | v7 |
+| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | Maven Central | v7 |
+| Rust SDK (`bithuman`) | 2.3.6 (in-tree crate) | source-only (not on crates.io) | v7 |
+| bithuman CLI | 2.3.6 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
 
 ### Engine ABI history
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 1.19.1 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
-| **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK. |
+| **v7** | libessence 1.19.1 | Adds `be_runtime_tick_compose_from_mel` — composing a tick directly from a mel feed. Current production baseline; covers every shipping SDK. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
+| **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
 | v5 and earlier | pre-1.16 | Retired — synchronous compose only, no streaming. |
 
 ### Skew policy

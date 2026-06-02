@@ -1,61 +1,63 @@
 ---
 title: "WebAssembly (Browser)"
-description: "Run bitHuman visual agents entirely in the browser with WebAssembly — the avatar renders on the user's machine, no server GPU required."
+description: "The status of bitHuman in the browser: an engine-internal Emscripten beachhead, plus where the production browser renderer actually lives."
 section: sdk
 group: "Languages"
 order: 14
 label: "WebAssembly"
 ---
 
-> **New** — the WebAssembly runtime lets a bitHuman agent render **fully client-side**, in any modern browser.
+> **Preview / internal** — the in-repo WebAssembly build is an engine-internal
+> beachhead, not a production browser SDK. Read this before assuming you can drop
+> a `libessence` WASM bundle into a page.
 
-## What it is
+## What the in-repo WASM actually is
 
-The bitHuman engine (`libessence`) is compiled to **WebAssembly**, so the entire avatar
-pipeline — mel spectrogram → audio encoder → frame compositing — runs **in the user's tab**,
-in realtime, on a `<canvas>` (via [ONNX Runtime Web](https://onnxruntime.ai/docs/tutorials/web/)
-on a WASM backend, with SIMD). The avatar video never leaves the device, and your server's GPU
-stays free.
+The WebAssembly target in this repo is an **Emscripten beachhead** for the engine —
+an early, internal port that compiles a narrow slice of `libessence` to WASM:
 
-This is the same [Essence](/concepts/models) model you run on-device elsewhere — now in the browser.
+- **Auth + heartbeat** — the licensing/billing loop, so the engine can run under
+  the same metering as native.
+- **Mel** — the mel-spectrogram front-end for audio.
+- **KNN** — the nearest-neighbour lookup used in the frame pipeline.
 
-## Two modes
+It does **not** ship the full client-side render pipeline as a supported,
+installable browser SDK. Treat it as preview/internal plumbing, not a product
+surface you build against today.
 
-| Mode | What the server does | What the browser does | Use it for |
-|---|---|---|---|
-| **Browser** `rendering_mode=browser` | Runs the conversation brain (STT / LLM / TTS) and streams audio over LiveKit | Renders the lip-synced face locally | Offloading render cost while keeping a cloud brain |
-| **Avatar** `rendering_mode=avatar` | Nothing | Mic-driven puppet, fully client-side; `.imx` cached in IndexedDB | Pure-client, offline-capable demos |
+## Where the production browser renderer lives
 
-## Quickstart
-
-The fastest path is the embed, with the rendering mode set in the URL:
+The production, browser-based avatar renderer is **not** this WASM build — it
+lives in the platform, in **agent-ui**. If you want a talking agent rendering in a
+browser today, use the platform embed rather than a hand-rolled `libessence` WASM
+bundle:
 
 ```html
 <iframe
-  src="https://bithuman.ai/embed/A74NWD9723?rendering_mode=browser"
+  src="https://bithuman.ai/embed/A74NWD9723"
   allow="microphone; autoplay"
   style="width:100%;height:100%;border:0">
 </iframe>
 ```
 
-## Requirements
+The embed is driven by the platform's agent-ui renderer. See the
+[Browser rendering guide](/guides/browser-rendering) for the embed and
+cross-origin-isolation setup.
+
+## Requirements (for the internal WASM build)
+
+If you are working on the engine-internal beachhead itself:
 
 - A modern browser with **WebAssembly SIMD** (recent Chrome, Firefox, Safari).
-- **`SharedArrayBuffer`** — your page must be cross-origin isolated, so serve these headers:
+- **`SharedArrayBuffer`** — the page must be cross-origin isolated, so serve:
 
 ```text
 Cross-Origin-Opener-Policy: same-origin
 Cross-Origin-Embedder-Policy: require-corp
 ```
 
-- A one-time model download per identity, cached in **IndexedDB** for instant reloads and offline use.
+## See also
 
-## When to use it
-
-- **Cost** — rendering happens on the client, so a single server can drive far more sessions.
-- **Privacy** — the rendered video stays on the user's machine.
-- **Scale & reach** — ship a talking agent to anyone with a browser, no install.
-
-See the full [Browser rendering guide](/guides/browser-rendering) for the pipeline internals and
-the cross-origin-isolation setup. For a server-rendered or native path instead, see
-[Python](/sdk/python), [Swift](/sdk/swift), or [Android](/sdk/android).
+For a supported render path today, use a server-rendered or native target:
+[Python](/sdk/python), [Swift](/sdk/swift), or [Android](/sdk/android), or the
+platform embed via the [Browser rendering guide](/guides/browser-rendering).

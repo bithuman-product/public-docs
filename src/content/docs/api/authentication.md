@@ -123,7 +123,8 @@ have production sessions running.
 
 | Error | Cause | Fix |
 |---|---|---|
-| `401` from REST API | Missing or invalid `api-secret` header | Add the header on every request; re-verify with `/v1/validate`. |
+| `401` `MISSING_AUTH` | `api-secret` header absent | Add the header on every request. |
+| `401` `UNAUTHORIZED` | `api-secret` header present but invalid | Re-verify the secret with `/v1/validate`; rotate if needed. |
 | `Authentication failed` (Python) | Wrong/missing `BITHUMAN_API_SECRET` | Verify with the `curl /v1/validate` recipe. |
 | `VoiceChatError.missingAPIKey` (Swift) | Avatar mode without `apiKey` set | Set `config.apiKey` or export `BITHUMAN_API_KEY`. |
 | Heartbeat silent after 5 min | Network dropped on-device | Reconnect; the SDK pauses the avatar after the grace window and resumes when heartbeats succeed. |
