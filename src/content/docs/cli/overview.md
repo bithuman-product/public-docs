@@ -57,16 +57,23 @@ versions. Every subcommand accepts `--help`. See
 The conversation brain is pluggable. Both paths go through the same
 `bithuman run` command — one environment variable is the only difference.
 
+> **Precondition.** The native brew binary serves the avatar on its own,
+> but the conversational brain runs as a Python agent the binary launches.
+> Install that bundle first: `pip install bithuman-cli` for the cloud
+> brain, or `pip install 'bithuman[local]'` for the on-device brain.
+> Without it the avatar renders but cannot talk back.
+
 | Brain | Requires | Use when |
 | --- | --- | --- |
 | **Cloud** (OpenAI Realtime) | `OPENAI_API_KEY` | Fast warm-up, lowest first-token latency, hosted reliability |
-| **On-device** (whisper.cpp + llama.cpp + Supertonic + Silero) | `pip install 'bithuman-cli[local]'` + `BITHUMAN_LOCAL=1` | Zero outbound network, private audio, kiosks / offline / mobile |
+| **On-device** (whisper.cpp + llama.cpp + Supertonic + Silero) | `pip install 'bithuman[local]'` + `BITHUMAN_LOCAL=1` | Zero outbound network, private audio, kiosks / offline / mobile |
 
 > **Note** The `bithuman` package on PyPI is the Python SDK / library
-> (`from bithuman import AsyncBithuman`). The CLI ships separately as
-> `bithuman-cli` — installed via Homebrew or the universal installer on macOS
-> and Linux; `pip install bithuman-cli` (including the `[local]` extra above) is
-> **macOS Apple Silicon only**. See [Install](/cli/install).
+> (`from bithuman import AsyncBithuman`), and carries the `[local]`
+> on-device brain extra (`pip install 'bithuman[local]'`). The CLI ships
+> separately as `bithuman-cli` — installed via Homebrew or the universal
+> installer on macOS and Linux; `pip install bithuman-cli` is **macOS
+> Apple Silicon only**. See [Install](/cli/install).
 
 ## Next steps
 

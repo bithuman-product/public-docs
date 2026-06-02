@@ -13,7 +13,7 @@ subcommand accepts `--help` for the full flag listing.
 
 | Command | What it does |
 | --- | --- |
-| `bithuman init` | Scaffold a new project / starter config |
+| `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull the `nova` avatar |
 | `bithuman run <path.imx>` | Live browser-served avatar (cloud or on-device brain) |
 | `bithuman render <path.imx>` | Offline render: model + WAV → MP4 (Linux-only) |
 | `bithuman info <path.imx>` | Print `.imx` metadata |
@@ -22,18 +22,22 @@ subcommand accepts `--help` for the full flag listing.
 | `bithuman doctor` | Host + auth + cache sanity check |
 | `bithuman --version` | Print `libessence` + ABI + CLI versions |
 
-## `bithuman init`
+## `bithuman init` — credential wizard
 
-Scaffold a new project with a starter configuration so you can go from a
-fresh directory to a running avatar quickly:
+`bithuman init` is an interactive setup wizard, not a project scaffolder.
+It walks you through first-time credentials and a starter avatar:
 
 ```bash
 bithuman init
 ```
 
-This sets up the local project layout and prompts for the values the
-other commands need (avatar auth, brain selection). After `init`, wire up
-your secrets as described in [Configuration](/cli/configuration).
+It prompts for your `BITHUMAN_API_SECRET` and writes it to
+`~/.bithuman/config` (a dotenv file, mode `0600`), lets you pick a
+conversation brain, and pulls the `nova` showcase avatar so you have
+something to run immediately. `~/.bithuman/config` is loaded at every CLI
+startup, so the secret persists across sessions without re-exporting it.
+See [Configuration](/cli/configuration) for the full set of variables it
+manages.
 
 ## `bithuman run` — live avatar
 
@@ -46,6 +50,18 @@ OpenAI Realtime or the [on-device](/cli/local-mode) stack per
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 # → open the printed http://127.0.0.1:8088/<CODE> URL, grant mic, talk
 ```
+
+> **Precondition — the conversation brain needs the Python agent bundle.**
+> The native brew binary serves the avatar on its own, but the
+> conversational brain runs as a Python agent that the binary launches.
+> Install it before `bithuman run` can talk back:
+>
+> - **Cloud brain (OpenAI Realtime):** `pip install bithuman-cli`
+> - **On-device brain:** `pip install 'bithuman[local]'` (then
+>   `BITHUMAN_LOCAL=1`)
+>
+> Without one of these the avatar renders but has no brain. See
+> [Configuration](/cli/configuration) and [Local mode](/cli/local-mode).
 
 Common flags:
 
@@ -85,9 +101,11 @@ Flags:
 > 2. **Use `bithuman run` instead** — the live-avatar path does not need the
 >    offline encoder; it publishes frames into LiveKit via the webrtc-rs
 >    encoder, and you can record from the browser if you need a file.
-> 3. **Render on a Linux host** — a small Linux box or CI runner with
->    `bithuman-cli` installed renders any `.imx` + WAV pair to MP4
->    identically.
+> 3. **Render on a Linux host** — a small Linux box or CI runner with the
+>    CLI installed via the universal installer renders any `.imx` + WAV
+>    pair to MP4 identically. (On Linux, install with the universal
+>    installer, not `pip install bithuman-cli` — the PyPI wheel is
+>    macOS-only.)
 >
 > An AVFoundation-based native macOS encoder is on the roadmap.
 

@@ -12,11 +12,21 @@ order: 11
 | --- | --- |
 | `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer). |
 | `OPENAI_API_KEY` | Cloud conversation brain (OpenAI Realtime). Required for `bithuman run` unless `BITHUMAN_LOCAL=1` is set. |
-| `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman-cli[local]'`. See [Local mode](/cli/local-mode). |
-| `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). See [Local mode tuning](/cli/local-mode). |
-| `BITHUMAN_INSTRUCTIONS` | System-prompt override for the conversation brain. |
-| `BITHUMAN_UNMETERED` | `=1` skips the avatar-runtime auth heartbeat — dev / parity testing only. |
-| `RUST_LOG` | Tracing filter. Default `info,bithuman_serve=info`. |
+| `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman[local]'`. See [Local mode](/cli/local-mode). |
+| `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). Brain-side — read by the Python agent, not the CLI binary. See [Local mode tuning](/cli/local-mode). |
+| `BITHUMAN_INSTRUCTIONS` | System-prompt override for the conversation brain. Brain-side — read by the Python agent, not the CLI binary. |
+| `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn`. |
+
+## Startup config file
+
+At every startup the CLI loads `~/.bithuman/config` — a dotenv file
+(written by `bithuman init`, mode `0600`) — and merges its keys into the
+environment. This is how `BITHUMAN_API_SECRET` persists across sessions
+without re-exporting it.
+
+Note: `~/.bithuman/embedded-key` is **not** read by the CLI, and a `.env`
+file in the current directory is **not** auto-loaded — only
+`~/.bithuman/config` and the process environment are consulted.
 
 ## Cloud vs on-device brain
 
@@ -34,10 +44,10 @@ bithuman run avatar.imx
 
 **On-device:** install the `[local]` extra and set `BITHUMAN_LOCAL=1`. No
 API key, no outbound network. `BITHUMAN_API_SECRET` is still required for
-avatar metering (or `BITHUMAN_UNMETERED=1` for dev parity testing).
+avatar metering.
 
 ```bash
-pip install 'bithuman-cli[local]'
+pip install 'bithuman[local]'
 export BITHUMAN_API_SECRET=your_api_secret
 BITHUMAN_LOCAL=1 bithuman run avatar.imx
 ```
@@ -53,13 +63,21 @@ on-device stack and tuning variables.
 | `~/.cache/bithuman/models` | `.imx` avatar models (pool-mode default `--models-root`) |
 | `~/.cache/bithuman/avatars` | Imported avatars staged via `POST /launch` |
 | `~/.cache/bithuman/showcase` | Downloads from `bithuman pull` |
+| `~/.cache/bithuman/run` | Per-`run` scratch (session state, logs) |
+| `~/.cache/bithuman/examples` | Cached example assets |
 | `~/.cache/bithuman/brain-venv` | Auto-bootstrapped venv for the bundled conversation brain (only used when not pip-installed) |
-| `~/.cache/huggingface/hub` | Local-mode STT + LLM weights (whisper.cpp `.bin`, llama.cpp `.gguf`) |
+| `~/.cache/huggingface` | Local-mode STT + LLM weights (whisper.cpp `.bin`, llama.cpp `.gguf`) |
 | `~/.cache/supertonic` | Local-mode TTS ONNX weights |
 
 `bithuman doctor` shows the current size of each directory. Clear the
 whole tree with `rm -rf ~/.cache/bithuman` — it regenerates on the next
 run.
+
+## Embedded LiveKit port
+
+`--embedded-livekit-port` sets the port for the embedded `livekit-server`
+child that `bithuman run` spawns. Override it when the default collides
+with another process.
 
 ## See also
 
