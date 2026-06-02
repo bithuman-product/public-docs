@@ -28,14 +28,31 @@ It's the same engine that powers the [SDKs](/sdk).
 > installer above. The separate `bithuman` PyPI package is the Python *library*,
 > not the CLI — see [Python SDK](/sdk/python).
 
+## Sign in
+
+```bash
+bithuman login
+```
+
+This opens your browser to sign in to bitHuman. Approve the request and you're
+done — `bithuman login` mints a per-device key, scoped to your account, and
+stores it in your OS keychain so every other command just works. No copying
+secrets, no `export`. On an SSH or headless box (no browser to open), use
+`bithuman login --device` and enter the short code it prints. See
+[Commands → Signing in](/cli/commands#signing-in) for logout and `auth status`.
+
+> **Tip** — Prefer to manage the credential yourself (CI, automation)? Skip
+> login and set `BITHUMAN_API_SECRET` directly — see
+> [Configuration](/cli/configuration). Both paths are fully supported.
+
 ## Verify
 
 ```bash
 bithuman doctor
 ```
 
-`doctor` checks your install, platform, and that everything's ready to run. Then
-head to [Commands](/cli/commands) or jump straight in:
+`doctor` checks your install, platform, sign-in, and that everything's ready to
+run. Then head to [Commands](/cli/commands) or jump straight in:
 
 ```bash
 bithuman pull modern-court-jester

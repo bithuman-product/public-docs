@@ -8,11 +8,13 @@ order: 10
 
 ## Subcommand overview
 
-The bithuman CLI exposes seven subcommands plus `--version`. Every
-subcommand accepts `--help` for the full flag listing.
+Every subcommand accepts `--help` for the full flag listing.
 
 | Command | What it does |
 | --- | --- |
+| `bithuman login` | Sign in via the browser; mint + store a per-device key |
+| `bithuman logout` | Revoke this device's key and clear the local store |
+| `bithuman auth status` | Show the signed-in account and credential source |
 | `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull the `nova` avatar |
 | `bithuman run <path.imx>` | Live browser-served avatar (cloud or on-device brain) |
 | `bithuman render <path.imx>` | Offline render: model + WAV → MP4 (Linux-only) |
@@ -21,6 +23,78 @@ subcommand accepts `--help` for the full flag listing.
 | `bithuman list` | Browse the showcase avatar catalog |
 | `bithuman doctor` | Host + auth + cache sanity check |
 | `bithuman --version` | Print `libessence` + ABI + CLI versions |
+
+## Signing in
+
+`bithuman login` is the first step after installing. It signs you in to your
+bitHuman account through the browser and stores the credential locally, so
+`run`, `pull`, `doctor`, and the rest authenticate without any `export`.
+
+```bash
+bithuman login
+# → opens your browser; approve the request, then return to the terminal
+# ✓ Logged in as you@example.com
+```
+
+What happens: the CLI opens your browser to sign in, you approve the request,
+and bitHuman mints a **per-device API key** scoped to your account — aliased
+`cli@<hostname>` so you can recognize it later. The key is saved to your OS
+keychain (macOS Keychain / Linux Secret Service) so it survives across
+sessions and never sits in a plaintext env file. If no keychain is available,
+the CLI falls back to `~/.bithuman/config` (a dotenv file, mode `0600`).
+
+**SSH / headless (no browser):**
+
+```bash
+bithuman login --device
+# → prints a short code and a URL; open the URL on any device, enter the code
+```
+
+`--device` switches to a code-entry flow: the CLI prints a short user code and
+a verification URL. Open that URL in a browser anywhere (your laptop, your
+phone), sign in, enter the code, and the CLI completes the login. Use this
+whenever the browser can't reach the machine running the CLI — the default
+loopback flow needs a browser on the same host.
+
+**Check who you are:**
+
+```bash
+bithuman auth status
+# Signed in as you@example.com
+# Key:    cli@my-macbook
+# Source: OS keychain
+```
+
+`auth status` reports the signed-in account, the per-device key alias, and
+where the credential is being read from (env var, keychain, or
+`~/.bithuman/config`).
+
+**Sign out:**
+
+```bash
+bithuman logout
+```
+
+`logout` revokes this device's key on the server and clears the local store.
+The key is gone immediately — any other machine's key (and your dashboard
+keys) are untouched.
+
+> **Tip** — Each device gets its own key, so you can revoke one laptop without
+> disrupting another. You can also revoke any device's key from
+> [Developer → API Keys](https://www.bithuman.ai/#developer) on the dashboard.
+
+### Credential resolution order
+
+Every command looks for the credential in this order — first match wins:
+
+1. **`BITHUMAN_API_SECRET`** in the environment (explicit; CI / automation)
+2. **OS keychain** (what `bithuman login` writes)
+3. **`~/.bithuman/config`** (the dotenv fallback, also written by
+   `bithuman init`)
+
+So a key you `export` always overrides a logged-in one — handy for testing a
+specific secret without logging out. See
+[Configuration](/cli/configuration) for the manual path in full.
 
 ## `bithuman init` — credential wizard
 

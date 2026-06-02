@@ -29,6 +29,34 @@ depending on which surface you're using:
 3. Click **Create new key**, name it (e.g. `production-mac`), and copy the
    value. **You won't be able to view it again** — store it somewhere durable.
 
+## Sign in from the CLI
+
+If you use the [CLI](/cli), you don't have to copy a key by hand. Run:
+
+```bash
+bithuman login
+```
+
+This opens your browser, you sign in to your bitHuman account and approve
+the request, and the CLI mints a **per-device API key** — scoped to your
+account and aliased `cli@<hostname>` — then stores it in your OS keychain.
+From then on every CLI command (and any SDK process that inherits the
+environment) authenticates automatically; there's nothing to `export`.
+
+On SSH or headless hosts where the browser can't reach the machine, use
+`bithuman login --device` and enter the short code it prints from any
+browser. See [CLI → Signing in](/cli/commands#signing-in).
+
+Because each device gets its own key, it's individually **revocable** — run
+`bithuman logout` on that machine, or revoke the `cli@<hostname>` key from
+[Developer → API Keys](https://www.bithuman.ai/#developer). Revoking one
+device leaves your other keys untouched.
+
+> **CI, containers, automation** — keep setting `BITHUMAN_API_SECRET`
+> directly (next section). That path is fully supported and is what you want
+> anywhere there's no browser or interactive shell. `bithuman login` is a
+> convenience for interactive machines, not a replacement for it.
+
 ## Verify it works
 
 ```bash
