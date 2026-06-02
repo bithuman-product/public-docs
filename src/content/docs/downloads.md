@@ -86,7 +86,7 @@ Self-contained Android AAR via Maven Central. `arm64-v8a`, Android 10+.
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("ai.bithuman:sdk:1.17.1")
+    implementation("ai.bithuman:sdk:2.3.3")
 }
 ```
 
