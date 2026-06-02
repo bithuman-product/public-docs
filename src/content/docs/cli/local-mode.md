@@ -8,27 +8,27 @@ order: 20
 
 ## The on-device brain
 
-`bithuman-cli[local]` is an opt-in extra that swaps the cloud
+`bithuman[local]` is an opt-in extra that swaps the cloud
 conversation brain (OpenAI Realtime) for an entirely in-process,
 on-device stack — whisper.cpp + llama.cpp + Supertonic + Silero VAD. No
 API key, no outbound network, no separate servers. Same `bithuman run`
 command, same browser URL, same avatar.
 
 ```bash
-pip install 'bithuman-cli[local]'
+pip install 'bithuman[local]'
 export BITHUMAN_API_SECRET=your_api_secret
 bithuman pull modern-court-jester
 BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 # → open the printed http://127.0.0.1:8088/<CODE> URL in a browser
 ```
 
-The `[local]` extra ships on the CLI sibling wheel (`bithuman-cli`) for
-macOS arm64, Linux x86_64, and Linux aarch64; Python 3.10–3.14.
+The `[local]` extra is published on the `bithuman` package for macOS
+arm64, Linux x86_64, and Linux aarch64; Python 3.10–3.14. (The CLI binary
+itself ships as the `bithuman-cli` wheel.)
 
 > **Note** `bithuman run` still pings `api.bithuman.ai` for avatar credit
-> accounting even in local mode — `BITHUMAN_API_SECRET` is required (or
-> `BITHUMAN_UNMETERED=1` for dev parity testing). Only the conversation
-> brain goes offline.
+> accounting even in local mode — `BITHUMAN_API_SECRET` is required. Only
+> the conversation brain goes offline.
 
 ## When to reach for it
 
@@ -163,15 +163,14 @@ the only difference.
 Cold start (every-model first download, first run only) is ~90 s. Process
 warm-up after that is under a second.
 
-## What's NOT in `bithuman-cli[local]`
+## What's NOT in `bithuman[local]`
 
 - **Avatar generation** — you still need an `.imx` file. Generate one on
   [bithuman.ai](https://www.bithuman.ai/#explore) (free tier) via
   `POST /v1/agent/generate`, or pull one from the showcase
   (`bithuman pull <slug>` → `~/.cache/bithuman/showcase/`).
 - **Avatar metering** — `bithuman run` still pings `api.bithuman.ai` for
-  credit accounting. Set `BITHUMAN_UNMETERED=1` for dev parity testing;
-  production deployments still need `BITHUMAN_API_SECRET`.
+  credit accounting; deployments still need `BITHUMAN_API_SECRET`.
 - **Voice cloning** — Supertonic ships voice presets. Custom voice
   cloning is a hosted service that produces JSON style files; once you
   have the JSON, inference is local but the cloning step is not.
@@ -192,8 +191,8 @@ subsequent runs start in under a second.
 
 ### `BITHUMAN_LOCAL=1` errors with "required the local extras"
 
-You installed `bithuman-cli` without the `[local]` extra. Re-install:
-`pip install 'bithuman-cli[local]'`.
+You installed the brain bundle without the `[local]` extra. Re-install:
+`pip install 'bithuman[local]'`.
 
 ### LLM is too dumb
 
