@@ -60,16 +60,12 @@ Each session bills at the [cloud or self-hosted rate](/guides/pricing) depending
 
 ## Runnable examples
 
-Six complete LiveKit agents ship in the [examples repo](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python) — each with `.env.example`, `requirements.txt`, and a `docker-compose.yml` full stack (LiveKit + agent + web UI). Clone, fill `.env`, then `docker compose up`:
+Complete LiveKit agents ship in the [examples repo](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python) — each with `.env.example`, `requirements.txt`, and a `docker-compose.yml` full stack (LiveKit + agent + web UI). Clone, fill `.env`, then `docker compose up`:
 
 | Example | Model · where |
 |---|---|
 | [cloud-essence](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-essence) | Essence · bitHuman cloud — start here |
-| [cloud-expression](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-expression) | Expression · bitHuman cloud |
 | [local-essence](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence) | Essence · your server (CPU) |
-| [local-expression-gpu](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-expression-gpu) | Expression · your NVIDIA GPU (local LiveKit + Redis) |
-| [local-expression-gpu-livekit-cloud](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-expression-gpu-livekit-cloud) | Expression · your GPU, WebRTC via LiveKit Cloud |
-| [local-expression-mac](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-expression-mac) | Expression · Apple Silicon M3+ |
 
 See the [LiveKit Agents docs](https://docs.livekit.io/agents/) for the broader agent-worker model.
 

@@ -64,7 +64,9 @@ The conversation brain is pluggable. Both paths go through the same
 
 > **Note** The `bithuman` package on PyPI is the Python SDK / library
 > (`from bithuman import AsyncBithuman`). The CLI ships separately as
-> `bithuman-cli`. See [Install](/cli/install).
+> `bithuman-cli` — installed via Homebrew or the universal installer on macOS
+> and Linux; `pip install bithuman-cli` (including the `[local]` extra above) is
+> **macOS Apple Silicon only**. See [Install](/cli/install).
 
 ## Next steps
 

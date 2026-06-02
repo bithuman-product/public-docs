@@ -51,7 +51,8 @@ from bithuman import AsyncBithuman
 import os
 
 rt = await AsyncBithuman.create(
-    agent_code="A78WKV4515",   # not model_path — the code resolves to the .imx
+    model_path="agent.imx",      # the local .imx file — required on-device
+    agent_code="A78WKV4515",     # optional: billing attribution
     api_secret=os.environ["BITHUMAN_API_SECRET"],
 )
 ```

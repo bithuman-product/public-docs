@@ -23,7 +23,7 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `agent_id` | string | yes | — | Agent ID to generate dynamics for. |
 | `image_url` | string | no | from agent | Source image URL. Defaults to the agent's primary image. |
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
-| `model` | string | no | `quality` | Model variant: `quality`, `speed`, or `auto`. |
+| `model` | string | no | `seedance` | Model variant: `seedance` (default), `quality`, `speed`, or `auto`. |
 
 ```python
 import requests
@@ -48,8 +48,8 @@ print(resp.json())
 **Duration guidance:** 1–3 s for quick gestures (waves, nods), 3–5 s for standard
 motions (default), 5–10 s for extended animations.
 
-**Model options:** `quality` (high-quality, default), `speed` (faster
-alternative), `auto` (platform picks the best for the input).
+**Model options:** `seedance` (default), `quality` (high-quality), `speed`
+(faster alternative), `auto` (platform picks the best for the input).
 
 ## Get dynamics
 

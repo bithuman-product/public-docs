@@ -9,16 +9,18 @@ order: 11
 ## Prerequisites
 
 - A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
-- Python 3.10–3.14 (use a virtualenv). Install the library:
+- Python 3.10–3.14 (use a virtualenv). Install the library (cross-platform wheels — macOS arm64 + Linux x86_64/aarch64):
 
 ```bash
-pip install bithuman==2.3.0 soundfile
+pip install bithuman==2.3.3 soundfile
 ```
 
-- Runs on macOS arm64 (M3+), Linux x86_64, and Linux aarch64 — fully on-device.
+- Runs on macOS arm64, Linux x86_64, and Linux aarch64 — fully on-device.
 - Two input files the script reads by name:
-  - **`avatar.imx`** — an avatar model. Run `bithuman pull modern-court-jester` once (the [CLI](/cli) caches it at `~/.cache/bithuman/showcase/modern-court-jester.imx`), then copy it next to your script as `avatar.imx`. Or download one from [Explore](https://www.bithuman.ai/#explore).
-  - **`speech.wav`** — any speech clip from any TTS (ElevenLabs, OpenAI, your own recording, …).
+  - **`avatar.imx`** — an avatar model. Download any showcase model directly, e.g. `curl -L https://models.bithuman.ai/showcase/modern-court-jester.imx -o avatar.imx`. (On macOS you can also `bithuman pull modern-court-jester` via the [CLI](/cli); the CLI's PyPI wheel is macOS-only, so on Linux use the direct download above or grab one from [Explore](https://www.bithuman.ai/#explore).)
+  - **`speech.wav`** — any speech clip from any TTS. No TTS handy? One call to the bitHuman API returns a WAV: `curl -X POST https://api.bithuman.ai/v1/tts -H "api-secret: $BITHUMAN_API_SECRET" -H content-type:application/json -d '{"text":"Hello from bitHuman.","voice":"F1"}' -o speech.wav`.
+
+> **Note (Debian/Ubuntu)** The bundled runtime looks for CA certificates at the RHEL path `/etc/pki/tls/certs/ca-bundle.crt`. On Debian/Ubuntu (certs live in `/etc/ssl/certs`) the first authenticated call fails with `Problem with the SSL CA cert`. Fix once with: `sudo mkdir -p /etc/pki/tls/certs && sudo ln -sf /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt`.
 
 ## Run it
 

@@ -215,9 +215,9 @@ root and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
 |---|---|---|
 | **macOS** | M3+, macOS 26 | M3+, macOS 26 |
 | **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 |
-| **iPhone** | iPhone 16 Pro+ (A18 Pro) | Not supported — use Essence |
+| **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) — **preview**, on-device validation in progress |
 
-Requires Xcode 26+ (older Xcodes reject the Swift 6 concurrency syntax).
+iPhone Expression ships in `bitHumanKit` (see the [iOS example](/examples/swift-ios-hello)) but is still being validated on-device — treat it as preview and prefer Essence for production iPhone builds today. Requires Xcode 26+ (older Xcodes reject the Swift 6 concurrency syntax).
 Expression on Apple Silicon auto-spawns a `bithuman-expression-daemon`
 subprocess; on unsupported hardware it raises `ExpressionModelNotSupported` — not
 a crash. See [models](/concepts/models).

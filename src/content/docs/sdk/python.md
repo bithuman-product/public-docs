@@ -24,9 +24,11 @@ aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host.)
 
 > **Note** `pip install bithuman` is the **library** — `from bithuman import
-> AsyncBithuman`. For the command-line tool, install the sibling
-> [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) wheel or the
-> [Homebrew tap](/cli). Both share the same `libessence` engine.
+> AsyncBithuman` — and ships cross-platform wheels (macOS arm64 + Linux
+> x86_64/aarch64). For the command-line tool, install the sibling
+> [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) — via Homebrew or the
+> [universal installer](/cli/install) on macOS/Linux; `pip install bithuman-cli`
+> is **macOS Apple Silicon only**. Both share the same `libessence` engine.
 
 > **Note** The SDK returns frames as numpy BGR arrays and needs **no** OpenCV
 > itself. Only example scripts that *display* a window need `opencv-python` — it
@@ -185,13 +187,17 @@ Silero) — no API key, no outbound network. See [local mode](/cli/local-mode).
 Not installed in the active environment — `pip install bithuman --upgrade` in
 the same venv you run from.
 
-### 401 / authentication failed
+### Authentication failed
 
-Confirm `BITHUMAN_API_SECRET` is set in the running shell, then:
+Confirm `BITHUMAN_API_SECRET` is set in the running shell, then check the key:
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
 ```
+
+`/v1/validate` always returns HTTP `200` — read the body: `{"valid": true}` means
+the key is good, `{"valid": false}` means it's missing or wrong (it does **not**
+return `401`).
 
 ### Avatar shows but no lip movement
 

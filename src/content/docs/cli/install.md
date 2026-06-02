@@ -8,14 +8,25 @@ order: 2
 
 ## Install
 
-One command, macOS and Linux:
+**macOS (Apple Silicon)** — Homebrew:
 
 ```bash
-curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
+brew install bithuman-product/bithuman/bithuman-cli
 ```
 
-This downloads the latest self-contained `bithuman` binary (the same engine that
-powers the [SDKs](/sdk)) and puts it on your `PATH`.
+**macOS or Linux** — universal installer (detects your platform and drops the
+right self-contained `bithuman` binary on your `PATH`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+```
+
+It's the same engine that powers the [SDKs](/sdk).
+
+> **Note** — `pip install bithuman-cli` also works, but **only on macOS Apple
+> Silicon** (there are no Linux or Intel-Mac wheels). On Linux, use the universal
+> installer above. The separate `bithuman` PyPI package is the Python *library*,
+> not the CLI — see [Python SDK](/sdk/python).
 
 ## Verify
 
@@ -28,7 +39,7 @@ head to [Commands](/cli/commands) or jump straight in:
 
 ```bash
 bithuman pull modern-court-jester
-bithuman run
+bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
 > **Tip** — `bithuman run` prints a local URL (e.g. `http://127.0.0.1:8088/<code>`)

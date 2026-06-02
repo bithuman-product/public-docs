@@ -9,16 +9,11 @@ order: 10
 ## Prerequisites
 
 - A bitHuman API secret (free tier works) — get one at [Developer → API Keys](https://www.bithuman.ai/#developer). See [Authentication](/api/authentication) for how the key is used.
-- Install the CLI (one of):
-
-```bash
-brew install bithuman-product/bithuman/bithuman-cli   # macOS, recommended
-```
-
-- Device floor: macOS 26+ on Apple Silicon (M3+) **or** Linux x86_64 / aarch64. ~3 GB free disk for the showcase avatar; ~5 GB more for the on-device brain.
+- Install the CLI:
+  - **macOS (Apple Silicon):** `brew install bithuman-product/bithuman/bithuman-cli` (or `pip install bithuman-cli`).
+  - **Linux (x86_64 / aarch64):** the universal installer — `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh`. (The PyPI `bithuman-cli` wheel is macOS-Apple-Silicon only, so `pip install` won't work on Linux.)
+- Device floor: macOS 14 (Sonoma)+ on Apple Silicon, **or** Linux x86_64 / aarch64. ~100 MB free disk for a showcase avatar; ~900 MB more for the on-device brain.
 - Optional: an `OPENAI_API_KEY` for the cloud brain — or skip it entirely with `BITHUMAN_LOCAL=1` for a fully on-device, offline brain.
-
-> **Note** No Homebrew? Use the universal one-liner `curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh`, or `pip install bithuman-cli` in any Python 3.10–3.14 env. All three install the same Rust binary.
 
 ## Run it
 
@@ -42,7 +37,7 @@ export OPENAI_API_KEY=sk-...
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~5 GB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline.
+4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~900 MB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline. (The `[local]` pip extra is macOS Apple Silicon — see [Local mode](/cli/local-mode) for the Linux path.)
 
 ```bash
 pip install 'bithuman-cli[local]'
@@ -80,7 +75,7 @@ bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
   --audio speech.wav --output rendered.mp4
 ```
 
-> **Note** `bithuman render` ships on **Linux only** as of bithuman 2.3.0 / libessence ABI v7 — on macOS the encoder returns "not implemented". Workarounds: render in a manylinux Docker container, or use `bithuman run` and screen-record the browser tab. macOS render support is queued.
+> **Note** `bithuman render` ships on **Linux only** (libessence ABI 7) — on macOS the encoder returns "not implemented". Workarounds: render on a Linux host (install via the universal installer above), or use `bithuman run` and screen-record the browser tab. macOS render support is queued.
 
 Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/cli)
 

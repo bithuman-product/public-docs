@@ -35,12 +35,13 @@ no side effects).
 
 | Query param | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `user_id` | string | yes | — | User UUID to look up. |
+| `user_id` | string | no | the key's owner | User UUID to look up. Omit it to get the balance for the account that owns the API secret. |
 | `app` | string | no | `imaginex` | App identifier for multi-app subscription support. |
 | `app_key` | string | no | same as `app` | Explicit subscription key for collection-scoped apps. |
 
 ```bash
-curl "https://api.bithuman.ai/v2/credit-summaries?user_id=$USER_ID&app=imaginex" \
+# Your own balance — just the key:
+curl https://api.bithuman.ai/v2/credit-summaries \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 

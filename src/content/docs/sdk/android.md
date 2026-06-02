@@ -24,12 +24,12 @@ android {
         minSdk = 29
     }
 }
-dependencies { implementation("ai.bithuman:sdk:1.17.1") }
+dependencies { implementation("ai.bithuman:sdk:2.3.3") }
 ```
 
 | Field | Value |
 |---|---|
-| Maven coordinate | `ai.bithuman:sdk:1.17.1` |
+| Maven coordinate | `ai.bithuman:sdk:2.3.3` |
 | ABI | `arm64-v8a` only |
 | Engine ABI | v6 (v7 refresh queued — track via release notes) |
 | Min / Compile SDK | 29 (Android 10) / 35 |
@@ -43,15 +43,15 @@ Kotlin SDK has its own release cadence and is **not** locked to the Python
 
 ## Auth
 
-Set your secret before the first `Avatar.load` / `Fixture` call:
+Pass your secret as the `apiSecret` argument to `Avatar.load` (the SDK also reads
+the `BITHUMAN_API_SECRET` environment variable if you set it before the process
+starts — but a Java *system property* is **not** read):
 
 ```kotlin
-class App : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        System.setProperty("BITHUMAN_API_SECRET", BuildConfig.BITHUMAN_API_SECRET)
-    }
-}
+val avatar = Avatar.load(
+    modelPath,
+    apiSecret = BuildConfig.BITHUMAN_API_SECRET,
+)
 ```
 
 Get a secret at [Developer → API Keys](https://www.bithuman.ai/#developer). The

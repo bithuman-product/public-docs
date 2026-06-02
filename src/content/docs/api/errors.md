@@ -22,6 +22,13 @@ All errors follow the same structure:
 }
 ```
 
+> **Important** Some endpoints (e.g. `GET /v1/agent/{code}`) return the real code
+> in the **body** (`status_code` / `error.code`) while the HTTP transport status is
+> still `200`. A few endpoints (e.g. an auth failure on `POST /v1/tts`) return a
+> bare `{"error": "Unauthorized"}` instead of the structured envelope. So always
+> branch on the parsed body's `status_code` / `error.code`, not just the HTTP
+> status line.
+
 ## HTTP status codes
 
 | Status | Meaning | Common cause |
@@ -93,17 +100,24 @@ resp = requests.post(
     json={"prompt": "You are a helpful assistant"},
 )
 
-if resp.status_code == 200:
-    print("Agent generating:", resp.json()["agent_id"])
-elif resp.status_code == 401:
-    print("Invalid API secret. Check BITHUMAN_API_SECRET.")
-elif resp.status_code == 429:
-    print("Rate limited. Wait and retry.")
-elif resp.status_code == 503:
+# Branch on the BODY's status_code/error.code, not just resp.status_code —
+# some endpoints return the real code in the body while the HTTP status is 200.
+body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+code = body.get("status_code", resp.status_code)
+err = body.get("error")
+err_code = err.get("code") if isinstance(err, dict) else err  # dict envelope or bare string
+
+if code == 200:
+    print("Agent generating:", body["data"]["agent_id"] if "data" in body else body.get("agent_id"))
+elif code in (401, 403):
+    print("Auth failed. Check BITHUMAN_API_SECRET.")
+elif code == 429:
+    print("Rate limited. Wait and retry with backoff.")
+elif code == 503:
     print("Workers busy. Retry in a few seconds.")
 else:
-    error = resp.json().get("error", {})
-    print(f"Error {error.get('code')}: {error.get('message')}")
+    msg = err.get("message") if isinstance(err, dict) else err
+    print(f"Error {err_code}: {msg}")
 ```
 
 For `429` and `503`, use exponential backoff with jitter — see

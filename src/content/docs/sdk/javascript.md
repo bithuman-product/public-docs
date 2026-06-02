@@ -24,6 +24,12 @@ and examples translate 1:1.
 
 ## Install
 
+> **Note** `@bithuman/sdk` is **not yet published to npm** — `npm install
+> @bithuman/sdk` will 404 today. While it's in preview, install it from source
+> (clone the SDK and `npm pack`/link the `sdks/javascript` package) or watch the
+> [changelog](/changelog) for the npm release. The command below is the form the
+> published package will take:
+
 ```bash
 npm install @bithuman/sdk
 ```

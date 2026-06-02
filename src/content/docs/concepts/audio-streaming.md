@@ -65,7 +65,7 @@ async def main():
 asyncio.run(main())
 ```
 
-To drive an avatar by [agent code](/concepts/avatars-imx) instead of a local file, pass `agent_code="A78WKV4515"` to `create()` in place of `model_path`.
+The on-device SDK always renders a local `.imx`, so `create()` needs `model_path`; you can also pass `agent_code` for billing attribution. Resolving an avatar purely by code (no local file) is the cloud/REST path — see [Avatars & .imx](/concepts/avatars-imx).
 
 ## Audio format
 

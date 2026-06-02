@@ -18,7 +18,7 @@ order: 13
 - Device floor (real hardware — the Simulator can't run on-device inference): **iPhone 16 Pro or later** (A18 Pro+), or **iPad Pro M4 or later**, on **iOS / iPadOS 26+**. Earlier devices are refused at launch by `HardwareCheck.evaluate()`.
 - Apple-approved **memory entitlements** — without them iOS terminates the app mid-conversation. Request both before you start (Apple takes 1–3 business days): `com.apple.developer.kernel.increased-memory-limit` and `com.apple.developer.kernel.extended-virtual-addressing`.
 
-> **Note** Swift / Apple is GA. The published SwiftPM package is **bitHumanKit** — a self-contained XCFramework with zero transitive dependencies. The iOS example below drives an **Expression** voice agent; Essence is the lighter option for lower-end devices (see [Models](/concepts/models)).
+> **Note** The published SwiftPM package is **bitHumanKit** — a self-contained XCFramework with zero transitive dependencies. macOS and iPad Expression are GA; **iPhone Expression (this example) is preview** — it runs on iPhone 16 Pro+, but on-device validation is still in progress, so prefer Essence for production iPhone builds (see [Models](/concepts/models) and the [Swift SDK matrix](/sdk/swift)).
 
 ## Run it
 

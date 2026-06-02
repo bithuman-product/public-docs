@@ -80,9 +80,8 @@ Flags:
 > command prints a `not implemented: be_video_encoder_*` error and exits.
 > Workarounds:
 >
-> 1. **Run inside a Linux Docker container** — e.g. from `python:3.12-slim`,
->    `pip install bithuman-cli` and render there, mounting your `.imx` and
->    WAV in and the MP4 out.
+> 1. **Run inside a Linux Docker container** — install the CLI with the
+>    universal installer (`curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh`; the PyPI wheel is macOS-only, so don't `pip install bithuman-cli` on Linux) and render there, mounting your `.imx` and WAV in and the MP4 out.
 > 2. **Use `bithuman run` instead** — the live-avatar path does not need the
 >    offline encoder; it publishes frames into LiveKit via the webrtc-rs
 >    encoder, and you can record from the browser if you need a file.

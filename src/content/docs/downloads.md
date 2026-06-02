@@ -23,7 +23,7 @@ brew install bithuman-cli
 **Universal installer (macOS + Linux, no Python required)**
 
 ```bash
-curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
 **PyPI sibling wheel (same Rust binary, Python-friendly)**
@@ -126,12 +126,12 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.2** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.3.3** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
-| Kotlin SDK (`ai.bithuman:sdk`) | 1.17.1 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v6 |
-| bithuman CLI (`bithuman`) | **2.3.0** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) · universal installer | v7 |
+| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.3 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
+| bithuman CLI (`bithuman-cli`) | **2.3.4** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS + Linux) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.3 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 
@@ -204,7 +204,7 @@ The engine ABI is the C surface `libessence` exposes to its language wrappers. N
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 2.3.0 | Adds `be_runtime_tick_compose_from_mel` (mel-driven compose). Backwards-compatible with v6 callers. |
+| **v7** | libessence 1.19.1 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK above. |
 | v5 and earlier | pre-1.16 | Retired in production builds — synchronous tick-compose only, no streaming. |
 

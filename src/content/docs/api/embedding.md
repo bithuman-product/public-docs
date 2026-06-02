@@ -58,10 +58,11 @@ const { data: { token } } = await res.json();
 
 ```json
 {
-  "success": true,
+  "status": "success",
+  "status_code": 200,
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "session_id": "f3c9..."
+    "sid": "f3c9..."
   }
 }
 ```

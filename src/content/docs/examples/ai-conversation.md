@@ -18,7 +18,7 @@ cd bithuman-sdk-public/Examples/python/local-essence
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 ```
 
-- An avatar `.imx` model and a working mic. Get a model with `bithuman pull modern-court-jester` (caches to `~/.cache/bithuman/showcase/modern-court-jester.imx`) or from [Explore](https://www.bithuman.ai/#explore).
+- An avatar `.imx` model and a working mic. Download one to the cache path the run command below uses — `curl -L https://models.bithuman.ai/showcase/modern-court-jester.imx --create-dirs -o ~/.cache/bithuman/showcase/modern-court-jester.imx` — or, on macOS, `bithuman pull modern-court-jester` (same destination). The CLI's PyPI wheel is macOS-only; on Linux use the direct download or grab one from [Explore](https://www.bithuman.ai/#explore).
 - Everything runs locally — no LiveKit server, no browser, no server-side WebRTC.
 
 ## Run it

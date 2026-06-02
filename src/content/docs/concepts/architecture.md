@@ -63,7 +63,7 @@ Most developers integrate at the SDK layer (L2) — you never need to know what'
 
 The owned layers ship independently but agree on a small set of stable contracts:
 
-- **Engine ABI (versioned).** `libessence` exposes a C ABI tagged with an explicit version. The current shipping ABI is **v7**, introduced in libessence 2.3.0. New ABI versions are additive — old SDK builds keep working with newer engines until a version is formally retired. `bithuman --version` prints `libessence <ver> ABI <n> / bithuman <ver>`.
+- **Engine ABI (versioned).** `libessence` exposes a C ABI tagged with an explicit version. The current shipping ABI is **v7**, introduced in libessence 1.19.1. New ABI versions are additive — old SDK builds keep working with newer engines until a version is formally retired. `bithuman --version` prints `libessence <ver> ABI <n> / bithuman <ver>`.
 - **SDK public API (SemVer-stable).** The public surface in each language is stable across patch and minor releases. Patches never break source compatibility; minors add APIs without removing old ones; majors call out breaks explicitly.
 - **One `.imx`, every surface.** A model file packed for one SDK runs identically across all of them — enforced by an in-tree `parity/` contract test suite that streams the same audio through every SDK and asserts byte-equal frames.
 
@@ -73,17 +73,17 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.3.2 | PyPI | v7 |
+| Python SDK (`bithuman`) | 2.3.3 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | SwiftPM | v7 |
-| Kotlin SDK (`ai.bithuman:sdk`) | 1.17.1 | Maven Central | v6 |
-| Rust SDK (`bithuman-core`) | in-tree crate | source-only (not on crates.io) | v7 |
-| bithuman CLI | 2.3.0 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
+| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.3 | Maven Central | v7 |
+| Rust SDK (`bithuman`) | in-tree crate | source-only (not on crates.io) | v7 |
+| bithuman CLI | 2.3.4 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
 
 ### Engine ABI history
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 2.3.0 | Adds `be_runtime_tick_compose_from_mel` (mel-driven compose). Backwards-compatible with v6 callers. |
+| **v7** | libessence 1.19.1 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK. |
 | v5 and earlier | pre-1.16 | Retired — synchronous compose only, no streaming. |
 

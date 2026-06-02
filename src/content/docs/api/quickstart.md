@@ -58,7 +58,7 @@ curl -X POST https://api.bithuman.ai/v1/validate \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
-A `200` with `{"valid": true}` means you're set.
+It always returns HTTP `200` — read the body: `{"valid": true}` means you're set, `{"valid": false}` means the secret is missing or wrong.
 
 ### Look up an agent
 
