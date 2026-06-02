@@ -44,6 +44,11 @@ export const GET: APIRoute = async () => {
   out +=
     `- **CLI** — \`brew install bithuman-product/bithuman/bithuman-cli\` (macOS) or the universal installer (Linux); \`bithuman run <model.imx>\` serves a live browser avatar.\n\n`;
 
+  out +=
+    `- **MCP server (for AI agents)** — drive bitHuman from any Model Context ` +
+    `Protocol client (Claude Desktop/Code, Cursor): 14 tools wrapping the REST ` +
+    `API. See [MCP server](${SITE}/guides/mcp-server).\n\n`;
+
   out += `## Machine-readable\n\n`;
   out += `- [OpenAPI spec](${SITE}/api/openapi.yaml): the full REST contract (YAML).\n`;
   out += `- [Interactive API console](${SITE}/api/reference): try every endpoint live.\n`;
