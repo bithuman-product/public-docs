@@ -137,7 +137,9 @@ paths:
                     example: "processing"
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "422":
+        "402":
+          description: Insufficient credits. Generation costs 250 credits — top up to continue. Returns error code `INSUFFICIENT_BALANCE`.
+        "400":
           $ref: "#/components/responses/ValidationError"
 
   /v1/agent/status/{agent_id}:
@@ -285,6 +287,44 @@ paths:
                     type: string
                     example: "A91XMB7113"
                   updated:
+                    type: boolean
+                    example: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteAgent
+      summary: Delete an agent
+      description: |
+        Permanently delete an agent you own. Stored assets are cleaned up
+        best-effort; usage history is retained. Deleting a missing or
+        non-owned agent returns 404.
+      tags: [Agent Management]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "A91XMB7113"
+      responses:
+        "200":
+          description: Agent deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  agent_code:
+                    type: string
+                    example: "A91XMB7113"
+                  deleted:
                     type: boolean
                     example: true
         "401":
@@ -491,6 +531,26 @@ paths:
       tags: [Billing]
       security:
         - apiSecret: []
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          description: User UUID to look up. Omit to get the balance for the account that owns the API secret.
+          schema:
+            type: string
+        - name: app
+          in: query
+          required: false
+          description: App identifier for multi-app subscription support.
+          schema:
+            type: string
+            default: imaginex
+        - name: app_key
+          in: query
+          required: false
+          description: Explicit subscription key for collection-scoped apps. Defaults to the same value as `app`.
+          schema:
+            type: string
       responses:
         "200":
           description: Credit balance retrieved
@@ -504,6 +564,9 @@ paths:
                   data:
                     type: object
                     properties:
+                      user_id:
+                        type: string
+                        description: The resolved account UUID.
                       balance:
                         type: number
                       plan_credits:
@@ -512,6 +575,10 @@ paths:
                         type: number
                       minutes_estimate:
                         type: object
+                      is_enterprise:
+                        type: boolean
+                      isEnterprisePlanUser:
+                        type: boolean
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -549,8 +616,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  status:
+                    type: string
+                    example: success
+                  status_code:
+                    type: integer
+                    example: 200
                   data:
                     type: object
                     properties:
@@ -988,6 +1059,268 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
+  /v1/agents:
+    get:
+      operationId: listAgents
+      summary: List agents
+      description: |
+        List the agents owned by your API secret, newest first. Paginated.
+      tags: [Agent Management]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: limit
+          in: query
+          description: Page size (1–100).
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+        - name: offset
+          in: query
+          description: Number of agents to skip.
+          schema: { type: integer, default: 0, minimum: 0 }
+        - name: status
+          in: query
+          description: Filter by generation state (e.g. `ready`, `processing`, `failed`).
+          schema: { type: string }
+      responses:
+        "200":
+          description: A page of agents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Agent" }
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/usage:
+    get:
+      operationId: getUsage
+      summary: Usage history
+      description: |
+        Return your account's usage / activity history, newest first. Each row
+        is a metered event. `credits_change` is the signed credit delta — usage
+        events are recorded as **positive** credits consumed.
+      tags: [Billing]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: limit
+          in: query
+          description: Page size (1–200).
+          schema: { type: integer, default: 50, minimum: 1, maximum: 200 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0, minimum: 0 }
+        - name: start
+          in: query
+          description: ISO-8601 timestamp; only return events at/after this time.
+          schema: { type: string, format: date-time }
+        - name: end
+          in: query
+          description: ISO-8601 timestamp; only return events at/before this time.
+          schema: { type: string, format: date-time }
+        - name: agent_code
+          in: query
+          description: Only return events for this agent.
+          schema: { type: string }
+      responses:
+        "200":
+          description: A page of usage events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/UsageEvent" }
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/webhooks:
+    post:
+      operationId: createWebhook
+      summary: Create a webhook
+      description: |
+        Register an HTTPS endpoint to receive signed event notifications. The
+        response includes a one-time `secret` used to verify the
+        `X-BitHuman-Signature` header — store it; it is never returned again.
+      tags: [Webhooks]
+      security:
+        - apiSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  description: HTTPS endpoint to deliver events to.
+                  example: "https://example.com/bithuman/webhook"
+                events:
+                  type: array
+                  description: Event types to subscribe to. Omit or pass `[]` to receive all.
+                  items:
+                    type: string
+                    enum: [agent.ready, agent.failed]
+                  example: ["agent.ready", "agent.failed"]
+                description:
+                  type: string
+                  description: Optional human-readable label.
+      responses:
+        "200":
+          description: Webhook created (includes the one-time signing secret)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    $ref: "#/components/schemas/WebhookWithSecret"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      operationId: listWebhooks
+      summary: List webhooks
+      description: List your registered webhooks (signing secrets are redacted).
+      tags: [Webhooks]
+      security:
+        - apiSecret: []
+      responses:
+        "200":
+          description: Your webhooks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Webhook" }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/webhooks/{webhook_id}:
+    get:
+      operationId: getWebhook
+      summary: Get a webhook
+      tags: [Webhooks]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: The webhook (secret redacted)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { $ref: "#/components/schemas/Webhook" }
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteWebhook
+      summary: Delete a webhook
+      tags: [Webhooks]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  deleted: { type: boolean, example: true }
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/webhooks/{webhook_id}/test:
+    post:
+      operationId: testWebhook
+      summary: Send a test event
+      description: Deliver a one-off `ping` event to verify the endpoint is reachable.
+      tags: [Webhooks]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Delivery attempted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      delivered: { type: boolean, example: true }
+                      status_code: { type: integer, example: 200 }
+                      attempts: { type: integer, example: 1 }
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/webhooks/{webhook_id}/deliveries:
+    get:
+      operationId: listWebhookDeliveries
+      summary: List delivery attempts
+      description: Recent delivery attempts for a webhook (most recent first).
+      tags: [Webhooks]
+      security:
+        - apiSecret: []
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Delivery log
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/WebhookDelivery" }
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
   securitySchemes:
     apiSecret:
@@ -1002,6 +1335,10 @@ components:
     Agent:
       type: object
       properties:
+        code:
+          type: string
+          description: The agent's short code — the primary identifier used across the platform and the embed/viewer URLs.
+          example: "A91XMB7113"
         agent_id:
           type: string
           example: "A91XMB7113"
@@ -1060,6 +1397,132 @@ components:
           type: object
           description: Gesture configuration and available gestures.
 
+    Pagination:
+      type: object
+      properties:
+        limit:
+          type: integer
+          example: 20
+        offset:
+          type: integer
+          example: 0
+        total:
+          type: integer
+          description: Total matching rows across all pages.
+          example: 137
+        has_more:
+          type: boolean
+          example: true
+
+    UsageEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        activity_type:
+          type: string
+          example: "bithuman-serve"
+        pricing_code:
+          type: string
+          example: "usage_essence_model_self_hosted"
+        app:
+          type: string
+          example: "imaginex"
+        agent_code:
+          type: string
+          nullable: true
+        credits_change:
+          type: number
+          description: Signed credit delta; usage events are positive credits consumed.
+          example: 1
+        frames_rendered:
+          type: integer
+          nullable: true
+        room_name:
+          type: string
+          nullable: true
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+        end_time:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          example: "https://example.com/bithuman/webhook"
+        events:
+          type: array
+          items:
+            type: string
+          description: Subscribed event types; empty means all.
+          example: ["agent.ready", "agent.failed"]
+        description:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    WebhookWithSecret:
+      allOf:
+        - $ref: "#/components/schemas/Webhook"
+        - type: object
+          properties:
+            secret:
+              type: string
+              description: |
+                HMAC-SHA256 signing secret, returned **only once** at creation.
+                Verify deliveries with
+                `sha256 = HMAC(secret, "{X-BitHuman-Timestamp}.{raw_body}")`
+                and compare against the `X-BitHuman-Signature` header.
+              example: "whsec_60fe3d…"
+
+    WebhookDelivery:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+          example: "agent.ready"
+        status_code:
+          type: integer
+          nullable: true
+          description: HTTP status returned by your endpoint; null on network error/timeout.
+          example: 200
+        attempts:
+          type: integer
+          example: 1
+        delivered:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
     Error:
       type: object
       properties:
@@ -1084,21 +1547,24 @@ components:
 
   responses:
     BadRequest:
-      description: Malformed or invalid request
+      description: Missing required parameter or malformed request. The HTTP status equals `status_code` (400).
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
           example:
             error:
-              code: "BAD_REQUEST"
+              code: "MISSING_PARAM"
               message: "Missing required field: text"
               httpStatus: 400
             status: "error"
             status_code: 400
 
     Unauthorized:
-      description: Invalid or missing API secret
+      description: |
+        Authentication failed. `UNAUTHORIZED` when the `api-secret` header is
+        present but invalid; `MISSING_AUTH` when it is absent. The HTTP status
+        equals `status_code` (401).
       content:
         application/json:
           schema:
@@ -1126,7 +1592,7 @@ components:
             status_code: 404
 
     ValidationError:
-      description: Invalid request parameters
+      description: Body failed schema validation. The HTTP status equals `status_code` (400).
       content:
         application/json:
           schema:
@@ -1135,9 +1601,9 @@ components:
             error:
               code: "VALIDATION_ERROR"
               message: "Invalid request parameters"
-              httpStatus: 422
+              httpStatus: 400
             status: "error"
-            status_code: 422
+            status_code: 400
 
 x-tagGroups:
   - name: Get started
@@ -1179,6 +1645,7 @@ x-tagGroups:
       - Dynamics
       - Embedding
       - Billing
+      - Webhooks
   - name: Resources
     tags:
       - community
@@ -1335,8 +1802,20 @@ tags:
 
       ```python
       import asyncio, os
+      import numpy as np
+      import soundfile as sf
       from bithuman import AsyncBithuman
-      from bithuman.audio import float32_to_int16, load_audio
+
+      # bithuman 2.3 is library-only; inline the former bithuman.audio
+      # helpers (the SDK resamples to 16 kHz internally).
+      def load_audio(path):
+          audio, sr = sf.read(path, dtype="float32", always_2d=False)
+          if audio.ndim > 1:
+              audio = audio.mean(axis=1)
+          return audio, sr
+
+      def float32_to_int16(arr):
+          return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
 
       async def main():
           rt = await AsyncBithuman.create(
@@ -1555,7 +2034,7 @@ tags:
       - Dashboard, Discord, docs.
 
       Check your current balance with
-      [`GET /v1/credit-summaries`](#tag/Billing/operation/getcreditsummaries).
+      [`GET /v2/credit-summaries`](#tag/Billing/operation/getCreditSummaries).
 
   ##########################################################################
   # Core concepts — the mental model
@@ -1625,8 +2104,20 @@ tags:
 
       ```python
       import asyncio, os
+      import numpy as np
+      import soundfile as sf
       from bithuman import AsyncBithuman
-      from bithuman.audio import float32_to_int16, load_audio
+
+      # bithuman 2.3 is library-only; inline the former bithuman.audio
+      # helpers (the SDK resamples to 16 kHz internally).
+      def load_audio(path):
+          audio, sr = sf.read(path, dtype="float32", always_2d=False)
+          if audio.ndim > 1:
+              audio = audio.mean(axis=1)
+          return audio, sr
+
+      def float32_to_int16(arr):
+          return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
 
       async def main():
           rt = await AsyncBithuman.create(
@@ -2278,7 +2769,13 @@ tags:
   - name: Files
     description: Upload images, videos, audio, and documents.
   - name: Billing
-    description: Check credit balance and plan details.
+    description: Check credit balance, plan details, and usage history.
+  - name: Webhooks
+    description: |
+      Register HTTPS endpoints to receive signed event notifications when
+      async work finishes (today: `agent.ready`, `agent.failed`). Each
+      delivery carries an `X-BitHuman-Signature: sha256=<hmac>` header — verify
+      it with the secret returned once at creation.
   - name: Embedding
     description: Mint short-lived tokens for website avatar embeds.
   - name: Dynamics

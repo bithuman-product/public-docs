@@ -85,7 +85,7 @@ Each yielded `frame` exposes:
 | Field | Type | What it is |
 |---|---|---|
 | `bgr_image` | `numpy.ndarray` (H, W, 3) `uint8` | The rendered video frame, BGR channel order |
-| `audio_chunk` | `bytes` | Audio aligned with the frame |
+| `audio_chunk` | `AudioChunk` | Audio aligned with the frame. An object exposing `.array` (numpy samples), `.bytes` (raw PCM), and `.duration` (seconds) — not raw `bytes`. |
 | `has_image` | `bool` | `False` for filler frames during silence |
 | `end_of_speech` | `bool` | `True` on the last frame of a turn |
 

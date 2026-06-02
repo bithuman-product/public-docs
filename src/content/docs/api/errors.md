@@ -8,7 +8,7 @@ order: 50
 
 ## Error response format
 
-All errors follow the same structure:
+Every error follows the same structured envelope:
 
 ```json
 {
@@ -22,25 +22,22 @@ All errors follow the same structure:
 }
 ```
 
-> **Important** Some endpoints (e.g. `GET /v1/agent/{code}`) return the real code
-> in the **body** (`status_code` / `error.code`) while the HTTP transport status is
-> still `200`. A few endpoints (e.g. an auth failure on `POST /v1/tts`) return a
-> bare `{"error": "Unauthorized"}` instead of the structured envelope. So always
-> branch on the parsed body's `status_code` / `error.code`, not just the HTTP
-> status line.
+> **Important** The HTTP transport status **always matches** `status_code` and
+> `error.httpStatus` — there is no "200-on-error". An auth failure returns HTTP
+> `401`, a validation failure returns HTTP `400`, and so on. You can branch on
+> either the HTTP status line or the parsed `error.code`; they never disagree.
 
 ## HTTP status codes
 
 | Status | Meaning | Common cause |
 |---|---|---|
 | `200` | Success | Request completed. |
-| `400` | Bad Request | Malformed JSON or unexpected payload shape. |
-| `401` | Unauthorized | Invalid or missing `api-secret` header. |
+| `400` | Bad Request | Malformed JSON, missing required parameter (`MISSING_PARAM`), or failed validation (`VALIDATION_ERROR`). |
+| `401` | Unauthorized | Invalid `api-secret` (`UNAUTHORIZED`) or absent `api-secret` header (`MISSING_AUTH`). |
 | `402` | Payment Required | Insufficient credits — top up to continue. |
 | `404` | Not Found | Agent, resource, or endpoint doesn't exist. |
 | `413` | Payload Too Large | File exceeds the size limit. |
 | `415` | Unsupported Media Type | File type not supported. |
-| `422` | Validation Error | Body parsed but failed schema validation. |
 | `429` | Rate Limited | Too many requests — see [rate limits](/api/rate-limits). |
 | `500` | Internal Error | Server-side error — retry or contact support. |
 | `503` | Service Unavailable | All workers busy — retry with backoff. |
@@ -51,8 +48,8 @@ All errors follow the same structure:
 
 | Code | HTTP | Resolution |
 |---|---|---|
-| `UNAUTHORIZED` | 401 | Check your `api-secret` header. Get a valid secret from [Developer → API Keys](https://www.bithuman.ai/#developer). |
-| `MISSING_AUTH` | 401 | Add the `api-secret` header to your request. |
+| `UNAUTHORIZED` | 401 | The `api-secret` header is present but invalid. Get a valid secret from [Developer → API Keys](https://www.bithuman.ai/#developer). |
+| `MISSING_AUTH` | 401 | The `api-secret` header is absent. Add it to your request. |
 | `ACCOUNT_SUSPENDED` | 401/403 | Balance below the `-11` suspension floor. Top up, then contact support if it persists. |
 | `INSUFFICIENT_BALANCE` | 402 | Top up credits at [www.bithuman.ai](https://www.bithuman.ai). |
 
@@ -62,7 +59,7 @@ All errors follow the same structure:
 |---|---|---|
 | `AGENT_NOT_FOUND` | 404 | Check the agent code. Use `POST /v1/validate` to confirm your secret has access. |
 | `AGENT_FAILED` | 400 | Generation failed. Check `error_message`; retry with different parameters. |
-| `VALIDATION_ERROR` | 422 | Body failed schema validation. Include all required fields. |
+| `VALIDATION_ERROR` | 400 | Body failed schema validation. Include all required fields. |
 | `NO_ACTIVE_ROOMS` | 404 | The agent must be in an active session before you can `/speak` or `/add-context`. |
 | `MISSING_PARAM` | 400 | A required parameter was not provided. |
 
@@ -100,24 +97,20 @@ resp = requests.post(
     json={"prompt": "You are a helpful assistant"},
 )
 
-# Branch on the BODY's status_code/error.code, not just resp.status_code —
-# some endpoints return the real code in the body while the HTTP status is 200.
-body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
-code = body.get("status_code", resp.status_code)
-err = body.get("error")
-err_code = err.get("code") if isinstance(err, dict) else err  # dict envelope or bare string
-
-if code == 200:
+# The HTTP status always matches the body's status_code, so either is safe to
+# branch on. On error, the body is the structured envelope: {"error": {...}}.
+if resp.ok:
+    body = resp.json()
     print("Agent generating:", body["data"]["agent_id"] if "data" in body else body.get("agent_id"))
-elif code in (401, 403):
+elif resp.status_code in (401, 403):
     print("Auth failed. Check BITHUMAN_API_SECRET.")
-elif code == 429:
+elif resp.status_code == 429:
     print("Rate limited. Wait and retry with backoff.")
-elif code == 503:
+elif resp.status_code == 503:
     print("Workers busy. Retry in a few seconds.")
 else:
-    msg = err.get("message") if isinstance(err, dict) else err
-    print(f"Error {err_code}: {msg}")
+    err = resp.json()["error"]
+    print(f"Error {err['code']}: {err['message']}")
 ```
 
 For `429` and `503`, use exponential backoff with jitter — see

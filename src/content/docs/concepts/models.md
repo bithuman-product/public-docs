@@ -6,9 +6,30 @@ group: "Models"
 order: 1
 ---
 
+## The five engines
+
+bitHuman is built on **five** engines. Two of them — **Essence** and **Expression** —
+are the avatar-rendering models this page compares in depth; the other three round
+out the stack:
+
+- **Essence** — the default avatar renderer. Pre-built `.imx` identity, real-time
+  lip-sync, runs on virtually any CPU.
+- **Expression** — the heavier, high-fidelity renderer that animates any portrait
+  at runtime on Apple Silicon or an NVIDIA GPU.
+- **Converse** — the conversation engine: the STT → LLM → TTS turn loop that drives
+  a managed agent's dialogue. It produces the audio that Essence/Expression lip-sync.
+- **Elevate** — the on-device expression/animation engine (vendored as
+  `libelevate`), used by AvatarUIKit and the `expression/iphone` sample app. It was
+  removed from the **cloud** model family but is **retained on-device**.
+- **Voice** — the speech engine (the voice/TTS stack behind audio-only chat and the
+  voices you select for an agent).
+
+The rest of this page focuses on Essence vs Expression — the two you choose between
+when packaging an avatar.
+
 ## At a glance
 
-bitHuman ships two avatar models. Both share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence is the default** — it runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression** is the heavier high-fidelity option for specific on-device Apple Silicon or GPU server use cases.
+bitHuman's two avatar models share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence is the default** — it runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression** is the heavier high-fidelity option for specific on-device Apple Silicon or GPU server use cases.
 
 | | **Essence** (default) | **Expression** |
 |---|---|---|

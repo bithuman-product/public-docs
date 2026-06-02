@@ -37,7 +37,7 @@ Verify the install:
 ```bash
 bithuman --version
 # libessence 1.19.1 ABI 7
-# bithuman    2.3.0
+# bithuman    2.3.6
 bithuman doctor   # full host + key + cache check
 ```
 
@@ -59,25 +59,13 @@ pip install livekit-plugins-bithuman
 
 See the [Python SDK guide](/sdk/python).
 
-### Swift / Apple SDK — GA
+### Swift / Apple SDK — Preview
 
-On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only, zero transitive dependencies.
+On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only. The install path links native ORT / ffmpeg / hdf5 (not zero-dependency).
 
-> **Note** The currently-published package is **bitHumanKit** (full-stack on-device). A newer `libessence` streaming binding (`Bithuman`) is rolling out — see the [Swift SDK guide](/sdk/swift) for current status.
+> **Note** The SwiftPM package is **`Bithuman`** — it binds directly onto the `libessence` streaming engine (`Fixture` / `Runtime` / `Avatar`). The app-layer renderer is **AvatarUIKit** (`bithuman-apps/avatar-ui-kit`). The earlier `bitHumanKit` package (`createRuntime` / `EssenceRuntime.frames()`) has been **removed**. See the [Swift SDK guide](/sdk/swift) for current status.
 
-```swift
-// Package.swift
-dependencies: [
-    .package(url: "https://github.com/bithuman-product/bithuman-sdk-public.git",
-             from: "0.8.1")
-],
-targets: [
-    .target(name: "MyApp",
-            dependencies: [.product(name: "bitHumanKit", package: "bithuman")])
-]
-```
-
-The product import is `import bitHumanKit`. See the [Swift SDK guide](/sdk/swift).
+The product import is `import Bithuman`. See the [Swift SDK guide](/sdk/swift).
 
 ### Android / Kotlin SDK — Beta
 
@@ -86,7 +74,7 @@ Self-contained Android AAR via Maven Central. `arm64-v8a`, Android 10+.
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("ai.bithuman:sdk:2.3.3")
+    implementation("ai.bithuman:sdk:2.3.6")
 }
 ```
 
@@ -95,6 +83,8 @@ See the [Kotlin SDK guide](/sdk/android).
 ### JavaScript / TypeScript — Preview
 
 A cloud client for browser and Node apps. Preview status — APIs may change.
+
+> **Note** `@bithuman/sdk` is **not yet published to npm** — `npm install @bithuman/sdk` will 404 today. Install from source while it's in preview; the command below is the form the published package will take.
 
 ```bash
 npm install @bithuman/sdk
@@ -126,12 +116,12 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.3** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
-| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.3 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
-| bithuman CLI (`bithuman-cli`) | **2.3.4** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS + Linux) | v7 |
+| Python SDK (`bithuman`) | **2.3.6** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Swift SDK (`Bithuman`) | 2.3.6 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
+| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
+| bithuman CLI (`bithuman-cli`) | **2.3.6** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS + Linux) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.3 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.6 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 
@@ -204,8 +194,8 @@ The engine ABI is the C surface `libessence` exposes to its language wrappers. N
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 1.19.1 | Adds `be_set_default_audio_encoder` for fallback audio-encoder registration. Backwards-compatible with v6 callers. |
-| **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. Current production baseline; covers every shipping SDK above. |
+| **v7** | libessence 1.19.1 | Adds `be_runtime_tick_compose_from_mel` — composing a tick directly from a mel feed. Current production baseline; covers every shipping SDK above. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
+| **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
 | v5 and earlier | pre-1.16 | Retired in production builds — synchronous tick-compose only, no streaming. |
 
 Confirm the ABI tag on a live host with `bithuman doctor`.

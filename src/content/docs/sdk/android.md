@@ -24,14 +24,14 @@ android {
         minSdk = 29
     }
 }
-dependencies { implementation("ai.bithuman:sdk:2.3.3") }
+dependencies { implementation("ai.bithuman:sdk:2.3.6") }
 ```
 
 | Field | Value |
 |---|---|
-| Maven coordinate | `ai.bithuman:sdk:2.3.3` |
+| Maven coordinate | `ai.bithuman:sdk:2.3.6` |
 | ABI | `arm64-v8a` only |
-| Engine ABI | v6 (v7 refresh queued — track via release notes) |
+| Engine ABI | v7 |
 | Min / Compile SDK | 29 (Android 10) / 35 |
 | NDK | 28.0.13004108 |
 | AAR size | ~40 MB |

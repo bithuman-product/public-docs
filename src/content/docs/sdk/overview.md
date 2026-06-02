@@ -32,10 +32,11 @@ avatars; the difference is where they run and how mature each surface is.
 | Platform / target | SDK | On-device / cloud | Status |
 |---|---|---|---|
 | Backend, AI agents, batch render, edge boxes | **[Python](/sdk/python)** | On-device | **GA** |
-| Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **GA** |
+| Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **Preview** |
 | Native Android apps | **[Android (Kotlin)](/sdk/android)** | On-device | **Beta** |
 | Browser & Node web clients | **[JavaScript / TS](/sdk/javascript)** | Cloud client | **Preview** |
-| Native app ↔ server avatar over WebRTC, or Python voice agent with a face | **[LiveKit (Apple + Python)](/sdk/livekit)** | Cloud / hybrid | Built on the GA bindings |
+| On-device engine wrapper backing the CLI | **[Rust](/cli)** | On-device | Internal / app-backing |
+| Native app ↔ server avatar over WebRTC, or Python voice agent with a face | **[LiveKit (Apple + Python)](/sdk/livekit)** | Cloud / hybrid | Built on the bindings |
 
 If you are not sure, start with the [Python SDK](/sdk/python) or the no-code
 [CLI](/cli).
@@ -67,18 +68,26 @@ We keep this honest so you can plan around it.
 
 | SDK | Package | Topology | Status |
 |---|---|---|---|
-| **Python** | `pip install bithuman` | On-device | **GA** |
-| **Swift / Apple** | SwiftPM `bitHumanKit` | On-device | **GA** — `bitHumanKit` is the published full-stack package; the newer `libessence` `Bithuman` streaming binding is rolling out |
-| **Android (Kotlin)** | Gradle `ai.bithuman:sdk` | On-device | **Beta** |
-| **JavaScript / TS** | `npm install @bithuman/sdk` | Cloud client | **Preview** |
+| **Python** | `pip install bithuman` (2.3.6) | On-device | **GA** |
+| **Swift / Apple** | SwiftPM `Bithuman` (2.3.6) + AvatarUIKit | On-device | **Preview** |
+| **Android (Kotlin)** | Gradle `ai.bithuman:sdk:2.3.6` | On-device | **Beta** |
+| **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
+| **Rust** | in-tree crate `bithuman` (2.3.6, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app in `bithuman-apps`, **not a published code SDK** — see below |
 
-> **Note** Swift has two surfaces today. The currently-published SwiftPM package
-> is **`bitHumanKit`** — a full-stack on-device library with a built-in voice
-> agent (STT + LLM + TTS) and a low-level streaming runtime. A newer binding
-> named **`Bithuman`** maps directly onto the `libessence` streaming engine
-> (`Fixture` / `Runtime` / `pushAudio` / `pullFrame`) and is rolling out. The
-> [Swift page](/sdk/swift) covers both.
+> **Note** On Apple platforms the SwiftPM package is **`Bithuman`** — it binds
+> directly onto the `libessence` streaming engine (`Fixture` / `Runtime` /
+> `Avatar`). The app-layer renderer is **AvatarUIKit** (from
+> `bithuman-apps/avatar-ui-kit`), used by the `expression/{mac,ipad,iphone}` sample
+> apps. The earlier `bitHumanKit` package — with `createRuntime` /
+> `EssenceRuntime.frames()` — has been **removed**. This rail is **preview**, and
+> its install path links native ORT / ffmpeg / hdf5 (not zero-dependency). The
+> [Swift page](/sdk/swift) has the details.
+
+> **Rust** The `bithuman` Rust crate is the on-device engine wrapper that **backs
+> the [CLI](/cli)**. It is internal / app-backing — source-only (not on
+> crates.io) — and wraps `libessence` ABI v7. You don't depend on it directly;
+> you get it through the CLI.
 
 ### A note on Flutter
 

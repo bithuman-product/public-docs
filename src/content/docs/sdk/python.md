@@ -16,7 +16,7 @@ frames out at 25 FPS. The runtime and all native dependencies ship in the wheel
 ## Install
 
 ```bash
-pip install 'bithuman==2.3.0'
+pip install 'bithuman==2.3.6'
 ```
 
 **Python 3.10–3.14** supported. Platforms: macOS arm64, Linux x86_64, Linux
@@ -89,10 +89,14 @@ copy-pasteable end-to-end example; everything below assumes you have it.
 `push_audio` and `run()` are independent — push as audio arrives (mic, TTS,
 WebRTC), drain frames on your render tick.
 
-`Bithuman` (no `Async`) is the threaded sync equivalent — same surface, no
-`await` — for batch scripts and notebooks. `Avatar` / `AsyncAvatar` remain as
-**soft-deprecated identity aliases** for pre-2.0 code (`Avatar is Bithuman`
-evaluates `True`); new code should use the `Bithuman` names.
+`Bithuman` (no `Async`) is the sync class, but it is **not** the same surface with
+`await` dropped. It does **not** expose `push_audio` / `run` / `flush`. The sync
+surface is just two calls: `load()` to load the model, and `compose()` — an
+**iterator** that yields frames for an audio input. Use it for batch scripts and
+notebooks; use `AsyncBithuman` for the incremental push/drain streaming loop.
+`Avatar` / `AsyncAvatar` remain as **soft-deprecated identity aliases** for
+pre-2.0 code (`Avatar is Bithuman` evaluates `True`); new code should use the
+`Bithuman` names.
 
 ## Public API at a glance
 
@@ -151,8 +155,13 @@ For a real-time WebRTC voice agent with an avatar, use the LiveKit plugin
 instead of driving the runtime yourself:
 
 ```bash
-pip install livekit-plugins-bithuman   # or: pip install bithuman[agent]
+pip install livekit-plugins-bithuman
 ```
+
+> **Note** There is no `bithuman[agent]` extra and no
+> `bithuman.utils.agent.LocalAvatarRunner` in the slim wheel — install the LiveKit
+> plugin as its own package above. The only extra the slim `bithuman` wheel
+> declares is `test`.
 
 ```python
 import os

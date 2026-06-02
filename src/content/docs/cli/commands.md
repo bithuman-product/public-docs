@@ -74,7 +74,7 @@ Flags:
 | `-o`, `--output <PATH>` | `output.mp4` | Output MP4 path. |
 | `--quality <PRESET>` | `MEDIUM` | Encoder preset: `LOW`, `MEDIUM`, `HIGH`. |
 | `--target-size <SIZE>` | `1280` | A single number `N` (longest side binds to `N`, aspect preserved) or `WxH` (explicit canvas). |
-| `--limit <N>` | none | Cap output frame count — for testing. |
+| `--limit <N>` | none | Intended to cap output frame count for testing, but **currently a no-op** — it is accepted and ignored; the full input is always rendered. |
 
 > **Warning** `bithuman render` is currently **Linux-only**. On macOS the
 > command prints a `not implemented: be_video_encoder_*` error and exits.
