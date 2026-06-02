@@ -78,6 +78,19 @@ If you exceed limits or run out of credits, the API returns an error:
 Common status codes: `402` (no credits), `429` (rate limited), `503` (workers
 busy). See the full [error reference](/api/errors).
 
+### Response headers
+
+Every `/v1` response carries your current rate-limit state, so you can throttle
+proactively instead of waiting for a `429`:
+
+| Header | Meaning |
+|--------|---------|
+| `X-RateLimit-Limit` | Burst capacity for the tier this endpoint uses. |
+| `X-RateLimit-Remaining` | Whole tokens left right now. |
+| `X-RateLimit-Reset` | Unix time when the bucket is fully refilled. |
+| `Retry-After` | (On `429` only) seconds to wait before retrying. |
+| `X-Request-Id` | Correlation id for the request — include it in support reports. |
+
 ## Recommended retry strategy
 
 Use exponential backoff with jitter for `429` and `503`:
@@ -99,8 +112,9 @@ def api_request_with_retry(url, headers, max_retries=3):
 
 ### Use webhooks instead of polling
 
-Rather than polling `/v1/agent/status/{id}` in a loop, prefer webhook
-notification when generation completes (where available).
+Rather than polling `/v1/agent/status/{id}` in a loop, register a
+[webhook](/api/webhooks) and get a signed `agent.ready` / `agent.failed` event
+the moment generation finishes.
 
 ### Cache agent details
 

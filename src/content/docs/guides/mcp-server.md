@@ -23,18 +23,22 @@ the server. Source lives in the public SDK repo under
 |------|----------|--------------|
 | `validate_api_secret` | `POST /v1/validate` | Check the API secret (free). |
 | `get_credit_balance` | `GET /v2/credit-summaries` | Credits, plan, minutes estimate. |
+| `get_usage` | `GET /v1/usage` | Usage/metering history (paginated). |
 | `list_voices` | `GET /v1/voices` | Built-in + custom TTS voices. |
 | `text_to_speech` | `POST /v1/tts` | Synthesize speech → a WAV file. |
 | `generate_agent` | `POST /v1/agent/generate` | Create an avatar agent. |
 | `get_agent_status` | `GET /v1/agent/status/{id}` | Poll generation progress. |
 | `get_agent` | `GET /v1/agent/{code}` | Fetch agent details. |
+| `list_agents` | `GET /v1/agents` | List your agents (paginated). |
 | `update_agent_prompt` | `POST /v1/agent/{code}` | Change an agent's prompt. |
+| `delete_agent` | `DELETE /v1/agent/{code}` | Delete an agent you own. |
 | `agent_speak` | `POST /v1/agent/{code}/speak` | Make a live agent speak. |
 | `add_agent_context` | `POST /v1/agent/{code}/add-context` | Inject silent knowledge. |
 | `get_dynamics` | `GET /v1/dynamics/{id}` | List gesture animations. |
 | `generate_dynamics` | `POST /v1/dynamics/generate` | Generate gestures. |
 | `create_embed_token` | `POST /v1/embed-tokens/request` | Mint a website embed JWT. |
 | `upload_file` | `POST /v1/files/upload` | Upload an asset → CDN URL. |
+| `create_webhook` · `list_webhooks` · `delete_webhook` · `test_webhook` | `…/v1/webhooks` | Manage signed event webhooks. |
 
 ## Setup
 

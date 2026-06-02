@@ -90,6 +90,31 @@ conversational agent:
 | `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
 
+## Usage history
+
+`GET /v1/usage` returns your account's metered events, newest first. Paginate
+with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
+(ISO-8601 timestamps) and `agent_code`.
+
+```python
+import requests
+
+resp = requests.get(
+    "https://api.bithuman.ai/v1/usage",
+    headers={"api-secret": "YOUR_API_SECRET"},
+    params={"limit": 50, "start": "2026-06-01T00:00:00Z"},
+).json()
+
+for ev in resp["data"]:
+    print(ev["created_at"], ev["pricing_code"], ev["credits_change"])
+print(resp["pagination"])   # {limit, offset, total, has_more}
+```
+
+Each row carries `activity_type`, `pricing_code`, `agent_code`, `created_at`,
+and `credits_change` — the signed credit delta (usage events are recorded as
+**positive** credits consumed). This is an audit trail; for an authoritative
+balance use `GET /v2/credit-summaries` above.
+
 ## Notes
 
 - **Balance is the source of truth**, not the sum of activity rows. The activity

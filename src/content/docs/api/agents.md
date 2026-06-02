@@ -171,6 +171,44 @@ print(agent["name"], agent["status"])
 }
 ```
 
+## List your agents
+
+`GET /v1/agents` — list the agents owned by your API secret, newest first.
+Paginated with `limit` (default 20, max 100) and `offset`; filter by generation
+state with `status`.
+
+```python
+import requests
+
+resp = requests.get(
+    "https://api.bithuman.ai/v1/agents",
+    headers={"api-secret": "YOUR_API_SECRET"},
+    params={"limit": 20, "offset": 0, "status": "ready"},
+).json()
+
+for a in resp["data"]:
+    print(a["code"], a["status"])
+print(resp["pagination"])   # {limit, offset, total, has_more}
+```
+
+Page through with `offset` until `pagination.has_more` is `false`.
+
+## Delete an agent
+
+`DELETE /v1/agent/{code}` — permanently delete an agent you own. Stored assets
+are cleaned up best-effort; usage history is retained for billing. Deleting a
+missing or non-owned agent returns `404`.
+
+```python
+import requests
+
+requests.delete(
+    "https://api.bithuman.ai/v1/agent/A91XMB7113",
+    headers={"api-secret": "YOUR_API_SECRET"},
+).json()
+# {"success": true, "agent_code": "A91XMB7113", "deleted": true}
+```
+
 ## Update an agent's prompt
 
 `POST /v1/agent/{code}` — update the system prompt of an existing agent without
