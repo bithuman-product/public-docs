@@ -1,0 +1,9 @@
+# bitHuman developer docs — open to all crawlers; AI agents explicitly welcome.
+User-agent: *
+Allow: /
+
+Sitemap: https://docs.bithuman.ai/sitemap.xml
+
+# For LLMs / AI agents: a curated index lives at /llms.txt and the full
+# documentation corpus (single file) at /llms-full.txt. The machine-readable
+# REST contract is at /api/openapi.yaml.
