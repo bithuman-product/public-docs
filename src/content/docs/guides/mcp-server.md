@@ -69,8 +69,71 @@ claude mcp add bithuman \
 }
 ```
 
+### Cursor
+
+In **Settings → MCP → Add new MCP server**, or in `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "bithuman": {
+      "command": "uvx",
+      "args": ["bithuman-mcp"],
+      "env": { "BITHUMAN_API_SECRET": "sk_your_secret" }
+    }
+  }
+}
+```
+
 Or install it directly with `pip install bithuman-mcp` and run the
 `bithuman-mcp` command.
+
+## Verify the connection
+
+After adding the server, your client should list a **bithuman** tool group. The
+quickest confirmation is to ask the agent:
+
+> Use the bithuman tools to validate my API secret.
+
+It calls `validate_api_secret` and should reply with `{"valid": true}`. If you
+get `valid: false`, re-check `BITHUMAN_API_SECRET`; if no bithuman tools appear
+at all, confirm `uvx` is on PATH and restart the client.
+
+## Using it
+
+You drive everything in natural language — the agent picks the right tools and
+chains them. A few worked examples:
+
+**Stand up a talking avatar and embed it**
+
+> Generate an avatar of a friendly fitness coach, wait until it's ready, then
+> give me an embed token for it.
+
+The agent calls `generate_agent`, polls `get_agent_status` until `ready` (2–5
+min), then `create_embed_token` and hands you the JWT for the
+[embed widget](/guides/deploy-embed).
+
+**Turn a script into speech**
+
+> List the female voices, then read this with F1: "Welcome to the demo."
+
+→ `list_voices`, then `text_to_speech` (saved as a WAV you can play).
+
+**Audit the account**
+
+> How many agents do I have, what's my credit balance, and what did I spend in
+> the last week?
+
+→ `list_agents` (paginated), `get_credit_balance`, and `get_usage` with a
+`start` date.
+
+**Get notified instead of polling**
+
+> Register a webhook at https://example.com/hooks/bithuman for agent.ready and
+> send it a test event.
+
+→ `create_webhook` (returns the one-time signing secret), then `test_webhook`.
+See [Webhooks](/api/webhooks) for verifying the `X-BitHuman-Signature` header.
 
 ## Configuration
 

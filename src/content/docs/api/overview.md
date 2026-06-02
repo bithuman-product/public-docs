@@ -51,6 +51,11 @@ the [embed token flow](/api/embedding) instead. See
   [Embedding](/api/embedding).
 - **Track credits** — read balance and per-mode minute estimates. See
   [Billing](/api/billing).
+- **Get notified** — register [webhooks](/api/webhooks) for signed
+  `agent.ready` / `agent.failed` events instead of polling.
+- **Drive it from an AI agent** — every endpoint below is also exposed as a
+  tool via the [MCP server](/guides/mcp-server), so Claude, Cursor, and other
+  MCP clients can call bitHuman directly.
 
 ## How agents are identified
 
@@ -71,6 +76,7 @@ the code).
 - [Authentication](/api/authentication) — keys, runtime tokens, and rotation.
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational
   contract.
+- [MCP server](/guides/mcp-server) — call every endpoint as a tool from an AI agent.
 
 ## Status and versioning
 
