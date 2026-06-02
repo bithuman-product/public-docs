@@ -20,26 +20,37 @@ The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
 
 ## What it does
 
-From one invocation, `bithuman run` stands up an embedded
-`livekit-server`, a `libessence` avatar runtime, a conversation brain
-(cloud or [on-device](/cli/local-mode)), and a browser landing page:
+The fastest path from a fresh install to a talking avatar is three steps —
+**install → `bithuman login` → run**:
 
 ```bash
-export BITHUMAN_API_SECRET=your_api_secret
+bithuman login            # opens your browser, signs you in — done
 export OPENAI_API_KEY=sk-...
 bithuman run avatar.imx
 # → open the printed http://127.0.0.1:8088/<CODE> URL, grant mic, talk
 ```
 
-That single command is the fastest way to get a talking, listening avatar
-in your browser. Beyond live chat, the CLI can render an MP4 offline,
-inspect an `.imx` file, browse and download showcase avatars, and run a
-full host sanity check.
+`bithuman login` opens your browser, you approve, and the CLI stores a
+per-device credential in your OS keychain so every other command
+authenticates automatically — no `export BITHUMAN_API_SECRET`. (That manual
+path still works for CI and automation; see
+[Configuration](/cli/configuration).)
 
-## The seven subcommands
+Under the hood `bithuman run` stands up an embedded `livekit-server`, a
+`libessence` avatar runtime, a conversation brain (cloud or
+[on-device](/cli/local-mode)), and a browser landing page. That single
+command is the fastest way to get a talking, listening avatar in your
+browser. Beyond live chat, the CLI can render an MP4 offline, inspect an
+`.imx` file, browse and download showcase avatars, and run a full host
+sanity check.
+
+## The subcommands
 
 | Command | What it does |
 | --- | --- |
+| `bithuman login` | Sign in via the browser; store a per-device key in the OS keychain |
+| `bithuman logout` | Revoke this device's key and clear the local store |
+| `bithuman auth status` | Show who you're signed in as and where the credential lives |
 | `bithuman init` | Scaffold a new project / starter config |
 | `bithuman run <path.imx>` | Start the live avatar (mic in, browser viewer out) |
 | `bithuman render <path.imx>` | Offline lipsync: model + WAV → MP4 (Linux-only) |

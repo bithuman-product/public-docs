@@ -10,19 +10,36 @@ order: 11
 
 | Variable | What |
 | --- | --- |
-| `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer). |
+| `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. The easiest way to set this is `bithuman login` (stores it in the OS keychain); set it manually for CI / automation. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer). |
 | `OPENAI_API_KEY` | Cloud conversation brain (OpenAI Realtime). Required for `bithuman run` unless `BITHUMAN_LOCAL=1` is set. |
 | `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman[local]'`. See [Local mode](/cli/local-mode). |
 | `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). Brain-side — read by the Python agent, not the CLI binary. See [Local mode tuning](/cli/local-mode). |
 | `BITHUMAN_INSTRUCTIONS` | System-prompt override for the conversation brain. Brain-side — read by the Python agent, not the CLI binary. |
 | `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn`. |
 
-## Startup config file
+## Where the credential comes from
+
+Every command resolves `BITHUMAN_API_SECRET` in this order — first match
+wins:
+
+1. **`BITHUMAN_API_SECRET`** in the environment (explicit; CI / automation)
+2. **OS keychain** — what `bithuman login` writes (macOS Keychain / Linux
+   Secret Service)
+3. **`~/.bithuman/config`** — the dotenv fallback (written by
+   `bithuman init`, or by `login` when no keychain is available)
+
+`bithuman login` is the recommended way to set this up for interactive use:
+it mints a per-device key and stores it in the keychain so commands just
+work across sessions. The manual env path stays fully supported for CI,
+containers, and headless automation — `export BITHUMAN_API_SECRET=…` (it
+takes priority over a logged-in key, which is handy for testing a specific
+secret). See [Commands → Signing in](/cli/commands#signing-in).
+
+### Startup config file
 
 At every startup the CLI loads `~/.bithuman/config` — a dotenv file
-(written by `bithuman init`, mode `0600`) — and merges its keys into the
-environment. This is how `BITHUMAN_API_SECRET` persists across sessions
-without re-exporting it.
+(mode `0600`) — and merges its keys into the environment. This is how a
+secret persists across sessions without re-exporting it.
 
 Note: `~/.bithuman/embedded-key` is **not** read by the CLI, and a `.env`
 file in the current directory is **not** auto-loaded — only
