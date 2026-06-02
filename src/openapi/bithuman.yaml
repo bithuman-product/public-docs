@@ -137,6 +137,8 @@ paths:
                     example: "processing"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "402":
+          description: Insufficient credits. Generation costs 250 credits — top up to continue. Returns error code `INSUFFICIENT_BALANCE`.
         "422":
           $ref: "#/components/responses/ValidationError"
 
@@ -491,6 +493,26 @@ paths:
       tags: [Billing]
       security:
         - apiSecret: []
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          description: User UUID to look up. Omit to get the balance for the account that owns the API secret.
+          schema:
+            type: string
+        - name: app
+          in: query
+          required: false
+          description: App identifier for multi-app subscription support.
+          schema:
+            type: string
+            default: imaginex
+        - name: app_key
+          in: query
+          required: false
+          description: Explicit subscription key for collection-scoped apps. Defaults to the same value as `app`.
+          schema:
+            type: string
       responses:
         "200":
           description: Credit balance retrieved
@@ -504,6 +526,9 @@ paths:
                   data:
                     type: object
                     properties:
+                      user_id:
+                        type: string
+                        description: The resolved account UUID.
                       balance:
                         type: number
                       plan_credits:
@@ -512,6 +537,10 @@ paths:
                         type: number
                       minutes_estimate:
                         type: object
+                      is_enterprise:
+                        type: boolean
+                      isEnterprisePlanUser:
+                        type: boolean
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -549,8 +578,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  status:
+                    type: string
+                    example: success
+                  status_code:
+                    type: integer
+                    example: 200
                   data:
                     type: object
                     properties:
@@ -1002,6 +1035,10 @@ components:
     Agent:
       type: object
       properties:
+        code:
+          type: string
+          description: The agent's short code — the primary identifier used across the platform and the embed/viewer URLs.
+          example: "A91XMB7113"
         agent_id:
           type: string
           example: "A91XMB7113"
@@ -1567,7 +1604,7 @@ tags:
       - Dashboard, Discord, docs.
 
       Check your current balance with
-      [`GET /v1/credit-summaries`](#tag/Billing/operation/getcreditsummaries).
+      [`GET /v2/credit-summaries`](#tag/Billing/operation/getCreditSummaries).
 
   ##########################################################################
   # Core concepts — the mental model
