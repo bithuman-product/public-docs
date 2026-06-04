@@ -61,8 +61,14 @@ itself, so it never drifts from the installed version.
    (non-TTY) stdout all silence it. You never need to strip escape codes.
 
 7. **Auth without a browser:** export `BITHUMAN_API_SECRET=…` (per-device key
-   from the dashboard). No `bithuman login` needed in CI / headless / agent
-   contexts. Verify with `bithuman whoami --json`.
+   from the dashboard), or pipe it in: `printf %s "$KEY" | bithuman login
+   --with-token`. No interactive `bithuman login` needed in CI / headless /
+   agent contexts. Verify with `bithuman whoami --json`.
+
+8. **Env-driven flags:** `BITHUMAN_JSON=1`, `BITHUMAN_QUIET=1`, and
+   `BITHUMAN_NO_COLOR=1` flip the matching global flag's default, so you can set
+   the mode once instead of threading `--json` through every call (an explicit
+   flag still wins).
 
 ---
 
@@ -137,8 +143,14 @@ encoder all resolvable), else **1**. `bithuman doctor --json | jq .ready` is a
 one-line readiness gate.
 
 ### `bithuman run <slug-or-path>`  (aliases: `chat`, `talk`)
-Interactive: opens a browser to a live, talking avatar. Not a `--json`
-command. A slug auto-downloads on first use.
+Opens a browser to a live, talking avatar; a slug auto-downloads on first use.
+Long-running (serves until Ctrl-C). Under `--json` it emits one
+`session_started` event on stdout when live, so a script can capture the URL:
+```json
+{"event":"session_started","url":"http://127.0.0.1:8088/NOVA","code":"NOVA","host":"127.0.0.1","port":8088}
+```
+All logs (livekit NDJSON, progress) go to stderr; browser auto-open is
+suppressed under `--json`. Failures emit the structured `{error:{…}}` too.
 
 ---
 
@@ -150,6 +162,7 @@ bithuman completion bash|zsh|fish|elvish|powershell   # shell completions
 bithuman <cmd> --help             # per-command flags + EXAMPLES block
 bithuman auth token               # print the resolved api-secret on stdout (exit 77 if none)
 bithuman __man [DIR]              # roff man pages — stdout, or one per command into DIR
+bithuman __agents                 # print this contract (AGENTS.md) to stdout, offline
 ```
 
 `auth login` / `auth logout` / `auth status` are noun-verb aliases of the
