@@ -1,6 +1,6 @@
 ---
 title: "MCP server"
-description: "Drive bitHuman from any AI agent. The bitHuman MCP server exposes the REST API as Model Context Protocol tools for Claude Desktop, Claude Code, Cursor, and other MCP clients."
+description: "Drive bitHuman from any AI agent. The bitHuman MCP server is built into the CLI (`bithuman mcp`) and exposes the platform as Model Context Protocol tools for Claude Desktop, Claude Code, Cursor, and other MCP clients."
 section: guides
 group: "AI agents"
 order: 30
@@ -12,12 +12,21 @@ directly as tools. Ask your agent to "make an avatar that explains our pricing
 and have it speak this script," and it can generate the agent, synthesize the
 speech, and mint an embed token without you writing any glue code.
 
-It's a thin wrapper over the [REST API](/api/overview): every tool maps to one
-documented endpoint, so anything you can do over HTTP, an agent can do through
-the server. Source lives in the public SDK repo under
-[`mcp/`](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/mcp).
+It's **built into the [bitHuman CLI](https://github.com/bithuman-product/homebrew-bithuman)** —
+just run `bithuman mcp`. The cloud tools are a thin wrapper over the
+[REST API](/api/overview) (every tool maps to one documented endpoint, so
+anything you can do over HTTP an agent can do here), plus a few local tools that
+inspect your install and model files.
+
+:::note
+The standalone `bithuman-mcp` PyPI package is **deprecated** — its tools are now
+built into the CLI. Install the CLI once (below) and you get the same tools,
+identical names, plus local ones — with no separate Python dependency.
+:::
 
 ## Tools
+
+**Cloud tools** — wrap the [REST API](/api/overview):
 
 | Tool | Endpoint | What it does |
 |------|----------|--------------|
@@ -40,20 +49,38 @@ the server. Source lives in the public SDK repo under
 | `upload_file` | `POST /v1/files/upload` | Upload an asset → CDN URL. |
 | `create_webhook` · `list_webhooks` · `delete_webhook` · `test_webhook` | `…/v1/webhooks` | Manage signed event webhooks. |
 
+**Local tools** — no network; inspect your install and local files:
+
+| Tool | What it does |
+|------|--------------|
+| `version` | CLI + libessence engine version and ABI. |
+| `doctor` | Install health; `ready` is true iff this machine can serve an avatar. |
+| `inspect_model` | Inspect a local `.imx` model file's metadata. |
+| `list_showcase` | List downloadable showcase avatars. |
+
 ## Setup
 
-You need an API secret from the [Developer Dashboard](https://www.bithuman.ai/#developer).
-The server is published on PyPI as [`bithuman-mcp`](https://pypi.org/project/bithuman-mcp/)
-and runs over stdio (the default MCP transport), so any client launches it the
-same way — the recommended launcher is [`uvx`](https://docs.astral.sh/uv/).
+Install the bitHuman CLI:
+
+```bash
+brew install bithuman                                                # macOS (Apple Silicon)
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh   # macOS + Linux
+pip install bithuman-cli                                             # macOS arm64 (pip)
+```
+
+Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
+[Developer Dashboard](https://www.bithuman.ai/#developer)). The server resolves
+your credential automatically — env → OS keychain → `~/.bithuman/config` — so you
+usually don't pass it per-client. Then register `bithuman mcp`:
 
 ### Claude Code
 
 ```bash
-claude mcp add bithuman \
-  -e BITHUMAN_API_SECRET=sk_your_secret \
-  -- uvx bithuman-mcp
+claude mcp add bithuman -- bithuman mcp
 ```
+
+If you haven't run `bithuman login`, pass the secret inline:
+`claude mcp add bithuman -e BITHUMAN_API_SECRET=sk_your_secret -- bithuman mcp`.
 
 ### Claude Desktop / generic JSON config
 
@@ -61,9 +88,8 @@ claude mcp add bithuman \
 {
   "mcpServers": {
     "bithuman": {
-      "command": "uvx",
-      "args": ["bithuman-mcp"],
-      "env": { "BITHUMAN_API_SECRET": "sk_your_secret" }
+      "command": "bithuman",
+      "args": ["mcp"]
     }
   }
 }
@@ -77,16 +103,15 @@ In **Settings → MCP → Add new MCP server**, or in `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "bithuman": {
-      "command": "uvx",
-      "args": ["bithuman-mcp"],
-      "env": { "BITHUMAN_API_SECRET": "sk_your_secret" }
+      "command": "bithuman",
+      "args": ["mcp"]
     }
   }
 }
 ```
 
-Or install it directly with `pip install bithuman-mcp` and run the
-`bithuman-mcp` command.
+If you haven't signed in with `bithuman login`, add an
+`"env": { "BITHUMAN_API_SECRET": "sk_your_secret" }` block to the config.
 
 ## Verify the connection
 
@@ -96,8 +121,8 @@ quickest confirmation is to ask the agent:
 > Use the bithuman tools to validate my API secret.
 
 It calls `validate_api_secret` and should reply with `{"valid": true}`. If you
-get `valid: false`, re-check `BITHUMAN_API_SECRET`; if no bithuman tools appear
-at all, confirm `uvx` is on PATH and restart the client.
+get `valid: false`, re-check your credential (`bithuman whoami`); if no bithuman
+tools appear at all, confirm `bithuman` is on your PATH and restart the client.
 
 ## Using it
 
@@ -139,10 +164,11 @@ See [Webhooks](/api/webhooks) for verifying the `X-BitHuman-Signature` header.
 
 | Env var | Default | Purpose |
 |---------|---------|---------|
-| `BITHUMAN_API_SECRET` | _(required)_ | Your API secret. Never logged. |
+| `BITHUMAN_API_SECRET` | _(auto-resolved)_ | Your API secret. Resolved from env → OS keychain → `~/.bithuman/config` (set by `bithuman login`). Never logged. |
 | `BITHUMAN_API_BASE` | `https://api.bithuman.ai` | API origin. |
-| `BITHUMAN_MCP_TRANSPORT` | `stdio` | `stdio` or `streamable-http`. |
-| `BITHUMAN_MCP_TIMEOUT` | `120` | Per-request timeout (seconds). |
+
+The built-in server speaks the standard MCP **stdio** transport, so there's
+nothing else to configure.
 
 ## Notes
 
