@@ -1752,7 +1752,7 @@ tags:
       brew install bithuman-product/bithuman/bithuman-cli
 
       # Universal installer — macOS + Linux, no Python required
-      curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
+      curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 
       # PyPI sibling wheel — Python-only environments
       pip install 'bithuman-cli==2.3.0'
@@ -2370,7 +2370,7 @@ tags:
       brew install bithuman-product/bithuman/bithuman-cli
 
       # any OS — universal installer
-      curl -fsSL https://github.com/bithuman-product/homebrew-bithuman/releases/latest/download/install.sh | sh
+      curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 
       # Python-only env (Linux x86_64/aarch64 + macOS arm64)
       pip install 'bithuman-cli==2.3.0'
@@ -2739,7 +2739,7 @@ tags:
       | Report a bug | [GitHub issues](https://github.com/bithuman-product/bithuman-sdk-public/issues) |
       | Ask a question | [Discord #help](https://discord.gg/ES953n7bPA) |
       | Request a feature | [Discord #ideas](https://discord.gg/ES953n7bPA) |
-      | Email support | support@bithuman.ai |
+      | Email support | hello@bithuman.ai |
       | Security disclosure | security@bithuman.ai (see [SECURITY.md](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/SECURITY.md)) |
 
       ### Service status
