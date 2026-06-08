@@ -82,7 +82,7 @@ Every error follows the same structured envelope:
 | Code | HTTP | Resolution |
 |---|---|---|
 | `RATE_LIMITED` | 429 | Back off and retry. See [rate limits](/api/rate-limits). |
-| `SESSION_LIMIT` | 429 | Concurrent-session limit reached. Wait for a session to end or upgrade your tier. |
+| `SESSION_LIMIT` | 429 | Concurrent-session capacity reached. Wait for an active session to end, then retry. |
 | `NO_AVAILABLE_WORKERS` | 503 | All workers busy. Retry with exponential backoff (up to 5 times). |
 | `INTERNAL_ERROR` | 500 | Retry once. If persistent, report via [Discord](https://discord.gg/ES953n7bPA). |
 
