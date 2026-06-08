@@ -1,6 +1,6 @@
 ---
 title: "Rate limits & quotas"
-description: "Per-tier request limits, concurrency caps, credit rates, and a recommended retry strategy."
+description: "Per-key request limits by endpoint class, concurrency notes, credit rates, and a recommended retry strategy."
 section: api
 group: "Reference"
 order: 51
@@ -8,25 +8,30 @@ order: 51
 
 ## Request limits
 
-API endpoints are rate-limited per API secret to protect service quality.
+API endpoints are rate-limited **per API secret** by endpoint class (a token
+bucket — a burst capacity that refills at a steady rate). The same limits apply
+on every plan; what your plan changes is your **credit balance**, not your
+request rate.
 
-| Tier | Concurrent sessions | Agent generations/day |
-|---|---|---|
-| **Free** | 2 | 5 |
-| **Creator** ($20/mo) | 5 | 20 |
-| **Pro** ($99/mo) | 10 | 50 |
-| **Enterprise** | Custom | Custom |
+| Endpoint class | Burst | Refill | Examples |
+|---|---|---|---|
+| **Read** (GET) | 240 | 240 / min | `GET /v1/agent/status/*`, `GET /v2/credit-summaries` |
+| **Write** (POST / PUT) | 60 | 60 / min | prompt / context / speak / file uploads |
+| **Generate** (heavy) | 10 | 10 / min | `POST /v1/agent/generate`, `POST /v1/dynamics/generate` |
 
-Check your current tier and usage at
+Exceeding a bucket returns `429` with a `Retry-After` header (see [Response
+headers](#response-headers)). Check your balance and keys at
 [Developer → API Keys](https://www.bithuman.ai/#developer).
 
-## Concurrency limits
+## Concurrency
 
 | Resource | Limit | Notes |
 |---|---|---|
-| Cloud avatar sessions | Based on tier | Active WebRTC sessions. |
-| Agent generation | 3 concurrent | Queued if exceeded. |
-| Dynamics generation | 2 concurrent | Queued if exceeded. |
+| Cloud avatar sessions | Bounded by credits | Each active session bills per minute; run as many as your balance supports. |
+| Agent generation | Queued | Heavy jobs queue and run as capacity frees up. |
+| Dynamics generation | Queued | Heavy jobs queue and run as capacity frees up. |
+
+Self-hosted deployments are bounded only by your own hardware.
 
 ## Credit rates
 
@@ -85,7 +90,7 @@ proactively instead of waiting for a `429`:
 
 | Header | Meaning |
 |--------|---------|
-| `X-RateLimit-Limit` | Burst capacity for the tier this endpoint uses. |
+| `X-RateLimit-Limit` | Burst capacity for the endpoint class this request uses. |
 | `X-RateLimit-Remaining` | Whole tokens left right now. |
 | `X-RateLimit-Reset` | Unix time when the bucket is fully refilled. |
 | `Retry-After` | (On `429` only) seconds to wait before retrying. |
@@ -136,7 +141,10 @@ session creation is the most expensive operation.
 Call `GET /v2/credit-summaries` before agent generation (250 credits) or
 dynamics creation (250 credits) to avoid calls that fail with `402`.
 
-## Need higher limits?
+## Need more capacity?
 
-Contact us via [Discord](https://discord.gg/ES953n7bPA) or email for enterprise
-pricing with custom limits.
+More credits mean more usage — upgrade your plan (Creator → Pro → Business →
+Enterprise) on the [pricing page](https://www.bithuman.ai/pricing), or top up at
+$1 = 100 credits from the dashboard. For volume, on-prem / air-gapped, or bespoke
+SLAs beyond Enterprise, [talk to sales](https://www.bithuman.ai/sales) or reach us
+via [Discord](https://discord.gg/ES953n7bPA) or [hello@bithuman.ai](mailto:hello@bithuman.ai).

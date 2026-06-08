@@ -21,10 +21,13 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 | **Self-hosted (Python SDK / CLI)** | Essence | 1 cr/min | CPU on your hardware |
 | **Self-hosted (GPU container)** | Expression | 2 cr/min | NVIDIA GPU on your hardware |
 | **On-device (Swift SDK)** | Expression | 2 cr/min | Active avatar minutes only |
+| **Managed agent — voice chat** | — | 10 cr/min | Cloud conversational agent, no avatar attached |
+| **Managed agent — camera chat** | — | 30 cr/min | Cloud conversational agent with camera/vision on |
 | **Audio-only (Swift SDK, no avatar)** | — | **Free** | No avatar attached → fully offline, no metering |
 | **`BITHUMAN_UNMETERED=1` dev mode** | either | **Free** | Skips auth + heartbeat — dev / parity testing only |
 | **Agent generation** | — | 250 cr (one-time) | Per [`.imx`](/concepts/avatars-imx) built from your photo / video |
 | **Dynamics generation** | — | 250 cr (one-time) | Per gesture / movement set generated for an agent |
+| **Book creation** | — | 250 cr (one-time) | Per illustrated book generated from a prompt |
 
 A "credit minute" is wall-clock time the engine is actively producing frames (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). Idle, paused, or disconnected time isn't billed.
 
@@ -36,14 +39,22 @@ A "credit minute" is wall-clock time the engine is actively producing frames (on
 
 ## Plans
 
-| Plan | Price | Credits / month | Concurrent sessions |
+| Plan | Monthly | Yearly | Credits / month |
 |---|---|---|---|
-| **Free** | $0 | 99 | 2 |
-| **Creator** | $20 | 1,800 | 5 |
-| **Pro** | $99 | 10,000 | 10 |
-| **Enterprise** | Contact | Custom | Custom |
+| **Free** | $0 | — | 99 |
+| **Creator** | $20 | $204 | 1,800 |
+| **Pro** | $99 | $1,010 | 10,000 |
+| **Business** | $299 | $2,990 | 50,000 |
+| **Enterprise** | $999 | $9,990 | 250,000 |
+| **Custom** | Contact sales | — | Volume / on-prem |
+
+Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem / air-gapped deployment, and bespoke SLAs beyond Enterprise: [talk to sales](https://www.bithuman.ai/sales).
 
 Current pricing and your live balance are in the [bitHuman dashboard](https://www.bithuman.ai/#library) — the credit balance is on the top navigation bar.
+
+## Top-up credits
+
+Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-up credits **never expire** — only plan credits reset at the end of each billing period (unused plan credits don't roll over). Top-ups stack on your plan balance and are spent after plan credits.
 
 ## Metered vs unmetered
 
@@ -117,7 +128,7 @@ The current heartbeat finishes, then subsequent heartbeats fail. The Python / Do
 
 ### Can I have multiple concurrent sessions?
 
-Yes, up to your plan's concurrent-session limit. Each session bills independently while it's actively generating frames.
+Yes. Each session bills independently while it's actively generating frames, and you can run as many as your credit balance supports. Self-hosted deployments are bounded only by your own hardware.
 
 ## Where to go next
 

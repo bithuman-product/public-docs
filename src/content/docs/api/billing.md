@@ -9,13 +9,16 @@ order: 41
 ## The credits model
 
 bitHuman bills in **credits**. The free tier includes 99 credits per month (no
-credit card); paid plans start at $20/month. Some operations are one-time costs;
-live sessions bill per minute.
+credit card); paid plans range from $20/month (Creator) to $999/month
+(Enterprise), plus contact-sales Custom for on-prem / volume. Top-up credits are
+$1 = 100 credits and never expire. Some operations are one-time costs; live
+sessions bill per minute.
 
 | Action | Cost |
 |---|---|
 | Agent generation (one-time, per avatar) | 250 credits |
 | Dynamics generation (one-time, per avatar) | 250 credits |
+| Book creation (one-time, per book) | 250 credits |
 | Live session — Essence, self-hosted | 1 credit/min |
 | Live session — Essence, cloud | 2 credits/min |
 | Live session — Expression, self-hosted | 2 credits/min |
@@ -23,8 +26,8 @@ live sessions bill per minute.
 | Voice chat (managed agent, no avatar) | 10 credits/min |
 | Camera chat (managed agent, camera on) | 30 credits/min |
 
-See the current [pricing page](https://www.bithuman.ai/pricing) for plan tiers
-and the TTS rate.
+See the [Pricing guide](/guides/pricing) for the full plan ladder (Free, Creator,
+Pro, Business, Enterprise, Custom) and annual pricing.
 
 ## Check credit balance
 
