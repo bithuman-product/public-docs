@@ -15,7 +15,7 @@ const first = agents[0];
         <div class="pg-combo" data-pg-combo>
           <button type="button" class="pg-combo-btn" data-pg-btn aria-haspopup="listbox" aria-expanded="false"
             data-code={first.code} data-image={first.image} data-model={first.group}>
-            <img class="pg-av" src={first.image} alt="" />
+            <img class="pg-av" src={first.image} alt="" loading="lazy" decoding="async" />
             <span class="pg-combo-name">{first.name}</span>
             <svg class="pg-chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
@@ -23,13 +23,13 @@ const first = agents[0];
             <div class="pg-grp">Expression</div>
             {data.expression.map((a) => (
               <button type="button" class="pg-opt" role="option" data-code={a.code} data-image={a.image} data-name={a.name} data-model="expression">
-                <img class="pg-av" src={a.image} alt="" /><span>{a.name}</span>
+                <img class="pg-av" src={a.image} alt="" loading="lazy" decoding="async" /><span>{a.name}</span>
               </button>
             ))}
             <div class="pg-grp">Essence</div>
             {data.essence.map((a) => (
               <button type="button" class="pg-opt" role="option" data-code={a.code} data-image={a.image} data-name={a.name} data-model="essence">
-                <img class="pg-av" src={a.image} alt="" /><span>{a.name}</span>
+                <img class="pg-av" src={a.image} alt="" loading="lazy" decoding="async" /><span>{a.name}</span>
               </button>
             ))}
           </div>
@@ -58,7 +58,7 @@ const first = agents[0];
 
   <div class="pg-right">
     <div class="pg-preview" data-pg-preview>
-      <img data-pg-poster src={first.image} alt={first.name} />
+      <img data-pg-poster src={first.image} alt={first.name} loading="lazy" decoding="async" />
       <div class="pg-hint"><span>▶</span> Press <strong>Launch</strong> to talk to a live agent</div>
       <button class="pg-close" data-pg-close aria-label="Close">
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>

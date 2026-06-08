@@ -77,6 +77,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     <div class="mm-sep"></div>
     {resources.map((r) => <a href={r.href}>{r.label}</a>)}
     <a href="https://status.bithuman.ai" target="_blank" rel="noopener">Status</a>
+    <div class="mm-sep"></div>
+    <a class="mm-cta" href="https://bithuman.ai/#developer" target="_blank" rel="noopener">Get API key →</a>
   </div>
 </header>
 
@@ -279,5 +281,13 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     }
     .mobile-menu a:hover { background: var(--color-surface-2); color: var(--color-text); }
     .mm-sep { height: 1px; background: var(--color-border); margin: 0.4rem 0; }
+    .mobile-menu a.mm-cta {
+      background: var(--color-primary);
+      color: #fff;
+      text-align: center;
+      font-weight: var(--fw-bold);
+      margin-top: 0.2rem;
+    }
+    .mobile-menu a.mm-cta:hover { background: var(--color-primary-hover); color: #fff; }
   }
 </style>

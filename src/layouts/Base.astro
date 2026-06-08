@@ -30,6 +30,7 @@ const ogImage = new URL(image, site).href;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/bithuman-mark.png" />
 
     <!-- Open Graph / Twitter -->
     <meta property="og:type" content="website" />
@@ -87,7 +88,13 @@ const ogImage = new URL(image, site).href;
       };
       // Scroll reveal
       (function () {
-        if (!("IntersectionObserver" in window)) return;
+        var all = document.querySelectorAll("[data-reveal]");
+        // Fallback: if IntersectionObserver is unavailable, reveal everything
+        // immediately so content is never stuck hidden (opacity:0).
+        if (!("IntersectionObserver" in window)) {
+          all.forEach(function (el) { el.classList.add("in"); });
+          return;
+        }
         var io = new IntersectionObserver(
           function (entries) {
             entries.forEach(function (e) {
@@ -99,9 +106,13 @@ const ogImage = new URL(image, site).href;
           },
           { threshold: 0.12 }
         );
-        document.querySelectorAll("[data-reveal]").forEach(function (el) {
+        all.forEach(function (el) {
           io.observe(el);
         });
+        // Backstop: never leave content hidden if observation stalls.
+        setTimeout(function () {
+          all.forEach(function (el) { el.classList.add("in"); });
+        }, 2500);
       })();
       // Mobile nav
       window.__bhToggleMenu = function () {
