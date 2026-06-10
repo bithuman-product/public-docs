@@ -16,10 +16,11 @@ frames out at 25 FPS. The runtime and all native dependencies ship in the wheel
 ## Install
 
 ```bash
-pip install 'bithuman==2.3.6'
+pip install bithuman
 ```
 
-**Python 3.10–3.14** supported. Platforms: macOS arm64, Linux x86_64, Linux
+**Python 3.10–3.14** supported; the latest release on
+[PyPI](https://pypi.org/project/bithuman/) is **2.3.3**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host.)
 

@@ -68,11 +68,11 @@ We keep this honest so you can plan around it.
 
 | SDK | Package | Topology | Status |
 |---|---|---|---|
-| **Python** | `pip install bithuman` (2.3.6) | On-device | **GA** |
+| **Python** | `pip install bithuman` (2.3.3) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM `Bithuman` (2.3.6) + AvatarUIKit | On-device | **Preview** |
 | **Android (Kotlin)** | Gradle `ai.bithuman:sdk:2.3.6` | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
-| **Rust** | in-tree crate `bithuman` (2.3.6, not on crates.io) | On-device | Internal / app-backing |
+| **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app in `bithuman-apps`, **not a published code SDK** — see below |
 
 > **Note** On Apple platforms the SwiftPM package is **`Bithuman`** — it binds
