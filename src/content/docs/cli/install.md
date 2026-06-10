@@ -14,8 +14,9 @@ order: 2
 brew install bithuman-product/bithuman/bithuman-cli
 ```
 
-**macOS or Linux** — universal installer (detects your platform and drops the
-right self-contained `bithuman` binary on your `PATH`):
+**macOS (Apple Silicon) or Linux** — universal installer (detects your platform
+and drops the right self-contained `bithuman` binary on your `PATH`; no
+Intel-Mac build is published):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh

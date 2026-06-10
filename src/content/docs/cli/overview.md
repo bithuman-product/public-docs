@@ -83,8 +83,8 @@ The conversation brain is pluggable. Both paths go through the same
 > (`from bithuman import AsyncBithuman`), and carries the `[local]`
 > on-device brain extra (`pip install 'bithuman[local]'`). The CLI ships
 > separately as `bithuman-cli` — installed via Homebrew or the universal
-> installer on macOS and Linux; `pip install bithuman-cli` is **macOS
-> Apple Silicon only**. See [Install](/cli/install).
+> installer on macOS (Apple Silicon) and Linux; `pip install bithuman-cli`
+> is **macOS Apple Silicon only**. See [Install](/cli/install).
 
 ## Next steps
 

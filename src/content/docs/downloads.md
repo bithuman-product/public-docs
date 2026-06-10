@@ -20,7 +20,7 @@ The fastest way to see an avatar talk. The same Rust binary ships through all th
 brew install bithuman-product/bithuman/bithuman-cli
 ```
 
-**Universal installer (macOS + Linux, no Python required)**
+**Universal installer (macOS Apple Silicon + Linux, no Python required)**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
@@ -123,7 +123,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Python SDK (`bithuman`) | **2.3.3** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
-| bithuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS + Linux) | v7 |
+| bithuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
 Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.3 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
