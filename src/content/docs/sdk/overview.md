@@ -69,20 +69,19 @@ We keep this honest so you can plan around it.
 | SDK | Package | Topology | Status |
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.3.3) | On-device | **GA** |
-| **Swift / Apple** | SwiftPM `Bithuman` (2.3.6) + AvatarUIKit | On-device | **Preview** |
+| **Swift / Apple** | SwiftPM `bitHumanKit` (0.8.2) | On-device | **Preview** |
 | **Android (Kotlin)** | Gradle `ai.bithuman:sdk:2.3.6` | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app in `bithuman-apps`, **not a published code SDK** — see below |
 
-> **Note** On Apple platforms the SwiftPM package is **`Bithuman`** — it binds
-> directly onto the `libessence` streaming engine (`Fixture` / `Runtime` /
-> `Avatar`). The app-layer renderer is **AvatarUIKit** (from
-> `bithuman-apps/avatar-ui-kit`), used by the `expression/{mac,ipad,iphone}` sample
-> apps. The earlier `bitHumanKit` package — with `createRuntime` /
-> `EssenceRuntime.frames()` — has been **removed**. This rail is **preview**, and
-> its install path links native ORT / ffmpeg / hdf5 (not zero-dependency). The
-> [Swift page](/sdk/swift) has the details.
+> **Note** On Apple platforms the SwiftPM product is **`bitHumanKit`** — an
+> umbrella framework (from
+> [`bithuman-product/bithuman-sdk-public`](https://github.com/bithuman-product/bithuman-sdk-public))
+> that re-exports both the Expression avatar engine and the Essence
+> (`libessence`) runtime. `import bitHumanKit` is all you need; the standalone
+> Layer-1 engine products are not yet published separately. This rail is
+> **preview**. The [Swift page](/sdk/swift) has the details.
 
 > **Rust** The `bithuman` Rust crate is the on-device engine wrapper that **backs
 > the [CLI](/cli)**. It is internal / app-backing — source-only (not on

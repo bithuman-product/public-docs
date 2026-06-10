@@ -61,11 +61,15 @@ See the [Python SDK guide](/sdk/python).
 
 ### Swift / Apple SDK — Preview
 
-On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only. The install path links native ORT / ffmpeg / hdf5 (not zero-dependency).
+On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only.
 
-> **Note** The SwiftPM package is **`Bithuman`** — it binds directly onto the `libessence` streaming engine (`Fixture` / `Runtime` / `Avatar`). The app-layer renderer is **AvatarUIKit** (`bithuman-apps/avatar-ui-kit`). The earlier `bitHumanKit` package (`createRuntime` / `EssenceRuntime.frames()`) has been **removed**. See the [Swift SDK guide](/sdk/swift) for current status.
+In Xcode: **File → Add Package Dependencies…** → paste
+`https://github.com/bithuman-product/bithuman-sdk-public.git` → pick **0.8.2**
+→ attach the **`bitHumanKit`** product. The package wraps a pre-compiled
+XCFramework with all third-party deps statically linked — zero transitive
+SwiftPM dependencies.
 
-The product import is `import Bithuman`. See the [Swift SDK guide](/sdk/swift).
+The product import is `import bitHumanKit`. See the [Swift SDK guide](/sdk/swift).
 
 ### Android / Kotlin SDK — Beta
 

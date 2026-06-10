@@ -1,6 +1,6 @@
 ---
 title: "Swift / iOS — Hello, avatar"
-description: "Boot a real-time, lip-synced on-device bitHuman avatar on iPhone or iPad with SwiftUI, the Bithuman SwiftPM package, and AvatarUIKit."
+description: "Boot a real-time, lip-synced on-device bitHuman avatar on iPhone or iPad with SwiftUI and the bitHumanKit SwiftPM package."
 section: examples
 group: "Examples"
 order: 13
@@ -18,7 +18,7 @@ order: 13
 - Device floor (real hardware — the Simulator can't run on-device inference): **iPhone 16 Pro or later** (A18 Pro+), or **iPad Pro M4 or later**, on **iOS / iPadOS 26+**. Earlier devices are refused at launch by `HardwareCheck.evaluate()`.
 - Apple-approved **memory entitlements** — without them iOS terminates the app mid-conversation. Request both before you start (Apple takes 1–3 business days): `com.apple.developer.kernel.increased-memory-limit` and `com.apple.developer.kernel.extended-virtual-addressing`.
 
-> **Note** This rail is **preview**. The SwiftPM package is **`Bithuman`** (binds `libessence`: `Fixture` / `Runtime` / `Avatar`), with **AvatarUIKit** (`bithuman-apps/avatar-ui-kit`) as the app-layer renderer — the basis for the `expression/{mac,ipad,iphone}` sample apps. The earlier `bitHumanKit` package has been **removed**, and the install path links native ORT / ffmpeg / hdf5 (not zero-dependency). **iPhone Expression (this example) is preview** — it runs on iPhone 16 Pro+, but on-device validation is still in progress, so prefer Essence for production iPhone builds (see [Models](/concepts/models) and the [Swift SDK matrix](/sdk/swift)).
+> **Note** This rail is **preview**. The SwiftPM product is **`bitHumanKit`** (`import bitHumanKit`) — an umbrella framework bundling the Expression avatar engine, the Essence (`libessence`) runtime, and the renderer views, with all third-party deps statically linked (zero transitive SwiftPM dependencies). **iPhone Expression (this example) is preview** — it runs on iPhone 16 Pro+, but on-device validation is still in progress, so prefer Essence for production iPhone builds (see [Models](/concepts/models) and the [Swift SDK matrix](/sdk/swift)).
 
 ## Run it
 

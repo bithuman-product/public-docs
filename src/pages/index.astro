@@ -40,10 +40,11 @@ avatar = await AsyncBithuman.create(model_path="agent.imx", api_secret="bh_...")
 await avatar.push_audio(pcm_bytes, 16000)   # 16 kHz int16 PCM (ends the utterance)
 async for frame in avatar.run():
     render(frame.bgr_image)        # lifelike animated face, in realtime` },
-  { label: "Swift", lang: "swift", code: `import Bithuman
+  { label: "Swift", lang: "swift", code: `import bitHumanKit
 
-let avatar = try Avatar(modelPath: imxURL, apiSecret: "bh_...")
-try avatar.compose(audioFile: wavURL) { frame in
+let runtime = try await Bithuman.createRuntime(modelPath: imxURL)
+try runtime.pushAudio(pcm16kMono)  // 16 kHz mono PCM
+for await frame in runtime.frames() {
     view.render(frame.cgImage())   // on-device, realtime
 }` },
 ];
