@@ -1,0 +1,34 @@
+---
+import Hub from "../../components/Hub.astro";
+
+const groups = [
+  {
+    label: "Core",
+    featured: true,
+    cards: [
+      { title: "Avatars and the .imx format", desc: "The self-contained file that packages an avatar — where it comes from and how to inspect it.", href: "/concepts/avatars-imx" },
+      { title: "Audio streaming", desc: "The push/drain pattern every SDK shares — PCM in, lip-synced 25 FPS frames out.", href: "/concepts/audio-streaming" },
+      { title: "Agent lifecycle", desc: "From a face and voice to a live talking avatar — generate, poll, resolve, drive.", href: "/concepts/agent-lifecycle" },
+    ],
+  },
+  {
+    label: "Models",
+    cards: [
+      { title: "Essence vs Expression", desc: "The two avatar models — what each does, where each runs, which to pick.", href: "/concepts/models" },
+    ],
+  },
+  {
+    label: "Architecture",
+    cards: [
+      { title: "Architecture", desc: "The libessence engine, the SDKs that wrap it, and the ABI + hardware matrices.", href: "/concepts/architecture" },
+    ],
+  },
+];
+---
+<Hub
+  eyebrow="Concepts"
+  title="Concepts"
+  tagline="The mental model behind bitHuman — one engine, one .imx format, one push/drain loop, two avatar models."
+  ctas={[{ label: "Essence vs Expression", href: "/concepts/models" }, { label: "Audio streaming", href: "/concepts/audio-streaming", variant: "secondary" }]}
+  groups={groups}
+/>
