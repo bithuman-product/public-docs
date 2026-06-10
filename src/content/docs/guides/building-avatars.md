@@ -12,7 +12,7 @@ An avatar is **likeness + voice + personality**, packaged into a single [`.imx` 
 
 ### 1. Download a pre-built one
 
-Browse [Explore](https://www.bithuman.ai/#explore), open the **⋮** menu on any agent, and choose **Download**. Or via the CLI:
+Browse [Explore](https://www.bithuman.ai/explore), open the **⋮** menu on any agent, and choose **Download**. Or via the CLI:
 
 ```bash
 bithuman list                            # browse showcase avatars
@@ -22,7 +22,7 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 
 ### 2. Generate from your own portrait
 
-Upload a mix of image, video, voice clip, and system prompt at [bithuman.ai](https://www.bithuman.ai/#explore) — or generate programmatically over the API (covered below).
+Upload a mix of image, video, voice clip, and system prompt at [bithuman.ai](https://www.bithuman.ai/explore) — or generate programmatically over the API (covered below).
 
 ## Media uploads
 

@@ -109,4 +109,4 @@ curl https://api.bithuman.ai/v1/webhooks -H "api-secret: $BITHUMAN_API_SECRET"
 curl -X DELETE https://api.bithuman.ai/v1/webhooks/{id} -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
-See the [API reference](/api/reference#tag/Webhooks) for the full schema.
+See the [API reference](/api/reference#tag/webhooks) for the full schema.

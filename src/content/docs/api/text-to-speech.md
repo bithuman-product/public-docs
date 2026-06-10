@@ -134,7 +134,7 @@ latency for long text), set `"stream": true`.
 Already calling OpenAI's TTS? Point existing clients at
 `POST /v1/audio/speech` — swap the base URL to `https://api.bithuman.ai/v1` and
 the auth header to `api-secret`. See the
-[API reference](/api/reference#tag/Voice) for the full schema.
+[API reference](/api/reference#tag/voice) for the full schema.
 
 ## Errors
 

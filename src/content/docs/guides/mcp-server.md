@@ -154,7 +154,7 @@ min), then `create_embed_token` and hands you the JWT for the
 
 **Get notified instead of polling**
 
-> Register a webhook at https://example.com/hooks/bithuman for agent.ready and
+> Register a webhook at `https://example.com/hooks/bithuman` for agent.ready and
 > send it a test event.
 
 → `create_webhook` (returns the one-time signing secret), then `test_webhook`.

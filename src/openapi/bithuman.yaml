@@ -2057,7 +2057,7 @@ tags:
 
       | Source | How |
       |---|---|
-      | **Showcase** | `bithuman pull <slug>` — pre-built avatars at [bithuman.ai → Explore](https://www.bithuman.ai/#explore). |
+      | **Showcase** | `bithuman pull <slug>` — pre-built avatars at [bithuman.ai → Explore](https://www.bithuman.ai/explore). |
       | **Dashboard** | Upload a portrait + voice samples at [bithuman.ai → Studio](https://www.bithuman.ai). |
       | **API** | [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent) returns an `agent_code` whose `.imx` you can download. |
 
@@ -2486,7 +2486,7 @@ tags:
 
       ### 1. Download a pre-built one
 
-      Browse [Explore](https://www.bithuman.ai/#explore), open the
+      Browse [Explore](https://www.bithuman.ai/explore), open the
       **⋮** menu on any agent → **Download**. Or via CLI:
 
       ```bash
@@ -2565,9 +2565,9 @@ tags:
       - **WebRTC delivery** — video streamed via LiveKit's media
         pipeline to any client
 
-      See the [bithuman-tts plugin
-      README](https://github.com/bithuman-product/bithuman-tts) for
-      the voice-agent integration recipe.
+      See the [LiveKit integration
+      guide](https://docs.bithuman.ai/sdk/livekit) for the
+      voice-agent integration recipe.
 
       <div class="bh-cards">
         <a href="#tag/deploy-self-hosted" class="bh-card">

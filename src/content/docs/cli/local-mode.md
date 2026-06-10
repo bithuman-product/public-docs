@@ -166,7 +166,7 @@ warm-up after that is under a second.
 ## What's NOT in `bithuman[local]`
 
 - **Avatar generation** — you still need an `.imx` file. Generate one on
-  [bithuman.ai](https://www.bithuman.ai/#explore) (free tier) via
+  [bithuman.ai](https://www.bithuman.ai/explore) (free tier) via
   `POST /v1/agent/generate`, or pull one from the showcase
   (`bithuman pull <slug>` → `~/.cache/bithuman/showcase/`).
 - **Avatar metering** — `bithuman run` still pings `api.bithuman.ai` for

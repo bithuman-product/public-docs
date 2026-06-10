@@ -14,7 +14,7 @@ two steps. (Want your own custom face later? See
 ## 1. Pick an agent
 
 Every agent has a short **code** like `A01GYN2750`. Browse the
-[agent gallery](https://www.bithuman.ai/#explore) and copy the code of any one
+[agent gallery](https://www.bithuman.ai/explore) and copy the code of any one
 you like — or use `A01GYN2750` to follow along.
 
 ## 2. Embed it
@@ -24,7 +24,7 @@ can speak to it and it responds:
 
 ```html
 <iframe
-  src="https://bithuman.ai/embed/A01GYN2750"
+  src="https://agent.viewer.bithuman.ai/api/embed/A01GYN2750"
   allow="microphone; camera; autoplay"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
