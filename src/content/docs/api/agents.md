@@ -48,6 +48,7 @@ asynchronous and costs 250 credits; the call returns immediately with an
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
+| `model` | string | no | `essence` | Avatar runtime model: `essence` or `expression`. See [models](/concepts/models). |
 
 ```python
 import requests

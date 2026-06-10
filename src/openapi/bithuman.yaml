@@ -115,6 +115,11 @@ paths:
                   type: integer
                   default: 10
                   description: Source video duration in seconds.
+                model:
+                  type: string
+                  enum: [essence, expression]
+                  default: essence
+                  description: Avatar runtime model for the generated agent. See [Essence vs Expression](#tag/models).
       responses:
         "200":
           description: Generation started
@@ -662,9 +667,9 @@ paths:
                   description: Gesture duration in seconds.
                 model:
                   type: string
-                  enum: [seedance, quality, speed, auto]
+                  enum: [seedance, kling, auto]
                   default: seedance
-                  description: Generation model variant.
+                  description: Video model used for gesture generation. `auto` currently resolves to `seedance`. Any other value is rejected.
       responses:
         "200":
           description: Dynamics generation started
