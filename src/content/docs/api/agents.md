@@ -164,9 +164,9 @@ print(agent["name"], agent["status"])
     "agent_id": "A91XMB7113",
     "status": "ready",
     "system_prompt": "You are a friendly AI assistant",
-    "image_url": "https://cdn.bithuman.ai/assets/image.jpg",
-    "video_url": "https://cdn.bithuman.ai/assets/video.mp4",
-    "model_url": "https://cdn.bithuman.ai/assets/model.imx",
+    "image_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/image_20260115_103000_000001.jpg",
+    "video_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/video_20260115_103200_000002.mp4",
+    "model_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/my_agent_20260115_103500_000003.imx",
     "name": "My Agent"
   }
 }
