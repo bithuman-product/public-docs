@@ -49,7 +49,7 @@ curl -s "https://api.bithuman.ai/v1/agent/status/$AGENT_ID" \
 4. Once ready, open the agent in the web viewer and start a conversation.
 
 ```bash
-open "https://agent.viewer.bithuman.ai/$AGENT_ID"   # or paste into any browser
+open "https://www.bithuman.ai/$AGENT_ID"   # or paste into any browser
 ```
 
 ## What you'll see
@@ -85,7 +85,7 @@ while true; do
   S=$(curl -s "$BASE/v1/agent/status/$AGENT_ID" -H "api-secret: $BITHUMAN_API_SECRET")
   STATUS=$(echo "$S" | python3 -c "import sys,json;print(json.load(sys.stdin).get('data',{}).get('status','unknown'))")
   echo "  status: $STATUS"
-  [ "$STATUS" = "ready" ]  && { echo "Open https://agent.viewer.bithuman.ai/$AGENT_ID"; break; }
+  [ "$STATUS" = "ready" ]  && { echo "Open https://www.bithuman.ai/$AGENT_ID"; break; }
   [ "$STATUS" = "failed" ] && { echo "Generation failed (credits auto-refunded)"; exit 1; }
   sleep 5
 done

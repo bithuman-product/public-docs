@@ -14,13 +14,13 @@ Production-deployed since Feb 2026. No install, no SDK call — flip one URL par
 
 ```text
 # Browser-side rendering, agent brain still cloud:
-https://agent.viewer.bithuman.ai/<AGENT_CODE>?rendering_mode=browser
+https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=browser
 
 # Pure client-side puppet (mic-driven, no LiveKit, no agent worker):
 https://agent.viewer.bithuman.ai/?rendering_mode=avatar&model_url=<IMX_URL>
 ```
 
-[Try it on a showcase agent →](https://agent.viewer.bithuman.ai/A74NWD9723?rendering_mode=browser)
+[Try it on a showcase agent →](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser)
 
 ## When you'd reach for it
 
@@ -45,8 +45,11 @@ https://agent.viewer.bithuman.ai/?rendering_mode=avatar&model_url=<IMX_URL>
 It's a URL parameter on the agent landing page. Replace `AGENT_CODE` with your code from bithuman.ai → Developer:
 
 ```text
-https://agent.viewer.bithuman.ai/<AGENT_CODE>?rendering_mode=browser
+https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=browser
 ```
+
+(The short URL mints a session key and forwards you — extra parameters like
+`rendering_mode` are preserved.)
 
 For `avatar` mode (no agent worker, no LiveKit), pass the IMX model URL directly:
 
@@ -103,8 +106,8 @@ Network adds the LiveKit audio-track RTT in `browser` mode (typically 50–150 m
 
 ## Try it
 
-- [Showcase agent — browser mode](https://agent.viewer.bithuman.ai/A74NWD9723?rendering_mode=browser) — server brain, client-rendered avatar.
-- [Showcase agent — cloud mode](https://agent.viewer.bithuman.ai/A74NWD9723) — for comparison.
+- [Showcase agent — browser mode](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser) — server brain, client-rendered avatar.
+- [Showcase agent — cloud mode](https://www.bithuman.ai/A74NWD9723) — for comparison.
 
 ## A standalone JS/TS SDK is coming
 
