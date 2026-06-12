@@ -87,7 +87,7 @@ print(list(gestures.keys()))
 | Field | Type | Description |
 |---|---|---|
 | `url` | string \| null | URL to the dynamics model file, or null if not yet generated. |
-| `status` | string | `generating` while in progress, `ready` when complete. |
+| `status` | string | `generating` while in progress, `ready` when complete. **Also returned as `ready` (with `url: null` and empty `gestures`) for agents whose dynamics were never generated** — treat `url != null`, not `status`, as the has-dynamics signal. |
 | `agent_id` | string | The agent ID. |
 | `gestures` | object | Map of gesture action name → video URL. |
 
@@ -146,7 +146,7 @@ These action names are what you pass to `VideoControl(action=...)` or the
 | `400` | Invalid parameters. |
 | `401` | Unauthorized. |
 | `402` | Insufficient credits. |
-| `404` | Agent not found (`DYNAMICS_NOT_FOUND` if no dynamics for the agent). |
+| `404` | Agent not found. (An agent **without** dynamics is not a 404 — `GET /v1/dynamics/{agent_id}` returns `200` with `url: null`.) |
 | `500` | Internal server error. |
 
 See the full [error reference](/api/errors) and the interactive

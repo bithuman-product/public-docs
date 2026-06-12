@@ -48,7 +48,7 @@ asynchronous and costs 250 credits; the call returns immediately with an
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
-| `model` | string | no | `essence` | Avatar runtime model: `essence` or `expression`. See [models](/concepts/models). |
+| `model` | string | no | `essence` | Avatar runtime model: `essence` or `expression` (`elevate` is also accepted). See [models](/concepts/models). **Warning:** unknown values are not rejected — generation silently falls back to the default pipeline and still bills 250 credits, so double-check spelling. |
 
 ```python
 import requests
@@ -288,7 +288,7 @@ requests.post(
 
 > **Note** `/speak` and `/add-context` target agents created on the bitHuman
 > platform that have an **active session** — not local SDK agents. Without a
-> live room you'll get `404 NO_ACTIVE_ROOMS`. Start a session via the
+> live room you'll get `404 NOT_FOUND`. Start a session via the
 > [embed flow](/api/embedding) or a LiveKit worker first.
 
 ## Error codes
@@ -297,9 +297,9 @@ requests.post(
 |---|---|---|
 | `401` | `UNAUTHORIZED` | Invalid or missing `api-secret`. |
 | `402` | `INSUFFICIENT_BALANCE` | Not enough credits (generation costs 250). |
-| `404` | `AGENT_NOT_FOUND` | No agent with the given code. |
-| `404` | `NO_ACTIVE_ROOMS` | Agent has no active session to `/speak` or `/add-context`. |
-| `422` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value). |
+| `404` | `NOT_FOUND` | No agent with the given code (`message`: `"Agent not found for code: <code>"`). |
+| `404` | `NOT_FOUND` | Agent has no active session to `/speak` or `/add-context` (`message`: `"No active rooms found for agent <code>"`). |
+| `400` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value). |
 
 See the full [error reference](/api/errors) and the interactive
 [API reference](/api/reference).

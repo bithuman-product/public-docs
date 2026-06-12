@@ -82,7 +82,8 @@ curl -X POST https://api.bithuman.ai/v1/agent/A01GYN2750/speak \
 ```
 
 > **Note** `/speak` and `/add-context` require an active session. With no live
-> room you'll get `404 NO_ACTIVE_ROOMS` — open the embed first, or start a
+> room you'll get a `404` (code `NOT_FOUND`, message `"No active rooms found
+> for agent <code>"`) — open the embed first, or start a
 > [LiveKit worker](/api/embedding).
 
 ### Voice without an avatar

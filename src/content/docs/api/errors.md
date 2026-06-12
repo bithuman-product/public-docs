@@ -57,10 +57,8 @@ Every error follows the same structured envelope:
 
 | Code | HTTP | Resolution |
 |---|---|---|
-| `AGENT_NOT_FOUND` | 404 | Check the agent code. Use `POST /v1/validate` to confirm your secret has access. |
-| `AGENT_FAILED` | 400 | Generation failed. Check `error_message`; retry with different parameters. |
+| `NOT_FOUND` | 404 | Returned both when no agent matches the code **and** when an agent has no active session for `/speak` / `/add-context`. Distinguish by the `message` string: `"Agent not found for code: <code>"` vs `"No active rooms found for agent <code>"`. |
 | `VALIDATION_ERROR` | 400 | Body failed schema validation. Include all required fields. |
-| `NO_ACTIVE_ROOMS` | 404 | The agent must be in an active session before you can `/speak` or `/add-context`. |
 | `MISSING_PARAM` | 400 | A required parameter was not provided. |
 
 ### File operations
@@ -70,12 +68,6 @@ Every error follows the same structured envelope:
 | `FILE_TOO_LARGE` | 413 | Images 10 MB, video 100 MB, audio 50 MB, docs 10 MB. |
 | `UNSUPPORTED_TYPE` | 415 | Supported: JPEG, PNG, WebP, MP4, WAV, MP3, OGG. |
 | `DOWNLOAD_FAILED` | 400 | Ensure the URL is publicly accessible and returns a valid file. |
-
-### Dynamics
-
-| Code | HTTP | Resolution |
-|---|---|---|
-| `DYNAMICS_NOT_FOUND` | 404 | Generate dynamics first with `POST /v1/dynamics/generate`. |
 
 ### Session & infrastructure
 
