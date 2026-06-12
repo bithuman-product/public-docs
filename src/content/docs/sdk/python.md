@@ -31,6 +31,23 @@ the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host
 > [universal installer](/cli/install) on macOS/Linux; `pip install bithuman-cli`
 > is **macOS Apple Silicon only**. Both share the same `libessence` engine.
 
+> **⚠️ Linux note (Debian / Ubuntu / `python:*-slim` Docker images)** The
+> bundled runtime looks for CA certificates at the RHEL path
+> `/etc/pki/tls/certs/ca-bundle.crt`. On Debian/Ubuntu (where certs live in
+> `/etc/ssl/certs`) the first authenticated call —
+> `AsyncBithuman.create(...)` — fails with
+> `RuntimeError: auth_authenticate: curl_easy_perform: Problem with the SSL CA cert`.
+> Setting `CURL_CA_BUNDLE` / `SSL_CERT_FILE` does **not** help. Fix once
+> (root required):
+>
+> ```bash
+> sudo mkdir -p /etc/pki/tls/certs && \
+>   sudo ln -sf /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
+> ```
+>
+> In a Dockerfile, drop the `sudo`. RHEL-family distros and macOS are
+> unaffected.
+
 > **Note** The SDK returns frames as numpy BGR arrays and needs **no** OpenCV
 > itself. Only example scripts that *display* a window need `opencv-python` — it
 > is in each example's `requirements.txt`.
@@ -208,6 +225,20 @@ curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_S
 `/v1/validate` always returns HTTP `200` — read the body: `{"valid": true}` means
 the key is good, `{"valid": false}` means it's missing or wrong (it does **not**
 return `401`).
+
+### `Problem with the SSL CA cert` on Linux (Debian/Ubuntu)
+
+`AsyncBithuman.create()` raises
+`RuntimeError: auth_authenticate: curl_easy_perform: Problem with the SSL CA cert (path? access rights?)`
+on Debian, Ubuntu, and derived images (including `python:*-slim`). The wheel's
+bundled libcurl only reads the RHEL CA path `/etc/pki/tls/certs/ca-bundle.crt`;
+`CURL_CA_BUNDLE` / `SSL_CERT_FILE` are ignored. Symlink the Debian bundle into
+place once:
+
+```bash
+sudo mkdir -p /etc/pki/tls/certs && \
+  sudo ln -sf /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
+```
 
 ### Avatar shows but no lip movement
 
