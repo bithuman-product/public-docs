@@ -139,5 +139,5 @@ balance use `GET /v2/credit-summaries` above.
 | `404` | `USER_NOT_FOUND` | `user_id` does not exist. |
 | `500` | `INTERNAL_ERROR` | Upstream database error. |
 
-See [Rate limits](/api/rate-limits) for per-endpoint-class request limits and the
+See [Rate limits](/api/rate-limits) for the plan-tiered request limits and the
 full [error reference](/api/errors).
