@@ -24,7 +24,7 @@ Replace `A78WKV4515` with your agent code — find it in the [Library](https://w
 
 ## Production: mint short-lived embed tokens
 
-For per-visitor session tracking and rate limiting, mint a short-lived embed token from your backend and pass it to the iframe. Your `api-secret` never reaches the browser.
+For per-visitor session tracking and rate limiting, mint a short-lived embed token from your backend and pass it to the iframe. Your `api-secret` never reaches the browser. (The mint endpoint authenticates your `api-secret` upstream and is covered by a per-IP [request limit](/api/rate-limits) rather than your plan tiers.)
 
 ```js
 // SERVER — mint a token (api-secret stays server-side)
