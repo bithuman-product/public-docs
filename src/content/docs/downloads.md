@@ -45,17 +45,21 @@ See the [CLI reference](/cli) for all seven subcommands (`init`, `run`, `render`
 
 ### Python SDK (library) — GA
 
-`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64, Python 3.10–3.14.
+`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.10–3.14.
 
 ```bash
 pip install bithuman
 ```
 
+> **macOS note** The 2.3.4 macOS wheels are tagged for **macOS 26+ (arm64)**. On older macOS versions pip reports `No matching distribution found` — upgrade to macOS 26+, or build from source / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
+
 Add the LiveKit agent integration:
 
 ```bash
-pip install livekit-plugins-bithuman
+pip install livekit-plugins-bithuman pillow
 ```
+
+> **Note** The plugin currently imports Pillow without declaring it — install `pillow` alongside (upstream fix pending with LiveKit), or `from livekit.plugins import bithuman` fails with `ModuleNotFoundError: No module named 'PIL'`.
 
 See the [Python SDK guide](/sdk/python).
 
@@ -120,12 +124,12 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.3** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.3.4** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
 | bithuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.3 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.4 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 

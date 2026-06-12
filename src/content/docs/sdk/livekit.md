@@ -26,8 +26,15 @@ than a browser.
 Install the plugin (it pulls in `bithuman` and `livekit-agents`):
 
 ```bash
-pip install livekit-plugins-bithuman   # or: pip install bithuman[agent]
+pip install livekit-plugins-bithuman pillow
 ```
+
+> **Note** The plugin currently requires Pillow but doesn't declare it —
+> install `pillow` alongside it (as above), or
+> `from livekit.plugins import bithuman` fails with
+> `ModuleNotFoundError: No module named 'PIL'`. Upstream fix pending with
+> LiveKit. (There is no `bithuman[agent]` extra in the 2.3 slim wheel — the
+> plugin is its own package.)
 
 Wire the avatar into an agent worker with a single object:
 

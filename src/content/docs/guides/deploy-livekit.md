@@ -13,10 +13,16 @@ order: 20
 ## Install
 
 ```bash
-pip install livekit-plugins-bithuman
+pip install livekit-plugins-bithuman pillow
 ```
 
 Python 3.9+. The plugin pulls `bithuman` + `livekit-agents`.
+
+> **Note** The plugin currently requires Pillow but doesn't declare it as a
+> dependency — install `pillow` alongside it (as above). Without it,
+> `from livekit.plugins import bithuman` fails with
+> `ModuleNotFoundError: No module named 'PIL'`. An upstream fix is pending with
+> LiveKit.
 
 ## Set your environment
 

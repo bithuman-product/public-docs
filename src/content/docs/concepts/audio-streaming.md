@@ -67,10 +67,14 @@ asyncio.run(main())
 
 The on-device SDK always renders a local `.imx`, so `create()` needs `model_path`; you can also pass `agent_code` for billing attribution. Resolving an avatar purely by code (no local file) is the cloud/REST path — see [Avatars & .imx](/concepts/avatars-imx).
 
-> **Debian/Ubuntu** If `create()` fails with `Problem with the SSL CA cert`,
-> the bundled runtime is looking for CA certs at the RHEL path. One-time fix:
-> `sudo mkdir -p /etc/pki/tls/certs && sudo ln -sf /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt`
-> — details in [Python SDK troubleshooting](/sdk/python#problem-with-the-ssl-ca-cert-on-linux-debianubuntu).
+> **Debian/Ubuntu** `create()` failing with `Problem with the SSL CA cert` is
+> **fixed in 2.3.4** — the SDK auto-discovers your distro's CA bundle on Linux,
+> no configuration needed. If you must stay on ≤ 2.3.3, either upgrade
+> (recommended) or symlink once:
+> `sudo mkdir -p /etc/pki/tls/certs && sudo ln -s /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt`.
+> Note `CURL_CA_BUNDLE` / `SSL_CERT_FILE` override auto-discovery when set — a
+> stale value breaks auth even on 2.3.4. Details in
+> [Python SDK troubleshooting](/sdk/python#problem-with-the-ssl-ca-cert-on-linux-debianubuntu).
 
 ## Audio format
 

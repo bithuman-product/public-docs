@@ -12,7 +12,7 @@ order: 14
 - **Android Studio** with NDK 28.0.13004108 and compile SDK 35. Add the dependency:
 
 ```kotlin
-implementation("ai.bithuman:sdk:2.3.3")   // Maven Central
+implementation("ai.bithuman:sdk:2.3.6")   // Maven Central
 ```
 
 - Device floor: an `arm64-v8a` device (physical phone or arm64 emulator image), **Android 10+ (API 29+)**. Inference is fully on-device — no cloud round-trip.
@@ -32,7 +32,7 @@ android {
     }
 }
 dependencies {
-    implementation("ai.bithuman:sdk:2.3.3")   // Maven Central
+    implementation("ai.bithuman:sdk:2.3.6")   // Maven Central
 }
 ```
 

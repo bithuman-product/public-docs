@@ -20,9 +20,14 @@ pip install bithuman
 ```
 
 **Python 3.10–3.14** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.3.3**. Platforms: macOS arm64, Linux x86_64, Linux
+[PyPI](https://pypi.org/project/bithuman/) is **2.3.4**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host.)
+
+> **macOS note** The 2.3.4 macOS wheels are tagged for **macOS 26+ (arm64)**.
+> On older macOS versions `pip install bithuman` fails with
+> `No matching distribution found` — upgrade to macOS 26+, or build from source
+> / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
 
 > **Note** `pip install bithuman` is the **library** — `from bithuman import
 > AsyncBithuman` — and ships cross-platform wheels (macOS arm64 + Linux
@@ -31,22 +36,22 @@ the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host
 > [universal installer](/cli/install) on macOS/Linux; `pip install bithuman-cli`
 > is **macOS Apple Silicon only**. Both share the same `libessence` engine.
 
-> **⚠️ Linux note (Debian / Ubuntu / `python:*-slim` Docker images)** The
-> bundled runtime looks for CA certificates at the RHEL path
-> `/etc/pki/tls/certs/ca-bundle.crt`. On Debian/Ubuntu (where certs live in
-> `/etc/ssl/certs`) the first authenticated call —
-> `AsyncBithuman.create(...)` — fails with
-> `RuntimeError: auth_authenticate: curl_easy_perform: Problem with the SSL CA cert`.
-> Setting `CURL_CA_BUNDLE` / `SSL_CERT_FILE` does **not** help. Fix once
-> (root required):
+> **Linux CA certificates — fixed in 2.3.4.** The SDK auto-discovers your
+> distro's CA bundle on Linux (Debian, Ubuntu, RHEL, SUSE, Alpine-glibc layouts
+> — including `python:*-slim` Docker images); no configuration needed. If you
+> must stay on **≤ 2.3.3**, where authenticated calls fail on Debian/Ubuntu with
+> `RuntimeError: auth_authenticate: curl_easy_perform: Problem with the SSL CA cert`:
+> either upgrade (recommended) or create the symlink:
 >
 > ```bash
 > sudo mkdir -p /etc/pki/tls/certs && \
->   sudo ln -sf /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
+>   sudo ln -s /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
 > ```
 >
-> In a Dockerfile, drop the `sudo`. RHEL-family distros and macOS are
-> unaffected.
+> (In a Dockerfile, drop the `sudo`.) Note that the `CURL_CA_BUNDLE` /
+> `SSL_CERT_FILE` env vars **override auto-discovery when set** — a stale or
+> wrong value will break auth even on 2.3.4; unset them unless you point them at
+> a valid bundle.
 
 > **Note** The SDK returns frames as numpy BGR arrays and needs **no** OpenCV
 > itself. Only example scripts that *display* a window need `opencv-python` — it
@@ -101,7 +106,7 @@ copy-pasteable end-to-end example; everything below assumes you have it.
 | `push_audio(bytes, sr, last_chunk)` | Feed 16-bit PCM; the avatar lip-syncs live. |
 | `flush()` | Mark end of audio input. |
 | `run()` | Async generator yielding frames at 25 FPS. |
-| `interrupt()` | Cancel current playback (barge-in). |
+| `interrupt()` | Cancel current playback (barge-in). **Synchronous** — call it directly; `await rt.interrupt()` raises `TypeError`. |
 | `frame` | `.bgr_image`, `.audio_chunk`, `.has_image`, `.end_of_speech`, `.frame_index`. |
 
 `push_audio` and `run()` are independent — push as audio arrives (mic, TTS,
@@ -173,8 +178,14 @@ For a real-time WebRTC voice agent with an avatar, use the LiveKit plugin
 instead of driving the runtime yourself:
 
 ```bash
-pip install livekit-plugins-bithuman
+pip install livekit-plugins-bithuman pillow
 ```
+
+> **Note** The plugin currently imports Pillow but doesn't declare it as a
+> dependency — install `pillow` alongside it (as above), or
+> `from livekit.plugins import bithuman` fails with
+> `ModuleNotFoundError: No module named 'PIL'`. An upstream fix is pending with
+> LiveKit.
 
 > **Note** There is no `bithuman[agent]` extra and no
 > `bithuman.utils.agent.LocalAvatarRunner` in the slim wheel — install the LiveKit
@@ -228,17 +239,37 @@ return `401`).
 
 ### `Problem with the SSL CA cert` on Linux (Debian/Ubuntu)
 
-`AsyncBithuman.create()` raises
+**Fixed in 2.3.4** — the SDK auto-discovers your distro's CA bundle on Linux;
+no configuration needed. `pip install --upgrade bithuman`.
+
+On **≤ 2.3.3**, `AsyncBithuman.create()` raises
 `RuntimeError: auth_authenticate: curl_easy_perform: Problem with the SSL CA cert (path? access rights?)`
-on Debian, Ubuntu, and derived images (including `python:*-slim`). The wheel's
-bundled libcurl only reads the RHEL CA path `/etc/pki/tls/certs/ca-bundle.crt`;
-`CURL_CA_BUNDLE` / `SSL_CERT_FILE` are ignored. Symlink the Debian bundle into
-place once:
+on Debian, Ubuntu, and derived images (including `python:*-slim`) because the
+wheel's bundled libcurl only reads the RHEL CA path
+`/etc/pki/tls/certs/ca-bundle.crt`. Either upgrade (recommended) or symlink the
+Debian bundle into place once:
 
 ```bash
 sudo mkdir -p /etc/pki/tls/certs && \
-  sudo ln -sf /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
+  sudo ln -s /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
 ```
+
+Still failing **on 2.3.4**? Check for stale `CURL_CA_BUNDLE` / `SSL_CERT_FILE`
+env vars — when set, they **override** auto-discovery, and a wrong value breaks
+auth even on 2.3.4.
+
+### `No matching distribution found for bithuman`
+
+pip found no wheel for your platform. The common causes:
+
+- **macOS older than 26** — the 2.3.4 macOS wheels are tagged for **macOS 26+
+  (arm64)**. Upgrade to macOS 26+, or build from source / contact
+  [hello@bithuman.ai](mailto:hello@bithuman.ai).
+- **Alpine / musl Linux** — not supported. The Linux wheels are
+  `manylinux_2_28` (glibc) for x86_64 / aarch64; use a glibc-based image
+  (e.g. `python:*-slim`) instead.
+- **Python outside 3.10–3.14**, or 32-bit / Windows interpreters (see the
+  platform list above).
 
 ### Avatar shows but no lip movement
 
