@@ -2027,7 +2027,7 @@ tags:
       | Live avatar session — Essence (cloud) | **2 credits / minute** |
       | Live avatar session — Expression (self-hosted) | **2 credits / minute** |
       | Live avatar session — Expression (cloud) | **4 credits / minute** |
-      | TTS / voice synthesis | See [pricing page](https://www.bithuman.ai/pricing) for current rate |
+      | TTS / voice synthesis | **Currently free** within standard [rate limits](https://docs.bithuman.ai/api/rate-limits) |
       | File upload + dynamics generation | varies; see endpoint docs |
 
       ### What's free
@@ -2496,7 +2496,7 @@ tags:
 
       ### 2. Generate from your own portrait
 
-      Call `POST /v1/agent-generation` with:
+      Call [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent) with:
 
       - **Prompt** — system instructions for the agent's personality
       - **Portrait** — front-facing photo or video
@@ -2504,18 +2504,18 @@ tags:
       - (Optional) **Knowledge** — documents the agent should know about
 
       ```bash
-      curl -X POST https://api.bithuman.ai/v1/agent-generation \
+      curl -X POST https://api.bithuman.ai/v1/agent/generate \
         -H "api-secret: $BITHUMAN_API_SECRET" \
         -H "content-type: application/json" \
         -d '{
           "prompt": "You are a friendly receptionist.",
-          "image_url": "https://example.com/headshot.jpg",
-          "voice_url": "https://example.com/voice.wav"
+          "image": "https://example.com/headshot.jpg",
+          "audio": "https://example.com/voice.wav"
         }'
       ```
 
-      The response includes an `agent_code` you can immediately use
-      with [`POST /v1/agent/{code}/speak`](#tag/Agent-Context).
+      The response includes an `agent_id` — once generation completes
+      you can use it with [`POST /v1/agent/{code}/speak`](#tag/Agent-Context).
 
       ### Media tips
 
