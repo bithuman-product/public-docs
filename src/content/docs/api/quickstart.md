@@ -25,7 +25,7 @@ can speak to it and it responds:
 ```html
 <iframe
   src="https://agent.viewer.bithuman.ai/api/embed/A01GYN2750"
-  allow="microphone; camera; autoplay"
+  allow="microphone *; camera *; autoplay *"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
 ```

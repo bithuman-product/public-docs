@@ -35,7 +35,7 @@ bundle:
 ```html
 <iframe
   src="https://bithuman.ai/embed/A74NWD9723"
-  allow="microphone; autoplay"
+  allow="microphone *; autoplay *"
   style="width:100%;height:100%;border:0">
 </iframe>
 ```

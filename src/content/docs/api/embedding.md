@@ -13,7 +13,7 @@ Drop an agent onto any page as an iframe — no SDK install required:
 ```html
 <iframe
   src="https://bithuman.ai/embed/A78WKV4515"
-  allow="microphone; camera; autoplay"
+  allow="microphone *; camera *; autoplay *"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
 ```
@@ -21,9 +21,12 @@ Drop an agent onto any page as an iframe — no SDK install required:
 Replace `A78WKV4515` with your agent code.
 
 > **Warning** The iframe needs delegated `microphone` permission to hear the
-> user. If the embedding page sets a restrictive `Permissions-Policy`, the
-> avatar will load but the mic will stay silent — allowlist
-> `agent.viewer.bithuman.ai` in the parent's policy.
+> user — and the `*` in the `allow` attribute is load-bearing. The embed URL
+> redirects cross-origin to `agent.viewer.bithuman.ai`, so a bare
+> `allow="microphone"` (which pins to the iframe's `src` origin) leaves the
+> mic silently blocked after the redirect. Use `microphone *` (or allowlist
+> `https://agent.viewer.bithuman.ai` explicitly). The same applies if the
+> embedding page sets a restrictive `Permissions-Policy`.
 
 ## Production: mint a token
 
@@ -77,7 +80,7 @@ script tag):
 ```html
 <iframe
   src="https://bithuman.ai/embed/A78WKV4515?token=THE_TOKEN"
-  allow="microphone; camera; autoplay"
+  allow="microphone *; camera *; autoplay *"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
 ```

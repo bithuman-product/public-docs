@@ -79,7 +79,7 @@ const first = agents[0];
     let model = btn.dataset.model || "expression";
 
     const snippet = (code: string, m: string) =>
-      `<iframe\n  src="https://bithuman.ai/embed/${code}?model=${m}"\n  allow="microphone; camera; autoplay"\n  style="width:100%;height:100%;border:0">\n</iframe>`;
+      `<iframe\n  src="https://bithuman.ai/embed/${code}?model=${m}"\n  allow="microphone *; camera *; autoplay *"\n  style="width:100%;height:100%;border:0">\n</iframe>`;
 
     const setModelUI = () =>
       seg.querySelectorAll("button").forEach((b) => b.classList.toggle("active", (b as HTMLElement).dataset.val === model));
@@ -114,7 +114,7 @@ const first = agents[0];
     root.querySelector("[data-pg-run]")?.addEventListener("click", () => {
       const f = document.createElement("iframe");
       f.src = `https://bithuman.ai/embed/${btn.dataset.code}?model=${model}`;
-      f.allow = "microphone; camera; autoplay; clipboard-write";
+      f.allow = "microphone *; camera *; autoplay *; clipboard-write";
       f.title = "bitHuman live agent"; f.className = "pg-frame";
       preview.querySelector(".pg-frame")?.remove();
       preview.appendChild(f); preview.classList.add("live");
