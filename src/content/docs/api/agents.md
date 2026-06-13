@@ -85,12 +85,16 @@ request. Poll every 5 seconds.
 |---|---|
 | `processing` | Initial state — generation queued. |
 | `generating` | Active generation in progress (sub-steps running). |
-| `completed` | All steps finished (transitional — becomes `ready`). |
-| `ready` | Success — the `.imx` model is available for use. |
+| `completed` | An intermediate sub-step finished. **Not terminal** — it can appear early (even around ~5% `progress`), so do not stop polling on it. |
+| `success` | Success — the `.imx` model is available for use. |
+| `ready` | Success — the `.imx` model is available for use (equivalent to `success`). |
 | `failed` | Failure — check `error_message`. |
 
-Treat `ready` and `failed` as terminal; `generating` and `completed` are
-intermediate, so keep polling. Typical wall-clock is two to five minutes.
+Treat `success` / `ready` and `failed` as terminal. `processing`, `generating`,
+and `completed` are intermediate, so keep polling (don't stop on `completed` —
+it can appear long before the model is done). Drive your loop off `progress`
+reaching `1.0` together with a terminal status. Typical wall-clock is two to
+five minutes.
 
 ```json
 {
@@ -133,7 +137,8 @@ agent_id = resp.json()["agent_id"]
 while True:
     data = requests.get(f"{BASE}/v1/agent/status/{agent_id}",
                         headers={"api-secret": SECRET}).json()["data"]
-    if data["status"] == "ready":
+    # `success` and `ready` both mean done; `completed` is NOT terminal.
+    if data["status"] in ("ready", "success"):
         print("Ready:", data["model_url"])
         break
     if data["status"] == "failed":

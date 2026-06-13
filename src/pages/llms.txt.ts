@@ -30,7 +30,7 @@ export const GET: APIRoute = async () => {
     `on-device (macOS/Linux/iOS/Android, CPU or GPU) or via a cloud REST API. ` +
     `The contract is the same everywhere: push 16-bit PCM audio in, drain ` +
     `lip-synced video frames out. Avatars are portable \`.imx\` files keyed by ` +
-    `a short agent code (e.g. \`A01GYN2750\`).\n\n`;
+    `a short agent code (e.g. \`A78WKV4515\`).\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;
   out +=

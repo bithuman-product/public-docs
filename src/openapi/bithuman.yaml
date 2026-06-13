@@ -19,7 +19,7 @@ info:
       </a>
       <a href="#tag/Voice" class="bh-card">
         <strong>Voice API →</strong>
-        <span>TTS in 31 languages, 10 voices, OpenAI-compatible</span>
+        <span>TTS in 30+ languages, 10 voices, OpenAI-compatible</span>
       </a>
       <a href="#tag/sdk-python" class="bh-card">
         <strong>Python SDK →</strong>
@@ -152,12 +152,15 @@ paths:
       operationId: getAgentStatus
       summary: Get agent generation status
       description: |
-        Poll this endpoint to check generation progress. Status transitions:
-        `processing` → `generating` → `completed` → `ready` (success) or `failed` (error).
+        Poll this endpoint to check generation progress. Status values:
+        `processing`, `generating`, `completed` (intermediate); `success` /
+        `ready` (terminal success); `failed` (terminal error).
 
         **Keep polling past `generating` and `completed`** — those are
-        intermediate states, not terminal. Only `ready` and `failed`
-        mean polling should stop.
+        intermediate states, not terminal. `completed` can appear early (even
+        around ~5% `progress`), so do not stop on it. Only `success` / `ready`
+        and `failed` mean polling should stop; gate on `progress` reaching
+        `1.0` together with a terminal status.
 
         Recommended polling interval: 5 seconds.
       tags: [Agent Generation]
@@ -189,7 +192,7 @@ paths:
                         type: string
                       status:
                         type: string
-                        enum: [processing, ready, failed, generating, completed]
+                        enum: [processing, generating, completed, success, ready, failed]
                       system_prompt:
                         type: string
                       image_url:
@@ -532,17 +535,15 @@ paths:
     get:
       operationId: getCreditSummaries
       summary: Check credit balance
-      description: Returns current credit balance, plan details, and estimated minutes remaining for each usage type.
+      description: |
+        Returns the current credit balance, plan details, and estimated minutes
+        remaining for each usage type. Always scoped to the **authenticated
+        account** (the owner of the `api-secret`) — there is no way to look up
+        another user.
       tags: [Billing]
       security:
         - apiSecret: []
       parameters:
-        - name: user_id
-          in: query
-          required: false
-          description: User UUID to look up. Omit to get the balance for the account that owns the API secret.
-          schema:
-            type: string
         - name: app
           in: query
           required: false
@@ -571,13 +572,18 @@ paths:
                     properties:
                       user_id:
                         type: string
-                        description: The resolved account UUID.
+                        description: The authenticated account's UUID.
                       balance:
                         type: number
+                        format: float
+                        description: Sum of plan + topup + reward credits, returned as a float (e.g. 5910592.0).
+                        example: 5910592.0
                       plan_credits:
                         type: number
+                        format: float
                       topup_credits:
                         type: number
+                        format: float
                       minutes_estimate:
                         type: object
                       is_enterprise:
@@ -806,9 +812,9 @@ paths:
       description: |
         Generates audio (WAV or PCM) from a text prompt. Pick a built-in voice
         (`M1`-`F5`), tune it inline with `axes`, or pass a `voice_code` from the
-        [Voice Designer](https://www.bithuman.ai/voice). Supports 31 languages,
+        [Voice Designer](https://www.bithuman.ai/voice). Supports 30+ languages,
         per-request quality / speed tuning, and optional sentence-by-sentence
-        streaming.
+        streaming. An unknown `voice_code` returns `404 VOICE_NOT_FOUND`.
       tags: [Voice]
       requestBody:
         required: true
@@ -850,7 +856,7 @@ paths:
                     brightness: 0.2
                 language:
                   type: string
-                  description: ISO-2 language code. 31 languages supported.
+                  description: ISO-2 language code. 30+ languages supported (the advertised count and the live server list don't always match exactly).
                   default: "en"
                   example: "en"
                 total_steps:
@@ -890,6 +896,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: "`voice_code` did not resolve to a known voice (`VOICE_NOT_FOUND`)."
         "503":
           description: Queue full / service overloaded. Retry with backoff.
 
@@ -1031,7 +1039,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [text, base_voice, axes]
+              required: [text, base_voice]
               properties:
                 text:
                   type: string
@@ -1042,7 +1050,7 @@ paths:
                   example: "F1"
                 axes:
                   type: object
-                  description: Map of axis-name → float value.
+                  description: Optional map of axis-name → float value. Omit to preview the unedited base voice.
                   additionalProperties:
                     type: number
                   example:
@@ -1702,7 +1710,7 @@ tags:
 
       ### What you can build
 
-      - **Voice-only chat** — TTS in 31 languages via [`/v1/tts`](#tag/Voice/operation/synthesizespeech)
+      - **Voice-only chat** — TTS in 30+ languages via [`/v1/tts`](#tag/Voice/operation/synthesizespeech)
         or the [OpenAI-compatible drop-in](#tag/Voice/operation/openaicompatspeech).
       - **Animated avatars** — make a hosted agent talk via
         [`/v1/agent/{code}/speak`](#tag/Agent-Context/operation/agentSpeak).
@@ -1723,7 +1731,7 @@ tags:
         </a>
         <a href="#tag/Voice" class="bh-card">
           <strong>Try the Voice API →</strong>
-          <span>One curl, 31 languages</span>
+          <span>One curl, 30+ languages</span>
         </a>
         <a href="https://www.bithuman.ai/voice" class="bh-card">
           <strong>Voice playground →</strong>
@@ -2195,20 +2203,24 @@ tags:
       ### 2. Poll until ready
 
       [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
-      — poll every 5 s. Status transitions:
+      — poll every 5 s. Status values:
 
       ```
-      processing → generating → completed → ready  (success)
-                                       \→ failed   (error)
+      processing / generating / completed   (intermediate)
+        → success / ready                   (terminal success)
+        → failed                            (terminal error)
       ```
 
-      `generating` and `completed` are **intermediate** — keep polling
-      past them until you see `ready` or `failed`. Typical wall-clock:
-      2–5 minutes.
+      `processing`, `generating`, and `completed` are **intermediate** — keep
+      polling past them (don't stop on `completed`; it can appear early, even
+      around ~5% `progress`) until you see `success`/`ready` or `failed`. Gate
+      on `progress` reaching `1.0` together with a terminal status. Typical
+      wall-clock: 2–5 minutes.
 
       ### 3. Resolve & stream
 
-      Once `ready`, the agent has an `agent_code` (e.g. `A78WKV4515`).
+      Once the status is `success`/`ready`, the agent has an `agent_code`
+      (e.g. `A78WKV4515`).
       Every SDK can resolve it by code:
 
       ```python
@@ -2760,7 +2772,7 @@ tags:
     description: Verify API credentials with `POST /v1/validate`.
   - name: Voice
     description: |
-      Text-to-speech synthesis in 31 languages with 10 built-in
+      Text-to-speech synthesis in 30+ languages with 10 built-in
       voices, plus an OpenAI-compatible drop-in (`/v1/audio/speech`)
       and a voice-tuning preview surface.
 

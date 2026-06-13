@@ -41,7 +41,7 @@ the [embed token flow](/api/embedding) instead. See
 
 - **Generate avatars** — turn a prompt, portrait, and voice sample into a new
   agent. See [Agents](/api/agents).
-- **Synthesize voice** — text-to-speech in 31 languages with 10 built-in
+- **Synthesize voice** — text-to-speech in 30+ languages with 10 built-in
   voices, plus an OpenAI-compatible drop-in. See [Text to Speech](/api/text-to-speech).
 - **Drive live sessions** — make a hosted agent speak or inject silent
   knowledge into an active room. See [Agents](/api/agents).

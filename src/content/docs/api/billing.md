@@ -31,14 +31,17 @@ Pro, Business, Enterprise, Custom) and annual pricing.
 
 ## Check credit balance
 
-`GET /v2/credit-summaries` — returns the live balance for a user, broken down by
-plan vs. topup credits, plus an estimate of how many minutes of each session type
-they can afford at current rates. Safe to call frequently (cached read-through,
-no side effects).
+`GET /v2/credit-summaries` — returns the live balance for the **authenticated
+account** (the owner of the `api-secret`), broken down by plan vs. topup credits,
+plus an estimate of how many minutes of each session type it can afford at current
+rates. Safe to call frequently (cached read-through, no side effects).
+
+The endpoint always returns the caller's own balance; there is no way to look up
+another user. (A `user_id` query param is silently ignored — it does not switch
+accounts and never returns `404`.)
 
 | Query param | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `user_id` | string | no | the key's owner | User UUID to look up. Omit it to get the balance for the account that owns the API secret. |
 | `app` | string | no | `imaginex` | App identifier for multi-app subscription support. |
 | `app_key` | string | no | same as `app` | Explicit subscription key for collection-scoped apps. |
 
@@ -53,9 +56,9 @@ curl https://api.bithuman.ai/v2/credit-summaries \
   "success": true,
   "data": {
     "user_id": "229be55d-1c1e-42b9-8517-a22c742668ef",
-    "balance": 1842,
-    "plan_credits": 99,
-    "topup_credits": 1743,
+    "balance": 1842.0,
+    "plan_credits": 99.0,
+    "topup_credits": 1743.0,
     "is_enterprise": false,
     "minutes_estimate": {
       "voice_chat": 184,
@@ -74,7 +77,7 @@ curl https://api.bithuman.ai/v2/credit-summaries \
 
 | Field | Type | Notes |
 |---|---|---|
-| `balance` | number | Sum of plan + topup + reward credits. Can go negative down to `-11` (grace window before suspension). |
+| `balance` | number (float) | Sum of plan + topup + reward credits, returned as a float (e.g. `5910592.0`). Can go negative down to `-11` (grace window before suspension). |
 | `plan_credits` | number | Remaining credits from the active subscription; resets at billing-period end. |
 | `topup_credits` | number | Credits from one-time top-ups; do not reset. |
 | `is_enterprise` | boolean | `true` for org-pooled (enterprise) billing. |
@@ -123,7 +126,7 @@ balance use `GET /v2/credit-summaries` above.
 - **Balance is the source of truth**, not the sum of activity rows. The activity
   ledger is a best-effort audit trail; sub-cent rounding and historical drift
   mean it can differ from `balance` by small amounts. Quote `balance` to users.
-- The minute estimates use floor-division on the integer balance and treat the
+- The minute estimates use floor-division on the balance and treat the
   suspension grace window (`-11..0`) as zero minutes.
 - For suspension-status UI, compare `balance` to the documented threshold `-11`
   rather than relying on a separate flag.
@@ -136,7 +139,6 @@ balance use `GET /v2/credit-summaries` above.
 |---|---|---|
 | `401` | `UNAUTHORIZED` / `MISSING_AUTH` | Missing or invalid `api-secret`. |
 | `402` | `INSUFFICIENT_BALANCE` | Balance too low for the requested operation. |
-| `404` | `USER_NOT_FOUND` | `user_id` does not exist. |
 | `500` | `INTERNAL_ERROR` | Upstream database error. |
 
 See [Rate limits](/api/rate-limits) for the plan-tiered request limits and the

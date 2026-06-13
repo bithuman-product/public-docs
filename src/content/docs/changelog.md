@@ -36,11 +36,11 @@ order: 1
 - Linux CLI tarballs (`bithuman-x86_64-unknown-linux-gnu.tar.gz` and `bithuman-aarch64-unknown-linux-gnu.tar.gz`) ship on the GitHub Release again — they had been missing since 2.0.1 because of two container-build blockers, both now fixed in `main`.
 - Pin `bithuman==2.2.2` if you want `pip install` AND the standalone Linux CLI binary from the same tag; `==2.2.1` is fine for wheel-only consumers.
 
-### Python SDK `bithuman` 2.2.1 (2026-05-25) — `bithuman[local]` extra
+### Python SDK `bithuman` 2.2.1 (2026-05-25) — `bithuman-cli[local]` extra
 
 > **Note** 2.2.0 was tagged the day before but never published — PyPI rejected uploads with a bare `400 Bad Request`. 2.2.1 has identical source content plus a verbose-twine workflow tweak that surfaced the real cause: the `bithuman` project had reached its 10 GB PyPI storage cap. Deleting 6 superseded releases freed ~8.6 GB and unblocked the ship.
 
-- New `pip install 'bithuman[local]'` extra adds a **fully on-device conversation brain** to `bithuman run`. Flip it on with `BITHUMAN_LOCAL=1`; no API key required, no outbound network.
+- New `pip install 'bithuman-cli[local]'` extra adds a **fully on-device conversation brain** to `bithuman run`. Flip it on with `BITHUMAN_LOCAL=1`; no API key required, no outbound network.
 - Stack: `whisper.cpp` (STT) + `llama.cpp` (LLM, default Qwen 2.5 0.5B-Instruct Q4_K_M) + Supertonic 3 (TTS, 31 languages, voice M1 default) + Silero VAD. All in-process — no Ollama or other server.
 - All three backends have first-party iOS + Android C++ cores, so the same `.gguf` / `.bin` / `.onnx` model files are reusable when porting to mobile.
 - New plugins live in `livekit.plugins.bithuman.{WhisperSTT, LlamaCppLLM, SupertonicTTS}` alongside `AvatarSession`. The avatar-only install path is unchanged (heavy deps are lazy-imported).

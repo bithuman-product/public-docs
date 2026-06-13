@@ -15,7 +15,7 @@ Every subcommand accepts `--help` for the full flag listing.
 | `bithuman login` | Sign in via the browser; mint + store a per-device key |
 | `bithuman logout` | Revoke this device's key and clear the local store |
 | `bithuman auth status` | Show the signed-in account and credential source |
-| `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull the `nova` avatar |
+| `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull a showcase avatar (e.g. `modern-court-jester`) |
 | `bithuman run <path.imx>` | Live browser-served avatar (cloud or on-device brain) |
 | `bithuman render <path.imx>` | Offline render: model + WAV → MP4 (Linux-only) |
 | `bithuman info <path.imx>` | Print `.imx` metadata |
@@ -107,8 +107,8 @@ bithuman init
 
 It prompts for your `BITHUMAN_API_SECRET` and writes it to
 `~/.bithuman/config` (a dotenv file, mode `0600`), lets you pick a
-conversation brain, and pulls the `nova` showcase avatar so you have
-something to run immediately. `~/.bithuman/config` is loaded at every CLI
+conversation brain, and pulls a showcase avatar (e.g. `modern-court-jester`)
+so you have something to run immediately. `~/.bithuman/config` is loaded at every CLI
 startup, so the secret persists across sessions without re-exporting it.
 See [Configuration](/cli/configuration) for the full set of variables it
 manages.
@@ -131,7 +131,7 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 > Install it before `bithuman run` can talk back:
 >
 > - **Cloud brain (OpenAI Realtime):** `pip install bithuman-cli`
-> - **On-device brain:** `pip install 'bithuman[local]'` (then
+> - **On-device brain:** `pip install 'bithuman-cli[local]'` (then
 >   `BITHUMAN_LOCAL=1`)
 >
 > Without one of these the avatar renders but has no brain. See

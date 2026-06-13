@@ -45,7 +45,7 @@ import { AsyncBithuman } from "@bithuman/sdk";
 
 const avatar = await AsyncBithuman.create({
   apiSecret: process.env.BITHUMAN_API_SECRET!,
-  avatarId: "nova",
+  avatarId: "modern-court-jester",
 });
 
 await avatar.pushAudio(audioChunk, { lastChunk: true });

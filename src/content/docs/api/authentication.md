@@ -109,15 +109,17 @@ is authorized by a separate, short-lived **runtime token**:
 1. Your code provides the API secret to the SDK or REST request.
 2. The SDK exchanges it for a short-lived runtime token at
    `POST /v1/runtime-tokens/request`.
-3. That token authorizes the avatar engine (heartbeat + frame production) for a
-   single session.
+3. That token authorizes the avatar engine (heartbeat + frame production) for
+   your account.
 4. Tokens auto-renew roughly every 60 seconds via the heartbeat.
 5. Bad keys fail at step 2 — fast — before any user-visible work.
 
 The runtime token is **not** an api-secret. It can't mint other tokens; it just
-authorizes the runtime to compute frames for one specific session. It is HS256-signed
-with a short TTL and carries `iss=bitHuman`, `sub=<user_id>`, and `aud=<fingerprint>`
-claims. The SDKs and LiveKit plugin handle this loop for you — you rarely call
+authorizes the runtime to compute frames on behalf of your account. It is
+**account-scoped** (not per-session or per-agent): HS256-signed with a short
+~5-minute TTL, carrying `iss=bitHuman`, `sub=<user_id>`, and a constant
+`aud=bithuman-runtime` claim — there is no agent or session claim. The SDKs and
+LiveKit plugin handle this loop for you — you rarely call
 `/v1/runtime-tokens/request` directly. For browser embeds, use the more constrained
 [embed token flow](/api/embedding) instead.
 

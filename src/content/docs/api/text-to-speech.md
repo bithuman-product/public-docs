@@ -8,7 +8,7 @@ order: 10
 
 bitHuman's text-to-speech runs the same in-house voice engine that powers live
 agents. One `POST` turns text into a WAV you can save or stream on the fly. It
-supports 31 languages, ten built-in voices, fine-grained tuning, and **voice
+supports 30+ languages, ten built-in voices, fine-grained tuning, and **voice
 codes** — opaque handles for a voice you've designed in the
 [Voice Designer](https://www.bithuman.ai/voice).
 
@@ -60,7 +60,7 @@ with open("voice.wav", "wb") as f:
 | `voice` | string | Built-in voice id (`M1`–`M5`, `F1`–`F5`). Defaults to `M1`. |
 | `voice_code` | string | A designed-voice handle (see [Voice codes](#voice-codes)). Takes precedence over `voice`. |
 | `axes` | object | Inline tuning — see [Tuning a voice](#tuning-a-voice). Ignored when `voice_code` is set. |
-| `language` | string | ISO-2 code. 31 languages supported. Defaults to `en`. |
+| `language` | string | ISO-2 code. 30+ languages supported (call `GET /v1/voices` / the playground for the current list — the advertised count and the live server list don't always match exactly). Defaults to `en`. |
 | `total_steps` | integer | Quality vs. speed: `5` fast, `8` balanced (default), `12` highest. |
 | `speed` | number | Playback rate, `0.7`–`2.0`. Defaults to `1.05`. |
 
@@ -111,7 +111,8 @@ curl -X POST https://api.bithuman.ai/v1/tts \
 A voice code is a UUID (e.g. `f8fb5feb-8a19-435c-89e5-a286a03565ec`). The
 endpoint expands it to the underlying voice + tuning, so your integration only
 ever references the code — re-tune the voice in the playground without touching
-your code path.
+your code path. An unknown or revoked `voice_code` returns
+`404 VOICE_NOT_FOUND` — handle it rather than assuming a fallback voice.
 
 ## Stream and play on the fly
 
@@ -138,5 +139,7 @@ the auth header to `api-secret`. See the
 
 ## Errors
 
-`401` means a missing or invalid `api-secret`; `400` is a malformed body; `503`
-means the queue is briefly full — retry with backoff. See [Errors](/api/errors).
+`401` means a missing or invalid `api-secret`; `400` is a malformed body; `404`
+(`VOICE_NOT_FOUND`) means the `voice_code` doesn't resolve to a known voice;
+`503` means the queue is briefly full — retry with backoff. See
+[Errors](/api/errors).

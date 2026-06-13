@@ -40,7 +40,7 @@ itself, so it never drifts from the installed version.
 
 4. **stdout is data; stderr is chatter.** Even in human mode, commands that
    produce a result path (`pull`, `render`) print **only that path** on
-   stdout, so `MODEL=$(bithuman pull nova)` captures exactly the path.
+   stdout, so `MODEL=$(bithuman pull modern-court-jester)` captures exactly the path.
    Progress, prompts, and nudges go to stderr.
 
 5. **Exit codes are a stable sysexits subset** — branch on them instead of
@@ -100,13 +100,13 @@ Exit **77** (`NOT_AUTHENTICATED`) if no credential resolves.
 ### `bithuman list --json`  (aliases: `avatars`, `ls`, `browse`)
 The showcase manifest passthrough — every avatar you can `pull`/`run`:
 ```json
-{"version":2,"updated":"…","source":"…","models":[{"slug":"nova","name":"…","description":"…"}]}
+{"version":2,"updated":"…","source":"…","models":[{"slug":"modern-court-jester","name":"…","description":"…"}]}
 ```
 Get every downloadable slug: `bithuman list --json | jq -r '.models[].slug'`
 
 ### `bithuman pull <slug> --json`  (aliases: `download`, `get`)
 ```json
-{"slug":"nova","path":"/…/nova.imx","cached":true,"sha256":"…"}
+{"slug":"modern-court-jester","path":"/…/modern-court-jester.imx","cached":true,"sha256":"…"}
 ```
 Human mode prints the bare `.imx` path on stdout. Exit **66**
 (`SLUG_NOT_FOUND`) for an unknown slug; **69** on download failure; **70**
@@ -114,7 +114,7 @@ Human mode prints the bare `.imx` path on stdout. Exit **66**
 
 ### `bithuman info <model.imx> --json`  (alias: `inspect`)
 ```json
-{"path":"/…/nova.imx","format_version":2,"size_bytes":98359972,"manifest":{…}}
+{"path":"/…/modern-court-jester.imx","format_version":2,"size_bytes":98359972,"manifest":{…}}
 ```
 Error codes: `FILE_NOT_FOUND`, `NOT_IMX`, `UNSUPPORTED_IMX_VERSION`,
 `MISSING_MANIFEST` (all exit **66**); `INTERNAL` (**70**).
@@ -147,7 +147,7 @@ Opens a browser to a live, talking avatar; a slug auto-downloads on first use.
 Long-running (serves until Ctrl-C). Under `--json` it emits one
 `session_started` event on stdout when live, so a script can capture the URL:
 ```json
-{"event":"session_started","url":"http://127.0.0.1:8088/NOVA","code":"NOVA","host":"127.0.0.1","port":8088}
+{"event":"session_started","url":"http://127.0.0.1:8088/MODERN-COURT-JESTER","code":"MODERN-COURT-JESTER","host":"127.0.0.1","port":8088}
 ```
 All logs (livekit NDJSON, progress) go to stderr; browser auto-open is
 suppressed under `--json`. Failures emit the structured `{error:{…}}` too.

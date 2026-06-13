@@ -58,17 +58,6 @@
   ],
   "essence": [
     {
-      "code": "A01GYN2750",
-      "name": "Virtual Puppy Companion",
-      "group": "essence",
-      "model": "essence",
-      "kind": "animal",
-      "gender": "feminine",
-      "category": "Entertainment",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A01GYN2750/image_20251013_224528_802679.jpg",
-      "embed": "https://agent.viewer.bithuman.ai/api/embed/A01GYN2750?model=essence"
-    },
-    {
       "code": "A00FRB8328",
       "name": "Mindful Puzzle Strategist",
       "group": "essence",

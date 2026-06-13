@@ -13,9 +13,9 @@ two steps. (Want your own custom face later? See
 
 ## 1. Pick an agent
 
-Every agent has a short **code** like `A01GYN2750`. Browse the
+Every agent has a short **code** like `A78WKV4515`. Browse the
 [agent gallery](https://www.bithuman.ai/explore) and copy the code of any one
-you like — or use `A01GYN2750` to follow along.
+you like — or use `A78WKV4515` to follow along.
 
 ## 2. Embed it
 
@@ -24,13 +24,13 @@ can speak to it and it responds:
 
 ```html
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A01GYN2750"
+  src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515"
   allow="microphone *; camera *; autoplay *"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
 ```
 
-Replace `A01GYN2750` with your chosen code. That's the whole quickstart — open
+Replace `A78WKV4515` with your chosen code. That's the whole quickstart — open
 the page and start talking.
 
 > **Note** The iframe needs delegated `microphone` permission to hear the user.
@@ -65,7 +65,7 @@ It always returns HTTP `200` — read the body: `{"valid": true}` means you're s
 Fetch any agent's details by code:
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/A01GYN2750 \
+curl https://api.bithuman.ai/v1/agent/A78WKV4515 \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -75,7 +75,7 @@ When an agent has an **active session** (the embed above, or a LiveKit room),
 push text into it and the avatar speaks it aloud:
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A01GYN2750/speak \
+curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
   -d '{"message": "Hello! Great to meet you."}'

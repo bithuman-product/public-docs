@@ -8,23 +8,23 @@ order: 20
 
 ## The on-device brain
 
-`bithuman[local]` is an opt-in extra that swaps the cloud
+`bithuman-cli[local]` is an opt-in extra that swaps the cloud
 conversation brain (OpenAI Realtime) for an entirely in-process,
 on-device stack — whisper.cpp + llama.cpp + Supertonic + Silero VAD. No
 API key, no outbound network, no separate servers. Same `bithuman run`
 command, same browser URL, same avatar.
 
 ```bash
-pip install 'bithuman[local]'
+pip install 'bithuman-cli[local]'
 export BITHUMAN_API_SECRET=your_api_secret
 bithuman pull modern-court-jester
 BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 # → open the printed http://127.0.0.1:8088/<CODE> URL in a browser
 ```
 
-The `[local]` extra is published on the `bithuman` package for macOS
-arm64, Linux x86_64, and Linux aarch64; Python 3.10–3.14. (The CLI binary
-itself ships as the `bithuman-cli` wheel.)
+The `[local]` extra is published on the `bithuman-cli` package for macOS
+arm64, Linux x86_64, and Linux aarch64; Python 3.10–3.14. (The `bithuman-cli`
+wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
 
 > **Note** `bithuman run` still pings `api.bithuman.ai` for avatar credit
 > accounting even in local mode — `BITHUMAN_API_SECRET` is required. Only
@@ -163,7 +163,7 @@ the only difference.
 Cold start (every-model first download, first run only) is ~90 s. Process
 warm-up after that is under a second.
 
-## What's NOT in `bithuman[local]`
+## What's NOT in `bithuman-cli[local]`
 
 - **Avatar generation** — you still need an `.imx` file. Generate one on
   [bithuman.ai](https://www.bithuman.ai/explore) (free tier) via
@@ -192,7 +192,7 @@ subsequent runs start in under a second.
 ### `BITHUMAN_LOCAL=1` errors with "required the local extras"
 
 You installed the brain bundle without the `[local]` extra. Re-install:
-`pip install 'bithuman[local]'`.
+`pip install 'bithuman-cli[local]'`.
 
 ### LLM is too dumb
 

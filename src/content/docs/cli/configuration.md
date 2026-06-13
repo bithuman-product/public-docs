@@ -12,7 +12,7 @@ order: 11
 | --- | --- |
 | `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. The easiest way to set this is `bithuman login` (stores it in the OS keychain); set it manually for CI / automation. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer). |
 | `OPENAI_API_KEY` | Cloud conversation brain (OpenAI Realtime). Required for `bithuman run` unless `BITHUMAN_LOCAL=1` is set. |
-| `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman[local]'`. See [Local mode](/cli/local-mode). |
+| `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman-cli[local]'`. See [Local mode](/cli/local-mode). |
 | `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). Brain-side — read by the Python agent, not the CLI binary. See [Local mode tuning](/cli/local-mode). |
 | `BITHUMAN_INSTRUCTIONS` | System-prompt override for the conversation brain. Brain-side — read by the Python agent, not the CLI binary. |
 | `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn`. |
@@ -64,7 +64,7 @@ API key, no outbound network. `BITHUMAN_API_SECRET` is still required for
 avatar metering.
 
 ```bash
-pip install 'bithuman[local]'
+pip install 'bithuman-cli[local]'
 export BITHUMAN_API_SECRET=your_api_secret
 BITHUMAN_LOCAL=1 bithuman run avatar.imx
 ```
