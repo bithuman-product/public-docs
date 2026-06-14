@@ -135,7 +135,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Python SDK (`bithuman`) | **2.3.4** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
-| bithuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
 Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.4 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
@@ -145,18 +145,20 @@ Two avatar models, different hardware floors. For a side-by-side feature compari
 
 | Device | Essence? | Expression? | SDKs |
 |---|---|---|---|
-| **iPhone 17 Pro+** | Yes | No (use Essence) | Swift |
+| **iPhone 16 Pro+** | Yes | Preview (prefer Essence) | Swift |
 | **iPad Pro M4+** | Yes | Yes | Swift |
 | **Mac (Apple Silicon)** | Yes | Yes (M3+) | Swift, Python, CLI |
 | **Mac (Intel)** | Pending in 2.3 | No | — (use 1.x wheel) |
 | **Android (`arm64-v8a`)** | Yes | No | Kotlin |
-| **Browser (WASM)** | Yes | No | JavaScript / TS |
+| **Browser (WASM)** | Yes | No | JavaScript / TS&nbsp;† |
 | **Linux x86_64 / aarch64** | Yes (CPU) | Yes (NVIDIA GPU) | Python, CLI |
 | **Windows** | Pending (WSL2 today) | No | — |
 | **Raspberry Pi 4B / 5** | Near real-time | No | Python, CLI |
-| **bitHuman Cloud** | Managed | Managed | JS / TS, LiveKit |
+| **bitHuman Cloud** | Managed | Managed | LiveKit · JS / TS&nbsp;† |
 
 All hosts that run a given model produce identical, lip-synced visual frames — your device choice is about form factor, memory, and latency budget, not visual quality. The detailed per-model hardware floors follow.
+
+> **†** The **JavaScript / TypeScript** client is **Preview — not yet released** (no npm package or public source yet; see the [JavaScript / TypeScript](#javascript--typescript--preview) section). For browser/Node today, drive a cloud avatar over [LiveKit](/sdk/livekit).
 
 ### Essence
 
@@ -165,7 +167,7 @@ The default avatar model. Runs on virtually every supported platform — the rig
 | Host | Status | Notes |
 |---|---|---|
 | **Apple M-series Mac** | Real-time, large memory headroom | Any Apple Silicon (arm64) |
-| **iPhone 17 Pro+** | Real-time, smallest memory footprint | iOS 26 |
+| **iPhone 16 Pro+** | Real-time, smallest memory footprint | iOS 26 |
 | **iPad Pro M4+** | Real-time | Pairs comfortably with an on-device LLM |
 | **Android (`arm64-v8a`)** | Real-time | Snapdragon 8 Gen 2+, Android 10+ |
 | **Linux x86_64 / aarch64** | Real-time | Python SDK, modern CPU + 4 GB RAM |
@@ -184,7 +186,7 @@ Heavier high-fidelity model. Runs on Apple Silicon on-device (demo apps) or on N
 |---|---|---|
 | **Mac M3+ (arm64)** | On-device | Demo app target |
 | **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
-| **iPhone 17 Pro+** | Not supported | Exceeds iOS per-app memory budget. Use Essence on iPhone. |
+| **iPhone 16 Pro+** | Preview | Needs the increased-memory entitlement; on-device validation in progress. Prefer Essence for production. |
 | **Android** | Not supported | Use Essence. |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
 | **Mac Intel / Linux CPU / Windows** | Not supported | Requires Apple Silicon or NVIDIA GPU |

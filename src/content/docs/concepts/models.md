@@ -48,7 +48,7 @@ Both ship to every surface — SDKs, REST API, LiveKit plugin, CLI, on-device, e
 
 | Surface | Essence | Expression |
 |---|---|---|
-| **iOS / iPadOS** | iPhone 17 Pro+, iPad Pro M4+ | iPad Pro M4+ only |
+| **iOS / iPadOS** | iPhone 16 Pro+, iPad Pro M4+ | iPad Pro M4+ (iPhone 16 Pro+ preview) |
 | **macOS arm64** | Any Apple Silicon | M3+ |
 | **macOS Intel** | Pending (2.3 ships arm64 only) | — |
 | **Android** | `arm64-v8a`, Android 10+ | — |

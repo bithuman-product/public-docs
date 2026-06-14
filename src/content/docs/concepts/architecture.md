@@ -31,7 +31,7 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 | Embed in a Python app | `pip install bithuman` | Python SDK (library only, ~5 MB) |
 | Embed in a Swift app | SwiftPM `Bithuman` | Swift SDK + bundled libessence XCFramework |
 | Embed in an Android app | `ai.bithuman:sdk` (Maven Central) | Kotlin SDK + AAR (`arm64-v8a`) |
-| Run from the CLI on Mac | `brew install bithuman-product/bithuman/bithuman-cli` | bithuman CLI (single Rust binary) |
+| Run from the CLI on Mac | `brew install bithuman-product/bithuman/bithuman-cli` | bitHuman CLI (single Rust binary) |
 | Run from the CLI in any Python env | `pip install bithuman-cli` | Same Rust binary, inside a Python wheel |
 | Cloud LiveKit avatar | `pip install livekit-plugins-bithuman` | Managed avatar session |
 
@@ -77,7 +77,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 | Swift SDK (`bitHumanKit`) | 0.8.2 | SwiftPM | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | Maven Central | v7 |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
-| bithuman CLI | 2.3.25 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
+| bitHuman CLI | 2.3.25 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
 
 ### Engine ABI history
 
@@ -115,7 +115,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. The 1.x line st
 | Host | Status | Notes |
 |---|---|---|
 | **Apple M-series Mac** | Real-time, large headroom | Any Apple Silicon (arm64) |
-| **iPhone 17 Pro+** | Real-time, smallest footprint | iOS 26 |
+| **iPhone 16 Pro+** | Real-time, smallest footprint | iOS 26 |
 | **iPad Pro M4+** | Real-time | Pairs well with an on-device LLM |
 | **Android (`arm64-v8a`)** | Real-time | Snapdragon 8 Gen 2+, Android 10+ |
 | **Linux x86_64 / aarch64** | Real-time | Modern CPU + 4 GB RAM |

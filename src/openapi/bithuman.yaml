@@ -1688,7 +1688,7 @@ tags:
       | Where | When to use it |
       |---|---|
       | **Cloud** *(default)* | Managed avatar runtime, video published over LiveKit. ~5 min setup with the [LiveKit plugin](#tag/deploy-livekit). |
-      | **On-device** | Your machine via the [bithuman CLI](#tag/cli) or any [SDK](#tag/sdk-python). Optional [fully on-device brain](#tag/local-mode). |
+      | **On-device** | Your machine via the [bitHuman CLI](#tag/cli) or any [SDK](#tag/sdk-python). Optional [fully on-device brain](#tag/local-mode). |
       | **Browser** | ONNX Runtime Web (WASM) renders in the user's tab; the server runs only the brain. |
 
       ### One engine, every surface
@@ -2379,7 +2379,7 @@ tags:
   - name: cli
     x-displayName: CLI (bithuman)
     description: |
-      ## The bithuman CLI
+      ## The bitHuman CLI
 
       A standalone Rust binary that drives the full avatar engine
       without writing any code. Same engine as the SDKs, same `.imx`
