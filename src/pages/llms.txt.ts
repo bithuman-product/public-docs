@@ -46,8 +46,8 @@ export const GET: APIRoute = async () => {
 
   out +=
     `- **MCP server (for AI agents)** — drive bitHuman from any Model Context ` +
-    `Protocol client (Claude Desktop/Code, Cursor): 21 tools wrapping the REST ` +
-    `API. See [MCP server](${SITE}/guides/mcp-server).\n\n`;
+    `Protocol client (Claude Desktop/Code, Cursor): 22 tools wrapping the REST ` +
+    `API and platform status. See [MCP server](${SITE}/guides/mcp-server).\n\n`;
 
   out += `## Machine-readable\n\n`;
   out += `- [OpenAPI spec](${SITE}/api/openapi.yaml): the full REST contract (YAML).\n`;

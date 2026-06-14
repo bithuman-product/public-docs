@@ -1,6 +1,6 @@
 ---
 title: "Commands"
-description: "Full reference for the seven bithuman subcommands — init, run, render, info, pull, list, doctor — with flags and examples."
+description: "Full reference for the bithuman subcommands — run, render, info, pull, list, doctor, init, the auth commands (login/logout), and mcp — with flags and examples."
 section: cli
 group: "Usage"
 order: 10
@@ -22,6 +22,7 @@ Every subcommand accepts `--help` for the full flag listing.
 | `bithuman pull <slug>` | Download a showcase avatar |
 | `bithuman list` | Browse the showcase avatar catalog |
 | `bithuman doctor` | Host + auth + cache sanity check |
+| `bithuman mcp` | Run the built-in MCP server for AI agents (stdio); `bithuman mcp tools` lists the tools. See [driving from an AI agent](/cli/agents). |
 | `bithuman --version` | Print `libessence` + ABI + CLI versions |
 
 ## Signing in

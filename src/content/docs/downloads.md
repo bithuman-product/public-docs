@@ -26,11 +26,15 @@ brew install bithuman-product/bithuman/bithuman-cli
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-**PyPI sibling wheel (same Rust binary, Python-friendly)**
+**PyPI sibling wheel (same Rust binary, Python-friendly) — macOS Apple Silicon only**
 
 ```bash
 pip install bithuman-cli
 ```
+
+> **Note** The `bithuman-cli` PyPI wheel is published for **macOS Apple
+> Silicon (arm64) only**. On Linux there is no `bithuman-cli` wheel — use the
+> universal installer above (it drops the same byte-identical binary).
 
 Verify the install:
 
@@ -41,7 +45,7 @@ bithuman --version
 bithuman doctor   # full host + key + cache check
 ```
 
-See the [CLI reference](/cli) for all seven subcommands (`init`, `run`, `render`, `info`, `pull`, `list`, `doctor`).
+See the [CLI reference](/cli) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
 
 ### Python SDK (library) — GA
 
@@ -92,10 +96,14 @@ See the [Kotlin SDK guide](/sdk/android).
 
 A cloud client for browser and Node apps. Preview status — APIs may change.
 
-> **Note** `@bithuman/sdk` is **not yet published to npm** — `npm install @bithuman/sdk` will 404 today. Install from source while it's in preview; the command below is the form the published package will take.
+> **Note — not yet available.** `@bithuman/sdk` is **not published to npm**
+> (`npm install @bithuman/sdk` 404s today) and has **no public source package**
+> yet. For a browser/Node integration today, drive a cloud avatar over
+> [LiveKit](/sdk/livekit). Track the [changelog](/changelog) for the release;
+> the command below is the form it will take.
 
 ```bash
-npm install @bithuman/sdk
+npm install @bithuman/sdk   # not available yet
 ```
 
 ### REST API
@@ -112,8 +120,8 @@ No install required. Authenticate with the `api-secret` header against `https://
 |---|---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM | — |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — | — |
-| **Linux x86_64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — | — |
-| **Linux aarch64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — | — |
+| **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — | — |
+| **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — | — |
 | **Windows** | Not shipping (use WSL2) | Not shipping (1.9.0 was last) | — | — |
 | **iOS / iPadOS** | — | — | SwiftPM | — |
 | **Android** | — | — | — | Maven Central `ai.bithuman:sdk` |

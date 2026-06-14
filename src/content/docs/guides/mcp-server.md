@@ -26,10 +26,11 @@ identical names, plus local ones — with no separate Python dependency.
 
 ## Tools
 
-**Cloud tools** — wrap the [REST API](/api/overview):
+**Cloud tools** — wrap the [REST API](/api/overview) (and platform status):
 
 | Tool | Endpoint | What it does |
 |------|----------|--------------|
+| `get_platform_status` | `status.bithuman.ai` | Live operational status of the platform + each public API. |
 | `validate_api_secret` | `POST /v1/validate` | Check the API secret (free). |
 | `get_credit_balance` | `GET /v2/credit-summaries` | Credits, plan, minutes estimate. |
 | `get_usage` | `GET /v1/usage` | Usage/metering history (paginated). |

@@ -1,6 +1,6 @@
 ---
 title: "Configuration"
-description: "Environment variables, cache layout, and cloud-vs-on-device brain selection for the bithuman CLI."
+description: "Environment variables, cache layout, and cloud-vs-on-device brain selection for the bitHuman CLI."
 section: cli
 group: "Usage"
 order: 11

@@ -37,7 +37,7 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 
 ## Engine layering
 
-The platform is three owned layers — engine, SDKs, apps — plus an upstream integration layer that wires bithuman into other ecosystems.
+The platform is three owned layers — engine, SDKs, apps — plus an upstream integration layer that wires bitHuman into other ecosystems.
 
 ```text
 L4  Upstream integrations
@@ -45,7 +45,7 @@ L4  Upstream integrations
         |
         v depends on
 L3  Apps (consume the SDKs)
-    bithuman CLI · Flutter reference app · Mac + iPad reference apps
+    bitHuman CLI · Flutter reference app · Mac + iPad reference apps
         |
         v builds on
 L2  bitHuman SDKs (language bindings)
@@ -57,7 +57,7 @@ L1  bitHuman Engine — libessence (cross-platform C++ behind a C ABI)
     macOS · iOS · Android · Linux · Windows
 ```
 
-Most developers integrate at the SDK layer (L2) — you never need to know what's underneath. The engine is statically linked into each SDK distribution, so there are no extra system libraries to install. The bithuman CLI (L3) consumes the Rust SDK the same way any third-party app would.
+Most developers integrate at the SDK layer (L2) — you never need to know what's underneath. The engine is statically linked into each SDK distribution, so there are no extra system libraries to install. The bitHuman CLI (L3) consumes the Rust SDK the same way any third-party app would.
 
 ## Cross-layer contracts
 

@@ -25,14 +25,18 @@ and examples translate 1:1.
 
 ## Install
 
-> **Note** `@bithuman/sdk` is **not yet published to npm** — `npm install
-> @bithuman/sdk` will 404 today. While it's in preview, install it from source
-> (clone the SDK and `npm pack`/link the `sdks/javascript` package) or watch the
-> [changelog](/changelog) for the npm release. The command below is the form the
-> published package will take:
+> **Note — not yet available.** `@bithuman/sdk` is **not published to npm**
+> (`npm install @bithuman/sdk` 404s today) and there is **no public source
+> package** to build from yet — the SDK monorepo currently ships the Python and
+> Swift rails only. The code on this page shows the shape the published client
+> *will* take; track the [changelog](/changelog) for the release. **To build a
+> browser or Node integration today, drive a served or cloud avatar over
+> [LiveKit](/sdk/livekit)** — that is the same transport this client wraps.
+
+When it ships, the install will be:
 
 ```bash
-npm install @bithuman/sdk
+npm install @bithuman/sdk   # not available yet — see the note above
 ```
 
 Auth: provide your API secret as `apiSecret`. Get one at [Developer → API

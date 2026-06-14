@@ -22,8 +22,11 @@ BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 # → open the printed http://127.0.0.1:8088/<CODE> URL in a browser
 ```
 
-The `[local]` extra is published on the `bithuman-cli` package for macOS
-arm64, Linux x86_64, and Linux aarch64; Python 3.10–3.14. (The `bithuman-cli`
+The `[local]` extra is published on the `bithuman-cli` package, whose PyPI
+wheel is **macOS Apple Silicon (arm64) only** today (Python 3.10–3.14) — so
+`pip install 'bithuman-cli[local]'` is a macOS-arm64 path. On Linux, install
+the CLI with the universal installer (see [CLI install](/cli/install)); the
+`[local]` brain bundle is not yet packaged for Linux. (The `bithuman-cli`
 wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
 
 > **Note** `bithuman run` still pings `api.bithuman.ai` for avatar credit

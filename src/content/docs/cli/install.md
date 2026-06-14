@@ -1,6 +1,6 @@
 ---
 title: "Install the CLI"
-description: "Install the bithuman CLI with one command, then verify with bithuman doctor."
+description: "Install the bitHuman CLI with one command, then verify with bithuman doctor."
 section: cli
 group: "Get started"
 order: 2

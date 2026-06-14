@@ -526,6 +526,8 @@ paths:
                       uploaded_at:
                         type: string
                         format: date-time
+        "400":
+          description: "`file_url` could not be downloaded — unreachable, non-public, or blocked (`DOWNLOAD_FAILED`); or `file_data` was not valid base64 (`VALIDATION_ERROR`)."
         "413":
           description: File too large (max 10 MB for images, 100 MB for video)
         "415":
@@ -2269,11 +2271,14 @@ tags:
       pip install bithuman --upgrade
       ```
 
-      Python 3.9–3.14, pre-built wheels for macOS arm64 and Linux x86_64 / aarch64 (macOS Intel + Windows via per-tag CI builds). As of
+      Python 3.10–3.14, pre-built wheels for macOS arm64 (macOS 26+) and
+      Linux x86_64 / aarch64 (manylinux_2_28). Windows and macOS-Intel are not
+      part of the 2.x distribution — pin the 1.x line if you need them. As of
       2.3.0 this wheel is the **Python SDK library only** (~5 MB):
       runtime + LiveKit plugin glue. The `bithuman` CLI binary ships
-      separately as `pip install bithuman-cli` or
-      `brew install bithuman-product/bithuman/bithuman-cli`.
+      separately — `pip install bithuman-cli` (the PyPI wheel is **macOS Apple
+      Silicon only**) or `brew install bithuman-product/bithuman/bithuman-cli`;
+      on Linux, install the CLI with the universal installer.
 
       ```python
       import asyncio, os
@@ -2299,13 +2304,13 @@ tags:
 
       In Xcode: **File → Add Package Dependencies…** →
       `https://github.com/bithuman-product/bithuman-sdk-public.git` →
-      pin to **0.8.1 or later** (older versions are unsupported).
+      pin to **0.8.1 or later** (current release **0.8.2**).
 
       ```swift
       // Package.swift
       .package(
           url: "https://github.com/bithuman-product/bithuman-sdk-public.git",
-          from: "0.8.1"
+          from: "0.8.1"   // resolves to the latest 0.8.x tag (0.8.2 today)
       )
       ```
 
@@ -2734,7 +2739,7 @@ tags:
       |---|---|
       | REST API | URL path (`/v1/`, `/v2/`) — never breaks at minor |
       | Python SDK | Semver — minor bumps may add params; major bumps may rename |
-      | Swift SDK | Semver — current floor is `0.8.1` per Package.swift |
+      | Swift SDK | Semver — floor `0.8.1` per Package.swift (current release `0.8.2`) |
       | Kotlin / Flutter SDKs | Semver — pinned in `build.gradle` / `pubspec.yaml` |
       | `.imx` file format | Forward-compatible within a major; auto-upgraded on first load |
 
