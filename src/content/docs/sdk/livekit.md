@@ -68,6 +68,78 @@ Two runnable LiveKit agents ship in the SDK repo, each with `.env.example`,
 | cloud-essence | bitHuman cloud | API key + agent ID |
 | local-essence | Your server (CPU) | API key + `.imx` |
 
+## Production video tuning (avoid a black or laggy avatar)
+
+> **Important for self-hosters.** By default the LiveKit plugin publishes the
+> avatar video track with no explicit encoding. LiveKit then maps a small
+> (~512×512) track to its **H480 preset — VP8, ~300 kbps, a 20 fps cap, and
+> simulcast ON** (a second encoder per session). The avatar engine renders at
+> 25 fps, so this:
+>
+> - **decimates to ~20 fps with judder → "extremely laggy"**, and
+> - under CPU/encoder pressure drives WebRTC into **encoder-overuse adaptation:
+>   ~1-second frozen frames (which render as a black screen) + a live 512→360
+>   downscale**.
+>
+> This is the most common cause of a self-hosted avatar that shows a **black
+> screen / no video, then appears but is laggy and unusable.** bitHuman's
+> *managed* workers already fix it; self-hosted agents must apply the same fix.
+
+Publish **one layer, simulcast off, H264, with explicit bitrate/fps**. Apply
+this monkey-patch **once, before** you call `avatar.start(...)`:
+
+```python
+# tuned_publish.py — import this BEFORE creating/starting bithuman.AvatarSession
+import os
+from livekit import rtc
+from livekit.agents.voice.avatar import AvatarRunner
+
+async def _tuned_publish_track(self) -> None:
+    async with self._lock:
+        await self._room_connected_fut
+        # audio — unchanged
+        audio = rtc.LocalAudioTrack.create_audio_track("avatar_audio", self._audio_source)
+        self._audio_publication = await self._room.local_participant.publish_track(
+            audio, rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_MICROPHONE))
+        await self._audio_publication.wait_for_subscription()
+        # video — single layer, no simulcast, H264, explicit encoding
+        video = rtc.LocalVideoTrack.create_video_track("avatar_video", self._video_source)
+        self._video_publication = await self._room.local_participant.publish_track(
+            video, rtc.TrackPublishOptions(
+                source=rtc.TrackSource.SOURCE_CAMERA,
+                video_codec=rtc.VideoCodec.H264,                 # ~55% less encode CPU than VP8
+                simulcast=os.getenv("AVATAR_VIDEO_SIMULCAST", "0").lower() in ("1", "true", "yes", "on"),
+                video_encoding=rtc.VideoEncoding(
+                    max_bitrate=int(os.getenv("AVATAR_VIDEO_MAX_BITRATE", "2000000")),
+                    max_framerate=float(os.getenv("AVATAR_VIDEO_MAX_FPS", "25")))))
+
+AvatarRunner._publish_track = _tuned_publish_track  # apply before avatar.start(...)
+```
+
+Tunables (override the defaults above without code changes): **`AVATAR_VIDEO_MAX_BITRATE`**
+(default `2000000`; raise to 3–4 M for portraits larger than 512²),
+**`AVATAR_VIDEO_MAX_FPS`** (default `25`, the engine fps),
+**`AVATAR_VIDEO_SIMULCAST`** (default off — leave off for single-subscriber avatars).
+You should see a published track at the full engine fps with no 512→360
+downscale and no frozen intervals. *(The `local-essence` / `cloud-essence`
+examples in the SDK repo ship with this applied.)*
+
+### Hardware floor (Essence, CPU)
+
+A self-hosted **Essence** session must render lip-sync **and** software-encode
+the video on CPU. Budget **dedicated cores per concurrent 25 fps session** (not
+just "a modern CPU") and disable simulcast as above — H264 + single-layer cuts
+encode CPU by ~55–82% vs the VP8/simulcast default. An oversubscribed or
+shared-vCPU box that can't sustain 25 fps produces the same laggy/frozen video.
+
+### A short black frame at startup is expected
+
+The track may be black for the **first moment** while the engine warms up and
+before the first audio arrives. If it stays black after frames should be
+flowing, the cause is almost always the publish preset above (a frozen/decimated
+track reads as black) — **not** a warmup issue. Gate client joins on the
+avatar being live, and apply the tuned publish first.
+
 ## Apple: connect a native app via `bithuman-livekit-swift`
 
 `bithuman-livekit-swift` is a **fork** of
