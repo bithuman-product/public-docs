@@ -4,6 +4,7 @@
     "org": "MINT Museum of Toys, Singapore",
     "category": "Cultural Institution",
     "summary": "MINT Museum launched 'The Little Prince', billed as the world's first museum AI ambassador, powered by bitHuman to give visitors personalized, multilingual guidance and ticketing. The avatar runs on-premise on a single Mac Mini for low latency and data privacy.",
+    "metric": "Runs on a single Mac Mini",
     "image": "https://www.bithuman.ai/mint_cover.webp",
     "href": "https://www.bithuman.ai/#mint-museum"
   },
@@ -12,6 +13,7 @@
     "org": "Ivoclar Vivadent",
     "category": "Dental Technology",
     "summary": "Ivoclar, a global dental-solutions leader, deployed bitHuman's interactive 'Virtual Einstein' avatar to deliver 24/7 customer care across tradeshows, events, and online platforms, speaking 50+ languages and trained on Ivoclar's full product catalog.",
+    "metric": "24/7 care in 50+ languages",
     "image": "https://www.bithuman.ai/ivoclar_cover.avif",
     "href": "https://www.bithuman.ai/#ivoclar"
   },
@@ -20,6 +22,7 @@
     "org": "NRF: Retail's Big Show",
     "category": "Retail Innovation",
     "summary": "At NRF: Retail's Big Show in the Jacob K. Javits Convention Center, bitHuman deployed 10 AI-powered virtual conference guides as interactive information kiosks, helping thousands of attendees navigate the venue, find exhibitor booths, and get real-time session info.",
+    "metric": "10 live kiosks, thousands of attendees",
     "image": "https://www.bithuman.ai/nrf_cover.webp",
     "href": "https://www.bithuman.ai/#nrf"
   },
@@ -28,6 +31,7 @@
     "org": "Shopify (Hysses storefront demo)",
     "category": "E-commerce Platform",
     "summary": "bitHuman natively supports Shopify's Storefront MCP, letting an expressive AI shopping-assistant avatar read live product catalogs, give recommendations, and manage carts in real time from just a store URL. Demonstrated live on the Hysses Shopify store.",
+    "metric": "Native Storefront MCP, from a store URL",
     "image": "https://www.bithuman.ai/shopify_cover.jpg",
     "href": "https://www.bithuman.ai/#shopify"
   },
@@ -36,6 +40,7 @@
     "org": "Allbirds",
     "category": "Sustainable Footwear / E-commerce",
     "summary": "Using allbirds.com as the example, bitHuman turns an e-commerce site into a conversational shopping destination where an expressive AI avatar showcases sustainable footwear, explains materials, displays products visually, and guides customers through purchases in 50+ languages.",
+    "metric": "Conversational shopping in 50+ languages",
     "image": "https://www.bithuman.ai/allbirds_cover.webp",
     "href": "https://www.bithuman.ai/#allbirds"
   },
@@ -44,6 +49,7 @@
     "org": "Uber (pitch-deck demo)",
     "category": "Interactive Presentations",
     "summary": "bitHuman turns an uploaded deck into an interactive AI presenter that walks through slides and answers questions in real time. Showcased with Uber's iconic pitch deck, the avatar lets viewers interrupt anytime to dive deeper into the business model or market opportunity.",
+    "metric": "Real-time Q&A over any deck",
     "image": "https://www.bithuman.ai/uber_slide_cover.jpg",
     "href": "https://www.bithuman.ai/#uber"
   }
