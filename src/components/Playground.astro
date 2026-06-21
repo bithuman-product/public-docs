@@ -3,11 +3,19 @@
 // + model on the left (the embed code updates live), hit Launch, and the real
 // agent runs in the preview on the right.
 import data from "../data/showcase-agents.json";
+
+interface Props {
+  /** Compact = preview-only (poster + Launch), no code editor. Used in the hero to protect LCP. */
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+
 const agents = [...data.expression, ...data.essence];
 const first = agents[0];
 ---
 
-<div class="pg" data-pg>
+<div class:list={["pg", { compact }]} data-pg data-pg-first-code={first.code} data-pg-first-model={first.group}>
+  {!compact && (
   <div class="pg-left">
     <div class="pg-controls">
       <div class="pg-field">
@@ -55,11 +63,19 @@ const first = agents[0];
 
     <button class="pg-run" data-pg-run><span class="dot"></span> Launch agent</button>
   </div>
+  )}
 
   <div class="pg-right">
     <div class="pg-preview" data-pg-preview>
-      <img data-pg-poster src={first.image} alt={first.name} loading="lazy" decoding="async" />
+      {compact ? (
+        <img data-pg-poster src={first.image} alt={first.name} fetchpriority="high" decoding="async" width="960" height="600" />
+      ) : (
+        <img data-pg-poster src={first.image} alt={first.name} loading="lazy" decoding="async" />
+      )}
       <div class="pg-hint"><span>▶</span> Press <strong>Launch</strong> to talk to a live agent</div>
+      {compact && (
+        <button class="pg-run pg-run-compact" data-pg-run><span class="dot"></span> Launch agent</button>
+      )}
       <button class="pg-close" data-pg-close aria-label="Close">
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
@@ -69,51 +85,60 @@ const first = agents[0];
 
 <script>
   document.querySelectorAll("[data-pg]").forEach((root) => {
-    const combo = root.querySelector("[data-pg-combo]")!;
-    const btn = root.querySelector("[data-pg-btn]") as HTMLElement;
-    const list = root.querySelector(".pg-combo-list") as HTMLElement;
-    const seg = root.querySelector("[data-pg-model]")!;
-    const codeEl = root.querySelector("[data-pg-code]") as HTMLElement;
+    const r = root as HTMLElement;
+    const combo = root.querySelector("[data-pg-combo]") as HTMLElement | null;
+    const btn = root.querySelector("[data-pg-btn]") as HTMLElement | null;
+    const list = root.querySelector(".pg-combo-list") as HTMLElement | null;
+    const seg = root.querySelector("[data-pg-model]") as HTMLElement | null;
+    const codeEl = root.querySelector("[data-pg-code]") as HTMLElement | null;
     const poster = root.querySelector("[data-pg-poster]") as HTMLImageElement;
     const preview = root.querySelector("[data-pg-preview]")!;
-    let model = btn.dataset.model || "expression";
+
+    // In compact (hero) mode there is no picker/code editor; the agent comes from
+    // the root data attributes and only the Launch/preview path is active.
+    const compact = r.classList.contains("compact");
+    let model = btn?.dataset.model || r.dataset.pgFirstModel || "expression";
+    // current selected agent code (kept on the picker button when present)
+    const currentCode = () => btn?.dataset.code || r.dataset.pgFirstCode!;
 
     const snippet = (code: string, m: string) =>
       `<iframe\n  src="https://bithuman.ai/embed/${code}?model=${m}"\n  allow="microphone *; camera *; autoplay *"\n  style="width:100%;height:100%;border:0">\n</iframe>`;
 
     const setModelUI = () =>
-      seg.querySelectorAll("button").forEach((b) => b.classList.toggle("active", (b as HTMLElement).dataset.val === model));
+      seg?.querySelectorAll("button").forEach((b) => b.classList.toggle("active", (b as HTMLElement).dataset.val === model));
 
     const sync = () => {
-      codeEl.textContent = snippet(btn.dataset.code!, model);
-      poster.src = btn.dataset.image!;
+      if (codeEl) codeEl.textContent = snippet(currentCode(), model);
+      if (btn?.dataset.image) poster.src = btn.dataset.image;
       const f = preview.querySelector("iframe");
       if (f) { f.remove(); preview.classList.remove("live"); }
     };
 
-    // dropdown open/close
-    const open = (o: boolean) => { list.hidden = !o; btn.setAttribute("aria-expanded", o ? "true" : "false"); };
-    btn.addEventListener("click", () => open(list.hidden));
-    document.addEventListener("click", (e) => { if (!combo.contains(e.target as Node)) open(false); });
-    root.querySelectorAll(".pg-opt").forEach((opt) =>
-      opt.addEventListener("click", () => {
-        const o = opt as HTMLElement;
-        btn.dataset.code = o.dataset.code; btn.dataset.image = o.dataset.image;
-        (btn.querySelector(".pg-av") as HTMLImageElement).src = o.dataset.image!;
-        (btn.querySelector(".pg-combo-name") as HTMLElement).textContent = o.dataset.name!;
-        model = o.dataset.model!; setModelUI();
-        list.querySelectorAll(".pg-opt").forEach((x) => x.classList.toggle("sel", x === opt));
-        open(false); sync();
-      })
-    );
+    if (!compact && btn && list && combo) {
+      // dropdown open/close
+      const open = (o: boolean) => { list.hidden = !o; btn.setAttribute("aria-expanded", o ? "true" : "false"); };
+      btn.addEventListener("click", () => open(list.hidden));
+      document.addEventListener("click", (e) => { if (!combo.contains(e.target as Node)) open(false); });
+      root.querySelectorAll(".pg-opt").forEach((opt) =>
+        opt.addEventListener("click", () => {
+          const o = opt as HTMLElement;
+          btn.dataset.code = o.dataset.code; btn.dataset.image = o.dataset.image;
+          (btn.querySelector(".pg-av") as HTMLImageElement).src = o.dataset.image!;
+          (btn.querySelector(".pg-combo-name") as HTMLElement).textContent = o.dataset.name!;
+          model = o.dataset.model!; setModelUI();
+          list.querySelectorAll(".pg-opt").forEach((x) => x.classList.toggle("sel", x === opt));
+          open(false); sync();
+        })
+      );
 
-    seg.querySelectorAll("button").forEach((b) =>
-      b.addEventListener("click", () => { model = (b as HTMLElement).dataset.val!; setModelUI(); sync(); })
-    );
+      seg?.querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => { model = (b as HTMLElement).dataset.val!; setModelUI(); sync(); })
+      );
+    }
 
     root.querySelector("[data-pg-run]")?.addEventListener("click", () => {
       const f = document.createElement("iframe");
-      f.src = `https://bithuman.ai/embed/${btn.dataset.code}?model=${model}`;
+      f.src = `https://bithuman.ai/embed/${currentCode()}?model=${model}`;
       f.allow = "microphone *; camera *; autoplay *; clipboard-write";
       f.title = "bitHuman live agent"; f.className = "pg-frame";
       preview.querySelector(".pg-frame")?.remove();
@@ -124,7 +149,7 @@ const first = agents[0];
     });
     root.querySelector("[data-pg-copy]")?.addEventListener("click", (e) => {
       const b = e.currentTarget as HTMLElement;
-      navigator.clipboard.writeText(codeEl.textContent ?? "").then(() => {
+      navigator.clipboard.writeText(codeEl?.textContent ?? "").then(() => {
         b.textContent = "Copied"; setTimeout(() => (b.textContent = "Copy"), 1400);
       }).catch(() => {});
     });
@@ -182,6 +207,12 @@ const first = agents[0];
   .pg-close:hover { background: rgba(0,0,0,0.85); }
   .pg-preview.live .pg-hint { display: none; }
   .pg-preview.live .pg-close { display: inline-flex; }
+
+  /* ---- compact (hero) variant: preview-only, single column ---- */
+  .pg.compact { grid-template-columns: 1fr; gap: 0; }
+  .pg.compact .pg-preview { height: clamp(360px, 46vw, 460px); aspect-ratio: 16/10; }
+  .pg-run-compact { position: absolute; bottom: var(--space-4); right: var(--space-4); z-index: 3; padding: 0.6rem 1rem; font-size: var(--ft-sm); box-shadow: var(--shadow-md); }
+  .pg-preview.live .pg-run-compact { display: none; }
 
   @media (max-width: 860px) {
     .pg { grid-template-columns: 1fr; }
