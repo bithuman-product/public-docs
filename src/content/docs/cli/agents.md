@@ -93,7 +93,7 @@ Exit **0** when signed in, **1** when signed out (`"logged_in":false`).
 ```json
 {"email":"you@example.com","plan":"creator","plan_label":"Creator",
  "credit_balance":5986130,"account_status":"active","out_of_credits":false,
- "upgrade_url":"https://www.bithuman.ai/upgrade"}
+ "upgrade_url":"https://www.bithuman.ai/billing"}
 ```
 Exit **77** (`NOT_AUTHENTICATED`) if no credential resolves.
 
