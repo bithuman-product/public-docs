@@ -20,11 +20,11 @@ pip install bithuman
 ```
 
 **Python 3.10–3.14** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.3.4**. Platforms: macOS arm64, Linux x86_64, Linux
+[PyPI](https://pypi.org/project/bithuman/) is **2.3.10**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host.)
 
-> **macOS note** The 2.3.4 macOS wheels are tagged for **macOS 26+ (arm64)**.
+> **macOS note** The 2.3.x macOS wheels are tagged for **macOS 26+ (arm64)**.
 > On older macOS versions `pip install bithuman` fails with
 > `No matching distribution found` — upgrade to macOS 26+, or build from source
 > / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
@@ -262,7 +262,7 @@ auth even on 2.3.4.
 
 pip found no wheel for your platform. The common causes:
 
-- **macOS older than 26** — the 2.3.4 macOS wheels are tagged for **macOS 26+
+- **macOS older than 26** — the 2.3.x macOS wheels are tagged for **macOS 26+
   (arm64)**. Upgrade to macOS 26+, or build from source / contact
   [hello@bithuman.ai](mailto:hello@bithuman.ai).
 - **Alpine / musl Linux** — not supported. The Linux wheels are

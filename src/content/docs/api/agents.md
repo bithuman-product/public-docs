@@ -48,7 +48,7 @@ asynchronous and costs 250 credits; the call returns immediately with an
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
-| `model` | string | no | `essence` | Avatar runtime model: `essence` or `expression` (`elevate` is also accepted). See [models](/concepts/models). **Warning:** unknown values are not rejected — generation silently falls back to the default pipeline and still bills 250 credits, so double-check spelling. |
+| `model` | string | no | `essence` | Avatar runtime model — `essence` (default), `expression`, `elevate`, or `embody`. Invalid values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models). |
 
 ```python
 import requests
@@ -169,9 +169,9 @@ print(agent["name"], agent["status"])
     "agent_id": "A91XMB7113",
     "status": "ready",
     "system_prompt": "You are a friendly AI assistant",
-    "image_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/image_20260115_103000_000001.jpg",
-    "video_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/video_20260115_103200_000002.mp4",
-    "model_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/my_agent_20260115_103500_000003.imx",
+    "image_url": "https://storage.bithuman.ai/A91XMB7113/image_20260115_103000_000001.jpg",
+    "video_url": "https://storage.bithuman.ai/A91XMB7113/video_20260115_103200_000002.mp4",
+    "model_url": "https://storage.bithuman.ai/A91XMB7113/my_agent_20260115_103500_000003.imx",
     "name": "My Agent"
   }
 }

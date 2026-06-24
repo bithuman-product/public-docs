@@ -20,6 +20,7 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 | **bitHuman Cloud** | Expression | 4 cr/min | GPU rendering on bitHuman's servers |
 | **Self-hosted (Python SDK / CLI)** | Essence | 1 cr/min | CPU on your hardware |
 | **Self-hosted (GPU container)** | Expression | 2 cr/min | NVIDIA GPU on your hardware |
+| **Self-hosted (GPU container)** | Flash | 4 cr/min | NVIDIA GPU rendering tier on your hardware |
 | **On-device (Swift SDK)** | Expression | 2 cr/min | Active avatar minutes only |
 | **Managed agent — voice chat** | — | 10 cr/min | Cloud conversational agent, no avatar attached |
 | **Managed agent — camera chat** | — | 30 cr/min | Cloud conversational agent with camera/vision on |

@@ -12,7 +12,7 @@ order: 11
 - Python 3.10–3.14 (use a virtualenv). Install the library (cross-platform wheels — macOS arm64 + Linux x86_64/aarch64):
 
 ```bash
-pip install bithuman==2.3.4 soundfile
+pip install bithuman soundfile
 ```
 
 - Runs on macOS arm64, Linux x86_64, and Linux aarch64 — fully on-device.

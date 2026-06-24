@@ -6,21 +6,32 @@ group: "Models"
 order: 1
 ---
 
-## The five engines
+## The engines
 
-bitHuman is built on **five** engines. Two of them — **Essence** and **Expression** —
-are the avatar-rendering models this page compares in depth; the other three round
-out the stack:
+bitHuman's avatar runtime is a family of **rendering engines** plus the
+**conversation and voice stack** that feeds them. The two render engines you choose
+between when packaging an avatar — and the focus of the rest of this page — are
+**Essence** and **Expression**.
+
+**Rendering engines**
 
 - **Essence** — the default avatar renderer. Pre-built `.imx` identity, real-time
   lip-sync, runs on virtually any CPU.
 - **Expression** — the heavier, high-fidelity renderer that animates any portrait
   at runtime on Apple Silicon or an NVIDIA GPU.
-- **Converse** — the conversation engine: the STT → LLM → TTS turn loop that drives
-  a managed agent's dialogue. It produces the audio that Essence/Expression lip-sync.
+- **Embody** — the real-time generative engine: it produces fully-generated motion
+  rather than patching a pre-rendered base, running on-device (Apple Silicon) and on
+  cloud GPU.
 - **Elevate** — the on-device expression/animation engine (vendored as
   `libelevate`), used by AvatarUIKit and the `expression/iphone` sample app. It was
   removed from the **cloud** model family but is **retained on-device**.
+- **Flash** — an additional self-hosted GPU rendering tier (metered per the
+  [pricing](/guides/pricing) table).
+
+**Conversation + voice stack** — drives a managed agent and feeds the renderers:
+
+- **Converse** — the STT → LLM → TTS turn loop that drives a managed agent's
+  dialogue. It produces the audio that the renderers lip-sync.
 - **Voice** — the speech engine (the voice/TTS stack behind audio-only chat and the
   voices you select for an agent).
 

@@ -55,7 +55,7 @@ See the [CLI reference](/cli) for all subcommands (`run`, `render`, `info`, `pul
 pip install bithuman
 ```
 
-> **macOS note** The 2.3.4 macOS wheels are tagged for **macOS 26+ (arm64)**. On older macOS versions pip reports `No matching distribution found` — upgrade to macOS 26+, or build from source / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
+> **macOS note** The 2.3.x macOS wheels are tagged for **macOS 26+ (arm64)**. On older macOS versions pip reports `No matching distribution found` — upgrade to macOS 26+, or build from source / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
 
 Add the LiveKit agent integration:
 
@@ -132,12 +132,12 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.4** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.3.10** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
 | Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
 | bitHuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.4 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.10 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 

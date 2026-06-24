@@ -38,7 +38,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
   | python3 -m json.tool
 ```
 
-3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` — only `ready` and `failed` are terminal (generation takes 2–5 min; failures auto-refund credits).
+3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` — only `success`/`ready` and `failed` are terminal (generation takes 2–5 min; failures auto-refund credits).
 
 ```bash
 export AGENT_ID=A91XMB7113   # paste the agent_id from step 2
@@ -54,7 +54,7 @@ open "https://www.bithuman.ai/$AGENT_ID"   # or paste into any browser
 
 ## What you'll see
 
-`/v1/validate` returns `{"valid": true}`. Generation returns `{"success": true, "agent_id": "...", "status": "processing"}`, and the status poll climbs through `progress` 0.0 → 1.0 until `data.status: "ready"` with a `model_url`. Opening the viewer URL gives you a live, talking avatar.
+`/v1/validate` returns `{"valid": true}`. Generation returns `{"success": true, "agent_id": "...", "status": "processing"}`, and the status poll climbs through `progress` 0.0 → 1.0 until `data.status` is `success`/`ready` with a `model_url`. Opening the viewer URL gives you a live, talking avatar.
 
 > **Warning** The `POST /v1/agent/{code}/speak` endpoint only works while the agent is in an **active session** (someone connected via the viewer, a LiveKit room, or the dashboard). With no active session you'll get `No active rooms found for agent`.
 
@@ -85,7 +85,7 @@ while true; do
   S=$(curl -s "$BASE/v1/agent/status/$AGENT_ID" -H "api-secret: $BITHUMAN_API_SECRET")
   STATUS=$(echo "$S" | python3 -c "import sys,json;print(json.load(sys.stdin).get('data',{}).get('status','unknown'))")
   echo "  status: $STATUS"
-  [ "$STATUS" = "ready" ]  && { echo "Open https://www.bithuman.ai/$AGENT_ID"; break; }
+  { [ "$STATUS" = "ready" ] || [ "$STATUS" = "success" ]; } && { echo "Open https://www.bithuman.ai/$AGENT_ID"; break; }
   [ "$STATUS" = "failed" ] && { echo "Generation failed (credits auto-refunded)"; exit 1; }
   sleep 5
 done

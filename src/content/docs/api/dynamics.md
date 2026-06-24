@@ -72,13 +72,13 @@ print(list(gestures.keys()))
 {
   "success": true,
   "data": {
-    "url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/my_agent_20260115_103500_000003.imx",
+    "url": "https://storage.bithuman.ai/A91XMB7113/my_agent_20260115_103500_000003.imx",
     "status": "ready",
     "agent_id": "A91XMB7113",
     "gestures": {
-      "mini_wave_hello": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/mini_wave_hello_20260115_104000_000004.mp4",
-      "talk_head_nod_subtle": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/talk_head_nod_subtle_20260115_104100_000005.mp4",
-      "blow_kiss_heart": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A91XMB7113/blow_kiss_heart_20260115_104200_000006.mp4"
+      "mini_wave_hello": "https://storage.bithuman.ai/A91XMB7113/mini_wave_hello_20260115_104000_000004.mp4",
+      "talk_head_nod_subtle": "https://storage.bithuman.ai/A91XMB7113/talk_head_nod_subtle_20260115_104100_000005.mp4",
+      "blow_kiss_heart": "https://storage.bithuman.ai/A91XMB7113/blow_kiss_heart_20260115_104200_000006.mp4"
     }
   }
 }

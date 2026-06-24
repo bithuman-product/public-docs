@@ -117,7 +117,7 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence, expression]
+                  enum: [essence, expression, elevate, embody]
                   default: essence
                   description: Avatar runtime model for the generated agent. See [Essence vs Expression](#tag/models).
       responses:
@@ -696,6 +696,10 @@ paths:
                   status:
                     type: string
                     example: "processing"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "402":
+          description: Insufficient credits. Dynamics generation costs 250 credits — INSUFFICIENT_BALANCE.
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -1770,7 +1774,7 @@ tags:
       curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 
       # PyPI sibling wheel — Python-only environments
-      pip install 'bithuman-cli==2.3.0'
+      pip install bithuman-cli
       ```
 
       Verify the install:
@@ -2395,7 +2399,7 @@ tags:
       curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 
       # Python-only env (Linux x86_64/aarch64 + macOS arm64)
-      pip install 'bithuman-cli==2.3.0'
+      pip install bithuman-cli
       ```
 
       ### Subcommands

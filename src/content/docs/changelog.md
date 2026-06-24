@@ -10,6 +10,19 @@ order: 1
 
 ## June 2026
 
+### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
+
+- **Streaming compose no longer degrades over a long utterance.** Self-hosted streaming previously re-fed the whole growing audio buffer to the engine on every tick, so its internal mel cache missed and recomputed from scratch — frame rate decayed across a long turn (an O(n²) cost). 2.3.10 binds libessence's incremental streaming surface (`push_audio` / `pull_frame` / `ticks_available` / `reset_stream`), holding a flat frame rate for the full utterance with byte-identical output. The stream is also reset at the start of each utterance so idle frames can't shift lip-sync.
+
+### Python SDK `bithuman` 2.3.9 (2026-06-23) — barge-in / interrupt fix
+
+- **Interrupt (barge-in) no longer wedges the runtime.** Interrupting the avatar mid-utterance previously froze it after the first barge-in (the interrupt path shared the terminal stop signal). 2.3.9 routes interrupts through a separate event, drains in-flight frames, and resumes on a fresh runtime — so a user can talk over the avatar repeatedly without it getting stuck.
+- **Recommended LiveKit stack:** `bithuman` 2.3.9+ with `livekit-plugins-bithuman` 1.6.3 and `livekit-agents` 1.6.x (plus `pillow`).
+
+### Python SDK `bithuman` 2.3.8 (2026-06-16)
+
+- Maintenance release on the 2.3 line (2.3.5–2.3.7 were not published).
+
 ### Python SDK `bithuman` 2.3.4 (2026-06-12) — Linux CA auto-discovery
 
 - **Linux CA auto-discovery.** The SDK now finds your distro's CA bundle automatically on Linux — self-hosted auth (`AsyncBithuman.create()`) works **zero-config** on Debian, Ubuntu, SUSE, and Alpine-glibc layouts. The `/etc/pki/tls/certs/ca-bundle.crt` symlink workaround needed on ≤ 2.3.3 is obsolete. Thanks to the customer report that pinned down the Debian/Ubuntu `Problem with the SSL CA cert` failure.
@@ -22,12 +35,12 @@ order: 1
 
 - **PyPI wheel split.** `pip install bithuman` is now the Python SDK **library only** (~5 MB) — `from bithuman import AsyncBithuman` still works. The bitHuman CLI moved to the sibling [`bithuman-cli`](https://pypi.org/project/bithuman-cli/2.3.0/) wheel; install via `pip install bithuman-cli`, `brew install bithuman-product/bithuman/bithuman-cli` (the old `bithuman` formula keeps working as a deprecated alias), or the universal `curl -sSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh` installer — all three deliver the same Rust binary that prints `libessence 1.19.1 ABI 7 / bithuman 2.3.0` on `bithuman --version`.
 - **CLI surface trimmed.** The binary now exposes exactly six runtime subcommands: `run`, `render`, `info`, `pull`, `list`, `doctor` (plus `init` for scaffolding a new project — seven in total). Legacy 1.x verbs (`voice`, `text`, `avatar`, `stream`, `speak`, `action`, `generate`, `asr`, `tts`, `models pull|list`, `cleanup`) were removed during the 2.x line and stay removed.
-- **Wheel matrix.** The Python library [`bithuman`](https://pypi.org/project/bithuman/) ships on PyPI for **macOS arm64** *and* **Linux x86_64 + aarch64** (manylinux). The CLI wheel [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) is **macOS Apple Silicon only** on PyPI — on Linux, install the CLI via the universal `install.sh` / tarball, not pip. Python 3.10–3.14. *(Latest patches: `bithuman` 2.3.4, `bithuman-cli` 2.3.25.)*
+- **Wheel matrix.** The Python library [`bithuman`](https://pypi.org/project/bithuman/) ships on PyPI for **macOS arm64** *and* **Linux x86_64 + aarch64** (manylinux). The CLI wheel [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) is **macOS Apple Silicon only** on PyPI — on Linux, install the CLI via the universal `install.sh` / tarball, not pip. Python 3.10–3.14. *(Latest patches: `bithuman` 2.3.10, `bithuman-cli` 2.3.25.)*
 - **Four-repo architecture.** Engine, SDKs, and apps are now cleanly separated across two private repos and two public ones: `bithuman-sdk` *(private)* holds the `libessence` engine + Python / Swift / Kotlin / Rust SDKs + the `parity/` contract tests; `bithuman-apps` *(private)* holds the bitHuman CLI, the Flutter plugin, and the Expression reference apps; [`bithuman-sdk-public`](https://github.com/bithuman-product/bithuman-sdk-public) *(public)* is the docs source + examples + landing pages; [`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman) *(public)* is the tap + the universal `install.sh` + the tarball release mirror.
 - **`BITHUMAN_BRAIN_*` → `BITHUMAN_AGENT_*` env-var rename** (carried through from Wave 5 of the 2.x line): `BITHUMAN_AGENT_PORT`, `BITHUMAN_AGENT_PYTHON`, `BITHUMAN_AGENT_SCRIPT`. The old `BITHUMAN_BRAIN_*` names are still read with a deprecation warning.
 - **No external API breaks.** Python (`from bithuman import AsyncBithuman`), Swift (`import Bithuman`), and Kotlin (`ai.bithuman:sdk`) public APIs are unchanged from 2.2.x. Migration for existing `pip install bithuman && bithuman run` users is install-time only: `pip install bithuman-cli` (or `brew install bithuman-product/bithuman/bithuman-cli`) to keep the `bithuman` console-script.
 - **Engine ABI** bumps to `v7` (libessence 1.19.1) — adds `be_runtime_tick_compose_from_mel` (compose a tick directly from a mel feed). Additive on top of v6; old SDK builds keep working. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point and did not bump the ABI.)
-- **LiveKit integration.** The upstream pin-relaxation PR ([livekit/agents#5882](https://github.com/livekit/agents/pull/5882)) is open against `livekit-plugins-bithuman`; once merged the plugin will accept `bithuman>=2.3` directly. Until then, install the plugin alongside the library: `pip install bithuman livekit-plugins-bithuman`.
+- **LiveKit integration.** The upstream pin-relaxation PR ([livekit/agents#5882](https://github.com/livekit/agents/pull/5882)) has since merged — `livekit-plugins-bithuman` (1.6.3) now pins `bithuman<3,>=0.5.25`, so `pip install bithuman livekit-plugins-bithuman` resolves cleanly.
 - **Removed surfaces.** The `bithuman.utils` and `bithuman.audio` Python modules are gone from the slim 2.3.0 wheel (helpers are inlined into the examples). **Elevate** was removed from the **cloud** model family but is **retained as the on-device engine** (vendored `libelevate`, used by AvatarUIKit and the `expression/iphone` sample app) — it was not deleted from the platform.
 
 ### Python SDK `bithuman` 2.2.2 (2026-05-25) — Linux CLI tarballs restored
