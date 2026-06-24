@@ -80,10 +80,10 @@ Open an RFC first if the binding introduces a new public concept (streaming mode
 
 An **integration** is code that *consumes* a bitHuman SDK to plug it into a third-party framework — a LiveKit plugin, a Pipecat processor, a LangChain tool, a Discord bot. It doesn't extend the engine; it wraps it for a specific runtime.
 
-Integrations live **upstream**, in the framework's own repo. bitHuman maintains a **contract test** in the SDK repo that verifies our SDK exposes everything the upstream plugin uses, so breakage is caught before users hit it. The pattern is:
+Integrations live **upstream**, in the framework's own repo. bitHuman maintains a **contract test** in the public SDK repo that verifies our SDK exposes everything the upstream plugin uses, so breakage is caught before users hit it. The pattern is:
 
 ```
-bithuman-sdk/
+bithuman-sdk-public/
   integrations/
     <integration-name>/
       README.md             # what this integration is + upstream link

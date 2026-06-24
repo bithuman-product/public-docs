@@ -73,7 +73,7 @@ We keep this honest so you can plan around it.
 | **Android (Kotlin)** | Gradle `ai.bithuman:sdk:2.3.6` | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
-| **Flutter** | reference app only | On-device | Reference app in `bithuman-apps`, **not a published code SDK** — see below |
+| **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 
 > **Note** On Apple platforms the SwiftPM product is **`bitHumanKit`** — an
 > umbrella framework (from
@@ -90,10 +90,8 @@ We keep this honest so you can plan around it.
 
 ### A note on Flutter
 
-A Flutter integration exists, but it is a **reference app** in the private
-`bithuman-apps` repo — it is **not** published to pub.dev and the plugin source
-is not in a public repo. Do not add `bithuman: ^X.Y.Z` to a `pubspec.yaml`;
-`flutter pub get` will fail with "package not found". Until it ships, build
+A Flutter integration exists today as an internal reference app — it is **not**
+published to pub.dev, so don't add `bithuman: ^X.Y.Z` to a `pubspec.yaml`. Until it ships, build
 Flutter apps on the underlying [Swift SDK](/sdk/swift) (Apple) and
 [Android SDK](/sdk/android) via platform channels, or [ping us on
 Discord](https://discord.gg/ES953n7bPA) for early access.

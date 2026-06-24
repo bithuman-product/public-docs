@@ -110,7 +110,7 @@ npm install @bithuman/sdk   # not available yet
 
 No install required. Authenticate with the `api-secret` header against `https://api.bithuman.ai`. See the [API reference](/api/reference) and the [quickstart](/api/quickstart).
 
-> **Note** Flutter is currently a **reference app only** (in `bithuman-apps`), not a published code SDK. See [community](/community) for how to follow its progress.
+> **Note** Flutter is currently a **reference app only**, not a published code SDK. See [community](/community) for how to follow its progress.
 
 ## What ships in 2.3
 
@@ -122,7 +122,7 @@ No install required. Authenticate with the `api-secret` header against `https://
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — | — |
 | **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — | — |
 | **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — | — |
-| **Windows** | Not shipping (use WSL2) | Not shipping (1.9.0 was last) | — | — |
+| **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — | — |
 | **iOS / iPadOS** | — | — | SwiftPM | — |
 | **Android** | — | — | — | Maven Central `ai.bithuman:sdk` |
 
@@ -172,9 +172,9 @@ The default avatar model. Runs on virtually every supported platform — the rig
 | **Android (`arm64-v8a`)** | Real-time | Snapdragon 8 Gen 2+, Android 10+ |
 | **Linux x86_64 / aarch64** | Real-time | Python SDK, modern CPU + 4 GB RAM |
 | **Intel Mac** | Pending in 2.3 | Use 1.x wheel or run via Linux x86_64 |
-| **Windows x86_64** | Not shipping in 2.3 | Use WSL2 today; native wheels on the roadmap |
+| **Windows x86_64** | WSL2 today | Run under WSL2; native wheels on the roadmap |
 | **Raspberry Pi 4B / 5** | Near real-time | Adequate for kiosks at modest FPS |
-| **Apple Watch / wearables** | Not supported | Insufficient memory |
+| **Apple Watch / wearables** | Not yet | Too memory-constrained for on-device rendering today |
 
 All hosts produce identical frames — your device decision is about form factor, memory, and latency budget, not visual quality.
 
@@ -187,10 +187,10 @@ Heavier high-fidelity model. Runs on Apple Silicon on-device (demo apps) or on N
 | **Mac M3+ (arm64)** | On-device | Demo app target |
 | **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
 | **iPhone 16 Pro+** | Preview | Needs the increased-memory entitlement; on-device validation in progress. Prefer Essence for production. |
-| **Android** | Not supported | Use Essence. |
+| **Android** | Use Essence | Essence runs on `arm64-v8a` today |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
-| **Mac Intel / Linux CPU / Windows** | Not supported | Requires Apple Silicon or NVIDIA GPU |
-| **Raspberry Pi** | Not supported | Use Essence |
+| **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression needs Apple Silicon or an NVIDIA GPU; Essence runs on CPU-only hosts |
+| **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
 
 If you're deploying to iPhone today, choose **Essence**. The iPhone reference app is built around Essence and stays well inside Apple's per-app memory cap.
 

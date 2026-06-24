@@ -147,9 +147,9 @@ billing heartbeat fires) once you add the lip-synced avatar.
 
 ## Hardware floor
 
-Gate this at runtime — under-spec devices should get a polite refusal screen, not
-a half-loaded engine. Use `HardwareCheck.evaluate()` to branch your SwiftUI root
-and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
+Gate this at runtime — on under-spec devices, guide people to a friendly fallback
+rather than a half-loaded engine. Use `HardwareCheck.evaluate()` to branch your
+SwiftUI root and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
 
 | | Essence | Expression |
 |---|---|---|
@@ -195,7 +195,7 @@ When hosting `AvatarRendererView` in SwiftUI, return the **same** renderer view
 instance from both `makeXxxView` and `updateXxxView`. SwiftUI rebuilds the
 parent constantly; a fresh renderer each time means a vanishing avatar.
 
-### Under-spec device shows a refusal screen
+### Under-spec device shows a friendly fallback
 
 Working as intended. Branch on `HardwareCheck.evaluate()`.
 

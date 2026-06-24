@@ -22,9 +22,8 @@ between when packaging an avatar — and the focus of the rest of this page — 
 - **Embody** — the real-time generative engine: it produces fully-generated motion
   rather than patching a pre-rendered base, running on-device (Apple Silicon) and on
   cloud GPU.
-- **Elevate** — the on-device expression/animation engine (vendored as
-  `libelevate`), used by AvatarUIKit and the `expression/iphone` sample app. It was
-  removed from the **cloud** model family but is **retained on-device**.
+- **Elevate** — an on-device expression and animation engine for Apple Silicon,
+  powering native Mac and iPhone experiences.
 - **Flash** — an additional self-hosted GPU rendering tier (metered per the
   [pricing](/guides/pricing) table).
 
@@ -70,7 +69,7 @@ Both ship to every surface — SDKs, REST API, LiveKit plugin, CLI, on-device, e
 | **Self-hosted CPU** | Python SDK / LiveKit plugin | — |
 | **Self-hosted GPU** | — | Docker container |
 
-Native macOS-Intel and Windows wheels are pending for the 2.3 line; the [architecture](/concepts/architecture) page tracks per-platform shipping status. iPhone Expression is not currently supported — use Essence on iPhone.
+Native macOS-Intel and Windows wheels are pending for the 2.3 line; the [architecture](/concepts/architecture) page tracks per-platform shipping status. On iPhone, Essence delivers a fast, real-time on-device avatar; Expression's heavier renderer targets iPad Pro and Mac (iPhone is in preview).
 
 ## Essence
 
@@ -114,7 +113,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 - Works with any face image — drag-and-drop swap, photo, video frame, anything.
 - AI-driven expressions adapt to speech content and emotional context.
 - Higher visual fidelity for close-up conversational interactions.
-- On-device demo apps target macOS M3+ and iPad Pro M4+. iPhone Expression and macOS-Intel are not currently supported.
+- On-device demo apps target macOS M3+ and iPad Pro M4+ today; iPhone Expression and macOS-Intel are on the way.
 - On Apple Silicon the Swift SDK auto-spawns a `bithuman-expression-daemon` subprocess to drive the model.
 
 **How to ship it**
@@ -133,7 +132,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ### iPhone app
 
-**Essence.** Expression on iPhone isn't currently supported — iPad and Mac are the on-device Expression hosts.
+**Essence.** On iPhone, choose Essence; iPad and Mac are the on-device homes for Expression.
 
 ### Android app
 
@@ -145,7 +144,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ### Need custom gestures (wave, nod, laugh)
 
-**Essence.** Expression doesn't support gesture triggers.
+**Essence.** Essence supports custom gestures — wave, nod, laugh — triggered by keyword or API.
 
 ### Quickest setup with any face photo
 

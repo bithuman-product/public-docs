@@ -42,7 +42,7 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 - [swift/ios-avatar](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
 - [swift/macos-voice](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
 
-> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-avatar`](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists in the `bithuman-apps` repo as a reference app, not a published code SDK.
+> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-avatar`](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
 
 ## Web & other languages
 

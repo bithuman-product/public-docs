@@ -71,7 +71,7 @@ Both methods return the same shape:
   "success": true,
   "message": "File uploaded successfully",
   "data": {
-    "file_url": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/YOUR_USER_ID/assets/docs/20260515_103000_document.pdf",
+    "file_url": "https://storage.bithuman.ai/bithuman/YOUR_USER_ID/assets/docs/20260515_103000_document.pdf",
     "original_source": "https://example.com/document.pdf",
     "file_type": "auto",
     "file_size": 1024000,

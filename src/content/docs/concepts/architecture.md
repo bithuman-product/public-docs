@@ -83,7 +83,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 1.19.1 | Adds `be_runtime_tick_compose_from_mel` — composing a tick directly from a mel feed. Current production baseline; covers every shipping SDK. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
+| **v7** | libessence 1.19.1 | Adds a streaming entry point (`be_runtime_tick_compose_from_mel`) that lets advanced callers drive a frame directly from precomputed audio features (mel spectrogram). Current production baseline; covers every shipping SDK. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
 | v5 and earlier | pre-1.16 | Retired — synchronous compose only, no streaming. |
 
@@ -128,10 +128,10 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. The 1.x line st
 |---|---|---|
 | **Mac M3+ (arm64)** | On-device | Demo app target |
 | **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
-| **iPhone** | Not supported | Exceeds the iOS per-app memory budget — use Essence |
-| **Android** | Not supported | Use Essence |
+| **iPhone** | Use Essence | Essence runs capable on-device avatars within iOS's per-app memory budget |
+| **Android** | Use Essence | Essence runs capable on-device avatars |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the [Docker container](/guides/deploy-self-hosted) |
-| **Mac Intel / Linux CPU / Windows / Raspberry Pi** | Not supported | Requires Apple Silicon or NVIDIA GPU |
+| **Mac Intel / Linux CPU / Windows / Raspberry Pi** | Use Essence or a server GPU | Expression runs on Apple Silicon or an NVIDIA GPU; Essence covers everything else on-device |
 
 ### Avatar resolutions
 

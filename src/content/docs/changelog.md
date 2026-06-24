@@ -12,7 +12,7 @@ order: 1
 
 ### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
 
-- **Streaming compose no longer degrades over a long utterance.** Self-hosted streaming previously re-fed the whole growing audio buffer to the engine on every tick, so its internal mel cache missed and recomputed from scratch — frame rate decayed across a long turn (an O(n²) cost). 2.3.10 binds libessence's incremental streaming surface (`push_audio` / `pull_frame` / `ticks_available` / `reset_stream`), holding a flat frame rate for the full utterance with byte-identical output. The stream is also reset at the start of each utterance so idle frames can't shift lip-sync.
+- **Streaming compose no longer degrades over a long utterance.** Self-hosted streaming now holds a steady frame rate for the full length of a turn (long utterances used to slow down as they grew), with byte-identical output. The audio stream also resets at the start of each turn so idle frames can't shift lip-sync.
 
 ### Python SDK `bithuman` 2.3.9 (2026-06-23) — barge-in / interrupt fix
 
@@ -36,7 +36,7 @@ order: 1
 - **PyPI wheel split.** `pip install bithuman` is now the Python SDK **library only** (~5 MB) — `from bithuman import AsyncBithuman` still works. The bitHuman CLI moved to the sibling [`bithuman-cli`](https://pypi.org/project/bithuman-cli/2.3.0/) wheel; install via `pip install bithuman-cli`, `brew install bithuman-product/bithuman/bithuman-cli` (the old `bithuman` formula keeps working as a deprecated alias), or the universal `curl -sSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh` installer — all three deliver the same Rust binary that prints `libessence 1.19.1 ABI 7 / bithuman 2.3.0` on `bithuman --version`.
 - **CLI surface trimmed.** The binary now exposes exactly six runtime subcommands: `run`, `render`, `info`, `pull`, `list`, `doctor` (plus `init` for scaffolding a new project — seven in total). Legacy 1.x verbs (`voice`, `text`, `avatar`, `stream`, `speak`, `action`, `generate`, `asr`, `tts`, `models pull|list`, `cleanup`) were removed during the 2.x line and stay removed.
 - **Wheel matrix.** The Python library [`bithuman`](https://pypi.org/project/bithuman/) ships on PyPI for **macOS arm64** *and* **Linux x86_64 + aarch64** (manylinux). The CLI wheel [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) is **macOS Apple Silicon only** on PyPI — on Linux, install the CLI via the universal `install.sh` / tarball, not pip. Python 3.10–3.14. *(Latest patches: `bithuman` 2.3.10, `bithuman-cli` 2.3.25.)*
-- **Four-repo architecture.** Engine, SDKs, and apps are now cleanly separated across two private repos and two public ones: `bithuman-sdk` *(private)* holds the `libessence` engine + Python / Swift / Kotlin / Rust SDKs + the `parity/` contract tests; `bithuman-apps` *(private)* holds the bitHuman CLI, the Flutter plugin, and the Expression reference apps; [`bithuman-sdk-public`](https://github.com/bithuman-product/bithuman-sdk-public) *(public)* is the docs source + examples + landing pages; [`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman) *(public)* is the tap + the universal `install.sh` + the tarball release mirror.
+- **Repo layout.** Public source lives in two repos: [`bithuman-sdk-public`](https://github.com/bithuman-product/bithuman-sdk-public) — docs source, runnable examples, and landing pages — and [`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman) — the Homebrew tap, universal `install.sh`, and tarball release mirror. The engine and language SDKs ship as prebuilt, statically linked artifacts on PyPI, SwiftPM, and Maven Central.
 - **`BITHUMAN_BRAIN_*` → `BITHUMAN_AGENT_*` env-var rename** (carried through from Wave 5 of the 2.x line): `BITHUMAN_AGENT_PORT`, `BITHUMAN_AGENT_PYTHON`, `BITHUMAN_AGENT_SCRIPT`. The old `BITHUMAN_BRAIN_*` names are still read with a deprecation warning.
 - **No external API breaks.** Python (`from bithuman import AsyncBithuman`), Swift (`import Bithuman`), and Kotlin (`ai.bithuman:sdk`) public APIs are unchanged from 2.2.x. Migration for existing `pip install bithuman && bithuman run` users is install-time only: `pip install bithuman-cli` (or `brew install bithuman-product/bithuman/bithuman-cli`) to keep the `bithuman` console-script.
 - **Engine ABI** bumps to `v7` (libessence 1.19.1) — adds `be_runtime_tick_compose_from_mel` (compose a tick directly from a mel feed). Additive on top of v6; old SDK builds keep working. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point and did not bump the ABI.)
@@ -51,7 +51,7 @@ order: 1
 
 ### Python SDK `bithuman` 2.2.1 (2026-05-25) — `bithuman-cli[local]` extra
 
-> **Note** 2.2.0 was tagged the day before but never published — PyPI rejected uploads with a bare `400 Bad Request`. 2.2.1 has identical source content plus a verbose-twine workflow tweak that surfaced the real cause: the `bithuman` project had reached its 10 GB PyPI storage cap. Deleting 6 superseded releases freed ~8.6 GB and unblocked the ship.
+> **Note** 2.2.0 was skipped; 2.2.1 is the first published build of this release, with identical source content. Install 2.2.1.
 
 - New `pip install 'bithuman-cli[local]'` extra adds a **fully on-device conversation brain** to `bithuman run`. Flip it on with `BITHUMAN_LOCAL=1`; no API key required, no outbound network.
 - Stack: `whisper.cpp` (STT) + `llama.cpp` (LLM, default Qwen 2.5 0.5B-Instruct Q4_K_M) + Supertonic 3 (TTS, 31 languages, voice M1 default) + Silero VAD. All in-process — no Ollama or other server.
@@ -78,7 +78,7 @@ order: 1
 
 ### Python SDK `bithuman` 2.0.0 (2026-05-22) — bundled-CLI release
 
-- `pip install bithuman` now ships a `bithuman` console-script that runs the full talk-to-your-avatar stack (Rust CLI + embedded livekit-server + agent-worker brain + browser UI). One install, one command, one URL — same Rust binary as the Homebrew CLI.
+- `pip install bithuman` now ships a `bithuman` console-script that runs the full talk-to-your-avatar stack (Rust CLI + embedded livekit-server + the agent brain (STT/LLM/TTS) + browser UI). One install, one command, one URL — same Rust binary as the Homebrew CLI.
 - The runtime library API (`import bithuman`, `AsyncBithuman`, `from bithuman import Avatar`) is unchanged — existing library consumers keep working.
 - The legacy 1.x Python CLI is preserved as the `essence-render` console-script.
 - Wheels: macOS arm64, Linux x86_64, Linux aarch64. Python 3.10+.
