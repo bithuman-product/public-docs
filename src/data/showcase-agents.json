@@ -8,7 +8,7 @@
       "kind": "human",
       "gender": "feminine",
       "category": "Entertainment",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A74NWD9723/image_20251122_000244_372799.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A74NWD9723/image_20251122_000244_372799.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A74NWD9723?model=expression"
     },
     {
@@ -19,7 +19,7 @@
       "kind": "human",
       "gender": "masculine",
       "category": "Entertainment",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A37QAW0225/image_20251122_095300_795835.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A37QAW0225/image_20251122_095300_795835.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A37QAW0225?model=expression"
     },
     {
@@ -30,7 +30,7 @@
       "kind": "human",
       "gender": "feminine",
       "category": "Education",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A43XYD7624/image_20251122_050207_852823.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A43XYD7624/image_20251122_050207_852823.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A43XYD7624?model=expression"
     },
     {
@@ -41,7 +41,7 @@
       "kind": "human",
       "gender": "masculine",
       "category": "Animals",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A23VKQ6520/default.jpg?",
+      "image": "https://assets.bithuman.ai/bithuman/A23VKQ6520/default.jpg?",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A23WJF0199?model=expression"
     },
     {
@@ -52,7 +52,7 @@
       "kind": "animal",
       "gender": "feminine",
       "category": "Entertainment",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A02GXF3393/image_20250818_040659_513784.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A02GXF3393/image_20250818_040659_513784.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A02GXF3393?model=expression"
     }
   ],
@@ -65,7 +65,7 @@
       "kind": "human",
       "gender": "feminine",
       "category": "Lifestyle",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A00FRB8328/image_20251122_072524_193325.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A00FRB8328/image_20251122_072524_193325.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A00FRB8328?model=essence"
     },
     {
@@ -76,7 +76,7 @@
       "kind": "human",
       "gender": "masculine",
       "category": "Education",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A00DFX1195/image_20251121_225204_834909.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A00DFX1195/image_20251121_225204_834909.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A00DFX1195?model=essence"
     },
     {
@@ -87,7 +87,7 @@
       "kind": "human",
       "gender": "masculine",
       "category": "Lifestyle",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A01FSP5051/image_20251122_060012_346934.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A01FSP5051/image_20251122_060012_346934.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A01FSP5051?model=essence"
     },
     {
@@ -98,7 +98,7 @@
       "kind": "animal",
       "gender": "masculine",
       "category": "Fiction",
-      "image": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/bithuman/A52CHG8880/image_20251122_053255_854135.jpg",
+      "image": "https://assets.bithuman.ai/bithuman/A52CHG8880/image_20251122_053255_854135.jpg",
       "embed": "https://agent.viewer.bithuman.ai/api/embed/A52CHG8880?model=essence"
     }
   ]
