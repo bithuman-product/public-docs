@@ -675,9 +675,9 @@ paths:
                   description: Gesture duration in seconds.
                 model:
                   type: string
-                  enum: [seedance, kling, auto]
-                  default: seedance
-                  description: Video model used for gesture generation. `auto` currently resolves to `seedance`. Any other value is rejected.
+                  enum: [auto]
+                  default: auto
+                  description: Gesture-video generation preset. Use `auto` (the recommended default).
       responses:
         "200":
           description: Dynamics generation started

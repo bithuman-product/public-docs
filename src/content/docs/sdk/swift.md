@@ -13,9 +13,9 @@ package that drops a real-time voice agent, with an optional lip-synced avatar,
 into your Mac, iPad, or iPhone app. The umbrella framework re-exports both
 on-device engines:
 
-- **Expression** — animates any portrait image at runtime (Wav2Vec2 → DiT →
-  VAE on the GPU + Neural Engine). Home of `VoiceChat` / `VoiceChatConfig` /
-  `AvatarConfig`.
+- **Expression** — animates any portrait image at runtime (speech encoder →
+  animator → face decoder on the GPU + Apple Neural Engine). Home of `VoiceChat` /
+  `VoiceChatConfig` / `AvatarConfig`.
 - **Essence** — the portable `libessence` C++ runtime that renders a pre-built
   `.imx` avatar (audio in, composed BGR frames out). Reached via
   `Bithuman.createRuntime(modelPath:)`.

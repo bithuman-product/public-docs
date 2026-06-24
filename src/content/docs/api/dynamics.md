@@ -23,7 +23,7 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `agent_id` | string | yes | — | Agent ID to generate dynamics for. |
 | `image_url` | string | no | from agent | Source image URL. Defaults to the agent's primary image. |
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
-| `model` | string | no | `seedance` | Video model: `seedance` (default), `kling`, or `auto` (resolves to `seedance`). Any other value is rejected. |
+| `model` | string | no | `auto` | Gesture-video generation preset. Leave as `auto` (the recommended default). |
 
 ```python
 import requests
@@ -31,7 +31,7 @@ import requests
 resp = requests.post(
     "https://api.bithuman.ai/v1/dynamics/generate",
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
-    json={"agent_id": "A91XMB7113", "duration": 5, "model": "seedance"},
+    json={"agent_id": "A91XMB7113", "duration": 5, "model": "auto"},
 )
 print(resp.json())
 ```
@@ -48,8 +48,7 @@ print(resp.json())
 **Duration guidance:** 1–3 s for quick gestures (waves, nods), 3–5 s for standard
 motions (default), 5–10 s for extended animations.
 
-**Model options:** `seedance` (default), `kling` (alternative video model),
-`auto` (currently resolves to `seedance`).
+**Model:** `auto` (the default) selects the recommended gesture-video backend.
 
 ## Get dynamics
 
