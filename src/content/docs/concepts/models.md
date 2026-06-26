@@ -18,7 +18,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
 - **Essence** — the avatar family (a packaged `.imx` identity with real-time lip-sync):
   - **Essence 1** — the default. Pre-built identity, runs on virtually any CPU.
   - **Essence 2 Quality** — the high-fidelity premium renderer (cloud GPU).
-  - **Essence 2 Standard** — the efficient distilled renderer (Apple-Silicon Neural
+  - **Essence 2 Mobile** — the efficient distilled renderer (Apple-Silicon Neural
     Engine primary, with elastic GPU overflow).
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
   - **Expression 1** — dynamic facial animation from any portrait image (Apple Silicon
