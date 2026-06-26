@@ -48,7 +48,7 @@ asynchronous and costs 250 credits; the call returns immediately with an
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
-| `model` | string | no | `essence` | Avatar runtime model — `essence` (default), `expression`, `elevate`, or `embody`. Invalid values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models). |
+| `model` | string | no | `essence` | Avatar model — `essence` (default) or `expression`. Invalid values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models). |
 
 ```python
 import requests
