@@ -10,6 +10,10 @@ order: 1
 
 ## June 2026
 
+### Model naming — versioned public taxonomy (2026-06-26)
+
+- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-mobile`**, **`expression-1`**, and **`expression-2`**. The older values **`essence`**, **`expression`**, **`elevate`**, and **`embody`** are now **deprecated aliases** — they keep working and resolve to the new names (`essence`→`essence-1`, `expression`→`expression-1`, `elevate`→`essence-2-quality`, `embody`→`expression-2`), so existing integrations and share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
+
 ### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
 
 - **Streaming compose no longer degrades over a long utterance.** Self-hosted streaming now holds a steady frame rate for the full length of a turn (long utterances used to slow down as they grew), with byte-identical output. The audio stream also resets at the start of each turn so idle frames can't shift lip-sync.

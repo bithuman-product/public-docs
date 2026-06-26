@@ -117,9 +117,16 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence, expression, elevate, embody]
-                  default: essence
-                  description: Avatar runtime model for the generated agent. See [Essence vs Expression](#tag/models).
+                  enum: [essence-1, essence-2-quality, essence-2-mobile, expression-1, expression-2, essence, expression, elevate, embody]
+                  default: essence-1
+                  description: >-
+                    Avatar runtime model for the generated agent. Public names:
+                    `essence-1`, `essence-2-quality`, `essence-2-mobile`, `expression-1`,
+                    `expression-2`. The legacy values `essence`, `expression`, `elevate`,
+                    and `embody` are **deprecated aliases** — still accepted, but they
+                    resolve to the names above (`essence`→`essence-1`,
+                    `expression`→`expression-1`, `elevate`→`essence-2-quality`,
+                    `embody`→`expression-2`). See [Essence vs Expression](#tag/models).
       responses:
         "200":
           description: Generation started
