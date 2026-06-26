@@ -13,19 +13,22 @@ bitHuman's avatar runtime is a family of **rendering engines** plus the
 between when packaging an avatar — and the focus of the rest of this page — are
 **Essence** and **Expression**.
 
-**Rendering engines**
+**Rendering engines** — two product families, each with tiers:
 
-- **Essence** — the default avatar renderer. Pre-built `.imx` identity, real-time
-  lip-sync, runs on virtually any CPU.
-- **Expression** — the heavier, high-fidelity renderer that animates any portrait
-  at runtime on Apple Silicon or an NVIDIA GPU.
-- **Embody** — the real-time generative engine: it produces fully-generated motion
-  rather than patching a pre-rendered base, running on-device (Apple Silicon) and on
-  cloud GPU.
-- **Elevate** — an on-device expression and animation engine for Apple Silicon,
-  powering native Mac and iPhone experiences.
-- **Flash** — an additional self-hosted GPU rendering tier (metered per the
-  [pricing](/guides/pricing) table).
+- **Essence** — the avatar family (a packaged `.imx` identity with real-time lip-sync):
+  - **Essence 1** — the default. Pre-built identity, runs on virtually any CPU.
+  - **Essence 2 Quality** — the high-fidelity premium renderer (cloud GPU).
+  - **Essence 2 Standard** — the efficient distilled renderer (Apple-Silicon Neural
+    Engine primary, with elastic GPU overflow).
+- **Expression** — the expressive family (animation driven from a portrait at runtime):
+  - **Expression 1** — dynamic facial animation from any portrait image (Apple Silicon
+    or NVIDIA GPU).
+  - **Expression 2** — the real-time generative engine: fully-generated motion rather
+    than patching a pre-rendered base.
+
+Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
+shape; the tier is selected per session and is transparent to your integration. (A
+separate self-hosted **Flash** GPU tier is metered per the [pricing](/guides/pricing) table.)
 
 **Conversation + voice stack** — drives a managed agent and feeds the renderers:
 
