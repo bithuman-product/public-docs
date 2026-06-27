@@ -117,16 +117,22 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence-1, essence-2-quality, essence-2-mobile, expression-1, expression-2, essence, expression, elevate, embody]
+                  enum: [essence-1, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression, elevate, embody, essence-2-mobile]
                   default: essence-1
                   description: >-
                     Avatar runtime model for the generated agent. Public names:
-                    `essence-1`, `essence-2-quality`, `essence-2-mobile`, `expression-1`,
-                    `expression-2`. The legacy values `essence`, `expression`, `elevate`,
-                    and `embody` are **deprecated aliases** — still accepted, but they
-                    resolve to the names above (`essence`→`essence-1`,
+                    `essence-1`, `essence-2-quality`, `essence-2-light`,
+                    `expression-1`, `expression-2`. Essence 2 has two tiers —
+                    **Quality** (`essence-2-quality`, high-fidelity cloud GPU)
+                    and **Light** (`essence-2-light`, the efficient distilled
+                    renderer). The legacy values `essence`, `expression`,
+                    `elevate`, `embody`, and `essence-2-mobile` are
+                    **deprecated aliases** — still accepted, but they resolve to
+                    the names above (`essence`→`essence-1`,
                     `expression`→`expression-1`, `elevate`→`essence-2-quality`,
-                    `embody`→`expression-2`). See [Essence vs Expression](#tag/models).
+                    `embody`→`expression-2`,
+                    `essence-2-mobile`→`essence-2-light`).
+                    See [Essence vs Expression](#tag/models).
       responses:
         "200":
           description: Generation started

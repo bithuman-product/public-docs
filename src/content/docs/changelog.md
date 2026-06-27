@@ -12,7 +12,7 @@ order: 1
 
 ### Model naming — versioned public taxonomy (2026-06-26)
 
-- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-mobile`**, **`expression-1`**, and **`expression-2`**. The older values **`essence`**, **`expression`**, **`elevate`**, and **`embody`** are now **deprecated aliases** — they keep working and resolve to the new names (`essence`→`essence-1`, `expression`→`expression-1`, `elevate`→`essence-2-quality`, `embody`→`expression-2`), so existing integrations and share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
+- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-light`**, **`expression-1`**, and **`expression-2`**. **Essence 2** ships in two tiers — **Quality** (`essence-2-quality`, the high-fidelity cloud GPU renderer) and **Light** (`essence-2-light`, the efficient distilled renderer). The older values **`essence`**, **`expression`**, **`elevate`**, **`embody`**, and **`essence-2-mobile`** are now **deprecated aliases** — they keep working and resolve to the new names (`essence`→`essence-1`, `expression`→`expression-1`, `elevate`→`essence-2-quality`, `embody`→`expression-2`, `essence-2-mobile`→`essence-2-light`), so existing integrations and share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
 
 ### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
 
