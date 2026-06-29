@@ -19,6 +19,8 @@ sessions bill per minute.
 | Agent generation (one-time, per avatar) | 250 credits |
 | Dynamics generation (one-time, per avatar) | 250 credits |
 | Book creation (one-time, per book) | 250 credits |
+| Talking video — Expression 2 | 4 credits/min (rounded up) |
+| Talking video — Essence 2 Quality | 8 credits/min (rounded up) |
 | Live session — Essence, self-hosted | 1 credit/min |
 | Live session — Essence, cloud | 2 credits/min |
 | Live session — Expression, self-hosted | 2 credits/min |

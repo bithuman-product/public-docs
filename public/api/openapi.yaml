@@ -833,6 +833,143 @@ paths:
                     type: string
                     description: Error message if regeneration_status is "failed".
 
+  /v1/video/generate:
+    post:
+      operationId: generateTalkingVideo
+      summary: Generate a talking video
+      description: |
+        Render an offline talking-video (mp4) from **text** or **audio**, driven by
+        one of your agents. Asynchronous: this returns immediately with a `job_id`;
+        poll [`GET /v1/video/{job_id}`](#operation/getTalkingVideo) for the finished
+        video URL.
+
+        - **Text input** — the agent's own voice speaks your `text` (text → speech →
+          render). Pass `input.voice` to override the voice for this render.
+        - **Audio input** — your `audio_url` (a hosted WAV/MP3) drives the render
+          directly.
+
+        The output is a public CDN URL. Limits: max **120 seconds** of output, max
+        **5000 characters** of text.
+      tags: [Video]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [model, input, agent_code]
+              properties:
+                model:
+                  type: string
+                  enum: [expression-2, essence-2-quality]
+                  description: |
+                    Avatar engine. `expression-2` (4 credits/min) or
+                    `essence-2-quality` (8 credits/min).
+                  example: "essence-2-quality"
+                agent_code:
+                  type: string
+                  description: An agent you own — provides the avatar identity (and, for text input, the default voice).
+                  example: "A91XMB7113"
+                input:
+                  type: object
+                  required: [type]
+                  properties:
+                    type:
+                      type: string
+                      enum: [text, audio]
+                    text:
+                      type: string
+                      maxLength: 5000
+                      description: Required when `type` is `text`. The script to speak.
+                      example: "Hello, welcome to bitHuman."
+                    voice:
+                      type: string
+                      description: Optional voice id override for text input. Defaults to the agent's own voice.
+                    audio_url:
+                      type: string
+                      description: Required when `type` is `audio`. A public URL to a WAV or MP3 file.
+                      example: "https://example.com/speech.wav"
+      responses:
+        "200":
+          description: Render job accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  job_id:
+                    type: string
+                    example: "vid_3f9a2c1b8e7d4a6f0b21"
+                  status:
+                    type: string
+                    enum: [processing]
+                    example: "processing"
+        "400":
+          description: Validation error — invalid model, missing input, or text/audio missing.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "402":
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (expression-2 = 4, essence-2-quality = 8 credits/min).
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/video/{job_id}:
+    get:
+      operationId: getTalkingVideo
+      summary: Get talking-video status
+      description: |
+        Poll a talking-video render job. While rendering, `status` is `processing`.
+        When done, `status` is `completed` and the response carries `video_url`,
+        `duration_seconds`, and `credits_charged`. On failure, `status` is `failed`
+        and the up-front charge is automatically refunded.
+      tags: [Video]
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "vid_3f9a2c1b8e7d4a6f0b21"
+      responses:
+        "200":
+          description: Job status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  job_id:
+                    type: string
+                  status:
+                    type: string
+                    enum: [processing, completed, failed]
+                  model:
+                    type: string
+                  video_url:
+                    type: string
+                    description: Public mp4 URL (present when status is `completed`).
+                  duration_seconds:
+                    type: number
+                    format: float
+                    description: Output duration in seconds (present when `completed`).
+                  credits_charged:
+                    type: integer
+                    description: Credits charged for this render (present when `completed`).
+                  error:
+                    type: object
+                    description: Failure detail (present when status is `failed`).
+                    properties:
+                      message:
+                        type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /v1/tts:
     post:
       operationId: synthesizeSpeech
