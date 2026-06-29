@@ -10,6 +10,10 @@ order: 1
 
 ## June 2026
 
+### Talking video generation — new API (2026-06-29)
+
+- **New endpoints: `POST /v1/video/generate` + `GET /v1/video/{job_id}`.** Render a finished **talking-video mp4** of one of your agents from **text** or **audio**. With text input, the agent's own voice speaks your script; with audio input, your hosted `audio_url` drives the render directly. The API is asynchronous — submit a job, then poll for the public mp4 URL, output duration, and credits charged. Launch engines: **`expression-2`** (4 credits/min) and **`essence-2-quality`** (8 credits/min), billed per minute of output **rounded up**; a failed render is automatically refunded. Limits: 120 seconds of output, 5000 characters of text. See [Talking video generation](/concepts/talking-video) and the [Video API reference](/api/video).
+
 ### Agent generation — v2 model names accepted (2026-06-29)
 
 - **`POST /v1/agent/generate` now accepts the v2 model names.** The `model` parameter takes **`essence-2-quality`**, **`expression-2`**, and **`essence-2-light`** as supported generation targets (alongside `essence-1` / `expression-1` and the deprecated legacy aliases). **`essence-2-quality`** and **`expression-2`** are **fully live now**. **`essence-2-light`** is a **supported generation model** — it produces a per-identity `.lebundle` via its dedicated trainer — but is currently **rollout-gated**: its agent generation turns on once its pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set; until then, generate Essence 2 agents with `essence-2-quality`. No change to existing integrations: the deprecated aliases and share links keep working unchanged.
