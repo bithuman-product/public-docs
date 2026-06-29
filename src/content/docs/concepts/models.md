@@ -20,9 +20,11 @@ between when packaging an avatar — and the focus of the rest of this page — 
   - **Essence 2 Quality** — the high-fidelity premium renderer (cloud GPU).
   - **Essence 2 Light** — the efficient distilled renderer (runs on CPU, the
     Apple-Silicon Neural Engine, or GPU, with elastic overflow). Formerly named
-    Essence 2 Mobile. *(Render tier: the `essence-2-light` model name is accepted
-    by `POST /v1/agent/generate`, but its agent-generation pipeline is not yet
-    enabled — generate Essence 2 agents with `essence-2-quality` for now.)*
+    Essence 2 Mobile. *(The `essence-2-light` model name is a supported
+    `POST /v1/agent/generate` target — it produces a per-identity `.lebundle` via
+    its dedicated trainer — but is currently rollout-gated (enabled once its
+    pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set); generate Essence 2
+    agents with `essence-2-quality` until that rollout completes.)*
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
   - **Expression 1** — dynamic facial animation from any portrait image (Apple Silicon
     or NVIDIA GPU).

@@ -12,7 +12,7 @@ order: 1
 
 ### Agent generation — v2 model names accepted (2026-06-29)
 
-- **`POST /v1/agent/generate` now accepts the v2 model names.** The `model` parameter takes **`essence-2-quality`** and **`expression-2`** as fully-supported generation targets (alongside `essence-1` / `expression-1` and the deprecated legacy aliases). **`essence-2-light`** is **accepted but its agent generation is not yet enabled** — it is the on-device / elastic render tier, not a distinct generation pipeline yet; until that ships, generate Essence 2 agents with `essence-2-quality`. No change to existing integrations: the deprecated aliases and share links keep working unchanged.
+- **`POST /v1/agent/generate` now accepts the v2 model names.** The `model` parameter takes **`essence-2-quality`**, **`expression-2`**, and **`essence-2-light`** as supported generation targets (alongside `essence-1` / `expression-1` and the deprecated legacy aliases). **`essence-2-quality`** and **`expression-2`** are **fully live now**. **`essence-2-light`** is a **supported generation model** — it produces a per-identity `.lebundle` via its dedicated trainer — but is currently **rollout-gated**: its agent generation turns on once its pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set; until then, generate Essence 2 agents with `essence-2-quality`. No change to existing integrations: the deprecated aliases and share links keep working unchanged.
 
 ### Model naming — versioned public taxonomy (2026-06-26)
 
