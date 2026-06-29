@@ -125,7 +125,16 @@ paths:
                     `expression-1`, `expression-2`. Essence 2 has two tiers —
                     **Quality** (`essence-2-quality`, high-fidelity cloud GPU)
                     and **Light** (`essence-2-light`, the efficient distilled
-                    renderer). The legacy values `essence`, `expression`,
+                    renderer). **All three are supported generation targets** at
+                    `POST /v1/agent/generate`. `essence-2-quality` and
+                    `expression-2` are **fully live now**. `essence-2-light` is a
+                    **supported generation model** — it produces a per-identity
+                    `.lebundle` via its dedicated trainer — but is currently
+                    **rollout-gated** (its agent generation is enabled once its
+                    pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set);
+                    until that rollout completes, pass `essence-2-quality` to
+                    generate an Essence 2 agent.
+                    The legacy values `essence`, `expression`,
                     `elevate`, `embody`, and `essence-2-mobile` are
                     **deprecated aliases** — still accepted, but they resolve to
                     the names above (`essence`→`essence-1`,

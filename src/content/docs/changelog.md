@@ -10,6 +10,10 @@ order: 1
 
 ## June 2026
 
+### Agent generation — v2 model names accepted (2026-06-29)
+
+- **`POST /v1/agent/generate` now accepts the v2 model names.** The `model` parameter takes **`essence-2-quality`**, **`expression-2`**, and **`essence-2-light`** as supported generation targets (alongside `essence-1` / `expression-1` and the deprecated legacy aliases). **`essence-2-quality`** and **`expression-2`** are **fully live now**. **`essence-2-light`** is a **supported generation model** — it produces a per-identity `.lebundle` via its dedicated trainer — but is currently **rollout-gated**: its agent generation turns on once its pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set; until then, generate Essence 2 agents with `essence-2-quality`. No change to existing integrations: the deprecated aliases and share links keep working unchanged.
+
 ### Model naming — versioned public taxonomy (2026-06-26)
 
 - **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-light`**, **`expression-1`**, and **`expression-2`**. **Essence 2** ships in two tiers — **Quality** (`essence-2-quality`, the high-fidelity cloud GPU renderer) and **Light** (`essence-2-light`, the efficient distilled renderer). The older values **`essence`**, **`expression`**, **`elevate`**, **`embody`**, and **`essence-2-mobile`** are now **deprecated aliases** — they keep working and resolve to the new names (`essence`→`essence-1`, `expression`→`expression-1`, `elevate`→`essence-2-quality`, `embody`→`expression-2`, `essence-2-mobile`→`essence-2-light`), so existing integrations and share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
