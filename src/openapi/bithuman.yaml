@@ -125,7 +125,13 @@ paths:
                     `expression-1`, `expression-2`. Essence 2 has two tiers —
                     **Quality** (`essence-2-quality`, high-fidelity cloud GPU)
                     and **Light** (`essence-2-light`, the efficient distilled
-                    renderer). The legacy values `essence`, `expression`,
+                    renderer). **Note:** `essence-2-quality` and `expression-2`
+                    are the fully-supported Essence-2 / Expression-2 generation
+                    targets. `essence-2-light` is **accepted but its agent
+                    generation is not yet enabled** — it is the on-device /
+                    elastic render tier; until its generation pipeline ships,
+                    pass `essence-2-quality` to generate an Essence 2 agent.
+                    The legacy values `essence`, `expression`,
                     `elevate`, `embody`, and `essence-2-mobile` are
                     **deprecated aliases** — still accepted, but they resolve to
                     the names above (`essence`→`essence-1`,
