@@ -3,7 +3,7 @@ title: "Authentication"
 description: "Get an API secret, set it for the right surface, and understand how it is exchanged for short-lived runtime tokens."
 section: api
 group: "Get started"
-order: 3
+order: 2
 ---
 
 ## One credential, two names

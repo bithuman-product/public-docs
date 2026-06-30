@@ -2,8 +2,8 @@
 title: "Video API"
 description: "Render a finished talking-video file (mp4) from text or audio with one of your agents."
 section: api
-group: "Assets"
-order: 35
+group: "Deliver"
+order: 20
 ---
 
 ## Overview

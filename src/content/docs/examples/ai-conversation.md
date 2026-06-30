@@ -79,6 +79,9 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 
 ## Next steps
 
+- [LiveKit integration](/sdk/livekit) — deploy a voice agent with a face.
+- [Building avatars](/guides/building-avatars) — use your own avatar.
+- [Embed widget](/guides/deploy-embed) — put it on your site.
 - [Python SDK](/sdk/python) — full API surface, LiveKit voice agents, troubleshooting.
 - [Audio streaming](/concepts/audio-streaming) — the `push_audio` / `flush` / `run` contract this example is built on.
 - [macos-voice example](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — fully on-device voice agent: speech never leaves your Mac.

@@ -104,6 +104,7 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 
 ## Next steps
 
-- [API reference](/api/reference) — every operation with a live console.
-- [API quickstart](/api/quickstart) — the guided path through your first calls.
-- [Agents](/api/agents) — the full generate → poll → speak lifecycle.
+- [API quickstart](/api/quickstart) — the full REST walkthrough
+- [Agents API](/api/agents) — generate and drive agents
+- [Embed widget](/api/embedding) — put the agent on a page
+- [API reference](/api/reference) — every operation with a live console

@@ -2,8 +2,8 @@
 title: "Errors"
 description: "The bitHuman API error format, HTTP status codes, and the full error-code catalog with resolution steps."
 section: api
-group: "Reference"
-order: 50
+group: "Operate & reference"
+order: 33
 ---
 
 ## Error response format

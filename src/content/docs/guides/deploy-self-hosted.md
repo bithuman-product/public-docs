@@ -3,7 +3,7 @@ title: "Self-hosted Expression GPU"
 description: "Run Expression on your own NVIDIA hardware with the published Docker image — a GPU worker that joins a LiveKit room and streams 25 FPS lip-synced video, with no cloud calls during inference."
 section: guides
 group: "Deploy"
-order: 21
+order: 11
 ---
 
 ## The Expression GPU container

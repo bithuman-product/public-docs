@@ -114,6 +114,6 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 
 ## Next steps
 
-- [Audio streaming](/concepts/audio-streaming) — the canonical `push_audio` / `flush` / `run` contract in depth.
-- [Python SDK](/sdk/python) — full API surface, LiveKit agents, troubleshooting.
-- [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice chat driving the avatar.
+- [Python SDK](/sdk/python) — the full on-device runtime reference.
+- [AI voice chat](/examples/ai-conversation) — add a conversational brain.
+- [Audio streaming](/concepts/audio-streaming) — the push/drain loop in depth.

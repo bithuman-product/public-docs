@@ -100,6 +100,8 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 
 ## Next steps
 
-- [Swift SDK](/sdk/swift) — full walkthrough: lifecycle, entitlements, device matrix.
+- [Swift SDK](/sdk/swift) — the full Apple SDK reference.
+- [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent.
+- [AI voice chat](/examples/ai-conversation) — add a conversational brain.
 - [macos-voice example](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.

@@ -2,8 +2,9 @@
 title: "Embedding API"
 description: "Mint short-lived JWT tokens from your backend and embed a talking avatar on any website via an iframe."
 section: api
-group: "Platform"
-order: 40
+group: "Deliver"
+order: 21
+label: "Embed widget"
 ---
 
 ## Embed an avatar

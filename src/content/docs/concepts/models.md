@@ -164,9 +164,10 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 **Expression** with `quality="high"`. Best for offline batch jobs rather than real-time streaming.
 
-## Where to go next
+## Next steps
 
-- [Quickstart](/api/quickstart) — get your first avatar running in ~2 minutes.
+- [Building avatars](/guides/building-avatars) — get or generate your first avatar.
+- [Pricing & credits](/guides/pricing) — what each model costs to run.
+- [SDK overview](/sdk/overview) — run a model on your own hardware.
 - [Architecture](/concepts/architecture) — engine layering and the full per-platform device matrix.
-- [Pricing](/guides/pricing) — credits, tiers, and what's metered.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how avatars are packaged.

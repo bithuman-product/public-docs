@@ -81,6 +81,8 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 
 ## Next steps
 
-- [CLI reference](/sdk/cli/overview) — every subcommand, cache layout, and flags.
+- [Commands](/sdk/cli/commands) — the full CLI surface.
+- [Local mode](/sdk/cli/local-mode) — run the whole stack offline.
+- [AI voice chat](/examples/ai-conversation) — a full conversational agent.
 - [Python — Hello, avatar](/examples/python-hello) — the same engine, in ~20 lines of code.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.

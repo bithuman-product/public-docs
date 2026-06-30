@@ -2,8 +2,8 @@
 title: "Text to speech"
 description: "Turn text into natural speech with bitHuman's real-time TTS — built-in voices, inline tuning, and shareable voice codes designed in the playground."
 section: api
-group: "Voice"
-order: 10
+group: "Build"
+order: 11
 ---
 
 bitHuman's text-to-speech runs the same in-house voice engine that powers live

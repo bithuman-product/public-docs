@@ -2,8 +2,8 @@
 title: "Browser rendering"
 description: "Move avatar rendering out of your server and into the user's tab — ONNX Runtime Web does the mel spectrogram, audio encoder, and frame compositing in WASM, so the video never leaves the machine."
 section: guides
-group: "On-device"
-order: 10
+group: "Build"
+order: 1
 ---
 
 ## ONNX in the user's tab

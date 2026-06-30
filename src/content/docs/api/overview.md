@@ -70,10 +70,11 @@ the code).
 
 ## Next steps
 
-- [Quickstart](/api/quickstart) — your first call in two minutes.
+- [Quickstart](/api/quickstart) — make your first API call and drive a live agent.
+- [Authentication](/api/authentication) — get an API secret and runtime tokens.
+- [Essence vs Expression](/concepts/models) — pick the right avatar model.
 - [API reference](/api/reference) — the interactive Scalar reference for every
   endpoint, with a live request console.
-- [Authentication](/api/authentication) — keys, runtime tokens, and rotation.
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational
   contract.
 - [MCP server](/guides/mcp-server) — call every endpoint as a tool from an AI agent.

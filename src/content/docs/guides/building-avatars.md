@@ -2,8 +2,8 @@
 title: "Building avatars"
 description: "Get a pre-built avatar or generate one from a portrait — media specs, the CO-STAR prompt framework, animal mode, and the agent-generation API."
 section: guides
-group: "Avatars"
-order: 2
+group: "Build"
+order: 0
 ---
 
 ## Two ways to get an avatar
@@ -132,8 +132,11 @@ The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`G
 
 Audio-only sessions are free. Full breakdown in [Pricing](/guides/pricing).
 
-## Where to go next
+## Next steps
 
+- [Deploy via LiveKit](/guides/deploy-livekit) — ship it to production.
+- [Embed widget](/guides/deploy-embed) — put it on your site in one line.
+- [Pricing & credits](/guides/pricing) — what it costs to run.
 - [Quickstart](/api/quickstart) — run your `.imx` in 2 minutes.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — inspect what you built.
 - [Agent lifecycle](/concepts/agent-lifecycle) — generate, poll, resolve, speak.

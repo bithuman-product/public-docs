@@ -24,9 +24,11 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
 // Optional explicit group ordering per section (groups not listed fall to the
 // end, ordered by the lowest page `order` within them).
 export const GROUP_ORDER: Partial<Record<SectionId, string[]>> = {
-  api: ["Get started", "Voice", "Agents", "Assets", "Platform", "Reference"],
+  // Verb-based groups that follow the build flow, so the longest sidebar stays scannable.
+  api: ["Get started", "Build", "Deliver", "Operate & reference"],
   sdk: ["Get started", "Languages", "Command line", "Real-time"],
-  concepts: ["Core", "Models", "Architecture"],
-  guides: ["Deploy", "On-device", "Avatars"],
+  // Lead with the defining product choice (Essence vs Expression) before the internals.
+  concepts: ["Models", "Core", "Architecture"],
+  guides: ["Build", "Deploy", "Integrate", "Pricing"],
   resources: ["Resources"],
 };

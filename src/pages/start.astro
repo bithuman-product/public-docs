@@ -1,0 +1,190 @@
+---
+import Base from "../layouts/Base.astro";
+import Button from "../components/Button.astro";
+import CodeTabs from "../components/CodeTabs.astro";
+import Playground from "../components/Playground.astro";
+
+// The canonical CLI happy path — kept in sync with src/content/docs/sdk/cli/install.md.
+const cliRun = [
+  {
+    label: "macOS / Linux",
+    lang: "bash",
+    code: `# 1 · install (Homebrew or the universal installer)
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+
+# 2 · sign in (opens your browser)
+bithuman login
+
+# 3 · grab an avatar and run it
+bithuman pull modern-court-jester
+bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
+# → open the printed http://127.0.0.1:8088 URL, grant mic, talk`,
+  },
+];
+
+const embed = [
+  {
+    label: "HTML",
+    lang: "html",
+    code: `<!-- Paste into any page. No API key, no install. -->
+<iframe
+  src="https://bithuman.ai/embed/A78WKV4515"
+  width="400" height="600"
+  allow="microphone; autoplay"
+  style="border:0;border-radius:16px">
+</iframe>`,
+  },
+];
+---
+
+<Base title="Get started — bitHuman docs" description="Go from zero to a talking, listening avatar — see one work with no setup, then pick how you run it.">
+  <!-- HERO -->
+  <section class="s-hero">
+    <div class="container">
+      <span class="eyebrow">Get started</span>
+      <h1>Your first visual agent</h1>
+      <p class="lede">A real-time avatar that sees, hears, and talks back. See one work right now with no setup — then choose how you want to run your own.</p>
+    </div>
+  </section>
+
+  <!-- STEP 1 — SEE IT WORK (no setup) -->
+  <section class="s-step">
+    <div class="container">
+      <div class="s-head">
+        <span class="s-num">1</span>
+        <div>
+          <h2>See one work — no setup</h2>
+          <p>Pick an agent and hit <strong>Launch</strong> to talk to a live avatar in your browser. No account, no install.</p>
+        </div>
+      </div>
+      <Playground />
+      <p class="s-note">Want it on your own site? Drop in one <code>&lt;iframe&gt;</code> — it needs no API key:</p>
+      <CodeTabs tabs={embed} title="Embed an agent" />
+    </div>
+  </section>
+
+  <!-- STEP 2 — PICK YOUR PATH -->
+  <section class="s-step alt">
+    <div class="container">
+      <div class="s-head">
+        <span class="s-num">2</span>
+        <div>
+          <h2>Choose how you run it</h2>
+          <p>There's only one real decision: let us host it, or run it on your own hardware. You can switch later — it's the same engine and the same avatars either way.</p>
+        </div>
+      </div>
+
+      <div class="fork">
+        <div class="fork-card">
+          <span class="fork-tag">Cloud</span>
+          <h3>Use the cloud API</h3>
+          <p>We host the GPU. Call simple REST endpoints to generate, host, and drive avatars. Best for web apps and zero-ops backends.</p>
+          <ul>
+            <li>No infrastructure to run</li>
+            <li>Works from any language over HTTP</li>
+          </ul>
+          <Button href="/api/quickstart">Start with the API →</Button>
+        </div>
+
+        <div class="fork-card">
+          <span class="fork-tag">On-device</span>
+          <h3>Run it yourself (SDK)</h3>
+          <p>Run avatars on your own hardware — Python, Swift, the browser, or a single CLI command. Private, low-latency, offline-capable.</p>
+          <ul>
+            <li>Your machine, your data</li>
+            <li>Python · Swift · Web · CLI</li>
+          </ul>
+          <Button href="/sdk/overview" variant="secondary">Get the SDK →</Button>
+        </div>
+      </div>
+
+      <div class="nudge">
+        <p><strong>Not sure?</strong> Most people start on-device — it's three commands to a talking avatar in your browser:</p>
+        <CodeTabs tabs={cliRun} title="Run locally with the CLI" />
+        <p class="s-note">Full walkthrough: <a href="/sdk/cli/install">Install the CLI →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 — GOOD TO KNOW -->
+  <section class="s-step">
+    <div class="container">
+      <div class="s-head">
+        <span class="s-num">3</span>
+        <div>
+          <h2>Two ideas worth knowing</h2>
+          <p>That's all the vocabulary you need to read the rest of the docs.</p>
+        </div>
+      </div>
+      <div class="ideas">
+        <div class="idea">
+          <h3>Essence vs Expression</h3>
+          <p><strong>Essence</strong> is the default — a ready-made avatar that runs on-device, even on CPU. <strong>Expression</strong> turns any portrait into a talking agent (needs a GPU or Apple Silicon). <a href="/concepts/models">Compare them →</a></p>
+        </div>
+        <div class="idea">
+          <h3>The <code>.imx</code> file</h3>
+          <p>Every avatar is one portable <code>.imx</code> file. The same file plays back identically across Python, Swift, the browser, and the CLI. <a href="/concepts/avatars-imx">How avatars work →</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHERE NEXT -->
+  <section class="s-next">
+    <div class="container">
+      <h2>Where to next</h2>
+      <div class="next-row">
+        <a class="next-card" href="/examples">Examples <span>Copy-paste starting points for every path</span></a>
+        <a class="next-card" href="/guides">Guides <span>Build, deploy, embed, and price your agent</span></a>
+        <a class="next-card" href="/showcase">Showcase <span>See what teams have shipped</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .s-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
+  .s-hero h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
+  .s-hero .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
+
+  .s-step { padding-block: var(--space-9); border-bottom: 1px solid var(--color-border); }
+  .s-step.alt { background: var(--color-surface-2); }
+  .s-head { display: flex; gap: var(--space-4); align-items: flex-start; margin-bottom: var(--space-6); max-width: 70ch; }
+  .s-num { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-weight: var(--fw-bold); font-size: var(--ft-md); }
+  .s-head h2 { font-size: var(--fh-xl); }
+  .s-head p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-lg); }
+  .s-note { margin-top: var(--space-4); color: var(--color-text-tertiary); font-size: var(--ft-sm); }
+  .s-note a { color: var(--color-primary); font-weight: var(--fw-medium); }
+
+  /* fork */
+  .fork { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .fork-card { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
+  .fork-tag { align-self: flex-start; padding: 0.2rem 0.6rem; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-xs); font-weight: var(--fw-medium); margin-bottom: var(--space-3); }
+  .fork-card h3 { font-size: var(--fh-md); }
+  .fork-card > p { margin-top: var(--space-2); color: var(--color-text-secondary); }
+  .fork-card ul { margin: var(--space-3) 0 var(--space-5); padding-left: 1.1rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .fork-card ul li { margin: 0.25rem 0; }
+  .fork-card :global(.btn) { margin-top: auto; align-self: flex-start; }
+
+  .nudge { margin-top: var(--space-6); padding: var(--space-5); border: 1px dashed var(--color-border-strong); border-radius: var(--r-xl); }
+  .nudge > p:first-child { margin-bottom: var(--space-3); color: var(--color-text-secondary); }
+
+  /* ideas */
+  .ideas { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .idea { padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
+  .idea h3 { font-size: var(--ft-lg); }
+  .idea p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .idea a { color: var(--color-primary); font-weight: var(--fw-medium); }
+
+  /* next */
+  .s-next { padding-block: var(--space-9); }
+  .s-next h2 { font-size: var(--fh-lg); margin-bottom: var(--space-5); }
+  .next-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+  .next-card { display: flex; flex-direction: column; gap: 0.3rem; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); font-weight: var(--fw-medium); transition: all var(--t-med) var(--ease); }
+  .next-card span { font-weight: var(--fw-regular); color: var(--color-text-tertiary); font-size: var(--ft-sm); }
+  .next-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+  @media (max-width: 820px) {
+    .fork, .ideas, .next-row { grid-template-columns: 1fr; }
+  }
+</style>

@@ -2,8 +2,8 @@
 title: "Agents API"
 description: "Generate avatar agents, poll their status, retrieve and update them, then make them speak or inject knowledge into live sessions."
 section: api
-group: "Agents"
-order: 20
+group: "Build"
+order: 10
 ---
 
 ## The agent lifecycle

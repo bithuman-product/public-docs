@@ -3,7 +3,7 @@ title: "Deploy via LiveKit"
 description: "The fastest path to production — drop a bitHuman avatar into any LiveKit agent worker with the cloud plugin. Managed runtime, ~5-minute setup."
 section: guides
 group: "Deploy"
-order: 20
+order: 10
 ---
 
 ## The cloud plugin

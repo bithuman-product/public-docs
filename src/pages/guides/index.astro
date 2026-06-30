@@ -3,16 +3,10 @@ import Hub from "../../components/Hub.astro";
 
 const groups = [
   {
-    label: "Build agents",
+    label: "Build",
     featured: true,
     cards: [
       { title: "Building avatars", desc: "Get a pre-built agent or generate one from a single portrait.", href: "/guides/building-avatars" },
-      { title: "Pricing & credits", desc: "How credits work, per-minute rates, and the free tier.", href: "/guides/pricing" },
-    ],
-  },
-  {
-    label: "On-device",
-    cards: [
       { title: "Browser rendering (WASM)", desc: "Render the agent in the user's browser via WebAssembly.", href: "/guides/browser-rendering" },
     ],
   },
@@ -22,6 +16,18 @@ const groups = [
       { title: "LiveKit", desc: "Ship to production fast with the managed LiveKit plugin.", href: "/guides/deploy-livekit" },
       { title: "Self-hosted", desc: "Run Expression on your own GPU with Docker.", href: "/guides/deploy-self-hosted" },
       { title: "Embed", desc: "Drop a live agent into any page with an iframe + embed token.", href: "/guides/deploy-embed" },
+    ],
+  },
+  {
+    label: "Integrate",
+    cards: [
+      { title: "MCP server", desc: "Drive bitHuman from any AI agent — Claude, Cursor — over Model Context Protocol.", href: "/guides/mcp-server" },
+    ],
+  },
+  {
+    label: "Pricing",
+    cards: [
+      { title: "Pricing & credits", desc: "How credits work, per-minute rates, and the free tier.", href: "/guides/pricing" },
     ],
   },
 ];

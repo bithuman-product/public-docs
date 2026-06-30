@@ -2,8 +2,8 @@
 title: "Webhooks"
 description: "Receive signed event notifications when async work finishes — register an endpoint, verify the HMAC signature, and inspect delivery attempts."
 section: api
-group: "Platform"
-order: 42
+group: "Operate & reference"
+order: 31
 ---
 
 Agent generation is asynchronous (2–5 minutes). Instead of polling

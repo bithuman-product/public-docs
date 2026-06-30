@@ -2,8 +2,8 @@
 title: "Billing API"
 description: "Read a user's live credit balance and per-mode minute estimates, and understand how credits are consumed."
 section: api
-group: "Platform"
-order: 41
+group: "Operate & reference"
+order: 30
 ---
 
 ## The credits model
@@ -145,3 +145,8 @@ balance use `GET /v2/credit-summaries` above.
 
 See [Rate limits](/api/rate-limits) for the plan-tiered request limits and the
 full [error reference](/api/errors).
+
+## Next steps
+
+- [Pricing & credits](/guides/pricing) — how credits and per-minute rates work
+- [Rate limits](/api/rate-limits) — quotas and limits per endpoint

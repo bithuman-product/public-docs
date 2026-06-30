@@ -2,8 +2,8 @@
 title: "Pricing & credits"
 description: "How bitHuman bills — credits per active minute by model and surface, the free tier, plans, and how to check your balance."
 section: guides
-group: "Avatars"
-order: 1
+group: "Pricing"
+order: 30
 ---
 
 ## How billing works
@@ -131,9 +131,9 @@ The current heartbeat finishes, then subsequent heartbeats fail. The Python / Do
 
 Yes. Each session bills independently while it's actively generating frames, and you can run as many as your credit balance supports. Self-hosted deployments are bounded only by your own hardware.
 
-## Where to go next
+## Next steps
 
+- [Billing API](/api/billing) — credit summaries over REST.
+- [Building avatars](/guides/building-avatars) — create an agent to run.
 - [Models](/concepts/models) — Essence vs Expression.
-- [Building avatars](/guides/building-avatars) — what generation costs and how to do it.
 - [Deploy via LiveKit](/guides/deploy-livekit) — the cloud-metered path.
-- [API reference](/api/reference) — the full credit-summaries schema.

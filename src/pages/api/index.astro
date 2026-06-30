@@ -3,35 +3,44 @@ import Hub from "../../components/Hub.astro";
 
 const groups = [
   {
-    label: "Get started",
+    label: "Start here",
     featured: true,
     cards: [
       { title: "Quickstart", desc: "Make your first API call and drive a live agent in minutes.", href: "/api/quickstart" },
-      { title: "Authentication", desc: "API secrets, runtime tokens, and per-SDK key setup.", href: "/api/authentication" },
+      { title: "Authentication", desc: "API secrets, runtime tokens, and key setup.", href: "/api/authentication" },
     ],
   },
   {
-    label: "Agents",
+    label: "Build",
     cards: [
       { title: "Agents", desc: "Generate, resolve, update, and drive agents — speak & add context.", href: "/api/agents" },
-      { title: "Embedding", desc: "Mint embed tokens and drop a live agent into any page.", href: "/api/embedding" },
-      { title: "Billing", desc: "Credit summaries and the realtime usage model.", href: "/api/billing" },
+      { title: "Text to speech", desc: "31-language TTS, OpenAI-compatible voice endpoints.", href: "/api/text-to-speech" },
+      { title: "Gestures & animations", desc: "Trigger waves, nods, and idle motion via the Dynamics API.", href: "/api/dynamics" },
+      { title: "File upload", desc: "Upload portraits and assets for agent generation.", href: "/api/files" },
     ],
   },
   {
-    label: "Reference",
+    label: "Deliver",
+    cards: [
+      { title: "Talking video", desc: "Render a finished MP4 from text or audio — submit and poll.", href: "/api/video" },
+      { title: "Embed widget", desc: "Mint a token and drop a live agent into any page.", href: "/api/embedding" },
+    ],
+  },
+  {
+    label: "Operate & reference",
     cards: [
       { title: "API reference", desc: "Full, interactive endpoint reference with try-it-out.", href: "/api/reference", badge: "Interactive" },
+      { title: "Billing", desc: "Credit summaries and the realtime usage model.", href: "/api/billing" },
+      { title: "Webhooks", desc: "Subscribe to agent and render lifecycle events.", href: "/api/webhooks" },
       { title: "Rate limits", desc: "Quotas and limits per endpoint.", href: "/api/rate-limits" },
-      { title: "Overview", desc: "How the REST platform fits together.", href: "/api/overview" },
     ],
   },
 ];
 ---
 <Hub
-  eyebrow="API Platform"
+  eyebrow="Cloud API"
   title="API Platform"
-  tagline="Generate, manage, and animate realtime visual agents over REST — voice, dynamics, files, and embedding, all from api.bithuman.ai."
-  ctas={[{ label: "Quickstart", href: "/api/quickstart" }, { label: "API reference", href: "/api/reference", variant: "secondary" }]}
+  tagline="Generate, manage, and animate realtime visual agents over REST — voice, gestures, files, and embedding, all from api.bithuman.ai. We host everything; you just call the endpoints."
+  ctas={[{ label: "New here? Start here", href: "/start" }, { label: "API reference", href: "/api/reference", variant: "secondary" }]}
   groups={groups}
 />

@@ -3,7 +3,7 @@ title: "API quickstart"
 description: "Pick an existing agent and get a live, talking avatar on your page in two steps — no agent generation required."
 section: api
 group: "Get started"
-order: 2
+order: 1
 ---
 
 The fastest way to start: **pick an agent that already exists and embed it.**
@@ -120,8 +120,9 @@ embed it exactly like step 2. See [Agents](/api/agents) for the full lifecycle.
 
 ## Next steps
 
+- [Authentication](/api/authentication) — keys, tokens, and how auth works.
+- [Agents API](/api/agents) — generate, update, and drive agents.
+- [Embed widget](/api/embedding) — drop your agent into any page.
 - [API reference](/api/reference) — every endpoint with a live console.
-- [Embedding](/api/embedding) — production embed tokens and the iframe flow.
-- [Authentication](/api/authentication) — runtime tokens and key rotation.
 - [Python SDK](/sdk/python) — the same engine, in-process, with the canonical
   [push-audio/drain-frames loop](/concepts/audio-streaming).
