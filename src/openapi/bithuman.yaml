@@ -134,12 +134,14 @@ paths:
                     pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set);
                     until that rollout completes, pass `essence-2-quality` to
                     generate an Essence 2 agent.
-                    The legacy values `essence`, `expression`,
-                    `elevate`, `embody`, and `essence-2-mobile` are
-                    **deprecated aliases** — still accepted, but they resolve to
-                    the names above (`essence`→`essence-1`,
-                    `expression`→`expression-1`, `elevate`→`essence-2-quality`,
-                    `embody`→`expression-2`,
+                    The bare `essence` and `expression` are **canonical
+                    version-shorthands** — they resolve to the current default
+                    of each family (`essence`→`essence-1`,
+                    `expression`→`expression-1`).
+                    The old engine names `elevate`, `embody`, and
+                    `essence-2-mobile` are **deprecated aliases** — still
+                    accepted, but they resolve to the names above
+                    (`elevate`→`essence-2-quality`, `embody`→`expression-2`,
                     `essence-2-mobile`→`essence-2-light`).
                     See [Essence vs Expression](#tag/models).
       responses:
