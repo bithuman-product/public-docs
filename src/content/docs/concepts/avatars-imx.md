@@ -8,7 +8,7 @@ order: 2
 
 ## What an `.imx` is
 
-Every bitHuman avatar is packaged as a single `.imx` file — a self-contained bundle of identity weights, textures, voice config, and metadata that the [`libessence`](/concepts/architecture) engine reads to animate one specific face. The same file plays back byte-identically on every runtime: [Python](/sdk/python), [Swift](/sdk/swift), [Kotlin](/sdk/android), and the [CLI](/cli).
+Every bitHuman avatar is packaged as a single `.imx` file — a self-contained bundle of identity weights, textures, voice config, and metadata that the [`libessence`](/concepts/architecture) engine reads to animate one specific face. The same file plays back byte-identically on every runtime: [Python](/sdk/python), [Swift](/sdk/swift), and the [CLI](/sdk/cli/overview).
 
 ## Where `.imx` files come from
 
@@ -52,7 +52,7 @@ Cache locations by surface:
 
 | Surface | Cache location |
 |---|---|
-| Python / Swift / Kotlin (Essence) | `~/.cache/bithuman/models/` |
+| Python / Swift (Essence) | `~/.cache/bithuman/models/` |
 | Showcase pulls (CLI) | `~/.cache/bithuman/showcase/` |
 | Swift (Expression on Mac/iPad) | `~/.cache/bithuman/expression/` |
 
@@ -84,4 +84,4 @@ The `.imx` format is **forward-compatible within a major version**. The first ti
 - [Building avatars](/guides/building-avatars) — design likeness, voice, and personality.
 - [Audio streaming](/concepts/audio-streaming) — drive the `.imx` with audio.
 - [Agent lifecycle](/concepts/agent-lifecycle) — generate, resolve, and go live.
-- [CLI reference](/cli) — `bithuman info`, `pull`, `list`, and more.
+- [CLI reference](/sdk/cli/overview) — `bithuman info`, `pull`, `list`, and more.

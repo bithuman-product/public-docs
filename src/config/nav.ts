@@ -4,7 +4,6 @@
 
 export type SectionId =
   | "api"
-  | "cli"
   | "sdk"
   | "concepts"
   | "guides"
@@ -13,8 +12,9 @@ export type SectionId =
 
 export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
   api: { label: "API Platform", home: "/api" },
-  cli: { label: "CLI", home: "/cli" },
-  sdk: { label: "Apps SDK", home: "/sdk" },
+  // The SDK pillar now covers every way to build with bitHuman on your own
+  // hardware — the language bindings and the command-line tool — as one section.
+  sdk: { label: "SDK", home: "/sdk" },
   concepts: { label: "Concepts", home: "/concepts" },
   guides: { label: "Guides", home: "/guides" },
   examples: { label: "Examples", home: "/examples" },
@@ -25,8 +25,7 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
 // end, ordered by the lowest page `order` within them).
 export const GROUP_ORDER: Partial<Record<SectionId, string[]>> = {
   api: ["Get started", "Voice", "Agents", "Assets", "Platform", "Reference"],
-  cli: ["Get started", "Usage", "Guides"],
-  sdk: ["Overview", "Languages", "Real-time", "Advanced"],
+  sdk: ["Get started", "Languages", "Command line", "Real-time"],
   concepts: ["Core", "Models", "Architecture"],
   guides: ["Deploy", "On-device", "Avatars"],
   resources: ["Resources"],

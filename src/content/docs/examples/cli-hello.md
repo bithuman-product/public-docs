@@ -37,7 +37,7 @@ export OPENAI_API_KEY=sk-...
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~900 MB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline. (The `[local]` pip extra is macOS Apple Silicon — see [Local mode](/cli/local-mode) for the Linux path.)
+4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~900 MB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline. (The `[local]` pip extra is macOS Apple Silicon — see [Local mode](/sdk/cli/local-mode) for the Linux path.)
 
 ```bash
 pip install 'bithuman-cli[local]'
@@ -81,6 +81,6 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 
 ## Next steps
 
-- [CLI reference](/cli) — every subcommand, cache layout, and flags.
+- [CLI reference](/sdk/cli/overview) — every subcommand, cache layout, and flags.
 - [Python — Hello, avatar](/examples/python-hello) — the same engine, in ~20 lines of code.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.

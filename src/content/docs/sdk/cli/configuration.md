@@ -1,9 +1,9 @@
 ---
 title: "Configuration"
 description: "Environment variables, cache layout, and cloud-vs-on-device brain selection for the bitHuman CLI."
-section: cli
-group: "Usage"
-order: 11
+section: sdk
+group: "Command line"
+order: 33
 ---
 
 ## Environment variables
@@ -12,8 +12,8 @@ order: 11
 | --- | --- |
 | `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. The easiest way to set this is `bithuman login` (stores it in the OS keychain); set it manually for CI / automation. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer). |
 | `OPENAI_API_KEY` | Cloud conversation brain (OpenAI Realtime). Required for `bithuman run` unless `BITHUMAN_LOCAL=1` is set. |
-| `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman-cli[local]'`. See [Local mode](/cli/local-mode). |
-| `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). Brain-side — read by the Python agent, not the CLI binary. See [Local mode tuning](/cli/local-mode). |
+| `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman-cli[local]'`. See [Local mode](/sdk/cli/local-mode). |
+| `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). Brain-side — read by the Python agent, not the CLI binary. See [Local mode tuning](/sdk/cli/local-mode). |
 | `BITHUMAN_INSTRUCTIONS` | System-prompt override for the conversation brain. Brain-side — read by the Python agent, not the CLI binary. |
 | `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn`. |
 
@@ -33,7 +33,7 @@ it mints a per-device key and stores it in the keychain so commands just
 work across sessions. The manual env path stays fully supported for CI,
 containers, and headless automation — `export BITHUMAN_API_SECRET=…` (it
 takes priority over a logged-in key, which is handy for testing a specific
-secret). See [Commands → Signing in](/cli/commands#signing-in).
+secret). See [Commands → Signing in](/sdk/cli/commands#signing-in).
 
 ### Startup config file
 
@@ -70,7 +70,7 @@ BITHUMAN_LOCAL=1 bithuman run avatar.imx
 ```
 
 Both modes go through the same `bithuman run` command and produce the
-same browser URL. See [Local mode](/cli/local-mode) for the full
+same browser URL. See [Local mode](/sdk/cli/local-mode) for the full
 on-device stack and tuning variables.
 
 ## Cache layout
@@ -98,6 +98,6 @@ with another process.
 
 ## See also
 
-- [Install](/cli/install) — install channels and `doctor`
-- [Commands](/cli/commands) — subcommand and flag reference
-- [Local mode](/cli/local-mode) — the on-device brain stack
+- [Install](/sdk/cli/install) — install channels and `doctor`
+- [Commands](/sdk/cli/commands) — subcommand and flag reference
+- [Local mode](/sdk/cli/local-mode) — the on-device brain stack

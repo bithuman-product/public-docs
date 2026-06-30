@@ -22,7 +22,7 @@ pip install bithuman
 **Python 3.10–3.14** supported; the latest release on
 [PyPI](https://pypi.org/project/bithuman/) is **2.3.10**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
-the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host.)
+the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a different host.)
 
 > **macOS note** The 2.3.x macOS wheels are tagged for **macOS 26+ (arm64)**.
 > On older macOS versions `pip install bithuman` fails with
@@ -33,7 +33,7 @@ the 2.x matrix — use WSL2, or fall back to the [CLI](/cli) on a different host
 > AsyncBithuman` — and ships cross-platform wheels (macOS arm64 + Linux
 > x86_64/aarch64). For the command-line tool, install the sibling
 > [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) — via Homebrew or the
-> [universal installer](/cli/install) on macOS/Linux; `pip install bithuman-cli`
+> [universal installer](/sdk/cli/install) on macOS/Linux; `pip install bithuman-cli`
 > is **macOS Apple Silicon only**. Both share the same `libessence` engine.
 
 > **Linux CA certificates — fixed in 2.3.4.** The SDK auto-discovers your
@@ -167,8 +167,8 @@ Runtime execution provider. Most users should stick to `AsyncBithuman` /
 ## Native acceleration
 
 The wheel ships a native extension `bithuman/_core.cpython-3X-<platform>.so` — a
-pybind11 binding to the shared `libessence` engine that also powers the Swift,
-Kotlin, and Rust SDKs. You never import `_core` directly; it loads automatically
+pybind11 binding to the shared `libessence` engine that also powers the Swift
+and Rust SDKs. You never import `_core` directly; it loads automatically
 behind `AsyncBithuman`. `bithuman.__core_version__` reports the engine version;
 `bithuman.__abi_version__` reports the C ABI.
 
@@ -211,7 +211,7 @@ self-hosted. See the [LiveKit page](/sdk/livekit) for the full deploy path.
 For private, no-cloud operation, install the `[local]` extra on the **CLI**
 package and set `BITHUMAN_LOCAL=1`. The conversation brain swaps from OpenAI
 Realtime to an entirely in-process stack (whisper.cpp + llama.cpp + Supertonic +
-Silero) — no API key, no outbound network. See [local mode](/cli/local-mode).
+Silero) — no API key, no outbound network. See [local mode](/sdk/cli/local-mode).
 
 ## System requirements
 
@@ -300,4 +300,4 @@ alive between sessions in production.
 - [Audio streaming](/concepts/audio-streaming) — the canonical push/drain loop
 - [Models](/concepts/models) — Essence models and the `.imx` format
 - [LiveKit](/sdk/livekit) — WebRTC voice agents with a face
-- [CLI](/cli) — no-code render and live chat, same engine
+- [CLI](/sdk/cli/overview) — no-code render and live chat, same engine

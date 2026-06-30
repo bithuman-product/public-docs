@@ -1802,7 +1802,6 @@ x-tagGroups:
     tags:
       - sdk-python
       - sdk-swift
-      - sdk-kotlin
       - sdk-flutter
       - cli
   - name: Guides
@@ -1859,7 +1858,7 @@ tags:
       ### One engine, every surface
 
       A single Rust engine (`libessence`) drives the bitHuman CLI, the
-      Python / Swift / Kotlin / Flutter SDKs, and the cloud REST API.
+      Python / Swift / Flutter SDKs, and the cloud REST API.
       They all read the same `.imx` file and produce identical
       frames — pick the surface that matches what you're building;
       the mental model never changes.
@@ -2032,7 +2031,7 @@ tags:
 
       - [Models](#tag/models) — Essence vs Expression
       - [Authentication](#tag/auth-guide) — set keys for every SDK
-      - [Python SDK](#tag/sdk-python) · [Swift SDK](#tag/sdk-swift) · [Kotlin SDK](#tag/sdk-kotlin)
+      - [Python SDK](#tag/sdk-python) · [Swift SDK](#tag/sdk-swift)
       - [Browse the API endpoints →](#tag/Voice)
 
   - name: auth-guide
@@ -2045,7 +2044,7 @@ tags:
       names depending on which SDK you're using:
 
       - **`BITHUMAN_API_SECRET`** — Python SDK, REST API, LiveKit
-        plugin, Kotlin SDK, CLI.
+        plugin, CLI.
       - **`BITHUMAN_API_KEY`** — Swift SDK on Apple platforms. Same
         value, different env-var name to match Apple convention.
 
@@ -2149,7 +2148,7 @@ tags:
       | **Expression** | Animates *any* portrait at runtime. Higher close-up quality; needs more compute. | Native desktop apps, per-session custom faces, GPU cloud |
 
       Both speak the same `push audio → drain frames` shape across
-      Python, Swift, Kotlin, and Flutter.
+      Python, Swift, and Flutter.
 
       ### Essence
 
@@ -2496,34 +2495,6 @@ tags:
 
       [Full Swift SDK reference →](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/README.md)
 
-  - name: sdk-kotlin
-    x-displayName: Kotlin SDK
-    description: |
-      ## Kotlin SDK
-
-      ```kotlin
-      // app/build.gradle.kts
-      android {
-          defaultConfig {
-              ndk { abiFilters += setOf("arm64-v8a") }
-              minSdk = 29
-          }
-      }
-      dependencies {
-          implementation("ai.bithuman:sdk:1.17.1")
-      }
-      ```
-
-      ```kotlin
-      import ai.bithuman.sdk.Bithuman
-
-      val runtime = Bithuman.createRuntime("/path/to/avatar.imx")
-      ```
-
-      AAR ships `arm64-v8a`, Android 10+.
-
-      [Full Kotlin SDK reference →](https://github.com/bithuman-product/bithuman-sdk-public)
-
   - name: sdk-flutter
     x-displayName: Flutter plugin
     description: |
@@ -2535,7 +2506,7 @@ tags:
         bithuman: ^1.16.0
       ```
 
-      One Dart codebase across macOS, iOS, and Android, with built-in
+      One Dart codebase across macOS and iOS, with built-in
       per-platform echo cancellation.
 
       Pub.dev publish is pending — request the git-dep URL on
@@ -2888,7 +2859,7 @@ tags:
 
       - **SDK release notes** —
         [github.com/bithuman-product/bithuman-sdk-public/releases](https://github.com/bithuman-product/bithuman-sdk-public/releases)
-        for tagged releases across Python, Swift, Kotlin, and Flutter.
+        for tagged releases across Python, Swift, and Flutter.
       - **Downloads page** —
         [releases.bithuman.ai](https://releases.bithuman.ai) for
         pre-built wheels, the platform support matrix, and the
@@ -2905,7 +2876,7 @@ tags:
       | REST API | URL path (`/v1/`, `/v2/`) — never breaks at minor |
       | Python SDK | Semver — minor bumps may add params; major bumps may rename |
       | Swift SDK | Semver — floor `0.8.1` per Package.swift (current release `0.8.2`) |
-      | Kotlin / Flutter SDKs | Semver — pinned in `build.gradle` / `pubspec.yaml` |
+      | Flutter SDK | Semver — pinned in `pubspec.yaml` |
       | `.imx` file format | Forward-compatible within a major; auto-upgraded on first load |
 
   - name: support

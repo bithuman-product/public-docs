@@ -45,7 +45,7 @@ bithuman --version
 bithuman doctor   # full host + key + cache check
 ```
 
-See the [CLI reference](/cli) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
+See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
 
 ### Python SDK (library) — GA
 
@@ -79,19 +79,6 @@ SwiftPM dependencies.
 
 The product import is `import bitHumanKit`. See the [Swift SDK guide](/sdk/swift).
 
-### Android / Kotlin SDK — Beta
-
-Self-contained Android AAR via Maven Central. `arm64-v8a`, Android 10+.
-
-```kotlin
-// app/build.gradle.kts
-dependencies {
-    implementation("ai.bithuman:sdk:2.3.6")
-}
-```
-
-See the [Kotlin SDK guide](/sdk/android).
-
 ### JavaScript / TypeScript — Preview
 
 A cloud client for browser and Node apps. Preview status — APIs may change.
@@ -116,15 +103,14 @@ No install required. Authenticate with the `api-secret` header against `https://
 
 2.3.0 is the first **split-wheel** release: the Python library (`pip install bithuman`) and the CLI binary (`pip install bithuman-cli` or `brew install bithuman-product/bithuman/bithuman-cli`) are now separate packages. Pre-2.3 PyPI bundled both — 2.2.x with the bundled CLI is still on PyPI and works, but consider it legacy; pin to 2.3+ for new projects.
 
-| Platform | CLI binary | Python wheel | Swift SDK | Kotlin SDK |
-|---|---|---|---|---|
-| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM | — |
-| **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — | — |
-| **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — | — |
-| **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — | — |
-| **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — | — |
-| **iOS / iPadOS** | — | — | SwiftPM | — |
-| **Android** | — | — | — | Maven Central `ai.bithuman:sdk` |
+| Platform | CLI binary | Python wheel | Swift SDK |
+|---|---|---|---|
+| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
+| **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
+| **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
+| **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
+| **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
+| **iOS / iPadOS** | — | — | SwiftPM |
 
 macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck on either, the 1.x line still has Windows wheels and a macOS-Intel build — pin the whole Python stack there until those targets graduate into the 2.x distribution.
 
@@ -134,7 +120,6 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 |---|---|---|---|
 | Python SDK (`bithuman`) | **2.3.10** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/bithuman-sdk-public) | v7 |
-| Kotlin SDK (`ai.bithuman:sdk`) | 2.3.6 | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/sdk) | v7 |
 | bitHuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
 Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.10 wheel on the backend — is supported and tested as long as the ABI columns line up.
@@ -149,7 +134,6 @@ Two avatar models, different hardware floors. For a side-by-side feature compari
 | **iPad Pro M4+** | Yes | Yes | Swift |
 | **Mac (Apple Silicon)** | Yes | Yes (M3+) | Swift, Python, CLI |
 | **Mac (Intel)** | Pending in 2.3 | No | — (use 1.x wheel) |
-| **Android (`arm64-v8a`)** | Yes | No | Kotlin |
 | **Browser (WASM)** | Yes | No | JavaScript / TS&nbsp;† |
 | **Linux x86_64 / aarch64** | Yes (CPU) | Yes (NVIDIA GPU) | Python, CLI |
 | **Windows** | Pending (WSL2 today) | No | — |
@@ -169,7 +153,6 @@ The default avatar model. Runs on virtually every supported platform — the rig
 | **Apple M-series Mac** | Real-time, large memory headroom | Any Apple Silicon (arm64) |
 | **iPhone 16 Pro+** | Real-time, smallest memory footprint | iOS 26 |
 | **iPad Pro M4+** | Real-time | Pairs comfortably with an on-device LLM |
-| **Android (`arm64-v8a`)** | Real-time | Snapdragon 8 Gen 2+, Android 10+ |
 | **Linux x86_64 / aarch64** | Real-time | Python SDK, modern CPU + 4 GB RAM |
 | **Intel Mac** | Pending in 2.3 | Use 1.x wheel or run via Linux x86_64 |
 | **Windows x86_64** | WSL2 today | Run under WSL2; native wheels on the roadmap |
@@ -187,7 +170,6 @@ Heavier high-fidelity model. Runs on Apple Silicon on-device (demo apps) or on N
 | **Mac M3+ (arm64)** | On-device | Demo app target |
 | **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
 | **iPhone 16 Pro+** | Preview | Needs the increased-memory entitlement; on-device validation in progress. Prefer Essence for production. |
-| **Android** | Use Essence | Essence runs on `arm64-v8a` today |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
 | **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression needs Apple Silicon or an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |

@@ -1,9 +1,10 @@
 ---
 title: "Local mode — zero-cloud conversation"
 description: "Run a fully on-device avatar brain — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one env-var flip. No API key, no outbound network, ~1.5 GB RAM."
-section: cli
-group: "Guides"
-order: 20
+section: sdk
+group: "Command line"
+order: 34
+label: "Local mode"
 ---
 
 ## The on-device brain
@@ -25,7 +26,7 @@ BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 The `[local]` extra is published on the `bithuman-cli` package, whose PyPI
 wheel is **macOS Apple Silicon (arm64) only** today (Python 3.10–3.14) — so
 `pip install 'bithuman-cli[local]'` is a macOS-arm64 path. On Linux, install
-the CLI with the universal installer (see [CLI install](/cli/install)); the
+the CLI with the universal installer (see [CLI install](/sdk/cli/install)); the
 `[local]` brain bundle is not yet packaged for Linux. (The `bithuman-cli`
 wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
 
@@ -44,7 +45,7 @@ wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
 - **Latency floor below network RTT** — when the speed of light to the
   nearest cloud region is itself the bottleneck.
 - **Mobile portability ramp** — the same C++ cores (whisper.cpp,
-  llama.cpp, ONNX Runtime) have first-party iOS and Android builds, and
+  llama.cpp, ONNX Runtime) have first-party iOS builds, and
   run the exact same model files.
 
 ## The stack
@@ -146,7 +147,7 @@ deployments, size it up too (1.5B+ recommended for non-English fluency).
 | Languages | OpenAI-supported | 31 (Supertonic) for TTS; Whisper coverage for STT |
 | RAM | ~300 MB (just the avatar) | ~1.5 GB |
 | Latency floor | ~400–600 ms (network) | ~800 ms first-audio (compute-bound) |
-| Mobile path | not applicable | iOS / Android via the same `.gguf` / `.bin` / `.onnx` |
+| Mobile path | not applicable | iOS via the same `.gguf` / `.bin` / `.onnx` |
 
 Both modes use the same Rust CLI, the same brain entrypoint
 (`bithuman.agent`), and the same `AvatarSession` plugin. One env var is
@@ -215,7 +216,7 @@ file name in `BITHUMAN_LOCAL_LLM_FILE` is wrong).
 
 ## See also
 
-- [CLI overview](/cli) — one binary, the same engine as the SDKs
-- [Configuration](/cli/configuration) — environment variables and cache layout
+- [CLI overview](/sdk/cli/overview) — one binary, the same engine as the language SDKs
+- [Configuration](/sdk/cli/configuration) — environment variables and cache layout
 - [Audio streaming](/concepts/audio-streaming) — the push-audio / drain-frames loop
 - [Python SDK](/sdk/python) — programmatic access to the same runtime

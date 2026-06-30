@@ -16,7 +16,6 @@ Every project below is open-source under [bithuman-product/bithuman-sdk-public/E
 | The smallest streaming loop in code | [Python — Hello, avatar](/examples/python-hello) | Python | ~5 min |
 | Call the platform from any language | [REST — Hello, avatar](/examples/rest-hello) | `curl` | ~5 min |
 | A talking voice assistant on a Mac/iPad/iPhone | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min |
-| An avatar on an Android phone or tablet | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min |
 | Full voice conversation, mic in / avatar out | [AI voice chat](/examples/ai-conversation) | Python | ~10 min |
 
 > **Note** New here? The fastest end-to-end demo is the [CLI — Hello, avatar](/examples/cli-hello): one `brew install`, one command, a talking avatar in your browser. No code.
@@ -35,10 +34,9 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 - [python/local-essence](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence) — Essence on your own CPU box. Ships `quickstart.py`, `microphone.py`, `conversation.py`, plus a web UI at `http://localhost:4202`.
 - [python/cloud-essence](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-essence) — Essence on bitHuman cloud + LiveKit + browser UI. Start here for production agents.
 
-## Native apps — Swift & Kotlin
+## Native apps — Swift
 
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package.
-- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — Maven Central AAR + `Avatar.load` on `arm64-v8a`.
 - [swift/ios-avatar](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
 - [swift/macos-voice](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
 

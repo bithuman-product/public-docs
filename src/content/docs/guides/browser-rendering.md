@@ -28,7 +28,7 @@ https://agent.viewer.bithuman.ai/?rendering_mode=avatar&model_url=<IMX_URL>
 - **You're paying for avatar GPU on the server.** Browser mode renders the avatar on the user's device, so the server runs only the conversation pipeline (speech-to-text, LLM, text-to-speech) — no avatar GPU.
 - **Privacy.** The rendered video never leaves the user's machine. Useful for kiosks, healthcare, education.
 - **Offline / cached.** In `avatar` mode the IMX is cached in IndexedDB after the first load. Subsequent sessions need no network for the avatar — the brain still does.
-- **Cross-device parity.** The same WASM pipeline runs in Safari / Chrome / Firefox on macOS, Windows, Linux, iOS, and Android. No per-platform native build.
+- **Cross-device parity.** The same WASM pipeline runs in Safari / Chrome / Firefox on macOS, Windows, Linux, and iOS. No per-platform native build.
 
 ## The three rendering modes
 

@@ -59,5 +59,5 @@ Cross-Origin-Embedder-Policy: require-corp
 ## See also
 
 For a supported render path today, use a server-rendered or native target:
-[Python](/sdk/python), [Swift](/sdk/swift), or [Android](/sdk/android), or the
+[Python](/sdk/python) or [Swift](/sdk/swift), or the
 platform embed via the [Browser rendering guide](/guides/browser-rendering).

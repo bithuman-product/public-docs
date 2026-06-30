@@ -6,7 +6,7 @@ const groups = [
     label: "Get started",
     featured: true,
     cards: [
-      { title: "Which SDK should I use?", desc: "On-device vs cloud, per-platform support, and the status of each binding.", href: "/sdk/overview" },
+      { title: "Which should I use?", desc: "Libraries vs CLI, on-device vs cloud, and the status of every binding.", href: "/sdk/overview" },
       { title: "Python", desc: "pip install bithuman — the GA on-device runtime + cloud client.", href: "/sdk/python", badge: "GA" },
     ],
   },
@@ -14,23 +14,34 @@ const groups = [
     label: "Languages",
     cards: [
       { title: "Swift (Apple)", desc: "iOS, iPadOS, macOS via SwiftPM. On-device, Apple Silicon.", href: "/sdk/swift", badge: "Preview" },
-      { title: "Android (Kotlin)", desc: "On-device avatars on Android via Gradle.", href: "/sdk/android", badge: "Beta" },
       { title: "JavaScript / TypeScript", desc: "Cloud client over LiveKit for web and Node.", href: "/sdk/javascript", badge: "Preview" },
       { title: "WebAssembly (Browser)", desc: "Run agents fully in the browser via WASM — no server GPU.", href: "/sdk/wasm", badge: "New" },
+    ],
+  },
+  {
+    label: "Command line",
+    cards: [
+      { title: "bitHuman CLI", desc: "One binary runs the whole avatar stack — same engine as the libraries, no code.", href: "/sdk/cli/overview" },
+      { title: "Install", desc: "One curl command — macOS (Apple Silicon) and Linux.", href: "/sdk/cli/install" },
+      { title: "Commands", desc: "run, render, info, pull, list, doctor — the full surface.", href: "/sdk/cli/commands" },
+      { title: "Configuration", desc: "Env vars, cache layout, and cloud vs on-device brain.", href: "/sdk/cli/configuration" },
+      { title: "Local mode", desc: "Run the whole stack offline — STT, LLM, TTS, all on-device.", href: "/sdk/cli/local-mode", badge: "Offline" },
+      { title: "For agents", desc: "The stable --json contract + built-in MCP server for driving the CLI from an AI agent.", href: "/sdk/cli/agents" },
     ],
   },
   {
     label: "Real-time",
     cards: [
       { title: "LiveKit transport", desc: "Connect an Apple app to a served or cloud agent — Session & Agent API.", href: "/sdk/livekit" },
+      { title: "Voice agent + avatar", desc: "A realtime conversational agent with a live, lip-synced face.", href: "/examples/ai-conversation" },
     ],
   },
 ];
 ---
 <Hub
-  eyebrow="Apps SDK"
-  title="Apps SDK"
-  tagline="Embed lifelike, realtime visual agents natively in your app — on-device or over the cloud — from Python, Apple, Android, or the browser."
-  ctas={[{ label: "Which SDK?", href: "/sdk/overview" }, { label: "Browse showcase", href: "/showcase", variant: "secondary" }]}
+  eyebrow="SDK"
+  title="SDK"
+  tagline="Embed lifelike, realtime visual agents on your own hardware — from Python, Apple, or the browser, or drive the whole stack from a single CLI command. On-device or over the cloud, one engine everywhere."
+  ctas={[{ label: "Which should I use?", href: "/sdk/overview" }, { label: "Browse showcase", href: "/showcase", variant: "secondary" }]}
   groups={groups}
 />

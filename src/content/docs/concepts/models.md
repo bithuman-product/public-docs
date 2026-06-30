@@ -69,7 +69,6 @@ Both ship to every surface — SDKs, REST API, LiveKit plugin, CLI, on-device, e
 | **iOS / iPadOS** | iPhone 16 Pro+, iPad Pro M4+ | iPad Pro M4+ (iPhone 16 Pro+ preview) |
 | **macOS arm64** | Any Apple Silicon | M3+ |
 | **macOS Intel** | Pending (2.3 ships arm64 only) | — |
-| **Android** | `arm64-v8a`, Android 10+ | — |
 | **Linux x86_64 / aarch64** | Any modern CPU | via NVIDIA GPU (Docker) |
 | **Windows** | Pending (use WSL2 today) | — |
 | **Raspberry Pi 4B+** | Supported | — |
@@ -86,7 +85,7 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 **Runtime characteristics**
 
 - ~200–500 MB resident, 1–2 CPU cores, real-time at 25 FPS.
-- Runs on macOS arm64, Linux x86_64 / aarch64, iOS, iPadOS, Android, Raspberry Pi 4B+, and in the browser via WASM.
+- Runs on macOS arm64, Linux x86_64 / aarch64, iOS, iPadOS, Raspberry Pi 4B+, and in the browser via WASM.
 - No idle timeout — sessions can run 24/7. Reliable for unattended kiosks and lobby displays.
 - Supports custom gestures (wave, nod, laugh) triggered by keywords or API.
 - Predictable, consistent behavior. Lower per-stream cost — the right pick for high-concurrency self-hosted deployments.
@@ -105,8 +104,7 @@ bithuman run modern-court-jester.imx   # live browser-served avatar
 
 - [Python SDK](/sdk/python) — self-host on macOS arm64 + Linux x86_64 / aarch64.
 - [Swift SDK](/sdk/swift) — native Mac, iPad, iPhone apps.
-- [Kotlin SDK](/sdk/android) — native Android apps (Beta).
-- [bitHuman CLI](/cli) — no code, terminal or browser.
+- [bitHuman CLI](/sdk/cli/overview) — no code, terminal or browser.
 - [REST API](/api/reference) — backend integration in any language.
 - [Cloud LiveKit plugin](/guides/deploy-livekit) — managed, no infrastructure.
 - [Embed widget](/guides/deploy-embed) — drop-in iframe for websites.
@@ -129,7 +127,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 - [Cloud LiveKit plugin](/guides/deploy-livekit) — bitHuman hosts the GPU worker (set `model="expression"`).
 - [Self-hosted GPU](/guides/deploy-self-hosted) — your own NVIDIA GPU via the Docker container.
 - [On-device macOS / iPadOS](/sdk/swift) — Apple Silicon M3+, via the Swift SDK.
-- [bitHuman CLI](/cli) — `bithuman run` with an Expression `.imx`.
+- [bitHuman CLI](/sdk/cli/overview) — `bithuman run` with an Expression `.imx`.
 - [REST API](/api/reference) — same endpoint as Essence; the model is selected per agent.
 
 ## Which should I use?
@@ -141,10 +139,6 @@ Expression generates real-time facial animation directly from a portrait image. 
 ### iPhone app
 
 **Essence.** On iPhone, choose Essence; iPad and Mac are the on-device homes for Expression.
-
-### Android app
-
-**Essence** via the [Kotlin SDK](/sdk/android) (Beta).
 
 ### Native Mac or iPad app with close-up dynamic faces
 

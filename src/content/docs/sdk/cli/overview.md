@@ -1,19 +1,19 @@
 ---
 title: "bitHuman CLI"
 description: "One Rust binary that runs the whole avatar stack — live browser avatar, offline render, model introspection — from a single command."
-section: cli
-group: "Get started"
-order: 0
-label: "Overview"
+section: sdk
+group: "Command line"
+order: 30
+label: "CLI"
 ---
 
-## One binary, the same engine as the SDKs
+## One binary, the same engine as the libraries
 
-`bithuman` is a single command-line binary that runs the entire avatar
-stack without writing any code. It is built on `libessence` — the same
-Rust engine that powers the [Python](/sdk/python), [Swift](/sdk/swift),
-and Kotlin SDKs and the [cloud REST API](/api/reference). They all read
-the same `.imx` avatar file and produce identical frames, so anything you
+`bithuman` is the command-line member of the [SDK](/sdk) family — a single
+binary that runs the entire avatar stack without writing any code. It is built
+on `libessence` — the same engine that powers the [Python](/sdk/python) and
+[Swift](/sdk/swift) libraries and the [cloud REST API](/api/reference). They all
+read the same `.imx` avatar file and produce identical frames, so anything you
 prove out with the CLI ports straight into your application.
 
 The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
@@ -34,11 +34,11 @@ bithuman run avatar.imx
 per-device credential in your OS keychain so every other command
 authenticates automatically — no `export BITHUMAN_API_SECRET`. (That manual
 path still works for CI and automation; see
-[Configuration](/cli/configuration).)
+[Configuration](/sdk/cli/configuration).)
 
 Under the hood `bithuman run` stands up an embedded `livekit-server`, a
 `libessence` avatar runtime, a conversation brain (cloud or
-[on-device](/cli/local-mode)), and a browser landing page. That single
+[on-device](/sdk/cli/local-mode)), and a browser landing page. That single
 command is the fastest way to get a talking, listening avatar in your
 browser. Beyond live chat, the CLI can render an MP4 offline, inspect an
 `.imx` file, browse and download showcase avatars, and run a full host
@@ -61,7 +61,7 @@ sanity check.
 
 `bithuman --version` prints the `libessence` engine, ABI tag, and CLI
 versions. Every subcommand accepts `--help`. See
-[Commands](/cli/commands) for the full flag reference.
+[Commands](/sdk/cli/commands) for the full flag reference.
 
 ## Two ways to talk to the avatar
 
@@ -85,12 +85,12 @@ The conversation brain is pluggable. Both paths go through the same
 > brain, and the `[local]` on-device brain extra
 > (`pip install 'bithuman-cli[local]'`). Install the CLI via Homebrew or the
 > universal installer on macOS (Apple Silicon) and Linux; `pip install
-> bithuman-cli` is **macOS Apple Silicon only**. See [Install](/cli/install).
+> bithuman-cli` is **macOS Apple Silicon only**. See [Install](/sdk/cli/install).
 
 ## Next steps
 
-- [Install the CLI](/cli/install) — Homebrew, universal installer, or PyPI
-- [Commands](/cli/commands) — full subcommand and flag reference
-- [Configuration](/cli/configuration) — environment variables and cache layout
-- [Local mode](/cli/local-mode) — the fully on-device brain
+- [Install the CLI](/sdk/cli/install) — Homebrew, universal installer, or PyPI
+- [Commands](/sdk/cli/commands) — full subcommand and flag reference
+- [Configuration](/sdk/cli/configuration) — environment variables and cache layout
+- [Local mode](/sdk/cli/local-mode) — the fully on-device brain
 - [Python SDK](/sdk/python) — programmatic access to the same runtime

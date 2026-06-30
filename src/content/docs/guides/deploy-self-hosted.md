@@ -10,7 +10,7 @@ order: 21
 
 The self-hosted GPU path runs [Expression](/concepts/models) on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams 25 FPS lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. Bills at the self-hosted rate (2 cr/min Expression).
 
-> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/cli) directly, or point the LiveKit plugin's `api_url` at your own Essence server. On Apple Silicon M3+, Expression runs natively with no Docker/NVIDIA — use the [Swift SDK](/sdk/swift).
+> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli/overview) directly, or point the LiveKit plugin's `api_url` at your own Essence server. On Apple Silicon M3+, Expression runs natively with no Docker/NVIDIA — use the [Swift SDK](/sdk/swift).
 
 ## Pull and run
 

@@ -8,7 +8,7 @@ import { getCollection } from "astro:content";
 export const prerender = true;
 
 const SITE = "https://docs.bithuman.ai";
-const ORDER = ["api", "cli", "sdk", "concepts", "guides", "examples", "resources"];
+const ORDER = ["api", "sdk", "concepts", "guides", "examples", "resources"];
 
 export const GET: APIRoute = async () => {
   const docs = await getCollection("docs", (e: any) => !e.data.draft);
@@ -21,8 +21,8 @@ export const GET: APIRoute = async () => {
   let out = `# bitHuman — full documentation\n\n`;
   out +=
     `> Real-time, lip-synced AI avatar platform. Push 16-bit PCM audio in, ` +
-    `drain 25 FPS lip-synced video frames out — on-device (macOS/Linux/iOS/` +
-    `Android) or via a cloud REST API. This file concatenates the entire docs ` +
+    `drain 25 FPS lip-synced video frames out — on-device (macOS/Linux/iOS) ` +
+    `or via a cloud REST API. This file concatenates the entire docs ` +
     `site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 
   for (const d of docs) {

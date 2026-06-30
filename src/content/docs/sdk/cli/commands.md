@@ -1,9 +1,9 @@
 ---
 title: "Commands"
 description: "Full reference for the bithuman subcommands — run, render, info, pull, list, doctor, init, the auth commands (login/logout), and mcp — with flags and examples."
-section: cli
-group: "Usage"
-order: 10
+section: sdk
+group: "Command line"
+order: 32
 ---
 
 ## Subcommand overview
@@ -22,7 +22,7 @@ Every subcommand accepts `--help` for the full flag listing.
 | `bithuman pull <slug>` | Download a showcase avatar |
 | `bithuman list` | Browse the showcase avatar catalog |
 | `bithuman doctor` | Host + auth + cache sanity check |
-| `bithuman mcp` | Run the built-in MCP server for AI agents (stdio); `bithuman mcp tools` lists the tools. See [driving from an AI agent](/cli/agents). |
+| `bithuman mcp` | Run the built-in MCP server for AI agents (stdio); `bithuman mcp tools` lists the tools. See [driving from an AI agent](/sdk/cli/agents). |
 | `bithuman --version` | Print `libessence` + ABI + CLI versions |
 
 ## Signing in
@@ -95,7 +95,7 @@ Every command looks for the credential in this order — first match wins:
 
 So a key you `export` always overrides a logged-in one — handy for testing a
 specific secret without logging out. See
-[Configuration](/cli/configuration) for the manual path in full.
+[Configuration](/sdk/cli/configuration) for the manual path in full.
 
 ## `bithuman init` — credential wizard
 
@@ -111,14 +111,14 @@ It prompts for your `BITHUMAN_API_SECRET` and writes it to
 conversation brain, and pulls a showcase avatar (e.g. `modern-court-jester`)
 so you have something to run immediately. `~/.bithuman/config` is loaded at every CLI
 startup, so the secret persists across sessions without re-exporting it.
-See [Configuration](/cli/configuration) for the full set of variables it
+See [Configuration](/sdk/cli/configuration) for the full set of variables it
 manages.
 
 ## `bithuman run` — live avatar
 
 The headline command. From one invocation it stands up an embedded
 `livekit-server`, a `libessence` runtime, the conversation brain (cloud
-OpenAI Realtime or the [on-device](/cli/local-mode) stack per
+OpenAI Realtime or the [on-device](/sdk/cli/local-mode) stack per
 `BITHUMAN_LOCAL`), and a browser landing page.
 
 ```bash
@@ -136,7 +136,7 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 >   `BITHUMAN_LOCAL=1`)
 >
 > Without one of these the avatar renders but has no brain. See
-> [Configuration](/cli/configuration) and [Local mode](/cli/local-mode).
+> [Configuration](/sdk/cli/configuration) and [Local mode](/sdk/cli/local-mode).
 
 Common flags:
 
@@ -204,7 +204,7 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
 Pulled avatars land in `~/.cache/bithuman/showcase/`. See
-[Configuration](/cli/configuration) for the full cache layout.
+[Configuration](/sdk/cli/configuration) for the full cache layout.
 
 ## `bithuman doctor` — install sanity check
 
@@ -216,5 +216,5 @@ exits `0` only if both avatar auth and a brain path are configured:
 bithuman doctor && bithuman run avatar.imx
 ```
 
-See [Install](/cli/install) for the full breakdown of what `doctor`
+See [Install](/sdk/cli/install) for the full breakdown of what `doctor`
 reports.

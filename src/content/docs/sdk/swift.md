@@ -111,7 +111,7 @@ runtime.resetStream()                        // at end-of-utterance
 
 This is the Apple expression of the [audio-streaming push/drain
 loop](/concepts/audio-streaming) — the same `Fixture`/`Runtime` contract as the
-Python and Kotlin SDKs.
+Python SDK.
 
 ## Permissions + entitlements
 
@@ -205,4 +205,4 @@ Working as intended. Branch on `HardwareCheck.evaluate()`.
 - [SDK overview](/sdk) — which SDK to pick
 - [LiveKit (Apple)](/sdk/livekit) — connect a native app to a cloud-hosted avatar
 - [Models](/concepts/models) — Essence vs Expression
-- [CLI](/cli) — no-code Mac terminal tool, same engine
+- [CLI](/sdk/cli/overview) — no-code Mac terminal tool, same engine

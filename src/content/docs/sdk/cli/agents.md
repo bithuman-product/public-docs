@@ -1,9 +1,9 @@
 ---
 title: "Driving the CLI from an AI agent"
 description: "The stable, machine-facing contract for the bitHuman CLI: global --json with schema_version, sysexits exit codes, structured errors, and the built-in MCP server. Read once and drive every command without scraping help text."
-section: cli
-group: "Reference"
-order: 50
+section: sdk
+group: "Command line"
+order: 35
 label: "For agents"
 ---
 

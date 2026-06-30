@@ -85,6 +85,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
     <article class="doc-main">
       <div class="doc-crumb">
         <a href="/">Docs</a> <span>/</span> <a href={meta.home}>{meta.label}</a>
+        {entry.data.group && (<Fragment><span>/</span><span class="crumb-cur">{entry.data.group}</span></Fragment>)}
       </div>
       <div class="prose">
         <h1>{entry.data.title}</h1>
@@ -169,6 +170,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
   .doc-crumb a { color: var(--color-text-tertiary); }
   .doc-crumb a:hover { color: var(--color-primary); }
   .doc-crumb span { margin: 0 0.3rem; }
+  .doc-crumb .crumb-cur { margin: 0; color: var(--color-text-secondary); }
   .doc-lede { font-size: var(--ft-lg); color: var(--color-text-secondary); margin-top: 0 !important; }
   .doc-pager { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
   .pager { display: flex; flex-direction: column; gap: 0.2rem; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); transition: all var(--t-fast) var(--ease); max-width: 48%; }

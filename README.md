@@ -29,7 +29,7 @@ src/
   pages/
     index.astro          Landing page (OpenAI-style: hero + pillars + showcase)
     api/reference.astro  Scalar API reference (renders public/api/openapi.yaml)
-    {api,cli,sdk,...}/   Pillar + resource pages (stubs during migration)
+    {api,sdk,...}/       Pillar + resource pages (stubs during migration)
   openapi/bithuman.yaml  OpenAPI 3.1 spec -> synced to public/api/openapi.yaml
 public/
   images/                Brand + agent imagery referenced across pages
@@ -37,11 +37,10 @@ public/
 
 ## Information architecture
 
-Three product pillars + resources, mirroring developers.openai.com:
+Two product pillars + resources, mirroring developers.openai.com:
 
 - **API Platform** (`/api`) — REST: agents, Voice/TTS, dynamics, embedding + the Scalar reference
-- **CLI** (`/cli`) — `bithuman` Rust binary, install, commands, local mode
-- **Apps SDK** (`/sdk`) — Python, Swift (Apple), Android (Kotlin), JS/TS
+- **SDK** (`/sdk`) — Python, Swift (Apple), JS/TS, and the CLI
 - **Showcase** (`/showcase`) — live demo agents + forkable reference apps
 - **Resources** — Examples, Changelog, Downloads, Community
 

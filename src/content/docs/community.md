@@ -62,7 +62,6 @@ Publishing channels per language:
 | Python | PyPI | `cibuildwheel` matrix → `twine upload` |
 | Rust | crates.io | `cargo publish` (after tag push) |
 | Swift | SwiftPM | binary xcframework on the public repo + `Package.swift` |
-| Kotlin | Maven Central | Gradle publish plugin |
 | JS/TS | npm | `npm publish --access public` |
 
 Checklist for a new binding:

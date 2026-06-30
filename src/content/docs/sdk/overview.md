@@ -1,19 +1,26 @@
 ---
-title: "SDKs"
-description: "Embed a real-time, lip-synced bitHuman avatar natively in your app — on-device or over the cloud — from Python, Apple, Android, or the browser."
+title: "SDK overview"
+description: "Embed a real-time, lip-synced bitHuman avatar natively in your app — on-device or over the cloud — from Python, Apple, the browser, or a single CLI command."
 section: sdk
-group: "Overview"
+group: "Get started"
 order: 0
 label: "Overview"
 ---
 
-## One engine, one API, every language
+## One engine, one API, every surface
 
 Every bitHuman SDK is a thin, idiomatic binding over **`libessence`** — the
-portable C++ avatar-rendering engine that also powers the [CLI](/cli) and the
-[cloud REST API](/api/reference). They all read the same `.imx` avatar file and
-produce identical frames at 25 FPS, so anything you prove out in one language
-ports straight to the others.
+portable C++ avatar-rendering engine that also powers the [cloud REST
+API](/api/reference). They all read the same `.imx` avatar file and produce
+identical frames at 25 FPS, so anything you prove out in one language ports
+straight to the others.
+
+This section covers both ways to build on your own hardware:
+
+- **Language libraries** — call the engine from [Python](/sdk/python),
+  [Swift](/sdk/swift), or the [browser](/sdk/wasm).
+- **The [command-line tool](/sdk/cli/overview)** — the same engine in a single
+  binary, no code required. Documented here under **Command line**.
 
 The contract is the same everywhere:
 
@@ -24,37 +31,36 @@ That push/drain loop is documented once, canonically, under
 [audio streaming](/concepts/audio-streaming) — every language page links back to
 it rather than repeating it.
 
-## Which SDK should I use?
+## Which one should I use?
 
-Match your target platform to a binding. All four ship visual, lip-synced
+Match your target platform to a binding. They all ship visual, lip-synced
 avatars; the difference is where they run and how mature each surface is.
 
 | Platform / target | SDK | On-device / cloud | Status |
 |---|---|---|---|
 | Backend, AI agents, batch render, edge boxes | **[Python](/sdk/python)** | On-device | **GA** |
 | Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **Preview** |
-| Native Android apps | **[Android (Kotlin)](/sdk/android)** | On-device | **Beta** |
 | Browser & Node web clients | **[JavaScript / TS](/sdk/javascript)** | Cloud client | **Preview** |
-| On-device engine wrapper backing the CLI | **[Rust](/cli)** | On-device | Internal / app-backing |
+| No code — terminal or browser viewer | **[CLI](/sdk/cli/overview)** | On-device | **GA** |
 | Native app ↔ server avatar over WebRTC, or Python voice agent with a face | **[LiveKit (Apple + Python)](/sdk/livekit)** | Cloud / hybrid | Built on the bindings |
 
 If you are not sure, start with the [Python SDK](/sdk/python) or the no-code
-[CLI](/cli).
+[CLI](/sdk/cli/overview).
 
 ## On-device vs cloud
 
 bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 
 <div class="bh-cols">
-  <div class="bh-cell"><strong>On-device</strong><br/>Runs on the user's machine, phone, or edge box. Private, low-latency, offline-capable. Python, Swift, Kotlin.</div>
+  <div class="bh-cell"><strong>On-device</strong><br/>Runs on the user's machine or edge box. Private, low-latency, offline-capable. Python, Swift, CLI.</div>
   <div class="bh-cell"><strong>Cloud</strong><br/>We host the GPU. Zero ops, ideal for web clients and sharing one avatar. JavaScript/TS, LiveKit.</div>
 </div>
 
 | | On-device | Cloud |
 |---|---|---|
-| Where inference runs | Your machine / phone | bitHuman's GPU pool |
-| SDKs | Python, Swift, Kotlin | JavaScript/TS, [LiveKit](/sdk/livekit) |
-| Network | Optional — billing heartbeat only ([or fully offline](/cli/local-mode)) | Required |
+| Where inference runs | Your machine | bitHuman's GPU pool |
+| Surfaces | Python, Swift, [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
+| Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
 | Hardware | Any modern CPU (Essence); Apple Silicon / NVIDIA GPU (Expression) | None — we host it |
 | Cost | 1 credit/min (Essence) · 2 credits/min (Expression) | 2 credits/min · 4 credits/min |
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
@@ -70,8 +76,8 @@ We keep this honest so you can plan around it.
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.3.10) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM `bitHumanKit` (0.8.2) | On-device | **Preview** |
-| **Android (Kotlin)** | Gradle `ai.bithuman:sdk:2.3.6` | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
+| **CLI** | `bithuman-cli` (2.3.25) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 
@@ -84,7 +90,7 @@ We keep this honest so you can plan around it.
 > **preview**. The [Swift page](/sdk/swift) has the details.
 
 > **Rust** The `bithuman` Rust crate is the on-device engine wrapper that **backs
-> the [CLI](/cli)**. It is internal / app-backing — source-only (not on
+> the [CLI](/sdk/cli/overview)**. It is internal / app-backing — source-only (not on
 > crates.io) — and wraps `libessence` ABI v7. You don't depend on it directly;
 > you get it through the CLI.
 
@@ -92,13 +98,12 @@ We keep this honest so you can plan around it.
 
 A Flutter integration exists today as an internal reference app — it is **not**
 published to pub.dev, so don't add `bithuman: ^X.Y.Z` to a `pubspec.yaml`. Until it ships, build
-Flutter apps on the underlying [Swift SDK](/sdk/swift) (Apple) and
-[Android SDK](/sdk/android) via platform channels, or [ping us on
-Discord](https://discord.gg/ES953n7bPA) for early access.
+Flutter apps on the underlying [Swift SDK](/sdk/swift) (Apple) via platform
+channels, or [ping us on Discord](https://discord.gg/ES953n7bPA) for early access.
 
 ## See also
 
 - [Audio streaming](/concepts/audio-streaming) — the canonical push/drain loop
 - [Models](/concepts/models) — Essence vs Expression and the `.imx` format
-- [CLI](/cli) — the no-code path, same engine
+- [CLI](/sdk/cli/overview) — the command-line tool, same engine
 - [API reference](/api/reference) — the cloud REST API

@@ -11,7 +11,7 @@ label: "Overview"
 
 The bitHuman API lets you create, manage, and drive avatar agents from any
 programming language. Reach for it when you don't need a native SDK — backends,
-CI scripts, or platforms where Python, Swift, or Kotlin aren't a fit.
+CI scripts, or platforms where Python or Swift aren't a fit.
 
 Everything is plain HTTPS + JSON. One header authenticates every request.
 

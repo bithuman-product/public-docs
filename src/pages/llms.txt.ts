@@ -12,8 +12,7 @@ const SITE = "https://docs.bithuman.ai";
 
 const SECTIONS: [string, string][] = [
   ["api", "API (cloud REST)"],
-  ["cli", "CLI"],
-  ["sdk", "SDKs"],
+  ["sdk", "SDKs (libraries + CLI)"],
   ["concepts", "Concepts"],
   ["guides", "Guides"],
   ["examples", "Examples"],
@@ -27,7 +26,7 @@ export const GET: APIRoute = async () => {
   out +=
     `> bitHuman is a real-time, lip-synced AI avatar platform. One engine ` +
     `(\`libessence\`) turns audio into a talking avatar at 25 FPS — fully ` +
-    `on-device (macOS/Linux/iOS/Android, CPU or GPU) or via a cloud REST API. ` +
+    `on-device (macOS/Linux/iOS, CPU or GPU) or via a cloud REST API. ` +
     `The contract is the same everywhere: push 16-bit PCM audio in, drain ` +
     `lip-synced video frames out. Avatars are portable \`.imx\` files keyed by ` +
     `a short agent code (e.g. \`A78WKV4515\`).\n\n`;
