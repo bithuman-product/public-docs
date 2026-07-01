@@ -19,8 +19,8 @@ frames out at 25 FPS. The runtime and all native dependencies ship in the wheel
 pip install bithuman
 ```
 
-**Python 3.10–3.14** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.3.10**. Platforms: macOS arm64, Linux x86_64, Linux
+**Python 3.11–3.13** supported; the latest release on
+[PyPI](https://pypi.org/project/bithuman/) is **2.3.11**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a different host.)
 
@@ -64,7 +64,8 @@ for details.
 ## 2.3 — slim wheel, CLI moved out
 
 Through 2.2, `pip install bithuman` bundled both the Python SDK and a `bithuman`
-CLI console-script. As of **2.3.0** the wheel is **library-only** (~5 MB) — the
+CLI console-script. As of **2.3.0** the wheel is **library-only** (~16–26 MB
+depending on platform) — the
 CLI moved to the sibling [`bithuman-cli`](https://pypi.org/project/bithuman-cli/)
 wheel. The runtime API (`AsyncBithuman`, `Bithuman`, `AudioChunk`, `VideoFrame`,
 …) is unchanged; code pinned to `bithuman==1.11.3` or any `2.x` runs on 2.3
@@ -215,7 +216,7 @@ Silero) — no API key, no outbound network. See [local mode](/sdk/cli/local-mod
 
 ## System requirements
 
-- **Python 3.10–3.14** (cp310–cp314 wheels ship for every supported platform).
+- **Python 3.11–3.13** (cp311–cp313 wheels ship for every supported platform).
 - **Essence**: any modern CPU, 4 GB RAM. macOS arm64 / Linux x86_64 / Linux aarch64.
 
 ## Troubleshooting
@@ -268,7 +269,7 @@ pip found no wheel for your platform. The common causes:
 - **Alpine / musl Linux** — not supported. The Linux wheels are
   `manylinux_2_28` (glibc) for x86_64 / aarch64; use a glibc-based image
   (e.g. `python:*-slim`) instead.
-- **Python outside 3.10–3.14**, or 32-bit / Windows interpreters (see the
+- **Python outside 3.11–3.13**, or 32-bit / Windows interpreters (see the
   platform list above).
 
 ### Avatar shows but no lip movement
