@@ -8,6 +8,18 @@ order: 1
 
 > **Note** Product-level changes only. For per-version notes, see the [Python SDK CHANGELOG](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/python/CHANGELOG.md) and the [Swift SDK releases](https://github.com/bithuman-product/bithuman-sdk-public/releases).
 
+## July 2026
+
+### General availability — Essence 2 Quality, Essence 2 Light, Expression 2 (2026-07-01)
+
+Three second-generation avatar models are now **generally available** on every surface — the REST API, the embed widget, the dashboard, and the SDKs. See [Essence 2 & Expression 2](/concepts/models-v2) for the full guide.
+
+- **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model in a few minutes, then the engine synthesizes fully generated motion live. Serves on three tiers — **gpu**, **cpu**, and **ane** (Apple Neural Engine). 4 credits/min cloud · 2 credits/min self-hosted.
+- **`essence-2-quality`** — the **highest-fidelity** tier of the Essence family: a heavy GPU renderer for close-up, hero-quality output on cloud GPUs. 8 credits/min cloud · 4 credits/min self-hosted.
+- **`essence-2-light`** — the **cost-effective** tier: a distilled renderer that runs across **gpu**, **cpu**, and **ane** — including fully **on-device**, where audio and video never leave your hardware. The `essence-2-light` rollout gate is lifted: agent generation with `model="essence-2-light"` is live. 4 credits/min cloud · 2 credits/min self-hosted.
+
+All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (250 credits, one-time) and serve through the existing session flows unchanged. The v1 models (`essence-1`, `expression-1`) remain fully supported.
+
 ## June 2026
 
 ### Talking video generation — new API (2026-06-29)

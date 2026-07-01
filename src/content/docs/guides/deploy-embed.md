@@ -77,6 +77,7 @@ Endpoint setup, signature verification, and retry policy are in the [API referen
 
 ## Where to go next
 
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, including the advanced per-tier `?model=` override for embed URLs.
 - [Deploy via LiveKit](/guides/deploy-livekit) — full agent-worker integration.
 - [Browser rendering](/guides/browser-rendering) — render client-side to cut server video egress.
 - [API reference](/api/reference) — embed tokens, agents, and webhooks.

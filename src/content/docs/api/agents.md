@@ -48,7 +48,7 @@ asynchronous and costs 250 credits; the call returns immediately with an
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
-| `model` | string | no | `essence` | Avatar model — `essence` (default) or `expression`. Invalid values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models). |
+| `model` | string | no | `essence-1` | Avatar model — `essence-1` (default), `essence-2-quality`, `essence-2-light`, `expression-1`, or `expression-2` (all five GA). The bare `essence` / `expression` shorthands resolve to `essence-1` / `expression-1`. Invalid or retired values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
 
 ```python
 import requests
@@ -59,6 +59,7 @@ resp = requests.post(
     json={
         "prompt": "You are a professional video content creator.",
         "image": "https://example.com/avatar.jpg",
+        "model": "expression-2",
     },
 )
 print(resp.json())
