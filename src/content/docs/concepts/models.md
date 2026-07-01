@@ -1,6 +1,6 @@
 ---
 title: "Essence vs Expression"
-description: "The two bitHuman avatar models — what each does, where each runs, and which one to pick."
+description: "The two bitHuman avatar models, Essence and Expression — what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick for real-time 25 FPS lip-sync."
 section: concepts
 group: "Models"
 order: 1

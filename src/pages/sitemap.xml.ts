@@ -10,15 +10,20 @@ const SITE = "https://docs.bithuman.ai";
 
 export const GET: APIRoute = async () => {
   const docs = await getCollection("docs", (e: any) => !e.data.draft);
+  // Static (non-collection) pages that produce their own routes. Must match the
+  // .astro pages under src/pages/ — no phantom routes (they 404 and waste crawl
+  // budget). /cli does NOT exist (CLI docs live under /sdk/cli/*); /concepts and
+  // /start are real landing pages that were missing.
   const staticRoutes = [
     "",
     "api",
     "api/reference",
-    "cli",
     "sdk",
     "guides",
+    "concepts",
     "resources",
     "showcase",
+    "start",
   ];
   const urls = Array.from(
     new Set([

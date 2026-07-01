@@ -9,8 +9,8 @@ import caseStudies from "../data/case-studies.json";
 const featuredCases = caseStudies.slice(0, 3);
 
 const pillars = [
-  { name: "Cloud API", href: "/api", cta: "Start with the API", tag: "We host the GPU — call simple REST endpoints to generate, host, and drive avatars. No infrastructure to run.", icon: "M4 7h16M4 12h16M4 17h10" },
-  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — Python, Swift, the browser, or one CLI command. Private and offline-capable.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
+  { name: "Cloud API", href: "/api", cta: "Start with the API", tag: "We host the GPU — call simple REST endpoints to generate, host, and drive avatars. No infrastructure to run. Move the same avatars on-device whenever privacy or cost calls for it.", icon: "M4 7h16M4 12h16M4 17h10" },
+  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — Python, Swift, the browser, or one CLI command. Private by design: inference stays on-device, so no data leaves your hardware. Self-host, deploy on-prem, or run air-gapped, from 1 credit/min.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
 ];
 
 // elegant device icons (line-art, theme-aware via currentColor)
@@ -23,9 +23,9 @@ const devices = [
 ];
 
 const stats = [
-  { v: "Realtime", l: "lifelike lip-sync" },
-  { v: "100+ FPS", l: "up to 1000+ on high-end" },
-  { v: "On-device", l: "works offline" },
+  { v: "25 FPS", l: "real-time lip-sync" },
+  { v: "On-device", l: "private — data stays local" },
+  { v: "From 1cr/min", l: "self-hosted, air-gap ready" },
 ];
 
 const quickstart = [
@@ -66,16 +66,19 @@ const customerLogos = [
 ];
 ---
 
-<Base>
+<Base
+  title="bitHuman Docs — Private On-Device AI Avatars in Real Time"
+  description="Build real-time AI avatars that run fully on-device — private by design, so audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at 25 FPS from 1 credit/min. API, SDKs, and CLI."
+>
   <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="container">
       <div class="hero-grid">
         <!-- LEFT: value prop + CTA -->
         <div class="hero-copy">
-          <span class="eyebrow" data-reveal>Realtime Visual AI</span>
+          <span class="eyebrow" data-reveal>Private On-Device Visual AI</span>
           <h1 data-reveal>Realtime visual agents</h1>
-          <p class="sub" data-reveal>Lifelike avatars that see, hear, and respond — live. Build them in a few lines of code, then run them anywhere: CPU, Apple Silicon, the browser, or the edge.</p>
+          <p class="sub" data-reveal>Lifelike avatars that see, hear, and respond — live. Build them in a few lines of code, then run them fully on-device — CPU, Apple Silicon, the browser, or the edge — so no data leaves your hardware.</p>
           <div class="hero-cta" data-reveal>
             <Button href="/start" size="lg">Start building</Button>
             <Button href="/showcase" variant="ghost" size="lg">Browse showcase</Button>
@@ -153,7 +156,7 @@ const customerLogos = [
         <div class="ms-copy">
           <span class="eyebrow">Two models, one engine</span>
           <h2>Essence &amp; Expression</h2>
-          <p><strong>Essence</strong> — a ready-made avatar that runs on-device, even on CPU (the default). <strong>Expression</strong> — turns any portrait into a talking agent on a GPU or Apple Silicon.</p>
+          <p><strong>Essence</strong> — a ready-made avatar that runs on-device, even on CPU or a Raspberry Pi (the default), so it works offline and air-gapped. <strong>Expression</strong> — turns any portrait into a talking agent on a GPU or Apple Silicon.</p>
         </div>
         <span class="mlink">Compare the models →</span>
       </a>
