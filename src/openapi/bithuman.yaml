@@ -1004,10 +1004,11 @@ paths:
               properties:
                 model:
                   type: string
-                  enum: [expression-2, essence-2-quality]
+                  enum: [expression-2, essence-2-quality, essence-2-light]
                   description: |
-                    Avatar engine. `expression-2` (4 credits/min) or
-                    `essence-2-quality` (8 credits/min).
+                    Avatar engine. `expression-2` (4 credits/min),
+                    `essence-2-quality` (8 credits/min), or `essence-2-light`
+                    (4 credits/min, the efficient distilled renderer).
                   example: "essence-2-quality"
                 agent_code:
                   type: string
@@ -1054,7 +1055,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (expression-2 = 4, essence-2-quality = 8 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (expression-2 = 4, essence-2-quality = 8, essence-2-light = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
 
