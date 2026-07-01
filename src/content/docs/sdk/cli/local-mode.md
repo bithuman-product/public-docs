@@ -1,6 +1,6 @@
 ---
 title: "Local mode — zero-cloud conversation"
-description: "Run a fully on-device avatar brain — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one env-var flip. No API key, no outbound network, ~1.5 GB RAM."
+description: "Run a fully on-device, air-gapped avatar brain — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one env-var flip. Private by design: no API key, no outbound network, nothing leaves your hardware. ~1.5 GB RAM."
 section: sdk
 group: "Command line"
 order: 34

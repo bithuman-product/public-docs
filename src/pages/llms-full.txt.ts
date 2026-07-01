@@ -20,10 +20,14 @@ export const GET: APIRoute = async () => {
 
   let out = `# bitHuman — full documentation\n\n`;
   out +=
-    `> Real-time, lip-synced AI avatar platform. Push 16-bit PCM audio in, ` +
-    `drain 25 FPS lip-synced video frames out — on-device (macOS/Linux/iOS) ` +
-    `or via a cloud REST API. This file concatenates the entire docs ` +
-    `site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
+    `> Private, on-device, real-time lip-synced AI avatar platform. Push ` +
+    `16-bit PCM audio in, drain 25 FPS lip-synced video frames out — fully ` +
+    `on-device (macOS/Linux/iOS, CPU incl. Raspberry Pi, NVIDIA GPU, or ` +
+    `Apple Silicon) or via a cloud REST API. Private by design: audio, ` +
+    `video, and prompts never leave your hardware; the only network call is ` +
+    `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem or ` +
+    `runs fully air-gapped, at low per-minute cost. This file concatenates ` +
+    `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 
   for (const d of docs) {
     out += `\n\n---\n\n# ${d.data.title}\n\nURL: ${SITE}/${d.id}\n\n${d.body ?? ""}\n`;

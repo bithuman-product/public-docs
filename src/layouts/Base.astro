@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = "bitHuman — Developer Platform",
-  description = "Audio in, lifelike avatar out — in real time, on any device. Build with the bitHuman API and SDKs.",
+  title = "bitHuman Docs — Private On-Device AI Avatars in Real Time",
+  description = "Build with bitHuman: turn a photo into a real-time (25 FPS) AI avatar that runs fully on-device. Private by design — audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at the lowest per-minute cost.",
   image = "/images/bithuman-banner.jpg",
 } = Astro.props;
 
@@ -34,6 +34,7 @@ const ogImage = new URL(image, site).href;
 
     <!-- Open Graph / Twitter -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="bitHuman Docs" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
@@ -42,6 +43,44 @@ const ogImage = new URL(image, site).href;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+
+    <!-- JSON-LD: Organization + SoftwareApplication (site-wide structured data) -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.bithuman.ai/#organization",
+          "name": "bitHuman",
+          "url": "https://www.bithuman.ai",
+          "logo": "https://docs.bithuman.ai/bithuman-mark.png",
+          "description": "bitHuman builds private, on-device AI avatars that turn any photo into a real-time video agent — self-hostable, deployable on-prem, and able to run fully air-gapped."
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://www.bithuman.ai/#software",
+          "name": "bitHuman",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "macOS, Linux, iOS, iPadOS, Raspberry Pi OS",
+          "url": "https://www.bithuman.ai",
+          "publisher": { "@id": "https://www.bithuman.ai/#organization" },
+          "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time (25 FPS) avatar that runs fully on your own hardware — private by design, self-hostable, on-prem, and air-gapped-capable. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",
+          "featureList": [
+            "On-device inference — audio, video, and prompts never leave your hardware",
+            "Real-time 25 FPS lip-sync",
+            "Runs on CPU (incl. Raspberry Pi), NVIDIA GPU, and Apple Silicon",
+            "Self-hosted, on-prem, and air-gapped deployment",
+            "Low per-minute cost, from 1 credit/min self-hosted"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "Free tier available; low per-minute cost from 1 credit/min self-hosted."
+          }
+        }
+      ]
+    })} />
 
     <!-- Fonts: Roboto + Roboto Mono (bitHuman brand) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

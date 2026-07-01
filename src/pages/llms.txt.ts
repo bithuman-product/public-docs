@@ -24,12 +24,18 @@ export const GET: APIRoute = async () => {
 
   let out = `# bitHuman\n\n`;
   out +=
-    `> bitHuman is a real-time, lip-synced AI avatar platform. One engine ` +
-    `(\`libessence\`) turns audio into a talking avatar at 25 FPS — fully ` +
-    `on-device (macOS/Linux/iOS, CPU or GPU) or via a cloud REST API. ` +
-    `The contract is the same everywhere: push 16-bit PCM audio in, drain ` +
-    `lip-synced video frames out. Avatars are portable \`.imx\` files keyed by ` +
-    `a short agent code (e.g. \`A78WKV4515\`).\n\n`;
+    `> bitHuman is a private, on-device, real-time lip-synced AI avatar ` +
+    `platform. One engine (\`libessence\`) turns audio into a talking avatar ` +
+    `at 25 FPS — fully on-device (macOS/Linux/iOS, CPU incl. Raspberry Pi, ` +
+    `NVIDIA GPU, or Apple Silicon) or via a cloud REST API. Private by ` +
+    `design: on-device inference means audio, video, and prompts never leave ` +
+    `your hardware — the only network call is a ~1-request-per-minute billing ` +
+    `heartbeat, so it runs self-hosted, on-prem, or fully air-gapped, well ` +
+    `suited to regulated and privacy-sensitive environments. Low per-minute ` +
+    `cost, from 1 credit/min self-hosted. The contract is the same ` +
+    `everywhere: push 16-bit PCM audio in, drain lip-synced video frames ` +
+    `out. Avatars are portable \`.imx\` files keyed by a short agent code ` +
+    `(e.g. \`A78WKV4515\`).\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;
   out +=
