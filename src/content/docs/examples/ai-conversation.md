@@ -10,7 +10,7 @@ order: 15
 
 - A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
 - An `OPENAI_API_KEY` (the brain) — from [openai.com](https://openai.com).
-- Python 3.10+ in a virtualenv. The example's `requirements.txt` pulls everything (the SDK ships no OpenCV; the display window needs it):
+- Python 3.11–3.13 in a virtualenv. The example's `requirements.txt` pulls everything (the SDK ships no OpenCV; the display window needs it):
 
 ```bash
 git clone https://github.com/bithuman-product/homebrew-bithuman.git

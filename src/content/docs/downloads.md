@@ -49,7 +49,7 @@ See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`,
 
 ### Python SDK (library) — GA
 
-`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.10–3.14.
+`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.11–3.13.
 
 ```bash
 pip install bithuman
@@ -105,7 +105,7 @@ No install required. Authenticate with the `api-secret` header against `https://
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
-| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
+| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.11–3.13) | SwiftPM |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
 | **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
 | **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
@@ -118,11 +118,11 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.3.10** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.3.11** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | bitHuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.10 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.3.11 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 

@@ -28,7 +28,7 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 
 | Goal | Install | What you get |
 |---|---|---|
-| Embed in a Python app | `pip install bithuman` | Python SDK (library only, ~5 MB) |
+| Embed in a Python app | `pip install bithuman` | Python SDK (library only, ~16–26 MB) |
 | Embed in a Swift app | SwiftPM `Bithuman` | Swift SDK + bundled libessence XCFramework |
 | Run from the CLI on Mac | `brew install bithuman-product/bithuman/bithuman-cli` | bitHuman CLI (single Rust binary) |
 | Run from the CLI in any Python env | `pip install bithuman-cli` | Same Rust binary, inside a Python wheel |
@@ -72,7 +72,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.3.10 | PyPI | v7 |
+| Python SDK (`bithuman`) | 2.3.11 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | SwiftPM | v7 |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
 | bitHuman CLI | 2.3.25 | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
@@ -98,7 +98,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
-| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
+| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.11–3.13) | SwiftPM |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
 | **Linux x86_64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — |
 | **Linux aarch64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — |
