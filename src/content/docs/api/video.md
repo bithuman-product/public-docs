@@ -1,6 +1,6 @@
 ---
 title: "Video API"
-description: "Render a finished talking-video file (mp4) from text or audio with one of your agents."
+description: "Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a CDN URL. Per-minute billing, auto-refunded on failure."
 section: api
 group: "Deliver"
 order: 20
