@@ -35,6 +35,12 @@ info:
     require an `api-secret` header.
     [Get a free API secret →](https://www.bithuman.ai/#developer)
 
+    Some routes are intentionally excluded from this reference because
+    they are internal or infrastructure — webhook receivers, `/func_*`
+    generation internals, health/telemetry, and realtime session
+    plumbing. They are not part of the public developer contract and
+    may change without notice.
+
 servers:
   - url: https://api.bithuman.ai
     description: Production
@@ -75,6 +81,12 @@ paths:
         video, and audio assets. Generation takes 2-5 minutes. Poll
         `/v1/agent/status/{agent_id}` to check progress.
       tags: [Agent Generation]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema: { type: string }
+          description: Optional. A unique client-generated key (e.g. a UUID). Retrying with the same key returns the original response instead of starting a second billed job. Keys are retained for 24 hours.
       requestBody:
         required: true
         content:
@@ -117,7 +129,7 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence-1, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression, elevate, embody, essence-2-mobile]
+                  enum: [essence-1, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression]
                   default: essence-1
                   description: >-
                     Avatar runtime model for the generated agent. Public names:
@@ -125,25 +137,16 @@ paths:
                     `expression-1`, `expression-2`. Essence 2 has two tiers —
                     **Quality** (`essence-2-quality`, high-fidelity cloud GPU)
                     and **Light** (`essence-2-light`, the efficient distilled
-                    renderer). **All three are supported generation targets** at
-                    `POST /v1/agent/generate`. `essence-2-quality` and
-                    `expression-2` are **fully live now**. `essence-2-light` is a
-                    **supported generation model** — it produces a per-identity
-                    `.lebundle` via its dedicated trainer — but is currently
-                    **rollout-gated** (its agent generation is enabled once its
-                    pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set);
-                    until that rollout completes, pass `essence-2-quality` to
-                    generate an Essence 2 agent.
-                    The bare `essence` and `expression` are **canonical
-                    version-shorthands** — they resolve to the current default
+                    renderer). `essence-2-quality` and `expression-2` are
+                    **fully live now**; `essence-2-light` agent generation is
+                    **rollout-gated**. The bare `essence` and `expression` are
+                    **version shorthands** that resolve to the current default
                     of each family (`essence`→`essence-1`,
-                    `expression`→`expression-1`).
-                    The old engine names `elevate`, `embody`, and
-                    `essence-2-mobile` are **deprecated aliases** — still
-                    accepted, but they resolve to the names above
-                    (`elevate`→`essence-2-quality`, `embody`→`expression-2`,
-                    `essence-2-mobile`→`essence-2-light`).
-                    See [Essence vs Expression](#tag/models).
+                    `expression`→`expression-1`). The retired engine names
+                    `elevate`, `embody`, and `essence-2-mobile` are **no longer
+                    accepted** and return `400 VALIDATION_ERROR` — use
+                    `essence-2-quality`, `expression-2`, and `essence-2-light`
+                    respectively. See [Essence vs Expression](#tag/models).
       responses:
         "200":
           description: Generation started
@@ -557,6 +560,130 @@ paths:
         "415":
           description: Unsupported file type
 
+  /v1/me:
+    get:
+      operationId: getMe
+      summary: Get current account
+      description: >-
+        The canonical account preflight — returns your identity, plan, and live
+        credit balance in one call. Use it to show "who am I / how many credits"
+        and to gate features before a billable call.
+      tags: [Account]
+      responses:
+        "200":
+          description: Account retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                      email:
+                        type: string
+                      plan:
+                        type: string
+                        example: "pro"
+                      plan_code:
+                        type: string
+                        example: "membership_pro"
+                      credit_balance:
+                        type: integer
+                        example: 5836982
+                        description: Total spendable credits = plan + topup + reward.
+                      plan_credits_remaining:
+                        type: integer
+                        example: 5055
+                      topup_credits_remaining:
+                        type: integer
+                        example: 5831600
+                      account_status:
+                        type: string
+                        example: "active"
+                      upgrade_url:
+                        type: string
+                      pricing_url:
+                        type: string
+                  status:
+                    type: string
+                    example: "success"
+                  status_code:
+                    type: integer
+                    example: 200
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/pricing:
+    get:
+      operationId: getPricing
+      summary: Get credit pricing
+      description: >-
+        Machine-readable credit pricing for billable operations, so you can
+        estimate cost before a call. Authoritative charges are always enforced
+        server-side at request time. For forward per-minute realtime estimates
+        based on your current balance, see `GET /v2/credit-summaries`
+        (`minutes_estimate`).
+      tags: [Account]
+      responses:
+        "200":
+          description: Pricing retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      unit:
+                        type: string
+                        example: "credits"
+                      agent_generation:
+                        type: object
+                        properties:
+                          flat:
+                            type: integer
+                            example: 250
+                          applies_to:
+                            type: string
+                            example: "all models"
+                          note:
+                            type: string
+                      talking_video:
+                        type: object
+                        properties:
+                          unit:
+                            type: string
+                            example: "credits_per_minute"
+                          billing:
+                            type: string
+                            example: "ceil(minutes) * rate, minimum 1 minute"
+                          rates:
+                            type: object
+                            additionalProperties:
+                              type: integer
+                            example:
+                              expression-2: 4
+                              essence-2-quality: 8
+                      dynamics_generation:
+                        type: object
+                        properties:
+                          flat:
+                            type: integer
+                            example: 250
+                          note:
+                            type: string
+                      notes:
+                        type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /v2/credit-summaries:
     get:
       operationId: getCreditSummaries
@@ -679,6 +806,12 @@ paths:
         Create gesture animations (wave, nod, smile, laugh, etc.) for an agent.
         These can be triggered during live sessions via keyword mapping.
       tags: [Dynamics]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema: { type: string }
+          description: Optional. A unique client-generated key (e.g. a UUID). Retrying with the same key returns the original response instead of starting a second billed job. Keys are retained for 24 hours.
       requestBody:
         required: true
         content:
@@ -699,9 +832,11 @@ paths:
                   description: Gesture duration in seconds.
                 model:
                   type: string
-                  enum: [auto]
-                  default: auto
-                  description: Gesture-video generation preset. Use `auto` (the recommended default).
+                  enum: [seedance, kling, auto]
+                  default: seedance
+                  description: >-
+                    Video motion model. `seedance` (default) or `kling`; `auto`
+                    lets the platform choose. Any other value returns 400.
       responses:
         "200":
           description: Dynamics generation started
@@ -853,6 +988,12 @@ paths:
         The output is a public CDN URL. Limits: max **120 seconds** of output, max
         **5000 characters** of text.
       tags: [Video]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema: { type: string }
+          description: Optional. A unique client-generated key (e.g. a UUID). Retrying with the same key returns the original response instead of starting a second billed job. Keys are retained for 24 hours.
       requestBody:
         required: true
         content:
@@ -1824,6 +1965,7 @@ x-tagGroups:
       - Dynamics
       - Embedding
       - Billing
+      - Account
       - Webhooks
   - name: Resources
     tags:
@@ -2928,6 +3070,8 @@ tags:
     description: Upload images, videos, audio, and documents.
   - name: Billing
     description: Check credit balance, plan details, and usage history.
+  - name: Account
+    description: Identity, plan, credits, and pricing.
   - name: Webhooks
     description: |
       Register HTTPS endpoints to receive signed event notifications when
