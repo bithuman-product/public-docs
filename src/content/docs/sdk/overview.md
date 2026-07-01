@@ -74,7 +74,7 @@ We keep this honest so you can plan around it.
 
 | SDK | Package | Topology | Status |
 |---|---|---|---|
-| **Python** | `pip install bithuman` (2.3.10) | On-device | **GA** |
+| **Python** | `pip install bithuman` (2.3.11) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM `bitHumanKit` (0.8.2) | On-device | **Preview** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.3.25) — Homebrew · PyPI · universal installer | On-device | **GA** |

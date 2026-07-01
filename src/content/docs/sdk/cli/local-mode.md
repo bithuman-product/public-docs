@@ -24,7 +24,7 @@ BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
 The `[local]` extra is published on the `bithuman-cli` package, whose PyPI
-wheel is **macOS Apple Silicon (arm64) only** today (Python 3.10–3.14) — so
+wheel is **macOS Apple Silicon (arm64) only** today (Python 3.11–3.13) — so
 `pip install 'bithuman-cli[local]'` is a macOS-arm64 path. On Linux, install
 the CLI with the universal installer (see [CLI install](/sdk/cli/install)); the
 `[local]` brain bundle is not yet packaged for Linux. (The `bithuman-cli`
