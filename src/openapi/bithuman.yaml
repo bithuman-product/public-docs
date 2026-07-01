@@ -975,10 +975,18 @@ paths:
       operationId: generateTalkingVideo
       summary: Generate a talking video
       description: |
-        Render an offline talking-video (mp4) from **text** or **audio**, driven by
-        one of your agents. Asynchronous: this returns immediately with a `job_id`;
-        poll [`GET /v1/video/{job_id}`](#operation/getTalkingVideo) for the finished
-        video URL.
+        Render a talking-video (mp4) from **text** or **audio**, driven by one of
+        your agents.
+
+        **Two modes:**
+        - **Async (default)** — returns immediately with a `job_id`; poll
+          [`GET /v1/video/{job_id}`](#operation/getTalkingVideo) for the finished
+          video. Use this for anything but the shortest clips — renders can take a
+          while, so you don't want to hold the connection.
+        - **Sync** — set `wait: true` (or `?wait=true`). The call blocks until the
+          render finishes (up to ~90s) and returns the `video_url` directly in this
+          response. If the render is still running at that cap you get the async
+          response (`status: processing`) instead — just poll the `job_id`.
 
         - **Text input** — the agent's own voice speaks your `text` (text → speech →
           render). Pass `input.voice` to override the voice for this render.
@@ -1014,6 +1022,16 @@ paths:
                   type: string
                   description: An agent you own — provides the avatar identity (and, for text input, the default voice).
                   example: "A91XMB7113"
+                wait:
+                  type: boolean
+                  default: false
+                  description: >-
+                    Sync toggle. `false` (default) returns a `job_id` immediately
+                    (async — poll for the result). `true` blocks until the render
+                    finishes (up to ~90s) and returns the finished `video_url` in
+                    this response; if it exceeds the cap you get
+                    `status: processing` + a `job_id` to poll. `?wait=true` as a
+                    query parameter also works.
                 input:
                   type: object
                   required: [type]
@@ -1035,7 +1053,10 @@ paths:
                       example: "https://example.com/speech.wav"
       responses:
         "200":
-          description: Render job accepted
+          description: >-
+            Async (or sync-timed-out): `status: processing` + a `job_id` to poll.
+            Sync completed: `status: completed` with `video_url`, `duration_seconds`,
+            and `credits_charged`.
           content:
             application/json:
               schema:
@@ -1048,8 +1069,18 @@ paths:
                     example: "vid_3f9a2c1b8e7d4a6f0b21"
                   status:
                     type: string
-                    enum: [processing]
+                    enum: [processing, completed]
                     example: "processing"
+                  video_url:
+                    type: string
+                    description: Public mp4 URL — present only on a completed sync render (wait=true).
+                  duration_seconds:
+                    type: number
+                    format: float
+                    description: Output duration — present on a completed sync render.
+                  credits_charged:
+                    type: integer
+                    description: Credits charged — present on a completed sync render.
         "400":
           description: Validation error — invalid model, missing input, or text/audio missing.
         "401":
