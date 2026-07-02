@@ -1,0 +1,165 @@
+---
+title: "Essence 2 Light"
+description: "Official guide to essence-2-light — bitHuman's cost-effective distilled avatar model: train-on-create from video or photo, gpu/cpu/ane serving tiers including on-device Apple Neural Engine, and pricing."
+section: concepts
+group: "Models"
+order: 5
+label: "Essence 2 Light"
+---
+
+## What it is
+
+**`essence-2-light`** is the cost-effective tier of the second-generation
+Essence family: a **distilled** renderer that keeps the Essence look — your
+identity's real footage, lip-synced live at ~25 frames per second — at a
+fraction of the compute. At creation the platform distills your identity into
+a compact bundle; that one artifact then serves on **three runtimes**: cloud
+**GPU**, cloud **CPU**, and the **Apple Neural Engine (ANE)** — including a
+fully **on-device** Apple-silicon build where audio and video never leave the
+hardware.
+
+It is half the cloud price of [Essence 2 Quality](/concepts/essence-2-quality)
+and the only Essence 2 tier with CPU and Neural Engine runtimes — the right
+default for kiosks, high-concurrency deployments, and privacy-sensitive
+environments.
+
+## When to choose it
+
+- **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
+  and Neural Engine runtimes that don't need a server GPU per session.
+- **On-device or privacy-first.** The Apple-silicon build runs entirely
+  on-device on the Neural Engine — inference is local, and the ANE renders far
+  faster than real time (hundreds of frames per second on M4-class hardware),
+  leaving the CPU and GPU free for your app.
+- **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
+  per-minute GPU pricing would dominate.
+
+If image quality is the whole point, choose
+[Essence 2 Quality](/concepts/essence-2-quality). If you want fully generated
+motion from a single photo, choose [Expression 2](/concepts/expression-2). For
+the family-level decision, start at
+[Essence 2 & Expression 2](/concepts/models-v2).
+
+## How creation works
+
+Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
+and `model: "essence-2-light"`. Creation is asynchronous and costs
+**250 credits** (one-time, per agent).
+
+```python
+import requests
+
+resp = requests.post(
+    "https://api.bithuman.ai/v1/agent/generate",
+    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    json={
+        "prompt": "You are a helpful retail assistant.",
+        "video": "https://example.com/identity.mp4",   # or pass "image" — see below
+        "model": "essence-2-light",
+    },
+)
+print(resp.json())
+# {"success": true, "message": "Agent generation started",
+#  "agent_id": "A56ZFX6217", "status": "processing"}
+```
+
+**Inputs.** Essence 2 Light derives its identity bundle from **video**. Supply
+a short clip of the identity — or supply just an `image`, and the platform
+**generates the identity video for you** as an extra creation step before
+training (you'll see `current_step: "video"` at ~45% progress). A voice is
+prepared as part of creation (supply `audio` to clone one, or one is
+generated).
+
+**What happens.** Poll
+[`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
+through the standard steps (`payment` → `persona` → `voice_image`), generates
+the identity video if you didn't provide one (`video`), then enters the
+distillation step (reported as `current_step: "lip_sync"`, ~70% progress)
+where the trainer builds the compact identity bundle on a cloud GPU. When
+status reaches `ready`, the agent is servable on every tier.
+
+**How long.** The distillation step typically takes **25–40 minutes** of GPU
+time. Some identities take longer — the platform allows a run up to several
+hours before flagging it as stuck, so keep polling `status` rather than
+applying your own short timeout.
+
+## Serving tiers
+
+A ready agent serves through every delivery surface — the
+[embed widget](/guides/deploy-embed), the viewer/share URL, the
+[REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
+By default (`essence-2-light`) the platform routes sessions to the
+cost-efficient **Neural Engine first line**, spilling to **elastic cloud GPU
+overflow** that scales from zero when the first line is full.
+
+For benchmarking or placement testing you can pin a runtime tier with the
+`?model=` override on the session URL:
+
+| `?model=` slug | Runtime | Notes |
+|---|---|---|
+| `essence-2-light` | Neural Engine (default) | ANE-backed first line with elastic GPU overflow — the preferred public name. |
+| `essence-2-light-ane` | Apple Neural Engine | Explicit form of the default route. |
+| `essence-2-light-gpu` | Cloud GPU | Direct GPU tier (elastic, scales from zero). |
+| `essence-2-light-cpu` | Cloud CPU | Direct CPU tier — no GPU in the path. |
+
+```text
+https://bithuman.ai/embed/A56ZFX6217?model=essence-2-light-cpu
+```
+
+Tier slugs are an advanced, operational surface — an unrecognized value falls
+back to the agent's default routing. For production, omit `?model=` and let
+the platform choose. See
+[tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
+
+**On-device.** The same distilled identity also runs **fully on-device** on
+Apple silicon via the [Swift SDK](/sdk/swift) rail (preview maturity): the
+Neural Engine executes the model locally, so audio, video, and prompts never
+leave the device — the only network traffic is the once-per-minute billing
+heartbeat. (Essence 2 Quality has no on-device runtime; Light is the
+on-device Essence 2 tier.)
+
+## Idle and speaking behavior
+
+Essence 2 Light animates the identity's **real footage**: the base video
+plays continuously and the engine renders lip-sync and expression over it. As
+of **2026-07-02**, the base video loops **forward-only** on every tier — when
+the clip reaches its last frame it wraps back to the first, and it never plays
+in reverse. This applies both while idle and while speaking, so motion always
+reads as natural forward movement.
+
+## Pricing
+
+| Surface | Rate |
+|---|---|
+| Cloud serving (all runtimes) | **4 credits/min** |
+| Self-hosted serving | **2 credits/min** |
+| Agent creation | 250 credits (one-time) |
+| [Talking-video renders](/api/video) | 4 credits per minute of output (rounded up) |
+
+Per-minute serving is metered on active avatar minutes only — idle, paused, or
+disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/pricing).
+
+## Limits and expectations
+
+- **Renders at ~25 fps** across gpu, cpu, and ane runtimes.
+- **Creation takes tens of minutes** (see above) — poll status rather than
+  assuming the 2–5 minute wall-clock of `essence-1`.
+- **Identity is fixed at creation.** The bundle bakes the source footage's
+  look and framing; to change the face, create a new agent.
+- **First session on a fresh agent** can take longer to connect while the
+  identity bundle is provisioned onto the serving tier; subsequent sessions
+  reuse it. See [troubleshooting](/guides/session-troubleshooting).
+- **Before distillation completes**, launch surfaces that request this model
+  reject it with `409 MODEL_NOT_GENERATED`
+  (`agent A56ZFX6217's essence-2-light model hasn't been generated yet`).
+  Once the agent is ready, its `supported_models` (on
+  [status / get / list](/api/agents#poll-status) and the embed-token
+  response) includes `essence-2-light`.
+
+## Next steps
+
+- [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
+- [Agents API](/api/agents) — full create → poll → serve lifecycle.
+- [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
+- [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
+- [Talking video generation](/concepts/talking-video) — render offline mp4s with `essence-2-light`.

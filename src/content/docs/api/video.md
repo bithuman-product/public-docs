@@ -77,7 +77,12 @@ print(resp.json())
 
 A `402` (`INSUFFICIENT_BALANCE`) is returned at submit time if your balance can't
 cover the render. An invalid `model`, a missing/invalid `input`, or text over the
-limit returns `400` before any charge.
+limit returns `400` before any charge. Requesting `expression-2` or
+`essence-2-light` for an agent whose trained per-identity model hasn't been
+generated yet returns `409 MODEL_NOT_GENERATED` — also **before any charge**
+(`agent <code>'s <model> model hasn't been generated yet`); check the agent's
+`supported_models` on the [Agents API](/api/agents#poll-status).
+`essence-2-quality` is never gated — it prepares on demand.
 
 ## Get talking-video status
 

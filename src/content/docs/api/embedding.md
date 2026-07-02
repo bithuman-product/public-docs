@@ -41,6 +41,7 @@ append it to the iframe URL.
 |---|---|---|---|
 | `agent_id` | string | yes | Agent code (e.g. `A78WKV4515`). |
 | `fingerprint` | string | yes | Stable per-device hex string for session tracking and per-visitor rate limiting. |
+| `model` | string | no | Request a specific avatar model for the session — a canonical name (`essence-1`, `expression-1`, `essence-2-quality`, `essence-2-light`, `expression-2`) or a runtime tier slug ([per model](/concepts/models-v2)). Validated **early**: unknown values return `400` listing the accepted names; requesting `expression-2` / `essence-2-light` on an agent whose trained model doesn't exist yet returns `409 MODEL_NOT_GENERATED` (instead of a failed session later). Omitted → the agent's own default model. |
 
 ```js
 // server: mint token (api-secret never reaches the browser)
@@ -66,12 +67,17 @@ const { data: { token } } = await res.json();
   "status_code": 200,
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "sid": "f3c9..."
+    "sid": "f3c9...",
+    "supported_models": ["essence-2-quality", "expression-2"]
   }
 }
 ```
 
 The `token` is a **1-hour, HS256-signed JWT**. Mint one per visitor session.
+`supported_models` lists the canonical model families the agent can be
+launched as right now (useful for building your own model picker); when you
+requested a `model`, the response also echoes the `model` baked into the
+token.
 
 ### Use the token in the iframe
 

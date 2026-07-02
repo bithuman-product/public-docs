@@ -18,6 +18,14 @@ prove out with the CLI ports straight into your application.
 
 The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
 
+> **Which models?** The CLI's local runtime (`run` / `render` / `info`) serves
+> **`essence-1`** `.imx` avatars. The
+> [second-generation models](/concepts/models-v2) (`expression-2`,
+> `essence-2-quality`, `essence-2-light`) are created and served through the
+> cloud surfaces — the [REST API](/api/agents), the
+> [embed widget](/guides/deploy-embed), and the dashboard — not by the CLI's
+> local mode.
+
 ## What it does
 
 The fastest path from a fresh install to a talking avatar is three steps —

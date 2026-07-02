@@ -78,8 +78,24 @@ paths:
       summary: Generate a new agent
       description: |
         Create a new avatar agent from a text prompt, with optional image,
-        video, and audio assets. Generation takes 2-5 minutes. Poll
-        `/v1/agent/status/{agent_id}` to check progress.
+        video, and audio assets. Poll `/v1/agent/status/{agent_id}` to check
+        progress.
+
+        **Creation time and inputs depend on `model`** (the second-generation
+        models train real per-identity models — don't apply a 5-minute client
+        timeout):
+
+        | model | identity input | typical creation time |
+        |---|---|---|
+        | `essence-1` (default) | image (or generated from prompt) | 2–5 minutes |
+        | `expression-1` | image (or generated from prompt) | ~1–2 minutes |
+        | `essence-2-quality` | **video required** (identity prepped from real footage in seconds) | a few minutes end-to-end |
+        | `essence-2-light` | video, or image (an identity video is generated first) | 25–40 minutes typical; occasionally longer |
+        | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
+
+        Failures during generation surface as `status: "failed"` with an
+        `error_message` on the status endpoint, and the 250 creation credits
+        are automatically refunded.
       tags: [Agent Generation]
       parameters:
         - name: Idempotency-Key
@@ -143,12 +159,14 @@ paths:
                     gpu / cpu / Apple Neural Engine, including on-device).
                     `expression-2` is the second-generation expression engine —
                     audio-driven real-time avatar video from a single photo
-                    (creation trains a per-identity model in a few minutes).
-                    The bare `essence` and `expression` are **version
-                    shorthands** that resolve to the current default of each
-                    family (`essence`→`essence-1`,
+                    (creation trains a per-identity model, roughly 45
+                    minutes). The bare `essence` and `expression` are
+                    **version shorthands** that resolve to the current default
+                    of each family (`essence`→`essence-1`,
                     `expression`→`expression-1`). Retired engine names are **no
-                    longer accepted** and return `400 VALIDATION_ERROR`. See
+                    longer accepted** and return `400 VALIDATION_ERROR`.
+                    Identity inputs and creation times differ per model — see
+                    the endpoint description table and
                     [Essence vs Expression](#tag/models).
       responses:
         "200":
@@ -175,7 +193,21 @@ paths:
         "402":
           description: Insufficient credits. Generation costs 250 credits — top up to continue. Returns error code `INSUFFICIENT_BALANCE`.
         "400":
-          $ref: "#/components/responses/ValidationError"
+          description: >-
+            Body failed validation — malformed JSON, or an invalid / retired
+            `model` value (rejected before dispatch; no credits charged). The
+            message lists the accepted model names.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "VALIDATION_ERROR"
+                  message: "Invalid model 'my-model'; must be one of: essence, essence-1, essence-2-light, essence-2-quality, expression, expression-1, expression-2"
+                  httpStatus: 400
+                status: "error"
+                status_code: 400
 
   /v1/agent/status/{agent_id}:
     get:
@@ -192,7 +224,17 @@ paths:
         and `failed` mean polling should stop; gate on `progress` reaching
         `1.0` together with a terminal status.
 
-        Recommended polling interval: 5 seconds.
+        `current_step` reports the pipeline stage: `payment` (~2%) →
+        `persona` (5–15%) → `voice_image` (~20%) → `video` (~45%, only for
+        models that generate an identity video) → `lip_sync` (70–99%, the
+        model-specific identity step — training/distillation for
+        `expression-2` / `essence-2-light`, so the longest stage) → `done`
+        (100%). A rare `essence-1` path reports `awaiting_face_marking`
+        (~35%).
+
+        Recommended polling interval: 5 seconds. Size your overall timeout to
+        the model: minutes for `essence-1` / `essence-2-quality`, ~90 minutes
+        for `expression-2`, and up to several hours for `essence-2-light`.
       tags: [Agent Generation]
       parameters:
         - name: agent_id
@@ -245,7 +287,22 @@ paths:
                         description: Human-readable progress description.
                       current_step:
                         type: string
-                        description: Current generation step name.
+                        description: >-
+                          Current generation step. Known values: `payment`,
+                          `persona`, `voice_image`, `video`,
+                          `awaiting_face_marking`, `lip_sync`, `done`.
+                        example: "lip_sync"
+                      supported_models:
+                        type: array
+                        items: { type: string }
+                        description: >-
+                          Canonical model families this agent can be launched
+                          as right now. Trained families (`expression-2`,
+                          `essence-2-light`) appear once their per-identity
+                          model has been generated; `essence-2-quality`
+                          appears whenever an image exists (prepares on
+                          demand). Tier slugs inherit their family.
+                        example: ["essence-2-quality", "expression-2"]
                       event_type:
                         type: string
                         description: Most recent event (e.g. "lip_created").
@@ -775,6 +832,22 @@ paths:
                   type: string
                   description: Stable per-device hex string used for session tracking and per-visitor rate limiting. Required.
                   example: "9f3c8b1a2d4e5f6789ab"
+                model:
+                  type: string
+                  description: >-
+                    Optional. Request a specific avatar model for the embed
+                    session — a canonical name (`essence-1`, `expression-1`,
+                    `essence-2-quality`, `essence-2-light`, `expression-2`) or
+                    a runtime tier slug (`expression-2-gpu/cpu/ane`,
+                    `essence-2-light-gpu/cpu/ane`). This is the **early
+                    artifact gate**: if the requested model is
+                    `expression-2*` / `essence-2-light*` and the agent's
+                    trained per-identity model hasn't been generated yet, the
+                    request is rejected `409 MODEL_NOT_GENERATED` instead of
+                    failing later at session dispatch. Unknown values return
+                    `400 VALIDATION_ERROR` listing the accepted names.
+                    Omitted → the agent's own default model.
+                  example: "expression-2"
       responses:
         "200":
           description: Token generated. The returned `token` is a JWT (HS256-signed) with a 1-hour TTL.
@@ -798,8 +871,40 @@ paths:
                       sid:
                         type: string
                         description: Session identifier for tracking this embed instance.
+                      model:
+                        type: string
+                        description: The model baked into the token claim (present when `model` was requested).
+                      supported_models:
+                        type: array
+                        items: { type: string }
+                        description: >-
+                          Canonical model families this agent can be launched
+                          as right now (e.g. a ready expression-2 agent lists
+                          `expression-2`; every agent with an image lists
+                          `essence-2-quality`, which prepares on demand). Tier
+                          slugs inherit their family and are not listed.
+                        example: ["essence-2-quality", "expression-2"]
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: >-
+            `MODEL_NOT_GENERATED` — the requested `model` is a trained
+            second-generation family (`expression-2` / `essence-2-light`)
+            whose per-identity model hasn't been generated for this agent.
+            Message shape: `agent <code>'s <model> model hasn't been generated
+            yet`. Create the agent with that model (or wait for creation to
+            finish), then retry.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "MODEL_NOT_GENERATED"
+                  message: "agent A56ZFX6217's expression-2 model hasn't been generated yet"
+                  httpStatus: 409
+                status: "error"
+                status_code: 409
 
   /v1/dynamics/generate:
     post:
@@ -1092,6 +1197,24 @@ paths:
           description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (expression-2 = 4, essence-2-quality = 8, essence-2-light = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          description: >-
+            `MODEL_NOT_GENERATED` — checked **before any charge**: the
+            requested `model` is `expression-2` / `essence-2-light` and this
+            agent's trained per-identity model hasn't been generated yet
+            (message: `agent <code>'s <model> model hasn't been generated
+            yet`). `essence-2-quality` is never gated — it prepares on demand.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "MODEL_NOT_GENERATED"
+                  message: "agent A56ZFX6217's essence-2-light model hasn't been generated yet"
+                  httpStatus: 409
+                status: "error"
+                status_code: 409
 
   /v1/video/{job_id}:
     get:
@@ -1709,6 +1832,16 @@ components:
           type: string
         model:
           type: string
+        supported_models:
+          type: array
+          items: { type: string }
+          description: >-
+            Canonical model families this agent can be launched as right now
+            — `essence-1` when its `.imx` exists, `essence-2-quality` whenever
+            an image exists (prepares on demand), and `essence-2-light` /
+            `expression-2` once their trained per-identity model has been
+            generated. Tier slugs inherit their family and are not listed.
+          example: ["essence-1", "essence-2-quality"]
         subject:
           type: string
         system_prompt:
@@ -2363,16 +2496,19 @@ tags:
 
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
-      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model in minutes) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
-      | `essence-2-quality` | Highest-fidelity Essence tier (cloud GPU) | gpu | 8 cr/min | 4 cr/min |
-      | `essence-2-light` | Cost-effective distilled Essence tier — runs on gpu, cpu, and ane (Apple Neural Engine), including on-device | gpu · cpu · ane | 4 cr/min | 2 cr/min |
+      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45 min) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
+      | `essence-2-quality` | Highest-fidelity Essence tier (cloud GPU; identity prepped from your source video in seconds) | gpu | 8 cr/min | 4 cr/min |
+      | `essence-2-light` | Cost-effective distilled Essence tier — runs on gpu, cpu, and ane (Apple Neural Engine), including on-device (creation distills an identity bundle, typically 25–40 min) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
 
       Create one with
       [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
       and `model: "expression-2"` (same shape for the other two); serve it
       through the normal session flows — e.g. embed agent `A56ZFX6217` and the
       platform routes the session to the model's best available tier.
-      Full guide: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2).
+      Family overview: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2);
+      per-model guides: [Expression 2](https://docs.bithuman.ai/concepts/expression-2)
+      · [Essence 2 Quality](https://docs.bithuman.ai/concepts/essence-2-quality)
+      · [Essence 2 Light](https://docs.bithuman.ai/concepts/essence-2-light).
 
   - name: pricing
     x-displayName: Pricing
