@@ -90,11 +90,21 @@ paths:
         | `essence-1` (default) | image (or generated from prompt) | 2–5 minutes |
         | `expression-1` | image (or generated from prompt) | ~1–2 minutes |
         | `essence-2-quality` | **video required** (identity prepped from real footage in seconds) | a few minutes end-to-end |
-        | `essence-2-light` | video, or image (an identity video is generated first) | 25–40 minutes typical; occasionally longer |
+        | `essence-2-light` | video, or image (an identity video is generated first) | 45 minutes typical; long builds can take hours |
+        | `essence-2` | video, or image (an identity video is generated first) | same as `essence-2-light` — **both Essence 2 tiers from one creation** |
         | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
+        | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
+
+        **Subject requirement (Essence 2 family):** `essence-2`,
+        `essence-2-quality` and `essence-2-light` require a **photorealistic
+        human** subject. The input is classified before anything is billed; a
+        cartoon / animal / exotic-creature input is rejected with
+        `422 MODEL_SUBJECT_MISMATCH` (nothing charged) — use `expression-2`
+        for non-human or stylized subjects, or send `model: "auto"` to route
+        automatically.
 
         Failures during generation surface as `status: "failed"` with an
-        `error_message` on the status endpoint, and the 250 creation credits
+        `error_message` on the status endpoint, and the creation credits
         are automatically refunded.
       tags: [Agent Generation]
       parameters:
@@ -145,9 +155,9 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence-1, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression]
+                  enum: [essence-1, essence-2, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression, auto]
                   default: essence-1
-                  example: "expression-2"
+                  example: "auto"
                   description: >-
                     Avatar runtime model for the generated agent. Public names:
                     `essence-1`, `essence-2-quality`, `essence-2-light`,
@@ -157,16 +167,25 @@ paths:
                     the highest-fidelity cloud GPU renderer) and **Light**
                     (`essence-2-light`, the cost-effective distilled renderer;
                     gpu / cpu / Apple Neural Engine, including on-device).
-                    `expression-2` is the second-generation expression engine —
-                    audio-driven real-time avatar video from a single photo
-                    (creation trains a per-identity model, roughly 45
-                    minutes). The bare `essence` and `expression` are
-                    **version shorthands** that resolve to the current default
-                    of each family (`essence`→`essence-1`,
-                    `expression`→`expression-1`). Retired engine names are **no
-                    longer accepted** and return `400 VALIDATION_ERROR`.
-                    Identity inputs and creation times differ per model — see
-                    the endpoint description table and
+                    **`essence-2` is the combined Essence 2 creation** (one
+                    500-credit charge): it trains the Light identity model AND
+                    makes Quality available from the same identity video — you
+                    pick the tier at launch (`?model=essence-2-light` /
+                    `essence-2-quality`). **`auto` classifies your input**
+                    (the image if provided, else the prompt): a photorealistic
+                    person routes to `essence-2` (combined); a cartoon, animal
+                    or exotic creature routes to `expression-2`. `auto` must be
+                    sent explicitly — an omitted `model` keeps the historical
+                    `essence-1` default. `expression-2` is the
+                    second-generation expression engine — audio-driven
+                    real-time avatar video from a single photo (creation
+                    trains a per-identity model, roughly 45 minutes). The bare
+                    `essence` and `expression` are **version shorthands** that
+                    resolve to the current default of each family
+                    (`essence`→`essence-1`, `expression`→`expression-1`).
+                    Retired engine names are **no longer accepted** and return
+                    `400 VALIDATION_ERROR`. Identity inputs and creation times
+                    differ per model — see the endpoint description table and
                     [Essence vs Expression](#tag/models).
       responses:
         "200":
@@ -533,6 +552,101 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+
+  /v1/agent/{code}/models:
+    post:
+      operationId: addAgentModel
+      summary: Add a model to an existing agent
+      description: |
+        Add an avatar model to an agent you already created — no need to
+        re-create the agent or regenerate its persona/voice/image. The agent
+        must be in the `ready` state (else `409 AGENT_NOT_READY`).
+
+        | model | what happens | prerequisites | credits | time |
+        |---|---|---|---|---|
+        | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
+        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 500 | ~10–45 min |
+        | `essence-2` | the **combined** add: trains Essence 2 Light from the stored identity video; Quality becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
+        | `essence-1` | builds the v1 `.imx` from the stored identity video (or generates one from the stored image) | stored video or image | 250 | ~10–20 min |
+
+        Asynchronous adds return `status: "processing"` — poll
+        [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
+        until `supported_models` contains the new family (`essence-2` adds
+        both `essence-2-light` and `essence-2-quality`). Charges are refunded
+        automatically if the add fails; re-POSTing the same model never
+        double-charges, and returns `status: "ready"` with `credits: 0` once
+        the model already exists.
+      tags: [Agent Management]
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "A91XMB7113"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [model]
+              properties:
+                model:
+                  type: string
+                  enum: [essence-1, essence-2, expression-1, expression-2]
+                  description: >-
+                    The model to add. The Essence 2 tiers are not individually
+                    addable — `essence-2` is the one combined add (Light train
+                    + Quality from the same identity video). Anything else
+                    returns `400 VALIDATION_ERROR` listing these options.
+                  example: "expression-2"
+      responses:
+        "200":
+          description: >-
+            Model added (`status: "ready"` — instant/already available) or the
+            add started (`status: "processing"` — poll supported_models).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  agent_id:
+                    type: string
+                  model:
+                    type: string
+                  status:
+                    type: string
+                    enum: [ready, processing]
+                  credits:
+                    type: integer
+                    description: Credits charged for this add (0 for instant enablement / already available).
+                  supported_models:
+                    type: array
+                    items:
+                      type: string
+                    description: The agent's launchable model families at response time.
+                  message:
+                    type: string
+        "400":
+          description: Invalid `model` (the message lists the addable options).
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: >-
+            `AGENT_NOT_READY` — the agent is still generating or failed;
+            models can only be added to a ready agent.
+        "422":
+          description: >-
+            `MODEL_PREREQUISITE_MISSING` — the agent lacks a stored asset the
+            model needs (e.g. `essence-2` needs an identity video), or
+            `MODEL_SUBJECT_MISMATCH` — the Essence 2 family requires a
+            photorealistic human subject and the stored image is a
+            cartoon/animal/exotic creature (use `expression-2`).
 
   /v1/files/upload:
     post:
