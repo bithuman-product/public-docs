@@ -53,6 +53,38 @@ const { data: { token } } = await res.json();
 
 The token is a **1-hour JWT** (HS256-signed). Mint one per visitor session. Both `agent_id` and `fingerprint` are required; the response also returns a `sid` session identifier for tracking the embed instance. See [`POST /v1/embed-tokens/request`](/api/reference) for the full request shape.
 
+## Pin a serving tier
+
+By default the platform routes each session to the best available capacity
+for the agent's [model](/concepts/models-v2). For benchmarking or placement
+testing, append `?model=` with a runtime tier slug to the embed (or viewer)
+URL to pin the session to that tier:
+
+```html
+<iframe
+  src="https://bithuman.ai/embed/A56ZFX6217?token=YOUR_TOKEN&model=expression-2-cpu"
+  allow="microphone *; camera *; autoplay *"
+  style="width: 400px; height: 700px; border: none;"
+></iframe>
+```
+
+The tier slugs per model are listed in each model guide —
+[Expression 2](/concepts/expression-2#serving-tiers),
+[Essence 2 Light](/concepts/essence-2-light#serving-tiers),
+[Essence 2 Quality](/concepts/essence-2-quality#serving) (single tier). An
+unrecognized value falls back to the agent's default routing. For production,
+omit `?model=` and let the platform choose — direct elastic tiers scale from
+zero and can cold-start on first connect
+([what to expect](/guides/session-troubleshooting#connect-latency-whats-normal)).
+
+Prefer validating the choice **when you mint the token**: pass `model` in the
+[`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token) body
+and the API checks it up front — an unknown value returns `400`, and a
+second-generation model whose per-identity artifact hasn't been generated for
+that agent returns `409 MODEL_NOT_GENERATED` (rather than a session that
+fails to start). The mint response's `supported_models` array tells you which
+model families the agent can launch as right now.
+
 ## Webhooks
 
 bitHuman POSTs to your endpoint when session events occur. Return `200` immediately and offload work to a queue — long handlers risk the timeout.
@@ -77,7 +109,8 @@ Endpoint setup, signature verification, and retry policy are in the [API referen
 
 ## Where to go next
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, including the advanced per-tier `?model=` override for embed URLs.
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [Essence 2 Light](/concepts/essence-2-light).
+- [Session behavior & troubleshooting](/guides/session-troubleshooting) — connect latency, idle behavior, and common embed errors.
 - [Deploy via LiveKit](/guides/deploy-livekit) — full agent-worker integration.
 - [Browser rendering](/guides/browser-rendering) — render client-side to cut server video egress.
 - [API reference](/api/reference) — embed tokens, agents, and webhooks.

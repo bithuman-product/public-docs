@@ -13,17 +13,28 @@ As of **2026-07-01**, bitHuman's three second-generation avatar models are
 **generally available** on every surface — the REST API, the embed widget, the
 dashboard, and the SDKs:
 
-- **`expression-2`** — the second-generation expression engine. Audio-driven,
-  real-time avatar video generated from a **single photo**: at agent creation
-  it trains a small per-identity model (a few minutes), then synthesizes fully
-  generated motion live — not patched onto a pre-rendered base. Serves on
-  three tiers: **gpu**, **cpu**, and **ane** (Apple Neural Engine).
-- **`essence-2-quality`** — the **highest-fidelity** tier of the Essence
-  family. A heavy GPU renderer for close-up, hero-quality output; served on
-  cloud GPUs.
-- **`essence-2-light`** — the **cost-effective** tier. A distilled renderer
-  that runs across **gpu**, **cpu**, and **ane** — including fully
-  **on-device**, where audio and video never leave your hardware.
+- **[`expression-2`](/concepts/expression-2)** — the second-generation
+  expression engine. Audio-driven, real-time avatar video generated from a
+  **single photo**: at agent creation it trains a small per-identity model
+  (roughly 45 minutes on a training GPU), then synthesizes fully generated
+  motion live — not patched onto a pre-rendered base. Serves on three tiers:
+  **gpu**, **cpu**, and **ane** (Apple Neural Engine).
+- **[`essence-2-quality`](/concepts/essence-2-quality)** — the
+  **highest-fidelity** tier of the Essence family. A heavy GPU renderer that
+  animates your identity's real source footage for close-up, hero-quality
+  output; served on cloud GPUs. No per-identity training — the identity is
+  prepared from your source video in seconds.
+- **[`essence-2-light`](/concepts/essence-2-light)** — the **cost-effective**
+  tier. A distilled renderer that runs across **gpu**, **cpu**, and **ane** —
+  including fully **on-device**, where audio and video never leave your
+  hardware. Creation distills a compact identity bundle (typically tens of
+  minutes).
+
+Each model now has an official per-model guide — what it is, creation,
+serving tiers, idle behavior, pricing, and limits:
+**[Expression 2](/concepts/expression-2)** ·
+**[Essence 2 Quality](/concepts/essence-2-quality)** ·
+**[Essence 2 Light](/concepts/essence-2-light)**.
 
 The first-generation models ([`essence-1` and `expression-1`](/concepts/models))
 remain fully supported; nothing changes for existing agents or integrations.
@@ -32,11 +43,13 @@ remain fully supported; nothing changes for existing agents or integrations.
 
 | | **essence-2-quality** | **essence-2-light** | **expression-2** |
 |---|---|---|---|
+| **Guide** | [Essence 2 Quality](/concepts/essence-2-quality) | [Essence 2 Light](/concepts/essence-2-light) | [Expression 2](/concepts/expression-2) |
 | **Family** | Essence | Essence | Expression |
 | **What it is** | Highest-fidelity GPU renderer | Efficient distilled renderer | Generative motion from one photo |
+| **Identity source** | Video (real footage) | Video, or generated from your image | Single photo |
 | **Serving tiers** | gpu | gpu · cpu · ane | gpu · cpu · ane |
 | **On-device** | — | Yes (CPU / Apple Neural Engine) | Yes (Apple Neural Engine) |
-| **Creation** | Train-on-create | Train-on-create | Train-on-create (~minutes, per-identity model) |
+| **Creation** | Train-on-create (instant identity prep) | Train-on-create (typically 25–40 min) | Train-on-create (~45 min per-identity model) |
 | **Cloud** | 8 credits/min | 4 credits/min | 4 credits/min |
 | **Self-hosted** | 4 credits/min | 2 credits/min | 2 credits/min |
 
@@ -48,23 +61,24 @@ every surface.
 
 ### Highest visual fidelity, close-up or hero content
 
-**`essence-2-quality`.** The premium Essence renderer on cloud GPUs — pick it
-when image quality is the whole point and 8 credits/min is acceptable.
+**[`essence-2-quality`](/concepts/essence-2-quality).** The premium Essence
+renderer on cloud GPUs — pick it when image quality is the whole point and
+8 credits/min is acceptable. Needs a source video of the identity.
 
 ### Cost-effective at scale, or on-device
 
-**`essence-2-light`.** Half the cloud price of Quality, and the only Essence 2
-tier that runs on CPU and the Apple Neural Engine as well as GPU — so the same
-agent serves from bitHuman's cloud, your own servers, or entirely on-device.
-The right default for kiosks, high-concurrency deployments, and
-privacy-sensitive environments.
+**[`essence-2-light`](/concepts/essence-2-light).** Half the cloud price of
+Quality, and the only Essence 2 tier that runs on CPU and the Apple Neural
+Engine as well as GPU — so the same agent serves from bitHuman's cloud, your
+own servers, or entirely on-device. The right default for kiosks,
+high-concurrency deployments, and privacy-sensitive environments.
 
 ### Fully generated motion from a single photo
 
-**`expression-2`.** The most lifelike motion in the lineup — expressions and
-head movement are generated live from the audio rather than replayed. Creation
-trains a per-identity model from your photo in a few minutes; serving spans
-gpu, cpu, and ane tiers.
+**[`expression-2`](/concepts/expression-2).** The most lifelike motion in the
+lineup — expressions and head movement are generated live from the audio
+rather than replayed. Creation trains a per-identity model from your photo
+(roughly 45 minutes); serving spans gpu, cpu, and ane tiers.
 
 Still deciding between the **families** (Essence vs Expression)? Start with
 [Essence vs Expression](/concepts/models).
@@ -73,11 +87,24 @@ Still deciding between the **families** (Essence vs Expression)? Start with
 
 All three models are **train-on-create**: you create an agent once with
 `POST /v1/agent/generate` and the platform prepares that identity's model as
-part of generation. Creation is asynchronous, costs **250 credits** (one-time,
-per agent), and typically completes in a few minutes — `expression-2` trains
-its per-identity model within that window. Poll
+part of generation. Creation is asynchronous and costs **250 credits**
+(one-time, per agent). Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents) until the status is terminal
 (`success` / `ready`).
+
+How long creation takes depends on the model — the v2 models do real
+per-identity work, so don't apply a short client timeout:
+
+| Model | Identity step | Typical creation time |
+|---|---|---|
+| `essence-2-quality` | Instant prep from your source video (seconds) | A few minutes end-to-end |
+| `essence-2-light` | Distills a compact identity bundle on a cloud GPU | Typically 25–40 minutes; occasionally longer |
+| `expression-2` | Trains a per-identity model on an H100-class GPU | Roughly 45 minutes (30–60) |
+
+Inputs differ too: `essence-2-quality` **requires a source video**;
+`essence-2-light` takes a video *or* generates one from your image;
+`expression-2` needs only a photo. Details and failure modes are in each
+model's guide and the [Agents API](/api/agents#generate-an-agent).
 
 ### Create an agent with `expression-2`
 
@@ -166,9 +193,9 @@ https://bithuman.ai/embed/A56ZFX6217?model=expression-2-ane
 
 | Model | Tier slugs |
 |---|---|
-| `expression-2` | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
-| `essence-2-light` | `essence-2-light-gpu` · `essence-2-light-cpu` · `essence-2-light-ane` |
-| `essence-2-quality` | `essence-2-quality` (single GPU tier) |
+| [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
+| [`essence-2-light`](/concepts/essence-2-light#serving-tiers) | `essence-2-light-gpu` · `essence-2-light-cpu` · `essence-2-light-ane` |
+| [`essence-2-quality`](/concepts/essence-2-quality#serving) | `essence-2-quality` (single GPU tier) |
 
 > **Note** Tier pinning is an advanced, operational surface — slugs may be
 > adjusted as capacity evolves, and an unrecognized value falls back to the
@@ -189,10 +216,24 @@ Per active minute of avatar runtime, from the
 Creation is a one-time 250 credits per agent for every model. Idle, paused, or
 disconnected time isn't billed.
 
+## Idle behavior
+
+All three models keep the avatar naturally alive during silences, and as of
+**2026-07-02** their idle loops play **forward-only** — footage wraps from its
+last frame back to its first and never plays in reverse. Expression 2
+additionally bakes a **real-footage idle clip** into every creation, so idle
+is the identity's own footage rather than generated frames. Details per model:
+[Expression 2](/concepts/expression-2#idle-and-speaking-behavior) ·
+[Essence 2 Light](/concepts/essence-2-light#idle-and-speaking-behavior), and
+the expectations overview in
+[Session behavior & troubleshooting](/guides/session-troubleshooting).
+
 ## Next steps
 
+- [Expression 2](/concepts/expression-2) · [Essence 2 Quality](/concepts/essence-2-quality) · [Essence 2 Light](/concepts/essence-2-light) — the official per-model guides.
 - [Essence vs Expression](/concepts/models) — the two model families.
 - [Agents API](/api/agents) — the full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
+- [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
 - [Pricing & credits](/guides/pricing) — plans, top-ups, and the full schedule.
 - [Changelog](/changelog) — the GA announcement.

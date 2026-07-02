@@ -48,7 +48,27 @@ asynchronous and costs 250 credits; the call returns immediately with an
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
-| `model` | string | no | `essence-1` | Avatar model — `essence-1` (default), `essence-2-quality`, `essence-2-light`, `expression-1`, or `expression-2` (all five GA). The bare `essence` / `expression` shorthands resolve to `essence-1` / `expression-1`. Invalid or retired values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
+| `model` | string | no | `essence-1` | Avatar model — `essence-1` (default), [`essence-2-quality`](/concepts/essence-2-quality), [`essence-2-light`](/concepts/essence-2-light), `expression-1`, or [`expression-2`](/concepts/expression-2) (all five GA). The bare `essence` / `expression` shorthands resolve to `essence-1` / `expression-1`. Invalid or retired values return `400 VALIDATION_ERROR` (no credits charged). See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
+
+### Model-specific inputs and creation times
+
+The `model` you pick changes what creation needs and how long it runs. All
+models share the same pipeline prefix — persona, voice, and image are prepared
+first (each generated from your prompt when not supplied) — then the
+model-specific identity step runs:
+
+| `model` | Identity input | Identity step | Typical creation time |
+|---|---|---|---|
+| `essence-1` (default) | `image` (or generated from prompt); `video` generated if needed | Builds the portable `.imx` avatar | 2–5 minutes |
+| `expression-1` | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
+| `essence-2-quality` | **`video` required** — the identity is prepared from real footage | Instant prep of a compact identity bundle (seconds, warm) | A few minutes end-to-end |
+| `essence-2-light` | `video`, **or** `image` (a video is generated from it first — adds a `video` step) | Distills a compact identity bundle on a cloud GPU | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
+| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | ~45 minutes (30–60; allowed up to 90) |
+
+Set your polling timeout per model — a 5-minute client timeout is fine for
+`essence-1` but will falsely "fail" every `expression-2` and `essence-2-light`
+creation. Full model behavior (serving tiers, idle, pricing) is in each
+model's guide.
 
 ```python
 import requests
@@ -95,7 +115,21 @@ Treat `success` / `ready` and `failed` as terminal. `processing`, `generating`,
 and `completed` are intermediate, so keep polling (don't stop on `completed` —
 it can appear long before the model is done). Drive your loop off `progress`
 reaching `1.0` together with a terminal status. Typical wall-clock is two to
-five minutes.
+five minutes for `essence-1` — the second-generation models train real
+per-identity models and take longer (see
+[model-specific inputs and creation times](#model-specific-inputs-and-creation-times)).
+
+While a run is in flight, `current_step` reports the pipeline stage:
+
+| `current_step` | Progress | What's happening |
+|---|---|---|
+| `payment` | ~2% | Credits reserved (250). |
+| `persona` | 5–15% | Persona / system prompt prepared. |
+| `voice_image` | ~20% | Voice and portrait generated (in parallel). |
+| `video` | ~45% | Identity video generated — `essence-1`, and `essence-2-light` when you supplied only an image. |
+| `awaiting_face_marking` | ~35% | Waiting on manual face marking (rare `essence-1` path). |
+| `lip_sync` | 70–99% | The model-specific identity step — `.imx` build (`essence-1`), identity prep (`essence-2-quality`), bundle distillation (`essence-2-light`), or per-identity training (`expression-2`). The longest step for the v2 models. |
+| `done` | 100% | Terminal — the agent is `ready`. |
 
 ```json
 {
@@ -104,13 +138,14 @@ five minutes.
     "agent_id": "A91XMB7113",
     "status": "ready",
     "progress": 1.0,
-    "progress_msg": "Done",
-    "current_step": "lip_created",
+    "progress_msg": "Complete",
+    "current_step": "done",
     "error_message": null,
     "system_prompt": "You are a professional video content creator.",
     "image_url": "https://...",
     "video_url": "https://...",
     "model_url": "https://...",
+    "supported_models": ["essence-2-quality", "expression-2"],
     "name": "agent name"
   }
 }
@@ -120,7 +155,8 @@ five minutes.
 |---|---|---|
 | `progress` | float (0.0–1.0) | Generation progress as a fraction. `1.0` is complete. |
 | `progress_msg` | string | Human-readable progress description. |
-| `current_step` | string | Current generation step (e.g. `lip_created`). |
+| `current_step` | string | Current generation step (see the table above). |
+| `supported_models` | string[] | The canonical model families this agent can be **launched as right now**. Trained families (`expression-2`, `essence-2-light`) appear once their per-identity model exists; `essence-2-quality` appears whenever the agent has an image (it prepares on demand); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family. Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response. |
 
 ### Generate and poll
 
@@ -146,6 +182,24 @@ while True:
         raise SystemExit(f"Failed: {data['error_message']}")
     time.sleep(5)
 ```
+
+### Creation failure modes
+
+Two kinds of failure exist — **rejected before start** (HTTP error, nothing
+charged) and **failed during generation** (`status: "failed"`, credits
+automatically refunded):
+
+| Failure | Surface | Notes |
+|---|---|---|
+| Invalid `model` value | `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: essence, essence-1, essence-2-light, essence-2-quality, expression, expression-1, expression-2` | Rejected before dispatch; no credits charged. Retired engine names get the same rejection. |
+| Malformed body | `400 VALIDATION_ERROR` — `Request body must be valid JSON` / `…a JSON object` | Rejected before dispatch. |
+| Not enough credits | `402 INSUFFICIENT_BALANCE` (also surfaces as `status: "failed"` with a payment `error_message` if the reserve fails mid-pipeline) | Creation costs 250 credits. |
+| A pipeline step fails | `status: "failed"` + `error_message` naming the step (voice, image, video, or the model step) | Terminal for that `agent_id`; the 250 credits are refunded automatically. Create again after fixing the input. |
+| `essence-2-quality` without a source video | `status: "failed"` at the model step | The tier prepares its identity from real footage — supply `video`. See [Essence 2 Quality](/concepts/essence-2-quality#how-creation-works). |
+| v2 creation "stuck" at `lip_sync` | Not a failure | That's the training/prep step — the longest part for `expression-2` / `essence-2-light`. Keep polling; see [creation times](#model-specific-inputs-and-creation-times). |
+
+More session-time issues (connect latency, tier pinning, idle behavior):
+[Session behavior & troubleshooting](/guides/session-troubleshooting).
 
 ## Get an agent
 
@@ -305,7 +359,8 @@ requests.post(
 | `402` | `INSUFFICIENT_BALANCE` | Not enough credits (generation costs 250). |
 | `404` | `NOT_FOUND` | No agent with the given code (`message`: `"Agent not found for code: <code>"`). |
 | `404` | `NOT_FOUND` | Agent has no active session to `/speak` or `/add-context` (`message`: `"No active rooms found for agent <code>"`). |
-| `400` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value). |
+| `400` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value, or an invalid / retired `model` name — the error message lists the accepted values). |
+| `409` | `MODEL_NOT_GENERATED` | A launch surface (embed-token `model`, [talking video](/api/video)) requested `expression-2` / `essence-2-light` for an agent whose trained per-identity model doesn't exist yet (`message`: `"agent <code>'s <model> model hasn't been generated yet"`). Check `supported_models`, or create the agent with that model. `essence-2-quality` is never gated — it prepares on demand. |
 
 See the full [error reference](/api/errors) and the interactive
 [API reference](/api/reference).
