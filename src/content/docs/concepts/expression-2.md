@@ -46,7 +46,7 @@ start at [Essence 2 & Expression 2](/concepts/models-v2).
 
 Create the agent once with
 [`POST /v1/agent/generate`](/api/agents#generate-an-agent) and
-`model: "expression-2"`. Creation is asynchronous and costs **250 credits**
+`model: "expression-2"`. Creation is asynchronous and costs **500 credits**
 (one-time, per agent).
 
 ```python
@@ -157,7 +157,7 @@ the generated frames take over. See
 |---|---|
 | Cloud serving | **4 credits/min** |
 | Self-hosted serving | **2 credits/min** |
-| Agent creation | 250 credits (one-time) |
+| Agent creation | 500 credits (one-time) |
 | [Talking-video renders](/api/video) | 4 credits per minute of output (rounded up) |
 
 Per-minute serving is metered on active avatar minutes only — idle, paused, or

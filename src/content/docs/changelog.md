@@ -25,7 +25,7 @@ Three second-generation avatar models are now **generally available** on every s
 - **`essence-2-quality`** — the **highest-fidelity** tier of the Essence family: a heavy GPU renderer for close-up, hero-quality output on cloud GPUs. 8 credits/min cloud · 4 credits/min self-hosted.
 - **`essence-2-light`** — the **cost-effective** tier: a distilled renderer that runs across **gpu**, **cpu**, and **ane** — including fully **on-device**, where audio and video never leave your hardware. The `essence-2-light` rollout gate is lifted: agent generation with `model="essence-2-light"` is live. 4 credits/min cloud · 2 credits/min self-hosted.
 
-All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (250 credits, one-time) and serve through the existing session flows unchanged. The v1 models (`essence-1`, `expression-1`) remain fully supported.
+All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (500 credits, one-time) and serve through the existing session flows unchanged. The v1 models (`essence-1`, `expression-1`) remain fully supported at 250 credits creation.
 
 ## June 2026
 

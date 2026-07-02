@@ -32,7 +32,8 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 | **Managed agent — camera chat** | — | 30 cr/min | Cloud conversational agent with camera/vision on |
 | **Audio-only (Swift SDK, no avatar)** | — | **Free** | No avatar attached → fully offline, no metering |
 | **`BITHUMAN_UNMETERED=1` dev mode** | either | **Free** | Skips auth + heartbeat — dev / parity testing only |
-| **Agent generation** | — | 250 cr (one-time) | Per [`.imx`](/concepts/avatars-imx) built from your photo / video |
+| **Agent generation (v1)** | Essence 1 / Expression 1 | 250 cr (one-time) | Per [`.imx`](/concepts/avatars-imx) built from your photo / video |
+| **Agent generation (v2)** | Expression 2 / Essence 2 Quality / Essence 2 Light | 500 cr (one-time) | Per avatar model trained on-create from your photo / video |
 | **Dynamics generation** | — | 250 cr (one-time) | Per gesture / movement set generated for an agent |
 | **Book creation** | — | 250 cr (one-time) | Per illustrated book generated from a prompt |
 

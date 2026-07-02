@@ -45,7 +45,7 @@ For the family-level decision, start at
 
 Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
 and `model: "essence-2-quality"`. Creation is asynchronous and costs
-**250 credits** (one-time, per agent).
+**500 credits** (one-time, per agent).
 
 ```python
 import requests
@@ -121,7 +121,7 @@ rejection — unlike the trained families
 |---|---|
 | Cloud serving | **8 credits/min** |
 | Self-hosted serving | **4 credits/min** |
-| Agent creation | 250 credits (one-time) |
+| Agent creation | 500 credits (one-time) |
 | [Talking-video renders](/api/video) | 8 credits per minute of output (rounded up) |
 
 Per-minute serving is metered on active avatar minutes only — idle, paused, or
