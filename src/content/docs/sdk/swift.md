@@ -35,14 +35,14 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 
 ```
-https://github.com/bithuman-product/bithuman-sdk-public.git
+https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
 Pick **0.8.2** (or "Up to Next Major" from 0.8.1) and attach the
 **`bitHumanKit`** product to your target. Or in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/bithuman-sdk-public.git",
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
          from: "0.8.1")   // resolves to the latest 0.8.x tag (0.8.2 today)
 ```
 
@@ -201,7 +201,7 @@ Working as intended. Branch on `HardwareCheck.evaluate()`.
 
 ## See also
 
-- [Runnable Swift examples](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift) — voice, avatar, and benchmark apps
+- [Runnable Swift examples](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift) — voice, avatar, and benchmark apps
 - [SDK overview](/sdk) — which SDK to pick
 - [LiveKit (Apple)](/sdk/livekit) — connect a native app to a cloud-hosted avatar
 - [Models](/concepts/models) — Essence vs Expression

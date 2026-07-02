@@ -12,7 +12,7 @@ order: 13
 - **Xcode 26+** on a Mac, plus an Apple Developer account. Add the SwiftPM package:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/bithuman-sdk-public.git", from: "0.8.1")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "0.8.1")
 ```
 
 - Device floor (real hardware — the Simulator can't run on-device inference): **iPhone 16 Pro or later** (A18 Pro+), or **iPad Pro M4 or later**, on **iOS / iPadOS 26+**. Earlier devices are refused at launch by `HardwareCheck.evaluate()`.
@@ -25,8 +25,8 @@ order: 13
 1. Open the example folder in Xcode (`File → Open` → select the folder containing `Package.swift`):
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-sdk-public.git
-open bithuman-sdk-public/Examples/swift/ios-avatar/Package.swift
+git clone https://github.com/bithuman-product/homebrew-bithuman.git
+open homebrew-bithuman/Examples/swift/ios-avatar/Package.swift
 ```
 
 2. Set the API key in the scheme: `Product → Scheme → Edit Scheme → Run → Arguments → Environment Variables`, add `BITHUMAN_API_KEY`. Never hardcode it.
@@ -96,12 +96,12 @@ final class AvatarLifecycle: ObservableObject {
 }
 ```
 
-Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/ios-avatar)
+Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar)
 
 ## Next steps
 
 - [Swift SDK](/sdk/swift) — the full Apple SDK reference.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain.
-- [macos-voice example](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
+- [macos-voice example](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.

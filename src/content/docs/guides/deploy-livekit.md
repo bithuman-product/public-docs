@@ -66,12 +66,12 @@ Each session bills at the [cloud or self-hosted rate](/guides/pricing) depending
 
 ## Runnable examples
 
-Complete LiveKit agents ship in the [examples repo](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python) — each with `.env.example`, `requirements.txt`, and a `docker-compose.yml` full stack (LiveKit + agent + web UI). Clone, fill `.env`, then `docker compose up`:
+Complete LiveKit agents ship in the [examples repo](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python) — each with `.env.example`, `requirements.txt`, and a `docker-compose.yml` full stack (LiveKit + agent + web UI). Clone, fill `.env`, then `docker compose up`:
 
 | Example | Model · where |
 |---|---|
-| [cloud-essence](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-essence) | Essence · bitHuman cloud — start here |
-| [local-essence](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence) | Essence · your server (CPU) |
+| [cloud-essence](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/cloud-essence) | Essence · bitHuman cloud — start here |
+| [local-essence](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/local-essence) | Essence · your server (CPU) |
 
 See the [LiveKit Agents docs](https://docs.livekit.io/agents/) for the broader agent-worker model.
 

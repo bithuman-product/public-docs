@@ -8,7 +8,7 @@ order: 3
 
 ## Where to find us
 
-- **GitHub** — [github.com/bithuman-product/bithuman-sdk-public](https://github.com/bithuman-product/bithuman-sdk-public). The public SDK source, runnable examples, and the source for these docs. File feature requests and bugs in [Issues](https://github.com/bithuman-product/bithuman-sdk-public/issues).
+- **GitHub** — [github.com/bithuman-product/homebrew-bithuman](https://github.com/bithuman-product/homebrew-bithuman). The public SDK source, runnable examples, and the source for these docs. File feature requests and bugs in [Issues](https://github.com/bithuman-product/homebrew-bithuman/issues).
 - **Discord** — [discord.gg/ES953n7bPA](https://discord.gg/ES953n7bPA). The fastest way to get help, share what you're building, and talk to the team.
 - **X (Twitter)** — [@bithuman_ai](https://x.com/bithuman_ai). Release news and announcements.
 - **Status** — [status.bithuman.ai](https://status.bithuman.ai). Live platform and API status.
@@ -19,7 +19,7 @@ There are three kinds of contributions, each with its own path.
 
 ### Small changes — open a PR
 
-Bug fixes, doc improvements, and internal refactors go straight to a pull request against [`bithuman-sdk-public`](https://github.com/bithuman-product/bithuman-sdk-public). No RFC needed.
+Bug fixes, doc improvements, and internal refactors go straight to a pull request against [`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman). No RFC needed.
 
 ### Platform-level changes — open an RFC
 
@@ -82,7 +82,7 @@ An **integration** is code that *consumes* a bitHuman SDK to plug it into a thir
 Integrations live **upstream**, in the framework's own repo. bitHuman maintains a **contract test** in the public SDK repo that verifies our SDK exposes everything the upstream plugin uses, so breakage is caught before users hit it. The pattern is:
 
 ```
-bithuman-sdk-public/
+homebrew-bithuman/
   integrations/
     <integration-name>/
       README.md             # what this integration is + upstream link

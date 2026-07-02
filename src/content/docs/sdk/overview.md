@@ -83,7 +83,7 @@ We keep this honest so you can plan around it.
 
 > **Note** On Apple platforms the SwiftPM product is **`bitHumanKit`** — an
 > umbrella framework (from
-> [`bithuman-product/bithuman-sdk-public`](https://github.com/bithuman-product/bithuman-sdk-public))
+> [`bithuman-product/homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
 > that re-exports both the Expression avatar engine and the Essence
 > (`libessence`) runtime. `import bitHumanKit` is all you need; the standalone
 > Layer-1 engine products are not yet published separately. This rail is

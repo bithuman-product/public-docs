@@ -13,8 +13,8 @@ order: 15
 - Python 3.10+ in a virtualenv. The example's `requirements.txt` pulls everything (the SDK ships no OpenCV; the display window needs it):
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-sdk-public.git
-cd bithuman-sdk-public/Examples/python/local-essence
+git clone https://github.com/bithuman-product/homebrew-bithuman.git
+cd homebrew-bithuman/Examples/python/local-essence
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 ```
 
@@ -73,9 +73,9 @@ async for frame in runtime.run():
 
 Customize the personality by editing the `instructions` string — e.g. "You are a patient tech expert who explains things simply." or "You are an enthusiastic product advisor."
 
-Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence)
+Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/local-essence)
 
-> **Note** **Common issues.** Script won't start → both keys set in the same shell? No mic input → grant the terminal mic permission (macOS: System Settings → Privacy & Security → Microphone). Avatar shows but doesn't lip-sync → OpenAI Realtime audio is 24 kHz PCM16; pass `24000` to `push_audio`. **Want it in the browser instead?** Run the [cloud-essence Docker Compose stack](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/cloud-essence) and open `http://localhost:4202`.
+> **Note** **Common issues.** Script won't start → both keys set in the same shell? No mic input → grant the terminal mic permission (macOS: System Settings → Privacy & Security → Microphone). Avatar shows but doesn't lip-sync → OpenAI Realtime audio is 24 kHz PCM16; pass `24000` to `push_audio`. **Want it in the browser instead?** Run the [cloud-essence Docker Compose stack](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/cloud-essence) and open `http://localhost:4202`.
 
 ## Next steps
 
@@ -84,4 +84,4 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tr
 - [Embed widget](/guides/deploy-embed) — put it on your site.
 - [Python SDK](/sdk/python) — full API surface, LiveKit voice agents, troubleshooting.
 - [Audio streaming](/concepts/audio-streaming) — the `push_audio` / `flush` / `run` contract this example is built on.
-- [macos-voice example](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/swift/macos-voice) — fully on-device voice agent: speech never leaves your Mac.
+- [macos-voice example](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — fully on-device voice agent: speech never leaves your Mac.

@@ -77,7 +77,7 @@ bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
 
 > **Note** `bithuman render` ships on **Linux only** (libessence ABI 7) — on macOS the encoder returns "not implemented". Workarounds: render on a Linux host (install via the universal installer above), or use `bithuman run` and screen-record the browser tab. macOS render support is queued.
 
-Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/cli)
+Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/cli)
 
 ## Next steps
 
