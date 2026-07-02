@@ -94,13 +94,13 @@ done
 The repo ships this as runnable per-endpoint scripts (`validate.sh`, `generate-agent.sh`, `speak.sh`, …):
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-sdk-public.git
-cd bithuman-sdk-public/Examples/rest-api/curl
+git clone https://github.com/bithuman-product/homebrew-bithuman.git
+cd homebrew-bithuman/Examples/rest-api/curl
 export BITHUMAN_API_SECRET=your_secret
 ./validate.sh
 ```
 
-Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/rest-api)
+Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/rest-api)
 
 ## Next steps
 

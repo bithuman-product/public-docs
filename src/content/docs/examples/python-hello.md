@@ -43,8 +43,8 @@ python hello.py
 The program **prints nothing and exits 0**. It renders frames into `frame.bgr_image` but doesn't display them — that's the minimal loop, by design. To actually *watch* the avatar (OpenCV window + speaker playback), run the canonical example:
 
 ```bash
-git clone https://github.com/bithuman-product/bithuman-sdk-public.git
-cd bithuman-sdk-public/Examples/python/local-essence
+git clone https://github.com/bithuman-product/homebrew-bithuman.git
+cd homebrew-bithuman/Examples/python/local-essence
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt      # incl. opencv — not bundled with the SDK
 python quickstart.py \
@@ -110,7 +110,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Full source: [GitHub](https://github.com/bithuman-product/bithuman-sdk-public/tree/main/Examples/python/local-essence)
+Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/local-essence)
 
 ## Next steps
 
