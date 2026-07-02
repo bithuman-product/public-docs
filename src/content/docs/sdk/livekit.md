@@ -12,8 +12,9 @@ When the avatar runs on a server — shared between participants, or Expression 
 a GPU — your client becomes a thin WebRTC subscriber and a Python agent runs the
 avatar. bitHuman ships two LiveKit integration points for this topology:
 
-- **Apple client** — `bithuman-livekit-swift`, a fork of LiveKit's Swift client,
-  connects a native iOS/macOS app to a served or cloud avatar.
+- **Apple client** — [`livekit/client-sdk-swift`](https://github.com/livekit/client-sdk-swift),
+  LiveKit's official Swift client, connects a native iOS/macOS app to a served
+  or cloud avatar.
 - **Python deploy path** — `livekit-plugins-bithuman` drops the avatar into any
   LiveKit agent worker, managed or self-hosted.
 
@@ -140,19 +141,17 @@ flowing, the cause is almost always the publish preset above (a frozen/decimated
 track reads as black) — **not** a warmup issue. Gate client joins on the
 avatar being live, and apply the tuned publish first.
 
-## Apple: connect a native app via `bithuman-livekit-swift`
+## Apple: connect a native app via LiveKit's Swift client
 
-`bithuman-livekit-swift` is a **fork** of
-[`livekit/client-sdk-swift`](https://github.com/livekit/client-sdk-swift)
-maintained by bitHuman. It tracks upstream releases and adds two things upstream
-doesn't have yet:
+Use the official [`livekit/client-sdk-swift`](https://github.com/livekit/client-sdk-swift)
+— a bitHuman avatar room is a standard LiveKit room, so the upstream client
+connects to a served or cloud avatar with no bitHuman-specific setup.
 
-- A **microphone-less app-audio path** — capture system / app audio without
-  holding a hardware mic.
-- A small **IPC layer** for routing audio between sibling processes.
-
-For anything not bitHuman-specific, the upstream LiveKit Swift docs and APIs
-apply unchanged — and upstream bugs should be filed upstream.
+> **Niche case:** if you need to capture **system/app audio without holding a
+> hardware microphone**, bitHuman maintained a
+> [frozen fork](https://github.com/bithuman-archive/bithuman-livekit-swift)
+> (archived, still installable via its git URL) that adds a mic-less app-audio
+> path + sibling-process audio IPC. For everything else, use upstream.
 
 ### Install
 
@@ -161,12 +160,12 @@ Add the Swift package and attach `LiveKit` to your target:
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/bithuman-product/bithuman-livekit-swift.git",
+    .package(url: "https://github.com/livekit/client-sdk-swift.git",
              .upToNextMajor(from: "2.14.0"))
 ],
 targets: [
     .target(name: "MyApp", dependencies: [
-        .product(name: "LiveKit", package: "bithuman-livekit-swift")
+        .product(name: "LiveKit", package: "client-sdk-swift")
     ])
 ]
 ```
@@ -210,7 +209,7 @@ the Python agent above — this client is the subscriber.
 | Your viewer is… | Use |
 |---|---|
 | A browser | The Python plugin + a web LiveKit client ([JS/TS SDK](/sdk/javascript) or LiveKit web) |
-| A native iOS/macOS app | The Python plugin (server) + `bithuman-livekit-swift` (client) |
+| A native iOS/macOS app | The Python plugin (server) + `livekit/client-sdk-swift` (client) |
 | On-device only, no server | The native [Swift](/sdk/swift) SDK instead |
 
 ## See also
