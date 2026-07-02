@@ -47,7 +47,12 @@ start at [Essence 2 & Expression 2](/concepts/models-v2).
 Create the agent once with
 [`POST /v1/agent/generate`](/api/agents#generate-an-agent) and
 `model: "expression-2"`. Creation is asynchronous and costs **500 credits**
-(one-time, per agent).
+(one-time, per agent). Expression 2 handles **any subject** — photorealistic
+or stylized — which is why `model: "auto"` routes cartoon / animal / exotic
+inputs here, and why the Essence 2 [subject gate](/api/agents#the-essence-2-subject-gate-422)
+points rejected creations at this model. You can also
+[add `expression-2`](/api/agents#add-a-model-to-an-existing-agent) to an
+existing agent (500 credits, uses its stored image).
 
 ```python
 import requests
@@ -188,4 +193,5 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
+- [Download your model](/api/agents#download-an-agents-model) — the trained model's Mac-runnable `.avatar` build, via API or `bithuman pull <code>`.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `expression-2`.

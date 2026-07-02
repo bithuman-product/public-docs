@@ -32,12 +32,15 @@ Every error follows the same structured envelope:
 | Status | Meaning | Common cause |
 |---|---|---|
 | `200` | Success | Request completed. |
-| `400` | Bad Request | Malformed JSON, missing required parameter (`MISSING_PARAM`), or failed validation (`VALIDATION_ERROR`). |
+| `302` | Redirect | Not an error — [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) redirects to the artifact URL by default. |
+| `400` | Bad Request | Malformed JSON, missing required parameter (`MISSING_PARAM`), failed validation (`VALIDATION_ERROR`), or a request that can never succeed as posed (`MODEL_NOT_DOWNLOADABLE`). |
 | `401` | Unauthorized | Invalid `api-secret` (`UNAUTHORIZED`) or absent `api-secret` header (`MISSING_AUTH`). |
 | `402` | Payment Required | Insufficient credits — top up to continue. |
-| `404` | Not Found | Agent, resource, or endpoint doesn't exist. |
+| `404` | Not Found | Agent, resource, or endpoint doesn't exist — or a model artifact not published to the download store yet (`MODEL_ARTIFACT_NOT_READY`, retryable). |
+| `409` | Conflict | The request is valid but the agent's **state** doesn't allow it yet (`MODEL_NOT_GENERATED`, `AGENT_NOT_READY`) — a state change (generate/add the model, wait for `ready`) fixes it. |
 | `413` | Payload Too Large | File exceeds the size limit. |
 | `415` | Unsupported Media Type | File type not supported. |
+| `422` | Unprocessable Entity | The request is well-formed but semantically incompatible with the target model (`MODEL_SUBJECT_MISMATCH`, `MODEL_PREREQUISITE_MISSING`) — change the input or asset, not the request syntax. |
 | `429` | Rate Limited | Too many requests — see [rate limits](/api/rate-limits). |
 | `500` | Internal Error | Server-side error — retry or contact support. |
 | `503` | Service Unavailable | All workers busy — retry with backoff. |
@@ -60,6 +63,23 @@ Every error follows the same structured envelope:
 | `NOT_FOUND` | 404 | Returned both when no agent matches the code **and** when an agent has no active session for `/speak` / `/add-context`. Distinguish by the `message` string: `"Agent not found for code: <code>"` vs `"No active rooms found for agent <code>"`. |
 | `VALIDATION_ERROR` | 400 | Body failed schema validation. Include all required fields. |
 | `MISSING_PARAM` | 400 | A required parameter was not provided. |
+
+### Model errors
+
+The model-release surfaces — [creation](/api/agents#generate-an-agent),
+[model add](/api/agents#add-a-model-to-an-existing-agent),
+[model download](/api/agents#download-an-agents-model), the
+[embed-token `model` field](/api/embedding), and
+[talking video](/api/video) — share these codes:
+
+| Code | HTTP | Resolution |
+|---|---|---|
+| `MODEL_NOT_GENERATED` | 409 | The requested model family isn't in the agent's `supported_models` — it can't be launched (or downloaded) as that family yet. Trained families (`expression-2`, `essence-2-light`): `"agent <code>'s <model> model hasn't been generated yet"` — [add the model](/api/agents#add-a-model-to-an-existing-agent) or create the agent with it. `essence-2-quality` is gated on the agent's **source video** (its identity prepares on demand from that footage): `"agent <code>'s essence-2-quality model requires a source video, which this agent doesn't have"`. Checked **before any charge**. |
+| `AGENT_NOT_READY` | 409 | [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent) on an agent that is still generating or failed. Wait for the current generation to finish, or fix/re-create a failed agent first. |
+| `MODEL_SUBJECT_MISMATCH` | 422 | An explicit Essence 2 creation or add whose input is not a **photorealistic human subject** — e.g. `"essence-2 requires a photorealistic human subject; this image looks like a cartoon — use expression-2"`. Nothing is billed and no agent row is created. Use `expression-2` for stylized/non-human subjects, or `model: "auto"` to route automatically. See [the subject gate](/api/agents#the-essence-2-subject-gate-422). |
+| `MODEL_PREREQUISITE_MISSING` | 422 | A [model add](/api/agents#add-a-model-to-an-existing-agent) needs a stored asset this agent doesn't have — identity video for `essence-2`, face image for `expression-2`, image + voice for `expression-1`, video or image for `essence-1`. Upload the missing asset, then retry. |
+| `MODEL_NOT_DOWNLOADABLE` | 400 | [Model download](/api/agents#download-an-agents-model) for a family with no per-identity artifact — `expression-1` renders server-side from the agent's image. A `400` because no state change can fix it (unlike the 409s). |
+| `MODEL_ARTIFACT_NOT_READY` | 404 | [Model download](/api/agents#download-an-agents-model) for a **supported** family whose artifact hasn't been published to the download store yet. Retryable — the message carries a per-family retry hint; poll on this code. |
 
 ### File operations
 

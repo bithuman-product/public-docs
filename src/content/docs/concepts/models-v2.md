@@ -106,6 +106,32 @@ Inputs differ too: `essence-2-quality` **requires a source video**;
 `expression-2` needs only a photo. Details and failure modes are in each
 model's guide and the [Agents API](/api/agents#generate-an-agent).
 
+Two more `model` values round out the creation surface:
+
+- **`essence-2` — the combined Essence 2 creation.** One 500-credit charge
+  trains Essence 2 Light **and** makes Essence 2 Quality available from the
+  same identity video — you pick the tier at launch (`?model=` or the
+  embed-token `model` field). See
+  [the combined creation](/api/agents#essence-2--the-combined-creation).
+- **`auto` — classify and route.** An LLM looks at your input (the image if
+  provided, else the prompt): a photorealistic person routes to `essence-2`
+  (combined), a cartoon / animal / exotic creature routes to `expression-2`.
+  It's the default in the dashboard's create flow; API callers must send it
+  explicitly (an omitted `model` keeps the historical `essence-1` default).
+  See [`auto`](/api/agents#auto--let-the-platform-pick-the-model).
+
+The Essence 2 family requires a **photorealistic human subject** — an
+explicit `essence-2*` creation with a stylized or non-human input is rejected
+with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before
+anything is billed (`auto` routes instead of rejecting).
+
+Already have an agent? You don't need to re-create it —
+[`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent)
+adds a model to it at the same per-model rates (adding `expression-1` is
+free and instant), and
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+downloads a generated artifact.
+
 ### Create an agent with `expression-2`
 
 ```python
@@ -214,9 +240,14 @@ Per active minute of avatar runtime, from the
 | `expression-2` | 4 credits/min | 2 credits/min |
 
 Creation is one-time and per agent: **500 credits** for the v2 models above
-(`expression-2`, `essence-2-quality`, `essence-2-light`) and 250 credits for the
-v1 models (`essence-1`, `expression-1`). Idle, paused, or disconnected time
-isn't billed.
+(`expression-2`, `essence-2-quality`, `essence-2-light` — and the
+[combined `essence-2`](/api/agents#essence-2--the-combined-creation) and
+[`auto`](/api/agents#auto--let-the-platform-pick-the-model), which charge the
+same 500) and 250 credits for the v1 models (`essence-1`, `expression-1`).
+[Adding a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
+charges the same per-model rates. Idle, paused, or disconnected time isn't
+billed. Machine-readable schedule:
+[`GET /v1/pricing`](/api/billing#get-the-pricing-schedule).
 
 ## Idle behavior
 

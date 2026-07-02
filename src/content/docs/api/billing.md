@@ -16,7 +16,9 @@ sessions bill per minute.
 
 | Action | Cost |
 |---|---|
-| Agent generation (one-time, per avatar) | 250 credits |
+| Agent generation — v1 models (`essence-1`, `expression-1`) | 250 credits (one-time, per avatar) |
+| Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`) | 500 credits (one-time, per avatar) |
+| [Add a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent) | Same per-model rates (250 / 500); adding `expression-1` is **free** (instant enablement, no training) |
 | Dynamics generation (one-time, per avatar) | 250 credits |
 | Book creation (one-time, per book) | 250 credits |
 | Talking video — Expression 2 | 4 credits/min (rounded up) |
@@ -30,6 +32,56 @@ sessions bill per minute.
 
 See the [Pricing guide](/guides/pricing) for the full plan ladder (Free, Creator,
 Pro, Business, Enterprise, Custom) and annual pricing.
+
+## Get the pricing schedule
+
+`GET /v1/pricing` — the machine-readable credit schedule, so you can estimate
+cost before a billable call. Agent creation is priced **per model** — read
+`agent_generation.by_model` (there is no flat creation rate):
+
+```bash
+curl https://api.bithuman.ai/v1/pricing \
+  -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "unit": "credits",
+    "agent_generation": {
+      "unit": "credits",
+      "by_model": {
+        "essence-1": 250,
+        "expression-1": 250,
+        "essence-2-quality": 500,
+        "essence-2-light": 500,
+        "expression-2": 500,
+        "essence-2": 500,
+        "auto": 500
+      },
+      "note": "One-time charge per agent created via POST /v1/agent/generate, PER MODEL …"
+    },
+    "talking_video": {
+      "unit": "credits_per_minute",
+      "billing": "ceil(minutes) * rate, minimum 1 minute",
+      "rates": { "essence-2-light": 4, "essence-2-quality": 8, "expression-2": 4 }
+    },
+    "dynamics_generation": { "flat": 250, "note": "…" },
+    "notes": "Authoritative charges are enforced server-side at request time. …"
+  }
+}
+```
+
+`by_model` keys are the `model` values `POST /v1/agent/generate` accepts:
+`essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
+(one 500-credit charge covers both tiers) and `auto`
+[classifies and routes](/api/agents#auto--let-the-platform-pick-the-model) —
+either way it charges the routed model's 500-credit rate.
+[Post-generation model adds](/api/agents#add-a-model-to-an-existing-agent)
+charge the same per-model rates (adding `expression-1` is free). Authoritative
+charges are always enforced server-side — treat this endpoint as an estimate
+and reference.
 
 ## Check credit balance
 
@@ -132,8 +184,10 @@ balance use `GET /v2/credit-summaries` above.
   suspension grace window (`-11..0`) as zero minutes.
 - For suspension-status UI, compare `balance` to the documented threshold `-11`
   rather than relying on a separate flag.
-- Check your balance before heavy operations (250-credit generation or dynamics)
-  to avoid wasted calls that fail with `402`.
+- Check your balance before heavy operations (agent generation at 250–500
+  credits per model, or dynamics at 250) to avoid wasted calls that fail with
+  `402` — [`GET /v1/pricing`](#get-the-pricing-schedule) gives the exact
+  per-model rates.
 
 ## Errors
 

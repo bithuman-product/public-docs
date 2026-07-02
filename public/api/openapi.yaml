@@ -210,7 +210,12 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits. Generation costs 250 credits — top up to continue. Returns error code `INSUFFICIENT_BALANCE`.
+          description: >-
+            Insufficient credits. Creation is billed **per model** — the
+            second-generation families (`essence-2`, `essence-2-quality`,
+            `essence-2-light`, `expression-2`, and `auto`) cost 500 credits;
+            the v1 families (`essence-1`, `expression-1`) cost 250. Top up to
+            continue. Returns error code `INSUFFICIENT_BALANCE`.
         "400":
           description: >-
             Body failed validation — malformed JSON, or an invalid / retired
@@ -223,10 +228,31 @@ paths:
               example:
                 error:
                   code: "VALIDATION_ERROR"
-                  message: "Invalid model 'my-model'; must be one of: essence, essence-1, essence-2-light, essence-2-quality, expression, expression-1, expression-2"
+                  message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-light, essence-2-quality, expression, expression-1, expression-2"
                   httpStatus: 400
                 status: "error"
                 status_code: 400
+        "422":
+          description: >-
+            `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
+            (`essence-2`, `essence-2-quality`, `essence-2-light`) whose input
+            is not a photorealistic human subject. The classifier runs on the
+            image if provided, else the prompt, **before anything is billed**
+            and before any agent row is created. Use `expression-2` for
+            cartoon / animal / stylized subjects, or `model: "auto"` (which
+            never rejects — it routes instead). A classifier outage never
+            blocks creation (the gate fails open).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "MODEL_SUBJECT_MISMATCH"
+                  message: "essence-2 requires a photorealistic human subject; this image looks like a cartoon — use expression-2"
+                  httpStatus: 422
+                status: "error"
+                status_code: 422
 
   /v1/agent/status/{agent_id}:
     get:
@@ -648,6 +674,146 @@ paths:
             photorealistic human subject and the stored image is a
             cartoon/animal/exotic creature (use `expression-2`).
 
+  /v1/agent/{code}/model/download:
+    get:
+      operationId: downloadAgentModel
+      summary: Download an agent's model artifact
+      description: |
+        Download the generated model file for an agent you own. The family
+        defaults to the agent's own model; override with `?model=<family>`
+        (canonical names, legacy names, and runtime tier slugs all fold onto
+        their family). Artifact per family:
+
+        | family | artifact |
+        |---|---|
+        | `essence-1` | `<code>.imx` (the portable IMX container) |
+        | `essence-2-light` | `<code>.lebundle.imx` (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow) |
+        | `essence-2-quality` | `<code>.pkl` (IMX container) |
+        | `expression-2` | `<code>.avatar` (CoreML zip — the Mac-runnable form, ~90 MB) |
+        | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
+
+        The default response is a **302 redirect** to the artifact — the
+        public URL for `essence-1`, a **1-hour signed URL** on a private
+        bucket for the other families — so `curl -LOJ` and browser anchors
+        just work. Pass `?redirect=false` to get the URL as JSON instead.
+
+        The launchability gate doubles as the download gate: a family the
+        agent can't be launched as (missing from `supported_models`) returns
+        `409 MODEL_NOT_GENERATED`. A family the agent supports whose artifact
+        hasn't been published to the download store yet returns
+        `404 MODEL_ARTIFACT_NOT_READY` — the message says when to retry;
+        **poll on that code**.
+
+        The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/commands) wraps
+        this endpoint: `bithuman pull <AGENT_CODE>` downloads the artifact,
+        recognizes its model family, and prints what to do next.
+      tags: [Agent Management]
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Agent code; the agent must be owned by the caller (else 404).
+          example: "A17ZTB0222"
+        - name: model
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [essence-1, essence-2-light, essence-2-quality, expression-2]
+          description: >-
+            Artifact family. Defaults to the agent's own model. Legacy names
+            and runtime tier slugs (e.g. `essence-2-light-ane`,
+            `expression-2-gpu`) fold onto their family; an unrecognized value
+            returns `400 VALIDATION_ERROR` listing the downloadable families.
+          example: "expression-2"
+        - name: redirect
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["false", "0", "no"]
+          description: >-
+            Pass `false` to receive the artifact URL as JSON (below) instead
+            of a 302 redirect — for UIs that want to fetch or label first.
+      responses:
+        "302":
+          description: >-
+            Redirect to the artifact — a public URL for `essence-1`, a
+            1-hour signed URL for the private families. Follow it
+            (`curl -LOJ`) to download the file.
+          headers:
+            Location:
+              schema:
+                type: string
+              description: The artifact URL.
+        "200":
+          description: With `?redirect=false` — the artifact URL as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "A17ZTB0222"
+                      model:
+                        type: string
+                        description: The resolved canonical family.
+                        example: "expression-2"
+                      filename:
+                        type: string
+                        example: "A17ZTB0222.avatar"
+                      url:
+                        type: string
+                        description: The artifact URL (signed, 1-hour TTL, for the private families).
+                      expires_in:
+                        type: integer
+                        nullable: true
+                        description: Signed-URL TTL in seconds (3600); `null` for the public essence-1 URL.
+                        example: 3600
+        "400":
+          description: >-
+            `VALIDATION_ERROR` — unknown `model` value (the message lists the
+            downloadable families), or `MODEL_NOT_DOWNLOADABLE` — the family
+            has no per-identity artifact to download (`expression-1` renders
+            server-side from the agent's image).
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: >-
+            `NOT_FOUND` — agent unknown or not owned by this account; or
+            `MODEL_ARTIFACT_NOT_READY` — the family is supported but its
+            artifact hasn't been published to the download store yet. The
+            message says when to retry; poll on this code.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "MODEL_ARTIFACT_NOT_READY"
+                  message: "agent A17ZTB0222's expression-2 artifact isn't available for download yet: the Mac-runnable build is paced, typically within the hour"
+                  httpStatus: 404
+                status: "error"
+                status_code: 404
+        "409":
+          description: >-
+            `MODEL_NOT_GENERATED` — the requested family isn't in the agent's
+            `supported_models` (same gate as embed/session launch), e.g.
+            `agent <code>'s expression-2 model hasn't been generated yet` or
+            `agent <code>'s essence-2-quality model requires a source video,
+            which this agent doesn't have`.
+        "429":
+          description: Rate limited (read bucket) — `RATE_LIMITED`.
+
   /v1/files/upload:
     post:
       operationId: uploadFile
@@ -820,13 +986,33 @@ paths:
                         example: "credits"
                       agent_generation:
                         type: object
+                        description: >-
+                          Agent creation is priced **per model** — read
+                          `by_model` (there is no flat rate). The
+                          second-generation families cost 500 credits; the v1
+                          families cost 250. `essence-2` is the combined
+                          Essence 2 creation (one 500-credit charge covers
+                          both tiers); `auto` charges the routed model's
+                          500-credit rate. Post-generation adds via
+                          `POST /v1/agent/{code}/models` charge the same
+                          per-model rates (adding `expression-1` is free).
                         properties:
-                          flat:
-                            type: integer
-                            example: 250
-                          applies_to:
+                          unit:
                             type: string
-                            example: "all models"
+                            example: "credits"
+                          by_model:
+                            type: object
+                            additionalProperties:
+                              type: integer
+                            description: One-time creation cost per `model` value accepted by `POST /v1/agent/generate`.
+                            example:
+                              essence-1: 250
+                              expression-1: 250
+                              essence-2-quality: 500
+                              essence-2-light: 500
+                              expression-2: 500
+                              essence-2: 500
+                              auto: 500
                           note:
                             type: string
                       talking_video:
@@ -994,20 +1180,24 @@ paths:
                         description: >-
                           Canonical model families this agent can be launched
                           as right now (e.g. a ready expression-2 agent lists
-                          `expression-2`; every agent with an image lists
-                          `essence-2-quality`, which prepares on demand). Tier
-                          slugs inherit their family and are not listed.
+                          `expression-2`; an agent with a source video lists
+                          `essence-2-quality`, whose identity prepares on
+                          demand from that video). Tier slugs inherit their
+                          family and are not listed.
                         example: ["essence-2-quality", "expression-2"]
         "401":
           $ref: "#/components/responses/Unauthorized"
         "409":
           description: >-
-            `MODEL_NOT_GENERATED` — the requested `model` is a trained
-            second-generation family (`expression-2` / `essence-2-light`)
-            whose per-identity model hasn't been generated for this agent.
-            Message shape: `agent <code>'s <model> model hasn't been generated
-            yet`. Create the agent with that model (or wait for creation to
-            finish), then retry.
+            `MODEL_NOT_GENERATED` — the requested `model` folds to a known
+            family the agent can't be launched as right now (it is missing
+            from the agent's `supported_models`). For the trained families
+            (`expression-2` / `essence-2-light`) the message is `agent
+            <code>'s <model> model hasn't been generated yet`; for
+            `essence-2-quality` it is `agent <code>'s essence-2-quality model
+            requires a source video, which this agent doesn't have`. Add the
+            model (`POST /v1/agent/{code}/models`) or create the agent with
+            it, then retry.
           content:
             application/json:
               schema:
@@ -1314,10 +1504,14 @@ paths:
         "409":
           description: >-
             `MODEL_NOT_GENERATED` — checked **before any charge**: the
-            requested `model` is `expression-2` / `essence-2-light` and this
-            agent's trained per-identity model hasn't been generated yet
-            (message: `agent <code>'s <model> model hasn't been generated
-            yet`). `essence-2-quality` is never gated — it prepares on demand.
+            requested `model` is a family this agent can't be launched as. For
+            `expression-2` / `essence-2-light` that means the trained
+            per-identity model hasn't been generated yet (message: `agent
+            <code>'s <model> model hasn't been generated yet`);
+            `essence-2-quality` is gated on the agent's **source video** — its
+            identity prepares on demand from that footage, so an agent without
+            one gets `agent <code>'s essence-2-quality model requires a source
+            video, which this agent doesn't have`.
           content:
             application/json:
               schema:
@@ -1951,10 +2145,11 @@ components:
           items: { type: string }
           description: >-
             Canonical model families this agent can be launched as right now
-            — `essence-1` when its `.imx` exists, `essence-2-quality` whenever
-            an image exists (prepares on demand), and `essence-2-light` /
-            `expression-2` once their trained per-identity model has been
-            generated. Tier slugs inherit their family and are not listed.
+            — `essence-1` when its `.imx` exists, `essence-2-quality` when a
+            **source video** exists (its identity prepares on demand from
+            that footage), and `essence-2-light` / `expression-2` once their
+            trained per-identity model has been generated. Tier slugs inherit
+            their family and are not listed.
           example: ["essence-1", "essence-2-quality"]
         subject:
           type: string
@@ -2619,6 +2814,14 @@ tags:
       and `model: "expression-2"` (same shape for the other two); serve it
       through the normal session flows — e.g. embed agent `A56ZFX6217` and the
       platform routes the session to the model's best available tier.
+      `model: "essence-2"` is the **combined Essence 2 creation** — one
+      500-credit charge covers both tiers (pick the tier at launch) — and
+      `model: "auto"` classifies your input and routes it (photorealistic
+      person → `essence-2`, cartoon/animal/exotic → `expression-2`). You can
+      also add a model to an agent you already have with
+      [`POST /v1/agent/{code}/models`](#tag/Agent-Management/operation/addAgentModel)
+      and download a generated artifact with
+      [`GET /v1/agent/{code}/model/download`](#tag/Agent-Management/operation/downloadAgentModel).
       Family overview: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2);
       per-model guides: [Expression 2](https://docs.bithuman.ai/concepts/expression-2)
       · [Essence 2 Quality](https://docs.bithuman.ai/concepts/essence-2-quality)
@@ -2640,7 +2843,9 @@ tags:
 
       | Action | Cost |
       |---|---|
-      | Agent generation (one-time, per avatar) | **250 credits** |
+      | Agent generation — v1 models (`essence-1`, `expression-1`) | **250 credits** (one-time, per avatar) |
+      | Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`) | **500 credits** (one-time, per avatar) |
+      | Add a model to an existing agent (`POST /v1/agent/{code}/models`) | same per-model rates; adding `expression-1` is **free** (instant enablement) |
       | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
       | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
       | Live avatar session — Essence 2 Quality (self-hosted) | **4 credits / minute** |

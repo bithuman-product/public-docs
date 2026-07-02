@@ -176,7 +176,8 @@ nothing else to configure.
 - **Async work.** `generate_agent` and `generate_dynamics` return immediately
   with `processing`. Have the agent poll `get_agent_status` / `get_dynamics`
   until `ready` (generation takes 2–5 minutes).
-- **Credits.** `generate_agent` (~250 credits) and `text_to_speech` consume
-  credits — check `get_credit_balance` first if cost matters.
+- **Credits.** `generate_agent` (250 credits for the default v1 model; 500 for
+  the [second-generation models](/concepts/models-v2)) and `text_to_speech`
+  consume credits — check `get_credit_balance` first if cost matters.
 - **Errors** come back as a structured object with the HTTP status and a link to
   the [error catalog](/api/errors); the agent can read and act on them.

@@ -75,6 +75,22 @@ Also removed from the slim wheel: the leaf modules `bithuman.audio`
 were tiny shims around `soundfile` / `time.monotonic`; applications inline them
 now (~15–30 LOC).
 
+## Which model artifacts can the SDK load?
+
+The `bithuman` wheel is the **`essence-1` runtime** — `AsyncBithuman` /
+`Bithuman` (and the low-level `Fixture`) load `essence-1` **`.imx`** files
+through `libessence`, including the ones you get from
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+or [`bithuman pull <AGENT_CODE>`](/sdk/cli/commands). The other downloadable
+artifacts are **not loadable by this package**: an `essence-2-light`
+`.lebundle.imx` targets the Light engine (licensed weights, no local playback
+path yet), an `essence-2-quality` `.pkl` renders on bitHuman's GPU cloud, and
+an `expression-2` `.avatar` is a CoreML build for Apple hardware — passing
+any of them as `model_path` fails at load. To put a second-generation model
+on screen from Python, serve it through the cloud instead: the
+[LiveKit plugin](#livekit-voice-agents)'s `AvatarSession` takes the **agent
+code** (not a model file) and streams whatever family that agent serves.
+
 ## The streaming loop
 
 `AsyncBithuman` is the runtime — one instance per avatar session. Create it,

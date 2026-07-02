@@ -103,7 +103,9 @@ See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
 ## Generate your own agent (optional)
 
 Prefer a custom face and persona? Generation is asynchronous — it returns an
-`agent_id` immediately and takes ~2–5 minutes (250 credits):
+`agent_id` immediately and takes ~2–5 minutes for the default `essence-1`
+model (250 credits; the [second-generation models](/concepts/models-v2) cost
+500 and train longer — see [per-model creation](/api/agents#model-specific-inputs-and-creation-times)):
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \

@@ -18,13 +18,16 @@ prove out with the CLI ports straight into your application.
 
 The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
 
-> **Which models?** The CLI's local runtime (`run` / `render` / `info`) serves
-> **`essence-1`** `.imx` avatars. The
-> [second-generation models](/concepts/models-v2) (`expression-2`,
-> `essence-2-quality`, `essence-2-light`) are created and served through the
-> cloud surfaces — the [REST API](/api/agents), the
-> [embed widget](/guides/deploy-embed), and the dashboard — not by the CLI's
-> local mode.
+> **Which models?** The CLI **recognizes every bitHuman model artifact** —
+> it sniffs the file and tells you what it is — and its local runtime
+> (`run` / `render`) plays **`essence-1`** `.imx` avatars. The
+> [second-generation artifacts](/concepts/models-v2) (`essence-2-light`
+> `.lebundle.imx`, `essence-2-quality` `.pkl`, `expression-2` `.avatar`) are
+> recognized by `run` / `info` / `pull` with honest guidance on where each
+> runs — today they serve through the cloud surfaces (the
+> [REST API](/api/agents), the [embed widget](/guides/deploy-embed), and the
+> dashboard), not the CLI's local runtime. See the
+> [launch matrix](/sdk/cli/commands#which-model-files-run-locally).
 
 ## What it does
 
@@ -62,8 +65,8 @@ sanity check.
 | `bithuman init` | Scaffold a new project / starter config |
 | `bithuman run <path.imx>` | Start the live avatar (mic in, browser viewer out) |
 | `bithuman render <path.imx>` | Offline lipsync: model + WAV → MP4 (Linux-only) |
-| `bithuman info <path.imx>` | Print `.imx` metadata |
-| `bithuman pull <slug>` | Download a showcase avatar |
+| `bithuman info <model-file>` | Print model metadata — engine + family for any recognized artifact |
+| `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or **your own agent's generated model** by code |
 | `bithuman list` | Browse the showcase avatar catalog |
 | `bithuman doctor` | Host + auth + cache sanity check |
 

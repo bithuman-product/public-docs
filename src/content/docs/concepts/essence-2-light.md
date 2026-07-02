@@ -46,6 +46,17 @@ Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
 and `model: "essence-2-light"`. Creation is asynchronous and costs
 **500 credits** (one-time, per agent).
 
+> **Tip — one creation, both Essence 2 tiers.** `model: "essence-2"` (the
+> [combined creation](/api/agents#essence-2--the-combined-creation)) charges
+> the same 500 credits and gives you Light **and**
+> [Essence 2 Quality](/concepts/essence-2-quality) from the same identity
+> video — pick the tier at launch. Like every Essence 2 creation, the input
+> must be a **photorealistic human subject** (else
+> [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors), nothing billed);
+> `model: "auto"` routes automatically instead. You can also
+> [add `essence-2`](/api/agents#add-a-model-to-an-existing-agent) to an
+> existing agent that has an identity video.
+
 ```python
 import requests
 
@@ -163,3 +174,4 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `essence-2-light`.
+- [Download your model](/api/agents#download-an-agents-model) — the trained `.lebundle.imx` (licensed weights), via API or `bithuman pull <code>`.
