@@ -47,6 +47,20 @@ Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
 and `model: "essence-2-quality"`. Creation is asynchronous and costs
 **500 credits** (one-time, per agent).
 
+> **Tip — one creation, both Essence 2 tiers.** `model: "essence-2"` (the
+> [combined creation](/api/agents#essence-2--the-combined-creation)) charges
+> the same 500 credits and gives you Quality **and**
+> [Essence 2 Light](/concepts/essence-2-light) from one identity video — you
+> pick the tier at launch. You can also
+> [add `essence-2` to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
+> that has a source video.
+
+Like every Essence 2 creation, the input must be a **photorealistic human
+subject** — a cartoon / animal / stylized input is rejected up front with
+[`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors), nothing billed
+(use [Expression 2](/concepts/expression-2) for those, or `model: "auto"` to
+route automatically).
+
 ```python
 import requests
 
@@ -106,14 +120,20 @@ fresh agent's first session. The platform also pre-warms overflow capacity
 while your session connects, so spilling past the first line stays smooth. See
 [session behavior & troubleshooting](/guides/session-troubleshooting).
 
-Because the identity prepares on demand, Essence 2 Quality is **never gated**
-behind a training artifact: any agent with an image lists
-`essence-2-quality` in its `supported_models`
-([status / get / list](/api/agents#poll-status) and the embed-token response)
-and can be requested as this model without a `409 MODEL_NOT_GENERATED`
-rejection — unlike the trained families
+The identity prepares on demand, but **only from the agent's source video**
+— so Essence 2 Quality is gated on that footage, just as the trained families
 ([Expression 2](/concepts/expression-2),
-[Essence 2 Light](/concepts/essence-2-light)).
+[Essence 2 Light](/concepts/essence-2-light)) are gated on their per-identity
+models. An agent **with** a source video lists `essence-2-quality` in its
+`supported_models` ([status / get / list](/api/agents#poll-status) and the
+embed-token response) and can be requested as this model immediately; an
+image-only agent cannot render Quality and gets a
+[`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) rejection whose message
+names the real blocker: `agent <code>'s essence-2-quality model requires a
+source video, which this agent doesn't have`. To unlock it, the agent needs
+identity footage: supply `video` at creation, or create with the combined
+`essence-2` from an image — its pipeline generates the identity video that
+Quality then derives from.
 
 ## Pricing
 
@@ -146,4 +166,5 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `essence-2-quality`.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
+- [Download your model](/api/agents#download-an-agents-model) — the identity `.pkl` bundle, via API or `bithuman pull <code>`.
 - [Pricing & credits](/guides/pricing) — plans and the full schedule.

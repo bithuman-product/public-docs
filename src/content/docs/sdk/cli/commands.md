@@ -16,10 +16,10 @@ Every subcommand accepts `--help` for the full flag listing.
 | `bithuman logout` | Revoke this device's key and clear the local store |
 | `bithuman auth status` | Show the signed-in account and credential source |
 | `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull a showcase avatar (e.g. `modern-court-jester`) |
-| `bithuman run <path.imx>` | Live browser-served avatar (cloud or on-device brain) |
+| `bithuman run <path.imx>` | Live browser-served avatar (cloud or on-device brain) — [recognizes the model family](#which-model-files-run-locally) first |
 | `bithuman render <path.imx>` | Offline render: model + WAV → MP4 (Linux-only) |
-| `bithuman info <path.imx>` | Print `.imx` metadata |
-| `bithuman pull <slug>` | Download a showcase avatar |
+| `bithuman info <model-file>` | Print model metadata — engine + family for any recognized bitHuman artifact |
+| `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or your own agent's generated model by code |
 | `bithuman list` | Browse the showcase avatar catalog |
 | `bithuman doctor` | Host + auth + cache sanity check |
 | `bithuman mcp` | Run the built-in MCP server for AI agents (stdio); `bithuman mcp tools` lists the tools. See [driving from an AI agent](/sdk/cli/agents). |
@@ -148,6 +148,27 @@ Common flags:
 | `--embedded-livekit` | on with model arg | Spawn a self-contained `livekit-server` child. Off when omitting the model and using an external SFU. |
 | `--mock-runtime` | off | Run with black frames instead of `libessence` — for protocol tests. |
 
+### Which model files run locally?
+
+`bithuman run` **recognizes the model family before launching** — it sniffs
+the file (the IMX container's engine header, or the artifact's format), so
+every bitHuman model file gets a correct, honest answer instead of a deep
+engine error:
+
+| Family | File | What `run` does |
+|---|---|---|
+| `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
+| `essence-2-light` | `<code>.lebundle.imx` | Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
+| `essence-2-quality` | `<code>.pkl` | Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
+| `expression-2` | `<code>.avatar` (CoreML zip) | Recognized; the CLI can't play it yet and the desktop app doesn't open `.avatar` files from disk today — keep the file for upcoming desktop support; the model runs live on bitHuman cloud (dashboard, embeds, API sessions). |
+| `expression-1` | — | No downloadable artifact exists (it renders server-side from the agent's image), and the model is not supported on Mac locally — it's a heavy GPU engine. Serve it through the cloud surfaces. |
+
+Recognition never breaks what already worked: a file the sniffer can't
+positively identify goes to the engine exactly as before (the engine stays
+the final arbiter), and only a **positive non-`essence-1` match** diverts.
+Get the files themselves with [`bithuman pull <AGENT_CODE>`](#bithuman-pull--list--your-models-and-showcase-avatars)
+or the [download endpoint](/api/agents#download-an-agents-model).
+
 ## `bithuman render` — offline MP4
 
 For batch jobs or pipelines with TTS upstream — no browser, no brain,
@@ -186,14 +207,21 @@ Flags:
 
 ## `bithuman info` — inspect a model
 
-Print `.imx` metadata (model type, fixture name, frame size, sample rate,
-duration, hash). Handy for verifying a model file before deploy:
+Print model metadata. For an `.imx` that's the model type, fixture name,
+frame size, sample rate, duration, and hash — plus the **engine and family**
+resolved from the unified IMX container header (also in `--json` as
+`engine` / `family`). Handy for verifying a model file before deploy:
 
 ```bash
 bithuman info avatar.imx
 ```
 
-## `bithuman pull` + `list` — showcase avatars
+`info` recognizes the non-`.imx` artifacts too: an `expression-2` `.avatar`
+(CoreML zip), an `essence-2-quality` pickle, and legacy `essence-1` tar
+exports get a format/family report instead of a "not an IMX file" error; a
+legacy BIMX v1 container gets a precise unsupported-version message.
+
+## `bithuman pull` + `list` — your models and showcase avatars
 
 Browse the showcase manifest and download one:
 
@@ -203,8 +231,40 @@ bithuman pull modern-court-jester
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-Pulled avatars land in `~/.cache/bithuman/showcase/`. See
+Pulled showcase avatars land in `~/.cache/bithuman/showcase/`. See
 [Configuration](/sdk/cli/configuration) for the full cache layout.
+
+### Pull your own agent's model by code
+
+Pass an **agent code** (`A` + 9 characters, e.g. `A17ZTB0222`) instead of a
+showcase slug and `pull` downloads **your agent's generated model** through
+the authenticated
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+endpoint, then sniffs the file and prints its family and the next step:
+
+```bash
+bithuman login                      # once — pull-by-code needs your account
+bithuman pull A17ZTB0222
+# → ~/.cache/bithuman/agents/A17ZTB0222/A17ZTB0222.avatar
+#   expression-2 (CoreML .avatar) — runs live on bitHuman cloud; not locally playable yet
+```
+
+When the agent's model is `essence-1`, the pulled `.imx` is immediately
+runnable:
+
+```bash
+bithuman pull A56ZFX6217
+bithuman run ~/.cache/bithuman/agents/A56ZFX6217/A56ZFX6217.imx
+```
+
+Files land in `~/.cache/bithuman/agents/<code>/`. What each family's file is
+— and which ones run locally — is in the
+[launch matrix](#which-model-files-run-locally). Failure modes: not signed
+in → exit 77 (`bithuman login` first); the server refusing the download →
+exit 66 carrying the API's error, including the poll-able
+[`MODEL_ARTIFACT_NOT_READY`](/api/errors#model-errors) when a supported
+artifact simply hasn't been published yet. Showcase-slug pulls are
+unchanged.
 
 ## `bithuman doctor` — install sanity check
 

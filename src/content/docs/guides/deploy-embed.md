@@ -79,11 +79,12 @@ zero and can cold-start on first connect
 
 Prefer validating the choice **when you mint the token**: pass `model` in the
 [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token) body
-and the API checks it up front — an unknown value returns `400`, and a
-second-generation model whose per-identity artifact hasn't been generated for
-that agent returns `409 MODEL_NOT_GENERATED` (rather than a session that
-fails to start). The mint response's `supported_models` array tells you which
-model families the agent can launch as right now.
+and the API checks it up front — an unknown value returns `400`, and a model
+family the agent can't be launched as (a per-identity artifact that hasn't
+been generated, or `essence-2-quality` on an agent with no source video)
+returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) rather than a
+session that fails to start. The mint response's `supported_models` array
+tells you which model families the agent can launch as right now.
 
 ## Webhooks
 
