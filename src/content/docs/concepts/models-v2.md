@@ -87,7 +87,7 @@ Still deciding between the **families** (Essence vs Expression)? Start with
 
 All three models are **train-on-create**: you create an agent once with
 `POST /v1/agent/generate` and the platform prepares that identity's model as
-part of generation. Creation is asynchronous and costs **250 credits**
+part of generation. Creation is asynchronous and costs **500 credits**
 (one-time, per agent). Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents) until the status is terminal
 (`success` / `ready`).
@@ -213,8 +213,10 @@ Per active minute of avatar runtime, from the
 | `essence-2-light` | 4 credits/min | 2 credits/min |
 | `expression-2` | 4 credits/min | 2 credits/min |
 
-Creation is a one-time 250 credits per agent for every model. Idle, paused, or
-disconnected time isn't billed.
+Creation is one-time and per agent: **500 credits** for the v2 models above
+(`expression-2`, `essence-2-quality`, `essence-2-light`) and 250 credits for the
+v1 models (`essence-1`, `expression-1`). Idle, paused, or disconnected time
+isn't billed.
 
 ## Idle behavior
 
