@@ -15,8 +15,8 @@ finished video URL. On success you get a public CDN URL, the output duration, an
 the credits charged.
 
 Talking videos bill **per minute of output, rounded up**: `expression-2` is 4
-credits/min and `essence-2-quality` is 8 credits/min. If a render fails, the
-charge is automatically refunded.
+credits/min, `essence-2-quality` is 8 credits/min, and `essence-2-light` is 4
+credits/min. If a render fails, the charge is automatically refunded.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
@@ -27,7 +27,7 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `expression-2` or `essence-2-quality`. |
+| `model` | string | yes | Engine: `expression-2`, `essence-2-quality`, or `essence-2-light`. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |

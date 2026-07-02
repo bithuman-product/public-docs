@@ -35,7 +35,12 @@ export const GET: APIRoute = async () => {
     `cost, from 1 credit/min self-hosted. The contract is the same ` +
     `everywhere: push 16-bit PCM audio in, drain lip-synced video frames ` +
     `out. Avatars are portable \`.imx\` files keyed by a short agent code ` +
-    `(e.g. \`A78WKV4515\`).\n\n`;
+    `(e.g. \`A78WKV4515\`). Models (second generation GA 2026-07-01): ` +
+    `\`expression-2\` (audio-driven real-time avatar video from a single ` +
+    `photo; gpu/cpu/ane serving tiers), \`essence-2-quality\` ` +
+    `(highest-fidelity GPU tier), \`essence-2-light\` (cost-effective; ` +
+    `gpu/cpu/ane incl. on-device), plus the v1 \`essence-1\` / ` +
+    `\`expression-1\`.\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;
   out +=

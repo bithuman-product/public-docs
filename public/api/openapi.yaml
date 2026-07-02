@@ -131,22 +131,25 @@ paths:
                   type: string
                   enum: [essence-1, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression]
                   default: essence-1
+                  example: "expression-2"
                   description: >-
                     Avatar runtime model for the generated agent. Public names:
                     `essence-1`, `essence-2-quality`, `essence-2-light`,
-                    `expression-1`, `expression-2`. Essence 2 has two tiers —
-                    **Quality** (`essence-2-quality`, high-fidelity cloud GPU)
-                    and **Light** (`essence-2-light`, the efficient distilled
-                    renderer). `essence-2-quality` and `expression-2` are
-                    **fully live now**; `essence-2-light` agent generation is
-                    **rollout-gated**. The bare `essence` and `expression` are
-                    **version shorthands** that resolve to the current default
-                    of each family (`essence`→`essence-1`,
-                    `expression`→`expression-1`). The retired engine names
-                    `elevate`, `embody`, and `essence-2-mobile` are **no longer
-                    accepted** and return `400 VALIDATION_ERROR` — use
-                    `essence-2-quality`, `expression-2`, and `essence-2-light`
-                    respectively. See [Essence vs Expression](#tag/models).
+                    `expression-1`, `expression-2` — all five **generally
+                    available** (the second generation went GA 2026-07-01).
+                    Essence 2 has two tiers — **Quality** (`essence-2-quality`,
+                    the highest-fidelity cloud GPU renderer) and **Light**
+                    (`essence-2-light`, the cost-effective distilled renderer;
+                    gpu / cpu / Apple Neural Engine, including on-device).
+                    `expression-2` is the second-generation expression engine —
+                    audio-driven real-time avatar video from a single photo
+                    (creation trains a per-identity model in a few minutes).
+                    The bare `essence` and `expression` are **version
+                    shorthands** that resolve to the current default of each
+                    family (`essence`→`essence-1`,
+                    `expression`→`expression-1`). Retired engine names are **no
+                    longer accepted** and return `400 VALIDATION_ERROR`. See
+                    [Essence vs Expression](#tag/models).
       responses:
         "200":
           description: Generation started
@@ -2354,6 +2357,23 @@ tags:
       - The highest visual quality at close range
       - Cloud GPU deployments (NVIDIA + TRT) or M3+ Mac / M4+ iPad apps
 
+      ### The second generation (GA 2026-07-01)
+
+      Three second-generation models are generally available:
+
+      | Model | What it is | Serving tiers | Cloud | Self-hosted |
+      |---|---|---|---|---|
+      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model in minutes) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
+      | `essence-2-quality` | Highest-fidelity Essence tier (cloud GPU) | gpu | 8 cr/min | 4 cr/min |
+      | `essence-2-light` | Cost-effective distilled Essence tier — runs on gpu, cpu, and ane (Apple Neural Engine), including on-device | gpu · cpu · ane | 4 cr/min | 2 cr/min |
+
+      Create one with
+      [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
+      and `model: "expression-2"` (same shape for the other two); serve it
+      through the normal session flows — e.g. embed agent `A56ZFX6217` and the
+      platform routes the session to the model's best available tier.
+      Full guide: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2).
+
   - name: pricing
     x-displayName: Pricing
     description: |
@@ -2371,10 +2391,16 @@ tags:
       | Action | Cost |
       |---|---|
       | Agent generation (one-time, per avatar) | **250 credits** |
-      | Live avatar session — Essence (self-hosted) | **1 credit / minute** |
-      | Live avatar session — Essence (cloud) | **2 credits / minute** |
-      | Live avatar session — Expression (self-hosted) | **2 credits / minute** |
-      | Live avatar session — Expression (cloud) | **4 credits / minute** |
+      | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
+      | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
+      | Live avatar session — Essence 2 Quality (self-hosted) | **4 credits / minute** |
+      | Live avatar session — Essence 2 Quality (cloud) | **8 credits / minute** |
+      | Live avatar session — Essence 2 Light (self-hosted) | **2 credits / minute** |
+      | Live avatar session — Essence 2 Light (cloud) | **4 credits / minute** |
+      | Live avatar session — Expression 1 (self-hosted) | **2 credits / minute** |
+      | Live avatar session — Expression 1 (cloud) | **4 credits / minute** |
+      | Live avatar session — Expression 2 (self-hosted) | **2 credits / minute** |
+      | Live avatar session — Expression 2 (cloud) | **4 credits / minute** |
       | TTS / voice synthesis | **Currently free** within standard [rate limits](https://docs.bithuman.ai/api/rate-limits) |
       | File upload + dynamics generation | varies; see endpoint docs |
 

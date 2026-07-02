@@ -8,6 +8,18 @@ order: 1
 
 > **Note** Product-level changes only. For per-version notes, see the [Python SDK CHANGELOG](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/python/CHANGELOG.md) and the [Swift SDK releases](https://github.com/bithuman-product/bithuman-sdk-public/releases).
 
+## July 2026
+
+### General availability — Essence 2 Quality, Essence 2 Light, Expression 2 (2026-07-01)
+
+Three second-generation avatar models are now **generally available** on every surface — the REST API, the embed widget, the dashboard, and the SDKs. See [Essence 2 & Expression 2](/concepts/models-v2) for the full guide.
+
+- **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model in a few minutes, then the engine synthesizes fully generated motion live. Serves on three tiers — **gpu**, **cpu**, and **ane** (Apple Neural Engine). 4 credits/min cloud · 2 credits/min self-hosted.
+- **`essence-2-quality`** — the **highest-fidelity** tier of the Essence family: a heavy GPU renderer for close-up, hero-quality output on cloud GPUs. 8 credits/min cloud · 4 credits/min self-hosted.
+- **`essence-2-light`** — the **cost-effective** tier: a distilled renderer that runs across **gpu**, **cpu**, and **ane** — including fully **on-device**, where audio and video never leave your hardware. The `essence-2-light` rollout gate is lifted: agent generation with `model="essence-2-light"` is live. 4 credits/min cloud · 2 credits/min self-hosted.
+
+All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (250 credits, one-time) and serve through the existing session flows unchanged. The v1 models (`essence-1`, `expression-1`) remain fully supported.
+
 ## June 2026
 
 ### Talking video generation — new API (2026-06-29)
@@ -16,11 +28,11 @@ order: 1
 
 ### Agent generation — v2 model names accepted (2026-06-29)
 
-- **`POST /v1/agent/generate` now accepts the v2 model names.** The `model` parameter takes **`essence-2-quality`**, **`expression-2`**, and **`essence-2-light`** as supported generation targets (alongside `essence-1` / `expression-1` and the deprecated legacy aliases). **`essence-2-quality`** and **`expression-2`** are **fully live now**. **`essence-2-light`** is a **supported generation model** — it produces a per-identity `.lebundle` via its dedicated trainer — but is currently **rollout-gated**: its agent generation turns on once its pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set; until then, generate Essence 2 agents with `essence-2-quality`. No change to existing integrations: the deprecated aliases and share links keep working unchanged.
+- **`POST /v1/agent/generate` now accepts the v2 model names.** The `model` parameter takes **`essence-2-quality`**, **`expression-2`**, and **`essence-2-light`** as supported generation targets (alongside `essence-1` / `expression-1`). All three are **fully live** (the `essence-2-light` rollout gate was lifted 2026-07-01). *Update 2026-06-30:* the legacy aliases (`elevate`, `embody`, `embody-gpu`, `essence-2-mobile`) were retired ahead of GA — requests using them now return a `400 VALIDATION_ERROR` naming the current model list. Share links are unaffected.
 
 ### Model naming — versioned public taxonomy (2026-06-26)
 
-- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-light`**, **`expression-1`**, and **`expression-2`**. **Essence 2** ships in two tiers — **Quality** (`essence-2-quality`, the high-fidelity cloud GPU renderer) and **Light** (`essence-2-light`, the efficient distilled renderer). The older values **`essence`**, **`expression`**, **`elevate`**, **`embody`**, and **`essence-2-mobile`** are now **deprecated aliases** — they keep working and resolve to the new names (`essence`→`essence-1`, `expression`→`expression-1`, `elevate`→`essence-2-quality`, `embody`→`expression-2`, `essence-2-mobile`→`essence-2-light`), so existing integrations and share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
+- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-light`**, **`expression-1`**, and **`expression-2`**. **Essence 2** ships in two tiers — **Quality** (`essence-2-quality`, the high-fidelity cloud GPU renderer) and **Light** (`essence-2-light`, the efficient distilled renderer). The older values **`essence`** and **`expression`** map to **`essence-1`** / **`expression-1`**; the pre-release codename values (`elevate`, `embody`, `essence-2-mobile`) were transitional aliases and have since been retired (*see the 2026-06-30 note above* — they now return a validation error naming the current model list). Share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
 
 ### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
 

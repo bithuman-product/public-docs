@@ -26,7 +26,12 @@ export const GET: APIRoute = async () => {
     `Apple Silicon) or via a cloud REST API. Private by design: audio, ` +
     `video, and prompts never leave your hardware; the only network call is ` +
     `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem or ` +
-    `runs fully air-gapped, at low per-minute cost. This file concatenates ` +
+    `runs fully air-gapped, at low per-minute cost. Models (second ` +
+    `generation GA 2026-07-01): \`expression-2\` (audio-driven real-time ` +
+    `avatar video from a single photo; gpu/cpu/ane tiers), ` +
+    `\`essence-2-quality\` (highest-fidelity GPU tier), \`essence-2-light\` ` +
+    `(cost-effective; gpu/cpu/ane incl. on-device), plus \`essence-1\` / ` +
+    `\`expression-1\`. This file concatenates ` +
     `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 
   for (const d of docs) {

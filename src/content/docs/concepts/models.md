@@ -17,19 +17,20 @@ between when packaging an avatar — and the focus of the rest of this page — 
 
 - **Essence** — the avatar family (a packaged `.imx` identity with real-time lip-sync):
   - **Essence 1** — the default. Pre-built identity, runs on virtually any CPU.
-  - **Essence 2 Quality** — the high-fidelity premium renderer (cloud GPU).
-  - **Essence 2 Light** — the efficient distilled renderer (runs on CPU, the
-    Apple-Silicon Neural Engine, or GPU, with elastic overflow). Formerly named
-    Essence 2 Mobile. *(The `essence-2-light` model name is a supported
-    `POST /v1/agent/generate` target — it produces a per-identity `.lebundle` via
-    its dedicated trainer — but is currently rollout-gated (enabled once its
-    pricing rows and `ESSENCE2_LIGHT_TRAINING_ENABLED` are set); generate Essence 2
-    agents with `essence-2-quality` until that rollout completes.)*
+  - **Essence 2 Quality** — the highest-fidelity premium renderer (cloud GPU).
+  - **Essence 2 Light** — the cost-effective distilled renderer (runs on GPU,
+    CPU, or the Apple Neural Engine — including fully on-device).
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
   - **Expression 1** — dynamic facial animation from any portrait image (Apple Silicon
     or NVIDIA GPU).
-  - **Expression 2** — the real-time generative engine: fully-generated motion rather
-    than patching a pre-rendered base.
+  - **Expression 2** — the second-generation generative engine: audio-driven,
+    fully-generated motion from a single photo rather than patching a
+    pre-rendered base. Serves on gpu, cpu, and ane tiers.
+
+> **New** The three second-generation models — `essence-2-quality`,
+> `essence-2-light`, and `expression-2` — are **generally available as of
+> 2026-07-01**. See [Essence 2 & Expression 2](/concepts/models-v2) for
+> what each one is, when to choose which, serving tiers, and pricing.
 
 Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
 shape; the tier is selected per session and is transparent to your integration. (A
@@ -166,6 +167,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ## Next steps
 
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models (GA 2026-07-01).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
 - [SDK overview](/sdk/overview) — run a model on your own hardware.

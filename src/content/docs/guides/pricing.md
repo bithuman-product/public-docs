@@ -16,10 +16,16 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 
 | Surface | Model | Cost | Notes |
 |---|---|---|---|
-| **bitHuman Cloud** | Essence | 2 cr/min | CPU rendering on bitHuman's servers |
-| **bitHuman Cloud** | Expression | 4 cr/min | GPU rendering on bitHuman's servers |
-| **Self-hosted (Python SDK / CLI)** | Essence | 1 cr/min | CPU on your hardware |
-| **Self-hosted (GPU container)** | Expression | 2 cr/min | NVIDIA GPU on your hardware |
+| **bitHuman Cloud** | Essence 1 | 2 cr/min | CPU rendering on bitHuman's servers |
+| **bitHuman Cloud** | Essence 2 Quality | 8 cr/min | Highest-fidelity GPU rendering |
+| **bitHuman Cloud** | Essence 2 Light | 4 cr/min | Cost-effective tier (gpu / cpu / ane) |
+| **bitHuman Cloud** | Expression 1 | 4 cr/min | GPU rendering on bitHuman's servers |
+| **bitHuman Cloud** | Expression 2 | 4 cr/min | Generative engine (gpu / cpu / ane) |
+| **Self-hosted (Python SDK / CLI)** | Essence 1 | 1 cr/min | CPU on your hardware |
+| **Self-hosted** | Essence 2 Quality | 4 cr/min | GPU on your hardware |
+| **Self-hosted** | Essence 2 Light | 2 cr/min | GPU / CPU / Apple Neural Engine, incl. on-device |
+| **Self-hosted (GPU container)** | Expression 1 | 2 cr/min | NVIDIA GPU on your hardware |
+| **Self-hosted** | Expression 2 | 2 cr/min | GPU / CPU / Apple Neural Engine |
 | **Self-hosted (GPU container)** | Flash | 4 cr/min | NVIDIA GPU rendering tier on your hardware |
 | **On-device (Swift SDK)** | Expression | 2 cr/min | Active avatar minutes only |
 | **Managed agent — voice chat** | — | 10 cr/min | Cloud conversational agent, no avatar attached |
@@ -136,4 +142,5 @@ Yes. Each session bills independently while it's actively generating frames, and
 - [Billing API](/api/billing) — credit summaries over REST.
 - [Building avatars](/guides/building-avatars) — create an agent to run.
 - [Models](/concepts/models) — Essence vs Expression.
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and their rates.
 - [Deploy via LiveKit](/guides/deploy-livekit) — the cloud-metered path.
