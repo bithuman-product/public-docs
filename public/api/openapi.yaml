@@ -95,12 +95,18 @@ paths:
         | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
         | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
 
+        **Picking the right family:** `essence-2` works best for
+        photorealistic human figures; `expression-2` works best for
+        cartoonish, stylized, animal, creature, or robot characters. Send
+        `model: "auto"` to apply this rule automatically — the platform
+        classifies your input and records the recommended model either way.
+
         **Subject requirement (Essence 2 family):** `essence-2`,
         `essence-2-quality` and `essence-2-light` require a **photorealistic
         human** subject. The input is classified before anything is billed; a
-        cartoon / animal / exotic-creature input is rejected with
+        cartoon / animal / creature / robot input is rejected with
         `422 MODEL_SUBJECT_MISMATCH` (nothing charged) — use `expression-2`
-        for non-human or stylized subjects, or send `model: "auto"` to route
+        for those characters, or send `model: "auto"` to route
         automatically.
 
         Failures during generation surface as `status: "failed"` with an
@@ -171,8 +177,9 @@ paths:
                     (`essence-2-quality` / `essence-2-light` are accepted as
                     internal serving-tier aliases of `essence-2`.) **`auto` classifies your input**
                     (the image if provided, else the prompt): a photorealistic
-                    person routes to `essence-2` (combined); a cartoon, animal
-                    or exotic creature routes to `expression-2`. `auto` must be
+                    person routes to `essence-2` (combined); a cartoon,
+                    animal, creature or robot routes to `expression-2` — the
+                    family that works best for stylized characters. `auto` must be
                     sent explicitly — an omitted `model` keeps the historical
                     `essence-1` default. `expression-2` is the
                     second-generation expression engine — audio-driven
@@ -237,8 +244,8 @@ paths:
             is not a photorealistic human subject. The classifier runs on the
             image if provided, else the prompt, **before anything is billed**
             and before any agent row is created. Use `expression-2` for
-            cartoon / animal / stylized subjects, or `model: "auto"` (which
-            never rejects — it routes instead). A classifier outage never
+            cartoon / animal / creature / robot subjects, or `model: "auto"`
+            (which never rejects — it routes instead). A classifier outage never
             blocks creation (the gate fails open).
           content:
             application/json:
@@ -670,7 +677,7 @@ paths:
             model needs (e.g. `essence-2` needs an identity video), or
             `MODEL_SUBJECT_MISMATCH` — the Essence 2 family requires a
             photorealistic human subject and the stored image is a
-            cartoon/animal/exotic creature (use `expression-2`).
+            cartoon/animal/creature/robot (use `expression-2`).
 
   /v1/agent/{code}/model/download:
     get:
@@ -2814,7 +2821,8 @@ tags:
       `model: "essence-2"` is the **combined Essence 2 creation** — one
       500-credit charge covers both tiers (pick the tier at launch) — and
       `model: "auto"` classifies your input and routes it (photorealistic
-      person → `essence-2`, cartoon/animal/exotic → `expression-2`). You can
+      person → `essence-2`; cartoon/animal/creature/robot →
+      `expression-2`, the family that works best for stylized characters). You can
       also add a model to an agent you already have with
       [`POST /v1/agent/{code}/models`](#tag/Agent-Management/operation/addAgentModel)
       and download a generated artifact with

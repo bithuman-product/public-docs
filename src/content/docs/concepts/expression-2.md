@@ -48,8 +48,10 @@ Create the agent once with
 [`POST /v1/agent/generate`](/api/agents#generate-an-agent) and
 `model: "expression-2"`. Creation is asynchronous and costs **500 credits**
 (one-time, per agent). Expression 2 handles **any subject** — photorealistic
-or stylized — which is why `model: "auto"` routes cartoon / animal / exotic
-inputs here, and why the Essence 2 [subject gate](/api/agents#the-essence-2-subject-gate-422)
+or stylized — and it is the family that **works best for cartoonish,
+stylized, animal, creature, and robot characters**, which is why
+`model: "auto"` routes those inputs here, and why the Essence 2
+[subject gate](/api/agents#the-essence-2-subject-gate-422)
 points rejected creations at this model. You can also
 [add `expression-2`](/api/agents#add-a-model-to-an-existing-agent) to an
 existing agent (500 credits, uses its stored image).
