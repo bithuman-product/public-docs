@@ -109,10 +109,15 @@ Two more `model` values round out the creation surface:
   [the combined creation](/api/agents#essence-2--the-combined-creation).
 - **`auto` — classify and route.** An LLM looks at your input (the image if
   provided, else the prompt): a photorealistic person routes to `essence-2`
-  (combined), a cartoon / animal / exotic creature routes to `expression-2`.
+  (combined), a cartoon / animal / creature / robot routes to `expression-2`.
   It's the default in the dashboard's create flow; API callers must send it
   explicitly (an omitted `model` keeps the historical `essence-1` default).
   See [`auto`](/api/agents#auto--let-the-platform-pick-the-model).
+
+**Which family for which character?** Essence 2 works best for
+photorealistic human figures; Expression 2 works best for cartoonish,
+stylized, animal, creature, or robot characters. `auto` applies this rule for
+you, and every classifiable creation records the recommended model.
 
 The Essence 2 family requires a **photorealistic human subject** — an
 explicit `essence-2*` creation with a stylized or non-human input is rejected

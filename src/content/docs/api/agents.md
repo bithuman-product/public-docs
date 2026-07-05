@@ -94,8 +94,8 @@ family.
 the `image` if you provided one, else the `prompt` — and routes it:
 
 - a **photorealistic person** → `essence-2` (the combined creation above);
-- a **cartoon, animal, or exotic creature** → `expression-2` (the generative
-  engine, which handles any subject).
+- a **cartoon, animal, creature, or robot** → `expression-2` (the generative
+  engine, which handles any subject and works best for stylized characters).
 
 `auto` never rejects on subject — it routes instead — and charges the routed
 model's 500-credit rate. It is the default selection in the dashboard's
