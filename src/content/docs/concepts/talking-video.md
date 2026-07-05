@@ -81,7 +81,7 @@ Audio input is the same call with an audio block:
 | `essence-2-quality` | High-fidelity output. |
 | `essence-2-light` | Cost-effective renders. |
 
-All three are [GA as of 2026-07-01](/concepts/models-v2).
+Essence 2 and Expression 2 are [launching July 7, 2026](/concepts/models-v2); `essence-1` and `expression-1` are available today.
 
 ## Cost
 
