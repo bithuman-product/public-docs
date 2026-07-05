@@ -159,19 +159,17 @@ paths:
                   default: essence-1
                   example: "auto"
                   description: >-
-                    Avatar runtime model for the generated agent. Public names:
-                    `essence-1`, `essence-2-quality`, `essence-2-light`,
-                    `expression-1`, `expression-2` — all five **generally
-                    available** (the second generation went GA 2026-07-01).
-                    Essence 2 has two tiers — **Quality** (`essence-2-quality`,
-                    the highest-fidelity cloud GPU renderer) and **Light**
-                    (`essence-2-light`, the cost-effective distilled renderer;
-                    gpu / cpu / Apple Neural Engine, including on-device).
-                    **`essence-2` is the combined Essence 2 creation** (one
-                    500-credit charge): it trains the Light identity model AND
-                    makes Quality available from the same identity video — you
-                    pick the tier at launch (`?model=essence-2-light` /
-                    `essence-2-quality`). **`auto` classifies your input**
+                    Avatar runtime model for the generated agent. Public
+                    names: `essence-1`, `essence-2`, `expression-1`,
+                    `expression-2`. `essence-1` / `expression-1` are available
+                    today; **`essence-2` and `expression-2` launch July 7,
+                    2026** (upcoming). **`essence-2` is the second-generation
+                    Essence model** for photorealistic people — one 500-credit
+                    creation that runs everywhere from fully on-device (CPU /
+                    Apple Neural Engine) up to cloud GPU; bitHuman serves the
+                    right way automatically, so you just select `essence-2`.
+                    (`essence-2-quality` / `essence-2-light` are accepted as
+                    internal serving-tier aliases of `essence-2`.) **`auto` classifies your input**
                     (the image if provided, else the prompt): a photorealistic
                     person routes to `essence-2` (combined); a cartoon, animal
                     or exotic creature routes to `expression-2`. `auto` must be
@@ -2799,15 +2797,14 @@ tags:
       - The highest visual quality at close range
       - Cloud GPU deployments (NVIDIA + TRT) or M3+ Mac / M4+ iPad apps
 
-      ### The second generation (GA 2026-07-01)
+      ### The second generation (launching July 7, 2026)
 
-      Three second-generation models are generally available:
+      Two second-generation models — `essence-2` and `expression-2` — launch July 7, 2026 (upcoming). `essence-1` / `expression-1` are available today.
 
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
       | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45 min) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
-      | `essence-2-quality` | Highest-fidelity Essence tier (cloud GPU; identity prepped from your source video in seconds) | gpu | 8 cr/min | 4 cr/min |
-      | `essence-2-light` | Cost-effective distilled Essence tier — runs on gpu, cpu, and ane (Apple Neural Engine), including on-device (creation distills an identity bundle, typically 25–40 min) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
+      | `essence-2` | Second-gen Essence for photorealistic people — runs everywhere from on-device (cpu · ane) up to cloud GPU; bitHuman picks the serving tier for you | gpu · cpu · ane | from 4 cr/min | from 2 cr/min |
 
       Create one with
       [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)

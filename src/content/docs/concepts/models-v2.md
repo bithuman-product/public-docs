@@ -1,40 +1,34 @@
 ---
 title: "Essence 2 & Expression 2"
-description: "bitHuman's second-generation avatar models — essence-2-quality, essence-2-light, and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving tiers, per-minute pricing, and which to choose."
+description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 7, 2026."
 section: concepts
 group: "Models"
 order: 2
 label: "Essence 2 & Expression 2"
 ---
 
-## Generally available
+## Upcoming — launches July 7, 2026
 
-As of **2026-07-01**, bitHuman's three second-generation avatar models are
-**generally available** on every surface — the REST API, the embed widget, the
-dashboard, and the SDKs:
+bitHuman's second-generation avatar models, **`essence-2`** and
+**`expression-2`**, launch on **July 7, 2026**. Until then, use the
+first-generation models ([`essence-1` and `expression-1`](/concepts/models)),
+which are available today and remain fully supported.
+
+When they launch, the two second-generation models will be available on every
+surface — the REST API, the embed widget, the dashboard, and the SDKs:
 
 - **[`expression-2`](/concepts/expression-2)** — the second-generation
   expression engine. Audio-driven, real-time avatar video generated from a
   **single photo**: at agent creation it trains a small per-identity model
   (roughly 45 minutes on a training GPU), then synthesizes fully generated
-  motion live — not patched onto a pre-rendered base. Serves on three tiers:
-  **gpu**, **cpu**, and **ane** (Apple Neural Engine).
-- **[`essence-2-quality`](/concepts/essence-2-quality)** — the
-  **highest-fidelity** tier of the Essence family. A heavy GPU renderer that
-  animates your identity's real source footage for close-up, hero-quality
-  output; served on cloud GPUs. No per-identity training — the identity is
-  prepared from your source video in seconds.
-- **[`essence-2-light`](/concepts/essence-2-light)** — the **cost-effective**
-  tier. A distilled renderer that runs across **gpu**, **cpu**, and **ane** —
-  including fully **on-device**, where audio and video never leave your
-  hardware. Creation distills a compact identity bundle (typically tens of
-  minutes).
-
-Each model now has an official per-model guide — what it is, creation,
-serving tiers, idle behavior, pricing, and limits:
-**[Expression 2](/concepts/expression-2)** ·
-**[Essence 2 Quality](/concepts/essence-2-quality)** ·
-**[Essence 2 Light](/concepts/essence-2-light)**.
+  motion live — not patched onto a pre-rendered base. Runs on GPU, CPU, and
+  Apple Neural Engine.
+- **`essence-2`** — the highest-fidelity Essence model for photorealistic
+  people. It animates your identity's real source footage, and runs everywhere
+  from **fully on-device** (iPhone, iPad, Mac, CPU — audio and video never
+  leave your hardware) up to **cloud GPUs** for close-up, hero-quality output.
+  bitHuman automatically serves the right way for your hardware and quality
+  needs — you just pick `essence-2`.
 
 The first-generation models ([`essence-1` and `expression-1`](/concepts/models))
 remain fully supported; nothing changes for existing agents or integrations.

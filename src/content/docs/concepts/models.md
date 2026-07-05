@@ -30,12 +30,11 @@ between when packaging an avatar — and the focus of the rest of this page — 
     photo rather than patching a pre-rendered base. Serves on gpu, cpu, and
     ane tiers.
 
-> **New** The three second-generation models — `essence-2-quality`,
-> `essence-2-light`, and `expression-2` — are **generally available as of
-> 2026-07-01**. See [Essence 2 & Expression 2](/concepts/models-v2) for the
+> **New** The two second-generation models — `essence-2`
+> and `expression-2` — are **launching July 7, 2026** (upcoming). See [Essence 2 & Expression 2](/concepts/models-v2) for the
 > family overview, and the official per-model guides:
 > [Expression 2](/concepts/expression-2) ·
-> [Essence 2 Quality](/concepts/essence-2-quality) ·
+> [Essence 2](/concepts/essence-2-light) ·
 > [Essence 2 Light](/concepts/essence-2-light).
 
 Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
@@ -173,7 +172,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models (GA 2026-07-01), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [Essence 2 Light](/concepts/essence-2-light).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launching July 7, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2-light).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
 - [SDK overview](/sdk/overview) — run a model on your own hardware.

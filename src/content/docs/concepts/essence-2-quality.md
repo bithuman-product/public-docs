@@ -7,6 +7,10 @@ order: 4
 label: "Essence 2 Quality"
 ---
 
+:::note
+**Launching July 7, 2026.** "Quality" and "Light" are internal serving tiers of a single model — as a developer you simply select `essence-2`, and bitHuman serves the right tier for your hardware and quality needs. This page documents the internal tier for reference.
+:::
+
 ## What it is
 
 **`essence-2-quality`** is the premium tier of the second-generation Essence
