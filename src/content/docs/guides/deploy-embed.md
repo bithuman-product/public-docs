@@ -55,10 +55,12 @@ The token is a **1-hour JWT** (HS256-signed). Mint one per visitor session. Both
 
 ## Pin a serving tier
 
-By default the platform routes each session to the best available capacity
-for the agent's [model](/concepts/models-v2). For benchmarking or placement
-testing, append `?model=` with a runtime tier slug to the embed (or viewer)
-URL to pin the session to that tier:
+By default the platform routes each session down the model's serving chain
+(GPU → Apple Neural Engine → CPU), overflowing on capacity
+([details](/concepts/models-v2#advanced-pin-a-serving-tier)). For
+benchmarking or placement testing, append `?model=` with a force-tier slug
+(`essence-2-gpu/-ane/-cpu`, `expression-2-gpu/-cpu/-ane`) to the embed (or
+viewer) URL to pin the session to that tier — a forced tier never overflows:
 
 ```html
 <iframe
@@ -70,7 +72,7 @@ URL to pin the session to that tier:
 
 The tier slugs per model are listed in each model guide —
 [Expression 2](/concepts/expression-2#serving-tiers),
-[Essence 2 Light](/concepts/essence-2-light#serving-tiers),
+[Essence 2 light tier](/concepts/essence-2-light#serving-tiers),
 [Essence 2 Quality](/concepts/essence-2-quality#serving) (single tier). An
 unrecognized value falls back to the agent's default routing. For production,
 omit `?model=` and let the platform choose — direct elastic tiers scale from
@@ -110,7 +112,7 @@ Endpoint setup, signature verification, and retry policy are in the [API referen
 
 ## Where to go next
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [Essence 2 Light](/concepts/essence-2-light).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [Essence 2 light tier](/concepts/essence-2-light).
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — connect latency, idle behavior, and common embed errors.
 - [Deploy via LiveKit](/guides/deploy-livekit) — full agent-worker integration.
 - [Browser rendering](/guides/browser-rendering) — render client-side to cut server video egress.

@@ -18,11 +18,10 @@ just run `bithuman mcp`. The cloud tools are a thin wrapper over the
 anything you can do over HTTP an agent can do here), plus a few local tools that
 inspect your install and model files.
 
-:::note
-The standalone `bithuman-mcp` PyPI package is **deprecated** — its tools are now
-built into the CLI. Install the CLI once (below) and you get the same tools,
-identical names, plus local ones — with no separate Python dependency.
-:::
+> **Note** The standalone `bithuman-mcp` PyPI package is **deprecated** — its
+> tools are now built into the CLI. Install the CLI once (below) and you get
+> the same tools, identical names, plus local ones — with no separate Python
+> dependency.
 
 ## Tools
 

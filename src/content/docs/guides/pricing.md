@@ -18,12 +18,12 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 |---|---|---|---|
 | **bitHuman Cloud** | Essence 1 | 2 cr/min | CPU rendering on bitHuman's servers |
 | **bitHuman Cloud** | Essence 2 Quality | 8 cr/min | Highest-fidelity GPU rendering |
-| **bitHuman Cloud** | Essence 2 Light | 4 cr/min | Cost-effective tier (gpu / cpu / ane) |
+| **bitHuman Cloud** | Essence 2 (`essence-2`) | 4 cr/min | The light tier — cost-effective (gpu / ane / cpu) |
 | **bitHuman Cloud** | Expression 1 | 4 cr/min | GPU rendering on bitHuman's servers |
 | **bitHuman Cloud** | Expression 2 | 4 cr/min | Generative engine (gpu / cpu / ane) |
 | **Self-hosted (Python SDK / CLI)** | Essence 1 | 1 cr/min | CPU on your hardware |
 | **Self-hosted** | Essence 2 Quality | 4 cr/min | GPU on your hardware |
-| **Self-hosted** | Essence 2 Light | 2 cr/min | GPU / CPU / Apple Neural Engine, incl. on-device |
+| **Self-hosted** | Essence 2 (`essence-2`) | 2 cr/min | GPU / CPU / Apple Neural Engine, incl. on-device |
 | **Self-hosted (GPU container)** | Expression 1 | 2 cr/min | NVIDIA GPU on your hardware |
 | **Self-hosted** | Expression 2 | 2 cr/min | GPU / CPU / Apple Neural Engine |
 | **Self-hosted (GPU container)** | Flash | 4 cr/min | NVIDIA GPU rendering tier on your hardware |
@@ -33,8 +33,8 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 | **Audio-only (Swift SDK, no avatar)** | — | **Free** | No avatar attached → fully offline, no metering |
 | **`BITHUMAN_UNMETERED=1` dev mode** | either | **Free** | Skips auth + heartbeat — dev / parity testing only |
 | **Agent generation (v1)** | Essence 1 / Expression 1 | 250 cr (one-time) | Per [`.imx`](/concepts/avatars-imx) built from your photo / video |
-| **Agent generation (v2)** | Expression 2 / Essence 2 Quality / Essence 2 Light | 500 cr (one-time) | Per avatar model trained on-create from your photo / video |
-| **Agent generation — `essence-2` (combined)** | Essence 2 Light **+** Quality | 500 cr (one-time) | One charge covers [both Essence 2 tiers](/api/agents#essence-2--the-combined-creation) — pick the tier at launch |
+| **Agent generation (v2)** | Expression 2 / Essence 2 / Essence 2 Quality | 500 cr (one-time) | Per avatar model trained on-create from your photo / video |
+| **Agent generation — `essence-2` (combined)** | Essence 2 light tier **+** Quality | 500 cr (one-time) | One charge covers [both Essence 2 tiers](/api/agents#essence-2--the-combined-creation) — pick the tier at launch |
 | **Agent generation — `auto`** | Routed for you | 500 cr (one-time) | An LLM [classifies your input](/api/agents#auto--let-the-platform-pick-the-model) — photorealistic person → `essence-2`, cartoon/animal → `expression-2` |
 | **Model add** ([`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent)) | any | same per-model rates | Add a model to an existing agent; adding Expression 1 is **free** (instant, nothing trained) |
 | **Dynamics generation** | — | 250 cr (one-time) | Per gesture / movement set generated for an agent |

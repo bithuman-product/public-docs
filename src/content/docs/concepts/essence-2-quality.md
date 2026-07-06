@@ -7,9 +7,12 @@ order: 4
 label: "Essence 2 Quality"
 ---
 
-:::note
-**Launching July 7, 2026.** "Quality" and "Light" are internal serving tiers of a single model — as a developer you simply select `essence-2`, and bitHuman serves the right tier for your hardware and quality needs. This page documents the internal tier for reference.
-:::
+> **Note — Launching July 7, 2026.** For most agents you simply select
+> **`essence-2`** and bitHuman serves the right tier for your hardware and
+> quality needs. `essence-2-quality` is the separate, explicitly selectable
+> **reference tier** for hero-quality output — this page documents it. (The
+> former `essence-2-light` name was consolidated into `essence-2` on
+> 2026-07-05.)
 
 ## What it is
 
@@ -23,7 +26,7 @@ Two properties define it:
 
 - **GPU-only, cloud-only.** The renderer needs a server-class GPU; there is no
   CPU or on-device runtime for this tier. (For on-device or CPU serving, use
-  [Essence 2 Light](/concepts/essence-2-light).)
+  [`essence-2`](/concepts/essence-2-light) — its light tier serves everywhere.)
 - **No per-identity training.** The rendering model is shared; your identity
   needs only a one-time, lightweight *prep* that distills your source video
   into a compact identity bundle (a few megabytes). Prep takes **seconds**, so
@@ -37,10 +40,10 @@ Two properties define it:
 - **You have real footage of the identity.** Quality renders over your actual
   source video, so the avatar keeps the person's true look and framing.
 - **8 credits/min cloud is acceptable** — it is the most expensive serving
-  tier, at twice the rate of Essence 2 Light or Expression 2.
+  tier, at twice the rate of `essence-2` or Expression 2.
 
 If you need scale, CPU serving, or on-device privacy, choose
-[Essence 2 Light](/concepts/essence-2-light). If you only have a photo and
+[`essence-2`](/concepts/essence-2-light). If you only have a photo and
 want fully generated motion, choose [Expression 2](/concepts/expression-2).
 For the family-level decision, start at
 [Essence 2 & Expression 2](/concepts/models-v2).
@@ -54,7 +57,7 @@ and `model: "essence-2-quality"`. Creation is asynchronous and costs
 > **Tip — one creation, both Essence 2 tiers.** `model: "essence-2"` (the
 > [combined creation](/api/agents#essence-2--the-combined-creation)) charges
 > the same 500 credits and gives you Quality **and**
-> [Essence 2 Light](/concepts/essence-2-light) from one identity video — you
+> [the light tier](/concepts/essence-2-light) from one identity video — you
 > pick the tier at launch. You can also
 > [add `essence-2` to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
 > that has a source video.
@@ -126,9 +129,9 @@ while your session connects, so spilling past the first line stays smooth. See
 
 The identity prepares on demand, but **only from the agent's source video**
 — so Essence 2 Quality is gated on that footage, just as the trained families
-([Expression 2](/concepts/expression-2),
-[Essence 2 Light](/concepts/essence-2-light)) are gated on their per-identity
-models. An agent **with** a source video lists `essence-2-quality` in its
+([Expression 2](/concepts/expression-2), the
+[essence-2 light tier](/concepts/essence-2-light)) are gated on their
+per-identity models. An agent **with** a source video lists `essence-2-quality` in its
 `supported_models` ([status / get / list](/api/agents#poll-status) and the
 embed-token response) and can be requested as this model immediately; an
 image-only agent cannot render Quality and gets a
@@ -162,7 +165,7 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
   capacity is deliberately narrower than the Light tier's — at peak, sessions
   spill to elastic cloud GPUs that scale from zero, which can add connect
   time. For high-concurrency deployments, prefer
-  [Essence 2 Light](/concepts/essence-2-light).
+  [`essence-2`](/concepts/essence-2-light).
 
 ## Next steps
 

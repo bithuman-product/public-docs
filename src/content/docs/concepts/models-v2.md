@@ -35,17 +35,24 @@ remain fully supported; nothing changes for existing agents or integrations.
 
 ## At a glance
 
-| | **essence-2-quality** | **essence-2-light** | **expression-2** |
+| | **essence-2** | **essence-2-quality** | **expression-2** |
 |---|---|---|---|
-| **Guide** | [Essence 2 Quality](/concepts/essence-2-quality) | [Essence 2 Light](/concepts/essence-2-light) | [Expression 2](/concepts/expression-2) |
+| **Guide** | [Essence 2 (light tier)](/concepts/essence-2-light) | [Essence 2 Quality](/concepts/essence-2-quality) | [Expression 2](/concepts/expression-2) |
 | **Family** | Essence | Essence | Expression |
-| **What it is** | Highest-fidelity GPU renderer | Efficient distilled renderer | Generative motion from one photo |
-| **Identity source** | Video (real footage) | Video, or generated from your image | Single photo |
-| **Serving tiers** | gpu | gpu · cpu · ane | gpu · cpu · ane |
-| **On-device** | — | Yes (CPU / Apple Neural Engine) | Yes (Apple Neural Engine) |
-| **Creation** | Train-on-create (instant identity prep) | Train-on-create (typically 25–40 min) | Train-on-create (~45 min per-identity model) |
-| **Cloud** | 8 credits/min | 4 credits/min | 4 credits/min |
-| **Self-hosted** | 4 credits/min | 2 credits/min | 2 credits/min |
+| **What it is** | The Essence 2 model — efficient distilled renderer, serves everywhere | Highest-fidelity GPU renderer (reference tier) | Generative motion from one photo |
+| **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
+| **Identity source** | Video, or generated from your image | Video (real footage) | Single photo |
+| **Serving tiers** | gpu · ane · cpu (auto-routed chain) | gpu | gpu · ane · cpu (auto-routed chain) |
+| **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
+| **Creation** | Train-on-create (typically 25–40 min) | Train-on-create (instant identity prep) | Train-on-create (~45 min per-identity model) |
+| **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
+| **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
+
+> **Note** The name `essence-2-light` was consolidated into **`essence-2`**
+> (2026-07-05): you create and serve with `model="essence-2"`, and the light
+> tier is what it serves. `essence-2-quality` remains a separate, explicitly
+> selectable reference tier. Requests naming `essence-2-light` get a
+> `400` with a hint pointing at `essence-2`.
 
 All three keep the platform contract unchanged: push 16-bit PCM audio in,
 drain real-time lip-synced video frames out. The same agent code works across
@@ -61,10 +68,10 @@ renderer on cloud GPUs — pick it when image quality is the whole point and
 
 ### Cost-effective at scale, or on-device
 
-**[`essence-2-light`](/concepts/essence-2-light).** Half the cloud price of
-Quality, and the only Essence 2 tier that runs on CPU and the Apple Neural
-Engine as well as GPU — so the same agent serves from bitHuman's cloud, your
-own servers, or entirely on-device. The right default for kiosks,
+**[`essence-2`](/concepts/essence-2-light).** Half the cloud price of
+Quality, and it runs on CPU and the Apple Neural Engine as well as GPU — so
+the same agent serves from bitHuman's cloud, your own servers, or entirely
+on-device. The right default for photorealistic humans, kiosks,
 high-concurrency deployments, and privacy-sensitive environments.
 
 ### Fully generated motion from a single photo
@@ -91,21 +98,21 @@ per-identity work, so don't apply a short client timeout:
 
 | Model | Identity step | Typical creation time |
 |---|---|---|
+| `essence-2` | Distills a compact identity bundle on a cloud GPU | Typically 25–40 minutes; occasionally longer |
 | `essence-2-quality` | Instant prep from your source video (seconds) | A few minutes end-to-end |
-| `essence-2-light` | Distills a compact identity bundle on a cloud GPU | Typically 25–40 minutes; occasionally longer |
 | `expression-2` | Trains a per-identity model on an H100-class GPU | Roughly 45 minutes (30–60) |
 
 Inputs differ too: `essence-2-quality` **requires a source video**;
-`essence-2-light` takes a video *or* generates one from your image;
+`essence-2` takes a video *or* generates one from your image;
 `expression-2` needs only a photo. Details and failure modes are in each
 model's guide and the [Agents API](/api/agents#generate-an-agent).
 
-Two more `model` values round out the creation surface:
+Two notes round out the creation surface:
 
-- **`essence-2` — the combined Essence 2 creation.** One 500-credit charge
-  trains Essence 2 Light **and** makes Essence 2 Quality available from the
-  same identity video — you pick the tier at launch (`?model=` or the
-  embed-token `model` field). See
+- **`essence-2` is a combined creation.** The one 500-credit charge trains
+  the light-tier identity bundle **and** makes Essence 2 Quality available
+  from the same identity video — launch with `?model=essence-2-quality` (or
+  the embed-token `model` field) when you want the reference tier. See
   [the combined creation](/api/agents#essence-2--the-combined-creation).
 - **`auto` — classify and route.** An LLM looks at your input (the image if
   provided, else the prompt): a photorealistic person routes to `essence-2`
@@ -157,10 +164,10 @@ print(resp.json())
 }
 ```
 
-The same request shape works for the other two models — set `model` to
-`essence-2-quality` or `essence-2-light`. Invalid model names return
-`400 VALIDATION_ERROR` with no credits charged; the retired internal engine
-names are not accepted.
+The same request shape works for the other models — set `model` to
+`essence-2` or `essence-2-quality`. Invalid model names return
+`400 VALIDATION_ERROR` with no credits charged; retired names are not
+accepted (`essence-2-light` returns a targeted hint pointing at `essence-2`).
 
 Then poll until the agent is ready:
 
@@ -207,25 +214,47 @@ The other delivery surfaces work unchanged too — the
 
 ### Advanced: pin a serving tier
 
-By default the platform routes each session to the best available tier for the
-agent's model. For benchmarking or placement testing you can **pin a specific
-tier** by appending `?model=` with a tier slug to the session (viewer / embed)
-URL:
+By default the platform routes each session down the model's serving chain
+(GPU → Apple Neural Engine → CPU) and overflows on capacity. For benchmarking
+or placement testing you can **force a specific tier** by appending `?model=`
+with a force-tier slug to the session (viewer / embed) URL. A forced tier is
+pinned — it never overflows, and it fails loudly if that tier is unavailable:
 
 ```text
 https://bithuman.ai/embed/A56ZFX6217?model=expression-2-ane
 ```
 
-| Model | Tier slugs |
+| Model | Force-tier slugs |
 |---|---|
+| [`essence-2`](/concepts/essence-2-light#serving-tiers) | `essence-2-gpu` · `essence-2-ane` · `essence-2-cpu` |
 | [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
-| [`essence-2-light`](/concepts/essence-2-light#serving-tiers) | `essence-2-light-gpu` · `essence-2-light-cpu` · `essence-2-light-ane` |
 | [`essence-2-quality`](/concepts/essence-2-quality#serving) | `essence-2-quality` (single GPU tier) |
 
-> **Note** Tier pinning is an advanced, operational surface — slugs may be
-> adjusted as capacity evolves, and an unrecognized value falls back to the
-> agent's default routing. For production, omit `?model=` and let the platform
-> choose.
+Legacy pins from before the 2026-07-05 consolidation keep working: the old
+`essence-2-light-gpu` / `essence-2-light-cpu` slugs still pin their tiers, and
+saved links carrying `essence-2-light` or `essence-2-light-ane` route to the
+`essence-2` default chain.
+
+> **Note** Tier forcing is an advanced, operational surface — slugs may be
+> adjusted as capacity evolves. For production, omit `?model=` and let the
+> platform choose.
+
+## Where each model runs
+
+The device/runtime matrix for the second generation:
+
+| Runtime | `essence-2` | `essence-2-quality` | `expression-2` |
+|---|---|---|---|
+| bitHuman cloud — GPU | ✅ chain tier | ✅ (the only tier) | ✅ chain tier |
+| bitHuman cloud — Apple Neural Engine | ✅ chain tier | — | ✅ chain tier |
+| bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
+| Self-hosted (your servers, CPU) | ✅ [SDK](/sdk/overview) | — | ✅ (AVX-512-class CPUs) |
+| On-device macOS / iOS (Apple silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
+| Browser-local (WASM/WebGPU, no server render) | Upcoming — the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today; the Essence 2 browser tier is in rollout | — | Planned (WebGPU) |
+
+Cloud sessions are routed automatically; on-device and self-hosted serving
+use the downloaded model artifact
+([`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)).
 
 ## Pricing
 
@@ -234,15 +263,15 @@ Per active minute of avatar runtime, from the
 
 | Model | Cloud | Self-hosted |
 |---|---|---|
+| `essence-2` | 4 credits/min | 2 credits/min |
 | `essence-2-quality` | 8 credits/min | 4 credits/min |
-| `essence-2-light` | 4 credits/min | 2 credits/min |
 | `expression-2` | 4 credits/min | 2 credits/min |
 
 Creation is one-time and per agent: **500 credits** for the v2 models above
-(`expression-2`, `essence-2-quality`, `essence-2-light` — and the
-[combined `essence-2`](/api/agents#essence-2--the-combined-creation) and
-[`auto`](/api/agents#auto--let-the-platform-pick-the-model), which charge the
-same 500) and 250 credits for the v1 models (`essence-1`, `expression-1`).
+(the [combined `essence-2`](/api/agents#essence-2--the-combined-creation),
+`essence-2-quality`, `expression-2` — and
+[`auto`](/api/agents#auto--let-the-platform-pick-the-model), which charges the
+routed model's 500) and 250 credits for the v1 models (`essence-1`, `expression-1`).
 [Adding a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
 charges the same per-model rates. Idle, paused, or disconnected time isn't
 billed. Machine-readable schedule:
@@ -256,13 +285,13 @@ last frame back to its first and never plays in reverse. Expression 2
 additionally bakes a **real-footage idle clip** into every creation, so idle
 is the identity's own footage rather than generated frames. Details per model:
 [Expression 2](/concepts/expression-2#idle-and-speaking-behavior) ·
-[Essence 2 Light](/concepts/essence-2-light#idle-and-speaking-behavior), and
+[Essence 2 light tier](/concepts/essence-2-light#idle-and-speaking-behavior), and
 the expectations overview in
 [Session behavior & troubleshooting](/guides/session-troubleshooting).
 
 ## Next steps
 
-- [Expression 2](/concepts/expression-2) · [Essence 2 Quality](/concepts/essence-2-quality) · [Essence 2 Light](/concepts/essence-2-light) — the official per-model guides.
+- [Expression 2](/concepts/expression-2) · [Essence 2 Quality](/concepts/essence-2-quality) · [Essence 2 light tier](/concepts/essence-2-light) — the official per-model guides.
 - [Essence vs Expression](/concepts/models) — the two model families.
 - [Agents API](/api/agents) — the full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.

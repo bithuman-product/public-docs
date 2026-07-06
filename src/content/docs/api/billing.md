@@ -17,7 +17,7 @@ sessions bill per minute.
 | Action | Cost |
 |---|---|
 | Agent generation — v1 models (`essence-1`, `expression-1`) | 250 credits (one-time, per avatar) |
-| Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`) | 500 credits (one-time, per avatar) |
+| Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `expression-2`, `auto`) | 500 credits (one-time, per avatar) |
 | [Add a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent) | Same per-model rates (250 / 500); adding `expression-1` is **free** (instant enablement, no training) |
 | Dynamics generation (one-time, per avatar) | 250 credits |
 | Book creation (one-time, per book) | 250 credits |
@@ -55,7 +55,6 @@ curl https://api.bithuman.ai/v1/pricing \
         "essence-1": 250,
         "expression-1": 250,
         "essence-2-quality": 500,
-        "essence-2-light": 500,
         "expression-2": 500,
         "essence-2": 500,
         "auto": 500
@@ -65,7 +64,7 @@ curl https://api.bithuman.ai/v1/pricing \
     "talking_video": {
       "unit": "credits_per_minute",
       "billing": "ceil(minutes) * rate, minimum 1 minute",
-      "rates": { "essence-2-light": 4, "essence-2-quality": 8, "expression-2": 4 }
+      "rates": { "essence-2": 4, "essence-2-quality": 8, "expression-2": 4 }
     },
     "dynamics_generation": { "flat": 250, "note": "…" },
     "notes": "Authoritative charges are enforced server-side at request time. …"

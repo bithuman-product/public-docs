@@ -39,7 +39,7 @@ contract (push audio in, drain lip-synced video out) is unchanged.
 If you need the absolute highest image fidelity for close-up content, compare
 with [Essence 2 Quality](/concepts/essence-2-quality). If cost at scale or
 on-device deployment is the priority, compare with
-[Essence 2 Light](/concepts/essence-2-light). For the family-level decision,
+[`essence-2`](/concepts/essence-2-light). For the family-level decision,
 start at [Essence 2 & Expression 2](/concepts/models-v2).
 
 ## How creation works
@@ -108,19 +108,20 @@ retried into a different model. See
 A ready `expression-2` agent serves through every delivery surface — the
 [embed widget](/guides/deploy-embed), the viewer/share URL, the
 [REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
-By default the platform routes each session to the model's best available
-capacity: an always-warm **GPU first line**, spilling to **elastic cloud GPU
-overflow** that scales from zero when the first line is full.
+By default the platform routes each session down the model's **serving
+chain — GPU → Apple Neural Engine → CPU** — starting at an always-warm GPU
+first line and overflowing to the next tier on capacity.
 
-For benchmarking or placement testing you can pin a runtime tier with the
-`?model=` override on the session URL:
+For benchmarking or placement testing you can **force one runtime tier** with
+the `?model=` override on the session URL (a forced tier never overflows and
+fails loudly if unavailable):
 
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
-| `expression-2` | GPU (default) | Primary GPU capacity with elastic cloud overflow. |
-| `expression-2-gpu` | GPU | Explicit alias of `expression-2`. |
-| `expression-2-cpu` | CPU | Native quantized (int8) build on CPU servers — no GPU in the path. |
-| `expression-2-ane` | Apple Neural Engine | Served from Apple-silicon Neural Engine hardware; limited real-time slots, with GPU overflow. |
+| `expression-2` | The full chain (default) | GPU → Neural Engine → CPU with automatic overflow. |
+| `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
+| `expression-2-cpu` | CPU | Force the native quantized (int8) build on CPU servers — no GPU in the path. |
+| `expression-2-ane` | Apple Neural Engine | Force the Apple-silicon Neural Engine tier; limited real-time slots. |
 
 ```text
 https://bithuman.ai/embed/A56ZFX6217?model=expression-2-ane

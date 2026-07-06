@@ -15,8 +15,9 @@ finished video URL. On success you get a public CDN URL, the output duration, an
 the credits charged.
 
 Talking videos bill **per minute of output, rounded up**: `expression-2` is 4
-credits/min, `essence-2-quality` is 8 credits/min, and `essence-2-light` is 4
-credits/min. If a render fails, the charge is automatically refunded.
+credits/min, `essence-2-quality` is 8 credits/min, and `essence-2` is 4
+credits/min (the efficient light-tier render; the former `essence-2-light`
+name is retired). If a render fails, the charge is automatically refunded.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
@@ -27,7 +28,7 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `expression-2`, `essence-2-quality`, or `essence-2-light`. |
+| `model` | string | yes | Engine: `expression-2`, `essence-2-quality`, or `essence-2`. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
@@ -79,7 +80,7 @@ A `402` (`INSUFFICIENT_BALANCE`) is returned at submit time if your balance can'
 cover the render. An invalid `model`, a missing/invalid `input`, or text over the
 limit returns `400` before any charge. Requesting a model the agent can't be
 launched as returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) —
-also **before any charge**: for `expression-2` / `essence-2-light` that means
+also **before any charge**: for `expression-2` / `essence-2` that means
 the trained per-identity model doesn't exist yet (`agent <code>'s <model>
 model hasn't been generated yet`); `essence-2-quality` is gated on the
 agent's **source video**, which its identity prepares from on demand (`agent
