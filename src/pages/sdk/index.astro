@@ -14,6 +14,7 @@ const groups = [
     label: "Languages",
     cards: [
       { title: "Swift (Apple)", desc: "iOS, iPadOS, macOS via SwiftPM. On-device, Apple Silicon.", href: "/sdk/swift", badge: "Preview" },
+      { title: "Android (Kotlin)", desc: "On-device Essence runtime via a Maven Central AAR — arm64-v8a, Android 10+.", href: "/sdk/android", badge: "Beta" },
       { title: "JavaScript / TypeScript", desc: "Cloud client over LiveKit for web and Node.", href: "/sdk/javascript", badge: "Preview" },
       { title: "WebAssembly (Browser)", desc: "Run agents fully in the browser via WASM — no server GPU.", href: "/sdk/wasm", badge: "New" },
     ],
@@ -41,7 +42,7 @@ const groups = [
 <Hub
   eyebrow="SDK"
   title="SDK"
-  tagline="Embed lifelike, realtime visual agents on your own hardware — from Python, Apple, or the browser, or drive the whole stack from a single CLI command. On-device or over the cloud, one engine everywhere."
+  tagline="Embed lifelike, realtime visual agents on your own hardware — from Python, Apple, Android, or the browser, or drive the whole stack from a single CLI command. On-device or over the cloud, one engine everywhere."
   ctas={[{ label: "New here? Start here", href: "/start" }, { label: "Which should I use?", href: "/sdk/overview", variant: "secondary" }]}
   groups={groups}
 />
