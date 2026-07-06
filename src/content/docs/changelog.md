@@ -10,6 +10,10 @@ order: 1
 
 ## July 2026
 
+### Android / Kotlin SDK docs restored (2026-07-04)
+
+The [Android SDK](/sdk/android) page and the [Kotlin hello-avatar example](/examples/kotlin-android-hello) are back. The on-device Essence runtime for Android — `ai.bithuman:sdk:2.3.6`, a self-contained arm64-v8a AAR on Maven Central — is unchanged and installable; only its documentation had been removed. It's pinned at `2.3.6` (Essence, Engine ABI v7, Beta) and renders Essence `.imx` models fully on-device.
+
 ### Pick-for-me creation, combined Essence 2, model adds & downloads (2026-07-02)
 
 The model-release UX wave — one creation surface across all five model families, plus post-creation adds and artifact downloads:
