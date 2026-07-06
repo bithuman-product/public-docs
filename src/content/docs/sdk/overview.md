@@ -18,7 +18,8 @@ straight to the others.
 This section covers both ways to build on your own hardware:
 
 - **Language libraries** — call the engine from [Python](/sdk/python),
-  [Swift](/sdk/swift), or the [browser](/sdk/wasm).
+  [Swift](/sdk/swift), [Android / Kotlin](/sdk/android), or the
+  [browser](/sdk/wasm).
 - **The [command-line tool](/sdk/cli/overview)** — the same engine in a single
   binary, no code required. Documented here under **Command line**.
 
@@ -40,6 +41,7 @@ avatars; the difference is where they run and how mature each surface is.
 |---|---|---|---|
 | Backend, AI agents, batch render, edge boxes | **[Python](/sdk/python)** | On-device | **GA** |
 | Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **Preview** |
+| Native Android apps | **[Android / Kotlin](/sdk/android)** | On-device | **Beta** |
 | Browser & Node web clients | **[JavaScript / TS](/sdk/javascript)** | Cloud client | **Preview** |
 | No code — terminal or browser viewer | **[CLI](/sdk/cli/overview)** | On-device | **GA** |
 | Native app ↔ server avatar over WebRTC, or Python voice agent with a face | **[LiveKit (Apple + Python)](/sdk/livekit)** | Cloud / hybrid | Built on the bindings |
@@ -76,6 +78,7 @@ We keep this honest so you can plan around it.
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.3.10) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM `bitHumanKit` (0.8.2) | On-device | **Preview** |
+| **Android / Kotlin** | `ai.bithuman:sdk:2.3.6` — Maven Central (Essence, pinned) | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.3.25) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
