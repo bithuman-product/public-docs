@@ -14,10 +14,11 @@ speaking — from a **text** script (the agent's voice synthesizes it) or from a
 finished video URL. On success you get a public CDN URL, the output duration, and
 the credits charged.
 
-Talking videos bill **per minute of output, rounded up**: `expression-2` is 4
-credits/min, `essence-2-quality` is 8 credits/min, and `essence-2` is 4
-credits/min (the efficient light-tier render; the former `essence-2-light`
-name is retired). If a render fails, the charge is automatically refunded.
+Talking videos bill **per minute of output, rounded up**: `essence-1` and
+`essence-2-quality` are 8 credits/min; `expression-1`, `expression-2`, and
+`essence-2` are 4 credits/min (`essence-2` is the efficient light-tier
+render; the former `essence-2-light` name is retired). If a render fails,
+the charge is automatically refunded.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
@@ -28,7 +29,7 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `expression-2`, `essence-2-quality`, or `essence-2`. |
+| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-quality`, or `essence-2`. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
@@ -81,11 +82,14 @@ cover the render. An invalid `model`, a missing/invalid `input`, or text over th
 limit returns `400` before any charge. Requesting a model the agent can't be
 launched as returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) —
 also **before any charge**: for `expression-2` / `essence-2` that means
-the trained per-identity model doesn't exist yet (`agent <code>'s <model>
+the trained per-identity model doesn't exist yet (`agent <code>'s <family>
 model hasn't been generated yet`); `essence-2-quality` is gated on the
 agent's **source video**, which its identity prepares from on demand (`agent
 <code>'s essence-2-quality model requires a source video, which this agent
-doesn't have`). Check the agent's `supported_models` on the
+doesn't have`); `essence-1` needs the agent's `.imx` model file (present on
+every completed essence-1 creation), and `expression-1` needs an
+expression-1 agent — or the free post-generation expression-1 model add —
+with an image. Check the agent's `supported_models` on the
 [Agents API](/api/agents#poll-status), or
 [add the model](/api/agents#add-a-model-to-an-existing-agent) first.
 

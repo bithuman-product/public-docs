@@ -77,6 +77,8 @@ Audio input is the same call with an audio block:
 
 | Model | Best for |
 |---|---|
+| `essence-1` | Classic photoreal renders — every essence-1 agent, available today. |
+| `expression-1` | Classic stylized renders — available today. |
 | `expression-2` | Fast, expressive renders. |
 | `essence-2-quality` | High-fidelity output. |
 | `essence-2` | Cost-effective renders (the light tier). |
@@ -89,6 +91,8 @@ Talking videos bill **per minute of output, rounded up**, at a per-model rate:
 
 | Model | Rate |
 |---|---|
+| `essence-1` | 8 credits/min (rounded up) |
+| `expression-1` | 4 credits/min (rounded up) |
 | `expression-2` | 4 credits/min (rounded up) |
 | `essence-2-quality` | 8 credits/min (rounded up) |
 | `essence-2` | 4 credits/min (rounded up) |
