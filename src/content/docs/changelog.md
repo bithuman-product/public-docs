@@ -10,6 +10,33 @@ order: 1
 
 ## July 2026
 
+### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
+
+The Essence 2 request surface is now just **`essence-2`** (plus the explicit
+`essence-2-quality` reference tier):
+
+- **The `essence-2-light` name is retired.** Create and render with
+  `model: "essence-2"` — the light tier is what it serves. Requests naming
+  `essence-2-light` (or the old `essence-2-light-ane` slug) get a targeted
+  `400` pointing at `essence-2`. Existing agents and saved links keep working
+  (retired values route to the `essence-2` chain), and `essence-2-light`
+  remains the internal **family** name you'll still see in
+  `supported_models`, `409` messages, and
+  [model downloads](/api/agents#download-an-agents-model).
+- **Serving chains + force tiers.** By default `essence-2` and
+  `expression-2` sessions route down a serving chain
+  (GPU → Apple Neural Engine → CPU) with automatic overflow. New
+  **force-tier slugs** — `essence-2-gpu` / `essence-2-ane` / `essence-2-cpu`
+  and `expression-2-gpu` / `expression-2-cpu` / `expression-2-ane` — pin one
+  tier for benchmarking/placement testing and never overflow. See
+  [tier pinning](/concepts/models-v2#advanced-pin-a-serving-tier).
+- **Talking videos:** [`POST /v1/video/generate`](/api/video) accepts
+  `essence-2` (4 credits/min) in place of the retired name;
+  `essence-2-quality` (8) and `expression-2` (4) unchanged.
+- **Where each model runs:** the family overview gains a
+  [device/runtime matrix](/concepts/models-v2#where-each-model-runs) (cloud
+  tiers, self-hosted, on-device Apple silicon, browser-local status).
+
 ### Android / Kotlin SDK docs restored (2026-07-04)
 
 The [Android SDK](/sdk/android) page and the [Kotlin hello-avatar example](/examples/kotlin-android-hello) are back. The on-device Essence runtime for Android — `ai.bithuman:sdk:2.3.6`, a self-contained arm64-v8a AAR on Maven Central — is unchanged and installable; only its documentation had been removed. It's pinned at `2.3.6` (Essence, Engine ABI v7, Beta) and renders Essence `.imx` models fully on-device.

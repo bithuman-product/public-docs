@@ -1,26 +1,30 @@
 ---
-title: "Essence 2 Light"
-description: "Official guide to essence-2-light — bitHuman's cost-effective distilled avatar model: train-on-create from video or photo, gpu/cpu/ane serving tiers including on-device Apple Neural Engine, and pricing."
+title: "Essence 2 — the light tier"
+description: "Reference guide to the essence-2 light tier (formerly essence-2-light) — bitHuman's cost-effective distilled avatar renderer: train-on-create from video or photo, gpu/ane/cpu serving including on-device Apple Neural Engine, and pricing."
 section: concepts
 group: "Models"
 order: 5
-label: "Essence 2 Light"
+label: "Essence 2 (light tier)"
 ---
 
-:::note
-**Launching July 7, 2026.** "Quality" and "Light" are internal serving tiers of a single model — as a developer you simply select `essence-2`, and bitHuman serves the right tier for your hardware and quality needs. This page documents the internal tier for reference.
-:::
+> **Note — Launching July 7, 2026.** As a developer you simply select
+> **`essence-2`**, and bitHuman serves the right tier for your hardware and
+> quality needs. This page documents the **light tier** — what `essence-2`
+> serves by default — for reference. The standalone name `essence-2-light`
+> was **retired on 2026-07-05** (requests naming it get a `400` with a hint
+> pointing at `essence-2`); it remains the internal *family* name you'll see
+> in `supported_models`, artifact errors, and downloads.
 
 ## What it is
 
-**`essence-2-light`** is the cost-effective tier of the second-generation
-Essence family: a **distilled** renderer that keeps the Essence look — your
-identity's real footage, lip-synced live at ~25 frames per second — at a
-fraction of the compute. At creation the platform distills your identity into
-a compact bundle; that one artifact then serves on **three runtimes**: cloud
-**GPU**, cloud **CPU**, and the **Apple Neural Engine (ANE)** — including a
-fully **on-device** Apple-silicon build where audio and video never leave the
-hardware.
+The **light tier of `essence-2`** is the cost-effective renderer of the
+second-generation Essence family: a **distilled** engine that keeps the
+Essence look — your identity's real footage, lip-synced live at ~25 frames
+per second — at a fraction of the compute. At creation the platform distills
+your identity into a compact bundle; that one artifact then serves on **three
+runtimes**: cloud **GPU**, the **Apple Neural Engine (ANE)**, and cloud
+**CPU** — including a fully **on-device** Apple-silicon build where audio and
+video never leave the hardware.
 
 It is half the cloud price of [Essence 2 Quality](/concepts/essence-2-quality)
 and the only Essence 2 tier with CPU and Neural Engine runtimes — the right
@@ -47,15 +51,15 @@ the family-level decision, start at
 ## How creation works
 
 Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
-and `model: "essence-2-light"`. Creation is asynchronous and costs
-**500 credits** (one-time, per agent).
+and `model: "essence-2"`. Creation is asynchronous and costs **500 credits**
+(one-time, per agent).
 
-> **Tip — one creation, both Essence 2 tiers.** `model: "essence-2"` (the
-> [combined creation](/api/agents#essence-2--the-combined-creation)) charges
-> the same 500 credits and gives you Light **and**
-> [Essence 2 Quality](/concepts/essence-2-quality) from the same identity
-> video — pick the tier at launch. Like every Essence 2 creation, the input
-> must be a **photorealistic human subject** (else
+> **Tip — one creation, both Essence 2 tiers.** `essence-2` is the
+> [combined creation](/api/agents#essence-2--the-combined-creation): the one
+> 500-credit charge trains this light tier **and** makes
+> [Essence 2 Quality](/concepts/essence-2-quality) available from the same
+> identity video — pick the tier at launch. Like every Essence 2 creation,
+> the input must be a **photorealistic human subject** (else
 > [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors), nothing billed);
 > `model: "auto"` routes automatically instead. You can also
 > [add `essence-2`](/api/agents#add-a-model-to-an-existing-agent) to an
@@ -70,7 +74,7 @@ resp = requests.post(
     json={
         "prompt": "You are a helpful retail assistant.",
         "video": "https://example.com/identity.mp4",   # or pass "image" — see below
-        "model": "essence-2-light",
+        "model": "essence-2",
     },
 )
 print(resp.json())
@@ -78,7 +82,7 @@ print(resp.json())
 #  "agent_id": "A56ZFX6217", "status": "processing"}
 ```
 
-**Inputs.** Essence 2 Light derives its identity bundle from **video**. Supply
+**Inputs.** The light tier derives its identity bundle from **video**. Supply
 a short clip of the identity — or supply just an `image`, and the platform
 **generates the identity video for you** as an extra creation step before
 training (you'll see `current_step: "video"` at ~45% progress). A voice is
@@ -103,27 +107,30 @@ applying your own short timeout.
 A ready agent serves through every delivery surface — the
 [embed widget](/guides/deploy-embed), the viewer/share URL, the
 [REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
-By default (`essence-2-light`) the platform routes sessions to the
-cost-efficient **Neural Engine first line**, spilling to **elastic cloud GPU
-overflow** that scales from zero when the first line is full.
+By default (`?model=essence-2`, or no override at all) the platform routes
+each session down the **serving chain — GPU → Apple Neural Engine → CPU** —
+overflowing to the next tier on capacity, so sessions land on the most
+cost-efficient runtime that's available.
 
-For benchmarking or placement testing you can pin a runtime tier with the
-`?model=` override on the session URL:
+For benchmarking or placement testing you can **force one runtime tier** with
+the `?model=` override on the session URL (a forced tier never overflows and
+fails loudly if unavailable):
 
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
-| `essence-2-light` | Neural Engine (default) | ANE-backed first line with elastic GPU overflow — the preferred public name. |
-| `essence-2-light-ane` | Apple Neural Engine | Explicit form of the default route. |
-| `essence-2-light-gpu` | Cloud GPU | Direct GPU tier (elastic, scales from zero). |
-| `essence-2-light-cpu` | Cloud CPU | Direct CPU tier — no GPU in the path. |
+| `essence-2` | The full chain (default) | GPU → Neural Engine → CPU with automatic overflow — the public name. |
+| `essence-2-gpu` | Cloud GPU | Force the GPU tier. |
+| `essence-2-ane` | Apple Neural Engine | Force the ANE tier. |
+| `essence-2-cpu` | Cloud CPU | Force the CPU tier — no GPU in the path. |
+| `essence-2-light-gpu` · `essence-2-light-cpu` | (legacy) | Pre-2026-07-05 force slugs — still accepted. |
+| `essence-2-light` · `essence-2-light-ane` | (retired) | Saved links keep working — they route to the `essence-2` chain. |
 
 ```text
-https://bithuman.ai/embed/A56ZFX6217?model=essence-2-light-cpu
+https://bithuman.ai/embed/A56ZFX6217?model=essence-2-cpu
 ```
 
-Tier slugs are an advanced, operational surface — an unrecognized value falls
-back to the agent's default routing. For production, omit `?model=` and let
-the platform choose. See
+Tier slugs are an advanced, operational surface. For production, omit
+`?model=` and let the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
 **On-device.** The same distilled identity also runs **fully on-device** on
@@ -135,7 +142,7 @@ on-device Essence 2 tier.)
 
 ## Idle and speaking behavior
 
-Essence 2 Light animates the identity's **real footage**: the base video
+The light tier animates the identity's **real footage**: the base video
 plays continuously and the engine renders lip-sync and expression over it. As
 of **2026-07-02**, the base video loops **forward-only** on every tier — when
 the clip reaches its last frame it wraps back to the first, and it never plays
@@ -166,7 +173,8 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
   reuse it. See [troubleshooting](/guides/session-troubleshooting).
 - **Before distillation completes**, launch surfaces that request this model
   reject it with `409 MODEL_NOT_GENERATED`
-  (`agent A56ZFX6217's essence-2-light model hasn't been generated yet`).
+  (`agent A56ZFX6217's essence-2-light model hasn't been generated yet` —
+  note the *family* keeps the internal `essence-2-light` name).
   Once the agent is ready, its `supported_models` (on
   [status / get / list](/api/agents#poll-status) and the embed-token
   response) includes `essence-2-light`.
@@ -177,5 +185,5 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
-- [Talking video generation](/concepts/talking-video) — render offline mp4s with `essence-2-light`.
+- [Talking video generation](/concepts/talking-video) — render offline mp4s with `model: "essence-2"`.
 - [Download your model](/api/agents#download-an-agents-model) — the trained `.lebundle.imx` (licensed weights), via API or `bithuman pull <code>`.

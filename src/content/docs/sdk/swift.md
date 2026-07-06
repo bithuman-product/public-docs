@@ -32,7 +32,7 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 
 > **Second-generation models** The on-device engine surface also covers the
 > second generation: [`expression-2`](/concepts/expression-2) and
-> [`essence-2-light`](/concepts/essence-2-light) have on-device Apple-silicon
+> [`essence-2`](/concepts/essence-2-light) have on-device Apple-silicon
 > engines (the Neural Engine tiers of those models), while
 > [`essence-2-quality`](/concepts/essence-2-quality) is **cloud-only** — it is
 > recognized but reported as cloud-only rather than loaded locally. The

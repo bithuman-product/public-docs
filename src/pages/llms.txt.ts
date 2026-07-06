@@ -37,10 +37,11 @@ export const GET: APIRoute = async () => {
     `out. Avatars are portable \`.imx\` files keyed by a short agent code ` +
     `(e.g. \`A78WKV4515\`). Models (second generation \`essence-2\`/\`expression-2\` launch July 7, 2026): ` +
     `\`expression-2\` (audio-driven real-time avatar video from a single ` +
-    `photo; gpu/cpu/ane serving tiers), \`essence-2-quality\` ` +
-    `(highest-fidelity GPU tier), \`essence-2-light\` (cost-effective; ` +
-    `gpu/cpu/ane incl. on-device), plus the v1 \`essence-1\` / ` +
-    `\`expression-1\`.\n\n`;
+    `photo — best for cartoon/animal/creature/robot characters; ` +
+    `gpu/ane/cpu serving chain), \`essence-2\` (photorealistic humans; ` +
+    `gpu/ane/cpu chain incl. on-device — the former essence-2-light name ` +
+    `is retired), \`essence-2-quality\` (highest-fidelity GPU reference ` +
+    `tier), plus the v1 \`essence-1\` / \`expression-1\`.\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;
   out +=

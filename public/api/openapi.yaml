@@ -278,13 +278,13 @@ paths:
         `persona` (5–15%) → `voice_image` (~20%) → `video` (~45%, only for
         models that generate an identity video) → `lip_sync` (70–99%, the
         model-specific identity step — training/distillation for
-        `expression-2` / `essence-2-light`, so the longest stage) → `done`
+        `expression-2` / `essence-2`, so the longest stage) → `done`
         (100%). A rare `essence-1` path reports `awaiting_face_marking`
         (~35%).
 
         Recommended polling interval: 5 seconds. Size your overall timeout to
         the model: minutes for `essence-1` / `essence-2-quality`, ~90 minutes
-        for `expression-2`, and up to several hours for `essence-2-light`.
+        for `expression-2`, and up to several hours for `essence-2`.
       tags: [Agent Generation]
       parameters:
         - name: agent_id
@@ -729,7 +729,7 @@ paths:
             enum: [essence-1, essence-2-light, essence-2-quality, expression-2]
           description: >-
             Artifact family. Defaults to the agent's own model. Legacy names
-            and runtime tier slugs (e.g. `essence-2-light-ane`,
+            and runtime tier slugs (e.g. `essence-2`, `essence-2-ane`,
             `expression-2-gpu`) fold onto their family; an unrecognized value
             returns `400 VALIDATION_ERROR` listing the downloadable families.
           example: "expression-2"
@@ -1141,17 +1141,20 @@ paths:
                   type: string
                   description: >-
                     Optional. Request a specific avatar model for the embed
-                    session — a canonical name (`essence-1`, `expression-1`,
-                    `essence-2-quality`, `essence-2-light`, `expression-2`) or
-                    a runtime tier slug (`expression-2-gpu/cpu/ane`,
-                    `essence-2-light-gpu/cpu/ane`). This is the **early
-                    artifact gate**: if the requested model is
-                    `expression-2*` / `essence-2-light*` and the agent's
-                    trained per-identity model hasn't been generated yet, the
-                    request is rejected `409 MODEL_NOT_GENERATED` instead of
-                    failing later at session dispatch. Unknown values return
-                    `400 VALIDATION_ERROR` listing the accepted names.
-                    Omitted → the agent's own default model.
+                    session — a model name (`essence-1`, `expression-1`,
+                    `essence-2`, `essence-2-quality`, `expression-2`) or a
+                    force-tier slug that pins one serving tier
+                    (`expression-2-gpu/-cpu/-ane`, `essence-2-gpu/-ane/-cpu`;
+                    the legacy `essence-2-light-gpu/-cpu` slugs still pin
+                    their tiers, and retired `essence-2-light(-ane)` values
+                    route to the `essence-2` chain). This is the **early
+                    artifact gate**: if the requested model folds onto the
+                    `expression-2` / `essence-2-light` families and the
+                    agent's trained per-identity model hasn't been generated
+                    yet, the request is rejected `409 MODEL_NOT_GENERATED`
+                    instead of failing later at session dispatch. Unknown
+                    values return `400 VALIDATION_ERROR` listing the accepted
+                    names. Omitted → the agent's own default model.
                   example: "expression-2"
       responses:
         "200":
@@ -1512,9 +1515,11 @@ paths:
           description: >-
             `MODEL_NOT_GENERATED` — checked **before any charge**: the
             requested `model` is a family this agent can't be launched as. For
-            `expression-2` / `essence-2-light` that means the trained
+            `expression-2` / `essence-2` that means the trained
             per-identity model hasn't been generated yet (message: `agent
-            <code>'s <model> model hasn't been generated yet`);
+            <code>'s <model> model hasn't been generated yet` — note the
+            message names the internal family, e.g. `essence-2-light` for the
+            `essence-2` light tier);
             `essence-2-quality` is gated on the agent's **source video** — its
             identity prepares on demand from that footage, so an agent without
             one gets `agent <code>'s essence-2-quality model requires a source
@@ -2832,7 +2837,10 @@ tags:
       Family overview: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2);
       per-model guides: [Expression 2](https://docs.bithuman.ai/concepts/expression-2)
       · [Essence 2 Quality](https://docs.bithuman.ai/concepts/essence-2-quality)
-      · [Essence 2 Light](https://docs.bithuman.ai/concepts/essence-2-light).
+      · [Essence 2 — the light tier](https://docs.bithuman.ai/concepts/essence-2-light).
+      Recommendation rule: **`essence-2` for photorealistic human figures;
+      `expression-2` for cartoonish, stylized, animal, creature, or robot
+      characters** — send `model: "auto"` to apply it automatically.
 
   - name: pricing
     x-displayName: Pricing

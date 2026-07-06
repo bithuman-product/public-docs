@@ -79,7 +79,7 @@ Audio input is the same call with an audio block:
 |---|---|
 | `expression-2` | Fast, expressive renders. |
 | `essence-2-quality` | High-fidelity output. |
-| `essence-2-light` | Cost-effective renders. |
+| `essence-2` | Cost-effective renders (the light tier). |
 
 Essence 2 and Expression 2 are [launching July 7, 2026](/concepts/models-v2); `essence-1` and `expression-1` are available today.
 
@@ -91,7 +91,7 @@ Talking videos bill **per minute of output, rounded up**, at a per-model rate:
 |---|---|
 | `expression-2` | 4 credits/min (rounded up) |
 | `essence-2-quality` | 8 credits/min (rounded up) |
-| `essence-2-light` | 4 credits/min (rounded up) |
+| `essence-2` | 4 credits/min (rounded up) |
 
 A 6.5-second `essence-2-quality` clip costs `ceil(6.5 / 60) × 8 = 8` credits; a
 70-second one costs `ceil(70 / 60) × 8 = 16`. If a render **fails**, the charge is
