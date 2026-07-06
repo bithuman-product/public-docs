@@ -90,8 +90,7 @@ paths:
         | `essence-1` (default) | image (or generated from prompt) | 2–5 minutes |
         | `expression-1` | image (or generated from prompt) | ~1–2 minutes |
         | `essence-2-quality` | **video required** (identity prepped from real footage in seconds) | a few minutes end-to-end |
-        | `essence-2-light` | video, or image (an identity video is generated first) | 45 minutes typical; long builds can take hours |
-        | `essence-2` | video, or image (an identity video is generated first) | same as `essence-2-light` — **both Essence 2 tiers from one creation** |
+        | `essence-2` | video, or image (an identity video is generated first) | 45 minutes typical; long builds can take hours — **both Essence 2 tiers from one creation** |
         | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
         | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
 
@@ -101,8 +100,8 @@ paths:
         `model: "auto"` to apply this rule automatically — the platform
         classifies your input and records the recommended model either way.
 
-        **Subject requirement (Essence 2 family):** `essence-2`,
-        `essence-2-quality` and `essence-2-light` require a **photorealistic
+        **Subject requirement (Essence 2 family):** `essence-2` and
+        `essence-2-quality` require a **photorealistic
         human** subject. The input is classified before anything is billed; a
         cartoon / animal / creature / robot input is rejected with
         `422 MODEL_SUBJECT_MISMATCH` (nothing charged) — use `expression-2`
@@ -161,7 +160,7 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence-1, essence-2, essence-2-quality, essence-2-light, expression-1, expression-2, essence, expression, auto]
+                  enum: [essence-1, essence-2, essence-2-quality, expression-1, expression-2, essence, expression, auto]
                   default: essence-1
                   example: "auto"
                   description: >-
@@ -174,8 +173,9 @@ paths:
                     creation that runs everywhere from fully on-device (CPU /
                     Apple Neural Engine) up to cloud GPU; bitHuman serves the
                     right way automatically, so you just select `essence-2`.
-                    (`essence-2-quality` / `essence-2-light` are accepted as
-                    internal serving-tier aliases of `essence-2`.) **`auto` classifies your input**
+                    (`essence-2-quality` remains an explicit reference tier;
+                    the former `essence-2-light` name was consolidated into
+                    `essence-2` and is no longer accepted.) **`auto` classifies your input**
                     (the image if provided, else the prompt): a photorealistic
                     person routes to `essence-2` (combined); a cartoon,
                     animal, creature or robot routes to `expression-2` — the
@@ -218,7 +218,7 @@ paths:
           description: >-
             Insufficient credits. Creation is billed **per model** — the
             second-generation families (`essence-2`, `essence-2-quality`,
-            `essence-2-light`, `expression-2`, and `auto`) cost 500 credits;
+            `expression-2`, and `auto`) cost 500 credits;
             the v1 families (`essence-1`, `expression-1`) cost 250. Top up to
             continue. Returns error code `INSUFFICIENT_BALANCE`.
         "400":
@@ -233,14 +233,14 @@ paths:
               example:
                 error:
                   code: "VALIDATION_ERROR"
-                  message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-light, essence-2-quality, expression, expression-1, expression-2"
+                  message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-quality, expression, expression-1, expression-2"
                   httpStatus: 400
                 status: "error"
                 status_code: 400
         "422":
           description: >-
             `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
-            (`essence-2`, `essence-2-quality`, `essence-2-light`) whose input
+            (`essence-2`, `essence-2-quality`) whose input
             is not a photorealistic human subject. The classifier runs on the
             image if provided, else the prompt, **before anything is billed**
             and before any agent row is created. Use `expression-2` for
@@ -1014,7 +1014,6 @@ paths:
                               essence-1: 250
                               expression-1: 250
                               essence-2-quality: 500
-                              essence-2-light: 500
                               expression-2: 500
                               essence-2: 500
                               auto: 500
@@ -1036,6 +1035,7 @@ paths:
                             example:
                               expression-2: 4
                               essence-2-quality: 8
+                              essence-2: 4
                       dynamics_generation:
                         type: object
                         properties:
@@ -1429,11 +1429,13 @@ paths:
               properties:
                 model:
                   type: string
-                  enum: [expression-2, essence-2-quality, essence-2-light]
+                  enum: [expression-2, essence-2-quality, essence-2]
                   description: |
                     Avatar engine. `expression-2` (4 credits/min),
-                    `essence-2-quality` (8 credits/min), or `essence-2-light`
-                    (4 credits/min, the efficient distilled renderer).
+                    `essence-2-quality` (8 credits/min), or `essence-2`
+                    (4 credits/min, the efficient distilled renderer — the
+                    former `essence-2-light` name, which is no longer
+                    accepted).
                   example: "essence-2-quality"
                 agent_code:
                   type: string
@@ -1503,7 +1505,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (expression-2 = 4, essence-2-quality = 8, essence-2-light = 4 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (expression-2 = 4, essence-2-quality = 8, essence-2 = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -2849,7 +2851,7 @@ tags:
       | Action | Cost |
       |---|---|
       | Agent generation — v1 models (`essence-1`, `expression-1`) | **250 credits** (one-time, per avatar) |
-      | Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`) | **500 credits** (one-time, per avatar) |
+      | Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `expression-2`, `auto`) | **500 credits** (one-time, per avatar) |
       | Add a model to an existing agent (`POST /v1/agent/{code}/models`) | same per-model rates; adding `expression-1` is **free** (instant enablement) |
       | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
       | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
