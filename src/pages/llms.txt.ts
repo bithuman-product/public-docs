@@ -35,7 +35,7 @@ export const GET: APIRoute = async () => {
     `cost, from 1 credit/min self-hosted. The contract is the same ` +
     `everywhere: push 16-bit PCM audio in, drain lip-synced video frames ` +
     `out. Avatars are portable \`.imx\` files keyed by a short agent code ` +
-    `(e.g. \`A78WKV4515\`). Models (second generation \`essence-2\`/\`expression-2\` launch July 7, 2026): ` +
+    `(e.g. \`A78WKV4515\`). Models (second generation \`essence-2\`/\`expression-2\` launch July 10, 2026): ` +
     `\`expression-2\` (audio-driven real-time avatar video from a single ` +
     `photo — best for cartoon/animal/creature/robot characters; ` +
     `gpu/ane/cpu serving chain), \`essence-2\` (photorealistic humans; ` +

@@ -7,7 +7,7 @@ order: 5
 label: "Essence 2 (light tier)"
 ---
 
-> **Note — Launching July 7, 2026.** As a developer you simply select
+> **Note — Launching July 10, 2026.** As a developer you simply select
 > **`essence-2`**, and bitHuman serves the right tier for your hardware and
 > quality needs. This page documents the **light tier** — what `essence-2`
 > serves by default — for reference. The standalone name `essence-2-light`

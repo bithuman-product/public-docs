@@ -27,7 +27,7 @@ export const GET: APIRoute = async () => {
     `video, and prompts never leave your hardware; the only network call is ` +
     `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem or ` +
     `runs fully air-gapped, at low per-minute cost. Models (second ` +
-    `generation, launching July 7, 2026): \`expression-2\` (audio-driven real-time ` +
+    `generation, launching July 10, 2026): \`expression-2\` (audio-driven real-time ` +
     `avatar video from a single photo — best for cartoon/animal/creature/robot ` +
     `characters; gpu/ane/cpu chain), \`essence-2\` (photorealistic humans; ` +
     `gpu/ane/cpu chain incl. on-device — the former essence-2-light name is ` +
