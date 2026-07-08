@@ -1,16 +1,16 @@
 ---
 title: "Essence 2 & Expression 2"
-description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 7, 2026."
+description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 10, 2026."
 section: concepts
 group: "Models"
 order: 2
 label: "Essence 2 & Expression 2"
 ---
 
-## Upcoming — launches July 7, 2026
+## Upcoming — launches July 10, 2026
 
 bitHuman's second-generation avatar models, **`essence-2`** and
-**`expression-2`**, launch on **July 7, 2026**. Until then, use the
+**`expression-2`**, launch on **July 10, 2026**. Until then, use the
 first-generation models ([`essence-1` and `expression-1`](/concepts/models)),
 which are available today and remain fully supported.
 

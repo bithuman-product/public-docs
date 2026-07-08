@@ -7,7 +7,7 @@ order: 4
 label: "Essence 2 Quality"
 ---
 
-> **Note — Launching July 7, 2026.** For most agents you simply select
+> **Note — Launching July 10, 2026.** For most agents you simply select
 > **`essence-2`** and bitHuman serves the right tier for your hardware and
 > quality needs. `essence-2-quality` is the separate, explicitly selectable
 > **reference tier** for hero-quality output — this page documents it. (The

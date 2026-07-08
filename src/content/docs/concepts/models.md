@@ -31,7 +31,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
     ane tiers.
 
 > **New** The two second-generation models — `essence-2`
-> and `expression-2` — are **launching July 7, 2026** (upcoming). See [Essence 2 & Expression 2](/concepts/models-v2) for the
+> and `expression-2` — are **launching July 10, 2026** (upcoming). See [Essence 2 & Expression 2](/concepts/models-v2) for the
 > family overview, and the official per-model guides:
 > [Expression 2](/concepts/expression-2) ·
 > [Essence 2](/concepts/models-v2) ·
@@ -172,7 +172,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launching July 7, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [the Essence 2 light tier](/concepts/essence-2-light).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launching July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [the Essence 2 light tier](/concepts/essence-2-light).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
 - [SDK overview](/sdk/overview) — run a model on your own hardware.
