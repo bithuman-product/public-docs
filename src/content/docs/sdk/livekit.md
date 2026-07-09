@@ -69,6 +69,31 @@ Two runnable LiveKit agents ship in the SDK repo, each with `.env.example`,
 | cloud-essence | bitHuman cloud | API key + agent ID |
 | local-essence | Your server (CPU) | API key + `.imx` |
 
+## Multiple agents in one room
+
+A room can hold more than one agent participant — e.g. a facilitator agent
+plus a persona agent that drives the bitHuman avatar. The avatar binds its
+audio **to the agent that starts the `AvatarSession`**, with no configuration
+needed: `AvatarSession.start()` stamps the launching agent's identity onto the
+avatar's join token (the LiveKit `lk.publish_on_behalf` attribute), and the
+avatar worker pins its audio receiver to exactly that participant.
+
+So in a room with agents **A** (facilitator) and **B** (persona), whichever
+agent calls `AvatarSession.start(...)` is the one the avatar lip-syncs for and
+sends `playback_started` / `playback_finished` back to. Other agents' audio is
+ignored by the avatar.
+
+- **No SDK/plugin upgrade or code change** is required — this works with the
+  released `livekit-plugins-bithuman`. Just make sure the agent you want the
+  avatar to speak for is the one that starts the `AvatarSession`.
+- **Single-agent rooms are unchanged** — with one agent present, the avatar
+  binds to it exactly as before.
+
+> Previously the avatar bound to the *first* agent-kind participant it saw, so
+> in a multi-agent room it could latch onto the wrong agent — staying silent
+> for the persona and never returning playback events. Fixed on the bitHuman
+> avatar workers (2026-07); no client change needed.
+
 ## Production video tuning (avoid a black or laggy avatar)
 
 > **Important for self-hosters.** By default the LiveKit plugin publishes the

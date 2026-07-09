@@ -10,6 +10,17 @@ order: 1
 
 ## July 2026
 
+### Multi-agent avatar rooms — audio binds to the launching agent (2026-07-09)
+
+The cloud avatar now pins its audio to the agent that starts the
+`AvatarSession` (via the LiveKit `lk.publish_on_behalf` attribute), fixing
+wrong-agent audio binding in rooms with more than one agent participant. The
+avatar previously bound to the *first* agent it saw, so with a facilitator +
+persona in the same room it could latch onto the wrong agent — staying silent
+for the persona and never returning `playback_started`/`playback_finished`.
+Server-side fix; no SDK or plugin upgrade required. See
+[LiveKit → Multiple agents](/sdk/livekit#multiple-agents-in-one-room).
+
 ### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
 
 The Essence 2 request surface is now just **`essence-2`** (plus the explicit
