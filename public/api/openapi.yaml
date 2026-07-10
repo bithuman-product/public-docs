@@ -52,6 +52,13 @@ paths:
   /v1/validate:
     post:
       operationId: validateApiSecret
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/validate \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+            # → {"valid": true}
       summary: Validate API secret
       description: |
         Verify that your API secret is valid and your account is active.
@@ -75,6 +82,21 @@ paths:
   /v1/agent/generate:
     post:
       operationId: generateAgent
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/agent/generate \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{
+                "prompt": "You are a friendly fitness coach who motivates users.",
+                "image": "https://example.com/face.jpg",
+                "audio": "https://example.com/voice.wav",
+                "model": "auto"
+              }'
+            # → {"success": true, "agent_id": "A91XMB7113", "status": "processing"}
+            # then poll GET /v1/agent/status/A91XMB7113
       summary: Generate a new agent
       description: |
         Create a new avatar agent from a text prompt, with optional image
@@ -84,9 +106,11 @@ paths:
         **Agent creation is image-only.** Provide a portrait `image` (or let
         the prompt generate one) — bitHuman generates a **10-second
         idle/driver video internally**, authored to loop seamlessly (its
-        first and last frames match). Video input is not accepted for any
-        model: a request carrying `video` is rejected with
-        `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is billed.
+        first and last frames match). Video input is not part of the creation
+        contract for any model and is being removed platform-wide: do not
+        send `video` — as the rollout completes, a request carrying it is
+        rejected with `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is
+        billed.
 
         **Creation time depends on `model`** (the second-generation
         models train real per-identity models — don't apply a 5-minute client
@@ -156,9 +180,10 @@ paths:
                   type: integer
                   deprecated: true
                   description: >-
-                    **Deprecated — accepted but ignored.** The internally
-                    generated identity/driver video is always 10 seconds,
-                    authored to loop seamlessly.
+                    **Deprecated — omit it.** The internally generated
+                    identity/driver video is standardizing on 10 seconds
+                    (authored to loop seamlessly); the parameter is ignored
+                    as that rollout completes.
                 model:
                   type: string
                   enum: [essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, essence, expression, auto]
@@ -168,8 +193,11 @@ paths:
                     Avatar runtime model for the generated agent. Public
                     names: `essence-1`, `essence-2`, `expression-1`,
                     `expression-2`. `essence-1` / `expression-1` are available
-                    today; **`essence-2` and `expression-2` launch July 10,
-                    2026** (upcoming). **`essence-2` is the second-generation
+                    today; **`essence-2` and `expression-2` launched July 10,
+                    2026** — creation access opens progressively during the
+                    rollout (a still-paused v2 model returns
+                    `503 MODEL_NOT_YET_AVAILABLE`, nothing charged).
+                    **`essence-2` is the second-generation
                     Essence model** for photorealistic people — one 500-credit
                     creation that runs everywhere from fully on-device (CPU /
                     Apple Neural Engine) up to cloud GPU; bitHuman serves the
@@ -234,7 +262,9 @@ paths:
             accepted model names), or a `video` input
             (`VIDEO_INPUT_NOT_SUPPORTED` — agent creation is image-only; the
             10-second idle/driver video is generated internally so it loops
-            seamlessly). Rejected before dispatch; no credits charged.
+            seamlessly; this rejection is rolling out platform-wide, so
+            never send `video`). Rejected before dispatch; no credits
+            charged.
           content:
             application/json:
               schema:
@@ -279,10 +309,38 @@ paths:
                   httpStatus: 422
                 status: "error"
                 status_code: 422
+        "503":
+          description: >-
+            `MODEL_NOT_YET_AVAILABLE` — the requested second-generation model
+            (`essence-2`, `essence-2-max`, `expression-2`, or `auto`, which
+            routes only to them) isn't open for creation on your account yet.
+            Essence 2 and Expression 2 launched July 10, 2026 with creation
+            access opening progressively — while the rollout completes, a
+            paused model returns this code **before any dispatch or charge**.
+            The v1 families (`essence-1`, `expression-1`) always work; retry
+            the v2 model later.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "MODEL_NOT_YET_AVAILABLE"
+                  message: "expression-2 isn't available for generation yet. Specify 'essence-1' or 'expression-1' to generate now."
+                  httpStatus: 503
+                status: "error"
+                status_code: 503
 
   /v1/agent/status/{agent_id}:
     get:
       operationId: getAgentStatus
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/agent/status/A91XMB7113 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+            # poll every 5 s until data.status is "ready"/"success" (or "failed")
       summary: Get agent generation status
       description: |
         Poll this endpoint to check generation progress. Status values:
@@ -396,6 +454,12 @@ paths:
   /v1/agent/{code}:
     get:
       operationId: getAgent
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/agent/A91XMB7113 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get agent details
       description: Retrieve full details for an agent by its code.
       tags: [Agent Management]
@@ -424,6 +488,14 @@ paths:
           $ref: "#/components/responses/NotFound"
     post:
       operationId: updateAgent
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113 \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"system_prompt": "You are a professional sales assistant."}'
       summary: Update agent prompt
       description: Update an existing agent's system prompt. The agent must already exist (use `POST /v1/agent/generate` to create one).
       tags: [Agent Management]
@@ -465,6 +537,13 @@ paths:
           $ref: "#/components/responses/NotFound"
     delete:
       operationId: deleteAgent
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X DELETE https://api.bithuman.ai/v1/agent/A91XMB7113 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+            # → {"success": true, "agent_code": "A91XMB7113", "deleted": true}
       summary: Delete an agent
       description: |
         Permanently delete an agent you own. Stored assets are cleaned up
@@ -505,6 +584,14 @@ paths:
   /v1/agent/{code}/speak:
     post:
       operationId: agentSpeak
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113/speak \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"message": "Hello! Welcome to our demo."}'
       summary: Make agent speak
       description: |
         Send text for the avatar to speak aloud in all active sessions.
@@ -558,6 +645,14 @@ paths:
   /v1/agent/{code}/add-context:
     post:
       operationId: addContext
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113/add-context \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"context": "The customer just purchased a premium plan."}'
       summary: Add context to agent
       description: |
         Inject background knowledge into the agent's context. The avatar
@@ -612,6 +707,16 @@ paths:
   /v1/agent/{code}/models:
     post:
       operationId: addAgentModel
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113/models \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"model": "expression-2"}'
+            # → {"success": true, "status": "processing", ...} — poll
+            #   GET /v1/agent/status/A91XMB7113 until supported_models lists it
       summary: Add a model to an existing agent
       description: |
         Add an avatar model to an agent you already created — no need to
@@ -706,10 +811,25 @@ paths:
             `MODEL_SUBJECT_MISMATCH` — the Essence 2 family requires a
             photorealistic human subject and the stored image is a
             cartoon/animal/creature/robot (use `expression-2`).
+        "503":
+          description: >-
+            `MODEL_NOT_YET_AVAILABLE` — adding a second-generation model
+            (`essence-2`, `expression-2`) isn't open on your account yet;
+            creation access is opening progressively since the July 10, 2026
+            launch. Rejected before any charge — retry later. Adding the v1
+            models always works.
 
   /v1/agent/{code}/model/download:
     get:
       operationId: downloadAgentModel
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            # 302 redirect to the artifact — -LOJ follows it and keeps the filename
+            curl -LOJ "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+            # → A17ZTB0222.avatar  (add ?redirect=false for the URL as JSON)
       summary: Download an agent's model artifact
       description: |
         Download the generated model file for an agent you own. The family
@@ -855,6 +975,14 @@ paths:
   /v1/files/upload:
     post:
       operationId: uploadFile
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/files/upload \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"file_url": "https://example.com/avatar.jpg", "file_type": "image"}'
       summary: Upload a file
       description: |
         Upload images, videos, audio, or documents. Files are auto-organized
@@ -941,6 +1069,12 @@ paths:
   /v1/me:
     get:
       operationId: getMe
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/me \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get current account
       description: >-
         The canonical account preflight — returns your identity, plan, and live
@@ -997,6 +1131,12 @@ paths:
   /v1/pricing:
     get:
       operationId: getPricing
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/pricing \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get credit pricing
       description: >-
         Machine-readable credit pricing for billable operations, so you can
@@ -1026,12 +1166,13 @@ paths:
                         type: object
                         description: >-
                           Agent creation is priced **per model** — read
-                          `by_model` (there is no flat rate). The
-                          second-generation families cost 500 credits; the v1
-                          families cost 250. `essence-2` is the combined
-                          Essence 2 creation (one 500-credit charge covers
-                          both tiers); `auto` charges the routed model's
-                          500-credit rate. Post-generation adds via
+                          `by_model` (there is no flat rate). `expression-2`
+                          costs 2000 credits; the Essence 2 family costs 500
+                          (`essence-2` is the combined Essence 2 creation —
+                          one 500-credit charge covers both models); the v1
+                          families cost 250. `auto` charges the routed
+                          model's rate (500 for `essence-2`, 2000 for
+                          `expression-2`). Post-generation adds via
                           `POST /v1/agent/{code}/models` charge the same
                           per-model rates (adding `expression-1` is free).
                         properties:
@@ -1072,6 +1213,8 @@ paths:
                             additionalProperties:
                               type: integer
                             example:
+                              essence-1: 8
+                              expression-1: 4
                               expression-2: 4
                               essence-2-max: 8
                               essence-2-quality: 8
@@ -1092,6 +1235,12 @@ paths:
   /v2/credit-summaries:
     get:
       operationId: getCreditSummaries
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v2/credit-summaries \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Check credit balance
       description: |
         Returns the current credit balance, plan details, and estimated minutes
@@ -1154,6 +1303,15 @@ paths:
   /v1/embed-tokens/request:
     post:
       operationId: requestEmbedToken
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/embed-tokens/request \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"agent_id": "A78WKV4515", "fingerprint": "9f3c8b1a2d4e5f6789ab"}'
+            # → data.token is a 1-hour JWT for the embed widget
       summary: Generate embed token
       description: Generate a JWT token for embedding an avatar on a website. Use this from your backend — never expose your API secret in frontend code.
       tags: [Embedding]
@@ -1269,6 +1427,15 @@ paths:
   /v1/dynamics/generate:
     post:
       operationId: generateDynamics
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/dynamics/generate \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"agent_id": "A91XMB7113"}'
+            # → {"success": true, "status": "processing"} — poll GET /v1/dynamics/A91XMB7113
       summary: Generate gesture animations
       description: |
         Create gesture animations (wave, nod, smile, laugh, etc.) for an agent.
@@ -1333,6 +1500,12 @@ paths:
   /v1/dynamics/{agent_id}:
     get:
       operationId: getDynamics
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/dynamics/A91XMB7113 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get available gestures
       description: List all available gesture animations for an agent.
       tags: [Dynamics]
@@ -1373,6 +1546,14 @@ paths:
           $ref: "#/components/responses/NotFound"
     put:
       operationId: updateDynamics
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X PUT https://api.bithuman.ai/v1/dynamics/A91XMB7113 \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"dynamics": {"enabled": true}, "toggle_enabled": true}'
       summary: Update dynamics configuration
       description: |
         Update gesture settings for an agent. After a successful update,
@@ -1441,6 +1622,20 @@ paths:
   /v1/video/generate:
     post:
       operationId: generateTalkingVideo
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/video/generate \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{
+                "model": "essence-2-max",
+                "agent_code": "A91XMB7113",
+                "input": {"type": "text", "text": "Hello, welcome to bitHuman."}
+              }'
+            # → {"success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing"}
+            # add "wait": true to block (≤ ~90 s) for the finished video_url
       summary: Generate a talking video
       description: |
         Render a talking-video (mp4) from **text** or **audio**, driven by one of
@@ -1596,6 +1791,13 @@ paths:
   /v1/video/{job_id}:
     get:
       operationId: getTalkingVideo
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+            # poll until status is "completed" — then video_url is the public mp4
       summary: Get talking-video status
       description: |
         Poll a talking-video render job. While rendering, `status` is `processing`.
@@ -1651,6 +1853,15 @@ paths:
   /v1/tts:
     post:
       operationId: synthesizeSpeech
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/tts \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"text": "Hello from bitHuman.", "voice": "F1"}' \
+              --output hello.wav
       summary: Synthesize speech from text
       description: |
         Generates audio (WAV or PCM) from a text prompt. Pick a built-in voice
@@ -1747,6 +1958,12 @@ paths:
   /v1/voices:
     get:
       operationId: listVoices
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/voices \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: List available voices
       description: Returns the catalog of built-in and custom voices.
       tags: [Voice]
@@ -1776,6 +1993,15 @@ paths:
   /v1/audio/speech:
     post:
       operationId: openaiCompatSpeech
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/audio/speech \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"model": "tts-1", "input": "Hello from bitHuman.", "voice": "M1"}' \
+              --output speech.wav
       summary: OpenAI-compatible speech endpoint
       description: |
         Drop-in compatible with OpenAI's `POST /v1/audio/speech`. Useful for
@@ -1828,6 +2054,12 @@ paths:
   /v1/studio/axes:
     get:
       operationId: listVoiceAxes
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/studio/axes \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: List voice-tuning semantic axes
       description: |
         Returns the available semantic axes (gender, pitch, rate, brightness)
@@ -1870,6 +2102,15 @@ paths:
   /v1/studio/preview:
     post:
       operationId: previewTunedVoice
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/studio/preview \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"text": "Tuned voice preview.", "base_voice": "F1", "axes": {"pitch": 0.15}}' \
+              --output preview.wav
       summary: Preview an axis-edited voice
       description: |
         Synthesize a one-off audio clip using a built-in voice edited along
@@ -1918,6 +2159,12 @@ paths:
   /v1/agents:
     get:
       operationId: listAgents
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v1/agents?limit=20&status=ready" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: List agents
       description: |
         List the agents owned by your API secret, newest first. Paginated.
@@ -1957,6 +2204,12 @@ paths:
   /v1/usage:
     get:
       operationId: getUsage
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v1/usage?limit=50&start=2026-06-01T00:00:00Z" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Usage history
       description: |
         Return your account's usage / activity history, newest first. Each row
@@ -2005,6 +2258,15 @@ paths:
   /v1/webhooks:
     post:
       operationId: createWebhook
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/webhooks \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"url": "https://example.com/bithuman/webhook", "events": ["agent.ready", "agent.failed"]}'
+            # → data.secret is returned ONCE — store it to verify signatures
       summary: Create a webhook
       description: |
         Register an HTTPS endpoint to receive signed event notifications. The
@@ -2050,6 +2312,12 @@ paths:
           $ref: "#/components/responses/Unauthorized"
     get:
       operationId: listWebhooks
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/webhooks \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: List webhooks
       description: List your registered webhooks (signing secrets are redacted).
       tags: [Webhooks]
@@ -2073,6 +2341,12 @@ paths:
   /v1/webhooks/{webhook_id}:
     get:
       operationId: getWebhook
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/webhooks/1de0c020-9d5e-4f8b-a1c2-3d4e5f607182 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get a webhook
       tags: [Webhooks]
       security:
@@ -2096,6 +2370,12 @@ paths:
           $ref: "#/components/responses/NotFound"
     delete:
       operationId: deleteWebhook
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X DELETE https://api.bithuman.ai/v1/webhooks/1de0c020-9d5e-4f8b-a1c2-3d4e5f607182 \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Delete a webhook
       tags: [Webhooks]
       security:
@@ -2121,6 +2401,13 @@ paths:
   /v1/webhooks/{webhook_id}/test:
     post:
       operationId: testWebhook
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/webhooks/1de0c020-9d5e-4f8b-a1c2-3d4e5f607182/test \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+            # delivers a one-off "ping" event to your endpoint
       summary: Send a test event
       description: Deliver a one-off `ping` event to verify the endpoint is reachable.
       tags: [Webhooks]
@@ -2152,6 +2439,12 @@ paths:
   /v1/webhooks/{webhook_id}/deliveries:
     get:
       operationId: listWebhookDeliveries
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/webhooks/1de0c020-9d5e-4f8b-a1c2-3d4e5f607182/deliveries \
+              -H "api-secret: $BITHUMAN_API_SECRET"
       summary: List delivery attempts
       description: Recent delivery attempts for a webhook (most recent first).
       tags: [Webhooks]
@@ -2875,9 +3168,9 @@ tags:
       - The highest visual quality at close range
       - Cloud GPU deployments (NVIDIA + TRT) or M3+ Mac / M4+ iPad apps
 
-      ### The second generation (launching July 10, 2026)
+      ### The second generation (launched July 10, 2026)
 
-      Two second-generation models — `essence-2` and `expression-2` — launch July 10, 2026 (rollout in progress; creation access opens progressively). `essence-1` / `expression-1` are available today.
+      Two second-generation models — `essence-2` and `expression-2` — launched July 10, 2026. The rollout is in progress: creation access opens progressively (a still-paused model returns `503 MODEL_NOT_YET_AVAILABLE`, nothing charged). `essence-1` / `expression-1` are available today.
 
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
@@ -2923,7 +3216,9 @@ tags:
       | Action | Cost |
       |---|---|
       | Agent generation — v1 models (`essence-1`, `expression-1`) | **250 credits** (one-time, per avatar) |
-      | Agent generation — second generation (`essence-2` combined, `essence-2-max`, `expression-2`, `auto`) | **500 credits** (one-time, per avatar) |
+      | Agent generation — Essence 2 (`essence-2` combined; covers `essence-2-max` too) | **500 credits** (one-time, per avatar) |
+      | Agent generation — Expression 2 (`expression-2`) | **2000 credits** (one-time, per avatar) |
+      | Agent generation — `auto` | the routed model's rate (500 or 2000) |
       | Add a model to an existing agent (`POST /v1/agent/{code}/models`) | same per-model rates; adding `expression-1` is **free** (instant enablement) |
       | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
       | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
