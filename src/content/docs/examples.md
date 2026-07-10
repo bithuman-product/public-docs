@@ -16,6 +16,7 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 | The smallest streaming loop in code | [Python — Hello, avatar](/examples/python-hello) | Python | ~5 min |
 | Call the platform from any language | [REST — Hello, avatar](/examples/rest-hello) | `curl` | ~5 min |
 | A talking voice assistant on a Mac/iPad/iPhone | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min |
+| An on-device avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min |
 | Full voice conversation, mic in / avatar out | [AI voice chat](/examples/ai-conversation) | Python | ~10 min |
 
 > **Note** New here? The fastest end-to-end demo is the [CLI — Hello, avatar](/examples/cli-hello): one `brew install`, one command, a talking avatar in your browser. No code.
@@ -41,6 +42,10 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 - [swift/macos-voice](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
 
 > **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-avatar`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
+
+## Native apps — Kotlin / Android
+
+- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — render an on-device avatar in ~20 lines of Kotlin, from the Maven Central AAR. See the [Android SDK](/sdk/android) for the full API surface.
 
 ## Web & other languages
 
