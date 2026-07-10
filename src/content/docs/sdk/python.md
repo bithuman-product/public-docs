@@ -20,7 +20,7 @@ pip install bithuman
 ```
 
 **Python 3.11–3.13** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.3.11**. Platforms: macOS arm64, Linux x86_64, Linux
+[PyPI](https://pypi.org/project/bithuman/) is **2.3.10**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a different host.)
 
