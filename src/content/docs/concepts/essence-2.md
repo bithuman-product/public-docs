@@ -1,39 +1,46 @@
 ---
-title: "Essence 2 — the light tier"
-description: "Reference guide to the essence-2 light tier (formerly essence-2-light) — bitHuman's cost-effective distilled avatar renderer: train-on-create from video or photo, gpu/ane/cpu serving including on-device Apple Neural Engine, and pricing."
+title: "Essence 2"
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: a distilled renderer that runs everywhere (GPU, Apple Neural Engine, CPU, WebGPU/WASM), train-on-create from video or photo, and pricing."
 section: concepts
 group: "Models"
 order: 5
-label: "Essence 2 (light tier)"
+label: "Essence 2"
 ---
 
-> **Note — Launching July 10, 2026 (rollout in progress).** As a developer you simply select
-> **`essence-2`**, and bitHuman serves the right tier for your hardware and
-> quality needs. This page documents the **light tier** — what `essence-2`
-> serves by default — for reference. The standalone name `essence-2-light`
-> was **retired on 2026-07-05** (requests naming it get a `400` with a hint
-> pointing at `essence-2`); it remains the internal *family* name you'll see
-> in `supported_models`, artifact errors, and downloads.
+> **Note — Launching July 10, 2026 (rollout in progress).** **`essence-2`** ("Essence 2") is the
+> **standard** second-generation Essence model and the default for
+> photorealistic humans — as a developer you simply select `essence-2`, and
+> bitHuman serves the right tier for your hardware and quality needs. Naming
+> history: the former `essence-2-light` name was **retired on 2026-07-05**
+> and consolidated into `essence-2` (requests naming it get a `400` with a
+> hint pointing at `essence-2`); it remains the internal *family* name you'll
+> see in `supported_models`, artifact errors, and downloads until the
+> platform-side flip. The premium tier was renamed `essence-2-quality` →
+> [`essence-2-max`](/concepts/essence-2-max) on 2026-07-10.
 
 ## What it is
 
-The **light tier of `essence-2`** is the cost-effective renderer of the
-second-generation Essence family: a **distilled** engine that keeps the
-Essence look — your identity's real footage at its native resolution
-(full-HD 1080p driver video by default), lip-synced live at ~25 frames
-per second — at a fraction of the compute. At creation the platform distills
-your identity into a compact bundle; that one artifact then serves on **three
-runtimes**: cloud **GPU**, the **Apple Neural Engine (ANE)**, and cloud
-**CPU** — including a fully **on-device** Apple-silicon build where audio and
-video never leave the hardware.
+**Essence 2** is the standard photoreal model of the second-generation
+Essence family: a **distilled** engine that keeps the Essence look — your
+identity's real footage at its native resolution (full-HD 1080p driver
+video by default), lip-synced live at ~25 frames per second — at a
+fraction of the compute of its gold teacher. At creation the platform
+distills your identity into a compact bundle; that one artifact then runs
+**everywhere**: cloud **GPU**, the **Apple Neural Engine (ANE)**, **CPU**,
+and in-browser **WebGPU/WASM** (in rollout) — including a fully
+**on-device** Apple-silicon build where audio and video never leave the
+hardware.
 
-It is half the cloud price of [Essence 2 Quality](/concepts/essence-2-quality)
-and the only Essence 2 tier with CPU and Neural Engine runtimes — the right
-default for kiosks, high-concurrency deployments, and privacy-sensitive
-environments.
+It is half the cloud price of [Essence 2 Max](/concepts/essence-2-max)
+and the only Essence 2 model with CPU, Neural Engine, and browser runtimes —
+the right default for photorealistic humans, kiosks, high-concurrency
+deployments, and privacy-sensitive environments.
 
 ## When to choose it
 
+- **It's the default.** For photorealistic humans, start here — pick
+  [Essence 2 Max](/concepts/essence-2-max) only when maximum fidelity is the
+  whole point.
 - **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
   and Neural Engine runtimes that don't need a server GPU per session.
 - **On-device or privacy-first.** The Apple-silicon build runs entirely
@@ -43,8 +50,9 @@ environments.
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
-If image quality is the whole point, choose
-[Essence 2 Quality](/concepts/essence-2-quality). If you want fully generated
+If maximum image fidelity is the whole point, choose
+[Essence 2 Max](/concepts/essence-2-max) — the gold teacher served directly
+on L40S-class GPUs. If you want fully generated
 motion from a single photo, choose [Expression 2](/concepts/expression-2). For
 the family-level decision, start at
 [Essence 2 & Expression 2](/concepts/models-v2).
@@ -55,11 +63,11 @@ Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
 and `model: "essence-2"`. Creation is asynchronous and costs **500 credits**
 (one-time, per agent).
 
-> **Tip — one creation, both Essence 2 tiers.** `essence-2` is the
+> **Tip — one creation, both Essence 2 models.** `essence-2` is the
 > [combined creation](/api/agents#essence-2--the-combined-creation): the one
-> 500-credit charge trains this light tier **and** makes
-> [Essence 2 Quality](/concepts/essence-2-quality) available from the same
-> identity video — pick the tier at launch. Like every Essence 2 creation,
+> 500-credit charge trains the standard Essence 2 **and** makes
+> [Essence 2 Max](/concepts/essence-2-max) available from the same
+> identity video — pick the model at launch. Like every Essence 2 creation,
 > the input must be a **photorealistic human subject** (else
 > [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors), nothing billed);
 > `model: "auto"` routes automatically instead. You can also
@@ -83,7 +91,7 @@ print(resp.json())
 #  "agent_id": "A56ZFX6217", "status": "processing"}
 ```
 
-**Inputs.** The light tier derives its identity bundle from **video**. Supply
+**Inputs.** Essence 2 derives its identity bundle from **video**. Supply
 a short clip of the identity — or supply just an `image`, and the platform
 **generates the identity video for you** as an extra creation step before
 training (you'll see `current_step: "video"` at ~45% progress). A voice is
@@ -138,8 +146,13 @@ Tier slugs are an advanced, operational surface. For production, omit
 Apple silicon via the [Swift SDK](/sdk/swift) rail (preview maturity): the
 Neural Engine executes the model locally, so audio, video, and prompts never
 leave the device — the only network traffic is the once-per-minute billing
-heartbeat. (Essence 2 Quality has no on-device runtime; Light is the
-on-device Essence 2 tier.)
+heartbeat. (Essence 2 Max has no on-device runtime; the standard Essence 2 is
+the on-device Essence 2 model.)
+
+**In the browser.** The same bundle also renders **browser-locally** via
+WebGPU/WASM — no server render in the loop. The browser tier is in rollout;
+see the [device/runtime matrix](/concepts/models-v2#where-each-model-runs)
+for current status.
 
 **In the browser.** A browser-local tier is **rolling out**: appending
 `?render=local` to a session URL downloads the identity's compact web bundle
@@ -151,7 +164,7 @@ publish; sessions without a published bundle fall back to cloud serving. See
 
 ## Idle and speaking behavior
 
-The light tier animates the identity's **real footage**: the base video
+Essence 2 animates the identity's **real footage**: the base video
 plays continuously and the engine renders lip-sync and expression over it. As
 of **2026-07-02**, the base video loops **forward-only** on every tier — when
 the clip reaches its last frame it wraps back to the first, and it never plays
@@ -183,7 +196,8 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - **Before distillation completes**, launch surfaces that request this model
   reject it with `409 MODEL_NOT_GENERATED`
   (`agent A56ZFX6217's essence-2-light model hasn't been generated yet` —
-  note the *family* keeps the internal `essence-2-light` name).
+  note the *family* keeps the internal `essence-2-light` name in server
+  responses until the platform-side flip).
   Once the agent is ready, its `supported_models` (on
   [status / get / list](/api/agents#poll-status) and the embed-token
   response) includes `essence-2-light`.
@@ -191,6 +205,7 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 ## Next steps
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
+- [Essence 2 Max](/concepts/essence-2-max) — the premium model: the gold teacher served directly.
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.

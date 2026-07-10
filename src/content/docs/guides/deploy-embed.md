@@ -72,8 +72,8 @@ viewer) URL to pin the session to that tier — a forced tier never overflows:
 
 The tier slugs per model are listed in each model guide —
 [Expression 2](/concepts/expression-2#serving-tiers),
-[Essence 2 light tier](/concepts/essence-2-light#serving-tiers),
-[Essence 2 Quality](/concepts/essence-2-quality#serving) (single tier). An
+[Essence 2](/concepts/essence-2#serving-tiers),
+[Essence 2 Max](/concepts/essence-2-max#serving) (single tier). An
 unrecognized value falls back to the agent's default routing. For production,
 omit `?model=` and let the platform choose — direct elastic tiers scale from
 zero and can cold-start on first connect
@@ -83,7 +83,7 @@ Prefer validating the choice **when you mint the token**: pass `model` in the
 [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token) body
 and the API checks it up front — an unknown value returns `400`, and a model
 family the agent can't be launched as (a per-identity artifact that hasn't
-been generated, or `essence-2-quality` on an agent with no source video)
+been generated, or `essence-2-max` on an agent with no source video)
 returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) rather than a
 session that fails to start. The mint response's `supported_models` array
 tells you which model families the agent can launch as right now.
@@ -112,7 +112,7 @@ Endpoint setup, signature verification, and retry policy are in the [API referen
 
 ## Where to go next
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [Essence 2 light tier](/concepts/essence-2-light).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2), [Essence 2 Max](/concepts/essence-2-max).
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — connect latency, idle behavior, and common embed errors.
 - [Deploy via LiveKit](/guides/deploy-livekit) — full agent-worker integration.
 - [Browser rendering](/guides/browser-rendering) — render client-side to cut server video egress.

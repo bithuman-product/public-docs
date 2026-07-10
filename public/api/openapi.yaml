@@ -89,7 +89,7 @@ paths:
         |---|---|---|
         | `essence-1` (default) | image (or generated from prompt) | 2–5 minutes |
         | `expression-1` | image (or generated from prompt) | ~1–2 minutes |
-        | `essence-2-quality` | **video required** (identity prepped from real footage in seconds) | a few minutes end-to-end |
+        | `essence-2-max` | **video required** (identity prepped from real footage in seconds) | a few minutes end-to-end |
         | `essence-2` | video, or image (an identity video is generated first) | 45 minutes typical; long builds can take hours — **both Essence 2 tiers from one creation** |
         | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
         | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
@@ -101,7 +101,7 @@ paths:
         classifies your input and records the recommended model either way.
 
         **Subject requirement (Essence 2 family):** `essence-2` and
-        `essence-2-quality` require a **photorealistic
+        `essence-2-max` require a **photorealistic
         human** subject. The input is classified before anything is billed; a
         cartoon / animal / creature / robot input is rejected with
         `422 MODEL_SUBJECT_MISMATCH` (nothing charged) — use `expression-2`
@@ -160,7 +160,7 @@ paths:
                   description: Source video duration in seconds.
                 model:
                   type: string
-                  enum: [essence-1, essence-2, essence-2-quality, expression-1, expression-2, essence, expression, auto]
+                  enum: [essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, essence, expression, auto]
                   default: essence-1
                   example: "auto"
                   description: >-
@@ -173,9 +173,13 @@ paths:
                     creation that runs everywhere from fully on-device (CPU /
                     Apple Neural Engine) up to cloud GPU; bitHuman serves the
                     right way automatically, so you just select `essence-2`.
-                    (`essence-2-quality` remains an explicit reference tier;
-                    the former `essence-2-light` name was consolidated into
-                    `essence-2` and is no longer accepted.) **`auto` classifies your input**
+                    (**`essence-2-max`** is the premium model — the Essence 2
+                    gold teacher served directly on L40S-class GPUs for
+                    maximum fidelity; its pre-rename name `essence-2-quality`
+                    is still accepted as a **deprecated alias** during the
+                    2026-07-10 rename migration. The former `essence-2-light`
+                    name was consolidated into `essence-2` and is no longer
+                    accepted.) **`auto` classifies your input**
                     (the image if provided, else the prompt): a photorealistic
                     person routes to `essence-2` (combined); a cartoon,
                     animal, creature or robot routes to `expression-2` — the
@@ -216,11 +220,12 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "402":
           description: >-
-            Insufficient credits. Creation is billed **per model** — the
-            second-generation families (`essence-2`, `essence-2-quality`,
-            `expression-2`, and `auto`) cost 500 credits;
-            the v1 families (`essence-1`, `expression-1`) cost 250. Top up to
-            continue. Returns error code `INSUFFICIENT_BALANCE`.
+            Insufficient credits. Creation is billed **per model** —
+            `expression-2` costs 2000 credits; the Essence 2 family
+            (`essence-2`, `essence-2-max`) costs 500; `auto` bills the
+            routed model's rate (500 or 2000); the v1 families (`essence-1`,
+            `expression-1`) cost 250. Top up to continue. Returns error code
+            `INSUFFICIENT_BALANCE`.
         "400":
           description: >-
             Body failed validation — malformed JSON, or an invalid / retired
@@ -233,14 +238,14 @@ paths:
               example:
                 error:
                   code: "VALIDATION_ERROR"
-                  message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-quality, expression, expression-1, expression-2"
+                  message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression, expression-1, expression-2"
                   httpStatus: 400
                 status: "error"
                 status_code: 400
         "422":
           description: >-
             `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
-            (`essence-2`, `essence-2-quality`) whose input
+            (`essence-2`, `essence-2-max`) whose input
             is not a photorealistic human subject. The classifier runs on the
             image if provided, else the prompt, **before anything is billed**
             and before any agent row is created. Use `expression-2` for
@@ -283,7 +288,7 @@ paths:
         (~35%).
 
         Recommended polling interval: 5 seconds. Size your overall timeout to
-        the model: minutes for `essence-1` / `essence-2-quality`, ~90 minutes
+        the model: minutes for `essence-1` / `essence-2-max`, ~90 minutes
         for `expression-2`, and up to several hours for `essence-2`.
       tags: [Agent Generation]
       parameters:
@@ -348,10 +353,13 @@ paths:
                         description: >-
                           Canonical model families this agent can be launched
                           as right now. Trained families (`expression-2`,
-                          `essence-2-light`) appear once their per-identity
-                          model has been generated; `essence-2-quality`
-                          appears whenever an image exists (prepares on
-                          demand). Tier slugs inherit their family.
+                          `essence-2-light` — the standard `essence-2`'s
+                          internal family name) appear once their per-identity
+                          model has been generated; `essence-2-quality` (the
+                          internal family name for `essence-2-max` until the
+                          platform-side rename flip) appears whenever an image
+                          exists (prepares on demand). Tier slugs inherit
+                          their family.
                         example: ["essence-2-quality", "expression-2"]
                       event_type:
                         type: string
@@ -596,14 +604,15 @@ paths:
         | model | what happens | prerequisites | credits | time |
         |---|---|---|---|---|
         | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
-        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 500 | ~10–45 min |
-        | `essence-2` | the **combined** add: trains Essence 2 Light from the stored identity video; Quality becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
+        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | ~10–45 min |
+        | `essence-2` | the **combined** add: trains the standard Essence 2 from the stored identity video; Essence 2 Max becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
         | `essence-1` | builds the v1 `.imx` from the stored identity video (or generates one from the stored image) | stored video or image | 250 | ~10–20 min |
 
         Asynchronous adds return `status: "processing"` — poll
         [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
         until `supported_models` contains the new family (`essence-2` adds
-        both `essence-2-light` and `essence-2-quality`). Charges are refunded
+        both internal family names, `essence-2-light` and
+        `essence-2-quality`). Charges are refunded
         automatically if the add fails; re-POSTing the same model never
         double-charges, and returns `status: "ready"` with `credits: 0` once
         the model already exists.
@@ -692,8 +701,8 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2-light` | `<code>.lebundle.imx` (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow) |
-        | `essence-2-quality` | `<code>.pkl` (IMX container) |
+        | `essence-2-light` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow) |
+        | `essence-2-quality` | `<code>.pkl` — the Essence 2 Max artifact (IMX container) |
         | `expression-2` | `<code>.avatar` (CoreML zip — the Mac-runnable form, ~90 MB) |
         | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
 
@@ -728,10 +737,13 @@ paths:
             type: string
             enum: [essence-1, essence-2-light, essence-2-quality, expression-2]
           description: >-
-            Artifact family. Defaults to the agent's own model. Legacy names
-            and runtime tier slugs (e.g. `essence-2`, `essence-2-ane`,
+            Artifact family. Defaults to the agent's own model. Public names,
+            deprecated aliases and runtime tier slugs (e.g. `essence-2`,
+            `essence-2-max`, `essence-2-ane`,
             `expression-2-gpu`) fold onto their family; an unrecognized value
             returns `400 VALIDATION_ERROR` listing the downloadable families.
+            The families keep their internal names (`essence-2-max` folds
+            onto `essence-2-quality`) until the platform-side rename flip.
           example: "expression-2"
         - name: redirect
           in: query
@@ -1009,14 +1021,20 @@ paths:
                             type: object
                             additionalProperties:
                               type: integer
-                            description: One-time creation cost per `model` value accepted by `POST /v1/agent/generate`.
+                            description: >-
+                              One-time creation cost per `model` value accepted
+                              by `POST /v1/agent/generate`. Note the premium
+                              model is still keyed by its pre-rename
+                              `essence-2-quality` name (an `essence-2-max`
+                              creation charges the same 500) until the
+                              platform-side rename flip.
                             example:
                               essence-1: 250
                               expression-1: 250
                               essence-2-quality: 500
-                              expression-2: 500
+                              expression-2: 2000
                               essence-2: 500
-                              auto: 500
+                              auto: 2000
                           note:
                             type: string
                       talking_video:
@@ -1034,6 +1052,7 @@ paths:
                               type: integer
                             example:
                               expression-2: 4
+                              essence-2-max: 8
                               essence-2-quality: 8
                               essence-2: 4
                       dynamics_generation:
@@ -1142,7 +1161,9 @@ paths:
                   description: >-
                     Optional. Request a specific avatar model for the embed
                     session — a model name (`essence-1`, `expression-1`,
-                    `essence-2`, `essence-2-quality`, `expression-2`) or a
+                    `essence-2`, `essence-2-max`, `expression-2` — the
+                    pre-rename `essence-2-quality` is still accepted as a
+                    deprecated alias for `essence-2-max`) or a
                     force-tier slug that pins one serving tier
                     (`expression-2-gpu/-cpu/-ane`, `essence-2-gpu/-ane/-cpu`;
                     the legacy `essence-2-light-gpu/-cpu` slugs still pin
@@ -1189,7 +1210,9 @@ paths:
                           Canonical model families this agent can be launched
                           as right now (e.g. a ready expression-2 agent lists
                           `expression-2`; an agent with a source video lists
-                          `essence-2-quality`, whose identity prepares on
+                          `essence-2-quality` — the internal family name for
+                          `essence-2-max` until the platform-side rename flip
+                          — whose identity prepares on
                           demand from that video). Tier slugs inherit their
                           family and are not listed.
                         example: ["essence-2-quality", "expression-2"]
@@ -1202,8 +1225,10 @@ paths:
             from the agent's `supported_models`). For the trained families
             (`expression-2` / `essence-2-light`) the message is `agent
             <code>'s <model> model hasn't been generated yet`; for
-            `essence-2-quality` it is `agent <code>'s essence-2-quality model
-            requires a source video, which this agent doesn't have`. Add the
+            `essence-2-max` it is `agent <code>'s essence-2-quality model
+            requires a source video, which this agent doesn't have` (the
+            message keeps the internal `essence-2-quality` family name until
+            the platform-side rename flip). Add the
             model (`POST /v1/agent/{code}/models`) or create the agent with
             it, then retry.
           content:
@@ -1432,16 +1457,18 @@ paths:
               properties:
                 model:
                   type: string
-                  enum: [essence-1, expression-1, essence-2, essence-2-quality, expression-2]
+                  enum: [essence-1, expression-1, essence-2, essence-2-max, essence-2-quality, expression-2]
                   description: |
                     Avatar engine. `essence-1` (8 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
                     available today. `expression-2` (4 credits/min),
-                    `essence-2-quality` (8 credits/min), and `essence-2`
-                    (4 credits/min, the efficient distilled renderer — the
+                    `essence-2-max` (8 credits/min, the premium model — its
+                    pre-rename name `essence-2-quality` is still accepted as
+                    a deprecated alias), and `essence-2`
+                    (4 credits/min, the standard distilled renderer — the
                     former `essence-2-light` name, which is no longer
                     accepted) are the v2 engines.
-                  example: "essence-2-quality"
+                  example: "essence-2-max"
                 agent_code:
                   type: string
                   description: An agent you own — provides the avatar identity (and, for text input, the default voice).
@@ -1510,7 +1537,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 8, expression-1 = 4, expression-2 = 4, essence-2-quality = 8, essence-2 = 4 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 8, expression-1 = 4, expression-2 = 4, essence-2-max = 8 — same for its deprecated alias essence-2-quality, essence-2 = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -1521,11 +1548,12 @@ paths:
             per-identity model hasn't been generated yet (message: `agent
             <code>'s <family> model hasn't been generated yet` — for
             `essence-2` the family reads `essence-2-light`, the internal name
-            of its distilled tier); `essence-2-quality` is gated on the
+            of its distilled tier); `essence-2-max` is gated on the
             agent's **source video** — its identity prepares on demand from
             that footage, so an agent without one gets `agent <code>'s
             essence-2-quality model requires a source video, which this agent
-            doesn't have`; `essence-1` needs the agent's `.imx` model file
+            doesn't have` (the message keeps the internal `essence-2-quality`
+            family name until the platform-side rename flip); `essence-1` needs the agent's `.imx` model file
             (present on every completed essence-1 creation) and
             `expression-1` needs an expression-1 agent (or the free
             post-generation expression-1 model add) with an image.
@@ -2162,9 +2190,12 @@ components:
           items: { type: string }
           description: >-
             Canonical model families this agent can be launched as right now
-            — `essence-1` when its `.imx` exists, `essence-2-quality` when a
+            — `essence-1` when its `.imx` exists, `essence-2-quality` (the
+            internal family name for `essence-2-max` until the platform-side
+            rename flip) when a
             **source video** exists (its identity prepares on demand from
-            that footage), and `essence-2-light` / `expression-2` once their
+            that footage), and `essence-2-light` (the standard `essence-2`) /
+            `expression-2` once their
             trained per-identity model has been generated. Tier slugs inherit
             their family and are not listed.
           example: ["essence-1", "essence-2-quality"]
@@ -2841,8 +2872,8 @@ tags:
       [`GET /v1/agent/{code}/model/download`](#tag/Agent-Management/operation/downloadAgentModel).
       Family overview: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2);
       per-model guides: [Expression 2](https://docs.bithuman.ai/concepts/expression-2)
-      · [Essence 2 Quality](https://docs.bithuman.ai/concepts/essence-2-quality)
-      · [Essence 2 — the light tier](https://docs.bithuman.ai/concepts/essence-2-light).
+      · [Essence 2](https://docs.bithuman.ai/concepts/essence-2)
+      · [Essence 2 Max](https://docs.bithuman.ai/concepts/essence-2-max).
       Recommendation rule: **`essence-2` for photorealistic human figures;
       `expression-2` for cartoonish, stylized, animal, creature, or robot
       characters** — send `model: "auto"` to apply it automatically.
@@ -2864,14 +2895,14 @@ tags:
       | Action | Cost |
       |---|---|
       | Agent generation — v1 models (`essence-1`, `expression-1`) | **250 credits** (one-time, per avatar) |
-      | Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `expression-2`, `auto`) | **500 credits** (one-time, per avatar) |
+      | Agent generation — second generation (`essence-2` combined, `essence-2-max`, `expression-2`, `auto`) | **500 credits** (one-time, per avatar) |
       | Add a model to an existing agent (`POST /v1/agent/{code}/models`) | same per-model rates; adding `expression-1` is **free** (instant enablement) |
       | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
       | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
-      | Live avatar session — Essence 2 Quality (self-hosted) | **4 credits / minute** |
-      | Live avatar session — Essence 2 Quality (cloud) | **8 credits / minute** |
-      | Live avatar session — Essence 2 Light (self-hosted) | **2 credits / minute** |
-      | Live avatar session — Essence 2 Light (cloud) | **4 credits / minute** |
+      | Live avatar session — Essence 2 Max (self-hosted) | **4 credits / minute** |
+      | Live avatar session — Essence 2 Max (cloud) | **8 credits / minute** |
+      | Live avatar session — Essence 2 (self-hosted) | **2 credits / minute** |
+      | Live avatar session — Essence 2 (cloud) | **4 credits / minute** |
       | Live avatar session — Expression 1 (self-hosted) | **2 credits / minute** |
       | Live avatar session — Expression 1 (cloud) | **4 credits / minute** |
       | Live avatar session — Expression 2 (self-hosted) | **2 credits / minute** |

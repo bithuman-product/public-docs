@@ -158,8 +158,8 @@ engine error:
 | Family | File | What `run` does |
 |---|---|---|
 | `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
-| `essence-2-light` | `<code>.lebundle.imx` | Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
-| `essence-2-quality` | `<code>.pkl` | Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
+| `essence-2-light` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact (the family keeps its internal name). Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
+| `essence-2-quality` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (the family keeps its pre-rename internal name). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
 | `expression-2` | `<code>.avatar` (CoreML zip) | Recognized; the CLI can't play it yet and the desktop app doesn't open `.avatar` files from disk today — keep the file for upcoming desktop support; the model runs live on bitHuman cloud (dashboard, embeds, API sessions). |
 | `expression-1` | — | No downloadable artifact exists (it renders server-side from the agent's image), and the model is not supported on Mac locally — it's a heavy GPU engine. Serve it through the cloud surfaces. |
 
@@ -217,7 +217,7 @@ bithuman info avatar.imx
 ```
 
 `info` recognizes the non-`.imx` artifacts too: an `expression-2` `.avatar`
-(CoreML zip), an `essence-2-quality` pickle, and legacy `essence-1` tar
+(CoreML zip), an `essence-2-quality` (Essence 2 Max) pickle, and legacy `essence-1` tar
 exports get a format/family report instead of a "not an IMX file" error; a
 legacy BIMX v1 container gets a precise unsupported-version message.
 

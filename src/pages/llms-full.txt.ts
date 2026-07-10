@@ -29,10 +29,12 @@ export const GET: APIRoute = async () => {
     `runs fully air-gapped, at low per-minute cost. Models (second ` +
     `generation, launching July 10, 2026): \`expression-2\` (audio-driven real-time ` +
     `avatar video from a single photo — best for cartoon/animal/creature/robot ` +
-    `characters; gpu/ane/cpu chain), \`essence-2\` (photorealistic humans; ` +
-    `gpu/ane/cpu chain incl. on-device — the former essence-2-light name is ` +
-    `retired), \`essence-2-quality\` (highest-fidelity GPU reference tier), ` +
-    `plus \`essence-1\` / \`expression-1\`. This file concatenates ` +
+    `characters; gpu/ane/cpu chain), \`essence-2\` (the STANDARD photoreal ` +
+    `model; distilled to run everywhere — gpu/ane/cpu/WebGPU-WASM incl. ` +
+    `on-device; the former essence-2-light name is retired), ` +
+    `\`essence-2-max\` (the PREMIUM model — the gold teacher served ` +
+    `directly on L40S-class GPUs; was essence-2-quality, still accepted as ` +
+    `a deprecated alias), plus \`essence-1\` / \`expression-1\`. This file concatenates ` +
     `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 
   for (const d of docs) {

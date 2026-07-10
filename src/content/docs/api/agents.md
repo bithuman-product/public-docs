@@ -36,7 +36,7 @@ curl -X POST https://api.bithuman.ai/v1/validate \
 
 `POST /v1/agent/generate` — create a new avatar agent. Generation is
 asynchronous and billed **per model** — the second-generation families
-(`essence-2`, `essence-2-quality`, `expression-2`, and
+(`essence-2`, `essence-2-max`, `expression-2`, and
 `auto`) cost 500 credits, the v1 families (`essence-1`, `expression-1`) 250
 (machine-readable schedule: [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule)).
 The call returns immediately with an `agent_id` and `processing` status.
@@ -51,7 +51,7 @@ The call returns immediately with an `agent_id` and `processing` status.
 | `video_aspect_ratio` | string | no | `16:9` | Video aspect ratio (`16:9`, `9:16`, `1:1`). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | `10` | Source video duration in seconds. |
-| `model` | string | no | `essence-1` | Avatar model — `essence-1` (default), **[`essence-2`](/concepts/models-v2)** (the [combined Essence 2 creation](#essence-2--the-combined-creation)), [`essence-2-quality`](/concepts/essence-2-quality), `expression-1`, or [`expression-2`](/concepts/expression-2) — plus **`auto`** ([classify-and-route](#auto--let-the-platform-pick-the-model)). The bare `essence` / `expression` shorthands resolve to `essence-1` / `expression-1`. `auto` must be sent **explicitly** — an omitted `model` keeps the historical `essence-1` default (and its 250-credit rate); a caller is never silently upgraded onto a 500-credit pipeline. Invalid values return `400 VALIDATION_ERROR` (no credits charged); the retired `essence-2-light` name returns a targeted hint pointing at `essence-2`. See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
+| `model` | string | no | `essence-1` | Avatar model — `essence-1` (default), **[`essence-2`](/concepts/essence-2)** (the [combined Essence 2 creation](#essence-2--the-combined-creation)), [`essence-2-max`](/concepts/essence-2-max), `expression-1`, or [`expression-2`](/concepts/expression-2) — plus **`auto`** ([classify-and-route](#auto--let-the-platform-pick-the-model)). The bare `essence` / `expression` shorthands resolve to `essence-1` / `expression-1`. `auto` must be sent **explicitly** — an omitted `model` keeps the historical `essence-1` default (and its 250-credit rate); a caller is never silently upgraded onto a 500-credit pipeline. Invalid values return `400 VALIDATION_ERROR` (no credits charged); the retired `essence-2-light` name returns a targeted hint pointing at `essence-2`, and the pre-rename `essence-2-quality` is still accepted as a **deprecated alias** for `essence-2-max` during the migration. See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
 
 ### Model-specific inputs and creation times
 
@@ -64,8 +64,8 @@ model-specific identity step runs:
 |---|---|---|---|
 | `essence-1` (default) | `image` (or generated from prompt); `video` generated if needed | Builds the portable `.imx` avatar | 2–5 minutes |
 | `expression-1` | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
-| `essence-2-quality` | **`video` required** — the identity is prepared from real footage | Instant prep of a compact identity bundle (seconds, warm) | A few minutes end-to-end |
-| `essence-2` | `video`, **or** `image` (a video is generated from it first — adds a `video` step) | **Combined**: distills the light-tier identity bundle on a cloud GPU; Quality derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
+| `essence-2-max` | **`video` required** — the identity is prepared from real footage | Instant prep of a compact identity bundle (seconds, warm) | A few minutes end-to-end |
+| `essence-2` | `video`, **or** `image` (a video is generated from it first — adds a `video` step) | **Combined**: distills the standard Essence 2 identity bundle on a cloud GPU; Max derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
 | `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | ~45 minutes (30–60; allowed up to 90) |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
 
@@ -76,17 +76,18 @@ model's guide.
 
 ### `essence-2` — the combined creation
 
-`model: "essence-2"` creates **both Essence 2 tiers from one creation**: a
-single 500-credit charge runs the [light-tier](/concepts/essence-2-light)
-distillation, and [Essence 2 Quality](/concepts/essence-2-quality) becomes
+`model: "essence-2"` creates **both Essence 2 models from one creation**: a
+single 500-credit charge runs the standard [Essence 2](/concepts/essence-2)
+distillation, and [Essence 2 Max](/concepts/essence-2-max) becomes
 available from the same identity video at no extra charge (its identity
 prepares on demand from that footage). Sessions launched as `essence-2` serve
-the light tier's chain by default; launch with `?model=essence-2-quality` on
+the standard chain by default; launch with `?model=essence-2-max` on
 the session/embed URL (or the `model` field on the
-[embed token](/api/embedding)) when you want the reference tier. Once ready,
-the agent's `supported_models` lists the two tier families
-(`essence-2-light` — the light tier's internal family name — and
-`essence-2-quality`).
+[embed token](/api/embedding)) when you want the premium model (the
+pre-rename `essence-2-quality` slug still works too). Once ready,
+the agent's `supported_models` lists the two families under their internal
+names — `essence-2-light` (the standard Essence 2) and `essence-2-quality`
+(Essence 2 Max) — until the platform-side flip.
 
 ### `auto` — let the platform pick the model
 
@@ -104,7 +105,7 @@ keeps the historical `essence-1` default for backward compatibility.
 
 ### The Essence 2 subject gate (422)
 
-An **explicit** Essence 2 creation (`essence-2`, `essence-2-quality`)
+An **explicit** Essence 2 creation (`essence-2`, `essence-2-max`)
 requires a **photorealistic human subject** — the Essence
 identity pipelines train on real human faces. The same classifier runs on
 your input **before anything is billed** and before any agent row is created;
@@ -186,7 +187,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
 | `voice_image` | ~20% | Voice and portrait generated (in parallel). |
 | `video` | ~45% | Identity video generated — `essence-1`, and `essence-2` when you supplied only an image. |
 | `awaiting_face_marking` | ~35% | Waiting on manual face marking (rare `essence-1` path). |
-| `lip_sync` | 70–99% | The model-specific identity step — `.imx` build (`essence-1`), identity prep (`essence-2-quality`), bundle distillation (`essence-2`), or per-identity training (`expression-2`). The longest step for the v2 models. |
+| `lip_sync` | 70–99% | The model-specific identity step — `.imx` build (`essence-1`), identity prep (`essence-2-max`), bundle distillation (`essence-2`), or per-identity training (`expression-2`). The longest step for the v2 models. |
 | `done` | 100% | Terminal — the agent is `ready`. |
 
 ```json
@@ -214,7 +215,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
 | `progress` | float (0.0–1.0) | Generation progress as a fraction. `1.0` is complete. |
 | `progress_msg` | string | Human-readable progress description. |
 | `current_step` | string | Current generation step (see the table above). |
-| `supported_models` | string[] | The canonical model families this agent can be **launched as right now**. Trained families (`expression-2`, `essence-2-light` — the internal family name for the `essence-2` light tier) appear once their per-identity model exists; `essence-2-quality` appears when the agent has a **source video** (its identity prepares on demand from that footage — an image alone is not enough); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family, and the combined `essence-2` creation shows up as its two tier families. Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response. |
+| `supported_models` | string[] | The canonical model families this agent can be **launched as right now**. Trained families (`expression-2`, `essence-2-light` — the internal family name for the standard `essence-2`) appear once their per-identity model exists; `essence-2-quality` (the internal family name for `essence-2-max`, kept until the platform-side flip) appears when the agent has a **source video** (its identity prepares on demand from that footage — an image alone is not enough); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family, and the combined `essence-2` creation shows up as its two tier families. Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response. |
 
 ### Generate and poll
 
@@ -249,12 +250,12 @@ automatically refunded):
 
 | Failure | Surface | Notes |
 |---|---|---|
-| Invalid `model` value | `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: auto, essence, essence-1, essence-2, essence-2-quality, expression, expression-1, expression-2` | Rejected before dispatch; no credits charged. Retired names get a **targeted hint** instead of the bare list — e.g. `essence-2-light` → *"'essence-2-light' was consolidated into 'essence-2' (2026-07-05)…"*. |
+| Invalid `model` value | `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression, expression-1, expression-2` | Rejected before dispatch; no credits charged. Retired names get a **targeted hint** instead of the bare list — e.g. `essence-2-light` → *"'essence-2-light' was consolidated into 'essence-2' (2026-07-05)…"*. |
 | Malformed body | `400 VALIDATION_ERROR` — `Request body must be valid JSON` / `…a JSON object` | Rejected before dispatch. |
 | Non-human subject on an explicit Essence 2 creation | [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) — `essence-2 requires a photorealistic human subject; this image looks like a <verdict> — use expression-2` | Rejected **before billing** and before any agent row exists — see [the subject gate](#the-essence-2-subject-gate-422). `auto` routes instead of rejecting. |
 | Not enough credits | `402 INSUFFICIENT_BALANCE` (also surfaces as `status: "failed"` with a payment `error_message` if the reserve fails mid-pipeline) | Creation costs the model's rate — 250 (v1) or 500 (second generation). |
 | A pipeline step fails | `status: "failed"` + `error_message` naming the step (voice, image, video, or the model step) | Terminal for that `agent_id`; the creation credits are refunded automatically. Create again after fixing the input. |
-| `essence-2-quality` without a source video | `status: "failed"` at the model step | The tier prepares its identity from real footage — supply `video`. See [Essence 2 Quality](/concepts/essence-2-quality#how-creation-works). |
+| `essence-2-max` without a source video | `status: "failed"` at the model step | The model prepares its identity from real footage — supply `video`. See [Essence 2 Max](/concepts/essence-2-max#how-creation-works). |
 | v2 creation "stuck" at `lip_sync` | Not a failure | That's the training/prep step — the longest part for `expression-2` / `essence-2`. Keep polling; see [creation times](#model-specific-inputs-and-creation-times). |
 
 More session-time issues (connect latency, tier pinning, idle behavior):
@@ -367,7 +368,7 @@ listing the options; the Essence 2 tiers are not individually addable —
 |---|---|---|---|---|
 | `expression-1` | **Instant enablement** — the v1 foundation model drives the agent's existing image + voice at runtime; nothing is trained | stored image **and** voice (else `422`) | **0** | immediate (this response) |
 | `expression-2` | Trains the per-identity Expression 2 model from the stored image | stored image (else `422`) | 500 | ~10–45 min |
-| `essence-2` | The **combined** add: trains the Essence 2 light tier from the stored identity video; Quality lights up from the same video at no extra charge | stored identity video (else `422 MODEL_PREREQUISITE_MISSING`) + photorealistic-human subject on the stored image (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
+| `essence-2` | The **combined** add: trains the standard Essence 2 from the stored identity video; Max lights up from the same video at no extra charge | stored identity video (else `422 MODEL_PREREQUISITE_MISSING`) + photorealistic-human subject on the stored image (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
 | `essence-1` | Builds the v1 `.imx` — reuses the stored identity video, or generates one from the stored image | stored video or image (else `422`) | 250 | ~10–20 min |
 
 ```python
@@ -396,8 +397,8 @@ An **async** add (everything except `expression-1`) responds immediately:
 ```
 
 Poll [`GET /v1/agent/status/{code}`](#poll-status) until `supported_models`
-contains the new family (`essence-2` adds **both** `essence-2-light` and
-`essence-2-quality`). The agent keeps serving as-is while the add runs —
+contains the new family (`essence-2` adds **both** internal family names,
+`essence-2-light` and `essence-2-quality`). The agent keeps serving as-is while the add runs —
 `status` stays `ready` for the v2 adds. An **instant** add (`expression-1`,
 or a model the agent already has) returns `status: "ready"` with
 `credits: 0` in the same response — re-POSTing the same model never
@@ -411,15 +412,16 @@ not-owned agent) · `409 AGENT_NOT_READY` ·
 
 `GET /v1/agent/{code}/model/download` — download the generated model artifact
 for an agent you own. The family defaults to the agent's own model; override
-with `?model=<family>` (legacy names and runtime tier slugs fold onto their
-family — `essence-2` and the `essence-2-{gpu,ane,cpu}` force slugs fold onto
-`essence-2-light`, the light tier's family name). What you get per family:
+with `?model=<family>` (public names, deprecated aliases and runtime tier
+slugs fold onto their family — `essence-2` and the `essence-2-{gpu,ane,cpu}`
+force slugs fold onto `essence-2-light`, and `essence-2-max` folds onto
+`essence-2-quality`, the families' internal names). What you get per family:
 
 | Family | Artifact | Notes |
 |---|---|---|
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
-| `essence-2-light` | `<code>.lebundle.imx` | Unified IMX container, ~350–550 MB. **Licensed weights** — a local runtime must complete the license activation flow; today the light model serves via bitHuman cloud. |
-| `essence-2-quality` | `<code>.pkl` | IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
+| `essence-2-light` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container, ~350–550 MB. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
+| `essence-2-quality` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
 | `expression-2` | `<code>.avatar` | CoreML zip (~90 MB) — the Mac-runnable form of the trained model. |
 | `expression-1` | — | Not downloadable: no per-identity artifact exists (the v1 foundation model renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
 
@@ -535,7 +537,7 @@ requests.post(
 | `404` | `NOT_FOUND` | No agent with the given code (`message`: `"Agent not found for code: <code>"`). |
 | `404` | `NOT_FOUND` | Agent has no active session to `/speak` or `/add-context` (`message`: `"No active rooms found for agent <code>"`). |
 | `400` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value, or an invalid / retired `model` name — the error message lists the accepted values). |
-| `409` | `MODEL_NOT_GENERATED` | A launch surface (embed-token `model`, [talking video](/api/video), [model download](#download-an-agents-model)) requested a family the agent can't be launched as — it's missing from `supported_models`. Trained families: `"agent <code>'s <model> model hasn't been generated yet"`; `essence-2-quality` (gated on the **source video** it prepares from): `"agent <code>'s essence-2-quality model requires a source video, which this agent doesn't have"`. [Add the model](#add-a-model-to-an-existing-agent) or create the agent with it. |
+| `409` | `MODEL_NOT_GENERATED` | A launch surface (embed-token `model`, [talking video](/api/video), [model download](#download-an-agents-model)) requested a family the agent can't be launched as — it's missing from `supported_models`. Trained families: `"agent <code>'s <model> model hasn't been generated yet"`; `essence-2-max` (gated on the **source video** it prepares from — the message keeps the internal `essence-2-quality` family name until the platform-side flip): `"agent <code>'s essence-2-quality model requires a source video, which this agent doesn't have"`. [Add the model](#add-a-model-to-an-existing-agent) or create the agent with it. |
 | `409` | `AGENT_NOT_READY` | [`POST /v1/agent/{code}/models`](#add-a-model-to-an-existing-agent) on an agent that is still generating or failed — models can only be added to a `ready` agent. |
 | `422` | `MODEL_SUBJECT_MISMATCH` | An explicit Essence 2 creation or add whose input isn't a photorealistic human subject — see [the subject gate](#the-essence-2-subject-gate-422). Nothing is billed. |
 | `422` | `MODEL_PREREQUISITE_MISSING` | [Model add](#add-a-model-to-an-existing-agent) on an agent missing a stored asset the model needs (identity video for `essence-2`, image for `expression-2`, image + voice for `expression-1`). Upload the asset, then retry. |
