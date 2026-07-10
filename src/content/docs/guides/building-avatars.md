@@ -126,7 +126,9 @@ The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`G
 | Action | Cost |
 |---|---|
 | Generate an agent — v1 models (`essence-1`, `expression-1`) | 250 credits (one-time) |
-| Generate an agent — second generation (`essence-2`, `essence-2-quality`, `expression-2`, `auto`) | 500 credits (one-time) |
+| Generate an agent — Essence 2 family (`essence-2`, `essence-2-quality`) | 500 credits (one-time) |
+| Generate an agent — `expression-2` | 2000 credits (one-time) |
+| Generate an agent — `auto` (the platform routes to `essence-2` or `expression-2`) | 500 or 2000 credits — the routed model's rate |
 | Generate a dynamics/gesture set | 250 credits (one-time) per agent |
 | Replay Essence `.imx` | 1 credit / active minute (self-hosted) |
 | Expression face from image | 2 credits / active minute (self-hosted) |
