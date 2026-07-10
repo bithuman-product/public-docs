@@ -46,6 +46,32 @@ for (const f of walk(PAGES, [".astro"])) {
   routes.add("/" + r);
 }
 
+// --- 1b. Load the vercel.json redirect map ---
+// Redirects are part of the routing surface: a destination that resolves
+// nowhere is redirect rot, and a content link that points at a redirect
+// SOURCE works via a 308 but should point at the canonical page instead.
+const redirects = new Map(); // source -> destination
+try {
+  const vercel = JSON.parse(readFileSync(join(ROOT, "vercel.json"), "utf8"));
+  for (const r of vercel.redirects ?? []) redirects.set(r.source, r.destination);
+} catch {
+  /* no vercel.json — nothing to check */
+}
+
+const redirectFailures = [];
+for (const [source, destination] of redirects) {
+  if (source.includes(":") || source.includes("*")) continue; // dynamic patterns
+  if (routes.has(source)) {
+    redirectFailures.push(
+      `redirect source ${source} shadows a real page (the page becomes unreachable)`
+    );
+  }
+  const dest = destination.replace(/\/$/, "") || "/";
+  if (!routes.has(dest) && !redirects.has(dest)) {
+    redirectFailures.push(`redirect ${source} -> ${destination} points at no known route`);
+  }
+}
+
 // --- 2. Scan markdown for internal links and validate ---
 const LINK_RE = /\]\((\/[^)\s#]*)(#[^)\s]*)?\)/g;
 const failures = [];
@@ -59,17 +85,29 @@ for (const f of walk(CONTENT, [".md", ".mdx"])) {
     // ignore links to static assets (have a file extension) and external-ish
     if (/\.[a-z0-9]{2,4}$/i.test(target)) continue;
     if (!routes.has(target)) {
-      failures.push({ file: relative(ROOT, f), target });
+      const note = redirects.has(target)
+        ? ` (redirects to ${redirects.get(target)} — link the canonical page instead)`
+        : "";
+      failures.push({ file: relative(ROOT, f), target, note });
     }
   }
 }
 
 // --- 3. Report ---
-if (failures.length) {
-  console.error(`Found ${failures.length} broken internal link(s):\n`);
-  for (const { file, target } of failures) {
-    console.error(`  ${file}  ->  ${target}`);
-    console.error(`    ::error file=${file}::broken internal link ${target}`);
+if (failures.length || redirectFailures.length) {
+  if (failures.length) {
+    console.error(`Found ${failures.length} broken internal link(s):\n`);
+    for (const { file, target, note } of failures) {
+      console.error(`  ${file}  ->  ${target}${note}`);
+      console.error(`    ::error file=${file}::broken internal link ${target}${note}`);
+    }
+  }
+  if (redirectFailures.length) {
+    console.error(`\nFound ${redirectFailures.length} vercel.json redirect problem(s):\n`);
+    for (const msg of redirectFailures) {
+      console.error(`  ${msg}`);
+      console.error(`    ::error file=vercel.json::${msg}`);
+    }
   }
   console.error(
     `\nFix the link or add the page. Valid routes (${routes.size}):\n  ` +
@@ -79,5 +117,6 @@ if (failures.length) {
 }
 
 console.log(
-  `OK — all internal links resolve (${routes.size} routes known).`
+  `OK — all internal links resolve (${routes.size} routes known, ` +
+    `${redirects.size} redirects checked).`
 );

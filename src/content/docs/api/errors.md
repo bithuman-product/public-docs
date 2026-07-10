@@ -62,7 +62,7 @@ Every error follows the same structured envelope:
 |---|---|---|
 | `NOT_FOUND` | 404 | Returned both when no agent matches the code **and** when an agent has no active session for `/speak` / `/add-context`. Distinguish by the `message` string: `"Agent not found for code: <code>"` vs `"No active rooms found for agent <code>"`. |
 | `VALIDATION_ERROR` | 400 | Body failed schema validation. Include all required fields. |
-| `VIDEO_INPUT_NOT_SUPPORTED` | 400 | [Agent creation](/api/agents#generate-an-agent) with a `video` input. Creation is **image-only** for every model — provide a portrait `image`; bitHuman generates the 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). This rejection is rolling out platform-wide (nothing charged when it fires) — never send `video`. |
+| `VIDEO_INPUT_NOT_SUPPORTED` | 400 | [Agent creation](/api/agents#generate-an-agent) with a `video` input. Creation is **image-only** for every model — provide a portrait `image`; bitHuman generates the 10-second identity video internally so it loops seamlessly (first frame == last frame). This rejection is rolling out platform-wide (nothing charged when it fires) — never send `video`. |
 | `MISSING_PARAM` | 400 | A required parameter was not provided. |
 
 ### Model errors

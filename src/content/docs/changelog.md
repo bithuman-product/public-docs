@@ -16,12 +16,13 @@ The `video` creation input is removed for **all models** (`essence-1`,
 `expression-1`, `essence-2`, `essence-2-max`, `expression-2`):
 
 - **Provide a portrait `image`** (or let the prompt generate one) — bitHuman
-  generates the **identity/driver video internally**, always **10 seconds**,
+  generates the **identity video internally**, always **10 seconds**,
   authored so idle loops seam perfectly (first frame == last frame). User
   footage can't guarantee that loop contract, which is why it's no longer
   accepted.
-- A [`POST /v1/agent/generate`](/api/agents#generate-an-agent) request
-  carrying `video` is rejected with
+- Never send `video` to
+  [`POST /v1/agent/generate`](/api/agents#generate-an-agent): as enforcement
+  rolls out platform-wide, requests carrying it are rejected with
   [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) **before
   anything is billed** — never silently ignored.
 - `video_aspect_ratio` is removed with the video input; `duration` is
@@ -38,15 +39,16 @@ The `video` creation input is removed for **all models** (`essence-1`,
 The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
 
 - **`essence-2-max` is the new canonical name of the premium model**
-  (previously `essence-2-quality`) — the Essence 2 gold teacher served
-  directly on L40S-class cloud GPUs for maximum fidelity. The API accepts
+  (previously `essence-2-quality`) — the highest-fidelity Essence 2
+  renderer, served directly on dedicated cloud GPUs. The API accepts
   `essence-2-max` everywhere a model is requested (`POST /v1/agent/generate`,
   [`POST /v1/video/generate`](/api/video), the embed-token `model` field, and
   `?model=` session pins); **`essence-2-quality` remains accepted as a
-  deprecated alias** during the migration, so nothing breaks. Server
-  *responses* (`supported_models`, `409` messages, pricing `by_model`, model
-  downloads) keep the `essence-2-quality` family name until the
-  platform-side flip. See [Essence 2 Max](/concepts/essence-2-max).
+  deprecated alias** during the migration, so nothing breaks. Some server
+  *responses* (`supported_models`, `409` messages, model downloads) may keep
+  the `essence-2-quality` family name until the rename rollout completes —
+  see [Naming & migration](/concepts/models-v2#naming--migration). See also
+  [Essence 2 Max](/concepts/essence-2-max).
 - **`essence-2` is the standard tier name** — the light-name retirement
   completed (the former `essence-2-light` was consolidated into `essence-2`
   on 2026-07-05): the standard photoreal model, distilled to run everywhere
@@ -55,8 +57,10 @@ The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
 - **Rates unchanged.** `essence-2` stays 4 credits/min cloud and
   `essence-2-max` 8 credits/min cloud, each 0.5× when self-hosted; creation
   stays 500 credits (the combined `essence-2` creation still covers both
-  models). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) already
-  lists `essence-2-max` alongside the alias in `talking_video.rates`.
+  models). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) now
+  advertises `essence-2-max` — the canonical name — in both
+  `agent_generation.by_model` and `talking_video.rates`; the deprecated
+  alias is no longer advertised.
 - **Docs moved.** The model guides now live at
   [/concepts/essence-2](/concepts/essence-2) and
   [/concepts/essence-2-max](/concepts/essence-2-max); the old URLs
@@ -83,13 +87,15 @@ Creation pricing is now **per engine**:
 
 The second-generation models reach their announced launch date and the
 rollout is underway. **Creation access opens progressively** (a v2 creation
-ahead of your account's access returns a clean `400` and bills nothing; the
-dashboard's v2 creation entries ship separately from the API). Alongside the
+ahead of your account's access returns
+[`503 MODEL_NOT_YET_AVAILABLE`](/api/errors#model-errors) and bills nothing;
+the dashboard's v2 creation entries ship separately from the API). Alongside the
 rollout, the model documentation gained the shipping characteristics:
 
 - **[`essence-2`](/concepts/essence-2)** — photorealistic people;
   animates real identity footage at its native resolution (full-HD 1080p
-  driver video by default) at ~25 fps; serves gpu → ane → cpu, fully
+  identity video by default) at ~25 fps; serves GPU → Apple Neural Engine →
+  CPU, fully
   on-device on Apple silicon, and a **browser-local tier is rolling out**
   (`?render=local`, WebGPU with WASM fallback) as per-identity web bundles
   publish.
@@ -97,10 +103,41 @@ rollout, the model documentation gained the shipping characteristics:
   characters; **fully generative across the whole 416×720 scene** at 20 fps
   from a single photo (no face detection or cropping anywhere in the
   pipeline), which is why any character morphology animates naturally;
-  serves gpu → ane → cpu plus on-device Apple silicon.
+  serves GPU → Apple Neural Engine → CPU plus on-device Apple silicon.
 - The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
   and [creation guide](/concepts/models-v2#how-creation-works) were refreshed
   to match.
+
+### Plan concurrency, offline licensing preview, and one pricing page (2026-07-10)
+
+Rounding out the launch — plan allowances and a documentation overhaul:
+
+- **Concurrent avatar sessions are now a plan allowance** — Creator 3,
+  Pro 10, Business 50, Enterprise 200, Custom unlimited. Enforcement is
+  rolling out: once active, a session start beyond the allowance returns
+  [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors#session--infrastructure),
+  and live sessions are never cut off mid-stream by the limit. See
+  [Session concurrency](/api/rate-limits#session-concurrency).
+- **Offline licensing is coming soon** — run avatars fully self-hosted with
+  per-device, per-model signed credit bundles minted through your online
+  account: Business $999/year prepacks 120,000 credits (Essence 2 +
+  Expression 2); Enterprise $1,999/year prepacks 240,000 credits (adds
+  Essence 2 Max). Self-hosted minutes meter at half the cloud rate. Preview
+  at [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
+- **[Pricing](/guides/pricing) is now the single home of every number** —
+  per-model serving rates (cloud and self-hosted), creation credits,
+  talking-video rates, and the plan table live there; other pages link to it
+  instead of repeating figures.
+- **Naming and migration history has one home** — every alias, retired name,
+  and response-name lag is consolidated at
+  [Models → Naming & migration](/concepts/models-v2#naming--migration).
+- **Every API operation ships a runnable example** — all 33 operations in
+  the [interactive API reference](/api/reference) now carry copy-paste curl
+  samples with realistic bodies and next-step hints.
+- **Android documentation restored** — the [Kotlin / Android SDK](/sdk/android)
+  page and the [Android hello example](/examples/kotlin-android-hello) are
+  reachable again, and the voice reference URLs consolidated at
+  [Text to speech](/api/text-to-speech).
 
 ### Multi-agent avatar rooms — audio binds to the launching agent (2026-07-09)
 
