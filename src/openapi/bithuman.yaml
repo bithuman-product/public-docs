@@ -1184,16 +1184,17 @@ paths:
                             additionalProperties:
                               type: integer
                             description: >-
-                              One-time creation cost per `model` value accepted
-                              by `POST /v1/agent/generate`. Note the premium
-                              model is still keyed by its pre-rename
-                              `essence-2-quality` name (an `essence-2-max`
-                              creation charges the same 500) until the
-                              platform-side rename flip.
+                              One-time creation cost per canonical `model`
+                              value accepted by `POST /v1/agent/generate`.
+                              Since the 2026-07-10 rename flip the premium
+                              model is keyed `essence-2-max`; the pre-rename
+                              `essence-2-quality` spelling is still accepted
+                              as a deprecated alias at the same 500 but is no
+                              longer advertised.
                             example:
                               essence-1: 250
                               expression-1: 250
-                              essence-2-quality: 500
+                              essence-2-max: 500
                               expression-2: 2000
                               essence-2: 500
                               auto: 2000
@@ -1217,7 +1218,6 @@ paths:
                               expression-1: 4
                               expression-2: 4
                               essence-2-max: 8
-                              essence-2-quality: 8
                               essence-2: 4
                       dynamics_generation:
                         type: object

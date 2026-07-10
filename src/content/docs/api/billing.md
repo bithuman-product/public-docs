@@ -59,7 +59,7 @@ curl https://api.bithuman.ai/v1/pricing \
       "by_model": {
         "essence-1": 250,
         "expression-1": 250,
-        "essence-2-quality": 500,
+        "essence-2-max": 500,
         "expression-2": 2000,
         "essence-2": 500,
         "auto": 2000
@@ -69,7 +69,7 @@ curl https://api.bithuman.ai/v1/pricing \
     "talking_video": {
       "unit": "credits_per_minute",
       "billing": "ceil(minutes) * rate, minimum 1 minute",
-      "rates": { "essence-1": 8, "expression-1": 4, "essence-2": 4, "essence-2-max": 8, "essence-2-quality": 8, "expression-2": 4 }
+      "rates": { "essence-1": 8, "expression-1": 4, "essence-2": 4, "essence-2-max": 8, "expression-2": 4 }
     },
     "dynamics_generation": { "flat": 250, "note": "…" },
     "notes": "Authoritative charges are enforced server-side at request time. …"
@@ -77,11 +77,12 @@ curl https://api.bithuman.ai/v1/pricing \
 }
 ```
 
-`by_model` keys are the `model` values `POST /v1/agent/generate` accepts —
-note the premium model is still keyed by its pre-rename `essence-2-quality`
-name (an `essence-2-max` creation charges that same 500) until the
-platform-side rename flip, while `talking_video.rates` already carries both
-names. `essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
+`by_model` keys are the **canonical** `model` values `POST /v1/agent/generate`
+accepts — since the 2026-07-10 platform-side rename flip the premium model is
+keyed `essence-2-max` (the pre-rename `essence-2-quality` spelling is still
+*accepted* as a deprecated alias at the same 500, but no longer advertised —
+in `by_model` or `talking_video.rates`).
+`essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
 (one 500-credit charge covers both models) and `auto`
 [classifies and routes](/api/agents#auto--let-the-platform-pick-the-model),
 charging the routed model's rate — 500 for `essence-2`, 2000 for
