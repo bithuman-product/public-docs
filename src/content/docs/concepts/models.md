@@ -17,11 +17,14 @@ between when packaging an avatar — and the focus of the rest of this page — 
 
 - **Essence** — the avatar family (a packaged `.imx` identity with real-time lip-sync):
   - **Essence 1** — the default. Pre-built identity, runs on virtually any CPU.
-  - **[Essence 2 Quality](/concepts/essence-2-quality)** — the
-    highest-fidelity premium renderer (cloud GPU).
-  - **[Essence 2 — the light tier](/concepts/essence-2-light)** — the cost-effective
-    distilled renderer (runs on GPU, CPU, or the Apple Neural Engine —
-    including fully on-device).
+  - **[Essence 2](/concepts/essence-2)** — the standard photoreal model:
+    a distilled renderer that runs everywhere (GPU, CPU, the Apple Neural
+    Engine — including fully on-device — and in-browser WebGPU/WASM). The
+    default.
+  - **[Essence 2 Max](/concepts/essence-2-max)** — the premium model: the
+    gold teacher served directly on L40S-class cloud GPUs for maximum
+    fidelity (was `essence-2-quality`, still accepted as a deprecated
+    alias).
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
   - **Expression 1** — dynamic facial animation from any portrait image (Apple Silicon
     or NVIDIA GPU).
@@ -35,8 +38,8 @@ between when packaging an avatar — and the focus of the rest of this page — 
 > creation access opens progressively). See [Essence 2 & Expression 2](/concepts/models-v2) for the
 > family overview, and the official per-model guides:
 > [Expression 2](/concepts/expression-2) ·
-> [Essence 2](/concepts/models-v2) ·
-> [Essence 2 Quality](/concepts/essence-2-quality).
+> [Essence 2](/concepts/essence-2) ·
+> [Essence 2 Max](/concepts/essence-2-max).
 
 Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
 shape; the tier is selected per session and is transparent to your integration. (A
@@ -173,7 +176,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launching July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [the Essence 2 light tier](/concepts/essence-2-light).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launching July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2), [Essence 2 Max](/concepts/essence-2-max).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
 - [SDK overview](/sdk/overview) — run a model on your own hardware.

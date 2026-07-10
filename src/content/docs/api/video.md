@@ -15,10 +15,11 @@ finished video URL. On success you get a public CDN URL, the output duration, an
 the credits charged.
 
 Talking videos bill **per minute of output, rounded up**: `essence-1` and
-`essence-2-quality` are 8 credits/min; `expression-1`, `expression-2`, and
-`essence-2` are 4 credits/min (`essence-2` is the efficient light-tier
-render; the former `essence-2-light` name is retired). If a render fails,
-the charge is automatically refunded.
+`essence-2-max` are 8 credits/min; `expression-1`, `expression-2`, and
+`essence-2` are 4 credits/min (`essence-2` is the standard distilled
+render; the former `essence-2-light` name is retired, and the pre-rename
+`essence-2-quality` is still accepted as a deprecated alias for
+`essence-2-max`). If a render fails, the charge is automatically refunded.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
@@ -29,7 +30,7 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-quality`, or `essence-2`. |
+| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-max`, or `essence-2`. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
@@ -46,7 +47,7 @@ resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
-        "model": "essence-2-quality",
+        "model": "essence-2-max",
         "agent_code": "A91XMB7113",
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
     },
@@ -83,10 +84,11 @@ limit returns `400` before any charge. Requesting a model the agent can't be
 launched as returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) —
 also **before any charge**: for `expression-2` / `essence-2` that means
 the trained per-identity model doesn't exist yet (`agent <code>'s <family>
-model hasn't been generated yet`); `essence-2-quality` is gated on the
+model hasn't been generated yet`); `essence-2-max` is gated on the
 agent's **source video**, which its identity prepares from on demand (`agent
 <code>'s essence-2-quality model requires a source video, which this agent
-doesn't have`); `essence-1` needs the agent's `.imx` model file (present on
+doesn't have` — the message keeps the internal `essence-2-quality` family
+name until the platform-side flip); `essence-1` needs the agent's `.imx` model file (present on
 every completed essence-1 creation), and `expression-1` needs an
 expression-1 agent — or the free post-generation expression-1 model add —
 with an image. Check the agent's `supported_models` on the
@@ -108,7 +110,9 @@ resp = requests.get(
 print(resp.json())
 ```
 
-While rendering:
+While rendering (note: job responses echo the **internal family name** — an
+`essence-2-max` request reads back as `essence-2-quality`, and `essence-2` as
+`essence-2-light`, until the platform-side rename flip):
 
 ```json
 { "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing", "model": "essence-2-quality" }

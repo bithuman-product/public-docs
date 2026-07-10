@@ -83,8 +83,9 @@ through `libessence`, including the ones you get from
 [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or [`bithuman pull <AGENT_CODE>`](/sdk/cli/commands). The other downloadable
 artifacts are **not loadable by this package**: an `essence-2-light`
-`.lebundle.imx` targets the Light engine (licensed weights, no local playback
-path yet), an `essence-2-quality` `.pkl` renders on bitHuman's GPU cloud, and
+`.lebundle.imx` targets the standard [Essence 2](/concepts/essence-2) engine
+(licensed weights, no local playback
+path yet), an `essence-2-quality` `.pkl` ([Essence 2 Max](/concepts/essence-2-max)) renders on bitHuman's GPU cloud, and
 an `expression-2` `.avatar` is a CoreML build for Apple hardware — passing
 any of them as `model_path` fails at load. To put a second-generation model
 on screen from Python, serve it through the cloud instead: the

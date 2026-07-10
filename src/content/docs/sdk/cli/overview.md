@@ -21,8 +21,10 @@ The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
 > **Which models?** The CLI **recognizes every bitHuman model artifact** —
 > it sniffs the file and tells you what it is — and its local runtime
 > (`run` / `render`) plays **`essence-1`** `.imx` avatars. The
-> [second-generation artifacts](/concepts/models-v2) (`essence-2-light`
-> `.lebundle.imx`, `essence-2-quality` `.pkl`, `expression-2` `.avatar`) are
+> [second-generation artifacts](/concepts/models-v2) (the standard Essence 2's
+> `essence-2-light` `.lebundle.imx`, Essence 2 Max's `essence-2-quality`
+> `.pkl`, `expression-2` `.avatar` — the artifact families keep their
+> internal names) are
 > recognized by `run` / `info` / `pull` with honest guidance on where each
 > runs — today they serve through the cloud surfaces (the
 > [REST API](/api/agents), the [embed widget](/guides/deploy-embed), and the

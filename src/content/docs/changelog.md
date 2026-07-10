@@ -10,6 +10,35 @@ order: 1
 
 ## July 2026
 
+### `essence-2-max` — the premium Essence 2 model renamed (2026-07-10)
+
+The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
+
+- **`essence-2-max` is the new canonical name of the premium model**
+  (previously `essence-2-quality`) — the Essence 2 gold teacher served
+  directly on L40S-class cloud GPUs for maximum fidelity. The API accepts
+  `essence-2-max` everywhere a model is requested (`POST /v1/agent/generate`,
+  [`POST /v1/video/generate`](/api/video), the embed-token `model` field, and
+  `?model=` session pins); **`essence-2-quality` remains accepted as a
+  deprecated alias** during the migration, so nothing breaks. Server
+  *responses* (`supported_models`, `409` messages, pricing `by_model`, model
+  downloads) keep the `essence-2-quality` family name until the
+  platform-side flip. See [Essence 2 Max](/concepts/essence-2-max).
+- **`essence-2` is the standard tier name** — the light-name retirement
+  completed (the former `essence-2-light` was consolidated into `essence-2`
+  on 2026-07-05): the standard photoreal model, distilled to run everywhere
+  (GPU / Apple Neural Engine / CPU / WebGPU-WASM), and the default. See
+  [Essence 2](/concepts/essence-2).
+- **Rates unchanged.** `essence-2` stays 4 credits/min cloud and
+  `essence-2-max` 8 credits/min cloud, each 0.5× when self-hosted; creation
+  stays 500 credits (the combined `essence-2` creation still covers both
+  models). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) already
+  lists `essence-2-max` alongside the alias in `talking_video.rates`.
+- **Docs moved.** The model guides now live at
+  [/concepts/essence-2](/concepts/essence-2) and
+  [/concepts/essence-2-max](/concepts/essence-2-max); the old URLs
+  (`/concepts/essence-2-light`, `/concepts/essence-2-quality`) redirect.
+
 ### Expression 2 creation price: 2000 credits (2026-07-10)
 
 Creation pricing is now **per engine**:
@@ -35,7 +64,7 @@ ahead of your account's access returns a clean `400` and bills nothing; the
 dashboard's v2 creation entries ship separately from the API). Alongside the
 rollout, the model documentation gained the shipping characteristics:
 
-- **[`essence-2`](/concepts/essence-2-light)** — photorealistic people;
+- **[`essence-2`](/concepts/essence-2)** — photorealistic people;
   animates real identity footage at its native resolution (full-HD 1080p
   driver video by default) at ~25 fps; serves gpu → ane → cpu, fully
   on-device on Apple silicon, and a **browser-local tier is rolling out**

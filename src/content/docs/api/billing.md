@@ -17,12 +17,12 @@ sessions bill per minute.
 | Action | Cost |
 |---|---|
 | Agent generation — v1 models (`essence-1`, `expression-1`) | 250 credits (one-time, per avatar) |
-| Agent generation — second generation (`essence-2` combined, `essence-2-quality`, `expression-2`, `auto`) | 500 credits (one-time, per avatar) |
+| Agent generation — second generation (`essence-2` combined, `essence-2-max`, `expression-2`, `auto`) | 500 credits (one-time, per avatar) |
 | [Add a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent) | Same per-model rates (250 / 500); adding `expression-1` is **free** (instant enablement, no training) |
 | Dynamics generation (one-time, per avatar) | 250 credits |
 | Book creation (one-time, per book) | 250 credits |
 | Talking video — Expression 2 | 4 credits/min (rounded up) |
-| Talking video — Essence 2 Quality | 8 credits/min (rounded up) |
+| Talking video — Essence 2 Max | 8 credits/min (rounded up) |
 | Live session — Essence, self-hosted | 1 credit/min |
 | Live session — Essence, cloud | 2 credits/min |
 | Live session — Expression, self-hosted | 2 credits/min |
@@ -64,7 +64,7 @@ curl https://api.bithuman.ai/v1/pricing \
     "talking_video": {
       "unit": "credits_per_minute",
       "billing": "ceil(minutes) * rate, minimum 1 minute",
-      "rates": { "essence-2": 4, "essence-2-quality": 8, "expression-2": 4 }
+      "rates": { "essence-2": 4, "essence-2-max": 8, "essence-2-quality": 8, "expression-2": 4 }
     },
     "dynamics_generation": { "flat": 250, "note": "…" },
     "notes": "Authoritative charges are enforced server-side at request time. …"
@@ -72,9 +72,12 @@ curl https://api.bithuman.ai/v1/pricing \
 }
 ```
 
-`by_model` keys are the `model` values `POST /v1/agent/generate` accepts:
-`essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
-(one 500-credit charge covers both tiers) and `auto`
+`by_model` keys are the `model` values `POST /v1/agent/generate` accepts —
+note the premium model is still keyed by its pre-rename `essence-2-quality`
+name (an `essence-2-max` creation charges that same 500) until the
+platform-side rename flip, while `talking_video.rates` already carries both
+names. `essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
+(one 500-credit charge covers both models) and `auto`
 [classifies and routes](/api/agents#auto--let-the-platform-pick-the-model) —
 either way it charges the routed model's 500-credit rate.
 [Post-generation model adds](/api/agents#add-a-model-to-an-existing-agent)

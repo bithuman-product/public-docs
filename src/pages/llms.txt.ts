@@ -38,10 +38,12 @@ export const GET: APIRoute = async () => {
     `(e.g. \`A78WKV4515\`). Models (second generation \`essence-2\`/\`expression-2\` launch July 10, 2026): ` +
     `\`expression-2\` (audio-driven real-time avatar video from a single ` +
     `photo — best for cartoon/animal/creature/robot characters; ` +
-    `gpu/ane/cpu serving chain), \`essence-2\` (photorealistic humans; ` +
-    `gpu/ane/cpu chain incl. on-device — the former essence-2-light name ` +
-    `is retired), \`essence-2-quality\` (highest-fidelity GPU reference ` +
-    `tier), plus the v1 \`essence-1\` / \`expression-1\`.\n\n`;
+    `gpu/ane/cpu serving chain), \`essence-2\` (the STANDARD photoreal model; ` +
+    `distilled to run everywhere — gpu/ane/cpu/WebGPU-WASM incl. on-device; ` +
+    `the former essence-2-light name is retired), \`essence-2-max\` (the ` +
+    `PREMIUM model — the gold teacher served directly on L40S-class GPUs; ` +
+    `was essence-2-quality, still accepted as a deprecated alias), plus the ` +
+    `v1 \`essence-1\` / \`expression-1\`.\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;
   out +=
