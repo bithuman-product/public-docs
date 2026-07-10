@@ -69,7 +69,7 @@ Two modes are always free: **audio-only** Swift SDK use (no avatar attached — 
 
 | Plan | Monthly | Yearly | Credits / month | Concurrent sessions |
 |---|---|---|---|---|
-| **Free** | $0 | — | 99 | — |
+| **Free** | $0 | — | 99 | 1 |
 | **Creator** | $20 | $204 | 1,800 | 3 |
 | **Pro** | $99 | $1,010 | 10,000 | 10 |
 | **Business** | $299 | $2,990 | 50,000 | 50 |

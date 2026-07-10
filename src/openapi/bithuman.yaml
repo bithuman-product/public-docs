@@ -3175,7 +3175,7 @@ tags:
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
       | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45 min) | gpu · cpu · ane | 4 credits/min | 2 credits/min |
-      | `essence-2` | Second-gen Essence for photorealistic people — runs everywhere from on-device (cpu · ane) up to cloud GPU; bitHuman picks the serving tier for you | gpu · cpu · ane | from 4 credits/min | from 2 credits/min |
+      | `essence-2` | Second-gen Essence for photorealistic people — runs everywhere from on-device (cpu · ane) up to cloud GPU; bitHuman picks the serving tier for you | gpu · cpu · ane | `essence-2` 4 credits/min · `essence-2-max` 8 credits/min | `essence-2` 2 credits/min · `essence-2-max` 4 credits/min |
 
       Create one with
       [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
