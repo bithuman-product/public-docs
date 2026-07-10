@@ -77,11 +77,18 @@ paths:
       operationId: generateAgent
       summary: Generate a new agent
       description: |
-        Create a new avatar agent from a text prompt, with optional image,
-        video, and audio assets. Poll `/v1/agent/status/{agent_id}` to check
+        Create a new avatar agent from a text prompt, with optional image
+        and audio assets. Poll `/v1/agent/status/{agent_id}` to check
         progress.
 
-        **Creation time and inputs depend on `model`** (the second-generation
+        **Agent creation is image-only.** Provide a portrait `image` (or let
+        the prompt generate one) — bitHuman generates a **10-second
+        idle/driver video internally**, authored to loop seamlessly (its
+        first and last frames match). Video input is not accepted for any
+        model: a request carrying `video` is rejected with
+        `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is billed.
+
+        **Creation time depends on `model`** (the second-generation
         models train real per-identity models — don't apply a 5-minute client
         timeout):
 
@@ -89,8 +96,8 @@ paths:
         |---|---|---|
         | `essence-1` (default) | image (or generated from prompt) | 2–5 minutes |
         | `expression-1` | image (or generated from prompt) | ~1–2 minutes |
-        | `essence-2-max` | **video required** (identity prepped from real footage in seconds) | a few minutes end-to-end |
-        | `essence-2` | video, or image (an identity video is generated first) | 45 minutes typical; long builds can take hours — **both Essence 2 tiers from one creation** |
+        | `essence-2` | image (or generated from prompt) — a 10-second identity video is generated internally | 45 minutes typical; long builds can take hours — **both Essence 2 models from one creation** |
+        | `essence-2-max` | included with every `essence-2` creation — its identity derives from the same internally generated identity video | prepares in seconds; available once the agent is ready |
         | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
         | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
 
@@ -133,10 +140,6 @@ paths:
                   type: string
                   description: URL to a face image for avatar appearance.
                   example: "https://example.com/face.jpg"
-                video:
-                  type: string
-                  description: URL to a video for avatar appearance and mannerisms.
-                  example: "https://example.com/clip.mp4"
                 audio:
                   type: string
                   description: URL to audio for voice cloning.
@@ -146,18 +149,16 @@ paths:
                   enum: ["16:9", "9:16", "1:1"]
                   default: "16:9"
                   description: Aspect ratio for image generation.
-                video_aspect_ratio:
-                  type: string
-                  enum: ["16:9", "9:16", "1:1"]
-                  default: "16:9"
-                  description: Aspect ratio for video generation.
                 agent_id:
                   type: string
                   description: Custom agent identifier. Auto-generated if omitted.
                 duration:
                   type: integer
-                  default: 10
-                  description: Source video duration in seconds.
+                  deprecated: true
+                  description: >-
+                    **Deprecated — accepted but ignored.** The internally
+                    generated identity/driver video is always 10 seconds,
+                    authored to loop seamlessly.
                 model:
                   type: string
                   enum: [essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, essence, expression, auto]
@@ -228,20 +229,35 @@ paths:
             `INSUFFICIENT_BALANCE`.
         "400":
           description: >-
-            Body failed validation — malformed JSON, or an invalid / retired
-            `model` value (rejected before dispatch; no credits charged). The
-            message lists the accepted model names.
+            Body failed validation — malformed JSON, an invalid / retired
+            `model` value (`VALIDATION_ERROR` — the message lists the
+            accepted model names), or a `video` input
+            (`VIDEO_INPUT_NOT_SUPPORTED` — agent creation is image-only; the
+            10-second idle/driver video is generated internally so it loops
+            seamlessly). Rejected before dispatch; no credits charged.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-              example:
-                error:
-                  code: "VALIDATION_ERROR"
-                  message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression, expression-1, expression-2"
-                  httpStatus: 400
-                status: "error"
-                status_code: 400
+              examples:
+                validation_error:
+                  summary: Invalid model value
+                  value:
+                    error:
+                      code: "VALIDATION_ERROR"
+                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression, expression-1, expression-2"
+                      httpStatus: 400
+                    status: "error"
+                    status_code: 400
+                video_input_not_supported:
+                  summary: Video creation input (image-only contract)
+                  value:
+                    error:
+                      code: "VIDEO_INPUT_NOT_SUPPORTED"
+                      message: "Agent creation is image-only. Provide a portrait `image`; bitHuman generates a 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). Video input is not accepted for any model (essence-1, expression-1, essence-2, essence-2-max, expression-2)."
+                      httpStatus: 400
+                    status: "error"
+                    status_code: 400
         "422":
           description: >-
             `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
@@ -280,8 +296,9 @@ paths:
         `1.0` together with a terminal status.
 
         `current_step` reports the pipeline stage: `payment` (~2%) →
-        `persona` (5–15%) → `voice_image` (~20%) → `video` (~45%, only for
-        models that generate an identity video) → `lip_sync` (70–99%, the
+        `persona` (5–15%) → `voice_image` (~20%) → `video` (~45%, the
+        internally generated 10-second identity video — models that need
+        one) → `lip_sync` (70–99%, the
         model-specific identity step — training/distillation for
         `expression-2` / `essence-2`, so the longest stage) → `done`
         (100%). A rare `essence-1` path reports `awaiting_face_marking`
@@ -605,8 +622,8 @@ paths:
         |---|---|---|---|---|
         | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
         | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | ~10–45 min |
-        | `essence-2` | the **combined** add: trains the standard Essence 2 from the stored identity video; Essence 2 Max becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
-        | `essence-1` | builds the v1 `.imx` from the stored identity video (or generates one from the stored image) | stored video or image | 250 | ~10–20 min |
+        | `essence-2` | the **combined** add: trains the standard Essence 2 from the agent's stored identity video (generated internally at creation); Essence 2 Max becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
+        | `essence-1` | builds the v1 `.imx` from the agent's stored identity video (or generates one internally from the stored image) | stored identity video or image | 250 | ~10–20 min |
 
         Asynchronous adds return `status: "processing"` — poll
         [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
@@ -683,7 +700,9 @@ paths:
         "422":
           description: >-
             `MODEL_PREREQUISITE_MISSING` — the agent lacks a stored asset the
-            model needs (e.g. `essence-2` needs an identity video), or
+            model needs (e.g. `essence-2` needs the agent's stored identity
+            video — generated internally by Essence creations, never
+            uploaded), or
             `MODEL_SUBJECT_MISMATCH` — the Essence 2 family requires a
             photorealistic human subject and the stored image is a
             cartoon/animal/creature/robot (use `expression-2`).
@@ -825,9 +844,11 @@ paths:
           description: >-
             `MODEL_NOT_GENERATED` — the requested family isn't in the agent's
             `supported_models` (same gate as embed/session launch), e.g.
-            `agent <code>'s expression-2 model hasn't been generated yet` or
-            `agent <code>'s essence-2-quality model requires a source video,
-            which this agent doesn't have`.
+            `agent <code>'s expression-2 model hasn't been generated yet`, or
+            an `essence-2-max` request on an agent that has no stored
+            identity video (identity videos are generated internally by
+            Essence creations — create with, or add, `essence-2` to
+            generate one).
         "429":
           description: Rate limited (read bucket) — `RATE_LIMITED`.
 
@@ -1209,11 +1230,12 @@ paths:
                         description: >-
                           Canonical model families this agent can be launched
                           as right now (e.g. a ready expression-2 agent lists
-                          `expression-2`; an agent with a source video lists
-                          `essence-2-quality` — the internal family name for
-                          `essence-2-max` until the platform-side rename flip
-                          — whose identity prepares on
-                          demand from that video). Tier slugs inherit their
+                          `expression-2`; an agent with a stored identity
+                          video — generated internally by Essence creations —
+                          lists `essence-2-quality`, the internal family name
+                          for `essence-2-max` until the platform-side rename
+                          flip, whose identity prepares on demand from that
+                          video). Tier slugs inherit their
                           family and are not listed.
                         example: ["essence-2-quality", "expression-2"]
         "401":
@@ -1225,10 +1247,11 @@ paths:
             from the agent's `supported_models`). For the trained families
             (`expression-2` / `essence-2-light`) the message is `agent
             <code>'s <model> model hasn't been generated yet`; for
-            `essence-2-max` it is `agent <code>'s essence-2-quality model
-            requires a source video, which this agent doesn't have` (the
-            message keeps the internal `essence-2-quality` family name until
-            the platform-side rename flip). Add the
+            `essence-2-max` it means the agent has no stored identity video
+            to prepare from — identity videos are generated internally by
+            Essence creations (the message keeps the internal
+            `essence-2-quality` family name until the platform-side rename
+            flip). Add the
             model (`POST /v1/agent/{code}/models`) or create the agent with
             it, then retry.
           content:
@@ -1549,10 +1572,11 @@ paths:
             <code>'s <family> model hasn't been generated yet` — for
             `essence-2` the family reads `essence-2-light`, the internal name
             of its distilled tier); `essence-2-max` is gated on the
-            agent's **source video** — its identity prepares on demand from
-            that footage, so an agent without one gets `agent <code>'s
-            essence-2-quality model requires a source video, which this agent
-            doesn't have` (the message keeps the internal `essence-2-quality`
+            agent's **stored identity video** (generated internally by
+            Essence creations) — its identity prepares on demand from
+            that video, so an agent without one is rejected with a message
+            naming the missing identity video (the message keeps the internal
+            `essence-2-quality`
             family name until the platform-side rename flip); `essence-1` needs the agent's `.imx` model file
             (present on every completed essence-1 creation) and
             `expression-1` needs an expression-1 agent (or the free
@@ -2193,8 +2217,9 @@ components:
             — `essence-1` when its `.imx` exists, `essence-2-quality` (the
             internal family name for `essence-2-max` until the platform-side
             rename flip) when a
-            **source video** exists (its identity prepares on demand from
-            that footage), and `essence-2-light` (the standard `essence-2`) /
+            **stored identity video** exists (generated internally by Essence
+            creations; its identity prepares on demand from
+            that video), and `essence-2-light` (the standard `essence-2`) /
             `expression-2` once their
             trained per-identity model has been generated. Tier slugs inherit
             their family and are not listed.
@@ -2209,7 +2234,10 @@ components:
           description: Avatar face image URL.
         video_url:
           type: string
-          description: Avatar source video URL.
+          description: >-
+            The agent's identity video URL — generated internally at
+            creation (10 seconds, authored to loop seamlessly). Read-only
+            output; video is never a creation input.
         model_url:
           type: string
           description: Downloadable .imx model URL.
@@ -3358,7 +3386,8 @@ tags:
       Call [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent) with:
 
       - **Prompt** — system instructions for the agent's personality
-      - **Portrait** — front-facing photo or video
+      - **Portrait** — front-facing photo (bitHuman generates the 10-second
+        idle/driver video internally)
       - **Voice samples** — 3–10 s of clean speech for voice cloning
       - (Optional) **Knowledge** — documents the agent should know about
 

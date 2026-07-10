@@ -10,6 +10,29 @@ order: 1
 
 ## July 2026
 
+### Agent creation is image-only (2026-07-10)
+
+The `video` creation input is removed for **all models** (`essence-1`,
+`expression-1`, `essence-2`, `essence-2-max`, `expression-2`):
+
+- **Provide a portrait `image`** (or let the prompt generate one) — bitHuman
+  generates the **identity/driver video internally**, always **10 seconds**,
+  authored so idle loops seam perfectly (first frame == last frame). User
+  footage can't guarantee that loop contract, which is why it's no longer
+  accepted.
+- A [`POST /v1/agent/generate`](/api/agents#generate-an-agent) request
+  carrying `video` is rejected with
+  [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) **before
+  anything is billed** — never silently ignored.
+- `video_aspect_ratio` is removed with the video input; `duration` is
+  **deprecated** (accepted but ignored — the internally generated identity
+  video is always 10 seconds).
+- Existing agents are unaffected, and [`POST /v1/files/upload`](/api/files)
+  still accepts video files as assets — video just isn't a *creation* input.
+- `essence-2-max` comes with the combined `essence-2` creation: its identity
+  derives from the same internally generated identity video. See
+  [Essence 2 Max](/concepts/essence-2-max#how-creation-works).
+
 ### `essence-2-max` — the premium Essence 2 model renamed (2026-07-10)
 
 The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:

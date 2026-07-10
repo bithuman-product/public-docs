@@ -30,9 +30,9 @@ API, the embed widget, the dashboard, and the SDKs:
   the **entire 416×720 scene** live at 20 fps — fully generated motion, not
   patched onto a pre-rendered base. Runs on GPU, CPU, and Apple Neural Engine.
 - **[`essence-2`](/concepts/essence-2)** — the **standard** Essence model for
-  photorealistic people, and the default. It animates your identity's real
-  source footage (full-HD 1080p video by default — supplied by you or
-  generated from your image) at ~25 fps with a distilled engine that runs
+  photorealistic people, and the default. It animates your identity's
+  footage (a full-HD 1080p identity video, generated internally from your
+  image) at ~25 fps with a distilled engine that runs
   everywhere — from **fully on-device** (iPhone, iPad, Mac, CPU — audio and
   video never leave your hardware) through **cloud GPUs** to in-browser
   **WebGPU/WASM**. bitHuman automatically serves the right way for your
@@ -52,8 +52,8 @@ remain fully supported; nothing changes for existing agents or integrations.
 | **Family** | Essence | Essence | Expression |
 | **What it is** | The standard Essence 2 model — efficient distilled renderer, serves everywhere; the default | The premium model — the gold teacher served directly (L40S-class GPU) | Generative motion from one photo |
 | **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
-| **Identity source** | Video, or generated from your image | Video (real footage) | Single photo |
-| **Output** | Real footage animated at its native resolution (1080p driver default), ~25 fps | Real footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
+| **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
+| **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
 | **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
 | **Creation** | Train-on-create (typically 25–40 min) | Train-on-create (instant identity prep) | Train-on-create (~45 min per-identity model) |
@@ -79,7 +79,8 @@ every surface.
 **[`essence-2-max`](/concepts/essence-2-max).** The premium Essence
 renderer — the gold teacher served directly on L40S-class cloud GPUs — pick
 it when image quality is the whole point and 8 credits/min is acceptable.
-Needs a source video of the identity.
+Its identity derives from the agent's stored identity video — generated
+internally by every `essence-2` creation.
 
 ### Cost-effective at scale, or on-device
 
@@ -115,19 +116,22 @@ per-identity work, so don't apply a short client timeout:
 | Model | Identity step | Typical creation time |
 |---|---|---|
 | `essence-2` | Distills a compact identity bundle on a cloud GPU | Typically 25–40 minutes; occasionally longer |
-| `essence-2-max` | Instant prep from your source video (seconds) | A few minutes end-to-end |
+| `essence-2-max` | Instant prep from the internally generated identity video (seconds) | Included with the combined `essence-2` creation |
 | `expression-2` | Trains a per-identity model on an H100-class GPU | Roughly 45 minutes (30–60) |
 
-Inputs differ too: `essence-2-max` **requires a source video**;
-`essence-2` takes a video *or* generates one from your image;
-`expression-2` needs only a photo. Details and failure modes are in each
+**Creation input is a portrait image for all three** — `essence-2` generates
+a 10-second identity video from it internally (authored to loop seamlessly),
+`essence-2-max` derives from that same video, and `expression-2` trains
+straight from the photo. User video input is not accepted
+([`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations)). Details
+and failure modes are in each
 model's guide and the [Agents API](/api/agents#generate-an-agent).
 
 Two notes round out the creation surface:
 
 - **`essence-2` is a combined creation.** The one 500-credit charge trains
   the standard Essence 2 identity bundle **and** makes Essence 2 Max
-  available from the same identity video — launch with `?model=essence-2-max`
+  available from the same internally generated identity video — launch with `?model=essence-2-max`
   (or the embed-token `model` field) when you want the premium model. See
   [the combined creation](/api/agents#essence-2--the-combined-creation).
 - **`auto` — classify and route.** An LLM looks at your input (the image if

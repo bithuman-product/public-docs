@@ -62,7 +62,7 @@ bitHuman's two avatar models share the same [`.imx` file format](/concepts/avata
 | | **Essence** (default) | **Expression** |
 |---|---|---|
 | **What it does** | Pre-built avatar identity packaged in an `.imx` file. Real-time lip-sync. | Dynamic facial animation from any portrait image at runtime. |
-| **Avatar source** | `.imx` you build once from a photo or video. | Any face image — provide at runtime, no build step. |
+| **Avatar source** | `.imx` you build once from a photo (the driver video is generated internally). | Any face image — provide at runtime, no build step. |
 | **Custom gestures** | Yes (wave, nod, laugh, etc.) | No |
 | **Idle animation** | Pre-recorded natural movement | AI-generated micro-movements |
 | **Compute needed** | Any modern CPU | Apple Silicon M3+ (demo apps) or NVIDIA GPU |

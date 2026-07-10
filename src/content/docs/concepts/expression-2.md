@@ -42,7 +42,7 @@ unchanged.
 - **Your character isn't a photorealistic human.** The whole scene animates —
   stylized, cartoon, animal, creature, robot, and object characters are
   exactly what this engine is for (and where `model: "auto"` routes them).
-- **You only have a photo.** One image is enough — no source video required.
+- **You only have a photo.** One image is enough — creation is image-only for every model, and Expression 2 trains straight from the photo.
 - **You want the same identity on cloud GPU, CPU, or Apple Neural Engine** —
   Expression 2 serves on all three tiers (see [serving](#serving-tiers)).
 

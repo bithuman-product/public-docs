@@ -22,29 +22,32 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 
 ### 2. Generate from your own portrait
 
-Upload a mix of image, video, voice clip, and system prompt at [bithuman.ai](https://www.bithuman.ai/explore) — or generate programmatically over the API (covered below).
+Upload a mix of image, voice clip, and system prompt at [bithuman.ai](https://www.bithuman.ai/explore) — or generate programmatically over the API (covered below).
+
+Agent creation is **image-only**: provide a portrait image (or let the prompt
+generate one) and bitHuman generates a **10-second idle/driver video
+internally**, authored to loop seamlessly (its first and last frames match) —
+so movement comes built in, for every model.
 
 ## Media uploads
 
 | Input | Use for | Limits |
 |---|---|---|
 | **Image** | Facial likeness | < 10 MB, one person, front-facing, calm expression, well-lit |
-| **Video** | Likeness + movement | < 30 s, one person, centered, stable, minimal motion |
 | **Voice** | Voice cloning | < 1 min, clean (no music/noise), MP3 / WAV / M4A, natural speech |
 
 ### Priority rules
 
-1. **Video > Image** — video always overwrites image for likeness.
-2. **Image ⇒ auto-persona** — an image auto-generates a persona, so a manual prompt becomes optional.
-3. **Voice** — when uploaded, replaces the auto-generated voice.
-4. **Prompt** — required only when no image/video is provided.
+1. **Image ⇒ auto-persona** — an image auto-generates a persona, so a manual prompt becomes optional.
+2. **Voice** — when uploaded, replaces the auto-generated voice.
+3. **Prompt** — required only when no image is provided.
 
 | Combination | Result |
 |---|---|
 | Prompt only | Likeness + voice + movement from text — good for fictional characters |
 | Image only | Instant avatar; persona + voice auto-generated |
 | Image + Voice | Realistic recreation — image for face, voice for speech |
-| Video + Voice + Prompt | Full control — video face, cloned voice, prompt personality |
+| Image + Voice + Prompt | Full control — image face, cloned voice, prompt personality |
 
 > **Tip** Start simple: upload one good photo for an instant avatar, or write a prompt for a creative character. Add voice or refine later.
 
@@ -99,9 +102,12 @@ Best results: front-facing, high-contrast, well-lit, face filling the frame. Sid
 The same upload + packaging flow is available over HTTP — generate agents from your own service. Call [`POST /v1/agent/generate`](/api/reference) with:
 
 - **`prompt`** — system instructions for the agent's personality.
-- **`image`** — front-facing portrait URL.
-- **`video`** — optional clip for appearance and mannerisms.
+- **`image`** — front-facing portrait URL (the 10-second idle/driver video is generated from it internally).
 - **`audio`** — voice sample URL (3–10 s of clean speech) for voice cloning.
+
+Video is **not** a creation input — a request carrying `video` is rejected
+with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations), nothing
+charged.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \

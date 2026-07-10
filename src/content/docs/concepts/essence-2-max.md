@@ -1,6 +1,6 @@
 ---
 title: "Essence 2 Max"
-description: "Official guide to essence-2-max (formerly essence-2-quality) — bitHuman's premium avatar model: the Essence 2 gold teacher served directly on L40S-class GPUs, instant identity prep from a source video, latency expectations, and pricing."
+description: "Official guide to essence-2-max (formerly essence-2-quality) — bitHuman's premium avatar model: the Essence 2 gold teacher served directly on L40S-class GPUs, instant identity prep from the internally generated identity video, latency expectations, and pricing."
 section: concepts
 group: "Models"
 order: 4
@@ -27,7 +27,7 @@ second-generation Essence family — bitHuman's **maximum-fidelity** avatar
 renderer. It is the Essence 2 **gold teacher served directly**: the full
 diffusion-transformer rendering stack that the standard
 [Essence 2](/concepts/essence-2) is distilled from, animating your identity's
-**real source footage** on **L40S-class cloud GPUs** and producing
+footage on **L40S-class cloud GPUs** and producing
 hero-quality, close-up output at ~25 frames per second.
 
 Two properties define it:
@@ -37,39 +37,45 @@ Two properties define it:
   or in-browser serving, use [Essence 2](/concepts/essence-2) — the standard
   model serves everywhere.)
 - **No per-identity training.** The rendering model is shared; your identity
-  needs only a one-time, lightweight *prep* that distills your source video
-  into a compact identity bundle (a few megabytes). Prep takes **seconds**, so
-  creation completes at standard agent-generation speed — there is no long
-  training step.
+  needs only a one-time, lightweight *prep* that distills the agent's
+  **identity video** — generated internally at creation from your portrait
+  image, 10 seconds, authored to loop seamlessly — into a compact identity
+  bundle (a few megabytes). Prep takes **seconds**, so there is no long
+  training step for Max itself.
 
 ## When to choose it
 
 - **Image quality is the whole point** — close-up, hero, or brand-critical
   content where you want the best-looking output bitHuman produces.
-- **You have real footage of the identity.** Max renders over your actual
-  source video, so the avatar keeps the person's true look and framing.
+- **True-to-portrait fidelity.** Max renders over the identity video
+  generated from your portrait image, so the avatar keeps the person's true
+  look and framing.
 - **8 credits/min cloud is acceptable** — it is the most expensive serving
   tier, at twice the rate of `essence-2` or Expression 2.
 
 If you need scale, CPU serving, or on-device privacy, choose
-[Essence 2](/concepts/essence-2). If you only have a photo and
-want fully generated motion, choose [Expression 2](/concepts/expression-2).
+[Essence 2](/concepts/essence-2). If you want fully generated
+motion for a stylized character, choose [Expression 2](/concepts/expression-2).
 For the family-level decision, start at
 [Essence 2 & Expression 2](/concepts/models-v2).
 
 ## How creation works
 
-Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
-and `model: "essence-2-max"`. Creation is asynchronous and costs
-**500 credits** (one-time, per agent).
+Essence 2 Max comes with the **combined Essence 2 creation**: create the
+agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent) and
+`model: "essence-2"` — the one asynchronous, **500-credit** creation (one-time,
+per agent) trains [the standard Essence 2](/concepts/essence-2) **and** makes
+Max available from the same internally generated identity video at no extra
+charge. You pick the model at launch (`?model=essence-2-max`). You can also
+[add `essence-2` to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
+that has a stored identity video.
 
-> **Tip — one creation, both Essence 2 models.** `model: "essence-2"` (the
-> [combined creation](/api/agents#essence-2--the-combined-creation)) charges
-> the same 500 credits and gives you Max **and**
-> [the standard Essence 2](/concepts/essence-2) from one identity video — you
-> pick the model at launch. You can also
-> [add `essence-2` to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
-> that has a source video.
+> **Creation is image-only.** Supply a portrait `image` (or let the prompt
+> generate one) — bitHuman generates the **10-second identity video
+> internally**, authored to loop seamlessly (its first and last frames
+> match). Video input is not accepted; a request carrying `video` is
+> rejected with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations),
+> nothing billed.
 
 Like every Essence 2 creation, the input must be a **photorealistic human
 subject** — a cartoon / animal / stylized input is rejected up front with
@@ -85,8 +91,8 @@ resp = requests.post(
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
         "prompt": "You are a concierge for a luxury hotel.",
-        "video": "https://example.com/identity.mp4",
-        "model": "essence-2-max",
+        "image": "https://example.com/portrait.jpg",
+        "model": "essence-2",   # the combined creation — Max included
     },
 )
 print(resp.json())
@@ -94,24 +100,24 @@ print(resp.json())
 #  "agent_id": "A56ZFX6217", "status": "processing"}
 ```
 
-**Inputs.** Supply a **`video`** — a short, well-lit clip of the identity
-facing the camera. Essence 2 Max derives the avatar from real footage, so
-the source video is the identity: its look, framing, and natural motion carry
-into every session. A voice is prepared as part of creation (supply `audio` to
-clone one, or one is generated).
+**Inputs.** Supply an **`image`** — a well-lit portrait of the identity
+facing the camera. bitHuman generates the identity video from it internally
+(you'll see `current_step: "video"` at ~45% progress); Essence 2 Max derives
+the avatar from that footage, so its look and framing carry into every
+session. A voice is prepared as part of creation (supply `audio` to clone
+one, or one is generated).
 
 **What happens.** Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
-through the standard steps (`payment` → `persona` → `voice_image`), then the
-identity-prep step (reported as `current_step: "lip_sync"`, ~70% progress)
-distills the compact identity bundle from your footage — this takes on the
-order of **10–30 seconds** on a warm builder. When status reaches `ready`,
-the agent is servable.
+through the standard steps (`payment` → `persona` → `voice_image` →
+`video`), then the model step (reported as `current_step: "lip_sync"`) —
+Max's own identity prep distills the compact identity bundle from the
+generated identity video in **10–30 seconds** on a warm builder. When status reaches `ready`, the agent is servable.
 
-**How long.** Because there is no per-identity training, an
-`essence-2-max` creation typically completes in **a few minutes**
-end-to-end — the persona/voice/image asset generation dominates, not the
-model step.
+**How long.** Max's identity prep itself takes seconds; the combined
+creation's overall wall-clock is set by the standard Essence 2
+distillation — typically **25–40 minutes** (occasionally longer). Keep
+polling `status` rather than applying a short client timeout.
 
 ## Serving
 
@@ -137,21 +143,23 @@ fresh agent's first session. The platform also pre-warms overflow capacity
 while your session connects, so spilling past the first line stays smooth. See
 [session behavior & troubleshooting](/guides/session-troubleshooting).
 
-The identity prepares on demand, but **only from the agent's source video**
-— so Essence 2 Max is gated on that footage, just as the trained families
+The identity prepares on demand, but **only from the agent's stored identity
+video** (generated internally at creation) — so Essence 2 Max is gated on
+that footage, just as the trained families
 ([Expression 2](/concepts/expression-2), the standard
 [Essence 2](/concepts/essence-2)) are gated on their
-per-identity models. An agent **with** a source video lists the family in its
+per-identity models. An agent **with** a stored identity video lists the
+family in its
 `supported_models` ([status / get / list](/api/agents#poll-status) and the
 embed-token response) — reported as `essence-2-quality`, the family's
 pre-rename name, until the platform-side flip — and can be requested as this
-model immediately; an image-only agent cannot render Max and gets a
-[`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) rejection whose message
-names the real blocker: `agent <code>'s essence-2-quality model requires a
-source video, which this agent doesn't have`. To unlock it, the agent needs
-identity footage: supply `video` at creation, or create with the combined
+model immediately; an agent without one cannot render Max and gets a
+[`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) rejection naming the
+missing identity video. To unlock it, create the agent with the combined
 `essence-2` from an image — its pipeline generates the identity video that
-Max then derives from.
+Max then derives from — or
+[add `essence-2`](/api/agents#add-a-model-to-an-existing-agent) to an agent
+that already stores one.
 
 ## Pricing
 
@@ -168,10 +176,12 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 ## Limits and expectations
 
 - **Renders at ~25 fps** on cloud GPUs; video streams over WebRTC.
-- **Source video required.** Creation needs identity footage — an image alone
-  is not enough for this model. Provide `video` in the generate request.
-- **Look is fixed at creation.** The avatar inherits the source video's
-  framing and appearance; to change either, create a new agent.
+- **Image-only creation, via the combined `essence-2`.** Provide a portrait
+  `image`; the identity video Max derives from is generated internally
+  (10 seconds, authored to loop seamlessly). User video input is not
+  accepted.
+- **Look is fixed at creation.** The avatar inherits the generated identity
+  video's framing and appearance; to change either, create a new agent.
 - **Capacity model**: a session takes a dedicated GPU renderer, so Max
   capacity is deliberately narrower than the standard Essence 2's — at peak,
   sessions spill to elastic cloud GPUs that scale from zero, which can add
