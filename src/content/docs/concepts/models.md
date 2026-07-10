@@ -31,7 +31,8 @@ between when packaging an avatar — and the focus of the rest of this page — 
     ane tiers.
 
 > **New** The two second-generation models — `essence-2`
-> and `expression-2` — are **launching July 10, 2026** (upcoming). See [Essence 2 & Expression 2](/concepts/models-v2) for the
+> and `expression-2` — are **launching July 10, 2026** (rollout in progress;
+> creation access opens progressively). See [Essence 2 & Expression 2](/concepts/models-v2) for the
 > family overview, and the official per-model guides:
 > [Expression 2](/concepts/expression-2) ·
 > [Essence 2](/concepts/models-v2) ·

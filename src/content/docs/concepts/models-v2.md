@@ -1,37 +1,41 @@
 ---
 title: "Essence 2 & Expression 2"
-description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 10, 2026."
+description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 10, 2026 — rollout in progress."
 section: concepts
 group: "Models"
 order: 2
 label: "Essence 2 & Expression 2"
 ---
 
-## Upcoming — launches July 10, 2026
+## Launching now — the July 10, 2026 rollout
 
 bitHuman's second-generation avatar models, **`essence-2`** and
-**`expression-2`**, launch on **July 10, 2026**. Until then, use the
-first-generation models ([`essence-1` and `expression-1`](/concepts/models)),
-which are available today and remain fully supported.
+**`expression-2`**, launch on **July 10, 2026**, and the rollout is in
+progress. This page documents the full API surface; **creation access opens
+progressively during the rollout** — a v2 creation ahead of your account's
+access returns a clean `400` and bills nothing, and the dashboard's v2
+creation entries ship separately from the API. The first-generation models
+([`essence-1` and `expression-1`](/concepts/models)) are available today,
+remain fully supported, and nothing changes for existing agents or
+integrations.
 
-When they launch, the two second-generation models will be available on every
-surface — the REST API, the embed widget, the dashboard, and the SDKs:
+The two second-generation models roll out across every surface — the REST
+API, the embed widget, the dashboard, and the SDKs:
 
 - **[`expression-2`](/concepts/expression-2)** — the second-generation
-  expression engine. Audio-driven, real-time avatar video generated from a
-  **single photo**: at agent creation it trains a small per-identity model
-  (roughly 45 minutes on a training GPU), then synthesizes fully generated
-  motion live — not patched onto a pre-rendered base. Runs on GPU, CPU, and
-  Apple Neural Engine.
-- **`essence-2`** — the highest-fidelity Essence model for photorealistic
-  people. It animates your identity's real source footage, and runs everywhere
-  from **fully on-device** (iPhone, iPad, Mac, CPU — audio and video never
-  leave your hardware) up to **cloud GPUs** for close-up, hero-quality output.
-  bitHuman automatically serves the right way for your hardware and quality
-  needs — you just pick `essence-2`.
-
-The first-generation models ([`essence-1` and `expression-1`](/concepts/models))
-remain fully supported; nothing changes for existing agents or integrations.
+  expression engine, for **stylized and universal characters** (cartoons,
+  animals, creatures, robots — and people). Audio-driven, real-time avatar
+  video generated from a **single photo**: at agent creation it trains a small
+  per-identity model (roughly 45 minutes on a training GPU), then synthesizes
+  the **entire 416×720 scene** live at 20 fps — fully generated motion, not
+  patched onto a pre-rendered base. Runs on GPU, CPU, and Apple Neural Engine.
+- **`essence-2`** — the highest-fidelity Essence model for **photorealistic
+  people**. It animates your identity's real source footage (full-HD 1080p
+  video by default — supplied by you or generated from your image) at ~25 fps,
+  and runs everywhere from **fully on-device** (iPhone, iPad, Mac, CPU — audio
+  and video never leave your hardware) up to **cloud GPUs** for close-up,
+  hero-quality output. bitHuman automatically serves the right way for your
+  hardware and quality needs — you just pick `essence-2`.
 
 ## At a glance
 
@@ -42,6 +46,7 @@ remain fully supported; nothing changes for existing agents or integrations.
 | **What it is** | The Essence 2 model — efficient distilled renderer, serves everywhere | Highest-fidelity GPU renderer (reference tier) | Generative motion from one photo |
 | **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
 | **Identity source** | Video, or generated from your image | Video (real footage) | Single photo |
+| **Output** | Real footage animated at its native resolution (1080p driver default), ~25 fps | Real footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) | gpu | gpu · ane · cpu (auto-routed chain) |
 | **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
 | **Creation** | Train-on-create (typically 25–40 min) | Train-on-create (instant identity prep) | Train-on-create (~45 min per-identity model) |
@@ -250,7 +255,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ [SDK](/sdk/overview) | — | ✅ (AVX-512-class CPUs) |
 | On-device macOS / iOS (Apple silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
-| Browser-local (WASM/WebGPU, no server render) | Upcoming — the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today; the Essence 2 browser tier is in rollout | — | Planned (WebGPU) |
+| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple-silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Planned (WebGPU-only) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
 use the downloaded model artifact

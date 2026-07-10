@@ -14,6 +14,13 @@ audio-driven, real-time talking avatar whose motion is **fully generated**
 live from the audio — expressions, mouth, and head movement are synthesized
 each session, not replayed from a pre-rendered base.
 
+It is also **fully generative across the whole scene**: the engine animates
+the **entire 416×720 portrait frame**, not a detected face region. That is
+what makes it the model for **any character morphology** — cartoons, animals,
+creatures, robots, objects with a "face", and people alike. There is no face
+detector, cropping, or landmark step anywhere in the pipeline, so a winged
+creature or a talking appliance animates just as naturally as a headshot.
+
 What makes it different from every other bitHuman model is **per-identity
 training**. At creation time the platform distills a large foundation model
 into a **small model of your specific identity**, built from a single photo.
@@ -22,17 +29,20 @@ model serves your sessions. That per-identity step is why Expression 2's
 motion tracks the audio so closely — and why creation takes longer than the
 other models (see [creation](#how-creation-works) below).
 
-At serve time the engine renders the face at **20 frames per second** and
-streams it over WebRTC like every other bitHuman session — the platform
-contract (push audio in, drain lip-synced video out) is unchanged.
+At serve time the engine generates the full **416×720** scene at **20 frames
+per second** and streams it over WebRTC like every other bitHuman session —
+the platform contract (push audio in, drain lip-synced video out) is
+unchanged.
 
 ## When to choose it
 
 - **You want the most lifelike generated motion in the lineup.** Expression 2
   synthesizes expression and movement from the audio itself rather than
   patching a base video.
-- **You only have a photo.** One frontal face image is enough — no source
-  video required.
+- **Your character isn't a photorealistic human.** The whole scene animates —
+  stylized, cartoon, animal, creature, robot, and object characters are
+  exactly what this engine is for (and where `model: "auto"` routes them).
+- **You only have a photo.** One image is enough — no source video required.
 - **You want the same identity on cloud GPU, CPU, or Apple Neural Engine** —
   Expression 2 serves on all three tiers (see [serving](#serving-tiers)).
 
@@ -132,9 +142,17 @@ back to the agent's default routing. For production, omit `?model=` and let
 the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
+**Self-hosted.** The CPU build also runs on your own servers via the
+[SDK](/sdk/overview) at the self-hosted rate — it needs modern
+(AVX-512-class) server CPUs; see the
+[device matrix](/concepts/models-v2#where-each-model-runs).
+
 **On-device.** The same distilled per-identity model also runs fully
 on-device on Apple silicon via the [Swift SDK](/sdk/swift) rail (preview
-maturity) — no server in the path.
+maturity) — no server in the path. Download the Mac-runnable `.avatar` build
+with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+or `bithuman pull <code>`. A browser-local (WebGPU) tier is planned; there is
+no WASM/CPU browser path for this model.
 
 ## Idle and speaking behavior
 
@@ -173,8 +191,8 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 
 ## Limits and expectations
 
-- **Output**: the face renders at 20 fps; video streams over WebRTC with
-  adaptive bitrate.
+- **Output**: the full 416×720 portrait scene, generated at 20 fps; video
+  streams over WebRTC with adaptive bitrate.
 - **Creation time**: plan for ~45 minutes (see above) — poll status rather
   than assuming the 2–5 minute wall-clock of `essence-1`.
 - **Identity input**: a clear, frontal, well-lit face photo gives the best
