@@ -1,9 +1,9 @@
 ---
 title: "Expression 2"
-description: "Official guide to expression-2 — bitHuman's second-generation expression engine: per-identity training from one photo, gpu/cpu/ane serving tiers, real-footage idle, latency expectations, and pricing."
+description: "Official guide to expression-2 — bitHuman's second-generation expression engine: per-identity training from one photo, GPU/CPU/Apple Neural Engine serving tiers, real-footage idle, latency expectations, and pricing."
 section: concepts
 group: "Models"
-order: 3
+order: 4
 label: "Expression 2"
 ---
 
@@ -76,9 +76,14 @@ the agent's stored image).
 ```python
 import requests
 
+import os
+
 resp = requests.post(
     "https://api.bithuman.ai/v1/agent/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={
+        "Content-Type": "application/json",
+        "api-secret": os.environ["BITHUMAN_API_SECRET"],
+    },
     json={
         "prompt": "You are a friendly product specialist.",
         "image": "https://example.com/face.jpg",
@@ -94,11 +99,12 @@ print(resp.json())
 identity source, and Expression 2 trains straight from the photo. If you omit
 it, the platform generates a portrait from your prompt first. bitHuman also
 generates the agent's **10-second idle clip internally** as part of creation,
-authored to loop seamlessly. Video input is not accepted — a request carrying
-`video` is rejected with
-[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations), nothing
-billed. A voice is always prepared as part of creation — supply `audio` to
-clone one, or one is generated for you.
+authored to loop seamlessly. Video input is not part of the creation contract
+and is being removed platform-wide: do not send `video` — as the rollout
+completes, a request carrying it is rejected with
+[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
+anything is billed. A voice is always prepared as part of creation — supply
+`audio` to clone one, or one is generated for you.
 
 **What happens.** Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
@@ -108,8 +114,8 @@ enters the **model-training step** (reported as `current_step: "lip_sync"`,
 training GPU. When the status reaches `ready`, the agent is servable on every
 tier.
 
-**How long.** The per-identity training step runs on an H100-class GPU and is
-the dominant cost of creation — expect the whole run to take **roughly
+**How long.** The per-identity training step runs on a dedicated training GPU
+and is the dominant cost of creation — expect the whole run to take **about
 45 minutes** (typically 30–60; the platform allows up to 90 minutes before a
 run is considered stuck). This is deliberate: the training recipe is
 quality-locked, and shorter recipes were removed after they measurably
@@ -160,7 +166,7 @@ the platform choose. See
 [device matrix](/concepts/models-v2#where-each-model-runs).
 
 **On-device.** The same distilled per-identity model also runs fully
-on-device on Apple silicon via the [Swift SDK](/sdk/swift) rail (preview
+on-device on Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview
 maturity) — no server in the path. Download the Mac-runnable `.avatar` build
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <code>`. A browser-local (WebGPU) tier is planned; there is
@@ -203,8 +209,8 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 
 - **Output**: the full 416×720 portrait scene, generated at 20 fps; video
   streams over WebRTC with adaptive bitrate.
-- **Creation time**: plan for ~45 minutes (see above) — poll status rather
-  than assuming the 2–5 minute wall-clock of `essence-1`.
+- **Creation time**: plan for about 45 minutes (see above) — poll status
+  rather than assuming the few-minute wall-clock of `essence-1`.
 - **Identity input**: a clear, frontal, well-lit face photo gives the best
   result. The identity is fixed at creation — to change the face, create a new
   agent.
@@ -221,6 +227,7 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 ## Next steps
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
+- [Second-generation gallery](https://bithuman.ai/explore?gallery=v2) — talk to a live launch agent.
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.

@@ -52,7 +52,7 @@ async def entrypoint(ctx: JobContext):
     # ...attach the avatar to your AgentSession and start it.
 ```
 
-To select Expression, pass `model="expression"` to the session. To point at your **own** Essence server instead of bitHuman's cloud, pass `api_url=` — see [self-hosted deployment](/guides/deploy-self-hosted).
+To select the first-generation Expression model, pass `model="expression"` to the session (`model` shorthands select within the first generation; a second-generation agent serves its own model automatically). To point at your **own** Essence server instead of bitHuman's cloud, pass `api_url=` — see [self-hosted deployment](/guides/deploy-self-hosted).
 
 ## What you get
 
@@ -62,7 +62,7 @@ To select Expression, pass `model="expression"` to the session. To point at your
 
 ## Billing
 
-Each session bills at the [cloud or self-hosted rate](/guides/pricing) depending on whether the avatar GPU is yours or bitHuman's — 2 cr/min cloud Essence, 4 cr/min cloud Expression.
+Each session bills at the [cloud or self-hosted rate](/guides/pricing) depending on whether the avatar runs on your hardware or bitHuman's — for the first-generation models, 2 credits/min cloud Essence 1 and 4 credits/min cloud Expression 1. The full per-model schedule is on [Pricing & credits](/guides/pricing#serving--credits-per-active-minute).
 
 ## Runnable examples
 

@@ -25,7 +25,7 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 Upload a mix of image, voice clip, and system prompt at [bithuman.ai](https://www.bithuman.ai/explore) — or generate programmatically over the API (covered below).
 
 Agent creation is **image-only**: provide a portrait image (or let the prompt
-generate one) and bitHuman generates a **10-second idle/driver video
+generate one) and bitHuman generates a **10-second identity video
 internally**, authored to loop seamlessly (its first and last frames match) —
 so movement comes built in, for every model.
 
@@ -102,12 +102,14 @@ Best results: front-facing, high-contrast, well-lit, face filling the frame. Sid
 The same upload + packaging flow is available over HTTP — generate agents from your own service. Call [`POST /v1/agent/generate`](/api/reference) with:
 
 - **`prompt`** — system instructions for the agent's personality.
-- **`image`** — front-facing portrait URL (the 10-second idle/driver video is generated from it internally).
+- **`image`** — front-facing portrait URL (the 10-second identity video is generated from it internally).
 - **`audio`** — voice sample URL (3–10 s of clean speech) for voice cloning.
 
-Video is **not** a creation input — a request carrying `video` is rejected
-with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations), nothing
-charged.
+Video is not part of the creation contract for any model and is being removed
+platform-wide: do not send `video` — as the rollout completes, a request
+carrying it is rejected with
+[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
+anything is billed.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -129,17 +131,11 @@ The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`G
 
 ## What it costs
 
-| Action | Cost |
-|---|---|
-| Generate an agent — v1 models (`essence-1`, `expression-1`) | 250 credits (one-time) |
-| Generate an agent — Essence 2 family (`essence-2`, `essence-2-max`) | 500 credits (one-time) |
-| Generate an agent — `expression-2` | 2000 credits (one-time) |
-| Generate an agent — `auto` (the platform routes to `essence-2` or `expression-2`) | 500 or 2000 credits — the routed model's rate |
-| Generate a dynamics/gesture set | 250 credits (one-time) per agent |
-| Replay Essence `.imx` | 1 credit / active minute (self-hosted) |
-| Expression face from image | 2 credits / active minute (self-hosted) |
-
-Audio-only sessions are free. Full breakdown in [Pricing](/guides/pricing).
+Creation is a one-time charge per agent — 250 credits for the
+first-generation models, 500 for `essence-2` (Essence 2 Max included),
+2000 for `expression-2`; `auto` bills the routed model's rate. Serving then
+bills per active minute. Every number lives on one page:
+[Pricing & credits](/guides/pricing).
 
 ## Next steps
 

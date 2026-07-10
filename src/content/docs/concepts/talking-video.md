@@ -35,7 +35,7 @@ Either way, the avatar identity comes from an **agent you own** (`agent_code`).
 
 ## Asynchronous: submit, then poll
 
-Rendering a full clip takes seconds, so the API is asynchronous — the same
+Rendering a full clip can take a while, so the API is asynchronous — the same
 submit-then-poll shape as agent and dynamics generation:
 
 1. `POST /v1/video/generate` returns immediately with a `job_id` and
@@ -61,8 +61,8 @@ curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 \
 # → { "success": true, "status": "completed",
 #     "video_url": "https://.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
 #     "duration_seconds": 6.5, "credits_charged": 8, "model": "essence-2-quality" }
-#    (job responses echo the internal family name — an essence-2-max request
-#     reads back as essence-2-quality until the platform-side rename flip)
+#    (during the rename rollout, job responses may echo the pre-rename family
+#     name — see /concepts/models-v2#naming--migration)
 ```
 
 Audio input is the same call with an audio block:
@@ -82,25 +82,19 @@ Audio input is the same call with an audio block:
 | `essence-1` | Classic photoreal renders — every essence-1 agent, available today. |
 | `expression-1` | Classic stylized renders — available today. |
 | `expression-2` | Fast, expressive renders. |
-| `essence-2-max` | Premium fidelity output — the gold teacher rendered directly (the pre-rename `essence-2-quality` is still accepted as a deprecated alias). |
+| `essence-2-max` | Premium fidelity output — the highest-fidelity renderer (the pre-rename `essence-2-quality` is still accepted as a deprecated alias — see [Naming & migration](/concepts/models-v2#naming--migration)). |
 | `essence-2` | The standard model — cost-effective renders. |
 
 Essence 2 and Expression 2 are [launching July 10, 2026 — rollout in progress](/concepts/models-v2); `essence-1` and `expression-1` are available today.
 
 ## Cost
 
-Talking videos bill **per minute of output, rounded up**, at a per-model rate:
-
-| Model | Rate |
-|---|---|
-| `essence-1` | 8 credits/min (rounded up) |
-| `expression-1` | 4 credits/min (rounded up) |
-| `expression-2` | 4 credits/min (rounded up) |
-| `essence-2-max` | 8 credits/min (rounded up) |
-| `essence-2` | 4 credits/min (rounded up) |
-
-A 6.5-second `essence-2-max` clip costs `ceil(6.5 / 60) × 8 = 8` credits; a
-70-second one costs `ceil(70 / 60) × 8 = 16`. If a render **fails**, the charge is
+Talking videos bill **per minute of output, rounded up**, at a per-model
+rate — the schedule lives on
+[Pricing & credits](/guides/pricing#talking-video--per-minute-of-output).
+For example, a 6.5-second `essence-2-max` clip costs
+`ceil(6.5 / 60) × 8 = 8` credits; a 70-second one costs
+`ceil(70 / 60) × 8 = 16`. If a render **fails**, the charge is
 automatically refunded.
 
 ## Limits

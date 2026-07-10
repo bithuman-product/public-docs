@@ -8,7 +8,7 @@ order: 11
 
 ## The Expression GPU container
 
-The self-hosted GPU path runs [Expression](/concepts/models) on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams 25 FPS lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. Bills at the self-hosted rate (2 cr/min Expression).
+The self-hosted GPU path runs the first-generation [Expression 1](/concepts/models) model on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams 25 fps lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. Bills at the self-hosted rate — 2 credits/min ([pricing](/guides/pricing)).
 
 > **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli/overview) directly, or point the LiveKit plugin's `api_url` at your own Essence server. On Apple Silicon M3+, Expression runs natively with no Docker/NVIDIA — use the [Swift SDK](/sdk/swift).
 
@@ -54,7 +54,11 @@ Set `BITHUMAN_UNMETERED=1` to skip `api.bithuman.ai` calls entirely — for loca
 
 ## Billing
 
-Self-hosted GPU sessions bill at the **self-hosted rate** (2 cr/min Expression). See [Pricing](/guides/pricing) for the full cloud-vs-self-hosted breakdown.
+Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for Expression 1. See [Pricing](/guides/pricing) for the full cloud-vs-self-hosted breakdown. Self-hosted serving authenticates online today (a once-per-minute billing heartbeat).
+
+## Offline licensing — coming soon
+
+Running the second-generation models **fully disconnected** — no heartbeat, no online auth — is coming soon for Business and Enterprise customers, delivered as per-device, per-model prepaid credit bundles. Packages and rates: [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
 
 ## Troubleshooting: black or laggy video
 

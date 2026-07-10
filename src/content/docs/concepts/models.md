@@ -1,9 +1,9 @@
 ---
 title: "Essence vs Expression"
-description: "The two bitHuman avatar models, Essence and Expression — what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick for real-time 25 FPS lip-sync."
+description: "The two bitHuman avatar model families, Essence and Expression — the first-generation models, what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick."
 section: concepts
 group: "Models"
-order: 1
+order: 5
 ---
 
 ## The engines
@@ -16,17 +16,17 @@ between when packaging an avatar — and the focus of the rest of this page — 
 **Rendering engines** — two product families, each with tiers:
 
 - **Essence** — the avatar family (a packaged `.imx` identity with real-time lip-sync):
-  - **Essence 1** — the default. Pre-built identity, runs on virtually any CPU.
-  - **[Essence 2](/concepts/essence-2)** — the standard photoreal model:
-    a distilled renderer that runs everywhere (GPU, CPU, the Apple Neural
-    Engine — including fully on-device — and in-browser WebGPU/WASM). The
-    default.
+  - **Essence 1** — first generation. Pre-built identity, runs on virtually
+    any CPU. (It remains the v1 API's historical default when `model` is
+    omitted; for new work the site-wide default is Essence 2.)
+  - **[Essence 2](/concepts/essence-2)** — the standard photoreal model and
+    **the default**: a distilled renderer that runs everywhere (GPU, CPU, the
+    Apple Neural Engine — including fully on-device — and in-browser
+    WebGPU/WASM).
   - **[Essence 2 Max](/concepts/essence-2-max)** — the premium model: the
-    gold teacher served directly on L40S-class cloud GPUs for maximum
-    fidelity (was `essence-2-quality`, still accepted as a deprecated
-    alias).
+    highest-fidelity renderer served on dedicated cloud GPUs.
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
-  - **Expression 1** — dynamic facial animation from any portrait image (Apple Silicon
+  - **Expression 1** — first generation. Dynamic facial animation from any portrait image (Apple Silicon
     or NVIDIA GPU).
   - **[Expression 2](/concepts/expression-2)** — the second-generation
     generative engine: audio-driven, fully-generated motion from a single
@@ -42,8 +42,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
 > [Essence 2 Max](/concepts/essence-2-max).
 
 Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
-shape; the tier is selected per session and is transparent to your integration. (A
-separate self-hosted **Flash** GPU tier is metered per the [pricing](/guides/pricing) table.)
+shape; the tier is selected per session and is transparent to your integration.
 
 **Conversation + voice stack** — drives a managed agent and feeds the renderers:
 
@@ -52,23 +51,24 @@ separate self-hosted **Flash** GPU tier is metered per the [pricing](/guides/pri
 - **Voice** — the speech engine (the voice/TTS stack behind audio-only chat and the
   voices you select for an agent).
 
-The rest of this page focuses on Essence vs Expression — the two you choose between
-when packaging an avatar.
+The rest of this page focuses on the **first-generation** models, Essence 1
+vs Expression 1 — the numbers and hardware notes below are theirs. For the
+second generation, see [Essence 2 & Expression 2](/concepts/models-v2).
 
 ## At a glance
 
-bitHuman's two avatar models share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence is the default** — it runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression** is the heavier high-fidelity option for specific on-device Apple Silicon or GPU server use cases.
+bitHuman's two first-generation avatar models share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence 1** runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression 1** is the heavier high-fidelity option for specific on-device Apple Silicon or GPU server use cases.
 
-| | **Essence** (default) | **Expression** |
+| | **Essence 1** | **Expression 1** |
 |---|---|---|
 | **What it does** | Pre-built avatar identity packaged in an `.imx` file. Real-time lip-sync. | Dynamic facial animation from any portrait image at runtime. |
-| **Avatar source** | `.imx` you build once from a photo (the driver video is generated internally). | Any face image — provide at runtime, no build step. |
+| **Avatar source** | `.imx` you build once from a photo (the identity video is generated internally). | Any face image — provide at runtime, no build step. |
 | **Custom gestures** | Yes (wave, nod, laugh, etc.) | No |
 | **Idle animation** | Pre-recorded natural movement | AI-generated micro-movements |
 | **Compute needed** | Any modern CPU | Apple Silicon M3+ (demo apps) or NVIDIA GPU |
 | **Memory footprint** | Low (~200–500 MB) | Higher (~2–6 GB) |
 | **Best for** | Kiosks, mobile, edge, 24/7 deployments, high concurrency | Close-up native consumer apps, custom faces per session |
-| **Pricing** | 1 credit/min self-hosted · 2 credits/min cloud | 2 credits/min self-hosted · 4 credits/min cloud |
+| **Pricing (first-generation rates)** | 1 credit/min self-hosted · 2 credits/min cloud | 2 credits/min self-hosted · 4 credits/min cloud |
 
 Both ship to every surface — SDKs, REST API, LiveKit plugin, CLI, on-device, embed widget. The same `.imx` file works everywhere.
 
@@ -172,7 +172,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ### Highest visual quality for offline video generation
 
-**Expression** with `quality="high"`. Best for offline batch jobs rather than real-time streaming.
+**[Talking video generation](/concepts/talking-video)** — render a finished mp4 with any model, including [Essence 2 Max](/concepts/essence-2-max) for premium fidelity. Best for offline batch jobs rather than real-time streaming.
 
 ## Next steps
 
