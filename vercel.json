@@ -16,10 +16,8 @@
     { "source": "/sdks/kotlin", "destination": "/sdk", "permanent": true },
     { "source": "/sdks/flutter", "destination": "/sdk", "permanent": true },
     { "source": "/integrations/flutter", "destination": "/sdk", "permanent": true },
-    { "source": "/sdk/android", "destination": "/sdk", "permanent": true },
 
     { "source": "/examples/overview", "destination": "/examples", "permanent": true },
-    { "source": "/examples/kotlin-android-hello", "destination": "/examples", "permanent": true },
 
     { "source": "/cli", "destination": "/sdk/cli/overview", "permanent": true },
     { "source": "/cli/overview", "destination": "/sdk/cli/overview", "permanent": true },
@@ -44,13 +42,13 @@
     { "source": "/api-reference/agent-context", "destination": "/api/agents", "permanent": true },
     { "source": "/api-reference/file-upload", "destination": "/api/files", "permanent": true },
     { "source": "/api-reference/dynamics", "destination": "/api/dynamics", "permanent": true },
-    { "source": "/api-reference/voice", "destination": "/api/reference", "permanent": true },
+    { "source": "/api-reference/voice", "destination": "/api/text-to-speech", "permanent": true },
 
     { "source": "/concepts/essence-2-quality", "destination": "/concepts/essence-2-max", "permanent": true },
     { "source": "/concepts/essence-2-light", "destination": "/concepts/essence-2", "permanent": true },
 
     { "source": "/roadmap", "destination": "/changelog", "permanent": true },
     { "source": "/use-cases", "destination": "/showcase", "permanent": false },
-    { "source": "/api/voice", "destination": "/api", "permanent": false }
+    { "source": "/api/voice", "destination": "/api/text-to-speech", "permanent": true }
   ]
 }
