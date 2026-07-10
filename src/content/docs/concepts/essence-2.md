@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: a distilled renderer that runs everywhere (GPU, Apple Neural Engine, CPU, WebGPU/WASM), train-on-create from video or photo, and pricing."
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: a distilled renderer that runs everywhere (GPU, Apple Neural Engine, CPU, WebGPU/WASM), train-on-create from a photo, and pricing."
 section: concepts
 group: "Models"
 order: 5
@@ -67,12 +67,12 @@ and `model: "essence-2"`. Creation is asynchronous and costs **500 credits**
 > [combined creation](/api/agents#essence-2--the-combined-creation): the one
 > 500-credit charge trains the standard Essence 2 **and** makes
 > [Essence 2 Max](/concepts/essence-2-max) available from the same
-> identity video — pick the model at launch. Like every Essence 2 creation,
+> internally generated identity video — pick the model at launch. Like every Essence 2 creation,
 > the input must be a **photorealistic human subject** (else
 > [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors), nothing billed);
 > `model: "auto"` routes automatically instead. You can also
 > [add `essence-2`](/api/agents#add-a-model-to-an-existing-agent) to an
-> existing agent that has an identity video.
+> existing agent that has a stored identity video.
 
 ```python
 import requests
@@ -82,7 +82,7 @@ resp = requests.post(
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
         "prompt": "You are a helpful retail assistant.",
-        "video": "https://example.com/identity.mp4",   # or pass "image" — see below
+        "image": "https://example.com/portrait.jpg",
         "model": "essence-2",
     },
 )
@@ -91,17 +91,21 @@ print(resp.json())
 #  "agent_id": "A56ZFX6217", "status": "processing"}
 ```
 
-**Inputs.** Essence 2 derives its identity bundle from **video**. Supply
-a short clip of the identity — or supply just an `image`, and the platform
-**generates the identity video for you** as an extra creation step before
-training (you'll see `current_step: "video"` at ~45% progress). A voice is
+**Inputs.** Creation is **image-only**: supply a portrait `image` of the
+identity (or let the prompt generate one), and the platform **generates the
+identity video for you** as a creation step before training — a 10-second
+clip authored to loop seamlessly, so idle playback never shows a seam
+(you'll see `current_step: "video"` at ~45% progress). User video input is
+not accepted: a request carrying `video` is rejected with
+[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations), nothing
+billed. A voice is
 prepared as part of creation (supply `audio` to clone one, or one is
 generated).
 
 **What happens.** Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
 through the standard steps (`payment` → `persona` → `voice_image`), generates
-the identity video if you didn't provide one (`video`), then enters the
+the identity video (`video`), then enters the
 distillation step (reported as `current_step: "lip_sync"`, ~70% progress)
 where the trainer builds the compact identity bundle on a cloud GPU. When
 status reaches `ready`, the agent is servable on every tier.
@@ -164,7 +168,8 @@ publish; sessions without a published bundle fall back to cloud serving. See
 
 ## Idle and speaking behavior
 
-Essence 2 animates the identity's **real footage**: the base video
+Essence 2 animates the identity's footage — the internally generated
+identity video: the base video
 plays continuously and the engine renders lip-sync and expression over it. As
 of **2026-07-02**, the base video loops **forward-only** on every tier — when
 the clip reaches its last frame it wraps back to the first, and it never plays
@@ -188,8 +193,8 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - **Renders at ~25 fps** across gpu, cpu, and ane runtimes.
 - **Creation takes tens of minutes** (see above) — poll status rather than
   assuming the 2–5 minute wall-clock of `essence-1`.
-- **Identity is fixed at creation.** The bundle bakes the source footage's
-  look and framing; to change the face, create a new agent.
+- **Identity is fixed at creation.** The bundle bakes the generated identity
+  video's look and framing; to change the face, create a new agent.
 - **First session on a fresh agent** can take longer to connect while the
   identity bundle is provisioned onto the serving tier; subsequent sessions
   reuse it. See [troubleshooting](/guides/session-troubleshooting).

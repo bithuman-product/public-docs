@@ -10,6 +10,29 @@ order: 1
 
 ## July 2026
 
+### Agent creation is image-only (2026-07-10)
+
+The `video` creation input is removed for **all models** (`essence-1`,
+`expression-1`, `essence-2`, `essence-2-max`, `expression-2`):
+
+- **Provide a portrait `image`** (or let the prompt generate one) — bitHuman
+  generates the **identity/driver video internally**, always **10 seconds**,
+  authored so idle loops seam perfectly (first frame == last frame). User
+  footage can't guarantee that loop contract, which is why it's no longer
+  accepted.
+- A [`POST /v1/agent/generate`](/api/agents#generate-an-agent) request
+  carrying `video` is rejected with
+  [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) **before
+  anything is billed** — never silently ignored.
+- `video_aspect_ratio` is removed with the video input; `duration` is
+  **deprecated** (accepted but ignored — the internally generated identity
+  video is always 10 seconds).
+- Existing agents are unaffected, and [`POST /v1/files/upload`](/api/files)
+  still accepts video files as assets — video just isn't a *creation* input.
+- `essence-2-max` comes with the combined `essence-2` creation: its identity
+  derives from the same internally generated identity video. See
+  [Essence 2 Max](/concepts/essence-2-max#how-creation-works).
+
 ### `essence-2-max` — the premium Essence 2 model renamed (2026-07-10)
 
 The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
@@ -126,7 +149,7 @@ The [Android SDK](/sdk/android) page and the [Kotlin hello-avatar example](/exam
 The model-release UX wave — one creation surface across all five model families, plus post-creation adds and artifact downloads:
 
 - **`model: "auto"` — let the platform pick.** [`POST /v1/agent/generate`](/api/agents#auto--let-the-platform-pick-the-model) now accepts `auto`: an LLM classifies your input (the image if provided, else the prompt) and routes it — a **photorealistic person** → `essence-2`, a **cartoon / animal / exotic creature** → `expression-2`. It's the default selection in the dashboard's create flow; API callers send it explicitly (an omitted `model` keeps the historical `essence-1` default). Charges the routed model's 500-credit rate.
-- **`model: "essence-2"` — one creation, both Essence 2 tiers.** A single 500-credit charge trains [Essence 2 Light](/concepts/essence-2-light) **and** makes [Essence 2 Quality](/concepts/essence-2-quality) available from the same identity video — [pick the tier at launch](/api/agents#essence-2--the-combined-creation) (`?model=` or the embed-token `model` field).
+- **`model: "essence-2"` — one creation, both Essence 2 tiers.** A single 500-credit charge trains [Essence 2 Light](/concepts/essence-2) **and** makes [Essence 2 Quality](/concepts/essence-2-max) available from the same identity video — [pick the tier at launch](/api/agents#essence-2--the-combined-creation) (`?model=` or the embed-token `model` field).
 - **The Essence 2 subject gate.** Explicit `essence-2*` creations require a **photorealistic human subject** — anything else is rejected with a clean [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) *before billing* and before any agent row is created (`auto` routes instead of rejecting). See [the subject gate](/api/agents#the-essence-2-subject-gate-422).
 - **Per-model creation pricing.** Creation is billed per model — 500 credits for the second generation (`essence-2`, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`), 250 for v1 (`essence-1`, `expression-1`). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) now returns the per-model map (`agent_generation.by_model`) — the old flat field is gone.
 - **`POST /v1/agent/{code}/models` — add a model to an existing agent.** No re-creation: [add](/api/agents#add-a-model-to-an-existing-agent) `essence-1` (250), `essence-2` (combined, 500), `expression-2` (500), or `expression-1` (**free, instant** — the v1 foundation model drives the agent's existing image + voice, nothing trained). Async adds poll via `supported_models`; failures auto-refund; re-POSTing never double-charges.
@@ -136,7 +159,7 @@ The model-release UX wave — one creation surface across all five model familie
 
 ### Official model guides + natural idle for the second generation (2026-07-02)
 
-- **Per-model official documentation.** Each second-generation model now has a full product guide — what it is, how creation works (inputs, pipeline steps, realistic durations), serving tiers and `?model=` pinning, idle behavior, pricing, and limits: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-quality), [Essence 2 Light](/concepts/essence-2-light) — plus a new [session behavior & troubleshooting](/guides/session-troubleshooting) guide covering connect latency (warm first line vs scale-from-zero overflow), idle vs speaking behavior, and the common errors.
+- **Per-model official documentation.** Each second-generation model now has a full product guide — what it is, how creation works (inputs, pipeline steps, realistic durations), serving tiers and `?model=` pinning, idle behavior, pricing, and limits: [Expression 2](/concepts/expression-2), [Essence 2 Quality](/concepts/essence-2-max), [Essence 2 Light](/concepts/essence-2) — plus a new [session behavior & troubleshooting](/guides/session-troubleshooting) guide covering connect latency (warm first line vs scale-from-zero overflow), idle vs speaking behavior, and the common errors.
 - **Expression 2: real-footage idle on every creation.** During silences the avatar now plays a looping clip derived from the identity itself — cropped from your source footage when available, or captured from the trained model's rest pose for photo-only creations — instead of generated idle frames. Baked in automatically at creation; existing agents' idle clips were regenerated.
 - **Forward-only looping.** Idle and base-video loops now always play forward, wrapping from the last frame back to the first — footage never plays in reverse. Applies to `expression-2` (all tiers, including on-device) and `essence-2-light` (idle and speech, all tiers).
 - **`supported_models` + early model gate.** Agent responses ([status](/api/agents#poll-status), get, list, and the [embed-token](/api/embedding) response) now include `supported_models` — the canonical model families the agent can be launched as right now. [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token) accepts an optional `model` field, validated up front; requesting `expression-2` / `essence-2-light` before the agent's trained model exists returns a clean `409 MODEL_NOT_GENERATED` ("agent `<code>`'s `<model>` model hasn't been generated yet") — on [talking video](/api/video), **before any charge**. *(Update, later on 2026-07-02: `essence-2-quality` — originally never gated here — is now gated on the agent's **source video**, the footage its identity prepares from; see the model-release entry above.)* A live `?model=` override to an ungenerated model now ends the session cleanly with `avatar_error: "model_not_generated"` instead of hanging.

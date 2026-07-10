@@ -16,7 +16,7 @@ Generate → Store → Resolve → Live session → Speak
 
 ## 1. Generate
 
-Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus optional image, video, and audio assets. It returns `{ agent_id, status: "processing" }` immediately — generation runs async (typically 2–5 minutes).
+Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus optional image and audio assets (creation is image-only — the idle/driver video is generated internally). It returns `{ agent_id, status: "processing" }` immediately — generation runs async (typically 2–5 minutes).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
