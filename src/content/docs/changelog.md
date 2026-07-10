@@ -26,6 +26,28 @@ Creation pricing is now **per engine**:
   before you generate; [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule)
   advertises `auto` at the 2000 ceiling so callers never see a number lower
   than the possible charge.
+### Essence 2 & Expression 2 — launch rollout begins; model pages refreshed (2026-07-10)
+
+The second-generation models reach their announced launch date and the
+rollout is underway. **Creation access opens progressively** (a v2 creation
+ahead of your account's access returns a clean `400` and bills nothing; the
+dashboard's v2 creation entries ship separately from the API). Alongside the
+rollout, the model documentation gained the shipping characteristics:
+
+- **[`essence-2`](/concepts/essence-2-light)** — photorealistic people;
+  animates real identity footage at its native resolution (full-HD 1080p
+  driver video by default) at ~25 fps; serves gpu → ane → cpu, fully
+  on-device on Apple silicon, and a **browser-local tier is rolling out**
+  (`?render=local`, WebGPU with WASM fallback) as per-identity web bundles
+  publish.
+- **[`expression-2`](/concepts/expression-2)** — stylized and universal
+  characters; **fully generative across the whole 416×720 scene** at 20 fps
+  from a single photo (no face detection or cropping anywhere in the
+  pipeline), which is why any character morphology animates naturally;
+  serves gpu → ane → cpu plus on-device Apple silicon.
+- The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
+  and [creation guide](/concepts/models-v2#how-creation-works) were refreshed
+  to match.
 
 ### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
 

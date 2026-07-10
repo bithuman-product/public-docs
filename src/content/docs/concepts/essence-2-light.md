@@ -7,7 +7,7 @@ order: 5
 label: "Essence 2 (light tier)"
 ---
 
-> **Note — Launching July 10, 2026.** As a developer you simply select
+> **Note — Launching July 10, 2026 (rollout in progress).** As a developer you simply select
 > **`essence-2`**, and bitHuman serves the right tier for your hardware and
 > quality needs. This page documents the **light tier** — what `essence-2`
 > serves by default — for reference. The standalone name `essence-2-light`
@@ -19,7 +19,8 @@ label: "Essence 2 (light tier)"
 
 The **light tier of `essence-2`** is the cost-effective renderer of the
 second-generation Essence family: a **distilled** engine that keeps the
-Essence look — your identity's real footage, lip-synced live at ~25 frames
+Essence look — your identity's real footage at its native resolution
+(full-HD 1080p driver video by default), lip-synced live at ~25 frames
 per second — at a fraction of the compute. At creation the platform distills
 your identity into a compact bundle; that one artifact then serves on **three
 runtimes**: cloud **GPU**, the **Apple Neural Engine (ANE)**, and cloud
@@ -139,6 +140,14 @@ Neural Engine executes the model locally, so audio, video, and prompts never
 leave the device — the only network traffic is the once-per-minute billing
 heartbeat. (Essence 2 Quality has no on-device runtime; Light is the
 on-device Essence 2 tier.)
+
+**In the browser.** A browser-local tier is **rolling out**: appending
+`?render=local` to a session URL downloads the identity's compact web bundle
+and renders Essence 2 **in the browser** — WebGPU on Apple-silicon and
+desktop-class GPUs (real-time with headroom), WASM fallback elsewhere — with
+no server render in the path. It activates per identity as web bundles
+publish; sessions without a published bundle fall back to cloud serving. See
+[browser rendering](/guides/browser-rendering).
 
 ## Idle and speaking behavior
 
