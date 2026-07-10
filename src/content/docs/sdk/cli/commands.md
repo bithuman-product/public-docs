@@ -253,8 +253,8 @@ When the agent's model is `essence-1`, the pulled `.imx` is immediately
 runnable:
 
 ```bash
-bithuman pull A56ZFX6217
-bithuman run ~/.cache/bithuman/agents/A56ZFX6217/A56ZFX6217.imx
+bithuman pull A66GYD8664
+bithuman run ~/.cache/bithuman/agents/A66GYD8664/A66GYD8664.imx
 ```
 
 Files land in `~/.cache/bithuman/agents/<code>/`. What each family's file is

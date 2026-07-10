@@ -48,7 +48,7 @@ resp = requests.post(
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
         "model": "essence-2-max",
-        "agent_code": "A91XMB7113",
+        "agent_code": "A80HVD8577",
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
     },
 )
@@ -71,7 +71,7 @@ resp = requests.post(
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
         "model": "expression-2",
-        "agent_code": "A91XMB7113",
+        "agent_code": "A80HVD8577",
         "input": {"type": "audio", "audio_url": "https://example.com/speech.wav"},
     },
 )

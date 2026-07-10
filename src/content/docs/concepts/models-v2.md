@@ -182,7 +182,7 @@ print(resp.json())
 {
   "success": true,
   "message": "Agent generation started",
-  "agent_id": "A56ZFX6217",
+  "agent_id": "A66GYD8664",
   "status": "processing"
 }
 ```
@@ -195,7 +195,7 @@ are handled as described in [Naming & migration](#naming--migration).
 Then poll until the agent is ready:
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/status/A56ZFX6217 \
+curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -215,7 +215,7 @@ const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
     "content-type": "application/json",
   },
   body: JSON.stringify({
-    agent_id: "A56ZFX6217",
+    agent_id: "A66GYD8664",
     fingerprint: visitorFingerprint,   // stable per-device hex — required
   }),
 });
@@ -225,7 +225,7 @@ const { data: { token } } = await res.json();
 ```html
 <!-- BROWSER — the agent renders on its model's serving tier -->
 <iframe
-  src="https://bithuman.ai/embed/A56ZFX6217?token=YOUR_TOKEN"
+  src="https://bithuman.ai/embed/A66GYD8664?token=YOUR_TOKEN"
   allow="microphone *; camera *; autoplay *"
   style="width: 400px; height: 700px; border: 0;"
 ></iframe>
@@ -244,7 +244,7 @@ with a force-tier slug to the session (viewer / embed) URL. A forced tier is
 pinned — it never overflows, and it fails loudly if that tier is unavailable:
 
 ```text
-https://bithuman.ai/embed/A56ZFX6217?model=expression-2-ane
+https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
 ```
 
 | Model | Force-tier slugs |

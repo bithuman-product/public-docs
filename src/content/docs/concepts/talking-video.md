@@ -50,7 +50,7 @@ curl -X POST https://api.bithuman.ai/v1/video/generate \
   -H "Content-Type: application/json" \
   -d '{
     "model": "essence-2-max",
-    "agent_code": "A91XMB7113",
+    "agent_code": "A80HVD8577",
     "input": { "type": "text", "text": "Hello, welcome to bitHuman." }
   }'
 # → { "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing" }
@@ -70,7 +70,7 @@ Audio input is the same call with an audio block:
 ```jsonc
 {
   "model": "expression-2",
-  "agent_code": "A91XMB7113",
+  "agent_code": "A80HVD8577",
   "input": { "type": "audio", "audio_url": "https://example.com/speech.wav" }
 }
 ```

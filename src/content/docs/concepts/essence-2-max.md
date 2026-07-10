@@ -99,7 +99,7 @@ resp = requests.post(
 )
 print(resp.json())
 # {"success": true, "message": "Agent generation started",
-#  "agent_id": "A56ZFX6217", "status": "processing"}
+#  "agent_id": "A66GYD8664", "status": "processing"}
 ```
 
 **Inputs.** Supply an **`image`** — a well-lit portrait of the identity

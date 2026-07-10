@@ -64,7 +64,7 @@ viewer) URL to pin the session to that tier — a forced tier never overflows:
 
 ```html
 <iframe
-  src="https://bithuman.ai/embed/A56ZFX6217?token=YOUR_TOKEN&model=expression-2-cpu"
+  src="https://bithuman.ai/embed/A66GYD8664?token=YOUR_TOKEN&model=expression-2-cpu"
   allow="microphone *; camera *; autoplay *"
   style="width: 400px; height: 700px; border: none;"
 ></iframe>
@@ -96,7 +96,7 @@ bitHuman POSTs to your endpoint when session events occur. Return `200` immediat
 **`room.join`** — fired once when a user connects:
 
 ```json
-{ "agent_code": "A91XMB7113", "event_type": "room.join",
+{ "agent_code": "A80HVD8577", "event_type": "room.join",
   "data": { "room_name": "support", "participant_count": 1,
             "session_id": "session_xyz" }, "timestamp": 1705312200.0 }
 ```
@@ -104,7 +104,7 @@ bitHuman POSTs to your endpoint when session events occur. Return `200` immediat
 **`chat.push`** — fired per message (user and agent):
 
 ```json
-{ "agent_code": "A91XMB7113", "event_type": "chat.push",
+{ "agent_code": "A80HVD8577", "event_type": "chat.push",
   "data": { "role": "user", "message": "help with order #12345",
             "session_id": "session_xyz" }, "timestamp": 1705312285.0 }
 ```

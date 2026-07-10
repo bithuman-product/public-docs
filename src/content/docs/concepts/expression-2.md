@@ -92,7 +92,7 @@ resp = requests.post(
 )
 print(resp.json())
 # {"success": true, "message": "Agent generation started",
-#  "agent_id": "A56ZFX6217", "status": "processing"}
+#  "agent_id": "A66GYD8664", "status": "processing"}
 ```
 
 **Inputs.** Creation is **image-only**: an `image` (URL or upload) is the
@@ -122,7 +122,7 @@ quality-locked, and shorter recipes were removed after they measurably
 degraded eye and expression fidelity.
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/status/A56ZFX6217 \
+curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -152,7 +152,7 @@ fails loudly if unavailable):
 | `expression-2-ane` | Apple Neural Engine | Force the Apple-silicon Neural Engine tier; limited real-time slots. |
 
 ```text
-https://bithuman.ai/embed/A56ZFX6217?model=expression-2-ane
+https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
 ```
 
 Tier slugs are an advanced, operational surface — an unrecognized value falls
@@ -219,7 +219,7 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
   reuse it. See [troubleshooting](/guides/session-troubleshooting).
 - **Before training completes**, launch surfaces that request this model
   reject it with `409 MODEL_NOT_GENERATED`
-  (`agent A56ZFX6217's expression-2 model hasn't been generated yet`). Once
+  (`agent A66GYD8664's expression-2 model hasn't been generated yet`). Once
   the agent is ready, its `supported_models` (on
   [status / get / list](/api/agents#poll-status) and the embed-token
   response) includes `expression-2`.

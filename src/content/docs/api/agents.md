@@ -157,7 +157,7 @@ print(resp.json())
 {
   "success": true,
   "message": "Agent generation started",
-  "agent_id": "A91XMB7113",
+  "agent_id": "A80HVD8577",
   "status": "processing"
 }
 ```
@@ -203,7 +203,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
 {
   "success": true,
   "data": {
-    "agent_id": "A91XMB7113",
+    "agent_id": "A80HVD8577",
     "status": "ready",
     "progress": 1.0,
     "progress_msg": "Complete",
@@ -279,7 +279,7 @@ More session-time issues (connect latency, tier pinning, idle behavior):
 ```python
 import requests
 
-code = "A91XMB7113"
+code = "A80HVD8577"
 data = requests.get(
     f"https://api.bithuman.ai/v1/agent/{code}",
     headers={"api-secret": "YOUR_API_SECRET"},
@@ -292,12 +292,12 @@ print(agent["name"], agent["status"])
 {
   "success": true,
   "data": {
-    "agent_id": "A91XMB7113",
+    "agent_id": "A80HVD8577",
     "status": "ready",
     "system_prompt": "You are a friendly AI assistant",
-    "image_url": "https://storage.bithuman.ai/A91XMB7113/image_20260115_103000_000001.jpg",
-    "video_url": "https://storage.bithuman.ai/A91XMB7113/video_20260115_103200_000002.mp4",
-    "model_url": "https://storage.bithuman.ai/A91XMB7113/my_agent_20260115_103500_000003.imx",
+    "image_url": "https://storage.bithuman.ai/A80HVD8577/image_20260115_103000_000001.jpg",
+    "video_url": "https://storage.bithuman.ai/A80HVD8577/video_20260115_103200_000002.mp4",
+    "model_url": "https://storage.bithuman.ai/A80HVD8577/my_agent_20260115_103500_000003.imx",
     "name": "My Agent"
   }
 }
@@ -335,10 +335,10 @@ missing or non-owned agent returns `404`.
 import requests
 
 requests.delete(
-    "https://api.bithuman.ai/v1/agent/A91XMB7113",
+    "https://api.bithuman.ai/v1/agent/A80HVD8577",
     headers={"api-secret": "YOUR_API_SECRET"},
 ).json()
-# {"success": true, "agent_code": "A91XMB7113", "deleted": true}
+# {"success": true, "agent_code": "A80HVD8577", "deleted": true}
 ```
 
 ## Update an agent's prompt
@@ -350,7 +350,7 @@ a new agent.
 ```python
 import requests
 
-code = "A91XMB7113"
+code = "A80HVD8577"
 resp = requests.post(
     f"https://api.bithuman.ai/v1/agent/{code}",
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
@@ -360,7 +360,7 @@ print(resp.json())
 ```
 
 ```json
-{ "agent_code": "A91XMB7113", "updated": true }
+{ "agent_code": "A80HVD8577", "updated": true }
 ```
 
 ## Add a model to an existing agent
@@ -386,7 +386,7 @@ listing the options; the Essence 2 tiers are not individually addable —
 import requests
 
 resp = requests.post(
-    "https://api.bithuman.ai/v1/agent/A56ZFX6217/models",
+    "https://api.bithuman.ai/v1/agent/A66GYD8664/models",
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={"model": "expression-2"},
 )
@@ -398,12 +398,12 @@ An **async** add (everything except `expression-1`) responds immediately:
 ```json
 {
   "success": true,
-  "agent_id": "A56ZFX6217",
+  "agent_id": "A66GYD8664",
   "model": "expression-2",
   "status": "processing",
   "credits": 2000,
   "supported_models": ["essence-1", "essence-2-quality"],
-  "message": "expression-2 model add started (typically 10-45 minutes). 2000 credits are charged (refunded automatically if the add fails). Poll GET /v1/agent/status/A56ZFX6217 until supported_models includes expression-2."
+  "message": "expression-2 model add started (typically 10-45 minutes). 2000 credits are charged (refunded automatically if the add fails). Poll GET /v1/agent/status/A66GYD8664 until supported_models includes expression-2."
 }
 ```
 

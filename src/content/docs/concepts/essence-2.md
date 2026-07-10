@@ -90,7 +90,7 @@ resp = requests.post(
 )
 print(resp.json())
 # {"success": true, "message": "Agent generation started",
-#  "agent_id": "A56ZFX6217", "status": "processing"}
+#  "agent_id": "A66GYD8664", "status": "processing"}
 ```
 
 **Inputs.** Creation is **image-only**: supply a portrait `image` of the
@@ -140,7 +140,7 @@ fails loudly if unavailable):
 | `essence-2-cpu` | Cloud CPU | Force the CPU tier — no GPU in the path. |
 
 ```text
-https://bithuman.ai/embed/A56ZFX6217?model=essence-2-cpu
+https://bithuman.ai/embed/A66GYD8664?model=essence-2-cpu
 ```
 
 Tier slugs are an advanced, operational surface. Saved links carrying

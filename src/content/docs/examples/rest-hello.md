@@ -41,7 +41,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` — only `success`/`ready` and `failed` are terminal (generation takes 2–5 min; failures auto-refund credits).
 
 ```bash
-export AGENT_ID=A91XMB7113   # paste the agent_id from step 2
+export AGENT_ID=A80HVD8577   # paste the agent_id from step 2
 curl -s "https://api.bithuman.ai/v1/agent/status/$AGENT_ID" \
   -H "api-secret: $BITHUMAN_API_SECRET" | python3 -m json.tool
 ```

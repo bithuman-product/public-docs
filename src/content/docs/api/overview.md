@@ -60,7 +60,7 @@ the [embed token flow](/api/embedding) instead. See
 ## How agents are identified
 
 Every endpoint identifies an agent by its **agent code** — a short string like
-`A91XMB7113`. You receive one when you [generate an agent](/api/agents), or find
+`A80HVD8577`. You receive one when you [generate an agent](/api/agents), or find
 it in your [Library](https://www.bithuman.ai/#library) (click an agent to reveal
 the code).
 

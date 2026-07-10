@@ -60,7 +60,7 @@ X-BitHuman-Delivery: evt_a1b2c3…
 X-BitHuman-Timestamp: 1780417371
 X-BitHuman-Signature: sha256=9f86d081…
 
-{"id":"evt_a1b2c3…","event":"agent.ready","created":1780417371,"data":{"agent_id":"A91XMB7113","code":"A91XMB7113"}}
+{"id":"evt_a1b2c3…","event":"agent.ready","created":1780417371,"data":{"agent_id":"A80HVD8577","code":"A80HVD8577"}}
 ```
 
 ## Verify the signature
