@@ -205,7 +205,8 @@ flagged destructive so a runtime can require approval. `generate_agent`,
 at least one of `prompt`/`image`/`audio`) so it can't silently spend. Agent
 creation is **image-only** — `video` is not a creation input (the 10-second
 idle/driver video is generated internally); older CLI builds still list
-`video` in the tool schema, but the API rejects it with
+`video` in the tool schema — never use it: as the image-only rollout
+completes, the API rejects it with
 [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations).
 
 Discover the surface without speaking JSON-RPC: `bithuman mcp tools` (or

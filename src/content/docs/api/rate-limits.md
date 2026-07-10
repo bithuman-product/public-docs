@@ -73,16 +73,32 @@ requests/minute.
 
 ## Session concurrency
 
-Concurrency is governed by **credits and spend caps**, not the request
-limiter — there is no per-plan cap on simultaneous sessions.
+Each plan includes an allowance of **concurrent avatar sessions** — live
+sessions running at the same time, across cloud and self-hosted:
+
+| Plan | Concurrent avatar sessions |
+|---|---|
+| Free | 1 |
+| Creator | 3 |
+| Pro | 10 |
+| Business | 50 |
+| Enterprise | 200 |
+| Custom (contact sales) | Unlimited |
+
+Sessions beyond the allowance are rejected at session start with
+`403 CONCURRENCY_LIMIT_REACHED` (enforcement is rolling out; a session that
+is already live is never cut off mid-stream by this limit). Within the
+allowance, usage is governed by **credits and spend caps** — each active
+session bills per minute, so run as many as your balance supports.
 
 | Resource | Limit | Notes |
 |---|---|---|
-| Cloud avatar sessions | Bounded by credits | Each active session bills per minute; run as many as your balance supports. |
+| Cloud avatar sessions | Plan allowance + credits | Each active session bills per minute. |
 | Agent generation | Queued | Heavy jobs queue and run as capacity frees up. |
 | Dynamics generation | Queued | Heavy jobs queue and run as capacity frees up. |
 
-Self-hosted deployments are bounded only by your own hardware.
+Self-hosted deployments render on your own hardware but count toward the
+same per-plan session allowance.
 
 ## Credit rates
 
@@ -92,14 +108,16 @@ Live sessions bill per minute by model and host; some operations are one-time.
 |---|---|
 | Voice chat (managed agent, no avatar) | 10 |
 | Camera chat (managed agent, camera on) | 30 |
-| Essence — cloud | 2 |
-| Essence — self-hosted | 1 |
-| Expression — cloud | 4 |
-| Expression — self-hosted | 2 |
+| Essence 1 — cloud | 2 |
+| Essence 1 — self-hosted | 1 |
+| Expression 1 / Expression 2 / Essence 2 — cloud | 4 |
+| Expression 1 / Expression 2 / Essence 2 — self-hosted | 2 |
+| Essence 2 Max — cloud | 8 |
+| Essence 2 Max — self-hosted | 4 |
 
 | One-time operation | Credits |
 |---|---|
-| Agent generation | 250 |
+| Agent generation — per model (v1 250 · Essence 2 500 · Expression 2 2000) | 250–2000 |
 | Dynamics generation | 250 |
 
 Check your balance with `GET /v2/credit-summaries` — see [Billing](/api/billing).
