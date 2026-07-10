@@ -84,14 +84,15 @@ Current pricing and your live balance are in the [bitHuman dashboard](https://ww
 
 ## Offline licensing — coming soon
 
-Self-hosted serving today authenticates online (a once-per-minute billing heartbeat). **Offline licensing** — running the second-generation models fully disconnected, with no heartbeat — is coming soon for Business and Enterprise customers:
+Self-hosted serving today authenticates online (a once-per-minute billing heartbeat). **Offline licensing** — running models fully disconnected, with no heartbeat — is coming soon, unlocked by tier starting at Pro:
 
 | Offline package | Models | Annual commitment | Offline credits included |
 |---|---|---|---|
+| Pro | Essence 1 + Expression 1 | from 60,000 credits/yr | 60,000 |
 | Business | Essence 2 + Expression 2 | $999/yr | 120,000 |
 | Enterprise | adds Essence 2 Max | $1,999/yr | 240,000 |
 
-Offline serving consumes the included credits at the self-hosted rates — 2 credits/min for Essence 2 and Expression 2, 4 credits/min for Essence 2 Max. Entitlements are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. These packages are separate from the monthly plans above. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
+Offline serving consumes the included credits at half the equivalent cloud rate — Essence 1 at 1 credit/min and Expression 1 at 2; Essence 2 and Expression 2 at 2; Essence 2 Max at 4. Entitlements are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. These packages are separate from the monthly plans above. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
 
 ## Top-up credits
 
