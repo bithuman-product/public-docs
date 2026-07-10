@@ -10,6 +10,23 @@ order: 1
 
 ## July 2026
 
+### Expression 2 creation price: 2000 credits (2026-07-10)
+
+Creation pricing is now **per engine**:
+
+- **`expression-2` creation (and model-add) costs 2000 credits** — up from
+  500. Expression 2 is the fully generative engine; each per-identity train
+  runs substantially more GPU time than an Essence 2 train, and the price now
+  reflects that cost.
+- **The Essence 2 family stays at 500 credits** (`essence-2` combined creation
+  — one charge, both tiers — and `essence-2-quality`); v1 stays at 250.
+- **`auto` bills the routed model's rate** — 500 when your subject routes to
+  `essence-2` (photorealistic person), 2000 when it routes to `expression-2`
+  (cartoon / animal / stylized character). The dashboard shows the range
+  before you generate; [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule)
+  advertises `auto` at the 2000 ceiling so callers never see a number lower
+  than the possible charge.
+
 ### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
 
 The Essence 2 request surface is now just **`essence-2`** (plus the explicit

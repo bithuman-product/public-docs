@@ -46,7 +46,7 @@ start at [Essence 2 & Expression 2](/concepts/models-v2).
 
 Create the agent once with
 [`POST /v1/agent/generate`](/api/agents#generate-an-agent) and
-`model: "expression-2"`. Creation is asynchronous and costs **500 credits**
+`model: "expression-2"`. Creation is asynchronous and costs **2000 credits**
 (one-time, per agent). Expression 2 handles **any subject** — photorealistic
 or stylized — and it is the family that **works best for cartoonish,
 stylized, animal, creature, and robot characters**, which is why

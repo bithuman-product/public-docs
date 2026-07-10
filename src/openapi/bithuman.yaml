@@ -216,11 +216,12 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "402":
           description: >-
-            Insufficient credits. Creation is billed **per model** — the
-            second-generation families (`essence-2`, `essence-2-quality`,
-            `expression-2`, and `auto`) cost 500 credits;
-            the v1 families (`essence-1`, `expression-1`) cost 250. Top up to
-            continue. Returns error code `INSUFFICIENT_BALANCE`.
+            Insufficient credits. Creation is billed **per model** —
+            `expression-2` costs 2000 credits; the Essence 2 family
+            (`essence-2`, `essence-2-quality`) costs 500; `auto` bills the
+            routed model's rate (500 or 2000); the v1 families (`essence-1`,
+            `expression-1`) cost 250. Top up to continue. Returns error code
+            `INSUFFICIENT_BALANCE`.
         "400":
           description: >-
             Body failed validation — malformed JSON, or an invalid / retired
@@ -596,7 +597,7 @@ paths:
         | model | what happens | prerequisites | credits | time |
         |---|---|---|---|---|
         | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
-        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 500 | ~10–45 min |
+        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | ~10–45 min |
         | `essence-2` | the **combined** add: trains Essence 2 Light from the stored identity video; Quality becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
         | `essence-1` | builds the v1 `.imx` from the stored identity video (or generates one from the stored image) | stored video or image | 250 | ~10–20 min |
 
@@ -1014,9 +1015,9 @@ paths:
                               essence-1: 250
                               expression-1: 250
                               essence-2-quality: 500
-                              expression-2: 500
+                              expression-2: 2000
                               essence-2: 500
-                              auto: 500
+                              auto: 2000
                           note:
                             type: string
                       talking_video:
