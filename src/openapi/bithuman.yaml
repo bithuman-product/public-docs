@@ -105,7 +105,7 @@ paths:
 
         **Agent creation is image-only.** Provide a portrait `image` (or let
         the prompt generate one) — bitHuman generates a **10-second
-        idle/driver video internally**, authored to loop seamlessly (its
+        identity video internally**, authored to loop seamlessly (its
         first and last frames match). Video input is not part of the creation
         contract for any model and is being removed platform-wide: do not
         send `video` — as the rollout completes, a request carrying it is
@@ -261,7 +261,7 @@ paths:
             `model` value (`VALIDATION_ERROR` — the message lists the
             accepted model names), or a `video` input
             (`VIDEO_INPUT_NOT_SUPPORTED` — agent creation is image-only; the
-            10-second idle/driver video is generated internally so it loops
+            10-second identity video is generated internally so it loops
             seamlessly; this rejection is rolling out platform-wide, so
             never send `video`). Rejected before dispatch; no credits
             charged.
@@ -3174,8 +3174,8 @@ tags:
 
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
-      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45 min) | gpu · cpu · ane | 4 cr/min | 2 cr/min |
-      | `essence-2` | Second-gen Essence for photorealistic people — runs everywhere from on-device (cpu · ane) up to cloud GPU; bitHuman picks the serving tier for you | gpu · cpu · ane | from 4 cr/min | from 2 cr/min |
+      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45 min) | gpu · cpu · ane | 4 credits/min | 2 credits/min |
+      | `essence-2` | Second-gen Essence for photorealistic people — runs everywhere from on-device (cpu · ane) up to cloud GPU; bitHuman picks the serving tier for you | gpu · cpu · ane | from 4 credits/min | from 2 credits/min |
 
       Create one with
       [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
@@ -3682,7 +3682,7 @@ tags:
 
       - **Prompt** — system instructions for the agent's personality
       - **Portrait** — front-facing photo (bitHuman generates the 10-second
-        idle/driver video internally)
+        identity video internally)
       - **Voice samples** — 3–10 s of clean speech for voice cloning
       - (Optional) **Knowledge** — documents the agent should know about
 
@@ -3796,8 +3796,8 @@ tags:
 
       ### Billing
 
-      Self-hosted GPU sessions bill at the **self-hosted rate** (1 cr/min
-      Essence, 2 cr/min Expression). See [pricing](#tag/pricing) for the
+      Self-hosted GPU sessions bill at the **self-hosted rate** (1 credit/min
+      Essence 1, 2 credits/min Expression 1). See [pricing](#tag/pricing) for the
       cloud-vs-self-hosted breakdown.
 
   - name: deploy-embed
