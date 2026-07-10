@@ -134,8 +134,9 @@ chains them. A few worked examples:
 > Generate an avatar of a friendly fitness coach, wait until it's ready, then
 > give me an embed token for it.
 
-The agent calls `generate_agent`, polls `get_agent_status` until `ready` (2–5
-min), then `create_embed_token` and hands you the JWT for the
+The agent calls `generate_agent`, polls `get_agent_status` until `ready` (a
+few minutes for first-generation models; about 45 minutes for the
+second generation), then `create_embed_token` and hands you the JWT for the
 [embed widget](/guides/deploy-embed).
 
 **Turn a script into speech**
@@ -174,9 +175,12 @@ nothing else to configure.
 
 - **Async work.** `generate_agent` and `generate_dynamics` return immediately
   with `processing`. Have the agent poll `get_agent_status` / `get_dynamics`
-  until `ready` (generation takes 2–5 minutes).
-- **Credits.** `generate_agent` (250 credits for the default v1 model; 500 for
-  the [second-generation models](/concepts/models-v2)) and `text_to_speech`
+  until `ready` (a few minutes for first-generation models; about 45 minutes
+  for the [second generation](/concepts/models-v2), which trains a real
+  per-identity model).
+- **Credits.** `generate_agent` (250 credits for the default first-generation
+  model; 500 for `essence-2`, 2000 for `expression-2` — see
+  [Pricing](/guides/pricing)) and `text_to_speech`
   consume credits — check `get_credit_balance` first if cost matters.
 - **Errors** come back as a structured object with the HTTP status and a link to
   the [error catalog](/api/errors); the agent can read and act on them.

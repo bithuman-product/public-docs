@@ -85,7 +85,7 @@ Both methods return the same shape:
 Use the returned `file_url` as the `image` or `audio` input to
 [agent generation](/api/agents). (Agent creation is image-only — `video`
 files upload fine as assets, but `video` is not a creation input; the
-idle/driver video is generated internally.)
+10-second identity video is generated internally.)
 
 ## Size limits
 

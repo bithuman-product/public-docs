@@ -1,6 +1,6 @@
 ---
 title: "Pricing & credits"
-description: "How bitHuman bills — credits per active minute by model and surface, the free tier, plans, and how to check your balance."
+description: "How bitHuman bills — credits per active minute by model and surface, one-time creation costs, plans and concurrency, offline licensing, and how to check your balance."
 section: guides
 group: "Pricing"
 order: 30
@@ -10,59 +10,88 @@ order: 30
 
 bitHuman bills in **credits** consumed per **active minute** of avatar runtime. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. Plans top up credits monthly; overage is pay-as-you-go.
 
+This page is the single source for every billing number on the platform — the model guides and API pages link back here.
+
 Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer) — it lands in your inbox in seconds with the free tier attached.
 
-## Credits per minute by surface and model
+## Serving — credits per active minute
 
-| Surface | Model | Cost | Notes |
-|---|---|---|---|
-| **bitHuman Cloud** | Essence 1 | 2 cr/min | CPU rendering on bitHuman's servers |
-| **bitHuman Cloud** | Essence 2 Max (`essence-2-max`) | 8 cr/min | Premium fidelity — the gold teacher on L40S-class GPUs (was `essence-2-quality`, still accepted as a deprecated alias) |
-| **bitHuman Cloud** | Essence 2 (`essence-2`) | 4 cr/min | The standard model — cost-effective (gpu / ane / cpu) |
-| **bitHuman Cloud** | Expression 1 | 4 cr/min | GPU rendering on bitHuman's servers |
-| **bitHuman Cloud** | Expression 2 | 4 cr/min | Generative engine (gpu / cpu / ane) |
-| **Self-hosted (Python SDK / CLI)** | Essence 1 | 1 cr/min | CPU on your hardware |
-| **Self-hosted** | Essence 2 Max | 4 cr/min | GPU on your hardware |
-| **Self-hosted** | Essence 2 (`essence-2`) | 2 cr/min | GPU / CPU / Apple Neural Engine, incl. on-device |
-| **Self-hosted (GPU container)** | Expression 1 | 2 cr/min | NVIDIA GPU on your hardware |
-| **Self-hosted** | Expression 2 | 2 cr/min | GPU / CPU / Apple Neural Engine |
-| **Self-hosted (GPU container)** | Flash | 4 cr/min | NVIDIA GPU rendering tier on your hardware |
-| **On-device (Swift SDK)** | Expression | 2 cr/min | Active avatar minutes only |
-| **Managed agent — voice chat** | — | 10 cr/min | Cloud conversational agent, no avatar attached |
-| **Managed agent — camera chat** | — | 30 cr/min | Cloud conversational agent with camera/vision on |
-| **Audio-only (Swift SDK, no avatar)** | — | **Free** | No avatar attached → fully offline, no metering |
-| **`BITHUMAN_UNMETERED=1` dev mode** | either | **Free** | Skips auth + heartbeat — dev / parity testing only |
-| **Agent generation (v1)** | Essence 1 / Expression 1 | 250 cr (one-time) | Per [`.imx`](/concepts/avatars-imx) built from your photo / video |
-| **Agent generation — Essence 2 family** | Essence 2 / Essence 2 Max | 500 cr (one-time) | Per avatar model trained on-create from your photo / video |
-| **Agent generation — Expression 2** | Expression 2 | 2000 cr (one-time) | Fully generative engine — its train costs more to run, priced accordingly |
-| **Agent generation — `essence-2` (combined)** | Essence 2 **+** Essence 2 Max | 500 cr (one-time) | One charge covers [both Essence 2 models](/api/agents#essence-2--the-combined-creation) — pick the model at launch |
-| **Agent generation — `auto`** | Routed for you | 500 or 2000 cr (one-time) | An LLM [classifies your input](/api/agents#auto--let-the-platform-pick-the-model) — photorealistic person → `essence-2` (500), cartoon/animal → `expression-2` (2000); you're billed the routed model's rate |
-| **Model add** ([`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent)) | any | same per-model rates | Add a model to an existing agent; adding Expression 1 is **free** (instant, nothing trained) |
-| **Dynamics generation** | — | 250 cr (one-time) | Per gesture / movement set generated for an agent |
-| **Book creation** | — | 250 cr (one-time) | Per illustrated book generated from a prompt |
+| Model | Cloud | Self-hosted |
+|---|---|---|
+| [Essence 2](/concepts/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
+| [Essence 2 Max](/concepts/essence-2-max) (`essence-2-max`) | 8 credits/min | 4 credits/min |
+| [Expression 2](/concepts/expression-2) (`expression-2`) | 4 credits/min | 2 credits/min |
+| Essence 1 (`essence-1`) | 2 credits/min | 1 credit/min |
+| Expression 1 (`expression-1`) | 4 credits/min | 2 credits/min |
 
-A "credit minute" is wall-clock time the engine is actively producing frames (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). Idle, paused, or disconnected time isn't billed.
+Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time the engine is actively producing frames (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached) — idle, paused, or disconnected time isn't billed. The second-generation models are [launching July 10, 2026 — rollout in progress](/concepts/models-v2).
+
+Managed conversational agents bill on top of avatar serving:
+
+| Surface | Rate |
+|---|---|
+| Managed agent — voice chat | 10 credits/min |
+| Managed agent — camera chat (vision on) | 30 credits/min |
+
+Two modes are always free: **audio-only** Swift SDK use (no avatar attached — fully offline, no metering) and **`BITHUMAN_UNMETERED=1` dev mode** (skips auth and heartbeat — development and parity testing only, not licensed for production).
+
+## Creation & generation — one-time credits
+
+| Action | Credits (one-time) | Notes |
+|---|---|---|
+| Agent creation — first generation (`essence-1`, `expression-1`) | 250 | Per [`.imx`](/concepts/avatars-imx) built from your portrait image |
+| Agent creation — `essence-2` (combined) | 500 | One charge covers [both Essence 2 models](/api/agents#essence-2--the-combined-creation) — Essence 2 **and** Essence 2 Max, trained on-create from your portrait image; pick the model at launch |
+| Agent creation — `expression-2` | 2000 | Fully generative engine trained on-create from your portrait image — its per-identity training costs more to run, priced accordingly |
+| Agent creation — `auto` | 500 or 2000 | The platform [classifies your input](/api/agents#auto--let-the-platform-pick-the-model) — a photorealistic person routes to `essence-2` (500), a cartoon / animal / creature to `expression-2` (2000); you're billed the routed model's rate |
+| Model add ([`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent)) | same per-model rates | Add a model to an existing agent; adding Expression 1 is **free** (instant, nothing trained) |
+| Dynamics generation | 250 | Per gesture / movement set generated for an agent |
+| Book creation | 250 | Per illustrated book generated from a prompt |
+
+## Talking video — per minute of output
+
+[Talking-video renders](/concepts/talking-video) bill per minute of finished output, **rounded up** (minimum one minute). A failed render is automatically refunded.
+
+| Model | Per minute of output |
+|---|---|
+| `essence-2` | 4 credits |
+| `essence-2-max` | 8 credits |
+| `expression-2` | 4 credits |
+| `essence-1` | 8 credits |
+| `expression-1` | 4 credits |
 
 ## Free tier
 
 - **99 credits / month** at signup, no credit card required.
-- Generates ~50 minutes of cloud Essence or ~25 minutes of cloud Expression.
+- Good for roughly 50 minutes of cloud Essence 1 serving, or about 25 minutes of the second-generation models.
 - Resets monthly. Unused credits don't roll over.
 
 ## Plans
 
-| Plan | Monthly | Yearly | Credits / month |
-|---|---|---|---|
-| **Free** | $0 | — | 99 |
-| **Creator** | $20 | $204 | 1,800 |
-| **Pro** | $99 | $1,010 | 10,000 |
-| **Business** | $299 | $2,990 | 50,000 |
-| **Enterprise** | $999 | $9,990 | 250,000 |
-| **Custom** | Contact sales | — | Volume / on-prem |
+| Plan | Monthly | Yearly | Credits / month | Concurrent sessions |
+|---|---|---|---|---|
+| **Free** | $0 | — | 99 | — |
+| **Creator** | $20 | $204 | 1,800 | 3 |
+| **Pro** | $99 | $1,010 | 10,000 | 10 |
+| **Business** | $299 | $2,990 | 50,000 | 50 |
+| **Enterprise** | $999 | $9,990 | 250,000 | 200 |
+| **Custom** | Contact sales | — | Volume / on-prem | Unlimited |
 
 Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem / air-gapped deployment, and bespoke SLAs beyond Enterprise: [talk to sales](https://www.bithuman.ai/sales).
 
+**Concurrent sessions** are a plan entitlement — the number of live avatar sessions your account can run at once. Enforcement is rolling out: when limits apply, a session past your plan's cap is refused with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors) rather than degrading running sessions. Details in [Rate limits & concurrency](/api/rate-limits).
+
 Current pricing and your live balance are in the [bitHuman dashboard](https://www.bithuman.ai/#library) — the credit balance is on the top navigation bar.
+
+## Offline licensing — coming soon
+
+Self-hosted serving today authenticates online (a once-per-minute billing heartbeat). **Offline licensing** — running the second-generation models fully disconnected, with no heartbeat — is coming soon for Business and Enterprise customers:
+
+| Offline package | Models | Annual commitment | Offline credits included |
+|---|---|---|---|
+| Business | Essence 2 + Expression 2 | $999/yr | 120,000 |
+| Enterprise | adds Essence 2 Max | $1,999/yr | 240,000 |
+
+Offline serving consumes the included credits at the self-hosted rates — 2 credits/min for Essence 2 and Expression 2, 4 credits/min for Essence 2 Max. Entitlements are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. These packages are separate from the monthly plans above. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
 
 ## Top-up credits
 
@@ -118,7 +147,7 @@ Response:
 }
 ```
 
-The `minutes_estimate` keys map directly to the two avatar models: `essence_*` = **Essence**, `expression_*` = **Expression** (`cloud` = bitHuman-hosted, `self_hosted` = your hardware). `voice_chat` / `camera_chat` are managed cloud conversational-agent estimates, not avatar models.
+The `minutes_estimate` keys map directly to the two avatar model families: `essence_*` = **Essence**, `expression_*` = **Expression** (`cloud` = bitHuman-hosted, `self_hosted` = your hardware). `voice_chat` / `camera_chat` are managed cloud conversational-agent estimates, not avatar models.
 
 ## What's NOT billed
 
@@ -126,13 +155,14 @@ The `minutes_estimate` keys map directly to the two avatar models: `essence_*` =
 - **Audio-only Swift SDK use** — voice chat with no avatar attached is unmetered and fully offline.
 - **Idle time** — the engine has to be actively producing frames. Stopped or paused sessions don't accrue.
 - **Failed auth** — bad keys fail fast and don't burn credits.
+- **Failed creations and renders** — automatically refunded.
 - **Model weights** — `.imx` and Expression weight downloads are free; only active runtime minutes count.
 
 ## FAQ
 
 ### Does the on-device Swift SDK work without an internet connection?
 
-Audio-only mode is fully offline. Avatar mode authenticates once on `chat.start()` and heartbeats once per minute — with a 5-minute offline grace window after the last successful heartbeat. After that, the avatar pauses until connectivity returns.
+Audio-only mode is fully offline. Avatar mode authenticates once on `chat.start()` and heartbeats once per minute — with a 5-minute offline grace window after the last successful heartbeat. After that, the avatar pauses until connectivity returns. For fully disconnected deployments, see [Offline licensing](#offline-licensing--coming-soon).
 
 ### What if I run out of credits mid-session?
 
@@ -140,12 +170,12 @@ The current heartbeat finishes, then subsequent heartbeats fail. The Python / Do
 
 ### Can I have multiple concurrent sessions?
 
-Yes. Each session bills independently while it's actively generating frames, and you can run as many as your credit balance supports. Self-hosted deployments are bounded only by your own hardware.
+Yes. Each session bills independently while it's actively generating frames. Your plan sets the concurrent-session entitlement — see the [plans table](#plans) (enforcement is rolling out). Self-hosted deployments are additionally bounded by your own hardware.
 
 ## Next steps
 
 - [Billing API](/api/billing) — credit summaries over REST.
 - [Building avatars](/guides/building-avatars) — create an agent to run.
-- [Models](/concepts/models) — Essence vs Expression.
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and their rates.
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and how to choose.
+- [Rate limits & concurrency](/api/rate-limits) — request limits and the concurrency contract.
 - [Deploy via LiveKit](/guides/deploy-livekit) — the cloud-metered path.

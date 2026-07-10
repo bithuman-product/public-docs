@@ -3,21 +3,25 @@ title: "Essence 2 & Expression 2"
 description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 10, 2026 — rollout in progress."
 section: concepts
 group: "Models"
-order: 2
+order: 1
 label: "Essence 2 & Expression 2"
 ---
 
-## Launching now — the July 10, 2026 rollout
+> **Note — Launching July 10, 2026 (rollout in progress).** bitHuman's
+> second-generation avatar models, **`essence-2`** and **`expression-2`**,
+> launch on **July 10, 2026**. This page documents the full API surface;
+> **creation access opens progressively during the rollout** — a
+> second-generation request ahead of your account's access returns
+> [`503 MODEL_NOT_YET_AVAILABLE`](/api/errors#model-errors) and bills
+> nothing, and the dashboard's creation entries ship separately from the API.
+> The first-generation models
+> ([`essence-1` and `expression-1`](/concepts/models)) are available today,
+> remain fully supported, and nothing changes for existing agents or
+> integrations. Want to see the second generation live? Browse the
+> [gallery](https://bithuman.ai/explore?gallery=v2) and talk to a launch
+> agent.
 
-bitHuman's second-generation avatar models, **`essence-2`** and
-**`expression-2`**, launch on **July 10, 2026**, and the rollout is in
-progress. This page documents the full API surface; **creation access opens
-progressively during the rollout** — a v2 creation ahead of your account's
-access returns a clean `400` and bills nothing, and the dashboard's v2
-creation entries ship separately from the API. The first-generation models
-([`essence-1` and `expression-1`](/concepts/models)) are available today,
-remain fully supported, and nothing changes for existing agents or
-integrations.
+## The second-generation lineup
 
 The two second-generation models roll out across every surface — the REST
 API, the embed widget, the dashboard, and the SDKs:
@@ -38,11 +42,9 @@ API, the embed widget, the dashboard, and the SDKs:
   **WebGPU/WASM**. bitHuman automatically serves the right way for your
   hardware and quality needs — you just pick `essence-2`.
 - **[`essence-2-max`](/concepts/essence-2-max)** — the **premium** Essence
-  model: the gold teacher served directly on L40S-class cloud GPUs for
-  maximum fidelity, close-up and hero-quality output.
-
-The first-generation models ([`essence-1` and `expression-1`](/concepts/models))
-remain fully supported; nothing changes for existing agents or integrations.
+  model: the highest-fidelity Essence renderer served directly on dedicated
+  cloud GPUs for close-up and hero-quality output. It has no separate
+  creation — every `essence-2` creation includes it.
 
 ## At a glance
 
@@ -50,23 +52,15 @@ remain fully supported; nothing changes for existing agents or integrations.
 |---|---|---|---|
 | **Guide** | [Essence 2](/concepts/essence-2) | [Essence 2 Max](/concepts/essence-2-max) | [Expression 2](/concepts/expression-2) |
 | **Family** | Essence | Essence | Expression |
-| **What it is** | The standard Essence 2 model — efficient distilled renderer, serves everywhere; the default | The premium model — the gold teacher served directly (L40S-class GPU) | Generative motion from one photo |
+| **What it is** | The standard Essence 2 model — efficient distilled renderer, serves everywhere; the default | The premium model — the highest-fidelity renderer, served on dedicated cloud GPUs | Generative motion from one photo |
 | **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
 | **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
 | **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
-| **Creation** | Train-on-create (typically 25–40 min) | Train-on-create (instant identity prep) | Train-on-create (~45 min per-identity model) |
+| **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (typically about 45 minutes) |
 | **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
 | **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
-
-> **Note — naming.** The premium model was renamed **`essence-2-quality` →
-> `essence-2-max`** on 2026-07-10; the API still accepts `essence-2-quality`
-> as a **deprecated alias** during the migration (and server responses keep
-> the old family name until the platform-side flip). Earlier, the name
-> `essence-2-light` was consolidated into **`essence-2`** (2026-07-05): you
-> create and serve with `model="essence-2"`, the standard model. Requests
-> naming `essence-2-light` get a `400` with a hint pointing at `essence-2`.
 
 All three keep the platform contract unchanged: push 16-bit PCM audio in,
 drain real-time lip-synced video frames out. The same agent code works across
@@ -77,7 +71,7 @@ every surface.
 ### Highest visual fidelity, close-up or hero content
 
 **[`essence-2-max`](/concepts/essence-2-max).** The premium Essence
-renderer — the gold teacher served directly on L40S-class cloud GPUs — pick
+renderer — the highest-fidelity model, served on dedicated cloud GPUs — pick
 it when image quality is the whole point and 8 credits/min is acceptable.
 Its identity derives from the agent's stored identity video — generated
 internally by every `essence-2` creation.
@@ -96,7 +90,7 @@ high-concurrency deployments, and privacy-sensitive environments.
 **[`expression-2`](/concepts/expression-2).** The most lifelike motion in the
 lineup — expressions and head movement are generated live from the audio
 rather than replayed. Creation trains a per-identity model from your photo
-(roughly 45 minutes); serving spans gpu, cpu, and ane tiers.
+(roughly 45 minutes); serving spans GPU, CPU, and Apple Neural Engine tiers.
 
 Still deciding between the **families** (Essence vs Expression)? Start with
 [Essence vs Expression](/concepts/models).
@@ -105,8 +99,9 @@ Still deciding between the **families** (Essence vs Expression)? Start with
 
 All three models are **train-on-create**: you create an agent once with
 `POST /v1/agent/generate` and the platform prepares that identity's model as
-part of generation. Creation is asynchronous and costs **500 credits**
-(one-time, per agent). Poll
+part of generation. Creation is asynchronous and one-time per agent —
+**500 credits** for `essence-2` (the combined creation, Essence 2 Max
+included) and **2000 credits** for `expression-2`. Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents) until the status is terminal
 (`success` / `ready`).
 
@@ -115,16 +110,19 @@ per-identity work, so don't apply a short client timeout:
 
 | Model | Identity step | Typical creation time |
 |---|---|---|
-| `essence-2` | Distills a compact identity bundle on a cloud GPU | Typically 25–40 minutes; occasionally longer |
+| `essence-2` | Distills a compact identity bundle on a cloud GPU | Typically about 45 minutes (up to a few hours) |
 | `essence-2-max` | Instant prep from the internally generated identity video (seconds) | Included with the combined `essence-2` creation |
-| `expression-2` | Trains a per-identity model on an H100-class GPU | Roughly 45 minutes (30–60) |
+| `expression-2` | Trains a per-identity model on a dedicated training GPU | Typically about 45 minutes (30–60) |
 
 **Creation input is a portrait image for all three** — `essence-2` generates
-a 10-second identity video from it internally (authored to loop seamlessly),
-`essence-2-max` derives from that same video, and `expression-2` trains
-straight from the photo. User video input is not accepted
-([`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations)). Details
-and failure modes are in each
+a 10-second identity video from it internally (authored to loop seamlessly,
+its first and last frames match), `essence-2-max` derives from that same
+video, and `expression-2` trains straight from the photo. Video input is not
+part of the creation contract for any model and is being removed
+platform-wide: do not send `video` — as the rollout completes, a request
+carrying it is rejected with
+[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
+anything is billed. Details and failure modes are in each
 model's guide and the [Agents API](/api/agents#generate-an-agent).
 
 Two notes round out the creation surface:
@@ -163,9 +161,14 @@ downloads a generated artifact.
 ```python
 import requests
 
+import os
+
 resp = requests.post(
     "https://api.bithuman.ai/v1/agent/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={
+        "Content-Type": "application/json",
+        "api-secret": os.environ["BITHUMAN_API_SECRET"],
+    },
     json={
         "prompt": "You are a friendly product specialist.",
         "image": "https://example.com/face.jpg",
@@ -186,10 +189,8 @@ print(resp.json())
 
 The same request shape works for the other models — set `model` to
 `essence-2` or `essence-2-max`. Invalid model names return
-`400 VALIDATION_ERROR` with no credits charged; retired names are not
-accepted (`essence-2-light` returns a targeted hint pointing at `essence-2`),
-and the pre-rename `essence-2-quality` still works as a deprecated alias for
-`essence-2-max`.
+`400 VALIDATION_ERROR` with no credits charged; retired and pre-rename names
+are handled as described in [Naming & migration](#naming--migration).
 
 Then poll until the agent is ready:
 
@@ -252,11 +253,8 @@ https://bithuman.ai/embed/A56ZFX6217?model=expression-2-ane
 | [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
 | [`essence-2-max`](/concepts/essence-2-max#serving) | `essence-2-max` (single GPU tier) |
 
-Legacy pins keep working: the pre-rename `essence-2-quality` slug is a
-deprecated alias for `essence-2-max` (the serving worker accepts both), the
-old `essence-2-light-gpu` / `essence-2-light-cpu` slugs still pin their
-tiers, and saved links carrying `essence-2-light` or `essence-2-light-ane`
-route to the `essence-2` default chain.
+Saved links carrying pre-rename or retired slugs keep working — see
+[Naming & migration](#naming--migration).
 
 > **Note** Tier forcing is an advanced, operational surface — slugs may be
 > adjusted as capacity evolves. For production, omit `?model=` and let the
@@ -272,8 +270,8 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — Apple Neural Engine | ✅ chain tier | — | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ [SDK](/sdk/overview) | — | ✅ (AVX-512-class CPUs) |
-| On-device macOS / iOS (Apple silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
-| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple-silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Planned (WebGPU-only) |
+| On-device macOS / iOS (Apple Silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
+| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Planned (WebGPU-only) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
 use the downloaded model artifact
@@ -290,15 +288,38 @@ Per active minute of avatar runtime, from the
 | `essence-2-max` | 8 credits/min | 4 credits/min |
 | `expression-2` | 4 credits/min | 2 credits/min |
 
-Creation is one-time and per agent: **500 credits** for the v2 models above
-(the [combined `essence-2`](/api/agents#essence-2--the-combined-creation),
-`essence-2-max`, `expression-2` — and
-[`auto`](/api/agents#auto--let-the-platform-pick-the-model), which charges the
-routed model's 500) and 250 credits for the v1 models (`essence-1`, `expression-1`).
+Creation is one-time and per agent: **500 credits** for the
+[combined `essence-2`](/api/agents#essence-2--the-combined-creation) (Essence
+2 Max included — no separate Max creation), **2000 credits** for
+`expression-2`,
+[`auto`](/api/agents#auto--let-the-platform-pick-the-model) charges the
+routed model's rate (500 or 2000), and 250 credits for the v1 models
+(`essence-1`, `expression-1`).
 [Adding a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
 charges the same per-model rates. Idle, paused, or disconnected time isn't
 billed. Machine-readable schedule:
 [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule).
+
+## Naming & migration
+
+This is the one place the historical model names are documented — every other
+page uses the canonical names (`essence-2`, `essence-2-max`, `expression-2`).
+
+- **`essence-2-quality` → `essence-2-max`** (renamed 2026-07-10). The API
+  accepts `essence-2-quality` as a **deprecated alias** during the migration,
+  and server *responses* (`supported_models`, `409` messages, model
+  downloads, talking-video job responses) may keep reporting the pre-rename
+  family name until the rename rollout completes. New integrations should
+  send `essence-2-max`.
+- **`essence-2-light`** was consolidated into **`essence-2`** (2026-07-05)
+  and is retired: you create and serve with `model="essence-2"`, the standard
+  model. Requests naming `essence-2-light` get a `400` with a hint pointing
+  at `essence-2`.
+- **Saved links and tier pins keep working.** The pre-rename
+  `essence-2-quality` slug pins the same tier as `essence-2-max` (the serving
+  worker accepts both); the old `essence-2-light-gpu` / `essence-2-light-cpu`
+  slugs still pin their tiers; and links carrying `essence-2-light` or
+  `essence-2-light-ane` route to the `essence-2` default chain.
 
 ## Idle behavior
 
