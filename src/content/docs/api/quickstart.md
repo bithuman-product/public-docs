@@ -24,7 +24,7 @@ can speak to it and it responds:
 
 ```html
 <iframe
-  src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515"
+  src="https://bithuman.ai/embed/A78WKV4515"
   allow="microphone *; camera *; autoplay *"
   style="width: 100%; height: 600px; border: 0;"
 ></iframe>
@@ -103,9 +103,11 @@ See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
 ## Generate your own agent (optional)
 
 Prefer a custom face and persona? Generation is asynchronous — it returns an
-`agent_id` immediately and takes ~2–5 minutes for the default `essence-1`
-model (250 credits; the [second-generation models](/concepts/models-v2) cost
-500 and train longer — see [per-model creation](/api/agents#model-specific-inputs-and-creation-times)):
+`agent_id` immediately and takes a few minutes for the default `essence-1`
+model (250 credits). The [second-generation models](/concepts/models-v2) train
+a real per-identity model, so they take about 45 minutes and cost more —
+500 credits for `essence-2`, 2000 for `expression-2`; see
+[per-model creation](/api/agents#model-specific-inputs-and-creation-times):
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \

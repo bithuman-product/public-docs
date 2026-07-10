@@ -7,6 +7,12 @@ order: 3
 label: "Expression 2"
 ---
 
+> **Note — Launching July 10, 2026 (rollout in progress).** `expression-2`
+> ("Expression 2") is the second-generation expression engine and the model
+> for **stylized and universal characters** — cartoons, animals, creatures,
+> robots, and people. Creation access opens progressively during the rollout;
+> see [Essence 2 & Expression 2](/concepts/models-v2) for the family overview.
+
 ## What it is
 
 **`expression-2`** is bitHuman's second-generation expression engine: an
@@ -64,7 +70,8 @@ stylized, animal, creature, and robot characters**, which is why
 [subject gate](/api/agents#the-essence-2-subject-gate-422)
 points rejected creations at this model. You can also
 [add `expression-2`](/api/agents#add-a-model-to-an-existing-agent) to an
-existing agent (500 credits, uses its stored image).
+existing agent (2000 credits — the same per-identity training runs; it uses
+the agent's stored image).
 
 ```python
 import requests
@@ -83,10 +90,15 @@ print(resp.json())
 #  "agent_id": "A56ZFX6217", "status": "processing"}
 ```
 
-**Inputs.** An `image` (URL or upload) is the identity source. If you omit it,
-the platform generates a portrait from your prompt first. A voice is always
-prepared as part of creation — supply `audio` to clone one, or one is
-generated for you.
+**Inputs.** Creation is **image-only**: an `image` (URL or upload) is the
+identity source, and Expression 2 trains straight from the photo. If you omit
+it, the platform generates a portrait from your prompt first. bitHuman also
+generates the agent's **10-second idle clip internally** as part of creation,
+authored to loop seamlessly. Video input is not accepted — a request carrying
+`video` is rejected with
+[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations), nothing
+billed. A voice is always prepared as part of creation — supply `audio` to
+clone one, or one is generated for you.
 
 **What happens.** Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
@@ -157,13 +169,11 @@ no WASM/CPU browser path for this model.
 ## Idle and speaking behavior
 
 As of **2026-07-02**, Expression 2 agents use **real-footage idle**: during
-silences the avatar plays a short, seamlessly looping clip derived from the
-identity itself — cropped from your source footage when the agent has any, or
-captured from the trained model's own rest pose for photo-only creations. The
-clip is authored to loop **forward-only** (it wraps from its last frame back
-to its first and never plays in reverse), so idle looks like a person waiting,
-not a video scrubbing back and forth. Every new creation bakes its idle clip
-automatically.
+silences the avatar plays the **10-second idle clip generated internally at
+creation** from the identity itself. The clip is authored to loop seamlessly
+and **forward-only** (it wraps from its last frame back to its first and never
+plays in reverse), so idle looks like a person waiting, not a video scrubbing
+back and forth. Every new creation bakes its idle clip automatically.
 
 When speech starts, the engine hands off from the idle clip to generated
 frames on the first rendered frame, and a per-identity color match keeps the
@@ -183,7 +193,7 @@ the generated frames take over. See
 |---|---|
 | Cloud serving | **4 credits/min** |
 | Self-hosted serving | **2 credits/min** |
-| Agent creation | 500 credits (one-time) |
+| Agent creation | 2000 credits (one-time) |
 | [Talking-video renders](/api/video) | 4 credits per minute of output (rounded up) |
 
 Per-minute serving is metered on active avatar minutes only — idle, paused, or

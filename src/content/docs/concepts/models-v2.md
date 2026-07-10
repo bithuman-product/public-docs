@@ -17,7 +17,9 @@ access returns a clean `400` and bills nothing, and the dashboard's v2
 creation entries ship separately from the API. The first-generation models
 ([`essence-1` and `expression-1`](/concepts/models)) are available today,
 remain fully supported, and nothing changes for existing agents or
-integrations.
+integrations. Want to see the second generation live? Browse the
+[v2 gallery](https://bithuman.ai/explore?gallery=v2) and talk to a launch
+agent.
 
 The two second-generation models roll out across every surface — the REST
 API, the embed widget, the dashboard, and the SDKs:
@@ -56,7 +58,7 @@ remain fully supported; nothing changes for existing agents or integrations.
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
 | **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
-| **Creation** | Train-on-create (typically 25–40 min) | Train-on-create (instant identity prep) | Train-on-create (~45 min per-identity model) |
+| **Creation** | Train-on-create, 500 credits (typically 25–40 min) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (~45 min per-identity model) |
 | **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
 | **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
 
@@ -105,8 +107,9 @@ Still deciding between the **families** (Essence vs Expression)? Start with
 
 All three models are **train-on-create**: you create an agent once with
 `POST /v1/agent/generate` and the platform prepares that identity's model as
-part of generation. Creation is asynchronous and costs **500 credits**
-(one-time, per agent). Poll
+part of generation. Creation is asynchronous and one-time per agent —
+**500 credits** for `essence-2` (the combined creation, Essence 2 Max
+included) and **2000 credits** for `expression-2`. Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents) until the status is terminal
 (`success` / `ready`).
 
@@ -290,11 +293,13 @@ Per active minute of avatar runtime, from the
 | `essence-2-max` | 8 credits/min | 4 credits/min |
 | `expression-2` | 4 credits/min | 2 credits/min |
 
-Creation is one-time and per agent: **500 credits** for the v2 models above
-(the [combined `essence-2`](/api/agents#essence-2--the-combined-creation),
-`essence-2-max`, `expression-2` — and
-[`auto`](/api/agents#auto--let-the-platform-pick-the-model), which charges the
-routed model's 500) and 250 credits for the v1 models (`essence-1`, `expression-1`).
+Creation is one-time and per agent: **500 credits** for the
+[combined `essence-2`](/api/agents#essence-2--the-combined-creation) (Essence
+2 Max included — no separate Max creation), **2000 credits** for
+`expression-2`,
+[`auto`](/api/agents#auto--let-the-platform-pick-the-model) charges the
+routed model's rate (500 or 2000), and 250 credits for the v1 models
+(`essence-1`, `expression-1`).
 [Adding a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
 charges the same per-model rates. Idle, paused, or disconnected time isn't
 billed. Machine-readable schedule:
