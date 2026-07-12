@@ -12,6 +12,16 @@ order: 1
 
 Production-deployed since Feb 2026. No install, no SDK call — flip one URL parameter on an existing agent landing page.
 
+> **Which generation.** The `rendering_mode=browser` / `avatar` modes on this
+> page render the first-generation **`essence-1`** avatar in WASM.
+> [`essence-2`](/concepts/essence-2) has its **own** browser-local tier — append
+> **`?render=local`** to a session URL to render Essence 2 in the browser
+> (WebGPU on Apple Silicon and desktop-class GPUs, WASM fallback), **rolling
+> out** per identity as web bundles publish. See
+> [Essence 2 → In the browser](/concepts/essence-2#serving-tiers) and
+> [where each model runs](/concepts/models-v2#where-each-model-runs).
+> `expression-2` has no WASM/CPU browser path (a WebGPU tier is planned).
+
 ```text
 # Browser-side rendering, agent brain still cloud:
 https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=browser

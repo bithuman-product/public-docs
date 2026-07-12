@@ -38,6 +38,14 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
   | python3 -m json.tool
 ```
 
+> **Choosing a second-generation model.** This walkthrough builds the default
+> first-generation `essence-1` agent. To create an `essence-2`, `essence-2-max`,
+> or `expression-2` agent instead, add a `"model"` field (or `"auto"`) to the
+> generate body — see [Essence 2 & Expression 2](/concepts/models-v2). Their
+> creation does real per-identity work, so it takes **about 45 minutes**, not
+> the 2–5 minutes below — keep polling `status` rather than applying a short
+> timeout.
+
 3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` — only `success`/`ready` and `failed` are terminal (generation takes 2–5 min; failures auto-refund credits).
 
 ```bash
@@ -106,5 +114,6 @@ Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree
 
 - [API quickstart](/api/quickstart) — the full REST walkthrough
 - [Agents API](/api/agents) — generate and drive agents
+- [Essence 2 & Expression 2](/concepts/models-v2) — pick a second-generation model (creation takes ~45 min)
 - [Embed widget](/api/embedding) — put the agent on a page
 - [API reference](/api/reference) — every operation with a live console

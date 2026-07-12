@@ -128,6 +128,29 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. The 1.x line st
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the [Docker container](/guides/deploy-self-hosted) |
 | **Mac Intel / Linux CPU / Windows / Raspberry Pi** | Use Essence or a server GPU | Expression runs on Apple Silicon or an NVIDIA GPU; Essence covers everything else on-device |
 
+### Second-generation models (Essence 2 / Expression 2)
+
+The tables above are the first-generation floors. The second-generation
+models — [`essence-2`](/concepts/essence-2),
+[`essence-2-max`](/concepts/essence-2-max), and
+[`expression-2`](/concepts/expression-2) — resolve their runtime tier for you
+at session launch; the device/runtime matrix is:
+
+| Runtime | `essence-2` | `essence-2-max` | `expression-2` |
+|---|---|---|---|
+| Cloud GPU | Real-time (~25 fps) | Real-time (~25 fps, the only tier) | Real-time (20 fps) |
+| Cloud Apple Neural Engine | Real-time | — | Real-time |
+| Cloud CPU | Real-time | — | Real-time |
+| Self-hosted CPU (your servers) | [SDK](/sdk/overview) | — | AVX-512-class CPUs |
+| On-device Apple Silicon (Mac / iOS) | [Swift SDK](/sdk/swift) | — (cloud-only) | [Swift SDK](/sdk/swift) |
+| Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Planned (WebGPU) |
+
+Cloud sessions route down the serving chain (GPU → Neural Engine → CPU)
+automatically; on-device and self-hosted serving use the downloaded model
+artifact. The canonical version of this matrix — with force-tier slugs and
+current rollout status — is
+[Where each model runs](/concepts/models-v2#where-each-model-runs).
+
 ### Avatar resolutions
 
 | Resolution | Best for |
@@ -152,6 +175,7 @@ The SDK never holds the long-lived secret in process memory — it exchanges the
 ## Where to go next
 
 - [Models](/concepts/models) — Essence vs Expression in depth.
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and where each one runs.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how avatars are packaged.
 - [Quickstart](/api/quickstart) — your first avatar in ~2 minutes.
 - [Python SDK](/sdk/python) — the easiest surface to script from.

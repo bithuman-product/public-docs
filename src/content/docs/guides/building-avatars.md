@@ -104,6 +104,7 @@ The same upload + packaging flow is available over HTTP — generate agents from
 - **`prompt`** — system instructions for the agent's personality.
 - **`image`** — front-facing portrait URL (the 10-second identity video is generated from it internally).
 - **`audio`** — voice sample URL (3–10 s of clean speech) for voice cloning.
+- **`model`** — which avatar model to build. An omitted `model` keeps the historical `essence-1` default; send `"auto"` to let the platform pick between the second-generation models, or name one explicitly.
 
 Video is not part of the creation contract for any model and is being removed
 platform-wide: do not send `video` — as the rollout completes, a request
@@ -118,9 +119,20 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -d '{
     "prompt": "You are a friendly receptionist.",
     "image": "https://example.com/headshot.jpg",
-    "audio": "https://example.com/voice.wav"
+    "audio": "https://example.com/voice.wav",
+    "model": "auto"
   }'
 ```
+
+> **Choosing a model.** `"auto"` classifies your input — a photorealistic
+> person routes to [`essence-2`](/concepts/essence-2), a stylized / animal /
+> creature / robot to [`expression-2`](/concepts/expression-2). You can also
+> name a model directly (`essence-2`, `essence-2-max`, or `expression-2`);
+> note the Essence 2 family requires a photorealistic human subject, so an
+> explicit `essence-2*` creation with a non-human input is rejected with
+> [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) (nothing billed).
+> See [Essence 2 & Expression 2](/concepts/models-v2#which-should-i-choose)
+> for the full chooser and the [subject gate](/api/agents#the-essence-2-subject-gate-422).
 
 The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`GET /v1/agent/status/{agent_id}`](/api/reference) until `ready`, then drive the resulting `agent_code` like any other avatar. See the [agent lifecycle](/concepts/agent-lifecycle) for the full generate → resolve → speak flow.
 

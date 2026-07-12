@@ -56,6 +56,31 @@ Set `BITHUMAN_UNMETERED=1` to skip `api.bithuman.ai` calls entirely — for loca
 
 Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for Expression 1. See [Pricing](/guides/pricing) for the full cloud-vs-self-hosted breakdown. Self-hosted serving authenticates online today (a once-per-minute billing heartbeat).
 
+## Essence 2 / Expression 2 self-hosted (SDK, CPU / Neural Engine)
+
+The Docker image above runs the first-generation
+[Expression 1](/concepts/models) model on an NVIDIA GPU. The
+[second-generation models](/concepts/models-v2) don't use this container —
+they self-host through the [SDK](/sdk/overview) instead, at the self-hosted
+rate of **2 credits/min** ([pricing](/guides/pricing)):
+
+- **[`essence-2`](/concepts/essence-2)** — runs self-hosted on a modern CPU
+  and on the Apple Neural Engine (Apple Silicon). Download the
+  `<code>.lebundle.imx` bundle with
+  [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+  or `bithuman pull <code>` and serve it via the Python SDK / CLI, or point
+  the LiveKit plugin's `api_url` at your own server.
+- **[`expression-2`](/concepts/expression-2)** — runs self-hosted on modern
+  (AVX-512-class) server CPUs, and on the Apple Neural Engine on Apple Silicon
+  via the [Swift SDK](/sdk/swift). Download the Mac-runnable `<code>.avatar`
+  build the same way.
+- **[`essence-2-max`](/concepts/essence-2-max)** — **no self-hosted runtime.**
+  It is cloud-GPU-only; use [`essence-2`](/concepts/essence-2) for on-device or
+  self-hosted serving.
+
+See [where each model runs](/concepts/models-v2#where-each-model-runs) for the
+full device/runtime matrix.
+
 ## Offline licensing — coming soon
 
 Running the second-generation models **fully disconnected** — no heartbeat, no online auth — is coming soon for Business and Enterprise customers, delivered as per-device, per-model prepaid credit bundles. Packages and rates: [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).

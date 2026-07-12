@@ -49,7 +49,7 @@ curl -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "essence-2-max",
+    "model": "essence-2",
     "agent_code": "A80HVD8577",
     "input": { "type": "text", "text": "Hello, welcome to bitHuman." }
   }'
@@ -60,9 +60,7 @@ curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 \
   -H "api-secret: $BITHUMAN_API_SECRET"
 # → { "success": true, "status": "completed",
 #     "video_url": "https://.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
-#     "duration_seconds": 6.5, "credits_charged": 8, "model": "essence-2-quality" }
-#    (during the rename rollout, job responses may echo the pre-rename family
-#     name — see /concepts/models-v2#naming--migration)
+#     "duration_seconds": 6.5, "credits_charged": 4, "model": "essence-2" }
 ```
 
 Audio input is the same call with an audio block:
@@ -77,24 +75,27 @@ Audio input is the same call with an audio block:
 
 ## Models
 
-| Model | Best for |
-|---|---|
-| `essence-1` | Classic photoreal renders — every essence-1 agent, available today. |
-| `expression-1` | Classic stylized renders — available today. |
-| `expression-2` | Fast, expressive renders. |
-| `essence-2-max` | Premium fidelity output — the highest-fidelity renderer (the pre-rename `essence-2-quality` is still accepted as a deprecated alias — see [Naming & migration](/concepts/models-v2#naming--migration)). |
-| `essence-2` | The standard model — cost-effective renders. |
+| Model | Best for | Availability |
+|---|---|---|
+| `essence-1` | Classic photoreal renders — every essence-1 agent. | Available today |
+| `expression-1` | Classic stylized renders. | Available today |
+| `essence-2` | The standard model — cost-effective renders. | Available (rollout in progress) |
+| `expression-2` | Fast, expressive renders. | Available (rollout in progress) |
+| `essence-2-max` | Premium fidelity output — the highest-fidelity renderer. | **Not yet available for talking video** — the offline quality render worker isn't live yet; use `essence-2` for now, or serve Max in [real time](/concepts/essence-2-max#serving). |
 
-Essence 2 and Expression 2 are [launching July 10, 2026 — rollout in progress](/concepts/models-v2); `essence-1` and `expression-1` are available today.
+`essence-2` and `expression-2` talking-video renders work today; `essence-2-max`
+talking-video is coming with the offline quality render worker. See
+[Essence 2 & Expression 2](/concepts/models-v2) for the full lineup and rollout
+status.
 
 ## Cost
 
 Talking videos bill **per minute of output, rounded up**, at a per-model
 rate — the schedule lives on
 [Pricing & credits](/guides/pricing#talking-video--per-minute-of-output).
-For example, a 6.5-second `essence-2-max` clip costs
-`ceil(6.5 / 60) × 8 = 8` credits; a 70-second one costs
-`ceil(70 / 60) × 8 = 16`. If a render **fails**, the charge is
+For example, a 6.5-second `essence-2` clip costs
+`ceil(6.5 / 60) × 4 = 4` credits; a 70-second one costs
+`ceil(70 / 60) × 4 = 8`. If a render **fails**, the charge is
 automatically refunded.
 
 ## Limits
@@ -107,4 +108,5 @@ automatically refunded.
 
 - [Generate a talking video](/api/video) — the full API reference.
 - [Billing & credits](/api/billing) — how credits are consumed.
-- [Essence vs Expression](/concepts/models) — the engine families.
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose.
+- [Essence vs Expression](/concepts/models) — the first-generation engine families.

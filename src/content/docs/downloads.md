@@ -176,6 +176,23 @@ Heavier high-fidelity model. Runs on Apple Silicon on-device (demo apps) or on N
 
 If you're deploying to iPhone today, choose **Essence**. The iPhone reference app is built around Essence and stays well inside Apple's per-app memory cap.
 
+### Essence 2 / Expression 2 (second generation)
+
+The tables above are the first-generation floors. The
+[second-generation models](/concepts/models-v2) resolve their runtime tier for
+you at session launch, and the same downloaded artifact serves on-device or
+self-hosted:
+
+| Runtime | `essence-2` | `essence-2-max` | `expression-2` |
+|---|---|---|---|
+| bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
+| Self-hosted CPU (your servers) | Yes ([SDK](/sdk/overview)) | — | Yes (AVX-512-class CPUs) |
+| On-device Apple Silicon (Mac / iOS) | Yes ([Swift](/sdk/swift)) | — (cloud-only) | Yes ([Swift](/sdk/swift)) |
+| Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Planned (WebGPU) |
+
+Full details, force-tier slugs, and rollout status:
+[Where each model runs](/concepts/models-v2#where-each-model-runs).
+
 ### Avatar resolutions
 
 Resolution interacts with both model and host:

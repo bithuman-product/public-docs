@@ -63,12 +63,21 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 | Where inference runs | Your machine | bitHuman's GPU pool |
 | Surfaces | Python, Swift, [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
 | Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
-| Hardware | Any modern CPU (Essence); Apple Silicon / NVIDIA GPU (Expression) | None — we host it |
-| Cost | 1 credit/min (Essence) · 2 credits/min (Expression) | 2 credits/min · 4 credits/min |
+| Hardware | CPU (Essence 1 · `essence-2`) · Apple Silicon / Neural Engine (`essence-2`, `expression-2`) · Apple Silicon or NVIDIA GPU (Expression 1) | None — we host it |
+| Cost | 1–2 credits/min (`essence-2` / `expression-2`: 2) | 2–8 credits/min (`essence-2` / `expression-2`: 4 · `essence-2-max`: 8) |
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
 
-See [models](/concepts/models) for the Essence vs Expression comparison and
-[pricing](/guides/pricing) for credit details.
+> **Second generation.** [`essence-2`](/concepts/essence-2) runs on-device on
+> Apple Silicon / the Neural Engine and self-hosted on CPU;
+> [`expression-2`](/concepts/expression-2) runs self-hosted on CPU
+> (AVX-512-class) and on the Neural Engine.
+> [`essence-2-max`](/concepts/essence-2-max) is cloud-GPU-only — no on-device
+> or self-hosted runtime. See
+> [where each model runs](/concepts/models-v2#where-each-model-runs).
+
+See [models](/concepts/models) for the Essence vs Expression comparison,
+[Essence 2 & Expression 2](/concepts/models-v2) for the second-generation
+lineup, and [pricing](/guides/pricing) for credit details.
 
 ## Status matrix
 
@@ -108,5 +117,6 @@ channels, or [ping us on Discord](https://discord.gg/ES953n7bPA) for early acces
 
 - [Audio streaming](/concepts/audio-streaming) — the canonical push/drain loop
 - [Models](/concepts/models) — Essence vs Expression and the `.imx` format
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and where each runs
 - [CLI](/sdk/cli/overview) — the command-line tool, same engine
 - [API reference](/api/reference) — the cloud REST API

@@ -13,7 +13,7 @@ Every SDK and the runtime use the same shape — audio in, video out:
 1. **Push** 16-bit PCM audio chunks as they arrive (mic, TTS, WebRTC).
 2. **Drain** lip-synced video frames at 25 FPS.
 
-That's the entire surface area. The same two calls drive both [Essence and Expression](/concepts/models), across Python, Swift, and the CLI.
+That's the entire surface area. The same two calls drive both [Essence and Expression](/concepts/models) — including the [second-generation `essence-2` and `expression-2`](/concepts/models-v2) — across Python, Swift, and the CLI.
 
 <div class="bh-flow"><span class="bh-node">push audio</span><span class="bh-sep">→</span><span class="bh-node">engine ticks</span><span class="bh-sep">→</span><span class="bh-node">pull frame</span><span class="bh-sep">→</span><span class="bh-node">render</span></div>
 

@@ -67,6 +67,20 @@ You don't have to understand it, but for the curious:
 - **Voice profile** — embedding for the cloned voice (Essence).
 - **Manifest** — model version, ABI, license, and training metadata.
 
+## Second-generation artifacts
+
+The `.imx` container above packages the first-generation `essence-1` avatar.
+The [second-generation models](/concepts/models-v2) each produce their own
+per-identity artifact, downloaded with
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+(or `bithuman pull <code>`):
+
+| Model | Artifact | What it is |
+|---|---|---|
+| [`essence-2`](/concepts/essence-2) | `<code>.lebundle.imx` | The standard Essence 2 bundle (~350–550 MB) — licensed weights; serves via bitHuman cloud today. |
+| [`essence-2-max`](/concepts/essence-2-max) | `<code>.pkl` | The Essence 2 Max identity bundle — renders on bitHuman's GPU cloud, not a local-playback artifact. |
+| [`expression-2`](/concepts/expression-2) | `<code>.avatar` | CoreML zip (~90 MB) — the Mac-runnable form of the trained per-identity model. |
+
 ## Inspecting an `.imx`
 
 Use the CLI to dump model metadata — version, ABI, resolution, and license:
