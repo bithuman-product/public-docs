@@ -10,8 +10,8 @@ label: "Expression 2"
 > **Note — Launching July 10, 2026 (rollout in progress).** `expression-2`
 > ("Expression 2") is the second-generation expression engine and the model
 > for **stylized and universal characters** — cartoons, animals, creatures,
-> robots, and people. Creation access opens progressively during the rollout;
-> see [Essence 2 & Expression 2](/concepts/models-v2) for the family overview.
+> robots, and people. Available now — see
+> [Essence 2 & Expression 2](/concepts/models-v2) for the family overview.
 
 ## What it is
 

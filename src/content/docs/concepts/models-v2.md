@@ -1,25 +1,20 @@
 ---
 title: "Essence 2 & Expression 2"
-description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time, privacy-first avatar video with on-device and cloud serving, per-minute pricing, and which to choose. Launching July 10, 2026 — rollout in progress."
+description: "bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time avatar video with on-device, browser, and cloud serving, per-minute pricing, and which to choose. Available now."
 section: concepts
 group: "Models"
 order: 1
 label: "Essence 2 & Expression 2"
 ---
 
-> **Note — Launching July 10, 2026 (rollout in progress).** bitHuman's
-> second-generation avatar models, **`essence-2`** and **`expression-2`**,
-> launch on **July 10, 2026**. This page documents the full API surface;
-> **creation access opens progressively during the rollout** — a
-> second-generation request ahead of your account's access returns
-> [`503 MODEL_NOT_YET_AVAILABLE`](/api/errors#model-errors) and bills
-> nothing, and the dashboard's creation entries ship separately from the API.
-> The first-generation models
-> ([`essence-1` and `expression-1`](/concepts/models)) are available today,
-> remain fully supported, and nothing changes for existing agents or
-> integrations. Want to see the second generation live? Browse the
-> [gallery](https://bithuman.ai/explore?gallery=v2) and talk to a launch
-> agent.
+> **Available now.** bitHuman's second-generation avatar models,
+> **`essence-2`** and **`expression-2`**, are **live** — create them today via
+> the API ([`POST /v1/agent/generate`](/api/agents#generate-a-new-agent)) or the
+> dashboard. The first-generation models
+> ([`essence-1` and `expression-1`](/concepts/models)) remain fully supported,
+> and nothing changes for existing agents or integrations. Browse the
+> [gallery](https://bithuman.ai/explore?gallery=v2) to see the second generation
+> live and talk to a demo agent.
 
 ## The second-generation lineup
 
