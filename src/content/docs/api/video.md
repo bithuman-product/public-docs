@@ -30,7 +30,7 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-max`, or `essence-2`. |
+| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-max`, or `essence-2`. `essence-1`, `expression-1`, `expression-2`, and `essence-2` render today; `essence-2-max` talking-video is rolling out (offline quality renders not yet generally available). |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
@@ -47,7 +47,7 @@ resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
-        "model": "essence-2-max",
+        "model": "essence-2",
         "agent_code": "A80HVD8577",
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
     },
