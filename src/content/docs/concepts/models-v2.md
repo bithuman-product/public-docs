@@ -66,6 +66,34 @@ All three keep the platform contract unchanged: push 16-bit PCM audio in,
 drain real-time lip-synced video frames out. The same agent code works across
 every surface.
 
+## Where each model runs
+
+One trained agent serves from bitHuman's cloud, in the browser, and
+(increasingly) on your own hardware — chosen automatically for your hardware and
+quality needs, or pinned with a force slug. Everything below is **live today**
+unless marked otherwise:
+
+| Runtime | essence-2 | essence-2-max | expression-2 |
+|---|---|---|---|
+| **Cloud GPU** | ✅ | ✅ | ✅ |
+| **Cloud CPU** | ✅ real-time (~25 fps) | — | ✅ offline talking-video¹ |
+| **Cloud Apple Neural Engine** | ✅ | — | ✅ |
+| **In-browser WebGPU** | ✅ live — audio-driven lip-sync, rendered on-device | — | 🔜 coming |
+| **In-browser WASM** | ⚠️ preview — living idle + voice today; lip-sync runs on WebGPU | — | 🔜 coming |
+| **Local download + `bithuman` CLI** (macOS + Linux) | 🔜 coming | 🔜 coming | 🔜 coming (Apple / CoreML) |
+
+¹ expression-2 renders ~20 fps; its CPU tier is sized for **offline talking-video
+generation** (and as a last-resort real-time overflow). Real-time expression-2
+streaming uses the GPU and Apple Neural Engine tiers.
+
+**In the browser**, essence-2 renders on the **viewer's own device** via WebGPU —
+audio and video frames never leave the browser — with WASM (idle + voice) as the
+fallback while full in-browser lip-sync lands for WASM and for expression-2.
+**Locally**, downloadable runtimes for the `bithuman` CLI (macOS + Linux) and
+locally-hosted LiveKit are in active development; today the packaged-model
+download is for archival / self-hosted-server use, and local playback runs
+through the cloud or the browser. See [Browser rendering](/guides/browser-rendering).
+
 ## Which should I choose?
 
 ### Highest visual fidelity, close-up or hero content
