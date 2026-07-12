@@ -438,7 +438,7 @@ force slugs fold onto `essence-2-light`, and `essence-2-max` folds onto
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
 | `essence-2-light` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container, ~350–550 MB. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
 | `essence-2-quality` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
-| `expression-2` | `<code>.avatar` | CoreML zip (~90 MB) — the Mac-runnable form of the trained model. |
+| `expression-2` | `<code>.avatar` | CoreML zip (~20–90 MB per identity) — the Apple/CoreML build of the trained model (served on bitHuman's cloud today; local `.avatar` playback is in development). |
 | `expression-1` | — | Not downloadable: no per-identity artifact exists (the v1 foundation model renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
 
 The default response is a **302 redirect** to the artifact (public URL for

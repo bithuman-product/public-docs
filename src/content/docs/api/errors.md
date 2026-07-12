@@ -43,7 +43,7 @@ Every error follows the same structured envelope:
 | `422` | Unprocessable Entity | The request is well-formed but semantically incompatible with the target model (`MODEL_SUBJECT_MISMATCH`, `MODEL_PREREQUISITE_MISSING`) — change the input or asset, not the request syntax. |
 | `429` | Rate Limited | Too many requests — see [rate limits](/api/rate-limits). |
 | `500` | Internal Error | Server-side error — retry or contact support. |
-| `503` | Service Unavailable | All workers busy — retry with backoff. Also `MODEL_NOT_YET_AVAILABLE` — a second-generation model whose creation access hasn't opened for your account yet (rollout since July 10, 2026). |
+| `503` | Service Unavailable | All workers busy — retry with backoff. Also `MODEL_NOT_YET_AVAILABLE` — a second-generation family paused for your account (rare — Essence 2 / Expression 2 are GA since July 10, 2026), or a talking-video tier whose offline render worker isn't wired yet (e.g. `essence-2-max`). |
 
 ## Error codes
 
@@ -80,7 +80,7 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 | `MODEL_SUBJECT_MISMATCH` | 422 | An explicit Essence 2 creation or add whose input is not a **photorealistic human subject** — e.g. `"essence-2 requires a photorealistic human subject; this image looks like a cartoon — use expression-2"`. Nothing is billed and no agent row is created. Use `expression-2` for stylized/non-human subjects, or `model: "auto"` to route automatically. See [the subject gate](/api/agents#the-essence-2-subject-gate-422). |
 | `MODEL_PREREQUISITE_MISSING` | 422 | A [model add](/api/agents#add-a-model-to-an-existing-agent) needs a stored asset this agent doesn't have — a stored identity video for `essence-2` (generated internally by Essence creations, never uploaded), face image for `expression-2`, image + voice for `expression-1`, stored identity video or image for `essence-1`. Add the missing image/voice asset, then retry. |
 | `MODEL_NOT_DOWNLOADABLE` | 400 | [Model download](/api/agents#download-an-agents-model) for a family with no per-identity artifact — `expression-1` renders server-side from the agent's image. A `400` because no state change can fix it (unlike the 409s). |
-| `MODEL_NOT_YET_AVAILABLE` | 503 | [Creation](/api/agents#generate-an-agent) or [model add](/api/agents#add-a-model-to-an-existing-agent) of a second-generation model (`essence-2`, `essence-2-max`, `expression-2`, or `auto`) that isn't open for your account yet — creation access opens progressively since the July 10, 2026 launch. Nothing charged. Retry later, or use the v1 families (`essence-1`, `expression-1`), which always work. |
+| `MODEL_NOT_YET_AVAILABLE` | 503 | Essence 2 / Expression 2 are **GA** (since July 10, 2026), so [creation](/api/agents#generate-an-agent) and [model add](/api/agents#add-a-model-to-an-existing-agent) don't return this in normal operation — it's the safety response if a v2 family is paused. It is also returned by [talking video](/api/video) for a tier whose offline render worker isn't wired yet (e.g. `essence-2-max`). Nothing charged; retry later or use another model (the v1 families always work). |
 | `MODEL_ARTIFACT_NOT_READY` | 404 | [Model download](/api/agents#download-an-agents-model) for a **supported** family whose artifact hasn't been published to the download store yet. Retryable — the message carries a per-family retry hint; poll on this code. |
 
 ### File operations

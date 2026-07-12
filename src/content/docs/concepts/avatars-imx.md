@@ -79,7 +79,7 @@ per-identity artifact, downloaded with
 |---|---|---|
 | [`essence-2`](/concepts/essence-2) | `<code>.lebundle.imx` | The standard Essence 2 bundle (~350–550 MB) — licensed weights; serves via bitHuman cloud today. |
 | [`essence-2-max`](/concepts/essence-2-max) | `<code>.pkl` | The Essence 2 Max identity bundle — renders on bitHuman's GPU cloud, not a local-playback artifact. |
-| [`expression-2`](/concepts/expression-2) | `<code>.avatar` | CoreML zip (~90 MB) — the Mac-runnable form of the trained per-identity model. |
+| [`expression-2`](/concepts/expression-2) | `<code>.avatar` | CoreML zip (~20–90 MB per identity) — the Apple/CoreML build of the trained per-identity model (cloud-served today; local `.avatar` playback is in development). |
 
 ## Inspecting an `.imx`
 

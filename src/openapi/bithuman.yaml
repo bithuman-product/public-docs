@@ -879,7 +879,7 @@ paths:
         | `essence-1` | `<code>.imx` (the portable IMX container) |
         | `essence-2-light` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow) |
         | `essence-2-quality` | `<code>.pkl` — the Essence 2 Max artifact (IMX container) |
-        | `expression-2` | `<code>.avatar` (CoreML zip — the Mac-runnable form, ~90 MB) |
+        | `expression-2` | `<code>.avatar` (CoreML zip — the Apple/CoreML build, ~20–90 MB per identity; cloud-served today, local playback in development) |
         | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
 
         The default response is a **302 redirect** to the artifact — the
