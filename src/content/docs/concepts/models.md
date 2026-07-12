@@ -17,8 +17,10 @@ between when packaging an avatar — and the focus of the rest of this page — 
 
 - **Essence** — the avatar family (a packaged `.imx` identity with real-time lip-sync):
   - **Essence 1** — first generation. Pre-built identity, runs on virtually
-    any CPU. (It remains the v1 API's historical default when `model` is
-    omitted; for new work the site-wide default is Essence 2.)
+    any CPU. (No longer the creation default: as of 2026-07-12 an omitted
+    `model` on `/v1/agent/generate` defaults to Expression 1 — still a v1
+    engine at the same 250-credit rate, never a v2 engine or a higher price.
+    For new photoreal work the recommended model is Essence 2.)
   - **[Essence 2](/concepts/essence-2)** — the standard photoreal model and
     **the default**: a distilled renderer that runs everywhere (GPU, CPU, the
     Apple Neural Engine — including fully on-device — and in-browser

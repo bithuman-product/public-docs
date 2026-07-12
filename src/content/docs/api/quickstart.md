@@ -103,11 +103,17 @@ See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
 ## Generate your own agent (optional)
 
 Prefer a custom face and persona? Generation is asynchronous — it returns an
-`agent_id` immediately and takes a few minutes for the default `essence-1`
-model (250 credits). The [second-generation models](/concepts/models-v2) train
-a real per-identity model, so they take about 45 minutes and cost more —
-500 credits for `essence-2`, 2000 for `expression-2`; see
-[per-model creation](/api/agents#model-specific-inputs-and-creation-times):
+`agent_id` immediately and takes a few minutes for the default `expression` +
+`v1` engine (Expression 1, 250 credits). Select an engine with `model`
+(`expression` default, or `essence`) plus `version` (`v1` default, or `v2`) —
+`essence` + `v2` → Essence 2, `expression` + `v2` → Expression 2; the full
+engine names (`essence-1` … `expression-2`) still work directly too. The
+[second-generation models](/concepts/models-v2) train a real per-identity
+model, so they take about 45 minutes and cost more — 500 credits for
+Essence 2, 2000 for Expression 2; see
+[per-model creation](/api/agents#model-specific-inputs-and-creation-times).
+Creation is image-only — a seamless 10-second identity video is generated
+internally:
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -115,7 +121,11 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -H "content-type: application/json" \
   -d '{
     "prompt": "You are a friendly fitness coach.",
-    "image": "https://example.com/headshot.jpg"
+    "image": "https://example.com/headshot.jpg",
+    "model": "expression",
+    "version": "v2",
+    "aspect_ratio": "9:16",
+    "transparency": false
   }'
 ```
 

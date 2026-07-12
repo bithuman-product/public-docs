@@ -44,17 +44,20 @@ The call returns immediately with an `agent_id` and `processing` status.
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `prompt` | string | no | random | System prompt / personality for the agent. |
-| `image` | string | no | — | Image URL or base64 data for appearance. |
+| `image` | string | no | — | Image URL or base64 data for appearance. A supplied image is treated as a **reference** and always regenerated via **Seedream 5 edit** to standardize it (never used raw); omit it and a portrait is generated from the `prompt` with **Seedream 5 pro**. |
 | `audio` | string | no | — | Audio URL or base64 data for voice cloning. |
-| `aspect_ratio` | string | no | `16:9` | Image aspect ratio (`16:9`, `9:16`, `1:1`). |
+| `aspect_ratio` | string | no | `16:9` | Aspect ratio for the generated identity image **and** driver video — `16:9` landscape (default), `9:16` portrait, `1:1` square. Images are generated at 1080p. |
+| `transparency` | boolean | no | `false` | When `true`, the identity image is generated on a solid **green-screen** background for chroma-key / transparent embedding — the character itself never uses green. |
+| `framing` | string | no | `portrait` | `portrait` (default) frames head-and-shoulders; `full_body` shows the whole figure including the feet (kiosk / standing-avatar layouts). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | — | **Deprecated — omit it.** The internally generated identity video is standardizing on 10 seconds; the parameter is ignored as that rollout completes. |
-| `model` | string | no | `essence-1` | Avatar model — `essence-1` (default), **[`essence-2`](/concepts/essence-2)** (the [combined Essence 2 creation](#essence-2--the-combined-creation)), [`essence-2-max`](/concepts/essence-2-max), `expression-1`, or [`expression-2`](/concepts/expression-2) — plus **`auto`** ([classify-and-route](#auto--let-the-platform-pick-the-model)). The bare `essence` / `expression` shorthands resolve to `essence-1` / `expression-1`. `auto` must be sent **explicitly** — an omitted `model` keeps the historical `essence-1` default (and its 250-credit rate); a caller is never silently upgraded onto a 500-credit pipeline. Invalid values return `400 VALIDATION_ERROR` (no credits charged); the retired `essence-2-light` name returns a targeted hint pointing at `essence-2`, and the pre-rename `essence-2-quality` is still accepted as a **deprecated alias** for `essence-2-max` during the migration. See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
+| `model` | string | no | `expression` | Avatar model **family** — `expression` (default) or `essence` — combined with `version` to pick the engine: `expression`+`v1` = **Expression 1** (the default), `essence`+`v1` = **[Essence 1](/concepts/essence-2)**, `essence`+`v2` = **[`essence-2`](/concepts/essence-2)** (the [combined Essence 2 creation](#essence-2--the-combined-creation)), `expression`+`v2` = **[`expression-2`](/concepts/expression-2)**. You may also pass a **full engine name** directly (`essence-1`, `essence-2`, **[`essence-2-max`](/concepts/essence-2-max)**, `expression-1`, `expression-2`) or **`auto`** ([classify-and-route](#auto--let-the-platform-pick-the-model)) — those pass through unchanged and `version` is ignored, so existing integrations keep working. An omitted `model` defaults to `expression` at `v1` (Expression 1, 250 credits) — a v1 engine at the ungated 250-credit rate; a caller is never silently upgraded onto a v2 engine or a higher price. Invalid values return `400 VALIDATION_ERROR` (no credits charged); the retired `essence-2-light` name returns a targeted hint pointing at `essence-2`, and the pre-rename `essence-2-quality` is still accepted as a **deprecated alias** for `essence-2-max` during the migration. See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
+| `version` | string | no | `v1` | Engine generation for the chosen `model` family — `v1` (default) selects the first-generation engine (Essence 1 / Expression 1, 250 credits); `v2` selects the second-generation engine (Essence 2, 500 credits, or Expression 2, 2000 credits). Ignored when `model` is a full engine name or `auto`. |
 
 > **Agent creation is image-only.** Provide a portrait `image` (or let the
 > prompt generate one) — bitHuman generates a **10-second identity video
-> internally**, authored to loop seamlessly (its first and last frames
-> match). Video input is not part of the creation contract for any model and
+> internally** (Seedance 1.5 pro, 25 fps), authored to loop seamlessly (its
+> first and last frames match). Video input is not part of the creation contract for any model and
 > is being removed platform-wide: do not send `video` — as the rollout
 > completes, a request carrying it is rejected with
 > [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
@@ -69,8 +72,8 @@ model-specific identity step runs:
 
 | `model` | Identity input | Identity step | Typical creation time |
 |---|---|---|---|
-| `essence-1` (default) | `image` (or generated from prompt); an identity video is generated internally if needed | Builds the portable `.imx` avatar | 2–5 minutes |
-| `expression-1` | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
+| `essence-1` | `image` (or generated from prompt); an identity video is generated internally if needed | Builds the portable `.imx` avatar | 2–5 minutes |
+| `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
 | `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | **Combined**: distills the standard Essence 2 identity bundle on a cloud GPU; Max derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
 | `essence-2-max` | Included with every `essence-2` creation — its identity derives from the same internally generated identity video | Instant prep of a compact identity bundle (seconds, warm) | Available once the combined creation is ready |
 | `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | ~45 minutes (30–60; allowed up to 90) |
@@ -110,7 +113,7 @@ the `image` if you provided one, else the `prompt` — and routes it:
 model's rate (500 credits for `essence-2`, 2000 for `expression-2`). It is
 the default selection in the dashboard's
 create flow, but **API callers must pass it explicitly**: an omitted `model`
-keeps the historical `essence-1` default for backward compatibility.
+defaults to `expression-1` (`v1`, 250 credits) for backward compatibility.
 
 ### The Essence 2 subject gate (422)
 
