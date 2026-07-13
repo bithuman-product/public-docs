@@ -47,6 +47,8 @@ the [embed token flow](/api/embedding) instead. See
   knowledge into an active room. See [Agents](/api/agents).
 - **Add gestures** — generate and toggle conversational animations. See
   [Dynamics](/api/dynamics).
+- **Render talking videos** — generate a finished mp4 of an agent speaking, from
+  a text script or hosted audio. See [Video API](/api/video).
 - **Embed in any page** — mint a token and drop an iframe. See
   [Embedding](/api/embedding).
 - **Track credits** — read balance and per-mode minute estimates. See

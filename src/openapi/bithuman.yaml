@@ -1694,8 +1694,11 @@ paths:
         - **Audio input** — your `audio_url` (a hosted WAV/MP3) drives the render
           directly.
 
-        The output is a public CDN URL. Limits: max **120 seconds** of output, max
-        **5000 characters** of text.
+        The output is a public CDN URL. `essence-2` / `essence-2-max` render at
+        **1080p** by default (1080×1920 portrait or 1920×1080 landscape, matching
+        the source orientation and capped at the source's long side);
+        `expression-2` renders at its native 416×720. Limits: max **120 seconds**
+        of output, max **5000 characters** of text.
       tags: [Video]
       parameters:
         - name: Idempotency-Key
@@ -2848,6 +2851,7 @@ x-tagGroups:
       - Files
       - Dynamics
       - Embedding
+      - Video
       - Billing
       - Account
       - Webhooks
@@ -4008,6 +4012,12 @@ tags:
       it with the secret returned once at creation.
   - name: Embedding
     description: Mint short-lived tokens for website avatar embeds.
+  - name: Video
+    description: |
+      Render a finished talking-video mp4 from text or audio. Submit
+      [`POST /v1/video/generate`](#operation/generateTalkingVideo) — async by
+      default, or `wait: true` for a blocking render — and poll
+      [`GET /v1/video/{job_id}`](#operation/getTalkingVideo).
   - name: Dynamics
     description: |
       Generate and manage conversational gesture animations (wave,

@@ -63,6 +63,12 @@ curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 \
 #     "duration_seconds": 6.5, "credits_charged": 4, "model": "essence-2" }
 ```
 
+**Blocking mode.** For short clips you can skip polling: pass `"wait": true`
+(or `?wait=true`) on the submit call and it holds the connection until the
+render finishes (up to ~90s), returning the finished `video_url` directly. If
+the render exceeds that cap you get the async `job_id` to poll instead. See
+[Generate a talking video](/api/video#blocking-mode-wait-true).
+
 Audio input is the same call with an audio block:
 
 ```jsonc
@@ -79,14 +85,13 @@ Audio input is the same call with an audio block:
 |---|---|---|
 | `essence-1` | Classic photoreal renders — every essence-1 agent. | Available today |
 | `expression-1` | Classic stylized renders. | Available today |
-| `essence-2` | The standard model — cost-effective renders. | Available (rollout in progress) |
-| `expression-2` | Fast, expressive renders. | Available (rollout in progress) |
-| `essence-2-max` | Premium fidelity output — the highest-fidelity renderer. | **Not yet available for talking video** — the offline quality render worker isn't live yet; use `essence-2` for now, or serve Max in [real time](/concepts/essence-2-max#serving). |
+| `essence-2` | The standard model — cost-effective renders. | Available today |
+| `expression-2` | Fast, expressive renders. | Available today |
+| `essence-2-max` | Premium fidelity output — the highest-fidelity renderer. | Available today |
 
-`essence-2` and `expression-2` talking-video renders work today; `essence-2-max`
-talking-video is coming with the offline quality render worker. See
-[Essence 2 & Expression 2](/concepts/models-v2) for the full lineup and rollout
-status.
+All five models render talking video today. See
+[Essence 2 & Expression 2](/concepts/models-v2) for the full second-generation
+lineup.
 
 ## Cost
 
@@ -102,7 +107,10 @@ automatically refunded.
 
 - **Output duration:** up to **120 seconds**.
 - **Text length:** up to **5000 characters**.
-- **Output:** mp4, served from a public CDN URL.
+- **Output:** mp4, served from a public CDN URL. `essence-2` / `essence-2-max`
+  render at **1080p** by default — `1080×1920` portrait or `1920×1080`
+  landscape, matching the source orientation and capped at the source's long
+  side; `expression-2` renders at its native `416×720`.
 
 ## See also
 

@@ -7,7 +7,7 @@ order: 4
 label: "Expression 2"
 ---
 
-> **Note — Launching July 10, 2026 (rollout in progress).** `expression-2`
+> **Note — Generally available.** `expression-2`
 > ("Expression 2") is the second-generation expression engine and the model
 > for **stylized and universal characters** — cartoons, animals, creatures,
 > robots, and people. Available now — see

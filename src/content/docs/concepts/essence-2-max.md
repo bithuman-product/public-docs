@@ -7,7 +7,7 @@ order: 3
 label: "Essence 2 Max"
 ---
 
-> **Note — Launching July 10, 2026 (rollout in progress).** For most agents you simply select
+> **Note — Generally available.** For most agents you simply select
 > **[`essence-2`](/concepts/essence-2)** — the standard model, served the
 > right way for your hardware and quality needs. **`essence-2-max`** is the
 > separate, explicitly selectable **premium model** for maximum-fidelity

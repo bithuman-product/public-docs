@@ -10,9 +10,14 @@ order: 20
 
 The Video API renders a complete **talking-video mp4** of one of your agents
 speaking — from a **text** script (the agent's voice synthesizes it) or from a
-**hosted audio** file. It is asynchronous: submit a job, then poll for the
-finished video URL. On success you get a public CDN URL, the output duration, and
-the credits charged.
+**hosted audio** file. It is asynchronous by default: submit a job, then poll for
+the finished video URL — or pass [`wait: true`](#blocking-mode-wait-true) for a
+blocking render that returns the mp4 in the response. On success you get a public
+CDN URL, the output duration, and the credits charged.
+
+`essence-2` / `essence-2-max` render at **1080p** by default — `1080×1920`
+portrait or `1920×1080` landscape, matching the source orientation and capped at
+the source's long side; `expression-2` renders at its native `416×720`.
 
 Talking videos bill **per minute of output, rounded up**: `essence-2-max`
 is 8 credits/min; `expression-1`, `expression-2`, and `essence-2` are
@@ -25,18 +30,22 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 ## Generate a talking video
 
-`POST /v1/video/generate` — submit a render job. Returns immediately with a
-`job_id` and `status: "processing"`; poll the GET endpoint for completion.
+`POST /v1/video/generate` — submit a render job. **Async by default:** returns
+immediately with a `job_id` and `status: "processing"`; poll the GET endpoint for
+completion. Pass **`wait: true`** for [blocking mode](#blocking-mode-wait-true) —
+the call holds the connection until the render finishes and returns the finished
+mp4 directly.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-max`, or `essence-2`. `essence-1`, `expression-1`, `expression-2`, and `essence-2` render today; `essence-2-max` talking-video is rolling out (offline quality renders not yet generally available). |
+| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-max`, or `essence-2`. All five render talking video today. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
 | `input.text` | string | for text | Script to speak (≤ 5000 chars). |
 | `input.voice` | string | no | Voice id override for text input. Defaults to the agent's own voice. |
 | `input.audio_url` | string | for audio | Public URL to a WAV or MP3 file. |
+| `wait` | boolean | no | Blocking mode. `false` (default) returns a `job_id` to poll. `true` blocks until the render finishes (up to ~90s) and returns the finished `video_url` — plus `duration_seconds` and `credits_charged` — directly in this response; if it exceeds the cap you get the async `{ job_id }` to poll instead. Accepted as a JSON/multipart field or as a `?wait=true` query parameter. |
 
 ### Text input
 
@@ -76,6 +85,38 @@ resp = requests.post(
     },
 )
 print(resp.json())
+```
+
+### Blocking mode (`wait: true`)
+
+Add `"wait": true` (a JSON/multipart field, or `?wait=true` as a query
+parameter) to hold the connection until the render finishes and get the mp4 back
+in the same response — no polling. If the render exceeds the ~90-second cap you
+get the async `{ job_id }` to poll instead.
+
+```python
+resp = requests.post(
+    "https://api.bithuman.ai/v1/video/generate",
+    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    json={
+        "model": "essence-2-max",
+        "agent_code": "A80HVD8577",
+        "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
+        "wait": True,
+    },
+)
+print(resp.json())
+```
+
+```json
+{
+  "success": true,
+  "job_id": "vid_3f9a2c1b8e7d4a6f0b21",
+  "status": "completed",
+  "video_url": "https://assets.bithuman.ai/.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
+  "duration_seconds": 6.5,
+  "credits_charged": 8
+}
 ```
 
 A `402` (`INSUFFICIENT_BALANCE`) is returned at submit time if your balance can't

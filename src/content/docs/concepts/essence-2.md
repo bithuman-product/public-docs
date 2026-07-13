@@ -7,7 +7,7 @@ order: 2
 label: "Essence 2"
 ---
 
-> **Note — Launching July 10, 2026 (rollout in progress).** **`essence-2`** ("Essence 2") is the
+> **Note — Generally available.** **`essence-2`** ("Essence 2") is the
 > **standard** second-generation Essence model and the default for
 > photorealistic humans — as a developer you simply select `essence-2`, and
 > bitHuman serves the right tier for your hardware and quality needs.
