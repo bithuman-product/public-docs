@@ -56,27 +56,37 @@ Set `BITHUMAN_UNMETERED=1` to skip `api.bithuman.ai` calls entirely — for loca
 
 Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for Expression 1. See [Pricing](/guides/pricing) for the full cloud-vs-self-hosted breakdown. Self-hosted serving authenticates online today (a once-per-minute billing heartbeat).
 
-## Essence 2 / Expression 2 self-hosted (SDK, CPU / Neural Engine)
+## Essence 2 / Expression 2 self-hosted — coming soon
 
 The Docker image above runs the first-generation
 [Expression 1](/concepts/models) model on an NVIDIA GPU. The
-[second-generation models](/concepts/models-v2) don't use this container —
-they self-host through the [SDK](/sdk/overview) instead, at the self-hosted
-rate of **2 credits/min** ([pricing](/guides/pricing)):
+[second-generation models](/concepts/models-v2) do **not** self-host through
+the developer SDK or CLI yet. A cross-platform (CPU / Neural Engine) developer
+self-host runtime for `essence-2` and `expression-2` is in active development —
+**today, serve these models through the cloud.**
 
-- **[`essence-2`](/concepts/essence-2)** — runs self-hosted on a modern CPU
-  and on the Apple Neural Engine (Apple Silicon). Download the
-  `<code>.lebundle.imx` bundle with
-  [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-  or `bithuman pull <code>` and serve it via the Python SDK / CLI, or point
-  the LiveKit plugin's `api_url` at your own server.
-- **[`expression-2`](/concepts/expression-2)** — runs self-hosted on modern
-  (AVX-512-class) server CPUs, and on the Apple Neural Engine on Apple Silicon
-  via the [Swift SDK](/sdk/swift). Download the Mac-runnable `<code>.avatar`
-  build the same way.
-- **[`essence-2-max`](/concepts/essence-2-max)** — **no self-hosted runtime.**
-  It is cloud-GPU-only; use [`essence-2`](/concepts/essence-2) for on-device or
-  self-hosted serving.
+You can already download the packaged artifacts — the `<code>.lebundle.imx`
+([`essence-2`](/concepts/essence-2)) and `<code>.avatar`
+([`expression-2`](/concepts/expression-2)) builds — with
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+or `bithuman pull <code>`, but they are for archival and forward-compatibility
+today. The [Python SDK](/sdk/python#which-model-artifacts-can-the-sdk-load) and
+[CLI](/sdk/cli/overview) **recognize** these files but their local runtimes only
+play `essence-1` `.imx` avatars, so passing a v2 artifact as the model path
+**fails at load**. Until the self-host runtime ships, put the second-generation
+models on screen through the cloud surfaces:
+
+- the [cloud REST API](/api/agents),
+- the [LiveKit plugin](/sdk/livekit) — pass the **agent code**, not a model
+  file, and it streams whatever family that agent serves,
+- the [embed widget](/guides/deploy-embed), or the dashboard.
+
+The one **on-device** path that exists today is **Apple Silicon** playback via
+the [Swift SDK](/sdk/swift) — `essence-2` and `expression-2` have on-device
+Neural Engine engines there. That rail is **preview**, not GA: treat it as a
+technology preview, not a self-host deployment product.
+[`essence-2-max`](/concepts/essence-2-max) has **no on-device or self-hosted
+runtime** — it is cloud-GPU-only.
 
 See [where each model runs](/concepts/models-v2#where-each-model-runs) for the
 full device/runtime matrix.
