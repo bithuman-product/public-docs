@@ -69,7 +69,7 @@ curl https://api.bithuman.ai/v1/pricing \
     "talking_video": {
       "unit": "credits_per_minute",
       "billing": "ceil(minutes) * rate, minimum 1 minute",
-      "rates": { "essence-1": 8, "expression-1": 4, "essence-2": 4, "essence-2-max": 8, "expression-2": 4 }
+      "rates": { "essence-1": 2, "expression-1": 4, "essence-2": 4, "essence-2-max": 8, "expression-2": 4 }
     },
     "dynamics_generation": { "flat": 250, "note": "…" },
     "notes": "Authoritative charges are enforced server-side at request time. …"

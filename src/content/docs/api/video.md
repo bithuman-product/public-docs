@@ -14,9 +14,9 @@ speaking — from a **text** script (the agent's voice synthesizes it) or from a
 finished video URL. On success you get a public CDN URL, the output duration, and
 the credits charged.
 
-Talking videos bill **per minute of output, rounded up**: `essence-1` and
-`essence-2-max` are 8 credits/min; `expression-1`, `expression-2`, and
-`essence-2` are 4 credits/min (`essence-2` is the standard distilled
+Talking videos bill **per minute of output, rounded up**: `essence-2-max`
+is 8 credits/min; `expression-1`, `expression-2`, and `essence-2` are
+4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard distilled
 render; the former `essence-2-light` name is retired, and the pre-rename
 `essence-2-quality` is still accepted as a deprecated alias for
 `essence-2-max`). If a render fails, the charge is automatically refunded.

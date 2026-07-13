@@ -1251,7 +1251,7 @@ paths:
                             additionalProperties:
                               type: integer
                             example:
-                              essence-1: 8
+                              essence-1: 2
                               expression-1: 4
                               expression-2: 4
                               essence-2-max: 8
@@ -1715,7 +1715,7 @@ paths:
                   type: string
                   enum: [essence-1, expression-1, essence-2, essence-2-max, essence-2-quality, expression-2]
                   description: |
-                    Avatar engine. `essence-1` (8 credits/min) and
+                    Avatar engine. `essence-1` (2 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
                     available today. `expression-2` (4 credits/min),
                     `essence-2-max` (8 credits/min, the premium model — its
@@ -1793,7 +1793,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 8, expression-1 = 4, expression-2 = 4, essence-2-max = 8 — same for its deprecated alias essence-2-quality, essence-2 = 4 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 2, expression-1 = 4, expression-2 = 4, essence-2-max = 8 — same for its deprecated alias essence-2-quality, essence-2 = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
         "409":

@@ -56,7 +56,7 @@ Two modes are always free: **audio-only** Swift SDK use (no avatar attached — 
 | `essence-2` | 4 credits |
 | `essence-2-max` | 8 credits |
 | `expression-2` | 4 credits |
-| `essence-1` | 8 credits |
+| `essence-1` | 2 credits |
 | `expression-1` | 4 credits |
 
 ## Free tier
