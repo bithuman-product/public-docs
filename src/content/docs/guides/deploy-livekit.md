@@ -84,6 +84,7 @@ See the [LiveKit Agents docs](https://docs.livekit.io/agents/) for the broader a
 
 ## Where to go next
 
+- [Trigger avatar actions from code](/guides/avatar-actions) — fire specific gestures deterministically from your agent code (and switch off the automatic ones).
 - [Self-hosted GPU](/guides/deploy-self-hosted) — run Expression on your own NVIDIA hardware.
 - [Embed widget](/guides/deploy-embed) — drop an iframe on any page.
 - [Pricing](/guides/pricing) — the cloud-vs-self-hosted credit breakdown.
