@@ -1461,6 +1461,159 @@ paths:
                 status: "error"
                 status_code: 409
 
+  /v1/runtime-tokens/request:
+    post:
+      operationId: requestRuntimeToken
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"agent_code": "A78WKV4515"}'
+            # → data.token is a short-lived runtime JWT the SDK uses to run a session
+      summary: Request a runtime token
+      description: >-
+        Exchange your API secret for a short-lived runtime token that authorizes one
+        avatar session. The SDKs call this for you; call it directly when building a
+        custom runtime. This is a billing endpoint — it meters credits for the session's
+        model per the schedule in `GET /v1/pricing`.
+      tags: [Authentication]
+      security:
+        - apiSecret: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agent_code:
+                  type: string
+                  description: Agent code the session runs (attribution + transcript).
+                  example: "A78WKV4515"
+                billing_type:
+                  type: string
+                  description: Selects the model and pricing schedule for the session.
+                  example: "agent-voice-chat"
+                room_name:
+                  type: string
+                  description: LiveKit room name to associate the session with its transcript.
+                user_id:
+                  type: string
+                  description: Optional. Attribute billing to a specific end-user (owner override).
+                fingerprint:
+                  type: string
+                  description: Optional 32-character runtime-instance fingerprint (analytics only).
+      responses:
+        "200":
+          description: A runtime token. `data.token` is a short-lived JWT for one session.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token: { type: string }
+                      transaction_id: { type: string }
+                  status: { type: string, example: success }
+                  status_code: { type: integer, example: 200 }
+              example:
+                data:
+                  transaction_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                status: success
+                status_code: 200
+        "402":
+          description: Insufficient credit balance.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "INSUFFICIENT_BALANCE"
+                  message: "Not enough credits to start a session"
+                  httpStatus: 402
+                status: "error"
+                status_code: 402
+        "403":
+          description: Key revoked, account suspended, or concurrency limit reached.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/realtime/ephemeral-token:
+    post:
+      operationId: requestRealtimeToken
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/realtime/ephemeral-token \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" -d '{}'
+            # → data.value is an OpenAI client secret; hand it to the browser
+      summary: Mint a realtime client secret
+      description: >-
+        Mint a short-lived OpenAI-Realtime client secret so a browser can open a realtime
+        voice session without your API secret. Mint on the server and pass only `data.value`
+        to the client. Balance-gated; rate-limited to 20/min. Realtime voice is metered at
+        10 credits/min once the session runs.
+      tags: [Voice]
+      security:
+        - apiSecret: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                  description: OpenAI Realtime model. Defaults to the current bitHuman default.
+                  example: "gpt-realtime-mini"
+      responses:
+        "200":
+          description: A client secret. Mint one per session.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      value: { type: string }
+                      expires_at: { type: integer }
+                      model: { type: string }
+                  status: { type: string, example: success }
+                  status_code: { type: integer, example: 200 }
+              example:
+                data:
+                  value: "ek_68f0c2..."
+                  expires_at: 1751500000
+                  model: "gpt-realtime-mini"
+                status: success
+                status_code: 200
+        "402":
+          description: Out of credits.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Too many realtime sessions; slow down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /v1/dynamics/generate:
     post:
       operationId: generateDynamics

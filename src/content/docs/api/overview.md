@@ -47,12 +47,21 @@ the [embed token flow](/api/embedding) instead. See
   knowledge into an active room. See [Agents](/api/agents).
 - **Add gestures** — generate and toggle conversational animations. See
   [Dynamics](/api/dynamics).
+- **Ground agents in your docs** — ingest files and URLs into knowledge bases from
+  code. See [Knowledge](/api/knowledge).
+- **Add realtime voice** — mint a browser client secret for OpenAI-Realtime
+  sessions. See [Realtime](/api/realtime).
+- **Bring your own keys** — use your own LLM/STT/TTS provider keys. See
+  [Providers](/api/providers).
 - **Render talking videos** — generate a finished mp4 of an agent speaking, from
   a text script or hosted audio. See [Video API](/api/video).
 - **Embed in any page** — mint a token and drop an iframe. See
   [Embedding](/api/embedding).
 - **Track credits** — read balance and per-mode minute estimates. See
   [Billing](/api/billing).
+- **Manage keys & teams** — rotate [API keys](/api/api-keys), watch
+  [runtime sessions](/api/runtime-sessions), and run
+  [organizations](/api/organizations) programmatically.
 - **Get notified** — register [webhooks](/api/webhooks) for signed
   `agent.ready` / `agent.failed` events instead of polling.
 - **Drive it from an AI agent** — every endpoint below is also exposed as a

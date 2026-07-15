@@ -92,9 +92,13 @@ paths:
               -d '{
                 "prompt": "You are a friendly fitness coach who motivates users.",
                 "image": "https://example.com/face.jpg",
-                "audio": "https://example.com/voice.wav",
-                "model": "auto"
+                "model": "expression",
+                "version": "v2",
+                "aspect_ratio": "9:16",
+                "framing": "portrait"
               }'
+            # model+version selects the engine: expression+v2 → Expression 2.
+            # Omit both to default to expression + v1 (Expression 1).
             # → {"success": true, "agent_id": "A91XMB7113", "status": "processing"}
             # then poll GET /v1/agent/status/A91XMB7113
       summary: Generate a new agent
@@ -112,18 +116,24 @@ paths:
         rejected with `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is
         billed.
 
-        **Creation time depends on `model`** (the second-generation
+        **Selecting an engine.** Send `model` (`expression` default, or
+        `essence`) + `version` (`v1` default, or `v2`). `expression`+`v2` →
+        Expression 2, `essence`+`v2` → Essence 2, and so on. Omitting both
+        gives Expression 1. Full engine names (`essence-1` … `expression-2`)
+        and `auto` are still accepted directly.
+
+        **Creation time depends on the resolved engine** (the second-generation
         models train real per-identity models — don't apply a 5-minute client
         timeout):
 
-        | model | identity input | typical creation time |
-        |---|---|---|
-        | `essence-1` (default) | image (or generated from prompt) | 2–5 minutes |
-        | `expression-1` | image (or generated from prompt) | ~1–2 minutes |
-        | `essence-2` | image (or generated from prompt) — a 10-second identity video is generated internally | 45 minutes typical; long builds can take hours — **both Essence 2 models from one creation** |
-        | `essence-2-max` | included with every `essence-2` creation — its identity derives from the same internally generated identity video | prepares in seconds; available once the agent is ready |
-        | `expression-2` | image (or generated from prompt) | ~45 minutes (30–60) |
-        | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
+        | model + version | engine | identity input | typical creation time |
+        |---|---|---|---|
+        | `expression` + `v1` (default) | Expression 1 | image (or generated from prompt) | ~1–2 minutes |
+        | `essence` + `v1` | Essence 1 | image (or generated from prompt) | 2–5 minutes |
+        | `essence` + `v2` | Essence 2 | image (or generated from prompt) — a 10-second identity video is generated internally | 45 minutes typical; long builds can take hours — **both Essence 2 models from one creation** |
+        | `essence-2-max` | Essence 2 premium | included with every `essence` + `v2` creation — its identity derives from the same internally generated identity video | prepares in seconds; available once the agent is ready |
+        | `expression` + `v2` | Expression 2 | image (or generated from prompt) | ~45 minutes (30–60) |
+        | `auto` | classified | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
 
         **Picking the right family:** `essence-2` works best for
         photorealistic human figures; `expression-2` works best for
@@ -172,7 +182,26 @@ paths:
                   type: string
                   enum: ["16:9", "9:16", "1:1"]
                   default: "16:9"
-                  description: Aspect ratio for image generation.
+                  description: >-
+                    Aspect ratio for the generated identity image and driver
+                    video. `16:9` landscape (default), `9:16` portrait, `1:1`
+                    square. Images are generated at 1080p on this ratio.
+                transparency:
+                  type: boolean
+                  default: false
+                  description: >-
+                    When `true`, the identity image is generated on a solid
+                    green-screen background (chroma-key friendly) so the avatar
+                    can be embedded transparently — the character itself never
+                    uses green. Leave `false` for a normal scene background.
+                framing:
+                  type: string
+                  enum: [portrait, full_body]
+                  default: portrait
+                  description: >-
+                    `portrait` (default) frames head-and-shoulders; `full_body`
+                    shows the full figure including the feet — use it for
+                    kiosk / standing-avatar layouts.
                 agent_id:
                   type: string
                   description: Custom agent identifier. Auto-generated if omitted.
@@ -186,45 +215,53 @@ paths:
                     as that rollout completes.
                 model:
                   type: string
-                  enum: [essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, essence, expression, auto]
-                  default: essence-1
-                  example: "auto"
+                  enum: [expression, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, auto]
+                  default: expression
+                  example: expression
                   description: >-
-                    Avatar runtime model for the generated agent. Public
-                    names: `essence-1`, `essence-2`, `expression-1`,
-                    `expression-2`. `essence-1` / `expression-1` are available
-                    today; **`essence-2` and `expression-2` launched July 10,
-                    2026** — creation access opens progressively during the
-                    rollout (a still-paused v2 model returns
-                    `503 MODEL_NOT_YET_AVAILABLE`, nothing charged).
-                    **`essence-2` is the second-generation
-                    Essence model** for photorealistic people — one 500-credit
-                    creation that runs everywhere from fully on-device (CPU /
-                    Apple Neural Engine) up to cloud GPU; bitHuman serves the
-                    right way automatically, so you just select `essence-2`.
-                    (**`essence-2-max`** is the premium model — the Essence 2
-                    gold teacher served directly on L40S-class GPUs for
-                    maximum fidelity; its pre-rename name `essence-2-quality`
-                    is still accepted as a **deprecated alias** during the
-                    2026-07-10 rename migration. The former `essence-2-light`
-                    name was consolidated into `essence-2` and is no longer
-                    accepted.) **`auto` classifies your input**
-                    (the image if provided, else the prompt): a photorealistic
-                    person routes to `essence-2` (combined); a cartoon,
-                    animal, creature or robot routes to `expression-2` — the
-                    family that works best for stylized characters. `auto` must be
-                    sent explicitly — an omitted `model` keeps the historical
-                    `essence-1` default. `expression-2` is the
-                    second-generation expression engine — audio-driven
-                    real-time avatar video from a single photo (creation
-                    trains a per-identity model, roughly 45 minutes). The bare
-                    `essence` and `expression` are **version shorthands** that
-                    resolve to the current default of each family
-                    (`essence`→`essence-1`, `expression`→`expression-1`).
-                    Retired engine names are **no longer accepted** and return
+                    Avatar model **family**: `expression` (default) or
+                    `essence`, combined with `version` (`v1` / `v2`) to select
+                    the engine — `expression`+`v1` → Expression 1,
+                    `essence`+`v2` → Essence 2, and so on. **Essence** is the
+                    photorealistic-human engine; **Expression** drives stylized /
+                    cartoon / creature characters (and photorealistic figures on
+                    v1). An omitted `model` defaults to `expression` at version
+                    `v1` (Expression 1) — a v1 engine at the 250-credit rate; an
+                    omitted model never silently selects a v2 engine or a higher
+                    price.
+
+
+                    You may still pass a **full engine name** directly
+                    (`essence-1`, `essence-2`, `expression-1`, `expression-2`)
+                    or `auto`; those pass through unchanged and `version` is
+                    ignored, so existing integrations keep working.
+                    **`essence-2`** is the second-generation Essence model for
+                    photorealistic people — one 500-credit creation that runs
+                    everywhere from on-device (CPU / Apple Neural Engine) up to
+                    cloud GPU. **`essence-2-max`** is the premium tier (its
+                    pre-rename name `essence-2-quality` remains a deprecated
+                    alias). **`expression-2`** is the second-generation
+                    expression engine — audio-driven real-time avatar video from
+                    a single photo (creation trains a per-identity model, ~45
+                    min). **`auto`** classifies your input (the image if
+                    provided, else the prompt): a photorealistic person routes to
+                    `essence-2`, a cartoon / animal / creature / robot to
+                    `expression-2`. Retired engine names return
                     `400 VALIDATION_ERROR`. Identity inputs and creation times
                     differ per model — see the endpoint description table and
                     [Essence vs Expression](#tag/models).
+                version:
+                  type: string
+                  enum: [v1, v2]
+                  default: v1
+                  example: v2
+                  description: >-
+                    Engine generation for the chosen `model` family. `v1`
+                    (default) selects the first-generation engine (Essence 1 /
+                    Expression 1, 250 credits); `v2` selects the
+                    second-generation engine (Essence 2, 500 credits, or
+                    Expression 2, 2000 credits). Ignored when `model` is a full
+                    engine name or `auto`.
       responses:
         "200":
           description: Generation started
@@ -842,7 +879,7 @@ paths:
         | `essence-1` | `<code>.imx` (the portable IMX container) |
         | `essence-2-light` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow) |
         | `essence-2-quality` | `<code>.pkl` — the Essence 2 Max artifact (IMX container) |
-        | `expression-2` | `<code>.avatar` (CoreML zip — the Mac-runnable form, ~90 MB) |
+        | `expression-2` | `<code>.avatar` (CoreML zip — the Apple/CoreML build, ~20–90 MB per identity; cloud-served today, local playback in development) |
         | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
 
         The default response is a **302 redirect** to the artifact — the
@@ -1214,7 +1251,7 @@ paths:
                             additionalProperties:
                               type: integer
                             example:
-                              essence-1: 8
+                              essence-1: 2
                               expression-1: 4
                               expression-2: 4
                               essence-2-max: 8
@@ -1424,6 +1461,159 @@ paths:
                 status: "error"
                 status_code: 409
 
+  /v1/runtime-tokens/request:
+    post:
+      operationId: requestRuntimeToken
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"agent_code": "A78WKV4515"}'
+            # → data.token is a short-lived runtime JWT the SDK uses to run a session
+      summary: Request a runtime token
+      description: >-
+        Exchange your API secret for a short-lived runtime token that authorizes one
+        avatar session. The SDKs call this for you; call it directly when building a
+        custom runtime. This is a billing endpoint — it meters credits for the session's
+        model per the schedule in `GET /v1/pricing`.
+      tags: [Authentication]
+      security:
+        - apiSecret: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agent_code:
+                  type: string
+                  description: Agent code the session runs (attribution + transcript).
+                  example: "A78WKV4515"
+                billing_type:
+                  type: string
+                  description: Selects the model and pricing schedule for the session.
+                  example: "agent-voice-chat"
+                room_name:
+                  type: string
+                  description: LiveKit room name to associate the session with its transcript.
+                user_id:
+                  type: string
+                  description: Optional. Attribute billing to a specific end-user (owner override).
+                fingerprint:
+                  type: string
+                  description: Optional 32-character runtime-instance fingerprint (analytics only).
+      responses:
+        "200":
+          description: A runtime token. `data.token` is a short-lived JWT for one session.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token: { type: string }
+                      transaction_id: { type: string }
+                  status: { type: string, example: success }
+                  status_code: { type: integer, example: 200 }
+              example:
+                data:
+                  transaction_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                status: success
+                status_code: 200
+        "402":
+          description: Insufficient credit balance.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "INSUFFICIENT_BALANCE"
+                  message: "Not enough credits to start a session"
+                  httpStatus: 402
+                status: "error"
+                status_code: 402
+        "403":
+          description: Key revoked, account suspended, or concurrency limit reached.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/realtime/ephemeral-token:
+    post:
+      operationId: requestRealtimeToken
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/realtime/ephemeral-token \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" -d '{}'
+            # → data.value is an OpenAI client secret; hand it to the browser
+      summary: Mint a realtime client secret
+      description: >-
+        Mint a short-lived OpenAI-Realtime client secret so a browser can open a realtime
+        voice session without your API secret. Mint on the server and pass only `data.value`
+        to the client. Balance-gated; rate-limited to 20/min. Realtime voice is metered at
+        10 credits/min once the session runs.
+      tags: [Voice]
+      security:
+        - apiSecret: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                  description: OpenAI Realtime model. Defaults to the current bitHuman default.
+                  example: "gpt-realtime-mini"
+      responses:
+        "200":
+          description: A client secret. Mint one per session.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      value: { type: string }
+                      expires_at: { type: integer }
+                      model: { type: string }
+                  status: { type: string, example: success }
+                  status_code: { type: integer, example: 200 }
+              example:
+                data:
+                  value: "ek_68f0c2..."
+                  expires_at: 1751500000
+                  model: "gpt-realtime-mini"
+                status: success
+                status_code: 200
+        "402":
+          description: Out of credits.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Too many realtime sessions; slow down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /v1/dynamics/generate:
     post:
       operationId: generateDynamics
@@ -1467,11 +1657,12 @@ paths:
                   description: Gesture duration in seconds.
                 model:
                   type: string
-                  enum: [seedance, kling, auto]
+                  enum: [seedance, auto]
                   default: seedance
                   description: >-
-                    Video motion model. `seedance` (default) or `kling`; `auto`
-                    lets the platform choose. Any other value returns 400.
+                    Video motion model. `seedance` (Seedance 1.5 pro) is the only
+                    dynamics model; `auto` resolves to it. Any legacy value (e.g.
+                    the retired `kling`) is coerced to `seedance`.
       responses:
         "200":
           description: Dynamics generation started
@@ -1656,8 +1847,11 @@ paths:
         - **Audio input** — your `audio_url` (a hosted WAV/MP3) drives the render
           directly.
 
-        The output is a public CDN URL. Limits: max **120 seconds** of output, max
-        **5000 characters** of text.
+        The output is a public CDN URL. `essence-2` / `essence-2-max` render at
+        **1080p** by default (1080×1920 portrait or 1920×1080 landscape, matching
+        the source orientation and capped at the source's long side);
+        `expression-2` renders at its native 416×720. Limits: max **120 seconds**
+        of output, max **5000 characters** of text.
       tags: [Video]
       parameters:
         - name: Idempotency-Key
@@ -1677,7 +1871,7 @@ paths:
                   type: string
                   enum: [essence-1, expression-1, essence-2, essence-2-max, essence-2-quality, expression-2]
                   description: |
-                    Avatar engine. `essence-1` (8 credits/min) and
+                    Avatar engine. `essence-1` (2 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
                     available today. `expression-2` (4 credits/min),
                     `essence-2-max` (8 credits/min, the premium model — its
@@ -1755,7 +1949,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 8, expression-1 = 4, expression-2 = 4, essence-2-max = 8 — same for its deprecated alias essence-2-quality, essence-2 = 4 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 2, expression-1 = 4, expression-2 = 4, essence-2-max = 8 — same for its deprecated alias essence-2-quality, essence-2 = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -2810,6 +3004,7 @@ x-tagGroups:
       - Files
       - Dynamics
       - Embedding
+      - Video
       - Billing
       - Account
       - Webhooks
@@ -3179,7 +3374,9 @@ tags:
 
       Create one with
       [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
-      and `model: "expression-2"` (same shape for the other two); serve it
+      using `model` (`essence` / `expression`) + `version` (`v1` / `v2`) — e.g.
+      `model: "expression"`, `version: "v2"` for Expression 2 — or pass the full
+      name `model: "expression-2"` directly (same shape for the other two); serve it
       through the normal session flows — e.g. embed agent `A56ZFX6217` and the
       platform routes the session to the model's best available tier.
       `model: "essence-2"` is the **combined Essence 2 creation** — one
@@ -3968,6 +4165,12 @@ tags:
       it with the secret returned once at creation.
   - name: Embedding
     description: Mint short-lived tokens for website avatar embeds.
+  - name: Video
+    description: |
+      Render a finished talking-video mp4 from text or audio. Submit
+      [`POST /v1/video/generate`](#operation/generateTalkingVideo) — async by
+      default, or `wait: true` for a blocking render — and poll
+      [`GET /v1/video/{job_id}`](#operation/getTalkingVideo).
   - name: Dynamics
     description: |
       Generate and manage conversational gesture animations (wave,

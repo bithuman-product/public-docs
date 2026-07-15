@@ -38,6 +38,38 @@ sessions bill per minute.
 See the [Pricing guide](/guides/pricing) for the full plan ladder (Free, Creator,
 Pro, Business, Enterprise, Custom) and annual pricing.
 
+## Account status {#account-status}
+
+`GET /v1/me` — your identity, plan, and current credit balance in one call. Handy as a
+pre-flight check (it's what the CLI uses) and to look up your `user_id` for the account
+endpoints.
+
+```bash
+curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+```json
+{
+  "data": {
+    "user_id": "3f9a…-uuid",
+    "email": "user@example.com",
+    "plan": "pro",
+    "plan_code": "membership_pro",
+    "credit_balance": 1240,
+    "plan_credits_remaining": 1000,
+    "topup_credits_remaining": 240,
+    "account_status": "active"
+  },
+  "status": "success",
+  "status_code": 200
+}
+```
+
+Read-only, no billing side effects. `credit_balance` is the sum of your plan and top-up
+credits. Use `user_id` in the `/v2/{user_id}/…` account endpoints
+([API keys](/api/api-keys), [Runtime sessions](/api/runtime-sessions),
+[Providers](/api/providers)).
+
 ## Get the pricing schedule
 
 `GET /v1/pricing` — the machine-readable credit schedule, so you can estimate
