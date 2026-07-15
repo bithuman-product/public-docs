@@ -14,9 +14,9 @@ for an avatar. Generate them asynchronously, then toggle them on to make the
 gesture model the active one for live sessions. During conversation, gestures
 trigger based on keyword mapping. Dynamics generation costs 250 credits.
 
-> **Trigger a specific gesture from your code.** Beyond automatic keyword mapping,
-> you can play an exact gesture on demand from your LiveKit agent — deterministic,
-> no keyword or randomness. See
+> **Trigger a specific gesture from your code.** With a **self-hosted** runtime you
+> can play an exact gesture on demand — deterministic, no keyword or randomness.
+> (On managed cloud, gestures fire by keyword mapping only.) See
 > [Trigger avatar actions from code](/guides/avatar-actions).
 
 ## Generate dynamics
