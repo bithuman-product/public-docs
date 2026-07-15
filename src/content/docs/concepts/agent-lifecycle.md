@@ -16,7 +16,7 @@ Generate → Store → Resolve → Live session → Speak
 
 ## 1. Generate
 
-Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus an optional portrait image and voice sample (creation is image-only — bitHuman generates the 10-second identity video internally, authored to loop seamlessly). It returns `{ agent_id, status: "processing" }` immediately — generation runs async: a few minutes for the first-generation models, about 45 minutes for the [second generation](/concepts/models-v2).
+Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus an optional portrait image and voice sample (creation is image-only — bitHuman generates the 10-second identity video internally, authored to loop seamlessly). It returns `{ agent_id, status: "processing" }` immediately — generation runs async: a few minutes for the first-generation models, roughly 45–75 minutes for the [second generation](/concepts/models-v2).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -40,7 +40,7 @@ processing → generating → completed → ready   (success)
                                   \→ failed    (error)
 ```
 
-> **Note** `generating` and `completed` are **intermediate** states, not terminal — keep polling past them until you see `ready` or `failed`. Typical wall-clock is a few minutes for the first-generation models and about 45 minutes for the second generation — don't apply a short client timeout.
+> **Note** `generating` and `completed` are **intermediate** states, not terminal — keep polling past them until you see `ready` or `failed`. Typical wall-clock is a few minutes for the first-generation models and roughly 45–75 minutes for the second generation — don't apply a short client timeout.
 
 ## 3. Resolve and stream
 

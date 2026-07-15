@@ -10,6 +10,20 @@ order: 1
 
 ## July 2026
 
+### Expression 2 — adaptive per-identity training (2026-07-15)
+
+Expression 2 agent creation now runs an **adaptive training recipe**: every
+agent must pass the same quality checks as before, and an identity that needs
+more work automatically gets more training rather than a lower bar. In
+practice creation typically completes in **45–75 minutes** (some identities
+up to about 90) — see
+[Expression 2](/concepts/expression-2#how-creation-works) for the updated
+expectations. The Expression 2 identities in the
+[gallery](https://bithuman.ai/explore?gallery=v2) have been refreshed with
+models trained under the new recipe, with the same quality checks enforced.
+No action is needed: existing agents, integrations, APIs, and pricing are
+unchanged.
+
 ### Agent creation is image-only (2026-07-10)
 
 The `video` creation input is removed for **all models** (`essence-1`,
