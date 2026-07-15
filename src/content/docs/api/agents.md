@@ -76,7 +76,7 @@ model-specific identity step runs:
 | `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
 | `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | **Combined**: distills the standard Essence 2 identity bundle on a cloud GPU; Max derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
 | `essence-2-max` | Included with every `essence-2` creation — its identity derives from the same internally generated identity video | Instant prep of a compact identity bundle (seconds, warm) | Available once the combined creation is ready |
-| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | ~45 minutes (30–60; allowed up to 90) |
+| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | Typically 45–75 minutes (some identities up to ~90) |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
 
 Set your polling timeout per model — a 5-minute client timeout is fine for
@@ -381,7 +381,7 @@ listing the options; the Essence 2 tiers are not individually addable —
 | `model` | What happens | Prerequisites | Credits | Time |
 |---|---|---|---|---|
 | `expression-1` | **Instant enablement** — the v1 foundation model drives the agent's existing image + voice at runtime; nothing is trained | stored image **and** voice (else `422`) | **0** | immediate (this response) |
-| `expression-2` | Trains the per-identity Expression 2 model from the stored image | stored image (else `422`) | 2000 | ~10–45 min |
+| `expression-2` | Trains the per-identity Expression 2 model from the stored image | stored image (else `422`) | 2000 | typically 45–75 min |
 | `essence-2` | The **combined** add: trains the standard Essence 2 from the agent's stored identity video (generated internally at creation); Max lights up from the same video at no extra charge | stored identity video (else `422 MODEL_PREREQUISITE_MISSING`) + photorealistic-human subject on the stored image (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
 | `essence-1` | Builds the v1 `.imx` — reuses the stored identity video, or generates one internally from the stored image | stored identity video or image (else `422`) | 250 | ~10–20 min |
 
@@ -410,7 +410,9 @@ An **async** add (everything except `expression-1`) responds immediately:
 }
 ```
 
-Poll [`GET /v1/agent/status/{code}`](#poll-status) until `supported_models`
+The minute estimate embedded in the response `message` is advisory — the
+table above has the typical times. Poll
+[`GET /v1/agent/status/{code}`](#poll-status) until `supported_models`
 contains the new family (`essence-2` adds **both** internal family names,
 `essence-2-light` and `essence-2-quality`). The agent keeps serving as-is while the add runs —
 `status` stays `ready` for the v2 adds. An **instant** add (`expression-1`,

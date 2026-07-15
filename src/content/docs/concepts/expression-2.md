@@ -115,11 +115,12 @@ training GPU. When the status reaches `ready`, the agent is servable on every
 tier.
 
 **How long.** The per-identity training step runs on a dedicated training GPU
-and is the dominant cost of creation — expect the whole run to take **about
-45 minutes** (typically 30–60; the platform allows up to 90 minutes before a
-run is considered stuck). This is deliberate: the training recipe is
-quality-locked, and shorter recipes were removed after they measurably
-degraded eye and expression fidelity.
+and is the dominant cost of creation — expect the whole run to take
+**typically 45–75 minutes** (some identities up to about 90). The training
+recipe is adaptive: every agent must pass the same quality checks before it
+ships, and an identity that needs more work automatically gets more
+training — never a lower bar. That is why harder identities land at the top
+of the range.
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
@@ -169,8 +170,8 @@ the platform choose. See
 on-device on Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview
 maturity) — no server in the path. Download the Mac-runnable `.avatar` build
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>`. A browser-local (WebGPU) tier is planned; there is
-no WASM/CPU browser path for this model.
+or `bithuman pull <code>`. A browser-local tier is planned; there is no
+in-browser path for this model today.
 
 ## Idle and speaking behavior
 
@@ -209,8 +210,9 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 
 - **Output**: the full 416×720 portrait scene, generated at 20 fps; video
   streams over WebRTC with adaptive bitrate.
-- **Creation time**: plan for about 45 minutes (see above) — poll status
-  rather than assuming the few-minute wall-clock of `essence-1`.
+- **Creation time**: plan for about an hour — typically 45–75 minutes (see
+  above) — and poll status rather than assuming the few-minute wall-clock of
+  `essence-1`.
 - **Identity input**: a clear, frontal, well-lit face photo gives the best
   result. The identity is fixed at creation — to change the face, create a new
   agent.

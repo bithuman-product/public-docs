@@ -25,7 +25,7 @@ API, the embed widget, the dashboard, and the SDKs:
   expression engine, for **stylized and universal characters** (cartoons,
   animals, creatures, robots — and people). Audio-driven, real-time avatar
   video generated from a **single photo**: at agent creation it trains a small
-  per-identity model (roughly 45 minutes on a training GPU), then synthesizes
+  per-identity model (typically 45–75 minutes on a training GPU), then synthesizes
   the **entire 416×720 scene** live at 20 fps — fully generated motion, not
   patched onto a pre-rendered base. Runs on GPU, CPU, and Apple Neural Engine.
 - **[`essence-2`](/concepts/essence-2)** — the **standard** Essence model for
@@ -53,7 +53,7 @@ API, the embed widget, the dashboard, and the SDKs:
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
 | **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
-| **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (typically about 45 minutes) |
+| **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (typically 45–75 minutes) |
 | **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
 | **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
 
@@ -85,7 +85,8 @@ high-concurrency deployments, and privacy-sensitive environments.
 **[`expression-2`](/concepts/expression-2).** The most lifelike motion in the
 lineup — expressions and head movement are generated live from the audio
 rather than replayed. Creation trains a per-identity model from your photo
-(roughly 45 minutes); serving spans GPU, CPU, and Apple Neural Engine tiers.
+(typically 45–75 minutes); serving spans GPU, CPU, and Apple Neural Engine
+tiers.
 
 Still deciding between the **families** (Essence vs Expression)? Start with
 [Essence vs Expression](/concepts/models).
@@ -107,7 +108,7 @@ per-identity work, so don't apply a short client timeout:
 |---|---|---|
 | `essence-2` | Distills a compact identity bundle on a cloud GPU | Typically about 45 minutes (up to a few hours) |
 | `essence-2-max` | Instant prep from the internally generated identity video (seconds) | Included with the combined `essence-2` creation |
-| `expression-2` | Trains a per-identity model on a dedicated training GPU | Typically about 45 minutes (30–60) |
+| `expression-2` | Trains a per-identity model on a dedicated training GPU | Typically 45–75 minutes (up to about 90 when training extends to hold quality) |
 
 **Creation input is a portrait image for all three** — `essence-2` generates
 a 10-second identity video from it internally (25 fps, authored to loop
@@ -294,7 +295,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ [SDK](/sdk/overview) | — | ✅ (AVX-512-class CPUs) |
 | On-device macOS / iOS (Apple Silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
-| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Planned (WebGPU-only) |
+| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Planned |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
 use the downloaded model artifact

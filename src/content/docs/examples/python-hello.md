@@ -117,4 +117,4 @@ Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree
 - [Python SDK](/sdk/python) — the full on-device runtime reference.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain.
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop in depth.
-- [Essence 2 & Expression 2](/concepts/models-v2) — choose a second-generation model to build (creating one takes ~45 min).
+- [Essence 2 & Expression 2](/concepts/models-v2) — choose a second-generation model to build (creating one takes ~45–75 min).

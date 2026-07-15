@@ -143,7 +143,7 @@ at session launch; the device/runtime matrix is:
 | Cloud CPU | Real-time | — | Real-time |
 | Self-hosted CPU (your servers) | [SDK](/sdk/overview) | — | AVX-512-class CPUs |
 | On-device Apple Silicon (Mac / iOS) | [Swift SDK](/sdk/swift) | — (cloud-only) | [Swift SDK](/sdk/swift) |
-| Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Planned (WebGPU) |
+| Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Planned |
 
 Cloud sessions route down the serving chain (GPU → Neural Engine → CPU)
 automatically; on-device and self-hosted serving use the downloaded model
