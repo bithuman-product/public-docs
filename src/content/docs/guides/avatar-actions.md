@@ -22,11 +22,12 @@ That call is fully deterministic — it plays exactly the clip you name, exactly
 when you call it. No language model, no keyword matching, no random selection is
 involved.
 
-> **Code-driven action triggering requires a self-hosted (in-process) runtime.**
-> With `AvatarSession(model_path=...)` or `AvatarSession(runtime=...)` you hold the
-> runtime and can `runtime.push(...)` directly. **Managed cloud** avatars
-> (`avatar_id=...`) render remotely and do **not** currently expose a code-level
-> action trigger — see [Cloud mode](#cloud-managed-mode).
+> **Works in both modes — only the call differs, by where the avatar renders.**
+> Self-hosted (`AvatarSession(model_path=...)` / `runtime=...`): you hold the runtime
+> and call `runtime.push(...)` directly. **Managed cloud** (`avatar_id=...`): the avatar
+> renders as a remote participant, so you fire the same gesture by sending it a
+> `trigger_dynamics` RPC — see [Cloud mode](#cloud-managed-mode). Both are deterministic:
+> you name the clip, it plays.
 
 ---
 
@@ -37,10 +38,11 @@ The trigger API depends on **where the avatar renders**:
 | Mode | How you create it | Where it renders | Trigger actions from code? |
 |---|---|---|---|
 | **Self-hosted / local** | `AvatarSession(model_path=...)` or `AvatarSession(runtime=my_runtime)` | in-process (`avatar.runtime`) | ✅ `runtime.push(VideoControl(action="…"))` |
-| **Managed cloud** | `AvatarSession(avatar_id=..., api_secret=...)` | a remote avatar participant | ❌ not currently available — see [Cloud mode](#cloud-managed-mode) |
+| **Managed cloud** | `AvatarSession(avatar_id=..., api_secret=...)` | a remote avatar participant | ✅ `trigger_dynamics` RPC → `avatar.avatar_identity` — see [Cloud mode](#cloud-managed-mode) |
 
-If you need code-driven actions today, run the runtime in-process (self-hosted).
-Everything below assumes that.
+Both paths are deterministic — you name the clip, it plays. The self-hosted examples
+below use `runtime.push(...)`; the [Cloud mode](#cloud-managed-mode) section shows the
+equivalent RPC for managed cloud.
 
 ---
 
@@ -195,20 +197,45 @@ With idle actions removed and no keyword triggers configured, the avatar plays
 ## Cloud (managed) mode
 
 With `AvatarSession(avatar_id=...)`, the avatar renders on bitHuman's cloud as a
-**separate LiveKit participant**, so there's no in-process runtime — and the managed
-cloud renderer does **not** currently expose a code-level action trigger. Firing a
-specific gesture per event from your agent code is **not available on managed cloud
-today**.
+**separate LiveKit participant** in your room. There's no in-process runtime, so you
+fire a gesture by sending the avatar participant a **`trigger_dynamics` RPC** — the
+cloud renderer plays the named clip, exactly like `runtime.push(...)` does
+self-hosted. It's the same primitive the platform's own agents use for state-based
+gestures (greeting, listening, thinking).
 
-On the managed platform, gestures are authored with the
-[Dynamics API](/api/dynamics) (`POST /v1/dynamics/generate`) and trigger by
-**keyword mapping** during a conversation — i.e. automatically, when a mapped word
-is spoken, not on demand from your code.
+```python
+import json, os
+from livekit.plugins import bithuman
 
-**If you need deterministic, per-event actions from code, self-host the runtime**
-([above](#trigger-an-action-from-code-self-hosted-livekit-agent)) — that's the
-supported path today. If you need per-event gesture triggering on managed cloud,
-[contact us](https://www.bithuman.ai/#developer) — it's on the roadmap, not shipped.
+avatar = bithuman.AvatarSession(
+    avatar_id="A1234567890",
+    api_secret=os.environ["BITHUMAN_API_SECRET"],
+)
+await avatar.start(session, room=ctx.room)
+
+# --- Fire a gesture on YOUR event, deterministically ---
+resp = await ctx.room.local_participant.perform_rpc(
+    destination_identity=avatar.avatar_identity,   # the cloud avatar participant
+    method="trigger_dynamics",
+    payload=json.dumps({"action": "mini_wave_hello"}),
+)
+# resp -> {"status":"success","action":"mini_wave_hello","animation_triggered":true,"service":"bithuman-serve"}
+```
+
+The response tells you whether it played: `animation_triggered: true` on success, or
+`status: "error"` when the action name is unknown or the avatar has no gesture clips.
+Wire that `perform_rpc(...)` call to any event you define — a data message, a
+room/participant event, a timer, or an allow-listed LLM tool — exactly like the
+self-hosted `runtime.push(...)` patterns [above](#common-wiring-patterns).
+
+**Requirements.** The avatar must have gesture clips generated and dynamics enabled —
+done once with the [Dynamics API](/api/dynamics) (`POST /v1/dynamics/generate`) or from
+the dashboard. Avatars created without dynamics render lip-sync only and won't respond
+to `trigger_dynamics`. List the gestures an avatar has with `GET /v1/dynamics/{agent_id}`.
+
+> **Keyword mapping still applies.** On the managed platform gestures can *also* fire
+> automatically when a mapped keyword is spoken. That's independent of the RPC above —
+> leave keyword mappings unset if you want gestures to fire **only** from your code.
 
 ---
 
@@ -217,14 +244,14 @@ supported path today. If you need per-event gesture triggering on managed cloud,
 | Need | API | Deterministic? | Mode |
 |---|---|---|---|
 | Play a named action (self-hosted) | `runtime.push(VideoControl(action="<name>"))` | ✅ fully | self-hosted |
-| Play a named action (managed cloud) | — not available yet | ❌ | cloud |
+| Play a named action (managed cloud) | `perform_rpc("trigger_dynamics", {"action":"<name>"})` → `avatar.avatar_identity` | ✅ fully | cloud |
 | Switch base clip | `runtime.push(VideoControl(target_video="<name>"))` | ✅ | self-hosted |
 | List available actions | `runtime.video_graph.action_video_names` (self-hosted) · `GET /v1/dynamics/{id}` (cloud) | — | both |
 | Stop a playing action | `runtime.interrupt()` / `stop_on_user_speech=True` | ✅ | self-hosted |
 | Auto-play on keyword | `KeywordTrigger` / dashboard keyword→gesture | opt-in (off by default) | both |
 | Auto-play while idle | model `idle_actions` | remove to disable | both |
 
-On a **self-hosted** runtime the event→action binding is yours to define: wire any
-predefined event to a `runtime.push(VideoControl(action=...))` call, and there's no
-hidden scheduler firing actions behind your back once idle actions and keyword
-mappings are off. Per-event triggering on **managed cloud** isn't available yet.
+The event→action binding is yours to define in **both** modes: wire any predefined event
+to `runtime.push(VideoControl(action=...))` (self-hosted) or a `trigger_dynamics` RPC to
+`avatar.avatar_identity` (managed cloud). There's no hidden scheduler firing actions
+behind your back once idle actions and keyword mappings are off.

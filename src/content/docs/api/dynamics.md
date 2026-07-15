@@ -11,12 +11,14 @@ label: "Gestures & animations"
 
 Dynamics are conversational gesture animations (wave, nod, laugh, idle motions)
 for an avatar. Generate them asynchronously, then toggle them on to make the
-gesture model the active one for live sessions. During conversation, gestures
-trigger based on keyword mapping. Dynamics generation costs 250 credits.
+gesture model the active one for live sessions. During conversation, gestures fire
+automatically on keyword mapping — or you can trigger an exact gesture from your code.
+Dynamics generation costs 250 credits.
 
-> **Trigger a specific gesture from your code.** With a **self-hosted** runtime you
-> can play an exact gesture on demand — deterministic, no keyword or randomness.
-> (On managed cloud, gestures fire by keyword mapping only.) See
+> **Trigger a specific gesture from your code — in either mode.** Self-hosted:
+> `runtime.push(VideoControl(action="…"))`. Managed cloud: send a `trigger_dynamics`
+> RPC to the avatar participant (`avatar.avatar_identity`). Both are deterministic —
+> no keyword, no randomness. See
 > [Trigger avatar actions from code](/guides/avatar-actions).
 
 ## Generate dynamics
