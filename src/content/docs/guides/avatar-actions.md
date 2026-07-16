@@ -226,7 +226,7 @@ resp = await ctx.room.local_participant.perform_rpc(
     method="trigger_dynamics",
     payload=json.dumps({"action": "mini_wave_hello"}),
 )
-# resp -> {"status":"success","action":"mini_wave_hello","animation_triggered":true, ...}
+# resp -> {"action":"mini_wave_hello","animation_triggered":true,"service":"bithuman-serve","status":"success"}
 ```
 
 The response tells you whether it played: `animation_triggered: true` on success.
