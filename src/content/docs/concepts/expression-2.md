@@ -31,9 +31,11 @@ What makes it different from every other bitHuman model is **per-identity
 training**. At creation time the platform distills a large foundation model
 into a **small model of your specific identity**, built from a single photo.
 The big teacher model never ships anywhere; only the compact per-identity
-model serves your sessions. That per-identity step is why Expression 2's
-motion tracks the audio so closely — and why creation takes longer than the
-other models (see [creation](#how-creation-works) below).
+model serves your sessions — a small, fast build paired with a per-identity
+decoder tuned for a sharp, well-defined mouth and teeth. That per-identity
+step is why Expression 2's motion tracks the audio so closely — and why
+creation takes longer than the other models (see
+[creation](#how-creation-works) below).
 
 At serve time the engine generates the full **416×720** scene at **20 frames
 per second** and streams it over WebRTC like every other bitHuman session —
