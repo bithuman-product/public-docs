@@ -10,6 +10,18 @@ order: 1
 
 ## July 2026
 
+### Run Expression 2 locally from the CLI (2026-07-16)
+
+The [bitHuman CLI](/sdk/cli/overview) now renders `expression-2` avatars on your
+own hardware. `bithuman run` with no arguments is a zero-config quickstart: it
+fetches the free **Wise Pup** avatar and renders it live — on macOS (Apple
+Silicon) via CoreML / Apple Neural Engine, and on Linux x86_64 via LiteRT;
+Windows is coming. Each avatar is one self-contained
+[`.imx` file](/concepts/avatars-imx) and the render engine ships inside the CLI,
+so a fresh install runs its first avatar with no extra setup — the CLI downloads
+only your platform's slice (about 26 MB on macOS, 63 MB on Linux). See
+[Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
+
 ### Expression 2 — smaller, sharper serving model (2026-07-16)
 
 Expression 2 now serves each identity through a **more compact per-identity

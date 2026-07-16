@@ -1,6 +1,6 @@
 ---
 title: "Commands"
-description: "Full reference for the bithuman subcommands — run, render, info, pull, list, doctor, init, the auth commands (login/logout), and mcp — with flags and examples."
+description: "Full reference for the bithuman subcommands — run, render, info, pull, list, engine, doctor, init, the auth commands (login/logout), and mcp — with flags and examples."
 section: sdk
 group: "Command line"
 order: 32
@@ -16,11 +16,12 @@ Every subcommand accepts `--help` for the full flag listing.
 | `bithuman logout` | Revoke this device's key and clear the local store |
 | `bithuman auth status` | Show the signed-in account and credential source |
 | `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull a showcase avatar (e.g. `modern-court-jester`) |
-| `bithuman run <path.imx>` | Live browser-served avatar (cloud or on-device brain) — [recognizes the model family](#which-model-files-run-locally) first |
+| `bithuman run [avatar]` | Live avatar. No argument fetches + renders the free Wise Pup avatar out of the box; pass an avatar file to run your own — [recognizes the model family](#which-model-files-run-locally) first |
 | `bithuman render <path.imx>` | Offline render: model + WAV → MP4 (Linux-only) |
 | `bithuman info <model-file>` | Print model metadata — engine + family for any recognized bitHuman artifact |
 | `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or your own agent's generated model by code |
 | `bithuman list` | Browse the showcase avatar catalog |
+| `bithuman engine list \| install \| update` | Inspect, install, or update the per-platform local render engine ([shipped in the CLI, auto-managed](#bithuman-engine--local-render-engine)) |
 | `bithuman doctor` | Host + auth + cache sanity check |
 | `bithuman mcp` | Run the built-in MCP server for AI agents (stdio); `bithuman mcp tools` lists the tools. See [driving from an AI agent](/sdk/cli/agents). |
 | `bithuman --version` | Print `libessence` + ABI + CLI versions |
@@ -116,10 +117,24 @@ manages.
 
 ## `bithuman run` — live avatar
 
-The headline command. From one invocation it stands up an embedded
-`livekit-server`, a `libessence` runtime, the conversation brain (cloud
-OpenAI Realtime or the [on-device](/sdk/cli/local-mode) stack per
-`BITHUMAN_LOCAL`), and a browser landing page.
+The headline command. With **no argument** it is the zero-config quickstart:
+the CLI fetches the free **Wise Pup** avatar (a showcase `expression-2`
+identity) and renders it live on your own hardware — no sign-in, no API key, no
+file to point at.
+
+```bash
+bithuman run
+# → the Wise Pup avatar downloads once, then renders in real time
+```
+
+Local rendering runs on macOS (Apple Silicon, CoreML) and Linux x86_64
+(LiteRT); see [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
+
+Pass an avatar file (or agent code) to run your own. From one invocation the
+CLI stands up an embedded `livekit-server`, a `libessence` runtime, the
+conversation brain (cloud OpenAI Realtime or the
+[on-device](/sdk/cli/local-mode) stack per `BITHUMAN_LOCAL`), and a browser
+landing page:
 
 ```bash
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
@@ -158,14 +173,15 @@ engine error:
 | Family | File | What `run` does |
 |---|---|---|
 | `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
+| `expression-2` | `<code>.imx` (also legacy `.avatar` zip) | **Runs locally** on macOS (Apple Silicon) and Linux x86_64; Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
 | `essence-2-light` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact (the family keeps its internal name). Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
 | `essence-2-quality` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (the family keeps its pre-rename internal name). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
-| `expression-2` | `<code>.avatar` (CoreML zip) | Recognized; the CLI can't play it yet and the desktop app doesn't open `.avatar` files from disk today — keep the file for upcoming desktop support; the model runs live on bitHuman cloud (dashboard, embeds, API sessions). |
 | `expression-1` | — | No downloadable artifact exists (it renders server-side from the agent's image), and the model is not supported on Mac locally — it's a heavy GPU engine. Serve it through the cloud surfaces. |
 
 Recognition never breaks what already worked: a file the sniffer can't
 positively identify goes to the engine exactly as before (the engine stays
-the final arbiter), and only a **positive non-`essence-1` match** diverts.
+the final arbiter), and only a **positive cloud-only match** (Essence 2 or
+Expression 1) diverts to the cloud surfaces.
 Get the files themselves with [`bithuman pull <AGENT_CODE>`](#bithuman-pull--list--your-models-and-showcase-avatars)
 or the [download endpoint](/api/agents#download-an-agents-model).
 
@@ -246,7 +262,7 @@ endpoint, then sniffs the file and prints its family and the next step:
 bithuman login                      # once — pull-by-code needs your account
 bithuman pull A17ZTB0222
 # → ~/.cache/bithuman/agents/A17ZTB0222/A17ZTB0222.avatar
-#   expression-2 (CoreML .avatar) — runs live on bitHuman cloud; not locally playable yet
+#   expression-2 — runs locally on macOS (Apple Silicon) / Linux x86_64, or live on bitHuman cloud
 ```
 
 When the agent's model is `essence-1`, the pulled `.imx` is immediately
@@ -265,6 +281,27 @@ exit 66 carrying the API's error, including the poll-able
 [`MODEL_ARTIFACT_NOT_READY`](/api/errors#model-errors) when a supported
 artifact simply hasn't been published yet. Showcase-slug pulls are
 unchanged.
+
+## `bithuman engine` — local render engine
+
+The engine that renders `expression-2` avatars locally ships **inside the CLI**,
+so a fresh install runs its first avatar with no extra download. `bithuman
+engine` is the manual channel for that runtime — you rarely need it, but it lets
+you inspect what's installed, install the engine for a different platform when
+you package a cross-platform build, or update it when a newer avatar needs a
+newer engine.
+
+```bash
+bithuman engine list                 # every known engine and whether it's installed
+bithuman engine install              # fetch this platform's engine into the cache
+bithuman engine install linux-x86_64 # fetch another platform's engine (cross-build)
+bithuman engine update               # install the newest pinned engine (idempotent)
+```
+
+Each avatar is one self-contained [`.imx` file](/concepts/avatars-imx); when the
+CLI fetches one it pulls only the slice your platform needs (about 26 MB on
+macOS, 63 MB on Linux). Which runtime renders on each platform is in
+[Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
 
 ## `bithuman doctor` — install sanity check
 
