@@ -132,7 +132,7 @@ paths:
         | `essence` + `v1` | Essence 1 | image (or generated from prompt) | 2–5 minutes |
         | `essence` + `v2` | Essence 2 | image (or generated from prompt) — a 10-second identity video is generated internally | 45 minutes typical; long builds can take hours — **both Essence 2 models from one creation** |
         | `essence-2-max` | Essence 2 premium | included with every `essence` + `v2` creation — its identity derives from the same internally generated identity video | prepares in seconds; available once the agent is ready |
-        | `expression` + `v2` | Expression 2 | image (or generated from prompt) | ~45 minutes (30–60) |
+        | `expression` + `v2` | Expression 2 | image (or generated from prompt) | 45–75 min typical (some up to ~90) |
         | `auto` | classified | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
 
         **Picking the right family:** `essence-2` works best for
@@ -763,7 +763,7 @@ paths:
         | model | what happens | prerequisites | credits | time |
         |---|---|---|---|---|
         | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
-        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | ~10–45 min |
+        | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | ~45–75 min (up to ~90) |
         | `essence-2` | the **combined** add: trains the standard Essence 2 from the agent's stored identity video (generated internally at creation); Essence 2 Max becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
         | `essence-1` | builds the v1 `.imx` from the agent's stored identity video (or generates one internally from the stored image) | stored identity video or image | 250 | ~10–20 min |
 
@@ -3369,7 +3369,7 @@ tags:
 
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
-      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45 min) | gpu · cpu · ane | 4 credits/min | 2 credits/min |
+      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~45–75 min) | gpu · cpu · ane | 4 credits/min | 2 credits/min |
       | `essence-2` | Second-gen Essence for photorealistic people — runs everywhere from on-device (cpu · ane) up to cloud GPU; bitHuman picks the serving tier for you | gpu · cpu · ane | `essence-2` 4 credits/min · `essence-2-max` 8 credits/min | `essence-2` 2 credits/min · `essence-2-max` 4 credits/min |
 
       Create one with
