@@ -30,6 +30,22 @@ It's the same engine that powers the [language SDKs](/sdk).
 > installer above. The separate `bithuman` PyPI package is the Python *library*,
 > not the CLI — see [Python SDK](/sdk/python).
 
+## Run it
+
+Run with no arguments to see the engine working immediately. The CLI fetches
+the free **Wise Pup** avatar (a showcase `expression-2` identity) and renders it
+live on your hardware — no sign-in, no API key:
+
+```bash
+bithuman run
+# → the Wise Pup avatar downloads once, then renders in real time
+```
+
+This is the out-of-the-box experience — one command from a clean install to a
+running avatar. It renders locally on macOS (Apple Silicon) and Linux x86_64;
+see [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
+To make an avatar talk back, sign in and add a conversation brain, below.
+
 ## Sign in
 
 ```bash
