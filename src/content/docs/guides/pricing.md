@@ -24,7 +24,7 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#deve
 | Essence 1 (`essence-1`) | 2 credits/min | 1 credit/min |
 | Expression 1 (`expression-1`) | 4 credits/min | 2 credits/min |
 
-Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time the engine is actively producing frames (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached) — idle, paused, or disconnected time isn't billed. The second-generation models are [launching July 10, 2026 — rollout in progress](/concepts/models-v2).
+Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time the engine is actively producing frames (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached) — idle, paused, or disconnected time isn't billed. The second-generation models [launched July 10, 2026](/concepts/models-v2).
 
 Managed conversational agents bill on top of avatar serving:
 

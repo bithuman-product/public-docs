@@ -10,6 +10,17 @@ order: 1
 
 ## July 2026
 
+### Expression 2 — smaller, sharper serving model (2026-07-16)
+
+Expression 2 now serves each identity through a **more compact per-identity
+model** — roughly **6× smaller and faster to run** than the previous build —
+paired with a **new per-identity decoder that sharpens the mouth and teeth**.
+The result is a crisper avatar at a lighter serving cost. The change is live
+across the [gallery](https://bithuman.ai/explore?gallery=v2) identities and is
+applied to new creations automatically. Serving surfaces, the platform
+contract (push audio in, drain video out), the APIs, and pricing are
+unchanged — existing agents get the improvement with no action needed.
+
 ### Expression 2 — adaptive per-identity training (2026-07-15)
 
 Expression 2 agent creation now runs an **adaptive training recipe**: every
