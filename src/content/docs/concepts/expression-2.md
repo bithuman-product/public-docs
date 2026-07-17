@@ -170,10 +170,13 @@ the platform choose. See
 
 **On-device.** The same distilled per-identity model also runs fully
 on-device on Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview
-maturity) — no server in the path. Download the Mac-runnable `.avatar` build
+maturity) — no server in the path. Download the runnable `<code>.imx` build
+(legacy `.avatar` zip)
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>`. A browser-local tier is planned; there is no
-in-browser path for this model today.
+or `bithuman pull <code>`. **In the browser:** append `?render=local` to a
+session URL to render Expression 2 locally (LiteRT.js / WebGPU, WASM fallback),
+so the video never leaves the machine — rolling out per identity as web bundles
+publish. See [Browser rendering](/guides/browser-rendering).
 
 ## Idle and speaking behavior
 
@@ -235,5 +238,5 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
-- [Download your model](/api/agents#download-an-agents-model) — the trained model's Mac-runnable `.avatar` build, via API or `bithuman pull <code>`.
+- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `<code>.imx` build (legacy `.avatar` zip), via API or `bithuman pull <code>`.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `expression-2`.
