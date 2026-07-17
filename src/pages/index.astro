@@ -99,8 +99,10 @@ const customerLogos = [
           </div>
         </div>
 
-        <!-- RIGHT: live product moment (poster-first, iframe deferred to Launch) -->
-        <div class="hero-media" data-reveal>
+        <!-- RIGHT: live product moment (poster-first, iframe deferred to Launch).
+             No data-reveal here: the hero poster is the LCP element, so it must
+             paint on decode instead of waiting at opacity:0 for the reveal JS. -->
+        <div class="hero-media">
           <Playground compact />
         </div>
       </div>
