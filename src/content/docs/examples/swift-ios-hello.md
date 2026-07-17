@@ -12,7 +12,7 @@ order: 13
 - **Xcode 26+** on a Mac, plus an Apple Developer account. Add the SwiftPM package:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "0.8.1")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "0.8.2")
 ```
 
 - Device floor (real hardware — the Simulator can't run on-device inference): **iPhone 16 Pro or later** (A18 Pro+), or **iPad Pro M4 or later**, on **iOS / iPadOS 26+**. Earlier devices are refused at launch by `HardwareCheck.evaluate()`.
