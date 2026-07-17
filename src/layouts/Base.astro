@@ -87,10 +87,26 @@ const ogImage = new URL(image, site).href;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- LCP hero/showcase images are served from this CDN — warm the connection early. -->
     <link rel="preconnect" href="https://assets.bithuman.ai" crossorigin />
+    <!-- Load the font CSS non-render-blocking: preload it, then apply via the
+         media="print"->all swap so first paint isn't gated on the Google Fonts
+         round-trip. display=swap already handles the FOUT. -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <!-- No-FOUC theme init: set [data-theme] before paint -->
     <script is:inline>
