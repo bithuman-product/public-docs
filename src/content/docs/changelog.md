@@ -133,14 +133,14 @@ rollout, the model documentation gained the shipping characteristics:
   animates real identity footage at its native resolution (full-HD 1080p
   identity video by default) at ~25 fps; serves GPU → Apple Neural Engine →
   CPU, fully
-  on-device on Apple silicon, and a **browser-local tier is rolling out**
+  on-device on Apple Silicon, and a **browser-local tier is rolling out**
   (`?render=local`, WebGPU with WASM fallback) as per-identity web bundles
   publish.
 - **[`expression-2`](/concepts/expression-2)** — stylized and universal
   characters; **fully generative across the whole 416×720 scene** at 20 fps
   from a single photo (no face detection or cropping anywhere in the
   pipeline), which is why any character morphology animates naturally;
-  serves GPU → Apple Neural Engine → CPU plus on-device Apple silicon.
+  serves GPU → Apple Neural Engine → CPU plus on-device Apple Silicon.
 - The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
   and [creation guide](/concepts/models-v2#how-creation-works) were refreshed
   to match.
@@ -212,7 +212,7 @@ The Essence 2 request surface is now just **`essence-2`** (plus the explicit
   `essence-2-quality` (8) and `expression-2` (4) unchanged.
 - **Where each model runs:** the family overview gains a
   [device/runtime matrix](/concepts/models-v2#where-each-model-runs) (cloud
-  tiers, self-hosted, on-device Apple silicon, browser-local status).
+  tiers, self-hosted, on-device Apple Silicon, browser-local status).
 
 ### Android / Kotlin SDK docs restored (2026-07-04)
 

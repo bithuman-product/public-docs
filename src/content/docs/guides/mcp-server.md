@@ -63,7 +63,7 @@ inspect your install and model files.
 Install the bitHuman CLI:
 
 ```bash
-brew install bithuman                                                # macOS (Apple Silicon)
+brew install bithuman-product/bithuman/bithuman-cli                  # macOS (Apple Silicon)
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh   # macOS (Apple Silicon) + Linux
 pip install bithuman-cli                                             # macOS arm64 (pip)
 ```

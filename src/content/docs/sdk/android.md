@@ -18,7 +18,7 @@ dependency. This SDK is **Beta**.
 > runtime (Engine ABI v7). `2.3.6` is the current published release on Maven
 > Central and is what you build against today; there is no newer Android
 > version, and it does not track the Python/Swift release cadence. It renders
-> **Essence** models — the newer Essence-2 and Expression-2 engines are served
+> **Essence** models — the newer Essence 2 and Expression 2 engines are served
 > from the cloud and are not part of this on-device AAR. See
 > [Models](#models) below for exactly which `.imx` to ship.
 
@@ -62,7 +62,7 @@ the SDK bundles its own audio encoder, so a stock model needs no extra assets.
   [`bithuman` CLI](/sdk/cli/overview) `pull`). Push the file onto the device's
   app-private storage (`getExternalFilesDir(null)` / `filesDir`) and pass its
   path to `Avatar.load` / `Fixture`.
-- **Essence only.** Essence-2 and Expression-2 are cloud-served engines — their
+- **Essence only.** Essence 2 and Expression 2 are cloud-served engines — their
   artifacts are not `.imx` and are not loadable by this on-device AAR. Use an
   **Essence** (`essence-1`) model. `Fixture.abiVersion()` reports the linked
   engine ABI at runtime, and an incompatible file fails with a clear

@@ -208,7 +208,7 @@ session creation is the most expensive operation.
 
 ### Check credits before heavy operations
 
-Call `GET /v2/credit-summaries` before agent generation (250–500 credits
+Call `GET /v2/credit-summaries` before agent generation (250–2000 credits
 depending on `model` — see [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule))
 or dynamics creation (250 credits) to avoid calls that fail with `402`.
 

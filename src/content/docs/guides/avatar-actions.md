@@ -6,8 +6,6 @@ group: "Build"
 order: 2
 ---
 
-# Triggering avatar actions from code
-
 Avatar actions are **named video clips** ("dynamics") baked into an avatar model.
 You play a specific one on demand, deterministically — no language model, no
 keyword matching, no random selection. The call differs only by **where the

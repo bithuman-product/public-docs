@@ -124,7 +124,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. The 1.x line st
 |---|---|---|
 | **Mac M3+ (arm64)** | On-device | Demo app target |
 | **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
-| **iPhone** | Use Essence | Essence runs capable on-device avatars within iOS's per-app memory budget |
+| **iPhone** | Use Essence | Essence delivers capable, real-time on-device avatars within iOS's per-app memory budget |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the [Docker container](/guides/deploy-self-hosted) |
 | **Mac Intel / Linux CPU / Windows / Raspberry Pi** | Use Essence or a server GPU | Expression runs on Apple Silicon or an NVIDIA GPU; Essence covers everything else on-device |
 

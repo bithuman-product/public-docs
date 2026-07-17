@@ -23,7 +23,7 @@ sessions bill per minute.
 | [Add a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent) | Same per-model rates (250 / 500 / 2000); adding `expression-1` is **free** (instant enablement, no training) |
 | Dynamics generation (one-time, per avatar) | 250 credits |
 | Book creation (one-time, per book) | 250 credits |
-| Talking video — Essence 1 | 8 credits/min (rounded up) |
+| Talking video — Essence 1 | 2 credits/min (rounded up) |
 | Talking video — Expression 1, Expression 2, Essence 2 | 4 credits/min (rounded up) |
 | Talking video — Essence 2 Max | 8 credits/min (rounded up) |
 | Live session — Essence 1, self-hosted | 1 credit/min |

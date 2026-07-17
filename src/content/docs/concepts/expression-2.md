@@ -152,7 +152,7 @@ fails loudly if unavailable):
 | `expression-2` | The full chain (default) | GPU → Neural Engine → CPU with automatic overflow. |
 | `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
 | `expression-2-cpu` | CPU | Force the native quantized (int8) build on CPU servers — no GPU in the path. |
-| `expression-2-ane` | Apple Neural Engine | Force the Apple-silicon Neural Engine tier; limited real-time slots. |
+| `expression-2-ane` | Apple Neural Engine | Force the Apple Silicon Neural Engine tier; limited real-time slots. |
 
 ```text
 https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane

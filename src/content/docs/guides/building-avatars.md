@@ -104,7 +104,7 @@ The same upload + packaging flow is available over HTTP — generate agents from
 - **`prompt`** — system instructions for the agent's personality.
 - **`image`** — front-facing portrait URL (the 10-second identity video is generated from it internally).
 - **`audio`** — voice sample URL (3–10 s of clean speech) for voice cloning.
-- **`model`** — which avatar model to build. An omitted `model` keeps the historical `essence-1` default; send `"auto"` to let the platform pick between the second-generation models, or name one explicitly.
+- **`model`** — which avatar model to build. An omitted `model` defaults to `expression-1` (Expression 1, 250 credits, since 2026-07-12); send `"auto"` to let the platform pick between the second-generation models, or name one explicitly.
 
 Video is not part of the creation contract for any model and is being removed
 platform-wide: do not send `video` — as the rollout completes, a request

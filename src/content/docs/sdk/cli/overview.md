@@ -76,7 +76,7 @@ browse and download showcase avatars, and run a full host sanity check.
 | `bithuman login` | Sign in via the browser; store a per-device key in the OS keychain |
 | `bithuman logout` | Revoke this device's key and clear the local store |
 | `bithuman auth status` | Show who you're signed in as and where the credential lives |
-| `bithuman init` | Scaffold a new project / starter config |
+| `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull a showcase avatar |
 | `bithuman run [avatar]` | Start the live avatar. No argument fetches + renders the free Wise Pup avatar out of the box; pass an avatar file to run your own |
 | `bithuman render <path.imx>` | Offline lipsync: model + WAV → MP4 (Linux-only) |
 | `bithuman info <model-file>` | Print model metadata — engine + family for any recognized artifact |
