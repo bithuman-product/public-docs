@@ -97,14 +97,10 @@ You drive the runtime with a single primitive, **`VideoControl`**
 
 ## Self-hosted — trigger from a local LiveKit agent
 
-> **Version note.** Named-gesture playback self-hosted needs the gesture-capable
-> runtime. The current published wheel (`bithuman` 2.3.x) renders **lip-sync
-> only** — `runtime.push(VideoControl(action=...))` is a no-op there. For
-> self-hosted gestures **today**, pin `pip install "bithuman==1.19.1"`. A `2.4.0`
-> release that restores gesture playback on the faster 2.x core is rolling out;
-> once it's published, `pip install bithuman` will work with the example below.
-> (Gesture triggering on the **managed cloud** — the section above — works on any
-> version, since the cloud renderer plays the clips.)
+> **Requires `bithuman>=2.7.0`** for self-hosted named-gesture playback
+> (`pip install "bithuman>=2.7.0"`). Earlier 2.x wheels render lip-sync only.
+> Gesture triggering on the **managed cloud** (the section above) works on any
+> version, since the cloud renderer plays the clips.
 
 Create the `AvatarSession` in **local mode** (`model_path=`), which builds an
 in-process `AsyncBithuman` you reach as `avatar.runtime`:
