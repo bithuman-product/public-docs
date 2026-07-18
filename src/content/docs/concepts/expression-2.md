@@ -163,6 +163,12 @@ back to the agent's default routing. For production, omit `?model=` and let
 the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
+Real-time streaming is carried by the **GPU and Apple Neural Engine tiers**. The
+**CPU tier is offline-batch-grade** — sized for offline talking-video generation
+and used as capacity overflow / fallback, not as the primary real-time line — so
+pin `expression-2-cpu` for batch and self-hosted-server work rather than
+low-latency live sessions.
+
 **Self-hosted.** The CPU build also runs on your own servers via the
 [SDK](/sdk/overview) at the self-hosted rate — it needs modern
 (AVX-512-class) server CPUs; see the

@@ -20,9 +20,13 @@ Production-deployed since Feb 2026. No install, no SDK call — flip one URL par
 > out** per identity as web bundles publish. See
 > [Essence 2 → In the browser](/concepts/essence-2#serving-tiers) and
 > [where each model runs](/concepts/models-v2#where-each-model-runs).
-> [`expression-2`](/concepts/expression-2) also renders in the browser —
-> append **`?render=local`** to a session URL for local render (LiteRT.js /
-> WebGPU, WASM fallback), **rolling out** per identity as web bundles publish.
+> [`expression-2`](/concepts/expression-2) also renders in the browser via the
+> same **`?render=local`** URL option (LiteRT.js / WebGPU, WASM fallback). It is
+> a **client-side rendering option**, not a separate serving tier: it is on by
+> default for an identity that has a published per-identity web bundle, and
+> **falls back to cloud rendering** for identities that don't. Per-identity web
+> bundles are **rolling out** — they aren't published for every identity yet, so
+> for many agents `?render=local` still renders in the cloud today.
 
 ```text
 # Browser-side rendering, agent brain still cloud:
