@@ -31,7 +31,7 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `agent_id` | string | yes | — | Agent ID to generate dynamics for. |
 | `image_url` | string | no | from agent | Source image URL. Defaults to the agent's primary image. |
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
-| `model` | string | no | `seedance` | Gesture-video generation preset: `seedance` (default), `kling`, or `auto` (recommended — selects the best backend). |
+| `model` | string | no | `seedance` | Gesture-video generation preset: `seedance` (default) or `auto` (recommended — selects the best backend). The retired `kling` value is still accepted but is coerced to `seedance`. |
 
 ```python
 import requests
@@ -56,7 +56,7 @@ print(resp.json())
 **Duration guidance:** 1–3 s for quick gestures (waves, nods), 3–5 s for standard
 motions (default), 5–10 s for extended animations.
 
-**Model:** the default is `seedance`; `auto` (recommended) selects the best gesture-video backend automatically. Also accepts `kling`.
+**Model:** the default is `seedance`; `auto` (recommended) selects the best gesture-video backend automatically. The retired `kling` value is still accepted for backward compatibility but is coerced to `seedance` — don't use it in new code.
 
 ## Get dynamics
 

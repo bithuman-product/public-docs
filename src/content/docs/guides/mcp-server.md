@@ -14,9 +14,12 @@ speech, and mint an embed token without you writing any glue code.
 
 It's **built into the [bitHuman CLI](https://github.com/bithuman-product/homebrew-bithuman)** —
 just run `bithuman mcp`. The cloud tools are a thin wrapper over the
-[REST API](/api/overview) (every tool maps to one documented endpoint, so
-anything you can do over HTTP an agent can do here), plus a few local tools that
-inspect your install and model files.
+[REST API](/api/overview) — each tool maps to one documented endpoint — plus a
+few local tools that inspect your install and model files. Not every endpoint
+has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
+[model add](/api/agents#add-a-model-to-an-existing-agent)
+(`POST /v1/agent/{code}/models`), and the [knowledge API](/api/knowledge)
+(`/v1/knowledge`) are HTTP-only for now.
 
 > **Note** The standalone `bithuman-mcp` PyPI package is **deprecated** — its
 > tools are now built into the CLI. Install the CLI once (below) and you get

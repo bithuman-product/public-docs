@@ -51,7 +51,7 @@ The call returns immediately with an `agent_id` and `processing` status.
 | `framing` | string | no | `portrait` | `portrait` (default) frames head-and-shoulders; `full_body` shows the whole figure including the feet (kiosk / standing-avatar layouts). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
 | `duration` | number | no | — | **Deprecated — omit it.** The internally generated identity video is standardizing on 10 seconds; the parameter is ignored as that rollout completes. |
-| `model` | string | no | `expression` | Avatar model **family** — `expression` (default) or `essence` — combined with `version` to pick the engine: `expression`+`v1` = **Expression 1** (the default), `essence`+`v1` = **[Essence 1](/concepts/essence-2)**, `essence`+`v2` = **[`essence-2`](/concepts/essence-2)** (the [combined Essence 2 creation](#essence-2--the-combined-creation)), `expression`+`v2` = **[`expression-2`](/concepts/expression-2)**. You may also pass a **full engine name** directly (`essence-1`, `essence-2`, **[`essence-2-max`](/concepts/essence-2-max)**, `expression-1`, `expression-2`) or **`auto`** ([classify-and-route](#auto--let-the-platform-pick-the-model)) — those pass through unchanged and `version` is ignored, so existing integrations keep working. An omitted `model` defaults to `expression` at `v1` (Expression 1, 250 credits) — a v1 engine at the ungated 250-credit rate; a caller is never silently upgraded onto a v2 engine or a higher price. Invalid values return `400 VALIDATION_ERROR` (no credits charged); the retired `essence-2-light` name returns a targeted hint pointing at `essence-2`, and the pre-rename `essence-2-quality` is still accepted as a **deprecated alias** for `essence-2-max` during the migration. See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
+| `model` | string | no | `expression` | Avatar model **family** — `expression` (default) or `essence` — combined with `version` to pick the engine: `expression`+`v1` = **Expression 1** (the default), `essence`+`v1` = **[Essence 1](/concepts/models)**, `essence`+`v2` = **[`essence-2`](/concepts/essence-2)** (the [combined Essence 2 creation](#essence-2--the-combined-creation)), `expression`+`v2` = **[`expression-2`](/concepts/expression-2)**. You may also pass a **full engine name** directly (`essence-1`, `essence-2`, **[`essence-2-max`](/concepts/essence-2-max)**, `expression-1`, `expression-2`) or **`auto`** ([classify-and-route](#auto--let-the-platform-pick-the-model)) — those pass through unchanged and `version` is ignored, so existing integrations keep working. An omitted `model` defaults to `expression` at `v1` (Expression 1, 250 credits) — a v1 engine at the ungated 250-credit rate; a caller is never silently upgraded onto a v2 engine or a higher price. Invalid values return `400 VALIDATION_ERROR` (no credits charged); the retired `essence-2-light` name returns a targeted hint pointing at `essence-2`, and the pre-rename `essence-2-quality` is still accepted as a **deprecated alias** for `essence-2-max` during the migration. See [models](/concepts/models) and [Essence 2 & Expression 2](/concepts/models-v2). |
 | `version` | string | no | `v1` | Engine generation for the chosen `model` family — `v1` (default) selects the first-generation engine (Essence 1 / Expression 1, 250 credits); `v2` selects the second-generation engine (Essence 2, 500 credits, or Expression 2, 2000 credits). Ignored when `model` is a full engine name or `auto`. |
 
 > **Agent creation is image-only.** Provide a portrait `image` (or let the
@@ -450,7 +450,7 @@ curl works:
 ```bash
 curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
   "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2"
-# → A17ZTB0222.avatar
+# → A17ZTB0222.imx
 ```
 
 Pass `?redirect=false` to get the URL as JSON instead (for UIs that want to
@@ -462,7 +462,7 @@ fetch or label first):
   "data": {
     "code": "A17ZTB0222",
     "model": "expression-2",
-    "filename": "A17ZTB0222.avatar",
+    "filename": "A17ZTB0222.imx",
     "url": "https://…signed…",
     "expires_in": 3600
   }

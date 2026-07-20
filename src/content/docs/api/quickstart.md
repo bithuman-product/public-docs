@@ -33,9 +33,12 @@ can speak to it and it responds:
 Replace `A78WKV4515` with your chosen code. That's the whole quickstart — open
 the page and start talking.
 
-> **Note** The iframe needs delegated `microphone` permission to hear the user.
-> If your page sets a restrictive `Permissions-Policy`, the avatar loads but the
-> mic stays silent — allowlist `agent.viewer.bithuman.ai`. For per-visitor
+> **Note** The iframe needs delegated `microphone` permission to hear the user,
+> and the `*` in the `allow` attribute is load-bearing — the embed URL redirects
+> cross-origin to `agent.viewer.bithuman.ai`, so a bare `allow="microphone"`
+> leaves the mic silently blocked. If your page sets a restrictive
+> `Permissions-Policy`, the avatar loads but the mic stays silent — allowlist
+> `agent.viewer.bithuman.ai`. For per-visitor
 > session tracking and rate limiting, mint a short-lived embed token on your
 > backend — see [Embedding](/api/embedding).
 
