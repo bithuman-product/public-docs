@@ -8,7 +8,7 @@ order: 14
 
 ## Prerequisites
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication). Read it from env or your app config at startup; never hardcode it.
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication). Read it from env or your app config at startup; never hardcode it.
 - **Android Studio** with NDK 28.0.13004108 and compile SDK 35. Add the dependency:
 
 ```kotlin

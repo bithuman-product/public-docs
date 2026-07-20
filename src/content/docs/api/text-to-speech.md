@@ -15,7 +15,7 @@ codes** — opaque handles for a voice you've designed in the
 ## Authentication
 
 Every call uses your bitHuman API secret in the `api-secret` header. Get one at
-[Developer → API Keys](https://www.bithuman.ai/#developer) (free tier, no card),
+[Developer → API Keys](https://www.bithuman.ai/developer/api-keys) (free tier, no card),
 then export it so the examples below pick it up:
 
 ```bash

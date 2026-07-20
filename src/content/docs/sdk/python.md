@@ -58,7 +58,7 @@ the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a d
 > is in each example's `requirements.txt`.
 
 Auth: export `BITHUMAN_API_SECRET`. Get a secret at [Developer → API
-Keys](https://www.bithuman.ai/#developer). See [authentication](/api/quickstart)
+Keys](https://www.bithuman.ai/developer/api-keys). See [authentication](/api/quickstart)
 for details.
 
 ## 2.3 — slim wheel, CLI moved out

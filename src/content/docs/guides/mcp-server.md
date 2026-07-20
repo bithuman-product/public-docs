@@ -72,7 +72,7 @@ pip install bithuman-cli                                             # macOS arm
 ```
 
 Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
-[Developer Dashboard](https://www.bithuman.ai/#developer)). The server resolves
+[Developer Dashboard](https://www.bithuman.ai/developer/api-keys)). The server resolves
 your credential automatically — env → OS keychain → `~/.bithuman/config` — so you
 usually don't pass it per-client. Then register `bithuman mcp`:
 

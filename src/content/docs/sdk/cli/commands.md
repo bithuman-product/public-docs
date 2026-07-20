@@ -83,7 +83,7 @@ keys) are untouched.
 
 > **Tip** — Each device gets its own key, so you can revoke one laptop without
 > disrupting another. You can also revoke any device's key from
-> [Developer → API Keys](https://www.bithuman.ai/#developer) on the dashboard.
+> [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) on the dashboard.
 
 ### Credential resolution order
 

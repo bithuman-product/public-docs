@@ -12,7 +12,7 @@ bitHuman bills in **credits** consumed per **active minute** of avatar runtime. 
 
 This page is the single source for every billing number on the platform — the model guides and API pages link back here.
 
-Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer) — it lands in your inbox in seconds with the free tier attached.
+Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/developer/api-keys) — it lands in your inbox in seconds with the free tier attached.
 
 ## Serving — credits per active minute
 
@@ -50,6 +50,7 @@ Two modes are always free: **audio-only** Swift SDK use (no avatar attached — 
 ## Talking video — per minute of output
 
 [Talking-video renders](/concepts/talking-video) bill per minute of finished output, **rounded up** (minimum one minute). A failed render is automatically refunded.
+
 
 | Model | Per minute of output |
 |---|---|

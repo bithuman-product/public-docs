@@ -8,7 +8,7 @@ order: 12
 
 ## Prerequisites
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
 - `curl` and `python3` (for pretty-printing JSON) — preinstalled on macOS and most Linux. No SDK, no language runtime.
 
 ```bash

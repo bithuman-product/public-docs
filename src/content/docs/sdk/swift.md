@@ -60,7 +60,7 @@ have **zero transitive Swift Package dependencies**. Just `import bitHumanKit`.
 
 Auth: export `BITHUMAN_API_KEY` or set `VoiceChatConfig.apiKey` before
 starting avatar mode. Get a key at
-[Developer → API Keys](https://www.bithuman.ai/#developer). Audio-only voice
+[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). Audio-only voice
 runs keyless and unmetered.
 
 > **Note** The Swift SDK reads **`BITHUMAN_API_KEY`**; every other surface

@@ -10,7 +10,7 @@ order: 33
 
 | Variable | What |
 | --- | --- |
-| `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. The easiest way to set this is `bithuman login` (stores it in the OS keychain); set it manually for CI / automation. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/#developer). |
+| `BITHUMAN_API_SECRET` | Avatar-runtime auth (metering). Canonical name on the CLI; `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity. The easiest way to set this is `bithuman login` (stores it in the OS keychain); set it manually for CI / automation. Get a free key at [bithuman.ai → Developer](https://www.bithuman.ai/developer/api-keys). |
 | `OPENAI_API_KEY` | Cloud conversation brain (OpenAI Realtime). Required for `bithuman run` unless `BITHUMAN_LOCAL=1` is set. |
 | `BITHUMAN_LOCAL` | `=1` flips the brain to the on-device stack (whisper.cpp + llama.cpp + Supertonic + Silero). Needs the `[local]` extra: `pip install 'bithuman-cli[local]'`. See [Local mode](/sdk/cli/local-mode). |
 | `BITHUMAN_LOCAL_*` | Per-component tuning (whisper model, LLM, voice, language). Brain-side — read by the Python agent, not the CLI binary. See [Local mode tuning](/sdk/cli/local-mode). |

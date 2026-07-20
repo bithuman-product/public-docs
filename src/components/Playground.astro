@@ -210,7 +210,11 @@ const first = agents[0];
 
   /* ---- compact (hero) variant: preview-only, single column ---- */
   .pg.compact { grid-template-columns: 1fr; gap: 0; }
-  .pg.compact .pg-preview { height: clamp(360px, 46vw, 460px); aspect-ratio: 16/10; }
+  /* Width-driven sizing: a fixed height + aspect-ratio gives the preview an
+     intrinsic (transferred) width that can inflate the hero grid track and
+     push the card — and its Launch pill — past the viewport edge (seen at
+     1440px). Let the column width drive the height via the aspect ratio. */
+  .pg.compact .pg-preview { height: auto; aspect-ratio: 16/10; }
   .pg-run-compact { position: absolute; bottom: var(--space-4); right: var(--space-4); z-index: 3; padding: 0.6rem 1rem; font-size: var(--ft-sm); box-shadow: var(--shadow-md); }
   .pg-preview.live .pg-run-compact { display: none; }
 

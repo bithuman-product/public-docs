@@ -51,7 +51,7 @@ Every error follows the same structured envelope:
 
 | Code | HTTP | Resolution |
 |---|---|---|
-| `UNAUTHORIZED` | 401 | The `api-secret` header is present but invalid. Get a valid secret from [Developer → API Keys](https://www.bithuman.ai/#developer). |
+| `UNAUTHORIZED` | 401 | The `api-secret` header is present but invalid. Get a valid secret from [Developer → API Keys](https://www.bithuman.ai/developer/api-keys). |
 | `MISSING_AUTH` | 401 | The `api-secret` header is absent. Add it to your request. |
 | `ACCOUNT_SUSPENDED` | 401/403 | Balance below the `-11` suspension floor. Top up, then contact support if it persists. |
 | `INSUFFICIENT_BALANCE` | 402 | Top up credits at [www.bithuman.ai](https://www.bithuman.ai). |

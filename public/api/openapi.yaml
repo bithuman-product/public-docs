@@ -33,13 +33,24 @@ info:
 
     All endpoints are relative to `https://api.bithuman.ai` and
     require an `api-secret` header.
-    [Get a free API secret →](https://www.bithuman.ai/#developer)
+    [Get a free API secret →](https://www.bithuman.ai/developer/api-keys)
 
-    Some routes are intentionally excluded from this reference because
-    they are internal or infrastructure — webhook receivers, `/func_*`
-    generation internals, health/telemetry, and realtime session
-    plumbing. They are not part of the public developer contract and
-    may change without notice.
+    This machine-readable spec currently covers the core
+    agent / video / dynamics / files / pricing surface. Some developer
+    endpoint groups are documented in the markdown guides rather than
+    here: [API keys](https://docs.bithuman.ai/api/api-keys)
+    (`/v2/{user}/api-secrets*`),
+    [runtime sessions](https://docs.bithuman.ai/api/runtime-sessions)
+    (`/v2/{user}/runtime-sessions*`),
+    [organizations](https://docs.bithuman.ai/api/organizations)
+    (`/v2/organizations*`),
+    [providers](https://docs.bithuman.ai/api/providers)
+    (`/v2/{user}/providers`), and
+    [knowledge](https://docs.bithuman.ai/api/knowledge)
+    (`/v1/knowledge/*`). Purely internal / infrastructure routes —
+    webhook receivers, `/func_*` generation internals, health/telemetry,
+    and realtime session plumbing — are excluded entirely: they are not
+    part of the public developer contract and may change without notice.
 
 servers:
   - url: https://api.bithuman.ai
@@ -215,7 +226,7 @@ paths:
                     as that rollout completes.
                 model:
                   type: string
-                  enum: [expression, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, auto]
+                  enum: [expression, essence, essence-1, essence-2, expression-1, expression-2, auto]
                   default: expression
                   example: expression
                   description: >-
@@ -238,9 +249,13 @@ paths:
                     **`essence-2`** is the second-generation Essence model for
                     photorealistic people — one 500-credit creation that runs
                     everywhere from on-device (CPU / Apple Neural Engine) up to
-                    cloud GPU. **`essence-2-max`** is the premium tier (its
-                    pre-rename name `essence-2-quality` remains a deprecated
-                    alias). **`expression-2`** is the second-generation
+                    cloud GPU. (`essence-2-light` is a retired alias — the
+                    public name is `essence-2`.) **`essence-2-max`**, the
+                    premium tier, is **not a standalone creation target** — it
+                    is delivered together with every `essence-2` creation (the
+                    one 500-credit charge covers both models), so request
+                    `essence-2` (or `essence` + `v2`) to get it.
+                    **`expression-2`** is the second-generation
                     expression engine — audio-driven real-time avatar video from
                     a single photo (creation trains a per-identity model, ~45
                     min). **`auto`** classifies your input (the image if
@@ -287,8 +302,9 @@ paths:
         "402":
           description: >-
             Insufficient credits. Creation is billed **per model** —
-            `expression-2` costs 2000 credits; the Essence 2 family
-            (`essence-2`, `essence-2-max`) costs 500; `auto` bills the
+            `expression-2` costs 2000 credits; the combined Essence 2
+            creation (`essence-2`, which also delivers `essence-2-max`)
+            costs 500; `auto` bills the
             routed model's rate (500 or 2000); the v1 families (`essence-1`,
             `expression-1`) cost 250. Top up to continue. Returns error code
             `INSUFFICIENT_BALANCE`.
@@ -312,7 +328,7 @@ paths:
                   value:
                     error:
                       code: "VALIDATION_ERROR"
-                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression, expression-1, expression-2"
+                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, expression, expression-1, expression-2"
                       httpStatus: 400
                     status: "error"
                     status_code: 400
@@ -328,7 +344,7 @@ paths:
         "422":
           description: >-
             `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
-            (`essence-2`, `essence-2-max`) whose input
+            (`essence-2`) whose input
             is not a photorealistic human subject. The classifier runs on the
             image if provided, else the prompt, **before anything is billed**
             and before any agent row is created. Use `expression-2` for
@@ -349,13 +365,13 @@ paths:
         "503":
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — the requested second-generation model
-            (`essence-2`, `essence-2-max`, `expression-2`, or `auto`, which
-            routes only to them) isn't open for creation on your account yet.
-            Essence 2 and Expression 2 launched July 10, 2026 with creation
-            access opening progressively — while the rollout completes, a
-            paused model returns this code **before any dispatch or charge**.
+            (`essence-2`, `expression-2`, or `auto`, which
+            routes only to them) can't accept creations right now. Essence 2
+            and Expression 2 have been generally available since their
+            July 10, 2026 launch, so this is a rare, temporary operational
+            pause — returned **before any dispatch or charge**.
             The v1 families (`essence-1`, `expression-1`) always work; retry
-            the v2 model later.
+            the v2 model shortly.
           content:
             application/json:
               schema:
@@ -851,9 +867,10 @@ paths:
         "503":
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — adding a second-generation model
-            (`essence-2`, `expression-2`) isn't open on your account yet;
-            creation access is opening progressively since the July 10, 2026
-            launch. Rejected before any charge — retry later. Adding the v1
+            (`essence-2`, `expression-2`) can't be dispatched right now.
+            Both models have been generally available since the July 10, 2026
+            launch, so this is a rare, temporary operational pause. Rejected
+            before any charge — retry shortly. Adding the v1
             models always works.
 
   /v1/agent/{code}/model/download:
@@ -866,7 +883,7 @@ paths:
             # 302 redirect to the artifact — -LOJ follows it and keeps the filename
             curl -LOJ "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2" \
               -H "api-secret: $BITHUMAN_API_SECRET"
-            # → A17ZTB0222.avatar  (add ?redirect=false for the URL as JSON)
+            # → A17ZTB0222.imx  (add ?redirect=false for the URL as JSON)
       summary: Download an agent's model artifact
       description: |
         Download the generated model file for an agent you own. The family
@@ -877,9 +894,9 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2-light` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow) |
-        | `essence-2-quality` | `<code>.pkl` — the Essence 2 Max artifact (IMX container) |
-        | `expression-2` | `<code>.avatar` (CoreML zip — the Apple/CoreML build, ~20–90 MB per identity; cloud-served today, local playback in development) |
+        | `essence-2` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow). `essence-2-light` is a retired internal alias for this family. |
+        | `essence-2-max` | `<code>.pkl` — the Essence 2 Max artifact (IMX container). `essence-2-quality` is its pre-rename internal alias. |
+        | `expression-2` | `<code>.imx` — the portable IMX container (~20–90 MB per identity; legacy `.avatar` zip, CoreML packaging internally) — runs locally on macOS (Apple Silicon) and Linux or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
 
         The default response is a **302 redirect** to the artifact — the
@@ -911,15 +928,16 @@ paths:
           required: false
           schema:
             type: string
-            enum: [essence-1, essence-2-light, essence-2-quality, expression-2]
+            enum: [essence-1, essence-2, essence-2-max, expression-2]
           description: >-
-            Artifact family. Defaults to the agent's own model. Public names,
-            deprecated aliases and runtime tier slugs (e.g. `essence-2`,
-            `essence-2-max`, `essence-2-ane`,
+            Artifact family. Defaults to the agent's own model. Retired
+            internal aliases and runtime tier slugs (e.g. `essence-2-light`
+            → `essence-2`, `essence-2-quality` → `essence-2-max`,
+            `essence-2-ane`,
             `expression-2-gpu`) fold onto their family; an unrecognized value
             returns `400 VALIDATION_ERROR` listing the downloadable families.
-            The families keep their internal names (`essence-2-max` folds
-            onto `essence-2-quality`) until the platform-side rename flip.
+            (Until the platform-side rename flip, server messages may still
+            spell the internal family names.)
           example: "expression-2"
         - name: redirect
           in: query
@@ -963,7 +981,7 @@ paths:
                         example: "expression-2"
                       filename:
                         type: string
-                        example: "A17ZTB0222.avatar"
+                        example: "A17ZTB0222.imx"
                       url:
                         type: string
                         description: The artifact URL (signed, 1-hour TTL, for the private families).
@@ -1225,9 +1243,12 @@ paths:
                               value accepted by `POST /v1/agent/generate`.
                               Since the 2026-07-10 rename flip the premium
                               model is keyed `essence-2-max`; the pre-rename
-                              `essence-2-quality` spelling is still accepted
-                              as a deprecated alias at the same 500 but is no
-                              longer advertised.
+                              `essence-2-quality` spelling is a deprecated
+                              alias and no longer advertised. Note
+                              `essence-2-max` is **not a standalone creation
+                              target** — it is delivered by the combined
+                              `essence-2` creation (its 500 entry mirrors
+                              that combined rate).
                             example:
                               essence-1: 250
                               expression-1: 250
@@ -1386,7 +1407,7 @@ paths:
                     their tiers, and retired `essence-2-light(-ane)` values
                     route to the `essence-2` chain). This is the **early
                     artifact gate**: if the requested model folds onto the
-                    `expression-2` / `essence-2-light` families and the
+                    `expression-2` / `essence-2` families and the
                     agent's trained per-identity model hasn't been generated
                     yet, the request is rejected `409 MODEL_NOT_GENERATED`
                     instead of failing later at session dispatch. Unknown
@@ -1869,7 +1890,7 @@ paths:
               properties:
                 model:
                   type: string
-                  enum: [essence-1, expression-1, essence-2, essence-2-max, essence-2-quality, expression-2]
+                  enum: [essence-1, expression-1, essence-2, essence-2-max, expression-2]
                   description: |
                     Avatar engine. `essence-1` (2 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
@@ -1981,6 +2002,25 @@ paths:
                   httpStatus: 409
                 status: "error"
                 status_code: 409
+        "503":
+          description: >-
+            `MODEL_NOT_YET_AVAILABLE` — the requested model can't render
+            right now (no routeable worker, or the model is temporarily
+            paused). All five models render talking video in normal
+            operation, so this is a rare, transient condition. Returned
+            **before any charge** — retry shortly, or render with another
+            of the agent's supported models.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "MODEL_NOT_YET_AVAILABLE"
+                  message: "essence-2-max talking video isn't available right now — retry shortly"
+                  httpStatus: 503
+                status: "error"
+                status_code: 503
 
   /v1/video/{job_id}:
     get:
@@ -2672,7 +2712,7 @@ components:
       in: header
       description: |
         Your bitHuman API secret. Get one at
-        [www.bithuman.ai/#developer](https://www.bithuman.ai/#developer).
+        [www.bithuman.ai/developer/api-keys](https://www.bithuman.ai/developer/api-keys).
 
   schemas:
     Agent:
@@ -3101,7 +3141,7 @@ tags:
 
       Sign in at [bithuman.ai](https://www.bithuman.ai) (free tier, no
       credit card), then go to
-      [Developer → API Keys](https://www.bithuman.ai/#developer) and
+      [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) and
       click **Create new key**. Copy the value — **you won't be able
       to view it again** — and store it somewhere durable.
 
@@ -3234,7 +3274,7 @@ tags:
       ### Get a key
 
       1. Sign in at [bithuman.ai](https://www.bithuman.ai).
-      2. Go to [Developer → API Keys](https://www.bithuman.ai/#developer).
+      2. Go to [Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
       3. Click **Create new key**, name it, and copy the value.
 
       Verify it works:
@@ -3311,7 +3351,7 @@ tags:
 
       ### Rotating keys
 
-      Rotate from the [Developer dashboard](https://www.bithuman.ai/#developer).
+      Rotate from the [Developer dashboard](https://www.bithuman.ai/developer/api-keys).
       Rotation invalidates the old key immediately; live sessions
       pause within ~60 s and resume on restart with the new key.
       There's no overlap window — rotate during a maintenance window
@@ -3365,7 +3405,7 @@ tags:
 
       ### The second generation (launched July 10, 2026)
 
-      Two second-generation models — `essence-2` and `expression-2` — launched July 10, 2026. The rollout is in progress: creation access opens progressively (a still-paused model returns `503 MODEL_NOT_YET_AVAILABLE`, nothing charged). `essence-1` / `expression-1` are available today.
+      Two second-generation models — `essence-2` and `expression-2` — launched July 10, 2026 and are **generally available**. (A temporary operational pause on a model returns `503 MODEL_NOT_YET_AVAILABLE`, nothing charged.) `essence-1` / `expression-1` remain available as before.
 
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|

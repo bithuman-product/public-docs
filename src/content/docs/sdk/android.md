@@ -81,7 +81,7 @@ val avatar = Avatar.load(
 )
 ```
 
-Get a secret at [Developer → API Keys](https://www.bithuman.ai/#developer). The
+Get a secret at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys). The
 library exchanges it for a short-lived runtime token at startup and renews on the
 heartbeat (5-minute offline grace).
 

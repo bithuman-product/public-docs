@@ -8,7 +8,7 @@ order: 13
 
 ## Prerequisites
 
-- A bitHuman API key, exposed to the app as `BITHUMAN_API_KEY` (Apple convention) — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
+- A bitHuman API key, exposed to the app as `BITHUMAN_API_KEY` (Apple convention) — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
 - **Xcode 26+** on a Mac, plus an Apple Developer account. Add the SwiftPM package:
 
 ```swift

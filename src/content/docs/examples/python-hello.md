@@ -8,7 +8,7 @@ order: 11
 
 ## Prerequisites
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/#developer); see [Authentication](/api/authentication).
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
 - Python 3.11–3.13 (use a virtualenv). Install the library (cross-platform wheels — macOS arm64 + Linux x86_64/aarch64):
 
 ```bash

@@ -47,7 +47,7 @@ the page and start talking.
 ## Going further
 
 The steps above need no API key. The rest of the platform does — get an API
-secret at [Developer → API Keys](https://www.bithuman.ai/#developer) (free tier,
+secret at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) (free tier,
 no credit card) and export it:
 
 ```bash

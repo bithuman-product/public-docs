@@ -22,7 +22,7 @@ https://api.bithuman.ai
 ```
 
 All endpoints are relative to this URL and require an `api-secret` header.
-[Get a free API secret →](https://www.bithuman.ai/#developer)
+[Get a free API secret →](https://www.bithuman.ai/developer/api-keys)
 
 ## Authentication
 

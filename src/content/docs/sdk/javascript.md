@@ -40,7 +40,7 @@ npm install @bithuman/sdk   # not available yet — see the note above
 ```
 
 Auth: provide your API secret as `apiSecret`. Get one at [Developer → API
-Keys](https://www.bithuman.ai/#developer).
+Keys](https://www.bithuman.ai/developer/api-keys).
 
 ## Quick start
 

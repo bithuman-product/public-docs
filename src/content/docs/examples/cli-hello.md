@@ -8,7 +8,7 @@ order: 10
 
 ## Prerequisites
 
-- A bitHuman API secret (free tier works) — get one at [Developer → API Keys](https://www.bithuman.ai/#developer). See [Authentication](/api/authentication) for how the key is used.
+- A bitHuman API secret (free tier works) — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys). See [Authentication](/api/authentication) for how the key is used.
 - Install the CLI:
   - **macOS (Apple Silicon):** `brew install bithuman-product/bithuman/bithuman-cli` (or `pip install bithuman-cli`).
   - **Linux (x86_64 / aarch64):** the universal installer — `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh`. (The PyPI `bithuman-cli` wheel is macOS-Apple-Silicon only, so `pip install` won't work on Linux.)

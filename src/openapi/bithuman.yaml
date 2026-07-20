@@ -33,7 +33,7 @@ info:
 
     All endpoints are relative to `https://api.bithuman.ai` and
     require an `api-secret` header.
-    [Get a free API secret →](https://www.bithuman.ai/#developer)
+    [Get a free API secret →](https://www.bithuman.ai/developer/api-keys)
 
     This machine-readable spec currently covers the core
     agent / video / dynamics / files / pricing surface. Some developer
@@ -2712,7 +2712,7 @@ components:
       in: header
       description: |
         Your bitHuman API secret. Get one at
-        [www.bithuman.ai/#developer](https://www.bithuman.ai/#developer).
+        [www.bithuman.ai/developer/api-keys](https://www.bithuman.ai/developer/api-keys).
 
   schemas:
     Agent:
@@ -3141,7 +3141,7 @@ tags:
 
       Sign in at [bithuman.ai](https://www.bithuman.ai) (free tier, no
       credit card), then go to
-      [Developer → API Keys](https://www.bithuman.ai/#developer) and
+      [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) and
       click **Create new key**. Copy the value — **you won't be able
       to view it again** — and store it somewhere durable.
 
@@ -3274,7 +3274,7 @@ tags:
       ### Get a key
 
       1. Sign in at [bithuman.ai](https://www.bithuman.ai).
-      2. Go to [Developer → API Keys](https://www.bithuman.ai/#developer).
+      2. Go to [Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
       3. Click **Create new key**, name it, and copy the value.
 
       Verify it works:
@@ -3351,7 +3351,7 @@ tags:
 
       ### Rotating keys
 
-      Rotate from the [Developer dashboard](https://www.bithuman.ai/#developer).
+      Rotate from the [Developer dashboard](https://www.bithuman.ai/developer/api-keys).
       Rotation invalidates the old key immediately; live sessions
       pause within ~60 s and resume on restart with the new key.
       There's no overlap window — rotate during a maintenance window

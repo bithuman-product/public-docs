@@ -67,7 +67,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
         <span class="status-dot"></span>
         <span class="status-txt">Status</span>
       </a>
-      <a class="btn-cta" href="https://bithuman.ai/#developer" target="_blank" rel="noopener">Get API key</a>
+      <a class="btn-cta" href="https://bithuman.ai/developer/api-keys" target="_blank" rel="noopener">Get API key</a>
       <button class="icon-btn menu-btn" aria-label="Menu" onclick="__bhToggleMenu()">
         <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
       </button>
@@ -80,7 +80,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     {resources.map((r) => <a href={r.href}>{r.label}</a>)}
     <a href="https://status.bithuman.ai" target="_blank" rel="noopener">Status</a>
     <div class="mm-sep"></div>
-    <a class="mm-cta" href="https://bithuman.ai/#developer" target="_blank" rel="noopener">Get API key →</a>
+    <a class="mm-cta" href="https://bithuman.ai/developer/api-keys" target="_blank" rel="noopener">Get API key →</a>
   </div>
 </header>
 
@@ -267,14 +267,22 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
       display: flex;
       flex-direction: column;
       gap: 0.15rem;
-      padding: var(--space-3) var(--space-5) var(--space-5);
-      border-bottom: 1px solid var(--color-border);
+      /* Closed state must zero the block padding too: with max-height: 0 the
+         padding still renders (height floors at 0, padding does not), so the
+         first link used to peek out beneath the header. */
+      padding: 0 var(--space-5);
       background: var(--color-bg);
       max-height: 0;
       overflow: hidden;
-      transition: max-height var(--t-med) var(--ease);
+      transition: max-height var(--t-med) var(--ease), padding var(--t-med) var(--ease);
     }
-    :root.nav-open .mobile-menu { max-height: 70vh; }
+    :root.nav-open .mobile-menu {
+      max-height: 70vh;
+      /* Short viewports: the menu's bottom CTA must stay reachable under the cap */
+      overflow-y: auto;
+      padding: var(--space-3) var(--space-5) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+    }
     .mobile-menu a {
       padding: 0.7rem 0.5rem;
       border-radius: var(--r-md);

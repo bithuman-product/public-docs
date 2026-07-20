@@ -25,7 +25,7 @@ depending on which surface you're using:
 
 1. Sign in at [bithuman.ai](https://www.bithuman.ai) (free tier, no credit
    card).
-2. Go to [Developer → API Keys](https://www.bithuman.ai/#developer).
+2. Go to [Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
 3. Click **Create new key**, name it (e.g. `production-mac`), and copy the
    value. **You won't be able to view it again** — store it somewhere durable.
 
@@ -49,7 +49,7 @@ browser. See [CLI → Signing in](/sdk/cli/commands#signing-in).
 
 Because each device gets its own key, it's individually **revocable** — run
 `bithuman logout` on that machine, or revoke the `cli@<hostname>` key from
-[Developer → API Keys](https://www.bithuman.ai/#developer). Revoking one
+[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). Revoking one
 device leaves your other keys untouched.
 
 > **CI, containers, automation** — keep setting `BITHUMAN_API_SECRET`
@@ -143,7 +143,7 @@ nothing, and doesn't require a key.
 
 ## Rotating keys
 
-Rotate from the [Developer dashboard](https://www.bithuman.ai/#developer).
+Rotate from the [Developer dashboard](https://www.bithuman.ai/developer/api-keys).
 Rotation invalidates the old key immediately — there's no overlap window. Live
 sessions using the old key fail their next heartbeat (within ~60 s) and pause;
 restart with the new key to resume. Rotate during a maintenance window if you
