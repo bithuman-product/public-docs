@@ -117,12 +117,13 @@ training GPU. When the status reaches `ready`, the agent is servable on every
 tier.
 
 **How long.** The per-identity training step runs on a dedicated training GPU
-and is the dominant cost of creation — expect the whole run to take
-**typically 45–75 minutes** (some identities up to about 90). The training
-recipe is adaptive: every agent must pass the same quality checks before it
-ships, and an identity that needs more work automatically gets more
-training — never a lower bar. That is why harder identities land at the top
-of the range.
+and is the dominant cost of creation — plan for **about 1 to 1.5 hours**
+(roughly 60–100 minutes). The training recipe is **adaptive**: it starts from a
+short, efficient schedule, and every agent must pass the same quality checks
+before it ships — an identity that needs more work automatically climbs to more
+training, never a lower bar. That is why harder identities take longer. A recent
+cold-start run measured about 1 hour 40 minutes end to end; runs trend toward
+the lower end of the range as the shared training pool stays warm.
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
@@ -221,9 +222,9 @@ disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/prici
 
 - **Output**: the full 416×720 portrait scene, generated at 20 fps; video
   streams over WebRTC with adaptive bitrate.
-- **Creation time**: plan for about an hour — typically 45–75 minutes (see
-  above) — and poll status rather than assuming the few-minute wall-clock of
-  `essence-1`.
+- **Creation time**: plan for about 1 to 1.5 hours — roughly 60–100 minutes
+  (see above; a cold run measured ~1h40m, trending faster as the pool warms) —
+  and poll status rather than assuming the few-minute wall-clock of `essence-1`.
 - **Identity input**: a clear, frontal, well-lit face photo gives the best
   result. The identity is fixed at creation — to change the face, create a new
   agent.

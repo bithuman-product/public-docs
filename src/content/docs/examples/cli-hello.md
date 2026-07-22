@@ -86,4 +86,4 @@ Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree
 - [AI voice chat](/examples/ai-conversation) — a full conversational agent.
 - [Python — Hello, avatar](/examples/python-hello) — the same engine, in ~20 lines of code.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose (creating one takes ~45–75 min).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose (creating one takes ~45 min to 1.5 h).

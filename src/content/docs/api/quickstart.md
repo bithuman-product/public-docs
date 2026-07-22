@@ -112,7 +112,7 @@ Prefer a custom face and persona? Generation is asynchronous — it returns an
 `essence` + `v2` → Essence 2, `expression` + `v2` → Expression 2; the full
 engine names (`essence-1` … `expression-2`) still work directly too. The
 [second-generation models](/concepts/models-v2) train a real per-identity
-model, so they take roughly 45–75 minutes and cost more — 500 credits for
+model, so they take roughly 45 minutes to 1.5 hours and cost more — 500 credits for
 Essence 2, 2000 for Expression 2; see
 [per-model creation](/api/agents#model-specific-inputs-and-creation-times).
 Creation is image-only — a seamless 10-second identity video is generated

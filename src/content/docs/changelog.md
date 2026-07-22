@@ -10,6 +10,17 @@ order: 1
 
 ## July 2026
 
+### Expression 2 — faster creation, same quality bar (2026-07-22)
+
+Expression 2 agent creation now runs the **adaptive-ladder recipe by default**:
+it starts from a short, efficient training schedule and climbs to more training
+only when an identity needs it to pass the **same** quality checks. In head-to-head
+testing this reaches essentially the same quality as the previous full-length
+recipe at roughly **40% of the training time and cost**. Creation now takes
+**about 1 to 1.5 hours** (a recent cold-start run measured ~1h40m; runs trend
+faster as the shared training pool stays warm). No API, pricing, or serving
+changes — new creations get the faster path automatically.
+
 ### Run Expression 2 locally from the CLI (2026-07-16)
 
 The [bitHuman CLI](/sdk/cli/overview) now renders `expression-2` avatars on your
@@ -38,8 +49,7 @@ unchanged — existing agents get the improvement with no action needed.
 Expression 2 agent creation now runs an **adaptive training recipe**: every
 agent must pass the same quality checks as before, and an identity that needs
 more work automatically gets more training rather than a lower bar. In
-practice creation typically completes in **45–75 minutes** (some identities
-up to about 90) — see
+practice creation completes in **about 1 to 1.5 hours** — see
 [Expression 2](/concepts/expression-2#how-creation-works) for the updated
 expectations. The Expression 2 identities in the
 [gallery](https://bithuman.ai/explore?gallery=v2) have been refreshed with

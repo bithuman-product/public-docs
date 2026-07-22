@@ -138,7 +138,7 @@ chains them. A few worked examples:
 > give me an embed token for it.
 
 The agent calls `generate_agent`, polls `get_agent_status` until `ready` (a
-few minutes for first-generation models; roughly 45–75 minutes for the
+few minutes for first-generation models; roughly 45 minutes to 1.5 hours for the
 second generation), then `create_embed_token` and hands you the JWT for the
 [embed widget](/guides/deploy-embed).
 
@@ -178,9 +178,9 @@ nothing else to configure.
 
 - **Async work.** `generate_agent` and `generate_dynamics` return immediately
   with `processing`. Have the agent poll `get_agent_status` / `get_dynamics`
-  until `ready` (a few minutes for first-generation models; roughly 45–75
-  minutes for the [second generation](/concepts/models-v2), which trains a real
-  per-identity model).
+  until `ready` (a few minutes for first-generation models; roughly 45 minutes
+  to 1.5 hours for the [second generation](/concepts/models-v2), which trains a
+  real per-identity model).
 - **Credits.** `generate_agent` (250 credits for the default first-generation
   model; 500 for `essence-2`, 2000 for `expression-2` — see
   [Pricing](/guides/pricing)) and `text_to_speech`
