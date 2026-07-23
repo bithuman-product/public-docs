@@ -39,7 +39,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 ```
 
 > **Choosing a second-generation model.** This walkthrough builds the default
-> first-generation `essence-1` agent. To create an `essence-2`, `essence-2-max`,
+> first-generation `expression-1` agent. To create an `essence-2`, `essence-2-max`,
 > or `expression-2` agent instead, add a `"model"` field (or `"auto"`) to the
 > generate body — see [Essence 2 & Expression 2](/concepts/models-v2). Their
 > creation does real per-identity work, so it takes **roughly 45 minutes to 1.5 hours**, not

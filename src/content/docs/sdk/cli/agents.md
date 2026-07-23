@@ -79,7 +79,7 @@ for flags and copy-pasteable `EXAMPLES:`.
 
 ### `bithuman version --json`
 ```json
-{"cli":"2.3.25","libessence":"2.3.6","abi":7}
+{"cli":"2.4.0","libessence":"2.3.6","abi":7}
 ```
 `"wheel"` is added when installed via the pip shim.
 
@@ -132,7 +132,7 @@ macOS `render` exits **70** with a workaround message.
 ### `bithuman doctor --json`
 ```json
 {"ready":false,
- "versions":{"libessence":"2.3.6","abi":7,"cli":"2.3.25","wheel":null,"agent_python":null},
+ "versions":{"libessence":"2.3.6","abi":7,"cli":"2.4.0","wheel":null,"agent_python":null},
  "host":{"os":"macos","arch":"aarch64","ram_gb":24.0},
  "auth":{"signed_in":true,"email":"…","source":"…","plan":"creator","credit_balance":…,"out_of_credits":false},
  "brain":{"cloud":false,"local_installed":false,"local_flag":false,"selected":"none"},

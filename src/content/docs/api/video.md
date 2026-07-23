@@ -151,12 +151,11 @@ resp = requests.get(
 print(resp.json())
 ```
 
-While rendering (note: job responses echo the **internal family name** — an
-`essence-2-max` request reads back as `essence-2-quality`, and `essence-2` as
-`essence-2-light`, until the platform-side rename flip):
+While rendering (note: job responses echo the **public** model name you
+requested — `essence-2` and `essence-2-max` read back as-is):
 
 ```json
-{ "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing", "model": "essence-2-quality" }
+{ "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing", "model": "essence-2-max" }
 ```
 
 When complete:
@@ -166,7 +165,7 @@ When complete:
   "success": true,
   "job_id": "vid_3f9a2c1b8e7d4a6f0b21",
   "status": "completed",
-  "model": "essence-2-quality",
+  "model": "essence-2-max",
   "video_url": "https://assets.bithuman.ai/.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
   "duration_seconds": 6.5,
   "credits_charged": 8

@@ -20,11 +20,11 @@ pip install bithuman
 ```
 
 **Python 3.11–3.13** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.7.0**. Platforms: macOS arm64, Linux x86_64, Linux
+[PyPI](https://pypi.org/project/bithuman/) is **2.8.0**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a different host.)
 
-> **macOS note** The 2.3.x macOS wheels are tagged for **macOS 26+ (arm64)**.
+> **macOS note** The 2.x macOS wheels are tagged for **macOS 26+ (arm64)**.
 > On older macOS versions `pip install bithuman` fails with
 > `No matching distribution found` — upgrade to macOS 26+, or build from source
 > / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
@@ -78,20 +78,27 @@ now (~15–30 LOC).
 
 ## Which model artifacts can the SDK load?
 
-The `bithuman` wheel is the **`essence-1` runtime** — `AsyncBithuman` /
-`Bithuman` (and the low-level `Fixture`) load `essence-1` **`.imx`** files
-through `libessence`, including the ones you get from
-[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or [`bithuman pull <AGENT_CODE>`](/sdk/cli/commands). The other downloadable
-artifacts are **not loadable by this package**: an `essence-2-light`
-`.lebundle.imx` targets the standard [Essence 2](/concepts/essence-2) engine
-(licensed weights, no local playback
-path yet), an `essence-2-quality` `.pkl` ([Essence 2 Max](/concepts/essence-2-max)) renders on bitHuman's GPU cloud, and
-an `expression-2` `.avatar` is a CoreML build for Apple hardware — passing
-any of them as `model_path` fails at load. To put a second-generation model
-on screen from Python, serve it through the cloud instead: the
-[LiveKit plugin](#livekit-voice-agents)'s `AvatarSession` takes the **agent
-code** (not a model file) and streams whatever family that agent serves.
+The `bithuman` wheel loads avatar models directly on-device, and *which*
+models it can load depends on your platform:
+
+- **`essence-1` `.imx` — every platform.** `AsyncBithuman` / `Bithuman`
+  (and the low-level `Fixture`) load `essence-1` **`.imx`** files through
+  `libessence`, including the ones you get from
+  [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+  or [`bithuman pull <AGENT_CODE>`](/sdk/cli/commands).
+- **[Essence 2](/concepts/essence-2) `.imx` — Linux, as of 2.8.0.** The Linux
+  combined wheel now **also bundles the Essence 2 runtime**: an Essence 2
+  `.imx` loads through the **same `AsyncBithuman` facade** and renders locally
+  on CPU. The loader reads the engine from the IMX header and routes
+  second-generation models to the bundled `libengine` backend. The Essence 2
+  bundle carries licensed weights, so this path needs a valid
+  `BITHUMAN_API_SECRET`. On **macOS** the wheel stays `essence-1`-only —
+  serve Essence 2 through the cloud instead.
+- **[Essence 2 Max](/concepts/essence-2-max) — cloud-only from Python.**
+- **Expression 1 / Expression 2 — no Python-loadable artifact.** Serve them
+  through the [LiveKit plugin](#livekit-voice-agents)'s `AvatarSession`, which
+  takes the **agent code** (not a model file) and streams whatever family
+  that agent serves.
 
 ## The streaming loop
 
@@ -280,7 +287,7 @@ auth even on 2.3.4.
 
 pip found no wheel for your platform. The common causes:
 
-- **macOS older than 26** — the 2.3.x macOS wheels are tagged for **macOS 26+
+- **macOS older than 26** — the 2.x macOS wheels are tagged for **macOS 26+
   (arm64)**. Upgrade to macOS 26+, or build from source / contact
   [hello@bithuman.ai](mailto:hello@bithuman.ai).
 - **Alpine / musl Linux** — not supported. The Linux wheels are
