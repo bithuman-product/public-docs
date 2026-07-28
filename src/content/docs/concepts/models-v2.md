@@ -99,7 +99,9 @@ part of generation. Creation is asynchronous and one-time per agent —
 **500 credits** for `essence-2` (the combined creation, Essence 2 Max
 included) and **2000 credits** for `expression-2`. Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents) until the status is terminal
-(`success` / `ready`).
+(`ready`, or `failed`). `success` is **not** terminal — the voice/image and
+video steps each write it mid-run, so a loop that stops on it exits at ~20%
+(see [the status table](/api/agents#poll-status)).
 
 How long creation takes depends on the model — the v2 models do real
 per-identity work, so don't apply a short client timeout:

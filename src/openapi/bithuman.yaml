@@ -393,18 +393,20 @@ paths:
           source: |
             curl https://api.bithuman.ai/v1/agent/status/A91XMB7113 \
               -H "api-secret: $BITHUMAN_API_SECRET"
-            # poll every 5 s until data.status is "ready"/"success" (or "failed")
+            # poll every 5 s until data.status is "ready" (or "failed").
+            # "success" is a STEP marker written mid-run — not terminal unless progress == 1.0
       summary: Get agent generation status
       description: |
         Poll this endpoint to check generation progress. Status values:
-        `processing`, `generating`, `completed` (intermediate); `success` /
+        `processing`, `generating`, `completed`, `success` (all intermediate);
         `ready` (terminal success); `failed` (terminal error).
 
-        **Keep polling past `generating` and `completed`** — those are
-        intermediate states, not terminal. `completed` can appear early (even
-        around ~5% `progress`), so do not stop on it. Only `success` / `ready`
-        and `failed` mean polling should stop; gate on `progress` reaching
-        `1.0` together with a terminal status.
+        **Keep polling past `generating`, `completed` and `success`** — those
+        are intermediate states, not terminal. `completed` can appear early
+        (even around ~5% `progress`), and `success` is a STEP-level marker the
+        voice/image and video steps each write (~20% and ~45% `progress`), so
+        do not stop on either. Only `ready` and `failed` mean polling should
+        stop — or `success` when `progress` has also reached `1.0`.
 
         `current_step` reports the pipeline stage: `payment` (~2%) →
         `persona` (5–15%) → `voice_image` (~20%) → `video` (~45%, the
@@ -3638,20 +3640,21 @@ tags:
       — poll every 5 s. Status values:
 
       ```
-      processing / generating / completed   (intermediate)
-        → success / ready                   (terminal success)
-        → failed                            (terminal error)
+      processing / generating / completed / success   (intermediate)
+        → ready                                       (terminal success)
+        → failed                                      (terminal error)
       ```
 
-      `processing`, `generating`, and `completed` are **intermediate** — keep
-      polling past them (don't stop on `completed`; it can appear early, even
-      around ~5% `progress`) until you see `success`/`ready` or `failed`. Gate
-      on `progress` reaching `1.0` together with a terminal status. Typical
-      wall-clock: 2–5 minutes.
+      `processing`, `generating`, `completed` and `success` are **intermediate**
+      — keep polling past them until you see `ready` or `failed`. Don't stop on
+      `completed` (it can appear early, even around ~5% `progress`) and don't
+      stop on `success` (a STEP-level marker written at ~20% and ~45%
+      `progress`) unless `progress` has also reached `1.0`. Typical wall-clock:
+      2–5 minutes.
 
       ### 3. Resolve & stream
 
-      Once the status is `success`/`ready`, the agent has an `agent_code`
+      Once the status is `ready`, the agent has an `agent_code`
       (e.g. `A78WKV4515`).
       Every SDK can resolve it by code:
 

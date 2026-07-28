@@ -46,7 +46,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 > the 2–5 minutes below — keep polling `status` rather than applying a short
 > timeout.
 
-3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` — only `success`/`ready` and `failed` are terminal (generation takes 2–5 min; failures auto-refund credits).
+3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` → `success` — only `ready` and `failed` are terminal. **`success` is a step-level marker written mid-run** (around 20% and 45% `progress`), so don't stop on it unless `progress` is also `1.0` (generation takes 2–5 min; failures auto-refund credits).
 
 ```bash
 export AGENT_ID=A80HVD8577   # paste the agent_id from step 2

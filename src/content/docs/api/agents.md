@@ -194,16 +194,18 @@ request. Poll every 5 seconds.
 | `processing` | Initial state — generation queued. |
 | `generating` | Active generation in progress (sub-steps running). |
 | `completed` | An intermediate sub-step finished. **Not terminal** — it can appear early (even around ~5% `progress`), so do not stop polling on it. |
-| `success` | Success — the `.imx` model is available for use. |
-| `ready` | Success — the `.imx` model is available for use (equivalent to `success`). |
+| `success` | A **sub-step** finished — the voice/portrait step and the identity-video step each write it. **Not terminal**: it appears mid-run, normally at `progress` `0.2` and `0.45`, before training has even started. Count it as done only when `progress` is also `1.0` (some historical rows finished on `success` + `1.0`). |
+| `ready` | **Terminal success** — the model is available for use. Always written together with `progress: 1.0` and `current_step: "done"`. |
 | `failed` | Failure — check `error_message`. |
 
-Treat `success` / `ready` and `failed` as terminal. `processing`, `generating`,
-and `completed` are intermediate, so keep polling (don't stop on `completed` —
-it can appear long before the model is done). Drive your loop off `progress`
-reaching `1.0` together with a terminal status. Typical wall-clock is two to
-five minutes for `essence-1` — the second-generation models train real
-per-identity models and take longer (see
+Treat `ready` and `failed` as terminal. `processing`, `generating`, `completed`
+and `success` are all intermediate, so keep polling. **`success` is a
+step-level marker, not the end of the run** — a loop that stops on it exits at
+~20% `progress` with a null `model_url` — and `completed` can appear long
+before the model is done. The safe terminal test is `status == "ready"`, or
+`status == "success"` **together with** `progress == 1.0`. Typical wall-clock
+is two to five minutes for `essence-1` — the second-generation models train
+real per-identity models and take longer (see
 [model-specific inputs and creation times](#model-specific-inputs-and-creation-times)).
 
 While a run is in flight, `current_step` reports the pipeline stage:
@@ -261,12 +263,18 @@ agent_id = resp.json()["agent_id"]
 while True:
     data = requests.get(f"{BASE}/v1/agent/status/{agent_id}",
                         headers={"api-secret": SECRET}).json()["data"]
-    # `success` and `ready` both mean done; `completed` is NOT terminal.
-    if data["status"] in ("ready", "success"):
+    # Only `ready` is terminal. `success` is a STEP-level marker (the
+    # voice/image and video steps each write it around 20% and 45%), and
+    # `completed` is not terminal either — stopping on them exits mid-run
+    # with model_url still null.
+    if data["status"] == "ready" or (
+        data["status"] == "success" and data.get("progress") == 1.0
+    ):
         print("Ready:", data["model_url"])
         break
     if data["status"] == "failed":
         raise SystemExit(f"Failed: {data['error_message']}")
+    print(f"  {data['status']} {data.get('current_step')} {data.get('progress')}")
     time.sleep(5)
 ```
 
