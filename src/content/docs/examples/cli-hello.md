@@ -75,7 +75,14 @@ bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
   --audio speech.wav --output rendered.mp4
 ```
 
-> **Note** `bithuman render` ships on **Linux only** (libessence ABI 7) — on macOS the encoder returns "not implemented". Workarounds: render on a Linux host (install via the universal installer above), or use `bithuman run` and screen-record the browser tab. macOS render support is queued.
+> **Warning** `bithuman render` is **not working in `cli-v2.4.0`** (verified
+> 2026-07-28). It ships on **Linux only** — on macOS the encoder returns "not
+> implemented" — and on Linux x86_64 it now fails at the muxing step with
+> `record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed`
+> and writes no file, for every WAV tried (including the one shipped in this
+> repo's own examples). Until it is fixed, get an mp4 from the
+> [Video API](/api/video) (`POST /v1/video/generate`), or use `bithuman run`
+> and screen-record the tab.
 
 Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/cli)
 

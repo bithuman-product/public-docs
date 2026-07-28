@@ -86,14 +86,33 @@ models it can load depends on your platform:
   `libessence`, including the ones you get from
   [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
   or [`bithuman pull <AGENT_CODE>`](/sdk/cli/commands).
-- **[Essence 2](/concepts/essence-2) `.imx` — Linux, as of 2.8.0.** The Linux
-  combined wheel now **also bundles the Essence 2 runtime**: an Essence 2
-  `.imx` loads through the **same `AsyncBithuman` facade** and renders locally
-  on CPU. The loader reads the engine from the IMX header and routes
-  second-generation models to the bundled `libengine` backend. The Essence 2
-  bundle carries licensed weights, so this path needs a valid
-  `BITHUMAN_API_SECRET`. On **macOS** the wheel stays `essence-1`-only —
-  serve Essence 2 through the cloud instead.
+- **[Essence 2](/concepts/essence-2) `.imx` — Linux, as of 2.8.0, but see the
+  warning below.** The Linux combined wheel bundles the Essence 2 runtime: the
+  loader reads the engine from the IMX header and routes second-generation
+  models to the bundled `libengine` backend, through the **same
+  `AsyncBithuman` facade**. The Essence 2 bundle carries licensed weights, so
+  this path needs a valid `BITHUMAN_API_SECRET`. On **macOS** the wheel stays
+  `essence-1`-only — serve Essence 2 through the cloud instead.
+
+  > **Warning — does not work with bundles built on the current renderer
+  > (verified 2026-07-28).** The 2.8.0 Linux loader requires `P.f16` or
+  > `fs_red.f16` inside the container. Essence 2 `.imx` files produced since
+  > the **2026-07-27 unified-renderer change** ship `unified_renderer.pt`
+  > instead and carry neither, so `AsyncBithuman.create()` raises:
+  >
+  > ```text
+  > [essence2-light] open refused: neither P.f16 nor fs_red.f16 in /tmp/libengine-e2l-…
+  >                  — repack the .imx with P.f16 materialized
+  > ModelLoadError [model_load_failed] failed to load v2 (essence2-light) .imx:
+  >   libengine status=4: backend loader for engine='essence2-light' failed to
+  >   open the container
+  > ```
+  >
+  > Reproduced on 3 of 3 agents, using artifacts fetched from the documented
+  > `GET /v1/agent/{code}/model/download?model=essence-2`. Until the loader and
+  > the packer agree again, serve Essence 2 through the cloud — the
+  > [Video API](/api/video) for offline mp4, or the
+  > [LiveKit plugin](#livekit-voice-agents) for live sessions.
 - **[Essence 2 Max](/concepts/essence-2-max) — cloud-only from Python.**
 - **Expression 1 / Expression 2 — no Python-loadable artifact.** Serve them
   through the [LiveKit plugin](#livekit-voice-agents)'s `AvatarSession`, which
@@ -119,6 +138,11 @@ async def main():
 
 asyncio.run(main())
 ```
+
+> **Note** Straight after `create()` this prints **`0 x 0`**, not the avatar's
+> dimensions — `frame_width` / `frame_height` are populated once the runtime has
+> produced its first frame. Read them inside the `run()` loop (or take the shape
+> off `frame.bgr_image`) rather than treating `0 x 0` as a load failure.
 
 The full `push_audio` / `flush` / `run` loop — including loading a WAV into
 int16 PCM without the removed audio helpers — is documented once, canonically,

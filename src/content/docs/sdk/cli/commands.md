@@ -194,6 +194,22 @@ just lipsync a WAV you already have:
 bithuman render avatar.imx --audio speech.wav --output demo.mp4
 ```
 
+> **Warning — broken in `cli-v2.4.0` (verified 2026-07-28).** On Linux x86_64,
+> the current release fails at the muxing step and writes **no output file**:
+>
+> ```text
+> encoding via libessence (h264+aac → mp4)…
+> error: record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed
+> ```
+>
+> This is not an input problem — it reproduces identically with a WAV from
+> [`/v1/tts`](/api/text-to-speech), with the `speech.wav` that ships in this
+> project's own `Examples/python/local-essence/`, and with a plain 16 kHz mono
+> PCM WAV written by Python's stdlib `wave`. Since the command is Linux-only
+> (see below), `bithuman render` has **no working platform** right now. To
+> produce an mp4 today, use the [Video API](/api/video)
+> (`POST /v1/video/generate`), which renders server-side and returns a URL.
+
 Flags:
 
 | Flag | Default | What |

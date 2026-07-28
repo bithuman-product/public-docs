@@ -12,7 +12,12 @@ One engine (`libessence`) drives every surface. Pick the install path that match
 
 ### bitHuman CLI (no code)
 
-The fastest way to see an avatar talk. The same Rust binary ships through all three channels — byte-identical. macOS arm64 and Linux (x86_64 + aarch64).
+The fastest way to see an avatar talk. **macOS arm64 and Linux x86_64.** The
+Homebrew formula and the universal installer both deliver the same Rust binary
+(currently `cli-v2.4.0`); the PyPI wheel is a macOS-only sibling and trails at
+`2.3.25`. There is **no Linux aarch64 build** published today — the release
+carries only `aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`, so
+`install.sh` on Linux arm64 resolves a download that does not exist.
 
 **Homebrew (recommended on Apple Silicon)**
 
@@ -40,10 +45,17 @@ Verify the install:
 
 ```bash
 bithuman --version
-# libessence 1.19.1 ABI 7
-# bithuman    2.3.25
+# libessence 2.3.8 ABI 7
+# bithuman    2.4.0
 bithuman doctor   # full host + key + cache check
 ```
+
+> **Note (Linux)** On Linux `bithuman doctor` reports **`✗ not ready`** for
+> "Agent worker" and "audio_encoder.onnx" and offers `pip install bithuman-cli`
+> as the fix — but that wheel is macOS-arm64-only, so the suggested command
+> cannot succeed. The `bithuman` *library* wheel supplies the encoder
+> (`pip install bithuman`); the "not ready" verdict does not stop `list`,
+> `info`, `pull`, or `engine list` from working.
 
 See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
 
@@ -108,7 +120,7 @@ No install required. Authenticate with the `api-secret` header against `https://
 | **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.11–3.13) | SwiftPM |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
 | **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
-| **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
+| **Linux aarch64** | Not published (no aarch64-linux tarball in the release) | `bithuman` (manylinux) | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -118,11 +130,11 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.7.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.8.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
-| bitHuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.4.0** (Homebrew / universal installer) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.7.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.8.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 
