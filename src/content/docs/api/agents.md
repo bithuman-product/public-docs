@@ -96,9 +96,11 @@ the standard chain by default; launch with `?model=essence-2-max` on
 the session/embed URL (or the `model` field on the
 [embed token](/api/embedding)) when you want the premium model (the
 pre-rename `essence-2-quality` slug still works too). Once ready,
-the agent's `supported_models` lists the two families under their internal
-names — `essence-2-light` (the standard Essence 2) and `essence-2-quality`
-(Essence 2 Max) — until the platform-side flip.
+the agent's `supported_models` lists both families — `essence-2` (the
+standard Essence 2) and `essence-2-max`. Responses may still carry the
+internal tier spellings `essence-2-light` / `essence-2-quality` while the
+rename completes; map them to `essence-2` / `essence-2-max` before sending
+them back as a `model` value.
 
 ### `auto` — let the platform pick the model
 
@@ -234,7 +236,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
     "image_url": "https://...",
     "video_url": "https://...",
     "model_url": "https://...",
-    "supported_models": ["essence-2-quality", "expression-2"],
+    "supported_models": ["essence-2-max", "expression-2"],
     "name": "agent name"
   }
 }
@@ -245,7 +247,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
 | `progress` | float (0.0–1.0) | Generation progress as a fraction. `1.0` is complete. |
 | `progress_msg` | string | Human-readable progress description. |
 | `current_step` | string | Current generation step (see the table above). |
-| `supported_models` | string[] | The canonical model families this agent can be **launched as right now**. Trained families (`expression-2`, `essence-2-light` — the internal family name for the standard `essence-2`) appear once their per-identity model exists; `essence-2-quality` (the internal family name for `essence-2-max`, kept until the platform-side flip) appears when the agent has a **stored identity video** (generated internally by Essence creations; its identity prepares on demand from that video); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family, and the combined `essence-2` creation shows up as its two tier families. Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response. |
+| `supported_models` | string[] | The model families this agent can be **launched as right now**, spelled with the **public model names** — `essence-1`, `expression-1`, `essence-2`, `essence-2-max`, `expression-2` — so every entry can be sent straight back as a `model` / `?model=` value. Trained families (`expression-2`, `essence-2`) appear once their per-identity model exists; `essence-2-max` appears when the agent has a **stored identity video** (generated internally by Essence creations; its identity prepares on demand from that video); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family, and the combined `essence-2` creation shows up as its two tier families (`essence-2` and `essence-2-max`). Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response.<br/><br/>**Compatibility:** responses may still carry the *internal* tier spellings `essence-2-light` and `essence-2-quality` (they are being renamed to `essence-2` / `essence-2-max`). Map them before you send them back — `essence-2-light` is **rejected with `400`** on [`POST /v1/video/generate`](/api/talking-video):<br/>`essence-2-light` → `essence-2`, `essence-2-quality` → `essence-2-max`. |
 
 ### Generate and poll
 
@@ -259,10 +261,17 @@ headers = {"Content-Type": "application/json", "api-secret": SECRET}
 resp = requests.post(f"{BASE}/v1/agent/generate", headers=headers,
                      json={"prompt": "You are a friendly AI assistant."})
 agent_id = resp.json()["agent_id"]
+print("agent_id:", agent_id)   # save this — you can resume polling any time
 
 while True:
-    data = requests.get(f"{BASE}/v1/agent/status/{agent_id}",
-                        headers={"api-secret": SECRET}).json()["data"]
+    r = requests.get(f"{BASE}/v1/agent/status/{agent_id}",
+                     headers={"api-secret": SECRET}, timeout=30)
+    if r.status_code != 200:
+        # Transient (429 rate limit, edge blip). Creation keeps running
+        # server-side — keep polling rather than aborting the run.
+        time.sleep(5)
+        continue
+    data = r.json()["data"]
     # Only `ready` is terminal. `success` is a STEP-level marker (the
     # voice/image and video steps each write it around 20% and 45%), and
     # `completed` is not terminal either — stopping on them exits mid-run
@@ -429,7 +438,7 @@ An **async** add (everything except `expression-1`) responds immediately:
   "model": "expression-2",
   "status": "processing",
   "credits": 2000,
-  "supported_models": ["essence-1", "essence-2-quality"],
+  "supported_models": ["essence-1", "essence-2-max"],
   "message": "expression-2 model add started (typically 10-45 minutes). 2000 credits are charged (refunded automatically if the add fails). Poll GET /v1/agent/status/A66GYD8664 until supported_models includes expression-2."
 }
 ```
@@ -437,8 +446,8 @@ An **async** add (everything except `expression-1`) responds immediately:
 The minute estimate embedded in the response `message` is advisory — the
 table above has the typical times. Poll
 [`GET /v1/agent/status/{code}`](#poll-status) until `supported_models`
-contains the new family (`essence-2` adds **both** internal family names,
-`essence-2-light` and `essence-2-quality`). The agent keeps serving as-is while the add runs —
+contains the new family (`essence-2` adds **both** tiers, `essence-2` and
+`essence-2-max`). The agent keeps serving as-is while the add runs —
 `status` stays `ready` for the v2 adds. An **instant** add (`expression-1`,
 or a model the agent already has) returns `status: "ready"` with
 `credits: 0` in the same response — re-POSTing the same model never
@@ -455,15 +464,15 @@ is paused — not returned in normal operation since the July 10, 2026 GA; nothi
 `GET /v1/agent/{code}/model/download` — download the generated model artifact
 for an agent you own. The family defaults to the agent's own model; override
 with `?model=<family>` (public names, deprecated aliases and runtime tier
-slugs fold onto their family — `essence-2` and the `essence-2-{gpu,ane,cpu}`
-force slugs fold onto `essence-2-light`, and `essence-2-max` folds onto
-`essence-2-quality`, the families' internal names). What you get per family:
+slugs all fold onto their family — the `essence-2-{gpu,ane,cpu}` force slugs
+and the retired `essence-2-light` fold onto `essence-2`; `essence-2-quality`
+folds onto `essence-2-max`). What you get per family:
 
 | Family | Artifact | Notes |
 |---|---|---|
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
-| `essence-2-light` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
-| `essence-2-quality` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
+| `essence-2` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
+| `essence-2-max` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
 | `expression-2` | `<code>.imx` | The portable IMX container (~20–90 MB per identity; legacy `.avatar` zip) — [runs locally](/sdk/cli/commands) on macOS (Apple Silicon) and Linux, or in the browser via [`?render=local`](/guides/browser-rendering); also served on bitHuman's cloud. |
 | `expression-1` | — | Not downloadable: no per-identity artifact exists (the v1 foundation model renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
 

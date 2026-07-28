@@ -87,7 +87,11 @@ been generated, or `essence-2-max` on an agent with no stored identity
 video — generated internally by Essence creations)
 returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) rather than a
 session that fails to start. The mint response's `supported_models` array
-tells you which model families the agent can launch as right now.
+tells you which model families the agent can launch as right now — send those
+values straight back as `model`, mapping the two internal tier spellings first
+(`essence-2-light` → `essence-2`, `essence-2-quality` → `essence-2-max`; the
+former is rejected with `400` by
+[`POST /v1/video/generate`](/api/talking-video)).
 
 ## Webhooks
 
