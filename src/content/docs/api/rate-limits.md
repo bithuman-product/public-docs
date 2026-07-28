@@ -165,10 +165,12 @@ proactively instead of waiting for a `429`:
 | `Retry-After` | (On `429` only) seconds to wait before retrying. |
 | `X-Request-Id` | Correlation id for the request — include it in support reports. |
 
-> **Note** The `X-RateLimit-*` headers appear on metered endpoints. Proxied or
-> streaming endpoints — for example raw TTS audio from `POST /v1/tts` — may omit
-> them, since the response body is a passthrough audio stream. Don't assume every
-> `/v1` response includes them; read them defensively.
+> **Note** Coverage is uneven, and not in the direction you would guess.
+> Measured 2026-07-28: `POST /v1/tts` **does** return `x-ratelimit-limit` /
+> `-remaining` / `-reset` even though its body is a passthrough audio stream,
+> while `POST /v1/validate` returns **none** of them. Don't assume any given
+> `/v1` response carries them — read them defensively and fall back to
+> exponential backoff when they are absent.
 
 ## Recommended retry strategy
 
