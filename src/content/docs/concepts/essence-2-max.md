@@ -80,6 +80,10 @@ subject** — a cartoon / animal / stylized input is rejected up front with
 (use [Expression 2](/concepts/expression-2) for those, or `model: "auto"` to
 route automatically).
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

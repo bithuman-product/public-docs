@@ -15,16 +15,35 @@ the finished video URL — or pass [`wait: true`](#blocking-mode-wait-true) for 
 blocking render that returns the mp4 in the response. On success you get a public
 CDN URL, the output duration, and the credits charged.
 
-`essence-2` / `essence-2-max` render at **1080p** by default — `1080×1920`
-portrait or `1920×1080` landscape, matching the source orientation and capped at
-the source's long side; `expression-2` renders at its native `416×720`.
+`essence-2` renders at **1080p** — `1080×1920` portrait or `1920×1080`
+landscape, matching the source orientation and capped at the source's long side.
+`expression-2` renders at its native `416×720`.
+
+> **Note** `essence-2-max` currently returns **`720×1280`**, not 1080p —
+> measured 2026-07-28 across three renders on two different agents whose source
+> assets are both `1080×1920`. Until that is corrected platform-side, the
+> 8-credit/min Max tier delivers *fewer* pixels than the 4-credit/min standard
+> tier. If output resolution is what you are paying for, use `essence-2`.
 
 Talking videos bill **per minute of output, rounded up**: `essence-2-max`
 is 8 credits/min; `expression-1`, `expression-2`, and `essence-2` are
 4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard distilled
 render; the former `essence-2-light` name is retired, and the pre-rename
 `essence-2-quality` is still accepted as a deprecated alias for
-`essence-2-max`). If a render fails, the charge is automatically refunded.
+`essence-2-max`).
+
+**How the charge actually lands.** Submitting a job charges the **120-second
+cap** up front — 2 × the per-minute rate — then refunds the difference once the
+real duration is known. So a 6-second `essence-2` render moves your balance
+`−8` then `+4`, settling at the documented 4 credits, and you need **8** credits
+free at submit time, not 4. Two consequences worth designing for:
+
+- a `402 INSUFFICIENT_BALANCE` at submit reflects the *up-front cap*, so it can
+  fire even when your balance covers the render's true cost;
+- a `credit_refund_…` row appears in [`GET /v1/usage`](/api/billing) for
+  **every** render, successful or not. On success it is the true-up of the
+  over-charge; only a *full* refund of the up-front amount means the render
+  failed. Compare the refund to the charge, don't treat any refund as a failure.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
@@ -48,6 +67,10 @@ mp4 directly.
 | `wait` | boolean | no | Blocking mode. `false` (default) returns a `job_id` to poll. `true` blocks until the render finishes (up to ~90s) and returns the finished `video_url` — plus `duration_seconds` and `credits_charged` — directly in this response; if it exceeds the cap you get the async `{ job_id }` to poll instead. Accepted as a JSON/multipart field or as a `?wait=true` query parameter. |
 
 ### Text input
+
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
 import requests
@@ -180,6 +203,13 @@ When complete:
 | `duration_seconds` | number | Output duration (present when `completed`). |
 | `credits_charged` | integer | Credits charged for this render (present when `completed`). |
 | `error` | object | Failure detail (present when `failed`); the charge is refunded. |
+
+> **Note** Treat `video_url` as **opaque** — read it from the response, never
+> construct it. The sample bodies above abbreviate it, but finished renders are
+> currently served from the object-storage host
+> (`https://<project>.supabase.co/storage/v1/object/public/bithuman/<AGENT>/<job_id>.mp4`),
+> not from `assets.bithuman.ai`. If you allowlist egress hosts or proxy the
+> download, allowlist what the API returns.
 
 ## Polling pattern
 

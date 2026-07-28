@@ -197,6 +197,10 @@ conversational agent:
 with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
 (ISO-8601 timestamps) and `agent_code`.
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

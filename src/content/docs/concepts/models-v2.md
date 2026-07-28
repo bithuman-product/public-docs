@@ -173,6 +173,10 @@ downloads a generated artifact.
 
 ### Create an agent with `expression-2`
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

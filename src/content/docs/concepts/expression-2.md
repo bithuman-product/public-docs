@@ -75,6 +75,10 @@ points rejected creations at this model. You can also
 existing agent (2000 credits — the same per-identity training runs; it uses
 the agent's stored image).
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

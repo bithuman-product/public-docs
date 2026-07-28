@@ -103,8 +103,15 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 
 ## Handling errors in Python
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
+import os
 import requests
+
+api_secret = os.environ["BITHUMAN_API_SECRET"]
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/agent/generate",

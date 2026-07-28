@@ -141,6 +141,10 @@ a …".) Use `expression-2` for those subjects, or `model: "auto"` to route
 automatically. A classifier outage never blocks creation — the gate fails
 open.
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

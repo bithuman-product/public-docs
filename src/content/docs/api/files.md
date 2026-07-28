@@ -27,6 +27,10 @@ Download a file from a publicly accessible URL.
 | `file_url` | string | URL of the file to download. |
 | `file_type` | string | One of `auto`, `image`, `video`, `audio`, `document`. |
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

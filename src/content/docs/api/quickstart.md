@@ -65,28 +65,46 @@ It always returns HTTP `200` — read the body: `{"valid": true}` means you're s
 
 ### Look up an agent
 
-Fetch any agent's details by code:
+Fetch **one of your own** agents by code. List them first — `GET /v1/agents`
+returns every agent on your account:
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/A78WKV4515 \
+curl "https://api.bithuman.ai/v1/agents?limit=5" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
-### Make it speak from your backend
-
-When an agent has an **active session** (the embed above, or a LiveKit room),
-push text into it and the avatar speaks it aloud:
+Then read one by its code (substitute a code from the list above):
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
+curl https://api.bithuman.ai/v1/agent/YOUR_AGENT_CODE \
+  -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+> **Note** `/v1/agent/{code}` is **owner-scoped**. A gallery code you do not own
+> — including the `A78WKV4515` used for the embed above — returns
+> `404 NOT_FOUND` (`"Agent not found for code: …"`) even with a perfectly valid
+> key. That is an ownership answer, not a "this agent doesn't exist" answer:
+> the same code still embeds and still mints an
+> [embed token](/api/embedding). Only agents on your own account are readable,
+> speakable, and renderable through the [Video API](/api/video).
+
+### Make it speak from your backend
+
+When one of **your** agents has an **active session** (an embed of it, or a
+LiveKit room), push text into it and the avatar speaks it aloud:
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/agent/YOUR_AGENT_CODE/speak \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
   -d '{"message": "Hello! Great to meet you."}'
 ```
 
-> **Note** `/speak` and `/add-context` require an active session. With no live
-> room you'll get a `404` (code `NOT_FOUND`, message `"No active rooms found
-> for agent <code>"`) — open the embed first, or start a
+> **Note** `/speak` and `/add-context` need both **ownership** and an active
+> session, and both failures are reported as `404 NOT_FOUND` — read the message
+> to tell them apart. `"Agent not found for code: <code>"` means the agent is
+> not on your account; `"No active rooms found
+> for agent <code>"` means it is yours but idle — open the embed first, or start a
 > [LiveKit worker](/api/embedding).
 
 ### Voice without an avatar

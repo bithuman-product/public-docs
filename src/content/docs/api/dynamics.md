@@ -33,6 +33,10 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
 | `model` | string | no | `seedance` | Gesture-video generation preset: `seedance` (default) or `auto` (recommended — selects the best backend). The retired `kling` value is still accepted but is coerced to `seedance`. |
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 

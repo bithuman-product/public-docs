@@ -71,6 +71,10 @@ and `model: "essence-2"`. Creation is asynchronous and costs **500 credits**
 > [add `essence-2`](/api/agents#add-a-model-to-an-existing-agent) to an
 > existing agent that has a stored identity video.
 
+> **Note** The Python examples below use
+> [`requests`](https://pypi.org/project/requests/), which is not in the standard
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
+
 ```python
 import requests
 
