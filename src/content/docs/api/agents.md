@@ -438,7 +438,7 @@ force slugs fold onto `essence-2-light`, and `essence-2-max` folds onto
 | Family | Artifact | Notes |
 |---|---|---|
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
-| `essence-2-light` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container, ~350–550 MB. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
+| `essence-2-light` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
 | `essence-2-quality` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
 | `expression-2` | `<code>.imx` | The portable IMX container (~20–90 MB per identity; legacy `.avatar` zip) — [runs locally](/sdk/cli/commands) on macOS (Apple Silicon) and Linux, or in the browser via [`?render=local`](/guides/browser-rendering); also served on bitHuman's cloud. |
 | `expression-1` | — | Not downloadable: no per-identity artifact exists (the v1 foundation model renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |

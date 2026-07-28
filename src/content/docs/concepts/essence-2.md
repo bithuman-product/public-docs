@@ -188,11 +188,32 @@ reads as natural forward movement.
 Per-minute serving is metered on active avatar minutes only — idle, paused, or
 disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/pricing).
 
+## The renderer (updated 2026-07-27)
+
+Essence 2 renders through a **unified renderer**: the face is animated from your
+identity's own footage, while the **mouth interior — the teeth especially — is
+synthesized by a small per-identity head** rather than being averaged out of the
+source frames. Teeth simply are not present in a closed-mouth portrait, so they
+have to be generated; that is the part that most visibly improved. Measured
+against each identity's own previous build, mouth-region fidelity improved
+**roughly 2× to 4.7×** across the launch gallery, verified frame by frame by
+eye. Mouth motion is also re-centred and wider, so speech reads as more dynamic.
+
+It costs nothing extra to serve — measured warm and end to end — and **pricing
+is unchanged**. The identity bundle also got about **5× smaller** (see Limits,
+below). **New creations get it automatically**; agents created before
+2026-07-27 keep serving their current build until they are retrained. Nothing
+in the API, the session contract, or the `?model=` tier slugs changed.
+
 ## Limits and expectations
 
 - **Renders at ~25 fps** across GPU, CPU, and Apple Neural Engine runtimes.
 - **Creation takes about 45 minutes** (see above) — poll status rather than
   assuming the few-minute wall-clock of `essence-1`.
+- **The downloadable identity bundle is ~85–105 MB** on the current renderer
+  (agents created before 2026-07-27 are larger — up to ~550 MB — until
+  retrained). Size varies per identity: read `Content-Length` rather than
+  assuming a fixed figure.
 - **Identity is fixed at creation.** The bundle bakes the generated identity
   video's look and framing; to change the face, create a new agent.
 - **First session on a fresh agent** can take longer to connect while the

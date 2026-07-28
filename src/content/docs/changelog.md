@@ -10,6 +10,32 @@ order: 1
 
 ## July 2026
 
+### Essence 2 — sharper mouth and teeth, and a much smaller model file (2026-07-27)
+
+Essence 2 now renders each identity through a **new unified renderer**. The
+mouth interior — teeth in particular — is **synthesized by a dedicated
+per-identity head** rather than being smoothed toward an average, and it shows
+most on wide-open speech: measured against each identity's own previous build,
+mouth-region fidelity improved **roughly 2× to 4.7×** across the launch gallery,
+and it was checked frame by frame by eye, not only by metrics. Mouth motion is
+also re-centred and wider, so speech reads as more dynamic.
+
+Two practical consequences:
+
+- **The downloadable model got about 5× smaller.** A `<code>.lebundle.imx` from
+  [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+  is now roughly **85–105 MB** instead of several hundred. Read `Content-Length`
+  rather than hard-coding a size.
+- **No serving-cost or pricing change.** Measured warm and end to end, the new
+  renderer costs nothing extra to serve. Rates are unchanged: 4 credits/min
+  cloud, 2 self-hosted, 500 credits to create.
+
+Nothing in the API, the session contract, or the tier slugs changed. **New
+creations get the new renderer automatically**; existing agents move over as
+they are retrained, so an older agent keeps serving its current build (and its
+larger model file) until then. Runs on all three runtimes — cloud GPU, Apple
+Neural Engine, and CPU.
+
 ### Expression 2 — faster creation, same quality bar (2026-07-22)
 
 Expression 2 agent creation now runs the **adaptive-ladder recipe by default**:
