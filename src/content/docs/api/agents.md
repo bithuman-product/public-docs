@@ -279,7 +279,10 @@ while True:
     if data["status"] == "ready" or (
         data["status"] == "success" and data.get("progress") == 1.0
     ):
-        print("Ready:", data["model_url"])
+        # model_url is null for models with no downloadable per-identity
+        # artifact (expression-1) — that is success, not a failure.
+        print("Ready:", agent_id, "| launchable as:", data["supported_models"])
+        print("       model_url:", data["model_url"])
         break
     if data["status"] == "failed":
         raise SystemExit(f"Failed: {data['error_message']}")
