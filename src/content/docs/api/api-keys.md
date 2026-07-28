@@ -13,6 +13,16 @@ a key's value, or delete one. Handy for rotating keys or provisioning per-server
 
 Base URL `https://api.bithuman.ai`. Authenticate with an existing `api-secret`. The `{user_id}`
 in the path is your own account id — get it from [`GET /v1/me`](/api/billing#account-status).
+
+Set it once in your shell before the examples below — with `$USER_ID` unset the
+paths collapse to `/v2//…` and the API answers `404 {"detail":"Not Found"}`:
+
+```bash
+export USER_ID=$(curl -s https://api.bithuman.ai/v1/me \
+  -H "api-secret: $BITHUMAN_API_SECRET" \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['user_id'])")
+```
+
 You can only manage your own keys.
 
 ## Create a key

@@ -220,6 +220,20 @@ and `credits_change` — the signed credit delta (usage events are recorded as
 **positive** credits consumed). This is an audit trail; for an authoritative
 balance use `GET /v2/credit-summaries` above.
 
+> **Note — a `credit_refund_…` row does not mean something failed.**
+> [Talking-video renders](/api/video) charge the 120-second cap up front and
+> then refund the overcharge, so **every** render — successful ones included —
+> writes a matched pair. A real 6-second `essence-2` render looks like this:
+>
+> ```text
+> usage_talking_video_essence_2_by_api                 8
+> credit_refund_usage_talking_video_essence_2_by_api   4      ← true-up, not a failure
+> ```
+>
+> Net 4 credits, which is the published rate. Only a refund equal to the **full**
+> up-front charge means the render failed. Reconcile refunds against their
+> charge rather than alerting on the `credit_refund_` prefix.
+
 ## Notes
 
 - **Balance is the source of truth**, not the sum of activity rows. The activity
