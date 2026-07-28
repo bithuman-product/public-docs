@@ -124,6 +124,18 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
   }'
 ```
 
+> **Note — `image` must be publicly fetchable, and this is not checked at
+> submit time.** The `https://example.com/…` URLs above are placeholders.
+> Posting one verbatim returns `HTTP 200` with
+> `{"success": true, "status": "processing"}`, and the job only fails seconds
+> later with `Image processing failed: Failed to download after 3 attempts:
+> 404`. The credits are charged at submit and **automatically refunded** on that
+> failure (verified 2026-07-28: `-500` then `+500` within 4 s), so nothing is
+> lost — but a `200` here is not confirmation that your image was accepted. Poll
+> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) before assuming
+> the creation started.
+
+
 > **Choosing a model.** `"auto"` classifies your input — a photorealistic
 > person routes to [`essence-2`](/concepts/essence-2), a stylized / animal /
 > creature / robot to [`expression-2`](/concepts/expression-2). You can also

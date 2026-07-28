@@ -101,6 +101,18 @@ print(resp.json())
 #  "agent_id": "A66GYD8664", "status": "processing"}
 ```
 
+> **Note — `image` must be publicly fetchable, and this is not checked at
+> submit time.** The `https://example.com/…` URLs above are placeholders.
+> Posting one verbatim returns `HTTP 200` with
+> `{"success": true, "status": "processing"}`, and the job only fails seconds
+> later with `Image processing failed: Failed to download after 3 attempts:
+> 404`. The credits are charged at submit and **automatically refunded** on that
+> failure (verified 2026-07-28: `-500` then `+500` within 4 s), so nothing is
+> lost — but a `200` here is not confirmation that your image was accepted. Poll
+> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) before assuming
+> the creation started.
+
+
 **Inputs.** Creation is **image-only**: an `image` (URL or upload) is the
 identity source, and Expression 2 trains straight from the photo. If you omit
 it, the platform generates a portrait from your prompt first. bitHuman also
