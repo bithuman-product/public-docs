@@ -175,7 +175,7 @@ engine error:
 | `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
 | `expression-2` | `<code>.imx` (also legacy `.avatar` zip) | **Runs locally** on macOS (Apple Silicon) and Linux x86_64; Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
 | `essence-2-light` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact (the family keeps its internal name). Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
-| `essence-2-quality` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (the family keeps its pre-rename internal name). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
+| `essence-2-max` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (`essence-2-quality` is its pre-rename internal alias). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
 | `expression-1` | — | No downloadable artifact exists (it renders server-side from the agent's image), and the model is not supported on Mac locally — it's a heavy GPU engine. Serve it through the cloud surfaces. |
 
 Recognition never breaks what already worked: a file the sniffer can't
@@ -249,7 +249,7 @@ bithuman info avatar.imx
 ```
 
 `info` recognizes the non-`.imx` artifacts too: an `expression-2` `.avatar`
-(CoreML zip), an `essence-2-quality` (Essence 2 Max) pickle, and legacy `essence-1` tar
+(CoreML zip), an `essence-2-max` (Essence 2 Max) pickle, and legacy `essence-1` tar
 exports get a format/family report instead of a "not an IMX file" error; a
 legacy BIMX v1 container gets a precise unsupported-version message.
 

@@ -110,10 +110,9 @@ curl https://api.bithuman.ai/v1/pricing \
 ```
 
 `by_model` keys are the **canonical** `model` values `POST /v1/agent/generate`
-accepts — since the 2026-07-10 platform-side rename flip the premium model is
-keyed `essence-2-max` (the pre-rename `essence-2-quality` spelling is still
-*accepted* as a deprecated alias at the same 500, but no longer advertised —
-in `by_model` or `talking_video.rates`).
+accepts — the premium model is keyed `essence-2-max` (8 credits/min). The
+pre-rename `essence-2-quality` spelling is **no longer accepted** (removed
+2026-07-29); use `essence-2-max`.
 `essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
 (one 500-credit charge covers both models) and `auto`
 [classifies and routes](/api/agents#auto--let-the-platform-pick-the-model),

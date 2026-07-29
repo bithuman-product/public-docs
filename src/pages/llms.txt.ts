@@ -41,8 +41,8 @@ export const GET: APIRoute = async () => {
     `gpu/ane/cpu serving chain), \`essence-2\` (the STANDARD photoreal model; ` +
     `distilled to run everywhere — gpu/ane/cpu/WebGPU-WASM incl. on-device; ` +
     `the former essence-2-light name is retired), \`essence-2-max\` (the ` +
-    `PREMIUM model — the gold teacher served directly on L40S-class GPUs; ` +
-    `was essence-2-quality), plus the ` +
+    `PREMIUM model — the gold teacher served directly on L40S-class GPUs` +
+    `), plus the ` +
     `v1 \`essence-1\` / \`expression-1\`.\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;

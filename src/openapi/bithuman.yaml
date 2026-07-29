@@ -226,7 +226,7 @@ paths:
                     as that rollout completes.
                 model:
                   type: string
-                  enum: [expression, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression-1, expression-2, auto]
+                  enum: [expression, essence, essence-1, essence-2, essence-2-max, expression-1, expression-2, auto]
                   default: expression
                   example: expression
                   description: >-
@@ -328,7 +328,7 @@ paths:
                   value:
                     error:
                       code: "VALIDATION_ERROR"
-                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, essence-2-quality, expression, expression-1, expression-2"
+                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, expression, expression-1, expression-2"
                       httpStatus: 400
                     status: "error"
                     status_code: 400
@@ -1414,9 +1414,7 @@ paths:
                   description: >-
                     Optional. Request a specific avatar model for the embed
                     session — a model name (`essence-1`, `expression-1`,
-                    `essence-2`, `essence-2-max`, `expression-2` — the
-                    pre-rename `essence-2-quality` is still accepted as a
-                    deprecated alias for `essence-2-max`) or a
+                    `essence-2`, `essence-2-max`, `expression-2`) or a
                     force-tier slug that pins one serving tier
                     (`expression-2-gpu/-cpu/-ane`, `essence-2-gpu/-ane/-cpu`;
                     the legacy `essence-2-light-gpu/-cpu` slugs still pin
@@ -1906,14 +1904,12 @@ paths:
               properties:
                 model:
                   type: string
-                  enum: [essence-1, expression-1, essence-2, essence-2-max, essence-2-quality, expression-2]
+                  enum: [essence-1, expression-1, essence-2, essence-2-max, expression-2]
                   description: |
                     Avatar engine. `essence-1` (2 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
                     available today. `expression-2` (4 credits/min),
-                    `essence-2-max` (8 credits/min, the premium model — its
-                    pre-rename name `essence-2-quality` is still accepted as
-                    a deprecated alias), and `essence-2`
+                    `essence-2-max` (8 credits/min, the premium model), and `essence-2`
                     (4 credits/min, the standard distilled renderer — the
                     former `essence-2-light` name, which is no longer
                     accepted) are the v2 engines.

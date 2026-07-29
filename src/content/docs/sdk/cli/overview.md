@@ -23,7 +23,7 @@ The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
 > **`essence-1`** `.imx` avatars and **`expression-2`** avatars — including the
 > free **Wise Pup** avatar that `bithuman run` fetches and renders out of the
 > box (see [Local rendering by platform](#local-rendering-by-platform) for where
-> Expression 2 renders locally). Essence 2 Max's `essence-2-quality` `.pkl` and
+> Expression 2 renders locally). Essence 2 Max's `essence-2-max` `.pkl` and
 > the standard Essence 2's `essence-2-light` `.lebundle.imx` are recognized by
 > `run` / `info` / `pull` with honest guidance and serve through the cloud
 > surfaces (the [REST API](/api/agents), the
