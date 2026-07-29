@@ -83,13 +83,13 @@ print(list(gestures.keys()))
 {
   "success": true,
   "data": {
-    "url": "https://storage.bithuman.ai/A80HVD8577/my_agent_20260115_103500_000003.imx",
+    "url": "https://assets.bithuman.ai/A80HVD8577/my_agent_20260115_103500_000003.imx",
     "status": "ready",
     "agent_id": "A80HVD8577",
     "gestures": {
-      "mini_wave_hello": "https://storage.bithuman.ai/A80HVD8577/mini_wave_hello_20260115_104000_000004.mp4",
-      "talk_head_nod_subtle": "https://storage.bithuman.ai/A80HVD8577/talk_head_nod_subtle_20260115_104100_000005.mp4",
-      "blow_kiss_heart": "https://storage.bithuman.ai/A80HVD8577/blow_kiss_heart_20260115_104200_000006.mp4"
+      "mini_wave_hello": "https://assets.bithuman.ai/A80HVD8577/mini_wave_hello_20260115_104000_000004.mp4",
+      "talk_head_nod_subtle": "https://assets.bithuman.ai/A80HVD8577/talk_head_nod_subtle_20260115_104100_000005.mp4",
+      "blow_kiss_heart": "https://assets.bithuman.ai/A80HVD8577/blow_kiss_heart_20260115_104200_000006.mp4"
     }
   }
 }

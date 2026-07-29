@@ -159,6 +159,29 @@ for (const f of walk(CONTENT, [".md", ".mdx"])) {
   }
 }
 
+// --- 2b. Hostnames that do not exist ---
+// Example response bodies quoted a `storage.bithuman.ai` CDN host in 8 places
+// across 3 pages. That host is NXDOMAIN — the real branded host is
+// assets.bithuman.ai (services/public-api-service/utils.py:983). A reader
+// copying the URL got a DNS failure. Checked as a literal deny-list rather
+// than by resolving DNS, so CI stays hermetic and offline.
+const RETIRED_HOSTS = {
+  "storage.bithuman.ai": "assets.bithuman.ai (storage.bithuman.ai does not resolve)",
+};
+for (const f of walk(CONTENT, [".md", ".mdx"])) {
+  const text = readFileSync(f, "utf8");
+  for (const [host, replacement] of Object.entries(RETIRED_HOSTS)) {
+    if (text.includes(host)) {
+      const line = text.slice(0, text.indexOf(host)).split("\n").length;
+      failures.push({
+        file: `${relative(ROOT, f)}:${line}`,
+        target: host,
+        note: ` — no such host; use ${replacement}`,
+      });
+    }
+  }
+}
+
 // `## Title {#custom-id}` is not supported by Astro's markdown: the literal
 // braces render into the heading text and the id becomes `title-custom-id`.
 for (const { file, snippet } of customIdHeadings) {
