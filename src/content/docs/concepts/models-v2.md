@@ -359,21 +359,26 @@ disconnected sessions stop accruing. Machine-readable schedule:
 This is the one place the historical model names are documented — every other
 page uses the canonical names (`essence-2`, `essence-2-max`, `expression-2`).
 
-- **`essence-2-quality` → `essence-2-max`** (renamed 2026-07-10). The API
-  accepts `essence-2-quality` as a **deprecated alias** during the migration,
-  and server *responses* (`supported_models`, `409` messages, model
-  downloads, talking-video job responses) may keep reporting the pre-rename
-  family name until the rename rollout completes. New integrations should
-  send `essence-2-max`.
+- **`essence-2-quality` → `essence-2-max`** (renamed 2026-07-10; alias
+  retired 2026-07-29). `essence-2-max` is the canonical name everywhere a
+  model is requested. The generation endpoints
+  ([`POST /v1/agent/generate`](/api/agents), [`POST /v1/video/generate`](/api/video),
+  and the embed-token `model` field) **no longer accept `essence-2-quality`** —
+  a request naming it returns a `400` listing the current models. Server
+  *responses* (`supported_models`, `409` messages, model downloads,
+  talking-video job responses) report `essence-2-max`. Send `essence-2-max`.
 - **`essence-2-light`** was consolidated into **`essence-2`** (2026-07-05)
   and is retired: you create and serve with `model="essence-2"`, the standard
   model. Requests naming `essence-2-light` get a `400` with a hint pointing
   at `essence-2`.
-- **Saved links and tier pins keep working.** The pre-rename
-  `essence-2-quality` slug pins the same tier as `essence-2-max` (the serving
-  worker accepts both); the old `essence-2-light-gpu` / `essence-2-light-cpu`
-  slugs still pin their tiers; and links carrying `essence-2-light` or
-  `essence-2-light-ane` route to the `essence-2` default chain.
+- **Saved viewer links keep rendering.** A share link carrying
+  `?model=essence-2-quality` no longer pins the premium tier by that string —
+  the viewer ignores the unrecognized override and falls back to the agent's
+  stored model, so the link still plays. New links should use
+  `?model=essence-2-max` to pin the premium tier. The old
+  `essence-2-light-gpu` / `essence-2-light-cpu` slugs still pin their tiers,
+  and links carrying `essence-2-light` or `essence-2-light-ane` route to the
+  `essence-2` default chain.
 
 ## Idle behavior
 

@@ -116,11 +116,13 @@ The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
   renderer, served directly on dedicated cloud GPUs. The API accepts
   `essence-2-max` everywhere a model is requested (`POST /v1/agent/generate`,
   [`POST /v1/video/generate`](/api/video), the embed-token `model` field, and
-  `?model=` session pins); **`essence-2-quality` remains accepted as a
-  deprecated alias** during the migration, so nothing breaks. Some server
-  *responses* (`supported_models`, `409` messages, model downloads) may keep
-  the `essence-2-quality` family name until the rename rollout completes —
-  see [Naming & migration](/concepts/models-v2#naming--migration). See also
+  `?model=` session pins); during the migration `essence-2-quality` was
+  accepted as a deprecated alias, so nothing broke. *(Update 2026-07-29: the
+  `essence-2-quality` alias has been fully retired — generation endpoints now
+  return a `400` naming the current models, and server responses report
+  `essence-2-max`. Saved `?model=essence-2-quality` viewer links still render
+  by falling back to the agent's stored model. Send `essence-2-max`.)* See
+  [Naming & migration](/concepts/models-v2#naming--migration) and
   [Essence 2 Max](/concepts/essence-2-max).
 - **`essence-2` is the standard tier name** — the light-name retirement
   completed (the former `essence-2-light` was consolidated into `essence-2`
