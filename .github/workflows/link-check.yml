@@ -1,11 +1,25 @@
 name: Internal links
 
-# Catch dead in-site links before they ship. The round-2 docs audit found
-# several (e.g. /sdk/kotlin when the page is /sdk/android, /concepts/pricing
-# when it's /guides/pricing, /api/voice when it's /api/text-to-speech) — they
-# rot silently because nothing resolves them. scripts/check-internal-links.mjs
-# collects every valid route (content collection + explicit pages) and fails
-# if any markdown link to an internal /route doesn't resolve.
+# Docs correctness checks that nothing else resolves.
+#
+# 1. Internal links — the round-2 docs audit found several dead ones
+#    (e.g. /sdk/kotlin when the page is /sdk/android, /concepts/pricing when
+#    it's /guides/pricing, /api/voice when it's /api/text-to-speech). They rot
+#    silently because nothing resolves them. scripts/check-internal-links.mjs
+#    collects every valid route (content collection + explicit pages) and fails
+#    if any markdown link to an internal /route doesn't resolve.
+#
+# 2. Billing consistency — the worked `minutes_estimate` JSON examples are the
+#    numbers a customer reads to decide whether they can afford a session, and
+#    they are hand-maintained alongside a rate table that changes independently.
+#    The 2026-07-28 audit found both examples documenting 4 serving keys when
+#    the API returns 16, and the 4 they did document were the unversioned
+#    aliases that mean the FIRST-generation rate — a 2x/4x over-estimate for
+#    anyone running Essence 2. scripts/check-billing-consistency.mjs re-derives
+#    every documented estimate from the pricing table and fails on disagreement.
+#
+# Both steps always run: `if: always()` so a broken link cannot mask a billing
+# error by aborting the job first.
 
 on:
   push:
@@ -13,13 +27,15 @@ on:
     paths:
       - 'src/content/**'
       - 'src/pages/**'
-      - 'scripts/check-internal-links.mjs'
+      - 'src/openapi/**'
+      - 'scripts/**'
       - '.github/workflows/link-check.yml'
   pull_request:
     paths:
       - 'src/content/**'
       - 'src/pages/**'
-      - 'scripts/check-internal-links.mjs'
+      - 'src/openapi/**'
+      - 'scripts/**'
       - '.github/workflows/link-check.yml'
 
 permissions:
@@ -35,3 +51,20 @@ jobs:
           node-version: '20'
       - name: Check internal links
         run: node scripts/check-internal-links.mjs
+      - name: Check billing consistency
+        if: always()
+        run: node scripts/check-billing-consistency.mjs
+      # public/api/openapi.yaml is the spec customers actually download from
+      # /api/openapi.yaml. It is a COPY of src/openapi/bithuman.yaml, refreshed
+      # only by `npm run sync-openapi` (which prebuild/predev call). Edit the
+      # source without running a build and the published spec silently keeps the
+      # old text — on 2026-07-28 it was still telling callers that the `success`
+      # agent status is terminal, two commits after that was corrected in source.
+      - name: Published OpenAPI spec is in sync with its source
+        if: always()
+        run: |
+          npm run sync-openapi --silent
+          git diff --exit-code -- public/api/openapi.yaml || {
+            echo "::error file=public/api/openapi.yaml::published spec is stale — run 'npm run sync-openapi' and commit the result"
+            exit 1
+          }
