@@ -231,8 +231,9 @@ the generated frames take over. See
 | Agent creation | 2000 credits (one-time) |
 | [Talking-video renders](/api/video) | 4 credits per minute of output (rounded up) |
 
-Per-minute serving is metered on active avatar minutes only — idle, paused, or
-disconnected time isn't billed. Full schedule: [Pricing & credits](/guides/pricing).
+Per-minute serving is metered for the whole time a session is live and the
+engine is rendering — **idle/silent animation included**. Only stopped, paused,
+or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guides/pricing).
 
 ## Limits and expectations
 

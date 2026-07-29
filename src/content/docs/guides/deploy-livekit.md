@@ -69,7 +69,7 @@ To select the first-generation Expression model, pass `model="expression"` to th
 
 ## Billing
 
-Each session bills at the [cloud or self-hosted rate](/guides/pricing) depending on whether the avatar runs on your hardware or bitHuman's — for the first-generation models, 2 credits/min cloud Essence 1 and 4 credits/min cloud Expression 1. The full per-model schedule is on [Pricing & credits](/guides/pricing#serving--credits-per-active-minute).
+Each session bills at the [cloud or self-hosted rate](/guides/pricing) depending on whether the avatar runs on your hardware or bitHuman's — for the first-generation models, 2 credits/min cloud Essence 1 and 4 credits/min cloud Expression 1. The full per-model schedule is on [Pricing & credits](/guides/pricing#serving--credits-per-live-minute).
 
 ## Runnable examples
 

@@ -1353,6 +1353,20 @@ paths:
                         format: float
                       minutes_estimate:
                         type: object
+                        description: >-
+                          Advisory forward runway: balance divided by each
+                          serving mode's credits/min rate. One key per model and
+                          hosting mode (essence_2_cloud, essence_2_self_hosted,
+                          essence_2_max_cloud, essence_2_max_self_hosted,
+                          expression_2_cloud, expression_2_self_hosted,
+                          essence_1_cloud, essence_1_self_hosted,
+                          expression_1_cloud, expression_1_self_hosted), plus
+                          voice_chat and camera_chat for managed agents. The
+                          unversioned essence_* / expression_* keys are retained
+                          aliases for the FIRST-generation models - they are NOT
+                          the Essence 2 rate.
+                        additionalProperties:
+                          type: integer
                       is_enterprise:
                         type: boolean
                       isEnterprisePlanUser:

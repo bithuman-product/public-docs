@@ -15,7 +15,7 @@ resync loop: upload a file or URL, create a KB from those files, and rebuild it 
 sources change.
 
 > **Requires an organization API key.** These endpoints are scoped to an organization —
-> use a key created under [Organizations → API keys](/api/organizations#org-api-keys).
+> use a key created under [Organizations → API keys](/api/organizations#organization-api-keys).
 > A personal key returns `403`. Everything you create is owned by the organization and
 > counts against its plan quotas.
 

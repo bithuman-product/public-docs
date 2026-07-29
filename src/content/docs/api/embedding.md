@@ -49,7 +49,7 @@ append it to the iframe URL.
 > renamed and are not accepted everywhere — map
 > `essence-2-light` → `essence-2` and `essence-2-quality` → `essence-2-max`
 > first. `essence-2-light` in particular is rejected with `400` by
-> [`POST /v1/video/generate`](/api/talking-video).
+> [`POST /v1/video/generate`](/api/video).
 
 ```js
 // server: mint token (api-secret never reaches the browser)

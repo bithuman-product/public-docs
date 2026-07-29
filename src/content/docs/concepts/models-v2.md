@@ -9,7 +9,7 @@ label: "Essence 2 & Expression 2"
 
 > **Available now.** bitHuman's second-generation avatar models,
 > **`essence-2`** and **`expression-2`**, are **live** — create them today via
-> the API ([`POST /v1/agent/generate`](/api/agents#generate-a-new-agent)) or the
+> the API ([`POST /v1/agent/generate`](/api/agents#generate-an-agent)) or the
 > dashboard. The first-generation models
 > ([`essence-1` and `expression-1`](/concepts/models)) remain fully supported,
 > and nothing changes for existing agents or integrations. Browse the
@@ -349,8 +349,9 @@ Creation is one-time and per agent: **500 credits** for the
 routed model's rate (500 or 2000), and 250 credits for the v1 models
 (`essence-1`, `expression-1`).
 [Adding a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent)
-charges the same per-model rates. Idle, paused, or disconnected time isn't
-billed. Machine-readable schedule:
+charges the same per-model rates. Serving accrues for the whole time a session
+is live and rendering, idle/silent animation included; only stopped, paused, or
+disconnected sessions stop accruing. Machine-readable schedule:
 [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule).
 
 ## Naming & migration

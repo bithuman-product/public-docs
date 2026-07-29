@@ -8,13 +8,13 @@ order: 30
 
 ## How billing works
 
-bitHuman bills in **credits** consumed per **active minute** of avatar runtime. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. Plans top up credits monthly; overage is pay-as-you-go.
+bitHuman bills in **credits** consumed per **live minute** of avatar runtime — every minute a session is connected and the engine is rendering, whether the avatar is speaking or idling. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. Plans top up credits monthly; overage is pay-as-you-go.
 
 This page is the single source for every billing number on the platform — the model guides and API pages link back here.
 
 Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/developer/api-keys) — it lands in your inbox in seconds with the free tier attached.
 
-## Serving — credits per active minute
+## Serving — credits per live minute
 
 | Model | Cloud | Self-hosted |
 |---|---|---|
@@ -24,7 +24,7 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/devel
 | Essence 1 (`essence-1`) | 2 credits/min | 1 credit/min |
 | Expression 1 (`expression-1`) | 4 credits/min | 2 credits/min |
 
-Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time the engine is actively producing frames (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached) — idle, paused, or disconnected time isn't billed. The second-generation models [launched July 10, 2026](/concepts/models-v2).
+Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time a session is live and the engine is rendering (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). **That includes idle/silent animation** — a connected avatar looping its idle motion is rendering, and accrues. Only stopped, paused, or disconnected sessions stop accruing. The second-generation models [launched July 10, 2026](/concepts/models-v2).
 
 Managed conversational agents bill on top of avatar serving:
 
@@ -113,7 +113,7 @@ The CLI, Python SDK, and Docker container all honour `BITHUMAN_UNMETERED=1`. The
 
 ### Server-side surfaces (cloud, self-hosted Python, self-hosted GPU)
 
-The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short-lived runtime token, then heartbeat back to `api.bithuman.ai` once per minute while the engine is generating frames. Each heartbeat increments your usage counter.
+The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short-lived runtime token, then heartbeat back to `api.bithuman.ai` once per minute for as long as the session is live. Each heartbeat increments your usage counter. **Silence does not pause the meter** — an idling avatar is still rendering frames, and is billed at the same rate as a speaking one.
 
 ### On-device surface (Swift SDK)
 
@@ -138,6 +138,16 @@ Response:
     "topup_credits": 5000,
     "is_enterprise": false,
     "minutes_estimate": {
+      "essence_2_cloud": 1310,
+      "essence_2_self_hosted": 2620,
+      "essence_2_max_cloud": 655,
+      "essence_2_max_self_hosted": 1310,
+      "expression_2_cloud": 1310,
+      "expression_2_self_hosted": 2620,
+      "essence_1_cloud": 2620,
+      "essence_1_self_hosted": 5240,
+      "expression_1_cloud": 1310,
+      "expression_1_self_hosted": 2620,
       "voice_chat": 524,
       "camera_chat": 174,
       "essence_cloud": 2620,
@@ -149,13 +159,26 @@ Response:
 }
 ```
 
-The `minutes_estimate` keys map directly to the two avatar model families: `essence_*` = **Essence**, `expression_*` = **Expression** (`cloud` = bitHuman-hosted, `self_hosted` = your hardware). `voice_chat` / `camera_chat` are managed cloud conversational-agent estimates, not avatar models.
+There is one key per **model and hosting mode** — `<model>_cloud` and
+`<model>_self_hosted`, each the balance divided by that mode's rate from the
+[serving table above](#serving--credits-per-live-minute). `voice_chat` /
+`camera_chat` are managed cloud conversational-agent estimates, not avatar
+models.
+
+:::caution[`essence_*` / `expression_*` without a version are the **first-generation** models]
+`essence_cloud`, `essence_self_hosted`, `expression_cloud` and
+`expression_self_hosted` predate the second-generation launch and are kept as
+aliases for Essence 1 / Expression 1. **They are not the Essence 2 rate.** If
+you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you will
+over-estimate your remaining minutes by 2x and 4x respectively — read
+`essence_2_cloud` / `essence_2_max_cloud` instead.
+:::
 
 ## What's NOT billed
 
 - **Source code, SDK installs, documentation** — free.
 - **Audio-only Swift SDK use** — voice chat with no avatar attached is unmetered and fully offline.
-- **Idle time** — the engine has to be actively producing frames. Stopped or paused sessions don't accrue.
+- **Stopped, paused, or disconnected sessions** — accrual stops as soon as the session ends. (Note: a *live* session that is silent still accrues — idle animation is rendering. See [What counts as a billable minute](#how-metering-works).)
 - **Failed auth** — bad keys fail fast and don't burn credits.
 - **Failed creations and renders** — automatically refunded.
 - **Model weights** — `.imx` and Expression weight downloads are free; only active runtime minutes count.

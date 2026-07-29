@@ -98,7 +98,7 @@ Pro+ · `409` already a member or pending.
 | `PATCH …/members/{member_id}` | admin* | Body: `role` (`admin`/`member`). Only owners can change an admin's role. |
 | `DELETE …/members/{member_id}` | admin* | Remove a member; a member can remove themselves (leave). Only owners remove admins; the owner can't leave. |
 
-## Organization API keys {#org-api-keys}
+## Organization API keys
 
 Org-scoped keys are what the [Knowledge API](/api/knowledge) and other org-shared resources use.
 

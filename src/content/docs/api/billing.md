@@ -38,7 +38,7 @@ sessions bill per minute.
 See the [Pricing guide](/guides/pricing) for the full plan ladder (Free, Creator,
 Pro, Business, Enterprise, Custom) and annual pricing.
 
-## Account status {#account-status}
+## Account status
 
 `GET /v1/me` — your identity, plan, and current credit balance in one call. Handy as a
 pre-flight check (it's what the CLI uses) and to look up your `user_id` for the account
@@ -156,6 +156,16 @@ curl https://api.bithuman.ai/v2/credit-summaries \
     "topup_credits": 1743.0,
     "is_enterprise": false,
     "minutes_estimate": {
+      "essence_2_cloud": 460,
+      "essence_2_self_hosted": 921,
+      "essence_2_max_cloud": 230,
+      "essence_2_max_self_hosted": 460,
+      "expression_2_cloud": 460,
+      "expression_2_self_hosted": 921,
+      "essence_1_cloud": 921,
+      "essence_1_self_hosted": 1842,
+      "expression_1_cloud": 460,
+      "expression_1_self_hosted": 921,
       "voice_chat": 184,
       "camera_chat": 61,
       "essence_cloud": 921,
@@ -179,17 +189,36 @@ curl https://api.bithuman.ai/v2/credit-summaries \
 | `isEnterprisePlanUser` | boolean | Backward-compat alias for `is_enterprise` — prefer the snake_case field. |
 | `minutes_estimate` | object | Floor-division of `balance` by each mode's credits/min rate. |
 
-The `minutes_estimate` keys map to the two avatar models and the managed
-conversational agent:
+There is one `minutes_estimate` key per serving mode. **The rate differs by
+model** — read the key for the model you actually run:
 
 | Key | Meaning | Rate |
 |---|---|---|
-| `essence_self_hosted` | Essence on your hardware | balance ÷ 1 |
-| `essence_cloud` | Essence on bitHuman cloud | balance ÷ 2 |
-| `expression_self_hosted` | Expression on your hardware | balance ÷ 2 |
-| `expression_cloud` | Expression on bitHuman cloud | balance ÷ 4 |
+| `essence_2_cloud` | Essence 2 on bitHuman cloud | balance ÷ 4 |
+| `essence_2_self_hosted` | Essence 2 on your hardware | balance ÷ 2 |
+| `essence_2_max_cloud` | Essence 2 Max on bitHuman cloud | balance ÷ 8 |
+| `essence_2_max_self_hosted` | Essence 2 Max on your hardware | balance ÷ 4 |
+| `expression_2_cloud` | Expression 2 on bitHuman cloud | balance ÷ 4 |
+| `expression_2_self_hosted` | Expression 2 on your hardware | balance ÷ 2 |
+| `essence_1_cloud` | Essence 1 on bitHuman cloud | balance ÷ 2 |
+| `essence_1_self_hosted` | Essence 1 on your hardware | balance ÷ 1 |
+| `expression_1_cloud` | Expression 1 on bitHuman cloud | balance ÷ 4 |
+| `expression_1_self_hosted` | Expression 1 on your hardware | balance ÷ 2 |
 | `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
+
+:::caution[`essence_*` and `expression_*` without a version are Essence 1 and Expression 1]
+`essence_cloud`, `essence_self_hosted`, `expression_cloud` and
+`expression_self_hosted` predate the second-generation models and are aliases of
+the `essence_1_*` / `expression_1_*` rows above. **They are not the Essence 2
+rate.** If you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you
+will over-estimate your remaining minutes by 2x and 4x respectively. Use the
+model-specific key, or compute from the
+[serving rates](/guides/pricing#serving--credits-per-live-minute).
+:::
+
+Estimates are advisory. The authoritative charge is always computed server-side
+at request time from the live rate schedule.
 
 ## Usage history
 

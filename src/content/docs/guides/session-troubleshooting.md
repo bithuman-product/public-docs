@@ -52,7 +52,8 @@ behavior deliberately:
   [Essence 2 › idle](/concepts/essence-2#idle-and-speaking-behavior).
 
 So: an avatar that keeps gently moving during silence is **working as
-designed** — that is the idle loop, and it is not billed differently. What you
+designed** — that is the idle loop. It is real rendering and it is billed at
+the same per-minute rate as speaking; there is no cheaper idle tier. What you
 should *not* see is frozen frames or reversed-looking motion; if you do,
 report it with the agent code and timestamp.
 
@@ -85,10 +86,13 @@ report it with the agent code and timestamp.
 
 ## Billing expectations
 
-Cloud avatar serving is metered **per active minute**, per the model's rate
-([pricing](/guides/pricing)). Idle, paused, or disconnected time isn't billed,
-and the idle loop does not run a session by itself — a session exists only
-while a client is connected.
+Cloud avatar serving is metered **per live minute**, per the model's rate
+([pricing](/guides/pricing)). A session accrues credits for as long as it is
+connected and the engine is rendering — **including idle/silent stretches**,
+because the idle loop is real rendering. Accrual stops when the session is
+stopped, paused, or disconnected. The idle loop never runs a session by itself:
+a session exists only while a client is connected, so hanging up is what stops
+the meter.
 
 ## Next steps
 
