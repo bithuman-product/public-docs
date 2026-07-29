@@ -149,7 +149,6 @@ Essence 2 Max has a **single serving tier**:
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
 | `essence-2-max` | Dedicated cloud GPU (only tier) | Always-warm first line, spilling to elastic cloud GPU overflow that scales from zero. |
-| `essence-2-quality` | (deprecated alias) | The pre-rename slug — the serving worker accepts both, so saved links keep working. Prefer `essence-2-max`. See [Naming & migration](/concepts/models-v2#naming--migration). |
 
 There are no `-cpu` / `-ane` runtime slugs for this model, and it is not
 available on-device — requesting it in an on-device SDK context is reported as

@@ -33,8 +33,8 @@ export const GET: APIRoute = async () => {
     `model; distilled to run everywhere — gpu/ane/cpu/WebGPU-WASM incl. ` +
     `on-device; the former essence-2-light name is retired), ` +
     `\`essence-2-max\` (the PREMIUM model — the gold teacher served ` +
-    `directly on L40S-class GPUs; was essence-2-quality, still accepted as ` +
-    `a deprecated alias), plus \`essence-1\` / \`expression-1\`. This file concatenates ` +
+    `directly on L40S-class GPUs; was essence-2-quality), plus ` +
+    `\`essence-1\` / \`expression-1\`. This file concatenates ` +
     `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 
   for (const d of docs) {
