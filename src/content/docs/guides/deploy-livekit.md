@@ -28,7 +28,7 @@ Python 3.9+. The plugin pulls `bithuman` + `livekit-agents`.
 
 ```bash
 export BITHUMAN_API_SECRET="your_api_secret"
-export BITHUMAN_AGENT_ID="A78WKV4515"        # your agent code from the Library
+export BITHUMAN_AGENT_ID="<your agent code from the Library>"
 export OPENAI_API_KEY="sk-..."
 export LIVEKIT_URL="wss://your-project.livekit.cloud"
 export LIVEKIT_API_KEY="APIxxxx"

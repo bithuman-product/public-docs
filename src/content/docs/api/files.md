@@ -29,10 +29,11 @@ Download a file from a publicly accessible URL.
 
 ```python
 import requests
+import os
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/files/upload",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"file_url": "https://example.com/presentation.pdf", "file_type": "auto"},
 )
 print(resp.json())
@@ -50,13 +51,14 @@ Upload base64-encoded file data directly.
 
 ```python
 import base64, requests
+import os
 
 with open("document.pdf", "rb") as f:
     file_data = base64.b64encode(f.read()).decode("utf-8")
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/files/upload",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"file_data": file_data, "file_name": "document.pdf", "file_type": "auto"},
 )
 print(resp.json())
@@ -71,7 +73,7 @@ Both methods return the same shape:
   "success": true,
   "message": "File uploaded successfully",
   "data": {
-    "file_url": "https://storage.bithuman.ai/bithuman/YOUR_USER_ID/assets/docs/20260515_103000_document.pdf",
+    "file_url": "https://assets.bithuman.ai/bithuman/YOUR_USER_ID/assets/docs/20260515_103000_document.pdf",
     "original_source": "https://example.com/document.pdf",
     "file_type": "auto",
     "file_size": 1024000,

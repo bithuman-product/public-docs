@@ -17,8 +17,8 @@ label: "Expression 2"
 
 **`expression-2`** is bitHuman's second-generation expression engine: an
 audio-driven, real-time talking avatar whose motion is **fully generated**
-live from the audio — expressions, mouth, and head movement are synthesized
-each session, not replayed from a pre-rendered base.
+live from the audio — expression, articulation and head movement are
+synthesized each session, not replayed from a pre-rendered base.
 
 It is also **fully generative across the whole scene**: the engine animates
 the **entire 416×720 portrait frame**, not a detected face region. That is
@@ -31,15 +31,15 @@ What makes it different from every other bitHuman model is **per-identity
 training**. At creation time the platform distills a large foundation model
 into a **small model of your specific identity**, built from a single photo.
 The big teacher model never ships anywhere; only the compact per-identity
-model serves your sessions — a small, fast build paired with a per-identity
-decoder tuned for a sharp, well-defined mouth and teeth. That per-identity
-step is why Expression 2's motion tracks the audio so closely — and why
-creation takes longer than the other models (see
+model serves your sessions — a compact per-identity build with its own
+decoder, which is what lets the whole frame stay sharp while it moves. That
+per-identity step is why Expression 2's motion tracks the audio so closely —
+and why creation takes longer than the other models (see
 [creation](#how-creation-works) below).
 
 At serve time the engine generates the full **416×720** scene at **20 frames
 per second** and streams it over WebRTC like every other bitHuman session —
-the platform contract (push audio in, drain lip-synced video out) is
+the platform contract (push audio in, drain audio-synced video out) is
 unchanged.
 
 ## When to choose it
@@ -126,7 +126,7 @@ cold-start run measured about 1 hour 40 minutes end to end; runs trend toward
 the lower end of the range as the shared training pool stays warm.
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
+curl "https://api.bithuman.ai/v1/agent/status/$AGENT_CODE" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -152,7 +152,7 @@ fails loudly if unavailable):
 |---|---|---|
 | `expression-2` | The full chain (default) | GPU → Neural Engine → CPU with automatic overflow. |
 | `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
-| `expression-2-cpu` | CPU | Force the native quantized (int8) build on CPU servers — no GPU in the path. |
+| `expression-2-cpu` | CPU | Force the native CPU build (LiteRT / XNNPACK) — no GPU in the path. |
 | `expression-2-ane` | Apple Neural Engine | Force the Apple Silicon Neural Engine tier; limited real-time slots. |
 
 ```text

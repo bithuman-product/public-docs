@@ -260,17 +260,27 @@ endpoint, then sniffs the file and prints its family and the next step:
 
 ```bash
 bithuman login                      # once — pull-by-code needs your account
-bithuman pull A17ZTB0222
-# → ~/.cache/bithuman/agents/A17ZTB0222/A17ZTB0222.avatar
+bithuman pull $AGENT_CODE
+# → ~/.cache/bithuman/agents/<code>/<code>.avatar
 #   expression-2 — runs locally on macOS (Apple Silicon) / Linux x86_64, or live on bitHuman cloud
 ```
 
-When the agent's model is `essence-1`, the pulled `.imx` is immediately
-runnable:
+The **extension follows the family**, not the command: an Expression 2 pull
+lands a `<code>.avatar`, an Essence 1 pull lands a `<code>.imx`. Both are IMX v2
+containers — `bithuman info` reads either and prints the family:
 
 ```bash
-bithuman pull A66GYD8664
-bithuman run ~/.cache/bithuman/agents/A66GYD8664/A66GYD8664.imx
+bithuman info ~/.cache/bithuman/agents/$AGENT_CODE/$AGENT_CODE.avatar
+# Format:  IMX v2
+# Engine:  expression2
+# Family:  expression-2 (Expression 2)
+```
+
+To talk to a pulled agent, pass the **code** — not a constructed path. `run`
+resolves the file itself and routes by family:
+
+```bash
+bithuman run $AGENT_CODE
 ```
 
 Files land in `~/.cache/bithuman/agents/<code>/`. What each family's file is

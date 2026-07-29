@@ -219,7 +219,7 @@ handled as described in [Naming & migration](#naming--migration).
 Then poll until the agent is ready:
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
+curl "https://api.bithuman.ai/v1/agent/status/$AGENT_CODE" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 

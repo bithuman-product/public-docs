@@ -66,6 +66,22 @@ Two modes are always free: **audio-only** Swift SDK use (no avatar attached — 
 - Good for roughly 50 minutes of cloud Essence 1 serving, or about 25 minutes of the second-generation models.
 - Resets monthly. Unused credits don't roll over.
 
+**The free tier covers serving, not creation.** Every one-time creation charge in
+the table above starts at 250 credits, so creating your own agent needs a paid
+plan — a `POST /v1/agent/generate` on 99 credits is refused with
+[`402 INSUFFICIENT_BALANCE`](/api/errors) before anything is trained or charged.
+What the free tier *does* cover, with no agent of your own:
+
+- The [Playground](https://www.bithuman.ai/playground) and the ready-made
+  showcase agents — no key needed.
+- [Text to speech](/api/text-to-speech), `POST /v1/validate`, and every read
+  endpoint.
+- Serving minutes on any agent you already have.
+
+Creation minimums by plan: **Creator** (1,800/month) covers Essence 1,
+Expression 1, and the Essence 2 family; **Expression 2 costs 2000**, so it needs
+Pro or above — or a top-up.
+
 ## Plans
 
 | Plan | Monthly | Yearly | Credits / month | Concurrent sessions |

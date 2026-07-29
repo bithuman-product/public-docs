@@ -110,8 +110,8 @@ paths:
               }'
             # model+version selects the engine: expression+v2 → Expression 2.
             # Omit both to default to expression + v1 (Expression 1).
-            # → {"success": true, "agent_id": "A91XMB7113", "status": "processing"}
-            # then poll GET /v1/agent/status/A91XMB7113
+            # → {"success": true, "agent_id": "$AGENT_CODE", "status": "processing"}
+            # then poll GET /v1/agent/status/$AGENT_CODE
       summary: Generate a new agent
       description: |
         Create a new avatar agent from a text prompt, with optional image
@@ -391,7 +391,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl https://api.bithuman.ai/v1/agent/status/A91XMB7113 \
+            curl https://api.bithuman.ai/v1/agent/status/$AGENT_CODE \
               -H "api-secret: $BITHUMAN_API_SECRET"
             # poll every 5 s until data.status is "ready"/"success" (or "failed")
       summary: Get agent generation status
@@ -511,7 +511,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl https://api.bithuman.ai/v1/agent/A91XMB7113 \
+            curl https://api.bithuman.ai/v1/agent/$AGENT_CODE \
               -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get agent details
       description: Retrieve full details for an agent by its code.
@@ -545,7 +545,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113 \
+            curl -X POST https://api.bithuman.ai/v1/agent/$AGENT_CODE \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{"system_prompt": "You are a professional sales assistant."}'
@@ -594,9 +594,9 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl -X DELETE https://api.bithuman.ai/v1/agent/A91XMB7113 \
+            curl -X DELETE https://api.bithuman.ai/v1/agent/$AGENT_CODE \
               -H "api-secret: $BITHUMAN_API_SECRET"
-            # → {"success": true, "agent_code": "A91XMB7113", "deleted": true}
+            # → {"success": true, "agent_code": "$AGENT_CODE", "deleted": true}
       summary: Delete an agent
       description: |
         Permanently delete an agent you own. Stored assets are cleaned up
@@ -641,7 +641,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113/speak \
+            curl -X POST https://api.bithuman.ai/v1/agent/$AGENT_CODE/speak \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{"message": "Hello! Welcome to our demo."}'
@@ -702,7 +702,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113/add-context \
+            curl -X POST https://api.bithuman.ai/v1/agent/$AGENT_CODE/add-context \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{"context": "The customer just purchased a premium plan."}'
@@ -764,12 +764,12 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl -X POST https://api.bithuman.ai/v1/agent/A91XMB7113/models \
+            curl -X POST https://api.bithuman.ai/v1/agent/$AGENT_CODE/models \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{"model": "expression-2"}'
             # → {"success": true, "status": "processing", ...} — poll
-            #   GET /v1/agent/status/A91XMB7113 until supported_models lists it
+            #   GET /v1/agent/status/$AGENT_CODE until supported_models lists it
       summary: Add a model to an existing agent
       description: |
         Add an avatar model to an agent you already created — no need to
@@ -881,9 +881,10 @@ paths:
           label: cURL
           source: |
             # 302 redirect to the artifact — -LOJ follows it and keeps the filename
-            curl -LOJ "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2" \
+            curl -LOJ "https://api.bithuman.ai/v1/agent/$AGENT_CODE/model/download?model=expression-2" \
               -H "api-secret: $BITHUMAN_API_SECRET"
-            # → A17ZTB0222.imx  (add ?redirect=false for the URL as JSON)
+            # → <code>.avatar for expression-2 (<code>.imx for essence-1);
+            #   add ?redirect=false for the URL + filename as JSON
       summary: Download an agent's model artifact
       description: |
         Download the generated model file for an agent you own. The family
@@ -896,7 +897,7 @@ paths:
         | `essence-1` | `<code>.imx` (the portable IMX container) |
         | `essence-2` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow). `essence-2-light` is a retired internal alias for this family. |
         | `essence-2-max` | `<code>.pkl` — the Essence 2 Max artifact (IMX container). `essence-2-quality` is its pre-rename internal alias. |
-        | `expression-2` | `<code>.imx` — the portable IMX container (~20–90 MB per identity; legacy `.avatar` zip, CoreML packaging internally) — runs locally on macOS (Apple Silicon) and Linux or in the browser, and is also served on bitHuman's cloud |
+        | `expression-2` | `<code>.avatar` — a portable IMX v2 container (~20–90 MB per identity) under a legacy extension; `bithuman info` reads it and reports `Family: expression-2`. Runs locally on macOS (Apple Silicon) and Linux or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
 
         The default response is a **302 redirect** to the artifact — the
@@ -981,7 +982,7 @@ paths:
                         example: "expression-2"
                       filename:
                         type: string
-                        example: "A17ZTB0222.imx"
+                        example: "A17ZTB0222.avatar"
                       url:
                         type: string
                         description: The artifact URL (signed, 1-hour TTL, for the private families).
@@ -1368,7 +1369,7 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/embed-tokens/request \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_id": "A78WKV4515", "fingerprint": "9f3c8b1a2d4e5f6789ab"}'
+              -d "{\"agent_id\": \"$AGENT_CODE\", \"fingerprint\": \"9f3c8b1a2d4e5f6789ab\"}"
             # → data.token is a 1-hour JWT for the embed widget
       summary: Generate embed token
       description: Generate a JWT token for embedding an avatar on a website. Use this from your backend — never expose your API secret in frontend code.
@@ -1492,7 +1493,7 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_code": "A78WKV4515"}'
+              -d "{\"agent_code\": \"$AGENT_CODE\"}"
             # → data.token is a short-lived runtime JWT the SDK uses to run a session
       summary: Request a runtime token
       description: >-
@@ -1645,8 +1646,8 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/dynamics/generate \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_id": "A91XMB7113"}'
-            # → {"success": true, "status": "processing"} — poll GET /v1/dynamics/A91XMB7113
+              -d "{\"agent_id\": \"$AGENT_CODE\"}"
+            # → {"success": true, "status": "processing"} — poll GET /v1/dynamics/$AGENT_CODE
       summary: Generate gesture animations
       description: |
         Create gesture animations (wave, nod, smile, laugh, etc.) for an agent.
@@ -1716,7 +1717,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl https://api.bithuman.ai/v1/dynamics/A91XMB7113 \
+            curl https://api.bithuman.ai/v1/dynamics/$AGENT_CODE \
               -H "api-secret: $BITHUMAN_API_SECRET"
       summary: Get available gestures
       description: List all available gesture animations for an agent.
@@ -1762,7 +1763,7 @@ paths:
         - lang: shell
           label: cURL
           source: |
-            curl -X PUT https://api.bithuman.ai/v1/dynamics/A91XMB7113 \
+            curl -X PUT https://api.bithuman.ai/v1/dynamics/$AGENT_CODE \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{"dynamics": {"enabled": true}, "toggle_enabled": true}'
@@ -1841,11 +1842,11 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/video/generate \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{
-                "model": "essence-2-max",
-                "agent_code": "A91XMB7113",
-                "input": {"type": "text", "text": "Hello, welcome to bitHuman."}
-              }'
+              -d "{
+                \"model\": \"essence-2-max\",
+                \"agent_code\": \"$AGENT_CODE\",
+                \"input\": {\"type\": \"text\", \"text\": \"Hello, welcome to bitHuman.\"}
+              }"
             # → {"success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing"}
             # add "wait": true to block (≤ ~90 s) for the finished video_url
       summary: Generate a talking video

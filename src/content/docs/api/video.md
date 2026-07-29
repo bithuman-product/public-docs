@@ -1,6 +1,6 @@
 ---
 title: "Video API"
-description: "Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a CDN URL. Per-minute billing, auto-refunded on failure."
+description: "Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a public mp4 URL. Per-minute billing, auto-refunded on failure."
 section: api
 group: "Deliver"
 order: 20
@@ -13,7 +13,7 @@ speaking — from a **text** script (the agent's voice synthesizes it) or from a
 **hosted audio** file. It is asynchronous by default: submit a job, then poll for
 the finished video URL — or pass [`wait: true`](#blocking-mode-wait-true) for a
 blocking render that returns the mp4 in the response. On success you get a public
-CDN URL, the output duration, and the credits charged.
+mp4 URL, the output duration, and the credits charged.
 
 `essence-2` / `essence-2-max` render at **1080p** by default — `1080×1920`
 portrait or `1920×1080` landscape, matching the source orientation and capped at
@@ -45,19 +45,20 @@ mp4 directly.
 | `input.text` | string | for text | Script to speak (≤ 5000 chars). |
 | `input.voice` | string | no | Voice id override for text input. Defaults to the agent's own voice. |
 | `input.audio_url` | string | for audio | Public URL to a WAV or MP3 file. |
-| `wait` | boolean | no | Blocking mode. `false` (default) returns a `job_id` to poll. `true` blocks until the render finishes (up to ~90s) and returns the finished `video_url` — plus `duration_seconds` and `credits_charged` — directly in this response; if it exceeds the cap you get the async `{ job_id }` to poll instead. Accepted as a JSON/multipart field or as a `?wait=true` query parameter. |
+| `wait` | boolean | no | Blocking mode. `false` (default) returns a `job_id` to poll. `true` blocks until the render finishes (up to ~90s) and returns the finished `video_url` — plus `duration_seconds` and `credits_charged` — directly in this response; if it exceeds the cap you get the async `{ job_id }` to poll instead. Accepted as a field in the **JSON body** or as a `?wait=true` query parameter. |
 
 ### Text input
 
 ```python
 import requests
+import os
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "essence-2",
-        "agent_code": "A80HVD8577",
+        "agent_code": os.environ["AGENT_CODE"],
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
     },
 )
@@ -75,12 +76,13 @@ print(resp.json())
 ### Audio input
 
 ```python
+import os
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "expression-2",
-        "agent_code": "A80HVD8577",
+        "agent_code": os.environ["AGENT_CODE"],
         "input": {"type": "audio", "audio_url": "https://example.com/speech.wav"},
     },
 )
@@ -89,18 +91,19 @@ print(resp.json())
 
 ### Blocking mode (`wait: true`)
 
-Add `"wait": true` (a JSON/multipart field, or `?wait=true` as a query
-parameter) to hold the connection until the render finishes and get the mp4 back
-in the same response — no polling. If the render exceeds the ~90-second cap you
-get the async `{ job_id }` to poll instead.
+Add `"wait": true` to the JSON body (or `?wait=true` on the query string) to
+hold the connection until the render finishes and get the finished `video_url`
+back in the same response — no polling. If the render exceeds the ~90-second cap
+you get the async `{ job_id }` to poll instead.
 
 ```python
+import os
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "essence-2-max",
-        "agent_code": "A80HVD8577",
+        "agent_code": os.environ["AGENT_CODE"],
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
         "wait": True,
     },
@@ -113,7 +116,7 @@ print(resp.json())
   "success": true,
   "job_id": "vid_3f9a2c1b8e7d4a6f0b21",
   "status": "completed",
-  "video_url": "https://assets.bithuman.ai/.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
+  "video_url": "https://<storage-host>/storage/v1/object/public/bithuman/<agent_code>/vid_3f9a2c1b8e7d4a6f0b21.mp4",
   "duration_seconds": 6.5,
   "credits_charged": 8
 }
@@ -142,11 +145,12 @@ with an image. Check the agent's `supported_models` on the
 
 ```python
 import requests
+import os
 
-job_id = "vid_3f9a2c1b8e7d4a6f0b21"
+job_id = os.environ["VIDEO_JOB_ID"]     # returned by POST /v1/video/generate
 resp = requests.get(
     f"https://api.bithuman.ai/v1/video/{job_id}",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 )
 print(resp.json())
 ```
@@ -166,7 +170,7 @@ When complete:
   "job_id": "vid_3f9a2c1b8e7d4a6f0b21",
   "status": "completed",
   "model": "essence-2-max",
-  "video_url": "https://assets.bithuman.ai/.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
+  "video_url": "https://<storage-host>/storage/v1/object/public/bithuman/<agent_code>/vid_3f9a2c1b8e7d4a6f0b21.mp4",
   "duration_seconds": 6.5,
   "credits_charged": 8
 }
@@ -176,7 +180,7 @@ When complete:
 |---|---|---|
 | `status` | string | `processing`, `completed`, or `failed`. |
 | `model` | string | The engine used. |
-| `video_url` | string | Public mp4 URL (present when `completed`). |
+| `video_url` | string | Public mp4 URL (present when `completed`). Today this is the raw object-storage URL; the same object is also reachable at `https://assets.bithuman.ai/bithuman/<agent_code>/<job_id>.mp4`. **Treat it as opaque** — read the field, do not construct it. |
 | `duration_seconds` | number | Output duration (present when `completed`). |
 | `credits_charged` | integer | Credits charged for this render (present when `completed`). |
 | `error` | object | Failure detail (present when `failed`); the charge is refunded. |
@@ -184,9 +188,10 @@ When complete:
 ## Polling pattern
 
 ```python
-import time, requests
+import os, time, requests
 
-def wait_for_video(job_id, api_secret, timeout=600):
+def wait_for_video(job_id, api_secret=None, timeout=600):
+    api_secret = api_secret or os.environ["BITHUMAN_API_SECRET"]
     while timeout > 0:
         r = requests.get(
             f"https://api.bithuman.ai/v1/video/{job_id}",

@@ -103,22 +103,27 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 
 ## Handling errors in Python
 
+Every endpoint returns the same envelope, so one handler covers all of them.
+This example reads an agent — a free call — so you can run it as-is:
+
 ```python
+import os
 import requests
 
-resp = requests.post(
-    "https://api.bithuman.ai/v1/agent/generate",
-    headers={"api-secret": api_secret, "Content-Type": "application/json"},
-    json={"prompt": "You are a helpful assistant"},
+resp = requests.get(
+    f"https://api.bithuman.ai/v1/agent/{os.environ['AGENT_CODE']}",
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 )
 
 # The HTTP status always matches the body's status_code, so either is safe to
 # branch on. On error, the body is the structured envelope: {"error": {...}}.
 if resp.ok:
-    body = resp.json()
-    print("Agent generating:", body["data"]["agent_id"] if "data" in body else body.get("agent_id"))
+    agent = resp.json()["data"]
+    print("Agent:", agent["agent_id"], agent["status"])
 elif resp.status_code in (401, 403):
     print("Auth failed. Check BITHUMAN_API_SECRET.")
+elif resp.status_code == 404:
+    print("No such agent — or it isn't one of yours. Check AGENT_CODE.")
 elif resp.status_code == 429:
     print("Rate limited. Wait and retry with backoff.")
 elif resp.status_code == 503:
@@ -127,6 +132,10 @@ else:
     err = resp.json()["error"]
     print(f"Error {err['code']}: {err['message']}")
 ```
+
+> **Note** The same branch structure applies to billable calls such as
+> `POST /v1/agent/generate` — but running one **charges credits on success**
+> (250–2000 depending on the model), so it is not used as the example here.
 
 For `429` and `503`, use exponential backoff with jitter — see
 [rate limits](/api/rate-limits) for the recommended retry strategy.

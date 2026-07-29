@@ -25,14 +25,20 @@ See [Building avatars](/guides/building-avatars) for the full creation flow and 
 The `.imx` is keyed by an **agent code** (e.g. `A78WKV4515`). The **cloud runtime and REST API** resolve an agent by its code — you don't ship a file. The **on-device SDKs render a local `.imx`**, so you pass its `model_path` (the `agent_code` is optional, used for billing attribution):
 
 ```python
+import asyncio, os
 from bithuman import AsyncBithuman
-import os
 
-rt = await AsyncBithuman.create(
-    model_path="agent.imx",      # the local .imx file — required on-device
-    agent_code="A78WKV4515",     # optional: billing attribution
-    api_secret=os.environ["BITHUMAN_API_SECRET"],
-)
+async def main():
+    rt = await AsyncBithuman.create(
+        model_path="agent.imx",                  # the local .imx file — required on-device
+        agent_code=os.environ["AGENT_CODE"],     # optional: billing attribution
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+    rt.get_first_frame()
+    print(rt.frame_width, "x", rt.frame_height)
+    await rt.stop()
+
+asyncio.run(main())
 ```
 
 To get the file for a local run, download it by code/slug (`bithuman pull` on macOS, or `https://models.bithuman.ai/showcase/<slug>.imx`) — see [Caching for offline use](#caching-for-offline-use).

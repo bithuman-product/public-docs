@@ -63,12 +63,33 @@ curl -X POST https://api.bithuman.ai/v1/validate \
 
 It always returns HTTP `200` — read the body: `{"valid": true}` means you're set, `{"valid": false}` means the secret is missing or wrong.
 
-### Look up an agent
+### Pick an agent to work with
 
-Fetch any agent's details by code:
+Every agent endpoint is **scoped to the agents you own** — a code belonging to
+someone else returns `404 NOT_FOUND`, not `403`. So the codes in these docs
+will not work with your secret. List your own and export one:
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/A78WKV4515 \
+curl "https://api.bithuman.ai/v1/agents?limit=5" \
+  -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+```bash
+export AGENT_CODE=<a code from the list above>
+```
+
+Examples throughout the docs use `$AGENT_CODE`; with those two exports done,
+they run as written.
+
+> **No agents yet?** [Generate one](#generate-your-own-agent-optional) below, or
+> use the [Playground](https://www.bithuman.ai/playground), which needs no key.
+
+### Look up an agent
+
+Fetch the details of an agent you own:
+
+```bash
+curl "https://api.bithuman.ai/v1/agent/$AGENT_CODE" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -78,7 +99,7 @@ When an agent has an **active session** (the embed above, or a LiveKit room),
 push text into it and the avatar speaks it aloud:
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
+curl -X POST "https://api.bithuman.ai/v1/agent/$AGENT_CODE/speak" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
   -d '{"message": "Hello! Great to meet you."}'
@@ -87,7 +108,8 @@ curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
 > **Note** `/speak` and `/add-context` require an active session. With no live
 > room you'll get a `404` (code `NOT_FOUND`, message `"No active rooms found
 > for agent <code>"`) — open the embed first, or start a
-> [LiveKit worker](/api/embedding).
+> [LiveKit worker](/api/embedding). A `404` naming the **code** instead
+> (`"Agent not found for code: …"`) means the agent isn't one of yours.
 
 ### Voice without an avatar
 

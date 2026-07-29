@@ -199,21 +199,38 @@ with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
 
 ```python
 import requests
+import os
 
 resp = requests.get(
     "https://api.bithuman.ai/v1/usage",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
     params={"limit": 50, "start": "2026-06-01T00:00:00Z"},
 ).json()
 
+net = 0
 for ev in resp["data"]:
-    print(ev["created_at"], ev["pricing_code"], ev["credits_change"])
+    code = ev["pricing_code"]
+    # Refund rows are recorded POSITIVE, like charges — the prefix carries the
+    # sign, so subtract them when totalling.
+    net += -ev["credits_change"] if code.startswith("credit_refund_") else ev["credits_change"]
+    print(ev["created_at"], code, ev["credits_change"])
+print("net credits consumed:", net)
 print(resp["pagination"])   # {limit, offset, total, has_more}
 ```
 
 Each row carries `activity_type`, `pricing_code`, `agent_code`, `created_at`,
-and `credits_change` — the signed credit delta (usage events are recorded as
-**positive** credits consumed). This is an audit trail; for an authoritative
+and `credits_change`.
+
+> **`credits_change` is a magnitude, not a signed delta.** Both charges and
+> refunds are recorded as **positive** numbers; the direction lives in
+> `pricing_code`, where a refund is the charge's code with a
+> **`credit_refund_` prefix**. A talking-video render is charged up front at the
+> 120-second cap and trued up on completion, so a one-minute Expression 2 render
+> leaves two rows — `usage_talking_video_expression_2_by_api` at `8` and
+> `credit_refund_usage_talking_video_expression_2_by_api` at `4` — for a net
+> **4** credits. Summing `credits_change` blindly reports 12.
+
+This is an audit trail; for an authoritative
 balance use `GET /v2/credit-summaries` above.
 
 ## Notes

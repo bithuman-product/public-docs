@@ -143,10 +143,11 @@ open.
 
 ```python
 import requests
+import os
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/agent/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "prompt": "You are a professional video content creator.",
         "image": "https://example.com/avatar.jpg",
@@ -281,11 +282,12 @@ More session-time issues (connect latency, tier pinning, idle behavior):
 
 ```python
 import requests
+import os
 
-code = "A80HVD8577"
+code = os.environ["AGENT_CODE"]
 data = requests.get(
     f"https://api.bithuman.ai/v1/agent/{code}",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 ).json()
 agent = data["data"]
 print(agent["name"], agent["status"])
@@ -298,9 +300,9 @@ print(agent["name"], agent["status"])
     "agent_id": "A80HVD8577",
     "status": "ready",
     "system_prompt": "You are a friendly AI assistant",
-    "image_url": "https://storage.bithuman.ai/A80HVD8577/image_20260115_103000_000001.jpg",
-    "video_url": "https://storage.bithuman.ai/A80HVD8577/video_20260115_103200_000002.mp4",
-    "model_url": "https://storage.bithuman.ai/A80HVD8577/my_agent_20260115_103500_000003.imx",
+    "image_url": "https://assets.bithuman.ai/bithuman/A80HVD8577/image_20260115_103000_000001.jpg",
+    "video_url": "https://assets.bithuman.ai/bithuman/A80HVD8577/video_20260115_103200_000002.mp4",
+    "model_url": "https://assets.bithuman.ai/bithuman/A80HVD8577/my_agent_20260115_103500_000003.imx",
     "name": "My Agent"
   }
 }
@@ -314,10 +316,11 @@ state with `status`.
 
 ```python
 import requests
+import os
 
 resp = requests.get(
     "https://api.bithuman.ai/v1/agents",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
     params={"limit": 20, "offset": 0, "status": "ready"},
 ).json()
 
@@ -336,12 +339,15 @@ missing or non-owned agent returns `404`.
 
 ```python
 import requests
+import os
 
+
+code = os.environ["AGENT_CODE"]
 requests.delete(
-    "https://api.bithuman.ai/v1/agent/A80HVD8577",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    f"https://api.bithuman.ai/v1/agent/{code}",
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 ).json()
-# {"success": true, "agent_code": "A80HVD8577", "deleted": true}
+# {"success": true, "agent_code": os.environ["AGENT_CODE"], "deleted": true}
 ```
 
 ## Update an agent's prompt
@@ -352,11 +358,12 @@ a new agent.
 
 ```python
 import requests
+import os
 
-code = "A80HVD8577"
+code = os.environ["AGENT_CODE"]
 resp = requests.post(
     f"https://api.bithuman.ai/v1/agent/{code}",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"system_prompt": "You are a professional sales assistant."},
 )
 print(resp.json())
@@ -387,10 +394,13 @@ listing the options; the Essence 2 tiers are not individually addable —
 
 ```python
 import requests
+import os
 
+
+code = os.environ["AGENT_CODE"]
 resp = requests.post(
-    "https://api.bithuman.ai/v1/agent/A66GYD8664/models",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    f"https://api.bithuman.ai/v1/agent/{code}/models",
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"model": "expression-2"},
 )
 print(resp.json())
@@ -440,7 +450,7 @@ force slugs fold onto `essence-2-light`, and `essence-2-max` folds onto
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
 | `essence-2-light` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container, ~350–550 MB. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
 | `essence-2-quality` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
-| `expression-2` | `<code>.imx` | The portable IMX container (~20–90 MB per identity; legacy `.avatar` zip) — [runs locally](/sdk/cli/commands) on macOS (Apple Silicon) and Linux, or in the browser via [`?render=local`](/guides/browser-rendering); also served on bitHuman's cloud. |
+| `expression-2` | `<code>.avatar` | The portable container (~20–90 MB per identity) — [runs locally](/sdk/cli/commands) on macOS (Apple Silicon) and Linux, or in the browser via [`?render=local`](/guides/browser-rendering); also served on bitHuman's cloud. The download API returns the `.avatar` extension for every Expression 2 identity today; `.imx` naming is being unified across families and this artifact will follow. |
 | `expression-1` | — | Not downloadable: no per-identity artifact exists (the v1 foundation model renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
 
 The default response is a **302 redirect** to the artifact (public URL for
@@ -449,8 +459,9 @@ curl works:
 
 ```bash
 curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
-  "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2"
-# → A17ZTB0222.imx
+  "https://api.bithuman.ai/v1/agent/$AGENT_CODE/model/download?model=expression-2"
+# → <code>.avatar   (Expression 2; other families keep their own extension —
+#                    see the artifact table above)
 ```
 
 Pass `?redirect=false` to get the URL as JSON instead (for UIs that want to
@@ -462,7 +473,7 @@ fetch or label first):
   "data": {
     "code": "A17ZTB0222",
     "model": "expression-2",
-    "filename": "A17ZTB0222.imx",
+    "filename": "A17ZTB0222.avatar",
     "url": "https://…signed…",
     "expires_in": 3600
   }
@@ -529,10 +540,11 @@ instead.
 
 ```python
 import requests
+import os
 
 requests.post(
     "https://api.bithuman.ai/v1/agent/A12345678/add-context",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "context": "Customer has VIP status. Preferred name: Alex. Account since 2021.",
         "type": "add_context",

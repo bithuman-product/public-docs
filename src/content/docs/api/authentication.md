@@ -73,7 +73,7 @@ capabilities.
 **REST API** — `api-secret` header on every request:
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
+curl -X POST "https://api.bithuman.ai/v1/agent/$AGENT_CODE/speak" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
   -d '{"message": "Hello"}'
@@ -82,10 +82,17 @@ curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
 **Python SDK** — env var, or pass directly:
 
 ```python
-runtime = await AsyncBithuman.create(
-    model_path="avatar.imx",
-    api_secret="your_key",
-)
+import asyncio, os
+from bithuman import AsyncBithuman
+
+async def main():
+    runtime = await AsyncBithuman.create(
+        model_path="avatar.imx",
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+    await runtime.stop()
+
+asyncio.run(main())
 ```
 
 **Swift SDK** — env var or config; never hardcode in source:

@@ -44,29 +44,31 @@ submit-then-poll shape as agent and dynamics generation:
    carries `video_url`, `duration_seconds`, and `credits_charged`) or `failed`.
 
 ```bash
-# 1. submit
-curl -X POST https://api.bithuman.ai/v1/video/generate \
+# 1. submit  (JSON body — this endpoint reads JSON only, never multipart)
+JOB=$(curl -sS -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "essence-2",
-    "agent_code": "A80HVD8577",
+    "agent_code": "'"$AGENT_CODE"'",
     "input": { "type": "text", "text": "Hello, welcome to bitHuman." }
-  }'
-# → { "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing" }
+  }' | python3 -c 'import sys,json; print(json.load(sys.stdin)["job_id"])')
+# JOB now holds e.g. vid_3f9a2c1b8e7d4a6f0b21; the submit response was
+# { "success": true, "job_id": "vid_…", "status": "processing" }
 
 # 2. poll
-curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 \
+curl -sS "https://api.bithuman.ai/v1/video/$JOB" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 # → { "success": true, "status": "completed",
-#     "video_url": "https://.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
+#     "video_url": "https://…/vid_….mp4",
 #     "duration_seconds": 6.5, "credits_charged": 4, "model": "essence-2" }
 ```
 
-**Blocking mode.** For short clips you can skip polling: pass `"wait": true`
-(or `?wait=true`) on the submit call and it holds the connection until the
-render finishes (up to ~90s), returning the finished `video_url` directly. If
-the render exceeds that cap you get the async `job_id` to poll instead. See
+**Blocking mode.** For short clips you can skip polling: pass `"wait": true` in
+the JSON body (or `?wait=true` on the query string) and the submit call holds
+the connection until the render finishes (up to ~90s), returning the finished
+`video_url` directly. If the render exceeds that cap you get the async `job_id`
+to poll instead. See
 [Generate a talking video](/api/video#blocking-mode-wait-true).
 
 Audio input is the same call with an audio block:

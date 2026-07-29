@@ -47,14 +47,20 @@ processing → generating → completed → ready   (success)
 Once `ready`, the agent has an `agent_code` (e.g. `A78WKV4515`). Every SDK can resolve it by code — no need to download the [`.imx`](/concepts/avatars-imx):
 
 ```python
+import asyncio, os
 from bithuman import AsyncBithuman
-import os
 
-rt = await AsyncBithuman.create(
-    model_path="agent.imx",      # the local .imx file — required on-device
-    agent_code="A78WKV4515",     # optional: billing attribution
-    api_secret=os.environ["BITHUMAN_API_SECRET"],
-)
+async def main():
+    rt = await AsyncBithuman.create(
+        model_path="agent.imx",                  # the local .imx file — required on-device
+        agent_code=os.environ["AGENT_CODE"],     # optional: billing attribution
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+    rt.get_first_frame()
+    print(rt.frame_width, "x", rt.frame_height)
+    await rt.stop()
+
+asyncio.run(main())
 ```
 
 From here, drive frames with the [push/drain loop](/concepts/audio-streaming).
@@ -64,7 +70,7 @@ From here, drive frames with the [push/drain loop](/concepts/audio-streaming).
 For a hosted LiveKit session, push text into the live room:
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
+curl -X POST "https://api.bithuman.ai/v1/agent/$AGENT_CODE/speak" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
   -d '{"message": "Hello!"}'
@@ -73,7 +79,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
 For silent knowledge injection — the avatar doesn't say it aloud but uses it in future replies:
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/add-context \
+curl -X POST "https://api.bithuman.ai/v1/agent/$AGENT_CODE/add-context" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
   -d '{"context": "The customer is on the Pro plan."}'

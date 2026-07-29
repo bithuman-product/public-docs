@@ -79,7 +79,7 @@ for flags and copy-pasteable `EXAMPLES:`.
 
 ### `bithuman version --json`
 ```json
-{"cli":"2.4.0","libessence":"2.3.6","abi":7}
+{"cli":"2.4.0","libessence":"2.3.8","abi":7,"schema_version":1}
 ```
 `"wheel"` is added when installed via the pip shim.
 

@@ -114,11 +114,17 @@ async def main():
         model_path="avatar.imx",
         api_secret=os.environ["BITHUMAN_API_SECRET"],
     )
-    print(rt.frame_width, "x", rt.frame_height)
+    rt.get_first_frame()               # renders frame 0 (numpy BGR array)
+    print(rt.frame_width, "x", rt.frame_height, "@", rt.fps, "fps")
     await rt.stop()
 
 asyncio.run(main())
 ```
+
+> **Note** `frame_width` / `frame_height` read `0` until the runtime has
+> produced a frame — they are discovered from the first decode, not from the
+> file header. Call `get_first_frame()` (or start the streaming loop) before
+> reading them.
 
 The full `push_audio` / `flush` / `run` loop — including loading a WAV into
 int16 PCM without the removed audio helpers — is documented once, canonically,
@@ -169,8 +175,10 @@ from bithuman import (
 Controls let you drive idle behavior and actions out of band:
 
 ```python
-await rt.push(VideoControl(action="wave"))
-await rt.push(VideoControl(target_video="idle"))
+# inside the async function that owns `rt`
+async def gesture(rt):
+    await rt.push(VideoControl(action="wave"))
+    await rt.push(VideoControl(target_video="idle"))
 ```
 
 ## Low-level API (advanced)

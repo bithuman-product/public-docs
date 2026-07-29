@@ -46,13 +46,18 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **0.8.2** (or "Up to Next Major" from 0.8.1) and attach the
-**`bitHumanKit`** product to your target. Or in `Package.swift`:
+Pick **2.4.0** and attach the **`bitHumanKit`** product to your target. Or in
+`Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "0.8.1")   // resolves to the latest 0.8.x tag (0.8.2 today)
+         from: "2.4.0")
 ```
+
+> **Note** `2.4.0` is the first tag in this repository that carries a
+> `Package.swift`. Earlier tags — including the whole `0.8.x` line — are
+> CLI-only releases with no Swift package manifest, so any pin below `2.4.0`
+> fails to resolve. Pin `2.4.0` or later.
 
 The package wraps a pre-compiled `bitHumanKit.xcframework`; every third-party
 dependency (MLX, HuggingFace, Tokenizers, …) is statically linked, so consumers

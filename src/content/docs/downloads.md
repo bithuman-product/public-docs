@@ -40,10 +40,22 @@ Verify the install:
 
 ```bash
 bithuman --version
-# libessence 1.19.1 ABI 7
-# bithuman    2.3.25
+# libessence 2.3.8 ABI 7
+# bithuman    2.4.0
 bithuman doctor   # full host + key + cache check
 ```
+
+The two lines are independent: `libessence` is the engine, `bithuman` is the CLI
+binary that wraps it. What matters for interoperability is the **ABI** number —
+see [current shipping versions](#current-shipping-versions). The exact numbers
+move with each release; the
+[tap releases page](https://github.com/bithuman-product/homebrew-bithuman/releases)
+is always current.
+
+> **Note** On Linux, `bithuman doctor` currently prints
+> `pip install bithuman-cli` as the remedy for a missing agent worker. That
+> wheel is macOS Apple Silicon only — on Linux, re-run the universal installer
+> above instead. (Tracked; the message is being corrected in the CLI.)
 
 See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
 
@@ -55,7 +67,7 @@ See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`,
 pip install bithuman
 ```
 
-> **macOS note** The 2.3.x macOS wheels are tagged for **macOS 26+ (arm64)**. On older macOS versions pip reports `No matching distribution found` — upgrade to macOS 26+, or build from source / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
+> **macOS note** The macOS wheels are tagged `macosx_14_0_arm64` — **macOS 14+ on Apple Silicon**. On macOS 13 or older, or on Intel, pip reports `No matching distribution found` — upgrade to macOS 14+, or contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
 
 Add the LiveKit agent integration:
 
@@ -72,8 +84,9 @@ See the [Python SDK guide](/sdk/python).
 On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only.
 
 In Xcode: **File → Add Package Dependencies…** → paste
-`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **0.8.2**
-→ attach the **`bitHumanKit`** product. The package wraps a pre-compiled
+`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.4.0**
+→ attach the **`bitHumanKit`** product. `2.4.0` is the first tag carrying a
+`Package.swift`; anything below it fails to resolve. The package wraps a pre-compiled
 XCFramework with all third-party deps statically linked — zero transitive
 SwiftPM dependencies.
 
@@ -108,21 +121,35 @@ No install required. Authenticate with the `api-secret` header against `https://
 | **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.11–3.13) | SwiftPM |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
 | **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
-| **Linux aarch64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
+| **Linux aarch64** | Universal installer — see the version note below | `bithuman` (manylinux) — see the version note below | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
 macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck on either, the 1.x line still has Windows wheels and a macOS-Intel build — pin the whole Python stack there until those targets graduate into the 2.x distribution.
 
+> **Linux aarch64 lags the current release.** Both aarch64 artifacts stop short
+> of the latest version:
+>
+> - **CLI** — the newest release carrying an `aarch64-unknown-linux-gnu` tarball
+>   is `cli-v2.3.27`. On aarch64, pin it:
+>   `curl -fsSL …/install.sh | BITHUMAN_VERSION=cli-v2.3.27 sh`.
+> - **Python wheel** — the newest `manylinux_2_28_aarch64` wheel is `2.7.0`, so
+>   `pip install bithuman` resolves 2.7.0 on aarch64 and 2.8.0 on x86_64.
+>
+> Both are the same libessence ABI (v7), so they interoperate. If you need
+> aarch64 parity on the newest release, tell us at
+> [hello@bithuman.ai](mailto:hello@bithuman.ai).
+
 ## Current shipping versions
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.7.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
-| bitHuman CLI (`bithuman-cli`) | **2.3.25** | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| Python SDK (`bithuman`) | **2.8.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Swift SDK (`bitHumanKit`) | **2.4.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) — tag `v2.4.0` | v7 |
+| bitHuman CLI — universal installer / Homebrew | **2.4.0** | [tap releases](https://github.com/bithuman-product/homebrew-bithuman/releases) — tag `cli-v2.4.0` | v7 |
+| bitHuman CLI — PyPI `bithuman-cli` | 2.3.25 | [PyPI](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) | v7 |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.7.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 
