@@ -44,12 +44,10 @@ append it to the iframe URL.
 | `model` | string | no | Request a specific avatar model for the session — a model name (`essence-1`, `expression-1`, `essence-2`, `essence-2-max`, `expression-2`) or a force-tier slug (`essence-2-gpu/-ane/-cpu`, `expression-2-gpu/-cpu/-ane` — [per model](/concepts/models-v2#advanced-pin-a-serving-tier)). Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet, or `essence-2-max` on an agent with no stored identity video — generated internally by Essence creations) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
 > **Reading `supported_models` back into `model`.** The mint response (and
-> `GET /v1/agent/status/{id}`) returns `supported_models`. Send its entries back
-> verbatim **except** for the two internal tier spellings, which are being
-> renamed and are not accepted everywhere — map
-> `essence-2-light` → `essence-2` and `essence-2-quality` → `essence-2-max`
-> first. `essence-2-light` in particular is rejected with `400` by
-> [`POST /v1/video/generate`](/api/video).
+> `GET /v1/agent/status/{id}`) returns `supported_models`. Every entry is a
+> **public** model name and can be sent back verbatim — the internal tier
+> spellings `essence-2-light` / `essence-2-quality` are folded before the
+> response is built, so they never appear in the array.
 
 ```js
 // server: mint token (api-secret never reaches the browser)
@@ -76,7 +74,7 @@ const { data: { token } } = await res.json();
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "sid": "f3c9...",
-    "supported_models": ["essence-2-quality", "expression-2"]
+    "supported_models": ["essence-2-max", "expression-2"]
   }
 }
 ```

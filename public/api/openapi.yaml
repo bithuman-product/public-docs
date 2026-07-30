@@ -485,12 +485,11 @@ paths:
                           as right now. Trained families (`expression-2`,
                           `essence-2-light` — the standard `essence-2`'s
                           internal family name) appear once their per-identity
-                          model has been generated; `essence-2-quality` (the
-                          internal family name for `essence-2-max` until the
-                          platform-side rename flip) appears whenever an image
-                          exists (prepares on demand). Tier slugs inherit
-                          their family.
-                        example: ["essence-2-quality", "expression-2"]
+                          model has been generated; `essence-2-max` appears
+                          once the agent has a **stored identity video**
+                          (its identity prepares on demand from that video).
+                          Tier slugs inherit their family.
+                        example: ["essence-2-max", "expression-2"]
                       event_type:
                         type: string
                         description: Most recent event (e.g. "lip_created").
@@ -788,8 +787,7 @@ paths:
         Asynchronous adds return `status: "processing"` — poll
         [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
         until `supported_models` contains the new family (`essence-2` adds
-        both internal family names, `essence-2-light` and
-        `essence-2-quality`). Charges are refunded
+        both tiers — `essence-2` and `essence-2-max`). Charges are refunded
         automatically if the add fails; re-POSTing the same model never
         double-charges, and returns `status: "ready"` with `credits: 0` once
         the model already exists.
@@ -932,14 +930,13 @@ paths:
             type: string
             enum: [essence-1, essence-2, essence-2-max, expression-2]
           description: >-
-            Artifact family. Defaults to the agent's own model. Retired
-            internal aliases and runtime tier slugs (e.g. `essence-2-light`
-            → `essence-2`, `essence-2-quality` → `essence-2-max`,
-            `essence-2-ane`,
-            `expression-2-gpu`) fold onto their family; an unrecognized value
-            returns `400 VALIDATION_ERROR` listing the downloadable families.
-            (Until the platform-side rename flip, server messages may still
-            spell the internal family names.)
+            Artifact family. Defaults to the agent's own model. The retired
+            `essence-2-light` name and the runtime tier slugs (`essence-2-ane`,
+            `essence-2-gpu`, `essence-2-cpu`, `expression-2-gpu`) fold onto
+            their family. `essence-2-quality` is **no longer accepted** — it
+            was retired on 2026-07-29 and now returns `400 VALIDATION_ERROR`;
+            send `essence-2-max`. Any other unrecognized value returns the
+            same `400`, listing the downloadable families.
           example: "expression-2"
         - name: redirect
           in: query
@@ -1245,8 +1242,9 @@ paths:
                               value accepted by `POST /v1/agent/generate`.
                               Since the 2026-07-10 rename flip the premium
                               model is keyed `essence-2-max`; the pre-rename
-                              `essence-2-quality` spelling is a deprecated
-                              alias and no longer advertised. Note
+                              `essence-2-quality` spelling was removed on
+                              2026-07-29 — sending it now returns a `400`.
+                              Note
                               `essence-2-max` is **not a standalone creation
                               target** — it is delivered by the combined
                               `essence-2` creation (its 500 entry mirrors
@@ -1462,12 +1460,10 @@ paths:
                           as right now (e.g. a ready expression-2 agent lists
                           `expression-2`; an agent with a stored identity
                           video — generated internally by Essence creations —
-                          lists `essence-2-quality`, the internal family name
-                          for `essence-2-max` until the platform-side rename
-                          flip, whose identity prepares on demand from that
-                          video). Tier slugs inherit their
+                          lists `essence-2-max`, whose identity prepares on
+                          demand from that video). Tier slugs inherit their
                           family and are not listed.
-                        example: ["essence-2-quality", "expression-2"]
+                        example: ["essence-2-max", "expression-2"]
         "401":
           $ref: "#/components/responses/Unauthorized"
         "409":
@@ -1479,9 +1475,7 @@ paths:
             <code>'s <model> model hasn't been generated yet`; for
             `essence-2-max` it means the agent has no stored identity video
             to prepare from — identity videos are generated internally by
-            Essence creations (the message keeps the internal
-            `essence-2-quality` family name until the platform-side rename
-            flip). Add the
+            Essence creations. Add the
             model (`POST /v1/agent/{code}/models`) or create the agent with
             it, then retry.
           content:
@@ -1982,7 +1976,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 2, expression-1 = 4, expression-2 = 4, essence-2-max = 8 — same for its deprecated alias essence-2-quality, essence-2 = 4 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 2, expression-1 = 4, expression-2 = 4, essence-2-max = 8, essence-2 = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -1997,9 +1991,7 @@ paths:
             agent's **stored identity video** (generated internally by
             Essence creations) — its identity prepares on demand from
             that video, so an agent without one is rejected with a message
-            naming the missing identity video (the message keeps the internal
-            `essence-2-quality`
-            family name until the platform-side rename flip); `essence-1` needs the agent's `.imx` model file
+            naming the missing identity video; `essence-1` needs the agent's `.imx` model file
             (present on every completed essence-1 creation) and
             `expression-1` needs an expression-1 agent (or the free
             post-generation expression-1 model add) with an image.
@@ -2753,16 +2745,14 @@ components:
           items: { type: string }
           description: >-
             Canonical model families this agent can be launched as right now
-            — `essence-1` when its `.imx` exists, `essence-2-quality` (the
-            internal family name for `essence-2-max` until the platform-side
-            rename flip) when a
+            — `essence-1` when its `.imx` exists, `essence-2-max` when a
             **stored identity video** exists (generated internally by Essence
             creations; its identity prepares on demand from
             that video), and `essence-2-light` (the standard `essence-2`) /
             `expression-2` once their
             trained per-identity model has been generated. Tier slugs inherit
             their family and are not listed.
-          example: ["essence-1", "essence-2-quality"]
+          example: ["essence-1", "essence-2-max"]
         subject:
           type: string
         system_prompt:

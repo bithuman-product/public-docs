@@ -96,10 +96,10 @@ the standard chain by default; launch with `?model=essence-2-max` on
 the session/embed URL (or the `model` field on the
 [embed token](/api/embedding)) when you want the premium model. Once ready,
 the agent's `supported_models` lists both families — `essence-2` (the
-standard Essence 2) and `essence-2-max`. Responses may still carry the
-internal tier spellings `essence-2-light` / `essence-2-quality` while the
-rename completes; map them to `essence-2` / `essence-2-max` before sending
-them back as a `model` value.
+standard Essence 2) and `essence-2-max`. Both are public names and can be sent
+straight back as a `model` value — the internal tier spellings
+`essence-2-light` / `essence-2-quality` are folded before the response is
+built and never appear in it.
 
 ### `auto` — let the platform pick the model
 
@@ -246,7 +246,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
 | `progress` | float (0.0–1.0) | Generation progress as a fraction. `1.0` is complete. |
 | `progress_msg` | string | Human-readable progress description. |
 | `current_step` | string | Current generation step (see the table above). |
-| `supported_models` | string[] | The model families this agent can be **launched as right now**, spelled with the **public model names** — `essence-1`, `expression-1`, `essence-2`, `essence-2-max`, `expression-2` — so every entry can be sent straight back as a `model` / `?model=` value. Trained families (`expression-2`, `essence-2`) appear once their per-identity model exists; `essence-2-max` appears when the agent has a **stored identity video** (generated internally by Essence creations; its identity prepares on demand from that video); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family, and the combined `essence-2` creation shows up as its two tier families (`essence-2` and `essence-2-max`). Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response.<br/><br/>**Compatibility:** responses may still carry the *internal* tier spellings `essence-2-light` and `essence-2-quality` (they are being renamed to `essence-2` / `essence-2-max`). Map them before you send them back — `essence-2-light` is **rejected with `400`** on [`POST /v1/video/generate`](/api/video):<br/>`essence-2-light` → `essence-2`, `essence-2-quality` → `essence-2-max`. |
+| `supported_models` | string[] | The model families this agent can be **launched as right now**, spelled with the **public model names** — `essence-1`, `expression-1`, `essence-2`, `essence-2-max`, `expression-2` — so every entry can be sent straight back as a `model` / `?model=` value. Trained families (`expression-2`, `essence-2`) appear once their per-identity model exists; `essence-2-max` appears when the agent has a **stored identity video** (generated internally by Essence creations; its identity prepares on demand from that video); `essence-1` appears when its `.imx` exists. Tier slugs inherit their family, and the combined `essence-2` creation shows up as its two tier families (`essence-2` and `essence-2-max`). Also returned on `GET /v1/agent/{code}`, `GET /v1/agents` items, and the embed-token response.<br/><br/>Every entry is a **public** name and is safe to send straight back: the internal tier spellings `essence-2-light` / `essence-2-quality` are folded before the response is built, so they never appear in this array. |
 
 ### Generate and poll
 
@@ -465,10 +465,10 @@ is paused — not returned in normal operation since the July 10, 2026 GA; nothi
 
 `GET /v1/agent/{code}/model/download` — download the generated model artifact
 for an agent you own. The family defaults to the agent's own model; override
-with `?model=<family>` (public names, deprecated aliases and runtime tier
-slugs all fold onto their family — the `essence-2-{gpu,ane,cpu}` force slugs
-and the retired `essence-2-light` fold onto `essence-2`; `essence-2-quality`
-folds onto `essence-2-max`). What you get per family:
+with `?model=<family>` (public names and runtime tier slugs fold onto their
+family — the `essence-2-{gpu,ane,cpu}` force slugs and the retired
+`essence-2-light` fold onto `essence-2`). `essence-2-quality` is **no longer
+accepted** and returns a `400`; send `essence-2-max`. What you get per family:
 
 | Family | Artifact | Notes |
 |---|---|---|
@@ -592,7 +592,7 @@ requests.post(
 | `400` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value, or an invalid / retired `model` name — the error message lists the accepted values). |
 | `400` | `VIDEO_INPUT_NOT_SUPPORTED` | [Agent creation](#generate-an-agent) with a `video` input. Creation is **image-only** — provide a portrait `image`; the 10-second identity video is generated internally so it loops seamlessly (first frame == last frame). Rejection is rolling out platform-wide (nothing charged) — never send `video`. |
 | `503` | `MODEL_NOT_YET_AVAILABLE` | A second-generation family paused for your account. Essence 2 / Expression 2 are **GA** (since July 10, 2026) and open for all accounts, so [creation](#generate-an-agent) and [model add](#add-a-model-to-an-existing-agent) don't return this in normal operation — it's the safety response if a v2 family is ever re-paused. Nothing charged; the v1 families always work. |
-| `409` | `MODEL_NOT_GENERATED` | A launch surface (embed-token `model`, [talking video](/api/video), [model download](#download-an-agents-model)) requested a family the agent can't be launched as — it's missing from `supported_models`. Trained families: `"agent <code>'s <model> model hasn't been generated yet"`; `essence-2-max` is gated on the **stored identity video** it prepares from (generated internally by Essence creations — the message keeps the internal `essence-2-quality` family name until the platform-side flip). [Add the model](#add-a-model-to-an-existing-agent) or create the agent with it. |
+| `409` | `MODEL_NOT_GENERATED` | A launch surface (embed-token `model`, [talking video](/api/video), [model download](#download-an-agents-model)) requested a family the agent can't be launched as — it's missing from `supported_models`. Trained families: `"agent <code>'s <model> model hasn't been generated yet"`; `essence-2-max` is gated on the **stored identity video** it prepares from (generated internally by Essence creations; the message names the public family `essence-2-max`). [Add the model](#add-a-model-to-an-existing-agent) or create the agent with it. |
 | `409` | `AGENT_NOT_READY` | [`POST /v1/agent/{code}/models`](#add-a-model-to-an-existing-agent) on an agent that is still generating or failed — models can only be added to a `ready` agent. |
 | `422` | `MODEL_SUBJECT_MISMATCH` | An explicit Essence 2 creation or add whose input isn't a photorealistic human subject — see [the subject gate](#the-essence-2-subject-gate-422). Nothing is billed. |
 | `422` | `MODEL_PREREQUISITE_MISSING` | [Model add](#add-a-model-to-an-existing-agent) on an agent missing a stored asset the model needs (a stored identity video for `essence-2` — generated internally by Essence creations, never uploaded; image for `expression-2`; image + voice for `expression-1`). |
