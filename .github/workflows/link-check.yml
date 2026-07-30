@@ -18,8 +18,32 @@ name: Internal links
 #    anyone running Essence 2. scripts/check-billing-consistency.mjs re-derives
 #    every documented estimate from the pricing table and fails on disagreement.
 #
-# Both steps always run: `if: always()` so a broken link cannot mask a billing
-# error by aborting the job first.
+# 3. Model-enum examples — the `model` enums in src/openapi/bithuman.yaml are
+#    hand-maintained HERE, in a different repo from the API that enforces them,
+#    and they have drifted from the code's accepted sets three times. The third,
+#    on 2026-07-29, was customer-visible and fixed by hand: the spec's examples
+#    and cURL samples advertised `essence-2-quality` after
+#    POST /v1/video/generate had begun 400-rejecting it, so a caller copying our
+#    example got an error. scripts/check-model-enum-examples.mjs fails if any
+#    documented `model` value (schema `example:`, a `"model": "..."` in a code
+#    sample, a `?model=` in a sample URL) is not a member of that endpoint's own
+#    enum.
+#
+#    ★WHAT THIS HALF CANNOT SEE, and where the other half lives. Whether the
+#    ENUM matches the API's accepted set needs both repos in one checkout, and
+#    the API is in a PRIVATE repo this public one holds no token for (adding one
+#    would mean a new secret). That comparison therefore runs on the platform
+#    side — the `model-enum-drift` job of its .github/workflows/audit-tests.yml,
+#    which checks THIS repo out (public, so no secret) and diffs each enum
+#    against the shipped VALID_AGENT_MODELS / SUPPORTED_VIDEO_MODELS /
+#    ALLOWED_DYNAMICS_MODELS / _ADDABLE_MODELS. Its limitation is the mirror of
+#    ours: it reads this repo's `main`, so a docs-only drift lands red on the
+#    next platform push rather than on the docs PR that caused it. Neither half
+#    is sufficient — that job compares enums and never reads an example; this
+#    step reads every example and never sees the code.
+#
+# Every step always runs: `if: always()` so a broken link cannot mask a billing
+# or model-enum error by aborting the job first.
 
 on:
   push:
@@ -54,6 +78,12 @@ jobs:
       - name: Check billing consistency
         if: always()
         run: node scripts/check-billing-consistency.mjs
+      # No documented `model` example may name a model its own endpoint's enum
+      # does not list (the 2026-07-29 essence-2-quality incident). See note 3
+      # above for the half of the drift this cannot see and where that runs.
+      - name: Check model-enum examples
+        if: always()
+        run: node scripts/check-model-enum-examples.mjs
       # public/api/openapi.yaml is the spec customers actually download from
       # /api/openapi.yaml. It is a COPY of src/openapi/bithuman.yaml, refreshed
       # only by `npm run sync-openapi` (which prebuild/predev call). Edit the
