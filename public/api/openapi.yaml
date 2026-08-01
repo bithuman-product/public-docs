@@ -483,8 +483,7 @@ paths:
                         description: >-
                           Canonical model families this agent can be launched
                           as right now. Trained families (`expression-2`,
-                          `essence-2-light` — the standard `essence-2`'s
-                          internal family name) appear once their per-identity
+                          `essence-2`) appear once their per-identity
                           model has been generated; `essence-2-max` appears
                           once the agent has a **stored identity video**
                           (its identity prepares on demand from that video).
@@ -1471,7 +1470,7 @@ paths:
             `MODEL_NOT_GENERATED` — the requested `model` folds to a known
             family the agent can't be launched as right now (it is missing
             from the agent's `supported_models`). For the trained families
-            (`expression-2` / `essence-2-light`) the message is `agent
+            (`expression-2` / `essence-2`) the message is `agent
             <code>'s <model> model hasn't been generated yet`; for
             `essence-2-max` it means the agent has no stored identity video
             to prepare from — identity videos are generated internally by
@@ -1985,9 +1984,8 @@ paths:
             requested `model` is a family this agent can't be rendered as
             right now. For `expression-2` / `essence-2` that means the trained
             per-identity model hasn't been generated yet (message: `agent
-            <code>'s <family> model hasn't been generated yet` — for
-            `essence-2` the family reads `essence-2-light`, the internal name
-            of its distilled tier); `essence-2-max` is gated on the
+            <code>'s <family> model hasn't been generated yet`, spelled with
+            the public family name); `essence-2-max` is gated on the
             agent's **stored identity video** (generated internally by
             Essence creations) — its identity prepares on demand from
             that video, so an agent without one is rejected with a message
@@ -2002,7 +2000,7 @@ paths:
               example:
                 error:
                   code: "MODEL_NOT_GENERATED"
-                  message: "agent A56ZFX6217's essence-2-light model hasn't been generated yet"
+                  message: "agent A56ZFX6217's essence-2 model hasn't been generated yet"
                   httpStatus: 409
                 status: "error"
                 status_code: 409
@@ -2748,7 +2746,7 @@ components:
             — `essence-1` when its `.imx` exists, `essence-2-max` when a
             **stored identity video** exists (generated internally by Essence
             creations; its identity prepares on demand from
-            that video), and `essence-2-light` (the standard `essence-2`) /
+            that video), and `essence-2` /
             `expression-2` once their
             trained per-identity model has been generated. Tier slugs inherit
             their family and are not listed.

@@ -174,7 +174,7 @@ engine error:
 |---|---|---|
 | `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
 | `expression-2` | `<code>.imx` (also legacy `.avatar` zip) | **Runs locally** on macOS (Apple Silicon) and Linux x86_64; Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
-| `essence-2-light` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact (the family keeps its internal name). Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
+| `essence-2` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact. Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
 | `essence-2-max` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (`essence-2-quality` is its pre-rename internal alias). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
 | `expression-1` | — | No downloadable artifact exists (it renders server-side from the agent's image), and the model is not supported on Mac locally — it's a heavy GPU engine. Serve it through the cloud surfaces. |
 
