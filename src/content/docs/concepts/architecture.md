@@ -72,7 +72,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.8.0 | PyPI | v7 |
+| Python SDK (`bithuman`) | 2.8.1 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | SwiftPM | v7 |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
 | bitHuman CLI | 2.4.0 (Homebrew / universal installer); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
@@ -98,7 +98,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
-| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.11–3.13) | SwiftPM |
+| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
 | **Linux x86_64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — |
 | **Linux aarch64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — |

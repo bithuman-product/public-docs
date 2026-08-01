@@ -89,7 +89,7 @@ We keep this honest so you can plan around it.
 
 | SDK | Package | Topology | Status |
 |---|---|---|---|
-| **Python** | `pip install bithuman` (2.8.0) | On-device | **GA** |
+| **Python** | `pip install bithuman` (2.8.1) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM `bitHumanKit` (0.8.2) | On-device | **Preview** |
 | **Android / Kotlin** | `ai.bithuman:sdk:2.3.6` — Maven Central (Essence, pinned) | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |

@@ -19,15 +19,15 @@ frames out at 25 FPS. The runtime and all native dependencies ship in the wheel
 pip install bithuman
 ```
 
-**Python 3.11–3.13** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.8.0**. Platforms: macOS arm64, Linux x86_64, Linux
+**Python 3.10–3.14** supported; the latest release on
+[PyPI](https://pypi.org/project/bithuman/) is **2.8.1**. Platforms: macOS arm64, Linux x86_64, Linux
 aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a different host.)
 
-> **macOS note** The 2.x macOS wheels are tagged for **macOS 26+ (arm64)**.
-> On older macOS versions `pip install bithuman` fails with
-> `No matching distribution found` — upgrade to macOS 26+, or build from source
-> / contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
+> **macOS note** As of 2.8.1 the macOS wheels are tagged for **macOS 14+
+> (arm64)** (the 2.3.x wheels required macOS 26+). On older macOS versions
+> `pip install bithuman` fails with `No matching distribution found` —
+> upgrade macOS, or contact [hello@bithuman.ai](mailto:hello@bithuman.ai).
 
 > **Note** `pip install bithuman` is the **library** — `from bithuman import
 > AsyncBithuman` — and ships cross-platform wheels (macOS arm64 + Linux
@@ -264,7 +264,7 @@ Silero) — no API key, no outbound network. See [local mode](/sdk/cli/local-mod
 
 ## System requirements
 
-- **Python 3.11–3.13** (cp311–cp313 wheels ship for every supported platform).
+- **Python 3.10–3.14** (cp310–cp314 wheels ship for every supported platform).
 - **Essence**: any modern CPU, 4 GB RAM. macOS arm64 / Linux x86_64 / Linux aarch64.
 
 ## Troubleshooting
@@ -311,13 +311,13 @@ auth even on 2.3.4.
 
 pip found no wheel for your platform. The common causes:
 
-- **macOS older than 26** — the 2.x macOS wheels are tagged for **macOS 26+
-  (arm64)**. Upgrade to macOS 26+, or build from source / contact
+- **macOS older than 14** — the 2.8.1 macOS wheels are tagged for **macOS 14+
+  (arm64)** (2.3.x wheels required macOS 26+). Upgrade macOS, or contact
   [hello@bithuman.ai](mailto:hello@bithuman.ai).
 - **Alpine / musl Linux** — not supported. The Linux wheels are
   `manylinux_2_28` (glibc) for x86_64 / aarch64; use a glibc-based image
   (e.g. `python:*-slim`) instead.
-- **Python outside 3.11–3.13**, or 32-bit / Windows interpreters (see the
+- **Python outside 3.10–3.14**, or 32-bit / Windows interpreters (see the
   platform list above).
 
 ### Avatar shows but no lip movement
