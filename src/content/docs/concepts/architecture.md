@@ -141,8 +141,8 @@ at session launch; the device/runtime matrix is:
 | Cloud GPU | Real-time (~25 fps) | Real-time (~25 fps, the only tier) | Real-time (20 fps) |
 | Cloud Apple Neural Engine | Real-time | — | Real-time |
 | Cloud CPU | Real-time | — | Real-time |
-| Self-hosted CPU (your servers) | [SDK](/sdk/overview) | — | AVX-512-class CPUs |
-| On-device Apple Silicon (Mac / iOS) | [Swift SDK](/sdk/swift) | — (cloud-only) | [Swift SDK](/sdk/swift) |
+| Self-hosted CPU (your servers) | In development — [cloud today](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon) | — | [CLI local rendering](/sdk/cli/overview#local-rendering-by-platform) (macOS arm64, Linux x86_64) |
+| On-device Apple Silicon (Mac / iOS) | [Swift SDK](/sdk/swift) (preview) | — (cloud-only) | [Swift SDK](/sdk/swift) |
 | Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Planned |
 
 Cloud sessions route down the serving chain (GPU → Neural Engine → CPU)

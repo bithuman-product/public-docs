@@ -192,14 +192,14 @@ If you're deploying to iPhone today, choose **Essence**. The iPhone reference ap
 
 The tables above are the first-generation floors. The
 [second-generation models](/concepts/models-v2) resolve their runtime tier for
-you at session launch, and the same downloaded artifact serves on-device or
-self-hosted:
+you at session launch. Each model also produces one downloadable per-identity
+artifact — where that artifact can run **locally today** differs by model:
 
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
 | bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
-| Self-hosted CPU (your servers) | Yes ([SDK](/sdk/overview)) | — | Yes (AVX-512-class CPUs) |
-| On-device Apple Silicon (Mac / iOS) | Yes ([Swift](/sdk/swift)) | — (cloud-only) | Yes ([Swift](/sdk/swift)) |
+| Self-hosted CPU (your servers) | In development — serve via the cloud today ([details](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon)) | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
+| On-device Apple Silicon (Mac / iOS) | Preview ([Swift](/sdk/swift)) | — (cloud-only) | Yes ([Swift](/sdk/swift) · [CLI](/sdk/cli/overview#local-rendering-by-platform)) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Planned (WebGPU) |
 
 Full details, force-tier slugs, and rollout status:

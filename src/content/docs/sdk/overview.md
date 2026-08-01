@@ -63,14 +63,18 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 | Where inference runs | Your machine | bitHuman's GPU pool |
 | Surfaces | Python, Swift, [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
 | Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
-| Hardware | CPU (Essence 1 · `essence-2`) · Apple Silicon / Neural Engine (`essence-2`, `expression-2`) · Apple Silicon or NVIDIA GPU (Expression 1) | None — we host it |
+| Hardware | CPU (Essence 1) · Apple Silicon / Neural Engine (`essence-2` preview, `expression-2`) · Apple Silicon or NVIDIA GPU (Expression 1) | None — we host it |
 | Cost | 1–2 credits/min (`essence-2` / `expression-2`: 2) | 2–8 credits/min (`essence-2` / `expression-2`: 4 · `essence-2-max`: 8) |
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
 
 > **Second generation.** [`essence-2`](/concepts/essence-2) runs on-device on
-> Apple Silicon / the Neural Engine and self-hosted on CPU;
-> [`expression-2`](/concepts/expression-2) runs self-hosted on CPU
-> (AVX-512-class) and on the Neural Engine.
+> Apple Silicon / the Neural Engine via the [Swift SDK](/sdk/swift) (preview);
+> its **self-hosted CPU runtime is in development** — the Python SDK / CLI
+> cannot serve an `essence-2` artifact yet, so serve it through the cloud today
+> ([details](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon)).
+> [`expression-2`](/concepts/expression-2) renders locally via the
+> [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
+> Linux x86_64) and on the Neural Engine.
 > [`essence-2-max`](/concepts/essence-2-max) is cloud-GPU-only — no on-device
 > or self-hosted runtime. See
 > [where each model runs](/concepts/models-v2#where-each-model-runs).
