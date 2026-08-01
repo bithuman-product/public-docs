@@ -41,9 +41,9 @@ deployments, and privacy-sensitive environments.
 - **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
   and Neural Engine runtimes that don't need a server GPU per session.
 - **On-device or privacy-first.** The Apple Silicon build runs entirely
-  on-device on the Neural Engine — inference is local, and the ANE renders far
-  faster than real time (hundreds of frames per second on M4-class hardware),
-  leaving the CPU and GPU free for your app.
+  on-device on the Neural Engine — inference is local, and the ANE renders
+  several times faster than real time on M4-class hardware, leaving the CPU
+  and GPU free for your app.
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
@@ -222,6 +222,14 @@ below). **New creations get it automatically**; agents created before
 2026-07-27 keep serving their current build until they are retrained. Nothing
 in the API, the session contract, or the `?model=` tier slugs changed.
 
+> **What's next — not yet live.** A further renderer update is in final
+> validation: it renders the mouth interior — the teeth especially — with
+> markedly higher realism, verified end to end on every serving tier (cloud
+> GPU, CPU, and Apple Silicon), and it substantially shortens agent creation.
+> It changes nothing in the API, pricing, or the session contract. **It has
+> not shipped** — new creations still get the 2026-07-27 renderer described
+> above; watch the [changelog](/changelog) for the rollout.
+
 ## Limits and expectations
 
 - **Renders at ~25 fps** across GPU, CPU, and Apple Neural Engine runtimes.
@@ -231,6 +239,12 @@ in the API, the session contract, or the `?model=` tier slugs changed.
   (agents created before 2026-07-27 are larger — up to ~550 MB — until
   retrained). Size varies per identity: read `Content-Length` rather than
   assuming a fixed figure.
+- **The downloaded bundle serves via bitHuman cloud today.** Local /
+  self-hosted serving of an `essence-2` `.lebundle.imx` through the Python
+  SDK or CLI is **in development, not yet available** — see
+  [self-hosting status](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon).
+  (On-device Apple Silicon playback via the [Swift SDK](/sdk/swift) is a
+  preview rail.)
 - **Identity is fixed at creation.** The bundle bakes the generated identity
   video's look and framing; to change the face, create a new agent.
 - **First session on a fresh agent** can take longer to connect while the
