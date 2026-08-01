@@ -148,9 +148,8 @@ also **before any charge**: for `expression-2` / `essence-2` that means
 the trained per-identity model doesn't exist yet (`agent <code>'s <family>
 model hasn't been generated yet`); `essence-2-max` is gated on the
 agent's **source video**, which its identity prepares from on demand (`agent
-<code>'s essence-2-quality model requires a source video, which this agent
-doesn't have` — the message keeps the internal `essence-2-quality` family
-name until the platform-side flip); `essence-1` needs the agent's `.imx` model file (present on
+<code>'s essence-2-max model requires a source video, which this agent
+doesn't have`); `essence-1` needs the agent's `.imx` model file (present on
 every completed essence-1 creation), and `expression-1` needs an
 expression-1 agent — or the free post-generation expression-1 model add —
 with an image. Check the agent's `supported_models` on the
