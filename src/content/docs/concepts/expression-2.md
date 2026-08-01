@@ -186,10 +186,12 @@ and used as capacity overflow / fallback, not as the primary real-time line — 
 pin `expression-2-cpu` for batch and self-hosted-server work rather than
 low-latency live sessions.
 
-**Self-hosted.** The CPU build also runs on your own servers via the
-[SDK](/sdk/overview) at the self-hosted rate — it needs modern
-(AVX-512-class) server CPUs; see the
-[device matrix](/concepts/models-v2#where-each-model-runs).
+**Self-hosted.** Expression 2 also renders on your own hardware via the
+[CLI's local renderer](/sdk/cli/overview#local-rendering-by-platform) —
+macOS (Apple Silicon) and Linux x86_64 — at the self-hosted rate; batch /
+server-grade CPU work wants modern (AVX-512-class) CPUs. (The Python SDK has
+no Expression-2-loadable artifact — local rendering is a CLI surface.) See
+the [device matrix](/concepts/models-v2#where-each-model-runs).
 
 **On-device.** The same distilled per-identity model also runs fully
 on-device on Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview
