@@ -57,11 +57,12 @@ We would rather write this down than let you assume coverage you do not have.
   carries a watermark, provenance metadata, or a C2PA manifest today. December 2
   is the date we are working to. Treat it as a target, not a feature you can plan
   around.
-- **In-session AI disclosure (50(1)):** the bitHuman-hosted viewer shows a notice
-  at the start of a session. If you embed our viewer, that notice is present. If
-  you build on the SDKs, the CLI, or a self-hosted deployment, **we render frames
-  and nothing else** — the surface that carries any notice is yours by
-  construction, and you should design it in.
+- **In-session AI disclosure (50(1)): the viewer does not display one today.**
+  Neither the bitHuman-hosted viewer nor the embed iframe shows an in-session
+  "you are speaking with an AI" notice. If you build on the SDKs, the CLI, or a
+  self-hosted deployment, **we render frames and nothing else** — the surface
+  that could carry a notice is yours by construction. Either way: if you need a
+  disclosure on the page, put it there yourself and do not assume ours.
 - **Running on your own hardware changes none of this.** On-device and
   self-hosted serving is the right answer for privacy. It is not an Article 50
   answer. If anything it makes marking harder: a pinned old runtime will keep
