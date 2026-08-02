@@ -61,6 +61,12 @@ Auth: export `BITHUMAN_API_SECRET`. Get a secret at [Developer → API
 Keys](https://www.bithuman.ai/developer/api-keys). See [authentication](/api/quickstart)
 for details.
 
+> **Which calls read the env var? (verified on 2.8.1)** The sync
+> `Bithuman.load(...)` falls back to `BITHUMAN_API_SECRET` automatically when
+> you omit `api_secret`. The async `AsyncBithuman.create(...)` does **not** on
+> 2.8.1 — pass `api_secret=os.environ["BITHUMAN_API_SECRET"]` explicitly (the
+> async env fallback lands in the next release).
+
 ## 2.3 — slim wheel, CLI moved out
 
 Through 2.2, `pip install bithuman` bundled both the Python SDK and a `bithuman`
@@ -95,7 +101,8 @@ models it can load depends on your platform:
   `essence-1`-only — serve Essence 2 through the cloud instead.
 
   > **Warning — does not work with bundles built on the current renderer
-  > (verified 2026-07-28).** The 2.8.0 Linux loader requires `P.f16` or
+  > (verified 2026-07-28 on 2.8.0; the same check ships in the 2.8.1
+  > backend).** The Linux loader requires `P.f16` or
   > `fs_red.f16` inside the container. Essence 2 `.imx` files produced since
   > the **2026-07-27 unified-renderer change** ship `unified_renderer.pt`
   > instead and carry neither, so `AsyncBithuman.create()` raises:
@@ -163,12 +170,41 @@ WebRTC), drain frames on your render tick.
 
 `Bithuman` (no `Async`) is the sync class, but it is **not** the same surface with
 `await` dropped. It does **not** expose `push_audio` / `run` / `flush`. The sync
-surface is just two calls: `load()` to load the model, and `compose()` — an
+surface is just two calls: the **classmethod** `Bithuman.load()` (which returns
+the loaded runtime — there is no separate constructor step), and `compose()` — an
 **iterator** that yields frames for an audio input. Use it for batch scripts and
 notebooks; use `AsyncBithuman` for the incremental push/drain streaming loop.
 `Avatar` / `AsyncAvatar` remain as **soft-deprecated identity aliases** for
 pre-2.0 code (`Avatar is Bithuman` evaluates `True`); new code should use the
 `Bithuman` names.
+
+### Offline render, sync (verified on 2.8.1)
+
+Renders frames from a WAV with no event loop — e.g. against a showcase
+`essence-1` model fetched with
+[`bithuman pull modern-court-jester`](/sdk/cli/commands#bithuman-pull--list--your-models-and-showcase-avatars):
+
+```python
+import os
+import numpy as np
+import soundfile as sf                # pip install soundfile
+from bithuman import Bithuman
+
+# Sync load: classmethod, returns the runtime. api_secret omitted here —
+# Bithuman.load() falls back to the BITHUMAN_API_SECRET env var (2.8.1).
+rt = Bithuman.load(
+    os.path.expanduser("~/.cache/bithuman/showcase/modern-court-jester.imx")
+)
+
+audio, sr = sf.read("speech.wav", dtype="int16")   # 16 kHz mono PCM
+for frame in rt.compose(audio, output_size=(1280, 720)):
+    bgr = frame.bgr                    # numpy (720, 1280, 3) uint8
+    # write to disk / encoder here; frame.frame_idx is the index
+```
+
+`compose()` yields `ComposedFrame` objects — the pixels are on **`.bgr`**
+(there is no `.image` attribute). Note `frame_width` / `frame_height` report
+`0 x 0` on the sync class too — take the shape off `.bgr` instead.
 
 ## Public API at a glance
 

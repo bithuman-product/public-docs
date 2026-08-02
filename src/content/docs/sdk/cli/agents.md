@@ -79,9 +79,11 @@ for flags and copy-pasteable `EXAMPLES:`.
 
 ### `bithuman version --json`
 ```json
-{"cli":"2.4.0","libessence":"2.3.6","abi":7}
+{"cli":"2.4.2","libessence":"2.3.8","abi":7,"schema_version":1}
 ```
-`"wheel"` is added when installed via the pip shim.
+`"wheel"` is added when installed via the pip shim. (Values shown are from CLI
+2.4.2; your install prints its own versions — the Homebrew release is 2.4.0,
+which reports `libessence 2.3.6`.)
 
 ### `bithuman whoami --json`  ·  `bithuman auth status --json`
 ```json
@@ -114,8 +116,15 @@ Human mode prints the bare `.imx` path on stdout. Exit **66**
 
 ### `bithuman info <model.imx> --json`  (alias: `inspect`)
 ```json
-{"path":"/…/modern-court-jester.imx","format_version":2,"size_bytes":98359972,"manifest":{…}}
+{"path":"/…/modern-court-jester.imx","format_version":2,"size_bytes":82583342,
+ "engine":"…","family":"…","manifest":{…},
+ "members":[{"name":"manifest.json","size_bytes":1030},{"name":"audio_encoder.onnx","size_bytes":2840632},…],
+ "schema_version":1}
 ```
+As of CLI **2.4.1**, `info` lists the **full container table of contents** —
+every member with its byte size (`members` in `--json`, a `Members (N):` block
+in human mode) — plus the `engine` / `family` resolved from the unified IMX
+header, so you can see exactly what a model file carries before deploying it.
 Error codes: `FILE_NOT_FOUND`, `NOT_IMX`, `UNSUPPORTED_IMX_VERSION`,
 `MISSING_MANIFEST` (all exit **66**); `INTERNAL` (**70**).
 
@@ -201,13 +210,18 @@ agent has a single error-parsing path. Tool `annotations` carry `readOnlyHint`
 / `destructiveHint` / `idempotentHint`; `delete_agent` and `delete_webhook` are
 flagged destructive so a runtime can require approval. `generate_agent`,
 `text_to_speech`, and `generate_dynamics` **consume credits** — check
-`get_credit_balance` first. `generate_agent` refuses an empty request (it needs
-at least one of `prompt`/`image`/`audio`) so it can't silently spend. Agent
-creation is **image-only** — `video` is not a creation input (the 10-second
-identity video is generated internally); older CLI builds still list
-`video` in the tool schema — never use it: as the image-only rollout
-completes, the API rejects it with
-[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations).
+`get_credit_balance` first. `generate_agent` refuses an empty request (its
+schema requires at least one of `prompt`/`image`/`audio`) so it can't silently
+spend, and as of CLI **2.4.1** it takes **`model` and `version`** — `model:
+"essence", version: "v2"` (or the full name `model: "essence-2"`) creates an
+[Essence 2](/concepts/essence-2) agent; omitted, the platform default
+(`expression-1`) applies, never a silent upgrade onto a higher-priced
+pipeline. Agent creation is **image-only** — `video` is not a creation input
+(the 10-second identity video is generated internally): CLI 2.4.1+ removed it
+from the tool schema entirely, and the API rejects any request carrying it
+with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations). On CLI
+2.4.0 (the current Homebrew release) the `model` parameter does not exist yet
+— upgrade, or use `bithuman-mcp` 0.3.4+ ([MCP server](/guides/mcp-server)).
 
 Discover the surface without speaking JSON-RPC: `bithuman mcp tools` (or
 `bithuman mcp tools --json`), and the catalog is also under `mcp_tools` in

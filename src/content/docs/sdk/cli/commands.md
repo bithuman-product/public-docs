@@ -248,6 +248,22 @@ resolved from the unified IMX container header (also in `--json` as
 bithuman info avatar.imx
 ```
 
+As of CLI **2.4.1**, `info` also prints the **full container table of
+contents** — every member in the `.imx` with its byte size (`members` in
+`--json`) — so you can see at a glance what an artifact carries (tested
+against CLI 2.4.2 on a showcase model):
+
+```text
+  Members (9):
+    manifest.json  (1030 bytes)
+    audio/feature_centers.npz  (624727 bytes)
+    audio_encoder.onnx  (2840632 bytes)
+    …
+```
+
+(`inspect` is an alias — `bithuman inspect avatar.imx` prints the same
+report.)
+
 `info` recognizes the non-`.imx` artifacts too: an `expression-2` `.avatar`
 (CoreML zip), an `essence-2-max` (Essence 2 Max) pickle, and legacy `essence-1` tar
 exports get a format/family report instead of a "not an IMX file" error; a

@@ -93,7 +93,7 @@ We keep this honest so you can plan around it.
 | **Swift / Apple** | SwiftPM `bitHumanKit` (0.8.2) | On-device | **Preview** |
 | **Android / Kotlin** | `ai.bithuman:sdk:2.3.6` — Maven Central (Essence, pinned) | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
-| **CLI** | `bithuman-cli` (2.3.27) — Homebrew · PyPI · universal installer | On-device | **GA** |
+| **CLI** | `bithuman-cli` (2.4.0 — 2.4.2 rolling out) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 

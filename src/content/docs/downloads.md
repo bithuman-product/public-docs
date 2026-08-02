@@ -14,7 +14,9 @@ One engine (`libessence`) drives every surface. Pick the install path that match
 
 The fastest way to see an avatar talk. **macOS arm64 and Linux x86_64.** The
 Homebrew formula and the universal installer both deliver the same Rust binary
-(currently `cli-v2.4.0`); the PyPI wheel is a macOS-only sibling and trails at
+(currently `cli-v2.4.0`; the `2.4.2` release — public model naming, the
+essence-2-capable MCP `generate_agent`, and the full `info` member listing —
+is rolling out); the PyPI wheel is a macOS-only sibling and trails at
 `2.3.25`. There is **no Linux aarch64 build** published today — the release
 carries only `aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`, so
 `install.sh` on Linux arm64 resolves a download that does not exist.
@@ -132,7 +134,8 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 |---|---|---|---|
 | Python SDK (`bithuman`) | **2.8.1** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | 0.8.2 | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
-| bitHuman CLI (`bithuman-cli`) | **2.4.0** (Homebrew / universal installer) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.4.0** (Homebrew / universal installer; 2.4.2 rolling out) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman MCP server (`bithuman-mcp`) | **0.3.4** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
 Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.8.1 wheel on the backend — is supported and tested as long as the ABI columns line up.
 

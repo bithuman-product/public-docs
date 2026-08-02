@@ -57,11 +57,10 @@ The call returns immediately with an `agent_id` and `processing` status.
 > **Agent creation is image-only.** Provide a portrait `image` (or let the
 > prompt generate one) — bitHuman generates a **10-second identity video
 > internally** (Seedance 1.5 pro, 25 fps), authored to loop seamlessly (its
-> first and last frames match). Video input is not part of the creation contract for any model and
-> is being removed platform-wide: do not send `video` — as the rollout
-> completes, a request carrying it is rejected with
+> first and last frames match). Video input is not part of the creation
+> contract for any model: a request carrying `video` is rejected with
 > [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
-> anything is billed.
+> anything is billed (verified against the live API, 2026-08-01).
 
 ### Model-specific inputs and creation times
 
@@ -185,6 +184,32 @@ print(resp.json())
 > **Note** The generation endpoint is `POST /v1/agent/generate`. (Older docs
 > referenced `/v1/agent-generation` — that path is incorrect.)
 
+### Idempotent retries — the `Idempotency-Key` header
+
+Creation is billed, so a network timeout on the response should never make you
+guess whether to retry. Send an **`Idempotency-Key`** header (any unique string
+you choose, e.g. a UUID) with the request:
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/agent/generate \
+  -H "Content-Type: application/json" \
+  -H "api-secret: $BITHUMAN_API_SECRET" \
+  -H "Idempotency-Key: order-42-avatar-1" \
+  -d '{"prompt": "You are a helpful retail assistant.", "model": "essence-2"}'
+```
+
+- A **repeated** request with the same key returns the **first response
+  verbatim** — same `agent_id` — with an `Idempotency-Replayed: true` response
+  header, and does **not** start a second billed generation.
+- When you don't supply your own `agent_id`, the agent id is **derived from the
+  key**, so a retry that lands on a different server replica still converges on
+  the same agent.
+- Use a **fresh key per intended creation** — reusing a key deliberately gives
+  you the previous creation back.
+
+The header is also honored on [`POST /v1/video/generate`](/api/video) and
+[`POST /v1/dynamics/generate`](/api/dynamics).
+
 ## Poll status
 
 `GET /v1/agent/status/{agent_id}` — returns the current state of a generation
@@ -299,7 +324,8 @@ automatically refunded):
 |---|---|---|
 | Invalid `model` value | `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, expression, expression-1, expression-2` | Rejected before dispatch; no credits charged. Retired names get a **targeted hint** instead of the bare list — e.g. `essence-2-light` → *"'essence-2-light' was consolidated into 'essence-2' (2026-07-05)…"*. |
 | Malformed body | `400 VALIDATION_ERROR` — `Request body must be valid JSON` / `…a JSON object` | Rejected before dispatch. |
-| `video` in the request body | [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) — `Agent creation is image-only. Provide a portrait image; bitHuman generates a 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). …` | The image-only contract is rolling out platform-wide — never send `video`; requests carrying it are rejected before dispatch (nothing charged) as the rollout completes. Send `image` instead — the identity video is always generated internally, for every model. |
+| `video` in the request body | [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) — `Agent creation is image-only. Provide a portrait image; bitHuman generates a 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). …` | Rejected before dispatch — nothing charged (verified live 2026-08-01). Send `image` instead — the identity video is always generated internally, for every model. |
+| Too many Essence 2 creations in flight | `status: "failed"` with a capacity `error_message` (queue position + an honest ETA derived from the measured drain rate) | `essence-2` creations are **admission-controlled**: at most **2 in-flight creations per account**, and a deep platform queue can also defer admission. Rejection happens **before billing** — nothing is charged, no refund needed. Wait for an in-flight creation to finish, then retry. |
 | A second-generation family paused for your account (rare) | [`503 MODEL_NOT_YET_AVAILABLE`](/api/errors#model-errors) — `<model> isn't available for generation yet. Specify 'essence-1' or 'expression-1' to generate now.` | Essence 2 / Expression 2 are **GA** (since July 10, 2026) — creation is open for all accounts, so this isn't returned in normal operation. It remains the safety response if a v2 family is ever re-paused; nothing is charged and the v1 families always work. |
 | Non-human subject on an explicit Essence 2 creation | [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) — `essence-2 requires a photorealistic human subject; this image looks like a <verdict> — use expression-2` | Rejected **before billing** and before any agent row exists — see [the subject gate](#the-essence-2-subject-gate-422). `auto` routes instead of rejecting. |
 | Not enough credits | `402 INSUFFICIENT_BALANCE` (also surfaces as `status: "failed"` with a payment `error_message` if the reserve fails mid-pipeline) | Creation costs the model's rate — 250 (v1), 500 (Essence 2), or 2000 (`expression-2`). |
@@ -331,15 +357,28 @@ print(agent["name"], agent["status"])
   "success": true,
   "data": {
     "agent_id": "A80HVD8577",
+    "code": "A80HVD8577",
     "status": "ready",
+    "model": "essence-2",
+    "supported_models": ["essence-2-max", "essence-2"],
+    "name": "My Agent",
     "system_prompt": "You are a friendly AI assistant",
+    "voice_id": "aBc123…",
     "image_url": "https://assets.bithuman.ai/A80HVD8577/image_20260115_103000_000001.jpg",
     "video_url": "https://assets.bithuman.ai/A80HVD8577/video_20260115_103200_000002.mp4",
-    "model_url": "https://assets.bithuman.ai/A80HVD8577/my_agent_20260115_103500_000003.imx",
-    "name": "My Agent"
+    "model_url": "https://assets.bithuman.ai/A80HVD8577/A80HVD8577.lebundle.imx"
   }
 }
 ```
+
+The response carries the agent's full record (abridged above; verified against
+the live API 2026-08-01) — the **persona** (`system_prompt`, `name`,
+`description`, `language`, `gender`), the **voice** (`voice_id`), the **media**
+(`image_url`, `video_url` — the internally generated 10-second identity video —
+and `model_url`), the creation state (`status`, `progress`, `current_step`,
+`error_message`), and the launch surface (`model`, `supported_models` — every
+entry a public model name you can send straight back as a `model` /
+`?model=` value).
 
 ## List your agents
 
@@ -590,7 +629,7 @@ requests.post(
 | `404` | `NOT_FOUND` | No agent with the given code (`message`: `"Agent not found for code: <code>"`). |
 | `404` | `NOT_FOUND` | Agent has no active session to `/speak` or `/add-context` (`message`: `"No active rooms found for agent <code>"`). |
 | `400` | `VALIDATION_ERROR` | Invalid request body (e.g. bad `type` value, or an invalid / retired `model` name — the error message lists the accepted values). |
-| `400` | `VIDEO_INPUT_NOT_SUPPORTED` | [Agent creation](#generate-an-agent) with a `video` input. Creation is **image-only** — provide a portrait `image`; the 10-second identity video is generated internally so it loops seamlessly (first frame == last frame). Rejection is rolling out platform-wide (nothing charged) — never send `video`. |
+| `400` | `VIDEO_INPUT_NOT_SUPPORTED` | [Agent creation](#generate-an-agent) with a `video` input. Creation is **image-only** — provide a portrait `image`; the 10-second identity video is generated internally so it loops seamlessly (first frame == last frame). Rejected before anything is billed — never send `video`. |
 | `503` | `MODEL_NOT_YET_AVAILABLE` | A second-generation family paused for your account. Essence 2 / Expression 2 are **GA** (since July 10, 2026) and open for all accounts, so [creation](#generate-an-agent) and [model add](#add-a-model-to-an-existing-agent) don't return this in normal operation — it's the safety response if a v2 family is ever re-paused. Nothing charged; the v1 families always work. |
 | `409` | `MODEL_NOT_GENERATED` | A launch surface (embed-token `model`, [talking video](/api/video), [model download](#download-an-agents-model)) requested a family the agent can't be launched as — it's missing from `supported_models`. Trained families: `"agent <code>'s <model> model hasn't been generated yet"`; `essence-2-max` is gated on the **stored identity video** it prepares from (generated internally by Essence creations; the message names the public family `essence-2-max`). [Add the model](#add-a-model-to-an-existing-agent) or create the agent with it. |
 | `409` | `AGENT_NOT_READY` | [`POST /v1/agent/{code}/models`](#add-a-model-to-an-existing-agent) on an agent that is still generating or failed — models can only be added to a `ready` agent. |

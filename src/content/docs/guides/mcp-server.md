@@ -21,10 +21,14 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 (`POST /v1/agent/{code}/models`), and the [knowledge API](/api/knowledge)
 (`/v1/knowledge`) are HTTP-only for now.
 
-> **Note** The standalone `bithuman-mcp` PyPI package is **deprecated** — its
-> tools are now built into the CLI. Install the CLI once (below) and you get
-> the same tools, identical names, plus local ones — with no separate Python
-> dependency.
+> **Note — two servers, same cloud tools.** The CLI's built-in `bithuman mcp`
+> is the recommended server: it adds the local tools and (as of CLI **2.4.1**)
+> carries the hardened `generate_agent` schema. The standalone
+> [`bithuman-mcp` PyPI package](https://pypi.org/project/bithuman-mcp/)
+> (`pip install bithuman-mcp`, currently **0.3.4**, Python 3.10–3.14) remains
+> available for pip-only environments — same cloud tool names, no local tools.
+> Since 0.3.4 it also accepts `model` / `version` on `generate_agent`, so
+> `essence-2` is reachable from either server.
 
 ## Tools
 
@@ -38,7 +42,7 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 | `get_usage` | `GET /v1/usage` | Usage/metering history (paginated). |
 | `list_voices` | `GET /v1/voices` | Built-in + custom TTS voices. |
 | `text_to_speech` | `POST /v1/tts` | Synthesize speech → a WAV file. |
-| `generate_agent` | `POST /v1/agent/generate` | Create an avatar agent. |
+| `generate_agent` | `POST /v1/agent/generate` | Create an avatar agent. Takes `prompt` / `image` / `audio` plus **`model` and `version`** — `model: "essence", version: "v2"` (or `model: "essence-2"`) creates an [Essence 2](/concepts/essence-2) agent; omitted, the platform default (`expression-1`, 250 credits) applies, never a silent upgrade. Needs CLI **2.4.1+** (or `bithuman-mcp` **0.3.4+**) — earlier servers had no `model` parameter and every creation fell to the default model. |
 | `get_agent_status` | `GET /v1/agent/status/{id}` | Poll generation progress. |
 | `get_agent` | `GET /v1/agent/{code}` | Fetch agent details. |
 | `list_agents` | `GET /v1/agents` | List your agents (paginated). |
@@ -70,6 +74,14 @@ brew install bithuman-product/bithuman/bithuman-cli                  # macOS (Ap
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh   # macOS (Apple Silicon) + Linux
 pip install bithuman-cli                                             # macOS arm64 (pip)
 ```
+
+> **Version check for `model` / `version` support:** `bithuman --version` must
+> report CLI **2.4.1 or newer**. The current Homebrew/installer release is
+> **2.4.0** (2.4.2 is rolling out) — on 2.4.0, `generate_agent` has no `model`
+> parameter and every creation uses the platform default model. Until your
+> install reports 2.4.1+, use the pip server for Essence 2 creations:
+> `pip install bithuman-mcp` (0.3.4) and register command `bithuman-mcp`
+> instead of `bithuman mcp`.
 
 Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
 [Developer Dashboard](https://www.bithuman.ai/developer/api-keys)). The server resolves
@@ -141,6 +153,21 @@ The agent calls `generate_agent`, polls `get_agent_status` until `ready` (a
 few minutes for first-generation models; roughly 45 minutes to 1.5 hours for the
 second generation), then `create_embed_token` and hands you the JWT for the
 [embed widget](/guides/deploy-embed).
+
+**Create a photoreal Essence 2 agent** (CLI 2.4.1+ / `bithuman-mcp` 0.3.4+)
+
+> Create an essence-2 avatar from this photo: https://…/portrait.jpg — a
+> helpful retail assistant. Tell me the agent id and poll until it's ready.
+
+The agent calls `generate_agent` with `model: "essence-2"` (equivalently
+`model: "essence", version: "v2"`) — 500 credits, and the input must be a
+photorealistic human subject (else the API rejects it 422 **before billing**,
+see [the subject gate](/api/agents#the-essence-2-subject-gate-422)) — then
+polls `get_agent_status`. Expect the `lip_sync` step to run ~25–40 minutes
+while the identity distills. Creation is **image-only**: never pass `video`
+(the `bithuman-mcp` 0.3.4 schema still lists a legacy `video` field — the API
+rejects it with `400 VIDEO_INPUT_NOT_SUPPORTED`; the CLI 2.4.1+ server has
+removed it).
 
 **Turn a script into speech**
 

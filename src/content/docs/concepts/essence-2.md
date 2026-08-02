@@ -114,12 +114,14 @@ identity (or let the prompt generate one), and the platform **generates the
 identity video for you** as a creation step before training — a 10-second
 clip authored to loop seamlessly, so idle playback never shows a seam
 (you'll see `current_step: "video"` at ~45% progress). Video input is not
-part of the creation contract and is being removed platform-wide: do not
-send `video` — as the rollout completes, a request carrying it is rejected
-with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
-anything is billed. A voice is
-prepared as part of creation (supply `audio` to clone one, or one is
-generated).
+part of the creation contract: a request carrying `video` is rejected with
+[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
+anything is billed (verified live 2026-08-01). One `aspect_ratio` value
+drives **both** the identity image and the driver video (`16:9` default,
+`9:16`, `1:1`), and the `framing` / `transparency` knobs shape the generated
+identity image — see [the parameter table](/api/agents#generate-an-agent).
+A voice is prepared as part of creation (supply `audio` to clone one, or one
+is generated).
 
 **What happens.** Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
@@ -244,6 +246,41 @@ in the API, the session contract, or the `?model=` tier slugs changed.
   the family under an earlier name — see
   [Naming & migration](/concepts/models-v2#naming--migration).
 
+## The developer journey
+
+Every path to a live Essence 2 avatar, in order — each step links the page
+with runnable, verified examples:
+
+1. **Create** — [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
+   with `model: "essence-2"` (equivalently `model: "essence", version: "v2"`).
+   Image-only intake, 500 credits, idempotent retries via the
+   [`Idempotency-Key` header](/api/agents#idempotent-retries--the-idempotency-key-header).
+   Also creatable from any [MCP client](/guides/mcp-server) (`generate_agent`
+   with `model`/`version`) or the dashboard.
+2. **Poll** — [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status)
+   until `status: "ready"`; the long `lip_sync` step is the distillation.
+   Failures refund automatically.
+3. **Inspect** — [`GET /v1/agent/{code}`](/api/agents#get-an-agent) returns
+   the persona, voice, media (including the internally generated identity
+   video), and `supported_models` (`essence-2` + `essence-2-max` after the
+   combined creation).
+4. **Go live** — [embed widget](/guides/deploy-embed) or share URL for the
+   fastest path; [LiveKit plugin](/guides/deploy-livekit) for programmatic
+   real-time sessions (`AvatarSession` takes the agent code); tier control
+   via [`?model=`](#serving-tiers). Drive a live session with
+   [`/speak` and `/add-context`](/api/agents#make-an-agent-speak).
+5. **Render offline** — [`POST /v1/video/generate`](/api/video) with
+   `model: "essence-2"` for mp4s (4 credits/min of output).
+6. **Download the artifact** —
+   [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
+   or [`bithuman pull <code>`](/sdk/cli/commands#pull-your-own-agents-model-by-code)
+   → `<code>.lebundle.imx`. Inspect it with
+   [`bithuman info`](/sdk/cli/commands#bithuman-info--inspect-a-model) (full
+   member listing as of CLI 2.4.1). **Licensed weights, cloud-served today**:
+   the [Python SDK](/sdk/python#which-model-artifacts-can-the-sdk-load) cannot
+   yet load current-renderer Essence 2 bundles locally — serve through the
+   cloud surfaces.
+
 ## Next steps
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
@@ -251,6 +288,6 @@ in the API, the session contract, or the `?model=` tier slugs changed.
 - [Essence 2 Max](/concepts/essence-2-max) — the premium, highest-fidelity model.
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
+- [MCP server](/guides/mcp-server) — create and manage agents from Claude, Cursor, or any MCP client.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `model: "essence-2"`.
-- [Download your model](/api/agents#download-an-agents-model) — the trained `.lebundle.imx` (licensed weights), via API or `bithuman pull <code>`.
