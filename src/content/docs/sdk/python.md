@@ -116,10 +116,18 @@ models it can load depends on your platform:
   > ```
   >
   > Reproduced on 3 of 3 agents, using artifacts fetched from the documented
-  > `GET /v1/agent/{code}/model/download?model=essence-2`. Until the loader and
-  > the packer agree again, serve Essence 2 through the cloud — the
-  > [Video API](/api/video) for offline mp4, or the
+  > `GET /v1/agent/{code}/model/download?model=essence-2`. For **live
+  > streaming**, serve Essence 2 through the cloud — the
+  > [Video API](/api/video) for cloud-rendered mp4, or the
   > [LiveKit plugin](#livekit-voice-agents) for live sessions.
+
+  **Offline self-host rendering works as of 2.9.0** and does *not* hit the
+  warning above: `bithuman.tessera_offline` (install the
+  `bithuman[tessera]` extra) unpacks current-renderer bundles itself and
+  renders them on CPU, metered, ~22–31 FPS on a 16-core desktop — see
+  [Self-hosted → Essence 2](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290).
+  The warning still applies to the **streaming** `AsyncBithuman` /
+  `Bithuman` load path.
 - **[Essence 2 Max](/concepts/essence-2-max) — cloud-only from Python.**
 - **Expression 1 / Expression 2 — no Python-loadable artifact.** Serve them
   through the [LiveKit plugin](#livekit-voice-agents)'s `AvatarSession`, which

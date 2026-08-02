@@ -56,46 +56,78 @@ Set `BITHUMAN_UNMETERED=1` to skip `api.bithuman.ai` calls entirely — for loca
 
 Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for Expression 1. See [Pricing](/guides/pricing) for the full cloud-vs-self-hosted breakdown. Self-hosted serving authenticates online today (a once-per-minute billing heartbeat).
 
-## Essence 2 / Expression 2 self-hosted — coming soon
+## Essence 2 self-hosted — CPU offline rendering (SDK 2.9.0+)
 
-The Docker image above runs the first-generation
-[Expression 1](/concepts/models) model on an NVIDIA GPU. For the
-[second-generation models](/concepts/models-v2), what you can run on your own
-hardware today differs by model:
+As of **`bithuman` 2.9.0** (Linux x86_64/aarch64, Python 3.10–3.14), the
+[`essence-2`](/concepts/essence-2) model **self-hosts on CPU** — no GPU
+required. The SDK renders the same `<code>.lebundle.imx` you download with
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+or `bithuman pull <code>`, entirely on your own hardware, teeth-refinement
+stage included.
 
-- **[`expression-2`](/concepts/expression-2)** already **renders locally via
-  the [CLI](/sdk/cli/overview#local-rendering-by-platform)** — macOS (Apple
+```bash
+pip install "bithuman[tessera]"   # torch + onnx + onnxruntime extras
+```
+
+```python
+import os
+from bithuman.tessera_offline import render_offline
+
+stats = render_offline(
+    "A80XXXXXXXX.lebundle.imx",          # the downloaded essence-2 artifact
+    "speech_16k.wav",                     # 16 kHz mono works best
+    out_mp4="rendered.mp4",
+    api_secret=os.environ["BITHUMAN_API_SECRET"],
+)
+print(stats["frames"], "frames,", stats["fps"], "fps")
+```
+
+For frame-level control, `OfflineTesseraRenderer(imx_path,
+api_secret=...).render(audio, on_frame=callback)` delivers RGB numpy frames
+as they are produced.
+
+**The metering key is required — plainly.** The self-hosted runtime ships
+**with** its license/metering support as one artifact: the renderer
+authenticates your `BITHUMAN_API_SECRET` at construction and sends a
+once-per-minute billing heartbeat (self-hosted rate — see
+[Pricing](/guides/pricing)). Without a valid key the runtime is
+**fail-closed**: it renders **zero frames** and raises at the first frame.
+There is no unmetered mode in the released wheel.
+
+**Prerequisites:** `ffmpeg` on PATH, and the speech encoder ONNX (asset id
+`audio-encoder-fp32` in the per-host dependency store `~/.bithuman/deps`, or
+point `BITHUMAN_W2V_ONNX` at the file).
+
+**Honest performance expectations (measured, 600-frame runs):** on a 16-core
+x86 desktop the route sustains **~22–25 FPS end-to-end** with the default
+`fast` CPU tier, and **~31 FPS** when the bundle carries the CPU director
+member (newer artifacts). Smaller boxes scale roughly with cores; the output
+is 25 FPS video, so a 16-core-class machine renders about real-time. Tuning
+knobs:
+
+| Env | Default | Purpose |
+|---|---|---|
+| `BITHUMAN_TESSERA_CPU_TIER` | `fast` | `reference` = the slower fp32 parity tier |
+| `BITHUMAN_TESSERA_TORCH_THREADS` | ~half the cores (≤12) | torch intra-op pool; oversubscribing thrashes |
+| `BITHUMAN_TESSERA_PIPELINE` | `1` | producer/consumer pipelined render; `0` disables |
+| `BITHUMAN_TESSERA_DIRECTOR` | `auto` | `ts`/`onnx` pins the director backend |
+
+Beyond `essence-2` offline CPU rendering, the rest of the second-generation
+matrix today:
+
+- **[`expression-2`](/concepts/expression-2)** renders locally via the
+  [CLI](/sdk/cli/overview#local-rendering-by-platform) — macOS (Apple
   Silicon) and Linux x86_64 — and on-device on Apple Silicon via the
   [Swift SDK](/sdk/swift).
-- **[`essence-2`](/concepts/essence-2)** does **not** self-host through the
-  developer SDK or CLI yet. Its self-hosted runtime — real-time CPU serving of
-  the same downloaded `.lebundle.imx`, no GPU required — is in active
-  development, and it ships **together with its license/metering support** (a
-  self-hosted session bills at the self-hosted rate, like every other
-  surface): the runtime and the billing path arrive as one release, never
-  separately. **Today, serve `essence-2` through the cloud.**
-
-You can already download the `essence-2` artifact — the `<code>.lebundle.imx` —
-with
-[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>`, but it is for archival and forward-compatibility
-today. The [Python SDK](/sdk/python#which-model-artifacts-can-the-sdk-load) and
-[CLI](/sdk/cli/overview) **recognize** the file, but passing it as the model
-path **fails at load** on current builds. Until the `essence-2` self-host
-runtime ships, put it on screen through the cloud surfaces:
-
-- the [cloud REST API](/api/agents),
-- the [LiveKit plugin](/sdk/livekit) — pass the **agent code**, not a model
-  file, and it streams whatever family that agent serves,
-- the [embed widget](/guides/deploy-embed), or the dashboard.
-
-The one **on-device** path that exists today for `essence-2` is **Apple
-Silicon** playback via the [Swift SDK](/sdk/swift) — `essence-2` and
-`expression-2` have on-device Neural Engine engines there. That rail is
-**preview**, not GA: treat it as a technology preview, not a self-host
-deployment product.
-[`essence-2-max`](/concepts/essence-2-max) has **no on-device or self-hosted
-runtime** — it is cloud-GPU-only.
+- **`essence-2` live streaming** (LiveKit-style sessions from your own
+  server) is still served **through the cloud** — the streaming loader does
+  not accept current cloud-form bundles yet (see the
+  [Python SDK loader notes](/sdk/python#which-model-artifacts-can-the-sdk-load)).
+- **Apple Silicon on-device** playback via the [Swift SDK](/sdk/swift)
+  (`essence-2` and `expression-2` Neural Engine engines) remains **preview**,
+  not GA.
+- [`essence-2-max`](/concepts/essence-2-max) has **no on-device or
+  self-hosted runtime** — it is cloud-GPU-only.
 
 See [where each model runs](/concepts/models-v2#where-each-model-runs) for the
 full device/runtime matrix.

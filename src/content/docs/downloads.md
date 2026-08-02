@@ -201,7 +201,7 @@ artifact — where that artifact can run **locally today** differs by model:
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
 | bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
-| Self-hosted CPU (your servers) | In development — serve via the cloud today ([details](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon)) | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
+| Self-hosted CPU (your servers) | Offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | Preview ([Swift](/sdk/swift)) | — (cloud-only) | Yes ([Swift](/sdk/swift) · [CLI](/sdk/cli/overview#local-rendering-by-platform)) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Planned (WebGPU) |
 

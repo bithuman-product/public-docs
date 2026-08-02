@@ -311,7 +311,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — GPU | ✅ chain tier | ✅ (the only tier) | ✅ chain tier |
 | bitHuman cloud — Apple Neural Engine | ✅ chain tier | — | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
-| Self-hosted (your servers, CPU) | In development — serve via the cloud today ([details](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon)) | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
+| Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming still via the cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
 | On-device macOS / iOS (Apple Silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
 | Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback), on by default where a per-identity web bundle is published and falling back to cloud otherwise, as bundles publish. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
@@ -325,11 +325,12 @@ fallback covering living idle + voice while full in-browser lip-sync lands for
 WASM and for expression-2. **Local playback of a downloaded artifact** differs
 by model: `expression-2` already renders locally via the
 [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
-Linux x86_64), while `essence-2` local/self-hosted playback and
-**locally-hosted LiveKit** are in active development — until they ship, the
-`essence-2` download is for archival and forward-compatibility, and playback
-runs through the cloud or the
-browser. And on **CPU**, essence-2 sustains real-time (~25 fps) while
+Linux x86_64), and as of SDK **2.9.0** the `essence-2` download **renders
+offline on your own CPU servers** — metered, no GPU — via
+`bithuman.tessera_offline`
+([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
+**Locally-hosted LiveKit** (live streaming from your own server) is still in
+active development — live sessions run through the cloud or the browser. And on **CPU**, essence-2 sustains real-time (~25 fps) while
 expression-2's CPU tier is sized for **offline talking-video generation** rather
 than real-time streaming (which uses the GPU and Apple Neural Engine tiers).
 

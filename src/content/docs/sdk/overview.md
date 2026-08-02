@@ -69,9 +69,12 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 
 > **Second generation.** [`essence-2`](/concepts/essence-2) runs on-device on
 > Apple Silicon / the Neural Engine via the [Swift SDK](/sdk/swift) (preview);
-> its **self-hosted CPU runtime is in development** — the Python SDK / CLI
-> cannot serve an `essence-2` artifact yet, so serve it through the cloud today
-> ([details](/guides/deploy-self-hosted#essence-2--expression-2-self-hosted--coming-soon)).
+> as of Python SDK **2.9.0** it also **renders offline on your own CPU
+> servers** — metered, no GPU, via `bithuman.tessera_offline` and the
+> `bithuman[tessera]` extra
+> ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
+> Live streaming of an `essence-2` artifact from your own server still runs
+> through the cloud.
 > [`expression-2`](/concepts/expression-2) renders locally via the
 > [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
 > Linux x86_64) and on the Neural Engine.

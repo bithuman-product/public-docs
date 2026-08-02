@@ -8,6 +8,23 @@ order: 1
 
 > **Note** Product-level changes only. For per-version notes, see the [Python SDK CHANGELOG](https://github.com/bithuman-product/homebrew-bithuman/blob/main/python/CHANGELOG.md) and the [Swift SDK releases](https://github.com/bithuman-product/homebrew-bithuman/releases).
 
+## August 2026
+
+### Essence 2 self-hosted — offline CPU rendering ships in Python SDK 2.9.0 (2026-08-02)
+
+The `essence-2` model now **self-hosts on your own CPU servers**. Python SDK
+**2.9.0** (Linux x86_64 and aarch64, Python 3.10–3.14) adds
+`bithuman.tessera_offline` — install the **`bithuman[tessera]`** extra and
+render the downloaded `<code>.lebundle.imx` to frames or an mp4 entirely on
+your hardware, no GPU required, teeth-refinement stage included. Measured
+end-to-end: **~22–31 FPS on a 16-core desktop** (the higher band when the
+bundle carries the CPU director member). The runtime ships **together with
+its metering**: a valid `BITHUMAN_API_SECRET` is required, sessions bill at
+the self-hosted rate (2 credits/min), and without a key the renderer is
+fail-closed — zero frames. Live streaming from your own server still runs
+through the cloud. Quickstart:
+[Self-hosted → Essence 2](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290).
+
 ## July 2026
 
 ### Essence 2 — sharper mouth and teeth, and a much smaller model file (2026-07-27)
