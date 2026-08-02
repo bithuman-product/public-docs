@@ -57,9 +57,14 @@ We would rather write this down than let you assume coverage you do not have.
   carries a watermark, provenance metadata, or a C2PA manifest today. December 2
   is the date we are working to. Treat it as a target, not a feature you can plan
   around.
-- **In-session AI disclosure (50(1)): the viewer does not display one today.**
-  Neither the bitHuman-hosted viewer nor the embed iframe shows an in-session
-  "you are speaking with an AI" notice. If you build on the SDKs, the CLI, or a
+- **In-session AI disclosure (50(1)): we do not show one, and that is a
+  position rather than a gap.** Neither the bitHuman-hosted viewer nor the embed
+  iframe displays a "you are speaking with an AI" notice. We built one, reviewed
+  it on a real session, and removed it: on a product whose premise is a visibly
+  synthetic avatar that the user chose to open, it read as noise. We rely on the
+  Article 50(1) carve-out for cases where the interaction is already obvious —
+  while noting on this same page that the Commission reads that exception
+  narrowly. Do not plan around it changing. If you build on the SDKs, the CLI, or a
   self-hosted deployment, **we render frames and nothing else** — the surface
   that could carry a notice is yours by construction. Either way: if you need a
   disclosure on the page, put it there yourself and do not assume ours.
