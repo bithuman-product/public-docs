@@ -213,7 +213,10 @@ Essence 2 renders through a **unified renderer**: the face is animated from your
 identity's own footage, while the **mouth interior — the teeth especially — is
 synthesized by a small per-identity head** rather than being averaged out of the
 source frames. Teeth simply are not present in a closed-mouth portrait, so they
-have to be generated; that is the part that most visibly improved. Measured
+have to be generated; that is the part that most visibly improved. The head is
+taught entirely by the identity's own high-fidelity teacher render: **the
+network learns from the teacher where and what to render** — no hand-crafted
+masks or fixed shapes decide which pixels it owns. Measured
 against each identity's own previous build, mouth-region fidelity improved
 **roughly 2× to 4.7×** across the launch gallery, verified frame by frame by
 eye. Mouth motion is also re-centred and wider, so speech reads as more dynamic.
