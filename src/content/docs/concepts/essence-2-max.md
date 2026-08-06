@@ -195,6 +195,9 @@ Per-minute serving is metered for the whole time a session is live and the
 engine is rendering — **idle/silent animation included**. Only stopped, paused,
 or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guides/pricing).
 
+Self-hosted serving runs on your own NVIDIA GPU from a licensed container:
+[Self-hosted Essence 2 Max](/guides/deploy-essence-2-max).
+
 ## Limits and expectations
 
 - **Renders at ~25 fps** on cloud GPUs; video streams over WebRTC.

@@ -26,6 +26,8 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/devel
 
 Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time a session is live and the engine is rendering (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). **That includes idle/silent animation** — a connected avatar looping its idle motion is rendering, and accrues. Only stopped, paused, or disconnected sessions stop accruing. The second-generation models [launched July 10, 2026](/concepts/models-v2).
 
+In the [self-hosted Essence 2 Max container](/guides/deploy-essence-2-max) a credit minute is rendering time — the seconds between a render being accepted and finishing, idle inside that render included. A container that is up and ready but rendering nothing accrues nothing.
+
 Managed conversational agents bill on top of avatar serving:
 
 | Surface | Rate |

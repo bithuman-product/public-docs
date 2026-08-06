@@ -6,6 +6,8 @@ group: "Deploy"
 order: 11
 ---
 
+> **Looking for self-hosted Essence 2 Max?** This page covers the Expression 1 container. Essence 2 Max self-hosts from a different image, with a different API and a different rate — see [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max).
+
 ## The Expression GPU container
 
 The self-hosted GPU path runs the first-generation [Expression 1](/concepts/models) model on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams 25 fps lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. Bills at the self-hosted rate — 2 credits/min ([pricing](/guides/pricing)).
