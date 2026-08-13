@@ -10,6 +10,18 @@ order: 1
 
 ## August 2026
 
+### Essence 2 Max self-hosted — a GPU container you run yourself (2026-08-13)
+
+`essence-2-max` — the **premium photoreal renderer** — can now run on **your
+own NVIDIA RTX 40-series GPU** as a self-hosted container. You POST audio to a
+local REST API and get back an H.264 talking video rendered entirely on your
+hardware, with an included example for visualizing it live in a locally-hosted
+LiveKit room. The image is **hand-delivered** (signed and checksummed) rather
+than pulled from a public registry — contact
+[hello@bithuman.ai](mailto:hello@bithuman.ai) to get a bundle. Sessions bill at
+the self-hosted rate (4 credits/min). Quickstart:
+[Self-hosted Essence 2 Max](/guides/deploy-essence-2-max).
+
 ### Essence 2 self-hosted — offline CPU rendering ships in Python SDK 2.9.0 (2026-08-02)
 
 The `essence-2` model now **self-hosts on your own CPU servers**. Python SDK

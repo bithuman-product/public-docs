@@ -3,7 +3,7 @@ title: "Embed widget"
 description: "Drop a talking avatar onto any website with a single iframe — zero backend — and mint short-lived embed tokens for per-visitor session tracking."
 section: guides
 group: "Deploy"
-order: 12
+order: 13
 ---
 
 ## Drop-in iframe

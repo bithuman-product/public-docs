@@ -293,7 +293,7 @@ https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
 |---|---|
 | [`essence-2`](/concepts/essence-2#serving-tiers) | `essence-2-gpu` · `essence-2-ane` · `essence-2-cpu` |
 | [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
-| [`essence-2-max`](/concepts/essence-2-max#serving) | `essence-2-max` (single GPU tier) |
+| [`essence-2-max`](/concepts/essence-2-max#serving) | `essence-2-max` (single cloud GPU tier; also self-hostable — see [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max)) |
 
 Saved links carrying pre-rename or retired slugs keep working — see
 [Naming & migration](#naming--migration).
