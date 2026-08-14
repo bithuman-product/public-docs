@@ -69,7 +69,9 @@ sessions ([billing](#billing)).
 | `run-essence-2-max.sh` | Launch script — revision guard + revocable-auth default |
 | `essence-2-max.env.example` | Every configuration knob, documented |
 | `QUICKSTART.md` | Verify → configure → run → render, all commands executed verbatim |
-| `examples/livekit/` | Locally-hosted LiveKit visualization loop |
+| `avatars/<agent code>.pkl` | Your avatar's prepared identity bundle — see [Avatars](#launch) |
+| `examples/realtime-chat/` | Talk to your avatar live — LiveKit + OpenAI Realtime voice |
+| `examples/livekit/` | Locally-hosted LiveKit server + clip-streaming loop |
 | `sample-<agent code>.mp4` | The literal output of the quickstart render |
 
 ## Verify and load the image
@@ -91,7 +93,10 @@ docker load -i essence-2-max-<version>.tar
 > **Note** `--insecure-ignore-tlog` is required and correct here: the
 > signature is deliberately absent from the public transparency log, and
 > trust anchors in the `cosign.pub` delivered with your bundle — not in a
-> public record.
+> public record. No cosign on the machine? One-line install:
+> `curl -sLo /usr/local/bin/cosign https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 && chmod +x /usr/local/bin/cosign`
+> — or rely on the sha256 check alone (the signature additionally proves
+> origin).
 
 ## Configure
 
@@ -132,10 +137,20 @@ The launcher enforces a **revision guard**: it refuses any image whose
 provenance label doesn't match your delivery document, so a wrong or stale
 `docker load` fails before any container starts.
 
-**Avatars.** Identity bundles live in the `essence-2-max-avatars` Docker
-volume. Put each agent's `.imx` file there — download it from the dashboard
-or with
-[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model).
+**Avatars.** Your avatar ships **with the bundle** as
+`avatars/<agent code>.pkl` — a prepared identity bundle for this container.
+Install it once into the `essence-2-max-avatars` Docker volume, from the
+bundle directory:
+
+```bash
+docker run --rm -v essence-2-max-avatars:/avatars -v "$PWD/avatars:/src" \
+  alpine cp /src/<agent code>.pkl /avatars/
+```
+
+Additional avatars are delivered the same way — drop the `.pkl` into the
+volume and it serves immediately (contact
+[hello@bithuman.ai](mailto:hello@bithuman.ai) to prepare more of your agents
+for self-hosting).
 
 ## Render over the REST API
 
@@ -150,7 +165,7 @@ curl -s localhost:8080/v1/health | jq '{status, engine: .engine.status, capacity
 
 **Render a talking video.** Rendering is an async job; the result is
 H.264/AAC mp4, playable in any browser `<video>` tag. `avatar_id` is the
-agent code of an avatar whose `.imx` is in the avatars volume. Audio can be
+agent code of an avatar installed in the avatars volume. Audio can be
 any common format — WAV at any sample rate, MP3, M4A/AAC, OGG, FLAC — the
 container normalizes it internally:
 
