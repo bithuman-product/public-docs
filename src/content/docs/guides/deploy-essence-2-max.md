@@ -1,6 +1,6 @@
 ---
 title: "Self-hosted Essence 2 Max"
-description: "Run essence-2-max — bitHuman's premium photoreal renderer — as a container on your own NVIDIA RTX 40-series GPU: verify the hand-delivered image, launch it with the revision guard, render H.264 talking videos over a local REST API, and visualize them in a locally-hosted LiveKit room."
+description: "Run essence-2 self-hosted — the GPU version of bitHuman's photoreal avatar rendering — as a container on your own NVIDIA GPU: verify the hand-delivered image, launch it, render H.264 talking videos over a local REST API, and visualize them in a locally-hosted LiveKit room."
 section: guides
 group: "Deploy"
 order: 12
@@ -9,23 +9,24 @@ label: "Self-hosted Essence 2 Max"
 
 ## The Essence 2 Max container
 
-Self-hosted [`essence-2-max`](/concepts/essence-2-max) runs bitHuman's
-**premium photoreal avatar renderer** as a single Docker container on your own
-NVIDIA GPU. One container, one API key, one concurrent render: you POST audio
-to a local REST API and get back an H.264 talking video of your agent,
-rendered entirely on your hardware. Sessions bill at the self-hosted rate —
-4 credits/min ([pricing](/guides/pricing)).
+This is the **self-hosted, GPU version of
+[essence-2](/concepts/essence-2)** — bitHuman's photoreal avatar rendering,
+packaged as a single Docker container you run on your own NVIDIA GPU
+(the model slug is [`essence-2-max`](/concepts/essence-2-max)). One container,
+one API key, one concurrent render: you POST audio to a local REST API and get
+back an H.264 talking video of your agent, rendered entirely on your hardware.
+Sessions bill at the self-hosted rate — 4 credits/min ([pricing](/guides/pricing)).
 
 This container renders **videos as jobs** (audio in → mp4 out). For live
 streaming, publish the rendered clips into a LiveKit room — the bundle ships a
 complete locally-hosted example ([below](#visualize-live-in-a-locally-hosted-livekit-room)).
-For a live cloud session with the same model, use the
+For a live cloud session instead of self-hosting, use the
 [cloud surfaces](/concepts/essence-2-max#serving).
 
 **Requirements**
 
 - **NVIDIA Ada (RTX 40-series) or newer**, with **12 GB VRAM dedicated to
-  this container** — the engine needs ~10 GB to itself, so don't share the
+  this container** — the container needs ~10 GB to itself, so don't share the
   GPU with another renderer.
 - **32 GB system RAM.**
 - Docker with the NVIDIA Container Toolkit.
@@ -95,8 +96,8 @@ authenticate with their bitHuman **API secrets** — the keys on your
 > air-gapped box, and the container says so in its logs on every boot.
 
 The env example documents every other knob — port (default `8080`),
-usage-report cadence, startup self-test, H.264 quality, and the engine pins
-that must match the shipped image.
+usage-report cadence, startup self-test, and H.264 quality. Leave the
+runtime-tuning values at their shipped defaults.
 
 ## Launch
 
@@ -118,8 +119,8 @@ or with
 
 Every call needs `Authorization: Bearer` with a bitHuman API secret.
 
-**Health and readiness.** Wait for `"status": "ok"` — the first boot
-deserializes TensorRT engines, so allow a couple of minutes:
+**Health and readiness.** Wait for `"status": "ok"` — the first boot loads
+the model into GPU memory, so allow a couple of minutes:
 
 ```bash
 curl -s localhost:8080/v1/health | jq '{status, engine: .engine.status, capacity}'

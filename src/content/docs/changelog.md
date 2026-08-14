@@ -92,7 +92,7 @@ only your platform's slice (about 26 MB on macOS, 63 MB on Linux). See
 
 Expression 2 now serves each identity through a **more compact per-identity
 model** — roughly **6× smaller and faster to run** than the previous build —
-paired with a **new per-identity decoder that sharpens the mouth and teeth**.
+with **sharper rendering of the mouth and teeth**.
 The result is a crisper avatar at a lighter serving cost. The change is live
 across the [gallery](https://bithuman.ai/explore?gallery=v2) identities and is
 applied to new creations automatically. Serving surfaces, the platform

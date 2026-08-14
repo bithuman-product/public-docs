@@ -28,13 +28,12 @@ detector, cropping, or landmark step anywhere in the pipeline, so a winged
 creature or a talking appliance animates just as naturally as a headshot.
 
 What makes it different from every other bitHuman model is **per-identity
-training**. At creation time the platform distills a large foundation model
-into a **small model of your specific identity**, built from a single photo.
-The big teacher model never ships anywhere; only the compact per-identity
-model serves your sessions — a small, fast build paired with a per-identity
-decoder tuned for a sharp, well-defined mouth and teeth. That per-identity
-step is why Expression 2's motion tracks the audio so closely — and why
-creation takes longer than the other models (see
+training**. At creation time the platform builds a **small model of your
+specific identity** from a single photo. The full rendering model never ships
+anywhere; only the compact per-identity model serves your sessions — a small,
+fast build tuned to render a sharp, well-defined mouth and teeth. That
+per-identity step is why Expression 2's motion tracks the audio so closely —
+and why creation takes longer than the other models (see
 [creation](#how-creation-works) below).
 
 At serve time the engine generates the full **416×720** scene at **20 frames
@@ -128,7 +127,7 @@ anything is billed. A voice is always prepared as part of creation — supply
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
 through the standard steps (`payment` → `persona` → `voice_image`), then
 enters the **model-training step** (reported as `current_step: "lip_sync"`,
-~70% progress) where the per-identity model is distilled and packaged on a
+~70% progress) where the per-identity model is trained and packaged on a
 training GPU. When the status reaches `ready`, the agent is servable on every
 tier.
 

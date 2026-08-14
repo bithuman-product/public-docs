@@ -19,9 +19,8 @@ label: "Essence 2 Max"
 
 **`essence-2-max`** ("Essence 2 Max") is the premium model of the
 second-generation Essence family — bitHuman's **maximum-fidelity** avatar
-renderer. It is the **highest-fidelity Essence 2 renderer served directly**:
-the full rendering stack that the standard
-[Essence 2](/concepts/essence-2) is distilled from, animating your identity's
+renderer. It is the **highest-fidelity way to serve
+[Essence 2](/concepts/essence-2)**, animating your identity's
 footage on **dedicated cloud GPUs** and producing
 hero-quality, close-up output at ~25 frames per second.
 
@@ -34,7 +33,7 @@ Two properties define it:
   serving, use [Essence 2](/concepts/essence-2) — the standard model serves
   everywhere.)
 - **No per-identity training.** The rendering model is shared; your identity
-  needs only a one-time, lightweight *prep* that distills the agent's
+  needs only a one-time, lightweight *prep* that turns the agent's
   **identity video** — generated internally at creation from your portrait
   image, 10 seconds, authored to loop seamlessly — into a compact identity
   bundle (a few megabytes). Prep takes **seconds**, so there is no long
@@ -131,13 +130,13 @@ one, or one is generated).
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
 through the standard steps (`payment` → `persona` → `voice_image` →
 `video`), then the model step (reported as `current_step: "lip_sync"`) —
-Max's own identity prep distills the compact identity bundle from the
+Max's own identity prep builds the compact identity bundle from the
 generated identity video in **seconds**. When status reaches `ready`, the
 agent is servable.
 
 **How long.** Max's identity prep itself takes seconds; the combined
 creation's overall wall-clock is set by the standard Essence 2
-distillation — typically **about 45 minutes** (occasionally longer). Keep
+model preparation — typically **about 45 minutes** (occasionally longer). Keep
 polling `status` rather than applying a short client timeout.
 
 ## Serving

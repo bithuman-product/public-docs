@@ -21,7 +21,7 @@ Essence family: a **distilled** engine that keeps the Essence look — your
 identity's footage at its native resolution (a full-HD 1080p identity
 video by default), lip-synced live at ~25 frames per second — at a
 fraction of the compute of [Essence 2 Max](/concepts/essence-2-max), the
-highest-fidelity renderer it is distilled from. At creation the platform
+highest-fidelity renderer in the family. At creation the platform
 distills your identity into a compact bundle; that one artifact then runs
 **everywhere**: cloud **GPU**, the **Apple Neural Engine (ANE)**, **CPU**,
 and in-browser **WebGPU/WASM** (in rollout) — including a fully
