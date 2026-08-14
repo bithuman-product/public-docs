@@ -164,7 +164,7 @@ The agent calls `generate_agent` with `model: "essence-2"` (equivalently
 photorealistic human subject (else the API rejects it 422 **before billing**,
 see [the subject gate](/api/agents#the-essence-2-subject-gate-422)) — then
 polls `get_agent_status`. Expect the `lip_sync` step to run ~25–40 minutes
-while the identity distills. Creation is **image-only**: never pass `video`
+while the identity trains. Creation is **image-only**: never pass `video`
 (the `bithuman-mcp` 0.3.4 schema still lists a legacy `video` field — the API
 rejects it with `400 VIDEO_INPUT_NOT_SUPPORTED`; the CLI 2.4.1+ server has
 removed it).

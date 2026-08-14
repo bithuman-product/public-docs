@@ -22,7 +22,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
     engine at the same 250-credit rate, never a v2 engine or a higher price.
     For new photoreal work the recommended model is Essence 2.)
   - **[Essence 2](/concepts/essence-2)** — the standard photoreal model and
-    **the default**: a distilled renderer that runs everywhere (GPU, CPU, the
+    **the default**: an efficient renderer that runs everywhere (GPU, CPU, the
     Apple Neural Engine — including fully on-device — and in-browser
     WebGPU/WASM).
   - **[Essence 2 Max](/concepts/essence-2-max)** — the premium model: the

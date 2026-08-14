@@ -192,7 +192,7 @@ server-grade CPU work wants modern (AVX-512-class) CPUs. (The Python SDK has
 no Expression-2-loadable artifact — local rendering is a CLI surface.) See
 the [device matrix](/concepts/models-v2#where-each-model-runs).
 
-**On-device.** The same distilled per-identity model also runs fully
+**On-device.** The same compact per-identity model also runs fully
 on-device on Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview
 maturity) — no server in the path. Download the runnable `<code>.imx` build
 (legacy `.avatar` zip)

@@ -27,7 +27,7 @@ landscape, matching the source orientation and capped at the source's long side.
 
 Talking videos bill **per minute of output, rounded up**: `essence-2-max`
 is 8 credits/min; `expression-1`, `expression-2`, and `essence-2` are
-4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard distilled
+4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard
 render; the former `essence-2-light` name is retired).
 
 **How the charge actually lands.** Submitting a job charges the **120-second

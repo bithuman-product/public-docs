@@ -42,8 +42,8 @@ through the cloud. Quickstart:
 ### Essence 2 — sharper mouth and teeth, and a much smaller model file (2026-07-27)
 
 Essence 2 now renders each identity through a **new unified renderer**. The
-mouth interior — teeth in particular — is **synthesized by a dedicated
-per-identity head** rather than being smoothed toward an average, and it shows
+mouth interior — teeth in particular — is **synthesized** rather than being
+smoothed toward an average, and it shows
 most on wide-open speech: measured against each identity's own previous build,
 mouth-region fidelity improved **roughly 2× to 4.7×** across the launch gallery,
 and it was checked frame by frame by eye, not only by metrics. Mouth motion is
@@ -155,7 +155,7 @@ The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
   [Essence 2 Max](/concepts/essence-2-max).
 - **`essence-2` is the standard tier name** — the light-name retirement
   completed (the former `essence-2-light` was consolidated into `essence-2`
-  on 2026-07-05): the standard photoreal model, distilled to run everywhere
+  on 2026-07-05): the standard photoreal model, optimized to run everywhere
   (GPU / Apple Neural Engine / CPU / WebGPU-WASM), and the default. See
   [Essence 2](/concepts/essence-2).
 - **Rates unchanged.** `essence-2` stays 4 credits/min cloud and
@@ -293,7 +293,7 @@ The model-release UX wave — one creation surface across all five model familie
 - **`model: "essence-2"` — one creation, both Essence 2 tiers.** A single 500-credit charge trains [Essence 2 Light](/concepts/essence-2) **and** makes [Essence 2 Quality](/concepts/essence-2-max) available from the same identity video — [pick the tier at launch](/api/agents#essence-2--the-combined-creation) (`?model=` or the embed-token `model` field).
 - **The Essence 2 subject gate.** Explicit `essence-2*` creations require a **photorealistic human subject** — anything else is rejected with a clean [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) *before billing* and before any agent row is created (`auto` routes instead of rejecting). See [the subject gate](/api/agents#the-essence-2-subject-gate-422).
 - **Per-model creation pricing.** Creation is billed per model — 500 credits for the second generation (`essence-2`, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`), 250 for v1 (`essence-1`, `expression-1`). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) now returns the per-model map (`agent_generation.by_model`) — the old flat field is gone.
-- **`POST /v1/agent/{code}/models` — add a model to an existing agent.** No re-creation: [add](/api/agents#add-a-model-to-an-existing-agent) `essence-1` (250), `essence-2` (combined, 500), `expression-2` (500), or `expression-1` (**free, instant** — the v1 foundation model drives the agent's existing image + voice, nothing trained). Async adds poll via `supported_models`; failures auto-refund; re-POSTing never double-charges.
+- **`POST /v1/agent/{code}/models` — add a model to an existing agent.** No re-creation: [add](/api/agents#add-a-model-to-an-existing-agent) `essence-1` (250), `essence-2` (combined, 500), `expression-2` (500), or `expression-1` (**free, instant** — the shared v1 engine drives the agent's existing image + voice, nothing trained). Async adds poll via `supported_models`; failures auto-refund; re-POSTing never double-charges.
 - **`GET /v1/agent/{code}/model/download` — download your generated model.** A 302 to the artifact (`?redirect=false` for JSON): `essence-1` → `.imx`, `essence-2-light` → `.lebundle.imx` (licensed weights), `essence-2-quality` → `.pkl`, `expression-2` → `.avatar` (the Mac-runnable CoreML build). Per-family [error matrix](/api/agents#download-an-agents-model) including the poll-able `404 MODEL_ARTIFACT_NOT_READY`.
 - **The CLI recognizes every model family.** [`bithuman run` / `info` / `pull`](/sdk/cli/commands) now sniff any bitHuman artifact and answer honestly: `essence-1` `.imx` runs locally as always; `.lebundle.imx` / `.pkl` / `.avatar` are recognized with a clear handoff to where they run ([launch matrix](/sdk/cli/commands#which-model-files-run-locally)). New: **`bithuman pull <AGENT_CODE>`** downloads your own agent's model through the endpoint above.
 - **Essence 2 Quality is now gated on the source video.** Its identity prepares on demand **from the agent's source footage** — an image-only agent can never render Quality, so it's no longer advertised in `supported_models` without a video, and requesting it returns `409 MODEL_NOT_GENERATED` with the real blocker named (`… requires a source video, which this agent doesn't have`). This corrects the earlier "never gated" behavior/wording (see the 2026-07-02 gate note below).
@@ -311,7 +311,7 @@ bitHuman's two second-generation avatar models — **`essence-2`** and **`expres
 
 - **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model, then the engine synthesizes fully generated motion live. *(Update 2026-07-02: per-model creation-time expectations are now documented — roughly 45 minutes for `expression-2`; see the [per-model guides](/concepts/models-v2).)* Serves on three tiers — **gpu**, **cpu**, and **ane** (Apple Neural Engine). 4 credits/min cloud · 2 credits/min self-hosted.
 - **`essence-2-quality`** — the **highest-fidelity** tier of the Essence family: a heavy GPU renderer for close-up, hero-quality output on cloud GPUs. 8 credits/min cloud · 4 credits/min self-hosted.
-- **`essence-2-light`** — the **cost-effective** tier: a distilled renderer that runs across **gpu**, **cpu**, and **ane** — including fully **on-device**, where audio and video never leave your hardware. 4 credits/min cloud · 2 credits/min self-hosted.
+- **`essence-2-light`** — the **cost-effective** tier: an efficient renderer that runs across **gpu**, **cpu**, and **ane** — including fully **on-device**, where audio and video never leave your hardware. 4 credits/min cloud · 2 credits/min self-hosted.
 
 All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (500 credits, one-time) and serve through the existing session flows unchanged. The v1 models (`essence-1`, `expression-1`) remain fully supported at 250 credits creation.
 
@@ -327,7 +327,7 @@ All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (
 
 ### Model naming — versioned public taxonomy (2026-06-26)
 
-- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-light`**, **`expression-1`**, and **`expression-2`**. **Essence 2** ships in two tiers — **Quality** (`essence-2-quality`, the high-fidelity cloud GPU renderer) and **Light** (`essence-2-light`, the efficient distilled renderer). The older values **`essence`** and **`expression`** map to **`essence-1`** / **`expression-1`**; the pre-release codename values (`elevate`, `embody`, `essence-2-mobile`) were transitional aliases and have since been retired (*see the 2026-06-30 note above* — they now return a validation error naming the current model list). Share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
+- **The avatar model families now have versioned public names.** The `model` parameter on agent generation (and the viewer's `?model=` selector) accepts the consolidated names **`essence-1`**, **`essence-2-quality`**, **`essence-2-light`**, **`expression-1`**, and **`expression-2`**. **Essence 2** ships in two tiers — **Quality** (`essence-2-quality`, the high-fidelity cloud GPU renderer) and **Light** (`essence-2-light`, the efficient run-everywhere renderer). The older values **`essence`** and **`expression`** map to **`essence-1`** / **`expression-1`**; the pre-release codename values (`elevate`, `embody`, `essence-2-mobile`) were transitional aliases and have since been retired (*see the 2026-06-30 note above* — they now return a validation error naming the current model list). Share links are unaffected. Documentation, dashboards, and app labels now use the new family names.
 
 ### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
 

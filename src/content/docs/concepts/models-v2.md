@@ -31,7 +31,7 @@ API, the embed widget, the dashboard, and the SDKs:
 - **[`essence-2`](/concepts/essence-2)** — the **standard** Essence model for
   photorealistic people, and the default. It animates your identity's
   footage (a full-HD 1080p identity video, generated internally from your
-  image) at ~25 fps with a distilled engine that runs
+  image) at ~25 fps with an efficient engine that runs
   everywhere — from **fully on-device** (iPhone, iPad, Mac, CPU — audio and
   video never leave your hardware) through **cloud GPUs** to in-browser
   **WebGPU/WASM**. bitHuman automatically serves the right way for your
@@ -47,7 +47,7 @@ API, the embed widget, the dashboard, and the SDKs:
 |---|---|---|---|
 | **Guide** | [Essence 2](/concepts/essence-2) | [Essence 2 Max](/concepts/essence-2-max) | [Expression 2](/concepts/expression-2) |
 | **Family** | Essence | Essence | Expression |
-| **What it is** | The standard Essence 2 model — efficient distilled renderer, serves everywhere; the default | The premium model — the highest-fidelity renderer, served on dedicated cloud GPUs | Generative motion from one photo |
+| **What it is** | The standard Essence 2 model — efficient renderer, serves everywhere; the default | The premium model — the highest-fidelity renderer, served on dedicated cloud GPUs | Generative motion from one photo |
 | **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
 | **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
@@ -108,7 +108,7 @@ per-identity work, so don't apply a short client timeout:
 
 | Model | Identity step | Typical creation time |
 |---|---|---|
-| `essence-2` | Distills a compact identity bundle on a cloud GPU | Typically about 45 minutes (up to a few hours) |
+| `essence-2` | Builds a compact identity bundle on a cloud GPU | Typically about 45 minutes (up to a few hours) |
 | `essence-2-max` | Instant prep from the internally generated identity video (seconds) | Included with the combined `essence-2` creation |
 | `expression-2` | Trains a per-identity model on a dedicated training GPU | About 1–1.5 hours (roughly 60–100 minutes; longer when the adaptive recipe extends to hold quality) |
 

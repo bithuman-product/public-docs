@@ -69,7 +69,7 @@ report it with the agent code and timestamp.
 | Status `failed` with `error_message` | A pipeline step failed — the message names it (e.g. a voice or image step failure). | Failed creations are terminal for that `agent_id` and the creation credits are **automatically refunded**; fix the input and create again. |
 | `400 VIDEO_INPUT_NOT_SUPPORTED` — `Agent creation is image-only. …` | The request carried a `video` input. Creation is **image-only** for every model — the 10-second identity video is generated internally so it loops seamlessly. Nothing is charged. | Send a portrait `image` (or let the prompt generate one) instead of `video`. |
 | `essence-2-max` isn't available on an agent | Max prepares its identity from the agent's **stored identity video** — generated internally by Essence creations — and this agent doesn't have one. | Create the agent with (or [add](/api/agents#add-a-model-to-an-existing-agent)) the combined `essence-2`, which generates the identity video internally. See [Essence 2 Max](/concepts/essence-2-max#how-creation-works). |
-| Polling seems stuck at `current_step: "lip_sync"` | For `expression-2` and `essence-2` this is the **model training/distillation step** — the longest part of creation (tens of minutes; see each model's guide). | Keep polling. Don't apply a 5-minute client timeout to v2 model creation. |
+| Polling seems stuck at `current_step: "lip_sync"` | For `expression-2` and `essence-2` this is the **model training step** — the longest part of creation (tens of minutes; see each model's guide). | Keep polling. Don't apply a 5-minute client timeout to v2 model creation. |
 
 ### Live sessions
 

@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: a distilled renderer that runs everywhere (GPU, Apple Neural Engine, CPU, WebGPU/WASM), train-on-create from a photo, and pricing."
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer that runs everywhere (GPU, Apple Neural Engine, CPU, WebGPU/WASM), train-on-create from a photo, and pricing."
 section: concepts
 group: "Models"
 order: 2
@@ -17,12 +17,12 @@ label: "Essence 2"
 ## What it is
 
 **Essence 2** is the standard photoreal model of the second-generation
-Essence family: a **distilled** engine that keeps the Essence look — your
+Essence family: a **compact, efficient** engine that keeps the Essence look — your
 identity's footage at its native resolution (a full-HD 1080p identity
 video by default), lip-synced live at ~25 frames per second — at a
 fraction of the compute of [Essence 2 Max](/concepts/essence-2-max), the
 highest-fidelity renderer in the family. At creation the platform
-distills your identity into a compact bundle; that one artifact then runs
+packages your identity into a compact bundle; that one artifact then runs
 **everywhere**: cloud **GPU**, the **Apple Neural Engine (ANE)**, **CPU**,
 and in-browser **WebGPU/WASM** (in rollout) — including a fully
 **on-device** Apple Silicon build where audio and video never leave the
@@ -127,7 +127,7 @@ is generated).
 [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
 through the standard steps (`payment` → `persona` → `voice_image`), generates
 the identity video (`video`), then enters the
-distillation step (reported as `current_step: "lip_sync"`, ~70% progress)
+training step (reported as `current_step: "lip_sync"`, ~70% progress)
 where the trainer builds the compact identity bundle on a cloud GPU. When
 status reaches `ready`, the agent is servable on every tier.
 
@@ -167,7 +167,7 @@ pre-rename or retired slugs keep working — see
 omit `?model=` and let the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
-**On-device.** The same distilled identity also runs **fully on-device** on
+**On-device.** The same compact identity also runs **fully on-device** on
 Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview maturity): the
 Neural Engine executes the model locally, so audio, video, and prompts never
 leave the device — the only network traffic is the once-per-minute billing
@@ -211,12 +211,9 @@ or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guid
 
 Essence 2 renders through a **unified renderer**: the face is animated from your
 identity's own footage, while the **mouth interior — the teeth especially — is
-synthesized by a small per-identity head** rather than being averaged out of the
-source frames. Teeth simply are not present in a closed-mouth portrait, so they
-have to be generated; that is the part that most visibly improved. The head is
-taught entirely by the identity's own high-fidelity teacher render: **the
-network learns from the teacher where and what to render** — no hand-crafted
-masks or fixed shapes decide which pixels it owns. Measured
+synthesized** rather than being averaged out of the source frames. Teeth simply
+are not present in a closed-mouth portrait, so they have to be generated; that
+is the part that most visibly improved. Measured
 against each identity's own previous build, mouth-region fidelity improved
 **roughly 2× to 4.7×** across the launch gallery, verified frame by frame by
 eye. Mouth motion is also re-centred and wider, so speech reads as more dynamic.
@@ -241,7 +238,7 @@ in the API, the session contract, or the `?model=` tier slugs changed.
 - **First session on a fresh agent** can take longer to connect while the
   identity bundle is provisioned onto the serving tier; subsequent sessions
   reuse it. See [troubleshooting](/guides/session-troubleshooting).
-- **Before distillation completes**, launch surfaces that request this model
+- **Before training completes**, launch surfaces that request this model
   reject it with [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors). Once
   the agent is ready, this model's family appears in its `supported_models`
   (on [status / get / list](/api/agents#poll-status) and the embed-token
@@ -261,7 +258,7 @@ with runnable, verified examples:
    Also creatable from any [MCP client](/guides/mcp-server) (`generate_agent`
    with `model`/`version`) or the dashboard.
 2. **Poll** — [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status)
-   until `status: "ready"`; the long `lip_sync` step is the distillation.
+   until `status: "ready"`; the long `lip_sync` step is the training.
    Failures refund automatically.
 3. **Inspect** — [`GET /v1/agent/{code}`](/api/agents#get-an-agent) returns
    the persona, voice, media (including the internally generated identity

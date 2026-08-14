@@ -73,7 +73,7 @@ model-specific identity step runs:
 |---|---|---|---|
 | `essence-1` | `image` (or generated from prompt); an identity video is generated internally if needed | Builds the portable `.imx` avatar | 2–5 minutes |
 | `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
-| `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | **Combined**: distills the standard Essence 2 identity bundle on a cloud GPU; Max derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
+| `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | **Combined**: builds the standard Essence 2 identity bundle on a cloud GPU; Max derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
 | `essence-2-max` | Included with every `essence-2` creation — its identity derives from the same internally generated identity video | Instant prep of a compact identity bundle (seconds, warm) | Available once the combined creation is ready |
 | `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | About 1–1.5 hours (roughly 60–100 minutes; longer when the adaptive recipe extends to hold quality) |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
@@ -87,7 +87,7 @@ model's guide.
 
 `model: "essence-2"` creates **both Essence 2 models from one creation**: a
 single 500-credit charge runs the standard [Essence 2](/concepts/essence-2)
-distillation, and [Essence 2 Max](/concepts/essence-2-max) becomes
+training, and [Essence 2 Max](/concepts/essence-2-max) becomes
 available at no extra charge from the same **internally generated identity
 video** (its identity prepares on demand from that video). Sessions
 launched as `essence-2` serve
@@ -243,7 +243,7 @@ While a run is in flight, `current_step` reports the pipeline stage:
 | `voice_image` | ~20% | Voice and portrait generated (in parallel). |
 | `video` | ~45% | The 10-second identity video is generated internally (`essence-1` and `essence-2`) — authored to loop seamlessly. |
 | `awaiting_face_marking` | ~35% | Waiting on manual face marking (rare `essence-1` path). |
-| `lip_sync` | 70–99% | The model-specific identity step — `.imx` build (`essence-1`), identity prep (`essence-2-max`), bundle distillation (`essence-2`), or per-identity training (`expression-2`). The longest step for the v2 models. |
+| `lip_sync` | 70–99% | The model-specific identity step — `.imx` build (`essence-1`), identity prep (`essence-2-max`), bundle build (`essence-2`), or per-identity training (`expression-2`). The longest step for the v2 models. |
 | `done` | 100% | Terminal — the agent is `ready`. |
 
 ```json
@@ -454,7 +454,7 @@ listing the options; the Essence 2 tiers are not individually addable —
 
 | `model` | What happens | Prerequisites | Credits | Time |
 |---|---|---|---|---|
-| `expression-1` | **Instant enablement** — the v1 foundation model drives the agent's existing image + voice at runtime; nothing is trained | stored image **and** voice (else `422`) | **0** | immediate (this response) |
+| `expression-1` | **Instant enablement** — the shared v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image **and** voice (else `422`) | **0** | immediate (this response) |
 | `expression-2` | Trains the per-identity Expression 2 model from the stored image | stored image (else `422`) | 2000 | about 1–1.5 h |
 | `essence-2` | The **combined** add: trains the standard Essence 2 from the agent's stored identity video (generated internally at creation); Max lights up from the same video at no extra charge | stored identity video (else `422 MODEL_PREREQUISITE_MISSING`) + photorealistic-human subject on the stored image (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
 | `essence-1` | Builds the v1 `.imx` — reuses the stored identity video, or generates one internally from the stored image | stored identity video or image (else `422`) | 250 | ~10–20 min |
@@ -515,7 +515,7 @@ accepted** and returns a `400`; send `essence-2-max`. What you get per family:
 | `essence-2` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
 | `essence-2-max` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
 | `expression-2` | `<code>.imx` | The portable IMX container (~20–90 MB per identity; legacy `.avatar` zip) — [runs locally](/sdk/cli/commands) on macOS (Apple Silicon) and Linux, or in the browser via [`?render=local`](/guides/browser-rendering); also served on bitHuman's cloud. |
-| `expression-1` | — | Not downloadable: no per-identity artifact exists (the v1 foundation model renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
+| `expression-1` | — | Not downloadable: no per-identity artifact exists (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
 
 The default response is a **302 redirect** to the artifact (public URL for
 `essence-1`, **1-hour signed URL** for the private families), so a plain
