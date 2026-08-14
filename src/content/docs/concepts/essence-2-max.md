@@ -27,10 +27,12 @@ hero-quality, close-up output at ~25 frames per second.
 
 Two properties define it:
 
-- **GPU-only, cloud-only.** The renderer needs a server-class GPU;
-  there is no CPU or on-device runtime for this model. (For on-device, CPU,
-  or in-browser serving, use [Essence 2](/concepts/essence-2) — the standard
-  model serves everywhere.)
+- **GPU-only.** The renderer needs a server-class GPU; there is no CPU or
+  on-device runtime for this model. It serves on dedicated cloud GPUs, and can
+  also run as a [self-hosted GPU container](/guides/deploy-essence-2-max) on
+  your own NVIDIA RTX 40-series hardware. (For on-device, CPU, or in-browser
+  serving, use [Essence 2](/concepts/essence-2) — the standard model serves
+  everywhere.)
 - **No per-identity training.** The rendering model is shared; your identity
   needs only a one-time, lightweight *prep* that distills the agent's
   **identity video** — generated internally at creation from your portrait
@@ -144,15 +146,17 @@ A ready agent serves through every delivery surface — the
 [embed widget](/guides/deploy-embed), the viewer/share URL, the
 [REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
 
-Essence 2 Max has a **single serving tier**:
+Essence 2 Max has a **single cloud serving tier**, plus a self-hosted GPU
+option you run yourself:
 
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
-| `essence-2-max` | Dedicated cloud GPU (only tier) | Always-warm first line, spilling to elastic cloud GPU overflow that scales from zero. |
+| `essence-2-max` | Dedicated cloud GPU (only cloud tier) | Always-warm first line, spilling to elastic cloud GPU overflow that scales from zero. |
+| self-hosted | Your own NVIDIA RTX 40-series GPU | Hand-delivered container — see [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max). |
 
 There are no `-cpu` / `-ane` runtime slugs for this model, and it is not
 available on-device — requesting it in an on-device SDK context is reported as
-cloud-only rather than treated as an unknown model.
+GPU-only rather than treated as an unknown model.
 
 **Connect behavior.** The identity bundle is shared across serving capacity.
 If a session lands on capacity that hasn't cached your identity yet, the
