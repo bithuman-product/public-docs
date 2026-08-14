@@ -19,9 +19,12 @@ locally-hosted LiveKit server carries the stream, and the bundle includes a
 your agent live in a browser
 ([below](#talk-to-your-agent-live-livekit--openai-realtime-voice)).
 
-Under the stream sits a simple local REST API: send speech audio, get back
-H.264 video of your agent saying it. Use it directly for clip generation, or
-let the bundled examples drive it per utterance for live conversation. One
+Two serving surfaces sit under the stream. A **live session**
+(`ws /v1/sessions`) runs one continuous engine stream per conversation — the
+avatar idles naturally between utterances and speaks each reply in the same
+stream, with no cuts, exactly as it serves in bitHuman's cloud; this is what
+the realtime chat example uses. And a simple REST API: send speech audio, get
+back H.264 video of your agent saying it, for clip generation. One
 container, one API key, one concurrent render; sessions bill at the
 self-hosted rate — 4 credits/min ([pricing](/guides/pricing)). For a live
 cloud session instead of self-hosting, use the
