@@ -1,6 +1,6 @@
 ---
 title: "Self-hosted Essence 2 Max"
-description: "Run essence-2 self-hosted — the GPU version of bitHuman's photoreal avatar rendering — as a container on your own NVIDIA GPU: verify the hand-delivered image, launch it, render H.264 talking videos over a local REST API, and visualize them in a locally-hosted LiveKit room."
+description: "Run a live photoreal avatar on your own NVIDIA GPU — the self-hosted, GPU version of essence-2: verify the hand-delivered image, launch the container, and stream your agent into a locally-hosted LiveKit room, including a real-time voice chat loop powered by your own OpenAI key."
 section: guides
 group: "Deploy"
 order: 12
@@ -10,17 +10,21 @@ label: "Self-hosted Essence 2 Max"
 ## The Essence 2 Max container
 
 This is the **self-hosted, GPU version of
-[essence-2](/concepts/essence-2)** — bitHuman's photoreal avatar rendering,
-packaged as a single Docker container you run on your own NVIDIA GPU
-(the model slug is [`essence-2-max`](/concepts/essence-2-max)). One container,
-one API key, one concurrent render: you POST audio to a local REST API and get
-back an H.264 talking video of your agent, rendered entirely on your hardware.
-Sessions bill at the self-hosted rate — 4 credits/min ([pricing](/guides/pricing)).
+[essence-2](/concepts/essence-2)** — bitHuman's photoreal avatar, packaged as
+a single Docker container that **streams a live agent from your own NVIDIA
+GPU** (the model slug is [`essence-2-max`](/concepts/essence-2-max)). Nothing
+about the avatar leaves your machine: the container renders locally, a
+locally-hosted LiveKit server carries the stream, and the bundle includes a
+**real-time voice chat loop** — bring your own OpenAI API key and talk to
+your agent live in a browser
+([below](#talk-to-your-agent-live-livekit--openai-realtime-voice)).
 
-This container renders **videos as jobs** (audio in → mp4 out). For live
-streaming, publish the rendered clips into a LiveKit room — the bundle ships a
-complete locally-hosted example ([below](#visualize-live-in-a-locally-hosted-livekit-room)).
-For a live cloud session instead of self-hosting, use the
+Under the stream sits a simple local REST API: send speech audio, get back
+H.264 video of your agent saying it. Use it directly for clip generation, or
+let the bundled examples drive it per utterance for live conversation. One
+container, one API key, one concurrent render; sessions bill at the
+self-hosted rate — 4 credits/min ([pricing](/guides/pricing)). For a live
+cloud session instead of self-hosting, use the
 [cloud surfaces](/concepts/essence-2-max#serving).
 
 **Requirements**
@@ -35,6 +39,24 @@ For a live cloud session instead of self-hosting, use the
 > from. The image ships as a signed, checksummed bundle delivered directly to
 > your team — contact [hello@bithuman.ai](mailto:hello@bithuman.ai) to get
 > one. Everything below assumes you have the bundle on the GPU host.
+
+## Get your licence key
+
+The container is licensed with a **bitHuman API secret** — the same key the
+cloud API uses. One key does three jobs here: it licenses the container
+(validated live at every session start), authenticates callers on the local
+REST API, and attributes usage for billing.
+
+1. Sign in at [bithuman.ai](https://www.bithuman.ai) (the free tier works —
+   no credit card).
+2. Go to [Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
+3. Click **Create new key**, name it for this machine (e.g. `gpu-server-1`),
+   and copy the value — **you won't be able to view it again**.
+
+Export it on the GPU host as `BITHUMAN_API_SECRET` and use it as the bearer
+token in every API call below. Deleting the key on the dashboard revokes it
+on this container within ~20 seconds; your account balance funds the
+sessions ([billing](#billing)).
 
 ## What's in the bundle
 
@@ -189,31 +211,53 @@ In static (air-gapped) auth mode, usage is attributed to the account you set
 in `ESSENCE2MAX_ACCOUNT_ID`. Check balances any time with the
 [Billing API](/api/billing).
 
-## Visualize live in a locally-hosted LiveKit room
+## Talk to your agent live (LiveKit + OpenAI Realtime voice)
 
-`examples/livekit/` in the bundle runs the full loop on your machine — no
-cloud account needed:
+`examples/realtime-chat/` in the bundle is a complete, **interactive, local
+conversation loop**: you speak in a browser, and your avatar answers you —
+voice and video. Everything runs on your machine except the voice brain,
+which is your own OpenAI account:
 
 ```
-essence-2-max ──mp4──▶ publish_render.py ──▶ livekit-server (local) ──▶ viewer.html
+your mic (chat.html) ──▶ LiveKit (local, docker) ──▶ chat_agent.py
+       ├──▶ OpenAI Realtime (speech-to-speech, YOUR key)
+       └──▶ essence-2-max container (renders each reply)
+  ◀── the avatar answers you, voice + video, in the browser
 ```
 
-1. `docker compose up -d` starts a local LiveKit server in dev mode on
-   `ws://localhost:7880`.
-2. `pip install livekit livekit-api av requests` for the publisher.
-3. `python3 publish_render.py --api http://localhost:8080 --api-key
-   $BITHUMAN_API_SECRET --avatar <agent code> --audio speech.wav --loop`
-   renders through the container's API, publishes video+audio into a room,
-   and prints a **viewer token**.
-4. Open `viewer.html` in a browser and paste the token — you'll see the
-   avatar playing live from the room.
+Four steps, with the container already running:
 
-Dev mode uses LiveKit's fixed `devkey`/`secret` key pair — fine on
-localhost, never expose it publicly. For production, replace the dev
-credentials with your own key/secret and mint tokens server-side. For
-real-time pipelines, POST short audio chunks per utterance and publish each
-finished clip — the render API is job-based, so latency ≈ clip length plus a
-few seconds.
+1. `docker compose -f examples/livekit/docker-compose.yml up -d` — the local
+   LiveKit server (dev mode, `ws://localhost:7880`).
+2. `pip install livekit livekit-api av requests numpy websockets`
+3. ```bash
+   OPENAI_API_KEY=sk-... python3 examples/realtime-chat/chat_agent.py \
+     --api http://localhost:8080 --api-key $BITHUMAN_API_SECRET \
+     --avatar <agent code>
+   ```
+4. Open `examples/realtime-chat/chat.html`, paste the **USER TOKEN** the
+   agent printed, allow the microphone — and just talk.
+
+The avatar greets you, then it's a conversation: OpenAI's server-side voice
+detection decides when you've finished speaking, the model answers in
+speech, and the container renders the reply and streams it into the room.
+Replies begin a few seconds after you stop talking — the default persona
+keeps answers to a few short sentences so turns stay snappy — and while the
+avatar speaks your mic is ignored, so you can't talk over it. Rendering
+bills your bitHuman key at the self-hosted rate; the voice side bills your
+OpenAI key.
+
+### Stream pre-rendered clips instead
+
+`examples/livekit/` is the simpler half of the loop — render a clip through
+the API and stream it into the same locally-hosted room for any viewer:
+`python3 publish_render.py --api http://localhost:8080 --api-key
+$BITHUMAN_API_SECRET --avatar <agent code> --audio speech.wav --loop`, then
+open `viewer.html` with the printed token.
+
+Dev mode uses LiveKit's fixed `devkey`/`secret` pair — fine on localhost,
+never expose it publicly. For production, use your own LiveKit key/secret
+and mint tokens server-side.
 
 ## Errors
 

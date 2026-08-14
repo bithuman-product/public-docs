@@ -1,6 +1,7 @@
 {
   "redirects": [
     { "source": "/introduction", "destination": "/", "permanent": true },
+    { "source": "/guides/eu-ai-act", "destination": "/legal/eu-ai-act", "permanent": true },
 
     { "source": "/getting-started/quickstart", "destination": "/api/quickstart", "permanent": true },
     { "source": "/getting-started/authentication", "destination": "/api/authentication", "permanent": true },

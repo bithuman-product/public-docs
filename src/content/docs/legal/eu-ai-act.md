@@ -1,9 +1,9 @@
 ---
 title: "EU AI Act — Article 50 transparency"
 description: "Who owes what under Article 50 of the EU AI Act when you build with bitHuman: bitHuman is the provider, you are the deployer, and the visible disclosure obligation is yours. The dates, the split, and what bitHuman does not ship."
-section: guides
-group: "Deploy"
-order: 6
+section: legal
+group: "Legal"
+order: 1
 label: "EU AI Act"
 ---
 

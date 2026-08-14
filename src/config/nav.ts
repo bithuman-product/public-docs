@@ -8,7 +8,8 @@ export type SectionId =
   | "concepts"
   | "guides"
   | "examples"
-  | "resources";
+  | "resources"
+  | "legal";
 
 export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
   api: { label: "API Platform", home: "/api" },
@@ -19,6 +20,9 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
   guides: { label: "Guides", home: "/guides" },
   examples: { label: "Examples", home: "/examples" },
   resources: { label: "Resources", home: "/resources" },
+  // Single-page pillar today; the home points at the page itself until a
+  // second legal page justifies a hub.
+  legal: { label: "Legal", home: "/legal/eu-ai-act" },
 };
 
 // Optional explicit group ordering per section (groups not listed fall to the
@@ -31,4 +35,5 @@ export const GROUP_ORDER: Partial<Record<SectionId, string[]>> = {
   concepts: ["Models", "Core", "Architecture"],
   guides: ["Build", "Deploy", "Integrate", "Pricing"],
   resources: ["Resources"],
+  legal: ["Legal"],
 };
