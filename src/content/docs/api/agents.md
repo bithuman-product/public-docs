@@ -143,7 +143,13 @@ open.
 
 > **Note** The Python examples below use
 > [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl` / `urllib` instead.
+> library — `pip install requests` first, or use `curl`.
+>
+> Do **not** use Python's standard-library `urllib` without setting a
+> `User-Agent`: it sends `Python-urllib/3.x`, which our edge rejects with
+> `403 error code: 1010` before the request ever reaches the API. Any
+> explicit User-Agent works — `requests`, `httpx`, `aiohttp` and `curl` all
+> send one and are unaffected.
 
 ```python
 import requests
@@ -565,6 +571,13 @@ Errors ([full reference](/api/errors#model-errors)):
 
 `POST /v1/agent/{agent_code}/speak` — trigger the agent to speak a message to
 users in an active session.
+
+> **Requires a LIVE session.** `/speak` speaks into a conversation that is
+> already open — it cannot start one. With nobody connected there is no room to
+> deliver to and the call returns `404 NOT_FOUND`
+> (`"No active rooms found for agent <code>"`). A successful call echoes
+> `delivered_to_rooms`; if that is `0`, or `rooms_skipped_no_worker` is
+> non-zero, the message reached no one.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
