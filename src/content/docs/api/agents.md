@@ -561,6 +561,31 @@ Errors ([full reference](/api/errors#model-errors)):
 > recognizes its model family, and prints what to do next — an `essence-1`
 > `.imx` runs locally with `bithuman run`.
 
+## Download an agent's self-hosted avatar
+
+`GET /v1/agent/{agent_code}/self-hosted-avatar` — download the prepared
+avatar bundle (`<code>.pkl`) that the
+[self-hosted Essence 2 Max container](/guides/deploy-essence-2-max) serves.
+This is the endpoint a live-licensed container calls **automatically** the
+first time you render one of your agents by code; call it yourself for
+air-gapped installs and copy the file into the container's avatars volume.
+
+Auth is your api-secret — as `Authorization: Bearer` (what the container
+forwards) or the classic `api-secret` header. The response is the raw
+bundle bytes (no redirect), so a plain curl works:
+
+```bash
+curl -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
+  "https://api.bithuman.ai/v1/agent/A06ZSE8608/self-hosted-avatar" \
+  -o A06ZSE8608.pkl
+```
+
+A `404` means the agent doesn't exist, isn't yours, or has no self-hosted
+bundle (it must be a completed `essence-2` creation); a `401` means the
+credential is bad. The same artifact is also available through
+[model download](#download-an-agents-model) with `?model=essence-2-max`
+(302-redirect form).
+
 ## Make an agent speak
 
 `POST /v1/agent/{agent_code}/speak` — trigger the agent to speak a message to

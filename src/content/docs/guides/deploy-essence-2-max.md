@@ -147,10 +147,26 @@ docker run --rm -v essence-2-max-avatars:/avatars -v "$PWD/avatars:/src" \
   alpine cp /src/<agent code>.pkl /avatars/
 ```
 
-Additional avatars are delivered the same way — drop the `.pkl` into the
-volume and it serves immediately (contact
-[hello@bithuman.ai](mailto:hello@bithuman.ai) to prepare more of your agents
-for self-hosting).
+**Default avatar.** A render that names no `avatar_id` uses the container's
+default: `ESSENCE2MAX_DEFAULT_AVATAR` if set in your env file, otherwise the
+single installed avatar. With several installed and no default configured,
+the API asks you to name one rather than guess.
+
+**Use your own avatar — from your own photo.** Create an agent from your
+portrait with the ordinary cloud creation — the dashboard, or
+[`POST /v1/agent/generate`](/api/agents#generate-an-agent) with
+`model: "essence-2"` and your `image` (skip the image and one is generated
+from your prompt; ~45 minutes, 500 credits). Once it's ready, just render
+with `avatar_id=<its agent code>`: with live licensing the container
+**fetches your avatar automatically on first use** — your own key authorizes
+it — and caches it in the volume. Air-gapped installs
+[download the avatar bundle](/api/agents#download-an-agents-self-hosted-avatar)
+themselves and copy it into the volume like the bundled one:
+
+```bash
+curl -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
+  https://api.bithuman.ai/v1/agent/<agent code>/self-hosted-avatar -o <agent code>.pkl
+```
 
 ## Render over the REST API
 
