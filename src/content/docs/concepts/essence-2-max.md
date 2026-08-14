@@ -83,13 +83,7 @@ route automatically).
 
 > **Note** The Python examples below use
 > [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl`.
->
-> Do **not** use Python's standard-library `urllib` without setting a
-> `User-Agent`: it sends `Python-urllib/3.x`, which our edge rejects with
-> `403 error code: 1010` before the request ever reaches the API. Any
-> explicit User-Agent works — `requests`, `httpx`, `aiohttp` and `curl` all
-> send one and are unaffected.
+> library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
 import requests
