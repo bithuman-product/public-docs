@@ -52,15 +52,15 @@ For a live cloud session with the same model, use the
 ## Verify and load the image
 
 Check the bytes, verify the signature, then load. Both checks run fully
-offline (the examples below use the 1.0.2 filenames — substitute your
-bundle's version):
+offline. Substitute your bundle's version for `<version>` (the tarball name in
+your delivery, e.g. `essence-2-max-1.0.4.tar`):
 
 ```bash
-sha256sum -c essence-2-max-1.0.2.tar.sha256
+sha256sum -c essence-2-max-<version>.tar.sha256
 cosign verify-blob --key cosign.pub \
-  --signature essence-2-max-1.0.2.tar.sig \
-  --insecure-ignore-tlog essence-2-max-1.0.2.tar   # "Verified OK"
-docker load -i essence-2-max-1.0.2.tar
+  --signature essence-2-max-<version>.tar.sig \
+  --insecure-ignore-tlog essence-2-max-<version>.tar   # "Verified OK"
+docker load -i essence-2-max-<version>.tar
 ```
 
 `Verified OK` means the bytes are exactly what bitHuman signed.

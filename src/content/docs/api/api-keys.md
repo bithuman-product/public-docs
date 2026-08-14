@@ -14,6 +14,11 @@ a key's value, or delete one. Handy for rotating keys or provisioning per-server
 Base URL `https://api.bithuman.ai`. Authenticate with an existing `api-secret`. The `{user_id}`
 in the path is your own account id — get it from [`GET /v1/me`](/api/billing#account-status).
 
+> **Header differs on the self-hosted container.** These cloud-API calls use the
+> `api-secret:` header. The [self-hosted Essence 2 Max container](/guides/deploy-essence-2-max)
+> takes the **same key** but as a bearer token — `Authorization: Bearer $BITHUMAN_API_SECRET`.
+> Use `api-secret:` against `api.bithuman.ai`, `Authorization: Bearer` against your local container.
+
 Set it once in your shell before the examples below — with `$USER_ID` unset the
 paths collapse to `/v2//…` and the API answers `404 {"detail":"Not Found"}`:
 
