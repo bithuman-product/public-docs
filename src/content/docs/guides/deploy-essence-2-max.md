@@ -128,15 +128,14 @@ curl -s localhost:8080/v1/health | jq '{status, engine: .engine.status, capacity
 
 **Render a talking video.** Rendering is an async job; the result is
 H.264/AAC mp4, playable in any browser `<video>` tag. `avatar_id` is the
-agent code of an avatar whose `.imx` is in the avatars volume:
+agent code of an avatar whose `.imx` is in the avatars volume. Audio can be
+any common format — WAV at any sample rate, MP3, M4A/AAC, OGG, FLAC — the
+container normalizes it internally:
 
 ```bash
-AUDIO_B64=$(base64 -w0 your_speech.wav)
 RID=$(curl -s -X POST localhost:8080/v1/renders \
   -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
-  -H 'Content-Type: application/json' \
-  -d "{\"avatar_id\": \"A49MST0248\", \"audio_base64\": \"$AUDIO_B64\", \"format\": \"mp4\"}" \
-  | jq -r .id)
+  -F "avatar_id=A49MST0248" -F "audio=@your_speech.wav" | jq -r .id)
 
 # poll until succeeded/failed
 curl -s -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
@@ -146,6 +145,12 @@ curl -s -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
 curl -s -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
   localhost:8080/v1/renders/$RID/video -o out.mp4
 ```
+
+From code, you can also send JSON — `{"avatar_id": …, "audio_base64": …,
+"format": "mp4"}` — to the same endpoint. Build the JSON body in a file and
+POST it with `curl --data @payload.json` rather than interpolating the
+base64 into the command line, which hits the shell's argument-length limit
+on clips longer than a few seconds.
 
 A bad or revoked key returns `401`. Capacity is enforced: check
 `/v1/health` → `.capacity.available` before posting — a second concurrent
