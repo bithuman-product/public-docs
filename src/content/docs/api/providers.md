@@ -88,3 +88,55 @@ Returns the same masked shape as `GET`. Existing entries are matched by `id` and
 > `clearSecrets`.
 
 Errors: `401`/`403` auth · `404` account not found · `500` on a storage failure.
+
+## Point an agent at your provider
+
+Registering a key does **not** change any agent by itself — it just stores the credential.
+Each agent chooses its providers independently, so the last step is to attach the entry
+you registered to the agent that should use it.
+
+`POST /v1/agent/{agent_code}` — set the per-capability selection. Send only the
+capabilities you want to change; the rest of the agent's settings are preserved.
+
+| Capability | Value | Meaning |
+|---|---|---|
+| `llm` / `stt` / `tts` / `realtime` | `"default"` | Use the bitHuman-managed provider (the default). |
+| `llm` / `stt` / `tts` / `realtime` | `{"mode": "custom", "provider_id": "<id>"}` | Use one of your registered entries. |
+
+`provider_id` is the `id` returned by `GET`/`PUT /v2/{user_id}/providers`.
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/agent/A12345678 \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" \
+  -d '{"providers": {"llm": {"mode": "custom", "provider_id": "b7e1…"}}}'
+```
+
+```json
+{ "agent_code": "A12345678", "updated": true }
+```
+
+A `provider_id` you have not registered is rejected with `400 VALIDATION_ERROR` naming the
+id — the selection is never stored half-configured. The change applies to the **next
+session**; a call already in progress keeps the provider it started with.
+
+### OpenAI-compatible endpoints (self-hosted, proxies, gateways)
+
+Any endpoint that speaks the OpenAI chat-completions API works: register it with
+`platform: "openai"` and put your endpoint in `credentials.baseUrl`.
+
+```bash
+curl -X PUT https://api.bithuman.ai/v2/$USER_ID/providers \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" \
+  -d '{"entries":[{
+        "platform": "openai",
+        "label": "My gateway",
+        "credentials": {"apiKey": "…", "baseUrl": "https://llm.example.com/v1"},
+        "options": {"llm": {"model": "my-model"}}
+      }]}'
+```
+
+- **`baseUrl` is the base, not the full route.** Use `https://llm.example.com/v1` — we append
+  `/chat/completions` ourselves. A pasted full endpoint is tolerated and trimmed.
+- **`options.llm.model`** is the model name we send in the request body.
+- **There is no host allowlist.** Any reachable HTTPS endpoint is called as configured; you
+  do not need to ask us to permit a domain.
