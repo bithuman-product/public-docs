@@ -10,6 +10,21 @@ order: 1
 
 ## August 2026
 
+### `409 MODEL_NOT_GENERATED` now tells you how to fix it (2026-08-17)
+
+The model gate used to state the problem and stop — `"agent <code>'s
+expression-1 model hasn't been generated yet"` — which read as *"this agent
+can't do that model"*. It can. Every 409 now names the remedy: the exact
+[model-add](/api/agents#add-a-model-to-an-existing-agent) call and its cost when
+the agent qualifies, or the missing asset when it doesn't. `expression-1` is the
+clearest case and got its own wording (*"isn't enabled on this agent yet"*):
+nothing is ever trained for it, so **any** agent with an image and a voice —
+including an Essence 1 agent — enables it with one free, instant call and can
+then render Expression 1 talking videos immediately. See
+[Using Expression 1 on an existing agent](/api/agents#using-expression-1-on-an-existing-agent).
+Same gate, same 409, same "before any charge" guarantee — only the message
+changed.
+
 ### Essence 2 Max self-hosted — a GPU container you run yourself (2026-08-13)
 
 `essence-2-max` — the **premium photoreal renderer** — can now run on **your

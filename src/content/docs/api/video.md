@@ -151,9 +151,10 @@ agent's **source video**, which its identity prepares from on demand (`agent
 <code>'s essence-2-max model requires a source video, which this agent
 doesn't have`); `essence-1` needs the agent's `.imx` model file (present on
 every completed essence-1 creation), and `expression-1` needs an
-expression-1 agent — or the free post-generation expression-1 model add —
-with an image. Check the agent's `supported_models` on the
-[Agents API](/api/agents#poll-status), or
+expression-1 agent — or the free, instant expression-1 model add on any agent
+with an image and a voice ([how](/api/agents#using-expression-1-on-an-existing-agent)).
+Every 409 here names the call that fixes it. Check the agent's
+`supported_models` on the [Agents API](/api/agents#poll-status), or
 [add the model](/api/agents#add-a-model-to-an-existing-agent) first.
 
 ## Get talking-video status

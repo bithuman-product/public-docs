@@ -500,6 +500,40 @@ not-owned agent) · `409 AGENT_NOT_READY` ·
 [`503 MODEL_NOT_YET_AVAILABLE`](/api/errors#model-errors) (only if a v2 family
 is paused — not returned in normal operation since the July 10, 2026 GA; nothing charged).
 
+### Using Expression 1 on an existing agent
+
+Every model is a **capability of the agent**, not a property of it — an agent
+created with `essence-1` can render Expression 1 too, with no change to the
+agent, its persona, its voice, or your request. The models are compatible; the
+capability just has to be switched on once.
+
+Expression 1 is the only model that needs no training at all: the shared v1
+engine drives the agent's stored image with its stored voice at render time. So
+enabling it is **one call, instant, and free**:
+
+```python
+import requests
+
+code = "A66GYD8664"          # an agent created with essence-1
+head = {"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"}
+
+requests.post(f"https://api.bithuman.ai/v1/agent/{code}/models",
+              headers=head, json={"model": "expression-1"})
+# -> {"success": true, "status": "ready", "credits": 0,
+#     "supported_models": ["essence-1", "expression-1", "essence-2-max"]}
+
+requests.post("https://api.bithuman.ai/v1/video/generate", headers=head,
+              json={"model": "expression-1", "agent_code": code,
+                    "input": {"type": "text", "text": "Hello!"}})
+```
+
+Until that call is made, `expression-1` is absent from the agent's
+`supported_models` and every Expression 1 request for it — talking video,
+[embed token](/api/embedding), model download — returns
+[`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) *before any charge*, with
+the enabling call named in the message. Nothing else about the request changes:
+same `agent_code`, same `input`, only `model` differs.
+
 ## Download an agent's model
 
 `GET /v1/agent/{code}/model/download` — download the generated model artifact
