@@ -40,7 +40,7 @@ append it to the iframe URL.
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `agent_id` | string | yes | Agent code (e.g. `A78WKV4515`). |
-| `fingerprint` | string | yes | Stable per-device hex string for session tracking and per-visitor rate limiting. |
+| `fingerprint` | string | yes | Stable per-visitor hex string. Used for per-visitor rate limiting, to key the agent's conversation memory so a returning visitor is recognised, and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
 | `model` | string | no | Request a specific avatar model for the session — a model name (`essence-1`, `expression-1`, `essence-2`, `essence-2-max`, `expression-2`) or a force-tier slug (`essence-2-gpu/-ane/-cpu`, `expression-2-gpu/-cpu/-ane` — [per model](/concepts/models-v2#advanced-pin-a-serving-tier)). Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet, or `essence-2-max` on an agent with no stored identity video — generated internally by Essence creations) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
 > **Reading `supported_models` back into `model`.** The mint response (and

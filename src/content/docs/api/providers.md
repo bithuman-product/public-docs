@@ -140,3 +140,36 @@ curl -X PUT https://api.bithuman.ai/v2/$USER_ID/providers \
 - **`options.llm.model`** is the model name we send in the request body.
 - **There is no host allowlist.** Any reachable HTTPS endpoint is called as configured; you
   do not need to ask us to permit a domain.
+
+### Knowing which end user a call belongs to
+
+Requests to your endpoint carry the visitor's identifier in the standard OpenAI
+`user` field, so you can attribute a call without any bitHuman-specific parsing:
+
+```json
+{
+  "model": "my-model",
+  "messages": [ … ],
+  "stream": true,
+  "user": "29830a59917f82805468b3170b0d9082"
+}
+```
+
+The value is the `fingerprint` you supplied when you minted the embed token (it
+appears in the token as the `endUserId` claim). Mint one per visitor and the same
+string comes back on every call for that visitor — see
+[Embedding](/api/embedding#production-mint-a-token). Without a token there is
+nothing per-visitor to send and the field is omitted.
+
+Two limits worth knowing:
+
+- **Sent only to your own endpoint.** Agents on bitHuman's default LLM do not
+  send it, and neither does the fallback if your endpoint is unreachable.
+- **Treat it as a hint, not an authenticated identity.** The value originates in
+  the page that embeds the agent, so a determined visitor can change it. Use it
+  to group and attribute traffic; do not use it alone to authorise access to one
+  user's data.
+
+Each request also carries `X-LiveKit-Room-ID` and `X-LiveKit-Job-ID` headers.
+Those identify the live session, not the person, and are useful for correlating a
+single conversation's calls.
