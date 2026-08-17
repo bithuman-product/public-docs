@@ -128,8 +128,10 @@ matrix today:
 - **Apple Silicon on-device** playback via the [Swift SDK](/sdk/swift)
   (`essence-2` and `expression-2` Neural Engine engines) remains **preview**,
   not GA.
-- [`essence-2-max`](/concepts/essence-2-max) has **no on-device or
-  self-hosted runtime** — it is cloud-GPU-only.
+- [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU
+  runtime** — it needs an NVIDIA GPU. It *does* self-host, as a single
+  container on your own Ada-generation card:
+  [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max).
 
 See [where each model runs](/concepts/models-v2#where-each-model-runs) for the
 full device/runtime matrix.

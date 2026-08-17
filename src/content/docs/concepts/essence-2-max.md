@@ -27,10 +27,12 @@ hero-quality, close-up output at ~25 frames per second.
 
 Two properties define it:
 
-- **GPU-only, cloud-only.** The renderer needs a server-class GPU;
-  there is no CPU or on-device runtime for this model. (For on-device, CPU,
-  or in-browser serving, use [Essence 2](/concepts/essence-2) — the standard
-  model serves everywhere.)
+- **GPU-only.** The renderer needs an NVIDIA GPU; there is no CPU or
+  on-device runtime for this model. (For on-device, CPU, or in-browser
+  serving, use [Essence 2](/concepts/essence-2) — the standard model serves
+  everywhere.) It runs on bitHuman cloud GPUs, and on **your own**
+  Ada-generation GPU via the
+  [self-hosted container](/guides/deploy-essence-2-max).
 - **No per-identity training.** The rendering model is shared; your identity
   needs only a one-time, lightweight *prep* that distills the agent's
   **identity video** — generated internally at creation from your portrait
@@ -153,6 +155,11 @@ Essence 2 Max has a **single serving tier**:
 There are no `-cpu` / `-ane` runtime slugs for this model, and it is not
 available on-device — requesting it in an on-device SDK context is reported as
 cloud-only rather than treated as an unknown model.
+
+For batch rendering on hardware you own, the same renderer ships as a
+self-hosted container — see
+[Self-hosted Essence 2 Max](/guides/deploy-essence-2-max). It renders complete
+clips rather than joining a session, so it is not a `?model=` serving tier.
 
 **Connect behavior.** The identity bundle is shared across serving capacity.
 If a session lands on capacity that hasn't cached your identity yet, the
