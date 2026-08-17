@@ -30,5 +30,6 @@ export const GROUP_ORDER: Partial<Record<SectionId, string[]>> = {
   // Lead with the defining product choice (Essence vs Expression) before the internals.
   concepts: ["Models", "Core", "Architecture"],
   guides: ["Build", "Deploy", "Integrate", "Pricing"],
-  resources: ["Resources"],
+  // Legal/compliance sits last in Resources — buyers look for it, builders don't.
+  resources: ["Resources", "Legal"],
 };
