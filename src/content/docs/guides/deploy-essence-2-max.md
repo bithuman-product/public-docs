@@ -243,11 +243,12 @@ curl -s localhost:8080/v1/health | jq '.engine.benchmark'
 ```
 
 A `degraded` verdict on a machine that used to read `ok` is almost always the
-**host**, not your workload. On a long-running Linux host, accumulated page
-cache can leave the kernel unable to find contiguous free memory, so allocations
-stall in compaction — we have measured this halve throughput on an otherwise
-idle machine, with the GPU sitting at barely half its normal power draw. It
-costs nothing to rule out:
+**host**, not your workload. On a host that has been up a long time, memory
+fragmentation can leave the kernel unable to find contiguous free memory, so
+allocations stall in compaction and starve the thread feeding the GPU. We have
+seen this halve throughput on an otherwise idle machine, with the GPU sitting at
+barely half its normal power draw. Dropping caches restores it, and costs
+nothing to try:
 
 ```bash
 sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
@@ -255,9 +256,19 @@ sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
 
 If the verdict returns to `ok`, that was it — page cache is reclaimable, so
 dropping it is safe, and a periodic drop (we run one every 6 hours, skipped
-while the GPU is busy) keeps it from coming back. If the verdict stays
-`degraded` on a freshly-booted host, the machine is genuinely oversubscribed:
-check for another process on the GPU with `nvidia-smi`.
+while the GPU is busy) keeps it from coming back.
+
+Two things worth knowing before you go hunting. A **full page cache is not
+itself the problem** — we deliberately filled one on a healthy host and
+throughput did not move, so a large `buff/cache` figure is not a fault. And the
+tempting kernel knobs are not the answer: on our hardware `min_free_kbytes` and
+`watermark_scale_factor` made no measurable difference, and disabling
+transparent huge pages outright *cost* about 5% throughput. The periodic drop is
+the only remedy we can show works.
+
+If the verdict stays `degraded` on a freshly-booted host, the machine is
+genuinely oversubscribed: check for another process on the GPU with
+`nvidia-smi`.
 
 > **Live sessions run at a fixed 25 fps.** The stream is paced to the audio, so
 > engine throughput above 25 fps is headroom that absorbs a busy host — it does
