@@ -232,6 +232,38 @@ A `render_incomplete` error means the host was too loaded or too slow for the
 requested output size, and the container refused to return a truncated video
 rather than pretend. Retry, or free up the machine.
 
+### Check throughput without running a render
+
+At boot the container benchmarks itself and publishes the result on
+`/v1/health`. This is the fastest way to tell a slow host from a slow request:
+
+```bash
+curl -s localhost:8080/v1/health | jq '.engine.benchmark'
+# { "benchmark_fps": 29.3, "verdict": "ok" }
+```
+
+A `degraded` verdict on a machine that used to read `ok` is almost always the
+**host**, not your workload. On a long-running Linux host, accumulated page
+cache can leave the kernel unable to find contiguous free memory, so allocations
+stall in compaction — we have measured this halve throughput on an otherwise
+idle machine, with the GPU sitting at barely half its normal power draw. It
+costs nothing to rule out:
+
+```bash
+sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
+```
+
+If the verdict returns to `ok`, that was it — page cache is reclaimable, so
+dropping it is safe, and a periodic drop (we run one every 6 hours, skipped
+while the GPU is busy) keeps it from coming back. If the verdict stays
+`degraded` on a freshly-booted host, the machine is genuinely oversubscribed:
+check for another process on the GPU with `nvidia-smi`.
+
+> **Live sessions run at a fixed 25 fps.** The stream is paced to the audio, so
+> engine throughput above 25 fps is headroom that absorbs a busy host — it does
+> not make the video smoother. What headroom buys you is the confidence that a
+> transient load spike won't drop you below the wire rate.
+
 ## Billing
 
 Usage is metered **per session** and reported automatically to bitHuman
