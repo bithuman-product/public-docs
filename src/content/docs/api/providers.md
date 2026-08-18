@@ -155,11 +155,25 @@ Requests to your endpoint carry the visitor's identifier in the standard OpenAI
 }
 ```
 
-The value is the `fingerprint` you supplied when you minted the embed token (it
-appears in the token as the `endUserId` claim). Mint one per visitor and the same
-string comes back on every call for that visitor — see
-[Embedding](/api/embedding#production-mint-a-token). Without a token there is
-nothing per-visitor to send and the field is omitted.
+The value is resolved in this order, and the first one present wins:
+
+1. the **`endUserId`** claim in the embed token you minted (also accepted as
+   `fingerprint`) — see [Embedding](/api/embedding#production-mint-a-token);
+2. an explicit **`?end_user_id=`** on the embed URL (aliases: `endUserId`,
+   `visitor_id`, `fingerprint`);
+3. the **session correlator** — a per-conversation identifier we generate.
+
+Options 1 and 2 are *durable*: mint or pass the same string for a returning
+visitor and you get the same value on every call, across sessions. Option 3 is
+the automatic fallback so the field is **never empty** for your endpoint, but it
+changes each session — if you see a value that varies per conversation, that
+means no durable identifier reached us and you should set one.
+
+> **Fixed 2026-08-18.** Embed tokens carrying `endUserId` were re-minted without
+> the claim before reaching the runtime, so customers who followed option 1
+> received the per-session correlator instead of their own identifier. The claim
+> is now carried through. If you supply `endUserId` and still see a changing
+> value, tell us — that is a bug, not a configuration issue.
 
 Two limits worth knowing:
 
