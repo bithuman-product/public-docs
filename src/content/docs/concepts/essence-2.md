@@ -24,9 +24,10 @@ fraction of the compute of [Essence 2 Max](/concepts/essence-2-max), the
 highest-fidelity renderer in the family. At creation the platform
 packages your identity into a compact bundle; that one artifact then runs
 **everywhere**: cloud **GPU**, the **Apple Neural Engine (ANE)**, **CPU**,
-and in-browser **WebGPU/WASM** (in rollout) — including a fully
-**on-device** Apple Silicon build where audio and video never leave the
-hardware.
+and in-browser **WebGPU/WASM** (in rollout). Its Apple Neural Engine runtime
+runs on **bitHuman's** Apple Silicon, as a cloud serving tier. A
+customer-installable **on-device** Apple build is **not published yet** — the
+[Swift SDK](/sdk/swift) carries no Essence 2 engine today.
 
 It is half the cloud price of [Essence 2 Max](/concepts/essence-2-max)
 and the only Essence 2 model with CPU, Neural Engine, and browser runtimes —
@@ -40,10 +41,10 @@ deployments, and privacy-sensitive environments.
   whole point.
 - **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
   and Neural Engine runtimes that don't need a server GPU per session.
-- **On-device or privacy-first.** The Apple Silicon build runs entirely
-  on-device on the Neural Engine — inference is local, and the ANE renders far
-  faster than real time (hundreds of frames per second on M4-class hardware),
-  leaving the CPU and GPU free for your app.
+- **Efficient Neural Engine serving.** The ANE tier renders far faster than
+  real time (hundreds of frames per second on M4-class hardware) and needs no
+  server GPU per session. It is a **cloud** tier on bitHuman's Apple Silicon;
+  it does not yet run on *your* device — see [Swift SDK](/sdk/swift).
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
@@ -167,15 +168,18 @@ pre-rename or retired slugs keep working — see
 omit `?model=` and let the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
-**On-device.** The same compact identity also runs **fully on-device** on
-Apple Silicon: the Neural Engine executes the model locally, so audio, video,
-and prompts never leave the device — the only network traffic is the
-once-per-minute billing heartbeat. On Apple this ships through the **Flutter
-plugin** (CocoaPods), which vendors the on-device Essence 2 engine for
-`ios-arm64` and `macos-arm64`. It is **not** part of the
-[Swift SDK](/sdk/swift) package: `bitHumanKit` is first-generation only, and
-naming an Essence 2 type there will not compile. (Essence 2 Max has no on-device runtime; the standard Essence 2 is
-the on-device Essence 2 model.)
+**On-device: not available yet.** The Essence 2 engine does run on Apple
+Silicon — that is how the **Neural Engine serving tier** above works — but that
+hardware is *bitHuman's*, reached over the network like any other cloud tier.
+There is **no published way to run Essence 2 on your own Mac or iPhone today**:
+
+- The [Swift SDK](/sdk/swift) does not carry it. `bitHumanKit` is
+  first-generation only, so naming an Essence 2 type there will not compile.
+- **Flutter is a reference app, not a published SDK** — it is not on pub.dev and
+  there is no CocoaPods pod. See [SDK overview](/sdk/overview#a-note-on-flutter).
+
+To reach Essence 2 from an Apple app today, use the [REST API](/api/overview) or
+a [LiveKit](/sdk/livekit) session. (Essence 2 Max is cloud-only by design.)
 
 **In the browser.** A browser-local tier is **rolling out**: appending
 `?render=local` to a session URL downloads the identity's compact web bundle

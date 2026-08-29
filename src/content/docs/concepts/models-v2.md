@@ -32,9 +32,9 @@ API, the embed widget, the dashboard, and the SDKs:
   photorealistic people, and the default. It animates your identity's
   footage (a full-HD 1080p identity video, generated internally from your
   image) at ~25 fps with an efficient engine that runs
-  everywhere — from **fully on-device** (iPhone, iPad, Mac, CPU — audio and
-  video never leave your hardware) through **cloud GPUs** to in-browser
-  **WebGPU/WASM**. bitHuman automatically serves the right way for your
+  everywhere — from **cloud GPUs**, **Apple Neural Engine** and **CPU** tiers to
+  in-browser **WebGPU/WASM**, where frames never leave the viewer's browser.
+  (A customer-installable on-device Apple build is not published yet.) bitHuman automatically serves the right way for your
   hardware and quality needs — you just pick `essence-2`.
 - **[`essence-2-max`](/concepts/essence-2-max)** — the **premium** Essence
   model: the highest-fidelity Essence renderer served directly on dedicated
@@ -312,7 +312,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — Apple Neural Engine | ✅ chain tier | — | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming still via the cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device macOS / iOS (Apple Silicon) | ✅ [Swift SDK](/sdk/swift) | — (cloud-only) | ✅ [Swift SDK](/sdk/swift) |
+| On-device macOS / iOS (Apple Silicon) | — not published yet ([Swift SDK](/sdk/swift) is first-generation only) | — (cloud-only) | — not published yet ([Swift SDK](/sdk/swift) is first-generation only) |
 | Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback), on by default where a per-identity web bundle is published and falling back to cloud otherwise, as bundles publish. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
