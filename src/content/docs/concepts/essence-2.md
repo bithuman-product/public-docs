@@ -175,8 +175,12 @@ There is **no published way to run Essence 2 on your own Mac or iPhone today**:
 
 - The [Swift SDK](/sdk/swift) does not carry it. `bitHumanKit` is
   first-generation only, so naming an Essence 2 type there will not compile.
-- **Flutter is a reference app, not a published SDK** — it is not on pub.dev and
-  there is no CocoaPods pod. See [SDK overview](/sdk/overview#a-note-on-flutter).
+- **Flutter is a reference app, not a published SDK.** An Essence 2 engine does
+  exist for `ios-arm64` and `macos-arm64`, and the Flutter plugin's CocoaPods
+  podspec can vendor it — but that engine is staged from a **private** internal
+  release, the plugin is not on pub.dev and its pod is not published, so the
+  path is not open to you. See
+  [SDK overview](/sdk/overview#a-note-on-flutter).
 
 To reach Essence 2 from an Apple app today, use the [REST API](/api/overview) or
 a [LiveKit](/sdk/livekit) session. (Essence 2 Max is cloud-only by design.)
