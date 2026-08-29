@@ -115,23 +115,33 @@ try await chat.start()   // throws .missingAPIKey / .authenticationFailed
 ## The Essence runtime
 
 For a pre-built `.imx` avatar (branded characters, 720p+, lowest credit rate),
-drive the `libessence` runtime directly — push PCM in, drain frames out:
+drive the runtime directly — push PCM in, drain frames out:
 
 ```swift
 import bitHumanKit
+import CoreGraphics
 
-let runtime = try await Bithuman.createRuntime(modelPath: modelURL)
+let result = try Bithuman.create(modelPath: modelURL)
+let runtime = result.bithuman        // result.staticIdleImage is the rest pose
+try await runtime.start()
 
-try runtime.pushAudio(pcm16kMonoFloat32)     // any amount, as it arrives
-for await frame in runtime.frames() {        // composed BGR frames, 25 FPS
-    // hand the frame to your view layer
+// Push audio as it arrives — 24 kHz for playback, 16 kHz for the encoder.
+try await runtime.pushAudio(audio24k: samples24, audio16k: samples16)
+
+// Drain rendered chunks; each carries its frames and the audio they pair with.
+while let chunk = runtime.tryDequeueChunk() {
+    let frames: [CGImage] = chunk.frames   // 25 FPS
+    // hand the frames to your view layer
 }
-runtime.resetStream()                        // at end-of-utterance
+
+await runtime.interrupt()            // at end-of-utterance
+await runtime.shutdown()
 ```
 
 This is the Apple expression of the [audio-streaming push/drain
-loop](/concepts/audio-streaming) — the same `Fixture`/`Runtime` contract as the
-Python SDK.
+loop](/concepts/audio-streaming). The entry point is `Bithuman.create` — there
+is no `createRuntime` on the published module. Verified to compile against
+`bitHumanKit` 2.4.0 with Xcode 26.5.
 
 ## Permissions + entitlements
 
