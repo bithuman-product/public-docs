@@ -168,10 +168,13 @@ omit `?model=` and let the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
 **On-device.** The same compact identity also runs **fully on-device** on
-Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview maturity): the
-Neural Engine executes the model locally, so audio, video, and prompts never
-leave the device — the only network traffic is the once-per-minute billing
-heartbeat. (Essence 2 Max has no on-device runtime; the standard Essence 2 is
+Apple Silicon: the Neural Engine executes the model locally, so audio, video,
+and prompts never leave the device — the only network traffic is the
+once-per-minute billing heartbeat. On Apple this ships through the **Flutter
+plugin** (CocoaPods), which vendors the on-device Essence 2 engine for
+`ios-arm64` and `macos-arm64`. It is **not** part of the
+[Swift SDK](/sdk/swift) package: `bitHumanKit` is first-generation only, and
+naming an Essence 2 type there will not compile. (Essence 2 Max has no on-device runtime; the standard Essence 2 is
 the on-device Essence 2 model.)
 
 **In the browser.** A browser-local tier is **rolling out**: appending
