@@ -44,10 +44,11 @@ async for frame in avatar.run():
     render(frame.bgr_image)        # lifelike animated face, in realtime` },
   { label: "Swift", lang: "swift", code: `import bitHumanKit
 
-let runtime = try await Bithuman.createRuntime(modelPath: imxURL)
-try runtime.pushAudio(pcm16kMono)  // 16 kHz mono PCM
-for await frame in runtime.frames() {
-    view.render(frame.cgImage())   // on-device, realtime
+let runtime = try Bithuman.create(modelPath: imxURL).bithuman
+try await runtime.start()
+try await runtime.pushAudio(audio24k: pcm24k, audio16k: pcm16k)
+while let chunk = runtime.tryDequeueChunk() {
+    chunk.frames.forEach(view.render)   // on-device, realtime
 }` },
 ];
 

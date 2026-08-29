@@ -18,7 +18,7 @@ on-device engines:
   `VoiceChatConfig` / `AvatarConfig`.
 - **Essence** — the portable `libessence` C++ runtime that renders a pre-built
   `.imx` avatar (audio in, composed BGR frames out). Reached via
-  `Bithuman.createRuntime(modelPath:)`.
+  `Bithuman.create(modelPath:)`.
 
 Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS. All inference
 runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
