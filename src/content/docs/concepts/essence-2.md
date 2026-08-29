@@ -173,8 +173,12 @@ Silicon — that is how the **Neural Engine serving tier** above works — but t
 hardware is *bitHuman's*, reached over the network like any other cloud tier.
 There is **no published way to run Essence 2 on your own Mac or iPhone today**:
 
-- The [Swift SDK](/sdk/swift) does not carry it. `bitHumanKit` is
-  first-generation only, so naming an Essence 2 type there will not compile.
+- The [Swift SDK](/sdk/swift) does not carry it. Naming an Essence 2 type there
+  will not compile: measured against the shipped `bitHumanKit.xcframework`, the
+  binary contains zero occurrences of the string `essence` and its public
+  interface declares no Essence 2 type. (That package *does* now vend an
+  on-device [`expression-2`](/concepts/expression-2) engine, as of 2.5.0 — but
+  that is the other second-generation model, not this one.)
 - **Flutter is a reference app, not a published SDK.** An Essence 2 engine does
   exist for `ios-arm64` and `macos-arm64`, and the Flutter plugin's CocoaPods
   podspec can vendor it — but that engine is staged from a **private** internal

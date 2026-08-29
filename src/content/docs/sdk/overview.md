@@ -63,21 +63,25 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 | Where inference runs | Your machine | bitHuman's GPU pool |
 | Surfaces | Python, Swift, [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
 | Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
-| Hardware | CPU (Essence 1) · Apple Silicon / Neural Engine (`essence-2` preview, `expression-2`) · Apple Silicon or NVIDIA GPU (Expression 1) | None — we host it |
+| Hardware | CPU (Essence 1) · Apple Silicon (`expression-2`, Swift SDK 2.5.0+) · Apple Silicon or NVIDIA GPU (Expression 1). `essence-2` on-device is not published. | None — we host it |
 | Cost | 1–2 credits/min (`essence-2` / `expression-2`: 2) | 2–8 credits/min (`essence-2` / `expression-2`: 4 · `essence-2-max`: 8) |
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
 
-> **Second generation.** [`essence-2`](/concepts/essence-2) runs on-device on
-> Apple Silicon / the Neural Engine via the [Swift SDK](/sdk/swift) (preview);
-> as of Python SDK **2.9.0** it also **renders offline on your own CPU
-> servers** — metered, no GPU, via `bithuman.tessera_offline` and the
+> **Second generation.** [`essence-2`](/concepts/essence-2) does **not** run
+> on-device through any published SDK — the [Swift SDK](/sdk/swift) does not
+> carry it (measured against the shipped `bitHumanKit` binary, which contains
+> zero occurrences of `essence`). Reach it via the [REST API](/api/overview) or
+> [LiveKit](/sdk/livekit). As of Python SDK **2.9.0** it does
+> **render offline on your own CPU servers** — metered, no GPU, via `bithuman.tessera_offline` and the
 > `bithuman[tessera]` extra
 > ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
 > Live streaming of an `essence-2` artifact from your own server still runs
 > through the cloud.
 > [`expression-2`](/concepts/expression-2) renders locally via the
 > [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
-> Linux x86_64) and on the Neural Engine.
+> Linux x86_64) and on the Neural Engine, and its engine is on the Apple
+> on-device rail as the `Expression2` SwiftPM product from **2.5.0**
+> ([engine only — no model bundle is published](/sdk/swift#expression-2-on-device)).
 > [`essence-2-max`](/concepts/essence-2-max) is cloud-GPU-only — no on-device
 > or self-hosted runtime. See
 > [where each model runs](/concepts/models-v2#where-each-model-runs).
@@ -93,7 +97,7 @@ We keep this honest so you can plan around it.
 | SDK | Package | Topology | Status |
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.9.0) | On-device | **GA** |
-| **Swift / Apple** | SwiftPM `bitHumanKit` (2.4.0) | On-device | **Preview** |
+| **Swift / Apple** | SwiftPM, pin `from: "2.5.0"` — products `bitHumanKit` and `Expression2` | On-device | **Preview** |
 | **Android / Kotlin** | `ai.bithuman:sdk:2.3.6` — Maven Central (Essence, pinned) | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.4.2 — Homebrew / universal installer; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |

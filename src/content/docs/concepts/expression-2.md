@@ -192,9 +192,13 @@ server-grade CPU work wants modern (AVX-512-class) CPUs. (The Python SDK has
 no Expression-2-loadable artifact — local rendering is a CLI surface.) See
 the [device matrix](/concepts/models-v2#where-each-model-runs).
 
-**On-device.** The same compact per-identity model also runs fully
-on-device on Apple Silicon via the [Swift SDK](/sdk/swift) rail (preview
-maturity) — no server in the path. Download the runnable `<code>.imx` build
+**On-device.** The engine runs on Apple Silicon via the [Swift SDK](/sdk/swift)
+rail (preview maturity) — no server in the path. The `Expression2` SwiftPM
+product, new in **2.5.0**, vends the engine binary; it ships **no model
+weights**, and no per-identity CoreML bundle is published yet, so resolving it
+does not by itself give you a rendering avatar. See
+[Expression 2 on-device](/sdk/swift#expression-2-on-device). Download the
+runnable `<code>.imx` build
 (legacy `.avatar` zip)
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <code>`. **In the browser:** append `?render=local` to a

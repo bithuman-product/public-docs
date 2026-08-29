@@ -29,7 +29,7 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 | Goal | Install | What you get |
 |---|---|---|
 | Embed in a Python app | `pip install bithuman` | Python SDK (library only, ~16–26 MB) |
-| Embed in a Swift app | SwiftPM `Bithuman` | Swift SDK + bundled libessence XCFramework |
+| Embed in a Swift app | SwiftPM `bitHumanKit` / `Expression2` | Swift SDK XCFrameworks |
 | Run from the CLI on Mac | `brew install bithuman-product/bithuman/bithuman-cli` | bitHuman CLI (single Rust binary) |
 | Run from the CLI in any Python env | `pip install bithuman-cli` | Same Rust binary, inside a Python wheel |
 | Cloud LiveKit avatar | `pip install livekit-plugins-bithuman` | Managed avatar session |
@@ -73,7 +73,8 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | 2.9.0 | PyPI | v7 |
-| Swift SDK (`bitHumanKit`) | 2.4.0 | SwiftPM | v7 |
+| Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.5.0) | SwiftPM | v7 |
+| Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no libessence ABI) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
 | bitHuman CLI | 2.4.2 (Homebrew / universal installer); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
 
@@ -142,7 +143,7 @@ at session launch; the device/runtime matrix is:
 | Cloud Apple Neural Engine | Real-time | — | Real-time |
 | Cloud CPU | Real-time | — | Real-time |
 | Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (~22–31 FPS on 16 cores); live streaming via cloud | — | [CLI local rendering](/sdk/cli/overview#local-rendering-by-platform) (macOS arm64, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | [Swift SDK](/sdk/swift) (preview) | — (cloud-only) | [Swift SDK](/sdk/swift) |
+| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2`, v2.5.0+ — engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
 | Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Planned |
 
 Cloud sessions route down the serving chain (GPU → Neural Engine → CPU)

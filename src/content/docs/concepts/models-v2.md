@@ -52,7 +52,7 @@ API, the embed widget, the dashboard, and the SDKs:
 | **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
-| **On-device** | Yes (CPU / Apple Neural Engine) | — | Yes (Apple Neural Engine) |
+| **On-device** | Your own CPU servers (Python SDK 2.9.0+). **Not** on your Mac/iPhone — the Apple Neural Engine tier is bitHuman's hardware, reached over the network | — | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/swift#expression-2-on-device)) |
 | **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (about 1–1.5 hours) |
 | **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
 | **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
@@ -312,7 +312,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — Apple Neural Engine | ✅ chain tier | — | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming still via the cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device macOS / iOS (Apple Silicon) | — not published yet ([Swift SDK](/sdk/swift) is first-generation only) | — (cloud-only) | — not published yet ([Swift SDK](/sdk/swift) is first-generation only) |
+| On-device macOS / iOS (Apple Silicon) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2` product, 2.5.0+ — engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
 | Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback), on by default where a per-identity web bundle is published and falling back to cloud otherwise, as bundles publish. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving

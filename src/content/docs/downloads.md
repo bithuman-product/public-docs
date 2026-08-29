@@ -85,12 +85,19 @@ See the [Python SDK guide](/sdk/python).
 On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only.
 
 In Xcode: **File → Add Package Dependencies…** → paste
-`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.4.0**
-→ attach the **`bitHumanKit`** product. The package wraps a pre-compiled
-XCFramework with all third-party deps statically linked — zero transitive
-SwiftPM dependencies.
+`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.5.0**
+→ attach a product. The package wraps pre-compiled XCFrameworks with all
+third-party deps statically linked — zero transitive SwiftPM dependencies.
 
-The product import is `import bitHumanKit`. See the [Swift SDK guide](/sdk/swift).
+- **`bitHumanKit`** — the umbrella (Expression 1 + an `.imx` avatar runtime +
+  the on-device LLM/TTS stack). `import bitHumanKit`.
+- **`Expression2`** — the [`expression-2`](/concepts/expression-2) engine on its
+  own, new in 2.5.0. `import Expression2`. **Engine only: it ships no model
+  weights**, and `isReady` stays `false` until a per-identity CoreML bundle is
+  present. None is published yet — see the
+  [Swift SDK guide](/sdk/swift#expression-2-on-device).
+
+`essence-2` is **not** on this rail. See the [Swift SDK guide](/sdk/swift).
 
 ### JavaScript / TypeScript — Preview
 
@@ -132,7 +139,8 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | **2.9.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | **2.4.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
+| Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
+| Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no libessence ABI) |
 | bitHuman CLI (`bithuman-cli`) | **2.4.2** (Homebrew / universal installer) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 

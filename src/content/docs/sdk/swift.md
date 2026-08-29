@@ -16,31 +16,36 @@ on-device engines:
 - **Expression** — animates any portrait image at runtime (speech encoder →
   animator → face decoder on the GPU + Apple Neural Engine). Home of `VoiceChat` /
   `VoiceChatConfig` / `AvatarConfig`.
-- **Essence** — the portable `libessence` C++ runtime that renders a pre-built
-  `.imx` avatar (audio in, composed BGR frames out). Reached via
-  `Bithuman.create(modelPath:)`.
+- **Essence** — an `.imx` avatar runtime that renders a pre-built avatar (audio
+  in, composed BGR frames out). Reached via `Bithuman.create(modelPath:)`.
+  (This page used to call it "the portable `libessence` C++ runtime". It is not:
+  the published `bitHumanKit.xcframework` binary is a static archive of 28
+  objects — `bitHumanKit.o`, MLX, HuggingFace, Tokenizers, Crypto, yyjson — and
+  `libessence` is not among them.)
 
 Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS. All inference
 runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 (audio-only is unmetered).
 
-> **Maturity** This rail is **preview**, not GA. The published package vends two
-> products: **`bitHumanKit`** (`import bitHumanKit`), the binary umbrella that
-> bundles everything, and `BithumanEngineProtocol`, a source-only Layer-0 engine
-> interface. The standalone Layer-1 engine products (`Expression`, `Bithuman`)
-> are **not** published — naming one fails at resolve time with
-> `product 'Expression' ... not found in package 'homebrew-bithuman'`. Attach the
-> umbrella.
+> **Maturity** This rail is **preview**, not GA. The package vends three
+> products: **`bitHumanKit`** (`import bitHumanKit`), the binary umbrella;
+> **`Expression2`** (`import Expression2`), the second-generation avatar engine,
+> new in **v2.5.0**; and `BithumanEngineProtocol`, a source-only Layer-0 engine
+> interface. The older standalone Layer-1 products (`Expression`, `Bithuman`) are
+> **not** published — naming one fails at resolve time with
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`.
 
-> **Second-generation models are not on this rail.** The published package
-> carries no [`expression-2`](/concepts/expression-2) or
-> [`essence-2`](/concepts/essence-2) engine: neither is a SwiftPM product, and
-> neither is bundled inside `bitHumanKit` (checked against the
-> `bitHumanKit.xcframework` attached to release `v2.4.0` — the binary this
-> package resolves to). [`essence-2-max`](/concepts/essence-2-max) is cloud-only
-> by design. To reach any second-generation model from an Apple app today, call
-> the [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session; the
-> on-device rail in this package is first-generation only.
+> **Which second-generation engines are on this rail.**
+> [`expression-2`](/concepts/expression-2) **is**, as of **v2.5.0** — see
+> [Expression 2 on-device](#expression-2-on-device) below, including what that
+> release does and does not include.
+> [`essence-2`](/concepts/essence-2) **is not**: it is not a SwiftPM product and
+> it is not bundled inside `bitHumanKit`. That is measured against the shipped
+> binary, not assumed — `bitHumanKit.xcframework` @ `v2.4.0` contains zero
+> occurrences of the string `essence` and its public interface declares no
+> Essence 2 type. [`essence-2-max`](/concepts/essence-2-max) is cloud-only by
+> design. To reach Essence 2 from an Apple app today, call the
+> [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session.
 
 ## Install
 
@@ -50,21 +55,29 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **2.4.0** ("Up to Next Major Version" from 2.4.0) and attach the
-**`bitHumanKit`** product to your target. Or in `Package.swift`:
+Pick **2.5.0** ("Up to Next Major Version" from 2.5.0) and attach the product
+you want — **`bitHumanKit`** for the umbrella, **`Expression2`** for the
+second-generation engine alone. Or in `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "2.4.0")   // 2.4.0 is the only tag that carries a Package.swift
+         from: "2.5.0")
 ```
+
+> **One package, two release tags — by design.** `2.5.0` is the version you pin;
+> it is the manifest that declares every product. The umbrella's binary still
+> downloads from the **`v2.4.0`** release and the Expression 2 binaries from
+> **`v2.5.0`**, because a single shared tag would have re-pointed
+> `bitHumanKit.xcframework.zip` at a release that does not carry it — a hard 404
+> for every existing consumer. SwiftPM reads absolute asset URLs out of the
+> manifest it resolves, so the assets do not have to live on the resolved tag.
 
 > **Do not pin `0.8.x` here.** This repo has no `0.8.2` tag, and no `v0.x` tag
 > carries a `Package.swift` — those tags hold Homebrew formula files. Resolving
 > `from: "0.8.1"` fails with
 > `error: the package manifest at '/Package.swift' cannot be accessed`. The
 > `0.8.x` numbers belong to the retired `bithuman-sdk-public` repo, archived when
-> the SwiftPM distribution moved here; `v2.4.0` is the only release carrying
-> `bitHumanKit.xcframework.zip`.
+> the SwiftPM distribution moved here.
 
 The package wraps a pre-compiled `bitHumanKit.xcframework`; every third-party
 dependency (MLX, HuggingFace, Tokenizers, …) is statically linked, so consumers
@@ -143,6 +156,40 @@ loop](/concepts/audio-streaming). The entry point is `Bithuman.create` — there
 is no `createRuntime` on the published module. Verified to compile against
 `bitHumanKit` 2.4.0 with Xcode 26.5.
 
+## Expression 2 on-device
+
+**New in v2.5.0.** [`expression-2`](/concepts/expression-2) is now a SwiftPM
+product of its own — the first second-generation engine on this rail. It is a
+pure Swift + CoreML talking head; Apple Silicon only, `macos-arm64`,
+`ios-arm64`, `ios-arm64-simulator`.
+
+```swift
+.product(name: "Expression2", package: "homebrew-bithuman")
+```
+
+```swift
+import Expression2
+
+let engine = Expression2Engine()
+engine.warmUp()
+engine.feed(samples)                       // [Float] PCM
+while let (frame, speech) = engine.pull() {
+    // frame: [UInt8], the composed image; engine.width x engine.height
+}
+```
+
+> **Read this before you plan around it — `Expression2` ships the engine, not a
+> runnable avatar.** `Expression2Engine()` takes no model path. The engine looks
+> for a per-identity CoreML bundle in `$BITHUMAN_EXPRESSION2_DIR` or in your app
+> bundle, and **`isReady` stays `false` until it finds one**. No such bundle is
+> published, so resolving this product does not by itself get you a rendering
+> avatar. On a clean machine the engine constructs and reports
+> `isReady=false` — that is the expected result today, not a misconfiguration.
+
+> **Depend on `Expression2` alone.** Adding both `Expression2` and the
+> `BithumanEngineProtocol` product pulls the Layer-0 module in twice and fails to
+> link.
+
 ## Permissions + entitlements
 
 `Info.plist` (all platforms):
@@ -194,7 +241,9 @@ a crash. See [models](/concepts/models).
 
 ## Performance
 
-Measured on an M5 MacBook Pro (libessence 1.19.1, single conversation):
+Measured on an M5 MacBook Pro against the `libessence` engine (1.19.1, single
+conversation). Treat them as indicative of the runtime, not as a measurement of
+the shipped `bitHumanKit` binary, which does not contain `libessence`:
 
 | Metric | Value |
 |---|---|
