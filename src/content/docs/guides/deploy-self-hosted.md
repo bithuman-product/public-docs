@@ -28,7 +28,13 @@ Then point a LiveKit agent worker at `http://localhost:8089/launch` — the work
 
 **Requirements:** an **Ampere-or-newer NVIDIA GPU** (compute capability ≥ 8.0 with BF16 tensor cores — RTX 30xx/40xx, A-series, L4/L40S, H100; **Turing T4 / GTX 16xx / RTX 20xx and older fall back to a slower non-real-time path**), **≥ 8 GB VRAM**, the NVIDIA Container Toolkit, and Docker 24+. Weights (~5 GB) download on first run into the `bithuman-models` volume; subsequent runs skip the download.
 
-> **Pin the image version.** Use a version-pinned tag (e.g. `sgubithuman/expression-avatar:2.3.7`) rather than `:latest` in production, and pull a current build — older image builds shipped a publish-preset cap that produced laggy/black video (see [Troubleshooting](#troubleshooting-black-or-laggy-video)). On a GPU it has never seen before, the first run may also spend a few extra minutes optimizing itself for that GPU (a one-time step); `GET /ready` stays non-`200` until that completes, so always poll `/ready` before sending `/launch`.
+> **Pin the image.** `sgubithuman/expression-avatar` publishes no semver tags — the tags are build ids and dated builds, and `:latest` moves. In production pin the **digest**, which never moves:
+>
+> ```bash
+> sgubithuman/expression-avatar@sha256:e9325ab35468be968eb41c4132b642775a45f83def2e11ee2f6ed5297fa696b3
+> ```
+>
+> That is the current build (tagged `0822021b`, pushed 2026-06-16), which `:latest` also points at today. Pull a current build — older image builds shipped a publish-preset cap that produced laggy/black video (see [Troubleshooting](#troubleshooting-black-or-laggy-video)). On a GPU it has never seen before, the first run may also spend a few extra minutes optimizing itself for that GPU (a one-time step); `GET /ready` stays non-`200` until that completes, so always poll `/ready` before sending `/launch`.
 
 > **Tip** First-run startup takes ~2 minutes (model download + decrypt + GPU warm-up). Poll `GET /ready` — it returns `200` when the worker is ready to accept `/launch` requests.
 

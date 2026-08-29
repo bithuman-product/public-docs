@@ -24,19 +24,23 @@ Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS. All inference
 runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 (audio-only is unmetered).
 
-> **Maturity** This rail is **preview**, not GA. Today the package publishes
-> exactly one product — **`bitHumanKit`** (`import bitHumanKit`), which bundles
-> everything. The standalone Layer-1 engine products (`Expression`, `Bithuman`)
-> are not yet published as separate SwiftPM products; until they ship, import
-> the umbrella.
+> **Maturity** This rail is **preview**, not GA. The published package vends two
+> products: **`bitHumanKit`** (`import bitHumanKit`), the binary umbrella that
+> bundles everything, and `BithumanEngineProtocol`, a source-only Layer-0 engine
+> interface. The standalone Layer-1 engine products (`Expression`, `Bithuman`)
+> are **not** published — naming one fails at resolve time with
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`. Attach the
+> umbrella.
 
-> **Second-generation models** The on-device engine surface also covers the
-> second generation: [`expression-2`](/concepts/expression-2) and
-> [`essence-2`](/concepts/essence-2) have on-device Apple-silicon
-> engines (the Neural Engine tiers of those models), while
-> [`essence-2-max`](/concepts/essence-2-max) is **cloud-only** — it is
-> recognized but reported as cloud-only rather than loaded locally. The
-> on-device v2 rail carries the same preview maturity as this package.
+> **Second-generation models are not on this rail.** The published package
+> carries no [`expression-2`](/concepts/expression-2) or
+> [`essence-2`](/concepts/essence-2) engine: neither is a SwiftPM product, and
+> neither is bundled inside `bitHumanKit` (checked against the
+> `bitHumanKit.xcframework` attached to release `v2.4.0` — the binary this
+> package resolves to). [`essence-2-max`](/concepts/essence-2-max) is cloud-only
+> by design. To reach any second-generation model from an Apple app today, call
+> the [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session; the
+> on-device rail in this package is first-generation only.
 
 ## Install
 
@@ -46,13 +50,21 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **0.8.2** (or "Up to Next Major" from 0.8.1) and attach the
+Pick **2.4.0** ("Up to Next Major Version" from 2.4.0) and attach the
 **`bitHumanKit`** product to your target. Or in `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "0.8.1")   // resolves to the latest 0.8.x tag (0.8.2 today)
+         from: "2.4.0")   // 2.4.0 is the only tag that carries a Package.swift
 ```
+
+> **Do not pin `0.8.x` here.** This repo has no `0.8.2` tag, and no `v0.x` tag
+> carries a `Package.swift` — those tags hold Homebrew formula files. Resolving
+> `from: "0.8.1"` fails with
+> `error: the package manifest at '/Package.swift' cannot be accessed`. The
+> `0.8.x` numbers belong to the retired `bithuman-sdk-public` repo, archived when
+> the SwiftPM distribution moved here; `v2.4.0` is the only release carrying
+> `bitHumanKit.xcframework.zip`.
 
 The package wraps a pre-compiled `bitHumanKit.xcframework`; every third-party
 dependency (MLX, HuggingFace, Tokenizers, …) is statically linked, so consumers

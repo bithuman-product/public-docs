@@ -3734,22 +3734,25 @@ tags:
       ## Swift SDK
 
       In Xcode: **File → Add Package Dependencies…** →
-      `https://github.com/bithuman-product/bithuman-sdk-public.git` →
-      pin to **0.8.1 or later** (current release **0.8.2**).
+      `https://github.com/bithuman-product/homebrew-bithuman.git` →
+      pin to **2.4.0 or later** (current release **2.4.0**).
 
       ```swift
       // Package.swift
       .package(
-          url: "https://github.com/bithuman-product/bithuman-sdk-public.git",
-          from: "0.8.1"   // resolves to the latest 0.8.x tag (0.8.2 today)
+          url: "https://github.com/bithuman-product/homebrew-bithuman.git",
+          from: "2.4.0"   // 2.4.0 is the only tag carrying a Package.swift
       )
       ```
 
       ```swift
       import bitHumanKit
 
-      let runtime = try await Bithuman.createRuntime(modelPath: modelURL)
+      let result = try Bithuman.create(modelPath: modelURL)
       ```
+
+      The older `bithuman-sdk-public` repo and its `0.8.x` tags are archived —
+      pinning them, or pinning `0.8.x` on this repo, does not resolve.
 
       Binary XCFramework, zero transitive SwiftPM deps. Runs on:
       - macOS 26+ (Tahoe) on Apple Silicon M3+
@@ -4143,7 +4146,7 @@ tags:
       |---|---|
       | REST API | URL path (`/v1/`, `/v2/`) — never breaks at minor |
       | Python SDK | Semver — minor bumps may add params; major bumps may rename |
-      | Swift SDK | Semver — floor `0.8.1` per Package.swift (current release `0.8.2`) |
+      | Swift SDK | Semver — floor `2.4.0` per Package.swift (current release `2.4.0`) |
       | Flutter SDK | Semver — pinned in `pubspec.yaml` |
       | `.imx` file format | Forward-compatible within a major; auto-upgraded on first load |
 

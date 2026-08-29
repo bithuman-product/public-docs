@@ -25,7 +25,7 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 > is the recommended server: it adds the local tools and (as of CLI **2.4.1**)
 > carries the hardened `generate_agent` schema. The standalone
 > [`bithuman-mcp` PyPI package](https://pypi.org/project/bithuman-mcp/)
-> (`pip install bithuman-mcp`, currently **0.3.4**, Python 3.10–3.14) remains
+> (`pip install bithuman-mcp`, currently **0.3.5**, Python 3.10–3.14) remains
 > available for pip-only environments — same cloud tool names, no local tools.
 > Since 0.3.4 it also accepts `model` / `version` on `generate_agent`, so
 > `essence-2` is reachable from either server.
@@ -77,10 +77,11 @@ pip install bithuman-cli                                             # macOS arm
 
 > **Version check for `model` / `version` support:** `bithuman --version` must
 > report CLI **2.4.1 or newer**. The current Homebrew/installer release is
-> **2.4.0** (2.4.2 is rolling out) — on 2.4.0, `generate_agent` has no `model`
-> parameter and every creation uses the platform default model. Until your
-> install reports 2.4.1+, use the pip server for Essence 2 creations:
-> `pip install bithuman-mcp` (0.3.4) and register command `bithuman-mcp`
+> **2.4.2**, so a fresh install is already there — but an install still on
+> **2.4.0** has no `model` parameter on `generate_agent`, and every creation
+> uses the platform default model. Until your install reports 2.4.1+, upgrade
+> (`brew upgrade bithuman-cli`) or use the pip server for Essence 2 creations:
+> `pip install bithuman-mcp` (0.3.5) and register command `bithuman-mcp`
 > instead of `bithuman mcp`.
 
 Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
@@ -164,10 +165,10 @@ The agent calls `generate_agent` with `model: "essence-2"` (equivalently
 photorealistic human subject (else the API rejects it 422 **before billing**,
 see [the subject gate](/api/agents#the-essence-2-subject-gate-422)) — then
 polls `get_agent_status`. Expect the `lip_sync` step to run ~25–40 minutes
-while the identity trains. Creation is **image-only**: never pass `video`
-(the `bithuman-mcp` 0.3.4 schema still lists a legacy `video` field — the API
-rejects it with `400 VIDEO_INPUT_NOT_SUPPORTED`; the CLI 2.4.1+ server has
-removed it).
+while the identity trains. Creation is **image-only**: never pass `video`. The
+`bithuman-mcp` 0.3.4 schema still listed a legacy `video` field — the API
+rejects it with `400 VIDEO_INPUT_NOT_SUPPORTED` — and `bithuman-mcp` 0.3.5 and
+the CLI 2.4.1+ server have both dropped it.
 
 **Turn a script into speech**
 

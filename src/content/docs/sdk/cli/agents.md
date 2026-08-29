@@ -82,8 +82,8 @@ for flags and copy-pasteable `EXAMPLES:`.
 {"cli":"2.4.2","libessence":"2.3.8","abi":7,"schema_version":1}
 ```
 `"wheel"` is added when installed via the pip shim. (Values shown are from CLI
-2.4.2; your install prints its own versions — the Homebrew release is 2.4.0,
-which reports `libessence 2.3.6`.)
+2.4.2, the current Homebrew release; your install prints its own versions — a
+2.4.0 install reports `libessence 2.3.6`.)
 
 ### `bithuman whoami --json`  ·  `bithuman auth status --json`
 ```json
@@ -220,8 +220,9 @@ pipeline. Agent creation is **image-only** — `video` is not a creation input
 (the 10-second identity video is generated internally): CLI 2.4.1+ removed it
 from the tool schema entirely, and the API rejects any request carrying it
 with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations). On CLI
-2.4.0 (the current Homebrew release) the `model` parameter does not exist yet
-— upgrade, or use `bithuman-mcp` 0.3.4+ ([MCP server](/guides/mcp-server)).
+2.4.0 the `model` parameter does not exist yet — upgrade (2.4.2 is the current
+Homebrew release), or use `bithuman-mcp` 0.3.4+
+([MCP server](/guides/mcp-server)).
 
 Discover the surface without speaking JSON-RPC: `bithuman mcp tools` (or
 `bithuman mcp tools --json`), and the catalog is also under `mcp_tools` in
