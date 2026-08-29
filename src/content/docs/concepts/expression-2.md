@@ -196,12 +196,18 @@ the [device matrix](/concepts/models-v2#where-each-model-runs).
 rail (preview maturity) — no server in the path. The `Expression2` SwiftPM
 product, new in **2.5.0**, vends the engine binary; it ships **no model
 weights**, and no per-identity CoreML bundle is published yet, so resolving it
-does not by itself give you a rendering avatar. See
-[Expression 2 on-device](/sdk/swift#expression-2-on-device). Download the
+does not by itself give you a rendering avatar. There is no self-serve path to a
+bundle — email [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity
+you want. See [Expression 2 on-device](/sdk/swift#expression-2-on-device).
+
+**The `.imx` below is a different rail, not the missing bundle.** Download the
 runnable `<code>.imx` build
 (legacy `.avatar` zip)
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>`. **In the browser:** append `?render=local` to a
+or `bithuman pull <code>` — that artifact drives the **Essence** runtime and the
+CLI. The `Expression2` SwiftPM product cannot read one: `strings` on the shipped
+v2.5.0 `Expression2.xcframework` finds zero occurrences of `imx`. **In the
+browser:** append `?render=local` to a
 session URL to render Expression 2 locally (LiteRT.js / WebGPU, WASM fallback),
 so the video never leaves the machine — rolling out per identity as web bundles
 publish. See [Browser rendering](/guides/browser-rendering).

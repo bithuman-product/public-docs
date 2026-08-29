@@ -94,7 +94,9 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
 - **`Expression2`** — the [`expression-2`](/concepts/expression-2) engine on its
   own, new in 2.5.0. `import Expression2`. **Engine only: it ships no model
   weights**, and `isReady` stays `false` until a per-identity CoreML bundle is
-  present. None is published yet — see the
+  present. None is published yet, and there is no self-serve way to get one —
+  email [hello@bithuman.ai](mailto:hello@bithuman.ai). An `.imx` from
+  `bithuman pull` is a **different rail** and will not start it. See the
   [Swift SDK guide](/sdk/swift#expression-2-on-device).
 
 `essence-2` is **not** on this rail. See the [Swift SDK guide](/sdk/swift).

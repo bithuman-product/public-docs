@@ -185,6 +185,20 @@ while let (frame, speech) = engine.pull() {
 > published, so resolving this product does not by itself get you a rendering
 > avatar. On a clean machine the engine constructs and reports
 > `isReady=false` — that is the expected result today, not a misconfiguration.
+>
+> **How you get a bundle: ask us — there is no self-serve path.** Bundles are
+> not on any download page, are not fetched by any CLI command, and are not
+> gated behind a plan you can buy. Email
+> [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want.
+>
+> **An `.imx` is not the missing piece.** `bithuman pull <code>` and
+> [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+> return an `.imx`, which belongs to the Essence runtime. `Expression2` cannot
+> read one: measured against the shipped `Expression2.xcframework` (macos-arm64,
+> v2.5.0), `strings` finds **zero** occurrences of `imx` — and one each of
+> `BITHUMAN_EXPRESSION2_DIR` and `dec_p2_v3_all`, the CoreML member whose
+> absence is what holds `warmUp()` and `isReady` down. Pointing
+> `$BITHUMAN_EXPRESSION2_DIR` at an unpacked `.imx` will not start the engine.
 
 > **Depend on `Expression2` alone.** Adding both `Expression2` and the
 > `BithumanEngineProtocol` product pulls the Layer-0 module in twice and fails to
