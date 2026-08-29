@@ -64,8 +64,12 @@ It's a URL parameter on the agent landing page. Replace `AGENT_CODE` with your c
 https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=browser
 ```
 
-(The short URL mints a session key and forwards you — extra parameters like
-`rendering_mode` are preserved.)
+(The short URL mints a session key and forwards you. It preserves a **named** set
+of parameters, not everything you append: the rendering-mode switches
+`rendering_mode`, `render` and `compute` all survive the hop, alongside `model`,
+`deployment`, `greetingLang`, `greetingMsg` and the transparent-embed options. A
+parameter outside that set is dropped silently, so if you need one to reach the
+viewer, use the `agent.viewer.bithuman.ai` URL directly.)
 
 For `avatar` mode (no agent worker, no LiveKit), pass the IMX model URL directly:
 
