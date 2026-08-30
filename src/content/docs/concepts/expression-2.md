@@ -74,6 +74,26 @@ points rejected creations at this model. You can also
 existing agent (2000 credits — the same per-identity training runs; it uses
 the agent's stored image).
 
+> **When the credits leave your balance.** Creation is **charged up front, not
+> on delivery.** The 2000 credits are debited within seconds of the request
+> being accepted — at the first step of the run, before the persona, the
+> portrait, the idle clip or the two hours of training. It is a flat one-time
+> charge, unlike [live serving](/guides/pricing#serving--credits-per-live-minute),
+> which meters the minutes actually rendered: creation does not cost more when
+> training takes longer or needs more attempts internally, and it is not
+> refunded pro rata if you never launch the agent.
+>
+> **What is refunded.** If the run fails early — a portrait that cannot be
+> fetched, a persona step that errors — the charge is reversed automatically,
+> typically within a minute, and a matching `credit_refund_…` row appears in
+> [`GET /v1/usage`](/api/billing#usage-history). **A creation that completes is
+> not refundable**, and completion is judged on the trained model being
+> published, not on your having launched it. So poll
+> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) to `ready` and
+> start a session while you still have the run in front of you. If an agent
+> reaches `ready` and will not serve, that is a fault worth reporting rather
+> than retrying — a second `generate` is a second 2000 credits.
+
 > **Note** The Python examples below use
 > [`requests`](https://pypi.org/project/requests/), which is not in the standard
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
@@ -132,13 +152,25 @@ training GPU. When the status reaches `ready`, the agent is servable on every
 tier.
 
 **How long.** The per-identity training step runs on a dedicated training GPU
-and is the dominant cost of creation — plan for **about 1 to 1.5 hours**
-(roughly 60–100 minutes). The training recipe is **adaptive**: it starts from a
-short, efficient schedule, and every agent must pass the same quality checks
-before it ships — an identity that needs more work automatically climbs to more
-training, never a lower bar. That is why harder identities take longer. A recent
-cold-start run measured about 1 hour 40 minutes end to end; runs trend toward
-the lower end of the range as the shared training pool stays warm.
+and is the dominant cost of creation — plan for **about 2 to 2.5 hours** end to
+end, and treat 4 hours as a normal upper tail rather than a fault. Of the 48
+creations that completed between 2026-07-15 and 2026-08-30, 39 finished inside
+12 hours; across those the **median was 2 hours 4 minutes**, the fastest 1 hour
+25 minutes, and 1 in 10 took longer than 3 hours 45 minutes. The other nine
+stalled and completed days later — rare, but real, which is why you should poll
+or wait for the email rather than time out on a fixed budget. Everything before the training step —
+persona, voice, portrait, the internally generated idle clip — accounts for only
+about 3 minutes of that; essentially the whole wait is training.
+
+The training recipe is **adaptive**: it starts from a short, efficient schedule,
+and every agent must pass the same quality checks before it ships — an identity
+that needs more work automatically climbs to more training, never a lower bar.
+That is why harder identities take longer, and why the tail is long.
+
+Build the wait into your integration: poll
+[`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status), or wait for the
+completion email, rather than holding a request open or assuming the few-minute
+wall-clock of `essence-1`.
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
@@ -250,9 +282,9 @@ or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guid
 
 - **Output**: the full 416×720 portrait scene, generated at 20 fps; video
   streams over WebRTC with adaptive bitrate.
-- **Creation time**: plan for about 1 to 1.5 hours — roughly 60–100 minutes
-  (see above; a cold run measured ~1h40m, trending faster as the pool warms) —
-  and poll status rather than assuming the few-minute wall-clock of `essence-1`.
+- **Creation time**: plan for about 2 to 2.5 hours (measured median 2h04m over
+  39 creations; fastest 1h25m, slowest decile beyond 3h45m — see above) — and
+  poll status rather than assuming the few-minute wall-clock of `essence-1`.
 - **Identity input**: a clear, frontal, well-lit face photo gives the best
   result. The identity is fixed at creation — to change the face, create a new
   agent.
