@@ -68,18 +68,30 @@ the SDK bundles its own audio encoder, so a stock model needs no extra assets.
   engine ABI at runtime, and an incompatible file fails with a clear
   `BithumanException` rather than rendering wrong.
 
-> **There is no second-generation Android artifact to resolve today, and no
-> newer coordinate to try.** Measured against Maven Central: the group
+> **There is no second-generation Android artifact you can resolve today, and
+> no newer coordinate to try.** Measured against Maven Central: the group
 > `ai.bithuman` publishes exactly **one** artifact, `ai.bithuman:sdk`, whose
 > latest and only current release is **2.3.6** — the Essence runtime on this
-> page. No Expression 2 or Essence 2 AAR is published under that group or any
-> other, so no Gradle coordinate you can write will fetch one; a build file
-> naming a second-generation Android artifact fails at dependency resolution.
-> When an Expression 2 AAR ships it will resolve from **Maven Central under the
-> same `ai.bithuman` group**, and this page will carry the coordinate and
+> page. No Expression 2 or Essence 2 AAR is published **to Maven Central**
+> under that group or any other, or from any other **public** repository, so no
+> Gradle coordinate you can write will fetch one; a build file naming a
+> second-generation Android artifact fails at dependency resolution. When an
+> Expression 2 AAR ships publicly it will resolve from **Maven Central under
+> the same `ai.bithuman` group**, and this page will carry the coordinate and
 > version the day it does. Until then, reach the second-generation models on
 > Android through the cloud — the [REST API](/api/overview), a
 > [LiveKit](/sdk/livekit) session, or the agent landing page in a WebView.
+
+> **Where Expression 2 on Android stands.** An `arm64-v8a` Expression 2 AAR
+> exists and has been built and run, but it is staged in a **private** registry
+> — it is not on Maven Central and an anonymous Gradle build cannot fetch it,
+> so there is no coordinate to publish here yet. When it does ship publicly,
+> these are the measured limits it ships with, stated plainly rather than
+> smoothed over: **`arm64-v8a` only**, **minSdk 26**, and — on a Snapdragon
+> 8 Gen 2 with the NPU decoder — **RTF 1.10 / 18.1 fps, which is not real
+> time**, after roughly **7.6 s of engine initialisation on the first
+> `create()`**. Plan an Android integration around a first-frame wait and a
+> below-real-time frame rate, or serve Expression 2 from the cloud instead.
 
 ## Auth
 

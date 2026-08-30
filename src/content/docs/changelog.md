@@ -57,8 +57,8 @@ through the cloud. Quickstart:
 ### Essence 2 — sharper mouth and teeth, and a much smaller model file (2026-07-27)
 
 Essence 2 now renders each identity through a **new unified renderer**. The
-mouth interior — teeth in particular — is **synthesized** rather than being
-smoothed toward an average, and it shows
+mouth interior — the teeth especially — is **rendered sharply** rather than
+being averaged out of the source frames, and it shows
 most on wide-open speech: measured against each identity's own previous build,
 mouth-region fidelity improved **roughly 2× to 4.7×** across the launch gallery,
 and it was checked frame by frame by eye, not only by metrics. Mouth motion is
