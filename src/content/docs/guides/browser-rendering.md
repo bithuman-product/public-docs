@@ -22,11 +22,14 @@ Production-deployed since Feb 2026. No install, no SDK call — flip one URL par
 > [where each model runs](/concepts/models-v2#where-each-model-runs).
 > [`expression-2`](/concepts/expression-2) also renders in the browser via the
 > same **`?render=local`** URL option (LiteRT.js / WebGPU, WASM fallback). It is
-> a **client-side rendering option**, not a separate serving tier: it is on by
-> default for an identity that has a published per-identity web bundle, and
-> **falls back to cloud rendering** for identities that don't. Per-identity web
-> bundles are **rolling out** — they aren't published for every identity yet, so
-> for many agents `?render=local` still renders in the cloud today.
+> a **client-side rendering option**, not a separate serving tier, and it is
+> **opt-in**: cloud rendering is the default for every visitor, on every
+> identity and every browser. Nobody gets a browser render unless the URL asks
+> for one. When it is asked for, it still needs a published per-identity web
+> bundle and a browser that can run the engine; without either, the session
+> **falls back to cloud rendering** on its own. Per-identity bundles are
+> **rolling out** — they aren't published for every identity yet, so for many
+> agents `?render=local` renders in the cloud today.
 
 ```text
 # Browser-side rendering, agent brain still cloud:

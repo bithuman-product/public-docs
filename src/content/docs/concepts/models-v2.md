@@ -31,11 +31,13 @@ API, the embed widget, the dashboard, and the SDKs:
 - **[`essence-2`](/concepts/essence-2)** — the **standard** Essence model for
   photorealistic people, and the default. It animates your identity's
   footage (a full-HD 1080p identity video, generated internally from your
-  image) at ~25 fps with an efficient engine that runs
-  everywhere — from **cloud GPUs**, **Apple Neural Engine** and **CPU** tiers to
-  in-browser **WebGPU/WASM**, where frames never leave the viewer's browser.
-  (A customer-installable on-device Apple build is not published yet.) bitHuman automatically serves the right way for your
-  hardware and quality needs — you just pick `essence-2`.
+  image) at ~25 fps with an efficient engine that serves from **cloud GPUs**,
+  **Apple Neural Engine** and **CPU** tiers, from **your own CPU servers**
+  for offline rendering, and — where you opt a session into it —
+  **in the viewer's browser** (WebGPU/WASM), where frames never leave that
+  browser. bitHuman routes cloud sessions for you; you just pick `essence-2`.
+  There is **no installable on-device build** for a Mac, iPhone, iPad or
+  Android device.
 - **[`essence-2-max`](/concepts/essence-2-max)** — the **premium** Essence
   model: the highest-fidelity Essence renderer served directly on dedicated
   cloud GPUs for close-up and hero-quality output. It has no separate
@@ -47,7 +49,7 @@ API, the embed widget, the dashboard, and the SDKs:
 |---|---|---|---|
 | **Guide** | [Essence 2](/concepts/essence-2) | [Essence 2 Max](/concepts/essence-2-max) | [Expression 2](/concepts/expression-2) |
 | **Family** | Essence | Essence | Expression |
-| **What it is** | The standard Essence 2 model — efficient renderer, serves everywhere; the default | The premium model — the highest-fidelity renderer, served on dedicated cloud GPUs | Generative motion from one photo |
+| **What it is** | The standard Essence 2 model — efficient renderer, serves from every cloud tier plus your own CPU servers and the browser; the default | The premium model — the highest-fidelity renderer, served on dedicated cloud GPUs | Generative motion from one photo |
 | **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
 | **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
@@ -71,14 +73,22 @@ it when image quality is the whole point and 8 credits/min is acceptable.
 Its identity derives from the agent's stored identity video — generated
 internally by every `essence-2` creation.
 
-### Cost-effective at scale, or on-device
+### Cost-effective at scale, or off our cloud
 
 **[`essence-2`](/concepts/essence-2).** The standard model and the default —
-half the cloud price of Max, and it runs on CPU, the Apple Neural Engine, and
-in-browser WebGPU/WASM as well as GPU — so the same agent serves from
-bitHuman's cloud, your own servers, the browser, or entirely
-on-device. The right default for photorealistic humans, kiosks,
+half the cloud price of Max, and the same identity artifact serves three
+different ways: from **bitHuman's cloud** (GPU, Apple Neural Engine and CPU
+tiers, routed for you), from **your own CPU servers** for offline rendering
+(Python SDK 2.9.0+), and **in the viewer's browser** where you opt a session
+into it. The right default for photorealistic humans, kiosks,
 high-concurrency deployments, and privacy-sensitive environments.
+
+> **What "on-device" means here.** There is **no installable Essence 2 build
+> for a Mac, iPhone, iPad or Android device** today — the Apple Neural Engine
+> tier runs on *bitHuman's* Apple Silicon, reached over the network like any
+> other cloud tier. The two places Essence 2 runs off our cloud are your own
+> CPU servers and the viewer's browser. See
+> [where each model runs](#where-each-model-runs).
 
 ### Fully generated motion from a single photo
 
@@ -313,7 +323,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming still via the cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
 | On-device macOS / iOS (Apple Silicon) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2` product, 2.5.0+ — engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
-| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback), on by default where a per-identity web bundle is published and falling back to cloud otherwise, as bundles publish. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
+| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback). **Opt-in:** cloud is the default for every visitor; the URL has to ask, and a session falls back to cloud when the identity has no published web bundle or the browser can't run the engine. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
 use the downloaded model artifact

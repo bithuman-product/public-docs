@@ -25,15 +25,21 @@ export const GET: APIRoute = async () => {
     `on-device (macOS/Linux/iOS, CPU incl. Raspberry Pi, NVIDIA GPU, or ` +
     `Apple Silicon) or via a cloud REST API. Private by design: audio, ` +
     `video, and prompts never leave your hardware; the only network call is ` +
-    `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem or ` +
-    `runs fully air-gapped, at low per-minute cost. Models (second ` +
-    `generation, launching July 10, 2026): \`expression-2\` (audio-driven real-time ` +
+    `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem, ` +
+    `at low per-minute cost. That heartbeat is required — the runtimes are ` +
+    `fail-closed without a valid key — and a fully air-gapped install is ` +
+    `supported only by the self-hosted essence-2-max container's static auth ` +
+    `mode. Models (second ` +
+    `generation, generally available since July 10, 2026): \`expression-2\` (audio-driven real-time ` +
     `avatar video from a single photo — best for cartoon/animal/creature/robot ` +
     `characters; gpu/ane/cpu chain), \`essence-2\` (the STANDARD photoreal ` +
-    `model; distilled to run everywhere — gpu/ane/cpu/WebGPU-WASM incl. ` +
-    `on-device; the former essence-2-light name is retired), ` +
-    `\`essence-2-max\` (the PREMIUM model — the gold teacher served ` +
-    `directly on L40S-class GPUs), plus ` +
+    `model; served from the gpu/ane/cpu cloud chain, from your own CPU ` +
+    `servers for offline rendering, and opt-in in the viewer's browser ` +
+    `(WebGPU/WASM). There is NO installable on-device build of essence-2 for ` +
+    `a Mac, iPhone, iPad or Android device; the former essence-2-light name ` +
+    `is retired), ` +
+    `\`essence-2-max\` (the PREMIUM model — the highest-fidelity Essence ` +
+    `renderer, served directly on L40S-class GPUs), plus ` +
     `\`essence-1\` / \`expression-1\`. This file concatenates ` +
     `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 

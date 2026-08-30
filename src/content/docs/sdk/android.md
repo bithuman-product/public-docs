@@ -68,6 +68,19 @@ the SDK bundles its own audio encoder, so a stock model needs no extra assets.
   engine ABI at runtime, and an incompatible file fails with a clear
   `BithumanException` rather than rendering wrong.
 
+> **There is no second-generation Android artifact to resolve today, and no
+> newer coordinate to try.** Measured against Maven Central: the group
+> `ai.bithuman` publishes exactly **one** artifact, `ai.bithuman:sdk`, whose
+> latest and only current release is **2.3.6** — the Essence runtime on this
+> page. No Expression 2 or Essence 2 AAR is published under that group or any
+> other, so no Gradle coordinate you can write will fetch one; a build file
+> naming a second-generation Android artifact fails at dependency resolution.
+> When an Expression 2 AAR ships it will resolve from **Maven Central under the
+> same `ai.bithuman` group**, and this page will carry the coordinate and
+> version the day it does. Until then, reach the second-generation models on
+> Android through the cloud — the [REST API](/api/overview), a
+> [LiveKit](/sdk/livekit) session, or the agent landing page in a WebView.
+
 ## Auth
 
 Pass your secret as the `apiSecret` argument to `Avatar.load` (the SDK also reads

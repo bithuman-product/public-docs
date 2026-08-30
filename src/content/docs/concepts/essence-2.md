@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer that runs everywhere (GPU, Apple Neural Engine, CPU, WebGPU/WASM), train-on-create from a photo, and pricing."
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Neural Engine and CPU tiers, from your own CPU servers, and in-browser (WebGPU/WASM); train-on-create from a photo, and pricing."
 section: concepts
 group: "Models"
 order: 2
@@ -22,12 +22,22 @@ identity's footage at its native resolution (a full-HD 1080p identity
 video by default), lip-synced live at ~25 frames per second — at a
 fraction of the compute of [Essence 2 Max](/concepts/essence-2-max), the
 highest-fidelity renderer in the family. At creation the platform
-packages your identity into a compact bundle; that one artifact then runs
-**everywhere**: cloud **GPU**, the **Apple Neural Engine (ANE)**, **CPU**,
-and in-browser **WebGPU/WASM** (in rollout). Its Apple Neural Engine runtime
-runs on **bitHuman's** Apple Silicon, as a cloud serving tier. A
-customer-installable **on-device** Apple build is **not published yet** — the
-[Swift SDK](/sdk/swift) carries no Essence 2 engine today.
+packages your identity into a compact bundle, and that one artifact serves
+three ways:
+
+- **From bitHuman's cloud** — a **GPU**, **Apple Neural Engine (ANE)** and
+  **CPU** tier chain, routed automatically. The Neural Engine tier runs on
+  **bitHuman's** Apple Silicon and is reached over the network like any other
+  cloud tier.
+- **From your own CPU servers** — offline rendering of the downloaded
+  artifact, metered, no GPU required (Python SDK 2.9.0+).
+- **In the viewer's browser** — WebGPU/WASM, opt-in per session and rolling
+  out per identity, with frames that never leave that browser.
+
+What it does **not** do today is run on a customer's own device. There is
+**no installable Essence 2 build for a Mac, iPhone, iPad or Android device**,
+and the [Swift SDK](/sdk/swift) carries no Essence 2 engine — see
+[serving tiers](#serving-tiers) below.
 
 It is half the cloud price of [Essence 2 Max](/concepts/essence-2-max)
 and the only Essence 2 model with CPU, Neural Engine, and browser runtimes —
@@ -130,7 +140,10 @@ through the standard steps (`payment` → `persona` → `voice_image`), generate
 the identity video (`video`), then enters the
 training step (reported as `current_step: "lip_sync"`, ~70% progress)
 where the trainer builds the compact identity bundle on a cloud GPU. When
-status reaches `ready`, the agent is servable on every tier.
+status reaches `ready`, the agent is servable on every cloud tier. (The
+browser tier is separate: it needs a per-identity web bundle published for
+that agent, which is still rolling out — see
+[In the browser](#serving-tiers) below.)
 
 **How long.** Creation typically takes **about 45 minutes** end to end.
 Some identities take longer — the platform allows a run up to several
