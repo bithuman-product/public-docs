@@ -253,6 +253,16 @@ below). **New creations get it automatically**; agents created before
 2026-07-27 keep serving their current build until they are retrained. Nothing
 in the API, the session contract, or the `?model=` tier slugs changed.
 
+**Which surfaces serve it.** The sharp mouth-interior rendering described above
+is served on the **cloud tiers** (GPU, Apple Neural Engine, CPU) and by
+**self-hosted CPU offline rendering**. It is **not** part of a
+**browser-local** session yet: `?render=local` runs a separate in-browser
+build, and as measured on **2026-08-30** across **all 22 identities** currently
+in the browser catalogue, **no published web bundle enables it** — a
+browser-local session renders the mouth the earlier way. Nothing about the
+price, the API, or the tier slugs changes with the surface; only the mouth
+region differs.
+
 ## Limits and expectations
 
 - **Renders at ~25 fps** across GPU, CPU, and Apple Neural Engine runtimes.

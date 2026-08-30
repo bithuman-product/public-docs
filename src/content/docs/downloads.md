@@ -211,8 +211,8 @@ artifact — where that artifact can run **locally today** differs by model:
 |---|---|---|---|
 | bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
 | Self-hosted CPU (your servers) | Offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | Preview ([Swift](/sdk/swift)) | — (cloud-only) | Yes ([Swift](/sdk/swift) · [CLI](/sdk/cli/overview#local-rendering-by-platform)) |
-| Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Planned (WebGPU) |
+| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.5.0+ — **engine only, [no model bundle published](/sdk/swift#expression-2-on-device)**; the [CLI](/sdk/cli/overview#local-rendering-by-platform) renders locally on macOS Apple Silicon |
+| Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:
 [Where each model runs](/concepts/models-v2#where-each-model-runs).

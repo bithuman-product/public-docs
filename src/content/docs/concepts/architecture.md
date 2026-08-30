@@ -144,7 +144,7 @@ at session launch; the device/runtime matrix is:
 | Cloud CPU | Real-time | — | Real-time |
 | Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (~22–31 FPS on 16 cores); live streaming via cloud | — | [CLI local rendering](/sdk/cli/overview#local-rendering-by-platform) (macOS arm64, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2`, v2.5.0+ — engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
-| Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Planned |
+| Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Rolling out — `?render=local` (LiteRT.js / WebGPU, WASM fallback) |
 
 Cloud sessions route down the serving chain (GPU → Neural Engine → CPU)
 automatically; on-device and self-hosted serving use the downloaded model
