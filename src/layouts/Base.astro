@@ -12,7 +12,7 @@ interface Props {
 
 const {
   title = "bitHuman Docs — Private On-Device AI Avatars in Real Time",
-  description = "Build with bitHuman: turn a photo into a real-time (25 FPS) AI avatar that runs fully on-device. Private by design — audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at the lowest per-minute cost.",
+  description = "Build with bitHuman: turn a photo into a real-time AI avatar (up to 25 FPS) that runs fully on-device. Private by design — audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at the lowest per-minute cost.",
   image = "/images/bithuman-banner.jpg",
 } = Astro.props;
 
@@ -64,10 +64,10 @@ const ogImage = new URL(image, site).href;
           "operatingSystem": "macOS, Linux, iOS, iPadOS, Raspberry Pi OS",
           "url": "https://www.bithuman.ai",
           "publisher": { "@id": "https://www.bithuman.ai/#organization" },
-          "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time (25 FPS) avatar that runs fully on your own hardware — private by design, self-hostable, on-prem, and air-gapped-capable. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",
+          "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time avatar (up to 25 FPS) that runs fully on your own hardware — private by design, self-hostable, on-prem, and air-gapped-capable. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",
           "featureList": [
             "On-device inference — audio, video, and prompts never leave your hardware",
-            "Real-time 25 FPS lip-sync",
+            "Real-time lip-sync — 25 FPS (Essence 2 / Essence 2 Max), 20 FPS (Expression 2)",
             "Runs on CPU (incl. Raspberry Pi), NVIDIA GPU, and Apple Silicon",
             "Self-hosted, on-prem, and air-gapped deployment",
             "Low per-minute cost, from 1 credit/min self-hosted"
