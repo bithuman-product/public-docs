@@ -222,13 +222,14 @@ Per-minute serving is metered for the whole time a session is live and the
 engine is rendering — **idle/silent animation included**. Only stopped, paused,
 or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guides/pricing).
 
-## The renderer (updated 2026-07-27)
+## The renderer (updated 2026-08-29)
 
 Essence 2 renders through a **unified renderer**: the face is animated from your
-identity's own footage, while the **mouth interior — the teeth especially — is
-synthesized** rather than being averaged out of the source frames. Teeth simply
-are not present in a closed-mouth portrait, so they have to be generated; that
-is the part that most visibly improved. Measured
+identity's own footage, and the **mouth interior — the teeth especially — is
+rendered sharply** rather than being averaged out of the source frames. Teeth
+are barely present in a closed-mouth portrait, so the mouth interior is the
+hardest region to get right; that is the part that most visibly improved.
+Measured
 against each identity's own previous build, mouth-region fidelity improved
 **roughly 2× to 4.7×** across the launch gallery, verified frame by frame by
 eye. Mouth motion is also re-centred and wider, so speech reads as more dynamic.
