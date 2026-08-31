@@ -60,8 +60,13 @@ Essence 2 now renders each identity through a **new unified renderer**. The
 mouth interior — the teeth especially — is **rendered sharply** rather than
 being averaged out of the source frames, and it shows
 most on wide-open speech: measured against each identity's own previous build,
-mouth-region fidelity improved **roughly 2× to 4.7×** across the launch gallery,
-and it was checked frame by frame by eye, not only by metrics. Mouth motion is
+mouth-region fidelity improved **roughly 2× to 4.7×** across the launch gallery.
+That ratio is LPIPS — a learned perceptual image-distance metric — computed only
+inside the mouth-interior mask of the reference render, on each identity's
+held-out frames, so it is a per-identity improvement factor and not a
+cross-identity score
+([conditions](/concepts/essence-2#the-renderer-updated-2026-08-29)). It was
+also checked frame by frame by eye, not only by metrics. Mouth motion is
 also re-centred and wider, so speech reads as more dynamic.
 
 Two practical consequences:

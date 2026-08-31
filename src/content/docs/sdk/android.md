@@ -217,10 +217,13 @@ Build variant didn't include `arm64-v8a` — check `abiFilters` in `defaultConfi
 Secret missing or invalid. Confirm `BITHUMAN_API_SECRET` is set before the first
 `Avatar.load`.
 
-### First compose tick is slow (~400 ms)
+### The first compose tick is much slower than the rest
 
-First-run init. Pre-warm with one silent tick at startup for consistent latency
-from frame one.
+First-run initialization — the first tick pays model load and warm-up. Its cost
+depends on the model shape and the device and spans more than an order of
+magnitude, so measure it on your target rather than budgeting from a single
+figure. Pre-warm with one silent tick at startup for consistent latency from
+frame one.
 
 ### `composeAsBitmaps` returns empty
 

@@ -51,10 +51,15 @@ deployments, and privacy-sensitive environments.
   whole point.
 - **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
   and Neural Engine runtimes that don't need a server GPU per session.
-- **Efficient Neural Engine serving.** The ANE tier renders far faster than
-  real time (hundreds of frames per second on M4-class hardware) and needs no
-  server GPU per session. It is a **cloud** tier on bitHuman's Apple Silicon;
-  it does not yet run on *your* device — see [Swift SDK](/sdk/swift).
+- **Efficient Neural Engine serving.** The Apple Neural Engine tier needs no
+  server GPU per session. The renderer model itself measured **2.9 ms/frame
+  (~345 fps)** on an M4 Max on 2026-06-21 — native CoreML conversion, batch 1,
+  all 110 graph operations resident on the Neural Engine, throughput taken from
+  a repeated drive frame. That is the **model in isolation**: a live session
+  also pays audio conditioning, paste-back and the mouth-interior compose, so do
+  not read it as session throughput. It is a **cloud** tier on bitHuman's Apple
+  Silicon; it does not yet run on *your* device — see
+  [Swift SDK](/sdk/swift).
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
@@ -244,8 +249,15 @@ are barely present in a closed-mouth portrait, so the mouth interior is the
 hardest region to get right; that is the part that most visibly improved.
 Measured
 against each identity's own previous build, mouth-region fidelity improved
-**roughly 2× to 4.7×** across the launch gallery, verified frame by frame by
-eye. Mouth motion is also re-centred and wider, so speech reads as more dynamic.
+**roughly 2× to 4.7×** across the launch gallery. That figure is a ratio of
+**LPIPS** — a learned perceptual image-distance metric — computed **only inside
+the mouth-interior mask of the reference render**, on each identity's held-out
+frames. So it is a per-identity improvement factor against that identity's own
+earlier build: it is not a score you can compare between identities, or against
+another vendor. Sharpness metrics were deliberately not used — they reward
+speckle, and artifacts inflate them. Every arm was also checked frame by frame
+by eye, which is the second gate and the one that has overruled the metric.
+Mouth motion is also re-centred and wider, so speech reads as more dynamic.
 
 It costs nothing extra to serve — measured warm and end to end — and **pricing
 is unchanged**. The identity bundle also got about **5× smaller** (see Limits,
@@ -265,7 +277,9 @@ region differs.
 
 ## Limits and expectations
 
-- **Renders at ~25 fps** across GPU, CPU, and Apple Neural Engine runtimes.
+- **Output is 25 fps on every tier.** Engine *throughput* is a different
+  number, and on the CPU tier it is far below 25 fps — see
+  [Rendering throughput, measured](#rendering-throughput-measured).
 - **Creation takes about 45 minutes** (see above) — poll status rather than
   assuming the few-minute wall-clock of `essence-1`.
 - **The downloadable identity bundle is ~85–105 MB** on the current renderer
@@ -284,6 +298,38 @@ region differs.
   response). During the rename rollout, server responses may still report
   the family under an earlier name — see
   [Naming & migration](/concepts/models-v2#naming--migration).
+
+### Rendering throughput, measured
+
+Every tier emits a **25 fps** video, because the stream is paced to the audio.
+How fast the engine can *produce* those frames is a separate number, it is not
+25 fps everywhere, and on the CPU tier it is the number that decides whether a
+tier is usable live.
+
+Measured 2026-08-30 against the deployed cloud CPU worker — one offline render
+per row through the same endpoint, 16 vCPU / 32 GB container, 16 render threads,
+one session per container, the same 3 seconds of speech, 75 frames each:
+
+| Resolution | Sharp mouth-interior rendering | Frames per second |
+|---|---|---:|
+| 1280×720 | armed | **0.9** |
+| 1280×720 | not armed | 12.4 |
+| 1080×1920 | armed | **1.0** |
+| 1080×1920 | not armed | 6.5 |
+
+Read the rows in pairs. At a **fixed** resolution the sharp mouth-interior
+rendering costs **14×** (1280×720) and **6.5×** (1080×1920); resolution alone
+costs under 2×. So the cost is the mouth-interior rendering, not the frame size,
+and an armed CPU render runs roughly **25× slower than playback**.
+
+**What this means for you.** The CPU tier is an **offline-rendering and
+last-resort** tier, not a real-time one; live sessions route to GPU and Apple
+Neural Engine first. If you pin a live session to CPU, expect it to fall behind.
+The un-armed rows vary run to run (a 17.6 fps reading was taken for the same
+1280×720 identity on an earlier container); the armed rows did not.
+
+GPU and Apple Neural Engine throughput has **not** been re-measured under this
+protocol and is deliberately not quoted here.
 
 ## The developer journey
 

@@ -341,9 +341,13 @@ offline on your own CPU servers** — metered, no GPU — via
 `bithuman.tessera_offline`
 ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
 **Locally-hosted LiveKit** (live streaming from your own server) is still in
-active development — live sessions run through the cloud or the browser. And on **CPU**, essence-2 sustains real-time (~25 fps) while
+active development — live sessions run through the cloud or the browser. And **neither** second-generation model's CPU tier sustains real-time
+rendering: essence-2's cloud CPU tier measured **0.9–1.0 fps** with the sharp
+mouth-interior rendering armed on 2026-08-30
+([conditions](/concepts/essence-2#rendering-throughput-measured)), and
 expression-2's CPU tier is sized for **offline talking-video generation** rather
-than real-time streaming (which uses the GPU and Apple Neural Engine tiers).
+than real-time streaming. Real-time streaming uses the GPU and Apple Neural
+Engine tiers.
 
 ## Pricing
 
