@@ -92,11 +92,14 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
 - **`bitHumanKit`** — the umbrella (Expression 1 + an `.imx` avatar runtime +
   the on-device LLM/TTS stack). `import bitHumanKit`.
 - **`Expression2`** — the [`expression-2`](/concepts/expression-2) engine on its
-  own, new in 2.5.0. `import Expression2`. **Engine only: it ships no model
-  weights**, and `isReady` stays `false` until a per-identity CoreML bundle is
-  present. None is published yet, and there is no self-serve way to get one —
-  email [hello@bithuman.ai](mailto:hello@bithuman.ai). An `.imx` from
-  `bithuman pull` is a **different rail** and will not start it. See the
+  own, new in 2.5.0. `import Expression2`. Ships a `macos-arm64` **and** an
+  `ios-arm64` slice, and both have rendered on real hardware (including an
+  iPhone). But it is **engine only: it ships no model weights**, and `isReady`
+  stays `false` until a per-identity CoreML bundle is present. None is published
+  yet, and there is no self-serve way to get one — email
+  [hello@bithuman.ai](mailto:hello@bithuman.ai). The `<code>.avatar` that
+  `bithuman pull` downloads is a **different rail** — it feeds the CLI's local
+  renderer, not this product — and will not start it. See the
   [Swift SDK guide](/sdk/swift#expression-2-on-device).
 
 `essence-2` is **not** on this rail. See the [Swift SDK guide](/sdk/swift).
@@ -193,7 +196,7 @@ Heavier high-fidelity model. Runs on Apple Silicon on-device (demo apps) or on N
 |---|---|---|
 | **Mac M3+ (arm64)** | On-device | Demo app target |
 | **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
-| **iPhone 16 Pro+** | Preview | Needs the increased-memory entitlement; on-device validation in progress. Prefer Essence for production. |
+| **iPhone 16 Pro+** | Preview | Expression **1** only — this table is the first-generation floor. Needs the increased-memory entitlement; on-device validation of Expression 1 is in progress. Prefer Essence for production. ([Expression 2](/sdk/swift#expression-2-on-device) is a different engine and has rendered on an iPhone, but publishes no model bundle yet.) |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
 | **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression needs Apple Silicon or an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
@@ -205,13 +208,15 @@ If you're deploying to iPhone today, choose **Essence**. The iPhone reference ap
 The tables above are the first-generation floors. The
 [second-generation models](/concepts/models-v2) resolve their runtime tier for
 you at session launch. Each model also produces one downloadable per-identity
-artifact — where that artifact can run **locally today** differs by model:
+artifact — where that artifact can run **locally today** differs by model.
+For the file each family hands you by name, and what opens it, see
+[what you get, per family](/sdk/cli/commands#what-you-get-per-family).
 
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
 | bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
 | Self-hosted CPU (your servers) | Offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.5.0+ — **engine only, [no model bundle published](/sdk/swift#expression-2-on-device)**; the [CLI](/sdk/cli/overview#local-rendering-by-platform) renders locally on macOS Apple Silicon |
+| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.5.0+ ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone** — but it is **engine only, [with no model bundle published](/sdk/swift#expression-2-on-device)**, so neither is self-serve yet. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:

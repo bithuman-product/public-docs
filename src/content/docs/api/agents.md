@@ -541,15 +541,16 @@ for an agent you own. The family defaults to the agent's own model; override
 with `?model=<family>` (public names and runtime tier slugs fold onto their
 family — the `essence-2-{gpu,ane,cpu}` force slugs and the retired
 `essence-2-light` fold onto `essence-2`). `essence-2-quality` is **no longer
-accepted** and returns a `400`; send `essence-2-max`. What you get per family:
+accepted** and returns a `400`; send `essence-2-max`. What you get per family — and what opens each file, in one
+place: [what you get, per family](/sdk/cli/commands#what-you-get-per-family).
 
 | Family | Artifact | Notes |
 |---|---|---|
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
 | `essence-2` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
-| `essence-2-max` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). |
-| `expression-2` | `<code>.imx` | The portable IMX container (~20–90 MB per identity; legacy `.avatar` zip) — [runs locally](/sdk/cli/commands) on macOS (Apple Silicon) and Linux, or in the browser via [`?render=local`](/guides/browser-rendering); also served on bitHuman's cloud. |
-| `expression-1` | — | Not downloadable: no per-identity artifact exists (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`. |
+| `essence-2-max` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). **It is derived on demand, not built ahead:** the bundle is produced from the agent's source video the first time the agent is launched as `essence-2-max`, so a download before that returns `404 MODEL_ARTIFACT_NOT_READY`. Start one session, then retry. |
+| `expression-2` | `<code>.avatar` | The per-identity Expression 2 artifact (~20–90 MB). **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** Measured across all 110 published objects on 2026-09-01, **96 are `IMX\0` v2 containers** and **14 are still the pre-2026-07-12 CoreML zip** — those 14 will not be re-published, so check with `bithuman info <file>` rather than assuming either form. [Runs locally](/sdk/cli/commands) on macOS (Apple Silicon), and on Linux x86_64 once the CPU render host is installed (`bithuman engine install linux-x86_64`); also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
+| `expression-1` | usually none; `<code>.imx` for a lip-stepped agent | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, so the normal answer is `400 MODEL_NOT_DOWNLOADABLE`. **One case does download:** an `expression-1` agent that went through the lip step owns a baked `<code>.imx`, and the endpoint redirects to it exactly as it does for `essence-1`. |
 
 The default response is a **302 redirect** to the artifact (public URL for
 `essence-1`, **1-hour signed URL** for the private families), so a plain
@@ -558,8 +559,16 @@ curl works:
 ```bash
 curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
   "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2"
-# → A17ZTB0222.imx
+# → A17ZTB0222.avatar
 ```
+
+> **`?model=` is the only way to reach a second family.** An agent that gained a
+> model through [add-a-model](#add-a-model-to-an-existing-agent) has more than
+> one downloadable artifact under the same code, and an omitted `?model=`
+> resolves to the family the agent was **created** with — not the one you added.
+> The [CLI](/sdk/cli/commands) has no flag for this: `bithuman pull <CODE>`
+> always takes the default. Read `supported_models` on
+> [`GET /v1/agent/{code}`](#get-an-agent) to see what an agent actually holds.
 
 Pass `?redirect=false` to get the URL as JSON instead (for UIs that want to
 fetch or label first):
@@ -570,7 +579,7 @@ fetch or label first):
   "data": {
     "code": "A17ZTB0222",
     "model": "expression-2",
-    "filename": "A17ZTB0222.imx",
+    "filename": "A17ZTB0222.avatar",
     "url": "https://…signed…",
     "expires_in": 3600
   }
@@ -584,7 +593,7 @@ Errors ([full reference](/api/errors#model-errors)):
 | Status | Code | When |
 |---|---|---|
 | `400` | `VALIDATION_ERROR` | Unknown `model` value — the message lists the downloadable families. |
-| `400` | `MODEL_NOT_DOWNLOADABLE` | The family has no per-identity artifact (`expression-1`). Not retryable. |
+| `400` | `MODEL_NOT_DOWNLOADABLE` | The family has no per-identity artifact for this agent — in practice `expression-1` on an agent with no lip-step `.imx`. Not retryable. |
 | `404` | `NOT_FOUND` | Agent unknown **or not owned by this account**. |
 | `404` | `MODEL_ARTIFACT_NOT_READY` | The family is supported but its artifact hasn't been published to the download store yet — the message says when to retry. **Poll on this code.** |
 | `409` | `MODEL_NOT_GENERATED` | The requested family isn't in the agent's `supported_models` (same gate as embed/session launch). |
@@ -593,7 +602,9 @@ Errors ([full reference](/api/errors#model-errors)):
 > **Tip** The [bitHuman CLI](/sdk/cli/commands) wraps this endpoint:
 > `bithuman pull A17ZTB0222` downloads the artifact,
 > recognizes its model family, and prints what to do next — an `essence-1`
-> `.imx` runs locally with `bithuman run`.
+> `.imx` runs locally with `bithuman run`. It calls this endpoint **without**
+> `?model=`, so on a multi-model agent it downloads the default family; use
+> `curl` with `?model=` for any other one.
 
 ## Download an agent's self-hosted avatar
 

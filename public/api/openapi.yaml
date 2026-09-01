@@ -882,7 +882,7 @@ paths:
             # 302 redirect to the artifact — -LOJ follows it and keeps the filename
             curl -LOJ "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2" \
               -H "api-secret: $BITHUMAN_API_SECRET"
-            # → A17ZTB0222.imx  (add ?redirect=false for the URL as JSON)
+            # → A17ZTB0222.avatar  (add ?redirect=false for the URL as JSON)
       summary: Download an agent's model artifact
       description: |
         Download the generated model file for an agent you own. The family
@@ -894,9 +894,9 @@ paths:
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
         | `essence-2` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow). `essence-2-light` is a retired internal alias for this family. |
-        | `essence-2-max` | `<code>.pkl` — the Essence 2 Max artifact (IMX container). `essence-2-quality` is its pre-rename internal alias. |
-        | `expression-2` | `<code>.imx` — the portable IMX container (~20–90 MB per identity; legacy `.avatar` zip, CoreML packaging internally) — runs locally on macOS (Apple Silicon) and Linux or in the browser, and is also served on bitHuman's cloud |
-        | `expression-1` | — not downloadable (renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE` |
+        | `essence-2-max` | `<code>.pkl` — the Essence 2 Max artifact (IMX container). `essence-2-quality` is its pre-rename internal alias. Derived on demand from the agent's source video on its first `essence-2-max` session, so a download before that session returns `404 MODEL_ARTIFACT_NOT_READY` — start one session, then retry. |
+        | `expression-2` | `<code>.avatar` — the frozen back-compat alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are `IMX\0` v2 containers and 14 are still the pre-2026-07-12 CoreML zip (measured 2026-09-01; `bithuman info` reports which), ~20–90 MB per identity — runs locally on macOS (Apple Silicon), on Linux x86_64 with the CPU render host installed, or in the browser, and is also served on bitHuman's cloud |
+        | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
         The default response is a **302 redirect** to the artifact — the
         public URL for `essence-1`, a **1-hour signed URL** on a private
@@ -979,7 +979,7 @@ paths:
                         example: "expression-2"
                       filename:
                         type: string
-                        example: "A17ZTB0222.imx"
+                        example: "A17ZTB0222.avatar"
                       url:
                         type: string
                         description: The artifact URL (signed, 1-hour TTL, for the private families).

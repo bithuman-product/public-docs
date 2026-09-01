@@ -87,11 +87,88 @@ the SDK bundles its own audio encoder, so a stock model needs no extra assets.
 > — it is not on Maven Central and an anonymous Gradle build cannot fetch it,
 > so there is no coordinate to publish here yet. When it does ship publicly,
 > these are the measured limits it ships with, stated plainly rather than
-> smoothed over: **`arm64-v8a` only**, **minSdk 26**, and — on a Snapdragon
-> 8 Gen 2 with the NPU decoder — **RTF 1.10 / 18.1 fps, which is not real
-> time**, after roughly **7.6 s of engine initialisation on the first
-> `create()`**. Plan an Android integration around a first-frame wait and a
-> below-real-time frame rate, or serve Expression 2 from the cloud instead.
+> smoothed over: **`arm64-v8a` only**, **minSdk 26**, a **Qualcomm Snapdragon**
+> requirement for the accelerated path, a first `create()` that takes **tens of
+> seconds**, and a sustained frame rate that **depends on the Snapdragon
+> generation** — real time on Snapdragon 8 Elite, below real time on Snapdragon
+> 8 Gen 2.
+>
+> ### The frame rate — and which path each number belongs to
+>
+> ★ **The accelerated path is opt-in. The library's own default is not it.**
+> `Expression2Options()` leaves `accelerator = Accelerator.AUTO`, and since
+> 2026-08-25 AUTO resolves to `Routing.ALL_CPU` on **every** device — it does
+> not try the Hexagon and fall back, it never asks for it. That default is the
+> correct-picture arm and it is slow: measured through this AAR on the Galaxy
+> Z Fold 5 (SM8550), 2026-08-26, 405 frames — **RTF 2.6046 · 7.67 fps**. To get
+> the numbers below you must pass **both** arguments:
+>
+> ```kotlin
+> Expression2Options(
+>     accelerator = Accelerator.NPU,      // alone, this resolves to the
+>     routing     = Routing.HTP_DECODER,  // retired Routing.MIXED — pass both
+> )
+> ```
+>
+> Everything else in those runs was left at its default: `overlapDecoder =
+> false`, `threads = 4`, and `qnnOptions = DEFAULT_QNN_OPTIONS`
+> (`backend_type:htp;htp_precision:1;htp_performance_mode:6`). Continuous
+> speech at 100 % talk duty from a cooled start, one process, one identity:
+>
+> | Handset | SoC | Run | Cold, first 39.5 s | **Sustained plateau** |
+> |---|---|---|---|---|
+> | Galaxy S25+ (SM-S936U1) | Snapdragon 8 Elite (SM8750) | 600 s of audio, 12,021 frames | RTF 0.7331 · 27.28 fps | **RTF 0.8732 · 22.90 fps** (audio 204–578 s) |
+> | Galaxy Z Fold 5 (SM-F946U1) | Snapdragon 8 Gen 2 (SM8550) | 500 s of audio, 10,005 frames | RTF 0.9014 · 22.19 fps | **RTF 1.1472 · 17.43 fps** (audio 161–500 s) |
+>
+> **RTF is render wall-clock divided by the duration of the audio rendered:
+> below 1.00 is faster than playback.** `fps` is the same measurement in the
+> other unit — the engine renders 20 frames per second of audio, so
+> `RTF × fps = 20` for every run. Quote one of them, not both as if they
+> confirmed each other.
+>
+> **Plan around the plateau, not the cold window.** On the S25+ the plateau
+> reproduces across two independent cooled runs (600 s and 500 s) to **0.3 %**,
+> while the cold 39.5-second window of those same two runs differs by **7.7 %**
+> (RTF 0.7331 vs 0.7892) — a short benchmark on Android measures the thermal
+> state, not the engine. The S25+ CPU clock cap settles after about 200 s
+> (cpu0/2/4 fall 3,532,800 → 2,745,600 kHz over the run) and the reading is
+> flat from there apart from one 6 % excursion; the Z Fold 5 settles by about
+> 161 s and keeps falling slightly past 500 s, so **its plateau is an upper
+> bound on speed** — a longer run reads worse, not better.
+>
+> **What this means for a conversation.** On Snapdragon 8 Elite this
+> configuration renders **faster than playback (RTF 0.87)** and held it flat
+> for the full ten minutes measured; beyond ten minutes is unmeasured. On
+> Snapdragon 8 Gen 2 it renders about **15 % slower than playback (RTF 1.15)**,
+> so audio outruns video over a long turn. Neither reaches 40 fps, and the
+> ceiling is arithmetic rather than tuning: at the S25+ plateau the `step`
+> stage alone costs **24.70 ms per frame** of a 25 ms budget, on the CPU, while
+> `decWait` is **0.000** — the accelerator is never the stage being waited on.
+>
+> ### First `create()` takes tens of seconds
+>
+> On the Galaxy S25+, three cold `create()` calls on this routing with no
+> compiled-context cache measured **46.6 s, 52.5 s and 63.7 s** — the spread is
+> the honest figure, so budget for the top of it, not the bottom. A fourth run
+> **with** the QNN context cache already warm measured **50.8 s**, inside that
+> same spread: the cost is **not** amortised by a later launch. Call `create()`
+> off the main thread and show real progress; do not put it behind a tap that
+> is expected to respond.
+>
+> ### Silicon boundary — Snapdragon only for the accelerated path
+>
+> The decoder runs on the **Hexagon NPU** through Qualcomm's QNN LiteRT
+> delegate, which your app supplies by adding `com.qualcomm.qti:qnn-litert-delegate`
+> and `com.qualcomm.qti:qnn-runtime` (2.49.0 packs Hexagon skels v68, v69, v73,
+> v75, v79 and v81). On silicon with no Hexagon — Exynos, Google Tensor,
+> MediaTek Dimensity — there is no accelerated path: `Accelerator.NPU` raises
+> `Expression2Exception` and deliberately does **not** fall back, because a CPU
+> run reported as an NPU run is worse than an error. What you are left with is
+> the all-CPU default above, **RTF 2.6046 · 7.67 fps** — about two and a half
+> times slower than playback — and even that number was measured on Snapdragon.
+> Expression 2 has **never been measured on non-Qualcomm silicon at all**.
+> Treat non-Snapdragon Android as **unsupported for Expression 2** until it is,
+> and serve those devices from the cloud.
 
 ## Auth
 

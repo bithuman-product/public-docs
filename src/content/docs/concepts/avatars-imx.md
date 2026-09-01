@@ -79,7 +79,7 @@ per-identity artifact, downloaded with
 |---|---|---|
 | [`essence-2`](/concepts/essence-2) | `<code>.lebundle.imx` | The standard Essence 2 bundle — **~85–105 MB** on the current renderer (agents created before the 2026-07-27 renderer change are larger, up to ~550 MB, until retrained). Licensed weights; serves via bitHuman cloud today. |
 | [`essence-2-max`](/concepts/essence-2-max) | `<code>.pkl` | The Essence 2 Max identity bundle — renders on bitHuman's GPU cloud, not a local-playback artifact. |
-| [`expression-2`](/concepts/expression-2) | `<code>.imx` (legacy: `.avatar` zip) | Renders locally via the [CLI](/sdk/cli/overview#local-rendering-by-platform) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
+| [`expression-2`](/concepts/expression-2) | `<code>.avatar` — **usually** an `IMX\0` v2 container despite the extension, not a zip (96 of the 110 published objects on 2026-09-01; the other 14 are the pre-2026-07-12 CoreML zip and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli/overview#local-rendering-by-platform) on macOS (Apple Silicon), and on Linux x86_64 with the CPU render host installed, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
 ## Inspecting an `.imx`
 

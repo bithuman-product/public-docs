@@ -173,10 +173,10 @@ engine error:
 | Family | File | What `run` does |
 |---|---|---|
 | `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
-| `expression-2` | `<code>.imx` (also legacy `.avatar` zip) | **Runs locally** on macOS (Apple Silicon) and Linux x86_64; Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
+| `expression-2` | `<code>.avatar` — what `pull` and the download endpoint actually hand you. The extension is a frozen alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are `IMX\0` v2 containers, 14 are still the pre-2026-07-12 CoreML zip (2026-09-01). A raw `<code>.imx` container also exists upstream. | **Runs locally** on macOS (Apple Silicon) — either form. On **Linux x86_64** the `.avatar` runs once the CPU render host is staged (`bithuman engine install linux-x86_64`); a raw `.imx` on Linux is handed off to the cloud instead. Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
 | `essence-2` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact. Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
 | `essence-2-max` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (`essence-2-quality` is its pre-rename internal alias). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
-| `expression-1` | — | No downloadable artifact exists (it renders server-side from the agent's image), and the model is not supported on Mac locally — it's a heavy GPU engine. Serve it through the cloud surfaces. |
+| `expression-1` | usually none; `<code>.imx` for an agent that went through the lip step | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, and the model is not supported on Mac locally (it's a heavy GPU engine). **One exception:** an `expression-1` agent that went through the lip step owns a baked `<code>.imx` in its model record, and the download endpoint serves that file exactly like `essence-1`, so it runs locally. Everything else in this family is cloud-served. |
 
 Recognition never breaks what already worked: a file the sniffer can't
 positively identify goes to the engine exactly as before (the engine stays
@@ -265,10 +265,14 @@ against CLI 2.4.2 on a showcase model):
 (`inspect` is an alias — `bithuman inspect avatar.imx` prints the same
 report.)
 
-`info` recognizes the non-`.imx` artifacts too: an `expression-2` `.avatar`
-(CoreML zip), an `essence-2-max` (Essence 2 Max) pickle, and legacy `essence-1` tar
-exports get a format/family report instead of a "not an IMX file" error; a
-legacy BIMX v1 container gets a precise unsupported-version message.
+`info` recognizes the non-`.imx` artifacts too: an old **zip-form**
+`expression-2` `.avatar`, an `essence-2-max` (Essence 2 Max) pickle, and legacy
+`essence-1` tar exports get a format/family report instead of a "not an IMX
+file" error; a legacy BIMX v1 container gets a precise unsupported-version
+message. (Most `.avatar` files you download today are **not** one of those —
+they are `IMX\0` v2 containers, and `info` reports them as `expression-2`,
+table of contents and all. A minority of older identities still carry the zip
+form; `info` reads either, which is the point of running it.)
 
 ## `bithuman pull` + `list` — your models and showcase avatars
 
@@ -314,6 +318,62 @@ exit 66 carrying the API's error, including the poll-able
 [`MODEL_ARTIFACT_NOT_READY`](/api/errors#model-errors) when a supported
 artifact simply hasn't been published yet. Showcase-slug pulls are
 unchanged.
+
+### One agent can have more than one downloadable model
+
+> **Read this if you added a model to an existing agent.** An agent is not
+> limited to the model it was created with. [Adding a
+> model](/api/agents#add-a-model-to-an-existing-agent) — `POST /v1/agent/{code}/models`
+> — gives the *same* agent code a second (or third) trained family, each with
+> its own downloadable artifact. `bithuman pull <CODE>` downloads **one** of
+> them: the family the server picks by default, which today is the model the
+> agent was **created** with. It is not an error and there is no warning — you
+> simply get the older artifact.
+>
+> **`pull` has no family flag.** Its own options are `--force`, `--dest` and
+> `--manifest` (plus the global `--json`); there is no `--model`. To fetch a specific
+> family, call the endpoint directly with `?model=<family>`:
+>
+> ```bash
+> # The default response is a 302 to the artifact; -L follows it and -OJ keeps
+> # the server's filename. Nothing here is a secret — export yours first.
+> curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
+>   "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2"
+> # → A17ZTB0222.avatar
+>
+> # Or ask for the URL as JSON instead of the redirect, to inspect it first:
+> curl -s -H "api-secret: $BITHUMAN_API_SECRET" \
+>   "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2&redirect=false"
+> # → {"success":true,"data":{"code":"A17ZTB0222","model":"expression-2",
+> #     "filename":"A17ZTB0222.avatar","url":"https://…signed…","expires_in":3600}}
+> ```
+>
+> The signed URL lives for one hour (`expires_in`), so fetch it, don't store it.
+>
+> Ask the API which families an agent actually has before you guess —
+> `supported_models` on [`GET /v1/agent/{code}`](/api/agents) lists them, and
+> asking for one the agent doesn't have returns `409 MODEL_NOT_GENERATED`
+> rather than a wrong file. Full per-family behaviour, including the override
+> and every error code, is in
+> [Download an agent's model](/api/agents#download-an-agents-model).
+
+### What you get, per family
+
+One line each — the file `pull` writes, and what runs it:
+
+| Family | File you get | What runs it |
+|---|---|---|
+| `essence-1` | `<code>.imx` | `bithuman run <file>` locally on macOS (Apple Silicon) and Linux; the [Python SDK](/sdk/python); the [Android AAR](/sdk/android); bitHuman cloud. |
+| `essence-2` | `<code>.lebundle.imx` | bitHuman cloud today, plus offline CPU rendering on your own servers via the [Python SDK](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (2.9.0+, `bithuman[tessera]`). Not playable by `bithuman run`, and there is no Mac/iPhone/Android build. **Licensed weights** — keep the file. |
+| `essence-2-max` | `<code>.pkl` | bitHuman's GPU cloud, or the hand-delivered [self-hosted GPU container](/guides/deploy-essence-2-max). No local-playback form. The `.pkl` is derived the first time the agent runs a session, so a download before that returns `404 MODEL_ARTIFACT_NOT_READY` — start one session, then retry. |
+| `expression-2` | `<code>.avatar` | `bithuman run <file>` on macOS (Apple Silicon); on Linux x86_64 after `bithuman engine install linux-x86_64`; the browser via [`?render=local`](/guides/browser-rendering); bitHuman cloud. **Not** the [`Expression2` Swift product](/sdk/swift#expression-2-on-device) — that engine wants a per-identity CoreML bundle, which is a different artifact and is not published. |
+| `expression-1` | usually nothing (`400 MODEL_NOT_DOWNLOADABLE`); `<code>.imx` if the agent went through the lip step | bitHuman cloud. When the `.imx` exists it is the same artifact `essence-1` serves and runs the same way. |
+
+All but one of those are `IMX\0` version-2 containers — including the
+`expression-2` one, despite its `.avatar` name; the exception is a minority of
+`expression-2` identities trained before 2026-07-12, which are still the
+CoreML zip and will not be re-published. `bithuman info <file>` reads both and
+prints the family, so run it rather than trusting the extension.
 
 ## `bithuman engine` — local render engine
 

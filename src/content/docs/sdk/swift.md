@@ -163,6 +163,26 @@ product of its own — the first second-generation engine on this rail. It is a
 pure Swift + CoreML talking head; Apple Silicon only, `macos-arm64`,
 `ios-arm64`, `ios-arm64-simulator`.
 
+**The `ios-arm64` slice is real, and it has rendered on an iPhone.** This page
+used to describe only macOS, which read as if iOS were a build target nobody
+had exercised. It has been: a consumer app declaring `Expression2` as a SwiftPM
+binary target, using only the public API, selected the `ios-arm64` slice and
+rendered **117 frames at 416×720 on an iPhone 15 running iOS 26.6.1** — every
+frame distinct, full 256-level picture, with a forced-black control arm going
+red beside it. The same engine on the same phone then sustained **36,021 frames
+— 1,801.6 s of speech in 338.01 s of wall clock, 106.57 fps (RTF 0.19)** at
+100 % talk duty in one process, with the worst ten-second bucket of that run
+still at 99.90 fps. CoreML placed the work on the Neural Engine.
+
+**What that does and does not buy you.** It establishes that the engine runs on
+iOS silicon and is fast there. It is deliberately **not** a support statement:
+the SDK's own iOS support level is still **compiles-only** and has not been
+promoted, those runs used development provisioning rather than a distribution
+profile, and — the part that actually blocks you — **there is still no
+published per-identity model bundle**, so an app that resolves this product on
+an iPhone gets the same `isReady=false` described below. Treat iOS as
+proven-capable and unshipped, not as ready to build a product on.
+
 ```swift
 .product(name: "Expression2", package: "homebrew-bithuman")
 ```
@@ -246,7 +266,15 @@ SwiftUI root and show your own `UnsupportedDeviceView` for `.unsupported(reason)
 |---|---|---|
 | **macOS** | M3+, macOS 26 | M3+, macOS 26 |
 | **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 |
-| **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) — **preview**, on-device validation in progress |
+| **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) — **preview**; on-device validation of *this* engine is in progress |
+
+**This table grades the two `bitHumanKit` engines — Essence and Expression 1.
+It is not Expression 2's floor.** The `Expression2` product is a separate
+CoreML engine with its own characteristics; the iPhone measurement above was
+taken on an **iPhone 15**, two generations below this table's iPhone row, so
+do not read the Expression column as an Expression 2 requirement. Expression 2
+has no published device floor yet, because it has no published model bundle to
+gate one on.
 
 Requires Xcode 26+ (older Xcodes reject the Swift 6 concurrency syntax).
 Expression on Apple Silicon auto-spawns a `bithuman-expression-daemon`

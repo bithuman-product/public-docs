@@ -225,19 +225,23 @@ no Expression-2-loadable artifact — local rendering is a CLI surface.) See
 the [device matrix](/concepts/models-v2#where-each-model-runs).
 
 **On-device.** The engine runs on Apple Silicon via the [Swift SDK](/sdk/swift)
-rail (preview maturity) — no server in the path. The `Expression2` SwiftPM
-product, new in **2.5.0**, vends the engine binary; it ships **no model
-weights**, and no per-identity CoreML bundle is published yet, so resolving it
-does not by itself give you a rendering avatar. There is no self-serve path to a
-bundle — email [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity
-you want. See [Expression 2 on-device](/sdk/swift#expression-2-on-device).
+rail (preview maturity) — no server in the path. That rail is **macOS *and*
+iOS**: the `Expression2` product ships a `macos-arm64` and an `ios-arm64`
+slice, and the iOS one has rendered on an iPhone — 117 frames at 416×720 on an
+iPhone 15, then 1,801.6 s of speech sustained at 106.57 fps on the Neural
+Engine. The `Expression2` SwiftPM product, new in **2.5.0**, vends the engine
+binary; it ships **no model weights**, and no per-identity CoreML bundle is
+published yet, so resolving it does not by itself give you a rendering avatar
+on either platform. There is no self-serve path to a bundle — email
+[hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want. See
+[Expression 2 on-device](/sdk/swift#expression-2-on-device).
 
-**The `.imx` below is a different rail, not the missing bundle.** Download the
-runnable `<code>.imx` build
-(legacy `.avatar` zip)
+**The downloadable artifact is a different rail, not the missing bundle.**
+Download the runnable `<code>.avatar` — the frozen back-compat alias of
+`.imx`, usually an `IMX\0` v2 container rather than a zip —
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>` — that artifact drives the **Essence** runtime and the
-CLI. The `Expression2` SwiftPM product cannot read one: `strings` on the shipped
+or `bithuman pull <code>` — that artifact drives the **CLI's** local renderer,
+not the `Expression2` Swift product. The `Expression2` SwiftPM product cannot read one: `strings` on the shipped
 v2.5.0 `Expression2.xcframework` finds zero occurrences of `imx`. **In the
 browser:** append `?render=local` to a
 session URL to render Expression 2 locally (LiteRT.js / WebGPU, WASM fallback),
@@ -305,5 +309,5 @@ or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guid
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
-- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `<code>.imx` build (legacy `.avatar` zip), via API or `bithuman pull <code>`.
+- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `<code>.avatar` (an IMX v2 container for all but the oldest identities), via API or `bithuman pull <code>`.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `expression-2`.
