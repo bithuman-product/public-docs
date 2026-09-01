@@ -133,9 +133,10 @@ matrix today:
   `expression-2` **only**, and it is **engine only** — the `Expression2`
   product (2.5.0+) builds and runs, but **no model bundle is published for it**
   ([details](/sdk/swift#expression-2-on-device)). The Swift SDK carries **no
-  `essence-2` engine at all**; the Neural Engine tier for `essence-2` is
+  `essence-2` engine at all**; the Apple tier for `essence-2` is
   bitHuman's own Apple Silicon, reached over the network like any other cloud
-  tier.
+  tier (it runs through CoreML on the Mac **GPU**, not the Neural Engine —
+  [why](/concepts/essence-2#which-apple-compute-unit-runs-essence-2)).
 - [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU
   runtime**, but it now ships a **hand-delivered self-hosted GPU container**
   for NVIDIA RTX 40-series hardware — see

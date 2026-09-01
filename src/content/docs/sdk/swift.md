@@ -172,7 +172,14 @@ frame distinct, full 256-level picture, with a forced-black control arm going
 red beside it. The same engine on the same phone then sustained **36,021 frames
 — 1,801.6 s of speech in 338.01 s of wall clock, 106.57 fps (RTF 0.19)** at
 100 % talk duty in one process, with the worst ten-second bucket of that run
-still at 99.90 fps. CoreML placed the work on the Neural Engine.
+still at 99.90 fps. CoreML placed the work on the Neural Engine — **577 of the
+611 placed operations, and none on the GPU**, read on the device from CoreML's
+own per-operation compute plan with every member at its default configuration.
+For the per-identity decoder the GPU was eligible and CoreML chose the Neural
+Engine anyway. (Expression 2's Apple members are fp16, which is what makes them
+Neural-Engine-eligible;
+[Essence 2](/concepts/essence-2#which-apple-compute-unit-runs-essence-2) is FP32
+and its cloud Apple tier is *not* on the Neural Engine.)
 
 **What that does and does not buy you.** It establishes that the engine runs on
 iOS silicon and is fast there. It is deliberately **not** a support statement:

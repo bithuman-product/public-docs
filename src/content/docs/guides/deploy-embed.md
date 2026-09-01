@@ -56,7 +56,7 @@ The token is a **1-hour JWT** (HS256-signed). Mint one per visitor session. Both
 ## Pin a serving tier
 
 By default the platform routes each session down the model's serving chain
-(GPU → Apple Neural Engine → CPU), overflowing on capacity
+(GPU → Apple → CPU), overflowing on capacity
 ([details](/concepts/models-v2#advanced-pin-a-serving-tier)). For
 benchmarking or placement testing, append `?model=` with a force-tier slug
 (`essence-2-gpu/-ane/-cpu`, `expression-2-gpu/-cpu/-ane`) to the embed (or

@@ -127,7 +127,16 @@ packaging detail the CLI handles for you:
 
 macOS renders through the same CoreML / Apple Neural Engine path the desktop app
 uses; Linux x86_64 renders in real time on a modern multi-core CPU. Windows
-support is on the way. For the full picture of where every model runs — cloud
+support is on the way.
+
+> **The Neural Engine really is doing this work.** Expression 2's Apple members
+> are exported at fp16, which makes them eligible for the Neural Engine, and
+> with the engine's default configuration CoreML puts almost all of the graph
+> there — measured on an iPhone through CoreML's own per-operation compute plan,
+> on the same engine and the same members this CLI loads.
+> **[Essence 2](/concepts/essence-2#which-apple-compute-unit-runs-essence-2) is
+> the opposite case** and its cloud "ANE" tier is not the Neural Engine at all,
+> so do not read the two as one story. For the full picture of where every model runs — cloud
 tiers, self-hosted, and on-device — see the
 [device matrix](/concepts/architecture).
 

@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Neural Engine and CPU tiers, from your own CPU servers, and in-browser (WebGPU/WASM); train-on-create from a photo, and pricing."
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Silicon and CPU tiers, from your own CPU servers, and in-browser (WebGPU/WASM); train-on-create from a photo, and pricing."
 section: concepts
 group: "Models"
 order: 2
@@ -25,10 +25,11 @@ highest-fidelity renderer in the family. At creation the platform
 packages your identity into a compact bundle, and that one artifact serves
 three ways:
 
-- **From bitHuman's cloud** — a **GPU**, **Apple Neural Engine (ANE)** and
-  **CPU** tier chain, routed automatically. The Neural Engine tier runs on
-  **bitHuman's** Apple Silicon and is reached over the network like any other
-  cloud tier.
+- **From bitHuman's cloud** — a **GPU**, **Apple** and **CPU** tier chain,
+  routed automatically. The Apple tier runs on **bitHuman's** Apple Silicon
+  Macs through **CoreML**, and is reached over the network like any other
+  cloud tier. Its `?model=` slug is still `essence-2-ane` — a historical
+  name, kept so saved links keep working.
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required (Python SDK 2.9.0+).
 - **In the viewer's browser** — WebGPU/WASM, opt-in per session and rolling
@@ -40,7 +41,7 @@ and the [Swift SDK](/sdk/swift) carries no Essence 2 engine — see
 [serving tiers](#serving-tiers) below.
 
 It is half the cloud price of [Essence 2 Max](/concepts/essence-2-max)
-and the only Essence 2 model with CPU, Neural Engine, and browser runtimes —
+and the only Essence 2 model with CPU, Apple and browser runtimes —
 the right default for photorealistic humans, kiosks, high-concurrency
 deployments, and privacy-sensitive environments.
 
@@ -50,16 +51,13 @@ deployments, and privacy-sensitive environments.
   [Essence 2 Max](/concepts/essence-2-max) only when maximum fidelity is the
   whole point.
 - **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
-  and Neural Engine runtimes that don't need a server GPU per session.
-- **Efficient Neural Engine serving.** The Apple Neural Engine tier needs no
-  server GPU per session. The renderer model itself measured **2.9 ms/frame
-  (~345 fps)** on an M4 Max on 2026-06-21 — native CoreML conversion, batch 1,
-  all 110 graph operations resident on the Neural Engine, throughput taken from
-  a repeated drive frame. That is the **model in isolation**: a live session
-  also pays audio conditioning, paste-back and the mouth-interior compose, so do
-  not read it as session throughput. It is a **cloud** tier on bitHuman's Apple
-  Silicon; it does not yet run on *your* device — see
-  [Swift SDK](/sdk/swift).
+  and Apple Silicon runtimes that don't need a datacentre GPU per session.
+- **Efficient Apple Silicon serving.** The Apple tier runs on bitHuman's own
+  Mac hardware through CoreML and needs no datacentre GPU per session. It is a
+  **cloud** tier; it does not yet run on *your* device — see
+  [Swift SDK](/sdk/swift). For what the compute actually runs on — and why the
+  throughput figure this bullet used to quote has been withdrawn — see
+  [Which Apple compute unit](#which-apple-compute-unit-runs-essence-2).
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
@@ -161,7 +159,7 @@ A ready agent serves through every delivery surface — the
 [embed widget](/guides/deploy-embed), the viewer/share URL, the
 [REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
 By default (`?model=essence-2`, or no override at all) the platform routes
-each session down the **serving chain — GPU → Apple Neural Engine → CPU** —
+each session down the **serving chain — GPU → Apple → CPU** —
 overflowing to the next tier on capacity, so sessions land on the most
 cost-efficient runtime that's available.
 
@@ -171,9 +169,9 @@ fails loudly if unavailable):
 
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
-| `essence-2` | The full chain (default) | GPU → Neural Engine → CPU with automatic overflow — the public name. |
+| `essence-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow — the public name. |
 | `essence-2-gpu` | Cloud GPU | Force the GPU tier. |
-| `essence-2-ane` | Apple Neural Engine | Force the ANE tier. |
+| `essence-2-ane` | Apple Silicon (CoreML) | Force the Apple tier. The `-ane` in the slug is historical — see [Which Apple compute unit](#which-apple-compute-unit-runs-essence-2). |
 | `essence-2-cpu` | Cloud CPU | Force the CPU tier — no GPU in the path. |
 
 ```text
@@ -187,7 +185,7 @@ omit `?model=` and let the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
 **On-device: not available yet.** The Essence 2 engine does run on Apple
-Silicon — that is how the **Neural Engine serving tier** above works — but that
+Silicon — that is how the **Apple serving tier** above works — but that
 hardware is *bitHuman's*, reached over the network like any other cloud tier.
 There is **no published way to run Essence 2 on your own Mac or iPhone today**:
 
@@ -266,7 +264,7 @@ below). **New creations get it automatically**; agents created before
 in the API, the session contract, or the `?model=` tier slugs changed.
 
 **Which surfaces serve it.** The sharp mouth-interior rendering described above
-is served on the **cloud tiers** (GPU, Apple Neural Engine, CPU) and by
+is served on the **cloud tiers** (GPU, Apple, CPU) and by
 **self-hosted CPU offline rendering**. It is **not** part of a
 **browser-local** session yet: `?render=local` runs a separate in-browser
 build, and as measured on **2026-08-30** across **all 22 identities** currently
@@ -324,12 +322,57 @@ and an armed CPU render runs roughly **25× slower than playback**.
 
 **What this means for you.** The CPU tier is an **offline-rendering and
 last-resort** tier, not a real-time one; live sessions route to GPU and Apple
-Neural Engine first. If you pin a live session to CPU, expect it to fall behind.
+first. If you pin a live session to CPU, expect it to fall behind.
 The un-armed rows vary run to run (a 17.6 fps reading was taken for the same
 1280×720 identity on an earlier container); the armed rows did not.
 
-GPU and Apple Neural Engine throughput has **not** been re-measured under this
+Cloud GPU and Apple-tier throughput has **not** been re-measured under this
 protocol and is deliberately not quoted here.
+
+### Which Apple compute unit runs Essence 2
+
+The tier is called `essence-2-ane` and this page used to call it the "Apple
+Neural Engine" tier. **That was wrong, and the throughput figure that came with
+it has been withdrawn.**
+
+Apple Silicon has three compute units CoreML can place work on — the CPU, the
+GPU, and the Neural Engine (ANE). Which one a model actually gets is decided by
+CoreML from the model's precision and the compute-unit configuration it is
+loaded with, not by the name of the tier.
+
+Measured on bitHuman's M4 Max serving host, against the per-identity CoreML
+renderer this tier actually serves, three independent checks agree:
+
+- **Asked for the Neural Engine, CoreML uses the CPU.** Loaded with the
+  Neural-Engine configuration, CoreML placed **none** of the renderer's compute
+  operations on the Neural Engine — it placed every one of them on the CPU, and
+  the output came back **bit-for-bit identical** to a CPU-only run. Identical
+  bits are not a close call: it is the same backend.
+- **The reason is precision.** The renderer is exported at FP32, and the Neural
+  Engine is fp16-only hardware, so an FP32 model is not eligible for it.
+- **The live tier is configured for the GPU.** Every serving worker on that host
+  binds the GPU compute-unit setting, so the work runs on the Mac's **GPU** —
+  where CoreML places the whole graph and runs it several times faster than
+  either CPU path.
+
+So the Apple tier is a real, fast tier, and it is **CoreML on Apple Silicon,
+running on the GPU**. It is not the Neural Engine. The `-ane` slug, the
+`essence-2-ane` force tier and every saved link keep working unchanged; only
+the description was wrong.
+
+**No replacement throughput figure is published here.** The withdrawn number
+was wrong because the mechanism attached to it was wrong, and quoting a fresh
+one would need the same per-model, per-compute-unit protocol the CPU table
+above uses. That has not been run for the Apple or GPU tiers — see
+[Rendering throughput, measured](#rendering-throughput-measured).
+
+**This is specific to Essence 2's cloud renderer, and it does *not* generalise
+to Expression 2 or to on-device Apple builds.**
+[`expression-2`](/concepts/expression-2) is a different engine whose Apple
+members are exported at fp16 — so they *are* Neural-Engine-eligible, and on an
+iPhone they genuinely run there. Its cloud Apple tier splits the work across
+both units on purpose. See
+[Expression 2's serving tiers](/concepts/expression-2#serving-tiers).
 
 ## The developer journey
 

@@ -176,7 +176,7 @@ The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
 - **`essence-2` is the standard tier name** — the light-name retirement
   completed (the former `essence-2-light` was consolidated into `essence-2`
   on 2026-07-05): the standard photoreal model, optimized to run everywhere
-  (GPU / Apple Neural Engine / CPU / WebGPU-WASM), and the default. See
+  (GPU / Apple Silicon / CPU / WebGPU-WASM), and the default. See
   [Essence 2](/concepts/essence-2).
 - **Rates unchanged.** `essence-2` stays 4 credits/min cloud and
   `essence-2-max` 8 credits/min cloud, each 0.5× when self-hosted; creation
@@ -218,8 +218,7 @@ rollout, the model documentation gained the shipping characteristics:
 
 - **[`essence-2`](/concepts/essence-2)** — photorealistic people;
   animates real identity footage at its native resolution (full-HD 1080p
-  identity video by default) at ~25 fps; serves GPU → Apple Neural Engine →
-  CPU, fully
+  identity video by default) at ~25 fps; serves GPU → Apple → CPU, fully
   on-device on Apple Silicon, and a **browser-local tier is rolling out**
   (`?render=local`, WebGPU with WASM fallback) as per-identity web bundles
   publish.
@@ -289,7 +288,7 @@ The Essence 2 request surface is now just **`essence-2`** (plus the explicit
   [model downloads](/api/agents#download-an-agents-model).
 - **Serving chains + force tiers.** By default `essence-2` and
   `expression-2` sessions route down a serving chain
-  (GPU → Apple Neural Engine → CPU) with automatic overflow. New
+  (GPU → Apple → CPU) with automatic overflow. New
   **force-tier slugs** — `essence-2-gpu` / `essence-2-ane` / `essence-2-cpu`
   and `expression-2-gpu` / `expression-2-cpu` / `expression-2-ane` — pin one
   tier for benchmarking/placement testing and never overflow. See

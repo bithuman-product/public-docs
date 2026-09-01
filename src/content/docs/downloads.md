@@ -214,7 +214,7 @@ For the file each family hands you by name, and what opens it, see
 
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
-| bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
+| bitHuman cloud (GPU · Apple · CPU chain) | Yes | GPU-only | Yes |
 | Self-hosted CPU (your servers) | Offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.5.0+ ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone** — but it is **engine only, [with no model bundle published](/sdk/swift#expression-2-on-device)**, so neither is self-serve yet. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
