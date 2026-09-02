@@ -1,6 +1,6 @@
 ---
 title: "Expression 2"
-description: "Official guide to expression-2 — bitHuman's second-generation expression engine: per-identity training from one photo, GPU/CPU/Apple Neural Engine serving tiers, real-footage idle, latency expectations, and pricing."
+description: "Official guide to expression-2 — bitHuman's second-generation expression engine: per-identity training from one photo, GPU/CPU/Apple Silicon serving tiers, real-footage idle, latency expectations, and pricing."
 section: concepts
 group: "Models"
 order: 4
@@ -50,7 +50,7 @@ unchanged.
   stylized, cartoon, animal, creature, robot, and object characters are
   exactly what this engine is for (and where `model: "auto"` routes them).
 - **You only have a photo.** One image is enough — creation is image-only for every model, and Expression 2 trains straight from the photo.
-- **You want the same identity on cloud GPU, CPU, or Apple Neural Engine** —
+- **You want the same identity on cloud GPU, CPU, or Apple Silicon** —
   Expression 2 serves on all three tiers (see [serving](#serving-tiers)).
 
 If you need the absolute highest image fidelity for close-up content, compare
@@ -188,7 +188,7 @@ A ready `expression-2` agent serves through every delivery surface — the
 [embed widget](/guides/deploy-embed), the viewer/share URL, the
 [REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
 By default the platform routes each session down the model's **serving
-chain — GPU → Apple Neural Engine → CPU** — starting at an always-warm GPU
+chain — GPU → Apple → CPU** — starting at an always-warm GPU
 first line and overflowing to the next tier on capacity.
 
 For benchmarking or placement testing you can **force one runtime tier** with
@@ -197,10 +197,10 @@ fails loudly if unavailable):
 
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
-| `expression-2` | The full chain (default) | GPU → Neural Engine → CPU with automatic overflow. |
+| `expression-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow. |
 | `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
 | `expression-2-cpu` | CPU | Force the native quantized (int8) build on CPU servers — no GPU in the path. |
-| `expression-2-ane` | Apple Neural Engine | Force the Apple Silicon Neural Engine tier; limited real-time slots. |
+| `expression-2-ane` | Apple Silicon (CoreML) | Force the Apple tier; limited real-time slots. Unlike Essence 2's same-named slug, this one really is carried by the Neural Engine — see [below](#which-apple-compute-units-run-expression-2). |
 
 ```text
 https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
@@ -211,7 +211,31 @@ back to the agent's default routing. For production, omit `?model=` and let
 the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
-Real-time streaming is carried by the **GPU and Apple Neural Engine tiers**. The
+### Which Apple compute units run Expression 2
+
+Apple Silicon has three compute units CoreML can place work on — the **CPU**,
+the **GPU**, and the **Neural Engine**. CoreML decides from the model's
+precision and the configuration it is loaded with, not from the name of a tier.
+Expression 2's Apple members are exported at **half precision**, which is what
+makes them eligible for the Neural Engine at all.
+
+**Measured, the Neural Engine carries most of it.** Reading CoreML's own
+per-operation compute plan for the exact compiled models the engine loads, on
+the Apple tier's compute-unit configuration: the speech front end places
+**99.8%** of its operations on the Neural Engine, the identity decoder
+**100%**, and the motion model **84.3%**, with the remainder on the CPU and
+**none on the GPU** in any of the three. The same holds on device — on an
+iPhone 15 the compute plan put the work on the Neural Engine, and for the
+per-identity decoder the GPU was *eligible* and CoreML chose the Neural Engine
+anyway.
+
+★ **This is the opposite of [Essence 2](/concepts/essence-2#which-apple-compute-unit-runs-essence-2)**,
+whose Apple tier is bound to the Mac **GPU** because the GPU measured faster and
+more faithful there. The two models share the word "Apple" and the historical
+`-ane` slug and nothing else about compute placement. Do not read a statement
+about one as a statement about the other.
+
+Real-time streaming is carried by the **GPU and Apple tiers**. The
 **CPU tier is offline-batch-grade** — sized for offline talking-video generation
 and used as capacity overflow / fallback, not as the primary real-time line — so
 pin `expression-2-cpu` for batch and self-hosted-server work rather than
@@ -231,8 +255,10 @@ slice, and the iOS one has rendered on an iPhone — 117 frames at 416×720 on a
 iPhone 15, then 1,801.6 s of speech sustained at 106.57 fps on the Neural
 Engine. The `Expression2` SwiftPM product, new in **2.5.0**, vends the engine
 binary; it ships **no model weights**, and no per-identity CoreML bundle is
-published yet, so resolving it does not by itself give you a rendering avatar
-on either platform. There is no self-serve path to a bundle — email
+published **in the directory form this product loads**, so resolving it does not
+by itself give you a rendering avatar on either platform (the `<code>.avatar`
+you can download is a packed container for the CLI and cloud engines — see
+[Expression 2 on-device](/sdk/swift#expression-2-on-device)). There is no self-serve path to a bundle — email
 [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want. See
 [Expression 2 on-device](/sdk/swift#expression-2-on-device).
 

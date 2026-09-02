@@ -8,6 +8,54 @@ order: 1
 
 > **Note** Product-level changes only. For per-version notes, see the [Python SDK CHANGELOG](https://github.com/bithuman-product/homebrew-bithuman/blob/main/python/CHANGELOG.md) and the [Swift SDK releases](https://github.com/bithuman-product/homebrew-bithuman/releases).
 
+## September 2026
+
+### The "Apple Neural Engine" tier is renamed **Apple**, and a false performance claim is withdrawn (2026-09-02)
+
+Essence 2's cloud Apple tier was documented as the **Apple Neural Engine**
+tier, with a per-frame throughput figure attached and attributed to every
+operation in the graph running on the Neural Engine. That attribution was
+wrong, so the number went with it.
+
+**What is true.** The tier runs on Apple Silicon Macs through **CoreML**, and
+every serving worker on those hosts binds the **GPU** compute unit — verified
+on the production hosts on 2026-09-02. The Neural Engine is not off-limits: on
+a minority of identities the renderer resolves to a half-precision graph the
+Neural Engine accepts and runs there. Measured head to head, it was about
+**2.2× slower** than the Metal GPU *and* slightly further from the reference
+picture, so the GPU is not a fallback — it is the fastest and most faithful
+unit on that machine. Both "it runs on the Neural Engine" and "it can never
+touch the Neural Engine" are false; the page now says the measured thing.
+
+**No replacement number is published.** The withdrawn figure was a
+model-in-isolation reading that a live session never sees, and the per-model,
+per-compute-unit protocol used for Essence 2's CPU table has not been run for
+the Apple or GPU tiers. Picking one of the figures in circulation is what
+produced the error, so the page says so instead. See
+[Which Apple compute unit runs Essence 2](/concepts/essence-2#which-apple-compute-unit-runs-essence-2).
+
+**Expression 2 is the opposite case, and is now documented separately.** Its
+Apple members are exported at half precision and CoreML's own per-operation
+compute plan places **84–100%** of their operations on the Neural Engine — none
+on the GPU. The two models share the word "Apple" and the historical `-ane`
+slug and nothing else. See
+[Which Apple compute units run Expression 2](/concepts/expression-2#which-apple-compute-units-run-expression-2).
+
+**Nothing you can write changed.** `essence-2-ane`, `expression-2-ane`, the
+`?model=` force slugs, saved links and every API field keep working exactly as
+before. Only the prose name of the tier changed, from "Apple Neural Engine" to
+"Apple".
+
+### Linux wheels restored for `bithuman` 2.10.0 (2026-09-02)
+
+2.10.0 was published for macOS first and carried **no Linux files for about a
+day**, so between 2026-09-01 and 2026-09-02 `pip install bithuman` on Linux
+silently resolved to the previous release, **2.9.0**. All ten Linux wheels
+(cp310–cp314 × `manylinux_2_28` x86_64 and aarch64) are on PyPI now, published
+from the same measured build as the macOS wheels. If you installed in that
+window, run `pip install -U bithuman` and check `bithuman.__version__`. See
+[Downloads](/downloads).
+
 ## August 2026
 
 ### `409 MODEL_NOT_GENERATED` now tells you how to fix it (2026-08-17)
@@ -83,7 +131,7 @@ Nothing in the API, the session contract, or the tier slugs changed. **New
 creations get the new renderer automatically**; existing agents move over as
 they are retrained, so an older agent keeps serving its current build (and its
 larger model file) until then. Runs on all three runtimes — cloud GPU, Apple
-Neural Engine, and CPU.
+Silicon, and CPU.
 
 ### Expression 2 — faster creation, same quality bar (2026-07-22)
 
@@ -176,7 +224,7 @@ The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
 - **`essence-2` is the standard tier name** — the light-name retirement
   completed (the former `essence-2-light` was consolidated into `essence-2`
   on 2026-07-05): the standard photoreal model, optimized to run everywhere
-  (GPU / Apple Neural Engine / CPU / WebGPU-WASM), and the default. See
+  (GPU / Apple Silicon / CPU / WebGPU-WASM), and the default. See
   [Essence 2](/concepts/essence-2).
 - **Rates unchanged.** `essence-2` stays 4 credits/min cloud and
   `essence-2-max` 8 credits/min cloud, each 0.5× when self-hosted; creation
@@ -218,16 +266,19 @@ rollout, the model documentation gained the shipping characteristics:
 
 - **[`essence-2`](/concepts/essence-2)** — photorealistic people;
   animates real identity footage at its native resolution (full-HD 1080p
-  identity video by default) at ~25 fps; serves GPU → Apple Neural Engine →
-  CPU, fully
-  on-device on Apple Silicon, and a **browser-local tier is rolling out**
+  identity video by default) at ~25 fps; serves GPU → Apple Silicon →
+  CPU (*corrected 2026-09-02: this entry originally said "fully on-device on
+  Apple Silicon"; no on-device Essence 2 build has been published — the Apple
+  tier is bitHuman's own hardware*), and a **browser-local tier is rolling out**
   (`?render=local`, WebGPU with WASM fallback) as per-identity web bundles
   publish.
 - **[`expression-2`](/concepts/expression-2)** — stylized and universal
   characters; **fully generative across the whole 416×720 scene** at 20 fps
   from a single photo (no face detection or cropping anywhere in the
   pipeline), which is why any character morphology animates naturally;
-  serves GPU → Apple Neural Engine → CPU plus on-device Apple Silicon.
+  serves GPU → Apple Silicon → CPU; its on-device Apple engine shipped later,
+  in [Swift SDK 2.5.0](/sdk/swift#expression-2-on-device) — engine only, with no
+  model bundle published.
 - The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
   and [creation guide](/concepts/models-v2#how-creation-works) were refreshed
   to match.
@@ -289,7 +340,7 @@ The Essence 2 request surface is now just **`essence-2`** (plus the explicit
   [model downloads](/api/agents#download-an-agents-model).
 - **Serving chains + force tiers.** By default `essence-2` and
   `expression-2` sessions route down a serving chain
-  (GPU → Apple Neural Engine → CPU) with automatic overflow. New
+  (GPU → Apple Silicon → CPU) with automatic overflow. New
   **force-tier slugs** — `essence-2-gpu` / `essence-2-ane` / `essence-2-cpu`
   and `expression-2-gpu` / `expression-2-cpu` / `expression-2-ane` — pin one
   tier for benchmarking/placement testing and never overflow. See

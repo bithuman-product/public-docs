@@ -14,7 +14,7 @@ into your Mac, iPad, or iPhone app. The umbrella framework re-exports both
 on-device engines:
 
 - **Expression** — animates any portrait image at runtime (speech encoder →
-  animator → face decoder on the GPU + Apple Neural Engine). Home of `VoiceChat` /
+  animator → face decoder, through CoreML on Apple Silicon). Home of `VoiceChat` /
   `VoiceChatConfig` / `AvatarConfig`.
 - **Essence** — an `.imx` avatar runtime that renders a pre-built avatar (audio
   in, composed BGR frames out). Reached via `Bithuman.create(modelPath:)`.
@@ -172,7 +172,10 @@ frame distinct, full 256-level picture, with a forced-black control arm going
 red beside it. The same engine on the same phone then sustained **36,021 frames
 — 1,801.6 s of speech in 338.01 s of wall clock, 106.57 fps (RTF 0.19)** at
 100 % talk duty in one process, with the worst ten-second bucket of that run
-still at 99.90 fps. CoreML placed the work on the Neural Engine.
+still at 99.90 fps. CoreML's own per-operation compute plan for that run
+placed the work on the **Neural Engine** and none of it on the GPU — and for
+the per-identity decoder the GPU was *eligible* and CoreML chose the Neural
+Engine anyway.
 
 **What that does and does not buy you.** It establishes that the engine runs on
 iOS silicon and is fast there. It is deliberately **not** a support statement:
@@ -200,25 +203,37 @@ while let (frame, speech) = engine.pull() {
 
 > **Read this before you plan around it — `Expression2` ships the engine, not a
 > runnable avatar.** `Expression2Engine()` takes no model path. The engine looks
-> for a per-identity CoreML bundle in `$BITHUMAN_EXPRESSION2_DIR` or in your app
-> bundle, and **`isReady` stays `false` until it finds one**. No such bundle is
-> published, so resolving this product does not by itself get you a rendering
-> avatar. On a clean machine the engine constructs and reports
-> `isReady=false` — that is the expected result today, not a misconfiguration.
+> for a per-identity CoreML bundle as a **directory of `.mlpackage` members** in
+> `$BITHUMAN_EXPRESSION2_DIR` or in your app bundle, and **`isReady` stays
+> `false` until it finds one**. No bundle in that form is published, so
+> resolving this product does not by itself get you a rendering avatar. On a
+> clean machine the engine constructs and reports `isReady=false` — that is the
+> expected result today, not a misconfiguration.
 >
-> **How you get a bundle: ask us — there is no self-serve path.** Bundles are
-> not on any download page, are not fetched by any CLI command, and are not
-> gated behind a plan you can buy. Email
+> **How you get a bundle: ask us — there is no self-serve path.** No download
+> page or CLI command hands you one in the layout this product reads, and it is
+> not gated behind a plan you can buy. Email
 > [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want.
 >
-> **An `.imx` is not the missing piece.** `bithuman pull <code>` and
+> **What the download endpoint gives you instead, stated precisely.** For an
+> `expression-2` agent,
 > [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-> return an `.imx`, which belongs to the Essence runtime. `Expression2` cannot
-> read one: measured against the shipped `Expression2.xcframework` (macos-arm64,
-> v2.5.0), `strings` finds **zero** occurrences of `imx` — and one each of
-> `BITHUMAN_EXPRESSION2_DIR` and `dec_p2_v3_all`, the CoreML member whose
-> absence is what holds `warmUp()` and `isReady` down. Pointing
-> `$BITHUMAN_EXPRESSION2_DIR` at an unpacked `.imx` will not start the engine.
+> returns a `<code>.avatar`. That file is **not** empty of CoreML: measured on a
+> downloaded one, it is an `IMX\0` v2 container whose members include
+> `dec_p2_v3_all.mlpackage`, `audiotokenizer_cpuAndNE.mlpackage` and
+> `student_v4_forward_frame_cpuAndNE.mlpackage` — and `dec_p2_v3_all` is exactly
+> the member name the shipped `Expression2.xcframework` (macos-arm64, v2.5.0)
+> carries in its strings. **What is missing is not the weights, it is a
+> supported way to hand them to this product**: the engine reads a directory,
+> the artifact is a packed container, and no unpacking route is published or
+> supported. Do not build on prising one open — there is no contract behind it,
+> and nothing about that file's layout is promised to stay put.
+>
+> **An `.imx` is definitely not the missing piece.** `bithuman pull <code>` on
+> an Essence agent returns an `.imx` for the Essence runtime. `Expression2`
+> cannot read one: measured against the same xcframework, `strings` finds
+> **zero** occurrences of `imx`. Pointing `$BITHUMAN_EXPRESSION2_DIR` at an
+> unpacked `.imx` will not start the engine.
 
 > **Depend on `Expression2` alone.** Adding both `Expression2` and the
 > `BithumanEngineProtocol` product pulls the Layer-0 module in twice and fails to

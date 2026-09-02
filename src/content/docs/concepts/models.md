@@ -23,7 +23,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
     For new photoreal work the recommended model is Essence 2.)
   - **[Essence 2](/concepts/essence-2)** — the standard photoreal model and
     **the default**: an efficient renderer served from bitHuman's cloud chain
-    (GPU, Apple Neural Engine, CPU), from your own CPU servers for offline
+    (GPU, Apple Silicon, CPU), from your own CPU servers for offline
     rendering, and — opt-in per session — in the viewer's browser
     (WebGPU/WASM). There is **no installable on-device build** for a Mac,
     iPhone, iPad or Android device.

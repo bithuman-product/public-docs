@@ -79,7 +79,7 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 > through the cloud.
 > [`expression-2`](/concepts/expression-2) renders locally via the
 > [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
-> Linux x86_64) and on the Neural Engine, and its engine is on the Apple
+> Linux x86_64), and its engine is on the Apple
 > on-device rail as the `Expression2` SwiftPM product from **2.5.0**
 > ([engine only — no model bundle is published](/sdk/swift#expression-2-on-device)).
 > [`essence-2-max`](/concepts/essence-2-max) is cloud-GPU-only — no on-device

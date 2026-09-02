@@ -121,12 +121,16 @@ packaging detail the CLI handles for you:
 
 | Platform | Local render | Status |
 | --- | --- | --- |
-| **macOS (Apple Silicon)** | Apple Neural Engine via CoreML | Real time |
+| **macOS (Apple Silicon)** | CoreML — predominantly the Neural Engine | Real time |
 | **Linux x86_64** | LiteRT (CPU) | Real time |
 | **Windows** | LiteRT (CPU) | Coming |
 
-macOS renders through the same CoreML / Apple Neural Engine path the desktop app
-uses; Linux x86_64 renders in real time on a modern multi-core CPU. Windows
+macOS renders through the same CoreML path the desktop app uses. Reading
+CoreML's own per-operation compute plan for the models this engine loads, the
+Neural Engine carries **84–100%** of the operations depending on the member,
+with the remainder on the CPU — see
+[which Apple compute units run Expression 2](/concepts/expression-2#which-apple-compute-units-run-expression-2).
+Linux x86_64 renders in real time on a modern multi-core CPU. Windows
 support is on the way. For the full picture of where every model runs — cloud
 tiers, self-hosted, and on-device — see the
 [device matrix](/concepts/architecture).

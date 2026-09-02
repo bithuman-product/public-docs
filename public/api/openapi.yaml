@@ -248,7 +248,7 @@ paths:
                     ignored, so existing integrations keep working.
                     **`essence-2`** is the second-generation Essence model for
                     photorealistic people — one 500-credit creation that runs
-                    everywhere from on-device (CPU / Apple Neural Engine) up to
+                    everywhere from on-device (CPU / Apple Silicon) up to
                     cloud GPU. (`essence-2-light` is a retired alias — the
                     public name is `essence-2`.) **`essence-2-max`**, the
                     premium tier, is **not a standalone creation target** — it

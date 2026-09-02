@@ -136,9 +136,10 @@ matrix today:
   [Python SDK loader notes](/sdk/python#which-model-artifacts-can-the-sdk-load)).
 - **Apple Silicon on-device** playback via the [Swift SDK](/sdk/swift) is
   `expression-2` **only**, and it is **engine only** — the `Expression2`
-  product (2.5.0+) builds and runs, but **no model bundle is published for it**
+  product (2.5.0+) builds and runs, but **no model bundle is published in the
+  form it loads**
   ([details](/sdk/swift#expression-2-on-device)). The Swift SDK carries **no
-  `essence-2` engine at all**; the Neural Engine tier for `essence-2` is
+  `essence-2` engine at all**; the Apple tier for `essence-2` is
   bitHuman's own Apple Silicon, reached over the network like any other cloud
   tier.
 - [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU

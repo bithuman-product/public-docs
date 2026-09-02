@@ -28,12 +28,12 @@ API, the embed widget, the dashboard, and the SDKs:
   per-identity model (about 2–2.5 hours on a training GPU; measured median
   2h04m over 39 creations), then synthesizes
   the **entire 416×720 scene** live at 20 fps — fully generated motion, not
-  patched onto a pre-rendered base. Runs on GPU, CPU, and Apple Neural Engine.
+  patched onto a pre-rendered base. Runs on GPU, CPU, and Apple Silicon.
 - **[`essence-2`](/concepts/essence-2)** — the **standard** Essence model for
   photorealistic people, and the default. It animates your identity's
   footage (a full-HD 1080p identity video, generated internally from your
   image) at ~25 fps with an efficient engine that serves from **cloud GPUs**,
-  **Apple Neural Engine** and **CPU** tiers, from **your own CPU servers**
+  **Apple Silicon** and **CPU** tiers, from **your own CPU servers**
   for offline rendering, and — where you opt a session into it —
   **in the viewer's browser** (WebGPU/WASM), where frames never leave that
   browser. bitHuman routes cloud sessions for you; you just pick `essence-2`.
@@ -55,7 +55,7 @@ API, the embed widget, the dashboard, and the SDKs:
 | **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
-| **On-device** | Your own CPU servers (Python SDK 2.9.0+). **Not** on your Mac/iPhone — the Apple Neural Engine tier is bitHuman's hardware, reached over the network | — | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/swift#expression-2-on-device)) |
+| **On-device** | Your own CPU servers (Python SDK 2.9.0+). **Not** on your Mac/iPhone — the Apple tier is bitHuman's hardware, reached over the network | — | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/swift#expression-2-on-device)) |
 | **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (about 2–2.5 hours) |
 | **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
 | **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
@@ -78,14 +78,14 @@ internally by every `essence-2` creation.
 
 **[`essence-2`](/concepts/essence-2).** The standard model and the default —
 half the cloud price of Max, and the same identity artifact serves three
-different ways: from **bitHuman's cloud** (GPU, Apple Neural Engine and CPU
+different ways: from **bitHuman's cloud** (GPU, Apple Silicon and CPU
 tiers, routed for you), from **your own CPU servers** for offline rendering
 (Python SDK 2.9.0+), and **in the viewer's browser** where you opt a session
 into it. The right default for photorealistic humans, kiosks,
 high-concurrency deployments, and privacy-sensitive environments.
 
 > **What "on-device" means here.** There is **no installable Essence 2 build
-> for a Mac, iPhone, iPad or Android device** today — the Apple Neural Engine
+> for a Mac, iPhone, iPad or Android device** today — the Apple
 > tier runs on *bitHuman's* Apple Silicon, reached over the network like any
 > other cloud tier. The two places Essence 2 runs off our cloud are your own
 > CPU servers and the viewer's browser. See
@@ -96,7 +96,7 @@ high-concurrency deployments, and privacy-sensitive environments.
 **[`expression-2`](/concepts/expression-2).** The most lifelike motion in the
 lineup — expressions and head movement are generated live from the audio
 rather than replayed. Creation trains a per-identity model from your photo
-(about 2–2.5 hours); serving spans GPU, CPU, and Apple Neural Engine
+(about 2–2.5 hours); serving spans GPU, CPU, and Apple Silicon
 tiers.
 
 Still deciding between the **families** (Essence vs Expression)? Start with
@@ -291,7 +291,7 @@ The other delivery surfaces work unchanged too — the
 ### Advanced: pin a serving tier
 
 By default the platform routes each session down the model's serving chain
-(GPU → Apple Neural Engine → CPU) and overflows on capacity. For benchmarking
+(GPU → Apple → CPU) and overflows on capacity. For benchmarking
 or placement testing you can **force a specific tier** by appending `?model=`
 with a force-tier slug to the session (viewer / embed) URL. A forced tier is
 pinned — it never overflows, and it fails loudly if that tier is unavailable:
@@ -320,7 +320,7 @@ The device/runtime matrix for the second generation:
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
 | bitHuman cloud — GPU | ✅ chain tier | ✅ (the only tier) | ✅ chain tier |
-| bitHuman cloud — Apple Neural Engine | ✅ chain tier | — | ✅ chain tier |
+| bitHuman cloud — Apple Silicon | ✅ chain tier | — | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming still via the cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
 | On-device macOS / iOS (Apple Silicon) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2` product, 2.5.0+ — `macos-arm64` **and** `ios-arm64`; both have rendered on real hardware, but it is engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
