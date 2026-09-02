@@ -97,6 +97,35 @@ Use the CLI to dump model metadata — version, ABI, resolution, and license:
 bithuman info path/to/avatar.imx
 ```
 
+### The `engine` value is a legacy name
+
+`bithuman info` reports an **`engine`** read from the container header (also
+`engine` in [`--json`](/sdk/cli/agents)), and the Python runtime quotes the same
+string verbatim in load errors — for example `backend loader for
+engine='essence2-light'`.
+
+**These engine ids are legacy names kept for compatibility.** They predate the
+current product naming and they are the literal strings every reader parses, so
+they are frozen and will not be renamed. They are spelled here exactly as you
+will see them, because you may have to match on one:
+
+| `engine` in the header | The model you actually have |
+|---|---|
+| `essence1` | [Essence 1](/concepts/models) — also the value an older container with no header resolves to |
+| `essence2-light` | **[Essence 2](/concepts/essence-2)** — request it as `essence-2` |
+| `essence2-quality` | **[Essence 2 Max](/concepts/essence-2-max)** — request it as `essence-2-max` |
+| `expression2` | **[Expression 2](/concepts/expression-2)** — request it as `expression-2` |
+
+So a current Essence 2 bundle reports `engine: essence2-light`, and an Essence 2
+Max bundle reports `engine: essence2-quality`. That is expected, not a mismatch
+— the engine id names the *loader family*, not the product.
+
+> **Never send an engine id to the API.** The `model` parameter takes the
+> product names only — `essence-1`, `essence-2`, `essence-2-max`,
+> `expression-1`, `expression-2` — and anything else returns
+> [`400 VALIDATION_ERROR`](/api/agents#creation-failure-modes). An engine id is
+> something you *read* off a file you already have, never something you *send*.
+
 ## File-format stability
 
 The `.imx` format is **forward-compatible within a major version**. The first time you open an older `.imx` with a newer runtime, the runtime warms it up and silently upgrades the file. Keep the runtime warm in production to avoid paying that warm-up cost per session.

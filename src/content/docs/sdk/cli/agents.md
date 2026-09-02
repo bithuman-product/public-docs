@@ -117,7 +117,7 @@ Human mode prints the bare `.imx` path on stdout. Exit **66**
 ### `bithuman info <model.imx> --json`  (alias: `inspect`)
 ```json
 {"path":"/…/modern-court-jester.imx","format_version":2,"size_bytes":82583342,
- "engine":"…","family":"…","manifest":{…},
+ "engine":"essence1","family":"…","manifest":{…},
  "members":[{"name":"manifest.json","size_bytes":1030},{"name":"audio_encoder.onnx","size_bytes":2840632},…],
  "schema_version":1}
 ```
@@ -125,6 +125,11 @@ As of CLI **2.4.1**, `info` lists the **full container table of contents** —
 every member with its byte size (`members` in `--json`, a `Members (N):` block
 in human mode) — plus the `engine` / `family` resolved from the unified IMX
 header, so you can see exactly what a model file carries before deploying it.
+The sample above is a showcase `essence-1` model; an Essence 2 bundle reports
+`"engine":"essence2-light"` and an Essence 2 Max bundle `"engine":"essence2-quality"`.
+Those engine ids are **legacy names kept for compatibility** and are never sent
+to the API — see [the `engine` value is a legacy
+name](/concepts/avatars-imx#the-engine-value-is-a-legacy-name).
 Error codes: `FILE_NOT_FOUND`, `NOT_IMX`, `UNSUPPORTED_IMX_VERSION`,
 `MISSING_MANIFEST` (all exit **66**); `INTERNAL` (**70**).
 

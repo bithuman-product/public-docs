@@ -37,7 +37,12 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 const ROOT = new URL("..", import.meta.url).pathname;
 
 // ── corpus ───────────────────────────────────────────────────────────────────
-const ROOTS = ["src/content", "src/pages", "src/openapi", "STYLE.md"];
+// `public/api/openapi.yaml` is a build-time copy of `src/openapi/bithuman.yaml`
+// (`npm run sync-openapi`, wired to pre{dev,build}), but it is the file a
+// developer actually FETCHES from docs.bithuman.ai/api/openapi.yaml. Guarding
+// only the source would leave the published bytes unchecked if the copy ever
+// drifts, so both are scanned.
+const ROOTS = ["src/content", "src/pages", "src/openapi", "public/api", "STYLE.md"];
 const EXT = /\.(md|astro|ts|yaml|yml)$/;
 const files = [];
 const walk = (rel) => {
@@ -57,7 +62,30 @@ const RETIRED = [
   { name: "lebundle",          re: /lebundle/gi },
   { name: "Essence 2 Light",   re: /Essence 2 Light/g },
   { name: "Essence 2 Quality", re: /Essence 2 Quality/g },
+  // The UNHYPHENATED container engine ids. These were invisible to the four
+  // patterns above (`essence-2-light` does not match `essence2-light`), so the
+  // guard passed a page using `essence2-light` as a live product name — proved
+  // by mutation before this entry existed. They are frozen manifest values, not
+  // product names: `bithuman info` prints one, `--json` exposes it as `engine`,
+  // and the loader quotes it verbatim (`backend loader for
+  // engine='essence2-light'`). Confirmed live in the shipped readers —
+  // ENGINE_ESSENCE2_LIGHT / ENGINE_ESSENCE2_QUALITY in the Python
+  // `unified_header.py` and the Rust `engine_id.rs`, both conformance-tested
+  // against the canonical `unified-engine-ids.json`, where public `essence-2`
+  // maps to engine `essence2-light` and `essence-2-max` to `essence2-quality`.
+  { name: "essence2-light",    re: /essence2[-_]light/gi,   engineId: true },
+  { name: "essence2-quality",  re: /essence2[-_]quality/gi, engineId: true },
 ];
+
+// An engine id is legitimate ONLY where it is presented as the container's
+// `engine` field — the value you READ off a file. Anywhere else it is a dead
+// name used as if it were a product, which is what the ruling forbids. So
+// instead of a blanket carrier (which would re-open the hole this entry closes)
+// the surrounding markdown BLOCK must actually be talking about the engine
+// field. "Pick `essence2-light` for cheap renders" has no such context and
+// fails; the mapping table, the `--json` sample and the quoted loader error all
+// do and pass.
+const ENGINE_FIELD_CONTEXT = /engine/i;
 
 // ── (a) FROZEN CARRIERS — never rename, never delete ─────────────────────────
 // A hit whose surrounding text matches one of these is a literal a developer
@@ -113,6 +141,7 @@ const carrierHits = new Map(CARRIERS.map((c) => [c.why, 0]));
 const markerHits = { n: 0 };
 
 let historyHits = 0;
+let engineIdHits = 0;
 for (const rel of files) {
   const lines = readFileSync(ROOT + rel, "utf8").split("\n");
   const isChangelog = rel.endsWith("changelog.md");
@@ -122,12 +151,34 @@ for (const rel of files) {
       const h = DATED_HEADING.exec(line);
       if (h) entryDate = h[1];
     }
-    for (const { name, re } of RETIRED) {
+    for (const { name, re, engineId } of RETIRED) {
       re.lastIndex = 0;
       if (!re.test(line)) continue;
       totalHits++;
       const carrier = CARRIERS.find((c) => c.re.test(line));
       if (carrier) { carrierHits.set(carrier.why, carrierHits.get(carrier.why) + 1); continue; }
+
+      if (engineId) {
+        // The whole blank-line-delimited block, NOT the +/-CONTEXT window: a
+        // mapping table's `engine` header row and a fenced loader error are
+        // both legitimately more than two lines from the hit.
+        let blo = i, bhi = i;
+        while (blo > 0 && lines[blo - 1].trim() !== "") blo--;
+        while (bhi < lines.length - 1 && lines[bhi + 1].trim() !== "") bhi++;
+        const block = lines.slice(blo, bhi + 1).join("\n");
+        if (ENGINE_FIELD_CONTEXT.test(block)) { engineIdHits++; continue; }
+        violations.push(
+          `${rel}:${i + 1}: container engine id \`${name}\` used outside the ` +
+          `\`engine\`-field context.\n` +
+          `      ${line.trim().slice(0, 140)}\n` +
+          `      → \`${name}\` is a frozen manifest value a developer READS off a\n` +
+          `        file (\`bithuman info\`, \`--json\` \`engine\`, the loader error), never a\n` +
+          `        product name and never a valid \`model\` value. Say which product it\n` +
+          `        means — see /concepts/avatars-imx#the-engine-value-is-a-legacy-name —\n` +
+          `        or use the product name: essence-2 / essence-2-max.`
+        );
+        continue;
+      }
       // The marker must be in the SAME markdown block as the hit. Expanding a
       // flat +/-CONTEXT window let a marker on an unrelated NEIGHBOURING line
       // rescue a genuine violation — a new changelog entry reintroducing a dead
@@ -179,6 +230,7 @@ if (files.length < 20) fatal.push(`only ${files.length} files scanned — corpus
 if (totalHits < 40) fatal.push(`only ${totalHits} retired-name occurrences found (expected 40+) — the scan is not reading the corpus`);
 if (markerHits.n < 10) fatal.push(`only ${markerHits.n} occurrences matched a retirement marker (expected 10+) — MARKERS or the corpus changed shape`);
 if (historyHits < 3) fatal.push(`only ${historyHits} occurrences resolved as dated changelog history (expected 3+) — the DATED_HEADING parse broke, so the changelog is no longer being dated-checked`);
+if (engineIdHits < 3) fatal.push(`only ${engineIdHits} container engine ids (essence2-light / essence2-quality) seen in an \`engine\`-field context (expected 3+) — either the loader error and the mapping table were deleted (they are frozen carriers a developer reads) or the unhyphenated pattern stopped matching, which is the exact blind spot this check was added to close`);
 for (const [why, n] of carrierHits) {
   if (n === 0) fatal.push(`frozen carrier never seen in the corpus (${why}) — it was renamed or deleted, which is exactly what must not happen`);
 }
@@ -199,5 +251,6 @@ console.log(
   `across ${files.length} files; ${[...carrierHits.values()].reduce((a, b) => a + b, 0)} are ` +
   `frozen carriers a developer types, ${markerHits.n} are plainly marked as retired, ` +
   `${historyHits} are dated changelog entries from before that name was retired, ` +
+  `${engineIdHits} are container engine ids shown in an \`engine\`-field context, ` +
   `0 used as a live product name. Both retired /concepts/ URLs still redirect to a real page.`
 );

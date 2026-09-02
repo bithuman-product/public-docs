@@ -27,8 +27,14 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   `<code>.lebundle.imx` (documented once on `/concepts/avatars-imx`),
   `libelevate-web` (the browser artifact path), `libelevate` / `lible_core`
   (the vendored engine and its native library, named verbatim in a runtime
-  error), and the `essence-2-light-gpu` / `-cpu` / `-ane` tier slugs that saved
-  links still carry. A retired spelling also stays spellable in a migration
+  error), the `essence-2-light-gpu` / `-cpu` / `-ane` tier slugs that saved
+  links still carry, and the **container engine ids** `essence2-light` /
+  `essence2-quality` (unhyphenated) — the values `bithuman info` prints, that
+  `--json` exposes as `engine`, and that the loader quotes verbatim in an
+  error. Those are manifest values every reader parses, so they never rename;
+  they are documented once on
+  `/concepts/avatars-imx#the-engine-value-is-a-legacy-name` and everywhere else
+  links there. A retired spelling also stays spellable in a migration
   note, a `400`-hint, or a dated changelog entry — that is how a reader with an
   old integration learns it is dead. `scripts/check-retired-model-names.mjs`
   enforces exactly this and fails on any other use.

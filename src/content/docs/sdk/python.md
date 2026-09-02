@@ -115,6 +115,12 @@ models it can load depends on your platform:
   >   open the container
   > ```
   >
+  > `essence2-light` in that message is the container's **engine id** for
+  > [Essence 2](/concepts/essence-2) — a legacy name kept for compatibility,
+  > quoted verbatim by the loader. It is not a model you can request; see [the
+  > `engine` value is a legacy
+  > name](/concepts/avatars-imx#the-engine-value-is-a-legacy-name).
+  >
   > Reproduced on 3 of 3 agents, using artifacts fetched from the documented
   > `GET /v1/agent/{code}/model/download?model=essence-2`. For **live
   > streaming**, serve Essence 2 through the cloud — the

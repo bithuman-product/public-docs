@@ -244,7 +244,12 @@ Flags:
 Print model metadata. For an `.imx` that's the model type, fixture name,
 frame size, sample rate, duration, and hash — plus the **engine and family**
 resolved from the unified IMX container header (also in `--json` as
-`engine` / `family`). Handy for verifying a model file before deploy:
+`engine` / `family`). The `engine` values are **legacy names kept for
+compatibility** — an Essence 2 bundle reports `essence2-light`, an Essence 2 Max
+bundle `essence2-quality` — and are never valid `model` values; see [the
+`engine` value is a legacy
+name](/concepts/avatars-imx#the-engine-value-is-a-legacy-name). Handy for
+verifying a model file before deploy:
 
 ```bash
 bithuman info avatar.imx
