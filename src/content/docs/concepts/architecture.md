@@ -72,7 +72,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.9.0 | PyPI | v7 |
+| Python SDK (`bithuman`) | 2.10.0 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.5.0) | SwiftPM | v7 |
 | Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no libessence ABI) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |

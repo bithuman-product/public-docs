@@ -64,9 +64,14 @@ Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for 
 
 ## Essence 2 self-hosted — CPU offline rendering (SDK 2.9.0+)
 
-As of **`bithuman` 2.9.0** (Linux x86_64/aarch64, Python 3.10–3.14), the
-[`essence-2`](/concepts/essence-2) model **self-hosts on CPU** — no GPU
-required. The SDK renders the same `<code>.lebundle.imx` you download with
+As of **`bithuman` 2.9.0** on Linux x86_64/aarch64 and **2.10.0** on macOS
+arm64 (Python 3.10–3.14), the [`essence-2`](/concepts/essence-2) model
+**self-hosts on CPU** — no GPU required.
+
+> **macOS needs 2.10.0, not 2.9.0.** This route calls a native library,
+> `lible_core`, that the macOS wheels did not ship until 2.10.0 — earlier macOS
+> wheels carried the Python half alone and raised `lible_core.so not found` at
+> the first frame. The Linux wheels have carried it since 2.8.1. The SDK renders the same `<code>.lebundle.imx` you download with
 [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <code>`, entirely on your own hardware, teeth-refinement
 stage included.

@@ -20,8 +20,8 @@ pip install bithuman
 ```
 
 **Python 3.10–3.14** supported; the latest release on
-[PyPI](https://pypi.org/project/bithuman/) is **2.9.0**. Platforms: macOS arm64, Linux x86_64, Linux
-aarch64. (Windows wheels were last published with 1.9.0 and are not yet back in
+[PyPI](https://pypi.org/project/bithuman/) is **2.10.0**. Platforms: macOS arm64, Linux x86_64, Linux
+aarch64 — all three, on every supported interpreter (15 wheels). (Windows wheels were last published with 1.9.0 and are not yet back in
 the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a different host.)
 
 > **macOS note** As of 2.8.1 the macOS wheels are tagged for **macOS 14+
@@ -121,13 +121,21 @@ models it can load depends on your platform:
   > [Video API](/api/video) for cloud-rendered mp4, or the
   > [LiveKit plugin](#livekit-voice-agents) for live sessions.
 
-  **Offline self-host rendering works as of 2.9.0** and does *not* hit the
-  warning above: `bithuman.tessera_offline` (install the
-  `bithuman[tessera]` extra) unpacks current-renderer bundles itself and
-  renders them on CPU, metered, ~22–31 FPS on a 16-core desktop — see
+  **Offline self-host rendering works as of 2.9.0 on Linux and 2.10.0 on
+  macOS** and does *not* hit the warning above: `bithuman.tessera_offline`
+  (install the `bithuman[tessera]` extra) unpacks current-renderer bundles
+  itself and renders them on CPU, metered, ~22–31 FPS on a 16-core desktop —
+  see
   [Self-hosted → Essence 2](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290).
   The warning still applies to the **streaming** `AsyncBithuman` /
   `Bithuman` load path.
+
+  > **If you are on macOS, use 2.10.0 or later.** This route calls a native
+  > library, `lible_core`, that the macOS wheels did not ship until 2.10.0 —
+  > every macOS wheel up to and including 2.9.0 carried the Python half and
+  > raised `lible_core.so not found` at the first frame. The Linux wheels have
+  > carried it since 2.8.1. `pip install --upgrade bithuman` and check
+  > `python -c "import bithuman; print(bithuman.__version__)"`.
 - **[Essence 2 Max](/concepts/essence-2-max) — cloud-only from Python.**
 - **Expression 1 / Expression 2 — no Python-loadable artifact.** Serve them
   through the [LiveKit plugin](#livekit-voice-agents)'s `AvatarSession`, which
