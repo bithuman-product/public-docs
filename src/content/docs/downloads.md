@@ -13,17 +13,18 @@ One engine (`libessence`) drives every surface. Pick the install path that match
 ### bitHuman CLI (no code)
 
 The fastest way to see an avatar talk. **macOS arm64 and Linux x86_64.** The
-Homebrew formula and the universal installer both deliver the same Rust binary
-(currently `cli-v2.4.2` — public model naming, the essence-2-capable MCP
-`generate_agent`, and the full `info` member listing); the PyPI wheel is a
-macOS-only sibling and trails at `2.3.25`. There is **no Linux aarch64 build** published today — the release
-carries only `aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`, so
-`install.sh` on Linux arm64 resolves a download that does not exist.
+Homebrew formula and the universal installer deliver the same Rust binary, but
+they are **no longer on the same version**: macOS is at `cli-v2.5.0`
+(Developer ID signed, family-selecting `pull --model`), while the newest release
+carrying a **Linux** tarball is `cli-v2.4.2`. The PyPI wheel is a macOS-only
+sibling and trails at `2.3.25`. `cli-v2.3.27` is the last release with a **Linux
+aarch64** tarball.
 
 **Homebrew (recommended on Apple Silicon)**
 
 ```bash
-brew install bithuman-product/bithuman/bithuman-cli
+brew tap bithuman-product/bithuman
+brew install bithuman-cli
 ```
 
 **Universal installer (macOS Apple Silicon + Linux, no Python required)**
@@ -31,6 +32,17 @@ brew install bithuman-product/bithuman/bithuman-cli
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
+
+> ★ **On Linux this command fails as of 2026-09-02 — pin the version.** The
+> installer resolves the newest `cli-v*` release, which is `cli-v2.5.0`, and
+> that release publishes only a macOS tarball. On Linux the download 404s and
+> the script exits 1 (`install: error: download failed.`). Pin the newest
+> release that has a Linux binary:
+>
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \
+>   | BITHUMAN_VERSION=cli-v2.4.2 sh
+> ```
 
 **PyPI sibling wheel (same Rust binary, Python-friendly) — macOS Apple Silicon only**
 
@@ -47,9 +59,21 @@ Verify the install:
 ```bash
 bithuman --version
 # libessence 2.3.8 ABI 7
-# bithuman    2.4.2
+# bithuman    2.5.0     (macOS)  ·  2.4.2 (Linux)
 bithuman doctor   # full host + key + cache check
 ```
+
+> **New in 2.5.0 (macOS): pick a model family at download time.**
+> `bithuman pull <CODE> --model essence-2` asks for a family, and a plain
+> `bithuman pull <CODE>` now names the families it did *not* hand you. The
+> Linux 2.4.2 binary has no `--model` flag — use `?model=<family>` on the
+> [download endpoint](/api/agents#download-an-agents-model) there.
+
+> **macOS 2.5.0 is the first Developer ID signed release.** Every build up to
+> and including 2.4.2 was ad-hoc signed, so a tarball downloaded in a *browser*
+> was quarantined and macOS killed it on launch with no message (exit 137).
+> `brew install` was never affected — Homebrew fetches with `curl`, which sets
+> no quarantine flag.
 
 > **Note (Linux)** On Linux `bithuman doctor` reports **`✗ not ready`** for
 > "Agent worker" and "audio_encoder.onnx" and offers `pip install bithuman-cli`
@@ -149,7 +173,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no libessence ABI) |
-| bitHuman CLI (`bithuman-cli`) | **2.4.2** (Homebrew / universal installer) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.5.0** macOS (Homebrew) · **2.4.2** Linux (universal installer, pin `BITHUMAN_VERSION=cli-v2.4.2`) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
 > **2.10.0, and why the macOS number matters.** 2.10.0 is the first release

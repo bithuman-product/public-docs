@@ -68,6 +68,18 @@ As of **`bithuman` 2.9.0** on Linux x86_64/aarch64 and **2.10.0** on macOS
 arm64 (Python 3.10–3.14), the [`essence-2`](/concepts/essence-2) model
 **self-hosts on CPU** — no GPU required.
 
+> **Start here instead if you just want it working.**
+> [Run a model on your own hardware](/guides/self-host-local) walks the whole
+> path per platform — install, download an artifact, render, and verify — with
+> the exact error text for each prerequisite. The section below is the
+> reference.
+
+> ★ **One prerequisite is not self-serve.** This route needs a ~377 MB shared
+> speech encoder that ships **neither in the model artifact nor in the wheel**,
+> and that the SDK **will not download for you**. On a machine that does not
+> already have it the render raises before the first frame. Read
+> [Prerequisites](#prerequisites) before you plan around this route.
+
 > **macOS needs 2.10.0, not 2.9.0.** This route calls a native library,
 > `lible_core`, that the macOS wheels did not ship until 2.10.0 — earlier macOS
 > wheels carried the Python half alone and raised `lible_core.so not found` at
@@ -105,9 +117,64 @@ once-per-minute billing heartbeat (self-hosted rate — see
 **fail-closed**: it renders **zero frames** and raises at the first frame.
 There is no unmetered mode in the released wheel.
 
-**Prerequisites:** `ffmpeg` on PATH, and the speech encoder ONNX (asset id
-`audio-encoder-fp32` in the per-host dependency store `~/.bithuman/deps`, or
-point `BITHUMAN_W2V_ONNX` at the file).
+### Prerequisites
+
+**`ffmpeg` on `PATH`** — the SDK shells out to it for audio decode and MP4
+encode.
+
+**The shared speech encoder** — a ~377 MB ONNX file, identity-agnostic (one copy
+serves every agent on the host). It is **not** inside the `.lebundle.imx` and
+**not** inside the wheel, and **nothing installs it for you**: no CLI subcommand
+fetches it, and no public URL is published. Without it the renderer raises at
+construction:
+
+```text
+bithuman.tessera_offline.TesseraOfflineError: shared audio encoder
+(wav2vec2 fp32 8s, ~377MB) not found — set BITHUMAN_W2V_ONNX, or provision
+the dependency store (~/.bithuman/deps, asset id audio-encoder-fp32).
+```
+
+Resolution order: `$BITHUMAN_W2V_ONNX` (or `$W2V_ONNX`), then the per-host
+dependency store `~/.bithuman/deps` (override with `$BITHUMAN_DEPS_DIR`) for
+asset id `audio-encoder-fp32`. To get the file, email
+[hello@bithuman.ai](mailto:hello@bithuman.ai) and say you are self-hosting
+Essence 2 on CPU; then `export BITHUMAN_W2V_ONNX=/path/to/the/file.onnx`.
+
+> **The `tessera` extra pulls a CUDA build of PyTorch (~2.5 GB) this CPU route
+> never uses.** Install the CPU wheel first to keep the environment small:
+>
+> ```bash
+> pip install torch --index-url https://download.pytorch.org/whl/cpu
+> pip install "bithuman[tessera]"
+> ```
+
+### Confirm the mouth-interior stage ran
+
+The sharp mouth interior comes from four **optional** members inside the
+artifact. A bundle without them **still renders successfully** — it renders the
+mouth the earlier, softer way, and the frame count looks identical. Check the
+members before you render:
+
+```bash
+bithuman info <code>.lebundle.imx | grep tessera
+#     tessera_bank.v1.json
+#     tessera_bank.v1.mp4
+#     tessera_head.v1.json
+#     tessera_head.v1.pt
+```
+
+and gate on `borrow_state` after — `borrowed` (every frame), `partial` (see
+`stats["tessera"]["unborrowed_rate"]`), `synthesized`, `absent` (the bundle has
+no such members; `borrow_reason` reads `no-tessera-members`), or `unknown`:
+
+```python
+assert stats["borrow_state"] == "borrowed", stats["borrow_reason"]
+```
+
+★ A frame count is not a verdict: a bundle missing the members returns a
+healthy-looking `{"frames": 375}` beside `{"borrow_state": "absent"}`. If a
+bundle reports `absent`, contact us — the artifact needs rebuilding, and there
+is nothing to configure on your side.
 
 **Honest performance expectations (measured, 600-frame runs):** on a 16-core
 x86 desktop the route sustains **~22–25 FPS end-to-end** with the default

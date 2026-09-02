@@ -75,14 +75,16 @@ bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
   --audio speech.wav --output rendered.mp4
 ```
 
-> **Warning** `bithuman render` is **not working in `cli-v2.4.0`** (verified
-> 2026-07-28). It ships on **Linux only** — on macOS the encoder returns "not
-> implemented" — and on Linux x86_64 it now fails at the muxing step with
+> **Warning** `bithuman render` is **not working in `cli-v2.4.0` or
+> `cli-v2.4.2`** (re-verified 2026-09-02). It ships on **Linux only** — on macOS
+> the encoder returns "not implemented" — and on Linux x86_64 it fails at the
+> muxing step with
 > `record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed`
 > and writes no file, for every WAV tried (including the one shipped in this
-> repo's own examples). Until it is fixed, get an mp4 from the
-> [Video API](/api/video) (`POST /v1/video/generate`), or use `bithuman run`
-> and screen-record the tab.
+> repo's own examples). Until it is fixed: for an **Essence 2** bundle render
+> locally with the [Python SDK](/guides/self-host-local#4-render), which does
+> produce an MP4; otherwise get one from the [Video API](/api/video)
+> (`POST /v1/video/generate`), or use `bithuman run` and screen-record the tab.
 
 Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/cli)
 

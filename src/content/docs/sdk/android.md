@@ -82,10 +82,12 @@ the SDK bundles its own audio encoder, so a stock model needs no extra assets.
 > Android through the cloud — the [REST API](/api/overview), a
 > [LiveKit](/sdk/livekit) session, or the agent landing page in a WebView.
 
-> **Where Expression 2 on Android stands.** An `arm64-v8a` Expression 2 AAR
-> exists and has been built and run, but it is staged in a **private** registry
-> — it is not on Maven Central and an anonymous Gradle build cannot fetch it,
-> so there is no coordinate to publish here yet. When it does ship publicly,
+> **Where Expression 2 on Android stands.** An `arm64-v8a` Expression 2 AAR is
+> now **published and verified** — a clean-room consumer build resolved it and
+> confirmed the served bytes member by member — but it is published to a
+> **private** registry that requires membership of a private repository. An
+> anonymous Gradle build gets **HTTP 401**, not a missing artifact, so there is
+> still no coordinate worth putting on this page. When it does ship publicly,
 > these are the measured limits it ships with, stated plainly rather than
 > smoothed over: **`arm64-v8a` only**, **minSdk 26**, a **Qualcomm Snapdragon**
 > requirement for the accelerated path, a first `create()` that takes **tens of

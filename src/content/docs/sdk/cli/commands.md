@@ -194,9 +194,10 @@ just lipsync a WAV you already have:
 bithuman render avatar.imx --audio speech.wav --output demo.mp4
 ```
 
-> **Warning — broken in `cli-v2.4.0` (verified 2026-07-28; not re-tested on
-> `cli-v2.4.2`).** On Linux x86_64, `cli-v2.4.0` fails at the muxing step and
-> writes **no output file**:
+> **Warning — broken in `cli-v2.4.0` and still broken in `cli-v2.4.2`**
+> (re-tested 2026-09-02 on Linux x86_64 with a showcase `.imx` and a 16 kHz mono
+> WAV: exit 70, no output file). It fails at the muxing step and writes **no
+> output file**:
 >
 > ```text
 > encoding via libessence (h264+aac → mp4)…
@@ -330,9 +331,18 @@ unchanged.
 > agent was **created** with. It is not an error and there is no warning — you
 > simply get the older artifact.
 >
-> **`pull` has no family flag.** Its own options are `--force`, `--dest` and
-> `--manifest` (plus the global `--json`); there is no `--model`. To fetch a specific
-> family, call the endpoint directly with `?model=<family>`:
+> **`pull --model` is new in CLI 2.5.0, which is macOS only.** On 2.5.0:
+>
+> ```bash
+> bithuman pull <CODE> --model essence-2   # ask for a family
+> bithuman pull <CODE>                     # server default; also names the
+>                                          # families it did NOT hand you
+> ```
+>
+> The newest CLI carrying a **Linux** binary is 2.4.2, whose `pull` options are
+> `--force`, `--dest` and `--manifest` (plus the global `--json`) and which has
+> **no** `--model`. On Linux — or from any CLI before 2.5.0 — fetch a specific
+> family by calling the endpoint directly with `?model=<family>`:
 >
 > ```bash
 > # The default response is a 302 to the artifact; -L follows it and -OJ keeps
