@@ -54,3 +54,37 @@ The reference at `/api/reference` is generated from `src/openapi/bithuman.yaml`
 
 GitHub push → Vercel build (project `public-docs`) → preview URL. DNS for
 `docs.bithuman.ai` is swapped to this project only once the rebuild is approved.
+
+### ★ A push can succeed while the site keeps serving the old build
+
+**Verify a publish by fetching the live HTML, never by reading the Vercel
+status.** This has bitten us: the push lands, the dashboard goes green, the
+deployment is marked Ready — and `docs.bithuman.ai` keeps serving the previous
+build. A green status says a build finished; it does not say the domain is
+pointing at it. The two failure shapes we have actually seen are an alias that
+never moved to the new deployment, and a cached HTML response served ahead of
+it.
+
+So the last step of publishing is not `git push`. It is:
+
+```bash
+# 1. Note the commit you pushed.
+git rev-parse --short HEAD
+
+# 2. Fetch the LIVE page — cache-busted — and grep for a string that exists
+#    only in the new build. Pick a distinctive sentence from your own diff.
+curl -sS "https://docs.bithuman.ai/concepts/essence-2?cb=$(date +%s)" \
+  | grep -c "head-upsample"
+
+# 3. Zero means the site is still serving the old build. Investigate the alias
+#    before telling anyone the change is live.
+```
+
+Do the same for `/llms.txt` and `/sitemap.xml` when the change adds or removes a
+page — they are generated at build time and are the quickest signal that the
+build you are looking at is the build you pushed.
+
+**A page that carries a `TKTK` marker is not publishable at all** — CI is red
+until the marker is resolved (`scripts/check-placeholders.mjs`), and
+`drafts/` holds page-sized text whose subject is not yet true. See
+`drafts/README.md`.

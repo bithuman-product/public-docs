@@ -312,6 +312,33 @@ browser-local session renders the mouth the earlier way. Nothing about the
 price, the API, or the tier slugs changes with the surface; only the mouth
 region differs.
 
+### A faster head upsample
+
+The renderer's **head-upsampling step** — the stage that takes the generated
+head region up to output resolution — has been rebuilt. It is an **internal
+graph change with no surface you can see or write against**: the API, the
+session contract, the `?model=` tier slugs and the price are all unchanged,
+there is nothing to opt into, and the rendered picture is the same.
+
+"The same picture" is a measurement, not a hope. On the same identity and the
+same frames, the rebuilt step's output and the output of the step it replaces
+agree to **167.85 dB** peak signal-to-noise ratio — a difference far below one
+step of an 8-bit pixel, so no display, encoder or eye resolves it. The change
+was also reviewed side by side on video before it was accepted, which is the
+gate that has overruled a metric here before. It is a speed change and nothing
+else.
+
+It **rolls out per identity**, the way the 2026-07-27 renderer change did: an
+identity picks it up when its bundle is rebuilt, and until then that identity
+serves the previous build. **First served on 2026-09-02, on a single
+identity** — the rollout has begun, it is not a fleet-wide switch, and most
+identities are still on the previous build. Nothing you write changes either
+way, and you cannot pin a session to one build or the other.
+
+**How much faster is your session? It depends on which tier serves you, and on
+the GPU tier the answer is "not measurably".** See
+[What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier).
+
 ## Limits and expectations
 
 - **Output is 25 fps on every tier.** Engine *throughput* is a different
@@ -365,9 +392,80 @@ Apple tiers first. If you pin a live session to CPU, expect it to fall behind.
 The un-armed rows vary run to run (a 17.6 fps reading was taken for the same
 1280×720 identity on an earlier container); the armed rows did not.
 
+**These rows predate the [head-upsample rewrite](#a-faster-head-upsample).**
+They were measured on 2026-08-30, before that change reached any identity. A
+rebuilt identity has not been re-measured under this protocol, so read the armed
+rows as an **upper bound** on the cost, not as the current figure for an
+identity that has already been rebuilt.
+
 GPU and Apple tier throughput has **not** been measured under this protocol
 and is deliberately not quoted here — see
 [Which Apple compute unit runs Essence 2](#which-apple-compute-unit-runs-essence-2).
+(The GPU figures in
+[What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier)
+are a before/after of one renderer step under a different harness. They are not
+a session-level throughput for that tier and must not be read as one.)
+
+### What the head-upsample rewrite is worth, per tier
+
+The [head-upsample rewrite](#a-faster-head-upsample) is a speed change, so the
+fair question is how much faster *your* session gets. **The honest answer is
+that it depends entirely on which tier serves you, and on two of the four tiers
+the answer today is "not at all".**
+
+The reason is the step being replaced. A cubic resize is pathologically
+expensive in the ONNX Runtime **CPU** kernel and cheap in the **CUDA** one.
+Profiled on the same graph, the same identity and the same batch, that single
+step is **68.6%** of the whole forward pass on the CPU execution provider and
+**0.48%** of it on CUDA. So the rewrite removes most of the CPU tier's work and
+almost none of the GPU tier's — and the gain does not transfer between them.
+
+| Tier | Measured? | What the rewrite does there |
+|---|---|---|
+| **CPU** (portable render core) | yes | **3.00× faster** on the renderer model; **7.54 → 23.87 fps** on the full delivered path |
+| **GPU** (NVIDIA CUDA) | yes | **No gain.** 0.971× (about 3% slower) batched, neutral at the streaming shape. Invisible in practice; see below |
+| **Apple** | not applicable yet | The Apple tier is not served the rebuilt graph at all — see below |
+| **Browser-local** (`?render=local`) | no | **Not measured** |
+
+**CPU tier — measured, and the reason the rewrite exists.** Threadripper PRO
+5955WX (x86-64), ONNX Runtime **CPU** execution provider, batch 24, 4 threads,
+3.93 GHz held, 63–75 °C, no throttling, **sustained** (240-frame arms reproduce
+the 120-frame arms to 0.3%). The renderer model alone runs **3.0023×**
+faster against a same-graph noise floor of **0.483%**. The **full delivered path** —
+renderer, frame packing, full-body paste-back — goes from **7.54 fps to
+23.87 fps** on a 1280×720 identity and **7.52 → 20.97 fps** on a 1080×1920 one,
+noise floors 0.19–1.25%. Two things this is not: it is a developer workstation
+rather than the deployed CPU worker, which has **not** been re-measured; and
+even at 23.87 fps the CPU tier is still **not** real time at 25 fps. The rewrite
+moves that tier from hopeless to borderline. It does not make it live-capable,
+and the guidance above is unchanged.
+
+**GPU tier — measured, and it is not a win.** NVIDIA RTX 4090 on the serving
+host, ONNX Runtime **CUDA** execution provider configured exactly as the
+deployed worker (batch 24, fp32 compute, 4 intra-op threads, and every
+kernel-time node — 277 before the rewrite, 279 after — placed on CUDA with zero
+CPU fallback), 11 interleaved A/B rounds on copies of the real artifacts. The rebuilt graph measured **0.971×** —
+about **3% slower** — against a same-graph noise floor of **0.083%**, and it
+lost all 11 rounds while a byte-identical duplicate of the unmodified graph
+split 5 of 11. At the single-frame streaming shape the ratio was **0.9987×**,
+inside the floor: neutral. In frames per second the renderer model on this
+tier runs at **1075 fps before and 1044 fps after** — both so far above the
+25 fps a session consumes that the difference is not observable in a session.
+
+We publish that because it is what this tier measured, not because it changes
+anything for you: **the rewrite targets the CPU tier; on the GPU tier it is
+neutral to very slightly negative, and no GPU-tier speed improvement should be
+expected or quoted.**
+
+**Apple tier — the rebuilt graph is not sent there.** The rewrite was applied to
+the batched graph, and the Apple tier is never shipped that member; it serves
+the single-frame graph, which has not been rebuilt. So an Apple-tier session
+serves the **previous** head upsample even on an identity that has already been
+rebuilt, and there is no figure to publish. Nothing about the picture, the API
+or the price differs either way.
+
+**Browser-local is not measured.** No figure is inferred for it from the rows
+above.
 
 ## The developer journey
 

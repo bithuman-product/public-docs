@@ -65,6 +65,16 @@ name: Internal links
 #    retired /concepts/ URLs still redirect to a real page. It refuses to pass
 #    vacuously: if a frozen carrier stops appearing in the corpus at all, that
 #    is a rename and it exits non-zero.
+# 5. Unresolved placeholders — the three withdrawn performance numbers on this
+#    site (2026-07-28, 2026-08-26, 2026-09-02) were all the same mistake: a
+#    figure measured on one thing, printed as if it described another. The
+#    defence that works is to write the page while the measurement is still
+#    missing, leave a `TKTK` marker where the number goes, and make CI red until
+#    someone replaces it. scripts/check-placeholders.mjs fails on any TKTK
+#    marker under src/content, src/pages, src/openapi or public/api. It does NOT
+#    scan drafts/, which has no route and exists precisely to hold page-sized
+#    text whose subject is not yet true.
+#
 # Every step always runs: `if: always()` so a broken link cannot mask a billing
 # or model-enum error by aborting the job first.
 
@@ -160,6 +170,11 @@ jobs:
       - name: Check retired product names
         if: always()
         run: node scripts/check-retired-model-names.mjs
+      # A TKTK marker means a sentence on a published page is waiting on a fact
+      # nobody has yet. Red until it is measured or the page moves to drafts/.
+      - name: Check for unresolved placeholders
+        if: always()
+        run: node scripts/check-placeholders.mjs
       - name: Published OpenAPI spec is in sync with its source
         if: always()
         run: |

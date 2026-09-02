@@ -10,6 +10,41 @@ order: 1
 
 ## September 2026
 
+### Essence 2's head upsample is rebuilt — a CPU-tier speedup, same picture (2026-09-02)
+
+Essence 2's **head-upsampling step** has been rebuilt. It is an internal graph
+change: the API, the session contract, the `?model=` tier slugs and the price
+are unchanged, there is nothing to opt into, and the picture is the same — the
+new and previous builds agree to **167.85 dB** PSNR on the same identity and the
+same frames, below one step of an 8-bit pixel, and the change was reviewed side
+by side on video before it was accepted.
+
+It **rolls out per identity**, the way the 2026-07-27 renderer change did: an
+identity picks it up when its bundle is rebuilt, and serves the previous build
+until then. **The first identity was served on 2026-09-02.** One identity is not
+a fleet: most identities are still on the previous build.
+
+**The speedup is a CPU-tier speedup, and only a CPU-tier speedup.** The step it
+replaces is **68.6%** of the forward pass under the ONNX Runtime **CPU**
+execution provider and **0.48%** of it on **CUDA**, so the gain does not
+transfer:
+
+- **CPU** (Threadripper PRO 5955WX, ORT CPU provider, batch 24, 4 threads,
+  sustained, no throttling): **3.00×** on the model step; the full delivered
+  path goes **7.54 → 23.87 fps**. Still short of 25 fps — that tier remains an
+  offline and last-resort tier.
+- **GPU** (RTX 4090, ORT CUDA provider, batch 24, as the deployed worker is
+  configured): **0.971×, about 3% slower**, against a 0.083% noise floor. No
+  gain, and none should be expected. The absolute cost there — 1075 fps before,
+  1044 fps after on that step — is far enough above a session's 25 fps that the
+  difference is not observable.
+- **Apple**: the rebuilt graph is not shipped to that tier at all, so an
+  Apple-tier session serves the previous head upsample. No figure.
+- **Browser-local**: not measured.
+
+See
+[What the head-upsample rewrite is worth, per tier](/concepts/essence-2#what-the-head-upsample-rewrite-is-worth-per-tier).
+
 ### The "Apple Neural Engine" tier is renamed **Apple**, and a false performance claim is withdrawn (2026-09-02)
 
 Essence 2's cloud Apple tier was documented as the **Apple Neural Engine**
