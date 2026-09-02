@@ -401,17 +401,18 @@ identity that has already been rebuilt.
 GPU and Apple tier throughput has **not** been measured under this protocol
 and is deliberately not quoted here — see
 [Which Apple compute unit runs Essence 2](#which-apple-compute-unit-runs-essence-2).
-(The GPU figures in
+(The GPU and Apple figures in
 [What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier)
-are a before/after of one renderer step under a different harness. They are not
-a session-level throughput for that tier and must not be read as one.)
+are renderer-model measurements under a different harness, at different batch
+sizes. They are not a session-level throughput for either tier, they are not
+comparable with each other, and neither must be read as one.)
 
 ### What the head-upsample rewrite is worth, per tier
 
 The [head-upsample rewrite](#a-faster-head-upsample) is a speed change, so the
 fair question is how much faster *your* session gets. **The honest answer is
-that it depends entirely on which tier serves you, and on two of the four tiers
-the answer today is "not at all".**
+that it depends entirely on which tier serves you, and on the two tiers that
+serve live sessions the answer today is "not at all".**
 
 The reason is the step being replaced. A cubic resize is pathologically
 expensive in the ONNX Runtime **CPU** kernel and cheap in the **CUDA** one.
@@ -419,12 +420,14 @@ Profiled on the same graph, the same identity and the same batch, that single
 step is **68.6%** of the whole forward pass on the CPU execution provider and
 **0.48%** of it on CUDA. So the rewrite removes most of the CPU tier's work and
 almost none of the GPU tier's — and the gain does not transfer between them.
+On the Apple tier the same step is **6.06%** of the forward pass, and it is
+already built the rewritten way (below), so there is nothing there to remove.
 
 | Tier | Measured? | What the rewrite does there |
 |---|---|---|
 | **CPU** (portable render core) | yes | **3.00× faster** on the renderer model; **7.54 → 23.87 fps** on the full delivered path |
 | **GPU** (NVIDIA CUDA) | yes | **No gain.** 0.971× (about 3% slower) batched, neutral at the streaming shape. Invisible in practice; see below |
-| **Apple** | not applicable yet | The Apple tier is not served the rebuilt graph at all — see below |
+| **Apple** (Apple Silicon, CoreML) | yes | **No gain — it was already there.** The Apple build has expressed this step the rewritten way since before the rollout; the step is 6.06% of that tier's forward pass. See below |
 | **Browser-local** (`?render=local`) | no | **Not measured** |
 
 **CPU tier — measured, and the reason the rewrite exists.** Threadripper PRO
@@ -457,12 +460,38 @@ anything for you: **the rewrite targets the CPU tier; on the GPU tier it is
 neutral to very slightly negative, and no GPU-tier speed improvement should be
 expected or quoted.**
 
-**Apple tier — the rebuilt graph is not sent there.** The rewrite was applied to
-the batched graph, and the Apple tier is never shipped that member; it serves
-the single-frame graph, which has not been rebuilt. So an Apple-tier session
-serves the **previous** head upsample even on an identity that has already been
-rebuilt, and there is no figure to publish. Nothing about the picture, the API
-or the price differs either way.
+**Apple tier — measured, and the rewrite was already in effect there.** This
+correction replaces an earlier version of this paragraph, published on
+2026-09-02, which said an Apple-tier session serves the *previous* head
+upsample. That was wrong, and the way it was wrong is worth stating: the Apple
+tier genuinely is never shipped the batched graph the rewrite was applied to —
+it is built from the single-frame one — but the Apple build does not run that
+graph's operators directly. It is converted to CoreML first, and **the
+converter has expressed this exact step as the same padded 5×5 depthwise
+convolution followed by a pixel shuffle, from the same 4-tap Keys kernel at
+a = −0.75, since before this rollout began.** The two are the same construction
+arrived at from two directions. Inspecting a live Apple build confirms it: the
+program contains a `pad → conv → pixel_shuffle` triple at the head upsample and
+**no** cubic-resize operator anywhere in it. So an Apple-tier session was
+already getting the rewritten step, and the rollout changes nothing there —
+neither the speed nor the picture.
+
+**What that step costs on Apple.** Apple M4 Max on the serving host, CoreML,
+**batch 1** (the shape that tier serves), fp32, GPU compute — all 268 operators
+placed on the GPU with no CPU fallback — box otherwise idle, **cooled and not
+thermally throttled**. Apple's own compute-plan cost estimate puts the three
+operators that make up the head upsample at **0.49% + 3.69% + 1.88% = 6.06%** of
+the forward pass, reproduced to the same figure on a second identity's build.
+Wall clock on the renderer model is **1.834 ms per frame (545 fps)**, against a
+same-model noise floor of **0.36%** (a byte-identical duplicate measured 0.9964×)
+and a negative control that was correctly 4.96× slower.
+
+Two things that figure is not. It is **batch 1** and the GPU-tier figures above
+are batch 24, so **the two must not be compared**; and it is the renderer model
+alone, not a session. The practical consequence of the 6.06% is a ceiling:
+even *deleting* this step outright would take that tier from 1.834 ms to
+1.723 ms per frame — **1.06×**. There is no CPU-tier-sized gain available on
+Apple, and none should be expected.
 
 **Browser-local is not measured.** No figure is inferred for it from the rows
 above.

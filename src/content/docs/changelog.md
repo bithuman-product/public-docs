@@ -12,6 +12,11 @@ order: 1
 
 ### Essence 2's head upsample is rebuilt — a CPU-tier speedup, same picture (2026-09-02)
 
+> **Corrected 2026-09-02.** The first version of this entry said the Apple tier
+> serves the *previous* head upsample. It does not: that tier's CoreML build
+> already expressed the step the rewritten way. The Apple row below is the
+> measured replacement.
+
 Essence 2's **head-upsampling step** has been rebuilt. It is an internal graph
 change: the API, the session contract, the `?model=` tier slugs and the price
 are unchanged, there is nothing to opt into, and the picture is the same — the
@@ -38,8 +43,15 @@ transfer:
   gain, and none should be expected. The absolute cost there — 1075 fps before,
   1044 fps after on that step — is far enough above a session's 25 fps that the
   difference is not observable.
-- **Apple**: the rebuilt graph is not shipped to that tier at all, so an
-  Apple-tier session serves the previous head upsample. No figure.
+- **Apple** (M4 Max on the serving host, CoreML, GPU compute, batch 1, fp32,
+  cooled and unthrottled): **no gain — the step was already built this way
+  there.** The rebuilt graph is genuinely not shipped to that tier, but its
+  CoreML converter has expressed this step as the same padded 5×5 depthwise
+  convolution plus pixel shuffle since before the rollout began, so the change
+  is not a change there. That step costs **6.06%** of the forward pass on that
+  tier (renderer model 1.834 ms/frame, 545 fps, 0.36% noise floor), which caps
+  any further work on it at **1.06×**. Batch 1, so not comparable with the
+  batch-24 rows above.
 - **Browser-local**: not measured.
 
 See
