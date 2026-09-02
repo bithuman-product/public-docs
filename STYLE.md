@@ -19,9 +19,18 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   generated internally from your portrait, 10 seconds, first and last frames match so it
   loops seamlessly. Banned synonyms: source video, source footage, driver video, real
   footage (except when quoting a verbatim server message, with a link).
-- Runtimes: GPU, CPU, Apple Neural Engine (spelled out; "ANE" only in slugs/tables after a
-  first definition). Apple Silicon (capital S), macOS, WebRTC, WebGPU, on-device,
-  self-hosted.
+- Runtimes: GPU, CPU, **Apple** — the cloud Apple-Silicon/CoreML tier. ★Never write "Apple
+  Neural Engine" for that tier. It is not a style preference: all four production serving
+  agents bind `cpuAndGPU`, so the tier runs on the Mac **GPU**, and the Neural Engine is the
+  SLOWER unit (2.2x) even for a graph that can use it. Naming it after the unit we chose not
+  to use tells the reader something untrue about how their render runs.
+  "ANE" survives ONLY inside slugs and identifiers — `essence-2-ane`, `expression-2-ane`,
+  `essence-2-light-ane` — which saved links, embeds and signed share JWTs carry verbatim and
+  which therefore never rename. Never expand it in prose.
+  "Neural Engine" IS correct where it is measured and true: **on-device Expression 2** (its
+  Apple members are fp16 — 577 of 611 placed ops, none on the GPU, on an iPhone 15) and the
+  audio front end of the cloud `expression-2` tier. Do not carry the Essence 2 verdict across.
+  Apple Silicon (capital S), macOS, WebRTC, WebGPU, on-device, self-hosted.
 
 ## Units & numbers
 
