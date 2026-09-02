@@ -81,6 +81,14 @@ per-identity artifact, downloaded with
 | [`essence-2-max`](/concepts/essence-2-max) | `<code>.pkl` | The Essence 2 Max identity bundle — renders on bitHuman's GPU cloud, not a local-playback artifact. |
 | [`expression-2`](/concepts/expression-2) | `<code>.avatar` — **usually** an `IMX\0` v2 container despite the extension, not a zip (96 of the 110 published objects on 2026-09-01; the other 14 are the pre-2026-07-12 CoreML zip and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli/overview#local-rendering-by-platform) on macOS (Apple Silicon), and on Linux x86_64 with the CPU render host installed, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
+> **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
+> for compatibility** — it predates the current product naming and survives only
+> as the file extension. It is the literal string the download endpoint and
+> `bithuman pull` give you, and the one `bithuman info` expects, so it is spelled
+> here exactly as you will type it. It is not a product name and never appears in
+> an API request: the model is [`essence-2`](/concepts/essence-2). The file will
+> not be renamed — saved paths and scripts keep working.
+
 ## Inspecting an `.imx`
 
 Use the CLI to dump model metadata — version, ABI, resolution, and license:

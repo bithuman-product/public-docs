@@ -15,6 +15,24 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   `essence-2-quality` is described strictly as a retiring alias of `essence-2-max`;
   `essence-2-light` appears only in the 400-hint migration note. The phrase
   "platform-side flip" is banned from public prose.
+- **Deprecated product names.** The product names are **essence-2** and
+  **expression-2** (plus `essence-2-max`, and the first generation). `elevate`,
+  `embody`, `essence-2-light`, `essence-2-quality`, `lebundle` and their variants
+  are DEPRECATED and must not be used as a live product name in prose.
+  ★They are NOT renamed, and nothing that carries them is deleted: a developer
+  who must TYPE one — a filename they receive, a URL path, a slug a saved link
+  carries — still gets it spelled exactly, with a plain statement that it is a
+  legacy name kept for compatibility. Hiding a name a developer must type is
+  worse than showing a retired one. The frozen carriers, which never rename:
+  `<code>.lebundle.imx` (documented once on `/concepts/avatars-imx`),
+  `libelevate-web` (the browser artifact path), `libelevate` / `lible_core`
+  (the vendored engine and its native library, named verbatim in a runtime
+  error), and the `essence-2-light-gpu` / `-cpu` / `-ane` tier slugs that saved
+  links still carry. A retired spelling also stays spellable in a migration
+  note, a `400`-hint, or a dated changelog entry — that is how a reader with an
+  old integration learns it is dead. `scripts/check-retired-model-names.mjs`
+  enforces exactly this and fails on any other use.
+  (`--color-elevated` is a CSS surface token, not the product — out of scope.)
 - The generated clip is the **"identity video"**, defined once (on `/concepts/models-v2`):
   generated internally from your portrait, 10 seconds, first and last frames match so it
   loops seamlessly. Banned synonyms: source video, source footage, driver video, real

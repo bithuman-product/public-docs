@@ -66,8 +66,9 @@ python -c "import bithuman; print(bithuman.__version__)"
 
 ### 2. Get a model artifact
 
-An Essence 2 artifact is a `<code>.lebundle.imx` file tied to one agent. Two
-ways to get one:
+An Essence 2 artifact is a `<code>.lebundle.imx` file tied to one agent
+(`lebundle` is a [legacy name kept for compatibility](/concepts/avatars-imx#second-generation-artifacts), not a product name —
+the model is `essence-2`). Two ways to get one:
 
 ```bash
 # CLI (see the installer note below):

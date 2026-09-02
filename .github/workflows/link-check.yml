@@ -42,6 +42,20 @@ name: Internal links
 #    is sufficient — that job compares enums and never reads an example; this
 #    step reads every example and never sees the code.
 #
+#
+# 4. Retired product names — the 2026-09-02 owner ruling is that a developer
+#    reading this site meets only essence-2 and expression-2. `elevate`,
+#    `embody`, `essence-2-light`, `essence-2-quality` and `lebundle` are
+#    DEPRECATED. ★Deprecate is not rename: the strings a developer must TYPE —
+#    the `.lebundle.imx` file the download endpoint hands them, the
+#    `libelevate-web` artifact path, the tier slugs saved links carry, the
+#    /concepts/ redirects — are FROZEN and must keep working forever, spelled
+#    exactly, with a plain note that they are legacy names kept for
+#    compatibility. scripts/check-retired-model-names.mjs fails only on a
+#    retired name used as a LIVE product name, and separately asserts the two
+#    retired /concepts/ URLs still redirect to a real page. It refuses to pass
+#    vacuously: if a frozen carrier stops appearing in the corpus at all, that
+#    is a rename and it exits non-zero.
 # Every step always runs: `if: always()` so a broken link cannot mask a billing
 # or model-enum error by aborting the job first.
 
@@ -90,6 +104,13 @@ jobs:
       # source without running a build and the published spec silently keeps the
       # old text — on 2026-07-28 it was still telling callers that the `success`
       # agent status is terminal, two commits after that was corrected in source.
+      # A retired product name may be SPELLED (a migration note, a 400-hint, a
+      # dated changelog entry, a filename a developer types) but never used as a
+      # live product name. Frozen carriers are asserted present, not merely
+      # allowed — renaming one breaks a client that resolves it by exact name.
+      - name: Check retired product names
+        if: always()
+        run: node scripts/check-retired-model-names.mjs
       - name: Published OpenAPI spec is in sync with its source
         if: always()
         run: |
