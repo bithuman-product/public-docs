@@ -42,8 +42,19 @@ const ROOT = new URL("..", import.meta.url).pathname;
 // developer actually FETCHES from docs.bithuman.ai/api/openapi.yaml. Guarding
 // only the source would leave the published bytes unchecked if the copy ever
 // drifts, so both are scanned.
-const ROOTS = ["src/content", "src/pages", "src/openapi", "public/api", "STYLE.md"];
-const EXT = /\.(md|astro|ts|yaml|yml)$/;
+// ★2026-09-02: the first five roots left the SITE CHROME unscanned. A retired
+// name in a nav label, a layout, a showcase entry or a style comment renders on
+// every page and this guard could not see it — proved by mutation: appending
+// "Essence 2 Light is the cheap tier; pick embody for mobile." to
+// src/components/Nav.astro left the guard GREEN. vercel.json is scanned as text
+// too (its redirect lines are frozen carriers), on top of the redirect
+// assertion below.
+const ROOTS = [
+  "src/content", "src/pages", "src/openapi", "public/api", "STYLE.md",
+  "src/components", "src/layouts", "src/config", "src/data", "src/styles",
+  "README.md", "vercel.json",
+];
+const EXT = /\.(md|astro|ts|yaml|yml|json|css)$/;
 const files = [];
 const walk = (rel) => {
   const abs = ROOT + rel;
@@ -62,6 +73,11 @@ const RETIRED = [
   { name: "lebundle",          re: /lebundle/gi },
   { name: "Essence 2 Light",   re: /Essence 2 Light/g },
   { name: "Essence 2 Quality", re: /Essence 2 Quality/g },
+  // Retired 2026-06-30 beside `elevate` and `embody` (see the 2026-06-29 and
+  // 2026-06-26 changelog entries, which name all three as transitional aliases
+  // that now 400). No pattern above matched it, so a NEW page could have used
+  // `essence-2-mobile` as a live product name and passed.
+  { name: "essence-2-mobile",  re: /essence-2-mobile/gi },
   // The UNHYPHENATED container engine ids. These were invisible to the four
   // patterns above (`essence-2-light` does not match `essence2-light`), so the
   // guard passed a page using `essence2-light` as a live product name — proved
@@ -134,6 +150,7 @@ const RETIRED_ON = {
 };
 const DATED_HEADING = /^#{2,3} .*\((\d{4}-\d{2}-\d{2})\)\s*$/;
 
+const fatalPre = []; // structural failures found before the corpus scan
 const CONTEXT = 2; // lines either side
 const violations = [];
 let totalHits = 0;
@@ -224,9 +241,66 @@ for (const [from, to, page] of REDIRECTS) {
   );
 }
 
+// ── CI actually RUNS on everything this file reads ───────────────────────────
+// ★THE DEFECT THIS CLOSES. This checker only protects a file if the workflow
+// that invokes it is TRIGGERED by a change to that file. On 2026-09-02 it was
+// not: the job's `paths:` filter listed src/content, src/pages, src/openapi,
+// scripts and its own file — so a commit that deleted a frozen
+// /concepts/ redirect from vercel.json ran NO workflow, even though the
+// assertion below catches that deletion in a fraction of a second when it runs.
+// A green checkbox meant "nothing I watch changed", not "the redirects survive".
+//
+// So the corpus and the trigger set must not be allowed to drift apart again:
+// every ROOT scanned here, plus vercel.json, must be covered by a trigger glob.
+// Parsed line-wise rather than with a YAML dependency, matching the
+// no-dependencies rule these four checkers share.
+const WF = ".github/workflows/link-check.yml";
+if (!existsSync(ROOT + WF)) {
+  fatalPre.push(`${WF} is missing — nothing invokes this checker, so every check below is decorative`);
+} else {
+  const wfLines = readFileSync(ROOT + WF, "utf8").split("\n");
+  const globs = new Set();
+  let inPaths = false;
+  for (const raw of wfLines) {
+    if (/^\s*paths:\s*$/.test(raw)) { inPaths = true; continue; }
+    if (!inPaths) continue;
+    const m = /^\s*-\s*'([^']+)'\s*$/.exec(raw);
+    if (m) { globs.add(m[1]); continue; }
+    if (/^\s*#/.test(raw) || raw.trim() === "") continue; // comments inside the list
+    inPaths = false;
+  }
+  // A glob covers a path if the path equals it, or the glob is `<dir>/**` and
+  // the path is that dir or under it.
+  const covered = (rel) => [...globs].some((g) =>
+    g === rel || (g.endsWith("/**") && (rel === g.slice(0, -3) || rel.startsWith(g.slice(0, -2))))
+  );
+  if (globs.size < 5) {
+    fatalPre.push(`parsed only ${globs.size} trigger glob(s) from ${WF} — the paths: block moved or changed shape, so this coverage check is no longer reading it`);
+  }
+  for (const r of new Set([...ROOTS, "vercel.json"])) {
+    if (!covered(r)) fatalPre.push(
+      `${WF} has no \`paths:\` glob covering \`${r}\`, but this checker reads it. ` +
+      `A commit touching only \`${r}\` would run no workflow, so this checker could ` +
+      `not fail on it — which is how deleting a frozen redirect once landed green. ` +
+      `Add \`${r}\` (or a \`${r}/**\` glob) to BOTH the push and pull_request path lists.`
+    );
+  }
+}
+
 // ── non-vacuity: refuse to pass by finding nothing ───────────────────────────
-const fatal = [];
+const fatal = [...fatalPre];
 if (files.length < 20) fatal.push(`only ${files.length} files scanned — corpus globbing broke`);
+// Per-ROOT non-vacuity. `files.length < 20` is satisfied by src/content alone,
+// so it would NOT notice EXT losing `.astro`/`.json` or the components moving —
+// the corpus would silently shrink back to the blind spot this root list was
+// added to close. A root that no longer exists is not a failure (a tree may be
+// legitimately deleted); a root that exists and contributes nothing is.
+for (const r of ROOTS) {
+  if (!existsSync(ROOT + r)) continue;
+  if (!files.some((f) => f === r || f.startsWith(r + "/"))) {
+    fatal.push(`root \`${r}\` exists but contributed 0 files to the scan — EXT or the walk stopped matching it, so that tree is now unguarded`);
+  }
+}
 if (totalHits < 40) fatal.push(`only ${totalHits} retired-name occurrences found (expected 40+) — the scan is not reading the corpus`);
 if (markerHits.n < 10) fatal.push(`only ${markerHits.n} occurrences matched a retirement marker (expected 10+) — MARKERS or the corpus changed shape`);
 if (historyHits < 3) fatal.push(`only ${historyHits} occurrences resolved as dated changelog history (expected 3+) — the DATED_HEADING parse broke, so the changelog is no longer being dated-checked`);

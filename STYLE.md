@@ -18,7 +18,9 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
 - **Deprecated product names.** The product names are **essence-2** and
   **expression-2** (plus `essence-2-max`, and the first generation). `elevate`,
   `embody`, `essence-2-light`, `essence-2-quality`, `lebundle` and their variants
-  are DEPRECATED and must not be used as a live product name in prose.
+  are DEPRECATED and must not be used as a live product name in prose. So are the
+  pre-release codenames `embody-gpu` and `essence-2-mobile`, retired with the
+  rest on 2026-06-30 — generation endpoints answer all of them with a `400`.
   ★They are NOT renamed, and nothing that carries them is deleted: a developer
   who must TYPE one — a filename they receive, a URL path, a slug a saved link
   carries — still gets it spelled exactly, with a plain statement that it is a

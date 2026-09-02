@@ -43,6 +43,15 @@ name: Internal links
 #    step reads every example and never sees the code.
 #
 #
+#    ★Its corpus was widened on 2026-09-02 to the site chrome (src/components,
+#    src/layouts, src/config, src/data, src/styles), README.md and vercel.json.
+#    It had scanned only src/content, src/pages, src/openapi, public/api and
+#    STYLE.md, so a retired name in a nav label or a layout — rendered on EVERY
+#    page — was invisible: appending "Essence 2 Light is the cheap tier; pick
+#    embody for mobile." to src/components/Nav.astro left it green. It fails on
+#    that now, and refuses to pass if any root it lists stops contributing files
+#    (which is how the corpus would silently shrink back).
+#
 # 4. Retired product names — the 2026-09-02 owner ruling is that a developer
 #    reading this site meets only essence-2 and expression-2. `elevate`,
 #    `embody`, `essence-2-light`, `essence-2-quality` and `lebundle` are
@@ -68,6 +77,26 @@ on:
       - 'src/openapi/**'
       - 'scripts/**'
       - '.github/workflows/link-check.yml'
+      # ★2026-09-02: the five globs above did not cover files these checks
+      # already read, so a change to one of them could never turn the job red.
+      # vercel.json is the sharp case: check-retired-model-names.mjs ASSERTS the
+      # two frozen /concepts/ redirects, and deleting one is precisely the
+      # unrecoverable break the assertion exists to stop — but vercel.json
+      # matches none of the globs above, so that commit ran no workflow at all.
+      # Measured: with the redirect deleted the checker exits 1; on a
+      # vercel.json-only push nothing invoked it. The rest are the site chrome
+      # and data now inside the checker's corpus, plus the STYLE.md rule text
+      # and public/api (the spec customers download, which sync-openapi only
+      # rewrites when src/openapi changed).
+      - 'vercel.json'
+      - 'src/components/**'
+      - 'src/layouts/**'
+      - 'src/config/**'
+      - 'src/data/**'
+      - 'src/styles/**'
+      - 'public/api/**'
+      - 'STYLE.md'
+      - 'README.md'
   pull_request:
     paths:
       - 'src/content/**'
@@ -75,6 +104,26 @@ on:
       - 'src/openapi/**'
       - 'scripts/**'
       - '.github/workflows/link-check.yml'
+      # ★2026-09-02: the five globs above did not cover files these checks
+      # already read, so a change to one of them could never turn the job red.
+      # vercel.json is the sharp case: check-retired-model-names.mjs ASSERTS the
+      # two frozen /concepts/ redirects, and deleting one is precisely the
+      # unrecoverable break the assertion exists to stop — but vercel.json
+      # matches none of the globs above, so that commit ran no workflow at all.
+      # Measured: with the redirect deleted the checker exits 1; on a
+      # vercel.json-only push nothing invoked it. The rest are the site chrome
+      # and data now inside the checker's corpus, plus the STYLE.md rule text
+      # and public/api (the spec customers download, which sync-openapi only
+      # rewrites when src/openapi changed).
+      - 'vercel.json'
+      - 'src/components/**'
+      - 'src/layouts/**'
+      - 'src/config/**'
+      - 'src/data/**'
+      - 'src/styles/**'
+      - 'public/api/**'
+      - 'STYLE.md'
+      - 'README.md'
 
 permissions:
   contents: read
