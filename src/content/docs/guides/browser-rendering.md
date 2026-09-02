@@ -138,6 +138,7 @@ The browser pipeline is currently distributed via the hosted agent-landing page 
 
 ## Where to go next
 
+- [WebGPU and local browser rendering](/guides/browser-webgpu) — measured WebGPU vs WASM frame rates, the standalone runtime you can self-host, which identities have a published web bundle, and what a browser session does and does not meter.
 - [Architecture](/concepts/architecture) — how `libessence` powers every renderer.
 - [Audio streaming](/concepts/audio-streaming) — the same push/drain pattern the WASM pipeline mirrors.
 - [Deploy embed](/guides/deploy-embed) — drop a hosted avatar onto any page.
