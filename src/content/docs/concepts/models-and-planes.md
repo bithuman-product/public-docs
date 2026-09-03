@@ -526,7 +526,7 @@ a retired one, so here they are:
 | `elevate` | SDK request field | **essence-2-max** | Accepted for compatibility; write `essence-2-max` in new code. |
 | `embody` | legacy request spelling | **expression-2** | Accepted for compatibility; write `expression-2` in new code. |
 | `essence-2-quality` | internal model lists | **essence-2-max** | No — write `essence-2-max`. |
-| `libelevate`, `libelevate-android` | old library and artifact names | nothing published | **No.** These were never released; the Android coordinate is `ai.bithuman:expression2-android`. |
+| `libelevate`, `libelevate-android` | old library and artifact names | **essence-2** | **No.** Neither spelling was ever published to Maven Central. `libelevate-android` was this module's artifactId until it was renamed on 2026-09-02; the coordinate to type is `ai.bithuman:essence2-android`. |
 
 The rule: **write the product name; accept the legacy spelling on input; expect
 to read it in file names and engine strings forever.**

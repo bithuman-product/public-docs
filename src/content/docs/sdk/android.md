@@ -491,7 +491,7 @@ is established is the coordinate, the bytes, the checksum, the declared `minSdk`
 the native payload — nothing further. Treat the API as unexercised until that build
 transcript exists.
 
-### The `elevate` name is in the published API surface
+### The legacy `elevate` name is in the published API surface
 
 The AAR declares `package="ai.bithuman.elevate"` and its `classes.jar` contains
 `ai/bithuman/elevate/{ElevateFrames, ElevateArmLayout, NativeBridge}`. The
