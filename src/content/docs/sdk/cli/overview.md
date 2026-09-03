@@ -16,7 +16,11 @@ on `libessence` — the same engine that powers the [Python](/sdk/python) and
 read the same `.imx` avatar file and produce identical frames, so anything you
 prove out with the CLI ports straight into your application.
 
-The CLI runs on macOS arm64 and Linux (x86_64 and aarch64).
+The CLI publishes a binary for exactly two targets: **macOS Apple
+Silicon** (`aarch64-apple-darwin`) and **Linux x86_64**
+(`x86_64-unknown-linux-gnu`). Intel Macs and Linux ARM have no current binary —
+the installer 404s on both. See
+[which platforms actually have a binary](/sdk/cli/install#which-platforms-actually-have-a-binary).
 
 > **Which models?** The CLI **recognizes every bitHuman model artifact** — it
 > sniffs the file and tells you what it is. Its local runtime plays
@@ -78,7 +82,7 @@ browse and download showcase avatars, and run a full host sanity check.
 | `bithuman auth status` | Show who you're signed in as and where the credential lives |
 | `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull a showcase avatar |
 | `bithuman run [avatar]` | Start the live avatar. No argument fetches + renders the free Wise Pup avatar out of the box; pass an avatar file to run your own |
-| `bithuman render <path.imx>` | Offline lipsync: model + WAV → MP4 (Linux-only) |
+| `bithuman render <path>` | Offline lipsync: model + audio → MP4. Linux-only, and [only Expression 2 completes](/sdk/cli/verified#bithuman-render-one-family-at-a-time) on 2.5.1 |
 | `bithuman info <model-file>` | Print model metadata — engine + family for any recognized artifact |
 | `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or **your own agent's generated model** by code |
 | `bithuman list` | Browse the showcase avatar catalog |
@@ -157,6 +161,7 @@ bithuman engine update               # update to the newest pinned engine
 ## Next steps
 
 - [Install the CLI](/sdk/cli/install) — Homebrew, universal installer, or PyPI
+- [Verified transcript](/sdk/cli/verified) — every command on Linux x86_64, run and pasted back with its real exit code
 - [Commands](/sdk/cli/commands) — full subcommand and flag reference
 - [Configuration](/sdk/cli/configuration) — environment variables and cache layout
 - [Local mode](/sdk/cli/local-mode) — the fully on-device brain

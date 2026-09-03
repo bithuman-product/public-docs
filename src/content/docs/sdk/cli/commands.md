@@ -8,7 +8,9 @@ order: 32
 
 ## Subcommand overview
 
-Every subcommand accepts `--help` for the full flag listing.
+Every subcommand accepts `--help` for the full flag listing. Everything on this
+page that can be run on Linux x86_64 has been, with its real exit code, on
+[Verified transcript](/sdk/cli/verified).
 
 | Command | What it does |
 | --- | --- |
@@ -25,6 +27,12 @@ Every subcommand accepts `--help` for the full flag listing.
 | `bithuman doctor` | Host + auth + cache sanity check |
 | `bithuman mcp` | Run the built-in MCP server for AI agents (stdio); `bithuman mcp tools` lists the tools. See [driving from an AI agent](/sdk/cli/agents). |
 | `bithuman --version` | Print `libessence` + ABI + CLI versions |
+| `bithuman version --json` | The same, machine-readable: `{"abi":7,"cli":"2.5.1","libessence":"2.3.8","schema_version":1}` |
+| `bithuman avatars` | Alias of `list` |
+| `bithuman whoami` | Alias of `auth status` |
+| `bithuman account` | Plan, credit balance and account status (alias: `credits`) |
+| `bithuman usage` | Recent credit usage / metering history; honors `--json` |
+| `bithuman completion <shell>` | Shell completions for bash, zsh, fish, elvish, powershell |
 
 ## Signing in
 
@@ -173,7 +181,7 @@ engine error:
 | Family | File | What `run` does |
 |---|---|---|
 | `essence-1` | `<code>.imx` (also legacy exports) | **Runs locally** — launches exactly as always. |
-| `expression-2` | `<code>.avatar` — what `pull` and the download endpoint actually hand you. The extension is a frozen alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are `IMX\0` v2 containers, 14 are still the pre-2026-07-12 CoreML zip (2026-09-01). A raw `<code>.imx` container also exists upstream. | **Runs locally** on macOS (Apple Silicon) — either form. On **Linux x86_64** the `.avatar` runs once the CPU render host is staged (`bithuman engine install linux-x86_64`); a raw `.imx` on Linux is handed off to the cloud instead. Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
+| `expression-2` | `<code>.avatar` — what `pull` and the download endpoint actually hand you. The extension is a frozen alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are `IMX\0` v2 containers, 14 are still the pre-2026-07-12 CoreML zip (2026-09-01). A raw `<code>.imx` container also exists upstream. | **Runs locally** on macOS (Apple Silicon) — either form. On **Linux x86_64** the `.avatar` runs once the CPU render host is staged (`bithuman engine install linux`); a raw `.imx` on Linux is handed off to the cloud instead. Windows coming. The free Wise Pup avatar renders out of the box. Also serves live on bitHuman cloud. See [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform). |
 | `essence-2` | `<code>.lebundle.imx` | The standard [Essence 2](/concepts/essence-2) artifact. Recognized; exits with `UNSUPPORTED_MODEL_FAMILY` (code 69) and points you to the cloud surfaces. The bundle contains **licensed weights** — local playback is pending the runtime license wiring, so keep the file. |
 | `essence-2-max` | `<code>.pkl` | The [Essence 2 Max](/concepts/essence-2-max) artifact (`essence-2-quality` is its pre-rename internal alias). Recognized; same honest handoff — this family renders on bitHuman's GPU cloud and is not a local-playback artifact. |
 | `expression-1` | usually none; `<code>.imx` for an agent that went through the lip step | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, and the model is not supported on Mac locally (it's a heavy GPU engine). **One exception:** an `expression-1` agent that went through the lip step owns a baked `<code>.imx` in its model record, and the download endpoint serves that file exactly like `essence-1`, so it runs locally. Everything else in this family is cloud-served. |
@@ -194,48 +202,103 @@ just lipsync a WAV you already have:
 bithuman render avatar.imx --audio speech.wav --output demo.mp4
 ```
 
-> **Warning — broken in `cli-v2.4.0` and still broken in `cli-v2.4.2`**
-> (re-tested 2026-09-02 on Linux x86_64 with a showcase `.imx` and a 16 kHz mono
-> WAV: exit 70, no output file). It fails at the muxing step and writes **no
-> output file**:
+> **Only Expression 2 completes on CLI 2.5.1.** Re-tested 2026-09-02 on Linux
+> x86_64 with one 16 kHz mono WAV driving all three families through the same
+> binary. Full transcript on
+> [Verified transcript](/sdk/cli/verified#bithuman-render-one-family-at-a-time).
 >
-> ```text
-> encoding via libessence (h264+aac → mp4)…
-> error: record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed
-> ```
+> | Family | File | Result | rc |
+> | --- | --- | --- | --- |
+> | Expression 2 | `<code>.avatar` | Writes a real MP4 (h264+aac; 60 frames at 20 fps from 3 s of audio) | `0` |
+> | Essence 2 | `<code>.lebundle.imx` | No local native runtime on this host | `69` |
+> | Essence 1 | `<code>.imx` | The engine runs; the mux fails and no file is written | `70` |
 >
-> This is not an input problem — it reproduces identically with a WAV from
-> [`/v1/tts`](/api/text-to-speech), with the `speech.wav` that ships in this
-> project's own `Examples/python/local-essence/`, and with a plain 16 kHz mono
-> PCM WAV written by Python's stdlib `wave`. Since the command is Linux-only
-> (see below), `bithuman render` had **no working platform** on 2.4.0. To
-> produce an mp4 today, use the [Video API](/api/video)
-> (`POST /v1/video/generate`), which renders server-side and returns a URL.
+> Same audio, same binary, different engines — so the failures below are the
+> runtime, not your input.
+
+### Essence 2 — `rc=69`, and a file copy does not fix it
+
+```text
+error: could not load lible_core.so (the native essence-2 runtime that owns the TESSERA teeth borrow).
+  hint: … Stage it as `lible_core.so` next to the bithuman binary / in ~/.bithuman/lib, or set BITHUMAN_LIBLE_CORE.
+```
+
+The message reads like a missing file, and the hint invites you to go find one.
+**Staging one does not work.** With `BITHUMAN_LIBLE_CORE` pointing at a real
+library, the loader gets further and then fails on the ABI:
+
+```text
+/home/you/.local/bin/lib/libonnxruntime.so.1: version `VERS_1.26.0' not found (required by …/lible_core.so)
+rc=69
+```
+
+The 2.5.1 tarball ships `libonnxruntime.so.1` at **`VERS_1.20.1`**; every
+`lible_core.so` is linked against **`VERS_1.26.0`**. That is an ABI gap inside
+the shipped binary, not a packaging oversight you can route around by moving
+files, so **Essence 2 has no offline `render` on any platform in 2.5.1**.
+Render it through the [Video API](/api/video), or run it live with
+`bithuman run <YOUR_AGENT_CODE>` — which opens a cloud session.
+
+(`lible_core` is the native library's frozen filename — a legacy name kept for
+compatibility, quoted verbatim by the loader, so it is spelled here exactly as
+you will see it.)
+
+### Essence 1 — `rc=70`, still
+
+```text
+  encoding via libessence (h264+aac → mp4)…
+error: record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed
+rc=70
+```
+
+First reported against `cli-v2.4.0`, still present in **2.5.1**. It fails at the
+muxing step and writes **no output file**. Three controls rule out the input:
+the identical WAV renders through Expression 2 with `rc=0`; the `speech.wav`
+that ships in this project's own `Examples/python/local-essence/` fails the same
+way; and a second showcase model fails the same way. Use the
+[Video API](/api/video) (`POST /v1/video/generate`) for Essence 1 MP4s today.
+
+### No credential — `rc=77`, before any model is opened
+
+```text
+  bithuman render: auth required (BE_ERR_NO_AUTH): set BITHUMAN_API_SECRET (or BITHUMAN_API_KEY)
+rc=77
+```
+
+`render` needs a signed-in account or `BITHUMAN_API_SECRET` in the environment.
+This gate is checked first, so it fires for every family and says nothing about
+whether that family would have rendered. It is also distinct from the
+`[selfhost-meter] … enforce=OFF (fail-open)` lines a successful Expression 2
+render prints: those are usage reporting that does not block a render, and they
+appear only *after* this gate has passed.
 
 Flags:
 
 | Flag | Default | What |
 | --- | --- | --- |
-| `-a`, `--audio <PATH>` | (required) | 16 kHz mono PCM WAV input. |
+| `-a`, `--audio <PATH>` | (required) | Input audio. Any format `ffmpeg` reads for the second-generation engines; Essence 1 wants a 16 kHz mono PCM WAV. |
 | `-o`, `--output <PATH>` | `output.mp4` | Output MP4 path. |
 | `--quality <PRESET>` | `MEDIUM` | Encoder preset: `LOW`, `MEDIUM`, `HIGH`. |
 | `--target-size <SIZE>` | `1280` | A single number `N` (longest side binds to `N`, aspect preserved) or `WxH` (explicit canvas). |
-| `--limit <N>` | none | Intended to cap output frame count for testing, but **currently a no-op** — it is accepted and ignored; the full input is always rendered. |
+| `--limit <N>` | none | Cap the render at N frames — the audio is trimmed to `N/fps`. Measured on 2.5.1: `--limit 10` on an Expression 2 avatar produced a 10-frame MP4 (`ffprobe` `nb_frames=10`). |
 
-> **Warning** `bithuman render` is currently **Linux-only**. On macOS the
-> command prints a `not implemented: be_video_encoder_*` error and exits.
-> Workarounds:
+> **`render` is Linux-only.** On macOS the command prints a
+> `not implemented: be_video_encoder_*` error and exits. **UNVERIFIED here** —
+> that macOS behaviour is carried from the earlier report and was not re-tested
+> on 2.5.1; this estate has no Mac in the loop that runs these checks. What
+> *was* re-tested is the Linux side, above. Workarounds:
 >
-> 1. **Run inside a Linux Docker container** — install the CLI with the
->    universal installer (`curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh`; the PyPI wheel is macOS-only, so don't `pip install bithuman-cli` on Linux) and render there, mounting your `.imx` and WAV in and the MP4 out.
-> 2. **Use `bithuman run` instead** — the live-avatar path does not need the
+> 1. **Run inside a Linux x86_64 container** — install with the universal
+>    installer (`curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh`;
+>    the PyPI wheel is macOS-only, so don't `pip install bithuman-cli` on Linux),
+>    mount your avatar and audio in and the MP4 out. **Expression 2 only** — see
+>    the family table above.
+> 2. **Use the [Video API](/api/video)** — `POST /v1/video/generate` renders
+>    server-side and returns a URL, and it is the only path that covers
+>    Essence 1 and Essence 2 today.
+> 3. **Use `bithuman run` instead** — the live-avatar path does not need the
 >    offline encoder; it publishes frames into LiveKit via the webrtc-rs
 >    encoder, and you can record from the browser if you need a file.
-> 3. **Render on a Linux host** — a small Linux box or CI runner with the
->    CLI installed via the universal installer renders any `.imx` + WAV
->    pair to MP4 identically. (On Linux, install with the universal
->    installer, not `pip install bithuman-cli` — the PyPI wheel is
->    macOS-only.)
 >
 > An AVFoundation-based native macOS encoder is on the roadmap.
 
@@ -336,17 +399,56 @@ unchanged.
 > agent was **created** with. It is not an error and there is no warning — you
 > simply get the older artifact.
 >
-> **`pull --model` is new in CLI 2.5.0, which is macOS only.** On 2.5.0:
+> **`pull --model` ships on both platforms as of CLI 2.5.1.** It was introduced
+> in 2.5.0; 2.5.1 is the first release to carry it in the Linux x86_64 tarball
+> as well, and it was exercised there on 2026-09-02:
 >
 > ```bash
-> bithuman pull <CODE> --model essence-2   # ask for a family
-> bithuman pull <CODE>                     # server default; also names the
->                                          # families it did NOT hand you
+> bithuman pull A31BSK9325 --model essence-2   # ask for a family
 > ```
 >
-> The newest CLI carrying a **Linux** binary is 2.4.2, whose `pull` options are
-> `--force`, `--dest` and `--manifest` (plus the global `--json`) and which has
-> **no** `--model`. On Linux — or from any CLI before 2.5.0 — fetch a specific
+> ```text
+> recognized: IMX v2 container — essence-2: cloud-served; no local CLI runtime yet
+> /home/you/.cache/bithuman/agents/A31BSK9325/A31BSK9325.lebundle.imx
+> rc=0
+> ```
+>
+> Accepted values are the API's, not the CLI's: `essence-1`, `essence-2`,
+> `essence-2-max`, `expression-2`. Asking for a family the agent does not have
+> comes back as a server error naming what went wrong rather than a wrong file —
+> here, an Expression 2 agent asked for `essence-2-max`:
+>
+> ```text
+> error: MODEL_ARTIFACT_NOT_READY: agent A55NVK9945's essence-2-max artifact isn't available for
+> download yet: the essence-2-max bundle derives on demand from the agent's source video the first
+> time the agent is launched as essence-2-max — start one session, then retry
+> rc=66
+> ```
+>
+> Without a credential the same command exits **77** before any download starts:
+>
+> ```text
+> error: downloading your agent A31BSK9325's model needs your account
+>   hint: run `bithuman login` (or export BITHUMAN_API_SECRET)
+> rc=77
+> ```
+>
+> **A bare `pull` still gives you the BIRTH model** — an agent created as
+> Essence 1 and later given Expression 2 hands back the Essence 1 artifact. Ask
+> `--json` what else it has rather than guessing:
+>
+> ```bash
+> bithuman pull A31BSK9325 --json
+> ```
+>
+> ```text
+> {"cached":true,"code":"A31BSK9325","family":"essence-2","model":"essence-2","model_source":"birth",
+>  "other_models":["essence-2-max"],"path":"/home/you/.cache/bithuman/agents/A31BSK9325/A31BSK9325.lebundle.imx",
+>  "runnable_locally":false,"schema_version":1}
+> rc=0
+> ```
+>
+> On a CLI **before 2.5.0**, or any build without the flag, fetch a specific
 > family by calling the endpoint directly with `?model=<family>`:
 >
 > ```bash
@@ -355,12 +457,6 @@ unchanged.
 > curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
 >   "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2"
 > # → A17ZTB0222.avatar
->
-> # Or ask for the URL as JSON instead of the redirect, to inspect it first:
-> curl -s -H "api-secret: $BITHUMAN_API_SECRET" \
->   "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2&redirect=false"
-> # → {"success":true,"data":{"code":"A17ZTB0222","model":"expression-2",
-> #     "filename":"A17ZTB0222.avatar","url":"https://…signed…","expires_in":3600}}
 > ```
 >
 > The signed URL lives for one hour (`expires_in`), so fetch it, don't store it.
@@ -381,7 +477,7 @@ One line each — the file `pull` writes, and what runs it:
 | `essence-1` | `<code>.imx` | `bithuman run <file>` locally on macOS (Apple Silicon) and Linux; the [Python SDK](/sdk/python); the [Android AAR](/sdk/android); bitHuman cloud. |
 | `essence-2` | `<code>.lebundle.imx` | bitHuman cloud today, plus offline CPU rendering on your own servers via the [Python SDK](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (2.9.0+, `bithuman[tessera]`). Not playable by `bithuman run`, and there is no Mac/iPhone/Android build. **Licensed weights** — keep the file. |
 | `essence-2-max` | `<code>.pkl` | bitHuman's GPU cloud, or the hand-delivered [self-hosted GPU container](/guides/deploy-essence-2-max). No local-playback form. The `.pkl` is derived the first time the agent runs a session, so a download before that returns `404 MODEL_ARTIFACT_NOT_READY` — start one session, then retry. |
-| `expression-2` | `<code>.avatar` | `bithuman run <file>` on macOS (Apple Silicon); on Linux x86_64 after `bithuman engine install linux-x86_64`; the browser via [`?render=local`](/guides/browser-rendering); bitHuman cloud. **Not** the [`Expression2` Swift product](/sdk/swift#expression-2-on-device) — that engine wants a per-identity CoreML bundle, which is a different artifact and is not published. |
+| `expression-2` | `<code>.avatar` | `bithuman run <file>` on macOS (Apple Silicon); on Linux x86_64 after `bithuman engine install linux`; the browser via [`?render=local`](/guides/browser-rendering); bitHuman cloud. **Not** the [`Expression2` Swift product](/sdk/swift#expression-2-on-device) — that engine wants a per-identity CoreML bundle, which is a different artifact and is not published. |
 | `expression-1` | usually nothing (`400 MODEL_NOT_DOWNLOADABLE`); `<code>.imx` if the agent went through the lip step | bitHuman cloud. When the `.imx` exists it is the same artifact `essence-1` serves and runs the same way. |
 
 All but one of those are `IMX\0` version-2 containers — including the
@@ -402,8 +498,32 @@ newer engine.
 ```bash
 bithuman engine list                 # every known engine and whether it's installed
 bithuman engine install              # fetch this platform's engine into the cache
-bithuman engine install linux-x86_64 # fetch another platform's engine (cross-build)
+bithuman engine install linux        # fetch another platform's engine (cross-build)
 bithuman engine update               # install the newest pinned engine (idempotent)
+```
+
+The platform argument is **`mac` or `linux`** — those two tokens and nothing
+else. A target triple is rejected:
+
+```text
+$ bithuman engine install linux-x86_64
+bithuman engine install: no engine for platform 'linux-x86_64' (known: mac, linux)
+rc=2
+```
+
+```text
+$ bithuman engine install linux
+  ◆ engine linux-1.0.0 ready → /home/you/.bithuman/engines/linux-1.0.0
+rc=0
+```
+
+`bithuman engine list` names both, and marks the one this host is using:
+
+```text
+  ◆ expression-2 engines  (~/.bithuman/engines)
+    mac-1.0.0  coreml · 173 MB  not installed
+    linux-1.0.0  litert · 92 MB  installed (this host)
+rc=0
 ```
 
 Each avatar is one self-contained [`.imx` file](/concepts/avatars-imx); when the
