@@ -355,16 +355,24 @@ Full setup on the [Android SDK page](/sdk/android).
 dependencies { implementation("ai.bithuman:expression2-android:0.3.0") }
 ```
 
-`arm64-v8a`, minSdk 26. Both coordinates resolve anonymously — verified here
-by fetching them directly, with `ai.bithuman:essence2-android` as the negative
-control (**HTTP 404**: it is not published). Coordinates, the resolving Gradle
-snippet and the measured limits are on the [Android SDK
+**Essence 2 is on Maven Central too**, as of 2026-09-03:
+
+```kotlin
+dependencies { implementation("ai.bithuman:essence2-android:0.2.0") }
+```
+
+`arm64-v8a`, minSdk 29. All three coordinates resolve anonymously — verified
+here by fetching them directly, with `ai.bithuman:libelevate-android` as the
+negative control (**HTTP 404**: it was never published). ★Older revisions of
+this page used `essence2-android` as that negative control; it now returns
+**200**, so a probe still expecting 404 there will read as broken. Coordinates,
+the resolving Gradle snippet and the measured limits are on the [Android SDK
 page](/sdk/android); the scripts and their controls are on [verifying the
 Android SDK](/sdk/android-verify).
 
-**What you cannot resolve:** an Essence 2 AAR. Reach Essence 2 on Android
-through the cloud — the [REST API](/api/overview), a
-[LiveKit](/sdk/livekit) session, or the agent landing page in a WebView.
+**What is not verified for Essence 2:** no outside Gradle project has been
+compiled against the AAR and no on-device figure has been taken — only the
+coordinate, bytes, checksum and native payload.
 
 ---
 

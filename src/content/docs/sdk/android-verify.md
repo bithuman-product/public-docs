@@ -53,11 +53,11 @@ echo
 echo "-- maven-metadata.xml, anonymous GET (200 = published, 404 = not published)"
 probe expression2-android      # expression-2, published 2026-09-02
 probe sdk                      # essence-1, published since May
-probe essence2-android         # essence-2 — STAGED, NOT PUBLISHED
+probe essence2-android         # essence-2, published 2026-09-03
 probe zzz-no-such-artifact     # negative control: must be 404
 echo
 echo "-- released versions"
-for a in expression2-android sdk; do
+for a in expression2-android essence2-android sdk; do
   printf '%-24s %s\n' "$a" \
     "$(curl -sS --max-time 30 "$base/$a/maven-metadata.xml" | grep -oPm1 '(?<=<release>)[^<]+')"
 done
@@ -67,25 +67,35 @@ Real output, `rc=0`:
 
 ```text
 -- artifacts under ai.bithuman
+  essence2-android
   expression2-android
   sdk
 
 -- maven-metadata.xml, anonymous GET (200 = published, 404 = not published)
 expression2-android      200
 sdk                      200
-essence2-android         404
+essence2-android         200
 zzz-no-such-artifact     404
 
 -- released versions
 expression2-android      0.3.0
+essence2-android         0.2.0
 sdk                      2.3.6
 ```
 
 ★ **Read the controls, not just the answers.** `zzz-no-such-artifact` → 404 and
-`sdk` → 200 means this probe *discriminates*, so `essence2-android` → **404** is a
-real finding: essence-2 is genuinely not published, rather than the probe being
-broken. A registry that answered 401 or 404 for everything would tell you nothing,
-and this estate has been misled by exactly that before.
+`sdk` → 200 means this probe *discriminates*, so `essence2-android` → **200** is a
+real finding: essence-2 is genuinely published, rather than the registry answering
+200 for everything. A registry that answered 401 or 404 for everything would tell
+you nothing, and this estate has been misled by exactly that before.
+
+> **Re-measured 2026-09-03.** This transcript previously showed
+> `essence2-android 404` and read that as "genuinely not published". That was
+> correct until the artifact was published at 03:39:15 UTC on 2026-09-03. The
+> script is unchanged; only the answer moved. ★If you are looking for a
+> permanently-absent coordinate to use as your own negative control, use
+> `libelevate-android` — it was never published and still returns 404 (verified
+> 2026-09-03) — not `essence2-android`, which now returns 200.
 
 ---
 

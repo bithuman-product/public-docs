@@ -352,18 +352,21 @@ around the CLI:
 
 ### Android — two artifacts on Maven Central, and one that is not there
 
-As of **2026-09-02** the `ai.bithuman` group on Maven Central publishes **two**
-artifacts, both resolvable anonymously:
+As of **2026-09-03** the `ai.bithuman` group on Maven Central publishes **three**
+artifacts, all resolvable anonymously:
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.0` | **expression-2** | 26 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.2.0` | **essence-2** | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | 29 | `arm64-v8a` |
 
-**There is no essence-2 Android artifact published.** It is staged as
-`ai.bithuman:essence2-android`; that coordinate resolves to nothing today and a
-build naming it fails at dependency resolution. Do not write it yet. The older
-name `libelevate-android` was never published and never will be.
+**All three models the ruling puts on Android now resolve.** essence-2 was
+published at 2026-09-03 03:39:15 UTC; this page said the day before that its
+coordinate "resolves to nothing", which was true then and is false now. The
+*artifact* name `libelevate-android` was never published and never will be —
+though the published essence-2 AAR does declare the Kotlin package
+`ai.bithuman.elevate`, which cannot be renamed after release.
 
 Positive and negative control, side by side — this is the check to run before
 you believe any coordinate on any page, including this one:
@@ -378,13 +381,15 @@ done
 ```text
 200  expression2-android
 200  sdk
-404  essence2-android
+200  essence2-android
 404  libelevate-android
 ```
 
-Exit code `0`. Two `200`s and two `404`s. If everything comes back `200` you are
-behind a proxy that invents pages; if everything comes back `404` your network
-is blocking Maven Central.
+Exit code `0`, re-run 2026-09-03. Three `200`s and one `404`. ★The `404` is the
+one that matters: `libelevate-android` is the permanently-absent coordinate that
+keeps this check honest. If everything comes back `200` you are behind a proxy
+that invents pages; if everything comes back `404` your network is blocking
+Maven Central.
 
 Gradle setup, the API of each artifact, the measured on-device frame rates and a
 full outside-project build transcript are on the

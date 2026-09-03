@@ -1,6 +1,6 @@
 ---
 title: "Android SDK (Kotlin)"
-description: "Two on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.0 (expression-2) and ai.bithuman:sdk:2.3.6 (essence-1). Coordinates, a Gradle snippet that resolves, and the measured limits."
+description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.0 (expression-2), ai.bithuman:essence2-android:0.2.0 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1). Coordinates, a Gradle snippet that resolves, and the measured limits."
 section: sdk
 group: "Languages"
 order: 12
@@ -8,16 +8,18 @@ order: 12
 
 ## What is on Maven Central
 
-Two Android artifacts are published under the `ai.bithuman` group and are
+Three Android artifacts are published under the `ai.bithuman` group and are
 resolvable by anyone, with no credential:
 
 | Maven coordinate | Model | Published | `minSdk` | ABI |
 |---|---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.0` | **expression-2** | 2026-09-02 | 26 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.2.0` | **essence-2** | 2026-09-03 | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | since May 2026 | 29 | `arm64-v8a` |
 
-`ai.bithuman:essence2-android` (**essence-2**) is **not published**. It is staged
-and its coordinate does not resolve — see [essence-2 on Android](#essence-2-on-android).
+All three models that the scope ruling puts on Android now have a coordinate that
+resolves. See [essence-2 on Android](#essence-2-on-android) for what is and is not
+verified about the newest one.
 
 > ### Correction — 2026-09-02
 >
@@ -412,20 +414,64 @@ explicit dependency.
 
 ## essence-2 on Android
 
-**Not published. There is no coordinate to write.**
-`ai.bithuman:essence2-android` returns **404** from Maven Central today — you can
-[check that yourself](/sdk/android-verify#is-it-on-maven-central) with the same
-probe that returns 200 for the two artifacts above. It is staged, and its remaining
-blocker is a licensing question, not a build.
+**Published.** `ai.bithuman:essence2-android:0.2.0` resolves from Maven Central.
 
-essence-2 **is** in scope for the Android lane, so this is a real gap rather than a
-deliberate absence — unlike expression-1 and essence-2-max, which are GPU-only.
-Reach essence-2 from an Android app through the cloud in the meantime: the
-[REST API](/api/overview), a [LiveKit](/sdk/livekit) session, or the agent landing
-page in a WebView.
+```kotlin
+dependencies {
+    implementation("ai.bithuman:essence2-android:0.2.0")
+}
+```
 
-★ The name `libelevate-android` appears in older internal material. It was
-**never published** and is obsolete; do not write it into a build file.
+> ### Correction — 2026-09-03
+>
+> Until today this page said essence-2 was *"not published"*, that *"there is no
+> coordinate to write"* and that `ai.bithuman:essence2-android` *"returns 404 from
+> Maven Central today"*. **That was true when it was written and is now false.**
+> The artifact was published at **2026-09-03 03:39:15 UTC** (`maven-metadata.xml`
+> `lastUpdated=20260903033915`), which is after the previous revision of this page.
+> The licensing blocker it described has been resolved in the artifact itself — the
+> AAR now carries `META-INF/NOTICE.txt` and the full licence texts for FFmpeg 7.1
+> (LGPL v2.1), LLVM libc++ and ONNX Runtime 1.26.0.
+
+### What was measured
+
+Every line below was executed against Maven Central on 2026-09-03, anonymously
+(no `~/.netrc`, no `~/.curlrc`, `curl -q`):
+
+| Check | Result |
+|---|---|
+| `essence2-android-0.2.0.pom` | HTTP 200, 1,967 B |
+| `essence2-android-0.2.0.aar` | HTTP 200, 11,784,075 B |
+| SHA-1 vs the published `.aar.sha1` | matches (`1d769543…`) |
+| `-sources.jar`, `-javadoc.jar` | HTTP 200 |
+| `minSdkVersion` (from the AAR's `AndroidManifest.xml`) | **29** |
+| ABI | `arm64-v8a` **only** |
+| Native payload | `lible_jni.so` (2,968,408 B), `libonnxruntime.so` (27,408,600 B), `libc++_shared.so` (1,253,544 B) |
+
+The probe discriminates: `junit:junit:4.13.2` returned 200 as a positive control,
+while `ai.bithuman:expression2-android:9.9.9` and a nonexistent artifact both
+returned 404.
+
+### What is NOT verified
+
+Unlike expression-2 above, **no outside Gradle project has been compiled against
+this artifact**, and no on-device render or performance figure has been taken. What
+is established is the coordinate, the bytes, the checksum, the declared `minSdk` and
+the native payload — nothing further. Treat the API as unexercised until that build
+transcript exists.
+
+### The `elevate` name is in the published API surface
+
+The AAR declares `package="ai.bithuman.elevate"` and its `classes.jar` contains
+`ai/bithuman/elevate/{ElevateFrames, ElevateArmLayout, NativeBridge}`. The
+`elevate` spelling is **deprecated** as a product name — the only two product names
+are expression-2 and essence-2 — but it is now a **published Kotlin package** and
+a Maven coordinate's contents cannot be rewritten after release. Import it as it is
+spelled; a rename would be a breaking API change, not an erratum.
+
+★ The *artifact* name `libelevate-android` was never published and is still
+obsolete — the coordinate is `ai.bithuman:essence2-android`. It is only the
+internal Kotlin package that carries the old spelling.
 
 ---
 
