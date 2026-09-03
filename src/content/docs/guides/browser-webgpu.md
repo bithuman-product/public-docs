@@ -178,26 +178,80 @@ The paste-back backend was confirmed by instrumenting a real run, which
 reported `paste_backend: "webgl2"`. Note the shape of this: **WebGPU's job in
 the shipped path is the speech encoder, not the frame generator.**
 
+### Why there is no WASM fallback for lip-sync — the number
+
+"WASM exists only as a dev hook" is a design decision with a measurement behind
+it, and the measurement is the whole story. The live chain runs the speech
+encoder **once every 320 ms**, so one run has a 320 ms budget. Measured
+2026-09-03 in headless Chrome 151 against the published encoder fetched from the
+mirror — same browser, same bytes, only the execution provider and the GPU
+changed:
+
+| Execution provider | Page | Steady run | 320 ms budget |
+|---|---|---|---|
+| **WebGPU**, real adapter | cross-origin isolated | **81 ms** | fits, 4× headroom |
+| WASM, 32-core host | cross-origin isolated (threads) | 870 ms | **2.7× over** |
+| WASM, 32-core host | not isolated (1 thread) | 2,600 ms | **8× over** |
+| WebGPU, no adapter | either | *hard error* | — |
+
+The WASM runs are not broken — they produce the correct `1×12×200×768` output,
+and the same host is a 32-core workstation, far above a typical laptop. They are
+simply too slow to keep up with speech. That is why an `?render=local` session
+on a machine with no usable WebGPU adapter gives you the living idle loop and
+the agent's TTS audio with **local lip-sync off**, instead of a mouth that runs
+seconds behind the voice. It is a floor we measured, not a gap we forgot.
+
+If you need lip-sync on a browser with no WebGPU adapter, use cloud rendering —
+drop the `?render=local` parameter.
+
 ### Whether it will work for *your* agent
 
 `?render=local` needs a published per-identity web bundle. Without one the
 session **falls back to cloud rendering** rather than rendering a wrong face.
 
-Probing the public bundle mirror for 49 real agent codes on 2026-09-02:
+Measured on 2026-09-03 by **listing the public bundle mirror itself** and then
+fetching, anonymously and unauthenticated, every member each identity's manifest
+names — the content-addressed shared members included:
 
-| Family | Codes probed | Bundle published |
+| Family | Identities published | Every member loadable |
 |---|---|---|
-| [expression-2](/concepts/expression-2) (stylized) | 49 | **40** |
-| [essence-2](/concepts/essence-2) (photoreal) | 49 | **1** |
+| [expression-2](/concepts/expression-2) (stylized) | **79** | 79 / 79 |
+| [essence-2](/concepts/essence-2) (photoreal) | **7** (4 belong to a live agent) | 7 / 7 |
 
-A control code that does not exist returned "not found" on both, so the probe
-distinguishes present from absent.
+A fabricated member name under each live prefix returned "not found" on every
+one of the 86 prefixes, so the probe distinguishes present from absent rather
+than reporting success for everything.
 
-**Read that table before planning around it.** Browser-local rendering is in
-real shape for expression-2 and is effectively **a single-identity preview for
-essence-2** today. For any other photoreal identity, `?render=local` will serve
-a cloud render. This is a publishing backlog, not a browser limitation — the one
-published photoreal bundle carries a complete set of members and loads fine.
+**This supersedes a smaller number this page carried on 2026-09-02** — "49 agent
+codes probed, expression-2 40, essence-2 1", read as *"effectively a
+single-identity preview for essence-2"*. That reading was the error, not the
+count: 40 and 1 were how many of **one 49-code sample** had a bundle, and the
+sample happened to contain one photoreal identity that did. Sampling agent codes
+answers "will *this* agent work"; it cannot count the catalog, and it should
+never have been written as though it had. The catalog is what the table above
+lists.
+
+So: browser-local rendering is in real shape for expression-2 across 79
+identities, and essence-2 is a **small pilot — four live identities — not a
+one-identity preview**. For any photoreal identity outside that four,
+`?render=local` still serves a cloud render. That remains a publishing backlog,
+not a browser limitation.
+
+### Borrowed teeth in the browser
+
+essence-2's mouth interior is **borrowed from real recorded frames**, never
+synthesized, and the browser is held to that rule like every other plane. Three
+of the four live published essence-2 bundles carry the donor bank (668, 985 and
+1024 donors); the fourth does not, and renders without the borrow until its bank
+is published.
+
+The compositor that consumes the bank is the **same C++**  the server planes
+link, compiled to WebAssembly — not a re-implementation. Verified on 2026-09-03
+against the artifact the live viewer serves: its three files matched their
+digests of record byte for byte, and the loader exported
+`_le_tessera_stream_create_corpus`, the entry point the shipped code **requires**
+before it will arm the borrow at all. A build without that symbol is refused
+rather than quietly composed in the wrong reference frame.
 
 ---
 

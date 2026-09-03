@@ -32,8 +32,10 @@ three ways:
   so saved links keep working.
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required (Python SDK 2.9.0+).
-- **In the viewer's browser** — WebGPU/WASM, opt-in per session and rolling
-  out per identity, with frames that never leave that browser.
+- **In the viewer's browser** — a WebAssembly renderer with a WebGPU speech
+  encoder, opt-in per session and rolling out per identity, with frames that
+  never leave that browser. Without a WebGPU adapter the face still renders;
+  local lip-sync does not.
 
 What it does **not** do today is run on a customer's own device. There is
 **no installable Essence 2 build for a Mac, iPhone, iPad or Android device**,
@@ -246,11 +248,17 @@ a [LiveKit](/sdk/livekit) session. (Essence 2 Max is cloud-only by design.)
 
 **In the browser.** A browser-local tier is **rolling out**: appending
 `?render=local` to a session URL downloads the identity's compact web bundle
-and renders Essence 2 **in the browser** — WebGPU on Apple Silicon and
-desktop-class GPUs (real-time with headroom), WASM fallback elsewhere — with
-no server render in the path. It activates per identity as web bundles
-publish; sessions without a published bundle fall back to cloud serving. See
-[browser rendering](/guides/browser-rendering) and the
+and renders Essence 2 **in the browser**, with no server render in the path.
+The frame generator runs on **WebAssembly** on every machine; WebGPU's job in
+this path is the **speech encoder** that drives the mouth. So a machine with no
+usable WebGPU adapter does not fall back to a slower renderer — it renders the
+living idle loop and plays the agent's TTS with **local lip-sync off**, because
+the encoder is 2.7–8× too slow on WASM to keep up with speech
+([the measurement](/guides/browser-webgpu#why-there-is-no-wasm-fallback-for-lip-sync--the-number)).
+The tier activates per identity as web bundles publish — **four live identities
+today**; sessions without a published bundle fall back to cloud serving. See
+[browser rendering](/guides/browser-rendering), the measured
+[WebGPU and local browser rendering](/guides/browser-webgpu) page, and the
 [device/runtime matrix](/concepts/models-v2#where-each-model-runs) for
 current status.
 

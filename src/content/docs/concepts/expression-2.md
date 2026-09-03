@@ -271,8 +271,13 @@ not the `Expression2` Swift product. The `Expression2` SwiftPM product cannot re
 v2.5.0 `Expression2.xcframework` finds zero occurrences of `imx`. **In the
 browser:** append `?render=local` to a
 session URL to render Expression 2 locally (LiteRT.js / WebGPU, WASM fallback),
-so the video never leaves the machine — rolling out per identity as web bundles
-publish. See [Browser rendering](/guides/browser-rendering).
+so the video never leaves the machine. This is the family's most complete
+browser story: **79 identities have a published web bundle**, and on 2026-09-03
+every member of all 79 was fetched anonymously from the public mirror without
+one miss ([how that was measured](/guides/browser-webgpu#whether-it-will-work-for-your-agent)).
+Sessions for an identity with no bundle fall back to cloud serving. See
+[Browser rendering](/guides/browser-rendering) and
+[WebGPU and local browser rendering](/guides/browser-webgpu).
 
 ## Idle and speaking behavior
 
