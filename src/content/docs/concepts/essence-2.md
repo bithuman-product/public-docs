@@ -353,13 +353,22 @@ else.
 It **rolls out per identity**, the way the 2026-07-27 renderer change did: an
 identity picks it up when its bundle is rebuilt, and until then that identity
 serves the previous build. **First served on 2026-09-02, on a single
-identity** — the rollout has begun, it is not a fleet-wide switch, and most
-identities are still on the previous build. Nothing you write changes either
-way, and you cannot pin a session to one build or the other.
+identity; today it is on 1 of 52 published identities** — the rollout has begun,
+it is not a fleet-wide switch, and almost every identity is still on the
+previous build. Nothing you write changes either way, and you cannot pin a
+session to one build or the other.
 
-**How much faster is your session? It depends on which tier serves you, and on
-the GPU tier the answer is "not measurably".** See
-[What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier).
+★ **It also rolls out per graph, which is the part that decides whether an
+Android device sees it at all.** The renderer ships as two graphs — a batched
+one and a single-frame one — and the 2026-09-02 change rewrote only the batched
+one. **Android runs the single-frame graph**, so that change reached nothing a
+phone executes. The single-frame graph was rewritten on 2026-09-03, on the same
+one identity.
+
+**How much faster is your session? It depends on which silicon runs the graph,
+and on the GPU tier the answer is "not measurably".** See
+[What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier)
+and [Android, measured on the handset](#android-measured-on-the-handset).
 
 ## Limits and expectations
 
@@ -433,24 +442,53 @@ comparable with each other, and neither must be read as one.)
 
 The [head-upsample rewrite](#a-faster-head-upsample) is a speed change, so the
 fair question is how much faster *your* session gets. **The honest answer is
-that it depends entirely on which tier serves you, and on the two tiers that
-serve live sessions the answer today is "not at all".**
+that it depends on which silicon runs the graph and on which of the renderer's
+two graphs you are running, and on the two cloud tiers that serve live sessions
+the answer today is "not at all".**
 
 The reason is the step being replaced. A cubic resize is pathologically
-expensive in the ONNX Runtime **CPU** kernel and cheap in the **CUDA** one.
-Profiled on the same graph, the same identity and the same batch, that single
-step is **68.6%** of the whole forward pass on the CPU execution provider and
-**0.48%** of it on CUDA. So the rewrite removes most of the CPU tier's work and
-almost none of the GPU tier's — and the gain does not transfer between them.
-On the Apple tier the same step is **6.06%** of the forward pass, and it is
+expensive in the ONNX Runtime **CPU** kernel and cheap in the **CUDA** one —
+and *how* expensive depends on the processor, so the share is quoted per
+silicon and must never be carried across:
+
+| Where the graph runs | Share of the forward pass taken by this one step |
+|---|---:|
+| CPU execution provider, x86-64 (Threadripper PRO 5955WX, batch 24) | **68.6%** |
+| CPU execution provider, arm64 (Snapdragon 8 Elite, batch 1) | **57.9%** (range 56.0–60.8% over 12 profiles) |
+| Apple Silicon, CoreML (M4 Max, batch 1) | **6.06%** |
+| CUDA (RTX 4090, batch 24) | **0.48%** |
+
+So the rewrite removes most of a CPU-side forward pass and almost none of a
+GPU-side one, the gain does not transfer between them, and **the same rewrite
+is worth a different amount on x86 than on an Arm phone** — 10.7 points of
+share, and 3.00× against 2.23× in wall clock. On the Apple tier the step is
 already built the rewritten way (below), so there is nothing there to remove.
 
-| Tier | Measured? | What the rewrite does there |
+| Where the graph runs | Measured? | What the rewrite does there |
 |---|---|---|
-| **CPU** (portable render core) | yes | **3.00× faster** on the renderer model; **7.54 → 23.87 fps** on the full delivered path |
+| **Android**, on-device (Snapdragon 8 Elite) | yes | **2.23× cooled, 1.92× sustained** on the renderer graph, on the handset. Still not real time — [see below](#android-measured-on-the-handset) |
+| **CPU** (portable render core, x86-64) | yes | **3.00× faster** on the renderer model — on a developer workstation, which is neither a phone nor the deployed CPU worker |
 | **GPU** (NVIDIA CUDA) | yes | **No gain.** 0.971× (about 3% slower) batched, neutral at the streaming shape. Invisible in practice; see below |
 | **Apple** (Apple Silicon, CoreML) | yes | **No gain — it was already there.** The Apple build has expressed this step the rewritten way since before the rollout; the step is 6.06% of that tier's forward pass. See below |
 | **Browser-local** (`?render=local`) | no | **Not measured** |
+
+**Which of the two graphs you get, and why it matters.** An identity's bundle
+carries the renderer as **two** graphs: a **batched** one, and a **single-frame**
+one for streaming. They are rewritten independently. The rollout that began on
+2026-09-02 rewrote **only the batched graph**, and:
+
+- **Android runs the single-frame graph.** The on-device engine cannot use the
+  batched path while the sharp mouth-interior pass is attached, and that pass is
+  always attached. So **the 2026-09-02 change reached nothing an Android device
+  executes.**
+- The **Apple** tier is also built from the single-frame graph — and separately
+  needs no change there, for the reason given below.
+
+The single-frame graph was rewritten and deployed on **2026-09-03**, on the same
+single identity. **Today exactly 1 of 52 published identities carries the rewrite,
+and it carries it in both graphs; the other 51 carry it in neither.** Read every
+figure below as what the change is worth *once your identity has been rebuilt*,
+not as what your session does today.
 
 **CPU tier — measured, and the reason the rewrite exists.** Threadripper PRO
 5955WX (x86-64), ONNX Runtime **CPU** execution provider, batch 24, 4 threads,
@@ -459,11 +497,16 @@ the 120-frame arms to 0.3%). The renderer model alone runs **3.0023×**
 faster against a same-graph noise floor of **0.483%**. The **full delivered path** —
 renderer, frame packing, full-body paste-back — goes from **7.54 fps to
 23.87 fps** on a 1280×720 identity and **7.52 → 20.97 fps** on a 1080×1920 one,
-noise floors 0.19–1.25%. Two things this is not: it is a developer workstation
-rather than the deployed CPU worker, which has **not** been re-measured; and
-even at 23.87 fps the CPU tier is still **not** real time at 25 fps. The rewrite
-moves that tier from hopeless to borderline. It does not make it live-capable,
-and the guidance above is unchanged.
+noise floors 0.19–1.25%.
+
+★ **Three things that row is not, and the third is new.** It is a developer
+workstation, not the deployed CPU worker, which has **not** been re-measured.
+Even at 23.87 fps that tier is still **not** real time at 25 fps. And **it is
+not an Android number and must never be quoted as one** — it is x86-64 at
+batch 24 on a 280 W workstation part, and the handset measurement below
+supersedes it for every on-device claim. The rewrite moves the x86 CPU tier
+from hopeless to borderline. It does not make it live-capable, and the
+guidance above is unchanged.
 
 **GPU tier — measured, and it is not a win.** NVIDIA RTX 4090 on the serving
 host, ONNX Runtime **CUDA** execution provider configured exactly as the
@@ -517,6 +560,81 @@ Apple, and none should be expected.
 
 **Browser-local is not measured.** No figure is inferred for it from the rows
 above.
+
+### Android, measured on the handset
+
+The rewrite's whole point is the CPU-side forward pass, and the CPU-side target
+that matters most is a phone. **It has now been measured on one.** These are the
+only on-device figures for this change, and they replace every extrapolation
+from workstation numbers.
+
+**What was measured.** Both graphs, benchmarked head to head on the same
+handset in the same session. This is an **offline benchmark of the renderer
+graph**, not a live session and not a run through the published
+[Android SDK](/sdk/android)'s own API — it drives the graph directly through the
+same ONNX Runtime 1.26.0 build the Android artifact carries.
+
+- **Device** Galaxy S25+ (`SM-S936U1`), **Snapdragon 8 Elite (SM8750)**.
+- **Runtime** ONNX Runtime **1.26.0**, Android build, **CPU execution provider**.
+- **Shape** the **single-frame** graph — batch 1, the shape Android actually
+  runs. Not comparable with any batch-24 row above.
+- **Threads** 4 intra-op, 1 inter-op, pinned to the four big cores (the mask the
+  shipping engine sets).
+- **Protocol** 8 repeats × 5 arms, interleaved and rotated, medians reported.
+  Screen held awake. All 80 samples passed the clock and contention guards; none
+  were discarded.
+
+| Arm | Cooled ms/frame | fps | RTF | Sustained ms/frame | fps | RTF |
+|---|---:|---:|---:|---:|---:|---:|
+| **Previous step** (cubic resize) | **109.23** | 9.15 | 2.73 | **160.04** | 6.25 | 4.00 |
+| **Rewritten step** | **49.00** | 20.41 | 1.23 | **83.38** | 11.99 | 2.08 |
+| Rewritten step, the deployed artifact | 48.88 | 20.46 | 1.22 | 83.63 | 11.96 | 2.09 |
+
+**Cooled** is after a quiet-and-cool window; **sustained** is after a burn-in,
+which is the state a real turn of speech puts the device in. RTF is render
+wall-clock over the duration of audio rendered — below 1.00 is faster than
+playback.
+
+**The speedup is 2.23× cooled and 1.92× sustained.** The third row is the
+identity that is actually deployed with the rewrite, benchmarked as itself; it
+agrees with the controlled arm to 0.27% cooled and 0.30% sustained. Per-repeat
+paired ratios, which cancel drift, give 2.234× and 1.906×, and every one of the
+eight repeats agrees on direction.
+
+**Both controls fired.** A byte-identical duplicate of the unmodified graph
+measured 1.003× cooled and 1.016× sustained — inside the noise floor. A
+deliberately heavier arm, carrying 33.8% more multiply-accumulates, measured
+**slower** (0.968× cooled, 0.938× sustained), as it must.
+
+★ **It is still not real time on a flagship, and that is the headline.** At
+49.00 ms per frame cooled the engine produces **20.41 fps** against the 25 fps a
+session consumes — RTF **1.22**, so audio outruns video. Sustained it is
+**11.99 fps**, RTF **2.08**. Against the internal bar for a real-time on-device
+tier (RTF ≤ 0.50, ≥ 40 fps) the rewritten graph is **2.45× short cooled and
+4.17× short sustained**. The rewrite closes roughly half the distance and no
+more.
+
+★ **Read the sustained figure as a floor, not as an estimate.** The burn that
+precedes it is a fixed amount of *work*, not a fixed amount of *time*, so the
+faster arm finishes it sooner and at higher average power: it enters its
+sustained window at 50.7 °C against 47.8 °C, and is judged against a big-core
+clock ceiling of 1.958 GHz against 2.438 GHz. A real power-density effect and a
+protocol artifact both push the same way, and this protocol cannot separate
+them. **1.92× is therefore a conservative lower bound on the sustained gain.**
+An equal-wall-clock protocol has been built and has not been run.
+
+**Why the phone gains less than the workstation.** On this silicon the replaced
+step is **57.9%** of the forward pass (56.0–60.8% across 12 profiles), not the
+68.6% measured on x86. That caps the achievable speedup at **2.38×**, and the
+measured 2.23× is 94% of that ceiling — the replacement is close to free, there
+is simply less to remove. For scale, every convolution in the graph together is
+**19.0%** of the same frame.
+
+**No other Android device has been measured, and no figure is published for
+one.** A mid-range part would be slower, and by an amount that depends on how
+large this step's share is on *that* processor — a share which is measured to
+move by more than ten points between the two silicon classes we have. There is
+no defensible way to project it, so no projection is offered.
 
 ## The developer journey
 

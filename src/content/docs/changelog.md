@@ -10,6 +10,68 @@ order: 1
 
 ## September 2026
 
+### Essence 2's head upsample reaches the Android path, and the phone figure is measured (2026-09-03)
+
+★ **Correction to the 2026-09-02 entry below.** That entry announced a rebuilt
+head-upsampling step and published a **3.00×** CPU speedup. Both statements
+stand, but the entry let a reader infer something that was not true: that an
+**Android** device got the win. It did not.
+
+**Why not.** An identity's renderer ships as **two** graphs — a **batched** one
+and a **single-frame** one — and they are rewritten independently. The
+2026-09-02 rollout rewrote **only the batched graph**. **Android runs the
+single-frame graph** (its batched path is unavailable while the sharp
+mouth-interior pass is attached, and that pass is always attached), so the
+change reached nothing a phone executes. The single-frame graph was rewritten
+and deployed on **2026-09-03**, on the same single identity. **The rewrite is
+now on 1 of 52 published identities, in both graphs; the other 51 have it in
+neither.**
+
+**And now it is measured on a phone.** Both graphs, benchmarked head to head on
+a **Galaxy S25+ (`SM-S936U1`, Snapdragon 8 Elite / SM8750)**, ONNX Runtime
+**1.26.0** CPU execution provider, **batch 1** (the shape Android runs), 4
+intra-op threads pinned to the four big cores, screen held awake, 8 interleaved
+and rotated repeats, medians, 80 of 80 samples passing the clock and contention
+guards. This is an **offline benchmark of the renderer graph** — not a live
+session, and not a run through the published Android SDK's own API.
+
+| Renderer graph | Cooled ms/frame | fps | RTF | Sustained ms/frame | fps | RTF |
+|---|---:|---:|---:|---:|---:|---:|
+| Previous step (cubic resize) | **109.23** | 9.15 | 2.73 | **160.04** | 6.25 | 4.00 |
+| Rebuilt step | **49.00** | 20.41 | 1.23 | **83.38** | 11.99 | 2.08 |
+
+**2.23× cooled, 1.92× sustained.** The deployed identity, benchmarked as
+itself, agrees to 0.27% / 0.30%. Both controls fired: a byte-identical duplicate
+measured 1.003× / 1.016×, inside the floor; a deliberately 33.8%-heavier arm
+measured **slower**, 0.968× / 0.938×. The sustained figure is a **lower bound** —
+the burn preceding it is fixed *work*, not fixed *time*, so the faster arm
+enters its window hotter (50.7 °C vs 47.8 °C) and against a lower clock ceiling
+(1.958 vs 2.438 GHz).
+
+★ **Essence 2 still does not render in real time on a flagship phone.** Even
+cooled and rebuilt, 20.41 fps is below the 25 fps a session consumes (RTF 1.22);
+sustained it is 11.99 fps. Against the internal real-time bar (RTF ≤ 0.50,
+≥ 40 fps) the rebuilt graph is 2.45× short cooled and 4.17× short sustained.
+
+★ **The 7.54 → 23.87 fps figure is not an Android figure.** It is a **developer
+workstation** — Threadripper PRO 5955WX, x86-64, batch 24 — and it is neither a
+phone nor the deployed CPU worker. The handset rows above supersede it for every
+on-device claim. The share of the forward pass taken by the replaced step is
+**68.6%** on that x86 part but **57.9%** on the Snapdragon, which is why the same
+rewrite is worth 3.00× there and 2.23× here; shares and speedups do not carry
+across silicon.
+
+**Unchanged, and stated again so it is not read as a general speedup:** on the
+**GPU** tier the rewrite is **0.971× — about 3% slower**, and no GPU speedup
+should be expected or quoted. On the **Apple** tier there is nothing to gain:
+that build's converter has expressed this step the rewritten way since
+2026-08-30, and the step is 6.06% of that tier's forward pass, which caps any
+work on it at **1.06×**.
+
+**No other Android device has been measured** and no figure is projected for
+one. See [Android, measured on the handset](/concepts/essence-2#android-measured-on-the-handset)
+and the [Android SDK page](/sdk/android#on-device-speed-measured-on-a-snapdragon-8-elite).
+
 ### essence-2 lands on Maven Central — both families now have a public Android SDK (2026-09-03)
 
 `ai.bithuman:essence2-android:0.2.0` is published to Maven Central and resolves
@@ -32,9 +94,10 @@ implementation("ai.bithuman:essence2-android:0.2.0")   // essence-2, minSdk 29, 
   32.7 fps.
 
 No Gradle project outside bitHuman has been compiled against it yet, and no
-on-device render or performance figure has been taken **for 0.2.0** — what is
-established is the coordinate, the bytes, the checksum, the declared `minSdk`
-and the native payload. The [Android SDK page](/sdk/android) carries the
+render through this artifact's own API has been taken — what is established is
+the coordinate, the bytes, the checksum, the declared `minSdk` and the native
+payload. **Updated the same day:** the renderer graph it carries has since been
+benchmarked on a Snapdragon 8 Elite handset — see the entry above. The [Android SDK page](/sdk/android) carries the
 measurements and both negative controls.
 
 **FFmpeg / LGPL.** The AAR links FFmpeg 7.1 statically, so LGPL-2.1 **§6(a)**

@@ -483,13 +483,68 @@ The probe discriminates: `junit:junit:4.13.2` returned 200 as a positive control
 while `ai.bithuman:expression2-android:9.9.9` and a nonexistent artifact both
 returned 404.
 
-### What is NOT verified
+### On-device speed, measured on a Snapdragon 8 Elite
+
+★ **This supersedes the previous version of this page, which said no on-device
+performance figure had been taken.** One has now been taken — for the renderer
+graph, on a handset. Read the scope before the numbers.
+
+**What was measured, and what was not.** The renderer graph was benchmarked
+directly on the device through the same ONNX Runtime 1.26.0 CPU build this AAR
+carries. It is **not** a run through this artifact's own Kotlin API, and it is
+**not** a live session. The API remains unexercised from outside — see
+[What is still not verified](#what-is-still-not-verified).
+
+- **Device** Galaxy S25+ (`SM-S936U1`), **Snapdragon 8 Elite (SM8750)**.
+- **Runtime** ONNX Runtime **1.26.0**, CPU execution provider — no accelerator.
+- **Shape** batch 1, the single-frame graph, which is the one this engine runs.
+- **Threads** 4 intra-op, 1 inter-op, pinned to the four big cores — the mask
+  the shipping engine sets.
+- **Protocol** 8 repeats × 5 arms, interleaved and rotated, medians. Screen held
+  awake so the device could not enter its idle clock cap. 80 of 80 samples
+  passed the clock and contention guards.
+
+| Renderer graph | Cooled ms/frame | fps | RTF | Sustained ms/frame | fps | RTF |
+|---|---:|---:|---:|---:|---:|---:|
+| Previous head upsample — what 51 of 52 identities carry | **109.23** | 9.15 | 2.73 | **160.04** | 6.25 | 4.00 |
+| Rebuilt head upsample — 1 of 52 today | **49.00** | 20.41 | 1.23 | **83.38** | 11.99 | 2.08 |
+
+**Cooled** is after a quiet-and-cool window. **Sustained** is after a burn-in,
+which is the state a real turn of speech puts the device in — quote it, not the
+cooled row, when you are sizing a product. RTF is render wall-clock over the
+duration of audio rendered; below 1.00 is faster than playback.
+
+★ **essence-2 does not render in real time on this device, before or after.**
+Even cooled, with the rebuilt step, 20.41 fps is below the 25 fps a session
+consumes (RTF 1.22), and sustained it is 11.99 fps. Plan for offline rendering
+or a cloud session; do not plan a live on-device essence-2 turn on current
+hardware.
+
+**Both controls fired**, in the same session: a byte-identical duplicate of the
+graph measured 1.003× cooled / 1.016× sustained (inside the noise floor), and a
+deliberately heavier arm carrying 33.8% more multiply-accumulates measured
+**slower**, 0.968× / 0.938×.
+
+**The second row is not what you get from `0.2.0` today.** It is a graph change
+that rolls out per identity and is currently on **1 of 52** published
+identities. The [Essence 2 concept page](/concepts/essence-2#android-measured-on-the-handset)
+carries the full protocol, the throttling caveat that makes 1.92× a lower bound
+on the sustained gain, and why the phone gains 2.23× where an x86 workstation
+gains 3.00×.
+
+**No other Android device has been measured and no figure is projected for
+one.** In particular, the **7.54 → 23.87 fps** figure published for the CPU
+render core is a **developer workstation** (Threadripper PRO 5955WX, x86-64,
+batch 24). It is not a phone number, and it does not describe this artifact.
+
+### What is still not verified
 
 Unlike expression-2 above, **no outside Gradle project has been compiled against
-this artifact**, and no on-device render or performance figure has been taken. What
-is established is the coordinate, the bytes, the checksum, the declared `minSdk` and
-the native payload — nothing further. Treat the API as unexercised until that build
-transcript exists.
+this artifact**, and no render through its own API has been taken — the figures
+above drive the graph, not the SDK. What is established is the coordinate, the
+bytes, the checksum, the declared `minSdk`, the native payload and the renderer
+graph's speed on one handset — nothing further. Treat the API as unexercised
+until that build transcript exists.
 
 ### The legacy `elevate` name is in the published API surface
 
