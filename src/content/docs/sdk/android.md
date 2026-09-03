@@ -118,6 +118,8 @@ import ai.bithuman.expression2.Expression2Avatar
 import ai.bithuman.expression2.Expression2Model
 import ai.bithuman.expression2.Expression2Options
 import ai.bithuman.expression2.Routing
+import android.content.Context
+import java.io.File
 
 val model = Expression2Model.combined(
     File(dir, "combined_fp32.tflite"),   // legacy member filenames, kept for
@@ -139,10 +141,23 @@ val avatar = Expression2Avatar.create(
 essence-1 AAR further down this page is the 25 fps one.
 
 ★ **Pass `routing` as well as `accelerator`.** `Expression2Options.resolveRouting()`
-is `routing ?: when (accelerator) { NPU -> Routing.MIXED; AUTO, CPU -> Routing.ALL_CPU }`.
-So `Accelerator.NPU` on its own resolves to `Routing.MIXED`, which is retired.
-Naming the routing you want is the difference between the arm you measured and a
-different one.
+is `routing ?: when (accelerator) { NPU -> Routing.MIXED; AUTO, CPU -> Routing.ALL_CPU }`
+— read out of the 0.3.0 bytecode, where `Accelerator.NPU` is the branch that
+selects `MIXED`. So `Accelerator.NPU` on its own resolves to `Routing.MIXED`.
+
+The wart is that **`MIXED` is the one routing this page publishes no measurement
+for.** Every figure above was taken on `HTP_DECODER` (the Hexagon runs) or on
+`ALL_CPU` (the 7.7 fps default). Ask for `Accelerator.NPU` alone and you silently
+get a third arm that none of these numbers describe.
+
+**And nothing warns you.** An earlier version of this page called `MIXED`
+*"retired"*. That was editorial, not shipped: `ai.bithuman:expression2-android:0.3.0`
+carries **no `@Deprecated` marker anywhere** — not on `MIXED`, not on anything — and
+the words *retired* and *deprecated* appear in no string in the AAR's own code.
+(They occur only inside the bundled Google `libLiteRt.so`, in `absl`'s retired-flag
+machinery and an XNNPACK message — nothing to do with routing.) `MIXED` is a live,
+undeprecated public constant, your IDE will not grey it out, and your build will
+not caution you. Name the routing you want and you get the arm you read about.
 
 ★ **The default is the slow one, deliberately.** A bare `Expression2Options()`
 leaves `accelerator = Accelerator.AUTO`, which resolves to `Routing.ALL_CPU` on
@@ -270,12 +285,58 @@ Avatar.load(modelPath, apiSecret).use { avatar ->
 ```
 
 `Avatar.load(modelPath, apiSecret)` — get a secret at
-[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). The library
-exchanges it for a short-lived runtime token at startup and renews on a heartbeat
-(5-minute offline grace). **Without a valid secret `Avatar.load` throws
-`BithumanException: AUTH_FAILED`** — the SDK also reads the
-`BITHUMAN_API_SECRET` environment variable if it is set before the process starts,
-but a Java *system property* is not read.
+[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). `BithumanAuth`
+exchanges it for a runtime token at startup and then renews on a heartbeat: the
+2.3.6 defaults are `intervalSeconds = 60` and `offlineGraceSeconds = 300`, so a
+60-second heartbeat with a 5-minute offline grace.
+
+> ### Correction — 2026-09-02: there is no `AUTH_FAILED`
+>
+> This page previously said that without a valid secret `Avatar.load` throws
+> **`BithumanException: AUTH_FAILED`**. **That identifier does not exist.** The
+> string `AUTH_FAILED` occurs nowhere in `ai.bithuman:sdk:2.3.6` — not in any of
+> the 19 classes in `classes.jar`, and not in any of the three bundled `.so`
+> files. Anyone who wrote a `catch` against that name was matching on nothing.
+
+What the 2.3.6 AAR actually does on the failure path, read out of its bytecode:
+
+| What you did | What you get |
+|---|---|
+| Passed no secret, with no env var set | **`java.lang.IllegalArgumentException`** — *not* a `BithumanException` — from `Avatar$Companion.load`, message `Avatar.load: apiSecret required (or set BITHUMAN_API_SECRET env, or BITHUMAN_UNMETERED=1 for dev).` |
+| Passed an empty secret | `java.lang.IllegalArgumentException`, message `apiSecret must not be empty`, from `BithumanAuth.configure` |
+| Passed a secret the server rejects | **`BithumanException`**, message `be_auth_init: status=<n>` or `be_auth_authenticate: status=<n>` |
+
+The type you must catch therefore depends on *which* failure it is: a **missing or
+empty** secret is an unchecked `IllegalArgumentException` (it is treated as a
+programming error), and only a **rejected** one is a `BithumanException`. A
+`try { … } catch (e: BithumanException)` around `Avatar.load` does not catch the
+missing-secret case at all.
+
+The numeric codes the native layer returns are `BithumanError.NO_AUTH = 11` and
+`BithumanError.AUTH_FATAL = 12`. Live auth status is exposed as `AuthState`, whose
+six values are `UNCONFIGURED`, `AUTHENTICATING`, `OK`, `OFFLINE`, `FATAL_BALANCE`
+and `FATAL_SUSPENDED`.
+
+★ **`BITHUMAN_UNMETERED=1` — real, and undocumented until now.** `Avatar.load`
+reads this environment variable with `System.getenv` as its **first** action, before
+it looks for a secret at all. If it is exactly the string `1`, the whole
+authentication block is skipped: no secret is required, `BithumanAuth.configure` is
+never called, and `load` goes straight to opening the `Fixture`. It is a
+development affordance — the value must be exactly `1` (`true` and `yes` do not
+work) and you should not ship it in a release build.
+
+The SDK also reads the `BITHUMAN_API_SECRET` environment variable, likewise via
+`System.getenv`, so it must be set before the process starts. A Java *system
+property* is not consulted on this path.
+
+★ **Why this page's own compile probe could not catch this.** Every snippet here is
+put through a compile probe before publication, and that control works — it is what
+caught the `ShortArray` mistake in the next section. But this defect was in
+**prose**, naming an identifier on a **failure path that no snippet exercises**. A
+control that compiles the happy path is structurally blind to a false claim about
+what happens when the happy path is *not* taken. That is a gap in the method, not a
+slip: it is why the table above is quoted out of the artifact rather than from
+memory, and why the failure-path names are now the ones the bytecode uses.
 
 ### Streaming
 
@@ -305,8 +366,40 @@ can see it go red.
 
 A single `Runtime` is **not** internally synchronized — pin push/pull to one thread
 or wrap it in your own mutex. Multi-conversation hosts share one `Fixture` across
-many `Runtime`s to amortize the model load. The default execution provider is CPU;
-`ExecutionProvider.NNAPI` and `QNN` are accepted but no-op to CPU.
+many `Runtime`s to amortize the model load.
+
+### Execution providers — what is actually in the artifact
+
+`ExecutionProvider` has five values: `CPU`, `AUTO`, `COREML`, `NNAPI` and `QNN`.
+The default is **`CPU`** (it is the default argument of `Avatar.load`). An earlier
+version of this page said `NNAPI` and `QNN` *"are accepted but no-op to CPU"*. That
+is not what the artifact shows, and the two are not in the same position:
+
+- **`NNAPI` is genuinely wired.** `libessence_jni.so` carries an undefined dynamic
+  reference to `OrtSessionOptionsAppendExecutionProvider_Nnapi@VERS_1.26.0`, and
+  the bundled `libonnxruntime.so` — a `DT_NEEDED` of the wrapper — exports that
+  symbol. A compiled call site exists, so selecting NNAPI demonstrably does **not**
+  no-op inside our wrapper: the provider really is appended to the ORT session
+  options. **What ONNX Runtime then does with it on a real handset — whether NNAPI
+  takes any of the graph, or whether ORT assigns every node back to CPU — is a
+  device fact, and it is not verified here.** No phone measurement backs either
+  answer, so this page asserts neither. Read it as "the provider is requested", not
+  as "the model is accelerated", until you measure it on your own device.
+- **`QNN` has no backend in this AAR to reach.** The bundled `libonnxruntime.so`
+  contains no QNN execution-provider code: no `libQnn*.so` reference, no
+  `QnnBackend_*` and no `QnnInterface*` symbol. The bare string
+  `QNNExecutionProvider` *does* appear, but so do `CUDAExecutionProvider`,
+  `OpenVINOExecutionProvider` and `DmlExecutionProvider`, none of which can be
+  compiled into an Android `arm64-v8a` build — that list is ORT's static table of
+  provider *names*, not evidence that any of them is present. The same test run
+  against NNAPI as a positive control finds 103 `ANeuralNetworks*` symbols, so the
+  test does discriminate. **What `ExecutionProvider.QNN` does at runtime is
+  therefore unverified**; what is certain is that this artifact ships no Qualcomm
+  backend for it to use.
+
+If you want the Qualcomm NPU on Android today, the measured path is the
+**expression-2** AAR at the top of this page, which takes the QNN delegate as an
+explicit dependency.
 
 > **Not re-measured for this page.** The on-device frame-rate and memory figures
 > previously published for essence-1 on Android (a tight-loop mean of 3.96 ms,
