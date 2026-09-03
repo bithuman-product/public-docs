@@ -15,22 +15,29 @@ into one claim. Verified 2026-09-02.
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
 | **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 2.10.0 | Works, with [one prerequisite you must ask us for](#the-audio-encoder-is-not-in-the-wheel) |
-| **Linux x86_64** | [Expression 2](/concepts/expression-2) — live render | [CLI](/sdk/cli/overview) `bithuman run` | Engine ships in the CLI; `bithuman render` is broken ([below](#the-linux-cli-installer-and-a-broken-render)) |
+| **Linux x86_64** | [Expression 2](/concepts/expression-2) — live and offline render | [CLI](/sdk/cli/overview) 2.5.1 | Engine ships in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified) |
 | **macOS Apple Silicon** | Expression 2 — live render, out of the box | CLI 2.5.0 via Homebrew | Works |
 | **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 2.10.0 | Works, same prerequisite as Linux |
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/swift) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
-| **Android** | Expression 2 / Essence 2 | — | No artifact you can resolve — [see below](#android) |
+| **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.0` | Resolves anonymously from Maven Central — limits on the [Android SDK page](/sdk/android) |
+| **Android** | Essence 2 | — | No artifact you can resolve — [see below](#android) |
 
-Two things are true on **every** platform:
+Two things to settle before you pick a platform:
 
-- **A metering key is required.** Self-hosted rendering authenticates
-  `BITHUMAN_API_SECRET` and sends a once-per-minute billing heartbeat at the
-  self-hosted rate ([pricing](/guides/pricing)). Without a valid key the
-  runtime is fail-closed — it renders zero frames. There is no unmetered mode
-  in a released wheel. Get a key at
-  [Developer → API](https://www.bithuman.ai/#developer).
+- **Self-hosted rendering is billed, and you should set
+  `BITHUMAN_API_SECRET`.** Every self-host runtime authenticates it and sends
+  a once-per-minute billing heartbeat at the self-hosted rate
+  ([pricing](/guides/pricing)). Get a key at
+  [Developer → API](https://www.bithuman.ai/#developer). **What happens
+  without one differs by model, and the two defaults are opposites**:
+  Essence 2's offline route is **fail-closed** — it raises
+  `MeteringNotArmedError` at the first frame and renders nothing — while the
+  Expression 2 Linux render host is **fail-open** as of the 2026-09-02 engine
+  rebuild: it renders, behind a `★ UNMETERED RENDER` banner on stderr, and the
+  usage may never reach the ledger. Both states, verbatim, with the exit codes:
+  [Python SDK → Metering](/sdk/python#7-metering--what-you-see-in-each-credential-state).
 - **Essence 2 live streaming is not self-hostable.** Only whole-clip offline
   rendering is. Live sessions run through the cloud — see
   [LiveKit](/guides/deploy-livekit).
@@ -198,50 +205,36 @@ there is nothing to configure on your side.
 | `BITHUMAN_TESSERA_PIPELINE` | `1` | producer/consumer pipelined render; `0` disables |
 | `BITHUMAN_TESSERA_DIRECTOR` | `auto` | `ts`/`onnx` pins the director backend |
 
-### The Linux CLI installer, and a broken `render`
+### The Linux CLI, alongside the Python route
 
-The CLI is useful on Linux for `list`, `pull`, `info` and `engine` — not for
-rendering.
+The CLI installs on Linux x86_64 with the unpinned one-liner — run here on
+2026-09-02 it resolved `cli-v2.5.1`, verified the sha256 and exited **0**,
+staging the Expression 2 render host beside the binary:
 
-> ★ **The universal installer fails on Linux as of 2026-09-02.** It resolves the
-> newest `cli-v*` release, which is `cli-v2.5.0` — and that release publishes
-> **only** a macOS tarball. On Linux the download 404s and the script exits 1:
->
-> ```text
-> install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.0/bithuman-x86_64-unknown-linux-gnu.tar.gz
-> curl: (22) The requested URL returned error: 404
-> install: error: download failed.
-> ```
->
-> Pin the newest release that carries a Linux binary — `cli-v2.4.2`:
->
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \
->   | BITHUMAN_VERSION=cli-v2.4.2 sh
-> ```
->
-> That installs `bithuman` 2.4.2 (`libessence 2.3.8 ABI 7`) with the Linux
-> Expression 2 render host, sha256-verified. `cli-v2.3.27` is the last release
-> carrying a **Linux aarch64** tarball.
-
-`bithuman render` does not work on Linux — it fails at the muxing step for
-every WAV tried, on 2.4.0 and still on 2.4.2:
-
-```text
-error: record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed
+```bash
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-It also refuses an Expression 2 `.avatar` outright, because `render` drives the
-Essence 1 engine only:
+Use it for `login`, `list`, `pull` and `info` — `bithuman info <file> | grep
+tessera` is the quickest way to read an artifact's members. Which families
+`render` can and cannot produce an MP4 for on Linux, with each command's real
+exit code, is on [what the CLI actually
+does](/sdk/cli/verified); Linux aarch64 is **not** published for `cli-v2.5.1`
+— see [installing the CLI](/sdk/cli/install).
+
+**Essence 2 has no offline `render` in the CLI.** Handing `bithuman render` a
+`.lebundle.imx` on Linux exits **69** — the CLI ships no `lible_core.so`, the
+native runtime that owns the teeth borrow:
 
 ```text
-error: could not load fixture: file corrupt: imx: container declares
-engine='expression2' but libessence serves engine='essence1' only
+error: could not load lible_core.so (the native essence-2 runtime that owns the
+TESSERA teeth borrow). Tried: …/.local/bin/lible_core.so; …/.bithuman/lib/lible_core.so
 ```
 
-For an offline MP4 on Linux, use the Python SDK route above. For a live
-Expression 2 avatar, use `bithuman run`, which drives the LiteRT render host the
-installer stages for you.
+That is what the Python route above is for: it is the supported way to get an
+Essence 2 MP4 on your own hardware, and it is the only route that reports
+whether the mouth interior was
+[borrowed](/sdk/python#6-prove-the-borrow-gate-fires).
 
 ---
 
@@ -356,22 +349,22 @@ dependencies { implementation("ai.bithuman:sdk:2.3.6") }
 bundles its own audio encoder, so a stock Essence 1 model needs no extra assets.
 Full setup on the [Android SDK page](/sdk/android).
 
-**What you cannot resolve today:** any second-generation artifact. The group
-`ai.bithuman` publishes exactly one artifact on Maven Central — `ai.bithuman:sdk`
-— so no Gradle coordinate you can write will fetch an Expression 2 or Essence 2
-AAR, and a build file naming one fails at dependency resolution.
+**Expression 2 is also on Maven Central**, as of 2026-09-02:
 
-An `arm64-v8a` Expression 2 AAR has been built, published and verified by a
-clean-room consumer build, but it is published to a **private** registry that
-requires membership of a private repository. An anonymous Gradle build gets
-**HTTP 401**, not a missing artifact — so there is no coordinate worth putting
-on this page yet. When it ships publicly it will resolve from Maven Central
-under the same `ai.bithuman` group, and this page will carry the coordinate the
-day it does.
+```kotlin
+dependencies { implementation("ai.bithuman:expression2-android:0.3.0") }
+```
 
-Until then, reach the second-generation models on Android through the cloud —
-the [REST API](/api/overview), a [LiveKit](/sdk/livekit) session, or the agent
-landing page in a WebView.
+`arm64-v8a`, minSdk 26. Both coordinates resolve anonymously — verified here
+by fetching them directly, with `ai.bithuman:essence2-android` as the negative
+control (**HTTP 404**: it is not published). Coordinates, the resolving Gradle
+snippet and the measured limits are on the [Android SDK
+page](/sdk/android); the scripts and their controls are on [verifying the
+Android SDK](/sdk/android-verify).
+
+**What you cannot resolve:** an Essence 2 AAR. Reach Essence 2 on Android
+through the cloud — the [REST API](/api/overview), a
+[LiveKit](/sdk/livekit) session, or the agent landing page in a WebView.
 
 ---
 
