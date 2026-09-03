@@ -61,11 +61,19 @@ Auth: export `BITHUMAN_API_SECRET`. Get a secret at [Developer → API
 Keys](https://www.bithuman.ai/developer/api-keys). See [authentication](/api/quickstart)
 for details.
 
-> **Which calls read the env var? (verified on 2.8.1)** The sync
-> `Bithuman.load(...)` falls back to `BITHUMAN_API_SECRET` automatically when
-> you omit `api_secret`. The async `AsyncBithuman.create(...)` does **not** on
-> 2.8.1 — pass `api_secret=os.environ["BITHUMAN_API_SECRET"]` explicitly (the
-> async env fallback lands in the next release).
+> **Which calls read the env var? (re-measured on 2.10.0)** **Both** do. The
+> sync `Bithuman.load(...)` has always fallen back to `BITHUMAN_API_SECRET`
+> when you omit `api_secret`, and the async `AsyncBithuman.create(...)` now
+> does too — on 2.8.1 it did not, so code written against that release passes
+> the secret explicitly and still works. Measured with its control: with the
+> variable set and `api_secret=` omitted, `create()` returns a runtime and the
+> process exits `0`; with the variable unset, the same call exits `1` on
+>
+> ```text
+> bithuman.exceptions.BithumanError: [unknown] AsyncAvatar.create: api_secret is
+> required (or set BITHUMAN_API_SECRET in env). Get a key at
+> https://www.bithuman.ai/#developer
+> ```
 
 ## 2.3 — slim wheel, CLI moved out
 
