@@ -98,7 +98,7 @@ We keep this honest so you can plan around it.
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.10.0) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM, pin `from: "2.5.0"` — products `bitHumanKit` and `Expression2` | On-device | **Preview** |
-| **Android / Kotlin** | `ai.bithuman:sdk:2.3.6` — Maven Central (Essence, pinned) | On-device | **Beta** |
+| **Android / Kotlin** | Maven Central, two artifacts: `ai.bithuman:expression2-android:0.3.0` (expression-2) and `ai.bithuman:sdk:2.3.6` (essence-1) | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.4.2 — Homebrew / universal installer; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
