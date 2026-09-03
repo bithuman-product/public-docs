@@ -10,7 +10,7 @@ order: 11
 
 On Apple platforms, bitHuman ships as **`bitHumanKit`** — a single SwiftPM
 package that drops a real-time voice agent, with an optional lip-synced avatar,
-into your Mac, iPad, or iPhone app. The umbrella framework re-exports both
+into your Mac, iPad, or iPhone app. The umbrella framework carries two
 on-device engines:
 
 - **Expression** — animates any portrait image at runtime (speech encoder →
@@ -32,8 +32,12 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > **`Expression2`** (`import Expression2`), the second-generation avatar engine,
 > new in **v2.5.0**; and `BithumanEngineProtocol`, a source-only Layer-0 engine
 > interface. The older standalone Layer-1 products (`Expression`, `Bithuman`) are
-> **not** published — naming one fails at resolve time with
-> `product 'Expression' ... not found in package 'homebrew-bithuman'`.
+> **not** published — naming one fails with
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`, rc 1.
+> Note **when** it fails: `swift package resolve` returns **0** on a manifest
+> naming `Expression`, because resolve settles the dependency graph and does not
+> check product names. The failure lands on `swift build`. If you are scripting a
+> preflight, resolve alone will pass you through.
 
 > **Which second-generation engines are on this rail.**
 > [`expression-2`](/concepts/expression-2) **is**, as of **v2.5.0** — see
@@ -41,13 +45,18 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > release does and does not include.
 > [`essence-2`](/concepts/essence-2) **is not**: it is not a SwiftPM product and
 > it is not bundled inside `bitHumanKit`. That is measured against the shipped
-> binary, not assumed — `bitHumanKit.xcframework` @ `v2.4.0` contains zero
-> occurrences of the string `essence` and its public interface declares no
-> Essence 2 type. [`essence-2-max`](/concepts/essence-2-max) is cloud-only by
+> binary, not assumed — `strings -a` on the `ios-arm64` slice of
+> `bitHumanKit.xcframework` @ `v2.4.0` counts `essence` **0**, `libessence`
+> **0**, `tessera` **0**, against `ImxContainer` **141** and `mlx` **104937** in
+> the same read, and its public interface declares no Essence 2 type.
+> [`essence-2-max`](/concepts/essence-2-max) is cloud-only by
 > design. To reach Essence 2 from an Apple app today, call the
 > [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session — or, on a
 > Mac specifically, drive the Python wheel: see
 > [Essence 2 on a Mac, without Swift](#essence-2-on-a-mac-without-swift).
+> Essence 2 **has** rendered on an iPhone, in a lab, and
+> [what that proved and what it did not](#essence-2-on-iphone-proven-not-shipped)
+> is written out below rather than left as a roadmap hint.
 
 > **Before you open Xcode, preflight the package from any machine.**
 > [Apple — check before you ship](/examples/apple-swiftpm-check) resolves the
@@ -64,14 +73,28 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **2.5.0** ("Up to Next Major Version" from 2.5.0) and attach the product
+Pick **2.5.1** ("Up to Next Major Version" from 2.5.1) and attach the product
 you want — **`bitHumanKit`** for the umbrella, **`Expression2`** for the
 second-generation engine alone. Or in `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "2.5.0")
+         from: "2.5.1")
 ```
+
+> **2.5.1 is a manifest correction and downloads nothing new.** Every
+> `binaryTarget` URL and checksum is byte-identical to 2.5.0 — 45 code lines in,
+> 45 code lines out. What changed is the manifest's own commentary, which had
+> gone false in two ways worth knowing about if you read it in Xcode: it recorded
+> that the umbrella does **not** contain `libessence` and then, ninety lines
+> lower, that the umbrella "re-exports both engines"; and it told you to
+> `import Expression` / `import Bithuman` for "the lower-level engine products",
+> neither of which this package has ever vended. Asking for one is not a
+> deprecation warning, it is a build failure —
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`, rc 1.
+> `Bithuman` is a **type** vended by `bitHumanKit`, not a module you can import.
+> If you are already on `from: "2.5.0"` you pick 2.5.1 up automatically and
+> nothing about your build changes.
 
 > **One package, two release tags — by design.** `2.5.0` is the version you pin;
 > it is the manifest that declares every product. The umbrella's binary still
@@ -87,6 +110,17 @@ second-generation engine alone. Or in `Package.swift`:
 > `error: the package manifest at '/Package.swift' cannot be accessed`. The
 > `0.8.x` numbers belong to the retired `bithuman-sdk-public` repo, archived when
 > the SwiftPM distribution moved here.
+>
+> **And the old URL still works, which is the part that can fool you.**
+> `bithuman-product/bithuman-sdk-public` has not been deleted: it 301-redirects
+> to `bithuman-archive/bithuman-sdk-public`, which is public and flagged
+> `archived: true`. A consumer pinned to that URL at `from: "0.8.1"` resolves —
+> SwiftPM picks tag `0.8.2` — and the binary it pins is not stale: it is the
+> **same 55,588,107 bytes, sha256 `5c536e37…e9db`**, as the umbrella this repo
+> ships at `v2.4.0`. So nothing breaks and nothing warns you. What you lose is
+> everything added since: that manifest vends only `bitHumanKit`, so no
+> `Expression2`, no `BithumanEngineProtocol`, and no future release, because the
+> repo is frozen. Move the URL, not just the version.
 
 The package wraps a pre-compiled `bitHumanKit.xcframework`; every third-party
 dependency (MLX, HuggingFace, Tokenizers, …) is statically linked, so consumers
@@ -346,6 +380,64 @@ the machine.
 inspected on Linux; the macOS wheel was **not executed**, because no Mac was
 involved in producing this page. See [Python SDK](/sdk/python) for the API once
 it is installed.
+
+## Essence 2 on iPhone: proven, not shipped
+
+Essence 2 has rendered on an iPhone with its teeth borrowed, and it is still not
+something you can build. Both halves of that are true and the gap between them is
+the honest answer to "when is Essence 2 on iOS".
+
+**What ran.** On 2026-09-02, one process on an iPhone 15 (iOS 26.6.1) rendered
+Essence 2 and composed the teeth borrow inline, through the same shipped seam the
+Apple runtime uses — not a replay of vectors recorded on a host. Graded against
+the offline borrow reference on its own operands, in one pixel domain, no resize
+and no zoom:
+
+| Arm | L1 vs the offline borrow reference |
+| --- | --- |
+| On-device borrow, whole 512×512 crop | **0.002295 u8** |
+| Borrow **off** (the twin, same director crops) | 0.100359 u8 |
+| Gap closed | **97.71 %** — 43.7× better |
+| Null control (candidate vs itself) | 0.000000 u8 — required to be exactly 0 |
+| Different-operand control (frame *i* vs reference *i+1*) | 1.492498 u8 — 650× the grade |
+
+Inside the stamped teeth window the same three arms read 0.026703 / 1.167819 /
+2.978286. The borrow changed 322,097 bytes inside that window and **0 bytes
+outside it**. The device's borrow-off crop is byte-identical to its pre-borrow
+crop, so the only difference between the two arms is the borrow itself.
+
+**Why that is not a lane.** It took a hand-assembled app side-loaded from a lab
+host, a payload copied into the app's Documents container by `devicectl`, a
+bundle trimmed to 64 target frames because the full one is killed on the device,
+a recorded provenance breach in the bundle's own metadata, and a 46 MB fp16
+speech front-end standing in for the 377 MB production one — which the phone
+`SIGKILL`s about a second after launch. No customer traffic touched it and no
+customer could reproduce it.
+
+**And it is not real-time.** The borrow costs 11.3× throughput: 1.56 fps armed
+against 17.67 fps on identical crops with the pass off — roughly 570 ms per frame
+in the compositor, not in the renderer. That is RTF 16.06 against a 25 fps
+target.
+
+**What has to land before this is a product, and who owns it.**
+
+1. **An m4 (v3) export of a tessera-carrying identity.** Everything trimmed
+   above exists because the identity used is a v2 bundle that holds its whole
+   frame volume resident. v3 deletes that volume and is the device format. A
+   bake, owned by the model side.
+2. **A co-built a2x and keypoint chain.** The GPU bake and the Apple
+   re-extraction disagree by 0.0127 against a 1e-3 bar — a cross-plane keypoint
+   delta, not a corrupt file. Until both come out of one source, no Apple bundle
+   satisfies its own exporter's gate.
+3. **Real-time.** See the 570 ms/frame above. This is a compositor problem.
+4. **A passthrough counter on the shipped path.** The shipped runtime keeps its
+   stream private and logs only to the console, so a shipped-path arm cannot yet
+   state its own teeth verdict. A small engine change.
+
+Until all four land, the honest label is **capability-proven, not armed**, and
+the supported ways to reach Essence 2 from an Apple app remain the
+[REST API](/api/overview), a [LiveKit](/sdk/livekit) session, or the Python wheel
+on a Mac.
 
 ## Permissions + entitlements
 

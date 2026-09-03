@@ -97,20 +97,26 @@ We keep this honest so you can plan around it.
 | SDK | Package | Topology | Status |
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.10.0) | On-device | **GA** |
-| **Swift / Apple** | SwiftPM, pin `from: "2.5.0"` — products `bitHumanKit` and `Expression2` | On-device | **Preview** |
+| **Swift / Apple** | SwiftPM, pin `from: "2.5.1"` — products `bitHumanKit` and `Expression2` | On-device | **Preview** |
 | **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.0` (expression-2), `ai.bithuman:essence2-android:0.2.0` (essence-2) and `ai.bithuman:sdk:2.3.6` (essence-1) | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.5.1 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 
-> **Note** On Apple platforms the SwiftPM product is **`bitHumanKit`** — an
-> umbrella framework (from
-> [`bithuman-product/homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
-> that re-exports both the Expression avatar engine and the Essence
-> (`libessence`) runtime. `import bitHumanKit` is all you need; the standalone
-> Layer-1 engine products are not yet published separately. This rail is
-> **preview**. The [Swift page](/sdk/swift) has the details.
+> **Note** On Apple platforms the package
+> ([`bithuman-product/homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
+> vends **three** products: **`bitHumanKit`**, the umbrella — the Expression
+> avatar engine plus an `.imx` avatar runtime plus the on-device LLM/TTS stack;
+> **`Expression2`**, the second-generation engine on its own; and
+> `BithumanEngineProtocol`, a source-only interface.
+> **It does not contain `libessence`.** This page said it did until 2026-09-03;
+> `strings -a` on the shipped `ios-arm64` binary counts `libessence` **0** and
+> `essence` **0**, against `ImxContainer` **141** in the same read. `Bithuman` is
+> a **type** vended by `bitHumanKit`, not an importable module — and there is no
+> `Expression` or `Bithuman` product to attach. This rail is **preview**. The
+> [Swift page](/sdk/swift) has the details, including where Essence 2 actually
+> stands on Apple.
 
 > **Rust** The `bithuman` Rust crate is the on-device engine wrapper that **backs
 > the [CLI](/sdk/cli/overview)**. It is internal / app-backing — source-only (not on

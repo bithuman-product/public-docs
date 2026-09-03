@@ -40,7 +40,7 @@ does.
 #   TAG=v9.9.9 ./swiftpm-preflight.sh   # control: a tag that does not exist
 set -u
 REPO=https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman
-TAG=${TAG:-v2.5.0}
+TAG=${TAG:-v2.5.1}
 curl -fsS --max-time 60 "$REPO/$TAG/Package.swift" -o Package.swift \
   || { echo "Package.swift @ $TAG: NOT FETCHABLE (rc=$?)"; exit 1; }
 echo "manifest        $TAG  ($(wc -l < Package.swift) lines)"
@@ -73,7 +73,7 @@ exit $rc
 
 ```text
 ### ARM 1 — the tag you pin
-manifest        v2.5.0  (197 lines)
+manifest        v2.5.1  (235 lines)
 OK  bitHumanKit                      53.0 MB  sha256 matches manifest
 OK  Expression2                       0.3 MB  sha256 matches manifest
 OK  BithumanEngineProtocolBinary      0.1 MB  sha256 matches manifest
@@ -93,17 +93,17 @@ rc=1
 Three things the passing arm tells you that a "just add the package" instruction
 does not:
 
-- **The tags carry a `v`.** The git tags are `v2.5.0`, `v2.4.0`; SwiftPM reads
-  those as semver, so `from: "2.5.0"` in `Package.swift` is right *and*
-  `raw.githubusercontent.com/.../2.5.0/...` is a 404. Both are true at once.
+- **The tags carry a `v`.** The git tags are `v2.5.1`, `v2.5.0`, `v2.4.0`; SwiftPM
+  reads those as semver, so `from: "2.5.1"` in `Package.swift` is right *and*
+  `raw.githubusercontent.com/.../2.5.1/...` is a 404. Both are true at once.
 - **`bitHumanKit.xcframework.zip` downloads from the `v2.4.0` release even
-  though you pin `2.5.0`.** That is deliberate — see below.
+  though you pin `2.5.1`.** That is deliberate — see below.
 - **`Expression2` is 0.3 MB.** The whole engine binary. That is your first clue
   that the model weights are somewhere else; check 3 confirms it.
 
 ### The two-tag layout, and why it is not a mistake
 
-`Package.swift` at `v2.5.0` declares two bases: `releaseTag = "v2.4.0"` for the
+`Package.swift` at `v2.5.1` declares two bases: `releaseTag = "v2.4.0"` for the
 umbrella and `expression2Tag = "v2.5.0"` for the Expression 2 binaries. A single
 shared tag would re-point `bitHumanKit.xcframework.zip` at a release that does
 not carry it. Ask the releases directly — one byte each, so it costs nothing:
@@ -130,7 +130,7 @@ v2.5.0/bitHumanKit.xcframework.zip             -> 404
 line is what the single-tag version of this manifest would have pointed every
 existing consumer at. SwiftPM reads absolute asset URLs out of whichever
 manifest it resolves, so an asset does not have to live on the resolved tag.
-**Pin `2.5.0`.**
+**Pin `2.5.1`.**
 
 ---
 
@@ -209,7 +209,7 @@ Unzip it and look. This answers three questions people keep asking us by email.
 # Answers: which CoreML compute units it accepts, which env vars it reads,
 # and whether any model weights ship with it.
 set -eu
-TAG=${TAG:-v2.5.0}
+TAG=${TAG:-v2.5.1}
 URL=https://github.com/bithuman-product/homebrew-bithuman/releases/download/$TAG/Expression2.xcframework.zip
 curl -fsSL --max-time 300 "$URL" -o Expression2.zip
 unzip -qo Expression2.zip
@@ -301,17 +301,13 @@ that is what you will see in Console.app:
 
 ---
 
-## The Swift code — UNVERIFIED
+## The Swift code — COMPILED AND RUN
 
-Everything below needs a Mac with Xcode. **None of it was compiled or executed
-for this page**, because the machine that produced every transcript above runs
-Linux and there is no Swift toolchain on it. It is here because it is the API
-surface the checks above are preflighting, and it is marked so you know the
-difference.
-
-**UNVERIFIED — needs macOS 26 + Xcode 26 + Apple Silicon.** Add the package
-(`https://github.com/bithuman-product/homebrew-bithuman.git`, from `2.5.0`),
-then:
+The transcripts above come from Linux. This section does not: it was resolved,
+built and executed on **macOS 26.6.2, Xcode 26.4.1, Apple Silicon** on
+2026-09-03. Add the package
+(`https://github.com/bithuman-product/homebrew-bithuman.git`, from `2.5.1`),
+attach the `Expression2` product, then:
 
 ```swift
 import Expression2
@@ -324,6 +320,29 @@ while let (frame, speech) = engine.pull() {
     // frame: [UInt8], engine.width x engine.height
 }
 ```
+
+What that actually did, rc read directly rather than through a pipe:
+
+```text
+swift package resolve   rc=0   Computed homebrew-bithuman at 2.5.1
+                               3 binary artifacts fetched
+swift build             rc=0   Build complete
+./.build/debug/App      rc=0   EXPRESSION2 OK isReady=false w=416 h=720
+
+# control — ask for `Expression`, the product the old manifest advertised
+swift package resolve   rc=0   ← resolve does NOT check product names
+swift build             rc=1   error: product 'Expression' required by package
+                               'consumer' target 'App' not found in package
+                               'homebrew-bithuman'.
+# restore the correct product name
+swift build             rc=0
+```
+
+Two things worth taking from the control arm. The engine really does construct
+and report its frame geometry (416×720) with **no model bundle present** —
+`isReady=false` is the engine telling you it found no weights, not a failure to
+load. And a wrong product name survives `resolve` and only dies at `build`, so a
+preflight that stops at `resolve` will wave it through.
 
 **UNVERIFIED.** Point the engine at a bundle and pick a compute unit:
 
