@@ -320,6 +320,20 @@ browser-local session renders the mouth the earlier way. Nothing about the
 price, the API, or the tier slugs changes with the surface; only the mouth
 region differs.
 
+**On the self-hosted download, it is per identity — and it is not yet every
+identity.** The sharp mouth interior is carried *inside* the artifact you
+download, so whether a self-hosted render gets it depends on which build of
+your identity was published, not on your server. Measured **2026-09-03** by
+reading the published objects themselves — the artifact the download endpoint
+hands back, not a manifest or a status field — **28 of 36** published
+essence-2 identities carry it; **5** carry an older build that renders the
+mouth interior the earlier way, and **3** have no published artifact yet. The
+cloud tiers are unaffected either way: an identity whose *download* is on an
+older build is still served the sharp mouth interior from the cloud. So if you
+self-host and the mouth interior does not look like your cloud sessions, that
+is this gap and not your setup — contact support with the agent code and we
+will tell you where that identity's published artifact stands.
+
 ### A faster head upsample
 
 The renderer's **head-upsampling step** — the stage that takes the generated
