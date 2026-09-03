@@ -72,7 +72,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.9.0 | PyPI | v7 |
+| Python SDK (`bithuman`) | 2.10.0 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.5.0) | SwiftPM | v7 |
 | Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no libessence ABI) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
@@ -140,13 +140,13 @@ at session launch; the device/runtime matrix is:
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
 | Cloud GPU | Real-time (~25 fps) | Real-time (~25 fps, the only tier) | Real-time (20 fps) |
-| Cloud Apple Silicon (CoreML) | Real-time | — | Real-time |
+| Cloud Apple Neural Engine | Real-time | — | Real-time |
 | Cloud CPU | Real-time | — | Real-time |
 | Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (~22–31 FPS on 16 cores); live streaming via cloud | — | [CLI local rendering](/sdk/cli/overview#local-rendering-by-platform) (macOS arm64, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2`, v2.5.0+ — `macos-arm64` **and** `ios-arm64`, both proven on hardware, but engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
 | Browser-local (WebGPU / WASM) | Rolling out — `?render=local` | — | Rolling out — `?render=local` (LiteRT.js / WebGPU, WASM fallback) |
 
-Cloud sessions route down the serving chain (GPU → Apple → CPU)
+Cloud sessions route down the serving chain (GPU → Neural Engine → CPU)
 automatically; on-device and self-hosted serving use the downloaded model
 artifact. The canonical version of this matrix — with force-tier slugs and
 current rollout status — is

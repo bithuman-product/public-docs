@@ -57,7 +57,7 @@ To select the first-generation Expression model, pass `model="expression"` to th
 > **Second-generation agents.** Point `BITHUMAN_AGENT_ID` at an
 > [`essence-2`](/concepts/essence-2) or
 > [`expression-2`](/concepts/expression-2) agent and it just works — the
-> platform resolves the model's serving tier (GPU → Apple → CPU) for
+> platform resolves the model's serving tier (GPU → Neural Engine → CPU) for
 > you at session launch, so no `model=` kwarg is needed. See
 > [Essence 2 & Expression 2](/concepts/models-v2).
 

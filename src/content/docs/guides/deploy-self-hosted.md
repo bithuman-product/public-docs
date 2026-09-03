@@ -64,9 +64,14 @@ Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for 
 
 ## Essence 2 self-hosted — CPU offline rendering (SDK 2.9.0+)
 
-As of **`bithuman` 2.9.0** (Linux x86_64/aarch64, Python 3.10–3.14), the
-[`essence-2`](/concepts/essence-2) model **self-hosts on CPU** — no GPU
-required. The SDK renders the same `<code>.lebundle.imx` you download with
+As of **`bithuman` 2.9.0** on Linux x86_64/aarch64 and **2.10.0** on macOS
+arm64 (Python 3.10–3.14), the [`essence-2`](/concepts/essence-2) model
+**self-hosts on CPU** — no GPU required.
+
+> **macOS needs 2.10.0, not 2.9.0.** This route calls a native library,
+> `lible_core`, that the macOS wheels did not ship until 2.10.0 — earlier macOS
+> wheels carried the Python half alone and raised `lible_core.so not found` at
+> the first frame. The Linux wheels have carried it since 2.8.1. The SDK renders the same `<code>.lebundle.imx` you download with
 [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <code>`, entirely on your own hardware, teeth-refinement
 stage included.
@@ -133,10 +138,9 @@ matrix today:
   `expression-2` **only**, and it is **engine only** — the `Expression2`
   product (2.5.0+) builds and runs, but **no model bundle is published for it**
   ([details](/sdk/swift#expression-2-on-device)). The Swift SDK carries **no
-  `essence-2` engine at all**; the Apple tier for `essence-2` is
+  `essence-2` engine at all**; the Neural Engine tier for `essence-2` is
   bitHuman's own Apple Silicon, reached over the network like any other cloud
-  tier (it runs through CoreML on the Mac **GPU**, not the Neural Engine —
-  [why](/concepts/essence-2#which-apple-compute-unit-runs-essence-2)).
+  tier.
 - [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU
   runtime**, but it now ships a **hand-delivered self-hosted GPU container**
   for NVIDIA RTX 40-series hardware — see

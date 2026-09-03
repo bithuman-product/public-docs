@@ -62,7 +62,7 @@ See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`,
 
 ### Python SDK (library) — GA
 
-`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.10–3.14.
+`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.10–3.14. **2.10.0** publishes all three platforms on all five interpreters.
 
 ```bash
 pip install bithuman
@@ -143,13 +143,26 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | libessence ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.9.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no libessence ABI) |
 | bitHuman CLI (`bithuman-cli`) | **2.4.2** (Homebrew / universal installer) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.9.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
+> **2.10.0, and why the macOS number matters.** 2.10.0 is the first release
+> whose **macOS** wheel carries `lible_core` — the native half of the Essence 2
+> offline render route. Every macOS wheel up to and including 2.9.0 shipped the
+> Python half alone and raised `lible_core.so not found` at the first frame; the
+> Linux wheels have carried it since 2.8.1. If you self-host on a Mac, upgrade.
+>
+> **Linux users who installed between 2026-09-01 and 2026-09-02 got 2.9.0.**
+> 2.10.0 was published for macOS first and had no Linux files for about a day,
+> so `pip install bithuman` on Linux silently resolved to the previous release.
+> All ten Linux wheels (cp310–cp314 × x86_64/aarch64) are on PyPI now — run
+> `pip install --upgrade bithuman` and confirm with
+> `python -c "import bithuman; print(bithuman.__version__)"`.
+
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.10.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 
@@ -214,8 +227,8 @@ For the file each family hands you by name, and what opens it, see
 
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
-| bitHuman cloud (GPU · Apple · CPU chain) | Yes | GPU-only | Yes |
-| Self-hosted CPU (your servers) | Offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
+| bitHuman cloud (GPU · Neural Engine · CPU chain) | Yes | GPU-only | Yes |
+| Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.5.0+ ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone** — but it is **engine only, [with no model bundle published](/sdk/swift#expression-2-on-device)**, so neither is self-serve yet. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
