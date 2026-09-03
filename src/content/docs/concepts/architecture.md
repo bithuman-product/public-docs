@@ -76,7 +76,7 @@ Each artifact declares the `libessence` ABI it builds against. Artifacts with a 
 | Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.5.0) | SwiftPM | v7 |
 | Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no libessence ABI) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
-| bitHuman CLI | 2.4.2 (Homebrew / universal installer); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
+| bitHuman CLI | 2.5.1 (Homebrew / universal installer — macOS arm64 and Linux x86_64); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
 
 ### Engine ABI history
 

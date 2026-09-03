@@ -75,8 +75,9 @@ bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
   --audio speech.wav --output rendered.mp4
 ```
 
-> **Warning** `bithuman render` is **not working in `cli-v2.4.0` or
-> `cli-v2.4.2`** (re-verified 2026-09-02). It ships on **Linux only** — on macOS
+> **Warning** `bithuman render` on an **Essence 1** model is **not working in
+> `cli-v2.4.0`, `cli-v2.4.2` or `cli-v2.5.1`** (re-verified 2026-09-02 against
+> 2.5.1). It ships on **Linux only** — on macOS
 > the encoder returns "not implemented" — and on Linux x86_64 it fails at the
 > muxing step with
 > `record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed`

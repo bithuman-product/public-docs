@@ -10,6 +10,82 @@ order: 1
 
 ## September 2026
 
+### essence-2 lands on Maven Central — both families now have a public Android SDK (2026-09-03)
+
+`ai.bithuman:essence2-android:0.2.0` is published to Maven Central and resolves
+anonymously, with no credential. With
+`ai.bithuman:expression2-android:0.3.0` (2026-09-02) and
+`ai.bithuman:sdk:2.3.6` (essence-1), **the `ai.bithuman` group now lists three
+artifacts** and every model the scope ruling puts on the Android lane has a
+coordinate that resolves.
+
+```kotlin
+implementation("ai.bithuman:essence2-android:0.2.0")   // essence-2, minSdk 29, arm64-v8a
+```
+
+**Ship-state, stated plainly.** This artifact ships knowingly under the
+2026-08-30 "base offering first" ruling, and two things are below bar:
+
+- it **fails the `PARITY_U8` gate at 2 levels**;
+- sustained throughput is **1.63x short of the accepted bar** — a 1,000-second
+  Hexagon run reads RTF 0.9959 / 20.08 fps against an accepted RTF 0.61 /
+  32.7 fps.
+
+No Gradle project outside bitHuman has been compiled against it yet, and no
+on-device render or performance figure has been taken **for 0.2.0** — what is
+established is the coordinate, the bytes, the checksum, the declared `minSdk`
+and the native payload. The [Android SDK page](/sdk/android) carries the
+measurements and both negative controls.
+
+**FFmpeg / LGPL.** The AAR links FFmpeg 7.1 statically, so LGPL-2.1 **§6(a)**
+applies, and the relink materials are published beside the AAR at a
+`repo1.maven.org` URL baked into the shipped `META-INF/NOTICE.txt`. The kit has
+15 entries — the object archive, the real link command, and FFmpeg's complete
+corresponding source. Every claim about it is checkable from the published
+bytes: [FFmpeg / LGPL — the Android relink offer](/legal/android-ffmpeg-lgpl).
+`expression2-android` carries no FFmpeg and needs no such offer.
+
+### CLI `2.5.1` — macOS and Linux back on one version (2026-09-03)
+
+`cli-v2.5.1` publishes **both** `aarch64-apple-darwin` and
+`x86_64-unknown-linux-gnu`. The 2.5.0 split — where macOS moved ahead and
+Linux was stuck three releases back on `cli-v2.4.2` — is closed, and **the
+`BITHUMAN_VERSION=cli-v2.4.2` pin this site used to recommend on Linux should
+be dropped**. The unpinned universal installer is now correct on both.
+
+`pull --model <family>` is in the Linux build too; the note saying it was
+macOS-only is withdrawn.
+
+**Still not published, and never has been:** `x86_64-apple-darwin` (Intel Mac)
+and, since `cli-v2.3.27`, `aarch64-unknown-linux-gnu` (Linux ARM). On those two
+targets `install.sh` resolves a download that 404s and exits 1. See
+[Downloads](/downloads#bithuman-cli-no-code) for the four-target probe.
+
+**`bithuman render` is unchanged and still limited**: `rc=0` for expression-2,
+**`rc=69` for essence-2** — the shipped `lib/libonnxruntime.so.1` is built at
+`VERS_1.20.1` while every `lible_core.so` requires `VERS_1.26.0`, so **copying
+a file in does not fix it** — and `rc=70` for essence-1. Details and the
+controls: [what the CLI actually does](/sdk/cli/verified).
+
+### Expression 2 self-hosting on Linux is fail-open, by owner ruling (2026-09-02)
+
+The rebuilt Linux engine that ships inside CLI 2.5.1
+(`engines/linux-x64-1.0.0.engine`) has metering **enforcement off**. A render
+with no credential **proceeds**, behind a `★ UNMETERED RENDER` banner on
+stderr; the meter is still armed and still beats wherever a credential exists.
+
+This was deliberate. The engine's own source carries the ruling: shipping the
+LGPL remediation fail-closed *"would have switched billing on for every
+existing self-hoster at the moment they upgraded, with no notice — a pricing
+change riding in on a licence fix."* Both switches (`ENFORCE_DEFAULT` and its
+twin `METER_ENFORCE_DEFAULT`) read `False` in the shipped bytes.
+
+**Scope: expression-2 only.** The engine declares `PRODUCT = "expression-2"`,
+and essence-2's `bithuman.tessera_offline` **stays fail-closed** — no
+credential there still raises `MeteringNotArmedError` and produces no frames.
+Enforcement is expected to return; treat unmetered rendering as a grace period,
+not a price.
+
 ### Essence 2's head upsample is rebuilt — a CPU-tier speedup, same picture (2026-09-02)
 
 > **Corrected 2026-09-02.** The first version of this entry said the Apple tier
@@ -482,7 +558,7 @@ All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (
 
 - **PyPI wheel split.** `pip install bithuman` is now the Python SDK **library only** (~5 MB) — `from bithuman import AsyncBithuman` still works. The bitHuman CLI moved to the sibling [`bithuman-cli`](https://pypi.org/project/bithuman-cli/2.3.0/) wheel; install via `pip install bithuman-cli`, `brew install bithuman-product/bithuman/bithuman-cli` (the old `bithuman` formula keeps working as a deprecated alias), or the universal `curl -sSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh` installer — all three deliver the same Rust binary that prints `libessence 1.19.1 ABI 7 / bithuman 2.3.0` on `bithuman --version`.
 - **CLI surface trimmed.** The binary now exposes exactly six runtime subcommands: `run`, `render`, `info`, `pull`, `list`, `doctor` (plus `init` for scaffolding a new project — seven in total). Legacy 1.x verbs (`voice`, `text`, `avatar`, `stream`, `speak`, `action`, `generate`, `asr`, `tts`, `models pull|list`, `cleanup`) were removed during the 2.x line and stay removed.
-- **Wheel matrix.** The Python library [`bithuman`](https://pypi.org/project/bithuman/) ships on PyPI for **macOS arm64** *and* **Linux x86_64 + aarch64** (manylinux). The CLI wheel [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) is **macOS Apple Silicon only** on PyPI — on Linux, install the CLI via the universal `install.sh` / tarball, not pip. Python 3.10–3.14. *(Latest patches: `bithuman` 2.9.0; `bithuman-cli` 2.3.25 on PyPI, `cli-v2.4.2` via Homebrew / the universal installer.)*
+- **Wheel matrix.** The Python library [`bithuman`](https://pypi.org/project/bithuman/) ships on PyPI for **macOS arm64** *and* **Linux x86_64 + aarch64** (manylinux). The CLI wheel [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) is **macOS Apple Silicon only** on PyPI — on Linux, install the CLI via the universal `install.sh` / tarball, not pip. Python 3.10–3.14. *(Latest patches, as of 2026-09-03: `bithuman` 2.10.0; `bithuman-cli` 2.3.25 on PyPI, `cli-v2.5.1` via Homebrew / the universal installer — macOS arm64 and Linux x86_64 on the same version.)*
 - **Repo layout.** Public source lives in two repos: [`bithuman-sdk-public`](https://github.com/bithuman-archive/bithuman-sdk-public) (since archived; examples now live in `homebrew-bithuman/Examples`) — docs source, runnable examples, and landing pages — and [`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman) — the Homebrew tap, universal `install.sh`, and tarball release mirror. The engine and language SDKs ship as prebuilt, statically linked artifacts on PyPI and SwiftPM.
 - **`BITHUMAN_BRAIN_*` → `BITHUMAN_AGENT_*` env-var rename** (carried through from Wave 5 of the 2.x line): `BITHUMAN_AGENT_PORT`, `BITHUMAN_AGENT_PYTHON`, `BITHUMAN_AGENT_SCRIPT`. The old `BITHUMAN_BRAIN_*` names are still read with a deprecation warning.
 - **No external API breaks.** Python (`from bithuman import AsyncBithuman`) and Swift (`import Bithuman`) public APIs are unchanged from 2.2.x. Migration for existing `pip install bithuman && bithuman run` users is install-time only: `pip install bithuman-cli` (or `brew install bithuman-product/bithuman/bithuman-cli`) to keep the `bithuman` console-script.

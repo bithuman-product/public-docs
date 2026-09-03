@@ -13,12 +13,55 @@ One engine (`libessence`) drives every surface. Pick the install path that match
 ### bitHuman CLI (no code)
 
 The fastest way to see an avatar talk. **macOS arm64 and Linux x86_64.** The
-Homebrew formula and the universal installer deliver the same Rust binary, but
-they are **no longer on the same version**: macOS is at `cli-v2.5.0`
-(Developer ID signed, family-selecting `pull --model`), while the newest release
-carrying a **Linux** tarball is `cli-v2.4.2`. The PyPI wheel is a macOS-only
-sibling and trails at `2.3.25`. `cli-v2.3.27` is the last release with a **Linux
-aarch64** tarball.
+Homebrew formula and the universal installer deliver the same Rust binary, and
+as of `cli-v2.5.1` they are **back on the same version on both platforms** —
+the 2.5.0 split, where macOS moved ahead and Linux was stuck at `cli-v2.4.2`,
+is closed. The PyPI wheel is a macOS-only sibling and still trails at `2.3.25`.
+
+**`cli-v2.5.1` publishes exactly two targets**, and the two it does not publish
+have never shipped at all. Measured against the release on 2026-09-03 — the
+404s are the control that makes the 200s mean something:
+
+```bash
+B=https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.1
+for t in x86_64-unknown-linux-gnu aarch64-apple-darwin x86_64-apple-darwin aarch64-unknown-linux-gnu; do
+  printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' "$B/bithuman-$t.tar.gz")" "$t"
+done
+```
+
+```text
+200  x86_64-unknown-linux-gnu
+200  aarch64-apple-darwin
+404  x86_64-apple-darwin
+404  aarch64-unknown-linux-gnu
+rc=0
+```
+
+| Your machine | Target the installer asks for | `cli-v2.5.1` |
+|---|---|---|
+| Apple Silicon Mac | `aarch64-apple-darwin` | **published** |
+| Linux x86_64 | `x86_64-unknown-linux-gnu` | **published** |
+| **Intel Mac** | `x86_64-apple-darwin` | **never published, any release** |
+| **Linux ARM (aarch64)** | `aarch64-unknown-linux-gnu` | not in 2.5.1 — `cli-v2.3.27` was the last |
+
+On the bottom two rows `install.sh` resolves a download that does not exist and
+exits **1** with `install: error: download failed.`
+
+**"Never published" is measured, not assumed.** Across **all 69 releases** in
+the tap, counting tarball assets per target:
+
+| Target | Releases carrying it | Newest |
+|---|---|---|
+| `aarch64-apple-darwin` | 33 | `cli-v2.5.1` |
+| `x86_64-unknown-linux-gnu` | 13 | `cli-v2.5.1` |
+| `aarch64-unknown-linux-gnu` | 10 | `cli-v2.3.27` |
+| `x86_64-apple-darwin` | **0** | **never** |
+
+So there is no pin that helps on **Intel Mac** — no release has ever built it.
+On **Linux ARM**, `BITHUMAN_VERSION=cli-v2.3.27` is the only tarball, and it is
+many releases behind. For both, use the Python library
+(`pip install bithuman`, which does publish manylinux aarch64) or a cloud
+route.
 
 **Homebrew (recommended on Apple Silicon)**
 
@@ -33,15 +76,24 @@ brew install bithuman-cli
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-> ★ **On Linux this command fails as of 2026-09-02 — pin the version.** The
-> installer resolves the newest `cli-v*` release, which is `cli-v2.5.0`, and
-> that release publishes only a macOS tarball. On Linux the download 404s and
-> the script exits 1 (`install: error: download failed.`). Pin the newest
-> release that has a Linux binary:
+> ★ **Correction — 2026-09-03. Do not pin on Linux any more.** This page told
+> Linux users to run the installer with `BITHUMAN_VERSION=cli-v2.4.2`, because
+> `cli-v2.5.0` shipped a macOS tarball only. **`cli-v2.5.1` ships both**, so
+> the unpinned command above is now the right one and the pin holds you three
+> releases back. Run on a clean Linux x86_64 box on 2026-09-03, unpinned:
 >
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \
->   | BITHUMAN_VERSION=cli-v2.4.2 sh
+> ```text
+> install: querying latest release...
+> install: version: cli-v2.5.1
+> install: target:  x86_64-unknown-linux-gnu
+> install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.1/bithuman-x86_64-unknown-linux-gnu.tar.gz
+> install: verifying sha256...
+> install: sha256 ok
+> install: extracting...
+> install: installed expression2-model (local realtime render host)
+> install: installed engines/ (linux-x64-1.0.0.engine )
+> install: installed: libessence 2.3.8 ABI 7
+> rc=0
 > ```
 
 **PyPI sibling wheel (same Rust binary, Python-friendly) — macOS Apple Silicon only**
@@ -58,16 +110,47 @@ Verify the install:
 
 ```bash
 bithuman --version
-# libessence 2.3.8 ABI 7
-# bithuman    2.5.0     (macOS)  ·  2.4.2 (Linux)
+```
+
+```text
+libessence 2.3.8 ABI 7
+bithuman    2.5.1
+rc=0
+```
+
+That is the real output of the install transcribed above, on Linux x86_64.
+`bithuman version --json` gives the machine-readable form:
+
+```text
+{"abi":7,"cli":"2.5.1","libessence":"2.3.8","schema_version":1}
+rc=0
+```
+
+```bash
 bithuman doctor   # full host + key + cache check
 ```
 
-> **New in 2.5.0 (macOS): pick a model family at download time.**
+> **Pick a model family at download time — on Linux too, as of 2.5.1.**
 > `bithuman pull <CODE> --model essence-2` asks for a family, and a plain
-> `bithuman pull <CODE>` now names the families it did *not* hand you. The
-> Linux 2.4.2 binary has no `--model` flag — use `?model=<family>` on the
-> [download endpoint](/api/agents#download-an-agents-model) there.
+> `bithuman pull <CODE>` names the families it did *not* hand you. This page
+> previously said the Linux binary had no `--model` flag; that was true of
+> 2.4.2 and is **false for 2.5.1**. Verified on Linux, with the control that
+> tells "flag accepted" apart from "flag unknown":
+>
+> ```text
+> $ bithuman pull planning-nebula --model essence-2
+> error: --model applies to YOUR agent codes (e.g. `bithuman pull A24EKJ8433 --model expression-2`),
+>        not to the showcase slug 'planning-nebula' — showcase avatars have a single published artifact
+> rc=66
+>
+> $ bithuman pull planning-nebula --zzz-nope
+> Usage: bithuman pull <SLUG>
+> rc=2
+> ```
+>
+> `rc=66` is the flag being **parsed and refused on its meaning**; `rc=2` is
+> what an unrecognised flag actually looks like. A page that only showed the
+> first line could not tell you which one you were getting.
 
 > **macOS 2.5.0 is the first Developer ID signed release.** Every build up to
 > and including 2.4.2 was ad-hoc signed, so a tarball downloaded in a *browser*
@@ -131,6 +214,61 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
 
 `essence-2` is **not** on this rail. See the [Swift SDK guide](/sdk/swift).
 
+### Android / Kotlin — Beta
+
+Three on-device AARs on Maven Central under the `ai.bithuman` group, all
+resolvable anonymously with no credential. As of 2026-09-03 **both second-
+generation families have a published Android artifact**.
+
+```kotlin
+// app/build.gradle.kts
+dependencies {
+    implementation("ai.bithuman:expression2-android:0.3.0")  // expression-2
+    implementation("ai.bithuman:essence2-android:0.2.0")     // essence-2
+}
+```
+
+| Coordinate | Model | `minSdk` | ABI |
+|---|---|---|---|
+| `ai.bithuman:expression2-android:0.3.0` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.2.0` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
+| `ai.bithuman:sdk:2.3.6` | essence-1 | 29 | `arm64-v8a` |
+
+Check the group listing yourself — the third line is the control that shows a
+404 is really a 404:
+
+```bash
+for c in essence2-android/0.2.0 expression2-android/0.3.0 zzz-none/0.2.0; do
+  a=${c%%/*}; v=${c##*/}
+  printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' \
+    "https://repo1.maven.org/maven2/ai/bithuman/$a/$v/$a-$v.pom")" "$c"
+done
+```
+
+```text
+200  essence2-android/0.2.0
+200  expression2-android/0.3.0
+404  zzz-none/0.2.0
+rc=0
+```
+
+> ★ **Read the limits before you plan around this.** The essence-2 AAR ships
+> knowingly under the "base offering first" ruling: it **fails the `PARITY_U8`
+> gate at 2 levels** and sustained throughput is **1.63x short of the accepted
+> bar**. `google()` is a required repository and `useLegacyPackaging = true` is
+> not optional — leaving either out fails in a confusing place, or silently.
+> The measured numbers and both negative controls are on the
+> [Android SDK page](/sdk/android).
+
+> **FFmpeg / LGPL.** `essence2-android` links FFmpeg 7.1 statically, and the
+> LGPL-2.1 §6(a) relink materials are published beside the AAR on Maven
+> Central. See [FFmpeg / LGPL — the Android relink
+> offer](/legal/android-ffmpeg-lgpl). `expression2-android` carries no FFmpeg
+> and needs no such offer.
+
+`expression-1` and `essence-2-max` are **GPU-only** by the 2026-09-02 scope
+ruling — their absence from Android is deliberate, not a gap.
+
 ### JavaScript / TypeScript — Preview
 
 A cloud client for browser and Node apps. Preview status — APIs may change.
@@ -158,9 +296,9 @@ No install required. Authenticate with the `api-secret` header against `https://
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
-| **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
-| **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
-| **Linux aarch64** | Not published (no aarch64-linux tarball in the release) | `bithuman` (manylinux) | — |
+| **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
+| **Linux x86_64** | Universal installer (tarball), `cli-v2.5.1` | `bithuman` (manylinux) | — |
+| **Linux aarch64** | **Not in 2.5.1** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -173,7 +311,9 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no libessence ABI) |
-| bitHuman CLI (`bithuman-cli`) | **2.5.0** macOS (Homebrew) · **2.4.2** Linux (universal installer, pin `BITHUMAN_VERSION=cli-v2.4.2`) · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.5.1** — macOS arm64 **and** Linux x86_64, same version, no pin needed · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| Android AAR (`ai.bithuman:expression2-android`) | **0.3.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
+| Android AAR (`ai.bithuman:essence2-android`) | **0.2.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
 > **2.10.0, and why the macOS number matters.** 2.10.0 is the first release

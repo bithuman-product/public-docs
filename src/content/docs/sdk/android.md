@@ -433,6 +433,37 @@ dependencies {
 > AAR now carries `META-INF/NOTICE.txt` and the full licence texts for FFmpeg 7.1
 > (LGPL v2.1), LLVM libc++ and ONNX Runtime 1.26.0.
 
+### FFmpeg is linked statically — and the LGPL §6(a) offer resolves
+
+`lible_jni.so` **defines 618 FFmpeg symbols** and imports none, so FFmpeg is
+inside the library rather than beside it. That makes LGPL-2.1 §6(b) unavailable
+and §6(a) the route, and the relink materials are published on Maven Central at
+the same coordinate as the AAR — classifier `relink`, extension `zip`. The URL
+is baked into the shipped `META-INF/NOTICE.txt`, and it resolves:
+
+```bash
+curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.2.0/essence2-android-0.2.0.aar
+OFFER=$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip')
+echo "$OFFER"
+curl -o /dev/null -s -w '%{http_code}\n' -L "$OFFER"
+curl -o /dev/null -s -w '%{http_code}\n' -L "${OFFER%.zip}X.zip"
+```
+
+```text
+https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.2.0/essence2-android-0.2.0-relink.zip
+200
+404
+rc=0
+```
+
+The kit holds **15 entries** — FFmpeg 7.1's complete corresponding source, the
+object-code form of the work that uses it, and the real link command. What is
+in it, why §6(a) rather than §6(b), and the commands that check every claim:
+[FFmpeg / LGPL — the Android relink offer](/legal/android-ffmpeg-lgpl).
+
+You do not need any of this to *use* the AAR. It matters if you redistribute
+it inside your own product.
+
 ### What was measured
 
 Every line below was executed against Maven Central on 2026-09-03, anonymously

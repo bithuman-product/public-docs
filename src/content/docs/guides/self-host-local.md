@@ -275,10 +275,14 @@ the one you got. Before 2.5.0 `pull` could only return an agent's *birth* model,
 so an agent born Essence 1 and later given another family was unreachable from
 the CLI.
 
-> **`--model` is 2.5.0 and later, which is macOS only.** The newest CLI carrying
-> a Linux binary is 2.4.2, whose `pull` has `--force`, `--dest` and `--manifest`
-> and no family flag. On Linux, select a family with `?model=<family>` on the
-> [download endpoint](/api/agents#download-an-agents-model) instead.
+> **`--model` is 2.5.0 and later — and as of `cli-v2.5.1` that includes Linux.**
+> This note previously said the flag was macOS-only because the newest CLI with
+> a Linux binary was 2.4.2. **2.5.1 publishes both targets**, and `--model` is
+> present in the Linux build: `bithuman pull <slug> --model essence-2` is parsed
+> and refused on its meaning (`rc=66`), where an unknown flag exits `rc=2`.
+> The `?model=<family>` form on the
+> [download endpoint](/api/agents#download-an-agents-model) still works and is
+> the right route from anything that is not the CLI.
 
 > **The macOS CLI carries no Essence 2 engine.** That is deliberate, not an
 > oversight — the available Essence 2 slices do not meet the mouth-interior bar
