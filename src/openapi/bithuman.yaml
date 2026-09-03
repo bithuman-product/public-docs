@@ -647,7 +647,8 @@ paths:
               -d '{"message": "Hello! Welcome to our demo."}'
       summary: Make agent speak
       description: |
-        Send text for the avatar to speak aloud in all active sessions.
+        Send text for the avatar to speak aloud. With `room_id` it goes to that
+        one session; without it, to every deliverable session of the agent.
         The agent must be in at least one active LiveKit room.
       tags: [Agent Context]
       parameters:
@@ -690,6 +691,85 @@ paths:
                     type: integer
                     example: 1
                     description: Number of active rooms that received the message.
+                  rooms:
+                    type: array
+                    items: {type: string}
+                    description: Room ids that received the message.
+                    example: ["room-A91XMB7113-x1y2-z3w4"]
+                  rooms_skipped:
+                    type: array
+                    items: {type: string}
+                    description: Live rooms with no agent worker attached, so not delivered to.
+                  rooms_failed:
+                    type: array
+                    items: {type: string}
+                    description: Rooms the publish was attempted on and failed.
+                  rooms_skipped_no_worker:
+                    type: integer
+                    description: Length of rooms_skipped.
+                    example: 0
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/agent/{code}/sessions:
+    get:
+      operationId: listAgentSessions
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/agent/A91XMB7113/sessions \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: List an agent's live sessions
+      description: |
+        The sessions this agent has open now. Pass a returned `room_id` to
+        /speak or /add-context to address ONE session instead of broadcasting.
+        `deliverable` is false when the room is live but no agent worker is
+        attached — /speak on such a room returns 404.
+      tags: [Agent Context]
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "A91XMB7113"
+      responses:
+        "200":
+          description: Live sessions (possibly an empty list)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agent_code:
+                    type: string
+                    example: "A91XMB7113"
+                  sessions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        room_id:
+                          type: string
+                          example: "room-A91XMB7113-x1y2-z3w4"
+                        num_participants:
+                          type: integer
+                          example: 3
+                        created_at:
+                          type: integer
+                          description: LiveKit room creation time, Unix seconds.
+                          example: 1788480000
+                        deliverable:
+                          type: boolean
+                          description: Whether an agent worker is attached and /speak would reach it.
+                          example: true
+                        matched_by:
+                          type: string
+                          enum: [name, ledger, "name+ledger", loose]
+                          description: How the room was bound to this agent.
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":

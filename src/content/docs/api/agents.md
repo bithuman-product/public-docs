@@ -639,14 +639,20 @@ users in an active session.
 > **Requires a LIVE session.** `/speak` speaks into a conversation that is
 > already open — it cannot start one. With nobody connected there is no room to
 > deliver to and the call returns `404 NOT_FOUND`
-> (`"No active rooms found for agent <code>"`). A successful call echoes
-> `delivered_to_rooms`; if that is `0`, or `rooms_skipped_no_worker` is
-> non-zero, the message reached no one.
+> (`"No active rooms found for agent <code>"`). A successful call names the
+> sessions it reached in `rooms`, and the ones it could not in `rooms_skipped`
+> (live, but no agent worker attached) and `rooms_failed`. On a broadcast a
+> partial delivery is normal — read `rooms`, not the counts. If nothing could be
+> delivered you get a `404`, never a `200` with `delivered_to_rooms: 0`.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `message` | string | yes | Text the agent will speak. |
-| `room_id` | string | no | Target a specific room. If omitted, delivers to all active rooms. |
+| `room_id` | string | no | Speak into ONE session. Omit to broadcast to every deliverable session of this agent. |
+
+Get a `room_id` from [list live sessions](#list-an-agents-live-sessions).
+Omitting `room_id` is a **broadcast**: with three sessions open, all three
+avatars speak the message.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A12345678/speak \
@@ -654,7 +660,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/A12345678/speak \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -d '{
     "message": "We have a 20% discount available today.",
-    "room_id": "customer_session_1"
+    "room_id": "room-A12345678-x1y2-z3w4"
   }'
 ```
 
@@ -662,9 +668,60 @@ curl -X POST https://api.bithuman.ai/v1/agent/A12345678/speak \
 {
   "agent_code": "A12345678",
   "context_type": "speak",
-  "delivered_to_rooms": 1
+  "delivered_to_rooms": 1,
+  "rooms": ["room-A12345678-x1y2-z3w4"],
+  "rooms_skipped": [],
+  "rooms_failed": [],
+  "rooms_skipped_no_worker": 0
 }
 ```
+
+Every room targeted appears in exactly one of `rooms`, `rooms_skipped` or
+`rooms_failed`, so a broadcast tells you what it reached rather than only how many.
+
+## List an agent's live sessions
+
+`GET /v1/agent/{agent_code}/sessions` — the sessions this agent has open now.
+Use a returned `room_id` to address one of them with `/speak` or `/add-context`.
+
+```bash
+curl https://api.bithuman.ai/v1/agent/A12345678/sessions \
+  -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+```json
+{
+  "agent_code": "A12345678",
+  "sessions": [
+    {
+      "room_id": "room-A12345678-x1y2-z3w4",
+      "num_participants": 3,
+      "created_at": 1788480000,
+      "deliverable": true,
+      "matched_by": "name"
+    },
+    {
+      "room_id": "support-call-8842",
+      "num_participants": 2,
+      "created_at": 1788479100,
+      "deliverable": false,
+      "matched_by": "ledger"
+    }
+  ]
+}
+```
+
+`created_at` is the room's LiveKit creation time in Unix seconds.
+`deliverable` is the field that matters: a room can be live and listed while its
+agent worker has gone (a worker restart, or a render-only room), and `/speak` on
+one of those returns `404`. An agent with nothing open returns `200` with an
+empty `sessions` array, not a `404`.
+
+There is **no per-agent limit** on how many sessions `/speak` can address —
+every deliverable session of the agent is listed and addressable, including
+rooms you named yourself if you drive LiveKit directly. Your account's
+concurrent-session allowance still applies; see
+[Session concurrency](/api/rate-limits#session-concurrency).
 
 ## Inject knowledge
 
@@ -676,7 +733,7 @@ instead.
 |---|---|---|---|---|
 | `context` | string | yes | — | Knowledge to inject (or message to speak). |
 | `type` | string | no | `add_context` | `add_context` injects knowledge silently; `speak` triggers a verbal response. |
-| `room_id` | string | no | — | Target a specific room. If omitted, delivers to all active rooms. |
+| `room_id` | string | no | — | Deliver to ONE session ([get one](#list-an-agents-live-sessions)). Omit to deliver to every deliverable session. |
 
 ```python
 import requests
@@ -687,7 +744,7 @@ requests.post(
     json={
         "context": "Customer has VIP status. Preferred name: Alex. Account since 2021.",
         "type": "add_context",
-        "room_id": "vip_session_42",
+        "room_id": "room-A12345678-x1y2-z3w4",
     },
 )
 ```
@@ -695,7 +752,9 @@ requests.post(
 > **Note** `/speak` and `/add-context` target agents created on the bitHuman
 > platform that have an **active session** — not local SDK agents. Without a
 > live room you'll get `404 NOT_FOUND`. Start a session via the
-> [embed flow](/api/embedding) or a LiveKit worker first.
+> [embed flow](/api/embedding) or a LiveKit worker first, then call
+> [`GET /v1/agent/{agent_code}/sessions`](#list-an-agents-live-sessions) to see
+> what is open.
 
 ## Error codes
 
