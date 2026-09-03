@@ -350,7 +350,7 @@ around the CLI:
   [Essence 2 — rc=69](/sdk/cli/verified#essence-2--rc69-and-a-file-copy-does-not-fix-it).
 
 
-### Android — two artifacts on Maven Central, and one that is not there
+### Android — three artifacts on Maven Central, and every in-scope model resolves
 
 As of **2026-09-03** the `ai.bithuman` group on Maven Central publishes **three**
 artifacts, all resolvable anonymously:
