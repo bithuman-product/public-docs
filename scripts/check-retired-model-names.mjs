@@ -113,6 +113,17 @@ const CARRIERS = [
     re: /libelevate-web/i },
   { why: "the vendored on-device engine and its native library, named verbatim in a runtime error",
     re: /libelevate|lible_core/i },
+  // ★2026-09-02: the shipped Expression2.xcframework (v2.5.0) still carries its
+  // pre-rename strings, and a developer meets them without ever writing the dead
+  // name themselves — they EXPORT the env var and they GREP the log prefix.
+  // Verified by inspecting the published binary: `strings` finds
+  // BITHUMAN_EMBODY_DIR and EMBODY_DEBUG_FAIL_PREDICT beside their EXPRESSION2_
+  // twins, and every engine log line is prefixed `[embody]`. Hiding a string a
+  // developer must type is worse than showing a retired one.
+  { why: "environment-variable names the shipped Expression2 binary still reads, typed verbatim by a developer",
+    re: /EMBODY_[A-Z]|EMBODY\)_/ },
+  { why: "the `[embody]` log-line prefix the shipped Expression2 engine emits, grepped verbatim by a developer",
+    re: /\[embody\]/i },
   { why: "tier slugs that saved links, embeds and signed share JWTs carry verbatim",
     re: /essence-2-light-(gpu|cpu|ane)/i },
   { why: "a CSS surface token, not the product",

@@ -15,21 +15,20 @@ Production-deployed since Feb 2026. No install, no SDK call — flip one URL par
 > **Which generation.** The `rendering_mode=browser` / `avatar` modes on this
 > page render the first-generation **`essence-1`** avatar in WASM.
 > [`essence-2`](/concepts/essence-2) has its **own** browser-local tier — append
-> **`?render=local`** to a session URL to render Essence 2 in the browser
-> (WebGPU on Apple Silicon and desktop-class GPUs, WASM fallback), **rolling
-> out** per identity as web bundles publish. See
-> [Essence 2 → In the browser](/concepts/essence-2#serving-tiers) and
-> [where each model runs](/concepts/models-v2#where-each-model-runs).
+> **`?render=local`** to a session URL — **rolling out** per identity as web
+> bundles publish. See [Essence 2 → In the
+> browser](/concepts/essence-2#serving-tiers) and [where each model
+> runs](/concepts/models-v2#where-each-model-runs).
 > [`expression-2`](/concepts/expression-2) also renders in the browser via the
-> same **`?render=local`** URL option (LiteRT.js / WebGPU, WASM fallback). It is
-> a **client-side rendering option**, not a separate serving tier, and it is
-> **opt-in**: cloud rendering is the default for every visitor, on every
-> identity and every browser. Nobody gets a browser render unless the URL asks
-> for one. When it is asked for, it still needs a published per-identity web
-> bundle and a browser that can run the engine; without either, the session
-> **falls back to cloud rendering** on its own. Per-identity bundles are
-> **rolling out** — they aren't published for every identity yet, so for many
-> agents `?render=local` renders in the cloud today.
+> same **`?render=local`** URL option. It is a **client-side rendering option**,
+> not a separate serving tier, and it is **opt-in**: cloud rendering is the
+> default for every visitor, on every identity and every browser. Nobody gets a
+> browser render unless the URL asks for one. When it is asked for, it still
+> needs a published per-identity web bundle and a browser that can run the
+> engine; without either, the session **falls back to cloud rendering** on its
+> own. Per-identity bundles are **rolling out** — they aren't published for
+> every identity yet, so for many agents `?render=local` renders in the cloud
+> today.
 
 ```text
 # Browser-side rendering, agent brain still cloud:
@@ -40,6 +39,16 @@ https://agent.viewer.bithuman.ai/?rendering_mode=avatar&model_url=<IMX_URL>
 ```
 
 [Try it on a showcase agent →](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser)
+
+> **WebGPU is not "the fast path" for `?render=local`, and there is no automatic
+> WASM fallback under it.** The Essence 2 director runs on **ONNX Runtime Web's
+> `wasm` provider by default**; WebGPU's job in the shipped path is the **speech
+> encoder**, and paste-back is **WebGL2**. Which stage runs on which backend,
+> the measured frame rates, and the `navigator.gpu`-exists-but-no-adapter
+> failure mode are all on
+> [WebGPU and local browser rendering](/guides/browser-webgpu) — that page is
+> the single source for those numbers. To check any of it on your own machine,
+> run [Browser — check before you ship](/examples/browser-webgpu-check).
 
 ## When you'd reach for it
 
@@ -132,13 +141,30 @@ Network adds the LiveKit audio-track RTT in `browser` mode (typically 50–150 m
 - [Showcase agent — browser mode](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser) — server brain, client-rendered avatar.
 - [Showcase agent — cloud mode](https://www.bithuman.ai/A74NWD9723) — for comparison.
 
-## A standalone JS/TS SDK is coming
+## Embedding it in your own app
 
-The browser pipeline is currently distributed via the hosted agent-landing page only. A standalone JS/TS SDK that wraps the same pipeline for embedding in your own React / Vue / vanilla app is in **Preview** — track or comment in [Discord](https://discord.gg/ES953n7bPA).
+Two different things, and only one of them exists today.
+
+**The Essence 2 renderer is downloadable now.** A self-contained ES module you
+can host yourself is published as static files — no npm, no bundler, no account.
+It is **frames-driven**: you supply per-frame keypoints, it renders faces, and
+the audio→keypoints stage is not in the package. See
+[Browser runtime (WebAssembly)](/sdk/wasm) for `createAvatar` and the rest of
+the API.
+
+**A JS/TS SDK that wraps a full hosted session is not.** `@bithuman/sdk` — the
+client that would drive a cloud or self-hosted avatar over LiveKit from your own
+React / Vue / vanilla app — is **not published to npm** yet. To build a browser
+integration against a hosted session today, drive
+[LiveKit](/sdk/livekit) directly, or use the hosted landing page with a
+rendering-mode parameter. Track it in
+[Discord](https://discord.gg/ES953n7bPA).
 
 ## Where to go next
 
 - [WebGPU and local browser rendering](/guides/browser-webgpu) — measured WebGPU vs WASM frame rates, the standalone runtime you can self-host, which identities have a published web bundle, and what a browser session does and does not meter.
+- [Browser — check before you ship](/examples/browser-webgpu-check) — three runnable preflights, each with a deliberately broken control arm: bundle integrity, the real-WebGPU probe, and the execution-provider benchmark.
+- [Browser runtime (WebAssembly)](/sdk/wasm) — the published runtime's API surface.
 - [Architecture](/concepts/architecture) — how `libessence` powers every renderer.
 - [Audio streaming](/concepts/audio-streaming) — the same push/drain pattern the WASM pipeline mirrors.
 - [Deploy embed](/guides/deploy-embed) — drop a hosted avatar onto any page.

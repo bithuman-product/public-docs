@@ -30,7 +30,10 @@ curl -s https://models.bithuman.ai/web/libelevate-web-v0.1.0/manifest.json
 ```
 
 The manifest lists all 17 files (~139 MB total) with a SHA-256 for each, so you
-can mirror it onto your own origin and verify what you serve. It ships:
+can mirror it onto your own origin and verify what you serve —
+[a runnable checker, with a control arm that proves it is really
+checking](/examples/browser-webgpu-check#check-1--is-the-runtime-you-fetched-the-one-we-published).
+It ships:
 
 - `index.js` — the loader (`createAvatar`)
 - `ort/` — onnxruntime-web, both the plain and the WebGPU-capable (`jsep`) WASM builds
@@ -60,6 +63,16 @@ Two things worth knowing before you reach for WebGPU:
 - **On the speed director, WebGPU bought nothing here** — 26.0 FPS on WebGPU
   against 26.9 FPS on 4-thread WASM. The graph is small enough that dispatch
   overhead cancels the win. Measure before assuming WebGPU is the fast path.
+
+A second, independent run on a different host (Linux x86_64, Chrome 148, Vulkan
+adapter, 8 WASM threads, median `session.run` over 30–50 iterations rather than
+the demo's EMA) reproduced the **shape** of both rows and nothing tighter: the
+quality director gained 1.7–2.4× from WebGPU across three runs, while the speed
+director came out a wash — and in one of the three runs WebGPU was a net loss
+(29.2 fps against WASM's 35.9). The transcripts and the harness are on
+[Browser — check before you ship](/examples/browser-webgpu-check#check-3--is-webgpu-actually-faster-here).
+Treat the table above as this page's reference numbers and that page as the way
+to get your own.
 
 Reproduce any row by opening the demo with the matching query parameters:
 
@@ -96,17 +109,42 @@ no available backend found. ERR: [webgpu] Error: Failed to get GPU adapter.
 
 It did not silently fall back to WASM. **Always feature-detect by awaiting
 `requestAdapter()` and checking for a non-null, non-fallback adapter**, then
-pass `ep: "wasm"` yourself if it fails:
+pass `ep: "wasm"` yourself if it fails.
+
+Two corrections to the obvious version of that function, both measured on
+2026-09-02 on a second host (Linux x86_64, Chrome 148, real Vulkan adapter) —
+[full transcripts](/examples/browser-webgpu-check#check-2--does-this-browser-have-a-real-webgpu-adapter):
+
+- **Retry once on `null`.** The *first* `requestAdapter()` of a browser session
+  resolves `null` while the GPU process is still starting, then returns the real
+  adapter on the next call. It reproduced on 3 of 3 runs on a machine that
+  demonstrably has an adapter. A one-shot probe reports "no WebGPU" on hardware
+  that has it — and if ORT is your first GPU touch, it is ORT that eats the
+  `null` and throws.
+- **Check both flag locations.** Chromium moved `isFallbackAdapter` from
+  `GPUAdapter` to `GPUAdapterInfo`. Reading only one of them classifies a
+  software (SwiftShader) adapter as real, and the WebGPU provider on SwiftShader
+  is slower than plain WASM.
 
 ```js
 async function hasRealWebGPU() {
   if (!navigator.gpu) return false;
-  const a = await navigator.gpu.requestAdapter();
-  return !!a && a.isFallbackAdapter !== true;
+  const once = async () => {
+    try { return (await navigator.gpu.requestAdapter()) ?? null; } catch { return null; }
+  };
+  const first = await once();
+  const a = first === null ? await once() : first;   // cold-call retry
+  if (!a) return false;
+  return a.isFallbackAdapter !== true && a.info?.isFallbackAdapter !== true;
 }
 ```
 
-Also measured on the adapter this host granted: `shader-f16` was **not**
+When the answer is `false`, an `?render=local` session does **not** go black and
+does not silently revert to the cloud: the director keeps rendering on WASM, you
+get the living idle loop and the agent's TTS audio, and only the local lip-sync
+is off.
+
+Also measured on the adapter the RTX 4090 host granted: `shader-f16` was **not**
 available. Do not assume fp16 support just because you got an adapter.
 
 ### Headless CI: the launcher decides whether you get a GPU
@@ -196,5 +234,7 @@ as applying to that route.
 ## Where to go next
 
 - [Browser rendering](/guides/browser-rendering) — the rendering modes and how to switch them.
+- [Browser — check before you ship](/examples/browser-webgpu-check) — the three checks above as runnable scripts, each with a deliberately broken control arm and the exit code it produced.
+- [Browser runtime (WebAssembly)](/sdk/wasm) — `createAvatar` and the rest of the standalone runtime's API surface.
 - [Run a model on your own hardware](/guides/self-host-local) — the SDK route, per platform.
 - [Pricing](/guides/pricing) — the rates behind the billing section above.

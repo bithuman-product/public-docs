@@ -45,7 +45,16 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > occurrences of the string `essence` and its public interface declares no
 > Essence 2 type. [`essence-2-max`](/concepts/essence-2-max) is cloud-only by
 > design. To reach Essence 2 from an Apple app today, call the
-> [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session.
+> [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session — or, on a
+> Mac specifically, drive the Python wheel: see
+> [Essence 2 on a Mac, without Swift](#essence-2-on-a-mac-without-swift).
+
+> **Before you open Xcode, preflight the package from any machine.**
+> [Apple — check before you ship](/examples/apple-swiftpm-check) resolves the
+> manifest at the tag you would pin, fetches every `binaryTarget` and checks its
+> sha256 against the pinned checksum, and shows you the two control arms that
+> fail. It takes about a minute and it is the difference between "SwiftPM is
+> broken" and "I pinned the wrong number".
 
 ## Install
 
@@ -239,6 +248,105 @@ while let (frame, speech) = engine.pull() {
 > `BithumanEngineProtocol` product pulls the Layer-0 module in twice and fails to
 > link.
 
+## Compute units are a measured choice
+
+**The hardware plane is called Apple, not "ANE".** Which silicon unit runs a
+graph is a per-model decision made by measurement, and the answer is genuinely
+different for different graphs and different hosts — so naming the plane after
+one unit describes it wrongly. Apple's own API identifiers are a separate
+matter: `MLComputeUnits.cpuAndNeuralEngine`, `.cpuAndGPU`, `cpuAndNE` are
+**Apple's** spellings and keep them. Ours is *Apple*; theirs is theirs.
+
+`Expression2` exposes the choice per graph through three environment variables.
+Measured against the shipped `Expression2.xcframework` at v2.5.0 — the exact
+asset the manifest pins —
+[transcript](/examples/apple-swiftpm-check#check-3--what-is-actually-inside-the-shipped-expression2-binary):
+
+| Variable | Selects the compute units for | Engine default |
+|---|---|---|
+| `EXPRESSION2_W2V_CU` | the 46 MB speech front-end | `cpuAndNE` |
+| `EXPRESSION2_ATOK_CU` | the audio tokenizer | `cpuAndNE` |
+| `EXPRESSION2_STUDENT_CU` | the per-frame student | `cpuAndNE` |
+
+```bash
+export EXPRESSION2_W2V_CU=cpuOnly     # tokens in the v2.5.0 binary: cpuAndNE | cpuOnly
+```
+
+Three things worth knowing before you tune any of these:
+
+- **`cpuAndNE` and `cpuOnly` are the only compute-unit tokens the published
+  v2.5.0 binary carries.** `cpuAndGPU` does not appear in it. On device the
+  Neural Engine really does carry this engine: on a real iPhone 15 run, 577 of
+  611 operations landed there.
+- **Do not copy our server's settings onto a device.** Our own Apple serve host
+  runs a *different* mix — the per-frame work on the Metal GPU, the audio
+  tokenizer on the Neural Engine, and the speech front-end on `cpuOnly` since
+  2026-09-02. That last one is not a latency win: the front-end is the 46 MB
+  member and `ANECompilerService` serialises machine-wide, so cold session
+  activations queued behind each other. Moving it to `cpuOnly` filled all 18
+  concurrent seats in **11.1 s** at 29.7 fps per session, against a measured
+  **425 s for a single** `cpuAndNE` load. That is a **concurrency** fix on a host
+  serving 18 sessions, and it has no bearing on one app on one phone.
+- **A different engine gets a different answer again.** Essence 2's Apple
+  director is FP32 and reaches the Neural Engine on 0% of its operations; it
+  serves on `cpuAndGPU`, where it measured **2.2× faster** than `cpuAndNE` *and*
+  closer to the reference picture. Three Apple paths, three different units, one
+  plane name.
+
+### Names you will see that we no longer write
+
+The engine predates the current naming and its own strings still carry the old
+one. You need these to grep your logs, so here they are:
+
+| You will meet | Current name | Notes |
+|---|---|---|
+| `[embody]` log prefix | Expression 2 | every engine log line; grep for this, not `[expression2]` |
+| `BITHUMAN_EMBODY_DIR` | `BITHUMAN_EXPRESSION2_DIR` | both strings are in the binary — **set the `EXPRESSION2` one** |
+| `w2v_frontend_cpuAndNE.mlpackage` | (unchanged) | a CoreML member filename; `cpuAndNE` here is Apple's token, frozen into the name |
+| `lible_core.dylib` | Essence 2 engine | inside the Python wheel, below |
+
+`embody` and `elevate` are [deprecated names](/concepts/models-v2). They are
+shown here because you have to type or grep them; they are not names to write.
+
+## Essence 2 on a Mac, without Swift
+
+`Expression2` is the second-generation engine on the SwiftPM rail, and
+[Essence 2](/concepts/essence-2) is not on it at all. But on **macOS**
+specifically there is a self-serve path that does not involve Xcode: the
+`bithuman` Python wheel.
+
+```bash
+pip install "bithuman>=2.10"
+```
+
+**Apple Silicon, macOS 14 or newer.** The current wheels are
+`macosx_14_0_arm64` for CPython 3.10–3.14 (plus manylinux). Inspecting the
+resolved macOS wheel shows the engine and its runtime travelling together:
+
+```text
+resolved: bithuman-2.10.0-cp312-cp312-macosx_14_0_arm64.whl
+engines inside it:
+  bithuman/_core.cpython-312-darwin.so                   2338.9 KB
+  bithuman/.dylibs/libonnxruntime.1.27.0.dylib          18786.3 KB
+  bithuman/lib/lible_core.dylib                           814.9 KB
+```
+
+`lible_core.dylib` is the Essence 2 engine under a retired spelling, and the
+wheel vendors its own ONNX Runtime beside it rather than using whatever is on
+the machine.
+
+> **On an Intel Mac this command succeeds and gives you the wrong thing.** There
+> is no macOS x86_64 wheel for 2.x, so pip silently resolves **1.10.7** — a
+> different generation, with none of those libraries in it — and exits 0. Pin
+> `bithuman>=2.10` so the resolver has to say no out loud. The
+> [transcript of both arms](/examples/apple-swiftpm-check#check-2--which-bithuman-wheel-will-pip-pick-on-a-mac)
+> shows exactly what each one prints.
+
+**UNVERIFIED on macOS.** The command above was resolved, downloaded and
+inspected on Linux; the macOS wheel was **not executed**, because no Mac was
+involved in producing this page. See [Python SDK](/sdk/python) for the API once
+it is installed.
+
 ## Permissions + entitlements
 
 `Info.plist` (all platforms):
@@ -337,6 +445,7 @@ Working as intended. Branch on `HardwareCheck.evaluate()`.
 
 ## See also
 
+- [Apple — check before you ship](/examples/apple-swiftpm-check) — three preflights you can run from any OS, with control arms and real exit codes
 - [Runnable Swift examples](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift) — voice, avatar, and benchmark apps
 - [SDK overview](/sdk) — which SDK to pick
 - [LiveKit (Apple)](/sdk/livekit) — connect a native app to a cloud-hosted avatar

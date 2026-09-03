@@ -18,6 +18,8 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 | A talking voice assistant on a Mac/iPad/iPhone | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min |
 | An on-device avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min |
 | Full voice conversation, mic in / avatar out | [AI voice chat](/examples/ai-conversation) | Python | ~10 min |
+| Know whether the browser path will work before you ship it | [Browser — check before you ship](/examples/browser-webgpu-check) | bash / JS | ~5 min |
+| Know whether the Apple package will resolve before you open Xcode | [Apple — check before you ship](/examples/apple-swiftpm-check) | bash | ~5 min |
 
 > **Note** New here? The fastest end-to-end demo is the [CLI — Hello, avatar](/examples/cli-hello): one `brew install`, one command, a talking avatar in your browser. No code.
 
@@ -55,5 +57,14 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 - [integrations/gradio-web](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/gradio-web) — talk to an avatar in the browser via Gradio + FastRTC.
 - [integrations/java-websocket](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/java-websocket) — stream audio to an avatar server from Java over WebSocket.
 - [integrations/offline-mac](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/offline-mac) — fully offline macOS integration.
+
+## Preflight & validation
+
+Not "hello, avatar" pages — checks you run *before* shipping, each with a
+deliberately broken control arm so you can tell a working setup from a silently
+failing one. Every transcript on both pages was produced by running the snippet.
+
+- [Browser — check before you ship](/examples/browser-webgpu-check) — bundle integrity against the published sha256s, a real-WebGPU adapter probe (three arms), and a WASM-vs-WebGPU benchmark of both director tiers.
+- [Apple — check before you ship](/examples/apple-swiftpm-check) — SwiftPM resolve preflight against the pinned checksums, which `bithuman` wheel pip picks on a Mac, and what is actually inside the shipped `Expression2` binary. Runs from any OS.
 
 For the REST contract see the [API reference](/api/reference). For deployment shapes (LiveKit cloud, self-hosted GPU, embed widget) see the [Guides](/guides/deploy-livekit).
