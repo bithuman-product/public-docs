@@ -35,6 +35,8 @@ and its coordinate does not resolve — see [essence-2 on Android](#essence-2-on
 > Android lane: **essence-1**, **expression-2** and **essence-2**. **expression-1**
 > and **essence-2-max** are **GPU-only**. Their absence from Android is correct and
 > deliberate — it is not a gap and there is no Android build of them coming.
+> The full matrix, every model against every lane, is on
+> [Models and planes](/concepts/models-and-planes).
 
 ---
 
@@ -347,3 +349,4 @@ deliberately fails, so you can tell a working setup from a silently-broken one.
 - [SDK overview](/sdk) — which SDK to pick
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop
 - [Swift SDK](/sdk/swift) — the Apple counterpart
+- [Models and planes](/concepts/models-and-planes) — which model runs on which lane, and what "GPU only" means

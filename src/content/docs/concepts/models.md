@@ -30,8 +30,9 @@ between when packaging an avatar — and the focus of the rest of this page — 
   - **[Essence 2 Max](/concepts/essence-2-max)** — the premium model: the
     highest-fidelity renderer served on dedicated cloud GPUs.
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
-  - **Expression 1** — first generation. Dynamic facial animation from any portrait image (Apple Silicon
-    or NVIDIA GPU).
+  - **Expression 1** — first generation. Dynamic facial animation from any
+    portrait image. **GPU only** — see
+    [models and planes](/concepts/models-and-planes).
   - **[Expression 2](/concepts/expression-2)** — the second-generation
     generative engine: audio-driven, fully-generated motion from a single
     photo rather than patching a pre-rendered base. Serves on gpu, cpu, and
@@ -69,28 +70,38 @@ bitHuman's two first-generation avatar models share the same [`.imx` file format
 | **Avatar source** | `.imx` you build once from a photo (the identity video is generated internally). | Any face image — provide at runtime, no build step. |
 | **Custom gestures** | Yes (wave, nod, laugh, etc.) | No |
 | **Idle animation** | Pre-recorded natural movement | AI-generated micro-movements |
-| **Compute needed** | Any modern CPU | Apple Silicon M3+ (demo apps) or NVIDIA GPU |
+| **Compute needed** | Any modern CPU | NVIDIA GPU (GPU-only — see [models and planes](/concepts/models-and-planes)) |
 | **Memory footprint** | Low (~200–500 MB) | Higher (~2–6 GB) |
 | **Best for** | Kiosks, mobile, edge, 24/7 deployments, high concurrency | Close-up native consumer apps, custom faces per session |
 | **Pricing (first-generation rates)** | 1 credit/min self-hosted · 2 credits/min cloud | 2 credits/min self-hosted · 4 credits/min cloud |
 
-Both ship to every surface — SDKs, REST API, LiveKit plugin, CLI, on-device, embed widget. The same `.imx` file works everywhere.
+**Essence 1** ships to every surface — SDKs, REST API, LiveKit plugin, CLI,
+on-device, embed widget. **Expression 1 does not**; see below.
 
 ## Where each model runs
 
-| Surface | Essence | Expression |
-|---|---|---|
-| **iOS / iPadOS** | iPhone 16 Pro+, iPad Pro M4+ | iPad Pro M4+ (iPhone 16 Pro+ preview) |
-| **macOS arm64** | Any Apple Silicon | M3+ |
-| **macOS Intel** | Pending (2.3 ships arm64 only) | — |
-| **Linux x86_64 / aarch64** | Any modern CPU | via NVIDIA GPU (Docker) |
-| **Windows** | Pending (use WSL2 today) | — |
-| **Raspberry Pi 4B+** | Supported | — |
-| **bitHuman Cloud** | Managed | Managed |
-| **Self-hosted CPU** | Python SDK / LiveKit plugin | — |
-| **Self-hosted GPU** | — | Docker container |
+The authority for this is the **model / plane matrix**, which encodes an owner
+scope ruling dated 2026-09-02. Read it there:
+**[Models and planes](/concepts/models-and-planes)**. The short version for the
+two first-generation models:
 
-Native macOS-Intel and Windows wheels are pending for the 2.3 line; the [architecture](/concepts/architecture) page tracks per-platform shipping status. On iPhone, Essence delivers a fast, real-time on-device avatar; Expression's heavier renderer targets iPad Pro and Mac (iPhone is in preview).
+| Lane | **Essence 1** | **Expression 1** |
+|---|---|---|
+| **GPU — offline and live** | In scope | In scope |
+| **Apple — macOS, iOS** | In scope | **Not applicable** |
+| **Browser** | In scope | **Not applicable** |
+| **Android** | In scope | **Not applicable** |
+
+**Expression 1 is GPU-only, deliberately.** The blank cells above are not a
+roadmap and not a gap — they are the intended shape of the model, and no release
+will fill them. If you need an expressive, portrait-driven model somewhere other
+than a GPU, the model is **[Expression 2](/concepts/expression-2)**, which is in
+scope on every lane.
+
+Essence 1 on-device runs on macOS arm64, Linux x86_64 / aarch64, iOS, iPadOS,
+Raspberry Pi 4B+ and in the browser. Native macOS-Intel and Windows wheels are
+pending for the 2.3 line; the [architecture](/concepts/architecture) page tracks
+per-platform shipping status.
 
 ## Essence
 
@@ -129,20 +140,22 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 **Runtime characteristics**
 
-- ~2–6 GB resident; needs Apple Silicon M3+ (Mac) / M4+ (iPad Pro) or an NVIDIA GPU (8 GB+ VRAM).
+- ~2–6 GB resident; needs an NVIDIA GPU (8 GB+ VRAM). **GPU only** — there is no
+  Apple, browser or Android lane for Expression 1, by scope ruling.
 - Works with any face image — drag-and-drop swap, photo, video frame, anything.
 - AI-driven expressions adapt to speech content and emotional context.
 - Higher visual fidelity for close-up conversational interactions.
-- On-device demo apps target macOS M3+ and iPad Pro M4+ today; iPhone Expression and macOS-Intel are on the way.
-- On Apple Silicon the Swift SDK auto-spawns a `bithuman-expression-daemon` subprocess to drive the model.
+- For an expressive model that *does* run on a Mac, an iPhone, in a browser or
+  on Android, use **[Expression 2](/concepts/expression-2)**.
 
 **How to ship it**
 
 - [Cloud LiveKit plugin](/guides/deploy-livekit) — bitHuman hosts the GPU worker (set `model="expression"`).
 - [Self-hosted GPU](/guides/deploy-self-hosted) — your own NVIDIA GPU via the Docker container.
-- [On-device macOS / iPadOS](/sdk/swift) — Apple Silicon M3+, via the Swift SDK.
-- [bitHuman CLI](/sdk/cli/overview) — `bithuman run` with an Expression `.imx`.
 - [REST API](/api/reference) — same endpoint as Essence; the model is selected per agent.
+
+There is deliberately no on-device row here. See
+[models and planes](/concepts/models-and-planes).
 
 ## Which should I use?
 
@@ -152,11 +165,15 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ### iPhone app
 
-**Essence.** On iPhone, choose Essence; iPad and Mac are the on-device homes for Expression.
+**Essence 1**, or **[Essence 2](/concepts/essence-2)** /
+**[Expression 2](/concepts/expression-2)** for the second generation. Not
+Expression 1 — it is GPU-only.
 
 ### Native Mac or iPad app with close-up dynamic faces
 
-**Expression on-device** via the [Swift SDK](/sdk/swift) or the Mac/iPad reference apps.
+**[Expression 2](/concepts/expression-2)** via the [Swift SDK](/sdk/swift).
+Expression *1* is GPU-only and has no on-device Apple build — see
+[models and planes](/concepts/models-and-planes).
 
 ### Need custom gestures (wave, nod, laugh)
 
@@ -180,6 +197,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 
 ## Next steps
 
+- [Models and planes](/concepts/models-and-planes) — the model x lane matrix, and what "GPU only" means
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launched July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2), [Essence 2 Max](/concepts/essence-2-max).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
