@@ -157,15 +157,21 @@ A 15-second clip produced 375 frames and a playable MP4. For frame-level
 control, `OfflineTesseraRenderer(imx_path, api_secret=...).render(audio,
 on_frame=callback)` hands you RGB numpy frames as they are produced.
 
-### 5. What a successful render means
+### 5. What a successful render does and does not tell you
 
-If `render_offline` returns, the MP4 is a render we stand behind — there is no
-quality flag to check afterwards and no second-guessing to do. An artifact that
-could not produce our current picture does not render a worse one quietly: it
-refuses, and the exception says so.
+If `render_offline` returns you have a complete, playable MP4: `stats["frames"]`
+is the frame count, and the file is the length you asked for.
 
-So the only two things worth asserting are the ones you already have: the call
-returned, and `stats["frames"]` is the frame count you expected.
+What it does not tell you is which mouth interior you got. Not every published
+Essence 2 artifact was built with the current, sharper one. An older bundle
+still renders, and it renders the earlier, softer mouth at the **same frame
+count, same resolution and same duration, with no warning and no error** —
+nothing in the numbers separates the two.
+
+If a render comes back softer around the mouth than the samples on
+[Essence 2](/concepts/essence-2), the artifact needs rebuilding on our side:
+send us the agent code at [hello@bithuman.ai](mailto:hello@bithuman.ai). There
+is nothing to configure on yours.
 
 ### Tuning
 

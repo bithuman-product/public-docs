@@ -286,10 +286,17 @@ Exit code `0`. A 10-second 16 kHz clip produced 250 frames of 25 fps video, and
 `metered_heartbeat` — which are what [§5](#5-metering--what-you-see-in-each-credential-state)
 below tells you to read. Everything else it returns is engine
 telemetry: unversioned, free to change between releases, and not something to
-branch on. **If a render succeeds, the frames are the frames we ship.** There is
-no quality flag to check, because there is no quality decision left with you:
-a container that could not produce our current mouth interior does not render
-at all, it refuses ([`InvalidAvatar`](/api/errors)).
+branch on.
+
+> **The one thing a successful render does not tell you.** Not every published
+> Essence 2 artifact was built with the current, sharper mouth interior. An
+> older one still renders, and it renders the earlier, softer mouth at the
+> **same frame count, same resolution and same duration, with no warning and no
+> error** — `stats["frames"]` cannot see the difference and neither can
+> `ffprobe`. If a render comes back softer around the mouth than the samples on
+> [Essence 2](/concepts/essence-2), the artifact needs rebuilding on our side:
+> send us the agent code at [hello@bithuman.ai](mailto:hello@bithuman.ai).
+> There is nothing to configure on yours.
 
 > **On throughput — measure your own identity, do not plan against one
 > number.** Four runs of the command above, on this box, reported `fps` of

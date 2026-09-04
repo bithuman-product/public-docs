@@ -148,6 +148,12 @@ Essence 2 on CPU; then `export BITHUMAN_W2V_ONNX=/path/to/the/file.onnx`.
 > pip install "bithuman[tessera]"
 > ```
 
+> **Not every published Essence 2 artifact was built with the current, sharper
+> mouth interior.** An older one still renders — the earlier, softer mouth, at
+> the same frame count and resolution, with no warning and no error. What to do
+> about it is on the Python SDK page: [what a successful render does not tell
+> you](/sdk/python#4-render).
+
 **Honest performance expectations (measured, 600-frame runs):** on a 16-core
 x86 desktop the route sustains **~22–25 FPS end-to-end** with the default
 `fast` CPU tier, and **~31 FPS** on newer artifacts, which carry an extra
