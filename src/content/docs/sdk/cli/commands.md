@@ -154,9 +154,18 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 > conversational brain runs as a Python agent that the binary launches.
 > Install it before `bithuman run` can talk back:
 >
-> - **Cloud brain (OpenAI Realtime):** `pip install bithuman-cli`
-> - **On-device brain:** `pip install 'bithuman-cli[local]'` (then
->   `BITHUMAN_LOCAL=1`)
+> - **Cloud brain (OpenAI Realtime):** `pip install bithuman-cli` —
+>   **macOS arm64 only.** The wheel has two files in its entire PyPI
+>   history, both `py3-none-macosx_11_0_arm64`; on Linux this exits 1.
+> - **On-device brain:** install the requirements directly —
+>   ```
+>   pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
+>   ```
+>   then `BITHUMAN_LOCAL=1`. Do **not** use `bithuman-cli[local]` (same
+>   macOS-only wheel) or `bithuman[local]` — the `bithuman` distribution
+>   has no `local` extra, so pip warns once, **exits 0, and installs none
+>   of the brain**. Verified 2026-09-04: the resolved package set for
+>   `bithuman[local]` is byte-identical to plain `bithuman`.
 >
 > Without one of these the avatar renders but has no brain. See
 > [Configuration](/sdk/cli/configuration) and [Local mode](/sdk/cli/local-mode).
@@ -282,11 +291,37 @@ Flags:
 | `--target-size <SIZE>` | `1280` | A single number `N` (longest side binds to `N`, aspect preserved) or `WxH` (explicit canvas). |
 | `--limit <N>` | none | Cap the render at N frames — the audio is trimmed to `N/fps`. Measured on 2.5.1: `--limit 10` on an Expression 2 avatar produced a 10-frame MP4 (`ffprobe` `nb_frames=10`). |
 
-> **`render` is Linux-only.** On macOS the command prints a
-> `not implemented: be_video_encoder_*` error and exits. **UNVERIFIED here** —
-> that macOS behaviour is carried from the earlier report and was not re-tested
-> on 2.5.1; this estate has no Mac in the loop that runs these checks. What
-> *was* re-tested is the Linux side, above. Workarounds:
+> **`render` is Linux-only.** Re-tested on 2.5.1 on a real Mac
+> (macOS 26.6.2, Apple Silicon, Homebrew `bithuman-cli 2.5.1`) on
+> 2026-09-04 — the previous "UNVERIFIED, no Mac in the loop" caveat is
+> now retired, and the behaviour is two different failures, not one:
+>
+> - **Essence 1 on macOS** — no output file at all. The engine prints,
+>   verbatim:
+>
+>   ```text
+>   record_mp4 failed: not implemented: video encoder unavailable on macOS
+>   in this libessence build (ffmpeg excluded to avoid webrtc-rs symbol
+>   collision in `bithuman serve`)
+>   ```
+>
+>   `libessence` there is the engine's own legacy library name, kept for
+>   compatibility and printed as-is — the product is Essence 1. Its own
+>   printed workaround #1 is "render on a Linux host" — which is
+>   workaround 1 below, and is Expression 2 only.
+> - **Expression 2 on macOS** — the engine under-produces: `engine
+>   produced 53 frames but the audio needs 60 — refusing to write a
+>   truncated render`, non-zero exit. ★**It still leaves the truncated
+>   MP4 at `--output`** — a cleanly decodable 53-frame / 2.65 s h264+aac
+>   file where 60 frames / 3.00 s were asked for. A caller that tests
+>   "did `out.mp4` appear" gets a silent 12 % truncation. Test the frame
+>   count, not the file's existence:
+>   ```bash
+>   ffprobe -v error -count_frames -select_streams v:0 \
+>     -show_entries stream=nb_read_frames -of csv=p=0 out.mp4
+>   ```
+>
+> Workarounds:
 >
 > 1. **Run inside a Linux x86_64 container** — install with the universal
 >    installer (`curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh`;

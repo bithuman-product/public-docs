@@ -37,12 +37,17 @@ export OPENAI_API_KEY=sk-...
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~900 MB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline. (The `[local]` pip extra is macOS Apple Silicon — see [Local mode](/sdk/cli/local-mode) for the Linux path.)
+4. Prefer no cloud at all? Run the fully on-device brain instead. First run downloads ~900 MB of brain models once (whisper.cpp + llama.cpp + Supertonic + Silero); after that it is offline. (Install the brain requirements directly — the `[local]` extra only exists on the macOS-arm64-only `bithuman-cli` wheel; see [Local mode](/sdk/cli/local-mode).)
 
 ```bash
-pip install 'bithuman-cli[local]'
+pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
 BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
+
+Install the requirements directly rather than through an extra.
+`bithuman-cli[local]` reaches the same set, but only on macOS arm64 —
+on Linux it exits 1. And `bithuman[local]` is not an extra at all: pip
+warns, **exits 0, and installs none of it**.
 
 ## What you'll see
 
