@@ -67,9 +67,14 @@ name: Internal links
 #    is a rename and it exits non-zero.
 # 5. Internal vocabulary — the 2026-09-04 owner rulings: "borrow is a tech
 #    internal concept and should never be exposed to client side" and "as a
-#    developer they don't need to know any technical details at all". Measured
-#    that day, this site carried 371 hits of our implementation vocabulary and —
-#    the sharp case — INSTRUCTED developers to gate on `stats["borrow_state"]`.
+#    developer they don't need to know any technical details at all". ★The
+#    figure first written here was 371, which this file's own instrument does
+#    not reproduce on any tree in the history; re-measured 2026-09-04 with
+#    `check-internal-vocabulary.mjs --emit` over its 107-file corpus, the site
+#    carried **222** hits on origin/main (7bf973b) and **229** on the base this
+#    rewrite was applied to — and, the sharp case, INSTRUCTED developers to gate
+#    on `stats["borrow_state"]`. An unreproducible number in a comment is the
+#    same defect one level down from a guard that cannot fail.
 #    scripts/check-internal-vocabulary.mjs grades the same customer-facing
 #    corpus for `borrow`, `passthrough`, `donor`, `bank`, `arming`, `w0`,
 #    `pi-frame`, `director`, `plane`, `compose` and `dream-1` (internal-only
