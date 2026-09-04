@@ -32,7 +32,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
   - **Expression 1** — first generation. Dynamic facial animation from any
     portrait image. **GPU only** — see
-    [models and planes](/concepts/models-and-planes).
+    [where each model runs](/concepts/where-models-run).
   - **[Expression 2](/concepts/expression-2)** — the second-generation
     generative engine: audio-driven, fully-generated motion from a single
     photo rather than patching a pre-rendered base. Serves on gpu, cpu, and
@@ -70,7 +70,7 @@ bitHuman's two first-generation avatar models share the same [`.imx` file format
 | **Avatar source** | `.imx` you build once from a photo (the identity video is generated internally). | Any face image — provide at runtime, no build step. |
 | **Custom gestures** | Yes (wave, nod, laugh, etc.) | No |
 | **Idle animation** | Pre-recorded natural movement | AI-generated micro-movements |
-| **Compute needed** | Any modern CPU | NVIDIA GPU (GPU-only — see [models and planes](/concepts/models-and-planes)) |
+| **Compute needed** | Any modern CPU | NVIDIA GPU (GPU-only — see [where each model runs](/concepts/where-models-run)) |
 | **Memory footprint** | Low (~200–500 MB) | Higher (~2–6 GB) |
 | **Best for** | Kiosks, mobile, edge, 24/7 deployments, high concurrency | Close-up native consumer apps, custom faces per session |
 | **Pricing (first-generation rates)** | 1 credit/min self-hosted · 2 credits/min cloud | 2 credits/min self-hosted · 4 credits/min cloud |
@@ -80,9 +80,9 @@ on-device, embed widget. **Expression 1 does not**; see below.
 
 ## Where each model runs
 
-The authority for this is the **model / plane matrix**, which encodes an owner
+The authority for this is the **model / lane matrix**, which encodes an owner
 scope ruling dated 2026-09-02. Read it there:
-**[Models and planes](/concepts/models-and-planes)**. The short version for the
+**[Where each model runs](/concepts/where-models-run)**. The short version for the
 two first-generation models:
 
 | Lane | **Essence 1** | **Expression 1** |
@@ -155,7 +155,7 @@ Expression generates real-time facial animation directly from a portrait image. 
 - [REST API](/api/reference) — same endpoint as Essence; the model is selected per agent.
 
 There is deliberately no on-device row here. See
-[models and planes](/concepts/models-and-planes).
+[where each model runs](/concepts/where-models-run).
 
 ## Which should I use?
 
@@ -173,7 +173,7 @@ Expression 1 — it is GPU-only.
 
 **[Expression 2](/concepts/expression-2)** via the [Swift SDK](/sdk/swift).
 Expression *1* is GPU-only and has no on-device Apple build — see
-[models and planes](/concepts/models-and-planes).
+[where each model runs](/concepts/where-models-run).
 
 ### Need custom gestures (wave, nod, laugh)
 
@@ -197,7 +197,7 @@ Expression *1* is GPU-only and has no on-device Apple build — see
 
 ## Next steps
 
-- [Models and planes](/concepts/models-and-planes) — the model x lane matrix, and what "GPU only" means
+- [Where each model runs](/concepts/where-models-run) — the model x lane matrix, and what "GPU only" means
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launched July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2), [Essence 2 Max](/concepts/essence-2-max).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.

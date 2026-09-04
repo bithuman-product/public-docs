@@ -217,7 +217,7 @@ predominantly *on* the Neural Engine, and it says nothing about iOS.
 attributed to every operation in the graph running on the Neural Engine. That
 attribution was wrong, the operation count did not describe this model, and the
 figure was a model-in-isolation reading that a live session — which also pays
-audio conditioning, paste-back and the mouth-interior compose — never sees. It
+audio conditioning, paste-back and the mouth-interior work — never sees. It
 has been **withdrawn rather than replaced**: the per-model, per-compute-unit
 protocol used for the [CPU table](#rendering-throughput-measured) below has not
 been run for the Apple or GPU tiers, and picking one of the several figures in
@@ -407,25 +407,25 @@ one session per container, the same 3 seconds of speech, 75 frames each:
 
 | Resolution | Sharp mouth-interior rendering | Frames per second |
 |---|---|---:|
-| 1280×720 | armed | **0.9** |
-| 1280×720 | not armed | 12.4 |
-| 1080×1920 | armed | **1.0** |
-| 1080×1920 | not armed | 6.5 |
+| 1280×720 | on | **0.9** |
+| 1280×720 | off | 12.4 |
+| 1080×1920 | on | **1.0** |
+| 1080×1920 | off | 6.5 |
 
 Read the rows in pairs. At a **fixed** resolution the sharp mouth-interior
 rendering costs **14×** (1280×720) and **6.5×** (1080×1920); resolution alone
 costs under 2×. So the cost is the mouth-interior rendering, not the frame size,
-and an armed CPU render runs roughly **25× slower than playback**.
+and a CPU render with it on runs roughly **25× slower than playback**.
 
 **What this means for you.** The CPU tier is an **offline-rendering and
 last-resort** tier, not a real-time one; live sessions route to the GPU and
 Apple tiers first. If you pin a live session to CPU, expect it to fall behind.
-The un-armed rows vary run to run (a 17.6 fps reading was taken for the same
-1280×720 identity on an earlier container); the armed rows did not.
+The **off** rows vary run to run (a 17.6 fps reading was taken for the same
+1280×720 identity on an earlier container); the **on** rows did not.
 
 **These rows predate the [head-upsample rewrite](#a-faster-head-upsample).**
 They were measured on 2026-08-30, before that change reached any identity. A
-rebuilt identity has not been re-measured under this protocol, so read the armed
+rebuilt identity has not been re-measured under this protocol, so read the **on**
 rows as an **upper bound** on the cost, not as the current figure for an
 identity that has already been rebuilt.
 

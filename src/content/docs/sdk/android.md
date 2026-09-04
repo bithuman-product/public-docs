@@ -33,12 +33,12 @@ verified about the newest one.
 
 > ### Which models belong on Android at all
 >
-> Per the model/plane scope ruling of 2026-09-02, three models are in scope for the
+> Per the model/lane scope ruling of 2026-09-02, three models are in scope for the
 > Android lane: **essence-1**, **expression-2** and **essence-2**. **expression-1**
 > and **essence-2-max** are **GPU-only**. Their absence from Android is correct and
 > deliberate — it is not a gap and there is no Android build of them coming.
 > The full matrix, every model against every lane, is on
-> [Models and planes](/concepts/models-and-planes).
+> [Where each model runs](/concepts/where-models-run).
 
 ---
 
@@ -574,4 +574,4 @@ deliberately fails, so you can tell a working setup from a silently-broken one.
 - [SDK overview](/sdk) — which SDK to pick
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop
 - [Swift SDK](/sdk/swift) — the Apple counterpart
-- [Models and planes](/concepts/models-and-planes) — which model runs on which lane, and what "GPU only" means
+- [Where each model runs](/concepts/where-models-run) — which model runs on which lane, and what "GPU only" means

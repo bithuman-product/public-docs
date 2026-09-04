@@ -135,7 +135,7 @@ controls: [what the CLI actually does](/sdk/cli/verified).
 The rebuilt Linux engine that ships inside CLI 2.5.1
 (`engines/linux-x64-1.0.0.engine`) has metering **enforcement off**. A render
 with no credential **proceeds**, behind a `★ UNMETERED RENDER` banner on
-stderr; the meter is still armed and still beats wherever a credential exists.
+stderr; the meter is still running and still beats wherever a credential exists.
 
 This was deliberate. The engine's own source carries the ruling: shipping the
 LGPL remediation fail-closed *"would have switched billing on for every
@@ -279,7 +279,7 @@ The `essence-2` model now **self-hosts on your own CPU servers**. Python SDK
 render the downloaded `<code>.lebundle.imx` to frames or an mp4 entirely on
 your hardware, no GPU required, teeth-refinement stage included. Measured
 end-to-end: **~22–31 FPS on a 16-core desktop** (the higher band when the
-bundle carries the CPU director member). The runtime ships **together with
+bundle carries the CPU acceleration member). The runtime ships **together with
 its metering**: a valid `BITHUMAN_API_SECRET` is required, sessions bill at
 the self-hosted rate (2 credits/min), and without a key the renderer is
 fail-closed — zero frames. Live streaming from your own server still runs
@@ -598,7 +598,7 @@ All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (
 
 ### Python SDK `bithuman` 2.3.10 (2026-06-23) — self-hosted streaming lag fix
 
-- **Streaming compose no longer degrades over a long utterance.** Self-hosted streaming now holds a steady frame rate for the full length of a turn (long utterances used to slow down as they grew), with byte-identical output. The audio stream also resets at the start of each turn so idle frames can't shift lip-sync.
+- **Streaming no longer degrades over a long turn.** Self-hosted streaming now holds a steady frame rate for the full length of a turn (long utterances used to slow down as they grew), with byte-identical output. The audio stream also resets at the start of each turn so idle frames can't shift lip-sync.
 
 ### Python SDK `bithuman` 2.3.9 (2026-06-23) — barge-in / interrupt fix
 

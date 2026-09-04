@@ -65,7 +65,23 @@ name: Internal links
 #    retired /concepts/ URLs still redirect to a real page. It refuses to pass
 #    vacuously: if a frozen carrier stops appearing in the corpus at all, that
 #    is a rename and it exits non-zero.
-# 5. Unresolved placeholders — the three withdrawn performance numbers on this
+# 5. Internal vocabulary — the 2026-09-04 owner rulings: "borrow is a tech
+#    internal concept and should never be exposed to client side" and "as a
+#    developer they don't need to know any technical details at all". Measured
+#    that day, this site carried 371 hits of our implementation vocabulary and —
+#    the sharp case — INSTRUCTED developers to gate on `stats["borrow_state"]`.
+#    scripts/check-internal-vocabulary.mjs grades the same customer-facing
+#    corpus for `borrow`, `passthrough`, `donor`, `bank`, `arming`, `w0`,
+#    `pi-frame`, `director`, `plane`, `compose` and `dream-1` (internal-only
+#    alpha, which may appear in NO customer-facing artifact). It is DISJOINT
+#    from checker 4 by assertion — `tessera` and `libessence` belong to that one
+#    — and it asserts frozen carriers PRESENT, so cleaning prose can never
+#    delete a string a developer types. ★Its firing control is SYNTHETIC: every
+#    pattern is fired against its own fixture in the same run, because on a
+#    fixed site the corpus is legitimately zero and a corpus-presence rule would
+#    be permanently red. That is the control the 165-occurrence defect lacked.
+#
+# 6. Unresolved placeholders — the three withdrawn performance numbers on this
 #    site (2026-07-28, 2026-08-26, 2026-09-02) were all the same mistake: a
 #    figure measured on one thing, printed as if it described another. The
 #    defence that works is to write the page while the measurement is still
@@ -172,6 +188,18 @@ jobs:
         run: node scripts/check-retired-model-names.mjs
       # A TKTK marker means a sentence on a published page is waiting on a fact
       # nobody has yet. Red until it is measured or the page moves to drafts/.
+      # No customer-facing page may name a mechanism. The firing control runs
+      # in the same invocation, so a pass here is a pass by a proven instrument
+      # rather than by a pattern nobody checked.
+      - name: Check internal vocabulary
+        if: always()
+        run: node scripts/check-internal-vocabulary.mjs
+      # ★And the guard's own mutation arms, so a change that quietly blinds it
+      # cannot land green. This is what a docs checker printing "OK — 234
+      # occurrences" over 165 it had no pattern for was missing.
+      - name: Internal-vocabulary guard self-test
+        if: always()
+        run: node scripts/check-internal-vocabulary.mjs --self-test
       - name: Check for unresolved placeholders
         if: always()
         run: node scripts/check-placeholders.mjs

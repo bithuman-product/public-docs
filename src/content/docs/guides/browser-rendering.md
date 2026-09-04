@@ -1,6 +1,6 @@
 ---
 title: "Browser rendering"
-description: "Move avatar rendering out of your server and into the user's tab — ONNX Runtime Web does the mel spectrogram, audio encoder, and frame compositing in WASM, so the video never leaves the machine."
+description: "Move avatar rendering out of your server and into the user's tab — ONNX Runtime Web does the whole render in WASM, so the video never leaves the machine."
 section: guides
 group: "Build"
 order: 1
@@ -8,7 +8,7 @@ order: 1
 
 ## ONNX in the user's tab
 
-`rendering_mode=browser` and `rendering_mode=avatar` are two URL-toggled modes on every bitHuman agent landing page. They move the avatar rendering pipeline (mel spectrogram → ONNX audio encoder → KNN cluster lookup → frame composite) **out of your server and into the user's browser**, using ONNX Runtime Web on a WebAssembly backend. The agent worker keeps the brain (STT/LLM/TTS); the GPU on the server is free.
+`rendering_mode=browser` and `rendering_mode=avatar` are two URL-toggled modes on every bitHuman agent landing page. They move avatar rendering **out of your server and into the user's browser**, using ONNX Runtime Web on a WebAssembly backend. The agent worker keeps the brain (STT/LLM/TTS); the GPU on the server is free.
 
 Production-deployed since Feb 2026. No install, no SDK call — flip one URL parameter on an existing agent landing page.
 
@@ -41,7 +41,7 @@ https://agent.viewer.bithuman.ai/?rendering_mode=avatar&model_url=<IMX_URL>
 [Try it on a showcase agent →](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser)
 
 > **WebGPU is not "the fast path" for `?render=local`, and there is no automatic
-> WASM fallback under it.** The Essence 2 director runs on **ONNX Runtime Web's
+> WASM fallback under it.** Essence 2 runs on **ONNX Runtime Web's
 > `wasm` provider by default**; WebGPU's job in the shipped path is the **speech
 > encoder**, and paste-back is **WebGL2**. Which stage runs on which backend,
 > the measured frame rates, and the `navigator.gpu`-exists-but-no-adapter
@@ -99,7 +99,7 @@ MediaStreamTrack (TTS or mic)
   -> Mel spectrogram (80 bins x 16 frames, Bluestein FFT)
   -> ONNX audio encoder (WASM, 512-D embedding)
   -> KNN cluster lookup (183 clusters, L2 distance)
-  -> Frame composite (base frame + mouth patch, alpha-blended)
+  -> Frame assembly (base frame + mouth patch, alpha-blended)
   -> <canvas> @ 25 FPS
 ```
 
@@ -113,7 +113,7 @@ The pipeline is bit-compatible with [the essence engine](/concepts/architecture)
 |---|---|
 | Mel FFT | 5–10 ms |
 | ONNX encoder (WASM) | 10–20 ms |
-| KNN lookup + composite | 5–10 ms |
+| KNN lookup + frame assembly | 5–10 ms |
 
 Network adds the LiveKit audio-track RTT in `browser` mode (typically 50–150 ms one-way to the nearest LiveKit edge). In `avatar` mode there's no network in the loop at all once the IMX is cached.
 
@@ -131,7 +131,7 @@ Network adds the LiveKit audio-track RTT in `browser` mode (typically 50–150 m
 | Server avatar GPU | yes | **no** | none |
 | Server brain (STT/LLM/TTS) | yes | yes | none |
 | LiveKit subscription | video + audio | **audio only** | none |
-| Browser ML work | none | mel + ONNX + composite | mel + ONNX + composite |
+| Browser ML work | none | the whole render | the whole render |
 | Server → browser bandwidth | 0.5–2 Mbps video | 32–64 kbps audio | 0 |
 | Offline-capable | no | partial (brain still needs net) | **yes (post-cache)** |
 | Setup | cloud session | append `?rendering_mode=browser` | append `?rendering_mode=avatar&model_url=…` |

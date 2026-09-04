@@ -135,7 +135,7 @@ Save this as `webgpu-probe.html` and open it in the browser you care about:
   L.push("");
   L.push(real
     ? "=> essence-2 local LIPSYNC will run (w2v on WebGPU)."
-    : "=> essence-2 local lipsync is OFF on this browser. The director still" +
+    : "=> essence-2 local lipsync is OFF on this browser. Essence 2 still" +
       "\n   renders on wasm; you get living idle + TTS audio, no local lipsync.");
   document.getElementById("out").textContent = L.join("\n");
 })();
@@ -181,7 +181,7 @@ requestAdapter()      : GPUAdapter
 isFallbackAdapter     : true
 REAL WebGPU adapter   : false
 
-=> essence-2 local lipsync is OFF on this browser. The director still
+=> essence-2 local lipsync is OFF on this browser. Essence 2 still
    renders on wasm; you get living idle + TTS audio, no local lipsync.
 
 ### C — GPU disabled
@@ -191,7 +191,7 @@ navigator.gpu present : true
 requestAdapter()      : null
 REAL WebGPU adapter   : false
 
-=> essence-2 local lipsync is OFF on this browser. The director still
+=> essence-2 local lipsync is OFF on this browser. Essence 2 still
    renders on wasm; you get living idle + TTS audio, no local lipsync.
 ```
 
@@ -207,7 +207,7 @@ WebGPU*, which is why the probe checks `isFallbackAdapter` on **both**
 
 ## Check 3 — is WebGPU actually faster here?
 
-WebGPU is an **acceleration for one of the two directors, and close to nothing
+WebGPU is an **acceleration for one of the two models, and close to nothing
 for the other**. Do not assume it. Measure it, on the hardware your users have.
 
 This harness serves the published bundle cross-origin-isolated (wasm threads
@@ -216,7 +216,7 @@ per tier per execution provider.
 
 ```python
 #!/usr/bin/env python3
-"""Benchmark the published essence-2 browser director on THIS machine, both
+"""Benchmark the published essence-2 browser models on THIS machine, both
 execution providers, both tiers. Serves the page cross-origin-isolated (wasm
 threads need it), drives headless Chrome, prints what the page measured."""
 import http.server, json, os, socketserver, subprocess, sys, threading, time
@@ -258,7 +258,7 @@ downloaded into `files/`
 (`curl -fsS https://models.bithuman.ai/web/libelevate-web-v0.1.0/<path> -o files/<path>`):
 
 ```html
-<!doctype html><meta charset="utf-8"><title>essence-2 director EP benchmark</title>
+<!doctype html><meta charset="utf-8"><title>essence-2 EP benchmark</title>
 <pre id="out">running…</pre>
 <script type="module">
 const q = new URLSearchParams(location.search);
@@ -381,19 +381,19 @@ adapter=yes"`, 8 WASM threads, cross-origin isolated, `hardwareConcurrency` 32.
 
 | tier | EP | run 1 | run 2 | run 3 |
 |---|---|---|---|---|
-| **m4b** (quality director) | wasm | 17.6 fps | 18.4 fps | 18.6 fps |
-| **m4b** (quality director) | webgpu | **42.1 fps** | **30.9 fps** | **31.0 fps** |
-| **m3c2** (speed director) | wasm | 48.8 fps | 35.9 fps | 32.9 fps |
-| **m3c2** (speed director) | webgpu | 50.5 fps | **29.2 fps** | 33.0 fps |
+| **m4b** (quality) | wasm | 17.6 fps | 18.4 fps | 18.6 fps |
+| **m4b** (quality) | webgpu | **42.1 fps** | **30.9 fps** | **31.0 fps** |
+| **m3c2** (speed) | wasm | 48.8 fps | 35.9 fps | 32.9 fps |
+| **m3c2** (speed) | webgpu | 50.5 fps | **29.2 fps** | 33.0 fps |
 
 Run 1's WebGPU numbers are the fastest of the three on both tiers; do not take
 them as the headline. The run-to-run spread on one machine is wide enough that a
 single run is not evidence — which is the other reason to run this yourself
 rather than quote it.
 
-**Read the two rows differently.** On the **quality** director WebGPU is worth
+**Read the two rows differently.** On the **quality** model WebGPU is worth
 1.7–2.4× and is the difference between under-realtime and comfortable. On the
-**speed** director it is a wash — and in run 2 it was a *net loss* (29.2 fps
+**speed** model it is a wash — and in run 2 it was a *net loss* (29.2 fps
 against wasm's 35.9). "WebGPU is the fast path" is not a true sentence about
 this pipeline; it is true of one graph and false of the other.
 
@@ -409,7 +409,7 @@ this pipeline; it is true of one graph and false of the other.
   own target hardware. On the speed tier you may be paying a 26 MB extra
   download for nothing.
 - **wasm is the floor and it is a real floor** — it renders on every browser in
-  the table, and it is what the director runs on by default.
+  the table, and it is what these models run on by default.
 
 ## Where to go next
 

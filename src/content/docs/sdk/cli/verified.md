@@ -147,7 +147,7 @@ rc=0
 ```
 
 Every showcase avatar in that catalog is Essence 1. `pull` writes the file and
-prints its path on stdout and nothing else, so it composes:
+prints its path on stdout and nothing else, so it pipes cleanly:
 
 ```bash
 bithuman pull planning-nebula

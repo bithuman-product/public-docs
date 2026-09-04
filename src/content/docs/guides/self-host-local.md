@@ -37,7 +37,7 @@ Two things to settle before you pick a platform:
   Expression 2 Linux render host is **fail-open** as of the 2026-09-02 engine
   rebuild: it renders, behind a `★ UNMETERED RENDER` banner on stderr, and the
   usage may never reach the ledger. Both states, verbatim, with the exit codes:
-  [Python SDK → Metering](/sdk/python#7-metering--what-you-see-in-each-credential-state).
+  [Python SDK → Metering](/sdk/python#5-metering--what-you-see-in-each-credential-state).
 - **Essence 2 live streaming is not self-hostable.** Only whole-clip offline
   rendering is. Live sessions run through the cloud — see
   [LiveKit](/guides/deploy-livekit).
@@ -150,51 +150,22 @@ stats = render_offline(
     out_mp4="rendered.mp4",
     api_secret=os.environ["BITHUMAN_API_SECRET"],
 )
-print(stats["frames"], stats["fps"], stats["borrow_state"])
+print(stats["frames"], stats["fps"])
 ```
 
 A 15-second clip produced 375 frames and a playable MP4. For frame-level
 control, `OfflineTesseraRenderer(imx_path, api_secret=...).render(audio,
 on_frame=callback)` hands you RGB numpy frames as they are produced.
 
-### 5. Confirm the mouth-interior stage actually ran
+### 5. What a successful render means
 
-Essence 2's sharp mouth interior comes from four **optional** members inside the
-artifact. Not every published bundle carries them, and one that does not
-**still renders successfully** — it just renders the mouth the earlier,
-softer way. Nothing in the output tells you by looking.
+If `render_offline` returns, the MP4 is a render we stand behind — there is no
+quality flag to check afterwards and no second-guessing to do. An artifact that
+could not produce our current picture does not render a worse one quietly: it
+refuses, and the exception says so.
 
-**Before you render**, list the members:
-
-```bash
-bithuman info A24EKJ8433.lebundle.imx | grep tessera
-#     tessera_bank.v1.json
-#     tessera_bank.v1.mp4
-#     tessera_head.v1.json
-#     tessera_head.v1.pt
-```
-
-All four must be present. **After you render**, gate on `borrow_state`:
-
-| `borrow_state` | Meaning |
-|---|---|
-| `borrowed` | The refinement stage ran on every frame. This is the good case. |
-| `partial` | It ran on some frames; `stats["tessera"]["unborrowed_rate"]` gives the fraction it did not. |
-| `synthesized` | The stage was available but did not run. |
-| `absent` | The bundle has no such members — `borrow_reason` reads `no-tessera-members`. |
-| `unknown` | The renderer could not determine it. |
-
-★ **A frame count is not a verdict.** A bundle missing the members returns a
-perfectly healthy-looking `{"frames": 375}` alongside
-`{"borrow_state": "absent", "borrow_reason": "no-tessera-members"}`. Assert on
-`borrow_state`, not on the frame count:
-
-```python
-assert stats["borrow_state"] == "borrowed", stats["borrow_reason"]
-```
-
-If a bundle comes back `absent`, contact us — the artifact needs rebuilding;
-there is nothing to configure on your side.
+So the only two things worth asserting are the ones you already have: the call
+returned, and `stats["frames"]` is the frame count you expected.
 
 ### Tuning
 
@@ -203,7 +174,7 @@ there is nothing to configure on your side.
 | `BITHUMAN_TESSERA_CPU_TIER` | `fast` | `reference` = the slower fp32 parity tier |
 | `BITHUMAN_TESSERA_TORCH_THREADS` | ~half the cores (≤12) | torch intra-op pool; oversubscribing thrashes |
 | `BITHUMAN_TESSERA_PIPELINE` | `1` | producer/consumer pipelined render; `0` disables |
-| `BITHUMAN_TESSERA_DIRECTOR` | `auto` | `ts`/`onnx` pins the director backend |
+| `BITHUMAN_TESSERA_DIRECTOR` | `auto` | `ts`/`onnx` pins the inference backend |
 
 ### The Linux CLI, alongside the Python route
 
@@ -225,7 +196,7 @@ does](/sdk/cli/verified); Linux aarch64 is **not** published for `cli-v2.5.1`
 
 **Essence 2 has no offline `render` in the CLI.** Handing `bithuman render` a
 `.lebundle.imx` on Linux exits **69** — the CLI ships no `lible_core.so`, the
-native runtime that owns the teeth borrow:
+native runtime it needs:
 
 ```text
 error: could not load lible_core.so (the native essence-2 runtime that owns the
@@ -233,9 +204,7 @@ TESSERA teeth borrow). Tried: …/.local/bin/lible_core.so; …/.bithuman/lib/li
 ```
 
 That is what the Python route above is for: it is the supported way to get an
-Essence 2 MP4 on your own hardware, and it is the only route that reports
-whether the mouth interior was
-[borrowed](/sdk/python#6-prove-the-borrow-gate-fires).
+Essence 2 MP4 on your own hardware.
 
 ---
 

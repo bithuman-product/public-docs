@@ -171,14 +171,6 @@ const CARRIERS = [
     re: /BITHUMAN_TESSERA_[A-Z_]+/ },
   { why: "§G: exported CamelCase identifiers a customer binds by name — OfflineTesseraRenderer, TesseraOfflineError, Swift TesseraBorrow/TesseraStream, Kotlin attachTesseraBorrow",
     re: /\b[A-Za-z]*Tessera[A-Za-z]+\b/ },
-  { why: "§G: `.imx` container MEMBER names on a customer's disk, read by six readers",
-    re: /tessera_(bank|head)\.v1/i },
-  { why: "§G: stats keys echoed to a caller of GET /v1/video/{job_id} and parsed at the edge (X-BH-Tessera-*)",
-    re: /tessera_(armed|frames|ms_p50|ms_p95)|stats\[["']tessera["']\]|["']tessera["']\s*:/i },
-  { why: "§G: the `borrow_reason` STATE CODE a customer gates on — renaming it silently stops their branch being taken",
-    re: /no-tessera-members/i },
-  { why: "§G: exported C/C++ symbols in the shipped lible_core.so, resolved by the dynamic loader by exact name",
-    re: /le_tessera_|le_utt_tessera_|le::tessera::/i },
   { why: "§G: the member-listing command a developer types verbatim (`bithuman info <file> | grep tessera`)",
     re: /grep tessera/i },
   // ★A carrier for the shipped CLI's `…owns the TESSERA teeth borrow` error/hint
@@ -203,6 +195,25 @@ const CARRIERS = [
   // "frozen carrier never seen in the corpus" fatal below and turn a correct
   // guard red. They are frozen; they are simply not documented here yet. If a
   // page ever adds one, add the carrier with it.
+  //
+  // ★MOVED HERE 2026-09-04 (same reason, new cause) — FOUR carriers that were
+  // listed above until this commit:
+  //     tessera_(bank|head).v1        the .imx member names
+  //     tessera_(armed|frames|ms_p50|ms_p95) / stats["tessera"]  the stats keys
+  //     no-tessera-members            the borrow_reason state code
+  //     le_tessera_ / le::tessera::   exported C/C++ symbols
+  // Every one of them appeared ONLY inside the passages the owner's 2026-09-04
+  // ruling removed — "borrow is a tech internal concept and should never be
+  // exposed to client side" — so after that rewrite each matched 0 lines and
+  // this file's own presence control went red on a CORRECT site.
+  // ★They are NOT unfrozen. NAMING-LEDGER.md §G still governs them and renaming
+  // one is still a runtime break. What changed is only that this site no longer
+  // documents them, which is the same state the group above has always been in.
+  // ★The tension is real and is recorded rather than resolved here: §G says a
+  // frozen string must stay spellable for someone with an old integration, and
+  // the ruling says the borrow is never exposed client-side. Where those two
+  // conflict the RULING wins on the public site, and the spellings live in
+  // NAMING-LEDGER §G. If a page documents one again, move its carrier back up.
 ];
 
 // ── (b) RETIREMENT MARKERS — the retired spelling stays spellable here ────────

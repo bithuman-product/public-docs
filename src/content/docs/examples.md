@@ -64,7 +64,7 @@ Not "hello, avatar" pages — checks you run *before* shipping, each with a
 deliberately broken control arm so you can tell a working setup from a silently
 failing one. Every transcript on both pages was produced by running the snippet.
 
-- [Browser — check before you ship](/examples/browser-webgpu-check) — bundle integrity against the published sha256s, a real-WebGPU adapter probe (three arms), and a WASM-vs-WebGPU benchmark of both director tiers.
+- [Browser — check before you ship](/examples/browser-webgpu-check) — bundle integrity against the published sha256s, a real-WebGPU adapter probe (three arms), and a WASM-vs-WebGPU benchmark of both models.
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — SwiftPM resolve preflight against the pinned checksums, which `bithuman` wheel pip picks on a Mac, and what is actually inside the shipped `Expression2` binary. Runs from any OS.
 
 For the REST contract see the [API reference](/api/reference). For deployment shapes (LiveKit cloud, self-hosted GPU, embed widget) see the [Guides](/guides/deploy-livekit).

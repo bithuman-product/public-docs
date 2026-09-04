@@ -110,8 +110,8 @@ Returns:
 Also exported: `decodeIdentityVideo(url)` and `demuxWebMVP9(buf)` if you want
 the decoded identity frames yourself, and `VERSION`.
 
-> **Never mix `pooled64` across models.** Each director's `pooled64` is the
-> output of that director's own trained compressor. `m4b`'s features fed to
+> **Never mix `pooled64` across models.** Each model's `pooled64` is the
+> output of that model's own trained compressor. `m4b`'s features fed to
 > `m3c2` is not a degraded picture, it is a wrong one. The runtime cannot detect
 > it — it only checks that the identity count matches the video frame count.
 
@@ -138,7 +138,7 @@ is no.
 - The probe to use, with its measured failure arms:
   [Check 2 — does this browser have a real WebGPU adapter?](/examples/browser-webgpu-check#check-2--does-this-browser-have-a-real-webgpu-adapter)
 - Whether WebGPU is worth it on your hardware — it is a large win on the quality
-  director and a wash on the speed one:
+  model and a wash on the speed one:
   [WebGPU and local browser rendering](/guides/browser-webgpu#measured-webgpu-vs-wasm)
 
 ## Hosting requirements
@@ -148,7 +148,7 @@ is no.
   `Cross-Origin-Embedder-Policy: require-corp`, or ship the bundled
   `coi-serviceworker.js` shim (it registers a service worker that injects the
   headers; the first page load reloads once). Without isolation the runtime
-  **silently clamps to 1 thread** — the quality director drops from the 20-fps
+  **silently clamps to 1 thread** — the quality model drops from the 20-fps
   class to roughly 8 fps. Check `avatar.crossOriginIsolated` rather than
   assuming.
 - **MIME types.** `.js` / `.mjs` as `text/javascript`, `.wasm` as

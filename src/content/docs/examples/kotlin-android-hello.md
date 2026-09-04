@@ -52,7 +52,7 @@ A full-screen `ImageView` shows the avatar lip-syncing to `speech.wav` — 16 kH
 ## Full code
 
 ```kotlin
-// MainActivity.kt — load model, compose frames, display them
+// MainActivity.kt — load the model, render frames, display them
 package com.example.bithumanhello
 
 import android.app.Activity
@@ -71,7 +71,7 @@ class MainActivity : Activity() {
         val model = File(dir, "sample-avatar.imx").absolutePath
         val audio = File(dir, "speech.wav").absolutePath
 
-        // Compose runs off the main thread; each Bitmap is a 25 fps frame.
+        // composeFromFile() runs off the main thread; each Bitmap is a 25 fps frame.
         Thread {
             Avatar.load(model, apiSecret = BuildConfig.BITHUMAN_API_SECRET).use { avatar ->
                 avatar.composeFromFile(audio).forEach { frame ->

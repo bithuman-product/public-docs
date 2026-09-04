@@ -1,10 +1,10 @@
 ---
-title: "Models and planes"
-description: "The model x plane matrix: which of the six bitHuman models runs on which hardware lane, what GPU-only means, and what each model is for — with every command on this page executed and its real output pasted back."
+title: "Where each model runs"
+description: "Which bitHuman model runs where: the five product models, what GPU-only means, and what each model is for — with every command on this page executed and its real output pasted back."
 section: concepts
 group: "Models"
 order: 0
-label: "Models and planes"
+label: "Where each model runs"
 ---
 
 This is the page to read before you pick a model. It answers one question —
@@ -17,18 +17,17 @@ printed, including the exit code. Where something could not be run here — it
 needs a Mac, an Android device, or a paid credential — the block says so and is
 marked **UNVERIFIED**. Nothing on this page is an idealised transcript.
 
-## The six models
+## The five models
 
 | Model | What it is | What it is for |
 |---|---|---|
 | **essence-1** | A complete avatar identity packaged in one `.imx` file. Pre-rendered base motion, mouth region patched in real time to match audio. | The workhorse. Runs on any modern CPU, no idle timeout, custom gestures, low memory. Kiosks, edge boxes, phones, high-concurrency LiveKit fleets. |
-| **essence-2** | The current photoreal renderer. Borrowed-teeth mouth synthesis against an audio-driven teacher. | The default for new photoreal work. Same reach as essence-1, much higher fidelity. |
+| **essence-2** | The current photoreal renderer — a sharper, more lifelike mouth than essence-1 at the same reach. | The default for new photoreal work. |
 | **essence-2-max** | essence-2's quality tier — the highest-fidelity renderer. | Offline/batch video where quality outranks cost and latency. **GPU only.** |
 | **expression-1** | First-generation expressive engine: facial animation driven from a portrait image at runtime, no build step. | Existing v1 agents. **GPU only.** |
 | **expression-2** | Second-generation generative engine: fully generated motion from one photo, rather than patching a pre-rendered base. | Stylized characters and creatures, and any case where the face is supplied at session time. |
-| **dream-1** | Realtime **text-to-video scene generation** — not an avatar engine. It shares neither the avatar container format nor the identity-training step. | Generating video from a prompt. **GPU only.** ★**Not generally available:** it carries no pricing code and no rate-card entry, there is no SDK, CLI, wheel or self-host route for it, and it is not part of the [talking video](/api/video) surface. It is listed here because the scope authority rules it, not because you can buy it today. |
 
-These six are the only product names. `essence-2-max` is a **tier of
+These five are the only product names. `essence-2-max` is a **tier of
 essence-2**, not a sixth family. If you have met the words `elevate`, `embody`,
 `essence-2-light`, `essence-2-quality`, `lebundle` or `libelevate`, see
 [legacy names you will still see](#legacy-names-you-will-still-see) — several of
@@ -40,9 +39,8 @@ The scope below is **two owner rulings**, dated **2026-09-02** and
 **2026-09-04**, encoded in one file in the models repository
 (`tools/model_scope.py`) that every internal guard, census and readiness sweep
 resolves through. This table reproduces that file's cell values; it does not
-re-derive them. The second ruling put `dream-1` on the GPU lanes and off every
-other, and re-affirmed `essence-2-max` and `expression-1` where they already
-were.
+re-derive them. The second ruling re-affirmed `essence-2-max` and
+`expression-1` on the GPU lanes, where they already were.
 
 | Model | GPU offline | GPU live | Cloud, Apple tier | macOS (your Mac) | iOS | Browser | Android | Cloud, CPU tier |
 |---|---|---|---|---|---|---|---|---|
@@ -51,7 +49,6 @@ were.
 | **essence-2-max** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
 | **expression-1** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
 | **expression-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | Not ruled |
-| **dream-1** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
 
 Lane keys, in the authority's own order, so you can join this table to anything
 internal you are handed: `gpu-offline`, `gpu-live`, `apple-serve`,
@@ -64,7 +61,7 @@ missing here, that is a gap, and it is our bug.
 
 **Not applicable** — the ruling puts this model **off** this lane. A missing
 artifact here is **correct**. This is not "coming soon", it is not a roadmap
-item, and there is no date. `essence-2-max`, `expression-1` and `dream-1` are
+item, and there is no date. `essence-2-max` and `expression-1` are
 **GPU-only by design**: their absence from Apple, browser and Android is the
 intended shape of the product, and you should architect against a GPU for them
 rather than waiting. If you need photoreal quality on a Mac, a phone or in a
@@ -72,17 +69,17 @@ tab, the model you want is **essence-2**, not essence-2-max.
 
 **Not ruled** — the rulings enumerated four lane groups (GPU, Apple, web,
 Android). bitHuman's managed **CPU serving tier** is not one of them, and it is
-also the tier essence-2 and expression-2 are armed on in production today. So
-the honest cell is neither "yes" nor "no". It is a serving tier inside the
-managed cloud rather than a plane you target, so it does not change what you
+also the tier essence-2 and expression-2 actually run on in production today.
+So the honest cell is neither "yes" nor "no". It is a serving tier inside the
+managed cloud rather than something you target, so it does not change what you
 build; it is shown because collapsing it into either of the other two answers
 would be inventing a ruling nobody made.
 
 The asymmetry between rows is deliberate and worth understanding: "GPU **only**"
 is exclusive language, so it puts a model off every lane including one the
-ruling never enumerated — that is why `essence-2-max`, `expression-1` and
-`dream-1` read **Not applicable** in the CPU-tier column while the all-lane
-models read **Not ruled**.
+ruling never enumerated — that is why `essence-2-max` and `expression-1` read
+**Not applicable** in the CPU-tier column while the all-lane models read
+**Not ruled**.
 
 ## essence-1 is most of the fleet
 
@@ -249,8 +246,8 @@ bithuman info A23WJF0199.avatar
     student_v4_forward_frame_cpuAndNE.mlpackage/Manifest.json  (617 bytes)
 ```
 
-Exit code `0`. This is the matrix made concrete: **one bundle carries two plane
-families** — CoreML `.mlpackage`s for the Apple lane and a
+Exit code `0`. This is the matrix made concrete: **one bundle carries two
+families of member** — CoreML `.mlpackage`s for the Apple lane and a
 `combined_litert.tflite` for the LiteRT lanes (browser, Android, CPU). The
 `_cpuAndNE` in those member names is an internal build label baked in at
 conversion time; it is not a statement about which compute unit executes at
@@ -317,8 +314,8 @@ and every other CLI exit code, is on
 
 ### GPU — every model, both directions
 
-Every one of the six models is in scope on GPU, offline and live. It is the
-only lane where `essence-2-max`, `expression-1` and `dream-1` exist at all. Start at
+Every one of the five models is in scope on GPU, offline and live. It is the
+only lane where `essence-2-max` and `expression-1` exist at all. Start at
 [self-hosted GPU](/guides/deploy-self-hosted) or the
 [LiveKit plugin](/guides/deploy-livekit).
 
@@ -537,9 +534,10 @@ The rule: **write the product name; accept the legacy spelling on input; expect
 to read it in file names and engine strings forever.**
 
 One more naming point, because it causes real architecture mistakes: the Apple
-lane is called **Apple**, not "ANE". It is a plane, not a compute unit, and
-naming it after a specific accelerator has repeatedly led people to design
-around the wrong thing.
+lane is called **Apple**, not "ANE". It is the whole Apple Silicon target, not
+one accelerator inside it — we run the work on whichever unit measures faster,
+and naming the lane after a specific accelerator has repeatedly led people to
+design around the wrong thing.
 
 ## Which model should I use?
 

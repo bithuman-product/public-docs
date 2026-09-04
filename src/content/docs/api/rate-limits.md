@@ -167,7 +167,7 @@ proactively instead of waiting for a `429`:
 
 > **Note** Coverage is uneven, and not in the direction you would guess.
 > Measured 2026-07-28: `POST /v1/tts` **does** return `x-ratelimit-limit` /
-> `-remaining` / `-reset` even though its body is a passthrough audio stream,
+> `-remaining` / `-reset` even though its body is a streamed audio response,
 > while `POST /v1/validate` returns **none** of them. Don't assume any given
 > `/v1` response carries them — read them defensively and fall back to
 > exponential backoff when they are absent.

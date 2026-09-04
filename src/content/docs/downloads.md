@@ -422,6 +422,6 @@ The engine ABI is the C surface `libessence` exposes to its language wrappers. N
 |---|---|---|
 | **v7** | libessence 1.19.1 | Adds `be_runtime_tick_compose_from_mel` — composing a tick directly from a mel feed. Current production baseline; covers every shipping SDK above. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
-| v5 and earlier | pre-1.16 | Retired in production builds — synchronous tick-compose only, no streaming. |
+| v5 and earlier | pre-1.16 | Retired in production builds — synchronous only, no streaming. |
 
 Confirm the ABI tag on a live host with `bithuman doctor`.

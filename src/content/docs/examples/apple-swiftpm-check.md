@@ -275,12 +275,11 @@ Apple serve host sets for two of its members. The on-device default is
 `cpuAndNE`, and on a real iPhone 15 measurement 577 of 611 operations landed on
 the Neural Engine.
 
-> **The plane is called Apple, not "ANE".** The hardware plane's name is
-> **Apple**, because which unit runs the work is a measured, per-model choice —
-> the Neural Engine for one graph, the GPU or the CPU for another, and it
-> changes when the measurement changes. `MLComputeUnits.cpuAndNeuralEngine`,
-> `cpuAndNE`, `cpuAndGPU` are **Apple's** API identifiers and keep Apple's
-> spelling; they are not plane names. See [Swift SDK →
+> **We target Apple Silicon, not one unit inside it.** Which unit runs the work
+> is a measured, per-model choice — the Neural Engine for one model, the GPU or
+> the CPU for another — and it changes when the measurement changes.
+> `MLComputeUnits.cpuAndNeuralEngine`, `cpuAndNE`, `cpuAndGPU` are **Apple's**
+> API identifiers and keep Apple's spelling. See [Swift SDK →
 > Compute units](/sdk/swift#compute-units-are-a-measured-choice).
 
 **3. `EMBODY` is a retired name still in the binary.** `BITHUMAN_EMBODY_DIR` and

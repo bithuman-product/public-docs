@@ -84,7 +84,7 @@ Each artifact declares the engine ABI it builds against. Artifacts with a **matc
 |---|---|---|
 | **v7** | libessence 1.19.1 | Adds a streaming entry point (`be_runtime_tick_compose_from_mel`) that lets advanced callers drive a frame directly from precomputed audio features (mel spectrogram). Current production baseline; covers every shipping SDK. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
-| v5 and earlier | pre-1.16 | Retired — synchronous compose only, no streaming. |
+| v5 and earlier | pre-1.16 | Retired — synchronous only, no streaming. |
 
 ### Skew policy
 

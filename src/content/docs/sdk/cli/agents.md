@@ -101,7 +101,7 @@ Exit **0** when signed in, **1** when signed out (`"logged_in":false`).
 Exit **77** (`NOT_AUTHENTICATED`) if no credential resolves.
 
 ### `bithuman list --json`  (aliases: `avatars`, `ls`, `browse`)
-The showcase manifest passthrough — every avatar you can `pull`/`run`:
+The showcase catalog — every avatar you can `pull`/`run`:
 ```json
 {"version":2,"updated":"…","source":"…","models":[{"slug":"modern-court-jester","name":"…","description":"…"}]}
 ```

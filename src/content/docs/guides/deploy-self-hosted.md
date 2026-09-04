@@ -148,38 +148,10 @@ Essence 2 on CPU; then `export BITHUMAN_W2V_ONNX=/path/to/the/file.onnx`.
 > pip install "bithuman[tessera]"
 > ```
 
-### Confirm the mouth-interior stage ran
-
-The sharp mouth interior comes from four **optional** members inside the
-artifact. A bundle without them **still renders successfully** — it renders the
-mouth the earlier, softer way, and the frame count looks identical. Check the
-members before you render:
-
-```bash
-bithuman info <code>.lebundle.imx | grep tessera
-#     tessera_bank.v1.json
-#     tessera_bank.v1.mp4
-#     tessera_head.v1.json
-#     tessera_head.v1.pt
-```
-
-and gate on `borrow_state` after — `borrowed` (every frame), `partial` (see
-`stats["tessera"]["unborrowed_rate"]`), `synthesized`, `absent` (the bundle has
-no such members; `borrow_reason` reads `no-tessera-members`), or `unknown`:
-
-```python
-assert stats["borrow_state"] == "borrowed", stats["borrow_reason"]
-```
-
-★ A frame count is not a verdict: a bundle missing the members returns a
-healthy-looking `{"frames": 375}` beside `{"borrow_state": "absent"}`. If a
-bundle reports `absent`, contact us — the artifact needs rebuilding, and there
-is nothing to configure on your side.
-
 **Honest performance expectations (measured, 600-frame runs):** on a 16-core
 x86 desktop the route sustains **~22–25 FPS end-to-end** with the default
-`fast` CPU tier, and **~31 FPS** when the bundle carries the CPU director
-member (newer artifacts). Smaller boxes scale roughly with cores; the output
+`fast` CPU tier, and **~31 FPS** on newer artifacts, which carry an extra
+CPU-acceleration member. Smaller boxes scale roughly with cores; the output
 is 25 FPS video, so a 16-core-class machine renders about real-time. Tuning
 knobs:
 
@@ -188,7 +160,7 @@ knobs:
 | `BITHUMAN_TESSERA_CPU_TIER` | `fast` | `reference` = the slower fp32 parity tier |
 | `BITHUMAN_TESSERA_TORCH_THREADS` | ~half the cores (≤12) | torch intra-op pool; oversubscribing thrashes |
 | `BITHUMAN_TESSERA_PIPELINE` | `1` | producer/consumer pipelined render; `0` disables |
-| `BITHUMAN_TESSERA_DIRECTOR` | `auto` | `ts`/`onnx` pins the director backend |
+| `BITHUMAN_TESSERA_DIRECTOR` | `auto` | `ts`/`onnx` pins the inference backend |
 
 Beyond `essence-2` offline CPU rendering, the rest of the second-generation
 matrix today:

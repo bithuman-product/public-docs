@@ -37,7 +37,7 @@ It ships:
 
 - `index.js` — the loader (`createAvatar`)
 - `ort/` — onnxruntime-web, both the plain and the WebGPU-capable (`jsep`) WASM builds
-- `models/` — two director graphs, `m4b` (quality) and `m3c2` (speed)
+- `models/` — two models, `m4b` (quality) and `m3c2` (speed)
 - `identity/` — one packaged demo identity
 - `demo.html` — a working page that drives all of it
 
@@ -50,7 +50,7 @@ It ships:
 Run against the published `demo.html`, 4 threads, cross-origin isolated,
 EMA settled over 12 s of uncapped rendering:
 
-| Director | Execution provider | FPS | NN time/frame | Load |
+| Model | Execution provider | FPS | NN time/frame | Load |
 |---|---|---|---|---|
 | `m4b` (quality) | **WebGPU** | **23.1** | 40.3 ms | 5.1 s |
 | `m4b` (quality) | WASM, 4 threads | 10.8 | 85.7 ms | 3.7 s |
@@ -59,16 +59,16 @@ EMA settled over 12 s of uncapped rendering:
 
 Two things worth knowing before you reach for WebGPU:
 
-- **On the quality director, WebGPU is worth ~2.1×** (23.1 vs 10.8 FPS).
-- **On the speed director, WebGPU bought nothing here** — 26.0 FPS on WebGPU
+- **On the quality model, WebGPU is worth ~2.1×** (23.1 vs 10.8 FPS).
+- **On the speed model, WebGPU bought nothing here** — 26.0 FPS on WebGPU
   against 26.9 FPS on 4-thread WASM. The graph is small enough that dispatch
   overhead cancels the win. Measure before assuming WebGPU is the fast path.
 
 A second, independent run on a different host (Linux x86_64, Chrome 148, Vulkan
 adapter, 8 WASM threads, median `session.run` over 30–50 iterations rather than
 the demo's EMA) reproduced the **shape** of both rows and nothing tighter: the
-quality director gained 1.7–2.4× from WebGPU across three runs, while the speed
-director came out a wash — and in one of the three runs WebGPU was a net loss
+quality model gained 1.7–2.4× from WebGPU across three runs, while the speed
+model came out a wash — and in one of the three runs WebGPU was a net loss
 (29.2 fps against WASM's 35.9). The transcripts and the harness are on
 [Browser — check before you ship](/examples/browser-webgpu-check#check-3--is-webgpu-actually-faster-here).
 Treat the table above as this page's reference numbers and that page as the way
@@ -140,7 +140,7 @@ async function hasRealWebGPU() {
 ```
 
 When the answer is `false`, an `?render=local` session does **not** go black and
-does not silently revert to the cloud: the director keeps rendering on WASM, you
+does not silently revert to the cloud: rendering continues on WASM, you
 get the living idle loop and the agent's TTS audio, and only the local lip-sync
 is off.
 
@@ -171,8 +171,8 @@ backends by design:
 |---|---|
 | Speech encoder (w2v) | **WebGPU** — the default; WASM exists only as a dev hook |
 | Audio-to-motion encoder/decoder | **WASM** (pinned) |
-| Director / frame generator | **WASM** by default; WebGPU is opt-in |
-| Paste-back composite (unsharp → warp → feather blend) | **WebGL2** |
+| Frame generator | **WASM** by default; WebGPU is opt-in |
+| Paste-back (unsharp → warp → feather blend) | **WebGL2** |
 
 The paste-back backend was confirmed by instrumenting a real run, which
 reported `paste_backend: "webgl2"`. Note the shape of this: **WebGPU's job in
@@ -236,22 +236,6 @@ identities, and essence-2 is a **small pilot — four live identities — not a
 one-identity preview**. For any photoreal identity outside that four,
 `?render=local` still serves a cloud render. That remains a publishing backlog,
 not a browser limitation.
-
-### Borrowed teeth in the browser
-
-essence-2's mouth interior is **borrowed from real recorded frames**, never
-synthesized, and the browser is held to that rule like every other plane. Three
-of the four live published essence-2 bundles carry the donor bank (668, 985 and
-1024 donors); the fourth does not, and renders without the borrow until its bank
-is published.
-
-The compositor that consumes the bank is the **same C++**  the server planes
-link, compiled to WebAssembly — not a re-implementation. Verified on 2026-09-03
-against the artifact the live viewer serves: its three files matched their
-digests of record byte for byte, and the loader exported
-`_le_tessera_stream_create_corpus`, the entry point the shipped code **requires**
-before it will arm the borrow at all. A build without that symbol is refused
-rather than quietly composed in the wrong reference frame.
 
 ---
 

@@ -17,7 +17,7 @@ on-device engines:
   animator → face decoder, through CoreML on Apple Silicon). Home of `VoiceChat` /
   `VoiceChatConfig` / `AvatarConfig`.
 - **Essence** — an `.imx` avatar runtime that renders a pre-built avatar (audio
-  in, composed BGR frames out). Reached via `Bithuman.create(modelPath:)`.
+  in, BGR frames out). Reached via `Bithuman.create(modelPath:)`.
   (This page used to call it "the portable `libessence` C++ runtime", using the
   engine's legacy name. It is not: the published `bitHumanKit.xcframework`
   binary is a static archive of 28 objects — `bitHumanKit.o`, MLX, HuggingFace,
@@ -55,9 +55,9 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session — or, on a
 > Mac specifically, drive the Python wheel: see
 > [Essence 2 on a Mac, without Swift](#essence-2-on-a-mac-without-swift).
-> Essence 2 **has** rendered on an iPhone, in a lab, and
-> [what that proved and what it did not](#essence-2-on-iphone-proven-not-shipped)
-> is written out below rather than left as a roadmap hint.
+> There is no supported way to ship Essence 2 inside an iOS app today —
+> [Essence 2 on iPhone](#essence-2-on-iphone) says so plainly rather than
+> leaving it as a roadmap hint.
 
 > **Before you open Xcode, preflight the package from any machine.**
 > [Apple — check before you ship](/examples/apple-swiftpm-check) resolves the
@@ -241,7 +241,7 @@ let engine = Expression2Engine()
 engine.warmUp()
 engine.feed(samples)                       // [Float] PCM
 while let (frame, speech) = engine.pull() {
-    // frame: [UInt8], the composed image; engine.width x engine.height
+    // frame: [UInt8], the image to display; engine.width x engine.height
 }
 ```
 
@@ -285,12 +285,12 @@ while let (frame, speech) = engine.pull() {
 
 ## Compute units are a measured choice
 
-**The hardware plane is called Apple, not "ANE".** Which silicon unit runs a
-graph is a per-model decision made by measurement, and the answer is genuinely
-different for different graphs and different hosts — so naming the plane after
-one unit describes it wrongly. Apple's own API identifiers are a separate
-matter: `MLComputeUnits.cpuAndNeuralEngine`, `.cpuAndGPU`, `cpuAndNE` are
-**Apple's** spellings and keep them. Ours is *Apple*; theirs is theirs.
+**We do not promise you a particular silicon unit, and you should not plan
+around one.** Which unit runs the work is a per-model decision we make by
+measurement, and the answer is genuinely different for different models and
+different hosts. What we do promise is Apple Silicon. Apple's own API
+identifiers — `MLComputeUnits.cpuAndNeuralEngine`, `.cpuAndGPU`, `cpuAndNE` —
+are Apple's spellings and are used verbatim below.
 
 `Expression2` exposes the choice per graph through three environment variables.
 Measured against the shipped `Expression2.xcframework` at v2.5.0 — the exact
@@ -322,11 +322,11 @@ Three things worth knowing before you tune any of these:
   concurrent seats in **11.1 s** at 29.7 fps per session, against a measured
   **425 s for a single** `cpuAndNE` load. That is a **concurrency** fix on a host
   serving 18 sessions, and it has no bearing on one app on one phone.
-- **A different engine gets a different answer again.** Essence 2's Apple
-  director is FP32 and reaches the Neural Engine on 0% of its operations; it
-  serves on `cpuAndGPU`, where it measured **2.2× faster** than `cpuAndNE` *and*
-  closer to the reference picture. Three Apple paths, three different units, one
-  plane name.
+- **A different model gets a different answer again.** Essence 2 on Apple is
+  FP32 and reaches the Neural Engine on 0% of its operations; it serves on
+  `cpuAndGPU`, where it measured **2.2× faster** than `cpuAndNE` *and* closer to
+  the reference picture. Three Apple paths, three different units — which is why
+  the unit is ours to pick and not yours to configure.
 
 ### Names you will see that we no longer write
 
@@ -382,63 +382,18 @@ inspected on Linux; the macOS wheel was **not executed**, because no Mac was
 involved in producing this page. See [Python SDK](/sdk/python) for the API once
 it is installed.
 
-## Essence 2 on iPhone: proven, not shipped
+## Essence 2 on iPhone
 
-Essence 2 has rendered on an iPhone with its teeth borrowed, and it is still not
-something you can build. Both halves of that are true and the gap between them is
-the honest answer to "when is Essence 2 on iOS".
+**Essence 2 is not available in an iOS app today.** There is no Swift product,
+no `.imx` you can ship in an app bundle, and no supported way to build one.
 
-**What ran.** On 2026-09-02, one process on an iPhone 15 (iOS 26.6.1) rendered
-Essence 2 and composed the teeth borrow inline, through the same shipped seam the
-Apple runtime uses — not a replay of vectors recorded on a host. Graded against
-the offline borrow reference on its own operands, in one pixel domain, no resize
-and no zoom:
+The supported ways to reach Essence 2 from an Apple app are the
+[REST API](/api/overview), a [LiveKit](/sdk/livekit) session, or the Python
+wheel on a Mac ([Python SDK](/sdk/python)). Expression 2 — documented above — is
+the model that runs on device today.
 
-| Arm | L1 vs the offline borrow reference |
-| --- | --- |
-| On-device borrow, whole 512×512 crop | **0.002295 u8** |
-| Borrow **off** (the twin, same director crops) | 0.100359 u8 |
-| Gap closed | **97.71 %** — 43.7× better |
-| Null control (candidate vs itself) | 0.000000 u8 — required to be exactly 0 |
-| Different-operand control (frame *i* vs reference *i+1*) | 1.492498 u8 — 650× the grade |
-
-Inside the stamped teeth window the same three arms read 0.026703 / 1.167819 /
-2.978286. The borrow changed 322,097 bytes inside that window and **0 bytes
-outside it**. The device's borrow-off crop is byte-identical to its pre-borrow
-crop, so the only difference between the two arms is the borrow itself.
-
-**Why that is not a lane.** It took a hand-assembled app side-loaded from a lab
-host, a payload copied into the app's Documents container by `devicectl`, a
-bundle trimmed to 64 target frames because the full one is killed on the device,
-a recorded provenance breach in the bundle's own metadata, and a 46 MB fp16
-speech front-end standing in for the 377 MB production one — which the phone
-`SIGKILL`s about a second after launch. No customer traffic touched it and no
-customer could reproduce it.
-
-**And it is not real-time.** The borrow costs 11.3× throughput: 1.56 fps armed
-against 17.67 fps on identical crops with the pass off — roughly 570 ms per frame
-in the compositor, not in the renderer. That is RTF 16.06 against a 25 fps
-target.
-
-**What has to land before this is a product, and who owns it.**
-
-1. **An m4 (v3) export of an identity that carries the teeth-borrow members.** Everything trimmed
-   above exists because the identity used is a v2 bundle that holds its whole
-   frame volume resident. v3 deletes that volume and is the device format. A
-   bake, owned by the model side.
-2. **A co-built a2x and keypoint chain.** The GPU bake and the Apple
-   re-extraction disagree by 0.0127 against a 1e-3 bar — a cross-plane keypoint
-   delta, not a corrupt file. Until both come out of one source, no Apple bundle
-   satisfies its own exporter's gate.
-3. **Real-time.** See the 570 ms/frame above. This is a compositor problem.
-4. **A passthrough counter on the shipped path.** The shipped runtime keeps its
-   stream private and logs only to the console, so a shipped-path arm cannot yet
-   state its own teeth verdict. A small engine change.
-
-Until all four land, the honest label is **capability-proven, not armed**, and
-the supported ways to reach Essence 2 from an Apple app remain the
-[REST API](/api/overview), a [LiveKit](/sdk/livekit) session, or the Python wheel
-on a Mac.
+If iOS support for Essence 2 would change what you build, tell us at
+[hello@bithuman.ai](mailto:hello@bithuman.ai); demand is what schedules it.
 
 ## Permissions + entitlements
 

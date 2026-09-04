@@ -142,7 +142,7 @@ models it can load depends on your platform:
   (install the `bithuman[tessera]` extra) unpacks current-renderer bundles
   itself and renders them on CPU, metered. Throughput depends on the
   identity's frame size and on the box — see [the measured
-  run](#5-render) below rather than planning against a single figure. The
+  run](#4-render) below rather than planning against a single figure. The
   warning still applies to the **streaming** `AsyncBithuman` / `Bithuman` load
   path.
 
@@ -231,65 +231,7 @@ kept for compatibility](/concepts/avatars-imx#second-generation-artifacts) that
 you will see in the filename and in error messages — the model is
 `essence-2`. `bithuman pull <CODE>` fetches the same file.
 
-### 3. Check the bundle before you render
-
-Essence 2's sharp mouth interior is **borrowed** from four optional members
-inside the container. A bundle without them still renders — it just renders the
-mouth the earlier, softer way, at the same frame count and the same resolution.
-Reading the container costs nothing, so read it first. This needs no CLI:
-
-```python
-"""List an IMX v2 container's members and say whether the four teeth-borrow
-members are present — before you spend a render finding out."""
-import struct, sys
-
-NEEDED = ("tessera_bank.v1.json", "tessera_bank.v1.mp4",
-          "tessera_head.v1.json", "tessera_head.v1.pt")
-
-with open(sys.argv[1], "rb") as f:
-    magic, _, n = struct.unpack("<4sHH", f.read(8))
-    assert magic == b"IMX\0", "not an IMX v2 container"
-    names = []
-    for _ in range(n):
-        (nl,) = struct.unpack("<H", f.read(2))
-        names.append(f.read(nl).decode())
-        f.read(16)                       # offset + size
-
-print(f"{n} members")
-for m in NEEDED:
-    print(f"  {'present' if m in names else 'MISSING':>7}  {m}")
-print("verdict:", "can borrow" if all(m in names for m in NEEDED)
-      else "cannot borrow — no teeth members in this container")
-```
-
-```text
-$ python check_members.py A31BSK9325.lebundle.imx
-27 members
-  present  tessera_bank.v1.json
-  present  tessera_bank.v1.mp4
-  present  tessera_head.v1.json
-  present  tessera_head.v1.pt
-verdict: can borrow
-```
-
-**Run the control too**, or you cannot tell a working check from one that
-prints "present" no matter what. Point it at an Essence 1 model, which by
-construction carries none of these members:
-
-```text
-$ python check_members.py ~/.cache/bithuman/showcase/modern-court-jester.imx
-9 members
-  MISSING  tessera_bank.v1.json
-  MISSING  tessera_bank.v1.mp4
-  MISSING  tessera_head.v1.json
-  MISSING  tessera_head.v1.pt
-verdict: cannot borrow — no teeth members in this container
-```
-
-If the CLI is installed, `bithuman info <file> | grep tessera` prints the same
-four names with their sizes.
-
-### 4. The audio encoder is not in the wheel
+### 3. The audio encoder is not in the wheel
 
 The render calls a shared speech encoder — a ~377 MB ONNX file that is **not
 in the artifact, not in the wheel, and not downloaded for you**. Without it the
@@ -310,7 +252,7 @@ self-hosting Essence 2 on CPU, then `export
 BITHUMAN_W2V_ONNX=/path/to/the/file.onnx`. One copy serves every agent on the
 host — the encoder is identity-agnostic.
 
-### 5. Render
+### 4. Render
 
 ```python
 import json, os, sys
@@ -323,10 +265,8 @@ stats = render_offline(
     api_secret=os.environ.get("BITHUMAN_API_SECRET"),
 )
 print(json.dumps({k: stats[k] for k in
-                  ("frames", "fps", "borrow_state", "borrow_reason")
+                  ("frames", "fps", "width", "height")
                   if k in stats}, indent=2))
-assert stats["borrow_state"] == "borrowed", stats["borrow_reason"]
-print("OK: every frame borrowed")
 ```
 
 ```text
@@ -334,63 +274,28 @@ $ python render_check.py A31BSK9325.lebundle.imx speech.wav rendered.mp4
 {
   "frames": 250,
   "fps": 5.44,
-  "borrow_state": "borrowed",
-  "borrow_reason": ""
+  "width": 1080,
+  "height": 1920
 }
-OK: every frame borrowed
 ```
 
 Exit code `0`. A 10-second 16 kHz clip produced 250 frames of 25 fps video, and
 `ffprobe` reads the MP4 back as `1080x1920`, `nb_frames=250`, `duration=10.0`.
 
-A second run of the same command, printing the whole `stats` dict unedited —
-the fields you will actually gate on are at the bottom:
-
-```json
-{
-  "frames": 250,
-  "fps": 6.33,
-  "wall_s": 39.472,
-  "motion_s": 0.828,
-  "director_s": 38.056,
-  "paste_s": 10.964,
-  "width": 1080,
-  "height": 1920,
-  "pipelined": true,
-  "director_backend": "onnx",
-  "director_batch": 24,
-  "paste_threads": null,
-  "tessera_armed": true,
-  "tessera_frames": 250,
-  "billing_type": "self-hosted-essence-2-model",
-  "metered_heartbeat": true,
-  "tessera": {
-    "frames": 250,
-    "passthrough": 0,
-    "borrowed": 250,
-    "unborrowed_rate": 0.0,
-    "reasons": {},
-    "synth_w_mean": 0.0646,
-    "synth_w_max": 0.8031,
-    "synth_w_sampled": 31,
-    "synth_w_every": 8,
-    "synth_w_errors": 0,
-    "synth_w_state": "armed",
-    "tessera_ms_p50": 29.727,
-    "tessera_ms_p95": 53.502,
-    "cpu_tier": "fast",
-    "int8_head_armed": true
-  },
-  "borrow_state": "borrowed",
-  "borrow_reason": ""
-}
-```
+`stats` also carries the two billing fields — `billing_type` and
+`metered_heartbeat` — which are what [§5](#5-metering--what-you-see-in-each-credential-state)
+below tells you to read. Everything else it returns is engine
+telemetry: unversioned, free to change between releases, and not something to
+branch on. **If a render succeeds, the frames are the frames we ship.** There is
+no quality flag to check, because there is no quality decision left with you:
+a container that could not produce our current mouth interior does not render
+at all, it refuses ([`InvalidAvatar`](/api/errors)).
 
 > **On throughput — measure your own identity, do not plan against one
 > number.** Four runs of the command above, on this box, reported `fps` of
-> **5.44, 5.64, 6.33 and 6.41** — a **1080×1920** identity on the ONNX director
-> path, on a machine carrying a load average of 7–14 from other work
-> throughout. Frame size, the director backend and what else the box is doing
+> **5.44, 5.64, 6.33 and 6.41** — a **1080×1920** identity, on a machine
+> carrying a load average of 7–14 from other work throughout. Frame size and
+> what else the box is doing
 > all move this figure, so the only number worth planning against is the one
 > your identity produces on your hardware. Two things to know before you read
 > it: `stats["fps"]` times the render loop **only** — the same run took 57.2 s
@@ -403,88 +308,7 @@ For frame-level control instead of an MP4:
 `OfflineTesseraRenderer(imx_path, api_secret=...).render(audio,
 on_frame=callback)` hands you RGB numpy frames as they are produced.
 
-### 6. Prove the borrow gate fires
-
-★ **This is the most important thing on the page.** `assert
-stats["borrow_state"] == "borrowed"` is only worth writing if you have watched
-it fail. Render the bundle, then render a copy of it with one teeth member
-removed, and compare:
-
-```python
-"""Prove the borrow gate FIRES: render the bundle, then render a copy with
-one tessera member removed. Same frame count, different verdict."""
-import os, shutil, sys
-from bithuman.tessera_offline import render_offline, unfold_imx
-
-imx, wav = sys.argv[1], sys.argv[2]
-sec = os.environ["BITHUMAN_API_SECRET"]
-
-ok = unfold_imx(imx, "bundle_ok")                 # 27 members, flat dir
-shutil.rmtree("bundle_broken", ignore_errors=True)
-shutil.copytree(ok, "bundle_broken")
-os.remove(os.path.join("bundle_broken", "tessera_bank.v1.json"))   # the control
-
-for name, path in (("ARMED   ", ok), ("STRIPPED", "bundle_broken")):
-    s = render_offline(path, wav, api_secret=sec, max_frames=50)
-    print(f"{name} frames={s['frames']:4d} "
-          f"borrow_state={s['borrow_state']:12s} "
-          f"borrow_reason={s['borrow_reason'] or '-'}")
-```
-
-```text
-$ python borrow_control.py A31BSK9325.lebundle.imx speech.wav
-ARMED    frames=  50 borrow_state=borrowed     borrow_reason=-
-STRIPPED frames=  50 borrow_state=absent       borrow_reason=no-tessera-members
-```
-
-Exit code `0` — **both arms succeeded**. That is the point. `unfold_imx`
-extracts a container to a directory, and the renderer accepts a directory
-wherever it accepts a `.imx`, so the two arms differ by exactly one deleted
-file.
-
-Now run the full render against the stripped copy and watch what a bundle that
-cannot borrow actually gives you:
-
-```text
-$ python render_check.py bundle_broken speech.wav broken.mp4
-{
-  "frames": 250,
-  "fps": 6.62,
-  "borrow_state": "absent",
-  "borrow_reason": "no-tessera-members"
-}
-Traceback (most recent call last):
-  File "render_check.py", line 13, in <module>
-    assert stats["borrow_state"] == "borrowed", stats["borrow_reason"]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: no-tessera-members
-```
-
-Exit code **1** — and `broken.mp4` is a complete, playable file: `ffprobe`
-reads `1080x1920`, `nb_frames=250`, the same as the good render. **Same frame
-count, same resolution, same duration, no warning, no error.** The only thing
-that separates a borrowed render from a synthesized one is the field, and the
-only thing that stops a synthesized render reaching your users is your assert.
-
-| `borrow_state` | What happened |
-|---|---|
-| `borrowed` | The mouth interior was borrowed on every frame. The good case. |
-| `partial` | Borrowed on some frames — `stats["tessera"]["unborrowed_rate"]` is the fraction it was not. |
-| `synthesized` | The stage was available and did not run on any frame. |
-| `absent` | The bundle carries no teeth members; `borrow_reason` says which condition failed. |
-| `unknown` | The renderer could not determine it — treat as a failure, not as a pass. |
-
-Compare against the names the SDK exports, not against string literals:
-
-```python
-from bithuman.tessera_offline import BORROW_BORROWED
-assert stats["borrow_state"] == BORROW_BORROWED, stats["borrow_reason"]
-```
-
-If a bundle you own reports `absent`, contact us — the artifact needs
-rebuilding and there is nothing to configure on your side.
-
-### 7. Metering — what you see in each credential state
+### 5. Metering — what you see in each credential state
 
 Self-hosted rendering is billed at the self-hosted rate
 ([pricing](/guides/pricing)). **Essence 2's offline route is fail-closed and
