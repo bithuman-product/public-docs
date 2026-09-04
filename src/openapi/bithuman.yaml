@@ -2088,7 +2088,7 @@ paths:
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — the requested model can't render
             right now (no routeable worker, or the model is temporarily
-            paused). All five models render talking video in normal
+            paused). All five avatar models render talking video in normal
             operation, so this is a rare, transient condition. Returned
             **before any charge** — retry shortly, or render with another
             of the agent's supported models.
