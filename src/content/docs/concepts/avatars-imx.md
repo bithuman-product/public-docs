@@ -8,7 +8,7 @@ order: 2
 
 ## What an `.imx` is
 
-Every bitHuman avatar is packaged as a single `.imx` file — a self-contained bundle of identity weights, textures, voice config, and metadata that the [`libessence`](/concepts/architecture) engine reads to animate one specific face. The same file plays back byte-identically on every runtime: [Python](/sdk/python), [Swift](/sdk/swift), and the [CLI](/sdk/cli/overview).
+Every bitHuman avatar is packaged as a single `.imx` file — a self-contained bundle of identity weights, textures, voice config, and metadata that the [essence engine](/concepts/architecture) reads to animate one specific face. The same file plays back byte-identically on every runtime: [Python](/sdk/python), [Swift](/sdk/swift), and the [CLI](/sdk/cli/overview).
 
 ## Where `.imx` files come from
 

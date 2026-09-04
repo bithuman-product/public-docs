@@ -84,7 +84,7 @@ for flags and copy-pasteable `EXAMPLES:`.
 `"wheel"` is added when installed via the pip shim. (Values shown are the real
 output of CLI **2.5.1** on Linux x86_64, the current release on both macOS arm64
 and Linux; your install prints its own versions — a 2.4.0 install reports
-`libessence 2.3.6`.)
+engine version `2.3.6` under the same key.)
 
 ### `bithuman whoami --json`  ·  `bithuman auth status --json`
 ```json

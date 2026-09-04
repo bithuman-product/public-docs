@@ -215,8 +215,9 @@ staging the Expression 2 render host beside the binary:
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-Use it for `login`, `list`, `pull` and `info` — `bithuman info <file> | grep
-tessera` is the quickest way to read an artifact's members. Which families
+Use it for `login`, `list`, `pull` and `info` —
+`bithuman info <file> | grep tessera` is the quickest way to read an
+artifact's members. Which families
 `render` can and cannot produce an MP4 for on Linux, with each command's real
 exit code, is on [what the CLI actually
 does](/sdk/cli/verified); Linux aarch64 is **not** published for `cli-v2.5.1`

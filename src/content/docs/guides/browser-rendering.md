@@ -103,7 +103,7 @@ MediaStreamTrack (TTS or mic)
   -> <canvas> @ 25 FPS
 ```
 
-The pipeline is bit-compatible with [`libessence`](/concepts/architecture) on the server — same `.imx` file, same cluster centroids, same encoder weights. The browser just runs the inference loop in WASM.
+The pipeline is bit-compatible with [the essence engine](/concepts/architecture) on the server — same `.imx` file, same cluster centroids, same encoder weights. The browser just runs the inference loop in WASM.
 
 ## Latency budget
 
@@ -165,6 +165,6 @@ rendering-mode parameter. Track it in
 - [WebGPU and local browser rendering](/guides/browser-webgpu) — measured WebGPU vs WASM frame rates, the standalone runtime you can self-host, which identities have a published web bundle, and what a browser session does and does not meter.
 - [Browser — check before you ship](/examples/browser-webgpu-check) — three runnable preflights, each with a deliberately broken control arm: bundle integrity, the real-WebGPU probe, and the execution-provider benchmark.
 - [Browser runtime (WebAssembly)](/sdk/wasm) — the published runtime's API surface.
-- [Architecture](/concepts/architecture) — how `libessence` powers every renderer.
+- [Architecture](/concepts/architecture) — how the essence engine powers every renderer.
 - [Audio streaming](/concepts/audio-streaming) — the same push/drain pattern the WASM pipeline mirrors.
 - [Deploy embed](/guides/deploy-embed) — drop a hosted avatar onto any page.

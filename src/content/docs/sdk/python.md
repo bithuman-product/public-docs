@@ -34,7 +34,7 @@ the 2.x matrix — use WSL2, or fall back to the [CLI](/sdk/cli/overview) on a d
 > x86_64/aarch64). For the command-line tool, install the sibling
 > [`bithuman-cli`](https://pypi.org/project/bithuman-cli/) — via Homebrew or the
 > [universal installer](/sdk/cli/install) on macOS/Linux; `pip install bithuman-cli`
-> is **macOS Apple Silicon only**. Both share the same `libessence` engine.
+> is **macOS Apple Silicon only**. Both share the same essence engine.
 
 > **Linux CA certificates — fixed in 2.3.4.** The SDK auto-discovers your
 > distro's CA bundle on Linux (Debian, Ubuntu, RHEL, SUSE, Alpine-glibc layouts
@@ -97,7 +97,7 @@ models it can load depends on your platform:
 
 - **`essence-1` `.imx` — every platform.** `AsyncBithuman` / `Bithuman`
   (and the low-level `Fixture`) load `essence-1` **`.imx`** files through
-  `libessence`, including the ones you get from
+  the essence engine, including the ones you get from
   [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
   or [`bithuman pull <AGENT_CODE>`](/sdk/cli/commands).
 - **[Essence 2](/concepts/essence-2) `.imx` — Linux, as of 2.8.0, but see the
@@ -784,7 +784,7 @@ Runtime execution provider. Most users should stick to `AsyncBithuman` /
 ## Native acceleration
 
 The wheel ships a native extension `bithuman/_core.cpython-3X-<platform>.so` — a
-pybind11 binding to the shared `libessence` engine that also powers the Swift
+pybind11 binding to the shared essence engine that also powers the Swift
 and Rust SDKs. You never import `_core` directly; it loads automatically
 behind `AsyncBithuman`. `bithuman.__core_version__` reports the engine version;
 `bithuman.__abi_version__` reports the C ABI.

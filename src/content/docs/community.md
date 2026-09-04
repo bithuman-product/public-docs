@@ -45,9 +45,9 @@ Smaller-scope decisions (which library to pick, naming choices, internal pattern
 
 ### Adding a new language SDK
 
-A bitHuman SDK is a thin language binding over **libessence**, the portable C ABI that drives audio-in / frames-out. Python and Rust are the canonical examples — both wrap the same C entry points, ship the same parity test corpus, and publish to their language's package index.
+A bitHuman SDK is a thin language binding over **the essence engine**, the portable C ABI that drives audio-in / frames-out. Python and Rust are the canonical examples — both wrap the same C entry points, ship the same parity test corpus, and publish to their language's package index.
 
-Every binding calls the same `libessence` C entry points (`be_fixture_load`, `be_runtime_create`, `be_runtime_tick_compose`, `be_runtime_close`, and the streaming `be_runtime_push_audio` / `be_runtime_pull_frame`). The binding's job is to marshal language-native audio buffers in, expose the BGR frame as the language-native image type, and surface errors idiomatically.
+Every binding calls the same engine C entry points (`be_fixture_load`, `be_runtime_create`, `be_runtime_tick_compose`, `be_runtime_close`, and the streaming `be_runtime_push_audio` / `be_runtime_pull_frame`). The binding's job is to marshal language-native audio buffers in, expose the BGR frame as the language-native image type, and surface errors idiomatically.
 
 **The parity contract.** Every binding ships the same test corpus: a 122-tick speech clip, checked against a recorded `cluster_idx` sequence. A new binding is "done" when this assertion holds in CI:
 

@@ -60,7 +60,7 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 
 | Tool | What it does |
 |------|--------------|
-| `version` | CLI + libessence engine version and ABI. |
+| `version` | CLI + essence engine version and ABI. |
 | `doctor` | Install health; `ready` is true iff this machine can serve an avatar. |
 | `inspect_model` | Inspect a local `.imx` model file's metadata. |
 | `list_showcase` | List downloadable showcase avatars. |

@@ -11,7 +11,7 @@ label: "CLI"
 
 `bithuman` is the command-line member of the [SDK](/sdk) family — a single
 binary that runs the entire avatar stack without writing any code. It is built
-on `libessence` — the same engine that powers the [Python](/sdk/python) and
+on the essence engine — the same engine that powers the [Python](/sdk/python) and
 [Swift](/sdk/swift) libraries and the [cloud REST API](/api/reference). They all
 read the same `.imx` avatar file and produce identical frames, so anything you
 prove out with the CLI ports straight into your application.
@@ -68,7 +68,7 @@ bithuman run avatar.imx
 other command authenticates automatically — no `export BITHUMAN_API_SECRET`.
 (That manual path still works for CI and automation; see
 [Configuration](/sdk/cli/configuration).) Under the hood `bithuman run` stands
-up an embedded `livekit-server`, a `libessence` avatar runtime, a conversation
+up an embedded `livekit-server`, an essence-engine avatar runtime, a conversation
 brain (cloud or [on-device](/sdk/cli/local-mode)), and a browser landing page.
 Beyond live chat, the CLI can render an MP4 offline, inspect a model file,
 browse and download showcase avatars, and run a full host sanity check.
@@ -89,7 +89,7 @@ browse and download showcase avatars, and run a full host sanity check.
 | `bithuman engine list \| install \| update` | Inspect, install, or update the per-platform local render engine (shipped in the CLI, auto-managed) |
 | `bithuman doctor` | Host + auth + cache sanity check |
 
-`bithuman --version` prints the `libessence` engine, ABI tag, and CLI
+`bithuman --version` prints the essence engine version, ABI tag, and CLI
 versions. Every subcommand accepts `--help`. See
 [Commands](/sdk/cli/commands) for the full flag reference.
 

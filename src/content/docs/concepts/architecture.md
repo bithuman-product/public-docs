@@ -1,6 +1,6 @@
 ---
 title: "Architecture"
-description: "How bitHuman is built and shipped — the libessence engine, the language SDKs that wrap it, the SDK-to-engine ABI compatibility matrix, and the per-device hardware matrix."
+description: "How bitHuman is built and shipped — the essence engine, the language SDKs that wrap it, the SDK-to-engine ABI compatibility matrix, and the per-device hardware matrix."
 section: concepts
 group: "Architecture"
 order: 5
@@ -13,12 +13,12 @@ bitHuman is one portable engine with thin language bindings on top and apps on t
 <div class="bh-stack">
   <div class="bh-layer"><div class="bh-l-title">Apps &amp; tools <span class="bh-tag">L3</span></div><div class="bh-l-sub">bitHuman CLI · reference apps (Mac, iPad, iPhone, Flutter) · LiveKit transport for WebRTC</div></div>
   <div class="bh-layer"><div class="bh-l-title">Language SDKs <span class="bh-tag">L2</span></div><div class="bh-l-sub">Python · Swift · JS — thin, idiomatic bindings over the same engine</div></div>
-  <div class="bh-layer bh-accent"><div class="bh-l-title">libessence — the engine <span class="bh-tag">L1</span></div><div class="bh-l-sub">Portable C++ avatar renderer behind a stable C ABI. Statically linked into every SDK. macOS · iOS · Linux · Windows · WASM</div></div>
+  <div class="bh-layer bh-accent"><div class="bh-l-title">The essence engine <span class="bh-tag">L1</span></div><div class="bh-l-sub">Portable C++ avatar renderer behind a stable C ABI. Statically linked into every SDK. macOS · iOS · Linux · Windows · WASM</div></div>
 </div>
 
 Every layer drives the same pipeline — audio goes in, lip-synced visual frames come out at a steady 25 FPS:
 
-<div class="bh-flow"><span class="bh-node">16 kHz mono audio</span><span class="bh-sep">→</span><span class="bh-node">libessence engine</span><span class="bh-sep">→</span><span class="bh-node">25 FPS visual frames</span></div>
+<div class="bh-flow"><span class="bh-node">16 kHz mono audio</span><span class="bh-sep">→</span><span class="bh-node">essence engine</span><span class="bh-sep">→</span><span class="bh-node">25 FPS visual frames</span></div>
 
 Most developers integrate at the SDK layer (L2) — you never need to know what's underneath. The engine is statically linked into each SDK distribution, so there are no extra system libraries to install.
 
@@ -68,13 +68,13 @@ The owned layers ship independently but agree on a small set of stable contracts
 
 ## SDK ↔ engine compatibility matrix
 
-Each artifact declares the `libessence` ABI it builds against. Artifacts with a **matching ABI** are interoperable even when their headline versions differ.
+Each artifact declares the engine ABI it builds against. Artifacts with a **matching ABI** are interoperable even when their headline versions differ.
 
-| Artifact | Latest version | Channel | libessence ABI |
+| Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | 2.10.0 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.5.0) | SwiftPM | v7 |
-| Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no libessence ABI) |
+| Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no engine ABI) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
 | bitHuman CLI | 2.5.1 (Homebrew / universal installer — macOS arm64 and Linux x86_64); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
 

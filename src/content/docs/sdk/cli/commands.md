@@ -139,7 +139,7 @@ Local rendering runs on macOS (Apple Silicon, CoreML) and Linux x86_64
 (LiteRT); see [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
 
 Pass an avatar file (or agent code) to run your own. From one invocation the
-CLI stands up an embedded `livekit-server`, a `libessence` runtime, the
+CLI stands up an embedded `livekit-server`, an essence-engine runtime, the
 conversation brain (cloud OpenAI Realtime or the
 [on-device](/sdk/cli/local-mode) stack per `BITHUMAN_LOCAL`), and a browser
 landing page:
@@ -169,7 +169,7 @@ Common flags:
 | `--port` | `8088` | Launcher HTTP port. |
 | `--max-sessions` | (CPU count) | Pool cap; new launches are rejected (not degraded) when full. |
 | `--embedded-livekit` | on with model arg | Spawn a self-contained `livekit-server` child. Off when omitting the model and using an external SFU. |
-| `--mock-runtime` | off | Run with black frames instead of `libessence` — for protocol tests. |
+| `--mock-runtime` | off | Run with black frames instead of the essence engine — for protocol tests. |
 
 ### Which model files run locally?
 

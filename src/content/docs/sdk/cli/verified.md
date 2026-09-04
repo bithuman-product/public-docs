@@ -40,7 +40,7 @@ Everything below ran here. Timings are this box's; exit codes are not.
 | OS | Ubuntu 26.04 LTS, glibc 2.43 |
 | Arch | `x86_64` |
 | CPU | AMD Ryzen Threadripper PRO 5955WX (16 cores / 32 threads) |
-| CLI | 2.5.1 (`libessence` 2.3.8, ABI 7) |
+| CLI | 2.5.1 (essence engine 2.3.8, ABI 7) |
 | `ffmpeg` | 8.0.1 on `PATH` |
 
 > **Not verified here.** macOS (any command), Windows, `bithuman run` standing

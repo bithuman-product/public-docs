@@ -18,10 +18,10 @@ on-device engines:
   `VoiceChatConfig` / `AvatarConfig`.
 - **Essence** — an `.imx` avatar runtime that renders a pre-built avatar (audio
   in, composed BGR frames out). Reached via `Bithuman.create(modelPath:)`.
-  (This page used to call it "the portable `libessence` C++ runtime". It is not:
-  the published `bitHumanKit.xcframework` binary is a static archive of 28
-  objects — `bitHumanKit.o`, MLX, HuggingFace, Tokenizers, Crypto, yyjson — and
-  `libessence` is not among them.)
+  (This page used to call it "the portable `libessence` C++ runtime", using the
+  engine's legacy name. It is not: the published `bitHumanKit.xcframework`
+  binary is a static archive of 28 objects — `bitHumanKit.o`, MLX, HuggingFace,
+  Tokenizers, Crypto, yyjson — and no legacy `libessence` object is among them.)
 
 Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS. All inference
 runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
@@ -46,8 +46,9 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > [`essence-2`](/concepts/essence-2) **is not**: it is not a SwiftPM product and
 > it is not bundled inside `bitHumanKit`. That is measured against the shipped
 > binary, not assumed — `strings -a` on the `ios-arm64` slice of
-> `bitHumanKit.xcframework` @ `v2.4.0` counts `essence` **0**, `libessence`
-> **0**, `tessera` **0**, against `ImxContainer` **141** and `mlx` **104937** in
+> `bitHumanKit.xcframework` @ `v2.4.0` counts `essence` **0**, the legacy
+> engine string `libessence` **0**, the legacy mechanism name `tessera` **0**,
+> against `ImxContainer` **141** and `mlx` **104937** in
 > the same read, and its public interface declares no Essence 2 type.
 > [`essence-2-max`](/concepts/essence-2-max) is cloud-only by
 > design. To reach Essence 2 from an Apple app today, call the
@@ -86,7 +87,7 @@ second-generation engine alone. Or in `Package.swift`:
 > `binaryTarget` URL and checksum is byte-identical to 2.5.0 — 45 code lines in,
 > 45 code lines out. What changed is the manifest's own commentary, which had
 > gone false in two ways worth knowing about if you read it in Xcode: it recorded
-> that the umbrella does **not** contain `libessence` and then, ninety lines
+> that the umbrella does **not** contain the essence engine and then, ninety lines
 > lower, that the umbrella "re-exports both engines"; and it told you to
 > `import Expression` / `import Bithuman` for "the lower-level engine products",
 > neither of which this package has ever vended. Asking for one is not a
@@ -421,7 +422,7 @@ target.
 
 **What has to land before this is a product, and who owns it.**
 
-1. **An m4 (v3) export of a tessera-carrying identity.** Everything trimmed
+1. **An m4 (v3) export of an identity that carries the teeth-borrow members.** Everything trimmed
    above exists because the identity used is a v2 bundle that holds its whole
    frame volume resident. v3 deletes that volume and is the device format. A
    bake, owned by the model side.
@@ -498,9 +499,9 @@ a crash. See [models](/concepts/models).
 
 ## Performance
 
-Measured on an M5 MacBook Pro against the `libessence` engine (1.19.1, single
+Measured on an M5 MacBook Pro against the essence engine (1.19.1, single
 conversation). Treat them as indicative of the runtime, not as a measurement of
-the shipped `bitHumanKit` binary, which does not contain `libessence`:
+the shipped `bitHumanKit` binary, which does not contain the essence engine:
 
 | Metric | Value |
 |---|---|
@@ -509,7 +510,7 @@ the shipped `bitHumanKit` binary, which does not contain `libessence`:
 | Sustained (tight loop) | 698 FPS |
 | Cold start | ~290 ms |
 | Peak RSS | ~84 MB |
-| Wrapper overhead vs raw libessence | +1.7 % |
+| Wrapper overhead vs the raw engine | +1.7 % |
 
 Comfortable headroom over the 25 FPS / 40 ms tick budget.
 

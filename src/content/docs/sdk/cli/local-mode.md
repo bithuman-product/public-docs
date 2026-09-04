@@ -56,7 +56,7 @@ wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
 | LLM | `llama-cpp-python` → llama.cpp | Qwen 2.5 0.5B-Instruct Q4_K_M | 400 MB | ~600 MB |
 | TTS | `supertonic` → ONNX Runtime | Supertonic 3 (31 languages, voice M1) | 380 MB | ~600 MB |
 | VAD | `livekit-plugins-silero` | Silero | 5 MB | ~50 MB |
-| Avatar | `libessence` | `.imx` | varies | ~300 MB |
+| Avatar | essence engine | `.imx` | varies | ~300 MB |
 
 **Total:** ~860 MB on disk for the brain plus your avatar file; ~1.5 GB
 RAM peak. The first run downloads the brain models from HuggingFace into

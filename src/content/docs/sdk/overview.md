@@ -9,7 +9,7 @@ label: "Overview"
 
 ## One engine, one API, every surface
 
-Every bitHuman SDK is a thin, idiomatic binding over **`libessence`** — the
+Every bitHuman SDK is a thin, idiomatic binding over **the essence engine** — the
 portable C++ avatar-rendering engine that also powers the [cloud REST
 API](/api/reference). They all read the same `.imx` avatar file and produce
 identical frames at 25 FPS, so anything you prove out in one language ports
@@ -110,9 +110,9 @@ We keep this honest so you can plan around it.
 > avatar engine plus an `.imx` avatar runtime plus the on-device LLM/TTS stack;
 > **`Expression2`**, the second-generation engine on its own; and
 > `BithumanEngineProtocol`, a source-only interface.
-> **It does not contain `libessence`.** This page said it did until 2026-09-03;
-> `strings -a` on the shipped `ios-arm64` binary counts `libessence` **0** and
-> `essence` **0**, against `ImxContainer` **141** in the same read. `Bithuman` is
+> **It does not contain the essence engine.** This page said it did until
+> 2026-09-03; `strings -a` on the shipped `ios-arm64` binary counts the legacy
+> engine string `libessence` **0** and `essence` **0**, against `ImxContainer` **141** in the same read. `Bithuman` is
 > a **type** vended by `bitHumanKit`, not an importable module — and there is no
 > `Expression` or `Bithuman` product to attach. This rail is **preview**. The
 > [Swift page](/sdk/swift) has the details, including where Essence 2 actually
@@ -120,7 +120,7 @@ We keep this honest so you can plan around it.
 
 > **Rust** The `bithuman` Rust crate is the on-device engine wrapper that **backs
 > the [CLI](/sdk/cli/overview)**. It is internal / app-backing — source-only (not on
-> crates.io) — and wraps `libessence` ABI v7. You don't depend on it directly;
+> crates.io) — and wraps essence engine ABI v7. You don't depend on it directly;
 > you get it through the CLI.
 
 ### A note on Flutter

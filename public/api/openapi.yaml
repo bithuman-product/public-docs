@@ -3160,7 +3160,7 @@ tags:
 
       ### One engine, every surface
 
-      A single Rust engine (`libessence`) drives the bitHuman CLI, the
+      A single Rust engine (the essence engine) drives the bitHuman CLI, the
       Python / Swift / Flutter SDKs, and the cloud REST API.
       They all read the same `.imx` file and produce identical
       frames — pick the surface that matches what you're building;
@@ -3457,7 +3457,7 @@ tags:
 
       The default model. One `.imx` file = one avatar identity.
       Pre-built at upload time, served by the lightweight
-      `libessence` runtime — runs on CPU (Raspberry Pi to server),
+      essence engine runtime — runs on CPU (Raspberry Pi to server),
       NVIDIA GPU, Apple Silicon (Mac/iPad/iPhone), and in the browser
       via WASM.
 
@@ -3571,7 +3571,7 @@ tags:
 
       Every bitHuman avatar is packaged as a single `.imx` file — a
       self-contained bundle of identity weights, textures, and metadata
-      that the `libessence` engine reads to animate one specific face.
+      that the essence engine reads to animate one specific face.
 
       ### Where `.imx` files come from
 

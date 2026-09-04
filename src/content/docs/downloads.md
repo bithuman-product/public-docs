@@ -8,7 +8,7 @@ order: 2
 
 ## Get the SDK
 
-One engine (`libessence`) drives every surface. Pick the install path that matches what you're building — they all read the same `.imx` avatar file and produce identical frames.
+One engine — the essence engine — drives every surface. Pick the install path that matches what you're building — they all read the same `.imx` avatar file and produce identical frames.
 
 ### bitHuman CLI (no code)
 
@@ -306,11 +306,11 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 ## Current shipping versions
 
-| Artifact | Latest version | Channel | libessence ABI |
+| Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
-| Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no libessence ABI) |
+| Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | bitHuman CLI (`bithuman-cli`) | **2.5.1** — macOS arm64 **and** Linux x86_64, same version, no pin needed · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.3.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.2.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |

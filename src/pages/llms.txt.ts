@@ -25,7 +25,7 @@ export const GET: APIRoute = async () => {
   let out = `# bitHuman\n\n`;
   out +=
     `> bitHuman is a private, on-device, real-time lip-synced AI avatar ` +
-    `platform. One engine (\`libessence\`) turns audio into a talking avatar ` +
+    `platform. One engine — the essence engine — turns audio into a talking avatar ` +
     `at 25 FPS — fully on-device (macOS/Linux/iOS, CPU incl. Raspberry Pi, ` +
     `NVIDIA GPU, or Apple Silicon) or via a cloud REST API. Private by ` +
     `design: on-device inference means audio, video, and prompts never leave ` +
