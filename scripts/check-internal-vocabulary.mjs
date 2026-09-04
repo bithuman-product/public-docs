@@ -56,13 +56,18 @@
 //   2  could not run (never a silent pass)
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 
 // ── corpus ───────────────────────────────────────────────────────────────────
 // Identical to check-retired-model-names.mjs on purpose: "customer-facing" must
 // mean the same set of bytes to both guards, or one of them is grading a
-// different site. Asserted equal at the bottom.
+// different site. ★That used to be this comment and nothing else — the ROOTS
+// array and EXT below were duplicated by hand and NOTHING compared them, so
+// the two guards could quietly grade different sites. It is now asserted
+// against the sibling's own walk output (`--emit-corpus`) in sameCorpus()
+// below, which is fatal on any difference.
 const ROOTS = [
   "src/content", "src/pages", "src/openapi", "public/api", "STYLE.md",
   "src/components", "src/layouts", "src/config", "src/data", "src/styles",
@@ -232,10 +237,58 @@ function scanText(text) {
   return hits;
 }
 
+// ── THE SIBLING-CORPUS ASSERTION ─────────────────────────────────────────────
+// ★Found by mutation 2026-09-04, not by reading: dropping ONE file from this
+// guard's walk (`&& !rel.endsWith("community.md")`) left it GREEN while eleven
+// mechanism words sat unread on that page. The per-root control passed (the
+// root still contributed files) and the minimum-count control passed (106 of
+// 107 is well over the floor of 20). Only a comparison against the OTHER
+// guard's corpus can see it, and that comparison is what the comment at the top
+// of ROOTS had been promising without code.
+//
+// It compares the sibling's WALK OUTPUT, not its ROOTS literal, so a divergent
+// EXT or walk predicate is caught too — which is the shape the mutation took.
+// Fatal, never a warning: a guard grading a different site than it claims is
+// the "OK — 234 occurrences" defect with a different subject.
+function siblingCorpusMismatch(root, mine) {
+  const sib = "scripts/check-retired-model-names.mjs";
+  let out;
+  try {
+    out = execFileSync(process.execPath, [root + sib, "--emit-corpus"],
+                       { encoding: "utf8", timeout: 60000 });
+  } catch (e) {
+    return [`could not read the sibling corpus from ${sib} --emit-corpus ` +
+            `(${(e && e.message || e).toString().split("\n")[0]}). The two guards ` +
+            `claim to grade the same site and that claim is now unverifiable, so ` +
+            `this run refuses rather than assuming it.`];
+  }
+  const theirs = out.split("\n").filter(Boolean).sort();
+  if (theirs.length === 0) {
+    return [`${sib} --emit-corpus produced 0 files — the comparison would pass ` +
+            `vacuously against an empty list.`];
+  }
+  const a = new Set(mine.slice().sort());
+  const b = new Set(theirs);
+  const onlyMine = [...a].filter((f) => !b.has(f));
+  const onlyTheirs = [...b].filter((f) => !a.has(f));
+  if (!onlyMine.length && !onlyTheirs.length) return [];
+  const show = (xs) => xs.slice(0, 5).join(", ") + (xs.length > 5 ? ` … +${xs.length - 5}` : "");
+  const msg = [];
+  if (onlyTheirs.length) msg.push(
+    `${onlyTheirs.length} customer-facing file(s) are graded by ${sib} but NOT by ` +
+    `this guard, so no mechanism word on them can ever be reported: ${show(onlyTheirs)}`);
+  if (onlyMine.length) msg.push(
+    `${onlyMine.length} file(s) are graded here but not by ${sib}: ${show(onlyMine)}`);
+  return msg;
+}
+
 function run({ verbose = true, root = ROOT, files = null } = {}) {
   const fatal = [];
   const violations = [];
   const corpus = files || collect(root);
+  // Only on a REAL run: the self-test's synthetic corpora are deliberately
+  // not the site, and comparing them to the sibling would be meaningless.
+  const siblingFatal = files ? [] : siblingCorpusMismatch(root, corpus);
 
   // ── the firing control, FIRST: a pattern that cannot match its own fixture
   //    is a pattern that was never added.
@@ -311,6 +364,7 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
     `the corpus is EMPTY — 0 files scanned. Every count below is 0 because ` +
     `nothing was read, not because the site is clean (ROOT resolves to ${root}).`
   );
+  for (const m of siblingFatal) fatal.push(m);
   if (corpus.length > 0 && corpus.length < 20) fatal.push(
     `only ${corpus.length} files scanned — corpus globbing broke`
   );
@@ -350,6 +404,9 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
     console.log(`  frozen carriers  ${CARRIERS.length} present on the site; ` +
                 `${carried} occurrence(s) of a mechanism word excused as a literal`);
     console.log(`  per-word         ${[...perName].map(([k, v]) => `${k}=${v}`).join(" ")}`);
+    // ★Printed from the same array the fatal list is built from, so it cannot
+    // claim agreement while the run fails beneath it.
+    if (!files) console.log(`  ★corpus control  ${siblingFatal.length === 0 ? "same 107-file corpus as check-retired-model-names.mjs" : "DIVERGED from check-retired-model-names.mjs"}`.replace("107", String(corpus.length)));
   }
 
   if (fatal.length) {
@@ -399,7 +456,12 @@ function emit(root = ROOT) {
 // ── --self-test: prove every arm goes red ────────────────────────────────────
 function selfTest() {
   let fails = 0;
-  const T = (label, ok) => { console.log(`${ok ? "  ok  " : "  FAIL"} ${label}`); if (!ok) fails++; };
+  // ★arms is COUNTED. The summary line below used to say "6 arms" as a string
+  // literal; adding M7 left it claiming 6 while 7 ran. A count that cannot
+  // disagree with what it counts is the same blind-instrument shape this file
+  // exists to catch, one level up — and it was caught here by adding an arm.
+  let arms = 0;
+  const T = (label, ok) => { arms++; console.log(`${ok ? "  ok  " : "  FAIL"} ${label}`); if (!ok) fails++; };
 
   console.log("check-internal-vocabulary --self-test");
 
@@ -452,7 +514,18 @@ function selfTest() {
   const one = collect(ROOT).filter((f) => f === "vercel.json");
   T("M6 a corpus with no frozen carrier is refused", one.length === 1 && run({ verbose: false, files: one }) === 1);
 
-  console.log(`self-test: 6 arms, ${fails} failed`);
+  // ★M7 — the arm that would have caught the defect that produced this rule.
+  // A corpus one file short of the sibling's passes every other control here:
+  // the root still contributes files, and 106 is far above the floor of 20.
+  // Only the sibling comparison sees it, so it is exercised directly.
+  const full = collect(ROOT);
+  const short = full.filter((f) => !f.endsWith("community.md"));
+  T("M7 a corpus one file short of the sibling's is refused",
+    short.length === full.length - 1 &&
+    siblingCorpusMismatch(ROOT, short).length > 0 &&
+    siblingCorpusMismatch(ROOT, full).length === 0);
+
+  console.log(`self-test: ${arms} arms, ${fails} failed`);
   return fails ? 1 : 0;
 }
 

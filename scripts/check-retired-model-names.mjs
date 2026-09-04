@@ -64,6 +64,26 @@ const walk = (rel) => {
 };
 for (const r of ROOTS) walk(r);
 
+// ── --emit-corpus ────────────────────────────────────────────────────────────
+// ★The two vocabulary guards claim to grade "the same customer-facing site".
+// Until 2026-09-04 that claim was a COMMENT in check-internal-vocabulary.mjs
+// ("Asserted equal at the bottom") with no code behind it: the ROOTS array and
+// the EXT regex were duplicated by hand in both files and nothing compared
+// them. Proved by mutation the same day — adding a single `&&
+// !rel.endsWith("community.md")` to this walk's twin left BOTH guards GREEN
+// while eleven mechanism words sat unread on that page. A per-root and a
+// minimum-file-count control both passed, because losing ONE file breaks
+// neither.
+//
+// So the corpus is now emitted rather than described, and the sibling asserts
+// its own list equals this one. This prints the walk's RESULT, not its inputs,
+// so it also catches a divergent walk predicate — which is the shape the
+// mutation above actually took.
+if (process.argv[2] === "--emit-corpus") {
+  process.stdout.write(files.slice().sort().join("\n") + "\n");
+  process.exit(0);
+}
+
 // ── the retired names ────────────────────────────────────────────────────────
 const RETIRED = [
   { name: "elevate",           re: /elevate/gi },
