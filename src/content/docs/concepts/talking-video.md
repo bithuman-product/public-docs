@@ -89,7 +89,7 @@ Audio input is the same call with an audio block:
 | `expression-2` | Fast, expressive renders. | Available today |
 | `essence-2-max` | Premium fidelity output — the highest-fidelity renderer. | Available today |
 
-All five models render talking video today. See
+All five avatar models render talking video today. See
 [Essence 2 & Expression 2](/concepts/models-v2) for the full second-generation
 lineup.
 
