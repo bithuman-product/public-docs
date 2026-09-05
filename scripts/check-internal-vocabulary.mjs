@@ -198,8 +198,16 @@ const CARRIERS = [
   // redirect must keep resolving forever, so the retired path is spelled here
   // on purpose. Same verdict as the /concepts/essence-2-{light,quality}
   // redirects in check-retired-model-names.mjs, which asserts them present.
-  { why: "the retired /concepts/ URLs, which must keep redirecting for saved links",
-    re: /"source"\s*:\s*"\/concepts\/[a-z0-9-]+"/i },
+  // ★WIDENED 2026-09-05 TO THE TRAILING-SLASH FORM — the same frozen redirect,
+  // in the spelling a saved link actually has. Measured on the live site that
+  // day: all 44 redirect sources resolved bare and ALL 44 returned 404 with a
+  // trailing slash, so the twins were added to vercel.json. The retired
+  // /concepts/ paths were directory-format pages, so the URL a reader copied
+  // out of their address bar ends in `/`. Widening the carrier to `/?` keeps
+  // it keyed on a `"source":` line of a retired /concepts/ path and nothing
+  // else — it is the SAME frozen string, not a new escape.
+  { why: "the retired /concepts/ URLs, both spellings, which must keep redirecting for saved links",
+    re: /"source"\s*:\s*"\/concepts\/[a-z0-9-]+\/?"/i },
   { why: "`be_runtime_tick_compose*` — exported C ABI entry points, resolved by the dynamic loader by exact name",
     re: /be_runtime_tick_compose\w*/i },
   { why: "BITHUMAN_TESSERA_DIRECTOR — an env var a customer sets in their own launcher; the reader takes it by exact name",
