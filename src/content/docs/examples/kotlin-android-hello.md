@@ -29,12 +29,44 @@ android {
     defaultConfig {
         ndk { abiFilters += setOf("arm64-v8a") }
         minSdk = 29
+
+        // The code below reads BuildConfig.BITHUMAN_API_SECRET. That constant
+        // does not exist unless you declare it here, and the value is taken
+        // from the environment or from gradle.properties -- never from a
+        // literal in a file you commit.
+        val bithumanSecret: String =
+            System.getenv("BITHUMAN_API_SECRET")
+                ?: (project.findProperty("bithuman.apiSecret") as String?)
+                ?: ""
+        buildConfigField("String", "BITHUMAN_API_SECRET", "\"$bithumanSecret\"")
     }
+
+    // Required. AGP 8.x defaults buildConfig to OFF, so without this line the
+    // BuildConfig class is never generated at all.
+    buildFeatures { buildConfig = true }
 }
 dependencies {
     implementation("ai.bithuman:sdk:2.3.6")   // Maven Central
 }
 ```
+
+> ★ **Both lines above are load-bearing, and the example did not compile without
+> them.** `BuildConfig` is generated only when `buildFeatures.buildConfig` is
+> `true`, and it has defaulted to **false** since AGP 8.0 — the version this
+> documentation pins is **8.7.3** ([Android SDK
+> verification](/sdk/android-verify)). With the block as it was printed here
+> until 2026-09-06 — no `buildConfigField`, no `buildFeatures` — the snippet in
+> [Full code](#full-code) fails at compile time with
+> `Unresolved reference: BuildConfig`, not at runtime.
+>
+> **This still bakes the secret into the APK,** which is fine for the local
+> hello-world this page is and wrong for anything you ship: a `buildConfigField`
+> is a string constant in the compiled artifact and anyone can read it back out.
+> It satisfies the "never hardcode it" rule in the prerequisites only in the
+> sense that the value is not in your source tree. For a real app, have the
+> device fetch a short-lived credential from **your** backend at startup and
+> pass that to `Avatar.load(...)` instead — the parameter takes any `String`,
+> so nothing else in the code below changes.
 
 2. Push your model and audio onto the device's app-private external dir (or adapt the paths in the code).
 

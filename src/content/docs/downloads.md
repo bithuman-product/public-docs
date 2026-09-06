@@ -192,25 +192,29 @@ See the [Python SDK guide](/sdk/python).
 On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only.
 
 In Xcode: **File → Add Package Dependencies…** → paste
-`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.5.0**
+`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.6.0**
 → attach a product. The package wraps pre-compiled XCFrameworks with all
 third-party deps statically linked — zero transitive SwiftPM dependencies.
 
-- **`bitHumanKit`** — the umbrella (Expression 1 + an `.imx` avatar runtime +
-  the on-device LLM/TTS stack). `import bitHumanKit`.
+- **`bitHumanKit`** — the umbrella: an on-device avatar engine, an `.imx`
+  avatar runtime and the on-device LLM/TTS stack. `import bitHumanKit`.
+  ★ It is **not** an Apple build of [`expression-1`](/concepts/expression-1),
+  which is [GPU-only](/concepts/where-models-run) and has no Apple artifact.
 - **`Expression2`** — the [`expression-2`](/concepts/expression-2) engine on its
   own, new in 2.5.0. `import Expression2`. Ships a `macos-arm64` **and** an
   `ios-arm64` slice, and both have rendered on real hardware (including an
-  iPhone). But it is **engine only: it ships no model weights**, and `isReady`
-  stays `false` until a per-identity CoreML bundle is present as a directory of
-  `.mlpackage` members. **No bundle in that form is published**, and there is no
-  self-serve way to get one — email
-  [hello@bithuman.ai](mailto:hello@bithuman.ai). The `<code>.avatar` you can
-  download is a **different rail**: it feeds the CLI's local renderer and the
-  cloud engines, and although it does carry CoreML members, it is a packed
-  container rather than the directory this product reads, with no supported way
-  to convert one into the other. See the
-  [Swift SDK guide](/sdk/swift#expression-2-on-device).
+  iPhone). It is **engine only: it ships no model weights**, and `isReady`
+  stays `false` until it is given a per-identity CoreML bundle.
+  ★ **2.6.0 (2026-09-06) is the release that lets you give it one.** It adds
+  `Expression2Engine.create(modelPath:…)`, a
+  `create(avatarContainer:…:stagingDir:)` that opens the `<code>.avatar` the
+  [download endpoint](/api/agents#download-an-agents-model) returns, and the
+  `Expression2Container` reader — all three read **0** in 2.5.0's shipped module
+  interface and are present in 2.6.0's. It also adds a third binary target,
+  `UnifiedModelHeader`, which rides under the `Expression2` product; attach the
+  product and you get it. This supersedes the sentence this page carried until
+  today, that there was "no supported way to convert one into the other". See
+  the [Swift SDK guide](/sdk/swift#expression-2-on-device).
 
 `essence-2` is **not** on this rail. See the [Swift SDK guide](/sdk/swift).
 
@@ -319,8 +323,8 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
-| Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
+| Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.6.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
+| Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | bitHuman CLI (`bithuman-cli`) | **2.5.1** — macOS arm64 **and** Linux x86_64, same version, no pin needed · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.2.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
@@ -427,7 +431,7 @@ For the file each family hands you by name, and what opens it, see
 |---|---|---|---|
 | bitHuman cloud (GPU · Apple Silicon · CPU chain) | Yes | GPU-only | Yes |
 | Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.5.0+ ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone** — but it is **engine only, [with no model bundle published](/sdk/swift#expression-2-on-device)**, so neither is self-serve yet. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
+| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/swift#expression-2-on-device), so an app with its own agent can hand it one. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:

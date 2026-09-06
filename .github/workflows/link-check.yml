@@ -219,6 +219,22 @@ jobs:
       - name: Check for unresolved placeholders
         if: always()
         run: node scripts/check-placeholders.mjs
+      # ★A CODE SAMPLE THAT CANNOT COMPILE. examples/kotlin-android-hello.md
+      # printed a MainActivity.kt reading `BuildConfig.BITHUMAN_API_SECRET`
+      # beside an app/build.gradle.kts that neither declared the constant nor
+      # switched `buildFeatures.buildConfig` on — off by default since AGP 8.0,
+      # and this site pins 8.7.3. The page's "Full code" therefore failed at
+      # COMPILE time with `Unresolved reference: BuildConfig`, and nothing here
+      # could see it: Astro renders a broken fence exactly as happily as a
+      # working one. The gate's --selftest runs in the same job because a docs
+      # site can legitimately carry zero such snippets, so a corpus-presence
+      # rule would be permanently red and a silent pattern permanently green.
+      - name: Kotlin snippets generate the BuildConfig they read
+        if: always()
+        run: node scripts/check-kotlin-buildconfig.mjs
+      - name: Kotlin BuildConfig guard self-test
+        if: always()
+        run: node scripts/check-kotlin-buildconfig.mjs --selftest
       - name: Published OpenAPI spec is in sync with its source
         if: always()
         run: |

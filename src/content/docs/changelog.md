@@ -10,6 +10,58 @@ order: 1
 
 ## September 2026
 
+### Swift SDK `2.6.0` — Expression 2 can be handed a model (2026-09-06)
+
+Tag `v2.6.0` on the SwiftPM package. Pin **`from: "2.6.0"`**. Everything in it
+is additive: if you are on `from: "2.5.0"` or `from: "2.5.1"` you pick it up
+automatically and nothing you have written stops compiling.
+
+★ **The engine can now be given a model.** Through 2.5.1 the only initializer
+was `Expression2Engine()`, which searched an environment variable or the app
+bundle and left `isReady == false` when it found nothing — so an app that had
+**downloaded** its own avatar had no way to point the engine at it. 2.6.0 adds:
+
+- `Expression2Engine.create(modelPath:sharedEngineDir:warmSpeech:)` and the
+  instance `load(modelPath:…)`;
+- `Expression2Engine.create(avatarContainer:sharedEngineContainer:sharedEngineDir:stagingDir:warmSpeech:)`,
+  which opens the `<code>.avatar` that
+  [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+  returns;
+- `Expression2Container` — `isContainer`, `members(of:)`, `read(_:from:)`,
+  `readManifest(_:)`, `unpack(_:to:)` — plus `Expression2ContainerError` (the
+  file is wrong) and `Expression2LoadError` (the contents are wrong, including
+  `notAnAvatarDirectory(path:)`).
+
+**This withdraws a sentence this site published.** The Swift SDK page said there
+was *"no supported way to hand them to this product … no unpacking route is
+published or supported"*. True of 2.5.x; **false as of 2.6.0**, and the page has
+been rewritten rather than softened.
+
+★ **Three binary targets now, not two.** `UnifiedModelHeader.xcframework` ships
+with this release because the engine's own module interface imports it. You
+never write that import — attach the **`Expression2` product** and all three
+targets come with it. A hand-rolled dependency on only the two 2.5.0 targets
+fails at import with `no such module 'UnifiedModelHeader'`.
+
+**`bitHumanKit` is untouched**: still the `v2.4.0` asset, same URL, same
+checksum. `Expression2` still ships **no model weights**, so resolving it does
+not by itself get you a rendering avatar — what changed is that you can now hand
+it one.
+
+Measured on the published zips, downloaded anonymously and re-hashed against the
+checksums the manifest pins (all match) — `ios-arm64` slice, aggregated over the
+nine emitted `.swiftinterface` files, with two unchanged symbols and a nonsense
+token as controls:
+
+```text
+token                      v2.5.0   v2.6.0
+create(modelPath                0        9
+Expression2Container            0       45
+notAnAvatarDirectory            0        9
+public init()   (control)       9        9
+a token in neither (control)    0        0
+```
+
 ### expression-2 Android is `0.3.1`, and `google()` is no longer required (2026-09-04)
 
 `ai.bithuman:expression2-android:0.3.1` reached Maven Central at
@@ -155,6 +207,30 @@ targets `install.sh` resolves a download that 404s and exits 1. See
 `VERS_1.20.1` while every `lible_core.so` requires `VERS_1.26.0`, so **copying
 a file in does not fix it** — and `rc=70` for essence-1. Details and the
 controls: [what the CLI actually does](/sdk/cli/verified).
+
+### CLI `2.5.0` — `bithuman pull --model`, and the first signed macOS tarball (2026-09-02)
+
+`bithuman pull <CODE> --model <FAMILY>` gives the CLI a door to something the
+download endpoint has always had. Before it, `bithuman pull <CODE>` could only
+hand you the agent's **birth** model, so an agent created as one family and
+later given another returned the first one silently, with nothing saying another
+family existed.
+
+- **`--model <FAMILY>`** is forwarded verbatim; the endpoint owns the vocabulary
+  and answers an unknown name with a `400` naming the accepted set.
+- **The no-flag path now names the families it did not hand you**, read off the
+  download response's own headers — no second request. `--json` gains
+  `other_models` and `model_source`; a missing header leaves `other_models`
+  **absent**, never `[]`.
+- `--model` on a showcase slug is **refused** (exit 66) rather than silently
+  ignored.
+- `bithuman list --mine` and `bithuman auth status` verify against the platform
+  API, and `serve` tells the brain when audio finishes **playing**, not only
+  when it is cut off.
+
+`cli-v2.5.0` was also the first Developer ID signed and notarized macOS tarball.
+It shipped **macOS only**; Linux caught up a day later in
+[`cli-v2.5.1`](#cli-251--macos-and-linux-back-on-one-version-2026-09-03).
 
 ### Expression 2 self-hosting on Linux is fail-open, by owner ruling (2026-09-02)
 

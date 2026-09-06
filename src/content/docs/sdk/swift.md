@@ -30,8 +30,8 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > **Maturity** This rail is **preview**, not GA. The package vends three
 > products: **`bitHumanKit`** (`import bitHumanKit`), the binary umbrella;
 > **`Expression2`** (`import Expression2`), the second-generation avatar engine,
-> new in **v2.5.0**; and `BithumanEngineProtocol`, a source-only Layer-0 engine
-> interface. The older standalone Layer-1 products (`Expression`, `Bithuman`) are
+> new in **v2.5.0** and **given a model-path API in v2.6.0**; and
+> `BithumanEngineProtocol`, a source-only Layer-0 engine interface. The older standalone Layer-1 products (`Expression`, `Bithuman`) are
 > **not** published — naming one fails with
 > `product 'Expression' ... not found in package 'homebrew-bithuman'`, rc 1.
 > Note **when** it fails: `swift package resolve` returns **0** on a manifest
@@ -74,33 +74,70 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **2.5.1** ("Up to Next Major Version" from 2.5.1) and attach the product
+Pick **2.6.0** ("Up to Next Major Version" from 2.6.0) and attach the product
 you want — **`bitHumanKit`** for the umbrella, **`Expression2`** for the
 second-generation engine alone. Or in `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "2.5.1")
+         from: "2.6.0")
 ```
 
-> **2.5.1 is a manifest correction and downloads nothing new.** Every
-> `binaryTarget` URL and checksum is byte-identical to 2.5.0 — 45 code lines in,
-> 45 code lines out. What changed is the manifest's own commentary, which had
-> gone false in two ways worth knowing about if you read it in Xcode: it recorded
-> that the umbrella does **not** contain the essence engine and then, ninety lines
-> lower, that the umbrella "re-exports both engines"; and it told you to
-> `import Expression` / `import Bithuman` for "the lower-level engine products",
-> neither of which this package has ever vended. Asking for one is not a
-> deprecation warning, it is a build failure —
-> `product 'Expression' ... not found in package 'homebrew-bithuman'`, rc 1.
-> `Bithuman` is a **type** vended by `bitHumanKit`, not a module you can import.
-> If you are already on `from: "2.5.0"` you pick 2.5.1 up automatically and
-> nothing about your build changes.
+> ### 2.6.0 — published 2026-09-06, and it is the first one that changes `Expression2`'s API
+>
+> **What to do:** if you are already on `from: "2.5.0"` or `from: "2.5.1"` you
+> pick 2.6.0 up automatically, and **nothing you have written stops compiling**
+> — the whole change is additive. If you pin an exact version and you use
+> `Expression2`, move to 2.6.0: it is the release that lets you hand the engine
+> a model.
+>
+> * ★ **`Expression2` can now be given a model path.** Through 2.5.1 the only
+>   initializer was `Expression2Engine()`, which searched an environment
+>   variable or the app bundle. 2.6.0 adds
+>   `Expression2Engine.create(modelPath:sharedEngineDir:warmSpeech:)`, the
+>   instance `load(modelPath:…)`, and a container opener. See
+>   [Expression 2 on-device](#expression-2-on-device).
+> * ★ **`Expression2` now rides a third binary target**, `UnifiedModelHeader`.
+>   You never import it — it is a `binaryTarget`, not a product — but the
+>   engine's own module interface does (`import UnifiedModelHeader`, line 14),
+>   so it must be resolvable. Depending on the two 2.5.0 targets by hand fails
+>   at import with `no such module 'UnifiedModelHeader'`. Attaching the
+>   **`Expression2` product**, as above, brings all three.
+> * **`bitHumanKit` did not change.** Its binary is still the `v2.4.0` asset,
+>   same URL and same checksum `5c536e37…e9db`.
+>
+> Measured on the published zips themselves rather than taken from the release
+> notes — the `ios-arm64` slice, aggregated over all nine emitted
+> `.swiftinterface` files, with `public init()` and `func pull` as controls that
+> read the same on both, and a nonsense token as the negative control:
+>
+> | token | v2.5.0 | v2.6.0 |
+> |---|---|---|
+> | `create(modelPath` | 0 | **9** |
+> | `Expression2Container` | 0 | **45** |
+> | `notAnAvatarDirectory` | 0 | **9** |
+> | `public init()` *(control)* | 9 | 9 |
+> | a token in neither *(control)* | 0 | 0 |
+>
+> Both zips were re-downloaded anonymously on 2026-09-06 and re-hashed against
+> the checksum the manifest pins; both match.
 
-> **One package, two release tags — by design.** `2.5.0` is the version you pin;
+> **2.5.1 was a manifest correction and downloaded nothing new.** Every
+> `binaryTarget` URL and checksum was byte-identical to 2.5.0. What changed was
+> the manifest's own commentary, which had gone false in two ways worth knowing
+> about if you read it in Xcode: it recorded that the umbrella does **not**
+> contain the essence engine and then, ninety lines lower, that the umbrella
+> "re-exports both engines"; and it told you to `import Expression` /
+> `import Bithuman` for "the lower-level engine products", neither of which this
+> package has ever vended. Asking for one is not a deprecation warning, it is a
+> build failure — `product 'Expression' ... not found in package
+> 'homebrew-bithuman'`, rc 1. `Bithuman` is a **type** vended by `bitHumanKit`,
+> not a module you can import.
+
+> **One package, two release tags — by design.** `2.6.0` is the version you pin;
 > it is the manifest that declares every product. The umbrella's binary still
-> downloads from the **`v2.4.0`** release and the Expression 2 binaries from
-> **`v2.5.0`**, because a single shared tag would have re-pointed
+> downloads from the **`v2.4.0`** release and the three Expression 2 binaries
+> from **`v2.6.0`**, because a single shared tag would have re-pointed
 > `bitHumanKit.xcframework.zip` at a release that does not carry it — a hard 404
 > for every existing consumer. SwiftPM reads absolute asset URLs out of the
 > manifest it resolves, so the assets do not have to live on the resolved tag.
@@ -202,10 +239,10 @@ is no `createRuntime` on the published module. Verified to compile against
 
 ## Expression 2 on-device
 
-**New in v2.5.0.** [`expression-2`](/concepts/expression-2) is now a SwiftPM
-product of its own — the first second-generation engine on this rail. It is a
-pure Swift + CoreML talking head; Apple Silicon only, `macos-arm64`,
-`ios-arm64`, `ios-arm64-simulator`.
+**New in v2.5.0, and given a model-path API in v2.6.0.**
+[`expression-2`](/concepts/expression-2) is a SwiftPM product of its own — the
+first second-generation engine on this rail. It is a pure Swift + CoreML talking
+head; Apple Silicon only, `macos-arm64`, `ios-arm64`, `ios-arm64-simulator`.
 
 **The `ios-arm64` slice is real, and it has rendered on an iPhone.** This page
 used to describe only macOS, which read as if iOS were a build target nobody
@@ -237,51 +274,113 @@ proven-capable and unshipped, not as ready to build a product on.
 ```swift
 import Expression2
 
-let engine = Expression2Engine()
-engine.warmUp()
+// v2.6.0: hand the engine the avatar you downloaded.
+let engine = try Expression2Engine.create(modelPath: avatarDirectory)
 engine.feed(samples)                       // [Float] PCM
 while let (frame, speech) = engine.pull() {
     // frame: [UInt8], the image to display; engine.width x engine.height
 }
 ```
 
-> **Read this before you plan around it — `Expression2` ships the engine, not a
-> runnable avatar.** `Expression2Engine()` takes no model path. The engine looks
-> for a per-identity CoreML bundle as a **directory of `.mlpackage` members** in
-> `$BITHUMAN_EXPRESSION2_DIR` or in your app bundle, and **`isReady` stays
-> `false` until it finds one**. No bundle in that form is published, so
-> resolving this product does not by itself get you a rendering avatar. On a
-> clean machine the engine constructs and reports `isReady=false` — that is the
-> expected result today, not a misconfiguration.
+`Expression2Engine()` + `warmUp()` still works and still searches
+`$BITHUMAN_EXPRESSION2_DIR` or your app bundle — nothing was removed. `create`
+is the addition: it takes the location as an argument instead of making you
+arrange the environment around the engine.
+
+### What v2.6.0 added, as the module declares it
+
+Read out of the shipped `Expression2.swiftinterface` at v2.6.0, not from the
+release notes:
+
+```swift
+// Point the engine at an unpacked avatar directory.
+public static func create(modelPath: URL, sharedEngineDir: URL? = nil,
+                          warmSpeech: [Float]? = nil) throws -> Expression2Engine
+public func load(modelPath: URL, sharedEngineDir: URL? = nil,
+                 warmSpeech: [Float]? = nil) throws
+
+// Or hand it the packed <CODE>.avatar the download endpoint gives you.
+public static func create(avatarContainer: URL, sharedEngineContainer: URL? = nil,
+                          sharedEngineDir: URL? = nil, stagingDir: URL,
+                          warmSpeech: [Float]? = nil) throws -> Expression2Engine
+
+// Ask what a directory is missing before you try to start.
+public static var requiredAvatarMembers: [String] { get }
+public static func missingMembers(avatarDir: URL, sharedEngineDir: URL? = nil) -> [String]
+
+// Open the container yourself.
+public enum Expression2Container {
+    public static func isContainer(_ url: URL) -> Bool
+    public static func members(of url: URL) throws -> [Member]
+    public static func read(_ name: String, from url: URL) throws -> Data
+    public static func readManifest(_ url: URL) throws -> Data
+    @discardableResult
+    public static func unpack(_ url: URL, to dir: URL) throws -> [String]
+}
+```
+
+Two error types come with it, and the distinction is worth knowing before you
+write a `catch`: **`Expression2ContainerError`** is about the *file* — not a
+container, wrong engine's container, a legacy ZIP container, truncated,
+unsupported version — while **`Expression2LoadError`** is about the *contents*:
+`notAnAvatarDirectory(path:)`, `missingMembers(avatarDir:sharedEngineDir:missing:)`
+and `warmUpRefused(…)`. (The v2.6.0 release notes file `notAnAvatarDirectory`
+under the container error; the shipped interface puts it on the load error.
+Catch the one the compiler shows you.)
+
+> ### Corrected 2026-09-06 — `Expression2` can now be handed the file you download
 >
-> **How you get a bundle: ask us — there is no self-serve path.** No download
-> page or CLI command hands you one in the layout this product reads, and it is
-> not gated behind a plan you can buy. Email
+> Until v2.6.0 this section said, correctly for the release it described:
+> *"What is missing is not the weights, it is a supported way to hand them to
+> this product … no unpacking route is published or supported. Do not build on
+> prising one open."* **v2.6.0 published that route**, so the paragraph is
+> replaced rather than softened.
+>
+> **What the download endpoint gives you.** For an `expression-2` agent,
+> [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+> returns a `<code>.avatar`: a container whose members include
+> `dec_p2_v3_all.mlpackage`, `audiotokenizer_cpuAndNE.mlpackage` and
+> `student_v4_forward_frame_cpuAndNE.mlpackage` — the same member names the
+> shipped `Expression2.xcframework` carries in its own strings.
+>
+> **What v2.6.0 does with it.** `Expression2Engine.create(avatarContainer:…:stagingDir:)`
+> opens that container, stages the members, and starts the engine — the engine's
+> own refusal message names that call as the answer. Or open it yourself with
+> `Expression2Container.members(of:)` / `.unpack(_:to:)` and use
+> `create(modelPath:)` on the resulting directory. Both are public API in the
+> published binary, so this is a contract now and not a file-format guess.
+>
+> **`Expression2Engine()` alone still gets you nothing.** The no-argument
+> initializer searches `$BITHUMAN_EXPRESSION2_DIR` or your app bundle for a
+> **directory of `.mlpackage` members** and leaves **`isReady` `false`** when it
+> finds none. On a clean machine that is the expected result, not a
+> misconfiguration — it is the reason `create(modelPath:)` was added.
+>
+> ★ **Two things are still true and still block a shipping app.** There is
+> **no published per-identity bundle you can download without an agent of your
+> own** — the route above starts from *your* agent's `<code>.avatar`, so it
+> gets you your identity and nobody else's. And an agent whose model has never
+> been generated has nothing to download. For anything beyond that, email
 > [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want.
 >
-> **What the download endpoint gives you instead, stated precisely.** For an
-> `expression-2` agent,
-> [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-> returns a `<code>.avatar`. That file is **not** empty of CoreML: measured on a
-> downloaded one, it is an `IMX\0` v2 container whose members include
-> `dec_p2_v3_all.mlpackage`, `audiotokenizer_cpuAndNE.mlpackage` and
-> `student_v4_forward_frame_cpuAndNE.mlpackage` — and `dec_p2_v3_all` is exactly
-> the member name the shipped `Expression2.xcframework` (macos-arm64, v2.5.0)
-> carries in its strings. **What is missing is not the weights, it is a
-> supported way to hand them to this product**: the engine reads a directory,
-> the artifact is a packed container, and no unpacking route is published or
-> supported. Do not build on prising one open — there is no contract behind it,
-> and nothing about that file's layout is promised to stay put.
+> **Check before you start, rather than catching a throw.**
+> `Expression2Engine.missingMembers(avatarDir:sharedEngineDir:)` returns the
+> member names a directory is short of, and `requiredAvatarMembers` is the list
+> it grades against.
 >
-> **An `.imx` is definitely not the missing piece.** `bithuman pull <code>` on
-> an Essence agent returns an `.imx` for the Essence runtime. `Expression2`
-> cannot read one: measured against the same xcframework, `strings` finds
-> **zero** occurrences of `imx`. Pointing `$BITHUMAN_EXPRESSION2_DIR` at an
-> unpacked `.imx` will not start the engine.
+> **An `.imx` for another engine is still not the missing piece.**
+> `bithuman pull <code>` on an Essence agent returns an artifact for the Essence
+> runtime, and this engine refuses it by design: the shipped refusal says it
+> reads its own container only and tells you to *"open it with the product its
+> unified `engine` header names"*. Pointing `$BITHUMAN_EXPRESSION2_DIR` at one
+> will not start the engine.
 
 > **Depend on `Expression2` alone.** Adding both `Expression2` and the
 > `BithumanEngineProtocol` product pulls the Layer-0 module in twice and fails to
-> link.
+> link. Attaching the `Expression2` product is also how you get
+> `UnifiedModelHeader`, the third binary target v2.6.0 added — you never import
+> it, but the engine's interface does, and a hand-rolled dependency on the two
+> older targets fails with `no such module 'UnifiedModelHeader'`.
 
 ## Compute units are a measured choice
 
@@ -293,8 +392,8 @@ identifiers — `MLComputeUnits.cpuAndNeuralEngine`, `.cpuAndGPU`, `cpuAndNE` �
 are Apple's spellings and are used verbatim below.
 
 `Expression2` exposes the choice per graph through three environment variables.
-Measured against the shipped `Expression2.xcframework` at v2.5.0 — the exact
-asset the manifest pins —
+Measured against the shipped `Expression2.xcframework` at **v2.6.0** — the exact
+asset the manifest pins, re-read 2026-09-06 —
 [transcript](/examples/apple-swiftpm-check#check-3--what-is-actually-inside-the-shipped-expression2-binary):
 
 | Variable | Selects the compute units for | Engine default |
@@ -304,13 +403,16 @@ asset the manifest pins —
 | `EXPRESSION2_STUDENT_CU` | the per-frame student | `cpuAndNE` |
 
 ```bash
-export EXPRESSION2_W2V_CU=cpuOnly     # tokens in the v2.5.0 binary: cpuAndNE | cpuOnly
+export EXPRESSION2_W2V_CU=cpuOnly     # tokens in the v2.6.0 binary: cpuAndNE | cpuOnly
 ```
 
 Three things worth knowing before you tune any of these:
 
 - **`cpuAndNE` and `cpuOnly` are the only compute-unit tokens the published
-  v2.5.0 binary carries.** `cpuAndGPU` does not appear in it. On device the
+  v2.6.0 binary carries.** `cpuAndGPU` does not appear in it — `strings -a` on
+  the `macos-arm64` slice counts `cpuAndNE` **7**, `cpuOnly` **1**, `cpuAndGPU`
+  **0**, with a token in neither reading **0** as the control (re-measured
+  2026-09-06; v2.5.0 read 4 / 1 / 0 on the same three). On device the
   Neural Engine really does carry this engine: on a real iPhone 15 run, 577 of
   611 operations landed there.
 - **Do not copy our server's settings onto a device.** Our own Apple serve host

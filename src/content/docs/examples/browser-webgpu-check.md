@@ -1,6 +1,6 @@
 ---
 title: "Browser — check before you ship"
-description: "Three copy-paste checks for the in-browser Essence 2 path: is the bundle you fetched the one we published, does this browser have a real WebGPU adapter, and is WebGPU actually faster here. Every transcript on this page was produced by running the snippet."
+description: "Four copy-paste checks for in-browser rendering, covering essence-2 and expression-2: is the bundle you fetched the one we published, does this browser have a real WebGPU adapter, is WebGPU actually faster here, and which runtime tier will expression-2 pick. Every transcript on this page was produced by running the snippet."
 section: examples
 group: "Examples"
 order: 16
@@ -8,10 +8,33 @@ order: 16
 
 ## What this page is
 
-Three checks you can run before you point a customer at
+Four checks you can run before you point a customer at
 [`?render=local`](/guides/browser-rendering). Each one ships with a **control
 arm** — a deliberately broken variant — because the failure that costs you a
 day is the one that looks like success.
+
+> ### Which family each check is about
+>
+> `?render=local` is **one switch**, and the **agent's model** picks the
+> renderer ([the table](/guides/browser-rendering#one-switch-and-the-model-picks-the-renderer)).
+> The two second-generation families both render in the browser and they do not
+> share an engine, so a check that answers for one does not automatically
+> answer for the other:
+>
+> | Check | [essence-2](/concepts/essence-2) | [expression-2](/concepts/expression-2) |
+> |---|---|---|
+> | 1 — bundle integrity | **yes** — this is the runtime it fetches | **no**: there is no standalone expression-2 runtime published to hash-check. Its per-identity bundles are fetched by the viewer, not by you |
+> | 2 — real WebGPU adapter | **yes** | **yes** — and it is the check that decides most for this family, because the same non-fallback-adapter predicate is what the shipped expression-2 gate uses |
+> | 3 — is WebGPU faster | **yes** — the transcripts are essence-2 models | **no** — it benchmarks the essence-2 bundle. Do not read its numbers onto expression-2 |
+> | 4 — which runtime tier | — (essence-2 has no tier gate; its stage-to-backend map is fixed) | **yes** |
+>
+> ★ **expression-2 is the bigger published surface of the two in the browser** —
+> **79** identities with a published web bundle against essence-2's **7**
+> ([counted from the mirror](/guides/browser-webgpu#whether-it-will-work-for-your-agent)),
+> so a page that covered only essence-2 was covering the smaller half.
+> [essence-1](/concepts/essence-1) renders in the browser too, on WASM only and
+> from its own `.imx` pipeline — none of these four checks describe it.
+> [expression-1](/concepts/expression-1) has no browser renderer at all.
 
 > **Provenance.** Every transcript below was produced by running the snippet
 > exactly as printed, on Ubuntu 26.04 / Google Chrome 148.0.7778.178 /
@@ -23,6 +46,9 @@ day is the one that looks like success.
 ---
 
 ## Check 1 — is the runtime you fetched the one we published?
+
+**Applies to [essence-2](/concepts/essence-2).** There is no standalone
+[expression-2](/concepts/expression-2) runtime published to hash-check.
 
 The browser runtime is static files on `models.bithuman.ai`. There is **no API
 key and no account** in this path — anyone can fetch them, and nothing on the
@@ -89,6 +115,8 @@ you think it is.
 ---
 
 ## Check 2 — does this browser have a REAL WebGPU adapter?
+
+**Applies to both second-generation families.**
 
 This is the check that matters most, because the failure is silent in the worst
 way: **`navigator.gpu` exists on machines that cannot grant an adapter**. A
@@ -206,6 +234,9 @@ WebGPU*, which is why the probe checks `isFallbackAdapter` on **both**
 ---
 
 ## Check 3 — is WebGPU actually faster here?
+
+**Applies to [essence-2](/concepts/essence-2).** It benchmarks the essence-2 bundle;
+do not read its numbers onto [expression-2](/concepts/expression-2).
 
 WebGPU is an **acceleration for one of the two models, and close to nothing
 for the other**. Do not assume it. Measure it, on the hardware your users have.
@@ -399,6 +430,219 @@ this pipeline; it is true of one graph and false of the other.
 
 ---
 
+## Check 4 — which runtime tier will expression-2 pick here? *(expression-2)*
+
+Checks 1–3 answer for [essence-2](/concepts/essence-2). This one answers for
+[expression-2](/concepts/expression-2), which is the family with **79**
+published browser bundles and a **different engine** in its own worker.
+
+expression-2 does not have one browser backend. It has a **capability gate**
+that picks one of three at session start, and the answer changes with facts
+about the machine you cannot see from the server:
+
+| Condition, in this order | Runtime you get |
+|---|---|
+| a **real** (non-fallback) WebGPU adapter | ONNX Runtime Web, **WebGPU** |
+| **no cross-origin isolation** (no COOP+COEP) | ONNX Runtime Web, **WASM, one thread** — and the LiteRT tier is impossible here, because without `SharedArrayBuffer` it throws at load. ★ But see the note below the table: on a hosted session this combination is **refused before it is reached** |
+| Apple silicon | ONNX Runtime Web, **WASM** |
+| x86 desktop, ≥ 10 hardware threads, **and** the identity bundle ships LiteRT members | **LiteRT.js WASM** |
+| anything else | ONNX Runtime Web, **WASM** |
+
+The rungs are ordered, so the first one that matches wins — which is why a
+laptop with a real GPU never reaches the core-count question, and why a page
+that forgot its COOP/COEP headers never reaches LiteRT no matter how many cores
+it has.
+
+> ★ **The one-thread rung is not what a customer gets — they get cloud.** This
+> table is the runtime *picker*. On a hosted session a **page-level gate runs
+> first**, and a page that is neither cross-origin isolated **nor** able to
+> grant a real WebGPU adapter is **refused there**, before the session is
+> minted: the viewer rewrites the URL to `?render=cloud` and the visitor gets
+> working cloud video. So the one-thread row is what any caller that bypasses
+> that page gate would be handed — it is defence in depth, and the probe below
+> reports it because it is the picker's answer, not the customer's outcome.
+> The practical reading of arms B and D is therefore: **no isolation and no
+> real adapter means no browser render at all.**
+
+Save this as `tier-probe.py` and run it. It serves one page cross-origin
+isolated, drives headless Chrome, and applies the table above to what the
+browser reports:
+
+```python
+#!/usr/bin/env python3
+"""Which in-browser runtime tier will an expression-2 session pick on THIS
+machine? Serves one page, drives headless Chrome, prints the verdict.
+  ./tier-probe.py         cross-origin isolated (COOP+COEP) -- the real page
+  ISOLATE=0 ./tier-probe.py   same page, headers off -- the control arm
+"""
+import http.server, json, os, socketserver, subprocess, sys, tempfile, threading
+
+PORT = int(os.environ.get("PORT", "8741"))
+CHROME = os.environ.get("CHROME", "/usr/bin/google-chrome")
+ISOLATE = os.environ.get("ISOLATE", "1") == "1"
+GPU = os.environ.get("GPU", "1") == "1"
+result, done = {}, threading.Event()
+
+PAGE = """<!doctype html><meta charset=utf-8><title>tier</title><script>
+// The tier table, transcribed from the shipped gate (LITERT_MIN_CORES = 10).
+const MIN_CORES = 10;
+function realAdapter(a){ if(!a) return false;
+  if(a.isFallbackAdapter===true) return false;
+  const i=a.info||null; if(i&&i.isFallbackAdapter===true) return false; return true; }
+function decide(p,webgpu,litert,isolated){
+  if(webgpu) return "ort-web webgpu  (tier1: real, non-fallback adapter)";
+  if(!isolated) return "ort-web wasm, 1 thread  (noiso: no COOP+COEP -> no SharedArrayBuffer; LiteRT.js would throw on load)";
+  if(p.apple) return "ort-web wasm  (tier2: Apple silicon)";
+  if(p.x86 && p.cores>=MIN_CORES) return litert ? "LiteRT.js wasm  (tier3: x86 desktop, "+p.cores+"T >= "+MIN_CORES+", bundle ships litert members)"
+                                                : "ort-web wasm  (fallback: x86 desktop, no litert member in this bundle)";
+  return "ort-web wasm  (fallback: "+(p.x86?("cores "+p.cores+" < "+MIN_CORES):"arch not x86")+")";
+}
+(async()=>{
+  let adapter=null, err=null;
+  try{ adapter = navigator.gpu ? await navigator.gpu.requestAdapter() : null; }catch(e){ err=String(e); }
+  const gl=document.createElement("canvas").getContext("webgl2");
+  const dbg=gl&&gl.getExtension("WEBGL_debug_renderer_info");
+  const renderer=dbg?gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):"";
+  const ua=navigator.userAgentData||{};
+  const p={ cores: navigator.hardwareConcurrency||0,
+            apple: /apple\\s*m\\d|apple gpu/i.test(renderer),
+            x86: !/arm/i.test(ua.platform||"") };
+  const out={ "navigator.gpu present": !!navigator.gpu,
+              "adapter granted": !!adapter,
+              "REAL (non-fallback) adapter": realAdapter(adapter),
+              "crossOriginIsolated": crossOriginIsolated===true,
+              "SharedArrayBuffer": typeof SharedArrayBuffer!=="undefined",
+              "hardwareConcurrency": p.cores,
+              "webgl2 renderer": renderer,
+              "adapter error": err,
+              "TIER (bundle WITH litert members)": decide(p,realAdapter(adapter),true,crossOriginIsolated===true),
+              "TIER (bundle WITHOUT litert members)": decide(p,realAdapter(adapter),false,crossOriginIsolated===true) };
+  await fetch("/r",{method:"POST",body:JSON.stringify(out)});
+})();
+</script>"""
+
+class H(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        if ISOLATE:
+            self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+            self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        super().end_headers()
+    def do_GET(self):
+        b = PAGE.encode()
+        self.send_response(200); self.send_header("Content-Type","text/html")
+        self.send_header("Content-Length",str(len(b))); self.end_headers(); self.wfile.write(b)
+    def do_POST(self):
+        result.update(json.loads(self.rfile.read(int(self.headers["Content-Length"]))))
+        self.send_response(204); self.end_headers(); done.set()
+    def log_message(self,*a): pass
+
+srv = socketserver.ThreadingTCPServer(("127.0.0.1", PORT), H)
+srv.allow_reuse_address = True
+threading.Thread(target=srv.serve_forever, daemon=True).start()
+flags = ["--headless=new","--no-sandbox","--disable-dev-shm-usage",
+         f"--user-data-dir={tempfile.mkdtemp(prefix='tierprobe-')}"]
+flags += (["--enable-unsafe-swiftshader"] if not GPU else ["--enable-features=Vulkan","--use-angle=vulkan"])
+p = subprocess.Popen([CHROME]+flags+[f"http://127.0.0.1:{PORT}/"],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+ok = done.wait(90); p.kill(); srv.shutdown()
+if not ok:
+    print("probe TIMED OUT"); sys.exit(2)
+print(f"== arm: cross-origin isolated = {ISOLATE}")
+for k,v in result.items():
+    print(f"{k:38} {v}")
+sys.exit(0)
+```
+
+### Arm A — a real GPU, page cross-origin isolated
+
+```text
+== arm: cross-origin isolated = True
+navigator.gpu present                  True
+adapter granted                        True
+REAL (non-fallback) adapter            True
+crossOriginIsolated                    True
+SharedArrayBuffer                      True
+hardwareConcurrency                    32
+webgl2 renderer                        ANGLE (NVIDIA, Vulkan 1.4.329 (NVIDIA NVIDIA GeForce RTX 4090 (0x00002684)), NVIDIA)
+adapter error                          None
+TIER (bundle WITH litert members)      ort-web webgpu  (tier1: real, non-fallback adapter)
+TIER (bundle WITHOUT litert members)   ort-web webgpu  (tier1: real, non-fallback adapter)
+```
+
+### Arm B — software adapter only, still isolated
+
+`GPU=0 ./tier-probe.py`. Chrome grants no adapter, the WebGPU rung does not
+match, and the machine drops to the x86-desktop rung — **where the identity's
+own bundle decides**, which is the one input that is not about your hardware at
+all:
+
+```text
+== arm: cross-origin isolated = True
+adapter granted                        False
+REAL (non-fallback) adapter            False
+crossOriginIsolated                    True
+SharedArrayBuffer                      True
+hardwareConcurrency                    32
+webgl2 renderer                        ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)
+TIER (bundle WITH litert members)      LiteRT.js wasm  (tier3: x86 desktop, 32T >= 10, bundle ships litert members)
+TIER (bundle WITHOUT litert members)   ort-web wasm  (fallback: x86 desktop, no litert member in this bundle)
+```
+
+### Arm C — real GPU, headers off
+
+`ISOLATE=0 ./tier-probe.py`. The WebGPU rung still matches first, so **losing
+cross-origin isolation costs you nothing on a machine with a real adapter**:
+
+```text
+== arm: cross-origin isolated = False
+REAL (non-fallback) adapter            True
+crossOriginIsolated                    False
+SharedArrayBuffer                      False
+hardwareConcurrency                    32
+TIER (bundle WITH litert members)      ort-web webgpu  (tier1: real, non-fallback adapter)
+TIER (bundle WITHOUT litert members)   ort-web webgpu  (tier1: real, non-fallback adapter)
+```
+
+### Arm D — the control that matters: no real adapter **and** no isolation
+
+`ISOLATE=0 GPU=0 ./tier-probe.py`. Same 32-thread machine as arm B, one HTTP
+header apart, and it lands two rungs lower — **one** WASM thread:
+
+```text
+== arm: cross-origin isolated = False
+REAL (non-fallback) adapter            False
+crossOriginIsolated                    False
+SharedArrayBuffer                      False
+hardwareConcurrency                    32
+TIER (bundle WITH litert members)      ort-web wasm, 1 thread  (noiso: ...)
+TIER (bundle WITHOUT litert members)   ort-web wasm, 1 thread  (noiso: ...)
+```
+
+★ **Read the four arms together, because that is the control.** Same host, same
+Chrome, same 32 threads — and **three different runtimes** come out of it,
+selected by one GPU flag and one HTTP header. If your run gives the same answer
+in all four arms, the probe is not measuring what you think it is. Arms B and D
+are the pair that shows `hardwareConcurrency` on its own is worthless: 32
+threads picks LiteRT in one and a single-threaded WASM tier in the other.
+
+**What to do with the answer.** If you embed a bitHuman session in an iframe or
+serve it from a page without `Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp`, every visitor without a real
+WebGPU adapter **gets no browser render at all** — the page gate refuses them
+and the session falls back to cloud rendering. They still see the avatar; you
+just do not get the thing you asked for, and you pay cloud rendering for it.
+That is a header you control, and it is free.
+
+**Provenance.** These four transcripts were produced by running the script
+above on 2026-09-06, Linux x86_64, Google Chrome headless, on a 32-thread host
+with an NVIDIA RTX 4090. The tier table and the 10-thread constant are
+transcribed from the gate the shipped viewer runs. This probe reports the
+**decision**, not a frame rate — it does not fetch an identity bundle, so the
+`WITH` / `WITHOUT` litert columns are both printed rather than one being
+selected for you.
+
+---
+
 ## What this tells you to do
 
 - **Never gate on `navigator.gpu`.** Gate on an adapter that came back and is
@@ -410,6 +654,11 @@ this pipeline; it is true of one graph and false of the other.
   download for nothing.
 - **wasm is the floor and it is a real floor** — it renders on every browser in
   the table, and it is what these models run on by default.
+- **Send the two isolation headers.** Check 4 arms B and D are the same machine
+  one header apart, and they land on different runtimes. For `expression-2` an
+  un-isolated page is worse than a slow render: every visitor without a real
+  WebGPU adapter is refused browser rendering outright and falls back to the
+  cloud.
 
 ## Where to go next
 

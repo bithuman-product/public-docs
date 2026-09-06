@@ -18,7 +18,18 @@ https://models.bithuman.ai/web/libelevate-web-v0.1.0/index.js
 ```
 
 It is the same runtime the hosted `?render=local` path uses for its frame
-generator, packaged so you can host it yourself.
+generator **when the agent's model is [essence-2](/concepts/essence-2)**,
+packaged so you can host it yourself.
+
+> ★ **Scoped 2026-09-06.** That sentence used to be unqualified, and it is only
+> true of one family. `?render=local` is one switch and the **agent's model**
+> picks the renderer: an [expression-2](/concepts/expression-2) agent on
+> `?render=local` runs a **different** in-browser web engine in its own worker,
+> not this package — so nothing you measure here describes it. An
+> [essence-1](/concepts/essence-1) agent runs the older `.imx` WASM pipeline,
+> also not this package, and [expression-1](/concepts/expression-1) has no
+> browser renderer at all. The per-family table is on
+> [Browser rendering](/guides/browser-rendering#one-switch-and-the-model-picks-the-renderer).
 
 > **The path says `libelevate-web`. Type it exactly.** `libelevate` is a
 > [retired name](/concepts/models-v2) — the product is

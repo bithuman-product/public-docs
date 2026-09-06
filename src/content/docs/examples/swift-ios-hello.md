@@ -12,13 +12,17 @@ order: 13
 - **Xcode 26+** on a Mac, plus an Apple Developer account. Add the SwiftPM package:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.5.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.6.0")
 ```
 
 - Device floor (real hardware — the Simulator can't run on-device inference): **iPhone 16 Pro or later** (A18 Pro+), or **iPad Pro M4 or later**, on **iOS / iPadOS 26+**. Earlier devices are refused at launch by `HardwareCheck.evaluate()`.
 - Apple-approved **memory entitlements** — without them iOS terminates the app mid-conversation. Request both before you start (Apple takes 1–3 business days): `com.apple.developer.kernel.increased-memory-limit` and `com.apple.developer.kernel.extended-virtual-addressing`.
 
-> **Note** This rail is **preview**. This example uses the **`bitHumanKit`** product (`import bitHumanKit`) — an umbrella framework bundling the Expression avatar engine, an `.imx` avatar runtime, and the renderer views, with all third-party deps statically linked (zero transitive SwiftPM dependencies). The package also vends **`Expression2`** as of 2.5.0; that product is the engine only and ships no model weights, so this example does not use it — see the [Swift SDK guide](/sdk/swift#expression-2-on-device). **iPhone Expression 1 (this example) is preview** — it runs on iPhone 16 Pro+, but on-device validation of *that* engine is still in progress, so prefer Essence for production iPhone builds (see [Models](/concepts/models) and the [Swift SDK matrix](/sdk/swift)). This is a statement about Expression **1**, the engine `bitHumanKit` bundles; Expression **2** is a separate `Expression2` product that *has* rendered on an iPhone but publishes no model bundle — see [Expression 2 on-device](/sdk/swift#expression-2-on-device).
+> **Note** This rail is **preview**. This example uses the **`bitHumanKit`** product (`import bitHumanKit`) — an umbrella framework bundling an on-device avatar engine, an `.imx` avatar runtime, and the renderer views, with all third-party deps statically linked (zero transitive SwiftPM dependencies). Prefer **Essence** for production iPhone builds.
+>
+> ★ **Corrected 2026-09-06 — this is not an Apple build of `expression-1`.** This note used to say *"iPhone Expression 1 (this example) is preview … on-device validation of that engine is still in progress"*, which read as if an Apple port of the [`expression-1`](/concepts/expression-1) model were on its way. It is not: `expression-1` is **GPU-only** and has no macOS, iPadOS or iOS build ([where each model runs](/concepts/where-models-run)). What `bitHumanKit` bundles is the umbrella's own on-device engine, reached through the `VoiceChat` / `AvatarConfig` API below.
+>
+> The package also vends **`Expression2`** — a separate product and a separate engine ([`expression-2`](/concepts/expression-2)) — which *has* rendered on an iPhone. As of **2.6.0** it takes a model path and can open the `<code>.avatar` you download for your own agent; it still ships no weights of its own. This example does not use it: see [Expression 2 on-device](/sdk/swift#expression-2-on-device).
 
 ## Run it
 

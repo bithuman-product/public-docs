@@ -97,7 +97,7 @@ We keep this honest so you can plan around it.
 | SDK | Package | Topology | Status |
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.10.0) | On-device | **GA** |
-| **Swift / Apple** | SwiftPM, pin `from: "2.5.1"` — products `bitHumanKit` and `Expression2` | On-device | **Preview** |
+| **Swift / Apple** | SwiftPM, pin `from: "2.6.0"` — products `bitHumanKit` and `Expression2` (2.6.0 gives `Expression2` a model-path API) | On-device | **Preview** |
 | **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.2.0` (essence-2) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.5.1 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
