@@ -205,6 +205,17 @@ jobs:
       - name: Internal-vocabulary guard self-test
         if: always()
         run: node scripts/check-internal-vocabulary.mjs --self-test
+      # ★A MODEL WE BILL FOR MUST HAVE A PAGE. Measured 2026-09-02 and again
+      # 2026-09-05 against the live site: the three second-generation concept
+      # pages answered 200 and /concepts/essence-1 and /concepts/expression-1
+      # both 404'd — two models on the rate card with no page at all. That is
+      # the one defect no other checker here can see, because every one of them
+      # grades bytes that exist and a missing page has none. The population is
+      # read from the serving rate card, not typed, so "if we charge for it, it
+      # gets a page" is enforced rather than remembered.
+      - name: Every billable model has a concept page
+        if: always()
+        run: node scripts/check-model-concept-pages.mjs
       - name: Check for unresolved placeholders
         if: always()
         run: node scripts/check-placeholders.mjs

@@ -3,7 +3,7 @@ title: "Talking video generation"
 description: "Talking-video generation — the offline counterpart to bitHuman's real-time avatars. Render a finished mp4 from a script or audio for social clips, explainers, and batch content."
 section: concepts
 group: "Models"
-order: 6
+order: 8
 ---
 
 ## What it is

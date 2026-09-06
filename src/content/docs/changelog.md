@@ -10,6 +10,32 @@ order: 1
 
 ## September 2026
 
+### expression-2 Android is `0.3.1`, and `google()` is no longer required (2026-09-04)
+
+`ai.bithuman:expression2-android:0.3.1` reached Maven Central at
+**2026-09-04T11:47:17Z** (`maven-metadata.xml` `latest`/`release` = `0.3.1`),
+**2,742,085 B**. It supersedes `0.3.0` as the version this site documents.
+
+**What changed for a consumer.** `0.3.1`'s POM declares only
+`org.jetbrains.kotlin:kotlin-stdlib:2.0.21`. `0.3.0`'s also declared
+`com.google.ai.edge.litert:litert:2.2.0`, which is **404 on Maven Central**, so
+a `0.3.0` build needed `google()` in its repositories and failed at
+`checkReleaseAarMetadata` without it. **`mavenCentral()` alone now resolves it.**
+A build pinned to `0.3.0` still needs `google()` — Central never replaces a
+published POM.
+
+**What did not change.** The engine is the same binary: `libexpr2jni.so` is
+446,200 B in both and differs in exactly **20 bytes at offsets 736–755** (the
+GNU build-id), and the bundled `libLiteRt.so` (5,508,376 B) is **byte-identical**.
+`classes.jar` goes from 32 to 41 entries, adding nine `Bhci*` classes and
+removing none — so every measurement this site published against `0.3.0` still
+describes `0.3.1`.
+
+★ **Still `arm64-v8a` only**, as are all three `ai.bithuman` Android artifacts.
+An x86_64 emulator resolves and installs and then throws
+`UnsatisfiedLinkError` at the first `System.loadLibrary`; use a physical arm64
+device or an `arm64-v8a` system image.
+
 ### Essence 2's head upsample reaches the Android path, and the phone figure is measured (2026-09-03)
 
 ★ **Correction to the 2026-09-02 entry below.** That entry announced a rebuilt

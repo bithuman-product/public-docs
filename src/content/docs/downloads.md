@@ -218,27 +218,34 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
 
 Three on-device AARs on Maven Central under the `ai.bithuman` group, all
 resolvable anonymously with no credential. As of 2026-09-03 **both second-
-generation families have a published Android artifact**.
+generation families have a published Android artifact**; `expression2-android`
+moved to **`0.3.1`** on 2026-09-04, and the versions below are Central's own
+`<release>` values, re-read 2026-09-06.
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.3.0")  // expression-2
+    implementation("ai.bithuman:expression2-android:0.3.1")  // expression-2
     implementation("ai.bithuman:essence2-android:0.2.0")     // essence-2
 }
 ```
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
-| `ai.bithuman:expression2-android:0.3.0` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
+| `ai.bithuman:expression2-android:0.3.1` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
 | `ai.bithuman:essence2-android:0.2.0` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | essence-1 | 29 | `arm64-v8a` |
+
+★ **`arm64-v8a` is the only ABI in any of the three.** An x86_64 emulator
+resolves and installs, then throws `UnsatisfiedLinkError` at the first
+`System.loadLibrary` — there is no slice to fall back to. Use a physical arm64
+device or an `arm64-v8a` system image.
 
 Check the group listing yourself — the third line is the control that shows a
 404 is really a 404:
 
 ```bash
-for c in essence2-android/0.2.0 expression2-android/0.3.0 zzz-none/0.2.0; do
+for c in essence2-android/0.2.0 expression2-android/0.3.1 zzz-none/0.2.0; do
   a=${c%%/*}; v=${c##*/}
   printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' \
     "https://repo1.maven.org/maven2/ai/bithuman/$a/$v/$a-$v.pom")" "$c"
@@ -247,7 +254,7 @@ done
 
 ```text
 200  essence2-android/0.2.0
-200  expression2-android/0.3.0
+200  expression2-android/0.3.1
 404  zzz-none/0.2.0
 rc=0
 ```
@@ -255,10 +262,13 @@ rc=0
 > ★ **Read the limits before you plan around this.** The essence-2 AAR ships
 > knowingly under the "base offering first" ruling: it **fails the `PARITY_U8`
 > gate at 2 levels** and sustained throughput is **1.63x short of the accepted
-> bar**. `google()` is a required repository and `useLegacyPackaging = true` is
-> not optional — leaving either out fails in a confusing place, or silently.
-> The measured numbers and both negative controls are on the
-> [Android SDK page](/sdk/android).
+> bar**. `useLegacyPackaging = true` is not optional — leaving it out fails
+> silently. ★`google()` **is no longer required for `expression2-android`
+> `0.3.1`**: its POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`,
+> where `0.3.0`'s also declared `com.google.ai.edge.litert:litert:2.2.0`, which
+> is 404 on Central. A build **pinned to `0.3.0` still needs `google()`** — a
+> published POM cannot be replaced. The measured numbers and both negative
+> controls are on the [Android SDK page](/sdk/android).
 
 > **FFmpeg / LGPL.** `essence2-android` links FFmpeg 7.1 statically, and the
 > LGPL-2.1 §6(a) relink materials are published beside the AAR on Maven
@@ -312,7 +322,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.5.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.5.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | bitHuman CLI (`bithuman-cli`) | **2.5.1** — macOS arm64 **and** Linux x86_64, same version, no pin needed · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
-| Android AAR (`ai.bithuman:expression2-android`) | **0.3.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
+| Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.2.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
@@ -337,9 +347,9 @@ Two avatar models, different hardware floors. For a side-by-side feature compari
 
 | Device | Essence? | Expression? | SDKs |
 |---|---|---|---|
-| **iPhone 16 Pro+** | Yes | Preview (prefer Essence) | Swift |
-| **iPad Pro M4+** | Yes | Yes | Swift |
-| **Mac (Apple Silicon)** | Yes | Yes (M3+) | Swift, Python, CLI |
+| **iPhone 16 Pro+** | Yes | **No** — GPU-only&nbsp;‡ | Swift |
+| **iPad Pro M4+** | Yes | **No** — GPU-only&nbsp;‡ | Swift |
+| **Mac (Apple Silicon)** | Yes | **No** — GPU-only&nbsp;‡ | Swift, Python, CLI |
 | **Mac (Intel)** | Pending in 2.3 | No | — (use 1.x wheel) |
 | **Browser (WASM)** | Yes | No | JavaScript / TS&nbsp;† |
 | **Linux x86_64 / aarch64** | Yes (CPU) | Yes (NVIDIA GPU) | Python, CLI |
@@ -348,6 +358,8 @@ Two avatar models, different hardware floors. For a side-by-side feature compari
 | **bitHuman Cloud** | Managed | Managed | LiveKit · JS / TS&nbsp;† |
 
 All hosts that run a given model produce identical, lip-synced visual frames — your device choice is about form factor, memory, and latency budget, not visual quality. The detailed per-model hardware floors follow.
+
+> **‡ Corrected 2026-09-06.** These three cells read *Preview (prefer Essence)*, *Yes* and *Yes (M3+)*. **Expression 1 has no Apple build at all** — the published Swift package vends `bitHumanKit`, `BithumanEngineProtocol` and `Expression2` and no `Expression` product; see [the correction under Expression](#expression) below.
 
 > **†** The **JavaScript / TypeScript** client is **Preview — not yet released** (no npm package or public source yet; see the [JavaScript / TypeScript](#javascript--typescript--preview) section). For browser/Node today, drive a cloud avatar over [LiveKit](/sdk/livekit).
 
@@ -370,16 +382,35 @@ All hosts produce identical frames — your device decision is about form factor
 
 ### Expression
 
-Heavier high-fidelity model. Runs on Apple Silicon on-device (demo apps) or on NVIDIA GPUs server-side.
+Heavier high-fidelity model, and this table is the **first-generation** floor:
+**Expression 1 is GPU-only.** It runs server-side on NVIDIA GPUs and there is
+**no Apple on-device build of it** — see
+[where each model runs](/concepts/where-models-run).
 
 | Host | Status | Notes |
 |---|---|---|
-| **Mac M3+ (arm64)** | On-device | Demo app target |
-| **iPad Pro M4+** | On-device | Sized for 16 GB+ devices |
-| **iPhone 16 Pro+** | Preview | Expression **1** only — this table is the first-generation floor. Needs the increased-memory entitlement; on-device validation of Expression 1 is in progress. Prefer Essence for production. ([Expression 2](/sdk/swift#expression-2-on-device) is a different engine and has rendered on an iPhone, but publishes no model bundle yet.) |
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
-| **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression needs Apple Silicon or an NVIDIA GPU; Essence runs on CPU-only hosts |
+| **Mac M3+ (arm64)** | Not applicable | No Apple build of Expression 1 — see the correction below |
+| **iPad Pro M4+** | Not applicable | Same — GPU-only by scope ruling, not a pending port |
+| **iPhone 16 Pro+** | Not applicable | Same. ([Expression 2](/sdk/swift#expression-2-on-device) is a **different engine**, has rendered on an iPhone, and publishes no model bundle yet.) |
+| **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression 1 needs an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
+
+> ### Correction — 2026-09-06: the three Apple rows above said **On-device** and **Preview**
+>
+> They read *"Mac M3+ — On-device — Demo app target"*, *"iPad Pro M4+ —
+> On-device"* and *"iPhone 16 Pro+ — Preview — on-device validation of
+> Expression 1 is in progress"*, and the section opened *"Runs on Apple Silicon
+> on-device (demo apps) or on NVIDIA GPUs server-side"*. **All of that was
+> false and is removed rather than softened.** The published Swift package
+> ([`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
+> vends **exactly three products** — `bitHumanKit`, `BithumanEngineProtocol`
+> and `Expression2`. There is **no `Expression` product**, and asking for one
+> fails at resolve time with
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`. Nothing
+> was in progress: there is no macOS, iPadOS or iOS build of `expression-1`,
+> and none is coming — it is GPU-only by scope ruling. To self-host it, use the
+> [NVIDIA container](/guides/deploy-self-hosted).
 
 If you're deploying to iPhone today, choose **Essence**. The iPhone reference app is built around Essence and stays well inside Apple's per-app memory cap.
 

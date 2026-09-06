@@ -21,8 +21,8 @@ into one claim. Verified 2026-09-02.
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/swift) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
-| **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.0` | Resolves anonymously from Maven Central — limits on the [Android SDK page](/sdk/android) |
-| **Android** | Essence 2 | — | No artifact you can resolve — [see below](#android) |
+| **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
+| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.2.0` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); what is and is not verified: [see below](#android) |
 
 Two things to settle before you pick a platform:
 
@@ -329,10 +329,11 @@ dependencies { implementation("ai.bithuman:sdk:2.3.6") }
 bundles its own audio encoder, so a stock Essence 1 model needs no extra assets.
 Full setup on the [Android SDK page](/sdk/android).
 
-**Expression 2 is also on Maven Central**, as of 2026-09-02:
+**Expression 2 is also on Maven Central**, published 2026-09-02 and **currently
+`0.3.1`** (2026-09-04):
 
 ```kotlin
-dependencies { implementation("ai.bithuman:expression2-android:0.3.0") }
+dependencies { implementation("ai.bithuman:expression2-android:0.3.1") }
 ```
 
 **Essence 2 is on Maven Central too**, as of 2026-09-03:
@@ -341,7 +342,27 @@ dependencies { implementation("ai.bithuman:expression2-android:0.3.0") }
 dependencies { implementation("ai.bithuman:essence2-android:0.2.0") }
 ```
 
-`arm64-v8a`, minSdk 29. All three coordinates resolve anonymously — verified
+`arm64-v8a`, minSdk 29.
+
+> ### ★ Every bitHuman AAR is `arm64-v8a` only — the default emulator will not run it
+>
+> All three coordinates ship **one** ABI slice. `essence2-android:0.2.0` carries
+> `lible_jni.so`, `libonnxruntime.so` and `libc++_shared.so` under
+> `jni/arm64-v8a/` and **nothing else**; `expression2-android:0.3.1` carries
+> `libexpr2jni.so` and `libLiteRt.so`, also `arm64-v8a` only.
+>
+> An AVD created from an **x86_64** system image resolves the dependency, builds
+> and installs — the failure is not at resolve time — and then throws
+> **`java.lang.UnsatisfiedLinkError`** the first time the SDK calls
+> `System.loadLibrary`, because there is no slice in the APK for that ABI.
+>
+> Use a **physical arm64 device**, or an emulator created from an **`arm64-v8a`
+> system image** (native on an Apple Silicon Mac; slow under full emulation on
+> x86_64 hosts). There is no x86_64 slice to fall back to, so
+> `abiFilters += "arm64-v8a"` in your `defaultConfig` only makes the failure
+> arrive at build time instead of at run time — it does not create one.
+
+All three coordinates resolve anonymously — verified
 here by fetching them directly, with `ai.bithuman:libelevate-android` as the
 negative control (**HTTP 404**: it was never published). ★Older revisions of
 this page used `essence2-android` as that negative control; it now returns

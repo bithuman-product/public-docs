@@ -10,7 +10,25 @@ order: 11
 
 The self-hosted GPU path runs the first-generation [Expression 1](/concepts/models) model on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams 25 fps lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. Bills at the self-hosted rate — 2 credits/min ([pricing](/guides/pricing)).
 
-> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli/overview) directly, or point the LiveKit plugin's `api_url` at your own Essence server. On Apple Silicon M3+, Expression runs natively with no Docker/NVIDIA — use the [Swift SDK](/sdk/swift).
+> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli/overview) directly, or point the LiveKit plugin's `api_url` at your own Essence server.
+
+> ### Correction — 2026-09-06: there is no Apple-native path for Expression 1
+>
+> This note used to end *"On Apple Silicon M3+, Expression runs natively with no
+> Docker/NVIDIA — use the [Swift SDK](/sdk/swift)"*. **That was false and is
+> removed rather than softened.** The published Swift package
+> ([`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
+> vends **exactly three products** — `bitHumanKit`, `BithumanEngineProtocol` and
+> `Expression2`. **There is no `Expression` product**, and asking for one fails
+> at resolve time with
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`.
+>
+> The avatar engine you can attach on Apple Silicon is
+> [`Expression2`](/sdk/swift#expression-2-on-device) — **a different engine**
+> (`expression-2`, not `expression-1`), and **code only**: it builds and runs,
+> but no model bundle is published in the form it loads. For **`expression-1`**
+> the supported self-hosted path is the NVIDIA container on this page; there is
+> no macOS or iOS build of it.
 
 ## Pull and run
 

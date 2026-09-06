@@ -1,6 +1,6 @@
 ---
 title: "Android SDK (Kotlin)"
-description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.0 (expression-2), ai.bithuman:essence2-android:0.2.0 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1). Coordinates, a Gradle snippet that resolves, and the measured limits."
+description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.2.0 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, and the measured limits."
 section: sdk
 group: "Languages"
 order: 12
@@ -13,13 +13,51 @@ resolvable by anyone, with no credential:
 
 | Maven coordinate | Model | Published | `minSdk` | ABI |
 |---|---|---|---|---|
-| `ai.bithuman:expression2-android:0.3.0` | **expression-2** | 2026-09-02 | 26 | `arm64-v8a` |
+| `ai.bithuman:expression2-android:0.3.1` | **expression-2** | 2026-09-04 | 26 | `arm64-v8a` |
 | `ai.bithuman:essence2-android:0.2.0` | **essence-2** | 2026-09-03 | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | since May 2026 | 29 | `arm64-v8a` |
 
 All three models that the scope ruling puts on Android now have a coordinate that
 resolves. See [essence-2 on Android](#essence-2-on-android) for what is and is not
 verified about the newest one.
+
+> ### ★ `arm64-v8a` is the only ABI, so an x86_64 emulator cannot run any of them
+>
+> Every one of the three AARs ships a single ABI slice. There is no x86, no
+> x86_64 and no `armeabi-v7a` fallback, so on an emulator built from an
+> **x86_64** system image the dependency resolves, the app compiles, the APK
+> installs — and the first `System.loadLibrary` throws
+> **`java.lang.UnsatisfiedLinkError`**, because the APK contains no library for
+> that ABI. Nothing earlier in the build warns you.
+>
+> Develop against a **physical arm64 device**, or create the AVD from an
+> **`arm64-v8a` system image** (native speed on an Apple Silicon Mac).
+> `ndk { abiFilters += "arm64-v8a" }` is worth setting — it keeps the APK small
+> and moves the mismatch to build time — but it cannot conjure a slice that was
+> never published.
+
+> ### Update — 2026-09-06: `expression2-android` is `0.3.1`
+>
+> Maven Central's `<release>` for `ai.bithuman:expression2-android` is **`0.3.1`**
+> (published 2026-09-04T11:47:17Z, **2,742,085 B**), not the `0.3.0` this page
+> named until today. Two things changed and one did not:
+>
+> * ★**`google()` is no longer required.** `0.3.1`'s POM declares only
+>   `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`. `0.3.0`'s also declared
+>   `com.google.ai.edge.litert:litert:2.2.0`, which is **404 on Maven Central**,
+>   and that is why every snippet on this page used to carry `google()`.
+>   A build **pinned to `0.3.0` still needs it** — a published POM can never be
+>   replaced.
+> * The **engine is the same binary.** `libexpr2jni.so` is 446,200 B in both and
+>   differs in exactly **20 bytes, offsets 736–755** — the GNU build-id; the
+>   bundled `libLiteRt.so` (5,508,376 B) is **byte-identical**, sha256
+>   `97355a36cb8ac762…` in both. `classes.jar` goes 32 → 41 entries, **adding**
+>   nine `Bhci*` classes and **removing none**.
+> * So **every measurement below, taken on `0.3.0`, still describes `0.3.1`** —
+>   the routing defaults, the `@Deprecated` count (**0** in both) and the
+>   `overlapDecoder` default are unchanged in the bytecode. Where a figure names
+>   `0.3.0` it is left naming `0.3.0`, because that is the artifact it was taken
+>   on.
 
 > ### Correction — 2026-09-02
 >
@@ -42,10 +80,10 @@ verified about the newest one.
 
 ---
 
-## expression-2 — `ai.bithuman:expression2-android:0.3.0`
+## expression-2 — `ai.bithuman:expression2-android:0.3.1`
 
 Feed 16 kHz mono `FloatArray` audio, pull RGBA frames of a talking head. All
-inference is on-device. The AAR is **2,722,532 B** to download and carries two
+inference is on-device. The AAR is **2,742,085 B** to download and carries two
 native libraries for `arm64-v8a` — `libexpr2jni.so` (446,200 B) and `libLiteRt.so`
 (5,508,376 B).
 
@@ -55,8 +93,7 @@ native libraries for `arm64-v8a` — `libexpr2jni.so` (446,200 B) and `libLiteRt
 // settings.gradle.kts
 dependencyResolutionManagement {
     repositories {
-        mavenCentral()   // ai.bithuman:expression2-android
-        google()         // REQUIRED — see below
+        mavenCentral()   // ai.bithuman:expression2-android — this is enough for 0.3.1
     }
 }
 ```
@@ -66,23 +103,26 @@ dependencyResolutionManagement {
 android {
     defaultConfig {
         minSdk = 26                       // the AAR's own minSdk
-        ndk { abiFilters += "arm64-v8a" }
+        ndk { abiFilters += "arm64-v8a" }  // the only ABI published
     }
     packaging { jniLibs { useLegacyPackaging = true } }   // not optional — see below
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.3.0")
+    implementation("ai.bithuman:expression2-android:0.3.1")
 }
 ```
 
-★ **`google()` is not optional, and leaving it out fails in a confusing place.** The
-AAR depends on `com.google.ai.edge.litert:litert:2.2.0`, which is **not on Maven
-Central** — it is only on Google's Maven repository. With `mavenCentral()` alone,
-Gradle still reports `expression2-android:0.3.0` as *resolved*, and then
+★ **`google()` was required for `0.3.0` and is not required for `0.3.1`.** The
+`0.3.0` POM declares `com.google.ai.edge.litert:litert:2.2.0`, which is **not on
+Maven Central** — it is only on Google's Maven repository. With `mavenCentral()`
+alone, Gradle still reports `expression2-android:0.3.0` as *resolved*, and then
 `assembleRelease` dies at `checkReleaseAarMetadata` with
 `Could not find com.google.ai.edge.litert:litert:2.2.0`. That is measured, not
 predicted — the [negative control](/sdk/android-verify#control-2-mavencentral-alone-is-not-enough)
-runs it.
+runs it. **`0.3.1`'s POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`**
+(re-read from Central 2026-09-06) and the LiteRT runtime it needs is the
+`libLiteRt.so` already inside the AAR, so `mavenCentral()` alone resolves it. ★If
+you pin `0.3.0` you still need `google()`: Central never replaces a published POM.
 
 ★ **`useLegacyPackaging = true` is not a style choice, and leaving it out is
 silent.** AGP defaults to `android:extractNativeLibs="false"` for `minSdk >= 23`, so
@@ -100,7 +140,7 @@ The Qualcomm delegate is **not** in our AAR. Your app supplies it:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.3.0")
+    implementation("ai.bithuman:expression2-android:0.3.1")
     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")
 }
@@ -144,7 +184,7 @@ essence-1 AAR further down this page is the 25 fps one.
 
 ★ **Pass `routing` as well as `accelerator`.** `Expression2Options.resolveRouting()`
 is `routing ?: when (accelerator) { NPU -> Routing.MIXED; AUTO, CPU -> Routing.ALL_CPU }`
-— read out of the 0.3.0 bytecode, where `Accelerator.NPU` is the branch that
+— read out of the 0.3.0 bytecode and unchanged in 0.3.1, where `Accelerator.NPU` is the branch that
 selects `MIXED`. So `Accelerator.NPU` on its own resolves to `Routing.MIXED`.
 
 The wart is that **`MIXED` is the one routing this page publishes no measurement
@@ -153,8 +193,9 @@ for.** Every figure above was taken on `HTP_DECODER` (the Hexagon runs) or on
 get a third arm that none of these numbers describe.
 
 **And nothing warns you.** An earlier version of this page called `MIXED`
-*"retired"*. That was editorial, not shipped: `ai.bithuman:expression2-android:0.3.0`
-carries **no `@Deprecated` marker anywhere** — not on `MIXED`, not on anything — and
+*"retired"*. That was editorial, not shipped: **neither `0.3.0` nor `0.3.1`**
+carries **a `@Deprecated` marker anywhere** — not on `MIXED`, not on anything
+(the string count in both `classes.jar` files is **0**) — and
 the words *retired* and *deprecated* appear in no string in the AAR's own code.
 (They occur only inside the bundled Google `libLiteRt.so`, in `absl`'s retired-flag
 machinery and an XNNPACK message — nothing to do with routing.) `MIXED` is a live,
@@ -166,7 +207,12 @@ leaves `accelerator = Accelerator.AUTO`, which resolves to `Routing.ALL_CPU` on
 every device — it does not try an accelerator and fall back, it never asks.
 Measured on a Snapdragon 8 Gen 2: **7.7 fps**.
 
-### Honest quality — what this 0.3.0 does today
+### Honest quality — what this artifact does today
+
+★ Every figure in this section was **taken on `0.3.0`**. It is left saying so.
+It describes `0.3.1` as well, because `0.3.1` ships the same engine binary —
+`libexpr2jni.so` differs in 20 build-id bytes, `libLiteRt.so` is byte-identical,
+and `classes.jar` only gains the nine `Bhci*` classes.
 
 The owner shipped this knowingly, under the ruling of 2026-08-30: *"for Android,
 let's release SDK even when RTF is not hyper realtime — we need to get base
@@ -202,7 +248,9 @@ the box).
 
 **Other things a first consumer meets:**
 
-- `arm64-v8a` only.
+- **`arm64-v8a` only** — so an **x86_64 emulator** installs and then throws
+  `UnsatisfiedLinkError` at the first `System.loadLibrary`. There is no fallback
+  slice. Physical arm64 device, or an `arm64-v8a` AVD image.
 - **Qualcomm only for anything faster than the CPU.** `Accelerator.NPU` *is* the
   Qualcomm QNN delegate. On non-Qualcomm arm64 the SDK does not fail — `AUTO`
   resolves to all-CPU and renders slowly: measured on an Exynos 1380 (Galaxy A37),

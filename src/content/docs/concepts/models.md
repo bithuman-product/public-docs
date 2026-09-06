@@ -62,7 +62,22 @@ second generation, see [Essence 2 & Expression 2](/concepts/models-v2).
 
 ## At a glance
 
-bitHuman's two first-generation avatar models share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence 1** runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression 1** is the heavier high-fidelity option for specific on-device Apple Silicon or GPU server use cases.
+bitHuman's two first-generation avatar models share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence 1** runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression 1** is the heavier high-fidelity option, and it is **GPU-only** — server-side NVIDIA GPUs, with no Apple, browser or Android build.
+
+> ### Correction — 2026-09-06: Expression 1 has no on-device Apple route
+>
+> The paragraph above used to call Expression 1 *"the heavier high-fidelity
+> option for specific **on-device Apple Silicon** or GPU server use cases"*.
+> **That was false**, and it contradicted the matrix further down this same
+> page. The published Swift package
+> ([`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
+> vends **exactly three products** — `bitHumanKit`, `BithumanEngineProtocol`
+> and `Expression2` — so there is no `Expression` product to attach, and
+> asking for one fails at resolve time with
+> `product 'Expression' ... not found in package 'homebrew-bithuman'`.
+> `Expression2` is a **different engine** (`expression-2`), not an Apple build
+> of this one. Expression 1 is GPU-only by design — see
+> [Where each model runs](/concepts/where-models-run).
 
 | | **Essence 1** | **Expression 1** |
 |---|---|---|

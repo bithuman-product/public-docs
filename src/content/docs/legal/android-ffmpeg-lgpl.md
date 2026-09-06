@@ -37,7 +37,7 @@ published for them. That is correct, not a gap:
 | Coordinate | FFmpeg linked in? | Relink offer |
 |---|---|---|
 | `ai.bithuman:essence2-android:0.2.0` | **yes** — statically, into `lible_jni.so` | **published** (below) |
-| `ai.bithuman:expression2-android:0.3.0` | no — it carries LiteRT (Apache-2.0) | none needed |
+| `ai.bithuman:expression2-android:0.3.1` | no — it carries LiteRT (Apache-2.0) | none needed |
 | `ai.bithuman:sdk:2.3.6` | not audited on this page | — |
 
 Measured, with the two AARs side by side — the second command is the control
@@ -45,7 +45,7 @@ that makes the first mean something:
 
 ```bash
 curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.2.0/essence2-android-0.2.0.aar
-curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.3.0/expression2-android-0.3.0.aar
+curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.3.1/expression2-android-0.3.1.aar
 unzip -q -o essence2.aar    jni/arm64-v8a/lible_jni.so    -d e2
 unzip -q -o expression2.aar jni/arm64-v8a/libexpr2jni.so  -d x2
 nm -D --defined-only e2/jni/arm64-v8a/lible_jni.so   | grep -cE ' T (av_|avcodec_|sws_)'
@@ -60,7 +60,8 @@ rc=1
 
 618 FFmpeg symbols **defined** inside the essence-2 library; zero in the
 expression-2 one. Run on Linux x86_64 on 2026-09-03 against the artifacts as
-published.
+published, and **re-run 2026-09-06 against `expression2-android:0.3.1`** —
+Central's current `<release>` — with the same three lines of output.
 
 **The `rc=1` is the second `grep -c`, and it is the expected answer.** `grep`
 exits 1 when it matches nothing, so a count of zero and a non-zero exit are the

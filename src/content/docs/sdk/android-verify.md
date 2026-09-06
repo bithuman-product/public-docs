@@ -78,10 +78,15 @@ essence2-android         200
 zzz-no-such-artifact     404
 
 -- released versions
-expression2-android      0.3.0
+expression2-android      0.3.1
 essence2-android         0.2.0
 sdk                      2.3.6
 ```
+
+> **Re-taken 2026-09-06.** The script is unchanged; only one answer moved.
+> `expression2-android` read `0.3.0` when this transcript was first captured and
+> Central's `<release>` is now **`0.3.1`** (published 2026-09-04T11:47:17Z). The
+> three `200`s and the `404` control are as before.
 
 ★ **Read the controls, not just the answers.** `zzz-no-such-artifact` → 404 and
 `sdk` → 200 means this probe *discriminates*, so `essence2-android` → **200** is a
@@ -108,7 +113,7 @@ tree.
 
 ```bash
 #!/usr/bin/env bash
-# expr2_consumer_probe.sh — prove ai.bithuman:expression2-android:0.3.0 resolves,
+# expr2_consumer_probe.sh — prove ai.bithuman:expression2-android:0.3.1 resolves,
 # compiles and links for an OUTSIDE consumer.
 #
 # The project this builds has NO path to the SDK except its Maven coordinates:
@@ -121,7 +126,7 @@ set -uo pipefail
 
 GROUP=ai.bithuman
 ARTIFACT=expression2-android
-VERSION=${1:-0.3.0}
+VERSION=${1:-0.3.1}   # Central's <release>; pass 0.3.0 to reproduce the transcripts below
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/expr2-consumer-XXXXXX")
 GRADLE=${GRADLE_BIN:-gradle}
 
@@ -276,9 +281,30 @@ echo "== verdict rc=$RC   (workdir $WORK)"
 exit $RC
 ```
 
+> ### ★ The three transcripts below were recorded against `0.3.0`
+>
+> They are kept verbatim, naming `0.3.0`, because that is the artifact Gradle
+> actually resolved on 2026-09-02. The script above now defaults to `0.3.1`,
+> Central's current `<release>`, and **one of these controls is expected to
+> change answer on it** — stated here rather than left for a reader whose own
+> run disagrees with the page:
+>
+> * **[Control 2](#control-2-mavencentral-alone-is-not-enough) is a control for
+>   `0.3.0`.** It fails there because `0.3.0`'s POM declares
+>   `com.google.ai.edge.litert:litert:2.2.0`, which is 404 on Central.
+>   **`0.3.1`'s POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`**
+>   (fetched from Central 2026-09-06), so `PROBE_OMIT_GOOGLE=1` should now
+>   **pass** on `0.3.1`. A control that stops firing because the defect it was
+>   built for was fixed is not a blind control — but you have to run it on
+>   `0.3.0` to watch it fire. **Run both.**
+> * The positive run and the accelerated-path run are unaffected: `0.3.1` ships
+>   the same engine (`libexpr2jni.so` 446,200 B, differing from `0.3.0`'s in 20
+>   build-id bytes; `libLiteRt.so` byte-identical), so the same two `.so` files
+>   land in the APK.
+
 ### The positive run
 
-`rc=0`:
+`rc=0`, recorded on `0.3.0`:
 
 ```text
 == probe ai.bithuman:expression2-android:0.3.0 in /home/sgu/.docslane-android-0902/work/expr2-consumer-T2E2f4
@@ -342,8 +368,11 @@ tell you which artifact you got.**
 
 ### Control 2: mavenCentral() alone is not enough
 
-The most likely way for your build to break. `PROBE_OMIT_GOOGLE=1` drops
-`google()` from the dependency repositories. `rc=1`:
+★ **On `0.3.0`.** This control fires on `0.3.0` and is expected **not** to fire
+on `0.3.1`, whose POM no longer names `litert` — see the note above. Run it on
+`0.3.0` if you want to watch it go red.
+
+`PROBE_OMIT_GOOGLE=1` drops `google()` from the dependency repositories. `rc=1`:
 
 ```text
 == probe ai.bithuman:expression2-android:0.3.0 in /home/sgu/.docslane-android-0902/work/expr2-consumer-0tToFz
@@ -369,8 +398,8 @@ The most likely way for your build to break. `PROBE_OMIT_GOOGLE=1` drops
 == verdict rc=1   (workdir /home/sgu/.docslane-android-0902/work/expr2-consumer-0tToFz)
 ```
 
-★ **This one is worse than control 1, and it is why `google()` is on the install
-snippet.** R1 goes green — `OK R1 resolved ai.bithuman:expression2-android:0.3.0`,
+★ **This one is worse than control 1, and it is why `google()` was on the install
+snippet for `0.3.0`.** R1 goes green — `OK R1 resolved ai.bithuman:expression2-android:0.3.0`,
 `gradle rc=0` — because our AAR *is* on Central and does resolve. What is missing
 is its dependency `com.google.ai.edge.litert:litert:2.2.0`, which is published only
 to Google's Maven repository. The failure lands two steps later at
