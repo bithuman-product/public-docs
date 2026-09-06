@@ -256,7 +256,43 @@ function blockLines(html) {
   }));
 }
 const DATE_IN_HEADING = /\((\d{4}-\d{2}-\d{2})\)/;
-let hits = 0, scanned = 0, bytes = 0, carrierExcused = 0, markerExcused = 0, fenced = 0, historyExcused = 0;
+// ★CORRECTING NOTE, 2026-09-06 — READ THIS BEFORE QUOTING A NUMBER OUT OF THIS
+// FILE'S OUTPUT.  The commit that landed this guard (23d306d7) says in its own
+// message: "docs.bithuman.ai served 102 occurrences of them" and "all 102 served
+// occurrences classify as legitimate: 77 §G frozen carriers … 14 plainly marked
+// as retired, 1 changelog entry … 10 verbatim transcript lines".
+//
+// ★THE SERVED COUNT OF `tessera` + `libessence` IS 83, NOT 102, and this file's
+// own comment above (line ~56) always said so: tessera 45 + libessence 38.
+// A commit message cannot be edited, so the correction lives here, in the file
+// the message describes, and in the output below.
+//
+// ★HOW 102 HAPPENED: `carrierExcused` was ONE counter incremented by BOTH scan
+// loops — the 11 mechanism words graded over the WHOLE PAGE, and the two
+// frozen-verbatim names graded BLOCK BY BLOCK.  Its 77 is therefore 19 + 58,
+// and the 19 are carrier-excused occurrences of OTHER words (`compose`,
+// `plane`, `director`…) that have nothing to do with `tessera` or `libessence`.
+// Adding 77 to the three frozen-name buckets counted those 19 twice.
+// MEASURED 2026-09-06 by instrumenting this exact file over the same 81 live
+// pages: mechanism-word carrierExcused = 19, frozen-name carrierExcused = 58,
+// and 58 + 14 + 1 + 10 = 83 = 45 + 38.  Independently re-derived the same day
+// over the 81 sitemap URLs (3,766,204 B): tessera 45, libessence 38, on 19 of
+// 81 pages, with the control `bithuman` firing at 5,796 in the raw HTML /
+// 2,316 in the rendered text, and two negative controls at 0.
+// ★NOTHING ABOUT THE VERDICT CHANGES: zero of the 83 uses either word as a live
+// product or mechanism name.  What was wrong was the arithmetic in the sentence
+// that reported it.
+//
+// THE FIX IS STRUCTURAL, not a corrected sentence: the counter is SPLIT, the
+// summary prints both halves, and the frozen-name buckets are now RECONCILED
+// against the number of frozen-name occurrences actually seen — a mismatch
+// exits 2 (CANNOT MEASURE), so this class of arithmetic can no longer be
+// published as a measurement.
+let hits = 0, scanned = 0, bytes = 0, markerExcused = 0, fenced = 0, historyExcused = 0;
+// ★TWO COUNTERS, BECAUSE THERE ARE TWO SCANS.  Conflating them is the defect above.
+let carrierMechanism = 0;   // the 11 mechanism words, whole-page scan
+let carrierFrozen = 0;      // the frozen-verbatim names, block-by-block scan
+let frozenSeen = 0;         // every frozen-name occurrence the block scan saw
 const perWord = Object.create(null);
 for (const [f, raw] of corpus) {
   bytes += raw.length; scanned++;
@@ -270,7 +306,7 @@ for (const [f, raw] of corpus) {
     let m;
     while ((m = re.exec(whole)) !== null) {
       const ctx = whole.slice(Math.max(0, m.index - 90), m.index + m[0].length + 90);
-      if (CARRIERS.some((c) => renderedCarrier(c).test(ctx))) { carrierExcused++; continue; }
+      if (CARRIERS.some((c) => renderedCarrier(c).test(ctx))) { carrierMechanism++; continue; }
       hits++; perWord[b.name] = (perWord[b.name] || 0) + 1;
       console.log(`HIT ${f} :: ${b.name} :: …${ctx.trim()}…`);
     }
@@ -292,8 +328,11 @@ for (const [f, raw] of corpus) {
       const re = new RegExp(b.re.source, b.re.flags);
       let m;
       while ((m = re.exec(line)) !== null) {
+        // ★COUNTED BEFORE IT IS CLASSIFIED. Every occurrence below leaves through
+        //  exactly one branch, so this total is what the buckets must add up to.
+        frozenSeen++;
         // ORDER IS THE SIBLING'S: carrier, then fence, then marker, then date.
-        if (CARRIERS.some((c) => renderedCarrier(c).test(line))) { carrierExcused++; continue; }
+        if (CARRIERS.some((c) => renderedCarrier(c).test(line))) { carrierFrozen++; continue; }
         if (inPre) { fenced++; continue; }
         // The sibling's window, unchanged: up to CONTEXT lines either side,
         // stopping at a blank line so an unrelated neighbouring block cannot
@@ -312,9 +351,27 @@ for (const [f, raw] of corpus) {
     }
   }
 }
-console.log(`\nscanned ${scanned} served page(s), ${bytes} byte(s); ${carrierExcused} occurrence(s) excused by a frozen carrier, ` +
-            `${markerExcused} plainly marked as retired, ${historyExcused} dated before the name was retired, ` +
-            `${fenced} inside a served code fence (budget ${FENCE_BUDGET})`);
+const frozenNames = VERBATIM.map((v) => v.name);
+const frozenHits = frozenNames.reduce((a, k) => a + (perWord[k] || 0), 0);
+console.log(`\nscanned ${scanned} served page(s), ${bytes} byte(s)`);
+console.log(`  the ${BANNED.length} MECHANISM word(s), whole page: ${carrierMechanism} occurrence(s) ` +
+            `excused by a frozen carrier — ★these belong to OTHER words and are NOT part of the ` +
+            `${frozenNames.join('/')} total below`);
+console.log(`  the ${VERBATIM.length} FROZEN name(s) (${frozenNames.join(', ')}), block by block: ` +
+            `${frozenSeen} occurrence(s) = ${carrierFrozen} frozen carrier + ${markerExcused} plainly ` +
+            `marked as retired + ${historyExcused} dated before the name was retired + ${fenced} ` +
+            `inside a served code fence (budget ${FENCE_BUDGET}) + ${frozenHits} as prose`);
+// ★THE RECONCILIATION THAT MAKES THE LINE ABOVE A MEASUREMENT.  Every frozen-name
+//  occurrence leaves the scan through exactly one branch, so the buckets must sum
+//  to what was seen. If they ever do not, the classification is not describing the
+//  corpus and this file may not report a verdict about it.
+const frozenSum = carrierFrozen + markerExcused + historyExcused + fenced + frozenHits;
+if (frozenSum !== frozenSeen) {
+  console.error(`CANNOT MEASURE: the frozen-name buckets sum to ${frozenSum} over ${frozenSeen} ` +
+                `occurrence(s) actually seen — a classification that does not add up to its own ` +
+                `corpus is the defect that published "all 102" over 83`);
+  process.exit(2);
+}
 // ★A fence is a narrow excuse, not an unlimited one — same rule as the sibling.
 if (fenced > FENCE_BUDGET) {
   console.log("per-word: " + JSON.stringify(perWord));
