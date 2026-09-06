@@ -256,6 +256,21 @@ function blockLines(html) {
   }));
 }
 const DATE_IN_HEADING = /\((\d{4}-\d{2}-\d{2})\)/;
+// ★WHAT THE PAGE SAYS IT IS, read out of the served bytes themselves.
+//  Returns the page's self-declared URL, or null when it declares none.
+function canonicalOf(html) {
+  const link = /<link\b[^>]*\brel\s*=\s*["']?canonical["']?[^>]*>/i.exec(html);
+  if (link) {
+    const href = /\bhref\s*=\s*["']([^"']+)["']/i.exec(link[0]);
+    if (href) return href[1];
+  }
+  const og = /<meta\b[^>]*\bproperty\s*=\s*["']og:url["'][^>]*>/i.exec(html);
+  if (og) {
+    const c = /\bcontent\s*=\s*["']([^"']+)["']/i.exec(og[0]);
+    if (c) return c[1];
+  }
+  return null;
+}
 // ★CORRECTING NOTE, 2026-09-06 — READ THIS BEFORE QUOTING A NUMBER OUT OF THIS
 // FILE'S OUTPUT.  The commit that landed this guard (23d306d7) says in its own
 // message: "docs.bithuman.ai served 102 occurrences of them" and "all 102 served
@@ -293,6 +308,8 @@ let hits = 0, scanned = 0, bytes = 0, markerExcused = 0, fenced = 0, historyExcu
 let carrierMechanism = 0;   // the 11 mechanism words, whole-page scan
 let carrierFrozen = 0;      // the frozen-verbatim names, block-by-block scan
 let frozenSeen = 0;         // every frozen-name occurrence the block scan saw
+let identityless = 0;       // served pages that declare no canonical URL of their own
+let renameAttempts = 0;     // pages whose FILENAME says changelog and whose ARTIFACT does not
 const perWord = Object.create(null);
 for (const [f, raw] of corpus) {
   bytes += raw.length; scanned++;
@@ -314,7 +331,22 @@ for (const [f, raw] of corpus) {
 
   // ── the frozen-verbatim names: the sibling's classifier, block by block ────
   if (!VERBATIM.length) continue;
-  const isChangelog = /changelog/i.test(f);
+  // ★THE CHANGELOG EXCUSE IS DERIVED FROM THE ARTIFACT, NEVER FROM THE FILENAME.
+  //  MEASURED 2026-09-06: this line read `/changelog/i.test(f)`, where `f` is the
+  //  name the OPERATOR gave the file.  Over one byte-identical 81-page corpus
+  //  (3,754,330 B) the verdict was rc=1 with the changelog page saved as
+  //  `029.html` and rc=0 with the same bytes saved as `029-changelog.html` — the
+  //  buckets moved 1 occurrence between `historyExcused` and `hits`.  An excuse a
+  //  caller can grant itself by choosing a filename is not a measurement, and it
+  //  is grantable in BOTH directions: renaming any page to `changelog.html` bought
+  //  a real violation a free pass.
+  //  The page's own `<link rel=canonical>` / `og:url` is the artifact speaking.
+  //  ★FAIL-CLOSED: a page that declares no identity does not get the excuse. It is
+  //  counted and printed, so the blindness is visible rather than assumed away.
+  const pageId = canonicalOf(raw);
+  if (pageId === null) identityless++;
+  const isChangelog = pageId !== null && /changelog/i.test(pageId);
+  if (!isChangelog && /changelog/i.test(f)) renameAttempts++;
   const lines = blockLines(raw);
   let entryDate = null;
   for (let idx = 0; idx < lines.length; idx++) {
@@ -361,6 +393,16 @@ console.log(`  the ${VERBATIM.length} FROZEN name(s) (${frozenNames.join(', ')})
             `${frozenSeen} occurrence(s) = ${carrierFrozen} frozen carrier + ${markerExcused} plainly ` +
             `marked as retired + ${historyExcused} dated before the name was retired + ${fenced} ` +
             `inside a served code fence (budget ${FENCE_BUDGET}) + ${frozenHits} as prose`);
+console.log(`  the ${historyExcused} changelog excuse(s) were granted on the page's OWN canonical ` +
+            `URL, never on a filename; ${identityless} of ${scanned} served page(s) declare no ` +
+            `canonical and are therefore INELIGIBLE for it (fail-closed)`);
+// ★AN EXCUSE A CALLER CAN GRANT ITSELF IS NOT AN EXCUSE.  If a file is NAMED
+//  changelog while the artifact it holds is not, say so out loud — silently
+//  declining is how a blind guard looks from the outside.
+if (renameAttempts) {
+  console.log(`  ★${renameAttempts} page(s) are NAMED changelog but do not SAY so in their own bytes — ` +
+              `the excuse was refused. Before 2026-09-06 the filename alone would have granted it.`);
+}
 // ★THE RECONCILIATION THAT MAKES THE LINE ABOVE A MEASUREMENT.  Every frozen-name
 //  occurrence leaves the scan through exactly one branch, so the buckets must sum
 //  to what was seen. If they ever do not, the classification is not describing the
