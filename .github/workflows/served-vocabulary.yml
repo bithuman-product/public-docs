@@ -1,0 +1,105 @@
+name: Served vocabulary
+
+# Grade the bytes docs.bithuman.ai actually HANDS A BROWSER, once per publish.
+#
+# WHY THIS IS A SEPARATE WORKFLOW AND NOT A STEP IN link-check.yml.
+# link-check.yml runs on `push` and `pull_request`, and it grades the SOURCE
+# tree in git. scripts/check-served-vocabulary.mjs grades a different subject —
+# the served site — and on a push trigger it would fetch the site BEFORE Vercel
+# had finished replacing it, i.e. grade the PREVIOUS deploy and print a green
+# about text nobody had changed. The correct trigger for a subject that only
+# exists after a deploy is the deploy finishing.
+#
+# ★MEASURED 2026-09-06, because the wrong literal here is a workflow that never
+# runs and still reads as configured:
+#   * A push to this repo IS a publish: `vercel[bot]` opens a GitHub Deployment
+#     and posts a `success` status on it. Five most recent, all `state:
+#     success`, creator `vercel[bot]`.
+#   * Its `environment` is the string "Production" — but its
+#     `production_environment` field is **false**. Gating on
+#     `production_environment` would be a condition that is never true, so the
+#     gate below reads `environment` instead.
+#   * Its `environment_url` is the per-deploy URL
+#     `https://public-docs-<id>-bit-human.vercel.app`, and that URL answers
+#     **302** to `https://vercel.com/sso-api?...` — every per-deploy URL is
+#     behind Vercel deployment protection. A guard pointed at it would fetch
+#     zero pages and exit 2 forever. So the subject is the ALIAS,
+#     https://docs.bithuman.ai, which answers 200 and is what a customer
+#     receives; scripts/check-served-is-current.mjs is what makes reading a
+#     moving alias safe.
+#   * Node 20 CANNOT build this site (`Node.js v20.20.2 is not supported by
+#     Astro! Please upgrade to ">=22.12.0"`), and check-served-vocabulary.mjs
+#     needs `dist/` for its route list. link-check.yml pins node 20 because it
+#     never builds. This one must not.
+#
+# ★A GREEN HERE IS A GREEN BY A PROVEN INSTRUMENT. Both scripts run their own
+# firing control first: check-served-is-current.mjs --self-test grades ten
+# arms including "an alias stuck on the previous build exits 1", and
+# check-served-vocabulary.mjs fires every one of its 13 patterns against its own
+# fixture through the html->text path, and proves no carrier can excuse any of
+# them, before it reads a single page.
+#
+# NOTE ON deployment_status: GitHub takes this workflow file from the DEFAULT
+# BRANCH, whatever ref was deployed. Editing it on a branch changes nothing
+# until it lands on main.
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: Origin to grade
+        default: https://docs.bithuman.ai
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  served:
+    name: no mechanism word reaches the served site
+    # `environment` is the string, because `production_environment` is false on
+    # every deployment this repo has (measured above). workflow_dispatch has no
+    # deployment payload at all, so it is allowed through explicitly.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       startsWith(github.event.deployment.environment, 'Production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ORIGIN: ${{ github.event.inputs.origin || 'https://docs.bithuman.ai' }}
+    steps:
+      # The COMMIT THAT WAS DEPLOYED, not the tip of main. dist/ is the route
+      # list this guard fetches, so a checkout of a newer commit would ask the
+      # site for pages that deploy never built and report them as unreachable.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      - name: The freshness gate proves itself
+        run: node scripts/check-served-is-current.mjs --self-test
+
+      # Refuse to grade until the alias is serving a build no older than this
+      # deployment. Without this the job would still be a post-deploy trigger
+      # yet could still grade the previous deploy — the very thing the trigger
+      # was chosen to avoid.
+      - name: The alias is serving THIS deploy, not the one before it
+        if: github.event_name == 'deployment_status'
+        run: |
+          node scripts/check-served-is-current.mjs \
+            --origin "$ORIGIN" \
+            --not-before '${{ github.event.deployment.created_at }}' \
+            --budget-seconds 180
+
+      # dist/ is the route list. `npm run build` also runs sync-openapi via
+      # prebuild, which is exactly what a Vercel build does.
+      - run: npm run build
+
+      - name: Grade the served bytes
+        run: node scripts/check-served-vocabulary.mjs --live "$ORIGIN"

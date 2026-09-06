@@ -13,7 +13,9 @@
     "start": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check:served-current": "node scripts/check-served-is-current.mjs",
+    "check:served-vocabulary": "node scripts/check-served-vocabulary.mjs --live"
   },
   "dependencies": {
     "astro": "^6.3.1"
