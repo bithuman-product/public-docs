@@ -10,10 +10,64 @@ order: 1
 
 ## September 2026
 
+### CLI `2.6.4` — a rejected key gets 300 seconds, then the session stops (2026-09-07)
+
+`cli-v2.6.4` (published 2026-09-07 23:30Z on the Homebrew tap; the formula
+pins it) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
+`42094b2c912b3b3b4be364aed18893892d247d1e1070c9bb82225fa5e7f26f1a`) and
+`bithuman-aarch64-apple-darwin.tar.gz` (sha256
+`ed827aaa0b3918100e6c6776ca0527d7b7cabb8e4618f3ce91ef437f205f1bbc`, Developer
+ID signed and notarized, verified quarantined), both from one commit
+(`01325a3`). Engine core unchanged.
+
+- **A key the service rejects gets a grace of 300 seconds, then the session
+  stops.** The CLI checks your key with the service when a self-hosted
+  session starts and once a minute while it runs. If the service **cannot be
+  reached** (no network, a timeout, a 5xx on our side) the session renders,
+  prints a loud `★ UNMETERED RENDER` line saying why, and keeps trying — it
+  never stops for this, however long it lasts. If the service **rejects the
+  key** (HTTP 401, 402 or 403 — revoked, from another environment, or out of
+  credits) the session keeps rendering for **300 seconds** from the first
+  rejection, prints a line once a minute naming the seconds of grace left and
+  the fix, and re-checks the key every minute; a key accepted again clears
+  the clock, and a key still rejected at 300 seconds **stops the session** —
+  `run` closes the preview and `render` exits `METERING_REFUSED` (77) with no
+  output. Before 2.6.4 a rejected key rendered on indefinitely behind the loud
+  line. Measured on the published tarballs from a fresh home directory, on
+  Linux x86_64 and on an Apple Silicon Mac, three sessions each: with an
+  invented key the session printed five countdown lines and ended by itself
+  **306 s** (Linux) / **305 s** (macOS) after it came up; with a good key
+  revoked once the session was up, the first rejected check started the clock
+  and the session stopped **300 s** after it, exit 77, on both; with the
+  metering service unreachable the session was still rendering **345 s**
+  later with no rejection and no refusal. The published 2.6.3 tarball, same
+  invented-key arm, was still rendering after 420 s — the control.
+- **Billing is unchanged.** A live session bills wall-clock, a render bills
+  the clip it writes, a download is free — as in 2.6.3. On the published
+  2.6.4 Linux tarball a 92 s Essence 2 session recorded **91.8 s** in two
+  acknowledged beats.
+- The same rule, with the same number, applies to the
+  [Python package](/sdk/python#the-four-refusals) (3.0.4) and to the Apple
+  engine below; for the Android SDK it is landed in the source and ships in
+  the next coordinate ([details](/sdk/android#metering)).
+
+### Apple engine `essence2-v1.4.0` / Swift package `2.10.0` — the same 300-second rule (2026-09-07)
+
+`essence2-v1.4.0` (published 2026-09-07 23:37Z; `Package.swift` at tag
+`v2.10.0` pins its `libessence2.xcframework.zip`, checksum
+`75b1919b848a0a8e13bdfe51999739813b610a42dad25d9fc5a3a4e408e29808`; ONNX
+Runtime and the resources archive carried forward byte-identical from
+`essence2-v1.3.0`). A key the service rejects renders for a grace of 300
+seconds from the first rejection behind a line once a minute, re-checked every
+minute; still rejected at 300 seconds the engine stops —
+`be_essence2_pull_frame` and `be_essence2_idle_frame` return `-3` from then on.
+A meter that cannot be reached still never stops a render. Billing is
+unchanged from `essence2-v1.3.0`. Details on [the Swift page](/sdk/swift#essence-2-on-device).
+
 ### CLI `2.6.3` — a live self-hosted session is billed on wall-clock (2026-09-07)
 
-`cli-v2.6.3` (published 2026-09-07 12:59Z on the Homebrew tap; the formula
-pins it) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
+`cli-v2.6.3` (published 2026-09-07 12:59Z on the Homebrew tap; superseded by
+[2.6.4](#cli-264--a-rejected-key-gets-300-seconds-then-the-session-stops-2026-09-07)) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
 `bf2c7b6414ed9d2fe8e00db929471ce82f405159c58c051733f3de6fdb94ecd6`) and
 `bithuman-aarch64-apple-darwin.tar.gz` (sha256
 `14ee0490a6bec87f26357bcdeb77160834ffdad6434200d77fdc3c806d043506`, Developer

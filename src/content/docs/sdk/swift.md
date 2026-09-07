@@ -489,6 +489,25 @@ needed: the engine leaves the ONNX Runtime symbols undefined and they resolve
 at your app's final link (the engine target alone fails at link on
 `_OrtGetApiBase`). Attach the product and you get both.
 
+**Metering.** A self-hosted Essence 2 session is billed at the published rate
+([pricing](/guides/pricing)) as of `essence2-v1.3.0` (tap `v2.9.0`): call
+`be_essence2_set_api_secret` once at launch (or set `BITHUMAN_API_SECRET`)
+with the API secret of the account the session bills to; with no credential
+the engine renders and prints `★ UNMETERED RENDER` on stderr. The engine
+checks the key when a session is created and once a minute while it runs, and
+`essence2-v1.4.0` (tap `v2.10.0`) applies the one rule every runtime follows
+when that check does not come back clean. If the service **cannot be
+reached**, the engine renders on, says so, and keeps trying — never a refusal,
+however long it lasts. If the service **rejects the key** (HTTP 401, 402 or
+403), the engine renders for a **grace of 300 seconds** from the first
+rejection, prints a line once a minute naming the seconds left and the fix,
+and re-checks the key every minute; a key accepted again clears the clock, and
+a key still rejected at 300 seconds ends the session — `be_essence2_pull_frame`
+and `be_essence2_idle_frame` return `-3` from then on and the engine has
+stopped, so destroy it and fix the key. `BITHUMAN_METER_ENFORCE=1` makes
+`be_essence2_create` return `-3` for a missing or rejected key before the
+first frame instead.
+
 **Where it builds.** iOS device, iOS simulator and macOS, all Apple Silicon:
 the engine archive carries `ios-arm64`, `ios-arm64-simulator` and
 `macos-arm64` slices. bitHuman's release notes for v2.8.0 record a scratch

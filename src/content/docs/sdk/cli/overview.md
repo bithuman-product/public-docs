@@ -175,10 +175,13 @@ on Linux was metered; an Essence 2 session on either platform, and any
 session on macOS, was not. 2.6.2 then counted frames delivered ÷ fps rather
 than wall-clock, so it under-counted a live preview on a machine whose engine
 paints slowly — measured, a 92 s session recorded as 8.0 s. `cli-v2.6.3`
-records the seconds the session was live. Metering never stops a render — without a sign-in,
-or with a rejected or depleted key, the session renders behind a loud
-`★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1` turns those cases
-into a refusal. Details and the verification on the published bytes:
+records the seconds the session was live. A session whose key the service
+cannot check keeps rendering behind a loud `★ UNMETERED RENDER` line and never
+stops for that; a key the service **rejects** (HTTP 401, 402 or 403) renders
+for a 300-second grace with a countdown line and then stops the session
+(`METERING_REFUSED`, exit 77) — as of `cli-v2.6.4`. `BITHUMAN_METER_ENFORCE=1`
+refuses a missing or rejected key before the first frame instead. Details and
+the verification on the published bytes:
 [the self-host guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session).
 
 ### One `.imx` per avatar, engine included

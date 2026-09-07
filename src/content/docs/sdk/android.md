@@ -595,6 +595,29 @@ surface `BitHuman.open(path)` / `Avatar.render(audio)` is present in `0.4.0`'s
 `classes.jar`, and on this version `open` refuses with
 `AvatarError.NotSupported`; when a version wires it, this page will say so.
 
+### Metering
+
+A self-hosted session is billed at the published rate ([pricing](/guides/pricing))
+as of `0.5.0`: set `Essence2Metering.apiSecret` (or the `BITHUMAN_API_SECRET`
+environment variable) to the API secret of the account the session bills to;
+with no credential the session renders and logs `★ UNMETERED RENDER`. The SDK
+checks the key when a session opens and once a minute while it runs. The one
+rule every runtime follows when that check does not come back clean is landed
+in the SDK source and ships in the next coordinate, `0.5.1`; on `0.5.0` a
+rejected key is logged once a minute and rendering continues:
+
+- **The service cannot be reached** (no network, a timeout, a 5xx on our
+  side): the session renders on, logs `★ UNMETERED RENDER`, and keeps trying —
+  never a refusal, however long it lasts.
+- **The service rejects the key** (HTTP 401, 402 or 403): the session renders
+  for a **grace of 300 seconds** from the first rejection, logs a line once a
+  minute naming the seconds left and the fix, and re-checks the key every
+  minute. A key accepted again clears the clock. A key still rejected at 300
+  seconds ends the session: every render call on the session object throws
+  `MeteringRefused` from then on — catch it, `close()` the session and fix the
+  key. `Essence2Metering.enforce = true` (or `BITHUMAN_METER_ENFORCE=1`)
+  refuses a missing or rejected key before the first frame instead.
+
 ### Two spellings of one package
 
 `0.4.0` adds `ai.bithuman.essence2` — `Essence2Frames`, `Essence2ModelStore`,

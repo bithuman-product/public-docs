@@ -13,7 +13,7 @@ and it does not soften the answer anywhere.
 
 Every shell command below was **run exactly as written** on a clean x86_64
 Linux host on 2026-09-02 (the [command line](#command-line--macos-arm64-and-linux-x86_64-and-only-those)
-block re-run on 2026-09-07 against `cli-v2.6.3`), and the output under it is
+block re-run on 2026-09-07 against `cli-v2.6.4`), and the output under it is
 what that run actually printed, including the exit code. Where something could not be run here — it
 needs a Mac, an Android device, or a paid credential — the block says so and is
 marked **UNVERIFIED**. Nothing on this page is an idealised transcript.
@@ -334,7 +334,7 @@ bithuman version --json
 ```
 
 ```text
-{"abi":7,"build":{…},"cli":"2.6.3","engine":{…},"libessence":"2.3.8","schema_version":1}
+{"abi":7,"build":{…},"cli":"2.6.4","engine":{…},"libessence":"2.3.8","schema_version":1}
 ```
 
 Exit code `0` for both commands (run 2026-09-07). Two objects are elided from
@@ -342,7 +342,7 @@ that line: `build` carries the commit, target and build time — the same values
 as the `PROVENANCE.json` in the tarball — and `engine` names the shipped
 Expression 2 engine and its digest. The installer's own output is not
 reproduced here — it is on [Verified CLI transcripts](/sdk/cli/verified#install).
-The `cli-v2.6.3` release carries exactly **two** platform builds —
+The `cli-v2.6.4` release carries exactly **two** platform builds —
 `aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`. There is no Intel-Mac
 build, no Windows build and no Linux-aarch64 build, and the installer on any of
 those exits `1` rather than installing something that will not run.

@@ -69,12 +69,30 @@ platform, and no session was metered on macOS. Downloading a model with
   session and claimed **8.0 s** of it — one usage row, **0 credits**. The
   published 2.6.3 tarball, same machine, same clip, same key, claimed
   **92.1 s**. Upgrade if you are self-hosting.
-- **Metering never stops a render.** With no sign-in, or a rejected or
-  depleted key, the session still renders and prints a loud
-  `★ UNMETERED RENDER` line on stderr saying why. Set
-  `BITHUMAN_METER_ENFORCE=1` to make those three cases a refusal before the
-  first frame instead. A meter failure mid-session never interrupts the
-  frames.
+- **When the key check does not come back clean — one rule, on every
+  runtime, as of `cli-v2.6.4`.** The CLI checks your key with the service
+  when a session starts and once a minute while it runs.
+  - If the service **cannot be reached** (no network, a timeout, or a 5xx on
+    our side), the session renders, prints a loud `★ UNMETERED RENDER` line
+    on stderr saying why, and keeps trying. It never stops for this, however
+    long it lasts.
+  - If the service **rejects the key** (HTTP 401, 402 or 403 — revoked, from
+    another environment, or out of credits), the session keeps rendering for
+    a **grace of 300 seconds** from the first rejection, prints a line once a
+    minute naming the seconds of grace left and the fix, and re-checks the key
+    every minute. A key the service accepts again clears the clock. A key
+    still rejected at 300 seconds **stops the session**: `run` closes the
+    preview and `render` exits `METERING_REFUSED` (77) with no output file.
+  - A missing key is unchanged: the session renders and says so.
+    `BITHUMAN_METER_ENFORCE=1` refuses a missing or rejected key before the
+    first frame instead.
+
+  Before 2.6.4 a rejected key rendered on indefinitely behind the loud line.
+  The same rule and the same number apply to the
+  [Python package](/sdk/python#the-four-refusals), the
+  [Apple engine](/sdk/swift#essence-2-on-device) and the
+  [Android SDK](/sdk/android#metering); the [pricing page](/guides/pricing)
+  is the authority for what is billed.
 - Sign in with `bithuman login` or set `BITHUMAN_API_SECRET` so the session
   is billed to your account.
 

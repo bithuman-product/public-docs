@@ -191,6 +191,21 @@ gone.
   # {"valid":true}
   ```
 
+- **A key the service rejects gets 300 seconds, then a refusal (3.0.4 and
+  later).** The package checks your key with the service when an avatar opens
+  and once a minute while frames flow. If the service **cannot be reached**,
+  frames keep coming behind a `★ UNMETERED RENDER` warning on the `bithuman`
+  logger, and nothing stops for that, however long it lasts. If the service
+  **rejects the key** (HTTP 401, 402 or 403), frames keep coming for a grace
+  of **300 seconds** from the first rejection while the key is re-checked once
+  a minute, with a warning naming the seconds left and the fix; a key accepted
+  again clears the clock, and a key still rejected at 300 seconds makes the
+  next frame raise `NotAuthorised` (on the [offline route](#rendering-a-whole-clip-to-a-file),
+  `MeteringNotArmedError`). A missing key is unchanged: refused at the first
+  frame. `BITHUMAN_METER_ENFORCE=1` refuses a rejected key before the first
+  frame instead. The same rule applies to every self-hosted runtime;
+  [pricing](/guides/pricing) is the authority for what is billed.
+
 ## Measured on the published wheel
 
 Run on 2026-09-07, minutes after the 3.0.0 wheels reached PyPI: a clean
