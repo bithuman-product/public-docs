@@ -10,10 +10,48 @@ order: 1
 
 ## September 2026
 
+### CLI `2.6.2` — self-hosted sessions on macOS are metered, and the help tells the truth (2026-09-07)
+
+`cli-v2.6.2` (published 2026-09-07 08:49Z on the Homebrew tap; the formula
+pins it) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
+`1248f34feea05c8f3adab0312376e3704643296ce8012718c7a75aba032db03f`) and
+`bithuman-aarch64-apple-darwin.tar.gz` (sha256
+`0dab98763ecf7b25414abfbfecfc9071edcbda859eb88616e6dc1942b6373025`, Developer
+ID signed and notarized), both from one commit (`679b9a6`). Engine core
+unchanged.
+
+- **A self-hosted essence-2 or expression-2 session on macOS is billed at the
+  published self-hosted rate** — 2 credits per minute
+  ([pricing](/guides/pricing)) — the way Linux already was. Up to and
+  including 2.6.1, `bithuman run <code>.imx` and `bithuman render` on a Mac
+  were not metered at all. Credits are charged per whole minute of frames
+  actually delivered, not wall-clock (a 5 s render costs 0; a live session
+  that has delivered 90 s of frames costs 2), one usage row per session;
+  downloading a model is free. Metering never stops a
+  render: with no sign-in, or a rejected or depleted key, the session renders
+  behind a loud `★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1`
+  turns those three cases into a refusal. Proven on the published tarballs
+  from a fresh home on Linux and on an Apple Silicon Mac, with the 2.6.1
+  macOS binary as the silent control — [the self-host guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session).
+- **`bithuman run --help` says where a model renders.** It no longer claims
+  essence-2 / expression-2 have "no local runtime yet" (false since 2.6.1): a
+  local `.imx` renders on this machine for essence-1, essence-2 and
+  expression-2 (`bithuman pull <CODE>` fetches one); an agent code for
+  essence-2 / expression-2 opens a live cloud session, as before; `--cloud`
+  forces one. The routing did not change; the words did.
+- **`bithuman doctor` on macOS no longer tells you to `pip install
+  bithuman-cli`** when the conversation worker is not set up yet — the first
+  `bithuman run` sets it up.
+- **The Linux tarball's build time is no longer in the future.** 2.6.1's
+  `PROVENANCE.json` said 2026-09-08; `built_at` is now the commit's time on
+  both platforms, and a tarball stamped ahead of the clock is refused before
+  it can be published.
+- A live preview ends its session cleanly on the first Ctrl-C.
+
 ### CLI `2.6.1` — essence-2 renders locally, on Linux and on macOS (2026-09-07)
 
-`cli-v2.6.1` (published 2026-09-07 05:04Z on the Homebrew tap; the formula
-pins it) ships the **essence-2 runtime inside the CLI tarball on both
+`cli-v2.6.1` (published 2026-09-07 05:04Z on the Homebrew tap; superseded by
+[2.6.2](#cli-262--self-hosted-sessions-on-macos-are-metered-and-the-help-tells-the-truth-2026-09-07)) ships the **essence-2 runtime inside the CLI tarball on both
 platforms** — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
 `5aef085a0686fc4f05b83ee50a26262a522f0f232c8f8717d157d29a5b18c1d6`) and
 `bithuman-aarch64-apple-darwin.tar.gz` (sha256

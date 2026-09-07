@@ -22,7 +22,7 @@ platform and drops the right self-contained `bithuman` binary on your `PATH`):
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-Run unpinned on Linux x86_64 on 2026-09-07 it resolves `cli-v2.6.1`, verifies
+Run unpinned on Linux x86_64 on 2026-09-07 it resolves `cli-v2.6.2`, verifies
 the published sha256, installs, and exits **0**. The whole transcript, with the
 failure cases beside it, is on
 [Verified transcript](/sdk/cli/verified#install).
@@ -32,7 +32,7 @@ tarballs carry the Essence 2 runtime as well as the Expression 2 one, so both
 second-generation models render locally — see
 [Essence 2 on your own machine](/sdk/cli/overview#essence-2-on-your-own-machine).
 
-`BITHUMAN_VERSION=cli-v2.6.1` pins a release; `BITHUMAN_INSTALL_DIR` moves the
+`BITHUMAN_VERSION=cli-v2.6.2` pins a release; `BITHUMAN_INSTALL_DIR` moves the
 install (default `~/.local/bin`, or `/usr/local/bin` as root).
 
 > **Note** — `pip install bithuman-cli` also works, but **only on macOS Apple
@@ -47,9 +47,9 @@ The installer builds a target triple from `uname` and downloads
 of the tap on 2026-09-07, exactly three targets have ever carried a tarball, and
 only two of them still do:
 
-| Your machine | Target the installer asks for | Published for `cli-v2.6.1` |
+| Your machine | Target the installer asks for | Published for `cli-v2.6.2` |
 | --- | --- | --- |
-| Apple Silicon Mac | `aarch64-apple-darwin` | **Yes** (35 releases, current) |
+| Apple Silicon Mac | `aarch64-apple-darwin` | **Yes** (36 releases, current) |
 | Linux x86_64 | `x86_64-unknown-linux-gnu` | **Yes** (15 releases, current) |
 | Linux ARM (`aarch64`) | `aarch64-unknown-linux-gnu` | **No** — last published `cli-v2.3.27`, 2026-07-10 |
 | Intel Mac | `x86_64-apple-darwin` | **No** — never published, in any release |
@@ -64,7 +64,7 @@ install: target:  aarch64-unknown-linux-gnu
 install: install dir: /home/you/.local/bin
 install: error: the bithuman CLI is NOT published for aarch64-unknown-linux-gnu.
 install: error:
-install: error:   release : cli-v2.6.1
+install: error:   release : cli-v2.6.2
 install: error:   wanted  : bithuman-aarch64-unknown-linux-gnu.tar.gz
 install: error:   release carries:
 install: error:     bithuman-aarch64-apple-darwin.tar.gz
@@ -138,8 +138,8 @@ missing:
 ```text
   Versions
     libessence engine     2.3.8 (ABI 7)
-    CLI binary            2.6.1
-    build                 2.6.1+d946a1da3780/adc2a18da787
+    CLI binary            2.6.2
+    build                 2.6.2+679b9a6a7a63/adc2a18da787
 
   Host
     OS / arch             linux / x86_64
@@ -153,7 +153,7 @@ missing:
 rc=1
 ```
 
-(Captured 2026-09-07 on a fresh Linux install of 2.6.1; the RAM, cache and
+(Captured 2026-09-07 on a fresh Linux install of 2.6.2; the RAM, cache and
 brain-detail lines between those sections are trimmed.)
 
 Rendering and pulling do not need a brain — see

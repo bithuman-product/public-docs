@@ -138,9 +138,20 @@ bithuman run
 Local rendering runs on macOS (Apple Silicon, CoreML) and Linux x86_64
 (LiteRT); see [Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
 
-Pass an avatar file (or agent code) to run your own. From one invocation the
-CLI stands up an embedded `livekit-server`, an essence-engine runtime, the
-conversation brain (cloud OpenAI Realtime or the
+Pass an avatar file (or agent code) to run your own. **Where it renders**, in
+the words of `bithuman run --help` on 2.6.2: a local `.imx` renders on this
+machine — essence-1, essence-2 and expression-2 (`bithuman pull <CODE>`
+fetches one); a slug auto-downloads on first use. An agent code is routed by
+engine family: essence-1 downloads the `.imx` and renders locally; essence-2
+/ expression-2 open a live cloud session. `--cloud` forces a cloud session.
+(Through 2.6.1 the help still said essence-2 / expression-2 had "no local
+runtime yet" — false since 2.6.1 shipped the Essence 2 runtime; the words
+were fixed in 2.6.2, the routing did not change.) A self-hosted Essence 2 or
+Expression 2 session is metered at the published self-hosted rate on both
+platforms — see [the self-host guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session).
+
+From one invocation the CLI stands up an embedded `livekit-server`, an
+essence-engine runtime, the conversation brain (cloud OpenAI Realtime or the
 [on-device](/sdk/cli/local-mode) stack per `BITHUMAN_LOCAL`), and a browser
 landing page:
 
@@ -154,9 +165,13 @@ bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 > conversational brain runs as a Python agent that the binary launches.
 > Install it before `bithuman run` can talk back:
 >
-> - **Cloud brain (OpenAI Realtime):** `pip install bithuman-cli` —
->   **macOS arm64 only.** The wheel has two files in its entire PyPI
->   history, both `py3-none-macosx_11_0_arm64`; on Linux this exits 1.
+> - **Cloud brain (OpenAI Realtime):** nothing to install — the first
+>   `bithuman run` creates `~/.cache/bithuman/brain-venv` and installs the
+>   worker into it (a one-time ~200 MB download), and `bithuman doctor`
+>   counts that venv once it exists. Advanced: `BITHUMAN_AGENT_SCRIPT` points
+>   the binary at your own checkout's worker. (2.6.1's `doctor` on macOS
+>   still told you to `pip install bithuman-cli`, a June wheel that puts an
+>   older `bithuman` ahead of yours on `PATH`; 2.6.2 stopped saying so.)
 > - **On-device brain:** install the requirements directly —
 >   ```
 >   pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
@@ -178,7 +193,10 @@ Common flags:
 | `--port` | `8088` | Launcher HTTP port. |
 | `--max-sessions` | (CPU count) | Pool cap; new launches are rejected (not degraded) when full. |
 | `--embedded-livekit` | on with model arg | Spawn a self-contained `livekit-server` child. Off when omitting the model and using an external SFU. |
-| `--mock-runtime` | off | Run with black frames instead of the essence engine — for protocol tests. |
+| `--cloud` | off | Force a cloud-rendered session (opens the live viewer) instead of rendering locally. Needs an agent code. |
+
+(A `--mock-runtime` flag used to be documented here; the binary does not have
+one — `bithuman run --help` on 2.6.2 does not print it.)
 
 ### Which model files run locally?
 

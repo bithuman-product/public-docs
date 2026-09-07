@@ -31,8 +31,11 @@ the CLI with the universal installer (see [CLI install](/sdk/cli/install)); the
 wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
 
 > **Note** `bithuman run` still pings `api.bithuman.ai` for avatar credit
-> accounting even in local mode — `BITHUMAN_API_SECRET` is required. Only
-> the conversation brain goes offline.
+> accounting even in local mode — a self-hosted Essence 2 or Expression 2
+> session is [metered at 2 credits per minute](/guides/self-host-local#the-cli-meters-a-self-hosted-session)
+> on macOS and Linux alike (as of 2.6.2 on macOS), and `BITHUMAN_API_SECRET`
+> or a `bithuman login` is what attributes it to your account. Only the
+> conversation brain goes offline.
 
 ## When to reach for it
 
@@ -174,7 +177,9 @@ warm-up after that is under a second.
   `POST /v1/agent/generate`, or pull one from the showcase
   (`bithuman pull <slug>` → `~/.cache/bithuman/showcase/`).
 - **Avatar metering** — `bithuman run` still pings `api.bithuman.ai` for
-  credit accounting; deployments still need `BITHUMAN_API_SECRET`.
+  credit accounting (2 credits per minute of frames, both platforms —
+  [details](/guides/self-host-local#the-cli-meters-a-self-hosted-session));
+  deployments still need `BITHUMAN_API_SECRET`.
 - **Voice cloning** — Supertonic ships voice presets. Custom voice
   cloning is a hosted service that produces JSON style files; once you
   have the JSON, inference is local but the cloning step is not.
