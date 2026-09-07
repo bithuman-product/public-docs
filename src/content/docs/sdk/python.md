@@ -248,7 +248,7 @@ Every essence-2 avatar reads one shared, identity-agnostic audio encoder — a
 ~377 MB file that is not in the avatar and not in the wheel. Through 2.10.0
 you had to ask us for it. **3.0.0 downloads it once per machine on first
 use**, from a public release coordinate that needs no credential (the same
-one the [CLI](/sdk/cli/overview) 2.6.0 fetches from), and **verifies its
+one the [CLI](/sdk/cli/overview) 2.6.0 and later fetch from), and **verifies its
 SHA-256** — `95c35c860be3f00c…`, 377,625,424 bytes — before using it. A copy
 that does not match is refused rather than reused.
 

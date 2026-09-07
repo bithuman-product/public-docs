@@ -79,12 +79,18 @@ for flags and copy-pasteable `EXAMPLES:`.
 
 ### `bithuman version --json`
 ```json
-{"abi":7,"cli":"2.5.1","libessence":"2.3.8","schema_version":1}
+{"abi":7,"build":{"built_at":"2026-09-08T00:00:00Z","commit":"d946a1da378048b7d0c50a5f5881e74000418145","commit_short":"d946a1da3780","target":"x86_64-unknown-linux-gnu","profile":"release",…},
+ "cli":"2.6.1",
+ "engine":{"platform":"linux","runtime":"litert","version":"1.0.0","sha256":"adc2a18da787…","size":92449082},
+ "libessence":"2.3.8","schema_version":1}
 ```
 `"wheel"` is added when installed via the pip shim. (Values shown are the real
-output of CLI **2.5.1** on Linux x86_64, the current release on both macOS arm64
-and Linux; your install prints its own versions — a 2.4.0 install reports
-engine version `2.3.6` under the same key.)
+output of CLI **2.6.1** on Linux x86_64, the current release on both macOS arm64
+and Linux, reformatted onto four lines; `build` and `engine` are new in 2.6.x
+— `build` matches the `PROVENANCE.json` in the tarball, `engine` names the
+shipped Expression 2 engine. Your install prints its own versions — a 2.4.0
+install reports engine version `2.3.6` under the same key and has neither
+object.)
 
 ### `bithuman whoami --json`  ·  `bithuman auth status --json`
 ```json
@@ -136,13 +142,23 @@ Error codes: `FILE_NOT_FOUND`, `NOT_IMX`, `UNSUPPORTED_IMX_VERSION`,
 
 ### `bithuman render <model.imx> -a in.wav -o out.mp4 --json`
 ```json
-{"output":"out.mp4","bytes":1234567,"seconds":3.4,"width":1280,"height":720}
+{"output":"out.mp4","bytes":1234567,"seconds":3.4,"width":1280,"height":720,"frames":125,"fps":25}
 ```
 Human mode prints the bare MP4 path on stdout. Error codes:
 `MODEL_NOT_FOUND` / `AUDIO_NOT_FOUND` (**66**), `NOT_AUTHENTICATED` /
 out-of-credits (**77**), `INTERNAL` (**70**).
-**Note:** the H.264 encoder is **Linux-only** in the published build; on
-macOS `render` exits **70** with a workaround message.
+**Which avatars render, as of 2.6.1:** `essence-2` (`<code>.imx`) and
+`expression-2` (`<code>.avatar`) render on **Linux x86_64 and macOS arm64**
+— an `essence-2` clip of *s* seconds yields `ceil(s × 25)` frames, an
+`expression-2` clip `ceil(s × 20)`. The first `essence-2` render on a machine
+downloads the shared audio encoder (~377 MB, once, into
+`~/.bithuman/engines/essence-2/`) before rendering — budget for it in a fresh
+CI runner. An avatar this build cannot render is refused as `NotSupported`,
+**exit 69**, with nothing written — on 2.6.1 that is an `essence-2` file with
+a required model member missing. `essence-1` exits **70** on both platforms
+(the muxing failure on
+[Commands](/sdk/cli/commands#essence-1--rc70-still)). Branch on the code,
+not on whether `out.mp4` exists.
 
 ### `bithuman doctor --json`
 ```json
@@ -226,7 +242,7 @@ pipeline. Agent creation is **image-only** — `video` is not a creation input
 (the 10-second identity video is generated internally): CLI 2.4.1+ removed it
 from the tool schema entirely, and the API rejects any request carrying it
 with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations). On CLI
-2.4.0 the `model` parameter does not exist yet — upgrade (**2.5.1** is the
+2.4.0 the `model` parameter does not exist yet — upgrade (**2.6.1** is the
 current release, on macOS arm64 and Linux x86_64 alike), or use `bithuman-mcp` 0.3.4+
 ([MCP server](/guides/mcp-server)).
 

@@ -10,6 +10,39 @@ order: 1
 
 ## September 2026
 
+### CLI `2.6.1` — essence-2 renders locally, on Linux and on macOS (2026-09-07)
+
+`cli-v2.6.1` (published 2026-09-07 05:04Z on the Homebrew tap; the formula
+pins it) ships the **essence-2 runtime inside the CLI tarball on both
+platforms** — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
+`5aef085a0686fc4f05b83ee50a26262a522f0f232c8f8717d157d29a5b18c1d6`) and
+`bithuman-aarch64-apple-darwin.tar.gz` (sha256
+`0fb359a8b709e2606af1f7e26b1df1ac705c8dc1da6f954131641b012d4f953c`, Developer
+ID signed and notarized). A downloaded essence-2 avatar now renders on your
+own machine, offline, exactly the way expression-2 already did:
+
+```bash
+bithuman pull <AGENT_CODE> --model essence-2              # → <AGENT_CODE>.imx
+bithuman render <AGENT_CODE>.imx -a speech.wav -o out.mp4   # exit 0; 5 s of audio → 125 frames at 25 fps
+bithuman run <AGENT_CODE>.imx                             # local server
+```
+
+- **The shared audio encoder is fetched on the first essence-2 render** —
+  about 377 MB, once per machine, from the public release coordinate, checked
+  by content digest, into `~/.bithuman/engines/essence-2/` — and reused after
+  that. Nothing to stage by hand, no environment variable, no extra install
+  step. The first play performs a licence check with the cloud, so it needs
+  the sign-in `pull <AGENT_CODE>` already needs.
+- **Fail-closed.** An essence-2 model file that is incomplete — a required
+  model member missing — is refused with **exit 69** and **no output file**.
+  The CLI never substitutes a generated mouth for the one the avatar recorded.
+- **expression-2 is unchanged.** The 2.6.0 line below — "essence-2 does not
+  render locally from these tarballs" — is closed, and so is every earlier
+  note about a runtime to stage beside the binary.
+- Proven from the published tarball alone — fresh home directory, empty
+  environment — on Linux x86_64 and on an Apple Silicon Mac:
+  [Verified transcript](/sdk/cli/verified#essence-2--exit-0-on-261-on-linux-and-on-macos).
+
 ### essence-2 reaches Apple and Android as public coordinates, and the CLI moves to 2.6.0 (2026-09-07)
 
 One line per release, each dated from the release itself and each checked
@@ -18,7 +51,7 @@ anonymously on 2026-09-07 before it was written here:
 - **2026-09-06 16:12Z — essence-2 Apple engine `essence2-v1.1.0`.** The first public release of the on-device essence-2 engine for iOS and macOS: an engine archive and an ONNX Runtime archive, each with a `.sha256` sidecar, fetchable with no credential. It refuses rather than drawing a mouth the avatar never recorded.
 - **2026-09-06 16:42Z — Swift SDK `v2.7.0`.** Adds the **`Essence2`** product (manifest only), pointing at `essence2-v1.1.0`. Its only module was `CLibEssence2`.
 - **2026-09-06 18:50Z — the essence-2 shared audio encoder is published** on a public release coordinate (377,625,424 B, SHA-256 `95c35c86…`), so the CLI and the Python package fetch it themselves instead of asking you to find it.
-- **2026-09-06 21:32Z — CLI `cli-v2.6.0`**, macOS arm64 and Linux x86_64 from one commit, with a `PROVENANCE.json` in each tarball. Fixed: `bithuman run` and `bithuman pull` agree on a container's name; `bithuman render` on macOS no longer truncates a clip; a refused render leaves no file behind. Added: the shared audio encoder is fetched once per machine and digest-checked on every use. Known and stated in the release: **essence-2 does not render locally from these tarballs** (`render` exits 69 for it); expression-2 renders locally on both platforms. The Python extra for offline rendering is now spelled `bithuman[offline]`.
+- **2026-09-06 21:32Z — CLI `cli-v2.6.0`**, macOS arm64 and Linux x86_64 from one commit, with a `PROVENANCE.json` in each tarball. Fixed: `bithuman run` and `bithuman pull` agree on a container's name; `bithuman render` on macOS no longer truncates a clip; a refused render leaves no file behind. Added: the shared audio encoder is fetched once per machine and digest-checked on every use. Known and stated in the release: **essence-2 does not render locally from these tarballs** (`render` exits 69 for it) — closed the same day by [`cli-v2.6.1`](#cli-261--essence-2-renders-locally-on-linux-and-on-macos-2026-09-07); expression-2 renders locally on both platforms. The Python extra for offline rendering is now spelled `bithuman[offline]`.
 - **2026-09-06 — Android `ai.bithuman:essence2-android:0.3.0`.** The first essence-2 AAR whose engine refuses, with a thrown exception, rather than drawing a mouth of its own — but it judged a bundle by a descriptive list in its manifest and refused complete bundles. Superseded the same night; do not build against it.
 - **2026-09-07 01:20Z — essence-2 Apple engine `essence2-v1.2.0`.** One rule for when a model renders — all four recorded-mouth files present, or a refusal naming the missing one — on every platform; `import Essence2` compiles; the resources archive rides on the same release, so the coordinate is complete on its own.
 - **2026-09-07 01:30Z — Swift SDK `v2.8.0`.** `Essence2` points at `essence2-v1.2.0`. Pin `from: "2.8.0"`. Resolves and builds for iOS device, iOS simulator and macOS from a consumer outside any bitHuman repository. Still missing: an in-app model download route that accepts a runtime token — [Essence 2 on-device](/sdk/swift#essence-2-on-device).

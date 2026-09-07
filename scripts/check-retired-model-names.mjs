@@ -191,16 +191,24 @@ const CARRIERS = [
     re: /BITHUMAN_TESSERA_[A-Z_]+/ },
   { why: "§G: exported CamelCase identifiers a customer binds by name — OfflineTesseraRenderer, TesseraOfflineError, Swift TesseraBorrow/TesseraStream, Kotlin attachTesseraBorrow",
     re: /\b[A-Za-z]*Tessera[A-Za-z]+\b/ },
-  { why: "§G: the member-listing command a developer types verbatim (`bithuman info <file> | grep tessera`)",
-    re: /grep tessera/i },
+  // ★MOVED DOWN 2026-09-07 (same reason as the four below): `grep tessera` —
+  // the member-listing command `bithuman info <file> | grep tessera`. Its one
+  // occurrence (guides/self-host-local.md) was removed with the cli-v2.6.1
+  // rewrite: the CLI now renders essence-2 itself, and grepping a container
+  // for its mouth-data members is the mechanism the 2026-09-04 ruling keeps
+  // off the customer side. The string is still frozen (§G) and still typable;
+  // the site simply no longer teaches it. Move it back up if a page does.
+  //
   // ★A carrier for the shipped CLI's `…owns the TESSERA teeth borrow` error/hint
   // string was written here and then REMOVED, because this file's own
   // "frozen carrier never seen in the corpus" control fired on it: all three
   // occurrences (sdk/cli/commands.md:222, sdk/cli/verified.md:362-363,
   // guides/self-host-local.md:231) also name `lible_core.so` and are already
   // taken by the `libelevate|lible_core` carrier above, which is first in this
-  // list and wins. Recorded rather than deleted silently: the string IS frozen
-  // (it is what the binary prints and what a developer greps), and if a page
+  // list and wins. ★2026-09-07: those three quotations are GONE — cli-v2.6.1
+  // ships the essence-2 runtime inside the tarball, so the loader error the
+  // pages quoted is no longer what a developer sees, and the pages now describe
+  // the 2.6.1 flow instead. Recorded rather than deleted silently: if a page
   // ever quotes the hint WITHOUT the library name, this guard will flag it and
   // the carrier goes back in.
   { why: "§G: library FILENAMES — System.loadLibrary/dlopen resolve them by exact name inside an installed app (readelf -d reports SONAME=libengine-backend-essence2-light.so)",

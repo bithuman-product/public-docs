@@ -81,9 +81,10 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 > clip-to-file route is `bithuman.offline` with the `bithuman[offline]` extra
 > ([Python SDK](/sdk/python)). Live streaming of an `essence-2` artifact from
 > your own server still runs through the cloud.
-> [`expression-2`](/concepts/expression-2) also renders locally via the
+> Both [`expression-2`](/concepts/expression-2) and — as of CLI **2.6.1** —
+> `essence-2` also render locally via the
 > [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
-> Linux x86_64), and its engine is on the Apple
+> Linux x86_64; the runtimes ship in the tarball), and `expression-2`'s engine is on the Apple
 > on-device rail as the `Expression2` SwiftPM product from **2.5.0**
 > ([engine only — no model bundle is published](/sdk/swift#expression-2-on-device)).
 > [`essence-2-max`](/concepts/essence-2-max) is cloud-GPU-only — no on-device
@@ -104,7 +105,7 @@ We keep this honest so you can plan around it.
 | **Swift / Apple** | SwiftPM, pin `from: "2.8.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0) | On-device | **Preview** |
 | **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.4.0` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
-| **CLI** | `bithuman-cli` (2.6.0 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
+| **CLI** | `bithuman-cli` (2.6.1 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64, essence-2 and expression-2 runtimes inside; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 

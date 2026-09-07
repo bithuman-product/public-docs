@@ -42,11 +42,17 @@ export const GET: APIRoute = async () => {
     `(e.g. \`A78WKV4515\`). Models (second generation \`essence-2\`/\`expression-2\`, generally available since July 10, 2026): ` +
     `\`expression-2\` (audio-driven real-time avatar video from a single ` +
     `photo — best for cartoon/animal/creature/robot characters; ` +
-    `gpu/ane/cpu serving chain), \`essence-2\` (the STANDARD photoreal model; ` +
-    `served from the gpu/ane/cpu cloud chain, from your own CPU servers for ` +
-    `offline rendering, and opt-in in the viewer's browser (WebGPU/WASM) — ` +
-    `there is NO installable on-device build for a Mac, iPhone, iPad or ` +
-    `Android device; the former essence-2-light name is retired), ` +
+    `GPU / Apple / CPU cloud serving chain, and local rendering via the CLI), ` +
+    `\`essence-2\` (the STANDARD photoreal model; ` +
+    `served from the GPU / Apple / CPU cloud chain, rendered LOCALLY on your ` +
+    `own Mac (Apple Silicon) or Linux x86_64 box by the CLI 2.6.1+ — ` +
+    `\`bithuman pull <CODE> --model essence-2\` then ` +
+    `\`bithuman render <CODE>.imx -a speech.wav -o out.mp4\`, offline, ` +
+    `runtime inside the CLI, the shared audio encoder (~377 MB) fetched once ` +
+    `on first render into ~/.bithuman/engines/essence-2/, an incomplete model ` +
+    `file refused with exit 69 and no output — plus your own CPU servers ` +
+    `(Python SDK), an Android AAR, and opt-in in the viewer's browser ` +
+    `(WebGPU/WASM); the former essence-2-light name is retired), ` +
     `\`essence-2-max\` (the ` +
     `PREMIUM model — the highest-fidelity Essence renderer, served directly ` +
     `on L40S-class GPUs), plus the ` +
@@ -62,7 +68,7 @@ export const GET: APIRoute = async () => {
   out +=
     `- **On-device Python SDK** — \`pip install bithuman\` (macOS arm64 + Linux x86_64/aarch64), then \`AsyncBithuman.create(model_path=…)\` → \`push_audio\` / \`flush\` / \`run\`.\n`;
   out +=
-    `- **CLI** — \`brew install bithuman-product/bithuman/bithuman-cli\` (macOS) or the universal installer (Linux); \`bithuman run <model.imx>\` serves a live browser avatar.\n\n`;
+    `- **CLI** — \`brew install bithuman-product/bithuman/bithuman-cli\` (macOS) or the universal installer (Linux); \`bithuman run <model.imx>\` serves a live browser avatar, and \`bithuman render <model> -a speech.wav -o out.mp4\` renders an essence-2 \`.imx\` or expression-2 \`.avatar\` to MP4 offline, on macOS arm64 and Linux x86_64 (CLI 2.6.1+, runtime inside the tarball). See [Verified transcript](${SITE}/sdk/cli/verified).\n\n`;
 
   out +=
     `- **MCP server (for AI agents)** — drive bitHuman from any Model Context ` +

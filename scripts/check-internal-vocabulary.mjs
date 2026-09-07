@@ -180,19 +180,17 @@ const CARRIERS = [
     re: /docker[- ]compose|Compose `env_file`|docker-compose\.yml/i },
   { why: "`compose()` / `composeFromFile()` — public streaming methods on the on-device Python and Kotlin runtimes, called by name",
     re: /\bcompose\(|`compose\(\)`|rt\.compose\b|\bcomposeFromFile\b/ },
-  // ★A VERBATIM LOADER ERROR. `…the native essence-2 runtime that owns the
-  // TESSERA teeth borrow` is printed by the shipped CLI; a developer meets it
-  // in their own terminal and searches for it. Keyed on the whole emitted
-  // phrase, not on `lible_core.so`, so it excuses that sentence and nothing
-  // else. ★It is also a FINDING and not only a carrier: the string itself
-  // names the mechanism, and the fix is in the binary's message, which this
-  // repo does not own. Filed as such rather than papered over here.
-  // Keyed on `TESSERA teeth borrow` rather than the longer `owns the …`
-  // because the site quotes this error WRAPPED, and a line-based carrier that
-  // only matches the unwrapped form leaves the continuation line reported as
-  // prose — which is what happened.
-  { why: "the shipped CLI's loader error/hint — `…the TESSERA teeth borrow` — read verbatim in a developer's own terminal",
-    re: /TESSERA teeth borrow/i },
+  // ★REMOVED 2026-09-07 — a VERBATIM LOADER ERROR that the site no longer
+  // quotes. `…the native essence-2 runtime that owns the TESSERA teeth borrow`
+  // was printed by CLI 2.5.x/2.6.0 when the essence-2 runtime was missing
+  // from the tarball, and three pages quoted it (sdk/cli/commands.md,
+  // sdk/cli/verified.md, guides/self-host-local.md). cli-v2.6.1 ships that
+  // runtime inside the tarball on both platforms, the error is no longer what
+  // a developer sees, and the three quotations were replaced by the 2.6.1
+  // flow. The carrier had to go with them: this file asserts every carrier
+  // PRESENT, so an unused one is a fatal, not a no-op. It was keyed on
+  // `TESSERA teeth borrow` (the wrapped form). If a page ever quotes an older
+  // CLI's error again, the carrier goes back in with its reason.
   // ★A FROZEN REDIRECT. `/concepts/models-and-planes` was a live URL and is in
   // saved links, embeds and search results. Deprecate is not delete: the
   // redirect must keep resolving forever, so the retired path is spelled here

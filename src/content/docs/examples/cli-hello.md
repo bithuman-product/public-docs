@@ -73,24 +73,39 @@ export OPENAI_API_KEY=sk-...
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-Want an offline MP4 instead of a live session? Lip-sync a WAV you already have:
+Want an offline MP4 instead of a live session? Lip-sync an audio file you
+already have. Both second-generation models render locally — on macOS Apple
+Silicon and Linux x86_64 — and the two flows have the same shape; `pull` prints
+the cached path on stdout, so capture it:
 
 ```bash
-bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
-  --audio speech.wav --output rendered.mp4
+bithuman login                                                # once — the first play checks the licence
+
+# Expression 2 — <code>.avatar
+MODEL=$(bithuman pull <YOUR_AGENT_CODE> --model expression-2)
+bithuman render "$MODEL" --audio speech.wav --output x2.mp4   # 20 fps
+
+# Essence 2 — <code>.imx (CLI 2.6.1 and later)
+MODEL=$(bithuman pull <YOUR_AGENT_CODE> --model essence-2)
+bithuman render "$MODEL" --audio speech.wav --output e2.mp4   # 25 fps; 5 s of audio → 125 frames
 ```
 
-> **Warning** `bithuman render` on an **Essence 1** model is **not working in
-> `cli-v2.4.0`, `cli-v2.4.2` or `cli-v2.5.1`** (re-verified 2026-09-02 against
-> 2.5.1). It ships on **Linux only** — on macOS
-> the encoder returns "not implemented" — and on Linux x86_64 it fails at the
-> muxing step with
+The first Essence 2 render on a machine downloads the shared audio encoder
+(~377 MB, once, by content digest) into `~/.bithuman/engines/essence-2/` and
+reuses it after that; nothing to stage by hand. Writing the MP4 needs `ffmpeg`
+on `PATH`. An Essence 2 file with a required member missing is refused with
+exit 69 and no output file. Every exit code, with the transcript, is on
+[Verified transcript](/sdk/cli/verified#bithuman-render-one-family-at-a-time).
+
+> **Warning** `bithuman render` on an **Essence 1** model (the showcase
+> avatars, including `modern-court-jester.imx`) is **not working** — first
+> reported against `cli-v2.4.0`, and 2.6.1's own `render --help` still reports
+> **exit 70** for this family on both platforms. On Linux x86_64 it fails at
+> the muxing step with
 > `record_mp4 failed: file corrupt: audio_decode: avformat_open_input failed`
 > and writes no file, for every WAV tried (including the one shipped in this
-> repo's own examples). Until it is fixed: for an **Essence 2** bundle render
-> locally with the [Python SDK](/guides/self-host-local#4-render), which does
-> produce an MP4; otherwise get one from the [Video API](/api/video)
-> (`POST /v1/video/generate`), or use `bithuman run` and screen-record the tab.
+> repo's own examples). For an Essence 1 MP4 use the [Video API](/api/video)
+> (`POST /v1/video/generate`), or `bithuman run` and screen-record the tab.
 
 Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/cli)
 

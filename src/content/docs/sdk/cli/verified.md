@@ -1,6 +1,6 @@
 ---
 title: "Verified transcript — Linux x86_64"
-description: "Every command on this page was executed on a real Linux x86_64 box against CLI 2.5.1 and the output pasted back unedited, including the exit codes that are not zero."
+description: "Every command on this page was executed on a real Linux x86_64 box against CLI 2.6.1 (and 2.5.1 where the output has not changed) and the output pasted back unedited, including the exit codes that are not zero."
 section: sdk
 group: "Command line"
 order: 31.5
@@ -9,10 +9,13 @@ label: "Verified transcript"
 
 ## What this page is
 
-A single uninterrupted session, run on 2026-09-02 against **CLI 2.5.1** on the
-host named below. Every block is the command as you would type it and the bytes
-it actually printed — including the three exit codes that are **not** zero,
-which are the interesting ones.
+A session run on the host named below, first on 2026-09-02 against **CLI
+2.5.1** and re-run on 2026-09-07 against **CLI 2.6.1** — from a fresh home
+directory and an empty environment, so nothing left over from an earlier
+install could help. Every block is the command as you would type it and the
+bytes it actually printed — including the exit codes that are **not** zero,
+which are the interesting ones. Blocks whose output did not change between
+the two releases keep the 2.5.1 capture and say so.
 
 Copy any block and run it. If your output differs from what is pasted here,
 that difference is real and worth chasing; nothing on this page is an
@@ -40,18 +43,20 @@ Everything below ran here. Timings are this box's; exit codes are not.
 | OS | Ubuntu 26.04 LTS, glibc 2.43 |
 | Arch | `x86_64` |
 | CPU | AMD Ryzen Threadripper PRO 5955WX (16 cores / 32 threads) |
-| CLI | 2.5.1 (essence engine 2.3.8, ABI 7) |
+| CLI | 2.6.1 (essence engine 2.3.8, ABI 7) — 2.5.1 where a block says so |
 | `ffmpeg` | 8.0.1 on `PATH` |
 
-> **Not verified here.** macOS (any command), Windows, `bithuman run` standing
-> up a live session, and code signing / notarization. This is a headless Linux
-> box; those need a Mac, a browser, or both. They are marked UNVERIFIED wherever
-> they come up rather than described as tested.
+> **One section was measured elsewhere.** The
+> [Essence 2 render](#essence-2--exit-0-on-261-on-linux-and-on-macos) is
+> the flow `cli-v2.6.1` was released to add. It was run during the release
+> verification on this Linux host *and* on an Apple Silicon Mac, from the
+> published tarball alone. Its numbers are reported below; it is the only
+> block on this page whose stdout is not pasted.
 
 ## Install
 
 The universal installer, unpinned, exactly as [Install](/sdk/cli/install)
-prints it:
+prints it. Run 2026-09-07 into a fresh home directory:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
@@ -59,10 +64,10 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 
 ```text
 install: querying latest release...
-install: version: cli-v2.5.1
+install: version: cli-v2.6.1
 install: target:  x86_64-unknown-linux-gnu
 install: install dir: /home/you/.local/bin
-install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.1/bithuman-x86_64-unknown-linux-gnu.tar.gz
+install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.1/bithuman-x86_64-unknown-linux-gnu.tar.gz
 install: verifying sha256...
 install: sha256 ok
 install: extracting...
@@ -72,55 +77,99 @@ install:
 install: installed: libessence 2.3.8 ABI 7
 install:   -> /home/you/.local/bin/bithuman
 install:
-install: Run 'bithuman --help' to get started.
+install: Note: /home/you/.local/bin is not on your PATH.
+install: Add this to your shell profile (~/.zshrc, ~/.bashrc, ~/.profile):
+install:
+install:     export PATH="/home/you/.local/bin:$PATH"
+install:
+install: Then restart your shell, or run:
+install:     export PATH="/home/you/.local/bin:$PATH"
 rc=0
 ```
 
-The installer resolves the newest `cli-v*` release itself — pin one with `BITHUMAN_VERSION=cli-v2.5.1`
+The `PATH` note appears because this was a fresh home directory with no
+`~/.local/bin` on the path; on a machine that already has it the installer ends
+with `Run 'bithuman --help' to get started.` instead.
+
+The installer resolves the newest `cli-v*` release itself — pin one with `BITHUMAN_VERSION=cli-v2.6.1`
 if you need a fixed version, and redirect the install with
 `BITHUMAN_INSTALL_DIR`.
 
 `install: sha256 ok` is a real check: the installer downloads the `.sha256`
 sidecar and aborts on a mismatch. If a release has no sidecar it prints
 `no sha256 sidecar published; skipping integrity check` instead — worth reading,
-because the two lines look similar and mean opposite things.
+because the two lines look similar and mean opposite things. The digest it
+checked against is the one published beside the tarball:
+`5aef085a0686fc4f05b83ee50a26262a522f0f232c8f8717d157d29a5b18c1d6`.
 
 ### Negative control — the two targets that will not install
 
 The installer derives its target from `uname -s` / `uname -m` and asks the
 release for `bithuman-<arch>-<os>.tar.gz`. Only two of those tarballs are
 published. Running the same script with `uname` reporting a different machine
-shows exactly what a developer on that machine sees:
+shows exactly what a developer on that machine sees — and as of 2.6.1 the
+installer names the two tarballs the release *does* carry and what to do
+instead:
 
 ```text
-install: version: cli-v2.5.1
+install: querying latest release...
+install: version: cli-v2.6.1
 install: target:  aarch64-unknown-linux-gnu
-install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.1/bithuman-aarch64-unknown-linux-gnu.tar.gz
-curl: (22) The requested URL returned error: 404
-install: error: download failed.
-install: error: The tarball for aarch64-unknown-linux-gnu may not be published for cli-v2.5.1.
-install: error: See available assets at: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.5.1
+install: install dir: /home/you/.local/bin
+install: error: the bithuman CLI is NOT published for aarch64-unknown-linux-gnu.
+install: error:
+install: error:   release : cli-v2.6.1
+install: error:   wanted  : bithuman-aarch64-unknown-linux-gnu.tar.gz
+install: error:   release carries:
+install: error:     bithuman-aarch64-apple-darwin.tar.gz
+install: error:     bithuman-x86_64-unknown-linux-gnu.tar.gz
+install: error:
+install: error:   aarch64 Linux was published through cli-v2.3.27 and dropped at cli-v2.4.0,
+install: error:   when the tarball began vendoring the expression-2 render engine and only an
+install: error:   x86_64 Linux engine was built. Options, in order of preference:
+install: error:     * ★USE THE PYTHON LIBRARY — it supports aarch64 Linux today:
+install: error:           pip install bithuman        # docs.bithuman.ai
+install: error:       Same engine, in your process; it is a library, not this command.
+install: error:     * use an x86_64 Linux host (or run the x86_64 build under emulation);
+install: error:     * pin the last aarch64 release — note it predates engine vendoring, so
+install: error:       `bithuman run` cannot render locally on it:
+install: error:           BITHUMAN_VERSION=cli-v2.3.27 sh install.sh
+install: error:     * tell us you need it: hello@bithuman.ai
+install: error:
+install: error:   Full asset list: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.6.1
 rc=1
 ```
 
 ```text
-install: version: cli-v2.5.1
+install: querying latest release...
+install: version: cli-v2.6.1
 install: target:  x86_64-apple-darwin
-install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.1/bithuman-x86_64-apple-darwin.tar.gz
-curl: (22) The requested URL returned error: 404
-install: error: download failed.
-install: error: The tarball for x86_64-apple-darwin may not be published for cli-v2.5.1.
-install: error: See available assets at: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.5.1
+install: install dir: /home/you/.local/bin
+install: error: the bithuman CLI is NOT published for x86_64-apple-darwin.
+install: error:
+install: error:   release : cli-v2.6.1
+install: error:   wanted  : bithuman-x86_64-apple-darwin.tar.gz
+install: error:   release carries:
+install: error:     bithuman-aarch64-apple-darwin.tar.gz
+install: error:     bithuman-x86_64-unknown-linux-gnu.tar.gz
+install: error:
+install: error:   Intel Macs are not built, and no other channel serves one either.
+install: error:   On Apple Silicon this installs normally. Options:
+install: error:     * run on an Apple Silicon Mac or an x86_64 Linux host;
+install: error:     * tell us you need it: hello@bithuman.ai
+install: error:
+install: error:   Full asset list: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.6.1
 rc=1
 ```
 
-Both exit **1**. The full platform picture, counted from the release assets, is
-on [Install](/sdk/cli/install#which-platforms-actually-have-a-binary).
+Both exit **1**, before any download starts. The full platform picture, counted
+from the release assets, is on
+[Install](/sdk/cli/install#which-platforms-actually-have-a-binary).
 
 ## The part that needs no credential
 
 `--version`, `list`, `pull` of a showcase avatar, and `info` all work signed
-out. This whole section was run with `BITHUMAN_API_SECRET` unset.
+out. This whole section was run with `BITHUMAN_API_SECRET` unset, on 2.6.1.
 
 ```bash
 bithuman --version
@@ -128,9 +177,15 @@ bithuman --version
 
 ```text
 libessence 2.3.8 ABI 7
-bithuman    2.5.1
+bithuman    2.6.1
+build       d946a1da3780 x86_64-unknown-linux-gnu/release 2026-09-08T00:00:00Z c5b9e6ec3285
+engine      linux 1.0.0 adc2a18da787
 rc=0
 ```
+
+Two lines are new since 2.5.1: `build` names the commit and target the binary
+was built from — the same values as the `PROVENANCE.json` inside the tarball —
+and `engine` names the Expression 2 render engine it shipped with.
 
 ```bash
 bithuman list
@@ -141,7 +196,7 @@ bithuman list
  thrift-coach-bargain-buddy      Thrift Coach & Bargain Buddy    essence   75 MB    —
  energetic-audio-story-buddy     Energetic Audio Story Buddy     essence   94 MB    —
  fairy-tale-grandmother-avatar   Fairy-Tale Grandmother Avatar   essence   111 MB   —
- modern-court-jester             Modern Court Jester             essence   79 MB    ✓ downloaded
+ modern-court-jester             Modern Court Jester             essence   79 MB    —
  planning-nebula                 Planning Nebula                 essence   48 MB    —
 rc=0
 ```
@@ -181,6 +236,17 @@ bithuman info ~/.cache/bithuman/showcase/planning-nebula.imx
     lip_sync/video_20251122_145930_723899_25fps.mp4.WAV2LIP_720_b7c1ee00.h5  (409888 bytes)
     lip_sync/video_20251122_145930_723899_25fps_bases.bin  (293938 bytes)
     lip_sync/video_20251122_145930_723899_25fps_patches.bin  (31148816 bytes)
+
+  Videos (1):
+    video_20251122_145930_723899_25fps
+      Resolution:        1248×704
+      Frame count:       201
+      Type:              LoopingVideo
+      Single direction:  false
+      Lip-sync:
+        Cluster count:   106
+        Source frames:   201
+        Crop bbox:       [0, 0, 155, 145]
 rc=0
 ```
 
@@ -193,9 +259,13 @@ bithuman info speech.wav          # not a model file at all
 ```
 
 ```text
-error: not an IMX container: speech.wav (expected magic 'IMX\0' at offset 0)
+error: not a usable avatar: speech.wav
 rc=66
 ```
+
+(2.5.1 said `not an IMX container: speech.wav (expected magic 'IMX\0' at
+offset 0)` here; 2.6.1 says the same thing in the CLI's four-word refusal
+vocabulary — this is `InvalidAvatar`.)
 
 ```bash
 bithuman pull not-a-real-avatar   # slug that is not in the manifest
@@ -204,6 +274,32 @@ bithuman pull not-a-real-avatar   # slug that is not in the manifest
 ```text
 error: slug 'not-a-real-avatar' not found in manifest. Try `bithuman list`.
 rc=66
+```
+
+A third control, because a flag that is silently ignored is worse than one
+that is refused: `--model` is for your own agent codes, and on a showcase slug
+it is **parsed and refused on its meaning** (`rc=66`), where an unknown flag
+exits `rc=2`. A page that showed only the first line could not tell you which
+one you were getting:
+
+```bash
+bithuman pull planning-nebula --model essence-2
+```
+
+```text
+error: --model applies to YOUR agent codes (e.g. `bithuman pull A24EKJ8433 --model expression-2`), not to the showcase slug 'planning-nebula' — showcase avatars have a single published artifact
+rc=66
+```
+
+```bash
+bithuman pull planning-nebula --zzz-nope
+```
+
+```text
+error: unexpected argument '--zzz-nope' found
+
+  tip: to pass '--zzz-nope' as a value, use '-- --zzz-nope'
+rc=2
 ```
 
 ## Where the credential starts mattering
@@ -220,7 +316,9 @@ ffmpeg -hide_banner -loglevel error -y -f lavfi -i "sine=frequency=220:duration=
 rc=0
 ```
 
-Now render **signed out** — the negative control for every render below:
+Now render **signed out** — the negative control for every render below
+(captured on 2.5.1; the gate is unchanged, and 2.6.1's own `--help` names it
+`NotAuthorised`):
 
 ```bash
 bithuman render ~/.cache/bithuman/showcase/planning-nebula.imx -a speech.wav -o out.mp4
@@ -248,17 +346,21 @@ The rest of this page ran with that variable set. Nothing else changed.
 
 ## `bithuman render`, one family at a time
 
-This is the section worth reading before you plan a pipeline. All three runs
-below used the **same** `speech.wav` and the same CLI, so the differences are
-the engine, not the input.
+This is the section worth reading before you plan a pipeline. All three
+families were driven with the **same** `speech.wav` through the same CLI, so
+the differences are the engine, not the input.
 
-| Family | File `pull` gives you | `render` on Linux x86_64, CLI 2.5.1 | rc |
+| Family | File `pull` gives you | `render` on Linux x86_64 | rc |
 | --- | --- | --- | --- |
-| Expression 2 | `<code>.avatar` | **Works** — writes a real MP4 | `0` |
-| Essence 2 | `<code>.lebundle.imx` | Fails — no local native runtime on this host | `69` |
+| Expression 2 | `<code>.avatar` | **Works** — writes a real MP4 (2.5.1 and 2.6.1) | `0` |
+| Essence 2 | `<code>.imx` | **Works as of 2.6.1** — writes a real MP4; 2.5.1 and 2.6.0 refused it | `0` |
 | Essence 1 | `<code>.imx` | Fails — the MP4 muxing step | `70` |
 
 ### Expression 2 — rc=0, real frames
+
+Captured on 2.5.1 (2026-09-02); 2.6.1's own `render --help` reports the same
+result — `exit 0 with ceil(seconds x 20) frames, every frame decoded` — on
+Linux x86_64 and on macOS arm64.
 
 ```bash
 bithuman pull A55NVK9945 --model expression-2
@@ -335,84 +437,68 @@ rc=0
 
 `ffprobe` on `x2lim.mp4` reports `nb_frames=10`.
 
-### Essence 2 — rc=69, and a file copy does not fix it
+### Essence 2 — exit 0 on 2.6.1, on Linux and on macOS
+
+This is the section `cli-v2.6.1` changed. Through 2.5.1 and 2.6.0 the Essence 2
+runtime was not in the tarball, and `render` exited **69** for every Essence 2
+file on every platform. In 2.6.1 the runtime ships **inside the CLI on both
+platforms**, and the flow below was run from the published tarball alone — a
+fresh home directory, an empty environment, nothing staged by hand — on this
+Linux x86_64 host and on an Apple Silicon Mac, on 2026-09-07:
 
 ```bash
-bithuman pull A31BSK9325 --model essence-2
+MODEL=$(bithuman pull A31BSK9325 --model essence-2)   # prints the cached <code>.imx path on stdout
+bithuman render "$MODEL" -a speech.wav -o e2.mp4
 ```
 
-```text
-already cached at /home/you/.cache/bithuman/agents/A31BSK9325/A31BSK9325.lebundle.imx (pass --force to re-download)
-recognized: IMX v2 container — essence-2: cloud-served; no local CLI runtime yet
-/home/you/.cache/bithuman/agents/A31BSK9325/A31BSK9325.lebundle.imx
-rc=0
-```
+What was measured, on both machines:
 
-`.lebundle.imx` is the filename the download endpoint and `pull` hand you for
-Essence 2. `lebundle` is a **legacy name kept for compatibility** — it never
-renames, because saved paths and scripts carry it; see
-[the `.imx` container](/concepts/avatars-imx).
+- **`rc=0`**, and `e2.mp4` is a real file. A **5-second** clip produced
+  **125 frames at 25 fps** — `ceil(seconds × 25)`, which is what 2.6.1's own
+  `render --help` promises for this family — with the avatar's own recorded
+  mouth on every speech frame.
+- **The first Essence 2 render downloads the shared audio encoder** —
+  about **377 MB**, one time per machine — from the public release coordinate,
+  checked by content digest, into `~/.bithuman/engines/essence-2/`. Every
+  later render reuses it. There is no environment variable to set and no
+  extra install step; the download is part of `render`.
+- **The first play performs a licence check with the cloud**, so it needs the
+  same sign-in `pull <AGENT_CODE>` needs (`bithuman login`, or
+  `BITHUMAN_API_SECRET` in CI). Signed out, it is the `rc=77` gate above.
+- `pull --model essence-2` now names the file **`<code>.imx`**. Earlier
+  releases wrote `<code>.lebundle.imx` — `lebundle` is a legacy name kept for
+  compatibility, and a file you already have under that name still opens; see
+  [the `.imx` container](/concepts/avatars-imx).
+
+The same file also serves live from your own machine:
 
 ```bash
-bithuman render ~/.cache/bithuman/agents/A31BSK9325/A31BSK9325.lebundle.imx \
-  -a speech.wav -o e2.mp4
+bithuman run "$MODEL"
 ```
 
-```text
-error: could not load lible_core.so (the native essence-2 runtime that owns the TESSERA teeth borrow). Tried: /home/you/.local/bin/lible_core.so; /home/you/.local/bin/lib/lible_core.so; /home/you/.local/bin/../lib/lible_core.so; /home/you/.bithuman/lib/lible_core.so; lible_core.so (lible_core.so: cannot open shared object file: No such file or directory)
-  hint: essence-2 offline render needs the native le_core runtime (it owns the TESSERA teeth borrow). Stage it as `lible_core.so` next to the bithuman binary / in ~/.bithuman/lib, or set BITHUMAN_LIBLE_CORE. Until then run the model live with `bithuman run <YOUR_AGENT_CODE>`.
-rc=69
-```
+`run` stood up its local server and answered **HTTP 200** on the URL it
+printed, on both machines. (Pass the **path**; passing the bare agent code
+instead routes an `essence-2` agent to a cloud session, as `bithuman run --help`
+states.)
 
-`lible_core` is the native library's own frozen filename — another legacy name
-that stays spelled exactly, because the loader quotes it verbatim in that error
-and you would otherwise be searching for a file that does not exist under any
-other name.
+**Negative control — an incomplete model file.** Essence 2 is fail-closed: if
+the downloaded model file is incomplete (a required model member is missing),
+`bithuman render` refuses with **exit 69** and writes **no output file** — it
+never substitutes a generated mouth for the one the avatar recorded. That is a
+refusal of the file, not a missing runtime: on 2.6.1 the runtime is in the
+tarball, and the fix is a complete model file (re-`pull` with `--force`, or
+contact [hello@bithuman.ai](mailto:hello@bithuman.ai) with the agent code if
+the artifact needs rebuilding on our side), not a file copied in beside the
+binary.
 
-**The message reads like a missing file, so the obvious next move is to find
-one and copy it in. That does not work, and here is the control that shows
-why.** Staging a real `lible_core.so` and pointing `BITHUMAN_LIBLE_CORE` at it:
-
-```bash
-BITHUMAN_LIBLE_CORE=/path/to/lible_core.so \
-  bithuman render ~/.cache/bithuman/agents/A31BSK9325/A31BSK9325.lebundle.imx \
-  -a speech.wav -o e2.mp4
-```
-
-```text
-error: could not load lible_core.so (…). Tried: /path/to/lible_core.so (/home/you/.local/bin/lib/libonnxruntime.so.1: version `VERS_1.26.0' not found (required by /path/to/lible_core.so)); …
-rc=69
-```
-
-The file was found. It did not load. The CLI 2.5.1 tarball ships
-`lib/libonnxruntime.so.1` built at **`VERS_1.20.1`**, and every `lible_core.so`
-is linked against **`VERS_1.26.0`**. You can confirm both sides yourself:
-
-```bash
-strings -a ~/.local/bin/lib/libonnxruntime.so.1 | grep -E '^VERS_1\.[0-9]+\.[0-9]+$' | sort -u
-```
-
-```text
-VERS_1.20.1
-rc=0
-```
-
-```bash
-objdump -T /path/to/lible_core.so | grep -o 'VERS_[0-9.]*' | sort -u
-```
-
-```text
-VERS_1.26.0
-rc=0
-```
-
-That is an ABI gap in the shipped binary, not a packaging oversight you can
-work around by moving files. **Essence 2 has no offline `render` on any
-platform in CLI 2.5.1.** Until a CLI ships with a matching runtime, render
-Essence 2 through the [Video API](/api/video) or run it live —
-`bithuman run <YOUR_AGENT_CODE>` opens a cloud session for it.
+Writing the MP4 needs `ffmpeg` on `PATH` (or `$BITHUMAN_FFMPEG`) for Essence 2
+and Expression 2, and `--target-size` applies to Essence 1 only — the
+second-generation engines emit their native size.
 
 ### Essence 1 — rc=70, still
+
+Captured on 2.5.1 (2026-09-02). 2.6.1's own `render --help` still reports
+**exit 70** for this family, on both platforms.
 
 ```bash
 bithuman render ~/.cache/bithuman/showcase/planning-nebula.imx -a speech.wav -o out.mp4
@@ -434,29 +520,31 @@ rc=70
 ```
 
 No output file is written. This is the same muxing failure first documented
-against `cli-v2.4.0`, and it is **still present in 2.5.1** — re-tested on
-2026-09-02, so the warning on [Commands](/sdk/cli/commands#bithuman-render--offline-mp4)
-now covers this release too.
+against `cli-v2.4.0`, so the warning on
+[Commands](/sdk/cli/commands#bithuman-render--offline-mp4) still covers the
+current release.
 
 It is not your WAV. The controls that rule the input out:
 
-- the identical `speech.wav` renders fine through Expression 2 above (`rc=0`);
+- the identical `speech.wav` renders fine through Expression 2 above (`rc=0`)
+  and through Essence 2 on 2.6.1;
 - `Examples/python/local-essence/speech.wav` from bitHuman's own repository
   fails identically (`rc=70`);
 - a second showcase model, `modern-court-jester.imx`, fails identically
   (`rc=70`).
 
-Same audio, same binary, two families: one writes an MP4 and one does not. To
+Same audio, same binary, three families: two write an MP4 and one does not. To
 produce an MP4 from Essence 1 today, use the [Video API](/api/video).
 
 ## Exit codes seen on this page
 
 | rc | Meaning | Seen on |
 | --- | --- | --- |
-| `0` | Success | `--version`, `list`, `pull`, `info`, Expression 2 `render` |
+| `0` | Success | `--version`, `list`, `pull`, `info`, Expression 2 `render`, Essence 2 `render` (2.6.1) |
 | `1` | Installer could not download a tarball for this target | `install.sh` on Linux ARM / Intel Mac |
-| `66` | Bad input or a server refusal carrying the API's error | `info` on a non-model, `pull` of an unknown slug |
-| `69` | Recognized family, no local runtime for it on this host | Essence 2 `render` |
+| `2` | Bad arguments — a flag the command does not have | `pull --zzz-nope` |
+| `66` | Bad input or a server refusal carrying the API's error | `info` on a non-model, `pull` of an unknown slug, `--model` on a showcase slug |
+| `69` | An avatar this build cannot render (`NotSupported`) — on 2.6.1, an Essence 2 file with a required member missing; no file is written | Essence 2 `render` on an incomplete model file |
 | `70` | The engine ran and the encode failed | Essence 1 `render` |
 | `77` | `BE_ERR_NO_AUTH` — no credential | any `render`, `pull <AGENT_CODE>` |
 
@@ -464,15 +552,17 @@ produce an MP4 from Essence 1 today, use the [Video API](/api/video).
 
 Marked UNVERIFIED because they cannot be executed on a headless Linux box:
 
-- **Anything on macOS.** The Apple Silicon tarball is published for 2.5.1
-  (HTTP 200, confirmed) but nothing on this page was run on a Mac.
-- **`bithuman run` live sessions.** The CLI's own `run --help` states the
-  routing — "essence-1 downloads the `.imx` and renders locally; essence-2 /
-  expression-2 (no local runtime yet) open a live CLOUD session" — and
-  `bithuman pull` prints the matching line ("needs the local Apple render
-  engine; cloud-served live"). That is the tool describing itself, not a live
-  session measured here.
-- **Code signing / notarization.** A macOS property; not checkable from Linux.
+- **macOS, beyond the Essence 2 flow.** The Essence 2 `pull` / `render` /
+  `run` sequence above was run on an Apple Silicon Mac during the 2.6.1
+  release verification; every other block on this page is Linux only. The
+  Apple Silicon tarball for 2.6.1 is published (HTTP 200, sha256
+  `0fb359a8b709e2606af1f7e26b1df1ac705c8dc1da6f954131641b012d4f953c`).
+- **A live conversation.** `bithuman run` on the Essence 2 file answered
+  HTTP 200 from its local server; a browser session with a microphone and a
+  brain was not driven from here.
+- **Code signing / notarization.** The 2.6.1 macOS tarball is Developer ID
+  signed and notarized per the release; a macOS property, not checkable from
+  Linux.
 - **Windows.** No binary exists to test.
 
 ## Next steps

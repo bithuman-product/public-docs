@@ -24,14 +24,14 @@ the installer 404s on both. See
 
 > **Which models?** The CLI **recognizes every bitHuman model artifact** — it
 > sniffs the file and tells you what it is. Its local runtime plays
-> **`essence-1`** `.imx` avatars and **`expression-2`** avatars — including the
+> **`essence-1`** `.imx` avatars, **`expression-2`** avatars — including the
 > free **Wise Pup** avatar that `bithuman run` fetches and renders out of the
-> box (see [Local rendering by platform](#local-rendering-by-platform) for where
-> Expression 2 renders locally). Essence 2 Max's `essence-2-max` `.pkl` and
-> the standard Essence 2's `.lebundle.imx` are recognized by
-> `run` / `info` / `pull` with honest guidance and serve through the cloud
-> surfaces (the [REST API](/api/agents), the
-> [embed widget](/guides/deploy-embed), and the dashboard). See the
+> box — and, as of **CLI 2.6.1**, **`essence-2`** `.imx` avatars, live and
+> offline, on macOS (Apple Silicon) and Linux x86_64 (see
+> [Local rendering by platform](#local-rendering-by-platform)). Essence 2 Max's
+> `essence-2-max` `.pkl` is recognized by `run` / `info` / `pull` with honest
+> guidance and serves through the cloud surfaces (the [REST API](/api/agents),
+> the [embed widget](/guides/deploy-embed), and the dashboard). See the
 > [launch matrix](/sdk/cli/commands#which-model-files-run-locally).
 
 ## Quickstart
@@ -82,7 +82,7 @@ browse and download showcase avatars, and run a full host sanity check.
 | `bithuman auth status` | Show who you're signed in as and where the credential lives |
 | `bithuman init` | Credential wizard: save `BITHUMAN_API_SECRET`, pick a brain, pull a showcase avatar |
 | `bithuman run [avatar]` | Start the live avatar. No argument fetches + renders the free Wise Pup avatar out of the box; pass an avatar file to run your own |
-| `bithuman render <path>` | Offline lipsync: model + audio → MP4. Linux-only, and [only Expression 2 completes](/sdk/cli/verified#bithuman-render-one-family-at-a-time) on 2.5.1 |
+| `bithuman render <path>` | Offline lipsync: model + audio → MP4. [Essence 2 and Expression 2](/sdk/cli/verified#bithuman-render-one-family-at-a-time) on Linux x86_64 and macOS arm64 as of 2.6.1; Essence 1 still exits 70 |
 | `bithuman info <model-file>` | Print model metadata — engine + family for any recognized artifact |
 | `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or **your own agent's generated model** by code |
 | `bithuman list` | Browse the showcase avatar catalog |
@@ -120,33 +120,57 @@ The conversation brain is pluggable. Both paths go through the same
 ## Local rendering by platform
 
 `bithuman run` renders `expression-2` avatars — including the Wise Pup default —
-natively on your own hardware. Which runtime does the work is a per-platform
-packaging detail the CLI handles for you:
+natively on your own hardware, and as of **CLI 2.6.1** it renders `essence-2`
+avatars the same way. Which runtime does the work is a per-platform packaging
+detail the CLI handles for you:
 
-| Platform | Local render | Status |
-| --- | --- | --- |
-| **macOS (Apple Silicon)** | CoreML — predominantly the Neural Engine | Real time |
-| **Linux x86_64** | LiteRT (CPU) | Real time |
-| **Windows** | LiteRT (CPU) | Coming |
+| Platform | Expression 2 local render | Essence 2 local render (2.6.1) | Status |
+| --- | --- | --- | --- |
+| **macOS (Apple Silicon)** | CoreML — predominantly the Neural Engine | Yes — `run` and `render`, runtime in the tarball | Real time (Expression 2) |
+| **Linux x86_64** | LiteRT (CPU) | Yes — `run` and `render`, runtime in the tarball | Real time (Expression 2) |
+| **Windows** | LiteRT (CPU) | — | Coming |
 
-macOS renders through the same CoreML path the desktop app uses. Reading
-CoreML's own per-operation compute plan for the models this engine loads, the
-Neural Engine carries **84–100%** of the operations depending on the member,
-with the remainder on the CPU — see
+macOS renders Expression 2 through the same CoreML path the desktop app uses.
+Reading CoreML's own per-operation compute plan for the models this engine
+loads, the Neural Engine carries **84–100%** of the operations depending on the
+member, with the remainder on the CPU — see
 [which Apple compute units run Expression 2](/concepts/expression-2#which-apple-compute-units-run-expression-2).
-Linux x86_64 renders in real time on a modern multi-core CPU. Windows
-support is on the way. For the full picture of where every model runs — cloud
-tiers, self-hosted, and on-device — see the
+Linux x86_64 renders Expression 2 in real time on a modern multi-core CPU.
+Windows support is on the way. For the full picture of where every model
+runs — cloud tiers, self-hosted, and on-device — see the
 [device matrix](/concepts/architecture).
+
+### Essence 2 on your own machine
+
+Since `cli-v2.6.1` (2026-09-07) the Essence 2 runtime ships **inside the CLI
+tarball** on both platforms, so a downloaded Essence 2 avatar renders locally,
+offline, with nothing staged by hand:
+
+```bash
+bithuman login                                        # once — the first play checks the licence with the cloud
+MODEL=$(bithuman pull <YOUR_AGENT_CODE> --model essence-2)   # → <code>.imx, path on stdout
+bithuman render "$MODEL" -a speech.wav -o out.mp4     # exit 0; 5 s of audio → 125 frames at 25 fps
+bithuman run "$MODEL"                                 # a local server, opened in your browser
+```
+
+The **first** Essence 2 render on a machine downloads the shared audio encoder
+— about **377 MB**, one time — from the public release coordinate, checked by
+content digest, into `~/.bithuman/engines/essence-2/`, and every later render
+reuses it. No environment variable, no extra install step. Essence 2 is
+**fail-closed**: a model file with a required member missing is refused with
+exit 69 and no output file, never played with a substituted mouth. The flow
+above was run from the published tarball alone, on Linux x86_64 and on an
+Apple Silicon Mac — see the
+[verified transcript](/sdk/cli/verified#essence-2--exit-0-on-261-on-linux-and-on-macos).
 
 ### One `.imx` per avatar, engine included
 
-An `expression-2` avatar is a single self-contained
-[`.imx` file](/concepts/avatars-imx). The render engine ships **inside the CLI**
-and is managed for you, so a fresh install needs no extra download to run its
-first avatar. When the CLI fetches an avatar it pulls only the slice your
-platform needs — about **26 MB on macOS** and about **63 MB on Linux** — rather
-than the full cross-platform bundle.
+An `expression-2` or `essence-2` avatar is a single self-contained
+[`.imx` file](/concepts/avatars-imx). The render engines ship **inside the
+CLI** and are managed for you, so a fresh install needs no extra download to
+run its first avatar. When the CLI fetches an Expression 2 avatar it pulls only
+the slice your platform needs — about **26 MB on macOS** and about **63 MB on
+Linux** — rather than the full cross-platform bundle.
 
 `bithuman engine` is the manual channel for that runtime: inspect it, install it
 for a cross-platform build, or update it when a newer avatar needs a newer

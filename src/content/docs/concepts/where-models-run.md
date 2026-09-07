@@ -12,8 +12,9 @@ This is the page to read before you pick a model. It answers one question —
 and it does not soften the answer anywhere.
 
 Every shell command below was **run exactly as written** on a clean x86_64
-Linux host on 2026-09-02, and the output under it is what that run actually
-printed, including the exit code. Where something could not be run here — it
+Linux host on 2026-09-02 (the [command line](#command-line--macos-arm64-and-linux-x86_64-and-only-those)
+block re-run on 2026-09-07 against `cli-v2.6.1`), and the output under it is
+what that run actually printed, including the exit code. Where something could not be run here — it
 needs a Mac, an Android device, or a paid credential — the block says so and is
 marked **UNVERIFIED**. Nothing on this page is an idealised transcript.
 
@@ -333,29 +334,40 @@ bithuman version --json
 ```
 
 ```text
-{"abi":7,"cli":"2.5.1","libessence":"2.3.8","schema_version":1}
+{"abi":7,"build":{…},"cli":"2.6.1","engine":{…},"libessence":"2.3.8","schema_version":1}
 ```
 
-Exit code `0` for both commands; the installer's own output is not reproduced
-here — it is on [Verified CLI transcripts](/sdk/cli/verified#install). The
-`cli-v2.5.1` release carries exactly **two** platform
-builds — `aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`. There is no
-Intel-Mac build, no Windows build and no Linux-aarch64 build, and the installer
-on any of those exits `1` rather than installing something that will not run.
+Exit code `0` for both commands (run 2026-09-07). Two objects are elided from
+that line: `build` carries the commit, target and build time — the same values
+as the `PROVENANCE.json` in the tarball — and `engine` names the shipped
+Expression 2 engine and its digest. The installer's own output is not
+reproduced here — it is on [Verified CLI transcripts](/sdk/cli/verified#install).
+The `cli-v2.6.1` release carries exactly **two** platform builds —
+`aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`. There is no Intel-Mac
+build, no Windows build and no Linux-aarch64 build, and the installer on any of
+those exits `1` rather than installing something that will not run.
 
 Every CLI command, every exit code and the negative controls that go with them
 are on **[Verified CLI transcripts](/sdk/cli/verified)** — a page where each
-command was executed with a credential present, which this one was not. Two
+command was executed with a credential present, which this one was not. Three
 results from it matter to the matrix and are worth knowing before you plan
 around the CLI:
 
-- **`bithuman render` works for expression-2 on Linux** — exit `0`, real
-  frames.
-- **It exits `69` for essence-2** — the family is recognised, there is no local
-  native runtime for it on this host, and **copying a file in does not fix it**;
-  it is an ABI mismatch. Render essence-2 through the cloud until a rebuilt
-  release lands. See
-  [Essence 2 — rc=69](/sdk/cli/verified#essence-2--rc69-and-a-file-copy-does-not-fix-it).
+- **`bithuman render` works for expression-2** — exit `0`, real frames — on
+  Linux x86_64 and macOS arm64.
+- **As of `cli-v2.6.1` it works for essence-2 too, on both platforms** —
+  the essence-2 runtime ships inside the CLI tarball. `bithuman pull <CODE>
+  --model essence-2` hands you `<CODE>.imx`; `bithuman render` on it exits
+  `0` (5 s of audio → 125 frames at 25 fps) and `bithuman run` on it serves a
+  local session. The first render downloads the shared audio encoder (~377 MB,
+  once, by content digest) into `~/.bithuman/engines/essence-2/`, and the first
+  play checks the licence with the cloud. Your Mac and your Linux box are
+  therefore **In scope** for essence-2 in practice, not only by ruling. See
+  [Essence 2 — exit 0 on 2.6.1](/sdk/cli/verified#essence-2--exit-0-on-261-on-linux-and-on-macos).
+- **essence-2 is fail-closed.** A model file with a required member missing
+  is refused with exit `69` and **no output file** — the CLI never draws a
+  mouth the avatar did not record. Until 2.6.0 that same code meant "no local
+  runtime"; on 2.6.1 it means the file.
 
 
 ### Android — three artifacts on Maven Central, and every in-scope model resolves

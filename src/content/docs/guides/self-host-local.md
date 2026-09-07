@@ -10,13 +10,14 @@ order: 9
 
 Self-hosting means the render happens on your machine. Not every platform is at
 the same place, and this page says which is which rather than averaging them
-into one claim. Verified 2026-09-02.
+into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-07 on
+`cli-v2.6.1`.
 
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
 | **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
-| **Linux x86_64** | [Expression 2](/concepts/expression-2) — live and offline render | [CLI](/sdk/cli/overview) 2.5.1 | Engine ships in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified) |
-| **macOS Apple Silicon** | Expression 2 — live render, out of the box | CLI 2.5.0 via Homebrew | Works |
+| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli/overview) 2.6.1 | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified) |
+| **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI 2.6.1 via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07 |
 | **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 3.0.0 | Works; same note as Linux |
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/swift) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
@@ -194,32 +195,35 @@ is nothing to configure on yours.
 ### The Linux CLI, alongside the Python route
 
 The CLI installs on Linux x86_64 with the unpinned one-liner — run here on
-2026-09-02 it resolved `cli-v2.5.1`, verified the sha256 and exited **0**,
-staging the Expression 2 render host beside the binary:
+2026-09-07 it resolved `cli-v2.6.1`, verified the sha256 and exited **0**,
+staging the Expression 2 render host beside the binary and, since 2.6.1, the
+Essence 2 runtime with it:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-Use it for `login`, `list`, `pull` and `info` —
-`bithuman info <file> | grep tessera` is the quickest way to read an
-artifact's members. Which families
-`render` can and cannot produce an MP4 for on Linux, with each command's real
-exit code, is on [what the CLI actually
-does](/sdk/cli/verified); Linux aarch64 is **not** published for `cli-v2.5.1`
-— see [installing the CLI](/sdk/cli/install).
+**Essence 2 renders offline in the CLI as of 2.6.1**, on Linux x86_64 and on
+macOS Apple Silicon — so the Python route above is one of two ways to get an
+Essence 2 MP4 on your own hardware, not the only one:
 
-**Essence 2 has no offline `render` in the CLI.** Handing `bithuman render` a
-`.lebundle.imx` on Linux exits **69** — the CLI ships no `lible_core.so`, the
-native runtime it needs:
-
-```text
-error: could not load lible_core.so (the native essence-2 runtime that owns the
-TESSERA teeth borrow). Tried: …/.local/bin/lible_core.so; …/.bithuman/lib/lible_core.so
+```bash
+bithuman login                                              # the first play checks the licence with the cloud
+MODEL=$(bithuman pull <YOUR_AGENT_CODE> --model essence-2)  # → <code>.imx, path on stdout
+bithuman render "$MODEL" -a speech.wav -o out.mp4           # exit 0; 5 s of audio → 125 frames at 25 fps
 ```
 
-That is what the Python route above is for: it is the supported way to get an
-Essence 2 MP4 on your own hardware.
+The first Essence 2 render on a machine downloads the shared audio encoder
+(~377 MB, once, checked by content digest) into
+`~/.bithuman/engines/essence-2/` — the same encoder the Python route fetches,
+kept separately under `~/.bithuman/deps` — and reuses it after that. No
+environment variable, nothing staged by hand. An incomplete model file (a
+required member missing) is refused with **exit 69** and no output file; the
+CLI never substitutes a generated mouth. `bithuman info <file>` lists an
+artifact's members if you want to see what you were handed. Each command's
+real exit code is on [what the CLI actually does](/sdk/cli/verified); Linux
+aarch64 is **not** published for `cli-v2.6.1` — see
+[installing the CLI](/sdk/cli/install).
 
 ---
 
@@ -233,16 +237,17 @@ brew install bithuman-cli
 bithuman doctor
 ```
 
-macOS 14+ on Apple Silicon (arm64). This installs **CLI 2.5.0**, which is the
-first macOS release **signed with a Developer ID certificate under the hardened
-runtime** and submitted for Apple notarization. That matters if you download the
+macOS 14+ on Apple Silicon (arm64). This installs **CLI 2.6.1**, **signed with
+a Developer ID certificate under the hardened runtime** and notarized by Apple,
+as every macOS release since 2.5.0 has been. That matters if you download the
 tarball directly rather than through Homebrew: every build up to and including
 2.4.2 was ad-hoc signed, so a browser-downloaded copy was quarantined and macOS
 killed it on launch with no message (exit 137). Homebrew installs were never
 affected — it fetches with `curl`, which sets no quarantine flag.
 
 The macOS tarball ships the Expression 2 render engine beside the binary, so the
-free Wise Pup avatar renders with no extra download:
+free Wise Pup avatar renders with no extra download — and, since 2.6.1, the
+Essence 2 runtime as well:
 
 ```bash
 bithuman run
@@ -269,13 +274,23 @@ the CLI.
 > [download endpoint](/api/agents#download-an-agents-model) still works and is
 > the right route from anything that is not the CLI.
 
-> **The macOS CLI carries no Essence 2 engine.** That is deliberate, not an
-> oversight — the available Essence 2 slices do not meet the mouth-interior bar
-> and are refused at packaging time. `bithuman run` on an Essence 2 bundle exits
-> `UNSUPPORTED_MODEL_FAMILY` (69). Render Essence 2 on macOS through the Python
-> SDK route below.
+> **The macOS CLI carries the Essence 2 runtime as of 2.6.1.** Until 2.6.0 it
+> did not, and `bithuman run` on an Essence 2 file exited 69. Now the same
+> three commands work on a Mac as on Linux — run from the published tarball on
+> an Apple Silicon Mac with a fresh home directory on 2026-09-07:
+>
+> ```bash
+> MODEL=$(bithuman pull <YOUR_AGENT_CODE> --model essence-2)   # → <code>.imx
+> bithuman render "$MODEL" -a speech.wav -o out.mp4            # exit 0; 5 s → 125 frames at 25 fps
+> bithuman run "$MODEL"                                        # local server, HTTP 200
+> ```
+>
+> The first render fetches the shared audio encoder (~377 MB, once) into
+> `~/.bithuman/engines/essence-2/`; the first play checks the licence with the
+> cloud, so sign in first. An incomplete model file is refused with exit 69
+> and no output.
 
-### Essence 2 offline rendering on macOS
+### Essence 2 offline rendering on macOS, with the Python SDK
 
 Identical to [the Linux route](#4-render), including the
 [audio-encoder prerequisite](#the-audio-encoder-is-not-in-the-wheel).

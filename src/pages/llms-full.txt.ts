@@ -32,12 +32,17 @@ export const GET: APIRoute = async () => {
     `mode. Models (second ` +
     `generation, generally available since July 10, 2026): \`expression-2\` (audio-driven real-time ` +
     `avatar video from a single photo — best for cartoon/animal/creature/robot ` +
-    `characters; gpu/ane/cpu chain), \`essence-2\` (the STANDARD photoreal ` +
-    `model; served from the gpu/ane/cpu cloud chain, from your own CPU ` +
-    `servers for offline rendering, and opt-in in the viewer's browser ` +
-    `(WebGPU/WASM). There is NO installable on-device build of essence-2 for ` +
-    `a Mac, iPhone, iPad or Android device; the former essence-2-light name ` +
-    `is retired), ` +
+    `characters; GPU / Apple / CPU cloud chain, local rendering via the CLI), ` +
+    `\`essence-2\` (the STANDARD photoreal ` +
+    `model; served from the GPU / Apple / CPU cloud chain, rendered locally on ` +
+    `your own Mac (Apple Silicon) or Linux x86_64 box by the CLI 2.6.1+ — ` +
+    `\`bithuman pull <CODE> --model essence-2\` then ` +
+    `\`bithuman render <CODE>.imx -a speech.wav -o out.mp4\`, offline, runtime ` +
+    `inside the CLI, the shared audio encoder (~377 MB) fetched once on first ` +
+    `render into ~/.bithuman/engines/essence-2/, an incomplete model file ` +
+    `refused with exit 69 and no output — from your own CPU servers (Python ` +
+    `SDK), on Android (AAR), and opt-in in the viewer's browser (WebGPU/WASM); ` +
+    `the former essence-2-light name is retired), ` +
     `\`essence-2-max\` (the PREMIUM model — the highest-fidelity Essence ` +
     `renderer, served directly on L40S-class GPUs), plus ` +
     `\`essence-1\` / \`expression-1\`. This file concatenates ` +

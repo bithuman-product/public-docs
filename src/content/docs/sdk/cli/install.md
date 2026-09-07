@@ -22,14 +22,17 @@ platform and drops the right self-contained `bithuman` binary on your `PATH`):
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-Run unpinned on Linux x86_64 on 2026-09-02 it resolves `cli-v2.5.1`, verifies
+Run unpinned on Linux x86_64 on 2026-09-07 it resolves `cli-v2.6.1`, verifies
 the published sha256, installs, and exits **0**. The whole transcript, with the
 failure cases beside it, is on
 [Verified transcript](/sdk/cli/verified#install).
 
-It's the same engine that powers the [language SDKs](/sdk).
+It's the same engine that powers the [language SDKs](/sdk). As of 2.6.1 both
+tarballs carry the Essence 2 runtime as well as the Expression 2 one, so both
+second-generation models render locally — see
+[Essence 2 on your own machine](/sdk/cli/overview#essence-2-on-your-own-machine).
 
-`BITHUMAN_VERSION=cli-v2.5.1` pins a release; `BITHUMAN_INSTALL_DIR` moves the
+`BITHUMAN_VERSION=cli-v2.6.1` pins a release; `BITHUMAN_INSTALL_DIR` moves the
 install (default `~/.local/bin`, or `/usr/local/bin` as root).
 
 > **Note** — `pip install bithuman-cli` also works, but **only on macOS Apple
@@ -40,33 +43,39 @@ install (default `~/.local/bin`, or `/usr/local/bin` as root).
 ## Which platforms actually have a binary
 
 The installer builds a target triple from `uname` and downloads
-`bithuman-<target>.tar.gz` from the release. Counted across **all 69 releases**
-of the tap on 2026-09-02, exactly three targets have ever carried a tarball, and
+`bithuman-<target>.tar.gz` from the release. Counted across **all 78 releases**
+of the tap on 2026-09-07, exactly three targets have ever carried a tarball, and
 only two of them still do:
 
-| Your machine | Target the installer asks for | Published for `cli-v2.5.1` |
+| Your machine | Target the installer asks for | Published for `cli-v2.6.1` |
 | --- | --- | --- |
-| Apple Silicon Mac | `aarch64-apple-darwin` | **Yes** (33 releases, current) |
-| Linux x86_64 | `x86_64-unknown-linux-gnu` | **Yes** (13 releases, current) |
+| Apple Silicon Mac | `aarch64-apple-darwin` | **Yes** (35 releases, current) |
+| Linux x86_64 | `x86_64-unknown-linux-gnu` | **Yes** (15 releases, current) |
 | Linux ARM (`aarch64`) | `aarch64-unknown-linux-gnu` | **No** — last published `cli-v2.3.27`, 2026-07-10 |
 | Intel Mac | `x86_64-apple-darwin` | **No** — never published, in any release |
 | Windows | — | No binary exists |
 
-On the bottom three rows the installer still asks the release for a tarball,
-gets a **404**, and exits **1**:
+On the bottom three rows the installer reads the release's asset list, sees no
+tarball for the target, names the two it does carry, and exits **1** before
+downloading anything:
 
 ```text
 install: target:  aarch64-unknown-linux-gnu
-install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.5.1/bithuman-aarch64-unknown-linux-gnu.tar.gz
-curl: (22) The requested URL returned error: 404
-install: error: download failed.
-install: error: The tarball for aarch64-unknown-linux-gnu may not be published for cli-v2.5.1.
+install: install dir: /home/you/.local/bin
+install: error: the bithuman CLI is NOT published for aarch64-unknown-linux-gnu.
+install: error:
+install: error:   release : cli-v2.6.1
+install: error:   wanted  : bithuman-aarch64-unknown-linux-gnu.tar.gz
+install: error:   release carries:
+install: error:     bithuman-aarch64-apple-darwin.tar.gz
+install: error:     bithuman-x86_64-unknown-linux-gnu.tar.gz
 rc=1
 ```
 
-The same three lines appear for `x86_64-apple-darwin`. So today an Intel Mac or
-a Linux ARM box **cannot install the CLI at all** — there is no flag, no
-fallback and no Rosetta path. Both cases are captured in full on
+The same shape appears for `x86_64-apple-darwin`. So today an Intel Mac or a
+Linux ARM box **cannot install the CLI at all** — there is no flag, no fallback
+and no Rosetta path. Both cases are captured in full, with the options the
+installer prints, on
 [Verified transcript](/sdk/cli/verified#negative-control--the-two-targets-that-will-not-install).
 
 Two workarounds that do exist:
@@ -129,7 +138,8 @@ missing:
 ```text
   Versions
     libessence engine     2.3.8 (ABI 7)
-    CLI binary            2.5.1
+    CLI binary            2.6.1
+    build                 2.6.1+d946a1da3780/adc2a18da787
 
   Host
     OS / arch             linux / x86_64
@@ -142,6 +152,9 @@ missing:
     Sign in                 bithuman login  (free, one tap with Google)
 rc=1
 ```
+
+(Captured 2026-09-07 on a fresh Linux install of 2.6.1; the RAM, cache and
+brain-detail lines between those sections are trimmed.)
 
 Rendering and pulling do not need a brain — see
 [Verified transcript](/sdk/cli/verified) for what works at each stage. Then head

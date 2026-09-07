@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Silicon and CPU tiers, from your own CPU servers, and in-browser (WebGPU/WASM); train-on-create from a photo, and pricing."
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Silicon and CPU tiers, on your own Mac or Linux machine with the CLI, from your own CPU servers, and in-browser (WebGPU/WASM); train-on-create from a photo, and pricing."
 section: concepts
 group: "Models"
 order: 2
@@ -23,24 +23,32 @@ video by default), lip-synced live at ~25 frames per second — at a
 fraction of the compute of [Essence 2 Max](/concepts/essence-2-max), the
 highest-fidelity renderer in the family. At creation the platform
 packages your identity into a compact bundle, and that one artifact serves
-three ways:
+four ways:
 
 - **From bitHuman's cloud** — a **GPU**, **Apple** and **CPU** tier chain,
   routed automatically. The Apple tier runs on **bitHuman's** Apple Silicon
   Macs through **CoreML**, and is reached over the network like any other cloud
   tier. Its `?model=` slug is still `essence-2-ane` — a historical name, kept
   so saved links keep working.
+- **On your own Mac or Linux machine** — the [CLI](/sdk/cli/overview#essence-2-on-your-own-machine)
+  (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
+  `<code>.imx` offline with `bithuman render` and serves it live with
+  `bithuman run`, with the runtime inside the CLI; on Android the
+  [`essence2-android`](/sdk/android#essence-2--aibithumanessence2-android040)
+  AAR, and in your own iOS/macOS app the Swift
+  [`Essence2`](/sdk/swift#essence-2-on-device) engine.
 - **From your own CPU servers** — offline rendering of the downloaded
-  artifact, metered, no GPU required (Python SDK 2.9.0+).
+  artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.0.0; 2.9.0+
+  for the earlier route).
 - **In the viewer's browser** — a WebAssembly renderer with a WebGPU speech
   encoder, opt-in per session and rolling out per identity, with frames that
   never leave that browser. Without a WebGPU adapter the face still renders;
   local lip-sync does not.
 
-What it does **not** do today is run on a customer's own device. There is
-**no installable Essence 2 build for a Mac, iPhone, iPad or Android device**,
-and the [Swift SDK](/sdk/swift) carries no Essence 2 engine — see
-[serving tiers](#serving-tiers) below.
+Wherever it runs, Essence 2 is **fail-closed**: a model file with a required
+member missing is refused rather than played with a substituted mouth. See
+[serving tiers](#serving-tiers) below for the cloud chain and
+[where each model runs](/concepts/where-models-run) for the full matrix.
 
 It is half the cloud price of [Essence 2 Max](/concepts/essence-2-max)
 and the only Essence 2 model with CPU, Apple, and browser runtimes —
@@ -225,17 +233,25 @@ circulation is what produced the error in the first place. If you need a
 throughput commitment for a specific identity and tier, ask us for a measured
 one rather than reading a number off this page.
 
-**On-device: not available yet.** The Essence 2 engine does run on Apple
-Silicon — that is how the **Apple serving tier** above works — but that
-hardware is *bitHuman's*, reached over the network like any other cloud tier.
-There is **no published way to run Essence 2 on your own Mac or iPhone today**:
+**On your own device.** The Apple serving tier above runs on *bitHuman's*
+Apple Silicon, reached over the network like any other cloud tier — it is not
+the same thing as running on your Mac. What does run on your hardware:
 
-- The [Swift SDK](/sdk/swift) does not carry it. Naming an Essence 2 type there
-  will not compile: measured against the shipped `bitHumanKit.xcframework`, the
-  binary contains zero occurrences of the string `essence` and its public
-  interface declares no Essence 2 type. (That package *does* now vend an
-  on-device [`expression-2`](/concepts/expression-2) engine, as of 2.5.0 — but
-  that is the other second-generation model, not this one.)
+- **Your own Mac or Linux machine, through the CLI** — as of `cli-v2.6.1`
+  (2026-09-07) the Essence 2 runtime ships inside the CLI tarball for macOS
+  Apple Silicon and Linux x86_64. `bithuman pull <CODE> --model essence-2`
+  hands you `<CODE>.imx`, `bithuman render` turns it and an audio file into an
+  MP4 offline (5 s of audio → 125 frames at 25 fps), and `bithuman run` serves
+  it from a local server. The first render downloads the shared audio encoder
+  (~377 MB, once, by content digest) into `~/.bithuman/engines/essence-2/`;
+  the first play checks the licence with the cloud. See
+  [Essence 2 on your own machine](/sdk/cli/overview#essence-2-on-your-own-machine).
+- **Android** — the [`ai.bithuman:essence2-android:0.4.0`](/sdk/android#essence-2--aibithumanessence2-android040)
+  AAR, with an in-SDK model store.
+- **iOS and macOS, in your own app** — the [Swift SDK](/sdk/swift#essence-2-on-device)'s
+  `Essence2` product (package 2.8.0): the engine's C interface, building for
+  iOS device, iOS simulator and macOS, with no in-app model download route
+  yet.
 - **Flutter is a reference app, not a published SDK.** An Essence 2 engine does
   exist for `ios-arm64` and `macos-arm64`, and the Flutter plugin's CocoaPods
   podspec can vendor it — but that engine is staged from a **private** internal
@@ -663,13 +679,14 @@ with runnable, verified examples:
    `model: "essence-2"` for mp4s (4 credits/min of output).
 6. **Download the artifact** —
    [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
-   or [`bithuman pull <code>`](/sdk/cli/commands#pull-your-own-agents-model-by-code)
-   → `<code>.lebundle.imx`. Inspect it with
+   or [`bithuman pull <code> --model essence-2`](/sdk/cli/commands#pull-your-own-agents-model-by-code)
+   → `<code>.imx` (older releases wrote `<code>.lebundle.imx`, a legacy name
+   kept for compatibility). Inspect it with
    [`bithuman info`](/sdk/cli/commands#bithuman-info--inspect-a-model) (full
-   member listing as of CLI 2.4.1). **Licensed weights, cloud-served today**:
-   the [Python SDK](/sdk/python#which-avatars-open) cannot
-   yet load current-renderer Essence 2 bundles locally — serve through the
-   cloud surfaces.
+   member listing as of CLI 2.4.1). **Licensed weights** — render it locally
+   with the [CLI](/sdk/cli/overview#essence-2-on-your-own-machine) (2.6.1,
+   macOS and Linux) or the [Python SDK](/sdk/python) (3.0.0), or serve it
+   through the cloud surfaces.
 
 ## Next steps
 

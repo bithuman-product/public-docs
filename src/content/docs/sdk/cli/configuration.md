@@ -83,6 +83,8 @@ on-device stack and tuning variables.
 | `~/.cache/bithuman/run` | Per-`run` scratch (session state, logs) |
 | `~/.cache/bithuman/examples` | Cached example assets |
 | `~/.cache/bithuman/brain-venv` | Auto-bootstrapped venv for the bundled conversation brain (only used when not pip-installed) |
+| `~/.bithuman/engines/essence-2` | The shared Essence 2 audio encoder (~377 MB), downloaded by content digest on the first Essence 2 `render` / `run` (CLI 2.6.1+) and reused after that; delete it and the next render fetches it again |
+| `~/.bithuman/engines` | Expression 2 engines installed by `bithuman engine install` (the tarball's own engine sits beside the binary) |
 | `~/.cache/huggingface` | Local-mode STT + LLM weights (whisper.cpp `.bin`, llama.cpp `.gguf`) |
 | `~/.cache/supertonic` | Local-mode TTS ONNX weights |
 
