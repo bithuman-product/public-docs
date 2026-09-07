@@ -17,30 +17,32 @@ Homebrew formula and the universal installer deliver the same Rust binary, on
 the same version on both platforms. The PyPI wheel is a macOS-only sibling and
 still trails at `2.3.25`.
 
-**`cli-v2.6.2` (2026-09-07) is the current release**, on the same two targets
-and built from one commit (`679b9a6`). The Essence 2 runtime has shipped
+**`cli-v2.6.3` (2026-09-07) is the current release**, on the same two targets
+and built from one commit (`b7a1005`). The Essence 2 runtime has shipped
 **inside the tarball on both platforms** since 2.6.1, so `bithuman render` and
 `bithuman run` handle a downloaded Essence 2 `<code>.imx` locally, the way they
-already handled Expression 2; 2.6.2 meters a self-hosted Essence 2 or
-Expression 2 session on both platforms (before it, only Expression 2 on Linux
-was; the download is free — [self-host
-guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session)) and makes
-`run --help` say where a model renders. Tarballs and digests, from the
+already handled Expression 2. A self-hosted session has been metered on both
+platforms since 2.6.2; 2.6.3 bills it on **wall-clock time while the session is
+live**, which is what the [pricing page](/guides/pricing) defines — 2.6.2
+counted frames delivered ÷ fps and under-counted a preview on a machine whose
+engine paints slowly (the download stays free — [self-host
+guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session)). The live
+preview also holds its nominal frame rate now. Tarballs and digests, from the
 release's own `.sha256` sidecars:
 
 | Target | Tarball | sha256 |
 |---|---|---|
-| Linux x86_64 | `bithuman-x86_64-unknown-linux-gnu.tar.gz` | `1248f34feea05c8f3adab0312376e3704643296ce8012718c7a75aba032db03f` |
-| macOS arm64 (Developer ID signed, notarized) | `bithuman-aarch64-apple-darwin.tar.gz` | `0dab98763ecf7b25414abfbfecfc9071edcbda859eb88616e6dc1942b6373025` |
+| Linux x86_64 | `bithuman-x86_64-unknown-linux-gnu.tar.gz` | `bf2c7b6414ed9d2fe8e00db929471ce82f405159c58c051733f3de6fdb94ecd6` |
+| macOS arm64 (Developer ID signed, notarized) | `bithuman-aarch64-apple-darwin.tar.gz` | `14ee0490a6bec87f26357bcdeb77160834ffdad6434200d77fdc3c806d043506` |
 
 What changed, release by release, is in the [changelog](/changelog).
 
-**`cli-v2.6.2` publishes exactly two targets**, and the two it does not publish
+**`cli-v2.6.3` publishes exactly two targets**, and the two it does not publish
 have never shipped at all. Measured against the release on 2026-09-07 — the
 404s are the control that makes the 200s mean something:
 
 ```bash
-B=https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.2
+B=https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.3
 for t in x86_64-unknown-linux-gnu aarch64-apple-darwin x86_64-apple-darwin aarch64-unknown-linux-gnu; do
   printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' "$B/bithuman-$t.tar.gz")" "$t"
 done
@@ -54,24 +56,24 @@ done
 rc=0
 ```
 
-| Your machine | Target the installer asks for | `cli-v2.6.2` |
+| Your machine | Target the installer asks for | `cli-v2.6.3` |
 |---|---|---|
 | Apple Silicon Mac | `aarch64-apple-darwin` | **published** |
 | Linux x86_64 | `x86_64-unknown-linux-gnu` | **published** |
 | **Intel Mac** | `x86_64-apple-darwin` | **never published, any release** |
-| **Linux ARM (aarch64)** | `aarch64-unknown-linux-gnu` | not in 2.6.2 — `cli-v2.3.27` was the last |
+| **Linux ARM (aarch64)** | `aarch64-unknown-linux-gnu` | not in 2.6.3 — `cli-v2.3.27` was the last |
 
 On the bottom two rows `install.sh` reads the release's asset list, finds no
 tarball for the target, names the two it does carry, and exits **1** before
 downloading anything.
 
-**"Never published" is measured, not assumed.** Across **all 79 releases** in
+**"Never published" is measured, not assumed.** Across **all 80 releases** in
 the tap on 2026-09-07, counting tarball assets per target:
 
 | Target | Releases carrying it | Newest |
 |---|---|---|
-| `aarch64-apple-darwin` | 36 | `cli-v2.6.2` |
-| `x86_64-unknown-linux-gnu` | 16 | `cli-v2.6.2` |
+| `aarch64-apple-darwin` | 37 | `cli-v2.6.3` |
+| `x86_64-unknown-linux-gnu` | 17 | `cli-v2.6.3` |
 | `aarch64-unknown-linux-gnu` | 10 | `cli-v2.3.27` |
 | `x86_64-apple-darwin` | **0** | **never** |
 
@@ -103,10 +105,10 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 >
 > ```text
 > install: querying latest release...
-> install: version: cli-v2.6.2
+> install: version: cli-v2.6.3
 > install: target:  x86_64-unknown-linux-gnu
 > install: install dir: /home/you/.local/bin
-> install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.2/bithuman-x86_64-unknown-linux-gnu.tar.gz
+> install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.3/bithuman-x86_64-unknown-linux-gnu.tar.gz
 > install: verifying sha256...
 > install: sha256 ok
 > install: extracting...
@@ -136,8 +138,8 @@ bithuman --version
 
 ```text
 libessence 2.3.8 ABI 7
-bithuman    2.6.2
-build       679b9a6a7a63 x86_64-unknown-linux-gnu/release 2026-09-07T08:24:57Z f02d05906c4e
+bithuman    2.6.3
+build       b7a10051121c x86_64-unknown-linux-gnu/release 2026-09-07T12:09:44Z 0f6724d0ad88
 engine      linux 1.0.0 adc2a18da787
 rc=0
 ```
@@ -148,7 +150,7 @@ That is the real output of the install transcribed above, on Linux x86_64.
 digest — are elided here):
 
 ```text
-{"abi":7,"build":{…},"cli":"2.6.2","engine":{…},"libessence":"2.3.8","schema_version":1}
+{"abi":7,"build":{…},"cli":"2.6.3","engine":{…},"libessence":"2.3.8","schema_version":1}
 rc=0
 ```
 
@@ -353,8 +355,8 @@ No install required. Authenticate with the `api-secret` header against `https://
 |---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
 | **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
-| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.2` | `bithuman` (manylinux) | — |
-| **Linux aarch64** | **Not in 2.6.2** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
+| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.3` | `bithuman` (manylinux) | — |
+| **Linux aarch64** | **Not in 2.6.3** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -368,7 +370,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.8.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | Swift SDK (`Essence2`) | engine release **`essence2-v1.2.0`**, declared by the package at **2.8.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
-| bitHuman CLI (`bithuman-cli`) | **2.6.2** (2026-09-07) — macOS arm64 **and** Linux x86_64, same version, no pin needed, Essence 2 runtime inside both tarballs, self-hosted sessions metered on both · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.6.3** (2026-09-07) — macOS arm64 **and** Linux x86_64, same version, no pin needed, Essence 2 runtime inside both tarballs, self-hosted sessions metered on both and billed on wall-clock · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.4.0** (2026-09-07; `0.2.0` and `0.3.0` are permanent and not to be used) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |

@@ -77,7 +77,7 @@ pip install bithuman-cli                                             # macOS arm
 
 > **Version check for `model` / `version` support:** `bithuman --version` must
 > report CLI **2.4.1 or newer**. The current Homebrew/installer release is
-> **2.6.2** (macOS arm64 and Linux x86_64), so a fresh install is already there
+> **2.6.3** (macOS arm64 and Linux x86_64), so a fresh install is already there
 > — but an install still on
 > **2.4.0** has no `model` parameter on `generate_agent`, and every creation
 > uses the platform default model. Until your install reports 2.4.1+, upgrade

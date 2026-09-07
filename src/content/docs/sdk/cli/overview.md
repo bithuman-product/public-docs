@@ -163,7 +163,8 @@ above was run from the published tarball alone, on Linux x86_64 and on an
 Apple Silicon Mac — see the
 [verified transcript](/sdk/cli/verified#essence-2--exit-0-on-261-on-linux-and-on-macos).
 
-**Self-hosted sessions are metered — on both platforms as of `cli-v2.6.2`.**
+**Self-hosted sessions are metered — on both platforms as of `cli-v2.6.2`,
+and billed on wall-clock as of `cli-v2.6.3`.**
 `bithuman run <code>.imx` and `bithuman render` on an Essence 2 or Expression
 2 avatar bill at the published self-hosted rate, **2 credits per minute**
 ([pricing](/guides/pricing)), by the pricing page's
@@ -171,7 +172,10 @@ Apple Silicon Mac — see the
 — wall-clock, idle animation included; an offline render, its output
 duration. `bithuman pull` is free. Before 2.6.2 only an Expression 2 session
 on Linux was metered; an Essence 2 session on either platform, and any
-session on macOS, was not. Metering never stops a render — without a sign-in,
+session on macOS, was not. 2.6.2 then counted frames delivered ÷ fps rather
+than wall-clock, so it under-counted a live preview on a machine whose engine
+paints slowly — measured, a 92 s session recorded as 8.0 s. `cli-v2.6.3`
+records the seconds the session was live. Metering never stops a render — without a sign-in,
 or with a rejected or depleted key, the session renders behind a loud
 `★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1` turns those cases
 into a refusal. Details and the verification on the published bytes:

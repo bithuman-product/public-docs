@@ -11,13 +11,13 @@ order: 9
 Self-hosting means the render happens on your machine. Not every platform is at
 the same place, and this page says which is which rather than averaging them
 into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-07 on
-`cli-v2.6.2`.
+`cli-v2.6.3`.
 
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
 | **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
-| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli/overview) 2.6.2 | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
-| **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI 2.6.2 via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07. Sessions are [metered](#the-cli-meters-a-self-hosted-session) as of 2.6.2 |
+| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli/overview) 2.6.3 | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
+| **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI 2.6.3 via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07. Sessions are [metered](#the-cli-meters-a-self-hosted-session) as of 2.6.2, on wall-clock as of 2.6.3 |
 | **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 3.0.0 | Works; same note as Linux |
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/swift) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
@@ -61,9 +61,14 @@ platform, and no session was metered on macOS. Downloading a model with
   ([the definition](/guides/pricing#serving--credits-per-live-minute)). Each
   session writes one usage row; the CLI logs `[selfhost-meter] beat seq=N
   served=…s product=<family> delivered` once a minute and once at the end.
-- **`cli-v2.6.2` counts frames delivered ÷ fps** as the served time, which
-  under-counts a `bithuman run` preview that paints below nominal fps;
-  corrected in `cli-v2.6.3`.
+- **`cli-v2.6.3` bills a live session on wall-clock**, which is what the
+  pricing page has always defined. `cli-v2.6.2` counted frames delivered ÷
+  fps instead, so it under-counted a `bithuman run` preview on a machine
+  whose engine paints below nominal fps. Measured on 2026-09-07 on an Apple
+  Silicon Mac, the published 2.6.2 macOS tarball held a 92 s Essence 2
+  session and claimed **8.0 s** of it — one usage row, **0 credits**. The
+  published 2.6.3 tarball, same machine, same clip, same key, claimed
+  **92.1 s**. Upgrade if you are self-hosting.
 - **Metering never stops a render.** With no sign-in, or a rejected or
   depleted key, the session still renders and prints a loud
   `★ UNMETERED RENDER` line on stderr saying why. Set
@@ -73,11 +78,25 @@ platform, and no session was metered on macOS. Downloading a model with
 - Sign in with `bithuman login` or set `BITHUMAN_API_SECRET` so the session
   is billed to your account.
 
-Verified on the published `cli-v2.6.2` tarballs on 2026-09-07 from a fresh
-home directory on a Linux x86_64 box and an Apple Silicon Mac: every session
-above landed as one row in the account's usage ledger, and the published
-2.6.1 macOS binary, run on the same clip with the same key, printed no meter
-line at all.
+Verified on the published `cli-v2.6.3` tarballs on 2026-09-07, downloaded
+anonymously and run from a fresh home directory on a Linux x86_64 box and on
+an Apple Silicon Mac. Each 90 s session landed as exactly one row in the
+account's usage ledger, and the seconds the row records are the seconds the
+session was live:
+
+| Platform | Session | Held | Recorded |
+|---|---|---|---|
+| Linux x86_64 | Essence 2 `run` | 92 s | 92.2 s |
+| Linux x86_64 | Expression 2 `run` | 92 s | 91.9 s |
+| macOS arm64 | Essence 2 `run` | 92 s | 92.1 s |
+| macOS arm64 | Expression 2 `run` | 91 s | 91.0 s |
+| either | Essence 2 `render`, 5 s clip | — | 5.0 s (0 credits) |
+| either | `pull` | — | no row, no meter line |
+
+The published **2.6.2** macOS binary on the same 92 s hold is the control: it
+recorded 8.0 s and 0 credits. Credits are charged per whole minute and the
+remainder carries to your next session, so a single 92 s session bills 2 and a
+5 s render bills 0.
 
 ---
 
@@ -230,7 +249,7 @@ is nothing to configure on yours.
 ### The Linux CLI, alongside the Python route
 
 The CLI installs on Linux x86_64 with the unpinned one-liner — run here on
-2026-09-07 it resolved `cli-v2.6.2`, verified the sha256 and exited **0**,
+2026-09-07 it resolved `cli-v2.6.3`, verified the sha256 and exited **0**,
 staging the Expression 2 render host beside the binary and, since 2.6.1, the
 Essence 2 runtime with it:
 
@@ -257,7 +276,7 @@ required member missing) is refused with **exit 69** and no output file; the
 CLI never substitutes a generated mouth. `bithuman info <file>` lists an
 artifact's members if you want to see what you were handed. Each command's
 real exit code is on [what the CLI actually does](/sdk/cli/verified); Linux
-aarch64 is **not** published for `cli-v2.6.2` — see
+aarch64 is **not** published for `cli-v2.6.3` — see
 [installing the CLI](/sdk/cli/install).
 
 ---
@@ -272,7 +291,7 @@ brew install bithuman-cli
 bithuman doctor
 ```
 
-macOS 14+ on Apple Silicon (arm64). This installs **CLI 2.6.2**, **signed with
+macOS 14+ on Apple Silicon (arm64). This installs **CLI 2.6.3**, **signed with
 a Developer ID certificate under the hardened runtime** and notarized by Apple,
 as every macOS release since 2.5.0 has been. That matters if you download the
 tarball directly rather than through Homebrew: every build up to and including

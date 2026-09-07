@@ -10,10 +10,50 @@ order: 1
 
 ## September 2026
 
+### CLI `2.6.3` — a live self-hosted session is billed on wall-clock (2026-09-07)
+
+`cli-v2.6.3` (published 2026-09-07 12:59Z on the Homebrew tap; the formula
+pins it) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
+`bf2c7b6414ed9d2fe8e00db929471ce82f405159c58c051733f3de6fdb94ecd6`) and
+`bithuman-aarch64-apple-darwin.tar.gz` (sha256
+`14ee0490a6bec87f26357bcdeb77160834ffdad6434200d77fdc3c806d043506`, Developer
+ID signed and notarized), both from one commit (`b7a1005`). Engine core
+unchanged.
+
+- **A live self-hosted session bills wall-clock, which is what the pricing
+  page defines.** `bithuman run <code>.imx` on an Essence 2 or Expression 2
+  avatar bills the seconds the session was live, idle animation included, at
+  2 credits per minute ([pricing](/guides/pricing)); an offline `bithuman
+  render` still bills the duration of the clip it writes; `bithuman pull` is
+  still free. 2.6.2 counted **frames delivered ÷ fps** instead, so a preview
+  on a machine whose engine paints below nominal fps under-claimed — measured
+  on an Apple Silicon Mac, the published 2.6.2 binary held a 92 s Essence 2
+  session and recorded **8.0 s of it, for 0 credits**. On the published 2.6.3
+  tarball, same machine and clip, the same session records **92.1 s**.
+  Verified on the published bytes from a fresh home directory on Linux
+  x86_64 and on an Apple Silicon Mac, both families, with the 2.6.2 macOS
+  binary as the control —
+  [the self-host guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session).
+- **The live preview holds its nominal frame rate.** On some Macs 2.6.2's
+  preview settled at about a third of nominal with no viewers and an idle
+  engine, because it trusted `sleep` to return on time and never made up a
+  late wake. The preview now paces on an absolute clock: measured on the Mac
+  that had it, Expression 2 settles at **20.0 fps against a 20 fps target**
+  where it previously ran at 5.8. Where the engine itself is the limit the
+  preview still runs below nominal — the pacer cannot invent frames — but it
+  no longer adds delay of its own.
+- **The Linux tarball's `PROVENANCE.json` says whether its tree was clean**
+  (`dirty:false`) and names the engine SDK revision, as the macOS half
+  already did, plus the source revision of the Expression 2 render host it
+  carries.
+- The release lane is tracked in the CLI repository, so the release and the
+  proof that drives it can be re-run by someone other than the person who
+  cut it.
+
 ### CLI `2.6.2` — self-hosted sessions on macOS are metered, and the help tells the truth (2026-09-07)
 
-`cli-v2.6.2` (published 2026-09-07 08:49Z on the Homebrew tap; the formula
-pins it) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
+`cli-v2.6.2` (published 2026-09-07 08:49Z on the Homebrew tap; superseded by
+[2.6.3](#cli-263--a-live-self-hosted-session-is-billed-on-wall-clock-2026-09-07)) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
 `1248f34feea05c8f3adab0312376e3704643296ce8012718c7a75aba032db03f`) and
 `bithuman-aarch64-apple-darwin.tar.gz` (sha256
 `0dab98763ecf7b25414abfbfecfc9071edcbda859eb88616e6dc1942b6373025`, Developer
@@ -29,9 +69,10 @@ unchanged.
   and the engine is rendering", idle animation included — and an offline
   `bithuman render` bills the duration of the clip it writes
   ([the definition](/guides/pricing#serving--credits-per-live-minute)); one
-  usage row per session; downloading a model is free. Known gap: cli-v2.6.2
-  counts frames delivered ÷ fps as the served time, which under-counts a
-  preview that paints below nominal fps; corrected in 2.6.3. Metering never
+  usage row per session; downloading a model is free. Known gap, fixed in
+  [2.6.3](#cli-263--a-live-self-hosted-session-is-billed-on-wall-clock-2026-09-07):
+  cli-v2.6.2 counts frames delivered ÷ fps as the served time, which
+  under-counts a preview that paints below nominal fps. Metering never
   stops a render: with no sign-in, or a rejected or depleted key, the session renders
   behind a loud `★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1`
   turns those three cases into a refusal. Proven on the published tarballs

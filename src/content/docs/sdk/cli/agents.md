@@ -80,12 +80,12 @@ for flags and copy-pasteable `EXAMPLES:`.
 ### `bithuman version --json`
 ```json
 {"abi":7,"build":{"built_at":"2026-09-07T08:24:57Z","commit":"679b9a6a7a63ccc9c4c60b23283ba6f57fc490de","commit_short":"679b9a6a7a63","target":"x86_64-unknown-linux-gnu","profile":"release",…},
- "cli":"2.6.2",
+ "cli":"2.6.3",
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.0","sha256":"adc2a18da787…","size":92449082},
  "libessence":"2.3.8","schema_version":1}
 ```
 `"wheel"` is added when installed via the pip shim. (Values shown are the real
-output of CLI **2.6.2** on Linux x86_64, the current release on both macOS arm64
+output of CLI **2.6.3** on Linux x86_64, the current release on both macOS arm64
 and Linux, reformatted onto four lines; `build` and `engine` are new in 2.6.x
 — `build` matches the `PROVENANCE.json` in the tarball, `engine` names the
 shipped Expression 2 engine. Your install prints its own versions — a 2.4.0
@@ -242,7 +242,7 @@ pipeline. Agent creation is **image-only** — `video` is not a creation input
 (the 10-second identity video is generated internally): CLI 2.4.1+ removed it
 from the tool schema entirely, and the API rejects any request carrying it
 with [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations). On CLI
-2.4.0 the `model` parameter does not exist yet — upgrade (**2.6.2** is the
+2.4.0 the `model` parameter does not exist yet — upgrade (**2.6.3** is the
 current release, on macOS arm64 and Linux x86_64 alike), or use `bithuman-mcp` 0.3.4+
 ([MCP server](/guides/mcp-server)).
 

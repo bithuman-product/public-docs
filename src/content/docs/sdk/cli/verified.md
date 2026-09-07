@@ -1,6 +1,6 @@
 ---
 title: "Verified transcript — Linux x86_64"
-description: "Every command on this page was executed on a real Linux x86_64 box against CLI 2.6.2 for the install and version blocks, 2.6.1 for the rest (and 2.5.1 where the output has not changed) and the output pasted back unedited, including the exit codes that are not zero."
+description: "Every command on this page was executed on a real Linux x86_64 box against CLI 2.6.3 for the install and version blocks, 2.6.1 for the rest (and 2.5.1 where the output has not changed) and the output pasted back unedited, including the exit codes that are not zero."
 section: sdk
 group: "Command line"
 order: 31.5
@@ -13,10 +13,11 @@ A session run on the host named below, first on 2026-09-02 against **CLI
 2.5.1** and re-run on 2026-09-07 against **CLI 2.6.1** — from a fresh home
 directory and an empty environment, so nothing left over from an earlier
 install could help. The [Install](#install) and `--version` blocks were run
-again later the same day against **CLI 2.6.2**, the current release; nothing
-else on this page changed between 2.6.1 and 2.6.2 except what the
-[2.6.2 changelog entry](/changelog#cli-262--self-hosted-sessions-on-macos-are-metered-and-the-help-tells-the-truth-2026-09-07)
-lists — a self-hosted session is now metered on macOS too (and an Essence 2
+again later the same day against **CLI 2.6.3**, the current release; nothing
+else on this page changed between 2.6.1 and 2.6.3 except what the
+[2.6.2](/changelog#cli-262--self-hosted-sessions-on-macos-are-metered-and-the-help-tells-the-truth-2026-09-07)
+and [2.6.3](/changelog#cli-263--a-live-self-hosted-session-is-billed-on-wall-clock-2026-09-07)
+changelog entries list — a self-hosted session is now metered on macOS too (and an Essence 2
 session on either platform), `run --help` no
 longer says "no local runtime yet", and the Linux tarball's `built_at` is the
 commit time rather than a date in the future. Every block is the command as you would type it and the
@@ -50,7 +51,7 @@ Everything below ran here. Timings are this box's; exit codes are not.
 | OS | Ubuntu 26.04 LTS, glibc 2.43 |
 | Arch | `x86_64` |
 | CPU | AMD Ryzen Threadripper PRO 5955WX (16 cores / 32 threads) |
-| CLI | 2.6.2 for Install and `--version`; 2.6.1 (essence engine 2.3.8, ABI 7) elsewhere — 2.5.1 where a block says so |
+| CLI | 2.6.3 for Install and `--version`; 2.6.1 (essence engine 2.3.8, ABI 7) elsewhere — 2.5.1 where a block says so |
 | `ffmpeg` | 8.0.1 on `PATH` |
 
 > **One section was measured elsewhere.** The
@@ -71,10 +72,10 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 
 ```text
 install: querying latest release...
-install: version: cli-v2.6.2
+install: version: cli-v2.6.3
 install: target:  x86_64-unknown-linux-gnu
 install: install dir: /home/you/.local/bin
-install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.2/bithuman-x86_64-unknown-linux-gnu.tar.gz
+install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.3/bithuman-x86_64-unknown-linux-gnu.tar.gz
 install: verifying sha256...
 install: sha256 ok
 install: extracting...
@@ -98,7 +99,7 @@ The `PATH` note appears because this was a fresh home directory with no
 `~/.local/bin` on the path; on a machine that already has it the installer ends
 with `Run 'bithuman --help' to get started.` instead.
 
-The installer resolves the newest `cli-v*` release itself — pin one with `BITHUMAN_VERSION=cli-v2.6.2`
+The installer resolves the newest `cli-v*` release itself — pin one with `BITHUMAN_VERSION=cli-v2.6.3`
 if you need a fixed version, and redirect the install with
 `BITHUMAN_INSTALL_DIR`.
 
@@ -107,7 +108,7 @@ sidecar and aborts on a mismatch. If a release has no sidecar it prints
 `no sha256 sidecar published; skipping integrity check` instead — worth reading,
 because the two lines look similar and mean opposite things. The digest it
 checked against is the one published beside the tarball:
-`1248f34feea05c8f3adab0312376e3704643296ce8012718c7a75aba032db03f`.
+`bf2c7b6414ed9d2fe8e00db929471ce82f405159c58c051733f3de6fdb94ecd6`.
 
 ### Negative control — the two targets that will not install
 
@@ -120,12 +121,12 @@ instead:
 
 ```text
 install: querying latest release...
-install: version: cli-v2.6.2
+install: version: cli-v2.6.3
 install: target:  aarch64-unknown-linux-gnu
 install: install dir: /home/you/.local/bin
 install: error: the bithuman CLI is NOT published for aarch64-unknown-linux-gnu.
 install: error:
-install: error:   release : cli-v2.6.2
+install: error:   release : cli-v2.6.3
 install: error:   wanted  : bithuman-aarch64-unknown-linux-gnu.tar.gz
 install: error:   release carries:
 install: error:     bithuman-aarch64-apple-darwin.tar.gz
@@ -143,18 +144,18 @@ install: error:       `bithuman run` cannot render locally on it:
 install: error:           BITHUMAN_VERSION=cli-v2.3.27 sh install.sh
 install: error:     * tell us you need it: hello@bithuman.ai
 install: error:
-install: error:   Full asset list: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.6.2
+install: error:   Full asset list: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.6.3
 rc=1
 ```
 
 ```text
 install: querying latest release...
-install: version: cli-v2.6.2
+install: version: cli-v2.6.3
 install: target:  x86_64-apple-darwin
 install: install dir: /home/you/.local/bin
 install: error: the bithuman CLI is NOT published for x86_64-apple-darwin.
 install: error:
-install: error:   release : cli-v2.6.2
+install: error:   release : cli-v2.6.3
 install: error:   wanted  : bithuman-x86_64-apple-darwin.tar.gz
 install: error:   release carries:
 install: error:     bithuman-aarch64-apple-darwin.tar.gz
@@ -165,7 +166,7 @@ install: error:   On Apple Silicon this installs normally. Options:
 install: error:     * run on an Apple Silicon Mac or an x86_64 Linux host;
 install: error:     * tell us you need it: hello@bithuman.ai
 install: error:
-install: error:   Full asset list: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.6.2
+install: error:   Full asset list: https://github.com/bithuman-product/homebrew-bithuman/releases/tag/cli-v2.6.3
 rc=1
 ```
 
@@ -184,8 +185,8 @@ bithuman --version
 
 ```text
 libessence 2.3.8 ABI 7
-bithuman    2.6.2
-build       679b9a6a7a63 x86_64-unknown-linux-gnu/release 2026-09-07T08:24:57Z f02d05906c4e
+bithuman    2.6.3
+build       b7a10051121c x86_64-unknown-linux-gnu/release 2026-09-07T12:09:44Z 0f6724d0ad88
 engine      linux 1.0.0 adc2a18da787
 rc=0
 ```
@@ -561,14 +562,14 @@ Marked UNVERIFIED because they cannot be executed on a headless Linux box:
 
 - **macOS, beyond the Essence 2 flow.** The Essence 2 `pull` / `render` /
   `run` sequence above was run on an Apple Silicon Mac during the 2.6.1
-  release verification and again on the published 2.6.2 tarball; every
-  other block on this page is Linux only. The Apple Silicon tarball for
-  2.6.2 is published (HTTP 200, sha256
-  `0dab98763ecf7b25414abfbfecfc9071edcbda859eb88616e6dc1942b6373025`).
+  release verification and again on the published 2.6.2 and 2.6.3 tarballs;
+  every other block on this page is Linux only. The Apple Silicon tarball
+  for 2.6.3 is published (HTTP 200, sha256
+  `14ee0490a6bec87f26357bcdeb77160834ffdad6434200d77fdc3c806d043506`).
 - **A live conversation.** `bithuman run` on the Essence 2 file answered
   HTTP 200 from its local server; a browser session with a microphone and a
   brain was not driven from here.
-- **Code signing / notarization.** The 2.6.2 macOS tarball is Developer ID
+- **Code signing / notarization.** The 2.6.3 macOS tarball is Developer ID
   signed and notarized per the release; a macOS property, not checkable from
   Linux.
 - **Windows.** No binary exists to test.

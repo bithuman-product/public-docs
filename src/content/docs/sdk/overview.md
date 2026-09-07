@@ -105,7 +105,7 @@ We keep this honest so you can plan around it.
 | **Swift / Apple** | SwiftPM, pin `from: "2.8.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0) | On-device | **Preview** |
 | **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.4.0` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
-| **CLI** | `bithuman-cli` (2.6.2 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64, essence-2 and expression-2 runtimes inside; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
+| **CLI** | `bithuman-cli` (2.6.3 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64, essence-2 and expression-2 runtimes inside; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 
