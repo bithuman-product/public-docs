@@ -55,7 +55,7 @@ with bithuman.open("avatar.imx") as avatar:            # essence-1, essence-2 or
         # cv2.imshow("avatar", image[:, :, ::-1]); cv2.waitKey(1)   # to watch it (OpenCV wants BGR)
 ```
 
-Interrupting the avatar is "stop consuming": `break` out of the loop (or call `.close()` on the iterator you kept) and nothing further is rendered. Every refusal is a `bithuman.AvatarError` — `InvalidAvatar`, `NotSupported`, `NotAuthorised` or `Failed` — and the message says what to do.
+Interrupting the avatar is "stop consuming": `break` out of the loop (or call `.close()` on the iterator you kept) and nothing further is rendered. Every refusal is a `bithuman.AvatarError` — `InvalidAvatar`, `NotSupported`, `NotAuthorised` or `Failed`. Set the key first: with `BITHUMAN_API_SECRET` unset, the first `render` on this showcase avatar refused before any frame with `Failed: the render stopped` ([measured on the published wheel](/sdk/python#measured-on-the-published-wheel)).
 
 ## Next steps
 

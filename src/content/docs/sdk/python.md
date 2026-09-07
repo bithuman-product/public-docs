@@ -37,11 +37,12 @@ That is the whole thing: **open an avatar, then render audio through it.**
 pip install bithuman
 ```
 
-**Python 3.10–3.14.** Platforms: Apple Silicon macOS, Linux x86_64 and Linux
-aarch64 (`manylinux_2_28`, glibc) — every platform on every supported
-interpreter, and both operating systems publish together. Windows and Intel
-Macs are not built; pin `bithuman>=3` so the resolver has to say no out loud
-rather than hand you an older release.
+**Python 3.10–3.14.** Platforms: Apple Silicon macOS (macOS 14 or newer),
+Linux x86_64 and Linux aarch64 (`manylinux_2_28`, glibc) — **15 wheels**,
+every platform on every supported interpreter, all uploaded together on
+2026-09-07 (read from PyPI that day, anonymously). Windows and Intel Macs are
+not built; pin `bithuman>=3` so the resolver has to say no out loud rather
+than hand you an older release.
 
 Two optional extras, installed once on the machine:
 
@@ -174,15 +175,55 @@ gone.
   the avatar's. If an `.imx` you were handed is refused this way, the
   artifact needs re-publishing on our side — send the agent code to
   [hello@bithuman.ai](mailto:hello@bithuman.ai).
-- **Rendering is metered.** Without `BITHUMAN_API_SECRET`, `render` refuses
-  with `NotAuthorised` before it hands you a frame. With a wrong or revoked
-  secret it refuses the same way. To tell a good key from a bad one without a
-  render — this endpoint always answers HTTP `200`, so read the body:
+- **Rendering is metered, and a missing key refuses before the first
+  frame.** Which class you get depends on the avatar: the package documents
+  `NotAuthorised` for a missing, invalid or exhausted key, and on the
+  published 3.0.0 wheel a showcase essence-1 avatar opened fine and then
+  refused the first `render` with **`Failed: the render stopped`** — no frame
+  was delivered, but the message did not name the key
+  ([the run](#measured-on-the-published-wheel)). Catch `AvatarError` around
+  the first render and check the key before you read the class. To tell a
+  good key from a bad one without a render — this endpoint always answers
+  HTTP `200`, so read the body:
 
   ```bash
   curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
   # {"valid":true}
   ```
+
+## Measured on the published wheel
+
+Run on 2026-09-07, minutes after the 3.0.0 wheels reached PyPI: a clean
+virtualenv on Linux x86_64 / Python 3.14.4, `pip install bithuman==3.0.0`
+(it resolved `bithuman-3.0.0-cp314-cp314-manylinux_2_28_x86_64.whl`), no
+`BITHUMAN_API_SECRET` in the environment, and the public showcase avatar
+`modern-court-jester.imx` (82,583,342 B, fetched anonymously). Output pasted
+as printed, with the working directory elided:
+
+```text
+version: 3.0.0
+__all__: ['open', 'Avatar', 'AvatarError', 'InvalidAvatar', 'NotSupported', 'NotAuthorised', 'Failed']
+has __version__: False
+--- from bithuman import AsyncBithuman
+_Retired: `bithuman.AsyncBithuman` was removed in 3.0.0: open an avatar with `bithuman.open(avatar)` and render audio through it with `avatar.render(audio)`. To keep the old surface, pin `bithuman<3`.
+--- import bithuman.tessera_offline
+DeprecationWarning: bithuman.tessera_offline is deprecated since 3.0.0 and will be removed in 4.0.0: import bithuman.offline instead (OfflineTesseraRenderer is now OfflineRenderer, TesseraOfflineError is now OfflineRenderError; …)
+--- bithuman.open('does-not-exist.imx')
+InvalidAvatar: no avatar at does-not-exist.imx
+--- bithuman.open('avatar.imx') then render with no BITHUMAN_API_SECRET
+opened: Avatar
+Failed: the render stopped
+```
+
+Exit code `0` (every refusal was caught). Three things that run settles:
+the surface really is the seven exported names plus `Avatar.render`; a 2.x
+name does not silently vanish — it refuses with the two lines to write
+instead; and with no key, **no frame is delivered**. The warning's last clause,
+elided above, names a `stats` key that is engine telemetry. The wheel's
+`METADATA` declares `Requires-Python: <3.15,>=3.10` and the extras `test`,
+`offline`, `expression-2` and the deprecated 2.x alias `bithuman[tessera]`, and
+its dependency module pins the shared audio encoder to the release coordinate
+and digest given below.
 
 ## Which avatars open
 
@@ -295,7 +336,7 @@ for image in avatar.render(pcm):
 
 | if you see | do this |
 |---|---|
-| `cannot import name 'AsyncBithuman'` (or `Bithuman`, `AudioChunk`, `VideoFrame`, `VideoControl`) | `bithuman.open(...)` and `avatar.render(audio)` replace all of them |
+| `from bithuman import AsyncBithuman` refuses: *"was removed in 3.0.0: open an avatar with `bithuman.open(avatar)` …"* (same for `Bithuman`, `AudioChunk`, `VideoFrame`, `VideoControl`) | `bithuman.open(...)` and `avatar.render(audio)` replace all of them |
 | `cannot import name 'Fixture'` (or `Runtime`, `EP_AUTO`, `EP_CPU`, `EP_COREML`, `ComposedFrame`) | same — they were the layer under `render`, and there is no layer to reach for now |
 | `no module named 'bithuman.api'` (or `.models`, `.exceptions`, `.config`, `.bhci`) | gone from the surface; the four refusals replace the error classes |
 | `avatar.interrupt()` | stop consuming and `close()` the iterator |
@@ -369,12 +410,14 @@ See [local mode](/sdk/cli/local-mode).
 Not installed in the active environment — `pip install bithuman --upgrade` in
 the same venv you run from.
 
-### `NotAuthorised` before the first frame
+### The first `render` refuses — `NotAuthorised`, or `Failed: the render stopped`
 
 Confirm `BITHUMAN_API_SECRET` is set in the running shell, then check the key
 against `/v1/validate` as shown above — it always returns HTTP `200`, so read
 the body: `{"valid": true}` means the key is good, `{"valid": false}` means it
-is missing or wrong.
+is missing or wrong. On the published 3.0.0 wheel a missing key surfaced as
+`Failed: the render stopped` on an essence-1 avatar, a message that does not
+name the key — check the key first.
 
 ### `InvalidAvatar` on an essence-2 file you were given
 
