@@ -82,6 +82,14 @@ Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for 
 
 ## Essence 2 self-hosted — CPU offline rendering (SDK 2.9.0+)
 
+> **3.0.0 note.** This section was written and run against the 2.x wheels.
+> On `bithuman` **3.0.0** the module is `bithuman.offline` and the extra is
+> `bithuman[offline]` — the spellings below still work with a
+> `DeprecationWarning` until 4.0.0 — and the shared audio encoder is
+> [fetched and digest-checked for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you)
+> instead of asked for. The simplest program is now two lines:
+> [Python SDK](/sdk/python).
+
 As of **`bithuman` 2.9.0** on Linux x86_64/aarch64 and **2.10.0** on macOS
 arm64 (Python 3.10–3.14), the [`essence-2`](/concepts/essence-2) model
 **self-hosts on CPU** — no GPU required.
@@ -170,7 +178,7 @@ Essence 2 on CPU; then `export BITHUMAN_W2V_ONNX=/path/to/the/file.onnx`.
 > mouth interior.** An older one still renders — the earlier, softer mouth, at
 > the same frame count and resolution, with no warning and no error. What to do
 > about it is on the Python SDK page: [what a successful render does not tell
-> you](/sdk/python#4-render).
+> you](/sdk/python#rendering-a-whole-clip-to-a-file).
 
 **Honest performance expectations (measured, 600-frame runs):** on a 16-core
 x86 desktop the route sustains **~22–25 FPS end-to-end** with the default
@@ -196,7 +204,7 @@ matrix today:
 - **`essence-2` live streaming** (LiveKit-style sessions from your own
   server) is still served **through the cloud** — the streaming loader does
   not accept current cloud-form bundles yet (see the
-  [Python SDK loader notes](/sdk/python#which-model-artifacts-can-the-sdk-load)).
+  [Python SDK loader notes](/sdk/python#which-avatars-open)).
 - **Apple Silicon on-device** playback via the [Swift SDK](/sdk/swift) is
   engine-first on both second-generation models: the `Expression2` product
   (2.5.0+; a model-path API from 2.6.0) and, since 2.7.0, the `Essence2`

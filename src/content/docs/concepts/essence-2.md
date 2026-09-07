@@ -667,7 +667,7 @@ with runnable, verified examples:
    → `<code>.lebundle.imx`. Inspect it with
    [`bithuman info`](/sdk/cli/commands#bithuman-info--inspect-a-model) (full
    member listing as of CLI 2.4.1). **Licensed weights, cloud-served today**:
-   the [Python SDK](/sdk/python#which-model-artifacts-can-the-sdk-load) cannot
+   the [Python SDK](/sdk/python#which-avatars-open) cannot
    yet load current-renderer Essence 2 bundles locally — serve through the
    cloud surfaces.
 

@@ -74,7 +74,7 @@ The on-device SDK always renders a local `.imx`, so `create()` needs `model_path
 > `sudo mkdir -p /etc/pki/tls/certs && sudo ln -s /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt`.
 > Note `CURL_CA_BUNDLE` / `SSL_CERT_FILE` override auto-discovery when set — a
 > stale value breaks auth even on 2.3.4. Details in
-> [Python SDK troubleshooting](/sdk/python#problem-with-the-ssl-ca-cert-on-linux-debianubuntu).
+> [Python SDK troubleshooting](/sdk/python#troubleshooting).
 
 ## Audio format
 

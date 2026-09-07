@@ -175,7 +175,7 @@ See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`,
 
 ### Python SDK (library) — GA
 
-`pip install bithuman` is the on-device avatar runtime **library** — `from bithuman import AsyncBithuman`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.10–3.14. **2.10.0** publishes all three platforms on all five interpreters.
+`pip install bithuman` is the on-device avatar runtime **library** — `import bithuman`, then `bithuman.open(...)` and `avatar.render(...)`. macOS arm64 + Linux x86_64 / aarch64 (manylinux_2_28, glibc), Python 3.10–3.14. **3.0.0** is a clean break from 2.x — eight names, four refusals, RGB frames, and essence-2 **and** expression-2 through the same two calls; `pip install "bithuman<3"` keeps you on 2.10.0, which stays on PyPI.
 
 ```bash
 pip install bithuman
@@ -342,7 +342,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **3.0.0** (2.10.0 stays on PyPI; pin `bithuman<3` to stay) | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.8.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | Swift SDK (`Essence2`) | engine release **`essence2-v1.2.0`**, declared by the package at **2.8.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |

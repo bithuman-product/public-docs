@@ -75,13 +75,13 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 > [Android SDK](/sdk/android#essence-2--aibithumanessence2-android040)'s
 > `ai.bithuman:essence2-android:0.4.0` (with an in-SDK model store). Live
 > sessions still run through the [REST API](/api/overview) or
-> [LiveKit](/sdk/livekit). As of Python SDK **2.9.0** it does
-> **render offline on your own CPU servers** — metered, no GPU, via `bithuman.tessera_offline` and the
-> `bithuman[tessera]` extra
-> ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
-> Live streaming of an `essence-2` artifact from your own server still runs
-> through the cloud.
-> [`expression-2`](/concepts/expression-2) renders locally via the
+> [LiveKit](/sdk/livekit). As of Python SDK **3.0.0** both `essence-2` and
+> `expression-2` **render locally on your own CPU** through one call,
+> `bithuman.open` — metered, no GPU — on macOS and Linux; the essence-2
+> clip-to-file route is `bithuman.offline` with the `bithuman[offline]` extra
+> ([Python SDK](/sdk/python)). Live streaming of an `essence-2` artifact from
+> your own server still runs through the cloud.
+> [`expression-2`](/concepts/expression-2) also renders locally via the
 > [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon,
 > Linux x86_64), and its engine is on the Apple
 > on-device rail as the `Expression2` SwiftPM product from **2.5.0**
@@ -100,7 +100,7 @@ We keep this honest so you can plan around it.
 
 | SDK | Package | Topology | Status |
 |---|---|---|---|
-| **Python** | `pip install bithuman` (2.10.0) | On-device | **GA** |
+| **Python** | `pip install bithuman` (3.0.0 — `bithuman.open` / `avatar.render`; `bithuman<3` to stay on 2.10.0) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM, pin `from: "2.8.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0) | On-device | **Preview** |
 | **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.4.0` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |

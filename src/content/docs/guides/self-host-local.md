@@ -14,10 +14,10 @@ into one claim. Verified 2026-09-02.
 
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
-| **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 2.10.0 | Works, with [one prerequisite you must ask us for](#the-audio-encoder-is-not-in-the-wheel) |
+| **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
 | **Linux x86_64** | [Expression 2](/concepts/expression-2) — live and offline render | [CLI](/sdk/cli/overview) 2.5.1 | Engine ships in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified) |
 | **macOS Apple Silicon** | Expression 2 — live render, out of the box | CLI 2.5.0 via Homebrew | Works |
-| **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 2.10.0 | Works, same prerequisite as Linux |
+| **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 3.0.0 | Works; same note as Linux |
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/swift) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
@@ -38,7 +38,7 @@ Two things to settle before you pick a platform:
   Expression 2 Linux render host is **fail-open** as of the 2026-09-02 engine
   rebuild: it renders, behind a `★ UNMETERED RENDER` banner on stderr, and the
   usage may never reach the ledger. Both states, verbatim, with the exit codes:
-  [Python SDK → Metering](/sdk/python#5-metering--what-you-see-in-each-credential-state).
+  [Python SDK → Metering](/sdk/python#the-four-refusals).
 - **Essence 2 live streaming is not self-hostable.** Only whole-clip offline
   rendering is. Live sessions run through the cloud — see
   [LiveKit](/guides/deploy-livekit).
@@ -46,6 +46,14 @@ Two things to settle before you pick a platform:
 ---
 
 ## Linux
+
+> **3.0.0 note.** The transcript below was taken on `bithuman` **2.10.0** and
+> is kept as it ran. On **3.0.0** the same route is spelled `bithuman.offline`
+> with the `bithuman[offline]` extra — the 2.x spellings below still work with
+> a `DeprecationWarning` until 4.0.0 — and the audio encoder step is no
+> longer yours: it is [fetched and digest-checked for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you).
+> The two-call surface (`bithuman.open` / `avatar.render`) is on the
+> [Python SDK page](/sdk/python).
 
 The Python SDK is the verified local-render path on Linux. Everything below was
 run end to end on Linux x86_64 with Python 3.14 against the wheel PyPI serves.

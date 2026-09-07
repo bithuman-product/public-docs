@@ -525,6 +525,13 @@ Exit code **`1`** (traceback trimmed to its last line). Set
 `BITHUMAN_API_SECRET`, or pass `api_secret=`, and it proceeds. See the
 [Python SDK](/sdk/python) page.
 
+> **3.0.0 note.** The two transcripts above were taken on **2.10.0** and are
+> kept as they ran. `pip install bithuman` now resolves **3.0.0**, whose
+> surface is `bithuman.open(...)` / `avatar.render(...)` — `AsyncBithuman`
+> raises a refusal naming those two — and whose key comes from
+> `BITHUMAN_API_SECRET` only. `pip install "bithuman<3"` reproduces the
+> transcripts above exactly.
+
 ## Legacy names you will still see
 
 There are two product names — **expression-2** and **essence-2** — plus
