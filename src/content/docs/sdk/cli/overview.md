@@ -166,10 +166,12 @@ Apple Silicon Mac — see the
 **Self-hosted sessions are metered — on both platforms as of `cli-v2.6.2`.**
 `bithuman run <code>.imx` and `bithuman render` on an Essence 2 or Expression
 2 avatar bill at the published self-hosted rate, **2 credits per minute**
-([pricing](/guides/pricing)), charged per whole minute of frames actually
-delivered, not wall-clock (a 5 s render costs 0; a live session that has
-delivered 90 s of frames costs 2). `bithuman pull` is free. Up to and including 2.6.1 a macOS session was not metered at
-all; Linux already was. Metering never stops a render — without a sign-in,
+([pricing](/guides/pricing)), by the pricing page's
+[definition of a credit minute](/guides/pricing#serving--credits-per-live-minute)
+— wall-clock, idle animation included; an offline render, its output
+duration. `bithuman pull` is free. Before 2.6.2 only an Expression 2 session
+on Linux was metered; an Essence 2 session on either platform, and any
+session on macOS, was not. Metering never stops a render — without a sign-in,
 or with a rejected or depleted key, the session renders behind a loud
 `★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1` turns those cases
 into a refusal. Details and the verification on the published bytes:

@@ -50,15 +50,20 @@ Two things to settle before you pick a platform:
 A self-hosted Essence 2 or Expression 2 session in the CLI — `bithuman run
 <code>.imx` and `bithuman render` — is billed at the published self-hosted
 rate, **2 credits per minute** ([pricing](/guides/pricing)), on **macOS and
-Linux alike** as of `cli-v2.6.2`. Up to and including 2.6.1 a macOS session
-was not metered at all; Linux already was. Downloading a model with
+Linux alike** as of `cli-v2.6.2`. Before 2.6.2 only an Expression 2 session
+on Linux was metered: an Essence 2 session was not metered on either
+platform, and no session was metered on macOS. Downloading a model with
 `bithuman pull` is free.
 
-- Credits are charged per **whole minute of frames actually delivered** — not
-  wall-clock: a 5 s `render` costs 0; a live `run` that has delivered 90 s of
-  frames costs 2. Each session writes one
-  usage row; the CLI logs `[selfhost-meter] beat seq=N served=…s
-  product=<family> delivered` once a minute and once at the end.
+- **A credit minute is what the pricing page says it is** — "wall-clock time
+  a session is live and the engine is rendering", idle animation included —
+  and an offline `bithuman render` bills the duration of the clip it writes
+  ([the definition](/guides/pricing#serving--credits-per-live-minute)). Each
+  session writes one usage row; the CLI logs `[selfhost-meter] beat seq=N
+  served=…s product=<family> delivered` once a minute and once at the end.
+- **`cli-v2.6.2` counts frames delivered ÷ fps** as the served time, which
+  under-counts a `bithuman run` preview that paints below nominal fps;
+  corrected in `cli-v2.6.3`.
 - **Metering never stops a render.** With no sign-in, or a rejected or
   depleted key, the session still renders and prints a loud
   `★ UNMETERED RENDER` line on stderr saying why. Set
@@ -319,8 +324,9 @@ the CLI.
 > `~/.bithuman/engines/essence-2/`; the first play checks the licence with the
 > cloud, so sign in first. An incomplete model file is refused with exit 69
 > and no output. As of 2.6.2 the session is
-> [metered](#the-cli-meters-a-self-hosted-session) on macOS, as it always
-> was on Linux: 2 credits per whole minute of frames, and the download is free.
+> [metered](#the-cli-meters-a-self-hosted-session) on macOS as on Linux —
+> before 2.6.2 no Essence 2 session was metered on either platform — at the
+> self-hosted rate by wall-clock, and the download is free.
 
 ### Essence 2 offline rendering on macOS, with the Python SDK
 

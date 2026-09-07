@@ -17,6 +17,14 @@ name: Internal links
 #    aliases that mean the FIRST-generation rate — a 2x/4x over-estimate for
 #    anyone running Essence 2. scripts/check-billing-consistency.mjs re-derives
 #    every documented estimate from the pricing table and fails on disagreement.
+#    ★2026-09-07: it also grades the billing RULE, not only the numbers.
+#    guides/pricing.md defines a credit minute (wall-clock, idle animation
+#    included; an offline `bithuman render` bills its output duration) and no
+#    other page may state a different one — three pages and llms.txt served
+#    "per whole minute of frames delivered, not wall-clock" beside it for two
+#    hours, because every checker here graded numbers. Pattern firing is proven
+#    on fixtures in the same run, with negative controls so a page can still
+#    state what a CLI build COUNTS as a fact about that build.
 #
 # 3. Model-enum examples — the `model` enums in src/openapi/bithuman.yaml are
 #    hand-maintained HERE, in a different repo from the API that enforces them,

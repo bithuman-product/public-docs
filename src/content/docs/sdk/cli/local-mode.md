@@ -177,7 +177,7 @@ warm-up after that is under a second.
   `POST /v1/agent/generate`, or pull one from the showcase
   (`bithuman pull <slug>` → `~/.cache/bithuman/showcase/`).
 - **Avatar metering** — `bithuman run` still pings `api.bithuman.ai` for
-  credit accounting (2 credits per minute of frames, both platforms —
+  credit accounting (the self-hosted rate, by wall-clock, on both platforms —
   [details](/guides/self-host-local#the-cli-meters-a-self-hosted-session));
   deployments still need `BITHUMAN_API_SECRET`.
 - **Voice cloning** — Supertonic ships voice presets. Custom voice

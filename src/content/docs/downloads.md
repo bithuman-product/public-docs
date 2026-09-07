@@ -21,8 +21,9 @@ still trails at `2.3.25`.
 and built from one commit (`679b9a6`). The Essence 2 runtime has shipped
 **inside the tarball on both platforms** since 2.6.1, so `bithuman render` and
 `bithuman run` handle a downloaded Essence 2 `<code>.imx` locally, the way they
-already handled Expression 2; 2.6.2 meters a self-hosted session on macOS the
-way Linux already did (2 credits per minute; the download is free — [self-host
+already handled Expression 2; 2.6.2 meters a self-hosted Essence 2 or
+Expression 2 session on both platforms (before it, only Expression 2 on Linux
+was; the download is free — [self-host
 guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session)) and makes
 `run --help` say where a model renders. Tarballs and digests, from the
 release's own `.sha256` sidecars:

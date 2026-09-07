@@ -16,7 +16,8 @@ install could help. The [Install](#install) and `--version` blocks were run
 again later the same day against **CLI 2.6.2**, the current release; nothing
 else on this page changed between 2.6.1 and 2.6.2 except what the
 [2.6.2 changelog entry](/changelog#cli-262--self-hosted-sessions-on-macos-are-metered-and-the-help-tells-the-truth-2026-09-07)
-lists — a self-hosted session on macOS is now metered, `run --help` no
+lists — a self-hosted session is now metered on macOS too (and an Essence 2
+session on either platform), `run --help` no
 longer says "no local runtime yet", and the Linux tarball's `built_at` is the
 commit time rather than a date in the future. Every block is the command as you would type it and the
 bytes it actually printed — including the exit codes that are **not** zero,

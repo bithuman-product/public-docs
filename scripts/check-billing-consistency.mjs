@@ -32,6 +32,13 @@
 //      value. They are the documented 2x/4x over-estimate trap, so if they ever
 //      silently start meaning Essence 2 the docs must not keep saying they
 //      don't.
+//   5. The billing RULE itself: guides/pricing.md defines a credit minute as
+//      wall-clock time a session is live (idle animation included) and an
+//      offline `bithuman render` as billing its output duration; no other page
+//      may state a different rule ("per whole minute of frames delivered, not
+//      wall-clock" — served for two hours on 2026-09-07). Pattern firing is
+//      proven on fixtures in the same run, with negative controls, so a page
+//      can still state what a given CLI build COUNTS as a fact.
 //
 // Pure Node, no deps. Exit 1 on any disagreement.
 //
@@ -227,7 +234,140 @@ if (examples === 0) {
   );
 }
 
-// --- 3. Report -------------------------------------------------------------
+// --- 3. The billing RULE — one definition, the pricing page's ---------------
+//
+// WHY. On 2026-09-07 the cli-v2.6.2 docs pass wrote the CLI's IMPLEMENTATION
+// as the billing rule on three pages — "charged per whole minute of frames
+// actually delivered, not wall-clock" — while guides/pricing.md, the declared
+// authority, says a credit minute is "wall-clock time a session is live and
+// the engine is rendering … That includes idle/silent animation". Both were
+// served side by side for about two hours. Owner ruling the same day: the
+// pricing page is the authority, and the docs never ratify an implementation
+// that disagrees with it. Sections 1–2 above grade the NUMBERS; nothing graded
+// the RULE those numbers apply to, so the contradiction landed green.
+//
+// WHAT IT GRADES
+//   3a. guides/pricing.md's Serving section CARRIES the definition — asserted
+//       present, so if the authority is reworded this cannot pass vacuously
+//       while every other page still quotes the old words.
+//   3b. No customer-facing file states a contradicting rule. The patterns are
+//       the shapes the defect took, bounded to a RULE: a page may still
+//       DESCRIBE what a CLI build counts ("cli-v2.6.2 counts frames delivered
+//       ÷ fps …") — that is a fact about a binary, and the negative controls
+//       pin that boundary so the fact can never be graded off the site.
+//   3c. Firing control, synthetic, in the same run: every pattern is fired
+//       against its own fixture, and every negative control against every
+//       pattern. A pattern that cannot match its fixture was never added; one
+//       that matches an allowed sentence would blind the site to a true fact.
+//       Either is fatal here, the way it is in check-internal-vocabulary.mjs.
+
+const RULE_CORPUS = [
+  ...walk(CONTENT, [".md", ".mdx"]),
+  ...walk(join(ROOT, "src/pages"), [".ts", ".astro"]),
+  ...walk(join(ROOT, "src/openapi"), [".yaml", ".yml"]),
+];
+
+// The authority's own words. The failure message quotes them so the fix is
+// to point at this sentence, never to write a second definition.
+const DEFINITION = /wall-clock time a session is live and the engine is rendering/;
+const DEFINITION_IDLE = /includes idle\/silent animation/;
+// Offline `bithuman render` — the ruling's second clause: it bills the output
+// duration. Asserted on the pricing page so the CLI pages have one place to
+// link instead of each carrying their own arithmetic.
+const OFFLINE_RENDER = /`bithuman render`[^\n]{0,160}\bduration\b/;
+
+const STALE_RULES = [
+  { name: "not wall-clock",
+    re: /\bnot\s+wall-?clock\b/gi,
+    fixture: "charged per whole minute of frames actually delivered, not wall-clock",
+    say: "the pricing page's credit minute IS wall-clock — quote it or link to it" },
+  { name: "per minute of frames",
+    re: /\bper\s+(?:whole\s+)?minutes?\s+of\s+frames\b/gi,
+    fixture: "metered at 2 credits per minute of frames on both platforms",
+    say: "a session bills by wall-clock, an offline render by its output duration — link /guides/pricing" },
+  { name: "billed on frames delivered",
+    re: /\b(?:charged|billed|bills?|metered|credits?)\b[^.\n]{0,80}?\bframes\s+(?:actually\s+)?delivered\b/gi,
+    fixture: "Credits are charged per **whole minute of frames actually delivered**",
+    say: "that is what one CLI build COUNTS, not the rule — describe the build's count as a fact, and link the rule" },
+  { name: "the way Linux already was",
+    re: /\bway\s+Linux\s+already\s+(?:was|did)\b/gi,
+    fixture: "billed at the self-hosted rate — the way Linux already was. Up to and including 2.6.1",
+    say: "false history: before cli-v2.6.2 only expression-2 on Linux was metered; essence-2 was unmetered on every platform" },
+];
+
+// Sentences the site MUST be able to carry. Each is a true statement that
+// sits next to the stale shapes above; if a pattern ever widens onto one of
+// these, the guard would be forbidding a fact, and this run says so.
+const NEGATIVE_CONTROLS = [
+  "cli-v2.6.2 counts frames delivered ÷ fps, which under-counts a preview that paints below nominal fps; corrected in 2.6.3.",
+  'A "credit minute" is wall-clock time a session is live and the engine is rendering. That includes idle/silent animation.',
+  "[selfhost-meter] session x2-litert-ae31a6cbf0124577 closed — beats delivered=1 failed=0 frames=85",
+  "[selfhost-meter] beat seq=1 served=4.2s product=expression-2 delivered (final)",
+  "Before 2.6.2 only an Expression 2 session on Linux was metered; Essence 2 on either platform was not.",
+];
+
+let ruleFilesGraded = 0;
+let ruleHits = 0;
+let firings = 0;
+
+// 3c first — an instrument that cannot fire must not grade anything.
+for (const rule of STALE_RULES) {
+  rule.re.lastIndex = 0;
+  if (!rule.re.test(rule.fixture)) {
+    failures.push(
+      `check-billing-consistency.mjs: pattern \`${rule.name}\` does not match its own fixture — ` +
+        `the instrument is blind, so no verdict below is trustworthy`
+    );
+  } else firings++;
+  for (const ok of NEGATIVE_CONTROLS) {
+    rule.re.lastIndex = 0;
+    if (rule.re.test(ok)) {
+      failures.push(
+        `check-billing-consistency.mjs: pattern \`${rule.name}\` fires on an allowed sentence — ` +
+          `"${ok}" — which would forbid a true fact; narrow the pattern`
+      );
+    }
+  }
+}
+
+// 3a — the authority carries the definition.
+{
+  const serving = section(pricingMd, /^Serving\b/) ?? "";
+  if (!DEFINITION.test(serving) || !DEFINITION_IDLE.test(serving)) {
+    failures.push(
+      `guides/pricing.md: the Serving section no longer defines a credit minute as ` +
+        `"wall-clock time a session is live and the engine is rendering … includes idle/silent animation" — ` +
+        `every self-host page links here for the rule, so the definition must stay on this page`
+    );
+  }
+  if (!OFFLINE_RENDER.test(serving)) {
+    failures.push(
+      `guides/pricing.md: the Serving section does not say what an offline \`bithuman render\` bills ` +
+        `(the output duration) — the CLI pages link here for it instead of carrying their own arithmetic`
+    );
+  }
+}
+
+// 3b — no page states a contradicting rule.
+for (const f of RULE_CORPUS) {
+  const text = readFileSync(f, "utf8");
+  const rel = relative(ROOT, f);
+  ruleFilesGraded++;
+  for (const rule of STALE_RULES) {
+    rule.re.lastIndex = 0;
+    let m;
+    while ((m = rule.re.exec(text)) !== null) {
+      ruleHits++;
+      const line = text.slice(0, m.index).split("\n").length;
+      failures.push(
+        `${rel}:${line}: states the billing rule as "${m[0].replace(/\s+/g, " ")}" — contradicts guides/pricing.md ` +
+          `(a credit minute is "wall-clock time a session is live and the engine is rendering"); ${rule.say}`
+      );
+    }
+  }
+}
+
+// --- 4. Report -------------------------------------------------------------
 if (failures.length) {
   console.error(`Found ${failures.length} billing-consistency problem(s):\n`);
   for (const msg of failures) {
@@ -246,5 +386,8 @@ if (failures.length) {
 
 console.log(
   `OK — ${examples} minutes_estimate example(s) agree with the pricing table ` +
-    `(${assertions} value(s) re-derived, ${Object.keys(rates).length} rates parsed).`
+    `(${assertions} value(s) re-derived, ${Object.keys(rates).length} rates parsed); ` +
+    `billing rule: ${ruleFilesGraded} file(s) carry no rule but the pricing page's ` +
+    `(${firings}/${STALE_RULES.length} patterns fired on their fixtures, ` +
+    `${NEGATIVE_CONTROLS.length} allowed sentences held).`
 );

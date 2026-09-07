@@ -20,15 +20,19 @@ pins it) — `bithuman-x86_64-unknown-linux-gnu.tar.gz` (sha256
 ID signed and notarized), both from one commit (`679b9a6`). Engine core
 unchanged.
 
-- **A self-hosted essence-2 or expression-2 session on macOS is billed at the
-  published self-hosted rate** — 2 credits per minute
-  ([pricing](/guides/pricing)) — the way Linux already was. Up to and
-  including 2.6.1, `bithuman run <code>.imx` and `bithuman render` on a Mac
-  were not metered at all. Credits are charged per whole minute of frames
-  actually delivered, not wall-clock (a 5 s render costs 0; a live session
-  that has delivered 90 s of frames costs 2), one usage row per session;
-  downloading a model is free. Metering never stops a
-  render: with no sign-in, or a rejected or depleted key, the session renders
+- **A self-hosted essence-2 or expression-2 session is billed at the
+  published self-hosted rate on macOS and Linux alike** — 2 credits per minute
+  ([pricing](/guides/pricing)). Before 2.6.2 only expression-2 on Linux was
+  metered: `bithuman run <code>.imx` and `bithuman render` on an essence-2
+  model were not metered on any platform, and on a Mac no session was. A
+  credit minute is the pricing page's — "wall-clock time a session is live
+  and the engine is rendering", idle animation included — and an offline
+  `bithuman render` bills the duration of the clip it writes
+  ([the definition](/guides/pricing#serving--credits-per-live-minute)); one
+  usage row per session; downloading a model is free. Known gap: cli-v2.6.2
+  counts frames delivered ÷ fps as the served time, which under-counts a
+  preview that paints below nominal fps; corrected in 2.6.3. Metering never
+  stops a render: with no sign-in, or a rejected or depleted key, the session renders
   behind a loud `★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1`
   turns those three cases into a refusal. Proven on the published tarballs
   from a fresh home on Linux and on an Apple Silicon Mac, with the 2.6.1
