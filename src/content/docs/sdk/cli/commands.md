@@ -195,9 +195,6 @@ Common flags:
 | `--embedded-livekit` | on with model arg | Spawn a self-contained `livekit-server` child. Off when omitting the model and using an external SFU. |
 | `--cloud` | off | Force a cloud-rendered session (opens the live viewer) instead of rendering locally. Needs an agent code. |
 
-(A `--mock-runtime` flag used to be documented here; the binary does not have
-one — `bithuman run --help` on 2.6.2 does not print it.)
-
 ### Which model files run locally?
 
 `bithuman run` **recognizes the model family before launching** — it sniffs
