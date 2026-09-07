@@ -990,6 +990,15 @@ paths:
         `404 MODEL_ARTIFACT_NOT_READY` — the message says when to retry;
         **poll on that code**.
 
+        **Every grant is recorded.** A model download costs **0 credits** on
+        the [pricing table](https://docs.bithuman.ai/guides/pricing) — only
+        runtime minutes bill — but the grant still writes exactly one usage row
+        before the URL is issued, under the family's self-hosted pricing code,
+        and hands you its id in `X-Bithuman-Meter-Id`. The rows show up in
+        `GET /v1/usage` at 0 credits; they are a record of what you fetched,
+        not a charge. The order matters both ways: a meter that refuses
+        (`402`) or fails (`500`) returns no URL at all.
+
         The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/commands) wraps
         this endpoint: `bithuman pull <AGENT_CODE>` downloads the artifact,
         recognizes its model family, and prints what to do next.
@@ -1017,6 +1026,25 @@ paths:
             send `essence-2-max`. Any other unrecognized value returns the
             same `400`, listing the downloadable families.
           example: "expression-2"
+        - name: member
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >-
+            Fetch ONE on-device model member instead of the whole container.
+            `essence-2` and `expression-2` publish a browser/Android bundle
+            beside the container — a `web_manifest.json` and the members it
+            lists (`combined_fp32.tflite`, `canon.bin`, ...) — and this serves
+            a single one of them, so a browser or an Android runtime pulls only
+            the lane it runs. Same entitlement as the container, same 1-hour
+            signed URL, and the URL honours `Range` (`curl -L -r 0-1023`
+            answers `206`, so OkHttp and browsers resume). Pass
+            `web_manifest.json` first to learn the member names. A member of a
+            **public** agent is served to an anonymous caller, like the browser
+            already serves those agents; every other visibility needs the same
+            credential as the container.
+          example: "web_manifest.json"
         - name: redirect
           in: query
           required: false
@@ -1037,8 +1065,77 @@ paths:
               schema:
                 type: string
               description: The artifact URL.
+            X-Bithuman-Meter-Id:
+              schema:
+                type: string
+              description: >-
+                The id of the single `activities` row this grant wrote. Every
+                download is metered BEFORE the URL is issued — a model download
+                costs **0 credits** on the published
+                [pricing table](https://docs.bithuman.ai/guides/pricing), and 0
+                is a price, not a reason to skip the record. The row carries
+                the family's self-hosted pricing code (e.g.
+                `usage_essence_2_model_self_hosted`) and appears in
+                `GET /v1/usage`; quote this id when reconciling one.
+            X-Bithuman-Model:
+              schema:
+                type: string
+              description: The canonical family actually served (`expression-2`, `essence-2`, ...).
+            X-Bithuman-Model-Source:
+              schema:
+                type: string
+              description: >-
+                Why this family was chosen — `requested` when `?model=` named
+                it, otherwise the agent's own default. Container arm only.
+            X-Bithuman-Supported-Models:
+              schema:
+                type: string
+              description: >-
+                Comma-separated list of the other families this agent could
+                have served, in the same public spellings `?model=` accepts —
+                retry with one of them without a second request. Container arm
+                only.
+            X-Bithuman-Model-Member:
+              schema:
+                type: string
+              description: The member name served. `?member=` arm only.
         "200":
           description: With `?redirect=false` — the artifact URL as JSON.
+          headers:
+            X-Bithuman-Meter-Id:
+              schema:
+                type: string
+              description: >-
+                The id of the single `activities` row this grant wrote. Every
+                download is metered BEFORE the URL is issued — a model download
+                costs **0 credits** on the published
+                [pricing table](https://docs.bithuman.ai/guides/pricing), and 0
+                is a price, not a reason to skip the record. The row carries
+                the family's self-hosted pricing code (e.g.
+                `usage_essence_2_model_self_hosted`) and appears in
+                `GET /v1/usage`; quote this id when reconciling one.
+            X-Bithuman-Model:
+              schema:
+                type: string
+              description: The canonical family actually served (`expression-2`, `essence-2`, ...).
+            X-Bithuman-Model-Source:
+              schema:
+                type: string
+              description: >-
+                Why this family was chosen — `requested` when `?model=` named
+                it, otherwise the agent's own default. Container arm only.
+            X-Bithuman-Supported-Models:
+              schema:
+                type: string
+              description: >-
+                Comma-separated list of the other families this agent could
+                have served, in the same public spellings `?model=` accepts —
+                retry with one of them without a second request. Container arm
+                only.
+            X-Bithuman-Model-Member:
+              schema:
+                type: string
+              description: The member name served. `?member=` arm only.
           content:
             application/json:
               schema:
@@ -1076,6 +1173,13 @@ paths:
             server-side from the agent's image).
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "402":
+          description: >-
+            `INSUFFICIENT_BALANCE` — the download could not be metered against
+            your account. Every grant writes its usage row BEFORE the URL is
+            issued, so a refused meter returns **no URL at all** rather than an
+            artifact nobody can account for. A download itself costs 0 credits;
+            this is what a suspended or depleted account sees.
         "404":
           description: >-
             `NOT_FOUND` — agent unknown or not owned by this account; or
@@ -1104,6 +1208,11 @@ paths:
             generate one).
         "429":
           description: Rate limited (read bucket) — `RATE_LIMITED`.
+        "500":
+          description: >-
+            `INTERNAL_ERROR` — the artifact could not be resolved, or the usage
+            row could not be written. In both cases **no URL is issued**: a
+            grant we cannot record is not handed out. Safe to retry.
 
   /v1/files/upload:
     post:
@@ -1568,6 +1677,69 @@ paths:
                   httpStatus: 409
                 status: "error"
                 status_code: 409
+
+  /v1/runtime-tokens/mint:
+    post:
+      operationId: mintScopedRuntimeToken
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/runtime-tokens/mint \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"agent_code": "A78WKV4515"}'
+            # → {"scoped_token": "...", "user_id": "...", "agent_code": "A78WKV4515", "expires_at": 1757280000}
+      summary: Mint a scoped runtime token for one agent
+      description: |
+        Exchange your API secret, **server-side**, for a 1-hour token bound to a
+        single `agent_code` — so a browser, a phone app or any other client you
+        do not fully control never holds your master secret.
+
+        This is the credential the on-device paths accept. It works as
+        `Authorization: Bearer <scoped_token>` on
+        [the model download route](#operation/downloadAgentModel), including
+        the `?member=` fetch the browser and Android runtimes use.
+
+        The scope is real: presenting the token for a **different** agent code
+        answers `404`, exactly like a code you do not own. It expires in one
+        hour and is not refreshable — mint another.
+
+        Call this from your server. Never ship the api-secret this endpoint
+        consumes to a client.
+      tags: [Authentication]
+      security:
+        - apiSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agent_code]
+              properties:
+                agent_code:
+                  type: string
+                  example: "A78WKV4515"
+                  description: The one agent this token may act for.
+      responses:
+        "200":
+          description: A scoped token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scoped_token: { type: string }
+                  user_id: { type: string }
+                  agent_code: { type: string, example: "A78WKV4515" }
+                  expires_at:
+                    type: integer
+                    description: Unix seconds; one hour from minting.
+        "400":
+          description: "`agent_code` is required."
+        "401":
+          description: Missing or invalid api-secret.
 
   /v1/runtime-tokens/request:
     post:
@@ -2786,6 +2958,307 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  # ── Self-hosting: the three routes a self-hosted container actually calls ──
+  # (added 2026-09-07; all three answered live and were absent from this file.)
+  /v1/agent/{code}/self-hosted-avatar:
+    get:
+      operationId: downloadSelfHostedAvatar
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -L https://api.bithuman.ai/v1/agent/A91XMB7113/self-hosted-avatar \
+              -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
+              -o A91XMB7113.pkl
+      summary: Download an agent's self-hosted avatar bundle
+      description: |
+        Fetch the prepared per-agent bundle that lets a **self-hosted
+        essence-2-max** container serve one of your agents. The container
+        fetches this at start; you can also fetch it yourself and copy it into
+        an air-gapped environment.
+
+        Authenticate with `Authorization: Bearer <api-secret>` (what the
+        container sends) or the classic `api-secret` header.
+
+        Ownership uses the same 404-not-403 rule as every other per-agent
+        route: a code you do not own is indistinguishable from one that does
+        not exist.
+
+        The bundle is built the **first time the agent is served as
+        essence-2-max**. If it has not been built yet you get a 404 whose
+        message says exactly that — start one session (or render a talking
+        video) with `model=essence-2-max`, then retry.
+
+        Rendering with this bundle is billed as a self-hosted session — see
+        [Pricing](#tag/pricing).
+      tags: [Self-hosting]
+      security:
+        - apiSecret: []
+        - bearerApiSecret: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+          example: "A91XMB7113"
+          description: The agent's short code.
+      responses:
+        "200":
+          description: The bundle, as a binary stream.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Missing or invalid credentials.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SelfHostError" }
+        "404":
+          description: |
+            No such agent, not yours, deleted — or the bundle has not been
+            prepared yet. The message says which and what to do next.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SelfHostError" }
+        "429":
+          description: Rate limited.
+
+  /v1/auth/validate:
+    post:
+      operationId: validateSelfHostedKey
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/auth/validate \
+              -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
+              -H "Content-Type: application/json" \
+              -d '{"billing_type": "self-hosted-essence-2-max-model"}'
+            # → {"user_id": "...", "key_id": "key_1a2b3c4d5e6f7a8b"}
+      summary: Live key check for a self-hosted runtime
+      description: |
+        A self-hosted container calls this once per render start and once per
+        billing beat (with a short positive cache), so **deleting a key in the
+        dashboard stops that container on its next beat**. An allowlist baked
+        into a container at start is not revocable; this endpoint is what makes
+        it revocable.
+
+        The three answers are deliberately distinct, and a runtime must treat
+        them differently:
+
+        | status | meaning | what a runtime should do |
+        |---|---|---|
+        | `200` | valid | serve |
+        | `401` | **definite**: unknown, revoked or disabled | stop |
+        | `503` | we cannot tell right now | retry, keep serving |
+
+        The 401 does not say *which* of unknown/revoked/disabled — a distinct
+        "revoked" answer would be a key-existence oracle for anyone probing keys
+        they do not own. And an outage of ours must never present to your users
+        as your key being revoked, which is what the 503 exists for.
+
+        `key_id` is a non-secret handle (`"key_" + sha256(secret)[:16]`) that
+        your runtime can derive locally, so a validation here and a beat there
+        describe the same key without either side storing the secret.
+      tags: [Self-hosting]
+      security:
+        - bearerApiSecret: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                billing_type:
+                  type: string
+                  description: |
+                    The self-hosted product this runtime serves. Omitted or
+                    unknown resolves to the essence-2-max default.
+                  example: "self-hosted-essence-2-max-model"
+      responses:
+        "200":
+          description: The key is valid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    description: |
+                      The account this key bills to. A response with no
+                      `user_id` must be treated as a failure — an
+                      identity-less "ok" cannot be billed to anybody.
+                  key_id:
+                    type: string
+                    example: "key_1a2b3c4d5e6f7a8b"
+        "401":
+          description: Definite — unknown, revoked or disabled key.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SelfHostError" }
+        "429":
+          description: Too many failed validations from this IP.
+        "503":
+          description: |
+            We cannot validate right now. Retry (a `Retry-After` header is
+            sent) and keep serving — this is not a statement about your key.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SelfHostError" }
+
+  /v1/meter/beats:
+    post:
+      operationId: postMeterBeat
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/meter/beats \
+              -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
+              -H "Content-Type: application/json" \
+              -d '{"session_id":"s-1","install_id":"i-1","seq":1,
+                   "served_s":60,"billing_type":"self-hosted-essence-2-model"}'
+      summary: Report a billing beat from a self-hosted session
+      description: |
+        A self-hosted or on-device runtime posts one beat per interval to bill
+        the session it is serving. Beats are the self-hosted meter: see
+        [Pricing](#tag/pricing) for the per-minute rate.
+
+        **Billing is wall-clock, and idle time counts.** A beat reports the
+        seconds of session that elapsed, not frames rendered.
+
+        The beat names its own product with `billing_type` (the same wire
+        string every bitHuman runtime already sends). The product is resolved
+        **once, on the first beat of a session**, and then pinned to the ledger
+        row: a later beat cannot re-price a session that is already open.
+
+        A runtime should read **only the status code**:
+
+        | status | meaning | what a runtime should do |
+        |---|---|---|
+        | `2xx` | the interval is durably recorded | advance the meter clock |
+        | `402` | balance depleted / account suspended | **keep rendering**, do not advance the clock |
+        | `401` | definite bad key | stop |
+        | `503` | we cannot tell right now | retry |
+
+        The 402 is not a kill switch by design: a paid render is never killed
+        mid-frame. Depletion gates the *next* session, through
+        [`/v1/auth/validate`](#operation/validateSelfHostedKey).
+
+        `session_id` + `install_id` + your account make the beat idempotent, so
+        a retried beat never double-charges.
+      tags: [Self-hosting]
+      security:
+        - bearerApiSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [session_id, seq, served_s]
+              properties:
+                session_id:
+                  type: string
+                  maxLength: 128
+                  description: Stable id for the session being billed.
+                install_id:
+                  type: string
+                  maxLength: 128
+                  description: Stable id for this installation.
+                seq:
+                  type: integer
+                  minimum: 1
+                  description: Beat sequence number within the session.
+                served_s:
+                  type: number
+                  description: |
+                    Seconds of session covered by this beat. Clamped
+                    server-side; wall-clock, idle included.
+                billing_type:
+                  type: string
+                  description: |
+                    The self-hosted product wire key. Absent or unknown
+                    resolves to the essence-2-max default.
+                  example: "self-hosted-essence-2-model"
+      responses:
+        "200":
+          description: The interval is durably recorded. Advance the meter clock.
+        "400":
+          description: Malformed beat (`session_id` and a positive `seq` are required).
+        "401":
+          description: Definite — unknown, revoked or disabled key.
+        "402":
+          description: |
+            Balance depleted or account suspended. Do **not** advance the meter
+            clock; keep rendering.
+        "503":
+          description: We cannot record right now. Retry.
+
+  /readyz:
+    get:
+      operationId: getReadiness
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/readyz
+            # → {"status":"ok","families":{"sessions":{"status":"ok"}, ...}}
+      summary: API readiness
+      description: |
+        Whether the API is currently **refusing work**, per route family, over a
+        rolling window. No credential required.
+
+        **Always HTTP 200, deliberately** — read the `status` field, not the
+        status code. A readiness route that answered 503 would invite being
+        wired to a rotation decision, and what this reports is that an upstream
+        is full, which taking the edge out of rotation would make worse.
+
+        `status` is `ok` | `degraded` | `unhealthy`, and each entry in
+        `families` carries the same verdict for one route family. The reply
+        describes **the replica that answered it**, not the fleet
+        (`replica_scope` says so) — for an overall view use
+        [status.bithuman.ai](https://status.bithuman.ai).
+
+        This is distinct from liveness: `GET /health` answers a static 200 from
+        the edge and cannot tell you whether anything is being refused.
+      tags: [Status]
+      security: []
+      responses:
+        "200":
+          description: The readiness verdict for the replica that answered.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok, degraded, unhealthy]
+                  window_seconds:
+                    type: number
+                    example: 900
+                  observed_seconds:
+                    type: number
+                    description: |
+                      How much of the window this replica has actually been up
+                      for. A young replica reporting `ok` is saying little.
+                  replica_scope:
+                    type: string
+                    example: "this process only — not a fleet view"
+                  families:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: [ok, degraded, unhealthy]
+
 components:
   securitySchemes:
     apiSecret:
@@ -2795,8 +3268,40 @@ components:
       description: |
         Your bitHuman API secret. Get one at
         [www.bithuman.ai/developer/api-keys](https://www.bithuman.ai/developer/api-keys).
+    bearerApiSecret:
+      type: http
+      scheme: bearer
+      description: |
+        The same API secret, sent as `Authorization: Bearer <api-secret>`. Self-
+        hosted runtimes send it this way; the classic `api-secret` header works
+        on the same routes.
 
   schemas:
+    SelfHostError:
+      type: object
+      description: |
+        The error envelope the self-hosting routes return. `error.type` is the
+        machine-readable word a runtime switches on; `error.code`,
+        `error.httpStatus` and `error.message` are the platform envelope every
+        other endpoint uses. Both are present on purpose — the self-hosted
+        container's key validator reads `type`, and the additive `code` means a
+        developer switching on `error.code` no longer gets `undefined` from
+        these routes.
+      properties:
+        error:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "missing_credentials"
+            code:
+              type: string
+              example: "MISSING_AUTH"
+            httpStatus:
+              type: integer
+              example: 401
+            message:
+              type: string
     Agent:
       type: object
       properties:
@@ -3127,6 +3632,8 @@ x-tagGroups:
       - Video
       - Billing
       - Account
+      - Self-hosting
+      - Status
       - Webhooks
   - name: Resources
     tags:
@@ -4281,6 +4788,17 @@ tags:
     description: Check credit balance, plan details, and usage history.
   - name: Account
     description: Identity, plan, credits, and pricing.
+  - name: Self-hosting
+    description: |
+      The three routes a self-hosted or on-device runtime calls: fetch the
+      per-agent bundle it serves, check that its key is still live, and report
+      the wall-clock it served. Self-hosted sessions are billed per minute —
+      see [Pricing](#tag/pricing).
+  - name: Status
+    description: |
+      Is the API currently refusing work? Unauthenticated, always HTTP 200 —
+      read the `status` field. For a fleet-wide view use
+      [status.bithuman.ai](https://status.bithuman.ai).
   - name: Webhooks
     description: |
       Register HTTPS endpoints to receive signed event notifications when

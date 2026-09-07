@@ -181,7 +181,7 @@ over-estimate your remaining minutes by 2x and 4x respectively — read
 - **Stopped, paused, or disconnected sessions** — accrual stops as soon as the session ends. (Note: a *live* session that is silent still accrues — idle animation is rendering. See [What counts as a billable minute](#how-metering-works).)
 - **Failed auth** — bad keys fail fast and don't burn credits.
 - **Failed creations and renders** — automatically refunded.
-- **Model weights** — `.imx` and Expression weight downloads are free; only active runtime minutes count.
+- **Model weights** — `.imx` and Expression weight downloads are free; only active runtime minutes count. Each download is still *recorded*: it writes one usage row at **0 credits** and returns its id in the `X-Bithuman-Meter-Id` response header, so a 0-credit line in [your usage](/api/reference#operation/getUsage) next to a download is the record, not a charge.
 
 ## FAQ
 

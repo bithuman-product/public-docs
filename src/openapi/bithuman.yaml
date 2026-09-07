@@ -990,6 +990,15 @@ paths:
         `404 MODEL_ARTIFACT_NOT_READY` — the message says when to retry;
         **poll on that code**.
 
+        **Every grant is recorded.** A model download costs **0 credits** on
+        the [pricing table](https://docs.bithuman.ai/guides/pricing) — only
+        runtime minutes bill — but the grant still writes exactly one usage row
+        before the URL is issued, under the family's self-hosted pricing code,
+        and hands you its id in `X-Bithuman-Meter-Id`. The rows show up in
+        `GET /v1/usage` at 0 credits; they are a record of what you fetched,
+        not a charge. The order matters both ways: a meter that refuses
+        (`402`) or fails (`500`) returns no URL at all.
+
         The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/commands) wraps
         this endpoint: `bithuman pull <AGENT_CODE>` downloads the artifact,
         recognizes its model family, and prints what to do next.
@@ -1017,6 +1026,25 @@ paths:
             send `essence-2-max`. Any other unrecognized value returns the
             same `400`, listing the downloadable families.
           example: "expression-2"
+        - name: member
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >-
+            Fetch ONE on-device model member instead of the whole container.
+            `essence-2` and `expression-2` publish a browser/Android bundle
+            beside the container — a `web_manifest.json` and the members it
+            lists (`combined_fp32.tflite`, `canon.bin`, ...) — and this serves
+            a single one of them, so a browser or an Android runtime pulls only
+            the lane it runs. Same entitlement as the container, same 1-hour
+            signed URL, and the URL honours `Range` (`curl -L -r 0-1023`
+            answers `206`, so OkHttp and browsers resume). Pass
+            `web_manifest.json` first to learn the member names. A member of a
+            **public** agent is served to an anonymous caller, like the browser
+            already serves those agents; every other visibility needs the same
+            credential as the container.
+          example: "web_manifest.json"
         - name: redirect
           in: query
           required: false
@@ -1037,8 +1065,77 @@ paths:
               schema:
                 type: string
               description: The artifact URL.
+            X-Bithuman-Meter-Id:
+              schema:
+                type: string
+              description: >-
+                The id of the single `activities` row this grant wrote. Every
+                download is metered BEFORE the URL is issued — a model download
+                costs **0 credits** on the published
+                [pricing table](https://docs.bithuman.ai/guides/pricing), and 0
+                is a price, not a reason to skip the record. The row carries
+                the family's self-hosted pricing code (e.g.
+                `usage_essence_2_model_self_hosted`) and appears in
+                `GET /v1/usage`; quote this id when reconciling one.
+            X-Bithuman-Model:
+              schema:
+                type: string
+              description: The canonical family actually served (`expression-2`, `essence-2`, ...).
+            X-Bithuman-Model-Source:
+              schema:
+                type: string
+              description: >-
+                Why this family was chosen — `requested` when `?model=` named
+                it, otherwise the agent's own default. Container arm only.
+            X-Bithuman-Supported-Models:
+              schema:
+                type: string
+              description: >-
+                Comma-separated list of the other families this agent could
+                have served, in the same public spellings `?model=` accepts —
+                retry with one of them without a second request. Container arm
+                only.
+            X-Bithuman-Model-Member:
+              schema:
+                type: string
+              description: The member name served. `?member=` arm only.
         "200":
           description: With `?redirect=false` — the artifact URL as JSON.
+          headers:
+            X-Bithuman-Meter-Id:
+              schema:
+                type: string
+              description: >-
+                The id of the single `activities` row this grant wrote. Every
+                download is metered BEFORE the URL is issued — a model download
+                costs **0 credits** on the published
+                [pricing table](https://docs.bithuman.ai/guides/pricing), and 0
+                is a price, not a reason to skip the record. The row carries
+                the family's self-hosted pricing code (e.g.
+                `usage_essence_2_model_self_hosted`) and appears in
+                `GET /v1/usage`; quote this id when reconciling one.
+            X-Bithuman-Model:
+              schema:
+                type: string
+              description: The canonical family actually served (`expression-2`, `essence-2`, ...).
+            X-Bithuman-Model-Source:
+              schema:
+                type: string
+              description: >-
+                Why this family was chosen — `requested` when `?model=` named
+                it, otherwise the agent's own default. Container arm only.
+            X-Bithuman-Supported-Models:
+              schema:
+                type: string
+              description: >-
+                Comma-separated list of the other families this agent could
+                have served, in the same public spellings `?model=` accepts —
+                retry with one of them without a second request. Container arm
+                only.
+            X-Bithuman-Model-Member:
+              schema:
+                type: string
+              description: The member name served. `?member=` arm only.
           content:
             application/json:
               schema:
@@ -1076,6 +1173,13 @@ paths:
             server-side from the agent's image).
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "402":
+          description: >-
+            `INSUFFICIENT_BALANCE` — the download could not be metered against
+            your account. Every grant writes its usage row BEFORE the URL is
+            issued, so a refused meter returns **no URL at all** rather than an
+            artifact nobody can account for. A download itself costs 0 credits;
+            this is what a suspended or depleted account sees.
         "404":
           description: >-
             `NOT_FOUND` — agent unknown or not owned by this account; or
@@ -1104,6 +1208,11 @@ paths:
             generate one).
         "429":
           description: Rate limited (read bucket) — `RATE_LIMITED`.
+        "500":
+          description: >-
+            `INTERNAL_ERROR` — the artifact could not be resolved, or the usage
+            row could not be written. In both cases **no URL is issued**: a
+            grant we cannot record is not handed out. Safe to retry.
 
   /v1/files/upload:
     post:
