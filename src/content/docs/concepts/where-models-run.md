@@ -35,26 +35,28 @@ them are still literals you have to type or read, and this page shows you which.
 
 ## The matrix
 
-The scope below is **two owner rulings**, dated **2026-09-02** and
-**2026-09-04**, encoded in one file in the models repository
-(`tools/model_scope.py`) that every internal guard, census and readiness sweep
-resolves through. This table reproduces that file's cell values; it does not
-re-derive them. The second ruling re-affirmed `essence-2-max` and
-`expression-1` on the GPU lanes, where they already were.
+The scope below is **four owner rulings** — **2026-09-02**, two on
+**2026-09-04**, and **2026-09-05** — encoded in one file in the models
+repository (`tools/model_scope.py`) that every internal guard, census and
+readiness sweep resolves through. This table reproduces that file's cell
+values, re-read on 2026-09-07; it does not re-derive them. The first 09-04
+ruling re-affirmed `essence-2-max` and `expression-1` on the GPU lanes, where
+they already were; the second fixed each model's dispatch chain and, with it,
+the last column; the 09-05 ruling narrowed where `essence-1` is served from.
 
 | Model | GPU offline | GPU live | Cloud, Apple tier | macOS (your Mac) | iOS | Browser | Android | Cloud, CPU tier |
 |---|---|---|---|---|---|---|---|---|
-| **essence-1** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | Not ruled |
-| **essence-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | Not ruled |
+| **essence-1** | **Not applicable** | **Not applicable** | In scope | In scope | In scope | In scope | In scope | **Not applicable** |
+| **essence-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | In scope |
 | **essence-2-max** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
 | **expression-1** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
-| **expression-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | Not ruled |
+| **expression-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | In scope |
 
 Lane keys, in the authority's own order, so you can join this table to anything
 internal you are handed: `gpu-offline`, `gpu-live`, `apple-serve`,
 `apple-macos`, `apple-ios`, `web`, `android`, `cpu-modal`.
 
-### There are three answers, and they are three different facts
+### There are two answers, and they are two different facts
 
 **In scope** — the ruling puts this model on this lane. If the artifact is
 missing here, that is a gap, and it is our bug.
@@ -67,19 +69,21 @@ intended shape of the product, and you should architect against a GPU for them
 rather than waiting. If you need photoreal quality on a Mac, a phone or in a
 tab, the model you want is **essence-2**, not essence-2-max.
 
-**Not ruled** — the rulings enumerated four lane groups (GPU, Apple, web,
-Android). bitHuman's managed **CPU serving tier** is not one of them, and it is
-also the tier essence-2 and expression-2 actually run on in production today.
-So the honest cell is neither "yes" nor "no". It is a serving tier inside the
-managed cloud rather than something you target, so it does not change what you
-build; it is shown because collapsing it into either of the other two answers
-would be inventing a ruling nobody made.
+`essence-1`'s three **Not applicable** cells are the other kind: they are the
+cloud's own serving tiers, and a ruling of **2026-09-05** serves essence-1 from
+the cloud's **Apple tier only**. That is about where *we* run it. Nothing
+about where *you* run it moved — your Mac, iPhone, browser and Android stay
+in scope, and so does the Apple tier a cloud session lands on.
 
-The asymmetry between rows is deliberate and worth understanding: "GPU **only**"
-is exclusive language, so it puts a model off every lane including one the
-ruling never enumerated — that is why `essence-2-max` and `expression-1` read
-**Not applicable** in the CPU-tier column while the all-lane models read
-**Not ruled**.
+> **Corrected 2026-09-07.** Until today the last column read **Not ruled** for
+> essence-1, essence-2 and expression-2, on the reasoning that the 2026-09-02
+> ruling enumerated four lane groups and never named the CPU serving tier. The
+> second ruling of 2026-09-04 — the one that fixed each model's dispatch chain —
+> names that tier as the final hop for essence-2 and expression-2, and the
+> authority file derives **In scope** from it rather than leaving the cell open.
+> essence-1's chain was narrowed on 2026-09-05 to the Apple tier alone, which
+> is why its cell reads Not applicable instead. There is no third answer any
+> more.
 
 ## essence-1 is most of the fleet
 
@@ -101,8 +105,8 @@ any code of yours that switches on `agents.model` must handle a null. It is not
 a rounding error — it is the second-largest bucket.
 
 The practical consequence for you: **essence-1 is the model you are most likely
-to be handed**, it is fully in scope on every lane, and the entire CLI showcase
-is built from it. Every avatar `bithuman list` returns today is an essence-1
+to be handed**, it is in scope on every lane you run yourself and on the
+cloud's Apple tier, and the entire CLI showcase is built from it. Every avatar `bithuman list` returns today is an essence-1
 identity:
 
 ```bash
@@ -312,10 +316,12 @@ and every other CLI exit code, is on
 
 ## The lanes, one at a time
 
-### GPU — every model, both directions
+### GPU — four of the five models, both directions
 
-Every one of the five models is in scope on GPU, offline and live. It is the
-only lane where `essence-2-max` and `expression-1` exist at all. Start at
+`essence-2`, `essence-2-max`, `expression-1` and `expression-2` are in scope on
+GPU, offline and live; `essence-1` is served from the cloud's Apple tier
+instead (ruling of 2026-09-05). GPU is the only lane where `essence-2-max` and
+`expression-1` exist at all. Start at
 [self-hosted GPU](/guides/deploy-self-hosted) or the
 [LiveKit plugin](/guides/deploy-livekit).
 
@@ -356,13 +362,13 @@ around the CLI:
 
 As of **2026-09-03** the `ai.bithuman` group on Maven Central publishes **three**
 artifacts, all resolvable anonymously. `expression2-android` has since moved to
-**`0.3.1`** (released 2026-09-04) — the version below is Central's own
-`<release>`, re-read 2026-09-06:
+**`0.3.1`** (2026-09-04) and `essence2-android` to **`0.4.0`** (2026-09-07) —
+the versions below are Central's own `<release>`, re-read 2026-09-07:
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | **expression-2** | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.2.0` | **essence-2** | 29 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.4.0` | **essence-2** | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI any of them ships**, so none of the three loads
@@ -371,8 +377,10 @@ on an **x86_64 emulator** — the app installs and then throws
 device or an `arm64-v8a` system image.
 
 **All three models the ruling puts on Android now resolve.** essence-2 was
-published at 2026-09-03 03:39:15 UTC; this page said the day before that its
-coordinate "resolves to nothing", which was true then and is false now. The
+first published at 2026-09-03 03:39:15 UTC; this page said the day before that
+its coordinate "resolves to nothing", which was true then and is false now.
+`0.4.0` (2026-09-07) is the version to use — `0.2.0` and `0.3.0` still resolve
+and [should not be built against](/sdk/android#essence-2--aibithumanessence2-android040). The
 *artifact* name `libelevate-android` was never published and never will be —
 though the published essence-2 AAR does declare the Kotlin package
 `ai.bithuman.elevate`, which cannot be renamed after release.
@@ -417,12 +425,15 @@ full outside-project build transcript are on the
 
 ```swift
 // Package.swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman", from: "2.5.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman", from: "2.8.0")
 ```
 
-Products: `bitHumanKit`, `Expression2`, `BithumanEngineProtocol`. Platforms:
-macOS 13+, iOS 16+. The binary targets are pinned by checksum, and **you can
-verify that pin from any operating system**, before you ever open Xcode:
+Products: `bitHumanKit`, `Expression2`, `Essence2` (since 2.7.0),
+`BithumanEngineProtocol`. Platforms: macOS 13+, iOS 16+. The binary targets
+are pinned by checksum, and **you can verify that pin from any operating
+system**, before you ever open Xcode. The transcript below was taken at
+`v2.5.0`; the same check at `v2.8.0`, over all six binary targets, is on the
+[Apple preflight page](/examples/apple-swiftpm-check#arm-4--re-run-2026-09-07-at-v280):
 
 ```bash
 curl -sSLO https://github.com/bithuman-product/homebrew-bithuman/releases/download/v2.5.0/Expression2.xcframework.zip
@@ -566,7 +577,7 @@ display.** essence-1. Low memory, no idle timeout, custom gestures, runs on
 non-human.** expression-2.
 
 **You are maintaining an existing v1 agent.** expression-1 on GPU, or
-essence-1 anywhere. Both remain supported.
+essence-1 on any lane you run yourself. Both remain supported.
 
 ## Next steps
 

@@ -18,10 +18,13 @@ working setup from a silently-failing one.
 > that Kotlin written against the published API compiles against the AAR's
 > `classes.jar`, and that the release APK packages the engine's native libraries.
 >
-> **NOT verified here:** anything that requires a phone. **No code on this page or
-> on the Android SDK page was executed on an Android device.** The frame rates,
-> parity figures and memory numbers quoted on that page come from internal
-> measurements on named handsets and were **not** re-taken for this page.
+> **NOT verified here:** anything that requires a phone. **No code on this page
+> was executed on an Android device.** The frame rates, parity figures and
+> memory numbers quoted on the Android SDK page come from internal measurements
+> on named handsets and were **not** re-taken for this page; so does the
+> 2026-09-07 handset run of `essence2-android:0.4.0` through its published
+> bytes, which that page attributes to bitHuman's own publish receipt rather
+> than to a transcript here.
 
 **The environment these ran in:** Ubuntu x86_64, OpenJDK **17.0.20**, Gradle
 **8.13**, Android SDK platform **35** + build-tools **35.0.0**, Android Gradle
@@ -83,6 +86,14 @@ essence2-android         0.2.0
 sdk                      2.3.6
 ```
 
+> **Re-taken 2026-09-07.** The script is unchanged and one answer moved
+> again: `essence2-android` now reads **`0.4.0`** (`lastUpdated`
+> 20260907014515). `0.2.0` and `0.3.0` remain published and remain the wrong
+> version to build against — [the Android SDK page says why](/sdk/android#essence-2--aibithumanessence2-android040).
+> That page's own `0.4.0` measurements (bytes, SHA-1, `minSdk`, the merged
+> `INTERNET` permission, the native payload, the §6(a) kit) were taken the way
+> this page's probes are — anonymously, over HTTPS — on 2026-09-07.
+>
 > **Re-taken 2026-09-06.** The script is unchanged; only one answer moved.
 > `expression2-android` read `0.3.0` when this transcript was first captured and
 > Central's `<release>` is now **`0.3.1`** (published 2026-09-04T11:47:17Z). The

@@ -10,6 +10,23 @@ order: 1
 
 ## September 2026
 
+### essence-2 reaches Apple and Android as public coordinates, and the CLI moves to 2.6.0 (2026-09-07)
+
+One line per release, each dated from the release itself and each checked
+anonymously on 2026-09-07 before it was written here:
+
+- **2026-09-06 16:12Z — essence-2 Apple engine `essence2-v1.1.0`.** The first public release of the on-device essence-2 engine for iOS and macOS: an engine archive and an ONNX Runtime archive, each with a `.sha256` sidecar, fetchable with no credential. It refuses rather than drawing a mouth the avatar never recorded.
+- **2026-09-06 16:42Z — Swift SDK `v2.7.0`.** Adds the **`Essence2`** product (manifest only), pointing at `essence2-v1.1.0`. Its only module was `CLibEssence2`.
+- **2026-09-06 18:50Z — the essence-2 shared audio encoder is published** on a public release coordinate (377,625,424 B, SHA-256 `95c35c86…`), so the CLI and the Python package fetch it themselves instead of asking you to find it.
+- **2026-09-06 21:32Z — CLI `cli-v2.6.0`**, macOS arm64 and Linux x86_64 from one commit, with a `PROVENANCE.json` in each tarball. Fixed: `bithuman run` and `bithuman pull` agree on a container's name; `bithuman render` on macOS no longer truncates a clip; a refused render leaves no file behind. Added: the shared audio encoder is fetched once per machine and digest-checked on every use. Known and stated in the release: **essence-2 does not render locally from these tarballs** (`render` exits 69 for it); expression-2 renders locally on both platforms. The Python extra for offline rendering is now spelled `bithuman[offline]`.
+- **2026-09-06 — Android `ai.bithuman:essence2-android:0.3.0`.** The first essence-2 AAR whose engine refuses, with a thrown exception, rather than drawing a mouth of its own — but it judged a bundle by a descriptive list in its manifest and refused complete bundles. Superseded the same night; do not build against it.
+- **2026-09-07 01:20Z — essence-2 Apple engine `essence2-v1.2.0`.** One rule for when a model renders — all four recorded-mouth files present, or a refusal naming the missing one — on every platform; `import Essence2` compiles; the resources archive rides on the same release, so the coordinate is complete on its own.
+- **2026-09-07 01:30Z — Swift SDK `v2.8.0`.** `Essence2` points at `essence2-v1.2.0`. Pin `from: "2.8.0"`. Resolves and builds for iOS device, iOS simulator and macOS from a consumer outside any bitHuman repository. Still missing: an in-app model download route that accepts a runtime token — [Essence 2 on-device](/sdk/swift#essence-2-on-device).
+- **2026-09-07 01:45Z — Android `ai.bithuman:essence2-android:0.4.0`.** The version to use. The same one rule as the Apple engine; an in-SDK **model store** (`Essence2ModelStore` — no default host yet, you pass the mirror); the product-named Kotlin package `ai.bithuman.essence2` beside the legacy `ai.bithuman.elevate`, kept for compatibility; `INTERNET` merged into your app. Driven on a Galaxy S25+ through the published bytes, 11 of 11 tests green. `0.2.0` can show a mouth the avatar never recorded without telling you and `0.3.0` refuses complete bundles — use neither. [Android SDK](/sdk/android#essence-2--aibithumanessence2-android040).
+- **`ai.bithuman:expression2-android:0.3.1`** (2026-09-04) is unchanged and current — see [its entry](#expression-2-android-is-031-and-google-is-no-longer-required-2026-09-04). The Kotlin hello page now carries an expression-2 and an essence-2 example, both compiled against the published AARs: [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello#second-generation-expression-2-and-essence-2).
+
+Also corrected on 2026-09-07: the scope matrix on [where each model runs](/concepts/where-models-run) no longer carries a "Not ruled" column — the cloud CPU serving tier is **in scope** for essence-2 and expression-2 by the 2026-09-04 dispatch ruling, and essence-1 is served from the cloud's Apple tier only (2026-09-05).
+
 ### Swift SDK `2.6.0` — Expression 2 can be handed a model (2026-09-06)
 
 Tag `v2.6.0` on the SwiftPM package. Pin **`from: "2.6.0"`**. Everything in it

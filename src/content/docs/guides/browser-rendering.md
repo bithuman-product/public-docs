@@ -63,9 +63,11 @@ https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=avatar
 
 > ★ **Start every one of these on `www.bithuman.ai`.** That host mints the
 > session key and forwards you to the viewer **carrying the rendering-mode
-> parameter with it**; the viewer host does not mint one. Observed 2026-09-06:
+> parameter with it**; the viewer host does not mint one. Observed 2026-09-07:
 > `https://www.bithuman.ai/<CODE>?rendering_mode=browser` answers `302` to
-> `https://agent.viewer.bithuman.ai/<CODE>?s=…&rendering_mode=browser`.
+> `https://agent.viewer.bithuman.ai/<CODE>?s=…&rendering_mode=browser`. A URL
+> that starts on the viewer host now bounces back to `www` **with** its query
+> string, so it ends up in the same place — `www` is simply the shorter road.
 > [Full detail, and the instruction this replaced](#activate-it).
 
 [Try it on a showcase agent →](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser)
@@ -124,21 +126,24 @@ parameter outside that set is dropped silently.)
 > This page used to end the paragraph above with *"if you need one to reach the
 > viewer, use the `agent.viewer.bithuman.ai` URL directly"*. **That instruction
 > was withdrawn on 2026-09-06** because following it produced a plain **cloud**
-> render: the observed redirect that day sent the viewer host back to `www`
+> render: the redirect observed that day sent the viewer host back to `www`
 > without the query string, so the mode never arrived.
 >
+> **The viewer-host redirect was fixed on 2026-09-07 and now keeps the query
+> string.** Both hops, observed anonymously that day:
+>
 > ```text
-> observed 2026-09-06 — the reason the old instruction was withdrawn
+> observed 2026-09-07
 > GET https://agent.viewer.bithuman.ai/<CODE>?rendering_mode=browser
->   -> 302  https://www.bithuman.ai/<CODE>          # query string dropped
+>   -> 302  https://www.bithuman.ai/<CODE>?rendering_mode=browser     # query string kept
 > GET https://www.bithuman.ai/<CODE>?rendering_mode=browser
 >   -> 302  https://agent.viewer.bithuman.ai/<CODE>?s=...&rendering_mode=browser
 > ```
 >
-> Treat that transcript as a dated observation, not a contract. The
-> viewer-host redirect may well be made to preserve the query string — and even
-> once it is, starting on `www` is still what you should do, because the session
-> key is minted there and only there. Nothing above changes.
+> So a link that starts on the viewer host is no longer wrong — it reaches the
+> browser render after one extra hop. It is still not the link to publish:
+> the session key is minted on `www` and only there, and `www` is the entry
+> point that needs no explanation. Nothing above changes.
 
 For `avatar` mode (no agent worker, no LiveKit), use the same landing page with
 the agent's own code:

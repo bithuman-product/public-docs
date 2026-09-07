@@ -63,14 +63,18 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 | Where inference runs | Your machine | bitHuman's GPU pool |
 | Surfaces | Python, Swift, [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
 | Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
-| Hardware | CPU (Essence 1) · Apple Silicon (`expression-2`, Swift SDK 2.5.0+) · Apple Silicon or NVIDIA GPU (Expression 1). `essence-2` on-device is not published. | None — we host it |
+| Hardware | CPU (Essence 1) · Apple Silicon (`expression-2` from Swift SDK 2.5.0, `essence-2` from 2.7.0) · Android arm64 (`essence-1`, `expression-2`, `essence-2`) · NVIDIA GPU (Expression 1). | None — we host it |
 | Cost | 1–2 credits/min (`essence-2` / `expression-2`: 2) | 2–8 credits/min (`essence-2` / `expression-2`: 4 · `essence-2-max`: 8) |
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
 
-> **Second generation.** [`essence-2`](/concepts/essence-2) does **not** run
-> on-device through any published SDK — the [Swift SDK](/sdk/swift) does not
-> carry it (measured against the shipped `bitHumanKit` binary, which contains
-> zero occurrences of `essence`). Reach it via the [REST API](/api/overview) or
+> **Second generation.** [`essence-2`](/concepts/essence-2) runs on-device
+> through two published SDKs as of 2026-09-07: the
+> [Swift SDK](/sdk/swift#essence-2-on-device)'s `Essence2` product (package
+> 2.8.0 — a C interface that builds for iOS and macOS, with no in-app model
+> download route yet) and the
+> [Android SDK](/sdk/android#essence-2--aibithumanessence2-android040)'s
+> `ai.bithuman:essence2-android:0.4.0` (with an in-SDK model store). Live
+> sessions still run through the [REST API](/api/overview) or
 > [LiveKit](/sdk/livekit). As of Python SDK **2.9.0** it does
 > **render offline on your own CPU servers** — metered, no GPU, via `bithuman.tessera_offline` and the
 > `bithuman[tessera]` extra
@@ -97,26 +101,27 @@ We keep this honest so you can plan around it.
 | SDK | Package | Topology | Status |
 |---|---|---|---|
 | **Python** | `pip install bithuman` (2.10.0) | On-device | **GA** |
-| **Swift / Apple** | SwiftPM, pin `from: "2.6.0"` — products `bitHumanKit` and `Expression2` (2.6.0 gives `Expression2` a model-path API) | On-device | **Preview** |
-| **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.2.0` (essence-2) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
+| **Swift / Apple** | SwiftPM, pin `from: "2.8.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0) | On-device | **Preview** |
+| **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.4.0` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
-| **CLI** | `bithuman-cli` (2.5.1 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
+| **CLI** | `bithuman-cli` (2.6.0 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |
 | **Flutter** | reference app only | On-device | Reference app only, not a published code SDK — see below |
 
 > **Note** On Apple platforms the package
 > ([`bithuman-product/homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
-> vends **three** products: **`bitHumanKit`**, the umbrella — the Expression
+> vends **four** products: **`bitHumanKit`**, the umbrella — the Expression
 > avatar engine plus an `.imx` avatar runtime plus the on-device LLM/TTS stack;
-> **`Expression2`**, the second-generation engine on its own; and
+> **`Expression2`**, the second-generation engine on its own; **`Essence2`**,
+> the essence-2 engine's C interface (since 2.7.0); and
 > `BithumanEngineProtocol`, a source-only interface.
 > **It does not contain the essence engine.** This page said it did until
 > 2026-09-03; `strings -a` on the shipped `ios-arm64` binary counts the legacy
 > engine string `libessence` **0** and `essence` **0**, against `ImxContainer` **141** in the same read. `Bithuman` is
 > a **type** vended by `bitHumanKit`, not an importable module — and there is no
 > `Expression` or `Bithuman` product to attach. This rail is **preview**. The
-> [Swift page](/sdk/swift) has the details, including where Essence 2 actually
-> stands on Apple.
+> [Swift page](/sdk/swift) has the details, including what the `Essence2`
+> product does and does not give you yet.
 
 > **Rust** The `bithuman` Rust crate is the on-device engine wrapper that **backs
 > the [CLI](/sdk/cli/overview)**. It is internal / app-backing — source-only (not on

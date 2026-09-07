@@ -198,13 +198,12 @@ matrix today:
   not accept current cloud-form bundles yet (see the
   [Python SDK loader notes](/sdk/python#which-model-artifacts-can-the-sdk-load)).
 - **Apple Silicon on-device** playback via the [Swift SDK](/sdk/swift) is
-  `expression-2` **only**, and it is **engine only** — the `Expression2`
-  product (2.5.0+) builds and runs, but **no model bundle is published in the
-  form it loads**
-  ([details](/sdk/swift#expression-2-on-device)). The Swift SDK carries **no
-  `essence-2` engine at all**; the Apple tier for `essence-2` is
-  bitHuman's own Apple Silicon, reached over the network like any other cloud
-  tier.
+  engine-first on both second-generation models: the `Expression2` product
+  (2.5.0+; a model-path API from 2.6.0) and, since 2.7.0, the `Essence2`
+  product — a C interface with its resources published, but **no in-app
+  model download route yet** ([details](/sdk/swift#essence-2-on-device)).
+  The cloud's Apple tier for `essence-2` is bitHuman's own Apple Silicon,
+  reached over the network like any other cloud tier.
 - [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU
   runtime**, but it now ships a **hand-delivered self-hosted GPU container**
   for NVIDIA RTX 40-series hardware — see

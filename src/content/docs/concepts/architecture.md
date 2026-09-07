@@ -73,10 +73,11 @@ Each artifact declares the engine ABI it builds against. Artifacts with a **matc
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | 2.10.0 | PyPI | v7 |
-| Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.5.0) | SwiftPM | v7 |
-| Swift SDK (`Expression2`) | 2.5.0 | SwiftPM | — (CoreML, no engine ABI) |
+| Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.8.0) | SwiftPM | v7 |
+| Swift SDK (`Expression2`) | 2.6.0 | SwiftPM | — (CoreML, no engine ABI) |
+| Swift SDK (`Essence2`) | engine release `essence2-v1.2.0`, package 2.8.0 | SwiftPM | — (C interface; ONNX Runtime 1.26.0) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
-| bitHuman CLI | 2.5.1 (Homebrew / universal installer — macOS arm64 and Linux x86_64); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI `bithuman-cli` · universal installer | v7 |
+| bitHuman CLI | 2.6.0 (Homebrew / universal installer — macOS arm64 and Linux x86_64); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI · universal installer | v7 |
 
 ### Engine ABI history
 
@@ -143,7 +144,7 @@ at session launch; the device/runtime matrix is:
 | Cloud Apple Silicon | Real-time | — | Real-time |
 | Cloud CPU | Real-time | — | Real-time |
 | Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (~22–31 FPS on 16 cores); live streaming via cloud | — | [CLI local rendering](/sdk/cli/overview#local-rendering-by-platform) (macOS arm64, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2`, v2.5.0+ — `macos-arm64` **and** `ios-arm64`, both proven on hardware, but engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
+| On-device Apple Silicon (Mac / iOS) | [Swift SDK](/sdk/swift#essence-2-on-device) `Essence2` product (package 2.8.0) — a C interface, builds for iOS and macOS; no in-app model download route yet | — (cloud-only) | [Swift SDK](/sdk/swift) `Expression2`, v2.5.0+ — `macos-arm64` **and** `ios-arm64`, both proven on hardware, but engine only, [no model bundle published](/sdk/swift#expression-2-on-device) |
 | Browser-local | Rolling out — `?render=local`, [4 live identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent). WASM renderer; WebGPU drives the speech encoder, and [without an adapter local lip-sync is off](/guides/browser-webgpu#why-there-is-no-wasm-fallback-for-lip-sync--the-number) | — | Rolling out — `?render=local`, [79 published identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent) (LiteRT.js / WebGPU, WASM fallback) |
 
 Cloud sessions route down the serving chain (GPU → Apple → CPU)

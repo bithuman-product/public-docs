@@ -12,7 +12,7 @@ order: 13
 - **Xcode 26+** on a Mac, plus an Apple Developer account. Add the SwiftPM package:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.6.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.8.0")
 ```
 
 - Device floor (real hardware — the Simulator can't run on-device inference): **iPhone 16 Pro or later** (A18 Pro+), or **iPad Pro M4 or later**, on **iOS / iPadOS 26+**. Earlier devices are refused at launch by `HardwareCheck.evaluate()`.
@@ -22,7 +22,7 @@ order: 13
 >
 > ★ **Corrected 2026-09-06 — this is not an Apple build of `expression-1`.** This note used to say *"iPhone Expression 1 (this example) is preview … on-device validation of that engine is still in progress"*, which read as if an Apple port of the [`expression-1`](/concepts/expression-1) model were on its way. It is not: `expression-1` is **GPU-only** and has no macOS, iPadOS or iOS build ([where each model runs](/concepts/where-models-run)). What `bitHumanKit` bundles is the umbrella's own on-device engine, reached through the `VoiceChat` / `AvatarConfig` API below.
 >
-> The package also vends **`Expression2`** — a separate product and a separate engine ([`expression-2`](/concepts/expression-2)) — which *has* rendered on an iPhone. As of **2.6.0** it takes a model path and can open the `<code>.avatar` you download for your own agent; it still ships no weights of its own. This example does not use it: see [Expression 2 on-device](/sdk/swift#expression-2-on-device).
+> The package also vends **`Expression2`** — a separate product and a separate engine ([`expression-2`](/concepts/expression-2)) — which *has* rendered on an iPhone. As of **2.6.0** it takes a model path and can open the `<code>.avatar` you download for your own agent; it still ships no weights of its own. This example does not use it: see [Expression 2 on-device](/sdk/swift#expression-2-on-device). Since **2.7.0** it also vends **`Essence2`**, the [`essence-2`](/concepts/essence-2) engine's C interface, which builds for iOS device, iOS simulator and macOS but has no in-app model download route yet: [Essence 2 on-device](/sdk/swift#essence-2-on-device).
 
 ## Run it
 

@@ -18,6 +18,12 @@ as of `cli-v2.5.1` they are **back on the same version on both platforms** —
 the 2.5.0 split, where macOS moved ahead and Linux was stuck at `cli-v2.4.2`,
 is closed. The PyPI wheel is a macOS-only sibling and still trails at `2.3.25`.
 
+**`cli-v2.6.0` (2026-09-06) is the current release**, on the same two targets
+and built from one commit. The four-target probe and the transcripts below
+were taken on `cli-v2.5.1` and still describe the shape; what 2.6.0 changed —
+and the one thing it deliberately does not do yet — is in the
+[changelog](/changelog).
+
 **`cli-v2.5.1` publishes exactly two targets**, and the two it does not publish
 have never shipped at all. Measured against the release on 2026-09-03 — the
 404s are the control that makes the 200s mean something:
@@ -192,7 +198,7 @@ See the [Python SDK guide](/sdk/python).
 On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only.
 
 In Xcode: **File → Add Package Dependencies…** → paste
-`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.6.0**
+`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.8.0**
 → attach a product. The package wraps pre-compiled XCFrameworks with all
 third-party deps statically linked — zero transitive SwiftPM dependencies.
 
@@ -215,29 +221,39 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
   product and you get it. This supersedes the sentence this page carried until
   today, that there was "no supported way to convert one into the other". See
   the [Swift SDK guide](/sdk/swift#expression-2-on-device).
+- **`Essence2`** — the [`essence-2`](/concepts/essence-2) engine, a product
+  since **2.7.0** (2026-09-06) and importable as `import Essence2` since
+  **2.8.0** (2026-09-07). A C interface with no Swift type on top, two binary
+  targets under one product (the engine and an ONNX Runtime build), built for
+  iOS device, iOS simulator and macOS. The engine's resources are published on
+  the same release; **no in-app model download route exists yet** — the
+  download endpoint takes the account secret, not a runtime token. See
+  [Essence 2 on-device](/sdk/swift#essence-2-on-device).
 
-`essence-2` is **not** on this rail. See the [Swift SDK guide](/sdk/swift).
+This page said until 2026-09-07 that `essence-2` was **not** on this rail.
+That was true when written and is false now.
 
 ### Android / Kotlin — Beta
 
 Three on-device AARs on Maven Central under the `ai.bithuman` group, all
-resolvable anonymously with no credential. As of 2026-09-03 **both second-
-generation families have a published Android artifact**; `expression2-android`
-moved to **`0.3.1`** on 2026-09-04, and the versions below are Central's own
-`<release>` values, re-read 2026-09-06.
+resolvable anonymously with no credential. **Both second-generation families
+have a published Android artifact**; `expression2-android` moved to
+**`0.3.1`** on 2026-09-04 and `essence2-android` to **`0.4.0`** on 2026-09-07,
+and the versions below are Central's own `<release>` values, re-read
+2026-09-07.
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
     implementation("ai.bithuman:expression2-android:0.3.1")  // expression-2
-    implementation("ai.bithuman:essence2-android:0.2.0")     // essence-2
+    implementation("ai.bithuman:essence2-android:0.4.0")     // essence-2 — 0.2.0 and 0.3.0 resolve too; use neither
 }
 ```
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.2.0` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.4.0` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | essence-1 | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI in any of the three.** An x86_64 emulator
@@ -249,7 +265,7 @@ Check the group listing yourself — the third line is the control that shows a
 404 is really a 404:
 
 ```bash
-for c in essence2-android/0.2.0 expression2-android/0.3.1 zzz-none/0.2.0; do
+for c in essence2-android/0.4.0 expression2-android/0.3.1 zzz-none/0.2.0; do
   a=${c%%/*}; v=${c##*/}
   printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' \
     "https://repo1.maven.org/maven2/ai/bithuman/$a/$v/$a-$v.pom")" "$c"
@@ -257,17 +273,21 @@ done
 ```
 
 ```text
-200  essence2-android/0.2.0
+200  essence2-android/0.4.0
 200  expression2-android/0.3.1
 404  zzz-none/0.2.0
 rc=0
 ```
 
-> ★ **Read the limits before you plan around this.** The essence-2 AAR ships
-> knowingly under the "base offering first" ruling: it **fails the `PARITY_U8`
-> gate at 2 levels** and sustained throughput is **1.63x short of the accepted
-> bar**. `useLegacyPackaging = true` is not optional — leaving it out fails
-> silently. ★`google()` **is no longer required for `expression2-android`
+Re-run 2026-09-07. 
+
+> ★ **Read the limits before you plan around this.** Both second-generation
+> AARs ship under the "base offering first" ruling: the measured frame rates,
+> the parity figure, and — for essence-2 — the fact that `0.4.0` plays the
+> avatar's recorded sequence with no audio-in entry point yet, are on the
+> [Android SDK page](/sdk/android). For expression-2, `useLegacyPackaging =
+> true` is not optional — leaving it out fails silently. ★`google()` **is no
+> longer required for `expression2-android`
 > `0.3.1`**: its POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`,
 > where `0.3.0`'s also declared `com.google.ai.edge.litert:litert:2.2.0`, which
 > is 404 on Central. A build **pinned to `0.3.0` still needs `google()`** — a
@@ -323,11 +343,12 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
 | Python SDK (`bithuman`) | **2.10.0** | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.6.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
+| Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.8.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
-| bitHuman CLI (`bithuman-cli`) | **2.5.1** — macOS arm64 **and** Linux x86_64, same version, no pin needed · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| Swift SDK (`Essence2`) | engine release **`essence2-v1.2.0`**, declared by the package at **2.8.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
+| bitHuman CLI (`bithuman-cli`) | **2.6.0** (2026-09-06) — macOS arm64 **and** Linux x86_64, same version, no pin needed · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
-| Android AAR (`ai.bithuman:essence2-android`) | **0.2.0** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
+| Android AAR (`ai.bithuman:essence2-android`) | **0.4.0** (2026-09-07; `0.2.0` and `0.3.0` are permanent and not to be used) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
 > **2.10.0, and why the macOS number matters.** 2.10.0 is the first release
@@ -431,7 +452,7 @@ For the file each family hands you by name, and what opens it, see
 |---|---|---|---|
 | bitHuman cloud (GPU · Apple Silicon · CPU chain) | Yes | GPU-only | Yes |
 | Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | — not published ([Swift SDK](/sdk/swift) does not carry Essence 2) | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/swift#expression-2-on-device), so an app with its own agent can hand it one. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
+| On-device Apple Silicon (Mac / iOS) | [Swift](/sdk/swift#essence-2-on-device) `Essence2` product, package **2.8.0** — the engine's C interface, builds for iOS device, iOS simulator and macOS; resources published; **no in-app model download route yet** | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/swift#expression-2-on-device), so an app with its own agent can hand it one. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:

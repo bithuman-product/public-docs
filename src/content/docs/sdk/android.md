@@ -1,6 +1,6 @@
 ---
 title: "Android SDK (Kotlin)"
-description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.2.0 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, and the measured limits."
+description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.4.0 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, the in-SDK model store, and the measured limits."
 section: sdk
 group: "Languages"
 order: 12
@@ -14,12 +14,12 @@ resolvable by anyone, with no credential:
 | Maven coordinate | Model | Published | `minSdk` | ABI |
 |---|---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | **expression-2** | 2026-09-04 | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.2.0` | **essence-2** | 2026-09-03 | 29 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.4.0` | **essence-2** | 2026-09-07 | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | since May 2026 | 29 | `arm64-v8a` |
 
-All three models that the scope ruling puts on Android now have a coordinate that
-resolves. See [essence-2 on Android](#essence-2-on-android) for what is and is not
-verified about the newest one.
+All three models that the scope ruling puts on Android have a coordinate that
+resolves. See [essence-2](#essence-2--aibithumanessence2-android040) for the
+version to use — `0.4.0`, and only `0.4.0` — and for the model store it ships.
 
 > ### ★ `arm64-v8a` is the only ABI, so an x86_64 emulator cannot run any of them
 >
@@ -35,6 +35,17 @@ verified about the newest one.
 > `ndk { abiFilters += "arm64-v8a" }` is worth setting — it keeps the APK small
 > and moves the mismatch to build time — but it cannot conjure a slice that was
 > never published.
+
+> ### Update — 2026-09-07: `essence2-android` is `0.4.0`, and it is the only version to use
+>
+> Maven Central's `<release>` for `ai.bithuman:essence2-android` is **`0.4.0`**
+> (`lastUpdated` 20260907014515; the AAR was written at 2026-09-07T01:31:51Z).
+> `0.2.0` and `0.3.0` are permanent coordinates and still resolve, and neither
+> should be in a new build: **`0.2.0` can show a mouth the avatar never
+> recorded without telling you, and `0.3.0` refuses complete avatar bundles.**
+> `0.4.0` ships an in-SDK model store and a product-named Kotlin package. Every
+> detail, with what was measured on the published bytes, is in
+> [essence-2](#essence-2--aibithumanessence2-android040) below.
 
 > ### Update — 2026-09-06: `expression2-android` is `0.3.1`
 >
@@ -460,37 +471,207 @@ explicit dependency.
 
 ---
 
-## essence-2 on Android
+## essence-2 — `ai.bithuman:essence2-android:0.4.0`
 
-**Published.** `ai.bithuman:essence2-android:0.2.0` resolves from Maven Central.
+**Use `0.4.0`.** It reached Maven Central on 2026-09-07 (`maven-metadata.xml`
+`<release>0.4.0</release>`, `lastUpdated` 20260907014515), and it is the first
+essence-2 Android artifact that has been driven on a handset through the bytes
+Central serves.
 
 ```kotlin
+// app/build.gradle.kts
+android {
+    defaultConfig {
+        minSdk = 29                        // the AAR's own minSdk
+        ndk { abiFilters += "arm64-v8a" }  // the only ABI published
+    }
+}
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.2.0")
+    implementation("ai.bithuman:essence2-android:0.4.0")
 }
 ```
 
-> ### Correction — 2026-09-03
+`mavenCentral()` is enough: the `0.4.0` POM declares only
+`org.jetbrains.kotlin:kotlin-stdlib:2.0.21`.
+
+> ### ★ `0.2.0` and `0.3.0` still resolve, and you should use neither
 >
-> Until today this page said essence-2 was *"not published"*, that *"there is no
-> coordinate to write"* and that `ai.bithuman:essence2-android` *"returns 404 from
-> Maven Central today"*. **That was true when it was written and is now false.**
-> The artifact was published at **2026-09-03 03:39:15 UTC** (`maven-metadata.xml`
-> `lastUpdated=20260903033915`), which is after the previous revision of this page.
-> The licensing blocker it described has been resolved in the artifact itself — the
-> AAR now carries `META-INF/NOTICE.txt` and the full licence texts for FFmpeg 7.1
-> (LGPL v2.1), LLVM libc++ and ONNX Runtime 1.26.0.
+> A published coordinate is permanent, so both stay on Central. What follows
+> is read from each version's own published sources and native library, and
+> from the four-way test bitHuman ran on 2026-09-07 against the Central bytes
+> of `0.3.0` and `0.4.0` on the same handset:
+>
+> * **`0.2.0` can show a mouth the avatar never recorded, silently.** Its
+>   engine draws a mouth of its own whenever the avatar's recorded-mouth data
+>   is not attached, and its render call reports a refusal as an integer
+>   return value (`-2`) that nothing forces an app to read. Sixty frames with
+>   the wrong mouth and every counter green is a real outcome on `0.2.0`.
+> * **`0.3.0` refuses complete bundles.** It made the refusal a thrown
+>   exception, which is right, but it decided whether a bundle may render from
+>   a descriptive list of targets in the bundle's manifest rather than from the
+>   files in the bundle: a bundle carrying all four recorded-mouth files whose
+>   list named another target was refused, and a bundle with one of those files
+>   missing was rendered.
+> * **`0.4.0` applies one rule, the same rule every other bitHuman runtime
+>   applies:** all four recorded-mouth files present, the avatar renders; any
+>   one missing, the session is refused before the first frame and the refusal
+>   names the file.
+
+### Getting a model onto the device
+
+`0.4.0` ships a model store. `Essence2ModelStore` downloads an identity's
+published bundle over HTTPS into app-private storage, verifies every file
+against its published length and SHA-256, keeps it, and opens it:
+
+```kotlin
+import ai.bithuman.essence2.Essence2BorrowRefused
+import ai.bithuman.essence2.Essence2ModelStore
+import ai.bithuman.elevate.Essence2ModelStore.PublicMirrorResolver  // nested types stay on the legacy package, kept for compatibility
+import android.content.Context
+import java.nio.ByteBuffer
+
+// The host is YOUR argument. There is no default: the essence-2 mirror is not
+// published yet, so a store built without a resolver refuses at the first fetch.
+val store = Essence2ModelStore(
+    context,
+    urlResolver = PublicMirrorResolver("https://models.example.com"),
+)
+
+fun play(agentCode: String, present: (ByteBuffer) -> Unit) {
+    val bundle = store.fetch(agentCode)      // blocks on the network — call it off the main thread
+    bundle.open().use { session ->           // the session already carries the avatar's recorded mouth
+        val out = session.newFrameBuffer()   // RGBA8888, session.width x session.height
+        try {
+            for (i in 0 until session.driveFrames) {
+                if (session.renderDriveBorrow(i, out) >= 0) present(out)   // -1: first push, nothing written yet
+            }
+            if (session.flushBorrow(out) >= 0) present(out)
+        } catch (e: Essence2BorrowRefused) {
+            // The session is over. Show your own "the avatar stopped" state; there is no other render call to retry.
+        }
+    }
+}
+```
+
+Five things to know, all read from the published `-sources.jar` and the AAR's
+own manifest, and every one of them exercised on the handset run below:
+
+- **There is no default host.** `PublicMirrorResolver()` with no argument
+  throws at the first fetch, and its message says why: essence-2 bundles are
+  not on the public mirror that expression-2's are, so a baked-in default
+  would 404 in the field while looking configured. Pass the base URL of the
+  mirror that serves yours, or your own `UrlResolver` if the bytes need a
+  signed URL. A file resolves as `{base}/{code}/android/v1/{name}`.
+- **`fetch(code)` returns only a bundle that can render.** Before downloading,
+  it checks that the published file list carries all four recorded-mouth
+  files; after downloading, it re-reads the bundle's own `manifest.json` and
+  checks the four files are on disk. A bundle missing any of them is refused,
+  naming the file, and the download is deleted rather than cached. Every file
+  is hashed as it streams and renamed into place only if both length and
+  digest match; a partial download resumes with a `Range` request.
+- **`bundle.open()` is the one way to a session, and `renderDriveBorrow` /
+  `flushBorrow` are the one way to a frame.** `open()` attaches the avatar's
+  recorded-mouth data before it returns (about 1.4 s once, not per frame).
+  `renderDriveBorrow(i, out)` pushes frame `i` and returns the index of the
+  frame it wrote into `out` — `i-1`, because the engine holds one frame of
+  look-ahead — or `-1` on the first push, when nothing was written.
+  `flushBorrow` releases the held frame at the end of the sequence. A refusal
+  throws `Essence2BorrowRefused` and ends the session: there is no return
+  value to ignore and no fallback to call.
+- **`renderDrive`, `renderKeypoints` and `renderChunk` refuse** on a bundle
+  that carries the recorded-mouth data — they are the paths that would draw a
+  mouth the avatar never recorded. Since `0.3.0` the native library refuses
+  them itself, so an app that opens an `Essence2Frames` on a directory the
+  store never fetched gets the same answer.
+- **`INTERNET` is merged into your app.** The AAR's manifest declares
+  `android.permission.INTERNET` for the store; a library permission merges
+  into every consumer, so your app gains it whether or not you call the store.
+
+**What a session renders today.** `renderDriveBorrow` takes a frame index,
+not audio: the session plays the avatar's own recorded motion sequence
+(`driveFrames` of them), each frame with the mouth taken from the avatar's
+recording. Audio-driven rendering is not on this artifact yet. The two-call
+surface `BitHuman.open(path)` / `Avatar.render(audio)` is present in `0.4.0`'s
+`classes.jar`, and on this version `open` refuses with
+`AvatarError.NotSupported`; when a version wires it, this page will say so.
+
+### Two spellings of one package
+
+`0.4.0` adds `ai.bithuman.essence2` — `Essence2Frames`, `Essence2ModelStore`,
+`Essence2StoreException`, `Essence2BorrowRefused`, `Essence2ArmLayout` — as
+Kotlin type aliases of the classes the AAR has always shipped under
+`ai.bithuman.elevate`, a legacy package name kept for compatibility: the JNI
+entry points are resolved by that exact name, and `0.2.0` / `0.3.0` consumers
+import it. Write the `essence2` spelling in new Kotlin. Two limits, stated
+rather than discovered: **Java cannot see a Kotlin type alias**, so a Java
+caller keeps importing `ai.bithuman.elevate.*`; and the nested types
+(`PublicMirrorResolver`, `UrlResolver`, `Bundle`, `ProgressListener`) are
+declared on the legacy class, which is why the example above imports the
+resolver from there. The legacy class names (`ElevateFrames`,
+`TesseraBorrowRefused`) are what a stack trace prints.
+
+### What was measured
+
+Every line below was executed against Maven Central on 2026-09-07,
+anonymously (no `~/.netrc`, no `~/.curlrc`, `curl -q`, no credential in the
+environment):
+
+| Check | Result |
+|---|---|
+| `essence2-android-0.4.0.pom` | HTTP 200, 2,008 B; one dependency, `kotlin-stdlib:2.0.21` |
+| `essence2-android-0.4.0.aar` | HTTP 200, **11,891,239 B** |
+| SHA-1 vs the published `.aar.sha1` | matches (`dcc67c024a4afdad21d6fec474b6effb130f4808`) |
+| `-sources.jar`, `-javadoc.jar` | HTTP 200 (33,595 B and 401,634 B) |
+| `minSdkVersion` (from the AAR's `AndroidManifest.xml`) | **29** |
+| Permissions the AAR merges into your app | `android.permission.INTERNET` (new since `0.3.0`) |
+| ABI | `arm64-v8a` **only** |
+| Native payload | `lible_jni.so` (**3,047,072 B**), `libonnxruntime.so` (27,408,600 B), `libc++_shared.so` (1,253,544 B) |
+| `classes.jar` | 79,267 B — `ai.bithuman.elevate.*` (legacy package, kept for compatibility) plus the `ai.bithuman.essence2` aliases |
+| The §6(a) relink kit named in `META-INF/NOTICE.txt` | HTTP 200, 13,899,870 B, 15 entries; the `relinkX.zip` control is 404 |
+
+One wrinkle the bytes carry: the `NOTICE.txt` inside the AAR still lists the
+engine library at 2,963,536 bytes. The file shipped beside it is 3,047,072 B.
+The offer URL and the licence texts in that file are correct; the byte count
+is stale.
+
+The probe discriminates: `junit:junit:4.13.2` returned 200 as a positive
+control, while `ai.bithuman:expression2-android:9.9.9` and a nonexistent
+artifact both returned 404.
+
+### Driven on a handset, through the published bytes
+
+This page used to say the essence-2 API was *unexercised from outside* and to
+*treat it as unverified until a build transcript exists*. That is no longer
+the state. On 2026-09-07 bitHuman ran `0.4.0` on a **Galaxy S25+
+(`SM-S936U1`, Snapdragon 8 Elite, Android 16)** through an application whose
+only dependency is the AAR — no source path to the SDK — and **11 of 11 tests
+were green**: the store fetched, verified and opened a real 526 MB identity;
+the session rendered with the avatar's recorded mouth; the engine refused the
+three non-recorded render paths; and the store refused the same bundle served
+with one recorded-mouth file removed, naming it. The native library's SHA-256
+was taken three times — inside the AAR, inside the installed APK, and from the
+running test process's own memory map — and all three read
+`bedfc89b16843c74…`, the digest of the file this page measured in the AAR
+above. The same harness built against the published `0.3.0` went red on
+exactly the two cases described at the top of this section.
+
+That run is bitHuman's, recorded in the engine repository's publish receipt
+for `0.4.0`; it was not re-taken for this page, and no Gradle build ran on the
+host that measured the bytes above. What this page verified itself is the
+artifact: the coordinate, the bytes, the checksum, the declared `minSdk`, the
+merged permission, the native payload and the published sources.
 
 ### FFmpeg is linked statically — and the LGPL §6(a) offer resolves
 
 `lible_jni.so` **defines 618 FFmpeg symbols** and imports none, so FFmpeg is
-inside the library rather than beside it. That makes LGPL-2.1 §6(b) unavailable
-and §6(a) the route, and the relink materials are published on Maven Central at
-the same coordinate as the AAR — classifier `relink`, extension `zip`. The URL
-is baked into the shipped `META-INF/NOTICE.txt`, and it resolves:
+inside the library rather than beside it. That makes LGPL-2.1 §6(b)
+unavailable and §6(a) the route, and the relink materials are published on
+Maven Central at the same coordinate as the AAR — classifier `relink`,
+extension `zip`. The URL is baked into the shipped `META-INF/NOTICE.txt`, and
+it resolves (re-run 2026-09-07 on `0.4.0`):
 
 ```bash
-curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.2.0/essence2-android-0.2.0.aar
+curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.4.0/essence2-android-0.4.0.aar
 OFFER=$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip')
 echo "$OFFER"
 curl -o /dev/null -s -w '%{http_code}\n' -L "$OFFER"
@@ -498,7 +679,7 @@ curl -o /dev/null -s -w '%{http_code}\n' -L "${OFFER%.zip}X.zip"
 ```
 
 ```text
-https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.2.0/essence2-android-0.2.0-relink.zip
+https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.4.0/essence2-android-0.4.0-relink.zip
 200
 404
 rc=0
@@ -512,36 +693,13 @@ in it, why §6(a) rather than §6(b), and the commands that check every claim:
 You do not need any of this to *use* the AAR. It matters if you redistribute
 it inside your own product.
 
-### What was measured
-
-Every line below was executed against Maven Central on 2026-09-03, anonymously
-(no `~/.netrc`, no `~/.curlrc`, `curl -q`):
-
-| Check | Result |
-|---|---|
-| `essence2-android-0.2.0.pom` | HTTP 200, 1,967 B |
-| `essence2-android-0.2.0.aar` | HTTP 200, 11,784,075 B |
-| SHA-1 vs the published `.aar.sha1` | matches (`1d769543…`) |
-| `-sources.jar`, `-javadoc.jar` | HTTP 200 |
-| `minSdkVersion` (from the AAR's `AndroidManifest.xml`) | **29** |
-| ABI | `arm64-v8a` **only** |
-| Native payload | `lible_jni.so` (2,968,408 B), `libonnxruntime.so` (27,408,600 B), `libc++_shared.so` (1,253,544 B) |
-
-The probe discriminates: `junit:junit:4.13.2` returned 200 as a positive control,
-while `ai.bithuman:expression2-android:9.9.9` and a nonexistent artifact both
-returned 404.
-
 ### On-device speed, measured on a Snapdragon 8 Elite
-
-★ **This supersedes the previous version of this page, which said no on-device
-performance figure had been taken.** One has now been taken — for the renderer
-graph, on a handset. Read the scope before the numbers.
 
 **What was measured, and what was not.** The renderer graph was benchmarked
 directly on the device through the same ONNX Runtime 1.26.0 CPU build this AAR
 carries. It is **not** a run through this artifact's own Kotlin API, and it is
-**not** a live session. The API remains unexercised from outside — see
-[What is still not verified](#what-is-still-not-verified).
+**not** a live session — the handset run above establishes that the API
+renders, not how fast a whole session runs. Read the scope before the numbers.
 
 - **Device** Galaxy S25+ (`SM-S936U1`), **Snapdragon 8 Elite (SM8750)**.
 - **Runtime** ONNX Runtime **1.26.0**, CPU execution provider — no accelerator.
@@ -573,9 +731,9 @@ graph measured 1.003× cooled / 1.016× sustained (inside the noise floor), and 
 deliberately heavier arm carrying 33.8% more multiply-accumulates measured
 **slower**, 0.968× / 0.938×.
 
-**The second row is not what you get from `0.2.0` today.** It is a graph change
-that rolls out per identity and is currently on **1 of 52** published
-identities. The [Essence 2 concept page](/concepts/essence-2#android-measured-on-the-handset)
+**The second row is not what you get from a published identity today.** It is
+a graph change that rolls out per identity and is currently on **1 of 52**
+published identities. The [Essence 2 concept page](/concepts/essence-2#android-measured-on-the-handset)
 carries the full protocol, the throttling caveat that makes 1.92× a lower bound
 on the sustained gain, and why the phone gains 2.23× where an x86 workstation
 gains 3.00×.
@@ -584,28 +742,6 @@ gains 3.00×.
 one.** In particular, the **7.54 → 23.87 fps** figure published for the CPU
 render core is a **developer workstation** (Threadripper PRO 5955WX, x86-64,
 batch 24). It is not a phone number, and it does not describe this artifact.
-
-### What is still not verified
-
-Unlike expression-2 above, **no outside Gradle project has been compiled against
-this artifact**, and no render through its own API has been taken — the figures
-above drive the graph, not the SDK. What is established is the coordinate, the
-bytes, the checksum, the declared `minSdk`, the native payload and the renderer
-graph's speed on one handset — nothing further. Treat the API as unexercised
-until that build transcript exists.
-
-### The legacy `elevate` name is in the published API surface
-
-The AAR declares `package="ai.bithuman.elevate"` and its `classes.jar` contains
-`ai/bithuman/elevate/{ElevateFrames, ElevateArmLayout, NativeBridge}`. The
-`elevate` spelling is **deprecated** as a product name — the only two product names
-are expression-2 and essence-2 — but it is now a **published Kotlin package** and
-a Maven coordinate's contents cannot be rewritten after release. Import it as it is
-spelled; a rename would be a breaking API change, not an erratum.
-
-★ The *artifact* name `libelevate-android` was never published and is still
-obsolete — the coordinate is `ai.bithuman:essence2-android`. It is only the
-internal Kotlin package that carries the old spelling.
 
 ---
 

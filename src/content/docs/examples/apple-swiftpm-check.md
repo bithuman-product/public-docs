@@ -13,7 +13,8 @@ before you open Xcode. Each has a control arm.
 
 > **Provenance, and the honest limit.** The transcripts below were produced by
 > running the snippets exactly as printed, on Ubuntu 26.04 / Python 3.14 /
-> curl 8.18, on 2026-09-02. Exit codes are real.
+> curl 8.18, on 2026-09-02 — and [ARM 4](#arm-4--re-run-2026-09-07-at-v280)
+> of check 1 on 2026-09-07, against the `v2.8.0` manifest. Exit codes are real.
 >
 > **No Mac was involved.** Everything on this page inspects Apple artifacts
 > *without executing them* — a resolve preflight, a wheel resolution, a binary
@@ -130,7 +131,36 @@ v2.5.0/bitHumanKit.xcframework.zip             -> 404
 line is what the single-tag version of this manifest would have pointed every
 existing consumer at. SwiftPM reads absolute asset URLs out of whichever
 manifest it resolves, so an asset does not have to live on the resolved tag.
-**Pin `2.5.1`.**
+**Pin `2.8.0`** — the current manifest, checked in ARM 4 below.
+
+### ARM 4 — re-run 2026-09-07 at v2.8.0
+
+The same script, unchanged, with `TAG=v2.8.0` — the manifest that declares all
+four products. Six binary targets now; the essence-2 pair is the new half:
+
+```bash
+TAG=v2.8.0 ./swiftpm-preflight.sh
+```
+
+```text
+manifest        v2.8.0  (395 lines)
+OK  bitHumanKit                      53.0 MB  sha256 matches manifest
+OK  Expression2                       0.5 MB  sha256 matches manifest
+OK  BithumanEngineProtocolBinary      0.1 MB  sha256 matches manifest
+OK  UnifiedModelHeader                0.2 MB  sha256 matches manifest
+OK  libessence2                     151.1 MB  sha256 matches manifest
+OK  onnxruntime                      44.1 MB  sha256 matches manifest
+rc=0
+```
+
+`TAG=v9.9.9` still fails exactly as ARM 2 does (`NOT FETCHABLE (rc=22)`,
+`rc=1`), so the six `OK` lines are a finding and not a script that prints
+`OK`. Three bases in that manifest, not two: `releaseTag = "v2.4.0"` for the
+umbrella, `expression2Tag = "v2.6.0"` for the three Expression 2 targets, and
+`essence2Tag = "essence2-v1.2.0"` for the two under `Essence2`. The target
+names are the archive names — the engine's keeps its legacy library spelling,
+kept for compatibility — and the product you attach is `Essence2`:
+[Essence 2 on-device](/sdk/swift#essence-2-on-device).
 
 ---
 

@@ -207,6 +207,15 @@ const CARRIERS = [
     re: /libessence[A-Za-z0-9_]*\.(a|so|dylib)\b|libessence_jni|libengine-backend-essence2-light/i },
   { why: "§G: the `libessence` JSON KEY in `bithuman version --json` / `doctor --json`, which the CLI's own help calls a stable contract and customer scripts parse",
     re: /["']libessence["']\s*:/i },
+  // ★ADDED 2026-09-07 with the Essence2 SwiftPM product. The shipped essence-2
+  // xcframework's module map (read out of the essence2-v1.2.0 archive, every
+  // slice) declares the Clang module `CLibEssence2` beside `Essence2`; a
+  // developer TYPES `import CLibEssence2`, and v2.7.0 consumers can type
+  // nothing else. The pattern is case-insensitive above, so this identifier
+  // reads as `libessence` to it. Keyed on the whole module name and nothing
+  // shorter — it excuses that identifier, not the word.
+  { why: "the Clang module `CLibEssence2` declared by the shipped essence-2 xcframework's module map — a developer types `import CLibEssence2`",
+    re: /\bCLibEssence2\b/ },
   // ★NOT ADDED, deliberately, and this is a finding rather than an omission:
   // §G also freezes the npm ErrorCode members TESSERA_MEMBERS_{MISSING,INVALID}
   // / TESSERA_ATTACH_REFUSED and the env names BITHUMAN_LIBESSENCE2 /

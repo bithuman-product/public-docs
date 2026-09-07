@@ -27,10 +27,12 @@ Audio in (16 kHz mono PCM), `CGImage` / BGR frames out at 25 FPS. All inference
 runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 (audio-only is unmetered).
 
-> **Maturity** This rail is **preview**, not GA. The package vends three
+> **Maturity** This rail is **preview**, not GA. The package vends four
 > products: **`bitHumanKit`** (`import bitHumanKit`), the binary umbrella;
 > **`Expression2`** (`import Expression2`), the second-generation avatar engine,
-> new in **v2.5.0** and **given a model-path API in v2.6.0**; and
+> new in **v2.5.0** and **given a model-path API in v2.6.0**; **`Essence2`**
+> (`import Essence2`), the essence-2 engine's C interface, new in **v2.7.0**
+> and importable under its own name since **v2.8.0**; and
 > `BithumanEngineProtocol`, a source-only Layer-0 engine interface. The older standalone Layer-1 products (`Expression`, `Bithuman`) are
 > **not** published — naming one fails with
 > `product 'Expression' ... not found in package 'homebrew-bithuman'`, rc 1.
@@ -39,25 +41,16 @@ runs **on-device**; a once-per-minute billing heartbeat meters avatar mode
 > check product names. The failure lands on `swift build`. If you are scripting a
 > preflight, resolve alone will pass you through.
 
-> **Which second-generation engines are on this rail.**
-> [`expression-2`](/concepts/expression-2) **is**, as of **v2.5.0** — see
-> [Expression 2 on-device](#expression-2-on-device) below, including what that
-> release does and does not include.
-> [`essence-2`](/concepts/essence-2) **is not**: it is not a SwiftPM product and
-> it is not bundled inside `bitHumanKit`. That is measured against the shipped
-> binary, not assumed — `strings -a` on the `ios-arm64` slice of
-> `bitHumanKit.xcframework` @ `v2.4.0` counts `essence` **0**, the legacy
-> engine string `libessence` **0**, the legacy mechanism name `tessera` **0**,
-> against `ImxContainer` **141** and `mlx` **104937** in
-> the same read, and its public interface declares no Essence 2 type.
-> [`essence-2-max`](/concepts/essence-2-max) is cloud-only by
-> design. To reach Essence 2 from an Apple app today, call the
-> [REST API](/api/overview) or join a [LiveKit](/sdk/livekit) session — or, on a
-> Mac specifically, drive the Python wheel: see
-> [Essence 2 on a Mac, without Swift](#essence-2-on-a-mac-without-swift).
-> There is no supported way to ship Essence 2 inside an iOS app today —
-> [Essence 2 on iPhone](#essence-2-on-iphone) says so plainly rather than
-> leaving it as a roadmap hint.
+> **Which second-generation engines are on this rail.** Both.
+> [`expression-2`](/concepts/expression-2) since **v2.5.0** — see
+> [Expression 2 on-device](#expression-2-on-device).
+> [`essence-2`](/concepts/essence-2) since **v2.7.0** (2026-09-06), as the
+> `Essence2` product — see [Essence 2 on-device](#essence-2-on-device),
+> including the one thing it does not give you yet. Neither engine is inside
+> `bitHumanKit`: that binary is still the `v2.4.0` asset, and `strings -a` on
+> its `ios-arm64` slice counts `essence` **0** against `ImxContainer` **141**
+> in the same read — attach the product you want, not the umbrella.
+> [`essence-2-max`](/concepts/essence-2-max) is cloud-only by design.
 
 > **Before you open Xcode, preflight the package from any machine.**
 > [Apple — check before you ship](/examples/apple-swiftpm-check) resolves the
@@ -74,14 +67,34 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **2.6.0** ("Up to Next Major Version" from 2.6.0) and attach the product
-you want — **`bitHumanKit`** for the umbrella, **`Expression2`** for the
-second-generation engine alone. Or in `Package.swift`:
+Pick **2.8.0** ("Up to Next Major Version" from 2.8.0) and attach the product
+you want — **`bitHumanKit`** for the umbrella, **`Expression2`** or
+**`Essence2`** for one second-generation engine alone. Or in `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "2.6.0")
+         from: "2.8.0")
 ```
+
+> ### 2.7.0 and 2.8.0 — essence-2 becomes a product (2026-09-06 and 2026-09-07)
+>
+> **What to do:** pin `from: "2.8.0"`. Both are manifest-only tags: nothing
+> that `bitHumanKit` or `Expression2` downloads changed — their asset URLs and
+> checksums are byte-for-byte what `v2.6.0` declared.
+>
+> * **v2.7.0** (2026-09-06T16:42Z) added the **`Essence2`** library product,
+>   pointing at the engine archives on release `essence2-v1.1.0`. Its only
+>   module was `CLibEssence2`; `import Essence2` failed with `no such module`.
+> * **v2.8.0** (2026-09-07T01:30Z) points the product at `essence2-v1.2.0`,
+>   whose module map declares **`Essence2` beside `CLibEssence2`** over the
+>   same header, so the product name and the import finally agree. The engine
+>   it carries also changed one rule — see
+>   [Essence 2 on-device](#essence-2-on-device).
+>
+> Measured on 2026-09-07, anonymously: the manifest at `v2.8.0` is
+> byte-identical to `main`, it declares six binary targets, and the
+> [preflight](/examples/apple-swiftpm-check#arm-4--re-run-2026-09-07-at-v280)
+> fetches all six and matches every checksum.
 
 > ### 2.6.0 — published 2026-09-06, and it is the first one that changes `Expression2`'s API
 >
@@ -134,12 +147,13 @@ second-generation engine alone. Or in `Package.swift`:
 > 'homebrew-bithuman'`, rc 1. `Bithuman` is a **type** vended by `bitHumanKit`,
 > not a module you can import.
 
-> **One package, two release tags — by design.** `2.6.0` is the version you pin;
-> it is the manifest that declares every product. The umbrella's binary still
-> downloads from the **`v2.4.0`** release and the three Expression 2 binaries
-> from **`v2.6.0`**, because a single shared tag would have re-pointed
-> `bitHumanKit.xcframework.zip` at a release that does not carry it — a hard 404
-> for every existing consumer. SwiftPM reads absolute asset URLs out of the
+> **One package, three release tags — by design.** `2.8.0` is the version you
+> pin; it is the manifest that declares every product. The umbrella's binary
+> still downloads from the **`v2.4.0`** release, the three Expression 2
+> binaries from **`v2.6.0`**, and the two Essence 2 binaries from
+> **`essence2-v1.2.0`**, because a single shared tag would have re-pointed
+> `bitHumanKit.xcframework.zip` at a release that does not carry it — a hard
+> 404 for every existing consumer. SwiftPM reads absolute asset URLs out of the
 > manifest it resolves, so the assets do not have to live on the resolved tag.
 
 > **Do not pin `0.8.x` here.** This repo has no `0.8.2` tag, and no `v0.x` tag
@@ -445,12 +459,97 @@ one. You need these to grep your logs, so here they are:
 `embody` and `elevate` are [deprecated names](/concepts/models-v2). They are
 shown here because you have to type or grep them; they are not names to write.
 
+## Essence 2 on-device
+
+**`Essence2` is a product of this package as of v2.7.0 (2026-09-06), and
+`import Essence2` compiles as of v2.8.0 (2026-09-07).** Until then this
+section said Essence 2 was *not available in an iOS app*, with *no Swift
+product and no supported way to build one*. That was true on the day it was
+written and is false now, so it is replaced rather than softened.
+
+```swift
+// Package.swift
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.8.0"),
+// ...
+.product(name: "Essence2", package: "homebrew-bithuman")
+```
+
+```swift
+import Essence2          // v2.8.0 and later
+import CLibEssence2      // the original module name — still works, same declarations
+```
+
+**What the product is.** The engine's C interface — fifteen `be_essence2_*`
+functions declared in one header: `be_essence2_create`, `push_audio`,
+`pull_frame`, `frames_available`, `idle_frame`, `is_ready`, `reset`, `destroy`
+and the rest — with no Swift type on top. `Essence2Engine` is not vended here;
+write your own wrapper over the C calls. **Two binary targets ride under the
+one product** — the engine archive and an ONNX Runtime build — and both are
+needed: the engine leaves the ONNX Runtime symbols undefined and they resolve
+at your app's final link (the engine target alone fails at link on
+`_OrtGetApiBase`). Attach the product and you get both.
+
+**Where it builds.** iOS device, iOS simulator and macOS, all Apple Silicon:
+the engine archive carries `ios-arm64`, `ios-arm64-simulator` and
+`macos-arm64` slices. bitHuman's release notes for v2.8.0 record a scratch
+consumer outside any bitHuman repository — cold cache, no credentials —
+resolving the package at `exact: "2.8.0"`, building and running an executable
+on macOS, and `xcodebuild` reporting `BUILD SUCCEEDED` for the iOS device and
+the iOS simulator destinations, beside three arms that fail on purpose: a
+flipped checksum digit refused at resolve, the engine target alone refused at
+link, and `import Essence2` refused at `v2.7.0` with `no such module`.
+
+**What this page verified itself on 2026-09-07, anonymously:** the manifest at
+`main` and at `v2.8.0` are byte-identical and declare four products; the
+engine archive on release `essence2-v1.2.0` downloads (158,440,195 B) and
+hashes to the checksum the manifest pins; its module map in every one of the
+three slices declares both `Essence2` and `CLibEssence2` over the one header;
+the ONNX Runtime archive and the resources archive sit on the same release
+with their `.sha256` sidecars; and the
+[preflight](/examples/apple-swiftpm-check#arm-4--re-run-2026-09-07-at-v280)
+fetches all six binary targets of v2.8.0 and matches every checksum.
+
+**The engine release is one coordinate, complete.** `essence2-v1.2.0` carries
+three archives: the engine, the ONNX Runtime build, and a resources archive
+(231,597,193 B) holding what the engine loads at start — its Metal library,
+the idle audio and the shared audio encoder. The resources are **not** a
+binary target, because SwiftPM cannot ship loose resource bundles through a
+product: linking succeeds without them and starting a session does not, so
+your app places them in its own resources. The archive names keep the
+engine's legacy library spelling, kept for compatibility —
+`libessence2.xcframework.zip` and `libessence2-resources.zip`, beside
+`onnxruntime.xcframework.zip` — names you download, never type in code.
+
+**What it does with a model.** The v1.2.0 engine applies the same rule as
+every other bitHuman runtime: a model package carrying all four of its
+recorded-mouth files renders, on iOS and macOS exactly as on the server; a
+package missing any of them is refused before the first frame, and the refusal
+names the file. (v1.1.0, cut the same day, read a descriptive block in the
+package's manifest instead and refused complete packages that lacked it —
+which is why v1.2.0 exists.) When the engine cannot render a mouth from the
+avatar's own recording it stops the session and says why, rather than drawing
+one and letting the video play on.
+
+★ **The remaining limit, stated plainly: there is no in-app model download
+yet.** The engine and its resources are published, but the only route that
+returns an essence-2 model today is
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model),
+which authenticates with the **account API secret** — a credential you must
+not ship inside an app — and not with a runtime token. So today you can build
+and start the engine against a model you place in the app yourself; an app
+that fetches its own model on first launch needs a download route that
+accepts a runtime token, and that route is the next step, not something this
+page can show you.
+
+One SwiftPM lesson worth a sentence: `swift package resolve` returns 0 for a
+product that does not exist — only `swift build` proves the product. Preflight
+with a build, not a resolve.
+
 ## Essence 2 on a Mac, without Swift
 
-`Expression2` is the second-generation engine on the SwiftPM rail, and
-[Essence 2](/concepts/essence-2) is not on it at all. But on **macOS**
-specifically there is a self-serve path that does not involve Xcode: the
-`bithuman` Python wheel.
+[Essence 2 on-device](#essence-2-on-device) above is a C interface you wrap
+yourself. On **macOS** specifically there is also a self-serve path that does
+not involve Xcode at all: the `bithuman` Python wheel.
 
 ```bash
 pip install "bithuman>=2.10"
@@ -483,19 +582,6 @@ the machine.
 inspected on Linux; the macOS wheel was **not executed**, because no Mac was
 involved in producing this page. See [Python SDK](/sdk/python) for the API once
 it is installed.
-
-## Essence 2 on iPhone
-
-**Essence 2 is not available in an iOS app today.** There is no Swift product,
-no `.imx` you can ship in an app bundle, and no supported way to build one.
-
-The supported ways to reach Essence 2 from an Apple app are the
-[REST API](/api/overview), a [LiveKit](/sdk/livekit) session, or the Python
-wheel on a Mac ([Python SDK](/sdk/python)). Expression 2 — documented above — is
-the model that runs on device today.
-
-If iOS support for Essence 2 would change what you build, tell us at
-[hello@bithuman.ai](mailto:hello@bithuman.ai); demand is what schedules it.
 
 ## Permissions + entitlements
 
