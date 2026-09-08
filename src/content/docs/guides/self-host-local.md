@@ -23,7 +23,7 @@ into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-07 on
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
 | **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
-| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.4.0` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#getting-a-model-onto-the-device)) |
+| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#getting-a-model-onto-the-device)) |
 | **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/swift#essence-2-on-device) `Essence2` (package 2.8.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published; no in-app model download route yet |
 
 Two things to settle before you pick a platform:
@@ -438,14 +438,14 @@ dependencies { implementation("ai.bithuman:expression2-android:0.3.1") }
 **Essence 2 is on Maven Central too** — since 2026-09-03, and `0.4.0` since 2026-09-07:
 
 ```kotlin
-dependencies { implementation("ai.bithuman:essence2-android:0.4.0") }   // 0.2.0 and 0.3.0 resolve too — use neither
+dependencies { implementation("ai.bithuman:essence2-android:0.5.1") }   // 0.2.0 through 0.5.0 resolve too — use none of them
 ```
 
 `arm64-v8a`, minSdk 29.
 
 > ### ★ Every bitHuman AAR is `arm64-v8a` only — the default emulator will not run it
 >
-> All three coordinates ship **one** ABI slice. `essence2-android:0.4.0` carries
+> All three coordinates ship **one** ABI slice. `essence2-android:0.5.1` carries
 > `lible_jni.so`, `libonnxruntime.so` and `libc++_shared.so` under
 > `jni/arm64-v8a/` and **nothing else**; `expression2-android:0.3.1` carries
 > `libexpr2jni.so` and `libLiteRt.so`, also `arm64-v8a` only.

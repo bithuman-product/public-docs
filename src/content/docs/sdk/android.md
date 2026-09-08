@@ -1,6 +1,6 @@
 ---
 title: "Android SDK (Kotlin)"
-description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.4.0 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, the in-SDK model store, and the measured limits."
+description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.5.1 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, the in-SDK model store, and the measured limits."
 section: sdk
 group: "Languages"
 order: 12
@@ -14,12 +14,13 @@ resolvable by anyone, with no credential:
 | Maven coordinate | Model | Published | `minSdk` | ABI |
 |---|---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | **expression-2** | 2026-09-04 | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.4.0` | **essence-2** | 2026-09-07 | 29 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.5.1` | **essence-2** | 2026-09-08 | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | since May 2026 | 29 | `arm64-v8a` |
 
 All three models that the scope ruling puts on Android have a coordinate that
-resolves. See [essence-2](#essence-2--aibithumanessence2-android040) for the
-version to use — `0.4.0`, and only `0.4.0` — and for the model store it ships.
+resolves. See [essence-2](#essence-2--aibithumanessence2-android051) for the
+version to use — `0.5.1`, and only `0.5.1` — for the model store it ships, and for
+how a self-hosted session is metered.
 
 > ### ★ `arm64-v8a` is the only ABI, so an x86_64 emulator cannot run any of them
 >
@@ -36,16 +37,20 @@ version to use — `0.4.0`, and only `0.4.0` — and for the model store it ship
 > and moves the mismatch to build time — but it cannot conjure a slice that was
 > never published.
 
-> ### Update — 2026-09-07: `essence2-android` is `0.4.0`, and it is the only version to use
+> ### Update — 2026-09-08: `essence2-android` is `0.5.1`, and it is the only version to use
 >
-> Maven Central's `<release>` for `ai.bithuman:essence2-android` is **`0.4.0`**
-> (`lastUpdated` 20260907014515; the AAR was written at 2026-09-07T01:31:51Z).
-> `0.2.0` and `0.3.0` are permanent coordinates and still resolve, and neither
-> should be in a new build: **`0.2.0` can show a mouth the avatar never
-> recorded without telling you, and `0.3.0` refuses complete avatar bundles.**
-> `0.4.0` ships an in-SDK model store and a product-named Kotlin package. Every
-> detail, with what was measured on the published bytes, is in
-> [essence-2](#essence-2--aibithumanessence2-android040) below.
+> Maven Central's `<release>` for `ai.bithuman:essence2-android` is **`0.5.1`**
+> (`lastUpdated` 20260908022240; the AAR was written at 2026-09-08T01:50:48Z).
+> `0.2.0`, `0.3.0`, `0.4.0` and `0.5.0` are permanent coordinates and still
+> resolve, and none should be in a new build: **`0.2.0` can show a mouth the
+> avatar never recorded without telling you, `0.3.0` refuses complete avatar
+> bundles, `0.4.0` does not meter the session it serves, and `0.5.0` keeps
+> rendering a rejected key for ever.** `0.5.1` meters a self-hosted session at
+> the published rate and applies the same rule every other bitHuman runtime
+> applies when a key is rejected: a five-minute grace, then the session refuses;
+> a metering service that cannot be reached never stops a render. Every detail,
+> with what was measured on the published bytes and on a handset, is in
+> [essence-2](#essence-2--aibithumanessence2-android051) below.
 
 > ### Update — 2026-09-06: `expression2-android` is `0.3.1`
 >
@@ -471,12 +476,14 @@ explicit dependency.
 
 ---
 
-## essence-2 — `ai.bithuman:essence2-android:0.4.0`
+## essence-2 — `ai.bithuman:essence2-android:0.5.1`
 
-**Use `0.4.0`.** It reached Maven Central on 2026-09-07 (`maven-metadata.xml`
-`<release>0.4.0</release>`, `lastUpdated` 20260907014515), and it is the first
-essence-2 Android artifact that has been driven on a handset through the bytes
-Central serves.
+**Use `0.5.1`.** It reached Maven Central on 2026-09-08 (`maven-metadata.xml`
+`<release>0.5.1</release>`, `lastUpdated` 20260908022240). Like `0.4.0` and
+`0.5.0` before it, it was driven on a handset through the exact bytes that were
+uploaded, before the press; it is the first version whose handset run exercised
+the [metering rule](#metering) end to end — a rejected key refused at 300 s, an
+unreachable service still rendering at 345 s, a good key landing one ledger row.
 
 ```kotlin
 // app/build.gradle.kts
@@ -487,16 +494,16 @@ android {
     }
 }
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.4.0")
+    implementation("ai.bithuman:essence2-android:0.5.1")
 }
 ```
 
-`mavenCentral()` is enough: the `0.4.0` POM declares only
+`mavenCentral()` is enough: the `0.5.1` POM declares only
 `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`.
 
-> ### ★ `0.2.0` and `0.3.0` still resolve, and you should use neither
+> ### ★ `0.2.0`, `0.3.0`, `0.4.0` and `0.5.0` still resolve, and you should use none of them
 >
-> A published coordinate is permanent, so both stay on Central. What follows
+> A published coordinate is permanent, so all four stay on Central. What follows
 > is read from each version's own published sources and native library, and
 > from the four-way test bitHuman ran on 2026-09-07 against the Central bytes
 > of `0.3.0` and `0.4.0` on the same handset:
@@ -512,14 +519,19 @@ dependencies {
 >   files in the bundle: a bundle carrying all four recorded-mouth files whose
 >   list named another target was refused, and a bundle with one of those files
 >   missing was rendered.
-> * **`0.4.0` applies one rule, the same rule every other bitHuman runtime
->   applies:** all four recorded-mouth files present, the avatar renders; any
->   one missing, the session is refused before the first frame and the refusal
->   names the file.
+> * **`0.4.0` and every version after it apply one rule, the same rule every
+>   other bitHuman runtime applies:** all four recorded-mouth files present, the
+>   avatar renders; any one missing, the session is refused before the first
+>   frame and the refusal names the file.
+> * **`0.4.0` does not meter.** A self-hosted session on it never reaches the
+>   ledger, although the [pricing page](/guides/pricing) says it is billed.
+> * **`0.5.0` meters, but renders a rejected key for ever.** It logs the
+>   rejection once a minute and never refuses; `0.5.1` refuses after the
+>   five-minute grace.
 
 ### Getting a model onto the device
 
-`0.4.0` ships a model store. `Essence2ModelStore` downloads an identity's
+Since `0.4.0` the SDK ships a model store. `Essence2ModelStore` downloads an identity's
 published bundle over HTTPS into app-private storage, verifies every file
 against its published length and SHA-256, keeps it, and opens it:
 
@@ -597,14 +609,14 @@ surface `BitHuman.open(path)` / `Avatar.render(audio)` is present in `0.4.0`'s
 
 ### Metering
 
-A self-hosted session is billed at the published rate ([pricing](/guides/pricing))
-as of `0.5.0`: set `Essence2Metering.apiSecret` (or the `BITHUMAN_API_SECRET`
-environment variable) to the API secret of the account the session bills to;
-with no credential the session renders and logs `★ UNMETERED RENDER`. The SDK
-checks the key when a session opens and once a minute while it runs. The one
-rule every runtime follows when that check does not come back clean is landed
-in the SDK source and ships in the next coordinate, `0.5.1`; on `0.5.0` a
-rejected key is logged once a minute and rendering continues:
+A self-hosted session is billed at the published rate ([pricing](/guides/pricing)):
+set `Essence2Metering.apiSecret` (or the `BITHUMAN_API_SECRET` environment
+variable) to the API secret of the account the session bills to; with no
+credential the session renders and logs `★ UNMETERED RENDER`. The SDK checks
+the key when a session opens and once a minute while it runs. When that check
+does not come back clean, `0.5.1` follows the one rule every bitHuman runtime
+follows (`0.5.0` logged a rejected key once a minute and rendered on; `0.4.0`
+and earlier did not meter at all):
 
 - **The service cannot be reached** (no network, a timeout, a 5xx on our
   side): the session renders on, logs `★ UNMETERED RENDER`, and keeps trying —
@@ -620,7 +632,7 @@ rejected key is logged once a minute and rendering continues:
 
 ### Two spellings of one package
 
-`0.4.0` adds `ai.bithuman.essence2` — `Essence2Frames`, `Essence2ModelStore`,
+Since `0.4.0` the AAR carries `ai.bithuman.essence2` — `Essence2Frames`, `Essence2ModelStore`,
 `Essence2StoreException`, `Essence2BorrowRefused`, `Essence2ArmLayout` — as
 Kotlin type aliases of the classes the AAR has always shipped under
 `ai.bithuman.elevate`, a legacy package name kept for compatibility: the JNI
@@ -635,18 +647,18 @@ resolver from there. The legacy class names (`ElevateFrames`,
 
 ### What was measured
 
-Every line below was executed against Maven Central on 2026-09-07,
+Every line below was executed against Maven Central on 2026-09-08,
 anonymously (no `~/.netrc`, no `~/.curlrc`, `curl -q`, no credential in the
 environment):
 
 | Check | Result |
 |---|---|
-| `essence2-android-0.4.0.pom` | HTTP 200, 2,008 B; one dependency, `kotlin-stdlib:2.0.21` |
-| `essence2-android-0.4.0.aar` | HTTP 200, **11,891,239 B** |
-| SHA-1 vs the published `.aar.sha1` | matches (`dcc67c024a4afdad21d6fec474b6effb130f4808`) |
-| `-sources.jar`, `-javadoc.jar` | HTTP 200 (33,595 B and 401,634 B) |
+| `essence2-android-0.5.1.pom` | HTTP 200, 2,279 B; one dependency, `kotlin-stdlib:2.0.21` |
+| `essence2-android-0.5.1.aar` | HTTP 200, **11,917,667 B** |
+| SHA-1 vs the published `.aar.sha1` | matches (`5ddb0e52d23121e27aa596bebfdb1bafc2b7a26b`) |
+| `-sources.jar`, `-javadoc.jar` | HTTP 200 (48,470 B and 415,608 B) |
 | `minSdkVersion` (from the AAR's `AndroidManifest.xml`) | **29** |
-| Permissions the AAR merges into your app | `android.permission.INTERNET` (new since `0.3.0`) |
+| Permissions the AAR merges into your app | `android.permission.INTERNET` (since `0.4.0`: the model store and the meter use it) |
 | ABI | `arm64-v8a` **only** |
 | Native payload | `lible_jni.so` (**3,047,072 B**), `libonnxruntime.so` (27,408,600 B), `libc++_shared.so` (1,253,544 B) |
 | `classes.jar` | 79,267 B — `ai.bithuman.elevate.*` (legacy package, kept for compatibility) plus the `ai.bithuman.essence2` aliases |
@@ -678,11 +690,24 @@ running test process's own memory map — and all three read
 above. The same harness built against the published `0.3.0` went red on
 exactly the two cases described at the top of this section.
 
-That run is bitHuman's, recorded in the engine repository's publish receipt
-for `0.4.0`; it was not re-taken for this page, and no Gradle build ran on the
-host that measured the bytes above. What this page verified itself is the
-artifact: the coordinate, the bytes, the checksum, the declared `minSdk`, the
-merged permission, the native payload and the published sources.
+`0.5.1` was driven the same way on the same handset on 2026-09-08, on the
+exact bytes that were uploaded to Central, before the press — the native
+library and the Kotlin half (`classes.jar`, where the meter lives) both pinned
+by digest — through **five arms, all green**: no credential renders and bills
+nothing; the lab escape sends nothing; a real key held a 90-second session and
+landed exactly one ledger row at the published self-hosted rate; an invented
+key rendered behind the countdown and was refused by `MeteringRefused` at
+300 seconds; and a real key against a service that could not be reached was
+still rendering at 345 seconds with no refusal. The same invented-key arm run
+against the published `0.5.0` went red — still rendering at the 330-second
+cap — which is the defect `0.5.1` exists for.
+
+Those runs are bitHuman's, recorded in the engine repository's publish
+receipts for `0.4.0` and `0.5.1`; they were not re-taken for this page, and no
+Gradle build ran on the host that measured the bytes above. What this page
+verified itself is the artifact: the coordinate, the bytes, the checksum, the
+declared `minSdk`, the merged permission, the native payload and the published
+sources.
 
 ### FFmpeg is linked statically — and the LGPL §6(a) offer resolves
 
@@ -691,10 +716,10 @@ inside the library rather than beside it. That makes LGPL-2.1 §6(b)
 unavailable and §6(a) the route, and the relink materials are published on
 Maven Central at the same coordinate as the AAR — classifier `relink`,
 extension `zip`. The URL is baked into the shipped `META-INF/NOTICE.txt`, and
-it resolves (re-run 2026-09-07 on `0.4.0`):
+it resolves (re-run 2026-09-08 on `0.5.1`):
 
 ```bash
-curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.4.0/essence2-android-0.4.0.aar
+curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.1/essence2-android-0.5.1.aar
 OFFER=$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip')
 echo "$OFFER"
 curl -o /dev/null -s -w '%{http_code}\n' -L "$OFFER"
@@ -702,7 +727,7 @@ curl -o /dev/null -s -w '%{http_code}\n' -L "${OFFER%.zip}X.zip"
 ```
 
 ```text
-https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.4.0/essence2-android-0.4.0-relink.zip
+https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.1/essence2-android-0.5.1-relink.zip
 200
 404
 rc=0

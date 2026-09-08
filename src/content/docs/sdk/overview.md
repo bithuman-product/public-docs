@@ -72,8 +72,8 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 > [Swift SDK](/sdk/swift#essence-2-on-device)'s `Essence2` product (package
 > 2.8.0 — a C interface that builds for iOS and macOS, with no in-app model
 > download route yet) and the
-> [Android SDK](/sdk/android#essence-2--aibithumanessence2-android040)'s
-> `ai.bithuman:essence2-android:0.4.0` (with an in-SDK model store). Live
+> [Android SDK](/sdk/android#essence-2--aibithumanessence2-android051)'s
+> `ai.bithuman:essence2-android:0.5.1` (with an in-SDK model store and a metered session). Live
 > sessions still run through the [REST API](/api/overview) or
 > [LiveKit](/sdk/livekit). As of Python SDK **3.0.0** both `essence-2` and
 > `expression-2` **render locally on your own CPU** through one call,
@@ -103,7 +103,7 @@ We keep this honest so you can plan around it.
 |---|---|---|---|
 | **Python** | `pip install bithuman` (3.0.0 — `bithuman.open` / `avatar.render`; `bithuman<3` to stay on 2.10.0) | On-device | **GA** |
 | **Swift / Apple** | SwiftPM, pin `from: "2.8.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0) | On-device | **Preview** |
-| **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.4.0` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
+| **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.5.1` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.6.3 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64, essence-2 and expression-2 runtimes inside; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |

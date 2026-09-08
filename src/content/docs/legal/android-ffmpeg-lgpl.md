@@ -38,7 +38,7 @@ published for them. That is correct, not a gap:
 
 | Coordinate | FFmpeg linked in? | Relink offer |
 |---|---|---|
-| `ai.bithuman:essence2-android:0.4.0` | **yes** — statically, into `lible_jni.so` | **published** (below); `0.2.0` and `0.3.0` each carry their own kit at the same shape of URL |
+| `ai.bithuman:essence2-android:0.5.1` | **yes** — statically, into `lible_jni.so` | **published** (below); `0.2.0` through `0.5.0` each carry their own kit at the same shape of URL |
 | `ai.bithuman:expression2-android:0.3.1` | no — it carries LiteRT (Apache-2.0) | none needed |
 | `ai.bithuman:sdk:2.3.6` | not audited on this page | — |
 

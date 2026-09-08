@@ -134,7 +134,7 @@ control that renames one call to a name that does not exist → `BUILD FAILED`,
 // app/build.gradle.kts
 dependencies {
     implementation("ai.bithuman:expression2-android:0.3.1")   // expression-2 — minSdk 26
-    implementation("ai.bithuman:essence2-android:0.4.0")      // essence-2   — minSdk 29
+    implementation("ai.bithuman:essence2-android:0.5.1")      // essence-2   — minSdk 29
 }
 ```
 

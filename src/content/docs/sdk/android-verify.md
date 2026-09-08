@@ -89,7 +89,7 @@ sdk                      2.3.6
 > **Re-taken 2026-09-07.** The script is unchanged and one answer moved
 > again: `essence2-android` now reads **`0.4.0`** (`lastUpdated`
 > 20260907014515). `0.2.0` and `0.3.0` remain published and remain the wrong
-> version to build against — [the Android SDK page says why](/sdk/android#essence-2--aibithumanessence2-android040).
+> version to build against — [the Android SDK page says why](/sdk/android#essence-2--aibithumanessence2-android051).
 > That page's own `0.4.0` measurements (bytes, SHA-1, `minSdk`, the merged
 > `INTERNET` permission, the native payload, the §6(a) kit) were taken the way
 > this page's probes are — anonymously, over HTTPS — on 2026-09-07.

@@ -270,14 +270,14 @@ and the versions below are Central's own `<release>` values, re-read
 // app/build.gradle.kts
 dependencies {
     implementation("ai.bithuman:expression2-android:0.3.1")  // expression-2
-    implementation("ai.bithuman:essence2-android:0.4.0")     // essence-2 — 0.2.0 and 0.3.0 resolve too; use neither
+    implementation("ai.bithuman:essence2-android:0.5.1")     // essence-2 — 0.2.0 through 0.5.0 resolve too; use none of them
 }
 ```
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.4.0` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.5.1` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | essence-1 | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI in any of the three.** An x86_64 emulator
