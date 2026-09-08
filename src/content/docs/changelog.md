@@ -54,7 +54,7 @@ ID signed and notarized, verified quarantined), both from one commit
 ### Apple engine `essence2-v1.4.0` / Swift package `2.10.0` — the same 300-second rule (2026-09-07)
 
 `essence2-v1.4.0` (published 2026-09-07 23:37Z; `Package.swift` at tag
-`v2.10.0` pins its `libessence2.xcframework.zip`, checksum
+`v2.10.0` pins the engine archive at checksum
 `75b1919b848a0a8e13bdfe51999739813b610a42dad25d9fc5a3a4e408e29808`; ONNX
 Runtime and the resources archive carried forward byte-identical from
 `essence2-v1.3.0`). A key the service rejects renders for a grace of 300
