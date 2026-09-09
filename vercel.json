@@ -519,6 +519,26 @@
       "source": "/getting-started/",
       "destination": "/start",
       "permanent": true
+    },
+    {
+      "source": "/sdk/mobile",
+      "destination": "/sdk",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/mobile/",
+      "destination": "/sdk",
+      "permanent": true
+    },
+    {
+      "source": "/mobile",
+      "destination": "/sdk",
+      "permanent": true
+    },
+    {
+      "source": "/mobile/",
+      "destination": "/sdk",
+      "permanent": true
     }
   ]
 }
