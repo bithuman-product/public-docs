@@ -16,7 +16,7 @@ implementation("ai.bithuman:sdk:2.3.6")   // Maven Central
 ```
 
 - Device floor: an `arm64-v8a` device (physical phone or **`arm64-v8a` emulator image**), **Android 10+ (API 29+)**. Inference is fully on-device — no cloud round-trip. ★The AAR ships **`arm64-v8a` only**, so an **x86_64** emulator resolves, builds and installs and then throws `UnsatisfiedLinkError` at the first `System.loadLibrary` — there is no fallback slice.
-- A `.imx` model file pushed to the device (the snippet reads from `getExternalFilesDir(null)`).
+- A `.imx` model file pushed to the device (the snippet reads from `getExternalFilesDir(null)`). **Where to get one:** create an essence-1 agent and download its artifact with `GET /v1/agent/{code}/model/download` ([Agents](/api/agents)), or pull a showcase identity — `https://models.bithuman.ai/showcase/<slug>.imx`, e.g. `modern-court-jester` — see [Avatars and the .imx format](/concepts/avatars-imx). The two second-generation sections below need **no** `.imx` and no manual push: their model stores download the identity by agent code.
 
 > **Note** The Android / Kotlin SDK is in **Beta**. The API surface below is stable enough to build on, but expect minor changes ahead of GA. There is no standalone Android project under `Examples/` yet — this snippet is the canonical starting point; track the [Android SDK](/sdk/android) page for updates.
 
@@ -176,14 +176,34 @@ fun renderExpression2(context: Context, code: String, pcm16k: FloatArray, show: 
 }
 ```
 
-`Accelerator.NPU` is the Qualcomm delegate, and it needs two more artifacts
-in `dependencies` — `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and
+★ **Do not ship `Accelerator.NPU` without a fallback.** It is the Qualcomm
+delegate, and it needs two more artifacts in `dependencies` —
+`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and
 `com.qualcomm.qti:qnn-runtime:2.49.0` — plus
 `packaging { jniLibs { useLegacyPackaging = true } }`; the
 [Android SDK page](/sdk/android#the-accelerated-path-needs-two-more-artifacts)
-has the measured reasons. On a non-Qualcomm device use `Accelerator.AUTO`,
-which is all-CPU and slow. The model store's public mirror needs no
-credential today.
+has the measured reasons. With all three in place it still **refused outright on
+a Galaxy S25+ (Snapdragon 8 Elite) on 2026-09-09**, throwing
+`Expression2Exception: TfLiteInterpreterCreate returned null (graph rejected) …
+this device has no usable Hexagon for this graph` and rendering zero frames. Wrap
+`create` in `try { NPU } catch (e: Expression2Exception) { Expression2Options() }`
+— the [Calling it](/sdk/android#calling-it--audio-in-frames-out) section has the
+exact block. On a non-Qualcomm device use a bare `Expression2Options()`, which is
+all-CPU and slow but always renders.
+
+★ **Where `code` comes from.** It is a bitHuman agent code, ten characters like
+`A66GYD8664` — the same identifier the [REST API](/api/agents) uses. The store's
+default resolver needs no credential and no host argument, but the identity has to
+be published on the public web mirror: `A66GYD8664`, `A55NVK9945`, `A17ZTB0222`
+and `A74NWD9723` were verified anonymously on 2026-09-09, and
+[the SDK page](/sdk/android#getting-a-model-onto-the-device) shows the one-line
+curl (with its negative control) that checks any other code before you build it
+into an app.
+
+**Measured end to end**, 2026-09-09, exactly this function against
+`A66GYD8664` on a Galaxy S25+ from a brand-new project: 9.03 s of 16 kHz mono
+speech in → **181 frames** of 416×720 out (20 fps × 9.03 s), first frame at
+15.3 s on the CPU arm.
 
 ### essence-2 — `Essence2ModelStore.fetch(code).open()`
 
@@ -217,11 +237,22 @@ fun playEssence2(context: Context, mirrorBase: String, code: String, show: (Byte
 }
 ```
 
-Three things the [Android SDK page](/sdk/android#getting-a-model-onto-the-device)
-explains and this snippet assumes: there is **no default mirror host yet**, so
-`mirrorBase` is yours to supply; the session plays the avatar's recorded
-sequence, because there is no audio-in entry point on this artifact yet; and a
-refusal ends the session — there is no other render call to fall back to.
+★ **This snippet compiles and cannot run today, and the reason is not your code.**
+`mirrorBase` has no value you can supply: `Essence2ModelStore` fetches
+`{base}/{code}/android/v1/android_store.v1.json` and **bitHuman publishes no public
+host that serves that tree**. Measured on the handset on 2026-09-09, both hosts a
+developer would guess refuse through the SDK's own error path — the expression-2
+web mirror with `HTTP 400 … {"error":"not_found"}`, `assets.bithuman.ai` with
+`HTTP 404` — each saying *"this identity has no android bundle published on this
+mirror"*. The REST model-download door serves essence-2 as a single
+`<code>.lebundle.imx`, which is not the member tree this store reads. Two more
+things the snippet assumes: the session plays the avatar's **recorded** sequence,
+because there is no audio-in entry point on this artifact yet (`BitHuman.open`
+throws `AvatarError.NotSupported`); and a refusal ends the session — there is no
+other render call to fall back to. **For an audio-driven talking head on Android
+today, use expression-2 above.** The
+[Android SDK page](/sdk/android#essence-2--aibithumanessence2-android051) carries
+the full measurement.
 
 ## Next steps
 

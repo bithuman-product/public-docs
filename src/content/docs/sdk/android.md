@@ -6,6 +6,13 @@ group: "Mobile — iOS & Android"
 order: 12
 ---
 
+**In a hurry?** [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello)
+is the shortest complete app. On this page, the fastest working path is
+[Install](#install--the-minimal-build-that-works) →
+[Calling it](#calling-it--audio-in-frames-out) →
+[Getting a model onto the device](#getting-a-model-onto-the-device), all
+expression-2. essence-2 has [a caveat you should read first](#essence-2--aibithumanessence2-android051).
+
 ## What is on Maven Central
 
 Three Android artifacts are published under the `ai.bithuman` group and are
@@ -107,9 +114,11 @@ native libraries for `arm64-v8a` — `libexpr2jni.so` (446,200 B) and `libLiteRt
 
 ```kotlin
 // settings.gradle.kts
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
 dependencyResolutionManagement {
     repositories {
-        mavenCentral()   // ai.bithuman:expression2-android — this is enough for 0.3.1
+        google()         // AGP's own aapt2 — NOT optional, see below
+        mavenCentral()   // ai.bithuman:expression2-android — Central alone is enough for the SDK
     }
 }
 ```
@@ -128,7 +137,24 @@ dependencies {
 }
 ```
 
-★ **`google()` was required for `0.3.0` and is not required for `0.3.1`.** The
+★ **`google()` is still required — by AGP, not by us. Measured 2026-09-09:** a
+`settings.gradle.kts` with `mavenCentral()` alone (this page printed exactly that
+until today) configures and compiles and then dies at `:app:processDebugResources`:
+
+```
+> Could not resolve all files for configuration ':app:detachedConfiguration2'.
+   > Could not find com.android.tools.build:aapt2:8.7.3-12006047.
+     Searched in the following locations:
+       - https://repo.maven.apache.org/maven2/com/android/tools/build/aapt2/8.7.3-12006047/aapt2-8.7.3-12006047.pom
+```
+
+The Android Gradle Plugin resolves its own `aapt2` out of the **dependency**
+repositories, and `aapt2` is published only on Google's Maven. Nothing about
+bitHuman is involved: any Android project needs `google()` there. What changed with
+`0.3.1` is narrower and still true — **the SDK's own POM no longer drags in a
+Google-only artifact**:
+
+★ **`0.3.1` no longer needs `google()` for the SDK's transitive dependency.** The
 `0.3.0` POM declares `com.google.ai.edge.litert:litert:2.2.0`, which is **not on
 Maven Central** — it is only on Google's Maven repository. With `mavenCentral()`
 alone, Gradle still reports `expression2-android:0.3.0` as *resolved*, and then
@@ -168,28 +194,82 @@ project in [the verification page](/sdk/android-verify), the release APK goes fr
 jump, because `qnn-runtime` packages the Hexagon skels and the Adreno backend.
 Do not exclude `libQnnGpu.so`: it is what `backend_type:gpu` loads.
 
-### Calling it
+### Calling it — audio in, frames out
+
+This is the whole loop, and it is the arm that renders on every arm64 device.
+Start here, then read the accelerated arm below.
 
 ```kotlin
-import ai.bithuman.expression2.Accelerator
 import ai.bithuman.expression2.Expression2Avatar
-import ai.bithuman.expression2.Expression2Model
+import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
-import ai.bithuman.expression2.Routing
 import android.content.Context
-import java.io.File
+import android.graphics.Bitmap
 
-val model = Expression2Model.combined(
-    File(dir, "combined_fp32.tflite"),   // legacy member filenames, kept for
-    File(dir, "canon.bin"),              // compatibility — you will receive these
-)
-val avatar = Expression2Avatar.create(
-    context, model,
-    Expression2Options(
+/** [pcm16k] is 16 kHz MONO float32 in [-1, 1] — one float per sample, not ShortArray. */
+fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
+    // Blocks on the network the first time (~158 MB). Never on the main thread.
+    val model = Expression2ModelStore(context).fetch(agentCode)
+
+    Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
+        val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
+        avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
+        avatar.flushTail()                    // the padded tail is the last sentence
+        while (true) {
+            if (avatar.pull(frame) != null) { show(frame); continue }
+            if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+        }
+    }
+}
+```
+
+**Measured end to end on 2026-09-09** on a Galaxy S25+ (SM-S936U1, Snapdragon
+8 Elite, Android 16), from a brand-new Gradle project whose only path to the SDK
+is the Maven coordinate: 9.03 s of 16 kHz mono speech in → **181 frames out**
+(20 fps × 9.03 s = 181), first frame at 15.3 s, whole clip in 23.7 s.
+`Expression2Options()` resolved to `acc=CPU routing=Routing(enc=CPU, tok14=CPU,
+step=CPU, dec=CPU)`, `initMs` 436.
+
+★ **The `Accelerator.NPU` arm below can refuse outright on a current Qualcomm
+flagship, and it is a thrown exception, not a fallback.** On that same Galaxy
+S25+ — Snapdragon 8 Elite, `qnn-litert-delegate` / `qnn-runtime` 2.49.0 both in
+the APK, `useLegacyPackaging = true` — the NPU arm rendered **zero frames**:
+
+```
+ai.bithuman.expression2.Expression2Exception: TfLiteInterpreterCreate returned null
+(graph rejected) for .../A66GYD8664/combined_hexagon.tflite on the NPU — the QNN
+delegate refused it; this device has no usable Hexagon for this graph
+    at ai.bithuman.expression2.Native.create(Native Method)
+    at ai.bithuman.expression2.Expression2Avatar$Companion.create(Expression2Avatar.kt:244)
+```
+
+Both members were tried and both were refused: the Hexagon-friendly
+`combined_hexagon.tflite` the mirror advertises for Android, and
+`combined_fp32.tflite` (`preferAndroidMember = false`). This is the SM8750
+Hexagon, newer than the SM8550 the Android member was tuned on. So:
+**never make `Accelerator.NPU` your only path.** Catch
+`Expression2Exception` from `create` and build again with `Expression2Options()`:
+
+```kotlin
+val avatar = try {
+    Expression2Avatar.create(context, model, Expression2Options(
         accelerator = Accelerator.NPU,
         routing     = Routing.HTP_DECODER,   // pass BOTH — see below
         qnnOptions  = Expression2Options.QNN_OPTIONS_HEXAGON_BURST,
-    ),
+    ))
+} catch (e: Expression2Exception) {
+    Log.w("x2", "NPU refused, falling back to CPU: ${e.message}")
+    Expression2Avatar.create(context, model, Expression2Options())
+}
+```
+
+If you already have the two member files on disk rather than a store fetch,
+`Expression2Model.combined` is the other way to a model:
+
+```kotlin
+val model = Expression2Model.combined(
+    File(dir, "combined_fp32.tflite"),   // legacy member filenames, kept for
+    File(dir, "canon.bin"),              // compatibility — you will receive these
 )
 ```
 
@@ -286,12 +366,48 @@ the box).
 ### Getting a model onto the device
 
 `Expression2ModelStore` downloads an identity's published bundle over HTTPS into
-app-private storage and hands you an `Expression2Model`:
+app-private storage and hands you an `Expression2Model`. **No credential, no host
+argument, no API key** — the default resolver points at bitHuman's public web
+mirror:
 
 ```kotlin
 val store = Expression2ModelStore(context)
 val model = store.fetch(agentCode)     // members: combined_fp32.tflite, canon.bin
 ```
+
+★ **Where the agent code comes from.** `agentCode` is a bitHuman agent code — the
+same identifier the [REST API](/api/agents) and the CLI use, ten characters like
+`A66GYD8664`. Two ways to get one:
+
+* **Use a published identity.** The store's default host is
+  `https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/expression2-web`
+  (`Expression2ModelStore.DEFAULT_BASE_URL`), and it resolves
+  `{base}/{code}/v1/web_manifest.json`. Verified anonymously on 2026-09-09,
+  `A66GYD8664`, `A55NVK9945`, `A17ZTB0222` and `A74NWD9723` all answer **HTTP 200**
+  there; a made-up code answers 400, so the probe discriminates. `A66GYD8664` is
+  the one this page's end-to-end run used.
+* **Create your own.** `POST /v1/agent/generate` with `model: "expression-2"`
+  returns an `agent_code` — see [Agents](/api/agents). Not every agent is mirrored
+  for the public web mirror; an unmirrored code fails the fetch with
+  `HTTP 400 … Object not found` naming the URL it tried.
+
+Check a code before you ship it into an app:
+
+```bash
+B=https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/expression2-web
+for c in A66GYD8664 ZZZNOSUCH99; do
+  printf '%s %s\n' "$c" "$(curl -sS -o /dev/null -w '%{http_code}' "$B/$c/v1/web_manifest.json")"
+done
+# A66GYD8664 200
+# ZZZNOSUCH99 400     <- the control: a code that is not there answers differently
+```
+
+★ **Where the audio comes from.** `feed` takes a `FloatArray` of **16 kHz mono
+float32 in [-1, 1]**, one float per sample — not `ShortArray`, and not a WAV
+header. From 16-bit PCM that is `sample / 32768f`; from `AudioRecord`, read into a
+`ShortArray` and divide, or use `AudioFormat.ENCODING_PCM_FLOAT` and feed it
+straight through. There is no file-reading helper in this AAR; the essence-1
+`composeFromFile` further down this page is a different artifact.
 
 The member filenames (`combined_fp32.tflite`, `canon.bin`) and the manifest name
 (`web_manifest.json`) are **legacy literals kept for compatibility** — you will
@@ -484,6 +600,35 @@ explicit dependency.
 uploaded, before the press; it is the first version whose handset run exercised
 the [metering rule](#metering) end to end — a rejected key refused at 300 s, an
 unreachable service still rendering at 345 s, a good key landing one ledger row.
+
+:::caution[Read this before you budget a sprint on essence-2 for Android]
+Two things this artifact does **not** do today, both measured on 2026-09-09 on a
+Galaxy S25+ from an outside Gradle project whose only path to the SDK is the
+Maven coordinate:
+
+1. **There is no bundle you can download.** `Essence2ModelStore` fetches
+   `{base}/{code}/android/v1/android_store.v1.json`, and **bitHuman publishes no
+   public host that serves that tree.** The store has no default host on purpose,
+   and the two hosts a developer would guess both refuse: the expression-2 web
+   mirror answers `HTTP 400 … {"error":"not_found"}` and `assets.bithuman.ai`
+   answers `HTTP 404`, both through the SDK's own error path — *"this identity has
+   no android bundle published on this mirror"*. The REST
+   [model-download door](/api/agents) serves essence-2 as a single
+   `<code>.lebundle.imx` file, which is **not** the `android/v1` member tree this
+   store consumes. Unless you run your own mirror and publish that tree yourself,
+   `fetch` cannot succeed.
+2. **There is no audio-in path.** `renderDriveBorrow(i, out)` takes a frame index
+   and plays the avatar's own recorded motion sequence. `BitHuman.open(path)` /
+   `Avatar.render(audio)` are present in `classes.jar` and `open` refuses with
+   `AvatarError.NotSupported`. An audio-driven talking head on Android is
+   **expression-2** today, not essence-2.
+
+Everything below — the coordinate, the bytes, the API, the metering rule, the
+speed figures — is accurate and was measured. It describes an artifact that an
+outside developer cannot yet feed. Build the Android lane on
+[expression-2](#expression-2--aibithumanexpression2-android031); come back to
+this section when a mirror is published.
+:::
 
 ```kotlin
 // app/build.gradle.kts
@@ -802,6 +947,7 @@ deliberately fails, so you can tell a working setup from a silently-broken one.
 
 ## See also
 
+- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the shortest complete app
 - [Verifying the Android SDK](/sdk/android-verify) — the executed transcripts
 - [SDK overview](/sdk) — which SDK to pick
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop

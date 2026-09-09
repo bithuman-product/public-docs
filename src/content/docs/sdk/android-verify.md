@@ -300,14 +300,30 @@ exit $RC
 > change answer on it** — stated here rather than left for a reader whose own
 > run disagrees with the page:
 >
-> * **[Control 2](#control-2-mavencentral-alone-is-not-enough) is a control for
->   `0.3.0`.** It fails there because `0.3.0`'s POM declares
->   `com.google.ai.edge.litert:litert:2.2.0`, which is 404 on Central.
->   **`0.3.1`'s POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`**
->   (fetched from Central 2026-09-06), so `PROBE_OMIT_GOOGLE=1` should now
->   **pass** on `0.3.1`. A control that stops firing because the defect it was
->   built for was fixed is not a blind control — but you have to run it on
->   `0.3.0` to watch it fire. **Run both.**
+> * **[Control 2](#control-2-mavencentral-alone-is-not-enough) still fires on
+>   `0.3.1` — for a different reason, and this page predicted the opposite.**
+>   Until 2026-09-09 the text here said `PROBE_OMIT_GOOGLE=1` "should now **pass**
+>   on `0.3.1`", reasoning that `0.3.1`'s POM no longer names `litert`. That half
+>   is true and the prediction was wrong: it was reasoning, not a run. The run,
+>   on 2026-09-09, is `rc=1` — the failure simply **moved later**, from
+>   `checkReleaseAarMetadata` to `processReleaseResources`, and changed subject
+>   from our dependency to AGP's own:
+>
+>   ```text
+>   > Task :app:processReleaseResources FAILED
+>   * What went wrong:
+>      > Could not find com.android.tools.build:aapt2:8.7.3-12006047.
+>        Searched in the following locations:
+>          - https://repo.maven.apache.org/maven2/com/android/tools/build/aapt2/8.7.3-12006047/aapt2-8.7.3-12006047.pom
+>   ```
+>
+>   `aapt2` is published on Google's Maven only, and AGP resolves it out of the
+>   **dependency** repositories, so `google()` there is required by every Android
+>   project regardless of bitHuman. The same script with `google()` present
+>   (`rc=0`, both `.so` files in the APK) is the positive control that makes this
+>   a real answer rather than a machine that fails at everything. **Run both.**
+>   ★The lesson this page has to keep: a prediction about a control is not the
+>   control. Nothing here should say what a script "should" do.
 > * The positive run and the accelerated-path run are unaffected: `0.3.1` ships
 >   the same engine (`libexpr2jni.so` 446,200 B, differing from `0.3.0`'s in 20
 >   build-id bytes; `libLiteRt.so` byte-identical), so the same two `.so` files
@@ -379,9 +395,12 @@ tell you which artifact you got.**
 
 ### Control 2: mavenCentral() alone is not enough
 
-★ **On `0.3.0`.** This control fires on `0.3.0` and is expected **not** to fire
-on `0.3.1`, whose POM no longer names `litert` — see the note above. Run it on
-`0.3.0` if you want to watch it go red.
+★ **This control fires on both versions, for two different reasons.** On `0.3.0`
+it dies at `checkReleaseAarMetadata` on `com.google.ai.edge.litert:litert:2.2.0`
+(the transcript below). On `0.3.1`, whose POM no longer names `litert`, it dies
+later at `processReleaseResources` on `com.android.tools.build:aapt2` — measured
+2026-09-09, quoted in the note above.
+Either way `google()` in the dependency repositories is not optional.
 
 `PROBE_OMIT_GOOGLE=1` drops `google()` from the dependency repositories. `rc=1`:
 
