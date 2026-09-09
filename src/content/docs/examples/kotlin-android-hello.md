@@ -35,6 +35,7 @@ renders about **5.6 frames per second**, and playback needs 20 — see
 | You need | Why | Check it |
 |---|---|---|
 | A **physical `arm64-v8a` phone**, USB debugging on | every bitHuman AAR is `arm64-v8a` only; an x86_64 emulator installs and then throws `UnsatisfiedLinkError` | `adb devices` lists it |
+| That phone **unlocked**, not just awake | `adb shell input tap` is delivered to whatever window has focus, and on a locked phone that is the lock screen, not your app — the tap is swallowed with no error anywhere | `adb shell dumpsys window \| grep mCurrentFocus` names your activity, not `Bouncer` |
 | **JDK 17** | the Android Gradle Plugin 8.7.3 this project pins refuses newer launcher JVMs — and refuses them illegibly: on a Homebrew JDK 26 the whole error is the string `26.0.2.1` | `java -version` |
 | An **Android SDK** with platform 35 | `compileSdk = 35` below | `$ANDROID_HOME/platforms/android-35` exists |
 | **Network on the phone** for the first run | the model store downloads the identity once | — |
@@ -532,8 +533,23 @@ So:
 
 ```bash
 adb push /tmp/speech.wav /storage/emulated/0/Android/data/com.example.x2hello/files/speech.wav
-adb shell input tap 540 900          # or just tap the phone
+adb shell input tap 540 900          # or just tap the phone — see below if nothing happens
 adb logcat -v time | grep X2HELLO
+```
+
+★ **If the tap does nothing, the phone is locked.** Measured on 2026-09-09: with
+the handset awake but on its lock screen, `dumpsys window` reads
+`mCurrentFocus=Window{… Bouncer}` while `mFocusedApp` is still
+`com.example.x2hello/.MainActivity` — the activity is running behind the
+keyguard, so `input tap` lands on the lock screen and the app never hears it. No
+command reports an error; twelve polls of `logcat` showed the same
+"No speech.wav yet" line as if nothing had been pushed. Unlock the phone, or skip
+the tap entirely — the activity renders in `onCreate`, so restarting it picks the
+file up:
+
+```bash
+adb shell am force-stop com.example.x2hello
+adb shell am start -n com.example.x2hello/.MainActivity
 ```
 
 ## What a real run looks like
@@ -579,9 +595,23 @@ a loop, would not separate the two boxes.
 |---|---:|---:|---:|
 | 40 | 45.24 | 0.54 | **84×** |
 | 60 | 27.63 | 1.72 | **16×** |
-| 80 | 50.11 | 2.93 | **17×** | The first frame arrives only when `feed()` returns, because `feed()` is
-where the compute happens: it renders every chunk whose look-ahead has arrived,
-and `pull()` then drains a queue that is already full.
+| 80 | 50.11 | 2.93 | **17×** |
+
+★ **Why nothing appears for twenty seconds and then everything does.** The
+first frame arrives only when `feed()` returns, because `feed()` is where the
+compute happens: it renders every chunk whose look-ahead has arrived, and
+`pull()` then drains a queue that is already full. That is why the app renders
+the whole clip before it plays a second of it, and why `FIRST_FRAME` and
+`DONE_FRAMES` are 0.6 s apart in the transcript above.
+
+**Executed a second time, from zero, on 2026-09-09.** The whole working tree
+was deleted again (`rm -rf ~/_devwalk_android`), the seven files were parsed out
+of the served HTML of this URL by a script that types none of them, `gradle
+wrapper --gradle-version 8.11.1` and `./gradlew :app:assembleDebug` produced
+`app-debug.apk` **3,474,603 B**, and the same phone rendered **117 frames**
+again: `FIRST_FRAME at 20765 ms`, `DONE_FRAMES 117 in 21369 ms`, from
+`audio: 91477 samples = 5.72 s`. Two independent extractions of this page, twenty
+bytes apart in the APK and 47 ms apart in the render — the page is the project.
 
 ## When it does not work
 
@@ -595,6 +625,7 @@ and `pull()` then drains a queue that is already full.
 | `speech.wav is not a RIFF/WAVE file` | you pushed an AIFF/MP3, or the push landed elsewhere | re-run the `afconvert`/`ffmpeg` line in Step 1 |
 | `need 16 kHz mono 16-bit PCM; speech.wav is 44100 Hz, 2 ch, 16-bit` | wrong sample rate or channel count | `-ac 1 -ar 16000` |
 | App shows the push instructions again after you pushed | the file landed in another package's directory | the path in the message is the one to use, verbatim |
+| App shows the push instructions and `adb shell input tap` changes nothing | the phone is locked — the tap goes to the keyguard | unlock it, or `am force-stop` then `am start` (Step 4) |
 | `Expression2Exception: … the QNN delegate refused it` | you asked for `Accelerator.NPU` explicitly | see the next section — do not name the accelerator |
 
 ## Optional — ask for the accelerator without risking zero frames
