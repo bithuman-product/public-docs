@@ -34,23 +34,41 @@ renders about **5.6 frames per second**, and playback needs 20 — see
 
 | You need | Why | Check it |
 |---|---|---|
-| A **physical `arm64-v8a` phone**, USB debugging on | every bitHuman AAR is `arm64-v8a` only; an x86_64 emulator installs and then throws `UnsatisfiedLinkError` | `adb devices` lists it |
+| A **physical `arm64-v8a` phone**, USB debugging on | every bitHuman AAR is `arm64-v8a` only; an x86_64 emulator installs and then throws `UnsatisfiedLinkError` | `adb devices` lists it — `adb` is **not** on your `PATH` by default; it ships inside the SDK at `$ANDROID_HOME/platform-tools`, which the export block below adds |
 | That phone **unlocked**, not just awake | `adb shell input tap` is delivered to whatever window has focus, and on a locked phone that is the lock screen, not your app — the tap is swallowed with no error anywhere | `adb shell dumpsys window \| grep mCurrentFocus` names your activity, not `Bouncer` |
-| **JDK 17** | the Android Gradle Plugin 8.7.3 this project pins refuses newer launcher JVMs — and refuses them illegibly: on a Homebrew JDK 26 the whole error is the string `26.0.2.1` | `java -version` |
+| **JDK 17** | the Android Gradle Plugin 8.7.3 this project pins refuses newer launcher JVMs — and refuses them illegibly: on a Homebrew JDK 26 the whole error is the string `26.0.2.1` | `"$JAVA_HOME/bin/java" -version` says `17.` — **not** bare `java -version`. Gradle launches the JVM that `JAVA_HOME` names, and bare `java` does not report it: on a Mac that *has* the required Homebrew `openjdk@17`, both `java -version` and `/usr/libexec/java_home -v 17` still print *"Unable to locate a Java Runtime"*, because a Homebrew JDK is keg-only and is never linked into `/Library/Java/JavaVirtualMachines`. Measured on macOS 26.6.2, 2026-09-09 |
 | An **Android SDK** with platform 35 | `compileSdk = 35` below | `$ANDROID_HOME/platforms/android-35` exists |
 | **Network on the phone** for the first run | the model store downloads the identity once | — |
 
-★ **Building from a terminal? Point Gradle at the SDK.** Android Studio writes
-`local.properties` for you; `gradle` on its own does not, and without it the very
-first task fails with *"SDK location not found"*. Either export `ANDROID_HOME`
-(and `JAVA_HOME` at JDK 17) in the shell you build in, or write one line into
-`local.properties` next to `settings.gradle.kts`:
+★ **Building from a terminal? Set these three, in this order.** Android Studio
+writes `local.properties` and finds `adb` for you; a plain terminal does neither
+— without `ANDROID_HOME` the very first Gradle task fails with *"SDK location
+not found"*, and without the `PATH` line every `adb` command on this page is
+`adb: command not found`. Paste the whole block into the shell you build in:
 
 ```bash
-export JAVA_HOME=/path/to/jdk-17          # AGP 8.7.3 refuses newer launcher JVMs
-export ANDROID_HOME=$HOME/Library/Android/sdk    # macOS default; ~/Android/Sdk on Linux
-# or, instead of the export:  echo "sdk.dir=$ANDROID_HOME" > local.properties
+# 1 · JDK 17 — AGP 8.7.3 refuses newer launcher JVMs.
+#     java_home finds a Temurin/Oracle JDK; the brew fallback exists because a
+#     Homebrew openjdk@17 is keg-only, so java_home cannot see it at all.
+export JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null \
+  || echo "$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home")"
+#     Linux instead:  export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+# 2 · the Android SDK (macOS/Android Studio default; ~/Android/Sdk on Linux;
+#     wherever you installed it — the next line follows whatever you set here)
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+
+# 3 · adb ships INSIDE the SDK and nothing on macOS or Linux puts it on PATH
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+
+# Both of these must answer before you build — they are the real checks:
+"$JAVA_HOME/bin/java" -version   # → openjdk version "17.…"   (bare `java -version` will NOT say this)
+adb version                      # → Android Debug Bridge version 1.0.41
 ```
+
+Instead of exporting `ANDROID_HOME` you may write `echo "sdk.dir=$ANDROID_HOME"
+> local.properties` next to `settings.gradle.kts` — but that only feeds Gradle.
+`adb` still needs the `PATH` line.
 
 Android Studio gives you the JDK and the SDK. You do not need an API key, a
 bitHuman account, or a `.imx` file for this page — [Expression 2](/concepts/models)
@@ -680,7 +698,9 @@ separation is what says the mouth is following the audio.
 
 | What you see | What it is | Fix |
 |---|---|---|
+| `adb: command not found` (or `zsh: command not found: adb`) | `adb` ships inside the SDK at `$ANDROID_HOME/platform-tools` and nothing adds it to `PATH` for you | the `export PATH=` line in [Before you start](#before-you-start) |
 | `SDK location not found … ANDROID_HOME … sdk.dir` | you are building from a terminal, so nothing wrote `local.properties` | Before you start — export `ANDROID_HOME` or write `sdk.dir=` |
+| `java -version` says *"Unable to locate a Java Runtime"* on a Mac that has JDK 17 | a Homebrew JDK is keg-only, so neither bare `java` nor `/usr/libexec/java_home` ever sees it — the check is wrong, not the machine | check `"$JAVA_HOME/bin/java" -version` instead; set `JAVA_HOME` with the block in [Before you start](#before-you-start) |
 | A `What went wrong:` whose whole body is a version like `26.0.2.1` | `JAVA_HOME` points at a JDK newer than 17 | point it at JDK 17 |
 | `Could not find com.android.tools.build:aapt2` | `google()` missing from `dependencyResolutionManagement` | Step 3, `settings.gradle.kts` |
 | `FAILURE … Directory '…' does not contain a Gradle build` from `gradle wrapper` | you ran the wrapper before writing the files; Gradle 9 will not write a wrapper into an empty directory | write the seven files of Step 3 first, then `gradle wrapper` — [Step 2](#step-2--create-the-project) |

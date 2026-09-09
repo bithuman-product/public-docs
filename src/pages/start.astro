@@ -92,13 +92,37 @@ const embed = [
           <p>Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or a single CLI command. Private, low-latency, offline-capable.</p>
           <ul>
             <li>Your machine, your data</li>
-            <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/swift">iOS &amp; iPadOS — Swift</a> (preview)</li>
+            <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/swift">iOS &amp; iPadOS — Swift</a> (preview) — each has a <strong>complete, copy-the-whole-page project</strong> below</li>
             <li><strong>The fastest frame on a phone is free.</strong> <a href="/sdk/android">Android + <code>expression-2</code></a> needs <strong>no account, no API key and no credits</strong> — the SDK's model store fetches a published avatar anonymously. Measured: 213 frames on a Galaxy S25+, ~3 minutes from an empty directory</li>
             <li><strong>iOS is the one with prerequisites</strong> — an Apple Developer team, an agent code (2000 credits, 60–100 min) and a key, all before the first frame: <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">what each phone rail needs</a></li>
             <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/wasm">Browser</a> · <a href="/sdk/cli/overview">CLI</a></li>
           </ul>
           <Button href="/sdk/overview" variant="secondary">Get the SDK →</Button>
         </div>
+      </div>
+
+      <!-- The two pages that actually end in a rendered frame on a handset.
+           Before 2026-09-09 the served bytes of this page linked NEITHER, so a
+           reader who clicked "Start building" for a phone had nowhere to land:
+           the finished thing existed and could not be reached. -->
+      <div class="phone-lane">
+        <h3>Shipping a phone app? Start at the finished project.</h3>
+        <p>Both pages print every file in full and end with a rendered frame on a real handset — copy the page, get the app.</p>
+        <div class="phone-row">
+          <a class="phone-card free" href="/examples/kotlin-android-hello">
+            <span class="phone-tag">Android · free</span>
+            <strong>Kotlin — Hello, avatar</strong>
+            <span>The whole project, seven files. <code>expression-2</code> renders with <b>no account, no API key and no credits</b>. Measured: 117 frames on a Galaxy S25+, ~3 minutes from an empty directory.</span>
+            <span class="phone-go">Open the Android project →</span>
+          </a>
+          <a class="phone-card" href="/examples/swift-ios-expression2">
+            <span class="phone-tag">iOS · gated</span>
+            <strong>Swift — a talking avatar on the iPhone you have</strong>
+            <span>The whole SwiftUI app. Renders on any recent iPhone, but you need an Apple Developer team, an agent code (2000 credits) and a key <em>before</em> the first frame.</span>
+            <span class="phone-go">Open the iOS project →</span>
+          </a>
+        </div>
+        <p class="s-note">Neither phone runs <code>essence-2</code> today — <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">what each phone rail needs →</a></p>
       </div>
 
       <div class="nudge">
@@ -137,7 +161,9 @@ const embed = [
     <div class="container">
       <h2>Where to next</h2>
       <div class="next-row">
-        <a class="next-card" href="/examples">Examples <span>Copy-paste starting points for every path</span></a>
+        <a class="next-card" href="/examples/kotlin-android-hello">Android, end to end <span>The whole Kotlin project — free, no key, 117 frames on a real phone</span></a>
+        <a class="next-card" href="/examples/swift-ios-expression2">iOS, end to end <span>The whole SwiftUI app — 149 frames at 21.8 fps on an iPhone 15</span></a>
+        <a class="next-card" href="/examples">All examples <span>Copy-paste starting points for every path</span></a>
         <a class="next-card" href="/guides">Guides <span>Build, deploy, embed, and price your agent</span></a>
         <a class="next-card" href="/showcase">Showcase <span>See what teams have shipped</span></a>
       </div>
@@ -170,6 +196,19 @@ const embed = [
   .fork-card ul a { color: var(--color-primary); font-weight: var(--fw-medium); }
   .fork-card :global(.btn) { margin-top: auto; align-self: flex-start; }
 
+  /* phone lane */
+  .phone-lane { margin-top: var(--space-6); padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
+  .phone-lane h3 { font-size: var(--ft-lg); }
+  .phone-lane > p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .phone-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-4); }
+  .phone-card { display: flex; flex-direction: column; gap: 0.4rem; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface-2); transition: all var(--t-med) var(--ease); }
+  .phone-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .phone-card.free { border-color: var(--color-primary); }
+  .phone-tag { align-self: flex-start; padding: 0.15rem 0.55rem; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-xs); font-weight: var(--fw-medium); }
+  .phone-card strong { font-size: var(--ft-md); }
+  .phone-card > span:not(.phone-tag):not(.phone-go) { color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  .phone-go { margin-top: auto; padding-top: var(--space-2); color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
+
   .nudge { margin-top: var(--space-6); padding: var(--space-5); border: 1px dashed var(--color-border-strong); border-radius: var(--r-xl); }
   .nudge > p:first-child { margin-bottom: var(--space-3); color: var(--color-text-secondary); }
 
@@ -189,6 +228,6 @@ const embed = [
   .next-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
   @media (max-width: 820px) {
-    .fork, .ideas, .next-row { grid-template-columns: 1fr; }
+    .fork, .ideas, .next-row, .phone-row { grid-template-columns: 1fr; }
   }
 </style>

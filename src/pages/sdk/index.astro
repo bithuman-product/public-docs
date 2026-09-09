@@ -20,6 +20,11 @@ const groups = [
       { title: "Android — Kotlin", desc: "Three on-device AARs on Maven Central. expression-2 is the working rail and renders with no account, key or credits; essence-2 has no published host to fetch from and essence-1 cannot authenticate on a device. arm64-v8a only: an x86_64 emulator installs and then throws UnsatisfiedLinkError.", href: "/sdk/android", badge: "Beta" },
       { title: "Where the avatar comes from", desc: "There is no single answer — the two rails split here. Android + expression-2 needs no account, key or credits at all; every other phone rail, iOS included, needs a key and an agent code first. Plus the device floors.", href: "/sdk/overview#getting-an-avatar-model-onto-a-phone" },
       { title: "Verify the Android SDK", desc: "Every Android snippet re-run on a clean machine, with its negative control.", href: "/sdk/android-verify" },
+      // Until 2026-09-09 this hub's served bytes linked NEITHER finished mobile
+      // project, so the reference pages were the end of the road. These two are
+      // the pages that end in a frame on a handset — they belong beside them.
+      { title: "Android, end to end — the whole project", desc: "Every file of a working Kotlin app, printed in full: seven files, one WAV, no account, no API key, no credits. Measured 117 frames on a Galaxy S25+.", href: "/examples/kotlin-android-hello", badge: "Free" },
+      { title: "iOS, end to end — the whole app", desc: "Every file of a working SwiftUI app that renders expression-2 on the iPhone you already have. 149 frames at 21.8 fps on an iPhone 15 — after the Apple Developer team, agent code and key.", href: "/examples/swift-ios-expression2" },
     ],
   },
   {
@@ -53,6 +58,6 @@ const groups = [
   eyebrow="SDK"
   title="SDK"
   tagline="Embed lifelike, realtime visual agents on your own hardware — from Python, iOS, Android, macOS or the browser, or drive the whole stack from a single CLI command. On-device or over the cloud, one engine everywhere."
-  ctas={[{ label: "New here? Start here", href: "/start" }, { label: "Which should I use?", href: "/sdk/overview", variant: "secondary" }]}
+  ctas={[{ label: "New here? Start here", href: "/start" }, { label: "Android app, end to end", href: "/examples/kotlin-android-hello", variant: "secondary" }, { label: "iOS app, end to end", href: "/examples/swift-ios-expression2", variant: "secondary" }]}
   groups={groups}
 />
