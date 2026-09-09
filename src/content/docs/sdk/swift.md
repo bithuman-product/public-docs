@@ -723,6 +723,29 @@ reading the strings of the `ios-arm64` slice of the published engine archive
 (158,661,991 B, downloaded with no credentials and re-hashed to exactly the
 checksum the manifest pins), with a nonsense token reading 0 in the same pass.
 
+**What that looks like from your own app, run on a phone.** A fresh SwiftUI app
+attaching only the `Essence2` product built for the device, installed on an
+iPhone 15 (iOS 26.6.1) on 2026-09-09, and handed the artifact above
+(101,895,441 B for the identity used) exactly as the header says:
+
+```text
+be_essence2_create(<the downloaded artifact>, nil, 0, &handle) -> rc = -2
+
+[be_essence2_create] Essence2SyncEngine: missing asset: Essence2Bundle:
+  …/DevWalkE2.app/e2model.imx is not a .elevatedir/.essence2dir bundle
+  (need a directory with meta.json {"format":"elevatedir-v*" | "essence2-light-dir-v*"})
+```
+
+Three things a reader should take from that run. The product really does
+build, link, install and run on `ios-arm64` — nothing about the SDK is in the
+way. The refusal arrives at `create`, **before** the [hardware
+floor](#hardware-floor) is ever consulted, so it is what you see on *any*
+Apple device, an iPhone 16 Pro included. And `rc` alone does not tell you what
+went wrong: a control arm in the same run, `be_essence2_create` on a path that
+does not exist, returns **the same `-2`** — read the stderr line, not the
+return code. The engine also prints `★ UNMETERED RENDER` on stderr when no
+API secret is set, exactly as [Metering](#essence-2-on-device) describes.
+
 **So they are two runtimes, not two spellings of one.** Nothing a consumer
 writes converts one into the other, and the credential is not what is in your
 way: even with the account API secret in hand — which you must not ship inside

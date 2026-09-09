@@ -170,6 +170,19 @@ const CARRIERS = [
     re: /EMBODY_[A-Z]|EMBODY\)_/ },
   { why: "the `[embody]` log-line prefix the shipped Expression2 engine emits, grepped verbatim by a developer",
     re: /\[embody\]/i },
+  // ★2026-09-09: the essence-2 engine's BUNDLE-DIRECTORY format literals. A
+  // developer who hands the artifact the download endpoint vends to
+  // `be_essence2_create` reads these back verbatim on stderr, and the meta.json
+  // `format` value is a string their own tooling would have to match:
+  //   "… is not a .elevatedir/.essence2dir bundle (need a directory with
+  //    meta.json {"format":"elevatedir-v*" | "essence2-light-dir-v*"})"
+  // Measured on an iPhone 15 (iOS 26.6.1) on 2026-09-09 with the published
+  // Essence2 product. Same class as `[embody]` and `lible_core` above: a
+  // string a reader MEETS rather than writes, and the page must be able to
+  // print it. Deliberately narrow — the bare word `elevate` is NOT matched,
+  // only these four frozen literals.
+  { why: "the essence-2 bundle-directory format literals, printed verbatim in the engine's own refusal and carried in a meta.json `format` value",
+    re: /\.elevatedir|\.essence2dir|elevatedir-v|essence2-light-dir-v/i },
   { why: "tier slugs that saved links, embeds and signed share JWTs carry verbatim",
     re: /essence-2-light-(gpu|cpu|ane)/i },
   { why: "a CSS surface token, not the product",
