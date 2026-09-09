@@ -75,7 +75,7 @@ model-specific identity step runs:
 | `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
 | `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | **Combined**: builds the standard Essence 2 identity bundle on a cloud GPU; Max derives from the same identity video | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
 | `essence-2-max` | Included with every `essence-2` creation — its identity derives from the same internally generated identity video | Instant prep of a compact identity bundle (seconds, warm) | Available once the combined creation is ready |
-| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | About 1–1.5 hours (roughly 60–100 minutes; longer when the adaptive recipe extends to hold quality) |
+| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | About **2 hours** — measured 2026-09-09 over every model-add that carries both timestamps (n=10, median 122.5 min, 8 of 10 between 119 and 141 min) and every creation on the same day (121/124/125/128 min). Longer when the adaptive recipe extends to hold quality |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
 
 Set your polling timeout per model — a 5-minute client timeout is fine for
@@ -480,12 +480,16 @@ An **async** add (everything except `expression-1`) responds immediately:
   "status": "processing",
   "credits": 2000,
   "supported_models": ["essence-1", "essence-2-max"],
-  "message": "expression-2 model add started (typically 10-45 minutes). 2000 credits are charged (refunded automatically if the add fails). Poll GET /v1/agent/status/A66GYD8664 until supported_models includes expression-2."
+  "message": "expression-2 model add started (typically 2-3 hours). 2000 credits are charged (refunded automatically if the add fails). Poll GET /v1/agent/status/A66GYD8664 until supported_models includes expression-2."
 }
 ```
 
-The minute estimate embedded in the response `message` is advisory — the
-table above has the typical times. Poll
+The estimate embedded in the response `message` is advisory — the table above
+has the typical times, and both are now the same measurement. They were not:
+until 2026-09-09 this endpoint answered "typically 10-45 minutes" for a job
+whose every measured run took about two hours, and the table said 60–100
+minutes for the same work. A caller who believed either opened a ticket long
+before the model was due. Poll
 [`GET /v1/agent/status/{code}`](#poll-status) until `supported_models`
 contains the new family (`essence-2` adds **both** tiers, `essence-2` and
 `essence-2-max`). The agent keeps serving as-is while the add runs —
