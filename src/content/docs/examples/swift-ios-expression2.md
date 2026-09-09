@@ -1,6 +1,6 @@
 ---
 title: "Swift / iOS — a talking avatar on the iPhone you have"
-description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 25 FPS. No device floor, no Apple entitlement, no 1.6 GB download. Every file printed in full."
+description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 25 FPS. No device floor, no Apple entitlement, no account and no credits — the showcase identity A08CCD3871 is a public download. Every file printed in full."
 section: examples
 group: "Examples"
 order: 12
@@ -48,13 +48,33 @@ on it; use `expression-2`, which is what this page is.
   [Signing](#5-sign-it-and-run-it-on-the-phone) below, and the fuller
   [signing section](/sdk/swift#signing-before-any-of-the-above-runs-on-a-phone)
   on the SDK page.
-- **An `expression-2` agent of your own**, in `ready` state, and your API
-  secret. The app renders *your* identity. Create one at
-  [bitHuman](https://www.bithuman.ai) and note its `<CODE>`; the API side is
-  [Agents](/api/agents).
+- **An identity to render.** You have two routes, and only one of them costs
+  anything:
 
-  ★ **Yes, the Android page names four identities that need no account — and
-  none of them works here.** [The Android SDK page](/sdk/android#getting-a-model-onto-the-device)
+  ★ **Route A — the showcase identity, no account, no key, no credits, no
+  wait.** `A08CCD3871` ("Milo the Curious Inventor") is a bitHuman-owned,
+  public-visibility `expression-2` agent whose `.avatar` we publish as a plain
+  public object. Fetch it with `curl` and nothing else:
+
+  ```bash
+  curl -fLo agent.avatar \
+    https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/A08CCD3871.avatar
+  ```
+
+  Measured 2026-09-09: `HTTP 206` on a range request with **no credential in
+  the environment at all**, 198,336,868 B, `IMX\0` v2, `unified_format_version:
+  2`, `decoder: decp2v3` — byte-identical (`sha256
+  c55e34e32afd4c1383972dd04c896fb8bd872b9e1b5e71b8a43e9f88acc92fc5`) to what the
+  download endpoint hands its owner. A made-up code on the same prefix answers
+  `400` in the same sweep.
+
+  ★ **Route B — your own identity**, in `ready` state, with your API secret.
+  Do this when you want *your* face on the phone. Create one at
+  [bitHuman](https://www.bithuman.ai) and note its `<CODE>`; the API side is
+  [Agents](/api/agents). Budget **60–100 minutes and 2000 credits** — see
+  below.
+
+  ★ **Why the Android codes still do not work here, and what changed.** [The Android SDK page](/sdk/android#getting-a-model-onto-the-device)
   points `Expression2ModelStore` at a mirror that answers *anonymously*, and
   [the Android example](/examples/kotlin-android-hello) renders `A66GYD8664`
   with no key and no agent of your own. That is real: measured 2026-09-09,
@@ -65,12 +85,17 @@ on it; use `expression-2`, which is what this page is.
   `combined_hexagon.tflite`, `enc_exp.onnx` — and **no `.avatar` container at
   all**, which is the only thing `Expression2` on Apple opens. The endpoint that
   *does* vend a `.avatar`, `GET /v1/agent/{code}/model/download`, answers **401
-  without an `api-secret`** — measured against `A66GYD8664` the same day. So on
-  this rail there is no identity to point the app at but your own, and no
-  keyless route to one. Do not spend an afternoon trying `A66GYD8664` here.
+  without an `api-secret`** — measured against `A66GYD8664` the same day, and
+  measured again against `A08CCD3871`, which is *public* and whose member tree
+  that same endpoint serves anonymously. **That 401 is deliberate and is not
+  going away**: the container is somebody's face, and anonymous container
+  downloads are exactly how a private identity would leak. Route A does not
+  open that door — it publishes ONE identity we own, as a public object we
+  chose, the same way the shared engine below has been public since July. Do
+  not spend an afternoon trying `A66GYD8664` here; use `A08CCD3871`.
 
-  ★ **Budget for this before you open Xcode: creating one takes about 60–100
-  minutes and costs 2000 credits** — an `expression-2` creation trains a
+  ★ **Route B only — budget for this before you open Xcode: creating one takes
+  about 60–100 minutes and costs 2000 credits** — an `expression-2` creation trains a
   per-identity model on an H100-class GPU. See
   [model-specific inputs and creation times](/api/agents#model-specific-inputs-and-creation-times). Nothing on this
   page can start until that finishes, so start the creation first and read the
@@ -95,12 +120,11 @@ curl -s -o /dev/null -w '%{http_code}\n' \
 # 302 → the artifact is there, `setup.sh` below will work
 # 404 → MODEL_ARTIFACT_NOT_READY; retry, and open a ticket if it outlives the day
 ```
-- **The bitHuman CLI**, for one 91 MB download that the model artifact does not
-  carry:
-
-```bash
-brew install bithuman-product/bithuman/bithuman-cli
-```
+- **Nothing else.** The shared engine graphs the artifact does not carry are a
+  public object too — one `curl`, no Homebrew, no CLI, no login. `setup.sh`
+  below fetches them. (If you already have the CLI,
+  `bithuman engine install mac` downloads that same object into
+  `~/.bithuman/engines/mac-1.0.0` and works just as well.)
 
 - About **280 MB of app**: the identity is ~190 MB and the shared graphs are
   ~91 MB, and both ship inside the app bundle.
@@ -130,72 +154,123 @@ before the script:
 
 | file | where it comes from | why you need it |
 |---|---|---|
-| `agent.avatar` | [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model) | your identity — the face, the motion and the per-identity graphs |
-| `shared_engine/` | `bithuman engine install mac` | ★ the artifact does **not** carry `w2v_frontend_cpuAndNE.mlpackage`, and the engine will not start without it. This directory has it |
-| `speech16k.wav` | macOS `say` + `afconvert` | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
+| `agent.avatar` | **Route A:** `…/public/web/showcase/A08CCD3871.avatar` (anonymous). **Route B:** [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model) with your `api-secret` | the identity — the face, the motion and the per-identity graphs |
+| `shared_engine/` | `…/public/web/engines/expression-2/mac-arm64-1.0.0.engine` (anonymous) | ★ the artifact does **not** carry `w2v_frontend_cpuAndNE.mlpackage`, and the engine will not start without it. This object has it |
+| `speech16k.wav` | `…/model/download?member=demo_speech_16k.wav` (anonymous for a public code), or macOS `say` + `afconvert` | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
 
-★ **Why `bithuman engine install mac` on a Mac, for an iOS app.** The graphs in
-that directory are CoreML packages, compiled on the device at first launch;
-they are not Mac-only code. The verb is named for the machine that downloads
-them. It needs no login. This is a real seam and it is bitHuman's to close —
-until then, one 91 MB directory rides in your app bundle.
+★ **Why a Mac engine object, for an iOS app.** The graphs inside it are CoreML
+packages, compiled on the device at first launch; they are not Mac-only code.
+The object is named for the machine that downloads them. It needs no login.
+This is a real seam and it is bitHuman's to close — until then, one 91 MB
+directory rides in your app bundle.
+
+★ **All three are `IMX\0` containers, and unpacking one is 20 lines.** A flat
+table of contents at the front — `IMX\0`, `u16 version`, `u16 count`, then per
+member `u16 nameLen`, the UTF-8 name, `u64 offset`, `u64 size` — followed by
+the payloads. The `unpack()` function in `setup.sh` below is the whole format.
 
 ```bash
 #!/bin/bash
 # setup.sh — fetch the three things the app needs into Sources/Model/
-# Usage:  BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>
+#
+# Route A (default) — no account, no key, no credits, no wait:
+#     ./setup.sh
+# Route B — your own identity:
+#     BITHUMAN_API_SECRET=... ./setup.sh <AGENT_CODE>
 set -euo pipefail
 cd "$(dirname "$0")"
-CODE="${1:-}"
-[ -n "$CODE" ] || { echo "usage: BITHUMAN_API_SECRET=… $0 <AGENT_CODE>"; exit 2; }
-[ -n "${BITHUMAN_API_SECRET:-}" ] || { echo "set BITHUMAN_API_SECRET"; exit 2; }
+PUB=https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web
+SHOWCASE=A08CCD3871
+CODE="${1:-$SHOWCASE}"
 mkdir -p Sources/Model
 
-# 1. your agent's per-identity avatar
-echo "==> downloading $CODE.avatar"
-curl -fL --progress-bar -H "api-secret: $BITHUMAN_API_SECRET" \
-  "https://api.bithuman.ai/v1/agent/$CODE/model/download?model=expression-2" \
-  -o Sources/Model/agent.avatar
+# Unpack an IMX\0 container. The whole format is these 20 lines.
+unpack() {  # unpack <container> <destdir>
+  python3 -c '
+import os, struct, sys
+src, dst = sys.argv[1], sys.argv[2]
+with open(src, "rb") as f:
+    head = f.read(1 << 20)
+    magic, version, count = struct.unpack_from("<4sHH", head, 0)
+    assert magic == b"IMX\0", magic
+    off, members = 8, []
+    for _ in range(count):
+        (n,) = struct.unpack_from("<H", head, off); off += 2
+        name = head[off:off + n].decode(); off += n
+        o, s = struct.unpack_from("<QQ", head, off); off += 16
+        members.append((name, o, s))
+    for name, o, s in members:
+        path = os.path.join(dst, name)
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        f.seek(o)
+        with open(path, "wb") as out:
+            out.write(f.read(s))
+print(f"{len(members)} members -> {dst}")
+' "$1" "$2"
+}
+
+# 1. the identity
+if [ -n "${BITHUMAN_API_SECRET:-}" ] && [ "$CODE" != "$SHOWCASE" ]; then
+  echo "==> downloading $CODE.avatar (your identity)"
+  curl -fL --progress-bar -H "api-secret: $BITHUMAN_API_SECRET" \
+    "https://api.bithuman.ai/v1/agent/$CODE/model/download?model=expression-2" \
+    -o Sources/Model/agent.avatar
+else
+  echo "==> downloading the showcase identity $SHOWCASE (no account needed)"
+  curl -fL --progress-bar "$PUB/showcase/$SHOWCASE.avatar" \
+    -o Sources/Model/agent.avatar
+fi
 ls -l Sources/Model/agent.avatar
 
 # 2. the shared speech front-end the artifact does not carry
-echo "==> installing the shared engine graphs"
-bithuman engine install mac
+echo "==> downloading the shared engine graphs"
+curl -fL --progress-bar "$PUB/engines/expression-2/mac-arm64-1.0.0.engine" \
+  -o /tmp/mac-arm64.engine
 rm -rf Sources/Model/shared_engine
-cp -R "$HOME/.bithuman/engines/mac-1.0.0" Sources/Model/shared_engine
+unpack /tmp/mac-arm64.engine Sources/Model/shared_engine
+rm -f /tmp/mac-arm64.engine
 
-# 3. something for it to say — macOS makes this for you
-echo "==> synthesising speech16k.wav"
-say -o /tmp/ios-expression2.aiff \
-  "Hello. I am a bit Human avatar, rendered on this phone, with no server in the loop."
-afconvert -f WAVE -d LEI16@16000 -c 1 /tmp/ios-expression2.aiff Sources/Model/speech16k.wav
-rm -f /tmp/ios-expression2.aiff
+# 3. something for it to say. A public agent's on-device bundle already
+#    carries one, so this needs no key and no TTS either.
+echo "==> downloading speech16k.wav"
+curl -fL --progress-bar \
+  ${BITHUMAN_API_SECRET:+-H "api-secret: $BITHUMAN_API_SECRET"} \
+  "https://api.bithuman.ai/v1/agent/$CODE/model/download?member=demo_speech_16k.wav&model=expression-2" \
+  -o Sources/Model/speech16k.wav
 
 echo "==> Sources/Model is ready:"
 du -sh Sources/Model/*
 ```
 
-Run on 2026-09-09 it printed:
+Run on 2026-09-09 with **no `BITHUMAN_API_SECRET` in the environment at all**
+(Route A), it printed:
 
 ```text
-==> downloading A79NEH6263.avatar
--rw-r--r--  1 sgu  staff  193628975 Sep  9 00:26 Sources/Model/agent.avatar
-==> installing the shared engine graphs
-  ◆ engine mac-1.0.0 ready → /Users/you/.bithuman/engines/mac-1.0.0
-==> synthesising speech16k.wav
+==> downloading the showcase identity A08CCD3871 (no account needed)
+-rw-rw-r--  1 you  you  198336868 Sep  9 07:40 Sources/Model/agent.avatar
+==> downloading the shared engine graphs
+10 members -> Sources/Model/shared_engine
+==> downloading speech16k.wav
 ==> Sources/Model is ready:
-185M    Sources/Model/agent.avatar
- 91M    Sources/Model/shared_engine
-168K    Sources/Model/speech16k.wav
+190M    Sources/Model/agent.avatar
+166M    Sources/Model/shared_engine
+636K    Sources/Model/speech16k.wav
 ```
 
-Sizes vary widely by identity — two agents measured the same day were 193.6 MB
-and 192.9 MB, so read `Content-Length` rather than budgeting from a number on
-this page.
+**Seven seconds, three `curl`s, zero accounts.** `shared_engine/` is larger
+here than the 91 MB the CLI leaves behind because the object carries both
+Apple graph sets; the app bundles what it needs. Route B, with a key and your
+own `<CODE>`, prints the same three lines with your identity in place of the
+first.
 
-> **Keep the secret out of the app.** `BITHUMAN_API_SECRET` is used once, on
-> your Mac, to fetch a file. Nothing in the app below reads a key, and no key
-> ships inside it. See [Authentication](/api/authentication).
+Sizes vary widely by identity — three agents measured the same day were
+198.3 MB, 193.6 MB and 192.9 MB, so read `Content-Length` rather than budgeting
+from a number on this page.
+
+> **Keep the secret out of the app.** On Route A there is no secret at all. On
+> Route B, `BITHUMAN_API_SECRET` is used once, on your Mac, to fetch a file.
+> Nothing in the app below reads a key, and no key ships inside it. See
+> [Authentication](/api/authentication).
 
 ## 2. The Xcode project
 

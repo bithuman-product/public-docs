@@ -15,7 +15,7 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 | Try a talking avatar end-to-end, no code | [CLI — Hello, avatar](/examples/cli-hello) | CLI | ~2 min |
 | The smallest streaming loop in code | [Python — Hello, avatar](/examples/python-hello) | Python | ~5 min |
 | Call the platform from any language | [REST — Hello, avatar](/examples/rest-hello) | `curl` | ~5 min |
-| A talking avatar on the iPhone you already own | [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) | SwiftUI | ~25 min of work, but **first** 60–100 min and 2000 credits to create the identity it renders |
+| A talking avatar on the iPhone you already own | [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) | SwiftUI | ~25 min. **No account, no key, no credits** — it renders the public showcase identity `A08CCD3871` |
 | A talking voice assistant on a Mac/iPad/iPhone **16 Pro or later** | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min + Apple's 1–3 day entitlement wait |
 | An on-device avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min |
 | Full voice conversation, mic in / avatar out | [AI voice chat](/examples/ai-conversation) | Python | ~10 min |
@@ -41,7 +41,7 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 ## Native apps — Swift
 
 - [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — **start here for a frame on a phone.** No device floor, no Apple entitlement, no 1.6 GB download: measured 2026-09-09 it rendered 416x720 frames on an iPhone 15. Every file is on the page.
-  **The 25 minutes is the app, not the wait.** This one renders *your own* agent: there is no keyless identity on the Apple rail, so before any of it you create an `expression-2` agent — **60–100 minutes** of per-identity training and **2000 credits** ([creation times](/api/agents#model-specific-inputs-and-creation-times), [pricing](/guides/pricing)). Start the creation first and read the page while it trains. The Android example below needs none of that.
+  **No account, no key, no credits, no wait.** Since 2026-09-09 the Apple rail has a keyless identity: `A08CCD3871`, a bitHuman-owned public showcase agent whose `.avatar` is a plain public object. `setup.sh` fetches the identity, the shared engine graphs and a 16 kHz WAV in **three anonymous `curl`s, measured 7 s** — the same shape the Android example has always had. Want *your own* face on the phone instead? That is still an `expression-2` creation: **60–100 minutes** and **2000 credits** ([creation times](/api/agents#model-specific-inputs-and-creation-times), [pricing](/guides/pricing)).
 - [swift/ios-expression2](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-expression2) — the same app as a repository you can clone, with a `setup.sh` that fetches your model.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package. The richest path (on-device STT + LLM + TTS) and the most demanding: iPhone 16 Pro or later, plus two Apple-approved entitlements.
 - [swift/ios-avatar](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
