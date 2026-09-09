@@ -806,6 +806,16 @@ The app loads, shows the avatar's rest pose, and says the bundled line once by
 itself. Press **Speak** to hear it again, or **Talk to it** to drive the mouth
 from your own microphone in real time.
 
+> **Honesty about the microphone button.** The **Speak** path is what every
+> number on this page was measured on, over and over, on the handset. The
+> **Talk to it** path compiles into the same build and installs with it, and it
+> was **not** driven by a human voice on a device while this page was written —
+> the runs that produced these logs were headless. It is here because it is
+> fifteen lines and it is the shape you want for a live agent; treat it as a
+> starting point, not as a measured result. It also streams rather than
+> generating first, so on an iPhone 15 expect the mouth to sit behind you by
+> about a chunk.
+
 It also writes what it did to `Documents/session.log` and its first frame to
 `Documents/first-frame.png`, both of which you can pull off the phone without
 keeping a console attached:
