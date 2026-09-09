@@ -34,6 +34,8 @@
 #                renamed, and the toolchain MUST reject it
 #   --selftest   the extractor's own arms only; no ssh, no toolchain, no network
 #   --deadman    no build at all: page if the last run's receipt is stale
+#   --which-node print the node interpreter this script would use, and exit 2 if
+#                there is none. The arm that answers "would cron get this far?"
 #
 # NO SECRET IS READ, PRINTED OR EXPORTED BY THIS SCRIPT, and it never runs under
 # `set -x`. The pager reads SLACK_WEBHOOK_URL itself, out of ~/.env, in its own
@@ -51,14 +53,65 @@ REMOTE_ANDROID_HOME="${GATE_REMOTE_ANDROID_HOME:-\$HOME/android-sdk}"
 
 MODE="run"
 case "${1:-}" in
-  --mutate)   MODE="mutate" ;;
-  --selftest) MODE="selftest" ;;
-  --deadman)  MODE="deadman" ;;
-  "")         ;;
-  *)          echo "usage: $0 [--mutate|--selftest|--deadman]" >&2; exit 2 ;;
+  --mutate)     MODE="mutate" ;;
+  --selftest)   MODE="selftest" ;;
+  --deadman)    MODE="deadman" ;;
+  --which-node) MODE="which-node" ;;
+  "")           ;;
+  *)            echo "usage: $0 [--mutate|--selftest|--deadman|--which-node]" >&2; exit 2 ;;
 esac
 
 say() { printf '%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*"; }
+
+# ------------------------------------------------------------ finding node ---
+# ★MEASURED 2026-09-09, and it is the whole reason this is not a bare
+# `command -v node`. cron on lafayette hands a job PATH=/usr/bin:/bin, and this
+# box has NO node in /usr/bin — node lives under ~/.nvm. The first installed
+# form of this gate therefore did this on every single nightly run:
+#
+#   $ env -i HOME=/home/sgu PATH=/usr/bin:/bin sh -c '.../examples-build-gate.sh --selftest'
+#   2026-09-09T08:05:10Z UNPROVEN: node is not on PATH here
+#   EXIT=2
+#
+# It could not once have been green. It would have paged docs-examples-unproven
+# every morning, and a guard whose green is UNREACHABLE is worse than no guard:
+# it teaches whoever is on call that this name means nothing. Interactive shells
+# never saw it, because nvm puts node on THEIR PATH — the classic shape where
+# the test passes for the tester and the job fails for cron.
+#
+# So: an explicit override first, then PATH, then the newest nvm install
+# (`sort -V`, so v9 does not beat v20 the way a lexical sort would), then the
+# absolute homes node actually takes on this estate's Linux box and its Macs.
+resolve_node() {
+  if [ -n "${GATE_NODE_BIN:-}" ] && [ -x "$GATE_NODE_BIN" ]; then
+    printf '%s\n' "$GATE_NODE_BIN"; return 0
+  fi
+  n="$(command -v node 2>/dev/null || true)"
+  if [ -n "$n" ]; then printf '%s\n' "$n"; return 0; fi
+  n="$(ls -d "$HOME"/.nvm/versions/node/*/bin/node 2>/dev/null | sort -V | tail -1)"
+  if [ -n "$n" ] && [ -x "$n" ]; then printf '%s\n' "$n"; return 0; fi
+  # The candidate list is INJECTABLE for exactly one reason: so a control can
+  # take every interpreter away and watch this exit 2. A resolver that can only
+  # be tested on a box that happens to have no node is a resolver nothing tests.
+  for c in ${GATE_NODE_CANDIDATES:-/usr/local/bin/node /opt/homebrew/bin/node /snap/bin/node /usr/bin/node}; do
+    if [ -x "$c" ]; then printf '%s\n' "$c"; return 0; fi
+  done
+  return 1
+}
+
+NODE_BIN="$(resolve_node || true)"
+
+# The cheapest possible answer to "would the beat get past its first line?" — no
+# network, no ssh, no toolchain, no checkout reset. Run it under the environment
+# cron actually gives a job and it answers for cron, not for your shell.
+if [ "$MODE" = which-node ]; then
+  if [ -z "$NODE_BIN" ]; then
+    say "UNPROVEN: no node interpreter found (PATH=$PATH, and no nvm/homebrew/usr-local install either)"
+    exit 2
+  fi
+  say "node: $NODE_BIN ($("$NODE_BIN" -v 2>&1))"
+  exit 0
+fi
 
 # ---------------------------------------------------------------- dead-man ---
 # A build gate that stops running looks exactly like a build gate that is green.
@@ -107,8 +160,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CHECKER="$HERE/check-published-examples-build.mjs"
 [ -f "$CHECKER" ] || { say "UNPROVEN: $CHECKER does not exist"; exit 2; }
 
-NODE_BIN="$(command -v node || true)"
-[ -n "$NODE_BIN" ] || { say "UNPROVEN: node is not on PATH here"; exit 2; }
+[ -n "$NODE_BIN" ] || { say "UNPROVEN: no node interpreter found (PATH=$PATH) — see resolve_node above"; exit 2; }
 
 # ------------------------------------------------------------- the selftest ---
 # Always, before anything is graded: if the extractor's own arms do not all fire,

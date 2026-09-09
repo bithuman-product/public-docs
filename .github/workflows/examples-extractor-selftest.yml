@@ -95,6 +95,42 @@ jobs:
         if: always()
         run: bash -n scripts/examples-build-gate.sh
 
+      # ★THE INTERPRETER THE *CRON JOB* GETS, NOT THE ONE YOUR SHELL HAS.
+      # MEASURED 2026-09-09: the first installed form of this gate resolved node
+      # with a bare `command -v node`. cron on lafayette gives a job
+      # PATH=/usr/bin:/bin, that box has no node in /usr/bin (it is under ~/.nvm),
+      # and the nightly beat therefore exited 2 — "node is not on PATH here" — on
+      # every run. It could never once have been green, and it would have paged
+      # UNPROVEN every morning until somebody stopped reading the name. It passed
+      # for every human who ran it, because a login shell has nvm on PATH.
+      #
+      # So this asserts the resolver's BEHAVIOUR, with its own control:
+      #   * with an interpreter reachable, --which-node exits 0 and names it;
+      #   * with PATH and HOME pointing at nothing, it must exit 2 and say
+      #     UNPROVEN — never 0, because a gate that cannot run must not report
+      #     that it ran.
+      - name: The runner finds a node the way cron would, and says UNPROVEN when it cannot
+        if: always()
+        run: |
+          set -u
+          out=$(bash scripts/examples-build-gate.sh --which-node); rc=$?
+          echo "$out"
+          test $rc -eq 0 || { echo "::error::--which-node exited $rc where a node is plainly available"; exit 1; }
+          case "$out" in *node:*) ;; *) echo "::error::--which-node exited 0 without naming an interpreter"; exit 1 ;; esac
+
+          # THE CONTROL: a sandbox PATH with the four tools the resolver itself
+          # needs and NO node, an empty HOME so there is no ~/.nvm, and the
+          # absolute-candidate list injected at a path that does not exist. This
+          # has to be built rather than assumed: `PATH=/nonexistent` alone would
+          # not test anything on a runner that ships /usr/local/bin/node.
+          sb=$(mktemp -d); mkdir -p "$sb/bin" "$sb/home"
+          for t in date ls sort tail; do ln -s "$(command -v $t)" "$sb/bin/$t"; done
+          out2=$(env -i PATH="$sb/bin" HOME="$sb/home" GATE_NODE_CANDIDATES="$sb/nope/node" \
+                   /bin/bash scripts/examples-build-gate.sh --which-node 2>&1); rc2=$?
+          echo "control: rc=$rc2 :: $out2"
+          test $rc2 -eq 2 || { echo "::error::with no interpreter anywhere the runner exited $rc2, not 2 — a gate that cannot run must report UNPROVEN, never a pass"; exit 1; }
+          case "$out2" in *UNPROVEN*) ;; *) echo "::error::the no-node arm exited 2 without saying UNPROVEN"; exit 1 ;; esac
+
       # ★The host gate is the only thing that compiles these pages, and it is
       # scheduled OUTSIDE this repository. If its script is deleted or renamed
       # here, cron keeps running a path that no longer exists and the estate
