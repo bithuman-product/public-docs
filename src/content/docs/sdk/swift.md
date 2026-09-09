@@ -2,7 +2,7 @@
 title: "Swift SDK (iOS, iPadOS, macOS)"
 description: "The iOS SDK. On-device, real-time, lip-synced avatars for iPhone, iPad and Mac — one SwiftPM package, bitHumanKit. Apple Silicon only. Preview maturity."
 section: sdk
-group: "Languages"
+group: "Mobile — iOS & Android"
 label: "Swift — iOS & macOS"
 order: 11
 ---

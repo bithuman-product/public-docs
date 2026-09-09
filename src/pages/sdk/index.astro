@@ -11,10 +11,19 @@ const groups = [
     ],
   },
   {
-    label: "Languages",
+    // Named for the platform, not for the language: the customer who asked
+    // "when do the Android and iOS SDKs go live" could not find pages filed
+    // under Swift and Kotlin.
+    label: "Mobile — iOS & Android",
     cards: [
       { title: "iOS, iPadOS & macOS — Swift", desc: "iPhone, iPad and Mac via one SwiftPM package (bitHumanKit). On-device, Apple Silicon.", href: "/sdk/swift", badge: "Preview" },
       { title: "Android — Kotlin", desc: "On-device Essence runtime via a Maven Central AAR — arm64-v8a, Android 10+.", href: "/sdk/android", badge: "Beta" },
+      { title: "Verify the Android SDK", desc: "Every Android snippet re-run on a clean machine, with its negative control.", href: "/sdk/android-verify" },
+    ],
+  },
+  {
+    label: "Languages",
+    cards: [
       { title: "JavaScript / TypeScript", desc: "Cloud client over LiveKit for web and Node.", href: "/sdk/javascript", badge: "Preview" },
       { title: "WebAssembly (Browser)", desc: "Run agents fully in the browser via WASM — no server GPU.", href: "/sdk/wasm", badge: "New" },
     ],

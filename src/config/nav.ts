@@ -30,7 +30,11 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
 export const GROUP_ORDER: Partial<Record<SectionId, string[]>> = {
   // Verb-based groups that follow the build flow, so the longest sidebar stays scannable.
   api: ["Get started", "Build", "Deliver", "Account & teams", "Operate & reference"],
-  sdk: ["Get started", "Languages", "Command line", "Real-time"],
+  // ★2026-09-09: the mobile rails sat inside a group called "Languages", so a
+  // developer looking for "the iOS SDK" or "the Android SDK" had to already know
+  // we file them under Swift and Kotlin. The group now names the platforms, and
+  // sits directly under Get started on every SDK page.
+  sdk: ["Get started", "Mobile — iOS & Android", "Languages", "Command line", "Real-time"],
   // Lead with the defining product choice (Essence vs Expression) before the internals.
   concepts: ["Models", "Core", "Architecture"],
   guides: ["Build", "Deploy", "Integrate", "Pricing"],

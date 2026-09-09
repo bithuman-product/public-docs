@@ -2,7 +2,7 @@
 title: "Verifying the Android SDK"
 description: "The scripts behind the Android SDK page, their real output and their negative controls — run them yourself and compare."
 section: sdk
-group: "Languages"
+group: "Mobile — iOS & Android"
 order: 12.5
 ---
 

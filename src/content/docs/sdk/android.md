@@ -2,7 +2,7 @@
 title: "Android SDK (Kotlin)"
 description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.5.1 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, the in-SDK model store, and the measured limits."
 section: sdk
-group: "Languages"
+group: "Mobile — iOS & Android"
 order: 12
 ---
 
