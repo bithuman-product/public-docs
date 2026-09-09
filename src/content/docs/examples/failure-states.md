@@ -588,10 +588,12 @@ varying only the header:
 
 ```text
 # no header
-HTTP/2 401  {"error":{"code":"MISSING_AUTH","message":"Missing api-secret header",…}}
+HTTP/2 401  {"error":{"type":"missing_credentials","code":"MISSING_AUTH","httpStatus":401,
+             "message":"send 'Authorization: Bearer <api-secret>' (or the api-secret header)"}}
 
 # a key that is not a key
-HTTP/2 401  {"error":{"code":"UNAUTHORIZED","message":"Invalid api-secret",…}}
+HTTP/2 401  {"error":{"type":"invalid_credentials","code":"UNAUTHORIZED","httpStatus":401,
+             "message":"invalid api secret; check the key in your dashboard or mint a new one"}}
 
 # a valid key, for a code it cannot see
 HTTP/2 404  {"error":{"code":"NOT_FOUND","message":"Agent not found for code: …",…}}
@@ -605,9 +607,28 @@ there, [a missing code and an unmirrored code are the same 400](#a-code-that-exi
 Here `401` means *fix your key*, `404` means *this key cannot see that agent*, and
 `302` is success. Two cautions on that last pair:
 
-- The `404` does **not** distinguish "no such agent" from "not on this account".
-  A code that is real and documented elsewhere still answers `404` to a key that
-  does not own it. Do not tell the user their code is invalid on a `404`.
+- The `404` does **not** distinguish "no such agent" from "not on this account",
+  and there is a **third** case underneath the same code that is easy to mistake
+  for either. Measured 2026-09-09 with one valid key, all three answer
+  `404 NOT_FOUND` and differ only in `message`:
+
+  ```text
+  # a code this key cannot see (invented, or real but owned by another account)
+  "Agent not found for code: A00XXX0000"
+
+  # a code this key OWNS, whose bundle has never been built
+  "agent <CODE>'s self-hosted avatar bundle hasn't been prepared yet — it is
+   built the first time the agent is served as essence-2-max. Start one session
+   (or render a talking video) with model='essence-2-max', then retry this
+   download."
+  ```
+
+  The second is the one that will reach your inbox: the agent is real, the key is
+  right, nothing is misconfigured, and the fix is to serve the agent once. Note
+  that `A66GYD8664` — the identity [the Android half of this page](#the-control)
+  downloads and renders anonymously — is in exactly that state, so a code that
+  demonstrably works on the Android rail can still `404` here. **Read the
+  `message`; never surface a bare `404` as "invalid code".**
 - The `302` points at signed storage that expires. Follow it promptly; do not
   cache the redirect target.
 
@@ -661,7 +682,8 @@ Measured 2026-09-09, `Expression2` 2.11.2, Apple Silicon.
 | Member weights corrupt | **never** | renders a **different face**, no error | verify against `manifest.json` — nothing else will |
 | No `api-secret` | at the door | `401 MISSING_AUTH` | send the header |
 | Bad `api-secret` | at the door | `401 UNAUTHORIZED` | fix the key |
-| Key cannot see the code | at the door | `404 NOT_FOUND` | not necessarily a bad code — may not be this account's |
+| Key cannot see the code | at the door | `404 NOT_FOUND`, `"Agent not found for code: …"` | not necessarily a bad code — may not be this account's |
+| Owned code, bundle never built | at the door | `404 NOT_FOUND`, `"…hasn't been prepared yet…"` | serve the agent once as `essence-2-max`, then retry — read the `message`, not the status |
 | Invalid key, render running | never refuses | 5,429 frames over 330 s | expected: on-device render is unmetered |
 
 ## Next steps
