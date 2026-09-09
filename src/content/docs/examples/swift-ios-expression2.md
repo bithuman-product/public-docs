@@ -141,6 +141,14 @@ BITHUMAN_API_SECRET=… ./setup.sh <YOUR_AGENT_CODE>
 open IOSExpression2.xcodeproj
 ```
 
+> ★ **The repository's `setup.sh` is still the Route B one, today.** The
+> keyless version is the script printed below on this page; the copy in
+> `bithuman-product/homebrew-bithuman` still requires
+> `BITHUMAN_API_SECRET` and an agent code of your own, and will exit 2 without
+> them. Until the two are the same file, clone the project for the Xcode
+> target and paste the `setup.sh` from this page over the one in it — or just
+> run the three `curl`s yourself; there is nothing else in it.
+
 Pick your team under **Signing & Capabilities**, select your iPhone, and press
 Run. Everything below is that same app, file by file, for building it yourself.
 
@@ -371,7 +379,7 @@ targets:
           # SUCCEEDED **. Fail here instead, where the message is unmissable.
           M="$SRCROOT/Sources/Model"
           fail() { echo "error: $1"; exit 1; }
-          [ -f "$M/agent.avatar" ] || fail "Sources/Model/agent.avatar is missing — run  BITHUMAN_API_SECRET=... ./setup.sh <YOUR_AGENT_CODE>"
+          [ -f "$M/agent.avatar" ] || fail "Sources/Model/agent.avatar is missing — run  ./setup.sh   (or BITHUMAN_API_SECRET=... ./setup.sh <YOUR_AGENT_CODE> for your own identity)"
           SZ=$(stat -f%z "$M/agent.avatar")
           [ "$SZ" -gt 1000000 ] || fail "Sources/Model/agent.avatar is only ${SZ} B — that is an error page or a truncated download, not an avatar. Re-run ./setup.sh"
           W="$M/shared_engine/w2v_frontend_cpuAndNE.mlpackage"
