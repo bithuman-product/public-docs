@@ -1,0 +1,111 @@
+name: Handset examples — the half CI can run
+
+# THE TWO HANDSET EXAMPLE PAGES ARE COMPILED BY A GATE THAT CANNOT LIVE HERE.
+#
+# examples/kotlin-android-hello.md and examples/swift-ios-expression2.md are two
+# whole projects printed in full — about 2,000 lines that end with a talking
+# avatar on a real phone. Until 2026-09-09 nothing in this repo compiled a line
+# of either. scripts/check-published-examples-build.mjs now does: it FETCHES the
+# served pages, pulls the code blocks out of the HTML, writes them to disk as the
+# page's own filenames say, and runs Gradle and xcodebuild on the result.
+#
+# ★IT CANNOT RUN IN GITHUB ACTIONS, AND SAYING SO OUT LOUD IS THE POINT.
+# `ubuntu-latest` has neither Xcode nor an Android SDK. `macos-latest` has Xcode
+# and NO Android SDK. There is no hosted runner on which both arms build, and a
+# gate split across two runners that each skip half the subject is a gate that
+# reports green for a page nobody compiled. So the compiling half runs on
+# `echelon` — the Mac with Xcode 26.3, JDK 17, an Android SDK with platform 35 —
+# scheduled from lafayette's crontab by scripts/examples-build-gate.sh, and it
+# pages a human through tools/guard_page.py when it goes red.
+#
+# WHAT IS LEFT FOR THIS WORKFLOW, AND WHY IT IS WORTH A JOB
+# --------------------------------------------------------
+# Two things, both of which decide whether the host gate's verdict means
+# anything, and both of which rot on a PULL REQUEST — hours or days before the
+# host gate's next run, and on a change that has not been published yet:
+#
+#  1. THE EXTRACTOR (`--selftest`). If the assignment rules stop matching the
+#     served markup — a Shiki upgrade, a path comment reworded, a `<pre>`
+#     attribute renamed — the gate extracts nothing, and "nothing" must never
+#     read as "nothing wrong". The self-test asserts every NEGATIVE arm fires
+#     too: a page that dropped a file, a page that printed one twice, an empty
+#     page, an ambiguous iOS page. All of it is fixtures — no network, no
+#     toolchain, no phone.
+#
+#  2. THE FAILURE CONTROL'S SUBJECT (`--controls`). The host gate proves it is
+#     really compiling the page by renaming one bitHuman API symbol and
+#     requiring the compiler to reject it. That control is worth exactly the
+#     token it renames: the day an author rewrites MainActivity.kt and
+#     `Expression2ModelStore(this).fetch(` stops appearing, the mutation changes
+#     nothing, the mutant BUILDS, and the red arm silently becomes a second
+#     green. This estate has already paid for that shape twice (a positive
+#     control that hard-coded one watcher; an API lock whose filter excluded
+#     every nested type). `--controls` reads the markdown SOURCE in this
+#     checkout — not the live page, because a PR's change is not published yet —
+#     and fails if either token is gone.
+#
+# WHAT THIS WORKFLOW DOES NOT DO: it does not compile anything. A green here
+# says the instrument is sound. It says nothing whatever about whether the
+# published code builds — only the host gate can say that, and its verdict
+# arrives in Slack.
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'scripts/check-published-examples-build.mjs'
+      - 'scripts/examples-build-gate.sh'
+      - 'src/content/docs/examples/kotlin-android-hello.md'
+      - 'src/content/docs/examples/swift-ios-expression2.md'
+      - '.github/workflows/examples-extractor-selftest.yml'
+  pull_request:
+    paths:
+      - 'scripts/check-published-examples-build.mjs'
+      - 'scripts/examples-build-gate.sh'
+      - 'src/content/docs/examples/kotlin-android-hello.md'
+      - 'src/content/docs/examples/swift-ios-expression2.md'
+      - '.github/workflows/examples-extractor-selftest.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  extractor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Fixtures only. Every negative arm must fire, so a rule that stopped
+      # matching anything cannot pass as a rule that found nothing wrong.
+      - name: Extractor self-test (all arms, including the negative ones)
+        run: node scripts/check-published-examples-build.mjs --selftest
+
+      # The host gate's mutation must still have something to rename.
+      - name: The host gate's failure control still has a subject
+        if: always()
+        run: node scripts/check-published-examples-build.mjs --controls
+
+      # The runner is a shell script that cron executes unattended on lafayette;
+      # a syntax error in it is a gate that never runs, which looks exactly like
+      # a gate that is green. `bash -n` is cheap and catches precisely that.
+      - name: The host runner parses
+        if: always()
+        run: bash -n scripts/examples-build-gate.sh
+
+      # ★The host gate is the only thing that compiles these pages, and it is
+      # scheduled OUTSIDE this repository. If its script is deleted or renamed
+      # here, cron keeps running a path that no longer exists and the estate
+      # loses the gate silently. Assert the two files reference each other.
+      - name: The runner and the checker still name each other
+        if: always()
+        run: |
+          set -e
+          test -x scripts/examples-build-gate.sh \
+            || { echo "::error::scripts/examples-build-gate.sh is not executable — cron runs it with bash, but keep the bit honest"; exit 1; }
+          grep -q 'check-published-examples-build.mjs' scripts/examples-build-gate.sh \
+            || { echo "::error::the host runner no longer invokes check-published-examples-build.mjs"; exit 1; }
+          grep -q 'examples-build-gate.sh' scripts/check-published-examples-build.mjs \
+            || { echo "::error::the checker no longer documents its host runner — the next reader will not find where this gate actually runs"; exit 1; }
