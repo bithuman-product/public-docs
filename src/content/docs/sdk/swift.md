@@ -727,9 +727,32 @@ SwiftUI root and show your own `UnsupportedDeviceView` for `.unsupported(reason)
 
 | | `bitHumanKit`: Essence | `bitHumanKit`: Expression | **`Essence2`** (essence-2) | `Expression2` (expression-2) |
 |---|---|---|---|---|
-| **macOS** | M3+, macOS 26 | M3+, macOS 26 | no device gate in the shipped binary | no device gate in the shipped binary |
-| **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 | **an iPad with M-series Apple Silicon** | no device gate in the shipped binary |
+| **macOS** | M3+, macOS 26 | M3+, macOS 26 | **Apple Silicon, M3 or later** | no device gate in the shipped binary |
+| **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 | **an iPad with M-series Apple Silicon** (iPad Pro 2021+, iPad Air 2022+) | no device gate in the shipped binary |
 | **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) | **iPhone 16 Pro / Pro Max (A18 Pro) or later** | no device gate; has rendered on an iPhone 15 |
+
+**Where each `Essence2` number comes from.** Every one is a sentence inside the
+published engine archive, counted per slice with a nonsense control reading 0
+in the same pass:
+
+| refusal, verbatim | `ios-arm64` | `macos-arm64` | simulator |
+|---|---|---|---|
+| *"bitHuman requires Apple M3 or later on macOS."* | 0 | **2** | 0 |
+| *"bitHuman requires Apple Silicon (M3 or later)."* | 0 | **2** | 0 |
+| *"…requires an iPad with M-series Apple Silicon (iPad Pro 2021 or later, iPad Air 2022 or later)."* | **2** | 0 | 0 |
+| *"…requires iPhone 16 Pro or later (A18 Pro+)."* | **2** | 0 | 0 |
+| *"…requires an A18 Pro chip (iPhone 16 Pro / Pro Max)…"* | **2** | 0 | 0 |
+| nonsense control | 0 | 0 | 0 |
+
+Each slice carries only the refusals that can fire on it. **The Simulator
+carries none of them**, which is the practical warning: a Simulator run will
+not tell you your device is under-spec.
+
+The `Expression2` column was measured the same way, on its own published
+archive: **0** hits for `unsupported hardware`, `HardwareCheck`, `A18` and
+`iPhone 16` in all three slices, against positive controls that fire in the
+same read (`Expression2` 1,106–1,108, `CoreML` 24–26) and a nonsense token
+at 0. It carries no device gate at all.
 
 ★ **The iPhone floor applies to `Essence2` too, and you should know it before
 you build rather than from a runtime refusal.** Until 2026-09-08 both this page
@@ -746,12 +769,8 @@ bitHuman iOS SDK requires iPhone 16 Pro or later (A18 Pro+).
 
 **There is no environment override.** Measured on an iPhone 15 running
 iOS 26.6.1 on 2026-09-08, and confirmed on 2026-09-09 by reading the strings of
-the published engine archive itself: the `iPhone 16 Pro` and `A18 Pro` refusals
-are present **6** and **4** times in the `ios-arm64` **device** slice and
-**0** times in both the `ios-arm64-simulator` and `macos-arm64` slices, while
-the generic `unsupported hardware` prefix reads 2 in all three and a nonsense
-control token reads 0 in every one. That is the shape of a gate that fires on a
-phone and nowhere else — and it is why a Simulator run will not warn you.
+the published engine archive itself — see the per-slice table above for the
+counts and their control.
 
 ★ **A standard A18 is not enough.** The same binary carries the reason
 verbatim: *"bitHuman iOS SDK requires an A18 Pro chip (iPhone 16 Pro / Pro
