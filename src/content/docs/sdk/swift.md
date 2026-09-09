@@ -1001,6 +1001,7 @@ Working as intended. Branch on `HardwareCheck.evaluate()`.
 
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the complete `Expression2` app, every file, measured on an iPhone 15
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — three preflights you can run from any OS, with control arms and real exit codes
+- [Failure states on a phone](/examples/failure-states) — what the on-device SDK throws with no network, a half-finished download, or a wrong agent code
 - [Runnable Swift examples](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift) — voice, avatar, and benchmark apps
 - [SDK overview](/sdk) — which SDK to pick
 - [LiveKit (Apple)](/sdk/livekit) — connect a native app to a cloud-hosted avatar

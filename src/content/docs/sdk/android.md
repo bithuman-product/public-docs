@@ -1062,6 +1062,7 @@ deliberately fails, so you can tell a working setup from a silently-broken one.
 
 - [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the shortest complete app
 - [Verifying the Android SDK](/sdk/android-verify) — the executed transcripts
+- [Failure states on a phone](/examples/failure-states) — what the store throws with no network, a half-finished download, or a wrong agent code
 - [SDK overview](/sdk) — which SDK to pick
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop
 - [Swift SDK](/sdk/swift) — the Apple counterpart
