@@ -1,6 +1,6 @@
 ---
 title: "SDK overview"
-description: "Embed a real-time, lip-synced bitHuman avatar natively in your app — on-device and private by design, so audio, video, and prompts never leave your hardware (or run fully offline). From Python, Apple, the browser, or a single CLI command, at 25 FPS from 1 credit/min self-hosted."
+description: "Embed a real-time, lip-synced bitHuman avatar natively in your app — on-device and private by design, so audio, video, and prompts never leave your hardware (or run fully offline). From iOS, Android, Python, macOS, the browser, or a single CLI command, at 25 FPS from 1 credit/min self-hosted."
 section: sdk
 group: "Get started"
 order: 0

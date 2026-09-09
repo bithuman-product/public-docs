@@ -122,12 +122,12 @@
     },
     {
       "source": "/sdks/kotlin",
-      "destination": "/sdk",
+      "destination": "/sdk/android",
       "permanent": true
     },
     {
       "source": "/sdks/kotlin/",
-      "destination": "/sdk",
+      "destination": "/sdk/android",
       "permanent": true
     },
     {
@@ -438,6 +438,86 @@
     {
       "source": "/api/voice/",
       "destination": "/api/text-to-speech",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ipados",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ipados/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/apple",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/apple/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/kotlin",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/kotlin/",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/ios",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/ios/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/android",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/android/",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart/",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/getting-started",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/getting-started/",
+      "destination": "/start",
       "permanent": true
     }
   ]

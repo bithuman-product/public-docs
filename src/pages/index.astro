@@ -10,7 +10,18 @@ const featuredCases = caseStudies.slice(0, 3);
 
 const pillars = [
   { name: "Cloud API", href: "/api", cta: "Start with the API", tag: "We host the GPU — call simple REST endpoints to generate, host, and drive avatars. No infrastructure to run. Move the same avatars on-device whenever privacy or cost calls for it.", icon: "M4 7h16M4 12h16M4 17h10" },
-  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — Python, Swift, Android, the browser, or one CLI command. Private by design: inference stays on-device, so no data leaves your hardware. Self-host, deploy on-prem, or run air-gapped, from 1 credit/min.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
+  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or one CLI command. Private by design: inference stays on-device, so no data leaves your hardware. Self-host, deploy on-prem, or run air-gapped, from 1 credit/min.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
+];
+
+// Every surface you can build on, named the way a developer searches for it —
+// the page each one opens is the single source for that platform.
+const platforms = [
+  { label: "iOS & iPadOS", href: "/sdk/swift" },
+  { label: "Android", href: "/sdk/android" },
+  { label: "macOS", href: "/sdk/swift" },
+  { label: "Python", href: "/sdk/python" },
+  { label: "Browser", href: "/sdk/wasm" },
+  { label: "CLI", href: "/sdk/cli/overview" },
 ];
 
 // elegant device icons (line-art, theme-aware via currentColor)
@@ -138,6 +149,16 @@ const customerLogos = [
           </a>
         ))}
       </div>
+
+      <!-- Platform row: a developer who came for "the iOS SDK" or "the Android
+           SDK" lands on one click, without knowing we file them under Swift and
+           Kotlin. Links only — every install step stays on its own page. -->
+      <div class="platforms" data-reveal>
+        <span class="platforms-label">Building for a device?</span>
+        <div class="platform-row">
+          {platforms.map((p) => (<a class="platform" href={p.href}>{p.label}</a>))}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -147,7 +168,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST.</p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. Shipping an app? <a href="/sdk/swift">iOS &amp; iPadOS</a> and <a href="/sdk/android">Android</a> run the same avatar on-device.</p>
         <Button href="/start">Start here →</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
@@ -272,6 +293,13 @@ const customerLogos = [
   .pillar:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .pillar-ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); margin-bottom: var(--space-4); }
   .pillar h3 { font-size: var(--fh-md); }
+
+  /* platform row */
+  .platforms { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-5); }
+  .platforms-label { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+  .platform-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .platform { padding: 0.3rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--r-full); background: var(--color-surface); font-size: var(--ft-sm); font-weight: var(--fw-medium); transition: all var(--t-med) var(--ease); }
+  .platform:hover { border-color: var(--color-primary); color: var(--color-primary); }
   .pillar p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
   .pillar-go { margin-top: var(--space-4); color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 

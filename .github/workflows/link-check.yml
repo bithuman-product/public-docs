@@ -177,6 +177,17 @@ jobs:
           node-version: '20'
       - name: Check internal links
         run: node scripts/check-internal-links.mjs
+      # ★2026-09-09: scripts/check-redirect-trailing-slash.mjs was written on
+      # 2026-09-05 against a measured 100 % failure — all 44 redirect sources
+      # resolved bare and ALL 44 answered 404 with a trailing slash — and then
+      # wired into NO workflow. A valid gate that never runs reads as
+      # configured and holds nothing, so the pairing could decay one entry at a
+      # time in silence. Its subject, vercel.json, is already in this job's
+      # path filter above. Firing proven the same day: an unpaired source
+      # (/sdk/tvos with no /sdk/tvos/) exits 1 here.
+      - name: Every redirect resolves with and without the trailing slash
+        if: always()
+        run: node scripts/check-redirect-trailing-slash.mjs
       - name: Check billing consistency
         if: always()
         run: node scripts/check-billing-consistency.mjs
