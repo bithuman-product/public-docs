@@ -145,3 +145,44 @@ jobs:
             || { echo "::error::the host runner no longer invokes check-published-examples-build.mjs"; exit 1; }
           grep -q 'examples-build-gate.sh' scripts/check-published-examples-build.mjs \
             || { echo "::error::the checker no longer documents its host runner — the next reader will not find where this gate actually runs"; exit 1; }
+
+      # ★AND THE GRADER'S OWN BYTES. Added 2026-09-09, auditing the gate the
+      # same night it was installed. Everything above pins the SUBJECT — the
+      # pages are fetched live, the host checkout resets to origin/main, and
+      # check_host_tools_versioned.py hashes examples-build-gate.sh against
+      # origin/main every morning. Nothing pinned check-published-examples-build.mjs:
+      # no crontab line names it (only the runner does), so the host-tool
+      # registry never discovers it, and the runner's own `git fetch` failure
+      # path says WARNING and RUNS ANYWAY. A hand-edited or months-old grader
+      # would have reported the identical GREEN on today's pages.
+      #
+      # The arm is hermetic: a throwaway repo in the runner's temp dir with the
+      # real runner and a stand-in grader, its own refs/remotes/origin/main, and
+      # GATE_SELF_UPDATED=1 so nothing is fetched or reset. Then the control —
+      # ONE byte appended to the grader — must exit 2 and say so. A pin whose
+      # red has never been seen is not a pin.
+      - name: The runner refuses to grade with a grader that is not origin/main's
+        if: always()
+        run: |
+          set -u
+          r=$(mktemp -d); mkdir -p "$r/scripts"
+          cp scripts/examples-build-gate.sh "$r/scripts/"
+          cp scripts/check-published-examples-build.mjs "$r/scripts/"
+          git -C "$r" init -q .
+          git -C "$r" -c user.email=ci@local -c user.name=ci add -A
+          git -C "$r" -c user.email=ci@local -c user.name=ci commit -qm pin
+          git -C "$r" update-ref refs/remotes/origin/main HEAD
+
+          out=$(GATE_SELF_UPDATED=1 /bin/bash "$r/scripts/examples-build-gate.sh" --selftest 2>&1); rc=$?
+          echo "$out"
+          test $rc -eq 0 || { echo "::error::the runner exited $rc on a grader that IS origin/main's blob — the pin is red on a clean tree"; exit 1; }
+          case "$out" in *"grader pinned"*) ;; *) echo "::error::the runner ran without saying which blob it pinned"; exit 1 ;; esac
+
+          # THE CONTROL: the same tree, one byte added to the grader.
+          printf '\n// hand-edited on the box\n' >> "$r/scripts/check-published-examples-build.mjs"
+          out2=$(GATE_SELF_UPDATED=1 /bin/bash "$r/scripts/examples-build-gate.sh" --selftest 2>&1); rc2=$?
+          echo "control: rc=$rc2"
+          echo "$out2"
+          test $rc2 -eq 2 || { echo "::error::a grader that is on NO commit was accepted (exit $rc2) — the gate would report a green produced by bytes nobody published"; exit 1; }
+          case "$out2" in *"THE GRADER IS NOT THE PUBLISHED GRADER"*) ;; *) echo "::error::the pin exited 2 without naming the defect"; exit 1 ;; esac
+          case "$out2" in *"selftest GREEN"*) echo "::error::the runner went on to GRADE with unpinned bytes before refusing"; exit 1 ;; *) ;; esac

@@ -24,9 +24,10 @@
 #   0  the published pages compiled (or, under --mutate, the control fired)
 #   1  A REAL DISAGREEMENT: the published code does not build
 #   2  UNPROVEN: the extractor's own self-test failed, echelon was unreachable,
-#      a toolchain was missing, the disk was too full to build, or (under
-#      --mutate) the deliberately broken page built anyway. Cannot-measure is
-#      not a pass; the cron line pages differently for 2 than for 1.
+#      a toolchain was missing, the disk was too full to build, THE GRADER'S OWN
+#      BYTES WERE NOT origin/main'S (see "the grader's OWN bytes" below), or
+#      (under --mutate) the deliberately broken page built anyway. Cannot-measure
+#      is not a pass; the cron line pages differently for 2 than for 1.
 #
 # MODES
 #   (none)       fetch the live pages and build both arms
@@ -162,6 +163,53 @@ CHECKER="$HERE/check-published-examples-build.mjs"
 
 [ -n "$NODE_BIN" ] || { say "UNPROVEN: no node interpreter found (PATH=$PATH) — see resolve_node above"; exit 2; }
 
+# ------------------------------------------------- the grader's OWN bytes ---
+# ★THE HOLE THIS CLOSES, found 2026-09-09 auditing the gate installed hours
+# earlier the same night. Everything else here pins the SUBJECT: the pages are
+# fetched live from docs.bithuman.ai, the checkout resets to origin/main above,
+# and check_host_tools_versioned.py hashes THIS FILE against origin/main every
+# morning (host_tools.tsv row 141). Nothing pinned the GRADER.
+#
+# check-published-examples-build.mjs is named by NO crontab line — the registry
+# discovers scheduled paths, and the only thing that names the .mjs is this
+# script — so it has no host_tools.tsv row and no watcher of any kind. Two
+# reachable states therefore graded the published pages with bytes that are on
+# no commit, and printed the identical GREEN:
+#   * a hand-edit to the .mjs in /home/sgu/docs-gate/public-docs, and
+#   * the `git fetch` at the top failing (it says WARNING and RUNS ANYWAY), so
+#     an arbitrarily old grader keeps reporting on today's pages.
+# A gate is only as honest as its grader, and an unpinned grader is exactly the
+# checked-in copy this whole file exists to refuse.
+#
+# So: the checker's blob must BE the blob at origin/main. Not "on some commit" —
+# origin/main, the same standard every other host tool on this estate is held to.
+# There is deliberately NO override: a developer iterating on the checker runs
+# `node scripts/check-published-examples-build.mjs` directly, and this wrapper is
+# the SCHEDULED path. A scheduled path that will grade unpinned bytes on request
+# is not pinned at all.
+CHECKER_REPO_PATH="scripts/check-published-examples-build.mjs"
+PIN_WANT=""; PIN_HAVE=""
+pin_checker() {
+  local repo want have
+  repo="$(git -C "$HERE" rev-parse --show-toplevel 2>/dev/null)" || return 3
+  want="$(git -C "$repo" rev-parse --verify --quiet "origin/main:$CHECKER_REPO_PATH")" || return 4
+  have="$(git -C "$repo" hash-object "$CHECKER" 2>/dev/null)" || return 5
+  [ -n "$want" ] && [ -n "$have" ] || return 5
+  PIN_WANT="$want"; PIN_HAVE="$have"
+  [ "$want" = "$have" ]
+}
+if pin_checker; then
+  say "grader pinned: $CHECKER_REPO_PATH is origin/main blob ${PIN_HAVE:0:12}"
+else
+  case $? in
+    3) say "UNPROVEN: $HERE is not inside a git checkout, so nothing pins the grader's bytes to a commit" ;;
+    4) say "UNPROVEN: could not read origin/main:$CHECKER_REPO_PATH — the grader cannot be compared with the published gate" ;;
+    5) say "UNPROVEN: could not hash $CHECKER" ;;
+    *) say "UNPROVEN: THE GRADER IS NOT THE PUBLISHED GRADER — $CHECKER is blob $PIN_HAVE, origin/main:$CHECKER_REPO_PATH is $PIN_WANT. Those bytes are on no commit, so a green from them would mean nothing." ;;
+  esac
+  exit 2
+fi
+
 # ------------------------------------------------------------- the selftest ---
 # Always, before anything is graded: if the extractor's own arms do not all fire,
 # it cannot tell a broken page from a good one and its green is meaningless.
@@ -199,7 +247,24 @@ cleanup() { ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" "rm -rf '$RDIR'"
 trap cleanup EXIT
 
 ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" "mkdir -p '$RDIR'" || { say "UNPROVEN: cannot create $RDIR on $REMOTE"; exit 2; }
-scp -q -o BatchMode=yes "$CHECKER" "$REMOTE:$RDIR/check.mjs" || { say "UNPROVEN: cannot copy the checker to $REMOTE"; exit 2; }
+
+# ★AND THE BYTES THAT ACTUALLY GRADE ARE THE ONES THAT LAND ON THE OTHER HOST.
+# Pinning the local copy is half the sentence: what runs is the file at the far
+# end of an scp. scp exits 0 on a copy it truncated (a full /tmp on echelon, a
+# connection dropped on the last block) and node runs a half file happily enough
+# to report something. So hash what landed and compare it with what was pinned.
+# GATE_COPY_SOURCE exists for exactly one reason — so a control can put a
+# different file on the wire and watch this refuse. A copy check that can only
+# be exercised by a real disk failure is a copy check nobody has ever seen work.
+CHECKER_SHA="$( { sha256sum "$CHECKER" 2>/dev/null || shasum -a 256 "$CHECKER" 2>/dev/null; } | awk '{print $1}')"
+[ -n "$CHECKER_SHA" ] || { say "UNPROVEN: cannot hash $CHECKER locally"; exit 2; }
+scp -q -o BatchMode=yes "${GATE_COPY_SOURCE:-$CHECKER}" "$REMOTE:$RDIR/check.mjs" || { say "UNPROVEN: cannot copy the checker to $REMOTE"; exit 2; }
+LANDED_SHA="$(ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" "shasum -a 256 '$RDIR/check.mjs' 2>/dev/null" | awk '{print $1}')"
+if [ "$LANDED_SHA" != "$CHECKER_SHA" ]; then
+  say "UNPROVEN: the grader that landed on $REMOTE is not the grader pinned here — local sha256 $CHECKER_SHA, on $REMOTE ${LANDED_SHA:-<unreadable>}. Nothing was graded."
+  exit 2
+fi
+say "grader on $REMOTE verified: sha256 ${CHECKER_SHA:0:12}"
 
 say "running the gate on $REMOTE ${ARGS:-(live pages)}"
 ssh -o BatchMode=yes "$REMOTE" bash -s -- <<EOF
