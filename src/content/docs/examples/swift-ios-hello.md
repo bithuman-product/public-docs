@@ -15,9 +15,11 @@ order: 13
 >
 > If what you want is *an on-device avatar frame on the iPhone you already
 > have*, take the **`Expression2`** product instead: no device gate, no
-> entitlement, no 1.6 GB download — measured on 2026-09-09 it rendered **149
-> frames at 416x720 on an iPhone 15**. It has its own limits, stated with the
-> measurement:
+> entitlement, no 1.6 GB download — measured on 2026-09-09 it rendered
+> **416x720 frames on an iPhone 15**. There is a complete app for it, every
+> file printed in full:
+> [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2).
+> Its limits are stated with the measurement on
 > [Expression 2 on-device](/sdk/swift#expression-2-on-device).
 
 ## Prerequisites
@@ -134,6 +136,7 @@ Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree
 
 ## Next steps
 
+- [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — the same goal without the device floor, the entitlements or the 1.6 GB download.
 - [Swift SDK](/sdk/swift) — the full Apple SDK reference.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain.

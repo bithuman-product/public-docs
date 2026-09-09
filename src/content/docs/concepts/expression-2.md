@@ -267,8 +267,14 @@ Download the runnable `<code>.avatar` — the frozen back-compat alias of
 `.imx`, usually an `IMX\0` v2 container rather than a zip —
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <code>` — that artifact drives the **CLI's** local renderer,
-not the `Expression2` Swift product. The `Expression2` SwiftPM product cannot read one: `strings` on the shipped
-v2.5.0 `Expression2.xcframework` finds zero occurrences of `imx`. **In the
+**and, since tap `2.6.0`, the `Expression2` Swift product as well**. This
+paragraph used to end "the `Expression2` SwiftPM product cannot read one",
+measured on the v2.5.0 binary, which had no container reader. v2.6.0 added
+`Expression2Container`, and on 2026-09-09 this artifact rendered 416x720 frames
+on an iPhone 15 — with one caveat that costs a step: the artifact does not carry
+`w2v_frontend_cpuAndNE.mlpackage`, so the engine also needs the directory
+`bithuman engine install mac` writes. The complete app is
+[Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2). **In the
 browser:** append `?render=local` to a
 session URL to render Expression 2 locally (LiteRT.js / WebGPU, WASM fallback),
 so the video never leaves the machine. This is the family's most complete

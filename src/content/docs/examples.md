@@ -15,7 +15,8 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 | Try a talking avatar end-to-end, no code | [CLI — Hello, avatar](/examples/cli-hello) | CLI | ~2 min |
 | The smallest streaming loop in code | [Python — Hello, avatar](/examples/python-hello) | Python | ~5 min |
 | Call the platform from any language | [REST — Hello, avatar](/examples/rest-hello) | `curl` | ~5 min |
-| A talking voice assistant on a Mac/iPad/iPhone | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min |
+| A talking avatar on the iPhone you already own | [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) | SwiftUI | ~25 min |
+| A talking voice assistant on a Mac/iPad/iPhone **16 Pro or later** | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min + Apple's 1–3 day entitlement wait |
 | An on-device avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min |
 | Full voice conversation, mic in / avatar out | [AI voice chat](/examples/ai-conversation) | Python | ~10 min |
 | Know whether the browser path will work before you ship it | [Browser — check before you ship](/examples/browser-webgpu-check) | bash / JS | ~5 min |
@@ -39,11 +40,13 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 
 ## Native apps — Swift
 
-- [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package.
+- [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — **start here for a frame on a phone.** No device floor, no Apple entitlement, no 1.6 GB download: measured 2026-09-09 it rendered 416x720 frames on an iPhone 15. Every file is on the page.
+- [swift/ios-expression2](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-expression2) — the same app as a repository you can clone, with a `setup.sh` that fetches your model.
+- [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package. The richest path (on-device STT + LLM + TTS) and the most demanding: iPhone 16 Pro or later, plus two Apple-approved entitlements.
 - [swift/ios-avatar](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
 - [swift/macos-voice](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
 
-> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-avatar`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
+> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-expression2`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-expression2) — the only one measured rendering on a phone, on 2026-09-09 — [`ios-avatar`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
 
 ## Native apps — Kotlin / Android
 

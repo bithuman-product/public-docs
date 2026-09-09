@@ -77,6 +77,13 @@ you want — **`bitHumanKit`** for the umbrella, **`Expression2`** or
          from: "2.11.0")
 ```
 
+> **`from: "2.11.0"` will not resolve 2.11.0, and that is correct.** Measured
+> 2026-09-09, it resolves **2.11.2** — the newest 2.x tag. `from:` is
+> "up to next major", so the number you write is a floor, not a choice. If a
+> `Package.resolved` in your repo names a higher 2.x than any heading on this
+> page, nothing is wrong; the headings below are dated notes on what each tag
+> changed, not a statement about what SwiftPM will pick.
+
 > ### 2.11.0 — published 2026-09-09, and it is the tag that stops the manifest misleading you
 >
 > **What to do:** move your pin to `2.11.0`. **Nothing you build changes** —
@@ -316,6 +323,13 @@ an iPhone gets the same `isReady=false` described below. *Your own* agent's
 recipe in [what the download endpoint gives you](#what-v260-added-as-the-module-declares-it)
 below — the documented one-call path does not open it.
 Treat iOS as proven-capable and unshipped, not as ready to build a product on.
+
+> **There is a complete, runnable app for this.**
+> [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2)
+> prints every file — the Xcode settings, `Info.plist`, the whole of
+> `App.swift`, the script that fetches your model, the signing flags and the
+> `xcodebuild` line — and ends with frames on a real handset. The sections below
+> are the reference for the calls it makes.
 
 ```swift
 .product(name: "Expression2", package: "homebrew-bithuman")
@@ -974,6 +988,7 @@ Working as intended. Branch on `HardwareCheck.evaluate()`.
 
 ## See also
 
+- [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the complete `Expression2` app, every file, measured on an iPhone 15
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — three preflights you can run from any OS, with control arms and real exit codes
 - [Runnable Swift examples](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift) — voice, avatar, and benchmark apps
 - [SDK overview](/sdk) — which SDK to pick
