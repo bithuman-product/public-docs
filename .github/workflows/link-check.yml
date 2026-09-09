@@ -254,6 +254,32 @@ jobs:
       - name: Kotlin BuildConfig guard self-test
         if: always()
         run: node scripts/check-kotlin-buildconfig.mjs --selftest
+      # ★2026-09-09: THE FIRST EXECUTABLE LINE OF BOTH HANDSET EXAMPLES WAS
+      # GRADED BY NOTHING. examples/kotlin-android-hello.md and
+      # examples/swift-ios-expression2.md are whole projects printed in full, and
+      # each opens with a dependency coordinate whose truth lives in ANOTHER
+      # SYSTEM — Maven Central, and the SwiftPM tap's tags and product list. Every
+      # other checker in this job resolves a claim against bytes already in this
+      # tree, so none of them could ever ask. The two live failure modes are both
+      # a stopped build on the reader's first command:
+      #   * `ai.bithuman:expression2-android:0.4.0` is uploaded to the Central
+      #     Portal and VALIDATED but NOT RELEASED — the obvious number to write
+      #     on a page, and it resolves for nobody.
+      #   * `swift package resolve` exits 0 against a product the package does
+      #     not vend; only `swift build` fails, and there is no Xcode here.
+      # Firing proven on the real pages against the real registries the same day:
+      # bumping the Android example to 0.4.0, pinning the tap at a 2.12.0 that was
+      # never cut, and attaching the `Expression` product a reader would guess all
+      # exit 1 with the registry's own answer quoted back.
+      - name: Every dependency coordinate the docs print actually resolves
+        if: always()
+        run: node scripts/check-dependency-coordinates.mjs
+      # The instrument, on fixtures with a stub registry, so a green above is a
+      # green by a proven checker even on a run where the network is what broke.
+      # It also asserts all three rules still find subjects in the real corpus.
+      - name: Dependency-coordinate guard self-test
+        if: always()
+        run: node scripts/check-dependency-coordinates.mjs --selftest
       - name: Published OpenAPI spec is in sync with its source
         if: always()
         run: |
