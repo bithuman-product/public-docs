@@ -235,29 +235,40 @@ No API key needed without an avatar:
 ```swift
 import bitHumanKit
 
-var config = VoiceChatConfig()
-config.localeIdentifier = "en-US"
-config.systemPrompt = "You are a helpful assistant. One sentence per turn."
+// `VoiceChat` is main-actor-isolated, so under Swift 6 language mode the code
+// that builds one has to be too. Without `@MainActor` this is a compile error,
+// not a warning: "main actor-isolated initializer 'init(config:)' cannot be
+// called from outside of the actor".
+@MainActor
+func startVoiceAgent() async throws {
+    var config = VoiceChatConfig()
+    config.localeIdentifier = "en-US"
+    config.systemPrompt = "You are a helpful assistant. One sentence per turn."
 
-let chat = VoiceChat(config: config)
-try await chat.start()
-// Speak into the mic. The agent listens, thinks, and replies aloud.
+    let chat = VoiceChat(config: config)
+    try await chat.start()
+    // Speak into the mic. The agent listens, thinks, and replies aloud.
+}
 ```
 
 Add the lip-synced avatar by pointing the config at the Expression weights and
 a portrait, and supplying your key:
 
 ```swift
+import Foundation      // ProcessInfo, URL — bitHumanKit does not re-export them
 import bitHumanKit
 
-let weights = try await ExpressionWeights.ensureAvailable()  // ~1.6 GB, cached
+@MainActor
+func startVoiceAgentWithAvatar(portraitURL: URL) async throws {
+    let weights = try await ExpressionWeights.ensureAvailable()  // ~1.6 GB, cached
 
-var config = VoiceChatConfig()
-config.avatar = AvatarConfig(modelPath: weights, portraitPath: portraitURL)
-config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_KEY"]
+    var config = VoiceChatConfig()
+    config.avatar = AvatarConfig(modelPath: weights, portraitPath: portraitURL)
+    config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_KEY"]
 
-let chat = VoiceChat(config: config)
-try await chat.start()   // throws .missingAPIKey / .authenticationFailed
+    let chat = VoiceChat(config: config)
+    try await chat.start()   // throws .missingAPIKey / .authenticationFailed
+}
 ```
 
 ## The Essence runtime
