@@ -437,7 +437,7 @@ full outside-project build transcript are on the
 
 ```swift
 // Package.swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman", from: "2.8.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman", from: "2.11.0")
 ```
 
 Products: `bitHumanKit`, `Expression2`, `Essence2` (since 2.7.0),

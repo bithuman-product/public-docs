@@ -68,14 +68,42 @@ In Xcode: **File → Add Package Dependencies…** → paste the package URL:
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-Pick **2.8.0** ("Up to Next Major Version" from 2.8.0) and attach the product
+Pick **2.11.0** ("Up to Next Major Version" from 2.11.0) and attach the product
 you want — **`bitHumanKit`** for the umbrella, **`Expression2`** or
 **`Essence2`** for one second-generation engine alone. Or in `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-         from: "2.8.0")
+         from: "2.11.0")
 ```
+
+> ### 2.11.0 — published 2026-09-09, and it is the tag that stops the manifest misleading you
+>
+> **What to do:** move your pin to `2.11.0`. **Nothing you build changes** —
+> strip the comments from the `2.10.0` and `2.11.0` manifests and the diff is
+> empty, so every product, asset URL and checksum is byte-for-byte what
+> `2.10.0` declared. What changes is what Xcode shows you when you open the
+> package, and two of those sentences were **false through `2.10.0`**:
+>
+> * ★ **"Depend on it alongside either of the others"** — taking `Expression2`
+>   **and** `Essence2` in one app does **not** link on a device. Measured on
+>   the published archives: **116 duplicate symbols and rc 1** at an app's
+>   final link on `ios-arm64` and on `macos-arm64`, against a control arm
+>   without the shared framework at rc 0, and a Simulator arm that is **green**
+>   — which is why a Simulator-only CI never saw it. A library target is
+>   compiled, never linked, so `swift build` and `xcodebuild … build` are green
+>   too. The collision fires at *your app's* final link.
+> * ★ **"That floor grades `bitHumanKit` ONLY"** — the iPhone floor also grades
+>   `Essence2`. See [Hardware floor](#hardware-floor).
+>
+> Both were corrected on the repository's `main` on 2026-09-08 — and **no tag
+> carried the correction**, so every version-pinned consumer kept resolving the
+> false pair. Verified anonymously on 2026-09-09 before this tag was cut: the
+> corrected sentences read **0** in `v2.7.0`, `v2.8.0`, `v2.9.0` and `v2.10.0`,
+> and **1** in `main`. They read **1** at `v2.11.0`, and the old sentences read
+> **0**, with a nonsense token at 0 in the same read. The lesson is worth one
+> line: **`main` is not what Xcode reads.** SwiftPM resolves the tag your
+> version rule picks and reads the manifest it finds *there*.
 
 > ### 2.7.0 and 2.8.0 — essence-2 becomes a product (2026-09-06 and 2026-09-07)
 >
@@ -468,9 +496,32 @@ section said Essence 2 was *not available in an iOS app*, with *no Swift
 product and no supported way to build one*. That was true on the day it was
 written and is false now, so it is replaced rather than softened.
 
+> ### ★ Read this before you plan a feature on it: `Essence2` builds, and it does not yet render on a phone
+>
+> The product resolves, links and starts. **Two separate things still stop an
+> iPhone app from showing an essence-2 avatar**, and neither is something you
+> can work around in your own code:
+>
+> 1. **The model you can download is not a package this engine opens** — it is
+>    the package the bitHuman cloud renders from. This applies on **every**
+>    Apple target, macOS included. [Details below](#the-model-you-can-download-is-not-the-package-this-engine-opens).
+> 2. **The engine refuses every iPhone below an iPhone 16 Pro, by device
+>    name** — see [Hardware floor](#hardware-floor).
+>
+> **So today, on iPhone and iPad, treat `Essence2` as not yet consumable.** For
+> an on-device avatar on a phone now, use
+> [`expression-2`](#expression-2-on-device), which has rendered on an
+> iPhone 15. For essence-2 on a phone now, run it as a
+> [cloud session](/api/runtime-sessions). On a **Mac**, the self-serve path that works
+> end to end today is the Python wheel —
+> [Essence 2 on a Mac, without Swift](#essence-2-on-a-mac-without-swift).
+>
+> This page is the single source for the state of this rail. The package
+> manifest points here rather than keeping its own copy.
+
 ```swift
 // Package.swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.8.0"),
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0"),
 // ...
 .product(name: "Essence2", package: "homebrew-bithuman")
 ```
@@ -519,15 +570,16 @@ the iOS simulator destinations, beside three arms that fail on purpose: a
 flipped checksum digit refused at resolve, the engine target alone refused at
 link, and `import Essence2` refused at `v2.7.0` with `no such module`.
 
-**What this page verified itself on 2026-09-07, anonymously:** the manifest at
-`main` and at `v2.8.0` are byte-identical and declare four products; the
-engine archive on release `essence2-v1.2.0` downloads (158,440,195 B) and
-hashes to the checksum the manifest pins; its module map in every one of the
-three slices declares both `Essence2` and `CLibEssence2` over the one header;
-the ONNX Runtime archive and the resources archive sit on the same release
-with their `.sha256` sidecars; and the
-[preflight](/examples/apple-swiftpm-check#arm-4--re-run-2026-09-07-at-v280)
-fetches all six binary targets of v2.8.0 and matches every checksum.
+**What this page verified itself on 2026-09-09, anonymously:** all **six**
+binary targets the `v2.11.0` manifest declares fetch 200 and hash to exactly
+the checksums it pins — `bitHumanKit`, `Expression2`,
+`BithumanEngineProtocol`, `UnifiedModelHeader`, the engine archive and the
+ONNX Runtime archive — with a flipped-digit control arm that fails as it
+should. The manifest declares four products, and its executable half is
+byte-identical to `v2.10.0`'s. (The earlier reading, on 2026-09-07 at
+`v2.8.0`, checked the same six targets against `essence2-v1.2.0` and is kept
+in the [preflight](/examples/apple-swiftpm-check#arm-4--re-run-2026-09-07-at-v280)
+as the record of that day.)
 
 **The engine release is one coordinate, complete.** `essence2-v1.2.0` carries
 three archives: the engine, the ONNX Runtime build, and a resources archive
@@ -540,26 +592,54 @@ engine's legacy library spelling, kept for compatibility —
 `libessence2.xcframework.zip` and `libessence2-resources.zip`, beside
 `onnxruntime.xcframework.zip` — names you download, never type in code.
 
-**What it does with a model.** The v1.2.0 engine applies the same rule as
-every other bitHuman runtime: a model package carrying all four of its
-recorded-mouth files renders, on iOS and macOS exactly as on the server; a
-package missing any of them is refused before the first frame, and the refusal
-names the file. (v1.1.0, cut the same day, read a descriptive block in the
+**What it does with a model.** The engine applies the same rule as every
+other bitHuman runtime: a model package carrying all four of its
+recorded-mouth files renders; a package missing any of them is refused before
+the first frame, and the refusal names the file. (This sentence used to end
+"…renders, on iOS and macOS exactly as on the server". That reads as a promise
+that the model you can fetch will play on a phone, and measured, it will not —
+see the block below. The rule is about a *complete* package, not about which
+packages you can obtain.) (v1.1.0, cut the same day, read a descriptive block in the
 package's manifest instead and refused complete packages that lacked it —
 which is why v1.2.0 exists.) When the engine cannot render a mouth from the
 avatar's own recording it stops the session and says why, rather than drawing
 one and letting the video play on.
 
-★ **The remaining limit, stated plainly: there is no in-app model download
-yet.** The engine and its resources are published, but the only route that
-returns an essence-2 model today is
-[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model),
-which authenticates with the **account API secret** — a credential you must
-not ship inside an app — and not with a runtime token. So today you can build
-and start the engine against a model you place in the app yourself; an app
-that fetches its own model on first launch needs a download route that
-accepts a runtime token, and that route is the next step, not something this
-page can show you.
+### The model you can download is not the package this engine opens
+
+★ **This is the limit that decides whether essence-2 on Apple hardware is
+usable today, and it is not a repack you can do in your app.** It used to be
+stated here as "there is no in-app model download yet" — a credentials
+problem, and one a runtime token would solve. Measured on both sides on
+**2026-09-09**, it is not that. It is a format problem, and it sits on
+bitHuman's side of the line.
+
+**What the endpoint returns.**
+[`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
+returned, for one live identity, a single `IMX\0` v2 container **file** of
+**99,536,068 B**. Read out of the container's own member index: **27 members**
+— `manifest.json`, four `.onnx` graphs, the image and motion data — and
+**zero** CoreML `.mlpackage` members. That artifact is the one the bitHuman
+cloud renders from.
+
+**What the Apple engine accepts.** A **directory** of CoreML packages, and it
+refuses anything else before the first frame, naming in the refusal both the
+format it wanted and the CoreML members it expects. Measured the same day by
+reading the strings of the `ios-arm64` slice of the published engine archive
+(158,661,991 B, downloaded with no credentials and re-hashed to exactly the
+checksum the manifest pins), with a nonsense token reading 0 in the same pass.
+
+**So they are two runtimes, not two spellings of one.** Nothing a consumer
+writes converts one into the other, and the credential is not what is in your
+way: even with the account API secret in hand — which you must not ship inside
+an app — the bytes you receive are the wrong shape for this engine. Publishing
+an on-device package per identity is a change on bitHuman's side, and it is
+not shipped.
+
+**What you can do today.** Build, link and start `Essence2` against a package
+you hold yourself. That is a real integration path for a private build; it is
+not a route to a customer-installable app. On a Mac, the self-serve path that
+works end to end is the Python wheel below.
 
 One SwiftPM lesson worth a sentence: `swift package resolve` returns 0 for a
 product that does not exist — only `swift build` proves the product. Preflight
@@ -641,19 +721,44 @@ Gate this at runtime — on under-spec devices, guide people to a friendly fallb
 rather than a half-loaded engine. Use `HardwareCheck.evaluate()` to branch your
 SwiftUI root and show your own `UnsupportedDeviceView` for `.unsupported(reason)`.
 
-| | Essence | Expression |
-|---|---|---|
-| **macOS** | M3+, macOS 26 | M3+, macOS 26 |
-| **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 |
-| **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) — **preview**; on-device validation of *this* engine is in progress |
+| | `bitHumanKit`: Essence | `bitHumanKit`: Expression | **`Essence2`** (essence-2) | `Expression2` (expression-2) |
+|---|---|---|---|---|
+| **macOS** | M3+, macOS 26 | M3+, macOS 26 | no device gate in the shipped binary | no device gate in the shipped binary |
+| **iPadOS** | iPad Pro M4+, iPadOS 26 | iPad Pro M4+, 16 GB, iPadOS 26 | **an iPad with M-series Apple Silicon** | no device gate in the shipped binary |
+| **iPhone** | iPhone 16 Pro+ (A18 Pro) | iPhone 16 Pro+ (A18 Pro) | **iPhone 16 Pro / Pro Max (A18 Pro) or later** | no device gate; has rendered on an iPhone 15 |
 
-**This table grades the two `bitHumanKit` engines — Essence and Expression 1.
-It is not Expression 2's floor.** The `Expression2` product is a separate
-CoreML engine with its own characteristics; the iPhone measurement above was
-taken on an **iPhone 15**, two generations below this table's iPhone row, so
-do not read the Expression column as an Expression 2 requirement. Expression 2
-has no published device floor yet, because it has no published model bundle to
-gate one on.
+★ **The iPhone floor applies to `Essence2` too, and you should know it before
+you build rather than from a runtime refusal.** Until 2026-09-08 both this page
+and the package manifest said the floor graded `bitHumanKit` only. It does not:
+the essence-2 engine starts the same check, because it starts the same avatar
+actor. On an under-spec phone `be_essence2_create` **returns 0** — the engine
+looks fine — and the *warm-up* is what refuses, with this message:
+
+```
+Bithuman.create: unsupported hardware — iPhone15,4 detected —
+bitHuman iOS SDK requires iPhone 16 Pro or later (A18 Pro+).
+— engine stays idle-only
+```
+
+**There is no environment override.** Measured on an iPhone 15 running
+iOS 26.6.1 on 2026-09-08, and confirmed on 2026-09-09 by reading the strings of
+the published engine archive itself: the `iPhone 16 Pro` and `A18 Pro` refusals
+are present **6** and **4** times in the `ios-arm64` **device** slice and
+**0** times in both the `ios-arm64-simulator` and `macos-arm64` slices, while
+the generic `unsupported hardware` prefix reads 2 in all three and a nonsense
+control token reads 0 in every one. That is the shape of a gate that fires on a
+phone and nowhere else — and it is why a Simulator run will not warn you.
+
+★ **A standard A18 is not enough.** The same binary carries the reason
+verbatim: *"bitHuman iOS SDK requires an A18 Pro chip (iPhone 16 Pro / Pro
+Max). The standard A18 lacks the GPU cores + thermal envelope for sustained
+25 FPS."* An iPhone 16 or 16 Plus is refused.
+
+**The `Expression2` column is a separate engine and is not gated by
+`HardwareCheck`.** It has no published device floor: measured, it renders on an
+**iPhone 15** — two generations below this table's iPhone row — so do not read
+any other column as an `Expression2` requirement. See
+[Expression 2 on-device](#expression-2-on-device) for what that run was.
 
 Requires Xcode 26+ (older Xcodes reject the Swift 6 concurrency syntax).
 Expression on Apple Silicon auto-spawns a `bithuman-expression-daemon`

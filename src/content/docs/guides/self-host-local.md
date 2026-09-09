@@ -24,7 +24,7 @@ into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-07 on
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
 | **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
 | **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#getting-a-model-onto-the-device)) |
-| **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/swift#essence-2-on-device) `Essence2` (package 2.8.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published; no in-app model download route yet |
+| **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/swift#essence-2-on-device) `Essence2` (package 2.11.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published. ★ **Not consumable on a phone yet:** the model the download endpoint returns is not a package this engine opens (measured 2026-09-09), and the engine refuses every iPhone below an iPhone 16 Pro. On a Mac, use the Python wheel below |
 
 Two things to settle before you pick a platform:
 
@@ -383,8 +383,10 @@ Identical to [the Linux route](#4-render), including the
 The Swift package is public and resolves anonymously:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.8.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
 .product(name: "Expression2", package: "homebrew-bithuman")   // or "Essence2" — see the Swift SDK page
+// ★ not both: Expression2 + Essence2 in one app is 116 duplicate symbols at an
+//   app's final link on a device. Measured; see the Swift SDK page.
 ```
 
 `Expression2` ships `macos-arm64`, `ios-arm64` and `ios-arm64-simulator` slices.

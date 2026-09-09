@@ -131,7 +131,10 @@ v2.5.0/bitHumanKit.xcframework.zip             -> 404
 line is what the single-tag version of this manifest would have pointed every
 existing consumer at. SwiftPM reads absolute asset URLs out of whichever
 manifest it resolves, so an asset does not have to live on the resolved tag.
-**Pin `2.8.0`** — the current manifest, checked in ARM 4 below.
+**Pin `2.11.0`** — the current manifest. Its executable half is byte-identical
+to `2.8.0`'s successor `2.10.0`; what it adds is the correction of two false
+sentences a version-pinned Xcode was still reading. ARM 4 below is the
+transcript at `v2.8.0`, kept as the record of that day.
 
 ### ARM 4 — re-run 2026-09-07 at v2.8.0
 
