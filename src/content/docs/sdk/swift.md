@@ -311,8 +311,11 @@ the SDK's own iOS support level is still **compiles-only** and has not been
 promoted, those runs used development provisioning rather than a distribution
 profile, and — the part that actually blocks you — **there is still no
 published per-identity model bundle**, so an app that resolves this product on
-an iPhone gets the same `isReady=false` described below. Treat iOS as
-proven-capable and unshipped, not as ready to build a product on.
+an iPhone gets the same `isReady=false` described below. *Your own* agent's
+`<code>.avatar` does render on a phone, but only through the hand-staging
+recipe in [what the download endpoint gives you](#what-v260-added-as-the-module-declares-it)
+below — the documented one-call path does not open it.
+Treat iOS as proven-capable and unshipped, not as ready to build a product on.
 
 ```swift
 .product(name: "Expression2", package: "homebrew-bithuman")
@@ -321,13 +324,31 @@ proven-capable and unshipped, not as ready to build a product on.
 ```swift
 import Expression2
 
-// v2.6.0: hand the engine the avatar you downloaded.
-let engine = try Expression2Engine.create(modelPath: avatarDirectory)
-engine.feed(samples)                       // [Float] PCM
-while let (frame, speech) = engine.pull() {
-    // frame: [UInt8], the image to display; engine.width x engine.height
+// Hand the engine an unpacked avatar directory and the shared engine directory.
+let engine = try Expression2Engine.create(modelPath: avatarDirectory,
+                                          sharedEngineDir: sharedEngineDirectory)
+engine.feed(samples)                       // [Float] PCM, 16 kHz mono
+engine.flushTail()                         // at end of utterance
+
+// ★ Generation is ASYNCHRONOUS. `pull()` returns nil until a chunk lands, so a
+// bare `while let` on the line after `feed()` drains NOTHING and your view stays
+// empty — the app builds, starts, reports no error, and shows no avatar. Poll.
+var idleTicks = 0
+while idleTicks < 100 {                    // 100 x 50 ms with nothing = done
+    var got = false
+    while let (frame, speech) = engine.pull() {
+        got = true
+        // frame: [UInt8], BGR, engine.width * engine.height * 3 bytes
+    }
+    if got { idleTicks = 0 }
+    else { idleTicks += 1; try await Task.sleep(nanoseconds: 50_000_000) }
 }
 ```
+
+Measured on an iPhone 15 (iOS 26.6.1) on 2026-09-09: the synchronous form this
+snippet used to show returned **0 frames** from 7.90 s of speech and printed no
+error. The polling form above returned **149 frames at 416x720, all 149
+distinct**, first frame **263 ms** after the first `feed()`.
 
 `Expression2Engine()` + `warmUp()` still works and still searches
 `$BITHUMAN_EXPRESSION2_DIR` or your app bundle — nothing was removed. `create`
@@ -390,12 +411,81 @@ Catch the one the compiler shows you.)
 > `student_v4_forward_frame_cpuAndNE.mlpackage` — the same member names the
 > shipped `Expression2.xcframework` carries in its own strings.
 >
-> **What v2.6.0 does with it.** `Expression2Engine.create(avatarContainer:…:stagingDir:)`
-> opens that container, stages the members, and starts the engine — the engine's
-> own refusal message names that call as the answer. Or open it yourself with
-> `Expression2Container.members(of:)` / `.unpack(_:to:)` and use
-> `create(modelPath:)` on the resulting directory. Both are public API in the
-> published binary, so this is a contract now and not a file-format guess.
+> ★ **Corrected again 2026-09-09 — on a phone, that one call does not open it.**
+> This block used to say `create(avatarContainer:…:stagingDir:)` "opens that
+> container, stages the members, and starts the engine". Followed literally in a
+> fresh app on an iPhone 15 (iOS 26.6.1, Xcode 26.3), against a live agent's own
+> `<code>.avatar`, it does not — and **two separate things** are in the way,
+> neither of which you can fix in your own code.
+>
+> **1. The published binary refuses every `.avatar` by member NAME, on iOS only.**
+>
+> ```text
+> refusing member name "audiotokenizer_cpuAndNE.mlpackage/Data/com.apple.CoreML/model.mlmodel"
+>   — it would write outside the destination directory
+> ```
+>
+> That name escapes nothing. The unpacker proves containment by comparing two
+> filesystem paths, and on iOS they standardize differently for the same
+> directory — logged on the device, unpacking into the app's own `tmp`:
+> the destination read `/var/mobile/…/stage` and the member path read
+> `/private/var/mobile/…/stage/…`, so the prefix test was false. Every published
+> `<code>.avatar` carries nested member names (9 of 14 on each of the other two
+> live agents sampled the same day), so this refuses the artifact the endpoint
+> vends. It is invisible off-device: **the same container unpacks 15/15 members
+> on macOS**, against the same published 2.11.2 binary. Fixed on the SDK's `main`
+> on 2026-09-09 — and **not** in any published `Expression2.xcframework`, so it
+> reaches you only when that binary is rebuilt and a tap tag is cut.
+>
+> **2. The artifact does not carry the shared speech front-end.** The engine
+> resolves three shared graphs — `Expression2Engine.sharedResolvableMembers`
+> reads `student_v4_forward_frame_cpuAndNE.mlpackage`,
+> `audiotokenizer_cpuAndNE.mlpackage`, `w2v_frontend_cpuAndNE.mlpackage` — and
+> the download carries the first two and **not** `w2v_frontend_cpuAndNE.mlpackage`.
+> With the members staged, `missingMembers(avatarDir:)` names exactly that one
+> and `create` refuses:
+>
+> ```text
+> expression-2 avatar is missing w2v_frontend_cpuAndNE.mlpackage — re-provision
+> the member(s) …, or pass `sharedEngineDir:` if the shared graphs live in a
+> second directory
+> ```
+>
+> **What works today, end to end, measured on the phone.** Get the shared half
+> from the CLI — a published verb that needs no login — and hand it to `create`
+> as `sharedEngineDir:`, staging the avatar's members yourself:
+>
+> ```bash
+> # once, on your Mac: the shared graphs (~91 MB). Copy the resulting
+> # ~/.bithuman/engines/mac-1.0.0 directory into your app's resources.
+> bithuman engine install mac
+> ```
+>
+> ```swift
+> // Stage the avatar's members by hand — `read` accepts the nested names the
+> // published unpacker refuses.
+> let dir = stagingDir.appendingPathComponent("avatar", isDirectory: true)
+> try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+> for m in try Expression2Container.members(of: avatarContainer) {
+>     let dst = dir.appendingPathComponent(m.name)
+>     try FileManager.default.createDirectory(at: dst.deletingLastPathComponent(),
+>                                             withIntermediateDirectories: true)
+>     try Expression2Container.read(m.name, from: avatarContainer).write(to: dst)
+> }
+>
+> let shared = Bundle.main.url(forResource: "mac-1.0.0", withExtension: nil)!
+> // <none> — with the shared directory the census is complete
+> print(Expression2Engine.missingMembers(avatarDir: dir, sharedEngineDir: shared))
+> let engine = try Expression2Engine.create(modelPath: dir, sharedEngineDir: shared)
+> ```
+>
+> That is the arm that rendered on an iPhone 15: engine ready in **7.2 s**
+> (CoreML compile included), then **149 frames at 416x720, every one distinct**,
+> from 7.90 s of 16 kHz mono speech — beside a forced-black control buffer that
+> the same picture check called `FLAT_OR_BLACK` in the same run. The engine
+> reports 111-127 fps generation per chunk. It is a real integration path for a
+> build you control; it is **not** something to ship to customers, because step
+> one copies a shared engine directory out of a CLI install by hand.
 >
 > **`Expression2Engine()` alone still gets you nothing.** The no-argument
 > initializer searches `$BITHUMAN_EXPRESSION2_DIR` or your app bundle for a

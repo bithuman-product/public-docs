@@ -6,6 +6,20 @@ group: "Examples"
 order: 13
 ---
 
+> ★ **Read the device floor before you clone.** This example is the
+> `bitHumanKit` umbrella, and it is the most demanding Apple path bitHuman has:
+> it needs an **iPhone 16 Pro or later**, a **~1.6 GB** first-launch download,
+> and **two memory entitlements Apple takes 1–3 business days to approve**.
+> On any other Apple Silicon iPhone `HardwareCheck.evaluate()` refuses it at
+> launch and you see the unsupported screen, not an avatar.
+>
+> If what you want is *an on-device avatar frame on the iPhone you already
+> have*, take the **`Expression2`** product instead: no device gate, no
+> entitlement, no 1.6 GB download — measured on 2026-09-09 it rendered **149
+> frames at 416x720 on an iPhone 15**. It has its own limits, stated with the
+> measurement:
+> [Expression 2 on-device](/sdk/swift#expression-2-on-device).
+
 ## Prerequisites
 
 - A bitHuman API key, exposed to the app as `BITHUMAN_API_KEY` (Apple convention) — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
@@ -37,6 +51,18 @@ open homebrew-bithuman/Examples/swift/ios-avatar/Package.swift
 
 3. Select a physical iPhone 16 Pro or iPad Pro M4+, then Build and Run.
 
+> **Fixed 2026-09-09 — until this date step 1 could not be completed.** Every
+> Swift example in that repository, this one included, pinned
+> `from: "0.8.1"`. The 0.x tags carry Homebrew formula files and no
+> `Package.swift`, so opening it in Xcode failed at resolve with
+> `error: the package manifest at '/Package.swift' cannot be accessed`. The
+> `HardwareCheck` switch above then failed to compile for a second reason (see
+> the `@unknown default` note in the code). Both are fixed on that repository's
+> `main`, which is what `git clone` gives you — measured after the fix on
+> macOS 26.6.2 / Xcode 26.3: `xcodebuild -scheme IOSAvatar -destination
+> 'generic/platform=iOS'` → `** BUILD SUCCEEDED **`. If you cloned earlier,
+> `git pull`.
+
 ## What you'll see
 
 On first launch the app downloads the Expression weights (~1.6 GB, cached), warms the model, then shows a live circular avatar that says "live — talk to me". Speak and the avatar answers and lip-syncs the reply at 25 fps, fully on-device with sub-200 ms latency. Under-spec devices instead show an "unsupported device" screen.
@@ -58,6 +84,10 @@ struct IOSAvatarApp: App {
             switch HardwareCheck.evaluate() {
             case .supported:                 AvatarRootView()
             case .unsupported(let reason):   UnsupportedDeviceView(reason: reason)
+            // Required. Without it the switch does not compile against the
+            // shipped binary: "switch covers known cases, but
+            // 'DeviceCapability' may have additional unknown values".
+            @unknown default:                UnsupportedDeviceView(reason: "This device is not supported.")
             }
         }
     }
