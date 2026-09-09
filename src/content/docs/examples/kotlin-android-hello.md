@@ -15,7 +15,7 @@ order: 14
 implementation("ai.bithuman:sdk:2.3.6")   // Maven Central
 ```
 
-- Device floor: an `arm64-v8a` device (physical phone or **`arm64-v8a` emulator image**), **Android 10+ (API 29+)**. Inference is fully on-device — no cloud round-trip. ★The AAR ships **`arm64-v8a` only**, so an **x86_64** emulator resolves, builds and installs and then throws `UnsatisfiedLinkError` at the first `System.loadLibrary` — there is no fallback slice.
+- Device floor: an `arm64-v8a` device (physical phone or **`arm64-v8a` emulator image**), **Android 10+ (API 29+)** for the essence-1 example on this page — the expression-2 AAR's own floor is lower, `minSdk 26`. Inference is fully on-device — no cloud round-trip. ★The AAR ships **`arm64-v8a` only**, so an **x86_64** emulator resolves, builds and installs and then throws `UnsatisfiedLinkError` at the first `System.loadLibrary` — there is no fallback slice.
 - A `.imx` model file pushed to the device (the snippet reads from `getExternalFilesDir(null)`). **Where to get one:** create an essence-1 agent and download its artifact with `GET /v1/agent/{code}/model/download` ([Agents](/api/agents)), or pull a showcase identity — `https://models.bithuman.ai/showcase/<slug>.imx`, e.g. `modern-court-jester` — see [Avatars and the .imx format](/concepts/avatars-imx). The two second-generation sections below need **no** `.imx` and no manual push: their model stores download the identity by agent code.
 
 > **Note** The Android / Kotlin SDK is in **Beta**. The API surface below is stable enough to build on, but expect minor changes ahead of GA. There is no standalone Android project under `Examples/` yet — this snippet is the canonical starting point; track the [Android SDK](/sdk/android) page for updates.
