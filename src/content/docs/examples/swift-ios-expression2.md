@@ -168,7 +168,7 @@ interface, then set exactly this much:
 | Minimum Deployments | **iOS 17.0** | measured to build and run at this floor |
 | Swift Language Version | **6** | the package is built with strict concurrency |
 | Signing → Team | your 10-character team id | a device build is a signed build |
-| Bundle Identifier | anything you own, e.g. `com.example.ios-expression2` | it appears in the `devicectl` commands below |
+| Bundle Identifier | anything you own, e.g. `com.example.ios-expression2` | it appears in the `devicectl` commands below — **substitute the one you chose**; the cloned project uses `ai.bithuman.example.ios-expression2` |
 | Targeted Device Family | iPhone, iPad | the engine runs on both |
 
 Then **File → Add Package Dependencies…**, paste
@@ -227,6 +227,7 @@ targets:
         CFBundleDisplayName: Expression2
         UILaunchScreen: {}
         NSMicrophoneUsageDescription: Drive the avatar with your own voice, on-device.
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.bithuman.example.ios-expression2
@@ -238,10 +239,23 @@ targets:
 
 ## 3. `Info.plist`
 
-One key, and only for the microphone button. The bundled-speech demo needs no
-permission at all, and **neither engine on this rail needs the increased-memory
-entitlements** that [Hello, avatar](/examples/swift-ios-hello) requires — those
-belong to the `bitHumanKit` umbrella.
+The bundle keys every iOS app needs, plus one for the microphone button. The
+bundled-speech demo needs no permission at all, and **neither engine on this
+rail needs the increased-memory entitlements** that
+[Hello, avatar](/examples/swift-ios-hello) requires — those belong to the
+`bitHumanKit` umbrella.
+
+> ★ **Corrected 2026-09-09 — `CFBundleIdentifier` is not optional, and leaving
+> it out fails late.** This block used to carry only the three keys below the
+> line. An app built from it compiles, links and produces a `.app`, and then
+> `devicectl` refuses the bundle before signing is ever consulted:
+> `The item at IOSExpression2.app is not a valid bundle … Failed to get the
+> identifier for the app to be installed.` Measured on the committed example
+> (Xcode 26.3, macOS 26.6.2): with the keys below, the same build advances past
+> that error to the signing check. Xcode's own *New Project* template sets
+> `GENERATE_INFOPLIST_FILE = YES` and synthesises these keys for you — the
+> moment you point `INFOPLIST_FILE` at a file of your own, they are yours to
+> supply.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -249,6 +263,28 @@ belong to the `bitHumanKit` umbrella.
   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- Without CFBundleIdentifier the app builds fine and then
+         `devicectl device install app` refuses the bundle with
+         "Failed to get the identifier for the app to be installed". -->
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+    <key>CFBundleDisplayName</key>
+    <string>Expression2</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
     <!-- Only needed for the "Talk to it" button. The bundled-speech demo
          renders without any permission at all. -->
     <key>NSMicrophoneUsageDescription</key>
@@ -783,14 +819,26 @@ device build.
 ```bash
 xcodebuild -project IOSExpression2.xcodeproj -scheme IOSExpression2 \
   -configuration Debug -destination "id=<YOUR-DEVICE-UDID>" \
+  -derivedDataPath build \
   DEVELOPMENT_TEAM=<YOUR-TEAM-ID> CODE_SIGN_STYLE=Automatic \
   -allowProvisioningUpdates build
 
 xcrun devicectl device install app --device <YOUR-DEVICE-UDID> \
-  build/Debug-iphoneos/IOSExpression2.app
+  build/Build/Products/Debug-iphoneos/IOSExpression2.app
 xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
-  com.example.ios-expression2
+  ai.bithuman.example.ios-expression2
 ```
+
+> ★ **Corrected 2026-09-09 — the two paths in that block.** Without
+> `-derivedDataPath`, `xcodebuild` writes the app into
+> `~/Library/Developer/Xcode/DerivedData/IOSExpression2-<hash>/Build/Products/…`
+> and nothing named `build/` is ever created, so the `install` line above used
+> to fail with *no such file*. And the bundle identifier of the app this page
+> builds — from the clone **and** from the XcodeGen spec above — is
+> `ai.bithuman.example.ios-expression2`, not `com.example.…`; the launch and
+> `copy from` commands need the identifier your build actually carries.
+> Measured on the committed example: with `-derivedDataPath build` the app
+> lands at `build/Build/Products/Debug-iphoneos/IOSExpression2.app`.
 
 > ★ **Over SSH this silently produces an unsigned app.** In an SSH session the
 > keychain search list holds only the system keychain, so
@@ -822,7 +870,8 @@ keeping a console attached:
 
 ```bash
 xcrun devicectl device copy from --device <YOUR-DEVICE-UDID> \
-  --domain-type appDataContainer --domain-identifier com.example.ios-expression2 \
+  --domain-type appDataContainer \
+  --domain-identifier ai.bithuman.example.ios-expression2 \
   --source Documents/first-frame.png --destination .
 ```
 
@@ -912,6 +961,19 @@ before you call `create` — the app above does.
 
 You called `create(avatarContainer:…:stagingDir:)`. Use the hand-staging loop in
 `Renderer.load`. See above.
+
+### `Failed to get the identifier for the app to be installed`
+
+`devicectl` refused the bundle, before signing was consulted. Your `Info.plist`
+has no `CFBundleIdentifier` — see [step 3](#3-infoplist). This is not a signing
+problem and `-allowProvisioningUpdates` will not help.
+
+### `install app … no such file or directory: build/Debug-iphoneos/…`
+
+`xcodebuild` writes to DerivedData unless you tell it otherwise. Add
+`-derivedDataPath build` and install from
+`build/Build/Products/Debug-iphoneos/IOSExpression2.app` — see
+[step 5](#5-sign-it-and-run-it-on-the-phone).
 
 ### The app installs and then the phone refuses to launch it
 
