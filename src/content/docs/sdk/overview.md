@@ -11,9 +11,16 @@ label: "Overview"
 
 Every bitHuman SDK is a thin, idiomatic binding over **the essence engine** — the
 portable C++ avatar-rendering engine that also powers the [cloud REST
-API](/api/reference). They all read the same `.imx` avatar file and produce
-identical frames at 25 FPS, so anything you prove out in one language ports
-straight to the others.
+API](/api/reference). The push/drain contract and the 25 FPS output are the same
+in every binding, so the shape of your code ports straight from one language to
+the next.
+
+**What does not port is the model file.** Each engine opens the artifact it was
+built for, and the families do not all reach every rail — most sharply,
+`essence-2` does not render on an iPhone or iPad today. If you are building for
+a phone, read [getting an avatar model onto a
+phone](#getting-an-avatar-model-onto-a-phone) first: it is one table, and it is
+the only place that question is answered in full.
 
 This section covers both ways to build on your own hardware:
 
@@ -54,14 +61,14 @@ If you are not sure, start with the [Python SDK](/sdk/python) or the no-code
 bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 
 <div class="bh-cols">
-  <div class="bh-cell"><strong>On-device</strong><br/>Runs on the user's machine or edge box. Private, low-latency, offline-capable. Python, Swift, CLI.</div>
+  <div class="bh-cell"><strong>On-device</strong><br/>Runs on the user's machine, phone or edge box. Private, low-latency, offline-capable. Python, Swift, Android/Kotlin, CLI.</div>
   <div class="bh-cell"><strong>Cloud</strong><br/>We host the GPU. Zero ops, ideal for web clients and sharing one avatar. JavaScript/TS, LiveKit.</div>
 </div>
 
 | | On-device | Cloud |
 |---|---|---|
 | Where inference runs | Your machine | bitHuman's GPU pool |
-| Surfaces | Python, Swift, [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
+| Surfaces | Python, [Swift](/sdk/swift), [Android / Kotlin](/sdk/android), [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
 | Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
 | Hardware | CPU (Essence 1) · Apple Silicon (`expression-2` from Swift SDK 2.5.0, `essence-2` from 2.7.0) · Android arm64 (`essence-1`, `expression-2`, `essence-2`) · NVIDIA GPU (Expression 1). | None — we host it |
 | Cost | 1–2 credits/min (`essence-2` / `expression-2`: 2) | 2–8 credits/min (`essence-2` / `expression-2`: 4 · `essence-2-max`: 8) |
@@ -96,6 +103,62 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 See [models](/concepts/models) for the Essence vs Expression comparison,
 [Essence 2 & Expression 2](/concepts/models-v2) for the second-generation
 lineup, and [pricing](/guides/pricing) for credit details.
+
+## Getting an avatar model onto a phone
+
+Both mobile SDKs assume you already hold two things, and neither is created by
+the SDK. Get them once, in this order.
+
+1. **An account and a secret.** Sign up and create a secret at
+   [bithuman.ai → Developer → API Keys](https://www.bithuman.ai/developer/api-keys)
+   — free tier, no card. It is one value with two names: the Swift SDK reads
+   `BITHUMAN_API_KEY`, while Android, Python, the CLI and the REST API read
+   `BITHUMAN_API_SECRET`. Export both if you move between rails. You do **not**
+   need a key to resolve the packages, to compile, or to run audio-only Swift
+   voice chat with no avatar attached — you need one the moment an avatar
+   renders, because that is what is metered.
+2. **An agent code.** An avatar is an agent, and an agent is a code like
+   `A17ZTB0222`. Create one from the dashboard or with [`POST
+   /v1/agent/generate`](/api/agents#generate-an-agent); list the ones you already
+   own with [`GET /v1/agents`](/api/agents#list-your-agents). Every route below
+   takes that code.
+
+Then the model reaches the handset one of these ways. Which one is decided by the
+rail and the model, not by you:
+
+| Rail | Model | How the model reaches the device |
+|---|---|---|
+| Android | `expression-2` | The AAR's own model store — `Expression2ModelStore(…).fetch(code)` downloads and digest-verifies the identity bundle over HTTPS at runtime. Nothing to bundle into the APK. [How](/sdk/android#getting-a-model-onto-the-device) |
+| Android | `essence-2` | Same shape — `Essence2ModelStore.fetch(code)`, shipped since 0.4.0. Use [0.5.1 and only 0.5.1](/sdk/android#essence-2--aibithumanessence2-android051). |
+| Android | `essence-1` | No store. Download the agent's `.imx` with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) — or `bithuman pull <CODE>` — and put the file on the device yourself. [How](/sdk/android#essence-1--aibithumansdk236) |
+| Apple | `expression-2` | Call the same download endpoint with `?model=expression-2` and hand the container to `Expression2Engine.create(avatarContainer:)`. The engine ships no weights of its own. [How](/sdk/swift#expression-2-on-device) |
+| Apple | bitHumanKit (`Essence`) | `ExpressionWeights.ensureAvailable()` pulls ~1.6 GB of shared weights on first launch and caches them; you supply a portrait image. There is no per-agent download on this path. |
+| Apple | `essence-2` | **Nothing renders today.** The `Essence2` product builds for iOS and macOS, but the artifact the download endpoint returns is not a package this engine opens, and the engine refuses every iPhone below an iPhone 16 Pro. [Both measured](/sdk/swift#essence-2-on-device) |
+| Desktop / CLI | any | `bithuman pull <CODE>`, or a showcase slug — `bithuman pull modern-court-jester` — into `~/.cache/bithuman`. |
+
+The download endpoint answers `404 MODEL_ARTIFACT_NOT_READY` while an agent's
+artifact is still being published, so a freshly generated agent is not
+immediately downloadable — poll rather than treating it as a failure. Codes,
+sizes and every error are on [the Agents API
+page](/api/agents#download-an-agents-model).
+
+### Which handset
+
+Check this before you order hardware, not after — both floors are hard refusals,
+not degraded modes.
+
+| Rail | Minimum device |
+|---|---|
+| Android — all three AARs | **arm64-v8a only.** There is no x86, x86_64 or armeabi-v7a slice. On an x86_64 emulator the dependency resolves, the app compiles, the APK installs — and the first `System.loadLibrary` throws `UnsatisfiedLinkError`, with nothing earlier warning you. Use a physical arm64 phone, or build the AVD from an arm64-v8a system image. Android 10+ (API 29; `expression2-android` is API 26). |
+| iPhone — `Expression2` | No device gate in the shipped binary; it has rendered on an iPhone 15. |
+| iPhone — bitHumanKit and `Essence2` | iPhone 16 Pro / Pro Max (A18 Pro) or later. Earlier iPhones are refused by device name at launch. |
+| iPad | iPad Pro M4 or later for bitHumanKit; an M-series iPad for `Essence2`. |
+| Mac | Apple Silicon, M3 or later. |
+
+One more Apple constraint that only bites at link time: taking the `Expression2`
+and `Essence2` products in the **same app** does not link on a device. Per-product
+tables, the refusal strings they were counted from, and that measurement are on
+the [Swift](/sdk/swift#hardware-floor) and [Android](/sdk/android) pages.
 
 ## Status matrix
 

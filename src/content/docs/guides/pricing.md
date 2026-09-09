@@ -8,7 +8,7 @@ order: 30
 
 ## How billing works
 
-bitHuman bills in **credits** consumed per **live minute** of avatar runtime — every minute a session is connected and the engine is rendering, whether the avatar is speaking or idling. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. Plans top up credits monthly; overage is pay-as-you-go.
+bitHuman bills in **credits** consumed per **live minute** of avatar runtime — every minute a session is connected and the engine is rendering, whether the avatar is speaking or idling. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. On-device rails — Swift and Android/Kotlin alike — bill at the self-hosted rate; see [on-device surfaces](#on-device-surfaces-swift-and-androidkotlin). Plans top up credits monthly; overage is pay-as-you-go.
 
 This page is the single source for every billing number on the platform — the model guides and API pages link back here.
 
@@ -24,7 +24,7 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/devel
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | 2 credits/min |
 
-Self-hosted serving is half the cloud rate across the board, and on-device serving (the Swift SDK) bills at the self-hosted rate. A "credit minute" is wall-clock time a session is live and the engine is rendering (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). **That includes idle/silent animation** — a connected avatar looping its idle motion is rendering, and accrues. Only stopped, paused, or disconnected sessions stop accruing. An offline `bithuman render` bills the duration of the clip it writes, at the self-hosted rate. The second-generation models [launched July 10, 2026](/concepts/models-v2).
+Self-hosted serving is half the cloud rate across the board, and on-device serving — the Swift SDK and the Android/Kotlin SDK alike — bills at the self-hosted rate. A "credit minute" is wall-clock time a session is live and the engine is rendering (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). **That includes idle/silent animation** — a connected avatar looping its idle motion is rendering, and accrues. Only stopped, paused, or disconnected sessions stop accruing. An offline `bithuman render` bills the duration of the clip it writes, at the self-hosted rate. The second-generation models [launched July 10, 2026](/concepts/models-v2).
 
 Managed conversational agents bill on top of avatar serving:
 
@@ -103,7 +103,7 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 
 | Mode | What it means | Auth |
 |---|---|---|
-| **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server) / `BITHUMAN_API_KEY` (Swift) |
+| **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server, Android, CLI, REST) / `BITHUMAN_API_KEY` (Swift only) |
 | **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skips auth + heartbeat entirely. For local dev, CI, and parity work — not licensed for production. | none |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
@@ -115,9 +115,15 @@ The CLI, Python SDK, and Docker container all honour `BITHUMAN_UNMETERED=1`. The
 
 The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short-lived runtime token, then heartbeat back to `api.bithuman.ai` once per minute for as long as the session is live. Each heartbeat increments your usage counter. **Silence does not pause the meter** — an idling avatar is still rendering frames, and is billed at the same rate as a speaking one.
 
-### On-device surface (Swift SDK)
+### On-device surfaces (Swift and Android/Kotlin)
 
-The Swift SDK requests a runtime token once on `chat.start()` (sync — bad keys fail fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar.
+Both mobile rails bill a live avatar at the **self-hosted rate** in the table above, on the same wall-clock rule: a session that is rendering accrues, idle animation included.
+
+**Swift.** The SDK requests a runtime token once on `chat.start()` (sync — bad keys fail fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar. The env var on this rail is `BITHUMAN_API_KEY`, not `BITHUMAN_API_SECRET`.
+
+**Android / Kotlin.** `ai.bithuman:essence2-android` meters from **0.5.1** and no earlier version — 0.4.0 does not meter at all, and 0.5.0 renders a rejected key for ever. Set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to; with no credential the session still renders and logs `★ UNMETERED RENDER`. `ai.bithuman:sdk` (essence-1) is stricter — `Avatar.load` throws without a secret. Both follow the same failure rule as every other runtime: a metering service that cannot be reached never stops a render, while a **rejected** key gets a 300-second grace and then ends the session. The measured detail is on the [Android SDK page](/sdk/android#metering).
+
+Which SDK pulls the model onto the handset, and which handsets are supported at all, is on [getting an avatar model onto a phone](/sdk/overview#getting-an-avatar-model-onto-a-phone).
 
 ## Check your balance
 

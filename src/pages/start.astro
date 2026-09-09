@@ -93,6 +93,7 @@ const embed = [
           <ul>
             <li>Your machine, your data</li>
             <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/swift">iOS &amp; iPadOS — Swift</a> (preview)</li>
+            <li>On a phone you need an agent code and a key before any code compiles: <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">getting an avatar onto a phone</a></li>
             <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/wasm">Browser</a> · <a href="/sdk/cli/overview">CLI</a></li>
           </ul>
           <Button href="/sdk/overview" variant="secondary">Get the SDK →</Button>
@@ -124,7 +125,7 @@ const embed = [
         </div>
         <div class="idea">
           <h3>The <code>.imx</code> file</h3>
-          <p>Every avatar is one portable <code>.imx</code> file. The same file plays back identically across Python, Swift, Android, the browser, and the CLI. <a href="/concepts/avatars-imx">How avatars work →</a></p>
+          <p>Every avatar is one portable <code>.imx</code> file, and every runtime speaks the same push-audio / drain-frames contract. What it will <em>not</em> do is open in every engine on every device &mdash; an <code>essence-2</code> file does not render on an iPhone today, for instance. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">Which model runs on which phone &rarr;</a></p>
         </div>
       </div>
     </div>

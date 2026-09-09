@@ -53,6 +53,15 @@ avatar = await AsyncBithuman.create(model_path="agent.imx",
 await avatar.push_audio(pcm_bytes, 16000)   # 16 kHz int16 PCM (ends the utterance)
 async for frame in avatar.run():
     render(frame.bgr_image)        # lifelike animated face, in realtime` },
+  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:sdk:2.3.6")
+// arm64-v8a only — an x86_64 emulator installs, then throws UnsatisfiedLinkError.
+import ai.bithuman.sdk.Avatar
+
+Avatar.load(imxPath, apiSecret).use { avatar ->
+    avatar.composeAsBitmaps(pcm16k).forEach { bmp ->
+        imageView.setImageBitmap(bmp)   // on-device, 25 fps
+    }
+}` },
   { label: "Swift", lang: "swift", code: `import bitHumanKit
 
 let runtime = try Bithuman.create(modelPath: imxURL).bithuman
@@ -168,7 +177,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. Shipping a mobile app? The <a href="/sdk/android">Android SDK</a> (beta) and the <a href="/sdk/swift">Swift SDK for iOS</a> (preview) render on-device — each page states exactly how far its rail has shipped.</p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. Shipping a mobile app? The <a href="/sdk/android">Android SDK</a> (beta) and the <a href="/sdk/swift">Swift SDK for iOS</a> (preview) render on-device — each page states exactly how far its rail has shipped. Before you write code, check <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">where the avatar model comes from on a phone</a>: Android is arm64-v8a only, and the Apple Essence engines need an iPhone 16 Pro.</p>
         <Button href="/start">Start here →</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
