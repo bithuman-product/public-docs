@@ -557,7 +557,29 @@ with the progress lines removed:
 plus the three padded tail frames that `flushTail()` produces past the end of the
 speech. 117 frames in 21.0 s, of which 0.5 s is the engine starting, is **5.7
 frames per second** of render on the all-CPU arm; the wall clock moves a few
-percent between runs (20.4–21.4 s across the four builds below). The first frame arrives only when `feed()` returns, because `feed()` is
+percent between runs (20.4–22.4 s across six builds).
+
+### This page was executed, not written
+
+The seven files above were parsed back **out of this page as it is served**, and
+built in a directory that did not exist. On 2026-09-09, after the page went live:
+the working tree was deleted, `com.example.x2hello` and its cached 158 MB model
+were uninstalled from the phone, the code blocks were extracted from the HTML of
+this URL, `gradle wrapper` + `./gradlew :app:assembleDebug` produced
+`app-debug.apk` **3,474,583 B**, and the phone rendered **117 frames** again
+(`FIRST_FRAME at 20724 ms`, `DONE_FRAMES 117 in 21322 ms`).
+
+The frames are audio-driven, and that is measured rather than asserted. Taking
+one delivered 416×720 frame every 20, and differencing each against the first:
+the muzzle band moves **16–84×** more than a control box of the same width taken
+below the subject, where nothing should move. A still image, or a mouth pasted on
+a loop, would not separate the two boxes.
+
+| frame | mean \|Δ\| in the muzzle band | same in the null control box | ratio |
+|---|---:|---:|---:|
+| 40 | 45.24 | 0.54 | **84×** |
+| 60 | 27.63 | 1.72 | **16×** |
+| 80 | 50.11 | 2.93 | **17×** | The first frame arrives only when `feed()` returns, because `feed()` is
 where the compute happens: it renders every chunk whose look-ahead has arrived,
 and `pull()` then drains a queue that is already full.
 
