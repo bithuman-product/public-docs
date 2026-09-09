@@ -77,7 +77,7 @@ bitHuman runs in two topologies. The same `.imx` and the same API work in both.
 | Where inference runs | Your machine | bitHuman's GPU pool |
 | Surfaces | Python, [Swift](/sdk/swift), [Android / Kotlin](/sdk/android), [CLI](/sdk/cli/overview) | JavaScript/TS, [LiveKit](/sdk/livekit) |
 | Network | Optional — billing heartbeat only ([or fully offline](/sdk/cli/local-mode)) | Required |
-| Hardware | CPU (Essence 1) · Apple Silicon (`expression-2` from Swift SDK 2.5.0, `essence-2` from 2.7.0) · Android arm64 (`essence-1`, `expression-2`, `essence-2`) · NVIDIA GPU (Expression 1). | None — we host it |
+| Hardware | CPU (Essence 1) · Apple Silicon (`expression-2` from Swift SDK 2.5.0; `essence-2`'s `Essence2` product from 2.7.0 — it **builds**, and [renders on no iPhone today](#getting-an-avatar-model-onto-a-phone)) · Android arm64 (a package exists for `essence-1`, `expression-2` and `essence-2`; ★ **only `expression-2` renders a frame on a handset today** — [the other two are blocked, and the table says how](#getting-an-avatar-model-onto-a-phone)) · NVIDIA GPU (Expression 1). | None — we host it |
 | Cost | 1–2 credits/min (`essence-2` / `expression-2`: 2) | 2–8 credits/min (`essence-2` / `expression-2`: 4 · `essence-2-max`: 8) |
 | Best for | Privacy, kiosks, edge, low latency | Zero-ops, web clients, sharing one avatar |
 
