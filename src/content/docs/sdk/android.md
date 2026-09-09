@@ -7,7 +7,10 @@ order: 12
 ---
 
 **In a hurry?** [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello)
-is the shortest complete app. On this page, the fastest working path is
+is a **complete project — every file in full**, from `settings.gradle.kts` to the
+activity, that renders a talking avatar on a physical phone and plays the audio
+back with it. Copy the seven files, push one WAV, run. On this page, the fastest
+working path is
 [Install](#install--the-minimal-build-that-works) →
 [Calling it](#calling-it--audio-in-frames-out) →
 [Getting a model onto the device](#getting-a-model-onto-the-device), all
@@ -112,6 +115,20 @@ native libraries for `arm64-v8a` — `libexpr2jni.so` (446,200 B) and `libLiteRt
 
 ### Install — the minimal build that works
 
+★ **Two things Gradle needs before any of this runs, and neither is bitHuman's.**
+Android Studio sets both for you; a terminal build does not, and both failures
+are measured here on 2026-09-09 against the project on
+[the example page](/examples/kotlin-android-hello):
+
+- **The SDK location.** With neither `ANDROID_HOME` exported nor a
+  `local.properties`, the first task fails with *"SDK location not found. Define a
+  valid SDK location with an ANDROID_HOME environment variable or by setting the
+  sdk.dir path in your project's local properties file"*. Export `ANDROID_HOME`,
+  or write `sdk.dir=/path/to/sdk` into `local.properties`.
+- **A JDK 17 launcher.** AGP 8.7.3 refuses a newer one, and it refuses it
+  *illegibly*: with `JAVA_HOME` at a Homebrew JDK 26 the entire "What went wrong"
+  is the string `26.0.2.1`. Point `JAVA_HOME` at JDK 17 and the same tree builds.
+
 ```kotlin
 // settings.gradle.kts
 pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
@@ -122,6 +139,11 @@ dependencyResolutionManagement {
     }
 }
 ```
+
+★ **Want the whole project instead of the two blocks below?**
+[Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) prints every
+file — settings, wrapper, manifest, activity — in the order you create them, and
+was built and run from exactly those bytes on a Galaxy S25+ on 2026-09-09.
 
 ```kotlin
 // app/build.gradle.kts
@@ -188,11 +210,17 @@ dependencies {
 }
 ```
 
-Both are on Maven Central. **Budget for the size**: measured on the throwaway
-project in [the verification page](/sdk/android-verify), the release APK goes from
+Both are on Maven Central, and neither needs a Qualcomm account. **Budget for the
+size**: measured on the throwaway project in
+[the verification page](/sdk/android-verify), the release APK goes from
 **4,539,502 B** (SDK only) to **71,866,299 B** with the QNN runtime added — a 15.8x
 jump, because `qnn-runtime` packages the Hexagon skels and the Adreno backend.
+(Same jump on a debug build measured 2026-09-09: **3,474,583 B** → **75,981,876 B**.)
 Do not exclude `libQnnGpu.so`: it is what `backend_type:gpu` loads.
+
+Having them in the APK is necessary and not sufficient — the device also has to
+accept the graph. [Ask for the accelerator the safe way](#ask-for-the-accelerator-not-for-the-npu)
+so that a refusal costs you speed rather than every frame.
 
 ### Calling it — audio in, frames out
 
@@ -230,10 +258,44 @@ is the Maven coordinate: 9.03 s of 16 kHz mono speech in → **181 frames out**
 `Expression2Options()` resolved to `acc=CPU routing=Routing(enc=CPU, tok14=CPU,
 step=CPU, dec=CPU)`, `initMs` 436.
 
-★ **The `Accelerator.NPU` arm below can refuse outright on a current Qualcomm
-flagship, and it is a thrown exception, not a fallback.** On that same Galaxy
-S25+ — Snapdragon 8 Elite, `qnn-litert-delegate` / `qnn-runtime` 2.49.0 both in
-the APK, `useLegacyPackaging = true` — the NPU arm rendered **zero frames**:
+`create` also tells you what it actually built — `avatar.accelerator`,
+`avatar.routing`, `avatar.acceleratorNote` and `avatar.initMs`. Log them; they are
+the only honest answer to "did my accelerator flag do anything?". On the run above
+they read `acc=CPU`, `routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=CPU)`,
+an empty note and `initMs` 436; across four builds on the same phone on 2026-09-09
+`initMs` stayed between 436 and 558 ms.
+
+### Ask for the accelerator, not for the NPU
+
+★ **Name the `routing` and leave `accelerator` at its `AUTO` default.** That is the
+one arm in this SDK that tries the Qualcomm accelerator and *falls back by itself*
+when the device refuses the graph — and it records why in `acceleratorNote` instead
+of throwing:
+
+```kotlin
+import ai.bithuman.expression2.Routing
+
+val avatar = Expression2Avatar.create(context, model, Expression2Options(
+    routing    = Routing.HTP_DECODER,                        // accelerator stays AUTO
+    qnnOptions = Expression2Options.QNN_OPTIONS_HEXAGON_BURST,
+))
+Log.i("x2", "acc=${avatar.accelerator} note=${avatar.acceleratorNote}")
+```
+
+**Measured 2026-09-09**, one phone (Galaxy S25+, Snapdragon 8 Elite / SM8750), one
+identity (`A66GYD8664`), one 5.72 s clip, four builds that differ only in these
+options:
+
+| `Expression2Options(…)` | QNN artifacts in the APK | What `create` returned | Frames |
+|---|---|---|---|
+| `()` | no | `acc=CPU`, note empty | **117** |
+| `routing = HTP_DECODER, qnnOptions = …` | no | `acc=CPU`, note *"no libQnnTFLiteDelegate.so in this APK — add com.qualcomm.qti:qnn-litert-delegate…"* | **117** |
+| `routing = HTP_DECODER, qnnOptions = …` | yes | `acc=CPU`, note *"the Hexagon refused this graph, fell back to XNNPACK: …"* | **117** |
+| `accelerator = Accelerator.NPU, routing = HTP_DECODER` | yes | **throws** `Expression2Exception` | **0** |
+
+The last row is the control, and it is one token away from the third: naming
+`Accelerator.NPU` makes the refusal fatal. The exception is real and it is the
+first thing a new consumer hits if the page's call snippet names the accelerator:
 
 ```
 ai.bithuman.expression2.Expression2Exception: TfLiteInterpreterCreate returned null
@@ -243,42 +305,14 @@ delegate refused it; this device has no usable Hexagon for this graph
     at ai.bithuman.expression2.Expression2Avatar$Companion.create(Expression2Avatar.kt:244)
 ```
 
-Both members were tried and both were refused: the Hexagon-friendly
+Both members were refused on this handset: the Hexagon-friendly
 `combined_hexagon.tflite` the mirror advertises for Android, and
 `combined_fp32.tflite` (`preferAndroidMember = false`). This is the SM8750
-Hexagon, newer than the SM8550 the Android member was tuned on. So:
-**never make `Accelerator.NPU` your only path.** Catch
-`Expression2Exception` from `create` and build again with `Expression2Options()`:
+Hexagon, newer than the SM8550 the Android member was tuned on — on an SM8550 the
+same options run the decoder on the Hexagon. Keep `accelerator` at `AUTO` and you
+get whichever the device will actually run, on every device, without a `try`.
 
-```kotlin
-val avatar = try {
-    Expression2Avatar.create(context, model, Expression2Options(
-        accelerator = Accelerator.NPU,
-        routing     = Routing.HTP_DECODER,   // pass BOTH — see below
-        qnnOptions  = Expression2Options.QNN_OPTIONS_HEXAGON_BURST,
-    ))
-} catch (e: Expression2Exception) {
-    Log.w("x2", "NPU refused, falling back to CPU: ${e.message}")
-    Expression2Avatar.create(context, model, Expression2Options())
-}
-```
-
-If you already have the two member files on disk rather than a store fetch,
-`Expression2Model.combined` is the other way to a model:
-
-```kotlin
-val model = Expression2Model.combined(
-    File(dir, "combined_fp32.tflite"),   // legacy member filenames, kept for
-    File(dir, "canon.bin"),              // compatibility — you will receive these
-)
-```
-
-`Expression2Avatar` exposes the frame contract as constants:
-`FRAME_WIDTH` **416**, `FRAME_HEIGHT` **720**, `FRAMES_PER_SECOND` **20**,
-`SAMPLE_RATE` **16000**. Twenty frames per second of audio, not 25 — the
-essence-1 AAR further down this page is the 25 fps one.
-
-★ **Pass `routing` as well as `accelerator`.** `Expression2Options.resolveRouting()`
+★ **Why the routing has to be named.** `Expression2Options.resolveRouting()`
 is `routing ?: when (accelerator) { NPU -> Routing.MIXED; AUTO, CPU -> Routing.ALL_CPU }`
 — read out of the 0.3.0 bytecode and unchanged in 0.3.1, where `Accelerator.NPU` is the branch that
 selects `MIXED`. So `Accelerator.NPU` on its own resolves to `Routing.MIXED`.
@@ -298,10 +332,29 @@ machinery and an XNNPACK message — nothing to do with routing.) `MIXED` is a l
 undeprecated public constant, your IDE will not grey it out, and your build will
 not caution you. Name the routing you want and you get the arm you read about.
 
-★ **The default is the slow one, deliberately.** A bare `Expression2Options()`
-leaves `accelerator = Accelerator.AUTO`, which resolves to `Routing.ALL_CPU` on
-every device — it does not try an accelerator and fall back, it never asks.
-Measured on a Snapdragon 8 Gen 2: **7.7 fps**.
+★ **A bare `Expression2Options()` never asks for an accelerator.** `AUTO` with no
+routing resolves to `Routing.ALL_CPU` on every device — it is not "try the fast one
+and fall back", it is "do not try". Measured on a Snapdragon 8 Gen 2: **7.7 fps**.
+The fallback in the table above is what happens when `AUTO` is given a routing that
+*does* use the accelerator: then it tries, and only then can it fall back.
+
+If you have an Adreno instead, the same shape applies with
+`Routing.GPU_DECODER` and `Expression2Options.QNN_OPTIONS_ADRENO_FP32`.
+
+If you already have the two member files on disk rather than a store fetch,
+`Expression2Model.combined` is the other way to a model:
+
+```kotlin
+val model = Expression2Model.combined(
+    File(dir, "combined_fp32.tflite"),   // legacy member filenames, kept for
+    File(dir, "canon.bin"),              // compatibility — you will receive these
+)
+```
+
+`Expression2Avatar` exposes the frame contract as constants:
+`FRAME_WIDTH` **416**, `FRAME_HEIGHT` **720**, `FRAMES_PER_SECOND` **20**,
+`SAMPLE_RATE` **16000**. Twenty frames per second of audio, not 25 — the
+essence-1 AAR further down this page is the 25 fps one.
 
 ### Honest quality — what this artifact does today
 
@@ -408,6 +461,15 @@ header. From 16-bit PCM that is `sample / 32768f`; from `AudioRecord`, read into
 `ShortArray` and divide, or use `AudioFormat.ENCODING_PCM_FLOAT` and feed it
 straight through. There is no file-reading helper in this AAR; the essence-1
 `composeFromFile` further down this page is a different artifact.
+
+★ **If you read a WAV, walk its chunks — do not skip 44 bytes.** The
+"samples start at byte 44" shortcut is wrong for files real encoders produce:
+macOS `afconvert` writes an `FLLR` padding chunk, so on the clip used for the run
+above the `data` payload begins at byte **4,096** and the shortcut feeds 4 KB of
+padding to the engine as if it were speech. A complete reader that walks `fmt `
+and `data` and rejects anything that is not 16 kHz mono 16-bit is in
+[the hello-avatar project](/examples/kotlin-android-hello#7-appsrcmainjavacomexamplex2hellomainactivitykt),
+together with the `say` / `ffmpeg` one-liners that produce a file it accepts.
 
 The member filenames (`combined_fp32.tflite`, `canon.bin`) and the manifest name
 (`web_manifest.json`) are **legacy literals kept for compatibility** — you will

@@ -50,7 +50,7 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 
 ## Native apps — Kotlin / Android
 
-- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — render an on-device avatar in ~20 lines of Kotlin, from the Maven Central AAR. See the [Android SDK](/sdk/android) for the full API surface.
+- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — a complete Android project, every file in full, that renders a talking avatar on a physical phone from a 16 kHz WAV. No API key. See the [Android SDK](/sdk/android) for the full API surface.
 
 ## Web & other languages
 
