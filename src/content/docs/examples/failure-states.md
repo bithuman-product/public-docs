@@ -1,6 +1,6 @@
 ---
 title: "Failure states on a phone"
-description: "What the on-device SDK actually throws when the network is gone, a download is interrupted, or an agent code is wrong — measured on a Galaxy S25+ against ai.bithuman:expression2-android:0.3.1, with the exact exception text and the handling each state needs."
+description: "What the on-device SDKs actually throw when the network is gone, a download is interrupted, a model is corrupt or a key is rejected — measured on a Galaxy S25+ against ai.bithuman:expression2-android:0.3.1 and on Apple Silicon against Expression2 2.11.2, with the exact exception text and the handling each state needs."
 section: examples
 group: "Examples"
 order: 18
@@ -323,9 +323,347 @@ the timing.
 - **A second `fetch()` for an installed identity.** It is a length-and-sidecar
   comparison, measured at 12–25 ms, not a download.
 
+## The same questions on the Apple rail
+
+Everything above is Android, where a model **store** owns the download. The Apple
+rail is a different shape and therefore has different failure states: there is no
+store. You call the download endpoint yourself, you get one `<CODE>.avatar`
+container, and **you** stage its members. So the states below split into two
+groups — what the *door* does when your key is wrong, and what the *engine* does
+when the bytes on disk are wrong.
+
+Measured 2026-09-09 against the published **`Expression2` 2.11.2**
+(`homebrew-bithuman`, the version [the Swift SDK page](/sdk/swift) pins), on
+Apple Silicon. The container reader, the member staging and the load path are the
+same Swift code in every slice of that xcframework; the CoreML compile is the
+part that is per-device, and it is called out where it matters.
+
+### The control
+
+One published identity, staged and rendered, so the failures below mean
+something:
+
+```text
+FSP|BEGIN|ok|secretInEnv=ABSENT
+FSP|STAGED|ok|members=17|108ms
+FSP|MISSING_MEMBERS|ok|count=0|
+FSP|ENGINE_OK|ok|416x720|isReady=true
+FSP|FRAMES|ok|53|digest=4a2503b4f95919ae…|8139ms
+```
+
+Note `secretInEnv=ABSENT` in that first line. It is not an oversight, and it is
+the answer to two of the questions below.
+
+### No network
+
+There is no `fetch()` on this rail, so "offline" is only ever a question about
+**render** time. The probe was re-run under a sandbox that denies the process all
+network access, with the control proving the denial is real:
+
+```text
+$ sandbox-exec -f nonet.sb curl -sS https://docs.bithuman.ai/
+curl: (6) Could not resolve host: docs.bithuman.ai      # denied
+$ curl -sS -o /dev/null -w '%{http_code}\n' https://docs.bithuman.ai/
+200                                                     # not denied
+```
+
+Under that same denial, with no API secret in the environment:
+
+```text
+FSP|ENGINE_OK|ok|416x720|isReady=true
+FSP|FRAMES|ok|53|digest=4a2503b4f95919ae…|7743ms
+```
+
+**Byte-identical to the networked run** — same 53 frames, same pixel digest.
+Nothing on the Apple render path opens a socket. Once the `.avatar` is on the
+device, `create()`, `feed()` and `pull()` are local, and offline is not a state
+you have to handle.
+
+### An interrupted download
+
+On Android a half-finished download leaves a `.part` the store knows about. Here
+it leaves a truncated container, and the container reader catches it before any
+member reaches the engine:
+
+```text
+FSP|TRUNCATED_AVATAR|198632867 -> 99316433
+FSP|STAGE_THREW|truncated|Expression2ContainerError|…/half.avatar: truncated
+  container — ran off the end at offset 6842536 reading member
+  "combined_litert.tflite". The file is incomplete (a partial download writes
+  exactly this).
+```
+
+19 ms, and the message names the diagnosis. A file that is not a container at all
+is rejected even earlier, on the magic number:
+
+```text
+FSP|STAGE_THREW|notacontainer|Expression2ContainerError|…/junk.avatar: not an
+  IMX\0 container — first bytes are [41 41 41 41]. The container
+  GET /v1/agent/{code}/model/download vends begins "IMX\0".
+```
+
+1 ms. So `Expression2Container.members(of:)` is a usable integrity gate on the
+*shape* of the download: call it before you stage, and both a truncated transfer
+and an HTML error page saved under a `.avatar` name fail there rather than deeper
+in.
+
+### A missing shared engine
+
+The commonest real-world Apple failure is not corruption, it is forgetting that
+the `.avatar` does not carry the shared graphs. `missingMembers()` answers that
+before you try to start:
+
+```text
+FSP|MISSING_MEMBERS|noshared|count=1|w2v_frontend_cpuAndNE.mlpackage
+FSP|ENGINE_THREW|noshared|Expression2LoadError|… : expression-2 avatar is missing
+  w2v_frontend_cpuAndNE.mlpackage — re-provision the member(s) …, or pass
+  `sharedEngineDir:` if the shared graphs live in a second directory.|74ms
+```
+
+Use it as a pre-flight — it is a directory listing, it costs nothing, and it
+turns a load exception into a message you can act on:
+
+```swift
+let missing = Expression2Engine.missingMembers(avatarDir: dir, sharedEngineDir: shared)
+guard missing.isEmpty else { throw SetupError.needsEngineInstall(missing) }
+```
+
+### A corrupt member: two different answers
+
+This is where the Apple rail differs from Android in a way worth knowing before
+you ship. The probe flips 4,096 bytes in the middle of a staged member, **keeping
+its length**, and the answer depends entirely on *which* member.
+
+Corrupt the decoder's **structure** (`model.mlmodel`) and CoreML refuses to
+compile it, with a load error that names the stage that failed:
+
+```text
+FSP|ENGINE_THREW|…model.mlmodel|Expression2LoadError|… every required member is
+  present and warm-up did not reach ready (decoder=missing-decp2) — a member is
+  present but unloadable (CoreML compile failure or an I/O-contract mismatch).
+  See the [embody] log lines for the member that refused.|287ms
+```
+
+Corrupt the same decoder's **weights** (`weight.bin`) and nothing refuses
+anything:
+
+```text
+FSP|CORRUPTED_MEMBER|dec_p2_v3_all…/weights/weight.bin|off=6299664|bytes=12599328->12599328
+FSP|MISSING_MEMBERS|…|count=0|
+FSP|ENGINE_OK|…|416x720|isReady=true
+FSP|FRAMES|…|53|digest=428e813acd8cfa5a…|7576ms
+```
+
+`missingMembers()` is satisfied, `create()` succeeds, 53 frames come out — and
+the pixel digest is `428e813a…` where the clean run gave `4a2503b4…`. **This is
+the one Apple state that fails silently, and it does not fail safe: it delivers a
+different face.** CoreML validates the model graph, not the numbers in it, and
+nothing else on this rail checks the numbers either.
+
+That is the gap: the shipped 2.11.2 surface
+(`isContainer`, `members(of:)`, `read`, `readManifest`, `unpack`,
+`requiredAvatarMembers`, `missingMembers`) has **no verification call**, and
+`missingMembers()` is a presence check — it passes a member that is present and
+wrong.
+
+### The verification the SDK does not do — and how to do it yourself
+
+You do not have to accept that, because the integrity data is already in your
+hands. Every container carries a `manifest.json` member whose `files{}` map
+declares each member's `bytes` and `sha256`:
+
+```jsonc
+"files": {
+  "dec_p2_v3": { "path": "dec_p2_v3_all.mlpackage", "bytes": 12620302, "sha256": "…" },
+  "canon":     { "path": "canon.f32",               "bytes": 299520,   "sha256": "…" },
+  …
+}
+```
+
+Flat members are a plain SHA-256 of the file. **`.mlpackage` members are
+directories**, and their digest is a rollup with one convention you have to get
+right: SHA-256 over the package's files sorted by relative path, updating
+`relpath` — *keeping its leading `/`* — followed by the file's bytes. Verified
+against a published container, all eight members reproduce exactly:
+
+```swift
+import CryptoKit
+
+func digest(of relPath: String, in dir: URL) throws -> String {
+    let fm = FileManager.default
+    let root = dir.appendingPathComponent(relPath)
+    var isDir: ObjCBool = false
+    guard fm.fileExists(atPath: root.path, isDirectory: &isDir) else {
+        throw VerifyError.missing(relPath)
+    }
+    if !isDir.boolValue {                       // flat member: plain SHA-256
+        return SHA256.hash(data: try Data(contentsOf: root))
+            .map { String(format: "%02x", $0) }.joined()
+    }
+    let subs = (try fm.subpathsOfDirectory(atPath: root.path))
+        .filter { sp in
+            var d: ObjCBool = false
+            fm.fileExists(atPath: root.appendingPathComponent(sp).path, isDirectory: &d)
+            return !d.boolValue
+        }
+        .sorted()
+    var h = SHA256()
+    for sp in subs {                            // NOTE the leading "/"
+        h.update(data: Data(("/" + sp).utf8))
+        h.update(data: try Data(contentsOf: root.appendingPathComponent(sp)))
+    }
+    return h.finalize().map { String(format: "%02x", $0) }.joined()
+}
+
+/// Call this after staging and before `Expression2Engine.create`.
+func verifyStaging(dir: URL, container: URL) throws -> [String] {
+    let manifest = try JSONSerialization.jsonObject(
+        with: Expression2Container.read("manifest.json", from: container)) as! [String: Any]
+    let files = manifest["files"] as! [String: Any]
+    return try files.values.compactMap { entry -> String? in
+        let e = entry as! [String: Any]
+        let path = e["path"] as! String
+        return try digest(of: path, in: dir) == (e["sha256"] as! String) ? nil : path
+    }
+}
+```
+
+It has to be shown catching something, or it is decoration. Clean staging, then
+the *exact* corruption that rendered silently above:
+
+```text
+# clean
+FSP|CHECK|dec_p2_v3|dec_p2_v3_all.mlpackage|OK|want=32b5adabd34ee7dd|got=32b5adabd34ee7dd
+FSP|VERIFY_RESULT|bad=0||86ms
+
+# 4096 bytes flipped in dec_p2_v3_all…/weights/weight.bin, length unchanged
+FSP|CHECK|dec_p2_v3|dec_p2_v3_all.mlpackage|FAIL|want=32b5adabd34ee7dd|got=5defe619b32c58bf
+FSP|CHECK|student|student_v4_forward_frame_cpuAndNE.mlpackage|OK|…
+FSP|VERIFY_RESULT|bad=1|dec_p2_v3_all.mlpackage|86ms
+```
+
+`bad=0` clean, `bad=1` corrupt, naming the member — **86 ms** for all 198 MB.
+That is cheap enough to run on every cold start, and it is the only thing
+standing between a rotted cache and a wrong face.
+
+> **Reported as an SDK gap.** This belongs in the SDK, not in your app. It is
+> filed against `Expression2` as a missing public verification call; until a
+> release carries one, the code above is the workaround, and it uses only shipped
+> API.
+
+### Four fifths of your download is for the other platform
+
+While verifying, the probe listed what a container actually holds — 17 members,
+198,632,867 bytes:
+
+| Member | Bytes | Read by Apple? |
+| --- | --- | --- |
+| `combined_litert.tflite` | 158,524,428 | **no** — this is the Android LiteRT model |
+| `student_v4_forward_frame_cpuAndNE.mlpackage` | 14,253,384 | yes |
+| `dec_p2_v3_all.mlpackage` | 12,620,302 | yes |
+| `audiotokenizer_cpuAndNE.mlpackage` | 6,242,385 | yes |
+| `dec_p2_cpuAndNE.mlpackage` | 4,939,205 | yes |
+| `idle.mp4`, `canon.f32`, `canon.bin`, `manifest.json` | 2,052,052 | mixed |
+
+Proof rather than inference: corrupting 4,096 bytes in the middle of
+`combined_litert.tflite` and rendering gives digest `4a2503b4…` — *byte-identical
+to the clean control*. The Apple engine never opens it.
+
+So **80% of every `.avatar` an iPhone downloads is a model it will never load.**
+Budget the download and the disk for 198 MB, not for the 40 MB Apple uses, and do
+not be surprised by the size on a cellular connection.
+
+### A rejected key
+
+On this rail the key is checked at the door, not on the device. The same URL,
+varying only the header:
+
+```text
+# no header
+HTTP/2 401  {"error":{"code":"MISSING_AUTH","message":"Missing api-secret header",…}}
+
+# a key that is not a key
+HTTP/2 401  {"error":{"code":"UNAUTHORIZED","message":"Invalid api-secret",…}}
+
+# a valid key, for a code it cannot see
+HTTP/2 404  {"error":{"code":"NOT_FOUND","message":"Agent not found for code: …",…}}
+
+# a valid key, for a code it owns
+HTTP/2 302  location: https://…/storage/v1/object/sign/models-downloads/expression-2/<CODE>.avatar?…
+```
+
+Three distinguishable answers, which is better than the Android mirror manages —
+there, [a missing code and an unmirrored code are the same 400](#a-code-that-exists-but-is-not-mirrored).
+Here `401` means *fix your key*, `404` means *this key cannot see that agent*, and
+`302` is success. Two cautions on that last pair:
+
+- The `404` does **not** distinguish "no such agent" from "not on this account".
+  A code that is real and documented elsewhere still answers `404` to a key that
+  does not own it. Do not tell the user their code is invalid on a `404`.
+- The `302` points at signed storage that expires. Follow it promptly; do not
+  cache the redirect target.
+
+And one thing the door does not give you: the storage response's `ETag` is a
+multipart tag (`"8fa4bda2…-4"`), **not** a digest of the file, so you cannot use
+it to check the download. `Content-Length` is exact (`198632867`) and is worth
+comparing; for anything stronger, use the manifest verification above.
+
+### The five-minute grace does not apply here
+
+The estate rule is a five-minute grace and then refusal, with a metering service
+that cannot be reached never stopping a render. **Measured, neither half of that
+rule has a subject on the Apple on-device rail, because nothing there meters at
+all.**
+
+A render was driven for 330 seconds with a deliberately *invalid*
+`BITHUMAN_API_SECRET` in the environment:
+
+```text
+FSP|BEGIN|longkey|secretInEnv=SET
+FSP|TICK|t=270s|frames=4437
+FSP|TICK|t=300s|frames=4949
+FSP|LONG_DONE|elapsed=330s|frames=5429|stillRendering=true
+FSP|AFTER_GRACE_WINDOW|frames=64|refused=false
+```
+
+It sailed through the 300-second mark at a steady rate and delivered 64 more
+frames afterwards. `refused=false`. Combined with the sandbox result above — no
+sockets on the render path — the conclusion is not "the grace failed to fire"; it
+is that **there is nothing on the device to fire it**. The engine consults no key
+and no meter.
+
+That is consistent with the rail's design, and the enforcement point is real: you
+cannot obtain the `.avatar` without a valid key, as the `401`s above show. But
+plan for it honestly — **once a device holds a container, that device can render
+from it offline, indefinitely, with no key.** If your product needs per-session
+entitlement, it has to come from your own backend gating the *download*, not from
+the SDK.
+
+### Apple reference
+
+Measured 2026-09-09, `Expression2` 2.11.2, Apple Silicon.
+
+| State | Time to fail | What you get | What to do |
+| --- | --- | --- | --- |
+| Offline, model on device | — | renders, identical digest | nothing; no socket is opened |
+| Not a container | 1 ms | `Expression2ContainerError`, magic-number message | you saved an error page; check the HTTP status first |
+| Truncated container | 19 ms | `Expression2ContainerError`, names the offset | re-download; `members(of:)` is the gate |
+| Shared engine missing | 74 ms | `Expression2LoadError`, names the member | `bithuman engine install mac`; pre-flight `missingMembers()` |
+| Member structure corrupt | 287 ms | `Expression2LoadError`, `decoder=missing-decp2` | re-stage from the container |
+| Member weights corrupt | **never** | renders a **different face**, no error | verify against `manifest.json` — nothing else will |
+| No `api-secret` | at the door | `401 MISSING_AUTH` | send the header |
+| Bad `api-secret` | at the door | `401 UNAUTHORIZED` | fix the key |
+| Key cannot see the code | at the door | `404 NOT_FOUND` | not necessarily a bad code — may not be this account's |
+| Invalid key, render running | never refuses | 5,429 frames over 330 s | expected: on-device render is unmetered |
+
 ## Next steps
 
 - [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the whole
   working project these states were measured against.
 - [Android SDK](/sdk/android) — coordinates, the model store, and the measured
   device limits.
+- [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2)
+  — the Apple project, file by file, that the Apple states above were measured
+  against.
+- [Swift SDK](/sdk/swift) — the container reader, `missingMembers()`, and the two
+  error types worth catching separately.
