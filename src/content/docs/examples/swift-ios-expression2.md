@@ -53,6 +53,33 @@ on it; use `expression-2`, which is what this page is.
   identity to point it at. Create one at
   [bitHuman](https://www.bithuman.ai) and note its `<CODE>`; the API side is
   [Agents](/api/agents).
+
+  ★ **Budget for this before you open Xcode: creating one takes about 60–100
+  minutes and costs 2000 credits** — an `expression-2` creation trains a
+  per-identity model on an H100-class GPU. See
+  [model-specific inputs and creation times](/api/agents#model-specific-inputs-and-creation-times). Nothing on this
+  page can start until that finishes, so start the creation first and read the
+  rest while it trains.
+
+  ★ **`ready` is not the same as downloadable, and the app needs downloadable.**
+  The agent flips to `status: "ready"` when the identity is built; the
+  `.avatar` this app bundles is *published* separately, and until it lands the
+  download endpoint answers `404 MODEL_ARTIFACT_NOT_READY` — "typically within
+  the hour". Usually it is minutes. It is not guaranteed: measured 2026-09-09,
+  an agent that reached `ready` on 2026-09-07 (progress `1.0`, `current_step:
+  "done"`, `model_status["expression-2"].state: "ready"`) was **still** answering
+  that 404 two days later, while 25 other `ready` `expression-2` agents on the
+  same account all returned a signed URL in the same sweep. No field on
+  `GET /v1/agent/{code}` distinguishes the two, so ask the endpoint itself
+  before you commit an afternoon:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -H "api-secret: $BITHUMAN_API_SECRET" \
+  "https://api.bithuman.ai/v1/agent/<CODE>/model/download?model=expression-2"
+# 302 → the artifact is there, `setup.sh` below will work
+# 404 → MODEL_ARTIFACT_NOT_READY; retry, and open a ticket if it outlives the day
+```
 - **The bitHuman CLI**, for one 91 MB download that the model artifact does not
   carry:
 
@@ -355,7 +382,7 @@ func log(_ line: String) {
     //   xcrun devicectl device copy from --device <udid> \
     //     --domain-type appDataContainer \
     //     --domain-identifier ai.bithuman.example.ios-expression2 \
-    //     --source Documents/session.log --destination .
+    //     --source Documents/session.log --destination ./session.log
     guard let docs = FileManager.default.urls(for: .documentDirectory,
                                               in: .userDomainMask).first else { return }
     let entry = Data((ISO8601DateFormatter().string(from: Date()) + "  " + line + "\n").utf8)
@@ -753,7 +780,7 @@ final class AvatarSession: ObservableObject {
     ///   xcrun devicectl device copy from --device <udid> \
     ///     --domain-type appDataContainer \
     ///     --domain-identifier ai.bithuman.example.ios-expression2 \
-    ///     --source Documents/first-frame.png --destination .
+    ///     --source Documents/first-frame.png --destination ./first-frame.png
     private func recordFirstFrame(_ cg: CGImage) {
         firstFrameAt = Date()
         guard let png = UIImage(cgImage: cg).pngData(),
@@ -840,12 +867,28 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > Measured on the committed example: with `-derivedDataPath build` the app
 > lands at `build/Build/Products/Debug-iphoneos/IOSExpression2.app`.
 
-> ★ **Over SSH this silently produces an unsigned app.** In an SSH session the
-> keychain search list holds only the system keychain, so
-> `security find-identity -v -p codesigning` reports **0 valid identities** even
-> with your certificates installed — the build then succeeds and the phone
-> rejects it with `0xe800801c (No code signature found.)`. Build from a
-> logged-in graphical session. The full list of signing traps is on
+> ★ **Over SSH the signing identity is not there, and it fails in two different
+> ways.** In an SSH session the keychain search list holds only the system
+> keychain, so `security find-identity -v -p codesigning` reports **0 valid
+> identities** even with your certificates installed. What happens next depends
+> on what else is cached: with a usable provisioning profile already in place the
+> build *succeeds* and the phone rejects the result with
+> `0xe800801c (No code signature found.)`; with the login keychain locked, the
+> build fails outright — measured 2026-09-09 on macOS 26.6.2 / Xcode 26.3, `rc
+> 65`:
+>
+> ```text
+> error: No Account for Team "XXXXXXXXXX". Add a new account in Accounts settings
+>        or verify that your accounts have valid credentials.
+> error: No signing certificate "iOS Development" found: No "iOS Development"
+>        signing certificate matching team ID "XXXXXXXXXX" with a private key was found.
+> ```
+>
+> Both have the same cause and the same fix: **build from a logged-in graphical
+> session**, where the login keychain is unlocked and Xcode's account is
+> readable. `security show-keychain-info ~/Library/Keychains/login.keychain-db`
+> tells you which state you are in — `User interaction is not allowed.` means
+> locked. The full list of signing traps is on
 > [the SDK page](/sdk/swift#signing-before-any-of-the-above-runs-on-a-phone).
 
 ## What you'll see
@@ -872,8 +915,16 @@ keeping a console attached:
 xcrun devicectl device copy from --device <YOUR-DEVICE-UDID> \
   --domain-type appDataContainer \
   --domain-identifier ai.bithuman.example.ios-expression2 \
-  --source Documents/first-frame.png --destination .
+  --source Documents/first-frame.png --destination ./first-frame.png
 ```
+
+> ★ **Corrected 2026-09-09 — `--destination .` is refused.** This block used to
+> end in a bare `.`, the shape every other copy tool accepts. `devicectl` does
+> not: it wants the destination *file*, and a directory comes back as
+> `Failed to perform I/O operations … Cannot open destination file
+> /Users/you/work: Is a directory`, rc 0, with nothing written. Measured on
+> Xcode 26.3 / macOS 26.6.2 against this app: the bare `.` arm failed and the
+> `./first-frame.png` arm printed `File received from Device` in the same run.
 
 ### Measured, 2026-09-09
 
