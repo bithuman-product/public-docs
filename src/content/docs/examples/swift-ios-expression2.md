@@ -49,10 +49,25 @@ on it; use `expression-2`, which is what this page is.
   [signing section](/sdk/swift#signing-before-any-of-the-above-runs-on-a-phone)
   on the SDK page.
 - **An `expression-2` agent of your own**, in `ready` state, and your API
-  secret. The app renders *your* identity; there is no public `expression-2`
-  identity to point it at. Create one at
+  secret. The app renders *your* identity. Create one at
   [bitHuman](https://www.bithuman.ai) and note its `<CODE>`; the API side is
   [Agents](/api/agents).
+
+  ★ **Yes, the Android page names four identities that need no account — and
+  none of them works here.** [The Android SDK page](/sdk/android#getting-a-model-onto-the-device)
+  points `Expression2ModelStore` at a mirror that answers *anonymously*, and
+  [the Android example](/examples/kotlin-android-hello) renders `A66GYD8664`
+  with no key and no agent of your own. That is real: measured 2026-09-09,
+  `A66GYD8664`, `A55NVK9945`, `A17ZTB0222` and `A74NWD9723` all answer **HTTP
+  200** there without credentials, and a made-up code answers 400. The reason it
+  does not carry over is the **form**, not the permission. That mirror vends the
+  Android and web member tree — `combined_fp32.tflite`,
+  `combined_hexagon.tflite`, `enc_exp.onnx` — and **no `.avatar` container at
+  all**, which is the only thing `Expression2` on Apple opens. The endpoint that
+  *does* vend a `.avatar`, `GET /v1/agent/{code}/model/download`, answers **401
+  without an `api-secret`** — measured against `A66GYD8664` the same day. So on
+  this rail there is no identity to point the app at but your own, and no
+  keyless route to one. Do not spend an afternoon trying `A66GYD8664` here.
 
   ★ **Budget for this before you open Xcode: creating one takes about 60–100
   minutes and costs 2000 credits** — an `expression-2` creation trains a
