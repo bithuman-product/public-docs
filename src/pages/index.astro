@@ -53,13 +53,29 @@ avatar = await AsyncBithuman.create(model_path="agent.imx",
 await avatar.push_audio(pcm_bytes, 16000)   # 16 kHz int16 PCM (ends the utterance)
 async for frame in avatar.run():
     render(frame.bgr_image)        # lifelike animated face, in realtime` },
-  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:sdk:2.3.6")
+  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.3.1")
+// No account, no API key, no credits — the model store fetches anonymously.
 // arm64-v8a only — an x86_64 emulator installs, then throws UnsatisfiedLinkError.
-import ai.bithuman.sdk.Avatar
+// Verbatim from /sdk/android — see scripts/check-home-quickstart-kotlin.mjs.
+import ai.bithuman.expression2.Expression2Avatar
+import ai.bithuman.expression2.Expression2ModelStore
+import ai.bithuman.expression2.Expression2Options
+import android.content.Context
+import android.graphics.Bitmap
 
-Avatar.load(imxPath, apiSecret).use { avatar ->
-    avatar.composeAsBitmaps(pcm16k).forEach { bmp ->
-        imageView.setImageBitmap(bmp)   // on-device, 25 fps
+/** [pcm16k] is 16 kHz MONO float32 in [-1, 1] — one float per sample, not ShortArray. */
+fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
+    // Blocks on the network the first time (~158 MB). Never on the main thread.
+    val model = Expression2ModelStore(context).fetch(agentCode)
+
+    Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
+        val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
+        avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
+        avatar.flushTail()                    // the padded tail is the last sentence
+        while (true) {
+            if (avatar.pull(frame) != null) { show(frame); continue }
+            if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+        }
     }
 }` },
   { label: "Swift", lang: "swift", code: `import bitHumanKit
@@ -177,7 +193,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. Shipping a mobile app? The <a href="/sdk/android">Android SDK</a> (beta) and the <a href="/sdk/swift">Swift SDK for iOS</a> (preview) render on-device — each page states exactly how far its rail has shipped. Before you write code, check <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">where the avatar model comes from on a phone</a>: Android is arm64-v8a only, and the Apple Essence engines need an iPhone 16 Pro.</p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. <strong>Shipping a mobile app? Android is the free rail.</strong> The Kotlin tab is <code>expression-2</code> on the <a href="/sdk/android">Android SDK</a> (beta), and it renders with <strong>no account, no API key and no credits</strong> — the model store fetches a published identity over anonymous HTTPS. Measured 2026-09-09: 213 frames on a Galaxy S25+, about three minutes from an empty directory (<a href="/examples/kotlin-android-hello">the whole project</a>). <a href="/sdk/swift">iOS</a> (preview) is the gated one — an Apple Developer team, an agent code and a key before anything renders. Both floors are hard: Android is arm64-v8a only, and the Apple Essence engines need an iPhone 16 Pro. <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">What each phone rail needs →</a></p>
         <Button href="/start">Start here →</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>

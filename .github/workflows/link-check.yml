@@ -280,6 +280,28 @@ jobs:
       - name: Dependency-coordinate guard self-test
         if: always()
         run: node scripts/check-dependency-coordinates.mjs --selftest
+      # ★2026-09-09: THE ONLY ANDROID CODE ON THE HOME PAGE TAUGHT THE ONE
+      # ANDROID ARTIFACT THAT CANNOT RENDER ON A HANDSET. The Quickstart
+      # "Kotlin" tab in src/pages/index.astro named `ai.bithuman:sdk:2.3.6` —
+      # essence-1, which sdk/android.md documents as unable to authenticate on a
+      # device — while the rail that works (`expression-2`, measured at 213
+      # frames on a Galaxy S25+ with no account, no API key and no credits) was
+      # nowhere on the front page. No gate here could see it: the coordinate
+      # EXISTS on Maven Central, so check-dependency-coordinates passes it, and
+      # `essence-1` is a current un-retired name, so check-retired-model-names
+      # passes it too. Existing and rendering are different questions.
+      # The fix is structural rather than editorial — the home page now quotes
+      # sdk/android.md's expression-2 loop BYTE FOR BYTE, and this gate fails if
+      # either side is edited alone, so the front page cannot drift away from the
+      # page that owns the rail. Firing proven on the real tree the same day from
+      # both directions (one character changed on the home page; one character
+      # changed on the SDK page) plus the --selftest fixtures below.
+      - name: Home page Android snippet is the SDK page's, verbatim
+        if: always()
+        run: node scripts/check-home-quickstart-kotlin.mjs
+      - name: Home-page Android snippet guard self-test
+        if: always()
+        run: node scripts/check-home-quickstart-kotlin.mjs --selftest
       - name: Published OpenAPI spec is in sync with its source
         if: always()
         run: |
