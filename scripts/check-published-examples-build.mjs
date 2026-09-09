@@ -790,9 +790,11 @@ async function main() {
   console.log(`work tree: ${workRoot}`);
   const started = Date.now();
   let worst = 0;
+  const perArm = {};
   try {
     for (const a of arms) {
       const rc = a === "android" ? await buildAndroid(workRoot) : await buildIos(workRoot);
+      perArm[a] = rc;
       worst = Math.max(worst, rc === 2 ? 2 : rc);
       if (rc === 2) break; // infrastructure: stop, do not report a build verdict
     }
@@ -809,17 +811,24 @@ async function main() {
   // ★THE CONTROL GRADES ITSELF. Under --mutate the page has been deliberately
   // broken, so the ONLY acceptable outcome is that the toolchain rejected it.
   if (MUTATE) {
-    if (worst === 1) {
-      console.log(`CONTROL FIRED in ${mins} min — the mutated page was REJECTED by the toolchain, so this gate really is compiling the published code`);
-      return 0;
-    }
-    if (worst === 0) {
-      console.log("::error::THE CONTROL DID NOT FIRE: a page with a renamed bitHuman API symbol BUILT anyway. This gate is not compiling what it claims to compile, and every green it has printed is worthless.");
+    // ★EVERY arm must reject its mutant, not "at least one". Grading the worst
+    // rc across arms would let a blind iOS control hide behind a firing Android
+    // one — a single number standing in for two independent questions is how a
+    // half-dead control reads as alive.
+    const blind = arms.filter((a) => perArm[a] === 0);
+    const unrun = arms.filter((a) => perArm[a] === undefined || perArm[a] === 2);
+    if (blind.length) {
+      console.log(`::error::THE CONTROL DID NOT FIRE on: ${blind.join(", ")}. A page with a renamed bitHuman API symbol BUILT anyway, so on that arm this gate is not compiling what it claims to compile and every green it has printed there is worthless.`);
       console.log(`CONTROL BLIND (exit 2) after ${mins} min`);
       return 2;
     }
-    console.log(`INFRASTRUCTURE (exit 2) after ${mins} min — the control could not be run, which is not the same as the control firing`);
-    return 2;
+    if (unrun.length) {
+      console.log(`::error::the control could not be RUN on: ${unrun.join(", ")} — cannot-measure is not the same as the control firing`);
+      console.log(`INFRASTRUCTURE (exit 2) after ${mins} min`);
+      return 2;
+    }
+    console.log(`CONTROL FIRED on ${arms.join(" + ")} in ${mins} min — every mutated page was REJECTED by its toolchain, so this gate really is compiling the published code`);
+    return 0;
   }
 
   console.log(worst === 0 ? `ALL GREEN in ${mins} min` : worst === 2 ? `INFRASTRUCTURE (exit 2) after ${mins} min` : `RED (exit 1) after ${mins} min`);
