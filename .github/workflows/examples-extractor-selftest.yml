@@ -112,7 +112,16 @@ jobs:
       - name: The runner finds a node the way cron would, and says UNPROVEN when it cannot
         if: always()
         run: |
-          set -u
+          # ★`shell: bash -e` IS THE DEFAULT, AND IT BROKE BOTH CONTROLS HERE.
+          # MEASURED 2026-09-09: this workflow was RED on main from the moment
+          # it was added — twice, runs 34327650638 and 34329195969 — and not
+          # because anything it grades was wrong. Under `-e`, `out=$(cmd); rc=$?`
+          # ABORTS AT THE ASSIGNMENT when cmd exits non-zero, so the step died
+          # the instant the control did what a control is for, before a single
+          # assertion ran. The failure even reads like the assertion failing.
+          # Every check below is an explicit `test … || exit 1`, so -e buys
+          # nothing here and costs the whole control.
+          set -u +e
           out=$(bash scripts/examples-build-gate.sh --which-node); rc=$?
           echo "$out"
           test $rc -eq 0 || { echo "::error::--which-node exited $rc where a node is plainly available"; exit 1; }
@@ -164,7 +173,16 @@ jobs:
       - name: The runner refuses to grade with a grader that is not origin/main's
         if: always()
         run: |
-          set -u
+          # ★`shell: bash -e` IS THE DEFAULT, AND IT BROKE BOTH CONTROLS HERE.
+          # MEASURED 2026-09-09: this workflow was RED on main from the moment
+          # it was added — twice, runs 34327650638 and 34329195969 — and not
+          # because anything it grades was wrong. Under `-e`, `out=$(cmd); rc=$?`
+          # ABORTS AT THE ASSIGNMENT when cmd exits non-zero, so the step died
+          # the instant the control did what a control is for, before a single
+          # assertion ran. The failure even reads like the assertion failing.
+          # Every check below is an explicit `test … || exit 1`, so -e buys
+          # nothing here and costs the whole control.
+          set -u +e
           r=$(mktemp -d); mkdir -p "$r/scripts"
           cp scripts/examples-build-gate.sh "$r/scripts/"
           cp scripts/check-published-examples-build.mjs "$r/scripts/"
