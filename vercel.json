@@ -539,6 +539,146 @@
       "source": "/mobile/",
       "destination": "/sdk",
       "permanent": true
+    },
+    {
+      "source": "/pricing",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/pricing/",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/credits",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/credits/",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/billing",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/billing/",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/costs",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/costs/",
+      "destination": "/guides/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/api-keys",
+      "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/api-keys/",
+      "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/keys",
+      "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/keys/",
+      "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/get-started",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/get-started/",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/sdks",
+      "destination": "/sdk",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/",
+      "destination": "/sdk",
+      "permanent": true
+    },
+    {
+      "source": "/ios-sdk",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/ios-sdk/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/android-sdk",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/android-sdk/",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/swift",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/swift/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/kotlin",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/kotlin/",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/apple",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/apple/",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/iphone",
+      "destination": "/sdk/swift",
+      "permanent": true
+    },
+    {
+      "source": "/iphone/",
+      "destination": "/sdk/swift",
+      "permanent": true
     }
   ]
 }
