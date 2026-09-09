@@ -459,16 +459,33 @@ same identifier the [REST API](/api/agents) and the CLI use, ten characters like
   for the public web mirror; an unmirrored code fails the fetch with
   `HTTP 400 … Object not found` naming the URL it tried.
 
-Check a code before you ship it into an app:
+Check a code before you ship it into an app — **and check the members, not just
+the manifest**:
 
 ```bash
 B=https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/expression2-web
 for c in A66GYD8664 ZZZNOSUCH99; do
-  printf '%s %s\n' "$c" "$(curl -sS -o /dev/null -w '%{http_code}' "$B/$c/v1/web_manifest.json")"
+  printf '%s' "$c"
+  for f in web_manifest.json combined_fp32.tflite canon.bin; do
+    printf ' %s=%s' "$f" \
+      "$(curl -sS -o /dev/null -r 0-0 -w '%{http_code}' "$B/$c/v1/$f")"
+  done
+  printf '\n'
 done
-# A66GYD8664 200
-# ZZZNOSUCH99 400     <- the control: a code that is not there answers differently
+# A66GYD8664 web_manifest.json=206 combined_fp32.tflite=206 canon.bin=206
+# ZZZNOSUCH99 web_manifest.json=400 combined_fp32.tflite=400 canon.bin=400
+#             ^ the control: a code that is not there answers differently
 ```
+
+> **Why the manifest alone is not the check.** `web_manifest.json` is a
+> *description* of the identity; `combined_fp32.tflite` is the renderer. They are
+> written by the same reconciler but they are separate objects, and one can be
+> there without the other. Measured 2026-09-09 across every `ready`
+> `expression-2` identity, 68 of 69 answered on all three names — and the 69th,
+> `A20DXS6404`, answered **206 for the manifest and 400 for
+> `combined_fp32.tflite`**. A manifest-only probe calls that identity healthy;
+> `store.fetch` then fails on it. Range-request the members too, and an identity
+> that cannot render is visible before you ship it.
 
 ★ **Where the audio comes from.** `feed` takes a `FloatArray` of **16 kHz mono
 float32 in [-1, 1]**, one float per sample — not `ShortArray`, and not a WAV
