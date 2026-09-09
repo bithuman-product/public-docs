@@ -107,9 +107,12 @@ you want — **`bitHumanKit`** for the umbrella, **`Expression2`** or
 
 > ### 2.7.0 and 2.8.0 — essence-2 becomes a product (2026-09-06 and 2026-09-07)
 >
-> **What to do:** pin `from: "2.8.0"`. Both are manifest-only tags: nothing
-> that `bitHumanKit` or `Expression2` downloads changed — their asset URLs and
-> checksums are byte-for-byte what `v2.6.0` declared.
+> **What to do:** nothing — **the pin to use is `2.11.0`**, above. This note is
+> kept as the record of how `essence-2` arrived on this rail, not as an
+> instruction; it used to read "pin `from: "2.8.0"`" and two pin instructions on
+> one page is how a page starts contradicting itself. Both were manifest-only
+> tags: nothing that `bitHumanKit` or `Expression2` downloads changed — their
+> asset URLs and checksums are byte-for-byte what `v2.6.0` declared.
 >
 > * **v2.7.0** (2026-09-06T16:42Z) added the **`Essence2`** library product,
 >   pointing at the engine archives on release `essence2-v1.1.0`. Its only
@@ -127,11 +130,12 @@ you want — **`bitHumanKit`** for the umbrella, **`Expression2`** or
 
 > ### 2.6.0 — published 2026-09-06, and it is the first one that changes `Expression2`'s API
 >
-> **What to do:** if you are already on `from: "2.5.0"` or `from: "2.5.1"` you
-> pick 2.6.0 up automatically, and **nothing you have written stops compiling**
-> — the whole change is additive. If you pin an exact version and you use
-> `Expression2`, move to 2.6.0: it is the release that lets you hand the engine
-> a model.
+> **What to do:** nothing, if you took the `2.11.0` pin above — it includes
+> this. This note explains what changed for anyone reading older code: if you
+> are on `from: "2.5.0"` or `from: "2.5.1"` you pick 2.6.0 up automatically and
+> **nothing you have written stops compiling** — the whole change is additive.
+> If you pin an *exact* version and you use `Expression2`, 2.6.0 is the release
+> that lets you hand the engine a model.
 >
 > * ★ **`Expression2` can now be given a model path.** Through 2.5.1 the only
 >   initializer was `Expression2Engine()`, which searched an environment
