@@ -54,7 +54,7 @@ avatars; the difference is where they run and how mature each surface is.
 | Platform / target | SDK | On-device / cloud | Status |
 |---|---|---|---|
 | Backend, AI agents, batch render, edge boxes | **[Python](/sdk/python)** | On-device | **GA** |
-| Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **Preview** |
+| Native Mac, iPad, iPhone apps | **[Swift / Apple](/sdk/swift)** | On-device | **Preview** — the gated phone rail: an Apple Developer team, an agent code (2000 credits, 60–100 min) and a key before the first frame |
 | Native Android apps | **[Android / Kotlin](/sdk/android)** | On-device | **Beta** — and the only phone rail that renders with no account, key or credits |
 | Browser & Node web clients | **[JavaScript / TS](/sdk/javascript)** | Cloud client | **Preview** |
 | No code — terminal or browser viewer | **[CLI](/sdk/cli/overview)** | On-device | **GA** |
@@ -90,20 +90,25 @@ Android `expression-2` walkthrough on this site was driven end to end on
 billing number; this note records what that one artifact was observed to do, and
 does not change it.
 
-> **Second generation.** [`essence-2`](/concepts/essence-2) runs on-device
-> through two published SDKs as of 2026-09-07: the
-> [Swift SDK](/sdk/swift#essence-2-on-device)'s `Essence2` product (package
-> 2.11.0 — a C interface that builds for iOS and macOS; ★ it does **not** yet
-> render on a phone, because the model the download endpoint returns is not a
-> package it opens and the engine refuses every iPhone below an iPhone 16 Pro
-> — [both measured, on the Swift SDK page](/sdk/swift#essence-2-on-device)) and the
+> **Second generation.** ★ **[`essence-2`](/concepts/essence-2) renders on no
+> phone today — not on an iPhone, and not on an Android handset. Build the phone
+> lane on [`expression-2`](/concepts/expression-2).** Two SDKs shipped an
+> `essence-2` surface as of 2026-09-07 and *both stop short of a frame on a
+> handset*: the [Swift SDK](/sdk/swift#essence-2-on-device)'s `Essence2` product
+> (package 2.11.0 — a C interface that **builds** for iOS and macOS, but the
+> model the download endpoint returns is not a package it opens, and the engine
+> refuses every iPhone below an iPhone 16 Pro
+> — [both measured, on the Swift SDK page](/sdk/swift#essence-2-on-device)), and the
 > [Android SDK](/sdk/android#essence-2--aibithumanessence2-android051)'s
 > `ai.bithuman:essence2-android:0.5.1` (an in-SDK model store and a metered
-> session — but ★ **no public host serves the `android/v1` member tree that store
+> session — but **no public host serves the `android/v1` member tree that store
 > consumes, so `fetch` cannot succeed for an outside developer today**, and there
-> is no audio-in path; build the Android lane on `expression-2`). Live
+> is no audio-in path). Live
 > sessions still run through the [REST API](/api/overview) or
-> [LiveKit](/sdk/livekit). As of Python SDK **3.0.0** both `essence-2` and
+> [LiveKit](/sdk/livekit).
+>
+> Where `essence-2` **does** run on your own hardware is a desktop, not a phone.
+> As of Python SDK **3.0.0** both `essence-2` and
 > `expression-2` **render locally on your own CPU** through one call,
 > `bithuman.open` — metered, no GPU — on macOS and Linux; the essence-2
 > clip-to-file route is `bithuman.offline` with the `bithuman[offline]` extra
@@ -216,7 +221,7 @@ We keep this honest so you can plan around it.
 | SDK | Package | Topology | Status |
 |---|---|---|---|
 | **Python** | `pip install bithuman` (3.0.0 — `bithuman.open` / `avatar.render`; `bithuman<3` to stay on 2.10.0) | On-device | **GA** |
-| **Swift / Apple** (iOS, iPadOS, macOS) | SwiftPM, pin `from: "2.11.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0). 2.11.0 is the tag that carries two corrections: `Expression2` + `Essence2` in one app does not link on a device, and the iPhone floor grades `Essence2` too | On-device | **Preview** |
+| **Swift / Apple** (iOS, iPadOS, macOS) | SwiftPM, pin `from: "2.11.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0 — it **builds**, but [renders on no iPhone today](#getting-an-avatar-model-onto-a-phone)). `expression-2` is the Apple rail that renders, and it is the gated one: an Apple Developer team, an agent code and a key first. 2.11.0 is the tag that carries two corrections: `Expression2` + `Essence2` in one app does not link on a device, and the iPhone floor grades `Essence2` too | On-device | **Preview** |
 | **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2 — **the working rail, and it needs no account, key or credits**), `ai.bithuman:essence2-android:0.5.1` (essence-2 — use no earlier version, and [no public host serves the tree its model store fetches](/sdk/android#essence-2--aibithumanessence2-android051), so it cannot be fed today) and `ai.bithuman:sdk:2.3.6` (essence-1 — resolves and compiles, but [cannot authenticate on a device](/sdk/android#essence-1--aibithumansdk236)) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.6.3 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64, essence-2 and expression-2 runtimes inside; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
