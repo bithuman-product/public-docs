@@ -10,6 +10,29 @@ order: 1
 
 ## September 2026
 
+### Android — the Kotlin example is a whole project, and essence-1 `2.3.6` cannot authenticate on a phone (2026-09-09)
+
+Two Android findings from a walk of the published pages on a Galaxy S25+
+(`SM-S936U1`, Snapdragon 8 Elite, Android 16).
+
+- **[Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) is now a
+  complete project rather than fragments** — every file in full, in the order you
+  create them, plus the audio reader and the playback clock. Parsed back out of
+  the served page into an empty directory and run: `app-debug.apk` 3,474,583 B,
+  5.72 s of speech → **117 frames** of 416×720, `acc=CPU`. Two toolchain steps the
+  site never wrote down (`ANDROID_HOME` / `local.properties`, and a JDK 17
+  launcher — AGP 8.7.3 rejects a newer one with an error whose whole body is the
+  string `26.0.2.1`) are now in [Install](/sdk/android#install--the-minimal-build-that-works).
+- **`ai.bithuman:sdk:2.3.6` (essence-1) resolves, compiles and installs, and then
+  cannot authenticate on a device.** `Avatar.load` throws
+  `be_auth_authenticate: status=11 … SSL peer certificate … was not OK`: the
+  published native library carries no CA trust store. It is not your network and
+  not your key — the same handset reached that exact endpoint over a public Google
+  Trust Services chain in the same minute — and there is no app-side workaround on
+  this version. Use
+  [expression-2](/sdk/android#expression-2--aibithumanexpression2-android031) on
+  Android, which needs no key. [The measurement](/sdk/android#essence-1--aibithumansdk236).
+
 ### CLI `2.6.4` — a rejected key gets 300 seconds, then the session stops (2026-09-07)
 
 `cli-v2.6.4` (published 2026-09-07 23:30Z on the Homebrew tap; the formula

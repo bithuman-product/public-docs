@@ -53,9 +53,17 @@ beyond your own agent's `.imx`:
   [Python SDK](/sdk/python).
 * **CLI** — the `bithuman` binary from the public Homebrew tap, with macOS
   arm64 and Linux x86_64 builds. See the [CLI overview](/sdk/cli/overview).
-* **Android** — `ai.bithuman:sdk` on Maven Central. This is the **only**
-  bitHuman model with a publicly resolvable Android artifact. See the
-  [Android SDK](/sdk/android).
+* **Android** — `ai.bithuman:sdk` on Maven Central. ★ **The published `2.3.6`
+  cannot authenticate on an Android device** — `Avatar.load` throws
+  `be_auth_authenticate: status=11` because the artifact's native library ships
+  with no CA trust store, measured on a Galaxy S25+ on 2026-09-09 with two
+  controls ruling out the network and the key. For an on-device talking head on
+  Android today use [expression-2](/concepts/expression-2)
+  (`ai.bithuman:expression2-android`), which needs no key at all. The full
+  measurement, and essence-1's API, are on the
+  [Android SDK](/sdk/android#essence-1--aibithumansdk236) page. (Three bitHuman
+  artifacts are publicly resolvable on Maven Central, not one: this page said
+  "the only" until 2026-09-09 and that stopped being true on 2026-09-02.)
 
 **In your own Apple app:** the Swift package we publish today exposes
 `bitHumanKit`, `BithumanEngineProtocol` and `Expression2`. There is **no

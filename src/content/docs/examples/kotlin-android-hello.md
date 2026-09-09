@@ -697,9 +697,34 @@ either asks for the accelerator or falls behind.
 
 Everything above is [Expression 2](/concepts/models). essence-1 is the older
 `ai.bithuman:sdk` artifact: it renders at 25 fps, it takes a `.imx` model file you
-push yourself, and it needs an **API secret**. It is still published and still
-supported; it is second on this page because it is the longer road to a first
-frame.
+push yourself, and it needs an **API secret**.
+
+:::caution
+**The published `ai.bithuman:sdk:2.3.6` cannot authenticate on an Android device,
+so the example below compiles and installs and then throws before its first
+frame. Measured on a Galaxy S25+ on 2026-09-09**, with a real API secret and the
+showcase `.imx` from Step 2 on the phone:
+
+```text
+ai.bithuman.sdk.BithumanException: be_auth_authenticate: status=11
+  msg=curl_easy_perform: SSL peer certificate or SSH remote key was not OK
+    at ai.bithuman.sdk.Avatar$Companion.load(Avatar.kt:185)
+    at com.example.bithumanhello.MainActivity.onCreate(MainActivity.kt:22)
+```
+
+The artifact's native library ships with no CA trust store, and there is no
+app-side workaround on this version — the full measurement, with the two controls
+that rule out your network and your key, is on
+[the Android SDK page](/sdk/android#essence-1--aibithumansdk236). It compiles:
+built from the block below exactly as printed, `BUILD SUCCESSFUL`, 20,515,057 B
+debug APK. It just cannot get past `Avatar.load`.
+
+**For a talking head on Android today, use the Expression 2 project at the top of
+this page.** It needs no key and no `.imx`.
+:::
+
+It is still published and still supported; it is second on this page because it
+is the longer road to a first frame.
 
 ### What essence-1 needs that Expression 2 does not
 

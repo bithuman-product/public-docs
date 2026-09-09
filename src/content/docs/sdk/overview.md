@@ -168,7 +168,7 @@ We keep this honest so you can plan around it.
 |---|---|---|---|
 | **Python** | `pip install bithuman` (3.0.0 — `bithuman.open` / `avatar.render`; `bithuman<3` to stay on 2.10.0) | On-device | **GA** |
 | **Swift / Apple** (iOS, iPadOS, macOS) | SwiftPM, pin `from: "2.11.0"` — products `bitHumanKit`, `Expression2` (2.6.0 gives it a model-path API) and `Essence2` (2.7.0; `import Essence2` from 2.8.0). 2.11.0 is the tag that carries two corrections: `Expression2` + `Essence2` in one app does not link on a device, and the iPhone floor grades `Essence2` too | On-device | **Preview** |
-| **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.5.1` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1) — all `arm64-v8a` only | On-device | **Beta** |
+| **Android / Kotlin** | Maven Central, three artifacts: `ai.bithuman:expression2-android:0.3.1` (expression-2), `ai.bithuman:essence2-android:0.5.1` (essence-2 — use no earlier version) and `ai.bithuman:sdk:2.3.6` (essence-1 — resolves and compiles, but [cannot authenticate on a device](/sdk/android#essence-1--aibithumansdk236)) — all `arm64-v8a` only | On-device | **Beta** |
 | **JavaScript / TS** | `@bithuman/sdk` (not yet on npm) | Cloud client | **Preview** |
 | **CLI** | `bithuman-cli` (2.6.3 — Homebrew / universal installer, macOS arm64 **and** Linux x86_64, essence-2 and expression-2 runtimes inside; 2.3.25 PyPI wheel) — Homebrew · PyPI · universal installer | On-device | **GA** |
 | **Rust** | in-tree crate `bithuman` (versioned with the CLI, not on crates.io) | On-device | Internal / app-backing |

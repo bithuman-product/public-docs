@@ -278,7 +278,7 @@ dependencies {
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
 | `ai.bithuman:essence2-android:0.5.1` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
-| `ai.bithuman:sdk:2.3.6` | essence-1 | 29 | `arm64-v8a` |
+| `ai.bithuman:sdk:2.3.6` | essence-1 — ★ resolves and compiles, but **cannot authenticate on a device**: [why](/sdk/android#essence-1--aibithumansdk236) | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI in any of the three.** An x86_64 emulator
 resolves and installs, then throws `UnsatisfiedLinkError` at the first
