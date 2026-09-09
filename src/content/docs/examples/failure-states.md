@@ -265,6 +265,14 @@ per-member download, but each member still short-circuits on the length and
 sidecar check that the corrupt file passes. `force` is useful for picking up a
 *changed* manifest; it is not a repair tool.
 
+This one is a defect rather than a design choice, and it is fixed at the root: on
+`bithuman-models` `main`, `fetchMember` honours the flag and discards a stale
+`.part` before re-fetching, with three arms in `DoorRetryTest` covering it. No
+*published* Android SDK carries that fix yet — `0.3.1`, the version this page
+measures and the one [the Android SDK page](/sdk/android) tells you to depend on,
+behaves exactly as transcribed above. Use `evict()` then `fetch()`, which is the
+correct repair on every version, before and after that fix ships.
+
 **The repair that works is `evict()` then `fetch()`:**
 
 ```kotlin
