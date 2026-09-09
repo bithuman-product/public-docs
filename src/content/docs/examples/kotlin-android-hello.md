@@ -89,16 +89,38 @@ Two ways to get a directory with a Gradle wrapper in it.
 generated with the ones below, and delete the `res/` layout and theme files it
 made — this project builds its UI in code and needs no resources.
 
-**From a terminal**, if you have Gradle installed:
+**From a terminal**, if you have Gradle installed. ★ **Make the directories,
+write the seven files from [Step 3](#step-3--the-files-in-order), and run
+`gradle wrapper` last** — on Gradle 9 that order is not optional, and the two
+wrong orders are measured below:
 
 ```bash
 mkdir -p x2hello/app/src/main/java/com/example/x2hello && cd x2hello
+#  <- write the seven files from Step 3 into this tree now, then:
 gradle wrapper --gradle-version 8.11.1      # writes gradlew + gradle/wrapper/*
 ```
+
+★ **Why the wrapper comes last: `gradle wrapper` needs a build to attach itself
+to.** Gradle 8 would write a wrapper into an empty directory; **Gradle 9 will
+not**, and it is the Gradle you get from Homebrew today. Measured on 2026-09-09
+with Gradle 9.7.1 (launcher JVM 17.0.20.1), three orders, one command:
+
+| When you run `gradle wrapper --gradle-version 8.11.1` | What Gradle 9.7.1 does |
+|---|---|
+| in the freshly-`mkdir`'d tree, **no files written yet** — the order this page printed until today | `FAILURE … Directory '…/x2hello' does not contain a Gradle build.` **No `gradlew`, no `gradle/wrapper/`.** |
+| with `settings.gradle.kts` written but the `app/` directory missing | `FAILURE … Configuring project ':app' without an existing directory is not allowed.` |
+| with **all seven files** of Step 3 in place | `BUILD SUCCESSFUL in 728ms` — `gradlew` and `gradle/wrapper/{gradle-wrapper.jar,gradle-wrapper.properties}` appear |
+
+The failure is not about bitHuman and not about AGP: `gradle wrapper` is a task,
+tasks belong to a build, and Gradle 9 refuses to invent one. If your `gradle`
+is 8.x the first row succeeds too — which is why this page said what it said,
+and why the durable instruction is the order above rather than a version check.
 
 The Gradle that writes the wrapper does not have to be the Gradle that builds:
 the run below used Gradle **9.7.1** on `PATH` to generate a **8.11.1** wrapper,
 and every later command is `./gradlew`, which downloads 8.11.1 the first time.
+**Android Studio is unaffected** — it writes the wrapper as part of creating the
+project, before there is anything for you to get out of order.
 
 Either way, this is the whole tree — seven files you write, plus the wrapper:
 
@@ -170,7 +192,11 @@ org.gradle.jvmargs=-Xmx2g
 ### 4. `gradle/wrapper/gradle-wrapper.properties`
 
 If you ran `gradle wrapper --gradle-version 8.11.1` you already have this file; it
-is printed so the version is not a guess.
+is printed so the version is not a guess — and if you are writing the seven files
+by hand before running the wrapper (Step 2), this is the one of them the wrapper
+task then rewrites. Gradle 9.7.1 wrote back two extra keys, `retries=0` and
+`retryBackOffMs=500`; they are its defaults, they change nothing here, and a file
+that gains them has not gone wrong.
 
 ```properties
 # gradle/wrapper/gradle-wrapper.properties
@@ -613,6 +639,43 @@ again: `FIRST_FRAME at 20765 ms`, `DONE_FRAMES 117 in 21369 ms`, from
 `audio: 91477 samples = 5.72 s`. Two independent extractions of this page, twenty
 bytes apart in the APK and 47 ms apart in the render — the page is the project.
 
+**Executed a third time, from zero — and this is the run that caught the step
+order.** 2026-09-09, same handset: `com.example.x2hello` was **uninstalled** (so
+the cached 158 MB model went with it), `~/_devwalk_android` (78 MB) was deleted,
+and a script re-fetched **183,783 bytes** of this URL and parsed the seven files
+out of it. Run in the order this page printed until today — `mkdir`, then
+`gradle wrapper` — **it stopped there**: `Directory '…/x2hello' does not contain
+a Gradle build`, no `gradlew` written. That is [now fixed in Step 2](#step-2--create-the-project);
+the two earlier executions had been done files-first, so the page had published
+an order that neither run had actually taken. Files first, then the wrapper:
+`BUILD SUCCESSFUL`, `app-debug.apk` **3,474,583 B**, install, one `adb push`,
+and
+
+```text
+09-09 13:08:14.445 I/X2HELLO: audio: 91477 samples = 5.72 s fetching model A66GYD8664 — first run downloads ~158 MB…
+09-09 13:08:17.069 I/X2HELLO: model ready — starting the engine…
+09-09 13:08:17.713 I/X2HELLO: engine: acc=CPU routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=CPU) initMs=607.658203125 note=
+09-09 13:08:38.347 I/X2HELLO: DONE_FRAMES 117 in 21278 ms
+09-09 13:08:44.039 I/X2HELLO: 117 frames, 5.72 s — tap to replay
+```
+
+★ **The frames were checked as pixels, not as a counter.** One added line in a
+copy of `MainActivity.kt` wrote every twentieth delivered `Bitmap` out as a PNG
+(`FIRST_FRAME at 20709 ms`, `DONE_FRAMES 117 in 22472 ms` on that build), and the
+five 416×720 frames were pulled off the phone and differenced against the first.
+The muzzle band moves **19–134×** more than a box of static background in the
+same frames:
+
+| frame | mean \|Δ\| in the muzzle band (rows 340–400) | background control (rows 20–110) | ratio |
+|---|---:|---:|---:|
+| 40 | 48.39 | 0.36 | **134×** |
+| 60 | 29.43 | 1.02 | **29×** |
+| 80 | 53.21 | 1.47 | **36×** |
+| 100 | 34.81 | 1.79 | **19×** |
+
+A still image would put both columns at zero; a video loop would move both. The
+separation is what says the mouth is following the audio.
+
 ## When it does not work
 
 | What you see | What it is | Fix |
@@ -620,6 +683,8 @@ bytes apart in the APK and 47 ms apart in the render — the page is the project
 | `SDK location not found … ANDROID_HOME … sdk.dir` | you are building from a terminal, so nothing wrote `local.properties` | Before you start — export `ANDROID_HOME` or write `sdk.dir=` |
 | A `What went wrong:` whose whole body is a version like `26.0.2.1` | `JAVA_HOME` points at a JDK newer than 17 | point it at JDK 17 |
 | `Could not find com.android.tools.build:aapt2` | `google()` missing from `dependencyResolutionManagement` | Step 3, `settings.gradle.kts` |
+| `FAILURE … Directory '…' does not contain a Gradle build` from `gradle wrapper` | you ran the wrapper before writing the files; Gradle 9 will not write a wrapper into an empty directory | write the seven files of Step 3 first, then `gradle wrapper` — [Step 2](#step-2--create-the-project) |
+| `Configuring project ':app' without an existing directory is not allowed` | `settings.gradle.kts` says `include(":app")` and there is no `app/` directory yet | `mkdir -p app/src/main/java/com/example/x2hello` (the `mkdir` line in Step 2 makes it) |
 | `UnsatisfiedLinkError` at first launch | an x86_64 emulator, or a device that is not `arm64-v8a` | use a physical arm64 phone |
 | `HTTP 400 … Object not found` naming a `web_manifest.json` URL | that agent code is not on the public mirror | [check the code first](/sdk/android#getting-a-model-onto-the-device) |
 | `speech.wav is not a RIFF/WAVE file` | you pushed an AIFF/MP3, or the push landed elsewhere | re-run the `afconvert`/`ffmpeg` line in Step 1 |

@@ -136,6 +136,13 @@ are measured here on 2026-09-09 against the project on
 - **A JDK 17 launcher.** AGP 8.7.3 refuses a newer one, and it refuses it
   *illegibly*: with `JAVA_HOME` at a Homebrew JDK 26 the entire "What went wrong"
   is the string `26.0.2.1`. Point `JAVA_HOME` at JDK 17 and the same tree builds.
+- **A wrapper, written *after* the build files exist.** If you are creating the
+  project from a terminal rather than from Android Studio, run
+  `gradle wrapper --gradle-version 8.11.1` **last**, once `settings.gradle.kts`
+  and the `app/` directory are on disk. **Gradle 9 refuses to write a wrapper into
+  an empty directory** — *"Directory '…' does not contain a Gradle build"* — where
+  Gradle 8 would; measured 2026-09-09 on 9.7.1, with the three orders tabulated on
+  [the example page](/examples/kotlin-android-hello#step-2--create-the-project).
 
 ```kotlin
 // settings.gradle.kts
