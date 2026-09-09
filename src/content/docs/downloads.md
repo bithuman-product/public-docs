@@ -262,9 +262,9 @@ That was true when written and is false now.
 Three on-device AARs on Maven Central under the `ai.bithuman` group, all
 resolvable anonymously with no credential. **Both second-generation families
 have a published Android artifact**; `expression2-android` moved to
-**`0.3.1`** on 2026-09-04 and `essence2-android` to **`0.4.0`** on 2026-09-07,
+**`0.3.1`** on 2026-09-04 and `essence2-android` to **`0.5.1`** on 2026-09-08,
 and the versions below are Central's own `<release>` values, re-read
-2026-09-07.
+anonymously on 2026-09-09.
 
 ```kotlin
 // app/build.gradle.kts
@@ -289,7 +289,7 @@ Check the group listing yourself — the third line is the control that shows a
 404 is really a 404:
 
 ```bash
-for c in essence2-android/0.4.0 expression2-android/0.3.1 zzz-none/0.2.0; do
+for c in essence2-android/0.5.1 expression2-android/0.3.1 zzz-none/0.2.0; do
   a=${c%%/*}; v=${c##*/}
   printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' \
     "https://repo1.maven.org/maven2/ai/bithuman/$a/$v/$a-$v.pom")" "$c"
@@ -297,24 +297,36 @@ done
 ```
 
 ```text
-200  essence2-android/0.4.0
+200  essence2-android/0.5.1
 200  expression2-android/0.3.1
 404  zzz-none/0.2.0
 rc=0
 ```
 
-Re-run 2026-09-07. 
+Re-run 2026-09-09. 
 
 > ★ **Read the limits before you plan around this.** Both second-generation
 > AARs ship under the "base offering first" ruling: the measured frame rates,
-> the parity figure, and — for essence-2 — the fact that `0.4.0` plays the
-> avatar's recorded sequence with no audio-in entry point yet, are on the
-> [Android SDK page](/sdk/android). For expression-2, `useLegacyPackaging =
-> true` is not optional — leaving it out fails silently. ★`google()` **is no
-> longer required for `expression2-android`
-> `0.3.1`**: its POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`,
-> where `0.3.0`'s also declared `com.google.ai.edge.litert:litert:2.2.0`, which
-> is 404 on Central. A build **pinned to `0.3.0` still needs `google()`** — a
+> the parity figure, and — for essence-2 — the fact that it plays the avatar's
+> recorded sequence with no audio-in entry point yet **and that no public host
+> serves the bundle its model store fetches**, are on the
+> [Android SDK page](/sdk/android). An audio-driven talking head on Android
+> today is **expression-2**; the whole project is on
+> [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello).
+> For expression-2, `useLegacyPackaging = true` is not optional — leaving it out
+> fails silently.
+>
+> ★**Keep `google()` in `dependencyResolutionManagement`.** What changed with
+> `expression2-android` `0.3.1` is narrower than "you can drop it": its POM
+> declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`, where `0.3.0`'s
+> also declared `com.google.ai.edge.litert:litert:2.2.0`, which is 404 on
+> Central — so the **SDK's own dependency** no longer needs Google's Maven.
+> AGP still does: it resolves its own `aapt2` out of the *dependency*
+> repositories, and `aapt2` is published only there. Measured 2026-09-09 with
+> `mavenCentral()` alone, the build compiles Kotlin and then dies at
+> `:app:processDebugResources` with
+> `Could not find com.android.tools.build:aapt2:8.7.3-12006047`. A build
+> **pinned to `0.3.0` fails earlier still**, at `checkReleaseAarMetadata` — a
 > published POM cannot be replaced. The measured numbers and both negative
 > controls are on the [Android SDK page](/sdk/android).
 
@@ -372,7 +384,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Swift SDK (`Essence2`) | engine release **`essence2-v1.4.0`**, declared by the package at **2.10.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
 | bitHuman CLI (`bithuman-cli`) | **2.6.4** (2026-09-07) — macOS arm64 **and** Linux x86_64, same version, no pin needed, Essence 2 runtime inside both tarballs, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
-| Android AAR (`ai.bithuman:essence2-android`) | **0.5.0** (2026-09-07; `0.2.0`, `0.3.0` and `0.4.0` are permanent on Central and superseded) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
+| Android AAR (`ai.bithuman:essence2-android`) | **0.5.1** (2026-09-08; `0.2.0`, `0.3.0`, `0.4.0` and `0.5.0` are permanent on Central and superseded — `0.5.0` renders a rejected key for ever) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
 > **2.10.0, and why the macOS number matters.** 2.10.0 is the first release

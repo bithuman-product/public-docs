@@ -68,12 +68,20 @@ how a self-hosted session is metered.
 > (published 2026-09-04T11:47:17Z, **2,742,085 B**), not the `0.3.0` this page
 > named until today. Two things changed and one did not:
 >
-> * ★**`google()` is no longer required.** `0.3.1`'s POM declares only
+> * ★**The SDK's own dependency no longer needs `google()` — but your build
+>   still does.** `0.3.1`'s POM declares only
 >   `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`. `0.3.0`'s also declared
 >   `com.google.ai.edge.litert:litert:2.2.0`, which is **404 on Maven Central**,
->   and that is why every snippet on this page used to carry `google()`.
->   A build **pinned to `0.3.0` still needs it** — a published POM can never be
->   replaced.
+>   and that is why every snippet on this page used to carry `google()` with
+>   *that* reason. It still carries `google()`, for a different one: **AGP
+>   resolves its own `aapt2` out of the dependency repositories and `aapt2` is
+>   published only on Google's Maven**, so a `mavenCentral()`-only build dies at
+>   `:app:processDebugResources` — measured 2026-09-09,
+>   [transcript below](#install--the-minimal-build-that-works). ★This bullet
+>   said flatly *"`google()` is no longer required"* until 2026-09-09, and a
+>   developer who acted on it could not build an APK at all. A build **pinned to
+>   `0.3.0` fails earlier still**, at `checkReleaseAarMetadata` — a published POM
+>   can never be replaced.
 > * The **engine is the same binary.** `libexpr2jni.so` is 446,200 B in both and
 >   differs in exactly **20 bytes, offsets 736–755** — the GNU build-id; the
 >   bundled `libLiteRt.so` (5,508,376 B) is **byte-identical**, sha256
@@ -905,7 +913,7 @@ environment):
 | ABI | `arm64-v8a` **only** |
 | Native payload | `lible_jni.so` (**3,047,072 B**), `libonnxruntime.so` (27,408,600 B), `libc++_shared.so` (1,253,544 B) |
 | `classes.jar` | 79,267 B — `ai.bithuman.elevate.*` (legacy package, kept for compatibility) plus the `ai.bithuman.essence2` aliases |
-| The §6(a) relink kit named in `META-INF/NOTICE.txt` | HTTP 200, 13,899,870 B, 15 entries; the `relinkX.zip` control is 404 |
+| The §6(a) relink kit named in `META-INF/NOTICE.txt` | HTTP 200, **13,899,725 B**, 15 entries; the `relinkX.zip` control is 404 |
 
 One wrinkle the bytes carry: the `NOTICE.txt` inside the AAR still lists the
 engine library at 2,963,536 bytes. The file shipped beside it is 3,047,072 B.
