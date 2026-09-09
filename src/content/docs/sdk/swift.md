@@ -800,6 +800,38 @@ inspected on Linux; the macOS wheel was **not executed**, because no Mac was
 involved in producing this page. See [Python SDK](/sdk/python) for the API once
 it is installed.
 
+## Signing, before any of the above runs on a phone
+
+Nothing on this rail runs in the Simulator — the engines are Apple-Silicon
+on-device inference — so the first build that matters is a **device** build, and
+a device build is signed. The page used to skip this; here is the whole of what
+you need, in the order you hit it.
+
+- **An Apple Developer team.** The build needs a `DEVELOPMENT_TEAM` (the
+  10-character team id) and a development signing certificate in your keychain.
+- **A provisioning profile that lists your iPhone's UDID.** Xcode's automatic
+  signing creates one the first time you build to a device you have paired and
+  trusted; there is no way to install a development build on a phone that is not
+  in the profile.
+- **Automatic signing, not manual, unless you manage profiles yourself.**
+  Setting `PROVISIONING_PROFILE_SPECIFIER` to an Xcode-managed profile fails the
+  build outright with `Provisioning profile "…" is Xcode managed, but signing
+  settings require a manually managed profile`. From the command line the working
+  shape is `CODE_SIGN_STYLE=Automatic` + `DEVELOPMENT_TEAM=<team>` +
+  `xcodebuild … -allowProvisioningUpdates`.
+- **Headless builds need the login keychain unlocked in a GUI session.** Over
+  SSH, `security find-identity -v -p codesigning` reports **0 valid identities**
+  even when the certificates are installed, because the SSH session's keychain
+  search list holds only the system keychain. The install then fails at the
+  phone with `0xe800801c (No code signature found.)`. Build from a logged-in
+  session, or arrange for one.
+- **What you do *not* need for these two engines.** Neither `Expression2` nor
+  `Essence2` requires the increased-memory entitlements below — those belong to
+  the `bitHumanKit` umbrella path. A plain development profile is enough.
+
+Measured 2026-09-09 on macOS 26.6.2 / Xcode 26.3, installing to an iPhone 15
+over `xcrun devicectl device install app`.
+
 ## Permissions + entitlements
 
 `Info.plist` (all platforms):
