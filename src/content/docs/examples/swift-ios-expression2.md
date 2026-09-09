@@ -202,6 +202,28 @@ this page.
 Two routes. **If you cloned**, `IOSExpression2.xcodeproj` is already there — open
 it, set your team, skip to [step 5](#5-sign-it-and-run-it-on-the-phone).
 
+> ### ★ A green build is not a working app, so the project refuses to build without the model
+>
+> `Sources/Model` is a resource **folder**, which copies whatever happens to be
+> in it. Measured on 2026-09-09: an untouched checkout — with only the committed
+> `PLACE_YOUR_MODEL_HERE.txt` in place — returns **`** BUILD SUCCEEDED **`**,
+> installs, launches, and shows you a blank view. The app does say
+> `no Model/agent.avatar in the bundle — run ./setup.sh`, but it says it into a
+> log, which is not where somebody who just watched a build succeed is looking.
+>
+> The `preBuildScripts` entry below refuses instead, and names the missing thing
+> and the command that produces it. It checks the seam that actually catches
+> people, too: the `.avatar` does **not** carry
+> `w2v_frontend_cpuAndNE.mlpackage`, so `shared_engine/` has to be there
+> separately. Four arms, three different failures and one pass:
+>
+> | `Sources/Model` holds | result |
+> |---|---|
+> | the placeholder only | `error: Sources/Model/agent.avatar is missing — run …/setup.sh` |
+> | a 4,096 B `agent.avatar` | `error: … is only 4096 B — that is an error page or a truncated download` |
+> | a real `agent.avatar`, no `shared_engine/` | `error: … w2v_frontend_cpuAndNE.mlpackage is missing` |
+> | both | `Sources/Model OK …` then `** BUILD SUCCEEDED **` |
+
 **If you are building it yourself:** File → New → Project → **App**, SwiftUI
 interface, then set exactly this much:
 
@@ -263,6 +285,23 @@ targets:
     dependencies:
       - package: bithuman
         product: Expression2
+    preBuildScripts:
+      - name: "Sources/Model must hold a real model, not the placeholder"
+        basedOnDependencyAnalysis: false
+        script: |
+          # A resource FOLDER copies whatever is there, so without this the app
+          # builds, installs and launches with no model at all and says so only
+          # in a log line nobody is reading. Measured 2026-09-09: an untouched
+          # checkout with just PLACE_YOUR_MODEL_HERE.txt returns ** BUILD
+          # SUCCEEDED **. Fail here instead, where the message is unmissable.
+          M="$SRCROOT/Sources/Model"
+          fail() { echo "error: $1"; exit 1; }
+          [ -f "$M/agent.avatar" ] || fail "Sources/Model/agent.avatar is missing — run  BITHUMAN_API_SECRET=... ./setup.sh <YOUR_AGENT_CODE>"
+          SZ=$(stat -f%z "$M/agent.avatar")
+          [ "$SZ" -gt 1000000 ] || fail "Sources/Model/agent.avatar is only ${SZ} B — that is an error page or a truncated download, not an avatar. Re-run ./setup.sh"
+          W="$M/shared_engine/w2v_frontend_cpuAndNE.mlpackage"
+          [ -d "$W" ] || fail "Sources/Model/shared_engine/w2v_frontend_cpuAndNE.mlpackage is missing — the .avatar does not carry it. Run  bithuman engine install mac  and re-run ./setup.sh"
+          echo "Sources/Model OK: agent.avatar ${SZ} B, shared_engine has w2v_frontend_cpuAndNE.mlpackage"
     info:
       path: Sources/Info.plist
       properties:
