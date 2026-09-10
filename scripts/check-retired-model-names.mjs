@@ -108,7 +108,7 @@ const RETIRED = [
   // ENGINE_ESSENCE2_LIGHT / ENGINE_ESSENCE2_QUALITY in the Python
   // `unified_header.py` and the Rust `engine_id.rs`, both conformance-tested
   // against the canonical `unified-engine-ids.json`, where public `essence-2`
-  // maps to engine `essence2-light` and `essence-2-max` to `essence2-quality`.
+  // maps to engine `essence2-light` (`essence2-quality` is the retired premium tier's id).
   { name: "essence2-light",    re: /essence2[-_]light/gi,   engineId: true },
   { name: "essence2-quality",  re: /essence2[-_]quality/gi, engineId: true },
   // ── ★ADDED 2026-09-04 — the two names this guard could not see ───────────
@@ -382,7 +382,7 @@ for (const rel of files) {
           `        file (\`bithuman info\`, \`--json\` \`engine\`, the loader error), never a\n` +
           `        product name and never a valid \`model\` value. Say which product it\n` +
           `        means — see /concepts/avatars-imx#the-engine-value-is-a-legacy-name —\n` +
-          `        or use the product name: essence-2 / essence-2-max.`
+          `        or use the product name: essence-2.`
         );
         continue;
       }
@@ -421,7 +421,7 @@ for (const rel of files) {
 // ── ACCEPT-BOTH: the old URLs must still resolve ─────────────────────────────
 const REDIRECTS = [
   ["/concepts/essence-2-light",   "/concepts/essence-2",     "src/content/docs/concepts/essence-2.md"],
-  ["/concepts/essence-2-quality", "/concepts/essence-2-max", "src/content/docs/concepts/essence-2-max.md"],
+  ["/concepts/essence-2-quality", "/concepts/essence-2",     "src/content/docs/concepts/essence-2.md"],
 ];
 // ★Read defensively. Found by mutation 2026-09-04: pointed at a tree with no
 // corpus — the exact case the zero-file control below exists for — this line

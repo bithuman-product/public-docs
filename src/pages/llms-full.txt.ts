@@ -27,9 +27,7 @@ export const GET: APIRoute = async () => {
     `video, and prompts never leave your hardware; the only network call is ` +
     `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem, ` +
     `at low per-minute cost. That heartbeat is required — the runtimes are ` +
-    `fail-closed without a valid key — and a fully air-gapped install is ` +
-    `supported only by the self-hosted essence-2-max container's static auth ` +
-    `mode. Models (second ` +
+    `fail-closed without a valid key. Models (second ` +
     `generation, generally available since July 10, 2026): \`expression-2\` (audio-driven real-time ` +
     `avatar video from a single photo — best for cartoon/animal/creature/robot ` +
     `characters; GPU / Apple / CPU cloud chain, local rendering via the CLI), ` +
@@ -42,9 +40,7 @@ export const GET: APIRoute = async () => {
     `render into ~/.bithuman/engines/essence-2/, an incomplete model file ` +
     `refused with exit 69 and no output — from your own CPU servers (Python ` +
     `SDK), on Android (AAR), and opt-in in the viewer's browser (WebGPU/WASM); ` +
-    `the former essence-2-light name is retired), ` +
-    `\`essence-2-max\` (the PREMIUM model — the highest-fidelity Essence ` +
-    `renderer, served directly on L40S-class GPUs), plus ` +
+    `the former essence-2-light name is retired), plus ` +
     `\`essence-1\` / \`expression-1\`. This file concatenates ` +
     `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 

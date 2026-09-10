@@ -372,12 +372,12 @@
     },
     {
       "source": "/concepts/essence-2-quality",
-      "destination": "/concepts/essence-2-max",
+      "destination": "/concepts/essence-2",
       "permanent": true
     },
     {
       "source": "/concepts/essence-2-quality/",
-      "destination": "/concepts/essence-2-max",
+      "destination": "/concepts/essence-2",
       "permanent": true
     },
     {

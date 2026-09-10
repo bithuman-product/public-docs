@@ -32,10 +32,7 @@ export const GET: APIRoute = async () => {
     `your hardware — the only network call is a ~1-request-per-minute billing ` +
     `heartbeat, so it runs self-hosted and on-prem, well ` +
     `suited to regulated and privacy-sensitive environments. That heartbeat ` +
-    `is required: the runtimes are fail-closed without a valid key. A fully ` +
-    `air-gapped install (no route to bithuman.ai at all) is supported only by ` +
-    `the self-hosted essence-2-max container's static auth mode, where you ` +
-    `mint the key allowlist yourself. Low per-minute ` +
+    `is required: the runtimes are fail-closed without a valid key. Low per-minute ` +
     `cost, from 1 credit/min self-hosted. The contract is the same ` +
     `everywhere: push 16-bit PCM audio in, drain lip-synced video frames ` +
     `out. Avatars are portable \`.imx\` files keyed by a short agent code ` +
@@ -52,10 +49,7 @@ export const GET: APIRoute = async () => {
     `on first render into ~/.bithuman/engines/essence-2/, an incomplete model ` +
     `file refused with exit 69 and no output — plus your own CPU servers ` +
     `(Python SDK), an Android AAR, and opt-in in the viewer's browser ` +
-    `(WebGPU/WASM); the former essence-2-light name is retired), ` +
-    `\`essence-2-max\` (the ` +
-    `PREMIUM model — the highest-fidelity Essence renderer, served directly ` +
-    `on L40S-class GPUs), plus the ` +
+    `(WebGPU/WASM); the former essence-2-light name is retired), plus the ` +
     `v1 \`essence-1\` / \`expression-1\`.\n\n`;
 
   out += `## Start here (fastest paths)\n\n`;

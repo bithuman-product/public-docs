@@ -6,17 +6,17 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
 ## Naming & casing
 
 - **bitHuman** — always, in any position ("bitHuman cloud", lowercase c).
-- Models in prose: **Essence 2, Essence 2 Max, Expression 2, Essence 1, Expression 1** —
+- Models in prose: **Essence 2, Expression 2, Essence 1, Expression 1** —
   capitalized, spaces, no hyphen. API values are backticked slugs only
-  (`essence-2`, `essence-2-max`, `expression-2`): monospace = the string you type.
+  (`essence-2`, `expression-2`): monospace = the string you type.
 - Say "second-generation models" in prose; "v2" only in tables and the changelog.
 - Retired and internal names (`essence-2-light`, `essence-2-quality`) live in ONE place —
   the "Naming & migration" section on `/concepts/models-v2` — everywhere else links there.
-  `essence-2-quality` is described strictly as a retiring alias of `essence-2-max`;
+  `essence-2-quality` is described strictly as a retired alias that now 400s;
   `essence-2-light` appears only in the 400-hint migration note. The phrase
   "platform-side flip" is banned from public prose.
 - **Deprecated product names.** The product names are **essence-2** and
-  **expression-2** (plus `essence-2-max`, and the first generation). `elevate`,
+  **expression-2** (plus the first generation). `elevate`,
   `embody`, `essence-2-light`, `essence-2-quality`, `lebundle` and their variants
   are DEPRECATED and must not be used as a live product name in prose. So are the
   pre-release codenames `embody-gpu` and `essence-2-mobile`, retired with the
