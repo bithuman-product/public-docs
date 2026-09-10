@@ -14,7 +14,7 @@ order: 2
 > browses them, and `curl -L "https://api.bithuman.ai/v1/agent/X03BOLT/model/download" -o avatar.imx`
 > fetches one. Running one locally is a self-hosted session and is
 > [metered](/guides/pricing) — the free tier covers it. See
-> [CLI — Hello, avatar](/examples/cli-hello#essence-2-and-expression-2-without-an-agent-of-your-own).
+> [the CLI page](/sdk/cli#twenty-more-avatars-still-with-no-account).
 
 
 One engine — the essence engine — drives every surface. Pick the install path that matches what you're building — they all read the same `.imx` avatar file and produce identical frames.

@@ -81,6 +81,30 @@ deliberate.** With no key, `render` refuses before it opens the model —
 session. Both were re-run today. What a self-hosted session costs is on
 [pricing](/guides/pricing).
 
+## Twenty more avatars, still with no account
+
+The showcase catalogue lists **twenty** [Essence 2](/concepts/essence-2) and
+[Expression 2](/concepts/expression-2) identities whose weights anyone may
+download — no api-secret, no account — and the download costs their owner
+nothing:
+
+```bash
+bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
+bithuman pull marmalade --manifest https://api.bithuman.ai/v1/models/showcase
+```
+
+Both re-run 2026-09-10 on Linux x86_64 with no credential in the environment:
+`list` printed twenty rows at exit 0, and `pull` printed
+`~/.cache/bithuman/showcase/marmalade.imx` at exit 0. `curl -s
+https://api.bithuman.ai/v1/models/showcase` is the same catalogue as JSON, and
+`curl -L "https://api.bithuman.ai/v1/agent/<CODE>/model/download" -o avatar.imx`
+fetches one directly — the endpoint 302s to a one-hour signed URL, so `-L` is
+all it takes.
+
+**The download is free; playing one is a self-hosted session and is
+[metered](/guides/pricing)** — the free tier covers it. That is the same
+`render`-refuses / `run`-warns split as above.
+
 ## Use your own avatar
 
 ```bash

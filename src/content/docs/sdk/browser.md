@@ -139,6 +139,13 @@ Run 2026-09-10 against a local mirror served with those two headers:
 canvas. In a real app drive `renderFrame` from `requestAnimationFrame` rather
 than a bare loop.
 
+★ **`A63GVG1577` is not a placeholder — type it.** It is the one identity the
+published bundle ships, and it is the only one those relative paths resolve to.
+Substituting your own agent code here gives you four 404s. To render **your**
+identity in a browser, use the hosted route at the top of this page; this
+package renders whatever identity assets you point it at, and today the only
+published set is that one.
+
 `createAvatar` is `async` and does the whole cold start: fetch the model, fetch
 the identity features, decode the identity video with WebCodecs, create the ONNX
 Runtime session.
