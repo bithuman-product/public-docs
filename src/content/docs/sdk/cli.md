@@ -151,5 +151,5 @@ working, not a broken install. Rendering and pulling do not need either.
 
 - [CLI reference](/sdk/cli/reference) — every command, every flag, every environment variable, every exit code
 - [Local mode](/sdk/cli/local-mode) — the conversation brain, fully on-device
-- [Verified transcript](/sdk/cli/verified) — each command re-run on a clean host with its real exit code, including the failure arms
+- [Verified transcript](/sdk/cli/reference) — each command re-run on a clean host with its real exit code, including the failure arms
 - [Python SDK](/sdk/python) — the same engine, in your own process

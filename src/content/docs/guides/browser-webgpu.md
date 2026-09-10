@@ -273,6 +273,6 @@ as applying to that route.
 
 - [Browser rendering](/guides/browser-rendering) — the rendering modes and how to switch them.
 - [Browser — check before you ship](/examples/browser-webgpu-check) — the three checks above as runnable scripts, each with a deliberately broken control arm and the exit code it produced.
-- [Browser runtime (WebAssembly)](/sdk/browser) — `createAvatar` and the rest of the standalone runtime's API surface.
+- [Browser runtime (WebAssembly)](/sdk/web) — `createAvatar` and the rest of the standalone runtime's API surface.
 - [Run a model on your own hardware](/guides/self-host-local) — the SDK route, per platform.
 - [Pricing](/guides/pricing) — the rates behind the billing section above.

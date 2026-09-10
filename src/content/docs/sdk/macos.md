@@ -85,7 +85,7 @@ is how the numbers drifted apart before.
 
 An **Intel Mac** has no CLI binary and no Python wheel — there has never been a
 native build. Use the [cloud API](/api/reference), the
-[browser](/sdk/browser), or run the Linux binary in a container.
+[browser](/sdk/web), or run the Linux binary in a container.
 
 ## See also
 

@@ -201,7 +201,7 @@ bithuman run <AGENT_CODE>.imx                             # local server
   note about a runtime to stage beside the binary.
 - Proven from the published tarball alone — fresh home directory, empty
   environment — on Linux x86_64 and on an Apple Silicon Mac:
-  [Verified transcript](/sdk/cli/verified#essence-2--exit-0-on-261-on-linux-and-on-macos).
+  [Verified transcript](/sdk/cli/reference).
 
 ### essence-2 reaches Apple and Android as public coordinates, and the CLI moves to 2.6.0 (2026-09-07)
 
@@ -418,7 +418,7 @@ targets `install.sh` resolves a download that 404s and exits 1. See
 **`rc=69` for essence-2** — the shipped `lib/libonnxruntime.so.1` is built at
 `VERS_1.20.1` while every `lible_core.so` requires `VERS_1.26.0`, so **copying
 a file in does not fix it** — and `rc=70` for essence-1. Details and the
-controls: [what the CLI actually does](/sdk/cli/verified).
+controls: [what the CLI actually does](/sdk/cli/reference).
 
 ### CLI `2.5.0` — `bithuman pull --model`, and the first signed macOS tarball (2026-09-02)
 

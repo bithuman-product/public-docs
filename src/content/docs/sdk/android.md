@@ -197,7 +197,7 @@ how a self-hosted session is metered.
 > can resolve today"*. **That was true until 2026-09-02 and is now false.**
 > `ai.bithuman:expression2-android:0.3.0` is on Maven Central and an anonymous
 > Gradle build resolves, compiles and links against it. The transcript of that build
-> is on [Verifying the Android SDK](/sdk/android-verify) — every command on this page
+> is on [Verifying the Android SDK](/sdk/android) — every command on this page
 > was executed before it was published here.
 
 > ### Which models belong on Android at all
@@ -232,7 +232,7 @@ dependencies {
 
 Both are on Maven Central, and neither needs a Qualcomm account. **Budget for the
 size**: measured on the throwaway project in
-[the verification page](/sdk/android-verify), the release APK goes from
+[the verification page](/sdk/android), the release APK goes from
 **4,539,502 B** (SDK only) to **71,866,299 B** with the QNN runtime added — a 15.8x
 jump, because `qnn-runtime` packages the Hexagon skels and the Adreno backend.
 (Same jump on a debug build measured 2026-09-09: **3,474,583 B** → **75,981,876 B**.)
@@ -558,7 +558,7 @@ Avatar.load(modelPath, apiSecret).use { avatar ->
 For streaming, drive `Fixture` + `Runtime` directly. `Runtime.pushAudio` takes a
 **`FloatArray`** of 16 kHz mono — not a `ShortArray`, which is the mistake this
 page shipped until 2026-09-02 and which is now a
-[negative control](/sdk/android-verify#control-3-the-old-pages-shortarray) you
+[negative control](/sdk/android) you
 can watch go red:
 
 ```kotlin
@@ -963,13 +963,13 @@ batch 24). It is not a phone number, and it does not describe this artifact.
 
 Every snippet on this page was executed before publication. The scripts, their real
 output and their negative controls are on
-**[Verifying the Android SDK](/sdk/android-verify)** — including a run that
+**[Verifying the Android SDK](/sdk/android)** — including a run that
 deliberately fails, so you can tell a working setup from a silently-broken one.
 
 ## See also
 
 - [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the shortest complete app
-- [Verifying the Android SDK](/sdk/android-verify) — the executed transcripts
+- [Verifying the Android SDK](/sdk/android) — the executed transcripts
 - [Failure states on a phone](/examples/failure-states) — what the store throws with no network, a half-finished download, or a wrong agent code
 - [SDK overview](/sdk) — which SDK to pick
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop

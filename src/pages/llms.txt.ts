@@ -68,7 +68,7 @@ export const GET: APIRoute = async () => {
   out +=
     `- **On-device Python SDK** — \`pip install bithuman\` (macOS arm64 + Linux x86_64/aarch64), then \`AsyncBithuman.create(model_path=…)\` → \`push_audio\` / \`flush\` / \`run\`.\n`;
   out +=
-    `- **CLI** — \`brew install bithuman-product/bithuman/bithuman-cli\` (macOS) or the universal installer (Linux); \`bithuman run <model.imx>\` serves a live browser avatar, and \`bithuman render <model> -a speech.wav -o out.mp4\` renders an essence-2 \`.imx\` or expression-2 \`.avatar\` to MP4 offline, on macOS arm64 and Linux x86_64 (CLI 2.6.1+, runtime inside the tarball; current release 2.6.2 — a self-hosted essence-2 / expression-2 session is metered on both platforms at the self-hosted rate by wall-clock, as ${SITE}/guides/pricing defines a credit minute; the model download is free). See [Verified transcript](${SITE}/sdk/cli/verified).\n\n`;
+    `- **CLI** — \`brew install bithuman-product/bithuman/bithuman-cli\` (macOS) or the universal installer (Linux); \`bithuman run <model.imx>\` serves a live browser avatar, and \`bithuman render <model> -a speech.wav -o out.mp4\` renders an essence-2 \`.imx\` or expression-2 \`.avatar\` to MP4 offline, on macOS arm64 and Linux x86_64 (CLI 2.6.1+, runtime inside the tarball; current release 2.6.5 — a self-hosted essence-2 / expression-2 session is metered on both platforms at the self-hosted rate by wall-clock, as ${SITE}/guides/pricing defines a credit minute; the model download is free). See [CLI](${SITE}/sdk/cli) and the [CLI reference](${SITE}/sdk/cli/reference).\n\n`;
 
   out +=
     `- **MCP server (for AI agents)** — drive bitHuman from any Model Context ` +

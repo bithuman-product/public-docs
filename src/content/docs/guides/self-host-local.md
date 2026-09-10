@@ -17,7 +17,7 @@ version and the install line.
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
 | **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
-| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli) | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
+| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli) | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/reference). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
 | **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07. Sessions are [metered](#the-cli-meters-a-self-hosted-session) as of 2.6.2, on wall-clock as of 2.6.3 |
 | **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 3.0.0 | Works; same note as Linux |
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/ios) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
@@ -294,7 +294,7 @@ environment variable, nothing staged by hand. An incomplete model file (a
 required member missing) is refused with **exit 69** and no output file; the
 CLI never substitutes a generated mouth. `bithuman info <file>` lists an
 artifact's members if you want to see what you were handed. Each command's
-real exit code is on [what the CLI actually does](/sdk/cli/verified); Linux
+real exit code is on [what the CLI actually does](/sdk/cli/reference); Linux
 aarch64 is **not** published for `cli-v2.6.3` — see
 [installing the CLI](/sdk/cli).
 
@@ -472,7 +472,7 @@ this page used `essence2-android` as that negative control; it now returns
 **200**, so a probe still expecting 404 there will read as broken. Coordinates,
 the resolving Gradle snippet and the measured limits are on the [Android SDK
 page](/sdk/android); the scripts and their controls are on [verifying the
-Android SDK](/sdk/android-verify).
+Android SDK](/sdk/android).
 
 **What is not verified for Essence 2:** no outside Gradle project has been
 compiled against the AAR and no on-device figure has been taken — only the

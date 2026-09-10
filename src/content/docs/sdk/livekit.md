@@ -234,7 +234,7 @@ the Python agent above — this client is the subscriber.
 
 | Your viewer is… | Use |
 |---|---|
-| A browser | The Python plugin + a web LiveKit client ([JS/TS SDK](/sdk/browser#what-this-is-not) or LiveKit web) |
+| A browser | The Python plugin + a web LiveKit client ([JS/TS SDK](/sdk/web) or LiveKit web) |
 | A native iOS/macOS app | The Python plugin (server) + `livekit/client-sdk-swift` (client) |
 | On-device only, no server | The native [Swift](/sdk/ios) SDK instead |
 

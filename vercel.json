@@ -62,12 +62,12 @@
     },
     {
       "source": "/getting-started/cli",
-      "destination": "/sdk/cli/overview",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/getting-started/cli/",
-      "destination": "/sdk/cli/overview",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
@@ -162,52 +162,52 @@
     },
     {
       "source": "/cli",
-      "destination": "/sdk/cli/overview",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/cli/",
-      "destination": "/sdk/cli/overview",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/cli/overview",
-      "destination": "/sdk/cli/overview",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/cli/overview/",
-      "destination": "/sdk/cli/overview",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/cli/install",
-      "destination": "/sdk/cli/install",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/cli/install/",
-      "destination": "/sdk/cli/install",
+      "destination": "/sdk/cli",
       "permanent": true
     },
     {
       "source": "/cli/commands",
-      "destination": "/sdk/cli/commands",
+      "destination": "/sdk/cli/reference",
       "permanent": true
     },
     {
       "source": "/cli/commands/",
-      "destination": "/sdk/cli/commands",
+      "destination": "/sdk/cli/reference",
       "permanent": true
     },
     {
       "source": "/cli/configuration",
-      "destination": "/sdk/cli/configuration",
+      "destination": "/sdk/cli/reference",
       "permanent": true
     },
     {
       "source": "/cli/configuration/",
-      "destination": "/sdk/cli/configuration",
+      "destination": "/sdk/cli/reference",
       "permanent": true
     },
     {
@@ -222,12 +222,12 @@
     },
     {
       "source": "/cli/agents",
-      "destination": "/sdk/cli/agents",
+      "destination": "/sdk/cli/reference",
       "permanent": true
     },
     {
       "source": "/cli/agents/",
-      "destination": "/sdk/cli/agents",
+      "destination": "/sdk/cli/reference",
       "permanent": true
     },
     {
@@ -732,42 +732,42 @@
     },
     {
       "source": "/sdk/javascript",
-      "destination": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
       "source": "/sdk/javascript/",
-      "destination": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
       "source": "/sdk/wasm",
-      "destination": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
       "source": "/sdk/wasm/",
-      "destination": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
-      "source": "/sdk/web",
-      "destination": "/sdk/browser",
+      "source": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
-      "source": "/sdk/web/",
-      "destination": "/sdk/browser",
+      "source": "/sdk/browser/",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
       "source": "/browser",
-      "destination": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
       "source": "/browser/",
-      "destination": "/sdk/browser",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
@@ -818,6 +818,26 @@
     {
       "source": "/python/",
       "destination": "/sdk/python",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/verified",
+      "destination": "/sdk/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/verified/",
+      "destination": "/sdk/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android-verify",
+      "destination": "/sdk/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android-verify/",
+      "destination": "/sdk/android",
       "permanent": true
     }
   ]

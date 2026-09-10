@@ -189,7 +189,7 @@ include(":app")
 ### 2. `build.gradle.kts`
 
 AGP **8.7.3** and Kotlin **2.0.21** are the versions every number on this page and
-on [Android SDK verification](/sdk/android-verify) was measured with.
+on [Android SDK verification](/sdk/android) was measured with.
 
 ```kotlin
 // build.gradle.kts  (project root)
@@ -891,7 +891,7 @@ dependencies {
 > them.** `BuildConfig` is generated only when `buildFeatures.buildConfig` is
 > `true`, and it has defaulted to **false** since AGP 8.0 — the version this
 > documentation pins is **8.7.3** ([Android SDK
-> verification](/sdk/android-verify)). With the block as it was printed here
+> verification](/sdk/android)). With the block as it was printed here
 > until 2026-09-06 — no `buildConfigField`, no `buildFeatures` — the snippet in
 > [Full code](#full-code) fails at compile time with
 > `Unresolved reference: BuildConfig`, not at runtime.

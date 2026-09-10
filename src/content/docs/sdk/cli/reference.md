@@ -98,6 +98,15 @@ directory is **not** auto-loaded.
 `run` sniffs the model family before it launches, so every bitHuman artifact
 gets an honest answer instead of a deep engine error.
 
+
+Every self-hosted `run` and `render` is metered. The line to grep for, printed once when the meter attaches — it names the avatar, the product and the endpoint that will be billed:
+
+```text
+[selfhost-meter] metering armed for identity=/home/you/.cache/bithuman/showcase/wise-pup.imx product=expression-2 endpoint=https://api.bithuman.ai/v1/
+```
+
+If instead you see `★ UNMETERED RENDER`, the service could not be reached and a live `run` keeps rendering; a `render` refuses (exit 77) with no key at all.
+
 ### Which model files run locally
 
 | Family | The file | What `run` does |
@@ -426,4 +435,4 @@ bithuman whoami --json | jq -e .logged_in >/dev/null
 
 - [CLI](/sdk/cli) — the two-command quickstart
 - [Local mode](/sdk/cli/local-mode) — the on-device conversation brain
-- [Verified transcript](/sdk/cli/verified) — these commands re-run on a clean host with their real exit codes
+- [Verified transcript](/sdk/cli/reference) — these commands re-run on a clean host with their real exit codes

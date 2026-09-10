@@ -1,176 +1,148 @@
 ---
 import Base from "../../layouts/Base.astro";
 
-// ── THE ONE SCREEN ───────────────────────────────────────────────────────────
-// This page answers exactly two questions — "which SDK do I want?" and "what do
-// I type?" — and nothing else. It was 18 cards and ~730 words of caveats until
-// 2026-09-10; a developer could not find the first command on it at all.
-//
-// Every `cmd` below was RUN on 2026-09-10 on the platform its row names. The
-// `where` string is what was verified and where; it is printed on the page,
-// because a command nobody ran is not a quickstart.
-//
-// One writer per fact: this table is the ONLY place the six first commands
-// live. Each platform page owns everything after the first command.
+// One table, one question: "what do I type on my platform?" Each row is
+// install → the shortest real code → run, and links to the one page that owns
+// everything after that. The snippets here are excerpts of the copy-paste
+// blocks on the platform pages — the page is the writer, this table quotes it.
 const rows = [
   {
-    platform: "Browser",
-    sub: "any modern browser",
-    cmd: "open https://www.bithuman.ai/A74NWD9723?rendering_mode=browser",
-    lang: "URL",
-    steps: "1",
-    key: "No",
-    href: "/sdk/browser",
-    where: "Chrome 141 headless, Linux x86_64",
-  },
-  {
     platform: "CLI",
-    sub: "macOS · Linux",
-    cmd: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\nbithuman run",
-    lang: "bash",
-    steps: "2",
-    key: "No",
+    sub: "macOS Apple Silicon · Linux x86_64",
     href: "/sdk/cli",
-    where: "Linux x86_64 and macOS 26.6.2 arm64",
-  },
-  {
-    platform: "macOS",
-    sub: "Apple Silicon",
-    cmd: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\nbithuman run",
-    lang: "bash",
-    steps: "2",
+    install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
+    code: "bithuman run            # free avatar, no account\nbithuman render wise-pup.imx -a speech.wav -o out.mp4",
+    run: "open http://127.0.0.1:8088/",
     key: "No",
-    href: "/sdk/macos",
-    where: "macOS 26.6.2 arm64",
   },
   {
     platform: "Python",
-    sub: "macOS · Linux",
-    cmd: 'pip install "bithuman[expression-2]"',
-    lang: "bash",
-    steps: "4",
-    key: "Yes",
+    sub: "3.10–3.14 · macOS arm64 · Linux",
     href: "/sdk/python",
-    where: "Linux x86_64, Python 3.14, bithuman 3.1.0",
+    install: 'pip install "bithuman[expression-2]"',
+    code: 'import bithuman\n\nwith bithuman.open("wise-pup.avatar") as avatar:\n    for image in avatar.render("speech.wav"):\n        show(image)          # (720, 416, 3) uint8, RGB',
+    run: "export BITHUMAN_API_SECRET=…\npython hello.py",
+    key: "Yes",
   },
   {
     platform: "Android",
-    sub: "arm64 handset",
-    cmd: 'implementation("ai.bithuman:expression2-android:0.3.1")',
-    lang: "kotlin",
-    steps: "3",
-    key: "No",
+    sub: "arm64-v8a · minSdk 26",
     href: "/sdk/android",
-    where: "Galaxy S25+ (Snapdragon 8 Elite), Android 16",
+    install: 'implementation("ai.bithuman:expression2-android:0.3.1")',
+    code: 'val model = Expression2ModelStore(context).fetch("A66GYD8664")\nExpression2Avatar.create(context, model, Expression2Options(\n    routing = Routing.HTP_DECODER, overlapDecoder = true, threads = 6)).use { avatar ->\n    avatar.feed(pcm16k); avatar.flushTail()\n    while (avatar.pull(frame) != null) show(frame)\n}',
+    run: "./gradlew :app:installDebug",
+    key: "No",
   },
   {
     platform: "iOS / iPadOS",
-    sub: "physical device",
-    cmd: "https://github.com/bithuman-product/homebrew-bithuman.git",
-    lang: "SwiftPM package URL",
-    steps: "4",
-    key: "No",
+    sub: "a physical device · Xcode 26+",
     href: "/sdk/ios",
-    where: "an iPhone 15 on 2026-09-09 — not re-run today",
+    install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")\n// product: Expression2",
+    code: "let engine = try Expression2Engine.create(modelPath: avatarDir, sharedEngineDir: engineDir)\nengine.feed(samples)             // [Float], 16 kHz mono\nengine.flushTail()\nwhile let (frame, _) = engine.pull() { show(frame) }   // poll — frames arrive async",
+    run: "Signing & Capabilities → your team → select your iPhone → Run",
+    key: "No",
+  },
+  {
+    platform: "macOS",
+    sub: "Apple Silicon, no Xcode",
+    href: "/sdk/macos",
+    install: "brew install bithuman-product/bithuman/bithuman-cli",
+    code: "bithuman run            # CoreML, Neural Engine",
+    run: "open http://127.0.0.1:8088/",
+    key: "No",
+  },
+  {
+    platform: "Web",
+    sub: "any modern browser",
+    href: "/sdk/web",
+    install: "— nothing to install —",
+    code: '<iframe src="https://bithuman.ai/embed/A74NWD9723"\n        allow="microphone" width="420" height="720"></iframe>',
+    run: "open https://www.bithuman.ai/A74NWD9723?rendering_mode=browser",
+    key: "No",
   },
 ];
 ---
 
 <Base
   title="SDK — bitHuman docs"
-  description="Six ways to render a bitHuman avatar, one table: the platform, the literal first command, how many steps to a first frame, and whether you need a key."
+  description="One table: install, the shortest real code and the run command for every platform — CLI, Python, Android, iOS, macOS and the web."
 >
   <section class="sdk-hero">
     <div class="container">
       <span class="eyebrow">SDK</span>
-      <h1>Which SDK do I want?</h1>
+      <h1>Pick your platform, type three things</h1>
       <p class="lede">
-        Six ways to put a talking avatar on screen. Pick the row you are on, type the command,
-        get a frame. Every command below was run on <strong>2026-09-10</strong> on the platform
-        its row names.
+        Every row renders a free showcase avatar with no account. Each platform page has the same
+        six sections — <strong>Install · Get a model · Minimal code · Run · Performance · Troubleshooting</strong> —
+        and is the only place its details live.
       </p>
     </div>
   </section>
-
   <section class="sdk-table-wrap">
     <div class="container">
       <div class="scroller">
         <table class="sdk-table">
           <colgroup>
-            <col style="width:15%" /><col style="width:63%" /><col style="width:11%" /><col style="width:11%" />
+            <col style="width:14%" /><col style="width:26%" /><col style="width:40%" /><col style="width:20%" />
           </colgroup>
           <thead>
             <tr>
               <th scope="col">Platform</th>
-              <th scope="col">The first command</th>
-              <th scope="col" class="num">Steps to<br />a first frame</th>
-              <th scope="col" class="num">Needs<br />a key?</th>
+              <th scope="col">Install</th>
+              <th scope="col">Minimal code</th>
+              <th scope="col">Run</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr>
                 <th scope="row">
-                  <a href={r.href}>{r.platform}</a>
+                  <a href={r.href}>{r.platform} →</a>
                   <span class="sub">{r.sub}</span>
+                  <span class:list={["key", r.key === "No" ? "no" : "yes"]}>{r.key === "No" ? "no key" : "key required"}</span>
                 </th>
-                <td>
-                  <pre><code>{r.cmd}</code></pre>
-                  <span class="verified">verified on {r.where}</span>
-                </td>
-                <td class="num"><span class="steps">{r.steps}</span></td>
-                <td class="num"><span class:list={["key", r.key === "No" ? "no" : "yes"]}>{r.key}</span></td>
+                <td><pre><code>{r.install}</code></pre></td>
+                <td><pre><code>{r.code}</code></pre></td>
+                <td><pre><code>{r.run}</code></pre></td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
       <p class="after">
-        Every path pushes <strong>16&nbsp;kHz mono audio</strong> in and drains lip-synced frames out —
-        that loop is written once, on <a href="/concepts/audio-streaming">audio streaming</a>.
-        A key, where a row needs one, is free at
-        <a href="https://www.bithuman.ai/developer/api-keys">Developer → API&nbsp;Keys</a> and is always read from
-        <code>BITHUMAN_API_SECRET</code>. What each model is, and where it runs, is on
-        <a href="/concepts/models-v2">Essence 2 &amp; Expression 2</a>; what it costs is on
+        Every platform pushes <strong>16&nbsp;kHz mono audio</strong> in and drains lip-synced frames out — the
+        loop is written once, on <a href="/concepts/audio-streaming">audio streaming</a>. A key, where a row needs
+        one, is free at <a href="https://www.bithuman.ai/developer/api-keys">Developer → API&nbsp;Keys</a> and is
+        read from <code>BITHUMAN_API_SECRET</code>. Which model is which is on
+        <a href="/concepts/models-v2">Essence 2 &amp; Expression 2</a>; what a session costs is on
         <a href="/guides/pricing">pricing</a>.
       </p>
       <p class="after muted">
-        Also here: <a href="/sdk/cli/reference">CLI reference</a> (every command, flag and environment variable) ·
-        <a href="/sdk/cli/local-mode">CLI local mode</a> (the on-device conversation brain) ·
-        <a href="/sdk/livekit">LiveKit</a> (a real-time voice agent with a face, from Python or Swift) ·
-        <a href="/sdk/cli/verified">CLI transcript</a> and <a href="/sdk/android-verify">Android probes</a> (the runs behind the numbers).
+        Reference: <a href="/sdk/cli/reference">CLI reference</a> (every command, flag, exit code) ·
+        <a href="/sdk/cli/local-mode">CLI local mode</a> (the conversation brain fully on-device) ·
+        <a href="/sdk/livekit">LiveKit</a> (a voice agent with a face, from Python or Swift) ·
+        <a href="/api/quickstart">API quickstart</a> (embed a hosted avatar, no SDK at all).
       </p>
     </div>
   </section>
 </Base>
-
 <style>
   .sdk-hero { padding-block: var(--space-6) var(--space-4); }
   .sdk-hero h1 { font-size: var(--fh-2xl); margin-top: var(--space-2); }
   .sdk-hero .lede { margin-top: var(--space-3); font-size: var(--ft-md); color: var(--color-text-secondary); max-width: 92ch; }
-
   .sdk-table-wrap { padding-bottom: var(--space-10); }
   .scroller { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--r-xl); }
-  .sdk-table { width: 100%; min-width: 44rem; table-layout: fixed; border-collapse: collapse; font-size: var(--ft-sm); }
+  .sdk-table { width: 100%; min-width: 56rem; table-layout: fixed; border-collapse: collapse; font-size: var(--ft-sm); }
   .sdk-table thead th { text-align: left; padding: var(--space-2) var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-border); font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); font-weight: var(--fw-medium); white-space: nowrap; }
   .sdk-table tbody tr + tr { border-top: 1px solid var(--color-border); }
-  .sdk-table th[scope="row"] { text-align: left; padding: var(--space-3) var(--space-4); vertical-align: top; white-space: nowrap; }
+  .sdk-table th[scope="row"] { text-align: left; padding: var(--space-3) var(--space-4); vertical-align: top; }
   .sdk-table th[scope="row"] a { font-weight: var(--fw-semibold); font-size: var(--ft-md); }
-  .sdk-table td { padding: var(--space-3) var(--space-4); vertical-align: top; }
-  .sdk-table .num { text-align: center; }
+  .sdk-table td { padding: var(--space-3) var(--space-3); vertical-align: top; }
   .sub { display: block; color: var(--color-text-tertiary); font-size: var(--ft-xs); font-weight: var(--fw-normal); margin-top: 0.15rem; }
   .sdk-table pre { margin: 0; padding: 0.55rem 0.7rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--r-md); }
-  .sdk-table pre code { font-size: 0.8125rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .verified { display: block; margin-top: 0.4rem; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
-  .steps { display: inline-block; min-width: 2rem; font-size: var(--fh-md); font-weight: var(--fw-semibold); }
-  .key { display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: var(--ft-xs); font-weight: var(--fw-medium); border: 1px solid var(--color-border); }
+  .sdk-table pre code { font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .key { display: inline-block; margin-top: 0.4rem; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: var(--ft-xs); font-weight: var(--fw-medium); border: 1px solid var(--color-border); }
   .key.no { color: var(--color-primary); border-color: transparent; background: var(--color-primary-soft); }
-
   .after { margin-top: var(--space-5); color: var(--color-text-secondary); max-width: 80ch; font-size: var(--ft-sm); }
   .after.muted { color: var(--color-text-tertiary); }
-
-  @media (max-width: 720px) {
-    .sdk-table th[scope="row"] { white-space: normal; }
-  }
 </style>

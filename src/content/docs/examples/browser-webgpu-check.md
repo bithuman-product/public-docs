@@ -664,6 +664,6 @@ selected for you.
 
 - [Browser rendering](/guides/browser-rendering) — what actually runs where, and
   what a browser render does and does not bill.
-- [Browser runtime (WebAssembly)](/sdk/browser) — the runtime these checks fetch.
+- [Browser runtime (WebAssembly)](/sdk/web) — the runtime these checks fetch.
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — the same
   treatment for the macOS / iOS rail.
