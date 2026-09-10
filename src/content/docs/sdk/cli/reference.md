@@ -203,7 +203,7 @@ second trained family, and a bare `pull` hands back the family the agent was
 |---|---|---|
 | `essence-1` | `<code>.imx` | This CLI, the [Python SDK](/sdk/python), the [Android AAR](/sdk/android), the cloud |
 | `essence-2` | `<code>.imx` | This CLI (2.6.1+), the [Python SDK](/sdk/python), the cloud. **Licensed weights — keep the file** |
-| `expression-2` | `<code>.avatar` | This CLI, the [Python SDK](/sdk/python), the browser via [`?render=local`](/guides/browser-rendering), the [Apple `Expression2` product](/sdk/ios#expression-2-on-device), the cloud |
+| `expression-2` | `<code>.avatar` | This CLI, the [Python SDK](/sdk/python), the browser via [`?render=local`](/guides/browser-rendering), the [Apple `Expression2` product](/sdk/ios#minimal-code), the cloud |
 | `essence-2-max` | `<code>.pkl` | The cloud, or the [self-hosted GPU container](/guides/deploy-essence-2-max). The `.pkl` derives on the agent's first session, so an earlier download answers `404 MODEL_ARTIFACT_NOT_READY` |
 | `expression-1` | usually nothing (`400 MODEL_NOT_DOWNLOADABLE`) | The cloud |
 
@@ -435,4 +435,3 @@ bithuman whoami --json | jq -e .logged_in >/dev/null
 
 - [CLI](/sdk/cli) — the two-command quickstart
 - [Local mode](/sdk/cli/local-mode) — the on-device conversation brain
-- [Verified transcript](/sdk/cli/reference) — these commands re-run on a clean host with their real exit codes

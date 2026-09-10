@@ -61,7 +61,7 @@ beyond your own agent's `.imx`:
   Android today use [expression-2](/concepts/expression-2)
   (`ai.bithuman:expression2-android`), which needs no key at all. The full
   measurement, and essence-1's API, are on the
-  [Android SDK](/sdk/android#essence-1--aibithumansdk236) page. (Three bitHuman
+  [Android SDK](/sdk/android#essence-2-and-essence-1-on-android) page. (Three bitHuman
   artifacts are publicly resolvable on Maven Central, not one: this page said
   "the only" until 2026-09-09 and that stopped being true on 2026-09-02.)
 

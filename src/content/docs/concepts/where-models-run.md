@@ -325,15 +325,14 @@ all.
 
 `bithuman doctor` reports the same thing as a checklist and **exits `1`** on a
 host with no credential — that is the designed result, not a broken install. It
-exits `0` only when it can actually stand up a live avatar. Its full transcript,
-and every other CLI exit code, is on
-[Verified CLI transcripts](/sdk/cli/reference).
+exits `0` only when it can actually stand up a live avatar. Every other CLI exit code is on the
+[CLI reference](/sdk/cli/reference#exit-codes).
 
 > **UNVERIFIED on this page.** A *successful* `bithuman render` — exit `0` with
 > real frames — was **not run here**, because this host has no credential. The
 > exit codes above (`77`, `66`, `0`) were observed here; a rendering exit `0`
-> was not. It **was** run, with a credential, on
-> [Verified CLI transcripts](/sdk/cli/reference), which is where the `0` / `69` /
+> was not. It **was** run, with a credential, for the
+> [CLI reference](/sdk/cli/reference), which is where the `0` / `69` /
 > `70` results come from.
 
 ## The lanes, one at a time
@@ -362,15 +361,14 @@ Exit code `0` for both commands (run 2026-09-07). Two objects are elided from
 that line: `build` carries the commit, target and build time — the same values
 as the `PROVENANCE.json` in the tarball — and `engine` names the shipped
 Expression 2 engine and its digest. The installer's own output is not
-reproduced here — it is on [Verified CLI transcripts](/sdk/cli).
+reproduced here — it is on the [CLI page](/sdk/cli).
 The `cli-v2.6.4` release carries exactly **two** platform builds —
 `aarch64-apple-darwin` and `x86_64-unknown-linux-gnu`. There is no Intel-Mac
 build, no Windows build and no Linux-aarch64 build, and the installer on any of
 those exits `1` rather than installing something that will not run.
 
 Every CLI command, every exit code and the negative controls that go with them
-are on **[Verified CLI transcripts](/sdk/cli/reference)** — a page where each
-command was executed with a credential present, which this one was not. Three
+are on the **[CLI reference](/sdk/cli/reference)**. Three
 results from it matter to the matrix and are worth knowing before you plan
 around the CLI:
 
@@ -413,7 +411,7 @@ device or an `arm64-v8a` system image.
 first published at 2026-09-03 03:39:15 UTC; this page said the day before that
 its coordinate "resolves to nothing", which was true then and is false now.
 `0.4.0` (2026-09-07) is the version to use — `0.2.0` and `0.3.0` still resolve
-and [should not be built against](/sdk/android#essence-2--aibithumanessence2-android051). The
+and [should not be built against](/sdk/android#essence-2-and-essence-1-on-android). The
 *artifact* name `libelevate-android` was never published and never will be —
 though the published essence-2 AAR does declare the Kotlin package
 `ai.bithuman.elevate`, which cannot be renamed after release.
@@ -443,15 +441,14 @@ Maven Central.
 
 Gradle setup, the API of each artifact, the measured on-device frame rates and a
 full outside-project build transcript are on the
-[Android SDK](/sdk/android) page and
-[Verifying the Android SDK](/sdk/android).
+[Android SDK](/sdk/android) page.
 
 > **UNVERIFIED on this page.** No Gradle build and no on-device run happened
 > *here* — this host has no Android SDK and no handset. The four-way probe above
 > is artifact-level verification over anonymous HTTP, which is what a dependency
 > resolution does, but it is not a green build. A real anonymous Gradle
-> resolve-and-compile **was** run, and its transcript is on
-> [Verifying the Android SDK](/sdk/android).
+> resolve-and-compile **was** run — see
+> [Android](/sdk/android).
 
 
 ### Apple — macOS and iOS via Swift Package Manager
@@ -624,8 +621,7 @@ essence-1 on any lane you run yourself. Both remain supported.
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation family overview
 - [Essence 2](/concepts/essence-2) · [Essence 2 Max](/concepts/essence-2-max) · [Expression 2](/concepts/expression-2)
 - [Essence vs Expression](/concepts/models) — the first-generation pair in detail
-- [Verified CLI transcripts](/sdk/cli/reference) — every CLI command executed, with its real exit code
-- [Verifying the Android SDK](/sdk/android) — an outside project resolving and compiling against both AARs
+- [CLI reference](/sdk/cli/reference) — every command, flag and exit code
 - [Android SDK](/sdk/android) · [Swift SDK](/sdk/ios) · [Python SDK](/sdk/python) · [CLI](/sdk/cli)
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how a model file is packaged
 - [Pricing & credits](/guides/pricing) — what each model costs to run

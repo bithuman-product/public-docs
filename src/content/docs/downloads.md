@@ -260,7 +260,7 @@ dependencies.
   `UnifiedModelHeader`, which rides under the `Expression2` product; attach the
   product and you get it. This supersedes the sentence this page carried until
   today, that there was "no supported way to convert one into the other". See
-  the [Swift SDK guide](/sdk/ios#expression-2-on-device).
+  the [Swift SDK guide](/sdk/ios#minimal-code).
 - **`Essence2`** — the [`essence-2`](/concepts/essence-2) engine, a product
   since **2.7.0** (2026-09-06) and importable as `import Essence2` since
   **2.8.0** (2026-09-07). A C interface with no Swift type on top, two binary
@@ -268,7 +268,7 @@ dependencies.
   iOS device, iOS simulator and macOS. The engine's resources are published on
   the same release; **no in-app model download route exists yet** — the
   download endpoint takes the account secret, not a runtime token. See
-  [Essence 2 on-device](/sdk/ios#essence-2-on-device).
+  [Essence 2 on-device](/sdk/ios#install).
 
 This page said until 2026-09-07 that `essence-2` was **not** on this rail.
 That was true when written and is false now.
@@ -294,7 +294,7 @@ dependencies {
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.3.1` | [expression-2](/concepts/expression-2) | 26 | `arm64-v8a` |
 | `ai.bithuman:essence2-android:0.5.1` | [essence-2](/concepts/essence-2) | 29 | `arm64-v8a` |
-| `ai.bithuman:sdk:2.3.6` | essence-1 — ★ resolves and compiles, but **cannot authenticate on a device**: [why](/sdk/android#essence-1--aibithumansdk236) | 29 | `arm64-v8a` |
+| `ai.bithuman:sdk:2.3.6` | essence-1 — ★ resolves and compiles, but **cannot authenticate on a device**: [why](/sdk/android#essence-2-and-essence-1-on-android) | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI in any of the three.** An x86_64 emulator
 resolves and installs, then throws `UnsatisfiedLinkError` at the first
@@ -469,7 +469,7 @@ Heavier high-fidelity model, and this table is the **first-generation** floor:
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
 | **Mac M3+ (arm64)** | Not applicable | No Apple build of Expression 1 — see the correction below |
 | **iPad Pro M4+** | Not applicable | Same — GPU-only by scope ruling, not a pending port |
-| **iPhone 16 Pro+** | Not applicable | Same. ([Expression 2](/sdk/ios#expression-2-on-device) is a **different engine**, has rendered on an iPhone, and publishes no model bundle yet.) |
+| **iPhone 16 Pro+** | Not applicable | Same. ([Expression 2](/sdk/ios#minimal-code) is a **different engine**, has rendered on an iPhone, and publishes no model bundle yet.) |
 | **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression 1 needs an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
 
@@ -504,7 +504,7 @@ For the file each family hands you by name, and what opens it, see
 |---|---|---|---|
 | bitHuman cloud (GPU · Apple Silicon · CPU chain) | Yes | GPU-only | Yes |
 | Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/ios#essence-2-on-device) `Essence2` product, package **2.8.0** — the engine's C interface, builds for iOS device, iOS simulator and macOS; resources published; **no in-app model download route yet** | — (cloud-only) | [Swift](/sdk/ios) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/ios#expression-2-on-device), so an app with its own agent can hand it one. The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
+| On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/ios#install) `Essence2` product, package **2.8.0** — the engine's C interface, builds for iOS device, iOS simulator and macOS; resources published; **no in-app model download route yet** | — (cloud-only) | [Swift](/sdk/ios) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/ios#minimal-code), so an app with its own agent can hand it one. The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:

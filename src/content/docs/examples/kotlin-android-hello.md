@@ -28,7 +28,7 @@ An app that, when you tap it:
 
 It renders first and plays second on purpose: on the all-CPU arm this phone
 renders about **5.6 frames per second**, and playback needs 20 — see
-[On-device speed](/sdk/android#on-device-speed-measured-on-a-snapdragon-8-elite).
+[On-device speed](/sdk/android#performance).
 
 ## Before you start
 
@@ -167,7 +167,7 @@ Every file is complete. Nothing is elided, and nothing else is needed.
 repositories and `aapt2` is published only on Google's Maven; with `mavenCentral()`
 alone this project configures, compiles Kotlin, and then dies at
 `:app:processDebugResources` with `Could not find com.android.tools.build:aapt2`.
-That has nothing to do with bitHuman — [the SDK page](/sdk/android#three-steps)
+That has nothing to do with bitHuman — [the SDK page](/sdk/android#install)
 has the transcript.
 
 ```kotlin
@@ -189,7 +189,7 @@ include(":app")
 ### 2. `build.gradle.kts`
 
 AGP **8.7.3** and Kotlin **2.0.21** are the versions every number on this page and
-on [Android SDK verification](/sdk/android) was measured with.
+on [Android](/sdk/android) were measured with.
 
 ```kotlin
 // build.gradle.kts  (project root)
@@ -706,7 +706,7 @@ separation is what says the mouth is following the audio.
 | `FAILURE … Directory '…' does not contain a Gradle build` from `gradle wrapper` | you ran the wrapper before writing the files; Gradle 9 will not write a wrapper into an empty directory | write the seven files of Step 3 first, then `gradle wrapper` — [Step 2](#step-2--create-the-project) |
 | `Configuring project ':app' without an existing directory is not allowed` | `settings.gradle.kts` says `include(":app")` and there is no `app/` directory yet | `mkdir -p app/src/main/java/com/example/x2hello` (the `mkdir` line in Step 2 makes it) |
 | `UnsatisfiedLinkError` at first launch | an x86_64 emulator, or a device that is not `arm64-v8a` | use a physical arm64 phone |
-| `HTTP 400 … Object not found` naming a `web_manifest.json` URL | that agent code is not on the public mirror | [check the code first](/sdk/android#getting-a-model-onto-the-device) |
+| `HTTP 400 … Object not found` naming a `web_manifest.json` URL | that agent code is not on the public mirror | [check the code first](/sdk/android#get-a-model) |
 | `speech.wav is not a RIFF/WAVE file` | you pushed an AIFF/MP3, or the push landed elsewhere | re-run the `afconvert`/`ffmpeg` line in Step 1 |
 | `need 16 kHz mono 16-bit PCM; speech.wav is 44100 Hz, 2 ch, 16-bit` | wrong sample rate or channel count | `-ac 1 -ar 16000` |
 | App shows the push instructions again after you pushed | the file landed in another package's directory | the path in the message is the one to use, verbatim |
@@ -765,7 +765,7 @@ run the decoder on the Hexagon. Keep `AUTO` and you get whichever is available.
 `A66GYD8664` is a published identity on the SDK's default mirror. To use your own,
 `POST /v1/agent/generate` with `model: "expression-2"` returns an `agent_code`
 ([Agents](/api/agents)) — but not every agent is mirrored, so check it before you
-build it into an app. [The SDK page](/sdk/android#getting-a-model-onto-the-device)
+build it into an app. [The SDK page](/sdk/android#get-a-model)
 carries the one-line `curl` and its negative control, plus the four codes verified
 anonymously on 2026-09-09.
 
@@ -830,7 +830,7 @@ push yourself, and it needs an **API secret**.
 > The artifact's native library ships with no CA trust store, and there is no
 > app-side workaround on this version — the full measurement, with the two controls
 > that rule out your network and your key, is on
-> [the Android SDK page](/sdk/android#essence-1--aibithumansdk236). It compiles:
+> [the Android SDK page](/sdk/android#essence-2-and-essence-1-on-android). It compiles:
 > built from the block below exactly as printed, `BUILD SUCCESSFUL`, 20,515,057 B
 > debug APK. It just cannot get past `Avatar.load`.
 >
@@ -1004,7 +1004,7 @@ because there is no audio-in entry point on this artifact yet (`BitHuman.open`
 throws `AvatarError.NotSupported`); and a refusal ends the session — there is no
 other render call to fall back to. **For an audio-driven talking head on Android
 today, use expression-2 above.** The
-[Android SDK page](/sdk/android#essence-2--aibithumanessence2-android051) carries
+[Android SDK page](/sdk/android#essence-2-and-essence-1-on-android) carries
 the full measurement.
 
 ## Next steps

@@ -258,9 +258,9 @@ binary; it ships **no model weights**, and no per-identity CoreML bundle is
 published **in the directory form this product loads**, so resolving it does not
 by itself give you a rendering avatar on either platform (the `<code>.avatar`
 you can download is a packed container for the CLI and cloud engines — see
-[Expression 2 on-device](/sdk/ios#expression-2-on-device)). There is no self-serve path to a bundle — email
+[Expression 2 on-device](/sdk/ios#minimal-code)). There is no self-serve path to a bundle — email
 [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want. See
-[Expression 2 on-device](/sdk/ios#expression-2-on-device).
+[Expression 2 on-device](/sdk/ios#minimal-code).
 
 **The downloadable artifact is a different rail, not the missing bundle.**
 Download the runnable `<code>.avatar` — the frozen back-compat alias of

@@ -24,7 +24,7 @@ The self-hosted GPU path runs the first-generation [Expression 1](/concepts/mode
 > `product 'Expression' ... not found in package 'homebrew-bithuman'`.
 >
 > The avatar engine you can attach on Apple Silicon is
-> [`Expression2`](/sdk/ios#expression-2-on-device) — **a different engine**
+> [`Expression2`](/sdk/ios#minimal-code) — **a different engine**
 > (`expression-2`, not `expression-1`), and **code only**: it builds and runs,
 > but no model bundle is published in the form it loads. For **`expression-1`**
 > the supported self-hosted path is the NVIDIA container on this page; there is
@@ -209,7 +209,7 @@ matrix today:
   engine-first on both second-generation models: the `Expression2` product
   (2.5.0+; a model-path API from 2.6.0) and, since 2.7.0, the `Essence2`
   product — a C interface with its resources published, but **no in-app
-  model download route yet** ([details](/sdk/ios#essence-2-on-device)).
+  model download route yet** ([details](/sdk/ios#install)).
   The cloud's Apple tier for `essence-2` is bitHuman's own Apple Silicon,
   reached over the network like any other cloud tier.
 - [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU

@@ -22,7 +22,7 @@ Two Android findings from a walk of the published pages on a Galaxy S25+
   5.72 s of speech → **117 frames** of 416×720, `acc=CPU`. Two toolchain steps the
   site never wrote down (`ANDROID_HOME` / `local.properties`, and a JDK 17
   launcher — AGP 8.7.3 rejects a newer one with an error whose whole body is the
-  string `26.0.2.1`) are now in [Install](/sdk/android#three-steps).
+  string `26.0.2.1`) are now in [Install](/sdk/android#install).
 - **`ai.bithuman:sdk:2.3.6` (essence-1) resolves, compiles and installs, and then
   cannot authenticate on a device.** `Avatar.load` throws
   `be_auth_authenticate: status=11 … SSL peer certificate … was not OK`: the
@@ -30,8 +30,8 @@ Two Android findings from a walk of the published pages on a Galaxy S25+
   not your key — the same handset reached that exact endpoint over a public Google
   Trust Services chain in the same minute — and there is no app-side workaround on
   this version. Use
-  [expression-2](/sdk/android#expression-2--aibithumanexpression2-android031) on
-  Android, which needs no key. [The measurement](/sdk/android#essence-1--aibithumansdk236).
+  [expression-2](/sdk/android#install) on
+  Android, which needs no key. [The measurement](/sdk/android#essence-2-and-essence-1-on-android).
 
 ### CLI `2.6.4` — a rejected key gets 300 seconds, then the session stops (2026-09-07)
 
@@ -72,7 +72,7 @@ ID signed and notarized, verified quarantined), both from one commit
 - The same rule, with the same number, applies to the
   [Python package](/sdk/python#the-four-refusals) (3.0.4) and to the Apple
   engine below; for the Android SDK it is landed in the source and ships in
-  the next coordinate ([details](/sdk/android#metering)).
+  the next coordinate ([details](/sdk/android#essence-2-and-essence-1-on-android)).
 
 ### Apple engine `essence2-v1.4.0` / Swift package `2.10.0` — the same 300-second rule (2026-09-07)
 
@@ -85,7 +85,7 @@ seconds from the first rejection behind a line once a minute, re-checked every
 minute; still rejected at 300 seconds the engine stops —
 `be_essence2_pull_frame` and `be_essence2_idle_frame` return `-3` from then on.
 A meter that cannot be reached still never stops a render. Billing is
-unchanged from `essence2-v1.3.0`. Details on [the Swift page](/sdk/ios#essence-2-on-device).
+unchanged from `essence2-v1.3.0`. Details on [the Swift page](/sdk/ios#install).
 
 ### CLI `2.6.3` — a live self-hosted session is billed on wall-clock (2026-09-07)
 
@@ -213,10 +213,10 @@ anonymously on 2026-09-07 before it was written here:
 - **2026-09-06 18:50Z — the essence-2 shared audio encoder is published** on a public release coordinate (377,625,424 B, SHA-256 `95c35c86…`), so the CLI and the Python package fetch it themselves instead of asking you to find it.
 - **2026-09-06 21:32Z — CLI `cli-v2.6.0`**, macOS arm64 and Linux x86_64 from one commit, with a `PROVENANCE.json` in each tarball. Fixed: `bithuman run` and `bithuman pull` agree on a container's name; `bithuman render` on macOS no longer truncates a clip; a refused render leaves no file behind. Added: the shared audio encoder is fetched once per machine and digest-checked on every use. Known and stated in the release: **essence-2 does not render locally from these tarballs** (`render` exits 69 for it) — closed the same day by [`cli-v2.6.1`](#cli-261--essence-2-renders-locally-on-linux-and-on-macos-2026-09-07); expression-2 renders locally on both platforms. The Python extra for offline rendering is now spelled `bithuman[offline]`.
 - **2026-09-06 — Android `ai.bithuman:essence2-android:0.3.0`.** The first essence-2 AAR whose engine refuses, with a thrown exception, rather than drawing a mouth of its own — but it judged a bundle by a descriptive list in its manifest and refused complete bundles. Superseded the same night; do not build against it.
-- **2026-09-08 02:17Z — Android `ai.bithuman:essence2-android:0.5.1`.** The version to use. A self-hosted session is metered at the published rate — `0.5.0` (2026-09-07 15:21Z) was the first Android version to meter at all; every version through `0.4.0` rendered free — and `0.5.1` adds the one rule every bitHuman runtime follows when the key check does not come back clean: a rejected key renders for a **five-minute grace** behind a countdown line, then every render call throws `MeteringRefused`; a metering service that cannot be reached never stops a render. Driven on a Galaxy S25+ through the exact bytes uploaded, before the press: five arms green, including the invented key refused at 300 s and the unreachable service still rendering at 345 s; the same arm on `0.5.0` went red. `0.2.0` through `0.5.0` still resolve — use none of them. [Android SDK](/sdk/android#essence-2--aibithumanessence2-android051).
+- **2026-09-08 02:17Z — Android `ai.bithuman:essence2-android:0.5.1`.** The version to use. A self-hosted session is metered at the published rate — `0.5.0` (2026-09-07 15:21Z) was the first Android version to meter at all; every version through `0.4.0` rendered free — and `0.5.1` adds the one rule every bitHuman runtime follows when the key check does not come back clean: a rejected key renders for a **five-minute grace** behind a countdown line, then every render call throws `MeteringRefused`; a metering service that cannot be reached never stops a render. Driven on a Galaxy S25+ through the exact bytes uploaded, before the press: five arms green, including the invented key refused at 300 s and the unreachable service still rendering at 345 s; the same arm on `0.5.0` went red. `0.2.0` through `0.5.0` still resolve — use none of them. [Android SDK](/sdk/android#essence-2-and-essence-1-on-android).
 - **2026-09-07 01:20Z — essence-2 Apple engine `essence2-v1.2.0`.** One rule for when a model renders — all four recorded-mouth files present, or a refusal naming the missing one — on every platform; `import Essence2` compiles; the resources archive rides on the same release, so the coordinate is complete on its own.
-- **2026-09-07 01:30Z — Swift SDK `v2.8.0`.** `Essence2` points at `essence2-v1.2.0`. Pin `from: "2.8.0"`. Resolves and builds for iOS device, iOS simulator and macOS from a consumer outside any bitHuman repository. Still missing: an in-app model download route that accepts a runtime token — [Essence 2 on-device](/sdk/ios#essence-2-on-device).
-- **2026-09-07 01:45Z — Android `ai.bithuman:essence2-android:0.4.0`.** The version to use. The same one rule as the Apple engine; an in-SDK **model store** (`Essence2ModelStore` — no default host yet, you pass the mirror); the product-named Kotlin package `ai.bithuman.essence2` beside the legacy `ai.bithuman.elevate`, kept for compatibility; `INTERNET` merged into your app. Driven on a Galaxy S25+ through the published bytes, 11 of 11 tests green. `0.2.0` can show a mouth the avatar never recorded without telling you and `0.3.0` refuses complete bundles — use neither. [Android SDK](/sdk/android#essence-2--aibithumanessence2-android051).
+- **2026-09-07 01:30Z — Swift SDK `v2.8.0`.** `Essence2` points at `essence2-v1.2.0`. Pin `from: "2.8.0"`. Resolves and builds for iOS device, iOS simulator and macOS from a consumer outside any bitHuman repository. Still missing: an in-app model download route that accepts a runtime token — [Essence 2 on-device](/sdk/ios#install).
+- **2026-09-07 01:45Z — Android `ai.bithuman:essence2-android:0.4.0`.** The version to use. The same one rule as the Apple engine; an in-SDK **model store** (`Essence2ModelStore` — no default host yet, you pass the mirror); the product-named Kotlin package `ai.bithuman.essence2` beside the legacy `ai.bithuman.elevate`, kept for compatibility; `INTERNET` merged into your app. Driven on a Galaxy S25+ through the published bytes, 11 of 11 tests green. `0.2.0` can show a mouth the avatar never recorded without telling you and `0.3.0` refuses complete bundles — use neither. [Android SDK](/sdk/android#essence-2-and-essence-1-on-android).
 - **2026-09-07 — Python `bithuman` 3.0.0.** A clean break: thirty-two public names become eight (`bithuman.open`, `Avatar`, `Avatar.render`, `AvatarError`, `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`), frames are **RGB**, the key comes from `BITHUMAN_API_SECRET` only, and essence-2 **and** expression-2 open through the same call on macOS and Linux (`bithuman[expression-2]` for the latter). An essence-2 avatar missing its recorded-mouth data is refused at `open`. The offline route is `bithuman.offline` / `bithuman[offline]` (the 2.x spellings warn until 4.0.0), and the shared audio encoder is fetched and digest-checked for you. `pip install "bithuman<3"` stays on 2.10.0. [Python SDK](/sdk/python#coming-from-2100).
 - **`ai.bithuman:expression2-android:0.3.1`** (2026-09-04) is unchanged and current — see [its entry](#expression-2-android-is-031-and-google-is-no-longer-required-2026-09-04). The Kotlin hello page now carries an expression-2 and an essence-2 example, both compiled against the published AARs: [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) (rewritten on 2026-09-09 as a complete project).
 
@@ -360,7 +360,7 @@ work on it at **1.06×**.
 
 **No other Android device has been measured** and no figure is projected for
 one. See [Android, measured on the handset](/concepts/essence-2#android-measured-on-the-handset)
-and the [Android SDK page](/sdk/android#on-device-speed-measured-on-a-snapdragon-8-elite).
+and the [Android SDK page](/sdk/android#performance).
 
 ### essence-2 lands on Maven Central — both families now have a public Android SDK (2026-09-03)
 
@@ -777,7 +777,7 @@ rollout, the model documentation gained the shipping characteristics:
   from a single photo (no face detection or cropping anywhere in the
   pipeline), which is why any character morphology animates naturally;
   serves GPU → Apple Silicon → CPU; its on-device Apple engine shipped later,
-  in [Swift SDK 2.5.0](/sdk/ios#expression-2-on-device) — engine only, with no
+  in [Swift SDK 2.5.0](/sdk/ios#minimal-code) — engine only, with no
   model bundle published.
 - The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
   and [creation guide](/concepts/models-v2#how-creation-works) were refreshed

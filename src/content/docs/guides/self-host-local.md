@@ -24,8 +24,8 @@ version and the install line.
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
 | **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
-| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#getting-a-model-onto-the-device)) |
-| **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/ios#essence-2-on-device) `Essence2` (package 2.11.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published. ★ **Not consumable on a phone yet:** the model the download endpoint returns is not a package this engine opens (measured 2026-09-09), and the engine refuses every iPhone below an iPhone 16 Pro. On a Mac, use the Python wheel below |
+| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#get-a-model)) |
+| **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/ios#install) `Essence2` (package 2.11.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published. ★ **Not consumable on a phone yet:** the model the download endpoint returns is not a package this engine opens (measured 2026-09-09), and the engine refuses every iPhone below an iPhone 16 Pro. On a Mac, use the Python wheel below |
 
 Two things to settle before you pick a platform:
 
@@ -91,8 +91,8 @@ platform, and no session was metered on macOS. Downloading a model with
   Before 2.6.4 a rejected key rendered on indefinitely behind the loud line.
   The same rule and the same number apply to the
   [Python package](/sdk/python#the-four-refusals), the
-  [Apple engine](/sdk/ios#essence-2-on-device) and the
-  [Android SDK](/sdk/android#metering); the [pricing page](/guides/pricing)
+  [Apple engine](/sdk/ios#install) and the
+  [Android SDK](/sdk/android#essence-2-and-essence-1-on-android); the [pricing page](/guides/pricing)
   is the authority for what is billed.
 - Sign in with `bithuman login` or set `BITHUMAN_API_SECRET` so the session
   is billed to your account.
@@ -413,7 +413,7 @@ different rail with no supported way to convert it. Ask us:
 **There is no TestFlight or App Store build**, and iOS support is not promoted
 past compiles-only. Treat iOS as proven-capable and unshipped.
 
-The [increased-memory entitlement is mandatory](/sdk/ios#permissions--entitlements)
+The [increased-memory entitlement is mandatory](/sdk/ios#run)
 on iOS — without it the OS kills your app mid-conversation. Request it before
 you start; Apple takes 1–3 business days.
 

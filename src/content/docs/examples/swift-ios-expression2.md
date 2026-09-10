@@ -36,7 +36,7 @@ built with Xcode 26.3 on macOS 26.6.2, on **2026-09-09**.
 product builds, links and starts on an iPhone, and then refuses the only model
 you can download for it, on **every** Apple device including an iPhone 16 Pro.
 The measurement and the exact refusal are on
-[Essence 2 on-device](/sdk/ios#essence-2-on-device). Do not spend an afternoon
+[Essence 2 on-device](/sdk/ios#install). Do not spend an afternoon
 on it; use `expression-2`, which is what this page is.
 
 ## Prerequisites
@@ -46,7 +46,7 @@ on it; use `expression-2`, which is what this page is.
 - **An Apple Developer team**, and an iPhone or iPad you have paired and
   trusted. Everything here is a *device* build — see
   [Signing](#5-sign-it-and-run-it-on-the-phone) below, and the fuller
-  [signing section](/sdk/ios#signing-before-any-of-the-above-runs-on-a-phone)
+  [signing section](/sdk/ios#run)
   on the SDK page.
 - **An identity to render.** You have two routes, and only one of them costs
   anything:
@@ -74,7 +74,7 @@ on it; use `expression-2`, which is what this page is.
   [Agents](/api/agents). Budget **60–100 minutes and 2000 credits** — see
   below.
 
-  ★ **Why the Android codes still do not work here, and what changed.** [The Android SDK page](/sdk/android#getting-a-model-onto-the-device)
+  ★ **Why the Android codes still do not work here, and what changed.** [The Android SDK page](/sdk/android#get-a-model)
   points `Expression2ModelStore` at a mirror that answers *anonymously*, and
   [the Android example](/examples/kotlin-android-hello) renders `A66GYD8664`
   with no key and no agent of your own. That is real: measured 2026-09-09,
@@ -1030,7 +1030,7 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > readable. `security show-keychain-info ~/Library/Keychains/login.keychain-db`
 > tells you which state you are in — `User interaction is not allowed.` means
 > locked. The full list of signing traps is on
-> [the SDK page](/sdk/ios#signing-before-any-of-the-above-runs-on-a-phone).
+> [the SDK page](/sdk/ios#run).
 
 ## What you'll see
 
@@ -1114,7 +1114,7 @@ Stated plainly, so nobody spends an afternoon finding out.
   iPhone 16 Pro floor is consulted, so an iPhone 16 Pro sees it too, and `rc`
   alone is not diagnostic — a path that does not exist returns the same `-2`.
   The verbatim message and both control arms are on
-  [Essence 2 on-device](/sdk/ios#essence-2-on-device). Use `expression-2` on
+  [Essence 2 on-device](/sdk/ios#install). Use `expression-2` on
   the device, or run essence-2 as a [cloud session](/api/runtime-sessions).
 - **The one-call container opener is broken on iOS.** Through `Expression2`
   2.11.2, `create(avatarContainer:…:stagingDir:)` refuses every published

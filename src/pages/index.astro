@@ -62,6 +62,7 @@ async for frame in avatar.run():
 import ai.bithuman.expression2.Expression2Avatar
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
+import ai.bithuman.expression2.Routing
 import android.content.Context
 import android.graphics.Bitmap
 
@@ -70,7 +71,12 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
     // Blocks on the network the first time (~158 MB). Never on the main thread.
     val model = Expression2ModelStore(context).fetch(agentCode)   // anonymous HTTPS
 
-    Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
+    // Name the routing and leave accelerator at AUTO: a refused graph then falls back to the CPU
+    // instead of throwing. A bare Expression2Options() is all-CPU — 7 fps on a Galaxy S25+;
+    // these three options are 58 fps on the same phone, pixel-identical.
+    val options = Expression2Options(routing = Routing.HTP_DECODER, overlapDecoder = true, threads = 6)
+
+    Expression2Avatar.create(context, model, options).use { avatar ->
         val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
         avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
         avatar.flushTail()                    // the padded tail is the last sentence

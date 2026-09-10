@@ -34,9 +34,9 @@ four ways:
   (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
   `<code>.imx` offline with `bithuman render` and serves it live with
   `bithuman run`, with the runtime inside the CLI; on Android the
-  [`essence2-android`](/sdk/android#essence-2--aibithumanessence2-android051)
+  [`essence2-android`](/sdk/android#essence-2-and-essence-1-on-android)
   AAR, and in your own iOS/macOS app the Swift
-  [`Essence2`](/sdk/ios#essence-2-on-device) engine.
+  [`Essence2`](/sdk/ios#install) engine.
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.0.0; 2.9.0+
   for the earlier route).
@@ -246,9 +246,9 @@ the same thing as running on your Mac. What does run on your hardware:
   (~377 MB, once, by content digest) into `~/.bithuman/engines/essence-2/`;
   the first play checks the licence with the cloud. See
   [Essence 2 on your own machine](/sdk/cli#what-renders-locally-and-where).
-- **Android** — the [`ai.bithuman:essence2-android:0.5.1`](/sdk/android#essence-2--aibithumanessence2-android051)
+- **Android** — the [`ai.bithuman:essence2-android:0.5.1`](/sdk/android#essence-2-and-essence-1-on-android)
   AAR, with an in-SDK model store.
-- **iOS and macOS, in your own app** — the [Swift SDK](/sdk/ios#essence-2-on-device)'s
+- **iOS and macOS, in your own app** — the [Swift SDK](/sdk/ios#install)'s
   `Essence2` product (package 2.8.0): the engine's C interface, building for
   iOS device, iOS simulator and macOS, with no in-app model download route
   yet.
