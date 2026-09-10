@@ -1002,6 +1002,15 @@ paths:
         The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/commands) wraps
         this endpoint: `bithuman pull <AGENT_CODE>` downloads the artifact,
         recognizes its model family, and prints what to do next.
+
+        **Showcase identities need no credential.** The `essence-2` and
+        `expression-2` identities listed by
+        [`GET /v1/models/showcase`](#tag/Agent-Management/operation/getShowcaseManifest)
+        are served to anonymous callers — same 302, same 1-hour signed URL, and
+        the owner is charged **0 credits**. Every other agent still needs the
+        `api-secret` header (or `Authorization: Bearer <api-secret | runtime
+        token>`) and must be owned by the caller; an anonymous request for one
+        answers `401 MISSING_AUTH`, the same answer an unknown code gets.
       tags: [Agent Management]
       parameters:
         - name: code
@@ -1009,7 +1018,10 @@ paths:
           required: true
           schema:
             type: string
-          description: Agent code; the agent must be owned by the caller (else 404).
+          description: >-
+            Agent code. The agent must be owned by the caller (else 404) —
+            except for the showcase identities in
+            `GET /v1/models/showcase`, which are served with no credential.
           example: "A17ZTB0222"
         - name: model
           in: query
@@ -1369,6 +1381,116 @@ paths:
                     example: 200
         "401":
           $ref: "#/components/responses/Unauthorized"
+
+  /v1/models/showcase:
+    get:
+      operationId: getShowcaseManifest
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            # No credential, no account. Every entry is downloadable by anyone.
+            curl -s https://api.bithuman.ai/v1/models/showcase | jq '.models[] | {slug, model, size}'
+        - lang: shell
+          label: bitHuman CLI
+          source: |
+            bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
+            bithuman pull bolt --manifest https://api.bithuman.ai/v1/models/showcase
+            bithuman run ~/.cache/bithuman/showcase/bolt.imx --audio hello.wav --output out.mp4
+      summary: List the freely downloadable showcase models
+      description: |
+        The catalogue of **Essence 2** and **Expression 2** showcase identities
+        whose model weights anyone may download — no api-secret, no account.
+
+        Each entry's `url` is
+        [`GET /v1/agent/{code}/model/download`](#tag/Agent-Management/operation/downloadAgentModel),
+        which answers a **302** to a 1-hour signed URL for anonymous callers
+        too. The grant is still recorded (one usage row) and costs the agent's
+        owner **0 credits** — an anonymous download is free or refused, never
+        billed to the owner.
+
+        The list is generated from the download route's own admission
+        predicate, so a code listed here is a code the route serves: an
+        `essence-2` or `expression-2` identity that is ready, listed in the
+        agent gallery, owns its own artifact, and whose owner has authorised
+        anonymous distribution of the weights. Agents that are merely public in
+        the gallery are **not** here — being viewable is a different permission
+        from the weights being distributable.
+
+        The shape is the bitHuman CLI's manifest v2, so the shipped CLI
+        consumes it directly with `--manifest`.
+
+        **Performance, honestly.** `expression-2` clears realtime on a
+        developer CPU. `essence-2` renders at roughly **1.1 fps on CPU**
+        (about 22x below realtime) and wants a GPU for anything interactive —
+        `note_performance` in the reply says the same.
+
+        `sha256` is deliberately empty: no content digest is recorded for these
+        objects yet, and the CLI skips verification on an empty value rather
+        than failing. Verify `size` and the container magic (`bithuman info`)
+        instead.
+
+        Throttled per IP; the reply is cached for 60 seconds.
+      tags: [Agent Management]
+      security: []
+      responses:
+        "200":
+          description: The showcase catalogue.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: integer
+                    example: 2
+                  updated:
+                    type: string
+                    example: "2026-09-10"
+                  source:
+                    type: string
+                  selection_criteria:
+                    type: string
+                  note_performance:
+                    type: object
+                    additionalProperties:
+                      type: string
+                  models:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        slug:
+                          type: string
+                          example: "bolt"
+                        name:
+                          type: string
+                          example: "Bolt"
+                        description:
+                          type: string
+                        model:
+                          type: string
+                          enum: [essence-2, expression-2]
+                        agent_code:
+                          type: string
+                          example: "X03BOLT"
+                        category:
+                          type: string
+                        is_featured:
+                          type: boolean
+                        url:
+                          type: string
+                          example: "https://api.bithuman.ai/v1/agent/X03BOLT/model/download?model=expression-2"
+                        sha256:
+                          type: string
+                          description: Empty — no digest is published for these objects yet.
+                        size:
+                          type: integer
+                          example: 198106157
+                        votes:
+                          type: integer
+        "429":
+          description: Too many requests from this address.
 
   /v1/pricing:
     get:
