@@ -79,8 +79,8 @@ So:
     canvas:      document.getElementById("cv"),
     ortBase:     "./ort/",
     modelUrl:    "./models/m4b_full_mmq.onnx",
-    pooled64Url: "./identity/A63GVG1577/pooled64_m4b.f16",
-    videoUrl:    "./identity/A63GVG1577/p_vp9_444.webm",
+    pooled64Url: "./identity/<YOUR_AGENT_CODE>/pooled64_m4b.f16",
+    videoUrl:    "./identity/<YOUR_AGENT_CODE>/p_vp9_444.webm",
     ep:          "wasm",   // default; "webgpu" is opt-in — see below
     threads:     4,
     onProgress:  (msg) => console.log(msg),

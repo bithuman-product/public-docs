@@ -24,12 +24,46 @@ Everything that changed is in [Coming from 2.10.0](#coming-from-2100).
 ```python
 import bithuman
 
-avatar = bithuman.open("A63GVG1577.imx")      # essence-2 or expression-2 — the same call
-for image in avatar.render("hello.wav"):      # (height, width, 3) uint8, RGB
+avatar = bithuman.open("wise-pup.avatar")     # essence-2 or expression-2 — the same call
+for image in avatar.render("demo_sample.wav"):  # (height, width, 3) uint8, RGB
     show(image)
 ```
 
 That is the whole thing: **open an avatar, then render audio through it.**
+
+### Run it now, on an avatar you can download
+
+**Wise Pup** is a free [expression-2](/concepts/expression-2) avatar bitHuman
+publishes for exactly this. The download needs no account; the render needs
+your API secret, because every render on your own machine is metered the same
+way a cloud one is.
+
+```bash
+pip install "bithuman[expression-2]"
+curl -fsSL -o wise-pup.avatar https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/A23WJF0199.avatar
+curl -fsSL -o demo_sample.wav https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav
+export BITHUMAN_API_SECRET=...      # https://www.bithuman.ai/developer/api-keys
+python - <<'EOF'
+import time, bithuman
+avatar = bithuman.open("wise-pup.avatar")
+n, t0 = 0, time.time()
+for image in avatar.render("demo_sample.wav"):
+    n += 1
+print(f"frames={n} fps={n/(time.time()-t0):.2f} shape={image.shape}")
+EOF
+```
+
+Measured on a 24-core Linux x86_64 box, 2026-09-10, from a clean `pip install`
+of 3.0.4: `frames=309 fps=24.17 shape=(720, 416, 3)` — expression-2 renders
+faster than its own 20 fps playback rate on CPU. **Essence 2 does not**: the
+same two calls on an essence-2 `.imx` measured **0.92 fps** on that machine, so
+plan essence-2 on CPU as an offline render, not a live one.
+
+Download `wise-pup.avatar`, not `wise-pup.imx`. Both are the same identity, but
+the `.imx` is the CLI's two-artifact form: it carries only the per-identity
+half and reads the shared encoder out of the engine cache that
+[the CLI installer](/sdk/cli/install) populates. This package ships no such
+cache, so it opens the self-contained `.avatar`.
 
 ## Install
 
@@ -137,8 +171,8 @@ for image in frames:
 freed when it is garbage collected.
 
 ```python
-with bithuman.open("A63GVG1577.imx") as avatar:
-    for image in avatar.render("hello.wav"):
+with bithuman.open("wise-pup.avatar") as avatar:
+    for image in avatar.render("demo_sample.wav"):
         show(image)
 ```
 
