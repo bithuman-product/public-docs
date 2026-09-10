@@ -171,14 +171,14 @@ There is one key per **model and hosting mode** — `<model>_cloud` and
 `camera_chat` are managed cloud conversational-agent estimates, not avatar
 models.
 
-:::caution[`essence_*` / `expression_*` without a version are the **first-generation** models]
-`essence_cloud`, `essence_self_hosted`, `expression_cloud` and
-`expression_self_hosted` predate the second-generation launch and are kept as
-aliases for Essence 1 / Expression 1. **They are not the Essence 2 rate.** If
-you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you will
-over-estimate your remaining minutes by 2x and 4x respectively — read
-`essence_2_cloud` / `essence_2_max_cloud` instead.
-:::
+> **`essence_*` / `expression_*` without a version are the **first-generation** models**
+>
+> `essence_cloud`, `essence_self_hosted`, `expression_cloud` and
+> `expression_self_hosted` predate the second-generation launch and are kept as
+> aliases for Essence 1 / Expression 1. **They are not the Essence 2 rate.** If
+> you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you will
+> over-estimate your remaining minutes by 2x and 4x respectively — read
+> `essence_2_cloud` / `essence_2_max_cloud` instead.
 
 ## What's NOT billed
 

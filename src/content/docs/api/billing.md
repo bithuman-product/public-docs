@@ -206,15 +206,15 @@ model** — read the key for the model you actually run:
 | `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
 
-:::caution[`essence_*` and `expression_*` without a version are Essence 1 and Expression 1]
-`essence_cloud`, `essence_self_hosted`, `expression_cloud` and
-`expression_self_hosted` predate the second-generation models and are aliases of
-the `essence_1_*` / `expression_1_*` rows above. **They are not the Essence 2
-rate.** If you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you
-will over-estimate your remaining minutes by 2x and 4x respectively. Use the
-model-specific key, or compute from the
-[serving rates](/guides/pricing#serving--credits-per-live-minute).
-:::
+> **`essence_*` and `expression_*` without a version are Essence 1 and Expression 1**
+>
+> `essence_cloud`, `essence_self_hosted`, `expression_cloud` and
+> `expression_self_hosted` predate the second-generation models and are aliases of
+> the `essence_1_*` / `expression_1_*` rows above. **They are not the Essence 2
+> rate.** If you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you
+> will over-estimate your remaining minutes by 2x and 4x respectively. Use the
+> model-specific key, or compute from the
+> [serving rates](/guides/pricing#serving--credits-per-live-minute).
 
 Estimates are advisory. The authoritative charge is always computed server-side
 at request time from the live rate schedule.

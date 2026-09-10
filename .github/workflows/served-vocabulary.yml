@@ -103,3 +103,19 @@ jobs:
 
       - name: Grade the served bytes
         run: node scripts/check-served-vocabulary.mjs --live "$ORIGIN"
+
+      # ★MEASURED 2026-09-10: four pages were serving 10 literal `:::` markers
+      # to customers — Starlight-style admonitions on a site whose Astro config
+      # has no remark-directive plugin. Two of them were the billing warning
+      # that reading `essence_cloud` for an Essence 2 agent over-estimates
+      # remaining minutes by 2x-4x, so the sentence that mattered most is the
+      # one that looked broken. Graded on the BUILT and SERVED bytes, never on
+      # the source, because the source is where the marker looks correct.
+      - name: The markup guard proves itself
+        run: node scripts/check-served-markup.mjs --self-test
+
+      - name: No unrendered authoring markup in what this repo builds
+        run: node scripts/check-served-markup.mjs
+
+      - name: No unrendered authoring markup in what is served
+        run: node scripts/check-served-markup.mjs --live "$ORIGIN"

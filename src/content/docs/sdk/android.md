@@ -527,41 +527,39 @@ publicly consumable Android artifact this org had.
 The coordinate is `ai.bithuman:sdk` — a legacy artifact name from before the SDK
 family had more than one member. It is frozen and it is what you must type.
 
-:::caution
-**`2.3.6` cannot authenticate on an Android device, so it cannot render a frame
-there. Measured on a Galaxy S25+ (SM-S936U1, Android 16) on 2026-09-09.** The
-first call in every essence-1 app throws before any model is read:
-
-```text
-ai.bithuman.sdk.BithumanException: be_auth_authenticate: status=11
-  msg=curl_easy_perform: SSL peer certificate or SSH remote key was not OK
-    at ai.bithuman.sdk.BithumanAuth.configure(Auth.kt:65)
-    at ai.bithuman.sdk.Avatar$Companion.load(Avatar.kt:185)
-```
-
-**It is not your network and not your key.** The published
-`jni/arm64-v8a/libessence_jni.so` links a static OpenSSL build that carries **no
-trust store at all** — `strings` finds **0** `BEGIN CERTIFICATE` in it, against
-**121** in a real bundle read by the same command — so every TLS handshake it
-makes fails verification. Two controls, on that handset, that minute:
-
-- The phone's own Java stack reached the very endpoint the SDK calls,
-  `https://api.bithuman.ai/v1/runtime-tokens/request`, and got **HTTP 401** over a
-  chain of `CN=bithuman.ai` → Google Trust Services `WE1` → `GTS Root R4` →
-  `GlobalSign Root CA`. A public chain, no interception, TLS healthy.
-- Pointing `SSL_CERT_FILE` at a 188,900-byte Mozilla `cacert.pem` inside the app
-  (`android.system.Os.setenv`) changes **nothing** — the env override is not in
-  these published bytes (`CURL_CA_BUNDLE` does not appear in the library either).
-  **There is no app-side workaround on this version.**
-
-The fix is in the SDK source — the Android build now embeds the Mozilla bundle —
-and it reaches you only in a **new published version**, which does not exist on
-Maven Central yet. Until it does, **use
-[expression-2](#expression-2--aibithumanexpression2-android031) for an on-device
-talking head on Android**: it needs no key, no `.imx` and no network after the
-model fetch. Everything below documents `2.3.6`'s API and remains accurate about
-the API; it is the authentication step that stops you.
-:::
+> **`2.3.6` cannot authenticate on an Android device, so it cannot render a frame
+> there. Measured on a Galaxy S25+ (SM-S936U1, Android 16) on 2026-09-09.** The
+> first call in every essence-1 app throws before any model is read:
+>
+> ```text
+> ai.bithuman.sdk.BithumanException: be_auth_authenticate: status=11
+>   msg=curl_easy_perform: SSL peer certificate or SSH remote key was not OK
+>     at ai.bithuman.sdk.BithumanAuth.configure(Auth.kt:65)
+>     at ai.bithuman.sdk.Avatar$Companion.load(Avatar.kt:185)
+> ```
+>
+> **It is not your network and not your key.** The published
+> `jni/arm64-v8a/libessence_jni.so` links a static OpenSSL build that carries **no
+> trust store at all** — `strings` finds **0** `BEGIN CERTIFICATE` in it, against
+> **121** in a real bundle read by the same command — so every TLS handshake it
+> makes fails verification. Two controls, on that handset, that minute:
+>
+> - The phone's own Java stack reached the very endpoint the SDK calls,
+>   `https://api.bithuman.ai/v1/runtime-tokens/request`, and got **HTTP 401** over a
+>   chain of `CN=bithuman.ai` → Google Trust Services `WE1` → `GTS Root R4` →
+>   `GlobalSign Root CA`. A public chain, no interception, TLS healthy.
+> - Pointing `SSL_CERT_FILE` at a 188,900-byte Mozilla `cacert.pem` inside the app
+>   (`android.system.Os.setenv`) changes **nothing** — the env override is not in
+>   these published bytes (`CURL_CA_BUNDLE` does not appear in the library either).
+>   **There is no app-side workaround on this version.**
+>
+> The fix is in the SDK source — the Android build now embeds the Mozilla bundle —
+> and it reaches you only in a **new published version**, which does not exist on
+> Maven Central yet. Until it does, **use
+> [expression-2](#expression-2--aibithumanexpression2-android031) for an on-device
+> talking head on Android**: it needs no key, no `.imx` and no network after the
+> model fetch. Everything below documents `2.3.6`'s API and remains accurate about
+> the API; it is the authentication step that stops you.
 
 ```kotlin
 // app/build.gradle.kts
@@ -731,34 +729,34 @@ uploaded, before the press; it is the first version whose handset run exercised
 the [metering rule](#metering) end to end — a rejected key refused at 300 s, an
 unreachable service still rendering at 345 s, a good key landing one ledger row.
 
-:::caution[Read this before you budget a sprint on essence-2 for Android]
-Two things this artifact does **not** do today, both measured on 2026-09-09 on a
-Galaxy S25+ from an outside Gradle project whose only path to the SDK is the
-Maven coordinate:
-
-1. **There is no bundle you can download.** `Essence2ModelStore` fetches
-   `{base}/{code}/android/v1/android_store.v1.json`, and **bitHuman publishes no
-   public host that serves that tree.** The store has no default host on purpose,
-   and the two hosts a developer would guess both refuse: the expression-2 web
-   mirror answers `HTTP 400 … {"error":"not_found"}` and `assets.bithuman.ai`
-   answers `HTTP 404`, both through the SDK's own error path — *"this identity has
-   no android bundle published on this mirror"*. The REST
-   [model-download door](/api/agents) serves essence-2 as a single
-   `<code>.lebundle.imx` file, which is **not** the `android/v1` member tree this
-   store consumes. Unless you run your own mirror and publish that tree yourself,
-   `fetch` cannot succeed.
-2. **There is no audio-in path.** `renderDriveBorrow(i, out)` takes a frame index
-   and plays the avatar's own recorded motion sequence. `BitHuman.open(path)` /
-   `Avatar.render(audio)` are present in `classes.jar` and `open` refuses with
-   `AvatarError.NotSupported`. An audio-driven talking head on Android is
-   **expression-2** today, not essence-2.
-
-Everything below — the coordinate, the bytes, the API, the metering rule, the
-speed figures — is accurate and was measured. It describes an artifact that an
-outside developer cannot yet feed. Build the Android lane on
-[expression-2](#expression-2--aibithumanexpression2-android031); come back to
-this section when a mirror is published.
-:::
+> **Read this before you budget a sprint on essence-2 for Android**
+>
+> Two things this artifact does **not** do today, both measured on 2026-09-09 on a
+> Galaxy S25+ from an outside Gradle project whose only path to the SDK is the
+> Maven coordinate:
+>
+> 1. **There is no bundle you can download.** `Essence2ModelStore` fetches
+>    `{base}/{code}/android/v1/android_store.v1.json`, and **bitHuman publishes no
+>    public host that serves that tree.** The store has no default host on purpose,
+>    and the two hosts a developer would guess both refuse: the expression-2 web
+>    mirror answers `HTTP 400 … {"error":"not_found"}` and `assets.bithuman.ai`
+>    answers `HTTP 404`, both through the SDK's own error path — *"this identity has
+>    no android bundle published on this mirror"*. The REST
+>    [model-download door](/api/agents) serves essence-2 as a single
+>    `<code>.lebundle.imx` file, which is **not** the `android/v1` member tree this
+>    store consumes. Unless you run your own mirror and publish that tree yourself,
+>    `fetch` cannot succeed.
+> 2. **There is no audio-in path.** `renderDriveBorrow(i, out)` takes a frame index
+>    and plays the avatar's own recorded motion sequence. `BitHuman.open(path)` /
+>    `Avatar.render(audio)` are present in `classes.jar` and `open` refuses with
+>    `AvatarError.NotSupported`. An audio-driven talking head on Android is
+>    **expression-2** today, not essence-2.
+>
+> Everything below — the coordinate, the bytes, the API, the metering rule, the
+> speed figures — is accurate and was measured. It describes an artifact that an
+> outside developer cannot yet feed. Build the Android lane on
+> [expression-2](#expression-2--aibithumanexpression2-android031); come back to
+> this section when a mirror is published.
 
 ```kotlin
 // app/build.gradle.kts
