@@ -73,10 +73,81 @@ export OPENAI_API_KEY=sk-...
 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 ```
 
-Want an offline MP4 instead of a live session? Lip-sync an audio file you
-already have. Both second-generation models render locally — on macOS Apple
-Silicon and Linux x86_64 — and the two flows have the same shape; `pull` prints
-the cached path on stdout, so capture it:
+## Essence 2 and Expression 2 without an agent of your own
+
+You do not need to create an agent to hold a second-generation model. The
+showcase catalogue lists twenty Essence 2 / Expression 2 identities whose
+weights **anyone may download — no api-secret, no account**:
+
+```bash
+curl -s https://api.bithuman.ai/v1/models/showcase | head -c 200
+bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
+```
+
+```text
+ SLUG                                  NAME                                 MODEL          SIZE     STATUS
+ shelly-tidewater                      Shelly Tidewater                     expression-2   189 MB   —
+ warm-clear-professional-presenter     Warm, Clear Professional Presenter   essence-2      97 MB    —
+ afro-latina-astrophysics-mentor       Afro-Latina Astrophysics Mentor      essence-2      94 MB    —
+ sofia-ramirez                         Sofia Ramirez                        essence-2      97 MB    —
+ clementine-serene-purring-companion   Clementine, Serene Purring Compan…   expression-2   189 MB   —
+ kwame-warm-museum-guide               Kwame, Warm Museum Guide             essence-2      97 MB    —
+ pip-the-red-panda-barista             Pip, the Red Panda Barista           expression-2   190 MB   —
+ ... (20 rows)
+```
+
+Exit code `0`, with no credential in the environment. `pull` is the same —
+and the download costs the agent's owner nothing:
+
+```bash
+bithuman pull bolt --manifest https://api.bithuman.ai/v1/models/showcase
+```
+
+```text
+~/.cache/bithuman/showcase/bolt.imx
+```
+
+Or fetch one with `curl` alone — the endpoint 302s to a 1-hour signed URL, so
+`-L` is all it takes:
+
+```bash
+curl -L "https://api.bithuman.ai/v1/agent/X03BOLT/model/download" -o avatar.imx
+```
+
+**The download is free; the local session is not.** `render` and `run` are
+self-hosted sessions and are [metered](/guides/pricing) — they need a
+credential, and the free tier is enough:
+
+```bash
+bithuman render ~/.cache/bithuman/showcase/bolt.imx --audio speech.wav --output bolt.mp4 --json
+```
+
+```text
+{"error":{"code":"NOT_SIGNED_IN","command":"render","kind":"NotAuthorised","message":"not signed in, or the credential is not valid — run `bithuman login`, or set BITHUMAN_API_SECRET"}}
+```
+
+```bash
+export BITHUMAN_API_SECRET=your_api_secret      # or: bithuman login
+bithuman render ~/.cache/bithuman/showcase/bolt.imx --audio speech.wav --output bolt.mp4 --json
+```
+
+```text
+{"bytes":583037,"fps":20,"frames":100,"height":720,"output":"~/bolt.mp4","schema_version":1,"seconds":3.452115218,"width":416}
+```
+
+> **Note** **Expression 2 clears realtime on a laptop CPU; Essence 2 does
+> not.** Measured on one Linux x86_64 box, 5 s of audio: Expression 2 wrote
+> 100 frames of 20 fps video in 3.5 s — about **29 rendered frames per
+> second**. Essence 2 wrote 125 frames of 25 fps 1080x1920 video in 86 s —
+> about **1.5 rendered frames per second**, roughly **17x slower than
+> realtime**, and about **1.2 fps / 21x** end to end once model preparation is
+> counted. Essence 2 on a CPU is for offline renders; use a GPU for anything
+> interactive. Your numbers will differ — this is one machine, not a spec.
+
+## Your own agent's model
+
+`pull <YOUR_AGENT_CODE> --model <family>` reaches an agent you own, and needs
+your api-secret. `pull` prints the cached path on stdout, so capture it:
 
 ```bash
 bithuman login                                                # once — the first play checks the licence

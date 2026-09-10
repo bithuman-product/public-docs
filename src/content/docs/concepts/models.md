@@ -136,9 +136,17 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 The CLI ships a curated set of ready-to-run Essence `.imx` avatars:
 
 ```bash
-bithuman list                          # browse the showcase
+bithuman list                          # browse the Essence 1 showcase
 bithuman pull modern-court-jester      # downloads to ~/.cache/bithuman/showcase/<slug>.imx
 bithuman run modern-court-jester.imx   # live browser-served avatar
+```
+
+Second-generation models have their own free catalogue — twenty Essence 2 and
+Expression 2 identities anyone may download with no credential:
+
+```bash
+bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
+bithuman pull bolt --manifest https://api.bithuman.ai/v1/models/showcase
 ```
 
 **How to ship it**

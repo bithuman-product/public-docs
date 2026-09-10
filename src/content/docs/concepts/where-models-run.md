@@ -107,8 +107,9 @@ a rounding error — it is the second-largest bucket.
 
 The practical consequence for you: **essence-1 is the model you are most likely
 to be handed**, it is in scope on every lane you run yourself and on the
-cloud's Apple tier, and the entire CLI showcase is built from it. Every avatar `bithuman list` returns today is an essence-1
-identity:
+cloud's Apple tier, and the CLI's **default** showcase manifest is built
+entirely from it — every avatar a bare `bithuman list` returns is an
+essence-1 identity:
 
 ```bash
 bithuman list --json | python3 -c "
@@ -128,6 +129,26 @@ planning-nebula                            model=essence
 Exit code `0`. Note the value: the manifest spells it **`essence`**, not
 `essence-1`. That is a frozen wire spelling — see
 [legacy names](#legacy-names-you-will-still-see).
+
+**That is no longer the whole showcase.** Since 2026-09-10 a second
+catalogue — [`GET /v1/models/showcase`](/api/reference#tag/Agent-Management/operation/getShowcaseManifest)
+— lists twenty **essence-2 and expression-2** identities that anyone may
+download with no credential. The CLI reads it with `--manifest`:
+
+```bash
+bithuman list --manifest https://api.bithuman.ai/v1/models/showcase --json | python3 -c "
+import json,sys
+for m in json.load(sys.stdin)['models']:
+    print(f\"{m['slug']:42s} model={m['model']}\")"
+```
+
+```text
+shelly-tidewater                           model=expression-2
+warm-clear-professional-presenter          model=essence-2
+afro-latina-astrophysics-mentor            model=essence-2
+sofia-ramirez                              model=essence-2
+...
+```
 
 ## Identify what you are holding
 

@@ -8,6 +8,15 @@ order: 2
 
 ## Get the SDK
 
+> **Note** **Twenty Essence 2 and Expression 2 models are free to download —
+> no api-secret, no account.** `curl -s https://api.bithuman.ai/v1/models/showcase`
+> lists them, `bithuman list --manifest https://api.bithuman.ai/v1/models/showcase`
+> browses them, and `curl -L "https://api.bithuman.ai/v1/agent/X03BOLT/model/download" -o avatar.imx`
+> fetches one. Running one locally is a self-hosted session and is
+> [metered](/guides/pricing) — the free tier covers it. See
+> [CLI — Hello, avatar](/examples/cli-hello#essence-2-and-expression-2-without-an-agent-of-your-own).
+
+
 One engine — the essence engine — drives every surface. Pick the install path that matches what you're building — they all read the same `.imx` avatar file and produce identical frames.
 
 ### bitHuman CLI (no code)
