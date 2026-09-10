@@ -1,155 +1,121 @@
 ---
-title: "bitHuman CLI"
-description: "Two commands to a talking avatar on your own machine — install the binary, run it. macOS Apple Silicon and Linux x86_64, no account and no API key for the first frame."
+title: "CLI"
+description: "Install one binary and type `bithuman run` — a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64, no account and no key for the first frame. Offline MP4 render in one more command."
 section: sdk
 group: "Platforms"
 order: 10
 label: "CLI"
 ---
 
-## Two commands
+## Install
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-bithuman run
 ```
 
-That is the whole quickstart. The installer picks your platform, verifies the
-release's sha256 and drops one self-contained binary on your `PATH`.
-`bithuman run` with no arguments downloads the free **Wise Pup** avatar
-(`A23WJF0199`, an [`expression-2`](/concepts/expression-2) identity) and renders
-it live at `http://127.0.0.1:8088/`. **No account, no sign-in, no API key.**
+One self-contained binary on your `PATH`, sha256-verified against the release.
+On Apple Silicon `brew install bithuman-product/bithuman/bithuman-cli` installs
+the same tarball. Published for **macOS Apple Silicon** and **Linux x86_64**
+only; on an Intel Mac or a Linux ARM box the installer names the platform and
+exits 1 without downloading anything
+([exact output](/sdk/cli/reference#platforms-with-no-binary)).
 
-Run 2026-09-10 on Linux x86_64 and again on macOS 26.6.2 (Apple Silicon), from
-the published bytes, with no credential in the environment:
+## Get a model
 
-```text
-install: querying latest release...
-install: version: cli-v2.6.5
-install: verifying sha256...
-install: sha256 ok
-install: installed: libessence 3.1.0 ABI 7
-
-  ◆ first run — fetching the Wise Pup lane (A23WJF0199.imx, this platform only) …
-  fetched litert lane: 4 members, 63.6 MB (sha-verified)
-  ◆ expression-2 · 416x720 @20fps · warm 881 ms
-  ◆ expression-2 preview at http://127.0.0.1:8088/  (Ctrl-C to stop)
-```
-
-macOS fetches a smaller, CoreML slice of the same avatar — `12 members, 26.3 MB`
-— and renders it at the same 20 fps. That rate is
-[`expression-2`'s own frame rate](/concepts/expression-2), not a limit of this
-machine.
-
-> **On Apple Silicon, `brew install bithuman-product/bithuman/bithuman-cli`
-> installs the same release** — the formula points at the same tarball. The curl
-> line above is the one that works on both platforms, so it is the one this page
-> teaches.
-
-## Give it a voice
-
-`bithuman run` on its own renders. To make the avatar listen and answer, sign in
-once and add a conversation brain:
+Nothing to fetch for the first frame: `bithuman run` with no argument downloads
+the free **Wise Pup** avatar (`A23WJF0199`, an
+[Expression 2](/concepts/expression-2) identity) itself — the slice for this
+platform only, sha-verified. Twenty more showcase avatars download with no
+account:
 
 ```bash
-bithuman login          # opens your browser; the key lands in your OS keychain
-bithuman run
-# → open the printed http://127.0.0.1:8088/ URL, grant the mic, talk
+bithuman avatars                  # the showcase catalogue — slug, name, model
+bithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx
 ```
 
-`bithuman login` mints a per-device key so no other command needs
-`export BITHUMAN_API_SECRET` (that path still works for CI —
-[reference](/sdk/cli/reference#environment-variables)). The brain runs as a
-Python worker the binary launches; signing in gives you the managed one. To run
-the brain **entirely on your own hardware** instead — whisper.cpp, llama.cpp,
-Supertonic, no LLM or TTS vendor — see [local mode](/sdk/cli/local-mode).
-
-## Render a clip to a file
+Your own agent needs a sign-in once, then the same command:
 
 ```bash
-bithuman render <avatar-file> --audio speech.wav --output out.mp4
+bithuman login                    # opens your browser; the key lands in your OS keychain
+bithuman pull <YOUR_AGENT_CODE>   # prints the cached path; --model essence-2 picks a family
 ```
 
-Measured 2026-09-10 on Linux x86_64, against the public showcase identity
-`A08CCD3871.avatar` and a 13.87 s 16 kHz WAV: **exit 0, 278 frames at 20 fps,
-2.9 MB, 9.5 s of wall clock** — faster than real time.
+## Minimal code
 
-**`render` needs a credential and `run` does not, and that difference is
-deliberate.** With no key, `render` refuses before it opens the model —
-`exit 77`, no output file. A live `run` renders anyway behind a loud
-`★ UNMETERED RENDER` line, because a metering failure must never stop a live
-session. Both were re-run today. What a self-hosted session costs is on
-[pricing](/guides/pricing).
-
-## Twenty more avatars, still with no account
-
-The showcase catalogue lists **twenty** [Essence 2](/concepts/essence-2) and
-[Expression 2](/concepts/expression-2) identities whose weights anyone may
-download — no api-secret, no account — and the download costs their owner
-nothing:
+Two operations — there is no third:
 
 ```bash
-bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
-bithuman pull marmalade --manifest https://api.bithuman.ai/v1/models/showcase
+bithuman run                                                        # 1. live avatar in your browser
+bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4  # 2. offline: audio in, MP4 out
 ```
 
-Both re-run 2026-09-10 on Linux x86_64 with no credential in the environment:
-`list` printed twenty rows at exit 0, and `pull` printed
-`~/.cache/bithuman/showcase/marmalade.imx` at exit 0. `curl -s
-https://api.bithuman.ai/v1/models/showcase` is the same catalogue as JSON, and
-`curl -L "https://api.bithuman.ai/v1/agent/<CODE>/model/download" -o avatar.imx`
-fetches one directly — the endpoint 302s to a one-hour signed URL, so `-L` is
-all it takes.
+`run` takes a path too (`bithuman run "$(bithuman pull marmalade)"`); `render`
+needs a 16 kHz mono WAV — `curl -fsSLo speech.wav
+https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav`
+is one. `bithuman open <file>` prints what an avatar is before you render it.
 
-**The download is free; playing one is a self-hosted session and is
-[metered](/guides/pricing)** — the free tier covers it. That is the same
-`render`-refuses / `run`-warns split as above.
+## Run
 
-## Use your own avatar
+Open the printed `http://127.0.0.1:8088/`, grant the microphone, talk. Without
+a sign-in the avatar renders but does not answer; `bithuman login` adds the
+managed conversation brain, and [local mode](/sdk/cli/local-mode) runs the
+brain entirely on your own hardware instead — no LLM or TTS vendor.
 
-```bash
-bithuman login
-bithuman pull <YOUR_AGENT_CODE>       # prints the cached path on stdout
-bithuman run <path>
-```
+`run` and `render` differ on purpose: **`render` refuses without a credential**
+(exit 77, no output file) while a live `run` keeps rendering and prints
+`★ UNMETERED RENDER` if the meter cannot be reached, because a metering failure
+must never stop a live session. A self-hosted session is metered —
+[pricing](/guides/pricing) is the authority.
 
-`bithuman pull` is free and takes a showcase slug too — `bithuman pull
-modern-court-jester`. `bithuman list` browses the catalogue with no credential
-at all. To create an agent of your own, see [Agents](/api/agents).
+## Performance
+
+Measured 2026-09-10 from the published `cli-v2.6.5` bytes, unpaced (frames
+produced as fast as the engine can, not paced to playback):
+
+| Device | Model | fps (unpaced) | Notes |
+|---|---|---:|---|
+| Apple Silicon, macOS 26.6.2, CoreML on the Neural Engine | Expression 2 (Wise Pup) | 54–69 | 32-frame chunks in 465–594 ms; the model plays at 20 fps |
+| Linux x86_64, 24 cores, LiteRT on CPU | Expression 2 (showcase `A08CCD3871`) | 29 | `render`: 278 frames of a 13.87 s clip in 9.5 s of whole-process wall clock |
+| either | Essence 2 | below real time on CPU | renders locally since 2.6.1; plan an offline `render`, not a live CPU session |
+
+The first Essence 2 render on a machine fetches one shared audio encoder
+(~377 MB, by content digest, once) into `~/.bithuman/engines/essence-2/`.
 
 ## What renders locally, and where
 
-| Platform | `expression-2` | `essence-2` | `essence-1` |
-| --- | --- | --- | --- |
-| **macOS (Apple Silicon)** | Yes — CoreML | Yes (2.6.1+) | Yes, live only |
-| **Linux x86_64** | Yes — LiteRT on CPU | Yes (2.6.1+) | Yes, live only |
+| Platform | Expression 2 | Essence 2 | Essence 1 |
+|---|---|---|---|
+| **macOS Apple Silicon** | yes — CoreML | yes (2.6.1+) | live only |
+| **Linux x86_64** | yes — LiteRT on CPU | yes (2.6.1+) | live only |
 
-Those are the only two targets with a published binary; an Intel Mac or a Linux
-ARM box has none, and the installer says so and exits 1 rather than downloading
-anything — [the exact output](/sdk/cli/reference#platforms-with-no-binary).
-`bithuman render` on an `essence-1` avatar still exits 70; use the
-[Video API](/api/video) for that family.
-[`essence-2-max`](/concepts/essence-2-max) and
-[`expression-1`](/concepts/expression-1) are GPU-only by design and serve
-through the [cloud API](/api/overview).
+Those are the only two targets with a published binary. `render` on an Essence 1
+avatar exits 70 — use the [Video API](/api/video) for that family;
+[Essence 2 Max](/concepts/essence-2-max) and
+[Expression 1](/concepts/expression-1) are GPU-only by design and serve through
+the [cloud API](/api/overview).
 
-The first `essence-2` render on a machine fetches one shared audio encoder
-(~377 MB, by content digest, once) into `~/.bithuman/engines/essence-2/`.
-Nothing to stage by hand.
+## Troubleshooting
 
-## Check the install
+| You see | It means | Do this |
+|---|---|---|
+| the installer names your platform and exits 1 | no binary for an Intel Mac or Linux ARM | the [web](/sdk/web), the [cloud API](/api/overview), or the Linux x86_64 binary in a container |
+| `render` exits 77, no output file | no credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
+| `pull <CODE>` exits 77 | your agent code, but no sign-in | `bithuman login`, then pull again |
+| `pull <CODE>` exits 66 with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman avatars` lists the public ones |
+| `pull <CODE>` exits 66 with `409 MODEL_NOT_GENERATED` | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), or `--model` the family it was created with |
+| `pull <CODE>` exits 66 with `MODEL_ARTIFACT_NOT_READY` | trained, not yet published to the download store | poll: run the same `pull` again in a minute |
+| `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman avatars` and copy a slug from it |
+| `render` exits 70 on an `.imx` | an Essence 1 avatar — the CLI renders that family live only | `bithuman run <file>`, or the [Video API](/api/video) |
+| `bithuman doctor` exits 1 | no credential and no brain configured yet — the check working | `bithuman login`; `run`, `pull` and `render` of a showcase file never needed it |
 
-```bash
-bithuman doctor
-```
+Every failure prints one JSON object to stderr and a
+[stable exit code](/sdk/cli/reference#exit-codes); branch on the code, not the
+text.
 
-`doctor` reports the binary, the host, the credential and the brain. **It exits
-1 until both a credential and a brain are configured** — that is the check
-working, not a broken install. Rendering and pulling do not need either.
+## See also
 
-## Next
-
-- [CLI reference](/sdk/cli/reference) — every command, every flag, every environment variable, every exit code
-- [Local mode](/sdk/cli/local-mode) — the conversation brain, fully on-device
-- [Verified transcript](/sdk/cli/reference) — each command re-run on a clean host with its real exit code, including the failure arms
-- [Python SDK](/sdk/python) — the same engine, in your own process
+- [CLI reference](/sdk/cli/reference) — every command, flag, exit code and environment variable
+- [Local mode](/sdk/cli/local-mode) — the conversation brain fully on-device
+- [macOS](/sdk/macos) — the same binary through Homebrew, and the native Swift package
+- [Python](/sdk/python) — the same engines as a library
+- [SDK](/sdk) — every platform on one table

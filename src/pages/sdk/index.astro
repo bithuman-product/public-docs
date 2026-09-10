@@ -11,7 +11,7 @@ const rows = [
     sub: "macOS Apple Silicon · Linux x86_64",
     href: "/sdk/cli",
     install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
-    code: "bithuman run            # free avatar, no account\nbithuman render wise-pup.imx -a speech.wav -o out.mp4",
+    code: "bithuman run                       # the free Wise Pup avatar, no account\nbithuman render \"$(bithuman pull marmalade)\" -a speech.wav -o out.mp4",
     run: "open http://127.0.0.1:8088/",
     key: "No",
   },

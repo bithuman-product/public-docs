@@ -16,7 +16,7 @@ version and the install line.
 
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
-| **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
+| **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#environment) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
 | **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli) | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/reference). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
 | **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07. Sessions are [metered](#the-cli-meters-a-self-hosted-session) as of 2.6.2, on wall-clock as of 2.6.3 |
 | **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 3.0.0 | Works; same note as Linux |
@@ -125,7 +125,7 @@ remainder carries to your next session, so a single 92 s session bills 2 and a
 > is kept as it ran. On **3.0.0** the same route is spelled `bithuman.offline`
 > with the `bithuman[offline]` extra — the 2.x spellings below still work with
 > a `DeprecationWarning` until 4.0.0 — and the audio encoder step is no
-> longer yours: it is [fetched and digest-checked for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you).
+> longer yours: it is [fetched and digest-checked for you](/sdk/python#environment).
 > The two-call surface (`bithuman.open` / `avatar.render`) is on the
 > [Python SDK page](/sdk/python).
 
