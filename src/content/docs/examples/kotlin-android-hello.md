@@ -167,7 +167,7 @@ Every file is complete. Nothing is elided, and nothing else is needed.
 repositories and `aapt2` is published only on Google's Maven; with `mavenCentral()`
 alone this project configures, compiles Kotlin, and then dies at
 `:app:processDebugResources` with `Could not find com.android.tools.build:aapt2`.
-That has nothing to do with bitHuman — [the SDK page](/sdk/android#install--the-minimal-build-that-works)
+That has nothing to do with bitHuman — [the SDK page](/sdk/android#three-steps)
 has the transcript.
 
 ```kotlin

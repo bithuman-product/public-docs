@@ -10,21 +10,22 @@ order: 9
 
 Self-hosting means the render happens on your machine. Not every platform is at
 the same place, and this page says which is which rather than averaging them
-into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-07 on
-`cli-v2.6.3`.
+into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-10 on the current
+release, **`cli-v2.6.5`** — [the CLI page](/sdk/cli) is the one writer for the
+version and the install line.
 
 | Your platform | What renders locally | Surface | State |
 |---|---|---|---|
 | **Linux x86_64 / aarch64** | [Essence 2](/concepts/essence-2) — offline CPU render of a whole audio clip | [Python SDK](/sdk/python) `bithuman` 3.0.0 | Works; the shared audio encoder is [fetched for you](/sdk/python#the-shared-audio-encoder-is-fetched-for-you) as of 3.0.0 (the 2.10.0 transcript below still asks you for it) |
-| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli/overview) 2.6.3 | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
-| **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI 2.6.3 via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07. Sessions are [metered](#the-cli-meters-a-self-hosted-session) as of 2.6.2, on wall-clock as of 2.6.3 |
+| **Linux x86_64** | [Expression 2](/concepts/expression-2) and, as of 2.6.1, [Essence 2](/concepts/essence-2) — live and offline render | [CLI](/sdk/cli) | Both runtimes ship in the CLI — what renders and what exits non-zero: [what the CLI actually does](/sdk/cli/verified). Sessions are [metered](#the-cli-meters-a-self-hosted-session) |
+| **macOS Apple Silicon** | Expression 2 and, as of 2.6.1, Essence 2 — live and offline render | CLI via Homebrew | Works; the Essence 2 flow was run from the published tarball on a Mac on 2026-09-07. Sessions are [metered](#the-cli-meters-a-self-hosted-session) as of 2.6.2, on wall-clock as of 2.6.3 |
 | **macOS Apple Silicon** | Essence 2 — offline CPU render | Python SDK 3.0.0 | Works; same note as Linux |
-| **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/swift) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
+| **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/ios) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
 | **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
 | **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#getting-a-model-onto-the-device)) |
-| **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/swift#essence-2-on-device) `Essence2` (package 2.11.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published. ★ **Not consumable on a phone yet:** the model the download endpoint returns is not a package this engine opens (measured 2026-09-09), and the engine refuses every iPhone below an iPhone 16 Pro. On a Mac, use the Python wheel below |
+| **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/ios#essence-2-on-device) `Essence2` (package 2.11.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published. ★ **Not consumable on a phone yet:** the model the download endpoint returns is not a package this engine opens (measured 2026-09-09), and the engine refuses every iPhone below an iPhone 16 Pro. On a Mac, use the Python wheel below |
 
 Two things to settle before you pick a platform:
 
@@ -90,7 +91,7 @@ platform, and no session was metered on macOS. Downloading a model with
   Before 2.6.4 a rejected key rendered on indefinitely behind the loud line.
   The same rule and the same number apply to the
   [Python package](/sdk/python#the-four-refusals), the
-  [Apple engine](/sdk/swift#essence-2-on-device) and the
+  [Apple engine](/sdk/ios#essence-2-on-device) and the
   [Android SDK](/sdk/android#metering); the [pricing page](/guides/pricing)
   is the authority for what is billed.
 - Sign in with `bithuman login` or set `BITHUMAN_API_SECRET` so the session
@@ -295,7 +296,7 @@ CLI never substitutes a generated mouth. `bithuman info <file>` lists an
 artifact's members if you want to see what you were handed. Each command's
 real exit code is on [what the CLI actually does](/sdk/cli/verified); Linux
 aarch64 is **not** published for `cli-v2.6.3` — see
-[installing the CLI](/sdk/cli/install).
+[installing the CLI](/sdk/cli).
 
 ---
 
@@ -309,8 +310,9 @@ brew install bithuman-cli
 bithuman doctor
 ```
 
-macOS 14+ on Apple Silicon (arm64). This installs **CLI 2.6.3**, **signed with
-a Developer ID certificate under the hardened runtime** and notarized by Apple,
+macOS 14+ on Apple Silicon (arm64). This installs the current CLI release
+([which version that is](/sdk/cli/reference#version)), **signed with a
+Developer ID certificate under the hardened runtime** and notarized by Apple,
 as every macOS release since 2.5.0 has been. That matters if you download the
 tarball directly rather than through Homebrew: every build up to and including
 2.4.2 was ad-hoc signed, so a browser-downloaded copy was quarantined and macOS
@@ -411,7 +413,7 @@ different rail with no supported way to convert it. Ask us:
 **There is no TestFlight or App Store build**, and iOS support is not promoted
 past compiles-only. Treat iOS as proven-capable and unshipped.
 
-The [increased-memory entitlement is mandatory](/sdk/swift#permissions--entitlements)
+The [increased-memory entitlement is mandatory](/sdk/ios#permissions--entitlements)
 on iOS — without it the OS kills your app mid-conversation. Request it before
 you start; Apple takes 1–3 business days.
 

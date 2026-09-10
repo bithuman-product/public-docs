@@ -2,68 +2,80 @@
 title: "Python SDK"
 description: "On-device avatar rendering for Python — pip install bithuman. Two calls, eight names: open an avatar, render audio through it. essence-2 and expression-2 on your own machine, macOS arm64 + Linux x86_64 / aarch64."
 section: sdk
-group: "Languages"
-order: 10
+group: "Platforms"
+order: 20
+label: "Python"
 ---
 
-## Overview
-
-`bithuman` runs a bitHuman avatar on your own machine, in your own process.
-Audio in (16 kHz mono), RGB frames out, at the avatar's own frame rate. The
-runtime and every native dependency ship in the wheel — no compile step. This
-SDK is **GA**.
-
-**3.0.0 is a clean break from 2.x.** Thirty-two public names became eight,
-fourteen error classes became four, and the same two calls open and render an
-[essence-2](/concepts/essence-2) avatar and an
-[expression-2](/concepts/expression-2) avatar alike. If you are on 2.10.0 and
-do not want to move, `pip install "bithuman<3"` is a complete, permanent
-answer — 2.10.0 stays on PyPI and keeps resolving exactly as it does today.
-Everything that changed is in [Coming from 2.10.0](#coming-from-2100).
-
-```python
-import bithuman
-
-avatar = bithuman.open("wise-pup.avatar")     # essence-2 or expression-2 — the same call
-for image in avatar.render("demo_sample.wav"):  # (height, width, 3) uint8, RGB
-    show(image)
-```
-
-That is the whole thing: **open an avatar, then render audio through it.**
-
-### Run it now, on an avatar you can download
-
-**Wise Pup** is a free [expression-2](/concepts/expression-2) avatar bitHuman
-publishes for exactly this. The download needs no account; the render needs
-your API secret, because every render on your own machine is metered the same
-way a cloud one is.
+## Four commands
 
 ```bash
 pip install "bithuman[expression-2]"
-curl -fsSL -o wise-pup.avatar https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/A23WJF0199.avatar
-curl -fsSL -o demo_sample.wav https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav
-export BITHUMAN_API_SECRET=...      # https://www.bithuman.ai/developer/api-keys
-python - <<'EOF'
-import time, bithuman
-avatar = bithuman.open("wise-pup.avatar")
-n, t0 = 0, time.time()
-for image in avatar.render("demo_sample.wav"):
-    n += 1
-print(f"frames={n} fps={n/(time.time()-t0):.2f} shape={image.shape}")
-EOF
+
+PUB=https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase
+curl -fsSLo wise-pup.avatar "$PUB/A23WJF0199.avatar"      # a free avatar, no account
+curl -fsSLo demo_sample.wav "$PUB/demo_sample.wav"
+
+export BITHUMAN_API_SECRET=...        # free at Developer -> API Keys
+python hello.py
 ```
 
-Measured on a 24-core Linux x86_64 box, 2026-09-10, from a clean `pip install`
-of 3.0.4: `frames=309 fps=24.17 shape=(720, 416, 3)` — expression-2 renders
-faster than its own 20 fps playback rate on CPU. **Essence 2 does not**: the
-same two calls on an essence-2 `.imx` measured **0.92 fps** on that machine, so
-plan essence-2 on CPU as an offline render, not a live one.
+`hello.py` is four lines:
 
-Download `wise-pup.avatar`, not `wise-pup.imx`. Both are the same identity, but
-the `.imx` is the CLI's two-artifact form: it carries only the per-identity
-half and reads the shared encoder out of the engine cache that
-[the CLI installer](/sdk/cli/install) populates. This package ships no such
-cache, so it opens the self-contained `.avatar`.
+```python
+# hello.py — open an avatar, render a clip through it
+import bithuman
+
+with bithuman.open("wise-pup.avatar") as avatar:      # essence or expression — one call
+    for image in avatar.render("demo_sample.wav"):    # (height, width, 3) uint8, RGB
+        print(image.shape)
+```
+
+That is the whole SDK: **open an avatar, render audio through it.** Run
+2026-09-10 on a 24-core Linux x86_64 box, Python 3.14, clean virtualenv, against
+that day's release `bithuman 3.1.0`:
+
+```text
+frames=309  shape=(720, 416, 3)  — 309 frames in 12.1 s of wall clock
+```
+
+**Wise Pup** is a free [expression-2](/concepts/expression-2) identity bitHuman
+publishes for exactly this: the download needs no account, and the file is
+self-contained. Download the `.avatar`, **not** the `.imx` — both are the same
+identity, but the `.imx` is the CLI's two-artifact form and reads the shared
+encoder out of a cache the [CLI installer](/sdk/cli) populates. This package
+ships no such cache.
+
+**The download is free; the render is metered.** With no
+`BITHUMAN_API_SECRET` the same program refuses before the first frame —
+`bithuman._errors.Failed: the render stopped`, 0 frames, exit 1 (re-measured
+the same day). Set the key first; the free tier is enough.
+
+The program prints a shape per frame and displays nothing — that is the minimal
+loop, by design. Hand each `image` to whatever shows pictures on your machine;
+`cv2.imshow("avatar", image[:, :, ::-1])` is one way, and the slice is there
+because OpenCV wants BGR while these frames are RGB.
+
+### Twenty avatars you can download with no credential
+
+You do not need an agent of your own to hold a second-generation model. The
+showcase catalogue lists **twenty** Essence 2 / Expression 2 identities whose
+weights anyone may download, and the download costs their owner nothing:
+
+```bash
+curl -s https://api.bithuman.ai/v1/models/showcase        # 20 entries, HTTP 200, no credential
+curl -L "https://api.bithuman.ai/v1/agent/<CODE>/model/download" -o avatar.imx
+```
+
+Re-measured 2026-09-10 with nothing in the environment: `200`, twenty rows.
+The [CLI](/sdk/cli) browses and fetches the same set —
+`bithuman list --manifest https://api.bithuman.ai/v1/models/showcase`, then
+`bithuman pull <slug> --manifest …`.
+
+An `essence-1` showcase avatar also still works with the identical program:
+`curl -L https://models.bithuman.ai/showcase/modern-court-jester.imx -o
+avatar.imx` rendered **342 frames from 13.87 s of audio in 3.44 s** on the same
+box, the same day.
 
 ## Install
 
@@ -71,38 +83,49 @@ cache, so it opens the self-contained `.avatar`.
 pip install bithuman
 ```
 
-**Python 3.10–3.14.** Platforms: Apple Silicon macOS (macOS 14 or newer),
-Linux x86_64 and Linux aarch64 (`manylinux_2_28`, glibc) — **15 wheels**,
-every platform on every supported interpreter, all uploaded together on
-2026-09-07 (read from PyPI that day, anonymously). Windows and Intel Macs are
-not built; pin `bithuman>=3` so the resolver has to say no out loud rather
-than hand you an older release.
+**Python 3.10–3.14.** Apple Silicon macOS (macOS 14 or newer), Linux x86_64 and
+Linux aarch64 (`manylinux_2_28`, glibc). Windows and Intel Macs are not built;
+pin `bithuman>=3` so the resolver says no out loud rather than handing you a 2.x
+release.
 
 Two optional extras, installed once on the machine:
 
 ```bash
 pip install "bithuman[expression-2]"   # to open an expression-2 avatar
-pip install "bithuman[offline]"        # the essence-2 offline render route (torch, onnx, onnxruntime)
+pip install "bithuman[offline]"        # the essence-2 clip-to-file route (torch, onnx, onnxruntime)
 ```
 
-Open an expression-2 avatar without the first and the refusal says so, and
-says that line. The second is what the 2.x releases spelled `bithuman[tessera]`
-— that spelling still installs the same three packages until 4.0.0, and is a
-deprecated alias. Install the CPU build of `torch` first if this machine has no
-GPU, or the extra pulls in the CUDA stack that this route never touches.
+Open an `expression-2` avatar without the first and the refusal names that
+line. The second is what 2.x spelled `bithuman[tessera]`, a deprecated alias
+that installs the same three packages until 4.0.0. Install the CPU build of
+`torch` first if this machine has no GPU, or the extra pulls in a CUDA stack
+this route never touches.
 
-`ffmpeg` must be on your `PATH` to read an audio *file* or to prepare an avatar
-for its first run. Pass 16 kHz mono samples and it is not needed.
+`ffmpeg` must be on your `PATH` to read an audio *file*, or to prepare an avatar
+for its first run. Pass 16 kHz mono samples instead and it is not needed.
 
-> **Note** `pip install bithuman` puts **no command on your `PATH`**. The
-> `bithuman` command-line tool is a separate artifact —
-> [install it](/sdk/cli/install) with Homebrew or the universal installer.
-> That is an invariant, not an accident: a pip-installed command named
-> `bithuman` would overwrite the one Homebrew put at the same path.
+> **`pip install bithuman` puts no command on your `PATH`.** The `bithuman`
+> command-line tool is a [separate artifact](/sdk/cli). That is an invariant,
+> not an accident: a pip-installed command named `bithuman` would overwrite the
+> one the installer put at the same path.
 
-Auth: export `BITHUMAN_API_SECRET`. Get a secret at [Developer → API
-Keys](https://www.bithuman.ai/developer/api-keys). The key lives in the
+Auth: export `BITHUMAN_API_SECRET`, free at [Developer → API
+Keys](https://www.bithuman.ai/developer/api-keys). The key is read from the
 environment and only there — there is no `api_secret=` argument any more.
+
+**Where to get an avatar file.** Any showcase avatar is a plain anonymous
+download, as above. Your own agent's file comes from
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) or
+`bithuman pull <CODE>`; an `essence-2` file arrives as `<code>.lebundle.imx`,
+a [legacy name kept for
+compatibility](/concepts/avatars-imx#second-generation-artifacts) in the
+filename only — the model is `essence-2`.
+
+> **3.0.0 was a clean break from 2.x.** Thirty-two public names became eight and
+> fourteen error classes became four. If you are on 2.10.0 and do not want to
+> move, `pip install "bithuman<3"` is a complete and permanent answer — 2.10.0
+> stays on PyPI. Everything that changed is in [Coming from
+> 2.10.0](#coming-from-2100).
 
 ## The surface — eight names
 
@@ -126,7 +149,7 @@ execution provider, no thread count, no delegate.
 `audio` is 16 kHz mono, and it is either a buffer or a stream — the same call:
 
 ```python
-avatar.render("hello.wav")                 # an audio file (needs ffmpeg on PATH)
+avatar.render("demo_sample.wav")                 # an audio file (needs ffmpeg on PATH)
 avatar.render(samples)                     # int16, or float32 in [-1, 1]
 avatar.render(raw_bytes)                   # 16 kHz mono, signed 16-bit little-endian
 avatar.render(microphone())                # any iterable of the above — a live conversation and a file are the same program
@@ -143,7 +166,7 @@ spellings of it.
 
 ```python
 import cv2
-for image in avatar.render("hello.wav"):
+for image in avatar.render("demo_sample.wav"):
     cv2.imshow("avatar", image[:, :, ::-1])   # OpenCV wants BGR
     cv2.waitKey(1)
 ```
@@ -215,7 +238,7 @@ gone.
   published 3.0.0 wheel a showcase essence-1 avatar opened fine and then
   refused the first `render` with **`Failed: the render stopped`** — no frame
   was delivered, but the message did not name the key
-  ([the run](#measured-on-the-published-wheel)). Catch `AvatarError` around
+  (re-measured 2026-09-10). Catch `AvatarError` around
   the first render and check the key before you read the class. To tell a
   good key from a bad one without a render — this endpoint always answers
   HTTP `200`, so read the body:
@@ -240,40 +263,6 @@ gone.
   frame instead. The same rule applies to every self-hosted runtime;
   [pricing](/guides/pricing) is the authority for what is billed.
 
-## Measured on the published wheel
-
-Run on 2026-09-07, minutes after the 3.0.0 wheels reached PyPI: a clean
-virtualenv on Linux x86_64 / Python 3.14.4, `pip install bithuman==3.0.0`
-(it resolved `bithuman-3.0.0-cp314-cp314-manylinux_2_28_x86_64.whl`), no
-`BITHUMAN_API_SECRET` in the environment, and the public showcase avatar
-`modern-court-jester.imx` (82,583,342 B, fetched anonymously). Output pasted
-as printed, with the working directory elided:
-
-```text
-version: 3.0.0
-__all__: ['open', 'Avatar', 'AvatarError', 'InvalidAvatar', 'NotSupported', 'NotAuthorised', 'Failed']
-has __version__: False
---- from bithuman import AsyncBithuman
-_Retired: `bithuman.AsyncBithuman` was removed in 3.0.0: open an avatar with `bithuman.open(avatar)` and render audio through it with `avatar.render(audio)`. To keep the old surface, pin `bithuman<3`.
---- import bithuman.tessera_offline
-DeprecationWarning: bithuman.tessera_offline is deprecated since 3.0.0 and will be removed in 4.0.0: import bithuman.offline instead (OfflineTesseraRenderer is now OfflineRenderer, TesseraOfflineError is now OfflineRenderError; …)
---- bithuman.open('does-not-exist.imx')
-InvalidAvatar: no avatar at does-not-exist.imx
---- bithuman.open('avatar.imx') then render with no BITHUMAN_API_SECRET
-opened: Avatar
-Failed: the render stopped
-```
-
-Exit code `0` (every refusal was caught). Three things that run settles:
-the surface really is the seven exported names plus `Avatar.render`; a 2.x
-name does not silently vanish — it refuses with the two lines to write
-instead; and with no key, **no frame is delivered**. The warning's last clause,
-elided above, names a `stats` key that is engine telemetry. The wheel's
-`METADATA` declares `Requires-Python: <3.15,>=3.10` and the extras `test`,
-`offline`, `expression-2` and the deprecated 2.x alias `bithuman[tessera]`, and
-its dependency module pins the shared audio encoder to the release coordinate
-and digest given below.
-
 ## Which avatars open
 
 | Family | `bithuman.open` | Notes |
@@ -297,7 +286,7 @@ Every essence-2 avatar reads one shared, identity-agnostic audio encoder — a
 ~377 MB file that is not in the avatar and not in the wheel. Through 2.10.0
 you had to ask us for it. **3.0.0 downloads it once per machine on first
 use**, from a public release coordinate that needs no credential (the same
-one the [CLI](/sdk/cli/overview) 2.6.0 and later fetch from), and **verifies its
+one the [CLI](/sdk/cli) 2.6.0 and later fetch from), and **verifies its
 SHA-256** — `95c35c860be3f00c…`, 377,625,424 bytes — before using it. A copy
 that does not match is refused rather than reused.
 
@@ -340,12 +329,12 @@ old module still works and raises one `DeprecationWarning` naming the new
 spellings, and both are removed in 4.0.0. The `BITHUMAN_TESSERA_*` environment
 keys are read forever beside their `BITHUMAN_OFFLINE_*` twins.
 
-**Throughput is a property of your identity and your box, not a number to
-plan against.** On 2.10.0 the measured run on this site's reference machine
-reported 5.4–6.4 fps for a 1080×1920 identity under load
-([the run](/guides/self-host-local#4-render)); measure your
-own identity on your own hardware and compare against 25 to know whether you
-render faster or slower than real time.
+**Throughput is a property of your identity and your box, not a number to plan
+against.** `essence-1` and `expression-2` both rendered faster than real time on
+the reference box above. `essence-2` on CPU is **much slower than real time and
+is being re-measured**, so this page publishes no figure for it: treat
+`essence-2` on a CPU as an offline render, never as a live one, and measure your
+own identity on your own hardware before you plan around it.
 
 ## Environment
 
@@ -448,9 +437,9 @@ See [local mode](/sdk/cli/local-mode).
 - **Python 3.10–3.14** (cp310–cp314 wheels ship for every supported platform).
 - Apple Silicon macOS, or Linux x86_64 / aarch64 on glibc (`manylinux_2_28`).
   Alpine / musl is not supported — use a glibc image such as `python:*-slim`.
-- essence-1: any modern CPU, 4 GB RAM. essence-2 and expression-2 render on
-  CPU too; expect a slower-than-real-time clip render on a laptop, and read the
-  throughput note above before you plan a product around it.
+- `essence-1`: any modern CPU, 4 GB RAM. `essence-2` and `expression-2` render
+  on CPU too, more slowly; read the throughput note above before you plan a
+  product around it.
 
 ## Troubleshooting
 
@@ -501,4 +490,4 @@ prepares the avatar. Both are kept — `BITHUMAN_DEPS_DIR` and
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and where each runs
 - [Run a model on your own hardware](/guides/self-host-local) — the same route per platform, plus macOS, Android and iOS
 - [LiveKit](/sdk/livekit) — WebRTC voice agents with a face
-- [CLI](/sdk/cli/overview) — no-code render and live chat
+- [CLI](/sdk/cli) — the same engine, no code

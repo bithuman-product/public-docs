@@ -20,7 +20,7 @@ order: 13
 > file printed in full:
 > [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2).
 > Its limits are stated with the measurement on
-> [Expression 2 on-device](/sdk/swift#expression-2-on-device).
+> [Expression 2 on-device](/sdk/ios#expression-2-on-device).
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ order: 13
 >
 > ★ **Corrected 2026-09-06 — this is not an Apple build of `expression-1`.** This note used to say *"iPhone Expression 1 (this example) is preview … on-device validation of that engine is still in progress"*, which read as if an Apple port of the [`expression-1`](/concepts/expression-1) model were on its way. It is not: `expression-1` is **GPU-only** and has no macOS, iPadOS or iOS build ([where each model runs](/concepts/where-models-run)). What `bitHumanKit` bundles is the umbrella's own on-device engine, reached through the `VoiceChat` / `AvatarConfig` API below.
 >
-> The package also vends **`Expression2`** — a separate product and a separate engine ([`expression-2`](/concepts/expression-2)) — which *has* rendered on an iPhone. As of **2.6.0** it takes a model path and can open the `<code>.avatar` you download for your own agent; it still ships no weights of its own. This example does not use it: see [Expression 2 on-device](/sdk/swift#expression-2-on-device). Since **2.7.0** it also vends **`Essence2`**, the [`essence-2`](/concepts/essence-2) engine's C interface, which builds for iOS device, iOS simulator and macOS but has no in-app model download route yet: [Essence 2 on-device](/sdk/swift#essence-2-on-device).
+> The package also vends **`Expression2`** — a separate product and a separate engine ([`expression-2`](/concepts/expression-2)) — which *has* rendered on an iPhone. As of **2.6.0** it takes a model path and can open the `<code>.avatar` you download for your own agent; it still ships no weights of its own. This example does not use it: see [Expression 2 on-device](/sdk/ios#expression-2-on-device). Since **2.7.0** it also vends **`Essence2`**, the [`essence-2`](/concepts/essence-2) engine's C interface, which builds for iOS device, iOS simulator and macOS but has no in-app model download route yet: [Essence 2 on-device](/sdk/ios#essence-2-on-device).
 
 ## Run it
 
@@ -137,7 +137,7 @@ Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree
 ## Next steps
 
 - [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — the same goal without the device floor, the entitlements or the 1.6 GB download.
-- [Swift SDK](/sdk/swift) — the full Apple SDK reference.
+- [Swift SDK](/sdk/ios) — the full Apple SDK reference.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain.
 - [macos-voice example](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.

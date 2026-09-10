@@ -221,7 +221,7 @@ Two different things, and only one of them exists today.
 can host yourself is published as static files — no npm, no bundler, no account.
 It is **frames-driven**: you supply per-frame keypoints, it renders faces, and
 the audio→keypoints stage is not in the package. See
-[Browser runtime (WebAssembly)](/sdk/wasm) for `createAvatar` and the rest of
+[Browser runtime (WebAssembly)](/sdk/browser) for `createAvatar` and the rest of
 the API.
 
 **A JS/TS SDK that wraps a full hosted session is not.** `@bithuman/sdk` — the
@@ -236,7 +236,7 @@ rendering-mode parameter. Track it in
 
 - [WebGPU and local browser rendering](/guides/browser-webgpu) — measured WebGPU vs WASM frame rates, the standalone runtime you can self-host, which identities have a published web bundle, and what a browser session does and does not meter.
 - [Browser — check before you ship](/examples/browser-webgpu-check) — three runnable preflights, each with a deliberately broken control arm: bundle integrity, the real-WebGPU probe, and the execution-provider benchmark.
-- [Browser runtime (WebAssembly)](/sdk/wasm) — the published runtime's API surface.
+- [Browser runtime (WebAssembly)](/sdk/browser) — the published runtime's API surface.
 - [Architecture](/concepts/architecture) — how the essence engine powers every renderer.
 - [Audio streaming](/concepts/audio-streaming) — the same push/drain pattern the WASM pipeline mirrors.
 - [Deploy embed](/guides/deploy-embed) — drop a hosted avatar onto any page.

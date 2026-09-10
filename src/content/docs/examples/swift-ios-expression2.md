@@ -36,7 +36,7 @@ built with Xcode 26.3 on macOS 26.6.2, on **2026-09-09**.
 product builds, links and starts on an iPhone, and then refuses the only model
 you can download for it, on **every** Apple device including an iPhone 16 Pro.
 The measurement and the exact refusal are on
-[Essence 2 on-device](/sdk/swift#essence-2-on-device). Do not spend an afternoon
+[Essence 2 on-device](/sdk/ios#essence-2-on-device). Do not spend an afternoon
 on it; use `expression-2`, which is what this page is.
 
 ## Prerequisites
@@ -46,7 +46,7 @@ on it; use `expression-2`, which is what this page is.
 - **An Apple Developer team**, and an iPhone or iPad you have paired and
   trusted. Everything here is a *device* build — see
   [Signing](#5-sign-it-and-run-it-on-the-phone) below, and the fuller
-  [signing section](/sdk/swift#signing-before-any-of-the-above-runs-on-a-phone)
+  [signing section](/sdk/ios#signing-before-any-of-the-above-runs-on-a-phone)
   on the SDK page.
 - **An identity to render.** You have two routes, and only one of them costs
   anything:
@@ -131,23 +131,27 @@ curl -s -o /dev/null -w '%{http_code}\n' \
 
 ## Run it
 
-If you would rather clone than paste, the same app is a directory in the
-package repository, with the setup script below already in it:
+**Copy this page.** Everything below is the whole app — the Xcode settings,
+`Info.plist`, all of `App.swift`, and the `setup.sh` that fetches the three
+files the engine needs. Create an empty SwiftUI project, paste them in, and
+press Run.
+
+There is a directory in the package repository with the same Xcode target in
+it, and you can clone it for the project file:
 
 ```bash
 git clone https://github.com/bithuman-product/homebrew-bithuman.git
 cd homebrew-bithuman/Examples/swift/ios-expression2
-BITHUMAN_API_SECRET=… ./setup.sh <YOUR_AGENT_CODE>
 open IOSExpression2.xcodeproj
 ```
 
-> ★ **The repository's `setup.sh` is still the Route B one, today.** The
-> keyless version is the script printed below on this page; the copy in
-> `bithuman-product/homebrew-bithuman` still requires
-> `BITHUMAN_API_SECRET` and an agent code of your own, and will exit 2 without
-> them. Until the two are the same file, clone the project for the Xcode
-> target and paste the `setup.sh` from this page over the one in it — or just
-> run the three `curl`s yourself; there is nothing else in it.
+★ **But use the `setup.sh` printed on this page, not the one in that
+directory.** Re-checked 2026-09-10: the repository's copy is still the Route B
+script — it requires `BITHUMAN_API_SECRET` and an agent code of your own and
+exits 2 without them, so a keyless reader who clones and runs it gets a
+usage error rather than a frame. The version below needs neither. Paste it over
+the file in the clone, or just run its three `curl`s by hand; there is nothing
+else in it.
 
 Pick your team under **Signing & Capabilities**, select your iPhone, and press
 Run. Everything below is that same app, file by file, for building it yourself.
@@ -331,7 +335,7 @@ choose **Up to Next Major Version** from **2.11.0**, and attach the
 > **Do not attach `Expression2` and `Essence2` to the same app.** They carry
 > overlapping objects; a device build links with **116 duplicate symbols and
 > rc 1** at your app's final link, while the Simulator is green — which is how
-> a Simulator-only CI misses it. [Details](/sdk/swift#install).
+> a Simulator-only CI misses it. [Details](/sdk/ios#install).
 
 Finally, drag the `Model` folder from step 1 into the project and choose
 **Create folder references** (blue folder, not yellow group). The app reads it
@@ -1026,7 +1030,7 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > readable. `security show-keychain-info ~/Library/Keychains/login.keychain-db`
 > tells you which state you are in — `User interaction is not allowed.` means
 > locked. The full list of signing traps is on
-> [the SDK page](/sdk/swift#signing-before-any-of-the-above-runs-on-a-phone).
+> [the SDK page](/sdk/ios#signing-before-any-of-the-above-runs-on-a-phone).
 
 ## What you'll see
 
@@ -1110,7 +1114,7 @@ Stated plainly, so nobody spends an afternoon finding out.
   iPhone 16 Pro floor is consulted, so an iPhone 16 Pro sees it too, and `rc`
   alone is not diagnostic — a path that does not exist returns the same `-2`.
   The verbatim message and both control arms are on
-  [Essence 2 on-device](/sdk/swift#essence-2-on-device). Use `expression-2` on
+  [Essence 2 on-device](/sdk/ios#essence-2-on-device). Use `expression-2` on
   the device, or run essence-2 as a [cloud session](/api/runtime-sessions).
 - **The one-call container opener is broken on iOS.** Through `Expression2`
   2.11.2, `create(avatarContainer:…:stagingDir:)` refuses every published
@@ -1179,7 +1183,7 @@ You attached both `Expression2` and `Essence2`. Attach one.
 
 ## Next steps
 
-- [Swift SDK](/sdk/swift) — the reference for every call this page makes, plus signing, compute units and the hardware floor.
+- [Swift SDK](/sdk/ios) — the reference for every call this page makes, plus signing, compute units and the hardware floor.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — the full on-device voice agent, when you are ready for the device floor and the entitlements.
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — preflight the package and its checksums from any machine.
 - [Expression 2](/concepts/expression-2) — what the model is and where it runs.

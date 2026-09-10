@@ -10,12 +10,12 @@ order: 11
 
 The self-hosted GPU path runs the first-generation [Expression 1](/concepts/models) model on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams 25 fps lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. Bills at the self-hosted rate — 2 credits/min ([pricing](/guides/pricing)).
 
-> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli/overview) directly, or point the LiveKit plugin's `api_url` at your own Essence server.
+> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli) directly, or point the LiveKit plugin's `api_url` at your own Essence server.
 
 > ### Correction — 2026-09-06: there is no Apple-native path for Expression 1
 >
 > This note used to end *"On Apple Silicon M3+, Expression runs natively with no
-> Docker/NVIDIA — use the [Swift SDK](/sdk/swift)"*. **That was false and is
+> Docker/NVIDIA — use the [Swift SDK](/sdk/ios)"*. **That was false and is
 > removed rather than softened.** The published Swift package
 > ([`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
 > vends **exactly three products** — `bitHumanKit`, `BithumanEngineProtocol` and
@@ -24,7 +24,7 @@ The self-hosted GPU path runs the first-generation [Expression 1](/concepts/mode
 > `product 'Expression' ... not found in package 'homebrew-bithuman'`.
 >
 > The avatar engine you can attach on Apple Silicon is
-> [`Expression2`](/sdk/swift#expression-2-on-device) — **a different engine**
+> [`Expression2`](/sdk/ios#expression-2-on-device) — **a different engine**
 > (`expression-2`, not `expression-1`), and **code only**: it builds and runs,
 > but no model bundle is published in the form it loads. For **`expression-1`**
 > the supported self-hosted path is the NVIDIA container on this page; there is
@@ -198,18 +198,18 @@ Beyond `essence-2` offline CPU rendering, the rest of the second-generation
 matrix today:
 
 - **[`expression-2`](/concepts/expression-2)** renders locally via the
-  [CLI](/sdk/cli/overview#local-rendering-by-platform) — macOS (Apple
+  [CLI](/sdk/cli#what-renders-locally-and-where) — macOS (Apple
   Silicon) and Linux x86_64 — and on-device on Apple Silicon via the
-  [Swift SDK](/sdk/swift).
+  [Swift SDK](/sdk/ios).
 - **`essence-2` live streaming** (LiveKit-style sessions from your own
   server) is still served **through the cloud** — the streaming loader does
   not accept current cloud-form bundles yet (see the
   [Python SDK loader notes](/sdk/python#which-avatars-open)).
-- **Apple Silicon on-device** playback via the [Swift SDK](/sdk/swift) is
+- **Apple Silicon on-device** playback via the [Swift SDK](/sdk/ios) is
   engine-first on both second-generation models: the `Expression2` product
   (2.5.0+; a model-path API from 2.6.0) and, since 2.7.0, the `Essence2`
   product — a C interface with its resources published, but **no in-app
-  model download route yet** ([details](/sdk/swift#essence-2-on-device)).
+  model download route yet** ([details](/sdk/ios#essence-2-on-device)).
   The cloud's Apple tier for `essence-2` is bitHuman's own Apple Silicon,
   reached over the network like any other cloud tier.
 - [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU

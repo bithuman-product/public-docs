@@ -12,8 +12,8 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 
 | If you want to… | Start with | Language | Time |
 |---|---|---|---|
-| Try a talking avatar end-to-end, no code | [CLI — Hello, avatar](/examples/cli-hello) | CLI | ~2 min |
-| The smallest streaming loop in code | [Python — Hello, avatar](/examples/python-hello) | Python | ~5 min |
+| Try a talking avatar end-to-end, no code | [CLI — Hello, avatar](/sdk/cli) | CLI | ~2 min |
+| The smallest streaming loop in code | [Python — Hello, avatar](/sdk/python) | Python | ~5 min |
 | Call the platform from any language | [REST — Hello, avatar](/examples/rest-hello) | `curl` | ~5 min |
 | A talking avatar on the iPhone you already own | [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) | SwiftUI | ~25 min. **No account, no key, no credits** — it renders the public showcase identity `A08CCD3871` |
 | A talking voice assistant on a Mac/iPad/iPhone **16 Pro or later** | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min + Apple's 1–3 day entitlement wait |
@@ -22,18 +22,18 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 | Know whether the browser path will work before you ship it | [Browser — check before you ship](/examples/browser-webgpu-check) | bash / JS | ~5 min |
 | Know whether the Apple package will resolve before you open Xcode | [Apple — check before you ship](/examples/apple-swiftpm-check) | bash | ~5 min |
 
-> **Note** New here? The fastest end-to-end demo is the [CLI — Hello, avatar](/examples/cli-hello): one `brew install`, one command, a talking avatar in your browser. No code.
+> **Note** New here? The fastest end-to-end demo is the [CLI — Hello, avatar](/sdk/cli): one `brew install`, one command, a talking avatar in your browser. No code.
 
 ## No-code & smallest scripts
 
-- [CLI — Hello, avatar](/examples/cli-hello) — install, `bithuman doctor`, `bithuman run`. Full demo, zero code.
+- [CLI — Hello, avatar](/sdk/cli) — install, `bithuman doctor`, `bithuman run`. Full demo, zero code.
 - [quickstart project](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/quickstart) — the smallest scripted path: API key, a model, your first render. Auto-downloads a sample avatar on first run.
 
 ## Backend & voice agents — Python
 
 The streaming runtime and LiveKit voice agents. Each repo project ships an `.env.example`, `requirements.txt`, and a `docker compose` stack.
 
-- [Python — Hello, avatar](/examples/python-hello) — the minimal `AsyncBithuman` streaming loop, ~20 lines.
+- [Python — Hello, avatar](/sdk/python) — the minimal `AsyncBithuman` streaming loop, ~20 lines.
 - [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice in, lip-synced avatar out. No server.
 - [python/local-essence](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/local-essence) — Essence on your own CPU box. Ships `quickstart.py`, `microphone.py`, `conversation.py`, plus a web UI at `http://localhost:4202`.
 - [python/cloud-essence](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/cloud-essence) — Essence on bitHuman cloud + LiveKit + browser UI. Start here for production agents.

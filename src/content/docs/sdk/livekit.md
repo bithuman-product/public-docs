@@ -2,8 +2,9 @@
 title: "LiveKit integration"
 description: "Connect a native Apple app to a server-hosted avatar over WebRTC, or deploy a Python voice agent with a face — both via LiveKit."
 section: sdk
-group: "Real-time"
-order: 40
+group: "Reference"
+order: 80
+label: "LiveKit"
 ---
 
 ## Overview
@@ -233,13 +234,13 @@ the Python agent above — this client is the subscriber.
 
 | Your viewer is… | Use |
 |---|---|
-| A browser | The Python plugin + a web LiveKit client ([JS/TS SDK](/sdk/javascript) or LiveKit web) |
+| A browser | The Python plugin + a web LiveKit client ([JS/TS SDK](/sdk/browser#what-this-is-not) or LiveKit web) |
 | A native iOS/macOS app | The Python plugin (server) + `livekit/client-sdk-swift` (client) |
-| On-device only, no server | The native [Swift](/sdk/swift) SDK instead |
+| On-device only, no server | The native [Swift](/sdk/ios) SDK instead |
 
 ## See also
 
 - [SDK overview](/sdk) — on-device vs cloud
 - [Python SDK](/sdk/python) — the runtime the plugin wraps
-- [Swift SDK](/sdk/swift) — the on-device alternative for Apple
+- [Swift SDK](/sdk/ios) — the on-device alternative for Apple
 - [Pricing](/guides/pricing) — self-hosted vs cloud rates

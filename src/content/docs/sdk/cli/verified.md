@@ -2,9 +2,9 @@
 title: "Verified transcript — Linux x86_64"
 description: "Every command on this page was executed on a real Linux x86_64 box against CLI 2.6.4 for the install and version blocks, 2.6.1 for the rest (and 2.5.1 where the output has not changed) and the output pasted back unedited, including the exit codes that are not zero."
 section: sdk
-group: "Command line"
-order: 31.5
-label: "Verified transcript"
+group: "Reference"
+order: 74
+label: "CLI — verified transcript"
 ---
 
 ## What this page is
@@ -64,7 +64,7 @@ Everything below ran here. Timings are this box's; exit codes are not.
 
 ## Install
 
-The universal installer, unpinned, exactly as [Install](/sdk/cli/install)
+The universal installer, unpinned, exactly as [Install](/sdk/cli)
 prints it. Run 2026-09-07 into a fresh home directory:
 
 ```bash
@@ -173,7 +173,7 @@ rc=1
 
 Both exit **1**, before any download starts. The full platform picture, counted
 from the release assets, is on
-[Install](/sdk/cli/install#which-platforms-actually-have-a-binary).
+[Install](/sdk/cli/reference#platforms-with-no-binary).
 
 ## The part that needs no credential
 
@@ -545,7 +545,7 @@ rc=70
 
 No output file is written. This is the same muxing failure first documented
 against `cli-v2.4.0`, so the warning on
-[Commands](/sdk/cli/commands#bithuman-render--offline-mp4) still covers the
+[Commands](/sdk/cli/reference#bithuman-render) still covers the
 current release.
 
 It is not your WAV. The controls that rule the input out:
@@ -594,6 +594,6 @@ Marked UNVERIFIED because they cannot be executed on a headless Linux box:
 
 ## Next steps
 
-- [Install the CLI](/sdk/cli/install) — the full platform matrix
-- [Commands](/sdk/cli/commands) — every subcommand and flag
-- [Configuration](/sdk/cli/configuration) — environment variables and cache layout
+- [Install the CLI](/sdk/cli) — the full platform matrix
+- [Commands](/sdk/cli/reference) — every subcommand and flag
+- [Configuration](/sdk/cli/reference#environment-variables) — environment variables and cache layout

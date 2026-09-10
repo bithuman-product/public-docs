@@ -24,7 +24,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
   - **[Essence 2](/concepts/essence-2)** — the standard photoreal model and
     **the default**: an efficient renderer served from bitHuman's cloud chain
     (GPU, Apple Silicon, CPU), on your own Mac or Linux machine through the
-    [CLI](/sdk/cli/overview#essence-2-on-your-own-machine) (2.6.1), from your
+    [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1), from your
     own CPU servers for offline rendering, on Android through the
     [AAR](/sdk/android), and — opt-in per session — in the viewer's browser
     (WebGPU/WASM). See [where each model runs](/concepts/where-models-run).
@@ -152,8 +152,8 @@ bithuman pull bolt --manifest https://api.bithuman.ai/v1/models/showcase
 **How to ship it**
 
 - [Python SDK](/sdk/python) — self-host on macOS arm64 + Linux x86_64 / aarch64.
-- [Swift SDK](/sdk/swift) — native Mac, iPad, iPhone apps.
-- [bitHuman CLI](/sdk/cli/overview) — no code, terminal or browser.
+- [Swift SDK](/sdk/ios) — native Mac, iPad, iPhone apps.
+- [bitHuman CLI](/sdk/cli) — no code, terminal or browser.
 - [REST API](/api/reference) — backend integration in any language.
 - [Cloud LiveKit plugin](/guides/deploy-livekit) — managed, no infrastructure.
 - [Embed widget](/guides/deploy-embed) — drop-in iframe for websites.
@@ -195,7 +195,7 @@ Expression 1 — it is GPU-only.
 
 ### Native Mac or iPad app with close-up dynamic faces
 
-**[Expression 2](/concepts/expression-2)** via the [Swift SDK](/sdk/swift).
+**[Expression 2](/concepts/expression-2)** via the [Swift SDK](/sdk/ios).
 Expression *1* is GPU-only and has no on-device Apple build — see
 [where each model runs](/concepts/where-models-run).
 
@@ -225,6 +225,6 @@ Expression *1* is GPU-only and has no on-device Apple build — see
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launched July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2), [Essence 2 Max](/concepts/essence-2-max).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
-- [SDK overview](/sdk/overview) — run a model on your own hardware.
+- [SDK overview](/sdk) — run a model on your own hardware.
 - [Architecture](/concepts/architecture) — engine layering and the full per-platform device matrix.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how avatars are packaged.

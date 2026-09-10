@@ -163,7 +163,7 @@ umbrella, `expression2Tag = "v2.6.0"` for the three Expression 2 targets, and
 `essence2Tag = "essence2-v1.2.0"` for the two under `Essence2`. The target
 names are the archive names — the engine's keeps its legacy library spelling,
 kept for compatibility — and the product you attach is `Essence2`:
-[Essence 2 on-device](/sdk/swift#essence-2-on-device).
+[Essence 2 on-device](/sdk/ios#essence-2-on-device).
 
 ---
 
@@ -294,7 +294,7 @@ one `.mlpackage`. `Expression2Engine()` takes no model path — it looks for a
 per-identity CoreML bundle in `$BITHUMAN_EXPRESSION2_DIR` or your app bundle,
 and `isReady` stays `false` until it finds one. That is the expected state on a
 clean machine, not a misconfiguration. See
-[Swift SDK → Expression 2 on-device](/sdk/swift#expression-2-on-device) for how
+[Swift SDK → Expression 2 on-device](/sdk/ios#expression-2-on-device) for how
 to get a bundle.
 
 **2. The compute unit is a knob, per model, and it is Apple's spelling.** The
@@ -313,7 +313,7 @@ the Neural Engine.
 > the CPU for another — and it changes when the measurement changes.
 > `MLComputeUnits.cpuAndNeuralEngine`, `cpuAndNE`, `cpuAndGPU` are **Apple's**
 > API identifiers and keep Apple's spelling. See [Swift SDK →
-> Compute units](/sdk/swift#compute-units-are-a-measured-choice).
+> Compute units](/sdk/ios#compute-units-are-a-measured-choice).
 
 **3. `EMBODY` is a retired name still in the binary.** `BITHUMAN_EMBODY_DIR` and
 `EMBODY_DEBUG_FAIL_PREDICT` are the pre-rename spellings of the `EXPRESSION2_*`
@@ -391,7 +391,7 @@ without an avatar. `bitHumanKit`'s lip-synced avatar mode does: export
 
 ## Where to go next
 
-- [Swift SDK](/sdk/swift) — the full Apple rail, what ships and what does not.
+- [Swift SDK](/sdk/ios) — the full Apple rail, what ships and what does not.
 - [Browser — check before you ship](/examples/browser-webgpu-check) — the same
   treatment for the browser path.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — the walkthrough app.

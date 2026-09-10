@@ -341,7 +341,7 @@ groups — what the *door* does when your key is wrong, and what the *engine* do
 when the bytes on disk are wrong.
 
 Measured 2026-09-09 against the published **`Expression2` 2.11.2**
-(`homebrew-bithuman`, the version [the Swift SDK page](/sdk/swift) pins), on
+(`homebrew-bithuman`, the version [the Swift SDK page](/sdk/ios) pins), on
 Apple Silicon. The container reader, the member staging and the load path are the
 same Swift code in every slice of that xcframework; the CoreML compile is the
 part that is per-device, and it is called out where it matters.
@@ -695,5 +695,5 @@ Measured 2026-09-09, `Expression2` 2.11.2, Apple Silicon.
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2)
   — the Apple project, file by file, that the Apple states above were measured
   against.
-- [Swift SDK](/sdk/swift) — the container reader, `missingMembers()`, and the two
+- [Swift SDK](/sdk/ios) — the container reader, `missingMembers()`, and the two
   error types worth catching separately.

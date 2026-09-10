@@ -30,13 +30,13 @@ four ways:
   Macs through **CoreML**, and is reached over the network like any other cloud
   tier. Its `?model=` slug is still `essence-2-ane` — a historical name, kept
   so saved links keep working.
-- **On your own Mac or Linux machine** — the [CLI](/sdk/cli/overview#essence-2-on-your-own-machine)
+- **On your own Mac or Linux machine** — the [CLI](/sdk/cli#what-renders-locally-and-where)
   (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
   `<code>.imx` offline with `bithuman render` and serves it live with
   `bithuman run`, with the runtime inside the CLI; on Android the
   [`essence2-android`](/sdk/android#essence-2--aibithumanessence2-android051)
   AAR, and in your own iOS/macOS app the Swift
-  [`Essence2`](/sdk/swift#essence-2-on-device) engine.
+  [`Essence2`](/sdk/ios#essence-2-on-device) engine.
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.0.0; 2.9.0+
   for the earlier route).
@@ -65,7 +65,7 @@ deployments, and privacy-sensitive environments.
 - **Efficient Apple Silicon serving.** The Apple tier carries real-time
   sessions on bitHuman's Apple Silicon Macs without a server GPU per session.
   It is a **cloud** tier on bitHuman's hardware; it does not run on *your*
-  device — see [Swift SDK](/sdk/swift). No per-frame throughput figure is
+  device — see [Swift SDK](/sdk/ios). No per-frame throughput figure is
   published for this tier; see
   [Which Apple compute unit runs Essence 2](#which-apple-compute-unit-runs-essence-2).
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
@@ -245,10 +245,10 @@ the same thing as running on your Mac. What does run on your hardware:
   it from a local server. The first render downloads the shared audio encoder
   (~377 MB, once, by content digest) into `~/.bithuman/engines/essence-2/`;
   the first play checks the licence with the cloud. See
-  [Essence 2 on your own machine](/sdk/cli/overview#essence-2-on-your-own-machine).
+  [Essence 2 on your own machine](/sdk/cli#what-renders-locally-and-where).
 - **Android** — the [`ai.bithuman:essence2-android:0.5.1`](/sdk/android#essence-2--aibithumanessence2-android051)
   AAR, with an in-SDK model store.
-- **iOS and macOS, in your own app** — the [Swift SDK](/sdk/swift#essence-2-on-device)'s
+- **iOS and macOS, in your own app** — the [Swift SDK](/sdk/ios#essence-2-on-device)'s
   `Essence2` product (package 2.8.0): the engine's C interface, building for
   iOS device, iOS simulator and macOS, with no in-app model download route
   yet.
@@ -257,7 +257,7 @@ the same thing as running on your Mac. What does run on your hardware:
   podspec can vendor it — but that engine is staged from a **private** internal
   release, the plugin is not on pub.dev and its pod is not published, so the
   path is not open to you. See
-  [SDK overview](/sdk/overview#a-note-on-flutter).
+  [SDK overview](/downloads#current-shipping-versions).
 
 To reach Essence 2 from an Apple app today, use the [REST API](/api/overview) or
 a [LiveKit](/sdk/livekit) session. (Essence 2 Max is cloud-only by design.)
@@ -679,12 +679,12 @@ with runnable, verified examples:
    `model: "essence-2"` for mp4s (4 credits/min of output).
 6. **Download the artifact** —
    [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
-   or [`bithuman pull <code> --model essence-2`](/sdk/cli/commands#pull-your-own-agents-model-by-code)
+   or [`bithuman pull <code> --model essence-2`](/sdk/cli/reference#bithuman-pull)
    → `<code>.imx` (older releases wrote `<code>.lebundle.imx`, a legacy name
    kept for compatibility). Inspect it with
-   [`bithuman info`](/sdk/cli/commands#bithuman-info--inspect-a-model) (full
+   [`bithuman info`](/sdk/cli/reference#bithuman-info) (full
    member listing as of CLI 2.4.1). **Licensed weights** — render it locally
-   with the [CLI](/sdk/cli/overview#essence-2-on-your-own-machine) (2.6.1,
+   with the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1,
    macOS and Linux) or the [Python SDK](/sdk/python) (3.0.0), or serve it
    through the cloud surfaces.
 

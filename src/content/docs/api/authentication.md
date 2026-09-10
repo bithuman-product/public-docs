@@ -31,7 +31,7 @@ depending on which surface you're using:
 
 ## Sign in from the CLI
 
-If you use the [CLI](/sdk/cli/overview), you don't have to copy a key by hand. Run:
+If you use the [CLI](/sdk/cli), you don't have to copy a key by hand. Run:
 
 ```bash
 bithuman login
@@ -45,7 +45,7 @@ environment) authenticates automatically; there's nothing to `export`.
 
 On SSH or headless hosts where the browser can't reach the machine, use
 `bithuman login --device` and enter the short code it prints from any
-browser. See [CLI → Signing in](/sdk/cli/commands#signing-in).
+browser. See [CLI → Signing in](/sdk/cli/reference#signing-in).
 
 Because each device gets its own key, it's individually **revocable** — run
 `bithuman logout` on that machine, or revoke the `cli@<hostname>` key from

@@ -109,7 +109,7 @@ During silence the runtime emits filler frames (`has_image=False`) so your rende
 The push/drain shape is identical everywhere — only the language idioms change:
 
 - **Python** — `await rt.push_audio(...)` / `async for frame in rt.run()`. See the [Python SDK](/sdk/python).
-- **Swift** — push PCM into the chat session, receive frames on the render callback. See the [Swift SDK](/sdk/swift).
+- **Swift** — push PCM into the chat session, receive frames on the render callback. See the [Swift SDK](/sdk/ios).
 
 All SDKs that target the same engine ABI produce byte-equivalent frames from the same audio — see [Architecture](/concepts/architecture) for the compatibility matrix.
 

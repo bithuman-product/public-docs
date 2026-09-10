@@ -4,7 +4,7 @@ import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
 import Playground from "../components/Playground.astro";
 
-// The canonical CLI happy path — kept in sync with src/content/docs/sdk/cli/install.md.
+// The canonical CLI happy path — kept in sync with src/content/docs/sdk/cli.md.
 const cliRun = [
   {
     label: "macOS / Linux",
@@ -92,12 +92,12 @@ const embed = [
           <p>Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or a single CLI command. Private, low-latency, offline-capable.</p>
           <ul>
             <li>Your machine, your data</li>
-            <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/swift">iOS &amp; iPadOS — Swift</a> (preview) — each has a <strong>complete, copy-the-whole-page project</strong> below</li>
+            <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/ios">iOS &amp; iPadOS — Swift</a> (preview) — each has a <strong>complete, copy-the-whole-page project</strong> below</li>
             <li><strong>The fastest frame on a phone is free.</strong> <a href="/sdk/android">Android + <code>expression-2</code></a> needs <strong>no account, no API key and no credits</strong> — the SDK's model store fetches a published avatar anonymously. Measured: 213 frames on a Galaxy S25+, ~3 minutes from an empty directory</li>
-            <li><strong>iOS is the one with prerequisites</strong> — an Apple Developer team, an agent code (2000 credits, 60–100 min) and a key, all before the first frame: <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">what each phone rail needs</a></li>
-            <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/wasm">Browser</a> · <a href="/sdk/cli/overview">CLI</a></li>
+            <li><strong>The first frame on an iPhone is free too</strong> — <a href="/sdk/ios">iOS + <code>expression-2</code></a> renders a public showcase identity with <strong>no account, no API key and no credits</strong>. What it does need is Apple's: Xcode 26+, an Apple Developer team and a physical device</li>
+            <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/browser">Browser</a> · <a href="/sdk/cli">CLI</a></li>
           </ul>
-          <Button href="/sdk/overview" variant="secondary">Get the SDK →</Button>
+          <Button href="/sdk" variant="secondary">Get the SDK →</Button>
         </div>
       </div>
 
@@ -116,19 +116,19 @@ const embed = [
             <span class="phone-go">Open the Android project →</span>
           </a>
           <a class="phone-card" href="/examples/swift-ios-expression2">
-            <span class="phone-tag">iOS · gated</span>
+            <span class="phone-tag">iOS · free</span>
             <strong>Swift — a talking avatar on the iPhone you have</strong>
-            <span>The whole SwiftUI app. Renders on any recent iPhone, but you need an Apple Developer team, an agent code (2000 credits) and a key <em>before</em> the first frame.</span>
+            <span>The whole SwiftUI app. Renders on any recent iPhone from a public showcase identity — <b>no account, no API key and no credits</b>. You do need Xcode 26+, an Apple Developer team and a physical device. Measured: 149 frames at 416x720 on an iPhone 15.</span>
             <span class="phone-go">Open the iOS project →</span>
           </a>
         </div>
-        <p class="s-note">Neither phone runs <code>essence-2</code> today — <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">what each phone rail needs →</a></p>
+        <p class="s-note">Neither phone runs <code>essence-2</code> today — <a href="/sdk">what each phone rail needs →</a></p>
       </div>
 
       <div class="nudge">
-        <p><strong>Not sure?</strong> Most people start on-device — it's three commands to a talking avatar in your browser:</p>
+        <p><strong>Not sure?</strong> Most people start on-device — it is <strong>two commands</strong> to a talking avatar in your browser:</p>
         <CodeTabs tabs={cliRun} title="Run locally with the CLI" />
-        <p class="s-note">Full walkthrough: <a href="/sdk/cli/install">Install the CLI →</a></p>
+        <p class="s-note">Full walkthrough: <a href="/sdk/cli">the CLI page →</a></p>
       </div>
     </div>
   </section>
@@ -150,7 +150,7 @@ const embed = [
         </div>
         <div class="idea">
           <h3>The <code>.imx</code> file</h3>
-          <p>Every avatar is one portable <code>.imx</code> file, and every runtime speaks the same push-audio / drain-frames contract. What it will <em>not</em> do is open in every engine on every device &mdash; an <code>essence-2</code> file does not render on an iPhone today, for instance. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">Which model runs on which phone &rarr;</a></p>
+          <p>Every avatar is one portable <code>.imx</code> file, and every runtime speaks the same push-audio / drain-frames contract. What it will <em>not</em> do is open in every engine on every device &mdash; an <code>essence-2</code> file does not render on an iPhone today, for instance. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/sdk">Which model runs on which phone &rarr;</a></p>
         </div>
       </div>
     </div>

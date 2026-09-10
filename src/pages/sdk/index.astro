@@ -1,63 +1,176 @@
 ---
-import Hub from "../../components/Hub.astro";
+import Base from "../../layouts/Base.astro";
 
-const groups = [
+// ── THE ONE SCREEN ───────────────────────────────────────────────────────────
+// This page answers exactly two questions — "which SDK do I want?" and "what do
+// I type?" — and nothing else. It was 18 cards and ~730 words of caveats until
+// 2026-09-10; a developer could not find the first command on it at all.
+//
+// Every `cmd` below was RUN on 2026-09-10 on the platform its row names. The
+// `where` string is what was verified and where; it is printed on the page,
+// because a command nobody ran is not a quickstart.
+//
+// One writer per fact: this table is the ONLY place the six first commands
+// live. Each platform page owns everything after the first command.
+const rows = [
   {
-    label: "Start here",
-    featured: true,
-    cards: [
-      { title: "Which should I use?", desc: "Libraries vs CLI, on-device vs cloud, and the status of every binding.", href: "/sdk/overview" },
-      { title: "Python", desc: "pip install bithuman — the GA on-device runtime + cloud client.", href: "/sdk/python", badge: "GA" },
-    ],
+    platform: "Browser",
+    sub: "any modern browser",
+    cmd: "open https://www.bithuman.ai/A74NWD9723?rendering_mode=browser",
+    lang: "URL",
+    steps: "1",
+    key: "No",
+    href: "/sdk/browser",
+    where: "Chrome 141 headless, Linux x86_64",
   },
   {
-    // Named for the platform, not for the language: the customer who asked
-    // "when do the Android and iOS SDKs go live" could not find pages filed
-    // under Swift and Kotlin.
-    label: "Mobile — iOS & Android",
-    cards: [
-      { title: "iOS, iPadOS & macOS — Swift", desc: "One SwiftPM package (bitHumanKit). Expression 2 runs on any recent iPhone, but this is the gated rail: an Apple Developer team, an agent code and a key before the first frame. The Essence engines need an iPhone 16 Pro (A18 Pro) or an M-series iPad / M3 Mac.", href: "/sdk/swift", badge: "Preview" },
-      { title: "Android — Kotlin", desc: "Three on-device AARs on Maven Central. expression-2 is the working rail and renders with no account, key or credits; essence-2 has no published host to fetch from and essence-1 cannot authenticate on a device. arm64-v8a only: an x86_64 emulator installs and then throws UnsatisfiedLinkError.", href: "/sdk/android", badge: "Beta" },
-      { title: "Where the avatar comes from", desc: "There is no single answer — the two rails split here. Android + expression-2 needs no account, key or credits at all; every other phone rail, iOS included, needs a key and an agent code first. Plus the device floors.", href: "/sdk/overview#getting-an-avatar-model-onto-a-phone" },
-      { title: "Verify the Android SDK", desc: "Every Android snippet re-run on a clean machine, with its negative control.", href: "/sdk/android-verify" },
-      // Until 2026-09-09 this hub's served bytes linked NEITHER finished mobile
-      // project, so the reference pages were the end of the road. These two are
-      // the pages that end in a frame on a handset — they belong beside them.
-      { title: "Android, end to end — the whole project", desc: "Every file of a working Kotlin app, printed in full: seven files, one WAV, no account, no API key, no credits. Measured 117 frames on a Galaxy S25+.", href: "/examples/kotlin-android-hello", badge: "Free" },
-      { title: "iOS, end to end — the whole app", desc: "Every file of a working SwiftUI app that renders expression-2 on the iPhone you already have. 149 frames at 21.8 fps on an iPhone 15 — after the Apple Developer team, agent code and key.", href: "/examples/swift-ios-expression2" },
-    ],
+    platform: "CLI",
+    sub: "macOS · Linux",
+    cmd: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\nbithuman run",
+    lang: "bash",
+    steps: "2",
+    key: "No",
+    href: "/sdk/cli",
+    where: "Linux x86_64 and macOS 26.6.2 arm64",
   },
   {
-    label: "Languages",
-    cards: [
-      { title: "JavaScript / TypeScript", desc: "Cloud client over LiveKit for web and Node.", href: "/sdk/javascript", badge: "Preview" },
-      { title: "WebAssembly (Browser)", desc: "Run agents fully in the browser via WASM — no server GPU.", href: "/sdk/wasm", badge: "New" },
-    ],
+    platform: "macOS",
+    sub: "Apple Silicon",
+    cmd: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\nbithuman run",
+    lang: "bash",
+    steps: "2",
+    key: "No",
+    href: "/sdk/macos",
+    where: "macOS 26.6.2 arm64",
   },
   {
-    label: "Command line",
-    cards: [
-      { title: "bitHuman CLI", desc: "One binary runs the whole avatar stack — same engine as the libraries, no code.", href: "/sdk/cli/overview" },
-      { title: "Install", desc: "One curl command — macOS (Apple Silicon) and Linux.", href: "/sdk/cli/install" },
-      { title: "Commands", desc: "run, render, info, pull, list, doctor — the full surface.", href: "/sdk/cli/commands" },
-      { title: "Configuration", desc: "Env vars, cache layout, and cloud vs on-device brain.", href: "/sdk/cli/configuration" },
-      { title: "Local mode", desc: "Run the whole stack offline — STT, LLM, TTS, all on-device.", href: "/sdk/cli/local-mode", badge: "Offline" },
-      { title: "For agents", desc: "The stable --json contract + built-in MCP server for driving the CLI from an AI agent.", href: "/sdk/cli/agents" },
-    ],
+    platform: "Python",
+    sub: "macOS · Linux",
+    cmd: "pip install bithuman",
+    lang: "bash",
+    steps: "4",
+    key: "Yes",
+    href: "/sdk/python",
+    where: "Linux x86_64, Python 3.14, bithuman 3.1.0",
   },
   {
-    label: "Real-time",
-    cards: [
-      { title: "LiveKit transport", desc: "Connect an Apple app to a served or cloud agent — Session & Agent API.", href: "/sdk/livekit" },
-      { title: "Voice agent + avatar", desc: "A realtime conversational agent with a live, lip-synced face.", href: "/examples/ai-conversation" },
-    ],
+    platform: "Android",
+    sub: "arm64 handset",
+    cmd: 'implementation("ai.bithuman:expression2-android:0.3.1")',
+    lang: "kotlin",
+    steps: "3",
+    key: "No",
+    href: "/sdk/android",
+    where: "Galaxy S25+ (Snapdragon 8 Elite), Android 16",
+  },
+  {
+    platform: "iOS / iPadOS",
+    sub: "physical device",
+    cmd: "https://github.com/bithuman-product/homebrew-bithuman.git",
+    lang: "SwiftPM package URL",
+    steps: "4",
+    key: "No",
+    href: "/sdk/ios",
+    where: "an iPhone 15 on 2026-09-09 — not re-run today",
   },
 ];
 ---
-<Hub
-  eyebrow="SDK"
-  title="SDK"
-  tagline="Embed lifelike, realtime visual agents on your own hardware — from Python, iOS, Android, macOS or the browser, or drive the whole stack from a single CLI command. On-device or over the cloud, one engine everywhere."
-  ctas={[{ label: "New here? Start here", href: "/start" }, { label: "Android app, end to end", href: "/examples/kotlin-android-hello", variant: "secondary" }, { label: "iOS app, end to end", href: "/examples/swift-ios-expression2", variant: "secondary" }]}
-  groups={groups}
-/>
+
+<Base
+  title="SDK — bitHuman docs"
+  description="Six ways to render a bitHuman avatar, one table: the platform, the literal first command, how many steps to a first frame, and whether you need a key."
+>
+  <section class="sdk-hero">
+    <div class="container">
+      <span class="eyebrow">SDK</span>
+      <h1>Which SDK do I want?</h1>
+      <p class="lede">
+        Six ways to put a talking avatar on screen. Pick the row you are on, type the command,
+        get a frame. Every command below was run on <strong>2026-09-10</strong> on the platform
+        its row names.
+      </p>
+    </div>
+  </section>
+
+  <section class="sdk-table-wrap">
+    <div class="container">
+      <div class="scroller">
+        <table class="sdk-table">
+          <colgroup>
+            <col style="width:15%" /><col style="width:63%" /><col style="width:11%" /><col style="width:11%" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">Platform</th>
+              <th scope="col">The first command</th>
+              <th scope="col" class="num">Steps to<br />a first frame</th>
+              <th scope="col" class="num">Needs<br />a key?</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr>
+                <th scope="row">
+                  <a href={r.href}>{r.platform}</a>
+                  <span class="sub">{r.sub}</span>
+                </th>
+                <td>
+                  <pre><code>{r.cmd}</code></pre>
+                  <span class="verified">verified on {r.where}</span>
+                </td>
+                <td class="num"><span class="steps">{r.steps}</span></td>
+                <td class="num"><span class:list={["key", r.key === "No" ? "no" : "yes"]}>{r.key}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="after">
+        Every path pushes <strong>16&nbsp;kHz mono audio</strong> in and drains lip-synced frames out —
+        that loop is written once, on <a href="/concepts/audio-streaming">audio streaming</a>.
+        A key, where a row needs one, is free at
+        <a href="https://www.bithuman.ai/developer/api-keys">Developer → API&nbsp;Keys</a> and is always read from
+        <code>BITHUMAN_API_SECRET</code>. What each model is, and where it runs, is on
+        <a href="/concepts/models-v2">Essence 2 &amp; Expression 2</a>; what it costs is on
+        <a href="/guides/pricing">pricing</a>.
+      </p>
+      <p class="after muted">
+        Also here: <a href="/sdk/cli/reference">CLI reference</a> (every command, flag and environment variable) ·
+        <a href="/sdk/cli/local-mode">CLI local mode</a> (the on-device conversation brain) ·
+        <a href="/sdk/livekit">LiveKit</a> (a real-time voice agent with a face, from Python or Swift) ·
+        <a href="/sdk/cli/verified">CLI transcript</a> and <a href="/sdk/android-verify">Android probes</a> (the runs behind the numbers).
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sdk-hero { padding-block: var(--space-6) var(--space-4); }
+  .sdk-hero h1 { font-size: var(--fh-2xl); margin-top: var(--space-2); }
+  .sdk-hero .lede { margin-top: var(--space-3); font-size: var(--ft-md); color: var(--color-text-secondary); max-width: 92ch; }
+
+  .sdk-table-wrap { padding-bottom: var(--space-10); }
+  .scroller { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--r-xl); }
+  .sdk-table { width: 100%; min-width: 44rem; table-layout: fixed; border-collapse: collapse; font-size: var(--ft-sm); }
+  .sdk-table thead th { text-align: left; padding: var(--space-2) var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-border); font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); font-weight: var(--fw-medium); white-space: nowrap; }
+  .sdk-table tbody tr + tr { border-top: 1px solid var(--color-border); }
+  .sdk-table th[scope="row"] { text-align: left; padding: var(--space-3) var(--space-4); vertical-align: top; white-space: nowrap; }
+  .sdk-table th[scope="row"] a { font-weight: var(--fw-semibold); font-size: var(--ft-md); }
+  .sdk-table td { padding: var(--space-3) var(--space-4); vertical-align: top; }
+  .sdk-table .num { text-align: center; }
+  .sub { display: block; color: var(--color-text-tertiary); font-size: var(--ft-xs); font-weight: var(--fw-normal); margin-top: 0.15rem; }
+  .sdk-table pre { margin: 0; padding: 0.55rem 0.7rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--r-md); }
+  .sdk-table pre code { font-size: 0.8125rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .verified { display: block; margin-top: 0.4rem; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .steps { display: inline-block; min-width: 2rem; font-size: var(--fh-md); font-weight: var(--fw-semibold); }
+  .key { display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: var(--ft-xs); font-weight: var(--fw-medium); border: 1px solid var(--color-border); }
+  .key.no { color: var(--color-primary); border-color: transparent; background: var(--color-primary-soft); }
+
+  .after { margin-top: var(--space-5); color: var(--color-text-secondary); max-width: 80ch; font-size: var(--ft-sm); }
+  .after.muted { color: var(--color-text-tertiary); }
+
+  @media (max-width: 720px) {
+    .sdk-table th[scope="row"] { white-space: normal; }
+  }
+</style>

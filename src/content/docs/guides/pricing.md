@@ -123,7 +123,7 @@ Both mobile rails bill a live avatar at the **self-hosted rate** in the table ab
 
 **Android / Kotlin.** `ai.bithuman:essence2-android` meters from **0.5.1** and no earlier version — 0.4.0 does not meter at all, and 0.5.0 renders a rejected key for ever. Set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to; with no credential the session still renders and logs `★ UNMETERED RENDER`. `ai.bithuman:sdk` (essence-1) is stricter — `Avatar.load` throws without a secret. Both follow the same failure rule as every other runtime: a metering service that cannot be reached never stops a render, while a **rejected** key gets a 300-second grace and then ends the session. The measured detail is on the [Android SDK page](/sdk/android#metering).
 
-Which SDK pulls the model onto the handset, and which handsets are supported at all, is on [getting an avatar model onto a phone](/sdk/overview#getting-an-avatar-model-onto-a-phone).
+Which SDK pulls the model onto the handset, and which handsets are supported at all, is on [getting an avatar model onto a phone](/sdk).
 
 ## Check your balance
 

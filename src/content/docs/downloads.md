@@ -26,8 +26,12 @@ Homebrew formula and the universal installer deliver the same Rust binary, on
 the same version on both platforms. The PyPI wheel is a macOS-only sibling and
 still trails at `2.3.25`.
 
-**`cli-v2.6.4` (2026-09-07) is the current release**, on the same two targets
-and built from one commit (`01325a3`). The Essence 2 runtime has shipped
+**`cli-v2.6.5` (2026-09-10) is the current release**, on the same two targets
+and built from one commit (`98fa0b4`). It carries essence engine
+**3.1.0** (printed under the engine's legacy spelling), and it removes a five-minute ceiling on an `essence-2`
+`bithuman render`: the budget the render spent was a *start-up* timeout of
+300 s that was never moved, so the longest clip the command could finish was
+whatever the machine rendered in five minutes. The Essence 2 runtime has shipped
 **inside the tarball on both platforms** since 2.6.1, so `bithuman render` and
 `bithuman run` handle a downloaded Essence 2 `<code>.imx` locally, the way they
 already handled Expression 2. A self-hosted session has been metered on both
@@ -41,17 +45,17 @@ release's own `.sha256` sidecars:
 
 | Target | Tarball | sha256 |
 |---|---|---|
-| Linux x86_64 | `bithuman-x86_64-unknown-linux-gnu.tar.gz` | `42094b2c912b3b3b4be364aed18893892d247d1e1070c9bb82225fa5e7f26f1a` |
-| macOS arm64 (Developer ID signed, notarized) | `bithuman-aarch64-apple-darwin.tar.gz` | `ed827aaa0b3918100e6c6776ca0527d7b7cabb8e4618f3ce91ef437f205f1bbc` |
+| Linux x86_64 | `bithuman-x86_64-unknown-linux-gnu.tar.gz` | `fc3690f0690f81e40975b9a1a4cdbb69f517434502f2bd77eb36f449525b0825` |
+| macOS arm64 (Developer ID signed, notarized) | `bithuman-aarch64-apple-darwin.tar.gz` | `b95594119a12f54a3748b21a4b51efb230da002941ec8954cea5e3e072476a56` |
 
 What changed, release by release, is in the [changelog](/changelog).
 
-**`cli-v2.6.4` publishes exactly two targets**, and the two it does not publish
-have never shipped at all. Measured against the release on 2026-09-07 — the
-404s are the control that makes the 200s mean something:
+**`cli-v2.6.5` publishes exactly two targets**, and one of the two it does not
+publish has never shipped at all. Re-measured against the release on
+2026-09-10 — the 404s are the control that makes the 200s mean something:
 
 ```bash
-B=https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.4
+B=https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.5
 for t in x86_64-unknown-linux-gnu aarch64-apple-darwin x86_64-apple-darwin aarch64-unknown-linux-gnu; do
   printf '%s  %s\n' "$(curl -sLo /dev/null -w '%{http_code}' "$B/bithuman-$t.tar.gz")" "$t"
 done
@@ -65,24 +69,24 @@ done
 rc=0
 ```
 
-| Your machine | Target the installer asks for | `cli-v2.6.4` |
+| Your machine | Target the installer asks for | `cli-v2.6.5` |
 |---|---|---|
 | Apple Silicon Mac | `aarch64-apple-darwin` | **published** |
 | Linux x86_64 | `x86_64-unknown-linux-gnu` | **published** |
 | **Intel Mac** | `x86_64-apple-darwin` | **never published, any release** |
-| **Linux ARM (aarch64)** | `aarch64-unknown-linux-gnu` | not in 2.6.4 — `cli-v2.3.27` was the last |
+| **Linux ARM (aarch64)** | `aarch64-unknown-linux-gnu` | not in 2.6.5 — `cli-v2.3.27` was the last |
 
 On the bottom two rows `install.sh` reads the release's asset list, finds no
 tarball for the target, names the two it does carry, and exits **1** before
 downloading anything.
 
-**"Never published" is measured, not assumed.** Across **all 83 releases** in
-the tap on 2026-09-07, counting tarball assets per target:
+**"Never published" is measured, not assumed.** Across **all 84 releases** in
+the tap on 2026-09-10, counting tarball assets per target:
 
 | Target | Releases carrying it | Newest |
 |---|---|---|
-| `aarch64-apple-darwin` | 38 | `cli-v2.6.4` |
-| `x86_64-unknown-linux-gnu` | 18 | `cli-v2.6.4` |
+| `aarch64-apple-darwin` | 39 | `cli-v2.6.5` |
+| `x86_64-unknown-linux-gnu` | 19 | `cli-v2.6.5` |
 | `aarch64-unknown-linux-gnu` | 10 | `cli-v2.3.27` |
 | `x86_64-apple-darwin` | **0** | **never** |
 
@@ -114,10 +118,10 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 >
 > ```text
 > install: querying latest release...
-> install: version: cli-v2.6.4
+> install: version: cli-v2.6.5
 > install: target:  x86_64-unknown-linux-gnu
 > install: install dir: /home/you/.local/bin
-> install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.4/bithuman-x86_64-unknown-linux-gnu.tar.gz
+> install: downloading https://github.com/bithuman-product/homebrew-bithuman/releases/download/cli-v2.6.5/bithuman-x86_64-unknown-linux-gnu.tar.gz
 > install: verifying sha256...
 > install: sha256 ok
 > install: extracting...
@@ -146,9 +150,9 @@ bithuman --version
 ```
 
 ```text
-libessence 2.3.8 ABI 7
-bithuman    2.6.4
-build       01325a3053c2 x86_64-unknown-linux-gnu/release 2026-09-07T22:36:48Z a999bbef614d
+libessence 3.1.0 ABI 7
+bithuman    2.6.5
+build       98fa0b448b9a x86_64-unknown-linux-gnu/release 2026-09-10T11:54:59Z 8dad1d3c09bd
 engine      linux 1.0.0 adc2a18da787
 rc=0
 ```
@@ -159,7 +163,7 @@ That is the real output of the install transcribed above, on Linux x86_64.
 digest — are elided here):
 
 ```text
-{"abi":7,"build":{…},"cli":"2.6.4","engine":{…},"libessence":"2.3.8","schema_version":1}
+{"abi":7,"build":{…},"cli":"2.6.5","engine":{…},"libessence":"3.1.0","schema_version":1}
 rc=0
 ```
 
@@ -204,7 +208,7 @@ bithuman doctor   # full host + key + cache check
 > (`pip install bithuman`); the "not ready" verdict does not stop `list`,
 > `info`, `pull`, or `engine list` from working.
 
-See the [CLI reference](/sdk/cli/overview) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
+See the [CLI reference](/sdk/cli) for all subcommands (`run`, `render`, `info`, `pull`, `list`, `doctor`, `init`, `login`/`logout`, and `mcp`).
 
 ### Python SDK (library) — GA
 
@@ -231,9 +235,12 @@ See the [Python SDK guide](/sdk/python).
 On-device real-time avatar for iOS, iPadOS, and macOS via SwiftPM. Apple Silicon only.
 
 In Xcode: **File → Add Package Dependencies…** → paste
-`https://github.com/bithuman-product/homebrew-bithuman.git` → pick **2.8.0**
-→ attach a product. The package wraps pre-compiled XCFrameworks with all
-third-party deps statically linked — zero transitive SwiftPM dependencies.
+`https://github.com/bithuman-product/homebrew-bithuman.git` → attach a product.
+**The version rule lives in exactly one place — [Install](/sdk/ios#install) on
+the Apple page** — because this page carried a second, older one until
+2026-09-10 and the two disagreed. The package wraps pre-compiled XCFrameworks
+with all third-party deps statically linked, so you take zero transitive SwiftPM
+dependencies.
 
 - **`bitHumanKit`** — the umbrella: an on-device avatar engine, an `.imx`
   avatar runtime and the on-device LLM/TTS stack. `import bitHumanKit`.
@@ -253,7 +260,7 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
   `UnifiedModelHeader`, which rides under the `Expression2` product; attach the
   product and you get it. This supersedes the sentence this page carried until
   today, that there was "no supported way to convert one into the other". See
-  the [Swift SDK guide](/sdk/swift#expression-2-on-device).
+  the [Swift SDK guide](/sdk/ios#expression-2-on-device).
 - **`Essence2`** — the [`essence-2`](/concepts/essence-2) engine, a product
   since **2.7.0** (2026-09-06) and importable as `import Essence2` since
   **2.8.0** (2026-09-07). A C interface with no Swift type on top, two binary
@@ -261,7 +268,7 @@ third-party deps statically linked — zero transitive SwiftPM dependencies.
   iOS device, iOS simulator and macOS. The engine's resources are published on
   the same release; **no in-app model download route exists yet** — the
   download endpoint takes the account secret, not a runtime token. See
-  [Essence 2 on-device](/sdk/swift#essence-2-on-device).
+  [Essence 2 on-device](/sdk/ios#essence-2-on-device).
 
 This page said until 2026-09-07 that `essence-2` was **not** on this rail.
 That was true when written and is false now.
@@ -366,7 +373,7 @@ npm install @bithuman/sdk   # not available yet
 
 No install required. Authenticate with the `api-secret` header against `https://api.bithuman.ai`. See the [API reference](/api/reference) and the [quickstart](/api/quickstart).
 
-> **Note** Flutter is currently a **reference app only**, not a published code SDK. See [community](/community) for how to follow its progress.
+> **Note** Flutter is a **reference app only**, not a published code SDK — it is not on pub.dev, so do not add `bithuman: ^X.Y.Z` to a `pubspec.yaml`. Build Flutter apps on the [Swift SDK](/sdk/ios) via platform channels until it ships. This is the one page that states Flutter's status. See [community](/community) for how to follow it.
 
 ## What ships in 2.3
 
@@ -376,8 +383,8 @@ No install required. Authenticate with the `api-secret` header against `https://
 |---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
 | **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
-| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.4` | `bithuman` (manylinux) | — |
-| **Linux aarch64** | **Not in 2.6.4** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
+| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.5` | `bithuman` (manylinux) | — |
+| **Linux aarch64** | **Not in 2.6.5** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -387,11 +394,11 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **3.0.0** (2.10.0 stays on PyPI; pin `bithuman<3` to stay) | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | **2.4.0** (pin the package at **2.8.0**) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
+| Python SDK (`bithuman`) | **3.1.0** (2026-09-10; 2.10.0 stays on PyPI, pin `bithuman<3` to stay) | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | Swift SDK (`Essence2`) | engine release **`essence2-v1.4.0`**, declared by the package at **2.10.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
-| bitHuman CLI (`bithuman-cli`) | **2.6.4** (2026-09-07) — macOS arm64 **and** Linux x86_64, same version, no pin needed, Essence 2 runtime inside both tarballs, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI (`bithuman-cli`) | **2.6.5** (2026-09-10) — macOS arm64 **and** Linux x86_64, same version, no pin needed, engine core `libessence` 3.1.0, an `essence-2` render no longer stops after five minutes of work, Essence 2 runtime inside both tarballs, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.1** (2026-09-08; `0.2.0`, `0.3.0`, `0.4.0` and `0.5.0` are permanent on Central and superseded — `0.5.0` renders a rejected key for ever) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
@@ -462,7 +469,7 @@ Heavier high-fidelity model, and this table is the **first-generation** floor:
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
 | **Mac M3+ (arm64)** | Not applicable | No Apple build of Expression 1 — see the correction below |
 | **iPad Pro M4+** | Not applicable | Same — GPU-only by scope ruling, not a pending port |
-| **iPhone 16 Pro+** | Not applicable | Same. ([Expression 2](/sdk/swift#expression-2-on-device) is a **different engine**, has rendered on an iPhone, and publishes no model bundle yet.) |
+| **iPhone 16 Pro+** | Not applicable | Same. ([Expression 2](/sdk/ios#expression-2-on-device) is a **different engine**, has rendered on an iPhone, and publishes no model bundle yet.) |
 | **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression 1 needs an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
 
@@ -491,13 +498,13 @@ The tables above are the first-generation floors. The
 you at session launch. Each model also produces one downloadable per-identity
 artifact — where that artifact can run **locally today** differs by model.
 For the file each family hands you by name, and what opens it, see
-[what you get, per family](/sdk/cli/commands#what-you-get-per-family).
+[what you get, per family](/sdk/cli/reference#what-you-get-per-family).
 
 | Runtime | `essence-2` | `essence-2-max` | `expression-2` |
 |---|---|---|---|
 | bitHuman cloud (GPU · Apple Silicon · CPU chain) | Yes | GPU-only | Yes |
-| Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); local rendering via the [CLI](/sdk/cli/overview#essence-2-on-your-own-machine) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli/overview#local-rendering-by-platform) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli/overview#essence-2-on-your-own-machine) renders a downloaded `<code>.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/swift#essence-2-on-device) `Essence2` product, package **2.8.0** — the engine's C interface, builds for iOS device, iOS simulator and macOS; resources published; **no in-app model download route yet** | — (cloud-only) | [Swift](/sdk/swift) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/swift#expression-2-on-device), so an app with its own agent can hand it one. The [CLI](/sdk/cli/overview#local-rendering-by-platform) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
+| Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); live streaming via cloud | — | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
+| On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/ios#essence-2-on-device) `Essence2` product, package **2.8.0** — the engine's C interface, builds for iOS device, iOS simulator and macOS; resources published; **no in-app model download route yet** | — (cloud-only) | [Swift](/sdk/ios) `Expression2` 2.6.0 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but as of 2.6.0 it [takes a model path and opens the downloaded container](/sdk/ios#expression-2-on-device), so an app with its own agent can hand it one. The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | — | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:

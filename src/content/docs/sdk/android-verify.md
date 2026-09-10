@@ -2,8 +2,9 @@
 title: "Verifying the Android SDK"
 description: "The scripts behind the Android SDK page, their real output and their negative controls — run them yourself and compare."
 section: sdk
-group: "Mobile — iOS & Android"
-order: 12.5
+group: "Reference"
+order: 76
+label: "Android — probes"
 ---
 
 Every snippet on the [Android SDK page](/sdk/android) was executed exactly as
@@ -636,7 +637,7 @@ The Android SDK page used to show `fun onAudio(pcm: ShortArray)` feeding
 
 ★ **That snippet had been published and could never have compiled.**
 `Runtime.pushAudio` takes a `FloatArray`. The corrected version is on the
-[Android SDK page](/sdk/android#streaming), and this control is what keeps it
+[Android SDK page](/sdk/android#essence-1--aibithumansdk236), and this control is what keeps it
 honest: the check goes red on the old text and green on the new one.
 
 ---

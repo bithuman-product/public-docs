@@ -17,7 +17,7 @@ export BITHUMAN_API_SECRET=your_secret
 
 - Works from any stack that can make HTTPS requests. Base URL is `https://api.bithuman.ai`; auth is the `api-secret` header on every call.
 
-> **Note** **Want to try for free first?** Generating an agent costs credits. To render an avatar at **$0 with no account**, use the SDK quickstart — it auto-downloads a sample model: see [Python — Hello, avatar](/examples/python-hello).
+> **Note** **Want to try for free first?** Generating an agent costs credits. To render an avatar at **$0 with no account**, use the SDK quickstart — it auto-downloads a sample model: see [Python — Hello, avatar](/sdk/python).
 
 ## Run it
 

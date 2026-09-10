@@ -1,48 +1,52 @@
 ---
 title: "Local mode — zero-cloud conversation"
-description: "Run a fully on-device, air-gapped avatar brain — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one env-var flip. Private by design: no API key, no outbound network, nothing leaves your hardware. ~1.5 GB RAM."
+description: "Swap the cloud conversation brain for an on-device one — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one environment variable. Audio and transcripts stay on the box; the avatar itself is still metered against api.bithuman.ai. ~1.5 GB RAM."
 section: sdk
-group: "Command line"
-order: 34
-label: "Local mode"
+group: "Reference"
+order: 72
+label: "CLI — local mode"
 ---
 
 ## The on-device brain
 
-`bithuman-cli[local]` is an opt-in extra that swaps the cloud
-conversation brain (OpenAI Realtime) for an entirely in-process,
-on-device stack — whisper.cpp + llama.cpp + Supertonic + Silero VAD. No
-API key, no outbound network, no separate servers. Same `bithuman run`
-command, same browser URL, same avatar.
+`BITHUMAN_LOCAL=1` swaps the cloud conversation brain (OpenAI Realtime) for an
+entirely in-process one — whisper.cpp + llama.cpp + Supertonic + Silero VAD. No
+LLM or TTS vendor, no API key for either, no separate servers. Same
+`bithuman run` command, same browser URL, same avatar.
 
 ```bash
-pip install 'bithuman-cli[local]'
-export BITHUMAN_API_SECRET=your_api_secret
+pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
+bithuman login
 bithuman pull modern-court-jester
 BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-# → open the printed http://127.0.0.1:8088/<CODE> URL in a browser
+# → open the printed http://127.0.0.1:8088/ URL in a browser
 ```
 
-The `[local]` extra is published on the `bithuman-cli` package, whose PyPI
-wheel is **macOS Apple Silicon (arm64) only** today (Python 3.10+) — so
-`pip install 'bithuman-cli[local]'` is a macOS-arm64 path. On Linux, install
-the CLI with the universal installer (see [CLI install](/sdk/cli/install)); the
-`[local]` brain bundle is not yet packaged for Linux. (The `bithuman-cli`
-wheel bundles the Rust CLI binary and depends on the `bithuman` Python SDK.)
+**Install those five requirements directly.** `bithuman-cli[local]` reaches the
+same set but only on macOS arm64 — the `bithuman-cli` wheel has no Linux or
+Intel build — and `bithuman[local]` is not an extra at all: pip warns, **exits
+0, and installs none of it**. `bithuman doctor` names the same five packages
+when they are missing.
 
-> **Note** `bithuman run` still pings `api.bithuman.ai` for avatar credit
-> accounting even in local mode — a self-hosted Essence 2 or Expression 2
-> session is [metered at 2 credits per minute](/guides/self-host-local#the-cli-meters-a-self-hosted-session)
-> on macOS and Linux alike (as of 2.6.2 on macOS), and `BITHUMAN_API_SECRET`
-> or a `bithuman login` is what attributes it to your account. Only the
-> conversation brain goes offline.
+> ★ **This is not air-gapped, and the difference matters.** The brain goes
+> offline; the **avatar does not**. `bithuman run` still reaches
+> `api.bithuman.ai` for credit accounting — a self-hosted Essence 2 or
+> Expression 2 session is
+> [metered](/guides/self-host-local#the-cli-meters-a-self-hosted-session) at the
+> [published self-hosted rate](/guides/pricing), and `BITHUMAN_API_SECRET` or a
+> `bithuman login` is what attributes it to your account. What local mode buys
+> you is that **audio, transcripts and generated speech never leave the box** —
+> which is the privacy property most deployments are actually asking for. For a
+> genuinely disconnected estate, talk to us: nothing on this page delivers it.
 
 ## When to reach for it
 
 - **Privacy-bound deployments** — kiosks, healthcare, finance, classroom.
   Audio never leaves the device.
-- **Offline / air-gapped** — conference demos on shaky WiFi, edge boxes
-  in stores, field engineers.
+- **A thin or unreliable uplink** — conference demos on shaky WiFi, edge
+  boxes in stores, field engineers. The brain never waits on the network; the
+  once-a-minute metering beat is all that does, and a beat that cannot be
+  delivered does not stop the render.
 - **Eliminate per-minute LLM/TTS spend** — pay once for the wheel;
   conversations are free thereafter.
 - **Latency floor below network RTT** — when the speed of light to the
@@ -170,9 +174,9 @@ the only difference.
 Cold start (every-model first download, first run only) is ~90 s. Process
 warm-up after that is under a second.
 
-## What's NOT in `bithuman-cli[local]`
+## What local mode does not give you
 
-- **Avatar generation** — you still need an `.imx` file. Generate one on
+- **Avatar generation** — you still need an avatar file. Generate one on
   [bithuman.ai](https://www.bithuman.ai/explore) (free tier) via
   `POST /v1/agent/generate`, or pull one from the showcase
   (`bithuman pull <slug>` → `~/.cache/bithuman/showcase/`).
@@ -200,8 +204,9 @@ subsequent runs start in under a second.
 
 ### `BITHUMAN_LOCAL=1` errors with "required the local extras"
 
-You installed the brain bundle without the `[local]` extra. Re-install:
-`pip install 'bithuman-cli[local]'`.
+The five brain packages are not in the environment the worker runs in.
+Re-install them with the line at the top of this page, then `bithuman doctor`
+— it lists the resolved backend versions once they import.
 
 ### LLM is too dumb
 
@@ -221,7 +226,7 @@ file name in `BITHUMAN_LOCAL_LLM_FILE` is wrong).
 
 ## See also
 
-- [CLI overview](/sdk/cli/overview) — one binary, the same engine as the language SDKs
-- [Configuration](/sdk/cli/configuration) — environment variables and cache layout
+- [CLI](/sdk/cli) — the two-command quickstart
+- [CLI reference](/sdk/cli/reference) — every command, flag and environment variable
 - [Audio streaming](/concepts/audio-streaming) — the push-audio / drain-frames loop
 - [Python SDK](/sdk/python) — programmatic access to the same runtime

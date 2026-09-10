@@ -52,7 +52,7 @@ beyond your own agent's `.imx`:
   Linux x86_64 and Linux aarch64. There is **no Windows wheel**. See the
   [Python SDK](/sdk/python).
 * **CLI** — the `bithuman` binary from the public Homebrew tap, with macOS
-  arm64 and Linux x86_64 builds. See the [CLI overview](/sdk/cli/overview).
+  arm64 and Linux x86_64 builds. See the [CLI overview](/sdk/cli).
 * **Android** — `ai.bithuman:sdk` on Maven Central. ★ **The published `2.3.6`
   cannot authenticate on an Android device** — `Avatar.load` throws
   `be_auth_authenticate: status=11` because the artifact's native library ships

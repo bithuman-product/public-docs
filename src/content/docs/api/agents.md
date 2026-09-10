@@ -546,7 +546,7 @@ with `?model=<family>` (public names and runtime tier slugs fold onto their
 family — the `essence-2-{gpu,ane,cpu}` force slugs and the retired
 `essence-2-light` fold onto `essence-2`). `essence-2-quality` is **no longer
 accepted** and returns a `400`; send `essence-2-max`. What you get per family — and what opens each file, in one
-place: [what you get, per family](/sdk/cli/commands#what-you-get-per-family).
+place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).
 
 > **The name in the Artifact column is the object in the store, not the file you
 > receive.** Whatever the stored object is called, the endpoint labels the
@@ -559,10 +559,10 @@ place: [what you get, per family](/sdk/cli/commands#what-you-get-per-family).
 
 | Family | Artifact in the store | Notes |
 |---|---|---|
-| `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/commands) in the CLI and the [Python SDK](/sdk/python). |
+| `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/reference) in the CLI and the [Python SDK](/sdk/python). |
 | `essence-2` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
 | `essence-2-max` | `<code>.pkl` | The Essence 2 Max artifact — IMX container; renders on bitHuman's GPU cloud (not a local-playback artifact). **It is derived on demand, not built ahead:** the bundle is produced from the agent's source video the first time the agent is launched as `essence-2-max`, so a download before that returns `404 MODEL_ARTIFACT_NOT_READY`. Start one session, then retry. |
-| `expression-2` | `<code>.avatar` | The per-identity Expression 2 artifact. Sizes range widely — two agents measured on 2026-09-09 were 193.6 MB and 192.9 MB, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** Measured across all 110 published objects on 2026-09-01, **96 are `IMX\0` v2 containers** and **14 are still the pre-2026-07-12 CoreML zip** — those 14 will not be re-published, so check with `bithuman info <file>` rather than assuming either form. [Runs locally](/sdk/cli/commands) on macOS (Apple Silicon), and on Linux x86_64 once the CPU render host is installed (`bithuman engine install linux-x86_64`); also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
+| `expression-2` | `<code>.avatar` | The per-identity Expression 2 artifact. Sizes range widely — two agents measured on 2026-09-09 were 193.6 MB and 192.9 MB, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** Measured across all 110 published objects on 2026-09-01, **96 are `IMX\0` v2 containers** and **14 are still the pre-2026-07-12 CoreML zip** — those 14 will not be re-published, so check with `bithuman info <file>` rather than assuming either form. [Runs locally](/sdk/cli/reference) on macOS (Apple Silicon), and on Linux x86_64 once the CPU render host is installed (`bithuman engine install linux-x86_64`); also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
 | `expression-1` | usually none; `<code>.imx` for a lip-stepped agent | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, so the normal answer is `400 MODEL_NOT_DOWNLOADABLE`. **One case does download:** an `expression-1` agent that went through the lip step owns a baked `<code>.imx`, and the endpoint redirects to it exactly as it does for `essence-1`. |
 
 The default response is a **302 redirect** to the artifact (public URL for
@@ -579,7 +579,7 @@ curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
 > model through [add-a-model](#add-a-model-to-an-existing-agent) has more than
 > one downloadable artifact under the same code, and an omitted `?model=`
 > resolves to the family the agent was **created** with — not the one you added.
-> The [CLI](/sdk/cli/commands) has no flag for this: `bithuman pull <CODE>`
+> The [CLI](/sdk/cli/reference) has no flag for this: `bithuman pull <CODE>`
 > always takes the default. Read `supported_models` on
 > [`GET /v1/agent/{code}`](#get-an-agent) to see what an agent actually holds.
 
@@ -612,7 +612,7 @@ Errors ([full reference](/api/errors#model-errors)):
 | `409` | `MODEL_NOT_GENERATED` | The requested family isn't in the agent's `supported_models` (same gate as embed/session launch). |
 | `429` | `RATE_LIMITED` | Read-bucket rate limit. |
 
-> **Tip** The [bitHuman CLI](/sdk/cli/commands) wraps this endpoint:
+> **Tip** The [bitHuman CLI](/sdk/cli/reference) wraps this endpoint:
 > `bithuman pull A17ZTB0222` downloads the artifact,
 > recognizes its model family, and prints what to do next — an `essence-1`
 > `.imx` runs locally with `bithuman run`. It calls this endpoint **without**

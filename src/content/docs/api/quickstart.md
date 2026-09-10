@@ -173,7 +173,7 @@ embed it exactly like step 2. See [Agents](/api/agents) for the full lifecycle.
 - [API reference](/api/reference) — every endpoint with a live console.
 - [Python SDK](/sdk/python) — the same engine, in-process, with the canonical
   [push-audio/drain-frames loop](/concepts/audio-streaming).
-- [Swift SDK (iOS, iPadOS, macOS)](/sdk/swift) — the same avatar rendered
+- [Swift SDK (iOS, iPadOS, macOS)](/sdk/ios) — the same avatar rendered
   on-device inside an iPhone, iPad or Mac app.
 - [Android SDK (Kotlin)](/sdk/android) — the same avatar on-device in an
   Android app, from Maven Central.

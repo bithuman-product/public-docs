@@ -22,7 +22,7 @@ Two Android findings from a walk of the published pages on a Galaxy S25+
   5.72 s of speech → **117 frames** of 416×720, `acc=CPU`. Two toolchain steps the
   site never wrote down (`ANDROID_HOME` / `local.properties`, and a JDK 17
   launcher — AGP 8.7.3 rejects a newer one with an error whose whole body is the
-  string `26.0.2.1`) are now in [Install](/sdk/android#install--the-minimal-build-that-works).
+  string `26.0.2.1`) are now in [Install](/sdk/android#three-steps).
 - **`ai.bithuman:sdk:2.3.6` (essence-1) resolves, compiles and installs, and then
   cannot authenticate on a device.** `Avatar.load` throws
   `be_auth_authenticate: status=11 … SSL peer certificate … was not OK`: the
@@ -85,7 +85,7 @@ seconds from the first rejection behind a line once a minute, re-checked every
 minute; still rejected at 300 seconds the engine stops —
 `be_essence2_pull_frame` and `be_essence2_idle_frame` return `-3` from then on.
 A meter that cannot be reached still never stops a render. Billing is
-unchanged from `essence2-v1.3.0`. Details on [the Swift page](/sdk/swift#essence-2-on-device).
+unchanged from `essence2-v1.3.0`. Details on [the Swift page](/sdk/ios#essence-2-on-device).
 
 ### CLI `2.6.3` — a live self-hosted session is billed on wall-clock (2026-09-07)
 
@@ -215,7 +215,7 @@ anonymously on 2026-09-07 before it was written here:
 - **2026-09-06 — Android `ai.bithuman:essence2-android:0.3.0`.** The first essence-2 AAR whose engine refuses, with a thrown exception, rather than drawing a mouth of its own — but it judged a bundle by a descriptive list in its manifest and refused complete bundles. Superseded the same night; do not build against it.
 - **2026-09-08 02:17Z — Android `ai.bithuman:essence2-android:0.5.1`.** The version to use. A self-hosted session is metered at the published rate — `0.5.0` (2026-09-07 15:21Z) was the first Android version to meter at all; every version through `0.4.0` rendered free — and `0.5.1` adds the one rule every bitHuman runtime follows when the key check does not come back clean: a rejected key renders for a **five-minute grace** behind a countdown line, then every render call throws `MeteringRefused`; a metering service that cannot be reached never stops a render. Driven on a Galaxy S25+ through the exact bytes uploaded, before the press: five arms green, including the invented key refused at 300 s and the unreachable service still rendering at 345 s; the same arm on `0.5.0` went red. `0.2.0` through `0.5.0` still resolve — use none of them. [Android SDK](/sdk/android#essence-2--aibithumanessence2-android051).
 - **2026-09-07 01:20Z — essence-2 Apple engine `essence2-v1.2.0`.** One rule for when a model renders — all four recorded-mouth files present, or a refusal naming the missing one — on every platform; `import Essence2` compiles; the resources archive rides on the same release, so the coordinate is complete on its own.
-- **2026-09-07 01:30Z — Swift SDK `v2.8.0`.** `Essence2` points at `essence2-v1.2.0`. Pin `from: "2.8.0"`. Resolves and builds for iOS device, iOS simulator and macOS from a consumer outside any bitHuman repository. Still missing: an in-app model download route that accepts a runtime token — [Essence 2 on-device](/sdk/swift#essence-2-on-device).
+- **2026-09-07 01:30Z — Swift SDK `v2.8.0`.** `Essence2` points at `essence2-v1.2.0`. Pin `from: "2.8.0"`. Resolves and builds for iOS device, iOS simulator and macOS from a consumer outside any bitHuman repository. Still missing: an in-app model download route that accepts a runtime token — [Essence 2 on-device](/sdk/ios#essence-2-on-device).
 - **2026-09-07 01:45Z — Android `ai.bithuman:essence2-android:0.4.0`.** The version to use. The same one rule as the Apple engine; an in-SDK **model store** (`Essence2ModelStore` — no default host yet, you pass the mirror); the product-named Kotlin package `ai.bithuman.essence2` beside the legacy `ai.bithuman.elevate`, kept for compatibility; `INTERNET` merged into your app. Driven on a Galaxy S25+ through the published bytes, 11 of 11 tests green. `0.2.0` can show a mouth the avatar never recorded without telling you and `0.3.0` refuses complete bundles — use neither. [Android SDK](/sdk/android#essence-2--aibithumanessence2-android051).
 - **2026-09-07 — Python `bithuman` 3.0.0.** A clean break: thirty-two public names become eight (`bithuman.open`, `Avatar`, `Avatar.render`, `AvatarError`, `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`), frames are **RGB**, the key comes from `BITHUMAN_API_SECRET` only, and essence-2 **and** expression-2 open through the same call on macOS and Linux (`bithuman[expression-2]` for the latter). An essence-2 avatar missing its recorded-mouth data is refused at `open`. The offline route is `bithuman.offline` / `bithuman[offline]` (the 2.x spellings warn until 4.0.0), and the shared audio encoder is fetched and digest-checked for you. `pip install "bithuman<3"` stays on 2.10.0. [Python SDK](/sdk/python#coming-from-2100).
 - **`ai.bithuman:expression2-android:0.3.1`** (2026-09-04) is unchanged and current — see [its entry](#expression-2-android-is-031-and-google-is-no-longer-required-2026-09-04). The Kotlin hello page now carries an expression-2 and an essence-2 example, both compiled against the published AARs: [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) (rewritten on 2026-09-09 as a complete project).
@@ -646,7 +646,7 @@ changes — new creations get the faster path automatically.
 
 ### Run Expression 2 locally from the CLI (2026-07-16)
 
-The [bitHuman CLI](/sdk/cli/overview) now renders `expression-2` avatars on your
+The [bitHuman CLI](/sdk/cli) now renders `expression-2` avatars on your
 own hardware. `bithuman run` with no arguments is a zero-config quickstart: it
 fetches the free **Wise Pup** avatar and renders it live — on macOS (Apple
 Silicon) via CoreML / Apple Neural Engine, and on Linux x86_64 via LiteRT;
@@ -654,7 +654,7 @@ Windows is coming. Each avatar is one self-contained
 [`.imx` file](/concepts/avatars-imx) and the render engine ships inside the CLI,
 so a fresh install runs its first avatar with no extra setup — the CLI downloads
 only your platform's slice (about 26 MB on macOS, 63 MB on Linux). See
-[Local rendering by platform](/sdk/cli/overview#local-rendering-by-platform).
+[Local rendering by platform](/sdk/cli#what-renders-locally-and-where).
 
 ### Expression 2 — smaller, sharper serving model (2026-07-16)
 
@@ -777,7 +777,7 @@ rollout, the model documentation gained the shipping characteristics:
   from a single photo (no face detection or cropping anywhere in the
   pipeline), which is why any character morphology animates naturally;
   serves GPU → Apple Silicon → CPU; its on-device Apple engine shipped later,
-  in [Swift SDK 2.5.0](/sdk/swift#expression-2-on-device) — engine only, with no
+  in [Swift SDK 2.5.0](/sdk/ios#expression-2-on-device) — engine only, with no
   model bundle published.
 - The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
   and [creation guide](/concepts/models-v2#how-creation-works) were refreshed
@@ -871,7 +871,7 @@ The model-release UX wave — one creation surface across all five model familie
 - **Per-model creation pricing.** Creation is billed per model — 500 credits for the second generation (`essence-2`, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`), 250 for v1 (`essence-1`, `expression-1`). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) now returns the per-model map (`agent_generation.by_model`) — the old flat field is gone.
 - **`POST /v1/agent/{code}/models` — add a model to an existing agent.** No re-creation: [add](/api/agents#add-a-model-to-an-existing-agent) `essence-1` (250), `essence-2` (combined, 500), `expression-2` (500), or `expression-1` (**free, instant** — the shared v1 engine drives the agent's existing image + voice, nothing trained). Async adds poll via `supported_models`; failures auto-refund; re-POSTing never double-charges.
 - **`GET /v1/agent/{code}/model/download` — download your generated model.** A 302 to the artifact (`?redirect=false` for JSON): `essence-1` → `.imx`, `essence-2-light` → `.lebundle.imx` (licensed weights), `essence-2-quality` → `.pkl`, `expression-2` → `.avatar` (the Mac-runnable CoreML build). Per-family [error matrix](/api/agents#download-an-agents-model) including the poll-able `404 MODEL_ARTIFACT_NOT_READY`.
-- **The CLI recognizes every model family.** [`bithuman run` / `info` / `pull`](/sdk/cli/commands) now sniff any bitHuman artifact and answer honestly: `essence-1` `.imx` runs locally as always; `.lebundle.imx` / `.pkl` / `.avatar` are recognized with a clear handoff to where they run ([launch matrix](/sdk/cli/commands#which-model-files-run-locally)). New: **`bithuman pull <AGENT_CODE>`** downloads your own agent's model through the endpoint above.
+- **The CLI recognizes every model family.** [`bithuman run` / `info` / `pull`](/sdk/cli/reference) now sniff any bitHuman artifact and answer honestly: `essence-1` `.imx` runs locally as always; `.lebundle.imx` / `.pkl` / `.avatar` are recognized with a clear handoff to where they run ([launch matrix](/sdk/cli/reference#which-model-files-run-locally)). New: **`bithuman pull <AGENT_CODE>`** downloads your own agent's model through the endpoint above.
 - **Essence 2 Max is now gated on the source video.** Its identity prepares on demand **from the agent's source footage** — an image-only agent can never render Max, so it's no longer advertised in `supported_models` without a video, and requesting it returns `409 MODEL_NOT_GENERATED` with the real blocker named (`… requires a source video, which this agent doesn't have`). This corrects the earlier "never gated" behavior/wording (see the 2026-07-02 gate note below).
 
 ### Official model guides + natural idle for the second generation (2026-07-02)

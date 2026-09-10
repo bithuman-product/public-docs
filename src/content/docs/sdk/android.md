@@ -1,20 +1,117 @@
 ---
-title: "Android SDK (Kotlin)"
+title: "Android"
 description: "Three on-device Android AARs on Maven Central — ai.bithuman:expression2-android:0.3.1 (expression-2), ai.bithuman:essence2-android:0.5.1 (essence-2) and ai.bithuman:sdk:2.3.6 (essence-1), all arm64-v8a only. Coordinates, a Gradle snippet that resolves, the in-SDK model store, and the measured limits."
 section: sdk
-group: "Mobile — iOS & Android"
-order: 12
+group: "Platforms"
+order: 30
+label: "Android"
 ---
 
-**In a hurry?** [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello)
-is a **complete project — every file in full**, from `settings.gradle.kts` to the
-activity, that renders a talking avatar on a physical phone and plays the audio
-back with it. Copy the seven files, push one WAV, run. On this page, the fastest
-working path is
-[Install](#install--the-minimal-build-that-works) →
-[Calling it](#calling-it--audio-in-frames-out) →
-[Getting a model onto the device](#getting-a-model-onto-the-device), all
-expression-2. essence-2 has [a caveat you should read first](#essence-2--aibithumanessence2-android051).
+## Three steps
+
+★ **A frame on an Android handset costs nothing.** No bitHuman account, no API
+key, no credits: `expression-2`'s model store fetches a published identity over
+**anonymous HTTPS**. It is the only phone rail where that is true, and it is the
+reason to start here.
+
+### Two Gradle blocks
+
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()         // AGP resolves its own aapt2 here — every Android project needs it
+        mavenCentral()   // the bitHuman AAR
+    }
+}
+```
+
+```kotlin
+// app/build.gradle.kts
+android {
+    defaultConfig {
+        minSdk = 26                        // the AAR's own floor
+        ndk { abiFilters += "arm64-v8a" }  // the only ABI published
+    }
+    packaging { jniLibs { useLegacyPackaging = true } }   // not optional — see below
+}
+dependencies {
+    implementation("ai.bithuman:expression2-android:0.3.1")
+}
+```
+
+### Calling it — audio in, frames out
+
+16 kHz mono `FloatArray` in, `Bitmap` frames out.
+
+```kotlin
+import ai.bithuman.expression2.Expression2Avatar
+import ai.bithuman.expression2.Expression2ModelStore
+import ai.bithuman.expression2.Expression2Options
+import android.content.Context
+import android.graphics.Bitmap
+
+/** [pcm16k] is 16 kHz MONO float32 in [-1, 1] — one float per sample, not ShortArray. */
+fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
+    // Blocks on the network the first time (~158 MB). Never on the main thread.
+    val model = Expression2ModelStore(context).fetch(agentCode)   // anonymous HTTPS
+
+    Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
+        val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
+        avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
+        avatar.flushTail()                    // the padded tail is the last sentence
+        while (true) {
+            if (avatar.pull(frame) != null) { show(frame); continue }
+            if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+        }
+    }
+}
+```
+
+`A66GYD8664` is a published identity that answers anonymously — so is
+`A55NVK9945`, `A17ZTB0222` and `A74NWD9723`, while a made-up code answers 400.
+
+### Build and install
+
+```bash
+./gradlew :app:installDebug
+```
+
+**Measured 2026-09-10** — the project below rebuilt from its Maven coordinate,
+installed on a **Galaxy S25+ (SM-S936U1, Snapdragon 8 Elite, Android 16)** and
+run with a 13.87 s 16 kHz WAV: `BUILD SUCCESSFUL`, `Installed on 1 device`, and
+the app's own log line **`309 frames, 13.87 s`**. No account, no key, no credit
+spend anywhere in the run.
+
+> ★ **Want the whole project rather than two blocks?**
+> [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) prints every
+> file in full — `settings.gradle.kts`, the wrapper, the manifest, the activity —
+> in the order you create them. There is no repository to clone: the page **is**
+> the project, and it was built from exactly those bytes.
+
+**Three things that are not bitHuman's and will still stop you.** Android Studio
+sets the first two for you; a terminal build does not.
+
+- **`ANDROID_HOME` or a `local.properties`** with `sdk.dir=…`, or the first task
+  fails with *"SDK location not found"*.
+- **A JDK 17 launcher.** AGP 8.7.3 refuses a newer one, and refuses it
+  illegibly: with `JAVA_HOME` at a JDK 26 the whole "What went wrong" is the
+  string `26.0.2.1`.
+- **Write the wrapper last.** `gradle wrapper --gradle-version 8.11.1` after
+  `settings.gradle.kts` and `app/` exist — **Gradle 9 refuses to write a wrapper
+  into an empty directory** where Gradle 8 would.
+
+★ **`useLegacyPackaging = true` is not a style choice, and leaving it out is
+silent.** AGP defaults to `extractNativeLibs="false"` for `minSdk >= 23`, so the
+installer puts **no** `.so` files on disk. `System.loadLibrary` does not care —
+the linker reads straight out of the APK — so the engine loads and everything
+looks healthy. But the SDK finds the Qualcomm delegate with a
+`File(nativeLibraryDir, "libQnnTFLiteDelegate.so").isFile` check, and that needs
+a real file. The result is `Accelerator.NPU` throwing *"no
+libQnnTFLiteDelegate.so in this APK"* while the delegate sits inside it.
+
+Everything below is reference: the other two model families, the accelerated
+path, the measured quality and speed, and the licence.
 
 ## What is on Maven Central
 
@@ -77,7 +174,7 @@ how a self-hosted session is metered.
 >   resolves its own `aapt2` out of the dependency repositories and `aapt2` is
 >   published only on Google's Maven**, so a `mavenCentral()`-only build dies at
 >   `:app:processDebugResources` — measured 2026-09-09,
->   [transcript below](#install--the-minimal-build-that-works). ★This bullet
+>   [transcript below](#three-steps). ★This bullet
 >   said flatly *"`google()` is no longer required"* until 2026-09-09, and a
 >   developer who acted on it could not build an APK at all. A build **pinned to
 >   `0.3.0` fails earlier still**, at `checkReleaseAarMetadata` — a published POM
@@ -121,98 +218,6 @@ inference is on-device. The AAR is **2,742,085 B** to download and carries two
 native libraries for `arm64-v8a` — `libexpr2jni.so` (446,200 B) and `libLiteRt.so`
 (5,508,376 B).
 
-### Install — the minimal build that works
-
-★ **Two things Gradle needs before any of this runs, and neither is bitHuman's.**
-Android Studio sets both for you; a terminal build does not, and both failures
-are measured here on 2026-09-09 against the project on
-[the example page](/examples/kotlin-android-hello):
-
-- **The SDK location.** With neither `ANDROID_HOME` exported nor a
-  `local.properties`, the first task fails with *"SDK location not found. Define a
-  valid SDK location with an ANDROID_HOME environment variable or by setting the
-  sdk.dir path in your project's local properties file"*. Export `ANDROID_HOME`,
-  or write `sdk.dir=/path/to/sdk` into `local.properties`.
-- **A JDK 17 launcher.** AGP 8.7.3 refuses a newer one, and it refuses it
-  *illegibly*: with `JAVA_HOME` at a Homebrew JDK 26 the entire "What went wrong"
-  is the string `26.0.2.1`. Point `JAVA_HOME` at JDK 17 and the same tree builds.
-- **A wrapper, written *after* the build files exist.** If you are creating the
-  project from a terminal rather than from Android Studio, run
-  `gradle wrapper --gradle-version 8.11.1` **last**, once `settings.gradle.kts`
-  and the `app/` directory are on disk. **Gradle 9 refuses to write a wrapper into
-  an empty directory** — *"Directory '…' does not contain a Gradle build"* — where
-  Gradle 8 would; measured 2026-09-09 on 9.7.1, with the three orders tabulated on
-  [the example page](/examples/kotlin-android-hello#step-2--create-the-project).
-
-```kotlin
-// settings.gradle.kts
-pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
-dependencyResolutionManagement {
-    repositories {
-        google()         // AGP's own aapt2 — NOT optional, see below
-        mavenCentral()   // ai.bithuman:expression2-android — Central alone is enough for the SDK
-    }
-}
-```
-
-★ **Want the whole project instead of the two blocks below?**
-[Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) prints every
-file — settings, wrapper, manifest, activity — in the order you create them, and
-was built and run from exactly those bytes on a Galaxy S25+ on 2026-09-09.
-
-```kotlin
-// app/build.gradle.kts
-android {
-    defaultConfig {
-        minSdk = 26                       // the AAR's own minSdk
-        ndk { abiFilters += "arm64-v8a" }  // the only ABI published
-    }
-    packaging { jniLibs { useLegacyPackaging = true } }   // not optional — see below
-}
-dependencies {
-    implementation("ai.bithuman:expression2-android:0.3.1")
-}
-```
-
-★ **`google()` is still required — by AGP, not by us. Measured 2026-09-09:** a
-`settings.gradle.kts` with `mavenCentral()` alone (this page printed exactly that
-until today) configures and compiles and then dies at `:app:processDebugResources`:
-
-```
-> Could not resolve all files for configuration ':app:detachedConfiguration2'.
-   > Could not find com.android.tools.build:aapt2:8.7.3-12006047.
-     Searched in the following locations:
-       - https://repo.maven.apache.org/maven2/com/android/tools/build/aapt2/8.7.3-12006047/aapt2-8.7.3-12006047.pom
-```
-
-The Android Gradle Plugin resolves its own `aapt2` out of the **dependency**
-repositories, and `aapt2` is published only on Google's Maven. Nothing about
-bitHuman is involved: any Android project needs `google()` there. What changed with
-`0.3.1` is narrower and still true — **the SDK's own POM no longer drags in a
-Google-only artifact**:
-
-★ **`0.3.1` no longer needs `google()` for the SDK's transitive dependency.** The
-`0.3.0` POM declares `com.google.ai.edge.litert:litert:2.2.0`, which is **not on
-Maven Central** — it is only on Google's Maven repository. With `mavenCentral()`
-alone, Gradle still reports `expression2-android:0.3.0` as *resolved*, and then
-`assembleRelease` dies at `checkReleaseAarMetadata` with
-`Could not find com.google.ai.edge.litert:litert:2.2.0`. That is measured, not
-predicted — the [negative control](/sdk/android-verify#control-2-mavencentral-alone-is-not-enough)
-runs it. **`0.3.1`'s POM declares only `org.jetbrains.kotlin:kotlin-stdlib:2.0.21`**
-(re-read from Central 2026-09-06) and the LiteRT runtime it needs is the
-`libLiteRt.so` already inside the AAR, so `mavenCentral()` alone resolves it. ★If
-you pin `0.3.0` you still need `google()`: Central never replaces a published POM.
-
-★ **`useLegacyPackaging = true` is not a style choice, and leaving it out is
-silent.** AGP defaults to `android:extractNativeLibs="false"` for `minSdk >= 23`, so
-the installer puts **no** `.so` files in `applicationInfo.nativeLibraryDir`.
-`System.loadLibrary` does not care — the linker reads straight out of the APK — so
-the engine loads and everything looks healthy. But the SDK finds the Qualcomm
-delegate with a `File(nativeLibraryDir, "libQnnTFLiteDelegate.so").isFile` check and
-puts that directory on `ADSP_LIBRARY_PATH`, and both need real files on disk. The
-result is `Accelerator.NPU` throwing *"no libQnnTFLiteDelegate.so in this APK"*
-while the delegate is sitting in the APK.
-
 ### The accelerated path needs two more artifacts
 
 The Qualcomm delegate is **not** in our AAR. Your app supplies it:
@@ -237,48 +242,20 @@ Having them in the APK is necessary and not sufficient — the device also has t
 accept the graph. [Ask for the accelerator the safe way](#ask-for-the-accelerator-not-for-the-npu)
 so that a refusal costs you speed rather than every frame.
 
-### Calling it — audio in, frames out
+### What the phone reported
 
-This is the whole loop, and it is the arm that renders on every arm64 device.
-Start here, then read the accelerated arm below.
-
-```kotlin
-import ai.bithuman.expression2.Expression2Avatar
-import ai.bithuman.expression2.Expression2ModelStore
-import ai.bithuman.expression2.Expression2Options
-import android.content.Context
-import android.graphics.Bitmap
-
-/** [pcm16k] is 16 kHz MONO float32 in [-1, 1] — one float per sample, not ShortArray. */
-fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
-    // Blocks on the network the first time (~158 MB). Never on the main thread.
-    val model = Expression2ModelStore(context).fetch(agentCode)
-
-    Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
-        val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
-        avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
-        avatar.flushTail()                    // the padded tail is the last sentence
-        while (true) {
-            if (avatar.pull(frame) != null) { show(frame); continue }
-            if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
-        }
-    }
-}
-```
-
-**Measured end to end on 2026-09-09** on a Galaxy S25+ (SM-S936U1, Snapdragon
-8 Elite, Android 16), from a brand-new Gradle project whose only path to the SDK
-is the Maven coordinate: 9.03 s of 16 kHz mono speech in → **181 frames out**
-(20 fps × 9.03 s = 181), first frame at 15.3 s, whole clip in 23.7 s.
-`Expression2Options()` resolved to `acc=CPU routing=Routing(enc=CPU, tok14=CPU,
-step=CPU, dec=CPU)`, `initMs` 436.
+The render loop is at the [top of this page](#calling-it--audio-in-frames-out);
+this is what it reported. **Measured 2026-09-09** on a Galaxy S25+ from a brand-new
+Gradle project whose only path to the SDK is the Maven coordinate: 9.03 s of
+16 kHz mono speech in → **181 frames out** (20 fps × 9.03 s = 181), first frame
+at 15.3 s, whole clip in 23.7 s. `Expression2Options()` resolved to `acc=CPU
+routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=CPU)`, `initMs` 436.
 
 `create` also tells you what it actually built — `avatar.accelerator`,
-`avatar.routing`, `avatar.acceleratorNote` and `avatar.initMs`. Log them; they are
-the only honest answer to "did my accelerator flag do anything?". On the run above
-they read `acc=CPU`, `routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=CPU)`,
-an empty note and `initMs` 436; across four builds on the same phone on 2026-09-09
-`initMs` stayed between 436 and 558 ms.
+`avatar.routing`, `avatar.acceleratorNote` and `avatar.initMs`. Log them; they
+are the only honest answer to "did my accelerator flag do anything?". Across
+four builds on the same phone on 2026-09-09 `initMs` stayed between 436 and
+558 ms.
 
 ### Ask for the accelerator, not for the NPU
 
@@ -520,46 +497,33 @@ The bundled `libLiteRt.so` is Apache-2.0 Google code, and the AAR ships
 
 ## essence-1 — `ai.bithuman:sdk:2.3.6`
 
-★ **This artifact has been publicly resolvable on Maven Central since May 2026 and
-this documentation has never mentioned it.** Until 2026-09-02 it was the *only*
-publicly consumable Android artifact this org had.
-
-The coordinate is `ai.bithuman:sdk` — a legacy artifact name from before the SDK
-family had more than one member. It is frozen and it is what you must type.
-
-> **`2.3.6` cannot authenticate on an Android device, so it cannot render a frame
-> there. Measured on a Galaxy S25+ (SM-S936U1, Android 16) on 2026-09-09.** The
+> ★ **`2.3.6` cannot authenticate on an Android device, so it renders no frame
+> there.** Measured on a Galaxy S25+ (SM-S936U1, Android 16) on 2026-09-09. The
 > first call in every essence-1 app throws before any model is read:
 >
 > ```text
 > ai.bithuman.sdk.BithumanException: be_auth_authenticate: status=11
 >   msg=curl_easy_perform: SSL peer certificate or SSH remote key was not OK
->     at ai.bithuman.sdk.BithumanAuth.configure(Auth.kt:65)
->     at ai.bithuman.sdk.Avatar$Companion.load(Avatar.kt:185)
 > ```
 >
 > **It is not your network and not your key.** The published
-> `jni/arm64-v8a/libessence_jni.so` links a static OpenSSL build that carries **no
-> trust store at all** — `strings` finds **0** `BEGIN CERTIFICATE` in it, against
-> **121** in a real bundle read by the same command — so every TLS handshake it
-> makes fails verification. Two controls, on that handset, that minute:
+> `jni/arm64-v8a/libessence_jni.so` links a static OpenSSL build carrying **no
+> trust store at all** — `strings` finds **0** `BEGIN CERTIFICATE` in it against
+> **121** in a real bundle read the same way — so every TLS handshake it makes
+> fails verification. Two controls on that handset, that minute: the phone's own
+> Java stack reached the very endpoint the SDK calls and got **HTTP 401** over a
+> healthy public chain; and pointing `SSL_CERT_FILE` at a Mozilla `cacert.pem`
+> inside the app changes nothing, because the env override is not in these
+> published bytes. **There is no app-side workaround on this version.** The fix
+> is in the SDK source and reaches you only in a new published version, which is
+> not on Maven Central yet.
 >
-> - The phone's own Java stack reached the very endpoint the SDK calls,
->   `https://api.bithuman.ai/v1/runtime-tokens/request`, and got **HTTP 401** over a
->   chain of `CN=bithuman.ai` → Google Trust Services `WE1` → `GTS Root R4` →
->   `GlobalSign Root CA`. A public chain, no interception, TLS healthy.
-> - Pointing `SSL_CERT_FILE` at a 188,900-byte Mozilla `cacert.pem` inside the app
->   (`android.system.Os.setenv`) changes **nothing** — the env override is not in
->   these published bytes (`CURL_CA_BUNDLE` does not appear in the library either).
->   **There is no app-side workaround on this version.**
->
-> The fix is in the SDK source — the Android build now embeds the Mozilla bundle —
-> and it reaches you only in a **new published version**, which does not exist on
-> Maven Central yet. Until it does, **use
-> [expression-2](#expression-2--aibithumanexpression2-android031) for an on-device
-> talking head on Android**: it needs no key, no `.imx` and no network after the
-> model fetch. Everything below documents `2.3.6`'s API and remains accurate about
-> the API; it is the authentication step that stops you.
+> Until it is, use [expression-2](#three-steps) for an on-device talking head on
+> Android. Everything below is accurate about `2.3.6`'s API; it is the
+> authentication step that stops you.
+
+The coordinate `ai.bithuman:sdk` is a legacy artifact name from before the family
+had more than one member. It is frozen and it is what you type.
 
 ```kotlin
 // app/build.gradle.kts
@@ -575,13 +539,10 @@ dependencies {
 }
 ```
 
-The AAR is **16,955,315 B** and carries `libessence_jni.so` (11,404,936 B),
-`libonnxruntime.so` (27,408,600 B) and `libc++_shared.so` (1,253,544 B) for
-`arm64-v8a`. A release APK containing it measured **18,986,991 B**. It loads a
-single self-contained `.imx` model file — generate an agent with an **essence-1**
-model and download its `.imx`.
-
-### High-level
+The AAR is **16,955,315 B** and carries `libessence_jni.so`, `libonnxruntime.so`
+and `libc++_shared.so` for `arm64-v8a`; a release APK containing it measured
+**18,986,991 B**. It loads a single self-contained `.imx` — generate an agent
+with an **essence-1** model and download its `.imx`.
 
 ```kotlin
 import ai.bithuman.sdk.Avatar
@@ -594,61 +555,11 @@ Avatar.load(modelPath, apiSecret).use { avatar ->
 }
 ```
 
-`Avatar.load(modelPath, apiSecret)` — get a secret at
-[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). `BithumanAuth`
-exchanges it for a runtime token at startup and then renews on a heartbeat: the
-2.3.6 defaults are `intervalSeconds = 60` and `offlineGraceSeconds = 300`, so a
-60-second heartbeat with a 5-minute offline grace.
-
-> ### Correction — 2026-09-02: there is no `AUTH_FAILED`
->
-> This page previously said that without a valid secret `Avatar.load` throws
-> **`BithumanException: AUTH_FAILED`**. **That identifier does not exist.** The
-> string `AUTH_FAILED` occurs nowhere in `ai.bithuman:sdk:2.3.6` — not in any of
-> the 19 classes in `classes.jar`, and not in any of the three bundled `.so`
-> files. Anyone who wrote a `catch` against that name was matching on nothing.
-
-What the 2.3.6 AAR actually does on the failure path, read out of its bytecode:
-
-| What you did | What you get |
-|---|---|
-| Passed no secret, with no env var set | **`java.lang.IllegalArgumentException`** — *not* a `BithumanException` — from `Avatar$Companion.load`, message `Avatar.load: apiSecret required (or set BITHUMAN_API_SECRET env, or BITHUMAN_UNMETERED=1 for dev).` |
-| Passed an empty secret | `java.lang.IllegalArgumentException`, message `apiSecret must not be empty`, from `BithumanAuth.configure` |
-| Passed a secret the server rejects | **`BithumanException`**, message `be_auth_init: status=<n>` or `be_auth_authenticate: status=<n>` |
-
-The type you must catch therefore depends on *which* failure it is: a **missing or
-empty** secret is an unchecked `IllegalArgumentException` (it is treated as a
-programming error), and only a **rejected** one is a `BithumanException`. A
-`try { … } catch (e: BithumanException)` around `Avatar.load` does not catch the
-missing-secret case at all.
-
-The numeric codes the native layer returns are `BithumanError.NO_AUTH = 11` and
-`BithumanError.AUTH_FATAL = 12`. Live auth status is exposed as `AuthState`, whose
-six values are `UNCONFIGURED`, `AUTHENTICATING`, `OK`, `OFFLINE`, `FATAL_BALANCE`
-and `FATAL_SUSPENDED`.
-
-★ **`BITHUMAN_UNMETERED=1` — real, and undocumented until now.** `Avatar.load`
-reads this environment variable with `System.getenv` as its **first** action, before
-it looks for a secret at all. If it is exactly the string `1`, the whole
-authentication block is skipped: no secret is required, `BithumanAuth.configure` is
-never called, and `load` goes straight to opening the `Fixture`. It is a
-development affordance — the value must be exactly `1` (`true` and `yes` do not
-work) and you should not ship it in a release build.
-
-The SDK also reads the `BITHUMAN_API_SECRET` environment variable, likewise via
-`System.getenv`, so it must be set before the process starts. A Java *system
-property* is not consulted on this path.
-
-★ **Why this page's own compile probe could not catch this.** Every snippet here is
-put through a compile probe before publication, and that control works — it is what
-caught the `ShortArray` mistake in the next section. But this defect was in
-**prose**, naming an identifier on a **failure path that no snippet exercises**. A
-control that compiles the happy path is structurally blind to a false claim about
-what happens when the happy path is *not* taken. That is a gap in the method, not a
-slip: it is why the table above is quoted out of the artifact rather than from
-memory, and why the failure-path names are now the ones the bytecode uses.
-
-### Streaming
+For streaming, drive `Fixture` + `Runtime` directly. `Runtime.pushAudio` takes a
+**`FloatArray`** of 16 kHz mono — not a `ShortArray`, which is the mistake this
+page shipped until 2026-09-02 and which is now a
+[negative control](/sdk/android-verify#control-3-the-old-pages-shortarray) you
+can watch go red:
 
 ```kotlin
 import ai.bithuman.sdk.Fixture
@@ -667,58 +578,40 @@ Fixture(modelPath).use { fx ->
 }
 ```
 
-★ **Correction.** This page previously wrote `fun onAudio(pcm: ShortArray)` here.
-`Runtime.pushAudio` takes a **`FloatArray`**, and the old snippet did not compile:
-`Argument type mismatch: actual type is 'kotlin.ShortArray', but 'kotlin.FloatArray'
-was expected.` That failure is reproduced as a
-[negative control](/sdk/android-verify#control-3-the-old-pages-shortarray) so you
-can see it go red.
+A single `Runtime` is **not** internally synchronized — pin push and pull to one
+thread, or wrap it in your own mutex. Multi-conversation hosts share one
+`Fixture` across many `Runtime`s to amortise the model load.
 
-A single `Runtime` is **not** internally synchronized — pin push/pull to one thread
-or wrap it in your own mutex. Multi-conversation hosts share one `Fixture` across
-many `Runtime`s to amortize the model load.
+**Which exception you catch depends on which failure it is.** A missing or empty
+secret is an unchecked `IllegalArgumentException` from `Avatar$Companion.load` or
+`BithumanAuth.configure`; only a **rejected** secret is a `BithumanException`
+(`be_auth_init: status=<n>` / `be_auth_authenticate: status=<n>`). A `catch (e:
+BithumanException)` around `Avatar.load` does not catch the missing-secret case
+at all. There is **no `AUTH_FAILED` identifier** — the string occurs nowhere in
+the artifact, so a `catch` written against that name matches nothing. Native
+codes are `BithumanError.NO_AUTH = 11` and `AUTH_FATAL = 12`; live status is
+`AuthState` (`UNCONFIGURED`, `AUTHENTICATING`, `OK`, `OFFLINE`, `FATAL_BALANCE`,
+`FATAL_SUSPENDED`). `Avatar.load` reads `BITHUMAN_UNMETERED=1` from the
+environment as its **first** action and skips authentication entirely when it is
+exactly `1` — a development affordance, not something to ship.
 
-### Execution providers — what is actually in the artifact
+**Execution providers.** `ExecutionProvider` has five values — `CPU` (the
+default), `AUTO`, `COREML`, `NNAPI`, `QNN`. `NNAPI` is genuinely wired: the
+wrapper carries a dynamic reference to
+`OrtSessionOptionsAppendExecutionProvider_Nnapi` and the bundled ONNX Runtime
+exports it, so the provider really is appended — **whether ONNX Runtime then
+gives it any of the graph on a real handset is a device fact and is not verified
+here.** `QNN` has **no backend in this AAR to reach**: no `libQnn*.so`
+reference, no `QnnBackend_*` and no `QnnInterface*` symbol, against 103
+`ANeuralNetworks*` symbols found by the same test as the positive control. For
+the Qualcomm NPU on Android today, the measured path is the **expression-2** AAR
+above, which takes the QNN delegate as an explicit dependency.
 
-`ExecutionProvider` has five values: `CPU`, `AUTO`, `COREML`, `NNAPI` and `QNN`.
-The default is **`CPU`** (it is the default argument of `Avatar.load`). An earlier
-version of this page said `NNAPI` and `QNN` *"are accepted but no-op to CPU"*. That
-is not what the artifact shows, and the two are not in the same position:
-
-- **`NNAPI` is genuinely wired.** `libessence_jni.so` carries an undefined dynamic
-  reference to `OrtSessionOptionsAppendExecutionProvider_Nnapi@VERS_1.26.0`, and
-  the bundled `libonnxruntime.so` — a `DT_NEEDED` of the wrapper — exports that
-  symbol. A compiled call site exists, so selecting NNAPI demonstrably does **not**
-  no-op inside our wrapper: the provider really is appended to the ORT session
-  options. **What ONNX Runtime then does with it on a real handset — whether NNAPI
-  takes any of the graph, or whether ORT assigns every node back to CPU — is a
-  device fact, and it is not verified here.** No phone measurement backs either
-  answer, so this page asserts neither. Read it as "the provider is requested", not
-  as "the model is accelerated", until you measure it on your own device.
-- **`QNN` has no backend in this AAR to reach.** The bundled `libonnxruntime.so`
-  contains no QNN execution-provider code: no `libQnn*.so` reference, no
-  `QnnBackend_*` and no `QnnInterface*` symbol. The bare string
-  `QNNExecutionProvider` *does* appear, but so do `CUDAExecutionProvider`,
-  `OpenVINOExecutionProvider` and `DmlExecutionProvider`, none of which can be
-  compiled into an Android `arm64-v8a` build — that list is ORT's static table of
-  provider *names*, not evidence that any of them is present. The same test run
-  against NNAPI as a positive control finds 103 `ANeuralNetworks*` symbols, so the
-  test does discriminate. **What `ExecutionProvider.QNN` does at runtime is
-  therefore unverified**; what is certain is that this artifact ships no Qualcomm
-  backend for it to use.
-
-If you want the Qualcomm NPU on Android today, the measured path is the
-**expression-2** AAR at the top of this page, which takes the QNN delegate as an
-explicit dependency.
-
-> **Not re-measured for this page.** The on-device frame-rate and memory figures
-> previously published for essence-1 on Android (a tight-loop mean of 3.96 ms,
-> 252 fps sustained, 139 MB PSS on a Snapdragon 8 Gen 2) were **not** re-taken here
-> and this page does not vouch for them. What is verified above is the coordinate,
-> the artifact contents, the API surface and that an outside project compiles
-> against it.
-
----
+> **Not re-measured.** The on-device frame-rate and memory figures previously
+> published for essence-1 on Android (3.96 ms mean, 252 fps sustained, 139 MB PSS
+> on a Snapdragon 8 Gen 2) were **not** re-taken and this page does not vouch for
+> them. What is verified is the coordinate, the artifact contents, the API
+> surface, and that an outside project compiles against it.
 
 ## essence-2 — `ai.bithuman:essence2-android:0.5.1`
 
@@ -1080,5 +973,5 @@ deliberately fails, so you can tell a working setup from a silently-broken one.
 - [Failure states on a phone](/examples/failure-states) — what the store throws with no network, a half-finished download, or a wrong agent code
 - [SDK overview](/sdk) — which SDK to pick
 - [Audio streaming](/concepts/audio-streaming) — the push/drain loop
-- [Swift SDK](/sdk/swift) — the Apple counterpart
+- [Swift SDK](/sdk/ios) — the Apple counterpart
 - [Where each model runs](/concepts/where-models-run) — which model runs on which lane, and what "GPU only" means

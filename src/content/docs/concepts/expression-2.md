@@ -242,13 +242,13 @@ pin `expression-2-cpu` for batch and self-hosted-server work rather than
 low-latency live sessions.
 
 **Self-hosted.** Expression 2 also renders on your own hardware via the
-[CLI's local renderer](/sdk/cli/overview#local-rendering-by-platform) —
+[CLI's local renderer](/sdk/cli#what-renders-locally-and-where) —
 macOS (Apple Silicon) and Linux x86_64 — at the self-hosted rate; batch /
 server-grade CPU work wants modern (AVX-512-class) CPUs. (The Python SDK has
 no Expression-2-loadable artifact — local rendering is a CLI surface.) See
 the [device matrix](/concepts/models-v2#where-each-model-runs).
 
-**On-device.** The engine runs on Apple Silicon via the [Swift SDK](/sdk/swift)
+**On-device.** The engine runs on Apple Silicon via the [Swift SDK](/sdk/ios)
 rail (preview maturity) — no server in the path. That rail is **macOS *and*
 iOS**: the `Expression2` product ships a `macos-arm64` and an `ios-arm64`
 slice, and the iOS one has rendered on an iPhone — 117 frames at 416×720 on an
@@ -258,9 +258,9 @@ binary; it ships **no model weights**, and no per-identity CoreML bundle is
 published **in the directory form this product loads**, so resolving it does not
 by itself give you a rendering avatar on either platform (the `<code>.avatar`
 you can download is a packed container for the CLI and cloud engines — see
-[Expression 2 on-device](/sdk/swift#expression-2-on-device)). There is no self-serve path to a bundle — email
+[Expression 2 on-device](/sdk/ios#expression-2-on-device)). There is no self-serve path to a bundle — email
 [hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want. See
-[Expression 2 on-device](/sdk/swift#expression-2-on-device).
+[Expression 2 on-device](/sdk/ios#expression-2-on-device).
 
 **The downloadable artifact is a different rail, not the missing bundle.**
 Download the runnable `<code>.avatar` — the frozen back-compat alias of

@@ -16,14 +16,14 @@ const pillars = [
 // Every surface you can build on, named the way a developer searches for it —
 // the page each one opens is the single source for that platform.
 const platforms = [
-  { label: "iOS & iPadOS", href: "/sdk/swift" },
+  { label: "iOS & iPadOS", href: "/sdk/ios" },
   { label: "Android", href: "/sdk/android" },
   { label: "iOS app, end to end", href: "/examples/swift-ios-expression2" },
   { label: "Android app, end to end", href: "/examples/kotlin-android-hello" },
-  { label: "macOS", href: "/sdk/swift" },
+  { label: "macOS", href: "/sdk/ios" },
   { label: "Python", href: "/sdk/python" },
-  { label: "Browser", href: "/sdk/wasm" },
-  { label: "CLI", href: "/sdk/cli/overview" },
+  { label: "Browser", href: "/sdk/browser" },
+  { label: "CLI", href: "/sdk/cli" },
 ];
 
 // elegant device icons (line-art, theme-aware via currentColor)
@@ -68,7 +68,7 @@ import android.graphics.Bitmap
 /** [pcm16k] is 16 kHz MONO float32 in [-1, 1] — one float per sample, not ShortArray. */
 fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
     // Blocks on the network the first time (~158 MB). Never on the main thread.
-    val model = Expression2ModelStore(context).fetch(agentCode)
+    val model = Expression2ModelStore(context).fetch(agentCode)   // anonymous HTTPS
 
     Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
         val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
@@ -97,10 +97,10 @@ while let chunk = runtime.tryDequeueChunk() {
 const examples = [
   { t: "Android app, end to end (Kotlin)", d: "The whole project, seven files — no account, no API key, no credits. 117 frames on a Galaxy S25+.", href: "/examples/kotlin-android-hello" },
   { t: "iOS app, end to end (Swift)", d: "The whole SwiftUI app — 149 frames at 21.8 fps on an iPhone 15. Needs an Apple team, a key and an agent code first.", href: "/examples/swift-ios-expression2" },
-  { t: "Hello, avatar (Python)", d: "Stream audio and render frames in ~20 lines.", href: "/examples/python-hello" },
+  { t: "Hello, avatar (Python)", d: "Stream audio and render frames in ~20 lines.", href: "/sdk/python" },
   { t: "Voice agent + avatar", d: "A real-time conversational agent with a live face.", href: "/examples/ai-conversation" },
   { t: "REST in any language", d: "Generate and drive an agent over plain HTTP.", href: "/examples/rest-hello" },
-  { t: "Run it from the CLI", d: "One binary, one command, a talking agent in your browser.", href: "/examples/cli-hello" },
+  { t: "Run it from the CLI", d: "One binary, one command, a talking agent in your browser.", href: "/sdk/cli" },
 ];
 
 // Real customers (logos copied into /public/logos) — monochrome credibility strip.
@@ -202,7 +202,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. <strong>Shipping a mobile app? Android is the free rail.</strong> The Kotlin tab is <code>expression-2</code> on the <a href="/sdk/android">Android SDK</a> (beta), and it renders with <strong>no account, no API key and no credits</strong> — the model store fetches a published identity over anonymous HTTPS. Measured 2026-09-09: 213 frames on a Galaxy S25+, about three minutes from an empty directory (<a href="/examples/kotlin-android-hello">the whole project</a>). <a href="/sdk/swift">iOS</a> (preview, <a href="/examples/swift-ios-expression2">the whole app</a>) is the gated one — an Apple Developer team, an agent code and a key before anything renders. Both floors are hard: Android is arm64-v8a only, and the Apple Essence engines need an iPhone 16 Pro. <a href="/sdk/overview#getting-an-avatar-model-onto-a-phone">What each phone rail needs →</a></p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. <strong>Shipping a mobile app? Android is the free rail.</strong> The Kotlin tab is <code>expression-2</code> on the <a href="/sdk/android">Android SDK</a> (beta), and it renders with <strong>no account, no API key and no credits</strong> — the model store fetches a published identity over anonymous HTTPS. Measured 2026-09-09: 213 frames on a Galaxy S25+, about three minutes from an empty directory (<a href="/examples/kotlin-android-hello">the whole project</a>). <a href="/sdk/ios">iOS</a> (preview, <a href="/examples/swift-ios-expression2">the whole app</a>) is free too — it renders a public showcase identity with no account, no API key and no credits; what it asks for is Apple's, an Apple Developer team and a physical device. Both floors are hard: Android is arm64-v8a only, and the Apple Essence engines need an iPhone 16 Pro. <a href="/sdk">What each phone rail needs →</a></p>
         <Button href="/start">Start here →</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>

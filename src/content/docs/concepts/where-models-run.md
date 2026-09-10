@@ -504,7 +504,7 @@ HTTP code and not just curl's exit status).
 > real Mac or iPhone were **not run here** — this is a Linux host. The checksum
 > agreement above is real; a working app is not something this page measured.
 
-See the [Swift SDK](/sdk/swift) page for the API.
+See the [Swift SDK](/sdk/ios) page for the API.
 
 ### Browser
 
@@ -626,6 +626,6 @@ essence-1 on any lane you run yourself. Both remain supported.
 - [Essence vs Expression](/concepts/models) — the first-generation pair in detail
 - [Verified CLI transcripts](/sdk/cli/verified) — every CLI command executed, with its real exit code
 - [Verifying the Android SDK](/sdk/android-verify) — an outside project resolving and compiling against both AARs
-- [Android SDK](/sdk/android) · [Swift SDK](/sdk/swift) · [Python SDK](/sdk/python) · [CLI](/sdk/cli/overview)
+- [Android SDK](/sdk/android) · [Swift SDK](/sdk/ios) · [Python SDK](/sdk/python) · [CLI](/sdk/cli)
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how a model file is packaged
 - [Pricing & credits](/guides/pricing) — what each model costs to run
