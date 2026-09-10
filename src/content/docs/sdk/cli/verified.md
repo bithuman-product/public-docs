@@ -382,6 +382,21 @@ recognized: IMX v2 container — expression-2: needs the local Apple render engi
 rc=0
 ```
 
+> **That second line was wrong, and the render below is the proof.**
+> This page is a verbatim capture, so the sentence stays as it was printed —
+> but it was false on Linux even as it was printed. **The model renders locally
+> on this machine**, through the vendored `expression2-model` host the
+> installer stages next to the `bithuman` binary; the very next command on this
+> page does exactly that. There is no Apple engine on Linux to install, nothing
+> was missing, and `bithuman engine install` — which the sentence recommends —
+> fetches the shared `.engine` runtime, a different artifact.
+>
+> Fixed in the CLI on 2026-09-10. A build carrying the fix answers
+> `recognized: expression-2 (Expression 2) — run it with: bithuman run <path>`,
+> and `pull --json` reports `"runnable_locally": true`. Until that build is
+> released, read the captured line as "this model renders here", and ignore the
+> advice in it.
+
 ```bash
 bithuman render ~/.cache/bithuman/agents/A55NVK9945/A55NVK9945.avatar \
   -a speech.wav -o x2.mp4
