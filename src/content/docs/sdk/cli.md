@@ -13,6 +13,15 @@ label: "CLI"
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
+What it prints when it succeeds — the last line names the engine core the
+binary carries, and `bithuman version` prints the same thing later:
+
+```text
+install: version: cli-v2.6.5
+install: sha256 ok
+install: installed: libessence 3.1.0 ABI 7
+```
+
 One self-contained binary on your `PATH`, sha256-verified against the release.
 On Apple Silicon `brew install bithuman-product/bithuman/bithuman-cli` installs
 the same tarball. Published for **macOS Apple Silicon** and **Linux x86_64**

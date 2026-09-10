@@ -412,7 +412,7 @@ macOS-only is withdrawn.
 **Still not published, and never has been:** `x86_64-apple-darwin` (Intel Mac)
 and, since `cli-v2.3.27`, `aarch64-unknown-linux-gnu` (Linux ARM). On those two
 targets `install.sh` resolves a download that 404s and exits 1. See
-[Downloads](/downloads#bithuman-cli-no-code) for the four-target probe.
+[Downloads](/sdk/cli) for the four-target probe.
 
 **`bithuman render` is unchanged and still limited**: `rc=0` for expression-2,
 **`rc=69` for essence-2** — the shipped `lib/libonnxruntime.so.1` is built at
