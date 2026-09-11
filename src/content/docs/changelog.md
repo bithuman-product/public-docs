@@ -359,7 +359,7 @@ that build's converter has expressed this step the rewritten way since
 work on it at **1.06×**.
 
 **No other Android device has been measured** and no figure is projected for
-one. See [Android, measured on the handset](/concepts/essence-2#android-measured-on-the-handset)
+one. See [Performance](/sdk/performance)
 and the [Android SDK page](/sdk/android#performance).
 
 ### essence-2 lands on Maven Central — both families now have a public Android SDK (2026-09-03)
@@ -508,7 +508,7 @@ transfer:
 - **Browser-local**: not measured.
 
 See
-[What the head-upsample rewrite is worth, per tier](/concepts/essence-2#what-the-head-upsample-rewrite-is-worth-per-tier).
+[The renderer](/concepts/essence-2#the-renderer).
 
 ### The "Apple Neural Engine" tier is renamed **Apple**, and a false performance claim is withdrawn (2026-09-02)
 
@@ -532,14 +532,14 @@ model-in-isolation reading that a live session never sees, and the per-model,
 per-compute-unit protocol used for Essence 2's CPU table has not been run for
 the Apple or GPU tiers. Picking one of the figures in circulation is what
 produced the error, so the page says so instead. See
-[Which Apple compute unit runs Essence 2](/concepts/essence-2#which-apple-compute-unit-runs-essence-2).
+[Serving tiers](/concepts/essence-2#serving-tiers).
 
 **Expression 2 is the opposite case, and is now documented separately.** Its
 Apple members are exported at half precision and CoreML's own per-operation
 compute plan places **84–100%** of their operations on the Neural Engine — none
 on the GPU. The two models share the word "Apple" and the historical `-ane`
 slug and nothing else. See
-[Which Apple compute units run Expression 2](/concepts/expression-2#which-apple-compute-units-run-expression-2).
+[Serving tiers](/concepts/expression-2#serving-tiers).
 
 **Nothing you can write changed.** `essence-2-ane`, `expression-2-ane`, the
 `?model=` force slugs, saved links and every API field keep working exactly as
@@ -601,7 +601,7 @@ That ratio is LPIPS — a learned perceptual image-distance metric — computed 
 inside the mouth-interior mask of the reference render, on each identity's
 held-out frames, so it is a per-identity improvement factor and not a
 cross-identity score
-([conditions](/concepts/essence-2#the-renderer-updated-2026-08-29)). It was
+([the renderer](/concepts/essence-2#the-renderer)). It was
 also checked frame by frame by eye, not only by metrics. Mouth motion is
 also re-centred and wider, so speech reads as more dynamic.
 
@@ -858,7 +858,7 @@ retired names and the migration are documented under
 
 bitHuman's two second-generation avatar models — **`essence-2`** and **`expression-2`** — are announced and **launch July 10, 2026** on every surface (the REST API, the embed widget, the dashboard, and the SDKs). Until then, `essence-1` and `expression-1` are available today. See [Essence 2 & Expression 2](/concepts/models-v2) for the full guide.
 
-- **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model, then the engine synthesizes fully generated motion live. *(Update 2026-07-02: per-model creation-time expectations are now documented — roughly 45 minutes for `expression-2`; see the [per-model guides](/concepts/models-v2).)* Serves on three tiers — **gpu**, **cpu**, and **ane** (the Apple tier — the slug is historical; [it runs on the Mac GPU, not the Neural Engine](/concepts/essence-2#which-apple-compute-unit-runs-essence-2)). 4 credits/min cloud · 2 credits/min self-hosted.
+- **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model, then the engine synthesizes fully generated motion live. *(Update 2026-07-02: per-model creation-time expectations are now documented — roughly 45 minutes for `expression-2`; see the [per-model guides](/concepts/models-v2).)* Serves on three tiers — **gpu**, **cpu**, and **ane** (the Apple tier — the slug is historical; [serving tiers](/concepts/essence-2#serving-tiers)). 4 credits/min cloud · 2 credits/min self-hosted.
 - **`essence-2-quality`** — the **highest-fidelity** tier of the Essence family: a heavy GPU renderer for close-up, hero-quality output on cloud GPUs. 8 credits/min cloud · 4 credits/min self-hosted.
 - **`essence-2-light`** — the **cost-effective** tier: an efficient renderer that runs across **gpu**, **cpu**, and **ane** — including fully **on-device**, where audio and video never leave your hardware. 4 credits/min cloud · 2 credits/min self-hosted.
 

@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Silicon and CPU tiers, on your own Mac or Linux machine with the CLI, from your own CPU servers, and in-browser (WebGPU/WASM); train-on-create from a photo, and pricing."
+description: "Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Silicon and CPU tiers, on your own Mac or Linux machine with the CLI, from your own CPU servers, and in the browser; train-on-create from a photo, and pricing."
 section: concepts
 group: "Models"
 order: 2
@@ -26,8 +26,7 @@ four ways:
 
 - **From bitHuman's cloud** — a **GPU**, **Apple** and **CPU** tier chain,
   routed automatically. The Apple tier runs on **bitHuman's** Apple Silicon
-  Macs through **CoreML**, and is reached over the network like any other cloud
-  tier. Its `?model=` slug is still `essence-2-ane` — a historical name, kept
+  Macs and is reached over the network like any other cloud tier. Its `?model=` slug is still `essence-2-ane` — a historical name, kept
   so saved links keep working.
 - **On your own Mac or Linux machine** — the [CLI](/sdk/cli#what-renders-locally-and-where)
   (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
@@ -39,10 +38,8 @@ four ways:
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.0.0; 2.9.0+
   for the earlier route).
-- **In the viewer's browser** — a WebAssembly renderer with a WebGPU speech
-  encoder, opt-in per session and rolling out per identity, with frames that
-  never leave that browser. Without a WebGPU adapter the face still renders;
-  local lip-sync does not.
+- **In the viewer's browser** — opt-in per session and rolling out per
+  identity, with frames that never leave that browser.
 
 Wherever it runs, Essence 2 is **fail-closed**: a model file with a required
 member missing is refused rather than played with a substituted mouth. See
@@ -61,9 +58,7 @@ deployments, and privacy-sensitive environments.
 - **Efficient Apple Silicon serving.** The Apple tier carries real-time
   sessions on bitHuman's Apple Silicon Macs without a server GPU per session.
   It is a **cloud** tier on bitHuman's hardware; it does not run on *your*
-  device — see [Swift SDK](/sdk/ios). No per-frame throughput figure is
-  published for this tier; see
-  [Which Apple compute unit runs Essence 2](#which-apple-compute-unit-runs-essence-2).
+  device — see [Swift SDK](/sdk/ios).
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
@@ -172,7 +167,7 @@ fails loudly if unavailable):
 |---|---|---|
 | `essence-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow — the public name. |
 | `essence-2-gpu` | Cloud GPU | Force the GPU tier. |
-| `essence-2-ane` | Apple Silicon (CoreML) | Force the Apple tier. The `-ane` spelling is a **historical name** kept as a permanent alias — see [below](#which-apple-compute-unit-runs-essence-2). |
+| `essence-2-ane` | Apple Silicon | Force the Apple tier. The `-ane` spelling is a **historical name** kept as a permanent alias. |
 | `essence-2-cpu` | Cloud CPU | Force the CPU tier — no GPU in the path. |
 
 ```text
@@ -185,89 +180,36 @@ pre-rename or retired slugs keep working — see
 omit `?model=` and let the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
-### Which Apple compute unit runs Essence 2
+### On your own device
 
-Apple Silicon has three compute units CoreML can place work on — the **CPU**,
-the **GPU**, and the **Neural Engine**. Which one a model gets is decided by
-CoreML from the model's precision and the configuration it is loaded with; it
-is not fixed by the name of a tier. The `essence-2-ane` slug predates that
-distinction and asserted a hardware fact it did not have.
+The Apple serving tier above runs on *bitHuman's* Apple Silicon, reached over
+the network like any other cloud tier — it is not the same thing as running on
+your Mac. What does run on your hardware:
 
-**Essence 2's Apple tier runs on the Mac GPU.** Every serving worker on the
-Apple hosts binds the `cpuAndGPU` compute unit, verified on the production
-hosts on 2026-09-02. The Neural Engine is not off-limits — for a minority of
-identities the renderer resolves to a half-precision graph the Neural Engine
-will accept, and it runs there — but measured head to head on the same
-identity and the same frames, the Neural Engine was **about 2.2× slower** than
-the Metal GPU **and** slightly further from the reference picture. So the GPU
-is not a fallback: it is the fastest *and* the most faithful unit available on
-that machine, which is why production binds it.
-
-Two things follow. First, **"Essence 2 runs on the Neural Engine" is false**,
-and so is "it can never touch the Neural Engine" — the honest statement is that
-the Neural Engine is available on some identities and is not the better unit.
-Second, this answer is **specific to Essence 2's renderer**. It does not carry
-over to [Expression 2](/concepts/expression-2#which-apple-compute-units-run-expression-2),
-whose Apple members are exported at half precision and are measured running
-predominantly *on* the Neural Engine, and it says nothing about iOS.
-
-**No per-frame number is published for the Apple or GPU tiers.** Until
-2026-09-02 this page carried a per-frame throughput figure for this tier,
-attributed to every operation in the graph running on the Neural Engine. That
-attribution was wrong, the operation count did not describe this model, and the
-figure was a model-in-isolation reading that a live session — which also pays
-audio conditioning, paste-back and the mouth-interior work — never sees. It
-has been **withdrawn rather than replaced**: the per-model, per-compute-unit
-protocol used for the [CPU table](#rendering-throughput-measured) below has not
-been run for the Apple or GPU tiers, and picking one of the several figures in
-circulation is what produced the error in the first place. If you need a
-throughput commitment for a specific identity and tier, ask us for a measured
-one rather than reading a number off this page.
-
-**On your own device.** The Apple serving tier above runs on *bitHuman's*
-Apple Silicon, reached over the network like any other cloud tier — it is not
-the same thing as running on your Mac. What does run on your hardware:
-
-- **Your own Mac or Linux machine, through the CLI** — as of `cli-v2.6.1`
-  (2026-09-07) the Essence 2 runtime ships inside the CLI tarball for macOS
-  Apple Silicon and Linux x86_64. `bithuman pull <CODE> --model essence-2`
-  hands you `<CODE>.imx`, `bithuman render` turns it and an audio file into an
-  MP4 offline (5 s of audio → 125 frames at 25 fps), and `bithuman run` serves
-  it from a local server. The first render downloads the shared audio encoder
-  (~377 MB, once, by content digest) into `~/.bithuman/engines/essence-2/`;
-  the first play checks the licence with the cloud. See
-  [Essence 2 on your own machine](/sdk/cli#what-renders-locally-and-where).
-- **Android** — the [`ai.bithuman:essence2-android:0.5.1`](/sdk/android#essence-2-and-essence-1-on-android)
-  AAR, with an in-SDK model store.
+- **Your own Mac or Linux machine, through the CLI** — `bithuman pull <CODE>
+  --model essence-2` hands you `<CODE>.imx`, `bithuman render` turns it and an
+  audio file into an MP4 offline, and `bithuman run` serves it from a local
+  server. See [the CLI](/sdk/cli#what-renders-locally-and-where).
+- **Your own CPU servers** — offline rendering of the downloaded artifact
+  through the [Python SDK](/sdk/python), metered, no GPU required.
+- **Android** — the [`essence2-android`](/sdk/android#essence-2-and-essence-1-on-android)
+  AAR resolves; it does not render for an outside developer yet.
 - **iOS and macOS, in your own app** — the [Swift SDK](/sdk/ios#install)'s
-  `Essence2` product (package 2.8.0): the engine's C interface, building for
-  iOS device, iOS simulator and macOS, with no in-app model download route
+  `Essence2` product builds; no per-identity bundle is published for a phone
   yet.
-- **Flutter is a reference app, not a published SDK.** An Essence 2 engine does
-  exist for `ios-arm64` and `macos-arm64`, and the Flutter plugin's CocoaPods
-  podspec can vendor it — but that engine is staged from a **private** internal
-  release, the plugin is not on pub.dev and its pod is not published, so the
-  path is not open to you. See
-  [SDK overview](/downloads#current-shipping-versions).
 
-To reach Essence 2 from an Apple app today, use the [REST API](/api/overview) or
-a [LiveKit](/sdk/livekit) session.
+Essence 2 GPU rendering on phones, Macs and in the browser is rolling out; the
+frame rate on each platform is on [Performance](/sdk/performance).
+To reach Essence 2 from an Apple app today, use the [REST API](/api/overview)
+or a [LiveKit](/sdk/livekit) session.
 
 **In the browser.** A browser-local tier is **rolling out**: appending
 `?render=local` to a session URL downloads the identity's compact web bundle
 and renders Essence 2 **in the browser**, with no server render in the path.
-The frame generator runs on **WebAssembly** on every machine; WebGPU's job in
-this path is the **speech encoder** that drives the mouth. So a machine with no
-usable WebGPU adapter does not fall back to a slower renderer — it renders the
-living idle loop and plays the agent's TTS with **local lip-sync off**, because
-the encoder is 2.7–8× too slow on WASM to keep up with speech
-([the measurement](/guides/browser-webgpu#why-there-is-no-wasm-fallback-for-lip-sync--the-number)).
-The tier activates per identity as web bundles publish — **four live identities
-today**; sessions without a published bundle fall back to cloud serving. See
-[browser rendering](/guides/browser-rendering), the measured
-[WebGPU and local browser rendering](/guides/browser-webgpu) page, and the
-[device/runtime matrix](/concepts/models-v2#where-each-model-runs) for
-current status.
+The tier activates per identity as web bundles publish; sessions without a
+published bundle fall back to cloud serving. See
+[browser rendering](/guides/browser-rendering) and the
+[device/runtime matrix](/concepts/models-v2#where-each-model-runs).
 
 ## Idle and speaking behavior
 
@@ -292,96 +234,22 @@ Per-minute serving is metered for the whole time a session is live and the
 engine is rendering — **idle/silent animation included**. Only stopped, paused,
 or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guides/pricing).
 
-## The renderer (updated 2026-08-29)
+## The renderer
 
-Essence 2 renders through a **unified renderer**: the face is animated from your
-identity's own footage, and the **mouth interior — the teeth especially — is
-rendered sharply** rather than being averaged out of the source frames. Teeth
-are barely present in a closed-mouth portrait, so the mouth interior is the
-hardest region to get right; that is the part that most visibly improved.
-Measured
-against each identity's own previous build, mouth-region fidelity improved
-**roughly 2× to 4.7×** across the launch gallery. That figure is a ratio of
-**LPIPS** — a learned perceptual image-distance metric — computed **only inside
-the mouth-interior mask of the reference render**, on each identity's held-out
-frames. So it is a per-identity improvement factor against that identity's own
-earlier build: it is not a score you can compare between identities, or against
-another vendor. Sharpness metrics were deliberately not used — they reward
-speckle, and artifacts inflate them. Every arm was also checked frame by frame
-by eye, which is the second gate and the one that has overruled the metric.
-Mouth motion is also re-centred and wider, so speech reads as more dynamic.
-
-It costs nothing extra to serve — measured warm and end to end — and **pricing
-is unchanged**. The identity bundle also got about **5× smaller** (see Limits,
-below). **New creations get it automatically**; agents created before
-2026-07-27 keep serving their current build until they are retrained. Nothing
-in the API, the session contract, or the `?model=` tier slugs changed.
-
-**Which surfaces serve it.** The sharp mouth-interior rendering described above
-is served on the **cloud tiers** (GPU, Apple, CPU) and by
-**self-hosted CPU offline rendering**. It is **not** part of a
-**browser-local** session yet: `?render=local` runs a separate in-browser
-build, and as measured on **2026-08-30** across **all 22 identities** currently
-in the browser catalogue, **no published web bundle enables it** — a
-browser-local session renders the mouth the earlier way. Nothing about the
-price, the API, or the tier slugs changes with the surface; only the mouth
-region differs.
-
-**On the self-hosted download, it is per identity — and it is not yet every
-identity.** The sharp mouth interior is carried *inside* the artifact you
-download, so whether a self-hosted render gets it depends on which build of
-your identity was published, not on your server. Measured **2026-09-03** by
-reading the published objects themselves — the artifact the download endpoint
-hands back, not a manifest or a status field — **28 of 36** published
-essence-2 identities carry it; **5** carry an older build that renders the
-mouth interior the earlier way, and **3** have no published artifact yet. The
-cloud tiers are unaffected either way: an identity whose *download* is on an
-older build is still served the sharp mouth interior from the cloud. So if you
-self-host and the mouth interior does not look like your cloud sessions, that
-is this gap and not your setup — contact support with the agent code and we
-will tell you where that identity's published artifact stands.
-
-### A faster head upsample
-
-The renderer's **head-upsampling step** — the stage that takes the generated
-head region up to output resolution — has been rebuilt. It is an **internal
-graph change with no surface you can see or write against**: the API, the
-session contract, the `?model=` tier slugs and the price are all unchanged,
-there is nothing to opt into, and the rendered picture is the same.
-
-"The same picture" is a measurement, not a hope. On the same identity and the
-same frames, the rebuilt step's output and the output of the step it replaces
-agree to **167.85 dB** peak signal-to-noise ratio — a difference far below one
-step of an 8-bit pixel, so no display, encoder or eye resolves it. The change
-was also reviewed side by side on video before it was accepted, which is the
-gate that has overruled a metric here before. It is a speed change and nothing
-else.
-
-It **rolls out per identity**, the way the 2026-07-27 renderer change did: an
-identity picks it up when its bundle is rebuilt, and until then that identity
-serves the previous build. **First served on 2026-09-02, on a single
-identity; today it is on 1 of 52 published identities** — the rollout has begun,
-it is not a fleet-wide switch, and almost every identity is still on the
-previous build. Nothing you write changes either way, and you cannot pin a
-session to one build or the other.
-
-★ **It also rolls out per graph, which is the part that decides whether an
-Android device sees it at all.** The renderer ships as two graphs — a batched
-one and a single-frame one — and the 2026-09-02 change rewrote only the batched
-one. **Android runs the single-frame graph**, so that change reached nothing a
-phone executes. The single-frame graph was rewritten on 2026-09-03, on the same
-one identity.
-
-**How much faster is your session? It depends on which silicon runs the graph,
-and on the GPU tier the answer is "not measurably".** See
-[What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier)
-and [Android, measured on the handset](#android-measured-on-the-handset).
+Essence 2 animates your identity's own footage, and the **mouth interior — the
+teeth especially — is rendered sharply** rather than being averaged out of the
+source frames. Renderer improvements roll out **per identity** as bundles are
+rebuilt: a new creation gets the current renderer automatically, and an agent
+created earlier keeps serving its current build until it is retrained. Nothing
+in the API, the session contract, the `?model=` tier slugs or the price changes
+with a renderer update. If you self-host and the mouth interior does not look
+like your cloud sessions, that is the build of your identity's published
+artifact and not your setup — contact support with the agent code.
 
 ## Limits and expectations
 
-- **Output is 25 fps on every tier.** Engine *throughput* is a different
-  number, and on the CPU tier it is far below 25 fps — see
-  [Rendering throughput, measured](#rendering-throughput-measured).
+- **Output is 25 fps on every tier.** How fast each platform can *produce*
+  frames is a different number — see [Performance](/sdk/performance).
 - **Creation takes about 45 minutes** (see above) — poll status rather than
   assuming the few-minute wall-clock of `essence-1`.
 - **The downloadable identity bundle is ~85–105 MB** on the current renderer
@@ -401,247 +269,6 @@ and [Android, measured on the handset](#android-measured-on-the-handset).
   the family under an earlier name — see
   [Naming & migration](/concepts/models-v2#naming--migration).
 
-### Rendering throughput, measured
-
-Every tier emits a **25 fps** video, because the stream is paced to the audio.
-How fast the engine can *produce* those frames is a separate number, it is not
-25 fps everywhere, and on the CPU tier it is the number that decides whether a
-tier is usable live.
-
-Measured 2026-08-30 against the deployed cloud CPU worker — one offline render
-per row through the same endpoint, 16 vCPU / 32 GB container, 16 render threads,
-one session per container, the same 3 seconds of speech, 75 frames each:
-
-| Resolution | Sharp mouth-interior rendering | Frames per second |
-|---|---|---:|
-| 1280×720 | on | **0.9** |
-| 1280×720 | off | 12.4 |
-| 1080×1920 | on | **1.0** |
-| 1080×1920 | off | 6.5 |
-
-Read the rows in pairs. At a **fixed** resolution the sharp mouth-interior
-rendering costs **14×** (1280×720) and **6.5×** (1080×1920); resolution alone
-costs under 2×. So the cost is the mouth-interior rendering, not the frame size,
-and a CPU render with it on runs roughly **25× slower than playback**.
-
-**What this means for you.** The CPU tier is an **offline-rendering and
-last-resort** tier, not a real-time one; live sessions route to the GPU and
-Apple tiers first. If you pin a live session to CPU, expect it to fall behind.
-The **off** rows vary run to run (a 17.6 fps reading was taken for the same
-1280×720 identity on an earlier container); the **on** rows did not.
-
-**These rows predate the [head-upsample rewrite](#a-faster-head-upsample).**
-They were measured on 2026-08-30, before that change reached any identity. A
-rebuilt identity has not been re-measured under this protocol, so read the **on**
-rows as an **upper bound** on the cost, not as the current figure for an
-identity that has already been rebuilt.
-
-GPU and Apple tier throughput has **not** been measured under this protocol
-and is deliberately not quoted here — see
-[Which Apple compute unit runs Essence 2](#which-apple-compute-unit-runs-essence-2).
-(The GPU and Apple figures in
-[What the head-upsample rewrite is worth, per tier](#what-the-head-upsample-rewrite-is-worth-per-tier)
-are renderer-model measurements under a different harness, at different batch
-sizes. They are not a session-level throughput for either tier, they are not
-comparable with each other, and neither must be read as one.)
-
-### What the head-upsample rewrite is worth, per tier
-
-The [head-upsample rewrite](#a-faster-head-upsample) is a speed change, so the
-fair question is how much faster *your* session gets. **The honest answer is
-that it depends on which silicon runs the graph and on which of the renderer's
-two graphs you are running, and on the two cloud tiers that serve live sessions
-the answer today is "not at all".**
-
-The reason is the step being replaced. A cubic resize is pathologically
-expensive in the ONNX Runtime **CPU** kernel and cheap in the **CUDA** one —
-and *how* expensive depends on the processor, so the share is quoted per
-silicon and must never be carried across:
-
-| Where the graph runs | Share of the forward pass taken by this one step |
-|---|---:|
-| CPU execution provider, x86-64 (Threadripper PRO 5955WX, batch 24) | **68.6%** |
-| CPU execution provider, arm64 (Snapdragon 8 Elite, batch 1) | **57.9%** (range 56.0–60.8% over 12 profiles) |
-| Apple Silicon, CoreML (M4 Max, batch 1) | **6.06%** |
-| CUDA (RTX 4090, batch 24) | **0.48%** |
-
-So the rewrite removes most of a CPU-side forward pass and almost none of a
-GPU-side one, the gain does not transfer between them, and **the same rewrite
-is worth a different amount on x86 than on an Arm phone** — 10.7 points of
-share, and 3.00× against 2.23× in wall clock. On the Apple tier the step is
-already built the rewritten way (below), so there is nothing there to remove.
-
-| Where the graph runs | Measured? | What the rewrite does there |
-|---|---|---|
-| **Android**, on-device (Snapdragon 8 Elite) | yes | **2.23× cooled, 1.92× sustained** on the renderer graph, on the handset. Still not real time — [see below](#android-measured-on-the-handset) |
-| **CPU** (portable render core, x86-64) | yes | **3.00× faster** on the renderer model — on a developer workstation, which is neither a phone nor the deployed CPU worker |
-| **GPU** (NVIDIA CUDA) | yes | **No gain.** 0.971× (about 3% slower) batched, neutral at the streaming shape. Invisible in practice; see below |
-| **Apple** (Apple Silicon, CoreML) | yes | **No gain — it was already there.** The Apple build has expressed this step the rewritten way since before the rollout; the step is 6.06% of that tier's forward pass. See below |
-| **Browser-local** (`?render=local`) | no | **Not measured** |
-
-**Which of the two graphs you get, and why it matters.** An identity's bundle
-carries the renderer as **two** graphs: a **batched** one, and a **single-frame**
-one for streaming. They are rewritten independently. The rollout that began on
-2026-09-02 rewrote **only the batched graph**, and:
-
-- **Android runs the single-frame graph.** The on-device engine cannot use the
-  batched path while the sharp mouth-interior pass is attached, and that pass is
-  always attached. So **the 2026-09-02 change reached nothing an Android device
-  executes.**
-- The **Apple** tier is also built from the single-frame graph — and separately
-  needs no change there, for the reason given below.
-
-The single-frame graph was rewritten and deployed on **2026-09-03**, on the same
-single identity. **Today exactly 1 of 52 published identities carries the rewrite,
-and it carries it in both graphs; the other 51 carry it in neither.** Read every
-figure below as what the change is worth *once your identity has been rebuilt*,
-not as what your session does today.
-
-**CPU tier — measured, and the reason the rewrite exists.** Threadripper PRO
-5955WX (x86-64), ONNX Runtime **CPU** execution provider, batch 24, 4 threads,
-3.93 GHz held, 63–75 °C, no throttling, **sustained** (240-frame arms reproduce
-the 120-frame arms to 0.3%). The renderer model alone runs **3.0023×**
-faster against a same-graph noise floor of **0.483%**. The **full delivered path** —
-renderer, frame packing, full-body paste-back — goes from **7.54 fps to
-23.87 fps** on a 1280×720 identity and **7.52 → 20.97 fps** on a 1080×1920 one,
-noise floors 0.19–1.25%.
-
-★ **Three things that row is not, and the third is new.** It is a developer
-workstation, not the deployed CPU worker, which has **not** been re-measured.
-Even at 23.87 fps that tier is still **not** real time at 25 fps. And **it is
-not an Android number and must never be quoted as one** — it is x86-64 at
-batch 24 on a 280 W workstation part, and the handset measurement below
-supersedes it for every on-device claim. The rewrite moves the x86 CPU tier
-from hopeless to borderline. It does not make it live-capable, and the
-guidance above is unchanged.
-
-**GPU tier — measured, and it is not a win.** NVIDIA RTX 4090 on the serving
-host, ONNX Runtime **CUDA** execution provider configured exactly as the
-deployed worker (batch 24, fp32 compute, 4 intra-op threads, and every
-kernel-time node — 277 before the rewrite, 279 after — placed on CUDA with zero
-CPU fallback), 11 interleaved A/B rounds on copies of the real artifacts. The rebuilt graph measured **0.971×** —
-about **3% slower** — against a same-graph noise floor of **0.083%**, and it
-lost all 11 rounds while a byte-identical duplicate of the unmodified graph
-split 5 of 11. At the single-frame streaming shape the ratio was **0.9987×**,
-inside the floor: neutral. In frames per second the renderer model on this
-tier runs at **1075 fps before and 1044 fps after** — both so far above the
-25 fps a session consumes that the difference is not observable in a session.
-
-We publish that because it is what this tier measured, not because it changes
-anything for you: **the rewrite targets the CPU tier; on the GPU tier it is
-neutral to very slightly negative, and no GPU-tier speed improvement should be
-expected or quoted.**
-
-**Apple tier — measured, and the rewrite was already in effect there.** This
-correction replaces an earlier version of this paragraph, published on
-2026-09-02, which said an Apple-tier session serves the *previous* head
-upsample. That was wrong, and the way it was wrong is worth stating: the Apple
-tier genuinely is never shipped the batched graph the rewrite was applied to —
-it is built from the single-frame one — but the Apple build does not run that
-graph's operators directly. It is converted to CoreML first, and **the
-converter has expressed this exact step as the same padded 5×5 depthwise
-convolution followed by a pixel shuffle, from the same 4-tap Keys kernel at
-a = −0.75, since before this rollout began.** The two are the same construction
-arrived at from two directions. Inspecting a live Apple build confirms it: the
-program contains a `pad → conv → pixel_shuffle` triple at the head upsample and
-**no** cubic-resize operator anywhere in it. So an Apple-tier session was
-already getting the rewritten step, and the rollout changes nothing there —
-neither the speed nor the picture.
-
-**What that step costs on Apple.** Apple M4 Max on the serving host, CoreML,
-**batch 1** (the shape that tier serves), fp32, GPU compute — all 268 operators
-placed on the GPU with no CPU fallback — box otherwise idle, **cooled and not
-thermally throttled**. Apple's own compute-plan cost estimate puts the three
-operators that make up the head upsample at **0.49% + 3.69% + 1.88% = 6.06%** of
-the forward pass, reproduced to the same figure on a second identity's build.
-Wall clock on the renderer model is **1.834 ms per frame (545 fps)**, against a
-same-model noise floor of **0.36%** (a byte-identical duplicate measured 0.9964×)
-and a negative control that was correctly 4.96× slower.
-
-Two things that figure is not. It is **batch 1** and the GPU-tier figures above
-are batch 24, so **the two must not be compared**; and it is the renderer model
-alone, not a session. The practical consequence of the 6.06% is a ceiling:
-even *deleting* this step outright would take that tier from 1.834 ms to
-1.723 ms per frame — **1.06×**. There is no CPU-tier-sized gain available on
-Apple, and none should be expected.
-
-**Browser-local is not measured.** No figure is inferred for it from the rows
-above.
-
-### Android, measured on the handset
-
-The rewrite's whole point is the CPU-side forward pass, and the CPU-side target
-that matters most is a phone. **It has now been measured on one.** These are the
-only on-device figures for this change, and they replace every extrapolation
-from workstation numbers.
-
-**What was measured.** Both graphs, benchmarked head to head on the same
-handset in the same session. This is an **offline benchmark of the renderer
-graph**, not a live session and not a run through the published
-[Android SDK](/sdk/android)'s own API — it drives the graph directly through the
-same ONNX Runtime 1.26.0 build the Android artifact carries.
-
-- **Device** Galaxy S25+ (`SM-S936U1`), **Snapdragon 8 Elite (SM8750)**.
-- **Runtime** ONNX Runtime **1.26.0**, Android build, **CPU execution provider**.
-- **Shape** the **single-frame** graph — batch 1, the shape Android actually
-  runs. Not comparable with any batch-24 row above.
-- **Threads** 4 intra-op, 1 inter-op, pinned to the four big cores (the mask the
-  shipping engine sets).
-- **Protocol** 8 repeats × 5 arms, interleaved and rotated, medians reported.
-  Screen held awake. All 80 samples passed the clock and contention guards; none
-  were discarded.
-
-| Arm | Cooled ms/frame | fps | RTF | Sustained ms/frame | fps | RTF |
-|---|---:|---:|---:|---:|---:|---:|
-| **Previous step** (cubic resize) | **109.23** | 9.15 | 2.73 | **160.04** | 6.25 | 4.00 |
-| **Rewritten step** | **49.00** | 20.41 | 1.23 | **83.38** | 11.99 | 2.08 |
-| Rewritten step, the deployed artifact | 48.88 | 20.46 | 1.22 | 83.63 | 11.96 | 2.09 |
-
-**Cooled** is after a quiet-and-cool window; **sustained** is after a burn-in,
-which is the state a real turn of speech puts the device in. RTF is render
-wall-clock over the duration of audio rendered — below 1.00 is faster than
-playback.
-
-**The speedup is 2.23× cooled and 1.92× sustained.** The third row is the
-identity that is actually deployed with the rewrite, benchmarked as itself; it
-agrees with the controlled arm to 0.27% cooled and 0.30% sustained. Per-repeat
-paired ratios, which cancel drift, give 2.234× and 1.906×, and every one of the
-eight repeats agrees on direction.
-
-**Both controls fired.** A byte-identical duplicate of the unmodified graph
-measured 1.003× cooled and 1.016× sustained — inside the noise floor. A
-deliberately heavier arm, carrying 33.8% more multiply-accumulates, measured
-**slower** (0.968× cooled, 0.938× sustained), as it must.
-
-★ **It is still not real time on a flagship, and that is the headline.** At
-49.00 ms per frame cooled the engine produces **20.41 fps** against the 25 fps a
-session consumes — RTF **1.22**, so audio outruns video. Sustained it is
-**11.99 fps**, RTF **2.08**. Against the internal bar for a real-time on-device
-tier (RTF ≤ 0.50, ≥ 40 fps) the rewritten graph is **2.45× short cooled and
-4.17× short sustained**. The rewrite closes roughly half the distance and no
-more.
-
-★ **Read the sustained figure as a floor, not as an estimate.** The burn that
-precedes it is a fixed amount of *work*, not a fixed amount of *time*, so the
-faster arm finishes it sooner and at higher average power: it enters its
-sustained window at 50.7 °C against 47.8 °C, and is judged against a big-core
-clock ceiling of 1.958 GHz against 2.438 GHz. A real power-density effect and a
-protocol artifact both push the same way, and this protocol cannot separate
-them. **1.92× is therefore a conservative lower bound on the sustained gain.**
-An equal-wall-clock protocol has been built and has not been run.
-
-**Why the phone gains less than the workstation.** On this silicon the replaced
-step is **57.9%** of the forward pass (56.0–60.8% across 12 profiles), not the
-68.6% measured on x86. That caps the achievable speedup at **2.38×**, and the
-measured 2.23× is 94% of that ceiling — the replacement is close to free, there
-is simply less to remove. For scale, every convolution in the graph together is
-**19.0%** of the same frame.
-
-**No other Android device has been measured, and no figure is published for
-one.** A mid-range part would be slower, and by an amount that depends on how
-large this step's share is on *that* processor — a share which is measured to
-move by more than ten points between the two silicon classes we have. There is
-no defensible way to project it, so no projection is offered.
 
 ## The developer journey
 

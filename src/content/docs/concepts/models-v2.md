@@ -35,7 +35,7 @@ API, the embed widget, the dashboard, and the SDKs:
   image) at ~25 fps with an efficient engine that serves from **cloud GPUs**,
   **Apple Silicon** and **CPU** tiers, from **your own CPU servers**
   for offline rendering, and — where you opt a session into it —
-  **in the viewer's browser** (WebGPU/WASM), where frames never leave that
+  **in the viewer's browser**, where frames never leave that
   browser. bitHuman routes cloud sessions for you; you just pick `essence-2`.
   On your own hardware it renders through the
   [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1, macOS Apple
@@ -52,7 +52,7 @@ API, the embed widget, the dashboard, and the SDKs:
 | **Best for** | Photorealistic humans | Characters: cartoons, animals, creatures, robots |
 | **Identity source** | Identity video generated internally from your image | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Fully generated 416×720 scene, 20 fps |
-| **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu · ane · cpu (auto-routed chain) |
+| **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (in rollout) | gpu · ane · cpu (auto-routed chain) |
 | **On-device** | Your own Mac (Apple Silicon) or Linux x86_64 box via the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1); your own CPU servers (Python SDK 3.0.0); Android via the [AAR](/sdk/android); the Swift `Essence2` engine in your own app. The cloud's Apple tier is bitHuman's hardware, reached over the network | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/ios#minimal-code)) |
 | **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Train-on-create, 2000 credits (about 2–2.5 hours) |
 | **Cloud** | 4 credits/min | 4 credits/min |
@@ -304,17 +304,16 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — Apple Silicon | ✅ chain tier | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | ✅ chain tier |
 | Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); ✅ local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (2.6.1); live streaming still via the cloud | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
-| On-device macOS / iOS (Apple Silicon) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0, engine `essence2-v1.2.0`) — a C interface, builds for iOS and macOS; resources published; no in-app model download route yet | [Swift SDK](/sdk/ios) `Expression2` product, 2.5.0+ — `macos-arm64` **and** `ios-arm64`; both have rendered on real hardware, but it is engine only, [no model bundle published](/sdk/ios#minimal-code) |
-| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback). **Opt-in:** cloud is the default for every visitor; the URL has to ask, and a session falls back to cloud when the identity has no published web bundle or the browser can't run the engine. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
+| On-device macOS / iOS (Apple Silicon) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0) — a C interface, builds for iOS and macOS; resources published; no in-app model download route yet | [Swift SDK](/sdk/ios) `Expression2` product, 2.5.0+ — `macos-arm64` **and** `ios-arm64`; both have rendered on real hardware, but it is engine only, [no model bundle published](/sdk/ios#minimal-code) |
+| Browser-local (no server render) | Rolling out — `?render=local` renders Essence 2 in-browser as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | Rolling out — `?render=local` renders Expression 2 in-browser. **Opt-in:** cloud is the default for every visitor; the URL has to ask, and a session falls back to cloud when the identity has no published web bundle or the browser can't run the engine. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
 use the downloaded model artifact
 ([`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)).
 
-A few things to know today: essence-2's **in-browser WebGPU** tier renders on the
-viewer's own device (audio and frames never leave the browser), with the WASM
-fallback covering living idle + voice while full in-browser lip-sync lands for
-WASM and for expression-2. **Local playback of a downloaded artifact** is now
+A few things to know today: essence-2's **in-browser** tier renders on the
+viewer's own device (audio and frames never leave the browser) and is rolling
+out per identity. **Local playback of a downloaded artifact** is now
 the same shape for both models: `expression-2` and, as of CLI **2.6.1**,
 `essence-2` render locally via the
 [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon,
@@ -323,13 +322,12 @@ CPU servers** — metered, no GPU — through the Python SDK (`bithuman.offline`
 in 3.0.0;
 [quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
 **Locally-hosted LiveKit** (live streaming from your own server) is still in
-active development — live sessions run through the cloud or the browser. And **neither** second-generation model's CPU tier sustains real-time
-rendering: essence-2's cloud CPU tier measured **0.9–1.0 fps** with the sharp
-mouth-interior rendering enabled on 2026-08-30
-([conditions](/concepts/essence-2#rendering-throughput-measured)), and
-expression-2's CPU tier is sized for **offline talking-video generation** rather
-than real-time streaming. Real-time streaming uses the GPU and Apple Neural
-Engine tiers.
+active development — live sessions run through the cloud or the browser. And
+**neither** second-generation model's CPU tier sustains real-time rendering:
+essence-2 on a CPU renders at about 1 fps ([Performance](/sdk/performance)),
+and expression-2's CPU tier is sized for **offline talking-video generation**
+rather than real-time streaming. Real-time streaming uses the GPU and Apple
+tiers.
 
 ## Pricing
 

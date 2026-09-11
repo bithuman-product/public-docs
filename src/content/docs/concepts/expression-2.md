@@ -197,8 +197,8 @@ fails loudly if unavailable):
 |---|---|---|
 | `expression-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow. |
 | `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
-| `expression-2-cpu` | CPU | Force the native quantized (int8) build on CPU servers — no GPU in the path. |
-| `expression-2-ane` | Apple Silicon (CoreML) | Force the Apple tier; limited real-time slots. Unlike Essence 2's same-named slug, this one really is carried by the Neural Engine — see [below](#which-apple-compute-units-run-expression-2). |
+| `expression-2-cpu` | CPU | Force the CPU tier — no GPU in the path. |
+| `expression-2-ane` | Apple Silicon | Force the Apple tier; limited real-time slots. |
 
 ```text
 https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
@@ -209,79 +209,27 @@ back to the agent's default routing. For production, omit `?model=` and let
 the platform choose. See
 [tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
 
-### Which Apple compute units run Expression 2
+### Where it runs
 
-Apple Silicon has three compute units CoreML can place work on — the **CPU**,
-the **GPU**, and the **Neural Engine**. CoreML decides from the model's
-precision and the configuration it is loaded with, not from the name of a tier.
-Expression 2's Apple members are exported at **half precision**, which is what
-makes them eligible for the Neural Engine at all.
-
-**Measured, the Neural Engine carries most of it.** Reading CoreML's own
-per-operation compute plan for the exact compiled models the engine loads, on
-the Apple tier's compute-unit configuration: the speech front end places
-**99.8%** of its operations on the Neural Engine, the identity decoder
-**100%**, and the motion model **84.3%**, with the remainder on the CPU and
-**none on the GPU** in any of the three. The same holds on device — on an
-iPhone 15 the compute plan put the work on the Neural Engine, and for the
-per-identity decoder the GPU was *eligible* and CoreML chose the Neural Engine
-anyway.
-
-★ **This is the opposite of [Essence 2](/concepts/essence-2#which-apple-compute-unit-runs-essence-2)**,
-whose Apple tier is bound to the Mac **GPU** because the GPU measured faster and
-more faithful there. The two models share the word "Apple" and the historical
-`-ane` slug and nothing else about compute placement. Do not read a statement
-about one as a statement about the other.
-
-Real-time streaming is carried by the **GPU and Apple tiers**. The
-**CPU tier is offline-batch-grade** — sized for offline talking-video generation
-and used as capacity overflow / fallback, not as the primary real-time line — so
-pin `expression-2-cpu` for batch and self-hosted-server work rather than
+Real-time streaming is carried by the **GPU and Apple tiers**. The **CPU tier
+is offline-batch-grade** — sized for offline talking-video generation and used
+as capacity overflow, not as the primary real-time line — so pin
+`expression-2-cpu` for batch and self-hosted-server work rather than
 low-latency live sessions.
 
-**Self-hosted.** Expression 2 also renders on your own hardware via the
-[CLI's local renderer](/sdk/cli#what-renders-locally-and-where) —
-macOS (Apple Silicon) and Linux x86_64 — at the self-hosted rate; batch /
-server-grade CPU work wants modern (AVX-512-class) CPUs. (The Python SDK has
-no Expression-2-loadable artifact — local rendering is a CLI surface.) See
-the [device matrix](/concepts/models-v2#where-each-model-runs).
+**On your own hardware.** Expression 2 renders locally through the
+[CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and
+Linux x86_64, through the [Python SDK](/sdk/python), on
+[Android](/sdk/android) and, in your own app, on iPhone, iPad and Mac through
+the [`Expression2` Swift product](/sdk/ios). The downloadable `<code>.avatar`
+from [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+or `bithuman pull <code>` drives all of them. The frame rate on each platform
+is on [Performance](/sdk/performance).
 
-**On-device.** The engine runs on Apple Silicon via the [Swift SDK](/sdk/ios)
-rail (preview maturity) — no server in the path. That rail is **macOS *and*
-iOS**: the `Expression2` product ships a `macos-arm64` and an `ios-arm64`
-slice, and the iOS one has rendered on an iPhone — 117 frames at 416×720 on an
-iPhone 15, then 1,801.6 s of speech sustained at 106.57 fps on the Neural
-Engine. The `Expression2` SwiftPM product, new in **2.5.0**, vends the engine
-binary; it ships **no model weights**, and no per-identity CoreML bundle is
-published **in the directory form this product loads**, so resolving it does not
-by itself give you a rendering avatar on either platform (the `<code>.avatar`
-you can download is a packed container for the CLI and cloud engines — see
-[Expression 2 on-device](/sdk/ios#minimal-code)). There is no self-serve path to a bundle — email
-[hello@bithuman.ai](mailto:hello@bithuman.ai) with the identity you want. See
-[Expression 2 on-device](/sdk/ios#minimal-code).
-
-**The downloadable artifact is a different rail, not the missing bundle.**
-Download the runnable `<code>.avatar` — the frozen back-compat alias of
-`.imx`, usually an `IMX\0` v2 container rather than a zip —
-with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>` — that artifact drives the **CLI's** local renderer,
-**and, since tap `2.6.0`, the `Expression2` Swift product as well**. This
-paragraph used to end "the `Expression2` SwiftPM product cannot read one",
-measured on the v2.5.0 binary, which had no container reader. v2.6.0 added
-`Expression2Container`, and on 2026-09-09 this artifact rendered 416x720 frames
-on an iPhone 15 — with one caveat that costs a step: the artifact does not carry
-`w2v_frontend_cpuAndNE.mlpackage`, so the engine also needs the directory
-`bithuman engine install mac` writes. The complete app is
-[Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2). **In the
-browser:** append `?render=local` to a
-session URL to render Expression 2 locally (LiteRT.js / WebGPU, WASM fallback),
-so the video never leaves the machine. This is the family's most complete
-browser story: **79 identities have a published web bundle**, and on 2026-09-03
-every member of all 79 was fetched anonymously from the public mirror without
-one miss ([how that was measured](/guides/browser-webgpu#whether-it-will-work-for-your-agent)).
-Sessions for an identity with no bundle fall back to cloud serving. See
-[Browser rendering](/guides/browser-rendering) and
-[WebGPU and local browser rendering](/guides/browser-webgpu).
+**In the browser:** append `?render=local` to a session URL to render
+Expression 2 in the tab, so the video never leaves the machine; sessions for
+an identity with no published web bundle fall back to cloud serving. See
+[Browser rendering](/guides/browser-rendering).
 
 ## Idle and speaking behavior
 
