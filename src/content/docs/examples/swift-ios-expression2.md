@@ -76,11 +76,15 @@ on it; use `expression-2`, which is what this page is.
 
   ★ **Why the Android codes still do not work here, and what changed.** [The Android SDK page](/sdk/android#get-a-model)
   points `Expression2ModelStore` at a mirror that answers *anonymously*, and
-  [the Android example](/examples/kotlin-android-hello) renders `A66GYD8664`
-  with no key and no agent of your own. That is real: measured 2026-09-09,
-  `A66GYD8664`, `A55NVK9945`, `A17ZTB0222` and `A74NWD9723` all answer **HTTP
-  200** there without credentials, and a made-up code answers 400. The reason it
-  does not carry over is the **form**, not the permission. That mirror vends the
+  [the Android example](/examples/kotlin-android-hello) renders `A02HCY0444`
+  with no key and no agent of your own. That is real: measured 2026-09-11,
+  a **public** agent answers **HTTP 302** to a signed URL there without
+  credentials, and a private one answers 401. (An earlier version of this note
+  said `A66GYD8664`, `A55NVK9945` and `A17ZTB0222` were keyless too; that was
+  measured 2026-09-09 against the anonymous storage mirror the superseded
+  `0.3.1` AAR used. `0.4.0+` fetches through the metered door, where those three
+  are private and answer 401.) The reason it does not carry over is the
+  **form**, not the permission. That mirror vends the
   Android and web member tree — `combined_fp32.tflite`,
   `combined_hexagon.tflite`, `enc_exp.onnx` — and **no `.avatar` container at
   all**, which is the only thing `Expression2` on Apple opens. The endpoint that

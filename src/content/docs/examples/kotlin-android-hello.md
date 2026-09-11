@@ -340,8 +340,8 @@ import java.nio.ByteOrder
  */
 class MainActivity : Activity() {
 
-    /** A published identity on the public mirror. Swap in your own agent code. */
-    private val agentCode = "A66GYD8664"
+    /** A PUBLIC showcase identity — the door serves it with no credential. Swap in your own agent code. */
+    private val agentCode = "A02HCY0444"
 
     /**
      * How the engine is built.
@@ -762,12 +762,20 @@ run the decoder on the Hexagon. Keep `AUTO` and you get whichever is available.
 
 ## Where the agent code comes from
 
-`A66GYD8664` is a published identity on the SDK's default mirror. To use your own,
-`POST /v1/agent/generate` with `model: "expression-2"` returns an `agent_code`
-([Agents](/api/agents)) — but not every agent is mirrored, so check it before you
-build it into an app. [The SDK page](/sdk/android#get-a-model)
-carries the one-line `curl` and its negative control, plus the four codes verified
-anonymously on 2026-09-09.
+`A02HCY0444` is a **public** showcase identity, which is what makes it keyless:
+since 0.4.0 the store fetches through the metered door at `api.bithuman.ai`, and
+that door serves a public agent to anonymous callers and answers `401
+MISSING_AUTH` for a private one. To use your own, `POST /v1/agent/generate` with
+`model: "expression-2"` returns an `agent_code` ([Agents](/api/agents)) — a
+private agent needs its owner's key passed to `MeteredDoorResolver`, so check
+visibility before you build a code into an app. [The SDK
+page](/sdk/android#get-a-model) carries the door's three answers and the codes
+verified anonymously on 2026-09-11.
+
+★ **The logcat transcripts above are a verbatim 2026-09-09 record and name
+`A66GYD8664`, which was keyless on the storage mirror 0.3.1 used. It is private
+at the door and now answers `401`** — the transcripts are left as recorded
+rather than rewritten; the code the app runs is the one above.
 
 ## Feed the microphone instead of a file
 

@@ -42,14 +42,29 @@ The whole project, file by file: [Kotlin / Android — Hello, avatar](/examples/
 into app-private storage — no account, no key, no host argument:
 
 ```kotlin
-val model = Expression2ModelStore(context).fetch("A66GYD8664")   // ~158 MB the first time; never on the main thread
+val model = Expression2ModelStore(context).fetch("A02HCY0444")   // ~158 MB the first time; never on the main thread
 ```
 
-`A66GYD8664`, `A55NVK9945`, `A17ZTB0222` and `A74NWD9723` all answer
-anonymously; every code on the [showcase](/showcase) is meant to. Your own
-agent's code comes from [Agents](/api/agents); a code not on the public mirror
-fails the fetch with `HTTP 400 … Object not found`. Two member files you already
-hold open with `Expression2Model.combined(File(dir, "combined_fp32.tflite"), File(dir, "canon.bin"))`.
+**A public agent needs no credential at all.** `A02HCY0444` (Shelly Tidewater)
+is one; so is every expression-2 code `bithuman list` prints — `A58ZFA5978`,
+`A68HQB7720`, `A74NWD9723`, `G06MARMALAD`, `X02GRUMBLEW` and the rest of the
+[showcase](/showcase). Your own agent's code comes from [Agents](/api/agents).
+
+★ **Since 0.4.0 the store fetches through the metered door at
+`api.bithuman.ai`, not the anonymous storage mirror 0.3.1 used**, so the
+refusals you can hit changed shape and it is worth knowing which is which
+(measured 2026-09-11):
+
+| what you asked for | answer |
+|---|---|
+| a **public** agent, no credential | `302` to a signed URL, `x-bithuman-meter-id` set — this is the keyless path |
+| a **private** agent, no credential | `401 MISSING_AUTH` — pass its owner's key: `Expression2ModelStore(context, urlResolver = Expression2ModelStore.MeteredDoorResolver("<api-secret>"))` |
+| a member that is not published | `404 MODEL_ARTIFACT_NOT_READY`, naming `web_manifest.json` as the member list |
+
+A code that is simply *private* therefore answers `401`, not "not found" — if a
+code you expected to be keyless refuses, check its visibility before you check
+your spelling. Two member files you already hold open with
+`Expression2Model.combined(File(dir, "combined_fp32.tflite"), File(dir, "canon.bin"))`.
 
 ## Minimal code
 
