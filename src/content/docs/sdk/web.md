@@ -128,6 +128,25 @@ first ([the check](/examples/browser-webgpu-check#check-2--does-this-browser-hav
 and read [WebGPU and local browser rendering](/guides/browser-webgpu) for
 where it is worth it.
 
+### Essence 1 in the tab
+
+An [essence-1](/concepts/essence-1) agent renders in your tab too, and not with
+the package above: open the hosted route with `?render=local` and the
+tab fetches the agent's `.imx`, runs the audio front end (mel + KNN cluster
+index) in a WebAssembly module, and draws the mouth on a `<canvas>` from the
+frames stored in the model file. That module is published, so what your tab
+runs is pinned to a commit:
+
+```text
+https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/essence1-web/3.1.2/manifest.json
+```
+
+`manifest.json` names `essence_compute_wasm.js` and `essence_compute_wasm.wasm`
+with their sha256 and the commit they were built from. It is the audio front
+end only — not a standalone renderer package, so there is nothing to `npm
+install`; the enable path is the hosted URL,
+`https://www.bithuman.ai/<CODE>?render=local`, on an Essence 1 agent.
+
 ## Troubleshooting
 
 | You see | It means | Do this |
