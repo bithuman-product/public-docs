@@ -839,6 +839,26 @@
       "source": "/sdk/android-verify/",
       "destination": "/sdk/android",
       "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-max",
+      "destination": "/concepts/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-max/",
+      "destination": "/concepts/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-essence-2-max",
+      "destination": "/concepts/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-essence-2-max/",
+      "destination": "/concepts/essence-2",
+      "permanent": true
     }
   ]
 }

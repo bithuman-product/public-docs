@@ -19,7 +19,6 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/devel
 | Model | Cloud | Self-hosted |
 |---|---|---|
 | [Essence 2](/concepts/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
-| [Essence 2 Max](/concepts/essence-2-max) (`essence-2-max`) | 8 credits/min | 4 credits/min |
 | [Expression 2](/concepts/expression-2) (`expression-2`) | 4 credits/min | 2 credits/min |
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | 2 credits/min |
@@ -40,7 +39,7 @@ Two modes are always free: **audio-only** Swift SDK use (no avatar attached — 
 | Action | Credits (one-time) | Notes |
 |---|---|---|
 | Agent creation — first generation (`essence-1`, `expression-1`) | 250 | Per [`.imx`](/concepts/avatars-imx) built from your portrait image |
-| Agent creation — `essence-2` (combined) | 500 | One charge covers [both Essence 2 models](/api/agents#essence-2--the-combined-creation) — Essence 2 **and** Essence 2 Max, trained on-create from your portrait image; pick the model at launch |
+| Agent creation — `essence-2` | 500 | Trained on-create from your portrait image — see [the Essence 2 creation](/api/agents#essence-2--the-photorealistic-creation) |
 | Agent creation — `expression-2` | 2000 | Fully generative engine trained on-create from your portrait image — its per-identity training costs more to run, priced accordingly |
 | Agent creation — `auto` | 500 or 2000 | The platform [classifies your input](/api/agents#auto--let-the-platform-pick-the-model) — a photorealistic person routes to `essence-2` (500), a cartoon / animal / creature to `expression-2` (2000); you're billed the routed model's rate |
 | Model add ([`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent)) | same per-model rates | Add a model to an existing agent; adding Expression 1 is **free** (instant, nothing trained) |
@@ -55,7 +54,6 @@ Two modes are always free: **audio-only** Swift SDK use (no avatar attached — 
 | Model | Per minute of output |
 |---|---|
 | `essence-2` | 4 credits |
-| `essence-2-max` | 8 credits |
 | `expression-2` | 4 credits |
 | `essence-1` | 2 credits |
 | `expression-1` | 4 credits |
@@ -91,9 +89,9 @@ Self-hosted serving today authenticates online (a once-per-minute billing heartb
 |---|---|---|---|
 | Pro | Essence 1 + Expression 1 | from 60,000 credits/yr | 60,000 |
 | Business | Essence 2 + Expression 2 | $999/yr | 120,000 |
-| Enterprise | adds Essence 2 Max | $1,999/yr | 240,000 |
+| Enterprise | Essence 2 + Expression 2 | $1,999/yr | 240,000 |
 
-Offline serving consumes the included credits at half the equivalent cloud rate — Essence 1 at 1 credit/min and Expression 1 at 2; Essence 2 and Expression 2 at 2; Essence 2 Max at 4. Entitlements are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. These packages are separate from the monthly plans above. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
+Offline serving consumes the included credits at half the equivalent cloud rate — Essence 1 at 1 credit/min and Expression 1 at 2; Essence 2 and Expression 2 at 2. Entitlements are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. These packages are separate from the monthly plans above. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
 
 ## Top-up credits
 
@@ -146,8 +144,6 @@ Response:
     "minutes_estimate": {
       "essence_2_cloud": 1310,
       "essence_2_self_hosted": 2620,
-      "essence_2_max_cloud": 655,
-      "essence_2_max_self_hosted": 1310,
       "expression_2_cloud": 1310,
       "expression_2_self_hosted": 2620,
       "essence_1_cloud": 2620,
@@ -176,9 +172,8 @@ models.
 > `essence_cloud`, `essence_self_hosted`, `expression_cloud` and
 > `expression_self_hosted` predate the second-generation launch and are kept as
 > aliases for Essence 1 / Expression 1. **They are not the Essence 2 rate.** If
-> you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you will
-> over-estimate your remaining minutes by 2x and 4x respectively — read
-> `essence_2_cloud` / `essence_2_max_cloud` instead.
+> you serve Essence 2 and read `essence_cloud`, you will over-estimate your
+> remaining minutes by 2x — read `essence_2_cloud` instead.
 
 ## What's NOT billed
 

@@ -139,7 +139,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
 > **Choosing a model.** `"auto"` classifies your input — a photorealistic
 > person routes to [`essence-2`](/concepts/essence-2), a stylized / animal /
 > creature / robot to [`expression-2`](/concepts/expression-2). You can also
-> name a model directly (`essence-2`, `essence-2-max`, or `expression-2`);
+> name a model directly (`essence-2` or `expression-2`);
 > note the Essence 2 family requires a photorealistic human subject, so an
 > explicit `essence-2*` creation with a non-human input is rejected with
 > [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) (nothing billed).
@@ -156,7 +156,7 @@ The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`G
 ## What it costs
 
 Creation is a one-time charge per agent — 250 credits for the
-first-generation models, 500 for `essence-2` (Essence 2 Max included),
+first-generation models, 500 for `essence-2`,
 2000 for `expression-2`; `auto` bills the routed model's rate. Serving then
 bills per active minute. Every number lives on one page:
 [Pricing & credits](/guides/pricing).

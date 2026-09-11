@@ -78,7 +78,6 @@ per-identity artifact, downloaded with
 | Model | Artifact | What it is |
 |---|---|---|
 | [`essence-2`](/concepts/essence-2) | `<code>.lebundle.imx` | The standard Essence 2 bundle — **~85–105 MB** on the current renderer (agents created before the 2026-07-27 renderer change are larger, up to ~550 MB, until retrained). Licensed weights; serves via bitHuman cloud today. |
-| [`essence-2-max`](/concepts/essence-2-max) | `<code>.pkl` | The Essence 2 Max identity bundle — renders on bitHuman's GPU cloud, not a local-playback artifact. |
 | [`expression-2`](/concepts/expression-2) | `<code>.avatar` — **usually** an `IMX\0` v2 container despite the extension, not a zip (96 of the 110 published objects on 2026-09-01; the other 14 are the pre-2026-07-12 CoreML zip and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon), and on Linux x86_64 with the CPU render host installed, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
@@ -113,16 +112,16 @@ will see them, because you may have to match on one:
 |---|---|
 | `essence1` | [Essence 1](/concepts/models) — also the value an older container with no header resolves to |
 | `essence2-light` | **[Essence 2](/concepts/essence-2)** — request it as `essence-2` |
-| `essence2-quality` | **[Essence 2 Max](/concepts/essence-2-max)** — request it as `essence-2-max` |
+| `essence2-quality` | A retired premium tier of Essence 2 — not a model you can request; treat the file as **[Essence 2](/concepts/essence-2)** |
 | `expression2` | **[Expression 2](/concepts/expression-2)** — request it as `expression-2` |
 
-So a current Essence 2 bundle reports `engine: essence2-light`, and an Essence 2
-Max bundle reports `engine: essence2-quality`. That is expected, not a mismatch
+So a current Essence 2 bundle reports `engine: essence2-light`. That is
+expected, not a mismatch
 — the engine id names the *loader family*, not the product.
 
 > **Never send an engine id to the API.** The `model` parameter takes the
-> product names only — `essence-1`, `essence-2`, `essence-2-max`,
-> `expression-1`, `expression-2` — and anything else returns
+> product names only — `essence-1`, `essence-2`, `expression-1`,
+> `expression-2` — and anything else returns
 > [`400 VALIDATION_ERROR`](/api/agents#creation-failure-modes). An engine id is
 > something you *read* off a file you already have, never something you *send*.
 

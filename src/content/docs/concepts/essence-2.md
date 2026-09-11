@@ -19,10 +19,9 @@ label: "Essence 2"
 **Essence 2** is the standard photoreal model of the second-generation
 Essence family: a **compact, efficient** engine that keeps the Essence look — your
 identity's footage at its native resolution (a full-HD 1080p identity
-video by default), lip-synced live at ~25 frames per second — at a
-fraction of the compute of [Essence 2 Max](/concepts/essence-2-max), the
-highest-fidelity renderer in the family. At creation the platform
-packages your identity into a compact bundle, and that one artifact serves
+video by default), lip-synced live at ~25 frames per second — on a
+fraction of the compute a dedicated GPU renderer needs. At creation the
+platform packages your identity into a compact bundle, and that one artifact serves
 four ways:
 
 - **From bitHuman's cloud** — a **GPU**, **Apple** and **CPU** tier chain,
@@ -50,16 +49,13 @@ member missing is refused rather than played with a substituted mouth. See
 [serving tiers](#serving-tiers) below for the cloud chain and
 [where each model runs](/concepts/where-models-run) for the full matrix.
 
-It is half the cloud price of [Essence 2 Max](/concepts/essence-2-max)
-and the only Essence 2 model with CPU, Apple, and browser runtimes —
+It has CPU, Apple, and browser runtimes as well as GPU —
 the right default for photorealistic humans, kiosks, high-concurrency
 deployments, and privacy-sensitive environments.
 
 ## When to choose it
 
-- **It's the default.** For photorealistic humans, start here — pick
-  [Essence 2 Max](/concepts/essence-2-max) only when maximum fidelity is the
-  whole point.
+- **It's the default.** For photorealistic humans, start here.
 - **Cost-effective at scale.** 4 credits/min cloud (2 self-hosted) with CPU
   and Apple runtimes that don't need a server GPU per session.
 - **Efficient Apple Silicon serving.** The Apple tier carries real-time
@@ -71,10 +67,8 @@ deployments, and privacy-sensitive environments.
 - **Always-on deployments.** Kiosks, lobby displays, and 24/7 assistants where
   per-minute GPU pricing would dominate.
 
-If maximum image fidelity is the whole point, choose
-[Essence 2 Max](/concepts/essence-2-max) — the highest-fidelity renderer,
-served on dedicated cloud GPUs. If you want fully generated
-motion from a single photo, choose [Expression 2](/concepts/expression-2). For
+If you want fully generated motion from a single photo, choose
+[Expression 2](/concepts/expression-2). For
 the family-level decision, start at
 [Essence 2 & Expression 2](/concepts/models-v2).
 
@@ -84,11 +78,8 @@ Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
 and `model: "essence-2"`. Creation is asynchronous and costs **500 credits**
 (one-time, per agent).
 
-> **Tip — one creation, both Essence 2 models.** `essence-2` is the
-> [combined creation](/api/agents#essence-2--the-combined-creation): the one
-> 500-credit charge trains the standard Essence 2 **and** makes
-> [Essence 2 Max](/concepts/essence-2-max) available from the same
-> internally generated identity video — pick the model at launch. Like every Essence 2 creation,
+> **Tip — the subject gate.** `essence-2` is the
+> [photorealistic creation](/api/agents#essence-2--the-photorealistic-creation):
 > the input must be a **photorealistic human subject** (else
 > [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors), nothing billed);
 > `model: "auto"` routes automatically instead. You can also
@@ -260,7 +251,7 @@ the same thing as running on your Mac. What does run on your hardware:
   [SDK overview](/downloads#current-shipping-versions).
 
 To reach Essence 2 from an Apple app today, use the [REST API](/api/overview) or
-a [LiveKit](/sdk/livekit) session. (Essence 2 Max is cloud-only by design.)
+a [LiveKit](/sdk/livekit) session.
 
 **In the browser.** A browser-local tier is **rolling out**: appending
 `?render=local` to a session URL downloads the identity's compact web bundle
@@ -668,8 +659,7 @@ with runnable, verified examples:
    Failures refund automatically.
 3. **Inspect** — [`GET /v1/agent/{code}`](/api/agents#get-an-agent) returns
    the persona, voice, media (including the internally generated identity
-   video), and `supported_models` (`essence-2` + `essence-2-max` after the
-   combined creation).
+   video), and `supported_models` (`essence-2` once the creation is ready).
 4. **Go live** — [embed widget](/guides/deploy-embed) or share URL for the
    fastest path; [LiveKit plugin](/guides/deploy-livekit) for programmatic
    real-time sessions (`AvatarSession` takes the agent code); tier control
@@ -692,7 +682,6 @@ with runnable, verified examples:
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
 - [Second-generation gallery](https://bithuman.ai/explore?gallery=v2) — talk to a live launch agent.
-- [Essence 2 Max](/concepts/essence-2-max) — the premium, highest-fidelity model.
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [MCP server](/guides/mcp-server) — create and manage agents from Claude, Cursor, or any MCP client.

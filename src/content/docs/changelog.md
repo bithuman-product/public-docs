@@ -573,18 +573,6 @@ then render Expression 1 talking videos immediately. See
 Same gate, same 409, same "before any charge" guarantee — only the message
 changed.
 
-### Essence 2 Max self-hosted — a GPU container you run yourself (2026-08-13)
-
-`essence-2-max` — the **premium photoreal renderer** — can now run on **your
-own NVIDIA RTX 40-series GPU** as a self-hosted container. You POST audio to a
-local REST API and get back an H.264 talking video rendered entirely on your
-hardware, with an included example for visualizing it live in a locally-hosted
-LiveKit room. The image is **hand-delivered** (signed and checksummed) rather
-than pulled from a public registry — contact
-[hello@bithuman.ai](mailto:hello@bithuman.ai) to get a bundle. Sessions bill at
-the self-hosted rate (4 credits/min). Quickstart:
-[Self-hosted Essence 2 Max](/guides/deploy-essence-2-max).
-
 ### Essence 2 self-hosted — offline CPU rendering ships in Python SDK 2.9.0 (2026-08-02)
 
 The `essence-2` model now **self-hosts on your own CPU servers**. Python SDK
@@ -683,7 +671,7 @@ unchanged.
 ### Agent creation is image-only (2026-07-10)
 
 The `video` creation input is removed for **all models** (`essence-1`,
-`expression-1`, `essence-2`, `essence-2-max`, `expression-2`):
+`expression-1`, `essence-2`, `expression-2`):
 
 - **Provide a portrait `image`** (or let the prompt generate one) — bitHuman
   generates the **identity video internally**, always **10 seconds**,
@@ -700,42 +688,23 @@ The `video` creation input is removed for **all models** (`essence-1`,
   video is always 10 seconds).
 - Existing agents are unaffected, and [`POST /v1/files/upload`](/api/files)
   still accepts video files as assets — video just isn't a *creation* input.
-- `essence-2-max` comes with the combined `essence-2` creation: its identity
-  derives from the same internally generated identity video. See
-  [Essence 2 Max](/concepts/essence-2-max#how-creation-works).
 
-### `essence-2-max` — the premium Essence 2 model renamed (2026-07-10)
+### Essence 2 naming settled (2026-07-10)
 
-The Essence 2 branding is now **Essence 2** and **Essence 2 Max**:
-
-- **`essence-2-max` is the new canonical name of the premium model**
-  (previously `essence-2-quality`) — the highest-fidelity Essence 2
-  renderer, served directly on dedicated cloud GPUs. The API accepts
-  `essence-2-max` everywhere a model is requested (`POST /v1/agent/generate`,
-  [`POST /v1/video/generate`](/api/video), the embed-token `model` field, and
-  `?model=` session pins); during the migration `essence-2-quality` was
-  accepted as a deprecated alias, so nothing broke. *(Update 2026-07-29: the
-  `essence-2-quality` alias has been fully retired — generation endpoints now
-  return a `400` naming the current models, and server responses report
-  `essence-2-max`. Saved `?model=essence-2-quality` viewer links still render
-  by falling back to the agent's stored model. Send `essence-2-max`.)* See
-  [Naming & migration](/concepts/models-v2#naming--migration) and
-  [Essence 2 Max](/concepts/essence-2-max).
 - **`essence-2` is the standard tier name** — the light-name retirement
   completed (the former `essence-2-light` was consolidated into `essence-2`
   on 2026-07-05): the standard photoreal model, optimized to run everywhere
   (GPU / Apple Silicon / CPU / WebGPU-WASM), and the default. See
-  [Essence 2](/concepts/essence-2).
-- **Rates unchanged.** `essence-2` stays 4 credits/min cloud and
-  `essence-2-max` 8 credits/min cloud, each 0.5× when self-hosted; creation
-  stays 500 credits (the combined `essence-2` creation still covers both
-  models). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) now
-  advertises `essence-2-max` — the canonical name — in both
-  `agent_generation.by_model` and `talking_video.rates`; the deprecated
-  alias is no longer advertised.
-- **Docs moved.** The model guides now live at
-  [/concepts/essence-2](/concepts/essence-2) and
-  [/concepts/essence-2-max](/concepts/essence-2-max); the old URLs
+  [Essence 2](/concepts/essence-2). The premium tier of the family
+  (previously `essence-2-quality`) became an internal model and is no longer
+  offered publicly; see [Naming & migration](/concepts/models-v2#naming--migration).
+- **Rates unchanged.** `essence-2` stays 4 credits/min cloud, 0.5× when
+  self-hosted; creation stays 500 credits.
+  [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) advertises the
+  canonical names only in `agent_generation.by_model` and
+  `talking_video.rates`; deprecated aliases are not advertised.
+- **Docs moved.** The model guide now lives at
+  [/concepts/essence-2](/concepts/essence-2); the old URLs
   (`/concepts/essence-2-light`, `/concepts/essence-2-quality`) redirect.
 
 ### Expression 2 creation price: 2000 credits (2026-07-10)
@@ -746,8 +715,7 @@ Creation pricing is now **per engine**:
   500. Expression 2 is the fully generative engine; each per-identity train
   runs substantially more GPU time than an Essence 2 train, and the price now
   reflects that cost.
-- **The Essence 2 family stays at 500 credits** (`essence-2` combined creation
-  — one charge, both tiers — and `essence-2-quality`); v1 stays at 250.
+- **Essence 2 stays at 500 credits**; v1 stays at 250.
 - **`auto` bills the routed model's rate** — 500 when your subject routes to
   `essence-2` (photorealistic person), 2000 when it routes to `expression-2`
   (cartoon / animal / stylized character). The dashboard shows the range
@@ -796,8 +764,8 @@ Rounding out the launch — plan allowances and a documentation overhaul:
 - **Offline licensing is coming soon** — run avatars fully self-hosted with
   per-device, per-model signed credit bundles minted through your online
   account: Business $999/year prepacks 120,000 credits (Essence 2 +
-  Expression 2); Enterprise $1,999/year prepacks 240,000 credits (adds
-  Essence 2 Max). Self-hosted minutes meter at half the cloud rate. Preview
+  Expression 2); Enterprise $1,999/year prepacks 240,000 credits.
+  Self-hosted minutes meter at half the cloud rate. Preview
   at [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
 - **[Pricing](/guides/pricing) is now the single home of every number** —
   per-model serving rates (cloud and self-hosted), creation credits,
@@ -856,32 +824,32 @@ The Essence 2 request surface is now just **`essence-2`** (plus the explicit
 
 The [Android SDK](/sdk/android) page and the [Kotlin hello-avatar example](/examples/kotlin-android-hello) are back. The on-device Essence runtime for Android — `ai.bithuman:sdk:2.3.6`, a self-contained arm64-v8a AAR on Maven Central — is unchanged and installable; only its documentation had been removed. It's pinned at `2.3.6` (Essence, Engine ABI v7, Beta) and renders Essence `.imx` models fully on-device.
 
-### Pick-for-me creation, combined Essence 2, model adds & downloads (2026-07-02)
+### Pick-for-me creation, model adds & downloads (2026-07-02)
 
 *Named as of today: these two tiers were called **Essence 2 Light** and
-**Essence 2 Quality** when this shipped; they are **`essence-2`** and
-**`essence-2-max`** now — both retired names and the migration are documented
-under [Naming & migration](/concepts/models-v2#naming--migration).*
+**Essence 2 Quality** when this shipped; Light is **`essence-2`** now and
+Quality became an internal model that is no longer offered publicly — both
+retired names and the migration are documented under
+[Naming & migration](/concepts/models-v2#naming--migration).*
 
 The model-release UX wave — one creation surface across all five model families, plus post-creation adds and artifact downloads:
 
 - **`model: "auto"` — let the platform pick.** [`POST /v1/agent/generate`](/api/agents#auto--let-the-platform-pick-the-model) now accepts `auto`: an LLM classifies your input (the image if provided, else the prompt) and routes it — a **photorealistic person** → `essence-2`, a **cartoon / animal / exotic creature** → `expression-2`. It's the default selection in the dashboard's create flow; API callers send it explicitly (an omitted `model` keeps the historical `essence-1` default). Charges the routed model's 500-credit rate.
-- **`model: "essence-2"` — one creation, both Essence 2 tiers.** A single 500-credit charge trains [Essence 2](/concepts/essence-2) **and** makes [Essence 2 Max](/concepts/essence-2-max) available from the same identity video — [pick the tier at launch](/api/agents#essence-2--the-combined-creation) (`?model=` or the embed-token `model` field).
 - **The Essence 2 subject gate.** Explicit `essence-2*` creations require a **photorealistic human subject** — anything else is rejected with a clean [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) *before billing* and before any agent row is created (`auto` routes instead of rejecting). See [the subject gate](/api/agents#the-essence-2-subject-gate-422).
 - **Per-model creation pricing.** Creation is billed per model — 500 credits for the second generation (`essence-2`, `essence-2-quality`, `essence-2-light`, `expression-2`, `auto`), 250 for v1 (`essence-1`, `expression-1`). [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) now returns the per-model map (`agent_generation.by_model`) — the old flat field is gone.
-- **`POST /v1/agent/{code}/models` — add a model to an existing agent.** No re-creation: [add](/api/agents#add-a-model-to-an-existing-agent) `essence-1` (250), `essence-2` (combined, 500), `expression-2` (500), or `expression-1` (**free, instant** — the shared v1 engine drives the agent's existing image + voice, nothing trained). Async adds poll via `supported_models`; failures auto-refund; re-POSTing never double-charges.
+- **`POST /v1/agent/{code}/models` — add a model to an existing agent.** No re-creation: [add](/api/agents#add-a-model-to-an-existing-agent) `essence-1` (250), `essence-2` (500), `expression-2` (500), or `expression-1` (**free, instant** — the shared v1 engine drives the agent's existing image + voice, nothing trained). Async adds poll via `supported_models`; failures auto-refund; re-POSTing never double-charges.
 - **`GET /v1/agent/{code}/model/download` — download your generated model.** A 302 to the artifact (`?redirect=false` for JSON): `essence-1` → `.imx`, `essence-2-light` → `.lebundle.imx` (licensed weights), `essence-2-quality` → `.pkl`, `expression-2` → `.avatar` (the Mac-runnable CoreML build). Per-family [error matrix](/api/agents#download-an-agents-model) including the poll-able `404 MODEL_ARTIFACT_NOT_READY`.
 - **The CLI recognizes every model family.** [`bithuman run` / `info` / `pull`](/sdk/cli/reference) now sniff any bitHuman artifact and answer honestly: `essence-1` `.imx` runs locally as always; `.lebundle.imx` / `.pkl` / `.avatar` are recognized with a clear handoff to where they run ([launch matrix](/sdk/cli/reference#which-model-files-run-locally)). New: **`bithuman pull <AGENT_CODE>`** downloads your own agent's model through the endpoint above.
-- **Essence 2 Max is now gated on the source video.** Its identity prepares on demand **from the agent's source footage** — an image-only agent can never render Max, so it's no longer advertised in `supported_models` without a video, and requesting it returns `409 MODEL_NOT_GENERATED` with the real blocker named (`… requires a source video, which this agent doesn't have`). This corrects the earlier "never gated" behavior/wording (see the 2026-07-02 gate note below).
 
 ### Official model guides + natural idle for the second generation (2026-07-02)
 
 *Named as of today: these two tiers were called **Essence 2 Light** and
-**Essence 2 Quality** when this shipped; they are **`essence-2`** and
-**`essence-2-max`** now — both retired names and the migration are documented
-under [Naming & migration](/concepts/models-v2#naming--migration).*
+**Essence 2 Quality** when this shipped; Light is **`essence-2`** now and
+Quality became an internal model that is no longer offered publicly — both
+retired names and the migration are documented under
+[Naming & migration](/concepts/models-v2#naming--migration).*
 
-- **Per-model official documentation.** Each second-generation model now has a full product guide — what it is, how creation works (inputs, pipeline steps, realistic durations), serving tiers and `?model=` pinning, idle behavior, pricing, and limits: [Expression 2](/concepts/expression-2), [Essence 2 Max](/concepts/essence-2-max), [Essence 2](/concepts/essence-2) — plus a new [session behavior & troubleshooting](/guides/session-troubleshooting) guide covering connect latency (warm first line vs scale-from-zero overflow), idle vs speaking behavior, and the common errors.
+- **Per-model official documentation.** Each second-generation model now has a full product guide — what it is, how creation works (inputs, pipeline steps, realistic durations), serving tiers and `?model=` pinning, idle behavior, pricing, and limits: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2) — plus a new [session behavior & troubleshooting](/guides/session-troubleshooting) guide covering connect latency (warm first line vs scale-from-zero overflow), idle vs speaking behavior, and the common errors.
 - **Expression 2: real-footage idle on every creation.** During silences the avatar now plays a looping clip derived from the identity itself — cropped from your source footage when available, or captured from the trained model's rest pose for photo-only creations — instead of generated idle frames. Baked in automatically at creation; existing agents' idle clips were regenerated.
 - **Forward-only looping.** Idle and base-video loops now always play forward, wrapping from the last frame back to the first — footage never plays in reverse. Applies to `expression-2` (all tiers, including on-device) and `essence-2-light` (idle and speech, all tiers).
 - **`supported_models` + early model gate.** Agent responses ([status](/api/agents#poll-status), get, list, and the [embed-token](/api/embedding) response) now include `supported_models` — the canonical model families the agent can be launched as right now. [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token) accepts an optional `model` field, validated up front; requesting `expression-2` / `essence-2-light` before the agent's trained model exists returns a clean `409 MODEL_NOT_GENERATED` ("agent `<code>`'s `<model>` model hasn't been generated yet") — on [talking video](/api/video), **before any charge**. *(Update, later on 2026-07-02: `essence-2-quality` — originally never gated here — is now gated on the agent's **source video**, the footage its identity prepares from; see the model-release entry above.)* A live `?model=` override to an ungenerated model now ends the session cleanly with `avatar_error: "model_not_generated"` instead of hanging.

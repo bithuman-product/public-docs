@@ -99,8 +99,7 @@ The first Essence 2 render on a machine fetches one shared audio encoder
 
 Those are the only two targets with a published binary. `render` on an Essence 1
 avatar exits 70 — use the [Video API](/api/video) for that family;
-[Essence 2 Max](/concepts/essence-2-max) and
-[Expression 1](/concepts/expression-1) are GPU-only by design and serve through
+[Expression 1](/concepts/expression-1) is GPU-only by design and serves through
 the [cloud API](/api/overview).
 
 ## Troubleshooting

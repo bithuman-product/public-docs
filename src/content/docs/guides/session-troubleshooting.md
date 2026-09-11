@@ -44,7 +44,7 @@ behavior deliberately:
   (the engine renders in fixed audio chunks), which the moving idle footage
   masks. Brief pauses inside a sentence do **not** flip the avatar back to
   idle. See [Expression 2 › idle](/concepts/expression-2#idle-and-speaking-behavior).
-- **Essence 2 / Essence 2 Max** — the avatar animates the identity's
+- **Essence 2** — the avatar animates the identity's
   footage (the identity video generated internally at creation); for the
   standard Essence 2, the base video loops
   **forward-only on every tier** (as of 2026-07-02), wrapping from last frame
@@ -63,12 +63,11 @@ report it with the agent code and timestamp.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: …` | Unknown or retired `model` value. The error lists the accepted names. | Use one of `essence-1`, `essence-2`, `essence-2-max`, `expression-1`, `expression-2`, `auto` (or the bare `essence` / `expression` shorthands). Retired and pre-rename names are handled per [Naming & migration](/concepts/models-v2#naming--migration). No credits are charged. |
-| `402 INSUFFICIENT_BALANCE` | Creation costs the model's rate — 250 credits for the first-generation models, 500 for `essence-2` (Essence 2 Max included), 2000 for `expression-2`; `auto` bills the routed model's rate (500 or 2000). See [Pricing](/guides/pricing#creation--generation--one-time-credits). | Top up, then retry. |
-| [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) — `… requires a photorealistic human subject …` | An explicit Essence 2 creation (`essence-2`, `essence-2-max`) with a cartoon / animal / stylized input — the [subject gate](/api/agents#the-essence-2-subject-gate-422) rejects it **before billing**. | Use `expression-2` for that subject, or `model: "auto"` (it routes instead of rejecting). |
+| `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: …` | Unknown or retired `model` value. The error lists the accepted names. | Use one of `essence-1`, `essence-2`, `expression-1`, `expression-2`, `auto` (or the bare `essence` / `expression` shorthands). Retired and pre-rename names are handled per [Naming & migration](/concepts/models-v2#naming--migration). No credits are charged. |
+| `402 INSUFFICIENT_BALANCE` | Creation costs the model's rate — 250 credits for the first-generation models, 500 for `essence-2`, 2000 for `expression-2`; `auto` bills the routed model's rate (500 or 2000). See [Pricing](/guides/pricing#creation--generation--one-time-credits). | Top up, then retry. |
+| [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) — `… requires a photorealistic human subject …` | An explicit Essence 2 creation (`essence-2`) with a cartoon / animal / stylized input — the [subject gate](/api/agents#the-essence-2-subject-gate-422) rejects it **before billing**. | Use `expression-2` for that subject, or `model: "auto"` (it routes instead of rejecting). |
 | Status `failed` with `error_message` | A pipeline step failed — the message names it (e.g. a voice or image step failure). | Failed creations are terminal for that `agent_id` and the creation credits are **automatically refunded**; fix the input and create again. |
 | `400 VIDEO_INPUT_NOT_SUPPORTED` — `Agent creation is image-only. …` | The request carried a `video` input. Creation is **image-only** for every model — the 10-second identity video is generated internally so it loops seamlessly. Nothing is charged. | Send a portrait `image` (or let the prompt generate one) instead of `video`. |
-| `essence-2-max` isn't available on an agent | Max prepares its identity from the agent's **stored identity video** — generated internally by Essence creations — and this agent doesn't have one. | Create the agent with (or [add](/api/agents#add-a-model-to-an-existing-agent)) the combined `essence-2`, which generates the identity video internally. See [Essence 2 Max](/concepts/essence-2-max#how-creation-works). |
 | Polling seems stuck at `current_step: "lip_sync"` | For `expression-2` and `essence-2` this is the **model training step** — the longest part of creation (tens of minutes; see each model's guide). | Keep polling. Don't apply a 5-minute client timeout to v2 model creation. |
 
 ### Live sessions
@@ -76,7 +75,7 @@ report it with the agent code and timestamp.
 | Symptom | Cause | Fix |
 |---|---|---|
 | Agent won't launch right after creation | Status isn't `ready` yet, or the identity artifact is still provisioning to serving capacity. | Poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready`; on the very first session, retry after a short wait. |
-| `409 MODEL_NOT_GENERATED` — `agent <code>'s <model> model hasn't been generated yet` (for `essence-2-max` the message names the missing identity video and, during the rename rollout, may use the pre-rename family name — see [Naming & migration](/concepts/models-v2#naming--migration)) | You requested a model family the agent can't be launched as (via the embed-token `model` field, [talking video](/api/video), or a [model download](/api/agents#download-an-agents-model)) — a trained per-identity model that doesn't exist, `expression-1` not yet enabled on this agent (its message reads `isn't enabled on this agent yet`), or `essence-2-max` on an agent with no stored identity video (generated internally by Essence creations; its identity prepares on demand **from that video**). | The message names the fix — follow it. Otherwise: check the agent's `supported_models` (returned on status / get / list and the embed-token response), [add the model](/api/agents#add-a-model-to-an-existing-agent), or create the agent with it. Enabling `expression-1` is [instant and free](/api/agents#using-expression-1-on-an-existing-agent). |
+| `409 MODEL_NOT_GENERATED` — `agent <code>'s <model> model hasn't been generated yet` | You requested a model family the agent can't be launched as (via the embed-token `model` field, [talking video](/api/video), or a [model download](/api/agents#download-an-agents-model)) — a trained per-identity model that doesn't exist, `expression-1` not yet enabled on this agent (its message reads `isn't enabled on this agent yet`). | The message names the fix — follow it. Otherwise: check the agent's `supported_models` (returned on status / get / list and the embed-token response), [add the model](/api/agents#add-a-model-to-an-existing-agent), or create the agent with it. Enabling `expression-1` is [instant and free](/api/agents#using-expression-1-on-an-existing-agent). |
 | Session ends immediately with `avatar_error: "model_not_generated"` | A `?model=` URL override targeted a not-yet-generated v2 model — the session disconnects cleanly instead of hanging through dispatch retries. | Same fix as the 409 above; prefer validating via the embed-token `model` field, which rejects up front. |
 | `404 NOT_FOUND` — `No active rooms found for agent <code>` on `/speak` or `/add-context` | These endpoints target an agent with an **active session**. | Start a session first (embed, viewer, or LiveKit), then call them. |
 | `?model=` tier pin appears ignored | Unrecognized tier slugs **fall back silently** to the agent's default routing. | Check the slug against the model's guide ([Expression 2](/concepts/expression-2#serving-tiers), [Essence 2](/concepts/essence-2#serving-tiers) — force tiers are `essence-2-gpu/-ane/-cpu`, `expression-2-gpu/-cpu/-ane`); for production, omit `?model=`. |
@@ -97,6 +96,6 @@ the meter.
 ## Next steps
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — model chooser and family overview.
-- [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) · [Essence 2 Max](/concepts/essence-2-max) — per-model guides.
+- [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) — per-model guides.
 - [Agents API](/api/agents) — creation, polling, and error codes.
 - [Error reference](/api/errors) — the full error envelope.

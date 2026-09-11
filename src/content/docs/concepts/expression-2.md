@@ -53,10 +53,8 @@ unchanged.
 - **You want the same identity on cloud GPU, CPU, or Apple Silicon** —
   Expression 2 serves on all three tiers (see [serving](#serving-tiers)).
 
-If you need the absolute highest image fidelity for close-up content, compare
-with [Essence 2 Max](/concepts/essence-2-max). If cost at scale or
-on-device deployment is the priority, compare with
-[Essence 2](/concepts/essence-2). For the family-level decision,
+For a photorealistic human, compare with [Essence 2](/concepts/essence-2).
+For the family-level decision,
 start at [Essence 2 & Expression 2](/concepts/models-v2).
 
 ## How creation works

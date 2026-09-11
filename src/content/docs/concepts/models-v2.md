@@ -41,46 +41,33 @@ API, the embed widget, the dashboard, and the SDKs:
   [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1, macOS Apple
   Silicon and Linux x86_64), the [Python SDK](/sdk/python) (3.0.0), and the
   [Android AAR](/sdk/android).
-- **[`essence-2-max`](/concepts/essence-2-max)** — the **premium** Essence
-  model: the highest-fidelity Essence renderer served directly on dedicated
-  cloud GPUs for close-up and hero-quality output. It has no separate
-  creation — every `essence-2` creation includes it.
 
 ## At a glance
 
-| | **essence-2** | **essence-2-max** | **expression-2** |
-|---|---|---|---|
-| **Guide** | [Essence 2](/concepts/essence-2) | [Essence 2 Max](/concepts/essence-2-max) | [Expression 2](/concepts/expression-2) |
-| **Family** | Essence | Essence | Expression |
-| **What it is** | The standard Essence 2 model — efficient renderer, serves from every cloud tier plus your own CPU servers and the browser; the default | The premium model — the highest-fidelity renderer, served on dedicated cloud GPUs | Generative motion from one photo |
-| **Best for** | Photorealistic humans | Photorealistic humans, close-up/hero quality | Characters: cartoons, animals, creatures, robots |
-| **Identity source** | Identity video generated internally from your image | The same internally generated identity video | Single photo |
-| **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Identity footage, reference fidelity, ~25 fps | Fully generated 416×720 scene, 20 fps |
-| **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu | gpu · ane · cpu (auto-routed chain) |
-| **On-device** | Your own Mac (Apple Silicon) or Linux x86_64 box via the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1); your own CPU servers (Python SDK 3.0.0); Android via the [AAR](/sdk/android); the Swift `Essence2` engine in your own app. The cloud's Apple tier is bitHuman's hardware, reached over the network | — | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/ios#minimal-code)) |
-| **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Included with the combined `essence-2` creation (instant identity prep) | Train-on-create, 2000 credits (about 2–2.5 hours) |
-| **Cloud** | 4 credits/min | 8 credits/min | 4 credits/min |
-| **Self-hosted** | 2 credits/min | 4 credits/min | 2 credits/min |
+| | **essence-2** | **expression-2** |
+|---|---|---|
+| **Guide** | [Essence 2](/concepts/essence-2) | [Expression 2](/concepts/expression-2) |
+| **Family** | Essence | Expression |
+| **What it is** | The standard Essence 2 model — efficient renderer, serves from every cloud tier plus your own CPU servers and the browser; the default | Generative motion from one photo |
+| **Best for** | Photorealistic humans | Characters: cartoons, animals, creatures, robots |
+| **Identity source** | Identity video generated internally from your image | Single photo |
+| **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Fully generated 416×720 scene, 20 fps |
+| **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (WebGPU/WASM, in rollout) | gpu · ane · cpu (auto-routed chain) |
+| **On-device** | Your own Mac (Apple Silicon) or Linux x86_64 box via the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1); your own CPU servers (Python SDK 3.0.0); Android via the [AAR](/sdk/android); the Swift `Essence2` engine in your own app. The cloud's Apple tier is bitHuman's hardware, reached over the network | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/ios#minimal-code)) |
+| **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Train-on-create, 2000 credits (about 2–2.5 hours) |
+| **Cloud** | 4 credits/min | 4 credits/min |
+| **Self-hosted** | 2 credits/min | 2 credits/min |
 
-All three keep the platform contract unchanged: push 16-bit PCM audio in,
+Both keep the platform contract unchanged: push 16-bit PCM audio in,
 drain real-time lip-synced video frames out. The same agent code works across
 every surface.
 
 ## Which should I choose?
 
-### Highest visual fidelity, close-up or hero content
-
-**[`essence-2-max`](/concepts/essence-2-max).** The premium Essence
-renderer — the highest-fidelity model, served on dedicated cloud GPUs — pick
-it when image quality is the whole point and 8 credits/min is acceptable.
-Its identity derives from the agent's stored identity video — generated
-internally by every `essence-2` creation.
-
 ### Cost-effective at scale, or off our cloud
 
 **[`essence-2`](/concepts/essence-2).** The standard model and the default —
-half the cloud price of Max, and the same identity artifact serves three
-different ways: from **bitHuman's cloud** (GPU, Apple Silicon and CPU
+the same identity artifact serves three different ways: from **bitHuman's cloud** (GPU, Apple Silicon and CPU
 tiers, routed for you), from **your own CPU servers** for offline rendering
 (Python SDK 2.9.0+), and **in the viewer's browser** where you opt a session
 into it. The right default for photorealistic humans, kiosks,
@@ -107,11 +94,10 @@ Still deciding between the **families** (Essence vs Expression)? Start with
 
 ## How creation works
 
-All three models are **train-on-create**: you create an agent once with
+Both models are **train-on-create**: you create an agent once with
 `POST /v1/agent/generate` and the platform prepares that identity's model as
 part of generation. Creation is asynchronous and one-time per agent —
-**500 credits** for `essence-2` (the combined creation, Essence 2 Max
-included) and **2000 credits** for `expression-2`. Poll
+**500 credits** for `essence-2` and **2000 credits** for `expression-2`. Poll
 [`GET /v1/agent/status/{agent_id}`](/api/agents) until the status is terminal
 (`ready`, or `failed`). `success` is **not** terminal — the voice/image and
 video steps each write it mid-run, so a loop that stops on it exits at ~20%
@@ -123,13 +109,12 @@ per-identity work, so don't apply a short client timeout:
 | Model | Identity step | Typical creation time |
 |---|---|---|
 | `essence-2` | Builds a compact identity bundle on a cloud GPU | Typically about 45 minutes (up to a few hours) |
-| `essence-2-max` | Instant prep from the internally generated identity video (seconds) | Included with the combined `essence-2` creation |
 | `expression-2` | Trains a per-identity model on a dedicated training GPU | About 2–2.5 hours. Measured over 39 creations completed within 12 h in the window 2026-07-15 → 2026-08-30: median 2h04m, fastest 1h25m, slowest decile beyond 3h45m |
 
-**Creation input is a portrait image for all three** — `essence-2` generates
+**Creation input is a portrait image for both** — `essence-2` generates
 a 10-second identity video from it internally (25 fps, authored to loop
-seamlessly, its first and last frames match), `essence-2-max` derives from
-that same video, and `expression-2` trains straight from the photo. The
+seamlessly, its first and last frames match), and `expression-2` trains
+straight from the photo. The
 identity image itself is produced by **Seedream 5 pro** (text-to-image from
 your prompt); an uploaded `image` is treated as a **reference** and always
 regenerated through Seedream 5 edit to standardize it — never used raw. The
@@ -153,16 +138,11 @@ model):
   shows the whole figure including the feet, for kiosk / standing-avatar
   layouts.
 
-Two notes round out the creation surface:
+One note rounds out the creation surface:
 
-- **`essence-2` is a combined creation.** The one 500-credit charge trains
-  the standard Essence 2 identity bundle **and** makes Essence 2 Max
-  available from the same internally generated identity video — launch with `?model=essence-2-max`
-  (or the embed-token `model` field) when you want the premium model. See
-  [the combined creation](/api/agents#essence-2--the-combined-creation).
 - **`auto` — classify and route.** An LLM looks at your input (the image if
-  provided, else the prompt): a photorealistic person routes to `essence-2`
-  (combined), a cartoon / animal / creature / robot routes to `expression-2`.
+  provided, else the prompt): a photorealistic person routes to `essence-2`,
+  a cartoon / animal / creature / robot routes to `expression-2`.
   It's the default in the dashboard's create flow; API callers must send it
   explicitly — an omitted `model` now defaults to `expression-1` (Expression 1,
   version `v1`, 250 credits), flipped from the old `essence-1` default on
@@ -241,8 +221,7 @@ The same request shape works for the other models. Select an engine with
 `model` + `version` — `model` is `expression` (default) or `essence`, and
 `version` is `v1` (default) or `v2`, so `essence` + `v2` is Essence 2 while
 `expression` + `v1` is Expression 1. You can still pass a **full engine name**
-directly (`essence-2`, `essence-2-max`, `expression-2`, `essence-1`,
-`expression-1`) — those pass through unchanged and `version` is ignored, so
+directly (`essence-2`, `expression-2`, `essence-1`, `expression-1`) — those pass through unchanged and `version` is ignored, so
 existing integrations keep working. Omitting `model` entirely defaults to
 `expression-1` (250 credits). Invalid or retired model names return
 `400 VALIDATION_ERROR` with no credits charged; pre-rename aliases are
@@ -307,7 +286,6 @@ https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
 |---|---|
 | [`essence-2`](/concepts/essence-2#serving-tiers) | `essence-2-gpu` · `essence-2-ane` · `essence-2-cpu` |
 | [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
-| [`essence-2-max`](/concepts/essence-2-max#serving) | `essence-2-max` (single cloud GPU tier; also self-hostable — see [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max)) |
 
 Saved links carrying pre-rename or retired slugs keep working — see
 [Naming & migration](#naming--migration).
@@ -320,14 +298,14 @@ Saved links carrying pre-rename or retired slugs keep working — see
 
 The device/runtime matrix for the second generation:
 
-| Runtime | `essence-2` | `essence-2-max` | `expression-2` |
-|---|---|---|---|
-| bitHuman cloud — GPU | ✅ chain tier | ✅ (the only tier) | ✅ chain tier |
-| bitHuman cloud — Apple Silicon | ✅ chain tier | — | ✅ chain tier |
-| bitHuman cloud — CPU | ✅ chain tier | — | ✅ chain tier |
-| Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); ✅ local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (2.6.1); live streaming still via the cloud | — | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
-| On-device macOS / iOS (Apple Silicon) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0, engine `essence2-v1.2.0`) — a C interface, builds for iOS and macOS; resources published; no in-app model download route yet | — (cloud-only) | [Swift SDK](/sdk/ios) `Expression2` product, 2.5.0+ — `macos-arm64` **and** `ios-arm64`; both have rendered on real hardware, but it is engine only, [no model bundle published](/sdk/ios#minimal-code) |
-| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | — | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback). **Opt-in:** cloud is the default for every visitor; the URL has to ask, and a session falls back to cloud when the identity has no published web bundle or the browser can't run the engine. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
+| Runtime | `essence-2` | `expression-2` |
+|---|---|---|
+| bitHuman cloud — GPU | ✅ chain tier | ✅ chain tier |
+| bitHuman cloud — Apple Silicon | ✅ chain tier | ✅ chain tier |
+| bitHuman cloud — CPU | ✅ chain tier | ✅ chain tier |
+| Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); ✅ local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (2.6.1); live streaming still via the cloud | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
+| On-device macOS / iOS (Apple Silicon) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0, engine `essence2-v1.2.0`) — a C interface, builds for iOS and macOS; resources published; no in-app model download route yet | [Swift SDK](/sdk/ios) `Expression2` product, 2.5.0+ — `macos-arm64` **and** `ios-arm64`; both have rendered on real hardware, but it is engine only, [no model bundle published](/sdk/ios#minimal-code) |
+| Browser-local (WASM/WebGPU, no server render) | Rolling out — `?render=local` renders Essence 2 in-browser (WebGPU on Apple Silicon/desktop-class GPUs, WASM fallback) as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | Rolling out — `?render=local` renders Expression 2 in-browser (LiteRT.js / WebGPU, WASM fallback). **Opt-in:** cloud is the default for every visitor; the URL has to ask, and a session falls back to cloud when the identity has no published web bundle or the browser can't run the engine. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
 Cloud sessions are routed automatically; on-device and self-hosted serving
 use the downloaded model artifact
@@ -361,12 +339,10 @@ Per active minute of avatar runtime, from the
 | Model | Cloud | Self-hosted |
 |---|---|---|
 | `essence-2` | 4 credits/min | 2 credits/min |
-| `essence-2-max` | 8 credits/min | 4 credits/min |
 | `expression-2` | 4 credits/min | 2 credits/min |
 
-Creation is one-time and per agent: **500 credits** for the
-[combined `essence-2`](/api/agents#essence-2--the-combined-creation) (Essence
-2 Max included — no separate Max creation), **2000 credits** for
+Creation is one-time and per agent: **500 credits** for
+[`essence-2`](/api/agents#essence-2--the-photorealistic-creation), **2000 credits** for
 `expression-2`,
 [`auto`](/api/agents#auto--let-the-platform-pick-the-model) charges the
 routed model's rate (500 or 2000), and 250 credits for the v1 models
@@ -380,32 +356,29 @@ disconnected sessions stop accruing. Machine-readable schedule:
 ## Naming & migration
 
 This is the one place the historical model names are documented — every other
-page uses the canonical names (`essence-2`, `essence-2-max`, `expression-2`).
+page uses the canonical names (`essence-2`, `expression-2`).
 
-- **`essence-2-quality` → `essence-2-max`** (renamed 2026-07-10; alias
-  retired 2026-07-29). `essence-2-max` is the canonical name everywhere a
-  model is requested. The generation endpoints
+- **`essence-2-quality`** was the internal name of a premium Essence 2 tier
+  and is retired (alias removed 2026-07-29). The generation endpoints
   ([`POST /v1/agent/generate`](/api/agents), [`POST /v1/video/generate`](/api/video),
   and the embed-token `model` field) **no longer accept `essence-2-quality`** —
-  a request naming it returns a `400` listing the current models. Server
-  *responses* (`supported_models`, `409` messages, model downloads,
-  talking-video job responses) report `essence-2-max`. Send `essence-2-max`.
+  a request naming it returns a `400` listing the current models. Send
+  `essence-2`.
 - **`essence-2-light`** was consolidated into **`essence-2`** (2026-07-05)
   and is retired: you create and serve with `model="essence-2"`, the standard
   model. Requests naming `essence-2-light` get a `400` with a hint pointing
   at `essence-2`.
 - **Saved viewer links keep rendering.** A share link carrying
-  `?model=essence-2-quality` no longer pins the premium tier by that string —
+  `?model=essence-2-quality` no longer pins a tier by that string —
   the viewer ignores the unrecognized override and falls back to the agent's
-  stored model, so the link still plays. New links should use
-  `?model=essence-2-max` to pin the premium tier. The old
+  stored model, so the link still plays. The old
   `essence-2-light-gpu` / `essence-2-light-cpu` slugs still pin their tiers,
   and links carrying `essence-2-light` or `essence-2-light-ane` route to the
   `essence-2` default chain.
 
 ## Idle behavior
 
-All three models keep the avatar naturally alive during silences, and as of
+Both models keep the avatar naturally alive during silences, and as of
 **2026-07-02** their idle loops play **forward-only** — footage wraps from its
 last frame back to its first and never plays in reverse. Expression 2
 additionally bakes a **real-footage idle clip** into every creation, so idle
@@ -417,7 +390,7 @@ the expectations overview in
 
 ## Next steps
 
-- [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) · [Essence 2 Max](/concepts/essence-2-max) — the official per-model guides.
+- [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) — the official per-model guides.
 - [Essence vs Expression](/concepts/models) — the two model families.
 - [Agents API](/api/agents) — the full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.

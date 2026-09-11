@@ -25,13 +25,10 @@ sessions bill per minute.
 | Book creation (one-time, per book) | 250 credits |
 | Talking video — Essence 1 | 2 credits/min (rounded up) |
 | Talking video — Expression 1, Expression 2, Essence 2 | 4 credits/min (rounded up) |
-| Talking video — Essence 2 Max | 8 credits/min (rounded up) |
 | Live session — Essence 1, self-hosted | 1 credit/min |
 | Live session — Essence 1, cloud | 2 credits/min |
 | Live session — Expression 1 / Expression 2 / Essence 2, self-hosted | 2 credits/min |
 | Live session — Expression 1 / Expression 2 / Essence 2, cloud | 4 credits/min |
-| Live session — Essence 2 Max, self-hosted | 4 credits/min |
-| Live session — Essence 2 Max, cloud | 8 credits/min |
 | Voice chat (managed agent, no avatar) | 10 credits/min |
 | Camera chat (managed agent, camera on) | 30 credits/min |
 
@@ -91,7 +88,6 @@ curl https://api.bithuman.ai/v1/pricing \
       "by_model": {
         "essence-1": 250,
         "expression-1": 250,
-        "essence-2-max": 500,
         "expression-2": 2000,
         "essence-2": 500,
         "auto": 2000
@@ -101,7 +97,7 @@ curl https://api.bithuman.ai/v1/pricing \
     "talking_video": {
       "unit": "credits_per_minute",
       "billing": "ceil(minutes) * rate, minimum 1 minute",
-      "rates": { "essence-1": 2, "expression-1": 4, "essence-2": 4, "essence-2-max": 8, "expression-2": 4 }
+      "rates": { "essence-1": 2, "expression-1": 4, "essence-2": 4, "expression-2": 4 }
     },
     "dynamics_generation": { "flat": 250, "note": "…" },
     "notes": "Authoritative charges are enforced server-side at request time. …"
@@ -110,11 +106,10 @@ curl https://api.bithuman.ai/v1/pricing \
 ```
 
 `by_model` keys are the **canonical** `model` values `POST /v1/agent/generate`
-accepts — the premium model is keyed `essence-2-max` (8 credits/min). The
-pre-rename `essence-2-quality` spelling is **no longer accepted** (removed
-2026-07-29); use `essence-2-max`.
-`essence-2` is the [combined Essence 2 creation](/api/agents#essence-2--the-combined-creation)
-(one 500-credit charge covers both models) and `auto`
+accepts. The retired `essence-2-quality` spelling is **no longer accepted**
+(removed 2026-07-29); use `essence-2`.
+`essence-2` is the [photorealistic Essence 2 creation](/api/agents#essence-2--the-photorealistic-creation)
+(one 500-credit charge) and `auto`
 [classifies and routes](/api/agents#auto--let-the-platform-pick-the-model),
 charging the routed model's rate — 500 for `essence-2`, 2000 for
 `expression-2` (the `auto` entry in `by_model` shows the worst case).
@@ -157,8 +152,6 @@ curl https://api.bithuman.ai/v2/credit-summaries \
     "minutes_estimate": {
       "essence_2_cloud": 460,
       "essence_2_self_hosted": 921,
-      "essence_2_max_cloud": 230,
-      "essence_2_max_self_hosted": 460,
       "expression_2_cloud": 460,
       "expression_2_self_hosted": 921,
       "essence_1_cloud": 921,
@@ -195,8 +188,6 @@ model** — read the key for the model you actually run:
 |---|---|---|
 | `essence_2_cloud` | Essence 2 on bitHuman cloud | balance ÷ 4 |
 | `essence_2_self_hosted` | Essence 2 on your hardware | balance ÷ 2 |
-| `essence_2_max_cloud` | Essence 2 Max on bitHuman cloud | balance ÷ 8 |
-| `essence_2_max_self_hosted` | Essence 2 Max on your hardware | balance ÷ 4 |
 | `expression_2_cloud` | Expression 2 on bitHuman cloud | balance ÷ 4 |
 | `expression_2_self_hosted` | Expression 2 on your hardware | balance ÷ 2 |
 | `essence_1_cloud` | Essence 1 on bitHuman cloud | balance ÷ 2 |
@@ -211,8 +202,8 @@ model** — read the key for the model you actually run:
 > `essence_cloud`, `essence_self_hosted`, `expression_cloud` and
 > `expression_self_hosted` predate the second-generation models and are aliases of
 > the `essence_1_*` / `expression_1_*` rows above. **They are not the Essence 2
-> rate.** If you serve Essence 2 or Essence 2 Max and read `essence_cloud`, you
-> will over-estimate your remaining minutes by 2x and 4x respectively. Use the
+> rate.** If you serve Essence 2 and read `essence_cloud`, you will
+> over-estimate your remaining minutes by 2x. Use the
 > model-specific key, or compute from the
 > [serving rates](/guides/pricing#serving--credits-per-live-minute).
 

@@ -114,7 +114,6 @@ If instead you see `★ UNMETERED RENDER`, the service could not be reached and 
 | `expression-2` | `<code>.avatar` | Renders locally on macOS Apple Silicon and Linux x86_64. The default Wise Pup avatar is this family |
 | `essence-2` | `<code>.imx` (releases before 2.6.0 wrote `<code>.lebundle.imx`, [a legacy name kept for compatibility](/concepts/avatars-imx)) | Renders locally on both platforms since **2.6.1**. The first play fetches the shared audio encoder and checks the licence with the cloud, so it needs your sign-in. A file missing a required member is refused, exit 69 |
 | `essence-1` | `<code>.imx` | Renders locally |
-| `essence-2-max` | `<code>.pkl` | Recognised, and handed to the [cloud](/concepts/essence-2-max) — GPU-only by design |
 | `expression-1` | usually none | Cloud-served. The exception is an agent that went through the lip step, which owns a baked `<code>.imx` that runs like `essence-1` |
 
 Passing a bare **agent code** rather than a path is different: an `essence-2`
@@ -194,7 +193,7 @@ a sign-in, or 66 carrying the API's error (including the poll-able
 model](/api/agents#add-a-model-to-an-existing-agent) gives the same code a
 second trained family, and a bare `pull` hands back the family the agent was
 *created* with — not the newest. There is no warning. Name the family with
-`--model` (`essence-1`, `essence-2`, `essence-2-max`, `expression-2`), or read
+`--model` (`essence-1`, `essence-2`, `expression-2`), or read
 `other_models` from `bithuman pull <CODE> --json`.
 
 ### What you get, per family
@@ -204,7 +203,6 @@ second trained family, and a bare `pull` hands back the family the agent was
 | `essence-1` | `<code>.imx` | This CLI, the [Python SDK](/sdk/python), the [Android AAR](/sdk/android), the cloud |
 | `essence-2` | `<code>.imx` | This CLI (2.6.1+), the [Python SDK](/sdk/python), the cloud. **Licensed weights — keep the file** |
 | `expression-2` | `<code>.avatar` | This CLI, the [Python SDK](/sdk/python), the browser via [`?render=local`](/guides/browser-rendering), the [Apple `Expression2` product](/sdk/ios#minimal-code), the cloud |
-| `essence-2-max` | `<code>.pkl` | The cloud, or the [self-hosted GPU container](/guides/deploy-essence-2-max). The `.pkl` derives on the agent's first session, so an earlier download answers `404 MODEL_ARTIFACT_NOT_READY` |
 | `expression-1` | usually nothing (`400 MODEL_NOT_DOWNLOADABLE`) | The cloud |
 
 All but a minority of these are `IMX\0` v2 containers — including the
@@ -217,8 +215,8 @@ extension.
 
 Prints format, engine, family, and every member of the container with its byte
 size. The `engine` field carries a **legacy name kept for compatibility** — an
-Essence 2 bundle reports `essence2-light`, an Essence 2 Max bundle
-`essence2-quality` — and is never a valid `model` value; see
+Essence 2 bundle reports `essence2-light` — and is never a valid `model`
+value; see
 [the `engine` value is a legacy name](/concepts/avatars-imx#the-engine-value-is-a-legacy-name).
 
 Run 2026-09-10 against the public showcase identity `A08CCD3871.avatar`, with

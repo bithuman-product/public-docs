@@ -87,9 +87,8 @@ Audio input is the same call with an audio block:
 | `expression-1` | Classic stylized renders. | Available today |
 | `essence-2` | The standard model — cost-effective renders. | Available today |
 | `expression-2` | Fast, expressive renders. | Available today |
-| `essence-2-max` | Premium fidelity output — the highest-fidelity renderer. | Available today |
 
-All five avatar models render talking video today. See
+All four avatar models render talking video today. See
 [Essence 2 & Expression 2](/concepts/models-v2) for the full second-generation
 lineup.
 
@@ -107,8 +106,8 @@ automatically refunded.
 
 - **Output duration:** up to **120 seconds**.
 - **Text length:** up to **5000 characters**.
-- **Output:** mp4, served from a public CDN URL. `essence-2` / `essence-2-max`
-  render at **1080p** by default — `1080×1920` portrait or `1920×1080`
+- **Output:** mp4, served from a public CDN URL. `essence-2` renders
+  at **1080p** by default — `1080×1920` portrait or `1920×1080`
   landscape, matching the source orientation and capped at the source's long
   side; `expression-2` renders at its native `416×720`.
 

@@ -112,8 +112,6 @@ Live sessions bill per minute by model and host; some operations are one-time.
 | Essence 1 — self-hosted | 1 |
 | Expression 1 / Expression 2 / Essence 2 — cloud | 4 |
 | Expression 1 / Expression 2 / Essence 2 — self-hosted | 2 |
-| Essence 2 Max — cloud | 8 |
-| Essence 2 Max — self-hosted | 4 |
 
 | One-time operation | Credits |
 |---|---|

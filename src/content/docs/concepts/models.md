@@ -28,8 +28,6 @@ between when packaging an avatar — and the focus of the rest of this page — 
     own CPU servers for offline rendering, on Android through the
     [AAR](/sdk/android), and — opt-in per session — in the viewer's browser
     (WebGPU/WASM). See [where each model runs](/concepts/where-models-run).
-  - **[Essence 2 Max](/concepts/essence-2-max)** — the premium model: the
-    highest-fidelity renderer served on dedicated cloud GPUs.
 - **Expression** — the expressive family (animation driven from a portrait at runtime):
   - **Expression 1** — first generation. Dynamic facial animation from any
     portrait image. **GPU only** — see
@@ -44,8 +42,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
 > [Essence 2 & Expression 2](/concepts/models-v2) for the
 > family overview, and the official per-model guides:
 > [Expression 2](/concepts/expression-2) ·
-> [Essence 2](/concepts/essence-2) ·
-> [Essence 2 Max](/concepts/essence-2-max).
+> [Essence 2](/concepts/essence-2).
 
 Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
 shape; the tier is selected per session and is transparent to your integration.
@@ -217,12 +214,12 @@ Expression *1* is GPU-only and has no on-device Apple build — see
 
 ### Highest visual quality for offline video generation
 
-**[Talking video generation](/concepts/talking-video)** — render a finished mp4 with any model, including [Essence 2 Max](/concepts/essence-2-max) for premium fidelity. Best for offline batch jobs rather than real-time streaming.
+**[Talking video generation](/concepts/talking-video)** — render a finished mp4 with any model. Best for offline batch jobs rather than real-time streaming.
 
 ## Next steps
 
 - [Where each model runs](/concepts/where-models-run) — the model x lane matrix, and what "GPU only" means
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launched July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2), [Essence 2 Max](/concepts/essence-2-max).
+- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models `essence-2` and `expression-2` (launched July 10, 2026), with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2).
 - [Building avatars](/guides/building-avatars) — get or generate your first avatar.
 - [Pricing & credits](/guides/pricing) — what each model costs to run.
 - [SDK overview](/sdk) — run a model on your own hardware.

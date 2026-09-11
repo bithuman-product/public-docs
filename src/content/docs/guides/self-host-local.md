@@ -485,6 +485,4 @@ coordinate, bytes, checksum and native payload.
 - [Python SDK](/sdk/python) — the full streaming and offline API.
 - [Self-hosted Expression GPU](/guides/deploy-self-hosted) — the NVIDIA Docker
   path for Expression 1, and the Essence 2 CPU reference.
-- [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max) — the hand-delivered
-  GPU container.
 - [Pricing](/guides/pricing) — self-hosted credit rates and metering.

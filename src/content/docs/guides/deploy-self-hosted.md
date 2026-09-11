@@ -212,10 +212,6 @@ matrix today:
   model download route yet** ([details](/sdk/ios#install)).
   The cloud's Apple tier for `essence-2` is bitHuman's own Apple Silicon,
   reached over the network like any other cloud tier.
-- [`essence-2-max`](/concepts/essence-2-max) has **no on-device or CPU
-  runtime**, but it now ships a **hand-delivered self-hosted GPU container**
-  for NVIDIA RTX 40-series hardware — see
-  [Self-hosted Essence 2 Max](/guides/deploy-essence-2-max).
 
 See [where each model runs](/concepts/models-v2#where-each-model-runs) for the
 full device/runtime matrix.

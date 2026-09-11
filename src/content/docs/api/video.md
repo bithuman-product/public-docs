@@ -19,15 +19,8 @@ CDN URL, the output duration, and the credits charged.
 landscape, matching the source orientation and capped at the source's long side.
 `expression-2` renders at its native `416×720`.
 
-> **Note** `essence-2-max` currently returns **`720×1280`**, not 1080p —
-> measured 2026-07-28 across three renders on two different agents whose source
-> assets are both `1080×1920`. Until that is corrected platform-side, the
-> 8-credit/min Max tier delivers *fewer* pixels than the 4-credit/min standard
-> tier. If output resolution is what you are paying for, use `essence-2`.
-
-Talking videos bill **per minute of output, rounded up**: `essence-2-max`
-is 8 credits/min; `expression-1`, `expression-2`, and `essence-2` are
-4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard
+Talking videos bill **per minute of output, rounded up**: `expression-1`,
+`expression-2`, and `essence-2` are 4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard
 render; the former `essence-2-light` name is retired).
 
 **How the charge actually lands.** Submitting a job charges the **120-second
@@ -55,7 +48,7 @@ mp4 directly.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, `essence-2-max`, or `essence-2`. All five render talking video today. |
+| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, or `essence-2`. All four render talking video today. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
@@ -120,7 +113,7 @@ resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
     headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
     json={
-        "model": "essence-2-max",
+        "model": "essence-2",
         "agent_code": "A80HVD8577",
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
         "wait": True,
@@ -136,7 +129,7 @@ print(resp.json())
   "status": "completed",
   "video_url": "https://assets.bithuman.ai/.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
   "duration_seconds": 6.5,
-  "credits_charged": 8
+  "credits_charged": 4
 }
 ```
 
@@ -146,10 +139,7 @@ limit returns `400` before any charge. Requesting a model the agent can't be
 launched as returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) —
 also **before any charge**: for `expression-2` / `essence-2` that means
 the trained per-identity model doesn't exist yet (`agent <code>'s <family>
-model hasn't been generated yet`); `essence-2-max` is gated on the
-agent's **source video**, which its identity prepares from on demand (`agent
-<code>'s essence-2-max model requires a source video, which this agent
-doesn't have`); `essence-1` needs the agent's `.imx` model file (present on
+model hasn't been generated yet`); `essence-1` needs the agent's `.imx` model file (present on
 every completed essence-1 creation), and `expression-1` needs an
 expression-1 agent — or the free, instant expression-1 model add on any agent
 with an image and a voice ([how](/api/agents#using-expression-1-on-an-existing-agent)).
@@ -173,10 +163,10 @@ print(resp.json())
 ```
 
 While rendering (note: job responses echo the **public** model name you
-requested — `essence-2` and `essence-2-max` read back as-is):
+requested — `essence-2` reads back as-is):
 
 ```json
-{ "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing", "model": "essence-2-max" }
+{ "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing", "model": "essence-2" }
 ```
 
 When complete:
@@ -186,10 +176,10 @@ When complete:
   "success": true,
   "job_id": "vid_3f9a2c1b8e7d4a6f0b21",
   "status": "completed",
-  "model": "essence-2-max",
+  "model": "essence-2",
   "video_url": "https://assets.bithuman.ai/.../vid_3f9a2c1b8e7d4a6f0b21.mp4",
   "duration_seconds": 6.5,
-  "credits_charged": 8
+  "credits_charged": 4
 }
 ```
 

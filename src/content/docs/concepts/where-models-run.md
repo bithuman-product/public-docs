@@ -24,12 +24,10 @@ marked **UNVERIFIED**. Nothing on this page is an idealised transcript.
 |---|---|---|
 | **essence-1** | A complete avatar identity packaged in one `.imx` file. Pre-rendered base motion, mouth region patched in real time to match audio. | The workhorse. Runs on any modern CPU, no idle timeout, custom gestures, low memory. Kiosks, edge boxes, phones, high-concurrency LiveKit fleets. |
 | **essence-2** | The current photoreal renderer — a sharper, more lifelike mouth than essence-1 at the same reach. | The default for new photoreal work. |
-| **essence-2-max** | essence-2's quality tier — the highest-fidelity renderer. | Offline/batch video where quality outranks cost and latency. **GPU only.** |
 | **expression-1** | First-generation expressive engine: facial animation driven from a portrait image at runtime, no build step. | Existing v1 agents. **GPU only.** |
 | **expression-2** | Second-generation generative engine: fully generated motion from one photo, rather than patching a pre-rendered base. | Stylized characters and creatures, and any case where the face is supplied at session time. |
 
-These five are the only product names. `essence-2-max` is a **tier of
-essence-2**, not a sixth family. If you have met the words `elevate`, `embody`,
+These four are the only product names. If you have met the words `elevate`, `embody`,
 `essence-2-light`, `essence-2-quality`, `lebundle` or `libelevate`, see
 [legacy names you will still see](#legacy-names-you-will-still-see) — several of
 them are still literals you have to type or read, and this page shows you which.
@@ -41,15 +39,14 @@ The scope below is **four owner rulings** — **2026-09-02**, two on
 repository (`tools/model_scope.py`) that every internal guard, census and
 readiness sweep resolves through. This table reproduces that file's cell
 values, re-read on 2026-09-07; it does not re-derive them. The first 09-04
-ruling re-affirmed `essence-2-max` and `expression-1` on the GPU lanes, where
-they already were; the second fixed each model's dispatch chain and, with it,
+ruling re-affirmed `expression-1` on the GPU lanes, where
+it already was; the second fixed each model's dispatch chain and, with it,
 the last column; the 09-05 ruling narrowed where `essence-1` is served from.
 
 | Model | GPU offline | GPU live | Cloud, Apple tier | macOS (your Mac) | iOS | Browser | Android | Cloud, CPU tier |
 |---|---|---|---|---|---|---|---|---|
 | **essence-1** | **Not applicable** | **Not applicable** | In scope | In scope | In scope | In scope | In scope | **Not applicable** |
 | **essence-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | In scope |
-| **essence-2-max** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
 | **expression-1** | In scope | In scope | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** | **Not applicable** |
 | **expression-2** | In scope | In scope | In scope | In scope | In scope | In scope | In scope | In scope |
 
@@ -64,11 +61,11 @@ missing here, that is a gap, and it is our bug.
 
 **Not applicable** — the ruling puts this model **off** this lane. A missing
 artifact here is **correct**. This is not "coming soon", it is not a roadmap
-item, and there is no date. `essence-2-max` and `expression-1` are
-**GPU-only by design**: their absence from Apple, browser and Android is the
-intended shape of the product, and you should architect against a GPU for them
-rather than waiting. If you need photoreal quality on a Mac, a phone or in a
-tab, the model you want is **essence-2**, not essence-2-max.
+item, and there is no date. `expression-1` is **GPU-only by design**: its
+absence from Apple, browser and Android is the intended shape of the product,
+and you should architect against a GPU for it rather than waiting. If you need
+photoreal quality on a Mac, a phone or in a tab, the model you want is
+**essence-2**.
 
 `essence-1`'s three **Not applicable** cells are the other kind: they are the
 cloud's own serving tiers, and a ruling of **2026-09-05** serves essence-1 from
@@ -98,7 +95,6 @@ least written about it. Measured against the agent table on 2026-09-02:
 | **expression-1** | 1,384 | 14.2 % |
 | **essence-2** | 125 | 1.3 % |
 | **expression-2** | 96 | 1.0 % |
-| **essence-2-max** | 2 | 0.02 % |
 | **Total** | **9,753** | |
 
 Read the second row honestly: 1,858 agents carry **no model value at all**, so
@@ -337,12 +333,11 @@ exits `0` only when it can actually stand up a live avatar. Every other CLI exit
 
 ## The lanes, one at a time
 
-### GPU — four of the five models, both directions
+### GPU — three of the four models, both directions
 
-`essence-2`, `essence-2-max`, `expression-1` and `expression-2` are in scope on
-GPU, offline and live; `essence-1` is served from the cloud's Apple tier
-instead (ruling of 2026-09-05). GPU is the only lane where `essence-2-max` and
-`expression-1` exist at all. Start at
+`essence-2`, `expression-1` and `expression-2` are in scope on GPU, offline
+and live; `essence-1` is served from the cloud's Apple tier instead (ruling
+of 2026-09-05). GPU is the only lane where `expression-1` exists at all. Start at
 [self-hosted GPU](/guides/deploy-self-hosted) or the
 [LiveKit plugin](/guides/deploy-livekit).
 
@@ -564,9 +559,8 @@ Exit code **`1`** (traceback trimmed to its last line). Set
 
 ## Legacy names you will still see
 
-There are two product names — **expression-2** and **essence-2** — plus
-**essence-2-max** as essence-2's quality tier, and the first generation,
-**essence-1** and **expression-1**. `elevate`, `embody`, `essence-2-light`,
+There are two product names — **expression-2** and **essence-2** — plus the
+first generation, **essence-1** and **expression-1**. `elevate`, `embody`, `essence-2-light`,
 `essence-2-quality`, `lebundle` and `libelevate` are **deprecated as words**.
 
 Deprecating a word does not rename a wire format. Several of these are frozen
@@ -580,9 +574,9 @@ a retired one, so here they are:
 | `essence2-light` | `Engine:` line from `bithuman info` | **essence-2** | No. Read-only; the `Family:` line is the answer. |
 | `essence-2-light` | the `agents.model` value in the database | **essence-2** | No — write `essence-2`. Retired as a product name, frozen as a stored value. |
 | `.lebundle.imx` | the file extension of an essence-2 bundle | an essence-2 model file | Yes — it is the filename you are given. |
-| `elevate` | SDK request field | **essence-2-max** | Accepted for compatibility; write `essence-2-max` in new code. |
+| `elevate` | SDK request field | **essence-2** | Accepted for compatibility; write `essence-2` in new code. |
 | `embody` | legacy request spelling | **expression-2** | Accepted for compatibility; write `expression-2` in new code. |
-| `essence-2-quality` | internal model lists | **essence-2-max** | No — write `essence-2-max`. |
+| `essence-2-quality` | internal model lists | **essence-2** | No — write `essence-2`. |
 | `libelevate`, `libelevate-android` | old library and artifact names | **essence-2** | **No.** Neither spelling was ever published to Maven Central. `libelevate-android` was this module's artifactId until it was renamed on 2026-09-02; the coordinate to type is `ai.bithuman:essence2-android`. |
 
 The rule: **write the product name; accept the legacy spelling on input; expect
@@ -597,12 +591,8 @@ design around the wrong thing.
 ## Which model should I use?
 
 **You need it on a Mac, an iPhone, in a browser, or on Android.** essence-1,
-essence-2 or expression-2. `essence-2-max` and `expression-1` are GPU-only and
-that is permanent — plan for the cloud, not for a future release.
-
-**You want the best photoreal quality and you are rendering offline.**
-essence-2-max, on GPU, via
-[talking video generation](/concepts/talking-video).
+essence-2 or expression-2. `expression-1` is GPU-only and that is permanent —
+plan for the cloud, not for a future release.
 
 **You want photoreal, everywhere.** essence-2.
 
@@ -619,7 +609,7 @@ essence-1 on any lane you run yourself. Both remain supported.
 ## Next steps
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation family overview
-- [Essence 2](/concepts/essence-2) · [Essence 2 Max](/concepts/essence-2-max) · [Expression 2](/concepts/expression-2)
+- [Essence 2](/concepts/essence-2) · [Expression 2](/concepts/expression-2)
 - [Essence vs Expression](/concepts/models) — the first-generation pair in detail
 - [CLI reference](/sdk/cli/reference) — every command, flag and exit code
 - [Android SDK](/sdk/android) · [Swift SDK](/sdk/ios) · [Python SDK](/sdk/python) · [CLI](/sdk/cli)
