@@ -22,11 +22,13 @@ BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 # → open the printed http://127.0.0.1:8088/ URL in a browser
 ```
 
-**Install those five requirements directly.** `bithuman-cli[local]` reaches the
-same set but only on macOS arm64 — the `bithuman-cli` wheel has no Linux or
-Intel build — and `bithuman[local]` is not an extra at all: pip warns, **exits
-0, and installs none of it**. `bithuman doctor` names the same five packages
-when they are missing.
+**Install those five requirements directly** — the `pip` line above is the
+whole story. There is no extra that does it for you: `bithuman-cli[local]` was
+withdrawn from PyPI on 2026-09-11 (`pip install bithuman-cli` now finds no
+distribution, and the CLI comes from Homebrew or the universal installer — see
+[Downloads](/downloads)), and `bithuman[local]` is not an extra at all: pip
+warns, **exits 0, and installs none of it**. `bithuman doctor` names the same
+five packages when they are missing.
 
 > ★ **This is not air-gapped, and the difference matters.** The brain goes
 > offline; the **avatar does not**. `bithuman run` still reaches
