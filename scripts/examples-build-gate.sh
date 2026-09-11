@@ -46,6 +46,10 @@ set -u -o pipefail
 
 CHECKOUT="${GATE_CHECKOUT:-/home/sgu/docs-gate/public-docs}"
 REMOTE="${GATE_REMOTE_HOST:-echelon}"
+# The token the remote prints its own exit status behind. See the sentinel note
+# at the run step: on echelon, ssh's exit status is not a signal.
+RC_SENTINEL="EXAMPLES_BUILD_GATE_RC"
+WORKDIR_LOCAL="${TMPDIR:-/tmp}"
 RECEIPT="${GATE_RECEIPT:-/home/sgu/scripts/docs-examples-build.receipt.json}"
 DEADMAN_HOURS="${GATE_DEADMAN_HOURS:-30}"
 MIN_FREE_GIB="${GATE_MIN_FREE_GIB:-6}"
@@ -237,6 +241,24 @@ if [ "$free_gib" -lt "$MIN_FREE_GIB" ]; then
 fi
 say "$REMOTE reachable, ${free_gib} GiB free"
 
+# --------------------------------------------- the transport failure control ---
+# ★A control that only runs in a special mode is a control nobody has seen work,
+# so this one runs on EVERY invocation, costs one round trip, and fails the gate
+# closed. It asks the transport to carry a KNOWN FAILURE (exit 7) back from
+# $REMOTE. Before 2026-09-11 this could not have passed: `ssh echelon "exit 7"`
+# returns 0, which is exactly why the verdict below is read from a sentinel and
+# not from $?. If this control ever stops seeing the 7, every verdict this gate
+# has printed since is worthless and it must say so rather than grade anything.
+ctl_line="$(ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" \
+              "sh -c 'exit 7'; echo \"$RC_SENTINEL=\$?\"" 2>/dev/null \
+            | grep -a "^$RC_SENTINEL=" | tail -1)"
+ctl_rc="${ctl_line#"$RC_SENTINEL="}"
+if [ "$ctl_rc" != "7" ]; then
+  say "UNPROVEN: the failure control did not come back from $REMOTE — asked for exit 7, the $RC_SENTINEL sentinel said '${ctl_rc:-<missing>}'. The transport cannot carry a failure, so a green from this gate would mean nothing. Refusing to grade."
+  exit 2
+fi
+say "transport control: $REMOTE carried a deliberate exit 7 back through the sentinel"
+
 # ------------------------------------------------------------------ the run ---
 STAMP="$(date -u +%Y%m%d-%H%M%S)-$$"
 RDIR="/tmp/docs-examples-gate-run-$STAMP"
@@ -267,7 +289,19 @@ fi
 say "grader on $REMOTE verified: sha256 ${CHECKER_SHA:0:12}"
 
 say "running the gate on $REMOTE ${ARGS:-(live pages)}"
-ssh -o BatchMode=yes "$REMOTE" bash -s -- <<EOF
+
+# ★THE VERDICT IS THE PRINTED SENTINEL, NEVER ssh's EXIT STATUS (2026-09-11).
+# echelon and moraga run Tailscale SSH; tailscaled's macOS incubator execs the
+# command under `/usr/bin/login -f -pq ...`, and login(1) does not propagate its
+# child's status. MEASURED: `ssh echelon "exit 3"` -> 0, `ssh echelon false` -> 0.
+# So `rc=$?` here graded EVERY run as a pass — including `--mutate`, which meant
+# the failure control could not fire either. A transport failure is still honest
+# (ssh itself returns 255), which is why the reachability probe above is sound;
+# it is only the REMOTE COMMAND's status that is lost. The remote therefore
+# prints its own status and we parse it; a MISSING sentinel is its own failure
+# code (UNPROVEN), and can never be read as a pass.
+GATE_OUT="$WORKDIR_LOCAL/gate-stdout.$STAMP"
+ssh -o BatchMode=yes "$REMOTE" bash -s -- <<EOF 2>&1 | tee "$GATE_OUT"
 set -u
 export JAVA_HOME="$REMOTE_JAVA_HOME"
 export ANDROID_HOME="$REMOTE_ANDROID_HOME"
@@ -275,10 +309,22 @@ export ANDROID_SDK_ROOT="\$ANDROID_HOME"
 export PATH="\$JAVA_HOME/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 cd "$RDIR"
 node "$RDIR/check.mjs" $ARGS --workdir "$RDIR"
+echo "$RC_SENTINEL=\$?"
 EOF
-rc=$?
 
-say "gate exited $rc"
+sentinel_line="$(grep -a "^$RC_SENTINEL=" "$GATE_OUT" 2>/dev/null | tail -1)"
+if [ -z "$sentinel_line" ]; then
+  say "UNPROVEN: no $RC_SENTINEL sentinel came back from $REMOTE. ssh to $REMOTE exits 0 whatever the remote command did, so a missing sentinel is the ONLY way to see a run that was truncated, killed, or never started. Nothing was graded."
+  rc=2
+else
+  rc="${sentinel_line#"$RC_SENTINEL="}"
+  case "$rc" in
+    ''|*[!0-9]*) say "UNPROVEN: malformed sentinel from $REMOTE: '$sentinel_line'"; rc=2 ;;
+  esac
+fi
+rm -f "$GATE_OUT"
+
+say "gate exited $rc (from $RC_SENTINEL)"
 
 # ------------------------------------------------------------- the receipt ---
 # Written on EVERY outcome, including a red: the dead-man's job is to notice that

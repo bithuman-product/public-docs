@@ -91,6 +91,17 @@ jobs:
       # The runner is a shell script that cron executes unattended on lafayette;
       # a syntax error in it is a gate that never runs, which looks exactly like
       # a gate that is green. `bash -n` is cheap and catches precisely that.
+      - name: No remote arm grades on ssh's exit code
+        # echelon runs Tailscale SSH; tailscaled execs the command under login(1),
+        # which does not propagate the child's status, so `ssh echelon "exit 3"`
+        # returns 0. The host gate's verdict used to be that number. This guard
+        # refuses any arm that goes back to reading it, and its --selftest proves
+        # the guard can still refuse (mutant caught, sentinel form passed, and the
+        # audited exemption withdrawn when its sentinel is deleted).
+        run: |
+          node scripts/check-remote-arm-verdicts.mjs --selftest
+          node scripts/check-remote-arm-verdicts.mjs
+
       - name: The host runner parses
         if: always()
         run: bash -n scripts/examples-build-gate.sh
