@@ -550,12 +550,13 @@ Exit code **`1`** (traceback trimmed to its last line). Set
 `BITHUMAN_API_SECRET`, or pass `api_secret=`, and it proceeds. See the
 [Python SDK](/sdk/python) page.
 
-> **3.0.0 note.** The two transcripts above were taken on **2.10.0** and are
-> kept as they ran. `pip install bithuman` now resolves **3.0.0**, whose
-> surface is `bithuman.open(...)` / `avatar.render(...)` — `AsyncBithuman`
-> raises a refusal naming those two — and whose key comes from
-> `BITHUMAN_API_SECRET` only. `pip install "bithuman<3"` reproduces the
-> transcripts above exactly.
+> **The two transcripts above were taken on 2.10.0** and are kept as they ran.
+> `pip install bithuman` resolves **3.1.2** today, whose surface is
+> `bithuman.open(...)` / `avatar.render(...)` — `AsyncBithuman` raises a refusal
+> naming those two — and whose key comes from `BITHUMAN_API_SECRET` only.
+> **2.10.0 is no longer on PyPI**: a `bithuman<3` pin resolves 2.9.0, so read
+> these two as a record of the 2.x surface rather than as something to re-run.
+> The [Python SDK](/sdk/python) page is the 3.x version of both.
 
 ## Legacy names you will still see
 

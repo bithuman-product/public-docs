@@ -17,7 +17,7 @@ measured performance and the exact refusals with their fixes. The
 |---|---|---|
 | [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \| sh` | `bithuman run` — a free avatar, no account |
 | [Python](/sdk/python) — 3.10–3.14, macOS arm64, Linux | `pip install "bithuman[expression-2]"` | `bithuman.open(...)` / `avatar.render(...)` |
-| [Android](/sdk/android) — arm64-v8a, minSdk 26 | `implementation("ai.bithuman:expression2-android:0.3.1")` | `Expression2ModelStore(context).fetch(code)`, anonymous |
+| [Android](/sdk/android) — arm64-v8a, minSdk 26 | `implementation("ai.bithuman:expression2-android:0.4.1")` | `Expression2ModelStore(context).fetch(code)`, anonymous |
 | [iOS & iPadOS](/sdk/ios) — a physical device, Xcode 26+ | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")`, product `Expression2` | three anonymous `curl`s for a showcase identity |
 | [macOS](/sdk/macos) — Apple Silicon | `brew install bithuman-product/bithuman/bithuman-cli` | `bithuman run` — CoreML on the Neural Engine |
 | [Web](/sdk/web) — any modern browser | nothing | one URL or one `<iframe>`; no JavaScript package is published today |
@@ -25,16 +25,16 @@ measured performance and the exact refusals with their fixes. The
 `expression-1` is GPU-only by design and serves through the
 [cloud API](/api/overview); every REST call is on the [API reference](/api/reference).
 
-## What ships in 2.3
+## The two packages
 
-2.3.0 is the first **split-wheel** release: the Python library (`pip install bithuman`) and the CLI binary (`pip install bithuman-cli` or `brew install bithuman-product/bithuman/bithuman-cli`) are now separate packages. Pre-2.3 PyPI bundled both — 2.2.x with the bundled CLI is still on PyPI and works, but consider it legacy; pin to 2.3+ for new projects.
+The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from the universal installer or from Homebrew — **not** from PyPI. The `bithuman-cli` wheel that briefly carried it is no longer published; `pip install bithuman-cli` finds no distribution.
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
-| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
+| **macOS arm64 (M-series)** | Homebrew or the universal installer | `bithuman` (3.10–3.14) | SwiftPM |
 | **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
-| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.5` | `bithuman` (manylinux) | — |
-| **Linux aarch64** | **Not in 2.6.5** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
+| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.6` | `bithuman` (manylinux) | — |
+| **Linux aarch64** | **Not in 2.6.6** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -44,29 +44,23 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **3.1.0** (2026-09-10; 2.10.0 stays on PyPI, pin `bithuman<3` to stay) | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **3.1.2** (2026-09-11) — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | Swift SDK (`Essence2`) | engine release **`essence2-v1.4.0`**, declared by the package at **2.10.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
-| bitHuman CLI (`bithuman-cli`) | **2.6.5** (2026-09-10) — macOS arm64 **and** Linux x86_64, same version, no pin needed, engine core `libessence` 3.1.0, an `essence-2` render no longer stops after five minutes of work, Essence 2 runtime inside both tarballs, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops · 2.3.25 (PyPI wheel) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · [PyPI `bithuman-cli`](https://pypi.org/project/bithuman-cli/) (macOS Apple Silicon only) · universal installer (macOS Apple Silicon + Linux) | v7 |
-| Android AAR (`ai.bithuman:expression2-android`) | **0.3.1** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
-| Android AAR (`ai.bithuman:essence2-android`) | **0.5.1** (2026-09-08; `0.2.0`, `0.3.0`, `0.4.0` and `0.5.0` are permanent on Central and superseded — `0.5.0` renders a rejected key for ever) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
+| bitHuman CLI | **2.6.6** (2026-09-11) — macOS arm64 **and** Linux x86_64, same version, no pin needed, engine core `libessence` 3.1.2 (the engine's legacy spelling), a rendered clip's mouth is in sync with its audio, an avatar file you downloaded yourself runs on Linux, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
+| Android AAR (`ai.bithuman:essence2-android`) | **0.5.2** (`0.2.0` through `0.5.1` are permanent on Central and superseded — `0.5.0` renders a rejected key for ever) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
-> **2.10.0, and why the macOS number matters.** 2.10.0 is the first release
-> whose **macOS** wheel carries `lible_core` — the native half of the Essence 2
-> offline render route. Every macOS wheel up to and including 2.9.0 shipped the
-> Python half alone and raised `lible_core.so not found` at the first frame; the
-> Linux wheels have carried it since 2.8.1. If you self-host on a Mac, upgrade.
->
-> **Linux users who installed between 2026-09-01 and 2026-09-02 got 2.9.0.**
-> 2.10.0 was published for macOS first and had no Linux files for about a day,
-> so `pip install bithuman` on Linux silently resolved to the previous release.
-> All ten Linux wheels (cp310–cp314 × x86_64/aarch64) are on PyPI now — run
-> `pip install --upgrade bithuman` and confirm with
-> `python -c "import bithuman; print(bithuman.__version__)"`.
+> **The macOS wheel carries `lible_core`** — the native half of the Essence 2
+> offline render route — from 2.10.0 on; every macOS wheel up to and including
+> 2.9.0 shipped the Python half alone and raised `lible_core.so not found` at
+> the first frame. Linux wheels have carried it since 2.8.1. On the current
+> release neither is a question: `pip install --upgrade bithuman`, and confirm
+> with `python -c "import bithuman; print(bithuman.__version__)"`.
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 2.10.0 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 3.1.2 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 

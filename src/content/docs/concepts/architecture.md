@@ -30,8 +30,7 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 |---|---|---|
 | Embed in a Python app | `pip install bithuman` | Python SDK (library only, ~16–26 MB) |
 | Embed in a Swift app | SwiftPM `bitHumanKit` / `Expression2` | Swift SDK XCFrameworks |
-| Run from the CLI on Mac | `brew install bithuman-product/bithuman/bithuman-cli` | bitHuman CLI (single Rust binary) |
-| Run from the CLI in any Python env | `pip install bithuman-cli` | Same Rust binary, inside a Python wheel |
+| Run from the CLI | `brew install bithuman-product/bithuman/bithuman-cli`, or the universal installer | bitHuman CLI (single Rust binary) |
 | Cloud LiveKit avatar | `pip install livekit-plugins-bithuman` | Managed avatar session |
 
 ## Engine layering

@@ -3764,8 +3764,6 @@ tags:
       # Universal installer — macOS (Apple Silicon) + Linux, no Python required
       curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 
-      # PyPI sibling wheel — Python-only environments
-      pip install bithuman-cli
       ```
 
       Verify the install:
@@ -3789,7 +3787,7 @@ tags:
       key, no outbound network, ~1.5 GB RAM:
 
       ```bash
-      pip install 'bithuman-cli[local]'
+      pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
       BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
       ```
 
@@ -4312,9 +4310,9 @@ tags:
       part of the 2.x distribution — pin the 1.x line if you need them. As of
       2.3.0 this wheel is the **Python SDK library only** (~5 MB):
       runtime + LiveKit plugin glue. The `bithuman` CLI binary ships
-      separately — `pip install bithuman-cli` (the PyPI wheel is **macOS Apple
-      Silicon only**) or `brew install bithuman-product/bithuman/bithuman-cli`;
-      on Linux, install the CLI with the universal installer.
+      separately — `brew install bithuman-product/bithuman/bithuman-cli` on
+      macOS, or the universal installer on macOS and Linux alike. There is no
+      PyPI wheel for the CLI.
 
       ```python
       import asyncio, os
@@ -4405,8 +4403,6 @@ tags:
       # any OS — universal installer
       curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 
-      # Python-only env (Linux x86_64/aarch64 + macOS arm64)
-      pip install bithuman-cli
       ```
 
       ### Subcommands
@@ -4434,7 +4430,7 @@ tags:
       ### On-device brain (no OpenAI key)
 
       ```bash
-      pip install 'bithuman-cli[local]'
+      pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
       BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
       ```
 
@@ -4461,12 +4457,12 @@ tags:
       ## Local mode
 
       For private, no-cloud operation, install the `[local]` extra on
-      the CLI package and set `BITHUMAN_LOCAL=1`. The conversation
+      the local-mode packages and set `BITHUMAN_LOCAL=1`. The conversation
       brain swaps from OpenAI Realtime to an entirely in-process
       stack — no API key, no outbound network.
 
       ```bash
-      pip install 'bithuman-cli[local]'
+      pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
       export BITHUMAN_API_SECRET=...
       bithuman pull modern-court-jester
       BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx

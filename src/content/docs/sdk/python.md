@@ -109,4 +109,4 @@ On Apple Silicon the CLI's CoreML figure on the same engine is on
 | `MODEL_ARTIFACT_NOT_READY` from the download | trained, not yet published to the download store | poll the same download URL; it clears on its own |
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
 | the first `render` is slow, with a large download | the ~377 MB shared encoder is being fetched, once | wait; on an air-gapped box mirror it (`BITHUMAN_DEPS_BASE_URL`) or point at a copy (`BITHUMAN_W2V_ONNX`) |
-| code written for 2.10.0 fails — `api_secret=`, BGR frames, fourteen error classes | 3.0.0 was a clean break: eight public names, four errors, RGB frames, the key from the environment only | port to the snippet above; `pip install "bithuman<3"` keeps 2.10.0, which stays on PyPI |
+| code written for 2.10.0 fails — `api_secret=`, BGR frames, fourteen error classes | 3.0.0 was a clean break: eight public names, four errors, RGB frames, the key from the environment only | port to the snippet above — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin no longer gets you 2.10.0 |
