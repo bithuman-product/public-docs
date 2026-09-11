@@ -142,7 +142,6 @@ paths:
         | `expression` + `v1` (default) | Expression 1 | image (or generated from prompt) | ~1–2 minutes |
         | `essence` + `v1` | Essence 1 | image (or generated from prompt) | 2–5 minutes |
         | `essence` + `v2` | Essence 2 | image (or generated from prompt) — a 10-second identity video is generated internally | 45 minutes typical; long builds can take hours — **both Essence 2 models from one creation** |
-        | `essence-2-max` | Essence 2 premium | included with every `essence` + `v2` creation — its identity derives from the same internally generated identity video | prepares in seconds; available once the agent is ready |
         | `expression` + `v2` | Expression 2 | image (or generated from prompt) | ~2–2.5 h typical (measured median 2h04m over 39 creations; slowest decile beyond 3h45m) |
         | `auto` | classified | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
 
@@ -152,8 +151,7 @@ paths:
         `model: "auto"` to apply this rule automatically — the platform
         classifies your input and records the recommended model either way.
 
-        **Subject requirement (Essence 2 family):** `essence-2` and
-        `essence-2-max` require a **photorealistic
+        **Subject requirement (Essence 2):** `essence-2` requires a **photorealistic
         human** subject. The input is classified before anything is billed; a
         cartoon / animal / creature / robot input is rejected with
         `422 MODEL_SUBJECT_MISMATCH` (nothing charged) — use `expression-2`
@@ -226,7 +224,7 @@ paths:
                     as that rollout completes.
                 model:
                   type: string
-                  enum: [expression, essence, essence-1, essence-2, essence-2-max, expression-1, expression-2, auto]
+                  enum: [expression, essence, essence-1, essence-2, expression-1, expression-2, auto]
                   default: expression
                   example: expression
                   description: >-
@@ -250,11 +248,8 @@ paths:
                     photorealistic people — one 500-credit creation that runs
                     everywhere from on-device (CPU / Apple Silicon) up to
                     cloud GPU. (`essence-2-light` is a retired alias — the
-                    public name is `essence-2`.) **`essence-2-max`**, the
-                    premium tier, is **not a standalone creation target** — it
-                    is delivered together with every `essence-2` creation (the
-                    one 500-credit charge covers both models), so request
-                    `essence-2` (or `essence` + `v2`) to get it.
+                    public name is `essence-2`.) Request it as `essence-2`
+                    (or `essence` + `v2`).
                     **`expression-2`** is the second-generation
                     expression engine — audio-driven real-time avatar video from
                     a single photo (creation trains a per-identity model, ~45
@@ -302,9 +297,8 @@ paths:
         "402":
           description: >-
             Insufficient credits. Creation is billed **per model** —
-            `expression-2` costs 2000 credits; the combined Essence 2
-            creation (`essence-2`, which also delivers `essence-2-max`)
-            costs 500; `auto` bills the
+            `expression-2` costs 2000 credits; `essence-2` costs 500;
+            `auto` bills the
             routed model's rate (500 or 2000); the v1 families (`essence-1`,
             `expression-1`) cost 250. Top up to continue. Returns error code
             `INSUFFICIENT_BALANCE`.
@@ -328,7 +322,7 @@ paths:
                   value:
                     error:
                       code: "VALIDATION_ERROR"
-                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, essence-2-max, expression, expression-1, expression-2"
+                      message: "Invalid model 'my-model'; must be one of: auto, essence, essence-1, essence-2, expression, expression-1, expression-2"
                       httpStatus: 400
                     status: "error"
                     status_code: 400
@@ -337,7 +331,7 @@ paths:
                   value:
                     error:
                       code: "VIDEO_INPUT_NOT_SUPPORTED"
-                      message: "Agent creation is image-only. Provide a portrait `image`; bitHuman generates a 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). Video input is not accepted for any model (essence-1, expression-1, essence-2, essence-2-max, expression-2)."
+                      message: "Agent creation is image-only. Provide a portrait `image`; bitHuman generates a 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). Video input is not accepted for any model (essence-1, expression-1, essence-2, expression-2)."
                       httpStatus: 400
                     status: "error"
                     status_code: 400
@@ -418,7 +412,7 @@ paths:
         (~35%).
 
         Recommended polling interval: 5 seconds. Size your overall timeout to
-        the model: minutes for `essence-1` / `essence-2-max`, ~90 minutes
+        the model: minutes for `essence-1`, ~90 minutes
         for `expression-2`, and up to several hours for `essence-2`.
       tags: [Agent Generation]
       parameters:
@@ -484,11 +478,9 @@ paths:
                           Canonical model families this agent can be launched
                           as right now. Trained families (`expression-2`,
                           `essence-2`) appear once their per-identity
-                          model has been generated; `essence-2-max` appears
-                          once the agent has a **stored identity video**
-                          (its identity prepares on demand from that video).
-                          Tier slugs inherit their family.
-                        example: ["essence-2-max", "expression-2"]
+                          model has been generated. Tier slugs inherit their
+                          family.
+                        example: ["essence-2", "expression-2"]
                       event_type:
                         type: string
                         description: Most recent event (e.g. "lip_created").
@@ -860,13 +852,12 @@ paths:
         |---|---|---|---|---|
         | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
         | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | ~2–2.5 h (measured median 2h04m over 39 creations) |
-        | `essence-2` | the **combined** add: trains the standard Essence 2 from the agent's stored identity video (generated internally at creation); Essence 2 Max becomes available from the same video at no extra charge | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
+        | `essence-2` | trains Essence 2 from the agent's stored identity video (generated internally at creation) | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
         | `essence-1` | builds the v1 `.imx` from the agent's stored identity video (or generates one internally from the stored image) | stored identity video or image | 250 | ~10–20 min |
 
         Asynchronous adds return `status: "processing"` — poll
         [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
-        until `supported_models` contains the new family (`essence-2` adds
-        both tiers — `essence-2` and `essence-2-max`). Charges are refunded
+        until `supported_models` contains the new family. Charges are refunded
         automatically if the add fails; re-POSTing the same model never
         double-charges, and returns `status: "ready"` with `credits: 0` once
         the model already exists.
@@ -974,7 +965,6 @@ paths:
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
         | `essence-2` | `<code>.lebundle.imx` — the standard Essence 2 artifact (unified IMX container, ~350–550 MB; **licensed weights** — local playback requires the runtime license activation flow). `essence-2-light` is a retired internal alias for this family. |
-        | `essence-2-max` | `<code>.pkl` — the Essence 2 Max artifact (IMX container). `essence-2-quality` is its pre-rename internal alias. Derived on demand from the agent's source video on its first `essence-2-max` session, so a download before that session returns `404 MODEL_ARTIFACT_NOT_READY` — start one session, then retry. |
         | `expression-2` | `<code>.avatar` — the frozen back-compat alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are `IMX\0` v2 containers and 14 are still the pre-2026-07-12 CoreML zip (measured 2026-09-01; `bithuman info` reports which), ~20–90 MB per identity — runs locally on macOS (Apple Silicon), on Linux x86_64 with the CPU render host installed, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
@@ -1028,14 +1018,14 @@ paths:
           required: false
           schema:
             type: string
-            enum: [essence-1, essence-2, essence-2-max, expression-2]
+            enum: [essence-1, essence-2, expression-2]
           description: >-
             Artifact family. Defaults to the agent's own model. The retired
             `essence-2-light` name and the runtime tier slugs (`essence-2-ane`,
             `essence-2-gpu`, `essence-2-cpu`, `expression-2-gpu`) fold onto
             their family. `essence-2-quality` is **no longer accepted** — it
             was retired on 2026-07-29 and now returns `400 VALIDATION_ERROR`;
-            send `essence-2-max`. Any other unrecognized value returns the
+            send `essence-2`. Any other unrecognized value returns the
             same `400`, listing the downloadable families.
           example: "expression-2"
         - name: member
@@ -1213,11 +1203,8 @@ paths:
           description: >-
             `MODEL_NOT_GENERATED` — the requested family isn't in the agent's
             `supported_models` (same gate as embed/session launch), e.g.
-            `agent <code>'s expression-2 model hasn't been generated yet`, or
-            an `essence-2-max` request on an agent that has no stored
-            identity video (identity videos are generated internally by
-            Essence creations — create with, or add, `essence-2` to
-            generate one).
+            `agent <code>'s expression-2 model hasn't been generated yet`
+            — create with, or add, that model to generate it.
         "429":
           description: Rate limited (read bucket) — `RATE_LIMITED`.
         "500":
@@ -1550,19 +1537,12 @@ paths:
                             description: >-
                               One-time creation cost per canonical `model`
                               value accepted by `POST /v1/agent/generate`.
-                              Since the 2026-07-10 rename flip the premium
-                              model is keyed `essence-2-max`; the pre-rename
-                              `essence-2-quality` spelling was removed on
-                              2026-07-29 — sending it now returns a `400`.
-                              Note
-                              `essence-2-max` is **not a standalone creation
-                              target** — it is delivered by the combined
-                              `essence-2` creation (its 500 entry mirrors
-                              that combined rate).
+                              The pre-rename `essence-2-quality` spelling was
+                              removed on 2026-07-29 — sending it now returns
+                              a `400`.
                             example:
                               essence-1: 250
                               expression-1: 250
-                              essence-2-max: 500
                               expression-2: 2000
                               essence-2: 500
                               auto: 2000
@@ -1585,7 +1565,6 @@ paths:
                               essence-1: 2
                               expression-1: 4
                               expression-2: 4
-                              essence-2-max: 8
                               essence-2: 4
                       dynamics_generation:
                         type: object
@@ -1665,7 +1644,6 @@ paths:
                           Advisory forward runway: balance divided by each
                           serving mode's credits/min rate. One key per model and
                           hosting mode (essence_2_cloud, essence_2_self_hosted,
-                          essence_2_max_cloud, essence_2_max_self_hosted,
                           expression_2_cloud, expression_2_self_hosted,
                           essence_1_cloud, essence_1_self_hosted,
                           expression_1_cloud, expression_1_self_hosted), plus
@@ -1722,7 +1700,7 @@ paths:
                   description: >-
                     Optional. Request a specific avatar model for the embed
                     session — a model name (`essence-1`, `expression-1`,
-                    `essence-2`, `essence-2-max`, `expression-2`) or a
+                    `essence-2`, `expression-2`) or a
                     force-tier slug that pins one serving tier
                     (`expression-2-gpu/-cpu/-ane`, `essence-2-gpu/-ane/-cpu`;
                     the legacy `essence-2-light-gpu/-cpu` slugs still pin
@@ -1768,12 +1746,9 @@ paths:
                         description: >-
                           Canonical model families this agent can be launched
                           as right now (e.g. a ready expression-2 agent lists
-                          `expression-2`; an agent with a stored identity
-                          video — generated internally by Essence creations —
-                          lists `essence-2-max`, whose identity prepares on
-                          demand from that video). Tier slugs inherit their
-                          family and are not listed.
-                        example: ["essence-2-max", "expression-2"]
+                          `expression-2`). Tier slugs inherit their family
+                          and are not listed.
+                        example: ["essence-2", "expression-2"]
         "401":
           $ref: "#/components/responses/Unauthorized"
         "409":
@@ -1782,10 +1757,7 @@ paths:
             family the agent can't be launched as right now (it is missing
             from the agent's `supported_models`). For the trained families
             (`expression-2` / `essence-2`) the message is `agent
-            <code>'s <model> model hasn't been generated yet`; for
-            `essence-2-max` it means the agent has no stored identity video
-            to prepare from — identity videos are generated internally by
-            Essence creations. Add the
+            <code>'s <model> model hasn't been generated yet`. Add the
             model (`POST /v1/agent/{code}/models`) or create the agent with
             it, then retry.
           content:
@@ -2223,7 +2195,7 @@ paths:
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{
-                "model": "essence-2-max",
+                "model": "essence-2",
                 "agent_code": "A91XMB7113",
                 "input": {"type": "text", "text": "Hello, welcome to bitHuman."}
               }'
@@ -2249,7 +2221,7 @@ paths:
         - **Audio input** — your `audio_url` (a hosted WAV/MP3) drives the render
           directly.
 
-        The output is a public CDN URL. `essence-2` / `essence-2-max` render at
+        The output is a public CDN URL. `essence-2` renders at
         **1080p** by default (1080×1920 portrait or 1920×1080 landscape, matching
         the source orientation and capped at the source's long side);
         `expression-2` renders at its native 416×720. Limits: max **120 seconds**
@@ -2271,16 +2243,15 @@ paths:
               properties:
                 model:
                   type: string
-                  enum: [essence-1, expression-1, essence-2, essence-2-max, expression-2]
+                  enum: [essence-1, expression-1, essence-2, expression-2]
                   description: |
                     Avatar engine. `essence-1` (2 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
-                    available today. `expression-2` (4 credits/min),
-                    `essence-2-max` (8 credits/min, the premium model), and `essence-2`
+                    available today. `expression-2` (4 credits/min) and `essence-2`
                     (4 credits/min, the standard distilled renderer — the
                     former `essence-2-light` name, which is no longer
                     accepted) are the v2 engines.
-                  example: "essence-2-max"
+                  example: "essence-2"
                 agent_code:
                   type: string
                   description: An agent you own — provides the avatar identity (and, for text input, the default voice).
@@ -2349,7 +2320,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "402":
-          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 2, expression-1 = 4, expression-2 = 4, essence-2-max = 8, essence-2 = 4 credits/min).
+          description: Insufficient credits — INSUFFICIENT_BALANCE. The cost is `ceil(minutes) × rate` (essence-1 = 2, expression-1 = 4, expression-2 = 4, essence-2 = 4 credits/min).
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -2359,11 +2330,7 @@ paths:
             right now. For `expression-2` / `essence-2` that means the trained
             per-identity model hasn't been generated yet (message: `agent
             <code>'s <family> model hasn't been generated yet`, spelled with
-            the public family name); `essence-2-max` is gated on the
-            agent's **stored identity video** (generated internally by
-            Essence creations) — its identity prepares on demand from
-            that video, so an agent without one is rejected with a message
-            naming the missing identity video; `essence-1` needs the agent's `.imx` model file
+            the public family name); `essence-1` needs the agent's `.imx` model file
             (present on every completed essence-1 creation) and
             `expression-1` needs an expression-1 agent (or the free
             post-generation expression-1 model add) with an image.
@@ -2393,7 +2360,7 @@ paths:
               example:
                 error:
                   code: "MODEL_NOT_YET_AVAILABLE"
-                  message: "essence-2-max talking video isn't available right now — retry shortly"
+                  message: "essence-2 talking video isn't available right now — retry shortly"
                   httpStatus: 503
                 status: "error"
                 status_code: 503
@@ -3080,73 +3047,8 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  # ── Self-hosting: the three routes a self-hosted container actually calls ──
-  # (added 2026-09-07; all three answered live and were absent from this file.)
-  /v1/agent/{code}/self-hosted-avatar:
-    get:
-      operationId: downloadSelfHostedAvatar
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl -L https://api.bithuman.ai/v1/agent/A91XMB7113/self-hosted-avatar \
-              -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
-              -o A91XMB7113.pkl
-      summary: Download an agent's self-hosted avatar bundle
-      description: |
-        Fetch the prepared per-agent bundle that lets a **self-hosted
-        essence-2-max** container serve one of your agents. The container
-        fetches this at start; you can also fetch it yourself and copy it into
-        an air-gapped environment.
-
-        Authenticate with `Authorization: Bearer <api-secret>` (what the
-        container sends) or the classic `api-secret` header.
-
-        Ownership uses the same 404-not-403 rule as every other per-agent
-        route: a code you do not own is indistinguishable from one that does
-        not exist.
-
-        The bundle is built the **first time the agent is served as
-        essence-2-max**. If it has not been built yet you get a 404 whose
-        message says exactly that — start one session (or render a talking
-        video) with `model=essence-2-max`, then retry.
-
-        Rendering with this bundle is billed as a self-hosted session — see
-        [Pricing](#tag/pricing).
-      tags: [Self-hosting]
-      security:
-        - apiSecret: []
-        - bearerApiSecret: []
-      parameters:
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
-          example: "A91XMB7113"
-          description: The agent's short code.
-      responses:
-        "200":
-          description: The bundle, as a binary stream.
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-        "401":
-          description: Missing or invalid credentials.
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/SelfHostError" }
-        "404":
-          description: |
-            No such agent, not yours, deleted — or the bundle has not been
-            prepared yet. The message says which and what to do next.
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/SelfHostError" }
-        "429":
-          description: Rate limited.
-
+  # ── Self-hosting: the two routes a self-hosted runtime actually calls ──
+  # (added 2026-09-07; both answered live and were absent from this file.)
   /v1/auth/validate:
     post:
       operationId: validateSelfHostedKey
@@ -3157,7 +3059,7 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/auth/validate \
               -H "Authorization: Bearer $BITHUMAN_API_SECRET" \
               -H "Content-Type: application/json" \
-              -d '{"billing_type": "self-hosted-essence-2-max-model"}'
+              -d '{"billing_type": "self-hosted-essence-2-model"}'
             # → {"user_id": "...", "key_id": "key_1a2b3c4d5e6f7a8b"}
       summary: Live key check for a self-hosted runtime
       description: |
@@ -3197,9 +3099,9 @@ paths:
                 billing_type:
                   type: string
                   description: |
-                    The self-hosted product this runtime serves. Omitted or
-                    unknown resolves to the essence-2-max default.
-                  example: "self-hosted-essence-2-max-model"
+                    The self-hosted product this runtime serves. Always send
+                    the key for the product you run.
+                  example: "self-hosted-essence-2-model"
       responses:
         "200":
           description: The key is valid.
@@ -3304,8 +3206,8 @@ paths:
                 billing_type:
                   type: string
                   description: |
-                    The self-hosted product wire key. Absent or unknown
-                    resolves to the essence-2-max default.
+                    The self-hosted product wire key. Always send the key
+                    for the product you run.
                   example: "self-hosted-essence-2-model"
       responses:
         "200":
@@ -3450,14 +3352,11 @@ components:
           items: { type: string }
           description: >-
             Canonical model families this agent can be launched as right now
-            — `essence-1` when its `.imx` exists, `essence-2-max` when a
-            **stored identity video** exists (generated internally by Essence
-            creations; its identity prepares on demand from
-            that video), and `essence-2` /
+            — `essence-1` when its `.imx` exists, and `essence-2` /
             `expression-2` once their
             trained per-identity model has been generated. Tier slugs inherit
             their family and are not listed.
-          example: ["essence-1", "essence-2-max"]
+          example: ["essence-1", "essence-2"]
         subject:
           type: string
         system_prompt:
@@ -4119,7 +4018,7 @@ tags:
       | Model | What it is | Serving tiers | Cloud | Self-hosted |
       |---|---|---|---|---|
       | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~2–2.5 h) | gpu · cpu · ane | 4 credits/min | 2 credits/min |
-      | `essence-2` | Second-gen Essence for photorealistic people — served from the cloud gpu/ane/cpu chain, from your own CPU servers for offline rendering, and opt-in in the viewer's browser; bitHuman picks the serving tier for you | gpu · cpu · ane | `essence-2` 4 credits/min · `essence-2-max` 8 credits/min | `essence-2` 2 credits/min · `essence-2-max` 4 credits/min |
+      | `essence-2` | Second-gen Essence for photorealistic people — served from the cloud gpu/ane/cpu chain, from your own CPU servers for offline rendering, and opt-in in the viewer's browser; bitHuman picks the serving tier for you | gpu · cpu · ane | 4 credits/min | 2 credits/min |
 
       Create one with
       [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
@@ -4139,8 +4038,7 @@ tags:
       [`GET /v1/agent/{code}/model/download`](#tag/Agent-Management/operation/downloadAgentModel).
       Family overview: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2);
       per-model guides: [Expression 2](https://docs.bithuman.ai/concepts/expression-2)
-      · [Essence 2](https://docs.bithuman.ai/concepts/essence-2)
-      · [Essence 2 Max](https://docs.bithuman.ai/concepts/essence-2-max).
+      · [Essence 2](https://docs.bithuman.ai/concepts/essence-2).
       Recommendation rule: **`essence-2` for photorealistic human figures;
       `expression-2` for cartoonish, stylized, animal, creature, or robot
       characters** — send `model: "auto"` to apply it automatically.
@@ -4162,14 +4060,12 @@ tags:
       | Action | Cost |
       |---|---|
       | Agent generation — v1 models (`essence-1`, `expression-1`) | **250 credits** (one-time, per avatar) |
-      | Agent generation — Essence 2 (`essence-2` combined; covers `essence-2-max` too) | **500 credits** (one-time, per avatar) |
+      | Agent generation — Essence 2 (`essence-2`) | **500 credits** (one-time, per avatar) |
       | Agent generation — Expression 2 (`expression-2`) | **2000 credits** (one-time, per avatar) |
       | Agent generation — `auto` | the routed model's rate (500 or 2000) |
       | Add a model to an existing agent (`POST /v1/agent/{code}/models`) | same per-model rates; adding `expression-1` is **free** (instant enablement) |
       | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
       | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
-      | Live avatar session — Essence 2 Max (self-hosted) | **4 credits / minute** |
-      | Live avatar session — Essence 2 Max (cloud) | **8 credits / minute** |
       | Live avatar session — Essence 2 (self-hosted) | **2 credits / minute** |
       | Live avatar session — Essence 2 (cloud) | **4 credits / minute** |
       | Live avatar session — Expression 1 (self-hosted) | **2 credits / minute** |
