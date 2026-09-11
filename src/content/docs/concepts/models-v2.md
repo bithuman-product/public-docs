@@ -39,7 +39,7 @@ API, the embed widget, the dashboard, and the SDKs:
   browser. bitHuman routes cloud sessions for you; you just pick `essence-2`.
   On your own hardware it renders through the
   [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1, macOS Apple
-  Silicon and Linux x86_64), the [Python SDK](/sdk/python) (3.0.0), and the
+  Silicon and Linux x86_64), the [Python SDK](/sdk/python) (3.x), and the
   [Android AAR](/sdk/android).
 
 ## At a glance
@@ -319,7 +319,7 @@ the same shape for both models: `expression-2` and, as of CLI **2.6.1**,
 [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon,
 Linux x86_64), and the `essence-2` download also **renders offline on your own
 CPU servers** — metered, no GPU — through the Python SDK (`bithuman.offline`
-in 3.0.0;
+on 3.x;
 [quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
 **Locally-hosted LiveKit** (live streaming from your own server) is still in
 active development — live sessions run through the cloud or the browser. And

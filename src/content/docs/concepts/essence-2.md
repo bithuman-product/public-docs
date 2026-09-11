@@ -36,7 +36,7 @@ four ways:
   AAR, and in your own iOS/macOS app the Swift
   [`Essence2`](/sdk/ios#install) engine.
 - **From your own CPU servers** — offline rendering of the downloaded
-  artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.0.0; 2.9.0+
+  artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.x; 2.9.0+
   for the earlier route).
 - **In the viewer's browser** — opt-in per session and rolling out per
   identity, with frames that never leave that browser.
@@ -302,7 +302,7 @@ with runnable, verified examples:
    [`bithuman info`](/sdk/cli/reference#bithuman-info) (full
    member listing as of CLI 2.4.1). **Licensed weights** — render it locally
    with the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1,
-   macOS and Linux) or the [Python SDK](/sdk/python) (3.0.0), or serve it
+   macOS and Linux) or the [Python SDK](/sdk/python) (3.x), or serve it
    through the cloud surfaces.
 
 ## Next steps

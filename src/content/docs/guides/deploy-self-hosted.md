@@ -82,8 +82,8 @@ Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for 
 
 ## Essence 2 self-hosted — CPU offline rendering (SDK 2.9.0+)
 
-> **3.0.0 note.** This section was written and run against the 2.x wheels.
-> On `bithuman` **3.0.0** the module is `bithuman.offline` and the extra is
+> **On 3.x.** This section was written and run against the 2.x wheels.
+> On `bithuman` 3.x the module is `bithuman.offline` and the extra is
 > `bithuman[offline]` — the spellings below still work with a
 > `DeprecationWarning` until 4.0.0 — and the shared audio encoder is
 > [fetched and digest-checked for you](/sdk/python#run)
