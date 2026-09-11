@@ -61,10 +61,12 @@ Measured 2026-09-10 on macOS 26.6.2, Apple Silicon, CLI 2.6.5, unpaced
 | Device | Model | fps (unpaced) | Notes |
 |---|---|---:|---|
 | Apple Silicon, CoreML on the Neural Engine | Expression 2 (Wise Pup) | 54–69 | 32-frame chunks in 465–594 ms — 2.7–3.4× faster than the 20 fps the model plays at |
-| Apple Silicon | Essence 2 | not yet published | renders locally since CLI 2.6.1; treat as an offline render until a figure is measured |
+| Apple M4, 8 threads | Essence 2 | 2.2 | 408 frames of 1080×1920 in 187 s; renders locally since CLI 2.6.1 — an offline `render`, not a live session |
 
 The Neural Engine carries 84–100 % of Expression 2's operations on this
 platform ([which compute units run it](/concepts/expression-2#which-apple-compute-units-run-expression-2)).
+
+Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
 
 ## Troubleshooting
 

@@ -112,6 +112,8 @@ The model plays at 20 fps. `Expression2` carries no device floor — it has
 rendered on an iPhone 15, two generations below the `Essence2` / `bitHumanKit`
 floor (iPhone 16 Pro or later, A18 Pro; a standard A18 is refused).
 
+Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
+
 ## Troubleshooting
 
 | You see | It means | Do this |

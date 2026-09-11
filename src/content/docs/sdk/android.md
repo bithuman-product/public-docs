@@ -135,6 +135,8 @@ produced as fast as the engine can, 1,642 frames per row, all rows pixel-identic
 The model plays at 20 fps, so anything above 20 is headroom. No other handset
 has been measured and no figure is projected for one.
 
+Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
+
 ## Essence 2 and Essence 1 on Android
 
 **Expression 2 is the Android rail today.** The other two families have

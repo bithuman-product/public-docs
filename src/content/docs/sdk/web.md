@@ -59,6 +59,8 @@ Expression 2, 25 fps for Essence 2 — because the frames are produced server-si
 | Expression 2 in the tab (WebGPU) | Apple M4 | Expression 2 | 28 | internal build, not yet a published package |
 | Expression 2 in the tab (WASM) | Linux x86_64 | Expression 2 | 20 | internal build, not yet a published package |
 
+Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
+
 ## Self-host the renderer
 
 There is one published in-browser renderer package, and it is narrower than its

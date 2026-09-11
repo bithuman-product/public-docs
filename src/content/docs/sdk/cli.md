@@ -85,10 +85,13 @@ produced as fast as the engine can, not paced to playback):
 |---|---|---:|---|
 | Apple Silicon, macOS 26.6.2, CoreML on the Neural Engine | Expression 2 (Wise Pup) | 54–69 | 32-frame chunks in 465–594 ms; the model plays at 20 fps |
 | Linux x86_64, 24 cores, LiteRT on CPU | Expression 2 (showcase `A08CCD3871`) | 29 | `render`: 278 frames of a 13.87 s clip in 9.5 s of whole-process wall clock |
-| either | Essence 2 | below real time on CPU | renders locally since 2.6.1; plan an offline `render`, not a live CPU session |
+| Linux x86_64 (Ryzen Threadripper PRO 5955WX), 8 threads | Essence 2 | 1.1 | 408 frames of 1920×1080 in 371 s; plan an offline `render`, not a live CPU session |
+| Apple M4, 8 threads | Essence 2 | 2.2 | 408 frames of 1080×1920 in 187 s; the same offline `render` |
 
 The first Essence 2 render on a machine fetches one shared audio encoder
 (~377 MB, by content digest, once) into `~/.bithuman/engines/essence-2/`.
+
+Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
 
 ## What renders locally, and where
 
