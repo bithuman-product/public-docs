@@ -141,18 +141,16 @@ pip install bithuman
 
 Python 3.10–3.14, `manylinux_2_28` (glibc), x86_64 and aarch64. On x86_64 with
 Python 3.14 this resolves
-`bithuman-2.10.0-cp314-cp314-manylinux_2_28_x86_64.whl` (21.7 MB). Confirm:
+`bithuman-3.1.2-cp314-cp314-manylinux_2_28_x86_64.whl` (20.9 MB). Confirm:
 
 ```bash
 python -c "import bithuman; print(bithuman.__version__)"
-# 2.10.0
+# 3.1.2
 ```
 
-> **Check the version, don't assume it.** 2.10.0 was published for macOS on
-> 2026-09-01 and for Linux on 2026-09-02. Installs on Linux in that window
-> silently resolved 2.9.0, because pip picks the newest release that has a file
-> for your platform — not the newest release. If you see 2.9.0, run
-> `pip install --upgrade bithuman`.
+> **Check the version, don't assume it.** pip picks the newest release that has
+> a file for *your* platform, which is not always the newest release — so read
+> the number back rather than assuming the upgrade happened.
 
 ### 2. Get a model artifact
 

@@ -71,12 +71,12 @@ Each artifact declares the engine ABI it builds against. Artifacts with a **matc
 
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 2.10.0 | PyPI | v7 |
+| Python SDK (`bithuman`) | 3.1.2 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 2.4.0 (pin the package at 2.8.0) | SwiftPM | v7 |
 | Swift SDK (`Expression2`) | 2.6.0 | SwiftPM | — (CoreML, no engine ABI) |
 | Swift SDK (`Essence2`) | engine release `essence2-v1.4.0`, package 2.10.0 | SwiftPM | — (C interface; ONNX Runtime 1.26.0) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
-| bitHuman CLI | 2.6.4 (Homebrew / universal installer — macOS arm64 and Linux x86_64, both with the Essence 2 runtime inside); 2.3.25 (PyPI, macOS only) | Homebrew · PyPI · universal installer | v7 |
+| bitHuman CLI | 2.6.6 (Homebrew / universal installer — macOS arm64 and Linux x86_64, both with the Essence 2 runtime inside) | Homebrew · universal installer | v7 |
 
 ### Engine ABI history
 
