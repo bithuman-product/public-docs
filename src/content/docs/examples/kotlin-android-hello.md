@@ -830,7 +830,7 @@ push yourself, and it needs an **API secret**.
 > The artifact's native library ships with no CA trust store, and there is no
 > app-side workaround on this version — the full measurement, with the two controls
 > that rule out your network and your key, is on
-> [the Android SDK page](/sdk/android#essence-2-and-essence-1-on-android). It compiles:
+> [the Android SDK page](/sdk/android#troubleshooting). It compiles:
 > built from the block below exactly as printed, `BUILD SUCCESSFUL`, 20,515,057 B
 > debug APK. It just cannot get past `Avatar.load`.
 >
@@ -1004,7 +1004,7 @@ because there is no audio-in entry point on this artifact yet (`BitHuman.open`
 throws `AvatarError.NotSupported`); and a refusal ends the session — there is no
 other render call to fall back to. **For an audio-driven talking head on Android
 today, use expression-2 above.** The
-[Android SDK page](/sdk/android#essence-2-and-essence-1-on-android) carries
+[Android SDK page](/sdk/android#troubleshooting) carries
 the full measurement.
 
 ## Next steps

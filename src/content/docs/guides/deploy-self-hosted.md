@@ -86,7 +86,7 @@ Self-hosted GPU sessions bill at the **self-hosted rate** — 2 credits/min for 
 > On `bithuman` **3.0.0** the module is `bithuman.offline` and the extra is
 > `bithuman[offline]` — the spellings below still work with a
 > `DeprecationWarning` until 4.0.0 — and the shared audio encoder is
-> [fetched and digest-checked for you](/sdk/python#environment)
+> [fetched and digest-checked for you](/sdk/python#run)
 > instead of asked for. The simplest program is now two lines:
 > [Python SDK](/sdk/python).
 
@@ -178,7 +178,7 @@ Essence 2 on CPU; then `export BITHUMAN_W2V_ONNX=/path/to/the/file.onnx`.
 > mouth interior.** An older one still renders — the earlier, softer mouth, at
 > the same frame count and resolution, with no warning and no error. What to do
 > about it is on the Python SDK page: [what a successful render does not tell
-> you](/sdk/python#render-a-clip-to-a-file).
+> you](/sdk/python#minimal-code).
 
 **Honest performance expectations (measured, 600-frame runs):** on a 16-core
 x86 desktop the route sustains **~22–25 FPS end-to-end** with the default

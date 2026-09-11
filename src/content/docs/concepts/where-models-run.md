@@ -406,7 +406,7 @@ device or an `arm64-v8a` system image.
 first published at 2026-09-03 03:39:15 UTC; this page said the day before that
 its coordinate "resolves to nothing", which was true then and is false now.
 `0.4.0` (2026-09-07) is the version to use — `0.2.0` and `0.3.0` still resolve
-and [should not be built against](/sdk/android#essence-2-and-essence-1-on-android). The
+and [should not be built against](/sdk/android#troubleshooting). The
 *artifact* name `libelevate-android` was never published and never will be —
 though the published essence-2 AAR does declare the Kotlin package
 `ai.bithuman.elevate`, which cannot be renamed after release.

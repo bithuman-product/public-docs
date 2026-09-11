@@ -59,7 +59,7 @@ beyond your own agent's `.imx`:
   native library ships with no CA trust store. For an on-device talking head on
   Android today use [expression-2](/concepts/expression-2)
   (`ai.bithuman:expression2-android`), which needs no key at all; essence-1 on
-  Android is on the [Android SDK](/sdk/android#essence-2-and-essence-1-on-android)
+  Android is on the [Android SDK](/sdk/android#troubleshooting)
   page.
 
 **In your own Apple app:** the Swift package we publish today exposes

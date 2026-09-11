@@ -32,7 +32,7 @@ four ways:
   (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
   `<code>.imx` offline with `bithuman render` and serves it live with
   `bithuman run`, with the runtime inside the CLI; on Android the
-  [`essence2-android`](/sdk/android#essence-2-and-essence-1-on-android)
+  [`essence2-android`](/sdk/android#troubleshooting)
   AAR, and in your own iOS/macOS app the Swift
   [`Essence2`](/sdk/ios#install) engine.
 - **From your own CPU servers** — offline rendering of the downloaded
@@ -192,7 +192,7 @@ your Mac. What does run on your hardware:
   server. See [the CLI](/sdk/cli#what-renders-locally-and-where).
 - **Your own CPU servers** — offline rendering of the downloaded artifact
   through the [Python SDK](/sdk/python), metered, no GPU required.
-- **Android** — the [`essence2-android`](/sdk/android#essence-2-and-essence-1-on-android)
+- **Android** — the [`essence2-android`](/sdk/android#troubleshooting)
   AAR resolves; it does not render for an outside developer yet.
 - **iOS and macOS, in your own app** — the [Swift SDK](/sdk/ios#install)'s
   `Essence2` product builds; no per-identity bundle is published for a phone
