@@ -16,9 +16,9 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 What it prints when it succeeds:
 
 ```text
-install: version: cli-v2.6.6
+install: version: cli-v2.6.7
 install: sha256 ok
-install: installed: libessence 3.1.2 ABI 7
+install: installed: libessence 3.1.3 ABI 7
 ```
 
 One self-contained binary on your `PATH`, sha256-verified against the release.

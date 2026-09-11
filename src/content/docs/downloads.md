@@ -33,8 +33,8 @@ The Python library and the CLI binary are separate things and have been since 2.
 |---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew or the universal installer | `bithuman` (3.10–3.14) | SwiftPM |
 | **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
-| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.6` | `bithuman` (manylinux) | — |
-| **Linux aarch64** | **Not in 2.6.6** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
+| **Linux x86_64** | Universal installer (tarball), `cli-v2.6.7` | `bithuman` (manylinux) | — |
+| **Linux aarch64** | **Not in 2.6.7** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
 | **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -48,7 +48,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.0** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
 | Swift SDK (`Essence2`) | engine release **`essence2-v1.5.1`** — what the tap's `Package.swift` points at on its current tag, `v2.12.1`. Its `libessence2-resources.zip` (44,392,223 B) carries the shared audio encoder; the one on `essence2-v1.5.0` does not, and that engine refuses to start without it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
-| bitHuman CLI | **2.6.6** (2026-09-11) — macOS arm64 **and** Linux x86_64, same version, no pin needed, engine core `libessence` 3.1.2 (the engine's legacy spelling), a rendered clip's mouth is in sync with its audio, an avatar file you downloaded yourself runs on Linux, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) | v7 |
+| bitHuman CLI | **2.6.7** (2026-09-11) — macOS arm64 **and** Linux x86_64, same version, no pin needed, engine core `libessence` 3.1.3 (the engine's legacy spelling), an offline `essence-2` render is 3.2x faster on Linux and the Linux tarball now carries the ffmpeg libraries its own engine links (2.6.6 shipped one of the three, so on a machine without system ffmpeg 7 the engine could not load), a rendered clip's mouth is in sync with its audio, an avatar file you downloaded yourself runs on Linux, self-hosted sessions metered on both and billed on wall-clock, a rejected key gets 300 s and then the session stops | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.2** (`0.2.0` through `0.5.1` are permanent on Central and superseded — `0.5.0` renders a rejected key for ever) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |

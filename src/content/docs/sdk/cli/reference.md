@@ -19,11 +19,11 @@ tree as JSON, generated from the binary so it cannot drift from your install.
 
 ```text
 $ bithuman --version
-libessence 3.1.2 ABI 7
-bithuman    2.6.6
+libessence 3.1.3 ABI 7
+bithuman    2.6.7
 ```
 
-**`cli-v2.6.6` is the current release**, the same version on macOS arm64 and
+**`cli-v2.6.7` is the current release**, the same version on macOS arm64 and
 Linux x86_64. The first line names the engine version — a separate axis from
 the CLI's own number, printed under the engine's legacy spelling because it is
 the string you have to grep for; the product name is
@@ -261,7 +261,7 @@ that is the check working. Rendering and pulling need neither.
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Brain-side tuning, read by the Python worker rather than the binary — [local mode](/sdk/cli/local-mode#tuning) |
 | `BITHUMAN_METER_ENFORCE` | `=1` turns a missing or rejected key into a refusal before the first frame instead of a warning |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` when it is not on `PATH` |
-| `BITHUMAN_VERSION` | Pins the release the installer fetches (`cli-v2.6.6`) |
+| `BITHUMAN_VERSION` | Pins the release the installer fetches (`cli-v2.6.7`) |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`, or `/usr/local/bin` as root) |
 | `BITHUMAN_JSON`, `BITHUMAN_QUIET`, `BITHUMAN_NO_COLOR` | Flip the matching global flag's default; an explicit flag still wins |
 | `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn` |
@@ -341,7 +341,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.6","libessence":"3.1.2",
+{"abi":7,"cli":"2.6.7","libessence":"3.1.3",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
@@ -378,7 +378,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 ```
 
 The `version --json`, `list --json`, `pull --json` and `info --json` objects
-above were read from CLI 2.6.6 on Linux x86_64 on 2026-09-11.
+above were read from CLI 2.6.7 on Linux x86_64 on 2026-09-11.
 
 ### Introspection
 

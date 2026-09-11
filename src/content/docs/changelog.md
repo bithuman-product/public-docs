@@ -10,6 +10,35 @@ order: 1
 
 ## September 2026
 
+### The CLI's Essence 2 engine is BUILT again, and its ffmpeg libraries travel with it (2026-09-11)
+
+CLI `cli-v2.6.7`, macOS arm64 and Linux x86_64 from one commit
+(`66613942f5f0`). The essence engine core moves to **3.1.3** (ABI 7).
+
+- **An offline `essence-2` render is 3.2x faster.** The engine core inside the
+  2.6.6 tarball (`lib/lible_core.*`) was a hand-pinned build that carried none
+  of the engine's vector routines — measured on the published 2.6.6 asset
+  itself: 885,304 bytes, zero vector targets. 2.6.7 builds that core from the
+  same commit the release pins: 1,137,920 bytes, eight vector targets. Same
+  machine, same avatar, same held-out human voice, 100 frames of 1920x1080,
+  unpaced: **1.08 fps → 3.48–3.77 fps on Linux x86_64**, and **8.59–8.71 fps
+  on an Apple M4**. `essence-2` through the CLI is still slower than realtime;
+  this release is a correctness fix, not the end of that work.
+- **The Linux tarball now carries the ffmpeg libraries its own engine links.**
+  It shipped `libavutil.so.59` alone; the engine also needs
+  `libavcodec.so.61` and `libavformat.so.61`, so on a machine without a system
+  ffmpeg 7 an `essence-2` render exited 69 rather than rendering. All three now
+  travel in the tarball. The release script's dependency walk had been running
+  with the vendor directory off the loader path — it saw "not found", copied
+  nothing, and reported success; it now refuses to build a tarball with any
+  unresolved library.
+- **`expression-2` on macOS, re-measured on the published arm64 tarball
+  itself:** 300 frames of 1280x720 at 25 fps, **30.5 fps**, mouth-to-audio lag
+  **0 frames**, and the receipt's `frames` equals the frame count in the file.
+
+`cli-v2.6.6` is marked superseded; its assets stay downloadable, and a
+`BITHUMAN_VERSION=cli-v2.6.6` pin keeps working.
+
 ### A free avatar by CODE, a clip that is in sync, and an Android default that is fast (2026-09-11)
 
 CLI `cli-v2.6.6`, `ai.bithuman:expression2-android:0.4.1` and
