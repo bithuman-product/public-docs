@@ -10,8 +10,8 @@ order: 9
 
 Self-hosting means the render happens on your machine. Not every platform is at
 the same place, and this page says which is which rather than averaging them
-into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-10 on the current
-release, **`cli-v2.6.5`** — [the CLI page](/sdk/cli) is the one writer for the
+into one claim. Verified 2026-09-02; the CLI rows re-verified 2026-09-10 on the release
+current that day — [the CLI page](/sdk/cli) is the one writer for the CLI
 version and the install line.
 
 | Your platform | What renders locally | Surface | State |
@@ -23,8 +23,8 @@ version and the install line.
 | **macOS Apple Silicon** | Expression 2 — on-device in your own app | [Swift SDK](/sdk/ios) `Expression2` | Engine only — [no model bundle is published](#ios-and-macos-in-your-own-app) |
 | **iOS** | Expression 2 — on-device in your own app | Swift SDK `Expression2` | Builds and runs on a device you sign yourself; no model bundle, so nothing renders yet |
 | **Android** | [Essence 1](/concepts/models) — on-device | [Android SDK](/sdk/android) `ai.bithuman:sdk:2.3.6` | Works |
-| **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.3.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
-| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#get-a-model)) |
+| **Android** | [Expression 2](/concepts/expression-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:expression2-android:0.4.1` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); limits on the [Android SDK page](/sdk/android) |
+| **Android** | [Essence 2](/concepts/essence-2) — on-device | [Android SDK](/sdk/android) `ai.bithuman:essence2-android:0.5.2` | Resolves anonymously from Maven Central — `arm64-v8a` only ([emulators](#android)); ships a model store; plays the avatar's recorded sequence, no audio-in entry point yet ([Android SDK](/sdk/android#get-a-model)) |
 | **iOS / macOS** | Essence 2 — on-device in your own app | [Swift SDK](/sdk/ios#install) `Essence2` (package 2.11.0) | A C interface that builds for iOS device, iOS simulator and macOS; resources published. ★ **Not consumable on a phone yet:** the model the download endpoint returns is not a package this engine opens (measured 2026-09-09), and the engine refuses every iPhone below an iPhone 16 Pro. On a Mac, use the Python wheel below |
 
 Two things to settle before you pick a platform:
@@ -433,26 +433,27 @@ bundles its own audio encoder, so a stock Essence 1 model needs no extra assets.
 Full setup on the [Android SDK page](/sdk/android).
 
 **Expression 2 is also on Maven Central**, published 2026-09-02 and **currently
-`0.3.1`** (2026-09-04):
+`0.4.1`**:
 
 ```kotlin
-dependencies { implementation("ai.bithuman:expression2-android:0.3.1") }
+dependencies { implementation("ai.bithuman:expression2-android:0.4.1") }
 ```
 
-**Essence 2 is on Maven Central too** — since 2026-09-03, and `0.4.0` since 2026-09-07:
+**Essence 2 is on Maven Central too** — since 2026-09-03, and **currently `0.5.2`**:
 
 ```kotlin
-dependencies { implementation("ai.bithuman:essence2-android:0.5.1") }   // 0.2.0 through 0.5.0 resolve too — use none of them
+dependencies { implementation("ai.bithuman:essence2-android:0.5.2") }   // 0.2.0 through 0.5.1 resolve too — use none of them
 ```
 
 `arm64-v8a`, minSdk 29.
 
 > ### ★ Every bitHuman AAR is `arm64-v8a` only — the default emulator will not run it
 >
-> All three coordinates ship **one** ABI slice. `essence2-android:0.5.1` carries
+> All three coordinates ship **one** ABI slice. `essence2-android:0.5.2` carries
 > `lible_jni.so`, `libonnxruntime.so` and `libc++_shared.so` under
-> `jni/arm64-v8a/` and **nothing else**; `expression2-android:0.3.1` carries
-> `libexpr2jni.so` and `libLiteRt.so`, also `arm64-v8a` only.
+> `jni/arm64-v8a/` and **nothing else**; `expression2-android:0.4.1` carries
+> `libexpr2jni.so` and `libLiteRt.so`, also `arm64-v8a` only. Both read out of
+> the published AARs on 2026-09-11.
 >
 > An AVD created from an **x86_64** system image resolves the dependency, builds
 > and installs — the failure is not at resolve time — and then throws
