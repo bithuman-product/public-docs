@@ -8,7 +8,6 @@
 // the 200s as the positive control that the fetch discriminates:
 //
 //     /concepts/essence-2       200
-//     /concepts/essence-2-max   200
 //     /concepts/expression-2    200
 //     /concepts/essence-1       404   ← a model we bill for
 //     /concepts/expression-1    404   ← a model we bill for
@@ -51,7 +50,6 @@
 // /concepts/zzz-not-a-page as the negative:
 //
 //     /concepts/essence-2       200   73,215 B
-//     /concepts/essence-2-max   200   38,071 B
 //     /concepts/expression-2    200   48,003 B
 //     /concepts/essence-1       404   ← on disk, untracked
 //     /concepts/expression-1    404   ← on disk, untracked

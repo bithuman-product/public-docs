@@ -161,6 +161,22 @@ const BANNED = [
     say: "INTERNAL-ONLY ALPHA. It has no pricing code, no rate-card row, no " +
          "SDK, CLI, wheel or self-host route. It appears in NO customer-facing " +
          "artifact — there is no carrier and no marker that admits it" },
+  // ★essence-2-max is the same kind of entry as dream-1: a PRODUCT NAME, not a
+  // mechanism word. Owner ruling 2026-09-10: "remove essence-2-max from public
+  // exposure altogether including docs etc. because essence-2-max is only for
+  // internal reference and prototype". Only two product names face a customer
+  // (essence-2, expression-2). The pattern covers every spelling the estate has
+  // used — `essence-2-max`, `essence_2_max` (rate keys such as
+  // `essence_2_max_cloud`), `essence2max`, `Essence 2 Max` — so a rename of the
+  // separator cannot walk it back onto a page. The trailing guard is a
+  // negative lookahead rather than `\b` because `_` is a word character:
+  // `essence_2_max_cloud` has no word boundary after `max` and must still fire.
+  { name: "essence-2-max", re: /\bessence[-_ ]?2[-_ ]?max(?![a-z])/gi,
+    fixture: "essence-2-max (rate key essence_2_max_cloud, spelled essence2max in one SDK, Essence 2 Max in prose) is GPU only",
+    say: "INTERNAL PROTOTYPE — a pure-teacher reference model that is not a " +
+         "product. It has no public page, rate-card row, enum value, SDK, CLI or " +
+         "self-host route. Name `essence-2` instead, or delete the sentence; " +
+         "there is no carrier and no marker that admits it" },
 ];
 
 // Words this file must NOT grade, because check-retired-model-names.mjs already
@@ -204,8 +220,12 @@ const CARRIERS = [
   // out of their address bar ends in `/`. Widening the carrier to `/?` keeps
   // it keyed on a `"source":` line of a retired /concepts/ path and nothing
   // else — it is the SAME frozen string, not a new escape.
-  { why: "the retired /concepts/ URLs, both spellings, which must keep redirecting for saved links",
-    re: /"source"\s*:\s*"\/concepts\/[a-z0-9-]+\/?"/i },
+  // ★WIDENED 2026-09-10 TO /guides/ — the same frozen redirect for the retired
+  // /guides/deploy-essence-2-max page, deleted under the essence-2-max removal
+  // ruling; its `"source":` line in vercel.json is the only place that path may
+  // still be spelled, and it exists so a saved link lands on /concepts/essence-2.
+  { why: "the retired /concepts/ and /guides/ URLs, both spellings, which must keep redirecting for saved links",
+    re: /"source"\s*:\s*"\/(concepts|guides)\/[a-z0-9-]+\/?"/i },
   { why: "`be_runtime_tick_compose*` — exported C ABI entry points, resolved by the dynamic loader by exact name",
     re: /be_runtime_tick_compose\w*/i },
   { why: "BITHUMAN_TESSERA_DIRECTOR — an env var a customer sets in their own launcher; the reader takes it by exact name",

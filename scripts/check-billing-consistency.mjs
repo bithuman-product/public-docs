@@ -45,7 +45,7 @@
 // Not in scope: whether the pricing table itself matches the live `pricing`
 // table in the database. CI has no DB credentials, so this checker deliberately
 // verifies INTERNAL consistency only. The rates were last reconciled against
-// the live schedule on 2026-07-28 (essence_2 4/2, essence_2_max 8/4,
+// the live schedule on 2026-07-28 (essence_2 4/2,
 // expression_2 4/2, essence_1 2/1, expression_1 4/2, voice 10, camera 30).
 
 import { readdirSync, readFileSync, statSync } from "node:fs";

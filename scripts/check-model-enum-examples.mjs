@@ -96,7 +96,7 @@ for (const block of blocks) {
 
   body.forEach((line, j) => {
     const lineNo = block.start + j + 1;
-    // schema example:  `example: "essence-2-max"` / `example: expression`
+    // schema example:  `example: "essence-2"` / `example: expression`
     const ex = /^\s*example:\s*["']?([A-Za-z0-9._-]+)["']?\s*$/.exec(line);
     if (ex) check(ex[1], lineNo, "example");
     // request/response body JSON in a description or x-codeSamples
