@@ -1,6 +1,6 @@
 ---
 title: "macOS"
-description: "A talking avatar on an Apple Silicon Mac: the CLI renders Expression 2 and Essence 2 locally, and the same Python library and Swift package run natively."
+description: "A talking avatar on an Apple Silicon Mac in three commands — install the CLI, pull a free showcase identity, run it. Expression 2 and Essence 2 render locally through CoreML; the same Python library and Swift package run natively."
 section: sdk
 group: "Platforms"
 order: 50
@@ -10,70 +10,79 @@ label: "macOS"
 ## Install
 
 ```bash
-brew install bithuman-product/bithuman/bithuman-cli
-```
-
-The universal installer puts the same release (same tarball, sha256-verified) on
-your `PATH` without Homebrew:
-
-```bash
+brew install ffmpeg                      # bithuman render writes the MP4 through ffmpeg
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"     # installs bithuman 2.6.5 (libessence 3.1.0 ABI 7)
 ```
 
-**Apple Silicon only.** An Intel Mac has no CLI binary and no Python wheel —
-use the [web](/sdk/web) or the [cloud API](/api/overview).
+One self-contained binary, sha256-verified against the release;
+`brew install bithuman-product/bithuman/bithuman-cli` installs the same tarball.
+**Apple Silicon only** — an Intel Mac has no binary and no Python wheel; use the
+[web](/sdk/web) or the [cloud API](/api/overview).
 
 ## Get a model
 
-Nothing to fetch by hand for the first frame: `bithuman run` with no argument
-downloads the free **Wise Pup** avatar itself — on a Mac, a 26 MB slice. Every other showcase avatar and your own agent come the same
-way as on the [CLI page](/sdk/cli#get-a-model): `bithuman avatars`,
-`bithuman pull <slug or CODE>`.
+Twenty showcase identities download with no account and no key — 4 Essence 2
+(photoreal human), 16 Expression 2 (stylized or animal):
+
+```bash
+bithuman list --manifest https://api.bithuman.ai/v1/models/showcase                        # slug, model, size
+MODEL=$(bithuman pull marmalade --manifest https://api.bithuman.ai/v1/models/showcase)      # Expression 2
+MODEL=$(bithuman pull afro-latina-astrophysics-mentor --manifest https://api.bithuman.ai/v1/models/showcase)   # Essence 2
+```
+
+`$MODEL` is a local `.imx` under `~/.cache/bithuman/`. `bithuman run` with no
+argument fetches the free Wise Pup avatar itself. Your own agent needs
+`bithuman login` once, then `bithuman pull <YOUR_AGENT_CODE>` (`--model
+essence-2` picks a family).
 
 ## Minimal code
 
 ```bash
-bithuman run                                   # live at http://127.0.0.1:8088/
-bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4   # offline: audio in, MP4 out
+bithuman run "$MODEL"                    # live at http://127.0.0.1:8088/ — CoreML, Neural Engine
 ```
 
-From **Python**, the same two calls as on every platform — `pip install
-"bithuman[expression-2]"` needs macOS 14 or newer on arm64; everything after
-the install is on the [Python page](/sdk/python). From **Swift**, the
-`Expression2` product of the SwiftPM package builds for `macos-arm64` as well
-as iOS; the package, its products and entitlements are on the
-[iOS page](/sdk/ios), the one writer for the Swift surface.
+From **Python**, `pip install "bithuman[expression-2]"` (macOS 14 or newer,
+arm64) — everything after the install is on the [Python page](/sdk/python).
+From **Swift**, the `Expression2` product of the package on the
+[iOS page](/sdk/ios) builds for `macos-arm64` too.
 
 ## Run
 
-Open `http://127.0.0.1:8088/`, grant the microphone, talk. `bithuman login`
-once adds the conversation brain to `run`; `render` needs that sign-in (or
-`BITHUMAN_API_SECRET` in the environment) and refuses with exit 77 without it.
-A self-hosted session is metered — [pricing](/guides/pricing) is the
-authority.
+Open `http://127.0.0.1:8088/`, grant the microphone, talk. Without a sign-in
+the avatar renders but does not answer; `bithuman login` adds the conversation
+brain. To render a clip to a file instead:
+
+```bash
+bithuman login                                              # once; a free account is enough
+bithuman render "$MODEL" -a speech.wav -o clip.mp4          # 16 kHz mono WAV in, MP4 out
+```
+
+`render` refuses with exit 77 without a credential. A showcase identity
+measured 0 credits for every download and render on 2026-09-10; a session on
+your own agent is metered — [pricing](/guides/pricing) is the authority.
 
 ## Performance
 
-On an Apple M4, Expression 2 renders at **54 fps** and Essence 2 at **2 fps** —
-unpaced, as fast as the engine can; avatars play at 20 and 25 fps. Essence 2
-GPU rendering on the Mac is rolling out; until it lands, plan an offline
-`render` for Essence 2 rather than a live session. Every platform side by
-side: [Performance](/sdk/performance).
+Unpaced (as fast as the engine renders, not paced to playback), from the
+published CLI 2.6.5 on an Apple M4:
+
+| Model | fps (unpaced) | Measured |
+|---|---:|---|
+| Expression 2 | **54** | 2026-09-10 — steady state over 32-frame chunks, 54–69; a whole 16 s clip including CoreML model load renders at 31 |
+| Essence 2 | **2** | 2026-09-11 — an offline `render` of 408 frames at 1920×1080 from a 16 s clip, 8 threads |
+
+Playback is 20 fps for Expression 2 and 25 fps for Essence 2. Every platform
+side by side: [Performance](/sdk/performance).
 
 ## Troubleshooting
 
 | You see | It means | Do this |
 |---|---|---|
 | the installer names your platform and exits 1 | Intel Mac — no binary has ever been built ([exact output](/sdk/cli/reference#platforms-with-no-binary)) | [web](/sdk/web) or the [cloud API](/api/overview) |
+| `bithuman: command not found` after the install | `~/.local/bin` is not on your `PATH` | `export PATH="$HOME/.local/bin:$PATH"` — the installer prints the same line |
+| `pull` exits 66: `--model applies to YOUR agent codes … not to the showcase slug` | on 2.6.5 a showcase identity is pulled by slug with `--manifest`, not by CODE with `--model` | the `pull` lines above |
+| `pull <CODE>` exits 77 | your own agent code, no sign-in (a showcase slug never needs one) | `bithuman login`, then pull again |
 | `render` exits 77, no output file | no credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
-| `bithuman doctor` exits 1 | no credential and no brain configured yet — the check working, not a broken install | `bithuman login`; `run` and `pull` never needed it |
-| `No matching distribution found for bithuman` | macOS older than 14, or an Intel Mac | upgrade macOS, or use an Apple Silicon Mac |
 | `Error: No available formula` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
-
-## See also
-
-- [CLI](/sdk/cli) — every command this page uses, in full
-- [CLI reference](/sdk/cli/reference) — flags, exit codes, environment variables
-- [Python](/sdk/python) — the library
-- [iOS](/sdk/ios) — the Swift package, which builds for macOS too
-- [SDK](/sdk) — every platform on one table
+| `No matching distribution found for bithuman` | macOS older than 14, or an Intel Mac | upgrade macOS, or use an Apple Silicon Mac |
