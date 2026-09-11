@@ -12,7 +12,7 @@ label: "macOS"
 ```bash
 brew install ffmpeg                      # bithuman render writes the MP4 through ffmpeg
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-export PATH="$HOME/.local/bin:$PATH"     # installs bithuman 2.6.5 (libessence 3.1.0 ABI 7)
+export PATH="$HOME/.local/bin:$PATH"     # installs bithuman 2.6.6 (libessence 3.1.2 ABI 7)
 ```
 
 One self-contained binary, sha256-verified against the release;

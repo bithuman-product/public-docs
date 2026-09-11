@@ -19,11 +19,11 @@ tree as JSON, generated from the binary so it cannot drift from your install.
 
 ```text
 $ bithuman --version
-libessence 3.1.0 ABI 7
-bithuman    2.6.5
+libessence 3.1.2 ABI 7
+bithuman    2.6.6
 ```
 
-**`cli-v2.6.5` is the current release**, the same version on macOS arm64 and
+**`cli-v2.6.6` is the current release**, the same version on macOS arm64 and
 Linux x86_64. The first line names the engine version — a separate axis from
 the CLI's own number, printed under the engine's legacy spelling because it is
 the string you have to grep for; the product name is
@@ -261,7 +261,7 @@ that is the check working. Rendering and pulling need neither.
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Brain-side tuning, read by the Python worker rather than the binary — [local mode](/sdk/cli/local-mode#tuning) |
 | `BITHUMAN_METER_ENFORCE` | `=1` turns a missing or rejected key into a refusal before the first frame instead of a warning |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` when it is not on `PATH` |
-| `BITHUMAN_VERSION` | Pins the release the installer fetches (`cli-v2.6.5`) |
+| `BITHUMAN_VERSION` | Pins the release the installer fetches (`cli-v2.6.6`) |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`, or `/usr/local/bin` as root) |
 | `BITHUMAN_JSON`, `BITHUMAN_QUIET`, `BITHUMAN_NO_COLOR` | Flip the matching global flag's default; an explicit flag still wins |
 | `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn` |
@@ -341,9 +341,9 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.5","libessence":"3.1.0",
+{"abi":7,"cli":"2.6.6","libessence":"3.1.2",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
- "engine":{"platform":"linux","runtime":"…","version":"1.0.0","sha256":"…","size":92449082},
+ "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
 
 // bithuman whoami --json      exit 0 signed in, 1 signed out
@@ -352,18 +352,23 @@ A stable sysexits subset. Branch on these rather than parsing text.
 // bithuman account --json     exit 77 with no credential
 {"email":"…","plan":"creator","credit_balance":5986130,"account_status":"active","out_of_credits":false}
 
-// bithuman list --json
-{"version":2,"models":[{"slug":"modern-court-jester","name":"…","description":"…"}]}
+// bithuman list --json     the gallery; every row carries the CODE you can pull
+{"version":2,"models":[{"agent_code":"A02HCY0444","slug":"shelly-tidewater","name":"…",
+                       "model":"expression-2","size":198632867,"description":"…"}],
+ "schema_version":1}
 
-// bithuman pull <slug> --json
-{"slug":"modern-court-jester","path":"/…/modern-court-jester.imx","cached":true,"sha256":"…"}
+// bithuman pull <CODE> --json      a gallery CODE needs no key and costs nothing
+{"code":"A02HCY0444","path":"/…/A02HCY0444.imx","cached":false,"family":"expression-2",
+ "model":"expression-2","model_source":"birth","other_models":[],"runnable_locally":true,
+ "schema_version":1}
 
 // bithuman info <file> --json
 {"path":"…","format_version":2,"size_bytes":82583342,"engine":"essence1","family":"essence-1",
  "manifest":{…},"members":[{"name":"manifest.json","size_bytes":1030},…],"schema_version":1}
 
-// bithuman render … --json
-{"output":"out.mp4","bytes":1234567,"seconds":3.4,"width":1280,"height":720,"frames":125,"fps":25}
+// bithuman render … --json     frames is read back from the finished file
+{"output":"out.mp4","bytes":1234567,"seconds":3.4,"width":1280,"height":720,"frames":125,
+ "fps":25,"lead_in_frames_dropped":10}
 
 // bithuman doctor --json      exit 0 iff "ready":true
 {"ready":false,"versions":{…},"host":{…},"auth":{…},"brain":{…},"runtime_assets":{…}}
@@ -372,8 +377,8 @@ A stable sysexits subset. Branch on these rather than parsing text.
 {"event":"session_started","url":"http://127.0.0.1:8088/","host":"127.0.0.1","port":8088}
 ```
 
-The `version --json` and `info --json` objects above were read from CLI 2.6.5 on
-Linux x86_64 on 2026-09-10.
+The `version --json`, `list --json`, `pull --json` and `info --json` objects
+above were read from CLI 2.6.6 on Linux x86_64 on 2026-09-11.
 
 ### Introspection
 
