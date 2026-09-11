@@ -12,7 +12,8 @@ download is cut in half, and when an agent code is wrong.
 
 Everything below is a transcript, not a prediction. Each row was produced by a
 probe app built against **`ai.bithuman:expression2-android:0.3.1`** — the version
-[the Android SDK page](/sdk/android) tells you to depend on — and run on a
+current that day; [the Android SDK page](/sdk/android) now names `0.4.1`, which
+changed the accelerator default and not the model store — and run on a
 physical Galaxy S25+ (SM-S936U1, Android 16) on 2026-09-09. The exception class,
 the message text and the millisecond timings are copied out of `logcat`.
 

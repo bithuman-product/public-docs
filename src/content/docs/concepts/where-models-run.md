@@ -388,13 +388,13 @@ around the CLI:
 
 As of **2026-09-03** the `ai.bithuman` group on Maven Central publishes **three**
 artifacts, all resolvable anonymously. `expression2-android` has since moved to
-**`0.3.1`** (2026-09-04) and `essence2-android` to **`0.4.0`** (2026-09-07) —
-the versions below are Central's own `<release>`, re-read 2026-09-07:
+**`0.4.1`** and `essence2-android` to **`0.5.2`** — the versions below are
+Central's own `<release>`, re-read 2026-09-11:
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
-| `ai.bithuman:expression2-android:0.3.1` | **expression-2** | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.5.1` | **essence-2** | 29 | `arm64-v8a` |
+| `ai.bithuman:expression2-android:0.4.1` | **expression-2** | 26 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.5.2` | **essence-2** | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI any of them ships**, so none of the three loads

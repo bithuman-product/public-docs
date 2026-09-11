@@ -265,7 +265,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.3.1")
+    implementation("ai.bithuman:expression2-android:0.4.1")
 }
 ```
 
@@ -719,7 +719,7 @@ Add the Qualcomm delegate and runtime to `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.3.1")
+    implementation("ai.bithuman:expression2-android:0.4.1")
     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // both on Maven Central
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // no Qualcomm account needed
 }
@@ -803,8 +803,8 @@ fun recordMic(seconds: Int): FloatArray {
 }
 ```
 
-Compiled against `expression2-android:0.3.1` with the project above on
-2026-09-09. Feeding a microphone live also means feeding *while* pulling — the
+Compiled against `expression2-android:0.3.1` — the version current that day —
+with the project above on 2026-09-09. Feeding a microphone live also means feeding *while* pulling — the
 SDK is built for that ([the streaming contract](/concepts/audio-streaming)), but
 remember this phone's all-CPU arm renders slower than real time, so a live app
 either asks for the accelerator or falls behind.
