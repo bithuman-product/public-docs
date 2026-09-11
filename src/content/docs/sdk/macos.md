@@ -66,7 +66,7 @@ Measured 2026-09-10 on macOS 26.6.2, Apple Silicon, CLI 2.6.5, unpaced
 The Neural Engine carries 84–100 % of Expression 2's operations on this
 platform ([which compute units run it](/concepts/expression-2#which-apple-compute-units-run-expression-2)).
 
-Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
+Every platform side by side: [Performance](/sdk/performance).
 
 ## Troubleshooting
 

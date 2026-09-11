@@ -91,7 +91,7 @@ produced as fast as the engine can, not paced to playback):
 The first Essence 2 render on a machine fetches one shared audio encoder
 (~377 MB, by content digest, once) into `~/.bithuman/engines/essence-2/`.
 
-Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
+Every platform side by side: [Performance](/sdk/performance).
 
 ## What renders locally, and where
 

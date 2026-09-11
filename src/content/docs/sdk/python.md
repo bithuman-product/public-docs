@@ -85,7 +85,7 @@ whole-process wall clock including `open`:
 The rendered rate is a property of your avatar and your machine — measure
 yours before you plan a product on it.
 
-Every platform side by side, with what is on main for the next release: [Performance](/sdk/performance).
+Every platform side by side: [Performance](/sdk/performance).
 
 ## The four refusals
 
