@@ -10,6 +10,39 @@ order: 1
 
 ## September 2026
 
+### A free avatar by CODE, a clip that is in sync, and an Android default that is fast (2026-09-11)
+
+CLI `cli-v2.6.6`, `ai.bithuman:expression2-android:0.4.1` and
+`ai.bithuman:essence2-android:0.5.2` on Maven Central, and `bithuman` 3.1.2 on
+PyPI.
+
+- **`bithuman pull <CODE>` gets you any avatar in the gallery, with no account,
+  no key and no credits.** Every row `bithuman list` prints carries the CODE to
+  pull — `pull` takes it directly, writes the `.imx` and tells you whether your
+  machine can render it (`"runnable_locally": true`). The [CLI
+  page](/sdk/cli) is two commands from nothing to a talking face.
+- **A rendered clip's mouth is in sync with its audio.** Before this release
+  `bithuman render` put ten warm-up frames — 400 ms of a closed, still face — in
+  front of the first spoken frame, one constant offset for the whole file, on
+  every platform, and the receipt reported every frame as good. If you trimmed
+  400 ms of audio or nudged a track in an editor to compensate, undo it. The
+  finished file also holds every frame the receipt counts, and `render --json`
+  names what it left out: `lead_in_frames_dropped`.
+- **An avatar file you downloaded yourself renders on Linux.** `render` and
+  `run` on a file fetched with a browser or `curl` used to exit 69 naming a
+  shared engine file as missing — a file the installer had already put beside
+  the binary. They take the copy that ships in the tarball now, and it never
+  reaches the network to do it. And `bithuman run <CODE>` on Linux x86_64 no
+  longer opens a cloud session for an avatar that same machine renders in
+  seconds: `run` asks the question `render` asks, so the two cannot disagree.
+- **On Android, a bare `Expression2Options()` is the fast one.** Depend on
+  `expression2-android:0.4.1` and the defaults ask for the accelerator — the
+  measured frame rate on a current handset is on the [Android
+  SDK](/sdk/android) page. On `0.3.1` the same bare options stayed on the CPU
+  and you had to name a routing to get off it. `essence2-android` is `0.5.2`.
+- **`pip install bithuman` is 3.1.2.** The CLI is not on PyPI: install it with
+  Homebrew or the universal installer ([the CLI page](/sdk/cli)).
+
 ### Android — the Kotlin example is a whole project, and essence-1 `2.3.6` cannot authenticate on a phone (2026-09-09)
 
 Two Android findings from a walk of the published pages on a Galaxy S25+
