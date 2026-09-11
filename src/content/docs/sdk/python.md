@@ -73,19 +73,11 @@ shared audio encoder once (~377 MB, sha256-verified, kept under
 
 ## Performance
 
-Measured 2026-09-10, unpaced (frames drained as fast as they are produced),
-whole-process wall clock including `open`:
-
-| Device | Model | fps (unpaced) | Notes |
-|---|---|---:|---|
-| Linux x86_64, 24 cores, Python 3.14, `bithuman 3.1.0` | Expression 2 (Wise Pup) | 25.5 | 309 frames of 416×720 in 12.1 s; the model plays at 20 fps |
-| Apple Silicon | Expression 2 | see [macOS](/sdk/macos#performance) | the CLI's CoreML figure on the same engine |
-| any CPU | Essence 2 | below real time | render a clip to a file (below); do not plan a live CPU session on it |
-
-The rendered rate is a property of your avatar and your machine — measure
-yours before you plan a product on it.
-
-Every platform side by side: [Performance](/sdk/performance).
+Expression 2 renders at **25 fps** on an x86 workstation — unpaced, whole
+process including `open`; the avatar plays at 20 fps. Essence 2 on a CPU
+renders at about 1 fps: render a clip to a file (below) rather than planning a
+live CPU session on it, until Essence 2 GPU rendering lands. Every platform
+side by side: [Performance](/sdk/performance).
 
 ## The four refusals
 
@@ -105,8 +97,8 @@ except bithuman.Failed:           # the message says why — retry, then report 
 ```
 
 All four are `AvatarError`. Those, plus `open`, `render` and `Avatar`, are the
-eight public names; there is no execution-provider, thread or delegate option —
-the package runs the avatar on this machine and decides the rest.
+eight public names; there is no tuning option — the package runs the avatar
+on this machine and decides the rest.
 
 A rejected key (HTTP 401, 402 or 403 from the service) gets a 300-second grace
 with a warning naming the seconds left, then `NotAuthorised` on the next frame;

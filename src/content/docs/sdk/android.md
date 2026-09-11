@@ -1,6 +1,6 @@
 ---
 title: "Android"
-description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.3.1 — with no account, no API key and no credits for the first frame. 58 fps unpaced on a Snapdragon 8 Elite with three options named."
+description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.3.1 — with no account, no API key and no credits for the first frame. 58 fps on a Galaxy S25+."
 section: sdk
 group: "Platforms"
 order: 30
@@ -30,13 +30,13 @@ android {
 }
 dependencies {
     implementation("ai.bithuman:expression2-android:0.3.1")
-    implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // the Hexagon path — both on Maven Central,
+    implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // on-device acceleration — both on Maven Central,
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // no Qualcomm account; +67 MB of APK
 }
 ```
 
-Leave the two Qualcomm lines out and the avatar still renders — on the CPU, at
-a fraction of the speed in the table below. The whole project, every file in
+Leave the two Qualcomm lines out and the avatar still renders, several times
+slower. The whole project, every file in
 the order you create them, is on
 [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello); there is no
 repository to clone, the page is the project.
@@ -78,9 +78,7 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
     // Blocks on the network the first time (~158 MB). Never on the main thread.
     val model = Expression2ModelStore(context).fetch(agentCode)   // anonymous HTTPS
 
-    // Name the routing and leave accelerator at AUTO: a refused graph then falls back to the CPU
-    // instead of throwing. A bare Expression2Options() is all-CPU — 7 fps on a Galaxy S25+;
-    // these three options are 58 fps on the same phone, pixel-identical.
+    // The fast path — 58 fps on a Galaxy S25+; a bare Expression2Options() renders at 7.
     val options = Expression2Options(routing = Routing.HTP_DECODER, overlapDecoder = true, threads = 6)
 
     Expression2Avatar.create(context, model, options).use { avatar ->
@@ -95,10 +93,9 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
 }
 ```
 
-`create` tells you what it actually built — log `avatar.accelerator`,
-`avatar.routing`, `avatar.acceleratorNote` and `avatar.initMs`; they are the
-only honest answer to "did my accelerator option do anything?". On an Adreno
-instead of a Hexagon, the same shape is `Routing.GPU_DECODER` with
+`create` reports what it built — log `avatar.accelerator`, `avatar.routing`,
+`avatar.acceleratorNote` and `avatar.initMs`. To run the decoder on the phone's
+GPU instead, pass `Routing.GPU_DECODER` with
 `Expression2Options.QNN_OPTIONS_ADRENO_FP32`.
 
 ## Run
@@ -112,29 +109,17 @@ A terminal build needs three things Android Studio sets for you: `ANDROID_HOME`
 newer ones illegibly), and the Gradle wrapper written **last** —
 `gradle wrapper --gradle-version 8.11.1` after `settings.gradle.kts` and `app/`
 exist, because Gradle 9 refuses to write a wrapper into an empty directory.
-The first `create()` on the Hexagon path takes about 45 s while the delegate
-compiles the graph — do it on a background thread at app start, once.
+The first `create()` takes about 45 s — do it on a background thread at app
+start, once.
 
 No account, no key and no credit spend anywhere in this run; a
 [self-hosted session](/guides/pricing) is metered only once you attach a key.
 
 ## Performance
 
-Measured 2026-09-10 on a **Galaxy S25+** (SM-S936U1, Snapdragon 8 Elite /
-SM8750, Hexagon V79, Android 16) through the published AAR, unpaced (frames
-produced as fast as the engine can, 1,642 frames per row, all rows pixel-identical):
-
-| Device | Model · options | fps (unpaced) | Notes |
-|---|---|---:|---|
-| Galaxy S25+ | Expression 2 · `expression2-android:0.3.1` · bare `Expression2Options()` | 7.1 | `AUTO` with no routing resolves to all-CPU — it does not try the Hexagon |
-| Galaxy S25+ | 0.3.1 · `routing = HTP_DECODER` (threads 4, overlap off — the accelerated defaults) | 23.6 | the Hexagon runs the decoder; the CPU `step` leg is the bottleneck |
-| Galaxy S25+ | 0.3.1 · `routing = HTP_DECODER, overlapDecoder = true, threads = 6` — the snippet above | **57.9** | worst heat-soaked 10 s window 43.4; 6 is the foreground cpuset ceiling |
-| Galaxy S25+ | next release · bare `Expression2Options()` at its new defaults | 48.2 | mean of 3 × 4-clip runs (57.6 over one clip); not on Maven Central yet |
-| Galaxy S25+ | Essence 2 · `essence2-android:0.5.1` | 1.0 | CPU only, and no public bundle host today — see below |
-
-The model plays at 20 fps, so anything above 20 is headroom. No other handset
-has been measured and no figure is projected for one.
-
+Expression 2 renders at **58 fps** on a Galaxy S25+ with the options in the
+code above — unpaced, as fast as the engine can; the avatar plays at 20 fps. A
+bare `Expression2Options()` renders at 7. Essence 2 on Android is rolling out.
 Every platform side by side: [Performance](/sdk/performance).
 
 ## Essence 2 and Essence 1 on Android
@@ -143,13 +128,9 @@ Every platform side by side: [Performance](/sdk/performance).
 published coordinates that resolve, and neither renders a frame for an outside
 developer:
 
-- **`ai.bithuman:essence2-android:0.5.1`** — `Essence2ModelStore` has no
-  default host and bitHuman publishes none that serves its `android/v1` tree;
-  the REST download serves Essence 2 as a single `.imx` this store does not
-  consume; and there is no audio-in call (`open` answers `NotSupported`). The
-  metering rule is the same as everywhere (300 s grace on a rejected key, then
-  refused; `★ UNMETERED RENDER` when the service is unreachable). Come back when
-  a mirror is published.
+- **`ai.bithuman:essence2-android:0.5.1`** — no published model host and no
+  audio-in call yet; Essence 2 on Android is rolling out. Until it lands,
+  Essence 2 renders through the [cloud API](/api/overview).
 - **`ai.bithuman:sdk:2.3.6`** (Essence 1) — its native library carries no TLS
   trust store, so `Avatar.load` fails at `be_auth_authenticate: status=11 …
   SSL peer certificate … was not OK` on every device. The fix is in a version
@@ -161,7 +142,7 @@ developer:
 |---|---|---|
 | `acc=CPU`, ~7 fps, with `Expression2Options()` | a bare options object never asks for the accelerator | name the routing: `Expression2Options(routing = Routing.HTP_DECODER, overlapDecoder = true, threads = 6)` |
 | `acceleratorNote` = *"no libQnnTFLiteDelegate.so in this APK"* | the Qualcomm artifacts are missing, or `useLegacyPackaging` is off so no `.so` is on disk | add the two `com.qualcomm.qti` lines and `packaging { jniLibs { useLegacyPackaging = true } }` |
-| `acceleratorNote` = *"the Hexagon refused this graph, fell back to XNNPACK"* | this Hexagon rejected the graph; you still get frames on the CPU | nothing to fix in your app; log it and ship |
+| `acceleratorNote` = *"… refused this graph, fell back to …"* | this phone rejected the accelerated graph; you still get frames on the CPU | nothing to fix in your app; log it and ship |
 | `Expression2Exception: TfLiteInterpreterCreate returned null (graph rejected) … on the NPU` | you named `accelerator = Accelerator.NPU`, which makes a refusal fatal | leave `accelerator` at `AUTO` and name the `routing` instead |
 | `fetch` fails with `HTTP 400 … Object not found` | the code is not on the public mirror | use a [showcase](/showcase) code, or open the two member files with `Expression2Model.combined(...)` |
 | `404 NOT_FOUND` from `GET /v1/agent/<CODE>/model/download` | not an agent on your account, and not public | check the code under [your agents](/api/agents) |
@@ -171,11 +152,11 @@ developer:
 | `SDK location not found` | no `ANDROID_HOME` and no `local.properties` | set one of them |
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
-| the first `create()` takes ~45 s | the Hexagon compiles the graph once per process | create on a background thread at app start; do not persist a QNN context cache — it makes decode 74–97× slower |
+| the first `create()` takes ~45 s | the accelerated graph is compiled once per process | create on a background thread at app start |
 
 **Licence.** The POM declares *Proprietary — bitHuman SDK License*
-(`https://bithuman.ai/license`); the bundled LiteRT is Apache-2.0 and its
-notices ship in the AAR's `META-INF/`. FFmpeg is linked statically under LGPL
+(`https://bithuman.ai/license`); the bundled inference runtime is Apache-2.0
+and its notices ship in the AAR's `META-INF/`. FFmpeg is linked statically under LGPL
 §6(a) — the relink offer is honoured on request to
 [hello@bithuman.ai](mailto:hello@bithuman.ai).
 

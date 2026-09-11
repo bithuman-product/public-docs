@@ -1,6 +1,6 @@
 ---
 title: "macOS"
-description: "A talking avatar on an Apple Silicon Mac: the CLI renders Expression 2 and Essence 2 locally through CoreML, and the same Python library and Swift package run natively."
+description: "A talking avatar on an Apple Silicon Mac: the CLI renders Expression 2 and Essence 2 locally, and the same Python library and Swift package run natively."
 section: sdk
 group: "Platforms"
 order: 50
@@ -26,15 +26,14 @@ use the [web](/sdk/web) or the [cloud API](/api/overview).
 ## Get a model
 
 Nothing to fetch by hand for the first frame: `bithuman run` with no argument
-downloads the free **Wise Pup** avatar itself — on a Mac, the CoreML slice
-(12 files, 26 MB). Every other showcase avatar and your own agent come the same
+downloads the free **Wise Pup** avatar itself — on a Mac, a 26 MB slice. Every other showcase avatar and your own agent come the same
 way as on the [CLI page](/sdk/cli#get-a-model): `bithuman avatars`,
 `bithuman pull <slug or CODE>`.
 
 ## Minimal code
 
 ```bash
-bithuman run                                   # live at http://127.0.0.1:8088/ — CoreML, Neural Engine
+bithuman run                                   # live at http://127.0.0.1:8088/
 bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4   # offline: audio in, MP4 out
 ```
 
@@ -55,18 +54,11 @@ authority.
 
 ## Performance
 
-Measured 2026-09-10 on macOS 26.6.2, Apple Silicon, CLI 2.6.5, unpaced
-(frames produced as fast as the engine can, not paced to playback):
-
-| Device | Model | fps (unpaced) | Notes |
-|---|---|---:|---|
-| Apple Silicon, CoreML on the Neural Engine | Expression 2 (Wise Pup) | 54–69 | 32-frame chunks in 465–594 ms — 2.7–3.4× faster than the 20 fps the model plays at |
-| Apple M4, 8 threads | Essence 2 | 2.2 | 408 frames of 1080×1920 in 187 s; renders locally since CLI 2.6.1 — an offline `render`, not a live session |
-
-The Neural Engine carries 84–100 % of Expression 2's operations on this
-platform ([which compute units run it](/concepts/expression-2#which-apple-compute-units-run-expression-2)).
-
-Every platform side by side: [Performance](/sdk/performance).
+On an Apple M4, Expression 2 renders at **54 fps** and Essence 2 at **2 fps** —
+unpaced, as fast as the engine can; avatars play at 20 and 25 fps. Essence 2
+GPU rendering on the Mac is rolling out; until it lands, plan an offline
+`render` for Essence 2 rather than a live session. Every platform side by
+side: [Performance](/sdk/performance).
 
 ## Troubleshooting
 

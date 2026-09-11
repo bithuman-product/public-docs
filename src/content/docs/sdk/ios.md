@@ -27,7 +27,7 @@ and a **physical iPhone or iPad** — the Simulator cannot run this engine.
 |---|---|
 | **`Expression2`** | the [Expression 2](/concepts/expression-2) engine alone — `ios-arm64`, `macos-arm64`, `ios-arm64-simulator` (builds only). **This page.** |
 | `bitHumanKit` | the umbrella: an on-device voice agent (speech recognition, language model, text-to-speech) with an optional avatar. iPhone 16 Pro / M3 Mac or later, two Apple entitlements that take 1–3 business days |
-| `Essence2` | the [Essence 2](/concepts/essence-2) engine's C interface — builds, and renders on no iPhone today (no published per-identity bundle; floor iPhone 16 Pro / A18 Pro) |
+| `Essence2` | the [Essence 2](/concepts/essence-2) engine's C interface — builds; renders on no iPhone today (Essence 2 on iPhone is rolling out; floor iPhone 16 Pro or later) |
 
 Do not take `Expression2` and `Essence2` in the same app: they collide at your
 app's final device link (116 duplicate symbols) while a Simulator build stays
@@ -98,21 +98,11 @@ identity above renders without one. A self-hosted session is metered —
 
 ## Performance
 
-Measured 2026-09-09 on an **iPhone 15** (iPhone15,4, iOS 26.6.1), Xcode 26.3,
-through the published `Expression2` product, unpaced (frames produced as fast
-as the engine can, 100 % talk duty, one process):
-
-| Device | Model | fps (unpaced) | Notes |
-|---|---|---:|---|
-| iPhone 15 (A16) | Expression 2, `Expression2` 2.11.x | **106.6** | 36,021 frames — 1,801.6 s of speech in 338.0 s; worst 10 s window 99.9 fps; first frame 263 ms after `feed()`; CoreML placed the work on the Neural Engine |
-| Apple Silicon Mac | Expression 2, same package (`macos-arm64`) | see [macOS](/sdk/macos#performance) | the CLI's CoreML figure on the same engine |
-| iPhone 16 Pro / M3 Mac or later | Essence 2, `Essence2` | none published | builds; no per-identity bundle to open on a phone today |
-
-The model plays at 20 fps. `Expression2` carries no device floor — it has
-rendered on an iPhone 15, two generations below the `Essence2` / `bitHumanKit`
-floor (iPhone 16 Pro or later, A18 Pro; a standard A18 is refused).
-
-Every platform side by side: [Performance](/sdk/performance).
+Expression 2 renders at **107 fps** on an iPhone 15 — unpaced, as fast as the
+engine can; the avatar plays at 20 fps — with the first frame about a quarter
+of a second after `feed()`. `Expression2` has no device floor; `Essence2` and
+`bitHumanKit` need an iPhone 16 Pro or later, and Essence 2 on iPhone is
+rolling out. Every platform side by side: [Performance](/sdk/performance).
 
 ## Troubleshooting
 

@@ -13,8 +13,7 @@ label: "CLI"
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-What it prints when it succeeds — the last line names the engine core the
-binary carries, and `bithuman version` prints the same thing later:
+What it prints when it succeeds:
 
 ```text
 install: version: cli-v2.6.5
@@ -78,18 +77,12 @@ must never stop a live session. A self-hosted session is metered —
 
 ## Performance
 
-Measured 2026-09-10 from the published `cli-v2.6.5` bytes, unpaced (frames
-produced as fast as the engine can, not paced to playback):
-
-| Device | Model | fps (unpaced) | Notes |
-|---|---|---:|---|
-| Apple Silicon, macOS 26.6.2, CoreML on the Neural Engine | Expression 2 (Wise Pup) | 54–69 | 32-frame chunks in 465–594 ms; the model plays at 20 fps |
-| Linux x86_64, 24 cores, LiteRT on CPU | Expression 2 (showcase `A08CCD3871`) | 29 | `render`: 278 frames of a 13.87 s clip in 9.5 s of whole-process wall clock |
-| Linux x86_64 (Ryzen Threadripper PRO 5955WX), 8 threads | Essence 2 | 1.1 | 408 frames of 1920×1080 in 371 s; plan an offline `render`, not a live CPU session |
-| Apple M4, 8 threads | Essence 2 | 2.2 | 408 frames of 1080×1920 in 187 s; the same offline `render` |
-
-The first Essence 2 render on a machine fetches one shared audio encoder
-(~377 MB, by content digest, once) into `~/.bithuman/engines/essence-2/`.
+Expression 2 renders at **54 fps** on an Apple M4 and **34 fps** on an x86
+workstation; Essence 2 at **2** and **1** — unpaced, as fast as the engine can;
+avatars play at 20 and 25 fps. Until Essence 2 GPU rendering lands, plan an
+offline `render` for Essence 2 rather than a live CPU session. The first
+Essence 2 render on a machine fetches one shared audio encoder (~377 MB, once)
+into `~/.bithuman/engines/essence-2/`.
 
 Every platform side by side: [Performance](/sdk/performance).
 
@@ -97,8 +90,8 @@ Every platform side by side: [Performance](/sdk/performance).
 
 | Platform | Expression 2 | Essence 2 | Essence 1 |
 |---|---|---|---|
-| **macOS Apple Silicon** | yes — CoreML | yes (2.6.1+) | live only |
-| **Linux x86_64** | yes — LiteRT on CPU | yes (2.6.1+) | live only |
+| **macOS Apple Silicon** | yes | yes (2.6.1+) | live only |
+| **Linux x86_64** | yes | yes (2.6.1+) | live only |
 
 Those are the only two targets with a published binary. `render` on an Essence 1
 avatar exits 70 — use the [Video API](/api/video) for that family;

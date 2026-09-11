@@ -71,9 +71,7 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
     // Blocks on the network the first time (~158 MB). Never on the main thread.
     val model = Expression2ModelStore(context).fetch(agentCode)   // anonymous HTTPS
 
-    // Name the routing and leave accelerator at AUTO: a refused graph then falls back to the CPU
-    // instead of throwing. A bare Expression2Options() is all-CPU — 7 fps on a Galaxy S25+;
-    // these three options are 58 fps on the same phone, pixel-identical.
+    // The fast path — 58 fps on a Galaxy S25+; a bare Expression2Options() renders at 7.
     val options = Expression2Options(routing = Routing.HTP_DECODER, overlapDecoder = true, threads = 6)
 
     Expression2Avatar.create(context, model, options).use { avatar ->

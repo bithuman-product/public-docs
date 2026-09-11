@@ -21,16 +21,13 @@ tree as JSON, generated from the binary so it cannot drift from your install.
 $ bithuman --version
 libessence 3.1.0 ABI 7
 bithuman    2.6.5
-build       98fa0b448b9a x86_64-unknown-linux-gnu/release 2026-09-10T11:54:59Z
-engine      linux 1.0.0 adc2a18da787
 ```
 
-**`cli-v2.6.5` is the current release** (2026-09-10), the same version on macOS
-arm64 and Linux x86_64. The first line names the **essence engine** version —
-3.1.0 here — which is a separate axis from the CLI's own number. It is printed
-under the engine's legacy spelling, kept because it is the string you have to
-grep for; the product name is [essence-2](/concepts/essence-2). `bithuman
-version --json` gives both plus the tarball's provenance. Do not pin a CLI version unless you have a
+**`cli-v2.6.5` is the current release**, the same version on macOS arm64 and
+Linux x86_64. The first line names the engine version — a separate axis from
+the CLI's own number, printed under the engine's legacy spelling because it is
+the string you have to grep for; the product name is
+[essence-2](/concepts/essence-2). Do not pin a CLI version unless you have a
 reason: the installer takes the newest release, and that is the tested one.
 
 ## Subcommands
@@ -122,10 +119,8 @@ for an `essence-1` code too.
 
 ### Where the local render happens
 
-| Platform | Expression 2 | Essence 2 |
-| --- | --- | --- |
-| macOS (Apple Silicon) | CoreML — the Neural Engine carries [84–100% of the operations](/concepts/expression-2#which-apple-compute-units-run-expression-2) | Yes, runtime in the tarball |
-| Linux x86_64 | LiteRT on CPU | Yes, runtime in the tarball |
+On macOS (Apple Silicon) and Linux x86_64, both Expression 2 and Essence 2
+render locally, with the runtime inside the tarball — nothing else to install.
 
 ### The conversation brain
 
@@ -207,7 +202,7 @@ second trained family, and a bare `pull` hands back the family the agent was
 
 All but a minority of these are `IMX\0` v2 containers — including the
 `expression-2` one, despite its `.avatar` name. A few `expression-2` identities
-trained before 2026-07-12 are still a CoreML zip and will not be re-published.
+trained before 2026-07-12 are still an older zip format and will not be re-published.
 `bithuman info <file>` reads either, so run it rather than trusting the
 extension.
 
@@ -347,8 +342,8 @@ A stable sysexits subset. Branch on these rather than parsing text.
 ```json
 // bithuman version --json
 {"abi":7,"cli":"2.6.5","libessence":"3.1.0",
- "build":{"commit_short":"98fa0b448b9a","target":"x86_64-unknown-linux-gnu","built_at":"2026-09-10T11:54:59Z","profile":"release"},
- "engine":{"platform":"linux","runtime":"litert","version":"1.0.0","sha256":"adc2a18da787…","size":92449082},
+ "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
+ "engine":{"platform":"linux","runtime":"…","version":"1.0.0","sha256":"…","size":92449082},
  "schema_version":1}
 
 // bithuman whoami --json      exit 0 signed in, 1 signed out
