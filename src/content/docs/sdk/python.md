@@ -17,26 +17,22 @@ Python **3.10–3.14** on Apple Silicon macOS (14 or newer), Linux x86_64 and
 Linux aarch64 (glibc, `manylinux_2_28`). No Windows, Intel Mac or Alpine wheels
 — pin `bithuman>=3` so the resolver refuses out loud rather than handing you a
 2.x release. The `[expression-2]` extra opens `.avatar` files; add
-`"bithuman[offline]"` for the Essence 2 clip-to-file route. `ffmpeg` on `PATH`
-is needed only to read an audio *file*; pass 16 kHz samples and it is not.
-
-> `pip install bithuman` puts **no `bithuman` command** on your `PATH`. The
-> command-line tool is the [CLI](/sdk/cli), a separate artifact, so the two can
-> never overwrite each other.
+`"bithuman[offline]"` for the Essence 2 clip-to-file route. `pip install
+bithuman` puts **no `bithuman` command** on your `PATH` — the command-line tool
+is the [CLI](/sdk/cli), a separate artifact.
 
 ## Get a model
 
 A showcase avatar is a plain anonymous download — no account, no key:
 
 ```bash
-PUB=https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase
-curl -fsSLo wise-pup.avatar "$PUB/A23WJF0199.avatar"     # the free Expression 2 avatar
-curl -fsSLo speech.wav      "$PUB/demo_sample.wav"        # 16 kHz mono, something for it to say
+curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}"
 ```
 
-Download the `.avatar`, not the `.imx` — the `.imx` is the [CLI](/sdk/cli)'s
-form and reads a cache this package does not have. Your own agent's file comes
-from [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+`A23WJF0199.avatar` is the free Wise Pup (Expression 2); `demo_sample.wav` is
+16 kHz mono, something for it to say. Download the `.avatar`, not the `.imx` —
+the `.imx` is the [CLI](/sdk/cli)'s form. Your own agent's file comes from
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE>`; an Essence 2 agent arrives as an `.imx`, an
 Expression 2 agent as an `.avatar`, and `bithuman.open` takes either.
 
@@ -46,16 +42,25 @@ Expression 2 agent as an `.avatar`, and `bithuman.open` takes either.
 # hello.py
 import bithuman
 
-with bithuman.open("wise-pup.avatar") as avatar:       # an Essence 2 .imx or an Expression 2 .avatar — one call
-    for image in avatar.render("speech.wav"):          # (height, width, 3) uint8, RGB, at the avatar's own frame rate
+with bithuman.open("A23WJF0199.avatar") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call
+    for image in avatar.render("demo_sample.wav"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate
         print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]
 ```
 
 That is the whole surface: **open an avatar, render audio through it.**
 `audio` is 16 kHz mono as a file path, an `int16` or `float32` array, raw
 16-bit little-endian bytes, or any iterable of those — a microphone stream and a
-file are the same program. Nothing is rendered ahead of what you take;
-`frames = avatar.render(...)` then `frames.close()` stops early.
+file are the same program; `frames = avatar.render(...)` then `frames.close()`
+stops early. Eight public names: `open`, `render`, `Avatar`, and four errors,
+all `AvatarError` — `InvalidAvatar` (not found, or not usable: fix the path or
+fetch it again), `NotSupported` (cannot run here: install the extra, or use the
+cloud), `NotAuthorised` (the key is missing, invalid, or out of credit),
+`Failed` (the message says why: retry, then report it). There is no
+execution-provider, thread or delegate option. A whole Essence 2 clip to an MP4
+on the CPU is `from bithuman.offline import render_offline`, then
+`render_offline("agent.imx", "speech.wav", out_mp4="rendered.mp4")`, with the
+`[offline]` extra (install the CPU build of `torch` first on a machine with no
+GPU).
 
 ## Run
 
@@ -65,63 +70,30 @@ python hello.py
 ```
 
 The download is free; **the render is metered** and refuses before the first
-frame without a key — [pricing](/guides/pricing) is the authority for what a
-session costs. The first use on a machine prepares the avatar into
-`BITHUMAN_CACHE_DIR` (`~/.cache/bithuman`) and, for Essence 2, fetches the
-shared audio encoder once (~377 MB, sha256-verified, kept under
-`BITHUMAN_DEPS_DIR`, `~/.bithuman/deps`); both happen once.
+frame without a key — [pricing](/guides/pricing) is the authority. A rejected
+key (HTTP 401, 402 or 403) gets a 300-second grace with a warning naming the
+seconds left, then `NotAuthorised` on the next frame; an unreachable service
+never stops a live render but logs `★ UNMETERED RENDER`
+(`BITHUMAN_METER_ENFORCE=1` refuses a rejected key before the first frame
+instead). The first use on a machine prepares the avatar into
+`BITHUMAN_CACHE_DIR` (`~/.cache/bithuman`); an Essence 2 avatar also fetches
+the shared audio encoder once (~377 MB, sha256-verified, kept under
+`BITHUMAN_DEPS_DIR`, `~/.bithuman/deps` — mirror it with
+`BITHUMAN_DEPS_BASE_URL`, or point at a copy with `BITHUMAN_W2V_ONNX`).
 
 ## Performance
 
-Expression 2 renders at **25 fps** on an x86 workstation — unpaced, whole
-process including `open`; the avatar plays at 20 fps. Essence 2 on a CPU
-renders at about 1 fps: render a clip to a file (below) rather than planning a
-live CPU session on it, until Essence 2 GPU rendering lands. Every platform
-side by side: [Performance](/sdk/performance).
+Unpaced (frames drained as fast as they are produced), whole process including
+`open`:
 
-## The four refusals
+| Hardware | Model | fps (unpaced) | Measured |
+|---|---|---:|---|
+| Ryzen Threadripper PRO 5955WX (Linux x86_64), Python 3.14, `bithuman` 3.1.0 | Expression 2 (Wise Pup) | **26** | 2026-09-10 — 309 frames of 416×720 in 12.1 s; playback is 20 fps |
+| the same machine, [CLI](/sdk/cli) 2.6.5, 8 threads | Essence 2 | **1** | 2026-09-11 — 408 frames at 1920×1080 in 371 s; render a clip to a file, not a live CPU session |
 
-```python
-try:
-    with bithuman.open(source) as avatar:
-        for image in avatar.render(audio):
-            show(image)
-except bithuman.InvalidAvatar:    # not found, or not a usable avatar — fix the path, or fetch it again
-    ...
-except bithuman.NotSupported:     # this avatar cannot run here — install the extra, or use the cloud
-    ...
-except bithuman.NotAuthorised:    # the key is missing, invalid, or out of credit
-    ...
-except bithuman.Failed:           # the message says why — retry, then report it
-    ...
-```
-
-All four are `AvatarError`. Those, plus `open`, `render` and `Avatar`, are the
-eight public names; there is no tuning option — the package runs the avatar
-on this machine and decides the rest.
-
-A rejected key (HTTP 401, 402 or 403 from the service) gets a 300-second grace
-with a warning naming the seconds left, then `NotAuthorised` on the next frame;
-an unreachable service never stops a live render but logs
-`★ UNMETERED RENDER`. `BITHUMAN_METER_ENFORCE=1` refuses a rejected key before
-the first frame instead.
-
-## Render a clip to a file
-
-The Essence 2 offline route — a whole clip to an MP4 on CPU — is
-`bithuman.offline`, with the `bithuman[offline]` extra installed:
-
-```python
-from bithuman.offline import render_offline
-
-stats = render_offline("A31BSK9325.imx", "speech.wav", out_mp4="rendered.mp4")
-print(stats["frames"], stats["billing_type"])      # billing_type and metered_heartbeat are the stable fields
-```
-
-`OfflineRenderer(path).render(audio, on_frame=callback)` hands you the frames
-instead of a file. With no key it refuses at the first frame and writes
-nothing. Install the CPU build of `torch` first on a machine with no GPU, or
-the extra pulls in a CUDA stack this route never touches.
+On Apple Silicon the CLI's CoreML figure on the same engine is on
+[macOS](/sdk/macos#performance). Every platform side by side:
+[Performance](/sdk/performance).
 
 ## Troubleshooting
 
@@ -137,28 +109,4 @@ the extra pulls in a CUDA stack this route never touches.
 | `MODEL_ARTIFACT_NOT_READY` from the download | trained, not yet published to the download store | poll the same download URL; it clears on its own |
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
 | the first `render` is slow, with a large download | the ~377 MB shared encoder is being fetched, once | wait; on an air-gapped box mirror it (`BITHUMAN_DEPS_BASE_URL`) or point at a copy (`BITHUMAN_W2V_ONNX`) |
-
-## Environment
-
-| Variable | Meaning |
-|---|---|
-| `BITHUMAN_API_SECRET` | your key — required to render; read from the environment and only there |
-| `BITHUMAN_CACHE_DIR` | where a prepared avatar is kept (default `~/.cache/bithuman`) |
-| `BITHUMAN_DEPS_DIR`, `BITHUMAN_DEPS_BASE_URL`, `BITHUMAN_DEPS_OFFLINE`, `BITHUMAN_W2V_ONNX` | the shared Essence 2 audio encoder: where it is kept, mirrored from, never fetched, or already held |
-
-## Coming from 2.10.0
-
-3.0.0 was a clean break: thirty-two public names became eight, fourteen error
-classes became four, frames are RGB (2.x yielded BGR), and the key is read from
-the environment only — there is no `api_secret=` argument. The 2.x offline
-module, class and extra names are deprecated aliases of `bithuman.offline` /
-`bithuman[offline]` that warn on import and are removed in 4.0.0.
-`pip install "bithuman<3"` keeps 2.10.0, which stays on PyPI.
-
-## See also
-
-- [LiveKit](/sdk/livekit) — a real-time voice agent with this avatar as its face
-- [CLI](/sdk/cli) — the same engines as one command; `bithuman pull` for your own agent's file
-- [Agents](/api/agents) — creating an agent and downloading its model
-- [Local mode](/sdk/cli/local-mode) — the conversation brain fully on-device
-- [SDK](/sdk) — every platform on one table
+| code written for 2.10.0 fails — `api_secret=`, BGR frames, fourteen error classes | 3.0.0 was a clean break: eight public names, four errors, RGB frames, the key from the environment only | port to the snippet above; `pip install "bithuman<3"` keeps 2.10.0, which stays on PyPI |
