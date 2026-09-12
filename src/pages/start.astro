@@ -15,10 +15,12 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 # 2 · sign in (opens your browser)
 bithuman login
 
-# 3 · grab an avatar and run it
-bithuman pull modern-court-jester
-bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-# → open the printed http://127.0.0.1:8088 URL, grant mic, talk`,
+# 3 · grab an avatar
+bithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx
+
+# 4 · run it
+bithuman run "$(bithuman pull marmalade)"
+# → open the printed http://127.0.0.1:8088/ URL, grant the microphone, talk`,
   },
 ];
 
@@ -29,10 +31,9 @@ const embed = [
     code: `<!-- Paste into any page. No API key, no install. -->
 <iframe
   src="https://bithuman.ai/embed/A78WKV4515"
-  width="400" height="600"
-  allow="microphone; autoplay"
-  style="border:0;border-radius:16px">
-</iframe>`,
+  allow="microphone *; camera *; autoplay *"
+  style="width: 100%; height: 600px; border: 0;"
+></iframe>`,
   },
 ];
 ---
@@ -58,7 +59,7 @@ const embed = [
         </div>
       </div>
       <Playground />
-      <p class="s-note">Want it on your own site? Drop in one <code>&lt;iframe&gt;</code> — it needs no API key:</p>
+      <p class="s-note">Want it on your own site? Drop in one <code>&lt;iframe&gt;</code> — it needs no API key. The <code>*</code> in <code>allow</code> is required: the embed is cross-origin. Details: <a href="/api/quickstart">API quickstart</a>.</p>
       <CodeTabs tabs={embed} title="Embed an agent" />
     </div>
   </section>
@@ -93,7 +94,7 @@ const embed = [
           <ul>
             <li>Your machine, your data</li>
             <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/ios">iOS &amp; iPadOS — Swift</a> (preview) — each has a <strong>complete, copy-the-whole-page project</strong> below</li>
-            <li><strong>The fastest frame on a phone is free.</strong> <a href="/sdk/android">Android + <code>expression-2</code></a> needs <strong>no account, no API key and no credits</strong> — the SDK's model store fetches a published avatar anonymously. Measured: 213 frames on a Galaxy S25+, ~3 minutes from an empty directory</li>
+            <li><strong>The fastest frame on a phone is free.</strong> <a href="/sdk/android">Android + <code>expression-2</code></a> needs <strong>no account, no API key and no credits</strong> — the SDK's model store fetches a published avatar anonymously.</li>
             <li><strong>The first frame on an iPhone is free too</strong> — <a href="/sdk/ios">iOS + <code>expression-2</code></a> renders a public showcase identity with <strong>no account, no API key and no credits</strong>. What it does need is Apple's: Xcode 26+, an Apple Developer team and a physical device</li>
             <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/web">Browser</a> · <a href="/sdk/cli">CLI</a></li>
           </ul>
@@ -112,22 +113,23 @@ const embed = [
           <a class="phone-card free" href="/examples/kotlin-android-hello">
             <span class="phone-tag">Android · free</span>
             <strong>Kotlin — Hello, avatar</strong>
-            <span>The whole project, seven files. <code>expression-2</code> renders with <b>no account, no API key and no credits</b>. Measured: 117 frames on a Galaxy S25+, ~3 minutes from an empty directory.</span>
+            <span>The whole project, seven files. <code>expression-2</code> renders with <b>no account, no API key and no credits</b>.</span>
             <span class="phone-go">Open the Android project →</span>
           </a>
           <a class="phone-card" href="/examples/swift-ios-expression2">
             <span class="phone-tag">iOS · free</span>
             <strong>Swift — a talking avatar on the iPhone you have</strong>
-            <span>The whole SwiftUI app. Renders on any recent iPhone from a public showcase identity — <b>no account, no API key and no credits</b>. You do need Xcode 26+, an Apple Developer team and a physical device. Measured: 149 frames at 416x720 on an iPhone 15.</span>
+            <span>The whole SwiftUI app. Renders on any recent iPhone from a public showcase identity — <b>no account, no API key and no credits</b>. You do need Xcode 26+, an Apple Developer team and a physical device.</span>
             <span class="phone-go">Open the iOS project →</span>
           </a>
         </div>
-        <p class="s-note">Neither phone runs <code>essence-2</code> today — <a href="/sdk">what each phone rail needs →</a></p>
+        <p class="s-note"><code>essence-2</code> on phones: the Android coordinate <code>essence2-android:0.5.3</code> resolves, with no walkthrough published yet; iOS is not yet available — <a href="/sdk">what each phone rail needs →</a></p>
       </div>
 
       <div class="nudge">
-        <p><strong>Not sure?</strong> Most people start on-device — it is <strong>two commands</strong> to a talking avatar in your browser:</p>
+        <p><strong>Not sure?</strong> Most people start on-device — it is <strong>four lines</strong> to a talking avatar in your browser:</p>
         <CodeTabs tabs={cliRun} title="Run locally with the CLI" />
+        <p class="s-note">Signed-in conversation is billed per minute — see <a href="/guides/pricing">pricing</a>. Without signing in, the avatar renders but does not answer.</p>
         <p class="s-note">Full walkthrough: <a href="/sdk/cli">the CLI page →</a></p>
       </div>
     </div>
@@ -161,8 +163,8 @@ const embed = [
     <div class="container">
       <h2>Where to next</h2>
       <div class="next-row">
-        <a class="next-card" href="/examples/kotlin-android-hello">Android, end to end <span>The whole Kotlin project — free, no key, 117 frames on a real phone</span></a>
-        <a class="next-card" href="/examples/swift-ios-expression2">iOS, end to end <span>The whole SwiftUI app — 149 frames at 21.8 fps on an iPhone 15</span></a>
+        <a class="next-card" href="/examples/kotlin-android-hello">Android, end to end <span>The whole Kotlin project — free, no key</span></a>
+        <a class="next-card" href="/examples/swift-ios-expression2">iOS, end to end <span>The whole SwiftUI app — a rendered frame on an iPhone 15</span></a>
         <a class="next-card" href="/examples">All examples <span>Copy-paste starting points for every path</span></a>
         <a class="next-card" href="/guides">Guides <span>Build, deploy, embed, and price your agent</span></a>
         <a class="next-card" href="/showcase">Showcase <span>See what teams have shipped</span></a>

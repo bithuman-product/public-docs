@@ -303,7 +303,7 @@ The device/runtime matrix for the second generation:
 | bitHuman cloud — GPU | ✅ chain tier | ✅ chain tier |
 | bitHuman cloud — Apple Silicon | ✅ chain tier | ✅ chain tier |
 | bitHuman cloud — CPU | ✅ chain tier | ✅ chain tier |
-| Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)); ✅ local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (2.6.1); live streaming still via the cloud | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
+| Self-hosted (your servers, CPU) | ✅ offline rendering, SDK 2.9.0+, metered ([quickstart](/guides/deploy-self-hosted#essence-2-on-your-own-cpu)); ✅ local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (2.6.1); live streaming still via the cloud | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
 | On-device macOS / iOS (Apple Silicon) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0) — a C interface, builds for iOS and macOS; resources published; no in-app model download route yet | [Swift SDK](/sdk/ios) `Expression2` product, 2.5.0+ — `macos-arm64` **and** `ios-arm64`; both have rendered on real hardware, but it is engine only, [no model bundle published](/sdk/ios#minimal-code) |
 | Browser-local (no server render) | Rolling out — `?render=local` renders Essence 2 in-browser as per-identity web bundles publish; the [browser rendering](/guides/browser-rendering) modes ship with `essence-1` today | Rolling out — `?render=local` renders Expression 2 in-browser. **Opt-in:** cloud is the default for every visitor; the URL has to ask, and a session falls back to cloud when the identity has no published web bundle or the browser can't run the engine. A client-side option, not a serving tier. See [browser rendering](/guides/browser-rendering) |
 
@@ -320,7 +320,7 @@ the same shape for both models: `expression-2` and, as of CLI **2.6.1**,
 Linux x86_64), and the `essence-2` download also **renders offline on your own
 CPU servers** — metered, no GPU — through the Python SDK (`bithuman.offline`
 on 3.x;
-[quickstart](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290)).
+[quickstart](/guides/deploy-self-hosted#essence-2-on-your-own-cpu)).
 **Locally-hosted LiveKit** (live streaming from your own server) is still in
 active development — live sessions run through the cloud or the browser. And
 **neither** second-generation model's CPU tier sustains real-time rendering:

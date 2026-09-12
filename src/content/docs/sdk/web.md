@@ -20,7 +20,7 @@ comes from [Agents](/api/agents).
 
 ```html
 <iframe src="https://bithuman.ai/embed/A74NWD9723"
-        allow="microphone" width="420" height="720"></iframe>
+        allow="microphone *; camera *; autoplay *" width="420" height="720"></iframe>
 ```
 
 Or open the agent directly: `https://www.bithuman.ai/A74NWD9723?rendering_mode=browser`

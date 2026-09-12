@@ -19,16 +19,20 @@ tree as JSON, generated from the binary so it cannot drift from your install.
 
 ```text
 $ bithuman --version
-libessence 3.1.3 ABI 7
-bithuman    2.6.7
+libessence <engine core> ABI <n>
+bithuman    <cli version>
+build       <commit> <target>/release <built at> <build host>
+engine      <platform> <engine version> <digest>
 ```
 
-**`cli-v2.6.7` is the current release**, the same version on macOS arm64 and
-Linux x86_64. The first line names the engine version — a separate axis from
-the CLI's own number, printed under the engine's legacy spelling because it is
-the string you have to grep for; the product name is
-[essence-2](/concepts/essence-2). Do not pin a CLI version unless you have a
-reason: the installer takes the newest release, and that is the tested one.
+The current release and its real transcript live on
+[the CLI page](/sdk/cli#install) — the one place that names the version — and
+it is the same version on macOS arm64 and Linux x86_64. The
+first line names the engine version, a separate axis from the CLI's own number,
+printed under the engine's legacy spelling because it is the string you have to
+grep for; the product name is [essence-2](/concepts/essence-2). Do not pin a
+CLI version unless you have a reason: the installer takes the newest release,
+and that is the tested one.
 
 ## Subcommands
 
@@ -261,7 +265,7 @@ that is the check working. Rendering and pulling need neither.
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Brain-side tuning, read by the Python worker rather than the binary — [local mode](/sdk/cli/local-mode#tuning) |
 | `BITHUMAN_METER_ENFORCE` | `=1` turns a missing or rejected key into a refusal before the first frame instead of a warning |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` when it is not on `PATH` |
-| `BITHUMAN_VERSION` | Pins the release the installer fetches (`cli-v2.6.7`) |
+| `BITHUMAN_VERSION` | Pins the release tag the installer fetches; unset, it takes the current release named on [the CLI page](/sdk/cli#install) |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`, or `/usr/local/bin` as root) |
 | `BITHUMAN_JSON`, `BITHUMAN_QUIET`, `BITHUMAN_NO_COLOR` | Flip the matching global flag's default; an explicit flag still wins |
 | `RUST_LOG` | Tracing filter. Default `bithuman_serve=info,warn` |
@@ -342,8 +346,8 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.7","libessence":"3.1.3",
- "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
+{"abi":7,"cli":"2.6.8","libessence":"3.1.3",
+ "build":{"commit_short":"b8c58abecf01","target":"x86_64-unknown-linux-gnu","built_at":"2026-09-12T00:59:34Z","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
 
@@ -378,8 +382,9 @@ A stable sysexits subset. Branch on these rather than parsing text.
 {"event":"session_started","url":"http://127.0.0.1:8088/","host":"127.0.0.1","port":8088}
 ```
 
-The `version --json`, `list --json`, `pull --json` and `info --json` objects
-above were read from CLI 2.6.7 on Linux x86_64 on 2026-09-11.
+The `version --json` object above matches the 2.6.8 Linux x86_64 build; the
+`list --json`, `pull --json` and `info --json` objects were read on Linux
+x86_64 on 2026-09-11 and their shapes are unchanged in 2.6.8.
 
 ### Introspection
 

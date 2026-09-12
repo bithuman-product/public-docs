@@ -1,62 +1,101 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { getEntry } from "astro:content";
 
-// Five platforms, three lines each: install, get a free showcase model, run.
+// Six platforms, three lines each: install, get a free showcase model, run.
 // Every line is a copy-paste excerpt of the platform page it links to — that
-// page is the writer, this one quotes it. The performance line quotes
-// /sdk/performance: measured, unpaced, from the bytes a developer installs.
+// page is the writer, this one quotes it. The performance line is not typed
+// here at all: it is parsed at build time from /sdk/performance, the one
+// writer for every frame-rate figure. Edit the platform page, never this file.
+
+/** Rows of the /sdk/performance table, keyed by the Platform cell. */
+async function performanceRows() {
+  const perf = await getEntry("docs", "sdk/performance");
+  if (!perf?.body) throw new Error("sdk/index: cannot read src/content/docs/sdk/performance.md");
+  const rows = new Map<string, { hardware: string; expression2: string; essence2: string }>();
+  for (const line of perf.body.split("\n")) {
+    if (!line.startsWith("|")) continue;
+    const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+    if (cells.length !== 4 || cells[0] === "Platform" || /^-+:?$/.test(cells[0])) continue;
+    rows.set(cells[0], { hardware: cells[1], expression2: cells[2], essence2: cells[3] });
+  }
+  if (rows.size === 0) throw new Error("sdk/index: no rows parsed from the performance table");
+  return rows;
+}
+
+const fps = (cell: string) => (cell === "—" ? "not yet measured" : `${cell} fps`);
+
+/** "<hardware> — Expression 2 <n> fps · Essence 2 <n> fps", from the parsed table only. */
+function perfLine(rows: Awaited<ReturnType<typeof performanceRows>>, platform: string) {
+  const r = rows.get(platform);
+  if (!r) throw new Error(`sdk/index: /sdk/performance has no "${platform}" row`);
+  return `${r.hardware} — Expression 2 ${fps(r.expression2)} · Essence 2 ${fps(r.essence2)}`;
+}
+
+const rows = await performanceRows();
+
 const blocks = [
   {
     name: "macOS",
-    sub: "Apple Silicon · CLI 2.6.7",
+    sub: "Apple Silicon",
     href: "/sdk/macos",
+    perfKey: "macOS",
     install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
-    model: "MODEL=$(bithuman pull marmalade --manifest https://api.bithuman.ai/v1/models/showcase)",
-    run: "bithuman run \"$MODEL\"          # then open http://127.0.0.1:8088/",
-    perf: "Apple M4 — Expression 2 54 fps · Essence 2 2 fps",
+      model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
+      run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
+  },
+  {
+    name: "Linux",
+    sub: "x86_64 · the same CLI",
+    href: "/sdk/cli",
+    perfKey: "Linux",
+    install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
+    model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
+    run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
   },
   {
     name: "iOS",
     sub: "a physical iPhone or iPad · Xcode 26+",
     href: "/sdk/ios",
-    install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")   // product: Expression2",
+    perfKey: "iOS",
+    install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")\n// product: .product(name: \"Expression2\", package: \"homebrew-bithuman\")",
     model: "curl -fLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/{showcase/A08CCD3871.avatar,engines/expression-2/mac-arm64-1.0.0.engine}\"",
-    run: "# Xcode: Signing & Capabilities → your team → select your iPhone → Run",
-    perf: "iPhone 15 (A16) — Expression 2 107 fps · Essence 2 —",
+    run: "# In Xcode: Signing & Capabilities → your team → select your iPhone → Run",
   },
   {
     name: "Android",
     sub: "arm64-v8a · minSdk 26",
     href: "/sdk/android",
+    perfKey: "Android",
     install: "implementation(\"ai.bithuman:expression2-android:0.4.1\")",
-    model: "val model = Expression2ModelStore(context).fetch(\"A66GYD8664\")   // anonymous HTTPS",
+    model: "val model = Expression2ModelStore(context).fetch(\"A02HCY0444\")   // ~158 MB the first time; never on the main thread",
     run: "./gradlew :app:installDebug",
-    perf: "Galaxy S25+ (Snapdragon 8 Elite) — Expression 2 58 fps · Essence 2 —",
   },
   {
     name: "Web",
     sub: "any modern browser",
     href: "/sdk/web",
+    perfKey: "Web",
     install: "# nothing to install",
-    model: "CODE=A74NWD9723                  # or any code on /showcase",
-    run: "open \"https://www.bithuman.ai/$CODE?rendering_mode=browser\"",
-    perf: "Chrome on M4 — no in-tab figure yet; the hosted route plays at 20 / 25 fps",
+    model: "# A74NWD9723 — or any code on /showcase",
+    run: "open \"https://www.bithuman.ai/A74NWD9723?rendering_mode=browser\"",
   },
   {
-    name: "Python / Linux",
+    name: "Python",
     sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
     href: "/sdk/python",
+    perfKey: "Linux",
     install: "pip install \"bithuman[expression-2]\"",
     model: "curl -fsSLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}\"",
-    run: "BITHUMAN_API_SECRET=… python -c 'import bithuman; [print(f.shape) for f in bithuman.open(\"A23WJF0199.avatar\").render(\"demo_sample.wav\")]'",
-    perf: "x86 workstation (Ryzen Threadripper PRO 5955WX) — Expression 2 26 fps from Python, 34 from the CLI · Essence 2 1 fps",
+    code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"A23WJF0199.avatar\") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"demo_sample.wav\"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]",
+    run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
   },
-];
+].map((b) => ({ ...b, perf: perfLine(rows, b.perfKey) }));
 ---
 
 <Base
   title="SDK — bitHuman docs"
-  description="Run a bitHuman avatar on your device. Pick a platform — macOS, iOS, Android, Web, Python / Linux: install, get a free model, run."
+  description="Run a bitHuman avatar on your device. Pick a platform — macOS, Linux, iOS, Android, Web, Python: install, get a free model, run."
 >
   <section class="sdk">
     <div class="container">
@@ -68,6 +107,7 @@ const blocks = [
             <dl>
               <div><dt>Install</dt><dd><pre><code>{b.install}</code></pre></dd></div>
               <div><dt>Get a model</dt><dd><pre><code>{b.model}</code></pre></dd></div>
+              {b.code && <div><dt>Minimal code</dt><dd><pre><code>{b.code}</code></pre></dd></div>}
               <div><dt>Run</dt><dd><pre><code>{b.run}</code></pre></dd></div>
             </dl>
             <p class="guide"><a href={b.href}>Full guide →</a></p>

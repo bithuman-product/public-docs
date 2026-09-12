@@ -388,13 +388,13 @@ around the CLI:
 
 As of **2026-09-03** the `ai.bithuman` group on Maven Central publishes **three**
 artifacts, all resolvable anonymously. `expression2-android` has since moved to
-**`0.4.1`** and `essence2-android` to **`0.5.2`** — the versions below are
-Central's own `<release>`, re-read 2026-09-11:
+**`0.4.1`** and `essence2-android` to **`0.5.3`** — the versions below are
+Central's own `<release>`, re-read 2026-09-12:
 
 | Coordinate | Model | `minSdk` | ABI |
 |---|---|---|---|
 | `ai.bithuman:expression2-android:0.4.1` | **expression-2** | 26 | `arm64-v8a` |
-| `ai.bithuman:essence2-android:0.5.2` | **essence-2** | 29 | `arm64-v8a` |
+| `ai.bithuman:essence2-android:0.5.3` | **essence-2** | 29 | `arm64-v8a` |
 | `ai.bithuman:sdk:2.3.6` | **essence-1** | 29 | `arm64-v8a` |
 
 ★ **`arm64-v8a` is the only ABI any of them ships**, so none of the three loads
@@ -405,7 +405,7 @@ device or an `arm64-v8a` system image.
 **All three models the ruling puts on Android now resolve.** essence-2 was
 first published at 2026-09-03 03:39:15 UTC; this page said the day before that
 its coordinate "resolves to nothing", which was true then and is false now.
-`0.4.0` (2026-09-07) is the version to use — `0.2.0` and `0.3.0` still resolve
+`0.4.1` is the version to use — `0.2.0` and `0.3.0` still resolve
 and [should not be built against](/sdk/android#troubleshooting). The
 *artifact* name `libelevate-android` was never published and never will be —
 though the published essence-2 AAR does declare the Kotlin package

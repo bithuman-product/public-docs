@@ -13,54 +13,57 @@ label: "CLI"
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-What it prints when it succeeds:
+`bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux.
+
+One self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put
+it elsewhere), sha256-verified against the release. On Apple Silicon
+`brew install bithuman-product/bithuman/bithuman-cli` installs the same
+tarball. The current release is **`cli-v2.6.8`** (2026-09-12), the same version
+on both platforms — this page is the one place that names it:
 
 ```text
-install: version: cli-v2.6.7
-install: sha256 ok
-install: installed: libessence 3.1.3 ABI 7
+$ bithuman --version            # Linux x86_64
+libessence 3.1.3 ABI 7
+bithuman    2.6.8
+build       b8c58abecf01 x86_64-unknown-linux-gnu/release 2026-09-12T00:59:34Z 8aafb27ef668
+engine      linux 1.0.1 76d990a19674
 ```
 
-One self-contained binary on your `PATH`, sha256-verified against the release.
-On Apple Silicon `brew install bithuman-product/bithuman/bithuman-cli` installs
-the same tarball. Published for **macOS Apple Silicon** and **Linux x86_64**
-only; on an Intel Mac or a Linux ARM box the installer names the platform and
-exits 1 without downloading anything
-([exact output](/sdk/cli/reference#platforms-with-no-binary)).
+The first two lines are the same on macOS; the last two name your platform's
+build. Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
+Intel Mac or a Linux ARM box the installer names the platform and stops without
+downloading anything ([exact output](/sdk/cli/reference#platforms-with-no-binary)).
 
 ## Get a model
 
-Nothing to fetch for the first frame: `bithuman run` with no argument downloads
-the free **Wise Pup** avatar (`A23WJF0199`, an
-[Expression 2](/concepts/expression-2) identity) itself — the slice for this
-platform only, sha-verified. Twenty more showcase avatars download with no
-account:
+A showcase avatar downloads with no account — twenty to pick from — and your
+own agents come by code; sign in once for `render` and for your own agents:
 
 ```bash
-bithuman avatars                  # the showcase catalogue — slug, name, model
+bithuman login                    # opens your browser; stores a per-device key on this machine
+bithuman avatars                  # the showcase catalogue — slug, code, name, model
 bithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx
 ```
 
-Your own agent needs a sign-in once, then the same command:
-
-```bash
-bithuman login                    # opens your browser; the key lands in your OS keychain
-bithuman pull <YOUR_AGENT_CODE>   # prints the cached path; --model essence-2 picks a family
-```
+A showcase pull is anonymous — `login` is for `render` and for your own agents:
+`bithuman pull <YOUR_AGENT_CODE> --model essence-2` prints
+`~/.cache/bithuman/agents/<YOUR_AGENT_CODE>/<YOUR_AGENT_CODE>.imx` (`--model` picks a family
+when the agent has more than one). `bithuman run` with no argument fetches the
+free **Wise Pup** avatar (`A23WJF0199`, an [Expression 2](/concepts/expression-2)
+identity) itself.
 
 ## Minimal code
 
 Two operations — there is no third:
 
 ```bash
-bithuman run                                                        # 1. live avatar in your browser
-bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4  # 2. offline: audio in, MP4 out
+bithuman run "$(bithuman pull marmalade)"                                # 1. live avatar in your browser
+bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4   # 2. offline: audio in, MP4 out
 ```
 
-`run` takes a path too (`bithuman run "$(bithuman pull marmalade)"`); `render`
-needs a 16 kHz mono WAV — `curl -fsSLo speech.wav
+`render` needs a 16 kHz mono WAV — `curl -fsSLo speech.wav
 https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav`
-is one. `bithuman open <file>` prints what an avatar is before you render it.
+is one. `bithuman info <file>` prints what an avatar is before you render it.
 
 ## Run
 
@@ -69,52 +72,41 @@ a sign-in the avatar renders but does not answer; `bithuman login` adds the
 managed conversation brain, and [local mode](/sdk/cli/local-mode) runs the
 brain entirely on your own hardware instead — no LLM or TTS vendor.
 
-`run` and `render` differ on purpose: **`render` refuses without a credential**
-(exit 77, no output file) while a live `run` keeps rendering and prints
-`★ UNMETERED RENDER` if the meter cannot be reached, because a metering failure
-must never stop a live session. A self-hosted session is metered —
-[pricing](/guides/pricing) is the authority.
+`render` is a billed offline render, so it needs `bithuman login` or
+`BITHUMAN_API_SECRET` in the environment. A self-hosted session on your own
+agent is metered — [pricing](/guides/pricing) is the authority.
 
 ## Performance
 
-Expression 2 renders at **54 fps** on an Apple M4 and **34 fps** on an x86
-workstation; Essence 2 at **2** and **1** — unpaced, as fast as the engine can;
-avatars play at 20 and 25 fps. Until Essence 2 GPU rendering lands, plan an
-offline `render` for Essence 2 rather than a live CPU session. The first
-Essence 2 render on a machine fetches one shared audio encoder (~377 MB, once)
-into `~/.bithuman/engines/essence-2/`.
-
-Every platform side by side: [Performance](/sdk/performance).
-
-## What renders locally, and where
-
-| Platform | Expression 2 | Essence 2 | Essence 1 |
-|---|---|---|---|
-| **macOS Apple Silicon** | yes | yes (2.6.1+) | live only |
-| **Linux x86_64** | yes | yes (2.6.1+) | live only |
-
-Those are the only two targets with a published binary. `render` on an Essence 1
-avatar exits 70 — use the [Video API](/api/video) for that family;
-[Expression 1](/concepts/expression-1) is GPU-only by design and serves through
-the [cloud API](/api/overview).
+Measured frame rates for every platform are on the
+[performance page](/sdk/performance).
 
 ## Troubleshooting
 
 | You see | It means | Do this |
 |---|---|---|
-| the installer names your platform and exits 1 | no binary for an Intel Mac or Linux ARM | the [web](/sdk/web), the [cloud API](/api/overview), or the Linux x86_64 binary in a container |
-| `render` exits 77, no output file | no credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
-| `pull <CODE>` exits 77 | your agent code, but no sign-in | `bithuman login`, then pull again |
-| `pull <CODE>` exits 66 with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman avatars` lists the public ones |
-| `pull <CODE>` exits 66 with `409 MODEL_NOT_GENERATED` | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), or `--model` the family it was created with |
-| `pull <CODE>` exits 66 with `MODEL_ARTIFACT_NOT_READY` | trained, not yet published to the download store | poll: run the same `pull` again in a minute |
+| the installer names your platform and stops | no binary for an Intel Mac or Linux ARM | the [web](/sdk/web), the [cloud API](/api/overview), or the Linux x86_64 binary in a container |
+| `bithuman: command not found` after the install | `~/.local/bin` is not on your `PATH` | `export PATH="$HOME/.local/bin:$PATH"` — the installer prints the same line |
+| `render` refuses with `NOT_SIGNED_IN`, no output file | no credential — `render` is billed | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
+| `pull <CODE>` refuses without a sign-in | your own agent code needs a credential; a showcase slug never does | `bithuman login`, then pull again |
+| `pull <CODE>` fails with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman avatars` lists the public ones |
+| `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), or `--model` the family it was created with |
+| `pull <CODE>` fails with `MODEL_ARTIFACT_NOT_READY` | trained, not yet published to the download store | run the same `pull` again in a minute |
 | `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman avatars` and copy a slug from it |
-| `render` exits 70 on an `.imx` | an Essence 1 avatar — the CLI renders that family live only | `bithuman run <file>`, or the [Video API](/api/video) |
-| `bithuman doctor` exits 1 | no credential and no brain configured yet — the check working | `bithuman login`; `run`, `pull` and `render` of a showcase file never needed it |
+| the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
+| `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` and `run` never needed it |
 
-Every failure prints one JSON object to stderr and a
-[stable exit code](/sdk/cli/reference#exit-codes); branch on the code, not the
-text.
+Every failure prints one JSON object to stderr with a stable code — the
+[reference](/sdk/cli/reference#exit-codes) lists them.
+
+### What renders locally, and where
+
+| Family | macOS Apple Silicon and Linux x86_64 |
+|---|---|
+| [Expression 2](/concepts/expression-2) (`<code>.avatar` or `.imx` — the same container) | `run` and `render` |
+| [Essence 2](/concepts/essence-2) (`<code>.imx`) | `run` and `render` |
+| [Essence 1](/concepts/essence-1) (`<code>.imx`) | `run` only — `render` refuses it; use the [Python SDK](/sdk/python) or the [Video API](/api/video) for a file |
+| [Expression 1](/concepts/expression-1) | neither — GPU-only by design, served through the [cloud API](/api/overview) |
 
 ## See also
 

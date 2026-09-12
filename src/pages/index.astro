@@ -20,7 +20,7 @@ const platforms = [
   { label: "Android", href: "/sdk/android" },
   { label: "iOS app, end to end", href: "/examples/swift-ios-expression2" },
   { label: "Android app, end to end", href: "/examples/kotlin-android-hello" },
-  { label: "macOS", href: "/sdk/ios" },
+  { label: "macOS", href: "/sdk/macos" },
   { label: "Python", href: "/sdk/python" },
   { label: "Browser", href: "/sdk/web" },
   { label: "CLI", href: "/sdk/cli" },
@@ -41,37 +41,33 @@ const stats = [
   { v: "From 1 credit/min", l: "self-hosted, air-gap ready" },
 ];
 
+// Each tab quotes the platform page it stands for — /sdk/cli, /sdk/python,
+// /sdk/android, /sdk/ios — line for line. The Kotlin tab is held to
+// sdk/android.md byte for byte by scripts/check-home-quickstart-kotlin.mjs.
 const quickstart = [
   { label: "CLI", lang: "bash", code: `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-bithuman login                  # opens your browser, signs you in
-bithuman pull modern-court-jester
-bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-# -> a live agent at http://127.0.0.1:8088` },
-  { label: "Python", lang: "python", code: `import os
-from bithuman import AsyncBithuman
+bithuman login                    # opens your browser; stores a per-device key on this machine
+bithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx
+bithuman run "$(bithuman pull marmalade)"                                # live avatar in your browser` },
+  { label: "Python", lang: "python", code: `# pip install "bithuman[expression-2]"
+# hello.py
+import bithuman
 
-avatar = await AsyncBithuman.create(model_path="agent.imx",
-                                    api_secret=os.environ["BITHUMAN_API_SECRET"])
-await avatar.push_audio(pcm_bytes, 16000)   # 16 kHz int16 PCM (ends the utterance)
-async for frame in avatar.run():
-    render(frame.bgr_image)        # lifelike animated face, in realtime` },
+with bithuman.open("A23WJF0199.avatar") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call
+    for image in avatar.render("demo_sample.wav"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate
+        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]` },
   { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.1")
-// No account, no API key, no credits — the model store fetches anonymously.
-// arm64-v8a only — an x86_64 emulator installs, then throws UnsatisfiedLinkError.
-// Verbatim from /sdk/android — see scripts/check-home-quickstart-kotlin.mjs.
 import ai.bithuman.expression2.Expression2Avatar
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
 import android.content.Context
 import android.graphics.Bitmap
 
-/** [pcm16k] is 16 kHz MONO float32 in [-1, 1] — one float per sample, not ShortArray. */
+/** [pcm16k] is 16 kHz mono float32 in [-1, 1] — one float per sample, not ShortArray. */
 fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
-    // Blocks on the network the first time (~158 MB). Never on the main thread.
-    val model = Expression2ModelStore(context).fetch(agentCode)   // anonymous HTTPS
+    // Downloads the model the first time (~158 MB). Never on the main thread.
+    val model = Expression2ModelStore(context).fetch(agentCode)
 
-    // 0.4.1 defaults: the Hexagon decoder when the handset has one, 6 threads — 58 fps on a
-    // Galaxy S25+; a refused graph falls back to the CPU instead of throwing.
     Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
         val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
         avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
@@ -82,13 +78,23 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
         }
     }
 }` },
-  { label: "Swift", lang: "swift", code: `import bitHumanKit
+  { label: "Swift", lang: "swift", code: `// Package.swift: .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
+import Expression2
 
-let runtime = try Bithuman.create(modelPath: imxURL).bithuman
-try await runtime.start()
-try await runtime.pushAudio(audio24k: pcm24k, audio16k: pcm16k)
-while let chunk = runtime.tryDequeueChunk() {
-    chunk.frames.forEach(view.render)   // on-device, realtime
+let engine = try Expression2Engine.create(modelPath: avatarDirectory,        // the unpacked .avatar
+                                          sharedEngineDir: sharedEngineDirectory)
+engine.feed(samples)                       // [Float] PCM, 16 kHz mono
+engine.flushTail()                         // at the end of an utterance
+
+// Generation is asynchronous: pull() returns nil until a chunk lands, so poll.
+var idleTicks = 0
+while idleTicks < 100 {                    // 100 x 50 ms with nothing = done
+    var got = false
+    while let (frame, _) = engine.pull() { // frame: [UInt8], BGR, engine.width * engine.height * 3
+        got = true
+        show(frame)
+    }
+    if got { idleTicks = 0 } else { idleTicks += 1; try await Task.sleep(nanoseconds: 50_000_000) }
 }` },
 ];
 
@@ -97,8 +103,8 @@ while let chunk = runtime.tryDequeueChunk() {
 // the /sdk hub linked either one, so a reader who came for a phone app could
 // not reach the finished thing from anywhere on the walk.
 const examples = [
-  { t: "Android app, end to end (Kotlin)", d: "The whole project, seven files — no account, no API key, no credits. 117 frames on a Galaxy S25+.", href: "/examples/kotlin-android-hello" },
-  { t: "iOS app, end to end (Swift)", d: "The whole SwiftUI app — 149 frames at 21.8 fps on an iPhone 15. Needs an Apple team, a key and an agent code first.", href: "/examples/swift-ios-expression2" },
+  { t: "Android app, end to end (Kotlin)", d: "The whole project — no account, no API key, no credits; a frame on an arm64 handset.", href: "/examples/kotlin-android-hello" },
+  { t: "iOS app, end to end (Swift)", d: "The whole SwiftUI app — a public showcase identity, no account and no key. Needs Xcode 26+, an Apple Developer team and a physical iPhone.", href: "/examples/swift-ios-expression2" },
   { t: "Hello, avatar (Python)", d: "Stream audio and render frames in ~20 lines.", href: "/sdk/python" },
   { t: "Voice agent + avatar", d: "A real-time conversational agent with a live face.", href: "/examples/ai-conversation" },
   { t: "REST in any language", d: "Generate and drive an agent over plain HTTP.", href: "/examples/rest-hello" },
@@ -204,7 +210,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Swift, or plain REST. <strong>Shipping a mobile app? Android is the free rail.</strong> The Kotlin tab is <code>expression-2</code> on the <a href="/sdk/android">Android SDK</a> (beta), and it renders with <strong>no account, no API key and no credits</strong> — the model store fetches a published identity over anonymous HTTPS. Measured 2026-09-09: 213 frames on a Galaxy S25+, about three minutes from an empty directory (<a href="/examples/kotlin-android-hello">the whole project</a>). <a href="/sdk/ios">iOS</a> (preview, <a href="/examples/swift-ios-expression2">the whole app</a>) is free too — it renders a public showcase identity with no account, no API key and no credits; what it asks for is Apple's, an Apple Developer team and a physical device. Both floors are hard: Android is arm64-v8a only, and the Apple Essence engines need an iPhone 16 Pro. <a href="/sdk">What each phone rail needs →</a></p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift — each tab is the first snippet of its platform page. <strong>Shipping a mobile app? Android is the free rail.</strong> The Kotlin tab is <code>expression-2</code> on the <a href="/sdk/android">Android SDK</a>, and it renders with <strong>no account, no API key and no credits</strong> — the model store fetches a published identity over anonymous HTTPS (<a href="/examples/kotlin-android-hello">the whole project</a>). <a href="/sdk/ios">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>) is free too — it renders a public showcase identity with no account, no API key and no credits; it needs Xcode 26+, an Apple Developer team and a physical iPhone. Android is arm64-v8a only. <a href="/sdk">What each platform needs →</a></p>
         <Button href="/start">Start here →</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>

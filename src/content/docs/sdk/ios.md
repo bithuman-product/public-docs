@@ -9,6 +9,9 @@ label: "iOS & iPadOS"
 
 ## Install
 
+You need Xcode 26+, an Apple Developer team and a physical iPhone or iPad —
+the Simulator cannot run this engine.
+
 In Xcode, *File → Add Package Dependencies…* and paste the URL, or in
 `Package.swift`:
 
@@ -17,16 +20,9 @@ In Xcode, *File → Add Package Dependencies…* and paste the URL, or in
 // product: .product(name: "Expression2", package: "homebrew-bithuman")
 ```
 
-`from:` is a floor — it resolves the newest 2.x tag. Pre-compiled xcframeworks,
-every dependency statically linked, zero transitive packages. You need
-**Xcode 26+**, an **Apple Developer team** and a **physical iPhone or iPad** —
-the Simulator cannot run this engine. `Expression2` is the
-[Expression 2](/concepts/expression-2) engine alone (`ios-arm64`, `macos-arm64`).
-The package's other products are not this page: `bitHumanKit` (an on-device
-voice agent; iPhone 16 Pro / M3 Mac or later) and `Essence2` (the
-[Essence 2](/concepts/essence-2) engine — builds, renders on no iPhone today).
-Never take `Expression2` and `Essence2` in one app: 116 duplicate symbols at
-the device link.
+`from:` is a floor — it resolves the newest 2.x tag. The `Expression2` product
+is the [Expression 2](/concepts/expression-2) engine as a pre-compiled
+xcframework (`ios-arm64`, `macos-arm64`) with no transitive packages.
 
 ## Get a model
 
@@ -55,8 +51,7 @@ let engine = try Expression2Engine.create(modelPath: avatarDirectory,        // 
 engine.feed(samples)                       // [Float] PCM, 16 kHz mono
 engine.flushTail()                         // at the end of an utterance
 
-// Generation is ASYNCHRONOUS: pull() returns nil until a chunk lands. A bare
-// `while let` on the line after feed() drains nothing and your view stays empty. Poll.
+// Generation is asynchronous: pull() returns nil until a chunk lands, so poll.
 var idleTicks = 0
 while idleTicks < 100 {                    // 100 x 50 ms with nothing = done
     var got = false
@@ -74,48 +69,29 @@ Every file of a working app — `Info.plist`, the Xcode settings, the whole of
 
 ## Run
 
-Signing & Capabilities → your team → select your iPhone → **Run**. Automatic
-signing creates a development profile for a paired, trusted phone the first
-time. From the command line the working shape is `CODE_SIGN_STYLE=Automatic
-DEVELOPMENT_TEAM=<team> xcodebuild … -allowProvisioningUpdates`, run from a
-logged-in GUI session (over SSH the keychain reports 0 signing identities and
-the install fails with `0xe800801c`). `Info.plist` needs
-`NSMicrophoneUsageDescription` to hear the user. Only a **metered render with
-your own key** needs `BITHUMAN_API_KEY` (the Swift SDK's spelling of
-`BITHUMAN_API_SECRET` — same value); the showcase identity above renders
-without one. A self-hosted session is metered — [pricing](/guides/pricing) is
-the authority.
+In Xcode: *Signing & Capabilities* → your team → select your iPhone → **Run**.
+Automatic signing creates a development profile for a paired, trusted phone
+the first time. `Info.plist` needs `NSMicrophoneUsageDescription` to hear the
+user. The showcase identity above renders without a key; a render of your own
+agent is metered — [pricing](/guides/pricing) is the authority.
 
 ## Performance
 
-Unpaced (frames produced as fast as the engine can, 100 % talk duty, one
-process), through the published `Expression2` product:
-
-| Hardware | Model | fps (unpaced) | Measured |
-|---|---|---:|---|
-| iPhone 15 (A16), iOS 26.6.1, Xcode 26.3 | Expression 2, `Expression2` 2.11.x | **107** | 2026-09-09 — 36,021 frames, 1,801.6 s of speech in 338.0 s; worst 10 s window 99.9; first frame 263 ms after `feed()`; CoreML placed the work on the Neural Engine |
-| Apple Silicon Mac | Expression 2, the same package (`macos-arm64`) | see [macOS](/sdk/macos#performance) | the CLI's CoreML figure on the same engine |
-| iPhone 16 Pro or later | Essence 2, `Essence2` | — | builds; no per-identity bundle to open on a phone today |
-
-The model plays at 20 fps. `Expression2` carries no device floor — it has
-rendered on an iPhone 15, two generations below the `Essence2` / `bitHumanKit`
-floor (iPhone 16 Pro or later, A18 Pro). Every platform side by side:
-[Performance](/sdk/performance).
+Measured frame rates for every platform are on the
+[performance page](/sdk/performance).
 
 ## Troubleshooting
 
 | You see | It means | Do this |
 |---|---|---|
+| duplicate symbols at the device link, while a Simulator build is green | `Expression2` and `Essence2` in one target | take one of them |
 | the app runs, no error, no avatar; `pull()` keeps returning `nil` | you drained synchronously on the line after `feed()` — frames arrive asynchronously | poll as in the snippet above |
-| `product 'Expression' … not found in package 'homebrew-bithuman'` | the older products are not published; `swift package resolve` does not check product names, `swift build` does | name `Expression2`, `bitHumanKit` or `Essence2` |
-| 116 duplicate symbols at the device link, Simulator green | `Expression2` and `Essence2` in one app | take one of them |
-| `Provisioning profile "…" is Xcode managed, but signing settings require a manually managed profile` | a `PROVISIONING_PROFILE_SPECIFIER` on an automatic profile | `CODE_SIGN_STYLE=Automatic` + `DEVELOPMENT_TEAM` + `-allowProvisioningUpdates` |
-| `0xe800801c (No code signature found.)` at install | built over SSH — the session's keychain has no signing identity | build from a logged-in GUI session |
-| `unsupported hardware — iPhone15,4 detected … requires iPhone 16 Pro or later` | the `Essence2` / `bitHumanKit` floor, checked at warm-up; there is no override | `Expression2` on that phone, or an A18 Pro / M-series device |
-| mic or speech start fails silently | missing `Info.plist` privacy strings; the OS caches the denial | add `NSMicrophoneUsageDescription` (and `NSSpeechRecognitionUsageDescription` for `bitHumanKit`) |
+| `product 'Expression' … not found in package 'homebrew-bithuman'` | an older product name; `swift package resolve` does not check product names, `swift build` does | name the product `Expression2` |
+| building from the command line: a *Xcode managed … manually managed profile* error, or `0xe800801c (No code signature found.)` at install | signing needs an automatic profile and a keychain with your identity — over SSH the keychain has none | from a logged-in GUI session run `CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=<team> xcodebuild … -allowProvisioningUpdates` |
+| mic or speech start fails silently | missing `Info.plist` privacy strings; the OS caches the denial | add `NSMicrophoneUsageDescription` |
 | avatar disappears on re-render | a fresh renderer view on every SwiftUI update | return the same instance from `makeUIView` and `updateUIView` |
 | `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not public | check the code under [your agents](/api/agents) or on the [showcase](/showcase) |
 | `409 MODEL_NOT_GENERATED` from the download | the agent has no Expression 2 model yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll |
 | `MODEL_ARTIFACT_NOT_READY` from the download | trained, not yet published to the download store | poll the same URL; it clears on its own |
-| `Essence2` refuses the file you downloaded: *need a directory with meta.json {"format":"elevatedir-v*" \| "essence2-light-dir-v*"}* | the Essence 2 engine opens an unpacked bundle directory, not the single `.imx` the download door serves; no such bundle is published for a phone today | use `Expression2`; Essence 2 renders through the [cloud API](/api/overview) |
-| a metered render refuses | `BITHUMAN_API_KEY` unset in the app's environment | set it — the Swift SDK reads that name, not `BITHUMAN_API_SECRET` |
+| `Essence2` refuses the file you downloaded: *need a directory with meta.json {"format":"elevatedir-v*" \| "essence2-light-dir-v*"}* | the package's `Essence2` product opens an unpacked bundle directory, not the single `.imx` the download endpoint serves; no such bundle is published for a phone (the quoted format names are legacy names kept for compatibility) | use `Expression2` on the phone; Essence 2 renders through the [cloud API](/api/overview) |
+| a metered render refuses | `BITHUMAN_API_KEY` unset in the app's environment | set it — the Swift SDK reads that name (same value as `BITHUMAN_API_SECRET`) |

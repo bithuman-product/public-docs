@@ -28,7 +28,7 @@
 // WHAT IT CHECKS
 //   1. src/pages/index.astro's `quickstart` array has a tab labelled "Kotlin".
 //   2. That tab's code CONTAINS, as a contiguous verbatim substring, the whole
-//      ```kotlin fence under "### Calling it — audio in, frames out" in
+//      ```kotlin fence under "## Minimal code" in
 //      src/content/docs/sdk/android.md — the measured expression-2 loop.
 //   3. The tab does not name a coordinate the Android page says cannot render
 //      on a device (`ai.bithuman:sdk:` — essence-1) or the essence-2 store,
@@ -48,7 +48,7 @@ const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const HOME = join(ROOT, "src/pages/index.astro");
 const ANDROID = join(ROOT, "src/content/docs/sdk/android.md");
 
-const HEADING = "### Calling it — audio in, frames out";
+const HEADING = "## Minimal code";
 /** Coordinates/APIs the Android page documents as unable to render for a reader. */
 const FORBIDDEN = [
   ["ai.bithuman:sdk:", "essence-1 — resolves and compiles, but cannot authenticate on a device"],
@@ -102,7 +102,7 @@ function grade(astro, androidMd) {
 // ── firing control ──────────────────────────────────────────────────────────
 if (process.argv.includes("--selftest")) {
   const FENCE = "val model = Expression2ModelStore(context).fetch(agentCode)";
-  const MD = `### Calling it — audio in, frames out\n\n\`\`\`kotlin\n${FENCE}\n\`\`\`\n`;
+  const MD = `## Minimal code\n\n\`\`\`kotlin\n${FENCE}\n\`\`\`\n`;
   const home = (code) => `const quickstart = [\n  { label: "Kotlin", lang: "kotlin", code: \`${code}\` },\n];\n`;
   const arms = [
     ["good: tab quotes the fence verbatim", home(`// x\n${FENCE}`), MD, false],

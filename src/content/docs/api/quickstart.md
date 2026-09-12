@@ -124,43 +124,34 @@ See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
 ## Generate your own agent (optional)
 
 Prefer a custom face and persona? Generation is asynchronous — it returns an
-`agent_id` immediately and takes a few minutes for the default `expression` +
-`v1` engine (Expression 1, 250 credits). Select an engine with `model`
-(`expression` default, or `essence`) plus `version` (`v1` default, or `v2`) —
-`essence` + `v2` → Essence 2, `expression` + `v2` → Expression 2; the full
-engine names (`essence-1` … `expression-2`) still work directly too. The
+`agent_id` immediately. Pick the model with `model` (`expression` or
+`essence`) and `version` (`v1` or `v2`): `essence` + `v2` is Essence 2,
+`expression` + `v2` is Expression 2. The
 [second-generation models](/concepts/models-v2) train a real per-identity
-model, so they take roughly 45 minutes to 1.5 hours and cost more — 500 credits for
-Essence 2, 2000 for Expression 2; see
-[per-model creation](/api/agents#model-specific-inputs-and-creation-times).
-Creation is image-only — a seamless 10-second identity video is generated
-internally:
+model, so they take longer and cost more — see
+[per-model creation](/api/agents#model-specific-inputs-and-creation-times) and
+[pricing](/guides/pricing). Creation is image-only: upload your own portrait —
+a URL must be publicly fetchable, and it is downloaded after the request
+returns, so poll status rather than reading a `200` as acceptance:
 
 ```bash
+export PORTRAIT_URL=https://your-site.example/portrait.jpg   # a public URL to your portrait
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
-  -d '{
-    "prompt": "You are a friendly fitness coach.",
-    "image": "https://example.com/headshot.jpg",
-    "model": "expression",
-    "version": "v2",
-    "aspect_ratio": "9:16",
-    "transparency": false
-  }'
+  -d @- <<EOF
+{
+  "prompt": "You are a friendly fitness coach.",
+  "image": "$PORTRAIT_URL",
+  "model": "expression",
+  "version": "v2",
+  "aspect_ratio": "9:16",
+  "transparency": false
+}
+EOF
 ```
 
-> **Note — `image` must be publicly fetchable, and this is not checked at
-> submit time.** The `https://example.com/…` URLs above are placeholders.
-> Posting one verbatim returns `HTTP 200` with
-> `{"success": true, "status": "processing"}`, and the job only fails seconds
-> later with `Image processing failed: Failed to download after 3 attempts:
-> 404`. The credits are charged at submit and **automatically refunded** on that
-> failure (verified 2026-07-28: `-500` then `+500` within 4 s), so nothing is
-> lost — but a `200` here is not confirmation that your image was accepted. Poll
-> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) before assuming
-> the creation started.
-
+`PORTRAIT_URL` is the one value you supply — any publicly fetchable image of a face.
 
 Then poll [`GET /v1/agent/status/{agent_id}`](/api/agents) until `ready` and
 embed it exactly like step 2. See [Agents](/api/agents) for the full lifecycle.

@@ -71,12 +71,12 @@ Each artifact declares the engine ABI it builds against. Artifacts with a **matc
 
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | 3.1.2 | PyPI | v7 |
+| Python SDK (`bithuman`) | 3.1.3 | PyPI | v7 |
 | Swift SDK (`bitHumanKit`) | 2.4.0 (the package pin is on [Install](/sdk/ios#install)) | SwiftPM | v7 |
-| Swift SDK (`Expression2`) | 2.6.0 | SwiftPM | — (CoreML, no engine ABI) |
+| Swift SDK (`Expression2`) | 2.6.1 | SwiftPM | — (CoreML, no engine ABI) |
 | Swift SDK (`Essence2`) | engine release `essence2-v1.5.1` (tap `v2.12.1`) | SwiftPM | — (C interface; ONNX Runtime 1.26.0) |
 | Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
-| bitHuman CLI | 2.6.7 (Homebrew / universal installer — macOS arm64 and Linux x86_64, both with the Essence 2 runtime inside) | Homebrew · universal installer | v7 |
+| bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 and Linux x86_64, both with the Essence 2 runtime inside | Homebrew · universal installer | v7 |
 
 ### Engine ABI history
 
@@ -95,14 +95,14 @@ Each artifact declares the engine ABI it builds against. Artifacts with a **matc
 
 ## Platform / device matrix
 
-### What ships in 2.3
+### What ships
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
-| **macOS arm64 (M-series)** | Homebrew + `bithuman-cli` wheel | `bithuman` (3.10–3.14) | SwiftPM |
+| **macOS arm64 (M-series)** | Homebrew or the universal installer | `bithuman` (3.10–3.14) | SwiftPM |
 | **macOS x86_64 (Intel)** | Pending | Pending (1.x was last) | — |
-| **Linux x86_64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — |
-| **Linux aarch64** | Tarball + `bithuman-cli` wheel | `bithuman` (manylinux) | — |
+| **Linux x86_64** | Universal installer (tarball) | `bithuman` (manylinux) | — |
+| **Linux aarch64** | No current binary (`cli-v2.3.27` was the last) | `bithuman` (manylinux) | — |
 | **Windows** | Not shipping (use WSL2) | Not shipping (1.9.0 was last) | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
@@ -138,10 +138,10 @@ at session launch; the device/runtime matrix is:
 
 | Runtime | `essence-2` | `expression-2` |
 |---|---|---|
-| Cloud GPU | Real-time (~25 fps) | Real-time (20 fps) |
+| Cloud GPU | Real-time | Real-time |
 | Cloud Apple Silicon | Real-time | Real-time |
 | Cloud CPU | Real-time | Real-time |
-| Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290) (~22–31 FPS on 16 cores); [CLI local rendering](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS arm64 and Linux x86_64 (2.6.1); live streaming via cloud | [CLI local rendering](/sdk/cli#what-renders-locally-and-where) (macOS arm64, Linux x86_64) |
+| Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-on-your-own-cpu); [CLI local rendering](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS arm64 and Linux x86_64 (2.6.1); live streaming via cloud | [CLI local rendering](/sdk/cli#what-renders-locally-and-where) (macOS arm64, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0) — a C interface, builds for iOS and macOS; no in-app model download route yet | [Swift SDK](/sdk/ios) `Expression2`, v2.5.0+ — `macos-arm64` **and** `ios-arm64`, both proven on hardware, but engine only, [no model bundle published](/sdk/ios#minimal-code) |
 | Browser-local | Rolling out — `?render=local`, [4 live identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent). WASM renderer; WebGPU drives the speech encoder, and [without an adapter local lip-sync is off](/guides/browser-webgpu#why-there-is-no-wasm-fallback-for-lip-sync--the-number) | Rolling out — `?render=local`, [79 published identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent) (LiteRT.js / WebGPU, WASM fallback) |
 

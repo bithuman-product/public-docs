@@ -10,7 +10,41 @@ order: 1
 
 ## September 2026
 
+### `bithuman render` is about 1.5x faster on Apple Silicon and 1.3x on Linux (2026-09-12)
+
+CLI `cli-v2.6.8`, macOS arm64 and Linux x86_64 built from one commit, published
+2026-09-12. The version installed before it is 2.6.6 — `cli-v2.6.7` was built
+and withdrawn before it was ever published, so the entry below first reaches
+developers here. From the release notes:
+
+- **`render` was opening your avatar on the wrong render model.** `bithuman
+  render` and `bithuman run` are the same engine on the same avatar, and they
+  asked it for different render models: `run` the one-frame model, `render` the
+  multi-frame one driven a frame at a time, which is the shape it is worst at.
+  The model is now chosen once, in one place, for both commands, and a check
+  outside both refuses any future build that reintroduces the split. Against
+  2.6.6, end to end, `render` is about **1.5x faster on Apple Silicon** and
+  about **1.3x faster on Linux**; the delivered MP4 is bit-identical.
+- **Your very first render is slower, and only your first** — it fetches the
+  shared audio model and builds the accelerator's compiled-model cache. On a
+  short clip most of the Mac wall is one-time work, so longer clips converge
+  on the faster render-loop rate.
+- **The last CPU step of the renderer moved to the GPU on Macs.** Writing each
+  face region back into the delivered frame now runs as a Metal compute pass,
+  byte-exact against the CPU path, with the on/off switch deleted rather than
+  defaulted.
+- **What did not change:** the bundled engine core stays at 3.1.3 (ABI 7), so
+  there is no new Python wheel; `bithuman render` still refuses `essence-1`
+  avatars on both platforms, naming the Python package to use instead. The
+  macOS tarball is Developer ID signed and notarized.
+
+`cli-v2.6.6` stays resolvable; a `BITHUMAN_VERSION=cli-v2.6.6` pin keeps
+working. Measured frame rates are on the [performance page](/sdk/performance).
+
 ### The CLI's Essence 2 engine is BUILT again, and its ffmpeg libraries travel with it (2026-09-11)
+
+> `cli-v2.6.7` was built and withdrawn before it was published; everything in
+> this entry ships in `cli-v2.6.8` (above).
 
 CLI `cli-v2.6.7`, macOS arm64 and Linux x86_64 from one commit
 (`66613942f5f0`). The essence engine core moves to **3.1.3** (ABI 7).
@@ -648,7 +682,7 @@ its metering**: a valid `BITHUMAN_API_SECRET` is required, sessions bill at
 the self-hosted rate (2 credits/min), and without a key the renderer is
 fail-closed — zero frames. Live streaming from your own server still runs
 through the cloud. Quickstart:
-[Self-hosted → Essence 2](/guides/deploy-self-hosted#essence-2-self-hosted--cpu-offline-rendering-sdk-290).
+[Self-hosted → Essence 2](/guides/deploy-self-hosted#essence-2-on-your-own-cpu).
 
 ## July 2026
 
