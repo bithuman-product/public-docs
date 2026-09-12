@@ -239,6 +239,25 @@ const CARRIERS = [
   // is the blanket exclusion this file refuses to write.
   { why: "`[selfhost-meter] metering armed for identity=` — the line the shipped self-host meter prints, grepped verbatim by a developer",
     re: /\[selfhost-meter\][^\n]*metering armed for identity=/ },
+  // ★A QUERY PARAMETER IS SPELLED BY THE CALLER, SO ITS NAME IS FROZEN — and
+  // the fact that this one is spelled `plane` is a finding, not a preference.
+  // `GET /v1/agent/{code}/model/download?plane=android` shipped 2026-09-11 to
+  // stop an Android handset being handed the browser's bytes for the twelve
+  // member names the two sets share. A developer has to TYPE `plane=`, so the
+  // PARAMETER is a carrier and this guard must not remove it.
+  // ★The carrier is deliberately narrow: `- name: plane` and a backticked
+  // `plane=` ONLY. It does NOT cover the English word, so the prose around the
+  // parameter is still graded and still has to say "member set" or "the Android
+  // set" — the same split this file's own closing note draws between a frozen
+  // slug and the gloss around it. A blanket word match here would read green
+  // over exactly the subject this rule exists for.
+  // ★AND THE REAL FIX IS UPSTREAM, where this guard cannot reach: the public
+  // API took an internal word as a customer-visible parameter name. Renaming it
+  // is a breaking change to a shipped Android runtime, so it is an owner call,
+  // not a docs one. Recorded here so the next reader finds the reason rather
+  // than the exception.
+  { why: "`?plane=` — the query parameter on GET /v1/agent/{code}/model/download that a browser or Android caller spells by name",
+    re: /- name: plane\b|`plane=`/ },
   // ★NOT ADDED, deliberately, and this is a finding rather than an omission:
   // the shipped essence-2 browser artifact names its two graphs `m4b` and
   // `m3c2` in a path a developer fetches. Those SLUGS are frozen and are

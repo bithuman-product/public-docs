@@ -1054,21 +1054,20 @@ paths:
             type: string
             enum: [android, web]
           description: >-
-            WHICH plane's member set `?member=` names. `essence-2` publishes
-            two — a browser set and an Android set — and they overlap in
-            twelve names (`manifest.json`, the a2x members, the four tessera
-            slots, `mask_512.u8`, `M.f32`). A browser asking for
+            Which member set `?member=` names. `essence-2` publishes two — one
+            for browsers and one for Android — and twelve names appear in both
+            of them, `manifest.json` among them. A browser asking for
             `manifest.json` and a handset asking for `manifest.json` want
-            different objects, so for those names the request has to say
-            which. Only meaningful alongside `member=`: the container has one
-            form, so `plane=` without `member=` returns
-            `400 VALIDATION_ERROR`, as does any value not listed here.
-            **You can usually omit it.** A member that exists in exactly one
-            plane's set names that plane by itself — which is why the Android
-            runtime's first call, `member=android_store.v1.json`, resolves
-            with no `plane=` at all. When the name is ambiguous and nothing
-            says otherwise the request lands on `web`, so every caller written
-            before this parameter existed behaves exactly as it did.
+            different files, so for those twelve the request has to say which
+            set it means. Only meaningful alongside `member=`: the container
+            itself has one form, so `plane=` on its own returns
+            `400 VALIDATION_ERROR`, as does any value not listed above.
+            **You can usually leave it out.** A member that appears in only one
+            of the two sets identifies itself — which is why the Android
+            runtime's first call, `member=android_store.v1.json`, resolves with
+            no `plane=` at all. When a name appears in both and the request says
+            nothing, it resolves to the browser set, so every caller written
+            before this parameter behaves exactly as it did.
           example: "android"
         - name: redirect
           in: query
