@@ -9,7 +9,7 @@ label: "Performance"
 
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
-| macOS | Apple M4 | 54 | 2 |
+| macOS | Apple M4 | 54 | 19 |
 | iOS | iPhone 15 | 118 | — |
 | Android | Galaxy S25+ | 58 | — |
 | Web | Chrome on M4 | 30 | — |
