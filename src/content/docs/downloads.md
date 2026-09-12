@@ -27,7 +27,7 @@ measured performance and the exact refusals with their fixes. The
 
 ## The two packages
 
-The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from the universal installer or from Homebrew — **not** from PyPI. The `bithuman-cli` wheel that briefly carried it is no longer published; `pip install bithuman-cli` finds no distribution.
+The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from the universal installer or from Homebrew — **not** from PyPI. The `bithuman-cli` wheel is **not** how you install the CLI and never should be. It does exist on PyPI — the CLI's own first-run setup installs it to build the agent worker's environment — but installing it yourself gets you that helper, not the `bithuman` command.
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
