@@ -12,7 +12,7 @@ label: "Performance"
 | macOS | Apple M4 | 54 | 2 |
 | iOS | iPhone 15 | 118 | — |
 | Android | Galaxy S25+ | 58 | — |
-| Web | Chrome on M4 | — | — |
+| Web | Chrome on M4 | 30 | — |
 | Linux | x86 workstation | 37 | 1 |
 
 Hyper-realtime = 40 fps or more, unpaced (avatars play at 20–25 fps).

@@ -61,8 +61,13 @@ bundle is `https://models.bithuman.ai/web/libelevate-web-v0.1.0/manifest.json`
 (every file with a sha256; `index.js` documents `createAvatar`; the path keeps
 a [retired name](/concepts/models-v2)), served with
 `Cross-Origin-Opener-Policy: same-origin` and
-`Cross-Origin-Embedder-Policy: require-corp`. No in-browser Expression 2
-package is published. Every platform side by side:
+`Cross-Origin-Embedder-Policy: require-corp`. There is no downloadable
+in-browser **package** for Expression 2 — but the tab does render it, and has
+for months: `?render=local` on the hosted route runs the Expression 2 renderer
+*in your tab*, on a real WebGPU adapter where the browser has one and on WASM
+where it does not, faster than the 20 fps the avatar plays at. Nothing to
+install and no key: open
+`https://www.bithuman.ai/A74NWD9723?render=local`. Every platform side by side:
 [Performance](/sdk/performance).
 
 ## Troubleshooting
