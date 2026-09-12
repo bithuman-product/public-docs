@@ -52,7 +52,7 @@ API, the embed widget, the dashboard, and the SDKs:
 | **Best for** | Photorealistic humans | Characters: cartoons, animals, creatures, robots |
 | **Identity source** | Identity video generated internally from your image | Single photo |
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Fully generated 416×720 scene, 20 fps |
-| **Serving tiers** | gpu · ane · cpu (auto-routed chain) · browser (in rollout) | gpu · ane · cpu (auto-routed chain) |
+| **Serving tiers** | gpu · Apple · cpu (auto-routed chain) · browser (in rollout) | gpu · Apple · cpu (auto-routed chain) |
 | **On-device** | Your own Mac (Apple Silicon) or Linux x86_64 box via the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1); your own CPU servers (Python SDK 3.0.0); Android via the [AAR](/sdk/android); the Swift `Essence2` engine in your own app. The cloud's Apple tier is bitHuman's hardware, reached over the network | Your own CPU/GPU via the CLI; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/ios#minimal-code)) |
 | **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Train-on-create, 2000 credits (about 2–2.5 hours) |
 | **Cloud** | 4 credits/min | 4 credits/min |

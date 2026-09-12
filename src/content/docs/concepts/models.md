@@ -35,7 +35,7 @@ between when packaging an avatar — and the focus of the rest of this page — 
   - **[Expression 2](/concepts/expression-2)** — the second-generation
     generative engine: audio-driven, fully-generated motion from a single
     photo rather than patching a pre-rendered base. Serves on gpu, cpu, and
-    ane tiers.
+    Apple tiers.
 
 > **New** The two second-generation models — `essence-2`
 > and `expression-2` — are **available now** (launched July 10, 2026). See

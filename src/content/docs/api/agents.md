@@ -534,7 +534,7 @@ same `agent_code`, same `input`, only `model` differs.
 `GET /v1/agent/{code}/model/download` — download the generated model artifact
 for an agent you own. The family defaults to the agent's own model; override
 with `?model=<family>` (public names and runtime tier slugs fold onto their
-family — the `essence-2-{gpu,ane,cpu}` force slugs and the retired
+family — the `essence-2-gpu` / `essence-2-ane` / `essence-2-cpu` force slugs and the retired
 `essence-2-light` fold onto `essence-2`). `essence-2-quality` is **no longer
 accepted** and returns a `400`. What you get per family — and what opens each file, in one
 place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).

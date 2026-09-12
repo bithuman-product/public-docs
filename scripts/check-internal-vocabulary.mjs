@@ -139,6 +139,13 @@ const BANNED = [
     fixture: "the quality director gained 2.1x from WebGPU",
     say: "the neural graph inside the engine — say 'the model' or name the " +
          "product. ★`directory` is a different word and is not matched" },
+  // ★OWNER RULING 2026-09-12: "there is no such thing called ane — only the Apple
+  // plane". The word survives ONLY inside the frozen slugs (`essence-2-ane`,
+  // `expression-2-ane`, `essence-2-light-ane`) a saved link or embed carries; as a
+  // bare word in prose it is banned. The lookarounds exclude the slug spellings.
+  { name: "ane", re: /(?<![-\w])ane(?![-\w])/gi,
+    fixture: "an efficient renderer that runs across gpu, cpu, and ane",
+    say: "the Apple Silicon target — say Apple (the device), never the chip block" },
   { name: "plane", re: /\bplanes?\b/gi,
     fixture: "the hardware plane is called Apple, not ANE",
     say: "our word for a serving target. A developer never chooses one " +
@@ -192,6 +199,10 @@ const OWNED_BY_RETIRED_NAMES = [
 // ★These are not exemptions for prose. Every one of them is a string that, if
 // this guard forced it off the page, a developer could no longer type.
 const CARRIERS = [
+  { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
+    re: /"ANE" survives ONLY inside slugs and identifiers/ },
+  { why: "the ONE sentence on /concepts/where-models-run that retires the word ANE by naming it",
+    re: /lane is called \*\*Apple\*\*, not "ANE"/ },
   { why: "`docker compose` / `docker-compose.yml` — the command a developer runs and the file they write",
     re: /docker[- ]compose|Compose `env_file`|docker-compose\.yml/i },
   { why: "`compose()` / `composeFromFile()` — public streaming methods on the on-device Python and Kotlin runtimes, called by name",
