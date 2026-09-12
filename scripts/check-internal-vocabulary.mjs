@@ -202,7 +202,8 @@ const CARRIERS = [
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
   { why: "the ONE sentence on /concepts/where-models-run that retires the word ANE by naming it",
-    re: /lane is called \*\*Apple\*\*, not "ANE"/ },
+    // source form `**Apple**, not "ANE"` AND the rendered form `Apple , not “ANE”` (the served gate reads the page)
+    re: /lane is called \*{0,2}Apple\*{0,2} ?, not ["“]ANE["”]/ },
   { why: "`docker compose` / `docker-compose.yml` — the command a developer runs and the file they write",
     re: /docker[- ]compose|Compose `env_file`|docker-compose\.yml/i },
   { why: "`compose()` / `composeFromFile()` — public streaming methods on the on-device Python and Kotlin runtimes, called by name",
