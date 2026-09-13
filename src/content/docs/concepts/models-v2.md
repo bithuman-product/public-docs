@@ -272,11 +272,13 @@ The other delivery surfaces work unchanged too — the
 
 ### Advanced: pin a serving tier
 
+This section is the one description of tier pinning on this site; the model
+guides and the embed guide list their own slugs and link here for the behavior.
+
 By default the platform routes each session down the model's serving chain
 (GPU → Apple → CPU) and overflows on capacity. For benchmarking
 or placement testing you can **force a specific tier** by appending `?model=`
-with a force-tier slug to the session (viewer / embed) URL. A forced tier is
-pinned — it never overflows, and it fails loudly if that tier is unavailable:
+with a force-tier slug to the session (viewer / embed) URL:
 
 ```text
 https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
@@ -286,6 +288,25 @@ https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
 |---|---|
 | [`essence-2`](/concepts/essence-2#serving-tiers) | `essence-2-gpu` · `essence-2-apple` · `essence-2-cpu` |
 | [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-apple` |
+
+**A recognized slug and an unrecognized one fail in opposite directions, and
+the difference is the thing to know before you pin.**
+
+* A slug the platform **recognizes** pins the session to that tier. It never
+  overflows, so if that tier is unavailable the session **fails loudly**
+  rather than quietly playing somewhere else — which is the whole point of
+  pinning for a benchmark.
+* A slug the platform **does not recognize** is **ignored silently**. The
+  session falls back to the agent's default routing and plays perfectly
+  normally, so a mistyped slug does not look like an error — it looks like
+  the pin was ignored, because it was. If a pin seems to have no effect,
+  check the spelling against the table above
+  ([symptom](/guides/session-troubleshooting#live-sessions)).
+
+There is a way to not rely on spelling at all: the embed-token `model` field
+is validated **when you mint the token**, and an unknown value returns a `400`
+listing the accepted names instead of silently doing nothing — see
+[`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token).
 
 The older `essence-2-ane` / `expression-2-ane` spellings of the Apple tier stay
 accepted for saved links, embeds and share tokens, and saved links carrying

@@ -190,8 +190,8 @@ chain — GPU → Apple → CPU** — starting at an always-warm GPU
 first line and overflowing to the next tier on capacity.
 
 For benchmarking or placement testing you can **force one runtime tier** with
-the `?model=` override on the session URL (a forced tier never overflows and
-fails loudly if unavailable):
+the `?model=` override on the session URL — these are the slugs Expression 2
+answers to:
 
 | `?model=` slug | Runtime | Notes |
 |---|---|---|
@@ -204,10 +204,13 @@ fails loudly if unavailable):
 https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
 ```
 
-Tier slugs are an advanced, operational surface — an unrecognized value falls
-back to the agent's default routing. For production, omit `?model=` and let
-the platform choose. See
-[tier pinning on the embed widget](/guides/deploy-embed#pin-a-serving-tier).
+Tier slugs are an advanced, operational surface, and for production you should
+omit `?model=` and let the platform choose. What a pin actually does — including
+why a *recognized* slug fails loudly while an *unrecognized* one is ignored
+silently — is described once, on
+[pin a serving tier](/concepts/models-v2#advanced-pin-a-serving-tier). To pin
+from the embed widget, see
+[the embed guide](/guides/deploy-embed#pin-a-serving-tier).
 
 ### Where it runs
 
