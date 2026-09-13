@@ -10,6 +10,54 @@ order: 1
 
 ## September 2026
 
+### Essence 2's audio step does less than half the work — upgrade to `cli-v2.6.13` (2026-09-13)
+
+CLI `cli-v2.6.13`, macOS arm64 and Linux x86_64 built from one commit. **If you
+are on any earlier 2.6.x, this is the one to install:** the speed-up below
+reached almost nobody until it landed.
+
+Rendering an avatar turns your audio into motion in short steps. Those steps now
+run over only the part of each audio window the renderer actually reads, so the
+audio side of a render costs less than half what it did. **Every delivered frame
+is identical** — we compared full renders frame by frame on macOS and on Linux
+before publishing.
+
+Getting it onto developers' machines took three tries, and the first two are why
+`2.6.13` exists:
+
+- **`cli-v2.6.10`** started fetching the faster audio files alongside the shared
+  audio model, in the same download, verified by checksum. On Linux the files as
+  first published could not be read by the runtime the CLI ships, so Linux kept
+  the slower path; they were re-published in a form every runtime reads.
+- **`cli-v2.6.11`** looked for those files beside whichever audio model the CLI
+  actually resolves, so machines that already had the model — most machines —
+  stopped being skipped.
+- **`cli-v2.6.12`** made the step itself do less than half the work, but only
+  replaced the files on a machine with an empty cache. If you had rendered
+  before, you kept the older files and the older speed.
+- **`cli-v2.6.13`** checks the files already on your machine against the ones it
+  expects and replaces any that differ, on the first render. Nothing to
+  configure.
+
+**Known issue, and it is not new:** on macOS, rendering the same input twice can
+produce slightly different output — every frame stays in its place, but some
+pixel values can differ slightly between runs. `2.6.11` and `2.6.12` behave the
+same way. A fix is in progress.
+
+Earlier versions stay resolvable; a `BITHUMAN_VERSION=cli-v2.6.12` pin keeps
+working. Measured frame rates are on the [performance page](/sdk/performance).
+
+### `bithuman render --json` reports its own steady-state rate (2026-09-13)
+
+CLI `cli-v2.6.9`. `render --json` now includes **`render_fps`** beside
+`render_seconds`: frames per second measured from the first audio pushed to the
+last frame delivered, with model load and start-up excluded. It is the number
+the [performance page](/sdk/performance) publishes, so you can reproduce that
+figure on your own machine instead of timing the whole process yourself.
+
+`fps` in the same object is unchanged and still means the **output video's**
+frame rate. Both fields are `null` rather than `0` when they cannot be measured.
+
 ### The Apple tier's force slugs are `essence-2-apple` and `expression-2-apple` (2026-09-13)
 
 The `?model=` slug that pins a session to the cloud's Apple tier is now spelled
