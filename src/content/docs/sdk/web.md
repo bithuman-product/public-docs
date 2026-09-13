@@ -59,9 +59,12 @@ Essence 2 renderer that ships one built-in identity and a recorded loop. Use it
 to measure in-browser speed on your hardware, not to render your agent. Its
 bundle is `https://models.bithuman.ai/web/libelevate-web-v0.1.0/manifest.json`
 (every file with a sha256; `index.js` documents `createAvatar`; the path keeps
-a [retired name](/concepts/models-v2)), served with
-`Cross-Origin-Opener-Policy: same-origin` and
-`Cross-Origin-Embedder-Policy: require-corp`. There is no downloadable
+a [retired name](/concepts/models-v2)). The host does **not** send
+`Cross-Origin-Opener-Policy` / `Cross-Origin-Embedder-Policy`, so a page that
+loads the bundle is not cross-origin isolated on those headers alone — the
+bundle ships `coi-serviceworker.js` for exactly that reason, and its own
+`demo.html` loads it. Send the two headers yourself, or ship that shim, or WASM
+stays clamped to one thread. There is no downloadable
 in-browser **package** for Expression 2 — but the tab does render it, and has
 for months: `?render=local` on the hosted route runs the Expression 2 renderer
 *in your tab*, on a real WebGPU adapter where the browser has one and on WASM
@@ -76,6 +79,6 @@ install and no key: open
 |---|---|---|
 | The hosted URL shows a page but no avatar | you opened the viewer host directly | start on `https://www.bithuman.ai/<CODE>?rendering_mode=browser` |
 | `404` on the hosted URL | the agent code is wrong or the agent is not public | check the code on the [showcase](/showcase) or in your [agents](/api/agents) |
-| The in-tab renderer runs at ~8 fps instead of 20 | `crossOriginIsolated` is `false`, so WASM clamped to 1 thread | send the two headers above, or ship the bundle's `coi-serviceworker.js` |
+| The in-tab renderer runs at ~8 fps instead of 20 | `crossOriginIsolated` is `false`, so WASM clamped to 1 thread | send `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp` from your own host, or ship the bundle's `coi-serviceworker.js` |
 | `WebGPU not available in this browser` | `ep: "webgpu"` on a browser with no adapter | pass `"wasm"`, or [probe first](/examples/browser-webgpu-check#check-2--does-this-browser-have-a-real-webgpu-adapter) |
 | You want a JavaScript SDK | there is no npm package today | drive a served avatar over [LiveKit](/sdk/livekit), or embed the hosted route |
