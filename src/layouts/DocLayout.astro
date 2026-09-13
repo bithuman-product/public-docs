@@ -51,7 +51,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
 
 <Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description}>
   <div class="doc">
-    <!-- sidebar -->
+    {/* sidebar */}
     <aside class="doc-side" data-doc-side>
       <button class="side-toggle" data-side-toggle aria-expanded="false">
         <span>{meta.label}</span>
@@ -81,7 +81,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
       </div>
     </aside>
 
-    <!-- content -->
+    {/* content */}
     <article class="doc-main">
       <div class="doc-crumb">
         <a href="/">Docs</a> <span>/</span> <a href={meta.home}>{meta.label}</a>
@@ -112,7 +112,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
       }
     </article>
 
-    <!-- on-this-page TOC -->
+    {/* on-this-page TOC */}
     <aside class="doc-toc">
       {
         toc.length > 0 && (
