@@ -11,22 +11,21 @@ label: "Performance"
 |---|---|---:|---:|
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 51.9 |
 | macOS | Apple M4 | 73 | 43 |
-| iOS | iPhone 15 | 118 | — |
-| Android | Galaxy S25+ | 58 | — |
-| Web | Chrome on M4 | 30 | — |
-| Linux | Intel Core i7-13700F | 41 | 21 |
+| iOS | iPhone 15 | 118 | no published release yet |
+| Android | Galaxy S25+ | 58 | not at default settings |
+| Web | Chrome on M4 | 30 | 12 — not yet real time |
+| Linux | Intel Core i7-13700F | 41 | 21 — not yet real time |
 
 **How to read a row.** Expression 2 plays at 20 frames per second, Essence 2 at
 25. A number at or above its model's own rate holds a live, two-way conversation
-on that hardware. A number below it still renders — use that pairing for offline
-files, or run the model [in the cloud](/api/overview) instead.
+on that hardware.
 
-A dash means we do not publish a number for that pairing yet, for one of three
-reasons: we have not measured it on that hardware; we have measured it and it is
-not yet fast enough for a live conversation; or we have measured it only on a
-setup you cannot get from a published release — and a number you cannot
-reproduce is not a number we will print. A dash never means the platform is
-unsupported — [what each platform needs →](/sdk)
+A cell marked **not yet real time** is a real measurement that falls under that
+rate: the pairing renders, just not fast enough to talk to. Use it for offline
+files, or run that model [in the cloud](/api/overview) instead.
+
+A cell with no number says what is missing instead. It never means the platform
+is unsupported — [what each platform needs →](/sdk)
 
 <!-- FLOORS:NOTES -->
 The Expression 2 Cloud GPU number already includes saving the video file.
