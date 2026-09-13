@@ -56,13 +56,9 @@ The token is a **1-hour JWT** (HS256-signed). Mint one per visitor session. Both
 ## Pin a serving tier
 
 By default the platform routes each session down the model's serving chain
-(GPU → Apple → CPU), overflowing on capacity
-([details](/concepts/models-v2#advanced-pin-a-serving-tier)). For
-benchmarking or placement testing, append `?model=` with a force-tier slug
-(`essence-2-gpu/-apple/-cpu`, `expression-2-gpu/-cpu/-apple`; the older `-ane`
-spelling of the Apple tier stays accepted for saved links, embeds and share
-tokens) to the embed (or
-viewer) URL to pin the session to that tier — a forced tier never overflows:
+(GPU → Apple → CPU), overflowing on capacity. For benchmarking or placement
+testing, append `?model=` with a force-tier slug to the embed (or viewer) URL
+to pin the session to that tier:
 
 ```html
 <iframe
@@ -72,10 +68,12 @@ viewer) URL to pin the session to that tier — a forced tier never overflows:
 ></iframe>
 ```
 
-The tier slugs per model are listed in each model guide —
+**The slugs, and what a pin does, are documented once** on
+[pin a serving tier](/concepts/models-v2#advanced-pin-a-serving-tier) — read
+that before you rely on one, because a *recognized* slug fails loudly while an
+*unrecognized* one is ignored silently. Each model guide lists its own slugs:
 [Expression 2](/concepts/expression-2#serving-tiers),
-[Essence 2](/concepts/essence-2#serving-tiers). An
-unrecognized value falls back to the agent's default routing. For production,
+[Essence 2](/concepts/essence-2#serving-tiers). For production,
 omit `?model=` and let the platform choose — direct elastic tiers scale from
 zero and can cold-start on first connect
 ([what to expect](/guides/session-troubleshooting#connect-latency-whats-normal)).
