@@ -83,7 +83,13 @@ automatically, once (about 450 MB in all, kept in `~/.bithuman/deps`).
 ## Performance
 
 Measured frame rates for every platform are on the
-[performance page](/sdk/performance). A completed `render` reports its own
+[performance page](/sdk/performance). **On Apple Silicon that page's Expression 2
+number is the [CLI](/sdk/cli)'s, and this package does not reach it.** The CLI
+renders Expression 2 through Core ML; this package runs the portable CPU runtime
+on every platform it ships for, so the same avatar renders more slowly here on a
+Mac. On Linux the CLI runs that same CPU runtime, so there the two match.
+
+A completed `render` reports its own
 steady-state rate — frames per second from the first audio push to the last
 frame, model load excluded, the same definition the CLI prints — on the
 `bithuman` logger at INFO:
