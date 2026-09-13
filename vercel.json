@@ -869,6 +869,16 @@
       "source": "/sdk/macos/",
       "destination": "/sdk/cli",
       "permanent": true
+    },
+    {
+      "source": "/guides/browser-webgpu",
+      "destination": "/guides/browser-rendering",
+      "permanent": true
+    },
+    {
+      "source": "/guides/browser-webgpu/",
+      "destination": "/guides/browser-rendering",
+      "permanent": true
     }
   ]
 }
