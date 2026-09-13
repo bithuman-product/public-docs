@@ -9,11 +9,11 @@ label: "Performance"
 
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
-| macOS | Apple M4 | 54 | 19 |
+| macOS | Apple M4 | 70 | 36 |
 | iOS | iPhone 15 | 118 | — |
 | Android | Galaxy S25+ | 58 | — |
 | Web | Chrome on M4 | 30 | — |
-| Linux | x86 workstation | 37 | 1 |
+| Linux | x86 workstation | 37 | 11 |
 
 Frames per second = steady-state throughput after warm-up — audio in to frame out, model load excluded, worst of three quiet runs on the published release, 28-second reference clip.
 
