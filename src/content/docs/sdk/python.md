@@ -1,6 +1,6 @@
 ---
 title: "Python"
-description: "pip install bithuman — open an avatar, render 16 kHz audio through it, take RGB frames. Expression 2 and Essence 2 on your own machine."
+description: "pip install bithuman — open an avatar, render audio through it, take RGB frames. Expression 2 and Essence 2 on your own machine."
 section: sdk
 group: "Platforms"
 order: 20
@@ -67,8 +67,8 @@ file are the same program.
 > long and slowed — pass it as a **path** and let it be converted, or resample
 > it yourself before you pass samples.
 
- `frames = avatar.render(...)` then `frames.close()`
-stops early. Every error `bithuman.open` and `avatar.render` raise is an `AvatarError`; the
+The call is lazy: `frames = avatar.render(...)` then `frames.close()` stops
+early. Every error `bithuman.open` and `avatar.render` raise is an `AvatarError`; the
 offline route below raises `bithuman.offline.OfflineRenderError`
 (`MeteringNotArmedError` when no credential is set).
 
