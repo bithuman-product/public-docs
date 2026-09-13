@@ -16,11 +16,17 @@ pip install "bithuman[expression-2]"
 `bithuman` 3.1.4 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
 wheels. The `[expression-2]` extra opens `.avatar` files; for the Essence 2
-clip-to-file route add the offline extra:
+clip-to-file route add the offline extra — on Linux install the CPU build of
+`torch` first, or the extra resolves to the default CUDA wheel and pulls the
+whole `nvidia-*` stack onto a machine that is about to render on the CPU:
 
 ```bash
+pip install torch --index-url https://download.pytorch.org/whl/cpu   # Linux only
 pip install "bithuman[offline]"
 ```
+
+The offline route also needs **`ffmpeg` on `PATH`** — it decodes the audio and
+encodes the MP4.
 
 `pip install bithuman` puts **no `bithuman` command** on your `PATH` — the
 command-line tool is the [CLI](/sdk/cli), a separate install.

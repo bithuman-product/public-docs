@@ -55,6 +55,30 @@
 //                 — P must be a `.library(name: "P")` in the tap's Package.swift
 //                 AT THE TAG SwiftPM WOULD ACTUALLY RESOLVE for that `from:`,
 //                 which is the highest tag sharing its major version.
+//   R4  PyPI      every `pip install <req>` a page prints in COPYABLE form —
+//                 the distribution must exist on PyPI, every extra it names in
+//                 `<dist>[a,b]` must be declared by the published wheel, and a
+//                 version specifier must be satisfiable by something published.
+//
+//  3. PYTHON — THE ONE REGISTRY ON THE SELF-HOSTING PATH THAT NOTHING ASKED.
+//     R1-R3 were written for the two handset example pages, so Maven Central
+//     and the Swift tap got graded and PyPI did not. That left the Python
+//     wheel — the coordinate on `guides/self-host-local` and `sdk/python`, the
+//     one a Linux or macOS self-hoster actually types — as the only dependency
+//     on this site whose truth lives in another system and whose truth nobody
+//     checked. Measured 2026-09-13: the platform table on
+//     guides/self-host-local.md named `bithuman` 3.1.3 while PyPI had served
+//     3.1.4 since 05:12Z that morning, and 3.1.3 is specifically the wheel
+//     WITHOUT the short-window audio frontend — so a reader who pinned the
+//     documented version got the slow legacy path and nothing said a word.
+//     Extras are the sharper half: `pip install "bithuman[offline]"` with an
+//     extra the wheel does not declare does NOT fail. pip emits a warning and
+//     installs the BASE package, so the reader gets a successful install, an
+//     import that works, and a render that cannot find its engine. Maven's
+//     immutability argument holds here too — PyPI forbids re-uploading a
+//     version, so every version that ever shipped still resolves and the
+//     changelog's history is safe. A yanked version also still resolves for an
+//     exact pin, which is why yanking is not graded as absence.
 //
 // WHAT IT DELIBERATELY DOES NOT GRADE, and why the discriminator is the typed
 // form and not the string: this site quotes coordinates that are SUPPOSED not to
@@ -139,6 +163,136 @@ export function gradleCoordinates(text) {
     out.push({ artifact: m[1], version: m[2], line: lineOf(text, m.index) });
   }
   return out;
+}
+
+/** R4 — PyPI requirements written in the form a developer copies.
+ *
+ *  THE DISCRIMINATOR IS A CODE REGION, not the string `pip install`. This site
+ *  writes that phrase in prose constantly ("`pip install bithuman` is the
+ *  library, and the CLI comes from the universal installer"), and a sentence
+ *  about installing is not a line anyone copies. Reading only fenced blocks and
+ *  inline code spans is the same choice R1-R3 make by grading `implementation(`
+ *  and `.product(name:` rather than every version-shaped string on the page.
+ *  Measured on the real corpus: whole-file scanning produced 86 subjects across
+ *  40 "distributions" including `and`, `for`, `then`, `GB` and `CUDA` — four of
+ *  which exist on PyPI and would have graded green as a coincidence. Bounded to
+ *  code regions and terminated at a backtick it finds 51 subjects across 11
+ *  real distributions and nothing else.
+ */
+export function pypiRequirements(path, text) {
+  const out = [];
+  for (const region of codeRegions(path, text)) {
+    const re = /\bpip[0-9.]*\s+install\s+([^\n]*)/g;
+    let m;
+    while ((m = re.exec(region.text)) !== null) {
+      // Stop at a shell comment, a chained command, or the backtick that closes
+      // a code span embedded in a JS template literal (src/pages/*.ts writes
+      // its spans as \`…\`, and the prose after one is not the command).
+      const cmd = m[1].split(/\s#|&&|\|\||[;|`]/)[0];
+      const abs = region.offset + m.index;
+      const line = lineOf(text, abs);
+      let skipNext = false;
+      for (const t of shTokens(cmd)) {
+        if (skipNext) { skipNext = false; continue; }
+        if (t.startsWith("-")) { if (PIP_VALUE_FLAGS.has(t)) skipNext = true; continue; }
+        // a path, a URL, a VCS spec or a shell variable is not a named release
+        if (t.includes("/") || t.includes("::") || t.startsWith("$") || t.startsWith(".")) continue;
+        const g = PEP508.exec(t);
+        if (!g) continue;
+        out.push({
+          dist: g[1],
+          extras: (g[2] || "").split(",").map((x) => x.trim()).filter(Boolean),
+          spec: (g[3] || "").trim(),
+          raw: t,
+          line,
+        });
+      }
+    }
+  }
+  return out;
+}
+
+/** pip flags that swallow the following token, so it is never a requirement. */
+const PIP_VALUE_FLAGS = new Set([
+  "--index-url", "--extra-index-url", "-i", "-r", "--requirement", "-c",
+  "--constraint", "-f", "--find-links", "--target", "-t", "--proxy", "--cert",
+  "--timeout", "--retries", "--upgrade-strategy", "--prefix", "--root", "--src",
+  "--report", "--no-binary", "--only-binary",
+]);
+
+const PEP508 =
+  /^([A-Za-z0-9][A-Za-z0-9._-]*)(?:\[([^\]]*)\])?((?:[<>=!~]=?[0-9][^,\s]*)(?:\s*,\s*[<>=!~]=?[0-9][^,\s]*)*)?$/;
+
+/** Shell-ish tokenizer: the quotes around `"bithuman[offline]"` are shell
+ *  syntax protecting the brackets, not part of the requirement. */
+export function shTokens(s) {
+  const out = [];
+  let cur = "", q = null;
+  for (const ch of s) {
+    if (q) { if (ch === q) q = null; else cur += ch; continue; }
+    if (ch === '"' || ch === "'") { q = ch; continue; }
+    if (/\s/.test(ch)) { if (cur) { out.push(cur); cur = ""; } continue; }
+    cur += ch;
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+
+/** The regions of a file a reader copies from. Markdown: fenced blocks and
+ *  inline spans. Everything else (.astro/.ts/.js/.yml) is already code. */
+export function codeRegions(path, text) {
+  if (!/\.(md|mdx)$/.test(path)) return [{ text, offset: 0 }];
+  const out = [];
+  const masked = text.split("");
+  const fence = /^[ \t]*(`{3,}|~{3,})[^\n]*\n([\s\S]*?)^[ \t]*\1[ \t]*$/gm;
+  let m;
+  while ((m = fence.exec(text)) !== null) {
+    out.push({ text: m[2], offset: m.index + m[0].indexOf(m[2], m[1].length) });
+    for (let i = m.index; i < m.index + m[0].length; i++) masked[i] = " ";
+  }
+  const rest = masked.join("");
+  const span = /`([^`\n]+)`/g;
+  while ((m = span.exec(rest)) !== null) out.push({ text: m[1], offset: m.index + 1 });
+  return out;
+}
+
+/** Is any published version acceptable to this specifier set? An `==` pin is
+ *  graded as existence; a range is graded as satisfiable by something. */
+export function specSatisfied(spec, versions) {
+  if (!spec) return true;
+  const rel = (v) => v.split(/[^0-9]+/).filter((x) => x !== "").map(Number);
+  const cmp = (a, b) => {
+    const A = rel(a), B = rel(b);
+    for (let i = 0; i < Math.max(A.length, B.length); i++) {
+      const d = (A[i] || 0) - (B[i] || 0);
+      if (d !== 0) return d;
+    }
+    return 0;
+  };
+  const clauses = spec.split(",").map((c) => c.trim()).filter(Boolean);
+  const ok = (v) =>
+    clauses.every((c) => {
+      const g = /^([<>=!~]=?)\s*(.+)$/.exec(c);
+      if (!g) return true;
+      const [, op, want] = g;
+      switch (op) {
+        case "==": return want.endsWith(".*") ? v.startsWith(want.slice(0, -1)) : cmp(v, want) === 0;
+        case "!=": return cmp(v, want) !== 0;
+        case ">=": return cmp(v, want) >= 0;
+        case ">":  return cmp(v, want) > 0;
+        case "<=": return cmp(v, want) <= 0;
+        case "<":  return cmp(v, want) < 0;
+        // ~=X.Y is >=X.Y within the same X; ~=X.Y.Z is >=X.Y.Z within X.Y.
+        case "~=": {
+          if (cmp(v, want) < 0) return false;
+          const w = rel(want);
+          const keep = Math.max(1, w.length - 1);
+          return rel(v).slice(0, keep).join(".") === w.slice(0, keep).join(".");
+        }
+        default: return true;
+      }
+    });
+  return versions.some(ok);
 }
 
 /** R2 — versions pinned against the tap, in either manifest dialect. */
@@ -231,6 +385,37 @@ const liveRegistry = {
     return [...xml.matchAll(/<version>([^<]+)<\/version>/g)].map((m) => m[1].trim());
   },
 
+  async pypiProject(dist) {
+    const url = `https://pypi.org/pypi/${encodeURIComponent(dist)}/json`;
+    let res;
+    try {
+      res = await fetch(url, { redirect: "follow" });
+    } catch (e) {
+      throw new RegistryUnreachable(`${url}: ${e.message}`);
+    }
+    if (res.status === 404) return null; // no such distribution — a real answer
+    if (!res.ok) throw new RegistryUnreachable(`${url}: HTTP ${res.status}`);
+    const j = await res.json();
+    // provides_extra is the declared list; older metadata only carries the
+    // markers, so fall back to the `extra == "…"` markers in requires_dist.
+    let extras = j.info?.provides_extra;
+    if (!Array.isArray(extras) || extras.length === 0) {
+      extras = [
+        ...new Set(
+          (j.info?.requires_dist || [])
+            .map((r) => /extra\s*==\s*["']([^"']+)["']/.exec(r))
+            .filter(Boolean)
+            .map((m) => m[1]),
+        ),
+      ];
+    }
+    const versions = Object.keys(j.releases || {}).filter((v) => (j.releases[v] || []).length > 0);
+    if (versions.length === 0) {
+      throw new RegistryUnreachable(`${url}: parsed zero released versions — the API shape changed`);
+    }
+    return { latest: j.info?.version ?? null, extras, versions };
+  },
+
   async tapTags() {
     let out;
     try {
@@ -305,11 +490,12 @@ export function newestTag(tags) {
 
 export async function grade(files, registry) {
   const failures = [];
-  const seen = { maven: 0, tapVersion: 0, tapProduct: 0 };
+  const seen = { maven: 0, tapVersion: 0, tapProduct: 0, pypi: 0 };
 
   const mavenWanted = new Map(); // artifact -> [{version, where}]
   const versionWanted = [];
   const productWanted = [];
+  const pypiWanted = new Map(); // dist -> [{extras, spec, where}]
 
   for (const { path, text } of files) {
     for (const c of gradleCoordinates(text)) {
@@ -324,6 +510,11 @@ export async function grade(files, registry) {
     for (const p of tapProducts(text)) {
       seen.tapProduct++;
       productWanted.push({ ...p, path });
+    }
+    for (const r of pypiRequirements(path, text)) {
+      seen.pypi++;
+      if (!pypiWanted.has(r.dist)) pypiWanted.set(r.dist, []);
+      pypiWanted.get(r.dist).push({ ...r, path });
     }
   }
 
@@ -400,6 +591,48 @@ export async function grade(files, registry) {
     }
   }
 
+  // R4 — PyPI
+  for (const [dist, uses] of [...pypiWanted].sort()) {
+    const proj = await registry.pypiProject(dist);
+    if (proj === null) {
+      for (const u of uses) {
+        failures.push({
+          path: u.path,
+          line: u.line,
+          msg:
+            `\`pip install ${u.raw}\` names the distribution "${dist}", which PyPI does not serve. ` +
+            `A reader who copies this line gets "No matching distribution found for ${dist}".`,
+        });
+      }
+      continue;
+    }
+    for (const u of uses) {
+      const missing = u.extras.filter((e) => !proj.extras.includes(e));
+      if (missing.length) {
+        failures.push({
+          path: u.path,
+          line: u.line,
+          msg:
+            `\`pip install ${u.raw}\` asks for the extra${missing.length > 1 ? "s" : ""} ` +
+            `${missing.map((e) => `"${e}"`).join(", ")}, which ${dist} ${proj.latest} does not declare. ` +
+            `Declared: ${proj.extras.length ? proj.extras.join(", ") : "(none)"}. ` +
+            `pip does NOT fail on this — it warns and installs the base package, so the reader ` +
+            `gets a green install and a broken import.`,
+        });
+      }
+      if (u.spec && !specSatisfied(u.spec, proj.versions)) {
+        failures.push({
+          path: u.path,
+          line: u.line,
+          msg:
+            `\`pip install ${u.raw}\` names a version of ${dist} PyPI cannot satisfy. ` +
+            `Newest published: ${proj.latest}. ` +
+            `A reader who copies this line gets "No matching distribution found for ${u.raw}".`,
+        });
+      }
+    }
+  }
+
   return { failures, seen };
 }
 
@@ -424,6 +657,19 @@ const FIX_GOOD_XCODEGEN =
 const FIX_BAD_XCODEGEN_PRODUCT =
   "```yaml\npackages:\n  bithuman:\n    url: https://github.com/bithuman-product/homebrew-bithuman.git\n" +
   "    from: 2.11.0\ntargets:\n  App:\n    dependencies:\n      - package: bithuman\n        product: Bithuman\n```\n";
+const FIX_GOOD_PYPI = 'x\n```bash\npip install "bithuman[offline]"\n```\n';
+const FIX_BAD_PYPI_EXTRA = 'x\n```bash\npip install "bithuman[nosuchextra]"\n```\n';
+const FIX_BAD_PYPI_DIST = "x\n```bash\npip install bithuman-notapackage\n```\n";
+const FIX_BAD_PYPI_VERSION = 'x\n```bash\npip install "bithuman>=99.0.0"\n```\n';
+// The phrase in a SENTENCE is prose about installing, not a line to copy: this
+// site writes exactly this and it must stay silent.
+const FIX_CONTROL_PYPI_PROSE =
+  "The Python library and the CLI are separate: pip install bithuman-notapackage is\n" +
+  "not how you install the CLI and never should be.\n";
+// A flag's value is not a requirement.
+const FIX_CONTROL_PYPI_INDEX =
+  "x\n```bash\npip install torch --index-url https://download.pytorch.org/whl/cpu\n```\n";
+
 const FIX_IRRELEVANT = "This page has no dependency coordinate at all.\n";
 
 const STUB = {
@@ -441,6 +687,17 @@ const STUB = {
   async tapProductsAt() {
     return ["bitHumanKit", "BithumanEngineProtocol", "Expression2", "Essence2"];
   },
+  async pypiProject(dist) {
+    const t = {
+      bithuman: {
+        latest: "3.1.4",
+        extras: ["test", "offline", "tessera", "expression-2"],
+        versions: ["2.10.0", "3.0.0", "3.1.2", "3.1.3", "3.1.4"],
+      },
+      torch: { latest: "2.6.0", extras: ["opt-einsum"], versions: ["2.5.1", "2.6.0"] },
+    };
+    return t[dist] ?? null;
+  },
 };
 
 if (process.argv.includes("--selftest")) {
@@ -454,6 +711,12 @@ if (process.argv.includes("--selftest")) {
     ["good: the XcodeGen spec the iOS example prints", FIX_GOOD_XCODEGEN, false],
     ["control: a quoted failure transcript is not a typed coordinate", FIX_CONTROL_PROSE, false],
     ["control: a page with no coordinate at all", FIX_IRRELEVANT, false],
+    ["bad: a PyPI extra the published wheel does not declare", FIX_BAD_PYPI_EXTRA, true],
+    ["bad: a PyPI distribution that does not exist", FIX_BAD_PYPI_DIST, true],
+    ["bad: a PyPI version nothing published satisfies", FIX_BAD_PYPI_VERSION, true],
+    ["good: the extra the self-hosting page prints", FIX_GOOD_PYPI, false],
+    ["control: `pip install` written in a sentence is not a copyable line", FIX_CONTROL_PYPI_PROSE, false],
+    ["control: an --index-url value is not a requirement", FIX_CONTROL_PYPI_INDEX, false],
   ];
   let bad = 0;
   for (const [name, text, mustFire] of arms) {
@@ -471,17 +734,18 @@ if (process.argv.includes("--selftest")) {
       maven: a.maven + gradleCoordinates(f.text).length,
       ver: a.ver + tapVersions(f.text).length,
       prod: a.prod + tapProducts(f.text).length,
+      pypi: a.pypi + pypiRequirements(f.path, f.text).length,
     }),
-    { maven: 0, ver: 0, prod: 0 },
+    { maven: 0, ver: 0, prod: 0, pypi: 0 },
   );
-  for (const [rule, n] of [["R1 gradle", counts.maven], ["R2 tap version", counts.ver], ["R3 tap product", counts.prod]]) {
+  for (const [rule, n] of [["R1 gradle", counts.maven], ["R2 tap version", counts.ver], ["R3 tap product", counts.prod], ["R4 pypi", counts.pypi]]) {
     const ok = n > 0;
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${(rule + " finds subjects in the real corpus").padEnd(58)} n=${n}`);
   }
   console.log(
     bad === 0
-      ? "check-dependency-coordinates --selftest: OK — 4/4 defect arms fire, 5/5 good arms stay silent, all 3 rules have real subjects."
+      ? "check-dependency-coordinates --selftest: OK — 7/7 defect arms fire, 8/8 good arms stay silent, all 4 rules have real subjects."
       : `check-dependency-coordinates --selftest: ${bad} arm(s) wrong`,
   );
   process.exit(bad === 0 ? 0 : 1);
@@ -511,6 +775,7 @@ for (const [rule, n] of [
   ["R1 (Gradle coordinates)", seen.maven],
   ["R2 (tap versions)", seen.tapVersion],
   ["R3 (tap products)", seen.tapProduct],
+  ["R4 (PyPI requirements)", seen.pypi],
 ]) {
   if (n === 0) {
     console.log(
@@ -537,6 +802,7 @@ if (failures.length) {
 
 console.log(
   `check-dependency-coordinates: OK — ${seen.maven} Gradle coordinate(s) resolve on Maven Central, ` +
-    `${seen.tapVersion} tap pin(s) name a tag that exists, and ${seen.tapProduct} attached SwiftPM ` +
-    `product(s) are vended by the manifest at the tag those pins resolve to.`,
+    `${seen.tapVersion} tap pin(s) name a tag that exists, ${seen.tapProduct} attached SwiftPM ` +
+    `product(s) are vended by the manifest at the tag those pins resolve to, and ${seen.pypi} ` +
+    `PyPI requirement(s) name a distribution, extras and a version PyPI actually serves.`,
 );
