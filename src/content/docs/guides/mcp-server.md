@@ -70,12 +70,13 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 Install the bitHuman CLI:
 
 ```bash
-brew install bithuman-product/bithuman/bithuman-cli                  # macOS (Apple Silicon)
-curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh   # macOS (Apple Silicon) + Linux
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
+macOS Apple Silicon and Linux x86_64 — [more on the CLI page](/sdk/cli#install).
+
 > **Version check for `model` / `version` support:** `bithuman --version` must
-> report CLI **2.4.1 or newer**. The current Homebrew/installer release is well
+> report CLI **2.4.1 or newer**. The current release is well
 > past that ([which version that is](/sdk/cli/reference#version)), so a fresh
 > install is already there — but an install still on
 > **2.4.0** has no `model` parameter on `generate_agent`, and every creation

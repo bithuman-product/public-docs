@@ -43,19 +43,10 @@ const rows = await performanceRows();
 
 const blocks = [
   {
-    name: "macOS",
-    sub: "Apple Silicon",
-    href: "/sdk/macos",
-    perfKey: "macOS",
-    install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
-      model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
-      run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
-  },
-  {
-    name: "Linux",
-    sub: "x86_64 · the same CLI",
+    name: "macOS & Linux",
+    sub: "Apple Silicon · x86_64 — one CLI, one command",
     href: "/sdk/cli",
-    perfKey: "Linux",
+    perfKeys: ["macOS", "Linux"],
     install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
     model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
     run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
@@ -96,7 +87,12 @@ const blocks = [
     code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"A23WJF0199.avatar\") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"demo_sample.wav\"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]",
     run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
   },
-].map((b) => ({ ...b, perf: "perfKey" in b ? perfLine(rows, (b as { perfKey: string }).perfKey) : null }));
+].map((b) => ({
+  ...b,
+  perf: "perfKey" in b ? [perfLine(rows, (b as { perfKey: string }).perfKey)]
+      : "perfKeys" in b ? (b as { perfKeys: string[] }).perfKeys.map((k) => perfLine(rows, k))
+      : null,
+}));
 ---
 
 <Base
@@ -118,7 +114,8 @@ const blocks = [
             </dl>
             <p class="guide"><a href={b.href}>Full guide →</a></p>
             {b.perf
-              ? <p class="perf"><a href="/sdk/performance">Measured</a>, unpaced: {b.perf}</p>
+              ? <p class="perf"><a href="/sdk/performance">Measured</a>, unpaced:{" "}
+                  {b.perf.map((line, i) => <span class="perf-line">{i > 0 && <br />}{line}</span>)}</p>
               : <p class="perf">No published frame rate for this path yet — see <a href="/sdk/performance">performance</a>.</p>}
           </article>
         ))}
