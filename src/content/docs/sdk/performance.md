@@ -32,6 +32,8 @@ The Expression 2 Cloud GPU number already includes saving the video file.
 
 The Essence 2 Cloud GPU number counts frames as they are rendered. Saving them to a video file adds encoding time on top, so a benchmark that writes an MP4 will measure less.
 
+Cloud GPU is a hosted service rather than an SDK on your own hardware, and its number is how fast the cloud renders frames — what a video-file render gets. A live hosted conversation plays at the model's own rate, 20 frames per second for Expression 2 and 25 for Essence 2, and never faster: the headroom above that rate shortens a file render and lets one card carry more sessions at once, rather than putting more frames on screen.
+
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
 <!-- /FLOORS:NOTES -->
 
