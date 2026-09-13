@@ -3779,15 +3779,10 @@ tags:
 
       ### 2. Install the CLI
 
-      Three install paths, same Rust binary:
+      One command, macOS Apple Silicon and Linux x86_64 alike:
 
       ```bash
-      # macOS Homebrew — recommended
-      brew install bithuman-product/bithuman/bithuman-cli
-
-      # Universal installer — macOS (Apple Silicon) + Linux, no Python required
       curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-
       ```
 
       Verify the install:
@@ -4334,9 +4329,8 @@ tags:
       part of the 2.x distribution — pin the 1.x line if you need them. As of
       2.3.0 this wheel is the **Python SDK library only** (~5 MB):
       runtime + LiveKit plugin glue. The `bithuman` CLI binary ships
-      separately — `brew install bithuman-product/bithuman/bithuman-cli` on
-      macOS, or the universal installer on macOS and Linux alike. There is no
-      PyPI wheel for the CLI.
+      separately, through the universal installer on macOS and Linux alike.
+      There is no PyPI wheel for the CLI.
 
       ```python
       import asyncio, os
@@ -4421,12 +4415,7 @@ tags:
       ### Install
 
       ```bash
-      # macOS — Homebrew (canonical)
-      brew install bithuman-product/bithuman/bithuman-cli
-
-      # any OS — universal installer
       curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-
       ```
 
       ### Subcommands

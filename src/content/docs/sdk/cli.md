@@ -1,10 +1,10 @@
 ---
-title: "CLI"
+title: "CLI — macOS and Linux"
 description: "Install one binary and type `bithuman run` — a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64, no account and no key for the first frame. Offline MP4 render in one more command."
 section: sdk
 group: "Platforms"
 order: 10
-label: "CLI"
+label: "CLI (macOS & Linux)"
 ---
 
 ## Install
@@ -15,11 +15,14 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 
 `bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux.
 
-One self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put
-it elsewhere), sha256-verified against the release. On Apple Silicon
-`brew install bithuman-product/bithuman/bithuman-cli` installs the same
-tarball. Both routes install the current release, and the same version ships on
-both platforms. `bithuman --version` tells you which one you got:
+That one command is the install on both platforms. It puts a single
+self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put it
+elsewhere), checksum-verified against the release.
+
+If you would rather Homebrew managed it, `brew install
+bithuman-product/bithuman/bithuman-cli` installs the same tarball on Apple
+Silicon. Use one or the other, not both. Either way `bithuman --version` tells
+you what you got:
 
 ```text
 $ bithuman --version
@@ -94,6 +97,8 @@ Measured frame rates for every platform are on the
 | `pull <CODE>` fails with `MODEL_ARTIFACT_NOT_READY` | trained, not yet published to the download store | run the same `pull` again in a minute |
 | `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman avatars` and copy a slug from it |
 | the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
+| `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
+| `No matching distribution found for bithuman` | an Intel Mac, or macOS older than 14 | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
 | `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` and `run` never needed it |
 
 Every failure prints one JSON object to stderr with a stable code — the
@@ -112,6 +117,6 @@ Every failure prints one JSON object to stderr with a stable code — the
 
 - [CLI reference](/sdk/cli/reference) — every command, flag, exit code and environment variable
 - [Local mode](/sdk/cli/local-mode) — the conversation brain fully on-device
-- [macOS](/sdk/macos) — the same binary through Homebrew, and the native Swift package
+- [iOS & macOS in Swift](/sdk/ios) — the native package; its `Expression2` product builds for Apple Silicon Macs too
 - [Python](/sdk/python) — the same engines as a library
 - [SDK](/sdk) — every platform on one table

@@ -11,7 +11,7 @@ order: 2
 One install line per platform. Each row links to the page that owns everything
 after it — a model to fetch with no account, the minimal code, the run command,
 measured performance and the exact refusals with their fixes. The
-[SDK page](/sdk) shows all six side by side.
+[SDK page](/sdk) shows them side by side.
 
 | Platform | Install | Then |
 |---|---|---|
@@ -19,7 +19,6 @@ measured performance and the exact refusals with their fixes. The
 | [Python](/sdk/python) — 3.10–3.14, macOS arm64, Linux | `pip install "bithuman[expression-2]"` | `bithuman.open(...)` / `avatar.render(...)` |
 | [Android](/sdk/android) — arm64-v8a, minSdk 26 | `implementation("ai.bithuman:expression2-android:0.4.1")` | `Expression2ModelStore(context).fetch(code)`, anonymous |
 | [iOS & iPadOS](/sdk/ios) — a physical device, Xcode 26+ | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")`, product `Expression2` | three anonymous `curl`s for a showcase identity |
-| [macOS](/sdk/macos) — Apple Silicon | `brew install bithuman-product/bithuman/bithuman-cli` | `bithuman run` — the same binary as the CLI row |
 | [Web](/sdk/web) — any modern browser | nothing | one URL or one `<iframe>`; no JavaScript package is published today |
 
 `expression-1` is GPU-only by design and serves through the

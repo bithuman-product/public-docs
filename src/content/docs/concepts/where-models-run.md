@@ -108,7 +108,7 @@ designed result, not a broken install.
 | **GPU** | `essence-2`, `expression-1`, `expression-2`, offline and live. The only lane where `expression-1` exists at all. | [Self-hosted GPU](/guides/deploy-self-hosted) · [LiveKit plugin](/guides/deploy-livekit) |
 | **Command line** | macOS Apple Silicon and Linux x86_64, and only those. | [CLI](/sdk/cli) |
 | **Android** | `essence-1`, `essence-2` and `expression-2`, arm64 only. | [Android SDK](/sdk/android) |
-| **Apple (your Mac and iPhone)** | Swift packages for macOS and iOS. Essence 2 in your own iOS or macOS app needs the next Swift SDK release. | [Swift SDK](/sdk/ios) · [macOS](/sdk/macos) |
+| **Apple (your Mac and iPhone)** | Swift packages for macOS and iOS. Essence 2 in your own iOS or macOS app needs the next Swift SDK release. | [Swift SDK](/sdk/ios) · [CLI](/sdk/cli) |
 | **Browser** | `essence-1` and, per identity, `essence-2` and `expression-2`. | [Web](/sdk/web) · [Browser rendering](/guides/browser-rendering) |
 | **Python** | macOS Apple Silicon, Linux x86_64 and Linux aarch64. | [Python SDK](/sdk/python) |
 

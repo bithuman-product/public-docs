@@ -40,8 +40,8 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 
 `bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux.
 
-On a Mac, `brew install bithuman-product/bithuman/bithuman-cli` installs the
-same build. `BITHUMAN_INSTALL_DIR` overrides the default `~/.local/bin`.
+`BITHUMAN_INSTALL_DIR` overrides the default `~/.local/bin`. Other install
+options are on the [CLI page](/sdk/cli#install).
 
 ### 2. Get a model
 
