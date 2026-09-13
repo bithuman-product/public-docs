@@ -198,10 +198,10 @@ fails loudly if unavailable):
 | `expression-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow. |
 | `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
 | `expression-2-cpu` | CPU | Force the CPU tier — no GPU in the path. |
-| `expression-2-ane` | Apple Silicon | Force the Apple tier; limited real-time slots. |
+| `expression-2-apple` | Apple Silicon | Force the Apple tier; limited real-time slots. The older `expression-2-ane` spelling stays accepted for saved links, embeds and share tokens. |
 
 ```text
-https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
+https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
 ```
 
 Tier slugs are an advanced, operational surface — an unrecognized value falls

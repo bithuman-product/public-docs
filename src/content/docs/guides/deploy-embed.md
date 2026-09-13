@@ -59,7 +59,9 @@ By default the platform routes each session down the model's serving chain
 (GPU → Apple → CPU), overflowing on capacity
 ([details](/concepts/models-v2#advanced-pin-a-serving-tier)). For
 benchmarking or placement testing, append `?model=` with a force-tier slug
-(`essence-2-gpu/-ane/-cpu`, `expression-2-gpu/-cpu/-ane`) to the embed (or
+(`essence-2-gpu/-apple/-cpu`, `expression-2-gpu/-cpu/-apple`; the older `-ane`
+spelling of the Apple tier stays accepted for saved links, embeds and share
+tokens) to the embed (or
 viewer) URL to pin the session to that tier — a forced tier never overflows:
 
 ```html

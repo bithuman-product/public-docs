@@ -1021,8 +1021,9 @@ paths:
             enum: [essence-1, essence-2, expression-2]
           description: >-
             Artifact family. Defaults to the agent's own model. The retired
-            `essence-2-light` name and the runtime tier slugs (`essence-2-ane`,
-            `essence-2-gpu`, `essence-2-cpu`, `expression-2-gpu`) fold onto
+            `essence-2-light` name and the runtime tier slugs (`essence-2-apple`,
+            `essence-2-gpu`, `essence-2-cpu`, `expression-2-gpu`; the older
+            `essence-2-ane` spelling stays accepted) fold onto
             their family. `essence-2-quality` is **no longer accepted** — it
             was retired on 2026-07-29 and now returns `400 VALIDATION_ERROR`;
             send `essence-2`. Any other unrecognized value returns the
@@ -1724,7 +1725,8 @@ paths:
                     session — a model name (`essence-1`, `expression-1`,
                     `essence-2`, `expression-2`) or a
                     force-tier slug that pins one serving tier
-                    (`expression-2-gpu/-cpu/-ane`, `essence-2-gpu/-ane/-cpu`;
+                    (`expression-2-gpu/-cpu/-apple`, `essence-2-gpu/-apple/-cpu`; the older
+                    `-ane` spelling of the Apple tier stays accepted;
                     the legacy `essence-2-light-gpu/-cpu` slugs still pin
                     their tiers, and retired `essence-2-light(-ane)` values
                     route to the `essence-2` chain). This is the **early

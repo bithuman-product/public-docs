@@ -10,6 +10,16 @@ order: 1
 
 ## September 2026
 
+### The Apple tier's force slugs are `essence-2-apple` and `expression-2-apple` (2026-09-13)
+
+The `?model=` slug that pins a session to the cloud's Apple tier is now spelled
+after the tier — `essence-2-apple` and `expression-2-apple` — on
+[embed](/api/embedding), viewer and share URLs, and in the
+[tier tables](/concepts/models-v2#advanced-pin-a-serving-tier). **Nothing you
+already have breaks:** the older `essence-2-ane` and `expression-2-ane`
+spellings stay accepted forever, so saved links, embeds and share tokens keep
+routing to the same tier.
+
 ### `bithuman render` is about 1.5x faster on Apple Silicon and 1.3x on Linux (2026-09-12)
 
 CLI `cli-v2.6.8`, macOS arm64 and Linux x86_64 built from one commit, published

@@ -26,8 +26,8 @@ four ways:
 
 - **From bitHuman's cloud** — a **GPU**, **Apple** and **CPU** tier chain,
   routed automatically. The Apple tier runs on **bitHuman's** Apple Silicon
-  Macs and is reached over the network like any other cloud tier. Its `?model=` slug is still `essence-2-ane` — a historical name, kept
-  so saved links keep working.
+  Macs and is reached over the network like any other cloud tier. Its `?model=` slug is `essence-2-apple`; the older
+  `essence-2-ane` spelling stays accepted, so saved links, embeds and share tokens keep working.
 - **On your own Mac or Linux machine** — the [CLI](/sdk/cli#what-renders-locally-and-where)
   (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
   `<code>.imx` offline with `bithuman render` and serves it live with
@@ -167,7 +167,7 @@ fails loudly if unavailable):
 |---|---|---|
 | `essence-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow — the public name. |
 | `essence-2-gpu` | Cloud GPU | Force the GPU tier. |
-| `essence-2-ane` | Apple Silicon | Force the Apple tier. The `-ane` spelling is a **historical name** kept as a permanent alias. |
+| `essence-2-apple` | Apple Silicon | Force the Apple tier. The older `essence-2-ane` spelling stays accepted for saved links, embeds and share tokens. |
 | `essence-2-cpu` | Cloud CPU | Force the CPU tier — no GPU in the path. |
 
 ```text

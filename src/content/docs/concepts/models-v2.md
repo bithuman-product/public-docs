@@ -279,15 +279,17 @@ with a force-tier slug to the session (viewer / embed) URL. A forced tier is
 pinned — it never overflows, and it fails loudly if that tier is unavailable:
 
 ```text
-https://bithuman.ai/embed/A66GYD8664?model=expression-2-ane
+https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
 ```
 
 | Model | Force-tier slugs |
 |---|---|
-| [`essence-2`](/concepts/essence-2#serving-tiers) | `essence-2-gpu` · `essence-2-ane` · `essence-2-cpu` |
-| [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-ane` |
+| [`essence-2`](/concepts/essence-2#serving-tiers) | `essence-2-gpu` · `essence-2-apple` · `essence-2-cpu` |
+| [`expression-2`](/concepts/expression-2#serving-tiers) | `expression-2-gpu` · `expression-2-cpu` · `expression-2-apple` |
 
-Saved links carrying pre-rename or retired slugs keep working — see
+The older `essence-2-ane` / `expression-2-ane` spellings of the Apple tier stay
+accepted for saved links, embeds and share tokens, and saved links carrying
+pre-rename or retired slugs keep working too — see
 [Naming & migration](#naming--migration).
 
 > **Note** Tier forcing is an advanced, operational surface — slugs may be
