@@ -29,7 +29,36 @@ docker run --gpus all -p 8089:8089 \
   sgubithuman/expression-avatar:latest
 ```
 
-Then point a LiveKit agent worker at `http://localhost:8089/launch` — the worker spawns render sessions on demand. Each `/launch` takes `{ livekit_url, livekit_token, room_name, avatar_image }`; the container joins the room and publishes video.
+Then point a LiveKit agent worker at `http://localhost:8089/launch` — the worker spawns render sessions on demand; the container joins the room and publishes video.
+
+`/launch` accepts **either JSON or multipart form data**. Exactly three fields
+are required — the worker answers `Missing required fields: livekit_url,
+livekit_token, room_name` if one is absent:
+
+| Field | Required | What it is |
+|---|---|---|
+| `livekit_url` | yes | the room's server, e.g. `ws://livekit:17880` |
+| `livekit_token` | yes | a join token for the avatar participant |
+| `room_name` | yes | the room to join |
+| `avatar_image` | no | the portrait to render; **omit it and the container uses its own default**. A face crop is applied automatically |
+| `avatar_image_url` | no | the same, fetched from a URL instead |
+
+### The other endpoints
+
+The container serves more than `/launch`, and two of these are the answer to
+questions elsewhere on this page:
+
+| Endpoint | Use |
+|---|---|
+| `GET /ready` | `200` when the worker will accept `/launch` — poll this, see below |
+| `GET /version` | `git_sha`, `image_tag` and `build_time` of the image that is **actually running** — this is how you confirm you are on a current build |
+| `GET /status` | `active_sessions`, `available_sessions`, `max_sessions` — live occupancy against the table below |
+| `POST /tasks/{task_id}/stop` | end one session; `GET /tasks` lists them |
+| `GET /health` | liveness, for an orchestrator's probe |
+
+`MAX_SESSIONS` caps concurrent sessions (the published image ships `9`). That is
+the knob behind the hardware table below; `AUTO_PREWARM` controls whether the
+pipeline loads at startup rather than on the first `/launch`.
 
 **Requirements:** an **Ampere-or-newer NVIDIA GPU** (compute capability ≥ 8.0 with BF16 tensor cores — RTX 30xx/40xx, A-series, L4/L40S, H100; **Turing T4 / GTX 16xx / RTX 20xx and older fall back to a slower non-real-time path**), **≥ 8 GB VRAM**, the NVIDIA Container Toolkit, and Docker 24+. Weights (~5 GB) download on first run into the `bithuman-models` volume; subsequent runs skip the download.
 
@@ -77,8 +106,9 @@ publish preset**, not the engine. LiveKit's default maps a small avatar track to
 a low-bitrate, frame-rate-capped VP8 preset with simulcast on, which decimates
 the render and, under encoder pressure, produces ~1 s frozen frames (black) plus
 a downscale. This container already publishes a tuned single H264 layer;
-ensure you are on a **current image build** (older builds did not) and
-tune via env if needed:
+ensure you are on a **current image build** — `curl localhost:8089/version`
+prints the `image_tag` and `git_sha` actually running — and tune via env if
+needed:
 
 | Env | Default | Purpose |
 |---|---|---|
