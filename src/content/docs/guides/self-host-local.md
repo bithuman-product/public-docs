@@ -180,7 +180,7 @@ Measured frame rates for every platform are on the
 | `OfflineRenderError` naming the audio encoder | the first render could not download it | allow the machine network access once; it is cached in `~/.bithuman/deps` afterwards |
 | `pip install "bithuman[offline]"` downloads gigabytes of `nvidia-*` packages | the default Linux `torch` is a CUDA build | install `torch` from the CPU index first (step above) |
 | `ffmpeg: command not found` | the SDK shells out to ffmpeg | install ffmpeg and put it on `PATH` |
-| `lible_core.so not found` at the first frame on macOS | a wheel older than 2.10.0 | `pip install -U bithuman` |
+| `lible_core.so not found` at the first frame on macOS | an old wheel, from before the native half shipped | `pip install -U bithuman` |
 | `java.lang.UnsatisfiedLinkError` on an Android emulator | an x86_64 system image; the AARs are `arm64-v8a` only | a physical device, or an `arm64-v8a` emulator image |
 | a render comes back softer around the mouth than the [samples](/concepts/essence-2) | an older artifact | send us the agent code at [hello@bithuman.ai](mailto:hello@bithuman.ai); nothing to configure on your side |
 

@@ -42,23 +42,23 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 ## Current shipping versions
 
-| Artifact | Latest version | Channel | Engine ABI |
-|---|---|---|---|
-| Python SDK (`bithuman`) | **3.1.4** — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) | v7 |
-| Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
-| Swift SDK (`Expression2`) | **2.6.1** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
-| Swift SDK (`Essence2`) | engine release **`essence2-v1.6.1`** — what the tap's `Package.swift` points at on its current tag, `v2.13.1`. You do not pin this yourself: pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app needs the next Swift SDK release. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface) |
-| bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) | v7 |
-| Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
-| Android AAR (`ai.bithuman:essence2-android`) | **0.5.3** (`0.2.0` through `0.5.2` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; pin `0.5.3`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
-| bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
+| Artifact | Latest version | Where it comes from |
+|---|---|---|
+| Python SDK (`bithuman`) | **3.1.4** — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) |
+| Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| Swift SDK (`Expression2`) | **2.6.1** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app needs the next Swift SDK release. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) |
+| Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
+| Android AAR (`ai.bithuman:essence2-android`) | **0.5.3** (`0.2.0` through `0.5.2` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; pin `0.5.3`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
+| bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) |
 
 > **`lible_core.so not found` at the first frame** means an old wheel that
 > shipped without the native half of the Essence 2 offline render route. Current
 > wheels carry it on both macOS and Linux: `pip install --upgrade bithuman`,
 > then confirm with `python -c "import bithuman; print(bithuman.__version__)"`.
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 3.1.4 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Surfaces are meant to be mixed — the Swift SDK on iOS with the Python wheel on your backend, for example. Keep each one current and they stay compatible; we handle the versioning underneath.
 
 ## Device and platform support
 
@@ -110,7 +110,7 @@ Heavier high-fidelity model, and this table is the **first-generation** floor:
 |---|---|---|
 | **Linux + NVIDIA GPU** | Server | 8 GB+ VRAM via the self-hosted Docker container |
 | **Mac M3+ (arm64)** | Not applicable | No Apple build of Expression 1 — see the correction below |
-| **iPad Pro M4+** | Not applicable | Same — GPU-only by scope ruling, not a pending port |
+| **iPad Pro M4+** | Not applicable | Same — GPU-only by design, not a pending port |
 | **iPhone 16 Pro+** | Not applicable | Same. ([Expression 2](/sdk/ios#minimal-code) is a **different engine**, has rendered on an iPhone, and publishes no model bundle yet.) |
 | **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression 1 needs an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
@@ -139,8 +139,8 @@ For the file each family hands you by name, and what opens it, see
 | Runtime | `essence-2` | `expression-2` |
 |---|---|---|
 | bitHuman cloud (GPU · Apple Silicon · CPU chain) | Yes | Yes |
-| Self-hosted CPU (your servers) | Offline rendering, metered — **SDK 2.9.0+ on Linux, 2.10.0+ on macOS** ([quickstart](/guides/deploy-self-hosted#essence-2-on-your-own-cpu)); local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); live streaming via cloud | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
-| On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/ios#install) `Essence2` product, package **2.8.0** — the engine's C interface, builds for iOS device, iOS simulator and macOS; resources published; **no in-app model download route yet** | [Swift](/sdk/ios) `Expression2` 2.6.1 ships **both** a `macos-arm64` and an `ios-arm64` slice and has rendered on **Mac and iPhone**. It is **engine only**, but since 2.6.0 it [takes a model path and opens the downloaded container](/sdk/ios#minimal-code), so an app with its own agent can hand it one. The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
+| Self-hosted CPU (your servers) | Offline rendering, metered — the current `bithuman` wheel on Linux and macOS ([quickstart](/guides/deploy-self-hosted#essence-2-on-your-own-cpu)); local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); live streaming via cloud | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) |
+| On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/ios#install) `Essence2` product builds for iOS device, iOS simulator and macOS, but there is **no in-app model download route yet** | The [Swift](/sdk/ios) `Expression2` product ships both a Mac and an iPhone slice and has rendered on both. It is **engine only**, but it [takes a model path and opens the downloaded container](/sdk/ios#minimal-code), so an app with its own agent can hand it one. The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:
@@ -157,15 +157,3 @@ Resolution interacts with both model and host:
 | **1280×720** | Desktop and cloud streaming — default for the CLI and LiveKit plugin |
 
 Frames are delivered at 1280×720 by every SDK; smaller avatars are letterboxed / pillarboxed into that frame.
-
-## Engine ABI history
-
-The engine ABI is the C surface `libessence` exposes to its language wrappers. New ABI versions are additive — old SDK builds that target an earlier ABI keep working against newer engines until a version is formally retired.
-
-| ABI | Introduced | Notes |
-|---|---|---|
-| **v7** | libessence 1.19.1 | Adds a streaming entry point for pre-computed audio features. Current production baseline; covers every shipping SDK above. Backwards-compatible with v6 callers. |
-| **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
-| v5 and earlier | pre-1.16 | Retired in production builds — synchronous only, no streaming. |
-
-Confirm the ABI tag on a live host with `bithuman doctor`.

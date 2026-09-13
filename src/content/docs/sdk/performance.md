@@ -16,8 +16,15 @@ label: "Performance"
 | Web | Chrome on M4 | 30 | — |
 | Linux | Intel Core i7-13700F | 41 | 21 |
 
-Avatars play at 20–25 fps, so a platform at or above that keeps up in real time.
-A dash means we have not measured that pairing yet.
+**How to read a row.** Expression 2 plays at 20 frames per second, Essence 2 at
+25. A number at or above its model's own rate holds a live, two-way conversation
+on that hardware. A number below it still renders — use that pairing for offline
+files, or run the model [in the cloud](/api/overview) instead.
+
+A dash means we do not publish a number for that pairing yet: either it has not
+been measured on that hardware, or it is not yet fast enough for a live
+conversation. It never means the platform is unsupported —
+[what each platform needs →](/sdk)
 
 <!-- FLOORS:NOTES -->
 The Expression 2 Cloud GPU number already includes saving the video file.

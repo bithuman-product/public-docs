@@ -224,8 +224,23 @@ const CARRIERS = [
   // the 2.6.1 flow instead. Recorded rather than deleted silently: if a page
   // ever quotes the hint WITHOUT the library name, this guard will flag it and
   // the carrier goes back in.
-  { why: "§G: library FILENAMES — System.loadLibrary/dlopen resolve them by exact name inside an installed app (readelf -d reports SONAME=libengine-backend-essence2-light.so)",
-    re: /libessence[A-Za-z0-9_]*\.(a|so|dylib)\b|libessence_jni|libengine-backend-essence2-light/i },
+  // ★MOVED DOWN 2026-09-13 (same mechanism as the group at the foot of this
+  // list): the library FILENAMES carrier
+  //     /libessence[A-Za-z0-9_]*\.(a|so|dylib)\b|libessence_jni|libengine-backend-essence2-light/i
+  //     (§G: System.loadLibrary/dlopen resolve them by exact name inside an
+  //      installed app; readelf -d reports SONAME=libengine-backend-essence2-light.so)
+  // Its ONE occurrence on this site was `libessence.a` in the "Adding a new
+  // language SDK" checklist on /community — an internal contributor handbook
+  // for a binding nobody outside bitHuman can build, since the engine ships as
+  // a binary. That page was rewritten to "where to get help and how to
+  // contribute" on 2026-09-13, so the string now matches 0 lines and this
+  // file's own "frozen carrier never seen in the corpus" control fired on a
+  // CORRECT site — exactly the state the four carriers at the foot of this list
+  // are in.
+  // ★It is NOT unfrozen. NAMING-LEDGER.md §G still governs it and renaming the
+  // artifact is still a runtime break for anyone who resolves it by name. What
+  // changed is only that this site no longer teaches it. Move it back up the
+  // moment a page documents one of these filenames again.
   { why: "§G: the `libessence` JSON KEY in `bithuman version --json` / `doctor --json`, which the CLI's own help calls a stable contract and customer scripts parse",
     re: /["']libessence["']\s*:/i },
   // ★ADDED 2026-09-07 with the Essence2 SwiftPM product. The shipped essence-2
@@ -550,8 +565,17 @@ if (fenceHits > FENCE_BUDGET) fatal.push(
   `not a place to park a retired product word — read the new ones and either fix them or ` +
   `raise this number deliberately.`
 );
-if (fenceHits < 5) fatal.push(
-  `only ${fenceHits} fenced-verbatim hits (expected 5+) — the fence tracker stopped ` +
+// ★LOWERED 5 -> 4 on 2026-09-13, and the reason is recorded rather than the
+// number quietly nudged. This is a LIVENESS control on the fence tracker, not a
+// budget: it exists so that a tracker which stopped matching ``` blocks cannot
+// read green. The corpus lost one fenced occurrence that day — the ASCII
+// engine-layering block on /concepts/architecture, a second drawing of the
+// three-layer stack already rendered above it on the same page, removed with
+// the rest of the engine-ABI detail a developer never types. Four live proofs
+// still stand, so a broken tracker (which would read 0) is still caught. Do not
+// lower this again without naming which fenced block went and why.
+if (fenceHits < 4) fatal.push(
+  `only ${fenceHits} fenced-verbatim hits (expected 4+) — the fence tracker stopped ` +
   `matching \`\`\` blocks, so quoted CLI transcripts are about to be reported as prose violations`
 );
 if (markerHits.n < 10) fatal.push(`only ${markerHits.n} occurrences matched a retirement marker (expected 10+) — MARKERS or the corpus changed shape`);
