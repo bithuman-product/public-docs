@@ -23,7 +23,7 @@ In Xcode, *File → Add Package Dependencies…* and paste the URL, or in
 `from:` is a floor — it resolves the newest 2.x tag. The `Expression2` product
 is the [Expression 2](/concepts/expression-2) engine as a pre-compiled
 xcframework (`ios-arm64`, `macos-arm64`) with no transitive packages.
-Essence 2 in your own iOS or macOS app needs the next Swift SDK release.
+The `Essence2` product is the [Essence 2](/concepts/essence-2) engine, also a pre-compiled xcframework (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`). Since **2.13.2** it opens the `<code>.imx` you download for your own agent, on both iPhone and Mac — measured on an iPhone 15 at [33 frames per second](/sdk/performance). You still fetch the file yourself; there is no in-app download route.
 
 ## Get a model
 
