@@ -9,7 +9,7 @@ label: "Performance"
 
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
-| Cloud GPU | NVIDIA RTX 4090 | — | 51.9 |
+| Cloud GPU | NVIDIA RTX 4090 | 290 | 51.9 |
 | macOS | Apple M4 | 73 | 43 |
 | iOS | iPhone 15 | 118 | 50 |
 | Android | Galaxy S25+ | 58 | — |
@@ -20,7 +20,9 @@ Avatars play at 20–25 fps, so a platform at or above that keeps up in real tim
 A dash means we have not measured that pairing yet.
 
 <!-- FLOORS:NOTES -->
-The Cloud GPU number counts frames as they are rendered. Saving them to a video file adds encoding time on top, so a benchmark that writes an MP4 will measure less.
+The Expression 2 Cloud GPU number already includes saving the video file.
+
+The Essence 2 Cloud GPU number counts frames as they are rendered. Saving them to a video file adds encoding time on top, so a benchmark that writes an MP4 will measure less.
 <!-- /FLOORS:NOTES -->
 
 Measured audio in to frame out, once the model has loaded. Loading the model the
