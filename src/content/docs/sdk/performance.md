@@ -11,7 +11,7 @@ label: "Performance"
 |---|---|---:|---:|
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 51.9 |
 | macOS | Apple M4 | 73 | 43 |
-| iOS | iPhone 15 | 118 | 50 |
+| iOS | iPhone 15 | 118 | — |
 | Android | Galaxy S25+ | 58 | — |
 | Web | Chrome on M4 | 30 | — |
 | Linux | Intel Core i7-13700F | 41 | 21 |

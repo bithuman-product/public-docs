@@ -23,6 +23,7 @@ In Xcode, *File → Add Package Dependencies…* and paste the URL, or in
 `from:` is a floor — it resolves the newest 2.x tag. The `Expression2` product
 is the [Expression 2](/concepts/expression-2) engine as a pre-compiled
 xcframework (`ios-arm64`, `macos-arm64`) with no transitive packages.
+Essence 2 in your own iOS or macOS app needs the next Swift SDK release.
 
 ## Get a model
 
