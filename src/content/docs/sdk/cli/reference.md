@@ -346,8 +346,8 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.8","libessence":"3.1.3",
- "build":{"commit_short":"b8c58abecf01","target":"x86_64-unknown-linux-gnu","built_at":"2026-09-12T00:59:34Z","profile":"release"},
+{"abi":7,"cli":"2.6.9","libessence":"3.1.3",
+ "build":{"commit_short":"8bb4d51cf091","target":"x86_64-unknown-linux-gnu","built_at":"2026-09-13T02:27:24Z","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
 
@@ -373,7 +373,13 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 // bithuman render … --json     frames is read back from the finished file
 {"output":"out.mp4","bytes":1234567,"seconds":3.4,"width":1280,"height":720,"frames":125,
- "fps":25,"lead_in_frames_dropped":10}
+ "fps":25,"render_seconds":3.18,"render_fps":39.3,"lead_in_frames_dropped":10}
+
+`fps` is the rate of the file you get (the container's frame rate). `render_fps`
+is the speed the engine produced those frames: `frames / render_seconds`, timed
+from the first audio push after the model has loaded and warmed up to the last
+frame handed to the writer — the number the performance page quotes. Both are
+present from 2.6.9.
 
 // bithuman doctor --json      exit 0 iff "ready":true
 {"ready":false,"versions":{…},"host":{…},"auth":{…},"brain":{…},"runtime_assets":{…}}
@@ -382,9 +388,9 @@ A stable sysexits subset. Branch on these rather than parsing text.
 {"event":"session_started","url":"http://127.0.0.1:8088/","host":"127.0.0.1","port":8088}
 ```
 
-The `version --json` object above matches the 2.6.8 Linux x86_64 build; the
+The `version --json` object above matches the 2.6.9 Linux x86_64 build; the
 `list --json`, `pull --json` and `info --json` objects were read on Linux
-x86_64 on 2026-09-11 and their shapes are unchanged in 2.6.8.
+x86_64 on 2026-09-11 and their shapes are unchanged in 2.6.9.
 
 ### Introspection
 

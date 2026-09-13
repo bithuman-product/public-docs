@@ -15,8 +15,10 @@ label: "Performance"
 | Web | Chrome on M4 | 30 | — |
 | Linux | x86 workstation | 37 | 1 |
 
+Frames per second = steady-state throughput after warm-up — audio in to frame out, model load excluded, worst of three quiet runs on the published release, 28-second reference clip.
+
 Hyper-realtime = 40 fps or more, unpaced (avatars play at 20–25 fps).
 
-Essence 2 GPU rendering is rolling out; figures update as each platform lands.
+Whole-clip time including model load is longer — see each platform page.
 
 <small>Measured September 2026.</small>

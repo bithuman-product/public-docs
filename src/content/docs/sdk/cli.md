@@ -18,14 +18,14 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 One self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put
 it elsewhere), sha256-verified against the release. On Apple Silicon
 `brew install bithuman-product/bithuman/bithuman-cli` installs the same
-tarball. The current release is **`cli-v2.6.8`** (2026-09-12), the same version
+tarball. The current release is **`cli-v2.6.9`** (2026-09-13), the same version
 on both platforms — this page is the one place that names it:
 
 ```text
 $ bithuman --version            # Linux x86_64
 libessence 3.1.3 ABI 7
-bithuman    2.6.8
-build       b8c58abecf01 x86_64-unknown-linux-gnu/release 2026-09-12T00:59:34Z 8aafb27ef668
+bithuman    2.6.9
+build       8bb4d51cf091 x86_64-unknown-linux-gnu/release 2026-09-13T02:27:24Z 3cc2217f9d31
 engine      linux 1.0.1 76d990a19674
 ```
 
