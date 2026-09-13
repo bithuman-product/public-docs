@@ -119,3 +119,15 @@ jobs:
 
       - name: No unrendered authoring markup in what is served
         run: node scripts/check-served-markup.mjs --live "$ORIGIN"
+
+      # ★MEASURED 2026-09-13: /start served an internal post-mortem about our
+      # own delivery failure to every visitor, inside an HTML comment, for four
+      # days. The PR-time half of this guard is in link-check.yml and grades the
+      # bytes this repo BUILDS; this half grades the bytes actually SERVED, so a
+      # comment that reaches production by any route other than a PR — an
+      # edited deploy, a rollback to an older build — is still caught.
+      - name: The comment guard proves itself
+        run: node scripts/check-served-comments.mjs --self-test
+
+      - name: No note to ourselves reaches a reader
+        run: node scripts/check-served-comments.mjs --live "$ORIGIN"

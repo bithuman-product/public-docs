@@ -21,10 +21,12 @@ label: "Performance"
 on that hardware. A number below it still renders — use that pairing for offline
 files, or run the model [in the cloud](/api/overview) instead.
 
-A dash means we do not publish a number for that pairing yet: either it has not
-been measured on that hardware, or it is not yet fast enough for a live
-conversation. It never means the platform is unsupported —
-[what each platform needs →](/sdk)
+A dash means we do not publish a number for that pairing yet, for one of three
+reasons: we have not measured it on that hardware; we have measured it and it is
+not yet fast enough for a live conversation; or we have measured it only on a
+setup you cannot get from a published release — and a number you cannot
+reproduce is not a number we will print. A dash never means the platform is
+unsupported — [what each platform needs →](/sdk)
 
 <!-- FLOORS:NOTES -->
 The Expression 2 Cloud GPU number already includes saving the video file.

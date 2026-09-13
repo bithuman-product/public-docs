@@ -310,3 +310,39 @@ jobs:
             echo "::error file=public/api/openapi.yaml::published spec is stale — run 'npm run sync-openapi' and commit the result"
             exit 1
           }
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # ★MEASURED 2026-09-13, live: docs.bithuman.ai/start served an internal
+  # post-mortem about our own delivery failure, to every visitor, inside an
+  # HTML comment. It had been there since 2026-09-09 and nothing caught it,
+  # because every guard above reads the SOURCE or reads RENDERED TEXT — and an
+  # HTML comment is neither. Astro strips `{/* ... */}` and emits `<!-- ... -->`
+  # verbatim, so anything left as HTML is, by construction, addressed to the
+  # reader; this job grades what is left, on the BUILT bytes.
+  #
+  # It is a job of its own rather than a step in `links` above because grading
+  # built bytes needs a build, and Astro 6 needs Node >= 22.12 while that job
+  # is pinned to 20. The post-deploy half — the same guard against the bytes
+  # actually SERVED — is in served-vocabulary.yml.
+  # ─────────────────────────────────────────────────────────────────────────
+  served-comments:
+    name: no note to ourselves reaches a reader
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      # The guard proves it can FIRE before it is allowed to report a pass —
+      # including on the live defect, verbatim, and on a long comment carrying
+      # no marker it knows (the next leak will not use our vocabulary).
+      - name: The comment guard proves itself
+        run: node scripts/check-served-comments.mjs --self-test
+
+      - run: npm run build
+
+      - name: No internal commentary in what this repo builds
+        run: node scripts/check-served-comments.mjs
