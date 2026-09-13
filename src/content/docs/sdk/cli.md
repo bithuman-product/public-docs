@@ -63,9 +63,9 @@ bithuman run "$(bithuman pull marmalade)"                                # 1. li
 bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4   # 2. offline: audio in, MP4 out
 ```
 
-`render` needs a 16 kHz mono WAV — `curl -fsSLo speech.wav
+`render` needs a mono WAV — `curl -fsSLo speech.wav
 https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav`
-is one. `bithuman info <file>` prints what an avatar is before you render it.
+is one (24 kHz, 15 s). `bithuman info <file>` prints what an avatar is before you render it.
 
 ## Run
 
