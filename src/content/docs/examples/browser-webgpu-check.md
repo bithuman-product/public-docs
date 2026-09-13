@@ -412,21 +412,20 @@ adapter=yes"`, 8 WASM threads, cross-origin isolated, `hardwareConcurrency` 32.
 
 | tier | EP | run 1 | run 2 | run 3 |
 |---|---|---|---|---|
-| **m4b** (quality) | wasm | 17.6 fps | 18.4 fps | 18.6 fps |
-| **m4b** (quality) | webgpu | **42.1 fps** | **30.9 fps** | **31.0 fps** |
-| **m3c2** (speed) | wasm | 48.8 fps | 35.9 fps | 32.9 fps |
-| **m3c2** (speed) | webgpu | 50.5 fps | **29.2 fps** | 33.0 fps |
+| **m4b** (the larger model) | wasm | 17.6 fps | 18.4 fps | 18.6 fps |
+| **m4b** (the larger model) | webgpu | **42.1 fps** | **30.9 fps** | **31.0 fps** |
+| **m3c2** (the smaller model) | wasm | 48.8 fps | 35.9 fps | 32.9 fps |
+| **m3c2** (the smaller model) | webgpu | 50.5 fps | **29.2 fps** | 33.0 fps |
 
 Run 1's WebGPU numbers are the fastest of the three on both tiers; do not take
 them as the headline. The run-to-run spread on one machine is wide enough that a
 single run is not evidence — which is the other reason to run this yourself
 rather than quote it.
 
-**Read the two rows differently.** On the **quality** model WebGPU is worth
-1.7–2.4× and is the difference between under-realtime and comfortable. On the
-**speed** model it is a wash — and in run 2 it was a *net loss* (29.2 fps
-against wasm's 35.9). "WebGPU is the fast path" is not a true sentence about
-this pipeline; it is true of one graph and false of the other.
+**Read the two rows differently.** On the larger model WebGPU is a real win.
+On the smaller one it is a wash, and in run 2 it was a net loss. "WebGPU is the
+fast path" is not a true sentence about this pipeline — it is true of one graph
+and false of the other, which is why you measure rather than assume.
 
 ---
 
@@ -633,13 +632,9 @@ and the session falls back to cloud rendering. They still see the avatar; you
 just do not get the thing you asked for, and you pay cloud rendering for it.
 That is a header you control, and it is free.
 
-**Provenance.** These four transcripts were produced by running the script
-above on 2026-09-06, Linux x86_64, Google Chrome headless, on a 32-thread host
-with an NVIDIA RTX 4090. The tier table and the 10-thread constant are
-transcribed from the gate the shipped viewer runs. This probe reports the
-**decision**, not a frame rate — it does not fetch an identity bundle, so the
-`WITH` / `WITHOUT` litert columns are both printed rather than one being
-selected for you.
+This probe reports the **decision**, not a frame rate — it does not fetch an
+identity bundle, so the `WITH` / `WITHOUT` litert columns are both printed
+rather than one being selected for you.
 
 ---
 
@@ -650,7 +645,7 @@ selected for you.
 - **Warm the adapter before you create a WebGPU session**, or handle the throw.
   There is no automatic wasm fallback underneath you.
 - **Do not ship a "use WebGPU when available" switch** without check 3 on your
-  own target hardware. On the speed tier you may be paying a 26 MB extra
+  own target hardware. On the smaller model you may be paying a 26 MB extra
   download for nothing.
 - **wasm is the floor and it is a real floor** — it renders on every browser in
   the table, and it is what these models run on by default.

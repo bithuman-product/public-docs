@@ -169,11 +169,8 @@ the automatic fallback so the field is **never empty** for your endpoint, but it
 changes each session — if you see a value that varies per conversation, that
 means no durable identifier reached us and you should set one.
 
-> **Fixed 2026-08-18.** Embed tokens carrying `endUserId` were re-minted without
-> the claim before reaching the runtime, so customers who followed option 1
-> received the per-session correlator instead of their own identifier. The claim
-> is now carried through. If you supply `endUserId` and still see a changing
-> value, tell us — that is a bug, not a configuration issue.
+> If you supply `endUserId` and still see a changing value, tell us — that is a
+> bug, not a configuration issue.
 
 Two limits worth knowing:
 

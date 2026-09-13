@@ -25,15 +25,12 @@ comes from [Agents](/api/agents).
 
 Or open the agent directly: `https://www.bithuman.ai/A74NWD9723?rendering_mode=browser`
 — a live, lip-synced agent that listens and answers, rendered in the tab.
-Start on `www.bithuman.ai`; that host mints the session, the viewer host does
+Always start on `www.bithuman.ai`: that host signs you in, the viewer host does
 not. Swap in your own agent code and it works the same way. The
 `rendering_mode` switch and its three values are on
 [browser rendering](/guides/browser-rendering); embedding options are on
 [deploy an embed](/guides/deploy-embed). An [Essence 1](/concepts/essence-1)
-agent renders in the tab with `?render=local` instead: the tab fetches the
-agent's `.imx` and runs the audio front end in a published WebAssembly module,
-pinned to a commit in
-`https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/essence1-web/3.1.2/manifest.json`.
+agent renders in the tab with `?render=local` instead.
 
 ## Run
 
@@ -46,32 +43,22 @@ on [pricing](/guides/pricing); the free tier covers a first conversation.
 
 ## Performance
 
-The hosted route plays at the model's own frame rate — 20 fps for Expression 2,
-25 fps for Essence 2 — because the frames are produced server-side and the tab
-decodes video. Rendering **in** the tab, unpaced (frames rendered back to back):
+The hosted route plays at the avatar's own frame rate: the frames are rendered
+on bitHuman's servers and your tab decodes video, like any other stream.
+Measured rates for every platform are on the
+[performance page](/sdk/performance).
 
-| Hardware | Model | fps (unpaced) | Measured |
-|---|---|---:|---|
-| Chrome 141 on Linux x86_64, WASM, 4 threads | reduced Essence 2 renderer — keypoint-driven, without the teeth pipeline | **12** | 2026-09-10 — needs cross-origin isolation, or WASM clamps to 1 thread |
+You can also render **in** the tab:
 
-That row is the one published in-browser package: a June student of the
-Essence 2 renderer that ships one built-in identity and a recorded loop. Use it
-to measure in-browser speed on your hardware, not to render your agent. Its
-bundle is `https://models.bithuman.ai/web/libelevate-web-v0.1.0/manifest.json`
-(every file with a sha256; `index.js` documents `createAvatar`; the path keeps
-a [retired name](/concepts/models-v2)). The host does **not** send
-`Cross-Origin-Opener-Policy` / `Cross-Origin-Embedder-Policy`, so a page that
-loads the bundle is not cross-origin isolated on those headers alone — the
-bundle ships `coi-serviceworker.js` for exactly that reason, and its own
-`demo.html` loads it. Send the two headers yourself, or ship that shim, or WASM
-stays clamped to one thread. There is no downloadable
-in-browser **package** for Expression 2 — but the tab does render it, and has
-for months: `?render=local` on the hosted route runs the Expression 2 renderer
-*in your tab*, on a real WebGPU adapter where the browser has one and on WASM
-where it does not, faster than the 20 fps the avatar plays at. Nothing to
-install and no key: open
-`https://www.bithuman.ai/A74NWD9723?render=local`. Every platform side by side:
-[Performance](/sdk/performance).
+- **Expression 2** — nothing to install. Add `?render=local` to the hosted URL
+  and the renderer runs in your tab, ahead of the rate the avatar plays at:
+  `https://www.bithuman.ai/A74NWD9723?render=local`.
+- **Essence 2** — the one published in-browser package is a **demo**. It ships
+  a single built-in identity and a recorded loop, so you can measure in-browser
+  speed on your own hardware; it cannot render your own agent. The bundle is
+  `https://models.bithuman.ai/web/libelevate-web-v0.1.0/manifest.json` (the path
+  keeps a [legacy name](/concepts/models-v2)). Your page must be cross-origin
+  isolated or WebAssembly drops to one thread — see the troubleshooting table.
 
 ## Troubleshooting
 
@@ -82,4 +69,4 @@ install and no key: open
 | The in-tab renderer runs at ~8 fps instead of 20 | `crossOriginIsolated` is `false`, so WASM clamped to 1 thread | send `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp` from your own host, or ship the bundle's `coi-serviceworker.js` |
 | `WebGPU not available in this browser` | `ep: "webgpu"` on a browser with no adapter | pass `"wasm"`, or [probe first](/examples/browser-webgpu-check#check-2--does-this-browser-have-a-real-webgpu-adapter) |
 | You want a JavaScript SDK | there is no npm package today | drive a served avatar over [LiveKit](/sdk/livekit), or embed the hosted route |
-| `?elevate_ep=webgpu` seems to do nothing on the hosted route | the short-link hop that mints your session forwards `render` but drops `elevate_ep`, so the page never sees it | add it **after** the page has loaded — append `&elevate_ep=webgpu` to the URL in the address bar (the one that already carries `token=`) and reload. This runs the model on the GPU instead of WASM; it is opt-in, not the default, and needs a real WebGPU adapter |
+| `?elevate_ep=webgpu` seems to do nothing | the parameter is dropped while the page signs you in, so the page never sees it | add it **after** the page has loaded: append `&elevate_ep=webgpu` to the URL in the address bar (the one that already carries `token=`) and reload. It runs the model on the GPU instead of WebAssembly; it is opt-in and needs a browser with WebGPU. `elevate_ep` is a legacy name kept for compatibility |

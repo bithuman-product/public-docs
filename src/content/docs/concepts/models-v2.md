@@ -325,11 +325,10 @@ on 3.x;
 [quickstart](/guides/deploy-self-hosted#essence-2-on-your-own-cpu)).
 **Locally-hosted LiveKit** (live streaming from your own server) is still in
 active development — live sessions run through the cloud or the browser. And
-**neither** second-generation model's CPU tier sustains real-time rendering:
-essence-2 on a CPU renders at about 1 fps ([Performance](/sdk/performance)),
-and expression-2's CPU tier is sized for **offline talking-video generation**
-rather than real-time streaming. Real-time streaming uses the GPU and Apple
-tiers.
+**neither** second-generation model's CPU tier is sized for real-time
+streaming: plain CPU is for offline rendering, and real-time streaming uses the
+GPU and Apple tiers. Measured frame rates per platform are on the
+[performance page](/sdk/performance).
 
 ## Pricing
 

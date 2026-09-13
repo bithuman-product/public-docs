@@ -61,26 +61,20 @@ https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=browser
 https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=avatar
 ```
 
-> ★ **Start every one of these on `www.bithuman.ai`.** That host mints the
-> session key and forwards you to the viewer **carrying the rendering-mode
-> parameter with it**; the viewer host does not mint one. Observed 2026-09-07:
-> `https://www.bithuman.ai/<CODE>?rendering_mode=browser` answers `302` to
-> `https://agent.viewer.bithuman.ai/<CODE>?s=…&rendering_mode=browser`. A URL
-> that starts on the viewer host now bounces back to `www` **with** its query
-> string, so it ends up in the same place — `www` is simply the shorter road.
-> [Full detail, and the instruction this replaced](#activate-it).
+> ★ **Start every one of these on `www.bithuman.ai`.** That host signs the
+> session and forwards you to the viewer, carrying the rendering-mode parameter
+> with it. The viewer host cannot sign a session, so a link that starts there
+> has to come back — it works, but `www` is the shorter road and the link to
+> publish.
 
 [Try it on a showcase agent →](https://www.bithuman.ai/A74NWD9723?rendering_mode=browser)
 
-> **WebGPU is not "the fast path" for `?render=local`, and there is no automatic
-> WASM fallback under it.** Essence 2 runs on **ONNX Runtime Web's
-> `wasm` provider by default**; WebGPU's job in the shipped path is the **speech
-> encoder**, and paste-back is **WebGL2**. Which stage runs on which backend,
-> the measured frame rates, and the `navigator.gpu`-exists-but-no-adapter
-> failure mode are all on
-> [WebGPU and local browser rendering](/guides/browser-webgpu) — that page is
-> the single source for those numbers. To check any of it on your own machine,
-> run [Browser — check before you ship](/examples/browser-webgpu-check).
+> **WebGPU is not simply "the fast path" for `?render=local`.** Part of the
+> pipeline needs a real WebGPU adapter and there is no WebAssembly fallback for
+> it, so on a machine without one the local lip-sync is off — see
+> [WebGPU and local browser rendering](/guides/browser-webgpu). To check your
+> own machine, run
+> [Browser — check before you ship](/examples/browser-webgpu-check).
 
 ## When you'd reach for it
 
@@ -122,28 +116,6 @@ parameter outside that set is dropped silently.)
 > session**: it issues the session key, then forwards you to the viewer with the
 > rendering-mode parameter attached. A URL that starts at the viewer has no
 > session behind it and must go back to `www` to get one.
->
-> This page used to end the paragraph above with *"if you need one to reach the
-> viewer, use the `agent.viewer.bithuman.ai` URL directly"*. **That instruction
-> was withdrawn on 2026-09-06** because following it produced a plain **cloud**
-> render: the redirect observed that day sent the viewer host back to `www`
-> without the query string, so the mode never arrived.
->
-> **The viewer-host redirect was fixed on 2026-09-07 and now keeps the query
-> string.** Both hops, observed anonymously that day:
->
-> ```text
-> observed 2026-09-07
-> GET https://agent.viewer.bithuman.ai/<CODE>?rendering_mode=browser
->   -> 302  https://www.bithuman.ai/<CODE>?rendering_mode=browser     # query string kept
-> GET https://www.bithuman.ai/<CODE>?rendering_mode=browser
->   -> 302  https://agent.viewer.bithuman.ai/<CODE>?s=...&rendering_mode=browser
-> ```
->
-> So a link that starts on the viewer host is no longer wrong — it reaches the
-> browser render after one extra hop. It is still not the link to publish:
-> the session key is minted on `www` and only there, and `www` is the entry
-> point that needs no explanation. Nothing above changes.
 
 For `avatar` mode (no agent worker, no LiveKit), use the same landing page with
 the agent's own code:
@@ -152,12 +124,9 @@ the agent's own code:
 https://www.bithuman.ai/<AGENT_CODE>?rendering_mode=avatar
 ```
 
-The mode resolves the agent's own model file — there is **no `model_url`
-parameter**. Earlier revisions of this page printed
-`agent.viewer.bithuman.ai/?rendering_mode=avatar&model_url=<IMX_URL>`; nothing
-in the shipped viewer reads `model_url`, and the short URL does not forward it
-either. To puppet an `.imx` you host yourself, [get in
-touch](mailto:hello@bithuman.ai) rather than building on that parameter.
+The mode resolves the agent's own model file. There is **no way to point it at
+an `.imx` you host yourself** — if that is what you need, [get in
+touch](mailto:hello@bithuman.ai).
 
 The browser downloads the model (~50–200 MB, per-agent), the audio encoder
 (2.7 MB, shared across all agents), then runs the lip-sync pipeline at 25 FPS on
@@ -166,16 +135,12 @@ a `<canvas>`.
 ## What the browser does
 
 ```text
-MediaStreamTrack (TTS or mic)
-  -> AudioContext + AudioWorklet (16 kHz, 640-sample chunks)
-  -> Mel spectrogram (80 bins x 16 frames, Bluestein FFT)
-  -> ONNX audio encoder (WASM, 512-D embedding)
-  -> KNN cluster lookup (183 clusters, L2 distance)
-  -> Frame assembly (base frame + mouth patch, alpha-blended)
-  -> <canvas> @ 25 FPS
+audio (the agent's speech, or the microphone)
+  -> the same engine that runs on the server, compiled for the browser
+  -> lip-synced frames on a <canvas>
 ```
 
-That is the [essence-1](/concepts/essence-1) pipeline specifically, and it is bit-compatible with [the same engine](/concepts/architecture) on the server — same `.imx` file, same cluster centroids, same encoder weights. The browser just runs the inference loop in WASM. [essence-2](/concepts/essence-2) and [expression-2](/concepts/expression-2) run their own web engines with a different stage list; see [WebGPU and local browser rendering](/guides/browser-webgpu#what-runs-where).
+An [essence-1](/concepts/essence-1) browser render is bit-compatible with [the same engine](/concepts/architecture) on the server: same `.imx` file, same weights, same result. [essence-2](/concepts/essence-2) and [expression-2](/concepts/expression-2) run their own browser engines — see [WebGPU and local browser rendering](/guides/browser-webgpu).
 
 ## Latency budget
 
@@ -234,7 +199,7 @@ rendering-mode parameter. Track it in
 
 ## Where to go next
 
-- [WebGPU and local browser rendering](/guides/browser-webgpu) — measured WebGPU vs WASM frame rates, the standalone runtime you can self-host, which identities have a published web bundle, and what a browser session does and does not meter.
+- [WebGPU and local browser rendering](/guides/browser-webgpu) — the runtime you can host yourself, which agents can render in the tab, and what a browser session costs.
 - [Browser — check before you ship](/examples/browser-webgpu-check) — three runnable preflights, each with a deliberately broken control arm: bundle integrity, the real-WebGPU probe, and the execution-provider benchmark.
 - [Browser runtime (WebAssembly)](/sdk/web) — the published runtime's API surface.
 - [Architecture](/concepts/architecture) — how the essence engine powers every renderer.

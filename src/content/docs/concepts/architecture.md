@@ -38,24 +38,20 @@ bitHuman is shipped as a single cross-platform runtime with idiomatic SDKs in ea
 The platform is three owned layers — engine, SDKs, apps — plus an upstream integration layer that wires bitHuman into other ecosystems.
 
 ```text
-L4  Upstream integrations
-    livekit-plugins-bithuman (lives in livekit/agents)
-        |
-        v depends on
-L3  Apps (consume the SDKs)
-    bitHuman CLI · Flutter reference app · Mac + iPad reference apps
-        |
-        v builds on
-L2  bitHuman SDKs (language bindings)
-    Python · Swift (Bithuman) · Rust (in-tree)
-        |
-        v wraps
-L1  bitHuman Engine — libessence (cross-platform C++ behind a C ABI)
-    Audio in: 16 kHz mono PCM   ·   Video out: 25 FPS BGR frames
-    macOS · iOS · Linux · Windows
+Your app
+    |
+    v  calls
+A bitHuman SDK — Python, Swift, Kotlin, or the CLI
+    |
+    v  wraps
+The bitHuman engine — libessence (C++, one codebase, every platform)
+    Audio in: 16 kHz mono PCM   ·   Video out: 25 FPS frames
 ```
 
-Most developers integrate at the SDK layer (L2) — you never need to know what's underneath. The engine is statically linked into each SDK distribution, so there are no extra system libraries to install. The bitHuman CLI (L3) consumes the Rust SDK the same way any third-party app would.
+You integrate at the SDK layer and never need to know what is underneath. The
+engine is statically linked into each SDK distribution, so there are no extra
+system libraries to install. The LiveKit plugin sits one level above the SDKs
+and is wired into LiveKit's own agent framework.
 
 ## Cross-layer contracts
 
@@ -65,26 +61,13 @@ The owned layers ship independently but agree on a small set of stable contracts
 - **SDK public API (SemVer-stable).** The public surface in each language is stable across patch and minor releases. Patches never break source compatibility; minors add APIs without removing old ones; majors call out breaks explicitly.
 - **One `.imx`, every surface.** A model file packed for one SDK runs identically across all of them — enforced by an in-tree `parity/` contract test suite that streams the same audio through every SDK and asserts byte-equal frames.
 
-## SDK ↔ engine compatibility matrix
+## SDK ↔ engine compatibility
 
-Each artifact declares the engine ABI it builds against. Artifacts with a **matching ABI** are interoperable even when their headline versions differ.
-
-| Artifact | Latest version | Channel | Engine ABI |
-|---|---|---|---|
-| Python SDK (`bithuman`) | 3.1.3 | PyPI | v7 |
-| Swift SDK (`bitHumanKit`) | 2.4.0 (the package pin is on [Install](/sdk/ios#install)) | SwiftPM | v7 |
-| Swift SDK (`Expression2`) | 2.6.1 | SwiftPM | — (CoreML, no engine ABI) |
-| Swift SDK (`Essence2`) | engine release `essence2-v1.5.1` (tap `v2.12.1`) | SwiftPM | — (C interface; ONNX Runtime 1.26.0) |
-| Rust SDK (`bithuman`) | in-tree crate, versioned with the CLI | source-only (not on crates.io) | v7 |
-| bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 and Linux x86_64, both with the Essence 2 runtime inside | Homebrew · universal installer | v7 |
-
-### Engine ABI history
-
-| ABI | Introduced | Notes |
-|---|---|---|
-| **v7** | libessence 1.19.1 | Adds a streaming entry point (`be_runtime_tick_compose_from_mel`) that lets advanced callers drive a frame directly from precomputed audio features (mel spectrogram). Current production baseline; covers every shipping SDK. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
-| **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
-| v5 and earlier | pre-1.16 | Retired — synchronous only, no streaming. |
+Each artifact declares the engine ABI it builds against. Artifacts with a
+**matching ABI** are interoperable even when their headline versions differ.
+The current shipping version and ABI of every artifact are on
+[Downloads](/downloads#current-shipping-versions) — that page is the one place
+that states them.
 
 ### Skew policy
 
@@ -143,7 +126,7 @@ at session launch; the device/runtime matrix is:
 | Cloud CPU | Real-time | Real-time |
 | Self-hosted CPU (your servers) | [Offline rendering, SDK 2.9.0+](/guides/deploy-self-hosted#essence-2-on-your-own-cpu); [CLI local rendering](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS arm64 and Linux x86_64 (2.6.1); live streaming via cloud | [CLI local rendering](/sdk/cli#what-renders-locally-and-where) (macOS arm64, Linux x86_64) |
 | On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `<code>.imx` on macOS Apple Silicon (2.6.1); in your own app, the [Swift SDK](/sdk/ios#install) `Essence2` product (package 2.8.0) — a C interface, builds for iOS and macOS; no in-app model download route yet | [Swift SDK](/sdk/ios) `Expression2`, v2.5.0+ — `macos-arm64` **and** `ios-arm64`, both proven on hardware, but engine only, [no model bundle published](/sdk/ios#minimal-code) |
-| Browser-local | Rolling out — `?render=local`, [4 live identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent). WASM renderer; WebGPU drives the speech encoder, and [without an adapter local lip-sync is off](/guides/browser-webgpu#why-there-is-no-wasm-fallback-for-lip-sync--the-number) | Rolling out — `?render=local`, [79 published identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent) (LiteRT.js / WebGPU, WASM fallback) |
+| Browser-local | Rolling out — `?render=local`, [4 live identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent). WASM renderer; WebGPU drives the speech encoder, and [without an adapter local lip-sync is off](/guides/browser-webgpu#without-webgpu-local-lip-sync-is-off) | Rolling out — `?render=local`, [79 published identities](/guides/browser-webgpu#whether-it-will-work-for-your-agent) (LiteRT.js / WebGPU, WASM fallback) |
 
 Cloud sessions route down the serving chain (GPU → Apple → CPU)
 automatically; on-device and self-hosted serving use the downloaded model

@@ -59,7 +59,7 @@ const embed = [
         </div>
       </div>
       <Playground />
-      <p class="s-note">Want it on your own site? Drop in one <code>&lt;iframe&gt;</code> — it needs no API key. The <code>*</code> in <code>allow</code> is required: the embed is cross-origin. Details: <a href="/api/quickstart">API quickstart</a>.</p>
+      <p class="s-note">Want it on your own site? Drop in one <code>&lt;iframe&gt;</code> — it needs no API key. Keep the <code>*</code> in <code>allow</code>; without it the microphone will not work. Details: <a href="/api/quickstart">API quickstart</a>.</p>
       <CodeTabs tabs={embed} title="Embed an agent" />
     </div>
   </section>
@@ -93,9 +93,8 @@ const embed = [
           <p>Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or a single CLI command. Private, low-latency, offline-capable.</p>
           <ul>
             <li>Your machine, your data</li>
-            <li>In a mobile app: <a href="/sdk/android">Android — Kotlin</a> (beta) · <a href="/sdk/ios">iOS &amp; iPadOS — Swift</a> (preview) — each has a <strong>complete, copy-the-whole-page project</strong> below</li>
-            <li><strong>The fastest frame on a phone is free.</strong> <a href="/sdk/android">Android + <code>expression-2</code></a> needs <strong>no account, no API key and no credits</strong> — the SDK's model store fetches a published avatar anonymously.</li>
-            <li><strong>The first frame on an iPhone is free too</strong> — <a href="/sdk/ios">iOS + <code>expression-2</code></a> renders a public showcase identity with <strong>no account, no API key and no credits</strong>. What it does need is Apple's: Xcode 26+, an Apple Developer team and a physical device</li>
+            <li><strong>On a phone the first frame is free</strong> — <a href="/sdk/android">Android</a> (beta) and <a href="/sdk/ios">iOS &amp; iPadOS</a> (preview) both render a public showcase avatar with <strong>no account, no API key and no credits</strong>. Each has a complete, copy-the-whole-page project below.</li>
+            <li>iOS also needs Apple's own kit: Xcode 26+, an Apple Developer team and a physical device</li>
             <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/web">Browser</a> · <a href="/sdk/cli">CLI</a></li>
           </ul>
           <Button href="/sdk" variant="secondary">Get the SDK →</Button>
@@ -113,17 +112,17 @@ const embed = [
           <a class="phone-card free" href="/examples/kotlin-android-hello">
             <span class="phone-tag">Android · free</span>
             <strong>Kotlin — Hello, avatar</strong>
-            <span>The whole project, seven files. <code>expression-2</code> renders with <b>no account, no API key and no credits</b>.</span>
+            <span>The whole project, seven files.</span>
             <span class="phone-go">Open the Android project →</span>
           </a>
           <a class="phone-card" href="/examples/swift-ios-expression2">
             <span class="phone-tag">iOS · free</span>
             <strong>Swift — a talking avatar on the iPhone you have</strong>
-            <span>The whole SwiftUI app. Renders on any recent iPhone from a public showcase identity — <b>no account, no API key and no credits</b>. You do need Xcode 26+, an Apple Developer team and a physical device.</span>
+            <span>The whole SwiftUI app. Renders on any recent iPhone.</span>
             <span class="phone-go">Open the iOS project →</span>
           </a>
         </div>
-        <p class="s-note"><code>essence-2</code> on phones: the Android coordinate <code>essence2-android:0.5.3</code> resolves, with no walkthrough published yet; iOS is not yet available — <a href="/sdk">what each phone rail needs →</a></p>
+        <p class="s-note">These projects use <code>expression-2</code>. For <code>essence-2</code> on a phone: the Android library <code>ai.bithuman:essence2-android:0.5.3</code> is published but has no walkthrough yet, and iOS is not available — <a href="/sdk">what each platform needs →</a></p>
       </div>
 
       <div class="nudge">
@@ -152,7 +151,7 @@ const embed = [
         </div>
         <div class="idea">
           <h3>The <code>.imx</code> file</h3>
-          <p>Every avatar is one portable <code>.imx</code> file, and every runtime speaks the same push-audio / drain-frames contract. What it will <em>not</em> do is open in every engine on every device &mdash; an <code>essence-2</code> file does not render on an iPhone today, for instance. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/sdk">Which model runs on which phone &rarr;</a></p>
+          <p>Every avatar is one portable <code>.imx</code> file, and every SDK opens it the same way: push audio in, take frames out. What it will <em>not</em> do is run on every device &mdash; an <code>essence-2</code> file does not render on an iPhone today, for instance. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/sdk">Which model runs where &rarr;</a></p>
         </div>
       </div>
     </div>

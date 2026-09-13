@@ -60,8 +60,6 @@ print(resp.json())
 **Duration guidance:** 1–3 s for quick gestures (waves, nods), 3–5 s for standard
 motions (default), 5–10 s for extended animations.
 
-**Model:** the default is `seedance`; `auto` (recommended) selects the best gesture-video backend automatically. The retired `kling` value is still accepted for backward compatibility but is coerced to `seedance` — don't use it in new code.
-
 ## Get dynamics
 
 `GET /v1/dynamics/{agent_id}` — list the current dynamics configuration and

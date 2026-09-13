@@ -16,14 +16,16 @@ label: "Performance"
 | Web | Chrome on M4 | 30 | — |
 | Linux | x86 workstation | 37 | 13 |
 
+Avatars play at 20–25 fps, so a platform at or above that keeps up in real time.
+A dash means we have not measured that pairing yet.
+
 <!-- FLOORS:NOTES -->
-The Cloud GPU figure is the engine rate: writing an MP4 adds a CPU H.264 encode that costs about a third of it.
+The Cloud GPU number counts frames as they are rendered. Saving them to a video file adds encoding time on top, so a benchmark that writes an MP4 will measure less.
 <!-- /FLOORS:NOTES -->
 
-Frames per second = steady-state throughput after warm-up — audio in to frame out, model load excluded, worst of three quiet runs on the published release, 28-second reference clip.
+Measured audio in to frame out, once the model has loaded. Loading the model the
+first time adds to the total.
 
-Hyper-realtime = 40 fps or more, unpaced (avatars play at 20–25 fps).
-
-Whole-clip time including model load is longer — see each platform page.
+Setup for each platform is on its own page — [pick a platform](/sdk).
 
 <small>Measured September 2026.</small>

@@ -18,19 +18,18 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 One self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put
 it elsewhere), sha256-verified against the release. On Apple Silicon
 `brew install bithuman-product/bithuman/bithuman-cli` installs the same
-tarball. The current release is **`cli-v2.6.9`** (2026-09-13), the same version
-on both platforms — this page is the one place that names it:
+tarball. Both routes install the current release, and the same version ships on
+both platforms. `bithuman --version` tells you which one you got:
 
 ```text
-$ bithuman --version            # Linux x86_64
-libessence 3.1.3 ABI 7
-bithuman    2.6.9
-build       8bb4d51cf091 x86_64-unknown-linux-gnu/release 2026-09-13T02:27:24Z 3cc2217f9d31
-engine      linux 1.0.1 76d990a19674
+$ bithuman --version
+libessence  3.1.4 ABI 7          # the engine inside, and the ABI it speaks
+bithuman    2.6.11               # the CLI itself
+build       …                    # commit, target and build time
+engine      …                    # the platform engine it loaded
 ```
 
-The first two lines are the same on macOS; the last two name your platform's
-build. Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
+Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
 Intel Mac or a Linux ARM box the installer names the platform and stops without
 downloading anything ([exact output](/sdk/cli/reference#platforms-with-no-binary)).
 
