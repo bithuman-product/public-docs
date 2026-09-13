@@ -24,7 +24,7 @@ both platforms. `bithuman --version` tells you which one you got:
 ```text
 $ bithuman --version
 libessence  3.1.4 ABI 7          # the engine inside, and the ABI it speaks
-bithuman    2.6.11               # the CLI itself
+bithuman    2.6.12               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```

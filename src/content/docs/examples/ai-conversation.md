@@ -16,9 +16,10 @@ order: 15
 git clone https://github.com/bithuman-product/homebrew-bithuman.git
 cd homebrew-bithuman/Examples/python/local-essence
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+pip install "bithuman<3"      # this example uses the 2.x API; 3.x reshaped it
 ```
 
-- An avatar `.imx` model and a working mic. Download one to the cache path the run command below uses — `curl -L https://models.bithuman.ai/showcase/modern-court-jester.imx --create-dirs -o ~/.cache/bithuman/showcase/modern-court-jester.imx` — or, on macOS, `bithuman pull modern-court-jester` (same destination). The CLI's PyPI wheel is macOS-only; on Linux use the direct download or grab one from [Explore](https://www.bithuman.ai/explore).
+- An avatar `.imx` model and a working mic. Download one to the cache path the run command below uses — `curl -L https://models.bithuman.ai/showcase/modern-court-jester.imx --create-dirs -o ~/.cache/bithuman/showcase/modern-court-jester.imx` — or, on macOS, `bithuman pull modern-court-jester` (same destination). `bithuman pull` comes with the [CLI](/sdk/cli#install), on macOS Apple Silicon and Linux x86_64 alike; the direct download above works anywhere. More avatars are on [Explore](https://www.bithuman.ai/explore).
 - Everything runs locally — no LiveKit server, no browser, no server-side WebRTC.
 
 ## Run it

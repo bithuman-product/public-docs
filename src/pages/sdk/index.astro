@@ -23,7 +23,10 @@ async function performanceRows() {
   return rows;
 }
 
-const fps = (cell: string) => (cell === "—" ? "not yet measured" : `${cell} fps`);
+// A dash on /sdk/performance means "no published number yet" — which covers both
+// "not measured on that hardware" and "measured, not yet fast enough to publish".
+// Say that, not "not yet measured", so this page cannot claim more than the table.
+const fps = (cell: string) => (cell === "—" ? "no published number yet" : `${cell} fps`);
 
 /** "<hardware> — Expression 2 <n> fps · Essence 2 <n> fps", from the parsed table only. */
 function perfLine(rows: Awaited<ReturnType<typeof performanceRows>>, platform: string) {
@@ -31,6 +34,10 @@ function perfLine(rows: Awaited<ReturnType<typeof performanceRows>>, platform: s
   if (!r) throw new Error(`sdk/index: /sdk/performance has no "${platform}" row`);
   return `${r.hardware} — Expression 2 ${fps(r.expression2)} · Essence 2 ${fps(r.essence2)}`;
 }
+
+// A card with no `perfKey` has no row of its own on /sdk/performance, and must
+// not reuse another platform's. The Python card did: it quoted the Linux CLI
+// cells, which are a different binary on the same hardware.
 
 const rows = await performanceRows();
 
@@ -84,13 +91,12 @@ const blocks = [
     name: "Python",
     sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
     href: "/sdk/python",
-    perfKey: "Linux",
     install: "pip install \"bithuman[expression-2]\"",
     model: "curl -fsSLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}\"",
     code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"A23WJF0199.avatar\") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"demo_sample.wav\"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]",
     run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
   },
-].map((b) => ({ ...b, perf: perfLine(rows, b.perfKey) }));
+].map((b) => ({ ...b, perf: "perfKey" in b ? perfLine(rows, (b as { perfKey: string }).perfKey) : null }));
 ---
 
 <Base
@@ -111,7 +117,9 @@ const blocks = [
               <div><dt>Run</dt><dd><pre><code>{b.run}</code></pre></dd></div>
             </dl>
             <p class="guide"><a href={b.href}>Full guide →</a></p>
-            <p class="perf"><a href="/sdk/performance">Measured</a>, unpaced: {b.perf}</p>
+            {b.perf
+              ? <p class="perf"><a href="/sdk/performance">Measured</a>, unpaced: {b.perf}</p>
+              : <p class="perf">No published frame rate for this path yet — see <a href="/sdk/performance">performance</a>.</p>}
           </article>
         ))}
       </div>

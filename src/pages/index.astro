@@ -155,9 +155,7 @@ const customerLogos = [
           </div>
         </div>
 
-        <!-- RIGHT: live product moment (poster-first, iframe deferred to Launch).
-             No data-reveal here: the hero poster is the LCP element, so it must
-             paint on decode instead of waiting at opacity:0 for the reveal JS. -->
+        {/* Hero poster is the LCP element: no data-reveal, so it paints on decode. */}
         <div class="hero-media">
           <Playground compact />
         </div>
@@ -192,9 +190,7 @@ const customerLogos = [
         ))}
       </div>
 
-      <!-- Platform row: a developer who came for "the iOS SDK" or "the Android
-           SDK" lands on one click, without knowing we file them under Swift and
-           Kotlin. Links only — every install step stays on its own page. -->
+      {/* Links only — every install step stays on its own platform page. */}
       <div class="platforms" data-reveal>
         <span class="platforms-label">Building for a device?</span>
         <div class="platform-row">
