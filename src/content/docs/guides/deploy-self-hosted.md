@@ -40,7 +40,7 @@ livekit_token, room_name` if one is absent:
 | `livekit_url` | yes | the room's server, e.g. `ws://livekit:17880` |
 | `livekit_token` | yes | a join token for the avatar participant |
 | `room_name` | yes | the room to join |
-| `avatar_image` | no | the portrait to render; **omit it and the container uses its own default**. A face crop is applied automatically |
+| `avatar_image` | no | the portrait to render, as a multipart file. A face crop is applied automatically. **Supply one** — omitting it is accepted, but the image the container falls back to is a test pattern, not a face |
 | `avatar_image_url` | no | the same, fetched from a URL instead |
 
 ### The other endpoints
@@ -51,7 +51,7 @@ questions elsewhere on this page:
 | Endpoint | Use |
 |---|---|
 | `GET /ready` | `200` when the worker will accept `/launch` — poll this, see below |
-| `GET /version` | `git_sha`, `image_tag` and `build_time` of the image that is **actually running** — this is how you confirm you are on a current build |
+| `GET /version` | `started_at` and `uptime_seconds` of the running worker. Its `git_sha` / `image_tag` / `build_time` read `unknown` on the published image — the build does not set them, so confirm your build from the **digest** instead (below) |
 | `GET /status` | `active_sessions`, `available_sessions`, `max_sessions` — live occupancy against the table below |
 | `POST /tasks/{task_id}/stop` | end one session; `GET /tasks` lists them |
 | `GET /health` | liveness, for an orchestrator's probe |
@@ -106,9 +106,11 @@ publish preset**, not the engine. LiveKit's default maps a small avatar track to
 a low-bitrate, frame-rate-capped VP8 preset with simulcast on, which decimates
 the render and, under encoder pressure, produces ~1 s frozen frames (black) plus
 a downscale. This container already publishes a tuned single H264 layer;
-ensure you are on a **current image build** — `curl localhost:8089/version`
-prints the `image_tag` and `git_sha` actually running — and tune via env if
-needed:
+ensure you are on a **current image build** — compare what you are running
+against the pinned digest above with
+`docker inspect <container> --format '{{.Config.Image}}'`, since `/version`
+reports `unknown` for the build fields on the published image — and tune via
+env if needed:
 
 | Env | Default | Purpose |
 |---|---|---|
