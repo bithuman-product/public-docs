@@ -58,7 +58,7 @@ prints the cached path the same way — the code is on [Agents](/api/agents).
 
 ### 3. Render
 
-Audio in, MP4 out. The sample clip is a 16 kHz mono WAV:
+Audio in, MP4 out. The sample clip is a 24 kHz mono WAV, 15 s:
 
 ```bash
 curl -fsSLo speech.wav https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav

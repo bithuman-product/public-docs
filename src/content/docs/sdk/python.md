@@ -40,7 +40,7 @@ curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/w
 ```
 
 `A23WJF0199.avatar` is the free Wise Pup (Expression 2); `demo_sample.wav` is
-16 kHz mono, something for it to say. Your own agent's file comes from
+24 kHz mono, 15 s, something for it to say. Your own agent's file comes from
 [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE>`; an Essence 2 agent arrives as an `.imx`, an
 Expression 2 agent as an `.avatar`, and `bithuman.open` takes either.
@@ -57,9 +57,17 @@ with bithuman.open("A23WJF0199.avatar") as avatar:      # an Essence 2 .imx or a
 ```
 
 That is the whole surface: **open an avatar, render audio through it.** The
-audio is 16 kHz mono as a file path, an `int16` or `float32` array, raw 16-bit
-little-endian bytes, or any iterable of those — a microphone stream and a file
-are the same program; `frames = avatar.render(...)` then `frames.close()`
+audio is a file path in any format ffmpeg reads — the rate is converted for you
+— or, already decoded, **16 kHz mono** as an `int16` or `float32` array, raw
+16-bit little-endian bytes, or any iterable of those; a microphone stream and a
+file are the same program.
+
+> **The 16 kHz applies only to the decoded forms.** `demo_sample.wav` above is
+> 24 kHz, so handing its raw bytes straight to `render` plays back about 1.5x
+> long and slowed — pass it as a **path** and let it be converted, or resample
+> it yourself before you pass samples.
+
+ `frames = avatar.render(...)` then `frames.close()`
 stops early. Every error `bithuman.open` and `avatar.render` raise is an `AvatarError`; the
 offline route below raises `bithuman.offline.OfflineRenderError`
 (`MeteringNotArmedError` when no credential is set).
@@ -81,10 +89,11 @@ python hello.py
 ```
 
 The download is free; **the render is metered** and refuses before the first
-frame without a key — [pricing](/guides/pricing) is the authority. The first
-use on a machine prepares the avatar into `~/.cache/bithuman`; an Essence 2
-avatar also fetches the shared audio encoder and its 2 s streaming window
-automatically, once (about 450 MB in all, kept in `~/.bithuman/deps`).
+frame without a key — [pricing](/guides/pricing) is the authority. An Essence 2
+avatar fetches the shared audio encoder automatically, once, into
+`~/.bithuman/deps` — about 377 MB. `bithuman.open(...).render(...)` fetches the
+2 s streaming window alongside it (about 450 MB in all); `render_offline(...)`
+does not, because the batch route runs the encoder once over the whole clip.
 
 ## Performance
 
