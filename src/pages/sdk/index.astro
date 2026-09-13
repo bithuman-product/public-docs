@@ -23,10 +23,13 @@ async function performanceRows() {
   return rows;
 }
 
-// A dash on /sdk/performance means "no published number yet" — which covers both
-// "not measured on that hardware" and "measured, not yet fast enough to publish".
-// Say that, not "not yet measured", so this page cannot claim more than the table.
-const fps = (cell: string) => (cell === "—" ? "no published number yet" : `${cell} fps`);
+// Since the owner's 2026-09-13 "-- is confusing" ruling, a cell on
+// /sdk/performance is either a bare number, a number with a plain status
+// ("12 · not yet real time"), or a status alone ("no published release yet").
+// Only a bare number takes the " fps" suffix; anything else is already a
+// sentence and is quoted as it stands, so this page can never claim more than
+// the table it reads.
+const fps = (cell: string) => (/^[0-9]+(\.[0-9]+)?$/.test(cell) ? `${cell} fps` : cell);
 
 /** "<hardware> — Expression 2 <n> fps · Essence 2 <n> fps", from the parsed table only. */
 function perfLine(rows: Awaited<ReturnType<typeof performanceRows>>, platform: string) {
