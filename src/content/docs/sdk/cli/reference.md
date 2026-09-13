@@ -346,8 +346,8 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.9","libessence":"3.1.3",
- "build":{"commit_short":"8bb4d51cf091","target":"x86_64-unknown-linux-gnu","built_at":"2026-09-13T02:27:24Z","profile":"release"},
+{"abi":7,"cli":"2.6.11","libessence":"3.1.4",
+ "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
 
@@ -388,9 +388,8 @@ present from 2.6.9.
 {"event":"session_started","url":"http://127.0.0.1:8088/","host":"127.0.0.1","port":8088}
 ```
 
-The `version --json` object above matches the 2.6.9 Linux x86_64 build; the
-`list --json`, `pull --json` and `info --json` objects were read on Linux
-x86_64 on 2026-09-11 and their shapes are unchanged in 2.6.9.
+The values above are examples — what matters is the shape, which is stable
+across releases. `schema_version` tells you when it is not.
 
 ### Introspection
 

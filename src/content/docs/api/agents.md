@@ -44,7 +44,7 @@ The call returns immediately with an `agent_id` and `processing` status.
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `prompt` | string | no | random | System prompt / personality for the agent. |
-| `image` | string | no | — | Image URL or base64 data for appearance. A supplied image is treated as a **reference** and always regenerated via **Seedream 5 edit** to standardize it (never used raw); omit it and a portrait is generated from the `prompt` with **Seedream 5 pro**. |
+| `image` | string | no | — | Image URL or base64 data for appearance. A supplied image is treated as a **reference** and is always regenerated to standardize it (never used raw); omit it and a portrait is generated from the `prompt`. |
 | `audio` | string | no | — | Audio URL or base64 data for voice cloning. |
 | `aspect_ratio` | string | no | `16:9` | Aspect ratio for the generated identity image **and** driver video — `16:9` landscape (default), `9:16` portrait, `1:1` square. Images are generated at 1080p. |
 | `transparency` | boolean | no | `false` | When `true`, the identity image is generated on a solid **green-screen** background for chroma-key / transparent embedding — the character itself never uses green. |
@@ -56,11 +56,10 @@ The call returns immediately with an `agent_id` and `processing` status.
 
 > **Agent creation is image-only.** Provide a portrait `image` (or let the
 > prompt generate one) — bitHuman generates a **10-second identity video
-> internally** (Seedance 1.5 pro, 25 fps), authored to loop seamlessly (its
-> first and last frames match). Video input is not part of the creation
-> contract for any model: a request carrying `video` is rejected with
+> internally**, authored to loop seamlessly. Video input is not part of the
+> creation contract for any model: a request carrying `video` is rejected with
 > [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
-> anything is billed (verified against the live API, 2026-08-01).
+> anything is billed.
 
 ### Model-specific inputs and creation times
 
@@ -74,7 +73,7 @@ model-specific identity step runs:
 | `essence-1` | `image` (or generated from prompt); an identity video is generated internally if needed | Builds the portable `.imx` avatar | 2–5 minutes |
 | `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
 | `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | Builds the Essence 2 identity bundle on a cloud GPU | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
-| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on an H100-class GPU | About **2 hours** — measured 2026-09-09 over every model-add that carries both timestamps (n=10, median 122.5 min, 8 of 10 between 119 and 141 min) and every creation on the same day (121/124/125/128 min). Longer when the adaptive recipe extends to hold quality |
+| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on a cloud GPU | About **2 hours**, sometimes longer |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
 
 Set your polling timeout per model — a 5-minute client timeout is fine for
@@ -214,7 +213,7 @@ request. Poll every 5 seconds.
 | `processing` | Initial state — generation queued. |
 | `generating` | Active generation in progress (sub-steps running). |
 | `completed` | An intermediate sub-step finished. **Not terminal** — it can appear early (even around ~5% `progress`), so do not stop polling on it. |
-| `success` | A **sub-step** finished — the voice/portrait step and the identity-video step each write it. **Not terminal**: it appears mid-run, normally at `progress` `0.2` and `0.45`, before training has even started. Count it as done only when `progress` is also `1.0` (some historical rows finished on `success` + `1.0`). |
+| `success` | A **sub-step** finished — the voice/portrait step and the identity-video step each write it. **Not terminal**: it appears mid-run, normally at `progress` `0.2` and `0.45`, before training has even started. Count it as done only when `progress` is also `1.0`. |
 | `ready` | **Terminal success** — the model is available for use. Always written together with `progress: 1.0` and `current_step: "done"`. |
 | `failed` | Failure — check `error_message`. |
 
@@ -477,11 +476,7 @@ An **async** add (everything except `expression-1`) responds immediately:
 ```
 
 The estimate embedded in the response `message` is advisory — the table above
-has the typical times, and both are now the same measurement. They were not:
-until 2026-09-09 this endpoint answered "typically 10-45 minutes" for a job
-whose every measured run took about two hours, and the table said 60–100
-minutes for the same work. A caller who believed either opened a ticket long
-before the model was due. Poll
+has the typical times. Poll
 [`GET /v1/agent/status/{code}`](#poll-status) until `supported_models`
 contains the new family. The agent keeps serving as-is while the add runs —
 `status` stays `ready` for the v2 adds. An **instant** add (`expression-1`,
@@ -543,17 +538,14 @@ place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).
 > **The name in the Artifact column is the object in the store, not the file you
 > receive.** Whatever the stored object is called, the endpoint labels the
 > download `<code>.imx` — that is the `filename` field and the
-> `Content-Disposition`, so `curl -LOJ` writes `A17ZTB0222.imx`. Measured
-> 2026-09-09 on two `expression-2` agents (stored `.avatar`) and four
-> `essence-2` agents (three stored `.lebundle.imx`): every one of the six was
-> delivered as `<code>.imx`. Name your local file from the response, not from
-> this column.
+> `Content-Disposition`, so `curl -LOJ` writes `A17ZTB0222.imx`. Name your local
+> file from the response, not from this column.
 
 | Family | Artifact in the store | Notes |
 |---|---|---|
 | `essence-1` | `<code>.imx` | The portable IMX container — [runs locally](/sdk/cli/reference) in the CLI and the [Python SDK](/sdk/python). |
-| `essence-2` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer (measured across the live fleet, 2026-07-28). Agents created before the 2026-07-27 renderer change carry a larger bundle — up to ~550 MB — until they are retrained; the artifact shrank roughly **5×**. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
-| `expression-2` | `<code>.avatar` | The per-identity Expression 2 artifact. Sizes range widely — two agents measured on 2026-09-09 were 193.6 MB and 192.9 MB, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** Measured across all 110 published objects on 2026-09-01, **96 are `IMX\0` v2 containers** and **14 are still the pre-2026-07-12 CoreML zip** — those 14 will not be re-published, so check with `bithuman info <file>` rather than assuming either form. [Runs locally](/sdk/cli/reference) on macOS (Apple Silicon), and on Linux x86_64 once the CPU render host is installed (`bithuman engine install linux-x86_64`); also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
+| `essence-2` | `<code>.lebundle.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer; older agents carry a larger bundle until they are retrained. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
+| `expression-2` | `<code>.avatar` | The per-identity Expression 2 artifact. Sizes range widely, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** A few of the oldest agents still carry an older container form, so check with `bithuman info <file>` rather than assuming. [Runs locally](/sdk/cli/reference) on macOS (Apple Silicon), and on Linux x86_64 once the CPU render host is installed (`bithuman engine install linux-x86_64`); also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
 | `expression-1` | usually none; `<code>.imx` for a lip-stepped agent | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, so the normal answer is `400 MODEL_NOT_DOWNLOADABLE`. **One case does download:** an `expression-1` agent that went through the lip step owns a baked `<code>.imx`, and the endpoint redirects to it exactly as it does for `essence-1`. |
 
 The default response is a **302 redirect** to the artifact (public URL for

@@ -44,23 +44,21 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Channel | Engine ABI |
 |---|---|---|---|
-| Python SDK (`bithuman`) | **3.1.3** — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) | v7 |
+| Python SDK (`bithuman`) | **3.1.4** — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) | v7 |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | v7 |
 | Swift SDK (`Expression2`) | **2.6.1** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (CoreML; no engine ABI) |
-| Swift SDK (`Essence2`) | engine release **`essence2-v1.5.1`** — what the tap's `Package.swift` points at on its current tag, `v2.12.1`. Its `libessence2-resources.zip` (a legacy name kept for compatibility; 44,392,223 B) carries the shared audio encoder; the one on `essence2-v1.5.0` does not, and that engine refuses to start without it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface; ONNX Runtime 1.26.0 rides with it) |
+| Swift SDK (`Essence2`) | engine release **`essence2-v1.6.1`** — what the tap's `Package.swift` points at on its current tag, `v2.13.1`. You do not pin this yourself: pin the package version on [Install](/sdk/ios#install) and the engine comes with it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) | — (C interface) |
 | bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) | v7 |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) | — (LiteRT) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.3** (`0.2.0` through `0.5.2` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; pin `0.5.3`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) | — (ONNX Runtime 1.26.0) |
 | bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) | — (API client, no engine) |
 
-> **The macOS wheel carries `lible_core`** — the native half of the Essence 2
-> offline render route — from 2.10.0 on; every macOS wheel up to and including
-> 2.9.0 shipped the Python half alone and raised `lible_core.so not found` at
-> the first frame. Linux wheels have carried it since 2.8.1. On the current
-> release neither is a question: `pip install --upgrade bithuman`, and confirm
-> with `python -c "import bithuman; print(bithuman.__version__)"`.
+> **`lible_core.so not found` at the first frame** means an old wheel that
+> shipped without the native half of the Essence 2 offline render route. Current
+> wheels carry it on both macOS and Linux: `pip install --upgrade bithuman`,
+> then confirm with `python -c "import bithuman; print(bithuman.__version__)"`.
 
-Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 3.1.3 wheel on the backend — is supported and tested as long as the ABI columns line up.
+Artifacts with **matching ABI** are interoperable even if their headline versions differ. Mixing surfaces in one project — for example the Swift SDK on iOS plus the Python `bithuman` 3.1.4 wheel on the backend — is supported and tested as long as the ABI columns line up.
 
 ## Device and platform support
 
@@ -117,21 +115,15 @@ Heavier high-fidelity model, and this table is the **first-generation** floor:
 | **Mac Intel / Linux CPU / Windows** | Needs a GPU — or use Essence | Expression 1 needs an NVIDIA GPU; Essence runs on CPU-only hosts |
 | **Raspberry Pi** | Use Essence | Essence runs near real-time on Pi 4B / 5 |
 
-> ### Correction — 2026-09-06: the three Apple rows above said **On-device** and **Preview**
->
-> They read *"Mac M3+ — On-device — Demo app target"*, *"iPad Pro M4+ —
-> On-device"* and *"iPhone 16 Pro+ — Preview — on-device validation of
-> Expression 1 is in progress"*, and the section opened *"Runs on Apple Silicon
-> on-device (demo apps) or on NVIDIA GPUs server-side"*. **All of that was
-> false and is removed rather than softened.** The published Swift package
-> ([`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
-> vends **exactly three products** — `bitHumanKit`, `BithumanEngineProtocol`
-> and `Expression2`. There is **no `Expression` product**, and asking for one
-> fails at resolve time with
-> `product 'Expression' ... not found in package 'homebrew-bithuman'`. Nothing
-> was in progress: there is no macOS, iPadOS or iOS build of `expression-1`,
-> and none is coming — it is GPU-only by scope ruling. To self-host it, use the
+> **There is no Apple build of `expression-1`, and none is coming** — it is
+> GPU-only by design. To self-host it, use the
 > [NVIDIA container](/guides/deploy-self-hosted).
+>
+> The published Swift package
+> ([`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman))
+> vends `bitHumanKit`, `BithumanEngineProtocol`, `Expression2` and `Essence2`.
+> There is **no `Expression` product** — asking for one fails at resolve time
+> with `product 'Expression' ... not found in package 'homebrew-bithuman'`.
 
 If you're deploying to iPhone today, choose **Essence**. The iPhone reference app is built around Essence and stays well inside Apple's per-app memory cap.
 
@@ -172,7 +164,7 @@ The engine ABI is the C surface `libessence` exposes to its language wrappers. N
 
 | ABI | Introduced | Notes |
 |---|---|---|
-| **v7** | libessence 1.19.1 | Adds `be_runtime_tick_compose_from_mel` — composing a tick directly from a mel feed. Current production baseline; covers every shipping SDK above. Backwards-compatible with v6 callers. (`be_set_default_audio_encoder` is an additive, ABI-unchanged entry point — it did not bump the ABI.) |
+| **v7** | libessence 1.19.1 | Adds a streaming entry point for pre-computed audio features. Current production baseline; covers every shipping SDK above. Backwards-compatible with v6 callers. |
 | **v6** | libessence 1.16.0 | Streaming push-audio / pull-frame API. |
 | v5 and earlier | pre-1.16 | Retired in production builds — synchronous only, no streaming. |
 

@@ -193,11 +193,9 @@ When complete:
 | `error` | object | Failure detail (present when `failed`); the charge is refunded. |
 
 > **Note** Treat `video_url` as **opaque** — read it from the response, never
-> construct it. The sample bodies above abbreviate it, but finished renders are
-> currently served from the object-storage host
-> (`https://<project>.supabase.co/storage/v1/object/public/bithuman/<AGENT>/<job_id>.mp4`),
-> not from `assets.bithuman.ai`. If you allowlist egress hosts or proxy the
-> download, allowlist what the API returns.
+> construct it. Finished renders are served from a storage host that is **not**
+> `assets.bithuman.ai`, and it can change. If you allowlist egress hosts or
+> proxy the download, allowlist what the API returns.
 
 ## Polling pattern
 
