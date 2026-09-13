@@ -34,7 +34,7 @@ four ways:
   `bithuman run`, with the runtime inside the CLI; on Android the
   [`essence2-android`](/sdk/android#troubleshooting)
   AAR, and in your own iOS/macOS app the Swift
-  [`Essence2`](/sdk/ios#install) engine.
+  [`Essence2`](/sdk/ios#install) engine. Essence 2 in your own iOS or macOS app needs the next Swift SDK release.
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.x; 2.9.0+
   for the earlier route).
