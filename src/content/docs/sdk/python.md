@@ -13,7 +13,7 @@ label: "Python"
 pip install "bithuman[expression-2]"
 ```
 
-`bithuman` 3.1.3 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
+`bithuman` 3.1.4 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
 wheels. The `[expression-2]` extra opens `.avatar` files; for the Essence 2
 clip-to-file route add the offline extra:
@@ -77,12 +77,23 @@ python hello.py
 The download is free; **the render is metered** and refuses before the first
 frame without a key — [pricing](/guides/pricing) is the authority. The first
 use on a machine prepares the avatar into `~/.cache/bithuman`; an Essence 2
-avatar also fetches the shared audio encoder automatically, once.
+avatar also fetches the shared audio encoder and its 2 s streaming window
+automatically, once (about 450 MB in all, kept in `~/.bithuman/deps`).
 
 ## Performance
 
 Measured frame rates for every platform are on the
-[performance page](/sdk/performance).
+[performance page](/sdk/performance). A completed `render` reports its own
+steady-state rate — frames per second from the first audio push to the last
+frame, model load excluded, the same definition the CLI prints — on the
+`bithuman` logger at INFO:
+
+```python
+import logging
+logging.basicConfig(level=logging.INFO)
+# bithuman: render <frames> frames in <seconds> s = <rate> fps steady state
+#           (first audio push -> last frame; model load excluded)
+```
 
 ## Troubleshooting
 
@@ -96,6 +107,6 @@ Measured frame rates for every platform are on the
 | `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not a public showcase | check the code under [your agents](/api/agents) or on the [showcase](/showcase) |
 | `409 MODEL_NOT_GENERATED` from the download | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
-| the first `render` is slow, with a large download | the shared audio encoder is being fetched, once | wait; it is cached for every later run |
+| the first `render` is slow, with a large download | the shared audio encoder and its 2 s window are being fetched, once | wait; they are cached for every later run |
 | the cache fills the wrong disk | downloads land in `~/.cache/bithuman` by default | set `BITHUMAN_CACHE_DIR` to move the download cache |
 | code written for a 2.x release fails | 3.0 changed the API: frames are RGB and the key comes from the environment only | port to the snippet above |
