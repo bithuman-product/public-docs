@@ -8,9 +8,8 @@ order: 12
 
 This page is the whole app. Copy every block on it into a new Xcode project and
 you get a bitHuman avatar talking on your own iPhone, rendered on the phone,
-with nothing in the loop but the phone. It was written by building it: the
-numbers quoted are from a run on an **iPhone 15 (iPhone15,4), iOS 26.6.1**,
-built with Xcode 26.3 on macOS 26.6.2, on **2026-09-09**.
+with nothing in the loop but the phone. It was written by building it, on an
+**iPhone 15 (iPhone15,4), iOS 26.6.1**, with Xcode 26.3 on macOS 26.6.2.
 
 > **Why this page exists beside [Swift / iOS — Hello, avatar](/examples/swift-ios-hello).**
 > That one uses the `bitHumanKit` umbrella and gives you far more — on-device
@@ -35,9 +34,8 @@ built with Xcode 26.3 on macOS 26.6.2, on **2026-09-09**.
 ★ **essence-2 is not on this page, and that is deliberate.** The `Essence2`
 product builds, links and starts on an iPhone, and then refuses the only model
 you can download for it, on **every** Apple device including an iPhone 16 Pro.
-The measurement and the exact refusal are on
-[Essence 2 on-device](/sdk/ios#install). Do not spend an afternoon
-on it; use `expression-2`, which is what this page is.
+The exact refusal is on [Essence 2 on-device](/sdk/ios#install). Do not spend an
+afternoon on it; use `expression-2`, which is what this page is.
 
 ## Prerequisites
 
@@ -61,12 +59,8 @@ on it; use `expression-2`, which is what this page is.
     https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/A08CCD3871.avatar
   ```
 
-  Measured 2026-09-09: `HTTP 206` on a range request with **no credential in
-  the environment at all**, 198,336,868 B, `IMX\0` v2, `unified_format_version:
-  2`, `decoder: decp2v3` — byte-identical (`sha256
-  c55e34e32afd4c1383972dd04c896fb8bd872b9e1b5e71b8a43e9f88acc92fc5`) to what the
-  download endpoint hands its owner. A made-up code on the same prefix answers
-  `400` in the same sweep.
+  It is served with **no credential in the environment at all**, and is
+  byte-identical to what the download endpoint hands its owner.
 
   ★ **Route B — your own identity**, in `ready` state, with your API secret.
   Do this when you want *your* face on the phone. Create one at
@@ -74,29 +68,20 @@ on it; use `expression-2`, which is what this page is.
   [Agents](/api/agents). Budget **60–100 minutes and 2000 credits** — see
   below.
 
-  ★ **Why the Android codes still do not work here, and what changed.** [The Android SDK page](/sdk/android#get-a-model)
-  points `Expression2ModelStore` at a mirror that answers *anonymously*, and
-  [the Android example](/examples/kotlin-android-hello) renders `A02HCY0444`
-  with no key and no agent of your own. That is real: measured 2026-09-11,
-  a **public** agent answers **HTTP 302** to a signed URL there without
-  credentials, and a private one answers 401. (An earlier version of this note
-  said `A66GYD8664`, `A55NVK9945` and `A17ZTB0222` were keyless too; that was
-  measured 2026-09-09 against the anonymous storage mirror the superseded
-  `0.3.1` AAR used. `0.4.0+` fetches through the metered door, where those three
-  are private and answer 401.) The reason it does not carry over is the
-  **form**, not the permission. That mirror vends the
-  Android and web member tree — `combined_fp32.tflite`,
-  `combined_hexagon.tflite`, `enc_exp.onnx` — and **no `.avatar` container at
-  all**, which is the only thing `Expression2` on Apple opens. The endpoint that
-  *does* vend a `.avatar`, `GET /v1/agent/{code}/model/download`, answers **401
-  without an `api-secret`** — measured against `A66GYD8664` the same day, and
-  measured again against `A08CCD3871`, which is *public* and whose member tree
-  that same endpoint serves anonymously. **That 401 is deliberate and is not
-  going away**: the container is somebody's face, and anonymous container
-  downloads are exactly how a private identity would leak. Route A does not
-  open that door — it publishes ONE identity we own, as a public object we
-  chose, the same way the shared engine below has been public since July. Do
-  not spend an afternoon trying `A66GYD8664` here; use `A08CCD3871`.
+  ★ **Why an Android agent code does not work here.** [The Android SDK
+  page](/sdk/android#get-a-model) points `Expression2ModelStore` at a mirror that
+  answers *anonymously*, and [the Android example](/examples/kotlin-android-hello)
+  renders `A02HCY0444` with no key and no agent of your own. The reason it does
+  not carry over is the **form**, not the permission. That mirror vends the
+  Android and web member tree — `combined_fp32.tflite`, `combined_hexagon.tflite`,
+  `enc_exp.onnx` — and **no `.avatar` container at all**, which is the only thing
+  `Expression2` on Apple opens. The endpoint that *does* vend a `.avatar`,
+  `GET /v1/agent/{code}/model/download`, answers **401 without an `api-secret`**.
+  **That 401 is deliberate and is not going away**: the container is somebody's
+  face, and anonymous container downloads are exactly how a private identity
+  would leak. Route A does not open that door — it publishes ONE identity we own,
+  as a public object we chose, the same way the shared engine below has been
+  public since July.
 
   ★ **Route B only — budget for this before you open Xcode: creating one takes
   about 60–100 minutes and costs 2000 credits** — an `expression-2` creation trains a
@@ -109,11 +94,7 @@ on it; use `expression-2`, which is what this page is.
   The agent flips to `status: "ready"` when the identity is built; the
   `.avatar` this app bundles is *published* separately, and until it lands the
   download endpoint answers `404 MODEL_ARTIFACT_NOT_READY` — "typically within
-  the hour". Usually it is minutes. It is not guaranteed: measured 2026-09-09,
-  an agent that reached `ready` on 2026-09-07 (progress `1.0`, `current_step:
-  "done"`, `model_status["expression-2"].state: "ready"`) was **still** answering
-  that 404 two days later, while 25 other `ready` `expression-2` agents on the
-  same account all returned a signed URL in the same sweep. No field on
+  the hour". Usually it is minutes. It is not guaranteed, and no field on
   `GET /v1/agent/{code}` distinguishes the two, so ask the endpoint itself
   before you commit an afternoon:
 
@@ -150,7 +131,7 @@ open IOSExpression2.xcodeproj
 ```
 
 ★ **But use the `setup.sh` printed on this page, not the one in that
-directory.** Re-checked 2026-09-10: the repository's copy is still the Route B
+directory.** The repository's copy is still the Route B
 script — it requires `BITHUMAN_API_SECRET` and an agent code of your own and
 exits 2 without them, so a keyless reader who clones and runs it gets a
 usage error rather than a frame. The version below needs neither. Paste it over
@@ -258,29 +239,14 @@ echo "==> Sources/Model is ready:"
 du -sh Sources/Model/*
 ```
 
-Run on 2026-09-09 with **no `BITHUMAN_API_SECRET` in the environment at all**
-(Route A), it printed:
+Run with **no `BITHUMAN_API_SECRET` in the environment at all** (Route A), it
+needs no account and no wait: three `curl`s and `Sources/Model` is ready.
+`shared_engine/` is larger there than the 91 MB the CLI leaves behind because the
+object carries both Apple graph sets; the app bundles what it needs. Route B,
+with a key and your own `<CODE>`, prints the same three lines with your identity
+in place of the first.
 
-```text
-==> downloading the showcase identity A08CCD3871 (no account needed)
--rw-rw-r--  1 you  you  198336868 Sep  9 07:40 Sources/Model/agent.avatar
-==> downloading the shared engine graphs
-10 members -> Sources/Model/shared_engine
-==> downloading speech16k.wav
-==> Sources/Model is ready:
-190M    Sources/Model/agent.avatar
-166M    Sources/Model/shared_engine
-636K    Sources/Model/speech16k.wav
-```
-
-**Seven seconds, three `curl`s, zero accounts.** `shared_engine/` is larger
-here than the 91 MB the CLI leaves behind because the object carries both
-Apple graph sets; the app bundles what it needs. Route B, with a key and your
-own `<CODE>`, prints the same three lines with your identity in place of the
-first.
-
-Sizes vary widely by identity — three agents measured the same day were
-198.3 MB, 193.6 MB and 192.9 MB, so read `Content-Length` rather than budgeting
+Sizes vary widely by identity, so read `Content-Length` rather than budgeting
 from a number on this page.
 
 > **Keep the secret out of the app.** On Route A there is no secret at all. On
@@ -296,24 +262,16 @@ it, set your team, skip to [step 5](#5-sign-it-and-run-it-on-the-phone).
 > ### ★ A green build is not a working app, so the project refuses to build without the model
 >
 > `Sources/Model` is a resource **folder**, which copies whatever happens to be
-> in it. Measured on 2026-09-09: an untouched checkout — with only the committed
-> `PLACE_YOUR_MODEL_HERE.txt` in place — returns **`** BUILD SUCCEEDED **`**,
-> installs, launches, and shows you a blank view. The app does say
-> `no Model/agent.avatar in the bundle — run ./setup.sh`, but it says it into a
-> log, which is not where somebody who just watched a build succeed is looking.
+> in it, so an untouched checkout builds, installs, launches, and shows you a
+> blank view. The app does say `no Model/agent.avatar in the bundle — run
+> ./setup.sh`, but it says it into a log, which is not where somebody who just
+> watched a build succeed is looking.
 >
 > The `preBuildScripts` entry below refuses instead, and names the missing thing
 > and the command that produces it. It checks the seam that actually catches
 > people, too: the `.avatar` does **not** carry
 > `w2v_frontend_cpuAndNE.mlpackage`, so `shared_engine/` has to be there
-> separately. Four arms, three different failures and one pass:
->
-> | `Sources/Model` holds | result |
-> |---|---|
-> | the placeholder only | `error: Sources/Model/agent.avatar is missing — run …/setup.sh` |
-> | a 4,096 B `agent.avatar` | `error: … is only 4096 B — that is an error page or a truncated download` |
-> | a real `agent.avatar`, no `shared_engine/` | `error: … w2v_frontend_cpuAndNE.mlpackage is missing` |
-> | both | `Sources/Model OK …` then `** BUILD SUCCEEDED **` |
+> separately.
 
 **If you are building it yourself:** File → New → Project → **App**, SwiftUI
 interface, then set exactly this much:
@@ -382,9 +340,8 @@ targets:
         script: |
           # A resource FOLDER copies whatever is there, so without this the app
           # builds, installs and launches with no model at all and says so only
-          # in a log line nobody is reading. Measured 2026-09-09: an untouched
-          # checkout with just PLACE_YOUR_MODEL_HERE.txt returns ** BUILD
-          # SUCCEEDED **. Fail here instead, where the message is unmissable.
+          # in a log line nobody is reading. Fail here instead, where the
+          # message is unmissable.
           M="$SRCROOT/Sources/Model"
           fail() { echo "error: $1"; exit 1; }
           [ -f "$M/agent.avatar" ] || fail "Sources/Model/agent.avatar is missing — run  ./setup.sh   (or BITHUMAN_API_SECRET=... ./setup.sh <YOUR_AGENT_CODE> for your own identity)"
@@ -416,18 +373,6 @@ bundled-speech demo needs no permission at all, and **neither engine on this
 rail needs the increased-memory entitlements** that
 [Hello, avatar](/examples/swift-ios-hello) requires — those belong to the
 `bitHumanKit` umbrella.
-
-> ★ **Corrected 2026-09-09 — `CFBundleIdentifier` is not optional, and leaving
-> it out fails late.** This block used to carry only the three keys below the
-> line. An app built from it compiles, links and produces a `.app`, and then
-> `devicectl` refuses the bundle before signing is ever consulted:
-> `The item at IOSExpression2.app is not a valid bundle … Failed to get the
-> identifier for the app to be installed.` Measured on the committed example
-> (Xcode 26.3, macOS 26.6.2): with the keys below, the same build advances past
-> that error to the signing check. Xcode's own *New Project* template sets
-> `GENERATE_INFOPLIST_FILE = YES` and synthesises these keys for you — the
-> moment you point `INFOPLIST_FILE` at a file of your own, they are yours to
-> supply.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -491,14 +436,13 @@ Five things happen here and each is marked in the source:
    after `feed()` drains nothing, throws nothing, logs nothing and shows you an
    empty view. Feed and drain must also run **at the same time**.
 4. **Pre-roll before you start the speaker.** The engine generates in chunks of
-   a little over a second of audio. Measured: feeding 0.8 s and then waiting
-   produced **0 frames in 5 s**. Feed ~1.6 s first, wait for frames, and only
+   a little over a second of audio, so feeding less than one chunk and then
+   waiting produces nothing. Feed ~1.6 s first, wait for frames, and only
    then start playback — otherwise the mouth trails the sound for the whole
    utterance.
 5. **Draw on an absolute 40 ms grid.** `Task.sleep` overshoots by a couple of
-   milliseconds every time; sleeping `0.04 − work` lets that error accumulate.
-   Measured over one utterance: **14.8 FPS** with the naive form against
-   **25 FPS** on an absolute grid.
+   milliseconds every time; sleeping `0.04 − work` lets that error accumulate
+   until playback falls behind the audio.
 
 ```swift
 // IOSExpression2 — a talking bitHuman avatar on a real iPhone, on-device.
@@ -1001,17 +945,6 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
   ai.bithuman.example.ios-expression2
 ```
 
-> ★ **Corrected 2026-09-09 — the two paths in that block.** Without
-> `-derivedDataPath`, `xcodebuild` writes the app into
-> `~/Library/Developer/Xcode/DerivedData/IOSExpression2-<hash>/Build/Products/…`
-> and nothing named `build/` is ever created, so the `install` line above used
-> to fail with *no such file*. And the bundle identifier of the app this page
-> builds — from the clone **and** from the XcodeGen spec above — is
-> `ai.bithuman.example.ios-expression2`, not `com.example.…`; the launch and
-> `copy from` commands need the identifier your build actually carries.
-> Measured on the committed example: with `-derivedDataPath build` the app
-> lands at `build/Build/Products/Debug-iphoneos/IOSExpression2.app`.
-
 > ★ **Over SSH the signing identity is not there, and it fails in two different
 > ways.** In an SSH session the keychain search list holds only the system
 > keychain, so `security find-identity -v -p codesigning` reports **0 valid
@@ -1019,15 +952,7 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > on what else is cached: with a usable provisioning profile already in place the
 > build *succeeds* and the phone rejects the result with
 > `0xe800801c (No code signature found.)`; with the login keychain locked, the
-> build fails outright — measured 2026-09-09 on macOS 26.6.2 / Xcode 26.3, `rc
-> 65`:
->
-> ```text
-> error: No Account for Team "XXXXXXXXXX". Add a new account in Accounts settings
->        or verify that your accounts have valid credentials.
-> error: No signing certificate "iOS Development" found: No "iOS Development"
->        signing certificate matching team ID "XXXXXXXXXX" with a private key was found.
-> ```
+> build fails outright with `No signing certificate "iOS Development" found`.
 >
 > Both have the same cause and the same fix: **build from a logged-in graphical
 > session**, where the login keychain is unlocked and Xcode's account is
@@ -1042,15 +967,13 @@ The app loads, shows the avatar's rest pose, and says the bundled line once by
 itself. Press **Speak** to hear it again, or **Talk to it** to drive the mouth
 from your own microphone in real time.
 
-> **Honesty about the microphone button.** The **Speak** path is what every
-> number on this page was measured on, over and over, on the handset. The
-> **Talk to it** path compiles into the same build and installs with it, and it
-> was **not** driven by a human voice on a device while this page was written —
-> the runs that produced these logs were headless. It is here because it is
-> fifteen lines and it is the shape you want for a live agent; treat it as a
-> starting point, not as a measured result. It also streams rather than
-> generating first, so on an iPhone 15 expect the mouth to sit behind you by
-> about a chunk.
+> **Honesty about the microphone button.** The **Speak** path is the one this
+> page was built and checked on. The **Talk to it** path compiles into the same
+> build and installs with it, but it was **not** driven by a human voice on a
+> device while this page was written. It is here because it is fifteen lines and
+> it is the shape you want for a live agent; treat it as a starting point. It
+> also streams rather than generating first, so expect the mouth to sit behind
+> you by about a chunk.
 
 It also writes what it did to `Documents/session.log` and its first frame to
 `Documents/first-frame.png`, both of which you can pull off the phone without
@@ -1063,46 +986,25 @@ xcrun devicectl device copy from --device <YOUR-DEVICE-UDID> \
   --source Documents/first-frame.png --destination ./first-frame.png
 ```
 
-> ★ **Corrected 2026-09-09 — `--destination .` is refused.** This block used to
-> end in a bare `.`, the shape every other copy tool accepts. `devicectl` does
-> not: it wants the destination *file*, and a directory comes back as
-> `Failed to perform I/O operations … Cannot open destination file
-> /Users/you/work: Is a directory`, rc 0, with nothing written. Measured on
-> Xcode 26.3 / macOS 26.6.2 against this app: the bare `.` arm failed and the
-> `./first-frame.png` arm printed `File received from Device` in the same run.
+★ Give `devicectl` the destination **file**, not a directory: a bare `.` comes
+back as `Cannot open destination file …: Is a directory` with nothing written.
 
-### Measured, 2026-09-09
+### What it costs on the device
 
-Everything below is one run of exactly the code above on an **iPhone 15
-(iPhone15,4), iOS 26.6.1**, installed from a Debug build made with Xcode 26.3 on
-macOS 26.6.2 — `Documents/session.log`, verbatim:
-
-```text
-engine ready: 14 members staged · 416x720 · isReady=true in 7.3s
-audio 16 kHz mono: 83797 samples, 5.24 s
-generated 117 frames at 416x720 in 2.62 s (44.6 FPS, 2.00x real time)
-first frame 416x720 written to Documents/first-frame.png (771436 B)
-played 117 frames in 4.68 s (25.0 FPS) beside 5.24 s of audio
-```
-
-| | |
-|---|---|
-| **First launch** | 7.3 s, nearly all of it CoreML compiling the graphs on the device. Later launches: **1.7 s** |
-| **Generation** | **2.00x real time** — 5.24 s of speech in 2.62 s |
-| **Playback** | **25.0 FPS**, the engine's own rate, held exactly |
-| **Frame** | 416x720, and the PNG pulled off the phone reads min 0, max 255, mean 92.66 — a picture. An all-black buffer of the same size through the same check reads flat in the same run, so that verdict can go red |
+On an iPhone 15 the app generates faster than real time — 5.24 s of speech in
+2.62 s — and then plays the frames back in sync with the audio. First launch
+takes a few seconds longer than later ones, because that is where CoreML compiles
+the graphs on the device.
 
 **An iPhone 15 is two generations below the floor
-[Hello, avatar](/examples/swift-ios-hello) refuses at launch.** `Expression2`
-has no device gate at all: measured on its published archive, `HardwareCheck`,
-`A18` and `iPhone 16` appear **0** times in all three slices, against positive
-controls that fire in the same read.
+[Hello, avatar](/examples/swift-ios-hello) refuses at launch.** `Expression2` has
+no device gate at all.
 
 ★ **Why this example generates the whole utterance before it plays it.** The
 engine emits frames in chunks of a little over a second of audio. Streaming
 them — feed at real time, draw what has arrived — works, and on this handset the
 mouth drifted behind the sound because the chunk boundary is longer than any
-sensible buffer. Generating first costs you the 2.6 s above and buys exact sync.
+sensible buffer. Generating first costs you the 2.62 s above and buys exact sync.
 A 5-second line is about 140 MB of frames held in memory, so for anything long,
 stream it (the microphone button does) or draw straight into a video writer.
 
@@ -1111,13 +1013,11 @@ stream it (the microphone button does) or draw straight into a video writer.
 Stated plainly, so nobody spends an afternoon finding out.
 
 - **essence-2 does not render on an iPhone today, on any iPhone.** The
-  `Essence2` product builds, links, installs and starts — and
-  `be_essence2_create` then returns `-2` on the artifact the download endpoint
-  vends, because that artifact is the form the bitHuman cloud renders from and
-  this engine wants a different one. The refusal arrives **before** the
-  iPhone 16 Pro floor is consulted, so an iPhone 16 Pro sees it too, and `rc`
-  alone is not diagnostic — a path that does not exist returns the same `-2`.
-  The verbatim message and both control arms are on
+  `Essence2` product builds, links, installs and starts — and then refuses the
+  artifact the download endpoint vends, because that artifact is the form the
+  bitHuman cloud renders from and this engine wants a different one. The refusal
+  arrives **before** the iPhone 16 Pro floor is consulted, so an iPhone 16 Pro
+  sees it too. The details are on
   [Essence 2 on-device](/sdk/ios#install). Use `expression-2` on
   the device, or run essence-2 as a [cloud session](/api/runtime-sessions).
 - **The one-call container opener is broken on iOS.** Through `Expression2`

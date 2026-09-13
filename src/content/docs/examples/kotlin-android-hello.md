@@ -12,8 +12,7 @@ head from your audio — on the device, with no cloud round-trip and **no API ke
 
 **Measured on 2026-09-09**, exactly these files, on a Galaxy S25+ (SM-S936U1,
 Snapdragon 8 Elite, Android 16): 5.72 s of speech in → **117 frames** of 416×720
-out, rendered in 21.0 s, then played back in sync with the audio. The transcript
-is [further down](#what-a-real-run-looks-like).
+out, rendered in 21.0 s, then played back in sync with the audio.
 
 ## What you end up with
 
@@ -36,7 +35,7 @@ renders about **5.6 frames per second**, and playback needs 20 — see
 |---|---|---|
 | A **physical `arm64-v8a` phone**, USB debugging on | every bitHuman AAR is `arm64-v8a` only; an x86_64 emulator installs and then throws `UnsatisfiedLinkError` | `adb devices` lists it — `adb` is **not** on your `PATH` by default; it ships inside the SDK at `$ANDROID_HOME/platform-tools`, which the export block below adds |
 | That phone **unlocked**, not just awake | `adb shell input tap` is delivered to whatever window has focus, and on a locked phone that is the lock screen, not your app — the tap is swallowed with no error anywhere | `adb shell dumpsys window \| grep mCurrentFocus` names your activity, not `Bouncer` |
-| **JDK 17** | the Android Gradle Plugin 8.7.3 this project pins refuses newer launcher JVMs — and refuses them illegibly: on a Homebrew JDK 26 the whole error is the string `26.0.2.1` | `"$JAVA_HOME/bin/java" -version` says `17.` — **not** bare `java -version`. Gradle launches the JVM that `JAVA_HOME` names, and bare `java` does not report it: on a Mac that *has* the required Homebrew `openjdk@17`, both `java -version` and `/usr/libexec/java_home -v 17` still print *"Unable to locate a Java Runtime"*, because a Homebrew JDK is keg-only and is never linked into `/Library/Java/JavaVirtualMachines`. Measured on macOS 26.6.2, 2026-09-09 |
+| **JDK 17** | the Android Gradle Plugin 8.7.3 this project pins refuses newer launcher JVMs — and refuses them illegibly: on a Homebrew JDK 26 the whole error is the string `26.0.2.1` | `"$JAVA_HOME/bin/java" -version` says `17.` — **not** bare `java -version`. Gradle launches the JVM that `JAVA_HOME` names, and bare `java` does not report it: on a Mac that *has* the required Homebrew `openjdk@17`, both `java -version` and `/usr/libexec/java_home -v 17` still print *"Unable to locate a Java Runtime"*, because a Homebrew JDK is keg-only and is never linked into `/Library/Java/JavaVirtualMachines` |
 | An **Android SDK** with platform 35 | `compileSdk = 35` below | `$ANDROID_HOME/platforms/android-35` exists |
 | **Network on the phone** for the first run | the model store downloads the identity once | — |
 
@@ -95,8 +94,7 @@ ffmpeg -i whatever.mp3 -ac 1 -ar 16000 -c:a pcm_s16le /tmp/speech.wav
 ★ **Do not skip 44 bytes to find the samples.** `afconvert` writes an `FLLR`
 padding chunk between the header and the data, so the classic "the data starts at
 byte 44" shortcut reads padding as audio and the avatar mouths noise. The reader
-below walks the RIFF chunks instead. This is measured, not theoretical: the WAV
-this page's run used has its `data` chunk at byte **4,096**.
+below walks the RIFF chunks instead.
 
 ## Step 2 — create the project
 
@@ -109,8 +107,7 @@ made — this project builds its UI in code and needs no resources.
 
 **From a terminal**, if you have Gradle installed. ★ **Make the directories,
 write the seven files from [Step 3](#step-3--the-files-in-order), and run
-`gradle wrapper` last** — on Gradle 9 that order is not optional, and the two
-wrong orders are measured below:
+`gradle wrapper` last** — on Gradle 9 that order is not optional:
 
 ```bash
 mkdir -p x2hello/app/src/main/java/com/example/x2hello && cd x2hello
@@ -120,22 +117,15 @@ gradle wrapper --gradle-version 8.11.1      # writes gradlew + gradle/wrapper/*
 
 ★ **Why the wrapper comes last: `gradle wrapper` needs a build to attach itself
 to.** Gradle 8 would write a wrapper into an empty directory; **Gradle 9 will
-not**, and it is the Gradle you get from Homebrew today. Measured on 2026-09-09
-with Gradle 9.7.1 (launcher JVM 17.0.20.1), three orders, one command:
-
-| When you run `gradle wrapper --gradle-version 8.11.1` | What Gradle 9.7.1 does |
-|---|---|
-| in the freshly-`mkdir`'d tree, **no files written yet** — the order this page printed until today | `FAILURE … Directory '…/x2hello' does not contain a Gradle build.` **No `gradlew`, no `gradle/wrapper/`.** |
-| with `settings.gradle.kts` written but the `app/` directory missing | `FAILURE … Configuring project ':app' without an existing directory is not allowed.` |
-| with **all seven files** of Step 3 in place | `BUILD SUCCESSFUL in 728ms` — `gradlew` and `gradle/wrapper/{gradle-wrapper.jar,gradle-wrapper.properties}` appear |
+not**, and it is the Gradle you get from Homebrew today. In a freshly-`mkdir`'d
+tree with no files written yet it stops at `FAILURE … Directory '…/x2hello' does
+not contain a Gradle build.` and writes no `gradlew`; with all seven files of
+Step 3 in place it succeeds.
 
 The failure is not about bitHuman and not about AGP: `gradle wrapper` is a task,
-tasks belong to a build, and Gradle 9 refuses to invent one. If your `gradle`
-is 8.x the first row succeeds too — which is why this page said what it said,
-and why the durable instruction is the order above rather than a version check.
+tasks belong to a build, and Gradle 9 refuses to invent one.
 
-The Gradle that writes the wrapper does not have to be the Gradle that builds:
-the run below used Gradle **9.7.1** on `PATH` to generate a **8.11.1** wrapper,
+The Gradle that writes the wrapper does not have to be the Gradle that builds,
 and every later command is `./gradlew`, which downloads 8.11.1 the first time.
 **Android Studio is unaffected** — it writes the wrapper as part of creating the
 project, before there is anything for you to get out of order.
@@ -581,13 +571,11 @@ adb shell input tap 540 900          # or just tap the phone — see below if no
 adb logcat -v time | grep X2HELLO
 ```
 
-★ **If the tap does nothing, the phone is locked.** Measured on 2026-09-09: with
-the handset awake but on its lock screen, `dumpsys window` reads
-`mCurrentFocus=Window{… Bouncer}` while `mFocusedApp` is still
-`com.example.x2hello/.MainActivity` — the activity is running behind the
-keyguard, so `input tap` lands on the lock screen and the app never hears it. No
-command reports an error; twelve polls of `logcat` showed the same
-"No speech.wav yet" line as if nothing had been pushed. Unlock the phone, or skip
+★ **If the tap does nothing, the phone is locked.** With the handset awake but
+on its lock screen, `dumpsys window` reads `mCurrentFocus=Window{… Bouncer}`
+while `mFocusedApp` is still `com.example.x2hello/.MainActivity` — the activity
+is running behind the keyguard, so `input tap` lands on the lock screen and the
+app never hears it, and no command reports an error. Unlock the phone, or skip
 the tap entirely — the activity renders in `onCreate`, so restarting it picks the
 file up:
 
@@ -598,101 +586,15 @@ adb shell am start -n com.example.x2hello/.MainActivity
 
 ## What a real run looks like
 
-Debug APK **3,474,583 B** — a debug APK moves a few hundred bytes between builds,
-so treat that as *about* 3.47 MB rather than a checksum. Galaxy S25+,
-`A66GYD8664`, the `say`/`afconvert` clip above, 2026-09-09 — logcat, verbatim,
-with the progress lines removed:
-
-```text
-09-09 11:54:22.898 I/X2HELLO: audio: 91477 samples = 5.72 s fetching model A66GYD8664 — first run downloads ~158 MB…
-09-09 11:54:22.918 I/X2HELLO: model ready — starting the engine…
-09-09 11:54:23.473 I/X2HELLO: engine: acc=CPU routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=CPU) initMs=525.43505859375 note=
-09-09 11:54:43.356 I/X2HELLO: FIRST_FRAME at 20438 ms
-09-09 11:54:43.950 I/X2HELLO: DONE_FRAMES 117 in 21032 ms
-09-09 11:54:43.950 I/X2HELLO: rendered 117 frames in 21 s — playing…
-09-09 11:54:49.655 I/X2HELLO: 117 frames, 5.72 s — tap to replay
-```
-
 117 frames for 5.72 s of audio is the published contract — 20 fps × 5.72 s = 114,
 plus the three padded tail frames that `flushTail()` produces past the end of the
-speech. 117 frames in 21.0 s, of which 0.5 s is the engine starting, is **5.7
-frames per second** of render on the all-CPU arm; the wall clock moves a few
-percent between runs (20.4–22.4 s across six builds).
-
-### This page was executed, not written
-
-The seven files above were parsed back **out of this page as it is served**, and
-built in a directory that did not exist. On 2026-09-09, after the page went live:
-the working tree was deleted, `com.example.x2hello` and its cached 158 MB model
-were uninstalled from the phone, the code blocks were extracted from the HTML of
-this URL, `gradle wrapper` + `./gradlew :app:assembleDebug` produced
-`app-debug.apk` **3,474,583 B**, and the phone rendered **117 frames** again
-(`FIRST_FRAME at 20724 ms`, `DONE_FRAMES 117 in 21322 ms`).
-
-The frames are audio-driven, and that is measured rather than asserted. Taking
-one delivered 416×720 frame every 20, and differencing each against the first:
-the muzzle band moves **16–84×** more than a control box of the same width taken
-below the subject, where nothing should move. A still image, or a mouth pasted on
-a loop, would not separate the two boxes.
-
-| frame | mean \|Δ\| in the muzzle band | same in the null control box | ratio |
-|---|---:|---:|---:|
-| 40 | 45.24 | 0.54 | **84×** |
-| 60 | 27.63 | 1.72 | **16×** |
-| 80 | 50.11 | 2.93 | **17×** |
+speech.
 
 ★ **Why nothing appears for twenty seconds and then everything does.** The
 first frame arrives only when `feed()` returns, because `feed()` is where the
 compute happens: it renders every chunk whose look-ahead has arrived, and
 `pull()` then drains a queue that is already full. That is why the app renders
-the whole clip before it plays a second of it, and why `FIRST_FRAME` and
-`DONE_FRAMES` are 0.6 s apart in the transcript above.
-
-**Executed a second time, from zero, on 2026-09-09.** The whole working tree
-was deleted again (`rm -rf ~/_devwalk_android`), the seven files were parsed out
-of the served HTML of this URL by a script that types none of them, `gradle
-wrapper --gradle-version 8.11.1` and `./gradlew :app:assembleDebug` produced
-`app-debug.apk` **3,474,603 B**, and the same phone rendered **117 frames**
-again: `FIRST_FRAME at 20765 ms`, `DONE_FRAMES 117 in 21369 ms`, from
-`audio: 91477 samples = 5.72 s`. Two independent extractions of this page, twenty
-bytes apart in the APK and 47 ms apart in the render — the page is the project.
-
-**Executed a third time, from zero — and this is the run that caught the step
-order.** 2026-09-09, same handset: `com.example.x2hello` was **uninstalled** (so
-the cached 158 MB model went with it), `~/_devwalk_android` (78 MB) was deleted,
-and a script re-fetched **183,783 bytes** of this URL and parsed the seven files
-out of it. Run in the order this page printed until today — `mkdir`, then
-`gradle wrapper` — **it stopped there**: `Directory '…/x2hello' does not contain
-a Gradle build`, no `gradlew` written. That is [now fixed in Step 2](#step-2--create-the-project);
-the two earlier executions had been done files-first, so the page had published
-an order that neither run had actually taken. Files first, then the wrapper:
-`BUILD SUCCESSFUL`, `app-debug.apk` **3,474,583 B**, install, one `adb push`,
-and
-
-```text
-09-09 13:08:14.445 I/X2HELLO: audio: 91477 samples = 5.72 s fetching model A66GYD8664 — first run downloads ~158 MB…
-09-09 13:08:17.069 I/X2HELLO: model ready — starting the engine…
-09-09 13:08:17.713 I/X2HELLO: engine: acc=CPU routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=CPU) initMs=607.658203125 note=
-09-09 13:08:38.347 I/X2HELLO: DONE_FRAMES 117 in 21278 ms
-09-09 13:08:44.039 I/X2HELLO: 117 frames, 5.72 s — tap to replay
-```
-
-★ **The frames were checked as pixels, not as a counter.** One added line in a
-copy of `MainActivity.kt` wrote every twentieth delivered `Bitmap` out as a PNG
-(`FIRST_FRAME at 20709 ms`, `DONE_FRAMES 117 in 22472 ms` on that build), and the
-five 416×720 frames were pulled off the phone and differenced against the first.
-The muzzle band moves **19–134×** more than a box of static background in the
-same frames:
-
-| frame | mean \|Δ\| in the muzzle band (rows 340–400) | background control (rows 20–110) | ratio |
-|---|---:|---:|---:|
-| 40 | 48.39 | 0.36 | **134×** |
-| 60 | 29.43 | 1.02 | **29×** |
-| 80 | 53.21 | 1.47 | **36×** |
-| 100 | 34.81 | 1.79 | **19×** |
-
-A still image would put both columns at zero; a video loop would move both. The
-separation is what says the mouth is following the audio.
+the whole clip before it plays a second of it.
 
 ## When it does not work
 
@@ -737,24 +639,11 @@ private val options = Expression2Options(
 ```
 
 ★ **`AUTO` is the fallback, and it is the whole difference between an app that
-renders and an app that does not.** Three arms, same phone, same identity, same
-audio, 2026-09-09 — only the options changed:
-
-| `Expression2Options(…)` | QNN in the APK | Result |
-|---|---|---|
-| `()` — the file above | no | `acc=CPU`, **117 frames** |
-| `routing = HTP_DECODER, qnnOptions = …` | no | `acc=CPU`, note *"no libQnnTFLiteDelegate.so in this APK — add com.qualcomm.qti:qnn-litert-delegate…"*, **117 frames** |
-| `routing = HTP_DECODER, qnnOptions = …` | yes | `acc=CPU`, note *"the Hexagon refused this graph, fell back to XNNPACK: …"*, **117 frames** |
-| `accelerator = Accelerator.NPU, routing = HTP_DECODER` | yes | `Expression2Exception: TfLiteInterpreterCreate returned null (graph rejected) … this device has no usable Hexagon for this graph`, **0 frames** |
-
-The last row is the control: one token turns a working app into a crashed one.
-Naming `Accelerator.NPU` makes the refusal fatal; leaving it at `AUTO` lets the
-SDK build the CPU arm instead and record why in `avatar.acceleratorNote`, which
-is why the app logs that field. All four rows were run on the same handset, the
-same identity and the same clip on 2026-09-09, and the fourth is what makes the
-first three a finding rather than a phone that only ever says `CPU`. The APK cost
-is real too — **3,474,583 B** without the QNN artifacts, **75,981,876 B** with
-them.
+renders and an app that does not.** Naming `Accelerator.NPU` makes a refusal
+fatal — `Expression2Exception: TfLiteInterpreterCreate returned null (graph
+rejected) … this device has no usable Hexagon for this graph`, and no frames at
+all. Leaving it at `AUTO` lets the SDK build the CPU arm instead and record why
+in `avatar.acceleratorNote`, which is why the app logs that field.
 
 ★ **This particular refusal is a Snapdragon 8 Elite (SM8750) fact**, not a
 universal one: the Android member was tuned on an SM8550, where the same options
@@ -771,11 +660,6 @@ private agent needs its owner's key passed to `MeteredDoorResolver`, so check
 visibility before you build a code into an app. [The SDK
 page](/sdk/android#get-a-model) carries the door's three answers and the codes
 verified anonymously on 2026-09-11.
-
-★ **The logcat transcripts above are a verbatim 2026-09-09 record and name
-`A66GYD8664`, which was keyless on the storage mirror 0.3.1 used. It is private
-at the door and now answers `401`** — the transcripts are left as recorded
-rather than rewritten; the code the app runs is the one above.
 
 ## Feed the microphone instead of a file
 
@@ -811,8 +695,7 @@ fun recordMic(seconds: Int): FloatArray {
 }
 ```
 
-Compiled against `expression2-android:0.3.1` — the version current that day —
-with the project above on 2026-09-09. Feeding a microphone live also means feeding *while* pulling — the
+Feeding a microphone live also means feeding *while* pulling — the
 SDK is built for that ([the streaming contract](/concepts/audio-streaming)), but
 remember this phone's all-CPU arm renders slower than real time, so a live app
 either asks for the accelerator or falls behind.
@@ -823,24 +706,12 @@ Everything above is [Expression 2](/concepts/models). essence-1 is the older
 `ai.bithuman:sdk` artifact: it renders at 25 fps, it takes a `.imx` model file you
 push yourself, and it needs an **API secret**.
 
-> **The published `ai.bithuman:sdk:2.3.6` cannot authenticate on an Android device,
-> so the example below compiles and installs and then throws before its first
-> frame. Measured on a Galaxy S25+ on 2026-09-09**, with a real API secret and the
-> showcase `.imx` from Step 2 on the phone:
->
-> ```text
-> ai.bithuman.sdk.BithumanException: be_auth_authenticate: status=11
->   msg=curl_easy_perform: SSL peer certificate or SSH remote key was not OK
->     at ai.bithuman.sdk.Avatar$Companion.load(Avatar.kt:185)
->     at com.example.bithumanhello.MainActivity.onCreate(MainActivity.kt:22)
-> ```
->
-> The artifact's native library ships with no CA trust store, and there is no
-> app-side workaround on this version — the full measurement, with the two controls
-> that rule out your network and your key, is on
-> [the Android SDK page](/sdk/android#troubleshooting). It compiles:
-> built from the block below exactly as printed, `BUILD SUCCESSFUL`, 20,515,057 B
-> debug APK. It just cannot get past `Avatar.load`.
+> **The published `ai.bithuman:sdk:2.3.6` cannot authenticate on an Android
+> device, so the example below compiles and installs and then throws before its
+> first frame** — `be_auth_authenticate: status=11`. The artifact's native
+> library ships with no CA trust store, and there is no app-side workaround on
+> this version; the details are on
+> [the Android SDK page](/sdk/android#troubleshooting).
 >
 > **For a talking head on Android today, use the Expression 2 project at the top of
 > this page.** It needs no key and no `.imx`.
@@ -895,12 +766,10 @@ dependencies {
 }
 ```
 
-> ★ **Both lines above are load-bearing, and the example did not compile without
-> them.** `BuildConfig` is generated only when `buildFeatures.buildConfig` is
-> `true`, and it has defaulted to **false** since AGP 8.0 — the version this
-> documentation pins is **8.7.3** ([Android SDK
-> verification](/sdk/android)). With the block as it was printed here
-> until 2026-09-06 — no `buildConfigField`, no `buildFeatures` — the snippet in
+> ★ **Both lines above are load-bearing.** `BuildConfig` is generated only when
+> `buildFeatures.buildConfig` is `true`, and it has defaulted to **false** since
+> AGP 8.0 — the version this documentation pins is **8.7.3** ([Android SDK
+> verification](/sdk/android)). Without them the snippet in
 > [Full code](#full-code) fails at compile time with
 > `Unresolved reference: BuildConfig`, not at runtime.
 >
@@ -1001,19 +870,15 @@ fun playEssence2(context: Context, mirrorBase: String, code: String, show: (Byte
 ★ **This snippet compiles and cannot run today, and the reason is not your code.**
 `mirrorBase` has no value you can supply: `Essence2ModelStore` fetches
 `{base}/{code}/android/v1/android_store.v1.json` and **bitHuman publishes no public
-host that serves that tree**. Measured on the handset on 2026-09-09, both hosts a
-developer would guess refuse through the SDK's own error path — the expression-2
-web mirror with `HTTP 400 … {"error":"not_found"}`, `assets.bithuman.ai` with
-`HTTP 404` — each saying *"this identity has no android bundle published on this
-mirror"*. The REST model-download door serves essence-2 as a single
-`<code>.lebundle.imx`, which is not the member tree this store reads. Two more
+host that serves that tree**. The REST model-download door serves essence-2 as
+a single `<code>.lebundle.imx`, which is not the member tree this store reads.
+Two more
 things the snippet assumes: the session plays the avatar's **recorded** sequence,
 because there is no audio-in entry point on this artifact yet (`BitHuman.open`
 throws `AvatarError.NotSupported`); and a refusal ends the session — there is no
 other render call to fall back to. **For an audio-driven talking head on Android
 today, use expression-2 above.** The
-[Android SDK page](/sdk/android#troubleshooting) carries
-the full measurement.
+[Android SDK page](/sdk/android#troubleshooting) has the detail.
 
 ## Next steps
 
