@@ -19,14 +19,14 @@ CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
   with exit code **77**, reported as `NOT_SIGNED_IN`, and says *"not signed in,
   or the credential is not valid — run `bithuman login`, or set
   BITHUMAN_API_SECRET"*. That is what you get for all three cases: no
-  credential, one this machine cannot use, and one the service rejects.
-  A live `run` session is metered separately, and a credential its meter
-  refuses — at the session's first check or on its once-a-minute beat — stops
-  the session with `METERING_REFUSED`, also exit 77. Until now a rejected credential kept rendering
-  for 300 seconds behind a countdown, and no credential at all rendered while
-  saying it was not charging you. Getting a key is free and takes a moment:
-  `bithuman login` opens your browser, or `bithuman login --device` prints a
-  code for an SSH session.
+  credential, one this machine cannot use, and one the service rejects. Until
+  now a rejected credential kept rendering for 300 seconds behind a countdown,
+  and no credential at all rendered while saying it was not charging you.
+  Getting a key is free and takes a moment: `bithuman login` opens your
+  browser, or `bithuman login --device` prints a code for an SSH session.
+- **A live `run` session is metered separately.** A credential its meter
+  refuses — at the session's first check, or on its once-a-minute beat while
+  frames are flowing — stops the session with `METERING_REFUSED`, also exit 77.
 - **`BITHUMAN_UNMETERED=1` is gone** from the CLI; setting it does nothing.
 - **An unreachable meter still renders, and is never refused.** If our service
   cannot be reached, the render continues and says so — being unable to ask is
