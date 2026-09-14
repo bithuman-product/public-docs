@@ -1,6 +1,6 @@
 ---
 title: "Swift / iOS — a talking avatar on the iPhone you have"
-description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 25 fps. No device floor, no Apple entitlement, no account and no credits — the showcase identity A08CCD3871 is a public download. Every file printed in full."
+description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 20 fps. No device floor, no Apple entitlement, no account and no credits — the showcase identity A08CCD3871 is a public download. Every file printed in full."
 section: examples
 group: "Examples"
 order: 12
@@ -24,7 +24,7 @@ with nothing in the loop but the phone. It was written by building it, on an
 
 | | |
 |---|---|
-| **Renders** | your own agent's identity, 416x720, 25 fps, entirely on the device |
+| **Renders** | your own agent's identity, 416x720, 20 fps, entirely on the device |
 | **Driven by** | a bundled 16 kHz WAV, or live microphone input |
 | **Needs** | a physical Apple-Silicon iPhone or iPad — the Simulator cannot run this engine |
 | **Does not need** | an iPhone 16 Pro, an Apple entitlement, a network connection at run time, or an API key inside the app |
@@ -440,8 +440,9 @@ Five things happen here and each is marked in the source:
    waiting produces nothing. Feed ~1.6 s first, wait for frames, and only
    then start playback — otherwise the mouth trails the sound for the whole
    utterance.
-5. **Draw on an absolute 40 ms grid.** `Task.sleep` overshoots by a couple of
-   milliseconds every time; sleeping `0.04 − work` lets that error accumulate
+5. **Draw on an absolute 50 ms grid.** Expression 2 delivers a frame every
+   50 ms — 20 fps — so the grid is `0.05`. `Task.sleep` overshoots by a couple
+   of milliseconds every time; sleeping `0.05 − work` lets that error accumulate
    until playback falls behind the audio.
 
 ```swift
@@ -452,7 +453,7 @@ Five things happen here and each is marked in the source:
 // Inputs:  Sources/Model/agent.avatar        your agent's <CODE>.avatar
 //          Sources/Model/shared_engine/      from `bithuman engine install mac`
 //          Sources/Model/speech16k.wav       16 kHz mono PCM speech
-// Output:  25 FPS lip-synced frames, drawn in SwiftUI, in sync with the audio.
+// Output:  20 FPS lip-synced frames, drawn in SwiftUI, in sync with the audio.
 //
 // Nothing here is bitHuman-internal: every call is public API of the shipped
 // binary. See https://docs.bithuman.ai/examples/swift-ios-expression2
@@ -581,7 +582,7 @@ actor Renderer {
 }
 
 // MARK: - 4. BGR888 → CGImage. Two vImage passes and no intermediate copy, so
-// this keeps up with 25 FPS even in a Debug build.
+// this keeps up with 20 FPS even in a Debug build.
 
 func makeCGImage(_ bgr: [UInt8], _ w: Int, _ h: Int) -> CGImage? {
     let n = w * h
@@ -613,9 +614,9 @@ func makeCGImage(_ bgr: [UInt8], _ w: Int, _ h: Int) -> CGImage? {
 
 // MARK: - 4b. The view we draw into
 //
-// ★ Do NOT push 25 FPS through an `@Published` property. Every assignment
+// ★ Do NOT push 20 FPS through an `@Published` property. Every assignment
 // re-evaluates the SwiftUI body around it, and measured on an iPhone 15 that
-// alone dropped playback from 25 FPS to 19.3. Hand the frame to a CALayer
+// alone dropped playback to 19.3 FPS. Hand the frame to a CALayer
 // instead; SwiftUI never sees it change.
 
 @MainActor
@@ -695,11 +696,11 @@ final class AvatarSession: ObservableObject {
     // 5b. Speak: generate the whole utterance, then play it in sync.
     //
     // ★ Why generate first rather than stream. Measured on an iPhone 15, this
-    // engine delivers about 20 FPS of a 25 FPS stream — a little slower than
-    // real time. Stream it and the mouth falls steadily further behind the
-    // sound; generate it and the two are locked together. On faster silicon you
-    // can stream (the microphone button below does), and the shape is the same:
-    // feed, poll, draw.
+    // engine delivers about 20 FPS — its own full rate, so a stream has no
+    // headroom above playback. A frame lost to a hiccup is never made up, and
+    // the mouth drifts behind the sound; generate the utterance first and the
+    // two are locked together. On faster silicon you can stream (the microphone
+    // button below does), and the shape is the same: feed, poll, draw.
     func speak() {
         guard ready, !busy, let wav = Payload.speechWAV else { return }
         let pcm = readPCM16MonoWAV(wav)
@@ -757,7 +758,7 @@ final class AvatarSession: ObservableObject {
                 hasFrame = true
                 shown += 1
                 if shown == 1 { recordFirstFrame(cg) }
-                let wait = start.addingTimeInterval(Double(n + 1) * 0.04).timeIntervalSinceNow
+                let wait = start.addingTimeInterval(Double(n + 1) * 0.05).timeIntervalSinceNow
                 if wait > 0 { try? await Task.sleep(nanoseconds: UInt64(wait * 1e9)) }
             }
             let played = Date().timeIntervalSince(start)
@@ -835,13 +836,13 @@ final class AvatarSession: ObservableObject {
         status = "Stopped — \(shown) frames at \(w)x\(h)."
     }
 
-    // 5d. Display: pop one frame every 40 ms — 25 FPS, the engine's own rate.
+    // 5d. Display: pop one frame every 50 ms — 20 FPS, the engine's own rate.
     /// The streaming draw loop, used by the microphone button. It shows whatever
     /// the engine has produced, 25 times a second.
     private func startDisplayLoop() {
         displayTask?.cancel()
         displayTask = Task { [weak self] in
-            // ★ An ABSOLUTE grid, not `sleep(0.04 - work)`. Task.sleep overshoots
+            // ★ An ABSOLUTE grid, not `sleep(0.05 - work)`. Task.sleep overshoots
             // a little every time, and subtracting the work from a fixed delay
             // lets that error accumulate — which is the video sliding behind the
             // audio in front of you.
@@ -857,7 +858,7 @@ final class AvatarSession: ObservableObject {
                     if self.shown == 1 { self.recordFirstFrame(cg) }
                 }
                 n += 1
-                let wait = start.addingTimeInterval(Double(n) * 0.04).timeIntervalSinceNow
+                let wait = start.addingTimeInterval(Double(n) * 0.05).timeIntervalSinceNow
                 if wait > 0 { try? await Task.sleep(nanoseconds: UInt64(wait * 1e9)) }
             }
         }
