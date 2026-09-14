@@ -1,0 +1,95 @@
+---
+import Base from "../layouts/Base.astro";
+
+// Without this page a mistyped or stale URL answered with the host's own plain
+// text — "The page could not be found / NOT_FOUND / iad1::…" — no navigation,
+// no search, no way back. This site moves URLs often enough to carry 176
+// redirects, so landing on one that was missed is a normal thing to happen to a
+// reader, and it should leave them inside the docs.
+
+const places = [
+  { title: "Get started", desc: "A live agent in your browser, then your own.", href: "/start" },
+  { title: "SDK", desc: "Install and run on macOS, Linux, iOS, Android, Web or Python.", href: "/sdk" },
+  { title: "API", desc: "Generate, drive and embed agents over REST.", href: "/api" },
+  { title: "Guides", desc: "Build, deploy and integrate, end to end.", href: "/guides" },
+  { title: "Examples", desc: "Whole projects printed in full, copy-paste ready.", href: "/examples" },
+  { title: "Changelog", desc: "What shipped, and when.", href: "/changelog" },
+];
+---
+
+<Base
+  title="Page not found — bitHuman docs"
+  description="That page is not here. Search the docs, or start from the SDK, the API or the guides."
+>
+  <section class="nf">
+    <div class="container">
+      <p class="eyebrow">404</p>
+      <h1>That page is not here.</h1>
+      <p class="lede">
+        It may have moved, or the link may be old. Search the docs — or pick up
+        from one of these.
+      </p>
+      <p class="acts">
+        <button class="find" type="button" onclick="window.__bhOpenSearch && window.__bhOpenSearch()">
+          Search the docs
+        </button>
+        <a class="home" href="/">Docs home</a>
+      </p>
+
+      <div class="grid">
+        {places.map((p) => (
+          <a class="card" href={p.href}>
+            <strong>{p.title}</strong>
+            <span>{p.desc}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { padding-block: var(--space-10) var(--space-12); }
+  .nf h1 { font-size: var(--fh-2xl); margin-top: var(--space-2); max-width: 18ch; }
+  .lede { margin-top: var(--space-3); max-width: 44ch; font-size: var(--ft-lg); color: var(--color-text-secondary); }
+  .acts { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+  .find {
+    padding: 0.6rem 1.1rem;
+    border: 0;
+    border-radius: var(--r-full);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: var(--ft-sm);
+    font-weight: var(--fw-medium);
+  }
+  .find:hover { background: var(--color-primary-hover); }
+  .home {
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-full);
+    font-size: var(--ft-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-secondary);
+  }
+  .home:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+
+  .grid {
+    margin-top: var(--space-8);
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-lg);
+    background: var(--color-surface);
+    transition: border-color var(--t-fast) var(--ease);
+  }
+  .card:hover { border-color: var(--color-primary); }
+  .card strong { font-weight: var(--fw-medium); }
+  .card span { font-size: var(--ft-sm); color: var(--color-text-secondary); }
+</style>

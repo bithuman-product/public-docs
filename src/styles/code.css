@@ -34,16 +34,19 @@
   background: var(--color-code-bg);
   overflow: hidden;
 }
+/* The bar carries the language on the left and Copy on the right. A block with
+   no language — the commands on the /sdk cards — gets just the button. */
 .bh-code-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: var(--space-3);
   padding: 0.3rem 0.4rem 0.3rem 0.85rem;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface-2);
 }
 .bh-code-lang {
+  margin-right: auto;
   font-size: var(--ft-xs);
   font-weight: var(--fw-medium);
   letter-spacing: 0.06em;
@@ -55,6 +58,11 @@
   border: 0;
   border-radius: 0;
   background: transparent !important;
+}
+/* One padding for every code block on the site, so a command never sits flush
+   against the edge of the card it is in. */
+pre {
+  padding: var(--space-4);
 }
 
 /* ---- the copy button --------------------------------------------------- */
