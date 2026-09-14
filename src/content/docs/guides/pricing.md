@@ -32,7 +32,7 @@ Managed conversational agents bill on top of avatar serving:
 | Managed agent — voice chat | 10 credits/min |
 | Managed agent — camera chat (vision on) | 30 credits/min |
 
-One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development escape hatch in the Python SDK, the Docker container and the Swift SDK, never licensed for production; the CLI ignores it entirely from 2.6.20.
+One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development escape hatch in the Python SDK, the Docker container, the Swift SDK and the Android Essence 2 SDK, never licensed for production; the CLI ignores it entirely from 2.6.20.
 
 ## Creation & generation — one-time credits
 
@@ -102,10 +102,10 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 | Mode | What it means | Auth |
 |---|---|---|
 | **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server, Android, CLI, REST) / `BITHUMAN_API_KEY` (Swift only) |
-| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skips auth and heartbeat. **The CLI ignores it completely from 2.6.20** — `render` and `run`, on macOS and Linux alike, refuse without a credential whether or not it is set. Still honoured by the Python SDK, the Docker container and the Swift SDK. | none, where it still applies |
+| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skips auth and heartbeat. **The CLI ignores it completely from 2.6.20** — `render` and `run`, on macOS and Linux alike, refuse without a credential whether or not it is set. Still honoured by the Python SDK, the Docker container, the Swift SDK and the Android Essence 2 SDK — the Android Expression 2 SDK has no such hatch. | none, where it still applies |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
-The Python SDK and the Docker container honour `BITHUMAN_UNMETERED=1`, and the Swift SDK has the same escape hatch via its unmetered initializer. The CLI does not: from 2.6.20 no environment variable renders for free there, on either platform.
+The Python SDK and the Docker container honour `BITHUMAN_UNMETERED=1`; the Swift SDK has the same escape hatch via its unmetered initializer; and the Android Essence 2 SDK reads the same variable, describing it in its own text as lab and CI only. The Android Expression 2 SDK carries no such hatch. The CLI does not honour it: from 2.6.20 no environment variable renders for free there, on either platform.
 
 ## How metering works
 
