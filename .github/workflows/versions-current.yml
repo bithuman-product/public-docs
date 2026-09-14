@@ -1,0 +1,42 @@
+name: Versions current
+
+# EVERY VERSION A PAGE NAMES AS THE ONE TO USE IS THE NEWEST ONE PUBLISHED.
+#
+# On 2026-09-13 four artifacts were published and the site went on naming the
+# one before each — `essence2-android` 0.5.3 for 0.5.5, `bithuman` 3.1.4 for
+# 3.1.5, `cli-v2.6.13` for `cli-v2.6.14` — and nothing noticed, because the
+# pages did not change. The registries did. So this runs on a SCHEDULE as well
+# as on every push and pull request: a page that was current when it merged is
+# graded again an hour after the next release.
+#
+# The check asks Maven Central, PyPI, the Swift package's tags and the tap's
+# release list (cli-v* by tag prefix, drafts and pre-releases skipped). A
+# registry it cannot read is CANNOT CHECK, exit 2 — red, never a pass.
+# scripts/check-versions-current.mjs says what each rule grades and why.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  versions-current:
+    name: every version a page names is the newest published
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: The guard proves itself (no network)
+        run: node scripts/check-versions-current.mjs --selftest
+      - name: Every version a page names is the newest published one
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-versions-current.mjs

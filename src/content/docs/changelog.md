@@ -10,6 +10,80 @@ order: 1
 
 ## September 2026
 
+### Essence 2 on Android is fast at its default settings — `essence2-android` 0.5.5 (2026-09-13)
+
+`ai.bithuman:essence2-android:0.5.5` on Maven Central. **If you are on 0.5.3,
+change the version and nothing else** — every class and method your code calls
+is the same in 0.5.5.
+
+- **The default settings are now the fast ones.** 0.5.3 left speed on the
+  table unless you overrode its settings: its default thread count was too low
+  for a current handset, and it assembled every 1080p output frame on the CPU.
+  0.5.5 corrects the thread default and assembles each output frame on the GPU
+  of a Snapdragon (Adreno) handset by default. The frame rate a Galaxy S25+ reaches at those
+  defaults, measured on the published library, is on the
+  [performance page](/sdk/performance).
+- **There is no 0.5.4** — it was never published, so 0.5.3 is followed by 0.5.5.
+- `0.2.0` through `0.5.3` stay on Central; `0.5.1` and `0.5.2` cannot install a
+  model on a handset. The coordinate and the troubleshooting table are on the
+  [Android SDK](/sdk/android#troubleshooting) page, and the FFmpeg relink kit
+  for this version is on [FFmpeg / LGPL](/legal/android-ffmpeg-lgpl).
+
+### `bithuman` 3.1.5: Essence 2's audio step does less work, and a render that stops early raises (2026-09-13)
+
+`bithuman` 3.1.5 on PyPI: `pip install --upgrade bithuman`. The same wheels as
+3.1.4 — CPython 3.10–3.14 on macOS arm64 (14 or newer), Linux x86_64 and Linux
+aarch64.
+
+- **Essence 2's audio step computes only what the renderer reads.** Each audio
+  window is now processed only as far as the part the renderer actually uses,
+  so the audio side of a render does less work than on 3.1.4. Delivered frames
+  are unchanged — compared frame by frame against 3.1.4's
+  audio step on Linux before publishing. The library fetches the new audio
+  files once, on first use, and checks them by digest.
+- **A render that stops early raises instead of returning a short video.**
+  `avatar.render(...)` now checks that it delivered the frames your audio calls
+  for, and raises `Failed` naming both counts — *"that render stopped early —
+  N frames came out of the M this audio should produce"* — so you can render
+  again rather than ship a clip that ends before its audio does. On 3.1.4 such
+  a render returned normally. A live stream has no fixed length and is never
+  flagged.
+- **If you pinned 3.1.4, move the pin.** 3.1.4 keeps working and keeps
+  fetching the audio files it was built for, but it runs the larger audio step.
+
+### `bithuman render` on a Mac compresses video on the Mac's own hardware encoder — `cli-v2.6.14` (2026-09-13)
+
+CLI `cli-v2.6.14`, macOS arm64 and Linux x86_64 built from one commit; it is
+what Homebrew and the universal installer give you. **One change, and it is on
+macOS:** `bithuman render` compresses the output video on your Mac's hardware
+video encoder instead of on the CPU.
+
+- **Renders are faster, and your Mac stays usable while they run.** The CPU was
+  spending more time compressing the video than rendering it. On an Apple M4
+  the same render runs about 1.7x faster, and compressing it takes about half
+  of one core instead of about five. Measured frame rates are on the
+  [performance page](/sdk/performance).
+- **The picture quality is the same.** The encoder setting was chosen to match
+  what 2.6.13 produced, measured frame by frame against an uncompressed
+  reference — not to make the file smaller.
+- **Speed is steadier from run to run.** Two identical renders used to differ
+  by up to 1.67x in speed depending on what else the Mac was doing; now they
+  differ by about 1%.
+- **Nothing fails without the hardware encoder.** If your `ffmpeg` does not
+  have Apple's hardware encoder — a custom build, say — you get the CPU encoder
+  as before. Every render prints which encoder it used, and
+  `BITHUMAN_FORCE_X264=1` pins the CPU encoder.
+- **Linux is unchanged:** same encoder, same settings, same bytes. The engine
+  inside is the same one 2.6.13 carried; only the CLI's own version moves.
+
+**Known issue, and it is not new:** on macOS, rendering the same input twice can
+produce slightly different output — every frame stays in its place, but some
+pixel values can differ slightly between runs. `2.6.11` through `2.6.13` behave
+the same way. A fix is in progress.
+
+Earlier versions stay resolvable; a `BITHUMAN_VERSION=cli-v2.6.13` pin keeps
+working.
+
 ### Essence 2's audio step does less than half the work — upgrade to `cli-v2.6.13` (2026-09-13)
 
 CLI `cli-v2.6.13`, macOS arm64 and Linux x86_64 built from one commit. **If you
