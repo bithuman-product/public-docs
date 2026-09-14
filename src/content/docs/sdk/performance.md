@@ -12,7 +12,7 @@ label: "Performance"
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 51.9 |
 | macOS | Apple M4 | 74 | 82 |
 | iOS | iPhone 15 | 118 | 33 |
-| Android | Galaxy S25+ | 58 | not at default settings |
+| Android | Galaxy S25+ | 58 | 15 — not yet real time |
 | Web | Chrome on M4 | 30 | 12 — not yet real time |
 | Linux | Intel Core i7-13700F | 41 | 21 — not yet real time |
 
@@ -36,7 +36,7 @@ Cloud GPU is a hosted service rather than an SDK on your own hardware, and its n
 
 The iPhone number is what a cool phone does. Render again straight away, with no pause, and an iPhone 15 settles at about 31 frames per second — still above the 25 Essence 2 plays at, so a conversation stays real time.
 
-The Android number is what a cool phone does. Under continuous rendering a Galaxy S25+ warms up and settles at about 40 frames per second after a few minutes — still twice the 20 frames per second Expression 2 plays at, so a conversation stays real time.
+The Android Expression 2 number is what a cool phone does. Under continuous rendering a Galaxy S25+ warms up and settles at about 40 frames per second after a few minutes — still twice the 20 frames per second Expression 2 plays at, so a conversation stays real time.
 
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
 <!-- /FLOORS:NOTES -->
