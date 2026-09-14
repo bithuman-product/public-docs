@@ -416,23 +416,49 @@ export async function grade(files, registry) {
 
 /* -------------------------------------------------------------- registries */
 
-async function get(url, headers = {}) {
-  let res;
-  try {
-    res = await fetch(url, { redirect: "follow", headers, signal: AbortSignal.timeout(30000) });
-  } catch (e) {
-    throw new CannotCheck(`${url}: ${e.message}`);
+// Maven Central answered a GitHub runner with HTTP 403 on this check's first
+// CI run, while the same host answered the coordinate gate a minute earlier.
+// So a refusal or an overload is retried with backoff, under a User-Agent that
+// says who is asking, and Maven is asked on a second Central hostname. If every
+// attempt still fails it is CANNOT CHECK, exit 2, never a pass. A 404 is an
+// answer and is not retried.
+const UA = "bithuman-public-docs-versions-check (+https://github.com/bithuman-product/public-docs)";
+const RETRY = new Set([403, 408, 429, 500, 502, 503, 504]);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function get(urls, headers = {}) {
+  const list = Array.isArray(urls) ? urls : [urls];
+  let last = "";
+  for (const url of list) {
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      let res;
+      try {
+        res = await fetch(url, {
+          redirect: "follow",
+          headers: { "User-Agent": UA, ...headers },
+          signal: AbortSignal.timeout(30000),
+        });
+      } catch (e) {
+        last = `${url}: ${e.message}`;
+        await sleep(2000 * 2 ** (attempt - 1));
+        continue;
+      }
+      if (res.ok) return res;
+      last = `${url}: HTTP ${res.status}`;
+      if (!RETRY.has(res.status)) break;
+      await sleep(2000 * 2 ** (attempt - 1));
+    }
   }
-  if (!res.ok) throw new CannotCheck(`${url}: HTTP ${res.status}`);
-  return res;
+  throw new CannotCheck(`${last} (4 attempts per host, ${list.length} host${list.length > 1 ? "s" : ""})`);
 }
 
 const liveRegistry = {
   tapTagsSeen: null,
   async latest(a) {
     if (a.kind === "maven") {
-      const url = `https://repo1.maven.org/maven2/ai/bithuman/${a.id}/maven-metadata.xml`;
-      const xml = await (await get(url)).text();
+      const path = `maven2/ai/bithuman/${a.id}/maven-metadata.xml`;
+      const url = `https://repo1.maven.org/${path}`;
+      const xml = await (await get([url, `https://repo.maven.apache.org/${path}`])).text();
       const release = /<release>([^<]+)<\/release>/.exec(xml)?.[1]?.trim();
       const versions = [...xml.matchAll(/<version>([^<]+)<\/version>/g)].map((m) => m[1].trim());
       if (!release && versions.length === 0) throw new CannotCheck(`${url}: no <release> and no <version>`);
