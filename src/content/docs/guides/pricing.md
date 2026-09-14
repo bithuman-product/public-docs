@@ -32,7 +32,7 @@ Managed conversational agents bill on top of avatar serving:
 | Managed agent — voice chat | 10 credits/min |
 | Managed agent — camera chat (vision on) | 30 credits/min |
 
-One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development escape hatch in the Python SDK, the Docker container, the Swift SDK and the Android Essence 2 SDK, never licensed for production; the CLI ignores it entirely from 2.6.20.
+One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development-only variable, never licensed for production, and it is being removed from the shipping surfaces: the CLI ignores it entirely from 2.6.20, and the public Python wheels refuse a render with no credential whether or not it is set.
 
 ## Creation & generation — one-time credits
 
@@ -102,10 +102,10 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 | Mode | What it means | Auth |
 |---|---|---|
 | **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server, Android, CLI, REST) / `BITHUMAN_API_KEY` (Swift only) |
-| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skips auth and heartbeat. **The CLI ignores it completely from 2.6.20** — `render` and `run`, on macOS and Linux alike, refuse without a credential whether or not it is set. Still honoured by the Python SDK, the Docker container, the Swift SDK and the Android Essence 2 SDK — the Android Expression 2 SDK has no such hatch. | none, where it still applies |
+| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skips auth and heartbeat. **The CLI ignores it completely from 2.6.20** — `render` and `run`, on macOS and Linux alike, refuse without a credential whether or not it is set. The Python SDK's public wheels do not honour it either — with it set and no credential, a render raises `NotAuthorised` exactly as it does without it. The Android Essence 2 SDK still names the variable in its own message, as lab and CI only; the Android Expression 2 SDK does not name it at all. | none, where it still applies |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
-The Python SDK and the Docker container honour `BITHUMAN_UNMETERED=1`; the Swift SDK has the same escape hatch via its unmetered initializer; and the Android Essence 2 SDK reads the same variable, describing it in its own text as lab and CI only. The Android Expression 2 SDK carries no such hatch. The CLI does not honour it: from 2.6.20 no environment variable renders for free there, on either platform.
+Do not build on `BITHUMAN_UNMETERED=1`. On the two surfaces checked against their published artifacts it does nothing: the CLI ignores it from 2.6.20, on both platforms, and a public Python wheel refuses a credential-less render with it set — `NotAuthorised`, *"no authenticated session for this render (missing key, rejected key, or no remaining credit)"*. The Android Essence 2 SDK still advertises it in its own message as lab and CI only. Whatever a given release does with it, every render is billed to an account, and a key is free to obtain.
 
 ## How metering works
 
