@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { getEntry } from "astro:content";
+import Code from "../../components/Code.astro";
 
 // Six platforms, three lines each: install, get a free showcase model, run.
 // Every line is a copy-paste excerpt of the platform page it links to — that
@@ -8,16 +9,29 @@ import { getEntry } from "astro:content";
 // here at all: it is parsed at build time from /sdk/performance, the one
 // writer for every frame-rate figure. Edit the platform page, never this file.
 
-/** Rows of the /sdk/performance table, keyed by the Platform cell. */
+// /sdk/performance carries MORE THAN ONE table, and both use the same Platform
+// names: the CLI table at the top has "macOS" and "Linux", and so does the
+// "Python library" table further down — a different product measured on the
+// same two machines. Keying a row by its Platform cell alone therefore let the
+// second table overwrite the first, and the cards silently read the wrong
+// product: the macOS card printed the Python row's "being re-measured" while
+// the table above it said 159, and the macOS & Linux card printed the Python
+// Linux 49/27 instead of the CLI's 44/29. A row is now addressed by the
+// heading it lives under as well as its Platform, so a card names one product
+// on one machine and a renamed heading fails the build instead of drifting.
+/** Rows of every table on /sdk/performance, keyed "<heading>/<Platform>". */
 async function performanceRows() {
   const perf = await getEntry("docs", "sdk/performance");
   if (!perf?.body) throw new Error("sdk/index: cannot read src/content/docs/sdk/performance.md");
   const rows = new Map<string, { hardware: string; expression2: string; essence2: string }>();
+  let heading = ""; // the table before the first H2 is the CLI one
   for (const line of perf.body.split("\n")) {
+    const h2 = /^##\s+(.+?)\s*$/.exec(line);
+    if (h2) { heading = h2[1]; continue; }
     if (!line.startsWith("|")) continue;
     const cells = line.split("|").slice(1, -1).map((c) => c.trim());
     if (cells.length !== 4 || cells[0] === "Platform" || /^-+:?$/.test(cells[0])) continue;
-    rows.set(cells[0], { hardware: cells[1], expression2: cells[2], essence2: cells[3] });
+    rows.set(`${heading}/${cells[0]}`, { hardware: cells[1], expression2: cells[2], essence2: cells[3] });
   }
   if (rows.size === 0) throw new Error("sdk/index: no rows parsed from the performance table");
   return rows;
@@ -27,29 +41,31 @@ async function performanceRows() {
 // /sdk/performance is either a bare number, a number with a plain status
 // ("12 · not yet real time"), or a status alone ("no published release yet").
 // Only a bare number takes the " fps" suffix; anything else is already a
-// sentence and is quoted as it stands, so this page can never claim more than
+// sentence and is shown as it stands, so this page can never claim more than
 // the table it reads.
-const fps = (cell: string) => (/^[0-9]+(\.[0-9]+)?$/.test(cell) ? `${cell} fps` : cell);
-
-/** "<hardware> — Expression 2 <n> fps · Essence 2 <n> fps", from the parsed table only. */
-function perfLine(rows: Awaited<ReturnType<typeof performanceRows>>, platform: string) {
-  const r = rows.get(platform);
-  if (!r) throw new Error(`sdk/index: /sdk/performance has no "${platform}" row`);
-  return `${r.hardware} — Expression 2 ${fps(r.expression2)} · Essence 2 ${fps(r.essence2)}`;
-}
-
-// A card with no `perfKey` has no row of its own on /sdk/performance, and must
-// not reuse another platform's. The Python card did: it quoted the Linux CLI
-// cells, which are a different binary on the same hardware.
+const isNumber = (cell: string) => /^[0-9]+(\.[0-9]+)?$/.test(cell);
 
 const rows = await performanceRows();
+
+/** One machine's row, as the card shows it: hardware, then a cell per model. */
+function perf(key: string) {
+  const r = rows.get(key);
+  if (!r) throw new Error(`sdk/index: /sdk/performance has no "${key}" row`);
+  return {
+    hardware: r.hardware,
+    models: [
+      { name: "Expression 2", cell: r.expression2 },
+      { name: "Essence 2", cell: r.essence2 },
+    ],
+  };
+}
 
 const blocks = [
   {
     name: "macOS & Linux",
     sub: "Apple Silicon · x86_64 — one CLI, one command",
     href: "/sdk/cli",
-    perfKeys: ["macOS", "Linux"],
+    perfKeys: ["/macOS", "/Linux"],
     install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
     model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
     run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
@@ -58,7 +74,7 @@ const blocks = [
     name: "iOS",
     sub: "a physical iPhone or iPad · Xcode 26+",
     href: "/sdk/ios",
-    perfKey: "iOS",
+    perfKeys: ["/iOS"],
     install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")\n// product: .product(name: \"Expression2\", package: \"homebrew-bithuman\")",
     model: "curl -fLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/{showcase/A08CCD3871.avatar,engines/expression-2/mac-arm64-1.0.0.engine}\"",
     run: "# In Xcode: Signing & Capabilities → your team → select your iPhone → Run",
@@ -67,7 +83,7 @@ const blocks = [
     name: "Android",
     sub: "arm64-v8a · minSdk 26",
     href: "/sdk/android",
-    perfKey: "Android",
+    perfKeys: ["/Android"],
     install: "implementation(\"ai.bithuman:expression2-android:0.4.1\")",
     model: "val model = Expression2ModelStore(context).fetch(\"A02HCY0444\")   // ~158 MB the first time; never on the main thread",
     run: "./gradlew :app:installDebug",
@@ -76,7 +92,7 @@ const blocks = [
     name: "Web",
     sub: "any modern browser",
     href: "/sdk/web",
-    perfKey: "Web",
+    perfKeys: ["/Web"],
     install: "# nothing to install",
     model: "# A74NWD9723 — or any code on /showcase",
     run: "open \"https://www.bithuman.ai/A74NWD9723?rendering_mode=browser\"",
@@ -85,17 +101,13 @@ const blocks = [
     name: "Python",
     sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
     href: "/sdk/python",
+    perfKeys: ["Python library/Linux", "Python library/macOS"],
     install: "pip install \"bithuman[expression-2]\"",
     model: "curl -fsSLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}\"",
     code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"A23WJF0199.avatar\") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"demo_sample.wav\"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]",
     run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
   },
-].map((b) => ({
-  ...b,
-  perf: "perfKey" in b ? [perfLine(rows, (b as { perfKey: string }).perfKey)]
-      : "perfKeys" in b ? (b as { perfKeys: string[] }).perfKeys.map((k) => perfLine(rows, k))
-      : null,
-}));
+].map((b) => ({ ...b, perf: b.perfKeys.map(perf) }));
 ---
 
 <Base
@@ -104,22 +116,50 @@ const blocks = [
 >
   <section class="sdk">
     <div class="container">
-      <h1>Run a bitHuman avatar on your device. Pick a platform.</h1>
+      <header class="sdk-head">
+        <p class="eyebrow">SDK</p>
+        <h1>Run a bitHuman avatar on your device</h1>
+        <p class="lede">
+          Pick a platform. Three commands each: install it, get a free showcase
+          model, run it. Every line is copy-paste, and the platform page behind
+          each card has the rest.
+        </p>
+      </header>
+
       <div class="grid">
         {blocks.map((b) => (
           <article class="block">
-            <h2><a href={b.href}>{b.name}</a> <span class="sub">{b.sub}</span></h2>
-            <dl>
-              <div><dt>Install</dt><dd><pre><code>{b.install}</code></pre></dd></div>
-              <div><dt>Get a model</dt><dd><pre><code>{b.model}</code></pre></dd></div>
-              {b.code && <div><dt>Minimal code</dt><dd><pre><code>{b.code}</code></pre></dd></div>}
-              <div><dt>Run</dt><dd><pre><code>{b.run}</code></pre></dd></div>
-            </dl>
-            <p class="guide"><a href={b.href}>Full guide →</a></p>
-            {b.perf
-              ? <p class="perf"><a href="/sdk/performance">Measured</a>, unpaced:{" "}
-                  {b.perf.map((line, i) => <span class="perf-line">{i > 0 && <br />}{line}</span>)}</p>
-              : <p class="perf">No published frame rate for this path yet — see <a href="/sdk/performance">performance</a>.</p>}
+            <h2><a href={b.href}>{b.name}</a></h2>
+            <p class="sub">{b.sub}</p>
+
+            <ol class="steps">
+              <li><span class="step">Install</span><Code code={b.install} /></li>
+              <li><span class="step">Get a model</span><Code code={b.model} /></li>
+              {b.code && <li><span class="step">Minimal code</span><Code code={b.code} /></li>}
+              <li><span class="step">Run</span><Code code={b.run} /></li>
+            </ol>
+
+            <div class="foot">
+              <div class="perf">
+                {b.perf.map((m) => (
+                  <div class="machine">
+                    <p class="hw">{m.hardware}</p>
+                    <dl>
+                      {m.models.map((x) => (
+                        <div class:list={["stat", { num: isNumber(x.cell) }]}>
+                          <dt>{x.name}</dt>
+                          <dd>{x.cell}{isNumber(x.cell) && <span class="unit"> fps</span>}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                ))}
+                <p class="perf-note">
+                  Measured, unpaced — <a href="/sdk/performance">how each number was taken</a>
+                </p>
+              </div>
+              <a class="guide" href={b.href}>Full guide <span aria-hidden="true">→</span></a>
+            </div>
           </article>
         ))}
       </div>
@@ -127,18 +167,96 @@ const blocks = [
   </section>
 </Base>
 <style>
-  .sdk { padding-block: var(--space-6) var(--space-10); }
-  .sdk h1 { font-size: var(--fh-2xl); max-width: 30ch; }
-  .grid { margin-top: var(--space-5); display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
-  .block { border: 1px solid var(--color-border); border-radius: var(--r-xl); padding: var(--space-4); min-width: 0; }
-  .block h2 { margin: 0; font-size: var(--ft-md); font-weight: var(--fw-semibold); }
-  .sub { display: block; color: var(--color-text-tertiary); font-size: var(--ft-xs); font-weight: var(--fw-normal); margin-top: 0.15rem; }
-  dl { margin: var(--space-3) 0 0; }
-  dl div { margin-top: var(--space-2); }
-  dt { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); font-weight: var(--fw-medium); }
-  dd { margin: 0.2rem 0 0; }
-  pre { margin: 0; padding: 0.5rem 0.65rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--r-md); overflow-x: auto; }
-  pre code { font-size: 0.78rem; line-height: 1.5; white-space: pre; }
-  .guide { margin: var(--space-3) 0 0; font-weight: var(--fw-semibold); }
-  .perf { margin: var(--space-2) 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .sdk { padding-block: var(--space-8) var(--space-12); }
+  .sdk-head { max-width: 46rem; }
+  .sdk-head h1 { font-size: var(--fh-2xl); margin-top: var(--space-2); max-width: 22ch; }
+  .sdk-head .lede { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
+
+  /* Two columns, not three: a card holds shell commands, and a 22rem column
+     was narrower than the shortest of them. */
+  .grid {
+    margin-top: var(--space-8);
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(26rem, 100%), 1fr));
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: var(--space-5);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-2xl);
+    background: var(--color-surface);
+    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+  }
+  .block:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-sm); }
+  .block h2 { font-size: var(--fh-md); letter-spacing: -0.015em; }
+  .block h2 a:hover { color: var(--color-primary); }
+  .sub { margin-top: 0.25rem; color: var(--color-text-tertiary); font-size: var(--ft-sm); }
+
+  .steps { list-style: none; margin: var(--space-5) 0 0; padding: 0; counter-reset: step; }
+  .steps li { margin-top: var(--space-4); min-width: 0; }
+  .steps li:first-child { margin-top: 0; }
+  .step {
+    counter-increment: step;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: var(--ft-xs);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-tertiary);
+  }
+  .step::before {
+    content: counter(step);
+    display: inline-grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    border-radius: var(--r-full);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: 0.65rem;
+    letter-spacing: 0;
+    vertical-align: -0.3rem;
+  }
+  .steps :global(.bh-code) { margin: 0; }
+
+  /* Footer: the measured numbers, then the way in. The numbers are never typed
+     on this page — every one comes from the /sdk/performance row named above. */
+  .foot { margin-top: auto; padding-top: var(--space-5); }
+  .perf {
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-lg);
+    background: var(--color-surface-2);
+  }
+  .machine + .machine { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+  .hw { font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-tertiary); }
+  .machine dl { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: var(--space-2) 0 0; }
+  .stat dt { font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .stat dd { margin: 0.1rem 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .stat.num dd { font-size: var(--fh-sm); font-weight: var(--fw-bold); color: var(--color-text); letter-spacing: -0.02em; }
+  .stat .unit { font-size: var(--ft-sm); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
+  .perf-note { margin-top: var(--space-3); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .perf-note a { color: var(--color-text-secondary); text-decoration: underline; text-underline-offset: 2px; }
+  .perf-note a:hover { color: var(--color-primary); }
+
+  .guide {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: var(--space-4);
+    font-weight: var(--fw-medium);
+    color: var(--color-primary);
+  }
+  .guide span { transition: transform var(--t-fast) var(--ease); }
+  .guide:hover span { transform: translateX(3px); }
+
+  @media (max-width: 560px) {
+    .block { padding: var(--space-4); border-radius: var(--r-xl); }
+    .sdk-head h1 { font-size: var(--fh-xl); }
+  }
 </style>

@@ -122,7 +122,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     align-items: center;
     gap: var(--space-5);
   }
-  .brand { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .brand { display: inline-flex; align-items: center; gap: 0.4rem; flex: none; }
   .brand-main {
     display: inline-flex;
     align-items: center;
@@ -158,10 +158,9 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
   }
   .nav-link:hover { color: var(--color-text); background: var(--color-surface-2); }
-  .nav-link.active { color: var(--color-text); }
-  .nav-link.active::after {
-    content: "";
-  }
+  /* The active page was marked by a colour alone, which at this size is barely
+     a mark at all; it now carries the surface too. */
+  .nav-link.active { color: var(--color-text); background: var(--color-surface-2); }
   .nav-dd { position: relative; }
   .dd-trigger svg { transition: transform var(--t-fast) var(--ease); }
   .nav-dd:hover .dd-trigger svg { transform: rotate(180deg); }
@@ -260,6 +259,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   .mobile-menu { display: none; }
 
   @media (max-width: 900px) {
+    .nav-inner { gap: var(--space-3); }
     .nav-links { display: none; }
     .menu-btn { display: inline-flex; }
     #nav-search kbd, .btn-cta, .status-txt { display: none; }

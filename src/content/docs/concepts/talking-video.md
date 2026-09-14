@@ -9,7 +9,7 @@ order: 8
 ## What it is
 
 Most of the bitHuman platform is **real-time** — audio streams in, a talking
-avatar streams out at 25 FPS. **Talking video generation** is the offline
+avatar streams out at 25 fps. **Talking video generation** is the offline
 counterpart: you submit a script (text) or a hosted audio file, and the platform
 renders a complete **mp4** of one of your agents speaking it, then hands you a
 public URL.

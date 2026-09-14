@@ -1,6 +1,6 @@
 ---
 title: "Swift / iOS — a talking avatar on the iPhone you have"
-description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 25 FPS. No device floor, no Apple entitlement, no account and no credits — the showcase identity A08CCD3871 is a public download. Every file printed in full."
+description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 25 fps. No device floor, no Apple entitlement, no account and no credits — the showcase identity A08CCD3871 is a public download. Every file printed in full."
 section: examples
 group: "Examples"
 order: 12
@@ -24,7 +24,7 @@ with nothing in the loop but the phone. It was written by building it, on an
 
 | | |
 |---|---|
-| **Renders** | your own agent's identity, 416x720, 25 FPS, entirely on the device |
+| **Renders** | your own agent's identity, 416x720, 25 fps, entirely on the device |
 | **Driven by** | a bundled 16 kHz WAV, or live microphone input |
 | **Needs** | a physical Apple-Silicon iPhone or iPad — the Simulator cannot run this engine |
 | **Does not need** | an iPhone 16 Pro, an Apple entitlement, a network connection at run time, or an API key inside the app |

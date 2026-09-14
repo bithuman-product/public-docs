@@ -1,0 +1,119 @@
+/* ============================================================================
+   bitHuman docs — code
+
+   One treatment wherever code appears: the prose blocks Markdown produces, the
+   platform cards on /sdk, the tabbed samples on the home page, the playground.
+
+   A code line WRAPS. It used to scroll inside a box with no visible edge, so
+   the first command a developer types read
+
+       curl -fsSL https://raw.githubusercontent.com
+
+   and stopped at the card edge — 434 of its 1177 pixels on screen, the rest
+   reachable only by dragging a scrollbar nothing drew. Wrapping puts every
+   character on screen at 1440px and at 390px, and the copy button is always
+   visible rather than appearing on hover, which a phone has no way to do.
+
+   Continuation lines carry a hanging indent, so a wrapped command still reads
+   as one command and a wrapped Python line still sits under its own block.
+   ========================================================================== */
+
+:root {
+  --code-lh: 1.6;
+  --code-fs: 0.84rem;
+  --code-indent: 2.25ch;
+}
+
+/* ---- the card ---------------------------------------------------------- */
+/* .bh-code is put around every <pre> at load; without scripting the <pre>
+   below still stands on its own and reads correctly. */
+.bh-code {
+  margin: var(--space-5) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  background: var(--color-code-bg);
+  overflow: hidden;
+}
+.bh-code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0.3rem 0.4rem 0.3rem 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+.bh-code-lang {
+  font-size: var(--ft-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+.bh-code > pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+/* ---- the copy button --------------------------------------------------- */
+.code-copy {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  font-family: var(--font-sans);
+  font-size: var(--ft-xs);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.code-copy:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+.code-copy[data-copied] {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ---- the code itself --------------------------------------------------- */
+pre {
+  font-size: var(--code-fs);
+  line-height: var(--code-lh);
+  tab-size: 2;
+}
+pre code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Shiki, and the Code component, put each source line in its own span. The
+   hanging indent needs a box per line, which means the newline between two of
+   those spans must stop rendering — hence `normal` on the parent. */
+pre code:has(> .line) {
+  white-space: normal;
+}
+pre .line {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-height: calc(var(--code-lh) * 1em);
+  padding-left: var(--code-indent);
+  text-indent: calc(var(--code-indent) * -1);
+}
+
+/* A long token in running prose must not push the page sideways: at 390px an
+   unbreakable path in a sentence gave the body 505px of horizontal scroll. */
+:not(pre) > code {
+  overflow-wrap: anywhere;
+}
