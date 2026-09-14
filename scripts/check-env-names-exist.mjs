@@ -38,7 +38,7 @@
 //   node scripts/check-env-names-exist.mjs
 //   node scripts/check-env-names-exist.mjs --selftest
 
-import { readFileSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdtempSync, rmSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
@@ -52,11 +52,32 @@ const UA = "bithuman-public-docs-env-name-check (+https://github.com/bithuman-pr
 // Only pages about the CLI. A variable named on a Python or Android page is
 // read by that artifact, not by this binary, and grading it here would produce
 // exactly the kind of confident wrong answer this check exists to prevent.
-const PAGES = [
-  "src/content/docs/sdk/cli.md",
-  "src/content/docs/sdk/cli/reference.md",
-  "src/content/docs/sdk/cli/local-mode.md",
-];
+//
+// ★DISCOVERED, NOT LISTED, and that is the point. A hardcoded list cannot tell
+// you it has gone incomplete: add sdk/cli/serve.md tomorrow and a stale list
+// grades two pages, finds nothing wrong, and prints the same green as a full
+// run. Under-coverage and a clean bill of health are indistinguishable in the
+// output, which is the failure this whole file exists to argue against. So the
+// corpus is read off disk every run and PRINTED, and an empty one refuses.
+const PAGE_ROOT = "src/content/docs/sdk";
+function cliPages(root = ROOT) {
+  const pages = [];
+  const top = join(root, PAGE_ROOT, "cli.md");
+  try { readFileSync(top); pages.push(`${PAGE_ROOT}/cli.md`); } catch { /* absent */ }
+  let entries = [];
+  try { entries = readdirSync(join(root, PAGE_ROOT, "cli")); } catch { /* no subdir */ }
+  for (const name of entries.sort()) {
+    if (name.endsWith(".md")) pages.push(`${PAGE_ROOT}/cli/${name}`);
+  }
+  if (pages.length === 0) {
+    throw new CannotCheck(`no CLI pages found under ${PAGE_ROOT} — the corpus is empty, which is never a pass`);
+  }
+  return pages;
+}
+
+// A name every CLI page set must contain. If it is absent the files are not
+// being read, and "no findings" would mean "nothing was looked at".
+const READ_CONTROL = "BITHUMAN_API_SECRET";
 
 // Names a CLI page may legitimately mention that this binary does not read.
 // Each needs a reason and the artifact that DOES read it, so the list cannot
@@ -88,9 +109,9 @@ async function get(url, headers = {}) {
   throw last;
 }
 
-function namesOnPages(root = ROOT) {
+function namesOnPages(root = ROOT, pages = cliPages(root)) {
   const found = new Map(); // name -> [pages]
-  for (const rel of PAGES) {
+  for (const rel of pages) {
     let text;
     try {
       text = readFileSync(join(root, rel), "utf8");
@@ -207,8 +228,15 @@ function selftest() {
 async function main() {
   if (process.argv.includes("--selftest")) return selftest();
   let names, version, binary, installer;
+  let pages;
   try {
-    names = namesOnPages();
+    pages = cliPages();
+    names = namesOnPages(ROOT, pages);
+    if (!names.has(READ_CONTROL)) {
+      throw new CannotCheck(
+        `read control: ${READ_CONTROL} appears on no CLI page — the corpus is not being read, ` +
+        `so "no findings" would mean "nothing was looked at"`);
+    }
     version = await newestCliRelease();
     binary = await publishedBinaryText(version);
     installer = await (await get(INSTALLER)).text();
@@ -218,7 +246,9 @@ async function main() {
     process.exit(2);
   }
   console.log(`graded against cli-v${version} and the published installer`);
-  console.log(`${names.size} BITHUMAN_* name(s) across ${PAGES.length} CLI page(s)`);
+  console.log(`corpus (read off disk, not a list): ${pages.join(", ")}`);
+  console.log(`★read control    ${READ_CONTROL} present — the files are being read`);
+  console.log(`${names.size} BITHUMAN_* name(s) across ${pages.length} CLI page(s)`);
   const findings = grade(names, [
     { label: "binary", text: binary },
     { label: "installer", text: installer },
