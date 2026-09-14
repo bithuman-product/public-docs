@@ -82,6 +82,17 @@
 // `BITHUMAN_VERSION=cli-v…` pin in prose is a deliberate pin to an old
 // release. Grading only the forms above is what keeps those free.
 //
+// ★NEWEST IS NOT WHAT EVERY PLATFORM INSTALLS. Measured 2026-09-14: PyPI's
+// info.version for `bithuman` went to 3.1.6 while 3.1.6 shipped only Linux
+// wheels — the macOS publish job refused. On a Mac, `pip install bithuman`
+// still resolved 3.1.5. Graded on info.version alone, this check demanded that
+// every page say 3.1.6, including "3.1.6 runs on Apple Silicon", which was
+// false. So for every PyPI artifact it also compares the newest release's
+// wheel PLATFORMS with the release before it, and when a platform was dropped
+// it says so on every finding for that artifact: which platform, and the newest
+// version that still serves it. The fix for a platform-partial release is to
+// split the claim by platform, never to bump it.
+//
 // THE CLI TRAP. `gh release view` on the tap returns the Swift SDK's release,
 // not the CLI's: the tap publishes both. The CLI is found by TAG PREFIX over
 // the whole release list, with drafts and pre-releases skipped.
@@ -135,6 +146,43 @@ export function cmpVer(a, b) {
 export function newest(versions) {
   const v = versions.filter((x) => SEMVER.test(x)).sort(cmpVer);
   return v.at(-1) ?? null;
+}
+
+/** The platform families a release's wheels cover. A pure-Python wheel covers all. */
+export function platformFamilies(files) {
+  const out = new Set();
+  for (const f of files || []) {
+    const n = f.filename || "";
+    if (!n.endsWith(".whl")) continue;
+    if (/-none-any\.whl$/.test(n)) out.add("any");
+    if (/macosx_[0-9_]+_(arm64|universal2)/.test(n)) out.add("macOS arm64");
+    if (/macosx_[0-9_]+_x86_64/.test(n)) out.add("macOS x86_64");
+    if (/(many|musl)linux[^-]*_x86_64/.test(n)) out.add("Linux x86_64");
+    if (/(many|musl)linux[^-]*_aarch64/.test(n)) out.add("Linux aarch64");
+    if (/win_amd64/.test(n)) out.add("Windows x86_64");
+  }
+  return out;
+}
+
+/** Platforms the newest release DROPPED relative to the release before it,
+ *  each with the newest version that still serves that platform — which is
+ *  what `pip install` resolves there. Empty when nothing was dropped. */
+export function platformRegression(releases, newestVersion) {
+  const withFiles = Object.keys(releases || {})
+    .filter((v) => SEMVER.test(v) && (releases[v] || []).length)
+    .sort(cmpVer);
+  const i = withFiles.indexOf(newestVersion);
+  if (i < 1) return [];
+  const now = platformFamilies(releases[newestVersion]);
+  if (now.has("any")) return [];
+  const prev = platformFamilies(releases[withFiles[i - 1]]);
+  const out = [];
+  for (const family of prev) {
+    if (family === "any" || now.has(family)) continue;
+    const still = withFiles.filter((v) => platformFamilies(releases[v]).has(family)).at(-1);
+    out.push({ family, newest: still ?? "(none)" });
+  }
+  return out;
 }
 
 /** The tag SwiftPM resolves for `from: X` — the highest tag in X's major that is >= X. */
@@ -428,10 +476,16 @@ export async function grade(files, registry) {
         continue;
       }
       if (s.version !== want) {
+        const dropped = registry.platformNotes?.[s.artifact] || [];
+        const hint = dropped.length
+          ? ` ★But ${s.artifact} ${want} ships no wheel for ${dropped
+              .map((d) => `${d.family} (pip resolves ${d.newest} there)`)
+              .join(", ")}. Do not write ${want} for that platform: split the claim by platform.`
+          : "";
         failures.push({
           path,
           line: s.line,
-          msg: `${s.rule}: ${s.what} names ${s.artifact} ${s.version}; the newest published is ${want}.`,
+          msg: `${s.rule}: ${s.what} names ${s.artifact} ${s.version}; the newest published is ${want}.${hint}`,
         });
       }
     }
@@ -567,6 +621,8 @@ const liveRegistry = {
       const j = await (await get(url)).json();
       const v = j?.info?.version;
       if (!v || !SEMVER.test(v)) throw new CannotCheck(`${url}: info.version is ${JSON.stringify(v)}`);
+      this.platformNotes = this.platformNotes || {};
+      this.platformNotes[a.id] = platformRegression(j.releases, v);
       return v;
     }
     if (a.kind === "cli") {
@@ -715,6 +771,42 @@ async function selftest() {
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${name.padEnd(64)} fired=${fired} expected=${mustFire}`);
   }
+  // PLATFORM REGRESSION: the case measured 2026-09-14.
+  {
+    const w = (tag) => ({ filename: `bithuman-X-cp312-cp312-${tag}.whl` });
+    const rel = {
+      "3.1.5": [w("macosx_14_0_arm64"), w("manylinux_2_28_x86_64"), w("manylinux_2_28_aarch64")],
+      "3.1.6": [w("manylinux_2_28_x86_64"), w("manylinux_2_28_aarch64")],
+    };
+    const got = platformRegression(rel, "3.1.6");
+    const ok1 = got.length === 1 && got[0].family === "macOS arm64" && got[0].newest === "3.1.5";
+    const full = { ...rel, "3.1.6": [...rel["3.1.6"], w("macosx_14_0_arm64")] };
+    const ok2 = platformRegression(full, "3.1.6").length === 0;
+    const pure = { "1.0.0": [w("macosx_14_0_arm64")], "1.0.1": [{ filename: "x-1.0.1-py3-none-any.whl" }] };
+    const ok3 = platformRegression(pure, "1.0.1").length === 0;
+    // The real case: PyPI's newest is 3.1.6, the page still says 3.1.5, and a
+    // Mac resolves 3.1.5. The finding must say both halves.
+    const base = stub();
+    const hinted = await grade(
+      [{ path: "p/sdk/python.md", text: "`bithuman` 3.1.5 runs on Python" }],
+      {
+        ...base,
+        async latest(a) { return a.id === "bithuman" ? "3.1.6" : base.latest(a); },
+        platformNotes: { bithuman: [{ family: "macOS arm64", newest: "3.1.5" }] },
+      },
+    );
+    const ok4 = hinted.failures.length === 1 && /macOS arm64 \(pip resolves 3\.1\.5 there\)/.test(hinted.failures[0].msg);
+    for (const [name, ok] of [
+      ["platform: a release that drops macOS arm64 is reported, with 3.1.5", ok1],
+      ["platform: a release that keeps every platform reports nothing", ok2],
+      ["platform: a pure-Python wheel covers every platform", ok3],
+      ["platform: the dropped platform is named ON the finding a fixer reads", ok4],
+    ]) {
+      if (!ok) bad++;
+      console.log(`  ${ok ? "OK  " : "FAIL"}  ${name.padEnd(64)}`);
+    }
+  }
+
   // CANNOT CHECK: an unreachable registry must never read as a pass.
   {
     const { failures, cannot } = await grade(
@@ -790,6 +882,15 @@ for (const f of failures) {
   const rel = relative(ROOT, f.path);
   console.log(`::error file=${rel},line=${f.line}::${f.msg}`);
   console.log(`  ${rel}:${f.line}\n      ${f.msg}\n`);
+}
+for (const [dist, dropped] of Object.entries(liveRegistry.platformNotes || {})) {
+  for (const d of dropped) {
+    console.log(
+      `::warning::PLATFORM REGRESSION — ${dist} ${latest[dist]} ships no ${d.family} wheel, which the ` +
+        `release before it had. On ${d.family}, pip installs ${d.newest}. A page must not say ` +
+        `${latest[dist]} runs there.`,
+    );
+  }
 }
 for (const c of cannot) {
   console.log(`::error::CANNOT CHECK ${c.artifact} — ${c.reason}`);

@@ -50,8 +50,8 @@ beyond your own agent's `.imx`:
 * **Python** — `pip install bithuman`, then open the `.imx` with the two-call
   surface the [Python SDK](/sdk/python) page documents (`AsyncBithuman` is the
   2.x spelling and raises a refusal naming its replacement on 3.x). PyPI serves
-  **3.1.5** with wheels for CPython 3.10–3.14 on macOS arm64, Linux x86_64 and
-  Linux aarch64. There is **no Windows wheel**.
+  **3.1.6** with wheels for CPython 3.10–3.14 on Linux x86_64 and Linux
+  aarch64; on macOS arm64 the newest wheel is 3.1.5. There is **no Windows wheel**.
 * **CLI** — the `bithuman` binary from the public Homebrew tap, with macOS
   arm64 and Linux x86_64 builds. See the [CLI overview](/sdk/cli).
 * **Android** — `ai.bithuman:sdk` on Maven Central. ★ **The published `2.3.6`

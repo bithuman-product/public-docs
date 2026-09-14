@@ -10,6 +10,20 @@ order: 1
 
 ## September 2026
 
+### `bithuman` 3.1.6 for Linux: Essence 2 uses more of your machine's cores (2026-09-14)
+
+`bithuman` 3.1.6 on PyPI, for Linux x86_64 and Linux aarch64 (CPython
+3.10–3.14). **No macOS wheels were published for 3.1.6**, so on Apple Silicon
+`pip install bithuman` still installs 3.1.5.
+
+- **Essence 2 uses more of your machine's cores.** The thread count reaches the
+  part of the renderer that does most of the work, which until now stayed at
+  four whatever you asked for. The default becomes the smaller of your core
+  count and 16.
+- **The thread count does not change a single frame.** The release was tested
+  at four, eight and sixteen threads, and every frame matched.
+- Nothing you call changes.
+
 ### Essence 2 renders faster again on Linux, and every frame is what 2.6.15 produced — `cli-v2.6.16` (2026-09-14)
 
 CLI `cli-v2.6.16`, macOS arm64 and Linux x86_64 built from one commit. **If you
