@@ -27,7 +27,7 @@ you what you got:
 ```text
 $ bithuman --version
 libessence  3.1.8 ABI 7          # the engine inside, and the ABI it speaks
-bithuman    2.6.19               # the CLI itself
+bithuman    2.6.20               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
@@ -72,19 +72,21 @@ is one (24 kHz, 15 s). `bithuman info <file>` prints what an avatar is before yo
 **Sign in first.** `bithuman login` opens a browser and stores a per-device
 key; `bithuman login --device` prints a code for an SSH session.
 
-From 2.6.19, `bithuman render` stops before the first frame without a usable
-credential, on both platforms — exit 77, *"not signed in, or the credential is
-not valid — run `bithuman login`, or set BITHUMAN_API_SECRET"*.
+From 2.6.20, every render path needs a credential, on both platforms. With
+none, `bithuman render` and `bithuman run` each stop before the first frame —
+exit 77, in a second or two, having written nothing. `render` says *"not signed
+in, or the credential is not valid — run `bithuman login`, or set
+BITHUMAN_API_SECRET"*; `run` refuses on the same terms. Both name the same two
+remedies, and no environment variable renders for free.
 
-`bithuman run` differs by platform. On **macOS** it refuses too: exit 77 in a
-few seconds, before it serves a frame or writes anything. On **Linux** it is
-**not yet covered** — with no credential it renders indefinitely, saying so in
-its log, and a credential the service rejects only ends the session after 300
-seconds of grace. Treat a Linux `run` as unenforced rather than as a way to
-render without a key: every render is metered, and
-[pricing](/guides/pricing) is the authority.
+Upgrade if you are on anything older: through 2.6.19 a Linux `bithuman run`
+with no credential rendered indefinitely. Every render is metered either way,
+and [pricing](/guides/pricing) is the authority.
 
 Then open the printed `http://127.0.0.1:8088/`, grant the microphone, talk.
+`run` serves localhost only; `--host` takes a LAN or tailnet address to expose
+it. `--host 0.0.0.0` needs `--allow-public-bind` as well — without it the CLI
+exits 2 and binds nothing, rather than putting the session on every interface.
 `bithuman login` also adds the managed conversation brain, and
 [local mode](/sdk/cli/local-mode) runs the brain entirely on your own hardware
 instead — no LLM or TTS vendor. A self-hosted session on your own
@@ -103,6 +105,8 @@ Measured frame rates for every platform are on the
 | `bithuman: command not found` after the install | `~/.local/bin` is not on your `PATH` | `export PATH="$HOME/.local/bin:$PATH"` — the installer prints the same line |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on your `PATH` — a script or CI shell often lacks Homebrew's `/opt/homebrew/bin` | `brew install ffmpeg` (macOS) or `sudo apt install -y ffmpeg` (Linux); in a script, `export PATH="/opt/homebrew/bin:$PATH"` or set `BITHUMAN_FFMPEG` |
 | `render` refuses with `NOT_SIGNED_IN`, no output file | no credential — `render` is billed | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
+| `run` refuses with `METERING_REFUSED`, nothing served | no credential, or one the service rejected — `run` is billed too, from 2.6.20 | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
+| `run --host 0.0.0.0` exits 2 with `PUBLIC_BIND_REFUSED` and nothing listening | binding every interface has to be deliberate | a LAN or tailnet address in `--host`, or add `--allow-public-bind` if you meant it |
 | `pull <CODE>` refuses without a sign-in | your own agent code needs a credential; a showcase slug never does | `bithuman login`, then pull again |
 | `pull <CODE>` fails with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman avatars` lists the public ones |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), or `--model` the family it was created with |

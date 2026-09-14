@@ -10,6 +10,39 @@ order: 1
 
 ## September 2026
 
+### Every render path needs a credential, on both platforms — `cli-v2.6.20` (2026-09-14)
+
+CLI `cli-v2.6.20`, macOS arm64 and Linux x86_64 built from one commit.
+**Read this before upgrading if anything you run renders without signing in.**
+
+- **`bithuman run` now refuses without a credential on Linux too.** It stops
+  before serving a frame — exit **77**, `METERING_REFUSED`, in about two
+  seconds — where 2.6.19 on Linux rendered indefinitely. macOS behaves as it
+  did in 2.6.19. The platforms word it differently and ask for the same two
+  things: Linux says *"the render host refused this session: its credential was
+  rejected. Run `bithuman login`, or set BITHUMAN_API_SECRET to the account
+  this session should be billed to."*; macOS says *"refusing to serve: no
+  api-secret is available, so this session cannot be attributed to an account …
+  run `bithuman login` or set BITHUMAN_API_SECRET to the API secret of the
+  account this session should be billed to."*
+- **No environment variable renders for free any more.** The CLI ignores
+  `BITHUMAN_UNMETERED=1` completely: with it set, `run` still exits **77** on
+  both platforms, and no session prints an unmetered or not-being-billed
+  banner. In 2.6.19 it still bought an unmetered Linux `run`. The Python SDK,
+  the Docker container and the Swift SDK are unchanged — see
+  [pricing](/guides/pricing).
+- **`bithuman render` is unchanged** — exit **77**, `NOT_SIGNED_IN`, no output
+  file written, on both platforms, as in 2.6.19.
+- **`--host 0.0.0.0` is refused unless you say you meant it.** It exits **2**
+  with `PUBLIC_BIND_REFUSED` and leaves nothing listening — *"--host 0.0.0.0
+  binds every interface, which would expose this session to your whole
+  network."* On 2.6.19 the same command bound the wildcard and served.
+  `--allow-public-bind` is still the opt-in, and with it the bind is not
+  refused. An unparseable `--host` now exits **2** with `BAD_HOST`, where
+  2.6.19 exited 1.
+- **`bithuman mcp tools` still lists 28 tools**, and the engine inside is still
+  **3.1.8** (ABI 7).
+
 ### `bithuman render` needs a credential, and on macOS so does `bithuman run` — `cli-v2.6.19` (2026-09-14)
 
 CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
@@ -60,11 +93,13 @@ CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
   duplicated the top-level `login`, `logout` and `whoami` — use those — and
   `auth token` is now **`bithuman token`**. If a script calls `bithuman auth`,
   change it.
-- **Six failures now return documented exit codes.** Paths that returned 64 — a
-  bad host, a refused public bind, missing LiveKit credentials, `init` outside
-  a terminal — return **2**, and "no brain configured" returns **77**. A script
-  matching on 64 needs updating. **Ctrl-C is now published as 130**, which it
-  always returned.
+- **Failures that returned 64 start returning documented exit codes.** `init`
+  outside a terminal returns **2** (`INTERACTIVE_ONLY`); a script matching on
+  64 needs updating. **Ctrl-C is now published as 130**, which it always
+  returned. *Correction: this entry also named a bad host and a refused public
+  bind here. Checked against the published binary, neither changed in 2.6.19 —
+  a bad `--host` still exited 1 and `--host 0.0.0.0` still bound the wildcard.
+  Both landed in 2.6.20, above.*
 - **`--json` errors carry a `hint`** beside the cause when there is a next step.
 - **`bithuman mcp tools` lists 28 tools**, adding local `pull` and `render`.
 - The engine inside moves to **3.1.8** (ABI 7).

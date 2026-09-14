@@ -106,7 +106,7 @@ Every self-hosted `run` and `render` is metered. The line to grep for, printed o
 [selfhost-meter] metering armed for identity=/home/you/.cache/bithuman/showcase/wise-pup.imx product=expression-2 endpoint=https://api.bithuman.ai/v1/
 ```
 
-If instead you see `★ UNMETERED RENDER`, the service could not be reached — our outage or your network — and the render continues and is never refused, because being unable to ask is not the same as being told no. An operator who wants a validated credential before any frame sets `BITHUMAN_METER_ENFORCE=1`, which refuses this case too. A render with no credential, or one the service rejects, is refused outright from 2.6.19 — see below.
+If instead you see `★ UNMETERED RENDER`, the service could not be reached — our outage or your network — and the render continues and is never refused, because being unable to ask is not the same as being told no. An operator who wants a validated credential before any frame sets `BITHUMAN_METER_ENFORCE=1`, which refuses this case too. A render with no credential, or one the service rejects, is refused outright: `render` from 2.6.19, and `run` on both platforms from 2.6.20 — see below.
 
 ### Which model files run locally
 
@@ -339,7 +339,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 |------|------|---------|
 | 0 | success | |
 | 1 | GENERIC | unclassified runtime error (also `doctor` when not ready) |
-| 2 | usage | bad arguments |
+| 2 | usage | bad arguments; also a refused public bind (`--host 0.0.0.0` without `--allow-public-bind`) and an unparseable `--host`, from 2.6.20 |
 | 66 | NOINPUT | input, file, slug or model not found |
 | 69 | UNAVAILABLE | network, engine or service unavailable; an incomplete model file |
 | 70 | SOFTWARE | internal error (`essence-1` `render`) |
@@ -350,7 +350,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.19","libessence":"3.1.8",
+{"abi":7,"cli":"2.6.20","libessence":"3.1.8",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
@@ -411,7 +411,7 @@ bithuman token         # the resolved secret on stdout (exit 77 if none)
 ```
 
 `bithuman mcp` speaks Model Context Protocol over stdio and exposes **28 tools**
-(confirmed on 2.6.19 with `bithuman mcp tools --json`): thin wrappers over
+(confirmed on 2.6.20 with `bithuman mcp tools --json`): thin wrappers over
 `api.bithuman.ai` — `validate_api_secret`, `get_credit_balance`, `get_usage`,
 `list_voices`, `text_to_speech`, `generate_agent`, `get_agent_status`,
 `get_agent`, `update_agent_prompt`, `delete_agent`, `list_agents`,

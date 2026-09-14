@@ -15,7 +15,7 @@ measured performance and the exact refusals with their fixes. The
 
 | Platform | Install | Then |
 |---|---|---|
-| [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \| sh` | `bithuman login`, then `bithuman run` — `render` needs a credential, and so does `run` on macOS |
+| [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \| sh` | `bithuman login`, then `bithuman run` — both `run` and `render` need a credential |
 | [Python](/sdk/python) — 3.10–3.14, macOS arm64, Linux | `pip install "bithuman[expression-2]"` | `bithuman.open(...)` / `avatar.render(...)` |
 | [Android](/sdk/android) — arm64-v8a, minSdk 26 | `implementation("ai.bithuman:expression2-android:0.4.1")` | `Expression2ModelStore(context).fetch(code)`, anonymous |
 | [iOS & iPadOS](/sdk/ios) — a physical device, Xcode 26+ | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")`, product `Expression2` | three anonymous `curl`s for a showcase identity |
