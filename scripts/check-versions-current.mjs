@@ -617,8 +617,12 @@ const liveRegistry = {
       return release && SEMVER.test(release) ? release : newest(versions);
     }
     if (a.kind === "pypi") {
+      // Cache-busted: on 2026-09-14 PyPI's CDN served a project JSON that still
+      // listed no macOS files for 3.1.6 a minute after the simple index (what
+      // pip reads) had all five, and a stale copy would report a platform
+      // regression that pip no longer sees.
       const url = `https://pypi.org/pypi/${a.id}/json`;
-      const j = await (await get(url)).json();
+      const j = await (await get(`${url}?cb=${Date.now()}`, { "Cache-Control": "no-cache" })).json();
       const v = j?.info?.version;
       if (!v || !SEMVER.test(v)) throw new CannotCheck(`${url}: info.version is ${JSON.stringify(v)}`);
       this.platformNotes = this.platformNotes || {};

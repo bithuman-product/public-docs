@@ -15,7 +15,7 @@ Android and iOS SDK pages for the phones.
 | Your platform | What renders locally | Surface |
 |---|---|---|
 | Linux x86_64, macOS Apple Silicon | [Essence 2](/concepts/essence-2) and [Expression 2](/concepts/expression-2) — live in your browser, or a whole clip to an MP4 | [CLI](/sdk/cli) |
-| Linux x86_64 / aarch64, macOS Apple Silicon | Expression 2 live frames, and an Essence 2 clip to an MP4 on the CPU | [Python SDK](/sdk/python) `bithuman` 3.1.6 (3.1.5 on a Mac) with the `[offline]` extra |
+| Linux x86_64 / aarch64, macOS Apple Silicon | Expression 2 live frames, and an Essence 2 clip to an MP4 on the CPU | [Python SDK](/sdk/python) `bithuman` 3.1.6 with the `[offline]` extra |
 | Android (`arm64-v8a`) | Expression 2 — on-device in your own app (an Essence 2 coordinate, `essence2-android:0.5.6`, resolves; no walkthrough is published yet) | [Android SDK](/sdk/android) |
 | iOS | Expression 2 — on-device in your own app | [Swift SDK](/sdk/ios) |
 
