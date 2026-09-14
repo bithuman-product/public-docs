@@ -111,7 +111,7 @@ Measured frame rates for every platform are on the [performance page](/sdk/perfo
 | `SDK location not found` | no `ANDROID_HOME` and no `local.properties` | set one of them |
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
-| you want Essence 2 on Android | the coordinate is `implementation("ai.bithuman:essence2-android:0.5.5")`; versions before `0.5.3` cannot install a model on a handset | use `0.5.5`; Expression 2 is the path this page documents |
+| you want Essence 2 on Android | the coordinate is `implementation("ai.bithuman:essence2-android:0.5.6")`; versions before `0.5.3` cannot install a model on a handset | use `0.5.6`; Expression 2 is the path this page documents |
 
 **Licence.** *Proprietary — bitHuman SDK License* (`https://bithuman.ai/license`);
 the bundled LiteRT is Apache-2.0 (notices in the AAR's `META-INF/`); FFmpeg is
