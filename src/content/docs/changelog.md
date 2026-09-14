@@ -10,7 +10,7 @@ order: 1
 
 ## September 2026
 
-### `bithuman render` and `bithuman run` now need a credential — `cli-v2.6.19` (2026-09-14)
+### `bithuman render` now needs a credential — `cli-v2.6.19` (2026-09-14)
 
 CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
 **Read this before upgrading if anything you run renders without signing in.**
@@ -24,9 +24,15 @@ CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
   and no credential at all rendered while saying it was not charging you.
   Getting a key is free and takes a moment: `bithuman login` opens your
   browser, or `bithuman login --device` prints a code for an SSH session.
-- **A live `run` session is metered separately.** A credential its meter
-  refuses — at the session's first check, or on its once-a-minute beat while
-  frames are flowing — stops the session with `METERING_REFUSED`, also exit 77.
+- **`bithuman run` is not covered by this release.** It is served through the
+  engine's own self-host meter, which 2.6.19 did not change, so it still
+  renders without a credential. Measured on the published build: a credential
+  the service rejects logs *"★ UNMETERED RENDER — CREDENTIAL REJECTED (401) …
+  Rendering continues for another 300 s of grace"*, keeps rendering through
+  four once-a-minute beats, and only on the fifth logs *"REFUSED: the
+  credential has been rejected (401) for 300 s"* — at which point the session
+  ends and the process exits **70**, not 77. Treat `run` as unenforced until a
+  release says otherwise.
 - **`BITHUMAN_UNMETERED=1` is gone** from the CLI; setting it does nothing.
 - **An unreachable meter still renders, and is never refused.** If our service
   cannot be reached, the render continues and says so — being unable to ask is
