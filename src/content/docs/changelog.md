@@ -10,6 +10,23 @@ order: 1
 
 ## September 2026
 
+### Essence 2's audio step does less work on iPhone and Mac — Swift SDK 2.13.3 (2026-09-14)
+
+Swift package tag **2.13.3** ships Essence 2 engine **1.6.3**. If you depend on
+the package with `from:`, you already resolve it, and nothing in your code
+changes.
+
+- **Essence 2's audio step computes only the part of each audio window the
+  renderer reads** — the same change the CLI took in 2.6.13 and the Python
+  library in 3.1.5. An Essence 2 render on an iPhone is substantially faster
+  for it. The measured rate for each platform is on the
+  [performance page](/sdk/performance).
+- **Nothing else in the package changes.** The `bitHumanKit` and `Expression2`
+  products are the same binaries 2.13.2 shipped; 2.13.2 shipped Essence 2
+  engine 1.6.2.
+- Essence 2 in your own iOS or macOS app still works from **2.13.2** — the
+  [install section](/sdk/ios#install) has the pin.
+
 ### Essence 2 on Android is fast at its default settings — `essence2-android` 0.5.5 (2026-09-13)
 
 `ai.bithuman:essence2-android:0.5.5` on Maven Central. **If you are on 0.5.3,

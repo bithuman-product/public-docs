@@ -48,6 +48,15 @@
 //   V6  SwiftPM   every `from:` pin on the Swift package must RESOLVE to the
 //                 newest tag (SwiftPM takes the highest tag in the same major,
 //                 so `from: "2.11.0"` is current while 2.x is newest).
+//   V8  Swift     "the newest package tag, **X**" must be the newest tag, and
+//                 "Essence 2 engine **Y**" must be what that tag's Package.swift
+//                 pins in `essence2Tag`. A page states the ENGINE a developer
+//                 actually gets, so it is graded against the package, not
+//                 against the engine's own release list. When that list is
+//                 AHEAD of the package, the run prints a warning and stays
+//                 green: no docs edit can fix an untagged package, and turning
+//                 this repository red for another lane's release step would
+//                 block every unrelated page change.
 //   V7  Changelog the newest `cli-v*` the changelog names must be the newest
 //                 CLI, and the newest version of the CLI, `bithuman` and both
 //                 Android artifacts must each have an entry.
@@ -94,6 +103,7 @@ export const ARTIFACTS = [
   { id: "bithuman-mcp", kind: "pypi", changelog: false },
   { id: "cli", kind: "cli", changelog: true },
   { id: "swift", kind: "tap", changelog: false },
+  { id: "swift-essence2-engine", kind: "tap-essence2", changelog: false },
 ];
 
 /* --------------------------------------------------------------- versions */
@@ -243,6 +253,19 @@ export function subjects(path, text) {
     }
   }
 
+  // V8 — the Swift package's newest tag, and the engine that tag ships
+  {
+    let m;
+    const tagRe = /newest package tag, \*\*(\d+\.\d+\.\d+)\*\*/g;
+    while ((m = tagRe.exec(text)) !== null) {
+      push("swift", m[1], m.index, "V8", `"the newest package tag, ${m[1]}"`);
+    }
+    const engRe = /Essence 2 engine \*\*(\d+\.\d+\.\d+)\*\*/g;
+    while ((m = engRe.exec(text)) !== null) {
+      push("swift-essence2-engine", m[1], m.index, "V8", `"Essence 2 engine ${m[1]}"`);
+    }
+  }
+
   // V5 — the downloads table
   if (isDownloads(path)) {
     for (const row of shippingTable(text)) {
@@ -326,7 +349,7 @@ class CannotCheck extends Error {}
 export async function grade(files, registry) {
   const failures = [];
   const cannot = [];
-  const seen = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0 };
+  const seen = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0 };
   const latest = {};
 
   for (const a of ARTIFACTS) {
@@ -490,6 +513,14 @@ const liveRegistry = {
       if (tags.length === 0) throw new CannotCheck(`${TAP} releases: no published cli-v* release found`);
       return newest(tags);
     }
+    if (a.kind === "tap-essence2") {
+      const tag = `v${await this.latest({ id: "swift", kind: "tap" })}`;
+      const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+      const manifest = await (await get(url)).text();
+      const m = /^\s*let\s+essence2Tag\s*=\s*"essence2-v(\d+\.\d+\.\d+)"/m.exec(manifest);
+      if (!m) throw new CannotCheck(`${url}: no essence2Tag — the manifest shape changed`);
+      return m[1];
+    }
     if (a.kind === "tap") {
       let out;
       try {
@@ -522,10 +553,11 @@ const STUB_LATEST = {
   bithuman: "3.1.5",
   "bithuman-mcp": "0.3.5",
   cli: "2.6.14",
-  swift: "2.13.2",
+  swift: "2.13.3",
+  "swift-essence2-engine": "1.6.3",
 };
 const stub = (down = []) => ({
-  tapTagsSeen: ["1.9.0", "2.11.0", "2.11.2", "2.13.2"],
+  tapTagsSeen: ["1.9.0", "2.11.0", "2.11.2", "2.13.2", "2.13.3"],
   async latest(a) {
     if (down.includes(a.id)) throw new CannotCheck(`stub: ${a.id} registry unreachable`);
     return STUB_LATEST[a.id];
@@ -578,6 +610,10 @@ const ARMS = [
   ["control: MCP history in prose, current version in the pip form", "p/guides/mcp.md", "The `bithuman-mcp` 0.3.4 schema still listed a field. (`pip install bithuman-mcp`, currently **0.3.5**, Python", false],
   ["good: the current landing-page coordinate", "p/pages/start.astro", "<code>ai.bithuman:essence2-android:0.5.5</code> and implementation(\"ai.bithuman:expression2-android:0.4.1\")", false],
   ["good: a newer entry citing an older CLI above the newest CLI's entry", "p/changelog.md", "### Python (2026-09-13)\n\nThe change `cli-v2.6.13` made.\n\n" + CL("2.6.14", "0.5.5", "3.1.5"), false],
+  ["bad: the newest Swift package tag named as an older tag", "p/sdk/ios.md", "The newest package tag, **2.13.2**, ships Essence 2 engine **1.6.3**.", true],
+  ["bad: an older Essence 2 engine named as what the newest tag ships", "p/sdk/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.2**.", true],
+  ["good: the newest tag and the engine it ships", "p/sdk/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**.", false],
+  ["control: a minimum Swift version is not a claim about the newest", "p/downloads.md", "Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the file you download.", false],
   ["control: a page with no version at all", "p/x.md", "Nothing versioned here.\n", false],
 ];
 
@@ -606,7 +642,7 @@ async function selftest() {
   }
   // The rules must see the real pages, or every arm above is about fixtures only.
   const real = corpus();
-  const counts = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0 };
+  const counts = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0 };
   for (const f of real) {
     for (const s of subjects(f.path, f.text)) counts[s.rule]++;
     counts.V6 += tapPins(f.text).length;
@@ -645,7 +681,7 @@ if (!files.some((f) => isChangelog(f.path))) {
   console.log("::error::no changelog.md in the corpus — V7 is grading nothing");
   process.exit(1);
 }
-for (const rule of ["V1", "V1b", "V3", "V4", "V5", "V6"]) {
+for (const rule of ["V1", "V1b", "V3", "V4", "V5", "V6", "V8"]) {
   if (seen[rule] === 0 && !cannot.length) {
     console.log(`::error::${rule} matched nothing in ${CORPUS_ROOTS.join(" + ")} — the extractor stopped seeing pages, not the pages stopped naming versions`);
     process.exit(1);
@@ -680,6 +716,6 @@ if (code === 1) {
   console.log(`check-versions-current: CANNOT CHECK — ${cannot.length} registr${cannot.length > 1 ? "ies" : "y"} unreadable. This is not a pass.`);
 } else {
   const n = Object.values(seen).reduce((a, b) => a + b, 0);
-  console.log(`check-versions-current: OK — ${n} subject(s) across V1–V7 name the newest published version.`);
+  console.log(`check-versions-current: OK — ${n} subject(s) across V1–V8 name the newest published version.`);
 }
 process.exit(code);
