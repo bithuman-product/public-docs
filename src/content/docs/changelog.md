@@ -10,6 +10,39 @@ order: 1
 
 ## September 2026
 
+### `bithuman render` and `bithuman run` now need a credential — `cli-v2.6.19` (2026-09-14)
+
+CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
+**Read this before upgrading if anything you run renders without signing in.**
+
+- **Every render needs a credential.** A render with no credential, or with one
+  the service rejects, now stops before the first frame with exit code **77**
+  and *"not signed in, or the credential is not valid — run `bithuman login`,
+  or set BITHUMAN_API_SECRET"*. Until now a rejected credential kept rendering
+  for 300 seconds behind a countdown, and no credential at all rendered while
+  saying it was not charging you. Getting a key is free and takes a moment:
+  `bithuman login` opens your browser, or `bithuman login --device` prints a
+  code for an SSH session.
+- **`BITHUMAN_UNMETERED=1` is gone** from the CLI; setting it does nothing.
+- **An unreachable meter still renders, and is never refused.** If our service
+  cannot be reached, the render continues and says so — being unable to ask is
+  not the same as being told no. An operator who wants a validated credential
+  before any frame sets `BITHUMAN_METER_ENFORCE=1`, which refuses that case too.
+- **Downloading is unchanged:** `bithuman pull <slug>` of a showcase avatar
+  still needs no account.
+- **`bithuman auth …` is gone.** `auth login`, `auth logout` and `auth status`
+  duplicated the top-level `login`, `logout` and `whoami` — use those — and
+  `auth token` is now **`bithuman token`**. If a script calls `bithuman auth`,
+  change it.
+- **Six failures now return documented exit codes.** Paths that returned 64 — a
+  bad host, a refused public bind, missing LiveKit credentials, `init` outside
+  a terminal — return **2**, and "no brain configured" returns **77**. A script
+  matching on 64 needs updating. **Ctrl-C is now published as 130**, which it
+  always returned.
+- **`--json` errors carry a `hint`** beside the cause when there is a next step.
+- **`bithuman mcp tools` lists 28 tools**, adding local `pull` and `render`.
+- The engine inside moves to **3.1.8** (ABI 7).
+
 ### `bithuman` 3.1.8: on a Mac, Expression 2 stops waiting at the end of each utterance (2026-09-14)
 
 `bithuman` 3.1.8 on PyPI, for Apple Silicon macOS (14 or newer), Linux x86_64

@@ -26,8 +26,8 @@ you what you got:
 
 ```text
 $ bithuman --version
-libessence  3.1.7 ABI 7          # the engine inside, and the ABI it speaks
-bithuman    2.6.18               # the CLI itself
+libessence  3.1.8 ABI 7          # the engine inside, and the ABI it speaks
+bithuman    2.6.19               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
@@ -69,13 +69,16 @@ is one (24 kHz, 15 s). `bithuman info <file>` prints what an avatar is before yo
 
 ## Run
 
-Open the printed `http://127.0.0.1:8088/`, grant the microphone, talk. Without
-a sign-in the avatar renders but does not answer; `bithuman login` adds the
-managed conversation brain, and [local mode](/sdk/cli/local-mode) runs the
-brain entirely on your own hardware instead — no LLM or TTS vendor.
+**Sign in first.** From 2.6.19 every render needs a credential: without one,
+`run` and `render` both stop before the first frame with exit 77 and *"not
+signed in, or the credential is not valid — run `bithuman login`, or set
+BITHUMAN_API_SECRET"*. `bithuman login` opens a browser and stores a per-device
+key; `bithuman login --device` prints a code for an SSH session.
 
-`render` is a billed offline render, so it needs `bithuman login` or
-`BITHUMAN_API_SECRET` in the environment. A self-hosted session on your own
+Then open the printed `http://127.0.0.1:8088/`, grant the microphone, talk.
+`bithuman login` also adds the managed conversation brain, and
+[local mode](/sdk/cli/local-mode) runs the brain entirely on your own hardware
+instead — no LLM or TTS vendor. A self-hosted session on your own
 agent is metered — [pricing](/guides/pricing) is the authority.
 
 ## Performance
