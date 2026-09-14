@@ -1,6 +1,6 @@
 ---
 title: "Audio streaming"
-description: "The push/drain pattern every bitHuman SDK shares — push 16-bit PCM in, drain lip-synced 25 fps frames out — with the canonical minimal Python loop and the audio/frame formats."
+description: "The push/drain pattern every bitHuman SDK shares — push 16-bit PCM in, drain lip-synced frames out at the model's own rate — with the canonical minimal Python loop and the audio/frame formats."
 section: concepts
 group: "Core"
 order: 3
@@ -11,13 +11,13 @@ order: 3
 Every SDK and the runtime use the same shape — audio in, video out:
 
 1. **Push** 16-bit PCM audio chunks as they arrive (mic, TTS, WebRTC).
-2. **Drain** lip-synced video frames at 25 fps.
+2. **Drain** lip-synced video frames at the model's own rate — 25 fps for Essence, 20 fps for Expression 2.
 
 That's the entire surface area. The same two calls drive both [Essence and Expression](/concepts/models) — including the [second-generation `essence-2` and `expression-2`](/concepts/models-v2) — across Python, Swift, and the CLI.
 
 <div class="bh-flow"><span class="bh-node">push audio</span><span class="bh-sep">→</span><span class="bh-node">engine ticks</span><span class="bh-sep">→</span><span class="bh-node">pull frame</span><span class="bh-sep">→</span><span class="bh-node">render</span></div>
 
-You feed PCM in as fast as it arrives and drain visual frames out on a fixed 25 fps clock — the engine buffers between the two so your audio source and your render loop never have to stay in lockstep.
+You feed PCM in as fast as it arrives and drain visual frames out on a fixed clock — 25 fps for Essence, 20 fps for Expression 2 — the engine buffers between the two so your audio source and your render loop never have to stay in lockstep.
 
 ## The minimal Python loop
 
@@ -98,11 +98,11 @@ Each yielded `frame` exposes:
 | `has_image` | `bool` | `False` for filler frames during silence |
 | `end_of_speech` | `bool` | `True` on the last frame of a turn |
 
-Frames arrive at **25 fps** regardless of audio chunk size.
+Frames arrive at the model's own rate — **25 fps** for Essence, **20 fps** for Expression 2 — regardless of audio chunk size.
 
 ## When the avatar isn't speaking
 
-During silence the runtime emits filler frames (`has_image=False`) so your render loop keeps its 25 fps cadence. Skip them, or render a static idle frame.
+During silence the runtime emits filler frames (`has_image=False`) so your render loop keeps its cadence. Skip them, or render a static idle frame.
 
 ## Mapping to other SDKs
 
