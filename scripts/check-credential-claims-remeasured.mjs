@@ -116,6 +116,9 @@ async function newestFor(artifact) {
   throw new CannotCheck(`unknown artifact kind: ${artifact}`);
 }
 
+/** A driven_by pointer must name a file that is really there. */
+let driverPresent = (rel) => { try { readFileSync(join(ROOT, rel)); return true; } catch { return false; } };
+
 function readManifest(root = ROOT) {
   let raw;
   try { raw = readFileSync(join(root, MANIFEST), "utf8"); }
@@ -163,7 +166,13 @@ function grade(claims, newest, pageText) {
   for (const c of claims) {
     const have = newest[c.artifact];
     if (have === undefined) { findings.push(`${c.id}: no published version was resolved for ${c.artifact}`); continue; }
-    if (cmp(have, c.measured_version) > 0) {
+    // ★A claim a machine reproduces on today's bytes is not attested, so its
+    // version is history and grading it would only invite a bump. The pointer
+    // must be real, though: a driver named here and absent would be the same
+    // fiction as a stale version, wearing a better disguise.
+    if (c.driven_by && !driverPresent(c.driven_by)) {
+      findings.push(`${c.id}: driven_by names ${c.driven_by}, which does not exist — the claim says a machine checks it and nothing does.`);
+    } else if (!c.driven_by && cmp(have, c.measured_version) > 0) {
       findings.push(
         `${c.id}: driven against ${c.artifact} ${c.measured_version} on ${c.measured_on}, but ${have} is published. ` +
         `The claim on ${c.page} now describes bytes nobody has checked — re-drive (${c.arms}), then move the version.`);
@@ -185,9 +194,23 @@ function selftest() {
     { name: "RED CONTROL: the phrase left the page fails", newest: { cli: "2.6.20" }, text: { "p.md": "something else" }, expect: 1 },
     { name: "an older published version does not fail (never happens, but must not)", newest: { cli: "2.6.19" }, text: { "p.md": "hello" }, expect: 0 },
   ];
+  const drivenClaim = [{ id: "d", artifact: "cli", measured_version: "2.6.20", measured_on: "d", arms: "a", page: "p.md", phrase: "hello", driven_by: "scripts/real.mjs" }];
+  const drivenArms = [
+    { name: "a machine-driven claim is not graded on version drift", newest: { cli: "9.9.9" }, present: true, expect: 0 },
+    { name: "RED CONTROL: a driven_by pointing at nothing fails", newest: { cli: "2.6.20" }, present: false, expect: 1 },
+  ];
   let bad = 0;
   for (const a of arms) {
     const got = grade(claims, a.newest, a.text).length ? 1 : 0;
+    const ok = got === a.expect;
+    if (!ok) bad++;
+    console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
+  }
+  const realDriverPresent = driverPresent;
+  for (const a of drivenArms) {
+    driverPresent = () => a.present;
+    const got = grade(drivenClaim, a.newest, { "p.md": "hello" }).length ? 1 : 0;
+    driverPresent = realDriverPresent;
     const ok = got === a.expect;
     if (!ok) bad++;
     console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
@@ -221,7 +244,8 @@ async function main() {
     console.error("CANNOT CHECK is a failure, never a pass: no claim was graded.");
     process.exit(2);
   }
-  console.log(`${claims.length} credential/billing claim(s), each graded against the newest published bytes`);
+  const machine = claims.filter((c) => c.driven_by).length;
+  console.log(`${claims.length} credential/billing claim(s): ${machine} reproduced on today's bytes by a driver, ${claims.length - machine} held by a version a human moves`);
   for (const [a, v] of Object.entries(newest)) console.log(`  newest ${a}: ${v}`);
   const naming = pagesNamingUnmetered();
   console.log(`pages naming BITHUMAN_UNMETERED: ${naming.length ? naming.join(", ") : "(none)"}`);
