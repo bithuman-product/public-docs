@@ -41,6 +41,17 @@ The Android Expression 2 number is what a cool phone does. Under continuous rend
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
 <!-- /FLOORS:NOTES -->
 
+## Python library
+
+The [Python library](/sdk/python) (`pip install bithuman`) is a separate
+product from the CLI, measured the same way on the same reference hardware, so
+each row here compares directly with the same platform in the table above.
+
+| Platform | Reference hardware | Expression 2 | Essence 2 |
+|---|---|---:|---:|
+| Linux | Intel Core i7-13700F | 49 | not yet stable run to run |
+| macOS | Apple M4 | being re-measured | being re-measured |
+
 Measured audio in to frame out, once the model has loaded. Loading the model the
 first time adds to the total.
 
