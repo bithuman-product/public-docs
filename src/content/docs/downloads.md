@@ -96,7 +96,7 @@ The default avatar model. Runs on virtually every supported platform — the rig
 | **Raspberry Pi 4B / 5** | Near real-time | Adequate for kiosks at modest FPS |
 | **Apple Watch / wearables** | Not yet | Too memory-constrained for on-device rendering today |
 
-All hosts produce identical frames — your device decision is about form factor, memory, and latency budget, not visual quality.
+Every host renders the same avatar, so your device decision is about form factor, memory, and latency budget. We do not claim the frames are bit-for-bit identical across hosts: on macOS, rendering the same input twice can produce slightly different pixel values ([changelog](/changelog)).
 
 ### Expression
 
