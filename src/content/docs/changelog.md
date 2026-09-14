@@ -10,6 +10,26 @@ order: 1
 
 ## September 2026
 
+### Expression 2 renders faster on a Mac, and every frame is what 2.6.16 produced — `cli-v2.6.17` (2026-09-14)
+
+CLI `cli-v2.6.17`, macOS arm64 and Linux x86_64 built from one commit. **If you
+installed 2.6.16, this is a drop-in upgrade** with nothing to change on your
+side.
+
+- **On Apple Silicon, an Expression 2 render now overlaps its steps.** For each
+  short stretch of video it used to produce the frames, finish them into
+  pictures and hand them to the video encoder one after another. The next
+  stretch is now produced while the previous one is finished and encoded.
+- **The output does not change.** With the same avatar and the same audio,
+  2.6.16 and 2.6.17 deliver the same frames byte for byte — checked frame by
+  frame over a full 28-second clip, with repeated runs of 2.6.16 agreeing with
+  each other as the control.
+- **Linux renders are unchanged.** The engine inside moves to 3.1.6 (ABI 7);
+  `bithuman --version` prints it beside the CLI's own version.
+
+Earlier versions stay resolvable; a `BITHUMAN_VERSION=cli-v2.6.16` pin keeps
+working.
+
 ### `bithuman` 3.1.6: Essence 2 uses more of your machine's cores (2026-09-14)
 
 `bithuman` 3.1.6 on PyPI, for Apple Silicon macOS (14 or newer), Linux x86_64
