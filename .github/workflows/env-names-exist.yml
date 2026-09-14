@@ -1,0 +1,70 @@
+name: Env names exist
+
+# EVERY ENVIRONMENT VARIABLE THE CLI PAGES NAME EXISTS IN A SHIPPED ARTIFACT.
+#
+# Measured 2026-09-14: the pricing page told developers that BITHUMAN_UNMETERED=1
+# renders free in the Python SDK. Run on the customer path, the published wheel
+# refuses a credential-less render identically with and without it — the escape
+# is compiled out of public wheels. The claim had been live for weeks because
+# nothing ever drove it against the artifact.
+#
+# The general defect is a page naming something the shipped thing does not have.
+# The mechanizable slice is the NAME: a variable a page tells a reader to set
+# must at least exist in the artifact that reads it. No registry serves these,
+# so no currency check can see a rename or a removal — this is the only thing
+# that would.
+#
+# WHAT A GREEN RUN DOES NOT MEAN, so nobody reads more into it: it grades that
+# the NAME EXISTS, never what the artifact DOES with it. A real string sat beside
+# a real docstring in the Python wheel while the behaviour refused. Only a run on
+# the customer path settles behaviour.
+#
+# WHEN IT RUNS. On any change to a CLI page or to the check; and daily, because
+# a variable disappears when a RELEASE publishes, which is not an event here.
+#
+# EXIT 0 every name is accounted for · 1 a page names something no shipped
+# artifact has · 2 CANNOT CHECK, a failure you can see and never a pass.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/content/docs/sdk/cli.md
+      - src/content/docs/sdk/cli/reference.md
+      - src/content/docs/sdk/cli/local-mode.md
+      - scripts/check-env-names-exist.mjs
+      - .github/workflows/env-names-exist.yml
+  pull_request:
+    paths:
+      - src/content/docs/sdk/cli.md
+      - src/content/docs/sdk/cli/reference.md
+      - src/content/docs/sdk/cli/local-mode.md
+      - scripts/check-env-names-exist.mjs
+      - .github/workflows/env-names-exist.yml
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  env-names-exist:
+    name: every environment variable the pages name exists
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # Fixtures, no network: the instrument is graded even on the runs where
+      # the network is what broke, and its red control runs every time.
+      - name: The env-name gate proves itself
+        run: node scripts/check-env-names-exist.mjs --selftest
+
+      - name: Every name the CLI pages state exists in a shipped artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-env-names-exist.mjs
