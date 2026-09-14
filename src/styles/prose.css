@@ -1,12 +1,22 @@
 /* ============================================================================
    Prose — styles for rendered Markdown doc content (mirrors OpenAI docs body)
    ========================================================================== */
+/* Reading text wants about 65 characters; data wants room. The prose column is
+   a grid with a narrow `text` track for everything that is read and a `full`
+   track for anything that is scanned — tables, and any figure marked wide. */
 .prose {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(0, 1fr)
+    [text-start] min(100%, 46rem) [text-end]
+    minmax(0, 1fr) [full-end];
   font-size: var(--ft-md);
   line-height: var(--lh-normal);
   color: var(--color-text);
-  max-width: 46rem;
 }
+.prose > * { grid-column: text; }
+.prose > .table-wrap,
+.prose > .bh-wide { grid-column: full; }
 .prose > :first-child { margin-top: 0; }
 
 .prose h1 {
@@ -56,48 +66,73 @@
 .prose pre { margin: var(--space-5) 0; }
 .prose .bh-code > pre { margin: 0; }
 
-/* tables */
+/* ============================== tables ==============================
+   A table is data, not prose, so it takes the whole content column rather than
+   the ~65-character measure the paragraphs sit in. Restrained rules, no boxed
+   grid: one line under the header, a hairline between rows, nothing vertical.
+   ==================================================================== */
+.table-wrap {
+  grid-column: full;
+  margin: var(--space-6) 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  /* The shadow on an edge shows only while there is more table past it. */
+  background:
+    linear-gradient(to right, var(--color-bg), transparent) left center,
+    linear-gradient(to left, var(--color-bg), transparent) right center,
+    radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.13), transparent) left center,
+    radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.13), transparent) right center;
+  background-repeat: no-repeat;
+  background-size: 28px 100%, 28px 100%, 12px 100%, 12px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  margin: var(--space-5) 0;
   font-size: var(--ft-sm);
+  /* Figures line up in a column instead of drifting by digit width. */
+  font-variant-numeric: tabular-nums;
 }
-.prose th, .prose td {
+.prose th {
+  padding: 0 0.9rem 0.55rem;
   text-align: left;
-  padding: 0.62rem 0.9rem;
+  font-size: var(--ft-xs);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-tertiary);
+  border-bottom: 1px solid var(--color-border-strong);
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+.prose td {
+  padding: 0.7rem 0.9rem;
   border-bottom: 1px solid var(--color-border);
   vertical-align: top;
+  line-height: var(--lh-snug);
 }
-.prose th { font-weight: var(--fw-medium); color: var(--color-text-secondary); background: var(--color-surface-2); }
-.prose tr:last-child td { border-bottom: 0; }
+/* Markdown's own column alignment, which an author style would otherwise win. */
+.prose th[align="right"], .prose td[align="right"] { text-align: right; }
+.prose th[align="center"], .prose td[align="center"] { text-align: center; }
+/* Figures columns stay tight to the right so a reader can run down them. */
+.prose th[align="right"] { width: 8.5rem; }
+.prose th:first-child, .prose td:first-child { padding-left: 0; }
+.prose th:last-child, .prose td:last-child { padding-right: 0; }
+/* The first column is the key a reader scans down. */
+.prose tbody td:first-child { font-weight: var(--fw-medium); color: var(--color-text); white-space: nowrap; }
+.prose tbody tr:last-child td { border-bottom: 0; }
+.prose tbody tr:hover td { background: var(--color-surface-2); }
+/* A cell that carries a status rather than a figure says so quietly. */
+.prose td.is-status { color: var(--color-text-tertiary); font-size: var(--ft-xs); font-weight: var(--fw-regular); }
 /* An address or a path in a cell must break rather than widen the row. */
 .prose td code, .prose td a { overflow-wrap: anywhere; }
 
-/* Wide enough for a grid: the table stays a table, and says when it scrolls —
-   the shadow on an edge appears only while there is more table past it. */
-@media (min-width: 701px) {
-  .prose table {
-    display: block;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    background:
-      linear-gradient(to right, var(--color-bg), transparent) left center,
-      linear-gradient(to left, var(--color-bg), transparent) right center,
-      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.13), transparent) left center,
-      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.13), transparent) right center;
-    background-repeat: no-repeat;
-    background-size: 28px 100%, 28px 100%, 12px 100%, 12px 100%;
-    background-attachment: local, local, scroll, scroll;
-  }
-}
-
 /* Too narrow for a grid: a table stops being one. Each row becomes a card of
    labelled values, so nothing is clipped and nothing has to be dragged
-   sideways. At 390px the three-column troubleshooting tables were columns of
-   cut-off paths; the column names come from rehype-table-labels.mjs at build
-   time, so this reads correctly with nothing running. */
+   sideways. The column names come from rehype-table-labels.mjs at build time,
+   so this reads correctly with nothing running. */
 @media (max-width: 700px) {
+  .table-wrap { overflow-x: visible; background: none; }
   .prose table, .prose tbody, .prose tr, .prose td { display: block; }
   .prose thead { display: none; }
   .prose tr {
@@ -107,6 +142,7 @@
     border-radius: var(--r-lg);
     background: var(--color-surface-2);
   }
+  .prose tbody tr:hover td { background: none; }
   .prose tr:last-child { margin-bottom: 0; }
   .prose td {
     display: grid;
@@ -114,7 +150,11 @@
     gap: var(--space-3);
     padding: 0.3rem 0;
     border: 0;
+    text-align: left;
   }
+  .prose td:first-child, .prose td:last-child { padding-inline: 0; }
+  .prose td[align="right"] { text-align: left; }
+  .prose td.is-status { font-size: var(--ft-sm); }
   .prose td:empty { display: none; }
   .prose td[data-label]::before {
     content: attr(data-label);

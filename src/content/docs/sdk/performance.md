@@ -7,16 +7,22 @@ order: 90
 label: "Performance"
 ---
 
-<!-- FLOORS:TABLE platform -->
+<!-- FLOORS:TABLE all -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 83.5 |
 | macOS | Apple M4 | 158 | 82 |
+| macOS · Python | Apple M4 | 157 | not measured on 3.1.8 (2026-09-14) |
+| Linux | Intel Core i7-13700F | 44 | 29 |
+| Linux · Python | Intel Core i7-13700F | 49 | 27 |
 | iOS | iPhone 15 | 118 | 52 |
 | Android | Galaxy S25+ | 58 | 50 |
 | Web | Chrome on M4 | 30 | 27 |
-| Linux | Intel Core i7-13700F | 44 | 29 |
 <!-- /FLOORS:TABLE -->
+
+Rows marked **· Python** are the [Python library](/sdk/python)
+(`pip install bithuman`), a separate product measured the same way on the same
+machine. Everything else is the CLI, the platform SDK, or the hosted API.
 
 **How to read a row.** Expression 2 plays at 20 frames per second, Essence 2 at
 25. A number at or above its model's own rate holds a live, two-way conversation
@@ -40,19 +46,6 @@ The Linux numbers come from an Intel Core i7-13700F desktop with nothing else ru
 <!-- /FLOORS:NOTES -->
 
 </details>
-
-## Python library
-
-The [Python library](/sdk/python) (`pip install bithuman`) is a separate
-product from the CLI, measured the same way on the same reference hardware, so
-each row here compares directly with the same platform in the table above.
-
-<!-- FLOORS:TABLE python -->
-| Platform | Reference hardware | Expression 2 | Essence 2 |
-|---|---|---:|---:|
-| Linux | Intel Core i7-13700F | 49 | 27 |
-| macOS | Apple M4 | 157 | not measured on 3.1.8 (2026-09-14) |
-<!-- /FLOORS:TABLE -->
 
 Measured audio in to frame out, once the model has loaded. Loading the model the
 first time adds to the total.
