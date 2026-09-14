@@ -10,6 +10,26 @@ order: 1
 
 ## September 2026
 
+### Essence 2 renders faster again on Linux, and every frame is what 2.6.15 produced — `cli-v2.6.16` (2026-09-14)
+
+CLI `cli-v2.6.16`, macOS arm64 and Linux x86_64 built from one commit. **If you
+installed 2.6.15 in the last hour, this is a drop-in upgrade** with nothing to
+change on your side.
+
+- **Building each finished frame now spreads across the threads the renderer
+  already had.** It was doing most of that work on one thread while the rest of
+  the machine waited. On a 24-thread Intel desktop, building a frame drops from
+  about 36 ms to about 26 ms at the old thread count, and from about 29 ms to
+  about 17 ms at the thread count 2.6.15 introduced.
+- **The output does not change at all.** Every frame is byte-for-byte what
+  2.6.15 produced — checked at four thread counts on three avatars, and over a
+  200-frame render where ten runs produced one identical result.
+- **macOS is unchanged**, and so is the engine inside: `bithuman --version`
+  still reports 3.1.5 (ABI 7) beside the CLI's own version.
+
+Earlier versions stay resolvable; a `BITHUMAN_VERSION=cli-v2.6.15` pin keeps
+working.
+
 ### Essence 2 on Android delivers frames sooner, and a model file that changed is picked up — `essence2-android` 0.5.6 (2026-09-14)
 
 `ai.bithuman:essence2-android:0.5.6` on Maven Central. **Code written against
