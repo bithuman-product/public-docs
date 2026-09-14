@@ -1235,6 +1235,17 @@ paths:
             `INTERNAL_ERROR` — the artifact could not be resolved, or the usage
             row could not be written. In both cases **no URL is issued**: a
             grant we cannot record is not handed out. Safe to retry.
+        "503":
+          description: >-
+            `SERVICE_UNAVAILABLE` — the download service briefly lost its
+            connection to storage and could not recover within the request.
+            **No URL is issued and nothing is metered.** Retry after the
+            `Retry-After` delay; the same request then succeeds.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying (currently 2).
 
   /v1/files/upload:
     post:
