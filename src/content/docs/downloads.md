@@ -43,7 +43,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 
 | Artifact | Latest version | Where it comes from |
 |---|---|---|
-| Python SDK (`bithuman`) | **3.1.5** — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) |
+| Python SDK (`bithuman`) | **3.1.6** on Linux; on a Mac the newest wheel is **3.1.5** — the 2.x line ends at 2.9.0 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Expression2`) | **2.6.1** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `<code>.imx` you download here. The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
