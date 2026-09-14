@@ -242,15 +242,21 @@ const CARRIERS = [
     re: /be_runtime_tick_compose\w*/i },
   { why: "BITHUMAN_TESSERA_DIRECTOR — an env var a customer sets in their own launcher; the reader takes it by exact name",
     re: /BITHUMAN_[A-Z_]*DIRECTOR\b/ },
-  // ★A CAPTURED LOG LINE, not prose. `[selfhost-meter] metering armed for
-  // identity=…` is what the shipped binary PRINTS; a developer greps it to
-  // confirm their self-host is being metered. Same class as the `[embody]`
-  // prefix carrier in check-retired-model-names.mjs. Deliberately keyed on the
-  // whole emitted string and not on the `[selfhost-meter]` prefix alone —
-  // a prefix carrier would excuse every banned word on any meter line, which
-  // is the blanket exclusion this file refuses to write.
-  { why: "`[selfhost-meter] metering armed for identity=` — the line the shipped self-host meter prints, grepped verbatim by a developer",
-    re: /\[selfhost-meter\][^\n]*metering armed for identity=/ },
+  // ★CARRIER REMOVED 2026-09-14, and this note is the finding that removed it.
+  // It excused the banned word `armed` on the strength of `[selfhost-meter]
+  // metering armed for identity=…` being what the shipped binary PRINTS. It is
+  // not. Read from the published Linux tarballs, the literal in the binary is
+  // `metering on for identity=` followed by product= / basis= / endpoint=, and
+  // `metering armed for identity=` appears ZERO times — in cli-v2.6.20, and
+  // also in 2.6.19 and 2.6.17, so the rename predates every release a reader
+  // is plausibly running. No developer greps the old spelling, which is why
+  // this is a deletion and not the deprecation note the refusal asks for:
+  // DEPRECATE IS NOT RENAME protects a string the artifact still prints, and
+  // this one never did. The page now spells what the binary emits.
+  // ★The general lesson, at the cost of a wrong line on a public page: a
+  // carrier registry is a claim ABOUT A SHIPPED ARTIFACT, so it goes stale
+  // exactly like any other such claim and nothing here re-reads the artifact.
+  // Before adding one, read the string out of the published bytes.
   // ★A QUERY PARAMETER IS SPELLED BY THE CALLER, SO ITS NAME IS FROZEN — and
   // the fact that this one is spelled `plane` is a finding, not a preference.
   // `GET /v1/agent/{code}/model/download?plane=android` shipped 2026-09-11 to
