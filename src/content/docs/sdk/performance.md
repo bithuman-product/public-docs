@@ -11,7 +11,7 @@ label: "Performance"
 |---|---|---:|---:|
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 51.9 |
 | macOS | Apple M4 | 74 | 82 |
-| iOS | iPhone 15 | 118 | 33 |
+| iOS | iPhone 15 | 118 | 52 |
 | Android | Galaxy S25+ | 58 | 15 — not yet real time |
 | Web | Chrome on M4 | 30 | being re-measured |
 | Linux | Intel Core i7-13700F | 41 | 21 — not yet real time |
@@ -34,7 +34,7 @@ The Essence 2 Cloud GPU number counts frames as they are rendered. Saving them t
 
 Cloud GPU is a hosted service rather than an SDK on your own hardware, and its number is how fast the cloud renders frames — what a video-file render gets. A live hosted conversation plays at the model's own rate, 20 frames per second for Expression 2 and 25 for Essence 2, and never faster: the headroom above that rate shortens a file render and lets one card carry more sessions at once, rather than putting more frames on screen.
 
-The iPhone number is what a cool phone does. Render again straight away, with no pause, and an iPhone 15 settles at about 31 frames per second — still above the 25 Essence 2 plays at, so a conversation stays real time.
+The iPhone Essence 2 number is what a cool phone does. Render again straight away, with no pause, and an iPhone 15 still does about 49 frames per second — well above the 25 Essence 2 plays at, so a conversation stays real time.
 
 The Android Expression 2 number is what a cool phone does. Under continuous rendering a Galaxy S25+ warms up and settles at about 40 frames per second after a few minutes — still twice the 20 frames per second Expression 2 plays at, so a conversation stays real time.
 
