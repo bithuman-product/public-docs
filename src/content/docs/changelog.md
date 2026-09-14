@@ -10,6 +10,39 @@ order: 1
 
 ## September 2026
 
+### `bithuman` 3.1.8: on a Mac, Expression 2 stops waiting at the end of each utterance (2026-09-14)
+
+`bithuman` 3.1.8 on PyPI, for Apple Silicon macOS (14 or newer), Linux x86_64
+and Linux aarch64 (CPython 3.10–3.14).
+
+- **The last frames of an utterance arrive as soon as they are ready.** The Mac
+  wheels carry the render host `cli-v2.6.18` ships, byte for byte, and that host
+  no longer waits out a fixed pause before handing over the end of an utterance.
+- **The output does not change.** The frames are byte for byte what 3.1.7's host
+  delivered, checked frame by frame with a determinism control.
+- **Linux is unchanged.**
+
+### Expression 2 renders much faster on a Mac, and every frame is what 2.6.17 produced — `cli-v2.6.18` (2026-09-14)
+
+CLI `cli-v2.6.18`, macOS arm64 and Linux x86_64 built from one commit. **If you
+installed 2.6.17, this is a drop-in upgrade** with nothing to change on your
+side.
+
+- **The end of a render no longer waits on a timer.** On a Mac the renderer
+  paused on fixed timers before handing over the last frames of a render, and
+  under load those pauses grew past a second. It now hands them over as soon as
+  they are ready. Measured frame rates are on the
+  [performance page](/sdk/performance).
+- **The output does not change.** With the same avatar and the same audio,
+  2.6.17 and 2.6.18 deliver the same frames byte for byte — checked frame by
+  frame over a full 28-second clip, with repeated runs of 2.6.17 agreeing with
+  each other as the control.
+- **Linux renders are unchanged.** The engine inside moves to 3.1.7 (ABI 7);
+  `bithuman --version` prints it beside the CLI's own version.
+
+Earlier versions stay resolvable; a `BITHUMAN_VERSION=cli-v2.6.17` pin keeps
+working.
+
 ### `bithuman` 3.1.7: Expression 2 on a Mac renders on the same CoreML engine as the macOS CLI (2026-09-14)
 
 `bithuman` 3.1.7 on PyPI, for Apple Silicon macOS (14 or newer), Linux x86_64
