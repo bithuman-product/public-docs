@@ -10,6 +10,31 @@ order: 1
 
 ## September 2026
 
+### Essence 2 on Android delivers frames sooner, and a model file that changed is picked up — `essence2-android` 0.5.6 (2026-09-14)
+
+`ai.bithuman:essence2-android:0.5.6` on Maven Central. **Code written against
+0.5.5 compiles unchanged** — nothing was removed or re-typed, and the two
+additions below are new types you can ignore until you want them.
+
+- **Frames arrive sooner, and the frames themselves are unchanged.** The render
+  now uses the phone's GPU alongside its CPU, and a step that ran as several
+  operations runs as one. The measured rate on a Galaxy S25+ is on the
+  [performance page](/sdk/performance).
+- **Interrupting the avatar stops it immediately.** Until now, a barge-in
+  delivered one more frame of the sentence it was already speaking.
+- **A model file that changes is picked up on the next session.** When
+  `Essence2ModelStore.fetch()` finds an identity already on the device, it now
+  asks the download service whether any member of it changed: if one has, the
+  device installs the new file; if the service cannot be reached, it opens the
+  copy it had already verified, so an app with no network keeps working. That
+  costs one small request on a cache hit. Two new types report the outcome:
+  `Essence2ModelStore.Revalidated` (`UNCHANGED`, `UPDATED`, `KEPT_UNREACHABLE`,
+  `KEPT_REFUSED`, `KEPT_FAILED`) and `MemberChanged`.
+- `0.2.0` through `0.5.5` stay on Central; `0.5.1` and `0.5.2` cannot install a
+  model on a handset. The FFmpeg relink materials for this version are on
+  [FFmpeg / LGPL](/legal/android-ffmpeg-lgpl), re-measured on the published
+  `0.5.6` artifacts.
+
 ### Essence 2 renders faster on Linux, and Linux video encoding costs far less processor time — `cli-v2.6.15` (2026-09-14)
 
 CLI `cli-v2.6.15`, macOS arm64 and Linux x86_64 built from one commit; it is
