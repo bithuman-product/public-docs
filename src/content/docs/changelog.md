@@ -10,7 +10,7 @@ order: 1
 
 ## September 2026
 
-### `bithuman render` now needs a credential — `cli-v2.6.19` (2026-09-14)
+### `bithuman render` needs a credential, and on macOS so does `bithuman run` — `cli-v2.6.19` (2026-09-14)
 
 CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
 **Read this before upgrading if anything you run renders without signing in.**
@@ -24,15 +24,22 @@ CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
   and no credential at all rendered while saying it was not charging you.
   Getting a key is free and takes a moment: `bithuman login` opens your
   browser, or `bithuman login --device` prints a code for an SSH session.
-- **`bithuman run` is not covered by this release.** It is served through the
-  engine's own self-host meter, which 2.6.19 did not change, so it still
-  renders without a credential. Measured on the published build: a credential
-  the service rejects logs *"★ UNMETERED RENDER — CREDENTIAL REJECTED (401) …
-  Rendering continues for another 300 s of grace"*, keeps rendering through
-  four once-a-minute beats, and only on the fifth logs *"REFUSED: the
-  credential has been rejected (401) for 300 s"* — at which point the session
-  ends and the process exits **70**, not 77. Treat `run` as unenforced until a
-  release says otherwise.
+- **`bithuman run` refuses on macOS, and is not yet covered on Linux.** Which
+  half of the product meters the session differs by platform: the CLI does it
+  on macOS arm64, the engine does it on Linux, and this release fixed the CLI
+  half only.
+  - **macOS.** No credential, or one the service rejects, ends the session in
+    a few seconds with exit **77** and `METERING_REFUSED` — *"refusing to
+    serve: no api-secret is available, so this session cannot be attributed to
+    an account"*, or *"refusing to serve: the API secret was rejected —
+    revoked, or from another environment. (401)"*. Nothing is served and no
+    output is written.
+  - **Linux.** It renders. A rejected credential logs *"★ UNMETERED RENDER —
+    CREDENTIAL REJECTED (401) … Rendering continues for another 300 s of
+    grace"*, keeps rendering through four once-a-minute beats, and only on the
+    fifth logs *"REFUSED: the credential has been rejected (401) for 300 s"* —
+    the session then ends and the process exits **70**, not 77. Treat a Linux
+    `run` as unenforced until a release says otherwise.
 - **`BITHUMAN_UNMETERED=1` is gone** from the CLI; setting it does nothing.
 - **An unreachable meter still renders, and is never refused.** If our service
   cannot be reached, the render continues and says so — being unable to ask is

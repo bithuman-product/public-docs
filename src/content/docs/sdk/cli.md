@@ -73,12 +73,15 @@ is one (24 kHz, 15 s). `bithuman info <file>` prints what an avatar is before yo
 key; `bithuman login --device` prints a code for an SSH session.
 
 From 2.6.19, `bithuman render` stops before the first frame without a usable
-credential — exit 77, *"not signed in, or the credential is not valid — run
-`bithuman login`, or set BITHUMAN_API_SECRET"*. `bithuman run` is **not yet
-covered**: it still renders without one, and a credential the service rejects
-only ends the session after 300 seconds of grace. Treat `run` as unenforced
-today rather than as a way to render without a key — every render is metered,
-and [pricing](/guides/pricing) is the authority.
+credential, on both platforms — exit 77, *"not signed in, or the credential is
+not valid — run `bithuman login`, or set BITHUMAN_API_SECRET"*.
+
+`bithuman run` differs by platform. On **macOS** it refuses too: exit 77 in a
+few seconds, before it serves a frame or writes anything. On **Linux** it is
+**not yet covered** — it renders without a credential, and one the service
+rejects only ends the session after 300 seconds of grace. Treat a Linux `run`
+as unenforced rather than as a way to render without a key: every render is
+metered, and [pricing](/guides/pricing) is the authority.
 
 Then open the printed `http://127.0.0.1:8088/`, grant the microphone, talk.
 `bithuman login` also adds the managed conversation brain, and
