@@ -68,6 +68,41 @@ esac
 
 say() { printf '%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*"; }
 
+# >>> measurement lock snippet (the estate's lock files and rules; --selftest evals THIS copy)
+# ★2026-09-14: this gate is the THIRD scheduled thing that reaches echelon, and that night a
+# sibling walker (tools/mac_disk_janitor.sh in bithuman-models) ran find/stat there inside a
+# lane's graded measurement window and VOIDED its control run.  A measurement on the remote
+# host now defers this gate before anything is built or walked there.  DEFERRED is recorded,
+# never silent, and no receipt is written -- so --deadman still reddens if this gate only ever
+# defers, which is the difference between deferring and quietly doing nothing.
+read -r -d '' LOCK_SNIPPET <<'LOCKSNIP' || true
+mh="${MEASURE_HOME:-$HOME}"; now=$(date +%s); who=""
+f="$mh/.measure_lock/holder"
+if [ -e "$f" ]; then
+  l1=$(sed -n 1p "$f"); l2=$(sed -n 2p "$f"); l3=$(sed -n 3p "$f"); l4=$(sed -n 4p "$f")
+  case "$l2" in ''|*[!0-9]*) l2=x ;; esac
+  case "$l3" in ''|*[!0-9]*) l3=x ;; esac
+  if [ "$l2" = x ] || [ "$l3" = x ]; then
+    who="$who; ${l1:-?} (UNPARSEABLE holder record: HELD until a human looks)"
+  elif [ $(( l2 + l3 * 60 - now )) -gt 0 ]; then
+    who="$who; ${l1:-?}${l4:+ - $l4}"
+  fi
+fi
+for d in "$mh"/.device_lock/*.lockdir; do
+  [ -d "$d" ] || continue
+  p=$(sed -n 1p "$d/pid" 2>/dev/null)
+  if [ -z "$p" ] || kill -0 "$p" 2>/dev/null; then who="$who; $(basename "$d" .lockdir) device lock"; fi
+done
+for sr in "$mh"/.device_lock/*.series; do
+  [ -f "$sr" ] || continue
+  p=$(sed -n 1p "$sr"); case "$p" in ''|*[!0-9]*) continue ;; esac
+  if kill -0 "$p" 2>/dev/null; then who="$who; $(basename "$sr" .series) series (pid $p)"; fi
+done
+[ -n "$who" ] && printf '%s\n' "${who#; }"
+LOCKSNIP
+# <<< measurement lock snippet
+
+
 # ------------------------------------------------------------ finding node ---
 # ★MEASURED 2026-09-09, and it is the whole reason this is not a bare
 # `command -v node`. cron on lafayette hands a job PATH=/usr/bin:/bin, and this
@@ -222,6 +257,37 @@ if ! "$NODE_BIN" "$CHECKER" --selftest; then
   say "UNPROVEN: the extractor self-test is RED — this gate is blind, do not read its verdict"
   exit 2
 fi
+# ★the measurement-lock arms, evaluated from the SHIPPED snippet above, not a copy of it.
+lock_fail=0
+_lk="$(mktemp -d)"; trap 'rm -rf "$_lk"' EXIT INT TERM
+mkdir -p "$_lk/.measure_lock" "$_lk/.device_lock"
+_held() { printf '%s\n' "$LOCK_SNIPPET" | MEASURE_HOME="$_lk" sh -s; }
+if [ -n "$(_held)" ]; then say "selftest: no lock files read as HELD  FAIL"; lock_fail=1
+else say "selftest: no lock files, nothing held (control)  OK"; fi
+printf 'web-baseline\n%s\n30\nquiet baseline\n' "$(( $(date +%s) - 60 ))" > "$_lk/.measure_lock/holder"
+case "$(_held)" in
+  *web-baseline*) say "selftest: a holder inside its minutes is HELD, and names the lane  OK" ;;
+  *) say "selftest: a holder inside its minutes was not held  FAIL"; lock_fail=1 ;;
+esac
+printf 'web-baseline\n%s\n30\nquiet baseline\n' "$(( $(date +%s) - 3600 ))" > "$_lk/.measure_lock/holder"
+if [ -n "$(_held)" ]; then say "selftest: an EXPIRED holder read as HELD  FAIL"; lock_fail=1
+else say "selftest: an EXPIRED holder is free  OK"; fi
+printf 'someone\nnot-a-time\n30\n' > "$_lk/.measure_lock/holder"
+case "$(_held)" in
+  *UNPARSEABLE*) say "selftest: an UNPARSEABLE holder is HELD until a human looks  OK" ;;
+  *) say "selftest: an UNPARSEABLE holder read as free  FAIL"; lock_fail=1 ;;
+esac
+rm -f "$_lk/.measure_lock/holder"
+mkdir -p "$_lk/.device_lock/DEV.lockdir"; echo "$$" > "$_lk/.device_lock/DEV.lockdir/pid"
+case "$(_held)" in
+  *"DEV device lock"*) say "selftest: a device lock whose pid lives is HELD  OK" ;;
+  *) say "selftest: a live device lock read as free  FAIL"; lock_fail=1 ;;
+esac
+rm -rf "$_lk/.device_lock/DEV.lockdir"
+if [ "$lock_fail" -ne 0 ]; then
+  say "UNPROVEN: the measurement-lock arms did not all fire - this gate cannot prove it will defer, so it does not run"
+  exit 2
+fi
 [ "$MODE" = selftest ] && { say "selftest-only: done"; exit 0; }
 
 # ------------------------------------------------------------ echelon checks ---
@@ -230,6 +296,13 @@ if ! ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" true 2>/dev/null; then
   exit 2
 fi
 
+# ★DEFER while $REMOTE is measuring: before any build, walk or file write there.
+held_by="$(printf '%s\n' "$LOCK_SNIPPET" | ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" sh -s 2>/dev/null)"
+if [ -n "$held_by" ]; then
+  say "DEFERRED: $REMOTE is measuring (measurement lock held by $held_by) - nothing was built, walked or written there."
+  say "DEFERRED is not a pass: no receipt is written, so --deadman reddens if this gate only ever defers."
+  exit 0
+fi
 free_gib=$(ssh -o BatchMode=yes -o ConnectTimeout=15 "$REMOTE" \
   "df -g /System/Volumes/Data | awk 'NR==2{print \$4}'" 2>/dev/null)
 case "${free_gib:-}" in
