@@ -34,13 +34,22 @@ CLI `cli-v2.6.19`, macOS arm64 and Linux x86_64 built from one commit.
     an account"*, or *"refusing to serve: the API secret was rejected —
     revoked, or from another environment. (401)"*. Nothing is served and no
     output is written.
-  - **Linux.** It renders. A rejected credential logs *"★ UNMETERED RENDER —
-    CREDENTIAL REJECTED (401) … Rendering continues for another 300 s of
-    grace"*, keeps rendering through four once-a-minute beats, and only on the
-    fifth logs *"REFUSED: the credential has been rejected (401) for 300 s"* —
-    the session then ends and the process exits **70**, not 77. Treat a Linux
-    `run` as unenforced until a release says otherwise.
-- **`BITHUMAN_UNMETERED=1` is gone** from the CLI; setting it does nothing.
+  - **Linux.** It renders, and with **no credential at all it keeps
+    rendering** — *"★ UNMETERED RENDER: no BITHUMAN_API_SECRET is set, so this
+    render cannot be attributed to an account. Proceeding anyway — metering is
+    FAIL-OPEN"* — with no countdown and no refusal. The 300-second grace
+    applies only to a credential the service actively **rejects**: that logs
+    *"★ UNMETERED RENDER — CREDENTIAL REJECTED (401) … Rendering continues for
+    another 300 s of grace"*, renders through four once-a-minute beats, and on
+    the fifth logs *"REFUSED: the credential has been rejected (401) for
+    300 s"* — the session then ends and the process exits **70**, not 77.
+    Treat a Linux `run` as unenforced until a release says otherwise.
+- **`BITHUMAN_UNMETERED=1` is gone wherever the CLI is the meter** — that is
+  `render` on both platforms and `run` on macOS, where setting it changes
+  nothing. The engine meter that serves `run` on Linux still honours it: that
+  session prints *"★ BITHUMAN_UNMETERED is set — THIS RENDER IS NOT BEING
+  BILLED. No usage will reach the ledger. This must never be set in
+  production."* and renders.
 - **An unreachable meter still renders, and is never refused.** If our service
   cannot be reached, the render continues and says so — being unable to ask is
   not the same as being told no. An operator who wants a validated credential

@@ -102,10 +102,10 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 | Mode | What it means | Auth |
 |---|---|---|
 | **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server, Android, CLI, REST) / `BITHUMAN_API_KEY` (Swift only) |
-| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skipped auth and heartbeat. **Removed from the CLI in 2.6.19** — setting it there now does nothing, and every render needs a credential. Still honoured by the Python SDK and the Docker container. | none, where it still applies |
+| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` skips auth and heartbeat. **Ignored wherever the CLI is the meter** since 2.6.19 — `render` on both platforms, `run` on macOS. Still honoured by the engine meter that serves `run` on Linux, and by the Python SDK and the Docker container. | none, where it still applies |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
-The Python SDK and the Docker container honour `BITHUMAN_UNMETERED=1`; the CLI did until 2.6.19 and no longer does. The Swift SDK has the same escape hatch via its unmetered initializer.
+The Python SDK and the Docker container honour `BITHUMAN_UNMETERED=1`, and so does the engine meter behind a Linux `bithuman run`. The CLI's own meter — `render` on both platforms, `run` on macOS — ignores it from 2.6.19. The Swift SDK has the same escape hatch via its unmetered initializer.
 
 ## How metering works
 
