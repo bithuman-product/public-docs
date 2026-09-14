@@ -51,14 +51,9 @@
   color: var(--color-text);
 }
 
-/* fenced code blocks (Shiki) — the card, the bar and the wrapping live in
-   src/styles/code.css so prose, cards and tabs all present code the same way. */
-.prose pre {
-  margin: var(--space-5) 0;
-  border-radius: var(--r-lg);
-  border: 1px solid var(--color-border);
-  background: var(--color-code-bg) !important;
-}
+/* The card, the bar and the wrapping live in src/styles/code.css, so prose,
+   platform cards and tabbed samples all present code the same way. */
+.prose pre { margin: var(--space-5) 0; }
 .prose .bh-code > pre { margin: 0; }
 
 /* tables */
@@ -67,20 +62,6 @@
   border-collapse: collapse;
   margin: var(--space-5) 0;
   font-size: var(--ft-sm);
-  display: block;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  /* A wide table still has to scroll on a phone, so it says so: the shadow on
-     an edge appears only while there is more table past it. Pure CSS — the
-     `local` layers move with the content, the `scroll` ones stay put. */
-  background:
-    linear-gradient(to right, var(--color-bg), transparent) left center,
-    linear-gradient(to left, var(--color-bg), transparent) right center,
-    radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.13), transparent) left center,
-    radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.13), transparent) right center;
-  background-repeat: no-repeat;
-  background-size: 28px 100%, 28px 100%, 12px 100%, 12px 100%;
-  background-attachment: local, local, scroll, scroll;
 }
 .prose th, .prose td {
   text-align: left;
@@ -88,15 +69,63 @@
   border-bottom: 1px solid var(--color-border);
   vertical-align: top;
 }
-.prose th {
-  font-weight: var(--fw-medium);
-  color: var(--color-text-secondary);
-  background: var(--color-surface-2);
-}
+.prose th { font-weight: var(--fw-medium); color: var(--color-text-secondary); background: var(--color-surface-2); }
 .prose tr:last-child td { border-bottom: 0; }
-/* A table cell is the one place a code span must be allowed to wrap hard:
-   at 390px the troubleshooting tables were cells of clipped paths. */
-.prose td code { overflow-wrap: anywhere; }
+/* An address or a path in a cell must break rather than widen the row. */
+.prose td code, .prose td a { overflow-wrap: anywhere; }
+
+/* Wide enough for a grid: the table stays a table, and says when it scrolls —
+   the shadow on an edge appears only while there is more table past it. */
+@media (min-width: 701px) {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    background:
+      linear-gradient(to right, var(--color-bg), transparent) left center,
+      linear-gradient(to left, var(--color-bg), transparent) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.13), transparent) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.13), transparent) right center;
+    background-repeat: no-repeat;
+    background-size: 28px 100%, 28px 100%, 12px 100%, 12px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+}
+
+/* Too narrow for a grid: a table stops being one. Each row becomes a card of
+   labelled values, so nothing is clipped and nothing has to be dragged
+   sideways. At 390px the three-column troubleshooting tables were columns of
+   cut-off paths; the column names come from rehype-table-labels.mjs at build
+   time, so this reads correctly with nothing running. */
+@media (max-width: 700px) {
+  .prose table, .prose tbody, .prose tr, .prose td { display: block; }
+  .prose thead { display: none; }
+  .prose tr {
+    margin-bottom: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-lg);
+    background: var(--color-surface-2);
+  }
+  .prose tr:last-child { margin-bottom: 0; }
+  .prose td {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 34%) minmax(0, 1fr);
+    gap: var(--space-3);
+    padding: 0.3rem 0;
+    border: 0;
+  }
+  .prose td:empty { display: none; }
+  .prose td[data-label]::before {
+    content: attr(data-label);
+    font-size: var(--ft-xs);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+    color: var(--color-text-tertiary);
+  }
+}
 
 /* blockquote → callout (migration uses blockquotes for Note/Tip/Warning) */
 .prose blockquote {

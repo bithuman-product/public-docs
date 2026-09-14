@@ -24,9 +24,6 @@ A cell marked **not yet real time** is a real measurement that falls under that
 rate: the pairing renders, just not fast enough to talk to. Use it for offline
 files, or run that model [in the cloud](/api/overview) instead.
 
-A cell with no number says what is missing instead. It never means the platform
-is unsupported — [what each platform needs →](/sdk)
-
 <!-- FLOORS:NOTES -->
 The Expression 2 Cloud GPU number already includes saving the video file.
 
