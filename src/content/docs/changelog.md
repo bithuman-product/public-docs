@@ -10,6 +10,22 @@ order: 1
 
 ## September 2026
 
+### `bithuman` 3.1.7: Expression 2 on a Mac renders on the same CoreML engine as the macOS CLI (2026-09-14)
+
+`bithuman` 3.1.7 on PyPI, for Apple Silicon macOS (14 or newer), Linux x86_64
+and Linux aarch64 (CPython 3.10–3.14).
+
+- **On a Mac, Expression 2 renders on the same CoreML host and engine as the
+  macOS CLI.** The Mac wheels carry the host `cli-v2.6.17` ships, byte for byte,
+  and a clean install renders the quickstart avatar on it: with logging at
+  `INFO` the library says *"expression-2 on the CoreML host … the same host and
+  engine as the macOS CLI"*. Nothing you call changes. Linux is unchanged.
+- **An avatar that cannot use CoreML now says why.** If an avatar was packed
+  without the Apple Silicon decoder, the library says so first and renders on
+  the CPU instead, where the warning used to end in a cut-off host log.
+- **To see which version you have,** run
+  `python -c "from importlib.metadata import version; print(version('bithuman'))"`.
+
 ### Expression 2 renders faster on a Mac, and every frame is what 2.6.16 produced — `cli-v2.6.17` (2026-09-14)
 
 CLI `cli-v2.6.17`, macOS arm64 and Linux x86_64 built from one commit. **If you
