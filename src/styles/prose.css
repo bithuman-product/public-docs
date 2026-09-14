@@ -55,7 +55,6 @@
    src/styles/code.css so prose, cards and tabs all present code the same way. */
 .prose pre {
   margin: var(--space-5) 0;
-  padding: var(--space-4) var(--space-5);
   border-radius: var(--r-lg);
   border: 1px solid var(--color-border);
   background: var(--color-code-bg) !important;

@@ -194,9 +194,7 @@ const ogImage = new URL(image, site).href;
           card.className = "bh-code";
           var bar = document.createElement("div");
           bar.className = "bh-code-bar";
-          var lang = document.createElement("span");
-          lang.className = "bh-code-lang";
-          lang.textContent = pre.getAttribute("data-language") || "";
+          var langName = pre.getAttribute("data-language");
           var btn = document.createElement("button");
           btn.className = "code-copy";
           btn.type = "button";
@@ -211,7 +209,12 @@ const ogImage = new URL(image, site).href;
               }, 1400);
             }).catch(function () {});
           });
-          bar.appendChild(lang);
+          if (langName) {
+            var lang = document.createElement("span");
+            lang.className = "bh-code-lang";
+            lang.textContent = langName;
+            bar.appendChild(lang);
+          }
           bar.appendChild(btn);
 
           pre.replaceWith(card);

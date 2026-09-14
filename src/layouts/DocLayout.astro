@@ -139,6 +139,34 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
         b.setAttribute("aria-expanded", open ? "true" : "false");
       });
     });
+
+    // "On this page" marks the section you are reading. The rail already drew a
+    // transparent left border for it and nothing ever turned the border on, so
+    // a reader halfway down a long page had no idea where they were.
+    (() => {
+      const links = [...document.querySelectorAll<HTMLAnchorElement>(".doc-toc a[href^='#']")];
+      if (links.length < 2) return;
+      const byId = new Map(links.map((a) => [decodeURIComponent(a.hash.slice(1)), a]));
+      const headings = [...byId.keys()]
+        .map((id) => document.getElementById(id))
+        .filter((h): h is HTMLElement => !!h);
+      if (!headings.length) return;
+
+      const mark = () => {
+        const line = window.scrollY + 140;
+        let current = headings[0];
+        for (const h of headings) if (h.offsetTop <= line) current = h;
+        for (const a of links) a.classList.remove("here");
+        byId.get(current.id)?.classList.add("here");
+      };
+      let queued = false;
+      addEventListener("scroll", () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(() => { queued = false; mark(); });
+      }, { passive: true });
+      mark();
+    })();
   </script>
 </Base>
 
@@ -163,7 +191,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
   .side-group ul { list-style: none; padding: 0; margin: 0; }
   .side-link { display: block; padding: 0.32rem 0.6rem; margin-left: -0.6rem; border-radius: var(--r-md); font-size: var(--ft-sm); color: var(--color-text-secondary); border-left: 2px solid transparent; }
   .side-link:hover { color: var(--color-text); background: var(--color-surface-2); }
-  .side-link.active { color: var(--color-primary); font-weight: var(--fw-medium); background: var(--color-primary-soft); }
+  .side-link.active { color: var(--color-primary); font-weight: var(--fw-medium); background: var(--color-primary-soft); border-left-color: var(--color-primary); }
   /* content */
   .doc-main { padding-block: var(--space-8); min-width: 0; }
   .doc-crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--space-4); }
@@ -186,6 +214,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
      and pushed the whole page sideways on a 1440px screen. */
   .doc-toc a { display: block; padding: 0.22rem 0; color: var(--color-text-tertiary); border-left: 2px solid transparent; padding-left: 0.6rem; overflow-wrap: anywhere; }
   .doc-toc a:hover { color: var(--color-text); }
+  .doc-toc a.here { color: var(--color-text); border-left-color: var(--color-primary); }
   .toc-d3 a { padding-left: 1.3rem; font-size: var(--ft-xs); }
 
   @media (max-width: 1080px) { .doc { grid-template-columns: 230px minmax(0,1fr); } .doc-toc { display: none; } }
