@@ -57,6 +57,21 @@
 //                 green: no docs edit can fix an untagged package, and turning
 //                 this repository red for another lane's release step would
 //                 block every unrelated page change.
+//   V9  Rates     ONE WRITER FOR A MEASURED RATE. sdk/performance.md is emitted
+//                 from the floors record; no other page may state a number that
+//                 equals one of its cells next to "fps" or "frames per second".
+//                 Measured 2026-09-14: sdk/ios said "measured on an iPhone 15 at
+//                 33 frames per second" while the cell had already moved to 52 —
+//                 a hand-written copy of a fact that only one writer regenerates.
+//                 The model PLAY rates (20 and 25) are exempt: they are product
+//                 constants stated all over the site, not measurements, and a
+//                 cell that happens to equal one must not silence them.
+//                 ★THE LINE, so nobody has to re-derive it: a number is a CELL
+//                 COPY when it states what a PLATFORM ACHIEVES. It is not one
+//                 when it states what a model PLAYS at (20, 25), what a BROKEN
+//                 configuration looks like (sdk/web's "~8 fps instead of 20"),
+//                 or what a page MEASURED ITSELF (the Kotlin example's own
+//                 all-CPU arm). Those three stay silent on purpose.
 //   V7  Changelog the newest `cli-v*` the changelog names must be the newest
 //                 CLI, and the newest version of the CLI, `bithuman` and both
 //                 Android artifacts must each have an entry.
@@ -164,6 +179,41 @@ function corpus() {
 }
 
 const isChangelog = (p) => /(^|\/)changelog\.mdx?$/.test(p);
+const isPerformance = (p) => /(^|\/)sdk\/performance\.mdx?$/.test(p);
+/** The rates a model PLAYS at — product constants, never a measurement. */
+const PLAY_RATES = new Set(["20", "25"]);
+
+/** Every number the emitted performance table states as a cell, mapped to the
+ *  row and column it came from, so a failure can name the cell it matched
+ *  rather than leaving a reader to hunt for it. */
+export function performanceCells(text) {
+  const out = new Map();
+  let columns = ["Expression 2", "Essence 2"];
+  for (const line of text.split("\n")) {
+    if (!/^\|/.test(line)) continue;
+    const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+    if (cells.length !== 4) continue;
+    if (/^platform$/i.test(cells[0])) {
+      columns = [cells[2], cells[3]];
+      continue;
+    }
+    if (/^-+$/.test(cells[0].replace(/:/g, ""))) continue;
+    cells.slice(2).forEach((c, i) => {
+      const m = /(\d+(?:\.\d+)?)/.exec(c);
+      if (m && !out.has(m[1])) out.set(m[1], `${cells[0]} · ${columns[i]}`);
+    });
+  }
+  return out;
+}
+
+/** Rate literals on a page: the number written next to fps / frames per second. */
+export function rateLiterals(text) {
+  const out = [];
+  const re = /(\d+(?:\.\d+)?)\s*(fps|frames per second)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) out.push({ value: m[1], line: lineOf(text, m.index), what: m[0] });
+  return out;
+}
 const isDownloads = (p) => /(^|\/)downloads\.mdx?$/.test(p);
 
 function lineOf(text, index) {
@@ -349,7 +399,7 @@ class CannotCheck extends Error {}
 export async function grade(files, registry) {
   const failures = [];
   const cannot = [];
-  const seen = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0 };
+  const seen = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0 };
   const latest = {};
 
   for (const a of ARTIFACTS) {
@@ -362,6 +412,12 @@ export async function grade(files, registry) {
     }
   }
   const unread = (artifact) => cannot.find((c) => c.artifact === artifact);
+
+  const cells = new Map();
+  for (const f of files) {
+    if (!isPerformance(f.path)) continue;
+    for (const [value, where] of performanceCells(f.text)) if (!cells.has(value)) cells.set(value, where);
+  }
 
   for (const { path, text } of files) {
     for (const s of subjects(path, text)) {
@@ -397,6 +453,25 @@ export async function grade(files, registry) {
             `V6: pins the Swift package at from: "${p.version}", which resolves to ${to ?? "no tag"}; ` +
             `the newest published tag is ${tags}.`,
         });
+      }
+    }
+
+    // V9 — one writer for a measured rate
+    if (!isChangelog(path) && !isPerformance(path) && cells.size) {
+      for (const r of rateLiterals(text)) {
+        seen.V9++;
+        if (PLAY_RATES.has(r.value)) continue;
+        if (cells.has(r.value)) {
+          failures.push({
+            path,
+            line: r.line,
+            msg:
+              `V9: "${r.what}" repeats the performance page's ${cells.get(r.value)} cell (${r.value}), ` +
+              `which is emitted from the floors record by its one writer. When that cell moves, this ` +
+              `copy silently becomes false — sdk/ios said 33 while the cell already said 52. ` +
+              `State the rate only on /sdk/performance and link to it.`,
+          });
+        }
       }
     }
 
@@ -578,6 +653,10 @@ const CL = (firstCli, e2, py) =>
   `### CLI (2026-09-13)\n\nCLI \`cli-v${firstCli}\`.\n\n` +
   "### Older (2026-09-11)\n\nCLI `cli-v2.6.6`, `ai.bithuman:expression2-android:0.4.1`.\n";
 
+const PERF_FIXTURE =
+  "| Platform | Reference hardware | Expression 2 | Essence 2 |\n|---|---|---:|---:|\n" +
+  "| iOS | iPhone 15 | 118 | 52 |\n| Web | Chrome on M4 | 30 | being re-measured |\n";
+
 const ARMS = [
   // defects — each must fire
   ["bad: the pre-#70 Android coordinate (0.5.3)", "p/sdk/android.md", '`implementation("ai.bithuman:essence2-android:0.5.3")`', true],
@@ -614,13 +693,23 @@ const ARMS = [
   ["bad: an older Essence 2 engine named as what the newest tag ships", "p/sdk/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.2**.", true],
   ["good: the newest tag and the engine it ships", "p/sdk/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**.", false],
   ["control: a minimum Swift version is not a claim about the newest", "p/downloads.md", "Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the file you download.", false],
+  ["bad: a page repeating a performance cell", "p/sdk/ios.md", "measured on an iPhone 15 at 52 frames per second", true],
+  ["bad: a page repeating the other column's cell", "p/sdk/web.md", "the browser renders at 118 fps today", true],
+  ["good: the model play rate is a product constant, not a cell", "p/concepts/essence-2.md", "lip-synced live at ~25 frames per second, and 20 fps for the other model", false],
+  ["good: a page's own measurement that is not a cell", "p/examples/kotlin.md", "this phone renders about 5.6 frames per second, and playback needs 20", false],
+  ["control: the performance page itself states its cells", "p/sdk/performance.md", PERF_FIXTURE, false],
   ["control: a page with no version at all", "p/x.md", "Nothing versioned here.\n", false],
 ];
 
 async function selftest() {
   let bad = 0;
   for (const [name, path, text, mustFire] of ARMS) {
-    const { failures, cannot } = await grade([{ path, text }], stub());
+    // V9 needs the performance page in the corpus to know what a cell is, so
+    // every arm is graded beside it — except the arm that IS that page.
+    const corpusFiles = isPerformance(path)
+      ? [{ path, text }]
+      : [{ path, text }, { path: "p/sdk/performance.md", text: PERF_FIXTURE }];
+    const { failures, cannot } = await grade(corpusFiles, stub());
     const fired = failures.length > 0;
     const ok = fired === mustFire && cannot.length === 0;
     if (!ok) bad++;
@@ -642,11 +731,12 @@ async function selftest() {
   }
   // The rules must see the real pages, or every arm above is about fixtures only.
   const real = corpus();
-  const counts = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0 };
+  const counts = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0 };
   for (const f of real) {
     for (const s of subjects(f.path, f.text)) counts[s.rule]++;
     counts.V6 += tapPins(f.text).length;
     if (isChangelog(f.path)) counts.V7++;
+    if (!isChangelog(f.path) && !isPerformance(f.path)) counts.V9 += rateLiterals(f.text).length;
   }
   for (const [rule, n] of Object.entries(counts)) {
     if (rule === "V2") continue; // no page pins with == today; the fixture arm proves it fires
@@ -707,15 +797,20 @@ for (const c of cannot) {
 }
 const code = verdict(failures, cannot);
 if (code === 1) {
+  const rates = failures.filter((f) => f.msg.startsWith("V9:")).length;
+  const versions = failures.length - rates;
+  const parts = [];
+  if (versions) parts.push(`${versions} version(s) older than the newest published`);
+  if (rates) parts.push(`${rates} rate literal(s) repeating a performance-page cell`);
   console.log(
-    `check-versions-current: ${failures.length} version(s) on the site are older than the newest published` +
+    `check-versions-current: ${failures.length} finding(s) — ${parts.join(", ")}` +
       (cannot.length ? `, and ${cannot.length} registr${cannot.length > 1 ? "ies" : "y"} could not be read` : "") +
-      ". Fix: write the newest version, and add its changelog entry.",
+      ". Fix: write the newest version and add its changelog entry; state a measured rate only on /sdk/performance.",
   );
 } else if (code === 2) {
   console.log(`check-versions-current: CANNOT CHECK — ${cannot.length} registr${cannot.length > 1 ? "ies" : "y"} unreadable. This is not a pass.`);
 } else {
   const n = Object.values(seen).reduce((a, b) => a + b, 0);
-  console.log(`check-versions-current: OK — ${n} subject(s) across V1–V8 name the newest published version.`);
+  console.log(`check-versions-current: OK — ${n} subject(s) across V1–V9: every version is the newest published, and no page repeats a performance cell.`);
 }
 process.exit(code);

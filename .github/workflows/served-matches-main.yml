@@ -66,6 +66,27 @@ jobs:
       # subject rather than an omission: the alias serves main, so it is behind
       # every unmerged commit by construction and a PR run would always fail.
       # Its proof is the self-test above, plus the first run after each merge.
+      # ★THE DIRECT CAUSE, ASKED DIRECTLY. The alias check below infers a
+      # missing build from a stale timestamp; this asks whether a deployment
+      # for THIS commit exists at all, which is what failed on 2026-09-14.
+      - name: A deployment exists for this commit
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha='${{ github.sha }}'
+          for attempt in $(seq 1 20); do
+            n="$(gh api "repos/${{ github.repository }}/deployments?sha=$sha&per_page=5" --jq 'length' 2>/dev/null || echo "")"
+            if [ -n "$n" ] && [ "$n" -gt 0 ] 2>/dev/null; then
+              echo "attempt $attempt: $n deployment(s) exist for $sha"
+              exit 0
+            fi
+            echo "attempt $attempt: no deployment for $sha yet"
+            sleep 30
+          done
+          echo "::error::no deployment was created for $sha within 10 minutes, so the site cannot be serving it. On 2026-09-14 a merge produced no build at all and the alias served the previous one for fifteen minutes. An empty commit on main produces the push event again."
+          exit 1
+
       - name: The alias is serving a build no older than main's head
         run: |
           NOT_BEFORE="$(git log -1 --format=%cI)"
