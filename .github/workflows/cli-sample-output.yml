@@ -1,0 +1,66 @@
+name: CLI sample output
+
+# THE SAMPLE OUTPUT ON THE PAGE IS WHAT THE PUBLISHED BINARY PRINTS.
+#
+# sdk/cli and sdk/cli/reference print what `bithuman --version` and
+# `bithuman version --json` produce, and a reader compares their own terminal
+# against them. Those blocks carry three facts: the CLI's version, the version
+# of the engine inside it, and the ABI. The version guard grades the first,
+# because a registry serves it. Nothing graded the other two.
+#
+# Measured 2026-09-14: cli-v2.6.15 moved the engine inside from 3.1.4 to 3.1.5
+# in the same release that moved the CLI from 2.6.14 to 2.6.15. A bump that
+# followed only the registry would have written the new CLI number beside a
+# stale engine number and read as correct to every check in this repository.
+# The engine version has no registry — the only thing that knows it is the
+# published binary — so this runs the published binary and compares.
+#
+# WHEN IT RUNS. On any change to the two pages that carry a block, so a bump is
+# graded before it merges rather than after; and daily, because the blocks go
+# stale when a RELEASE publishes, which is not an event in this repository.
+# The whole run takes seconds: the tarball download dominates it.
+#
+# EXIT 0 the pages match the binary · 1 they do not · 2 the binary could not be
+# obtained or run, which is a failure you can see and never a pass.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/content/docs/sdk/cli.md
+      - src/content/docs/sdk/cli/reference.md
+      - scripts/check-cli-sample-output.mjs
+      - .github/workflows/cli-sample-output.yml
+  pull_request:
+    paths:
+      - src/content/docs/sdk/cli.md
+      - src/content/docs/sdk/cli/reference.md
+      - scripts/check-cli-sample-output.mjs
+      - .github/workflows/cli-sample-output.yml
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cli-sample-output:
+    name: the sample output is what the published binary prints
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # The instrument proves itself with fixtures and no network, so it is
+      # graded even on the runs where the network is what broke.
+      - name: The sample-output gate proves itself
+        run: node scripts/check-cli-sample-output.mjs --selftest
+
+      - name: Both sample blocks match the published binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-cli-sample-output.mjs
