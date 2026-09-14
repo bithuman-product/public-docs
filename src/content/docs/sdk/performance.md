@@ -7,6 +7,7 @@ order: 90
 label: "Performance"
 ---
 
+<!-- FLOORS:TABLE platform -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 83.5 |
@@ -15,6 +16,7 @@ label: "Performance"
 | Android | Galaxy S25+ | 58 | 50 |
 | Web | Chrome on M4 | 30 | 27 |
 | Linux | Intel Core i7-13700F | 44 | 29 |
+<!-- /FLOORS:TABLE -->
 
 **How to read a row.** Expression 2 plays at 20 frames per second, Essence 2 at
 25. A number at or above its model's own rate holds a live, two-way conversation
@@ -40,10 +42,12 @@ The [Python library](/sdk/python) (`pip install bithuman`) is a separate
 product from the CLI, measured the same way on the same reference hardware, so
 each row here compares directly with the same platform in the table above.
 
+<!-- FLOORS:TABLE python -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
 | Linux | Intel Core i7-13700F | 49 | 27 |
 | macOS | Apple M4 | being re-measured | being re-measured |
+<!-- /FLOORS:TABLE -->
 
 Measured audio in to frame out, once the model has loaded. Loading the model the
 first time adds to the total.
