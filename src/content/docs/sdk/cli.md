@@ -26,8 +26,8 @@ you what you got:
 
 ```text
 $ bithuman --version
-libessence  3.1.5 ABI 7          # the engine inside, and the ABI it speaks
-bithuman    2.6.16               # the CLI itself
+libessence  3.1.6 ABI 7          # the engine inside, and the ABI it speaks
+bithuman    2.6.17               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
