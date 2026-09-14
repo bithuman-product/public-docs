@@ -13,7 +13,7 @@ label: "Python"
 pip install "bithuman[expression-2]"
 ```
 
-`bithuman` 3.1.7 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
+`bithuman` 3.1.8 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
 wheels. The `[expression-2]` extra opens `.avatar` files; for the Essence 2
 clip-to-file route add the offline extra — on Linux install the CPU build of
