@@ -37,8 +37,11 @@ CLI `cli-v2.6.20`, macOS arm64 and Linux x86_64 built from one commit.
   with `PUBLIC_BIND_REFUSED` and leaves nothing listening — *"--host 0.0.0.0
   binds every interface, which would expose this session to your whole
   network."* On 2.6.19 the same command bound the wildcard and served.
-  `--allow-public-bind` is still the opt-in, and with it the bind is not
-  refused. An unparseable `--host` now exits **2** with `BAD_HOST`, where
+  `--allow-public-bind` still opts in, and it still binds: with a credential
+  and the flag, `run` listens on `0.0.0.0` — checked against the kernel's
+  socket table, with the same credential and no flag refusing and listening on
+  nothing. The refusal is a gate on one flag, not a blanket ban on exposing a
+  session. An unparseable `--host` now exits **2** with `BAD_HOST`, where
   2.6.19 exited 1.
 - **`bithuman mcp tools` still lists 28 tools**, and the engine inside is still
   **3.1.8** (ABI 7).
