@@ -103,10 +103,14 @@ gets an honest answer instead of a deep engine error.
 Every self-hosted `run` and `render` is metered. The line to grep for, printed once when the meter attaches — it names the avatar, the product and the endpoint that will be billed:
 
 ```text
-[selfhost-meter] metering armed for identity=/home/you/.cache/bithuman/showcase/wise-pup.imx product=expression-2 endpoint=https://api.bithuman.ai/v1/
+[selfhost-meter] metering on for identity=/home/you/.cache/bithuman/showcase/wise-pup.imx product=expression-2 basis=… endpoint=https://api.bithuman.ai/v1/
 ```
 
-If instead you see `★ UNMETERED RENDER`, the service could not be reached — our outage or your network — and the render continues and is never refused, because being unable to ask is not the same as being told no. An operator who wants a validated credential before any frame sets `BITHUMAN_METER_ENFORCE=1`, which refuses this case too. A render with no credential, or one the service rejects, is refused outright: `render` from 2.6.19, and `run` on both platforms from 2.6.20 — see below.
+If the service cannot be reached — our outage or your network — the render continues and is never refused, because being unable to ask is not the same as being told no. Every beat says so and the session still ends 0: *"beat seq=1 failed to send (…); 5.3s (181 frames) stay UNACKED and will be re-claimed. Rendering continues."*
+
+`BITHUMAN_METER_ENFORCE=1` is the operator override for that case, and **it takes effect on macOS only**. There, a `run` that cannot validate its credential exits 77 before a frame is served: *"refusing to serve: could not reach …/v1/auth/validate to validate the credential (…), and BITHUMAN_METER_ENFORCE=1 requires a validated credential before any frame."* On Linux the same variable changes nothing — `run` is metered there by the engine's own meter, which fails open and renders. Do not rely on it to hold a Linux box to a validated credential.
+
+A render with no credential, or one the service rejects, is refused outright on both platforms: `render` from 2.6.19, and `run` from 2.6.20 — see below.
 
 ### Which model files run locally
 
