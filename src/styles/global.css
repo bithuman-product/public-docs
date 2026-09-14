@@ -2,6 +2,7 @@
    bitHuman docs — global base
    ========================================================================== */
 @import "./tokens.css";
+@import "./code.css";
 
 *,
 *::before,

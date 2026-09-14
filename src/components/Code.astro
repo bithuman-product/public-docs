@@ -1,0 +1,15 @@
+---
+// A code block written by a page rather than by Markdown, in the same shape
+// Shiki produces: one span per source line. That is what lets the site's code
+// CSS (src/styles/code.css) wrap a long line with a hanging indent, and what
+// lets the copy button in Base.astro find it — so a command on a card reads
+// and copies exactly like the same command inside a fenced block.
+interface Props {
+  code: string;
+  lang?: string;
+}
+const { code, lang } = Astro.props;
+const lines = code.split("\n");
+---
+
+<pre data-language={lang}><code>{lines.map((l) => <span class="line">{l}</span>)}</code></pre>

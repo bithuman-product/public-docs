@@ -12,7 +12,7 @@ interface Props {
 
 const {
   title = "bitHuman Docs — Private On-Device AI Avatars in Real Time",
-  description = "Build with bitHuman: turn a photo into a real-time AI avatar (up to 25 FPS) that runs fully on-device. Private by design — audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at the lowest per-minute cost.",
+  description = "Build with bitHuman: turn a photo into a real-time AI avatar (up to 25 fps) that runs fully on-device. Private by design — audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at the lowest per-minute cost.",
   image = "/images/bithuman-banner.jpg",
 } = Astro.props;
 
@@ -64,10 +64,10 @@ const ogImage = new URL(image, site).href;
           "operatingSystem": "macOS, Linux, iOS, iPadOS, Raspberry Pi OS",
           "url": "https://www.bithuman.ai",
           "publisher": { "@id": "https://www.bithuman.ai/#organization" },
-          "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time avatar (up to 25 FPS) that runs fully on your own hardware — private by design, self-hostable, on-prem, and air-gapped-capable. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",
+          "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time avatar (up to 25 fps) that runs fully on your own hardware — private by design, self-hostable, on-prem, and air-gapped-capable. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",
           "featureList": [
             "On-device inference — audio, video, and prompts never leave your hardware",
-            "Real-time lip-sync — 25 FPS (Essence 2), 20 FPS (Expression 2)",
+            "Real-time lip-sync — 25 fps (Essence 2), 20 fps (Expression 2)",
             "Runs on CPU (incl. Raspberry Pi), NVIDIA GPU, and Apple Silicon",
             "Self-hosted, on-prem, and air-gapped deployment",
             "Low per-minute cost, from 1 credit/min self-hosted"
@@ -175,22 +175,48 @@ const ogImage = new URL(image, site).href;
       window.__bhToggleMenu = function () {
         document.documentElement.classList.toggle("nav-open");
       };
-      // Copy button on every prose code block
+      // Every code block on the site — prose, platform cards, tabbed samples —
+      // gets the same card: a bar naming the language and a Copy button that is
+      // always visible. The button used to appear on hover only, which a phone
+      // cannot do, and it lived inside the <pre>, so it scrolled away with the
+      // code. The text is read at click time so a block filled in later (the
+      // playground) copies what is on screen.
       (function () {
-        document.querySelectorAll(".prose pre").forEach(function (pre) {
+        document.querySelectorAll("pre").forEach(function (pre) {
+          // The tabbed sample, the playground and the embed demo already draw a
+          // bar with their own copy control; the API reference is a
+          // third-party renderer. Everything else gets the card.
+          if (pre.closest(".bh-code, .references-rendered, .ct-panel, .pg-code, .wd-code")) return;
           var code = pre.querySelector("code");
-          var text = (code ? code.innerText : pre.innerText);
+          if (!code) return;
+
+          var card = document.createElement("div");
+          card.className = "bh-code";
+          var bar = document.createElement("div");
+          bar.className = "bh-code-bar";
+          var lang = document.createElement("span");
+          lang.className = "bh-code-lang";
+          lang.textContent = pre.getAttribute("data-language") || "";
           var btn = document.createElement("button");
           btn.className = "code-copy";
           btn.type = "button";
           btn.textContent = "Copy";
           btn.addEventListener("click", function () {
-            navigator.clipboard.writeText(text).then(function () {
+            navigator.clipboard.writeText(code.innerText).then(function () {
               btn.textContent = "Copied";
-              setTimeout(function () { btn.textContent = "Copy"; }, 1400);
+              btn.setAttribute("data-copied", "");
+              setTimeout(function () {
+                btn.textContent = "Copy";
+                btn.removeAttribute("data-copied");
+              }, 1400);
             }).catch(function () {});
           });
-          pre.appendChild(btn);
+          bar.appendChild(lang);
+          bar.appendChild(btn);
+
+          pre.replaceWith(card);
+          card.appendChild(bar);
+          card.appendChild(pre);
         });
       })();
     </script>

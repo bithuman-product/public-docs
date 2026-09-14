@@ -179,10 +179,12 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
   .pager span { font-size: var(--ft-xs); color: var(--color-text-tertiary); }
   .pager strong { color: var(--color-primary); font-size: var(--ft-sm); }
   /* toc */
-  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--space-8); font-size: var(--ft-sm); }
+  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--space-8); font-size: var(--ft-sm); min-width: 0; }
   .toc-label { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
   .doc-toc ul { list-style: none; padding: 0; margin: 0; }
-  .doc-toc a { display: block; padding: 0.22rem 0; color: var(--color-text-tertiary); border-left: 2px solid transparent; padding-left: 0.6rem; }
+  /* A heading can be a file path. Without this the 200px rail was 328px wide
+     and pushed the whole page sideways on a 1440px screen. */
+  .doc-toc a { display: block; padding: 0.22rem 0; color: var(--color-text-tertiary); border-left: 2px solid transparent; padding-left: 0.6rem; overflow-wrap: anywhere; }
   .doc-toc a:hover { color: var(--color-text); }
   .toc-d3 a { padding-left: 1.3rem; font-size: var(--ft-xs); }
 

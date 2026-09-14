@@ -122,7 +122,7 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 
 **Runtime characteristics**
 
-- ~200–500 MB resident, 1–2 CPU cores, real-time at 25 FPS.
+- ~200–500 MB resident, 1–2 CPU cores, real-time at 25 fps.
 - Runs on macOS arm64, Linux x86_64 / aarch64, iOS, iPadOS, Raspberry Pi 4B+, and in the browser via WASM.
 - No idle timeout — sessions can run 24/7. Reliable for unattended kiosks and lobby displays.
 - Supports custom gestures (wave, nod, laugh) triggered by keywords or API.
@@ -210,7 +210,7 @@ Expression *1* is GPU-only and has no on-device Apple build — see
 
 ### Edge hardware (Raspberry Pi, low-power laptop)
 
-**Essence.** Runs on 1–2 CPU cores at 25 FPS.
+**Essence.** Runs on 1–2 CPU cores at 25 fps.
 
 ### Highest visual quality for offline video generation
 

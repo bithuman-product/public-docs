@@ -93,7 +93,7 @@ The default avatar model. Runs on virtually every supported platform — the rig
 | **Linux x86_64 / aarch64** | Real-time | Python SDK, modern CPU + 4 GB RAM |
 | **Intel Mac** | Pending in 2.3 | Use 1.x wheel or run via Linux x86_64 |
 | **Windows x86_64** | WSL2 today | Run under WSL2; native wheels on the roadmap |
-| **Raspberry Pi 4B / 5** | Near real-time | Adequate for kiosks at modest FPS |
+| **Raspberry Pi 4B / 5** | Near real-time | Adequate for kiosks at modest fps |
 | **Apple Watch / wearables** | Not yet | Too memory-constrained for on-device rendering today |
 
 Every host renders the same avatar, so your device decision is about form factor, memory, and latency budget. We do not claim the frames are bit-for-bit identical across hosts: on macOS, rendering the same input twice can produce slightly different pixel values ([changelog](/changelog)).
