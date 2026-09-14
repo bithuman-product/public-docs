@@ -10,6 +10,33 @@ order: 1
 
 ## September 2026
 
+### Essence 2 renders faster on Linux, and Linux video encoding costs far less processor time — `cli-v2.6.15` (2026-09-14)
+
+CLI `cli-v2.6.15`, macOS arm64 and Linux x86_64 built from one commit; it is
+what Homebrew and the universal installer give you. Both changes are on Linux,
+and the picture is the same.
+
+- **An Essence 2 render on Linux is about 1.5x faster.** The frame-assembly
+  work ran on four cores no matter what your machine had; it now uses more of
+  them. Measured on a 24-thread Intel desktop at 1080p, under load. Frame
+  rates for every platform are on the [performance page](/sdk/performance).
+- **Video encoding on Linux takes about 60% less processor time.**
+  `bithuman render` now compresses with the same encoder settings the bitHuman
+  cloud uses. Both settings were measured on the same frames against an
+  uncompressed reference: the picture is equal or slightly better, and files
+  are about a fifth larger.
+- **macOS is unchanged** — it keeps the hardware video encoder 2.6.14
+  introduced.
+- **The engine inside moves to 3.1.5** (ABI 7). `bithuman --version` prints it
+  beside the CLI's own version, and the [CLI page](/sdk/cli#install) shows
+  what that output looks like.
+
+A second Linux speedup is already built and will arrive as its own release,
+with its own entry here. Nothing you install today needs changing for it.
+
+Earlier versions stay resolvable; a `BITHUMAN_VERSION=cli-v2.6.14` pin keeps
+working.
+
 ### Essence 2's audio step does less work on iPhone and Mac — Swift SDK 2.13.3 (2026-09-14)
 
 Swift package tag **2.13.3** ships Essence 2 engine **1.6.3**. If you depend on
