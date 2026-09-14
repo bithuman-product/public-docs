@@ -1,0 +1,76 @@
+name: Python refusal driven
+
+# THE PYTHON SDK'S REFUSAL IS DRIVEN, NOT ATTESTED.
+#
+# The most expensive lesson on these pages: guides/pricing said
+# BITHUMAN_UNMETERED=1 renders free in the Python SDK. The published wheel
+# refuses a credential-less render identically with and without it — the escape
+# is compiled out of public wheels. That was live for WEEKS, across several
+# releases, because nothing ever ran the wheel.
+#
+# A refusal arm costs nothing: no credential, no render, nothing billed. So this
+# reproduces it on the newest published wheel rather than recording a version
+# somebody promises they checked.
+#
+# ★THE CONTROL. If the wheel raised NotAuthorised for every unhappy path these
+# arms would pass while proving nothing, so the first arm opens a model that
+# does not exist and REQUIRES InvalidAvatar — a different exception — which
+# shows NotAuthorised is specific to the credential path.
+#
+# ★AND THE ARMS PULL FRAMES. bithuman.open() SUCCEEDS with no credential;
+# metering bites at the FIRST FRAME. An arm that only opened the avatar would go
+# green against a wheel that renders for free, which is the very claim this
+# disproves.
+#
+# Daily, because the event that invalidates it is a RELEASE PUBLISHING, which is
+# not an event in this repository. Whole run: ~30 s.
+#
+# EXIT 0 the refusal reproduced · 1 it did not · 2 CANNOT CHECK, a failure you
+# can see and never a pass.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/content/docs/guides/pricing.md
+      - src/content/docs/sdk/python.md
+      - scripts/check-python-refusals.mjs
+      - scripts/credential-claims.json
+      - .github/workflows/python-refusals.yml
+  pull_request:
+    paths:
+      - src/content/docs/guides/pricing.md
+      - src/content/docs/sdk/python.md
+      - scripts/check-python-refusals.mjs
+      - scripts/credential-claims.json
+      - .github/workflows/python-refusals.yml
+  schedule:
+    - cron: "51 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-refusals:
+    name: the published wheel refuses a credential-less render
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Fixtures, no network: four red controls fire every run, including a
+      # silent render and a refusal for the wrong reason.
+      - name: The Python refusal driver proves itself
+        run: node scripts/check-python-refusals.mjs --selftest
+
+      - name: Drive the refusal on the published wheel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-python-refusals.mjs
