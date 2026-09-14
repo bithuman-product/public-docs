@@ -13,7 +13,7 @@ label: "Performance"
 | macOS | Apple M4 | 80 | 82 |
 | iOS | iPhone 15 | 118 | 52 |
 | Android | Galaxy S25+ | 58 | 50 |
-| Web | Chrome on M4 | 30 | 20 — not yet real time |
+| Web | Chrome on M4 | 30 | 23 — not yet real time |
 | Linux | Intel Core i7-13700F | 41 | 21 — not yet real time |
 
 **How to read a row.** Expression 2 plays at 20 frames per second, Essence 2 at
