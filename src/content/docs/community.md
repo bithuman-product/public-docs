@@ -19,7 +19,8 @@ order: 3
 Search these docs first — every SDK page ends in a troubleshooting table that
 maps the exact message you see to the fix. If that does not cover it, post in
 Discord with the command you ran, the version (`bithuman --version`, or
-`bithuman.__version__` from Python) and the full error. That is usually enough
+`python -c "from importlib.metadata import version; print(version('bithuman'))"`
+for the Python library) and the full error. That is usually enough
 for an answer the same day.
 
 ## Contributing
