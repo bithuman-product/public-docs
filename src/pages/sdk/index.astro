@@ -3,11 +3,18 @@ import Base from "../../layouts/Base.astro";
 import { getEntry } from "astro:content";
 import Code from "../../components/Code.astro";
 
-// Six platforms, three lines each: install, get a free showcase model, run.
-// Every line is a copy-paste excerpt of the platform page it links to — that
-// page is the writer, this one quotes it. The performance line is not typed
-// here at all: it is parsed at build time from /sdk/performance, the one
-// writer for every frame-rate figure. Edit the platform page, never this file.
+// A gallery of platforms. A card's face carries only what someone choosing a
+// platform needs — what it is, the machine it was measured on, and the two
+// numbers. The commands live behind the card and open on click, because five
+// platforms' worth of shell on one screen is the clutter, not the shell.
+//
+// Opening is a plain link to the card's own id, so the open card has a URL
+// (/sdk#ios), the back button closes it, and none of it needs scripting.
+//
+// Every line of every command is a copy-paste excerpt of the platform page the
+// card links to — that page is the writer, this one quotes it. No frame rate is
+// typed here at all: each comes from /sdk/performance, the one writer for every
+// such figure.
 
 // /sdk/performance carries MORE THAN ONE table, and both use the same Platform
 // names: the CLI table at the top has "macOS" and "Linux", and so does the
@@ -47,7 +54,7 @@ const isNumber = (cell: string) => /^[0-9]+(\.[0-9]+)?$/.test(cell);
 
 const rows = await performanceRows();
 
-/** One machine's row, as the card shows it: hardware, then a cell per model. */
+/** One machine's row, as a card shows it: hardware, then a cell per model. */
 function perf(key: string) {
   const r = rows.get(key);
   if (!r) throw new Error(`sdk/index: /sdk/performance has no "${key}" row`);
@@ -60,10 +67,22 @@ function perf(key: string) {
   };
 }
 
+// Drawn in the same hand as the device row on the home page: 24x24, stroked,
+// no fill. The mark is decoration for the eye scanning the gallery — the card's
+// own heading is what a screen reader gets.
+const MARKS: Record<string, string> = {
+  cli: `<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 9.5 10.5 12l-3 2.5M13 15h3.5"/>`,
+  ios: `<rect x="7" y="2" width="10" height="20" rx="2.5"/><line x1="10.5" y1="4.8" x2="13.5" y2="4.8"/>`,
+  android: `<rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10" y1="18.8" x2="14" y2="18.8"/>`,
+  web: `<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><circle cx="6" cy="6.2" r=".55" fill="currentColor" stroke="none"/><circle cx="8.2" cy="6.2" r=".55" fill="currentColor" stroke="none"/>`,
+  python: `<path d="M9 8 5 12l4 4M15 8l4 4-4 4"/>`,
+};
+
 const blocks = [
   {
+    id: "cli",
     name: "macOS & Linux",
-    sub: "Apple Silicon · x86_64 — one CLI, one command",
+    sub: "Apple Silicon · x86_64",
     href: "/sdk/cli",
     perfKeys: ["/macOS", "/Linux"],
     install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
@@ -71,8 +90,9 @@ const blocks = [
     run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
   },
   {
+    id: "ios",
     name: "iOS",
-    sub: "a physical iPhone or iPad · Xcode 26+",
+    sub: "iPhone or iPad · Xcode 26+",
     href: "/sdk/ios",
     perfKeys: ["/iOS"],
     install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")\n// product: .product(name: \"Expression2\", package: \"homebrew-bithuman\")",
@@ -80,6 +100,7 @@ const blocks = [
     run: "# In Xcode: Signing & Capabilities → your team → select your iPhone → Run",
   },
   {
+    id: "android",
     name: "Android",
     sub: "arm64-v8a · minSdk 26",
     href: "/sdk/android",
@@ -89,6 +110,7 @@ const blocks = [
     run: "./gradlew :app:installDebug",
   },
   {
+    id: "web",
     name: "Web",
     sub: "any modern browser",
     href: "/sdk/web",
@@ -98,6 +120,7 @@ const blocks = [
     run: "open \"https://www.bithuman.ai/A74NWD9723?rendering_mode=browser\"",
   },
   {
+    id: "python",
     name: "Python",
     sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
     href: "/sdk/python",
@@ -116,49 +139,48 @@ const blocks = [
 >
   <section class="sdk">
     <div class="container">
-      <header class="sdk-head">
-        <p class="eyebrow">SDK</p>
-        <h1>Run a bitHuman avatar on your device</h1>
-        <p class="lede">
-          Pick a platform. Three commands each: install it, get a free showcase
-          model, run it. Every line is copy-paste, and the platform page behind
-          each card has the rest.
-        </p>
-      </header>
+      <h1 id="platforms">Run a bitHuman avatar on your device</h1>
+      <p class="lede">Pick a platform.</p>
 
-      <div class="grid">
+      <div class="gallery">
         {blocks.map((b) => (
-          <article class="block">
-            <h2><a href={b.href}>{b.name}</a></h2>
+          <article class="card" id={b.id}>
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><Fragment set:html={MARKS[b.id]} /></svg>
+            </span>
+
+            <h2 class="name" id={`${b.id}-name`}><a href={`#${b.id}`}>{b.name}</a></h2>
             <p class="sub">{b.sub}</p>
 
-            <ol class="steps">
-              <li><span class="step">Install</span><Code code={b.install} /></li>
-              <li><span class="step">Get a model</span><Code code={b.model} /></li>
-              {b.code && <li><span class="step">Minimal code</span><Code code={b.code} /></li>}
-              <li><span class="step">Run</span><Code code={b.run} /></li>
-            </ol>
+            <div class="rates">
+              {b.perf.map((m) => (
+                <div class="machine">
+                  <p class="hw">{m.hardware}</p>
+                  <dl>
+                    {m.models.map((x) => (
+                      <div class:list={["stat", { num: isNumber(x.cell) }]}>
+                        <dt>{x.name}</dt>
+                        <dd>{x.cell}{isNumber(x.cell) && <span class="unit"> fps</span>}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </div>
 
-            <div class="foot">
-              <div class="perf">
-                {b.perf.map((m) => (
-                  <div class="machine">
-                    <p class="hw">{m.hardware}</p>
-                    <dl>
-                      {m.models.map((x) => (
-                        <div class:list={["stat", { num: isNumber(x.cell) }]}>
-                          <dt>{x.name}</dt>
-                          <dd>{x.cell}{isNumber(x.cell) && <span class="unit"> fps</span>}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                ))}
-                <p class="perf-note">
-                  Measured, unpaced — <a href="/sdk/performance">how each number was taken</a>
-                </p>
-              </div>
-              <a class="guide" href={b.href}>Full guide <span aria-hidden="true">→</span></a>
+            <p class="cue" aria-hidden="true">Setup <span>→</span></p>
+
+            <div class="detail" role="region" aria-labelledby={`${b.id}-name`}>
+              <ol class="steps">
+                <li><span class="step">Install</span><Code code={b.install} /></li>
+                <li><span class="step">Get a model</span><Code code={b.model} /></li>
+                {b.code && <li><span class="step">Minimal code</span><Code code={b.code} /></li>}
+                <li><span class="step">Run</span><Code code={b.run} /></li>
+              </ol>
+              <p class="ends">
+                <a class="guide" href={b.href}>Full guide <span aria-hidden="true">→</span></a>
+                <a class="close" href="#platforms">Close</a>
+              </p>
             </div>
           </article>
         ))}
@@ -166,36 +188,65 @@ const blocks = [
     </div>
   </section>
 </Base>
+
 <style>
   .sdk { padding-block: var(--space-8) var(--space-12); }
-  .sdk-head { max-width: 46rem; }
-  .sdk-head h1 { font-size: var(--fh-2xl); margin-top: var(--space-2); max-width: 22ch; }
-  .sdk-head .lede { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
+  .sdk h1 { font-size: var(--fh-2xl); max-width: 22ch; scroll-margin-top: calc(var(--nav-h) + 20px); }
+  .lede { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
 
-  /* Two columns, not three: a card holds shell commands, and a 22rem column
-     was narrower than the shortest of them. */
-  .grid {
+  .gallery {
     margin-top: var(--space-8);
     display: grid;
-    gap: var(--space-5);
-    grid-template-columns: repeat(auto-fit, minmax(min(26rem, 100%), 1fr));
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr));
+    /* Each card owns its height, so opening one grows only that one and leaves
+       the cards beside it the shape they had. */
+    align-items: start;
   }
-  .block {
-    display: flex;
-    flex-direction: column;
+
+  .card {
+    position: relative;
     min-width: 0;
     padding: var(--space-5);
     border: 1px solid var(--color-border);
     border-radius: var(--r-2xl);
     background: var(--color-surface);
+    scroll-margin-top: calc(var(--nav-h) + 16px);
     transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
   }
-  .block:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-sm); }
-  .block h2 { font-size: var(--fh-md); letter-spacing: -0.015em; }
-  .block h2 a:hover { color: var(--color-primary); }
+  .card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-sm); }
+  .card:target { border-color: var(--color-primary); box-shadow: var(--shadow-sm); }
+
+  .mark { display: block; color: var(--color-primary); }
+  .mark svg { width: 22px; height: 22px; }
+
+  .name { margin-top: var(--space-3); font-size: var(--fh-md); letter-spacing: -0.015em; }
+  /* The whole card is the target, while the link's name stays just the platform. */
+  .name a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .card:target .name a::after { content: none; }
+  .name a:focus-visible { outline: none; }
+  .name a:focus-visible::after { outline: 2px solid var(--color-primary); outline-offset: 3px; }
   .sub { margin-top: 0.25rem; color: var(--color-text-tertiary); font-size: var(--ft-sm); }
 
-  .steps { list-style: none; margin: var(--space-5) 0 0; padding: 0; counter-reset: step; }
+  .rates { margin-top: var(--space-4); }
+  .machine + .machine { margin-top: var(--space-3); }
+  .hw { font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-tertiary); }
+  .machine dl { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-6); margin: 0.3rem 0 0; }
+  .stat dt { font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .stat dd { margin: 0.1rem 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .stat.num dd { font-size: var(--fh-sm); font-weight: var(--fw-bold); color: var(--color-text); letter-spacing: -0.02em; }
+  .stat .unit { font-size: var(--ft-sm); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
+
+  .cue { margin-top: var(--space-4); font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-primary); }
+  .cue span { display: inline-block; transition: transform var(--t-fast) var(--ease); }
+  .card:hover .cue span { transform: translateX(3px); }
+
+  /* Closed by default; the URL opens it. */
+  .detail { display: none; }
+  .card:target .detail { display: block; }
+  .card:target .cue { display: none; }
+
+  .steps { list-style: none; margin: var(--space-4) 0 0; padding: 0; counter-reset: step; }
   .steps li { margin-top: var(--space-4); min-width: 0; }
   .steps li:first-child { margin-top: 0; }
   .step {
@@ -224,39 +275,15 @@ const blocks = [
   }
   .steps :global(.bh-code) { margin: 0; }
 
-  /* Footer: the measured numbers, then the way in. The numbers are never typed
-     on this page — every one comes from the /sdk/performance row named above. */
-  .foot { margin-top: auto; padding-top: var(--space-5); }
-  .perf {
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--r-lg);
-    background: var(--color-surface-2);
-  }
-  .machine + .machine { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
-  .hw { font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-tertiary); }
-  .machine dl { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: var(--space-2) 0 0; }
-  .stat dt { font-size: var(--ft-xs); color: var(--color-text-secondary); }
-  .stat dd { margin: 0.1rem 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .stat.num dd { font-size: var(--fh-sm); font-weight: var(--fw-bold); color: var(--color-text); letter-spacing: -0.02em; }
-  .stat .unit { font-size: var(--ft-sm); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
-  .perf-note { margin-top: var(--space-3); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
-  .perf-note a { color: var(--color-text-secondary); text-decoration: underline; text-underline-offset: 2px; }
-  .perf-note a:hover { color: var(--color-primary); }
-
-  .guide {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: var(--space-4);
-    font-weight: var(--fw-medium);
-    color: var(--color-primary);
-  }
-  .guide span { transition: transform var(--t-fast) var(--ease); }
+  .ends { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-5); }
+  .guide { font-weight: var(--fw-medium); color: var(--color-primary); }
+  .guide span { display: inline-block; transition: transform var(--t-fast) var(--ease); }
   .guide:hover span { transform: translateX(3px); }
+  .close { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+  .close:hover { color: var(--color-text); }
 
   @media (max-width: 560px) {
-    .block { padding: var(--space-4); border-radius: var(--r-xl); }
-    .sdk-head h1 { font-size: var(--fh-xl); }
+    .card { padding: var(--space-4); border-radius: var(--r-xl); }
+    .sdk h1 { font-size: var(--fh-xl); }
   }
 </style>

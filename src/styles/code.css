@@ -59,10 +59,13 @@
   border-radius: 0;
   background: transparent !important;
 }
-/* One padding for every code block on the site, so a command never sits flush
-   against the edge of the card it is in. */
+/* One base for every code block on the site, so a block reads correctly before
+   the card above is built — and with nothing running at all. */
 pre {
   padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  background: var(--color-code-bg);
 }
 
 /* ---- the copy button --------------------------------------------------- */

@@ -6,7 +6,8 @@ interface Card { title: string; desc: string; href: string; badge?: string; exte
 interface Group { label: string; featured?: boolean; cards: Card[]; }
 interface CTA { label: string; href: string; variant?: "primary" | "secondary"; external?: boolean; }
 interface Props {
-  eyebrow: string;
+  /** Only when it says something the title does not — never a repeat of it. */
+  eyebrow?: string;
   title: string;
   tagline: string;
   ctas?: CTA[];
@@ -18,7 +19,7 @@ const { eyebrow, title, tagline, ctas = [], groups } = Astro.props;
 <Base title={`${title} — bitHuman docs`} description={tagline}>
   <section class="hub-hero">
     <div class="container">
-      <span class="eyebrow">{eyebrow}</span>
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       <h1>{title}</h1>
       <p class="tagline">{tagline}</p>
       {
@@ -46,7 +47,7 @@ const { eyebrow, title, tagline, ctas = [], groups } = Astro.props;
                   {c.badge && <span class="pill hc-badge">{c.badge}</span>}
                 </div>
                 <p>{c.desc}</p>
-                <span class="hc-go">{c.external ? "Open ↗" : "Read"} <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7h7M7 4l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                {c.external && <span class="hc-go">Open ↗</span>}
               </a>
             ))}
           </div>
@@ -76,7 +77,6 @@ const { eyebrow, title, tagline, ctas = [], groups } = Astro.props;
   .hc-badge { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
   .hub-card p { margin: var(--space-2) 0 var(--space-4); color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
   .hc-go { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-  .hub-card:hover .hc-go svg { transform: translateX(3px); transition: transform var(--t-fast) var(--ease); }
 
   @media (max-width: 900px) { .hub-cards, .hub-cards.featured { grid-template-columns: 1fr; } }
 </style>
