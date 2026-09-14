@@ -49,8 +49,8 @@ each row here compares directly with the same platform in the table above.
 
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
-| Linux | Intel Core i7-13700F | 49 | not measured yet |
-| macOS | Apple M4 | not measured yet | not measured yet |
+| Linux | Intel Core i7-13700F | 49 | not yet stable run to run |
+| macOS | Apple M4 | being re-measured | being re-measured |
 
 Measured audio in to frame out, once the model has loaded. Loading the model the
 first time adds to the total.
