@@ -24,6 +24,9 @@ on that hardware.
 
 A cell with no number says what is missing instead.
 
+<details>
+<summary>What each number includes, row by row</summary>
+
 <!-- FLOORS:NOTES -->
 The Expression 2 Cloud GPU number already includes saving the video file.
 
@@ -35,6 +38,8 @@ The Android Expression 2 number is what a cool phone does. Under continuous rend
 
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
 <!-- /FLOORS:NOTES -->
+
+</details>
 
 ## Python library
 
