@@ -192,11 +192,22 @@ async function main() {
     const tarball = join(dir, ASSET);
     writeFileSync(tarball, Buffer.from(await (await get(`https://github.com/${TAP}/releases/download/cli-v${cliVersion}/${ASSET}`)).arrayBuffer()));
     execFileSync("tar", ["xzf", tarball, "-C", dir], { stdio: "pipe" });
-    const pull = spawnSync(join(dir, "bithuman"), ["pull", SLUG, "--json"],
-      { encoding: "utf8", timeout: 600_000, env: { ...process.env, HOME: home } });
-    const pm = /"path"\s*:\s*"([^"]+)"/.exec(`${pull.stdout}\n${pull.stderr}`);
-    if (!pm) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}': ${(pull.stderr || "").slice(-300)}`);
-    model = pm[1];
+    // ★A transient 500 from the download service must not read as a product
+    // defect. Retried with backoff, and still CANNOT CHECK if it persists: a
+    // daily gate that goes red on somebody else's outage trains its readers to
+    // ignore it, which is a slower way of having no gate at all. Seen for real
+    // on 2026-09-14: HTTP 500 on one runner while the CLI gate's pull, minutes
+    // earlier on the same commit, succeeded.
+    let last = "";
+    for (let attempt = 0; attempt < 3 && !model; attempt++) {
+      if (attempt) await new Promise((r) => setTimeout(r, 3000 * attempt));
+      const pull = spawnSync(join(dir, "bithuman"), ["pull", SLUG, "--json"],
+        { encoding: "utf8", timeout: 600_000, env: { ...process.env, HOME: home } });
+      last = `${pull.stdout || ""}\n${pull.stderr || ""}`;
+      const pm = /"path"\s*:\s*"([^"]+)"/.exec(last);
+      if (pm) model = pm[1];
+    }
+    if (!model) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}' in 3 attempts: ${last.slice(-300)}`);
 
     writeFileSync(join(dir, "probe.py"), PROBE);
   } catch (err) {

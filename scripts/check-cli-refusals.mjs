@@ -280,10 +280,19 @@ async function main() {
     home = join(dir, "home");
     mkdirSync(home, { recursive: true });
     // A showcase pull is anonymous: no account, no credential, no charge.
-    const pull = drive(bin, home, ["pull", SLUG, "--json"]);
-    const pm = /"path"\s*:\s*"([^"]+)"/.exec(pull.blob);
-    if (!pm) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}': ${pull.blob.slice(-300)}`);
-    model = pm[1];
+    // ★A transient 500 from the download service must not read as a product
+    // defect. Retried with backoff, and still CANNOT CHECK if it persists: a
+    // daily gate that goes red on somebody else's outage trains its readers to
+    // ignore it, which is a slower way of having no gate at all.
+    let lastPull = "";
+    for (let attempt = 0; attempt < 3 && !model; attempt++) {
+      if (attempt) await new Promise((r) => setTimeout(r, 3000 * attempt));
+      const pull = drive(bin, home, ["pull", SLUG, "--json"]);
+      lastPull = pull.blob;
+      const pm = /"path"\s*:\s*"([^"]+)"/.exec(pull.blob);
+      if (pm) model = pm[1];   // the OUTER model — shadowing it here left every arm with undefined
+    }
+    if (!model) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}' in 3 attempts: ${lastPull.slice(-300)}`);
   } catch (err) {
     console.error(`::error::CANNOT CHECK — ${err instanceof CannotCheck ? err.message : err.message}`);
     console.error("CANNOT CHECK is a failure, never a pass: no refusal was driven.");
