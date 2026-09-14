@@ -10,7 +10,7 @@ label: "Performance"
 <!-- FLOORS:TABLE all -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
-| Cloud GPU | NVIDIA RTX 4090 | 290 | 83.5 |
+| Cloud GPU | NVIDIA RTX 4090 | 290 | 105 |
 | macOS | Apple M4 | 158 | 82 |
 | macOS · Python | Apple M4 | 157 | not measured on 3.1.8 (2026-09-14) |
 | Linux | Intel Core i7-13700F | 44 | 29 |
