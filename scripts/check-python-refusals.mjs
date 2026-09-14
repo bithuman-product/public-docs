@@ -109,6 +109,22 @@ const ARMS = [
     model: null, env: { BITHUMAN_UNMETERED: "1" }, expect: "NotAuthorised" },
 ];
 
+// ★SPECIFICITY IS A PROPERTY, NOT A HABIT. The control arm below provokes
+// InvalidAvatar precisely so that NotAuthorised means something — but an arm
+// can be deleted and the property would vanish with it, silently, because a
+// property nobody states is invisible to the second author. So it is required
+// here: the arms must produce at least two distinct outcomes.
+const MIN_DISTINCT_OUTCOMES = 2;
+
+function specificity(rows) {
+  const seen = [...new Set(rows.map((r) => r.got).filter(Boolean))].sort();
+  if (seen.length < MIN_DISTINCT_OUTCOMES) {
+    return [`specificity: every arm produced ${seen.join(", ") || "nothing"} — if the wheel answered NotAuthorised ` +
+            `for every unhappy path these arms would all pass while proving nothing. Restore an arm that provokes a DIFFERENT exception.`];
+  }
+  return { ok: seen };
+}
+
 function grade(rows) {
   const findings = [];
   for (const r of rows) {
@@ -139,8 +155,18 @@ function selftest() {
     if (!ok) bad++;
     console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
   }
+  const specArms = [
+    { name: "distinct outcomes satisfy specificity", rows: [{ got: "NotAuthorised" }, { got: "InvalidAvatar" }], expect: 0 },
+    { name: "RED CONTROL: one outcome everywhere fails specificity", rows: [{ got: "NotAuthorised" }, { got: "NotAuthorised" }], expect: 1 },
+  ];
+  for (const a of specArms) {
+    const got = Array.isArray(specificity(a.rows)) ? 1 : 0;
+    const ok = got === a.expect;
+    if (!ok) bad++;
+    console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
+  }
   if (bad) { console.error(`selftest: ${bad} arm(s) wrong — the check cannot be trusted`); process.exit(1); }
-  console.log("selftest: OK — four red controls fire, including a silent render and a wrong-reason refusal.");
+  console.log("selftest: OK — five red controls fire, including a wheel that answers one exception everywhere.");
 }
 
 async function main() {
@@ -166,11 +192,22 @@ async function main() {
     const tarball = join(dir, ASSET);
     writeFileSync(tarball, Buffer.from(await (await get(`https://github.com/${TAP}/releases/download/cli-v${cliVersion}/${ASSET}`)).arrayBuffer()));
     execFileSync("tar", ["xzf", tarball, "-C", dir], { stdio: "pipe" });
-    const pull = spawnSync(join(dir, "bithuman"), ["pull", SLUG, "--json"],
-      { encoding: "utf8", timeout: 600_000, env: { ...process.env, HOME: home } });
-    const pm = /"path"\s*:\s*"([^"]+)"/.exec(`${pull.stdout}\n${pull.stderr}`);
-    if (!pm) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}': ${(pull.stderr || "").slice(-300)}`);
-    model = pm[1];
+    // ★A transient 500 from the download service must not read as a product
+    // defect. Retried with backoff, and still CANNOT CHECK if it persists: a
+    // daily gate that goes red on somebody else's outage trains its readers to
+    // ignore it, which is a slower way of having no gate at all. Seen for real
+    // on 2026-09-14: HTTP 500 on one runner while the CLI gate's pull, minutes
+    // earlier on the same commit, succeeded.
+    let last = "";
+    for (let attempt = 0; attempt < 3 && !model; attempt++) {
+      if (attempt) await new Promise((r) => setTimeout(r, 3000 * attempt));
+      const pull = spawnSync(join(dir, "bithuman"), ["pull", SLUG, "--json"],
+        { encoding: "utf8", timeout: 600_000, env: { ...process.env, HOME: home } });
+      last = `${pull.stdout || ""}\n${pull.stderr || ""}`;
+      const pm = /"path"\s*:\s*"([^"]+)"/.exec(last);
+      if (pm) model = pm[1];
+    }
+    if (!model) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}' in 3 attempts: ${last.slice(-300)}`);
 
     writeFileSync(join(dir, "probe.py"), PROBE);
   } catch (err) {
@@ -196,6 +233,9 @@ async function main() {
   rmSync(dir, { recursive: true, force: true });
 
   const findings = grade(rows);
+  const spec = specificity(rows);
+  if (Array.isArray(spec)) findings.push(...spec);
+  else console.log(`★specificity     arms provoked ${spec.ok.length} distinct outcomes (${spec.ok.join(" ")})`);
   if (findings.length) {
     for (const f of findings) console.error(`::error::${f}`);
     console.error("\nThe Python SDK did not behave the way guides/pricing says it does.");

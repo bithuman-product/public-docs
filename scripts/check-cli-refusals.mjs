@@ -122,7 +122,12 @@ async function proveDetectorReads(port) {
   }
 }
 
-/** Run one arm with a clean environment. Returns {code, json, stderr}. */
+/** Run one arm with a clean environment.
+ *  ★THE EMPTY HOME IS PART OF THE SUBJECT, not tidiness: `bithuman login`
+ *  stores a per-device key under HOME, so an arm inheriting a developer's or a
+ *  runner's HOME can find a real credential and RENDER — turning every refusal
+ *  arm green for the one reason that invalidates the whole gate. The three
+ *  BITHUMAN_* variables are deleted for the same reason. */
 function drive(bin, home, args, env = {}) {
   const base = { ...process.env, HOME: home };
   delete base.BITHUMAN_API_SECRET;
@@ -185,6 +190,25 @@ const ARMS = [
     env: {}, expectCode: 2, expectName: "PUBLIC_BIND_REFUSED", watchPort: 18993 },
 ];
 
+// ★SPECIFICITY IS A PROPERTY OF THE GATE, NOT A HABIT OF WHOEVER WROTE THE
+// ARMS. A gate whose arms all produce the SAME failure cannot tell you which
+// condition produced it: point every arm at a broken install and they all go
+// "exit 1, no code", and the run still reads as four independent checks. The
+// arms below happen to provoke four different names today. "Happen to" is the
+// problem — the next person to trim an arm will not know they removed the
+// property, because a property nobody states is invisible to the second
+// author. So it is required here, in the file, where an edit has to meet it.
+const MIN_DISTINCT_CODES = 2;
+
+function specificity(results) {
+  const names = [...new Set(results.map((r) => r.name).filter(Boolean))].sort();
+  if (names.length < MIN_DISTINCT_CODES) {
+    return [`specificity: every arm produced the same result (${names.join(", ") || "no codes at all"}) — ` +
+            `this gate can no longer tell which condition fired. Restore an arm that provokes a DIFFERENT named failure.`];
+  }
+  return { ok: names };
+}
+
 function grade(results) {
   const findings = [];
   for (const r of results) {
@@ -225,8 +249,22 @@ function selftest() {
     if (!ok) bad++;
     console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
   }
+  const specArms = [
+    { name: "arms provoking different failures satisfy specificity",
+      rows: [{ name: "NOT_SIGNED_IN" }, { name: "MODEL_NOT_FOUND" }], expect: 0 },
+    { name: "RED CONTROL: every arm answering the same code fails specificity",
+      rows: [{ name: "NOT_SIGNED_IN" }, { name: "NOT_SIGNED_IN" }], expect: 1 },
+    { name: "RED CONTROL: arms producing no code at all fail specificity",
+      rows: [{ name: null }, { name: null }], expect: 1 },
+  ];
+  for (const a of specArms) {
+    const got = Array.isArray(specificity(a.rows)) ? 1 : 0;
+    const ok = got === a.expect;
+    if (!ok) bad++;
+    console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
+  }
   if (bad) { console.error(`selftest: ${bad} arm(s) wrong — the check cannot be trusted`); process.exit(1); }
-  console.log("selftest: OK — five red controls fire: a 66 masquerading as a refusal, a refusal that wrote a file, and one that bound a socket.");
+  console.log("selftest: OK — seven red controls fire, including a gate that has gone blind by answering one code everywhere.");
 }
 
 async function main() {
@@ -242,10 +280,19 @@ async function main() {
     home = join(dir, "home");
     mkdirSync(home, { recursive: true });
     // A showcase pull is anonymous: no account, no credential, no charge.
-    const pull = drive(bin, home, ["pull", SLUG, "--json"]);
-    const pm = /"path"\s*:\s*"([^"]+)"/.exec(pull.blob);
-    if (!pm) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}': ${pull.blob.slice(-300)}`);
-    model = pm[1];
+    // ★A transient 500 from the download service must not read as a product
+    // defect. Retried with backoff, and still CANNOT CHECK if it persists: a
+    // daily gate that goes red on somebody else's outage trains its readers to
+    // ignore it, which is a slower way of having no gate at all.
+    let lastPull = "";
+    for (let attempt = 0; attempt < 3 && !model; attempt++) {
+      if (attempt) await new Promise((r) => setTimeout(r, 3000 * attempt));
+      const pull = drive(bin, home, ["pull", SLUG, "--json"]);
+      lastPull = pull.blob;
+      const pm = /"path"\s*:\s*"([^"]+)"/.exec(pull.blob);
+      if (pm) model = pm[1];   // the OUTER model — shadowing it here left every arm with undefined
+    }
+    if (!model) throw new CannotCheck(`could not pull the showcase avatar '${SLUG}' in 3 attempts: ${lastPull.slice(-300)}`);
   } catch (err) {
     console.error(`::error::CANNOT CHECK — ${err instanceof CannotCheck ? err.message : err.message}`);
     console.error("CANNOT CHECK is a failure, never a pass: no refusal was driven.");
@@ -284,6 +331,9 @@ async function main() {
   }
   rmSync(dir, { recursive: true, force: true });
   const findings = grade(results);
+  const spec = specificity(results);
+  if (Array.isArray(spec)) findings.push(...spec);
+  else console.log(`★specificity     arms provoked ${spec.ok.length} distinct codes (${spec.ok.join(" ")})`);
   if (findings.length) {
     for (const f of findings) console.error(`::error::${f}`);
     console.error("\nA refusal the pages promise did not happen on today's published bytes.");
