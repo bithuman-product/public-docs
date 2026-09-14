@@ -1,0 +1,76 @@
+name: Served site matches main
+
+# IS docs.bithuman.ai SERVING WHAT WE MERGED?
+#
+# WHAT HAPPENED, 2026-09-14. #76 merged at 02:31:42Z and Vercel created no
+# deployment for the merge commit — not a failed build, no build at all, while
+# #73, #74 and #75 each got one within seconds. The alias went on serving the
+# previous build for fifteen minutes: sdk/ios still stated an iPhone rate the
+# performance page had already moved. An empty commit produced the push event
+# again and the build appeared immediately, so it was a missed webhook.
+#
+# ★WHY NOTHING NOTICED, AND WHY THIS FILE IS NOT THE SAME CHECK TWICE.
+# scripts/check-served-is-current.mjs already existed and is exactly the right
+# instrument — but served-vocabulary.yml runs it on `deployment_status`. A
+# missed build produces NO deployment and therefore NO event, so the guard that
+# would have caught it was never started. An event-driven check cannot see the
+# absence of its own event. That blind spot closes only on a clock.
+#
+# WHAT THIS ASKS. The alias's `last-modified` must be at or after the commit
+# date of main's head. It does not prove the alias is serving that exact
+# commit: nothing Vercel returns to an anonymous client names one. It proves
+# the alias is serving a build no older than what we merged, which is what the
+# fifteen-minute gap violated.
+#
+# WHY THE BUDGET. A normal deploy takes a minute or two, so a run that fires
+# during one waits rather than reporting a gap that is about to close. Only a
+# site still behind main after the budget is a failure.
+#
+# EXIT 0 the alias is serving a build no older than main's head · 1 it is still
+# behind after the budget · 2 it could not be measured. Two is a failure you
+# can see, never a pass.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: Origin to grade
+        default: https://docs.bithuman.ai
+
+permissions:
+  contents: read
+
+jobs:
+  served-matches-main:
+    name: the alias is serving a build no older than main
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ORIGIN: ${{ github.event.inputs.origin || 'https://docs.bithuman.ai' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # The instrument proves itself before it grades anything, and it needs no
+      # network to do it — including on the runs where the network is what broke.
+      - name: The freshness gate proves itself
+        run: node scripts/check-served-is-current.mjs --self-test
+
+      # ★THIS JOB CANNOT RUN ON A PULL REQUEST, and that is a property of the
+      # subject rather than an omission: the alias serves main, so it is behind
+      # every unmerged commit by construction and a PR run would always fail.
+      # Its proof is the self-test above, plus the first run after each merge.
+      - name: The alias is serving a build no older than main's head
+        run: |
+          NOT_BEFORE="$(git log -1 --format=%cI)"
+          echo "main head $(git rev-parse --short HEAD) committed $NOT_BEFORE"
+          node scripts/check-served-is-current.mjs \
+            --origin "$ORIGIN" \
+            --not-before "$NOT_BEFORE" \
+            --budget-seconds 600
