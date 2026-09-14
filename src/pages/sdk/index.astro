@@ -1,75 +1,33 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { getEntry } from "astro:content";
 import Code from "../../components/Code.astro";
 
-// A gallery of platforms. A card's face carries only what someone choosing a
-// platform needs — what it is, the machine it was measured on, and the two
-// numbers. The commands live behind the card and open on click, because five
-// platforms' worth of shell on one screen is the clutter, not the shell.
+// Organised by MODEL, then by platform.
 //
-// Opening is a plain link to the card's own id, so the open card has a URL
-// (/sdk#ios), the back button closes it, and none of it needs scripting.
+// It used to be the other way round, and every card carried both models. That
+// repeated the same two names five times, and it hid the thing a reader most
+// needs: the two models do NOT run in the same places. Expression 2 has a
+// documented on-device path on all five; Essence 2 has one on the CLI and the
+// Python library, and renders through the cloud on a handset or in a browser.
+// Grouped this way the difference IS the content, rather than something a
+// reader has to reconstruct by comparing five cards.
 //
-// Every line of every command is a copy-paste excerpt of the platform page the
-// card links to — that page is the writer, this one quotes it. No frame rate is
-// typed here at all: each comes from /sdk/performance, the one writer for every
-// such figure.
+// Where the setup is the same for both models — one CLI, one Python package —
+// it is written once here and shown in both panes, with the one line that
+// actually differs called out on the card.
+//
+// No frame rate appears on this page. Performance is /sdk/performance, linked
+// once, and a card answers "is this my platform and what do I run".
+//
+// Every command is a copy-paste excerpt of the platform page the card links to;
+// that page is the writer, this one quotes it.
 
-// /sdk/performance carries MORE THAN ONE table, and both use the same Platform
-// names: the CLI table at the top has "macOS" and "Linux", and so does the
-// "Python library" table further down — a different product measured on the
-// same two machines. Keying a row by its Platform cell alone therefore let the
-// second table overwrite the first, and the cards silently read the wrong
-// product: the macOS card printed the Python row's "being re-measured" while
-// the table above it said 159, and the macOS & Linux card printed the Python
-// Linux 49/27 instead of the CLI's 44/29. A row is now addressed by the
-// heading it lives under as well as its Platform, so a card names one product
-// on one machine and a renamed heading fails the build instead of drifting.
-/** Rows of every table on /sdk/performance, keyed "<heading>/<Platform>". */
-async function performanceRows() {
-  const perf = await getEntry("docs", "sdk/performance");
-  if (!perf?.body) throw new Error("sdk/index: cannot read src/content/docs/sdk/performance.md");
-  const rows = new Map<string, { hardware: string; expression2: string; essence2: string }>();
-  let heading = ""; // the table before the first H2 is the CLI one
-  for (const line of perf.body.split("\n")) {
-    const h2 = /^##\s+(.+?)\s*$/.exec(line);
-    if (h2) { heading = h2[1]; continue; }
-    if (!line.startsWith("|")) continue;
-    const cells = line.split("|").slice(1, -1).map((c) => c.trim());
-    if (cells.length !== 4 || cells[0] === "Platform" || /^-+:?$/.test(cells[0])) continue;
-    rows.set(`${heading}/${cells[0]}`, { hardware: cells[1], expression2: cells[2], essence2: cells[3] });
-  }
-  if (rows.size === 0) throw new Error("sdk/index: no rows parsed from the performance table");
-  return rows;
-}
+const CLI_SETUP = {
+  install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
+  model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
+  run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
+};
 
-// Since the owner's 2026-09-13 "-- is confusing" ruling, a cell on
-// /sdk/performance is either a bare number, a number with a plain status
-// ("12 · not yet real time"), or a status alone ("no published release yet").
-// Only a bare number takes the " fps" suffix; anything else is already a
-// sentence and is shown as it stands, so this page can never claim more than
-// the table it reads.
-const isNumber = (cell: string) => /^[0-9]+(\.[0-9]+)?$/.test(cell);
-
-const rows = await performanceRows();
-
-/** One machine's row, as a card shows it: hardware, then a cell per model. */
-function perf(key: string) {
-  const r = rows.get(key);
-  if (!r) throw new Error(`sdk/index: /sdk/performance has no "${key}" row`);
-  return {
-    hardware: r.hardware,
-    models: [
-      { name: "Expression 2", cell: r.expression2 },
-      { name: "Essence 2", cell: r.essence2 },
-    ],
-  };
-}
-
-// Drawn in the same hand as the device row on the home page: 24x24, stroked,
-// no fill. The mark is decoration for the eye scanning the gallery — the card's
-// own heading is what a screen reader gets.
 const MARKS: Record<string, string> = {
   cli: `<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 9.5 10.5 12l-3 2.5M13 15h3.5"/>`,
   ios: `<rect x="7" y="2" width="10" height="20" rx="2.5"/><line x1="10.5" y1="4.8" x2="13.5" y2="4.8"/>`,
@@ -78,113 +36,211 @@ const MARKS: Record<string, string> = {
   python: `<path d="M9 8 5 12l4 4M15 8l4 4-4 4"/>`,
 };
 
-const blocks = [
+interface Card {
+  key: string;
+  name: string;
+  sub: string;
+  href: string;
+  /** The one thing that differs for this model on this platform. */
+  note?: string;
+  setup?: { install: string; model: string; code?: string; run: string };
+  /** Used instead of `setup` where this site documents no on-device path. */
+  elsewhere?: string;
+}
+
+interface Model {
+  id: string;
+  name: string;
+  what: string;
+  concept: string;
+  cards: Card[];
+}
+
+const models: Model[] = [
   {
-    id: "cli",
-    name: "macOS & Linux",
-    sub: "Apple Silicon · x86_64",
-    href: "/sdk/cli",
-    perfKeys: ["/macOS", "/Linux"],
-    install: "curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
-    model: "bithuman login                    # opens your browser; stores a per-device key on this machine\nbithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx",
-    run: "bithuman run \"$(bithuman pull marmalade)\"                                # live avatar in your browser",
+    id: "expression-2",
+    name: "Expression 2",
+    what: "The whole scene generated from your portrait — head, shoulders, background.",
+    concept: "/concepts/expression-2",
+    cards: [
+      {
+        key: "cli",
+        name: "macOS & Linux",
+        sub: "Apple Silicon · x86_64",
+        href: "/sdk/cli",
+        note: "One CLI runs both models. `bithuman run` with no argument fetches the free Wise Pup, an Expression 2 identity.",
+        setup: CLI_SETUP,
+      },
+      {
+        key: "ios",
+        name: "iOS",
+        sub: "iPhone or iPad · Xcode 26+",
+        href: "/sdk/ios",
+        setup: {
+          install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")\n// product: .product(name: \"Expression2\", package: \"homebrew-bithuman\")",
+          model: "curl -fLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/{showcase/A08CCD3871.avatar,engines/expression-2/mac-arm64-1.0.0.engine}\"",
+          run: "# In Xcode: Signing & Capabilities → your team → select your iPhone → Run",
+        },
+      },
+      {
+        key: "android",
+        name: "Android",
+        sub: "arm64-v8a · minSdk 26",
+        href: "/sdk/android",
+        setup: {
+          install: "implementation(\"ai.bithuman:expression2-android:0.4.1\")",
+          model: "val model = Expression2ModelStore(context).fetch(\"A02HCY0444\")   // ~158 MB the first time; never on the main thread",
+          run: "./gradlew :app:installDebug",
+        },
+      },
+      {
+        key: "web",
+        name: "Web",
+        sub: "any modern browser",
+        href: "/sdk/web",
+        note: "`?render=local` moves the render into the tab; without it the avatar is served.",
+        setup: {
+          install: "# nothing to install",
+          model: "# A74NWD9723 — or any code on /showcase",
+          run: "open \"https://www.bithuman.ai/A74NWD9723?render=local\"",
+        },
+      },
+      {
+        key: "python",
+        name: "Python",
+        sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
+        href: "/sdk/python",
+        note: "One package runs both models. The `[expression-2]` extra is what opens a `.avatar`.",
+        setup: {
+          install: "pip install \"bithuman[expression-2]\"",
+          model: "curl -fsSLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}\"",
+          code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"A23WJF0199.avatar\") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"demo_sample.wav\"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]",
+          run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
+        },
+      },
+    ],
   },
   {
-    id: "ios",
-    name: "iOS",
-    sub: "iPhone or iPad · Xcode 26+",
-    href: "/sdk/ios",
-    perfKeys: ["/iOS"],
-    install: ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"2.11.0\")\n// product: .product(name: \"Expression2\", package: \"homebrew-bithuman\")",
-    model: "curl -fLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/{showcase/A08CCD3871.avatar,engines/expression-2/mac-arm64-1.0.0.engine}\"",
-    run: "# In Xcode: Signing & Capabilities → your team → select your iPhone → Run",
+    id: "essence-2",
+    name: "Essence 2",
+    what: "Your own portrait footage, animated — the identity you uploaded, lip-synced.",
+    concept: "/concepts/essence-2",
+    cards: [
+      {
+        key: "cli",
+        name: "macOS & Linux",
+        sub: "Apple Silicon · x86_64",
+        href: "/sdk/cli",
+        note: "The same CLI. `--model essence-2` picks the family when your agent has more than one.",
+        setup: CLI_SETUP,
+      },
+      {
+        key: "python",
+        name: "Python",
+        sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
+        href: "/sdk/python",
+        note: "The same package. Live frames need no extra; the `[offline]` extra is for rendering a whole clip to MP4.",
+        setup: {
+          install: "pip install bithuman",
+          model: "# your agent's .imx — bithuman pull <CODE>, or GET /v1/agent/{code}/model/download",
+          code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"agent.imx\") as avatar:               # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"speech.wav\"):          # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)",
+          run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
+        },
+      },
+      {
+        key: "ios",
+        name: "iOS",
+        sub: "iPhone or iPad",
+        href: "/sdk/ios",
+        elsewhere: "No handset bundle is published, so this site documents no on-device path. Use Expression 2 on the phone, or render Essence 2 through the [cloud API](/api/overview).",
+      },
+      {
+        key: "android",
+        name: "Android",
+        sub: "arm64-v8a",
+        href: "/sdk/android",
+        elsewhere: "The Android page documents the Expression 2 path. For Essence 2 today, use the [CLI](/sdk/cli), the [Python library](/sdk/python) or the [cloud API](/api/overview).",
+      },
+      {
+        key: "web",
+        name: "Web",
+        sub: "any modern browser",
+        href: "/sdk/web",
+        elsewhere: "The published in-browser package is a demo: one built-in identity, and it cannot render your own agent. Serve the avatar over the [cloud API](/api/overview) instead.",
+      },
+    ],
   },
-  {
-    id: "android",
-    name: "Android",
-    sub: "arm64-v8a · minSdk 26",
-    href: "/sdk/android",
-    perfKeys: ["/Android"],
-    install: "implementation(\"ai.bithuman:expression2-android:0.4.1\")",
-    model: "val model = Expression2ModelStore(context).fetch(\"A02HCY0444\")   // ~158 MB the first time; never on the main thread",
-    run: "./gradlew :app:installDebug",
-  },
-  {
-    id: "web",
-    name: "Web",
-    sub: "any modern browser",
-    href: "/sdk/web",
-    perfKeys: ["/Web"],
-    install: "# nothing to install",
-    model: "# A74NWD9723 — or any code on /showcase",
-    run: "open \"https://www.bithuman.ai/A74NWD9723?rendering_mode=browser\"",
-  },
-  {
-    id: "python",
-    name: "Python",
-    sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
-    href: "/sdk/python",
-    perfKeys: ["Python library/Linux", "Python library/macOS"],
-    install: "pip install \"bithuman[expression-2]\"",
-    model: "curl -fsSLO \"https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}\"",
-    code: "# hello.py\nimport bithuman\n\nwith bithuman.open(\"A23WJF0199.avatar\") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call\n    for image in avatar.render(\"demo_sample.wav\"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate\n        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]",
-    run: "export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys\npython hello.py",
-  },
-].map((b) => ({ ...b, perf: b.perfKeys.map(perf) }));
+];
+
+/** `a [b](/c)` → HTML, so a note can carry one link without a markdown parser. */
+const rich = (s: string) =>
+  s
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 ---
 
 <Base
   title="SDK — bitHuman docs"
-  description="Run a bitHuman avatar on your device. Pick a platform — macOS, Linux, iOS, Android, Web, Python: install, get a free model, run."
+  description="Run a bitHuman avatar on your device. Pick a model — Expression 2 or Essence 2 — then your platform: macOS, Linux, iOS, Android, Web, Python."
 >
   <section class="sdk">
     <div class="container">
       <h1 id="platforms">Run a bitHuman avatar on your device</h1>
-      <p class="lede">Pick a platform.</p>
+      <p class="lede">Pick a model, then your platform.</p>
 
-      <div class="gallery">
-        {blocks.map((b) => (
-          <article class="card" id={b.id}>
-            <span class="mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><Fragment set:html={MARKS[b.id]} /></svg>
-            </span>
+      <nav class="tabs" aria-label="Model">
+        {models.map((m) => (
+          <a class:list={["tab", `tab-${m.id}`]} href={`#${m.id}`}>{m.name}</a>
+        ))}
+      </nav>
 
-            <h2 class="name" id={`${b.id}-name`}><a href={`#${b.id}`}>{b.name}</a></h2>
-            <p class="sub">{b.sub}</p>
+      <div class="panes">
+        {models.map((m) => (
+          <section class="pane" id={m.id} aria-labelledby={`${m.id}-h`}>
+            <p class="what">
+              <strong id={`${m.id}-h`}>{m.name}</strong> — {m.what}{" "}
+              <a href={m.concept}>How it works</a>
+            </p>
 
-            <div class="rates">
-              {b.perf.map((m) => (
-                <div class="machine">
-                  <p class="hw">{m.hardware}</p>
-                  <dl>
-                    {m.models.map((x) => (
-                      <div class:list={["stat", { num: isNumber(x.cell) }]}>
-                        <dt>{x.name}</dt>
-                        <dd>{x.cell}{isNumber(x.cell) && <span class="unit"> fps</span>}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
+            <div class="gallery">
+              {m.cards.map((c) => (
+                <article class="card" id={`${m.id}-${c.key}`}>
+                  <span class="mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><Fragment set:html={MARKS[c.key]} /></svg>
+                  </span>
+
+                  <h2 class="name" id={`${m.id}-${c.key}-name`}>
+                    {c.setup ? <a href={`#${m.id}-${c.key}`}>{c.name}</a> : <a href={c.href}>{c.name}</a>}
+                  </h2>
+                  <p class="sub">{c.sub}</p>
+
+                  {c.elsewhere
+                    ? <p class="elsewhere" set:html={rich(c.elsewhere)} />
+                    : <p class="cue" aria-hidden="true">Setup <span>→</span></p>}
+
+                  {c.setup && (
+                    <div class="detail" role="region" aria-labelledby={`${m.id}-${c.key}-name`}>
+                      {c.note && <p class="note" set:html={rich(c.note)} />}
+                      <ol class="steps">
+                        <li><span class="step">Install</span><Code code={c.setup.install} /></li>
+                        <li><span class="step">Get a model</span><Code code={c.setup.model} /></li>
+                        {c.setup.code && <li><span class="step">Minimal code</span><Code code={c.setup.code} /></li>}
+                        <li><span class="step">Run</span><Code code={c.setup.run} /></li>
+                      </ol>
+                      <p class="ends">
+                        <a class="guide" href={c.href}>Full guide <span aria-hidden="true">→</span></a>
+                        <a class="close" href="#platforms">Close</a>
+                      </p>
+                    </div>
+                  )}
+                </article>
               ))}
             </div>
-
-            <p class="cue" aria-hidden="true">Setup <span>→</span></p>
-
-            <div class="detail" role="region" aria-labelledby={`${b.id}-name`}>
-              <ol class="steps">
-                <li><span class="step">Install</span><Code code={b.install} /></li>
-                <li><span class="step">Get a model</span><Code code={b.model} /></li>
-                {b.code && <li><span class="step">Minimal code</span><Code code={b.code} /></li>}
-                <li><span class="step">Run</span><Code code={b.run} /></li>
-              </ol>
-              <p class="ends">
-                <a class="guide" href={b.href}>Full guide <span aria-hidden="true">→</span></a>
-                <a class="close" href="#platforms">Close</a>
-              </p>
-            </div>
-          </article>
+          </section>
         ))}
       </div>
+
+      <p class="perf">Measured frame rates for every platform and both models are on the <a href="/sdk/performance">performance page</a>.</p>
     </div>
   </section>
 </Base>
@@ -194,8 +250,38 @@ const blocks = [
   .sdk h1 { font-size: var(--fh-2xl); max-width: 22ch; scroll-margin-top: calc(var(--nav-h) + 20px); }
   .lede { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
 
+  /* Two links, one fragment each, so the chosen model has a URL and the back
+     button returns to the other one. */
+  .tabs { display: flex; gap: var(--space-1); margin-top: var(--space-6); border-bottom: 1px solid var(--color-border); }
+  .tab {
+    padding: 0.6rem var(--space-4);
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    font-weight: var(--fw-medium);
+    color: var(--color-text-secondary);
+    transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  }
+  .tab:hover { color: var(--color-text); }
+
+  .pane { display: none; }
+  /* Expression 2 until the reader asks for the other one. Where :has() is
+     unavailable both panes show, which is complete rather than broken. */
+  .panes:not(:has(:target)) .pane:first-of-type { display: block; }
+  .pane:target,
+  .pane:has(.card:target) { display: block; }
+  .sdk:not(:has(#essence-2:target)):not(:has(#essence-2 .card:target)) .tab-expression-2,
+  .sdk:has(#essence-2:target) .tab-essence-2,
+  .sdk:has(#essence-2 .card:target) .tab-essence-2 {
+    color: var(--color-text);
+    border-bottom-color: var(--color-primary);
+  }
+
+  .what { margin-top: var(--space-5); max-width: 62ch; color: var(--color-text-secondary); }
+  .what strong { color: var(--color-text); }
+  .what a { color: var(--color-primary); font-weight: var(--fw-medium); }
+
   .gallery {
-    margin-top: var(--space-8);
+    margin-top: var(--space-5);
     display: grid;
     gap: var(--space-4);
     grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr));
@@ -228,23 +314,20 @@ const blocks = [
   .name a:focus-visible::after { outline: 2px solid var(--color-primary); outline-offset: 3px; }
   .sub { margin-top: 0.25rem; color: var(--color-text-tertiary); font-size: var(--ft-sm); }
 
-  .rates { margin-top: var(--space-4); }
-  .machine + .machine { margin-top: var(--space-3); }
-  .hw { font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-tertiary); }
-  .machine dl { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-6); margin: 0.3rem 0 0; }
-  .stat dt { font-size: var(--ft-xs); color: var(--color-text-secondary); }
-  .stat dd { margin: 0.1rem 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .stat.num dd { font-size: var(--fh-sm); font-weight: var(--fw-bold); color: var(--color-text); letter-spacing: -0.02em; }
-  .stat .unit { font-size: var(--ft-sm); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
-
   .cue { margin-top: var(--space-4); font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-primary); }
   .cue span { display: inline-block; transition: transform var(--t-fast) var(--ease); }
   .card:hover .cue span { transform: translateX(3px); }
+
+  .elsewhere { position: relative; z-index: 1; margin-top: var(--space-4); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .elsewhere :global(a) { color: var(--color-primary); font-weight: var(--fw-medium); }
 
   /* Closed by default; the URL opens it. */
   .detail { display: none; }
   .card:target .detail { display: block; }
   .card:target .cue { display: none; }
+
+  .note { margin-top: var(--space-4); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .note :global(code) { font-family: var(--font-mono); font-size: 0.86em; }
 
   .steps { list-style: none; margin: var(--space-4) 0 0; padding: 0; counter-reset: step; }
   .steps li { margin-top: var(--space-4); min-width: 0; }
@@ -282,8 +365,13 @@ const blocks = [
   .close { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
   .close:hover { color: var(--color-text); }
 
+  .perf { margin-top: var(--space-8); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+  .perf a { color: var(--color-text-secondary); text-decoration: underline; text-underline-offset: 2px; }
+  .perf a:hover { color: var(--color-primary); }
+
   @media (max-width: 560px) {
     .card { padding: var(--space-4); border-radius: var(--r-xl); }
     .sdk h1 { font-size: var(--fh-xl); }
+    .tab { padding-inline: var(--space-3); }
   }
 </style>
