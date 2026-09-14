@@ -44,13 +44,13 @@ and that is the tested one.
 | `bithuman list` | Browse the showcase catalogue (aliases: `avatars`, `ls`, `browse`) |
 | `bithuman info <file>` | Model metadata: format, engine, family, and the container's full table of contents (alias: `inspect`) |
 | `bithuman login` / `logout` | Sign in through the browser and mint a per-device key / revoke it |
-| `bithuman auth status` | Who you are signed in as and where the credential lives (alias: `whoami`) |
+| `bithuman whoami` | Who you are signed in as and where the credential lives |
 | `bithuman account` | Plan, credit balance, account status (alias: `credits`) |
 | `bithuman usage` | Recent credit usage and metering history |
 | `bithuman init` | Interactive wizard: save a secret, pick a brain, pull a starter avatar |
 | `bithuman engine list \| install \| update` | Inspect or fetch the per-platform Expression 2 render engine |
 | `bithuman doctor` | Host, credential, brain and cache check |
-| `bithuman mcp` | The built-in MCP server over stdio; `bithuman mcp tools` lists its 26 tools |
+| `bithuman mcp` | The built-in MCP server over stdio; `bithuman mcp tools` lists its 28 tools |
 | `bithuman completion <shell>` | Completions for bash, zsh, fish, elvish, powershell |
 
 Every subcommand takes `--help`, and each `--help` ends in a copy-pasteable
@@ -61,7 +61,7 @@ Every subcommand takes `--help`, and each `--help` ends in a copy-pasteable
 ```bash
 bithuman login              # opens a browser, mints a per-device key
 bithuman login --device     # SSH / headless: prints a short code to enter elsewhere
-bithuman auth status        # who am I, and where is the credential read from
+bithuman whoami             # who am I, and where is the credential read from
 bithuman logout             # revokes this device's key on the server
 ```
 
@@ -106,7 +106,7 @@ Every self-hosted `run` and `render` is metered. The line to grep for, printed o
 [selfhost-meter] metering armed for identity=/home/you/.cache/bithuman/showcase/wise-pup.imx product=expression-2 endpoint=https://api.bithuman.ai/v1/
 ```
 
-If instead you see `★ UNMETERED RENDER`, the service could not be reached and a live `run` keeps rendering; a `render` refuses (exit 77) with no key at all.
+If instead you see `★ UNMETERED RENDER`, the service could not be reached — our outage or your network — and the render continues and is never refused, because being unable to ask is not the same as being told no. An operator who wants a validated credential before any frame sets `BITHUMAN_METER_ENFORCE=1`, which refuses this case too. A render with no credential, or one the service rejects, is refused outright from 2.6.19 — see below.
 
 ### Which model files run locally
 
@@ -323,6 +323,9 @@ A failure prints one object to **stderr** and leaves stdout empty:
 
 ```json
 {"error":{"code":"SLUG_NOT_FOUND","message":"slug 'x' not found in manifest. Try `bithuman list`.","command":"pull"}}
+
+// when there is a next step, the object carries a `hint` beside the cause:
+{"error":{"code":"NOT_AUTHENTICATED","command":"account","hint":"run `bithuman login` (free, one tap) — or set BITHUMAN_API_SECRET","kind":"NotAuthorised","message":"not signed in"}}
 ```
 
 Colour is emitted only to an interactive TTY, so `--json`, `NO_COLOR`, `CI`,
@@ -341,12 +344,13 @@ A stable sysexits subset. Branch on these rather than parsing text.
 | 69 | UNAVAILABLE | network, engine or service unavailable; an incomplete model file |
 | 70 | SOFTWARE | internal error (`essence-1` `render`) |
 | 77 | NOPERM | not signed in, out of credits, or forbidden |
+| 130 | — | interrupted (Ctrl-C) — the session closed through its stop-flush |
 
 ### The shapes
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.18","libessence":"3.1.7",
+{"abi":7,"cli":"2.6.19","libessence":"3.1.8",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
@@ -397,7 +401,7 @@ across releases. `schema_version` tells you when it is not.
 bithuman __schema      # the whole command / flag / exit-code tree as JSON
 bithuman __man [DIR]   # roff man pages
 bithuman __agents      # this contract, printed offline
-bithuman auth token    # the resolved secret on stdout (exit 77 if none)
+bithuman token         # the resolved secret on stdout (exit 77 if none)
 ```
 
 ### MCP server
@@ -406,8 +410,8 @@ bithuman auth token    # the resolved secret on stdout (exit 77 if none)
 { "mcpServers": { "bithuman": { "command": "bithuman", "args": ["mcp"] } } }
 ```
 
-`bithuman mcp` speaks Model Context Protocol over stdio and exposes **26 tools**
-(confirmed on 2.6.5 with `bithuman mcp tools`): thin wrappers over
+`bithuman mcp` speaks Model Context Protocol over stdio and exposes **28 tools**
+(confirmed on 2.6.19 with `bithuman mcp tools --json`): thin wrappers over
 `api.bithuman.ai` — `validate_api_secret`, `get_credit_balance`, `get_usage`,
 `list_voices`, `text_to_speech`, `generate_agent`, `get_agent_status`,
 `get_agent`, `update_agent_prompt`, `delete_agent`, `list_agents`,
