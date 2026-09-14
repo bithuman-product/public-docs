@@ -1,0 +1,73 @@
+name: CLI refusals driven
+
+# THE REFUSALS ARE DRIVEN, NOT ATTESTED.
+#
+# credential-claims.json records the version each claim was driven against, and
+# a human moves that version after re-driving. For a claim that must RENDER to
+# prove anything, that is the best available: it costs a credential and real
+# money.
+#
+# ★The REFUSAL arms are free. "X refuses without a credential" is driven by
+# running the artifact with NO credential — nothing renders, nothing is billed,
+# no secret and no device are needed, and it ends in a non-zero exit in seconds.
+# So those claims are not attested at all here: this job reproduces them on the
+# newest published bytes, and there is nothing left for anyone to bump.
+#
+# ★WHY EACH ARM ASSERTS AN EXACT CODE. Measured while building this: the CLI
+# resolves the MODEL BEFORE the credential, so an arm pointed at a missing path
+# exits 66 MODEL_NOT_FOUND. An arm asserting only "it failed" would pass on a
+# run that never reached the credential check. The first arm therefore names a
+# missing model deliberately and REQUIRES 66, proving the others got past the
+# step that would otherwise fake their result.
+#
+# Daily, because the event that invalidates a refusal claim is a RELEASE
+# PUBLISHING, which is not an event in this repository. Whole run: ~15 s.
+#
+# EXIT 0 every refusal reproduced · 1 one did not · 2 CANNOT CHECK, a failure
+# you can see and never a pass.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/content/docs/sdk/cli.md
+      - src/content/docs/guides/pricing.md
+      - src/content/docs/changelog.md
+      - scripts/check-cli-refusals.mjs
+      - scripts/credential-claims.json
+      - .github/workflows/cli-refusals.yml
+  pull_request:
+    paths:
+      - src/content/docs/sdk/cli.md
+      - src/content/docs/guides/pricing.md
+      - src/content/docs/changelog.md
+      - scripts/check-cli-refusals.mjs
+      - scripts/credential-claims.json
+      - .github/workflows/cli-refusals.yml
+  schedule:
+    - cron: "29 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cli-refusals:
+    name: every refusal the pages promise happens on today's bytes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # Fixtures, no network: three red controls fire every run, including a 66
+      # masquerading as a refusal.
+      - name: The refusal driver proves itself
+        run: node scripts/check-cli-refusals.mjs --selftest
+
+      - name: Drive every refusal on the published binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-cli-refusals.mjs
