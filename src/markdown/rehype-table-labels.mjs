@@ -1,5 +1,5 @@
 /**
- * Stamp every table cell with the name of its column.
+ * Give every table a scroll wrapper, and stamp every cell with its column name.
  *
  * A table is a grid, and a grid needs width. At 390px the four-column
  * troubleshooting tables on /sdk/cli were a column of clipped paths, and the
@@ -11,6 +11,12 @@
  * Done here, at build time, rather than in a script on the page: the label is
  * part of the content, so it must be there whether or not anything runs.
  * Every table on this site comes from Markdown, so every table is covered.
+ *
+ * The wrapper is what lets a table fill its column. Scrolling used to be put on
+ * the table itself with `display: block`, and a block-level table box sizes to
+ * its content rather than to `width: 100%` — which is why the performance
+ * table, the whole point of its page, sat at 470px inside a 728px column. The
+ * overflow now belongs to the wrapper and the table can be a table again.
  */
 
 const textOf = (node) =>
@@ -23,6 +29,9 @@ const textOf = (node) =>
 const childrenNamed = (node, tagName) =>
   (node.children ?? []).filter((c) => c.type === "element" && c.tagName === tagName);
 
+/** A figure, or a sentence standing in for one. */
+const isFigure = (t) => /^[0-9]+(\.[0-9]+)?$/.test(t.trim());
+
 function labelCells(table) {
   const headRow = childrenNamed(childrenNamed(table, "thead")[0] ?? {}, "tr")[0];
   if (!headRow) return;
@@ -32,7 +41,13 @@ function labelCells(table) {
   for (const body of childrenNamed(table, "tbody")) {
     for (const row of childrenNamed(body, "tr")) {
       childrenNamed(row, "td").forEach((cell, i) => {
-        if (names[i]) (cell.properties ??= {})["data-label"] = names[i];
+        const props = (cell.properties ??= {});
+        if (names[i]) props["data-label"] = names[i];
+        // A cell in a figures column that carries a sentence instead is a
+        // status, and reads as one rather than competing with the numbers.
+        if (props.align === "right" && !isFigure(textOf(cell))) {
+          props.className = [...(props.className ?? []), "is-status"];
+        }
       });
     }
   }
@@ -41,8 +56,21 @@ function labelCells(table) {
 export default function rehypeTableLabels() {
   return (tree) => {
     const walk = (node) => {
-      if (node.type === "element" && node.tagName === "table") labelCells(node);
-      for (const child of node.children ?? []) walk(child);
+      const kids = node.children ?? [];
+      for (let i = 0; i < kids.length; i++) {
+        const child = kids[i];
+        if (child.type === "element" && child.tagName === "table") {
+          labelCells(child);
+          kids[i] = {
+            type: "element",
+            tagName: "div",
+            properties: { className: ["table-wrap"] },
+            children: [child],
+          };
+          continue;
+        }
+        walk(child);
+      }
     };
     walk(tree);
   };

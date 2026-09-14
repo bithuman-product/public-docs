@@ -7,8 +7,11 @@ import Code from "../../components/Code.astro";
 // It used to be the other way round, and every card carried both models. That
 // repeated the same two names five times, and it hid the thing a reader most
 // needs: the two models do NOT run in the same places. Expression 2 has a
-// documented on-device path on all five; Essence 2 has one on the CLI and the
-// Python library, and renders through the cloud on a handset or in a browser.
+// documented on-device path on all five. Essence 2 has one WRITTEN on the CLI
+// and the Python library; on iPhone and on Android the SDK ships and was
+// measured on a real device, but the step-by-step is not written yet, and in a
+// browser the published package is a demo. That is a docs gap on the handsets
+// and a product limit only on the web.
 // Grouped this way the difference IS the content, rather than something a
 // reader has to reconstruct by comparing five cards.
 //
@@ -152,14 +155,14 @@ const models: Model[] = [
         name: "iOS",
         sub: "iPhone or iPad",
         href: "/sdk/ios",
-        elsewhere: "No handset bundle is published, so this site documents no on-device path. Use Expression 2 on the phone, or render Essence 2 through the [cloud API](/api/overview).",
+        elsewhere: "The same Swift package carries Essence 2 from 2.13.2, and it opens the `.imx` the download endpoint serves. The step-by-step is not written yet — the [iOS page](/sdk/ios) has the package, and the [cloud API](/api/overview) renders it meanwhile.",
       },
       {
         key: "android",
         name: "Android",
         sub: "arm64-v8a",
         href: "/sdk/android",
-        elsewhere: "The Android page documents the Expression 2 path. For Essence 2 today, use the [CLI](/sdk/cli), the [Python library](/sdk/python) or the [cloud API](/api/overview).",
+        elsewhere: "The Essence 2 Android SDK is published and runs on a handset; the step-by-step is not on the [Android page](/sdk/android) yet. Until it is, use the [CLI](/sdk/cli), the [Python library](/sdk/python) or the [cloud API](/api/overview).",
       },
       {
         key: "web",
