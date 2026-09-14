@@ -10,19 +10,24 @@ order: 1
 
 ## September 2026
 
-### `bithuman` 3.1.6 for Linux: Essence 2 uses more of your machine's cores (2026-09-14)
+### `bithuman` 3.1.6: Expression 2 on a Mac renders on the CLI's engine, and Essence 2 uses more of your cores (2026-09-14)
 
-`bithuman` 3.1.6 on PyPI, for Linux x86_64 and Linux aarch64 (CPython
-3.10–3.14). **No macOS wheels were published for 3.1.6**, so on Apple Silicon
-`pip install bithuman` still installs 3.1.5.
+`bithuman` 3.1.6 on PyPI, for Apple Silicon macOS (14 or newer), Linux x86_64
+and Linux aarch64 (CPython 3.10–3.14). The Linux wheels published first and the
+Mac wheels about half an hour later; if `pip install bithuman` on a Mac gave you
+3.1.5 in that window, run `pip install --upgrade bithuman`.
 
+- **On a Mac, Expression 2 now renders on the CoreML engine the macOS CLI
+  uses.** Until now the Python library rendered Expression 2 on a CPU engine of
+  its own, while `bithuman render` on the same Mac used CoreML. The Mac wheels
+  now carry that CoreML engine and fetch its model files once, on first use.
+  Nothing you call changes. Linux is unchanged.
 - **Essence 2 uses more of your machine's cores.** The thread count reaches the
   part of the renderer that does most of the work, which until now stayed at
   four whatever you asked for. The default becomes the smaller of your core
   count and 16.
 - **The thread count does not change a single frame.** The release was tested
   at four, eight and sixteen threads, and every frame matched.
-- Nothing you call changes.
 
 ### Essence 2 renders faster again on Linux, and every frame is what 2.6.15 produced — `cli-v2.6.16` (2026-09-14)
 
