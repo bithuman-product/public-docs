@@ -10,7 +10,7 @@ label: "Performance"
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---:|---:|
 | Cloud GPU | NVIDIA RTX 4090 | 290 | 83.5 |
-| macOS | Apple M4 | 80 | 82 |
+| macOS | Apple M4 | 159 | 82 |
 | iOS | iPhone 15 | 118 | 52 |
 | Android | Galaxy S25+ | 58 | 50 |
 | Web | Chrome on M4 | 30 | 23 — not yet real time |
