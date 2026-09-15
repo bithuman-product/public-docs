@@ -1,0 +1,753 @@
+{
+  "artifact": {
+    "registry": "pypi",
+    "coordinate": "bithuman",
+    "version": "3.1.8",
+    "digest": "sha256:ba1736540992c6e9c220d71addc3eec1e3b3893b0b6a474efc7a08f7a3a3035c",
+    "resolved_on": "2026-09-15",
+    "wheel": "bithuman-3.1.8-cp312-cp312-manylinux_2_28_x86_64.whl"
+  },
+  "surface": {
+    "package": "bithuman",
+    "distribution": {
+      "name": "bithuman",
+      "version": "3.1.8",
+      "requires_python": "<3.15,>=3.10",
+      "extras": [
+        "expression-2",
+        "offline",
+        "tessera",
+        "test"
+      ],
+      "console_scripts": [],
+      "has_py_typed": true
+    },
+    "dunder_version": false,
+    "runnable_as_module": true,
+    "retired": [
+      {
+        "name": "AccountStatusError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "AsyncAvatar",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "AsyncBithuman",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "AudioChunk",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "Bithuman",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "BithumanError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "ComposedFrame",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EP",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EP_AUTO",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EP_COREML",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EP_CPU",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EP_NNAPI",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EP_QNN",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "Emotion",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "EmotionPrediction",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "Fixture",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "ModelError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "ModelLoadError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "ModelNotFoundError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "ModelSecurityError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "Runtime",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "RuntimeNotReadyError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "TokenError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "TokenExpiredError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "TokenRequestError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "TokenValidationError",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "VideoControl",
+        "raises": "_Retired",
+        "is_import_error": true
+      },
+      {
+        "name": "VideoFrame",
+        "raises": "_Retired",
+        "is_import_error": true
+      }
+    ],
+    "modules": [
+      {
+        "name": "bithuman",
+        "interface": "stub",
+        "stub": "__init__.pyi",
+        "doc": "bithuman — run an avatar on this machine.\n\n    import bithuman\n    avatar = bithuman.open(\"A63GVG1577.imx\")\n    for image in avatar.render(audio):\n        show(image)\n\nTwo operations: **open an avatar, then render audio through it.**  Frames come\nback as ``(height, width, 3)`` uint8 arrays in RGB order, at the avatar's own\nframe rate.  ``audio`` is 16 kHz mono — a buffer, the path of an audio file, or\nan iterable of buffers for a live stream; passing a stream instead of a whole\nclip is the same call.\n\n**Both families open the same way.**  essence-2 and expression-2 avatars are\nthe same two lines above; nothing in your code says which one you have.\nexpression-2 needs one extra package on this machine::\n\n    pip install \"bithuman[expression-2]\"\n\nEight names, and that is the whole surface::\n\n    open  ·  Avatar.render  ·  Avatar\n    AvatarError  ·  InvalidAvatar  ·  NotSupported  ·  NotAuthorised  ·  Failed\n\nThere is nothing to configure.  This package runs the avatar on this machine,\nin your process, so there is nothing left to choose about where or how it runs\n— you chose that when you chose this package instead of the cloud one.\n\nA key belongs in the environment, not in your code::\n\n    export BITHUMAN_API_SECRET=...        # rendering is metered\n\n**One command, if you would rather not write anything.**  Give it an avatar\nand some audio and it writes a video::\n\n    python -m bithuman A63GVG1577 speech.wav       # -> A63GVG1577.mp4\n\nThe avatar can be a ten-character code — it is fetched once, which is free —\nor a file you already have.  Run it with no arguments to see the avatars your\nkey can open.\n\nNo audio to hand?  This package ships 15 s of speech at\n``bithuman/assets/demo_sample.wav`` — ``python -m bithuman --help`` prints its\npath on this machine.\n\n★``pip install bithuman`` never puts a command on your PATH, and the line\nabove is why it does not have to.  That is an invariant, not an accident:\na pip-installed command named ``bithuman`` would overwrite the one Homebrew\nputs at the same path, so ``tests/test_no_console_script.py`` fails if a\nfuture release grows one.  ``python -m`` needs no script and cannot collide\nwith one.  The full command-line tool is still a separate artifact::\n\n    curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
+        "declared": [
+          "open",
+          "Avatar",
+          "AvatarError",
+          "InvalidAvatar",
+          "NotSupported",
+          "NotAuthorised",
+          "Failed"
+        ],
+        "symbols": [
+          {
+            "name": "open",
+            "kind": "function",
+            "doc": "Open an avatar and return it.\n\n``source`` is the avatar file on this machine.  This package runs the\navatar **here**, in your process; nothing is sent anywhere to make a\nframe.\n\nRaises :class:`InvalidAvatar` if it cannot be found or is not usable,\n:class:`NotSupported` if it cannot run on this machine,\n:class:`NotAuthorised` if the key is missing, invalid or out of credit,\nand :class:`Failed` if something else went wrong.",
+            "signature": "(source: Any) -> Avatar",
+            "runtime_signature": "(source) -> 'Avatar'"
+          },
+          {
+            "name": "Avatar",
+            "kind": "class",
+            "doc": "An open avatar.  Get one from :func:`bithuman.open`.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._open",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, engine, engine_id, armed=True)"
+              }
+            ],
+            "members": [
+              {
+                "name": "__enter__",
+                "signature": "(self) -> 'Avatar'",
+                "doc": "",
+                "runtime_signature": "(self)"
+              },
+              {
+                "name": "__exit__",
+                "signature": "(self, *exc: Any) -> bool",
+                "doc": "",
+                "runtime_signature": "(self, *exc)"
+              },
+              {
+                "name": "render",
+                "signature": "(self, audio: Audio) -> Iterator[np.ndarray]",
+                "doc": "Yield the frames for ``audio``.\n\n``audio`` is 16 kHz mono — a buffer (bytes, or an int16/float array),\nthe path of an audio file, or an **iterable of those** for a live\nstream.  Passing a stream instead of a whole clip is the same call.\n\nEach frame is a ``(height, width, 3)`` uint8 array in RGB order.\nFrames arrive in order, at the avatar's own frame rate — which is a\nproperty of the avatar, not something to choose.\n\nTo stop early — a person interrupting the avatar — stop consuming and\nclose the iterator; the avatar is ready for the next ``render``.",
+                "runtime_signature": "(self, audio) -> \"Iterator['object']\""
+              }
+            ],
+            "constructor_signature": null
+          },
+          {
+            "name": "AvatarError",
+            "kind": "exception",
+            "doc": "Base class for every refusal this package raises.",
+            "bases": [
+              "Exception"
+            ],
+            "defined_in": "bithuman._errors",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "InvalidAvatar",
+            "kind": "exception",
+            "doc": "We cannot find it, or it is not a usable avatar.\n\nFix the path or the code, or fetch the avatar again.",
+            "bases": [
+              "AvatarError"
+            ],
+            "defined_in": "bithuman._errors",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "NotSupported",
+            "kind": "exception",
+            "doc": "This avatar cannot run here.\n\nUse the cloud package, or another device.",
+            "bases": [
+              "AvatarError"
+            ],
+            "defined_in": "bithuman._errors",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "NotAuthorised",
+            "kind": "exception",
+            "doc": "The key is missing, invalid, or out of credit.\n\nFix the credential.",
+            "bases": [
+              "AvatarError"
+            ],
+            "defined_in": "bithuman._errors",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "Failed",
+            "kind": "exception",
+            "doc": "We could not do it — transient, or our fault.\n\nRetry, then report it.",
+            "bases": [
+              "AvatarError"
+            ],
+            "defined_in": "bithuman._errors",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          }
+        ],
+        "stub_only": [
+          "Audio"
+        ],
+        "stub_aliases": {
+          "Audio": "Union[bytes, bytearray, memoryview, str, 'np.ndarray', Iterable[Any]]"
+        },
+        "runtime_extra": [
+          "bindings",
+          "lib"
+        ]
+      },
+      {
+        "name": "bithuman.bindings",
+        "interface": "__all__",
+        "stub": null,
+        "doc": "",
+        "declared": [
+          "libengine"
+        ],
+        "symbols": [
+          {
+            "name": "libengine",
+            "kind": "module",
+            "doc": "libengine — Python binding over the be_engine_* narrow-waist C ABI.\n\nA thin ctypes wrapper so a Python host (the `bithuman` wheel, tools, tests) can\ndrive the ONE engine — open a `.imx`, feed audio, pull frames, meter — regardless\nof which engine/plane backend serves it. This is the Python arm of \"one tool over\none waist\" (ARCHITECTURE.md): the same be_engine_* contract the Rust CLI, the\nSwift package, and the cloud worker speak.\n\nLoad the SHARED libengine (built with -DENGINE_BUILD_SHARED=ON, OUTPUT_NAME\n`engine`). Backends are separate dlopen'd `.so`s resolved by the facade; set the\nsearch dir with Engine.set_backend_search_dir().\n\n    from libengine import LibEngine, HostCaps, Tier\n    eng = LibEngine(\"/path/libengine.so\")\n    with eng.open(\"avatar.imx\", host_caps=HostCaps([\"coreml-neural-engine\", \"onnxruntime-cpu\"], Tier.OFFLINE_PREPAID)) as sess:\n        sess.feed_audio(pcm_int16_bytes)\n        frame = sess.pull_frame()   # bytes, or None on an idle/not-ready poll",
+            "value_type": "module"
+          }
+        ],
+        "stub_only": [],
+        "stub_aliases": {},
+        "runtime_extra": []
+      },
+      {
+        "name": "bithuman.bindings.libengine",
+        "interface": "undeclared",
+        "stub": null,
+        "doc": "libengine — Python binding over the be_engine_* narrow-waist C ABI.\n\nA thin ctypes wrapper so a Python host (the `bithuman` wheel, tools, tests) can\ndrive the ONE engine — open a `.imx`, feed audio, pull frames, meter — regardless\nof which engine/plane backend serves it. This is the Python arm of \"one tool over\none waist\" (ARCHITECTURE.md): the same be_engine_* contract the Rust CLI, the\nSwift package, and the cloud worker speak.\n\nLoad the SHARED libengine (built with -DENGINE_BUILD_SHARED=ON, OUTPUT_NAME\n`engine`). Backends are separate dlopen'd `.so`s resolved by the facade; set the\nsearch dir with Engine.set_backend_search_dir().\n\n    from libengine import LibEngine, HostCaps, Tier\n    eng = LibEngine(\"/path/libengine.so\")\n    with eng.open(\"avatar.imx\", host_caps=HostCaps([\"coreml-neural-engine\", \"onnxruntime-cpu\"], Tier.OFFLINE_PREPAID)) as sess:\n        sess.feed_audio(pcm_int16_bytes)\n        frame = sess.pull_frame()   # bytes, or None on an idle/not-ready poll",
+        "declared": [],
+        "symbols": [],
+        "stub_only": [],
+        "runtime_extra": []
+      },
+      {
+        "name": "bithuman.lib",
+        "interface": "undeclared",
+        "stub": null,
+        "doc": "",
+        "declared": [],
+        "symbols": [],
+        "stub_only": [],
+        "runtime_extra": []
+      },
+      {
+        "name": "bithuman.lib.libengine",
+        "interface": "not-importable",
+        "import_error": "ImportError: dynamic module does not define module export function (PyInit_libengine)",
+        "declared": [],
+        "symbols": []
+      },
+      {
+        "name": "bithuman.lib.libengine-backend-essence2-light",
+        "interface": "not-importable",
+        "import_error": "ImportError: dynamic module does not define module export function (PyInit_libengine_backend_essence2_light)",
+        "declared": [],
+        "symbols": []
+      },
+      {
+        "name": "bithuman.lib.lible_core",
+        "interface": "not-importable",
+        "import_error": "ImportError: dynamic module does not define module export function (PyInit_lible_core)",
+        "declared": [],
+        "symbols": []
+      },
+      {
+        "name": "bithuman.offline",
+        "interface": "__all__",
+        "stub": null,
+        "doc": "``bithuman.offline`` — the essence-2 self-hosted offline render.\n\n    from bithuman.offline import OfflineRenderer, render_offline\n\n    stats = render_offline(\"A63GVG1577.imx\", \"speech.wav\", out_mp4=\"out.mp4\")\n    assert stats[\"borrow_state\"] == \"borrowed\"\n\nThis is the reference route: it renders a whole clip on CPU through the same\npipeline the hosted engine runs, and every render says whether the avatar's own\nteeth were used.  ``stats[\"borrow_state\"]`` is one of the five ``BORROW_*``\nnames below and is the field to gate on; ``stats[\"borrow\"]`` carries the\nper-frame evidence behind it.\n\nThis module is not part of the eight-name taught surface (``bithuman.open`` and\n``avatar.render`` are); it is kept for the callers that drive the offline route\ndirectly.\n\n★2.x SPELLINGS.  ``bithuman.tessera_offline`` (module), ``OfflineTesseraRenderer``\nand ``TesseraOfflineError`` (classes), ``bithuman[tessera]`` (extra) and\n``BITHUMAN_TESSERA_*`` (environment) are the 2.x names of the things below.\nImporting the old module warns and keeps working until 4.0.0; the old extra\ninstalls the same dependencies; the old environment keys are read forever.\nThe 2.x stats key ``stats[\"tessera\"]`` is gone — it is ``stats[\"borrow\"]``.",
+        "declared": [
+          "OfflineRenderer",
+          "OfflineRenderError",
+          "MeteringNotArmedError",
+          "render_offline",
+          "unfold_imx",
+          "BORROW_BORROWED",
+          "BORROW_PARTIAL",
+          "BORROW_SYNTHESIZED",
+          "BORROW_ABSENT",
+          "BORROW_UNKNOWN"
+        ],
+        "symbols": [
+          {
+            "name": "OfflineRenderer",
+            "kind": "class",
+            "doc": "Offline CPU renderer for an essence-2 (essence2-light engine)\n``.imx``/bundle dir, teeth-armed when the bundle carries the\nv5.1 members. Metering is armed at CONSTRUCTION (billing key\nfirst); rendering without a permitting gate raises.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._offline",
+            "not_in_shipped_interface": [],
+            "members": [
+              {
+                "name": "__enter__",
+                "signature": "(self)",
+                "doc": ""
+              },
+              {
+                "name": "__exit__",
+                "signature": "(self, *exc)",
+                "doc": ""
+              },
+              {
+                "name": "close",
+                "signature": "(self)",
+                "doc": ""
+              },
+              {
+                "name": "render",
+                "signature": "(self, audio, max_frames: 'Optional[int]' = None, on_frame: 'Optional[Callable[[np.ndarray, int], None]]' = None) -> 'dict'",
+                "doc": "Render ``audio`` (a path, or float32 16 kHz mono PCM) to full\nRGB frames. ``on_frame(frame_hw3_u8, frame_idx)`` receives every\nframe; returns the honest stats dict (CPU-class fps)."
+              }
+            ],
+            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'int' = 4, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
+          },
+          {
+            "name": "OfflineRenderError",
+            "kind": "exception",
+            "doc": "Unspecified run-time error.",
+            "bases": [
+              "RuntimeError"
+            ],
+            "defined_in": "bithuman._offline",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "MeteringNotArmedError",
+            "kind": "exception",
+            "doc": "The v2 metering gate refused frame production (no authenticated\nheartbeat / grace elapsed / 402-403). Fail-closed by design.",
+            "bases": [
+              "OfflineRenderError"
+            ],
+            "defined_in": "bithuman._offline",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "render_offline",
+            "kind": "function",
+            "doc": "One-call offline render. When ``out_mp4`` is given the frames are\nencoded (h264 + the source audio muxed when ``audio`` is a path).",
+            "signature": "(imx_path: 'str', audio, out_mp4: 'Optional[str]' = None, **kw) -> 'dict'"
+          },
+          {
+            "name": "unfold_imx",
+            "kind": "function",
+            "doc": "Extract every member of a packed ``IMX\\0`` v2 container into\n``dst_dir`` (flat, member names may carry subdirs). Returns dst_dir.\nA directory input is returned as-is (already unfolded).",
+            "signature": "(imx_path: 'str', dst_dir: 'str') -> 'str'"
+          },
+          {
+            "name": "BORROW_BORROWED",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'borrowed'"
+          },
+          {
+            "name": "BORROW_PARTIAL",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'partial'"
+          },
+          {
+            "name": "BORROW_SYNTHESIZED",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'synthesized'"
+          },
+          {
+            "name": "BORROW_ABSENT",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'absent'"
+          },
+          {
+            "name": "BORROW_UNKNOWN",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'unknown'"
+          }
+        ],
+        "stub_only": [],
+        "stub_aliases": {},
+        "runtime_extra": [
+          "annotations"
+        ]
+      },
+      {
+        "name": "bithuman.tessera_offline",
+        "interface": "__all__",
+        "stub": null,
+        "doc": "DEPRECATED — the 2.x spelling of :mod:`bithuman.offline`.  Removed in 4.0.0.\n\nEverything here is the same object as in ``bithuman.offline``; only the names\ndiffer, and importing this module says so once::\n\n    from bithuman.tessera_offline import OfflineTesseraRenderer   # 2.x\n    from bithuman.offline import OfflineRenderer                  # 3.0.0\n\n    OfflineTesseraRenderer is OfflineRenderer      # True\n    TesseraOfflineError is OfflineRenderError      # True\n\n★WHY THIS FILE EXISTS.  A customer's ``import`` and ``except`` resolve by exact\nspelling against whatever version pip installed, and 34,636 installs a month\nresolve this package unpinned.  A rename that deletes the old module turns an\nupgrade into ``ModuleNotFoundError`` with no sentence about what to write\ninstead; a rename that keeps it, warns, and points at the new name is one a\nprogram can act on.  ``tests/test_offline_alias_surface.py`` pins that the two\nspellings are one object and that this module warns while the new one is silent.",
+        "declared": [
+          "OfflineTesseraRenderer",
+          "render_offline",
+          "unfold_imx",
+          "TesseraOfflineError",
+          "MeteringNotArmedError",
+          "BORROW_BORROWED",
+          "BORROW_PARTIAL",
+          "BORROW_SYNTHESIZED",
+          "BORROW_ABSENT",
+          "BORROW_UNKNOWN"
+        ],
+        "symbols": [
+          {
+            "name": "OfflineTesseraRenderer",
+            "kind": "class",
+            "doc": "Offline CPU renderer for an essence-2 (essence2-light engine)\n``.imx``/bundle dir, teeth-armed when the bundle carries the\nv5.1 members. Metering is armed at CONSTRUCTION (billing key\nfirst); rendering without a permitting gate raises.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._offline",
+            "not_in_shipped_interface": [],
+            "members": [
+              {
+                "name": "__enter__",
+                "signature": "(self)",
+                "doc": ""
+              },
+              {
+                "name": "__exit__",
+                "signature": "(self, *exc)",
+                "doc": ""
+              },
+              {
+                "name": "close",
+                "signature": "(self)",
+                "doc": ""
+              },
+              {
+                "name": "render",
+                "signature": "(self, audio, max_frames: 'Optional[int]' = None, on_frame: 'Optional[Callable[[np.ndarray, int], None]]' = None) -> 'dict'",
+                "doc": "Render ``audio`` (a path, or float32 16 kHz mono PCM) to full\nRGB frames. ``on_frame(frame_hw3_u8, frame_idx)`` receives every\nframe; returns the honest stats dict (CPU-class fps)."
+              }
+            ],
+            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'int' = 4, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
+          },
+          {
+            "name": "render_offline",
+            "kind": "function",
+            "doc": "One-call offline render. When ``out_mp4`` is given the frames are\nencoded (h264 + the source audio muxed when ``audio`` is a path).",
+            "signature": "(imx_path: 'str', audio, out_mp4: 'Optional[str]' = None, **kw) -> 'dict'"
+          },
+          {
+            "name": "unfold_imx",
+            "kind": "function",
+            "doc": "Extract every member of a packed ``IMX\\0`` v2 container into\n``dst_dir`` (flat, member names may carry subdirs). Returns dst_dir.\nA directory input is returned as-is (already unfolded).",
+            "signature": "(imx_path: 'str', dst_dir: 'str') -> 'str'"
+          },
+          {
+            "name": "TesseraOfflineError",
+            "kind": "exception",
+            "doc": "Unspecified run-time error.",
+            "bases": [
+              "RuntimeError"
+            ],
+            "defined_in": "bithuman._offline",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "MeteringNotArmedError",
+            "kind": "exception",
+            "doc": "The v2 metering gate refused frame production (no authenticated\nheartbeat / grace elapsed / 402-403). Fail-closed by design.",
+            "bases": [
+              "OfflineRenderError"
+            ],
+            "defined_in": "bithuman._offline",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "BORROW_BORROWED",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'borrowed'"
+          },
+          {
+            "name": "BORROW_PARTIAL",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'partial'"
+          },
+          {
+            "name": "BORROW_SYNTHESIZED",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'synthesized'"
+          },
+          {
+            "name": "BORROW_ABSENT",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'absent'"
+          },
+          {
+            "name": "BORROW_UNKNOWN",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'unknown'"
+          }
+        ],
+        "stub_only": [],
+        "stub_aliases": {},
+        "runtime_extra": [
+          "DEPRECATION",
+          "annotations",
+          "warnings"
+        ]
+      },
+      {
+        "name": "bithuman.unified_header",
+        "interface": "__all__",
+        "stub": null,
+        "doc": "Unified generated-model container header — shared PRODUCER helper (Phase 2).\n\nThis module is the canonical Python writer-side companion to the Phase-1\n*readers* (`engine_id.rs` / `unified_header.h` / dispatcher.py / imx-parser.ts).\nIt stamps the three additive manifest fields defined by the unified `.imx`\nheader spec onto a producer's manifest dict:\n\n    - ``engine``                  engine-id enum value (default ``\"essence1\"``)\n    - ``engine_abi``              int ABI the bundle requires (default ``1``)\n    - ``unified_format_version``  version of THIS header convention (``1``)\n\nSee ``docs/UNIFIED_MODEL_FORMAT.md`` and the machine-readable registry\n``docs/unified-engine-ids.json`` (the single source of truth for the engine-id\nenum and the ABI numbers).\n\n★ Container/magic/version-byte are UNCHANGED. This helper only ADDS the three\noptional manifest keys. It is a pure-dict transform — no I/O, no container\nrewrite — so producers can apply it at the moment they assemble the manifest,\nbehind their own ``UNIFIED_HEADER`` flag, and stay byte-identical when the flag\nis OFF.\n\nThe literals are loaded from the JSON registry at import time when it can be\nlocated (keeping this reader in lock-step with the single source of truth);\notherwise they fall back to a baked-in copy that the cross-language conformance\ntest pins to the registry — exactly the duplication pattern every other reader\nfollows.",
+        "declared": [
+          "ENGINE_ESSENCE1",
+          "ENGINE_ESSENCE2_QUALITY",
+          "ENGINE_ESSENCE2_LIGHT",
+          "ENGINE_EXPRESSION2",
+          "ENGINE_EXPRESSION1",
+          "ENGINE_ESSENCE2_GOLDEN",
+          "ENGINE_IDS",
+          "DEFAULT_ENGINE",
+          "DEFAULT_ENGINE_ABI",
+          "UNIFIED_FORMAT_VERSION",
+          "KEY_ENGINE",
+          "KEY_ENGINE_ABI",
+          "KEY_UNIFIED_FORMAT_VERSION",
+          "stamp_engine_header"
+        ],
+        "symbols": [
+          {
+            "name": "ENGINE_ESSENCE1",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'essence1'"
+          },
+          {
+            "name": "ENGINE_ESSENCE2_QUALITY",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'essence2-quality'"
+          },
+          {
+            "name": "ENGINE_ESSENCE2_LIGHT",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'essence2-light'"
+          },
+          {
+            "name": "ENGINE_EXPRESSION2",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'expression2'"
+          },
+          {
+            "name": "ENGINE_EXPRESSION1",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'expression1'"
+          },
+          {
+            "name": "ENGINE_ESSENCE2_GOLDEN",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'essence2-golden'"
+          },
+          {
+            "name": "ENGINE_IDS",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "tuple",
+            "value": "('essence1', 'essence2-quality', 'essence2-light', 'expression2', 'expression1', 'essence2-golden')"
+          },
+          {
+            "name": "DEFAULT_ENGINE",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'essence1'"
+          },
+          {
+            "name": "DEFAULT_ENGINE_ABI",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "1"
+          },
+          {
+            "name": "UNIFIED_FORMAT_VERSION",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "1"
+          },
+          {
+            "name": "KEY_ENGINE",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'engine'"
+          },
+          {
+            "name": "KEY_ENGINE_ABI",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'engine_abi'"
+          },
+          {
+            "name": "KEY_UNIFIED_FORMAT_VERSION",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'unified_format_version'"
+          },
+          {
+            "name": "stamp_engine_header",
+            "kind": "function",
+            "doc": "Add the three unified-header fields to ``manifest`` IN PLACE and return it.\n\nThis is the Phase-2 producer stamp. It adds ONLY ``engine`` / ``engine_abi``\n/ ``unified_format_version`` (the additive header keys) — it never touches\nthe container magic, the version byte, the binary TOC, or any existing\nmanifest field. The shipped corpus' resolution rule (absent ⇒ ``essence1``)\nis unaffected because we stamp the very value the reader would default to.\n\nArgs:\n    manifest: the manifest dict to stamp (``bimx_metadata.json`` for BIMX v1,\n        ``manifest.json`` for IMX v2). Mutated in place.\n    engine: engine-id to stamp; must be one of ``ENGINE_IDS``. Defaults to\n        the registry ``default_engine`` (``\"essence1\"``).\n    engine_abi: the ABI the bundle requires (default ``1``).\n    unified_format_version: version of the header convention (default ``1``).\n\nReturns:\n    The same ``manifest`` dict, for chaining.\n\nRaises:\n    ValueError: if ``engine`` is not a known engine-id (fail-loud — we do\n        not stamp a value no reader can dispatch on).",
+            "signature": "(manifest: 'dict', engine: 'str' = 'essence1', engine_abi: 'int' = 1, unified_format_version: 'int' = 1) -> 'dict'"
+          }
+        ],
+        "stub_only": [],
+        "stub_aliases": {},
+        "runtime_extra": [
+          "Optional",
+          "Path",
+          "annotations",
+          "json",
+          "os"
+        ]
+      }
+    ]
+  }
+}

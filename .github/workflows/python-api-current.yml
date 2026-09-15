@@ -1,0 +1,81 @@
+name: Python API reference current
+
+# THE PYTHON API REFERENCE STILL DESCRIBES THE WHEEL PyPI SERVES TODAY.
+#
+# /sdk/python-api is generated: a script installs the newest published wheel
+# into an empty virtualenv and reads the public surface back out of the
+# installed bytes. Nothing on that page was typed, and nothing on it was read
+# from a source tree — a symbol that exists in source and is not exported by the
+# installed package is something a developer cannot call, so it does not belong
+# in a reference.
+#
+# ★WHY THIS RUNS ON A SCHEDULE AND NOT ONLY ON PUSH. The page cannot go wrong on
+# its own; it goes wrong when a RELEASE PUBLISHES, which is not an event in this
+# repository. Everything on this site generated from a published artifact and
+# then left alone has gone stale the same way — `instrument.cli` was the only
+# machine-readable version in the performance record, it was stale on all eight
+# rows that carried it, and it was deleted on 2026-09-15 for exactly that. The
+# subject of this job is PyPI, so PyPI is what it asks, every morning.
+#
+# The job installs the wheel for real. That is the point: a surface read from a
+# metadata API is a claim about the artifact, and this one is the artifact.
+#
+# EXIT 0 the reference matches the shipped surface · 1 it does not (the surface
+# moved, the record is stale, or the page is not what the record renders — the
+# run names which) · 2 CANNOT CHECK (PyPI unreachable, no wheel for this
+# platform, the wheel will not install), a failure you can see and never a pass.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/content/docs/sdk/python-api.md
+      - scripts/python-surface.json
+      - scripts/gen-python-api.mjs
+      - scripts/check-python-api-current.mjs
+      - scripts/python-api-extract.py
+      - .github/workflows/python-api-current.yml
+  pull_request:
+    paths:
+      - src/content/docs/sdk/python-api.md
+      - scripts/python-surface.json
+      - scripts/gen-python-api.mjs
+      - scripts/check-python-api-current.mjs
+      - scripts/python-api-extract.py
+      - .github/workflows/python-api-current.yml
+  schedule:
+    - cron: "37 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-api-current:
+    name: the reference is the surface of the newest published wheel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      # ★3.12 is the interpreter the committed record was generated with, so the
+      # wheel this job resolves is the same FILE. The check does not depend on
+      # that — the surface is identical on every interpreter (proved by
+      # extracting one wheel under 3.12 and 3.14 and diffing), and the digest is
+      # graded against PyPI's own JSON for the recorded filename — but matching
+      # it keeps a failure about the surface from arriving dressed as a
+      # difference in the wheel.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Fixtures, no network: one arm per outcome, including every kind of FAIL
+      # and three ways of not being able to look. An instrument that cannot show
+      # its own red is not evidence of anything.
+      - name: The re-extraction gate proves itself
+        run: node scripts/check-python-api-current.mjs --selftest
+
+      - name: Re-extract the newest published wheel and compare with the page
+        run: node scripts/check-python-api-current.mjs
