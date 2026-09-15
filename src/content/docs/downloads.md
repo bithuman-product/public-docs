@@ -26,7 +26,9 @@ measured performance and the exact refusals with their fixes. The
 
 ## The two packages
 
-The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from the universal installer or from Homebrew — **not** from PyPI. The `bithuman-cli` wheel is **not** how you install the CLI and never should be. It does exist on PyPI — the CLI's own first-run setup installs it to build the agent worker's environment — but installing it yourself gets you that helper, not the `bithuman` command.
+The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from `install.bithuman.ai` or from Homebrew — **not** from PyPI.
+
+**`bithuman` is the only bitHuman package on PyPI.** A `bithuman-cli` wheel was published there once and was removed on 2026-09-15, so installing that name from PyPI now fails outright — and it was never the way to get the `bithuman` command. The Homebrew *formula* is also called `bithuman-cli` — that one is real and is the supported route. If you find any other package on PyPI with a bitHuman-like name, it is not ours.
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
@@ -50,7 +52,7 @@ macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck
 | bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.7** (`0.2.0` through `0.5.5` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; pin `0.5.6`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
-| bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) |
+| bitHuman MCP server | ships **inside the CLI** — [`bithuman mcp`](/guides/mcp-server) | [install.bithuman.ai](https://install.bithuman.ai) |
 
 > **`lible_core.so not found` at the first frame** means an old wheel that
 > shipped without the native half of the Essence 2 offline render route. Current

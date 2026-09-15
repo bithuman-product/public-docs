@@ -38,7 +38,7 @@
 //   V2  PyPI      an exact pin `<dist>==<v>` in a code region — v must be the
 //                 newest release on PyPI.
 //   V3  PyPI      prose that states a version as current: "`bithuman` 3.1.5",
-//                 "`pip install bithuman-mcp` (0.3.5)", "PyPI serves **3.1.5**".
+//                 "PyPI serves **3.1.5**".
 //   V4  CLI       sample `bithuman --version` output (`bithuman    2.6.14`)
 //                 and `version --json` output (`"cli":"2.6.14"`) — must be the
 //                 newest `cli-v*` release that is neither a draft nor a
@@ -133,7 +133,6 @@ export const ARTIFACTS = [
   { id: "essence2-android", kind: "maven", changelog: true },
   { id: "expression2-android", kind: "maven", changelog: true },
   { id: "bithuman", kind: "pypi", changelog: true },
-  { id: "bithuman-mcp", kind: "pypi", changelog: false },
   { id: "cli", kind: "cli", changelog: true },
   { id: "swift", kind: "tap", changelog: false },
   { id: "swift-essence2-engine", kind: "tap-essence2", changelog: false },
@@ -340,9 +339,12 @@ export function subjects(path, text) {
   // V3 — prose that states a PyPI version as current
   for (const dist of pypiIds) {
     // A version followed by "+" is a minimum ("0.3.4+"), not a claim. The bare
-    // "`dist` X" form is graded for `bithuman` only: the MCP page writes
-    // "`bithuman-mcp` 0.3.4" as history, and states its current version in the
-    // `pip install` form instead.
+    // "`dist` X" form is graded for `bithuman` only — it is the only bitHuman
+    // distribution on PyPI. `bithuman-cli` and `bithuman-mcp` were both removed
+    // from the index on 2026-09-15, and an artifact whose project 404s cannot be
+    // graded for currency at all: this check would exit 2 CANNOT CHECK for ever
+    // on it, which is a red that no docs edit can clear. They are gone from
+    // ARTIFACTS for that reason, not because the pages stopped naming them.
     const forms = [
       new RegExp("`pip install " + esc(dist) + "`[,\\s]*(?:currently\\s+)?\\(?\\**(\\d+\\.\\d+\\.\\d+)(?![0-9.+])", "g"),
     ];
@@ -382,7 +384,6 @@ export function subjects(path, text) {
 
 const TABLE_KEYS = {
   "`bithuman`": "bithuman",
-  "`bithuman-mcp`": "bithuman-mcp",
   "`ai.bithuman:expression2-android`": "expression2-android",
   "`ai.bithuman:essence2-android`": "essence2-android",
 };
@@ -697,7 +698,6 @@ const STUB_LATEST = {
   "essence2-android": "0.5.5",
   "expression2-android": "0.4.1",
   bithuman: "3.1.5",
-  "bithuman-mcp": "0.3.5",
   cli: "2.6.14",
   swift: "2.13.3",
   "swift-essence2-engine": "1.6.3",
@@ -715,7 +715,7 @@ const TABLE = (py, e2) =>
   `| Python SDK (\`bithuman\`) | **${py}** — the 2.x line ends at 2.9.0 | PyPI |\n` +
   "| Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** | Central |\n" +
   `| Android AAR (\`ai.bithuman:essence2-android\`) | **${e2}** (\`0.2.0\` through \`0.5.3\` stay on Central) | Central |\n` +
-  "| bitHuman MCP server (`bithuman-mcp`) | **0.3.5** | PyPI |\n\n";
+  "\n";
 
 const CL = (firstCli, e2, py) =>
   "## September 2026\n\n" +
@@ -734,7 +734,6 @@ const ARMS = [
   ["bad: `bithuman` 3.1.4 stated as current", "p/sdk/python.md", "`bithuman` 3.1.4 runs on Python 3.10–3.14", true],
   ["bad: PyPI serves an old version across a line break", "p/concepts/essence-1.md", "PyPI serves\n  **3.1.4** with wheels", true],
   ["bad: an exact pip pin to an old version", "p/x.md", '```bash\npip install "bithuman==3.1.4"\n```\n', true],
-  ["bad: an old MCP version in prose", "p/guides/mcp.md", "(`pip install bithuman-mcp`, currently **0.3.4**, Python", true],
   ["bad: sample --version output naming an old CLI", "p/sdk/cli.md", "```text\nlibessence  3.1.4 ABI 7\nbithuman    2.6.13\n```\n", true],
   ["bad: sample version --json naming an old CLI", "p/sdk/cli/reference.md", '```json\n{"abi":7,"cli":"2.6.13","libessence":"3.1.4"}\n```\n', true],
   ["bad: the downloads table naming an old wheel", "p/downloads.md", TABLE("3.1.4", "0.5.5"), true],
@@ -756,8 +755,7 @@ const ARMS = [
   ["control: a deliberate pin to an old CLI release", "p/sdk/cli/reference.md", "`BITHUMAN_VERSION=cli-v2.3.27` still resolves a Linux-ARM tarball", false],
   ["control: old coordinates in prose about history", "p/examples/failure-states.md", "produced against **`ai.bithuman:expression2-android:0.3.1`** — the version current that day", false],
   ["control: old versions inside the changelog's history", "p/changelog.md", CL("2.6.14", "0.5.5", "3.1.5") + "`bithuman` 2.3.9 and `implementation(\"ai.bithuman:essence2-android:0.2.0\")`\n", false],
-  ["control: a minimum version is not a claim", "p/guides/mcp.md", "Needs CLI **2.4.1+** (or `bithuman-mcp` **0.3.4+**) and `bithuman` 3.1.2+", false],
-  ["control: MCP history in prose, current version in the pip form", "p/guides/mcp.md", "The `bithuman-mcp` 0.3.4 schema still listed a field. (`pip install bithuman-mcp`, currently **0.3.5**, Python", false],
+  ["control: a minimum version is not a claim", "p/guides/mcp.md", "Needs CLI **2.4.1+** and `bithuman` 3.1.2+", false],
   ["good: the current landing-page coordinate", "p/pages/start.astro", "<code>ai.bithuman:essence2-android:0.5.5</code> and implementation(\"ai.bithuman:expression2-android:0.4.1\")", false],
   ["good: a newer entry citing an older CLI above the newest CLI's entry", "p/changelog.md", "### Python (2026-09-13)\n\nThe change `cli-v2.6.13` made.\n\n" + CL("2.6.14", "0.5.5", "3.1.5"), false],
   ["bad: the newest Swift package tag named as an older tag", "p/sdk/ios.md", "The newest package tag, **2.13.2**, ships Essence 2 engine **1.6.3**.", true],
@@ -884,8 +882,15 @@ for (const rule of ["V1", "V1b", "V3", "V4", "V5", "V6", "V8"]) {
     process.exit(1);
   }
 }
-if (seen.V5 > 0 && seen.V5 < 4) {
-  console.log(`::error::V5 graded ${seen.V5} row(s) of the downloads table; it carries 4 — the table changed shape`);
+// ★THREE, not four, since 2026-09-15. The table's fourth graded row was the
+// standalone MCP server, and `bithuman-mcp` was removed from PyPI that day —
+// project 404, not a yank. Its row is still on the page, but it now names where
+// the server comes from (inside the CLI) rather than a version, exactly as the
+// `bitHuman CLI` row already did. A row with no version literal is not a
+// currency claim and is not graded here. Update this count WITH the table, and
+// only after checking which rows still name a graded artifact.
+if (seen.V5 > 0 && seen.V5 < 3) {
+  console.log(`::error::V5 graded ${seen.V5} row(s) of the downloads table; it carries 3 that name a graded artifact — the table changed shape`);
   process.exit(1);
 }
 

@@ -18,6 +18,17 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 That one command is the install on both platforms. It puts a single
 self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put it
 elsewhere), checksum-verified against the release.
+[`install.bithuman.ai`](https://install.bithuman.ai) serves the same script, so
+`curl -fsSL https://install.bithuman.ai | sh` is the shorter spelling of the
+line above.
+
+> **There is no pip install for the CLI.** `bithuman` on PyPI is the
+> [Python library](/sdk/python) — it is the only bitHuman package on PyPI, and
+> it installs no command. The CLI and its [MCP server](/guides/mcp-server) come
+> from the installer above or from Homebrew, whose formula is named
+> `bithuman-cli`. A `bithuman-cli` wheel existed on PyPI until 2026-09-15 and
+> was removed. If you find a package on PyPI with a bitHuman-like name that is
+> not `bithuman`, it is not ours.
 
 If you would rather Homebrew managed it, `brew install
 bithuman-product/bithuman/bithuman-cli` installs the same tarball on Apple

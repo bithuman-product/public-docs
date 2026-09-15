@@ -312,10 +312,11 @@ of render work behind and **whether that binary still runs on a current ARM
 distribution was never tested** — treat it as a stopgap. On an Intel Mac, use
 the [cloud API](/api/reference) or run the Linux binary in a container.
 
-There is no PyPI route to the CLI. The `bithuman-cli` wheel does exist, but it
-is the helper the CLI's own first-run setup installs into the agent worker's
-environment — it does not give you the `bithuman` command. The separate
-`bithuman` PyPI package is the [Python library](/sdk/python), not the CLI.
+There is no PyPI route to the CLI, and there is no longer a `bithuman-cli`
+wheel: it was removed from PyPI on 2026-09-15, so asking pip for that name
+fails outright. It never gave you the `bithuman` command in any case. The `bithuman`
+PyPI package is the [Python library](/sdk/python) — the only bitHuman package
+on PyPI — and it installs no command at all.
 
 ## The machine-readable contract
 
