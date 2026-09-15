@@ -38,6 +38,14 @@ straight out of `pip install bithuman`, which is why the CLI and the
 extras: `.avatar` files need `[expression-2]`, and the Essence 2 clip-to-file
 route needs `[offline]`.
 
+## Authentication and configuration
+
+Set `BITHUMAN_API_SECRET` in the shell you run Python from — a key is free at
+[your API keys](https://www.bithuman.ai/developer/api-keys). `bithuman.open()` succeeds without one; metering bites
+at the **first frame**, so a process with no key opens the avatar and then
+raises `NotAuthorised` as soon as you pull from `render()`. `BITHUMAN_CACHE_DIR`
+moves the download cache off `~/.cache/bithuman`.
+
 ## Get a model
 
 A showcase avatar is a plain anonymous download — no account, no key:
@@ -139,3 +147,22 @@ logging.basicConfig(level=logging.INFO)
 | the first `render` is slow, with a large download | the shared audio encoder and its 2 s window are being fetched, once | wait; they are cached for every later run |
 | the cache fills the wrong disk | downloads land in `~/.cache/bithuman` by default | set `BITHUMAN_CACHE_DIR` to move the download cache |
 | code written for a 2.x release fails | 3.0 changed the API: frames are RGB and the key comes from the environment only | port to the snippet above |
+
+## Examples and source
+
+- [`python/quickstart`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/quickstart) — the smallest scripted path:
+  a key, a model, a first render.
+- [`python/local-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) — Essence on your own CPU
+  box, with a microphone script, a conversation script and a web UI.
+- [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman
+  cloud over LiveKit; the production shape.
+- [Examples](/examples) — every runnable project. The wheel itself is on
+  [PyPI](https://pypi.org/project/bithuman/).
+
+## See also
+
+- [LiveKit](/sdk/livekit) — running this library inside an agent worker, and
+  the interpreter range that path needs
+- [CLI](/sdk/cli) — the same engines as a binary
+- [Performance](/sdk/performance) — measured frame rates for every platform
+- [SDK](/sdk) — every platform on one page

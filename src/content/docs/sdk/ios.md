@@ -25,6 +25,14 @@ is the [Expression 2](/concepts/expression-2) engine as a pre-compiled
 xcframework (`ios-arm64`, `macos-arm64`) with no transitive packages.
 The `Essence2` product is the [Essence 2](/concepts/essence-2) engine, also a pre-compiled xcframework (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`). Since **2.13.2** it opens the `<code>.imx` you download for your own agent, on both iPhone and Mac — the measured iPhone 15 rate is on the [performance page](/sdk/performance). The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**, and `from:` resolves it for you. You still fetch the file yourself; there is no in-app download route.
 
+## Authentication and configuration
+
+The showcase identity on this page needs nothing — no account, no key, no
+credits. Your own agent does: the Swift SDK reads `BITHUMAN_API_KEY` from the
+app's environment, the same value the other SDKs read as
+`BITHUMAN_API_SECRET`, and a metered render refuses without it. Keys are free
+at [your API keys](https://www.bithuman.ai/developer/api-keys).
+
 ## Get a model
 
 Three anonymous downloads — the identity, the shared engine graphs it does not
@@ -97,3 +105,20 @@ Measured frame rates for every platform are on the
 | `MODEL_ARTIFACT_NOT_READY` from the download | trained, not yet published to the download store | poll the same URL; it clears on its own |
 | `Essence2` refuses the file you downloaded: *need a directory with meta.json {"format":"elevatedir-v*" \| "essence2-light-dir-v*"}* | a package older than **2.13.2**, whose `Essence2` product opened an unpacked bundle directory rather than the single `.imx` the download endpoint serves (the quoted format names are legacy names kept for compatibility) | move the pin to **2.13.3**, which ships Essence 2 engine 1.6.3 and opens that `.imx` as served |
 | a metered render refuses | `BITHUMAN_API_KEY` unset in the app's environment | set it — the Swift SDK reads that name (same value as `BITHUMAN_API_SECRET`) |
+
+## Examples and source
+
+- [iOS app, end to end](/examples/swift-ios-expression2) — the whole project
+  printed on one page, and [`swift/ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
+  to clone, with a `setup.sh` that fetches the model.
+- [`swift/ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) — a complete SwiftUI reference app.
+- [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice only, on device, no key.
+- [Homebrew tap](https://github.com/bithuman-product/homebrew-bithuman) — the Swift package itself.
+
+## See also
+
+- [LiveKit](/sdk/livekit) — subscribing to a server-hosted avatar from a native
+  app, when the render is not on the device
+- [CLI](/sdk/cli) — the same engines on an Apple Silicon Mac, with no Xcode
+- [Performance](/sdk/performance) — measured frame rates for every platform
+- [SDK](/sdk) — every platform on one page

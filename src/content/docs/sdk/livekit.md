@@ -61,6 +61,19 @@ pip install livekit-plugins-bithuman pillow
 > LiveKit. (There is no `bithuman[agent]` extra — the plugin is its own
 > package.)
 
+### Authentication and configuration
+
+Three credentials, from two places. `BITHUMAN_API_SECRET` is yours, free at
+[your API keys](https://www.bithuman.ai/developer/api-keys); `LIVEKIT_URL`, `LIVEKIT_API_KEY` and
+`LIVEKIT_API_SECRET` come from your LiveKit project, Cloud or self-hosted. The
+plugin reads none of them implicitly — pass the bitHuman secret to
+`AvatarSession` and let `livekit-agents` read the rest from the environment.
+The Swift client below authenticates differently: it takes a room token your
+own server mints, never a bitHuman key.
+
+The video-publishing environment variables are further down, under
+[production video tuning](#production-video-tuning-avoid-a-black-or-laggy-avatar).
+
 Wire the avatar into an agent worker with a single object:
 
 ```python
@@ -85,13 +98,14 @@ What you get:
 - **LiveKit Cloud-compatible** — works with LiveKit Cloud and self-hosted servers.
 - **WebRTC delivery** — video streamed via LiveKit's media pipeline to any client.
 
-Two runnable LiveKit agents ship in the SDK repo, each with `.env.example`,
+Two runnable LiveKit agents ship in
+[bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main/python), each with `.env.example`,
 `requirements.txt`, and a `docker-compose.yml` full stack:
 
 | Example | Where the avatar runs | Needs |
 |---|---|---|
-| cloud-essence | bitHuman cloud | API key + agent ID |
-| local-essence | Your server (CPU) | API key + `.imx` |
+| [cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) | bitHuman cloud | API key + agent ID |
+| [local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) | Your server (CPU) | API key + `.imx` |
 
 ## Multiple agents in one room
 
@@ -171,8 +185,9 @@ Tunables (override the defaults above without code changes): **`AVATAR_VIDEO_MAX
 **`AVATAR_VIDEO_MAX_FPS`** (default `25`, the engine fps),
 **`AVATAR_VIDEO_SIMULCAST`** (default off — leave off for single-subscriber avatars).
 You should see a published track at the full engine fps with no 512→360
-downscale and no frozen intervals. *(The `local-essence` / `cloud-essence`
-examples in the SDK repo ship with this applied.)*
+downscale and no frozen intervals. *(The
+[local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) and
+[cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) examples ship with this applied.)*
 
 ### Hardware floor (Essence, CPU)
 

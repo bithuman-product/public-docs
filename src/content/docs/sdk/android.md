@@ -36,6 +36,36 @@ dependencies {
 Without the two Qualcomm lines the avatar still renders, on the CPU, slower.
 The whole project, file by file: [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello).
 
+## Authentication and configuration
+
+A public agent needs no credential at all — no account, no key, no credits.
+Your own private agent does: pass its owner's key through the model store,
+
+```kotlin
+// app/build.gradle.kts — AGP 8.x generates no BuildConfig unless you ask
+android {
+    buildFeatures { buildConfig = true }
+    defaultConfig {
+        buildConfigField(
+            "String", "BITHUMAN_API_SECRET",
+            "\"${providers.gradleProperty("bithumanApiSecret").getOrElse("")}\"",
+        )
+    }
+}
+```
+
+Put `bithumanApiSecret=…` in `~/.gradle/gradle.properties` or pass
+`-PbithumanApiSecret=…` — never in source control. Then hand it to the model
+store:
+
+```kotlin
+Expression2ModelStore(context, urlResolver =
+    Expression2ModelStore.MeteredDoorResolver(BuildConfig.BITHUMAN_API_SECRET))
+```
+
+Keys are free at [your API keys](https://www.bithuman.ai/developer/api-keys).
+Without one a private agent answers `401`.
+
 ## Get a model
 
 `Expression2ModelStore` downloads a published identity into app-private storage
@@ -120,3 +150,17 @@ licence, and a copy is available from [hello@bithuman.ai](mailto:hello@bithuman.
 the bundled LiteRT is Apache-2.0 (notices in the AAR's `META-INF/`); FFmpeg is
 linked statically under LGPL §6(a), relink on request to
 [hello@bithuman.ai](mailto:hello@bithuman.ai).
+
+## Examples and source
+
+- [Android app, end to end](/examples/kotlin-android-hello) — the whole project
+  printed on one page: `build.gradle.kts`, the activity, the audio loop.
+- [Examples](/examples) — every runnable project, by language.
+- [bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main) — the repository behind those pages.
+
+## See also
+
+- [LiveKit](/sdk/livekit) — subscribing to a server-hosted avatar when the
+  render is not on the handset
+- [Performance](/sdk/performance) — measured frame rates for every platform
+- [SDK](/sdk) — every platform on one page
