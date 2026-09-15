@@ -74,7 +74,7 @@ Play `out.mp4` — it is the length of the audio. To see the same avatar live,
 run it and open the printed URL:
 
 ```bash
-bithuman run "$(bithuman pull marmalade)"     # → http://127.0.0.1:8088/, grant the microphone, talk
+bithuman run "$(bithuman pull marmalade)"     # → http://127.0.0.1:8088/ — a local preview of the avatar
 ```
 
 The full command set is on [the CLI page](/sdk/cli).

@@ -83,7 +83,12 @@ Upgrade if you are on anything older: through 2.6.19 a Linux `bithuman run`
 with no credential rendered indefinitely. Every render is metered either way,
 and [pricing](/guides/pricing) is the authority.
 
-Then open the printed `http://127.0.0.1:8088/`, grant the microphone, talk.
+Then open the printed `http://127.0.0.1:8088/`. For an
+[Expression 2](/concepts/expression-2) avatar — which is what `bithuman run`
+fetches when you give it no argument, and what the showcase slugs are — that
+page is a **local preview**: the avatar renders its idle loop at its own frame
+rate, and the terminal counts frames and viewers beside it. It does not ask for
+a microphone, and no conversation brain is started on this path.
 `run` serves localhost only; `--host` takes a LAN or tailnet address to expose
 it. `--host 0.0.0.0` needs `--allow-public-bind` as well — without it the CLI
 exits 2 and binds nothing, rather than putting the session on every interface.
