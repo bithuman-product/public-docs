@@ -113,6 +113,11 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
 The default `Expression2Options()` uses the handset's accelerator when it has
 one and falls back to the CPU instead of throwing.
 
+Every public class and member of both Android artifacts, with the Kotlin
+signature each one actually has, is on the
+[Android API reference](/sdk/android-api) — generated from the AARs Maven
+Central serves, not typed.
+
 ## Run
 
 ```bash
@@ -160,6 +165,8 @@ linked statically under LGPL §6(a), relink on request to
 
 ## See also
 
+- [Android API reference](/sdk/android-api) — every public class in both
+  artifacts, read back out of the published AARs
 - [LiveKit](/sdk/livekit) — subscribing to a server-hosted avatar when the
   render is not on the handset
 - [Performance](/sdk/performance) — measured frame rates for every platform
