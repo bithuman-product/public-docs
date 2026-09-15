@@ -7,6 +7,11 @@ order: 20
 label: "Python"
 ---
 
+**This is the surface you program against.** If you only want to *run* an
+avatar — no code — that is the [CLI](/sdk/cli), a binary you install from
+[install.bithuman.ai](https://install.bithuman.ai), not from PyPI. The two
+serve different purposes and neither replaces the other.
+
 ## Install
 
 ```bash

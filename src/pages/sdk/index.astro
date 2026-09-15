@@ -160,6 +160,19 @@ const rich = (s: string) =>
       <h1 id="platforms">Run a bitHuman avatar on your device</h1>
       <p class="lede">Pick a model, then your platform.</p>
 
+      {/* The question a reader is actually asking, answered before the tabs.
+          Everything below assumes they already know which surface is theirs,
+          and most of the confusion this page has caused was them not knowing. */}
+      <p class="either">
+        <strong>Want to run an avatar, without writing code?</strong> That is the
+        <a href="/sdk/cli">CLI</a> — one binary, installed from
+        <a href="https://install.bithuman.ai">install.bithuman.ai</a> or Homebrew.
+        <br />
+        <strong>Want to build with one?</strong> That is a library: the
+        <a href="/sdk/python">Python package</a> (<code>pip install bithuman</code>),
+        or a platform SDK below.
+      </p>
+
       <nav class="tabs" aria-label="Model">
         {models.map((m) => (
           <a class:list={["tab", `tab-${m.id}`]} href={`#${m.id}`}>{m.name}</a>
@@ -228,6 +241,21 @@ const rich = (s: string) =>
     color: var(--color-text);
     border-bottom-color: var(--color-primary);
   }
+
+  .either {
+    margin-top: var(--space-5);
+    max-width: 68ch;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-xl);
+    background: var(--color-surface);
+    font-size: var(--ft-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+  .either strong { color: var(--color-text); }
+  .either a { color: var(--color-primary); font-weight: var(--fw-medium); }
+  .either code { font-family: var(--font-mono); font-size: 0.86em; }
 
   .what { margin-top: var(--space-5); max-width: 62ch; color: var(--color-text-secondary); }
   .what strong { color: var(--color-text); }
