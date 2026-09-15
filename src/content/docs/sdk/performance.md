@@ -9,15 +9,15 @@ label: "Performance"
 
 <!-- FLOORS:TABLE all -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
-|---|---|---:|---:|
-| Cloud GPU | NVIDIA RTX 4090 | 290 | 105 |
-| macOS | Apple M4 | 158 | 82 |
-| macOS · Python | Apple M4 | 157 | not measured on 3.1.8 (2026-09-14) |
-| Linux | Intel Core i7-13700F | 44 | 29 |
-| Linux · Python | Intel Core i7-13700F | 49 | 27 |
-| iOS | iPhone 15 | 118 | 52 |
-| Android | Galaxy S25+ | 58 | 50 |
-| Web | Chrome on M4 | 30 | not yet real time in a browser |
+|---|---|---|---|
+| Cloud GPU | NVIDIA RTX 4090 | 290 · hosted main-4863fb011 | 105 · hosted cdf5fa3a3 |
+| macOS | Apple M4 | 158 · cli-v2.6.18 | 82 · cli-v2.6.14 |
+| macOS · Python | Apple M4 | 157 · bithuman 3.1.8 | not measured on 3.1.8 (2026-09-14) |
+| Linux | Intel Core i7-13700F | 44 · cli-v2.6.17 | 29 · cli-v2.6.17 |
+| Linux · Python | Intel Core i7-13700F | 49 · bithuman 3.1.4 | 27 · bithuman 3.1.6 |
+| iOS | iPhone 15 | 118 · Expression2 2.11.x | 52 · essence2-v1.6.3 |
+| Android | Galaxy S25+ | 58 · expression2-android 0.3.1 | 50 · essence2-android 0.5.6 |
+| Web | Chrome on M4 | 30 · bithuman-ui 021a6f6 | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
 
 Rows marked **· Python** are the [Python library](/sdk/python)
@@ -27,6 +27,16 @@ machine. Everything else is the CLI, the platform SDK, or the hosted API.
 **How to read a row.** Expression 2 plays at 20 frames per second, Essence 2 at
 25. A number at or above its model's own rate holds a live, two-way conversation
 on that hardware.
+
+**What follows each number** is the artifact it was measured on — a CLI
+release, a wheel, a Maven artifact, a Swift package tag. A frame rate you
+cannot tie to a version is not reproducible, so every cell names its own, and
+the two cells on a row often name different things: on macOS, Expression 2 was
+measured on cli-v2.6.18 and Essence 2 on cli-v2.6.14. **hosted** means there is
+no artifact to fetch — the number came from a service we run, so you cannot
+reproduce it on your own hardware at all. A name is the version the measurement
+was taken on, which is deliberately not always the newest one published; for
+what to install today, see the page for your platform.
 
 A cell with no number says what is missing instead.
 
