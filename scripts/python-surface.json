@@ -2,16 +2,16 @@
   "artifact": {
     "registry": "pypi",
     "coordinate": "bithuman",
-    "version": "3.1.8",
-    "digest": "sha256:ba1736540992c6e9c220d71addc3eec1e3b3893b0b6a474efc7a08f7a3a3035c",
+    "version": "3.1.10",
+    "digest": "sha256:db802ed7f62b02c191eb8a9aca96182248c237e083057ade24b7a513ac0944cf",
     "resolved_on": "2026-09-15",
-    "wheel": "bithuman-3.1.8-cp312-cp312-manylinux_2_28_x86_64.whl"
+    "wheel": "bithuman-3.1.10-cp314-cp314-manylinux_2_28_x86_64.whl"
   },
   "surface": {
     "package": "bithuman",
     "distribution": {
       "name": "bithuman",
-      "version": "3.1.8",
+      "version": "3.1.10",
       "requires_python": "<3.15,>=3.10",
       "extras": [
         "expression-2",

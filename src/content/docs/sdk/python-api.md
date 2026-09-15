@@ -36,9 +36,9 @@ changes is the registry, not the page.
 | --- | --- |
 | Registry | pypi |
 | Coordinate | bithuman |
-| Version | 3.1.8 |
-| Wheel | `bithuman-3.1.8-cp312-cp312-manylinux_2_28_x86_64.whl` |
-| Digest | `sha256:ba1736540992c6e9c220d71addc3eec1e3b3893b0b6a474efc7a08f7a3a3035c` |
+| Version | 3.1.10 |
+| Wheel | `bithuman-3.1.10-cp314-cp314-manylinux_2_28_x86_64.whl` |
+| Digest | `sha256:db802ed7f62b02c191eb8a9aca96182248c237e083057ade24b7a513ac0944cf` |
 | Resolved on | 2026-09-15 |
 
 Every name below was read back out of those bytes, in a virtualenv that had nothing else installed in it. Nothing here was read from a source tree.

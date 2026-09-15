@@ -10,6 +10,27 @@ order: 1
 
 ## September 2026
 
+### Renders longer than 48 seconds — `bithuman` 3.1.10 (2026-09-15)
+
+`bithuman` 3.1.10 on PyPI. Essence 2 had a per-render maximum of 48.0 s / 1200
+frames: the positional table has a fixed row count, an utterance has as many
+frames as its audio, and the first bounded the second. Longer audio was
+refused, with the remedy in the message — split it into parts of 48 s or less.
+
+That bound is gone. Past the table the second half of the rows repeats, and the
+first 1200 frames read the table exactly as before, so a render that fit under
+the old ceiling is unchanged. Read from the published wheels: the refusal text
+appears nowhere in 3.1.10, and `_offline.py` is byte-identical across the macOS
+arm64 and Linux x86_64 builds.
+
+**The public API did not change.** Every name, signature and exception on
+[the Python reference](/sdk/python-api) is the same as the release before it;
+only the behaviour on long audio moved. That page is regenerated from these
+bytes.
+
+This is the Python library. The CLI, the Apple and Android SDKs and the browser
+build ship their own engine and are not covered by this note.
+
 ### `BITHUMAN_UNMETERED` is gone from the Android SDK, and a frame-source constructor loses an argument — `essence2-android` 0.5.7 (2026-09-15)
 
 `ai.bithuman:essence2-android:0.5.7` on Maven Central. **Read this before
