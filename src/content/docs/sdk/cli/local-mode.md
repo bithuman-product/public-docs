@@ -24,9 +24,10 @@ BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
 
 **Install those five requirements directly** — the `pip` line above is the
 whole story. There is no extra that does it for you: `bithuman-cli[local]` is not a route
-to these packages (the `bithuman-cli` wheel exists, but it is the helper the
-CLI's own first-run setup installs — not the CLI, which comes from Homebrew or
-the universal installer, see [Downloads](/downloads)), and `bithuman[local]` is not an extra at all: pip
+to these packages — there is no `bithuman-cli` wheel at all any more, it was
+removed from PyPI on 2026-09-15, and the CLI comes from
+[install.bithuman.ai](https://install.bithuman.ai) or Homebrew (see
+[Downloads](/downloads)) — and `bithuman[local]` is not an extra at all: pip
 warns, **exits 0, and installs none of it**. `bithuman doctor` names the same
 five packages when they are missing.
 

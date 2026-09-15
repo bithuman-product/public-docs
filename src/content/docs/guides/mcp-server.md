@@ -21,14 +21,16 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 (`POST /v1/agent/{code}/models`), and the [knowledge API](/api/knowledge)
 (`/v1/knowledge`) are HTTP-only for now.
 
-> **Note — two servers, same cloud tools.** The CLI's built-in `bithuman mcp`
-> is the recommended server: it adds the local tools and (as of CLI **2.4.1**)
-> carries the hardened `generate_agent` schema. The standalone
-> [`bithuman-mcp` PyPI package](https://pypi.org/project/bithuman-mcp/)
-> (`pip install bithuman-mcp`, currently **0.3.5**, Python 3.10–3.14) remains
-> available for pip-only environments — same cloud tool names, no local tools.
-> Since 0.3.4 it also accepts `model` / `version` on `generate_agent`, so
-> `essence-2` is reachable from either server.
+> **Note — one server.** `bithuman mcp`, inside the CLI, is the bitHuman MCP
+> server. A standalone `bithuman-mcp` package was published on PyPI until
+> 2026-09-15 and has been removed, so asking pip for that name now fails
+> outright. If you registered that command with your MCP client, change it to
+> `bithuman mcp`.
+>
+> **`bithuman` is the only bitHuman package on PyPI**, and it is the
+> [Python library](/sdk/python) — not the CLI and not the MCP server. The CLI
+> that carries this server installs from
+> [install.bithuman.ai](https://install.bithuman.ai) or Homebrew.
 
 ## Tools
 
@@ -81,9 +83,9 @@ macOS Apple Silicon and Linux x86_64 — [more on the CLI page](/sdk/cli#install
 > install is already there — but an install still on
 > **2.4.0** has no `model` parameter on `generate_agent`, and every creation
 > uses the platform default model. Until your install reports 2.4.1+, upgrade
-> (`brew upgrade bithuman-cli`) or use the pip server for Essence 2 creations:
-> `pip install bithuman-mcp` (0.3.5) and register command `bithuman-mcp`
-> instead of `bithuman mcp`.
+> (`brew upgrade bithuman-cli`, or re-run
+> [install.bithuman.ai](https://install.bithuman.ai)). There is no pip
+> alternative: the standalone server was removed from PyPI on 2026-09-15.
 
 Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
 [Developer Dashboard](https://www.bithuman.ai/developer/api-keys)). The server resolves

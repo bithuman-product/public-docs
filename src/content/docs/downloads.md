@@ -26,31 +26,33 @@ measured performance and the exact refusals with their fixes. The
 
 ## The two packages
 
-The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from the universal installer or from Homebrew — **not** from PyPI. The `bithuman-cli` wheel is **not** how you install the CLI and never should be. It does exist on PyPI — the CLI's own first-run setup installs it to build the agent worker's environment — but installing it yourself gets you that helper, not the `bithuman` command.
+The Python library and the CLI binary are separate things and have been since 2.3.0: `pip install bithuman` is the library, and the CLI comes from `install.bithuman.ai` or from Homebrew — **not** from PyPI.
+
+**`bithuman` is the only bitHuman package on PyPI.** A `bithuman-cli` wheel was published there once and was removed on 2026-09-15, so installing that name from PyPI now fails outright — and it was never the way to get the `bithuman` command. The Homebrew *formula* is also called `bithuman-cli` — that one is real and is the supported route. If you find any other package on PyPI with a bitHuman-like name, it is not ours.
 
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew or the universal installer | `bithuman` (3.10–3.14) | SwiftPM |
-| **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
+| **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | **Not supported** — no wheel | — |
 | **Linux x86_64** | Universal installer (tarball) — the current release is named on [/sdk/cli](/sdk/cli#install) | `bithuman` (manylinux) | — |
 | **Linux aarch64** | **Not in the current release** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
-| **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
+| **Windows** | WSL2 today | **Not supported** — no wheel; run under WSL2 | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
-macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck on either, the 1.x line still has Windows wheels and a macOS-Intel build — pin the whole Python stack there until those targets graduate into the 2.x distribution.
+**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64, and Apple-silicon macOS (14 or newer).** That is the whole set. On Windows or an Intel Mac `pip install bithuman` reports *no matching distribution found* — that is an unsupported platform, not a broken package. On Windows, run it under WSL2, which is a supported Linux.
 
 ## Current shipping versions
 
 | Artifact | Latest version | Where it comes from |
 |---|---|---|
-| Python SDK (`bithuman`) | **3.1.10** — the 2.x line ends at 2.8.1 on PyPI, so a `bithuman<3` pin is a downgrade, not a hold | [PyPI](https://pypi.org/project/bithuman/) |
+| Python SDK (`bithuman`) | **3.1.10** — a `bithuman<3` pin is a downgrade, not a hold: it resolves to the newest 2.x PyPI still serves, which was 2.3.4 on 2026-09-15 | [PyPI](https://pypi.org/project/bithuman/) |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Expression2`) | **2.6.1** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `<code>.imx` you download here. The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.7** (`0.2.0` through `0.5.5` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; pin `0.5.6`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
-| bitHuman MCP server (`bithuman-mcp`) | **0.3.5** (also built into the CLI — [`bithuman mcp`](/guides/mcp-server)) | [PyPI](https://pypi.org/project/bithuman-mcp/) |
+| bitHuman MCP server | ships **inside the CLI** — [`bithuman mcp`](/guides/mcp-server) | [install.bithuman.ai](https://install.bithuman.ai) |
 
 > **`lible_core.so not found` at the first frame** means an old wheel that
 > shipped without the native half of the Essence 2 offline render route. Current
