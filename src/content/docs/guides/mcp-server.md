@@ -32,6 +32,27 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 > that carries this server installs from
 > [install.bithuman.ai](https://install.bithuman.ai) or Homebrew.
 
+## Install and register
+
+The server is the CLI. [Install the CLI](/sdk/cli#install), then point your MCP
+client at it:
+
+```bash
+bithuman mcp            # the server itself — this is what an MCP client launches
+bithuman mcp tools      # print the tool surface and exit
+```
+
+Client configuration is one entry:
+
+```json
+{ "command": "bithuman", "args": ["mcp"] }
+```
+
+`bithuman mcp tools` on cli-v2.6.20 prints **28 tools — 6 local and 22 cloud**.
+The local six (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`,
+`render`) work against your own install and model files; the rest are the REST
+API below. Authenticate once with `bithuman login`, as for any other command.
+
 ## Tools
 
 **Cloud tools** — wrap the [REST API](/api/overview) (and platform status):

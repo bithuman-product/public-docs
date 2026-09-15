@@ -7,6 +7,11 @@ order: 10
 label: "CLI (macOS & Linux)"
 ---
 
+**This is the surface you use without writing code.** One binary: type
+`bithuman run` and talk to an avatar. If you want to *program* against the
+models instead, that is the [Python library](/sdk/python) — a different
+surface for a different purpose, installed a different way.
+
 ## Install
 
 ```bash
