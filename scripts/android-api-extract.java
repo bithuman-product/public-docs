@@ -29,6 +29,17 @@
 //                          its access flags, every method and field with its
 //                          JVM name and descriptor. This is what an app's
 //                          class loader binds to.
+//                          ★WHY A PARSER AND NOT `Class.forName`, so nobody
+//                          "fixes" this into reflection: these classes link
+//                          against `android.*`, and loading one for real needs
+//                          an Android platform jar that the docs runner does
+//                          not have and should not carry. Reflection would
+//                          therefore report every class as unloadable — a
+//                          runtime surface of nothing — and the gate would go
+//                          inert with a plausible-looking green. The class-file
+//                          format IS what a loader parses, the JVM signatures
+//                          in the Kotlin metadata make the join exact without
+//                          linking, and ASM reads it with no platform present.
 //
 // The bridge between the two is exact: the Kotlin metadata records, for every
 // declared function, property accessor and constructor, the JVM signature it
