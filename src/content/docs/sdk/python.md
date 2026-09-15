@@ -31,6 +31,13 @@ encodes the MP4.
 `pip install bithuman` puts **no `bithuman` command** on your `PATH` — the
 command-line tool is the [CLI](/sdk/cli), a separate install.
 
+**[essence-1](/concepts/essence-1) needs no extra at all.** It is the base
+wheel's own path — `bithuman.open` takes a first-generation `<code>.imx`
+straight out of `pip install bithuman`, which is why the CLI and the
+[Swift](/sdk/ios) page send you here for it. Only the newer engines are behind
+extras: `.avatar` files need `[expression-2]`, and the Essence 2 clip-to-file
+route needs `[offline]`.
+
 ## Get a model
 
 A showcase avatar is a plain anonymous download — no account, no key:
@@ -43,7 +50,8 @@ curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/w
 24 kHz mono, 15 s, something for it to say. Your own agent's file comes from
 [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE>`; an Essence 2 agent arrives as an `.imx`, an
-Expression 2 agent as an `.avatar`, and `bithuman.open` takes either.
+Expression 2 agent as an `.avatar`, and `bithuman.open` takes either — as it
+does a first-generation `essence-1` `.imx`.
 
 ## Minimal code
 
