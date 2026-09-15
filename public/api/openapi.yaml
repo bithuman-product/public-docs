@@ -4358,7 +4358,7 @@ tags:
       asyncio.run(main())
       ```
 
-      [Full Python SDK reference →](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/python/README.md)
+      [Full Python SDK reference →](https://docs.bithuman.ai/sdk/python)
 
   - name: sdk-swift
     x-displayName: Swift SDK
@@ -4395,7 +4395,7 @@ tags:
       `bithuman-expression-daemon` as a subprocess. On unsupported
       hardware, `ExpressionModelNotSupported` is raised — not a crash.
 
-      [Full Swift SDK reference →](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/README.md)
+      [Full Swift SDK reference →](https://docs.bithuman.ai/sdk/ios)
 
   - name: sdk-flutter
     x-displayName: Flutter plugin
@@ -4721,8 +4721,10 @@ tags:
       ## Community
 
       - **GitHub** —
-        [bithuman-product/bithuman-sdk-public](https://github.com/bithuman-product/bithuman-sdk-public)
-        for issues, examples, and Swift SDK source distribution.
+        [bithuman-product/bithuman-examples](https://github.com/bithuman-product/bithuman-examples)
+        for runnable demos, and
+        [homebrew-bithuman](https://github.com/bithuman-product/homebrew-bithuman)
+        for issues and the CLI and Swift distributions.
       - **Discord** —
         [discord.gg/ES953n7bPA](https://discord.gg/ES953n7bPA) — questions,
         showcases, and roadmap discussions.
@@ -4734,7 +4736,7 @@ tags:
 
       We accept community PRs for SDK examples, integration plugins
       (LiveKit, Pipecat, Vapi, etc.), and docs. See
-      [CONTRIBUTING.md](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/CONTRIBUTING.md)
+      [CONTRIBUTING.md](https://github.com/bithuman-product/homebrew-bithuman/blob/main/CONTRIBUTING.md)
       for the RFC process.
 
       <div class="bh-cards">
@@ -4742,7 +4744,7 @@ tags:
           <strong>Join Discord →</strong>
           <span>Talk to the team and community</span>
         </a>
-        <a href="https://github.com/bithuman-product/bithuman-sdk-public" class="bh-card">
+        <a href="https://github.com/bithuman-product/bithuman-examples" class="bh-card">
           <strong>GitHub →</strong>
           <span>Issues, examples, SDK source</span>
         </a>
@@ -4754,8 +4756,9 @@ tags:
       ## Changelog & releases
 
       - **SDK release notes** —
-        [github.com/bithuman-product/bithuman-sdk-public/releases](https://github.com/bithuman-product/bithuman-sdk-public/releases)
-        for tagged releases across Python, Swift, and Flutter.
+        [github.com/bithuman-product/homebrew-bithuman/releases](https://github.com/bithuman-product/homebrew-bithuman/releases)
+        for the tagged CLI and Swift releases; the Python SDK's history is on
+        [PyPI](https://pypi.org/project/bithuman/#history).
       - **Downloads page** —
         [releases.bithuman.ai](https://releases.bithuman.ai) for
         pre-built wheels, the platform support matrix, and the
@@ -4790,11 +4793,11 @@ tags:
 
       | I want to… | Go here |
       |---|---|
-      | Report a bug | [GitHub issues](https://github.com/bithuman-product/bithuman-sdk-public/issues) |
+      | Report a bug | [GitHub issues](https://github.com/bithuman-product/homebrew-bithuman/issues) |
       | Ask a question | [Discord #help](https://discord.gg/ES953n7bPA) |
       | Request a feature | [Discord #ideas](https://discord.gg/ES953n7bPA) |
       | Email support | hello@bithuman.ai |
-      | Security disclosure | hello@bithuman.ai (see [SECURITY.md](https://github.com/bithuman-product/bithuman-sdk-public/blob/main/SECURITY.md)) |
+      | Security disclosure | hello@bithuman.ai (see [SECURITY.md](https://github.com/bithuman-product/homebrew-bithuman/blob/main/SECURITY.md)) |
 
       ### Service status
 
