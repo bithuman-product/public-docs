@@ -19,6 +19,11 @@ Android and iOS SDK pages for the phones.
 | Android (`arm64-v8a`) | Expression 2 — on-device in your own app (an Essence 2 coordinate, `essence2-android:0.5.6`, resolves; no walkthrough is published yet) | [Android SDK](/sdk/android) |
 | iOS | Expression 2 — on-device in your own app | [Swift SDK](/sdk/ios) |
 
+**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64,
+and Apple-silicon macOS (14 or newer)** — that is the whole set. On Windows or
+an Intel Mac `pip install bithuman` reports *no matching distribution found*:
+an unsupported platform, not a broken package. Run it under WSL2 on Windows.
+
 Two things to settle before you start:
 
 - **A self-hosted render is billed at the self-hosted rate** ([pricing](/guides/pricing)),

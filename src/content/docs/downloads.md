@@ -33,13 +33,13 @@ The Python library and the CLI binary are separate things and have been since 2.
 | Platform | CLI binary | Python wheel | Swift SDK |
 |---|---|---|---|
 | **macOS arm64 (M-series)** | Homebrew or the universal installer | `bithuman` (3.10–3.14) | SwiftPM |
-| **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | Pending (1.x was last) | — |
+| **macOS x86_64 (Intel)** | **Never published** — no `x86_64-apple-darwin` tarball has ever shipped | **Not supported** — no wheel | — |
 | **Linux x86_64** | Universal installer (tarball) — the current release is named on [/sdk/cli](/sdk/cli#install) | `bithuman` (manylinux) | — |
 | **Linux aarch64** | **Not in the current release** — `cli-v2.3.27` was the last release with an `aarch64-unknown-linux-gnu` tarball | `bithuman` (manylinux) | — |
-| **Windows** | WSL2 today | WSL2 today (1.9.0 was the last native wheel) | — |
+| **Windows** | WSL2 today | **Not supported** — no wheel; run under WSL2 | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
-macOS-Intel and Windows are tracked but not part of the 2.3 cut. If you're stuck on either, the 1.x line still has Windows wheels and a macOS-Intel build — pin the whole Python stack there until those targets graduate into the 2.x distribution.
+**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64, and Apple-silicon macOS (14 or newer).** That is the whole set. On Windows or an Intel Mac `pip install bithuman` reports *no matching distribution found* — that is an unsupported platform, not a broken package. On Windows, run it under WSL2, which is a supported Linux.
 
 ## Current shipping versions
 

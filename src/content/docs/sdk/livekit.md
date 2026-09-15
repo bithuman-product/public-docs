@@ -46,9 +46,17 @@ than a browser.
 >   pin and it resolves by walking the *plugin* back to 1.5.9, the last release
 >   whose pin admitted a 3.x wheel.
 >
-> The pin is upstream, so no bitHuman release can move it. Run the plugin on a
-> 3.11-3.13 interpreter and let it choose the wheel; use the
-> [Python SDK](/sdk/python) directly when you need the current engine.
+> **The 3.11-3.13 window is the marker's doing, not a real incompatibility.**
+> `livekit-agents` requires Python `<3.15,>=3.10` and the bitHuman wheel
+> declares exactly the same range, so every interpreter either supports would
+> work. The plugin's own `requires_python` is `>=3.10` too — it is only its
+> dependency marker that narrows to 3.11-3.13, which contradicts the package's
+> own metadata.
+>
+> The pin and the marker are both upstream, so no bitHuman release can move
+> them. Run the plugin on a 3.11, 3.12 or 3.13 interpreter and let it choose
+> the wheel; use the [Python SDK](/sdk/python) directly when you need the
+> current engine.
 
 Install the plugin on Python 3.11, 3.12 or 3.13:
 
