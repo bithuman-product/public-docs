@@ -45,8 +45,8 @@ order: 13
 1. Open the example folder in Xcode (`File → Open` → select the folder containing `Package.swift`):
 
 ```bash
-git clone https://github.com/bithuman-product/homebrew-bithuman.git
-open homebrew-bithuman/Examples/swift/ios-avatar/Package.swift
+git clone https://github.com/bithuman-product/bithuman-examples.git
+open bithuman-examples/swift/ios-avatar/Package.swift
 ```
 
 2. Set the API key in the scheme: `Product → Scheme → Edit Scheme → Run → Arguments → Environment Variables`, add `BITHUMAN_API_KEY`. Never hardcode it.
@@ -132,7 +132,7 @@ final class AvatarLifecycle: ObservableObject {
 }
 ```
 
-Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar)
+Full source: [GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar)
 
 ## Next steps
 
@@ -140,5 +140,5 @@ Full source: [GitHub](https://github.com/bithuman-product/homebrew-bithuman/tree
 - [Swift SDK](/sdk/ios) — the full Apple SDK reference.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain.
-- [macos-voice example](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
+- [macos-voice example](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
 - [Models](/concepts/models) — Essence vs Expression, which to ship.

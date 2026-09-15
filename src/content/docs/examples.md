@@ -8,7 +8,12 @@ order: 1
 
 ## Pick your path
 
-Every project below is open-source under [bithuman-product/homebrew-bithuman/Examples](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples). Each tutorial page follows the same shape: **Prerequisites → Run it → What you'll see → Full code → Next steps**. Find your row and start there.
+Every project below is open-source under [bithuman-product/bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main). Each tutorial page follows the same shape: **Prerequisites → Run it → What you'll see → Full code → Next steps**. Find your row and start there.
+
+> **One example in that repo is internal-only.** `swift/compare-tts` declares a
+> dependency on a path outside the repository — `../../../../bithuman-sdk-internal/engine/voice`
+> — so it cannot resolve for anyone outside bitHuman, and `swift build` fails before it
+> compiles anything. Every other package there resolves from public sources.
 
 | If you want to… | Start with | Language | Time |
 |---|---|---|---|
@@ -27,7 +32,7 @@ Every project below is open-source under [bithuman-product/homebrew-bithuman/Exa
 ## No-code & smallest scripts
 
 - [CLI — Hello, avatar](/sdk/cli) — install, `bithuman doctor`, `bithuman run`. Full demo, zero code.
-- [quickstart project](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/quickstart) — the smallest scripted path: API key, a model, your first render. Auto-downloads a sample avatar on first run.
+- [quickstart project](https://github.com/bithuman-product/bithuman-examples/tree/main/python/quickstart) — the smallest scripted path: API key, a model, your first render. Auto-downloads a sample avatar on first run.
 
 ## Backend & voice agents — Python
 
@@ -35,19 +40,19 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 
 - [Python — Hello, avatar](/sdk/python) — the minimal `AsyncBithuman` streaming loop, ~20 lines.
 - [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice in, lip-synced avatar out. No server.
-- [python/local-essence](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/local-essence) — Essence on your own CPU box. Ships `quickstart.py`, `microphone.py`, `conversation.py`, plus a web UI at `http://localhost:4202`.
-- [python/cloud-essence](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/python/cloud-essence) — Essence on bitHuman cloud + LiveKit + browser UI. Start here for production agents.
+- [python/local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) — Essence on your own CPU box. Ships `quickstart.py`, `microphone.py`, `conversation.py`, plus a web UI at `http://localhost:4202`.
+- [python/cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman cloud + LiveKit + browser UI. Start here for production agents.
 
 ## Native apps — Swift
 
 - [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — **start here for a frame on a phone.** No device floor, no Apple entitlement, no 1.6 GB download: measured 2026-09-09 it rendered 416x720 frames on an iPhone 15. Every file is on the page.
   **No account, no key, no credits, no wait.** Since 2026-09-09 the Apple rail has a keyless identity: `A08CCD3871`, a bitHuman-owned public showcase agent whose `.avatar` is a plain public object. `setup.sh` fetches the identity, the shared engine graphs and a 16 kHz WAV in **three anonymous `curl`s, measured 7 s** — the same shape the Android example has always had. Want *your own* face on the phone instead? That is still an `expression-2` creation: **60–100 minutes** and **2000 credits** ([creation times](/api/agents#model-specific-inputs-and-creation-times), [pricing](/guides/pricing)).
-- [swift/ios-expression2](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-expression2) — the same app as a repository you can clone, with a `setup.sh` that fetches your model.
+- [swift/ios-expression2](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the same app as a repository you can clone, with a `setup.sh` that fetches your model.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package. The richest path (on-device STT + LLM + TTS) and the most demanding: iPhone 16 Pro or later, plus two Apple-approved entitlements.
-- [swift/ios-avatar](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
-- [swift/macos-voice](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
+- [swift/ios-avatar](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
+- [swift/macos-voice](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
 
-> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-expression2`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-expression2) — the only one measured rendering on a phone, on 2026-09-09 — [`ios-avatar`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
+> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the only one measured rendering on a phone, on 2026-09-09 — [`ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
 
 ## Native apps — Kotlin / Android
 
@@ -56,11 +61,11 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 ## Web & other languages
 
 - [REST — Hello, avatar](/examples/rest-hello) — zero-to-avatar with nothing but `curl`. Backends, CI, any non-SDK language.
-- [rest-api](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/rest-api) — `curl` and Python scripts for every REST endpoint.
-- [integrations/nextjs-ui](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/nextjs-ui) — a polished Next.js video-chat UI over LiveKit.
-- [integrations/gradio-web](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/gradio-web) — talk to an avatar in the browser via Gradio + FastRTC.
-- [integrations/java-websocket](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/java-websocket) — stream audio to an avatar server from Java over WebSocket.
-- [integrations/offline-mac](https://github.com/bithuman-product/homebrew-bithuman/tree/main/Examples/integrations/offline-mac) — fully offline macOS integration.
+- [rest-api](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api) — `curl` and Python scripts for every REST endpoint.
+- [integrations/nextjs-ui](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) — a polished Next.js video-chat UI over LiveKit.
+- [integrations/gradio-web](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web) — talk to an avatar in the browser via Gradio + FastRTC.
+- [integrations/java-websocket](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/java-websocket) — stream audio to an avatar server from Java over WebSocket.
+- [integrations/offline-mac](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/offline-mac) — fully offline macOS integration.
 
 ## Preflight & validation
 
