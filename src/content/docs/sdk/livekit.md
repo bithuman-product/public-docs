@@ -33,7 +33,7 @@ than a browser.
 > on 2026-09-15 that means:
 >
 > - On **Python 3.11, 3.12 or 3.13** the command below installs the 2.x
->   wheel — **2.9.0** today — and not the 3.x wheel the
+>   wheel — **2.8.1** today — and not the 3.x wheel the
 >   [Python SDK page](/sdk/python) documents. This is the combination that
 >   works, and it is what the examples below assume.
 > - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
