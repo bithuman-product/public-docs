@@ -111,6 +111,7 @@ Measured frame rates for every platform are on the [performance page](/sdk/perfo
 | `SDK location not found` | no `ANDROID_HOME` and no `local.properties` | set one of them |
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
+| you want `essence-1` on Android | it is the first-generation artifact, `ai.bithuman:sdk:2.3.6` — a `.imx` you push yourself and an API secret, not the model-store route above. The published 2.3.6 **cannot authenticate on a device**: it installs, then throws before its first frame with `be_auth_authenticate: status=11`, because its native library ships with no CA trust store and there is no app-side workaround on this version | for a talking head on Android today use Expression 2 above, which needs no key; the whole first-generation project is on [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello#the-first-generation-artifact--essence-1-aibithumansdk236) |
 | you want Essence 2 on Android | the coordinate is `implementation("ai.bithuman:essence2-android:0.5.6")`; versions before `0.5.3` cannot install a model on a handset | use `0.5.6`; Expression 2 is the path this page documents |
 
 **Licence.** *Proprietary — bitHuman SDK License* (`https://bithuman.ai/license`);
