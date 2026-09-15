@@ -25,18 +25,41 @@ than a browser.
 
 ## Python: deploy via the LiveKit plugin
 
-Install the plugin (it pulls in `bithuman` and `livekit-agents`):
+> **Python 3.11, 3.12 or 3.13 — and the plugin installs the 2.x wheel, not the
+> 3.x one.** `livekit-plugins-bithuman` is published by LiveKit, not by
+> bitHuman, and release 1.8.1 declares its bitHuman dependency as
+> `bithuman<3,>=0.5.25` under the marker
+> `python_version >= "3.11" and python_version < "3.14"`. Resolved against PyPI
+> on 2026-09-15 that means:
+>
+> - On **Python 3.11, 3.12 or 3.13** the command below installs the 2.x
+>   wheel — **2.9.0** today — and not the 3.x wheel the
+>   [Python SDK page](/sdk/python) documents. This is the combination that
+>   works, and it is what the examples below assume.
+> - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
+>   with *no* bitHuman wheel at all, and the first import fails with
+>   `ModuleNotFoundError: No module named 'cv2'` — cv2 reaches the plugin as a
+>   dependency of the wheel that was skipped.
+> - **You cannot have both current.** Ask pip for the plugin alongside a 3.x
+>   pin and it resolves by walking the *plugin* back to 1.5.9, the last release
+>   whose pin admitted a 3.x wheel.
+>
+> The pin is upstream, so no bitHuman release can move it. Run the plugin on a
+> 3.11-3.13 interpreter and let it choose the wheel; use the
+> [Python SDK](/sdk/python) directly when you need the current engine.
+
+Install the plugin on Python 3.11, 3.12 or 3.13:
 
 ```bash
 pip install livekit-plugins-bithuman pillow
 ```
 
-> **Note** The plugin currently requires Pillow but doesn't declare it —
-> install `pillow` alongside it (as above), or
+> **Note** The plugin imports `PIL` but does not declare Pillow — install
+> `pillow` alongside it (as above), or
 > `from livekit.plugins import bithuman` fails with
 > `ModuleNotFoundError: No module named 'PIL'`. Upstream fix pending with
-> LiveKit. (There is no `bithuman[agent]` extra in the 2.3 slim wheel — the
-> plugin is its own package.)
+> LiveKit. (There is no `bithuman[agent]` extra — the plugin is its own
+> package.)
 
 Wire the avatar into an agent worker with a single object:
 

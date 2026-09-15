@@ -16,10 +16,16 @@ order: 10
 pip install livekit-plugins-bithuman pillow
 ```
 
-Python 3.9+. The plugin pulls `bithuman` + `livekit-agents`.
+**Python 3.11, 3.12 or 3.13.** The plugin is LiveKit's package, and 1.8.1 asks
+for the bitHuman wheel only on those three interpreters: on 3.10 or 3.14 it
+installs with no bitHuman wheel and the first import fails. On the interpreters
+where it does ask, it pins below 3.x, so this command installs the 2.x
+wheel rather than the current one on [the Python page](/sdk/python). The
+[LiveKit page](/sdk/livekit#python-deploy-via-the-livekit-plugin) has the
+resolved versions and why no bitHuman release can change them.
 
-> **Note** The plugin currently requires Pillow but doesn't declare it as a
-> dependency — install `pillow` alongside it (as above). Without it,
+> **Note** The plugin imports `PIL` but doesn't declare Pillow — install
+> `pillow` alongside it (as above). Without it,
 > `from livekit.plugins import bithuman` fails with
 > `ModuleNotFoundError: No module named 'PIL'`. An upstream fix is pending with
 > LiveKit.
