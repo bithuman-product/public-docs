@@ -123,6 +123,13 @@ const TAP = "bithuman-product/homebrew-bithuman";
 
 /** What a page can name, and where its truth lives. */
 export const ARTIFACTS = [
+  // ★The FIRST-GENERATION Android coordinate. Ungraded until 2026-09-15, and
+  // the gap was invisible: a page could say ai.bithuman:sdk:0.0.1 and this
+  // check still printed OK, because an extracted coordinate whose artifact is
+  // not listed here was silently skipped. essence-1 is maintained, not
+  // invested in — which is exactly why its coordinate needs a guard rather
+  // than attention. changelog:false: v1 gets no new narrative, only truth.
+  { id: "sdk", kind: "maven", changelog: false },
   { id: "essence2-android", kind: "maven", changelog: true },
   { id: "expression2-android", kind: "maven", changelog: true },
   { id: "bithuman", kind: "pypi", changelog: true },
@@ -683,6 +690,10 @@ const liveRegistry = {
 /* --------------------------------------------------------------- selftest */
 
 const STUB_LATEST = {
+  // ai.bithuman:sdk — the first-generation Android coordinate. A stub entry is
+  // not optional: an ARTIFACTS id the stub cannot answer makes EVERY arm fail,
+  // which is how adding this artifact first showed up (38 arms wrong).
+  sdk: "2.3.6",
   "essence2-android": "0.5.5",
   "expression2-android": "0.4.1",
   bithuman: "3.1.5",
