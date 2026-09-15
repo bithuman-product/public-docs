@@ -175,7 +175,11 @@ function grade(claims, newest, pageText) {
     } else if (!c.driven_by && cmp(have, c.measured_version) > 0) {
       findings.push(
         `${c.id}: driven against ${c.artifact} ${c.measured_version} on ${c.measured_on}, but ${have} is published. ` +
-        `The claim on ${c.page} now describes bytes nobody has checked — re-drive (${c.arms}), then move the version.`);
+        `The claim on ${c.page} now describes bytes nobody has checked — re-drive (${c.arms}), then move the version.` +
+        // ★A red that does not carry the plan is a red someone has to reconstruct
+        // at the worst possible moment. When a claim is KNOWN to be about to
+        // flip, the entry says what to do and the failure prints it.
+        (c.when_this_goes_red ? `\n    ★WHAT TO DO: ${c.when_this_goes_red}` : ""));
     }
     const text = pageText[c.page];
     if (text === undefined) { findings.push(`${c.id}: ${c.page} could not be read`); continue; }
