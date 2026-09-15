@@ -36,6 +36,15 @@ dependencies {
 Without the two Qualcomm lines the avatar still renders, on the CPU, slower.
 The whole project, file by file: [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello).
 
+> **`mavenCentral()` is not optional, and searching for the artifact will not
+> find it.** The `ai.bithuman` group is served by Maven Central itself and is
+> **not** on Google's Maven mirror, so a build with only `google()` resolves
+> nothing. It also returns no results on `search.maven.org` — verified
+> 2026-09-15, with a control query that does return results — so the web search
+> saying "not found" is not evidence the artifact is missing. Browse
+> [the group directory](https://repo1.maven.org/maven2/ai/bithuman/) instead,
+> which lists every published version.
+
 ## Authentication and configuration
 
 A public agent needs no credential at all — no account, no key, no credits.
