@@ -10,6 +10,28 @@ order: 1
 
 ## September 2026
 
+### `BITHUMAN_UNMETERED` is gone from the Android SDK, and a frame-source constructor loses an argument — `essence2-android` 0.5.7 (2026-09-15)
+
+`ai.bithuman:essence2-android:0.5.7` on Maven Central. **Read this before
+upgrading if you construct the frame source yourself.**
+
+- **The unmetered development variable is gone.** Read from the published AAR,
+  `BITHUMAN_UNMETERED`, `UNMETERED_ENV` and the unmetered banner appear zero
+  times in 0.5.7; the same search finds the variable in 0.5.6, and finds
+  `SelfHostMeter` and `MeteringRefused` in both. With the CLI ignoring it from
+  2.6.20 and the public Python wheels refusing with or without it, **no shipping
+  surface now has an environment variable that renders free** — see
+  [pricing](/guides/pricing).
+- **`ElevateFrames` takes one argument fewer.** The class sits on the
+  `ai.bithuman.elevate` package — a legacy name kept for compatibility, which
+  a developer still types. Its constructor was
+  `(String, String, int, String, boolean)` in 0.5.6 and is
+  `(String, String, int, boolean)` in 0.5.7 — the execution-provider string is
+  no longer accepted. Code that passed it will not compile against 0.5.7;
+  delete the argument. Nothing on this site taught that parameter.
+- **The `0.2.0` through `0.5.6` artifacts stay on Central** and are superseded,
+  not withdrawn.
+
 ### Every render path needs a credential, on both platforms — `cli-v2.6.20` (2026-09-14)
 
 CLI `cli-v2.6.20`, macOS arm64 and Linux x86_64 built from one commit.
