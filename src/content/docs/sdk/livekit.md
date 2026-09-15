@@ -37,14 +37,23 @@ than a browser.
 >   2026-09-15 — and not the 3.x wheel the [Python SDK page](/sdk/python)
 >   documents. This is the combination that works, and it is what the examples
 >   below assume. Which 2.x you get depends on what the index holds that day:
->   the pin is `bithuman<3`, and versions have been removed from it.
+>   the pin is `bithuman<3`, and versions have been removed from it. **None of
+>   the 3.x work reaches this path** — an avatar rendered through the plugin is
+>   rendered by a 2.x engine.
 > - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
 >   with *no* bitHuman wheel at all, and the first import fails with
 >   `ModuleNotFoundError: No module named 'cv2'` — cv2 reaches the plugin as a
 >   dependency of the wheel that was skipped.
-> - **You cannot have both current.** Ask pip for the plugin alongside a 3.x
->   pin and it resolves by walking the *plugin* back to 1.5.9, the last release
->   whose pin admitted a 3.x wheel.
+> - **You cannot have both current, and the pin is not arbitrary.** Ask pip for
+>   the plugin alongside a 3.x pin and it resolves by walking the *plugin* back
+>   to 1.5.9. The `<3` bound is load-bearing: the plugin's only bitHuman import
+>   is `from bithuman import AsyncBithuman`, and 3.0.0 removed that name — on
+>   3.1.10 it raises, with a message naming its replacement. So the plugin
+>   genuinely cannot run on a 3.x wheel; relaxing the bound needs a code change
+>   upstream, not just a looser constraint.
+> - **The wheel ships for Linux x86_64, Linux aarch64 and Apple-silicon macOS
+>   only.** There is no Windows wheel and no Intel-macOS wheel, on any version,
+>   so this path is closed on those platforms regardless of interpreter.
 >
 > **The 3.11-3.13 window is the marker's doing, not a real incompatibility.**
 > `livekit-agents` requires Python `<3.15,>=3.10` and the bitHuman wheel
