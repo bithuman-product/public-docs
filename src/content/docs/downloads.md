@@ -83,7 +83,14 @@ All hosts that run a given model produce identical, lip-synced visual frames —
 
 ### Essence
 
-The default avatar model. Runs on virtually every supported platform — the right choice for mobile, edge, and any deployment without a discrete GPU.
+The default avatar model, and this table is the **first-generation** floor —
+the same scope as the Expression table below it, and the one the Raspberry Pi
+row belongs to. Runs on virtually every supported platform — the right choice
+for mobile, edge, and any deployment without a discrete GPU. The measured
+second-generation frame rates on [performance](/sdk/performance) are a
+different set of numbers on different hardware; a host graded here and absent
+there is not a retracted claim, it is a floor this page states and that table
+does not measure.
 
 | Host | Status | Notes |
 |---|---|---|
