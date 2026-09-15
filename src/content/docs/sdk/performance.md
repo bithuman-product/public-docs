@@ -17,7 +17,7 @@ label: "Performance"
 | Linux · Python | Intel Core i7-13700F | 49 | 27 |
 | iOS | iPhone 15 | 118 | 52 |
 | Android | Galaxy S25+ | 58 | 50 |
-| Web | Chrome on M4 | 30 | 27 |
+| Web | Chrome on M4 | 30 | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
 
 Rows marked **· Python** are the [Python library](/sdk/python)
@@ -41,6 +41,8 @@ The Essence 2 Cloud GPU number is how fast a finished 1920x1080 video file is de
 The iPhone Essence 2 number is what a cool phone does. Render again straight away, with no pause, and an iPhone 15 still does about 49 frames per second — well above the 25 Essence 2 plays at, so a conversation stays real time.
 
 The Android Expression 2 number is what a cool phone does. Under continuous rendering a Galaxy S25+ warms up and settles at about 40 frames per second after a few minutes — still twice the 20 frames per second Expression 2 plays at, so a conversation stays real time.
+
+The Essence 2 Web cell does not carry a number today. The engine computes about 27 frames per second in Chrome on an M4 when it is driven on its own, but that measurement stops the page's own display loop and detaches the live audio. On the page a visitor actually opens, with the voice playing and the picture being drawn on the same browser thread, Essence 2 delivered about 11 frames per second on 2026-09-15 — well under the 25 it plays at, so the face barely moves while the voice continues. Expression 2 in the same browser delivers its full 20 frames per second, because it does its work on a background thread and leaves the display loop free. This is a limitation of the Essence 2 web build, not of the hardware.
 
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
 <!-- /FLOORS:NOTES -->
