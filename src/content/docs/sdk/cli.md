@@ -36,6 +36,17 @@ Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
 Intel Mac or a Linux ARM box the installer names the platform and stops without
 downloading anything ([exact output](/sdk/cli/reference#platforms-with-no-binary)).
 
+## Authentication and configuration
+
+`bithuman login` opens a browser and stores a per-device key on this machine;
+`bithuman login --device` prints a code instead, for an SSH session. In a
+script or in CI, set `BITHUMAN_API_SECRET` — a key is free at
+[your API keys](https://www.bithuman.ai/developer/api-keys). Which one wins when both are present, and every other
+variable the binary reads, is on the
+[CLI reference](/sdk/cli/reference#credential-resolution-order).
+
+A showcase `pull` and `run` are the exception: those never needed an account.
+
 ## Get a model
 
 A showcase avatar downloads with no account — twenty to pick from — and your
@@ -133,6 +144,13 @@ Every failure prints one JSON object to stderr with a stable code — the
 | [Essence 2](/concepts/essence-2) (`<code>.imx`) | `run` and `render` |
 | [Essence 1](/concepts/essence-1) (`<code>.imx`) | `run` only — `render` refuses it; use the [Python SDK](/sdk/python) or the [Video API](/api/video) for a file |
 | [Expression 1](/concepts/expression-1) | neither — GPU-only by design, served through the [cloud API](/api/overview) |
+
+## Examples and source
+
+- [`api/cli`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/cli) — shell scripts that drive a live stream, an
+  offline render and the REST API.
+- [Examples](/examples) — every runnable project, by language.
+- [Homebrew tap](https://github.com/bithuman-product/homebrew-bithuman) — the installer and the released binaries.
 
 ## See also
 

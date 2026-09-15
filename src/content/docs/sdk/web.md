@@ -10,6 +10,15 @@ order: 60
 
 Nothing. The hosted route renders in any modern browser.
 
+## Authentication and configuration
+
+Nothing to authenticate, and nothing to configure: the browser holds no key.
+A hosted session is metered per active minute against the **agent's owner**,
+at the rate on [pricing](/guides/pricing), and the free tier covers a first
+conversation. The one thing you do configure lives on **your** host, not ours —
+serving your page cross-origin isolated, or in-tab WebAssembly drops to a
+single thread. See Troubleshooting.
+
 ## Get a model
 
 Every showcase agent is public. `A74NWD9723` is one; browse the rest on the
@@ -73,3 +82,26 @@ You can also render **in** the tab:
 | `WebGPU not available in this browser` | you asked for the GPU renderer on a browser with no usable GPU | ask for the software renderer, or [probe first](/examples/browser-webgpu-check#check-1--does-this-browser-have-a-usable-gpu) |
 | You want a JavaScript SDK | there is no npm package today | drive a served avatar over [LiveKit](/sdk/livekit), or embed the hosted route |
 | `?ep=webgpu` seems to do nothing | the parameter is dropped while the page signs you in, so the page never sees it | add it **after** the page has loaded: append `&ep=webgpu` to the URL in the address bar (the one that already carries `token=`) and reload. It runs the model on the GPU instead of WebAssembly; it is opt-in and needs a browser with WebGPU. The older `?elevate_ep=` is still accepted and always will be — `elevate_ep` is a legacy name kept for compatibility, and `ep` is the same parameter the Expression 2 local renderer already takes. |
+
+## Examples and source
+
+- [Does this browser have a usable GPU?](/examples/browser-webgpu-check) — a
+  probe to run before you ask for the GPU renderer.
+- [`integrations/nextjs-ui`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) — a Next.js
+  video-chat UI over LiveKit, for when the avatar is served rather than in-tab.
+- [`integrations/gradio-web`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web) — the same idea in
+  Gradio + FastRTC.
+- [Examples](/examples) — every runnable project, by language.
+
+There is no npm package today, so there is no JavaScript API reference to link:
+the browser surface is the hosted URL, its query parameters, and the `<iframe>`
+above. The parameters are on [browser rendering](/guides/browser-rendering).
+
+## See also
+
+- [Browser rendering](/guides/browser-rendering) — `rendering_mode` and its
+  three values, in full
+- [Deploy an embed](/guides/deploy-embed) — putting the iframe on your own site
+- [LiveKit](/sdk/livekit) — driving a served avatar from your own JavaScript
+- [Performance](/sdk/performance) — measured frame rates for every platform
+- [SDK](/sdk) — every platform on one page
