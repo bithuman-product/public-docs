@@ -48,8 +48,8 @@ const year = 2026;
         <span>bitHuman</span>
       </a>
       <p class="muted">
-        Real-time, on-device avatars. Audio in, lifelike face out — at 25 fps,
-        from Raspberry Pi to H100.
+        Real-time, on-device avatars. Audio in, lifelike face out —
+        <a href="/sdk/performance">measured</a> from a phone to an RTX 4090.
       </p>
     </div>
     <div class="footer-cols">
@@ -95,6 +95,10 @@ const year = 2026;
   }
   .footer-brand .brand img { border-radius: 6px; }
   .footer-brand p { margin-top: var(--space-3); max-width: 34ch; font-size: var(--ft-sm); }
+  /* The tagline names what the one-writer record measures, so the word that
+     makes that claim links to the record's own page. */
+  .footer-brand p a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .footer-brand p a:hover { color: var(--color-primary); }
   .footer-cols {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

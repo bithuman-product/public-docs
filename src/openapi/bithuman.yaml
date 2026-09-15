@@ -3724,7 +3724,7 @@ tags:
       ### One engine, every surface
 
       A single Rust engine (the essence engine) drives the bitHuman CLI, the
-      Python / Swift / Flutter SDKs, and the cloud REST API.
+      Python and Swift SDKs, and the cloud REST API.
       They all read the same `.imx` file and produce identical
       frames — pick the surface that matches what you're building;
       the mental model never changes.
@@ -4006,8 +4006,8 @@ tags:
       | **Essence** | A pre-built avatar identity in an `.imx`. Low memory, runs on every supported platform. **The default.** | Kiosks, mobile, edge, high-concurrency servers |
       | **Expression** | Animates *any* portrait at runtime. Higher close-up quality; needs more compute. | Native desktop apps, per-session custom faces, GPU cloud |
 
-      Both speak the same `push audio → drain frames` shape across
-      Python, Swift, and Flutter.
+      Both speak the same `push audio → drain frames` shape in
+      Python and in Swift.
 
       ### Essence
 
@@ -4402,17 +4402,18 @@ tags:
     description: |
       ## Flutter plugin
 
-      ```yaml
-      # pubspec.yaml
-      dependencies:
-        bithuman: ^1.16.0
-      ```
+      **Not published — there is nothing to put in `pubspec.yaml` yet.**
+      Checked against pub.dev on 2026-09-15: `bithuman` is not a
+      published Dart package, and no public repository carries the
+      plugin, so neither a hosted dependency nor a git dependency
+      resolves today. Any coordinate here would fail on
+      `flutter pub get`, so this page prints none.
 
-      One Dart codebase across macOS and iOS, with built-in
-      per-platform echo cancellation.
+      What exists is one Dart codebase across macOS and iOS with
+      built-in per-platform echo cancellation, in private beta. Ask for
+      access on [Discord](https://discord.gg/ES953n7bPA).
 
-      Pub.dev publish is pending — request the git-dep URL on
-      [Discord](https://discord.gg/ES953n7bPA).
+      Shipping on Apple today: the [Swift SDK](#tag/sdk-swift).
 
   - name: cli
     x-displayName: CLI (bithuman)
@@ -4775,7 +4776,6 @@ tags:
       | REST API | URL path (`/v1/`, `/v2/`) — never breaks at minor |
       | Python SDK | Semver — minor bumps may add params; major bumps may rename |
       | Swift SDK | Semver — floor `2.11.0` per Package.swift (current release `2.11.2`) |
-      | Flutter SDK | Semver — pinned in `pubspec.yaml` |
       | `.imx` file format | Forward-compatible within a major; auto-upgraded on first load |
 
   - name: support
