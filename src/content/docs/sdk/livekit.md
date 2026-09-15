@@ -32,10 +32,12 @@ than a browser.
 > `python_version >= "3.11" and python_version < "3.14"`. Resolved against PyPI
 > on 2026-09-15 that means:
 >
-> - On **Python 3.11, 3.12 or 3.13** the command below installs the 2.x
->   wheel — **2.8.1** today — and not the 3.x wheel the
->   [Python SDK page](/sdk/python) documents. This is the combination that
->   works, and it is what the examples below assume.
+> - On **Python 3.11, 3.12 or 3.13** the command below installs the newest
+>   2.x wheel PyPI still serves — **2.3.4** when this was last driven, on
+>   2026-09-15 — and not the 3.x wheel the [Python SDK page](/sdk/python)
+>   documents. This is the combination that works, and it is what the examples
+>   below assume. Which 2.x you get depends on what the index holds that day:
+>   the pin is `bithuman<3`, and versions have been removed from it.
 > - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
 >   with *no* bitHuman wheel at all, and the first import fails with
 >   `ModuleNotFoundError: No module named 'cv2'` — cv2 reaches the plugin as a
