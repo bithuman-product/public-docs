@@ -114,7 +114,9 @@ Measured frame rates for every platform are on the [performance page](/sdk/perfo
 | you want `essence-1` on Android | it is the first-generation artifact, `ai.bithuman:sdk:2.3.6` — a `.imx` you push yourself and an API secret, not the model-store route above. The published 2.3.6 **cannot authenticate on a device**: it installs, then throws before its first frame with `be_auth_authenticate: status=11`, because its native library ships with no CA trust store and there is no app-side workaround on this version | for a talking head on Android today use Expression 2 above, which needs no key; the whole first-generation project is on [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello#the-first-generation-artifact--essence-1-aibithumansdk236) |
 | you want Essence 2 on Android | the coordinate is `implementation("ai.bithuman:essence2-android:0.5.7")`; versions before `0.5.3` cannot install a model on a handset | use `0.5.6`; Expression 2 is the path this page documents |
 
-**Licence.** *Proprietary — bitHuman SDK License* (`https://bithuman.ai/license`);
+**Licence.** *Proprietary — bitHuman SDK License*. The full text travels with the
+bytes: `META-INF/NOTICE.txt` inside the AAR states which part is under which
+licence, and a copy is available from [hello@bithuman.ai](mailto:hello@bithuman.ai).
 the bundled LiteRT is Apache-2.0 (notices in the AAR's `META-INF/`); FFmpeg is
 linked statically under LGPL §6(a), relink on request to
 [hello@bithuman.ai](mailto:hello@bithuman.ai).
