@@ -104,7 +104,7 @@ a checksum per file.
 #   ./verify.sh            fetch, then hash-check against the manifest
 #   FETCH=0 ./verify.sh    re-check what is already on disk (control arm)
 set -u
-BASE=https://models.bithuman.ai/web/libelevate-web-v0.1.0
+BASE=https://models.bithuman.ai/web/essence2-web-v0.1.1
 FILES="index.js ort/ort.min.mjs ort/ort-wasm-simd-threaded.mjs ort/ort-wasm-simd-threaded.jsep.mjs"
 if [ "${FETCH:-1}" = 1 ]; then
   curl -fsS --max-time 60 "$BASE/manifest.json" -o manifest.json || { echo "manifest FETCH-FAILED"; exit 1; }
@@ -128,10 +128,14 @@ script works: append a byte to one of the files, run it again, and the line for
 that file must change to `MISMATCH`. If it still prints `OK`, the script is not
 checking what you think it is.
 
-> **`libelevate-web` in the URL is a retired name, and you still have to type
-> it.** The published path is `models.bithuman.ai/web/libelevate-web-v0.1.0/…`.
-> The product is [Essence 2](/concepts/essence-2); the URL is frozen so saved
-> links keep working, and will not be renamed. Type it as it is.
+> **You no longer have to type `libelevate-web`.** The bundle is published at
+> `models.bithuman.ai/web/essence2-web-v0.1.1/…`, named for the product,
+> [Essence 2](/concepts/essence-2). The older
+> `models.bithuman.ai/web/libelevate-web-v0.1.0/…` path carries the **same
+> bytes** — every file has the same `sha256` in both manifests — and it is
+> frozen, not redirected: saved links and already-deployed pages keep resolving
+> it forever. Use the new URL in anything you write today; leave the old one
+> where it already works.
 
 ## What to do with the answers
 
