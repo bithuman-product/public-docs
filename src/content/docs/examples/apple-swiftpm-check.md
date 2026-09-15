@@ -227,8 +227,10 @@ depend on whatever ONNX Runtime is on the machine.
 > **`lible_core.dylib` is a retired name you will see on disk.** `le` is the old
 > internal spelling for what is now [**Essence 2**](/concepts/essence-2). The
 > filename inside the wheel is a frozen carrier and is not being renamed; you
-> will meet it in stack traces and `otool` output. Same family as
-> `libelevate-web` in the [browser bundle URL](/examples/browser-webgpu-check).
+> will meet it in stack traces and `otool` output. The browser bundle had the
+> same problem and it is now fixed at the source: that URL is `essence2-web`
+> today, and the old `libelevate-web` path still serves the same bytes forever —
+> see the [browser bundle check](/examples/browser-webgpu-check).
 
 ---
 

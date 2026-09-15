@@ -56,9 +56,12 @@ You can also render **in** the tab:
 - **Essence 2** — the one published in-browser package is a **demo**. It ships
   a single built-in identity and a recorded loop, so you can measure in-browser
   speed on your own hardware; it cannot render your own agent. The bundle is
-  `https://models.bithuman.ai/web/libelevate-web-v0.1.0/manifest.json` (the path
-  keeps a [legacy name](/concepts/models-v2)). Your page must be cross-origin
-  isolated or WebAssembly drops to one thread — see the troubleshooting table.
+  `https://models.bithuman.ai/web/essence2-web-v0.1.1/manifest.json`. The same
+  bytes are also published at the older `libelevate-web-v0.1.0` path — a
+  [retired name](/concepts/models-v2) that still works and will never be
+  removed, so saved links and already-deployed pages keep resolving. Your page
+  must be cross-origin isolated or WebAssembly drops to one thread — see the
+  troubleshooting table.
 
 ## Troubleshooting
 
