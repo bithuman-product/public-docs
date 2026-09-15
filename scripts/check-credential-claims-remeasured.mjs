@@ -164,6 +164,16 @@ function pagesNamingUnmetered(root = ROOT) {
 function grade(claims, newest, pageText) {
   const findings = [];
   for (const c of claims) {
+    // ★A ROUTE MUST BE STATED. This cannot check that the route is RIGHT — no
+    // string comparison can. It checks that one was written down, because the
+    // failure this exists for is omission-by-familiarity: an author who has
+    // read the routing drops it at the handoff, since by then it is background
+    // to them rather than news. A blank box gets noticed; confident prose with
+    // a missing qualifier does not.
+    if (!c.route || !String(c.route).trim()) {
+      findings.push(`${c.id}: no \`route\` — say which invocation and code path was actually driven, ` +
+                    `not just the command. A claim whose route is unstated cannot be scoped by the next reader.`);
+    }
     const have = newest[c.artifact];
     if (have === undefined) { findings.push(`${c.id}: no published version was resolved for ${c.artifact}`); continue; }
     // ★A claim a machine reproduces on today's bytes is not attested, so its
@@ -191,21 +201,23 @@ function grade(claims, newest, pageText) {
 }
 
 function selftest() {
-  const claims = [{ id: "c", artifact: "cli", measured_version: "2.6.20", measured_on: "d", arms: "a", page: "p.md", phrase: "hello" }];
+  const claims = [{ id: "c", artifact: "cli", measured_version: "2.6.20", measured_on: "d", arms: "a", route: "r", page: "p.md", phrase: "hello" }];
   const arms = [
     { name: "artifact still at the measured version passes", newest: { cli: "2.6.20" }, text: { "p.md": "hello" }, expect: 0 },
     { name: "RED CONTROL: artifact moved past the measurement fails", newest: { cli: "2.6.21" }, text: { "p.md": "hello" }, expect: 1 },
     { name: "RED CONTROL: the phrase left the page fails", newest: { cli: "2.6.20" }, text: { "p.md": "something else" }, expect: 1 },
+    { name: "RED CONTROL: a claim with no route fails", newest: { cli: "2.6.20" }, text: { "p.md": "hello" }, expect: 1,
+      claims: [{ id: "c", artifact: "cli", measured_version: "2.6.20", measured_on: "d", arms: "a", page: "p.md", phrase: "hello" }] },
     { name: "an older published version does not fail (never happens, but must not)", newest: { cli: "2.6.19" }, text: { "p.md": "hello" }, expect: 0 },
   ];
-  const drivenClaim = [{ id: "d", artifact: "cli", measured_version: "2.6.20", measured_on: "d", arms: "a", page: "p.md", phrase: "hello", driven_by: "scripts/real.mjs" }];
+  const drivenClaim = [{ id: "d", artifact: "cli", measured_version: "2.6.20", measured_on: "d", arms: "a", route: "r", page: "p.md", phrase: "hello", driven_by: "scripts/real.mjs" }];
   const drivenArms = [
     { name: "a machine-driven claim is not graded on version drift", newest: { cli: "9.9.9" }, present: true, expect: 0 },
     { name: "RED CONTROL: a driven_by pointing at nothing fails", newest: { cli: "2.6.20" }, present: false, expect: 1 },
   ];
   let bad = 0;
   for (const a of arms) {
-    const got = grade(claims, a.newest, a.text).length ? 1 : 0;
+    const got = grade(a.claims || claims, a.newest, a.text).length ? 1 : 0;
     const ok = got === a.expect;
     if (!ok) bad++;
     console.log(`  ${ok ? "PASS" : "FAIL"}  ${a.name}`);
