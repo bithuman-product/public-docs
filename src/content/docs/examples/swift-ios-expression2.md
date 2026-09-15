@@ -125,8 +125,8 @@ There is a directory in the package repository with the same Xcode target in
 it, and you can clone it for the project file:
 
 ```bash
-git clone https://github.com/bithuman-product/homebrew-bithuman.git
-cd homebrew-bithuman/Examples/swift/ios-expression2
+git clone https://github.com/bithuman-product/bithuman-examples.git
+cd bithuman-examples/swift/ios-expression2
 open IOSExpression2.xcodeproj
 ```
 
