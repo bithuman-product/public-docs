@@ -25,9 +25,15 @@
 //     correctly still say `0.3.1`. The distance between a staged version and a
 //     published one is invisible in a diff and total for the reader: Gradle
 //     answers `Could not find ai.bithuman:expression2-android:0.4.0`.
-//     Maven Central is immutable, so this rule is safe for history — every
-//     version that ever shipped still resolves, including the `0.2.0` in the
-//     changelog. Only a version that was NEVER published can fail here.
+//     Maven Central does not allow deletion, so on Central a version that was
+//     released stays released — the `0.2.0` in the changelog still resolves.
+//     That is a property of Central, NOT a property this rule may assume: the
+//     rule asks the registry every run and believes the answer. Note the one
+//     hole even Central has — `ai.bithuman:essence2-android:0.5.4` is absent
+//     from Central today while 0.5.3 and 0.5.5 are present, because a staged
+//     deployment that is never released never becomes immutable in the first
+//     place. "It shipped" is our record; "it resolves" is the registry's, and
+//     only the second one is what a reader's build gets.
 //
 //  2. APPLE — A PRODUCT THAT DOES NOT EXIST, WHICH `resolve` REPORTS AS FINE.
 //     `swift package resolve` exits 0 against a manifest naming a product the
@@ -74,11 +80,77 @@
 //     Extras are the sharper half: `pip install "bithuman[offline]"` with an
 //     extra the wheel does not declare does NOT fail. pip emits a warning and
 //     installs the BASE package, so the reader gets a successful install, an
-//     import that works, and a render that cannot find its engine. Maven's
-//     immutability argument holds here too — PyPI forbids re-uploading a
-//     version, so every version that ever shipped still resolves and the
-//     changelog's history is safe. A yanked version also still resolves for an
-//     exact pin, which is why yanking is not graded as absence.
+//     import that works, and a render that cannot find its engine.
+//
+//     ★PYPI IS NOT IMMUTABLE AND THIS RULE MUST NOT ASSUME IT IS. An earlier
+//     version of this header argued that "PyPI forbids re-uploading a version,
+//     so every version that ever shipped still resolves and the changelog's
+//     history is safe." The first clause is true and the conclusion does not
+//     follow: re-upload is forbidden, DELETION IS NOT. On 2026-09-15 the owner
+//     deleted `bithuman` 2.9.0 and 3.1.3-3.1.8, and deleted the projects
+//     `bithuman-cli` and `bithuman-mcp` outright — `/simple/<name>/` went 404,
+//     which is stronger than a yank and unrecoverable, because a deleted
+//     version number is burned on PyPI forever. So the gate VERIFIES; it never
+//     infers existence from immutability. Every version this file grades is
+//     checked against the live index on the run that grades it, and a version
+//     that resolved yesterday and not today fails today. Proven by mutation on
+//     2026-09-15: a page citing `pip install bithuman==3.1.4` — a version that
+//     existed that morning and was deleted that evening — turns this gate red.
+//
+//     A yanked version still resolves for an exact pin, which is why yanking
+//     is not graded as absence. A DELETED one resolves for nothing, which is
+//     why deletion is graded exactly like a version that never existed: the
+//     registry is asked, and its answer is the verdict.
+//
+//     THE RESIDUAL GAP, STATED RATHER THAN PAPERED OVER: this rule grades the
+//     COPYABLE form only, so a version named in prose — the changelog's own
+//     history, the version stamps in sdk/performance.md — is not graded, and
+//     after a deletion some of those now name versions that no longer resolve.
+//     That exemption used to be justified by immutability. It no longer is, so
+//     it is now a deliberate choice with a named cost: a changelog is a record
+//     of what happened, and a record that must be rewritten every time someone
+//     deletes a version is not a record. The cost is that prose can go stale
+//     silently. Deliberately NOT fixed by adding a second rule that greps
+//     prose for version-shaped strings — that would redden the changelog on
+//     every deletion and grade the one text on this site that is supposed to
+//     describe the past. If this gap must close, close it by not deleting
+//     published versions.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// PUBLISHED-COORDINATE POLICY (owner ruling, 2026-09-15). This gate enforces
+// the last line of it; the rest is written here because this is the file that
+// reasons about what a registry does and does not guarantee.
+//
+//   ONE COORDINATE PER REGISTRY, and the docs name that one way:
+//     PyPI            `bithuman` — the Python library, and NOTHING else.
+//                     Any other bitHuman-named PyPI package is not ours.
+//                     `bithuman-cli` and `bithuman-mcp` were deleted 2026-09-15;
+//                     the names were deliberately NOT reserved, so anyone may
+//                     now claim them. The CLI ships from install.bithuman.ai
+//                     and the Homebrew tap; MCP ships inside it as `bithuman mcp`.
+//     Maven Central   `ai.bithuman:essence2-android`, `:expression2-android`.
+//     Homebrew tap    `bithuman-product/homebrew-bithuman`, formula `bithuman-cli`.
+//     SwiftPM         the same tap repo; consumers land on the highest BARE
+//                     semver tag, so a `cli-v*` or `essence2-v*` tag is
+//                     invisible to them and a bare `v*` tag is an SDK release
+//                     whether or not anyone meant it to be.
+//     npm, pub.dev    NOTHING IS PUBLISHED. Do not cite a coordinate there.
+//
+//   YANK vs DELETE — these are different tools and the difference is the whole
+//   point. YANK means "stop new installs from choosing it": the version still
+//   resolves for anyone who pinned it exactly, so existing builds keep working
+//   and nobody is broken. It is reversible. DELETE means "this must never be
+//   installable again": every pin to it fails hard, the version number is
+//   burned forever, and it CANNOT be undone. Yank is the default; deletion
+//   needs a reason that survives being told to the customer whose build it
+//   breaks.
+//
+//   BEFORE ANY DELETION, check what pins the version — our docs, our examples,
+//   and our dependents — and repoint them FIRST. On 2026-09-15 the order was
+//   reversed and the docs lane had to repoint six pages after the fact, while
+//   this gate sat red on a `pip install bithuman-mcp` line whose distribution
+//   had ceased to exist.
+// ─────────────────────────────────────────────────────────────────────────────
 //
 // WHAT IT DELIBERATELY DOES NOT GRADE, and why the discriminator is the typed
 // form and not the string: this site quotes coordinates that are SUPPOSED not to
