@@ -88,6 +88,11 @@ early. Every error `bithuman.open` and `avatar.render` raise is an `AvatarError`
 offline route below raises `bithuman.offline.OfflineRenderError`
 (`MeteringNotArmedError` when no credential is set).
 
+Every public name in the package, with the signature it actually has and the
+exception it actually raises, is listed on the
+[Python API reference](/sdk/python-api) — generated from the wheel a developer
+installs, not from our source.
+
 To render a whole Essence 2 clip to an MP4 instead of taking live frames, use
 the offline route (the `[offline]` extra):
 
@@ -157,10 +162,14 @@ logging.basicConfig(level=logging.INFO)
 - [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman
   cloud over LiveKit; the production shape.
 - [Examples](/examples) — every runnable project. The wheel itself is on
-  [PyPI](https://pypi.org/project/bithuman/).
+  [PyPI](https://pypi.org/project/bithuman/), and its public surface — read back
+  out of the installed bytes — is the
+  [Python API reference](/sdk/python-api).
 
 ## See also
 
+- [Python API reference](/sdk/python-api) — every public name in the installed
+  package, its signature, and what it raises
 - [LiveKit](/sdk/livekit) — running this library inside an agent worker, and
   the interpreter range that path needs
 - [CLI](/sdk/cli) — the same engines as a binary
