@@ -135,7 +135,7 @@ directory.** The repository's copy is still the Route B
 script — it requires `BITHUMAN_API_SECRET` and an agent code of your own and
 exits 2 without them, so a keyless reader who clones and runs it gets a
 usage error rather than a frame. The version below needs neither. Paste it over
-the file in the clone, or just run its three `curl`s by hand; there is nothing
+the file in the clone, or just run its three commands by hand; there is nothing
 else in it.
 
 Pick your team under **Signing & Capabilities**, select your iPhone, and press
@@ -152,19 +152,20 @@ before the script:
 | file | where it comes from | why you need it |
 |---|---|---|
 | `agent.avatar` | **Route A:** `…/public/web/showcase/A08CCD3871.avatar` (anonymous). **Route B:** [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model) with your `api-secret` | the identity — the face, the motion and the per-identity graphs |
-| `shared_engine/` | `…/public/web/engines/expression-2/mac-arm64-1.0.0.engine` (anonymous) | ★ the artifact does **not** carry `w2v_frontend_cpuAndNE.mlpackage`, and the engine will not start without it. This object has it |
+| `shared_engine/` | `bithuman engine install mac` — the [CLI](/sdk/cli#install) fetches it from the public channel (anonymous, no login) into `~/.bithuman/engines/` | ★ the artifact does **not** carry `w2v_frontend_cpuAndNE.mlpackage`, and the engine will not start without it. The shared engine has it |
 | `speech16k.wav` | `…/model/download?member=demo_speech_16k.wav` (anonymous for a public code), or macOS `say` + `afconvert` | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
 
-★ **Why a Mac engine object, for an iOS app.** The graphs inside it are CoreML
+★ **Why the `mac` engine, for an iOS app.** The graphs inside it are CoreML
 packages, compiled on the device at first launch; they are not Mac-only code.
-The object is named for the machine that downloads them. It needs no login.
+The engine is named for the machine that downloads it. It needs no login.
 This is a real seam and it is bitHuman's to close — until then, one 91 MB
 directory rides in your app bundle.
 
-★ **All three are `IMX\0` containers, and unpacking one is 20 lines.** A flat
-table of contents at the front — `IMX\0`, `u16 version`, `u16 count`, then per
-member `u16 nameLen`, the UTF-8 name, `u64 offset`, `u64 size` — followed by
-the payloads. The `unpack()` function in `setup.sh` below is the whole format.
+★ **Step 2 needs the [`bithuman` CLI](/sdk/cli#install) on your Mac** — one
+installer line on that page; it needs no account for this. The `.avatar` and
+the shared engine are opaque bitHuman model files, and `bithuman engine
+install` is the shipped tool that unpacks the engine for you. Nothing on this
+page, and nothing in your app, has to know what is inside one.
 
 ```bash
 #!/bin/bash
@@ -181,31 +182,6 @@ SHOWCASE=A08CCD3871
 CODE="${1:-$SHOWCASE}"
 mkdir -p Sources/Model
 
-# Unpack an IMX\0 container. The whole format is these 20 lines.
-unpack() {  # unpack <container> <destdir>
-  python3 -c '
-import os, struct, sys
-src, dst = sys.argv[1], sys.argv[2]
-with open(src, "rb") as f:
-    head = f.read(1 << 20)
-    magic, version, count = struct.unpack_from("<4sHH", head, 0)
-    assert magic == b"IMX\0", magic
-    off, members = 8, []
-    for _ in range(count):
-        (n,) = struct.unpack_from("<H", head, off); off += 2
-        name = head[off:off + n].decode(); off += n
-        o, s = struct.unpack_from("<QQ", head, off); off += 16
-        members.append((name, o, s))
-    for name, o, s in members:
-        path = os.path.join(dst, name)
-        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        f.seek(o)
-        with open(path, "wb") as out:
-            out.write(f.read(s))
-print(f"{len(members)} members -> {dst}")
-' "$1" "$2"
-}
-
 # 1. the identity
 if [ -n "${BITHUMAN_API_SECRET:-}" ] && [ "$CODE" != "$SHOWCASE" ]; then
   echo "==> downloading $CODE.avatar (your identity)"
@@ -219,13 +195,18 @@ else
 fi
 ls -l Sources/Model/agent.avatar
 
-# 2. the shared speech front-end the artifact does not carry
-echo "==> downloading the shared engine graphs"
-curl -fL --progress-bar "$PUB/engines/expression-2/mac-arm64-1.0.0.engine" \
-  -o /tmp/mac-arm64.engine
+# 2. the shared speech front-end the artifact does not carry.
+#    `bithuman engine install` fetches it from the public channel and lays it
+#    out ready to copy — no login, no key, sha-verified on the way in.
+echo "==> installing the shared engine graphs"
+bithuman engine install mac
+ENGINE_DIR=$(bithuman engine list --json | python3 -c '
+import json, sys
+print(next(e["cache_dir"] for e in json.load(sys.stdin)["engines"]
+           if e["platform"] == "mac" and e["installed"]))')
 rm -rf Sources/Model/shared_engine
-unpack /tmp/mac-arm64.engine Sources/Model/shared_engine
-rm -f /tmp/mac-arm64.engine
+mkdir -p Sources/Model/shared_engine
+cp -R "$ENGINE_DIR"/. Sources/Model/shared_engine/
 
 # 3. something for it to say. A public agent's on-device bundle already
 #    carries one, so this needs no key and no TTS either.
@@ -240,11 +221,11 @@ du -sh Sources/Model/*
 ```
 
 Run with **no `BITHUMAN_API_SECRET` in the environment at all** (Route A), it
-needs no account and no wait: three `curl`s and `Sources/Model` is ready.
-`shared_engine/` is larger there than the 91 MB the CLI leaves behind because the
-object carries both Apple graph sets; the app bundles what it needs. Route B,
-with a key and your own `<CODE>`, prints the same three lines with your identity
-in place of the first.
+needs no account and no wait: two `curl`s, one `bithuman engine install`, and
+`Sources/Model` is ready. `shared_engine/` is the 91 MB the CLI leaves in
+`~/.bithuman/engines/mac-<version>/`, copied into the project. Route B, with a
+key and your own `<CODE>`, prints the same three lines with your identity in
+place of the first.
 
 Sizes vary widely by identity, so read `Content-Length` rather than budgeting
 from a number on this page.

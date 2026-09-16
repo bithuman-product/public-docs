@@ -76,7 +76,6 @@ bithuman info e2.lebundle.imx
 ```
 
 ```text
-  Format:         IMX v2
   Engine:         essence2-light
   Family:         essence-2 (Essence 2)
   Members (26):

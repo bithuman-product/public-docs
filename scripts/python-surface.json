@@ -876,7 +876,7 @@
           {
             "name": "unfold_imx",
             "kind": "function",
-            "doc": "Extract every member of a packed ``IMX\\0`` v2 container into\n``dst_dir`` (flat, member names may carry subdirs). Returns dst_dir.\nA directory input is returned as-is (already unfolded).",
+            "doc": "[withheld: this docstring describes the proprietary container format]",
             "signature": "(imx_path: 'str', dst_dir: 'str') -> 'str'"
           },
           {
@@ -981,7 +981,7 @@
           {
             "name": "unfold_imx",
             "kind": "function",
-            "doc": "Extract every member of a packed ``IMX\\0`` v2 container into\n``dst_dir`` (flat, member names may carry subdirs). Returns dst_dir.\nA directory input is returned as-is (already unfolded).",
+            "doc": "[withheld: this docstring describes the proprietary container format]",
             "signature": "(imx_path: 'str', dst_dir: 'str') -> 'str'"
           },
           {
@@ -1056,7 +1056,7 @@
         "name": "bithuman.unified_header",
         "interface": "__all__",
         "stub": null,
-        "doc": "Unified generated-model container header — shared PRODUCER helper (Phase 2).\n\nThis module is the canonical Python writer-side companion to the Phase-1\n*readers* (`engine_id.rs` / `unified_header.h` / dispatcher.py / imx-parser.ts).\nIt stamps the three additive manifest fields defined by the unified `.imx`\nheader spec onto a producer's manifest dict:\n\n    - ``engine``                  engine-id enum value (default ``\"essence1\"``)\n    - ``engine_abi``              int ABI the bundle requires (default ``1``)\n    - ``unified_format_version``  version of THIS header convention (``1``)\n\nSee ``docs/UNIFIED_MODEL_FORMAT.md`` and the machine-readable registry\n``docs/unified-engine-ids.json`` (the single source of truth for the engine-id\nenum and the ABI numbers).\n\n★ Container/magic/version-byte are UNCHANGED. This helper only ADDS the three\noptional manifest keys. It is a pure-dict transform — no I/O, no container\nrewrite — so producers can apply it at the moment they assemble the manifest,\nbehind their own ``UNIFIED_HEADER`` flag, and stay byte-identical when the flag\nis OFF.\n\nThe literals are loaded from the JSON registry at import time when it can be\nlocated (keeping this reader in lock-step with the single source of truth);\notherwise they fall back to a baked-in copy that the cross-language conformance\ntest pins to the registry — exactly the duplication pattern every other reader\nfollows.",
+        "doc": "[withheld: this docstring describes the proprietary container format]",
         "declared": [
           "ENGINE_ESSENCE1",
           "ENGINE_ESSENCE2_QUALITY",
@@ -1168,7 +1168,7 @@
           {
             "name": "stamp_engine_header",
             "kind": "function",
-            "doc": "Add the three unified-header fields to ``manifest`` IN PLACE and return it.\n\nThis is the Phase-2 producer stamp. It adds ONLY ``engine`` / ``engine_abi``\n/ ``unified_format_version`` (the additive header keys) — it never touches\nthe container magic, the version byte, the binary TOC, or any existing\nmanifest field. The shipped corpus' resolution rule (absent ⇒ ``essence1``)\nis unaffected because we stamp the very value the reader would default to.\n\nArgs:\n    manifest: the manifest dict to stamp (``bimx_metadata.json`` for BIMX v1,\n        ``manifest.json`` for IMX v2). Mutated in place.\n    engine: engine-id to stamp; must be one of ``ENGINE_IDS``. Defaults to\n        the registry ``default_engine`` (``\"essence1\"``).\n    engine_abi: the ABI the bundle requires (default ``1``).\n    unified_format_version: version of the header convention (default ``1``).\n\nReturns:\n    The same ``manifest`` dict, for chaining.\n\nRaises:\n    ValueError: if ``engine`` is not a known engine-id (fail-loud — we do\n        not stamp a value no reader can dispatch on).",
+            "doc": "[withheld: this docstring describes the proprietary container format]",
             "signature": "(manifest: 'dict', engine: 'str' = 'essence1', engine_abi: 'int' = 1, unified_format_version: 'int' = 1) -> 'dict'"
           }
         ],

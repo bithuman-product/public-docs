@@ -246,14 +246,9 @@ Expression2ContainerError | .../half.avatar: truncated container — ran off the
   incomplete (a partial download writes exactly this).
 ```
 
-A file that is not a container at all is rejected even earlier, on the magic
-number:
-
-```text
-Expression2ContainerError | .../junk.avatar: not an IMX\0 container — first
-  bytes are [41 41 41 41]. The container
-  GET /v1/agent/{code}/model/download vends begins "IMX\0".
-```
+A file that is not a container at all is rejected even earlier, on its first
+bytes: `Expression2ContainerError` names the file, prints the four bytes it
+actually found, and says they are not what a bitHuman container starts with.
 
 So `Expression2Container.members(of:)` is a usable integrity gate on the
 *shape* of the download: call it before you stage, and both a truncated transfer
