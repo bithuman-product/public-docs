@@ -55,7 +55,7 @@ once, and the render in the next step needs it too:
 
 ```bash
 bithuman login                    # opens your browser; stores a per-device key on this machine
-bithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx
+bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.imx
 ```
 
 For one of your own agents, `bithuman pull <YOUR_AGENT_CODE> --model essence-2`
@@ -67,7 +67,7 @@ Audio in, MP4 out. The sample clip is a 24 kHz mono WAV, 15 s:
 
 ```bash
 curl -fsSLo speech.wav https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav
-bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4
+bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
 ```
 
 Rendering an Essence 2 file (your own `--model essence-2` pull) also fetches the
@@ -79,7 +79,7 @@ Play `out.mp4` — it is the length of the audio. To see the same avatar live,
 run it and open the printed URL:
 
 ```bash
-bithuman run "$(bithuman pull marmalade)"     # → http://127.0.0.1:8088/ — a local preview of the avatar
+bithuman run "$(bithuman pull wise-pup)"     # → http://127.0.0.1:8088/ — a local preview of the avatar
 ```
 
 The full command set is on [the CLI page](/sdk/cli).

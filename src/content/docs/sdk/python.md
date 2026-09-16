@@ -57,18 +57,21 @@ moves the download cache off `~/.cache/bithuman`.
 
 ## Get a model
 
-A showcase avatar is a plain anonymous download — no account, no key:
+A free-gallery avatar is a plain anonymous download — no account, no key:
 
 ```bash
-curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/{A23WJF0199.avatar,demo_sample.wav}"
+curl -fL -o A23WJF0199.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
 ```
 
-`A23WJF0199.avatar` is the free Wise Pup (Expression 2); `demo_sample.wav` is
-24 kHz mono, 15 s, something for it to say. Your own agent's file comes from
-[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <CODE>`; an Essence 2 agent arrives as an `.imx`, an
-Expression 2 agent as an `.avatar`, and `bithuman.open` takes either — as it
-does a first-generation `essence-1` `.imx`.
+`A23WJF0199` is the free **Wise Pup** ([Expression 2](/concepts/expression-2));
+`demo_sample.wav` is 24 kHz mono, 15 s, something for it to say. The same URL
+serves your own agent — add `-H "api-secret: $BITHUMAN_API_SECRET"` and your
+code — so there is one route, not two. `bithuman list` shows every identity the
+door serves without a credential, and `bithuman pull <SLUG>` is the same fetch
+from the CLI. An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as
+an `.imx` or `.avatar` (the same container under two names), and `bithuman.open`
+takes any of them — as it does a first-generation `essence-1` `.imx`.
 
 ## Minimal code
 
@@ -76,7 +79,7 @@ does a first-generation `essence-1` `.imx`.
 # hello.py
 import bithuman
 
-with bithuman.open("A23WJF0199.avatar") as avatar:      # an Essence 2 .imx or an Expression 2 .avatar — one call
+with bithuman.open("A23WJF0199.imx") as avatar:         # an Essence 2 .imx or an Expression 2 .avatar — one call
     for image in avatar.render("demo_sample.wav"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate
         print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]
 ```

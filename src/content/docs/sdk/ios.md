@@ -35,16 +35,28 @@ at [your API keys](https://www.bithuman.ai/developer/api-keys).
 
 ## Get a model
 
-Three anonymous downloads — the identity, the shared engine graphs it does not
-carry, and something for it to say. No account, no key, no credits:
+Three things, none of which needs an account, a key or credits — the identity,
+the shared engine graphs it does not carry, and something for it to say:
 
 ```bash
-curl -fLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/{showcase/A08CCD3871.avatar,engines/expression-2/mac-arm64-1.0.0.engine}"
-curl -fLo speech16k.wav "https://api.bithuman.ai/v1/agent/A08CCD3871/model/download?member=demo_speech_16k.wav&model=expression-2"
+# 1. the identity, through the download door (1-hour signed URL, no credential)
+curl -fL -o A23WJF0199.avatar "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+
+# 2. the shared engine, from the public channel `bithuman engine install` reads
+curl -fLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/engines/expression-2/mac-arm64-1.0.0.engine"
+
+# 3. 16 kHz mono speech — your Mac makes this, no network at all
+say -o /tmp/hello.aiff "Hello. I am a bitHuman avatar, rendered on this device."
+afconvert -f WAVE -d LEI16@16000 -c 1 /tmp/hello.aiff speech16k.wav && rm -f /tmp/hello.aiff
 ```
 
-`A08CCD3871` is a bitHuman-owned public showcase identity; any code on the
-[showcase](/showcase) works the same way. The `setup.sh` on
+`A23WJF0199` is **Wise Pup**, a bitHuman-owned identity in the free gallery; any
+code `bithuman list` prints works the same way, and so does your own agent once
+you add `-H "api-secret: $BITHUMAN_API_KEY"`. The identity comes through the
+same download door either way — it answers a 1-hour signed URL and needs no
+credential for a gallery identity. The **engine** is different: it is one shared
+artifact per platform, not per-identity, and it is published on the public
+channel that `bithuman engine install` reads, sha-pinned. The `setup.sh` on
 [the example page](/examples/swift-ios-expression2) fetches these, unpacks the
 container and stages the engine directory for you. Your own agent's `.avatar`
 comes from [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)

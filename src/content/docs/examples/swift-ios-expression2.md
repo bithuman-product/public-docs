@@ -1,6 +1,6 @@
 ---
 title: "Swift / iOS — a talking avatar on the iPhone you have"
-description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 20 fps. No device floor, no Apple entitlement, no account and no credits — the showcase identity A08CCD3871 is a public download. Every file printed in full."
+description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 20 fps. No device floor, no Apple entitlement, no account and no credits — the free-gallery identity A23WJF0199 (Wise Pup) downloads with no credential. Every file printed in full."
 section: examples
 group: "Examples"
 order: 12
@@ -49,18 +49,20 @@ afternoon on it; use `expression-2`, which is what this page is.
 - **An identity to render.** You have two routes, and only one of them costs
   anything:
 
-  ★ **Route A — the showcase identity, no account, no key, no credits, no
-  wait.** `A08CCD3871` ("Milo the Curious Inventor") is a bitHuman-owned,
-  public-visibility `expression-2` agent whose `.avatar` we publish as a plain
-  public object. Fetch it with `curl` and nothing else:
+  ★ **Route A — a free-gallery identity, no account, no key, no credits, no
+  wait.** `A23WJF0199` ("Wise Pup") is a bitHuman-owned `expression-2` identity
+  in the **free gallery**, and the download endpoint serves every gallery
+  identity to anyone. Fetch it with `curl` and nothing else:
 
   ```bash
   curl -fLo agent.avatar \
-    https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/A08CCD3871.avatar
+    "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
   ```
 
-  It is served with **no credential in the environment at all**, and is
-  byte-identical to what the download endpoint hands its owner.
+  It is served with **no credential in the environment at all** — the endpoint
+  answers `302` to a one-hour signed URL, which `curl -L` follows. `bithuman
+  list` prints every identity this works for; pick a different face and only the
+  code changes.
 
   ★ **Route B — your own identity**, in `ready` state, with your API secret.
   Do this when you want *your* face on the phone. Create one at
@@ -75,13 +77,17 @@ afternoon on it; use `expression-2`, which is what this page is.
   not carry over is the **form**, not the permission. That mirror vends the
   Android and web member tree — `combined_fp32.tflite`, `combined_hexagon.tflite`,
   `enc_exp.onnx` — and **no `.avatar` container at all**, which is the only thing
-  `Expression2` on Apple opens. The endpoint that *does* vend a `.avatar`,
-  `GET /v1/agent/{code}/model/download`, answers **401 without an `api-secret`**.
-  **That 401 is deliberate and is not going away**: the container is somebody's
-  face, and anonymous container downloads are exactly how a private identity
-  would leak. Route A does not open that door — it publishes ONE identity we own,
-  as a public object we chose, the same way the shared engine below has been
-  public since July.
+  `Expression2` on Apple opens. The container comes from
+  `GET /v1/agent/{code}/model/download`, which is what Route A calls.
+
+  ★ **And that endpoint still answers `401` for most codes — deliberately.** A
+  container is somebody's face, and weights cannot be recalled once handed out,
+  so being *visible* in the gallery is a different permission from being
+  *downloadable*. The endpoint serves the identities whose owner has authorised
+  anonymous distribution — `bithuman list` is exactly that set — and refuses
+  every other code with the same `401 MISSING_AUTH` an unknown code gets, so the
+  door discloses nothing. Route A is inside that set; your own agent (Route B)
+  is not, and needs your `api-secret`.
 
   ★ **Route B only — budget for this before you open Xcode: creating one takes
   about 60–100 minutes and costs 2000 credits** — an `expression-2` creation trains a
@@ -151,9 +157,9 @@ before the script:
 
 | file | where it comes from | why you need it |
 |---|---|---|
-| `agent.avatar` | **Route A:** `…/public/web/showcase/A08CCD3871.avatar` (anonymous). **Route B:** [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model) with your `api-secret` | the identity — the face, the motion and the per-identity graphs |
+| `agent.avatar` | [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model) — **Route A:** `A23WJF0199`, anonymous. **Route B:** your code with your `api-secret`. One endpoint, both routes | the identity — the face, the motion and the per-identity graphs |
 | `shared_engine/` | `bithuman engine install mac` — the [CLI](/sdk/cli#install) fetches it from the public channel (anonymous, no login) into `~/.bithuman/engines/` | ★ the artifact does **not** carry `w2v_frontend_cpuAndNE.mlpackage`, and the engine will not start without it. The shared engine has it |
-| `speech16k.wav` | `…/model/download?member=demo_speech_16k.wav` (anonymous for a public code), or macOS `say` + `afconvert` | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
+| `speech16k.wav` | macOS `say` + `afconvert` (what `setup.sh` runs — no network). `…/model/download?member=demo_speech_16k.wav` also serves one, but only for a `visibility: public` code — a featured `demo` identity like Wise Pup gets 401 there | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
 
 ★ **Why the `mac` engine, for an iOS app.** The graphs inside it are CoreML
 packages, compiled on the device at first launch; they are not Mac-only code.
@@ -177,22 +183,26 @@ page, and nothing in your app, has to know what is inside one.
 #     BITHUMAN_API_SECRET=... ./setup.sh <AGENT_CODE>
 set -euo pipefail
 cd "$(dirname "$0")"
-PUB=https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web
-SHOWCASE=A08CCD3871
+SHOWCASE=A23WJF0199          # "Wise Pup" — in the free gallery; `bithuman list` shows the rest
 CODE="${1:-$SHOWCASE}"
 mkdir -p Sources/Model
 
-# 1. the identity
+# 1. the identity.
+#
+#    ONE URL FOR BOTH ROUTES. The gallery identity and your own agent come
+#    through the SAME door; the only difference is whether a credential rides
+#    along. It answers 302 to a 1-hour signed URL (curl -L follows), rate-limits
+#    the anonymous arm, and re-asks permission on every fetch.
 if [ -n "${BITHUMAN_API_SECRET:-}" ] && [ "$CODE" != "$SHOWCASE" ]; then
   echo "==> downloading $CODE.avatar (your identity)"
-  curl -fL --progress-bar -H "api-secret: $BITHUMAN_API_SECRET" \
-    "https://api.bithuman.ai/v1/agent/$CODE/model/download?model=expression-2" \
-    -o Sources/Model/agent.avatar
+  AUTH=(-H "api-secret: $BITHUMAN_API_SECRET")
 else
-  echo "==> downloading the showcase identity $SHOWCASE (no account needed)"
-  curl -fL --progress-bar "$PUB/showcase/$SHOWCASE.avatar" \
-    -o Sources/Model/agent.avatar
+  echo "==> downloading the free-gallery identity $SHOWCASE (no account needed)"
+  AUTH=()
 fi
+curl -fL --progress-bar "${AUTH[@]+"${AUTH[@]}"}" \
+  "https://api.bithuman.ai/v1/agent/$CODE/model/download?model=expression-2" \
+  -o Sources/Model/agent.avatar
 ls -l Sources/Model/agent.avatar
 
 # 2. the shared speech front-end the artifact does not carry.
@@ -208,13 +218,18 @@ rm -rf Sources/Model/shared_engine
 mkdir -p Sources/Model/shared_engine
 cp -R "$ENGINE_DIR"/. Sources/Model/shared_engine/
 
-# 3. something for it to say. A public agent's on-device bundle already
-#    carries one, so this needs no key and no TTS either.
-echo "==> downloading speech16k.wav"
-curl -fL --progress-bar \
-  ${BITHUMAN_API_SECRET:+-H "api-secret: $BITHUMAN_API_SECRET"} \
-  "https://api.bithuman.ai/v1/agent/$CODE/model/download?member=demo_speech_16k.wav&model=expression-2" \
-  -o Sources/Model/speech16k.wav
+# 3. something for it to say — 16 kHz mono, made by your Mac, no network.
+#
+#    ★NOT THE `member=` ROUTE, AND THAT IS NOT AN OVERSIGHT. The on-device
+#    member catalogue is served anonymously only for `visibility: public`
+#    agents; a FEATURED identity like Wise Pup is `demo`, so `member=` answers
+#    401 for it even though the container itself downloads freely. Two arms of
+#    one endpoint, two admission rules — `say` needs neither.
+echo "==> synthesising speech16k.wav"
+say -o /tmp/ios-expression2.aiff \
+  "Hello. I am a bit Human avatar, rendered on this phone, with no server in the loop."
+afconvert -f WAVE -d LEI16@16000 -c 1 /tmp/ios-expression2.aiff Sources/Model/speech16k.wav
+rm -f /tmp/ios-expression2.aiff
 
 echo "==> Sources/Model is ready:"
 du -sh Sources/Model/*

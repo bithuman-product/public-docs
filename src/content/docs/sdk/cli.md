@@ -73,7 +73,7 @@ own agents come by code; sign in once for `render` and for your own agents:
 ```bash
 bithuman login                    # opens your browser; stores a per-device key on this machine
 bithuman avatars                  # the showcase catalogue — slug, code, name, model
-bithuman pull marmalade           # prints ~/.cache/bithuman/showcase/marmalade.imx
+bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.imx
 ```
 
 A showcase pull is anonymous — `login` is for `render` and for your own agents:
@@ -88,8 +88,8 @@ identity) itself.
 Two operations — there is no third:
 
 ```bash
-bithuman run "$(bithuman pull marmalade)"                                # 1. live avatar in your browser
-bithuman render "$(bithuman pull marmalade)" -a speech.wav -o out.mp4   # 2. offline: audio in, MP4 out
+bithuman run "$(bithuman pull wise-pup)"                                # 1. live avatar in your browser
+bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4   # 2. offline: audio in, MP4 out
 ```
 
 `render` needs a mono WAV — `curl -fsSLo speech.wav
