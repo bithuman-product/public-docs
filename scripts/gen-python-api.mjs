@@ -215,6 +215,65 @@ const NAME_SCREEN = [
   /essence2[-_](light|quality)/i,
   /\bdream[-_ ]?1\b/i,
 ];
+// ★THE CONTAINER FORMAT IS PROPRIETARY AND CLOSED (owner ruling, 2026-09-16).
+// Naming the format and the extension a customer receives is fine — it is on
+// every file they download. The LAYOUT is not: the magic, the version bytes,
+// the table of contents, the field widths and order, the sibling family's
+// magic, and the manifest member names that identify a version.
+//
+// This screen is UNLIKE the two above it in one decisive way, and that is why
+// it is a separate list. Those withhold a docstring FROM THE PAGE and keep it
+// in the record, because a vocabulary guard still has to grade it. This one
+// must also clear the RECORD: scripts/python-surface.json is committed to a
+// PUBLIC repository, so a docstring parked there is published exactly as
+// surely as one rendered onto a page. `redactFormatDetail` below applies it to
+// the record, and `assertNoFormatDetail` refuses to write a record that still
+// carries a match — the wheel can reword its docstrings at any time, and a
+// screen that is never checked against its own output is a screen that goes
+// blind without saying so.
+//
+// ★THE AUTHORITATIVE FIX IS NOT HERE. These strings are in the SHIPPED WHEEL's
+// own docstrings; `pydoc bithuman.offline` prints them on any machine that has
+// run `pip install bithuman`. This repository can only stop republishing them.
+// The wheel is the artifact that has to change.
+export const FORMAT_SCREEN = [
+  /IMX\\0/,                               // the container magic, spelled out
+  /\bIMX\s*v\d/i,                          // the format name carrying a version
+  /\bBIMX\b/i,                            // the sibling family's magic
+  /\bbimx_metadata\b/i,                   // the member that identifies that family
+  /\bbinary TOC\b/i,                      // the table of contents
+  /\bcontainer\/?\s*magic\b/i,            // "container magic", "container/magic"
+  /\bmagic (byte|number)/i,
+  /\bversion[- ]byte\b/i,
+  /\bmember (table|index)\b/i,
+  /\bu(8|16|32|64)\s+(offset|size|count|nameLen|version)\b/i,
+];
+
+// ★WHAT THIS SCREEN DELIBERATELY DOES NOT MATCH, because the distinction is the
+// whole ruling and a reader will otherwise widen it wrongly:
+//
+//     `bithuman.unified_header`, `UNIFIED_FORMAT_VERSION`, `engine_abi`,
+//     `unified_format_version`
+//
+// are the SHIPPED WHEEL'S OWN PUBLIC IDENTIFIERS — a module name the page
+// enumerates, a constant, and two parameters of a public function. They name a
+// concept; they disclose no layout: no magic, no width, no order, no offset.
+// This record's one job is to state the callable surface truthfully, and a
+// record that hid a public parameter name would be lying about the very thing
+// it exists to report. The PROSE around them described the layout, and that
+// prose is what `redactFormatDetail` removes.
+//
+// The test to apply to a new pattern is the ruling's own: could a reader
+// RECONSTRUCT A PARSER from it? A field's width, its order, a magic value and a
+// table shape: yes — screen it. A name: no.
+export const formatDetailAllowed = (s) => !FORMAT_SCREEN.some((re) => re.test(s));
+
+// What the record stores where a docstring carried format detail. It is a
+// MARKER, not a paraphrase: a record that silently dropped the field would be
+// indistinguishable from a wheel that shipped no docstring at all.
+export const FORMAT_WITHHELD =
+  "[withheld: this docstring describes the proprietary container format]";
+
 // A DOCSTRING this matches is withheld; the name and signature still appear,
 // which is what a reference is for.
 const PROSE_SCREEN = [
@@ -293,7 +352,9 @@ function renderSymbol(sym) {
     }
   }
   out.push("");
-  if (sym.doc && proseAllowed(sym.doc)) {
+  if (sym.doc === FORMAT_WITHHELD) {
+    out.push("_The docstring shipped with this symbol describes the container format, which is proprietary and not documented publicly. See [Avatars and the `.imx` format](/concepts/avatars-imx)._");
+  } else if (sym.doc && proseAllowed(sym.doc)) {
     out.push(rst(sym.doc));
   } else if (sym.doc) {
     out.push("_The docstring shipped with this symbol describes internal machinery and is not reproduced here._");
@@ -563,7 +624,50 @@ export function normalizeSurface(surface) {
     }
   }
   delete cleaned.extracted_by;
+  redactFormatDetail(cleaned);
   return cleaned;
+}
+
+/**
+ * Replace every docstring that describes the proprietary container layout with
+ * FORMAT_WITHHELD, IN PLACE. Applied inside `normalizeSurface` so that the
+ * committed record and a live re-extraction go through the identical transform
+ * — otherwise check-python-api-current.mjs would report a surface change on
+ * every run.
+ */
+export function redactFormatDetail(surface) {
+  let n = 0;
+  const screen = (o) => {
+    if (o && typeof o.doc === "string" && !formatDetailAllowed(o.doc)) {
+      o.doc = FORMAT_WITHHELD;
+      n++;
+    }
+  };
+  for (const m of surface.modules ?? []) {
+    screen(m);
+    for (const s of m.symbols ?? []) {
+      screen(s);
+      for (const mem of s.members ?? []) screen(mem);
+    }
+  }
+  return n;
+}
+
+/**
+ * The post-condition. A screen is only worth what its own output proves: if the
+ * wheel rewords `IMX\\0 v2` to something these patterns miss, the record is
+ * published with the leak and everything downstream still reads green. So the
+ * whole serialized record is re-read and refused if any pattern still fires.
+ */
+export function assertNoFormatDetail(text) {
+  const hit = FORMAT_SCREEN.find((re) => re.test(text));
+  if (hit) {
+    throw new Error(
+      `REFUSING TO WRITE: the record still matches ${hit} after redaction. The ` +
+      `wheel's docstrings carry container-format detail this screen did not ` +
+      `catch — read the match, widen FORMAT_SCREEN, and regenerate. The format ` +
+      `is proprietary and this file is committed to a public repository.`);
+  }
 }
 
 /** The whole record: the artifact it came from, and the surface inside it. */
@@ -621,6 +725,11 @@ if (invokedDirectly) {
     }
     const nextPage = `${page.head}\n${region}${page.tail}`;
     const nextRecord = JSON.stringify(record, null, 2) + "\n";
+    // ★Graded on the BYTES that are about to be committed, not on the object
+    // they came from — a serializer that re-encodes an escape is exactly the
+    // kind of gap a screen checked only against its input would miss.
+    assertNoFormatDetail(nextRecord);
+    assertNoFormatDetail(nextPage);
     if (dry) {
       console.log(region);
       console.log(`--- record would be ${nextRecord.length} bytes at ${RECORD_PATH}`);

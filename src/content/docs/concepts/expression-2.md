@@ -305,5 +305,5 @@ or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guid
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
-- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `<code>.avatar` (an IMX v2 container for all but the oldest identities), via API or `bithuman pull <code>`.
+- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `<code>.avatar` (the current bitHuman container for all but the oldest identities), via API or `bithuman pull <code>`.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `expression-2`.

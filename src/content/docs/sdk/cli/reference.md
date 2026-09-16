@@ -208,15 +208,15 @@ second trained family, and a bare `pull` hands back the family the agent was
 | `expression-2` | `<code>.avatar` | This CLI, the [Python SDK](/sdk/python), the browser via [`?render=local`](/guides/browser-rendering), the [Apple `Expression2` product](/sdk/ios#minimal-code), the cloud |
 | `expression-1` | usually nothing (`400 MODEL_NOT_DOWNLOADABLE`) | The cloud |
 
-All but a minority of these are `IMX\0` v2 containers — including the
-`expression-2` one, despite its `.avatar` name. A few `expression-2` identities
+All but a minority of these are the current bitHuman container — including
+the `expression-2` one, despite its `.avatar` name. A few `expression-2` identities
 trained before 2026-07-12 are still an older zip format and will not be re-published.
 `bithuman info <file>` reads either, so run it rather than trusting the
 extension.
 
 ## `bithuman info`
 
-Prints format, engine, family, and every member of the container with its byte
+Prints the engine, family, and every member of the container with its byte
 size. The `engine` field carries a **legacy name kept for compatibility** — an
 Essence 2 bundle reports `essence2-light` — and is never a valid `model`
 value; see
@@ -226,7 +226,6 @@ Run 2026-09-10 against the public showcase identity `A08CCD3871.avatar`, with
 no credential anywhere in the environment:
 
 ```text
-  Format:         IMX v2
   Engine:         expression2
   Family:         expression-2 (Expression 2)
   Members (17):

@@ -298,9 +298,7 @@ encoded (h264 + the source audio muxed when `audio` is a path).
 unfold_imx(imx_path: str, dst_dir: str) -> str
 ```
 
-Extract every member of a packed `IMX\0` v2 container into
-`dst_dir` (flat, member names may carry subdirs). Returns dst_dir.
-A directory input is returned as-is (already unfolded).
+_The docstring shipped with this symbol describes the container format, which is proprietary and not documented publicly. See [Avatars and the `.imx` format](/concepts/avatars-imx)._
 
 ## bithuman.tessera_offline
 
