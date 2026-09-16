@@ -135,7 +135,7 @@ directory.** The repository's copy is still the Route B
 script — it requires `BITHUMAN_API_SECRET` and an agent code of your own and
 exits 2 without them, so a keyless reader who clones and runs it gets a
 usage error rather than a frame. The version below needs neither. Paste it over
-the file in the clone, or just run its three `curl`s by hand; there is nothing
+the file in the clone, or just run its three commands by hand; there is nothing
 else in it.
 
 Pick your team under **Signing & Capabilities**, select your iPhone, and press
