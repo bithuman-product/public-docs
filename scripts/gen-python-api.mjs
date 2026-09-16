@@ -660,7 +660,15 @@ export function redactFormatDetail(surface) {
  * whole serialized record is re-read and refused if any pattern still fires.
  */
 export function assertNoFormatDetail(text) {
-  const hit = FORMAT_SCREEN.find((re) => re.test(text));
+  // ★GRADED IN BOTH ENCODINGS, and this is not belt-and-braces — it is the bug
+  // this function shipped with for one hour. A docstring holds the four
+  // characters `IMX\0`; `JSON.stringify` writes them as `IMX\\0`, so the
+  // pattern that matches the docstring does NOT match the serialized record,
+  // and a post-condition run only on the file's bytes would have read green
+  // over the exact leak it exists to stop. Un-double the escapes and grade that
+  // too.
+  const forms = [text, text.replace(/\\\\/g, "\\")];
+  const hit = FORMAT_SCREEN.find((re) => forms.some((f) => re.test(f)));
   if (hit) {
     throw new Error(
       `REFUSING TO WRITE: the record still matches ${hit} after redaction. The ` +
@@ -728,6 +736,16 @@ if (invokedDirectly) {
     // ★Graded on the BYTES that are about to be committed, not on the object
     // they came from — a serializer that re-encodes an escape is exactly the
     // kind of gap a screen checked only against its input would miss.
+    // The post-condition's own positive control: a screen that cannot fail is
+    // not a screen. Both encodings, because only one of them nearly got out.
+    for (const probe of ["a ``IMX\\0`` v2 container", 'a "IMX\\\\0" v2 container']) {
+      let fired = false;
+      try { assertNoFormatDetail(probe); } catch { fired = true; }
+      if (!fired) {
+        console.error(`gen-python-api: THE FORMAT POST-CONDITION IS BLIND — it accepted ${JSON.stringify(probe)}.`);
+        process.exit(1);
+      }
+    }
     assertNoFormatDetail(nextRecord);
     assertNoFormatDetail(nextPage);
     if (dry) {
