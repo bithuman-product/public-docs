@@ -15,7 +15,7 @@ label: "Performance"
 | macOS · Python | Apple M4 | 157 · bithuman 3.1.8 | not measured on 3.1.8 (2026-09-14) |
 | Linux | Intel Core i7-13700F | 44 · cli-v2.6.17 | 29 · cli-v2.6.17 |
 | Linux · Python | Intel Core i7-13700F | 49 · bithuman 3.1.4 | 27 · bithuman 3.1.6 |
-| iOS | iPhone 15 | 118 · Expression2 2.11.x | 52 · essence2-v1.6.3 |
+| iOS | iPhone 15 | 118 · Expression2 2.11.x | 53 · essence2-v1.7.0 |
 | Android | Galaxy S25+ | 58 · expression2-android 0.3.1 | 50 · essence2-android 0.5.6 |
 | Web | Chrome on M4 | 30 · bithuman-ui 021a6f6 | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
@@ -48,7 +48,7 @@ The Expression 2 Cloud GPU number already includes saving the video file.
 
 The Essence 2 Cloud GPU number is how fast a finished 1920x1080 video file is delivered, including encoding it. The GPU itself renders Essence 2 at roughly 190 to 210 frames per second when the card is not busy with other work; the published figure is lower because it also includes encoding the video file. Cloud GPU is a hosted service rather than an SDK on your own hardware; a live hosted conversation plays at the model's own rate, 20 frames per second for Expression 2 and 25 for Essence 2, and never faster: the headroom above that rate shortens a file render and lets one card carry more sessions at once, rather than putting more frames on screen.
 
-The iPhone Essence 2 number is what a cool phone does. Render again straight away, with no pause, and an iPhone 15 still does about 49 frames per second — well above the 25 Essence 2 plays at, so a conversation stays real time.
+The iPhone Essence 2 number is what a phone does with no pause between renders: the published figure is the worst of three runs, and the slowest of them was the one taken straight after another with no cooldown. An iPhone 15 stayed above 53 frames per second in all three — more than twice the 25 Essence 2 plays at, so a conversation stays real time.
 
 The Android Expression 2 number is what a cool phone does. Under continuous rendering a Galaxy S25+ warms up and settles at about 40 frames per second after a few minutes — still twice the 20 frames per second Expression 2 plays at, so a conversation stays real time.
 
