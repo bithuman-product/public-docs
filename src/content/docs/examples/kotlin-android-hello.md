@@ -255,7 +255,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.6")
+    implementation("ai.bithuman:expression2-android:0.4.7")
 }
 ```
 
@@ -621,7 +621,7 @@ Add the Qualcomm delegate and runtime to `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.6")
+    implementation("ai.bithuman:expression2-android:0.4.7")
     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // both on Maven Central
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // no Qualcomm account needed
 }

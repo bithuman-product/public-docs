@@ -1,6 +1,6 @@
 ---
 title: "Android"
-description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.4.6 — with no account, no API key and no credits for the first frame."
+description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.4.7 — with no account, no API key and no credits for the first frame."
 section: sdk
 group: "Platforms"
 order: 30
@@ -27,7 +27,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required — see Troubleshooting
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.6")
+    implementation("ai.bithuman:expression2-android:0.4.7")
     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // accelerated rendering on Snapdragon handsets;
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // both on Maven Central, no Qualcomm account; +67 MB of APK
 }
@@ -156,7 +156,7 @@ Measured frame rates for every platform are on the [performance page](/sdk/perfo
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
 | you want `essence-1` on Android | it is the first-generation artifact, `ai.bithuman:sdk:2.3.6` — a `.imx` you push yourself and an API secret, not the model-store route above. The published 2.3.6 **cannot authenticate on a device**: it installs, then throws before its first frame with `be_auth_authenticate: status=11`, because its native library ships with no CA trust store and there is no app-side workaround on this version | for a talking head on Android today use Expression 2 above, which needs no key; the whole first-generation project is on [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello#the-first-generation-artifact--essence-1-aibithumansdk236) |
-| you want Essence 2 on Android | the coordinate is `implementation("ai.bithuman:essence2-android:0.5.7")`; versions before `0.5.3` cannot install a model on a handset | use `0.5.6`; Expression 2 is the path this page documents |
+| you want Essence 2 on Android | the coordinate is `implementation("ai.bithuman:essence2-android:0.5.8")`; versions before `0.5.3` cannot install a model on a handset, and `0.5.7` delivers 72–77 % of a reply's frames under an un-paced feed | use `0.5.8`; Expression 2 is the path this page documents |
 
 **Licence.** *Proprietary — bitHuman SDK License*. The full text travels with the
 bytes: `META-INF/NOTICE.txt` inside the AAR states which part is under which
