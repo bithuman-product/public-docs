@@ -224,6 +224,16 @@ the clip reaches its last frame it wraps back to the first, and it never plays
 in reverse. This applies both while idle and while speaking, so motion always
 reads as natural forward movement.
 
+The entire animation rides on top of that driver video: in idle it is pure video
+playback, and while talking the animated face is pasted back onto the driver's
+frame (Expression 2, by contrast, only plays its driver clip during idle). The
+engine reads the driver one frame at a time, always forward with a wrap, so the
+efficient implementation is a decode cursor — the platform's hardware decoder one
+frame ahead of the paste — rather than the whole clip expanded into memory (a
+1080p driver expanded whole is about 1.5 GB per session). That cursor is on
+main for every core and reaches each published artifact with its next release;
+the changelog names the version for each.
+
 ## Pricing
 
 | Surface | Rate |

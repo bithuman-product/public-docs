@@ -7,7 +7,7 @@
         "version": "0.5.7",
         "digest": "sha256:8ff028e0254da1349b8593748385a100ad8ea9e1141ab9b8676c155c268406d1",
         "filename": "essence2-android-0.5.7.aar",
-        "resolved_on": "2026-09-15"
+        "resolved_on": "2026-09-16"
       },
       "surface": {
         "artifact_facts": {
@@ -4328,10 +4328,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.4.1",
-        "digest": "sha256:12ed072074d242c68b7f6377d6ab2df595322fd9e13125c7d0c31c690ad05ce9",
-        "filename": "expression2-android-0.4.1.aar",
-        "resolved_on": "2026-09-15"
+        "version": "0.4.6",
+        "digest": "sha256:63d36db629e2be4c659a1fe281be21280af4ab178346a4d5c2b05708c72c4bfb",
+        "filename": "expression2-android-0.4.6.aar",
+        "resolved_on": "2026-09-16"
       },
       "surface": {
         "artifact_facts": {
@@ -6292,6 +6292,15 @@
                 "loadable": true
               },
               {
+                "name": "idleLoop",
+                "signature": "val idleLoop: List<Bitmap>",
+                "mutable": false,
+                "jvm_getter": "getIdleLoop()Ljava/util/List;",
+                "jvm_setter": null,
+                "jvm_field": "field idleLoop$delegateLkotlin/Lazy;",
+                "loadable": true
+              },
+              {
                 "name": "initMs",
                 "signature": "val initMs: Double",
                 "mutable": false,
@@ -6337,6 +6346,15 @@
                 "loadable": true
               },
               {
+                "name": "pendingAudioSlices",
+                "signature": "val pendingAudioSlices: Int",
+                "mutable": false,
+                "jvm_getter": "getPendingAudioSlices()I",
+                "jvm_setter": null,
+                "jvm_field": null,
+                "loadable": true
+              },
+              {
                 "name": "queuedFrames",
                 "signature": "val queuedFrames: Int",
                 "mutable": false,
@@ -6370,6 +6388,15 @@
                 "jvm_getter": "getWidth()I",
                 "jvm_setter": null,
                 "jvm_field": "field widthI",
+                "loadable": true
+              },
+              {
+                "name": "idleLoopUnavailableReason",
+                "signature": "var idleLoopUnavailableReason: String?",
+                "mutable": true,
+                "jvm_getter": "getIdleLoopUnavailableReason()Ljava/lang/String;",
+                "jvm_setter": null,
+                "jvm_field": "field idleLoopUnavailableReasonLjava/lang/String;",
                 "loadable": true
               }
             ],
@@ -6577,6 +6604,16 @@
                 "jvm_field": "field FRAME_WIDTHI",
                 "loadable": true,
                 "value": 416
+              },
+              {
+                "name": "IDLE_LOOP_FRAMES",
+                "signature": "const val IDLE_LOOP_FRAMES: Int",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field IDLE_LOOP_FRAMESI",
+                "loadable": true,
+                "value": 48
               },
               {
                 "name": "SAMPLE_RATE",
@@ -6889,17 +6926,17 @@
             "sealed_subclasses": [],
             "constructors": [
               {
-                "signature": "constructor(index: Long, presentationTimeUs: Long)",
-                "jvm": "<init>(JJ)V",
+                "signature": "constructor(index: Long, presentationTimeUs: Long, audioSample: Long = …, isSpeech: Boolean = …)",
+                "jvm": "<init>(JJJZ)V",
                 "loadable": true
               }
             ],
             "functions": [
               {
                 "name": "copy",
-                "signature": "fun copy(index: Long = …, presentationTimeUs: Long = …): Expression2Frame",
+                "signature": "fun copy(index: Long = …, presentationTimeUs: Long = …, audioSample: Long = …, isSpeech: Boolean = …): Expression2Frame",
                 "suspend": false,
-                "jvm": "copy(JJ)Lai/bithuman/expression2/Expression2Frame;",
+                "jvm": "copy(JJJZ)Lai/bithuman/expression2/Expression2Frame;",
                 "loadable": true
               },
               {
@@ -6931,6 +6968,20 @@
                 "loadable": true
               },
               {
+                "name": "component3",
+                "signature": "operator fun component3(): Long",
+                "suspend": false,
+                "jvm": "component3()J",
+                "loadable": true
+              },
+              {
+                "name": "component4",
+                "signature": "operator fun component4(): Boolean",
+                "suspend": false,
+                "jvm": "component4()Z",
+                "loadable": true
+              },
+              {
                 "name": "equals",
                 "signature": "operator fun equals(other: Any?): Boolean",
                 "suspend": false,
@@ -6940,12 +6991,30 @@
             ],
             "properties": [
               {
+                "name": "audioSample",
+                "signature": "val audioSample: Long",
+                "mutable": false,
+                "jvm_getter": "getAudioSample()J",
+                "jvm_setter": null,
+                "jvm_field": "field audioSampleJ",
+                "loadable": true
+              },
+              {
                 "name": "index",
                 "signature": "val index: Long",
                 "mutable": false,
                 "jvm_getter": "getIndex()J",
                 "jvm_setter": null,
                 "jvm_field": "field indexJ",
+                "loadable": true
+              },
+              {
+                "name": "isSpeech",
+                "signature": "val isSpeech: Boolean",
+                "mutable": false,
+                "jvm_getter": "isSpeech()Z",
+                "jvm_setter": null,
+                "jvm_field": "field isSpeechZ",
                 "loadable": true
               },
               {
@@ -6969,8 +7038,17 @@
             ],
             "loadable_undeclared": [
               {
+                "name": "<init>",
+                "jvm": "<init>(JJJZILkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "access": [
+                  "public",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              },
+              {
                 "name": "copy$default",
-                "jvm": "copy$default(Lai/bithuman/expression2/Expression2Frame;JJILjava/lang/Object;)Lai/bithuman/expression2/Expression2Frame;",
+                "jvm": "copy$default(Lai/bithuman/expression2/Expression2Frame;JJJZILjava/lang/Object;)Lai/bithuman/expression2/Expression2Frame;",
                 "access": [
                   "public",
                   "static",
@@ -7056,6 +7134,15 @@
                 "loadable": true
               },
               {
+                "name": "idleClip",
+                "signature": "val idleClip: File?",
+                "mutable": false,
+                "jvm_getter": "getIdleClip()Ljava/io/File;",
+                "jvm_setter": null,
+                "jvm_field": "field idleClipLjava/io/File;",
+                "loadable": true
+              },
+              {
                 "name": "isSplit",
                 "signature": "val isSplit: Boolean",
                 "mutable": false,
@@ -7086,7 +7173,7 @@
             "loadable_undeclared": [
               {
                 "name": "<init>",
-                "jvm": "<init>(Ljava/lang/String;Ljava/io/File;Ljava/io/File;Ljava/io/File;Ljava/io/File;Ljava/io/File;Lkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "jvm": "<init>(Ljava/lang/String;Ljava/io/File;Ljava/io/File;Ljava/io/File;Ljava/io/File;Ljava/io/File;Ljava/io/File;Lkotlin/jvm/internal/DefaultConstructorMarker;)V",
                 "access": [
                   "public",
                   "synthetic"
@@ -7126,6 +7213,16 @@
               {
                 "name": "combined",
                 "jvm": "combined(Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "jvm-static"
+              },
+              {
+                "name": "combined",
+                "jvm": "combined(Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
                 "access": [
                   "public",
                   "static",
@@ -7187,9 +7284,9 @@
             "functions": [
               {
                 "name": "combined",
-                "signature": "fun combined(modelPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …): Expression2Model",
+                "signature": "fun combined(modelPath: File, canonPath: File, code: String? = …, contextCacheDir: File? = …, idleClipPath: File? = …): Expression2Model",
                 "suspend": false,
-                "jvm": "combined(Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
+                "jvm": "combined(Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
                 "loadable": true
               },
               {
@@ -7241,8 +7338,17 @@
                 "kind": "jvm-overload"
               },
               {
+                "name": "combined",
+                "jvm": "combined(Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;)Lai/bithuman/expression2/Expression2Model;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "jvm-overload"
+              },
+              {
                 "name": "combined$default",
-                "jvm": "combined$default(Lai/bithuman/expression2/Expression2Model$Companion;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;ILjava/lang/Object;)Lai/bithuman/expression2/Expression2Model;",
+                "jvm": "combined$default(Lai/bithuman/expression2/Expression2Model$Companion;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;ILjava/lang/Object;)Lai/bithuman/expression2/Expression2Model;",
                 "access": [
                   "public",
                   "static",
@@ -7757,6 +7863,16 @@
                 "jvm_field": "field DEFAULT_DOOR_URLLjava/lang/String;",
                 "loadable": true,
                 "value": "https://api.bithuman.ai"
+              },
+              {
+                "name": "IDLE",
+                "signature": "const val IDLE: String",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field IDLELjava/lang/String;",
+                "loadable": true,
+                "value": "idle.mp4"
               },
               {
                 "name": "MANIFEST",

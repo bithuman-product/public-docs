@@ -10,6 +10,69 @@ order: 1
 
 ## September 2026
 
+### The idle clip plays whole, decoded in place, on iPhone and Mac — Swift SDK 2.13.5 / `Expression2` 2.6.3 (2026-09-16)
+
+Package tag **2.13.5** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);
+`from:` resolves it. It ships the `Expression2` engine at **2.6.3**. **Read this before
+upgrading if your app reads `engine.idleLoop`.**
+
+- **The idle clip plays from its first frame to its last and wraps there.** The
+  identity's `idle.mp4` is a 10 s, 200-frame loop authored so that its last frame
+  leads into its first. 2.6.2 held the first 48 frames and wrapped at 2.4 s — a cut
+  the clip's author never made, visible as a jump every few seconds. 2.6.3 plays
+  the video in place: one hardware decoder runs a few frames ahead of the display
+  and the wrap is the file's own end. The principle is the one every bitHuman surface
+  now follows: play video in place rather than loading it into memory — efficient
+  compute and efficient memory management, which only requires the right
+  implementation. Measured on the published bytes on an M4 Mac: the loop wraps at frame 199 → 0 every
+  200 frames with a seam smaller than the step between two ordinary frames, a 60 s
+  clip costs the same resident memory as the 10 s one (within 3 MB), and an idle
+  frame costs about 0.3 ms.
+- **`idleLoop` is gone from the public surface.** `idleLoop: [[UInt8]]` — the list
+  that invited the cap — does not exist in 2.6.3; code that reads it does not compile.
+  Take `idleNextPixelBuffer()` (the decoder's own `CVPixelBuffer`, no copy — hand it
+  to a texture or a sample-buffer layer) or `idle(into:)` (the same frame as BGR bytes).
+  `idleFrameCount`, `idleIndex` and `idleWraps` say where the loop is;
+  `idleUnavailableReason` says why no clip plays when it does not.
+- `pullPos()` is unchanged from 2.6.2: `(frame, speech, isSpeech, pos)`.
+- The `BithumanEngineProtocol` product drops its `idleLoop` requirement and gains
+  `idleNextPixelBuffer()` with a default of `nil`.
+
+### An utterance is exactly as long as its audio, and every frame says where it belongs — Swift SDK 2.13.4 / `Expression2` 2.6.2 (2026-09-16)
+
+`Expression2` **2.6.2** was the first release since 2.6.0 whose engine bytes moved
+(2.6.1 re-hosted 2.6.0's archive byte-for-byte). What changed for an app:
+
+- **Tail 0 and head 0.** A fed utterance is delivered as exactly `round(seconds × 20)`
+  frames — no invented frames after the audio ends — and the first frame is the
+  first audio frame. `pullPos()` reaches the shipped interface for the first time:
+  `(frame, speech, isSpeech, pos)`, where `pos` is the frame's own audio position in
+  16 kHz samples, so a presenter pairs a frame with its sound by arithmetic instead of
+  by counting.
+- **Back-pressure instead of silent discard.** When the app stops pulling, the engine
+  parks its producer at 64 queued frames rather than dropping the oldest; the
+  shipped 2.6.1 binary destroyed 455 of 565 frames on a paced consumer.
+- **`isSpeech`** is per-frame voice activity — this frame's own 40 ms of fed audio
+  has energy — with one definition on every platform; `speech` beside it is the
+  legacy flag and keeps its old meaning.
+
+### The idle clip is an SDK member, the tail is 0, and `isSpeech` means one thing — `expression2-android` 0.4.6 (2026-09-16)
+
+`ai.bithuman:expression2-android:0.4.6` on Maven Central (`0.4.1` and earlier stay
+and are superseded; `0.4.5` was never published).
+
+- **`Expression2Avatar.idleLoop`** — the identity's own idle clip, from the same store
+  and manifest as the weights (`idle.mp4`). Read from the published AAR, in 0.4.6 it
+  is a `List<Bitmap>` of the clip's first **48** frames (`IDLE_LOOP_FRAMES`) — a cap
+  copied from the Apple SDK's old premise, which wraps a 10 s clip at 2.4 s. The
+  next release replaces it with a cursor that plays the whole clip in place, decoded
+  by `MediaCodec` one frame at a time; that changes the member's type, and the note
+  for it will say so.
+- **Tail 0**: a segment of *n* fed samples is delivered as `round(n / 800)` frames and
+  not one more; before, the last chunk always yielded 21 frames.
+- **`Expression2Frame.isSpeech`** is per-frame voice activity with the same
+  definition as the Apple SDK's; `audioSample` is the frame's own 16 kHz position.
+
 ### Renders longer than 48 seconds — `bithuman` 3.1.10 (2026-09-15)
 
 `bithuman` 3.1.10 on PyPI. Essence 2 had a per-render maximum of 48.0 s / 1200

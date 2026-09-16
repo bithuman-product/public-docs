@@ -1,6 +1,6 @@
 ---
 title: "Android"
-description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.4.1 — with no account, no API key and no credits for the first frame."
+description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.4.6 — with no account, no API key and no credits for the first frame."
 section: sdk
 group: "Platforms"
 order: 30
@@ -27,7 +27,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required — see Troubleshooting
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.1")
+    implementation("ai.bithuman:expression2-android:0.4.6")
     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // accelerated rendering on Snapdragon handsets;
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // both on Maven Central, no Qualcomm account; +67 MB of APK
 }

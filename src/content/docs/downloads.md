@@ -17,7 +17,7 @@ measured performance and the exact refusals with their fixes. The
 |---|---|---|
 | [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh \| sh` | `bithuman login`, then `bithuman run` — both `run` and `render` need a credential |
 | [Python](/sdk/python) — 3.10–3.14, macOS arm64, Linux | `pip install "bithuman[expression-2]"` | `bithuman.open(...)` / `avatar.render(...)` |
-| [Android](/sdk/android) — arm64-v8a, minSdk 26 | `implementation("ai.bithuman:expression2-android:0.4.1")` | `Expression2ModelStore(context).fetch(code)`, anonymous |
+| [Android](/sdk/android) — arm64-v8a, minSdk 26 | `implementation("ai.bithuman:expression2-android:0.4.6")` | `Expression2ModelStore(context).fetch(code)`, anonymous |
 | [iOS & iPadOS](/sdk/ios) — a physical device, Xcode 26+ | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")`, product `Expression2` | three anonymous `curl`s for a showcase identity |
 | [Web](/sdk/web) — any modern browser | nothing | one URL or one `<iframe>`; no JavaScript package is published today |
 
@@ -47,10 +47,10 @@ The Python library and the CLI binary are separate things and have been since 2.
 |---|---|---|
 | Python SDK (`bithuman`) | **3.1.10** — a `bithuman<3` pin is a downgrade, not a hold: it resolves to the newest 2.x PyPI still serves, which was 2.3.4 on 2026-09-15 | [PyPI](https://pypi.org/project/bithuman/) |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
-| Swift SDK (`Expression2`) | **2.6.1** | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
-| Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `<code>.imx` you download here. The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| Swift SDK (`Expression2`) | **2.6.3** (package tag **2.13.5** — `from:` resolves it; `idleLoop` left the public surface in 2.6.3, see the [changelog](/changelog)) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `<code>.imx` you download here. The newest package tag, **2.13.5**, ships Essence 2 engine **1.6.3**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) |
-| Android AAR (`ai.bithuman:expression2-android`) | **0.4.1** (a bare `Expression2Options()` asks for the accelerator; on `0.3.1` it stayed on the CPU) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
+| Android AAR (`ai.bithuman:expression2-android`) | **0.4.6** (`0.4.1` and earlier stay on Central and are superseded; a bare `Expression2Options()` asks for the accelerator since `0.4.1`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.7** (`0.2.0` through `0.5.5` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; pin `0.5.6`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
 | bitHuman MCP server | ships **inside the CLI** — [`bithuman mcp`](/guides/mcp-server) | [install.bithuman.ai](https://install.bithuman.ai) |
 
