@@ -10,6 +10,35 @@ order: 1
 
 ## September 2026
 
+### The avatar's source video plays in place, and long audio stops being cut short — Swift SDK 2.13.6 / `Essence2` engine 1.7.0 (2026-09-16)
+
+Package tag **2.13.6** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);
+it ships Essence 2 engine **1.7.0**. No Swift surface change — `from:` resolves it and
+nothing in your code moves. Tags **2.13.3** and earlier stay published and keep resolving
+to the engine versions they always did.
+
+- **Long audio stops being cut short, and this is the one to read.** Driving 75 seconds of
+  audio through Essence 2 in one call previously returned **1209 of the 1875 frames** the
+  audio entitles you to — **and returned success while doing it**. If you were driving long
+  audio in a single call, you were losing the end of it with nothing to tell you. 1.7.0
+  returns **1885**: every frame, plus the short tail the engine has always added. Shorter
+  clips are unaffected and return exactly the frame counts they did before.
+- **About 1.5 GB less memory on a 1080p identity.** Earlier releases expanded the
+  identity's whole source video into memory before the avatar could speak, and composited
+  onto that copy. 1.7.0 decodes one frame ahead of what it is drawing and composites onto
+  the decoded frame directly, in idle and in speech. Measured against the copy previous
+  releases composited onto, the result reads 45 dB PSNR — the difference is not visible,
+  and it was reviewed on a side-by-side before it shipped.
+- **The idle animation plays whole.** It runs from the first frame to the last and wraps
+  only at the authored end, where the clip is designed to be seamless, instead of cutting
+  early.
+- **A frame-buffer correctness fix.** A buffer could hand a reader the slot still being
+  written — a torn frame carrying a valid label, about one walk in ten thousand where two
+  readers are active. Apple's path has a single reader and could not reach it; fixed anyway.
+
+The measured iPhone 15 rate is on the [performance page](/sdk/performance); it did not
+regress with the memory saving.
+
 ### Every frame of a reply comes out, and the driver video plays in place — `essence2-android` 0.5.8 (2026-09-16)
 
 `ai.bithuman:essence2-android:0.5.8` on Maven Central. No Kotlin surface change;
