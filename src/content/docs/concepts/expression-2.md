@@ -243,6 +243,16 @@ and **forward-only** (it wraps from its last frame back to its first and never
 plays in reverse), so idle looks like a person waiting, not a video scrubbing
 back and forth. Every new creation bakes its idle clip automatically.
 
+**The clip is played in place, never held.** The on-device SDKs decode `idle.mp4`
+with the platform's hardware decoder a few frames ahead of the display and wrap
+where the file ends, so the whole 10 s loop is shown and resident memory does not
+grow with the clip's length. Play video in place rather than loading it into memory
+— efficient compute and efficient memory management, which only requires the right
+implementation. On Apple platforms (Swift SDK `Expression2` **2.6.3**) the decoder's
+own pixel buffer is what the texture samples and no CPU touches an idle pixel; the
+Android AAR reaches the same shape in the release after **0.4.6** (see the
+[changelog](/changelog) — 0.4.6 still holds the clip's first 48 frames).
+
 When speech starts, the engine hands off from the idle clip to generated
 frames on the first rendered frame, and a per-identity color match keeps the
 two visually continuous. When speech ends, idle resumes only after sustained
