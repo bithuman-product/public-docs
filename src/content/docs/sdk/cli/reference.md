@@ -42,7 +42,7 @@ and that is the tested one.
 | `bithuman render <file> -a <audio>` | Offline render: model + audio → MP4 |
 | `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or your own agent's model by code |
 | `bithuman list` | Browse the showcase catalogue (aliases: `avatars`, `ls`, `browse`) |
-| `bithuman info <file>` | Model metadata: format, engine, family, and the container's full table of contents (alias: `inspect`) |
+| `bithuman info <file>` | Model metadata: engine, family, and every member the container carries (alias: `inspect`) |
 | `bithuman login` / `logout` | Sign in through the browser and mint a per-device key / revoke it |
 | `bithuman whoami` | Who you are signed in as and where the credential lives |
 | `bithuman account` | Plan, credit balance, account status (alias: `credits`) |
