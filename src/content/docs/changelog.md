@@ -10,6 +10,36 @@ order: 1
 
 ## September 2026
 
+### `pip install bithuman` resolves 2.11.0 — the 3.x line is withdrawn from PyPI, and a `bithuman<3` pin gets the same engine (2026-09-16)
+
+`bithuman` **2.11.0** is what PyPI serves now, to every resolver: an unconstrained
+`pip install bithuman`, a `bithuman<3` pin, and `pip install livekit-plugins-bithuman`
+(whose own pin is `bithuman<3,>=0.5.25`) all resolve it, on Python 3.11, 3.12 and 3.13
+from a fresh environment, and `pip check` is clean on each. The 3.x releases
+(3.0.0 through 3.1.10) were deleted from PyPI on 2026-09-16; a pin on any of them no
+longer resolves.
+
+**Why the number goes backwards.** 3.0.0 cut the exported surface from 32 names to 7 and
+announced the break with a major bump — so a `bithuman<3` pin never received it, and
+resolved 2.3.4 instead: an old engine, but a working one. 2.11.0 is the 3.x engine
+(every native half byte-identical to 3.1.10's, on all three platforms) published where
+that pin can reach it, **with the whole 2.x import surface carried alongside**: every name
+the published 2.10.0 wheel exported — `AsyncBithuman`, `Bithuman`, `AsyncAvatar`,
+`AudioChunk`, `VideoControl`, `VideoFrame`, `Emotion`, the 2.x exception kinds and the
+rest — imports and works, at package level, next to the `open()` / `render()` surface
+[the Python reference](/sdk/python-api) documents. Nothing is a stub: `AsyncBithuman` is
+the streaming class our own serving binds to.
+
+One name changed meaning and is said out loud: `Avatar` is what `open()` returns
+(`.render()`), as in 3.x; the 2.x synchronous class stays reachable as `Bithuman`, and
+`bithuman.Avatar.load(...)` raises rather than pretending. The default picture is the 2.x
+one again — `AsyncBithuman` yields 1280x720 unless told otherwise — and Essence 2 opens on
+the streaming class too.
+
+[The Python reference](/sdk/python-api) is regenerated from the 2.11.0 wheel. This is the
+Python library; the CLI, the Apple and Android SDKs and the browser build ship their own
+engine and are not covered by this note.
+
 ### The idle clip plays whole, decoded in place, on iPhone and Mac — Swift SDK 2.13.5 / `Expression2` 2.6.3 (2026-09-16)
 
 Package tag **2.13.5** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);
