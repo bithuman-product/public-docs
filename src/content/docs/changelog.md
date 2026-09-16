@@ -24,11 +24,11 @@ to the engine versions they always did.
   returns **1885**: every frame, plus the short tail the engine has always added. Shorter
   clips are unaffected and return exactly the frame counts they did before.
 - **About 1.5 GB less memory on a 1080p identity.** Earlier releases expanded the
-  identity's whole source video into memory before the avatar could speak, and composited
-  onto that copy. 1.7.0 decodes one frame ahead of what it is drawing and composites onto
+  identity's whole source video into memory before the avatar could speak, and drew the
+  face onto that copy. 1.7.0 decodes one frame ahead of what it is drawing and draws onto
   the decoded frame directly, in idle and in speech. Measured against the copy previous
-  releases composited onto, the result reads 45 dB PSNR — the difference is not visible,
-  and it was reviewed on a side-by-side before it shipped.
+  releases drew onto, the result reads 45 dB PSNR — the difference is not visible, and it
+  was reviewed on a side-by-side before it shipped.
 - **The idle animation plays whole.** It runs from the first frame to the last and wraps
   only at the authored end, where the clip is designed to be seamless, instead of cutting
   early.
