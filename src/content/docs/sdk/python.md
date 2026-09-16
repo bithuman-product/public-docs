@@ -18,9 +18,13 @@ serve different purposes and neither replaces the other.
 pip install "bithuman[expression-2]"
 ```
 
-`bithuman` 3.1.10 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
+`bithuman` 2.11.0 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
-wheels. The `[expression-2]` extra opens `.avatar` files; for the Essence 2
+wheels. It is what an unconstrained `pip install bithuman` resolves, and what
+a `bithuman<3` pin resolves too: the 3.x line (3.0.0–3.1.10) was withdrawn
+from PyPI on 2026-09-16, and 2.11.0 carries the same engine with the 2.x
+import surface (`AsyncBithuman` and the rest) alongside the `open()` /
+`render()` surface below. The `[expression-2]` extra opens `.avatar` files; for the Essence 2
 clip-to-file route add the offline extra — on Linux install the CPU build of
 `torch` first, or the extra resolves to the default CUDA wheel and pulls the
 whole `nvidia-*` stack onto a machine that is about to render on the CPU:
