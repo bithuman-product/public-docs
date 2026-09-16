@@ -10,6 +10,59 @@ order: 1
 
 ## September 2026
 
+### Every frame of a reply comes out, and the driver video plays in place — `essence2-android` 0.5.8 (2026-09-16)
+
+`ai.bithuman:essence2-android:0.5.8` on Maven Central. No Kotlin surface change;
+`0.5.7` and earlier stay on Central and are superseded. **Read this if your app
+feeds audio faster than real time, or if it has ever run 0.5.7 on the same device.**
+
+- **Every frame of a reply comes out.** In 0.5.7 the motion frontier advanced only
+  behind `feed()` / `endOfAudio()`, one block per call: an app that pushed more
+  than 320 ms of audio per call fell behind its own audio by the difference, and
+  after `endOfAudio` exactly one more block ever came out. Measured on a Galaxy
+  S25+ through an un-paced transport, 0.5.7 delivered **72–77 % of every reply's
+  frames** — the rest of the audio played under a frozen last frame. 0.5.8 extends
+  the frontier on a thread of the SDK's own, woken by a feed and by a pull that
+  finds the queue low; the same handset and script deliver **1828 of 1827 expected
+  frames** over 8 replies, hold 0, stale 0, speaker under-runs 0. Nothing to change
+  in your code; feed as the audio arrives.
+- **The driver video plays in place — resident memory 2969 → 1613 MB on the same
+  identity.** 0.5.7 expanded `target_frames.mp4` to 251 JPEG files at the first
+  session and decoded the whole clip into memory at every open (1.56 GB for a 1080p
+  identity). 0.5.8 plays it through a decode cursor — the phone's hardware H.264
+  decoder (`MediaCodec`) one frame ahead of the paste — and writes nothing into the
+  bundle directory. The principle every bitHuman surface now follows: play video in
+  place rather than loading it into memory.
+- **A device that ran 0.5.7 keeps its JPEG files, and 0.5.8 walks them; a fresh
+  install decodes the mp4.** Both are correct. On the mp4 path the first frame of a
+  reply arrives a little later and less evenly than on the JPEG path (same script,
+  same handset: time-to-first-audio +26 to +284 ms across takes, up to 12 stale
+  frames and 2 speaker under-runs per take against 0 / 0) — the reply's first block
+  waits on a seek to the clip's keyframe and the decoder's warm-up. The next
+  release pre-seeks that block when an utterance opens.
+- **The picture moves by one lossy generation.** The paste now lands on the decoded
+  frame itself rather than on 0.5.7's JPEG re-encode of it: 45 dB PSNR against the
+  old canvas on the region the paste leaves untouched; the mouth region is unchanged.
+- **A torn-frame race in the driver cursor is fixed before it shipped.** Two
+  consumers reading the cursor 13 frames apart could receive a frame the decoder
+  was still writing, under the right label, about once in 10,000 reads. No published
+  Android artifact carried it (0.5.7 has no cursor); 0.5.8 does not either.
+
+### The idle clip plays whole, decoded in place — `expression2-android` 0.4.7 (2026-09-16)
+
+`ai.bithuman:expression2-android:0.4.7` on Maven Central. **Read this before
+upgrading if your app reads `Expression2Avatar.idleLoop`.**
+
+- **The idle clip plays from its first frame to its last and wraps there.** 0.4.6
+  held the clip's first 48 frames as a `List<Bitmap>` and wrapped at 2.4 s — a cut
+  the clip's author never made. 0.4.7 decodes the clip in place with `MediaCodec`,
+  one frame at a time, and wraps where the file ends; resident memory is independent
+  of the clip's length.
+- **`idleLoop` changes type.** It is no longer a `List<Bitmap>`; take
+  `Expression2IdleLoop` (`next(bitmap)` draws the next frame into your bitmap and
+  reports the wrap). Code that indexed the old list does not compile against 0.4.7.
+- **`0.4.6` and earlier stay on Central** and are superseded, not withdrawn.
+
 ### `pip install bithuman` resolves 2.11.0 — the 3.x line is withdrawn from PyPI, and a `bithuman<3` pin gets the same engine (2026-09-16)
 
 `bithuman` **2.11.0** is what PyPI serves now, to every resolver: an unconstrained

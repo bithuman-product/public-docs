@@ -137,8 +137,8 @@ Both second-generation models are on Maven Central and resolve with no account:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.6")
-    implementation("ai.bithuman:essence2-android:0.5.7")
+    implementation("ai.bithuman:expression2-android:0.4.7")
+    implementation("ai.bithuman:essence2-android:0.5.8")
 }
 ```
 

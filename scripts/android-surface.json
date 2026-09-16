@@ -4,9 +4,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.5.7",
-        "digest": "sha256:8ff028e0254da1349b8593748385a100ad8ea9e1141ab9b8676c155c268406d1",
-        "filename": "essence2-android-0.5.7.aar",
+        "version": "0.5.8",
+        "digest": "sha256:7c9d2102dfd4851e70babd1aabbda7a7421a9b5c386135b934ec7108c39e0433",
+        "filename": "essence2-android-0.5.8.aar",
         "resolved_on": "2026-09-16"
       },
       "surface": {
@@ -4328,9 +4328,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.4.6",
-        "digest": "sha256:63d36db629e2be4c659a1fe281be21280af4ab178346a4d5c2b05708c72c4bfb",
-        "filename": "expression2-android-0.4.6.aar",
+        "version": "0.4.7",
+        "digest": "sha256:eb72f92093ced29efe0e439b25c41ad117668b2a0ff9cb83ee9d331d9b52f364",
+        "filename": "expression2-android-0.4.7.aar",
         "resolved_on": "2026-09-16"
       },
       "surface": {
@@ -6293,11 +6293,11 @@
               },
               {
                 "name": "idleLoop",
-                "signature": "val idleLoop: List<Bitmap>",
+                "signature": "val idleLoop: Expression2IdleLoop?",
                 "mutable": false,
-                "jvm_getter": "getIdleLoop()Ljava/util/List;",
+                "jvm_getter": "getIdleLoop()Lai/bithuman/expression2/Expression2IdleLoop;",
                 "jvm_setter": null,
-                "jvm_field": "field idleLoop$delegateLkotlin/Lazy;",
+                "jvm_field": null,
                 "loadable": true
               },
               {
@@ -6604,16 +6604,6 @@
                 "jvm_field": "field FRAME_WIDTHI",
                 "loadable": true,
                 "value": 416
-              },
-              {
-                "name": "IDLE_LOOP_FRAMES",
-                "signature": "const val IDLE_LOOP_FRAMES: Int",
-                "mutable": false,
-                "jvm_getter": null,
-                "jvm_setter": null,
-                "jvm_field": "field IDLE_LOOP_FRAMESI",
-                "loadable": true,
-                "value": 48
               },
               {
                 "name": "SAMPLE_RATE",
@@ -7055,6 +7045,100 @@
                   "synthetic"
                 ],
                 "kind": "default-argument-bridge"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.expression2.Expression2IdleLoop",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [
+              "AutoCloseable"
+            ],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "close",
+                "signature": "fun close()",
+                "suspend": false,
+                "jvm": "close()V",
+                "loadable": true
+              },
+              {
+                "name": "next",
+                "signature": "fun next(dst: Bitmap): Int",
+                "suspend": false,
+                "jvm": "next(Landroid/graphics/Bitmap;)I",
+                "loadable": true
+              }
+            ],
+            "properties": [
+              {
+                "name": "height",
+                "signature": "val height: Int",
+                "mutable": false,
+                "jvm_getter": "getHeight()I",
+                "jvm_setter": null,
+                "jvm_field": "field heightI",
+                "loadable": true
+              },
+              {
+                "name": "width",
+                "signature": "val width: Int",
+                "mutable": false,
+                "jvm_getter": "getWidth()I",
+                "jvm_setter": null,
+                "jvm_field": "field widthI",
+                "loadable": true
+              },
+              {
+                "name": "frameCount",
+                "signature": "var frameCount: Int",
+                "mutable": true,
+                "jvm_getter": "getFrameCount()I",
+                "jvm_setter": null,
+                "jvm_field": "field frameCountI",
+                "loadable": true
+              },
+              {
+                "name": "lastIndex",
+                "signature": "var lastIndex: Int",
+                "mutable": true,
+                "jvm_getter": "getLastIndex()I",
+                "jvm_setter": null,
+                "jvm_field": "field lastIndexI",
+                "loadable": true
+              },
+              {
+                "name": "wraps",
+                "signature": "var wraps: Int",
+                "mutable": true,
+                "jvm_getter": "getWraps()I",
+                "jvm_setter": null,
+                "jvm_field": "field wrapsI",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Ljava/io/File;II)V",
+                "access": [
+                  "public"
+                ],
+                "kind": "internal"
               }
             ]
           },
@@ -9238,9 +9322,9 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 54,
-          "declared_classes": 51,
-          "public_classes": 40
+          "class_files": 55,
+          "declared_classes": 52,
+          "public_classes": 41
         }
       }
     }
