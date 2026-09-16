@@ -159,7 +159,7 @@ before the script:
 |---|---|---|
 | `agent.avatar` | [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model) — **Route A:** `A23WJF0199`, anonymous. **Route B:** your code with your `api-secret`. One endpoint, both routes | the identity — the face, the motion and the per-identity graphs |
 | `shared_engine/` | `bithuman engine install mac` — the [CLI](/sdk/cli#install) fetches it from the public channel (anonymous, no login) into `~/.bithuman/engines/` | ★ the artifact does **not** carry `w2v_frontend_cpuAndNE.mlpackage`, and the engine will not start without it. The shared engine has it |
-| `speech16k.wav` | macOS `say` + `afconvert` (what `setup.sh` runs — no network). `…/model/download?member=demo_speech_16k.wav` also serves one, but only for a `visibility: public` code — a featured `demo` identity like Wise Pup gets 401 there | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
+| `speech16k.wav` | [`…/model/download?member=demo_speech_16k.wav`](/api/agents#download-an-agents-model) — the same door, the same anonymous route, one file out of the identity's own bundle instead of the whole container | something for the avatar to say. 16 kHz, mono, 16-bit PCM |
 
 ★ **Why the `mac` engine, for an iOS app.** The graphs inside it are CoreML
 packages, compiled on the device at first launch; they are not Mac-only code.
@@ -218,18 +218,14 @@ rm -rf Sources/Model/shared_engine
 mkdir -p Sources/Model/shared_engine
 cp -R "$ENGINE_DIR"/. Sources/Model/shared_engine/
 
-# 3. something for it to say — 16 kHz mono, made by your Mac, no network.
-#
-#    ★NOT THE `member=` ROUTE, AND THAT IS NOT AN OVERSIGHT. The on-device
-#    member catalogue is served anonymously only for `visibility: public`
-#    agents; a FEATURED identity like Wise Pup is `demo`, so `member=` answers
-#    401 for it even though the container itself downloads freely. Two arms of
-#    one endpoint, two admission rules — `say` needs neither.
-echo "==> synthesising speech16k.wav"
-say -o /tmp/ios-expression2.aiff \
-  "Hello. I am a bit Human avatar, rendered on this phone, with no server in the loop."
-afconvert -f WAVE -d LEI16@16000 -c 1 /tmp/ios-expression2.aiff Sources/Model/speech16k.wav
-rm -f /tmp/ios-expression2.aiff
+# 3. something for it to say. The identity's own bundle already carries a
+#    16 kHz mono clip, so this needs no key and no TTS either — `member=`
+#    asks the SAME door for ONE file out of the bundle instead of the whole
+#    container, and takes the same credential (none, here) as step 1.
+echo "==> downloading speech16k.wav"
+curl -fL --progress-bar "${AUTH[@]+"${AUTH[@]}"}" \
+  "https://api.bithuman.ai/v1/agent/$CODE/model/download?member=demo_speech_16k.wav&model=expression-2" \
+  -o Sources/Model/speech16k.wav
 
 echo "==> Sources/Model is ready:"
 du -sh Sources/Model/*

@@ -35,8 +35,8 @@ at [your API keys](https://www.bithuman.ai/developer/api-keys).
 
 ## Get a model
 
-Three things, none of which needs an account, a key or credits — the identity,
-the shared engine graphs it does not carry, and something for it to say:
+Three anonymous downloads — the identity, the shared engine graphs it does not
+carry, and something for it to say. No account, no key, no credits:
 
 ```bash
 # 1. the identity, through the download door (1-hour signed URL, no credential)
@@ -45,9 +45,8 @@ curl -fL -o A23WJF0199.avatar "https://api.bithuman.ai/v1/agent/A23WJF0199/model
 # 2. the shared engine, from the public channel `bithuman engine install` reads
 curl -fLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/engines/expression-2/mac-arm64-1.0.0.engine"
 
-# 3. 16 kHz mono speech — your Mac makes this, no network at all
-say -o /tmp/hello.aiff "Hello. I am a bitHuman avatar, rendered on this device."
-afconvert -f WAVE -d LEI16@16000 -c 1 /tmp/hello.aiff speech16k.wav && rm -f /tmp/hello.aiff
+# 3. 16 kHz mono speech — the identity's own bundle carries one
+curl -fL -o speech16k.wav "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2&member=demo_speech_16k.wav"
 ```
 
 `A23WJF0199` is **Wise Pup**, a bitHuman-owned identity in the free gallery; any
