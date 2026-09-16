@@ -35,9 +35,11 @@ line above.
 > was removed. If you find a package on PyPI with a bitHuman-like name that is
 > not `bithuman`, it is not ours.
 
-If you would rather Homebrew managed it, `brew install
-bithuman-product/bithuman/bithuman-cli` installs the same tarball on Apple
-Silicon. Use one or the other, not both. Either way `bithuman --version` tells
+**On Apple Silicon only**, Homebrew is an alternative: `brew install
+bithuman-product/bithuman/bithuman-cli` installs the same tarball. The formula
+declares `arch: :arm64` and `macos: :sonoma`, so it is not an option on Linux
+or on an Intel Mac — on Linux the installer above is the only route. Use one or
+the other, not both. Either way `bithuman --version` tells
 you what you got:
 
 ```text
