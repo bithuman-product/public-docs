@@ -2,16 +2,16 @@
   "artifact": {
     "registry": "pypi",
     "coordinate": "bithuman",
-    "version": "3.1.10",
-    "digest": "sha256:db802ed7f62b02c191eb8a9aca96182248c237e083057ade24b7a513ac0944cf",
-    "resolved_on": "2026-09-15",
-    "wheel": "bithuman-3.1.10-cp314-cp314-manylinux_2_28_x86_64.whl"
+    "version": "2.11.0",
+    "digest": "sha256:cb87b9da954671bb68d006ffa405bcbdb81a537bac5dff5bade49388e77c74ba",
+    "resolved_on": "2026-09-16",
+    "wheel": "bithuman-2.11.0-cp314-cp314-manylinux_2_28_x86_64.whl"
   },
   "surface": {
     "package": "bithuman",
     "distribution": {
       "name": "bithuman",
-      "version": "3.1.10",
+      "version": "2.11.0",
       "requires_python": "<3.15,>=3.10",
       "extras": [
         "expression-2",
@@ -22,156 +22,15 @@
       "console_scripts": [],
       "has_py_typed": true
     },
-    "dunder_version": false,
+    "dunder_version": true,
     "runnable_as_module": true,
-    "retired": [
-      {
-        "name": "AccountStatusError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "AsyncAvatar",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "AsyncBithuman",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "AudioChunk",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "Bithuman",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "BithumanError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "ComposedFrame",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EP",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EP_AUTO",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EP_COREML",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EP_CPU",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EP_NNAPI",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EP_QNN",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "Emotion",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "EmotionPrediction",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "Fixture",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "ModelError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "ModelLoadError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "ModelNotFoundError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "ModelSecurityError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "Runtime",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "RuntimeNotReadyError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "TokenError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "TokenExpiredError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "TokenRequestError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "TokenValidationError",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "VideoControl",
-        "raises": "_Retired",
-        "is_import_error": true
-      },
-      {
-        "name": "VideoFrame",
-        "raises": "_Retired",
-        "is_import_error": true
-      }
-    ],
+    "retired": [],
     "modules": [
       {
         "name": "bithuman",
         "interface": "stub",
         "stub": "__init__.pyi",
-        "doc": "bithuman — run an avatar on this machine.\n\n    import bithuman\n    avatar = bithuman.open(\"A63GVG1577.imx\")\n    for image in avatar.render(audio):\n        show(image)\n\nTwo operations: **open an avatar, then render audio through it.**  Frames come\nback as ``(height, width, 3)`` uint8 arrays in RGB order, at the avatar's own\nframe rate.  ``audio`` is 16 kHz mono — a buffer, the path of an audio file, or\nan iterable of buffers for a live stream; passing a stream instead of a whole\nclip is the same call.\n\n**Both families open the same way.**  essence-2 and expression-2 avatars are\nthe same two lines above; nothing in your code says which one you have.\nexpression-2 needs one extra package on this machine::\n\n    pip install \"bithuman[expression-2]\"\n\nEight names, and that is the whole surface::\n\n    open  ·  Avatar.render  ·  Avatar\n    AvatarError  ·  InvalidAvatar  ·  NotSupported  ·  NotAuthorised  ·  Failed\n\nThere is nothing to configure.  This package runs the avatar on this machine,\nin your process, so there is nothing left to choose about where or how it runs\n— you chose that when you chose this package instead of the cloud one.\n\nA key belongs in the environment, not in your code::\n\n    export BITHUMAN_API_SECRET=...        # rendering is metered\n\n**One command, if you would rather not write anything.**  Give it an avatar\nand some audio and it writes a video::\n\n    python -m bithuman A63GVG1577 speech.wav       # -> A63GVG1577.mp4\n\nThe avatar can be a ten-character code — it is fetched once, which is free —\nor a file you already have.  Run it with no arguments to see the avatars your\nkey can open.\n\nNo audio to hand?  This package ships 15 s of speech at\n``bithuman/assets/demo_sample.wav`` — ``python -m bithuman --help`` prints its\npath on this machine.\n\n★``pip install bithuman`` never puts a command on your PATH, and the line\nabove is why it does not have to.  That is an invariant, not an accident:\na pip-installed command named ``bithuman`` would overwrite the one Homebrew\nputs at the same path, so ``tests/test_no_console_script.py`` fails if a\nfuture release grows one.  ``python -m`` needs no script and cannot collide\nwith one.  The full command-line tool is still a separate artifact::\n\n    curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh",
+        "doc": "bithuman — run an avatar on this machine.\n\n    import bithuman\n    avatar = bithuman.open(\"A63GVG1577.imx\")\n    for image in avatar.render(audio):\n        show(image)\n\nTwo operations: **open an avatar, then render audio through it.**  Frames come\nback as ``(height, width, 3)`` uint8 arrays in RGB order, at the avatar's own\nframe rate.  ``audio`` is 16 kHz mono — a buffer, the path of an audio file, or\nan iterable of buffers for a live stream; passing a stream instead of a whole\nclip is the same call.\n\n**Both families open the same way.**  essence-2 and expression-2 avatars are\nthe same two lines above; nothing in your code says which one you have.\nexpression-2 needs one extra package on this machine::\n\n    pip install \"bithuman[expression-2]\"\n\nEight names, and that is the whole surface::\n\n    open  ·  Avatar.render  ·  Avatar\n    AvatarError  ·  InvalidAvatar  ·  NotSupported  ·  NotAuthorised  ·  Failed\n\nThere is nothing to configure.  This package runs the avatar on this machine,\nin your process, so there is nothing left to choose about where or how it runs\n— you chose that when you chose this package instead of the cloud one.\n\nA key belongs in the environment, not in your code::\n\n    export BITHUMAN_API_SECRET=...        # rendering is metered\n\n**One command, if you would rather not write anything.**  Give it an avatar\nand some audio and it writes a video::\n\n    python -m bithuman A63GVG1577 speech.wav       # -> A63GVG1577.mp4\n\nThe avatar can be a ten-character code — it is fetched once, which is free —\nor a file you already have.  Run it with no arguments to see the avatars your\nkey can open.\n\nNo audio to hand?  This package ships 15 s of speech at\n``bithuman/assets/demo_sample.wav`` — ``python -m bithuman --help`` prints its\npath on this machine.\n\n★``pip install bithuman`` never puts a command on your PATH, and the line\nabove is why it does not have to.  That is an invariant, not an accident:\na pip-installed command named ``bithuman`` would overwrite the one Homebrew\nputs at the same path, so ``tests/test_no_console_script.py`` fails if a\nfuture release grows one.  ``python -m`` needs no script and cannot collide\nwith one.  The full command-line tool is still a separate artifact::\n\n    curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\n\n**Pinned to ``bithuman<3``?  This release still answers.**  2.11.0 carries\nthe complete 2.x import surface alongside the two operations above —\n``AsyncBithuman``, ``Bithuman``, ``AudioChunk``, ``VideoFrame``,\n``VideoControl``, the ``Fixture``/``Runtime`` handles and the 2.x exception\nhierarchy all import and work::\n\n    from bithuman import AsyncBithuman\n    runtime = await AsyncBithuman.create(model_path=\"A63GVG1577.imx\",\n                                         api_secret=\"bh-...\")\n\nThat is what keeps ``livekit-plugins-bithuman`` — which pins ``bithuman<3``\nand imports ``AsyncBithuman`` — working with nothing to change.  The two\noperations above are still the whole *taught* surface; the 2.x names are\ncarried for compatibility, not taught.  One name changed meaning and is\nlisted in the source below: ``Avatar`` is what ``open()`` returns, and 2.x's\nsynchronous ``Avatar`` is reachable as ``Bithuman``.",
         "declared": [
           "open",
           "Avatar",
@@ -179,7 +38,38 @@
           "InvalidAvatar",
           "NotSupported",
           "NotAuthorised",
-          "Failed"
+          "Failed",
+          "Bithuman",
+          "AsyncBithuman",
+          "AsyncAvatar",
+          "ComposedFrame",
+          "EP",
+          "AudioChunk",
+          "VideoControl",
+          "VideoFrame",
+          "Emotion",
+          "EmotionPrediction",
+          "BithumanError",
+          "TokenError",
+          "TokenExpiredError",
+          "TokenValidationError",
+          "TokenRequestError",
+          "AccountStatusError",
+          "ModelError",
+          "ModelNotFoundError",
+          "ModelLoadError",
+          "ModelSecurityError",
+          "RuntimeNotReadyError",
+          "Fixture",
+          "Runtime",
+          "EP_CPU",
+          "EP_AUTO",
+          "EP_COREML",
+          "EP_NNAPI",
+          "EP_QNN",
+          "__version__",
+          "__core_version__",
+          "__abi_version__"
         ],
         "symbols": [
           {
@@ -284,6 +174,550 @@
             "not_in_shipped_interface": [],
             "members": [],
             "constructor_signature": null
+          },
+          {
+            "name": "Bithuman",
+            "kind": "class",
+            "doc": "High-level convenience wrapper around `Fixture` + `Runtime`.\n\nLoad a .imx once, then call `compose(audio)` to stream BGR frames.\nUse as a context manager (or call `.close()`) to release the underlying\nC handles deterministically.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._avatar_sync",
+            "not_in_shipped_interface": [
+              {
+                "name": "__enter__",
+                "signature": "(self) -> \"'Avatar'\""
+              },
+              {
+                "name": "__exit__",
+                "signature": "(self, exc_type, exc_val, exc_tb) -> 'None'"
+              },
+              {
+                "name": "__init__",
+                "signature": "(self, fixture: '_core.Fixture')"
+              },
+              {
+                "name": "close",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "compose",
+                "signature": "(self, audio: 'AudioInput', preallocated_out: 'Optional[np.ndarray]' = None, output_size: 'Optional[tuple]' = (1280, 720)) -> 'Iterator[ComposedFrame]'"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "AsyncBithuman",
+            "kind": "class",
+            "doc": "Async-first facade over libessence for parity with legacy\n`bithuman.AsyncBithuman`. Construct via ``await AsyncAvatar.create(...)``.\n\nNOTE (consolidation): this is the relocated *internal* native\nfacade, kept reachable so nothing Phase-1/2 is lost. The public,\ncanonical async class is ``bithuman.AsyncBithuman``\n(``bithuman.runtime_async``); ``bithuman.AsyncAvatar`` is an alias\nof THAT. The Phase-1/2 loader lives in\n:class:`bithuman._loader.NativeFixtureLoaderMixin` (single\nsource of truth) and is inherited here AND by the canonical\n``AsyncBithuman``.\n\nLifecycle:\n\n    avatar = await AsyncAvatar.create(model_path=..., api_secret=...)\n    await avatar.push_audio(pcm_bytes, sample_rate=16_000, last_chunk=True)\n    async for frame in avatar.run():\n        ...\n    await avatar.shutdown()",
+            "bases": [
+              "NativeFixtureLoaderMixin"
+            ],
+            "defined_in": "bithuman._avatar",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, *, input_buffer_size: 'int' = 0, output_buffer_size: 'int' = 6, output_size: 'Optional[Tuple[int, int]]' = (1280, 720), tags: 'Optional[str]' = 'bithuman', billing_type: 'str' = 'self-hosted-essence-model', api_secret: 'Optional[str]' = None, api_url: 'str' = 'https://api.bithuman.ai/v1/runtime-tokens/request', agent_code: 'Optional[str]' = None, num_threads: 'int' = 0) -> 'None'"
+              },
+              {
+                "name": "cleanup",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "flush",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "get_first_frame",
+                "signature": "(self) -> 'Optional[np.ndarray]'"
+              },
+              {
+                "name": "interrupt",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "is_token_refresh_running",
+                "signature": "(self) -> 'bool'"
+              },
+              {
+                "name": "push",
+                "signature": "(self, control: 'VideoControl') -> 'None'"
+              },
+              {
+                "name": "push_audio",
+                "signature": "(self, data: 'bytes', sample_rate: 'int', last_chunk: 'bool' = True) -> 'None'"
+              },
+              {
+                "name": "run",
+                "signature": "(self) -> 'AsyncIterator[VideoFrame]'"
+              },
+              {
+                "name": "set_agent_code",
+                "signature": "(self, agent_code: 'str') -> 'None'"
+              },
+              {
+                "name": "set_billing_type",
+                "signature": "(self, billing_type: 'str') -> 'None'"
+              },
+              {
+                "name": "set_identity",
+                "signature": "(self, identity: 'str') -> 'None'"
+              },
+              {
+                "name": "set_model",
+                "signature": "(self, model_path: 'str') -> 'None'"
+              },
+              {
+                "name": "shutdown",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "start",
+                "signature": "(self, **kwargs) -> 'None'"
+              },
+              {
+                "name": "start_token_refresh",
+                "signature": "(self, **kwargs) -> 'bool'"
+              },
+              {
+                "name": "stop",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "stop_token_refresh",
+                "signature": "(self) -> 'None'"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "AsyncAvatar",
+            "kind": "class",
+            "doc": "Async-first facade over libessence for parity with legacy\n`bithuman.AsyncBithuman`. Construct via ``await AsyncAvatar.create(...)``.\n\nNOTE (consolidation): this is the relocated *internal* native\nfacade, kept reachable so nothing Phase-1/2 is lost. The public,\ncanonical async class is ``bithuman.AsyncBithuman``\n(``bithuman.runtime_async``); ``bithuman.AsyncAvatar`` is an alias\nof THAT. The Phase-1/2 loader lives in\n:class:`bithuman._loader.NativeFixtureLoaderMixin` (single\nsource of truth) and is inherited here AND by the canonical\n``AsyncBithuman``.\n\nLifecycle:\n\n    avatar = await AsyncAvatar.create(model_path=..., api_secret=...)\n    await avatar.push_audio(pcm_bytes, sample_rate=16_000, last_chunk=True)\n    async for frame in avatar.run():\n        ...\n    await avatar.shutdown()",
+            "bases": [
+              "NativeFixtureLoaderMixin"
+            ],
+            "defined_in": "bithuman._avatar",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, *, input_buffer_size: 'int' = 0, output_buffer_size: 'int' = 6, output_size: 'Optional[Tuple[int, int]]' = (1280, 720), tags: 'Optional[str]' = 'bithuman', billing_type: 'str' = 'self-hosted-essence-model', api_secret: 'Optional[str]' = None, api_url: 'str' = 'https://api.bithuman.ai/v1/runtime-tokens/request', agent_code: 'Optional[str]' = None, num_threads: 'int' = 0) -> 'None'"
+              },
+              {
+                "name": "cleanup",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "flush",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "get_first_frame",
+                "signature": "(self) -> 'Optional[np.ndarray]'"
+              },
+              {
+                "name": "interrupt",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "is_token_refresh_running",
+                "signature": "(self) -> 'bool'"
+              },
+              {
+                "name": "push",
+                "signature": "(self, control: 'VideoControl') -> 'None'"
+              },
+              {
+                "name": "push_audio",
+                "signature": "(self, data: 'bytes', sample_rate: 'int', last_chunk: 'bool' = True) -> 'None'"
+              },
+              {
+                "name": "run",
+                "signature": "(self) -> 'AsyncIterator[VideoFrame]'"
+              },
+              {
+                "name": "set_agent_code",
+                "signature": "(self, agent_code: 'str') -> 'None'"
+              },
+              {
+                "name": "set_billing_type",
+                "signature": "(self, billing_type: 'str') -> 'None'"
+              },
+              {
+                "name": "set_identity",
+                "signature": "(self, identity: 'str') -> 'None'"
+              },
+              {
+                "name": "set_model",
+                "signature": "(self, model_path: 'str') -> 'None'"
+              },
+              {
+                "name": "shutdown",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "start",
+                "signature": "(self, **kwargs) -> 'None'"
+              },
+              {
+                "name": "start_token_refresh",
+                "signature": "(self, **kwargs) -> 'bool'"
+              },
+              {
+                "name": "stop",
+                "signature": "(self) -> 'None'"
+              },
+              {
+                "name": "stop_token_refresh",
+                "signature": "(self) -> 'None'"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "ComposedFrame",
+            "kind": "class",
+            "doc": "One avatar frame produced by `Avatar.compose`.\n\nAttributes\n----------\nbgr:\n    (H, W, 3) uint8 numpy array in BGR pixel order. View into a buffer\n    that the runtime may overwrite on the next tick; copy it if you\n    need to retain the frame across iterations.\ncluster_idx:\n    The viseme cluster id chosen for this tick (range [0, cluster_count)).\nframe_idx:\n    Zero-based tick index inside the current compose() call.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._avatar_sync",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, bgr: 'np.ndarray', cluster_idx: 'int', frame_idx: 'int') -> None"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "EP",
+            "kind": "class",
+            "doc": "Execution provider hint. CPU is the canonical baseline; the others\nare mapped opportunistically by the C ABI when available on the host.",
+            "bases": [
+              "IntEnum"
+            ],
+            "defined_in": "bithuman._avatar_sync",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "AudioChunk",
+            "kind": "class",
+            "doc": "One chunk of audio bound for the avatar runtime.\n\nAttributes\n----------\ndata:\n    Audio samples as a 1-D int16 numpy array. The constructor will\n    coerce ``bytes`` / float32 / float64 input to int16 to match\n    legacy semantics.\nsample_rate:\n    Sample rate in hertz (typically 16000 for the avatar pipeline).\nlast_chunk:\n    Marks the final chunk of a speech utterance. The runtime uses\n    this to flush internal buffers and emit ``end_of_speech`` on\n    the final composed frame.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._models",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, data: 'np.ndarray', sample_rate: 'int', last_chunk: 'bool' = True) -> None"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "VideoControl",
+            "kind": "class",
+            "doc": "One unit of input to the avatar runtime.\n\nThe runtime consumes a stream of these. Each control is either\n\"speaking\" (has an ``AudioChunk``), an action / target-video cue,\nan emotion override, or \"idle\" (everything None) — in which case\nthe runtime emits idle-loop frames.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._models",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, audio: 'Optional[AudioChunk]' = None, text: 'Optional[str]' = None, target_video: 'Optional[str]' = None, action: 'Optional[Union[str, List[str]]]' = None, emotion_preds: 'Optional[List[EmotionPrediction]]' = None, message_id: 'str' = <factory>, end_of_speech: 'bool' = False, force_action: 'bool' = False, stop_on_user_speech: 'Optional[bool]' = None, stop_on_agent_speech: 'Optional[bool]' = None) -> None"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "VideoFrame",
+            "kind": "class",
+            "doc": "One composed avatar frame.\n\nAttributes\n----------\nbgr_image:\n    (H, W, 3) uint8 BGR image, or None for control-only frames\n    (e.g. end-of-speech markers without a render attached).\naudio_chunk:\n    The audio slice that aligns with this frame, or None if the\n    runtime is in idle-loop / no-speech mode.\nframe_index:\n    Zero-based tick index inside the current speech utterance,\n    reset whenever the runtime transitions speaking → idle.\nsource_message_id:\n    Echoes the ``message_id`` of the originating VideoControl,\n    so consumers can correlate frames back to the request.\nend_of_speech:\n    True only on the final composed frame of an utterance.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._models",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, bgr_image: 'Optional[np.ndarray]' = None, audio_chunk: 'Optional[AudioChunk]' = None, frame_index: 'Optional[int]' = None, source_message_id: 'Optional[Hashable]' = None, end_of_speech: 'bool' = False) -> None"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "Emotion",
+            "kind": "class",
+            "doc": "Emotion label, matches legacy `bithuman.api.Emotion`.\n\nThese are the seven canonical labels the agent worker prompts the\nLLM with. They flow through JSON as their string values.",
+            "bases": [
+              "str",
+              "Enum"
+            ],
+            "defined_in": "bithuman._models",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "EmotionPrediction",
+            "kind": "class",
+            "doc": "Emotion classifier output for one audio segment.\n\nLegacy uses pydantic BaseModel with fields ``emotion`` + ``score``;\nwe use ``dataclass`` to avoid pulling in pydantic for the core\nwrapper, while keeping the field names and serialization shape.",
+            "bases": [
+              "object"
+            ],
+            "defined_in": "bithuman._models",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, emotion: 'Emotion', score: 'float') -> None"
+              },
+              {
+                "name": "to_dict",
+                "signature": "(self) -> 'dict'"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "BithumanError",
+            "kind": "exception",
+            "doc": "Base class for all bitHuman errors.\n\nCarries a stable string `code` (e.g. \"model_not_found\") + a\n`docs_url` pointing at the canonical docs page for that error.\nCatch on this base for any bitHuman error, or on a specific\nsubclass for targeted handling.",
+            "bases": [
+              "Exception"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": "(self, message: 'str' = '', *, code: 'str | None' = None)"
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "TokenError",
+            "kind": "exception",
+            "doc": "Base exception for token-related errors.",
+            "bases": [
+              "BithumanError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "TokenExpiredError",
+            "kind": "exception",
+            "doc": "Raised when the JWT token has expired.",
+            "bases": [
+              "TokenError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "TokenValidationError",
+            "kind": "exception",
+            "doc": "Raised when token validation fails (invalid signature, claims, etc.).",
+            "bases": [
+              "TokenError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "TokenRequestError",
+            "kind": "exception",
+            "doc": "Raised when a token request to the auth server fails.",
+            "bases": [
+              "TokenError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "AccountStatusError",
+            "kind": "exception",
+            "doc": "Raised when the account has a billing/access issue (402, 403).\n\nLegacy `bithuman` makes this a subclass of TokenError (it surfaces\nout of the token-refresh path). We keep that inheritance for parity.",
+            "bases": [
+              "TokenError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "ModelError",
+            "kind": "exception",
+            "doc": "Base exception for model-related errors.",
+            "bases": [
+              "BithumanError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "ModelNotFoundError",
+            "kind": "exception",
+            "doc": "Raised when the model file cannot be found.",
+            "bases": [
+              "ModelError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "ModelLoadError",
+            "kind": "exception",
+            "doc": "Raised when model loading fails.",
+            "bases": [
+              "ModelError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "ModelSecurityError",
+            "kind": "exception",
+            "doc": "Raised when a security restriction blocks model operations.",
+            "bases": [
+              "ModelError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "RuntimeNotReadyError",
+            "kind": "exception",
+            "doc": "Raised when an operation is attempted before the runtime is ready.",
+            "bases": [
+              "BithumanError"
+            ],
+            "defined_in": "bithuman._exceptions",
+            "not_in_shipped_interface": [],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "Fixture",
+            "kind": "class",
+            "doc": "Loaded bitHuman avatar model (an .imx container) backed by the native libessence engine.\n\nLow-level/advanced API: most callers should use the high-level ``bithuman.AsyncBithuman`` / ``bithuman.Bithuman``. A Fixture memory-maps the model once and exposes its immutable properties; pass it to ``Runtime`` to run inference. TAR-format console exports are auto-converted to v2 on load; legacy/encoder-less models use the process default encoder registered via ``set_default_audio_encoder``.",
+            "bases": [
+              "pybind11_object"
+            ],
+            "defined_in": "bithuman._core",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": null
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "Runtime",
+            "kind": "class",
+            "doc": "Stateful inference session over a loaded ``Fixture``.\n\nLow-level/advanced API (the high-level ``AsyncBithuman`` wraps this). Feed 25 fps audio ticks to ``tick`` for the cluster index, or ``tick_compose_to_size`` for a composed BGR frame. ``be_runtime_tick`` is metered — authenticate first via ``auth_init``/``auth_authenticate``.",
+            "bases": [
+              "pybind11_object"
+            ],
+            "defined_in": "bithuman._core",
+            "not_in_shipped_interface": [
+              {
+                "name": "__init__",
+                "signature": null
+              }
+            ],
+            "members": [],
+            "constructor_signature": null
+          },
+          {
+            "name": "EP_CPU",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "0"
+          },
+          {
+            "name": "EP_AUTO",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "1"
+          },
+          {
+            "name": "EP_COREML",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "2"
+          },
+          {
+            "name": "EP_NNAPI",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "3"
+          },
+          {
+            "name": "EP_QNN",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "4"
+          },
+          {
+            "name": "__version__",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'2.11.0'"
+          },
+          {
+            "name": "__core_version__",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "str",
+            "value": "'2.11.0'"
+          },
+          {
+            "name": "__abi_version__",
+            "kind": "constant",
+            "doc": "",
+            "value_type": "int",
+            "value": "7"
           }
         ],
         "stub_only": [

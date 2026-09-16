@@ -36,10 +36,10 @@ changes is the registry, not the page.
 | --- | --- |
 | Registry | pypi |
 | Coordinate | bithuman |
-| Version | 3.1.10 |
-| Wheel | `bithuman-3.1.10-cp314-cp314-manylinux_2_28_x86_64.whl` |
-| Digest | `sha256:db802ed7f62b02c191eb8a9aca96182248c237e083057ade24b7a513ac0944cf` |
-| Resolved on | 2026-09-15 |
+| Version | 2.11.0 |
+| Wheel | `bithuman-2.11.0-cp314-cp314-manylinux_2_28_x86_64.whl` |
+| Digest | `sha256:cb87b9da954671bb68d006ffa405bcbdb81a537bac5dff5bade49388e77c74ba` |
+| Resolved on | 2026-09-16 |
 
 Every name below was read back out of those bytes, in a virtualenv that had nothing else installed in it. Nothing here was read from a source tree.
 
@@ -53,7 +53,7 @@ Every name below was read back out of those bytes, in a virtualenv that had noth
 
 ## bithuman
 
-7 names, declared by the type stub the package ships.
+38 names, declared by the type stub the package ships.
 
 ### open
 
@@ -120,6 +120,135 @@ Fix the credential.
 We could not do it — transient, or our fault.
 
 Retry, then report it.
+
+### Bithuman
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### AsyncBithuman
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### AsyncAvatar
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### ComposedFrame
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### EP
+
+Execution provider hint. CPU is the canonical baseline; the others
+are mapped opportunistically by the C ABI when available on the host.
+
+### AudioChunk
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### VideoControl
+
+One unit of input to the avatar runtime.
+
+The runtime consumes a stream of these. Each control is either
+"speaking" (has an `AudioChunk`), an action / target-video cue,
+an emotion override, or "idle" (everything None) — in which case
+the runtime emits idle-loop frames.
+
+### VideoFrame
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### Emotion
+
+Emotion label, matches legacy `bithuman.api.Emotion`.
+
+These are the seven canonical labels the agent worker prompts the
+LLM with. They flow through JSON as their string values.
+
+### EmotionPrediction
+
+Emotion classifier output for one audio segment.
+
+Legacy uses pydantic BaseModel with fields `emotion` + `score`;
+we use `dataclass` to avoid pulling in pydantic for the core
+wrapper, while keeping the field names and serialization shape.
+
+### BithumanError
+
+Base class for all bitHuman errors.
+
+Carries a stable string `code` (e.g. "model_not_found") + a
+`docs_url` pointing at the canonical docs page for that error.
+Catch on this base for any bitHuman error, or on a specific
+subclass for targeted handling.
+
+### TokenError
+
+Base exception for token-related errors.
+
+### TokenExpiredError
+
+Raised when the JWT token has expired.
+
+### TokenValidationError
+
+Raised when token validation fails (invalid signature, claims, etc.).
+
+### TokenRequestError
+
+Raised when a token request to the auth server fails.
+
+### AccountStatusError
+
+Raised when the account has a billing/access issue (402, 403).
+
+Legacy `bithuman` makes this a subclass of TokenError (it surfaces
+out of the token-refresh path). We keep that inheritance for parity.
+
+### ModelError
+
+Base exception for model-related errors.
+
+### ModelNotFoundError
+
+Raised when the model file cannot be found.
+
+### ModelLoadError
+
+Raised when model loading fails.
+
+### ModelSecurityError
+
+Raised when a security restriction blocks model operations.
+
+### RuntimeNotReadyError
+
+Raised when an operation is attempted before the runtime is ready.
+
+### Fixture
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### Runtime
+
+_The docstring shipped with this symbol describes internal machinery and is not reproduced here._
+
+### EP_CPU
+
+### EP_AUTO
+
+### EP_COREML
+
+### EP_NNAPI
+
+### EP_QNN
+
+### __version__
+
+### __core_version__
+
+### __abi_version__
 
 ## bithuman.offline
 
@@ -196,6 +325,17 @@ A directory input is returned as-is (already unfolded).
 | `NotSupported` | `bithuman` | `AvatarError` |
 | `NotAuthorised` | `bithuman` | `AvatarError` |
 | `Failed` | `bithuman` | `AvatarError` |
+| `BithumanError` | `bithuman` | `Exception` |
+| `TokenError` | `bithuman` | `BithumanError` |
+| `TokenExpiredError` | `bithuman` | `TokenError` |
+| `TokenValidationError` | `bithuman` | `TokenError` |
+| `TokenRequestError` | `bithuman` | `TokenError` |
+| `AccountStatusError` | `bithuman` | `TokenError` |
+| `ModelError` | `bithuman` | `BithumanError` |
+| `ModelNotFoundError` | `bithuman` | `ModelError` |
+| `ModelLoadError` | `bithuman` | `ModelError` |
+| `ModelSecurityError` | `bithuman` | `ModelError` |
+| `RuntimeNotReadyError` | `bithuman` | `BithumanError` |
 | `OfflineRenderError` | `bithuman.offline` | `RuntimeError` |
 | `MeteringNotArmedError` | `bithuman.offline` | `OfflineRenderError` |
 | `TesseraOfflineError` | `bithuman.tessera_offline` | `RuntimeError` |
@@ -207,9 +347,59 @@ A reference generated from a source tree would have listed each of these. They a
 | Name | Why it is not the surface | What it is |
 | --- | --- | --- |
 | `bithuman.Avatar.__init__` | on the runtime object, in no type stub | takes 3 arguments, none of them documented |
+| `bithuman.Bithuman.__enter__` | on the runtime object, in no type stub | `(self) -> 'Avatar'` |
+| `bithuman.Bithuman.__exit__` | on the runtime object, in no type stub | `(self, exc_type, exc_val, exc_tb) -> None` |
+| `bithuman.Bithuman.__init__` | on the runtime object, in no type stub | `(self, fixture: _core.Fixture)` |
+| `bithuman.Bithuman.close` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.Bithuman.compose` | on the runtime object, in no type stub | `(self, audio: AudioInput, preallocated_out: Optional[np.ndarray] = None, output_size: Optional[tuple] = (1280, 720)) -> Iterator[ComposedFrame]` |
+| `bithuman.AsyncBithuman.__init__` | on the runtime object, in no type stub | `(self, *, input_buffer_size: int = 0, output_buffer_size: int = 6, output_size: Optional[Tuple[int, int]] = (1280, 720), tags: Optional[str] = 'bithuman', billing_type: str = 'self-hosted-essence-model', api_secret: Optional[str] = None, api_url: str = 'https://api.bithuman.ai/v1/runtime-tokens/request', agent_code: Optional[str] = None, num_threads: int = 0) -> None` |
+| `bithuman.AsyncBithuman.cleanup` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncBithuman.flush` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncBithuman.get_first_frame` | on the runtime object, in no type stub | `(self) -> Optional[np.ndarray]` |
+| `bithuman.AsyncBithuman.interrupt` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncBithuman.is_token_refresh_running` | on the runtime object, in no type stub | `(self) -> bool` |
+| `bithuman.AsyncBithuman.push` | on the runtime object, in no type stub | `(self, control: VideoControl) -> None` |
+| `bithuman.AsyncBithuman.push_audio` | on the runtime object, in no type stub | `(self, data: bytes, sample_rate: int, last_chunk: bool = True) -> None` |
+| `bithuman.AsyncBithuman.run` | on the runtime object, in no type stub | `(self) -> AsyncIterator[VideoFrame]` |
+| `bithuman.AsyncBithuman.set_agent_code` | on the runtime object, in no type stub | `(self, agent_code: str) -> None` |
+| `bithuman.AsyncBithuman.set_billing_type` | on the runtime object, in no type stub | `(self, billing_type: str) -> None` |
+| `bithuman.AsyncBithuman.set_identity` | on the runtime object, in no type stub | `(self, identity: str) -> None` |
+| `bithuman.AsyncBithuman.set_model` | on the runtime object, in no type stub | `(self, model_path: str) -> None` |
+| `bithuman.AsyncBithuman.shutdown` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncBithuman.start` | on the runtime object, in no type stub | `(self, **kwargs) -> None` |
+| `bithuman.AsyncBithuman.start_token_refresh` | on the runtime object, in no type stub | `(self, **kwargs) -> bool` |
+| `bithuman.AsyncBithuman.stop` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncBithuman.stop_token_refresh` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncAvatar.__init__` | on the runtime object, in no type stub | `(self, *, input_buffer_size: int = 0, output_buffer_size: int = 6, output_size: Optional[Tuple[int, int]] = (1280, 720), tags: Optional[str] = 'bithuman', billing_type: str = 'self-hosted-essence-model', api_secret: Optional[str] = None, api_url: str = 'https://api.bithuman.ai/v1/runtime-tokens/request', agent_code: Optional[str] = None, num_threads: int = 0) -> None` |
+| `bithuman.AsyncAvatar.cleanup` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncAvatar.flush` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncAvatar.get_first_frame` | on the runtime object, in no type stub | `(self) -> Optional[np.ndarray]` |
+| `bithuman.AsyncAvatar.interrupt` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncAvatar.is_token_refresh_running` | on the runtime object, in no type stub | `(self) -> bool` |
+| `bithuman.AsyncAvatar.push` | on the runtime object, in no type stub | `(self, control: VideoControl) -> None` |
+| `bithuman.AsyncAvatar.push_audio` | on the runtime object, in no type stub | `(self, data: bytes, sample_rate: int, last_chunk: bool = True) -> None` |
+| `bithuman.AsyncAvatar.run` | on the runtime object, in no type stub | `(self) -> AsyncIterator[VideoFrame]` |
+| `bithuman.AsyncAvatar.set_agent_code` | on the runtime object, in no type stub | `(self, agent_code: str) -> None` |
+| `bithuman.AsyncAvatar.set_billing_type` | on the runtime object, in no type stub | `(self, billing_type: str) -> None` |
+| `bithuman.AsyncAvatar.set_identity` | on the runtime object, in no type stub | `(self, identity: str) -> None` |
+| `bithuman.AsyncAvatar.set_model` | on the runtime object, in no type stub | `(self, model_path: str) -> None` |
+| `bithuman.AsyncAvatar.shutdown` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncAvatar.start` | on the runtime object, in no type stub | `(self, **kwargs) -> None` |
+| `bithuman.AsyncAvatar.start_token_refresh` | on the runtime object, in no type stub | `(self, **kwargs) -> bool` |
+| `bithuman.AsyncAvatar.stop` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.AsyncAvatar.stop_token_refresh` | on the runtime object, in no type stub | `(self) -> None` |
+| `bithuman.ComposedFrame.__init__` | on the runtime object, in no type stub | `(self, bgr: np.ndarray, cluster_idx: int, frame_idx: int) -> None` |
+| `bithuman.AudioChunk.__init__` | on the runtime object, in no type stub | `(self, data: np.ndarray, sample_rate: int, last_chunk: bool = True) -> None` |
+| `bithuman.VideoControl.__init__` | on the runtime object, in no type stub | `(self, audio: Optional[AudioChunk] = None, text: Optional[str] = None, target_video: Optional[str] = None, action: Optional[Union[str, List[str]]] = None, emotion_preds: Optional[List[EmotionPrediction]] = None, message_id: str = <factory>, end_of_speech: bool = False, force_action: bool = False, stop_on_user_speech: Optional[bool] = None, stop_on_agent_speech: Optional[bool] = None) -> None` |
+| `bithuman.VideoFrame.__init__` | on the runtime object, in no type stub | `(self, bgr_image: Optional[np.ndarray] = None, audio_chunk: Optional[AudioChunk] = None, frame_index: Optional[int] = None, source_message_id: Optional[Hashable] = None, end_of_speech: bool = False) -> None` |
+| `bithuman.EmotionPrediction.__init__` | on the runtime object, in no type stub | `(self, emotion: Emotion, score: float) -> None` |
+| `bithuman.EmotionPrediction.to_dict` | on the runtime object, in no type stub | `(self) -> dict` |
+| `bithuman.BithumanError.__init__` | on the runtime object, in no type stub | `(self, message: str = '', *, code: str | None = None)` |
+| `bithuman.Fixture.__init__` | on the runtime object, in no type stub | `` |
+| `bithuman.Runtime.__init__` | on the runtime object, in no type stub | `` |
 | `bithuman.Audio` | declared by the type stub, absent at runtime — importing it raises `ImportError` | the type an `audio` argument accepts: `Union[bytes, bytearray, memoryview, str, 'np.ndarray', Iterable[Any]]` |
 | 3 files under `bithuman/lib/` | listed as modules by their suffix, none of them imports | native libraries the engine opens by path |
-| 28 names from the 2.x releases | intercepted with a refusal that says what to write instead | raises `NotSupported` and `ImportError` |
+| 0 names from the 2.x releases | intercepted with a refusal that says what to write instead | raises `NotSupported` and `ImportError` |
 | `bithuman.__version__` | removed on purpose — `hasattr` answers False | read the version from `importlib.metadata` |
 
 ## Other modules the package exposes
