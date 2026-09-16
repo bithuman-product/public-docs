@@ -222,7 +222,7 @@ Essence 2 bundle reports `essence2-light` — and is never a valid `model`
 value; see
 [the `engine` value is a legacy name](/concepts/avatars-imx#the-engine-value-is-a-legacy-name).
 
-Run 2026-09-10 against the public showcase identity `A08CCD3871.avatar`, with
+Run 2026-09-10 against the showcase identity `A08CCD3871.avatar`, with
 no credential anywhere in the environment:
 
 ```text
