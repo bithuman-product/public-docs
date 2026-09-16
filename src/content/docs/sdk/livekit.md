@@ -32,14 +32,20 @@ than a browser.
 > `python_version >= "3.11" and python_version < "3.14"`. Resolved against PyPI
 > on 2026-09-15 that means:
 >
-> - On **Python 3.11, 3.12 or 3.13** the command below installs the newest
->   2.x wheel PyPI still serves — **2.3.4** when this was last driven, on
->   2026-09-15 — and not the 3.x wheel the [Python SDK page](/sdk/python)
->   documents. This is the combination that works, and it is what the examples
->   below assume. Which 2.x you get depends on what the index holds that day:
->   the pin is `bithuman<3`, and versions have been removed from it. **None of
->   the 3.x work reaches this path** — an avatar rendered through the plugin is
->   rendered by a 2.x engine.
+> - **This path is currently broken at runtime, and the install will not tell
+>   you.** The plugin pins `bithuman<3` and imports one name from it,
+>   `AsyncBithuman`. The 2.x wheel PyPI now serves no longer carries that name,
+>   so the plugin installs cleanly and then fails when a session starts. Check
+>   your own environment in one line:
+>
+>   ```bash
+>   python -c "from bithuman import AsyncBithuman"
+>   ```
+>
+>   Silence means the path works. An `ImportError` naming `bithuman.open`
+>   means it does not, whatever `pip` reported. Pin a wheel that still carries
+>   the name, or drive the avatar through the [Python SDK](/sdk/python)
+>   directly until the plugin is updated upstream.
 > - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
 >   with *no* bitHuman wheel at all, and the first import fails with
 >   `ModuleNotFoundError: No module named 'cv2'` — cv2 reaches the plugin as a
