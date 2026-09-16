@@ -442,7 +442,7 @@ the SDK.
 | State | Time to fail | What you get | What to do |
 | --- | --- | --- | --- |
 | Offline, model on device | — | renders, identical digest | nothing; no socket is opened |
-| Not a container | 1 ms | `Expression2ContainerError`, magic-number message | you saved an error page; check the HTTP status first |
+| Not a container | 1 ms | `Expression2ContainerError`, first-bytes message | you saved an error page; check the HTTP status first |
 | Truncated container | 19 ms | `Expression2ContainerError`, names the offset | re-download; `members(of:)` is the gate |
 | Shared engine missing | 74 ms | `Expression2LoadError`, names the member | `bithuman engine install mac`; pre-flight `missingMembers()` |
 | Member structure corrupt | 287 ms | `Expression2LoadError`, `decoder=missing-decp2` | re-stage from the container |

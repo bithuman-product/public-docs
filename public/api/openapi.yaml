@@ -1448,7 +1448,7 @@ paths:
 
         `sha256` is deliberately empty: no content digest is recorded for these
         objects yet, and the CLI skips verification on an empty value rather
-        than failing. Verify `size` and the container magic (`bithuman info`)
+        than failing. Verify `size` and the file itself (`bithuman info`)
         instead.
 
         Throttled per IP; the reply is cached for 60 seconds.
