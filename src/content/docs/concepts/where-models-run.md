@@ -20,7 +20,7 @@ This is the page to read before you pick a model. It answers one question —
 | **expression-2** | Second-generation generative engine: fully generated motion from one photo, rather than patching a pre-rendered base. | Stylized characters and creatures, and any case where the face is supplied at session time. |
 
 Those four are the only product names. If you have met the words `elevate`,
-`embody`, `essence-2-light`, `essence-2-quality`, `lebundle` or `libelevate`,
+`embody`, `essence-2-light`, `essence-2-quality`, `lebundle`, `libelevate`, `libessence` or `tessera`,
 see [legacy names you will still see](#legacy-names-you-will-still-see) —
 several of them are still literals you have to type or read, and this page
 shows you which.
@@ -118,8 +118,8 @@ Measured frame rates for every platform are on the
 
 There are two current product names — **expression-2** and **essence-2** —
 plus the first generation, **essence-1** and **expression-1**. `elevate`,
-`embody`, `essence-2-light`, `essence-2-quality`, `lebundle` and `libelevate`
-are **deprecated as words**.
+`embody`, `essence-2-light`, `essence-2-quality`, `lebundle`, `libelevate`,
+`libessence` and `tessera` are **deprecated as words**.
 
 Deprecating a word does not rename a wire format. Several of these are frozen
 forever in file names, API fields and manifest values, and **you will have to
@@ -136,6 +136,8 @@ a retired one, so here they are:
 | `embody` | legacy request spelling | **expression-2** | Accepted for compatibility; write `expression-2` in new code. |
 | `essence-2-quality` | internal model lists | **essence-2** | No — write `essence-2`. |
 | `libelevate`, `libelevate-android` | old library and artifact names | **essence-2** | **No.** Neither spelling was ever published to Maven Central; the coordinate to type is `ai.bithuman:essence2-android`. |
+| `libessence`, `libessence2` | the `libessence 3.1.8 ABI 7` line from `bithuman --version`, the `libessence` key in `--json` output, and the library the Swift SDK links | a legacy spelling of the **essence** engine core | **No.** A library filename and a version string you read — frozen because `dlopen` and your JSON parser resolve them by exact name. |
+| `tessera` | the `bithuman[tessera]` extra, the `bithuman.tessera_offline` module and the `BITHUMAN_TESSERA_*` variables — the 2.x spellings | an internal codename for part of the renderer, retired as a product name | Only in 2.x code. Write `bithuman[offline]` and `bithuman.offline`; the two are the *same objects*, and importing the 2.x one warns. |
 
 The rule: **write the product name; accept the legacy spelling on input; expect
 to read it in file names and engine strings forever.**
