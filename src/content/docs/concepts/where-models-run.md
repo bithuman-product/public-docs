@@ -170,7 +170,7 @@ essence-1 on any lane you run yourself. Both remain supported.
 
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation family overview
 - [Essence 2](/concepts/essence-2) · [Expression 2](/concepts/expression-2)
-- [Essence vs Expression](/concepts/models) — the first-generation pair in detail
+- [Essence 1 vs Expression 1](/concepts/models) — the first-generation pair in detail
 - [CLI reference](/sdk/cli/reference) — every command, flag and exit code
 - [Android SDK](/sdk/android) · [Swift SDK](/sdk/ios) · [Python SDK](/sdk/python) · [CLI](/sdk/cli)
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how a model file is packaged

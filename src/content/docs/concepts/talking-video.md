@@ -116,4 +116,4 @@ automatically refunded.
 - [Generate a talking video](/api/video) — the full API reference.
 - [Billing & credits](/api/billing) — how credits are consumed.
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose.
-- [Essence vs Expression](/concepts/models) — the first-generation engine families.
+- [Essence 1 vs Expression 1](/concepts/models) — the first-generation engine families.

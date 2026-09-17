@@ -94,6 +94,6 @@ same file, fetched the same way, whichever SDK you point at it.
 ## See also
 
 * [Where each model runs](/concepts/where-models-run) — the per-model matrix
-* [Essence vs Expression](/concepts/models) — the first-generation comparison
+* [Essence 1 vs Expression 1](/concepts/models) — the first-generation comparison
 * [Expression 1](/concepts/expression-1) — the other first-generation model
 * [Essence 2](/concepts/essence-2) — the recommended model for new work

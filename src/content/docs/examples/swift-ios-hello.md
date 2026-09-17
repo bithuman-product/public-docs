@@ -141,4 +141,4 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-examples/tree
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain.
 - [macos-voice example](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
-- [Models](/concepts/models) — Essence vs Expression, which to ship.
+- [Where each model runs](/concepts/where-models-run) — which model to ship, and which platforms it runs on.

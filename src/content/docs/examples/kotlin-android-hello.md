@@ -884,4 +884,4 @@ today, use expression-2 above.** The
 
 - [Android SDK](/sdk/android) — full walkthrough: API surface, streaming, `Fixture` + `Runtime`, and the two second-generation model stores.
 - [Audio streaming](/concepts/audio-streaming) — the streaming contract that backs `composeFromFile`.
-- [Models](/concepts/models) — Essence vs Expression, which to ship.
+- [Where each model runs](/concepts/where-models-run) — which model to ship, and which platforms it runs on.

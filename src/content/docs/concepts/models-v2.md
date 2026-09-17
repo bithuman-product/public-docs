@@ -89,8 +89,11 @@ rather than replayed. Creation trains a per-identity model from your photo
 (about 2–2.5 hours); serving spans GPU, CPU, and Apple Silicon
 tiers.
 
-Still deciding between the **families** (Essence vs Expression)? Start with
-[Essence vs Expression](/concepts/models).
+Still deciding which **family** you want? The chooser on this page is the fast
+answer, and [Where each model runs](/concepts/where-models-run) is the one that
+also tells you which platforms each is available on. (Maintaining a
+first-generation agent instead? [Essence 1 vs Expression
+1](/concepts/models) compares that pair.)
 
 ## How creation works
 
@@ -411,7 +414,7 @@ the expectations overview in
 ## Next steps
 
 - [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) — the official per-model guides.
-- [Essence vs Expression](/concepts/models) — the two model families.
+- [Essence 1 vs Expression 1](/concepts/models) — the two model families.
 - [Agents API](/api/agents) — the full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
