@@ -50,6 +50,63 @@ before, because the old path never read what was on disk, it assumed the
 overwrite. Anything short, long, corrupt or undeclared still falls through to a
 full fetch.
 
+### Every frame of a reply survives a barge-in — `essence2-android` 0.5.10 (2026-09-16)
+
+`ai.bithuman:essence2-android:0.5.10` on Maven Central. No Kotlin surface change —
+`api/essence2-android.api` is byte-identical to `0.5.9` — so nothing in your code
+moves. **Read this if your users interrupt the avatar.**
+
+- **An interruption no longer rewinds the driver video to its first frame.**
+  Interrupting purges the frame ring by design, and the empty ring used to be
+  filled with the identity's frame 0 — so every barge-in cut back to the top of
+  the source video for about 150 ms, and up to ~1 s at the start of an utterance.
+  The picture now rides on the frame it already has and keeps playing forward.
+- **`0.5.9` and earlier stay on Central** and are superseded.
+
+### An interruption rides on the current frame — Swift SDK 2.13.7 / `Essence2` engine 1.8.0 (2026-09-16)
+
+Package tag **2.13.7** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);
+it ships Essence 2 engine **1.8.0** and Expression 2 engine **2.6.3**. No Swift
+surface change — `from:` resolves it and nothing in your code moves. Tags
+**2.13.6** and earlier stay published and keep resolving to the engine versions
+they always did.
+
+- **The same barge-in fix as `essence2-android` 0.5.10, on Apple.** Interrupting
+  purges the frame ring, and the engine used to fill the empty ring with the
+  identity's frame 0 — a visible cut back to the top of the source video on every
+  interruption. 1.8.0 holds the frame it already delivered and continues forward.
+- **Not claimed:** no iPhone or Mac run was made for this engine release. The
+  change was verified by reading the published slices themselves, on all three
+  (`macos-arm64`, `ios-arm64`, `ios-arm64-simulator`), against the same read of
+  1.7.0.
+
+### The warp prior reaches Android — `essence2-android` 0.5.9 (2026-09-16)
+
+`ai.bithuman:essence2-android:0.5.9` on Maven Central. No Kotlin surface change.
+Superseded by `0.5.10` the same evening; upgrade straight to `0.5.10`.
+
+- **The picture-quality work that missed the `0.5.8` press by three and a half
+  hours.** `0.5.8` shipped without it; `0.5.9` is `0.5.8` plus that change and
+  nothing else.
+
+### `bithuman run` on an Expression 2 identity opens a real conversation — `cli-v2.6.21` (2026-09-16)
+
+CLI `cli-v2.6.21`, macOS arm64 and Linux x86_64 built from one commit. **Read this
+if you have ever run `bithuman run` on an Expression 2 agent.**
+
+- **It was a silent picture; it is a session now.** Until this release `run` stood
+  up a live conversation only for an `essence-1` `.imx` — and `bithuman list`
+  returns no essence-1 models, so the local path this site described could not be
+  walked with any avatar you can actually obtain. An Expression 2 `run` went
+  somewhere else entirely: a page on localhost showing the avatar fed one
+  hardcoded silent sample, with no microphone and no way to interrupt.
+- **It joins a room the way `essence-1` does.** The session publishes video *and*
+  audio, takes your microphone, answers, and can be interrupted, because the reply
+  is a live track rather than a rendered file.
+- **Nothing that worked before refuses now.** `--offscreen` still gives the
+  deterministic benchmark, unchanged, and if the render host is not installed
+  beside the binary the cloud handoff is unchanged.
+
 ### The avatar's source video plays in place, and long audio stops being cut short — Swift SDK 2.13.6 / `Essence2` engine 1.7.0 (2026-09-16)
 
 Package tag **2.13.6** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);
@@ -853,7 +910,7 @@ ID signed and notarized), both from one commit (`b7a1005`). Engine core
 unchanged.
 
 - **A live self-hosted session bills wall-clock, which is what the pricing
-  page defines.** `bithuman run <code>.imx` on an Essence 2 or Expression 2
+  page defines.** `bithuman run <CODE>.imx` on an Essence 2 or Expression 2
   avatar bills the seconds the session was live, idle animation included, at
   2 credits per minute ([pricing](/guides/pricing)); an offline `bithuman
   render` still bills the duration of the clip it writes; `bithuman pull` is
@@ -895,7 +952,7 @@ unchanged.
 - **A self-hosted essence-2 or expression-2 session is billed at the
   published self-hosted rate on macOS and Linux alike** — 2 credits per minute
   ([pricing](/guides/pricing)). Before 2.6.2 only expression-2 on Linux was
-  metered: `bithuman run <code>.imx` and `bithuman render` on an essence-2
+  metered: `bithuman run <CODE>.imx` and `bithuman render` on an essence-2
   model were not metered on any platform, and on a Mac no session was. A
   credit minute is the pricing page's — "wall-clock time a session is live
   and the engine is rendering", idle animation included — and an offline
@@ -991,7 +1048,7 @@ bundle and left `isReady == false` when it found nothing — so an app that had
 - `Expression2Engine.create(modelPath:sharedEngineDir:warmSpeech:)` and the
   instance `load(modelPath:…)`;
 - `Expression2Engine.create(avatarContainer:sharedEngineContainer:sharedEngineDir:stagingDir:warmSpeech:)`,
-  which opens the `<code>.avatar` that
+  which opens the `.avatar` that
   [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
   returns;
 - `Expression2Container` — `isContainer`, `members(of:)`, `read(_:from:)`,
@@ -1333,7 +1390,7 @@ changed.
 The `essence-2` model now **self-hosts on your own CPU servers**. Python SDK
 **2.9.0** (Linux x86_64 and aarch64, Python 3.10–3.14) adds
 `bithuman.tessera_offline` — install the **`bithuman[tessera]`** extra and
-render the downloaded `<code>.lebundle.imx` to frames or an mp4 entirely on
+render the downloaded `.lebundle.imx` to frames or an mp4 entirely on
 your hardware, no GPU required, teeth-refinement stage included. Measured
 end-to-end: **~22–31 FPS on a 16-core desktop** (the higher band when the
 bundle carries the CPU acceleration member). The runtime ships **together with
@@ -1362,7 +1419,7 @@ also re-centred and wider, so speech reads as more dynamic.
 
 Two practical consequences:
 
-- **The downloadable model got about 5× smaller.** A `<code>.lebundle.imx` from
+- **The downloadable model got about 5× smaller.** A `.lebundle.imx` from
   [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
   is now roughly **85–105 MB** instead of several hundred. Read `Content-Length`
   rather than hard-coding a size.
