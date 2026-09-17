@@ -119,7 +119,11 @@ Measured frame rates for every platform are on the
 There are two current product names — **expression-2** and **essence-2** —
 plus the first generation, **essence-1** and **expression-1**. `elevate`,
 `embody`, `essence-2-light`, `essence-2-quality`, `lebundle` and `libelevate`
-are **deprecated as words**.
+are **deprecated as words**. One of them is a plain rename and one is not:
+every `light` spelling — `essence-2-light`, `essence2-light`, `essence2_light`
+— is simply **`essence-2`**, the model you already use; `essence-2-quality`
+named a *different*, retired internal tier and does **not** fold onto
+`essence-2`.
 
 Deprecating a word does not rename a wire format. Several of these are frozen
 forever in file names, API fields and manifest values, and **you will have to
@@ -134,7 +138,7 @@ a retired one, so here they are:
 | `.lebundle.imx` | the file extension of an essence-2 bundle | an essence-2 model file | Yes — it is the filename you are given. |
 | `elevate` | SDK request field | **essence-2** | Accepted for compatibility; write `essence-2` in new code. |
 | `embody` | legacy request spelling | **expression-2** | Accepted for compatibility; write `expression-2` in new code. |
-| `essence-2-quality` | internal model lists | **essence-2** | No — write `essence-2`. |
+| `essence-2-quality` | older internal model lists and billing rows | a **separate, retired internal tier** — *not* another spelling of `essence-2` | No, and it is no longer accepted. It is not part of the public model set; if you meet it in your own historical billing rows it is that retired tier, not `essence-2`. |
 | `libelevate`, `libelevate-android` | old library and artifact names | **essence-2** | **No.** Neither spelling was ever published to Maven Central; the coordinate to type is `ai.bithuman:essence2-android`. |
 
 The rule: **write the product name; accept the legacy spelling on input; expect
