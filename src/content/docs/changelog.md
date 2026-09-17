@@ -10,6 +10,78 @@ order: 1
 
 ## September 2026
 
+### A warm `bithuman run` stops re-downloading the identity it already has — `cli-v2.6.22` (2026-09-17)
+
+CLI `cli-v2.6.22`, macOS arm64 and Linux x86_64 built from one commit. The engine
+inside is **2.11.1** (ABI 7); `bithuman --version` on this release is printed on
+the [CLI page](/sdk/cli#install).
+
+- **A second launch moves 83.4 % fewer bytes.** `bithuman run` used to re-fetch every
+  member of the identity and write it over the byte-identical file already in
+  `~/.bithuman/avatars/`, warm or cold, on every single launch. The members of an
+  `IMX\0` container are content-addressed, so a member already on disk under its
+  declared digest *is* the member; the fetch now asks that question — declared length
+  first, then sha256 — and skips it. Measured on the default identity on Linux:
+  **76,239,355 B → 12,620,302 B** moved, and **1.09–1.33 s → 0.30–0.38 s** on that
+  stage.
+- **This is more verification, not less.** The old path never read what was on disk;
+  it assumed the overwrite. The new path reads it and proves it. A member that is
+  short, long, corrupt, or carries no declared digest falls through to the fetch
+  exactly as before.
+- **Nothing you type changes.** No flag, no cache to clear, no behaviour to opt into.
+
+### An interrupt no longer rewinds the driver video — `Essence2` engine 1.8.0 / Swift SDK 2.13.7 · `essence2-android` 0.5.10 (2026-09-16)
+
+Package tag **2.13.7** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman),
+shipping Essence 2 engine **1.8.0**, and `ai.bithuman:essence2-android:0.5.10` on
+Maven Central. No Swift and no Kotlin surface change — `from:` resolves the tag and
+nothing in your code moves.
+
+- **Barging in rides on the frame already showing.** Interrupting an Essence 2 reply
+  purges the frame ring by design, and the idle path then fell back to driver frame
+  **0** — the first frame of the identity's source video, cached once at init. So
+  every interruption snapped the picture back to the top of the clip: measured at
+  three frames (150 ms) per cut, and up to nineteen frames (about a second) at the
+  start of an utterance. The engine now continues the walk it is on and the picture
+  stays continuous.
+- **Both platforms get it from the same shared core.** The fix lives in
+  `le_a2x_reset`, which the Apple xcframework and the Android `lible_jni.so` both
+  link. Read off the published Android bytes: that function is **72 instructions with
+  no sign test on the incoming frame index in `0.5.6` and in `0.5.8`**, and **101
+  instructions carrying one (`tbz w1, #31`) in `0.5.10`** — the two earlier releases
+  agreeing is the control that the reader is reading, and that the difference is the
+  artifact rather than the method.
+- **`0.5.9` also stays on Central** and is superseded.
+
+### `bithuman run` on an Expression 2 identity opens a conversation — `cli-v2.6.21` (2026-09-16)
+
+CLI `cli-v2.6.21`, macOS arm64 and Linux x86_64 built from one commit.
+**Read this if you followed the local-preview wording that used to be on this site.**
+
+- **It joins a room now, instead of showing a silent page.** Until this release, `run`
+  stood up a live session only for an `essence-1` `.imx` — and `bithuman list` returns
+  zero `essence-1` models, so the local route this site described could not be walked
+  with any avatar a developer can actually get. An Expression 2 `run` was routed
+  somewhere else: a page on localhost showing the avatar fed one hardcoded silent
+  sample, with no microphone and no way to interrupt. It now publishes video **and**
+  audio, accepts your microphone, answers, and can be interrupted, because the reply
+  is a live track rather than a rendered file. Measured on Linux x86_64 against a
+  showcase Expression 2 identity at 416x720: a 75-second driven session delivered
+  **1,519 video frames and 7,710 audio frames** to a second participant.
+- **`livekit-server` is a prerequisite for that route.** The CLI discovers and spawns
+  an embedded one so `run` is self-contained; if it is not on `PATH` or in a
+  well-known location, the session refuses and says so. Install it with `brew install
+  livekit` on macOS, or `curl -sSL https://get.livekit.io | bash` on Linux.
+- **Between turns you get the identity's own idle clip, whole.** The session used to
+  feed the model silence and publish whatever it invented for silence — a resting face
+  the identity never recorded. The clip now plays from its first frame to its last and
+  wraps only at the authored seam. It plays in place: the idle path measured **99.5 MB**
+  resident for a ten-second clip and **99.3 MB** for the same clip six times as long.
+- **Speaking frames did not move.** 189 of 189 speech frames byte-identical against
+  the previous release, with the engine's own determinism control alongside.
+- **`--offscreen` is unchanged**, and so is the cloud hand-off when no render host is
+  installed beside the binary. `essence-2` identities still open a cloud session.
+
 ### The avatar's source video plays in place, and long audio stops being cut short — Swift SDK 2.13.6 / `Essence2` engine 1.7.0 (2026-09-16)
 
 Package tag **2.13.6** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);
