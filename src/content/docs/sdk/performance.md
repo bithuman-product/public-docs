@@ -15,7 +15,7 @@ label: "Performance"
 | macOS · Python | Apple M4 | 157 · bithuman 3.1.8 | not measured on 3.1.8 (2026-09-14) |
 | Linux | Intel Core i7-13700F | 44 · cli-v2.6.17 | 29 · cli-v2.6.17 |
 | Linux · Python | Intel Core i7-13700F | 49 · bithuman 3.1.4 | 27 · bithuman 3.1.6 |
-| iOS | iPhone 15 | 118 · Expression2 2.11.x | 53 · essence2-v1.7.0 |
+| iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · essence2-v1.7.0 |
 | Android | Galaxy S25+ | 58 · expression2-android 0.3.1 | 50 · essence2-android 0.5.6 |
 | Web | Chrome on M4 | 30 · bithuman-ui 021a6f6 | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
@@ -55,6 +55,8 @@ The Android Expression 2 number is what a cool phone does. Under continuous rend
 The Essence 2 Web cell does not carry a number today. The engine computes about 27 frames per second in Chrome on an M4 when it is driven on its own, but that measurement stops the page's own display loop and detaches the live audio. On the page a visitor actually opens, with the voice playing and the picture being drawn on the same browser thread, Essence 2 delivered about 11 frames per second on 2026-09-15 — well under the 25 it plays at, so the face barely moves while the voice continues. Expression 2 in the same browser delivers its full 20 frames per second, because it does its work on a background thread and leaves the display loop free. This is a limitation of the Essence 2 web build, not of the hardware.
 
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
+
+The Linux Essence 2 number is how fast the CLI renders a file, not the rate a conversation plays at. Essence 2 plays at 25 frames per second on every platform, and headroom above that shortens a render and absorbs a busy machine rather than putting more frames on screen. Essence 2 on Linux also varies more from run to run than any other row here: on the same desktop, the same release and the same clip, repeated renders at the stock settings measured between 25 and 33 frames per second on 2026-09-17, with the slowest and the fastest both taken on an idle machine. Expression 2 measured in the same session on the same desktop stayed inside 2 per cent, so this is something about Essence 2 rather than about the machine.
 <!-- /FLOORS:NOTES -->
 
 </details>
