@@ -172,9 +172,9 @@ Every failure prints one JSON object to stderr with a stable code — the
 
 | Family | macOS Apple Silicon and Linux x86_64 |
 |---|---|
-| [Expression 2](/concepts/expression-2) (`<code>.avatar` or `.imx` — the same container) | `run` and `render` |
-| [Essence 2](/concepts/essence-2) (`<code>.imx`) | `run` and `render` |
-| [Essence 1](/concepts/essence-1) (`<code>.imx`) | `run` only — `render` refuses it; use the [Python SDK](/sdk/python) or the [Video API](/api/video) for a file |
+| [Expression 2](/concepts/expression-2) (`.avatar` or `.imx` — the same container) | `run` and `render` |
+| [Essence 2](/concepts/essence-2) (`.imx`) | `run` and `render` |
+| [Essence 1](/concepts/essence-1) (`.imx`) | `run` only — `render` refuses it; use the [Python SDK](/sdk/python) or the [Video API](/api/video) for a file |
 | [Expression 1](/concepts/expression-1) | neither — GPU-only by design, served through the [cloud API](/api/overview) |
 
 ## Examples and source

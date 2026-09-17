@@ -30,11 +30,11 @@ four ways:
   `essence-2-ane` spelling stays accepted, so saved links, embeds and share tokens keep working.
 - **On your own Mac or Linux machine** — the [CLI](/sdk/cli#what-renders-locally-and-where)
   (2.6.1, macOS Apple Silicon and Linux x86_64) renders the downloaded
-  `<code>.imx` offline with `bithuman render` and serves it live with
+  `.imx` offline with `bithuman render` and serves it live with
   `bithuman run`, with the runtime inside the CLI; on Android the
   [`essence2-android`](/sdk/android#troubleshooting)
   AAR, and in your own iOS/macOS app the Swift
-  [`Essence2`](/sdk/ios#install) engine. From Swift SDK **2.13.2** that engine opens the `<code>.imx` you download, on both iPhone and Mac.
+  [`Essence2`](/sdk/ios#install) engine. From Swift SDK **2.13.2** that engine opens the `.imx` you download, on both iPhone and Mac.
 - **From your own CPU servers** — offline rendering of the downloaded
   artifact, metered, no GPU required ([Python SDK](/sdk/python) 3.x; 2.9.0+
   for the earlier route).
@@ -310,7 +310,7 @@ with runnable, verified examples:
 6. **Download the artifact** —
    [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
    or [`bithuman pull <code> --model essence-2`](/sdk/cli/reference#bithuman-pull)
-   → `<code>.imx` (older releases wrote `<code>.lebundle.imx`, a legacy name
+   → `<CODE>.imx` (older releases wrote `<CODE>.lebundle.imx`, a legacy name
    kept for compatibility). Inspect it with
    [`bithuman info`](/sdk/cli/reference#bithuman-info) (full
    member listing as of CLI 2.4.1). **Licensed weights** — render it locally

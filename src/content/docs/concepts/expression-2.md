@@ -224,7 +224,7 @@ low-latency live sessions.
 [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and
 Linux x86_64, through the [Python SDK](/sdk/python), on
 [Android](/sdk/android) and, in your own app, on iPhone, iPad and Mac through
-the [`Expression2` Swift product](/sdk/ios). The downloadable `<code>.avatar`
+the [`Expression2` Swift product](/sdk/ios). The downloadable `.avatar`
 from [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 or `bithuman pull <code>` drives all of them. The frame rate on each platform
 is on [Performance](/sdk/performance).
@@ -305,5 +305,5 @@ or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guid
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
-- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `<code>.avatar` (the current bitHuman container for all but the oldest identities), via API or `bithuman pull <code>`.
+- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `.avatar` (the current bitHuman container for all but the oldest identities), via API or `bithuman pull <code>`.
 - [Talking video generation](/concepts/talking-video) — render offline mp4s with `expression-2`.

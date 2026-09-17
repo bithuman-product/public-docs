@@ -41,7 +41,7 @@ encodes the MP4.
 command-line tool is the [CLI](/sdk/cli), a separate install.
 
 **[essence-1](/concepts/essence-1) needs no extra at all.** It is the base
-wheel's own path — `bithuman.open` takes a first-generation `<code>.imx`
+wheel's own path — `bithuman.open` takes a first-generation `.imx`
 straight out of `pip install bithuman`, which is why the CLI and the
 [Swift](/sdk/ios) page send you here for it. Only the newer engines are behind
 extras: `.avatar` files need `[expression-2]`, and the Essence 2 clip-to-file

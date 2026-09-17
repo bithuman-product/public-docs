@@ -871,7 +871,7 @@ fun playEssence2(context: Context, mirrorBase: String, code: String, show: (Byte
 `mirrorBase` has no value you can supply: `Essence2ModelStore` fetches
 `{base}/{code}/android/v1/android_store.v1.json` and **bitHuman publishes no public
 host that serves that tree**. The REST model-download door serves essence-2 as
-a single `<code>.lebundle.imx`, which is not the member tree this store reads.
+a single `.lebundle.imx`, which is not the member tree this store reads.
 Two more
 things the snippet assumes: the session plays the avatar's **recorded** sequence,
 because there is no audio-in entry point on this artifact yet (`BitHuman.open`
