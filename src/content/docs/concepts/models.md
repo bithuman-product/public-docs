@@ -1,10 +1,19 @@
 ---
-title: "Essence vs Expression"
-description: "The two bitHuman avatar model families, Essence and Expression — the first-generation models, what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick."
+title: "Essence 1 vs Expression 1"
+description: "The two first-generation bitHuman models compared — what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick. For the current models, see Essence 2 and Expression 2."
 section: concepts
 group: "Models"
 order: 5
+label: "Essence 1 vs Expression 1"
 ---
+
+> **Looking for the current models?** This page compares the **first
+> generation**, Essence 1 and Expression 1, which are maintained and still run
+> two thirds of the agents on the platform. If you are starting something new,
+> the models to read about are
+> **[Essence 2 and Expression 2](/concepts/models-v2)**, and the page that says
+> which of them runs where is
+> **[Where each model runs](/concepts/where-models-run)**.
 
 ## The engines
 

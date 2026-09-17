@@ -78,7 +78,7 @@ they ship inside the self-hosting container image.
 ## See also
 
 * [Where each model runs](/concepts/where-models-run) — the per-model matrix
-* [Essence vs Expression](/concepts/models) — the first-generation comparison
+* [Essence 1 vs Expression 1](/concepts/models) — the first-generation comparison
 * [Essence 1](/concepts/essence-1) — the other first-generation model
 * [Expression 2](/concepts/expression-2) — the recommended model for new work
 * [Self-hosted deployment](/guides/deploy-self-hosted) — the GPU container
