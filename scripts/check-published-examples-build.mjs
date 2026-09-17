@@ -241,15 +241,26 @@ const MUTATIONS = {
     file: "app/src/main/java/com/example/x2hello/MainActivity.kt",
     from: "Expression2ModelStore(this).fetch(",
     to: "Expression2ModelStore(this).fetchRenamedByTheSdk(",
+    // ★the symbol the toolchain must NAME in its rejection. A control that
+    // grades "the build failed" and not "the build failed FOR MY REASON"
+    // reports FIRED for any unrelated failure — which is exactly what the iOS
+    // arm did, every Sunday, while compiling no Swift at all.
+    token: "fetchRenamedByTheSdk",
     what: "the model-store call the page makes, renamed as the SDK might rename it",
   },
   ios: {
     file: "Sources/App.swift",
     from: "Expression2Engine.create(modelPath:",
     to: "Expression2Engine.createRenamedByTheSdk(modelPath:",
+    token: "createRenamedByTheSdk",
     what: "the engine factory the page calls, renamed as the SDK might rename it",
   },
 };
+
+// ★Every build command's output, for the arm being built right now. main()
+// clears it per arm so the --mutate grader can ask whether the toolchain
+// rejection NAMED the mutated symbol.
+let ARM_TRANSCRIPT = "";
 
 function mutate(arm, files) {
   const m = MUTATIONS[arm];
@@ -389,6 +400,19 @@ function controlsInSource(repoRoot) {
       console.log(`  ok  ${arm}: ${rel} calls ${JSON.stringify(m.from)} (${n}x) — the mutation has something to rename`);
     }
   }
+  // ★THE TOKEN THE REJECTION MUST NAME HAS TO BE PART OF WHAT WE WRITE. If an
+  // edit ever decouples `token` from `to`, --mutate's wrong-reason check would
+  // reject every run (or, worse, be softened away) and the arm would go back
+  // to grading "did it fail" — the shape that hid a blind iOS control for
+  // eight days.
+  for (const [arm, m] of Object.entries(MUTATIONS)) {
+    if (!m.token || !m.to.includes(m.token)) {
+      console.log(`::error::MUTATIONS.${arm}.token ${JSON.stringify(m.token)} is not part of what the mutation writes (${JSON.stringify(m.to)}) — the --mutate arm could never see its own symbol in a rejection`);
+      bad++;
+    } else {
+      console.log(`  ok  ${arm}: the rejection must name ${JSON.stringify(m.token)}, which the mutation really writes`);
+    }
+  }
   // The instrument itself, on a string that is definitely not there.
   const negative = controlTokenCount("nothing to see here", MUTATIONS.android.from);
   if (negative !== 0) {
@@ -411,7 +435,9 @@ function run(cmd, args, opts = {}) {
     maxBuffer: 256 * 1024 * 1024,
     timeout: opts.timeoutMs || 45 * 60 * 1000,
   });
-  return { rc: r.status, out: (r.stdout || "") + (r.stderr || ""), err: r.error };
+  const out = (r.stdout || "") + (r.stderr || "");
+  ARM_TRANSCRIPT += out;
+  return { rc: r.status, out, err: r.error };
 }
 
 function have(tool) {
@@ -718,11 +744,30 @@ async function buildIos(workRoot) {
   console.log(`[ios] Info.plist lints and carries ${REQUIRED_PLIST_KEYS.length} required keys`);
 
   // The resource folder the spec references must exist for XcodeGen to accept
-  // it. EMPTY placeholders only — no identity, no avatar, no customer bytes.
-  mkdirSync(join(proj, "Sources/Model/shared_engine"), { recursive: true });
-  for (const f of ["Sources/Model/agent.avatar", "Sources/Model/speech16k.wav", "Sources/Model/shared_engine/.placeholder"]) {
-    writeFileSync(join(proj, f), "");
-  }
+  // it. SYNTHETIC placeholders only — no identity, no avatar, no customer bytes.
+  //
+  // ★AND THEY MUST SATISFY THE PAGE'S OWN preBuildScripts PHASE, WHICH THIS
+  // GATE SPENT EIGHT DAYS FAILING. The published spec gained a phase named
+  // "Sources/Model must hold a real model, not the placeholder" in 4d3ae37
+  // (2026-09-09) — it refuses an agent.avatar under 1 MB and a missing
+  // shared_engine/w2v_frontend_cpuAndNE.mlpackage. This writer still wrote
+  // zero-byte files, so every run since died in that phase with
+  //     error: Sources/Model/agent.avatar is only 0 B … Re-run ./setup.sh
+  // before a single line of Swift was compiled. MEASURED 2026-09-17:
+  // `grep -c "[ios] GREEN" ~/scripts/docs-examples-build.log` = 0 — the iOS arm
+  // has NEVER been green, and the daily `docs-examples-build` page said "the
+  // published iOS example no longer builds" about a tree this gate crippled
+  // itself. The page is fine for a developer who ran ./setup.sh; ARM 1/ARM 2
+  // control (0 B -> rc 1, 1.1 MB -> rc 0) confirmed the size is the whole
+  // difference.
+  // ★WORSE, IT BLINDED THE WEEKLY CONTROL: --mutate grades "did the build
+  // fail", and this arm failed every time for a reason that has nothing to do
+  // with the mutation, so docs-examples-control reported FIRED on iOS
+  // unconditionally. See the MUTATION-TOKEN check in main().
+  mkdirSync(join(proj, "Sources/Model/shared_engine/w2v_frontend_cpuAndNE.mlpackage"),
+            { recursive: true });
+  writeFileSync(join(proj, "Sources/Model/agent.avatar"), Buffer.alloc(1_100_000));
+  writeFileSync(join(proj, "Sources/Model/speech16k.wav"), "");
 
   console.log("[ios] xcodegen generate");
   const g = run("xcodegen", ["generate", "--spec", "project.yml"], { cwd: proj });
@@ -791,9 +836,12 @@ async function main() {
   const started = Date.now();
   let worst = 0;
   const perArm = {};
+  const armOut = {};
   try {
     for (const a of arms) {
+      ARM_TRANSCRIPT = "";
       const rc = a === "android" ? await buildAndroid(workRoot) : await buildIos(workRoot);
+      armOut[a] = ARM_TRANSCRIPT;
       perArm[a] = rc;
       worst = Math.max(worst, rc === 2 ? 2 : rc);
       if (rc === 2) break; // infrastructure: stop, do not report a build verdict
@@ -825,6 +873,21 @@ async function main() {
     if (unrun.length) {
       console.log(`::error::the control could not be RUN on: ${unrun.join(", ")} — cannot-measure is not the same as the control firing`);
       console.log(`INFRASTRUCTURE (exit 2) after ${mins} min`);
+      return 2;
+    }
+    // ★AND IT MUST HAVE FAILED FOR *MY* REASON. A rejection that never names
+    // the mutated symbol is a build that died before it compiled anything, and
+    // grading it as FIRED is how this control certified a blind arm for eight
+    // days: the iOS placeholder made every run die in a preBuildScripts phase,
+    // `perArm.ios === 1` every Sunday, and "CONTROL FIRED on android + ios"
+    // was printed over a Swift compiler that was never invoked.
+    const wrongReason = arms.filter(
+      (a) => !(armOut[a] || "").includes(MUTATIONS[a].token));
+    if (wrongReason.length) {
+      for (const a of wrongReason) {
+        console.log(`::error::[${a}] THE CONTROL FIRED FOR THE WRONG REASON: the build failed without ever naming ${JSON.stringify(MUTATIONS[a].token)}, so the mutated source was never compiled and this arm certifies nothing. Read the transcript for what actually stopped it.`);
+      }
+      console.log(`CONTROL BLIND (exit 2) after ${mins} min`);
       return 2;
     }
     console.log(`CONTROL FIRED on ${arms.join(" + ")} in ${mins} min — every mutated page was REJECTED by its toolchain, so this gate really is compiling the published code`);
