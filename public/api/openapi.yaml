@@ -181,7 +181,12 @@ paths:
                   example: "You are a friendly fitness coach who motivates users."
                 image:
                   type: string
-                  description: URL to a face image for avatar appearance.
+                  description: >-
+                    URL to a face image for avatar appearance. For the best
+                    likeness use a photo with one clear figure, a neutral
+                    expression, facing the camera, a relaxed pose, and no
+                    occlusion of the face. This is guidance, not validation —
+                    nothing inspects or rejects the photo you send.
                   example: "https://example.com/face.jpg"
                 audio:
                   type: string
@@ -4548,8 +4553,8 @@ tags:
       Call [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent) with:
 
       - **Prompt** — system instructions for the agent's personality
-      - **Portrait** — front-facing photo (bitHuman generates the 10-second
-        identity video internally)
+      - **Portrait** — a photo of the person (bitHuman generates the
+        10-second identity video internally)
       - **Voice samples** — 3–10 s of clean speech for voice cloning
       - (Optional) **Knowledge** — documents the agent should know about
 
@@ -4569,8 +4574,10 @@ tags:
 
       ### Media tips
 
-      - **Portrait**: front-facing, neutral expression, even lighting,
-        eyes open, mouth closed. Avoid hats, glasses, hands in frame.
+      - **Portrait**: one clear figure, neutral expression, facing the
+        camera, relaxed pose, no occlusion of the face. This is guidance,
+        not validation — nothing inspects or rejects the photo you send —
+        so pass the same five points on to whoever picks it.
       - **Voice**: 3–10 seconds of clean speech, no background noise,
         no music, mono WAV preferred (16 kHz+).
 

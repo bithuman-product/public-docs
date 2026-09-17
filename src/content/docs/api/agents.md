@@ -61,6 +61,13 @@ The call returns immediately with an `agent_id` and `processing` status.
 > [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
 > anything is billed.
 
+> **Choosing the `image`.** The best likeness comes from a photo with **one
+> clear figure**, a **neutral expression**, **facing the camera**, a **relaxed
+> pose**, and **no occlusion of the face**. This is guidance, not validation —
+> nothing inspects, scores or rejects the photo you send — so if your own users
+> supply the photo, pass the same five points on to them. See
+> [what makes a good photo](/guides/building-avatars#what-makes-a-good-photo).
+
 ### Model-specific inputs and creation times
 
 The `model` you pick changes what creation needs and how long it runs. All

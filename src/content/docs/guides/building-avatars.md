@@ -33,8 +33,20 @@ so movement comes built in, for every model.
 
 | Input | Use for | Limits |
 |---|---|---|
-| **Image** | Facial likeness | < 10 MB, one person, front-facing, calm expression, well-lit |
+| **Image** | Facial likeness | < 10 MB; one clear figure, neutral expression, facing the camera, relaxed pose, face unobstructed |
 | **Voice** | Voice cloning | < 1 min, clean (no music/noise), MP3 / WAV / M4A, natural speech |
+
+### What makes a good photo
+
+Your image sets the likeness, so it is worth picking a good one. For the best result, use a photo with:
+
+- **A clear figure** — one subject, in focus and easy to see.
+- **A neutral expression** — a resting face, not mid-laugh or mid-word.
+- **Facing the camera** — straight on, not a side profile.
+- **A relaxed pose** — however the person naturally stands or sits.
+- **No occlusion of the face** — eyes, nose and mouth all visible.
+
+None of this is enforced: any photo you send is accepted, and nothing inspects or scores it. These are simply the conditions the models were built around, so a photo that meets them gives the most lifelike avatar. If you are building on top of bitHuman, pass the same five points on to whoever chooses the photo.
 
 ### Priority rules
 
@@ -102,7 +114,7 @@ Best results: front-facing, high-contrast, well-lit, face filling the frame. Sid
 The same upload + packaging flow is available over HTTP — generate agents from your own service. Call [`POST /v1/agent/generate`](/api/reference) with:
 
 - **`prompt`** — system instructions for the agent's personality.
-- **`image`** — front-facing portrait URL (the 10-second identity video is generated from it internally).
+- **`image`** — portrait URL (the 10-second identity video is generated from it internally). Best results from [one clear figure, neutral expression, facing the camera, relaxed pose, face unobstructed](#what-makes-a-good-photo).
 - **`audio`** — voice sample URL (3–10 s of clean speech) for voice cloning.
 - **`model`** — which avatar model to build. An omitted `model` defaults to `expression-1` (Expression 1, 250 credits, since 2026-07-12); send `"auto"` to let the platform pick between the second-generation models, or name one explicitly.
 
@@ -150,7 +162,7 @@ The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`G
 
 ### Media tips for generation
 
-- **Portrait** — front-facing, neutral expression, even lighting, eyes open, mouth closed. Avoid hats, glasses, hands in frame.
+- **Portrait** — one clear figure, neutral expression, facing the camera, relaxed pose, face unobstructed. See [what makes a good photo](#what-makes-a-good-photo).
 - **Voice** — 3–10 seconds of clean speech, no background noise or music, mono WAV preferred (16 kHz+).
 
 ## What it costs
