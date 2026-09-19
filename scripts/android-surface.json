@@ -4,9 +4,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.5.11",
-        "digest": "sha256:9385735d4a3eb8ca9efdbbb751831f26f92ff3882adca8cdeb1f805a5241e5bb",
-        "filename": "essence2-android-0.5.11.aar",
+        "version": "0.5.12",
+        "digest": "sha256:8512fc644bcbed156d5656409082faf0e02eabbbf699e4e757d35213995823ac",
+        "filename": "essence2-android-0.5.12.aar",
         "resolved_on": "2026-09-19"
       },
       "surface": {
