@@ -13,8 +13,8 @@ label: "Performance"
 | Cloud GPU | NVIDIA RTX 4090 | 272 · 416x720 at 20 fps · 13.6x real time · hosted baked-54363cd28 (2026-09-19) | 88 · 1920x1080 at 25 fps · 3.52x real time · hosted 54363cd28 (2026-09-19) |
 | macOS | Apple M4 | 158 · 416x720 at 20 fps · 7.9x real time · cli-v2.6.18 (2026-09-14) | 82 · 1920x1080 at 25 fps · 3.28x real time · cli-v2.6.14 (2026-09-13) |
 | macOS · Python | Apple M4 | 157 · 416x720 at 20 fps · 7.85x real time · bithuman 3.1.8 (2026-09-14) | not measured on 3.1.8 (2026-09-14) |
-| Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.17 (2026-09-14) | 29 · 1920x1080 at 25 fps · 1.16x real time · cli-v2.6.17 (2026-09-14) |
-| Linux · Python | Intel Core i7-13700F | 49 · 416x720 at 20 fps · 2.45x real time · bithuman 3.1.4 (2026-09-13) | 32 · 1920x1080 at 25 fps · 1.28x real time · bithuman 2.11.3 (2026-09-19) |
+| Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.22 (2026-09-19) | 32 · 1920x1080 at 25 fps · 1.28x real time · cli-v2.6.22 (2026-09-19) |
+| Linux · Python | Intel Core i7-13700F | 47 · 416x720 at 20 fps · 2.35x real time · bithuman 2.11.3 (2026-09-19) | 32 · 1920x1080 at 25 fps · 1.28x real time · bithuman 2.11.3 (2026-09-19) |
 | iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · 1920x1080 at 25 fps · 2.12x real time · essence2-v1.7.0 (2026-09-16) |
 | Android | Galaxy S25+ | 58 · expression2-android 0.3.1 (2026-09-10) | 50 · 1920x1080 at 25 fps · 2x real time · essence2-android 0.5.6 (2026-09-14) |
 | Web | Chrome on M4 | 30 · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | not yet real time in a browser |
