@@ -18,7 +18,7 @@ surface for a different purpose, installed a different way.
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-`bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux.
+`bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux. `bithuman run` spawns `livekit-server` from your `PATH` — `brew install livekit` on macOS, `curl -sSL https://get.livekit.io | bash` on Linux.
 
 That one command is the install on both platforms. It puts a single
 self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put it
@@ -124,12 +124,14 @@ Upgrade if you are on anything older: through 2.6.19 a Linux `bithuman run`
 with no credential rendered indefinitely. Every render is metered either way,
 and [pricing](/guides/pricing) is the authority.
 
-Then open the printed `http://127.0.0.1:8088/`. For an
-[Expression 2](/concepts/expression-2) avatar — which is what `bithuman run`
-fetches when you give it no argument, and what the showcase slugs are — that
-page is a **local preview**: the avatar renders its idle loop at its own frame
-rate, and the terminal counts frames and viewers beside it. It does not ask for
-a microphone, and no conversation brain is started on this path.
+Then open the printed `http://127.0.0.1:8088/<CODE>`. From 2.6.22 an
+[Expression 2](/concepts/expression-2) avatar — what the showcase slugs are —
+is **a live session with the brain**: `run` spawns an embedded `livekit-server`
+(it must be on your `PATH`, see the prerequisites above), builds the
+conversation brain on first run (a one-time ~200 MB pip install, one to two
+minutes) and prints the session URL. Give `run` a slug or a file: on 2.6.22
+`bithuman run` with no argument fetches Wise Pup and then exits 66
+`MODEL_NOT_FOUND` (measured on Linux x86_64).
 `run` serves localhost only; `--host` takes a LAN or tailnet address to expose
 it. `--host 0.0.0.0` needs `--allow-public-bind` as well — without it the CLI
 exits 2 and binds nothing, rather than putting the session on every interface.
