@@ -151,7 +151,7 @@ Measured frame rates for every platform are on the
 | `bithuman: command not found` after the install | `~/.local/bin` is not on your `PATH` | `export PATH="$HOME/.local/bin:$PATH"` — the installer prints the same line |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on your `PATH` — a script or CI shell often lacks Homebrew's `/opt/homebrew/bin` | `brew install ffmpeg` (macOS) or `sudo apt install -y ffmpeg` (Linux); in a script, `export PATH="/opt/homebrew/bin:$PATH"` or set `BITHUMAN_FFMPEG` |
 | `render` refuses with `NOT_SIGNED_IN`, no output file | no credential — `render` is billed | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
-| `run` refuses with `METERING_REFUSED`, nothing served | no credential, or one the service rejected — `run` is billed too, from 2.6.20 | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
+| `run` refuses with `NOT_SIGNED_IN`, exit 77, nothing served | no credential — `run` is billed too, from 2.6.20. A credential the service *rejects* is a different answer: exit **1**, `sign-in failed: auth required (BE_ERR_NO_AUTH)` | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
 | `run --host 0.0.0.0` exits 2 with `PUBLIC_BIND_REFUSED` and nothing listening | binding every interface has to be deliberate | a LAN or tailnet address in `--host`, or add `--allow-public-bind` if you meant it |
 | `pull <CODE>` refuses without a sign-in | your own agent code needs a credential; a showcase slug never does | `bithuman login`, then pull again |
 | `pull <CODE>` fails with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman avatars` lists the public ones |
