@@ -114,10 +114,16 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
         while (true) {
             if (avatar.pull(frame) != null) { show(frame); continue }
             if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+            Thread.sleep(10)                  // null means "not ready yet" — wait, do not re-ask at once
         }
     }
 }
 ```
+
+`pull()` returns `null` when no frame is ready yet: it never renders and never
+waits, so asking again immediately just burns a core the engine needs — sleep,
+then ask again. That is what the line above does, and it is worth about 10 frames
+per second on a Galaxy S25+.
 
 The default `Expression2Options()` uses the handset's accelerator when it has
 one and falls back to the CPU instead of throwing.

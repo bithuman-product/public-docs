@@ -74,6 +74,7 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
         while (true) {
             if (avatar.pull(frame) != null) { show(frame); continue }
             if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+            Thread.sleep(10)                  // null means "not ready yet" — wait, do not re-ask at once
         }
     }
 }` },
