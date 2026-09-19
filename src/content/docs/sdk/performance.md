@@ -16,7 +16,7 @@ label: "Performance"
 | Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.22 (2026-09-19) | 32 · 1920x1080 at 25 fps · 1.28x real time · cli-v2.6.22 (2026-09-19) |
 | Linux · Python | Intel Core i7-13700F | 47 · 416x720 at 20 fps · 2.35x real time · bithuman 2.11.3 (2026-09-19) | 32 · 1920x1080 at 25 fps · 1.28x real time · bithuman 2.11.3 (2026-09-19) |
 | iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · 1920x1080 at 25 fps · 2.12x real time · essence2-v1.7.0 (2026-09-16) |
-| Android | Galaxy S25+ | 45 · 416x720 at 20 fps · 2.25x real time · expression2-android 0.4.7 (2026-09-19) | 52 · 1920x1080 at 25 fps · 2.08x real time · essence2-android 0.5.11 (2026-09-19) |
+| Android | Galaxy S25+ | 45 · 416x720 at 20 fps · 2.25x real time · expression2-android 0.4.7 (2026-09-19) | 46 · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |
 | Web | Chrome on M4 | 30 · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
 
@@ -57,6 +57,8 @@ The Essence 2 Cloud GPU number is how fast a finished 1920x1080 video file is de
 The iPhone Essence 2 number is what a phone does with no pause between renders: the published figure is the worst of three runs, and the slowest of them was the one taken straight after another with no cooldown. An iPhone 15 stayed above 53 frames per second in all three — more than twice the 25 Essence 2 plays at, so a conversation stays real time.
 
 The Android Expression 2 number is what a cool phone does. Under continuous rendering a Galaxy S25+ warms up and settles at about 40 frames per second after a few minutes — still twice the 20 frames per second Expression 2 plays at, so a conversation stays real time.
+
+The Android Essence 2 number went from 52 on essence2-android 0.5.11 to 46 on 0.5.12, and that is a change in the picture, not a slower engine: from 0.5.12 the mouth is drawn inside the identity's own lip outline instead of a plain oval that covered more of the face, and shaping every frame to that outline is more work per frame. A cool Galaxy S25+ measured 47, 46 and 50 frames per second on three separate starts; 46 is the lowest, and it is still well above the 25 frames per second Essence 2 plays at.
 
 The Essence 2 Web cell does not carry a number today. The engine computes about 27 frames per second in Chrome on an M4 when it is driven on its own, but that measurement stops the page's own display loop and detaches the live audio. On the page a visitor actually opens, with the voice playing and the picture being drawn on the same browser thread, Essence 2 delivered about 11 frames per second on 2026-09-15 — well under the 25 it plays at, so the face barely moves while the voice continues. Expression 2 in the same browser delivers its full 20 frames per second, because it does its work on a background thread and leaves the display loop free. This is a limitation of the Essence 2 web build, not of the hardware.
 
