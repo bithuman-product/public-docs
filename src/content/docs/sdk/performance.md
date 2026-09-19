@@ -13,7 +13,7 @@ label: "Performance"
 | Cloud GPU | NVIDIA RTX 4090 | 272 · 416x720 at 20 fps · 13.6x real time · hosted baked-5e4d606b8 (2026-09-19) | 92 · 1920x1080 at 25 fps · 3.68x real time · hosted cfd9ddf5c (2026-09-19) |
 | macOS | Apple M4 | 160 · 416x720 at 20 fps · 8x real time · cli-v2.6.24 (2026-09-19) | 109 · 1920x1080 at 25 fps · 4.36x real time · cli-v2.6.24 (2026-09-19) |
 | macOS · Python | Apple M4 | 157 · 416x720 at 20 fps · 7.85x real time · bithuman 3.1.8 (2026-09-14) | not measured on 3.1.8 (2026-09-14) |
-| Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.22 (2026-09-19) | 37 · 1920x1080 at 25 fps · 1.48x real time · cli-v2.6.24 (2026-09-19) |
+| Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.24 (2026-09-19) | 37 · 1920x1080 at 25 fps · 1.48x real time · cli-v2.6.24 (2026-09-19) |
 | Linux · Python | Intel Core i7-13700F | 47 · 416x720 at 20 fps · 2.35x real time · bithuman 2.11.3 (2026-09-19) | 32 · 1920x1080 at 25 fps · 1.28x real time · bithuman 2.11.3 (2026-09-19) |
 | iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · 1920x1080 at 25 fps · 2.12x real time · essence2-v1.7.0 (2026-09-16) |
 | Android | Galaxy S25+ | 45 · 416x720 at 20 fps · 2.25x real time · expression2-android 0.4.7 (2026-09-19) | 46 · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |
@@ -39,12 +39,6 @@ was taken on, which is deliberately not always the newest one published; for
 what to install today, see the page for your platform.
 
 A cell with no number says what is missing instead.
-
-**The Android Essence 2 cell is being re-measured.** Its number was taken on
-`essence2-android` 0.5.11, which `0.5.12` superseded on 2026-09-19 — and
-`0.5.12` is the coordinate every install page here now names. Read that cell as
-the record of the release it names, not as what today's artifact does on a
-handset; the new measurement replaces it here when it is taken.
 
 <details>
 <summary>What each number includes, row by row</summary>
