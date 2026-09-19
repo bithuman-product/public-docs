@@ -43,7 +43,7 @@ Silicon and Linux x86_64.
 curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
 ```
 
-`bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux.
+`bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux. `bithuman run` spawns `livekit-server` from your `PATH` — `brew install livekit` on macOS, `curl -sSL https://get.livekit.io | bash` on Linux.
 
 `BITHUMAN_INSTALL_DIR` overrides the default `~/.local/bin`. Other install
 options are on the [CLI page](/sdk/cli#install).
@@ -79,7 +79,7 @@ Play `out.mp4` — it is the length of the audio. To see the same avatar live,
 run it and open the printed URL:
 
 ```bash
-bithuman run "$(bithuman pull wise-pup)"     # → http://127.0.0.1:8088/ — a local preview of the avatar
+bithuman run "$(bithuman pull wise-pup)"     # → http://127.0.0.1:8088/<CODE> — a live session, brain included
 ```
 
 The full command set is on [the CLI page](/sdk/cli).
