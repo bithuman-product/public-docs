@@ -44,8 +44,8 @@ you what you got:
 
 ```text
 $ bithuman --version
-libessence  2.11.1 ABI 7         # the engine inside, and the ABI it speaks
-bithuman    2.6.22               # the CLI itself
+libessence  2.11.3 ABI 7         # the engine inside, and the ABI it speaks
+bithuman    2.6.23               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
@@ -85,15 +85,16 @@ A showcase pull is anonymous — `login` is for `render` and for your own agents
 `~/.cache/bithuman/agents/<YOUR_AGENT_CODE>/<YOUR_AGENT_CODE>.imx` (`--model` picks a family
 when the agent has more than one).
 
-> **Give `run` a model — do not rely on the bare `bithuman run`.** The binary's
-> own help offers it as a zero-config first step, and on **cli-v2.6.22** it does
-> not work: it fetches the Wise Pup lane into a *directory* and then hands that
-> directory to a loader that wants a file, so it stops at
+> **The bare `bithuman run` needs cli-v2.6.23.** From that release it is
+> `bithuman run wise-pup` — the same resolver, the same cache, the same session
+> (measured on 2026-09-19 on Linux x86_64, fresh `$HOME`: the embedded
+> `livekit-server` and the brain come up and the session URL prints, with no
+> `~/.bithuman/avatars/` directory left behind). On **cli-v2.6.22** it does not
+> work: it fetches the Wise Pup lane into a *directory* and hands that to a
+> loader that wants a file, stopping at
 > `error: model '~/.bithuman/avatars/A23WJF0199' is not a file`, exit **66**.
-> Reproduced on 2026-09-19 on Linux x86_64, on a fresh `$HOME` and on a warm
-> one. `bithuman pull wise-pup` writes a real `.imx` and
-> `bithuman run "$(bithuman pull wise-pup)"` runs it — that is the path this
-> page teaches everywhere else, and it is the one to use.
+> `bithuman run "$(bithuman pull wise-pup)"` runs on either — that is the path
+> this page teaches everywhere else.
 
 ## Minimal code
 
@@ -121,17 +122,22 @@ BITHUMAN_API_SECRET"*; `run` refuses on the same terms. Both name the same two
 remedies, and no environment variable renders for free.
 
 Upgrade if you are on anything older: through 2.6.19 a Linux `bithuman run`
-with no credential rendered indefinitely. Every render is metered either way,
-and [pricing](/guides/pricing) is the authority.
+with no credential rendered indefinitely, and through 2.6.22 the Linux
+`--offscreen` render was the one path left open — it rendered with no
+credential, and unmetered with one. From 2.6.23 it exits 77 `METERING_REFUSED`
+before the first frame like every other path, and the host meters (measured on
+the published Linux tarball, fresh `$HOME`). Every render is metered either
+way, and [pricing](/guides/pricing) is the authority.
 
 Then open the printed `http://127.0.0.1:8088/<CODE>`. From 2.6.22 an
 [Expression 2](/concepts/expression-2) avatar — what the showcase slugs are —
 is **a live session with the brain**: `run` spawns an embedded `livekit-server`
 (it must be on your `PATH`, see the prerequisites above), builds the
 conversation brain on first run (a one-time ~200 MB pip install, one to two
-minutes) and prints the session URL. Give `run` a slug or a file: on 2.6.22
-`bithuman run` with no argument fetches Wise Pup and then exits 66
-`MODEL_NOT_FOUND` (measured on Linux x86_64).
+minutes) and prints the session URL. From 2.6.23 `bithuman run` with no
+argument is `bithuman run wise-pup` and reaches the same session; on 2.6.22 it
+fetched Wise Pup and then exited 66 `MODEL_NOT_FOUND` (both measured on Linux
+x86_64).
 `run` serves localhost only; `--host` takes a LAN or tailnet address to expose
 it. `--host 0.0.0.0` needs `--allow-public-bind` as well — without it the CLI
 exits 2 and binds nothing, rather than putting the session on every interface.
