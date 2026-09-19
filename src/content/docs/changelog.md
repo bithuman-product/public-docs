@@ -10,6 +10,17 @@ order: 1
 
 ## September 2026
 
+### The mouth is composed through the identity's own lip contour — `bithuman` 2.11.4 (2026-09-19)
+
+`pip install --upgrade bithuman`. When an Essence 2 avatar carries its lip
+contour (`lip_template.v1.json` — the door serves it for most identities today),
+the engine now composes the mouth through that contour instead of the generic
+elliptical region it used before, so less of the picture around the lips is
+regenerated per frame. An avatar without the member renders exactly as 2.11.3
+did. The mouth's own texture is unchanged: it stays the identity's own on both
+CPU tiers, as 2.11.3 made it. No API change; Python 3.10–3.14 on macOS arm64,
+Linux x86_64 and Linux aarch64.
+
 ### `bithuman run` with no argument runs Wise Pup, and a Linux offline render is metered — `cli-v2.6.23` (2026-09-19)
 
 `curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`

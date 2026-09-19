@@ -45,7 +45,7 @@ The Python library and the CLI binary are separate things and have been since 2.
 
 | Artifact | Latest version | Where it comes from |
 |---|---|---|
-| Python SDK (`bithuman`) | **2.11.3** — `pip install bithuman`, unconstrained, resolves it, and so does a `bithuman<3` pin (`livekit-plugins-bithuman` declares one); the 3.x line was withdrawn from PyPI on 2026-09-16, and 2.11.3 is its engine with the 2.x import surface carried alongside | [PyPI](https://pypi.org/project/bithuman/) |
+| Python SDK (`bithuman`) | **2.11.4** — `pip install bithuman`, unconstrained, resolves it, and so does a `bithuman<3` pin (`livekit-plugins-bithuman` declares one); the 3.x line was withdrawn from PyPI on 2026-09-16, and 2.11.4 is its engine with the 2.x import surface carried alongside | [PyPI](https://pypi.org/project/bithuman/) |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Expression2`) | **2.6.3** (package tag **2.13.5** — `from:` resolves it; `idleLoop` left the public surface in 2.6.3, see the [changelog](/changelog)) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `.imx` you download here. The newest package tag, **2.13.7**, ships Essence 2 engine **1.8.0**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
