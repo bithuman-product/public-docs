@@ -16,19 +16,38 @@ order: 10
 pip install livekit-plugins-bithuman pillow
 ```
 
-**Python 3.11, 3.12 or 3.13.** The plugin is LiveKit's package, and 1.8.1 asks
-for the bitHuman wheel only on those three interpreters: on 3.10 or 3.14 it
-installs with no bitHuman wheel and the first import fails. On the interpreters
-where it does ask, it pins below 3.x, so this command installs the 2.x
-wheel rather than the current one on [the Python page](/sdk/python). The
-[LiveKit page](/sdk/livekit#python-deploy-via-the-livekit-plugin) has the
-resolved versions and why no bitHuman release can change them.
+**The line above is for Python 3.11, 3.12 and 3.13.** On **3.10 or 3.14**, name
+`bithuman` yourself as well:
 
-> **Note** The plugin imports `PIL` but doesn't declare Pillow — install
-> `pillow` alongside it (as above). Without it,
-> `from livekit.plugins import bithuman` fails with
-> `ModuleNotFoundError: No module named 'PIL'`. An upstream fix is pending with
-> LiveKit.
+```bash
+pip install livekit-plugins-bithuman pillow bithuman     # Python 3.10 / 3.14
+```
+
+Both extra words are there because of the plugin's published metadata, which is
+LiveKit's to set, not ours. Measured against the current release (**1.8.2**) on
+2026-09-19:
+
+| you run | 3.11 / 3.12 / 3.13 | 3.10 / 3.14 |
+|---|---|---|
+| `pip install livekit-plugins-bithuman` | installs, then `ModuleNotFoundError: No module named 'PIL'` | installs, then `ModuleNotFoundError: No module named 'cv2'` |
+| `… pillow` | **imports** | still `No module named 'cv2'` |
+| `… pillow bithuman` | **imports** | **imports** |
+
+Two separate causes. The plugin does `from PIL import Image` at module scope
+and never declares `pillow`. And it asks for `bithuman` behind a
+`python_version >= "3.11" and python_version < "3.14"` marker, so on 3.10 and
+3.14 pip reports success and installs no `bithuman` at all — which takes `cv2`,
+`loguru` and the runtime with it. `pip install bithuman` beside the plugin
+resolves it: the wheel publishes cp310 and cp314 and imports cleanly on both.
+
+> **Both are already fixed upstream and merely unreleased.**
+> [livekit/agents#7280](https://github.com/livekit/agents/pull/7280) added
+> `pillow` and dropped the marker on 2026-09-15, about four hours after 1.8.2
+> was cut. A plugin release after that commit needs neither extra word.
+
+The plugin pins `bithuman<3`, so it installs the 2.x wheel rather than anything
+newer — [the LiveKit page](/sdk/livekit#python-deploy-via-the-livekit-plugin)
+has the resolved versions and why no bitHuman release can change them.
 
 ## Set your environment
 
