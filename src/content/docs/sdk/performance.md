@@ -10,7 +10,7 @@ label: "Performance"
 <!-- FLOORS:TABLE all -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---|---|
-| Cloud GPU | NVIDIA RTX 4090 | 272 · 416x720 at 20 fps · 13.6x real time · hosted baked-5e4d606b8 (2026-09-19) | 86 · 1920x1080 at 25 fps · 3.44x real time · hosted 5e4d606b8 (2026-09-19) |
+| Cloud GPU | NVIDIA RTX 4090 | 272 · 416x720 at 20 fps · 13.6x real time · hosted baked-5e4d606b8 (2026-09-19) | 92 · 1920x1080 at 25 fps · 3.68x real time · hosted cfd9ddf5c (2026-09-19) |
 | macOS | Apple M4 | 160 · 416x720 at 20 fps · 8x real time · cli-v2.6.24 (2026-09-19) | 109 · 1920x1080 at 25 fps · 4.36x real time · cli-v2.6.24 (2026-09-19) |
 | macOS · Python | Apple M4 | 157 · 416x720 at 20 fps · 7.85x real time · bithuman 3.1.8 (2026-09-14) | not measured on 3.1.8 (2026-09-14) |
 | Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.22 (2026-09-19) | 37 · 1920x1080 at 25 fps · 1.48x real time · cli-v2.6.24 (2026-09-19) |
@@ -66,7 +66,7 @@ The Linux numbers come from an Intel Core i7-13700F desktop with nothing else ru
 
 The Linux Essence 2 number is how fast the CLI renders a file, not the rate a conversation plays at. Essence 2 plays at 25 frames per second on every platform, and headroom above that shortens a render and absorbs a busy machine rather than putting more frames on screen. Essence 2 on Linux also varies more from run to run than any other row here: on the same desktop, the same release and the same clip, repeated renders at the stock settings measured between 25 and 33 frames per second on 2026-09-17, with the slowest and the fastest both taken on an idle machine. Expression 2 measured in the same session on the same desktop stayed inside 2 per cent, so this is something about Essence 2 rather than about the machine.
 
-Read a number here with the frame size beside it. Essence 2 delivers a 1920x1080 picture 25 times a second and Expression 2 delivers a 416x720 picture 20 times a second, which is 8.65 times the pixels per second of speech. On the Cloud GPU row that makes Essence 2's 86 about 178 megapixels a second against Expression 2's 272 at 81 — Essence 2 is doing 2.19 times more pixel work per second while its number reads smaller. What the two columns DO compare on is how far above the conversation each one renders, 3.44 times real time against 13.6, and every cell prints it.
+Read a number here with the frame size beside it. Essence 2 delivers a 1920x1080 picture 25 times a second and Expression 2 delivers a 416x720 picture 20 times a second, which is 8.65 times the pixels per second of speech. On the Cloud GPU row that makes Essence 2's 92 about 191 megapixels a second against Expression 2's 272 at 81 — Essence 2 is doing 2.34 times more pixel work per second while its number reads smaller. What the two columns DO compare on is how far above the conversation each one renders, 3.68 times real time against 13.6, and every cell prints it.
 <!-- /FLOORS:NOTES -->
 
 </details>
