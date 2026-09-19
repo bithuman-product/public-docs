@@ -108,7 +108,7 @@ Every self-hosted `run` and `render` is metered. The line to grep for, printed o
 
 If the service cannot be reached — our outage or your network — the render continues and is never refused, because being unable to ask is not the same as being told no. Every beat says so and the session still ends 0: *"beat seq=1 failed to send (…); 5.3s (181 frames) stay UNACKED and will be re-claimed. Rendering continues."*
 
-`BITHUMAN_METER_ENFORCE=1` was the operator override for that case through 2.6.20, where it took effect on macOS only. On 2.6.22 it is not what decides: `run` **signs the credential in first, on both platforms**. An invalid secret exits 1 — *"sign-in failed: auth required (BE_ERR_NO_AUTH)"* — before anything starts, with or without the variable; a valid one with the metering service unreachable brings the session up live on Linux and macOS alike, with no refusal before serving. Do not rely on the variable to hold a box to a validated credential.
+`BITHUMAN_METER_ENFORCE=1` was the operator override for that case through 2.6.20, where it took effect on macOS only. From 2.6.22 it is not what decides: `run` **signs the credential in first, on both platforms**. An invalid secret exits 1 — *"sign-in failed: auth required (BE_ERR_NO_AUTH)"* — before anything starts, with or without the variable; a valid one with the metering service unreachable brings the session up live on Linux and macOS alike, with no refusal before serving — and on 2.6.23 Linux a viewer who then joins is rendered to, with the variable set: *"could not reach … /v1/auth/validate … PROCEEDING and metering in the background"*, then *"beat seq=1 failed to send … 74 frames stay UNACKED … Rendering continues."* Do not rely on the variable to hold a box to a validated credential.
 
 A render with no credential, or one the service rejects, is refused outright on both platforms: `render` from 2.6.19, and `run` from 2.6.20 — see below.
 
@@ -354,7 +354,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.22","libessence":"2.11.1",
+{"abi":7,"cli":"2.6.23","libessence":"2.11.3",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}

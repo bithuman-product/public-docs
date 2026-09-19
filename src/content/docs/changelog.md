@@ -10,6 +10,48 @@ order: 1
 
 ## September 2026
 
+### `bithuman run` with no argument runs Wise Pup, and a Linux offline render is metered — `cli-v2.6.23` (2026-09-19)
+
+`curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
+to confirm (`bithuman 2.6.23`). macOS arm64 and Linux x86_64, built from one
+commit.
+
+- **The bare `bithuman run` is `bithuman run wise-pup` now.** On `cli-v2.6.22`
+  the first command the binary's own help offers exited 66 `MODEL_NOT_FOUND`:
+  it fetched the Wise Pup identity through a second resolver that wrote loose
+  members into a *directory* and handed that directory to a loader that wants
+  one `.imx` *file*, while `bithuman run wise-pup` worked. The no-argument
+  branch now takes exactly the by-name route — one resolver, one cache
+  (`~/.cache/bithuman/showcase/`), the same exit code and the same `--json`
+  envelope. The divergent resolver is deleted along with the four variables
+  only it read: `BITHUMAN_DEFAULT_AVATAR`, `BITHUMAN_DEFAULT_AVATAR_URL`,
+  `BITHUMAN_DEFAULT_AVATAR_LEGACY` and `BITHUMAN_DEFAULT_IMX_URL` do nothing
+  from this release; `bithuman run <name-or-url>` picks a different identity.
+- **On Linux an offline render needs a credential, and is metered.** The
+  published 2.6.22 rendered `bithuman run <model> --offscreen` on Linux with
+  **no credential** (macOS refused), and — because the Linux render host was
+  packed without the module its own meter imports — rendered *unmetered even
+  with one*. Both are closed: a credential-less offline render exits **77**
+  `METERING_REFUSED` on both platforms (measured on the published Linux tarball,
+  fresh `$HOME`: refused before the first frame, nothing written), the host
+  beats the meter, and the pixels are unchanged. The Linux build now refuses to
+  ship a host that cannot import its meter. [Pricing](/guides/pricing) is the
+  authority on what a render costs.
+- **`bithuman render` says why the encoder died.** A dead ffmpeg used to
+  surface only as *"write frame to ffmpeg: Broken pipe (os error 32) (encoder
+  died?)"*. The encoder's exit status — or the signal that killed it — and its
+  stderr are now on the same error line.
+- **MCP tool refusals carry a code.** A refused tool call answered with a
+  prose string and no code. Every refusal now carries the CLI's own error
+  envelope — `INVALID_ARGUMENTS`, `NOT_SIGNED_IN`, and the child's own code for
+  `render` — so a client can branch on it.
+- **Nothing renamed.** No machine `code`, `--json` key or exit code is added or
+  renamed; a script that parsed 2.6.22 parses 2.6.23. The engine pin moves to
+  `essence1-v3.1.3-e2.26` (bithuman-models `b8252b09d`): the essence-1 engine
+  linked is source-identical to 2.6.22's and only its version number moved
+  (2.11.1 → 2.11.3); the essence-2 core inside is built from that same commit
+  and so carries the mouth fix described in the entry below.
+
 ### The mouth is the identity's own again, everywhere — `bithuman` 2.11.3, `essence2-android` 0.5.11 (2026-09-18/19)
 
 One defect, two coordinates, and worth a paragraph because nothing in the output
