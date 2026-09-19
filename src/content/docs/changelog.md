@@ -10,6 +10,46 @@ order: 1
 
 ## September 2026
 
+### The mouth is the identity's own again, everywhere — `bithuman` 2.11.3, `essence2-android` 0.5.11 (2026-09-18/19)
+
+One defect, two coordinates, and worth a paragraph because nothing in the output
+announced it. When an avatar speaks, the inside of the mouth is meant to come
+from the identity's own recording. On the affected releases part of it was
+generated instead — on every frame — and the render's own quality counter read
+clean throughout, because that counter grades whole frames and the effect was
+partial on every one of them. The fix removes the generated part entirely.
+
+- **Python SDK — `bithuman` 2.11.3.** `pip install --upgrade bithuman`. Fixed on
+  both CPU tiers, including the default one. The same release stops the offline
+  renderer unpacking ~432 MB per renderer that the engine already reads without
+  it — **and that unpacking was changing your picture**, because it re-encoded a
+  frame the renderer then preferred over the original. Renders now use the
+  original. No API change.
+- **Android — `ai.bithuman:essence2-android:0.5.11`.** Measured on a handset
+  across the same 62 frames as the release before it: the generated share of the
+  mouth went from **0.1107 mean / 0.8371 max to 0.000000 / 0.000000**. No Kotlin
+  or Java surface change — bump the coordinate and rebuild.
+
+### A warm `bithuman run` stops re-downloading the avatar it already has — `cli-v2.6.22` (2026-09-17)
+
+`curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
+to confirm.
+
+Every launch re-fetched every piece of the identity and wrote it over the
+byte-identical file already on disk — warm or cold. The CLI now checks what is
+already there, by declared length and then by digest, and fetches only what is
+missing or wrong. Measured on the default identity on Linux:
+
+| | bytes moved | stage wall |
+|---|---|---|
+| before, every launch | 76,239,355 B | 1.09–1.33 s |
+| after, warm launch | 12,620,302 B | 0.30–0.38 s |
+
+**−83.4% of the transfer, 3.6x off the line** — and strictly *more* checking than
+before, because the old path never read what was on disk, it assumed the
+overwrite. Anything short, long, corrupt or undeclared still falls through to a
+full fetch.
+
 ### The avatar's source video plays in place, and long audio stops being cut short — Swift SDK 2.13.6 / `Essence2` engine 1.7.0 (2026-09-16)
 
 Package tag **2.13.6** on the [SwiftPM package](https://github.com/bithuman-product/homebrew-bithuman);

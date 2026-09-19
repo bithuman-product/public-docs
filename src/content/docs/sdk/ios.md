@@ -23,7 +23,7 @@ In Xcode, *File → Add Package Dependencies…* and paste the URL, or in
 `from:` is a floor — it resolves the newest 2.x tag. The `Expression2` product
 is the [Expression 2](/concepts/expression-2) engine as a pre-compiled
 xcframework (`ios-arm64`, `macos-arm64`) with no transitive packages.
-The `Essence2` product is the [Essence 2](/concepts/essence-2) engine, also a pre-compiled xcframework (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`). Since **2.13.2** it opens the `<code>.imx` you download for your own agent, on both iPhone and Mac — the measured iPhone 15 rate is on the [performance page](/sdk/performance). The newest package tag, **2.13.6**, ships Essence 2 engine **1.7.0** and Expression 2 engine **2.6.3**, and `from:` resolves it for you. You still fetch the file yourself; there is no in-app download route.
+The `Essence2` product is the [Essence 2](/concepts/essence-2) engine, also a pre-compiled xcframework (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`). Since **2.13.2** it opens the `<code>.imx` you download for your own agent, on both iPhone and Mac — the measured iPhone 15 rate is on the [performance page](/sdk/performance). The newest package tag, **2.13.7**, ships Essence 2 engine **1.8.0** and Expression 2 engine **2.6.3**, and `from:` resolves it for you. You still fetch the file yourself; there is no in-app download route.
 
 ## Authentication and configuration
 
