@@ -16,7 +16,7 @@ label: "Performance"
 | Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.17 (2026-09-14) | 29 · 1920x1080 at 25 fps · 1.16x real time · cli-v2.6.17 (2026-09-14) |
 | Linux · Python | Intel Core i7-13700F | 49 · 416x720 at 20 fps · 2.45x real time · bithuman 3.1.4 (2026-09-13) | 32 · 1920x1080 at 25 fps · 1.28x real time · bithuman 2.11.3 (2026-09-19) |
 | iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · 1920x1080 at 25 fps · 2.12x real time · essence2-v1.7.0 (2026-09-16) |
-| Android | Galaxy S25+ | 58 · expression2-android 0.3.1 (2026-09-10) | 50 · 1920x1080 at 25 fps · 2x real time · essence2-android 0.5.6 (2026-09-14) |
+| Android | Galaxy S25+ | 41 · 416x720 at 20 fps · 2.05x real time · expression2-android 0.4.7 (2026-09-19) | 52 · 1920x1080 at 25 fps · 2.08x real time · essence2-android 0.5.11 (2026-09-19) |
 | Web | Chrome on M4 | 30 · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
 
