@@ -10,14 +10,14 @@ label: "Performance"
 <!-- FLOORS:TABLE all -->
 | Platform | Reference hardware | Expression 2 | Essence 2 |
 |---|---|---|---|
-| Cloud GPU | NVIDIA RTX 4090 | 290 · hosted main-4863fb011 | 105 · hosted cdf5fa3a3 |
-| macOS | Apple M4 | 158 · cli-v2.6.18 | 82 · cli-v2.6.14 |
-| macOS · Python | Apple M4 | 157 · bithuman 3.1.8 | not measured on 3.1.8 (2026-09-14) |
-| Linux | Intel Core i7-13700F | 44 · cli-v2.6.17 | 29 · cli-v2.6.17 |
-| Linux · Python | Intel Core i7-13700F | 49 · bithuman 3.1.4 | 27 · bithuman 3.1.6 |
-| iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · essence2-v1.7.0 |
-| Android | Galaxy S25+ | 58 · expression2-android 0.3.1 | 50 · essence2-android 0.5.6 |
-| Web | Chrome on M4 | 30 · bithuman-ui 021a6f6 | not yet real time in a browser |
+| Cloud GPU | NVIDIA RTX 4090 | 290 · 416x720 at 20 fps · 14.5x real time · hosted main-4863fb011 (2026-09-13) | 105 · 1920x1080 at 25 fps · 4.2x real time · hosted cdf5fa3a3 (2026-09-14) |
+| macOS | Apple M4 | 158 · 416x720 at 20 fps · 7.9x real time · cli-v2.6.18 (2026-09-14) | 82 · 1920x1080 at 25 fps · 3.28x real time · cli-v2.6.14 (2026-09-13) |
+| macOS · Python | Apple M4 | 157 · 416x720 at 20 fps · 7.85x real time · bithuman 3.1.8 (2026-09-14) | not measured on 3.1.8 (2026-09-14) |
+| Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.17 (2026-09-14) | 29 · 1920x1080 at 25 fps · 1.16x real time · cli-v2.6.17 (2026-09-14) |
+| Linux · Python | Intel Core i7-13700F | 49 · 416x720 at 20 fps · 2.45x real time · bithuman 3.1.4 (2026-09-13) | 27 · 1920x1080 at 25 fps · 1.08x real time · bithuman 3.1.6 (2026-09-14) |
+| iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · 1920x1080 at 25 fps · 2.12x real time · essence2-v1.7.0 (2026-09-16) |
+| Android | Galaxy S25+ | 58 · expression2-android 0.3.1 (2026-09-10) | 50 · 1920x1080 at 25 fps · 2x real time · essence2-android 0.5.6 (2026-09-14) |
+| Web | Chrome on M4 | 30 · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | not yet real time in a browser |
 <!-- /FLOORS:TABLE -->
 
 Rows marked **· Python** are the [Python library](/sdk/python)
@@ -57,6 +57,8 @@ The Essence 2 Web cell does not carry a number today. The engine computes about 
 The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
 
 The Linux Essence 2 number is how fast the CLI renders a file, not the rate a conversation plays at. Essence 2 plays at 25 frames per second on every platform, and headroom above that shortens a render and absorbs a busy machine rather than putting more frames on screen. Essence 2 on Linux also varies more from run to run than any other row here: on the same desktop, the same release and the same clip, repeated renders at the stock settings measured between 25 and 33 frames per second on 2026-09-17, with the slowest and the fastest both taken on an idle machine. Expression 2 measured in the same session on the same desktop stayed inside 2 per cent, so this is something about Essence 2 rather than about the machine.
+
+Read a number here with the frame size beside it. Essence 2 delivers a 1920x1080 picture 25 times a second and Expression 2 delivers a 416x720 picture 20 times a second, which is 8.65 times the pixels per second of speech. On the Cloud GPU row that makes Essence 2's 105 about 218 megapixels a second against Expression 2's 290 at 87 — Essence 2 is doing 2.51 times more pixel work per second while its number reads smaller. What the two columns DO compare on is how far above the conversation each one renders, 4.2 times real time against 14.5, and every cell prints it.
 <!-- /FLOORS:NOTES -->
 
 </details>
