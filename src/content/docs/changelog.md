@@ -24,8 +24,8 @@ route needs no extra any more (`torch` and `onnxruntime` are not pulled in);
 `ffmpeg` is still needed on `PATH` to write the MP4.
 
 On Apple Silicon the four combinations of "the identity carries a contour"
-and "its CoreML director declares the contour input" are each named at open,
-and the one that used to draw the older elliptical mask silently — a director
+and "its CoreML model declares the contour input" are each named at open,
+and the one that used to draw the older elliptical mask silently — a model
 without the input under an identity with a contour — now falls back to the
 onnxruntime path and draws the contour. A missing `api_secret` on a public
 wheel now says so plainly instead of refusing every frame. No API change;
