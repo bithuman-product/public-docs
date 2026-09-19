@@ -1,6 +1,6 @@
 ---
 title: "CLI — macOS and Linux"
-description: "Install one binary and type `bithuman run` — a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64, no account and no key for the first frame. Offline MP4 render in one more command."
+description: "Install one binary, sign in once, and `bithuman run` puts a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64. Offline MP4 render in one more command."
 section: sdk
 group: "Platforms"
 order: 10
@@ -44,11 +44,15 @@ you what you got:
 
 ```text
 $ bithuman --version
-libessence  3.1.8 ABI 7          # the engine inside, and the ABI it speaks
-bithuman    2.6.20               # the CLI itself
+libessence  2.11.1 ABI 7         # the engine inside, and the ABI it speaks
+bithuman    2.6.22               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
+
+The two numbers move independently and the installer always fetches the newest
+CLI, so read yours rather than this page's — the shape is the contract, the
+digits are a snapshot (taken 2026-09-19 from the installer's own download).
 
 Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
 Intel Mac or a Linux ARM box the installer names the platform and stops without
@@ -79,9 +83,17 @@ bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.i
 A showcase pull is anonymous — `login` is for `render` and for your own agents:
 `bithuman pull <YOUR_AGENT_CODE> --model essence-2` prints
 `~/.cache/bithuman/agents/<YOUR_AGENT_CODE>/<YOUR_AGENT_CODE>.imx` (`--model` picks a family
-when the agent has more than one). `bithuman run` with no argument fetches the
-free **Wise Pup** avatar (`A23WJF0199`, an [Expression 2](/concepts/expression-2)
-identity) itself.
+when the agent has more than one).
+
+> **Give `run` a model — do not rely on the bare `bithuman run`.** The binary's
+> own help offers it as a zero-config first step, and on **cli-v2.6.22** it does
+> not work: it fetches the Wise Pup lane into a *directory* and then hands that
+> directory to a loader that wants a file, so it stops at
+> `error: model '~/.bithuman/avatars/A23WJF0199' is not a file`, exit **66**.
+> Reproduced on 2026-09-19 on Linux x86_64, on a fresh `$HOME` and on a warm
+> one. `bithuman pull wise-pup` writes a real `.imx` and
+> `bithuman run "$(bithuman pull wise-pup)"` runs it — that is the path this
+> page teaches everywhere else, and it is the one to use.
 
 ## Minimal code
 
