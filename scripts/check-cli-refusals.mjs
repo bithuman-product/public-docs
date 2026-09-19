@@ -176,14 +176,24 @@ const ARMS = [
     why: "sdk/cli.md and the changelog say render stops before the first frame, having written nothing",
     args: (m, out) => ["render", m, "-a", m, "-o", out, "--json"],
     env: {}, expectCode: 77, expectName: "NOT_SIGNED_IN", expectNoOutput: true },
+  // ★THE REASON CODE MOVED, THE REFUSAL DID NOT. Through cli-v2.6.20 a
+  // credential-less `run` answered METERING_REFUSED; on cli-v2.6.22 both arms
+  // below answer NOT_SIGNED_IN at the same exit 77, which is the same code
+  // `render` has always used for the same state — the two commands now give one
+  // answer instead of two. Driven 2026-09-19 on Linux x86_64 against the
+  // installer's own bytes; `render` also answers 77 NOT_SIGNED_IN with no
+  // credential, with an invalid one, and with BITHUMAN_UNMETERED=1 set, writing
+  // no output file in any of the three. METERING_REFUSED appears nowhere on
+  // 2.6.22 and is kept below only as the RED CONTROL's wrong-reason fixture.
+  // What is graded here is unchanged: exit 77, a named reason, nothing served.
   { id: "run refuses with no credential",
     why: "from 2.6.20 this is true on Linux too, which is the claim the pages make",
     args: (m) => ["run", m, "--host", "127.0.0.1", "--port", "18991", "--json"],
-    env: {}, expectCode: 77, expectName: "METERING_REFUSED" },
+    env: {}, expectCode: 77, expectName: "NOT_SIGNED_IN" },
   { id: "BITHUMAN_UNMETERED=1 does not buy a render",
     why: "guides/pricing says no environment variable renders free in the CLI",
     args: (m) => ["run", m, "--host", "127.0.0.1", "--port", "18992", "--json"],
-    env: { BITHUMAN_UNMETERED: "1" }, expectCode: 77, expectName: "METERING_REFUSED" },
+    env: { BITHUMAN_UNMETERED: "1" }, expectCode: 77, expectName: "NOT_SIGNED_IN" },
   { id: "wildcard bind is refused without the opt-in",
     why: "sdk/cli and the changelog say exit 2 WITH NOTHING LISTENING — the socket, not the message, is the claim",
     args: (m) => ["run", m, "--host", "0.0.0.0", "--port", "18993", "--json"],
