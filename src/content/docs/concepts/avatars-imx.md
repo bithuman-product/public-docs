@@ -82,11 +82,12 @@ per-identity artifact, downloaded with
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
 > for compatibility** — it predates the current product naming and survives only
-> as the file extension. It is the literal string the download endpoint and
-> `bithuman pull` give you, and the one `bithuman info` expects, so it is spelled
-> here exactly as you will type it. It is not a product name and never appears in
-> an API request: the model is [`essence-2`](/concepts/essence-2). The file will
-> not be renamed — saved paths and scripts keep working.
+> as the extension older releases wrote, `<CODE>.lebundle.imx`. The download
+> endpoint and `bithuman pull` label the file `<CODE>.imx` today; a bundle you
+> saved under the older name keeps working, and `bithuman info` reads both, so
+> the old spelling is kept here exactly as you may still have it on disk. It is
+> not a product name and never appears in an API request: the model is
+> [`essence-2`](/concepts/essence-2).
 
 ## Inspecting an `.imx`
 

@@ -26,7 +26,8 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   carries — still gets it spelled exactly, with a plain statement that it is a
   legacy name kept for compatibility. Hiding a name a developer must type is
   worse than showing a retired one. The frozen carriers, which never rename:
-  `<code>.lebundle.imx` (documented once on `/concepts/avatars-imx`),
+  `<CODE>.lebundle.imx` (the name older releases wrote — the download endpoint
+  labels the file `<CODE>.imx` today; documented once on `/concepts/avatars-imx`),
   `libelevate-web` (the browser artifact path), `libelevate` / `lible_core`
   (the vendored engine and its native library, named verbatim in a runtime
   error), the `essence-2-light-gpu` / `-cpu` / `-ane` tier slugs that saved
