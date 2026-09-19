@@ -18,24 +18,17 @@ serve different purposes and neither replaces the other.
 pip install "bithuman[expression-2]"
 ```
 
-`bithuman` 2.11.4 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
+`bithuman` 2.11.5 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
 wheels. It is what an unconstrained `pip install bithuman` resolves, and what
 a `bithuman<3` pin resolves too: the 3.x line (3.0.0–3.1.10) was withdrawn
-from PyPI on 2026-09-16, and 2.11.4 carries the same engine with the 2.x
+from PyPI on 2026-09-16, and 2.11.5 carries the same engine with the 2.x
 import surface (`AsyncBithuman` and the rest) alongside the `open()` /
-`render()` surface below. The `[expression-2]` extra opens `.avatar` files; for the Essence 2
-clip-to-file route add the offline extra — on Linux install the CPU build of
-`torch` first, or the extra resolves to the default CUDA wheel and pulls the
-whole `nvidia-*` stack onto a machine that is about to render on the CPU:
-
-```bash
-pip install torch --index-url https://download.pytorch.org/whl/cpu   # Linux only
-pip install "bithuman[offline]"
-```
-
-The offline route also needs **`ffmpeg` on `PATH`** — it decodes the audio and
-encodes the MP4.
+`render()` surface below. The `[expression-2]` extra opens `.avatar` files. The Essence 2
+clip-to-file route (`bithuman.offline`) needs **no extra** since 2.11.5 — it
+runs the same engine the streaming route runs, so `torch` and `onnxruntime`
+are no longer pulled in for it (`bithuman[offline]` still resolves, for an
+install that pins it). Writing the MP4 needs **`ffmpeg` on `PATH`**.
 
 `pip install bithuman` puts **no `bithuman` command** on your `PATH` — the
 command-line tool is the [CLI](/sdk/cli), a separate install.

@@ -10,6 +10,27 @@ order: 1
 
 ## September 2026
 
+### An offline render is the same render as a streaming one, on macOS too — `bithuman` 2.11.5 (2026-09-19)
+
+`pip install --upgrade bithuman`. `bithuman.offline` (`OfflineRenderer`,
+`render_offline`) no longer drives a second, Python-side copy of the render:
+it opens the same engine session `bithuman.open()` opens and pushes the clip
+through it. So a clip rendered to a file now gets the same picture a live
+session gets — including the identity's own lip contour, which 2.11.4 brought
+to the streaming route only. Measured on the published wheels: the same avatar
+and audio through both routes give **299 of 299 frames byte-identical** on
+Linux and on macOS, with 0.0 generated mouth texture on both. The offline
+route needs no extra any more (`torch` and `onnxruntime` are not pulled in);
+`ffmpeg` is still needed on `PATH` to write the MP4.
+
+On Apple Silicon the four combinations of "the identity carries a contour"
+and "its CoreML director declares the contour input" are each named at open,
+and the one that used to draw the older elliptical mask silently — a director
+without the input under an identity with a contour — now falls back to the
+onnxruntime path and draws the contour. A missing `api_secret` on a public
+wheel now says so plainly instead of refusing every frame. No API change;
+Python 3.10–3.14 on macOS arm64, Linux x86_64 and Linux aarch64.
+
 ### The mouth follows the identity's own lip contour on Android — `essence2-android` 0.5.12 (2026-09-19)
 
 `ai.bithuman:essence2-android:0.5.12` on Maven Central. When an Essence 2
