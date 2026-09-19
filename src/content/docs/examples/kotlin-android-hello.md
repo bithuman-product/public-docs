@@ -439,6 +439,9 @@ class MainActivity : Activity() {
                     continue
                 }
                 if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+                // A null is "not ready yet". pull() never renders, so asking again at
+                // once just burns a core the engine needs — wait, then ask again.
+                Thread.sleep(10)
             }
         }
         frames = out
