@@ -48,9 +48,9 @@ Each artifact below is one section: the bytes it was read from, the packages it 
 | --- | --- |
 | Registry | maven-central |
 | Coordinate | ai.bithuman:essence2-android |
-| Version | 0.5.11 |
-| File | `essence2-android-0.5.11.aar` |
-| Digest | `sha256:9385735d4a3eb8ca9efdbbb751831f26f92ff3882adca8cdeb1f805a5241e5bb` |
+| Version | 0.5.12 |
+| File | `essence2-android-0.5.12.aar` |
+| Digest | `sha256:8512fc644bcbed156d5656409082faf0e02eabbbf699e4e757d35213995823ac` |
 | Resolved on | 2026-09-19 |
 
 | What the artifact declares | Value |

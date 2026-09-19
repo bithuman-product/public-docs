@@ -10,6 +10,50 @@ order: 1
 
 ## September 2026
 
+### The mouth follows the identity's own lip contour on Android — `essence2-android` 0.5.12 (2026-09-19)
+
+`ai.bithuman:essence2-android:0.5.12` on Maven Central. When an Essence 2
+identity carries its lip contour (`lip_template.v1.json` — the door serves it
+for most identities today), the mouth on the handset is now drawn within that
+contour instead of the generic elliptical region it used before. **This is the
+first Android release where that happens at all:** `0.5.11` and everything
+before it drew the ellipse whatever the identity carried, so the shape of the
+mouth on a phone was never the identity's own. An identity without the member
+renders exactly as `0.5.11` did.
+
+The mouth's own texture is unchanged and still entirely the identity's own:
+measured on a Galaxy S25+ across 62 frames, the generated share of the mouth
+read **0.000000 mean / 0.000000 max**, as `0.5.11` did.
+
+No Kotlin or Java surface change — the public surface read from the published
+AAR is identical to `0.5.11`'s, down to the member ([API
+reference](/sdk/android-api), which is generated from these bytes). Bump the
+coordinate and rebuild.
+
+### Essence 2 runs on Linux again, and the mouth follows the identity's own lip contour — `cli-v2.6.24` (2026-09-19)
+
+`curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
+to confirm (`bithuman 2.6.24`). macOS arm64 and Linux
+x86_64, built from one commit. **Upgrade if you are on Linux**, whichever model
+you run.
+
+- **On Linux, `cli-v2.6.23` could not run an Essence 2 identity at all.** Live
+  or `--offscreen`, it stopped about three seconds in with exit **134** and no
+  error envelope — the video library bundled in that one tarball had been built
+  without HEVC, which is what an Essence 2 identity's own video is encoded in.
+  There is no workaround on `2.6.23`; `2.6.24` ships a library that reads it,
+  and the build now refuses a video library that cannot open what an identity
+  ships, so a tarball with this hole cannot be packed again. **Expression 2
+  identities — Wise Pup, and everything `bithuman run` offers by default — and
+  every macOS build were unaffected throughout.**
+- **The mouth follows the identity's own lip contour.** An identity carrying
+  `lip_template.v1.json` now has its mouth drawn within that contour instead of
+  the generic elliptical region, the same change the Python wheel got in
+  `bithuman` 2.11.4. An identity without the member renders exactly as before.
+- **Nothing renamed.** No machine `code`, `--json` key or exit code is added or
+  renamed; a script that parsed `2.6.23` parses `2.6.24`, and everything
+  `2.6.23` fixed ships unchanged. The engine inside moves to **2.11.4** (ABI 7).
+
 ### The mouth follows the identity's own lip contour — `bithuman` 2.11.4 (2026-09-19)
 
 `pip install --upgrade bithuman`. When an Essence 2 avatar carries its lip

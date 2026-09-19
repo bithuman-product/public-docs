@@ -40,6 +40,12 @@ what to install today, see the page for your platform.
 
 A cell with no number says what is missing instead.
 
+**The Android Essence 2 cell is being re-measured.** Its number was taken on
+`essence2-android` 0.5.11, which `0.5.12` superseded on 2026-09-19 — and
+`0.5.12` is the coordinate every install page here now names. Read that cell as
+the record of the release it names, not as what today's artifact does on a
+handset; the new measurement replaces it here when it is taken.
+
 <details>
 <summary>What each number includes, row by row</summary>
 
