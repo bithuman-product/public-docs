@@ -364,17 +364,20 @@ print(agent["name"], agent["status"])
     "system_prompt": "You are a friendly AI assistant",
     "voice_id": "aBc123…",
     "image_url": "https://assets.bithuman.ai/A80HVD8577/image_20260115_103000_000001.jpg",
-    "video_url": "https://assets.bithuman.ai/A80HVD8577/video_20260115_103200_000002.mp4",
-    "model_url": "https://assets.bithuman.ai/A80HVD8577/A80HVD8577.lebundle.imx"
+    "video_url": "https://assets.bithuman.ai/A80HVD8577/video_20260115_103200_000002.mp4"
   }
 }
 ```
 
 The response carries the agent's full record (abridged above; verified against
-the live API 2026-08-01) — the **persona** (`system_prompt`, `name`,
+the live API 2026-09-19) — the **persona** (`system_prompt`, `name`,
 `description`, `language`, `gender`), the **voice** (`voice_id`), the **media**
 (`image_url`, `video_url` — the internally generated 10-second identity video —
-and `model_url`), the creation state (`status`, `progress`, `current_step`,
+and `model_url`, which for the second-generation families is the **stored
+handle** of the model rather than a link you can fetch — for an Essence 2 agent
+it reads `<CODE>.lebundle`, for an Expression 2 agent `embody/bundles/<CODE>`,
+both legacy names kept for compatibility; to get the file, use
+[the download endpoint](#download-an-agents-model), which labels it `<CODE>.imx`), the creation state (`status`, `progress`, `current_step`,
 `error_message`), and the launch surface (`model`, `supported_models` — every
 entry a public model name you can send straight back as a `model` /
 `?model=` value).

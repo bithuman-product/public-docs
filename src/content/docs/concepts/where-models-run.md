@@ -72,7 +72,7 @@ must handle a null. It is not a rounding error.
 row of the matrix applies to a file somebody sent you:
 
 ```bash
-bithuman info e2.lebundle.imx
+bithuman info A23KSG5258.imx
 ```
 
 ```text
@@ -82,10 +82,11 @@ bithuman info e2.lebundle.imx
     …
 ```
 
-Read the **`Family:`** line — that is the product. Two things in that output
-are legacy names you will meet and cannot avoid: the file extension
-`.lebundle.imx`, and the `Engine: essence2-light` line. Neither is a product
-name; [legacy names](#legacy-names-you-will-still-see) maps them all. The full
+Read the **`Family:`** line — that is the product. Two legacy names you can
+still meet here: the `Engine: essence2-light` line in that output, and the
+`.lebundle.imx` extension on a bundle an older release saved (the download
+endpoint labels the file `<CODE>.imx` today; `bithuman info` reads both). Neither
+is a product name; [legacy names](#legacy-names-you-will-still-see) maps them all. The full
 output and every exit code are on the
 [CLI reference](/sdk/cli/reference).
 
@@ -135,7 +136,7 @@ a retired one, so here they are:
 | `essence` | `model` field in the showcase manifest and in `agents.model` | **essence-1** | Yes — accepted request spelling. |
 | `essence2-light` | `Engine:` line from `bithuman info` | **essence-2** | No. Read-only; the `Family:` line is the answer. |
 | `essence-2-light` | the `agents.model` value in the database | **essence-2** | No — write `essence-2`. Retired as a product name, frozen as a stored value. |
-| `.lebundle.imx` | the file extension of an essence-2 bundle | an essence-2 model file | Yes — it is the filename you are given. |
+| `.lebundle.imx` | the extension on an essence-2 bundle an older release saved | an essence-2 model file | Only if you already have one — the download endpoint labels the file `<CODE>.imx` today, and `bithuman info` reads both. |
 | `elevate` | SDK request field | **essence-2** | Accepted for compatibility; write `essence-2` in new code. |
 | `embody` | legacy request spelling | **expression-2** | Accepted for compatibility; write `expression-2` in new code. |
 | `essence-2-quality` | older internal model lists and billing rows | a **separate, retired internal tier** — *not* another spelling of `essence-2` | No, and it is no longer accepted. It is not part of the public model set; if you meet it in your own historical billing rows it is that retired tier, not `essence-2`. |

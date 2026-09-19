@@ -8,8 +8,8 @@
 // `essence-2-quality`, `lebundle` and their variants are DEPRECATED.
 //
 // ★DEPRECATE IS NOT RENAME. Nothing that carries a retired name is renamed or
-// deleted here. A developer who must TYPE one — the `.lebundle.imx` file the
-// download endpoint hands them, the `libelevate-web` artifact path, a tier slug
+// deleted here. A developer who must TYPE one — the `.lebundle.imx` file an
+// older release left on their disk, the `libelevate-web` artifact path, a tier slug
 // a saved link carries — still gets it spelled exactly, because hiding a name a
 // developer must type is worse than showing a retired one. This script does not
 // hunt for the strings; it checks that every one of them is either a FROZEN
@@ -153,8 +153,16 @@ const ENGINE_FIELD_CONTEXT = /engine/i;
 // A hit whose surrounding text matches one of these is a literal a developer
 // receives or types. Each entry names why it is frozen.
 const CARRIERS = [
-  { why: "the artifact filename the download endpoint and `bithuman pull` produce",
-    re: /\.lebundle\.imx/i },
+  // ★REMOVED 2026-09-19: `.lebundle.imx` was a carrier here as "the artifact
+  // filename the download endpoint and `bithuman pull` produce". It is not:
+  // the endpoint has labelled the file `<CODE>.imx` since 2026-09-02 (measured
+  // through the customer door on 2026-09-19 — A23KSG5258 signs as
+  // `A23KSG5258.imx`). A bundle an older release saved keeps its name on a
+  // developer's disk and `bithuman info` still reads it, so the string stays
+  // SPELLABLE — under rule (b) like every other legacy name: within a block
+  // that says it is the older name. A carrier excused it everywhere, so a table
+  // row calling it the current artifact read green; the marker rule reddens
+  // exactly that row.
   { why: "the frozen public browser-artifact path under models.bithuman.ai",
     re: /libelevate-web/i },
   { why: "the vendored on-device engine and its native library, named verbatim in a runtime error",
@@ -305,6 +313,10 @@ const RETIRED_ON = {
   "Essence 2 Light": "2026-07-05",
   "essence-2-quality": "2026-07-29",
   "Essence 2 Quality": "2026-07-29",
+  // The download endpoint stopped labelling the essence-2 file `.lebundle.imx`
+  // on 2026-09-02 (it hands out `<CODE>.imx`). Entries before that date
+  // described the file by the name it actually had.
+  "lebundle": "2026-09-02",
   // Retired by the 2026-09-04 owner ruling (NAMING.md §6a). Every changelog
   // entry on this site predates it, so the changelog keeps its spellings and
   // this guard says so out loud rather than letting them pass unexplained.

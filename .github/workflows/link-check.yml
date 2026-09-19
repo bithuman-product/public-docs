@@ -64,7 +64,7 @@ name: Internal links
 #    reading this site meets only essence-2 and expression-2. `elevate`,
 #    `embody`, `essence-2-light`, `essence-2-quality` and `lebundle` are
 #    DEPRECATED. ★Deprecate is not rename: the strings a developer must TYPE —
-#    the `.lebundle.imx` file the download endpoint hands them, the
+#    the `.lebundle.imx` file an older release left on their disk, the
 #    `libelevate-web` artifact path, the tier slugs saved links carry, the
 #    /concepts/ redirects — are FROZEN and must keep working forever, spelled
 #    exactly, with a plain note that they are legacy names kept for
