@@ -51,7 +51,7 @@ questions elsewhere on this page:
 | Endpoint | Use |
 |---|---|
 | `GET /ready` | `200` when the worker will accept `/launch` — poll this, see below |
-| `GET /version` | `started_at` and `uptime_seconds` of the running worker. Its `git_sha` / `image_tag` / `build_time` read `unknown` on the published image — the build does not set them, so confirm your build from the **digest** instead (below) |
+| `GET /version` | `started_at` and `uptime_seconds` of the running worker, plus `git_sha`, `image_tag` and `build_time` — the commit and build the image was made from, baked in when it was published. An image built before those were stamped reads `unknown` for all three; confirm such a build from its **digest** instead (below) |
 | `GET /status` | `active_sessions`, `available_sessions`, `max_sessions` — live occupancy against the table below |
 | `POST /tasks/{task_id}/stop` | end one session; `GET /tasks` lists them |
 | `GET /health` | liveness, for an orchestrator's probe |
@@ -62,10 +62,12 @@ pipeline loads at startup rather than on the first `/launch`.
 
 **Requirements:** an **Ampere-or-newer NVIDIA GPU** (compute capability ≥ 8.0 with BF16 tensor cores — RTX 30xx/40xx, A-series, L4/L40S, H100; **Turing T4 / GTX 16xx / RTX 20xx and older fall back to a slower non-real-time path**), **≥ 8 GB VRAM**, the NVIDIA Container Toolkit, and Docker 24+. Weights (~5 GB) download on first run into the `bithuman-models` volume; subsequent runs skip the download.
 
-> **Pin the image.** `sgubithuman/expression-avatar` publishes no semver tags. In production pin the **digest**, which never moves:
+> **Pin the image.** `sgubithuman/expression-avatar` publishes no semver tags, and `:latest` moves with every publish. In production pin the **digest** of the image you tested, which never moves — read it off the image you pulled:
 >
 > ```bash
-> sgubithuman/expression-avatar@sha256:e9325ab35468be968eb41c4132b642775a45f83def2e11ee2f6ed5297fa696b3
+> docker pull sgubithuman/expression-avatar:latest
+> docker inspect --format '{{index .RepoDigests 0}}' sgubithuman/expression-avatar:latest
+> # sgubithuman/expression-avatar@sha256:…  ← pin this string in your deployment
 > ```
 >
 > On a GPU it has never seen before, the first run may spend a few extra minutes optimizing itself for that GPU (a one-time step); `GET /ready` stays non-`200` until that completes, so always poll `/ready` before sending `/launch`.
@@ -106,11 +108,10 @@ publish preset**, not the engine. LiveKit's default maps a small avatar track to
 a low-bitrate, frame-rate-capped VP8 preset with simulcast on, which decimates
 the render and, under encoder pressure, produces ~1 s frozen frames (black) plus
 a downscale. This container already publishes a tuned single H264 layer;
-ensure you are on a **current image build** — compare what you are running
-against the pinned digest above with
-`docker inspect <container> --format '{{.Config.Image}}'`, since `/version`
-reports `unknown` for the build fields on the published image — and tune via
-env if needed:
+ensure you are on a **current image build** — `GET /version` on the running
+worker names the `build_time` and `git_sha` it was built from, and
+`docker inspect <container> --format '{{.Config.Image}}'` shows the digest you
+pinned — and tune via env if needed:
 
 | Env | Default | Purpose |
 |---|---|---|
