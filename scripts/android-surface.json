@@ -4,10 +4,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.5.10",
-        "digest": "sha256:4074a827835a534dfc8176554fd18380ae3265037cb71402c6661a6cc5553e3c",
-        "filename": "essence2-android-0.5.10.aar",
-        "resolved_on": "2026-09-17"
+        "version": "0.5.11",
+        "digest": "sha256:9385735d4a3eb8ca9efdbbb751831f26f92ff3882adca8cdeb1f805a5241e5bb",
+        "filename": "essence2-android-0.5.11.aar",
+        "resolved_on": "2026-09-19"
       },
       "surface": {
         "artifact_facts": {
@@ -1973,6 +1973,15 @@
                 "jvm_getter": "getMean()D",
                 "jvm_setter": null,
                 "jvm_field": "field meanD",
+                "loadable": true
+              },
+              {
+                "name": "bandPx",
+                "signature": "var bandPx: Long",
+                "mutable": true,
+                "jvm_getter": "getBandPx()J",
+                "jvm_setter": "setBandPx$essence2_android_release(J)V",
+                "jvm_field": "field bandPxJ",
                 "loadable": true
               }
             ],
@@ -4175,6 +4184,22 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.BithumanCode",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.BithumanCodes",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.CoreThreads",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -4318,8 +4343,8 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 60,
-          "declared_classes": 55,
+          "class_files": 62,
+          "declared_classes": 57,
           "public_classes": 36
         }
       }
@@ -4331,7 +4356,7 @@
         "version": "0.4.7",
         "digest": "sha256:eb72f92093ced29efe0e439b25c41ad117668b2a0ff9cb83ee9d331d9b52f364",
         "filename": "expression2-android-0.4.7.aar",
-        "resolved_on": "2026-09-17"
+        "resolved_on": "2026-09-19"
       },
       "surface": {
         "artifact_facts": {
