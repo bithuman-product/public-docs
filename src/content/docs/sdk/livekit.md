@@ -27,23 +27,33 @@ than a browser.
 
 > **Python 3.11, 3.12 or 3.13 — and the plugin installs the 2.x wheel, not the
 > 3.x one.** `livekit-plugins-bithuman` is published by LiveKit, not by
-> bitHuman, and release 1.8.1 declares its bitHuman dependency as
+> bitHuman, and release **1.8.2** declares its bitHuman dependency as
 > `bithuman<3,>=0.5.25` under the marker
 > `python_version >= "3.11" and python_version < "3.14"`. Resolved against PyPI
-> on 2026-09-15 that means:
+> on 2026-09-19 that means:
 >
 > - On **Python 3.11, 3.12 or 3.13** the command below installs the newest
->   2.x wheel PyPI still serves — **2.3.4** when this was last driven, on
->   2026-09-15 — and not the 3.x wheel the [Python SDK page](/sdk/python)
+>   2.x wheel PyPI still serves — **2.11.3** when this was last driven, on
+>   2026-09-19 — and not the 3.x wheel the [Python SDK page](/sdk/python)
 >   documents. This is the combination that works, and it is what the examples
 >   below assume. Which 2.x you get depends on what the index holds that day:
 >   the pin is `bithuman<3`, and versions have been removed from it. **None of
 >   the 3.x work reaches this path** — an avatar rendered through the plugin is
 >   rendered by a 2.x engine.
+> - **It also needs `pillow`, which it does not declare** — `pip install
+>   livekit-plugins-bithuman pillow`. See
+>   [Deploy via LiveKit](/guides/deploy-livekit#install) for the full table of
+>   what fails where.
 > - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
 >   with *no* bitHuman wheel at all, and the first import fails with
 >   `ModuleNotFoundError: No module named 'cv2'` — cv2 reaches the plugin as a
->   dependency of the wheel that was skipped.
+>   dependency of the wheel that was skipped. Naming `bithuman` yourself on the
+>   same command line fixes it: the wheel publishes cp310 and cp314 and imports
+>   cleanly on both, so the marker is stale rather than protective.
+> - **Both of those are already fixed upstream and merely unreleased.**
+>   [livekit/agents#7280](https://github.com/livekit/agents/pull/7280) added
+>   `pillow` and dropped the marker on 2026-09-15, hours after 1.8.2 was cut.
+>   The next plugin release needs neither workaround.
 > - **You cannot have both current, and the pin is not arbitrary.** Ask pip for
 >   the plugin alongside a 3.x pin and it resolves by walking the *plugin* back
 >   to 1.5.9. The `<3` bound is load-bearing: the plugin's only bitHuman import
