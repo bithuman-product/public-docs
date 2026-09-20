@@ -86,6 +86,38 @@ both LiveKit Cloud and a self-hosted LiveKit server, and bills at the
 [self-hosted or cloud rate](/guides/pricing) depending on whether the avatar
 GPU is yours or ours.
 
+### Choosing a model
+
+`AvatarSession` takes a `model` argument. On the published **1.8.2** it accepts
+two values, and both name a first-generation engine:
+
+| `model=` | Engine served |
+|---|---|
+| `"expression"` | Expression 1 |
+| `"essence"` (default) | Essence 1 |
+
+**On 1.8.2 you cannot ask for Essence 2 or Expression 2 from the plugin.** The
+request it sends names no model — only whether the session is GPU- or CPU-bound
+— so which model a second-generation avatar is served as is decided by the
+server's default for that avatar, not by your code. Two consequences worth
+knowing before you design around it:
+
+- Naming a model the avatar cannot be served as does not fail. Measured on
+  2026-09-20 against an avatar prepared for Expression 1 only, `model="essence"`
+  returned HTTP 200 and the session started **as Expression 1** — a different
+  model than the call asked for, with nothing said about it.
+- If you need a specific second-generation model today, prepare the avatar for
+  exactly that model (see [Avatar models](/concepts/models-v2)) so the server's
+  default for it is the one you want.
+
+The fix — `"expression-2"` and `"essence-2"` as values, and the chosen model
+sent with the request so the server honours it — is open upstream as
+[livekit/agents#7366](https://github.com/livekit/agents/pull/7366) and is not
+released yet. With it, asking for a model the avatar lacks is refused before a
+renderer starts, naming what to add. The two first-generation names keep
+working unchanged. This page will name the release that carries it once LiveKit
+ships one.
+
 What you get:
 
 - **Managed avatar runtime** — no GPU to provision, no Docker to operate.
