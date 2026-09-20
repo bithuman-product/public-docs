@@ -65,6 +65,9 @@ door serves without a credential, and `bithuman pull <SLUG>` is the same fetch
 from the CLI. An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as
 an `.imx` or `.avatar` (the same container under two names), and `bithuman.open`
 takes any of them — as it does a first-generation `essence-1` `.imx`.
+`python -m bithuman <CODE> <audio>` fetches by code into `~/.cache/bithuman/downloads`
+and, from 2.11.6, fetches the file again when the published one changed since it was cached
+(a length comparison; when it cannot be asked, the cached file is used).
 
 ## Minimal code
 
