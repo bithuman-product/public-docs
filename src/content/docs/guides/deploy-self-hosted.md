@@ -1,17 +1,25 @@
 ---
-title: "Self-hosted Expression 1 GPU (first generation, Docker)"
-description: "Run first-generation Expression 1 on your own NVIDIA hardware with the published Docker image — a GPU worker that joins a LiveKit room and streams lip-synced video, with no cloud calls during inference. Expression 2 and Essence 2 are distributed through the SDKs, not this image."
+title: "Self-hosted deployment"
+description: "Run bitHuman on your own hardware: the first-generation Expression 1 GPU worker (a published Docker image for NVIDIA), and where the second-generation models self-host — through the SDKs and the CLI, not this image."
 section: guides
 group: "Deploy"
 order: 11
-label: "Self-hosted Expression 1 GPU"
+label: "Self-hosted deployment"
 ---
 
-## The Expression GPU container
+Which self-hosted path you take is decided by the model:
 
-The self-hosted GPU path runs the first-generation [Expression 1](/concepts/models) model on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. It bills at the self-hosted rate ([pricing](/guides/pricing)).
+| Model | Self-hosted path |
+|---|---|
+| [Expression 1](/concepts/expression-1) (first generation) | **This page** — the published Docker image, an NVIDIA GPU worker that joins a LiveKit room |
+| [Essence 2](/concepts/essence-2) and [Expression 2](/concepts/expression-2) | The [Python wheel, the CLI and the Android and Apple SDKs](/guides/self-host-local) — there is no Docker image for them, and no self-hosted LiveKit worker |
+| [Essence 1](/concepts/essence-1) (first generation) | The [Python wheel](/sdk/python) and the [CLI](/sdk/cli)'s `run` — no GPU, no container |
 
-> **Note** Self-hosted **Essence** (no GPU, higher concurrency) doesn't use this container — run the [Python SDK](/sdk/python) or [CLI](/sdk/cli) directly, or point the LiveKit plugin's `api_url` at your own Essence server.
+Every self-hosted render is metered at the self-hosted rate ([pricing](/guides/pricing)) and authenticates online; running fully disconnected is [offline licensing — coming soon](#offline-licensing--coming-soon).
+
+## The Expression 1 GPU container
+
+The self-hosted GPU path runs the first-generation [Expression 1](/concepts/expression-1) model on your own NVIDIA hardware. The Docker image ships everything baked in — a GPU worker that joins a LiveKit room and streams lip-synced video entirely on your GPU, with no cloud calls during inference. Use it when you need a different portrait per session. It bills at the self-hosted rate ([pricing](/guides/pricing)).
 
 There is no macOS or iOS build of Expression 1. The engine you can attach on Apple Silicon is [Expression 2](/sdk/ios), a different model.
 

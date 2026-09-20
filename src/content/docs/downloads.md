@@ -39,7 +39,20 @@ The Python library and the CLI binary are separate things and have been since 2.
 | **Windows** | WSL2 today | **Not supported** — no wheel; run under WSL2 | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
-**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64, and Apple-silicon macOS (14 or newer).** That is the whole set. On Windows or an Intel Mac `pip install bithuman` reports *no matching distribution found* — that is an unsupported platform, not a broken package. On Windows, run it under WSL2, which is a supported Linux.
+**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64, and Apple-silicon macOS (14 or newer).** That is the whole set. Anywhere else — Windows, an Intel Mac — `pip install bithuman` stops at `bithuman 2.11.5 has NO WHEEL for this platform.`, prints that set, and installs nothing: since 2026-09-20 the release also carries a source distribution that exists only to refuse, so pip cannot fall back to an older wheel (before that date an Intel Mac quietly received a 1.x release). On Windows, run it under WSL2, which is a supported Linux.
+
+**Verify what you downloaded.** Every CLI release publishes a `.sha256` sidecar
+beside each tarball on the
+[releases page](https://github.com/bithuman-product/homebrew-bithuman/releases)
+— `bithuman-aarch64-apple-darwin.tar.gz.sha256` and
+`bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256` — and `install.sh` checks the
+tarball against it before installing anything: it prints `sha256 ok`, and it
+stops on a mismatch or when the machine has neither `shasum` nor `sha256sum`.
+For a tarball you fetched by hand, put the sidecar next to it and run
+`sha256sum -c bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256` (macOS:
+`shasum -a 256 -c bithuman-aarch64-apple-darwin.tar.gz.sha256`). The Python
+wheel is verified by pip against the digest PyPI publishes; the current wheel's
+digest is on the [Python API page](/sdk/python-api).
 
 ## Current shipping versions
 
@@ -48,7 +61,7 @@ The Python library and the CLI binary are separate things and have been since 2.
 | Python SDK (`bithuman`) | **2.11.5** — `pip install bithuman`, unconstrained, resolves it, and so does a `bithuman<3` pin (`livekit-plugins-bithuman` declares one); the 3.x line was withdrawn from PyPI on 2026-09-16, and 2.11.5 is its engine with the 2.x import surface carried alongside | [PyPI](https://pypi.org/project/bithuman/) |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Expression2`) | **2.6.3** (the package tag to pin is on [Install](/sdk/ios#install) — `from:` resolves it; `idleLoop` left the public surface in 2.6.3, see the [changelog](/changelog)) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
-| Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `.imx` you download here. The newest package tag, **2.13.7**, ships Essence 2 engine **1.8.0**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `.imx` you download here. The newest package tag, **2.13.8**, ships Essence 2 engine **1.9.0**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | bitHuman CLI | the current release, named on [/sdk/cli](/sdk/cli#install) — macOS arm64 **and** Linux x86_64, same version, no pin needed; what each release changed is in the [changelog](/changelog) | [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (macOS) · universal installer (macOS Apple Silicon + Linux) |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.7** (`0.4.6` and earlier stay on Central and are superseded; `idleLoop` changed type in `0.4.7`, see the [changelog](/changelog); a bare `Expression2Options()` asks for the accelerator since `0.4.1`) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.12** (`0.2.0` through `0.5.11` stay on Central and are superseded — `0.5.1` and `0.5.2` cannot install a model on a handset; `0.5.7` delivers 72–77 % of a reply's frames under an un-paced feed, see the [changelog](/changelog)) | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |

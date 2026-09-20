@@ -3,42 +3,16 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
 import Playground from "../components/Playground.astro";
+import { hubMeta, START_CLI, START_EMBED } from "../config/hubs";
 
-// The canonical CLI happy path — kept in sync with src/content/docs/sdk/cli.md.
-const cliRun = [
-  {
-    label: "macOS / Linux",
-    lang: "bash",
-    code: `# 1 · install (Homebrew or the universal installer)
-curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-
-# 2 · sign in (opens your browser)
-bithuman login
-
-# 3 · grab an avatar
-bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.imx
-
-# 4 · run it
-bithuman run "$(bithuman pull wise-pup)"
-# → open the printed http://127.0.0.1:8088/<CODE> URL — a live session, brain included`,
-  },
-];
-
-const embed = [
-  {
-    label: "HTML",
-    lang: "html",
-    code: `<!-- Paste into any page. No API key, no install. -->
-<iframe
-  src="https://bithuman.ai/embed/A78WKV4515"
-  allow="microphone *; camera *; autoplay *"
-  style="width: 100%; height: 600px; border: 0;"
-></iframe>`,
-  },
-];
+const meta = hubMeta("start");
+// The canonical CLI happy path — the same four steps src/content/docs/sdk/cli.md
+// teaches; the bytes live in src/config/hubs.ts so /llms-full.txt carries them too.
+const cliRun = [{ label: "macOS / Linux", lang: "bash", code: START_CLI }];
+const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
 ---
 
-<Base title="Get started — bitHuman docs" description="Go from zero to a talking, listening avatar — see one work with no setup, then pick how you run it.">
+<Base title="Get started — bitHuman docs" description={meta.description}>
   {/* HERO */}
   <section class="s-hero">
     <div class="container">

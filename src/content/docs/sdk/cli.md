@@ -86,23 +86,19 @@ A showcase pull is anonymous — `login` is for `render` and for your own agents
 `~/.cache/bithuman/agents/<YOUR_AGENT_CODE>/<YOUR_AGENT_CODE>.imx` (`--model` picks a family
 when the agent has more than one).
 
-> **The bare `bithuman run` needs cli-v2.6.23.** From that release it is
-> `bithuman run wise-pup` — the same resolver, the same cache, the same session
-> (measured on 2026-09-19 on Linux x86_64, fresh `$HOME`: the embedded
-> `livekit-server` and the brain come up and the session URL prints, with no
-> `~/.bithuman/avatars/` directory left behind). On **cli-v2.6.22** it does not
-> work: it fetches the Wise Pup lane into a *directory* and hands that to a
-> loader that wants a file, stopping at
-> `error: model '~/.bithuman/avatars/A23WJF0199' is not a file`, exit **66**.
-> `bithuman run "$(bithuman pull wise-pup)"` runs on either — that is the path
-> this page teaches everywhere else.
+> **`run` takes the slug too.** `bithuman run wise-pup` resolves the slug
+> itself — the same resolver, the same cache and the same session as pulling
+> first (measured on the published cli-v2.6.25 Linux x86_64 tarball, fresh
+> `$HOME`: the embedded `livekit-server` and the brain come up and the session
+> URL prints) — and the bare `bithuman run` is `bithuman run wise-pup`. A path
+> works as well: `bithuman run ~/.cache/bithuman/showcase/wise-pup.imx`.
 
 ## Minimal code
 
 Two operations — there is no third:
 
 ```bash
-bithuman run "$(bithuman pull wise-pup)"                                # 1. live avatar in your browser
+bithuman run wise-pup                                                  # 1. live avatar in your browser
 bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4   # 2. offline: audio in, MP4 out
 ```
 
@@ -122,23 +118,19 @@ in, or the credential is not valid — run `bithuman login`, or set
 BITHUMAN_API_SECRET"*; `run` refuses on the same terms. Both name the same two
 remedies, and no environment variable renders for free.
 
-Upgrade if you are on anything older: through 2.6.19 a Linux `bithuman run`
-with no credential rendered indefinitely, and through 2.6.22 the Linux
-`--offscreen` render was the one path left open — it rendered with no
-credential, and unmetered with one. From 2.6.23 it exits 77 `METERING_REFUSED`
-before the first frame like every other path, and the host meters (measured on
-the published Linux tarball, fresh `$HOME`). Every render is metered either
-way, and [pricing](/guides/pricing) is the authority.
+That includes the Linux `--offscreen` render, which exits 77
+`METERING_REFUSED` before the first frame with no credential and is metered
+with one (measured on the published Linux tarball, fresh `$HOME`). Every render
+is metered, and [pricing](/guides/pricing) is the authority; what each release
+changed is in the [changelog](/changelog).
 
-Then open the printed `http://127.0.0.1:8088/<CODE>`. From 2.6.22 an
+Then open the printed `http://127.0.0.1:8088/<CODE>`. An
 [Expression 2](/concepts/expression-2) avatar — what the showcase slugs are —
 is **a live session with the brain**: `run` spawns an embedded `livekit-server`
 (it must be on your `PATH`, see the prerequisites above), builds the
 conversation brain on first run (a one-time ~200 MB pip install, one to two
-minutes) and prints the session URL. From 2.6.23 `bithuman run` with no
-argument is `bithuman run wise-pup` and reaches the same session; on 2.6.22 it
-fetched Wise Pup and then exited 66 `MODEL_NOT_FOUND` (both measured on Linux
-x86_64).
+minutes) and prints the session URL. `bithuman run` with no argument is
+`bithuman run wise-pup` and reaches the same session.
 `run` serves localhost only; `--host` takes a LAN or tailnet address to expose
 it. `--host 0.0.0.0` needs `--allow-public-bind` as well — without it the CLI
 exits 2 and binds nothing, rather than putting the session on every interface.
@@ -169,7 +161,7 @@ Measured frame rates for every platform are on the
 | `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman avatars` and copy a slug from it |
 | the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
 | `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
-| `No matching distribution found for bithuman` | an Intel Mac, or macOS older than 14 | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
+| `pip install bithuman` stops at `bithuman 2.11.5 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
 | `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` never needed it |
 
 With `--json`, every failure prints one JSON object to stderr with a stable

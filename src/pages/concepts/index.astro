@@ -1,5 +1,6 @@
 ---
 import Hub from "../../components/Hub.astro";
+import { hubMeta } from "../../config/hubs";
 
 const groups = [
   {
@@ -19,7 +20,7 @@ const groups = [
       { title: "Talking video", desc: "Render a finished MP4 from text or audio with any model — the asynchronous output mode.", href: "/concepts/talking-video" },
       { title: "Essence 1", desc: "The first-generation avatar model — two thirds of every agent on the platform, and the one that runs on virtually any CPU. Maintained.", href: "/concepts/essence-1" },
       { title: "Expression 1", desc: "The first-generation expressive model — facial animation generated from a portrait. GPU-only, and maintained.", href: "/concepts/expression-1" },
-      { title: "Essence 1 vs Expression 1", desc: "The two first-generation models compared, with the hardware notes and the numbers behind each.", href: "/concepts/models" },
+      { title: "Models", desc: "All four models on one page — the current pair, and the first-generation pair compared with the hardware notes behind each.", href: "/concepts/models" },
     ],
   },
   {
@@ -39,7 +40,7 @@ const groups = [
 ---
 <Hub
   title="Concepts"
-  tagline="The mental model behind bitHuman — one engine, one .imx format, one push/drain loop, one model family."
+  tagline={hubMeta("concepts").description}
   ctas={[{ label: "Which model?", href: "/concepts/models-v2" }, { label: "Audio streaming", href: "/concepts/audio-streaming", variant: "secondary" }]}
   groups={groups}
 />

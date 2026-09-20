@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import { lastModified } from "./git-lastmod";
+import { HUBS } from "../config/hubs";
 
 // Every URL the site serves, with the date of its last commit — the one list
 // behind /sitemap.xml, /sitemap-index.xml and the "Site sections" block of
@@ -8,19 +9,10 @@ import { lastModified } from "./git-lastmod";
 const SITE = "https://docs.bithuman.ai";
 
 // Static (non-collection) pages that produce their own routes, keyed by the
-// route with the source file that renders it. Must match the .astro pages
-// under src/pages/ — no phantom routes (they 404 and waste crawl budget).
-export const STATIC_ROUTES: Record<string, string> = {
-  "": "src/pages/index.astro",
-  api: "src/pages/api/index.astro",
-  "api/reference": "src/openapi/bithuman.yaml",
-  sdk: "src/pages/sdk/index.astro",
-  guides: "src/pages/guides/index.astro",
-  concepts: "src/pages/concepts/index.astro",
-  resources: "src/pages/resources/index.astro",
-  showcase: "src/pages/showcase/index.astro",
-  start: "src/pages/start.astro",
-};
+// route with the source file that renders it — one list, src/config/hubs.ts,
+// which must match the .astro pages under src/pages/ (no phantom routes: they
+// 404 and waste crawl budget).
+export const STATIC_ROUTES: Record<string, string> = Object.fromEntries(HUBS.map((h) => [h.route, h.file]));
 
 export async function sitemapEntries(): Promise<{ loc: string; lastmod: string | null }[]> {
   const docs = await getCollection("docs", (e: any) => !e.data.draft);

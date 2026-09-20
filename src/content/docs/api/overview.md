@@ -1,5 +1,5 @@
 ---
-title: "API Platform"
+title: "API overview"
 description: "REST API for generating avatars, synthesizing voice, driving live sessions, and embedding agents — from any language."
 section: api
 group: "Get started"
@@ -84,7 +84,7 @@ the code).
 - [Quickstart](/api/quickstart) — make your first API call and drive a live agent.
 - [Authentication](/api/authentication) — get an API secret and runtime tokens.
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose (`essence-2` / `expression-2` / `auto`).
-- [Essence 1 vs Expression 1](/concepts/models) — the first-generation family comparison.
+- [Models](/concepts/models) — the four models, the first-generation pair compared.
 - [API reference](/api/reference) — the interactive Scalar reference for every
   endpoint, with a live request console.
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational

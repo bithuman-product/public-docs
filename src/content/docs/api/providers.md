@@ -10,7 +10,7 @@ label: "Bring your own keys"
 ## Overview
 
 The Providers API lets you **bring your own provider keys** (BYOK) — e.g. your own OpenAI or
-Deepgram key — for your agents to use. Keys are stored **encrypted at rest** and are never
+ElevenLabs key — for your agents to use. Keys are stored **encrypted at rest** and are never
 returned in plaintext; reads return only presence, a masked hint, and timestamps.
 
 Base URL `https://api.bithuman.ai`. Authenticate with the `api-secret` header. The `{user_id}`
@@ -66,7 +66,7 @@ want stored.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `platform` | string | yes | Provider id, e.g. `openai`, `deepgram`. |
+| `platform` | string | yes | Provider id, e.g. `openai`, `elevenlabs`, `cartesia`, `grok`. |
 | `id` | string | no | Existing entry id to update; omit to add a new one. |
 | `label` | string | no | Display name; defaults to the platform name. |
 | `credentials` | object | no | Key/value credentials. Sensitive keys are encrypted at rest. |

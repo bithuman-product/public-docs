@@ -20,9 +20,11 @@ Android and iOS SDK pages for the phones.
 | iOS and macOS | Expression 2 and Essence 2 — on-device in your own app, through the Swift package's `Expression2` and `Essence2` products | [Swift SDK](/sdk/ios) |
 
 **The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64,
-and Apple-silicon macOS (14 or newer)** — that is the whole set. On Windows or
-an Intel Mac `pip install bithuman` reports *no matching distribution found*:
-an unsupported platform, not a broken package. Run it under WSL2 on Windows.
+and Apple-silicon macOS (14 or newer)** — that is the whole set. Anywhere else —
+Windows, an Intel Mac — `pip install bithuman` stops at `bithuman 2.11.5 has NO
+WHEEL for this platform.`, prints that set, and installs nothing: since
+2026-09-20 the release carries a source distribution that exists only to refuse,
+so pip cannot fall back to an older wheel. Run it under WSL2 on Windows.
 
 Two things to settle before you start:
 
@@ -82,7 +84,7 @@ Play `out.mp4` — it is the length of the audio. To see the same avatar live,
 run it and open the printed URL:
 
 ```bash
-bithuman run "$(bithuman pull wise-pup)"     # → http://127.0.0.1:8088/<CODE> — a live session, brain included
+bithuman run wise-pup                        # → http://127.0.0.1:8088/<CODE> — a live session, brain included
 ```
 
 The full command set is on [the CLI page](/sdk/cli).

@@ -23,7 +23,7 @@ In Xcode, *File → Add Package Dependencies…* and paste the URL, or in
 `from:` is a floor — it resolves the newest 2.x tag. The `Expression2` product
 is the [Expression 2](/concepts/expression-2) engine as a pre-compiled
 xcframework (`ios-arm64`, `macos-arm64`) with no transitive packages.
-The `Essence2` product is the [Essence 2](/concepts/essence-2) engine, also a pre-compiled xcframework (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`). Since **2.13.2** it opens the `.imx` you download for your own agent, on both iPhone and Mac — the measured iPhone 15 rate is on the [performance page](/sdk/performance). The newest package tag, **2.13.7**, ships Essence 2 engine **1.8.0** and Expression 2 engine **2.6.3**, and `from:` resolves it for you. You still fetch the file yourself; there is no in-app download route.
+The `Essence2` product is the [Essence 2](/concepts/essence-2) engine, also a pre-compiled xcframework (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`). Since **2.13.2** it opens the `.imx` you download for your own agent, on both iPhone and Mac — the measured iPhone 15 rate is on the [performance page](/sdk/performance). The newest package tag, **2.13.8**, ships Essence 2 engine **1.9.0** and Expression 2 engine **2.6.3**, and `from:` resolves it for you. You still fetch the file yourself; there is no in-app download route.
 
 ## Authentication and configuration
 
@@ -67,20 +67,26 @@ with your key.
 ```swift
 import Expression2
 
-let engine = try Expression2Engine.create(modelPath: avatarDirectory,        // the unpacked .avatar
+// modelPath is the unpacked .avatar
+let engine = try Expression2Engine.create(modelPath: avatarDirectory,
                                           sharedEngineDir: sharedEngineDirectory)
-engine.feed(samples)                       // [Float] PCM, 16 kHz mono
-engine.flushTail()                         // at the end of an utterance
+engine.feed(samples)   // [Float] PCM, 16 kHz mono
+engine.flushTail()     // at the end of an utterance
 
 // Generation is asynchronous: pull() returns nil until a chunk lands, so poll.
+// 100 x 50 ms with nothing = done.
 var idleTicks = 0
-while idleTicks < 100 {                    // 100 x 50 ms with nothing = done
+while idleTicks < 100 {
     var got = false
-    while let (frame, _) = engine.pull() { // frame: [UInt8], BGR, engine.width * engine.height * 3
+    // frame: [UInt8], BGR, engine.width * engine.height * 3
+    while let (frame, _) = engine.pull() {
         got = true
         show(frame)
     }
-    if got { idleTicks = 0 } else { idleTicks += 1; try await Task.sleep(nanoseconds: 50_000_000) }
+    if got { idleTicks = 0 } else {
+        idleTicks += 1
+        try await Task.sleep(nanoseconds: 50_000_000)
+    }
 }
 ```
 

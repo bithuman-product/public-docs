@@ -13,8 +13,9 @@ before you open Xcode. Each has a control arm.
 
 > **Provenance, and the honest limit.** The transcripts below were produced by
 > running the snippets exactly as printed, on Ubuntu 26.04 / Python 3.14 /
-> curl 8.18, on 2026-09-02 — and [ARM 4](#arm-4--re-run-2026-09-07-at-v280)
-> of check 1 on 2026-09-07, against the `v2.8.0` manifest. Exit codes are real.
+> curl 8.18, on 2026-09-02 — [ARM 4](#arm-4--re-run-2026-09-07-at-v280)
+> of check 1 on 2026-09-07, against the `v2.8.0` manifest, and all three arms
+> of check 2 on 2026-09-20 (Python 3.14.4, pip 25.1.1). Exit codes are real.
 >
 > **No Mac was involved.** Everything on this page inspects Apple artifacts
 > *without executing them* — a resolve preflight, a wheel resolution, a binary
@@ -193,35 +194,61 @@ exit $rc
 
 ```text
 ### ARM 1 — Apple Silicon Mac (macosx_14_0_arm64)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.7/27.7 MB 106.6 MB/s  0:00:00
-Saved ./wheels/bithuman-2.10.0-cp312-cp312-macosx_14_0_arm64.whl
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 31.9/31.9 MB 113.4 MB/s eta 0:00:00
+Saved ./wheels/bithuman-2.11.5-cp312-cp312-macosx_14_0_arm64.whl
 Successfully downloaded bithuman
-resolved: bithuman-2.10.0-cp312-cp312-macosx_14_0_arm64.whl
+resolved: bithuman-2.11.5-cp312-cp312-macosx_14_0_arm64.whl
 engines inside it:
-  bithuman/_core.cpp                                       36.8 KB
-  bithuman/_core.cpython-312-darwin.so                   2338.9 KB
-  bithuman/.dylibs/libonnxruntime.1.27.0.dylib          18786.3 KB
-  bithuman/lib/lible_core.dylib                           814.9 KB
+  bithuman/_core.cpython-312-darwin.so                   2364.0 KB
+  bithuman/.dylibs/libonnxruntime.1.26.0.dylib          36421.0 KB
+  bithuman/lib/lible_core.dylib                          1289.7 KB
 rc=0
 
-### ARM 2 — control: an Intel Mac (macosx_13_0_x86_64)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 34.2 MB/s  0:00:00
-Saved ./wheels/bithuman-1.10.7-cp312-cp312-macosx_10_13_x86_64.whl
+### ARM 2 — control: an Intel Mac (macosx_13_0_x86_64), wheels only
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 23.1 MB/s eta 0:00:00
+Saved ./wheels/bithuman-1.5.0-cp312-cp312-macosx_10_13_x86_64.whl
 Successfully downloaded bithuman
-resolved: bithuman-1.10.7-cp312-cp312-macosx_10_13_x86_64.whl
+resolved: bithuman-1.5.0-cp312-cp312-macosx_10_13_x86_64.whl
 engines inside it:
 rc=0
 ```
 
-**Arm 2 is the trap, and it exits 0.** On an Intel Mac `pip install bithuman`
-does not fail — it silently resolves **1.10.7**, a release from a different
-generation, with none of the engine libraries in it. There is no macOS x86_64
-wheel for 2.x: the current wheels are `macosx_14_0_arm64` for cp310–cp314, plus
-manylinux x86_64/aarch64. **Apple Silicon, macOS 14 or newer.** Pin
-`bithuman>=2.10` if you want the resolver to say so out loud.
+Re-run 2026-09-20 (Python 3.14.4, pip 25.1.1). **Arm 2 is the trap, and it
+exits 0** — but only because the script passes `--only-binary=:all:`, which
+many CI templates do: told to consider wheels alone, pip walks back to the
+newest Intel-Mac wheel PyPI still has, a 1.x release from a different
+generation with none of the engine libraries in it (on 2026-09-02 the same arm
+resolved 1.10.7; that release's files are gone from PyPI now). There is no
+macOS x86_64 wheel for 2.x: the current wheels are `macosx_14_0_arm64` for
+cp310–cp314, plus manylinux x86_64/aarch64. **Apple Silicon, macOS 14 or
+newer.** Pin `bithuman>=2.10` if you want the resolver to say so out loud.
+
+A plain `pip install bithuman` on that Intel Mac no longer falls into the trap.
+Since 2026-09-20 the release also carries a source distribution — 2 kB, no
+engine — that exists only to refuse, and pip prefers the newest version that
+has *any* distribution, so it picks 2.11.5 and the build stops at the guard's
+first line. The third arm is the same resolve without `--only-binary`:
+
+```bash
+python3 -m pip download --no-deps --no-cache-dir --platform macosx_13_0_x86_64 \
+        --python-version 3.12 -d wheels bithuman 2>&1 | grep -E 'Downloading|NO WHEEL|^error:' | uniq
+echo "rc=${PIPESTATUS[0]}"
+```
+
+```text
+### ARM 3 — the same Intel Mac, sdist allowed (what `pip install bithuman` does)
+  Downloading bithuman-2.11.5.tar.gz (2.1 kB)
+        bithuman 2.11.5 has NO WHEEL for this platform.
+error: subprocess-exited-with-error
+rc=1
+```
+
+Before that date the plain install did what arm 2 does — it resolved 1.10.7
+silently and exited 0. Now it names the supported set, says that nothing was
+installed, and exits 1.
 
 The arm-1 listing is also how you can tell that the wheel is self-contained: it
-vendors its own `libonnxruntime.1.27.0.dylib` next to the engine, so it does not
+vendors its own `libonnxruntime.1.26.0.dylib` next to the engine, so it does not
 depend on whatever ONNX Runtime is on the machine.
 
 > **`lible_core.dylib` is a retired name you will see on disk.** `le` is the old
