@@ -56,7 +56,7 @@ const year = 2026;
       {
         cols.map((c) => (
           <div class="footer-col">
-            <h4>{c.title}</h4>
+            <p class="footer-col-title">{c.title}</p>
             {c.links.map((l) => (
               <a href={l.href}>{l.label}</a>
             ))}
@@ -106,7 +106,8 @@ const year = 2026;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-5);
   }
-  .footer-col h4 {
+  .footer-col-title {
+    font-weight: var(--fw-bold);
     font-size: var(--ft-xs);
     text-transform: uppercase;
     letter-spacing: 0.06em;

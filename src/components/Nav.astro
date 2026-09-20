@@ -21,7 +21,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   <div class="nav-inner">
     <div class="brand">
       <a class="brand-main" href="https://www.bithuman.ai" aria-label="bitHuman home">
-        <img src="/images/bitHuman-logo-circle.png" alt="bitHuman" width="24" height="24" />
+        <img src="/images/bitHuman-logo-circle.png" alt="" width="24" height="24" />
         <span>bitHuman</span>
       </a>
       <a class="brand-docs" href="/" aria-label="Docs home">docs</a>
@@ -49,11 +49,12 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     </nav>
 
     <div class="nav-actions">
-      <button class="icon-btn" aria-label="Search" id="nav-search" onclick="window.__bhOpenSearch && window.__bhOpenSearch()">
+      <button class="icon-btn" id="nav-search" onclick="window.__bhOpenSearch && window.__bhOpenSearch()">
         <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"
           ><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="m14 14 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg
         >
-        <kbd>⌘K</kbd>
+        <span class="sr-only">Search</span>
+        <kbd data-search-key>⌘K</kbd>
       </button>
       <button class="icon-btn" aria-label="Toggle theme" onclick="__bhToggleTheme()">
         <svg class="i-sun" width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"
@@ -85,6 +86,12 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
 </header>
 
 <script>
+  // The search shortcut is Ctrl+K everywhere but on Apple keyboards, and the
+  // hint should name the key the reader actually has.
+  if (!/Mac|iPhone|iPad|iPod/.test(navigator.platform)) {
+    document.querySelectorAll("[data-search-key]").forEach((k) => (k.textContent = "Ctrl K"));
+  }
+
   // Live service-health dot: fetch the public, CORS-enabled overall-status
   // summary from status.bithuman.ai and color the header dot. Fails silently
   // (dot stays neutral) — the link itself always works.
@@ -213,6 +220,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     font-size: 0.7rem;
     color: var(--color-text-tertiary);
   }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   #nav-search { padding-inline: 0.6rem; }
   .i-moon { display: none; }
   :root[data-theme="dark"] .i-sun { display: none; }

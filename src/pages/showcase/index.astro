@@ -17,10 +17,10 @@ import caseStudies from "../../data/case-studies.json";
       <div class="case-grid">
         {caseStudies.map((c) => (
           <a class="case-card" href={c.href} target={c.href?.startsWith("http") ? "_blank" : undefined} rel={c.href?.startsWith("http") ? "noopener" : undefined}>
-            <div class="case-img" style={`background-image:url(${c.image})`}></div>
+            <img class="case-img" src={c.image} alt="" loading="lazy" decoding="async" width="640" height="400" />
             <div class="case-b">
               {c.category && <span class="pill">{c.category}</span>}
-              <h3>{c.title}</h3>
+              <h2>{c.title}</h2>
               <p>{c.summary}</p>
               {c.org && <span class="case-org">{c.org}</span>}
             </div>
@@ -38,10 +38,10 @@ import caseStudies from "../../data/case-studies.json";
   .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
   .case-card { display: flex; flex-direction: column; border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: all var(--t-med) var(--ease); }
   .case-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--color-border-strong); }
-  .case-img { aspect-ratio: 16/10; background-size: cover; background-position: center; background-color: var(--color-surface-3); }
+  .case-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: var(--color-surface-3); }
   .case-b { padding: var(--space-5); display: flex; flex-direction: column; flex: 1; }
   .case-b .pill { align-self: flex-start; margin-bottom: var(--space-2); }
-  .case-b h3 { font-size: var(--ft-lg); }
+  .case-b h2 { font-size: var(--ft-lg); }
   .case-b p { margin-top: 0.4rem; color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
   .case-org { margin-top: var(--space-3); font-size: var(--ft-xs); color: var(--color-text-tertiary); font-weight: var(--fw-medium); }
   @media (max-width: 900px) { .case-grid { grid-template-columns: 1fr; } }
