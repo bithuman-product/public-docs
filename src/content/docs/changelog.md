@@ -10,6 +10,31 @@ order: 1
 
 ## September 2026
 
+### On Linux, a live session ended with Ctrl-C was billed 0 s for its last interval — `cli-v2.6.25` (2026-09-20)
+
+`curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
+to confirm (`bithuman 2.6.25`). macOS arm64 and Linux x86_64, built from one
+commit. **Upgrade if you run live sessions on Linux.**
+
+- **The last meter beat of a live session survives Ctrl-C.** On `2.6.24` Linux,
+  a `bithuman run` session ended with Ctrl-C (or SIGTERM) was billed nothing for
+  the time since its last beat — up to 60 s, the whole session when shorter —
+  because the terminal's signal reached the render host before the CLI could
+  close it. Measured on the published `2.6.24` bytes: Ctrl-C after 32 s, no
+  beat, 3 of 3 runs. The host now runs in its own process group, like the CLI's
+  other helpers; the CLI closes it as before and the host reports the last
+  interval itself. Measured on the published `2.6.25` bytes: Ctrl-C after 30 s
+  delivers `[selfhost-meter] beat seq=1 served=30.6s … delivered (final)` about
+  1.5 s after the signal, 3 of 3 runs; SIGTERM 1 of 1; a session the platform
+  ends is unchanged.
+- **Exit codes are unchanged.** A live session ended by Ctrl-C still exits
+  **0** after its short drain — the [reference](/sdk/cli/reference#exit-codes)
+  now says so beside the `130` a local Essence 2 preview returns. No machine
+  `code` or `--json` key is added or renamed; a script that parsed `2.6.24`
+  parses `2.6.25`. The engine inside moves to **2.11.5** (ABI 7); an identity
+  file replaced under the same name is unpacked again once instead of the older
+  unpacked copy being used forever.
+
 ### An offline render is the same render as a streaming one, on macOS too — `bithuman` 2.11.5 (2026-09-19)
 
 `pip install --upgrade bithuman`. `bithuman.offline` (`OfflineRenderer`,

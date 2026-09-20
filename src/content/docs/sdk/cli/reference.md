@@ -351,13 +351,13 @@ A stable sysexits subset. Branch on these rather than parsing text.
 | 69 | UNAVAILABLE | network, engine or service unavailable; an incomplete model file |
 | 70 | SOFTWARE | internal error (`essence-1` `render`) |
 | 77 | NOPERM | not signed in, out of credits, or forbidden |
-| 130 | — | interrupted (Ctrl-C) — the session closed through its stop-flush |
+| 130 | — | interrupted (Ctrl-C) on a local Essence 2 preview: the CLI's own meter delivers its final beat, then the process exits 130. A live Expression 2 session (`run wise-pup`) exits **0** on Ctrl-C after its 2 s drain; from 2.6.25 that drain carries the render host's final beat on Linux (`[selfhost-meter] beat … delivered (final)`, ~1.5 s after the signal — 2.6.24 lost it) |
 
 ### The shapes
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.24","libessence":"2.11.4",
+{"abi":7,"cli":"2.6.25","libessence":"2.11.5",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
