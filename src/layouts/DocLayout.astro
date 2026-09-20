@@ -92,7 +92,7 @@ if (section === "sdk") {
 <Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description} type="article" jsonLd={jsonLd}>
   <div class="doc">
     {/* sidebar */}
-    <aside class="doc-side" data-doc-side data-pagefind-ignore>
+    <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>
       <button class="side-toggle" data-side-toggle aria-expanded="false">
         <span>{meta.label}</span>
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 5 7 8.5 10.5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -153,7 +153,7 @@ if (section === "sdk") {
     </article>
 
     {/* on-this-page TOC */}
-    <aside class="doc-toc" data-pagefind-ignore>
+    <aside class="doc-toc" aria-label="Page outline" data-pagefind-ignore>
       {
         toc.length > 0 && (
           <nav aria-label="On this page">
