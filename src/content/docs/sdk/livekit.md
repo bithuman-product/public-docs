@@ -30,7 +30,7 @@ than a browser.
 > under the marker `python_version >= "3.11" and python_version < "3.14"`, and
 > it needs `pillow`, which it does not declare — `pip install
 > livekit-plugins-bithuman pillow`. The plugin pins `bithuman<3`, which
-> resolves the newest 2.x wheel — 2.11.5 on 2026-09-19 — the same wheel the
+> resolves the newest 2.x wheel — 2.11.6 on 2026-09-20 — the same wheel the
 > [Python SDK page](/sdk/python) documents.
 >
 > On **Python 3.10 or 3.14** the marker is false, pip installs the plugin with

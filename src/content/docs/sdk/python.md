@@ -18,17 +18,17 @@ serve different purposes and neither replaces the other.
 pip install "bithuman[expression-2]"
 ```
 
-`bithuman` 2.11.5 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
+`bithuman` 2.11.6 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
 wheels. It is what an unconstrained `pip install bithuman` resolves, and what
 a `bithuman<3` pin resolves too: the 3.x line (3.0.0–3.1.10) was withdrawn
-from PyPI on 2026-09-16, and 2.11.5 carries the same engine with the 2.x
+from PyPI on 2026-09-16, and 2.11.6 carries the same engine with the 2.x
 import surface (`AsyncBithuman` and the rest) alongside the `open()` /
-`render()` surface below. The `[expression-2]` extra opens `.avatar` files. The Essence 2
-clip-to-file route (`bithuman.offline`) needs **no extra** since 2.11.5 — it
-runs the same engine the streaming route runs, so `torch` and `onnxruntime`
-are no longer pulled in for it (`bithuman[offline]` still resolves, for an
-install that pins it). Writing the MP4 needs **`ffmpeg` on `PATH`**.
+`render()` surface below. **There is one extra**, `[expression-2]`, and it
+opens `.avatar` files. The Essence 2 clip-to-file route (`bithuman.offline`)
+is on the base wheel — it runs the same engine the streaming route runs, so
+nothing it needs is optional and no `torch` is installed. Writing the MP4
+needs **`ffmpeg` on `PATH`**.
 
 `pip install bithuman` puts **no `bithuman` command** on your `PATH` — the
 command-line tool is the [CLI](/sdk/cli), a separate install.
@@ -38,7 +38,10 @@ wheel's own path — `bithuman.open` takes a first-generation `.imx`
 straight out of `pip install bithuman`, which is why the CLI and the
 [Swift](/sdk/ios) page send you here for it. One newer engine is behind an
 extra: `.avatar` files need `[expression-2]`. The Essence 2 clip-to-file route
-(`bithuman.offline`) is on the base wheel — see above.
+(`bithuman.offline`) is on the base wheel — see above. The legacy
+`bithuman[offline]` and `bithuman[tessera]` extras that older instructions
+name were removed from the wheel on 2026-09-20; a requirements file that still
+asks for one installs the base wheel, and pip says so in a warning.
 
 ## Authentication and configuration
 
@@ -153,7 +156,7 @@ logging.basicConfig(level=logging.INFO)
 | You see | It means | Do this |
 |---|---|---|
 | `ModuleNotFoundError: No module named 'bithuman'` | not installed in the active environment | `pip install bithuman --upgrade` in the venv you run from |
-| `bithuman 2.11.5 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14. pip installed nothing: the release's source distribution exists only to print this (since 2026-09-20; before that, pip could quietly resolve a 1.x wheel) | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
+| `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14. pip installed nothing: the release's source distribution exists only to print this (since 2026-09-20; before that, pip could quietly resolve a 1.x wheel) | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
 | `NotSupported` opening a `.avatar` | the Expression 2 extra is missing | `pip install "bithuman[expression-2]"` |
 | the first `render` raises `NotAuthorised` | no usable key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
 | `InvalidAvatar` on an Essence 2 file you were given | the file is not usable as published | send the agent code to [hello@bithuman.ai](mailto:hello@bithuman.ai) for re-publishing |

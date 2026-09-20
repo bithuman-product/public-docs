@@ -49,7 +49,7 @@ beyond your own agent's `.imx`:
 
 * **Python** — `pip install bithuman`, then open the `.imx` with the two-call
   surface the [Python SDK](/sdk/python) page documents (`AsyncBithuman`, the
-  2.x spelling, is carried alongside it and keeps working). PyPI serves **2.11.5** with wheels for CPython 3.10–3.14 on macOS arm64, Linux x86_64 and
+  2.x spelling, is carried alongside it and keeps working). PyPI serves **2.11.6** with wheels for CPython 3.10–3.14 on macOS arm64, Linux x86_64 and
   Linux aarch64. There is **no Windows wheel**.
 * **CLI** — the `bithuman` binary from the public Homebrew tap, with macOS
   arm64 and Linux x86_64 builds. See the [CLI overview](/sdk/cli).

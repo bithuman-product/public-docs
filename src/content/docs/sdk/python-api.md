@@ -36,9 +36,9 @@ changes is the registry, not the page.
 | --- | --- |
 | Registry | pypi |
 | Coordinate | bithuman |
-| Version | 2.11.5 |
-| Wheel | `bithuman-2.11.5-cp314-cp314-manylinux_2_28_x86_64.whl` |
-| Digest | `sha256:39cbef68f7cc8900badfc6b4215e35fe1cb9211653d8cc75d83786b7e6e229bc` |
+| Version | 2.11.6 |
+| Wheel | `bithuman-2.11.6-cp314-cp314-manylinux_2_28_x86_64.whl` |
+| Digest | `sha256:d54fef37839cd490cf27e7004c8d71f2144b05acd225162b2d145b2502dad3c3` |
 | Resolved on | 2026-09-20 |
 
 Every name below was read back out of those bytes, in a virtualenv that had nothing else installed in it. Nothing here was read from a source tree.
@@ -46,7 +46,7 @@ Every name below was read back out of those bytes, in a virtualenv that had noth
 | What the distribution declares | Value |
 | --- | --- |
 | Python versions | `<3.15,>=3.10` |
-| Extras | `bithuman[expression-2]`, `bithuman[offline]`, `bithuman[tessera]`, `bithuman[test]` |
+| Extras | `bithuman[expression-2]`, `bithuman[test]` |
 | Commands added to `PATH` | none |
 | Ships type information | yes — a `py.typed` marker and a type stub |
 | `python -m bithuman` | yes |

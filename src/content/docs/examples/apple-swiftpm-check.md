@@ -194,10 +194,10 @@ exit $rc
 
 ```text
 ### ARM 1 — Apple Silicon Mac (macosx_14_0_arm64)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 31.9/31.9 MB 113.4 MB/s eta 0:00:00
-Saved ./wheels/bithuman-2.11.5-cp312-cp312-macosx_14_0_arm64.whl
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 31.8/31.8 MB 42.3 MB/s eta 0:00:00
+Saved ./wheels/bithuman-2.11.6-cp312-cp312-macosx_14_0_arm64.whl
 Successfully downloaded bithuman
-resolved: bithuman-2.11.5-cp312-cp312-macosx_14_0_arm64.whl
+resolved: bithuman-2.11.6-cp312-cp312-macosx_14_0_arm64.whl
 engines inside it:
   bithuman/_core.cpython-312-darwin.so                   2364.0 KB
   bithuman/.dylibs/libonnxruntime.1.26.0.dylib          36421.0 KB
@@ -226,7 +226,7 @@ newer.** Pin `bithuman>=2.10` if you want the resolver to say so out loud.
 A plain `pip install bithuman` on that Intel Mac no longer falls into the trap.
 Since 2026-09-20 the release also carries a source distribution — 2 kB, no
 engine — that exists only to refuse, and pip prefers the newest version that
-has *any* distribution, so it picks 2.11.5 and the build stops at the guard's
+has *any* distribution, so it picks 2.11.6 and the build stops at the guard's
 first line. The third arm is the same resolve without `--only-binary`:
 
 ```bash
@@ -237,8 +237,8 @@ echo "rc=${PIPESTATUS[0]}"
 
 ```text
 ### ARM 3 — the same Intel Mac, sdist allowed (what `pip install bithuman` does)
-  Downloading bithuman-2.11.5.tar.gz (2.1 kB)
-        bithuman 2.11.5 has NO WHEEL for this platform.
+  Downloading bithuman-2.11.6.tar.gz (2.1 kB)
+        bithuman 2.11.6 has NO WHEEL for this platform.
 error: subprocess-exited-with-error
 rc=1
 ```

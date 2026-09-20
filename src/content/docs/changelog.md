@@ -10,6 +10,40 @@ order: 1
 
 ## September 2026
 
+### `pip install bithuman` no longer pulls `torch` — `bithuman` 2.11.6 (2026-09-20)
+
+`pip install --upgrade bithuman`. The wheel's `bithuman[offline]` and
+`bithuman[tessera]` extras are **gone**. They existed to add `torch`, `onnx`
+and `onnxruntime` for the clip-to-file route, which has not used them since 2.11.5 — the route runs
+the same engine `bithuman.open()` runs. Read off the published metadata, the
+extras `bithuman` 2.11.6 declares are `expression-2` and `test`, and it
+declares seven runtime dependencies with no `torch` among them.
+
+- **Nothing you import or call moves.** `bithuman.offline`
+  (`OfflineRenderer`, `render_offline`, `unfold_imx`) and the legacy
+  `bithuman.tessera_offline` spelling both still import, unchanged — read back
+  out of the published 2.11.6 wheel in a virtualenv with nothing else in it.
+  `ffmpeg` on `PATH` is still what writes the MP4.
+- **A requirements file that pins a removed extra still installs.** A pin
+  written as `bithuman[offline]` or `bithuman[tessera]` does not fail: pip
+  warns that the wheel does not provide that extra and installs the base
+  package, which is the whole install. Drop the brackets when you next touch
+  your requirements — there is nothing left for them to add.
+- **A re-published identity is fetched again instead of being served from the
+  cache.** `python -m bithuman <CODE> <audio>` caches the container it
+  downloads under `~/.cache/bithuman/downloads`, and on 2.11.5 it kept serving
+  that copy after the same code had been re-published. From 2.11.6 it compares
+  the cached file with the published one and fetches again when they differ;
+  when the published file cannot be asked about, the cached copy is used as
+  before. The matching CLI fix rides `cli-v2.6.26`.
+- **A process that had `torch` in its environment starts faster.** Measured on
+  the published wheels, `bithuman.open()` is ready in **158 ms**, against
+  **1,196 ms** in the same environment with `torch` present for the import to
+  find.
+- **No API change**, and the same platforms: Python 3.10–3.14 on macOS arm64,
+  Linux x86_64 and Linux aarch64. Anywhere else the release still refuses by
+  name rather than installing something older.
+
 ### A live session's local video server no longer shows its key on the process list — `cli-v2.6.26` (2026-09-20)
 
 `curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
