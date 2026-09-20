@@ -415,10 +415,11 @@ rail needs the increased-memory entitlements** that
 Five things happen here and each is marked in the source:
 
 1. **Stage the container's members by hand**, then `create(modelPath:sharedEngineDir:)`.
-   The documented one-call form, `create(avatarContainer:…:stagingDir:)`, is
-   the obvious thing to reach for and it **does not work on iOS today** — the
-   shipped unpacker refuses a published `.avatar` by member name. The loop that
-   replaces it is nine lines and uses only public API.
+   The one-call form, `create(avatarContainer:…:stagingDir:)`, **works on iOS**
+   from `Expression2` 2.6.3 — driven on an iPhone 15 against the package tag a
+   `from: "2.11.0"` dependency resolves today, it opened a published `.avatar`
+   and reached `isReady` in 7.5 s (2026-09-20). Either is correct; the loop
+   below is nine lines of public API and shows you every member as it lands.
 2. **Keep the engine inside an `actor`.** `Expression2Engine` is a plain class
    and not `Sendable`; an actor is what makes this compile under Swift 6 *and*
    keeps the load off the main thread. Only `[UInt8]`, `Int` and `Bool` cross
@@ -526,9 +527,9 @@ actor Renderer {
 
     /// Stage the container's members to disk, then start the engine.
     ///
-    /// Why by hand and not `create(avatarContainer:…:stagingDir:)`: through
-    /// Expression2 2.11.2 the shipped unpacker refuses a published `.avatar` on
-    /// iOS by member name. `Expression2Container.read` does not. See the doc page.
+    /// `create(avatarContainer:…:stagingDir:)` does all of this in one call and
+    /// works on iOS from Expression2 2.6.3. Doing it by hand costs nine lines and
+    /// gives you the member list to show progress against. See the doc page.
     func load(avatar: URL, sharedEngine: URL, staging: URL) throws -> String {
         let fm = FileManager.default
         let dir = staging.appendingPathComponent("avatar", isDirectory: true)
@@ -1009,12 +1010,13 @@ Stated plainly, so nobody spends an afternoon finding out.
   package's `Essence2` product, which opens the `.imx` you download from
   **2.13.2** — see [Essence 2 on-device](/sdk/ios#install); a walkthrough
   shaped like this one is pending.
-- **The one-call container opener is broken on iOS.** Through `Expression2`
-  2.11.2, `create(avatarContainer:…:stagingDir:)` refuses every published
-  `.avatar` by member name on iOS, and unpacks the same file happily on macOS.
-  The root cause is fixed on the SDK's `main`; it reaches you when the framework
-  is rebuilt and a new package tag is cut. Until then, stage the members
-  yourself, as `Renderer.load` above does.
+- **The one-call container opener works again** (was broken through `Expression2`
+  2.11.2, which refused every published `.avatar` by member name on iOS while
+  unpacking the same file happily on macOS). Measured on an iPhone 15 on
+  2026-09-20 against the package tag a `from: "2.11.0"` dependency resolves:
+  `create(avatarContainer:…:stagingDir:)` opened the container, staged 34 files
+  and reached `isReady` at 416x720. `Renderer.load` above stages by hand, which
+  is still correct and still only public API.
 - **The shared graphs are copied out of a CLI install by hand.** That is fine
   for a build you control and it is not something to ship to customers. The fix
   is on bitHuman's side: either the `.avatar` carries
