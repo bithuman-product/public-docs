@@ -144,10 +144,17 @@ browser tier is separate: it needs a per-identity web bundle published for
 that agent, which is still rolling out — see
 [In the browser](#serving-tiers) below.)
 
-**How long.** Creation typically takes **about 45 minutes** end to end.
-Some identities take longer — the platform allows a run up to several
-hours before flagging it as stuck, so keep polling `status` rather than
-applying your own short timeout.
+**How long.** Measured end to end on **2026-09-20**, one creation took
+**2 h 09 m** from `POST /v1/agent/generate` to `status: "ready"` — about the
+same as an [`expression-2`](/concepts/expression-2) creation on that run
+(2 h 02 m). Plan for **about 2 to 2.5 hours**; some identities take longer,
+and the platform allows a run up to several hours before flagging it as
+stuck, so keep polling `status` rather than applying your own short timeout.
+
+**And `ready` is not yet downloadable.** The agent serves as soon as it says
+`ready`; the downloadable identity bundle is published a little later, and
+[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+answers a retryable `404 MODEL_ARTIFACT_NOT_READY` until it is.
 
 ## Serving tiers
 
@@ -263,8 +270,9 @@ artifact and not your setup — contact support with the agent code.
 
 - **Output is 25 fps on every tier.** How fast each platform can *produce*
   frames is a different number — see [Performance](/sdk/performance).
-- **Creation takes about 45 minutes** (see above) — poll status rather than
-  assuming the few-minute wall-clock of `essence-1`.
+- **Creation takes about 2 to 2.5 hours** (2 h 09 m measured 2026-09-20, see
+  above) — poll status rather than assuming the few-minute wall-clock of
+  `essence-1`.
 - **The downloadable identity bundle is ~85–105 MB** on the current renderer
   (agents created before 2026-07-27 are larger — up to ~550 MB — until
   retrained). Size varies per identity: read `Content-Length` rather than

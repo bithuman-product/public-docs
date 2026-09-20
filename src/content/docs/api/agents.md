@@ -75,16 +75,25 @@ models share the same pipeline prefix — persona, voice, and image are prepared
 first (each generated from your prompt when not supplied) — then the
 model-specific identity step runs:
 
-| `model` | Identity input | Identity step | Typical creation time |
+| `model` | Identity input | Identity step | Creation time |
 |---|---|---|---|
-| `essence-1` | `image` (or generated from prompt); an identity video is generated internally if needed | Builds the portable `.imx` avatar | 2–5 minutes |
-| `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | ~1–2 minutes |
-| `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | Builds the Essence 2 identity bundle on a cloud GPU | 25–40 minutes typical; occasionally longer (allowed up to several hours) |
-| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on a cloud GPU | About **2 hours**, sometimes longer |
+| `expression-1` (default) | `image` (or generated from prompt) | None (animates the portrait at runtime) | **1 min** |
+| `essence-1` | `image` (or generated from prompt); an identity video is generated internally if needed | Builds the portable `.imx` avatar | **13 min** |
+| `expression-2` | `image` (or generated from prompt) | Trains a per-identity model on a cloud GPU | **2 h 02 m** |
+| `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | Builds the Essence 2 identity bundle on a cloud GPU | **2 h 09 m** |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
 
-Set your polling timeout per model — a 5-minute client timeout is fine for
-`essence-1` but will falsely "fail" every `expression-2` and `essence-2`
+Those four figures are **one creation per model, measured end to end on
+2026-09-20**, from this call to `status: "ready"` on
+[`GET /v1/agent/status/{agent_id}`](#poll-status). Read them as one observed
+range rather than a guarantee: **under 15 minutes for either
+first-generation model, and about 2 to 2.5 hours for either
+second-generation one**, with individual runs going longer.
+
+**Neither second-generation model is the quick one.** `essence-2` is not a
+shortcut past `expression-2` — on that run it took slightly longer. Set your
+polling timeout per model: a 5-minute client timeout is fine for
+`expression-1` but will falsely "fail" every `expression-2` and `essence-2`
 creation. Full model behavior (serving tiers, idle, pricing) is in each
 model's guide.
 
@@ -229,10 +238,18 @@ and `success` are all intermediate, so keep polling. **`success` is a
 step-level marker, not the end of the run** — a loop that stops on it exits at
 ~20% `progress` with a null `model_url` — and `completed` can appear long
 before the model is done. The safe terminal test is `status == "ready"`, or
-`status == "success"` **together with** `progress == 1.0`. Typical wall-clock
-is two to five minutes for `essence-1` — the second-generation models train
-real per-identity models and take longer (see
+`status == "success"` **together with** `progress == 1.0`. Wall-clock runs
+from about a minute to a couple of hours depending on the model (see
 [model-specific inputs and creation times](#model-specific-inputs-and-creation-times)).
+
+> **`ready` does not yet mean downloadable.** The agent can be launched,
+> embedded and spoken to as soon as it reports `ready`, but its **model file
+> is published separately, a little later**. Until it is,
+> [`GET /v1/agent/{code}/model/download`](#download-an-agents-model) answers
+> [`404 MODEL_ARTIFACT_NOT_READY`](/api/errors#model-errors) — a retryable
+> code, not a failure. On 2026-09-20 an `expression-2` agent was still
+> answering it 23 minutes after it went `ready`. **Retry the download on that
+> 404**; don't treat it as a broken agent.
 
 While a run is in flight, `current_step` reports the pipeline stage:
 
@@ -404,6 +421,24 @@ print(resp["pagination"])   # {limit, offset, total, has_more}
 
 Page through with `offset` until `pagination.has_more` is `false`.
 
+**Each item is a summary, not the full record.** A list item carries exactly
+these fields, and no others:
+
+`code` · `agent_id` · `name` · `description` · `model` · `gender` ·
+`language` · `image_path` · `thumbnail_path` · `status` · `supported_models` ·
+`model_status` · `created_at` · `updated_at`
+
+The prompt, the progress fields, the media URLs and the model handle are
+**not** here — read those from [`GET /v1/agent/{code}`](#get-an-agent). Fields
+that don't apply are `null` rather than absent, so a deleted agent still has a
+`name` key with `null` in it. `supported_models` is `[]` and `model_status`
+is `{}` while an agent is still generating.
+
+**Deleted agents are listed too**, with `status: "deleted"` and their other
+fields nulled — the listing is a history, not just your live agents. Pass
+`status=ready` (or filter on the field) when you only want agents you can
+launch.
+
 ## Delete an agent
 
 `DELETE /v1/agent/{code}` — permanently delete an agent you own. Stored assets
@@ -420,11 +455,11 @@ requests.delete(
 # {"success": true, "agent_code": "A80HVD8577", "deleted": true}
 ```
 
-## Update an agent's prompt
+## Update an agent
 
-`POST /v1/agent/{code}` — update the system prompt of an existing agent without
-regenerating it. The agent must already exist. For a new face or voice, generate
-a new agent.
+`POST /v1/agent/{code}` — update an existing agent's **system prompt**, its
+**provider selection**, or both, without regenerating it. The agent must
+already exist. For a new face or voice, generate a new agent.
 
 ```python
 import requests
@@ -442,6 +477,38 @@ print(resp.json())
 { "agent_code": "A80HVD8577", "updated": true }
 ```
 
+Send at least one of `system_prompt` and `providers`. A body with neither —
+an empty one, or one carrying only fields this route does not accept —
+returns `400 MISSING_PARAM`:
+
+```json
+{
+  "error": {
+    "code": "MISSING_PARAM",
+    "message": "Nothing to update — send 'system_prompt' and/or 'providers'",
+    "httpStatus": 400
+  },
+  "status": "error",
+  "status_code": 400
+}
+```
+
+`providers` points each capability (`llm`, `stt`, `tts`, `realtime`) at one of
+your own registered provider keys, or back at the platform default. The shape,
+the `provider_id` you pass and the `400` you get for one you have not
+registered are on
+[Providers (BYOK)](/api/providers#point-an-agent-at-your-provider).
+
+### Agent names are generated
+
+**An agent's `name` cannot be set — not here and not at creation.** It is
+generated from the prompt and the portrait during the `persona` step, so it is
+`null` for the first few seconds of a creation and then whatever the platform
+wrote. A `name` in the body of this call is ignored: on its own it returns the
+`400 MISSING_PARAM` above (nothing to update), and alongside `system_prompt` it
+updates the prompt and leaves the name alone. Keep your own label for an agent
+in your own system, keyed by the agent `code`.
+
 ## Add a model to an existing agent
 
 `POST /v1/agent/{code}/models` — add an avatar model to an agent you already
@@ -456,8 +523,8 @@ listing the options).
 | `model` | What happens | Prerequisites | Credits | Time |
 |---|---|---|---|---|
 | `expression-1` | **Instant enablement** — the shared v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image **and** voice (else `422`) | **0** | immediate (this response) |
-| `expression-2` | Trains the per-identity Expression 2 model from the stored image | stored image (else `422`) | 2000 | about 1–1.5 h |
-| `essence-2` | Trains Essence 2 from the agent's stored identity video (generated internally at creation) | stored identity video (else `422 MODEL_PREREQUISITE_MISSING`) + photorealistic-human subject on the stored image (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | 45 min–3 h |
+| `expression-2` | Trains the per-identity Expression 2 model from the stored image | stored image (else `422`) | 2000 | the same training a creation runs — [about 2–2.5 h](#model-specific-inputs-and-creation-times) |
+| `essence-2` | Trains Essence 2 from the agent's stored identity video (generated internally at creation) | stored identity video (else `422 MODEL_PREREQUISITE_MISSING`) + photorealistic-human subject on the stored image (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | the same training a creation runs — [about 2–2.5 h](#model-specific-inputs-and-creation-times) |
 | `essence-1` | Builds the v1 `.imx` — reuses the stored identity video, or generates one internally from the stored image | stored identity video or image (else `422`) | 250 | ~10–20 min |
 
 ```python
@@ -547,9 +614,13 @@ place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).
 
 > **The name in the Artifact column is the object in the store, not the file you
 > receive.** Whatever the stored object is called, the endpoint labels the
-> download `.imx` — that is the `filename` field and the
-> `Content-Disposition`, so `curl -LOJ` writes `A17ZTB0222.imx`. Name your local
-> file from the response, not from this column.
+> download `.imx` — that is the `filename` field in the `?redirect=false`
+> response. **Name the local file yourself**, from that field or from the
+> agent code; don't ask curl to take the name off the wire. The redirect
+> target does not always send a `Content-Disposition` header — the public
+> `essence-1` URL sends none — and with no header a filename-from-the-header
+> flag such as `curl -LOJ` quietly falls back to the last path segment of the
+> request URL and writes a file called `download`.
 
 | Family | Artifact in the store | Notes |
 |---|---|---|
@@ -563,9 +634,11 @@ The default response is a **302 redirect** to the artifact (public URL for
 curl works:
 
 ```bash
-curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
-  "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2"
-# → A17ZTB0222.imx   (-LOJ takes the Content-Disposition name, which is always .imx)
+CODE=A17ZTB0222
+curl -L -o "$CODE.imx" -H "api-secret: $BITHUMAN_API_SECRET" \
+  "https://api.bithuman.ai/v1/agent/$CODE/model/download?model=expression-2"
+# → A17ZTB0222.imx   (-L follows the 302; -o names the file, so the result
+#                     does not depend on a header the target may not send)
 ```
 
 > **`?model=` is the only way to reach a second family.** An agent that gained a

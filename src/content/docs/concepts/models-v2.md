@@ -24,8 +24,8 @@ API, the embed widget, the dashboard, and the SDKs:
   expression engine, for **stylized and universal characters** (cartoons,
   animals, creatures, robots — and people). Audio-driven, real-time avatar
   video generated from a **single photo**: at agent creation it trains a small
-  per-identity model (about 2–2.5 hours on a training GPU; measured median
-  2h04m over 39 creations), then synthesizes
+  per-identity model ([about 2–2.5 hours](#how-creation-works) on a training
+  GPU), then synthesizes
   the **entire 416×720 scene** live at 20 fps — fully generated motion, not
   patched onto a pre-rendered base. Runs on GPU, CPU, and Apple Silicon.
 - **[`essence-2`](/concepts/essence-2)** — the **standard** Essence model for
@@ -53,7 +53,7 @@ API, the embed widget, the dashboard, and the SDKs:
 | **Output** | Identity footage animated at its native resolution (1080p driver default), ~25 fps | Fully generated 416×720 scene, 20 fps |
 | **Serving tiers** | gpu · Apple · cpu (auto-routed chain) · browser (in rollout) | gpu · Apple · cpu (auto-routed chain) |
 | **On-device** | Your own Mac (Apple Silicon) or Linux x86_64 box via the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1); your own CPU servers (the current `bithuman` wheel); Android via the [AAR](/sdk/android); the Swift `Essence2` engine in your own app. The cloud's Apple tier is bitHuman's hardware, reached over the network | Your own CPU/GPU via the CLI; Android via the [AAR](/sdk/android); your own servers through the `bithuman[expression-2]` wheel; Apple Silicon via the `Expression2` SwiftPM product (2.5.0+, [engine only](/sdk/ios#minimal-code)) |
-| **Creation** | Train-on-create, 500 credits (typically about 45 minutes) | Train-on-create, 2000 credits (about 2–2.5 hours) |
+| **Creation** | Train-on-create, 500 credits ([about 2–2.5 hours](#how-creation-works)) | Train-on-create, 2000 credits ([about 2–2.5 hours](#how-creation-works)) |
 | **Cloud** | 4 credits/min | 4 credits/min |
 | **Self-hosted** | 2 credits/min | 2 credits/min |
 
@@ -108,10 +108,23 @@ video steps each write it mid-run, so a loop that stops on it exits at ~20%
 How long creation takes depends on the model — the v2 models do real
 per-identity work, so don't apply a short client timeout:
 
-| Model | Identity step | Typical creation time |
+| Model | Identity step | Creation time |
 |---|---|---|
-| `essence-2` | Builds a compact identity bundle on a cloud GPU | Typically about 45 minutes (up to a few hours) |
-| `expression-2` | Trains a per-identity model on a dedicated training GPU | About 2–2.5 hours. Measured over 39 creations completed within 12 h in the window 2026-07-15 → 2026-08-30: median 2h04m, fastest 1h25m, slowest decile beyond 3h45m |
+| `expression-2` | Trains a per-identity model on a dedicated training GPU | **2 h 02 m** |
+| `essence-2` | Builds a compact identity bundle on a cloud GPU | **2 h 09 m** |
+
+Both figures are **one creation each, measured end to end on 2026-09-20**,
+from `POST /v1/agent/generate` to `status: "ready"`. The first-generation
+models on the same run finished in 1 minute (`expression-1`) and 13 minutes
+(`essence-1`). Read this as one observed range rather than a guarantee:
+**about 2 to 2.5 hours for either second-generation model**, with individual
+runs going longer — a wider `expression-2` sample (39 creations,
+2026-07-15 → 2026-08-30) put the median at 2h04m and the slowest decile
+beyond 3h45m.
+
+**`essence-2` is not the quick one.** It trains for about as long as
+`expression-2` — on the 2026-09-20 run, slightly longer. Pick between them on
+[subject and serving](#which-should-i-choose), never on creation time.
 
 **Creation input is a portrait image for both** — `essence-2` generates
 a 10-second identity video from it internally (25 fps, authored to loop

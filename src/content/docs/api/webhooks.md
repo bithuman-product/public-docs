@@ -6,8 +6,8 @@ group: "Operate & reference"
 order: 31
 ---
 
-Agent generation is asynchronous — a few minutes for the first-generation
-models, roughly 45 minutes to 1.5 hours for the second generation. Instead of polling
+Agent generation is asynchronous — minutes for the first-generation models,
+about 2 to 2.5 hours for either second-generation one. Instead of polling
 `GET /v1/agent/status/{id}`, register a **webhook** and bitHuman will POST a
 signed event to your endpoint the moment the work finishes.
 

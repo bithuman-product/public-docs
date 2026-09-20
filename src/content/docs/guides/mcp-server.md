@@ -176,9 +176,9 @@ chains them. A few worked examples:
 > Generate an avatar of a friendly fitness coach, wait until it's ready, then
 > give me an embed token for it.
 
-The agent calls `generate_agent`, polls `get_agent_status` until `ready` (a
-few minutes for first-generation models; roughly 45 minutes to 1.5 hours for the
-second generation), then `create_embed_token` and hands you the JWT for the
+The agent calls `generate_agent`, polls `get_agent_status` until `ready`
+(minutes for a first-generation model; about 2 to 2.5 hours for either
+second-generation one), then `create_embed_token` and hands you the JWT for the
 [embed widget](/guides/deploy-embed).
 
 **Create a photoreal Essence 2 agent** (CLI 2.4.1+ / `bithuman-mcp` 0.3.4+)
@@ -190,8 +190,9 @@ The agent calls `generate_agent` with `model: "essence-2"` (equivalently
 `model: "essence", version: "v2"`) — 500 credits, and the input must be a
 photorealistic human subject (else the API rejects it 422 **before billing**,
 see [the subject gate](/api/agents#the-essence-2-subject-gate-422)) — then
-polls `get_agent_status`. Expect the `lip_sync` step to run ~25–40 minutes
-while the identity trains. Creation is **image-only**: never pass `video`. The
+polls `get_agent_status`. Expect the whole creation to take about 2 to 2.5
+hours, most of it in the `lip_sync` step while the identity trains
+([creation times](/api/agents#model-specific-inputs-and-creation-times)). Creation is **image-only**: never pass `video`. The
 `bithuman-mcp` 0.3.4 schema still listed a legacy `video` field — the API
 rejects it with `400 VIDEO_INPUT_NOT_SUPPORTED` — and `bithuman-mcp` 0.3.5 and
 the CLI 2.4.1+ server have both dropped it.
@@ -234,8 +235,8 @@ and Linux x86_64 — so a hosted agent, or one on Windows, calls the
 
 - **Async work.** `generate_agent` and `generate_dynamics` return immediately
   with `processing`. Have the agent poll `get_agent_status` / `get_dynamics`
-  until `ready` (a few minutes for first-generation models; roughly 45 minutes
-  to 1.5 hours for the [second generation](/concepts/models-v2), which trains a
+  until `ready` (minutes for a first-generation model; about 2 to 2.5 hours for
+  either model of the [second generation](/concepts/models-v2), which trains a
   real per-identity model).
 - **Credits.** `generate_agent` (250 credits for the default first-generation
   model; 500 for `essence-2`, 2000 for `expression-2` — see

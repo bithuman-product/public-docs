@@ -16,7 +16,7 @@ Generate → Store → Resolve → Live session → Speak
 
 ## 1. Generate
 
-Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus an optional portrait image and voice sample (creation is image-only — bitHuman generates the 10-second identity video internally, authored to loop seamlessly). It returns `{ agent_id, status: "processing" }` immediately — generation runs async: a few minutes for the first-generation models, roughly 45 minutes to 1.5 hours for the [second generation](/concepts/models-v2) (`essence-2` about 45 min; `expression-2` about 1–1.5 h).
+Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus an optional portrait image and voice sample (creation is image-only — bitHuman generates the 10-second identity video internally, authored to loop seamlessly). It returns `{ agent_id, status: "processing" }` immediately — generation runs async. Measured end to end on 2026-09-20, one creation per model: `expression-1` 1 min, `essence-1` 13 min, `expression-2` 2 h 02 m, `essence-2` 2 h 09 m. Plan for under 15 minutes for either first-generation model and **about 2 to 2.5 hours** for either model of the [second generation](/concepts/models-v2) — neither of those two is the quick one.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -52,7 +52,9 @@ processing → generating → completed → ready   (success)
                                   \→ failed    (error)
 ```
 
-> **Note** `generating` and `completed` are **intermediate** states, not terminal — keep polling past them until you see `ready` or `failed`. Typical wall-clock is a few minutes for the first-generation models and roughly 45 minutes to 1.5 hours for the second generation — don't apply a short client timeout.
+> **Note** `generating` and `completed` are **intermediate** states, not terminal — keep polling past them until you see `ready` or `failed`. Wall-clock runs from about a minute to a couple of hours depending on the model ([creation times](/api/agents#model-specific-inputs-and-creation-times)) — don't apply a short client timeout.
+
+> **`ready` does not yet mean downloadable.** The agent serves, embeds and speaks as soon as it reports `ready`, but its model file is published separately and a little later. Until it is, [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) answers a retryable [`404 MODEL_ARTIFACT_NOT_READY`](/api/errors#model-errors) — on 2026-09-20 an `expression-2` agent was still answering it 23 minutes after it went `ready`. Retry the download on that 404.
 
 ## 3. Resolve and stream
 
