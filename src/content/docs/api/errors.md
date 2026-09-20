@@ -33,7 +33,9 @@ A `502` or `504` comes from the content delivery network in front of the API,
 not from the API itself, so it carries an HTML page rather than the envelope
 above. **Never assume a JSON body on a 5xx** — check the `Content-Type` before
 parsing, and fall back to the HTTP status line when it isn't
-`application/json`. Both are transient: retry with backoff.
+`application/json`. Both are transient, and both carry a `Retry-After` header
+(seconds), so your usual retry helper still works. Any route can answer either
+one.
 
 ## HTTP status codes
 
@@ -51,7 +53,7 @@ parsing, and fall back to the HTTP status line when it isn't
 | `422` | Unprocessable Entity | The request is well-formed but semantically incompatible with the target model (`MODEL_SUBJECT_MISMATCH`, `MODEL_PREREQUISITE_MISSING`) — change the input or asset, not the request syntax. |
 | `429` | Rate Limited | Too many requests — see [rate limits](/api/rate-limits). |
 | `500` | Internal Error | Server-side error — retry or contact support. |
-| `502` / `504` | Bad Gateway / Gateway Timeout | Raised by the delivery network in front of the API, and the **only** statuses that do not carry the JSON envelope — see [the exception above](#the-one-exception-502-and-504). Transient; retry with backoff. |
+| `502` / `504` | Bad Gateway / Gateway Timeout | Raised by the delivery network in front of the API, and the **only** statuses that do not carry the JSON envelope — see [the exception above](#the-one-exception-502-and-504). Transient; retry after the `Retry-After` seconds. |
 | `503` | Service Unavailable | All workers busy — retry with backoff. Also `MODEL_NOT_YET_AVAILABLE` — a second-generation family temporarily paused for your account (rare — Essence 2 / Expression 2 are GA since July 10, 2026). Transient in either case; all four avatar models render [talking video](/api/video). |
 
 ## Error codes

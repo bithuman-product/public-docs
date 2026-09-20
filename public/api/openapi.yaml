@@ -480,6 +480,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "502":
+          $ref: "#/components/responses/EdgeBadGateway"
     post:
       operationId: updateAgent
       x-codeSamples:
@@ -2567,6 +2569,8 @@ paths:
                   httpStatus: 503
                 status: "error"
                 status_code: 503
+        "504":
+          $ref: "#/components/responses/EdgeGatewayTimeout"
 
   /v1/video/{job_id}:
     get:
@@ -2990,6 +2994,8 @@ paths:
                     $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "502":
+          $ref: "#/components/responses/EdgeBadGateway"
 
   /v1/usage:
     get:
@@ -4020,6 +4026,41 @@ components:
               httpStatus: 400
             status: "error"
             status_code: 400
+
+    EdgeBadGateway:
+      description: >-
+        Raised by the content delivery network in front of the API, before the
+        request reaches it. **The body is an HTML page, not the JSON envelope
+        every other status uses** — check `Content-Type` before parsing a 5xx.
+        A `Retry-After` header is present, so an ordinary retry helper still
+        works. Any route can answer this.
+      content:
+        text/html:
+          schema:
+            type: string
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+
+    EdgeGatewayTimeout:
+      description: >-
+        The request reached the content delivery network in front of the API
+        but no response came back in time. **The body is an HTML page, not the
+        JSON envelope every other status uses** — check `Content-Type` before
+        parsing a 5xx. A `Retry-After` header is present, so an ordinary retry
+        helper still works. Any route can answer this; the long-running
+        routes are the likeliest.
+      content:
+        text/html:
+          schema:
+            type: string
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
 
 x-tagGroups:
   - name: Get started
