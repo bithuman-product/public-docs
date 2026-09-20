@@ -1,5 +1,5 @@
 ---
-title: "Essence 1 vs Expression 1"
+title: "Essence 1 vs Expression 1 (first generation)"
 description: "The two first-generation bitHuman models compared — what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick. For the current models, see Essence 2 and Expression 2."
 section: concepts
 group: "Models"

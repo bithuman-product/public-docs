@@ -75,5 +75,6 @@ failing one. Every transcript on both pages was produced by running the snippet.
 
 - [Browser — check before you ship](/examples/browser-webgpu-check) — a probe for whether a browser has a usable GPU, and a check that the runtime files you serve are the ones we published.
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — SwiftPM resolve preflight against the pinned checksums, which `bithuman` wheel pip picks on a Mac, and what is actually inside the shipped `Expression2` binary. Runs from any OS.
+- [Failure states on a phone](/examples/failure-states) — what the on-device SDKs throw when the network is gone, a download is interrupted, a model is corrupt or a key is rejected, with the handling each state needs.
 
 For the REST contract see the [API reference](/api/reference). For deployment shapes (LiveKit cloud, self-hosted GPU, embed widget) see the [Guides](/guides/deploy-livekit).

@@ -1,51 +1,37 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import { inSidebarOrder } from "../lib/sidebar-order";
 
-// /llms-full.txt — the entire documentation corpus concatenated into one
-// plain-text file, ordered by pillar. For AI agents that want to ingest
-// everything in a single fetch. Curated index lives at /llms.txt.
+// /llms-full.txt — every page's full Markdown in one file, in sidebar order,
+// for AI agents that ingest everything in a single fetch. Site-relative links
+// become absolute so a reader of this file can follow them; fenced code is
+// left byte-for-byte. The index lives at /llms.txt.
 
 export const prerender = true;
 
 const SITE = "https://docs.bithuman.ai";
-const ORDER = ["api", "sdk", "concepts", "guides", "examples", "resources"];
+
+/** `](/path)` → `](https://docs.bithuman.ai/path)` outside fenced code. */
+function absolutize(md: string): string {
+  return md
+    .split(/(^```[\s\S]*?^```[ \t]*$)/m)
+    .map((part, i) => (i % 2 ? part : part.replace(/\]\(\/(?!\/)/g, `](${SITE}/`)))
+    .join("");
+}
 
 export const GET: APIRoute = async () => {
-  const docs = await getCollection("docs", (e: any) => !e.data.draft);
-  docs.sort(
-    (a: any, b: any) =>
-      ORDER.indexOf(a.data.section) - ORDER.indexOf(b.data.section) ||
-      (a.data.order ?? 100) - (b.data.order ?? 100),
-  );
+  const docs = inSidebarOrder(await getCollection("docs", (e: any) => !e.data.draft));
 
   let out = `# bitHuman — full documentation\n\n`;
   out +=
-    `> Private, on-device, real-time lip-synced AI avatar platform. Push ` +
-    `16-bit PCM audio in, drain 25 FPS lip-synced video frames out — fully ` +
-    `on-device (macOS/Linux/iOS, CPU incl. Raspberry Pi, NVIDIA GPU, or ` +
-    `Apple Silicon) or via a cloud REST API. Private by design: audio, ` +
-    `video, and prompts never leave your hardware; the only network call is ` +
-    `a ~1-request-per-minute billing heartbeat, so it self-hosts on-prem, ` +
-    `at low per-minute cost. That heartbeat is required — the runtimes are ` +
-    `fail-closed without a valid key. Models (second ` +
-    `generation, generally available since July 10, 2026): \`expression-2\` (audio-driven real-time ` +
-    `avatar video from a single photo — best for cartoon/animal/creature/robot ` +
-    `characters; GPU / Apple / CPU cloud chain, local rendering via the CLI), ` +
-    `\`essence-2\` (the STANDARD photoreal ` +
-    `model; served from the GPU / Apple / CPU cloud chain, rendered locally on ` +
-    `your own Mac (Apple Silicon) or Linux x86_64 box by the CLI 2.6.1+ — ` +
-    `\`bithuman pull <CODE> --model essence-2\` then ` +
-    `\`bithuman render <CODE>.imx -a speech.wav -o out.mp4\`, offline, runtime ` +
-    `inside the CLI, the shared audio encoder (~377 MB) fetched once on first ` +
-    `render into ~/.bithuman/engines/essence-2/, an incomplete model file ` +
-    `refused with exit 69 and no output — from your own CPU servers (Python ` +
-    `SDK), on Android (AAR), and opt-in in the viewer's browser (WebGPU/WASM); ` +
-    `the former essence-2-light name is retired), plus ` +
-    `\`essence-1\` / \`expression-1\`. This file concatenates ` +
-    `the entire docs site for ingestion. Curated index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
+    `> Every page of ${SITE}, in the order the site's sidebar shows them. ` +
+    `Each section starts with the page title and its URL. ` +
+    `Index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
 
   for (const d of docs) {
-    out += `\n\n---\n\n# ${d.data.title}\n\nURL: ${SITE}/${d.id}\n\n${d.body ?? ""}\n`;
+    out += `\n\n---\n\n# ${d.data.title}\n\nURL: ${SITE}/${d.id}\n\n`;
+    if (d.data.description) out += `${d.data.description}\n\n`;
+    out += `${absolutize(d.body ?? "")}\n`;
   }
 
   return new Response(out, {

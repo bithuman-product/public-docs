@@ -1,5 +1,5 @@
 ---
-title: "Python"
+title: "Python SDK"
 description: "pip install bithuman — open an avatar, render audio through it, take RGB frames. Expression 2 and Essence 2 on your own machine."
 section: sdk
 group: "Platforms"

@@ -2,6 +2,7 @@
 import Base from "./Base.astro";
 import "../styles/prose.css";
 import { SECTIONS, GROUP_ORDER, type SectionId } from "../config/nav.ts";
+import { lastModified } from "../lib/git-lastmod";
 
 interface Heading {
   depth: number;
@@ -47,9 +48,48 @@ const flatNav = groups.flatMap(([, items]) => items);
 const curIdx = flatNav.findIndex((e: any) => slugOf(e) === currentPath);
 const prevPage = curIdx > 0 ? flatNav[curIdx - 1] : null;
 const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1] : null;
+
+// Structured data for this page, from its own frontmatter and its last commit
+// (the sitemap's <lastmod> source) — nothing the page does not already say.
+const pageUrl = `https://docs.bithuman.ai${currentPath}`;
+const modified = lastModified(`src/content/docs/${entry.id}.md`);
+const crumbs = [
+  { name: "Docs", item: "https://docs.bithuman.ai/" },
+  { name: meta.label, item: `https://docs.bithuman.ai${meta.home}` },
+  { name: entry.data.title, item: pageUrl },
+];
+const jsonLd: Record<string, unknown>[] = [
+  {
+    "@type": "TechArticle",
+    "@id": `${pageUrl}#article`,
+    headline: entry.data.title,
+    ...(entry.data.description ? { description: entry.data.description } : {}),
+    url: pageUrl,
+    inLanguage: "en",
+    ...(modified ? { dateModified: modified } : {}),
+    author: { "@id": "https://www.bithuman.ai/#organization" },
+    publisher: { "@id": "https://www.bithuman.ai/#organization" },
+    isPartOf: { "@type": "WebSite", name: "bitHuman Docs", url: "https://docs.bithuman.ai/" },
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: c.item })),
+  },
+];
+if (section === "sdk") {
+  jsonLd.push({
+    "@type": "SoftwareApplication",
+    "@id": `${pageUrl}#software`,
+    name: entry.data.title,
+    ...(entry.data.description ? { description: entry.data.description } : {}),
+    url: pageUrl,
+    applicationCategory: "DeveloperApplication",
+    publisher: { "@id": "https://www.bithuman.ai/#organization" },
+  });
+}
 ---
 
-<Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description}>
+<Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description} type="article" jsonLd={jsonLd}>
   <div class="doc">
     {/* sidebar */}
     <aside class="doc-side" data-doc-side>
