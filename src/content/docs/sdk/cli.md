@@ -44,15 +44,15 @@ you what you got:
 
 ```text
 $ bithuman --version
-libessence  2.11.4 ABI 7         # the engine inside, and the ABI it speaks
-bithuman    2.6.24               # the CLI itself
+libessence  2.11.5 ABI 7         # the engine inside, and the ABI it speaks
+bithuman    2.6.25               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
 
 The two numbers move independently and the installer always fetches the newest
 CLI, so read yours rather than this page's — the shape is the contract, the
-digits are a snapshot (taken 2026-09-19 from the installer's own download).
+digits are a snapshot (taken 2026-09-20 from the installer's own download).
 
 Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
 Intel Mac or a Linux ARM box the installer names the platform and stops without
