@@ -86,6 +86,12 @@ A showcase pull is anonymous — `login` is for `render` and for your own agents
 `~/.cache/bithuman/agents/<YOUR_AGENT_CODE>/<YOUR_AGENT_CODE>.imx` (`--model` picks a family
 when the agent has more than one).
 
+A second `pull` of the same identity re-downloads it when the published file changed since it
+was cached (the cached file's length is compared with the published one; when that cannot be
+asked, the cached file is kept) — for an agent code today, and for a showcase slug from
+cli-v2.6.26. `--force` re-downloads regardless; `bithuman run <slug>` uses the file already
+pulled, so `pull` again to pick up a change.
+
 > **`run` takes the slug too.** `bithuman run wise-pup` resolves the slug
 > itself — the same resolver, the same cache and the same session as pulling
 > first (measured on the published cli-v2.6.25 Linux x86_64 tarball, fresh
