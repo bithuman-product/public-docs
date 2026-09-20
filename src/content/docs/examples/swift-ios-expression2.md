@@ -67,7 +67,7 @@ afternoon on it; use `expression-2`, which is what this page is.
   ★ **Route B — your own identity**, in `ready` state, with your API secret.
   Do this when you want *your* face on the phone. Create one at
   [bitHuman](https://www.bithuman.ai) and note its `<CODE>`; the API side is
-  [Agents](/api/agents). Budget **60–100 minutes and 2000 credits** — see
+  [Agents](/api/agents). Budget **about 2–2.5 hours and 2000 credits** — see
   below.
 
   ★ **Why an Android agent code does not work here.** [The Android SDK
@@ -90,7 +90,7 @@ afternoon on it; use `expression-2`, which is what this page is.
   is not, and needs your `api-secret`.
 
   ★ **Route B only — budget for this before you open Xcode: creating one takes
-  about 60–100 minutes and costs 2000 credits** — an `expression-2` creation trains a
+  about 2–2.5 hours and costs 2000 credits** — an `expression-2` creation trains a
   per-identity model on an H100-class GPU. See
   [model-specific inputs and creation times](/api/agents#model-specific-inputs-and-creation-times). Nothing on this
   page can start until that finishes, so start the creation first and read the
@@ -1005,14 +1005,10 @@ stream it (the microphone button does) or draw straight into a video writer.
 
 Stated plainly, so nobody spends an afternoon finding out.
 
-- **essence-2 does not render on an iPhone today, on any iPhone.** The
-  `Essence2` product builds, links, installs and starts — and then refuses the
-  artifact the download endpoint vends, because that artifact is the form the
-  bitHuman cloud renders from and this engine wants a different one. The refusal
-  arrives **before** the iPhone 16 Pro floor is consulted, so an iPhone 16 Pro
-  sees it too. The details are on
-  [Essence 2 on-device](/sdk/ios#install). Use `expression-2` on
-  the device, or run essence-2 as a [cloud session](/api/runtime-sessions).
+- **This project is Expression 2 only.** Essence 2 on an iPhone is the
+  package's `Essence2` product, which opens the `.imx` you download from
+  **2.13.2** — see [Essence 2 on-device](/sdk/ios#install); a walkthrough
+  shaped like this one is pending.
 - **The one-call container opener is broken on iOS.** Through `Expression2`
   2.11.2, `create(avatarContainer:…:stagingDir:)` refuses every published
   `.avatar` by member name on iOS, and unpacks the same file happily on macOS.

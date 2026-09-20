@@ -36,8 +36,9 @@ shows you which.
 
 ### There are two answers, and they are two different facts
 
-**In scope** — this model belongs on this platform. If the artifact is missing
-here, that is a gap, and it is our bug.
+**In scope** — this model ships, or is meant to ship, on this platform. What
+is published for each platform today is on the [SDK page](/sdk); if the
+artifact is missing here, that is a gap, and it is our bug.
 
 **Not applicable** — this model is deliberately **off** this platform. A
 missing artifact here is **correct**. It is not "coming soon", it is not a
@@ -54,16 +55,15 @@ iPhone, browser and Android stay in scope.
 
 ## essence-1 is the model you are most likely to be handed
 
-About two thirds of the agents on the platform are **essence-1**, and the
-CLI's default showcase catalogue is built entirely from it — every avatar a
-bare `bithuman list` returns is an essence-1 identity. A second catalogue of
-twenty essence-2 and expression-2 identities is open to anyone with no
-credential; the CLI reads it with `bithuman list --manifest
-https://api.bithuman.ai/v1/models/showcase`.
+Many of the agents on the platform are **essence-1**. The showcase catalogue a
+bare `bithuman list` returns is the same list
+`GET /v1/models/showcase` serves (it is on the [API reference](/api/reference)) —
+Essence 2 and Expression 2 identities only, open to anyone with no credential.
+Essence 1 identities come by agent code: `bithuman pull <CODE> --model
+essence-1`, or the [download endpoint](/api/agents#download-an-agents-model).
 
 One thing to code against: **a stored agent can carry no model value at all.**
-Roughly a fifth of them do, so anything of yours that switches on `agents.model`
-must handle a null. It is not a rounding error.
+Anything of yours that switches on `agents.model` must handle a null.
 
 ## Identify what you are holding
 
@@ -78,7 +78,7 @@ bithuman info A23KSG5258.imx
 ```text
   Engine:         essence2-light
   Family:         essence-2 (Essence 2)
-  Members (26):
+  Members (…):
     …
 ```
 

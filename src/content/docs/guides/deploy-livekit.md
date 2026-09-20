@@ -45,9 +45,10 @@ resolves it: the wheel publishes cp310 and cp314 and imports cleanly on both.
 > `pillow` and dropped the marker on 2026-09-15, about four hours after 1.8.2
 > was cut. A plugin release after that commit needs neither extra word.
 
-The plugin pins `bithuman<3`, so it installs the 2.x wheel rather than anything
-newer — [the LiveKit page](/sdk/livekit#python-deploy-via-the-livekit-plugin)
-has the resolved versions and why no bitHuman release can change them.
+The plugin pins `bithuman<3`, which resolves the newest 2.x wheel — the same
+current wheel [the Python SDK page](/sdk/python) documents; [the LiveKit
+page](/sdk/livekit#python-deploy-via-the-livekit-plugin) has the resolved
+versions.
 
 ## Set your environment
 

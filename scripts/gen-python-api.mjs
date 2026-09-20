@@ -518,11 +518,15 @@ export function renderRegion(record) {
     "intercepted with a refusal that says what to write instead",
     `raises \`NotSupported\`${record.surface.retired.every((r) => r.is_import_error) ? " and `ImportError`" : ""}`,
   ]);
-  rows.push([
-    "`bithuman.__version__`",
-    "removed on purpose — `hasattr` answers False",
-    "read the version from `importlib.metadata`",
-  ]);
+  // The record says whether the wheel carries `__version__`; the 3.x line did
+  // not, the 2.11.x line does — the page follows the record, not a memory.
+  if (!record.surface.dunder_version) {
+    rows.push([
+      "`bithuman.__version__`",
+      "removed on purpose — `hasattr` answers False",
+      "read the version from `importlib.metadata`",
+    ]);
+  }
   out.push(table([["Name", "Why it is not the surface", "What it is"], ["---", "---", "---"], ...rows]));
   out.push("");
 

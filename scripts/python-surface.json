@@ -2,16 +2,16 @@
   "artifact": {
     "registry": "pypi",
     "coordinate": "bithuman",
-    "version": "2.11.0",
-    "digest": "sha256:cb87b9da954671bb68d006ffa405bcbdb81a537bac5dff5bade49388e77c74ba",
-    "resolved_on": "2026-09-16",
-    "wheel": "bithuman-2.11.0-cp314-cp314-manylinux_2_28_x86_64.whl"
+    "version": "2.11.5",
+    "digest": "sha256:39cbef68f7cc8900badfc6b4215e35fe1cb9211653d8cc75d83786b7e6e229bc",
+    "resolved_on": "2026-09-20",
+    "wheel": "bithuman-2.11.5-cp314-cp314-manylinux_2_28_x86_64.whl"
   },
   "surface": {
     "package": "bithuman",
     "distribution": {
       "name": "bithuman",
-      "version": "2.11.0",
+      "version": "2.11.5",
       "requires_python": "<3.15,>=3.10",
       "extras": [
         "expression-2",
@@ -142,7 +142,7 @@
           {
             "name": "NotSupported",
             "kind": "exception",
-            "doc": "This avatar cannot run here.\n\nUse the cloud package, or another device.",
+            "doc": "This avatar cannot run here.\n\nRender it in the cloud with the Video API (POST /v1/video/generate),\nor open it on Apple Silicon macOS or Linux.",
             "bases": [
               "AvatarError"
             ],
@@ -703,14 +703,14 @@
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.0'"
+            "value": "'2.11.5'"
           },
           {
             "name": "__core_version__",
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.0'"
+            "value": "'2.11.5'"
           },
           {
             "name": "__abi_version__",
@@ -796,7 +796,7 @@
         "name": "bithuman.offline",
         "interface": "__all__",
         "stub": null,
-        "doc": "``bithuman.offline`` — the essence-2 self-hosted offline render.\n\n    from bithuman.offline import OfflineRenderer, render_offline\n\n    stats = render_offline(\"A63GVG1577.imx\", \"speech.wav\", out_mp4=\"out.mp4\")\n    assert stats[\"borrow_state\"] == \"borrowed\"\n\nThis is the reference route: it renders a whole clip on CPU through the same\npipeline the hosted engine runs, and every render says whether the avatar's own\nteeth were used.  ``stats[\"borrow_state\"]`` is one of the five ``BORROW_*``\nnames below and is the field to gate on; ``stats[\"borrow\"]`` carries the\nper-frame evidence behind it.\n\nThis module is not part of the eight-name taught surface (``bithuman.open`` and\n``avatar.render`` are); it is kept for the callers that drive the offline route\ndirectly.\n\n★2.x SPELLINGS.  ``bithuman.tessera_offline`` (module), ``OfflineTesseraRenderer``\nand ``TesseraOfflineError`` (classes), ``bithuman[tessera]`` (extra) and\n``BITHUMAN_TESSERA_*`` (environment) are the 2.x names of the things below.\nImporting the old module warns and keeps working until 4.0.0; the old extra\ninstalls the same dependencies; the old environment keys are read forever.\nThe 2.x stats key ``stats[\"tessera\"]`` is gone — it is ``stats[\"borrow\"]``.",
+        "doc": "``bithuman.offline`` — the essence-2 self-hosted offline render.\n\n    from bithuman.offline import OfflineRenderer, render_offline\n\n    stats = render_offline(\"A63GVG1577.imx\", \"speech.wav\", out_mp4=\"out.mp4\")\n    assert stats[\"borrow_state\"] == \"borrowed\"\n\nThis is the reference route: it renders a whole clip on CPU through the same\npipeline the hosted engine runs, and every render says whether the avatar's own\nteeth were used.  ``stats[\"borrow_state\"]`` is one of the five ``BORROW_*``\nnames below and is the field to gate on; ``stats[\"borrow\"]`` carries the\nper-frame evidence behind it.\n\nThis module is not part of the eight-name taught surface (``bithuman.open`` and\n``avatar.render`` are); it is kept for the callers that drive the offline route\ndirectly.\n\n★2.x SPELLINGS.  ``bithuman.tessera_offline`` (module), ``OfflineTesseraRenderer``\nand ``TesseraOfflineError`` (classes) and ``bithuman[tessera]`` (extra) are the\n2.x names of the things below.  Importing the old module warns and keeps\nworking until 4.0.0; the old extra installs the same dependencies.  The 2.x\nstats key ``stats[\"tessera\"]`` is gone — it is ``stats[\"borrow\"]``.  The 2.x\n``BITHUMAN_TESSERA_*`` / ``BITHUMAN_OFFLINE_*`` environment keys configured a\nsecond, Python-side director this route no longer carries (2.11.5); nothing\nreads them, and a program that sets them renders exactly as one that does not.",
         "declared": [
           "OfflineRenderer",
           "OfflineRenderError",
@@ -813,7 +813,7 @@
           {
             "name": "OfflineRenderer",
             "kind": "class",
-            "doc": "Offline CPU renderer for an essence-2 (essence2-light engine)\n``.imx``/bundle dir, teeth-armed when the bundle carries the\nv5.1 members. Metering is armed at CONSTRUCTION (billing key\nfirst); rendering without a permitting gate raises.",
+            "doc": "Offline CPU renderer for an **essence-2** ``.imx``/bundle dir.\nMetering is armed at CONSTRUCTION (billing key first); the teeth borrow is\narmed at construction too, and an avatar that cannot borrow is refused\nhere, before any frame exists.\n\nThe model is called **essence-2** — that is the only name to write.\n``essence2-light`` below is not a second product name: it is the\nfrozen ``engine`` literal stamped inside every essence-2 container,\nread back off the file and compared here. It is a value you may READ\nout of a bundle, never one you type.",
             "bases": [
               "object"
             ],
@@ -837,11 +837,11 @@
               },
               {
                 "name": "render",
-                "signature": "(self, audio, max_frames: 'Optional[int]' = None, on_frame: 'Optional[Callable[[np.ndarray, int], None]]' = None) -> 'dict'",
+                "signature": "(self, audio, max_frames: 'Optional[int]' = None, on_frame: \"Optional[Callable[['object', int], None]]\" = None) -> 'dict'",
                 "doc": "Render ``audio`` (a path, or float32 16 kHz mono PCM) to full\nRGB frames. ``on_frame(frame_hw3_u8, frame_idx)`` receives every\nframe; returns the honest stats dict (CPU-class fps)."
               }
             ],
-            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'int' = 4, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
+            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'Optional[int]' = None, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
           },
           {
             "name": "OfflineRenderError",
@@ -942,7 +942,7 @@
           {
             "name": "OfflineTesseraRenderer",
             "kind": "class",
-            "doc": "Offline CPU renderer for an essence-2 (essence2-light engine)\n``.imx``/bundle dir, teeth-armed when the bundle carries the\nv5.1 members. Metering is armed at CONSTRUCTION (billing key\nfirst); rendering without a permitting gate raises.",
+            "doc": "Offline CPU renderer for an **essence-2** ``.imx``/bundle dir.\nMetering is armed at CONSTRUCTION (billing key first); the teeth borrow is\narmed at construction too, and an avatar that cannot borrow is refused\nhere, before any frame exists.\n\nThe model is called **essence-2** — that is the only name to write.\n``essence2-light`` below is not a second product name: it is the\nfrozen ``engine`` literal stamped inside every essence-2 container,\nread back off the file and compared here. It is a value you may READ\nout of a bundle, never one you type.",
             "bases": [
               "object"
             ],
@@ -966,11 +966,11 @@
               },
               {
                 "name": "render",
-                "signature": "(self, audio, max_frames: 'Optional[int]' = None, on_frame: 'Optional[Callable[[np.ndarray, int], None]]' = None) -> 'dict'",
+                "signature": "(self, audio, max_frames: 'Optional[int]' = None, on_frame: \"Optional[Callable[['object', int], None]]\" = None) -> 'dict'",
                 "doc": "Render ``audio`` (a path, or float32 16 kHz mono PCM) to full\nRGB frames. ``on_frame(frame_hw3_u8, frame_idx)`` receives every\nframe; returns the honest stats dict (CPU-class fps)."
               }
             ],
-            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'int' = 4, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
+            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'Optional[int]' = None, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
           },
           {
             "name": "render_offline",

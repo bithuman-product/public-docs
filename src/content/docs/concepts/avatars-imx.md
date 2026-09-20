@@ -77,8 +77,8 @@ per-identity artifact, downloaded with
 
 | Model | Artifact | What it is |
 |---|---|---|
-| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — **~85–105 MB** on the current renderer (agents created before the 2026-07-27 renderer change are larger, up to ~550 MB, until retrained). Licensed weights; serves via bitHuman cloud today. |
-| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon), and on Linux x86_64 with the CPU render host installed, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
+| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/ios) — the first local play checks the licence with the cloud, so it needs your sign-in. |
+| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
 > for compatibility** — it predates the current product naming and survives only

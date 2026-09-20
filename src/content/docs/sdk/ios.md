@@ -42,7 +42,8 @@ carry, and something for it to say. No account, no key, no credits:
 # 1. the identity, through the download door (1-hour signed URL, no credential)
 curl -fL -o A23WJF0199.avatar "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
 
-# 2. the shared engine, from the public channel `bithuman engine install` reads
+# 2. the shared engine, from the public channel `bithuman engine install` reads — the `mac` engine is right for an iPhone app:
+#    its graphs are CoreML packages compiled on the device at first launch, and it is named for the machine that downloads it
 curl -fLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/engines/expression-2/mac-arm64-1.0.0.engine"
 
 # 3. 16 kHz mono speech — the identity's own bundle carries one
@@ -114,7 +115,7 @@ Measured frame rates for every platform are on the
 | `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not public | check the code under [your agents](/api/agents) or on the [showcase](/showcase) |
 | `409 MODEL_NOT_GENERATED` from the download | the agent has no Expression 2 model yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll |
 | `MODEL_ARTIFACT_NOT_READY` from the download | trained, not yet published to the download store | poll the same URL; it clears on its own |
-| `Essence2` refuses the file you downloaded: *need a directory with meta.json {"format":"elevatedir-v*" \| "essence2-light-dir-v*"}* | a package older than **2.13.2**, whose `Essence2` product opened an unpacked bundle directory rather than the single `.imx` the download endpoint serves (the quoted format names are legacy names kept for compatibility) | move the pin to **2.13.3**, which ships Essence 2 engine 1.6.3 and opens that `.imx` as served |
+| `Essence2` refuses the file you downloaded: *need a directory with meta.json {"format":"elevatedir-v*" \| "essence2-light-dir-v*"}* | a package older than **2.13.2**, whose `Essence2` product opened an unpacked bundle directory rather than the single `.imx` the download endpoint serves (the quoted format names are legacy names kept for compatibility) | pin **2.13.2** or newer — from there the `Essence2` product opens that `.imx` as served |
 | a metered render refuses | `BITHUMAN_API_KEY` unset in the app's environment | set it — the Swift SDK reads that name (same value as `BITHUMAN_API_SECRET`) |
 
 ## Examples and source

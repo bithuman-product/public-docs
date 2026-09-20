@@ -127,7 +127,7 @@ clip authored to loop seamlessly, so idle playback never shows a seam
 part of the creation contract: a request carrying `video` is rejected with
 [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
 anything is billed (verified live 2026-08-01). One `aspect_ratio` value
-drives **both** the identity image and the driver video (`16:9` default,
+drives **both** the identity image and the identity video (`16:9` default,
 `9:16`, `1:1`), and the `framing` / `transparency` knobs shape the generated
 identity image — see [the parameter table](/api/agents#generate-an-agent).
 A voice is prepared as part of creation (supply `audio` to clone one, or one
@@ -224,7 +224,7 @@ the clip reaches its last frame it wraps back to the first, and it never plays
 in reverse. This applies both while idle and while speaking, so motion always
 reads as natural forward movement.
 
-The entire animation rides on top of that driver video: in idle it is pure video
+The entire animation rides on top of that identity video: in idle it is pure video
 playback, and while talking the animated face is pasted back onto the driver's
 frame (Expression 2, by contrast, only plays its driver clip during idle). The
 engine reads the driver one frame at a time, always forward with a wrap, so the

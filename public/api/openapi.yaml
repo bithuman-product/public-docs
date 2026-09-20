@@ -951,8 +951,8 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; **~85–105 MB** for an agent created on the current renderer, up to ~550 MB for one created before 2026-07-27 — read `Content-Length` rather than assuming a figure; **licensed weights** — local playback requires the runtime license activation flow). `essence-2-light` is a retired internal alias for this family. |
-        | `expression-2` | `<code>.avatar` — the frozen back-compat alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are the current bitHuman container and 14 are still the pre-2026-07-12 CoreML zip (measured 2026-09-01; `bithuman info` reports which), ~20–90 MB per identity — runs locally on macOS (Apple Silicon), on Linux x86_64 with the CPU render host installed, or in the browser, and is also served on bitHuman's cloud |
+        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the licence with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#what-renders-locally-and-where). `essence-2-light` is a retired internal alias for this family. |
+        | `expression-2` | `<code>.avatar` — the frozen back-compat alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are the current bitHuman container and 14 are still the pre-2026-07-12 CoreML zip (measured 2026-09-01; `bithuman info` reports which), ~20–90 MB per identity — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
         The default response is a **302 redirect** to the artifact — the
@@ -2376,7 +2376,7 @@ paths:
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — the requested model can't render
             right now (no routeable worker, or the model is temporarily
-            paused). All five avatar models render talking video in normal
+            paused). All four avatar models render talking video in normal
             operation, so this is a rare, transient condition. Returned
             **before any charge** — retry shortly, or render with another
             of the agent's supported models.

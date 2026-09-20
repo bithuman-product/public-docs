@@ -87,6 +87,8 @@ API below. Authenticate once with `bithuman login`, as for any other command.
 | `doctor` | Install health; `ready` is true iff this machine can serve an avatar. |
 | `inspect_model` | Inspect a local `.imx` model file's metadata. |
 | `list_showcase` | List downloadable showcase avatars. |
+| `pull` | Download a showcase avatar or one of your agents' model files. |
+| `render` | Render an audio file against a local model file to an MP4 — needs a credential, like the command. |
 
 ## Setup
 

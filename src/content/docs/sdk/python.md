@@ -36,9 +36,9 @@ command-line tool is the [CLI](/sdk/cli), a separate install.
 **[essence-1](/concepts/essence-1) needs no extra at all.** It is the base
 wheel's own path — `bithuman.open` takes a first-generation `.imx`
 straight out of `pip install bithuman`, which is why the CLI and the
-[Swift](/sdk/ios) page send you here for it. Only the newer engines are behind
-extras: `.avatar` files need `[expression-2]`, and the Essence 2 clip-to-file
-route needs `[offline]`.
+[Swift](/sdk/ios) page send you here for it. One newer engine is behind an
+extra: `.avatar` files need `[expression-2]`. The Essence 2 clip-to-file route
+(`bithuman.offline`) is on the base wheel — see above.
 
 ## Authentication and configuration
 
@@ -99,7 +99,7 @@ exception it actually raises, is listed on the
 installs, not from our source.
 
 To render a whole Essence 2 clip to an MP4 instead of taking live frames, use
-the offline route (the `[offline]` extra):
+the offline route — on the base wheel, no extra:
 
 ```python
 from bithuman.offline import render_offline
@@ -156,7 +156,7 @@ logging.basicConfig(level=logging.INFO)
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
 | the first `render` is slow, with a large download | the shared audio encoder and its 2 s window are being fetched, once | wait; they are cached for every later run |
 | the cache fills the wrong disk | downloads land in `~/.cache/bithuman` by default | set `BITHUMAN_CACHE_DIR` to move the download cache |
-| code written for a 2.x release fails | 3.0 changed the API: frames are RGB and the key comes from the environment only | port to the snippet above |
+| code written for a 2.x release behaves differently | `open()` / `render()` frames are RGB and the key comes from the environment; `AsyncBithuman` keeps its 2.x contract | port to the snippet above, or keep `AsyncBithuman` |
 
 ## Examples and source
 

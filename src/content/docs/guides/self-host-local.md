@@ -15,9 +15,9 @@ Android and iOS SDK pages for the phones.
 | Your platform | What renders locally | Surface |
 |---|---|---|
 | Linux x86_64, macOS Apple Silicon | [Essence 2](/concepts/essence-2) and [Expression 2](/concepts/expression-2) — live in your browser, or a whole clip to an MP4 | [CLI](/sdk/cli) |
-| Linux x86_64 / aarch64, macOS Apple Silicon | Expression 2 live frames, and an Essence 2 clip to an MP4 on the CPU | [Python SDK](/sdk/python) `bithuman` 2.11.5 (no extra needed for the Essence 2 clip route since 2.11.5) |
-| Android (`arm64-v8a`) | Expression 2 — on-device in your own app (an Essence 2 coordinate, `essence2-android:0.5.6`, resolves; no walkthrough is published yet) | [Android SDK](/sdk/android) |
-| iOS | Expression 2 — on-device in your own app | [Swift SDK](/sdk/ios) |
+| Linux x86_64 / aarch64, macOS Apple Silicon | Essence 2 and Expression 2 frames from `bithuman.open()`, and an Essence 2 clip to an MP4 on the CPU | [Python SDK](/sdk/python) `bithuman` 2.11.5 (no extra needed for the Essence 2 clip route since 2.11.5) |
+| Android (`arm64-v8a`) | Expression 2 — on-device in your own app; an Essence 2 library is published too (the coordinate is on the [Android page](/sdk/android#troubleshooting), the API on [`Essence2Avatar`](/sdk/android-api#essence2avatar)) | [Android SDK](/sdk/android) |
+| iOS and macOS | Expression 2 and Essence 2 — on-device in your own app, through the Swift package's `Expression2` and `Essence2` products | [Swift SDK](/sdk/ios) |
 
 **The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64,
 and Apple-silicon macOS (14 or newer)** — that is the whole set. On Windows or
@@ -29,8 +29,11 @@ Two things to settle before you start:
 - **A self-hosted render is billed at the self-hosted rate** ([pricing](/guides/pricing)),
   so sign in with `bithuman login` or export `BITHUMAN_API_SECRET` — get a key at
   [Developer → API keys](https://www.bithuman.ai/developer/api-keys). Downloading a model is free.
-- **Essence 2 live streaming is not self-hostable.** Only whole-clip rendering
-  is; live sessions run through the cloud — see [LiveKit](/guides/deploy-livekit).
+- **There is no self-hosted LiveKit worker image for the second-generation
+  models** — the Docker image is [Expression 1 only](/guides/deploy-self-hosted).
+  Local live playback of Essence 2 is the CLI's `bithuman run`, and the Python
+  wheel streams frames; a hosted live session is the [cloud API](/api/overview)
+  or [LiveKit](/guides/deploy-livekit).
 
 ## Linux and macOS
 
@@ -100,9 +103,12 @@ The Python route renders a whole Essence 2 clip on the CPU — no GPU. Python
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install torch --index-url https://download.pytorch.org/whl/cpu   # Linux: the CPU build first, or the extra pulls ~2.5 GB of CUDA
-pip install "bithuman[offline]"
+pip install bithuman
 ```
+
+`pip install bithuman` is the whole install: `bithuman.offline` on the base
+wheel renders an Essence 2 clip to an MP4. `bithuman[offline]` still resolves
+for an install that pins it, but it installs `torch` you do not need.
 
 You also need **`ffmpeg` on `PATH`** — the SDK uses it to decode audio and
 encode the MP4.
@@ -153,7 +159,7 @@ Nothing below is needed for a new integration; each is kept so an existing one k
 
 | Legacy name | Status on `bithuman` 2.11.5 | Use instead |
 |---|---|---|
-| `pip install "bithuman[tessera]"` | still resolves; installs the same render extras | `bithuman[offline]` |
+| `pip install "bithuman[tessera]"` | still resolves; installs the same extras as `[offline]` — neither is needed | `pip install bithuman` |
 | `bithuman.tessera_offline` (module path) | still importable | `bithuman.offline` |
 | `OfflineTesseraRenderer`, `TesseraOfflineError` (exported names) | still exported | `OfflineRenderer`, `render_offline`, `OfflineRenderError` |
 | `BITHUMAN_TESSERA_DIRECTOR` and the other `BITHUMAN_TESSERA_*` variables | still read | no variable — the defaults are the fast path |
@@ -183,7 +189,7 @@ Measured frame rates for every platform are on the
 |---|---|---|
 | `bithuman render` refuses with `NOT_SIGNED_IN`, no output file | a render is billed, so it needs a credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
 | `OfflineRenderError` naming the audio encoder | the first render could not download it | allow the machine network access once; it is cached in `~/.bithuman/deps` afterwards |
-| `pip install "bithuman[offline]"` downloads gigabytes of `nvidia-*` packages | the default Linux `torch` is a CUDA build | install `torch` from the CPU index first (step above) |
+| `pip install "bithuman[offline]"` downloads gigabytes of `nvidia-*` packages | an install pinned to the extra pulls a CUDA `torch` the clip route no longer uses | `pip install bithuman` — the base wheel renders the clip |
 | `ffmpeg: command not found` | the SDK shells out to ffmpeg | install ffmpeg and put it on `PATH` |
 | `lible_core.so not found` at the first frame on macOS | an old wheel, from before the native half shipped | `pip install -U bithuman` |
 | `java.lang.UnsatisfiedLinkError` on an Android emulator | an x86_64 system image; the AARs are `arm64-v8a` only | a physical device, or an `arm64-v8a` emulator image |

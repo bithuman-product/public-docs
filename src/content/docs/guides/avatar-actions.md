@@ -13,7 +13,7 @@ avatar renders**:
 
 - **Self-hosted** (you hold the runtime): push a `VideoControl` to it.
   ```python
-  from bithuman.api import VideoControl
+  from bithuman import VideoControl
   await avatar.runtime.push(VideoControl(action="mini_wave_hello"))
   ```
 - **Managed cloud** (the avatar renders as a remote participant): send it a
@@ -72,8 +72,9 @@ A bitHuman avatar plays from a graph of **named clips**, in two roles:
 - **Action clips** — discrete gestures (`mini_wave_hello`, `clap_cheer`,
   `thumbs_up_pulse`, …). These are your "dynamic actions."
 
-You drive the runtime with a single primitive, **`VideoControl`**
-(`bithuman.api.VideoControl`). Audio, text, and actions all flow through it:
+You drive the runtime with a single primitive, **`VideoControl`**, imported
+from `bithuman` — the `bithuman.api` module is not in the 2.11.x wheel. Audio,
+text, and actions all flow through it:
 
 | Field | Type | Purpose |
 |---|---|---|
@@ -106,7 +107,7 @@ in-process `AsyncBithuman` you reach as `avatar.runtime`:
 ```python
 from livekit.agents import Agent, AgentSession, JobContext, function_tool, RunContext
 from livekit.plugins import bithuman
-from bithuman.api import VideoControl
+from bithuman import VideoControl
 import asyncio, os
 
 async def entrypoint(ctx: JobContext):

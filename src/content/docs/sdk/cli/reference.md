@@ -119,7 +119,7 @@ A render with no credential, or one the service rejects, is refused outright on 
 | `expression-2` | `.avatar` | Renders locally on macOS Apple Silicon and Linux x86_64. The default Wise Pup avatar is this family |
 | `essence-2` | `.imx` (releases before 2.6.0 wrote `<CODE>.lebundle.imx`, [a legacy name kept for compatibility](/concepts/avatars-imx)) | Renders locally on both platforms since **2.6.1**. The first play fetches the shared audio encoder and checks the licence with the cloud, so it needs your sign-in. A file missing a required member is refused, exit 69 |
 | `essence-1` | `.imx` | Renders locally |
-| `expression-1` | usually none | Cloud-served. The exception is an agent that went through the lip step, which owns a baked `.imx` that runs like `essence-1` |
+| `expression-1` | usually none | Cloud-served. The exception is an agent that also owns a baked `.imx` — the download endpoint hands that file out, and it runs like `essence-1` |
 
 Passing a bare **agent code** rather than a path is different: an `essence-2`
 or `expression-2` code opens a live cloud session, and `--cloud` forces that
@@ -128,7 +128,9 @@ for an `essence-1` code too.
 ### Where the local render happens
 
 On macOS (Apple Silicon) and Linux x86_64, both Expression 2 and Essence 2
-render locally, with the runtime inside the tarball — nothing else to install.
+render locally, with the runtime inside the tarball. Two tools come from your
+`PATH`: `render` writes its MP4 through `ffmpeg`, and `run` spawns
+`livekit-server` — [install](/sdk/cli#install) names both.
 
 ### The conversation brain
 
@@ -256,7 +258,8 @@ in the tarball, and the one thing it fetches is the shared audio encoder.
 
 Checks versions, host, RAM, credential, brain and cache sizes, and **exits 0
 only when both a credential and a brain resolve** — signed out it exits 1, and
-that is the check working. Rendering and pulling need neither.
+that is the check working. Pulling a showcase avatar needs neither; `render`
+and `run` need a credential.
 
 ## Environment variables
 
@@ -266,7 +269,7 @@ that is the check working. Rendering and pulling need neither.
 | `OPENAI_API_KEY` | Selects the OpenAI Realtime conversation brain |
 | `BITHUMAN_LOCAL` | `=1` selects the on-device brain — [local mode](/sdk/cli/local-mode) |
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Brain-side tuning, read by the Python worker rather than the binary — [local mode](/sdk/cli/local-mode#tuning) |
-| `BITHUMAN_METER_ENFORCE` | `=1` turns a missing or rejected key into a refusal before the first frame instead of a warning |
+| `BITHUMAN_METER_ENFORCE` | Legacy. Read, but not decisive from 2.6.22 — `run` signs the credential in first regardless; see [credential resolution](#credential-resolution-order) and [`bithuman run`](#bithuman-run) |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` when it is not on `PATH` |
 | `BITHUMAN_VERSION` | Pins the release tag the installer fetches; unset, it takes the current release named on [the CLI page](/sdk/cli#install) |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`, or `/usr/local/bin` as root) |
@@ -344,7 +347,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 | 0 | success | |
 | 1 | GENERIC | unclassified runtime error (also `doctor` when not ready) |
 | 2 | usage | bad arguments; also a refused public bind (`--host 0.0.0.0` without `--allow-public-bind`) and an unparseable `--host`, from 2.6.20 |
-| 66 | NOINPUT | input, file, slug or model not found |
+| 66 | NOINPUT | input, file, slug or model not found; also `NOT_IMX` (the file is not an avatar container) and `CLOUD_NEEDS_AGENT_CODE` (`run <file> --cloud` — a cloud session takes an agent code, not a path), both `kind: InvalidAvatar` |
 | 69 | UNAVAILABLE | network, engine or service unavailable; an incomplete model file |
 | 70 | SOFTWARE | internal error (`essence-1` `render`) |
 | 77 | NOPERM | not signed in, out of credits, or forbidden |
@@ -415,14 +418,11 @@ bithuman token         # the resolved secret on stdout (exit 77 if none)
 ```
 
 `bithuman mcp` speaks Model Context Protocol over stdio and exposes **28 tools**
-(confirmed on 2.6.20 with `bithuman mcp tools --json`): thin wrappers over
-`api.bithuman.ai` — `validate_api_secret`, `get_credit_balance`, `get_usage`,
-`list_voices`, `text_to_speech`, `generate_agent`, `get_agent_status`,
-`get_agent`, `update_agent_prompt`, `delete_agent`, `list_agents`,
-`agent_speak`, `add_agent_context`, `get_dynamics`, `generate_dynamics`,
-`create_embed_token`, `upload_file`, and the webhook set — plus four local tools
-that re-exec the CLI with no network: `version`, `doctor`, `inspect_model`,
-`list_showcase`.
+(`bithuman mcp tools --json`): six local tools that re-exec the CLI with no
+network — `version`, `doctor`, `inspect_model`, `list_showcase`, `pull`,
+`render` — and 22 that wrap `api.bithuman.ai` and the platform status page.
+The [MCP server guide](/guides/mcp-server#tools) lists every tool with its
+endpoint.
 
 It is the built-in successor to the standalone `bithuman-mcp` Python package:
 one tool to install, the same tool names. Auth comes from the resolved secret
