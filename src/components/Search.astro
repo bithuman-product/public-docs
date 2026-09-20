@@ -81,4 +81,9 @@
   .sm-hint { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
   .sm-close { font-size: var(--ft-xs); color: var(--color-text-tertiary); background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--r-sm); padding: 0.2rem 0.45rem; }
   #pf-search { padding: 0.9rem; --pagefind-ui-primary: var(--color-primary); --pagefind-ui-font: var(--font-sans); --pagefind-ui-background: var(--color-elevated); --pagefind-ui-text: var(--color-text); --pagefind-ui-border: var(--color-border); }
+  /* Pagefind's stylesheet leaves the match highlight, the focus ring and the
+     Clear button to the browser's defaults; these bring them onto the palette. */
+  #pf-search :global(mark) { background: var(--color-primary-soft); color: inherit; padding: 0 0.1em; border-radius: 2px; }
+  #pf-search :global(.pagefind-ui__search-input:focus) { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+  #pf-search :global(.pagefind-ui__search-clear) { border: 0; padding-inline: 0.7rem; }
 </style>

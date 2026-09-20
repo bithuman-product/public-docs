@@ -44,10 +44,13 @@ const stats = [
 // /sdk/android, /sdk/ios — line for line. The Kotlin tab is held to
 // sdk/android.md byte for byte by scripts/check-home-quickstart-kotlin.mjs.
 const quickstart = [
-  { label: "CLI", lang: "bash", code: `curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-bithuman login                    # opens your browser; stores a per-device key on this machine
-bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.imx
-bithuman run "$(bithuman pull wise-pup)"                                # live avatar in your browser` },
+  { label: "CLI", lang: "bash", code: `# install one binary, then sign in (opens your browser)
+curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+bithuman login
+# a showcase avatar — prints ~/.cache/bithuman/showcase/wise-pup.imx
+bithuman pull wise-pup
+# a live avatar in your browser
+bithuman run "$(bithuman pull wise-pup)"` },
   { label: "Python", lang: "python", code: `# pip install "bithuman[expression-2]"
 # hello.py
 import bithuman
@@ -111,14 +114,15 @@ const examples = [
   { t: "Run it from the CLI", d: "One binary, one command, a talking agent in your browser.", href: "/sdk/cli" },
 ];
 
-// Real customers (logos copied into /public/logos) — monochrome credibility strip.
+// Real customers — the marks bithuman.ai's own case studies carry, copied into
+// /public/logos, drawn monochrome. Only a customer's own mark goes here: NRF
+// has no wordmark in the brand assets yet (only a favicon), so it waits.
 const customerLogos = [
   { name: "Shopify", src: "/logos/shopify-logo.svg" },
   { name: "Uber", src: "/logos/uber-logo.svg" },
-  { name: "Allbirds", src: "/logos/allbirds-logo.svg" },
+  { name: "Allbirds", src: "/logos/allbirds-logo.webp" },
   { name: "Ivoclar", src: "/logos/ivoclar-logo.svg" },
   { name: "MINT Museum", src: "/logos/mint-museum-logo.webp" },
-  { name: "NRF", src: "/logos/nrf-logo.webp" },
 ];
 ---
 
@@ -207,7 +211,7 @@ const customerLogos = [
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
         <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift. <strong>On a phone, the first frame is free</strong> — both <a href="/sdk/android">Android</a> (<a href="/examples/kotlin-android-hello">the whole project</a>) and <a href="/sdk/ios">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>) render a public showcase avatar with <strong>no account, no API key and no credits</strong>. Android is arm64 only; iOS needs Xcode 26+, an Apple Developer team and a physical iPhone. <a href="/sdk">What each platform needs →</a></p>
-        <Button href="/start">Start here →</Button>
+        <Button href="/start">Start here</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
     </div>
@@ -262,7 +266,8 @@ const customerLogos = [
       <div class="cards-3">
         {featuredCases.map((c) => (
           <a class="bcard" href="/showcase" data-reveal>
-            <div class="bcard-img" style={`background-image:url(${c.image})`}>
+            <div class="bcard-img">
+              <img src={c.image} alt="" loading="lazy" decoding="async" width="640" height="400" />
               <span class="bcard-org">{c.org}</span>
             </div>
             <div class="bcard-b">
@@ -370,7 +375,8 @@ const customerLogos = [
   .show-head { display: flex; justify-content: space-between; align-items: flex-end; max-width: none; gap: var(--space-5); }
   .bcard { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
   .bcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .bcard-img { position: relative; aspect-ratio: 16/10; background-size: cover; background-position: center; background-color: var(--color-surface-3); }
+  .bcard-img { position: relative; aspect-ratio: 16/10; background: var(--color-surface-3); }
+  .bcard-img img { width: 100%; height: 100%; object-fit: cover; }
   .bcard-org { position: absolute; left: var(--space-3); bottom: var(--space-3); padding: 0.2rem 0.55rem; border-radius: var(--r-sm); background: rgba(0,0,0,0.62); color: #fff; font-size: var(--ft-xs); font-weight: var(--fw-medium); backdrop-filter: blur(2px); }
   .bcard-b { padding: var(--space-4); }
   .bcard-b .pill { margin-bottom: var(--space-2); }

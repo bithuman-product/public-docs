@@ -1,6 +1,6 @@
 ---
 title: "CLI — macOS and Linux"
-description: "Install one binary, sign in once, and `bithuman run` puts a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64. Offline MP4 render in one more command."
+description: "Install one binary, sign in once, and bithuman run puts a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64. Offline MP4 render in one more command."
 section: sdk
 group: "Platforms"
 order: 10

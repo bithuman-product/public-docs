@@ -1,6 +1,6 @@
 ---
 title: "MCP server"
-description: "Drive bitHuman from any AI agent. The bitHuman MCP server is built into the CLI (`bithuman mcp`) and exposes the platform as Model Context Protocol tools for Claude Desktop, Claude Code, Cursor, and other MCP clients."
+description: "Drive bitHuman from any AI agent. The bitHuman MCP server is built into the CLI (bithuman mcp) and exposes the platform as Model Context Protocol tools for Claude Desktop, Claude Code, Cursor, and other MCP clients."
 section: guides
 group: "Integrate"
 order: 20
