@@ -838,50 +838,16 @@ class MainActivity : Activity() {
 Full source: [Android SDK reference](/sdk/android) — the SDK page carries the
 streaming API surface, `Fixture` and `Runtime`.
 
-## essence-2 on Android — `Essence2ModelStore.fetch(code).open()`
+## essence-2 on Android
 
-```kotlin
-// Essence2Hello.kt — fetch an essence-2 identity through the in-SDK store and play its recorded sequence
-package com.example.bithumanhello
-
-import ai.bithuman.essence2.Essence2BorrowRefused
-import ai.bithuman.essence2.Essence2ModelStore
-import ai.bithuman.elevate.Essence2ModelStore.PublicMirrorResolver  // nested types stay on the legacy package, kept for compatibility
-import android.content.Context
-import java.nio.ByteBuffer
-
-/** Plays agent [code]'s recorded sequence into [show], one RGBA8888 frame at a time. False if the session was refused. */
-fun playEssence2(context: Context, mirrorBase: String, code: String, show: (ByteBuffer) -> Unit): Boolean {
-    // There is no default host yet — the mirror base is your argument. Blocks on the network; call it off the main thread.
-    val store = Essence2ModelStore(context, urlResolver = PublicMirrorResolver(mirrorBase))
-    val bundle = store.fetch(code)                // refused, naming the file, if any of the four recorded-mouth files is missing
-    bundle.open().use { session ->                // the session already carries the avatar's recorded mouth
-        val out = session.newFrameBuffer()        // RGBA8888, session.width x session.height
-        return try {
-            for (i in 0 until session.driveFrames) {
-                if (session.renderDriveBorrow(i, out) >= 0) show(out)   // -1 on the first push: nothing written yet
-            }
-            if (session.flushBorrow(out) >= 0) show(out)
-            true
-        } catch (e: Essence2BorrowRefused) {
-            false                                  // the session is over; there is no other render call to retry
-        }
-    }
-}
-```
-
-★ **This snippet compiles and cannot run today, and the reason is not your code.**
-`mirrorBase` has no value you can supply: `Essence2ModelStore` fetches
-`{base}/{code}/android/v1/android_store.v1.json` and **bitHuman publishes no public
-host that serves that tree**. The REST model-download door serves essence-2 as
-one `<CODE>.imx` file, which is not the member tree this store reads.
-Two more
-things the snippet assumes: the session plays the avatar's **recorded** sequence,
-because there is no audio-in entry point on this artifact yet (`BitHuman.open`
-throws `AvatarError.NotSupported`); and a refusal ends the session — there is no
-other render call to fall back to. **For an audio-driven talking head on Android
-today, use expression-2 above.** The
-[Android SDK page](/sdk/android#troubleshooting) has the detail.
+Essence 2 on Android is one dependency, resolved from Maven Central with no
+account — the coordinate is on the [Android SDK page](/sdk/android#troubleshooting)
+and the audio-driven API is
+[`Essence2Avatar`](/sdk/android-api#essence2avatar) (`create`, `feed`, `pull`),
+with [`Essence2ModelStore`](/sdk/android-api#essence2modelstore) fetching the
+identity from the public download endpoint. A walkthrough shaped like the
+Expression 2 project above is pending; the library is published and measured
+([performance](/sdk/performance)).
 
 ## Next steps
 

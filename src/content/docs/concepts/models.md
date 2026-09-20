@@ -137,22 +137,14 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 - Supports custom gestures (wave, nod, laugh) triggered by keywords or API.
 - Predictable, consistent behavior. Lower per-stream cost — the right pick for high-concurrency self-hosted deployments.
 
-**Try it from the showcase**
+**Try it**
 
-The CLI ships a curated set of ready-to-run Essence `.imx` avatars:
-
-```bash
-bithuman list                          # browse the Essence 1 showcase
-bithuman pull modern-court-jester      # downloads to ~/.cache/bithuman/showcase/<slug>.imx
-bithuman run modern-court-jester.imx   # live browser-served avatar
-```
-
-Second-generation models have their own free catalogue — twenty Essence 2 and
-Expression 2 identities anyone may download with no credential:
+An Essence 1 identity comes by agent code — the free showcase catalogue
+(`bithuman avatars`) is second-generation only:
 
 ```bash
-bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
-bithuman pull bolt --manifest https://api.bithuman.ai/v1/models/showcase
+bithuman pull <CODE> --model essence-1   # one of your agents; downloads to ~/.cache/bithuman/
+bithuman run <CODE>.imx                  # live browser-served avatar
 ```
 
 **How to ship it**

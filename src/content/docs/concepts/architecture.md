@@ -8,11 +8,11 @@ order: 5
 
 ## The three layers
 
-bitHuman is one portable engine with thin language bindings on top, and your app on top of that. Every layer reads the same [`.imx` model file](/concepts/avatars-imx) and produces the same lip-synced frames — on an iPhone, a Raspberry Pi, a MacBook, a browser, or a cloud GPU.
+bitHuman is one portable engine with thin language bindings on top, and your app on top of that. Every layer reads the same [container](/concepts/avatars-imx) (`.imx`, or `.avatar` for Expression 2) and produces the same lip-synced frames — on an iPhone, a Raspberry Pi, a MacBook, a browser, or a cloud GPU.
 
 <div class="bh-stack">
   <div class="bh-layer"><div class="bh-l-title">Apps &amp; tools</div><div class="bh-l-sub">the bitHuman CLI · your own app · LiveKit transport for WebRTC</div></div>
-  <div class="bh-layer"><div class="bh-l-title">Language SDKs</div><div class="bh-l-sub">Python · Swift · Kotlin · JavaScript — thin, idiomatic bindings over the same engine</div></div>
+  <div class="bh-layer"><div class="bh-l-title">Language SDKs</div><div class="bh-l-sub">Python · Swift · Kotlin — thin, idiomatic bindings over the same engine; the browser through the hosted URL or an iframe</div></div>
   <div class="bh-layer bh-accent"><div class="bh-l-title">The bitHuman engine</div><div class="bh-l-sub">The portable avatar renderer. Shipped inside every SDK — there is nothing separate to install. macOS · iOS · Android · Linux · the browser</div></div>
 </div>
 

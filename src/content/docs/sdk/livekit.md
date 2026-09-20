@@ -25,57 +25,22 @@ than a browser.
 
 ## Python: deploy via the LiveKit plugin
 
-> **Python 3.11, 3.12 or 3.13 — and the plugin installs the 2.x wheel, not the
-> 3.x one.** `livekit-plugins-bithuman` is published by LiveKit, not by
-> bitHuman, and release **1.8.2** declares its bitHuman dependency as
-> `bithuman<3,>=0.5.25` under the marker
-> `python_version >= "3.11" and python_version < "3.14"`. Resolved against PyPI
-> on 2026-09-19 that means:
+> **Python 3.11, 3.12 or 3.13.** `livekit-plugins-bithuman` is published by
+> LiveKit, not by bitHuman; release **1.8.2** declares `bithuman<3,>=0.5.25`
+> under the marker `python_version >= "3.11" and python_version < "3.14"`, and
+> it needs `pillow`, which it does not declare — `pip install
+> livekit-plugins-bithuman pillow`. The plugin pins `bithuman<3`, which
+> resolves the newest 2.x wheel — 2.11.5 on 2026-09-19 — the same wheel the
+> [Python SDK page](/sdk/python) documents.
 >
-> - On **Python 3.11, 3.12 or 3.13** the command below installs the newest
->   2.x wheel PyPI still serves — **2.11.3** when this was last driven, on
->   2026-09-19 — and not the 3.x wheel the [Python SDK page](/sdk/python)
->   documents. This is the combination that works, and it is what the examples
->   below assume. Which 2.x you get depends on what the index holds that day:
->   the pin is `bithuman<3`, and versions have been removed from it. **None of
->   the 3.x work reaches this path** — an avatar rendered through the plugin is
->   rendered by a 2.x engine.
-> - **It also needs `pillow`, which it does not declare** — `pip install
->   livekit-plugins-bithuman pillow`. See
->   [Deploy via LiveKit](/guides/deploy-livekit#install) for the full table of
->   what fails where.
-> - On **Python 3.10 or 3.14** the marker is false, pip installs the plugin
->   with *no* bitHuman wheel at all, and the first import fails with
->   `ModuleNotFoundError: No module named 'cv2'` — cv2 reaches the plugin as a
->   dependency of the wheel that was skipped. Naming `bithuman` yourself on the
->   same command line fixes it: the wheel publishes cp310 and cp314 and imports
->   cleanly on both, so the marker is stale rather than protective.
-> - **Both of those are already fixed upstream and merely unreleased.**
->   [livekit/agents#7280](https://github.com/livekit/agents/pull/7280) added
->   `pillow` and dropped the marker on 2026-09-15, hours after 1.8.2 was cut.
->   The next plugin release needs neither workaround.
-> - **You cannot have both current, and the pin is not arbitrary.** Ask pip for
->   the plugin alongside a 3.x pin and it resolves by walking the *plugin* back
->   to 1.5.9. The `<3` bound is load-bearing: the plugin's only bitHuman import
->   is `from bithuman import AsyncBithuman`, and 3.0.0 removed that name — on
->   3.1.10 it raises, with a message naming its replacement. So the plugin
->   genuinely cannot run on a 3.x wheel; relaxing the bound needs a code change
->   upstream, not just a looser constraint.
-> - **The wheel ships for Linux x86_64, Linux aarch64 and Apple-silicon macOS
->   only.** There is no Windows wheel and no Intel-macOS wheel, on any version,
->   so this path is closed on those platforms regardless of interpreter.
->
-> **The 3.11-3.13 window is the marker's doing, not a real incompatibility.**
-> `livekit-agents` requires Python `<3.15,>=3.10` and the bitHuman wheel
-> declares exactly the same range, so every interpreter either supports would
-> work. The plugin's own `requires_python` is `>=3.10` too — it is only its
-> dependency marker that narrows to 3.11-3.13, which contradicts the package's
-> own metadata.
->
-> The pin and the marker are both upstream, so no bitHuman release can move
-> them. Run the plugin on a 3.11, 3.12 or 3.13 interpreter and let it choose
-> the wheel; use the [Python SDK](/sdk/python) directly when you need the
-> current engine.
+> On **Python 3.10 or 3.14** the marker is false, pip installs the plugin with
+> *no* bitHuman wheel, and the first import fails with `ModuleNotFoundError: No
+> module named 'cv2'`; naming `bithuman` yourself on the same command line
+> fixes it. Both are fixed upstream
+> ([livekit/agents#7280](https://github.com/livekit/agents/pull/7280)) and
+> unreleased. The wheel ships for Linux x86_64, Linux aarch64 and Apple-silicon
+> macOS only — see [Deploy via LiveKit](/guides/deploy-livekit#install) for the
+> full table of what fails where.
 
 Install the plugin on Python 3.11, 3.12 or 3.13:
 
@@ -301,7 +266,7 @@ the Python agent above — this client is the subscriber.
 
 | Your viewer is… | Use |
 |---|---|
-| A browser | The Python plugin + a web LiveKit client ([JS/TS SDK](/sdk/web) or LiveKit web) |
+| A browser | The Python plugin + a web LiveKit client (LiveKit's own JS SDK; bitHuman publishes [no npm package](/sdk/web)) |
 | A native iOS/macOS app | The Python plugin (server) + `livekit/client-sdk-swift` (client) |
 | On-device only, no server | The native [Swift](/sdk/ios) SDK instead |
 

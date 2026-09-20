@@ -46,7 +46,7 @@ The call returns immediately with an `agent_id` and `processing` status.
 | `prompt` | string | no | random | System prompt / personality for the agent. |
 | `image` | string | no | — | Image URL or base64 data for appearance. A supplied image is treated as a **reference** and is always regenerated to standardize it (never used raw); omit it and a portrait is generated from the `prompt`. |
 | `audio` | string | no | — | Audio URL or base64 data for voice cloning. |
-| `aspect_ratio` | string | no | `16:9` | Aspect ratio for the generated identity image **and** driver video — `16:9` landscape (default), `9:16` portrait, `1:1` square. Images are generated at 1080p. |
+| `aspect_ratio` | string | no | `16:9` | Aspect ratio for the generated identity image **and** identity video — `16:9` landscape (default), `9:16` portrait, `1:1` square. Images are generated at 1080p. |
 | `transparency` | boolean | no | `false` | When `true`, the identity image is generated on a solid **green-screen** background for chroma-key / transparent embedding — the character itself never uses green. |
 | `framing` | string | no | `portrait` | `portrait` (default) frames head-and-shoulders; `full_body` shows the whole figure including the feet (kiosk / standing-avatar layouts). |
 | `agent_id` | string | no | auto | Custom agent identifier. |
@@ -554,8 +554,8 @@ place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).
 | Family | Artifact in the store | Notes |
 |---|---|---|
 | `essence-1` | `.imx` | The portable IMX container — [runs locally](/sdk/cli/reference) in the CLI and the [Python SDK](/sdk/python). |
-| `essence-2` | `.imx` | The standard Essence 2 artifact — unified IMX container. **~85–105 MB** for an agent created on the current renderer; older agents carry a larger bundle until they are retrained. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — a local runtime must complete the license activation flow; today the model serves via bitHuman cloud. |
-| `expression-2` | `.avatar` | The per-identity Expression 2 artifact. Sizes range widely, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** A few of the oldest agents still carry an older container form, so check with `bithuman info <file>` rather than assuming. [Runs locally](/sdk/cli/reference) on macOS (Apple Silicon), and on Linux x86_64 once the CPU render host is installed (`bithuman engine install linux`); also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
+| `essence-2` | `.imx` | The standard Essence 2 artifact — unified IMX container. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/ios); the first local play checks the licence with the cloud, so it needs your sign-in. |
+| `expression-2` | `.avatar` | The per-identity Expression 2 artifact. Sizes range widely, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** A few of the oldest agents still carry an older container form, so check with `bithuman info <file>` rather than assuming. [Runs locally](/sdk/cli/reference) on macOS (Apple Silicon) and Linux x86_64; also in the browser via [`?render=local`](/guides/browser-rendering), and served on bitHuman's cloud. |
 | `expression-1` | usually none; `.imx` for a lip-stepped agent | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, so the normal answer is `400 MODEL_NOT_DOWNLOADABLE`. **One case does download:** an `expression-1` agent that went through the lip step owns a baked `.imx`, and the endpoint redirects to it exactly as it does for `essence-1`. |
 
 The default response is a **302 redirect** to the artifact (public URL for
@@ -572,8 +572,8 @@ curl -LOJ -H "api-secret: $BITHUMAN_API_SECRET" \
 > model through [add-a-model](#add-a-model-to-an-existing-agent) has more than
 > one downloadable artifact under the same code, and an omitted `?model=`
 > resolves to the family the agent was **created** with — not the one you added.
-> The [CLI](/sdk/cli/reference) has no flag for this: `bithuman pull <CODE>`
-> always takes the default. Read `supported_models` on
+> The [CLI](/sdk/cli/reference#bithuman-pull) passes it as
+> `bithuman pull <CODE> --model <family>`. Read `supported_models` on
 > [`GET /v1/agent/{code}`](#get-an-agent) to see what an agent actually holds.
 
 Pass `?redirect=false` to get the URL as JSON instead (for UIs that want to
@@ -607,10 +607,10 @@ Errors ([full reference](/api/errors#model-errors)):
 
 > **Tip** The [bitHuman CLI](/sdk/cli/reference) wraps this endpoint:
 > `bithuman pull A17ZTB0222` downloads the artifact,
-> recognizes its model family, and prints what to do next — an `essence-1`
-> `.imx` runs locally with `bithuman run`. It calls this endpoint **without**
-> `?model=`, so on a multi-model agent it downloads the default family; use
-> `curl` with `?model=` for any other one.
+> recognizes its model family, and prints what to do next — the file runs
+> locally with `bithuman run`. On a multi-model agent, `bithuman pull <CODE>
+> --model <family>` is this endpoint's `?model=`. A showcase code needs no
+> credential on this route; your own agents need the `api-secret` header.
 
 ## Make an agent speak
 

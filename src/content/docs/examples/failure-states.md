@@ -11,9 +11,9 @@ other one: what the on-device SDK does when the phone is offline, when a model
 download is cut in half, and when an agent code is wrong.
 
 Each state below was produced against
-**`ai.bithuman:expression2-android:0.3.1`** — the version current that day;
-[the Android SDK page](/sdk/android) now names `0.4.1`, which changed the
-accelerator default and not the model store — on a physical Galaxy S25+.
+**`ai.bithuman:expression2-android:0.3.1`** — the version current that day —
+on a physical Galaxy S25+; the model-store behaviour is unchanged through the
+release [the Android SDK page](/sdk/android) names today.
 
 The short version: **the store fails fast and never hands the engine bytes it did
 not verify.** There is one exception to that, at the bottom, and it is the one

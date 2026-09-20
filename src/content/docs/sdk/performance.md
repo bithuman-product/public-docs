@@ -12,7 +12,7 @@ label: "Performance"
 |---|---|---|---|
 | Cloud GPU | NVIDIA RTX 4090 | 272 · 416x720 at 20 fps · 13.6x real time · hosted baked-5e4d606b8 (2026-09-19) | 92 · 1920x1080 at 25 fps · 3.68x real time · hosted cfd9ddf5c (2026-09-19) |
 | macOS | Apple M4 | 160 · 416x720 at 20 fps · 8x real time · cli-v2.6.24 (2026-09-19) | 109 · 1920x1080 at 25 fps · 4.36x real time · cli-v2.6.24 (2026-09-19) |
-| macOS · Python | Apple M4 | 157 · 416x720 at 20 fps · 7.85x real time · bithuman 3.1.8 (2026-09-14) | not measured on 3.1.8 (2026-09-14) |
+| macOS · Python | Apple M4 | 157 measured on bithuman 3.1.8, a wheel PyPI no longer serves; not re-measured on the current wheel (2026-09-20) | not measured on a wheel PyPI serves (2026-09-20) |
 | Linux | Intel Core i7-13700F | 44 · 416x720 at 20 fps · 2.2x real time · cli-v2.6.24 (2026-09-19) | 37 · 1920x1080 at 25 fps · 1.48x real time · cli-v2.6.24 (2026-09-19) |
 | Linux · Python | Intel Core i7-13700F | 47 · 416x720 at 20 fps · 2.35x real time · bithuman 2.11.3 (2026-09-19) | 32 · 1920x1080 at 25 fps · 1.28x real time · bithuman 2.11.3 (2026-09-19) |
 | iOS | iPhone 15 | 118 measured, no recorded way to re-run it | 53 · 1920x1080 at 25 fps · 2.12x real time · essence2-v1.7.0 (2026-09-16) |
@@ -56,7 +56,7 @@ The Android Essence 2 number went from 52 on essence2-android 0.5.11 to 46 on 0.
 
 The Essence 2 Web cell does not carry a number today. The engine computes about 27 frames per second in Chrome on an M4 when it is driven on its own, but that measurement stops the page's own display loop and detaches the live audio. On the page a visitor actually opens, with the voice playing and the picture being drawn on the same browser thread, Essence 2 delivered about 11 frames per second on 2026-09-15 — well under the 25 it plays at, so the face barely moves while the voice continues. Expression 2 in the same browser delivers its full 20 frames per second, because it does its work on a background thread and leaves the display loop free. This is a limitation of the Essence 2 web build, not of the hardware.
 
-The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running. Earlier Linux numbers (37 and 13) came from a different machine, an AMD Threadripper PRO 5955WX server that was also running production work, so the change reflects the machine, not a software update.
+The Linux numbers come from an Intel Core i7-13700F desktop with nothing else running.
 
 The Linux Essence 2 number is how fast the CLI renders a file, not the rate a conversation plays at. Essence 2 plays at 25 frames per second on every platform, and headroom above that shortens a render and absorbs a busy machine rather than putting more frames on screen. Essence 2 on Linux also varies more from run to run than any other row here: on the same desktop, the same release and the same clip, repeated renders at the stock settings measured between 25 and 33 frames per second on 2026-09-17, with the slowest and the fastest both taken on an idle machine. Expression 2 measured in the same session on the same desktop stayed inside 2 per cent, so this is something about Essence 2 rather than about the machine.
 

@@ -124,9 +124,9 @@ See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
 ## Generate your own agent (optional)
 
 Prefer a custom face and persona? Generation is asynchronous — it returns an
-`agent_id` immediately. Pick the model with `model` (`expression` or
-`essence`) and `version` (`v1` or `v2`): `essence` + `v2` is Essence 2,
-`expression` + `v2` is Expression 2. The
+`agent_id` immediately. Pick the model with `model` — `expression-2` or
+`essence-2` (the pair `model: "expression"` + `version: "v2"` is also
+accepted and means the same thing). The
 [second-generation models](/concepts/models-v2) train a real per-identity
 model, so they take longer and cost more — see
 [per-model creation](/api/agents#model-specific-inputs-and-creation-times) and
@@ -143,8 +143,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
 {
   "prompt": "You are a friendly fitness coach.",
   "image": "$PORTRAIT_URL",
-  "model": "expression",
-  "version": "v2",
+  "model": "expression-2",
   "aspect_ratio": "9:16",
   "transparency": false
 }

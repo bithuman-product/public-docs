@@ -38,7 +38,7 @@ Every project below is open-source under [bithuman-product/bithuman-examples](ht
 
 The streaming runtime and LiveKit voice agents. Each repo project ships an `.env.example`, `requirements.txt`, and a `docker compose` stack.
 
-- [Python — Hello, avatar](/sdk/python) — the minimal `AsyncBithuman` streaming loop, ~20 lines.
+- [Python — Hello, avatar](/sdk/python) — the minimal `bithuman.open()` / `render()` loop, a few lines.
 - [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice in, lip-synced avatar out. No server.
 - [python/local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) — Essence on your own CPU box. Ships `quickstart.py`, `microphone.py`, `conversation.py`, plus a web UI at `http://localhost:4202`.
 - [python/cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman cloud + LiveKit + browser UI. Start here for production agents.
@@ -46,13 +46,13 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 ## Native apps — Swift
 
 - [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — **start here for a frame on a phone.** No device floor, no Apple entitlement, no 1.6 GB download: measured 2026-09-09 it rendered 416x720 frames on an iPhone 15. Every file is on the page.
-  **No account, no key, no credits, no wait.** The Apple rail has a keyless identity: `A23WJF0199` (Wise Pup), a bitHuman-owned agent in the **free gallery** — the download endpoint serves every gallery identity to anyone, so the same URL covers the showcase face and your own agent and only the credential differs. `setup.sh` fetches the identity, the shared engine graphs and a 16 kHz WAV with **no credential in the environment at all** — the same shape the Android example has always had. Want *your own* face on the phone instead? That is still an `expression-2` creation: **60–100 minutes** and **2000 credits** ([creation times](/api/agents#model-specific-inputs-and-creation-times), [pricing](/guides/pricing)).
+  **No account, no key, no credits, no wait.** The Apple rail has a keyless identity: `A23WJF0199` (Wise Pup), a bitHuman-owned agent in the **free gallery** — the download endpoint serves every gallery identity to anyone, so the same URL covers the showcase face and your own agent and only the credential differs. `setup.sh` fetches the identity, the shared engine graphs and a 16 kHz WAV with **no credential in the environment at all** — the same shape the Android example has always had. Want *your own* face on the phone instead? That is still an `expression-2` creation: **about 2–2.5 hours** and **2000 credits** ([creation times](/api/agents#model-specific-inputs-and-creation-times), [pricing](/guides/pricing)).
 - [swift/ios-expression2](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the same app as a repository you can clone, with a `setup.sh` that fetches your model.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package. The richest path (on-device STT + LLM + TTS) and the most demanding: iPhone 16 Pro or later, plus two Apple-approved entitlements.
 - [swift/ios-avatar](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
 - [swift/macos-voice](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
 
-> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the only one measured rendering on a phone, on 2026-09-09 — [`ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews. A Flutter app exists today as an internal reference app, not a published code SDK.
+> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the only one measured rendering on a phone, on 2026-09-09 — [`ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews.
 
 ## Native apps — Kotlin / Android
 

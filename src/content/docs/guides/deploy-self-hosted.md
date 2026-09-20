@@ -95,7 +95,7 @@ Self-hosted GPU sessions bill at the **self-hosted rate** — see [Pricing](/gui
 
 Whole-clip Essence 2 rendering with the Python SDK is covered step by step in
 [Run a model on your own hardware](/guides/self-host-local#linux-and-macos) —
-install `bithuman[offline]`, pull your agent, render to an MP4.
+`pip install bithuman`, pull your agent, render to an MP4 with `bithuman.offline` (on the base wheel, no extra).
 
 ## Offline licensing — coming soon
 

@@ -36,10 +36,10 @@ changes is the registry, not the page.
 | --- | --- |
 | Registry | pypi |
 | Coordinate | bithuman |
-| Version | 2.11.0 |
-| Wheel | `bithuman-2.11.0-cp314-cp314-manylinux_2_28_x86_64.whl` |
-| Digest | `sha256:cb87b9da954671bb68d006ffa405bcbdb81a537bac5dff5bade49388e77c74ba` |
-| Resolved on | 2026-09-16 |
+| Version | 2.11.5 |
+| Wheel | `bithuman-2.11.5-cp314-cp314-manylinux_2_28_x86_64.whl` |
+| Digest | `sha256:39cbef68f7cc8900badfc6b4215e35fe1cb9211653d8cc75d83786b7e6e229bc` |
+| Resolved on | 2026-09-20 |
 
 Every name below was read back out of those bytes, in a virtualenv that had nothing else installed in it. Nothing here was read from a source tree.
 
@@ -107,7 +107,8 @@ Fix the path or the code, or fetch the avatar again.
 
 This avatar cannot run here.
 
-Use the cloud package, or another device.
+Render it in the cloud with the Video API (POST /v1/video/generate),
+or open it on Apple Silicon macOS or Linux.
 
 ### NotAuthorised
 
@@ -259,7 +260,7 @@ _The docstring shipped with this symbol describes internal machinery and is not 
 ### OfflineRenderer
 
 ```python
-OfflineRenderer(imx_path: str, *, api_secret: Optional[str] = None, api_url: Optional[str] = None, threads: int = 4, model_key: Optional[str] = None, tags: str = 'offline-render')
+OfflineRenderer(imx_path: str, *, api_secret: Optional[str] = None, api_url: Optional[str] = None, threads: Optional[int] = None, model_key: Optional[str] = None, tags: str = 'offline-render')
 ```
 
 _The docstring shipped with this symbol describes internal machinery and is not reproduced here._
@@ -268,7 +269,7 @@ Usable as a context manager: `with` closes it for you.
 
 **`close()`**
 
-**`render(audio, max_frames: Optional[int] = None, on_frame: Optional[Callable[[np.ndarray, int], None]] = None) -> dict`**
+**`render(audio, max_frames: Optional[int] = None, on_frame: "Optional[Callable[['object', int], None]]" = None) -> dict`**
 
 Render `audio` (a path, or float32 16 kHz mono PCM) to full
 RGB frames. `on_frame(frame_hw3_u8, frame_idx)` receives every
@@ -398,7 +399,6 @@ A reference generated from a source tree would have listed each of these. They a
 | `bithuman.Audio` | declared by the type stub, absent at runtime — importing it raises `ImportError` | the type an `audio` argument accepts: `Union[bytes, bytearray, memoryview, str, 'np.ndarray', Iterable[Any]]` |
 | 3 files under `bithuman/lib/` | listed as modules by their suffix, none of them imports | native libraries the engine opens by path |
 | 0 names from the 2.x releases | intercepted with a refusal that says what to write instead | raises `NotSupported` and `ImportError` |
-| `bithuman.__version__` | removed on purpose — `hasattr` answers False | read the version from `importlib.metadata` |
 
 ## Other modules the package exposes
 

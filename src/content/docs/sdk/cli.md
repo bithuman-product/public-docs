@@ -20,9 +20,9 @@ curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/
 
 `bithuman render` writes the MP4 through `ffmpeg` — `brew install ffmpeg` on macOS, `sudo apt install -y ffmpeg` on Linux. `bithuman run` spawns `livekit-server` from your `PATH` — `brew install livekit` on macOS, `curl -sSL https://get.livekit.io | bash` on Linux.
 
-That one command is the install on both platforms. It puts a single
-self-contained binary in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put it
-elsewhere), checksum-verified against the release.
+That one command is the install on both platforms. It puts the CLI and its
+runtime in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to put it elsewhere),
+checksum-verified against the release.
 [`install.bithuman.ai`](https://install.bithuman.ai) serves the same script, so
 `curl -fsSL https://install.bithuman.ai | sh` is the shorter spelling of the
 line above.
@@ -67,12 +67,13 @@ script or in CI, set `BITHUMAN_API_SECRET` — a key is free at
 variable the binary reads, is on the
 [CLI reference](/sdk/cli/reference#credential-resolution-order).
 
-A showcase `pull` and `run` are the exception: those never needed an account.
+A showcase `pull` is the exception: it never needed an account. `run` and `render` do, from 2.6.20.
 
 ## Get a model
 
-A showcase avatar downloads with no account — twenty to pick from — and your
-own agents come by code; sign in once for `render` and for your own agents:
+A showcase avatar downloads with no account — the catalogue `bithuman avatars`
+prints — and your own agents come by code; sign in once for `run`, `render` and
+for your own agents:
 
 ```bash
 bithuman login                    # opens your browser; stores a per-device key on this machine
@@ -169,10 +170,13 @@ Measured frame rates for every platform are on the
 | the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
 | `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
 | `No matching distribution found for bithuman` | an Intel Mac, or macOS older than 14 | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
-| `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` and `run` never needed it |
+| `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` never needed it |
 
-Every failure prints one JSON object to stderr with a stable code — the
-[reference](/sdk/cli/reference#exit-codes) lists them.
+With `--json`, every failure prints one JSON object to stderr with a stable
+code; without it the same failure is prose, and the exit code is the contract —
+the [reference](/sdk/cli/reference#exit-codes) lists them. Three codes share
+exit 77: `NOT_SIGNED_IN` (`run`, `render`), `NOT_AUTHENTICATED` (account
+commands) and `METERING_REFUSED` (`run --offscreen`).
 
 ### What renders locally, and where
 
