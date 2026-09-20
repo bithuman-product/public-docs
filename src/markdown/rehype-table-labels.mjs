@@ -48,6 +48,14 @@ function labelCells(table) {
         if (props.align === "right" && !isFigure(textOf(cell))) {
           props.className = [...(props.className ?? []), "is-status"];
         }
+        // The stacked cell is a two-column grid of label and value, and a grid
+        // makes every child its own item — so a value like "`render` exits 69"
+        // used to scatter into three cells, its code in one and its words in
+        // the next. One span holds the value together. On a wide screen the
+        // span is inline and changes nothing.
+        if (cell.children?.length) {
+          cell.children = [{ type: "element", tagName: "span", properties: { className: ["td-v"] }, children: cell.children }];
+        }
       });
     }
   }
