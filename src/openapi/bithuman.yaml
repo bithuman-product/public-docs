@@ -352,6 +352,8 @@ paths:
                   httpStatus: 422
                 status: "error"
                 status_code: 422
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "503":
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — the requested second-generation model
@@ -444,6 +446,8 @@ paths:
                     $ref: "#/components/schemas/Agent"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/agent/{code}:
     get:
@@ -480,6 +484,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "502":
           $ref: "#/components/responses/EdgeBadGateway"
     post:
@@ -601,6 +607,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
     delete:
       operationId: deleteAgent
       x-codeSamples:
@@ -669,6 +677,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/agent/{code}/speak:
     post:
@@ -748,6 +758,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/agent/{code}/sessions:
     get:
@@ -810,6 +822,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/agent/{code}/add-context:
     post:
@@ -901,6 +915,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/agent/{code}/models:
     post:
@@ -1007,6 +1023,8 @@ paths:
             `MODEL_SUBJECT_MISMATCH` — the Essence 2 family requires a
             photorealistic human subject and the stored image is a
             cartoon/animal/creature/robot (use `expression-2`).
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "503":
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — adding a second-generation model
@@ -1316,7 +1334,7 @@ paths:
             `agent <code>'s expression-2 model hasn't been generated yet`
             — create with, or add, that model to generate it.
         "429":
-          description: Rate limited (read bucket) — `RATE_LIMITED`.
+          $ref: "#/components/responses/RateLimited"
         "500":
           description: >-
             `INTERNAL_ERROR` — the artifact could not be resolved, or the usage
@@ -1347,8 +1365,11 @@ paths:
               -d '{"file_url": "https://example.com/avatar.jpg", "file_type": "image"}'
       summary: Upload a file
       description: |
-        Upload images, videos, audio, or documents. Files are auto-organized
-        by type. Supports URL download or direct base64 upload.
+        Upload images, videos, audio, or documents — by public URL or as
+        base64. Files are organized by type, and the type is read from the
+        file's own bytes: `file_type` and the filename extension are both
+        cross-checked against them, never trusted over them. The response
+        returns a public URL for the stored file.
       tags: [Files]
       requestBody:
         required: true
@@ -1366,9 +1387,18 @@ paths:
                       example: "https://example.com/avatar.jpg"
                     file_type:
                       type: string
-                      enum: [auto, image, video, audio, document]
+                      enum: [auto, image, video, audio, document, pdf]
                       default: auto
-                      description: File type (auto-detected if omitted).
+                      description: >-
+                        Optional cross-check, not an override — the stored
+                        category always comes from the file's own bytes. Give a
+                        value and the bytes must agree with it, or the upload is
+                        refused with `415`. `document` and `pdf` are the same
+                        category. Any other value is refused with `400
+                        VALIDATION_ERROR`; omit it, or send `auto`, to let the
+                        bytes decide. The filename here comes from the URL's
+                        path, and its extension must be one of the supported
+                        ones.
                 - type: object
                   title: Upload by base64
                   required: [file_data, file_name]
@@ -1378,12 +1408,23 @@ paths:
                       description: Base64-encoded file data.
                     file_name:
                       type: string
-                      description: Original filename with extension.
+                      description: >-
+                        Original filename. The extension is required and must
+                        be one of the supported ones (see `415`); a name
+                        without one is refused.
                       example: "avatar.jpg"
                     file_type:
                       type: string
-                      enum: [auto, image, video, audio, document]
+                      enum: [auto, image, video, audio, document, pdf]
                       default: auto
+                      description: >-
+                        Optional cross-check, not an override — the stored
+                        category always comes from the file's own bytes. Give a
+                        value and the bytes must agree with it, or the upload is
+                        refused with `415`. `document` and `pdf` are the same
+                        category. Any other value is refused with `400
+                        VALIDATION_ERROR`; omit it, or send `auto`, to let the
+                        bytes decide.
       responses:
         "200":
           description: File uploaded
@@ -1422,11 +1463,86 @@ paths:
                         type: string
                         format: date-time
         "400":
-          description: "`file_url` could not be downloaded — unreachable, non-public, or blocked (`DOWNLOAD_FAILED`); or `file_data` was not valid base64 (`VALIDATION_ERROR`)."
+          description: |
+            One of:
+
+            - `DOWNLOAD_FAILED` — `file_url` could not be downloaded:
+              unreachable, not publicly readable, or not an ordinary public
+              `http(s)` address.
+            - `VALIDATION_ERROR` — `file_data` was not valid base64, both
+              `file_url` and `file_data` were sent, or `file_type` was a value
+              this API does not define. The accepted values are `auto`,
+              `image`, `video`, `audio`, `document` and `pdf`; anything else is
+              refused rather than quietly treated as `auto`, so a typo cannot
+              silently change where your file lands.
+            - `MISSING_PARAM` — neither `file_url` nor `file_data` was sent.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "VALIDATION_ERROR"
+                  message: "Invalid file_type 'picture'; must be one of: auto, image, video, audio, document, pdf"
+                  httpStatus: 400
+                status: "error"
+                status_code: 400
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "413":
-          description: File too large (max 10 MB for images, 100 MB for video)
+          description: |
+            `FILE_TOO_LARGE` — the file is over the limit for its category:
+            **10 MB** images, **100 MB** video, **25 MB** audio and documents.
+            The category is read from the file's own bytes, so the limit that
+            applies is the one for what the file actually is.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "FILE_TOO_LARGE"
+                  message: "file is 31 MB; the limit for image is 10 MB"
+                  httpStatus: 413
+                status: "error"
+                status_code: 413
         "415":
-          description: Unsupported file type
+          description: |
+            `UNSUPPORTED_TYPE` — this API will not store the file. Four things
+            raise it:
+
+            - **The bytes are not a supported type.** Supported: JPEG, PNG,
+              GIF, WebP, BMP · MP4, MOV, WebM, AVI, WMV, FLV, Matroska ·
+              MP3, WAV, FLAC, AAC, OGG, M4A · PDF, Word, Excel, PowerPoint,
+              RTF and plain text.
+            - **The bytes contradict `file_type`.** Sending
+              `file_type: "image"` with a text file is refused here rather than
+              stored under the wrong category.
+            - **The filename extension is not one of the supported ones.** For
+              a base64 upload that is `file_name`; for a URL upload it is the
+              last path segment of `file_url`. A name with no extension, or
+              one like `.exe` or `.sh`, is refused.
+            - **The file would run in a browser.** SVG, HTML and any text
+              carrying a script are refused outright: an uploaded file is
+              served from a public address, and a file that executes there
+              would run as if it came from us.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error:
+                  code: "UNSUPPORTED_TYPE"
+                  message: "file_type was declared 'image' but the uploaded bytes are text/plain"
+                  httpStatus: 415
+                status: "error"
+                status_code: 415
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          description: >-
+            `INTERNAL_ERROR` — the file was accepted but could not be stored.
+            Nothing is kept and nothing is charged; retrying is safe.
 
   /v1/me:
     get:
@@ -1489,6 +1605,8 @@ paths:
                     example: 200
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimitedByAddress"
 
   /v1/models/showcase:
     get:
@@ -1598,7 +1716,7 @@ paths:
                         votes:
                           type: integer
         "429":
-          description: Too many requests from this address.
+          $ref: "#/components/responses/RateLimitedByAddress"
 
   /v1/pricing:
     get:
@@ -1699,6 +1817,8 @@ paths:
                         type: string
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v2/credit-summaries:
     get:
@@ -1780,6 +1900,8 @@ paths:
                         type: boolean
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/embed-tokens/request:
     post:
@@ -1947,6 +2069,8 @@ paths:
                   httpStatus: 409
                 status: "error"
                 status_code: 409
+        "429":
+          $ref: "#/components/responses/RateLimitedByAddress"
 
   /v1/runtime-tokens/mint:
     post:
@@ -2187,11 +2311,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "429":
-          description: Too many realtime sessions; slow down.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/RateLimitedByAddress"
 
   /v1/dynamics/generate:
     post:
@@ -2266,6 +2386,8 @@ paths:
           description: Insufficient credits. Dynamics generation costs 250 credits — INSUFFICIENT_BALANCE.
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/dynamics/{agent_id}:
     get:
@@ -2314,6 +2436,8 @@ paths:
                           type: string
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
     put:
       operationId: updateDynamics
       x-codeSamples:
@@ -2388,6 +2512,8 @@ paths:
                   regeneration_error:
                     type: string
                     description: Error message if regeneration_status is "failed".
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/video/generate:
     post:
@@ -2550,6 +2676,8 @@ paths:
                   httpStatus: 409
                 status: "error"
                 status_code: 409
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "503":
           description: >-
             `MODEL_NOT_YET_AVAILABLE` — the requested model can't render
@@ -2633,6 +2761,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/tts:
     post:
@@ -2736,6 +2866,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           description: "`voice_code` did not resolve to a known voice (`VOICE_NOT_FOUND`)."
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "503":
           description: Queue full / service overloaded. Retry with backoff.
 
@@ -2773,6 +2905,8 @@ paths:
                           example: "builtin"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/audio/speech:
     post:
@@ -2834,6 +2968,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/studio/axes:
     get:
@@ -2882,6 +3018,8 @@ paths:
                           description: Per-voice-ID projection onto this axis.
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/studio/preview:
     post:
@@ -2939,6 +3077,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/agents:
     get:
@@ -2994,6 +3134,8 @@ paths:
                     $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "502":
           $ref: "#/components/responses/EdgeBadGateway"
 
@@ -3050,6 +3192,8 @@ paths:
                     $ref: "#/components/schemas/Pagination"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/webhooks:
     post:
@@ -3106,6 +3250,8 @@ paths:
                     $ref: "#/components/schemas/WebhookWithSecret"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
     get:
       operationId: listWebhooks
       x-codeSamples:
@@ -3133,6 +3279,8 @@ paths:
                     items: { $ref: "#/components/schemas/Webhook" }
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/webhooks/{webhook_id}:
     get:
@@ -3164,6 +3312,8 @@ paths:
                   data: { $ref: "#/components/schemas/Webhook" }
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
     delete:
       operationId: deleteWebhook
       x-codeSamples:
@@ -3193,6 +3343,8 @@ paths:
                   deleted: { type: boolean, example: true }
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/webhooks/{webhook_id}/test:
     post:
@@ -3231,6 +3383,8 @@ paths:
                       attempts: { type: integer, example: 1 }
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /v1/webhooks/{webhook_id}/deliveries:
     get:
@@ -3265,6 +3419,8 @@ paths:
                     items: { $ref: "#/components/schemas/WebhookDelivery" }
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   # ── Self-hosting: the two routes a self-hosted runtime actually calls ──
   # (added 2026-09-07; both answered live and were absent from this file.)
@@ -3344,7 +3500,7 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SelfHostError" }
         "429":
-          description: Too many failed validations from this IP.
+          $ref: "#/components/responses/RateLimitedFailedAuth"
         "503":
           description: |
             We cannot validate right now. Retry (a `Retry-After` header is
@@ -3439,6 +3595,8 @@ paths:
           description: |
             Balance depleted or account suspended. Do **not** advance the meter
             clock; keep rendering.
+        "429":
+          $ref: "#/components/responses/RateLimitedFailedAuth"
         "503":
           description: We cannot record right now. Retry.
 
@@ -4026,6 +4184,105 @@ components:
               httpStatus: 400
             status: "error"
             status_code: 400
+
+    RateLimited:
+      description: |
+        Too many requests. The limiter is **per account** — every API secret on
+        the account draws from one bucket — and **per cost tier**, so a burst of
+        reads never uses up your generate budget. Your plan sets the number for
+        each tier; the matrix, the tier each route belongs to and a retry
+        recipe are on
+        [Rate limits](https://docs.bithuman.ai/api/rate-limits).
+
+        Wait `Retry-After` seconds and retry. The `X-RateLimit-*` headers let a
+        client slow down *before* it gets here, but header coverage is uneven
+        across routes — read them defensively and fall back to exponential
+        backoff when they are absent.
+
+        On a route that can also be called without an API secret, an anonymous
+        call is metered per network address instead: same body, same
+        `Retry-After`, no `X-RateLimit-*`.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+          example: 1
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: Requests per minute your plan allows on this request's cost tier.
+          example: 30
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: Whole requests left in the bucket right now.
+          example: 0
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: Unix time at which the bucket is fully refilled.
+          example: 1758380460
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "RATE_LIMITED"
+              message: "Too many generate requests for this api-secret. Retry in ~1s."
+              httpStatus: 429
+            status: "error"
+            status_code: 429
+
+    RateLimitedByAddress:
+      description: |
+        Too many requests from this network address. These routes carry their
+        own credential and are checked by the service behind them, so there is
+        no account to meter at the front door — they get one flat limit per
+        address (120 requests/minute) instead of the per-plan cost tiers, and
+        no `X-RateLimit-*` headers. Wait `Retry-After` seconds and retry. See
+        [Rate limits](https://docs.bithuman.ai/api/rate-limits).
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+          example: 1
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "RATE_LIMITED"
+              message: "Too many requests from this address. Retry in ~1s."
+              httpStatus: 429
+            status: "error"
+            status_code: 429
+
+    RateLimitedFailedAuth:
+      description: |
+        Too many **failed** key validations from this network address — 30 per
+        minute. Only failures spend budget, so a runtime presenting a live key
+        never reaches this, however often it calls. It says nothing about
+        whether your key is valid: wait `Retry-After` seconds, retry, and read
+        the answer you get then. See
+        [Rate limits](https://docs.bithuman.ai/api/rate-limits).
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+          example: 1
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SelfHostError"
+          example:
+            error:
+              type: "rate_limited"
+              message: "too many failed validations"
 
     EdgeBadGateway:
       description: >-
