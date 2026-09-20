@@ -57,7 +57,9 @@ const configuration = {
         </ul>
       </div>
     </noscript>
-    <div id="api-reference"></div>
+    {/* Not id="api-reference": the bundle auto-mounts an empty, second
+        instance on that id, and the page would carry two. */}
+    <div id="bh-api-reference"></div>
   </div>
 
   <script is:inline src={`https://cdn.jsdelivr.net/npm/@scalar/api-reference@${SCALAR_VERSION}`}></script>
@@ -68,7 +70,7 @@ const configuration = {
       // Scalar keys its palette on a body class; the site keys its own on
       // <html data-theme>. Start Scalar in the site's mode and follow the
       // site toggle from then on.
-      window.Scalar.createApiReference("#api-reference", Object.assign({}, configuration, {
+      window.Scalar.createApiReference("#bh-api-reference", Object.assign({}, configuration, {
         forceDarkModeState: mode(),
       }));
       new MutationObserver(function () {
@@ -109,8 +111,11 @@ const configuration = {
 
     --scalar-color-accent: var(--bh-coral);
 
-    /* === Header: the site nav is sticky, and this is its height === */
-    --scalar-header-height: var(--nav-h);
+    /* === Header: Scalar's own header row is empty here (0), and the
+       site nav above it is sticky, so the sidebar and the sticky code
+       cards offset by the nav's height === */
+    --scalar-header-height: 0px;
+    --scalar-custom-header-height: var(--nav-h);
     --scalar-header-call-to-action-color: var(--bh-coral);
 
     /* === Sidebar geometry === */
