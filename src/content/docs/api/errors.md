@@ -98,8 +98,8 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 
 | Code | HTTP | Resolution |
 |---|---|---|
-| `FILE_TOO_LARGE` | 413 | Images 10 MB, video 100 MB, audio 50 MB, docs 10 MB. |
-| `UNSUPPORTED_TYPE` | 415 | Supported: JPEG, PNG, WebP, MP4, WAV, MP3, OGG. |
+| `FILE_TOO_LARGE` | 413 | Images 10 MB, video 100 MB, audio and documents 25 MB. |
+| `UNSUPPORTED_TYPE` | 415 | The bytes are not a supported type, they contradict `file_type`, the filename extension is not one [File upload](/api/files) lists, or the file would run in a browser (SVG, HTML, scripted text). |
 | `DOWNLOAD_FAILED` | 400 | Ensure the URL is publicly accessible and returns a valid file. |
 
 ### Session & infrastructure

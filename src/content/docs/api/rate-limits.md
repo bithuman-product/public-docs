@@ -55,8 +55,10 @@ headers](#response-headers)) and the standard [error envelope](/api/errors):
 
 Two surfaces are deliberately exempt from the request limiter:
 
-- **Webhooks** — webhook traffic is never rate-limited, so signed event
-  deliveries and their retries always go through.
+- **Webhooks** — event traffic is never rate-limited, so signed deliveries,
+  their retries, and the provider callbacks the platform receives always go
+  through. (Managing your own endpoints with `/v1/webhooks` is an ordinary
+  read/write call and is metered like any other.)
 - **Live-session heartbeats** — the runtime-token routes (`/v1/runtime-tokens*`,
   `/v1/runtime/*`) that keep a live avatar session authenticated and billing.
   An active session is never cut off with a `429`; live usage is bounded by
