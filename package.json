@@ -11,7 +11,7 @@
     "prebuild": "npm run sync-openapi",
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build --force && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "check:served-current": "node scripts/check-served-is-current.mjs",
