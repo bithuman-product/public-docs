@@ -206,7 +206,26 @@ const CARRIERS = [
   // program PARSES; renaming one is a runtime break with no compile error.
   { why: "§G: the public Python MODULE PATH `bithuman.tessera_offline` — `from bithuman.tessera_offline import …` resolves by exact match out of an installed, version-pinned wheel",
     re: /tessera_offline/i },
-  { why: "§G: the wheel EXTRA `bithuman[tessera]` — pip resolves an extra by exact match, so deleting it fails every requirements.txt that pins it",
+  // ★REASON CORRECTED 2026-09-20. This row used to read "pip resolves an extra
+  // by exact match, so deleting it fails every requirements.txt that pins it" —
+  // the argument for keeping the extra IN the wheel. That premise expired the
+  // same day: `bithuman` 2.11.6 ships `Provides-Extra:` of only `test` and
+  // `expression-2`; `offline` and `tessera` are GONE (pyproject.toml's own note:
+  // both installed torch/onnx/onnxruntime for a route that has not used them
+  // since 2.11.5). Deleting it did NOT fail those requirements files — pip warns
+  // that the extra is not provided and installs the base wheel, which is the
+  // whole install. bithuman-models tools/guard_surface_cut_correctness.py now
+  // reddens `Provides-Extra: tessera` at EVERY major, so the two repos would
+  // have disagreed had this row kept arguing for its presence.
+  // ★THE PERMIT STAYS, FOR THE OPPOSITE REASON. The spelling must remain
+  // WRITABLE here because five pages now have to NAME the extra to say it was
+  // removed (changelog.md:16,28,1591; downloads.md:61; self-host-local.md:167;
+  // sdk/python.md:42). Deleting the permit would redden the very notes that
+  // carry the retirement — and the fatal-if-zero check below would then fire on
+  // `tessera` for the second reason it names. A carrier row that protects a
+  // retirement note is not the same as one that protects a live coordinate, and
+  // this one is now the former.
+  { why: "§G: the wheel EXTRA `bithuman[tessera]` — REMOVED from the wheel in 2.11.6 (2026-09-20). The spelling stays permitted because the pages that announce its removal must be able to name it; it is no longer a live pip coordinate",
     re: /bithuman\[tessera\]|`tessera` extra/i },
   { why: "§G: BITHUMAN_TESSERA_* env names a customer sets in their own launcher; the reader takes BOTH spellings and never drops the frozen one",
     re: /BITHUMAN_TESSERA_[A-Z_]+/ },
