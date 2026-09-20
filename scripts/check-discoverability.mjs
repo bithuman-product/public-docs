@@ -84,8 +84,11 @@ console.log(`inbound links: ${collection.size - orphans.length} of ${collection.
 const originArg = process.argv.indexOf("--origin");
 if (originArg !== -1) {
   const origin = process.argv[originArg + 1].replace(/\/$/, "");
+  // A protected preview accepts the linked project's development token as a
+  // header: `vercel env run -- node scripts/check-discoverability.mjs --origin <url>`.
+  const headers = process.env.VERCEL_OIDC_TOKEN ? { "x-vercel-trusted-oidc-idp-token": process.env.VERCEL_OIDC_TOKEN } : {};
   const get = async (path) => {
-    const r = await fetch(origin + path, { redirect: "manual" });
+    const r = await fetch(origin + path, { redirect: "manual", headers });
     return { status: r.status, type: r.headers.get("content-type") ?? "", body: r.status === 200 ? await r.text() : "" };
   };
   const sm = await get("/sitemap.xml");
