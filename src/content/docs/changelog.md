@@ -10,6 +10,28 @@ order: 1
 
 ## September 2026
 
+### A live session's local video server no longer shows its key on the process list — `cli-v2.6.26` (2026-09-20)
+
+`curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
+to confirm (`bithuman 2.6.26`). macOS arm64 and Linux x86_64, built from one
+commit. **Upgrade if you run live sessions on a machine other people can log
+in to.**
+
+- **The key pair for the local video server is no longer on its command line.**
+  A live `bithuman run` or `bithuman serve` starts a local video server with a
+  freshly minted key and secret, and those were passed as command-line
+  arguments — which every user on the same machine can read with `ps`, for as
+  long as the session runs. They are now passed in the server's environment,
+  which only your own user can read, and nothing is written to disk. Measured
+  on the published `2.6.26` bytes: a live session's 13 processes carry no
+  credential on any command line.
+- **Nothing else changes for you.** No machine `code`, no `--json` key and no
+  exit code is added or renamed; a script that parsed `2.6.25` parses `2.6.26`.
+  The engine inside is the same build `2.6.25` shipped (`2.11.5`, ABI 7).
+  Ctrl-C on a live session still delivers the final meter beat — re-measured on
+  the published `2.6.26` bytes from a fresh install: `served=30.8s … delivered
+  (final)`, exit 0.
+
 ### On Linux, a live session ended with Ctrl-C was billed 0 s for its last interval — `cli-v2.6.25` (2026-09-20)
 
 `curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
