@@ -39,7 +39,7 @@ The Python library and the CLI binary are separate things and have been since 2.
 | **Windows** | WSL2 today | **Not supported** — no wheel; run under WSL2 | — |
 | **iOS / iPadOS** | — | — | SwiftPM |
 
-**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64, and Apple-silicon macOS (14 or newer).** That is the whole set. Anywhere else — Windows, an Intel Mac — `pip install bithuman` stops at `bithuman 2.11.5 has NO WHEEL for this platform.`, prints that set, and installs nothing: since 2026-09-20 the release also carries a source distribution that exists only to refuse, so pip cannot fall back to an older wheel (before that date an Intel Mac quietly received a 1.x release). On Windows, run it under WSL2, which is a supported Linux.
+**The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64, and Apple-silicon macOS (14 or newer).** That is the whole set. Anywhere else — Windows, an Intel Mac — `pip install bithuman` stops at `bithuman 2.11.6 has NO WHEEL for this platform.`, prints that set, and installs nothing: since 2026-09-20 the release also carries a source distribution that exists only to refuse, so pip cannot fall back to an older wheel (before that date an Intel Mac quietly received a 1.x release). On Windows, run it under WSL2, which is a supported Linux.
 
 **Verify what you downloaded.** Every CLI release publishes a `.sha256` sidecar
 beside each tarball on the
@@ -58,7 +58,7 @@ digest is on the [Python API page](/sdk/python-api).
 
 | Artifact | Latest version | Where it comes from |
 |---|---|---|
-| Python SDK (`bithuman`) | **2.11.5** — `pip install bithuman`, unconstrained, resolves it, and so does a `bithuman<3` pin (`livekit-plugins-bithuman` declares one); the 3.x line was withdrawn from PyPI on 2026-09-16, and 2.11.5 is its engine with the 2.x import surface carried alongside | [PyPI](https://pypi.org/project/bithuman/) |
+| Python SDK (`bithuman`) | **2.11.6** — `pip install bithuman`, unconstrained, resolves it, and so does a `bithuman<3` pin (`livekit-plugins-bithuman` declares one); the 3.x line was withdrawn from PyPI on 2026-09-16, and 2.11.6 is its engine with the 2.x import surface carried alongside. It pulls no `torch`: the legacy `bithuman[offline]` and `bithuman[tessera]` extras were removed on 2026-09-20 | [PyPI](https://pypi.org/project/bithuman/) |
 | Swift SDK (`bitHumanKit`) | binary **2.4.0** — the package version to pin is on [Install](/sdk/ios#install), the only page that states it | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Expression2`) | **2.6.3** (the package tag to pin is on [Install](/sdk/ios#install) — `from:` resolves it; `idleLoop` left the public surface in 2.6.3, see the [changelog](/changelog)) | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | Swift SDK (`Essence2`) | ships with the package — pin the package version on [Install](/sdk/ios#install) and the engine comes with it. Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the `.imx` you download here. The newest package tag, **2.13.8**, ships Essence 2 engine **1.9.0**. | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |

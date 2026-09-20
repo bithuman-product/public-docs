@@ -167,7 +167,7 @@ Measured frame rates for every platform are on the
 | `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman avatars` and copy a slug from it |
 | the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
 | `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
-| `pip install bithuman` stops at `bithuman 2.11.5 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
+| `pip install bithuman` stops at `bithuman 2.11.6 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
 | `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` never needed it |
 
 With `--json`, every failure prints one JSON object to stderr with a stable

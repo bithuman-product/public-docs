@@ -15,13 +15,13 @@ Android and iOS SDK pages for the phones.
 | Your platform | What renders locally | Surface |
 |---|---|---|
 | Linux x86_64, macOS Apple Silicon | [Essence 2](/concepts/essence-2) and [Expression 2](/concepts/expression-2) — live in your browser, or a whole clip to an MP4 | [CLI](/sdk/cli) |
-| Linux x86_64 / aarch64, macOS Apple Silicon | Essence 2 and Expression 2 frames from `bithuman.open()`, and an Essence 2 clip to an MP4 on the CPU | [Python SDK](/sdk/python) `bithuman` 2.11.5 (no extra needed for the Essence 2 clip route since 2.11.5) |
+| Linux x86_64 / aarch64, macOS Apple Silicon | Essence 2 and Expression 2 frames from `bithuman.open()`, and an Essence 2 clip to an MP4 on the CPU | [Python SDK](/sdk/python) `bithuman` 2.11.6 (no extra needed for the Essence 2 clip route since 2.11.5) |
 | Android (`arm64-v8a`) | Expression 2 — on-device in your own app; an Essence 2 library is published too (the coordinate is on the [Android page](/sdk/android#troubleshooting), the API on [`Essence2Avatar`](/sdk/android-api#essence2avatar)) | [Android SDK](/sdk/android) |
 | iOS and macOS | Expression 2 and Essence 2 — on-device in your own app, through the Swift package's `Expression2` and `Essence2` products | [Swift SDK](/sdk/ios) |
 
 **The Python wheel ships for Python 3.10–3.14 on Linux x86_64, Linux aarch64,
 and Apple-silicon macOS (14 or newer)** — that is the whole set. Anywhere else —
-Windows, an Intel Mac — `pip install bithuman` stops at `bithuman 2.11.5 has NO
+Windows, an Intel Mac — `pip install bithuman` stops at `bithuman 2.11.6 has NO
 WHEEL for this platform.`, prints that set, and installs nothing: since
 2026-09-20 the release carries a source distribution that exists only to refuse,
 so pip cannot fall back to an older wheel. Run it under WSL2 on Windows.
@@ -109,8 +109,9 @@ pip install bithuman
 ```
 
 `pip install bithuman` is the whole install: `bithuman.offline` on the base
-wheel renders an Essence 2 clip to an MP4. `bithuman[offline]` still resolves
-for an install that pins it, but it installs `torch` you do not need.
+wheel renders an Essence 2 clip to an MP4. There is no extra to add for this
+route, and since 2.11.6 there is no extra left that could add `torch` — the
+wheel declares only `[expression-2]` and `[test]`.
 
 You also need **`ffmpeg` on `PATH`** — the SDK uses it to decode audio and
 encode the MP4.
@@ -155,13 +156,15 @@ Install, model download, minimal code and a running app: the
 [Android SDK page](/sdk/android), or the whole project on
 [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello).
 
-### Legacy 2.x names still accepted
+### Legacy 2.x names
 
-Nothing below is needed for a new integration; each is kept so an existing one keeps working, spelled exactly as it was:
+Nothing below is needed for a new integration. The module path, the exported
+names and the environment variables are kept so an existing integration keeps
+working, spelled exactly as it was; the one entry that is gone says so:
 
-| Legacy name | Status on `bithuman` 2.11.5 | Use instead |
+| Legacy name | Status on `bithuman` 2.11.6 | Use instead |
 |---|---|---|
-| `pip install "bithuman[tessera]"` | still resolves; installs the same extras as `[offline]` — neither is needed | `pip install bithuman` |
+| the `bithuman[tessera]` extra (and `bithuman[offline]`) | **removed from the wheel on 2026-09-20.** A requirements file that still asks for one installs the base package and pip warns that the extra is not provided — neither ever added anything this route needs | drop the brackets: `pip install bithuman` |
 | `bithuman.tessera_offline` (module path) | still importable | `bithuman.offline` |
 | `OfflineTesseraRenderer`, `TesseraOfflineError` (exported names) | still exported | `OfflineRenderer`, `render_offline`, `OfflineRenderError` |
 | `BITHUMAN_TESSERA_DIRECTOR` and the other `BITHUMAN_TESSERA_*` variables | still read | no variable — the defaults are the fast path |
@@ -191,7 +194,7 @@ Measured frame rates for every platform are on the
 |---|---|---|
 | `bithuman render` refuses with `NOT_SIGNED_IN`, no output file | a render is billed, so it needs a credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
 | `OfflineRenderError` naming the audio encoder | the first render could not download it | allow the machine network access once; it is cached in `~/.bithuman/deps` afterwards |
-| `pip install "bithuman[offline]"` downloads gigabytes of `nvidia-*` packages | an install pinned to the extra pulls a CUDA `torch` the clip route no longer uses | `pip install bithuman` — the base wheel renders the clip |
+| an install pinned to the `bithuman[offline]` extra used to download gigabytes of `nvidia-*` packages | that extra pulled a CUDA `torch` the clip route has not used since 2.11.5; it was removed from the wheel on 2026-09-20, so nothing pulls it now | `pip install bithuman` — the base wheel renders the clip |
 | `ffmpeg: command not found` | the SDK shells out to ffmpeg | install ffmpeg and put it on `PATH` |
 | `lible_core.so not found` at the first frame on macOS | an old wheel, from before the native half shipped | `pip install -U bithuman` |
 | `java.lang.UnsatisfiedLinkError` on an Android emulator | an x86_64 system image; the AARs are `arm64-v8a` only | a physical device, or an `arm64-v8a` emulator image |
