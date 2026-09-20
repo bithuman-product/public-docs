@@ -1,6 +1,6 @@
 ---
 title: "Failure states on a phone"
-description: "What the on-device SDKs actually throw when the network is gone, a download is interrupted, a model is corrupt or a key is rejected — measured on a Galaxy S25+ against ai.bithuman:expression2-android:0.3.1 and on Apple Silicon against Expression2 2.11.2, with the exact exception text and the handling each state needs."
+description: "What the on-device SDKs actually throw when the network is gone, a download is interrupted, a model is corrupt or a key is rejected — measured on a Galaxy S25+ against ai.bithuman:expression2-android:0.3.1 and on Apple Silicon against Expression2 2.6.3, with the exact exception text and the handling each state needs."
 section: examples
 group: "Examples"
 order: 18
@@ -219,11 +219,14 @@ container, and **you** stage its members. So the states below split into two
 groups — what the *door* does when your key is wrong, and what the *engine* does
 when the bytes on disk are wrong.
 
-The states below are against the published **`Expression2` 2.11.2**
-(`homebrew-bithuman`, the version [the Swift SDK page](/sdk/ios) pins), on
-Apple Silicon. The container reader, the member staging and the load path are the
-same Swift code in every slice of that xcframework; the CoreML compile is the
-part that is per-device, and it is called out where it matters.
+The states below were **re-driven on 2026-09-20** against the published
+**`Expression2` 2.6.3** — the engine a `from: "2.11.0"` dependency resolves today
+(`homebrew-bithuman`, the version [the Swift SDK page](/sdk/ios) pins) — on Apple
+Silicon, against a container as the download door serves it (17 members,
+198,632,867 bytes). Two rows are older and say so. The container reader, the
+member staging and the load path are the same Swift code in every slice of that
+xcframework; the CoreML compile is the part that is per-device, and it is called
+out where it matters.
 
 ### No network
 
@@ -250,10 +253,21 @@ A file that is not a container at all is rejected even earlier, on its first
 bytes: `Expression2ContainerError` names the file, prints the four bytes it
 actually found, and says they are not what a bitHuman container starts with.
 
-So `Expression2Container.members(of:)` is a usable integrity gate on the
-*shape* of the download: call it before you stage, and both a truncated transfer
-and an HTML error page saved under a `.avatar` name fail there rather than deeper
-in.
+```text
+Expression2ContainerError | .../err.avatar: not an IMX\0 container — first bytes
+  are [3c 21 64 6f]. The container GET /v1/agent/{code}/model/download vends
+  begins "IMX\0".
+```
+
+> **`members(of:)` catches the HTML error page but NOT a truncation.** Measured
+> 2026-09-20 on `Expression2` 2.6.3: the table of contents sits at the *head* of
+> the file, so `members(of:)` reads it and returns **17 members in 0.3 ms** for a
+> container cut to 50%, to 99%, and even for its **first 2 KB**. The truncation
+> surfaces only when a member's bytes are actually read — by `read`, by `unpack`,
+> or by `create(avatarContainer:…)`, each of which throws the message above.
+> So the cheap integrity gate is a **`Content-Length` comparison** against the
+> download; `members(of:)` is the gate for *"is this a container at all"*, and
+> staging is what proves it is a whole one.
 
 ### A missing shared engine
 
@@ -292,7 +306,13 @@ Apple state that fails silently, and it does not fail safe: it delivers a
 different face.** CoreML validates the model graph, not the numbers in it, and
 nothing else on this rail checks the numbers either.
 
-That is the gap: the shipped 2.11.2 surface
+Still true on 2.6.3, and measured rather than asserted: flipping 4,096 bytes in
+the middle of `weight.bin` (length unchanged) gave `create()` in 1.8 s, the same
+**326 frames** as the clean container at the same wall clock, and a frame digest
+of `031d3f04…` against the clean run's `7a31a1dc…` — which two clean runs
+reproduce exactly. Nothing in the API said a word.
+
+That is the gap: the shipped 2.6.3 surface
 (`isContainer`, `members(of:)`, `read`, `readManifest`, `unpack`,
 `requiredAvatarMembers`, `missingMembers`) has **no verification call**, and
 `missingMembers()` is a presence check — it passes a member that is present and
@@ -385,20 +405,32 @@ On this rail the key is checked at the door, not on the device. The same URL,
 varying only the header:
 
 ```text
-# no header
-HTTP/2 401  {"error":{"type":"missing_credentials","code":"MISSING_AUTH","httpStatus":401,
-             "message":"send 'Authorization: Bearer <api-secret>' (or the api-secret header)"}}
+# no header, for a code that needs one
+HTTP/2 401  {"error":{"code":"MISSING_AUTH","httpStatus":401,"message":"This agent's model
+             requires a credential: send the api-secret header or Authorization:
+             Bearer <api-secret | runtime token>"},"status":"error","status_code":401}
 
 # a key that is not a key
-HTTP/2 401  {"error":{"type":"invalid_credentials","code":"UNAUTHORIZED","httpStatus":401,
-             "message":"invalid api secret; check the key in your dashboard or mint a new one"}}
+HTTP/2 401  {"error":{"code":"UNAUTHORIZED","httpStatus":401,
+             "message":"Invalid api-secret"},"status":"error","status_code":401}
 
 # a valid key, for a code it cannot see
-HTTP/2 404  {"error":{"code":"NOT_FOUND","message":"Agent not found for code: …",…}}
+HTTP/2 404  {"error":{"code":"NOT_FOUND","httpStatus":404,
+             "message":"Agent not found for code: …"},"status":"error","status_code":404}
 
 # a valid key, for a code it owns
 HTTP/2 302  location: https://…/storage/v1/object/sign/models-downloads/expression-2/<CODE>.avatar?…
+
+# NO header at all, for a free-gallery code
+HTTP/2 302  location: https://…/storage/v1/object/sign/models-downloads/…?…
 ```
+
+★ **`401` is not the answer to "no key" — it is the answer to "no key, and this
+one needs one".** A free-gallery identity answers **`302` anonymously**, which is
+the whole of [Route A](/examples/swift-ios-expression2) and is easy to mistake for
+"the endpoint is open". Test your handling against *your own* code, not a gallery
+one. (Measured 2026-09-20; the `"type"` field these bodies used to carry is gone,
+so switch on `error.code`, never on `type`.)
 
 Three distinguishable answers, which is better than the Android mirror manages —
 there, [a missing code and an unmirrored code are the same 400](#a-code-that-exists-but-is-not-mirrored).
@@ -437,20 +469,24 @@ the SDK.
 
 ### Apple reference
 
-`Expression2` 2.11.2, Apple Silicon.
+`Expression2` 2.6.3 on Apple Silicon, re-driven 2026-09-20 except where a row
+says otherwise.
 
 | State | Time to fail | What you get | What to do |
 | --- | --- | --- | --- |
-| Offline, model on device | — | renders, identical digest | nothing; no socket is opened |
-| Not a container | 1 ms | `Expression2ContainerError`, first-bytes message | you saved an error page; check the HTTP status first |
-| Truncated container | 19 ms | `Expression2ContainerError`, names the offset | re-download; `members(of:)` is the gate |
-| Shared engine missing | 74 ms | `Expression2LoadError`, names the member | `bithuman engine install mac`; pre-flight `missingMembers()` |
-| Member structure corrupt | 287 ms | `Expression2LoadError`, `decoder=missing-decp2` | re-stage from the container |
-| Member weights corrupt | **never** | renders a **different face**, no error | verify against `manifest.json` — nothing else will |
-| No `api-secret` | at the door | `401 MISSING_AUTH` | send the header |
-| Bad `api-secret` | at the door | `401 UNAUTHORIZED` | fix the key |
+| Offline, model on device | — | renders, identical digest *(2.11.2; not re-driven)* | nothing; no socket is opened |
+| Not a container | 0.7 ms | `Expression2ContainerError`, first-bytes message | you saved an error page; check the HTTP status first |
+| Truncated container, `members(of:)` | — | **no error — 17 members in 0.3 ms**, even on the first 2 KB | compare `Content-Length`; `members(of:)` is not this gate |
+| Truncated container, staging or `create(avatarContainer:…)` | 67–87 ms | `Expression2ContainerError`, names the member and the offset | re-download |
+| Shared engine missing | 0.6 ms | `Expression2LoadError`, names the member | `bithuman engine install mac`; pre-flight `missingMembers()` |
+| Member structure corrupt | 379 ms | `Expression2LoadError`, `decoder=missing-decp2` | re-stage from the container |
+| Member weights corrupt | **never** | 326 frames, no error, digest `031d3f04…` vs `7a31a1dc…` — a **different face** | verify against `manifest.json` — nothing else will |
+| One-call `create(avatarContainer:…)`, clean container | — | opens on iOS *and* macOS (2.0 s on an M4) | either this or stage by hand |
+| No `api-secret`, code needs one | at the door | `401 MISSING_AUTH` | send the header |
+| No `api-secret`, free-gallery code | at the door | **`302` — it downloads** | do not read `302` as "my key worked" |
+| Bad `api-secret` | at the door | `401 UNAUTHORIZED`, `"Invalid api-secret"` | fix the key |
 | Key cannot see the code | at the door | `404 NOT_FOUND`, `"Agent not found for code: …"` | not necessarily a bad code — may not be this account's |
-| Invalid key, render running | never refuses | 5,429 frames over 330 s | expected: on-device render is unmetered |
+| Invalid key, render running | never refuses | 5,429 frames over 330 s *(2.11.2; not re-driven)* | expected: on-device render is unmetered |
 
 ## Next steps
 
