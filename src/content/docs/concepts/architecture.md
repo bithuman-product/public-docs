@@ -49,7 +49,7 @@ The SDK never holds the long-lived secret in process memory — it exchanges the
 
 ## Where to go next
 
-- [Essence 1 vs Expression 1](/concepts/models) — the first-generation pair in depth.
+- [Models](/concepts/models) — all four models, the first-generation pair in depth.
 - [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and where each one runs.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how avatars are packaged.
 - [Quickstart](/api/quickstart) — your first avatar in ~2 minutes.

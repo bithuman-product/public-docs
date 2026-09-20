@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { hubMeta } from "../../config/hubs";
 
 // A card is a link to that platform's complete guide. Nothing opens here.
 //
@@ -153,7 +154,7 @@ const rich = (s: string) =>
 
 <Base
   title="SDK — bitHuman docs"
-  description="Run a bitHuman avatar on your device. Pick a model — Expression 2 or Essence 2 — then your platform: macOS, Linux, iOS, Android, Web, Python."
+  description={hubMeta("sdk").description}
 >
   <section class="sdk">
     <div class="container">

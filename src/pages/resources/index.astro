@@ -1,5 +1,6 @@
 ---
 import Hub from "../../components/Hub.astro";
+import { hubMeta } from "../../config/hubs";
 
 const groups = [
   {
@@ -30,7 +31,7 @@ const groups = [
 ---
 <Hub
   title="Resources"
-  tagline="Everything around building with bitHuman — downloads, changelog, examples, and the community."
+  tagline={hubMeta("resources").description}
   ctas={[{ label: "Downloads", href: "/downloads" }, { label: "Examples", href: "/examples", variant: "secondary" }]}
   groups={groups}
 />

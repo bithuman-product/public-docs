@@ -1,21 +1,21 @@
 ---
-title: "Essence 1 vs Expression 1 (first generation)"
-description: "The two first-generation bitHuman models compared — what each does, where each runs (on-device CPU, Raspberry Pi, Apple Silicon, or NVIDIA GPU), and which one to pick. For the current models, see Essence 2 and Expression 2."
+title: "Models"
+description: "bitHuman's four avatar models — Essence 2 and Expression 2, the current generation, and Essence 1 and Expression 1, the first — what each does, where each runs, and which one to pick."
 section: concepts
 group: "Models"
-order: 5
-label: "Essence 1 vs Expression 1"
+order: 0
+label: "Models"
 ---
 
-> **Looking for the current models?** This page compares the **first
-> generation**, Essence 1 and Expression 1, which are maintained and still run
-> two thirds of the agents on the platform. If you are starting something new,
-> the models to read about are
-> **[Essence 2 and Expression 2](/concepts/models-v2)**, and the page that says
-> which of them runs where is
-> **[Where each model runs](/concepts/where-models-run)**.
+bitHuman has four avatar models in two families. **Essence 2** and
+**Expression 2** are the current generation — start there for anything new;
+their page is **[Essence 2 & Expression 2](/concepts/models-v2)**. **Essence 1**
+and **Expression 1** are the first generation, maintained and still running two
+thirds of the agents on the platform. This page names all four, then compares
+the first-generation pair in depth. The page that says which model runs where
+is **[Where each model runs](/concepts/where-models-run)**.
 
-## The engines
+## The four models
 
 bitHuman's avatar runtime is a family of **rendering engines** plus the
 **conversation and voice stack** that feeds them. The two render engines you choose
@@ -46,13 +46,6 @@ between when packaging an avatar — and the focus of the rest of this page — 
     photo rather than patching a pre-rendered base. Serves on gpu, cpu, and
     Apple tiers.
 
-> **New** The two second-generation models — `essence-2`
-> and `expression-2` — are **available now** (launched July 10, 2026). See
-> [Essence 2 & Expression 2](/concepts/models-v2) for the
-> family overview, and the official per-model guides:
-> [Expression 2](/concepts/expression-2) ·
-> [Essence 2](/concepts/essence-2).
-
 Each family shares one `.imx` format, SDK methods, and the `push audio → drain frames`
 shape; the tier is selected per session and is transparent to your integration.
 
@@ -67,7 +60,7 @@ The rest of this page focuses on the **first-generation** models, Essence 1
 vs Expression 1 — the numbers and hardware notes below are theirs. For the
 second generation, see [Essence 2 & Expression 2](/concepts/models-v2).
 
-## At a glance
+## Essence 1 vs Expression 1 at a glance
 
 bitHuman's two first-generation avatar models share the same [`.imx` file format](/concepts/avatars-imx), the same SDK methods, and the same [`push audio → drain frames`](/concepts/audio-streaming) shape. **Essence 1** runs on virtually every CPU and is what `bithuman pull` ships in the showcase. **Expression 1** is the heavier high-fidelity option, and it is **GPU-only** — server-side NVIDIA GPUs, with no Apple, browser or Android build.
 
@@ -97,8 +90,9 @@ bitHuman's two first-generation avatar models share the same [`.imx` file format
 | **Best for** | Kiosks, mobile, edge, 24/7 deployments, high concurrency | Close-up native consumer apps, custom faces per session |
 | **Pricing (first-generation rates)** | 1 credit/min self-hosted · 2 credits/min cloud | 2 credits/min self-hosted · 4 credits/min cloud |
 
-**Essence 1** ships to every surface — SDKs, REST API, LiveKit plugin, CLI,
-on-device, embed widget. **Expression 1 does not**; see below.
+**Essence 1** ships to the REST API, the LiveKit plugin, the embed widget, the
+[CLI](/sdk/cli) and the [Python wheel](/sdk/python). **Expression 1 does not**;
+see below.
 
 ## Where each model runs
 
@@ -120,10 +114,14 @@ will fill them. If you need an expressive, portrait-driven model somewhere other
 than a GPU, the model is **[Expression 2](/concepts/expression-2)**, which is in
 scope on every lane.
 
-Essence 1 on-device runs on macOS arm64, Linux x86_64 / aarch64, iOS, iPadOS,
-Raspberry Pi 4B+ and in the browser. Native macOS-Intel and Windows wheels are
-pending for the 2.3 line; the [architecture](/concepts/architecture) page tracks
-per-platform shipping status.
+Where Essence 1 runs on your own hardware today, by published artifact: the
+`bithuman` wheel on Linux x86_64 and aarch64 (measured) and on Apple-silicon
+macOS (the wheel carries the engine), and the CLI's `bithuman run` on the same
+machines. Nothing published proves an iOS or iPadOS build (the Swift package
+has no Essence 1 product), a browser build (the hosted viewer never renders
+Essence 1 in the tab, and there is no npm package) or an Android build (only
+the legacy `ai.bithuman:sdk:2.3.6`, which cannot authenticate on a phone).
+There are no Intel-Mac or Windows wheels — see [downloads](/downloads).
 
 ## Essence
 
@@ -132,7 +130,7 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 **Runtime characteristics**
 
 - ~200–500 MB resident, 1–2 CPU cores, real-time at 25 fps.
-- Runs on macOS arm64, Linux x86_64 / aarch64, iOS, iPadOS, Raspberry Pi 4B+, and in the browser via WASM.
+- Runs on macOS arm64 and Linux x86_64 / aarch64 through the `bithuman` wheel and the CLI — see [where each model runs](#where-each-model-runs) above.
 - No idle timeout — sessions can run 24/7. Reliable for unattended kiosks and lobby displays.
 - Supports custom gestures (wave, nod, laugh) triggered by keywords or API.
 - Predictable, consistent behavior. Lower per-stream cost — the right pick for high-concurrency self-hosted deployments.
@@ -150,7 +148,6 @@ bithuman run <CODE>.imx                  # live browser-served avatar
 **How to ship it**
 
 - [Python SDK](/sdk/python) — self-host on macOS arm64 + Linux x86_64 / aarch64.
-- [Swift SDK](/sdk/ios) — native Mac, iPad, iPhone apps.
 - [bitHuman CLI](/sdk/cli) — no code, terminal or browser.
 - [REST API](/api/reference) — backend integration in any language.
 - [Cloud LiveKit plugin](/guides/deploy-livekit) — managed, no infrastructure.
@@ -187,9 +184,10 @@ There is deliberately no on-device row here. See
 
 ### iPhone app
 
-**Essence 1**, or **[Essence 2](/concepts/essence-2)** /
-**[Expression 2](/concepts/expression-2)** for the second generation. Not
-Expression 1 — it is GPU-only.
+**[Essence 2](/concepts/essence-2)** or
+**[Expression 2](/concepts/expression-2)** through the [Swift SDK](/sdk/ios).
+Neither first-generation model has a published iPhone build — Expression 1 is
+GPU-only, and no Swift product carries Essence 1.
 
 ### Native Mac or iPad app with close-up dynamic faces
 
@@ -209,9 +207,9 @@ Expression *1* is GPU-only and has no on-device Apple build — see
 
 **Essence.** Lower per-stream cost makes it the right pick for high-concurrency deployments.
 
-### Edge hardware (Raspberry Pi, low-power laptop)
+### Edge hardware (low-power laptop, single-board computer)
 
-**Essence.** Runs on 1–2 CPU cores at 25 fps.
+**Essence.** Runs on 1–2 CPU cores at 25 fps through the Linux x86_64 / aarch64 wheel.
 
 ### Highest visual quality for offline video generation
 

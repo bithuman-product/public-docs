@@ -232,7 +232,12 @@ function corpus() {
   return files.map((p) => ({ path: p, text: readFileSync(p, "utf8") }));
 }
 
-const isChangelog = (p) => /(^|\/)changelog\.mdx?$/.test(p);
+// History is not graded for currency: the changelog and its archive
+// (src/content/docs/changelog/*.md — entries older than the current page keeps,
+// moved there unchanged). V7, the rule that the NEWEST entries exist, reads the
+// current page only: an archive names no current version by construction.
+const isChangelog = (p) => /(^|\/)changelog(\/[^/]+)?\.mdx?$/.test(p);
+const isChangelogHead = (p) => /(^|\/)changelog\.mdx?$/.test(p);
 const isPerformance = (p) => /(^|\/)sdk\/performance\.mdx?$/.test(p);
 /** The rates a model PLAYS at — product constants, never a measurement. */
 const PLAY_RATES = new Set(["20", "25"]);
@@ -325,8 +330,12 @@ export function subjects(path, text) {
         push(dist, m[1], region.offset + m.index, "V2", `${dist}==${m[1]}`);
       }
     }
-    // V4 — sample CLI output
-    const verLine = /^[ \t]*bithuman[ \t]+(\d+\.\d+\.\d+)\b/gm;
+    // V4 — sample CLI output. The `--version` line is the version and then
+    // nothing but an optional `# comment`: a line that CONTINUES after the
+    // version is a sentence quoting an artifact, not this output — measured
+    // 2026-09-20 on the PyPI guard's own first line, `bithuman 2.11.5 has NO
+    // WHEEL for this platform.`, which four pages quote as what a reader sees.
+    const verLine = /^[ \t]*bithuman[ \t]+(\d+\.\d+\.\d+)[ \t]*(?:#.*)?$/gm;
     while ((m = verLine.exec(region.text)) !== null) {
       push("cli", m[1], region.offset + m.index, "V4", `\`bithuman --version\` output naming ${m[1]}`);
     }
@@ -537,8 +546,8 @@ export async function grade(files, registry) {
       }
     }
 
-    // V7 — the changelog
-    if (isChangelog(path)) {
+    // V7 — the changelog (the current page, never the archive)
+    if (isChangelogHead(path)) {
       seen.V7++;
       // The NEWEST cli-v the changelog names, not the first: entries of one
       // date can sit in any order, and an entry may cite an older release.
@@ -747,6 +756,7 @@ const ARMS = [
   ["good: the current Android coordinates", "p/sdk/android.md", '```kotlin\nimplementation("ai.bithuman:essence2-android:0.5.5")\nimplementation("ai.bithuman:expression2-android:0.4.1")\n```\n', false],
   ["good: `bithuman` 3.1.5 stated as current", "p/sdk/python.md", "`bithuman` 3.1.5 runs on Python 3.10–3.14", false],
   ["good: sample output naming the newest CLI", "p/sdk/cli.md", '```text\nbithuman    2.6.14\n```\n```json\n{"cli":"2.6.14"}\n```\n', false],
+  ["good: a quoted pip guard line is a sentence, not --version output", "p/sdk/python.md", "| `bithuman 2.11.5 has NO WHEEL for this platform.` | no wheel |\n```text\n        bithuman 2.11.5 has NO WHEEL for this platform.\n```\n", false],
   ["good: the current downloads table", "p/downloads.md", TABLE("3.1.5", "0.5.5"), false],
   ["good: from: 2.11.0 resolves to the newest 2.x tag", "p/sdk/ios.md", '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")\n```\n', false],
   ["good: a changelog with every newest entry", "p/changelog.md", CL("2.6.14", "0.5.5", "3.1.5"), false],
@@ -840,7 +850,7 @@ async function selftest() {
   for (const f of real) {
     for (const s of subjects(f.path, f.text)) counts[s.rule]++;
     counts.V6 += tapPins(f.text).length;
-    if (isChangelog(f.path)) counts.V7++;
+    if (isChangelogHead(f.path)) counts.V7++;
     if (!isChangelog(f.path) && !isPerformance(f.path)) counts.V9 += rateLiterals(f.text).length;
   }
   for (const [rule, n] of Object.entries(counts)) {
@@ -872,7 +882,7 @@ if (process.argv.includes("--selftest")) process.exit(await selftest());
 const files = corpus();
 const { failures, cannot, seen, latest } = await grade(files, liveRegistry);
 
-if (!files.some((f) => isChangelog(f.path))) {
+if (!files.some((f) => isChangelogHead(f.path))) {
   console.log("::error::no changelog.md in the corpus — V7 is grading nothing");
   process.exit(1);
 }

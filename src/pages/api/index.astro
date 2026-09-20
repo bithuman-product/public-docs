@@ -1,5 +1,6 @@
 ---
 import Hub from "../../components/Hub.astro";
+import { hubMeta } from "../../config/hubs";
 
 const groups = [
   {
@@ -53,7 +54,7 @@ const groups = [
 <Hub
   eyebrow="Cloud API"
   title="API Platform"
-  tagline="Generate, manage, and animate realtime visual agents over REST — voice, gestures, files, and embedding, all from api.bithuman.ai. We host everything; you just call the endpoints."
+  tagline={hubMeta("api").description}
   ctas={[{ label: "New here? Start here", href: "/start" }, { label: "API reference", href: "/api/reference", variant: "secondary" }]}
   groups={groups}
 />

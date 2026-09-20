@@ -1,9 +1,10 @@
 ---
 import Base from "../../layouts/Base.astro";
 import caseStudies from "../../data/case-studies.json";
+import { hubMeta } from "../../config/hubs";
 ---
 
-<Base title="Showcase — bitHuman" description="Real teams shipping realtime visual agents with bitHuman — museums, enterprise, retail, and more.">
+<Base title="Showcase — bitHuman" description={hubMeta("showcase").description}>
   <section class="sc-hero">
     <div class="container">
       <span class="eyebrow">Showcase</span>

@@ -158,10 +158,10 @@ audio into those keypoints is not part of the package, so it is the right tool
 for evaluating render quality and speed, not a lip-sync engine on its own. See
 [Browser runtime](/sdk/web) for the API and the download.
 
-**A JavaScript SDK for a full hosted session — not yet.** `@bithuman/sdk`, the
-client that would drive a cloud or self-hosted avatar from your own React, Vue
-or vanilla app, is not published to npm. To build a browser integration against
-a hosted session today, drive [LiveKit](/sdk/livekit) directly or use the hosted
+**A JavaScript SDK for a full hosted session — not yet.** bitHuman publishes
+no npm package: there is no client library that drives a cloud or self-hosted
+avatar from your own React, Vue or vanilla app. To build a browser integration
+against a hosted session today, drive [LiveKit](/sdk/livekit) directly or use the hosted
 landing page with a rendering-mode parameter. Track it in
 [Discord](https://discord.gg/ES953n7bPA).
 

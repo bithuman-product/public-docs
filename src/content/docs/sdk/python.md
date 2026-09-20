@@ -72,9 +72,12 @@ takes any of them — as it does a first-generation `essence-1` `.imx`.
 # hello.py
 import bithuman
 
-with bithuman.open("A23WJF0199.imx") as avatar:         # an Essence 2 .imx or an Expression 2 .avatar — one call
-    for image in avatar.render("demo_sample.wav"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate
-        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]
+# an Essence 2 .imx or an Expression 2 .avatar — one call
+with bithuman.open("A23WJF0199.imx") as avatar:
+    # (height, width, 3) uint8, RGB, at the avatar's own frame rate
+    for image in avatar.render("demo_sample.wav"):
+        # hand it to your display — OpenCV wants image[:, :, ::-1]
+        print(image.shape)
 ```
 
 That is the whole surface: **open an avatar, render audio through it.** The
@@ -147,7 +150,7 @@ logging.basicConfig(level=logging.INFO)
 | You see | It means | Do this |
 |---|---|---|
 | `ModuleNotFoundError: No module named 'bithuman'` | not installed in the active environment | `pip install bithuman --upgrade` in the venv you run from |
-| `No matching distribution found for bithuman` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14 | a supported platform, or the [cloud API](/api/overview) |
+| `bithuman 2.11.5 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14. pip installed nothing: the release's source distribution exists only to print this (since 2026-09-20; before that, pip could quietly resolve a 1.x wheel) | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
 | `NotSupported` opening a `.avatar` | the Expression 2 extra is missing | `pip install "bithuman[expression-2]"` |
 | the first `render` raises `NotAuthorised` | no usable key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
 | `InvalidAvatar` on an Essence 2 file you were given | the file is not usable as published | send the agent code to [hello@bithuman.ai](mailto:hello@bithuman.ai) for re-publishing |

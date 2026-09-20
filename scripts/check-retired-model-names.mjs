@@ -342,7 +342,8 @@ let fenceHits = 0;
 const nameHits = new Map(RETIRED.map((r) => [r.name, 0]));
 for (const rel of files) {
   const lines = readFileSync(ROOT + rel, "utf8").split("\n");
-  const isChangelog = rel.endsWith("changelog.md");
+  // The changelog and its archive (changelog/*.md) are dated history alike.
+  const isChangelog = /(^|\/)changelog(\/[^/]+)?\.md$/.test(rel);
   // ── ★PROSE / CODE-SPAN CONTROL (ADDED 2026-09-04) ────────────────────────
   // Two guards on this estate flagged a docstring and were wrong. A fenced
   // block on this site is a command a developer types, a program they paste, a

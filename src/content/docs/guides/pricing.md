@@ -75,7 +75,7 @@ One mode is always free: **audio-only** Swift SDK use — no avatar attached, fu
 | **Enterprise** | $999 | $9,990 | 250,000 | 200 |
 | **Custom** | Contact sales | — | Volume / on-prem | Unlimited |
 
-Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem / air-gapped deployment, and bespoke SLAs beyond Enterprise: [talk to sales](https://www.bithuman.ai/sales).
+Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem deployment, and bespoke SLAs beyond Enterprise (fully disconnected operation is [offline licensing — coming soon](#offline-licensing--coming-soon)): [talk to sales](https://www.bithuman.ai/sales).
 
 **Concurrent sessions** are a plan entitlement — the number of live avatar sessions your account can run at once. Enforcement is rolling out: when limits apply, a session past your plan's cap is refused with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors) rather than degrading running sessions. Details in [Rate limits & concurrency](/api/rate-limits).
 

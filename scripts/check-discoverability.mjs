@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // Discoverability gate — the three things a crawler or an agent reaches first.
 //
-//   1. /llms.txt lists every page of the content collection, and nothing else
-//      (an agent reads only that file; a page missing from it is invisible to
-//      one, and a line for a page that does not exist is a dead end).
+//   1. /llms.txt lists every page of the content collection, and nothing that
+//      is not a built page (an agent reads only that file; a page missing from
+//      it is invisible to one, and a line for a page that does not exist is a
+//      dead end). The hub pages — src/config/hubs.ts — are listed there too,
+//      with the description each one publishes, and they must be built.
 //   2. Every page has at least one inbound link from a DIFFERENT built page
 //      (hub, sidebar, footer, prose). check-internal-links grades outbound
 //      links only, so an orphan reads green there.
@@ -53,11 +55,13 @@ const sectionBlock = llms.slice(llms.indexOf("\n## Site sections"));
 const pageList = new Set(
   [...sectionBlock.matchAll(/^- \[[^\]]*\]\((https:\/\/docs\.bithuman\.ai\/[^)\s]+)\)/gm)].map((m) => m[1].slice(SITE.length)),
 );
+const isBuiltRoute = (route) => existsSync(join(DIST, route.replace(/^\//, ""), "index.html"));
 const missing = [...collection].filter((p) => !pageList.has(p)).sort();
-const extra = [...pageList].filter((p) => !collection.has(p)).sort();
+const extra = [...pageList].filter((p) => !collection.has(p) && !isBuiltRoute(p)).sort();
+const hubs = [...pageList].filter((p) => !collection.has(p) && isBuiltRoute(p)).sort();
 for (const p of missing) fail(`llms.txt: ${p} is in the content collection and not in llms.txt`);
-for (const p of extra) fail(`llms.txt: ${p} is in llms.txt and not in the content collection`);
-console.log(`llms.txt: ${pageList.size} page line(s) vs ${collection.size} collection page(s) — ${missing.length} missing, ${extra.length} extra`);
+for (const p of extra) fail(`llms.txt: ${p} is in llms.txt and is neither a content page nor a built page`);
+console.log(`llms.txt: ${pageList.size} page line(s) vs ${collection.size} collection page(s) + ${hubs.length} built hub(s) — ${missing.length} missing, ${extra.length} extra`);
 
 // --- 2. inbound links -----------------------------------------------------
 const built = walk(DIST, [".html"]).filter((f) => !f.includes("/pagefind/"));

@@ -5,6 +5,9 @@ import CodeTabs from "../components/CodeTabs.astro";
 import Playground from "../components/Playground.astro";
 import WidgetDemo from "../components/WidgetDemo.astro";
 import caseStudies from "../data/case-studies.json";
+import { hubMeta } from "../config/hubs";
+
+const meta = hubMeta("");
 
 const featuredCases = caseStudies.slice(0, 3);
 
@@ -50,14 +53,17 @@ bithuman login
 # a showcase avatar — prints ~/.cache/bithuman/showcase/wise-pup.imx
 bithuman pull wise-pup
 # a live avatar in your browser
-bithuman run "$(bithuman pull wise-pup)"` },
+bithuman run wise-pup` },
   { label: "Python", lang: "python", code: `# pip install "bithuman[expression-2]"
 # hello.py
 import bithuman
 
-with bithuman.open("A23WJF0199.imx") as avatar:         # an Essence 2 .imx or an Expression 2 .avatar — one call
-    for image in avatar.render("demo_sample.wav"):     # (height, width, 3) uint8, RGB, at the avatar's own frame rate
-        print(image.shape)                             # hand it to your display — OpenCV wants image[:, :, ::-1]` },
+# an Essence 2 .imx or an Expression 2 .avatar — one call
+with bithuman.open("A23WJF0199.imx") as avatar:
+    # (height, width, 3) uint8, RGB, at the avatar's own frame rate
+    for image in avatar.render("demo_sample.wav"):
+        # hand it to your display — OpenCV wants image[:, :, ::-1]
+        print(image.shape)` },
   { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.7")
 import ai.bithuman.expression2.Expression2Avatar
 import ai.bithuman.expression2.Expression2ModelStore
@@ -81,23 +87,30 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
         }
     }
 }` },
-  { label: "Swift", lang: "swift", code: `// Package.swift: .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
+  { label: "Swift", lang: "swift", code: `// Package.swift:
+//   .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
 import Expression2
 
-let engine = try Expression2Engine.create(modelPath: avatarDirectory,        // the unpacked .avatar
+// modelPath is the unpacked .avatar
+let engine = try Expression2Engine.create(modelPath: avatarDirectory,
                                           sharedEngineDir: sharedEngineDirectory)
-engine.feed(samples)                       // [Float] PCM, 16 kHz mono
-engine.flushTail()                         // at the end of an utterance
+engine.feed(samples)   // [Float] PCM, 16 kHz mono
+engine.flushTail()     // at the end of an utterance
 
 // Generation is asynchronous: pull() returns nil until a chunk lands, so poll.
+// 100 x 50 ms with nothing = done.
 var idleTicks = 0
-while idleTicks < 100 {                    // 100 x 50 ms with nothing = done
+while idleTicks < 100 {
     var got = false
-    while let (frame, _) = engine.pull() { // frame: [UInt8], BGR, engine.width * engine.height * 3
+    // frame: [UInt8], BGR, engine.width * engine.height * 3
+    while let (frame, _) = engine.pull() {
         got = true
         show(frame)
     }
-    if got { idleTicks = 0 } else { idleTicks += 1; try await Task.sleep(nanoseconds: 50_000_000) }
+    if got { idleTicks = 0 } else {
+        idleTicks += 1
+        try await Task.sleep(nanoseconds: 50_000_000)
+    }
 }` },
 ];
 
@@ -128,7 +141,7 @@ const customerLogos = [
 
 <Base
   title="bitHuman Docs — Private On-Device AI Avatars in Real Time"
-  description="Build real-time AI avatars that run fully on-device — private by design, so audio, video, and prompts never leave your hardware. Self-host or deploy on-prem from 1 credit/min. API, SDKs, and CLI."
+  description={meta.description}
 >
   {/* ===== HERO ===== */}
   <section class="hero">

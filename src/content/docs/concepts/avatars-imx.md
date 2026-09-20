@@ -1,6 +1,6 @@
 ---
 title: "Avatars and the .imx format"
-description: "The self-contained .imx file that packages a bitHuman avatar — where it comes from, how it's addressed by agent code, and how to inspect it."
+description: "The self-contained .imx file every bitHuman avatar ships in — one container for Essence 1, Essence 2 and Expression 2 identities — where it comes from, how it's addressed by agent code, and how to inspect it."
 section: concepts
 group: "Core"
 order: 2
@@ -8,7 +8,16 @@ order: 2
 
 ## What an `.imx` is
 
-Every bitHuman avatar is packaged as a single `.imx` file — a self-contained bundle of identity weights, textures, voice config, and metadata that the [essence engine](/concepts/architecture) reads to animate one specific face. The same file opens on every runtime: [Python](/sdk/python), [Swift](/sdk/ios), and the [CLI](/sdk/cli).
+An `.imx` file is the container a bitHuman avatar ships in: one self-contained
+file of identity weights, textures and a manifest (model version, ABI, licence)
+that an [engine](/concepts/architecture) reads to animate one specific face.
+Every model that renders on your own hardware uses it — a first-generation
+[Essence 1](/concepts/essence-1) identity, an [Essence 2](/concepts/essence-2)
+identity, and an [Expression 2](/concepts/expression-2) identity, which the
+download endpoint labels `.avatar`: the same container under a second
+extension. The same file opens on every on-device runtime — [Python](/sdk/python),
+[Swift](/sdk/ios) and the [CLI](/sdk/cli) — and `bithuman info` tells you which
+model a file you were given holds.
 
 ## Where `.imx` files come from
 
@@ -22,20 +31,17 @@ See [Building avatars](/guides/building-avatars) for the full creation flow and 
 
 ## Agent codes
 
-The `.imx` is keyed by an **agent code** (e.g. `A78WKV4515`). The **cloud runtime and REST API** resolve an agent by its code — you don't ship a file. The **on-device SDKs render a local `.imx`**, so you pass its `model_path` (the `agent_code` is optional, used for billing attribution):
+The `.imx` is keyed by an **agent code** (e.g. `A78WKV4515`). The **cloud runtime and REST API** resolve an agent by its code — you don't ship a file. The **on-device SDKs open a local `.imx`** — the file you downloaded for that code — and the key comes from `BITHUMAN_API_SECRET` in the environment, checked at the first frame:
 
 ```python
-from bithuman import AsyncBithuman
-import os
+import bithuman
 
-rt = await AsyncBithuman.create(
-    model_path="agent.imx",      # the local .imx file — required on-device
-    agent_code="A78WKV4515",     # optional: billing attribution
-    api_secret=os.environ["BITHUMAN_API_SECRET"],
-)
+with bithuman.open("A78WKV4515.imx") as avatar:   # the local file — required on-device
+    for image in avatar.render("speech.wav"):      # (height, width, 3) uint8, RGB
+        ...
 ```
 
-To get the file for a local run, download it by code/slug (`bithuman pull` on macOS, or `https://models.bithuman.ai/showcase/<slug>.imx`) — see [Caching for offline use](#caching-for-offline-use).
+To get the file for a local run, download it by code or slug — `bithuman pull <CODE>` on macOS or Linux, or [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) — see [Caching for offline use](#caching-for-offline-use).
 
 > **Note** Use `agent_code`, never the deprecated `figure_id` — the old identifier returns a 400.
 
@@ -67,16 +73,15 @@ You don't have to understand it, but for the curious:
 - **Voice profile** — embedding for the cloned voice (Essence).
 - **Manifest** — model version, ABI, license, and training metadata.
 
-## Second-generation artifacts
+## One container, one file per model
 
-The `.imx` container above packages the first-generation `essence-1` avatar.
-The [second-generation models](/concepts/models-v2) each produce their own
-per-identity artifact, downloaded with
-[`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-(or `bithuman pull <code>`):
+Each model produces its own per-identity file in that container, downloaded
+with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
+(or `bithuman pull <code>`, with `--model` when the agent has more than one):
 
 | Model | Artifact | What it is |
 |---|---|---|
+| [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
 | [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/ios) — the first local play checks the licence with the cloud, so it needs your sign-in. |
 | [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
@@ -111,7 +116,7 @@ will see them, because you may have to match on one:
 
 | `engine` in the header | The model you actually have |
 |---|---|
-| `essence1` | [Essence 1](/concepts/models) — also the value an older container with no header resolves to |
+| `essence1` | [Essence 1](/concepts/essence-1) — also the value an older container with no header resolves to |
 | `essence2-light` | **[Essence 2](/concepts/essence-2)** — request it as `essence-2` |
 | `essence2-quality` | A retired premium tier of Essence 2 — not a model you can request; treat the file as **[Essence 2](/concepts/essence-2)** |
 | `expression2` | **[Expression 2](/concepts/expression-2)** — request it as `expression-2` |

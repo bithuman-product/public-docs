@@ -11,12 +11,12 @@
 // is Scalar's own dark theme with the coral accent — the site's theme toggle
 // drives both, so Scalar's toggle is hidden.
 import Base from "../../layouts/Base.astro";
+import { hubMeta } from "../../config/hubs";
 import { getCollection } from "astro:content";
 
 const SCALAR_VERSION = "1.69.2";
 const title = "REST API reference — bitHuman docs";
-const description =
-  "Every endpoint in the bitHuman OpenAPI spec — agents, voice, talking video, embedding, billing, webhooks — with try-it-out. The same contract is served raw at /api/openapi.yaml.";
+const description = hubMeta("api/reference").description;
 
 // The endpoint pages, for the no-JavaScript path.
 const apiPages = (await getCollection("docs", (e: any) => !e.data.draft && e.data.section === "api"))

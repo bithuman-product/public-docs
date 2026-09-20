@@ -412,7 +412,7 @@ the expectations overview in
 ## Next steps
 
 - [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) — the official per-model guides.
-- [Essence 1 vs Expression 1](/concepts/models) — the two model families.
+- [Models](/concepts/models) — all four models and the two families.
 - [Agents API](/api/agents) — the full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.

@@ -70,7 +70,7 @@ Instead of exporting `ANDROID_HOME` you may write `echo "sdk.dir=$ANDROID_HOME"
 `adb` still needs the `PATH` line.
 
 Android Studio gives you the JDK and the SDK. You do not need an API key, a
-bitHuman account, or a `.imx` file for this page — [Expression 2](/concepts/models)
+bitHuman account, or a `.imx` file for this page — [Expression 2](/concepts/expression-2)
 identities on the public mirror are fetched by agent code alone.
 
 ## Step 1 — make `speech.wav`
@@ -705,7 +705,7 @@ either asks for the accelerator or falls behind.
 
 ## The first-generation artifact — essence-1 (`ai.bithuman:sdk:2.3.6`)
 
-Everything above is [Expression 2](/concepts/models). essence-1 is the older
+Everything above is [Expression 2](/concepts/expression-2). essence-1 is the older
 `ai.bithuman:sdk` artifact: it renders at 25 fps, it takes a `.imx` model file you
 push yourself, and it needs an **API secret**.
 

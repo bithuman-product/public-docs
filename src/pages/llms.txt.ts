@@ -1,15 +1,17 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { sitemapEntries } from "../lib/sitemap";
+import { HUBS } from "../config/hubs";
 import { SECTIONS } from "../config/nav.ts";
 import { SECTION_ORDER, inSidebarOrder } from "../lib/sidebar-order";
 
 // /llms.txt — the llmstxt.org index for LLMs / AI agents: a short orientation,
 // the machine-readable entry points, then every page in sidebar order, each
-// line written from that page's own frontmatter (title + description). No
-// fact appears here that a page does not own — this file used to state a tool
-// count, a wheel extra and a frame rate the pages contradicted, and an agent
-// reads only this file. Companion: /llms-full.txt (the whole corpus).
+// line written from that page's own frontmatter (title + description), and
+// the hub pages from src/config/hubs.ts, the one record their own <meta
+// description> is rendered from. No fact appears here that a page does not
+// own — this file used to state a tool count, a wheel extra and a frame rate
+// the pages contradicted, and an agent reads only this file. Companion:
+// /llms-full.txt (the whole corpus).
 
 export const prerender = true;
 
@@ -47,8 +49,7 @@ export const GET: APIRoute = async () => {
   out += `- [Sitemap](${SITE}/sitemap.xml): every URL with its last-modified date.\n\n`;
 
   out += `## Site sections\n\n`;
-  const staticLocs = (await sitemapEntries()).filter((e) => !docs.some((d: any) => `${SITE}/${d.id}` === e.loc));
-  for (const e of staticLocs) out += `- ${e.loc}\n`;
+  for (const h of HUBS) out += `- [${h.name}](${SITE}/${h.route}): ${h.description}\n`;
   out += `\n`;
 
   for (const sec of SECTION_ORDER) {

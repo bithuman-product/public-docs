@@ -217,6 +217,6 @@ or dynamics creation (250 credits) to avoid calls that fail with `402`.
 Higher plans raise your request limits (see the matrix above) and come with
 more credits — upgrade (Creator → Pro → Business → Enterprise) on the
 [pricing page](https://www.bithuman.ai/pricing), or top up at
-$1 = 100 credits from the dashboard. For volume, on-prem / air-gapped, or bespoke
+$1 = 100 credits from the dashboard. For volume, on-prem deployment, or bespoke
 SLAs beyond Enterprise, [talk to sales](https://www.bithuman.ai/sales) or reach us
 via [Discord](https://discord.gg/ES953n7bPA) or [hello@bithuman.ai](mailto:hello@bithuman.ai).
