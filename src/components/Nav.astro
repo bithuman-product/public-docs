@@ -17,7 +17,7 @@ const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || path.startsWith(href + "/");
 ---
 
-<header class="nav">
+<header class="nav" data-pagefind-ignore>
   <div class="nav-inner">
     <div class="brand">
       <a class="brand-main" href="https://www.bithuman.ai" aria-label="bitHuman home">
