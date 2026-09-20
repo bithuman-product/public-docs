@@ -45,7 +45,7 @@ you what you got:
 ```text
 $ bithuman --version
 libessence  2.11.5 ABI 7         # the engine inside, and the ABI it speaks
-bithuman    2.6.25               # the CLI itself
+bithuman    2.6.26               # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
@@ -94,7 +94,7 @@ pulled, so `pull` again to pick up a change.
 
 > **`run` takes the slug too.** `bithuman run wise-pup` resolves the slug
 > itself — the same resolver, the same cache and the same session as pulling
-> first (measured on the published cli-v2.6.25 Linux x86_64 tarball, fresh
+> first (measured on the published cli-v2.6.26 Linux x86_64 tarball, fresh
 > `$HOME`: the embedded `livekit-server` and the brain come up and the session
 > URL prints) — and the bare `bithuman run` is `bithuman run wise-pup`. A path
 > works as well: `bithuman run ~/.cache/bithuman/showcase/wise-pup.imx`.

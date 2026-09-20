@@ -357,7 +357,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.6.25","libessence":"2.11.5",
+{"abi":7,"cli":"2.6.26","libessence":"2.11.5",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
