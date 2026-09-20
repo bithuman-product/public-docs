@@ -8,16 +8,27 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  /** Open Graph object type: a docs page is an `article`, a hub is the site. */
+  type?: "website" | "article";
+  /** Per-page structured data, added to the site-wide graph as-is. */
+  jsonLd?: Record<string, unknown>[];
 }
 
 const {
   title = "bitHuman Docs — Private On-Device AI Avatars in Real Time",
   description = "Build with bitHuman: turn a photo into a real-time AI avatar (up to 25 fps) that runs fully on-device. Private by design — audio, video, and prompts never leave your hardware. Self-host, deploy on-prem, or run air-gapped at the lowest per-minute cost.",
-  image = "/images/bithuman-banner.jpg",
+  // 1200×630 — the whole wordmark on the banner's own white, so a large-image
+  // card shows all of it instead of the 3.58:1 banner cropped to 1.91:1.
+  image = "/images/og-card.jpg",
+  type = "website",
+  jsonLd = [],
 } = Astro.props;
 
 const site = Astro.site ?? new URL("https://docs.bithuman.ai");
-const canonical = new URL(Astro.url.pathname, site).href;
+// One URL per page, and it is the slash-less one: the sitemap, /llms.txt, the
+// nav and every redirect already spell it that way, and vercel.json's
+// `trailingSlash: false` sends the other form here with a 308.
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", site).href;
 const ogImage = new URL(image, site).href;
 ---
 
@@ -29,11 +40,15 @@ const ogImage = new URL(image, site).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/bithuman-mark.png" />
+    {/* The two plain-text renderings of this site, for AI agents. */}
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+    <link rel="alternate" type="text/plain" href="/llms-full.txt" title="llms-full.txt" />
 
     {/* Open Graph / Twitter */}
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:site_name" content="bitHuman Docs" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -44,10 +59,11 @@ const ogImage = new URL(image, site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* JSON-LD: Organization + SoftwareApplication (site-wide structured data) */}
+    {/* JSON-LD: Organization + SoftwareApplication (site-wide), plus whatever the page adds */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@graph": [
+        ...jsonLd,
         {
           "@type": "Organization",
           "@id": "https://www.bithuman.ai/#organization",
@@ -61,7 +77,7 @@ const ogImage = new URL(image, site).href;
           "@id": "https://www.bithuman.ai/#software",
           "name": "bitHuman",
           "applicationCategory": "DeveloperApplication",
-          "operatingSystem": "macOS, Linux, iOS, iPadOS, Raspberry Pi OS",
+          "operatingSystem": "macOS, Linux, iOS, iPadOS, Android, Web, Raspberry Pi OS",
           "url": "https://www.bithuman.ai",
           "publisher": { "@id": "https://www.bithuman.ai/#organization" },
           "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time avatar (up to 25 fps) that runs fully on your own hardware — private by design, self-hostable, on-prem, and air-gapped-capable. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",

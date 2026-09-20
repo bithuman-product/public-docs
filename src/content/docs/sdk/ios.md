@@ -1,5 +1,5 @@
 ---
-title: "iOS & iPadOS"
+title: "iOS & iPadOS SDK"
 description: "A lip-synced Expression 2 avatar on the iPhone you already have — one SwiftPM package, a public showcase identity fetched with curl, no account, no API key and no credits for the first frame. The same package builds for macOS."
 section: sdk
 group: "Platforms"

@@ -1,5 +1,5 @@
 ---
-title: "Android"
+title: "Android SDK"
 description: "A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.4.7 — with no account, no API key and no credits for the first frame."
 section: sdk
 group: "Platforms"

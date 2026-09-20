@@ -224,7 +224,9 @@ See [Webhooks](/api/webhooks) for verifying the `X-BitHuman-Signature` header.
 | `BITHUMAN_API_BASE` | `https://api.bithuman.ai` | API origin. |
 
 The built-in server speaks the standard MCP **stdio** transport, so there's
-nothing else to configure.
+nothing else to configure. It runs where the CLI runs — macOS Apple Silicon
+and Linux x86_64 — so a hosted agent, or one on Windows, calls the
+[REST API](/api/overview) directly instead.
 
 ## Notes
 

@@ -8,28 +8,10 @@ info:
   x-logo:
     url: https://docs.bithuman.ai/bithuman-mark.png
   description: |
-    Real-time, lip-synced AI avatars. Audio in, talking video out at
-    25 FPS with sub-200 ms latency. Render on the cloud, on-device, or
-    in the browser — one engine, one `.imx` file.
-
-    <div class="bh-cards">
-      <a href="#tag/quickstart" class="bh-card">
-        <strong>Quickstart →</strong>
-        <span>Your first talking avatar in 2 minutes</span>
-      </a>
-      <a href="#tag/Voice" class="bh-card">
-        <strong>Voice API →</strong>
-        <span>TTS in 30+ languages, 10 voices, OpenAI-compatible</span>
-      </a>
-      <a href="#tag/sdk-python" class="bh-card">
-        <strong>Python SDK →</strong>
-        <span>pip install bithuman</span>
-      </a>
-      <a href="#tag/sdk-swift" class="bh-card">
-        <strong>Swift SDK →</strong>
-        <span>Mac / iPad / iPhone, on-device</span>
-      </a>
-    </div>
+    Real-time, lip-synced AI avatars: audio in, talking video out — on
+    the cloud, on your own hardware, or in the browser. This is the REST
+    contract; the guides, the SDKs and the CLI are on
+    [docs.bithuman.ai](https://docs.bithuman.ai).
 
     All endpoints are relative to `https://api.bithuman.ai` and
     require an `api-secret` header.
@@ -958,7 +940,7 @@ paths:
             # 302 redirect to the artifact — -LOJ follows it and keeps the filename
             curl -LOJ "https://api.bithuman.ai/v1/agent/A17ZTB0222/model/download?model=expression-2" \
               -H "api-secret: $BITHUMAN_API_SECRET"
-            # → A17ZTB0222.avatar  (add ?redirect=false for the URL as JSON)
+            # → A17ZTB0222.imx  (add ?redirect=false for the URL as JSON)
       summary: Download an agent's model artifact
       description: |
         Download the generated model file for an agent you own. The family
@@ -1006,6 +988,12 @@ paths:
         `api-secret` header (or `Authorization: Bearer <api-secret | runtime
         token>`) and must be owned by the caller; an anonymous request for one
         answers `401 MISSING_AUTH`, the same answer an unknown code gets.
+      # Showcase identities are served to anonymous callers; every other agent
+      # needs the api-secret header. Both are valid, so a generated client does
+      # not hard-require the header on a route that accepts a bare request.
+      security:
+        - apiSecret: []
+        - {}
       tags: [Agent Management]
       parameters:
         - name: code
@@ -1186,13 +1174,12 @@ paths:
                         example: "expression-2"
                       filename:
                         type: string
-                        example: "A17ZTB0222.avatar"
+                        example: "A17ZTB0222.imx"
                       url:
                         type: string
                         description: The artifact URL (signed, 1-hour TTL, for the private families).
                       expires_in:
-                        type: integer
-                        nullable: true
+                        type: [integer, "null"]
                         description: Signed-URL TTL in seconds (3600); `null` for the public essence-1 URL.
                         example: 3600
         "400":
@@ -3477,26 +3464,21 @@ components:
           type: string
           example: "imaginex"
         agent_code:
-          type: string
-          nullable: true
+          type: [string, "null"]
         credits_change:
           type: number
           description: Signed credit delta; usage events are positive credits consumed.
           example: 1
         frames_rendered:
-          type: integer
-          nullable: true
+          type: [integer, "null"]
         room_name:
-          type: string
-          nullable: true
+          type: [string, "null"]
         start_time:
-          type: string
+          type: [string, "null"]
           format: date-time
-          nullable: true
         end_time:
-          type: string
+          type: [string, "null"]
           format: date-time
-          nullable: true
         created_at:
           type: string
           format: date-time
@@ -3517,8 +3499,7 @@ components:
           description: Subscribed event types; empty means all.
           example: ["agent.ready", "agent.failed"]
         description:
-          type: string
-          nullable: true
+          type: [string, "null"]
         active:
           type: boolean
           example: true
@@ -3553,8 +3534,7 @@ components:
           type: string
           example: "agent.ready"
         status_code:
-          type: integer
-          nullable: true
+          type: [integer, "null"]
           description: HTTP status returned by your endpoint; null on network error/timeout.
           example: 200
         attempts:
@@ -3669,7 +3649,6 @@ x-tagGroups:
     tags:
       - sdk-python
       - sdk-swift
-      - sdk-flutter
       - cli
   - name: Guides
     tags:
@@ -3704,1117 +3683,68 @@ x-tagGroups:
 
 tags:
   ##########################################################################
-  # Prose-only sections (no operations). Scalar renders these as standalone
-  # pages in the sidebar via x-tagGroups.
+  # Prose-only sections (no operations). Scalar lists them in the sidebar via
+  # x-tagGroups. Each is one sentence and the page that owns the subject —
+  # the docs site is the one writer for guides and concepts, and this spec
+  # used to carry a second, older copy of every one of them.
   ##########################################################################
   - name: overview
     x-displayName: Overview
-    description: |
-      ## What bitHuman is
-
-      bitHuman puts a real-time, lip-synced talking avatar in your
-      app. Send audio in, get animated video out at 25 FPS with
-      sub-200 ms latency. The rendering runs **on the device** — no
-      cloud round-trip, no PII leaving the box, no network dependency
-      for the avatar itself.
-
-      ### Three places it can render
-
-      | Where | When to use it |
-      |---|---|
-      | **Cloud** *(default)* | Managed avatar runtime, video published over LiveKit. ~5 min setup with the [LiveKit plugin](#tag/deploy-livekit). |
-      | **On-device** | Your machine via the [bitHuman CLI](#tag/cli) or any [SDK](#tag/sdk-python). Optional [fully on-device brain](#tag/local-mode). |
-      | **Browser** | ONNX Runtime Web (WASM) renders in the user's tab; the server runs only the brain. |
-
-      ### One engine, every surface
-
-      A single Rust engine (the essence engine) drives the bitHuman CLI, the
-      Python and Swift SDKs, and the cloud REST API.
-      They all read the same `.imx` file and produce identical
-      frames — pick the surface that matches what you're building;
-      the mental model never changes.
-
-      ### Two avatar models
-
-      - **[Essence](#tag/models)** — a pre-built avatar identity baked
-        into an `.imx`. Low memory, runs on every supported platform.
-        **The default.**
-      - **[Expression](#tag/models)** — animates *any* portrait at
-        runtime. Higher close-up quality; needs more compute.
-
-      Both speak the same `.imx` format and the same SDK methods —
-      swap them without rewriting your integration.
-
-      ### What you can build
-
-      - **Voice-only chat** — TTS in 30+ languages via [`/v1/tts`](#tag/Voice/operation/synthesizespeech)
-        or the [OpenAI-compatible drop-in](#tag/Voice/operation/openaicompatspeech).
-      - **Animated avatars** — make a hosted agent talk via
-        [`/v1/agent/{code}/speak`](#tag/Agent-Context/operation/agentSpeak).
-      - **Generate new avatars** — turn a prompt + portrait + voice
-        sample into a new agent via [`/v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent).
-      - **Embed in any app** — REST from any language, native SDKs,
-        drop-in LiveKit plugin, Docker image for self-hosted GPU,
-        browser iframe.
-
-      <div class="bh-cards">
-        <a href="#tag/quickstart" class="bh-card">
-          <strong>Start in 2 minutes →</strong>
-          <span>Install the CLI, run your first avatar</span>
-        </a>
-        <a href="#tag/models" class="bh-card">
-          <strong>Pick a model →</strong>
-          <span>Essence vs Expression</span>
-        </a>
-        <a href="#tag/Voice" class="bh-card">
-          <strong>Try the Voice API →</strong>
-          <span>One curl, 30+ languages</span>
-        </a>
-        <a href="https://www.bithuman.ai/voice" class="bh-card">
-          <strong>Voice playground →</strong>
-          <span>Hear all 10 voices live</span>
-        </a>
-      </div>
-
+    description: "What bitHuman is, where an avatar renders and what you can build: [https://docs.bithuman.ai/api/overview](https://docs.bithuman.ai/api/overview)."
   - name: quickstart
     x-displayName: Quickstart
-    description: |
-      ## Your first talking avatar in 2 minutes
-
-      The fastest path is the CLI — no code, no toolchain. Once it
-      works, the [SDKs](#tag/sdk-python) do the same thing in your
-      language.
-
-      ### 1. Get an API secret
-
-      Sign in at [bithuman.ai](https://www.bithuman.ai) (free tier, no
-      credit card), then go to
-      [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) and
-      click **Create new key**. Copy the value — **you won't be able
-      to view it again** — and store it somewhere durable.
-
-      ### 2. Install the CLI
-
-      One command, macOS Apple Silicon and Linux x86_64 alike:
-
-      ```bash
-      curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-      ```
-
-      Verify the install:
-
-      ```bash
-      export BITHUMAN_API_SECRET=your_api_secret
-      bithuman --version
-      bithuman doctor              # check creds, brain, caches
-      ```
-
-      ### 3. Make it talk
-
-      ```bash
-      export OPENAI_API_KEY=sk-...                              # cloud brain
-      bithuman pull modern-court-jester                          # any slug from `bithuman list`
-      bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-      # → open the printed http://127.0.0.1:8088/<CODE> URL, grant mic, talk
-      ```
-
-      Skip the cloud entirely with the **on-device brain** — no API
-      key, no outbound network, ~1.5 GB RAM:
-
-      ```bash
-      pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
-      BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-      ```
-
-      First run downloads ~860 MB of brain models from HuggingFace
-      (~90 s once). Subsequent runs warm-load in under a second.
-      [Local mode →](#tag/local-mode).
-
-      Or render an MP4 offline — no browser, no brain — just lipsync
-      a WAV you already have:
-
-      ```bash
-      bithuman render ~/.cache/bithuman/showcase/modern-court-jester.imx \
-        --audio speech.wav --output demo.mp4
-      ```
-
-      ### 4. Now in your language
-
-      Same engine, same `.imx`, same `push audio → drain frames`
-      shape. Minimal Python:
-
-      ```python
-      import asyncio, os
-      import numpy as np
-      import soundfile as sf
-      from bithuman import AsyncBithuman
-
-      # bithuman 2.3 is library-only; inline the former bithuman.audio
-      # helpers (the SDK resamples to 16 kHz internally).
-      def load_audio(path):
-          audio, sr = sf.read(path, dtype="float32", always_2d=False)
-          if audio.ndim > 1:
-              audio = audio.mean(axis=1)
-          return audio, sr
-
-      def float32_to_int16(arr):
-          return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
-
-      async def main():
-          rt = await AsyncBithuman.create(
-              model_path="avatar.imx",
-              api_secret=os.environ["BITHUMAN_API_SECRET"],
-          )
-
-          pcm, sr = load_audio("speech.wav")
-          pcm = float32_to_int16(pcm)
-          chunk = sr // 100                       # 10 ms chunks
-          for i in range(0, len(pcm), chunk):
-              await rt.push_audio(pcm[i:i+chunk].tobytes(), sr, last_chunk=False)
-          await rt.flush()
-
-          async for frame in rt.run():
-              if frame.has_image:
-                  image = frame.bgr_image         # numpy (H, W, 3) uint8
-              if frame.end_of_speech:
-                  break
-          await rt.stop()
-
-      asyncio.run(main())
-      ```
-
-      | Concept | What it is |
-      |---|---|
-      | `AsyncBithuman` | The runtime. One per avatar session. |
-      | `push_audio(bytes, sr, last_chunk)` | Feed 16-bit PCM; avatar lip-syncs live. |
-      | `flush()` | Mark end of audio input. |
-      | `run()` | Async generator yielding frames at 25 FPS. |
-      | `frame` | `.bgr_image`, `.audio_chunk`, `.has_image`, `.end_of_speech`. |
-
-      ### Next
-
-      - [Models](#tag/models) — Essence vs Expression
-      - [Authentication](#tag/auth-guide) — set keys for every SDK
-      - [Python SDK](#tag/sdk-python) · [Swift SDK](#tag/sdk-swift)
-      - [Browse the API endpoints →](#tag/Voice)
-
+    description: "Your first talking avatar, with curl and a hosted agent: [https://docs.bithuman.ai/api/quickstart](https://docs.bithuman.ai/api/quickstart)."
   - name: auth-guide
     x-displayName: Authentication
-    description: |
-      ## Authentication
-
-      bitHuman uses a single shared credential per account that
-      authenticates every SDK and the REST API. Two equivalent env-var
-      names depending on which SDK you're using:
-
-      - **`BITHUMAN_API_SECRET`** — Python SDK, REST API, LiveKit
-        plugin, CLI.
-      - **`BITHUMAN_API_KEY`** — Swift SDK on Apple platforms. Same
-        value, different env-var name to match Apple convention.
-
-      ### Get a key
-
-      1. Sign in at [bithuman.ai](https://www.bithuman.ai).
-      2. Go to [Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
-      3. Click **Create new key**, name it, and copy the value.
-
-      Verify it works:
-
-      ```bash
-      curl -X POST https://api.bithuman.ai/v1/validate \
-        -H "api-secret: YOUR_KEY"
-      ```
-
-      A 200 with `{"valid": true, ...}` means you're good.
-
-      ### Set it for your SDK
-
-      **Python SDK** — env var, or pass directly:
-
-      ```python
-      runtime = await AsyncBithuman.create(
-          model_path="avatar.imx",
-          api_secret="your_key",
-      )
-      ```
-
-      **REST API** — `api-secret` header on every request:
-
-      ```bash
-      curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
-        -H "api-secret: $BITHUMAN_API_SECRET" \
-        -H "content-type: application/json" \
-        -d '{"message": "Hello"}'
-      ```
-
-      **Swift SDK** — env var or explicit:
-
-      ```swift
-      config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_KEY"]
-      // or
-      config.apiKey = await fetchFromBackend()    // production: Keychain
-      ```
-
-      **Never hardcode the key in source.** For DMG distribution, bake
-      it into Info.plist via a build script. For App Store, fetch from
-      your own backend via Keychain on first launch.
-
-      ### Audio-only Swift mode is unmetered
-
-      If you only want on-device voice chat (no lip-synced avatar),
-      **skip the API key entirely**:
-
-      ```swift
-      var config = VoiceChatConfig()
-      config.systemPrompt = "You are a helpful assistant."
-      config.voice = .preset("Aiden")
-      // no config.avatar = ...
-
-      let chat = VoiceChat(config: config)
-      try await chat.start()  // does not authenticate
-      ```
-
-      This mode runs fully offline (after first-launch weight
-      downloads), bills nothing, and doesn't require a key.
-
-      ### How the flow works
-
-      1. Your code provides the API secret to the SDK / REST request.
-      2. The SDK exchanges it for a short-lived **runtime token** at
-         `https://api.bithuman.ai/v1/runtime-tokens/request`.
-      3. That token authenticates the actual avatar engine (heartbeat
-         + frame production).
-      4. Tokens auto-renew every minute via the heartbeat.
-      5. Bad keys fail at step 2 — fast — before any user-visible work.
-
-      The `BITHUMAN_API_SECRET` never leaves your machine for any
-      destination other than `api.bithuman.ai` over TLS.
-
-      ### Rotating keys
-
-      Rotate from the [Developer dashboard](https://www.bithuman.ai/developer/api-keys).
-      Rotation invalidates the old key immediately; live sessions
-      pause within ~60 s and resume on restart with the new key.
-      There's no overlap window — rotate during a maintenance window
-      if you have production sessions running.
-
+    description: "API secrets, runtime tokens and where each surface reads its key: [https://docs.bithuman.ai/api/authentication](https://docs.bithuman.ai/api/authentication)."
   - name: models
     x-displayName: Models
-    description: |
-      ## Essence vs Expression
-
-      Two avatar models, same SDK methods, same `.imx` format — swap
-      them without rewriting your integration.
-
-      | Model | What it is | Best for |
-      |---|---|---|
-      | **Essence** | A pre-built avatar identity in an `.imx`. Low memory, runs on every supported platform. **The default.** | Kiosks, mobile, edge, high-concurrency servers |
-      | **Expression** | Animates *any* portrait at runtime. Higher close-up quality; needs more compute. | Native desktop apps, per-session custom faces, GPU cloud |
-
-      Both speak the same `push audio → drain frames` shape in
-      Python and in Swift.
-
-      ### Essence
-
-      The default model. One `.imx` file = one avatar identity.
-      Pre-built at upload time, served by the lightweight
-      essence engine runtime — runs on CPU (Raspberry Pi to server),
-      NVIDIA GPU, Apple Silicon (Mac/iPad/iPhone), and in the browser
-      via WASM.
-
-      Pick Essence when you want:
-
-      - Predictable resource use (low memory, no GPU required)
-      - Many concurrent sessions on the same machine
-      - Mobile / embedded / edge deployments
-      - Browser-side rendering
-
-      ### Expression
-
-      Real-time animation of *any* portrait. Higher close-up quality,
-      especially for nuanced facial expressions, but requires a GPU
-      and more memory. Ships as a Docker image for self-hosted
-      deployment, and is built into the Swift SDK on Apple Silicon
-      M3+ (Mac) and M4+ (iPad Pro) — auto-spawned
-      `bithuman-expression-daemon`.
-
-      Pick Expression when you want:
-
-      - Per-session custom faces (one user's portrait → their avatar)
-      - The highest visual quality at close range
-      - Cloud GPU deployments (NVIDIA + TRT) or M3+ Mac / M4+ iPad apps
-
-      ### The second generation (launched July 10, 2026)
-
-      Two second-generation models — `essence-2` and `expression-2` — launched July 10, 2026 and are **generally available**. (A temporary operational pause on a model returns `503 MODEL_NOT_YET_AVAILABLE`, nothing charged.) `essence-1` / `expression-1` remain available as before.
-
-      | Model | What it is | Serving tiers | Cloud | Self-hosted |
-      |---|---|---|---|---|
-      | `expression-2` | Second-gen expression engine — audio-driven real-time avatar video from a single photo (creation trains a per-identity model, ~2–2.5 h) | gpu · cpu · Apple | 4 credits/min | 2 credits/min |
-      | `essence-2` | Second-gen Essence for photorealistic people — served from the cloud gpu/Apple/cpu chain, from your own CPU servers for offline rendering, and opt-in in the viewer's browser; bitHuman picks the serving tier for you | gpu · cpu · Apple | 4 credits/min | 2 credits/min |
-
-      Create one with
-      [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
-      using `model` (`essence` / `expression`) + `version` (`v1` / `v2`) — e.g.
-      `model: "expression"`, `version: "v2"` for Expression 2 — or pass the full
-      name `model: "expression-2"` directly (same shape for the other two); serve it
-      through the normal session flows — e.g. embed agent `A56ZFX6217` and the
-      platform routes the session to the model's best available tier.
-      `model: "essence-2"` is the **combined Essence 2 creation** — one
-      500-credit charge covers both tiers (pick the tier at launch) — and
-      `model: "auto"` classifies your input and routes it (photorealistic
-      person → `essence-2`; cartoon/animal/creature/robot →
-      `expression-2`, the family that works best for stylized characters). You can
-      also add a model to an agent you already have with
-      [`POST /v1/agent/{code}/models`](#tag/Agent-Management/operation/addAgentModel)
-      and download a generated artifact with
-      [`GET /v1/agent/{code}/model/download`](#tag/Agent-Management/operation/downloadAgentModel).
-      Family overview: [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2);
-      per-model guides: [Expression 2](https://docs.bithuman.ai/concepts/expression-2)
-      · [Essence 2](https://docs.bithuman.ai/concepts/essence-2).
-      Recommendation rule: **`essence-2` for photorealistic human figures;
-      `expression-2` for cartoonish, stylized, animal, creature, or robot
-      characters** — send `model: "auto"` to apply it automatically.
-
+    description: "Essence 2, Expression 2 and the first generation — what each does and where each runs: [https://docs.bithuman.ai/concepts/models-v2](https://docs.bithuman.ai/concepts/models-v2)."
   - name: pricing
     x-displayName: Pricing
-    description: |
-      ## Pricing & credits
-
-      Free tier — **99 credits/month, no credit card**. Enough to
-      try every endpoint and run a small avatar session.
-
-      Paid plans start at **$20/month (Creator)**. Credits roll over
-      within a billing period.
-      [**See current pricing →**](https://www.bithuman.ai/pricing)
-
-      ### What costs credits
-
-      | Action | Cost |
-      |---|---|
-      | Agent generation — v1 models (`essence-1`, `expression-1`) | **250 credits** (one-time, per avatar) |
-      | Agent generation — Essence 2 (`essence-2`) | **500 credits** (one-time, per avatar) |
-      | Agent generation — Expression 2 (`expression-2`) | **2000 credits** (one-time, per avatar) |
-      | Agent generation — `auto` | the routed model's rate (500 or 2000) |
-      | Add a model to an existing agent (`POST /v1/agent/{code}/models`) | same per-model rates; adding `expression-1` is **free** (instant enablement) |
-      | Live avatar session — Essence 1 (self-hosted) | **1 credit / minute** |
-      | Live avatar session — Essence 1 (cloud) | **2 credits / minute** |
-      | Live avatar session — Essence 2 (self-hosted) | **2 credits / minute** |
-      | Live avatar session — Essence 2 (cloud) | **4 credits / minute** |
-      | Live avatar session — Expression 1 (self-hosted) | **2 credits / minute** |
-      | Live avatar session — Expression 1 (cloud) | **4 credits / minute** |
-      | Live avatar session — Expression 2 (self-hosted) | **2 credits / minute** |
-      | Live avatar session — Expression 2 (cloud) | **4 credits / minute** |
-      | TTS / voice synthesis | **Currently free** within standard [rate limits](https://docs.bithuman.ai/api/rate-limits) |
-      | File upload + dynamics generation | varies; see endpoint docs |
-
-      ### What's free
-
-      - On-device Swift voice chat **without** avatar — fully offline,
-        unmetered.
-      - Local mode brain (`BITHUMAN_LOCAL=1`) for everything except
-        the API secret exchange itself.
-      - Dashboard, Discord, docs.
-
-      Check your current balance with
-      [`GET /v2/credit-summaries`](#tag/Billing/operation/getCreditSummaries).
-
-  ##########################################################################
-  # Core concepts — the mental model
-  ##########################################################################
+    description: "Credits per minute by model and surface, creation costs and plans: [https://docs.bithuman.ai/guides/pricing](https://docs.bithuman.ai/guides/pricing)."
   - name: avatars-imx
     x-displayName: Avatars & .imx files
-    description: |
-      ## Avatars and the `.imx` format
-
-      Every bitHuman avatar is packaged as a single `.imx` file — a
-      self-contained bundle of identity weights, textures, and metadata
-      that the essence engine reads to animate one specific face.
-
-      ### Where `.imx` files come from
-
-      | Source | How |
-      |---|---|
-      | **Showcase** | `bithuman pull <slug>` — pre-built avatars at [bithuman.ai → Explore](https://www.bithuman.ai/explore). |
-      | **Dashboard** | Upload a portrait + voice samples at [bithuman.ai → Studio](https://www.bithuman.ai). |
-      | **API** | [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent) returns an `agent_code` whose `.imx` you can download. |
-
-      ### Where the file lives
-
-      The `.imx` is keyed by **agent code** (e.g. `A78WKV4515`). Once
-      generated, every SDK and the cloud runtime can resolve it by
-      code — no need to ship the file with your app.
-
-      ```bash
-      # Cache locally for offline use
-      bithuman pull modern-court-jester
-      # → ~/.cache/bithuman/showcase/modern-court-jester.imx
-      ```
-
-      ### What's inside
-
-      You don't have to understand it, but for the curious:
-
-      - **Identity weights** — a small neural net specific to the face
-      - **Reference frames** — texture atlases for the head
-      - **Voice profile** — embedding for the cloned voice (Essence)
-      - **Manifest** — model version, ABI, license, training metadata
-
-      Inspect it with `bithuman info avatar.imx`.
-
-      ### File format stability
-
-      The `.imx` format is **forward-compatible within a major
-      version**. The first time you open an older `.imx` with a newer
-      runtime, the runtime warms it up and silently upgrades the file.
-      Keep the runtime warm in production to avoid that cost
-      per-session.
-
+    description: "The downloadable model file, how it is addressed by agent code and how to inspect it: [https://docs.bithuman.ai/concepts/avatars-imx](https://docs.bithuman.ai/concepts/avatars-imx)."
   - name: audio-streaming
     x-displayName: Audio streaming
-    description: |
-      ## The push/drain pattern
-
-      Every SDK and the runtime use the same shape:
-
-      1. **Push** 16-bit PCM audio chunks as they arrive (mic, TTS,
-         WebRTC).
-      2. **Drain** lip-synced video frames at 25 FPS.
-
-      Audio in, video out — that's the entire surface area.
-
-      ### Python — the minimal loop
-
-      ```python
-      import asyncio, os
-      import numpy as np
-      import soundfile as sf
-      from bithuman import AsyncBithuman
-
-      # bithuman 2.3 is library-only; inline the former bithuman.audio
-      # helpers (the SDK resamples to 16 kHz internally).
-      def load_audio(path):
-          audio, sr = sf.read(path, dtype="float32", always_2d=False)
-          if audio.ndim > 1:
-              audio = audio.mean(axis=1)
-          return audio, sr
-
-      def float32_to_int16(arr):
-          return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
-
-      async def main():
-          rt = await AsyncBithuman.create(
-              model_path="avatar.imx",
-              api_secret=os.environ["BITHUMAN_API_SECRET"],
-          )
-
-          pcm, sr = load_audio("speech.wav")
-          pcm = float32_to_int16(pcm)
-          chunk = sr // 100                       # 10 ms chunks
-          for i in range(0, len(pcm), chunk):
-              await rt.push_audio(pcm[i:i+chunk].tobytes(), sr, last_chunk=False)
-          await rt.flush()
-
-          async for frame in rt.run():
-              if frame.has_image:
-                  image = frame.bgr_image         # numpy (H, W, 3) uint8
-              if frame.end_of_speech:
-                  break
-          await rt.stop()
-
-      asyncio.run(main())
-      ```
-
-      ### Audio format
-
-      | Property | Value |
-      |---|---|
-      | Encoding | 16-bit signed PCM (`int16`) |
-      | Channels | Mono |
-      | Sample rate | Any (SDK auto-resamples) |
-      | Chunk size | Anything; 10–40 ms is typical |
-
-      ### Frame format
-
-      Each yielded `frame` exposes:
-
-      | Field | Type | What it is |
-      |---|---|---|
-      | `bgr_image` | `numpy.ndarray` (H, W, 3) `uint8` | The rendered video frame |
-      | `audio_chunk` | `bytes` | Audio aligned with the frame |
-      | `has_image` | `bool` | False for filler frames during silence |
-      | `end_of_speech` | `bool` | True on the last frame of a turn |
-
-      Frames arrive at **25 FPS** regardless of audio chunk size.
-
-      ### When the avatar isn't speaking
-
-      During silence, the runtime emits filler frames (`has_image=False`)
-      so your render loop keeps its 25 FPS cadence. Skip them or render
-      a static idle frame.
-
+    description: "The push/drain contract every SDK shares — PCM in, lip-synced frames out: [https://docs.bithuman.ai/concepts/audio-streaming](https://docs.bithuman.ai/concepts/audio-streaming)."
   - name: agent-lifecycle
     x-displayName: Agent lifecycle
-    description: |
-      ## The agent lifecycle
-
-      From "I have a face and voice" to "live talking avatar":
-
-      ```
-      Generate → Store → Resolve → Live session → Speak
-      ```
-
-      ### 1. Generate
-
-      [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent)
-      with a prompt + image + voice sample. Returns `{agent_id, status:
-      "processing"}` immediately — generation runs async.
-
-      ### 2. Poll until ready
-
-      [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
-      — poll every 5 s. Status values:
-
-      ```
-      processing / generating / completed / success   (intermediate)
-        → ready                                       (terminal success)
-        → failed                                      (terminal error)
-      ```
-
-      `processing`, `generating`, `completed` and `success` are **intermediate**
-      — keep polling past them until you see `ready` or `failed`. Don't stop on
-      `completed` (it can appear early, even around ~5% `progress`) and don't
-      stop on `success` (a STEP-level marker written at ~20% and ~45%
-      `progress`) unless `progress` has also reached `1.0`. Typical wall-clock:
-      2–5 minutes.
-
-      ### 3. Resolve & stream
-
-      Once the status is `ready`, the agent has an `agent_code`
-      (e.g. `A78WKV4515`).
-      Every SDK can resolve it by code:
-
-      ```python
-      rt = await AsyncBithuman.create(
-          agent_code="A78WKV4515",  # not model_path — code resolves to .imx
-          api_secret=os.environ["BITHUMAN_API_SECRET"],
-      )
-      ```
-
-      ### 4. Drive the live session
-
-      For a hosted LiveKit session, push text into the live room:
-
-      ```bash
-      curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
-        -H "api-secret: $BITHUMAN_API_SECRET" \
-        -H "content-type: application/json" \
-        -d '{"message": "Hello!"}'
-      ```
-
-      For silent knowledge injection (avatar doesn't say it aloud but
-      uses it in future replies):
-
-      ```bash
-      curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/add-context \
-        -H "api-secret: $BITHUMAN_API_SECRET" \
-        -H "content-type: application/json" \
-        -d '{"context": "The customer is on the Pro plan."}'
-      ```
-
-      ### Updating an agent
-
-      [`POST /v1/agent/{code}`](#tag/Agent-Management/operation/updateAgent)
-      updates the system prompt only — for new face/voice, generate a
-      new agent.
-
-  ##########################################################################
-  # SDK sections
-  ##########################################################################
+    description: "Generate, poll, resolve and drive an agent over the API and SDKs: [https://docs.bithuman.ai/concepts/agent-lifecycle](https://docs.bithuman.ai/concepts/agent-lifecycle)."
   - name: sdk-python
     x-displayName: Python SDK
-    description: |
-      ## Python SDK
-
-      ```bash
-      pip install bithuman --upgrade
-      ```
-
-      Python 3.10–3.14, pre-built wheels for macOS arm64 (macOS 26+) and
-      Linux x86_64 / aarch64 (manylinux_2_28). Windows and macOS-Intel are not
-      part of the 2.x distribution — pin the 1.x line if you need them. As of
-      2.3.0 this wheel is the **Python SDK library only** (~5 MB):
-      runtime + LiveKit plugin glue. The `bithuman` CLI binary ships
-      separately, through the universal installer on macOS and Linux alike.
-      There is no PyPI wheel for the CLI.
-
-      ```python
-      import asyncio, os
-      from bithuman import AsyncBithuman
-
-      async def main():
-          rt = await AsyncBithuman.create(
-              model_path="avatar.imx",
-              api_secret=os.environ["BITHUMAN_API_SECRET"],
-          )
-          print(rt.frame_width, "x", rt.frame_height)
-          await rt.stop()
-
-      asyncio.run(main())
-      ```
-
-      [Full Python SDK reference →](https://docs.bithuman.ai/sdk/python)
-
+    description: "`pip install bithuman` — open an avatar, render audio through it, take frames: [https://docs.bithuman.ai/sdk/python](https://docs.bithuman.ai/sdk/python)."
   - name: sdk-swift
     x-displayName: Swift SDK
-    description: |
-      ## Swift SDK
-
-      In Xcode: **File → Add Package Dependencies…** →
-      `https://github.com/bithuman-product/homebrew-bithuman.git` →
-      pin to **2.11.0 or later** (current release **2.11.2**).
-
-      ```swift
-      // Package.swift
-      .package(
-          url: "https://github.com/bithuman-product/homebrew-bithuman.git",
-          from: "2.11.0"   // the tap tag the iOS install page pins
-      )
-      ```
-
-      ```swift
-      import bitHumanKit
-
-      let result = try Bithuman.create(modelPath: modelURL)
-      ```
-
-      The older `bithuman-sdk-public` repo and its `0.8.x` tags are archived —
-      pinning them, or pinning `0.8.x` on this repo, does not resolve.
-
-      Binary XCFramework, zero transitive SwiftPM deps. Runs on:
-      - macOS 26+ (Tahoe) on Apple Silicon M3+
-      - iPad Pro M4+
-      - iPhone 16 Pro+ (A18 Pro)
-
-      Expression on Apple Silicon auto-spawns
-      `bithuman-expression-daemon` as a subprocess. On unsupported
-      hardware, `ExpressionModelNotSupported` is raised — not a crash.
-
-      [Full Swift SDK reference →](https://docs.bithuman.ai/sdk/ios)
-
-  - name: sdk-flutter
-    x-displayName: Flutter plugin
-    description: |
-      ## Flutter plugin
-
-      **Not published — there is nothing to put in `pubspec.yaml` yet.**
-      Checked against pub.dev on 2026-09-15: `bithuman` is not a
-      published Dart package, and no public repository carries the
-      plugin, so neither a hosted dependency nor a git dependency
-      resolves today. Any coordinate here would fail on
-      `flutter pub get`, so this page prints none.
-
-      What exists is one Dart codebase across macOS and iOS with
-      built-in per-platform echo cancellation, in private beta. Ask for
-      access on [Discord](https://discord.gg/ES953n7bPA).
-
-      Shipping on Apple today: the [Swift SDK](#tag/sdk-swift).
-
+    description: "The SwiftPM package for iPhone, iPad and Mac: [https://docs.bithuman.ai/sdk/ios](https://docs.bithuman.ai/sdk/ios)."
   - name: cli
     x-displayName: CLI (bithuman)
-    description: |
-      ## The bitHuman CLI
-
-      A standalone Rust binary that drives the full avatar engine
-      without writing any code. Same engine as the SDKs, same `.imx`
-      format.
-
-      ### Install
-
-      ```bash
-      curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
-      ```
-
-      ### Subcommands
-
-      | Command | What it does |
-      |---|---|
-      | `bithuman list` | Browse showcase avatars available via `pull` |
-      | `bithuman pull <slug>` | Download an avatar into `~/.cache/bithuman/showcase/` |
-      | `bithuman info <path.imx>` | Inspect an `.imx` file's metadata |
-      | `bithuman run <path.imx>` | Start the live avatar (mic in, browser viewer out) |
-      | `bithuman render <path.imx> --audio x.wav --output y.mp4` | Offline lipsync — no browser, no brain |
-      | `bithuman doctor` | Check credentials, brain selection, caches |
-      | `bithuman --version` | Print engine + CLI versions |
-
-      ### Live demo
-
-      ```bash
-      export BITHUMAN_API_SECRET=your_api_secret
-      export OPENAI_API_KEY=sk-...                              # cloud brain
-      bithuman pull modern-court-jester
-      bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-      # → open the printed http://127.0.0.1:8088/<CODE>, grant mic, talk
-      ```
-
-      ### On-device brain (no OpenAI key)
-
-      ```bash
-      pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
-      BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-      ```
-
-      See [Local mode →](#tag/local-mode) for the on-device stack
-      (whisper.cpp + llama.cpp + Supertonic + Silero VAD).
-
-      <div class="bh-cards">
-        <a href="#tag/quickstart" class="bh-card">
-          <strong>Quickstart →</strong>
-          <span>Full 2-minute walkthrough</span>
-        </a>
-        <a href="#tag/local-mode" class="bh-card">
-          <strong>Local mode →</strong>
-          <span>Run fully offline</span>
-        </a>
-      </div>
-
-  ##########################################################################
-  # Guides
-  ##########################################################################
+    description: "One binary for macOS Apple Silicon and Linux x86_64 — a live avatar in the browser or an MP4 render: [https://docs.bithuman.ai/sdk/cli](https://docs.bithuman.ai/sdk/cli)."
   - name: local-mode
     x-displayName: Local mode (on-device brain)
-    description: |
-      ## Local mode
-
-      For private, no-cloud operation, install the `[local]` extra on
-      the local-mode packages and set `BITHUMAN_LOCAL=1`. The conversation
-      brain swaps from OpenAI Realtime to an entirely in-process
-      stack — no API key, no outbound network.
-
-      ```bash
-      pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
-      export BITHUMAN_API_SECRET=...
-      bithuman pull modern-court-jester
-      BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-      ```
-
-      The local stack ships:
-
-      - **STT** — whisper.cpp (`tiny.en` by default, configurable)
-      - **LLM** — llama.cpp + a GGUF model (`Qwen 2.5 0.5B-Instruct Q4_K_M` by default)
-      - **TTS** — Supertonic (the same model bitHuman ships in
-        production for `/v1/tts`)
-      - **VAD** — Silero
-
-      ~1.5 GB RAM peak, ~860 MB one-time HuggingFace download.
-
-      ### Tuning
-
-      - `BITHUMAN_LOCAL_LLM=<gguf-path>` — swap to a bigger / smaller
-        model
-      - `BITHUMAN_LOCAL_LANG=<iso2>` — pin transcript language
-        (default `en`)
-      - `BITHUMAN_LOCAL_WHISPER=<name>` — pick the whisper variant
-
-      ### Troubleshooting
-
-      **Is local mode actually wired up?** `bithuman doctor` verifies
-      the `[local]` extras are importable and lists the resolved
-      backend versions.
-
-      **First run feels stuck.** It's downloading ~860 MB from
-      HuggingFace. Watch network activity; subsequent runs start in
-      &lt;1 s.
-
-      **LLM is too dumb.** Bump to a bigger GGUF — see the table above.
-
-      **TTS pronounces wrong language.** Set `BITHUMAN_LOCAL_LANG` to
-      match your transcript language.
-
+    description: "Swap the cloud conversation brain for an on-device one: [https://docs.bithuman.ai/sdk/cli/local-mode](https://docs.bithuman.ai/sdk/cli/local-mode)."
   - name: building-avatars
     x-displayName: Building avatars
-    description: |
-      ## Building avatars
-
-      Two ways to get an avatar `.imx`:
-
-      ### 1. Download a pre-built one
-
-      Browse [Explore](https://www.bithuman.ai/explore), open the
-      **⋮** menu on any agent → **Download**. Or via CLI:
-
-      ```bash
-      bithuman list                          # browse showcase avatars
-      bithuman pull modern-court-jester      # cache locally
-      ```
-
-      ### 2. Generate from your own portrait
-
-      Call [`POST /v1/agent/generate`](#tag/Agent-Generation/operation/generateAgent) with:
-
-      - **Prompt** — system instructions for the agent's personality
-      - **Portrait** — a photo of the person (bitHuman generates the
-        10-second identity video internally)
-      - **Voice samples** — 3–10 s of clean speech for voice cloning
-      - (Optional) **Knowledge** — documents the agent should know about
-
-      ```bash
-      curl -X POST https://api.bithuman.ai/v1/agent/generate \
-        -H "api-secret: $BITHUMAN_API_SECRET" \
-        -H "content-type: application/json" \
-        -d '{
-          "prompt": "You are a friendly receptionist.",
-          "image": "https://example.com/headshot.jpg",
-          "audio": "https://example.com/voice.wav"
-        }'
-      ```
-
-      The response includes an `agent_id` — once generation completes
-      you can use it with [`POST /v1/agent/{code}/speak`](#tag/Agent-Context).
-
-      ### Media tips
-
-      - **Portrait**: one clear figure, neutral expression, facing the
-        camera, relaxed pose, no occlusion of the face. This is guidance,
-        not validation — nothing inspects or rejects the photo you send —
-        so pass the same five points on to whoever picks it.
-      - **Voice**: 3–10 seconds of clean speech, no background noise,
-        no music, mono WAV preferred (16 kHz+).
-
-  ##########################################################################
-  # Deployment — three focused pages
-  ##########################################################################
+    description: "Get a pre-built avatar or generate one from a portrait: [https://docs.bithuman.ai/guides/building-avatars](https://docs.bithuman.ai/guides/building-avatars)."
   - name: deploy-livekit
     x-displayName: Managed (LiveKit plugin)
-    description: |
-      ## Deploy via LiveKit plugin
-
-      The fastest path to production. Drop the bitHuman avatar into any
-      LiveKit agent worker. Managed runtime, ~5-minute setup.
-
-      ### Install
-
-      ```bash
-      pip install livekit-plugins-bithuman
-      ```
-
-      ### Wire into an agent worker
-
-      ```python
-      import os
-      from livekit.plugins import bithuman
-
-      avatar = bithuman.AvatarSession(
-          avatar_id="A78WKV4515",
-          api_secret=os.environ["BITHUMAN_API_SECRET"],
-      )
-      ```
-
-      Each session bills at the [self-hosted or cloud rate](#tag/pricing)
-      depending on whether the avatar GPU is yours or ours.
-
-      ### What you get
-
-      - **Managed avatar runtime** — no GPU to provision, no Docker to
-        operate
-      - **LiveKit Cloud-compatible** — works with both LiveKit Cloud
-        and self-hosted LiveKit servers
-      - **WebRTC delivery** — video streamed via LiveKit's media
-        pipeline to any client
-
-      See the [LiveKit integration
-      guide](https://docs.bithuman.ai/sdk/livekit) for the
-      voice-agent integration recipe.
-
-      <div class="bh-cards">
-        <a href="#tag/deploy-self-hosted" class="bh-card">
-          <strong>Self-hosted GPU →</strong>
-          <span>Run on your own NVIDIA hardware</span>
-        </a>
-        <a href="#tag/deploy-embed" class="bh-card">
-          <strong>Browser embed →</strong>
-          <span>Drop an iframe on any page</span>
-        </a>
-      </div>
-
+    description: "Drop an avatar into a LiveKit agent worker with the plugin: [https://docs.bithuman.ai/guides/deploy-livekit](https://docs.bithuman.ai/guides/deploy-livekit)."
   - name: deploy-self-hosted
     x-displayName: Self-hosted GPU (Docker)
-    description: |
-      ## Self-hosted GPU deployment
-
-      Run Expression on your own NVIDIA hardware. The Docker image is
-      published on Docker Hub and ships everything baked in.
-
-      ### Pull and run
-
-      ```bash
-      docker run --gpus all -p 8089:8089 \
-        -v bithuman-models:/data/models \
-        --tmpfs /tmp/bh-weights:size=9g,mode=0700 \
-        --env-file ./bithuman.env \
-        sgubithuman/expression-avatar:latest
-      ```
-
-      Point a LiveKit agent worker at `http://localhost:8089/launch` —
-      the worker will spawn render sessions on demand.
-
-      ### Hardware floor
-
-      | GPU | Concurrent Essence sessions |
-      |---|---|
-      | RTX 3090 (24 GB) | 6–8 |
-      | RTX 4090 (24 GB) | **8–10** (recommended) |
-      | H100 (80 GB) | 30+ (overkill for most loads) |
-
-      Expression sessions are heavier — budget ~3 GB VRAM per session.
-
-      ### Billing
-
-      Self-hosted GPU sessions bill at the **self-hosted rate** (1 credit/min
-      Essence 1, 2 credits/min Expression 1). See [pricing](#tag/pricing) for the
-      cloud-vs-self-hosted breakdown.
-
+    description: "Run Expression 1 on your own NVIDIA hardware with the published image: [https://docs.bithuman.ai/guides/deploy-self-hosted](https://docs.bithuman.ai/guides/deploy-self-hosted)."
   - name: deploy-embed
     x-displayName: Browser embed
-    description: |
-      ## Browser embed
-
-      Embed an agent as an iframe — no SDK install, drop it on any page:
-
-      ```html
-      <iframe
-        src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515"
-        allow="microphone; camera; autoplay"
-        style="width: 100%; height: 600px; border: 0;"
-      ></iframe>
-      ```
-
-      Replace `A78WKV4515` with your agent code.
-
-      ### Production: mint short-lived tokens
-
-      For per-visitor session tracking and rate limiting, mint a
-      short-lived embed token from your backend and append it as a
-      query string:
-
-      ```js
-      // server: mint token (api-secret never reaches the browser)
-      const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
-        method: "POST",
-        headers: {
-          "api-secret": process.env.BITHUMAN_API_SECRET,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          agent_id: "A78WKV4515",
-          fingerprint: visitorFingerprint,  // stable per-device hex
-        }),
-      });
-      const { data: { token } } = await res.json();
-
-      // browser: pass token in the iframe URL
-      // <iframe src="https://agent.viewer.bithuman.ai/api/embed/A78WKV4515?token={token}" .../>
-      ```
-
-      The token is a **1-hour JWT**. Mint per visitor session. See
-      [POST /v1/embed-tokens/request](#tag/Embedding/operation/requestEmbedToken)
-      for the full request shape.
-
-  ##########################################################################
-  # Community
-  ##########################################################################
+    description: "A talking avatar on any website with one iframe and an embed token: [https://docs.bithuman.ai/guides/deploy-embed](https://docs.bithuman.ai/guides/deploy-embed)."
   - name: community
     x-displayName: Community
-    description: |
-      ## Community
-
-      - **GitHub** —
-        [bithuman-product/bithuman-examples](https://github.com/bithuman-product/bithuman-examples)
-        for runnable demos, and
-        [homebrew-bithuman](https://github.com/bithuman-product/homebrew-bithuman)
-        for issues and the CLI and Swift distributions.
-      - **Discord** —
-        [discord.gg/ES953n7bPA](https://discord.gg/ES953n7bPA) — questions,
-        showcases, and roadmap discussions.
-      - **Twitter / X** —
-        [@bithuman_ai](https://twitter.com/bithuman_ai) — release
-        announcements and demos.
-
-      ### Contributing
-
-      We accept community PRs for SDK examples, integration plugins
-      (LiveKit, Pipecat, Vapi, etc.), and docs. See
-      [CONTRIBUTING.md](https://github.com/bithuman-product/homebrew-bithuman/blob/main/CONTRIBUTING.md)
-      for the RFC process.
-
-      <div class="bh-cards">
-        <a href="https://discord.gg/ES953n7bPA" class="bh-card">
-          <strong>Join Discord →</strong>
-          <span>Talk to the team and community</span>
-        </a>
-        <a href="https://github.com/bithuman-product/bithuman-examples" class="bh-card">
-          <strong>GitHub →</strong>
-          <span>Issues, examples, SDK source</span>
-        </a>
-      </div>
-
+    description: "Where to find bitHuman online, get help and contribute: [https://docs.bithuman.ai/community](https://docs.bithuman.ai/community)."
   - name: changelog
     x-displayName: Changelog & releases
-    description: |
-      ## Changelog & releases
-
-      - **SDK release notes** —
-        [github.com/bithuman-product/homebrew-bithuman/releases](https://github.com/bithuman-product/homebrew-bithuman/releases)
-        for the tagged CLI and Swift releases; the Python SDK's history is on
-        [PyPI](https://pypi.org/project/bithuman/#history).
-      - **Downloads page** —
-        [releases.bithuman.ai](https://releases.bithuman.ai) for
-        pre-built wheels, the platform support matrix, and the
-        device-by-device compatibility table.
-      - **API changelog** — breaking changes to the REST API are
-        announced on Discord and in the GitHub repo's CHANGELOG. The
-        REST API itself is versioned via `/v1/...` / `/v2/...` paths;
-        new endpoints land additively without forcing migrations.
-
-      ### Versioning policy
-
-      | Surface | Versioning |
-      |---|---|
-      | REST API | URL path (`/v1/`, `/v2/`) — never breaks at minor |
-      | Python SDK | Semver — minor bumps may add params; major bumps may rename |
-      | Swift SDK | Semver — floor `2.11.0` per Package.swift (current release `2.11.2`) |
-      | `.imx` file format | Forward-compatible within a major; auto-upgraded on first load |
-
+    description: "Release notes and version history: [https://docs.bithuman.ai/changelog](https://docs.bithuman.ai/changelog)."
   - name: support
     x-displayName: Support & status
-    description: |
-      ## Support & status
-
-      ### Status
-
-      [**status.bithuman.ai**](https://status.bithuman.ai) — live
-      status of `api.bithuman.ai`, the GPU avatar pool, TTS, agent
-      generation, and the dashboard.
-
-      ### Where to get help
-
-      | I want to… | Go here |
-      |---|---|
-      | Report a bug | [GitHub issues](https://github.com/bithuman-product/homebrew-bithuman/issues) |
-      | Ask a question | [Discord #help](https://discord.gg/ES953n7bPA) |
-      | Request a feature | [Discord #ideas](https://discord.gg/ES953n7bPA) |
-      | Email support | hello@bithuman.ai |
-      | Security disclosure | hello@bithuman.ai (see [SECURITY.md](https://github.com/bithuman-product/homebrew-bithuman/blob/main/SECURITY.md)) |
-
-      ### Service status
-
-      All of api.bithuman.ai runs behind Cloudflare with multiple
-      origins for HA. When a regional issue surfaces, the status page
-      is the first place we publish.
-
-  ##########################################################################
-  # API tags (these have actual operations attached)
-  ##########################################################################
+    description: "Help, Discord and the status page: [https://docs.bithuman.ai/community](https://docs.bithuman.ai/community)."
   - name: Authentication
     description: Verify API credentials with `POST /v1/validate`.
   - name: Voice

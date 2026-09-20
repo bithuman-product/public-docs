@@ -1,9 +1,10 @@
 ---
-title: "Self-hosted Expression 1 GPU"
+title: "Self-hosted Expression 1 GPU (first generation, Docker)"
 description: "Run first-generation Expression 1 on your own NVIDIA hardware with the published Docker image — a GPU worker that joins a LiveKit room and streams lip-synced video, with no cloud calls during inference. Expression 2 and Essence 2 are distributed through the SDKs, not this image."
 section: guides
 group: "Deploy"
 order: 11
+label: "Self-hosted Expression 1 GPU"
 ---
 
 ## The Expression GPU container

@@ -1,84 +1,60 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import { sitemapEntries } from "../lib/sitemap";
+import { SECTIONS } from "../config/nav.ts";
+import { SECTION_ORDER, inSidebarOrder } from "../lib/sidebar-order";
 
-// /llms.txt — the llmstxt.org curated index for LLMs / AI agents. A tight
-// orientation blurb + the machine-readable entry points + every doc page
-// grouped by pillar. Auto-generated from the `docs` content collection so it
-// never drifts. Companion: /llms-full.txt (the whole corpus in one file).
+// /llms.txt — the llmstxt.org index for LLMs / AI agents: a short orientation,
+// the machine-readable entry points, then every page in sidebar order, each
+// line written from that page's own frontmatter (title + description). No
+// fact appears here that a page does not own — this file used to state a tool
+// count, a wheel extra and a frame rate the pages contradicted, and an agent
+// reads only this file. Companion: /llms-full.txt (the whole corpus).
 
 export const prerender = true;
 
 const SITE = "https://docs.bithuman.ai";
 
-const SECTIONS: [string, string][] = [
-  ["api", "API (cloud REST)"],
-  ["sdk", "SDKs (libraries + CLI)"],
-  ["concepts", "Concepts"],
-  ["guides", "Guides"],
-  ["examples", "Examples"],
-  ["resources", "Resources"],
-];
-
 export const GET: APIRoute = async () => {
-  const docs = await getCollection("docs", (e: any) => !e.data.draft);
+  const docs = inSidebarOrder(await getCollection("docs", (e: any) => !e.data.draft));
 
   let out = `# bitHuman\n\n`;
   out +=
-    `> bitHuman is a private, on-device, real-time lip-synced AI avatar ` +
-    `platform. One engine — the essence engine — turns audio into a talking avatar ` +
-    `at 25 FPS — fully on-device (macOS/Linux/iOS, CPU incl. Raspberry Pi, ` +
-    `NVIDIA GPU, or Apple Silicon) or via a cloud REST API. Private by ` +
-    `design: on-device inference means audio, video, and prompts never leave ` +
-    `your hardware — the only network call is a ~1-request-per-minute billing ` +
-    `heartbeat, so it runs self-hosted and on-prem, well ` +
-    `suited to regulated and privacy-sensitive environments. That heartbeat ` +
-    `is required: the runtimes are fail-closed without a valid key. Low per-minute ` +
-    `cost, from 1 credit/min self-hosted. The contract is the same ` +
-    `everywhere: push 16-bit PCM audio in, drain lip-synced video frames ` +
-    `out. Avatars are portable \`.imx\` files keyed by a short agent code ` +
-    `(e.g. \`A78WKV4515\`). Models (second generation \`essence-2\`/\`expression-2\`, generally available since July 10, 2026): ` +
-    `\`expression-2\` (audio-driven real-time avatar video from a single ` +
-    `photo — best for cartoon/animal/creature/robot characters; ` +
-    `GPU / Apple / CPU cloud serving chain, and local rendering via the CLI), ` +
-    `\`essence-2\` (the STANDARD photoreal model; ` +
-    `served from the GPU / Apple / CPU cloud chain, rendered LOCALLY on your ` +
-    `own Mac (Apple Silicon) or Linux x86_64 box by the CLI 2.6.1+ — ` +
-    `\`bithuman pull <CODE> --model essence-2\` then ` +
-    `\`bithuman render <CODE>.imx -a speech.wav -o out.mp4\`, offline, ` +
-    `runtime inside the CLI, a shared audio encoder fetched once on the first ` +
-    `render — plus your own CPU servers ` +
-    `(Python SDK), an Android AAR, and opt-in in the viewer's browser ` +
-    `(WebGPU/WASM); the former essence-2-light name is retired), plus the ` +
-    `v1 \`essence-1\` / \`expression-1\`.\n\n`;
+    `> bitHuman turns audio into a real-time, lip-synced talking avatar. Two ` +
+    `second-generation models — Essence 2 (photoreal, from one portrait) and ` +
+    `Expression 2 (stylized characters and creatures) — plus the maintained ` +
+    `first generation, Essence 1 and Expression 1. Run them over the cloud REST ` +
+    `API, on your own hardware with the CLI, the Python package, the Android ` +
+    `and Apple SDKs, or in a browser tab through the hosted viewer. The contract ` +
+    `is the same everywhere: push 16-bit PCM audio in, drain lip-synced video ` +
+    `frames out. An avatar is one downloadable model file (\`.imx\`, or ` +
+    `\`.avatar\` for Expression 2) keyed by a short agent code such as ` +
+    `\`A78WKV4515\`. Which model runs where, and what each costs, is on the ` +
+    `pages below — this file only points at them.\n\n`;
 
-  out += `## Start here (fastest paths)\n\n`;
-  out +=
-    `- **Embed a hosted agent** — no API key: an \`<iframe>\` to ` +
-    `\`https://bithuman.ai/embed/<agent_code>\` is live and talking. See [API quickstart](${SITE}/api/quickstart).\n`;
-  out +=
-    `- **Cloud REST API** — authenticate with the \`api-secret\` header against ` +
-    `\`https://api.bithuman.ai\`. Cheapest check: \`POST /v1/validate\`. Text-to-speech, agents, embedding, dynamics.\n`;
-  out +=
-    `- **On-device Python SDK** — \`pip install "bithuman[expression-2]"\` (macOS arm64 + Linux x86_64/aarch64, Python 3.10–3.14), then \`bithuman.open(...)\` / \`avatar.render(...)\` for RGB frames; \`bithuman[offline]\` renders an Essence 2 clip to an MP4. Guide: /sdk/python\n`;
-  out +=
-    `- **CLI** — one command on macOS Apple Silicon and Linux x86_64 alike (\`curl -fsSL .../install.sh | sh\`); \`bithuman run <model.imx>\` serves a live browser avatar, and \`bithuman render <model> -a speech.wav -o out.mp4\` renders an essence-2 \`.imx\` or expression-2 \`.avatar\` to MP4 offline, on macOS arm64 and Linux x86_64 (CLI 2.6.1+, runtime inside the tarball; the current release is named on ${SITE}/sdk/cli; \`render\` needs a sign-in — a self-hosted essence-2 / expression-2 session is metered on both platforms at the self-hosted rate by wall-clock, as ${SITE}/guides/pricing defines a credit minute; the model download is free). See [CLI](${SITE}/sdk/cli) and the [CLI reference](${SITE}/sdk/cli/reference).\n\n`;
-
-  out +=
-    `- **MCP server (for AI agents)** — drive bitHuman from any Model Context ` +
-    `Protocol client (Claude Desktop/Code, Cursor): 22 tools wrapping the REST ` +
-    `API and platform status. See [MCP server](${SITE}/guides/mcp-server).\n\n`;
+  out += `## Start here\n\n`;
+  out += `- **Embed a hosted agent** — an \`<iframe>\` and no API key: [API quickstart](${SITE}/api/quickstart).\n`;
+  out += `- **Cloud REST API** — the \`api-secret\` header against \`https://api.bithuman.ai\`: [API overview](${SITE}/api/overview).\n`;
+  out += `- **Python** — \`pip install bithuman\`, then open an avatar and take frames: [Python SDK](${SITE}/sdk/python).\n`;
+  out += `- **CLI** — one binary for macOS Apple Silicon and Linux x86_64; a live avatar in the browser or an MP4 render: [CLI](${SITE}/sdk/cli) and the [CLI reference](${SITE}/sdk/cli/reference).\n`;
+  out += `- **Android and Apple** — [Android SDK](${SITE}/sdk/android), [iOS & iPadOS SDK](${SITE}/sdk/ios).\n`;
+  out += `- **MCP server (for AI agents)** — the CLI's \`bithuman mcp\` exposes the platform as Model Context Protocol tools: [MCP server](${SITE}/guides/mcp-server).\n\n`;
 
   out += `## Machine-readable\n\n`;
-  out += `- [OpenAPI spec](${SITE}/api/openapi.yaml): the full REST contract (YAML).\n`;
-  out += `- [Interactive API console](${SITE}/api/reference): try every endpoint live.\n`;
-  out += `- [llms-full.txt](${SITE}/llms-full.txt): the entire documentation as one file, for ingestion.\n\n`;
+  out += `- [OpenAPI spec](${SITE}/api/openapi.yaml): the REST contract (YAML). Endpoint groups documented only in the pages, not the spec: [API keys](${SITE}/api/api-keys), [knowledge](${SITE}/api/knowledge), [organizations](${SITE}/api/organizations), [providers](${SITE}/api/providers), [runtime sessions](${SITE}/api/runtime-sessions).\n`;
+  out += `- [Interactive API console](${SITE}/api/reference): every endpoint in the spec, with try-it-out.\n`;
+  out += `- [llms-full.txt](${SITE}/llms-full.txt): the entire documentation as one file, for ingestion.\n`;
+  out += `- [Sitemap](${SITE}/sitemap.xml): every URL with its last-modified date.\n\n`;
 
-  for (const [sec, label] of SECTIONS) {
-    const items = docs
-      .filter((d: any) => d.data.section === sec)
-      .sort((a: any, b: any) => (a.data.order ?? 100) - (b.data.order ?? 100));
+  out += `## Site sections\n\n`;
+  const staticLocs = (await sitemapEntries()).filter((e) => !docs.some((d: any) => `${SITE}/${d.id}` === e.loc));
+  for (const e of staticLocs) out += `- ${e.loc}\n`;
+  out += `\n`;
+
+  for (const sec of SECTION_ORDER) {
+    const items = docs.filter((d: any) => d.data.section === sec);
     if (!items.length) continue;
-    out += `## ${label}\n\n`;
+    out += `## ${SECTIONS[sec].label}\n\n`;
     for (const d of items) {
       const desc = d.data.description ? `: ${d.data.description}` : "";
       out += `- [${d.data.title}](${SITE}/${d.id})${desc}\n`;
