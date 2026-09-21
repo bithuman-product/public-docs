@@ -226,8 +226,9 @@ Linux x86_64, through the [Python SDK](/sdk/python), on
 [Android](/sdk/android) and, in your own app, on iPhone, iPad and Mac through
 the [`Expression2` Swift product](/sdk/ios). The downloadable `.avatar`
 from [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>` drives all of them. The frame rate on each platform
-is on [Performance](/sdk/performance).
+or `bithuman pull <code>` drives all of them; from there it is the same two
+operations as any other family, [in one place](/sdk/cli#minimal-code). The
+frame rate on each platform is on [Performance](/sdk/performance).
 
 **In the browser:** append `?render=local` to a session URL to render
 Expression 2 in the tab, so the video never leaves the machine; sessions for

@@ -197,9 +197,10 @@ the network like any other cloud tier — it is not the same thing as running on
 your Mac. What does run on your hardware:
 
 - **Your own Mac or Linux machine, through the CLI** — `bithuman pull <CODE>
-  --model essence-2` hands you `<CODE>.imx`, `bithuman render` turns it and an
-  audio file into an MP4 offline, and `bithuman run` serves it from a local
-  server. See [the CLI](/sdk/cli#what-renders-locally-and-where).
+  --model essence-2` hands you `<CODE>.imx`; from there it is the same two
+  operations as any other family, [in one place](/sdk/cli#minimal-code). The
+  `--model` flag is the only part that is specific to Essence 2, and only
+  because an agent can own more than one family.
 - **Your own CPU servers** — offline rendering of the downloaded artifact
   through the [Python SDK](/sdk/python), metered, no GPU required.
 - **Android** — the [`essence2-android`](/sdk/android#troubleshooting)
@@ -320,7 +321,7 @@ with runnable, verified examples:
    or [`bithuman pull <code> --model essence-2`](/sdk/cli/reference#bithuman-pull)
    → `<CODE>.imx` (older releases wrote `<CODE>.lebundle.imx`, a legacy name
    kept for compatibility). Inspect it with
-   [`bithuman info`](/sdk/cli/reference#bithuman-info) (full
+   [`bithuman open`](/sdk/cli/reference#bithuman-open) (full
    member listing as of CLI 2.4.1). **Licensed weights** — render it locally
    with the [CLI](/sdk/cli#what-renders-locally-and-where) (2.6.1,
    macOS and Linux) or the [Python SDK](/sdk/python) (3.x), or serve it

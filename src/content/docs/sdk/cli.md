@@ -71,13 +71,13 @@ A showcase `pull` is the exception: it never needed an account. `run` and `rende
 
 ## Get a model
 
-A showcase avatar downloads with no account — the catalogue `bithuman avatars`
+A showcase avatar downloads with no account — the catalogue `bithuman list`
 prints — and your own agents come by code; sign in once for `run`, `render` and
 for your own agents:
 
 ```bash
 bithuman login                    # opens your browser; stores a per-device key on this machine
-bithuman avatars                  # the showcase catalogue — slug, code, name, model
+bithuman list                  # the showcase catalogue — slug, code, name, model
 bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.imx
 ```
 
@@ -110,7 +110,7 @@ bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4   # 2. offl
 
 `render` needs a mono WAV — `curl -fsSLo speech.wav
 https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav`
-is one (24 kHz, 15 s). `bithuman info <file>` prints what an avatar is before you render it.
+is one (24 kHz, 15 s). `bithuman open <file>` prints what an avatar is before you render it.
 
 ## Run
 
@@ -161,10 +161,10 @@ Measured frame rates for every platform are on the
 | `run` refuses with `NOT_SIGNED_IN`, exit 77, nothing served | no credential — `run` is billed too, from 2.6.20. A credential the service *rejects* is a different answer: exit **1**, `sign-in failed: auth required (BE_ERR_NO_AUTH)` | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
 | `run --host 0.0.0.0` exits 2 with `PUBLIC_BIND_REFUSED` and nothing listening | binding every interface has to be deliberate | a LAN or tailnet address in `--host`, or add `--allow-public-bind` if you meant it |
 | `pull <CODE>` refuses without a sign-in | your own agent code needs a credential; a showcase slug never does | `bithuman login`, then pull again |
-| `pull <CODE>` fails with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman avatars` lists the public ones |
+| `pull <CODE>` fails with `404 NOT_FOUND` | not an agent on your account, and not a showcase slug | check the code under [your agents](/api/agents); `bithuman list` lists the public ones |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), or `--model` the family it was created with |
 | `pull <CODE>` fails with `MODEL_ARTIFACT_NOT_READY` | trained, not yet published to the download store | run the same `pull` again in a minute |
-| `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman avatars` and copy a slug from it |
+| `SLUG_NOT_FOUND` | the slug is not in the catalogue | `bithuman list` and copy a slug from it |
 | the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
 | `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
 | `pip install bithuman` stops at `bithuman 2.11.6 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |

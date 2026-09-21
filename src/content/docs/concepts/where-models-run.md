@@ -67,12 +67,12 @@ Anything of yours that switches on `agents.model` must handle a null.
 
 ## Identify what you are holding
 
-`bithuman info` reads a model file locally and tells you its family. It needs
+`bithuman open` reads a model file locally and tells you its family. It needs
 **no credential and no network**, so it is the cheapest way to find out which
 row of the matrix applies to a file somebody sent you:
 
 ```bash
-bithuman info A23KSG5258.imx
+bithuman open A23KSG5258.imx
 ```
 
 ```text
@@ -85,14 +85,14 @@ bithuman info A23KSG5258.imx
 Read the **`Family:`** line — that is the product. Two legacy names you can
 still meet here: the `Engine: essence2-light` line in that output, and the
 `.lebundle.imx` extension on a bundle an older release saved (the download
-endpoint labels the file `<CODE>.imx` today; `bithuman info` reads both). Neither
+endpoint labels the file `<CODE>.imx` today; `bithuman open` reads both). Neither
 is a product name; [legacy names](#legacy-names-you-will-still-see) maps them all. The full
 output and every exit code are on the
 [CLI reference](/sdk/cli/reference).
 
 ## What a credential changes
 
-`bithuman info` is free. **`bithuman render` is not** — it needs
+`bithuman open` is free. **`bithuman render` is not** — it needs
 `bithuman login`, or `BITHUMAN_API_SECRET` in the environment. Get a key at
 [Developer → API keys](https://www.bithuman.ai/developer/api-keys).
 
@@ -134,9 +134,9 @@ a retired one, so here they are:
 | Literal you will meet | Where you meet it | What it means | Do you type it? |
 |---|---|---|---|
 | `essence` | `model` field in the showcase manifest and in `agents.model` | **essence-1** | Yes — accepted request spelling. |
-| `essence2-light` | `Engine:` line from `bithuman info` | **essence-2** | No. Read-only; the `Family:` line is the answer. |
+| `essence2-light` | `Engine:` line from `bithuman open` | **essence-2** | No. Read-only; the `Family:` line is the answer. |
 | `essence-2-light` | the `agents.model` value in the database | **essence-2** | No — write `essence-2`. Retired as a product name, frozen as a stored value. |
-| `.lebundle.imx` | the extension on an essence-2 bundle an older release saved | an essence-2 model file | Only if you already have one — the download endpoint labels the file `<CODE>.imx` today, and `bithuman info` reads both. |
+| `.lebundle.imx` | the extension on an essence-2 bundle an older release saved | an essence-2 model file | Only if you already have one — the download endpoint labels the file `<CODE>.imx` today, and `bithuman open` reads both. |
 | `elevate` | SDK request field | **essence-2** | Accepted for compatibility; write `essence-2` in new code. |
 | `embody` | legacy request spelling | **expression-2** | Accepted for compatibility; write `expression-2` in new code. |
 | `essence-2-quality` | older internal model lists and billing rows | a **separate, retired internal tier** — *not* another spelling of `essence-2` | No, and it is no longer accepted. It is not part of the public model set; if you meet it in your own historical billing rows it is that retired tier, not `essence-2`. |
