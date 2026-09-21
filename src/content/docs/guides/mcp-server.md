@@ -163,7 +163,7 @@ quickest confirmation is to ask the agent:
 > Use the bithuman tools to validate my API secret.
 
 It calls `validate_api_secret` and should reply with `{"valid": true}`. If you
-get `valid: false`, re-check your credential (`bithuman whoami`); if no bithuman
+get `valid: false`, re-check your credential (`bithuman account`); if no bithuman
 tools appear at all, confirm `bithuman` is on your PATH and restart the client.
 
 ## Using it

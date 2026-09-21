@@ -46,7 +46,7 @@ blow_kiss_heart   thumbs_up_pulse   celebration_jump  talk_head_nod_subtle
 
 > These are the `action` names you pass to `VideoControl(action=...)`
 > (self-hosted) or in the `trigger_dynamics` payload (cloud). List any avatar's
-> real gesture names with `GET /v1/dynamics/{agent_id}` or `bithuman info <model>.imx`.
+> real gesture names with `GET /v1/dynamics/{agent_id}` or `bithuman open <model>.imx`.
 
 ### Grab the self-hosted `.imx`
 
@@ -141,7 +141,7 @@ Don't guess action names — read them from the model. Two reliable ways:
 
 ```bash
 # From the .imx itself (CLI):
-bithuman info rascal_ravioli.imx        # lists the baked clip names
+bithuman open rascal_ravioli.imx        # lists the baked clip names
 
 # Or from the cloud, for any dynamics-enabled avatar:
 curl -s https://api.bithuman.ai/v1/dynamics/A06DKG5760 \
@@ -283,7 +283,7 @@ With idle actions removed and no keyword triggers configured, the avatar plays
 | Play a named action (self-hosted) | `runtime.push(VideoControl(action="<name>"))` | ✅ fully | self-hosted |
 | Play a named action (managed cloud) | `perform_rpc("trigger_dynamics", {"action":"<name>"})` → `avatar.avatar_identity` | ✅ fully | cloud |
 | Switch base clip | `runtime.push(VideoControl(target_video="<name>"))` | ✅ | self-hosted |
-| List available actions | `bithuman info <model>.imx` (self-hosted) · `GET /v1/dynamics/{id}` (cloud) | — | both |
+| List available actions | `bithuman open <model>.imx` (self-hosted) · `GET /v1/dynamics/{id}` (cloud) | — | both |
 | Stop a playing action | `runtime.interrupt()` / `stop_on_user_speech=True` | ✅ | self-hosted |
 | Auto-play on keyword | keyword→gesture mapping (dashboard) | opt-in (off by default) | both |
 | Auto-play while idle | model `idle_actions` | remove to disable | both |

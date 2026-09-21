@@ -16,7 +16,7 @@ Every model that renders on your own hardware uses it — a first-generation
 identity, and an [Expression 2](/concepts/expression-2) identity, which the
 download endpoint labels `.avatar`: the same container under a second
 extension. The same file opens on every on-device runtime — [Python](/sdk/python),
-[Swift](/sdk/ios) and the [CLI](/sdk/cli) — and `bithuman info` tells you which
+[Swift](/sdk/ios) and the [CLI](/sdk/cli) — and `bithuman open` tells you which
 model a file you were given holds.
 
 ## Where `.imx` files come from
@@ -83,13 +83,13 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 |---|---|---|
 | [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
 | [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/ios) — the first local play checks the licence with the cloud, so it needs your sign-in. |
-| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman info` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
+| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman open` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
 > for compatibility** — it predates the current product naming and survives only
 > as the extension older releases wrote, `<CODE>.lebundle.imx`. The download
 > endpoint and `bithuman pull` label the file `<CODE>.imx` today; a bundle you
-> saved under the older name keeps working, and `bithuman info` reads both, so
+> saved under the older name keeps working, and `bithuman open` reads both, so
 > the old spelling is kept here exactly as you may still have it on disk. It is
 > not a product name and never appears in an API request: the model is
 > [`essence-2`](/concepts/essence-2).
@@ -99,12 +99,12 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 Use the CLI to dump model metadata — version, ABI, resolution, and license:
 
 ```bash
-bithuman info path/to/avatar.imx
+bithuman open path/to/avatar.imx
 ```
 
 ### The `engine` value is a legacy name
 
-`bithuman info` reports an **`engine`** read from the container header (also
+`bithuman open` reports an **`engine`** read from the container header (also
 `engine` in [`--json`](/sdk/cli/reference#the-machine-readable-contract)), and the Python runtime quotes the same
 string verbatim in load errors — for example `backend loader for
 engine='essence2-light'`.
@@ -140,4 +140,4 @@ The `.imx` format is **forward-compatible within a major version**. The first ti
 - [Building avatars](/guides/building-avatars) — design likeness, voice, and personality.
 - [Audio streaming](/concepts/audio-streaming) — drive the `.imx` with audio.
 - [Agent lifecycle](/concepts/agent-lifecycle) — generate, resolve, and go live.
-- [CLI reference](/sdk/cli) — `bithuman info`, `pull`, `list`, and more.
+- [CLI reference](/sdk/cli) — `bithuman open`, `pull`, `list`, and more.

@@ -138,7 +138,7 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 **Try it**
 
 An Essence 1 identity comes by agent code — the free showcase catalogue
-(`bithuman avatars`) is second-generation only:
+(`bithuman list`) is second-generation only:
 
 ```bash
 bithuman pull <CODE> --model essence-1   # one of your agents; downloads to ~/.cache/bithuman/

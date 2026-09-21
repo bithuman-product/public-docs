@@ -41,14 +41,11 @@ and that is the tested one.
 | `bithuman run [avatar]` | Live avatar. No argument fetches and renders the free Wise Pup `expression-2` avatar; pass a file or an agent code to run your own |
 | `bithuman render <file> -a <audio>` | Offline render: model + audio → MP4 |
 | `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or your own agent's model by code |
-| `bithuman list` | Browse the showcase catalogue (aliases: `avatars`, `ls`, `browse`) |
-| `bithuman info <file>` | Model metadata: engine, family, and every member the container carries (alias: `inspect`) |
+| `bithuman list` | Browse the showcase catalogue (alias: `avatars`) |
+| `bithuman open <file>` | Can this avatar be opened and run here? Engine, family, and every member the container carries (alias: `info`) |
 | `bithuman login` / `logout` | Sign in through the browser and mint a per-device key / revoke it |
-| `bithuman whoami` | Who you are signed in as and where the credential lives |
-| `bithuman account` | Plan, credit balance, account status (alias: `credits`) |
-| `bithuman usage` | Recent credit usage and metering history |
-| `bithuman init` | Interactive wizard: save a secret, pick a brain, pull a starter avatar |
-| `bithuman engine list \| install \| update` | Inspect or fetch the per-platform Expression 2 render engine |
+| `bithuman account` | Who you are signed in as, your plan, your credit balance and your spend |
+| `bithuman engine list \| install` | Inspect or fetch the per-platform Expression 2 render engine |
 | `bithuman doctor` | Host, credential, brain and cache check |
 | `bithuman mcp` | The built-in MCP server over stdio; `bithuman mcp tools` lists its 28 tools |
 | `bithuman completion <shell>` | Completions for bash, zsh, fish, elvish, powershell |
@@ -56,12 +53,22 @@ and that is the tested one.
 Every subcommand takes `--help`, and each `--help` ends in a copy-pasteable
 `EXAMPLES:` block.
 
+**There is one name per task.** `chat` (for `run`), `info` (for `open`) and
+`avatars` (for `list`) are the only aliases; `bithuman <cmd> --help` names them.
+From **2.6.27** the surface lost the spellings nothing used — `talk`, `inspect`,
+`download`, `get`, `ls`, `browse`, `gallery`, `credits` and `agents-md` — and
+three commands that were a second way to do something the CLI already did:
+`init` (use `bithuman login`, then `bithuman run`), `engine update` (use
+`bithuman engine install`, which is idempotent), and `whoami` and `usage`, which
+are both `bithuman account` now. A retired spelling exits 2 with
+`unrecognized subcommand`.
+
 ## Signing in
 
 ```bash
 bithuman login              # opens a browser, mints a per-device key
 bithuman login --device     # SSH / headless: prints a short code to enter elsewhere
-bithuman whoami             # who am I, and where is the credential read from
+bithuman account            # who am I, on what plan, with how many credits
 bithuman logout             # revokes this device's key on the server
 ```
 
@@ -213,13 +220,18 @@ second trained family, and a bare `pull` hands back the family the agent was
 All but a minority of these are the current bitHuman container — including
 the `expression-2` one, despite its `.avatar` name. A few `expression-2` identities
 trained before 2026-07-12 are still an older zip format and will not be re-published.
-`bithuman info <file>` reads either, so run it rather than trusting the
+`bithuman open <file>` reads either, so run it rather than trusting the
 extension.
 
-## `bithuman info`
+## `bithuman open`
 
-Prints the engine, family, and every member of the container with its byte
-size. The `engine` field carries a **legacy name kept for compatibility** — an
+`open` and `render` are the two operations — there is no third. `open` answers
+one question: can this avatar be opened and run here? It succeeds, or it refuses
+with one of four kinds (`InvalidAvatar`, `NotSupported`, `NotAuthorised`,
+`Failed`). `info` is its alias and every older page's spelling.
+
+On success it prints the engine, family, and every member of the container with
+its byte size. The `engine` field carries a **legacy name kept for compatibility** — an
 Essence 2 bundle reports `essence2-light` — and is never a valid `model`
 value; see
 [the `engine` value is a legacy name](/concepts/avatars-imx#the-engine-value-is-a-legacy-name).
@@ -245,9 +257,8 @@ build, or when a newer avatar needs a newer engine.
 
 ```bash
 bithuman engine list           # what exists and which one this host uses
-bithuman engine install        # this platform
+bithuman engine install        # this platform — idempotent, so it is also the update
 bithuman engine install linux  # the other one, for a cross-build
-bithuman engine update
 ```
 
 The platform argument is **`mac` or `linux`** and nothing else; a target triple
@@ -362,11 +373,11 @@ A stable sysexits subset. Branch on these rather than parsing text.
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}
 
-// bithuman whoami --json      exit 0 signed in, 1 signed out
-{"logged_in":true,"user":"you@example.com","alias":"cli@host-…","source":"env BITHUMAN_API_SECRET"}
-
-// bithuman account --json     exit 77 with no credential
-{"email":"…","plan":"creator","credit_balance":5986130,"account_status":"active","out_of_credits":false}
+// bithuman account --json     exit 0 when the account could be read, 77 with no credential
+{"logged_in":true,"source":"env BITHUMAN_API_SECRET","email":"…","plan":"creator",
+ "credit_balance":5986130,"account_status":"active","out_of_credits":false,
+ "usage":{"data":[{"created_at":"…","activity_type":"…","agent_code":"…","credits_change":-42}],
+          "pagination":{"total":128}}}
 
 // bithuman list --json     the gallery; every row carries the CODE you can pull
 {"version":2,"models":[{"agent_code":"A02HCY0444","slug":"shelly-tidewater","name":"…",
@@ -378,7 +389,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
  "model":"expression-2","model_source":"birth","other_models":[],"runnable_locally":true,
  "schema_version":1}
 
-// bithuman info <file> --json
+// bithuman open <file> --json
 {"path":"…","format_version":2,"size_bytes":82583342,"engine":"essence1","family":"essence-1",
  "manifest":{…},"members":[{"name":"manifest.json","size_bytes":1030},…],"schema_version":1}
 
@@ -406,7 +417,6 @@ across releases. `schema_version` tells you when it is not.
 
 ```sh
 bithuman __schema      # the whole command / flag / exit-code tree as JSON
-bithuman __man [DIR]   # roff man pages
 bithuman __agents      # this contract, printed offline
 bithuman token         # the resolved secret on stdout (exit 77 if none)
 ```
@@ -444,8 +454,8 @@ SLUG=$(bithuman list --json | jq -r '.models[0].slug')
 MODEL=$(bithuman pull "$SLUG") || exit $?
 bithuman render "$MODEL" -a in.wav -o out.mp4 --json | jq -r .output
 
-# Confirm a credential without a browser.
-bithuman whoami --json | jq -e .logged_in >/dev/null
+# Confirm a credential without a browser (exit 0 signed in, 77 not).
+bithuman account --json >/dev/null
 ```
 
 ## See also
