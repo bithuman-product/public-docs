@@ -192,7 +192,7 @@ Rounding out the launch — plan allowances and a documentation overhaul:
   at [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
   *Superseded:* those per-tier packages no longer apply. Offline licensing is
   Business and Enterprise only, from 100,000 credits per licence with no upper
-  limit — see [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon)
+  limit, on a one-year term — see [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon)
   for the current terms.
 - **[Pricing](/guides/pricing) is now the single home of every number** —
   per-model serving rates (cloud and self-hosted), creation credits,
