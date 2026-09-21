@@ -46,6 +46,16 @@ One mode is always free: **audio-only** Swift SDK use — no avatar attached, fu
 | Dynamics generation | 250 | Per gesture / movement set generated for an agent |
 | Book creation | 250 | Per illustrated book generated from a prompt |
 
+Every number in this table is larger than a whole free month — a free account
+cannot create an agent of any model. See
+[the free tier](#the-free-tier-cannot-create-an-agent) for the arithmetic and
+the two ways past it.
+
+Reading this schedule from code? [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule)
+returns the same per-model map as `data.agent_generation.by_model`, and
+advertises `auto` at its **2000**-credit ceiling so an estimate is never lower
+than the debit (the charge is still the routed model's rate, 500 or 2000).
+
 ## Talking video — per minute of output
 
 [Talking-video renders](/concepts/talking-video) bill per minute of finished output, **rounded up** (minimum one minute). A failed render is automatically refunded.
@@ -61,8 +71,40 @@ One mode is always free: **audio-only** Swift SDK use — no avatar attached, fu
 ## Free tier
 
 - **99 credits / month** at signup, no credit card required.
-- Good for roughly 50 minutes of cloud Essence 1 serving, or about 25 minutes of the second-generation models.
 - Resets monthly. Unused credits don't roll over.
+
+### The free tier cannot create an agent
+
+99 credits is less than the cheapest creation, so **no creation fits inside a
+free month** — the arithmetic, against the
+[creation table above](#creation--generation--one-time-credits):
+
+| Create this | One-time cost | Against 99 free credits |
+|---|---|---|
+| Essence 1 / Expression 1 agent | 250 credits | 151 credits short |
+| `essence-2` agent | 500 credits | 401 credits short |
+| `expression-2` agent | 2000 credits | 1,901 credits short |
+| `auto` (platform picks the model) | 500 or 2000 credits | 401 or 1,901 credits short |
+
+A creation you cannot pay for is refused with
+[`402 INSUFFICIENT_BALANCE`](/api/errors) and no agent is made. Two ways past
+it, and nothing else: [top up](#top-up-credits) at **$1 = 100 credits**, or move
+to a paid [plan](#plans) — the smallest, Creator at $20/month, carries 1,800
+credits, which covers one `essence-2` creation with 1,300 credits left to serve
+it.
+
+### What 99 credits does cover
+
+Serving an agent that already exists, at the
+[rates above](#serving--credits-per-live-minute):
+
+- **49 minutes** of cloud Essence 1 (99 ÷ 2 credits/min), or **24 minutes** of
+  cloud Essence 2 / Expression 2 (99 ÷ 4 credits/min).
+- **99 minutes** of self-hosted or on-device Essence 1 (99 ÷ 1), or **49
+  minutes** of self-hosted Essence 2 / Expression 2 (99 ÷ 2).
+
+Free API secrets themselves, SDK installs and model downloads cost nothing —
+see [What's NOT billed](#whats-not-billed).
 
 ## Plans
 

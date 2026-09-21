@@ -10,14 +10,26 @@ order: 12
 
 - A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
 - `curl` and `python3` (for pretty-printing JSON) — preinstalled on macOS and most Linux. No SDK, no language runtime.
-
-```bash
-export BITHUMAN_API_SECRET=your_secret
-```
-
+- **At least 250 credits on the account.** Step 2 creates an agent, and creation is a one-time charge: 250 credits for `expression-1` (what this walkthrough builds), 500 for `essence-2`, 2000 for `expression-2`. The free tier's **99 credits/month covers none of them** — a free balance gets `402 INSUFFICIENT_BALANCE` and no agent. Top up or pick a plan first: [the free-tier arithmetic](/guides/pricing#the-free-tier-cannot-create-an-agent).
 - Works from any stack that can make HTTPS requests. Base URL is `https://api.bithuman.ai`; auth is the `api-secret` header on every call.
 
-> **Note** **Want to try for free first?** Generating an agent costs credits. To render an avatar at **$0 with no account**, use the SDK quickstart — it auto-downloads a sample model: see [Python — Hello, avatar](/sdk/python).
+Export the secret once — every command on this page reads it from the environment:
+
+```bash
+export BITHUMAN_API_SECRET=your_secret   # replace with the key from Developer → API Keys
+```
+
+Then confirm you can afford step 2 before you run it. This call spends nothing:
+
+```bash
+curl -s https://api.bithuman.ai/v2/credit-summaries \
+  -H "api-secret: $BITHUMAN_API_SECRET" \
+  | python3 -c "import sys,json;print('balance:', int(json.load(sys.stdin)['data']['balance']), 'credits')"
+```
+
+A balance under 250 means step 2 cannot run — see [Pricing & credits](/guides/pricing#the-free-tier-cannot-create-an-agent).
+
+> **Note** **Want to spend less on the first run?** Creation is the expensive step, not serving. Downloading a free-gallery avatar model is an anonymous, free download, and running it bills per live minute instead of a one-time 250–2000-credit creation — see [Python — Hello, avatar](/sdk/python) (the render itself still needs the same free API secret).
 
 ## Run it
 
@@ -28,21 +40,23 @@ curl -s -X POST https://api.bithuman.ai/v1/validate \
   -H "api-secret: $BITHUMAN_API_SECRET" | python3 -m json.tool
 ```
 
-2. Generate an agent from a text prompt (optionally add an `image` URL of a face). This is asynchronous and costs credits; it returns an `agent_id`.
+2. Generate an agent from a text prompt (optionally add an `image` URL of a face). This is asynchronous and returns an `agent_id`. **It debits 250 credits** — the `expression-1` rate named in the body below. Name the model on every creation call: the price is the price of the model that gets built, so leaving it out leaves the cost to a server default. `"model": "essence-2"` costs 500 and `"model": "expression-2"` costs 2000 ([creation costs](/guides/pricing#creation--generation--one-time-credits)).
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
   -H "Content-Type: application/json" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
-  -d '{"prompt": "You are a friendly fitness coach.", "aspect_ratio": "16:9"}' \
+  -d '{"prompt": "You are a friendly fitness coach.", "model": "expression-1", "aspect_ratio": "16:9"}' \
   | python3 -m json.tool
 ```
 
-> **Choosing a second-generation model.** This walkthrough builds the default
-> first-generation `expression-1` agent. To create an `essence-2` or
-> `expression-2` agent instead, add a `"model"` field (or `"auto"`) to the
-> generate body — see [Essence 2 & Expression 2](/concepts/models-v2). Their
-> creation does real per-identity work, so it takes **about 2 to 2.5 hours**
+> **Choosing a second-generation model.** This walkthrough builds an
+> `expression-1` agent: the cheapest creation at 250 credits, and the fastest.
+> To create an `essence-2` (500 credits) or `expression-2` (2000 credits) agent
+> instead, change the `"model"` value — or send `"auto"` and let the platform
+> pick, billing the routed model's rate. See
+> [Essence 2 & Expression 2](/concepts/models-v2). Their creation does real
+> per-identity work, so it takes **about 2 to 2.5 hours**
 > ([creation times](/api/agents#model-specific-inputs-and-creation-times)), not
 > the minutes below — keep polling `status` rather than applying a short
 > timeout.
@@ -50,7 +64,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 3. Save the returned `agent_id`, then poll status every ~5 s until `data.status` is `ready`. Keep polling through `processing` → `generating` → `completed` → `success` — only `ready` and `failed` are terminal. **`success` is a step-level marker written mid-run** (around 20% and 45% `progress`), so don't stop on it unless `progress` is also `1.0` (generation takes 2–5 min; failures auto-refund credits).
 
 ```bash
-export AGENT_ID=A80HVD8577   # paste the agent_id from step 2
+export AGENT_ID=PASTE_AGENT_ID_FROM_STEP_2   # e.g. A91XMB7113 — must be an agent on your own account
 curl -s "https://api.bithuman.ai/v1/agent/status/$AGENT_ID" \
   -H "api-secret: $BITHUMAN_API_SECRET" | python3 -m json.tool
 ```
@@ -58,7 +72,9 @@ curl -s "https://api.bithuman.ai/v1/agent/status/$AGENT_ID" \
 4. Once ready, open the agent in the web viewer and start a conversation.
 
 ```bash
-open "https://www.bithuman.ai/$AGENT_ID"   # or paste into any browser
+AGENT_URL="https://www.bithuman.ai/$AGENT_ID"
+echo "$AGENT_URL"              # paste it into any browser
+# macOS: open "$AGENT_URL"  ·  Linux: xdg-open "$AGENT_URL"
 ```
 
 ## What you'll see
@@ -69,27 +85,37 @@ open "https://www.bithuman.ai/$AGENT_ID"   # or paste into any browser
 
 ## Full code
 
-A single copy-paste script that validates, generates, and polls to ready:
+A single copy-paste script that validates, checks you can pay for the creation,
+generates, and polls to ready. It debits one creation charge — 250 credits as
+written — and exits before spending anything if the balance is short:
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 : "${BITHUMAN_API_SECRET:?Set BITHUMAN_API_SECRET first}"
 BASE="https://api.bithuman.ai"
+MODEL="expression-1"   # 250 credits. essence-2 = 500 credits, expression-2 = 2000.
+COST=250               # keep in step with MODEL — https://docs.bithuman.ai/guides/pricing
 
-# 1. Validate
+# 1. Validate the secret (spends nothing; always HTTP 200, read the `valid` field)
 curl -s -X POST "$BASE/v1/validate" \
   -H "api-secret: $BITHUMAN_API_SECRET" | python3 -m json.tool
 
-# 2. Generate (returns agent_id)
+# 2. Refuse before spending: creation is one-time and the free tier is 99 credits/month
+BALANCE=$(curl -s "$BASE/v2/credit-summaries" -H "api-secret: $BITHUMAN_API_SECRET" \
+  | python3 -c "import sys,json;print(int(json.load(sys.stdin)['data']['balance']))")
+echo "Balance: $BALANCE credits — creating $MODEL costs $COST"
+[ "$BALANCE" -ge "$COST" ] || { echo "Not enough credits: top up at https://www.bithuman.ai"; exit 1; }
+
+# 3. Generate (debits $COST, returns agent_id)
 RESP=$(curl -s -X POST "$BASE/v1/agent/generate" \
   -H "Content-Type: application/json" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
-  -d '{"prompt": "You are a friendly fitness coach.", "aspect_ratio": "16:9"}')
+  -d "{\"prompt\": \"You are a friendly fitness coach.\", \"model\": \"$MODEL\", \"aspect_ratio\": \"16:9\"}")
 AGENT_ID=$(echo "$RESP" | python3 -c "import sys,json;print(json.load(sys.stdin)['agent_id'])")
 echo "Agent: $AGENT_ID"
 
-# 3. Poll until ready or failed (data.status)
+# 4. Poll until ready or failed (data.status)
 while true; do
   S=$(curl -s "$BASE/v1/agent/status/$AGENT_ID" -H "api-secret: $BITHUMAN_API_SECRET")
   STATUS=$(echo "$S" | python3 -c "import sys,json;print(json.load(sys.stdin).get('data',{}).get('status','unknown'))")
@@ -108,6 +134,11 @@ cd bithuman-examples/api/rest-api/curl
 export BITHUMAN_API_SECRET=your_secret
 ./validate.sh
 ```
+
+`validate.sh` spends nothing. `generate-agent.sh` performs a real creation and
+debits credits; it sends no `model` field, so confirm your balance and the
+[creation costs](/guides/pricing#creation--generation--one-time-credits) before
+you run it.
 
 Full source: [GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api)
 

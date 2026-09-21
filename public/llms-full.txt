@@ -1,0 +1,96 @@
+# bitHuman — full page index
+
+Every page on docs.bithuman.ai. The curated entry points are in /llms.txt.
+
+## Start
+
+- [Changelog](https://docs.bithuman.ai/changelog): Release notes and version history for the bitHuman platform.
+- [Community](https://docs.bithuman.ai/community): Where to find bitHuman online, get help, and contribute SDKs and integrations.
+- [Downloads](https://docs.bithuman.ai/downloads): Get the bitHuman SDK: install commands for every surface, the current shipping versions, and where each second-generation model runs.
+- [Examples](https://docs.bithuman.ai/examples): Runnable bitHuman projects grouped by what you're building — every one is open-source. Clone, set your API secret, run.
+
+## Concepts
+
+- [Agent lifecycle](https://docs.bithuman.ai/concepts/agent-lifecycle): From a face and voice to a live talking avatar — generate, poll, resolve, and drive a session over the REST API and SDKs.
+- [Architecture](https://docs.bithuman.ai/concepts/architecture): How bitHuman is built — one portable engine, thin language SDKs on top, and your app on top of that. Audio in, lip-synced frames out, the same on ever
+- [Audio streaming](https://docs.bithuman.ai/concepts/audio-streaming): The push/drain pattern every bitHuman SDK shares — push 16-bit PCM in, drain lip-synced frames out at the model's own rate — with the canonical minima
+- [Avatars and the .imx format](https://docs.bithuman.ai/concepts/avatars-imx): The self-contained .imx file every bitHuman avatar ships in — one container for Essence 1, Essence 2 and Expression 2 identities — where it comes from
+- [Essence 1](https://docs.bithuman.ai/concepts/essence-1): Official guide to essence-1 — bitHuman's first-generation avatar model: what it is, where it runs, how to self-host it with the Python SDK, the CLI or
+- [Essence 2](https://docs.bithuman.ai/concepts/essence-2): Official guide to essence-2 — bitHuman's standard photoreal avatar model: an efficient renderer served from cloud GPU, Apple Silicon and CPU tiers, on
+- [Expression 1](https://docs.bithuman.ai/concepts/expression-1): Official guide to expression-1 — bitHuman's first-generation expressive avatar model: audio-driven facial animation from a portrait, GPU-only, how it 
+- [Expression 2](https://docs.bithuman.ai/concepts/expression-2): Official guide to expression-2 — bitHuman's second-generation expression engine: per-identity training from one photo, GPU/CPU/Apple Silicon serving t
+- [Models](https://docs.bithuman.ai/concepts/models): bitHuman's four avatar models — Essence 2 and Expression 2, the current generation, and Essence 1 and Expression 1, the first — what each does, where 
+- [Essence 2 & Expression 2](https://docs.bithuman.ai/concepts/models-v2): bitHuman's second-generation avatar models — essence-2 and expression-2 — real-time avatar video with on-device, browser, and cloud serving, per-minut
+- [Talking video generation](https://docs.bithuman.ai/concepts/talking-video): The offline counterpart to bitHuman's real-time avatars: render a finished mp4 from a script or audio, for social clips, explainers, and batch content
+- [Where each model runs](https://docs.bithuman.ai/concepts/where-models-run): Which bitHuman model runs where: the four product models, what GPU-only means, and which one to pick.
+
+## SDKs
+
+- [Android SDK](https://docs.bithuman.ai/sdk/android): A lip-synced Expression 2 avatar on an arm64 Android handset from one Maven coordinate — ai.bithuman:expression2-android:0.4.7 — with no account, no A
+- [Android API reference](https://docs.bithuman.ai/sdk/android-api): Every public class in the two Android artifacts — Kotlin signatures, nullability, defaults and constants — read back out of the AARs Maven Central ser
+- [CLI — macOS and Linux](https://docs.bithuman.ai/sdk/cli): Install one binary, sign in once, and bithuman run puts a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64. Offline MP4
+- [Local mode — zero-cloud conversation](https://docs.bithuman.ai/sdk/cli/local-mode): Swap the cloud conversation brain for an on-device one — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one environment variable. Audio and 
+- [CLI reference](https://docs.bithuman.ai/sdk/cli/reference): Every bithuman subcommand, flag, environment variable, exit code and --json shape, in one page. The happy path is on /sdk/cli.
+- [iOS & iPadOS SDK](https://docs.bithuman.ai/sdk/ios): Ship a bitHuman avatar inside your own iOS, iPadOS or macOS app: one SwiftPM package, the device floor and Apple entitlements each engine needs, and a
+- [LiveKit integration](https://docs.bithuman.ai/sdk/livekit): Connect a native Apple app to a server-hosted avatar over WebRTC, or deploy a Python voice agent with a face — both via LiveKit.
+- [Performance](https://docs.bithuman.ai/sdk/performance): Frames per second for Expression 2 and Essence 2 on reference hardware — every platform in one table.
+- [Python SDK](https://docs.bithuman.ai/sdk/python): A venv, pip install bithuman, one free model — open an avatar, render audio through it, take RGB frames. Expression 2 and Essence 2 on your own machin
+- [Python API reference](https://docs.bithuman.ai/sdk/python-api): Every public name in the installed bithuman package — signatures, docstrings and the exception hierarchy — read back out of the wheel PyPI serves, not
+- [Web](https://docs.bithuman.ai/sdk/web): A talking avatar in a browser tab with nothing to install — one URL or one iframe. Any showcase code, no account, no key.
+
+## Examples
+
+- [AI voice chat](https://docs.bithuman.ai/examples/ai-conversation): Talk to an OpenAI Realtime voice agent and watch a bitHuman avatar lip-sync the response in real time.
+- [Apple — check before you ship](https://docs.bithuman.ai/examples/apple-swiftpm-check): Preflight the macOS and iOS rail from any machine, before you open Xcode: which tag your SwiftPM pin actually resolves and whether its binaries match 
+- [Browser — check before you ship](https://docs.bithuman.ai/examples/browser-webgpu-check): Two copy-paste checks before you point a customer at browser rendering: does this browser have a usable GPU, and are the runtime files you serve the o
+- [Failure states on a phone](https://docs.bithuman.ai/examples/failure-states): What the on-device SDKs actually throw when the network is gone, a download is interrupted, a model is corrupt or a key is rejected — measured on a Ga
+- [Kotlin / Android — Hello, avatar](https://docs.bithuman.ai/examples/kotlin-android-hello): Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Expression 2 needs no API ke
+- [REST — Hello, avatar](https://docs.bithuman.ai/examples/rest-hello): Zero-to-avatar with the bitHuman REST API using nothing but curl: validate, generate an agent from a prompt, poll until ready.
+- [Swift / iOS — Essence 2 on device](https://docs.bithuman.ai/examples/swift-ios-essence2): A complete SwiftUI app that renders a full-resolution Essence 2 avatar on an iPhone, entirely on the device. Every file printed in full, every coordin
+- [Swift / iOS — a talking avatar on the iPhone you have](https://docs.bithuman.ai/examples/swift-ios-expression2): A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 20 fps. No device floor, no Apple entitlement, no account a
+- [Swift / iOS — Hello, avatar](https://docs.bithuman.ai/examples/swift-ios-hello): A complete on-device voice agent on iPhone or iPad — speech in, a language model, speech out and a lip-synced avatar — built on the bitHumanKit SwiftP
+
+## Guides
+
+- [Trigger avatar actions from code](https://docs.bithuman.ai/guides/avatar-actions): Fire a specific avatar gesture/action deterministically — self-hosted or on the managed cloud — no LLM, no keywords, no randomness. With a ready-to-ru
+- [Browser rendering](https://docs.bithuman.ai/guides/browser-rendering): Move avatar rendering out of your server and into the user's tab — one URL parameter, no install, no SDK call. What it needs, which agents can do it, 
+- [Building avatars](https://docs.bithuman.ai/guides/building-avatars): Get a pre-built avatar or generate one from a portrait — media specs, the CO-STAR prompt framework, animal mode, and the agent-generation API.
+- [Embed widget](https://docs.bithuman.ai/guides/deploy-embed): Drop a talking avatar onto any website with a single iframe — zero backend — and mint short-lived embed tokens for per-visitor session tracking.
+- [Deploy via LiveKit](https://docs.bithuman.ai/guides/deploy-livekit): The fastest path to production — drop a bitHuman avatar into any LiveKit agent worker with the cloud plugin. Managed runtime, ~5-minute setup.
+- [Self-hosted deployment](https://docs.bithuman.ai/guides/deploy-self-hosted): Run bitHuman on your own hardware: the first-generation Expression 1 GPU worker (a published Docker image for NVIDIA), and where the second-generation
+- [MCP server](https://docs.bithuman.ai/guides/mcp-server): Drive bitHuman from any AI agent. The bitHuman MCP server is built into the CLI (bithuman mcp) and exposes the platform as Model Context Protocol tool
+- [Pricing & credits](https://docs.bithuman.ai/guides/pricing): How bitHuman bills — credits per active minute by model and surface, one-time creation costs, plans and concurrency, offline licensing, and how to che
+- [Run a model on your own hardware](https://docs.bithuman.ai/guides/self-host-local): Self-hosting per platform: install, get a model, render it on your own Linux or macOS machine with the CLI or the Python SDK, and where the Android an
+- [Session behavior & troubleshooting](https://docs.bithuman.ai/guides/session-troubleshooting): What to expect from a live avatar session — connect latency, warm vs overflow capacity, idle vs speaking behavior — and how to diagnose the common err
+- [Voice providers](https://docs.bithuman.ai/guides/voice-providers): Every agent speaks every language for free on bitHuman's built-in voice pipeline — or bring your own OpenAI, Grok, ElevenLabs, or Cartesia key to unlo
+
+## REST API
+
+- [Agents API](https://docs.bithuman.ai/api/agents): Generate avatar agents, poll their status, retrieve and update them, then make them speak or inject knowledge into live sessions.
+- [API keys](https://docs.bithuman.ai/api/api-keys): Create, list, reveal, and delete your account's API secrets programmatically.
+- [Authentication](https://docs.bithuman.ai/api/authentication): Get an API secret, set it for the right surface, and understand how it is exchanged for short-lived runtime tokens.
+- [Billing API](https://docs.bithuman.ai/api/billing): Read a user's live credit balance and per-mode minute estimates, and understand how credits are consumed.
+- [Dynamics API](https://docs.bithuman.ai/api/dynamics): Generate and manage conversational gesture animations — waves, nods, laughs, idle motions — for an avatar.
+- [Embedding API](https://docs.bithuman.ai/api/embedding): Mint short-lived JWT tokens from your backend and embed a talking avatar on any website via an iframe.
+- [Errors](https://docs.bithuman.ai/api/errors): The bitHuman API error format, HTTP status codes, and the full error-code catalog with resolution steps.
+- [File Upload API](https://docs.bithuman.ai/api/files): Upload images, video, audio, and documents by URL or base64. Files are auto-organized by type and returned as CDN URLs.
+- [Knowledge API](https://docs.bithuman.ai/api/knowledge): Ingest documents and URLs, build knowledge bases, and rebuild them — programmatically, with an organization API key.
+- [Organizations](https://docs.bithuman.ai/api/organizations): Create a team, invite members, manage roles and org-scoped API keys, and track per-member usage.
+- [API overview](https://docs.bithuman.ai/api/overview): REST API for generating avatars, synthesizing voice, driving live sessions, and embedding agents — from any language.
+- [Providers (BYOK)](https://docs.bithuman.ai/api/providers): Bring your own LLM, STT, and TTS provider keys — store them encrypted and have your agents use them.
+- [API quickstart](https://docs.bithuman.ai/api/quickstart): Pick an existing agent and get a live, talking avatar on your page in two steps — no agent generation required.
+- [Rate limits & quotas](https://docs.bithuman.ai/api/rate-limits): Plan-tiered request limits by endpoint cost tier, the 429 / Retry-After contract, credit rates, and a recommended retry strategy.
+- [Realtime API](https://docs.bithuman.ai/api/realtime): Mint a short-lived client secret to open an OpenAI-Realtime voice session directly from the browser.
+- [Runtime sessions](https://docs.bithuman.ai/api/runtime-sessions): List live avatar sessions, read a session transcript, terminate a session, or revoke every runtime key at once.
+- [Text to speech](https://docs.bithuman.ai/api/text-to-speech): Turn text into natural speech with bitHuman's real-time TTS — built-in voices, inline tuning, and shareable voice codes designed in the playground.
+- [Video API](https://docs.bithuman.ai/api/video): Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a CDN URL. Per-minute billing, auto-refun
+- [Webhooks](https://docs.bithuman.ai/api/webhooks): Receive signed event notifications when async work finishes — register an endpoint, verify the HMAC signature, and inspect delivery attempts.
+
+## Changelog
+
+- [Changelog archive](https://docs.bithuman.ai/changelog/archive): Release notes from July 2026 and earlier — every entry, unchanged. The current changelog is /changelog.
+
+## Legal
+
+- [FFmpeg / LGPL — the Android relink offer](https://docs.bithuman.ai/legal/android-ffmpeg-lgpl): ai.bithuman:essence2-android statically links FFmpeg 7.1 under LGPL-2.1. This is the section 6(a) offer: where the relink materials are, what is in th
+- [EU AI Act — Article 50 transparency](https://docs.bithuman.ai/legal/eu-ai-act): Who owes what under Article 50 of the EU AI Act when you build with bitHuman: bitHuman is the provider, you are the deployer, and the visible disclosu

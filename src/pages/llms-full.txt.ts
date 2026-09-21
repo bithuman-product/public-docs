@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { SECTION_ORDER, inSidebarOrder } from "../lib/sidebar-order";
 import { HUBS, START_CLI, START_EMBED } from "../config/hubs";
+import { agentFacts } from "../config/agent-facts";
 
 // /llms-full.txt — every page in one file, in sidebar order, for AI agents
 // that ingest everything in a single fetch: the hub pages first (home, /start
@@ -9,6 +10,10 @@ import { HUBS, START_CLI, START_EMBED } from "../config/hubs";
 // section's pages), then every content page's full Markdown. Site-relative
 // links become absolute so a reader of this file can follow them; fenced code
 // is left byte-for-byte. The index lives at /llms.txt.
+//
+// The "what to get right first" block opens this file too (src/config/agent-facts.ts):
+// an agent that ingests the corpus in one fetch never opens /llms.txt, so the
+// corrections it needs before its first call have to be in both.
 
 export const prerender = true;
 
@@ -30,6 +35,7 @@ export const GET: APIRoute = async () => {
     `> Every page of ${SITE}, in the order the site's sidebar shows them. ` +
     `Each section starts with the page title and its URL. ` +
     `Index: ${SITE}/llms.txt · OpenAPI: ${SITE}/api/openapi.yaml\n`;
+  out += `\n${agentFacts(SITE)}`;
 
   const hub = (route: string, body = "") => {
     const h = HUBS.find((x) => x.route === route);

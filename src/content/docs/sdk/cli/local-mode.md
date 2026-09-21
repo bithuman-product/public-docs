@@ -14,13 +14,39 @@ entirely in-process one — whisper.cpp + llama.cpp + Supertonic + Silero VAD. N
 LLM or TTS vendor, no API key for either, no separate servers. Same
 `bithuman run` command, same browser URL, same avatar.
 
+Run these in order. The five packages go in **fourth**, not first: they have to
+land in the venv the CLI bootstraps on your first `bithuman run`, and that
+directory does not exist until then.
+
 ```bash
-pip install 'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
+# 1 — an avatar file. `bithuman pull` is free and anonymous: no account, no key.
+bithuman pull sofia-ramirez
+
+# 2 — sign in. This is for `run`, not for `pull`: an Essence 2 .imx will not play
+#     until this device is activated against your account. Opens a browser; on a
+#     headless box use `bithuman login --device`, or export BITHUMAN_API_SECRET.
 bithuman login
-bithuman pull modern-court-jester
-BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
-# → open the printed http://127.0.0.1:8088/ URL in a browser
+
+# 3 — one cloud-brain run, which bootstraps ~/.cache/bithuman/brain-venv.
+#     Ctrl-C once the URL prints; you only need the venv.
+bithuman run ~/.cache/bithuman/showcase/sofia-ramirez.imx
+
+# 4 — the five on-device brain packages, installed with THAT venv's own pip.
+#     A bare `pip install` puts them somewhere the brain worker never looks, and
+#     on stock Debian/Ubuntu it is refused outright with
+#     `error: externally-managed-environment`.
+~/.cache/bithuman/brain-venv/bin/python -m pip install \
+  'livekit-agents[silero]~=1.5' supertonic pywhispercpp llama-cpp-python soxr
+
+# 5 — talk to it — open the printed http://127.0.0.1:8088/ URL in a browser.
+BITHUMAN_LOCAL=1 bithuman run ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
+
+`llama-cpp-python` publishes no wheel for every Python version; where it does
+not, step 4 compiles it and needs `cmake` and a C++ toolchain on the box first.
+
+`sofia-ramirez` (agent code `A52DHS2219`) is an Essence 2 identity in the free
+showcase, about 148 MB; `bithuman list` prints every showcase slug.
 
 **Install those five requirements directly** — the `pip` line above is the
 whole story. There is no extra that does it for you: `bithuman-cli[local]` is not a route
@@ -30,6 +56,32 @@ removed from PyPI on 2026-09-15, and the CLI comes from
 [Downloads](/downloads)) — and `bithuman[local]` is not an extra at all: pip
 warns, **exits 0, and installs none of it**. `bithuman doctor` names the same
 five packages when they are missing.
+
+### What is free, and what needs an account
+
+`bithuman list` and `bithuman pull <slug>` are **anonymous** — the showcase weights
+download with no credential at all. `bithuman run` and `bithuman render` are not:
+they need `bithuman login`, or `BITHUMAN_API_SECRET` in the environment. With
+neither, an Essence 2 `.imx` refuses outright — *"essence-2 weights are licensed:
+this device has to be activated against your bitHuman account"* — because the first
+local play activates the device once, against your account. Local mode changes none
+of that; it only moves the **brain** off the network. Minutes still bill at the
+[published self-hosted rate](/guides/pricing).
+
+### Which interpreter the five packages go into
+
+They have to be importable from the interpreter the **brain worker** runs in, which
+is not necessarily the shell you typed `pip` into. The CLI launches that worker from
+`~/.cache/bithuman/brain-venv` — the venv it bootstraps on your first `bithuman run`
+— so run the avatar once before installing, and install into that same environment,
+which is what steps 3 and 4 above do. A bare system-wide `pip install` is also
+refused outright on stock Debian and Ubuntu with
+`error: externally-managed-environment`, which is a second reason to name the
+interpreter rather than rely on whatever `pip` resolves to. `bithuman doctor`'s
+**Brain (local)** row is the check. Treat it as a screen rather than a proof: the
+run in step 5 is what shows the worker really imported them, and on a fresh box
+`bithuman doctor` also reports `bundled brain venv (not bootstrapped)` until step 3
+has happened.
 
 > ★ **This is not air-gapped, and the difference matters.** The brain goes
 > offline; the **avatar does not**. `bithuman run` still reaches
@@ -197,8 +249,11 @@ warm-up after that is under a second.
 
 ### Is local mode actually wired up?
 
-Run `bithuman doctor` — it verifies the `[local]` extras are importable
-and lists the resolved backend versions.
+Run `bithuman doctor`. Its **Auth + brain selection** block reports whether you are
+signed in, whether `OPENAI_API_KEY` is set, and whether the on-device brain
+dependencies are installed — naming the five packages when they are missing, and the
+resolved backend versions once they import. (It checks for those five packages by
+name; there is no `[local]` extra to install, as the note above explains.)
 
 ### First run feels stuck
 
