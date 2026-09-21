@@ -262,7 +262,8 @@ targets: [
 
 > **Note** Version 2 of the LiveKit Swift client has breaking changes from
 > version 1. See the [LiveKit v1→v2 migration
-> guide](https://docs.livekit.io/guides/migrate-from-v1/) if you are upgrading.
+> guide](https://docs.livekit.io/reference/migration-guides/migrate-from-v1/) if
+> you are upgrading.
 
 ### Connect and render
 

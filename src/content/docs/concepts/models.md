@@ -138,12 +138,22 @@ Essence packages a complete avatar identity (face, body, gestures) into an `.imx
 **Try it**
 
 An Essence 1 identity comes by agent code — the free showcase catalogue
-(`bithuman list`) is second-generation only:
+(`bithuman list`) is second-generation only. An agent code is **yours**, so this
+path needs a credential from the first command onward:
 
 ```bash
-bithuman pull <CODE> --model essence-1   # one of your agents; downloads to ~/.cache/bithuman/
-bithuman run <CODE>.imx                  # live browser-served avatar
+bithuman login                                    # or: export BITHUMAN_API_SECRET=...
+MODEL=$(bithuman pull <CODE> --model essence-1)   # pull prints the cached path on stdout
+bithuman run "$MODEL"                             # live, browser-served avatar
 ```
+
+> **What is free, and what needs an account.** The free showcase is anonymous:
+> `bithuman list` and `bithuman pull <slug>` download second-generation weights with
+> no credential at all. Everything else on this page needs one. Pulling **your own**
+> agent by **code** answers `MISSING_AUTH` without it; `bithuman run` and
+> `bithuman render` refuse without it; and minutes bill at the
+> [published rates](/guides/pricing). `bithuman open`, which only reads a file already
+> on your disk, stays free.
 
 **How to ship it**
 

@@ -189,10 +189,31 @@ ffprobe -v error -count_frames -select_streams v:0 \
 ## `bithuman pull`
 
 ```bash
-bithuman pull modern-court-jester           # a showcase slug → ~/.cache/bithuman/showcase/
-bithuman pull A17ZTB0222                    # your agent → ~/.cache/bithuman/agents/<code>/
-bithuman pull A31BSK9325 --model essence-2  # a specific family
+# showcase slugs: no account, nothing billed
+bithuman pull wise-pup                         # expression-2, 189 MB → ~/.cache/bithuman/showcase/
+bithuman pull kwame-warm-museum-guide          # essence-2, 148 MB, same route
+
+# your own agent (needs a sign-in): its agent code, not a showcase slug
+AGENT_CODE=…
+bithuman pull "$AGENT_CODE"                    # → ~/.cache/bithuman/agents/<code>/
+bithuman pull "$AGENT_CODE" --model essence-2  # when the agent owns more than one family
 ```
+
+Sizes are 188–190 MB for an `expression-2` identity and 118–148 MB for an
+`essence-2` one — check the number before you start a download on a metered
+connection.
+
+Slugs are not forever. One that has left the catalogue takes the whole command
+down before anything is fetched, and names the fix:
+
+```text
+$ bithuman pull some-old-slug
+error: slug 'some-old-slug' not found in manifest. Try `bithuman list`.
+rc=66
+```
+
+So resolve a slug from `bithuman list` or from
+[the catalogue table](/sdk/cli#the-showcase-catalogue), not from an older page.
 
 `pull` prints the cached path — and only the path — on stdout, so
 `MODEL=$(bithuman pull …)` captures it. A showcase slug needs no credential;
@@ -200,6 +221,11 @@ an agent code goes through the authenticated
 [download endpoint](/api/agents#download-an-agents-model) and exits 77 without
 a sign-in, or 66 carrying the API's error (including the poll-able
 `MODEL_ARTIFACT_NOT_READY`).
+
+The catalogue `bithuman list` prints comes from one public, credential-free
+endpoint — `GET https://api.bithuman.ai/v1/models/showcase` — whose `models[]`
+rows carry `slug`, `agent_code`, `model`, `size` and the `url` that serves the
+file. That is the route to a current slug when the CLI is not installed.
 
 **One agent can own more than one downloadable model.** [Adding a
 model](/api/agents#add-a-model-to-an-existing-agent) gives the same code a
@@ -446,6 +472,15 @@ and the API rejects any request carrying it with
 ### Recipes
 
 ```sh
+# A first render on a fresh machine, start to finish. The download is
+# anonymous; the render is not, so the credential is checked FIRST — exit 77
+# from `account` means: run `bithuman login`, or export BITHUMAN_API_SECRET.
+set -e
+bithuman account --json >/dev/null
+MODEL=$(bithuman pull wise-pup)
+curl -fsSLo speech.wav "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+bithuman render "$MODEL" -a speech.wav -o out.mp4 --json | jq -r .output
+
 # Is this install ready to serve an avatar? (exit 0 = yes)
 bithuman doctor --json | jq -e .ready >/dev/null
 

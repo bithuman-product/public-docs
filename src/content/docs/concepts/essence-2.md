@@ -203,16 +203,19 @@ your Mac. What does run on your hardware:
   because an agent can own more than one family.
 - **Your own CPU servers** — offline rendering of the downloaded artifact
   through the [Python SDK](/sdk/python), metered, no GPU required.
-- **Android** — the [`essence2-android`](/sdk/android#troubleshooting)
-  AAR resolves; it does not render for an outside developer yet.
+- **Android** — the [`essence2-android`](/sdk/android#troubleshooting) AAR
+  renders on a handset; a complete project is on
+  [Essence 2 on Android](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed).
+  Fetching the identity needs your `api-secret`.
 - **iOS and macOS, in your own app** — the [Swift SDK](/sdk/ios#install)'s
-  `Essence2` product builds; no per-identity bundle is published for a phone
-  yet.
+  `Essence2` product opens the `.imx` the download endpoint serves, on the
+  device; a complete app is on
+  [Essence 2 on iPhone](/examples/swift-ios-essence2). It needs iOS 26.
 
-Essence 2 GPU rendering on phones, Macs and in the browser is rolling out; the
-frame rate on each platform is on [Performance](/sdk/performance).
-To reach Essence 2 from an Apple app today, use the [REST API](/api/overview)
-or a [LiveKit](/sdk/livekit) session.
+Essence 2 rendering in the browser is rolling out; the frame rate on each
+platform is on [Performance](/sdk/performance). To reach Essence 2 without
+shipping an engine, use the [REST API](/api/overview) or a
+[LiveKit](/sdk/livekit) session.
 
 **In the browser.** A browser-local tier is **rolling out**: appending
 `?render=local` to a session URL downloads the identity's compact web bundle

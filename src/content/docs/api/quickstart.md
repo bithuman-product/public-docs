@@ -51,7 +51,7 @@ secret at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) (
 no credit card) and export it:
 
 ```bash
-export BITHUMAN_API_SECRET=your_api_secret
+export BITHUMAN_API_SECRET=your_api_secret   # replace with the key from Developer → API Keys
 ```
 
 Verify it with the cheapest call there is — no credits, no agent needed:
@@ -132,7 +132,21 @@ model, so they take longer and cost more — see
 [per-model creation](/api/agents#model-specific-inputs-and-creation-times) and
 [pricing](/guides/pricing). Creation is image-only: upload your own portrait —
 a URL must be publicly fetchable, and it is downloaded after the request
-returns, so poll status rather than reading a `200` as acceptance:
+returns, so poll status rather than reading a `200` as acceptance.
+
+> **What this call costs, before you run it.** Creation is a one-time charge of
+> **250 credits** for `essence-1` / `expression-1`, **500 credits** for
+> `essence-2` and **2000 credits** for `expression-2` (`auto` bills whichever
+> model it routes to). The free tier's **99 credits/month** covers none of them:
+> on a free balance this call returns `402 INSUFFICIENT_BALANCE` and creates
+> nothing, so top up or choose a plan first —
+> [the free-tier arithmetic](/guides/pricing#the-free-tier-cannot-create-an-agent).
+> Steps 1 and 2 above need no API key and create nothing.
+
+The snippet below creates an `expression-2` agent — the most expensive model at
+**2000 credits**; change `"model"` to `"essence-2"` (500) or `"expression-1"`
+(250) to spend less. It needs the `BITHUMAN_API_SECRET` export from
+[Going further](#going-further) and one value of your own, `PORTRAIT_URL`:
 
 ```bash
 export PORTRAIT_URL=https://your-site.example/portrait.jpg   # a public URL to your portrait
@@ -150,7 +164,9 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
 EOF
 ```
 
-`PORTRAIT_URL` is the one value you supply — any publicly fetchable image of a face.
+`PORTRAIT_URL` is any publicly fetchable image of a face. Check your balance
+before and after with
+[`GET /v2/credit-summaries`](/guides/pricing#check-your-balance).
 
 Then poll [`GET /v1/agent/status/{agent_id}`](/api/agents) until `ready` and
 embed it exactly like step 2. See [Agents](/api/agents) for the full lifecycle.

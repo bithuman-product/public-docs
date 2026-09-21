@@ -31,11 +31,12 @@ with nothing in the loop but the phone. It was written by building it, on an
 | **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For those, use [Hello, avatar](/examples/swift-ios-hello) or a [cloud session](/api/runtime-sessions) |
 | **Costs** | nothing at run time. The download is metered at 0; on-device rendering here is not a hosted session. See [pricing](/guides/pricing) |
 
-★ **essence-2 is not on this page, and that is deliberate.** The `Essence2`
-product builds, links and starts on an iPhone, and then refuses the only model
-you can download for it, on **every** Apple device including an iPhone 16 Pro.
-The exact refusal is on [Essence 2 on-device](/sdk/ios#install). Do not spend an
-afternoon on it; use `expression-2`, which is what this page is.
+★ **Essence 2 is not on this page, and that is deliberate.** It is a different
+engine on a different product, with its own requirements and its own walkthrough:
+[Essence 2 on iPhone](/examples/swift-ios-essence2), a complete app of the same
+shape. This page is `expression-2`, which needs no iOS 26 and no separate
+resources archive. Do not attach both products to one app — they fail at link
+with duplicate symbols ([why](/sdk/ios#install)).
 
 ## Prerequisites
 
@@ -1008,8 +1009,9 @@ Stated plainly, so nobody spends an afternoon finding out.
 
 - **This project is Expression 2 only.** Essence 2 on an iPhone is the
   package's `Essence2` product, which opens the `.imx` you download from
-  **2.13.2** — see [Essence 2 on-device](/sdk/ios#install); a walkthrough
-  shaped like this one is pending.
+  **2.13.2** — see [Essence 2 on-device](/sdk/ios#install). A walkthrough
+  shaped like this one is
+  [Essence 2 on iPhone](/examples/swift-ios-essence2).
 - **The one-call container opener works again** (was broken through `Expression2`
   2.11.2, which refused every published `.avatar` by member name on iOS while
   unpacking the same file happily on macOS). Measured on an iPhone 15 on

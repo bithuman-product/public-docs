@@ -191,6 +191,19 @@ const CARRIERS = [
   // only these four frozen literals.
   { why: "the essence-2 bundle-directory format literals, printed verbatim in the engine's own refusal and carried in a meta.json `format` value",
     re: /\.elevatedir|\.essence2dir|elevatedir-v|essence2-light-dir-v/i },
+  // ★2026-09-21: the published essence2-android AAR's REAL Kotlin package. The
+  // `ai.bithuman.essence2.*` names are type ALIASES onto `ai.bithuman.elevate.*`,
+  // and Kotlin does not resolve a nested classifier through an alias — so
+  // `Essence2ModelStore.MeteredDoorResolver` does not compile through the alias
+  // and a developer MUST type `ai.bithuman.elevate` in one import line to reach
+  // it. Verified with kotlinc 2.0.21 against ai.bithuman:essence2-android:0.5.12:
+  // as printed through the alias, `error: unresolved reference
+  // 'MeteredDoorResolver'`; importing the nested class from this package, rc=0.
+  // Same class as `lible_core` and `[embody]`: a string a developer must type
+  // verbatim for the code to build. Deliberately narrow — the bare word
+  // `elevate` is NOT matched, only this package prefix.
+  { why: "the published essence2-android AAR's real Kotlin package, typed verbatim in an import because the `ai.bithuman.essence2` aliases cannot reach a nested class",
+    re: /ai\.bithuman\.elevate/i },
   { why: "tier slugs that saved links, embeds and signed share JWTs carry verbatim",
     re: /essence-2-light-(gpu|cpu|ane)/i },
   { why: "a CSS surface token, not the product",

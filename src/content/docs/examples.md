@@ -22,7 +22,8 @@ Every project below is open-source under [bithuman-product/bithuman-examples](ht
 | Call the platform from any language | [REST — Hello, avatar](/examples/rest-hello) | `curl` | ~5 min |
 | A talking avatar on the iPhone you already own | [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) | SwiftUI | ~25 min. **No account, no key, no credits** — it renders the free-gallery identity `A23WJF0199` (Wise Pup) |
 | A talking voice assistant on a Mac/iPad/iPhone **16 Pro or later** | [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) | SwiftUI | ~15 min + Apple's 1–3 day entitlement wait |
-| An on-device avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min |
+| An on-device avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | Kotlin | ~15 min. Expression 2 needs no key; the Essence 2 project on the same page needs one |
+| A full-resolution Essence 2 avatar on an iPhone | [Swift / iOS — Essence 2 on-device](/examples/swift-ios-essence2) | SwiftUI | ~30 min. Needs **iOS 26**; the download is anonymous |
 | Full voice conversation, mic in / avatar out | [AI voice chat](/examples/ai-conversation) | Python | ~10 min |
 | Know whether the browser path will work before you ship it | [Browser — check before you ship](/examples/browser-webgpu-check) | bash / JS | ~5 min |
 | Know whether the Apple package will resolve before you open Xcode | [Apple — check before you ship](/examples/apple-swiftpm-check) | bash | ~5 min |
@@ -48,6 +49,7 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 - [Swift / iOS — expression-2 on-device](/examples/swift-ios-expression2) — **start here for a frame on a phone.** No device floor, no Apple entitlement, no 1.6 GB download: measured 2026-09-09 it rendered 416x720 frames on an iPhone 15. Every file is on the page.
   **No account, no key, no credits, no wait.** The Apple rail has a keyless identity: `A23WJF0199` (Wise Pup), a bitHuman-owned agent in the **free gallery** — the download endpoint serves every gallery identity to anyone, so the same URL covers the showcase face and your own agent and only the credential differs. `setup.sh` fetches the identity, the shared engine graphs and a 16 kHz WAV with **no credential in the environment at all** — the same shape the Android example has always had. Want *your own* face on the phone instead? That is still an `expression-2` creation: **about 2–2.5 hours** and **2000 credits** ([creation times](/api/agents#model-specific-inputs-and-creation-times), [pricing](/guides/pricing)).
 - [swift/ios-expression2](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the same app as a repository you can clone, with a `setup.sh` that fetches your model.
+- [Swift / iOS — Essence 2 on-device](/examples/swift-ios-essence2) — the same shape, for the full-resolution engine: a complete SwiftUI app, every file printed, that renders an Essence 2 identity entirely on the phone. The identity and the engine resources both download **with no credential**. Costs you **iOS 26** and a separate resources archive, and the two engine products cannot be attached to one app.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package. The richest path (on-device STT + LLM + TTS) and the most demanding: iPhone 16 Pro or later, plus two Apple-approved entitlements.
 - [swift/ios-avatar](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
 - [swift/macos-voice](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
@@ -56,7 +58,7 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 
 ## Native apps — Kotlin / Android
 
-- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — a complete Android project, every file in full, that renders a talking avatar on a physical phone from a 16 kHz WAV. **No API key, no account and no agent of your own** — it renders a published identity that the model store's mirror serves anonymously, so this is the shortest path on the site from nothing to a frame on a handset. See the [Android SDK](/sdk/android) for the full API surface.
+- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — a complete Android project, every file in full, that renders a talking avatar on a physical phone from a 16 kHz WAV. The Expression 2 project needs **no API key, no account and no agent of your own** — it renders a published identity that the model store's mirror serves anonymously, so this is the shortest path on the site from nothing to a frame on a handset. The Essence 2 project in the second half of the same page renders a full-resolution picture and **does** need your `api-secret` to fetch the identity. See the [Android SDK](/sdk/android) for the full API surface.
 
 ## Web & other languages
 

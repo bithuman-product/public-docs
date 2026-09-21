@@ -12,13 +12,25 @@ An avatar is **likeness + voice + personality**, packaged into a single [`.imx` 
 
 ### 1. Download a pre-built one
 
-Browse [Explore](https://www.bithuman.ai/explore), open the **⋮** menu on any agent, and choose **Download**. Or via the CLI:
+Browse [Explore](https://www.bithuman.ai/explore), open the **⋮** menu on any agent, and choose **Download**. Or via the [CLI](/sdk/cli#install):
 
 ```bash
-bithuman list                            # browse showcase avatars
-bithuman pull modern-court-jester        # cache to ~/.cache/bithuman/showcase/
-bithuman run ~/.cache/bithuman/showcase/modern-court-jester.imx
+bithuman list                          # browse the showcase — free, no account
+bithuman pull sofia-ramirez            # → ~/.cache/bithuman/showcase/sofia-ramirez.imx
+bithuman login                         # `run` needs a credential; `pull` did not
+bithuman run ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
+
+`sofia-ramirez` (agent code `A52DHS2219`) is an Essence 2 identity in the free
+showcase, about 148 MB; `bithuman list` prints the rest.
+
+> **What is free, and what needs an account.** `bithuman list`, `bithuman pull <slug>`
+> and `bithuman open` are anonymous — the showcase weights download with no
+> credential at all. **Playing** a model is not: `bithuman run` and `bithuman render`
+> need `bithuman login` or `BITHUMAN_API_SECRET`, an Essence 2 `.imx` refuses to start
+> without one (its weights activate per device on first local play), and the minutes
+> bill at the [published rates](/guides/pricing). Pulling one of **your own** agents by
+> **code** rather than a showcase slug needs that credential too.
 
 ### 2. Generate from your own portrait
 
@@ -124,6 +136,10 @@ carrying it is rejected with
 [`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
 anything is billed.
 
+Set your API secret in the shell first — the call is rejected without it, and it is
+read from the environment, never pasted into the body (see
+[Authentication](/api/authentication)):
+
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" \
@@ -172,6 +188,13 @@ first-generation models, 500 for `essence-2`,
 2000 for `expression-2`; `auto` bills the routed model's rate. Serving then
 bills per active minute. Every number lives on one page:
 [Pricing & credits](/guides/pricing).
+
+**A free account cannot generate an agent.** The free tier's monthly credit
+allowance is smaller than the cheapest creation charge above, so the call in this
+section needs a paid plan — see [Pricing & credits](/guides/pricing) for the
+allowance and the plan that covers the model you want. Everything on the download
+side stays free either way: `bithuman list`, `bithuman pull <slug>` and
+`bithuman open` need no account at all.
 
 ## Next steps
 

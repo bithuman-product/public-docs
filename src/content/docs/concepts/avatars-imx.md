@@ -47,12 +47,24 @@ To get the file for a local run, download it by code or slug — `bithuman pull 
 
 ## Caching for offline use
 
-You can also pull the file down and pass it by path:
+You can also pull the file down and pass it by path. A showcase slug needs no
+account — `bithuman pull` downloads it anonymously:
 
 ```bash
-bithuman pull modern-court-jester
-# → ~/.cache/bithuman/showcase/modern-court-jester.imx
+bithuman pull sofia-ramirez
+# → ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
+
+`sofia-ramirez` (agent code `A52DHS2219`) is an Essence 2 identity in the free
+showcase, about 148 MB. `bithuman list` prints every showcase slug; a slug that is
+not in that list is refused with `slug '<name>' not found in manifest`.
+
+> **A showcase slug is free; your own agent is not.** `bithuman pull <slug>`,
+> `bithuman list` and `bithuman open` all work with no credential. Pulling **your
+> own** agent by **code** does need one — `bithuman pull A78WKV4515` answers
+> `MISSING_AUTH` until you run `bithuman login` or export `BITHUMAN_API_SECRET`.
+> So does *playing* any model: `bithuman run` and `bithuman render` need that
+> credential, and the minutes bill at the [published rates](/guides/pricing).
 
 Cache locations by surface:
 
@@ -96,10 +108,11 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 
 ## Inspecting an `.imx`
 
-Use the CLI to dump model metadata — version, ABI, resolution, and license:
+Use the CLI to dump model metadata — version, ABI, resolution, and license. This
+reads the file on your own disk, so it needs no account and no network:
 
 ```bash
-bithuman open path/to/avatar.imx
+bithuman open ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
 
 ### The `engine` value is a legacy name

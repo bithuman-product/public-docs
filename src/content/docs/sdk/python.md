@@ -1,6 +1,6 @@
 ---
 title: "Python SDK"
-description: "pip install bithuman — open an avatar, render audio through it, take RGB frames. Expression 2 and Essence 2 on your own machine."
+description: "A venv, pip install bithuman, one free model — open an avatar, render audio through it, take RGB frames. Expression 2 and Essence 2 on your own machine."
 section: sdk
 group: "Platforms"
 order: 20
@@ -12,11 +12,57 @@ avatar — no code — that is the [CLI](/sdk/cli), a binary you install from
 [install.bithuman.ai](https://install.bithuman.ai), not from PyPI. The two
 serve different purposes and neither replaces the other.
 
+## Before you start
+
+Six things, each one checkable before you type anything else. Check them in
+order and stop at the first failure — every later step assumes the ones above
+it.
+
+| You need | Why | Check it |
+|---|---|---|
+| Python 3.10–3.14 | the wheel is built for those; 3.15 has none | `python3 --version` |
+| Apple Silicon macOS 14+, Linux x86_64, or Linux aarch64 | no Windows, Intel Mac or musl wheel exists | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
+| A virtual environment | a system-wide `pip install` is refused on Debian and Ubuntu — see [Install](#install) | `python3 -m venv --help` |
+| `BITHUMAN_API_SECRET` | the model download is free; rendering a frame is metered and refuses without a key | `test -n "$BITHUMAN_API_SECRET" && echo set` |
+| About 1 GB of free disk | ~570 MB for the installed package, plus 118–190 MB per avatar | `df -h .` |
+| `ffmpeg` on `PATH` | only for the MP4 route, `render_offline` | `ffmpeg -version` |
+
+A free key is enough to render: the free tier covers self-hosted minutes, and
+it is only *creating your own agent* that a free month cannot pay for —
+[pricing](/guides/pricing#the-free-tier-cannot-create-an-agent) is the
+authority.
+
 ## Install
 
+Three lines, in this order:
+
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install "bithuman[expression-2]"
 ```
+
+**Do not skip the first two lines.** On a stock Debian or Ubuntu the bare
+`pip install` installs nothing at all and stops with (measured 2026-09-21,
+Ubuntu 26.04, Python 3.14.4):
+
+```text
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install python3-xyz …
+```
+
+That is [PEP 668](https://peps.python.org/pep-0668/): the system interpreter is
+owned by the distribution's package manager, and a virtual environment is the
+supported way past it. If `python3 -m venv .venv` itself fails with `ensurepip
+is not available`, install the `python3-venv` package first (`sudo apt install
+-y python3-venv` on Debian and Ubuntu) and re-run the three lines.
+
+The install pulls about 160 MB of wheels and occupies about 570 MB in the venv
+(measured 2026-09-21 on Linux x86_64, Python 3.14). Every later command on this
+page assumes the venv is **active** — that is what `source .venv/bin/activate`
+does, and a new terminal needs it again.
 
 `bithuman` 2.11.6 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
@@ -36,38 +82,112 @@ command-line tool is the [CLI](/sdk/cli), a separate install.
 **[essence-1](/concepts/essence-1) needs no extra at all.** It is the base
 wheel's own path — `bithuman.open` takes a first-generation `.imx`
 straight out of `pip install bithuman`, which is why the CLI and the
-[Swift](/sdk/ios) page send you here for it. One newer engine is behind an
-extra: `.avatar` files need `[expression-2]`. The Essence 2 clip-to-file route
-(`bithuman.offline`) is on the base wheel — see above. The legacy
+[Swift](/sdk/ios) page send you here for it. The legacy
 `bithuman[offline]` and `bithuman[tessera]` extras that older instructions
 name were removed from the wheel on 2026-09-20; a requirements file that still
 asks for one installs the base wheel, and pip says so in a warning.
 
+## Quickstart: the whole thing in one block
+
+Paste this into a fresh directory on macOS or Linux. It installs the package,
+fetches a free avatar and 15 seconds of speech, and renders. Nothing else has
+to be set up first, and the only line you edit is the `BITHUMAN_API_SECRET`
+export in step 2.
+
+```bash
+# 1 — an isolated environment (a system-wide install is refused on Debian/Ubuntu)
+python3 -m venv .venv
+source .venv/bin/activate
+pip install "bithuman[expression-2]"
+
+# 2 — a credential: free at https://www.bithuman.ai/developer/api-keys
+export BITHUMAN_API_SECRET=…
+
+# 3 — a free showcase avatar (189 MB, no account needed) and something to say
+curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+
+# 4 — render it
+cat > hello.py <<'PY'
+import bithuman
+
+frames, shape = 0, None
+with bithuman.open("wise-pup.imx") as avatar:
+    # each image is (height, width, 3) uint8, RGB, at the avatar's own rate
+    for image in avatar.render("demo_sample.wav"):
+        frames, shape = frames + 1, image.shape
+print(f"{frames} frames of {shape}")
+PY
+python hello.py
+```
+
+`A23WJF0199` is **Wise Pup**, a free [Expression 2](/concepts/expression-2)
+showcase avatar; `demo_sample.wav` is 24 kHz mono, 15.0 seconds. Expression 2
+plays at 20 frames per second, so the frame count tracks the length of the
+audio you hand it.
+
+Step 2 is not optional. Left unedited, the `…` placeholder is a key the
+service rejects, so the run stops at `bithuman.open` with *"that key was not
+accepted (401)"*; with no key set at all it gets one step further and raises
+`NotAuthorised` at the **first frame** — see
+[Authentication](#authentication-and-configuration) for both refusals and their
+exact text.
+
 ## Authentication and configuration
 
 Set `BITHUMAN_API_SECRET` in the shell you run Python from — a key is free at
-[your API keys](https://www.bithuman.ai/developer/api-keys). `bithuman.open()` succeeds without one; metering bites
-at the **first frame**, so a process with no key opens the avatar and then
-raises `NotAuthorised` as soon as you pull from `render()`. `BITHUMAN_CACHE_DIR`
+[your API keys](https://www.bithuman.ai/developer/api-keys). `BITHUMAN_CACHE_DIR`
 moves the download cache off `~/.cache/bithuman`.
+
+The two credential failures happen at different moments, which is how you tell
+them apart (both measured 2026-09-21 on `bithuman` 2.11.6):
+
+| The key | `bithuman.open()` | The first `render()` frame |
+|---|---|---|
+| not set at all | succeeds | raises `NotAuthorised`: *"no credential was supplied, so this render cannot be attributed to an account. Set BITHUMAN_API_SECRET…"* |
+| set but rejected | raises `NotAuthorised`: *"that key was not accepted (401) — the API secret was rejected — revoked, or from another environment."* | never reached |
+
+So a process with no key still opens the file and does real work before it
+refuses: metering bites at the first frame, not at load.
 
 ## Get a model
 
-A free-gallery avatar is a plain anonymous download — no account, no key:
+A showcase avatar is a plain anonymous download — no account, no key. **Check
+the size before you start it**: an [Expression 2](/concepts/expression-2)
+avatar is 188–190 MB, an [Essence 2](/concepts/essence-2) avatar 118–148 MB
+(the sizes `bithuman list` prints; the [CLI page](/sdk/cli#the-showcase-catalogue)
+carries the catalogue).
 
 ```bash
-curl -fL -o A23WJF0199.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+# Expression 2 — Wise Pup, 189 MB
+curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+
+# Essence 2 — Executive Coach for Clear Decisions, 118 MB
+curl -fL -o executive-coach.imx "https://api.bithuman.ai/v1/agent/A80HVD8577/model/download?model=essence-2"
+
+# 15 s of 24 kHz mono speech, 720 KB
 curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
 ```
 
-`A23WJF0199` is the free **Wise Pup** ([Expression 2](/concepts/expression-2));
-`demo_sample.wav` is 24 kHz mono, 15 s, something for it to say. The same URL
-serves your own agent — add `-H "api-secret: $BITHUMAN_API_SECRET"` and your
-code — so there is one route, not two. `bithuman list` shows every identity the
-door serves without a credential, and `bithuman pull <SLUG>` is the same fetch
-from the CLI. An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as
-an `.imx` or `.avatar` (the same container under two names), and `bithuman.open`
-takes any of them — as it does a first-generation `essence-1` `.imx`.
+The same URL serves your own agent — add `-H "api-secret: $BITHUMAN_API_SECRET"`
+and your agent code — so there is one route, not two.
+
+To pick a model without installing anything, read the catalogue the CLI reads.
+It is a public endpoint, needs no credential, and every row carries the exact
+`url` to download:
+
+```bash
+curl -fsS https://api.bithuman.ai/v1/models/showcase \
+  | jq -r '.models[] | "\(.slug)\t\(.agent_code)\t\(.model)\t\(.size)"'
+
+# …or resolve one slug straight to a file
+URL=$(curl -fsS https://api.bithuman.ai/v1/models/showcase | jq -r '.models[] | select(.slug=="wise-pup") | .url')
+curl -fL -o wise-pup.imx "$URL"
+```
+
+An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as an `.imx` or
+an `.avatar` (the same container under two names), and `bithuman.open` takes any
+of them — as it does a first-generation `essence-1` `.imx`.
 `python -m bithuman <CODE> <audio>` fetches by code into `~/.cache/bithuman/downloads`
 and, from 2.11.6, fetches the file again when the published one changed since it was cached
 (a length comparison; when it cannot be asked, the cached file is used).
@@ -75,11 +195,12 @@ and, from 2.11.6, fetches the file again when the published one changed since it
 ## Minimal code
 
 ```python
-# hello.py
+# hello.py — needs wise-pup.imx and demo_sample.wav in the working directory,
+# and BITHUMAN_API_SECRET in the environment. See the quickstart above.
 import bithuman
 
 # an Essence 2 .imx or an Expression 2 .avatar — one call
-with bithuman.open("A23WJF0199.imx") as avatar:
+with bithuman.open("wise-pup.imx") as avatar:
     # (height, width, 3) uint8, RGB, at the avatar's own frame rate
     for image in avatar.render("demo_sample.wav"):
         # hand it to your display — OpenCV wants image[:, :, ::-1]
@@ -97,6 +218,16 @@ file are the same program.
 > long and slowed — pass it as a **path** and let it be converted, or resample
 > it yourself before you pass samples.
 
+To see a frame rather than its shape, write one out with the OpenCV that is
+already installed as a dependency of the wheel — note the channel flip, because
+the frame is RGB and `imwrite` expects BGR:
+
+```python
+# inside the loop above: `image` is the frame you were just handed
+import cv2
+cv2.imwrite("first_frame.png", image[:, :, ::-1])
+```
+
 The call is lazy: `frames = avatar.render(...)` then `frames.close()` stops
 early. Every error `bithuman.open` and `avatar.render` raise is an `AvatarError`; the
 offline route below raises `bithuman.offline.OfflineRenderError`
@@ -108,17 +239,32 @@ exception it actually raises, is listed on the
 installs, not from our source.
 
 To render a whole Essence 2 clip to an MP4 instead of taking live frames, use
-the offline route — on the base wheel, no extra:
+the offline route — on the base wheel, no extra. It needs `ffmpeg` on `PATH`
+and a credential:
 
 ```python
+# needs executive-coach.imx and demo_sample.wav from "Get a model" above
 from bithuman.offline import render_offline
 
-render_offline("agent.imx", "speech.wav", out_mp4="rendered.mp4")
+render_offline("executive-coach.imx", "demo_sample.wav", out_mp4="rendered.mp4")
+```
+
+**A refused offline render still leaves a file at `out_mp4`.** Measured
+2026-09-21 on 2.11.6: with no credential the call raises
+`MeteringNotArmedError` and leaves an 18 KB MP4 behind that carries the audio
+and **no video stream at all**. So a pipeline must branch on the exception, or
+count the video frames — never on the file existing:
+
+```bash
+ffprobe -v error -count_frames -select_streams v:0 \
+  -show_entries stream=nb_read_frames -of csv=p=0 rendered.mp4
+# a real render prints a frame count; the refused stub prints nothing
 ```
 
 ## Run
 
 ```bash
+source .venv/bin/activate           # every new terminal
 export BITHUMAN_API_SECRET=…        # free at https://www.bithuman.ai/developer/api-keys
 python hello.py
 ```
@@ -129,6 +275,8 @@ avatar fetches the shared audio encoder automatically, once, into
 `~/.bithuman/deps` — about 377 MB. `bithuman.open(...).render(...)` fetches the
 2 s streaming window alongside it (about 450 MB in all); `render_offline(...)`
 does not, because the batch route runs the encoder once over the whole clip.
+Plan for that download on the first Essence 2 run, and for none on the ones
+after it.
 
 ## Performance
 
@@ -155,12 +303,17 @@ logging.basicConfig(level=logging.INFO)
 
 | You see | It means | Do this |
 |---|---|---|
-| `ModuleNotFoundError: No module named 'bithuman'` | not installed in the active environment | `pip install bithuman --upgrade` in the venv you run from |
+| `error: externally-managed-environment` from `pip install` | the distribution owns the system interpreter ([PEP 668](https://peps.python.org/pep-0668/)); pip installed nothing | create a venv first — the three lines under [Install](#install) |
+| `ensurepip is not available` from `python3 -m venv` | the venv module is packaged separately | `sudo apt install -y python3-venv` (Debian, Ubuntu), then re-run |
+| `ModuleNotFoundError: No module named 'bithuman'` | not installed in the active environment, or the venv is not activated in this terminal | `source .venv/bin/activate`, then `pip install "bithuman[expression-2]"` |
 | `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14. pip installed nothing: the release's source distribution exists only to print this (since 2026-09-20; before that, pip could quietly resolve a 1.x wheel) | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
 | `NotSupported` opening a `.avatar` | the Expression 2 extra is missing | `pip install "bithuman[expression-2]"` |
-| the first `render` raises `NotAuthorised` | no usable key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
+| the first `render` raises `NotAuthorised`, *"no credential was supplied"* | no key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
+| `bithuman.open` raises `NotAuthorised`, *"that key was not accepted (401)"* | there is a key and the service rejected it — revoked, or from another environment | mint a fresh one at [your API keys](https://www.bithuman.ai/developer/api-keys) |
+| `MeteringNotArmedError` from `render_offline` | same missing credential, on the offline route | `export BITHUMAN_API_SECRET=…`, or pass `api_secret=` |
+| the MP4 exists but has no picture | a refused render still writes the audio-only stub described above | set the credential, delete the stub, render again — and gate on the frame count, not the file |
 | `InvalidAvatar` on an Essence 2 file you were given | the file is not usable as published | send the agent code to [hello@bithuman.ai](mailto:hello@bithuman.ai) for re-publishing |
-| `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not a public showcase | check the code under [your agents](/api/agents) or on the [showcase](/showcase) |
+| `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not a public showcase | check the code under [your agents](/api/agents) or in the [catalogue](/sdk/cli#the-showcase-catalogue) |
 | `409 MODEL_NOT_GENERATED` from the download | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
 | the first `render` is slow, with a large download | the shared audio encoder and its 2 s window are being fetched, once | wait; they are cached for every later run |

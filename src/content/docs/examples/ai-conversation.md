@@ -8,19 +8,66 @@ order: 15
 
 ## Prerequisites
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
+- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication). The runtime checks it at the first frame, so this example does not start without one.
 - An `OPENAI_API_KEY` (the brain) — from [openai.com](https://openai.com).
-- Python 3.10–3.14 in a virtualenv. The example's `requirements.txt` pulls everything (the SDK ships no OpenCV; the display window needs it):
+- A working microphone, and an avatar `.imx` file — [get one below](#get-an-avatar-file).
+- **On Linux, the PortAudio system library.** `sounddevice` loads it at import and no
+  pip package supplies it, so without it the script dies on its first import with
+  `OSError: PortAudio library not found`. On Debian and Ubuntu:
+  `sudo apt install libportaudio2`. macOS needs nothing here — the macOS wheel falls
+  back to a PortAudio it bundles.
+- Everything runs locally — no LiveKit server, no browser, no server-side WebRTC.
+- Python 3.10–3.14, **in a virtualenv**. A system-wide `pip install` is refused on stock
+  Debian and Ubuntu with `error: externally-managed-environment`, so create the
+  environment first. This is the whole install, in order — the last line matters, see
+  below:
 
 ```bash
 git clone https://github.com/bithuman-product/bithuman-examples.git
 cd bithuman-examples/python/local-essence
-python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
-pip install "bithuman<3"      # this example uses the 2.x API; 3.x reshaped it
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install "bithuman<3"                                  # 2.x API (AsyncBithuman); 3.x reshaped it
+pip install --force-reinstall --no-deps opencv-python     # must be LAST — see below
 ```
 
-- An avatar `.imx` model and a working mic. Download one to the cache path the run command below uses — `curl -L https://models.bithuman.ai/showcase/modern-court-jester.imx --create-dirs -o ~/.cache/bithuman/showcase/modern-court-jester.imx` — or, on macOS, `bithuman pull modern-court-jester` (same destination). `bithuman pull` comes with the [CLI](/sdk/cli#install), on macOS Apple Silicon and Linux x86_64 alike; the direct download above works anywhere. More avatars are on [Explore](https://www.bithuman.ai/explore).
-- Everything runs locally — no LiveKit server, no browser, no server-side WebRTC.
+**Why `opencv-python` goes last.** The example draws the avatar with `cv2.imshow`, so it
+needs a **GUI** OpenCV build. Both `requirements.txt` and the `bithuman` wheel itself
+depend on `opencv-python-headless`, which has no window support, and whichever of the two
+lands last wins the shared `cv2` directory. Installing the GUI build afterwards is what
+makes the window open; skip that line and the script reaches the display and raises
+`cv2.error: ... The function is not implemented. Rebuild the library with Windows, GTK+
+2.x or Cocoa support`. Do **not** `pip uninstall opencv-python-headless` to fix it —
+removing it deletes files the GUI build shares, and `import cv2` then half-loads.
+
+## Get an avatar file
+
+Downloading a showcase avatar is **free and anonymous** — no account, no key, nothing to
+sign in to. Either command below writes the exact path the run command uses. The CLI
+route needs the [bitHuman CLI](/sdk/cli#install) (macOS Apple Silicon or Linux x86_64);
+the `curl` route works on any platform:
+
+```bash
+# With the CLI
+bithuman pull sofia-ramirez
+
+# Or with curl alone — the same file, addressed by agent code
+curl -L "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2" \
+  --create-dirs -o ~/.cache/bithuman/showcase/sofia-ramirez.imx
+```
+
+`sofia-ramirez` (agent code `A52DHS2219`) is an Essence 2 identity in the free showcase,
+about 148 MB. `bithuman list` prints every showcase slug; more are on
+[Explore](https://www.bithuman.ai/explore).
+
+> **What is free, and what needs an account.** Downloading a showcase avatar costs
+> nothing and needs no credential. *Playing* one always does — this example,
+> `bithuman run` and `bithuman render` alike — and the minutes bill at the
+> [published rates](/guides/pricing). The same split applies to `bithuman pull`
+> itself: a showcase **slug** is anonymous, while one of **your own** agents by
+> **code** is not (`bithuman pull A78WKV4515` answers `MISSING_AUTH` until you run
+> `bithuman login` or export `BITHUMAN_API_SECRET`).
 
 ## Run it
 
@@ -33,8 +80,15 @@ export BITHUMAN_API_SECRET="your_secret" OPENAI_API_KEY="sk-..."
 2. Run the conversation, pointing at your model. Speak into your mic; press `Q` in the window to quit.
 
 ```bash
-python conversation.py --model ~/.cache/bithuman/showcase/modern-court-jester.imx
+python conversation.py --model ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
+
+> **Essence 2 wants a GPU or an Apple Silicon Mac for a live conversation.**
+> `bithuman list --json` publishes the measured figure in its `note_performance`
+> field: `essence-2` renders at about 1.1 fps on a CPU — roughly 22x below real
+> time — while `expression-2` clears real time on a developer CPU. On a CPU-only
+> Linux box this example still runs, but the face will fall far behind the audio.
+> See [where each model runs](/concepts/where-models-run).
 
 ## What you'll see
 
@@ -76,7 +130,22 @@ Customize the personality by editing the `instructions` string — e.g. "You are
 
 Full source: [GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence)
 
-> **Note** **Common issues.** Script won't start → both keys set in the same shell? No mic input → grant the terminal mic permission (macOS: System Settings → Privacy & Security → Microphone). Avatar shows but doesn't lip-sync → OpenAI Realtime audio is 24 kHz PCM16; pass `24000` to `push_audio`. **Want it in the browser instead?** Run the [cloud-essence Docker Compose stack](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) and open `http://localhost:4202`.
+> **Note** **Common issues, by the exact error.**
+> `OSError: PortAudio library not found` → the system library is missing;
+> `sudo apt install libportaudio2` on Debian/Ubuntu, or `brew install portaudio` on a Mac
+> whose bundled copy did not load.
+> `cv2.error: ... The function is not implemented` → the headless OpenCV is winning;
+> re-run the `--force-reinstall --no-deps opencv-python` line above.
+> `error: externally-managed-environment` → you are outside the virtualenv;
+> `source .venv/bin/activate`.
+> Script won't start → both keys set in the same shell?
+> No mic input → grant the terminal mic permission (macOS: System Settings → Privacy &
+> Security → Microphone).
+> Avatar shows but doesn't lip-sync → OpenAI Realtime audio is 24 kHz PCM16; pass `24000`
+> to `push_audio`.
+> **Want it in the browser instead?** Run the
+> [cloud-essence Docker Compose stack](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence)
+> and open `http://localhost:4202`.
 
 ## Next steps
 
