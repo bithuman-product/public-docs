@@ -75,7 +75,7 @@ One mode is always free: **audio-only** Swift SDK use — no avatar attached, fu
 | **Enterprise** | $999 | $9,990 | 250,000 | 200 |
 | **Custom** | Contact sales | — | Volume / on-prem | Unlimited |
 
-Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem deployment, and bespoke SLAs beyond Enterprise (fully disconnected operation is [offline licensing — coming soon](#offline-licensing--coming-soon)): [talk to sales](https://www.bithuman.ai/sales).
+Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem deployment, and bespoke SLAs beyond Enterprise (running with no billing heartbeat is [offline licensing — coming soon](#offline-licensing--coming-soon), for Business and Enterprise only): [talk to sales](https://www.bithuman.ai/sales).
 
 **Concurrent sessions** are a plan entitlement — the number of live avatar sessions your account can run at once. Enforcement is rolling out: when limits apply, a session past your plan's cap is refused with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors) rather than degrading running sessions. Details in [Rate limits & concurrency](/api/rate-limits).
 
@@ -83,15 +83,20 @@ Current pricing and your live balance are in the [bitHuman dashboard](https://ww
 
 ## Offline licensing — coming soon
 
-Self-hosted serving today authenticates online (a once-per-minute billing heartbeat). **Offline licensing** — running models fully disconnected, with no heartbeat — is coming soon, unlocked by tier starting at Pro:
+Self-hosted serving today authenticates online (a once-per-minute billing heartbeat). **Offline licensing** — running a model without that heartbeat, for trade-show stands and venues with poor connectivity — is coming soon, and it is **for Business and Enterprise customers only**. No other plan qualifies: Free, Creator and Pro cannot buy it.
 
-| Offline package | Models | Annual commitment | Offline credits included |
-|---|---|---|---|
-| Pro | Essence 1 + Expression 1 | from 60,000 credits/yr | 60,000 |
-| Business | Essence 2 + Expression 2 | $999/yr | 120,000 |
-| Enterprise | Essence 2 + Expression 2 | $1,999/yr | 240,000 |
+It stays **credit-based**. An offline licence is not a separate subscription with its own price list — it spends the same credits as everything else on this page, metered by the engine on your own machine instead of over the internet.
 
-Offline serving consumes the included credits at half the equivalent cloud rate — Essence 1 at 1 credit/min and Expression 1 at 2; Essence 2 and Expression 2 at 2. Entitlements are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. These packages are separate from the monthly plans above. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
+| | |
+|---|---|
+| **Who can buy** | **Business and Enterprise only** |
+| **Minimum per licence** | **100,000 credits** — a smaller bundle is refused |
+| **Maximum per licence** | **No upper limit** — there is no maximum bundle size |
+| **Rate while offline** | The self-hosted rate above: Essence 1 at 1 credit/min; Expression 1, Essence 2 and Expression 2 at 2 |
+| **Term** | Up to 12 months — a licence ends when its credits are consumed or its term runs out, whichever comes first |
+| **Scope** | One device, one model per licence |
+
+Licences are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed or the term ends. A self-serve licence carries a required periodic check-in that reports what it has spent — every 6 hours on a device identified by fingerprint, every 3 days on one with a verified hardware key — so it is *heartbeat-free*, not *air-gapped*. Fully air-gapped licences, which never check in at all, are arranged directly with us. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
 
 ## Top-up credits
 
@@ -188,7 +193,7 @@ models.
 
 ### Does the on-device Swift SDK work without an internet connection?
 
-Audio-only mode is fully offline. Avatar mode authenticates once on `chat.start()` and heartbeats once per minute — with a 5-minute offline grace window after the last successful heartbeat. After that, the avatar pauses until connectivity returns. For fully disconnected deployments, see [Offline licensing](#offline-licensing--coming-soon).
+Audio-only mode is fully offline. Avatar mode authenticates once on `chat.start()` and heartbeats once per minute — with a 5-minute offline grace window after the last successful heartbeat. After that, the avatar pauses until connectivity returns. For deployments that cannot hold a per-minute connection, see [Offline licensing](#offline-licensing--coming-soon) — Business and Enterprise only, from 100,000 credits.
 
 ### What if I run out of credits mid-session?
 

@@ -107,7 +107,7 @@ Whole-clip Essence 2 rendering with the Python SDK is covered step by step in
 
 ## Offline licensing — coming soon
 
-Running the second-generation models **fully disconnected** — no heartbeat, no online auth — is coming soon for Business and Enterprise customers, delivered as per-device, per-model prepaid credit bundles. Packages and rates: [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
+Running the second-generation models **without the billing heartbeat** — no per-minute call home — is coming soon, and it is **for Business and Enterprise customers only**. No other plan qualifies. Each licence is a per-device, per-model prepaid credit bundle of **at least 100,000 credits**, with **no upper limit** on how many credits it may carry, valid until those credits are consumed or its term ends (up to 12 months), whichever comes first. It stays credit-based — the same credits as online serving, metered by the engine on your own machine. Rates, scope and the check-in interval: [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
 
 ## Troubleshooting: black or laggy video
 
