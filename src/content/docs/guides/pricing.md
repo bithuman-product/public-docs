@@ -90,13 +90,16 @@ It stays **credit-based**. An offline licence is not a separate subscription wit
 | | |
 |---|---|
 | **Who can buy** | **Business and Enterprise only** |
+| **Models covered** | The same families your plan entitles online — Essence 1, Expression 1, Essence 2 and Expression 2 |
 | **Minimum per licence** | **100,000 credits** — a smaller bundle is refused |
 | **Maximum per licence** | **No upper limit** — there is no maximum bundle size |
 | **Rate while offline** | The self-hosted rate above: Essence 1 at 1 credit/min; Expression 1, Essence 2 and Expression 2 at 2 |
-| **Term** | Up to 12 months — a licence ends when its credits are consumed or its term runs out, whichever comes first |
+| **Term** | **One year** from the day the licence is minted, plus a short grace period |
+| **What ends a licence** | Its credits running out, or its year running out — whichever comes first |
+| **Unspent credits** | **Not returned.** Credits still on a licence when its year ends are forfeited, so size the bundle to what you will actually render in a year |
 | **Scope** | One device, one model per licence |
 
-Licences are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed or the term ends. A self-serve licence carries a required periodic check-in that reports what it has spent — every 6 hours on a device identified by fingerprint, every 3 days on one with a verified hardware key — so it is *heartbeat-free*, not *air-gapped*. Fully air-gapped licences, which never check in at all, are arranged directly with us. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
+Licences are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. A self-serve licence carries a required periodic check-in that reports what it has spent — every 6 hours on a device identified by fingerprint, every 3 days on one with a verified hardware key — so it is *heartbeat-free*, not *air-gapped*. Fully air-gapped licences, which never check in at all, are arranged directly with us. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
 
 ## Top-up credits
 
