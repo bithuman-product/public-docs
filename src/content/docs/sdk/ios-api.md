@@ -1,6 +1,6 @@
 ---
 title: "iOS API reference"
-description: "The full C interface the Essence 2 product vends on Apple — every function, its arguments and its return codes — plus the Expression 2 Swift entry points, read out of the xcframework the Swift package pins, not out of a source tree."
+description: "The full C interface the Essence 2 product vends on Apple — every function, its arguments and its return codes, and the four link settings a target must carry — plus the Expression 2 Swift entry points, read out of the xcframework the Swift package pins, not out of a source tree."
 section: sdk
 group: "Reference"
 order: 77
@@ -36,6 +36,40 @@ Two combinations fail to link, and both are quiet until an app's final link:
 
 `Expression2` **+** `Essence2` in one app is supported from `2.14.0`, and fails
 below it with 112 duplicate symbols.
+
+### What each product needs at link
+
+`Essence2` is the only one that asks anything of your target. It is a static C
+library, so it declares none of the Apple libraries it calls and an app that
+attaches it compiles and then fails its final link:
+
+```swift
+linkerSettings: [
+    .linkedLibrary("c++"),
+    .linkedFramework("VideoToolbox"),
+    .linkedFramework("Accelerate"),
+    .linkedFramework("CoreML"),
+]
+```
+
+All four are required. Measured 2026-09-22 on macOS 26.5 with Xcode 26.5,
+against the artifacts `from: "2.14.0"` resolves, by dropping each one from a
+working link: without `libc++` 316 symbols are undefined, without
+`VideoToolbox` 5 (`_VTDecompressionSession*`), without `Accelerate` 27
+(`_BNNSFilter*` and the BLAS/LAPACK `$NEWLAPACK` entry points), without
+`CoreML` 5 (`_OBJC_CLASS_$_ML*`). With all four a plain SwiftPM executable
+calling `be_essence2_quiesce_all()` links and runs. Metal and its graph
+framework need no entry of their own — they arrive through CoreML and
+Accelerate.
+
+Every `Essence2` link also prints `ld: warning: Could not find or use
+auto-linked framework 'CoreAudioTypes'`. That name is a linker option baked
+into the Essence 2 static library and is not a standalone framework on any current Apple
+platform; the link succeeds and there is nothing to add.
+
+`Expression2`, `bitHumanKit` and `BithumanEngineProtocol` are Swift modules and
+record their own dependencies — you add nothing. More detail, with the Xcode
+equivalent, is on the [Apple SDK page](/sdk/ios#what-essence-2-needs-at-link).
 
 ## Expression 2 — Swift
 
@@ -228,7 +262,7 @@ are legacy names kept for compatibility —
 
 ## See also
 
-- [iOS & iPadOS SDK](/sdk/ios) — install, a worked minimal app, device floors
+- [Apple SDK](/sdk/ios) — install, a worked minimal app, device floors, and the Mac path
 - [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) — a complete
   app, every file printed
 - [Android API reference](/sdk/android-api) — the same surface on the handsets
