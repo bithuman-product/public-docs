@@ -1030,6 +1030,11 @@ e2hello/
         └── java/com/example/e2hello/MainActivity.kt
 ```
 
+The three blocks below name their path from `e2hello/`, because this is a
+second project beside the Expression 2 one — the two trees have files with the
+same names and different contents, and a path with no root would not say which
+tree it belongs to.
+
 ### Changed file 1 — `settings.gradle.kts`
 
 Only the project name changes. `google()` is still needed in **both** blocks:
@@ -1038,7 +1043,7 @@ own `aapt2` from Google's Maven and without it the build dies at
 `:app:processDebugResources`.
 
 ```kotlin
-// settings.gradle.kts
+// e2hello/settings.gradle.kts
 pluginManagement {
     repositories { google(); mavenCentral(); gradlePluginPortal() }
 }
@@ -1062,7 +1067,7 @@ line `BuildConfig` is never generated and the activity below fails to compile
 with `Unresolved reference: BuildConfig`.
 
 ```kotlin
-// app/build.gradle.kts
+// e2hello/app/build.gradle.kts
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
