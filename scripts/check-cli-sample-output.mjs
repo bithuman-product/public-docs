@@ -38,10 +38,11 @@
 //   node scripts/check-cli-sample-output.mjs --observed '{"cli":"2.6.15","libessence":"3.1.5","abi":7}'
 //   node scripts/check-cli-sample-output.mjs --selftest
 
-import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const TAP = "bithuman-product/homebrew-bithuman";
@@ -52,6 +53,188 @@ const PAGES = {
   text: "src/content/docs/sdk/cli.md",
   json: "src/content/docs/sdk/cli/reference.md",
 };
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE NAME HALF: every `bithuman <name>` a page teaches is a name the binary
+   answers to.
+
+   WHY. Measured 2026-09-22: www.bithuman.ai taught `bithuman demo` and
+   `bithuman fingerprint`. Neither has ever been a subcommand of anything. They
+   were written, reviewed, shipped and served for weeks, and the reason nothing
+   caught them is that no check knew what the CLI is CALLED — the version guard
+   watches numbers, the refusal driver watches behaviour, and a name that never
+   existed has no registry to go stale against.
+
+   ★ALLOWLIST, NEVER A DENYLIST. A denylist of bad names catches a bad name only
+   AFTER it has shipped and someone noticed. An allowlist catches it the first
+   time someone writes it. The allowlist is not curated here: it is the surface
+   of the published binary, read out of its own `__schema`, so it cannot drift
+   from the tool a reader actually installs.
+
+   THE ONE PLACE THAT KNOWS WHAT THE CLI IS CALLED is scripts/cli-surface.json.
+   This script already downloads and executes the published tarball to grade the
+   sample blocks, so it extracts the schema in the SAME download and writes that
+   file — no second fetch, and no second opinion. bithuman-ui's customer surfaces
+   read the same file over raw.githubusercontent, which is why it is committed
+   rather than computed on the fly.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const SURFACE_REL = "scripts/cli-surface.json";
+
+// clap generates `help` itself, so it is typeable (`bithuman help`, rc=0,
+// measured on cli-v2.6.26) but appears in no `__schema` subcommand list. It is
+// named here, not discovered, because the binary does not report it — the one
+// name on this list that is a judgement rather than a measurement.
+const BUILTIN_NAMES = ["help"];
+
+// The customer-facing corpus. Every published page, plus the site chrome that
+// renders on all of them — a command name in a nav label or a layout reaches a
+// reader exactly as a command name in a code fence does.
+const NAME_ROOTS = [
+  "src/content", "src/pages", "src/components", "src/layouts",
+  "src/config", "src/data", "public/api", "README.md",
+];
+const NAME_EXT = /\.(md|mdx|astro|ts|tsx|js|mjs|json|yaml|yml|html|txt)$/;
+
+// ★A CHANGELOG IS A HISTORICAL RECORD, and it must be able to say that a
+//  command was REMOVED. `bithuman auth …` really did exist and really is gone;
+//  an entry that says so is the only way a reader with an old script learns it.
+//  Grading these pages would force us to delete true history to get a green,
+//  which is how a check earns its way into someone's disable list.
+//  THE COST, stated plainly rather than hidden: a NEW changelog entry that
+//  teaches a command that never existed is NOT graded by this check.
+const HISTORICAL = [/^src\/content\/docs\/changelog\.md$/, /^src\/content\/docs\/changelog\//];
+
+// A page may name a command that does not exist in order to say IT DOES NOT
+// EXIST. Each row is a (path, name) pair, never a whole path: a blanket path
+// allow would let the NEXT invented name through on the same page.
+// A row whose page no longer carries that name is STALE and is RED — the same
+// discipline the retired-name ratchet in bithuman-ui uses for its allow rows.
+const DENIAL_ROWS = [
+  // e.g. ["src/content/docs/sdk/cli.md", "fingerprint"],
+];
+
+/** Every name typeable after `bithuman`, read out of the binary's own schema. */
+export function typeableFromSchema(schema) {
+  const names = new Set(BUILTIN_NAMES);
+  const paths = new Set();
+  const walk = (node, prefix) => {
+    for (const sub of node?.subcommands || []) {
+      for (const n of [sub.name, ...(sub.aliases || [])]) {
+        if (!n) continue;
+        paths.add(`${prefix}${n}`.trim());
+        if (!prefix) names.add(n);
+      }
+      walk(sub, `${prefix}${sub.name} `);
+    }
+  };
+  walk(schema?.commands, "");
+  if (names.size <= BUILTIN_NAMES.length) {
+    throw new CannotCheck("the binary's __schema listed no subcommands — nothing to build an allowlist from");
+  }
+  return { names: [...names].sort(), paths: [...paths].sort() };
+}
+
+/** The committed surface document, shaped like python-surface.json beside it. */
+export function surfaceDoc({ version, digest, schema }) {
+  const { names, paths } = typeableFromSchema(schema);
+  return {
+    artifact: {
+      registry: "github-releases",
+      coordinate: TAP,
+      tag: `cli-v${version}`,
+      version,
+      asset: ASSET,
+      digest,
+      resolved_on: new Date().toISOString().slice(0, 10),
+    },
+    surface: {
+      schema_version: schema.schema_version ?? null,
+      note:
+        "Every name typeable after `bithuman`, read out of the published binary's own `__schema`. " +
+        "Regenerate with `node scripts/check-cli-sample-output.mjs --emit-surface`; never edit by hand.",
+      builtins: BUILTIN_NAMES,
+      names,
+      paths,
+    },
+  };
+}
+
+function corpus(root = ROOT) {
+  const files = [];
+  const walk = (rel) => {
+    const abs = join(root, rel);
+    if (!existsSync(abs)) return;
+    if (statSync(abs).isFile()) { if (NAME_EXT.test(rel)) files.push(rel); return; }
+    for (const e of readdirSync(abs).sort()) walk(`${rel}/${e}`);
+  };
+  for (const r of NAME_ROOTS) walk(r);
+  return files.filter((f) => !HISTORICAL.some((re) => re.test(f))).sort();
+}
+
+/* `bithuman` in COMMAND POSITION, followed by a bare word.
+
+   The prefix test is what keeps this off prose, and it was built by running it
+   over the whole site: `from bithuman import Avatar`, `pip install
+   livekit-plugins-bithuman pillow`, `Computed homebrew-bithuman at 2.5.1`,
+   `which bithuman wheel`, `Every bithuman subcommand` and `/bithuman` all name
+   a package, a repo or a noun — not a command — and every one of them is
+   silent here because the character before `bithuman` is a word character,
+   a `-`, a `.` or a `/`. A command, by contrast, starts a line or follows a
+   shell prompt, a backtick, a quote, a pipe or `<Code>`. */
+const INVOCATION = /bithuman[ \t]+([a-z][a-z0-9-]*)/g;
+
+export function inCommandPosition(text, idx) {
+  let i = idx - 1;
+  while (i >= 0 && (text[i] === " " || text[i] === "\t")) i--;
+  if (i < 0) return true;
+  const c = text[i];
+  if (c === "\n" || c === "\r") return true;
+  return "`>$(;&|\"'".includes(c);
+}
+
+/** Every `bithuman <name>` invocation on one page. */
+export function invocationsIn(text) {
+  const out = [];
+  INVOCATION.lastIndex = 0;
+  let m;
+  while ((m = INVOCATION.exec(text))) {
+    if (!inCommandPosition(text, m.index)) continue;
+    out.push({ name: m[1], line: text.slice(0, m.index).split("\n").length });
+  }
+  return out;
+}
+
+/** Grade one tree. Returns faults; an empty corpus throws, never passes. */
+export function gradeNames(files, allowed, readFile, denialRows = DENIAL_ROWS) {
+  if (files.length === 0) {
+    throw new CannotCheck("the name corpus is empty — nothing was graded, which is never a pass");
+  }
+  const faults = [];
+  const used = new Set();
+  for (const rel of files) {
+    let text;
+    try { text = readFile(rel); } catch { throw new CannotCheck(`${rel} could not be read`); }
+    for (const { name, line } of invocationsIn(text)) {
+      if (allowed.has(name)) continue;
+      const row = denialRows.find(([p, n]) => p === rel && n === name);
+      if (row) { used.add(row.join("\t")); continue; }
+      faults.push({
+        rel, line,
+        msg: `\`bithuman ${name}\` is not a command the published CLI has. A reader who types it gets a usage error (exit 2). The binary's own names are in ${SURFACE_REL}.`,
+      });
+    }
+  }
+  for (const row of denialRows) {
+    if (!used.has(row.join("\t"))) {
+      faults.push({
+        rel: row[0], line: 1,
+        msg: `stale allow row: ${row[0]} no longer names \`bithuman ${row[1]}\`, so the row permits nothing and must be deleted.`,
+      });
+    }
+  }
+  return faults;
+}
 
 class CannotCheck extends Error {}
 
@@ -148,22 +331,35 @@ async function runPublishedBinary(version) {
   try {
     const res = await get(url);
     const buf = Buffer.from(await res.arrayBuffer());
+    const sha = createHash("sha256").update(buf).digest("hex");
     const tarball = join(dir, ASSET);
     writeFileSync(tarball, buf);
     execFileSync("tar", ["xzf", tarball, "-C", dir], { stdio: "inherit" });
     const bin = join(dir, "bithuman");
     const home = join(dir, "home");
     mkdirSync(home, { recursive: true });
-    const out = execFileSync(bin, ["version", "--json"], {
-      encoding: "utf8",
-      timeout: 120000,
-      env: { ...process.env, HOME: home },
-    });
+    const run = (args) =>
+      execFileSync(bin, args, { encoding: "utf8", timeout: 120000, maxBuffer: 64 << 20, env: { ...process.env, HOME: home } });
+
+    const out = run(["version", "--json"]);
     const j = JSON.parse(out);
     if (!j.cli || !j.libessence || j.abi === undefined) {
       throw new CannotCheck(`the binary's version --json lacks cli/libessence/abi: ${out.slice(0, 200)}`);
     }
-    return { cli: j.cli, libessence: j.libessence, abi: j.abi };
+
+    // The SAME download serves the name half. `__schema` is the binary
+    // describing its own surface; it is the only thing that knows it.
+    let schema;
+    try {
+      schema = JSON.parse(run(["__schema"]));
+    } catch (e) {
+      throw new CannotCheck(`the published cli-v${version} binary would not emit __schema: ${e.message}`);
+    }
+    if (!schema?.commands?.subcommands?.length) {
+      throw new CannotCheck("the binary's __schema carries no subcommands — an allowlist built from it would permit nothing");
+    }
+
+    return { cli: j.cli, libessence: j.libessence, abi: j.abi, schema, digest: `sha256:${sha}` };
   } catch (e) {
     if (e instanceof CannotCheck) throw e;
     throw new CannotCheck(`could not run the published cli-v${version} binary: ${e.message}`);
@@ -208,9 +404,73 @@ function selftest() {
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${(rel + " still carries a sample block").padEnd(56)} ${JSON.stringify(got)}`);
   }
+  /* ── the name half ──────────────────────────────────────────────────────
+     The positive control is THE REAL HISTORY: `bithuman fingerprint` is the
+     name www.bithuman.ai actually taught, and the one a customer actually
+     could not run. The negative controls are the prose this matcher must not
+     fire on — every one of them is a real line from this site. */
+  const SCHEMA = {
+    schema_version: 1,
+    commands: {
+      name: "bithuman",
+      subcommands: [
+        { name: "run", aliases: ["chat"], subcommands: [] },
+        { name: "render", aliases: [], subcommands: [] },
+        { name: "engine", aliases: [], subcommands: [{ name: "list", aliases: [], subcommands: [] }] },
+      ],
+    },
+  };
+  const allowed = new Set(typeableFromSchema(SCHEMA).names);
+  const one = (text, rows = []) => gradeNames(["p.md"], allowed, () => text, rows).length;
+
+  const nameArms = [
+    ["FIRES: the real defect — `bithuman fingerprint` in a code span", () => one("Print it with `bithuman fingerprint` first.\n"), 1],
+    ["FIRES: the other real defect — `bithuman demo` at a shell prompt", () => one("```sh\n$ bithuman demo\n```\n"), 1],
+    ["FIRES: an invented name at the start of a line", () => one("```sh\nbithuman setup --all\n```\n"), 1],
+    ["FIRES: an invented name inside <Code>", () => one("<Code>bithuman activate</Code>\n"), 1],
+    ["silent: a real subcommand", () => one("Run `bithuman run` to start.\n"), 0],
+    ["silent: a real ALIAS", () => one("Run `bithuman chat` to start.\n"), 0],
+    ["silent: clap's own `help`", () => one("Try `bithuman help`.\n"), 0],
+    ["silent: a nested subcommand", () => one("```sh\nbithuman engine list\n```\n"), 0],
+    ["silent: a python import, not a command", () => one("```py\nfrom bithuman import AsyncBithuman\n```\n"), 0],
+    ["silent: a pip coordinate, not a command", () => one("```sh\npip install livekit-plugins-bithuman pillow\n```\n"), 0],
+    ["silent: a hyphenated repo name", () => one("Computed homebrew-bithuman at 2.5.1\n"), 0],
+    ["silent: `bithuman` as a noun in prose", () => one("Every bithuman subcommand is listed here.\n"), 0],
+    ["silent: a URL vanity path", () => one("Join discord.gg/x (not the /bithuman vanity)\n"), 0],
+    ["silent: a long flag is not a name", () => one("Run `bithuman --version` to check.\n"), 0],
+    ["silent: a denial row permits the exact (page, name) pair", () => one("There is no `bithuman fingerprint` command.\n", [["p.md", "fingerprint"]]), 0],
+    ["FIRES: a denial row whose page no longer names it is STALE", () => one("The page was rewritten.\n", [["p.md", "fingerprint"]]), 1],
+  ];
+  for (const [name, fn, want] of nameArms) {
+    const n = fn();
+    const ok = want === 0 ? n === 0 : n >= 1;
+    if (!ok) bad++;
+    console.log(`  ${ok ? "OK  " : "FAIL"}  ${name.padEnd(56)} faults=${n}`);
+  }
+
+  // An empty corpus must REFUSE, never pass silently.
+  let refused = false;
+  try { gradeNames([], allowed, () => ""); } catch (e) { refused = e instanceof CannotCheck; }
+  if (!refused) bad++;
+  console.log(`  ${refused ? "OK  " : "FAIL"}  ${"an empty corpus refuses rather than passing".padEnd(56)} ${refused ? "CannotCheck" : "PASSED VACUOUSLY"}`);
+
+  // The real corpus must be non-empty and must include the CLI pages, or every
+  // arm above describes fixtures only.
+  const real = corpus();
+  const hasCli = real.includes(PAGES.text) && real.includes(PAGES.json);
+  if (real.length === 0 || !hasCli) bad++;
+  console.log(`  ${real.length > 0 && hasCli ? "OK  " : "FAIL"}  ${"the real corpus is populated and holds the CLI pages".padEnd(56)} files=${real.length}`);
+
+  // The committed surface must parse and carry names — it is the authority a
+  // second repository reads.
+  let surfaceNames = 0;
+  try { surfaceNames = JSON.parse(readFileSync(join(ROOT, SURFACE_REL), "utf8")).surface.names.length; } catch { /* absent */ }
+  if (surfaceNames === 0) bad++;
+  console.log(`  ${surfaceNames > 0 ? "OK  " : "FAIL"}  ${(SURFACE_REL + " parses and carries names").padEnd(56)} names=${surfaceNames}`);
+
   console.log(
     bad === 0
-      ? "check-cli-sample-output --selftest: OK — 4 defect arms fire, 2 good arms stay silent, both real pages carry a block."
+      ? "check-cli-sample-output --selftest: OK — version arms and name arms all behave; the matcher fires on the two names the site really taught and stays silent on the prose it must not touch."
       : `check-cli-sample-output --selftest: ${bad} arm(s) wrong`,
   );
   return bad === 0 ? 0 : 1;
@@ -219,6 +479,43 @@ function selftest() {
 /* -------------------------------------------------------------------- main */
 
 if (process.argv.includes("--selftest")) process.exit(selftest());
+
+/* ── --from-surface: the name half alone, with no network ──────────────────
+   The surface file is committed, so grading pages against it needs no
+   download. That is what lets this run on every pull request beside the other
+   cheap guards, while the 171 MB download stays on the daily schedule.
+   A missing or unparseable surface is exit 2: the authority was unreachable,
+   and a check that cannot reach its authority has not passed. */
+if (process.argv.includes("--from-surface")) {
+  try {
+    const raw = readFileSync(join(ROOT, SURFACE_REL), "utf8");
+    const doc = JSON.parse(raw);
+    const names = doc?.surface?.names;
+    if (!Array.isArray(names) || names.length === 0) {
+      throw new CannotCheck(`${SURFACE_REL} carries no names — an empty allowlist would permit nothing and prove nothing`);
+    }
+    const files = corpus();
+    const faults = gradeNames(files, new Set(names), (rel) => readFileSync(join(ROOT, rel), "utf8"));
+    console.log(`allowlist: ${names.length} name(s) from ${doc.artifact?.tag || "?"} · corpus: ${files.length} file(s)`);
+    if (faults.length) {
+      console.log(`\n${faults.length} page(s) name a command the published CLI does not have:\n`);
+      for (const f of faults) {
+        console.log(`::error file=${f.rel},line=${f.line}::${f.msg}`);
+        console.log(`  ${f.rel}:${f.line}\n      ${f.msg}\n`);
+      }
+      process.exit(1);
+    }
+    console.log("check-cli-sample-output --from-surface: OK — every `bithuman <name>` on a page is a name the published binary answers to.");
+    process.exit(0);
+  } catch (e) {
+    if (e instanceof CannotCheck || e.code === "ENOENT" || e instanceof SyntaxError) {
+      console.log(`::error::CANNOT CHECK — ${e.message}`);
+      console.log("check-cli-sample-output --from-surface: COULD NOT GRADE. This is exit 2 (infrastructure), not a pass.");
+      process.exit(2);
+    }
+    throw e;
+  }
+}
 
 let binary;
 const obsIdx = process.argv.indexOf("--observed");
@@ -239,6 +536,30 @@ try {
   throw e;
 }
 
+/* ── the surface file, written from the download we already did ─────────── */
+if (binary.schema) {
+  const doc = surfaceDoc({ version: binary.cli, digest: binary.digest, schema: binary.schema });
+  if (process.argv.includes("--emit-surface")) {
+    writeFileSync(join(ROOT, SURFACE_REL), JSON.stringify(doc, null, 2) + "\n");
+    console.log(`wrote ${SURFACE_REL} — ${doc.surface.names.length} typeable name(s) from ${doc.artifact.tag}`);
+    process.exit(0);
+  }
+  // Not emitting: the COMMITTED file must already say what the binary says.
+  // `resolved_on` and `digest` move with every re-run, so only the NAMES are
+  // graded — the surface is what this file exists to state.
+  let committed = null;
+  try { committed = JSON.parse(readFileSync(join(ROOT, SURFACE_REL), "utf8")); } catch { /* absent */ }
+  const have = JSON.stringify(committed?.surface?.names || []);
+  const want = JSON.stringify(doc.surface.names);
+  if (have !== want) {
+    console.log(`::error file=${SURFACE_REL},line=1::${SURFACE_REL} disagrees with the published binary. It lists ${JSON.parse(have).length} name(s); cli-v${binary.cli} has ${doc.surface.names.length}. Regenerate with \`node scripts/check-cli-sample-output.mjs --emit-surface\`.`);
+    console.log(`  committed: ${have}`);
+    console.log(`  binary   : ${want}`);
+    process.exit(1);
+  }
+  console.log(`${SURFACE_REL} matches cli-v${binary.cli}: ${doc.surface.names.length} typeable name(s)`);
+}
+
 console.log(`the published binary prints cli ${binary.cli}, libessence ${binary.libessence}, abi ${binary.abi}`);
 
 const faults = [];
@@ -247,6 +568,17 @@ for (const [kind, rel] of Object.entries(PAGES)) {
   const sample = kind === "text" ? sampleFromText(text) : sampleFromJson(text);
   const needle = kind === "text" ? "libessence" : '{"abi":';
   for (const f of compare(rel, sample, binary)) faults.push({ rel, line: lineOf(text, needle), msg: f });
+}
+
+// The name half, graded against the schema this same binary just printed —
+// not against the committed file, so a green here is a statement about the
+// BINARY and not about a file we also wrote.
+if (binary.schema) {
+  const files = corpus();
+  console.log(`grading ${files.length} page(s) for command names the binary does not have`);
+  for (const f of gradeNames(files, new Set(typeableFromSchema(binary.schema).names), (rel) => readFileSync(join(ROOT, rel), "utf8"))) {
+    faults.push(f);
+  }
 }
 
 if (faults.length) {

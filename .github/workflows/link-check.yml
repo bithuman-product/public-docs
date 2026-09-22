@@ -225,6 +225,17 @@ jobs:
       # No customer-facing page may name a mechanism. The firing control runs
       # in the same invocation, so a pass here is a pass by a proven instrument
       # rather than by a pattern nobody checked.
+      # ★EVERY `bithuman <name>` A PAGE TEACHES IS A NAME THE BINARY ANSWERS TO.
+      # Measured 2026-09-22: the site taught `bithuman demo` and `bithuman
+      # fingerprint`; neither has ever been a subcommand of anything, and both
+      # were served for weeks because nothing knew what the CLI is CALLED.
+      # The allowlist is the published binary's own `__schema`, captured in
+      # scripts/cli-surface.json by the daily cli-sample-output run — so this
+      # runs on every pull request with no download, and a missing or empty
+      # authority is exit 2 (CANNOT VERIFY), never a free green.
+      - name: Every CLI command a page names exists in the published binary
+        if: always()
+        run: node scripts/check-cli-sample-output.mjs --from-surface
       - name: Check internal vocabulary
         if: always()
         run: node scripts/check-internal-vocabulary.mjs
