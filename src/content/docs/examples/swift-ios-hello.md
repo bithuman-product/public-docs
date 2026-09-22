@@ -33,7 +33,7 @@ pole — everything else takes minutes.
    terminates the app mid-conversation, about half a minute into a live turn,
    when memory passes the ~3 GB default ceiling. The provisioning profile
    updates itself once they are granted. Full detail:
-   [Apple entitlements](/sdk/ios#apple-entitlements).
+   [Apple entitlements](/sdk/ios#apple-entitlements--bithumankit-only).
 
    ★ These are **entitlements**, so they are embedded in the code signature from
    the file `CODE_SIGN_ENTITLEMENTS` names. They are not `Info.plist` keys and
@@ -62,7 +62,7 @@ pole — everything else takes minutes.
 |---|---|---|
 | a rendered avatar frame on the phone you already own | [Expression 2 on the iPhone you have](/examples/swift-ios-expression2) | any Apple Silicon iPhone or iPad |
 | the whole voice conversation, avatar included | this page (`bitHumanKit`) | iPhone 16 Pro / iPad Pro M4, iOS 26, two entitlements |
-| the 1080p photoreal renderer in your own app | the `Essence2` product — [Swift SDK](/sdk/ios#can-i-ship-essence-2-on-iphone) | any Apple Silicon iPhone, M-series iPad or M3 Mac, OS 26 |
+| the 1080p photoreal renderer in your own app | the `Essence2` product — [Swift SDK](/sdk/ios#requirements) | any Apple Silicon iPhone, M-series iPad or M3 Mac, OS 26 |
 
 This page uses the **`bitHumanKit`** umbrella product (`import bitHumanKit`):
 an on-device avatar engine, an `.imx` avatar runtime and the renderer views in
@@ -74,7 +74,7 @@ transitive SwiftPM dependencies. It is a **preview** rail.
 build at all ([where each model runs](/concepts/where-models-run)). The two
 engine products in the same package — `Expression2` and `Essence2` — are
 separate products with their own APIs, and this example uses neither: see
-[Swift SDK](/sdk/ios#choose-an-engine).
+[Swift SDK](/sdk/ios#install).
 
 ## Run it
 
@@ -113,7 +113,7 @@ https://github.com/bithuman-product/homebrew-bithuman.git
 choose **Up to Next Major Version** from **2.11.0** — the same floor
 `swift/ios-avatar/Package.swift` declares — and attach the **`bitHumanKit`**
 product, only that one. Verified 2026-09-21 by listing the package's tags:
-`from: "2.11.0"` resolves **v2.13.8**, the newest 2.x tag, and `bitHumanKit`'s
+`from: "2.14.0"` resolves **v2.14.0**, the newest 2.x tag, and `bitHumanKit`'s
 own binary has ridden on tag `v2.4.0` unchanged since v2.11.0, so the floor and
 the ceiling give you the same framework.
 
@@ -278,11 +278,11 @@ Full source:
 | hundreds of `ld` lines: *"object file … was built for newer 'iOS' version (26.0) than being linked"* | the package manifest declares `.iOS(.v16)`; the engine objects are iOS 26 | expected, not a fault — build at iOS 26.0 |
 | a device link fails with **116 duplicate symbols** while the Simulator is green | `Expression2` and `Essence2` are both attached to one target | attach one; `bitHumanKit` needs neither |
 | the "unsupported device" screen at launch | the device is below the floor — the refusal names the model it detected | use an iPhone 16 Pro / iPad Pro M4+, or ship [`Expression2`](/examples/swift-ios-expression2) on that device |
-| the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling: the entitlements are not granted yet, or not in the profile | check Apple's reply, then rebuild so the profile picks them up ([entitlements](/sdk/ios#apple-entitlements)) |
+| the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling: the entitlements are not granted yet, or not in the profile | check Apple's reply, then rebuild so the profile picks them up ([entitlements](/sdk/ios#apple-entitlements--bithumankit-only)) |
 | `error: the package manifest at '/Package.swift' cannot be accessed` | a clone from before 2026-09-09, pinning a 0.x tag | `git pull` |
 | the avatar never starts and the error mentions a key | `BITHUMAN_API_KEY` is not in the scheme's environment | add it under *Edit Scheme → Run → Arguments* |
 | the microphone never opens | missing privacy strings; the OS caches the denial | keep `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` in `Info.plist` |
-| a Simulator build succeeds and proves nothing | the hardware gate reads `hw.machine`, which in a Simulator is not your phone's | test on the device ([why](/sdk/ios#the-simulator-is-not-a-test-of-the-device)) |
+| a Simulator build succeeds and proves nothing | the hardware gate reads `hw.machine`, which in a Simulator is not your phone's | test on the device ([why](/sdk/ios#build-on-a-device-not-the-simulator)) |
 
 ## Next steps
 

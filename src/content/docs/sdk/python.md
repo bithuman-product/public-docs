@@ -130,67 +130,8 @@ Step 2 is not optional. Left unedited, the `…` placeholder is a key the
 service rejects, so the run stops at `bithuman.open` with *"that key was not
 accepted (401)"*; with no key set at all it gets one step further and raises
 `NotAuthorised` at the **first frame** — see
-[Authentication](#authentication-and-configuration) for both refusals and their
+[Authentication](#authentication) for both refusals and their
 exact text.
-
-## Authentication and configuration
-
-Set `BITHUMAN_API_SECRET` in the shell you run Python from — a key is free at
-[your API keys](https://www.bithuman.ai/developer/api-keys). `BITHUMAN_CACHE_DIR`
-moves the download cache off `~/.cache/bithuman`.
-
-The two credential failures happen at different moments, which is how you tell
-them apart (both measured 2026-09-21 on `bithuman` 2.11.6):
-
-| The key | `bithuman.open()` | The first `render()` frame |
-|---|---|---|
-| not set at all | succeeds | raises `NotAuthorised`: *"no credential was supplied, so this render cannot be attributed to an account. Set BITHUMAN_API_SECRET…"* |
-| set but rejected | raises `NotAuthorised`: *"that key was not accepted (401) — the API secret was rejected — revoked, or from another environment."* | never reached |
-
-So a process with no key still opens the file and does real work before it
-refuses: metering bites at the first frame, not at load.
-
-## Get a model
-
-A showcase avatar is a plain anonymous download — no account, no key. **Check
-the size before you start it**: an [Expression 2](/concepts/expression-2)
-avatar is 188–190 MB, an [Essence 2](/concepts/essence-2) avatar 118–148 MB
-(the sizes `bithuman list` prints; the [CLI page](/sdk/cli#the-showcase-catalogue)
-carries the catalogue).
-
-```bash
-# Expression 2 — Wise Pup, 189 MB
-curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
-
-# Essence 2 — Executive Coach for Clear Decisions, 118 MB
-curl -fL -o executive-coach.imx "https://api.bithuman.ai/v1/agent/A80HVD8577/model/download?model=essence-2"
-
-# 15 s of 24 kHz mono speech, 720 KB
-curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
-```
-
-The same URL serves your own agent — add `-H "api-secret: $BITHUMAN_API_SECRET"`
-and your agent code — so there is one route, not two.
-
-To pick a model without installing anything, read the catalogue the CLI reads.
-It is a public endpoint, needs no credential, and every row carries the exact
-`url` to download:
-
-```bash
-curl -fsS https://api.bithuman.ai/v1/models/showcase \
-  | jq -r '.models[] | "\(.slug)\t\(.agent_code)\t\(.model)\t\(.size)"'
-
-# …or resolve one slug straight to a file
-URL=$(curl -fsS https://api.bithuman.ai/v1/models/showcase | jq -r '.models[] | select(.slug=="wise-pup") | .url')
-curl -fL -o wise-pup.imx "$URL"
-```
-
-An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as an `.imx` or
-an `.avatar` (the same container under two names), and `bithuman.open` takes any
-of them — as it does a first-generation `essence-1` `.imx`.
-`python -m bithuman <CODE> <audio>` fetches by code into `~/.cache/bithuman/downloads`
-and, from 2.11.6, fetches the file again when the published one changed since it was cached
-(a length comparison; when it cannot be asked, the cached file is used).
 
 ## Minimal code
 
@@ -243,7 +184,7 @@ the offline route — on the base wheel, no extra. It needs `ffmpeg` on `PATH`
 and a credential:
 
 ```python
-# needs executive-coach.imx and demo_sample.wav from "Get a model" above
+# needs executive-coach.imx and demo_sample.wav — see "Get a model" below
 from bithuman.offline import render_offline
 
 render_offline("executive-coach.imx", "demo_sample.wav", out_mp4="rendered.mp4")
@@ -260,6 +201,65 @@ ffprobe -v error -count_frames -select_streams v:0 \
   -show_entries stream=nb_read_frames -of csv=p=0 rendered.mp4
 # a real render prints a frame count; the refused stub prints nothing
 ```
+
+## Get a model
+
+A showcase avatar is a plain anonymous download — no account, no key. **Check
+the size before you start it**: an [Expression 2](/concepts/expression-2)
+avatar is 188–190 MB, an [Essence 2](/concepts/essence-2) avatar 118–148 MB
+(the sizes `bithuman list` prints; the [CLI page](/sdk/cli#the-showcase-catalogue)
+carries the catalogue).
+
+```bash
+# Expression 2 — Wise Pup, 189 MB
+curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+
+# Essence 2 — Executive Coach for Clear Decisions, 118 MB
+curl -fL -o executive-coach.imx "https://api.bithuman.ai/v1/agent/A80HVD8577/model/download?model=essence-2"
+
+# 15 s of 24 kHz mono speech, 720 KB
+curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+```
+
+The same URL serves your own agent — add `-H "api-secret: $BITHUMAN_API_SECRET"`
+and your agent code — so there is one route, not two.
+
+To pick a model without installing anything, read the catalogue the CLI reads.
+It is a public endpoint, needs no credential, and every row carries the exact
+`url` to download:
+
+```bash
+curl -fsS https://api.bithuman.ai/v1/models/showcase \
+  | jq -r '.models[] | "\(.slug)\t\(.agent_code)\t\(.model)\t\(.size)"'
+
+# …or resolve one slug straight to a file
+URL=$(curl -fsS https://api.bithuman.ai/v1/models/showcase | jq -r '.models[] | select(.slug=="wise-pup") | .url')
+curl -fL -o wise-pup.imx "$URL"
+```
+
+An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as an `.imx` or
+an `.avatar` (the same container under two names), and `bithuman.open` takes any
+of them — as it does a first-generation `essence-1` `.imx`.
+`python -m bithuman <CODE> <audio>` fetches by code into `~/.cache/bithuman/downloads`
+and, from 2.11.6, fetches the file again when the published one changed since it was cached
+(a length comparison; when it cannot be asked, the cached file is used).
+
+## Authentication
+
+Set `BITHUMAN_API_SECRET` in the shell you run Python from — a key is free at
+[your API keys](https://www.bithuman.ai/developer/api-keys). `BITHUMAN_CACHE_DIR`
+moves the download cache off `~/.cache/bithuman`.
+
+The two credential failures happen at different moments, which is how you tell
+them apart (both measured 2026-09-21 on `bithuman` 2.11.6):
+
+| The key | `bithuman.open()` | The first `render()` frame |
+|---|---|---|
+| not set at all | succeeds | raises `NotAuthorised`: *"no credential was supplied, so this render cannot be attributed to an account. Set BITHUMAN_API_SECRET…"* |
+| set but rejected | raises `NotAuthorised`: *"that key was not accepted (401) — the API secret was rejected — revoked, or from another environment."* | never reached |
+
+So a process with no key still opens the file and does real work before it
+refuses: metering bites at the first frame, not at load.
 
 ## Run
 

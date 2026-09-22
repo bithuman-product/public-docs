@@ -28,7 +28,7 @@ binary.
 |---|---|
 | **Renders** | the identity's own canvas at 25 fps — 1080x1920 for the default code — entirely on the device, [measured rates](/sdk/performance) |
 | **Driven by** | a 16 kHz mono WAV you make on your Mac in one command |
-| **Needs** | a physical Apple-Silicon iPhone or iPad, **iOS 26**, and `Essence2` resolved at **v2.13.8 or newer** — see [the floor](#2-the-xcode-project) |
+| **Needs** | a physical Apple-Silicon iPhone or iPad, **iOS 26**, and `Essence2` resolved at **v2.14.0 or newer** — see [the floor](#2-the-xcode-project) |
 | **Does not need** | an agent of your own, credits to create one, or the device floor and Apple entitlements the `bitHumanKit` umbrella asks for — nothing on this path requests either. **And not an API key to reach a first frame:** the engine does not refuse without one, it renders and says so — [what the key is actually for](#the-key-is-not-a-gate-it-is-an-attribution) |
 | **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For a whole voice agent see [Hello, avatar](/examples/swift-ios-hello) |
 | **Costs** | the identity download is anonymous and free. The render is a self-hosted session and is metered — [pricing](/guides/pricing) is the authority |
@@ -70,11 +70,11 @@ the `Essence2` package product nor the app below asks for an entitlement, and
 the app builds and signs without one. What an entitlement buys is headroom
 above the roughly 3 GB an unentitled iOS app may hold, so if your own app grows
 past this one and is killed with no crash log, that ceiling is the first thing
-to check — [the iOS SDK page](/sdk/ios#apple-entitlements) covers requesting
+to check — [the iOS SDK page](/sdk/ios#apple-entitlements--bithumankit-only) covers requesting
 them.
 
 ★ **If you read the package's own `Package.swift`, you will find a comment
-saying the opposite — it is older than this page.** The manifest at v2.13.8
+saying the opposite — it is older than this page.** The manifest at v2.14.0
 still carries a note dated 2026-09-08 reporting that on an iPhone 15 the
 Essence 2 warm-up refused with *"unsupported hardware — iPhone15,4 detected"*,
 and concluding that Essence 2 needs an iPhone 16 Pro. That was measured on
@@ -283,11 +283,12 @@ Then **File → Add Package Dependencies…**, paste
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-choose **Up to Next Major Version** from **2.13.8**, and attach the **`Essence2`**
-product — *not* `bitHumanKit`, *not* `Expression2`, and never two of them.
+choose **Up to Next Major Version** from **2.14.0**, and attach the **`Essence2`**
+product. (From 2.14.0 you may also attach `Expression2` alongside it; every
+earlier tag fails an app's final link with 112 duplicate symbols.)
 
-★ **2.13.8, not 2.11.0, and the three digits are the difference between a
-talking face and a face that will not speak.** The package tag does not
+★ **2.14.0, and the digits are the difference between a talking face and a
+face that will not speak.** The package tag does not
 carry the engine; it *pins* an engine release, and the pin has moved. Read out
 of each tag's own `Package.swift` on **2026-09-21**:
 
@@ -296,7 +297,8 @@ of each tag's own `Package.swift` on **2026-09-21**:
 | v2.11.0, v2.11.2 | `essence2-v1.4.0` |
 | v2.12.1 | `essence2-v1.5.1` |
 | v2.13.0 | `essence2-v1.6.0` |
-| **v2.13.8** | **`essence2-v1.9.0`** |
+| v2.13.8 | `essence2-v1.9.0` |
+| **v2.14.0** | **`essence2-v1.10.0`** |
 
 Everything this page promises — no iPhone model floor, the measured iPhone rate
 on the [performance page](/sdk/performance), the `be_essence2.h` surface below —
@@ -304,10 +306,10 @@ is **essence2-v1.9.0**. On an engine older than that, an iPhone below a 16 Pro
 gets `be_essence2_create` returning 0 and then a warm-up that refuses by name
 (*"unsupported hardware — iPhone15,4 detected"*) with the engine "idle-only":
 the identity's motion plays and it never speaks, which is the one failure on
-this page that looks like nothing at all. `from: "2.11.0"` would be
+this page that looks like nothing at all. `from: "2.14.0"` would be
 *satisfied* by v2.11.0, and SwiftPM keeps whatever your `Package.resolved`
 already holds, so a floor of 2.11.0 is a floor on the wrong thing. Ask for
-2.13.8.
+2.14.0.
 
 Check what you actually resolved, rather than what you asked for:
 
@@ -326,7 +328,7 @@ The second line must print `essence2-v1.9.0` or newer. If it does not,
 Attaching `Essence2` brings both binary targets it needs — the engine leaves
 every ONNX Runtime symbol undefined and they resolve at your app's final link,
 so a product carrying only the engine resolves cleanly and then dies at link.
-Verified 2026-09-21 in the v2.13.8 manifest: the `Essence2` product lists two
+Verified 2026-09-22 in the v2.14.0 manifest: the `Essence2` product lists two
 binary targets — the engine archive and the ONNX Runtime build its audio head
 needs at link.
 
@@ -374,9 +376,9 @@ options:
 packages:
   bithuman:
     url: https://github.com/bithuman-product/homebrew-bithuman.git
-    # 2.13.8, not 2.11.0: v2.11.x pins essence2-v1.4.0, whose warm-up refuses
+    # 2.14.0, not 2.11.0: v2.11.x pins essence2-v1.4.0, whose warm-up refuses
     # any iPhone below a 16 Pro and leaves the engine idle-only. See step 2.
-    from: 2.13.8
+    from: 2.14.0
 targets:
   IOSEssence2:
     type: application
@@ -1030,14 +1032,14 @@ Each row below quotes the shipped engine's own wording where it has one.
 | `be_essence2_create returned -2` naming *"is neither a bundle directory nor a container the door serves"* | the file you passed is not what the download door hands back | pass the `.imx` exactly as downloaded — do not unzip it |
 | a refusal naming *"is a meta.json (.elevatedir) bundle. That reader was removed on 2026-09-15"* | an identity exported before that date | re-download it from the door, which serves the current format |
 | *"the shared audio front end is missing"*, or the engine starts and never becomes ready | the engine resources are not at the app bundle's resource root | add `EngineResources` as **groups** (yellow), not as a folder reference |
-| **the identity's motion plays, on a phone below an iPhone 16 Pro, and it never speaks** | **check this first**: you resolved an Essence 2 engine older than `essence2-v1.9.0`, whose warm-up refuses the device by name and leaves the engine idle-only. Nothing is thrown | raise the package floor to **2.13.8** and confirm with the two `grep`s in [step 2](#2-the-xcode-project) |
+| **the identity's motion plays, on a phone below an iPhone 16 Pro, and it never speaks** | **check this first**: you resolved an Essence 2 engine older than `essence2-v1.9.0`, whose warm-up refuses the device by name and leaves the engine idle-only. Nothing is thrown | raise the package floor to **2.14.0** and confirm with the two `grep`s in [step 2](#2-the-xcode-project) |
 | the identity's motion plays and it never speaks, on a phone at or above that floor | the engine's own runtime failed — this reaches you as an absence, not an error | read `be_essence2_render_status`; the app above logs it after every utterance |
 | every pull returns `-3` and the app stops | metering refused the session: a credential the service **rejects** renders for a 300 s grace, then stops. No credential at all never does this — it renders and prints `★ UNMETERED RENDER` | check the key in the Run scheme; [what the key is for](#the-key-is-not-a-gate-it-is-an-attribution) |
 | `be_essence2_create returned -3` at launch, before any frame | `BITHUMAN_METER_ENFORCE=1` is in the scheme's environment: it turns the startup cases into a refusal with no grace | unset it, or supply a key the service accepts |
 | `be_essence2_get_info reported a 0-pixel canvas` | the guard in `load()` firing — `get_info` answered before the engine had produced a frame | re-run; if it repeats, report the agent code. Without the guard this is a face that never moves and no message at all |
 | `ld` warns *"built for newer 'iOS' version (26.0) than being linked"*, once per object | the package manifest's `.iOS(.v16)` floor meeting objects built at iOS 26 | expected — not a fault. The error version of this is a link failure, fixed by Minimum Deployments **iOS 26.0** |
 | the app builds for the Simulator and then crashes there | expected — this is on-device Apple-Silicon inference | run on a physical device |
-| the app disappears mid-render with no crash log | iOS jetsammed it at the roughly 3 GB an unentitled app may hold | this app fits; if yours has grown past it, request the two memory entitlements ([iOS SDK](/sdk/ios#apple-entitlements)) |
+| the app disappears mid-render with no crash log | iOS jetsammed it at the roughly 3 GB an unentitled app may hold | this app fits; if yours has grown past it, request the two memory entitlements ([iOS SDK](/sdk/ios#apple-entitlements--bithumankit-only)) |
 | the first launch takes minutes, and does again later | the engine unpacks `agent.imx` under `NSTemporaryDirectory()`, which iOS may reclaim | expected; unpack to a directory you control and pass that instead — see the note after the code |
 
 ## Next steps

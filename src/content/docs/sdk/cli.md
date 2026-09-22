@@ -87,37 +87,27 @@ Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
 Intel Mac or a Linux ARM box the installer names the platform and stops without
 downloading anything ([exact output](/sdk/cli/reference#platforms-with-no-binary)).
 
-## What needs an account, and what does not
+## Minimal code
 
-| Command | Account | What it costs |
-|---|---|---|
-| `bithuman list` | no | nothing |
-| `bithuman pull <slug>` | no | nothing — a showcase download is anonymous |
-| `bithuman open <file>` | no | nothing |
-| `bithuman pull <YOUR_AGENT_CODE>` | **yes** | nothing; the download itself is free |
-| `bithuman render` | **yes** | metered — [pricing](/guides/pricing) |
-| `bithuman run` | **yes** | metered — [pricing](/guides/pricing) |
-
-Sign in **before** you render, not after: with no credential `render` and `run`
-each stop before the first frame with exit 77 and write nothing, however long
-the download took.
-
-> The footer `bithuman list` prints — *"every model above is pre-baked and
-> free — no account needed"* — is about the `pull` line above it. The
-> `bithuman render` line in that same footer does need a sign-in.
-
-## Authentication and configuration
+Two operations — there is no third. Both need a credential
+([Authentication](#authentication)); the `pull` inside them does not:
 
 ```bash
-bithuman login            # opens a browser, stores a per-device key
-bithuman login --device   # SSH or headless: prints a code to enter elsewhere
-bithuman account          # exit 0 signed in, 77 not — the check to script
+# 1. live avatar in your browser — prints http://127.0.0.1:8088/<CODE>
+bithuman login
+bithuman run wise-pup
 ```
 
-In a script or in CI, set `BITHUMAN_API_SECRET` instead — a key is free at
-[your API keys](https://www.bithuman.ai/developer/api-keys). Which one wins when
-both are present, and every other variable the binary reads, is on the
-[CLI reference](/sdk/cli/reference#credential-resolution-order).
+```bash
+# 2. offline: audio in, MP4 out
+bithuman login
+curl -fsSLo speech.wav "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
+```
+
+`speech.wav` there is 24 kHz mono, 15.0 seconds — `render` takes any format
+`ffmpeg` reads for the second-generation engines. `bithuman open <file>` prints
+what an avatar is, with no account and no charge, before you render it.
 
 ## Get a model
 
@@ -131,7 +121,7 @@ MODEL=$(bithuman pull wise-pup)   # 189 MB, anonymous — prints the cached path
 echo "$MODEL"                     # ~/.cache/bithuman/showcase/wise-pup.imx
 ```
 
-Your own agents come by code and need the sign-in above:
+Your own agents come by code and need a credential ([Authentication](#authentication)):
 `bithuman pull <YOUR_AGENT_CODE> --model essence-2` prints
 `~/.cache/bithuman/agents/<YOUR_AGENT_CODE>/<YOUR_AGENT_CODE>.imx` (`--model` picks a family
 when the agent has more than one).
@@ -174,27 +164,37 @@ to download.
 > URL prints) — and the bare `bithuman run` is `bithuman run wise-pup`. A path
 > works as well: `bithuman run ~/.cache/bithuman/showcase/wise-pup.imx`.
 
-## Minimal code
-
-Two operations — there is no third. Both need the sign-in from
-[above](#authentication-and-configuration); the `pull` inside them does not:
+## Authentication
 
 ```bash
-# 1. live avatar in your browser — prints http://127.0.0.1:8088/<CODE>
-bithuman login
-bithuman run wise-pup
+bithuman login            # opens a browser, stores a per-device key
+bithuman login --device   # SSH or headless: prints a code to enter elsewhere
+bithuman account          # exit 0 signed in, 77 not — the check to script
 ```
 
-```bash
-# 2. offline: audio in, MP4 out
-bithuman login
-curl -fsSLo speech.wav "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
-bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
-```
+In a script or in CI, set `BITHUMAN_API_SECRET` instead — a key is free at
+[your API keys](https://www.bithuman.ai/developer/api-keys). Which one wins when
+both are present, and every other variable the binary reads, is on the
+[CLI reference](/sdk/cli/reference#credential-resolution-order).
 
-`speech.wav` there is 24 kHz mono, 15.0 seconds — `render` takes any format
-`ffmpeg` reads for the second-generation engines. `bithuman open <file>` prints
-what an avatar is, with no account and no charge, before you render it.
+## What needs an account, and what does not
+
+| Command | Account | What it costs |
+|---|---|---|
+| `bithuman list` | no | nothing |
+| `bithuman pull <slug>` | no | nothing — a showcase download is anonymous |
+| `bithuman open <file>` | no | nothing |
+| `bithuman pull <YOUR_AGENT_CODE>` | **yes** | nothing; the download itself is free |
+| `bithuman render` | **yes** | metered — [pricing](/guides/pricing) |
+| `bithuman run` | **yes** | metered — [pricing](/guides/pricing) |
+
+Sign in **before** you render, not after: with no credential `render` and `run`
+each stop before the first frame with exit 77 and write nothing, however long
+the download took.
+
+> The footer `bithuman list` prints — *"every model above is pre-baked and
+> free — no account needed"* — is about the `pull` line above it. The
+> `bithuman render` line in that same footer does need a sign-in.
 
 ## Run
 

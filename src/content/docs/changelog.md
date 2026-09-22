@@ -10,6 +10,25 @@ order: 1
 
 ## September 2026
 
+### Expression 2 on Android brings its own accelerator — `ai.bithuman:expression2-android:0.4.8` (2026-09-22)
+
+Through `0.4.7` the AAR named the Qualcomm accelerator runtime in the docs and
+nowhere else: its published POM declared only `kotlin-stdlib`, so an app that
+took the coordinate and nothing else got no delegate on disk and the engine fell
+back to the CPU. It still rendered, and it still said nothing — the only symptom
+was a frame rate several times lower than the page quoted.
+
+`0.4.8` declares `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and
+`com.qualcomm.qti:qnn-runtime:2.49.0` itself, at runtime scope, so Gradle brings
+them in. The dependency block is now one line, and the two hand-typed
+`com.qualcomm.qti` lines older instructions carry are no longer needed.
+
+Know what it costs, because it is most of the APK: those two artifacts take a
+build from **3,508,289 B to 73,881,473 B**, and `useLegacyPackaging = true`
+extracts **22 libraries totalling 201,207,300 B** onto the device. If that is
+too much, `exclude(group = "com.qualcomm.qti")` and the engine renders on the
+CPU — [Android SDK](/sdk/android#install).
+
 ### One app can take both Expression 2 and Essence 2 — Swift package `2.14.0` (2026-09-22)
 
 Every package tag through `v2.13.8` made `Expression2` + `Essence2` in one app a

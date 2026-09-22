@@ -10,21 +10,6 @@ order: 60
 
 Nothing. The hosted route renders in any modern browser.
 
-## Authentication and configuration
-
-Nothing to authenticate, and nothing to configure: the browser holds no key.
-A hosted session is metered per active minute against the **agent's owner**,
-at the rate on [pricing](/guides/pricing), and the free tier covers a first
-conversation. The one thing you do configure lives on **your** host, not ours —
-serving your page cross-origin isolated, or in-tab WebAssembly drops to a
-single thread. See Troubleshooting.
-
-## Get a model
-
-Every showcase agent is public. `A74NWD9723` is one; browse the rest on the
-[showcase](/showcase) and use any code you see there. Your own agent's code
-comes from [Agents](/api/agents).
-
 ## Minimal code
 
 ```html
@@ -40,6 +25,21 @@ not. Swap in your own agent code and it works the same way. The
 [browser rendering](/guides/browser-rendering); embedding options are on
 [deploy an embed](/guides/deploy-embed). An [Essence 1](/concepts/essence-1)
 agent renders in the tab with `?render=local` instead.
+
+## Get a model
+
+Every showcase agent is public. `A74NWD9723` is one; browse the rest on the
+[showcase](/showcase) and use any code you see there. Your own agent's code
+comes from [Agents](/api/agents).
+
+## Authentication
+
+Nothing to authenticate, and nothing to configure: the browser holds no key.
+A hosted session is metered per active minute against the **agent's owner**,
+at the rate on [pricing](/guides/pricing), and the free tier covers a first
+conversation. The one thing you do configure lives on **your** host, not ours —
+serving your page cross-origin isolated, or in-tab WebAssembly drops to a
+single thread. See Troubleshooting.
 
 ## Run
 

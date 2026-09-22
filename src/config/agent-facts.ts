@@ -68,11 +68,11 @@ export function agentFacts(site: string): string {
     `warms up, refuses by name and stays idle-only — the face moves, it never speaks, ` +
     `and **nothing is thrown**. Raise the floor, then \`swift package update\`, because ` +
     `\`Package.resolved\` does not move on its own: ` +
-    `[the floor is the number that matters](${site}/sdk/ios#the-floor-is-the-number-that-matters). ` +
+    `[pin the version](${site}/sdk/ios#pin-the-version). ` +
     `On Android, older Maven coordinates still resolve, still compile and render ` +
     `**differently**, with no exception to catch — and across some releases the Kotlin ` +
     `API is byte-identical, so no compiler and no reference page can see it: ` +
-    `[what an older pin changes](${site}/sdk/android#type-these-versions-and-nothing-lower).\n` +
+    `[what an older pin changes](${site}/sdk/android#pin-the-version).\n` +
     `- **On Android the two models differ in the one thing that decides a project: the ` +
     `credential.** \`expression2-android\` reaches a first frame with no account and no ` +
     `key. \`essence2-android\` needs an api-secret in **two** places — the model store's ` +

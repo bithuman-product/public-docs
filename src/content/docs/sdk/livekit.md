@@ -55,7 +55,7 @@ pip install livekit-plugins-bithuman pillow
 > LiveKit. (There is no `bithuman[agent]` extra — the plugin is its own
 > package.)
 
-### Authentication and configuration
+### Authentication
 
 Three credentials, from two places. `BITHUMAN_API_SECRET` is yours, free at
 [your API keys](https://www.bithuman.ai/developer/api-keys); `LIVEKIT_URL`, `LIVEKIT_API_KEY` and
