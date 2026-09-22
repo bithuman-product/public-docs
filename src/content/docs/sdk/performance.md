@@ -42,6 +42,33 @@ what to install today, see the page for your platform.
 
 A cell with no number says what is missing instead.
 
+## How current each row is
+
+Every number above is re-taken on a **30-day clock**. Each cell names the day
+its own run was measured; this table says whether that day is still inside the
+clock, so a figure that has aged out reads as aged out rather than sitting in
+the table looking like the others.
+
+<!-- PERF-CURRENCY -->
+| Row | Measured | Within the 30-day clock |
+|---|---|---|
+| Cloud GPU | 2026-09-20 | yes |
+| Cloud Apple silicon | 2026-09-20 | yes |
+| Cloud CPU | 2026-09-20 | yes |
+| macOS | 2026-09-20 | yes |
+| macOS · Python | 2026-09-20 | yes |
+| Linux | 2026-09-20 | yes |
+| Linux · Python | 2026-09-20 | yes |
+| iOS | 2026-09-20 | yes |
+| Android | 2026-09-19 | yes |
+| Web | Expression 2 2026-09-12 · Essence 2 2026-09-20 | yes |
+<!-- /PERF-CURRENCY -->
+
+This table is generated from the same record as the one above, and a scheduled
+check regrades it against the calendar rather than against the day it was
+written — so a row crosses the clock here on the day it crosses, not on the day
+someone happens to look.
+
 <details>
 <summary>What each number includes, row by row</summary>
 
@@ -74,4 +101,6 @@ first time adds to the total.
 
 Setup for each platform is on its own page — [pick a platform](/sdk).
 
-<small>Measured September 2026.</small>
+<small>Every figure on this page is generated from the measurement record that
+produces it. Nothing here is typed by hand, and the dates beside the numbers are
+the days those runs were taken.</small>
