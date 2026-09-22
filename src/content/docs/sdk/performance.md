@@ -53,7 +53,7 @@ the table looking like the others.
 | Row | Measured | Within the 30-day clock |
 |---|---|---|
 | Cloud GPU | 2026-09-20 | yes |
-| Cloud Apple silicon | 2026-09-20 | yes |
+| Cloud Apple silicon | Expression 2 2026-09-20 · Essence 2 2026-09-22 | yes |
 | Cloud CPU | 2026-09-20 | yes |
 | macOS | 2026-09-20 | yes |
 | macOS · Python | 2026-09-20 | yes |
