@@ -408,6 +408,28 @@ The bundled LiteRT is Apache-2.0; FFmpeg is linked statically into
 `essence2-android` under LGPL §6(a) — the relink materials are on
 [Android FFmpeg / LGPL](/legal/android-ffmpeg-lgpl).
 
+## Examples and source
+
+- **The one app you can clone and run today** —
+  [`app/avatar_chat`](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat),
+  a Flutter app that is the same code on Android, iOS and macOS. **On Android it
+  builds from a clone with no private access at all**: every engine it needs is a
+  public Maven Central coordinate, so `flutter build apk` is the whole story. Its
+  plugin is pinned (`ref: flutter-plugin-v2.6.8`), so a clone builds the same
+  bytes on every machine.
+  > ★ The same app does **not** build for iOS or macOS from a clone — the
+  > plugin's Apple half stages its engines from a private repository. The app's
+  > own README says so in a table rather than letting the build fail at a
+  > dependency you would have to guess at. For Apple, use the Swift package on
+  > [iOS / macOS](/sdk/ios) instead, which resolves from the public tap.
+- **Nothing to clone for a bare Gradle consumer, and nothing is missing.** The two
+  coordinates at the top of this page are the entire integration; there is no
+  `android/` sample project, and the `android/` directory in `bithuman-examples`
+  holds notes only (see the note above — it names coordinates several releases
+  behind this page).
+- [Android API reference](/sdk/android-api) — the Kotlin surface, its options and
+  its error codes
+
 ## See also
 
 - [Downloads](/downloads) — every published version of both artifacts
