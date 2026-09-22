@@ -61,6 +61,10 @@
 //                 — P must be a `.library(name: "P")` in the tap's Package.swift
 //                 AT THE TAG SwiftPM WOULD ACTUALLY RESOLVE for that `from:`,
 //                 which is the highest tag sharing its major version.
+//   R5  SwiftPM   every page that attaches the `Essence2` product must pin the
+//                 tap at a FLOOR whose own tag already carries
+//                 `essence2-v1.9.0` or newer. R2 grades the tag SwiftPM would
+//                 resolve TODAY; this grades the tag a reader can be LEFT ON.
 //   R4  PyPI      every `pip install <req>` a page prints in COPYABLE form —
 //                 the distribution must exist on PyPI, every extra it names in
 //                 `<dist>[a,b]` must be declared by the published wheel, and a
@@ -526,7 +530,67 @@ const liveRegistry = {
     }
     return products;
   },
+
+  // R5 — which essence-2 engine release a given tap tag pins. The manifest
+  // declares it once, as `let essence2Tag = "essence2-vX.Y.Z"`, and every
+  // essence-2 binaryTarget URL is built from it.
+  async tapEssence2TagAt(tag) {
+    const url = `https://raw.githubusercontent.com/${TAP}/${tag}/Package.swift`;
+    let res;
+    try {
+      res = await fetch(url, { redirect: "follow" });
+    } catch (e) {
+      throw new RegistryUnreachable(`${url}: ${e.message}`);
+    }
+    if (!res.ok) throw new RegistryUnreachable(`${url}: HTTP ${res.status}`);
+    const m = /^let\s+essence2Tag\s*=\s*["']([^"']+)["']/m.exec(await res.text());
+    if (!m) {
+      throw new RegistryUnreachable(
+        `${url}: no \`let essence2Tag = "…"\` — the manifest shape changed, so R5 cannot grade`,
+      );
+    }
+    return m[1];
+  },
 };
+
+/* ------------------------------------------------------------------- R5 --
+ * A `from:` FLOOR IS A PROMISE ABOUT THE OLDEST TAG A READER CAN BE LEFT ON,
+ * AND FOR essence-2 THAT TAG IS A DIFFERENT ENGINE.
+ *
+ * R2 asks "does the tag this resolves to exist" and R3 asks "does it vend the
+ * product" — both look at the tag SwiftPM picks on a FRESH resolve, which is
+ * the newest 2.x. Neither is the tag a reader ends up on. `from:` is satisfied
+ * by the floor itself, SwiftPM keeps whatever `Package.resolved` already holds,
+ * and the tap's tags do not carry the engine — they PIN one, and the pin moved:
+ *
+ *     v2.11.0, v2.11.2 -> essence2-v1.4.0
+ *     v2.12.1          -> essence2-v1.5.1
+ *     v2.13.0          -> essence2-v1.6.0
+ *     v2.13.8          -> essence2-v1.9.0
+ *
+ * Read out of each tag's own Package.swift on 2026-09-21. It matters because
+ * the iPhone answer changed with the engine: on essence2-v1.5.x and older,
+ * `be_essence2_create` returns 0 on an iPhone below a 16 Pro and the warm-up
+ * then refuses by name ("unsupported hardware — iPhone15,4 detected"), leaving
+ * the engine idle-only — the identity's motion plays and it never speaks, with
+ * nothing thrown and nothing logged that a reader is looking at. The pages say
+ * essence-2 has no iPhone model floor, and that sentence is only true from
+ * essence2-v1.9.0.
+ *
+ * So a page carrying `from: "2.11.0"` beside an `Essence2` attach is GREEN on
+ * R2 and R3 and still hands a reader a silent, unexplainable phone. This rule
+ * grades the floor, not the resolution.
+ */
+const ESSENCE2_PRODUCT = "Essence2";
+const ESSENCE2_FLOOR = "essence2-v1.9.0";
+
+/** Compare two `essence2-vX.Y.Z` tags. Returns true when a >= b. */
+export function engineAtLeast(a, b) {
+  const n = (s) => (s ?? "").replace(/^essence2-v/, "").split(".").map((x) => parseInt(x, 10) || 0);
+  const A = n(a), B = n(b);
+  for (let i = 0; i < 3; i++) if ((A[i] || 0) !== (B[i] || 0)) return (A[i] || 0) > (B[i] || 0);
+  return true;
+}
 
 /** The tag SwiftPM resolves for `from: X` — highest tag with the same major. */
 export function resolvesTo(from, tags) {
@@ -562,7 +626,7 @@ export function newestTag(tags) {
 
 export async function grade(files, registry) {
   const failures = [];
-  const seen = { maven: 0, tapVersion: 0, tapProduct: 0, pypi: 0 };
+  const seen = { maven: 0, tapVersion: 0, tapProduct: 0, pypi: 0, essence2Floor: 0 };
 
   const mavenWanted = new Map(); // artifact -> [{version, where}]
   const versionWanted = [];
@@ -663,6 +727,41 @@ export async function grade(files, registry) {
     }
   }
 
+  // R5 — the essence-2 engine floor. Graded per PAGE: a pin is only a promise
+  // about the engine on a page that also tells the reader to attach Essence2.
+  if (versionWanted.length && productWanted.some((p) => p.product === ESSENCE2_PRODUCT)) {
+    const tags = await registry.tapTags();
+    const essence2Pages = new Set(
+      productWanted.filter((p) => p.product === ESSENCE2_PRODUCT).map((p) => p.path),
+    );
+    for (const v of versionWanted) {
+      if (!essence2Pages.has(v.path)) continue;
+      // The floor tag itself, spelled the way the tap spells its tags. If it
+      // does not exist R2 has already said so; do not say it twice.
+      const floorTag = tags.includes(`v${v.version}`)
+        ? `v${v.version}`
+        : tags.includes(v.version)
+          ? v.version
+          : null;
+      if (!floorTag) continue;
+      seen.essence2Floor++;
+      const engine = await registry.tapEssence2TagAt(floorTag);
+      if (engineAtLeast(engine, ESSENCE2_FLOOR)) continue;
+      failures.push({
+        path: v.path,
+        line: v.line,
+        msg:
+          `pins the ${TAP} package at ${v.version} (${v.dialect}) on a page that attaches ` +
+          `${ESSENCE2_PRODUCT}, but ${floorTag} pins engine ${engine}, older than ${ESSENCE2_FLOOR}. ` +
+          `\`from:\` is satisfied by the floor and SwiftPM keeps whatever Package.resolved already ` +
+          `holds, so a reader can sit on ${engine} while the page promises ${ESSENCE2_FLOOR} ` +
+          `behaviour: below 1.9.0 an iPhone under a 16 Pro warms up, refuses by name and stays ` +
+          `idle-only — the face moves and never speaks, and nothing is thrown. ` +
+          `Raise the floor to a tag that pins ${ESSENCE2_FLOOR} or newer.`,
+      });
+    }
+  }
+
   // R4 — PyPI
   for (const [dist, uses] of [...pypiWanted].sort()) {
     const proj = await registry.pypiProject(dist);
@@ -744,6 +843,23 @@ const FIX_CONTROL_PYPI_INDEX =
 
 const FIX_IRRELEVANT = "This page has no dependency coordinate at all.\n";
 
+// R5 — the floor a reader can be left on, beside an Essence2 attach.
+const FIX_BAD_ESSENCE2_FLOOR =
+  '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0"),\n' +
+  '.product(name: "Essence2", package: "homebrew-bithuman")\n```\n';
+const FIX_GOOD_ESSENCE2_FLOOR =
+  '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8"),\n' +
+  '.product(name: "Essence2", package: "homebrew-bithuman")\n```\n';
+const FIX_BAD_ESSENCE2_FLOOR_XCODEGEN =
+  "```yaml\npackages:\n  bithuman:\n    url: https://github.com/bithuman-product/homebrew-bithuman.git\n" +
+  "    from: 2.11.0\ntargets:\n  App:\n    dependencies:\n      - package: bithuman\n        product: Essence2\n```\n";
+// The floor rule is essence-2's alone: Expression 2's engine tag has not moved
+// under these pins, so the SAME low floor beside an Expression2 attach must
+// stay silent. Without this arm R5 would read as "2.11.0 is banned".
+const FIX_CONTROL_LOW_FLOOR_OTHER_PRODUCT =
+  '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0"),\n' +
+  '.product(name: "bitHumanKit", package: "homebrew-bithuman")\n```\n';
+
 const STUB = {
   async mavenVersions(artifact) {
     const t = {
@@ -754,10 +870,22 @@ const STUB = {
     return t[artifact] ?? [];
   },
   async tapTags() {
-    return ["v2.9.0", "v2.10.0", "v2.11.0", "v2.11.1", "v2.11.2"];
+    return ["v2.9.0", "v2.10.0", "v2.11.0", "v2.11.1", "v2.11.2", "v2.12.1", "v2.13.0", "v2.13.8"];
   },
   async tapProductsAt() {
     return ["bitHumanKit", "BithumanEngineProtocol", "Expression2", "Essence2"];
+  },
+  // The five tags below were read out of their own Package.swift on
+  // 2026-09-21; the rest of this table is not claimed to be real, it is a
+  // fixture floor so an unlisted tag cannot accidentally PASS the rule.
+  async tapEssence2TagAt(tag) {
+    return {
+      "v2.11.0": "essence2-v1.4.0",
+      "v2.11.2": "essence2-v1.4.0",
+      "v2.12.1": "essence2-v1.5.1",
+      "v2.13.0": "essence2-v1.6.0",
+      "v2.13.8": "essence2-v1.9.0",
+    }[tag] ?? "essence2-v1.0.0";
   },
   async pypiProject(dist) {
     const t = {
@@ -789,6 +917,10 @@ if (process.argv.includes("--selftest")) {
     ["good: the extra the self-hosting page prints", FIX_GOOD_PYPI, false],
     ["control: `pip install` written in a sentence is not a copyable line", FIX_CONTROL_PYPI_PROSE, false],
     ["control: an --index-url value is not a requirement", FIX_CONTROL_PYPI_INDEX, false],
+    ["bad: Essence2 attached on a from: 2.11.0 floor (engine 1.4.0)", FIX_BAD_ESSENCE2_FLOOR, true],
+    ["bad: the same floor in an XcodeGen spec", FIX_BAD_ESSENCE2_FLOOR_XCODEGEN, true],
+    ["good: Essence2 attached on a from: 2.13.8 floor (engine 1.9.0)", FIX_GOOD_ESSENCE2_FLOOR, false],
+    ["control: the same low floor beside a non-Essence2 product", FIX_CONTROL_LOW_FLOOR_OTHER_PRODUCT, false],
   ];
   let bad = 0;
   for (const [name, text, mustFire] of arms) {
@@ -797,6 +929,20 @@ if (process.argv.includes("--selftest")) {
     const ok = fired === mustFire;
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${name.padEnd(58)} fired=${fired} expected=${mustFire}`);
+  }
+
+  // MUTATION ARM. Every "good" arm above is silence, and silence is also what a
+  // dead rule produces. Re-grade the GOOD R5 fixture against a registry whose
+  // only difference is that v2.13.8 pins the old engine: if R5 still says
+  // nothing, its silence on the real corpus means nothing either.
+  {
+    const mutated = { ...STUB, async tapEssence2TagAt() { return "essence2-v1.4.0"; } };
+    const { failures } = await grade([{ path: "fixture.md", text: FIX_GOOD_ESSENCE2_FLOOR }], mutated);
+    const ok = failures.length > 0;
+    if (!ok) bad++;
+    console.log(
+      `  ${ok ? "OK  " : "FAIL"}  ${"mutation: the good R5 arm fires when the engine pin moves back".padEnd(58)} fired=${failures.length > 0} expected=true`,
+    );
   }
   // The extractors must also actually see the real pages, or every arm above is
   // a statement about fixtures and nothing else.
@@ -810,14 +956,21 @@ if (process.argv.includes("--selftest")) {
     }),
     { maven: 0, ver: 0, prod: 0, pypi: 0 },
   );
-  for (const [rule, n] of [["R1 gradle", counts.maven], ["R2 tap version", counts.ver], ["R3 tap product", counts.prod], ["R4 pypi", counts.pypi]]) {
+  // R5's subjects are pages that BOTH pin the tap and attach Essence2 — the
+  // intersection, because either alone is not a promise about the engine.
+  const r5 = real.filter(
+    (f) =>
+      tapVersions(f.text).length > 0 &&
+      tapProducts(f.text).some((p) => p.product === ESSENCE2_PRODUCT),
+  ).length;
+  for (const [rule, n] of [["R1 gradle", counts.maven], ["R2 tap version", counts.ver], ["R3 tap product", counts.prod], ["R4 pypi", counts.pypi], ["R5 essence-2 floor", r5]]) {
     const ok = n > 0;
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${(rule + " finds subjects in the real corpus").padEnd(58)} n=${n}`);
   }
   console.log(
     bad === 0
-      ? "check-dependency-coordinates --selftest: OK — 7/7 defect arms fire, 8/8 good arms stay silent, all 4 rules have real subjects."
+      ? "check-dependency-coordinates --selftest: OK — 9/9 defect arms fire (one of them a mutation), 10/10 good arms stay silent, all 5 rules have real subjects."
       : `check-dependency-coordinates --selftest: ${bad} arm(s) wrong`,
   );
   process.exit(bad === 0 ? 0 : 1);
@@ -848,6 +1001,7 @@ for (const [rule, n] of [
   ["R2 (tap versions)", seen.tapVersion],
   ["R3 (tap products)", seen.tapProduct],
   ["R4 (PyPI requirements)", seen.pypi],
+  ["R5 (essence-2 engine floor)", seen.essence2Floor],
 ]) {
   if (n === 0) {
     console.log(
@@ -875,6 +1029,8 @@ if (failures.length) {
 console.log(
   `check-dependency-coordinates: OK — ${seen.maven} Gradle coordinate(s) resolve on Maven Central, ` +
     `${seen.tapVersion} tap pin(s) name a tag that exists, ${seen.tapProduct} attached SwiftPM ` +
-    `product(s) are vended by the manifest at the tag those pins resolve to, and ${seen.pypi} ` +
-    `PyPI requirement(s) name a distribution, extras and a version PyPI actually serves.`,
+    `product(s) are vended by the manifest at the tag those pins resolve to, ${seen.pypi} ` +
+    `PyPI requirement(s) name a distribution, extras and a version PyPI actually serves, and ` +
+    `${seen.essence2Floor} Essence2 page pin(s) have a FLOOR tag that already carries ` +
+    `${ESSENCE2_FLOOR} or newer.`,
 );

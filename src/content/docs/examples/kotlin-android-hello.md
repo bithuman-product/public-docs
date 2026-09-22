@@ -34,6 +34,16 @@ Everything up to that section — the phone, the JDK, `adb`, the WAV, the Gradle
 wrapper — is shared by both, so read it once and it applies to either. The rest
 of this page is the Expression 2 project.
 
+**Every coordinate on this page was re-fetched on 2026-09-21**, by a reader that
+did not write it, from the bytes rather than from a note: `maven-metadata.xml`
+on Maven Central makes `0.4.7` and `0.5.12` the current release of each
+artifact; both AARs' own `AndroidManifest.xml` declare
+`minSdkVersion` **26** and **29**, and each ships exactly one ABI directory,
+`arm64-v8a`; the two `com.qualcomm.qti` artifacts at `2.49.0` resolve; and the
+door at `api.bithuman.ai` answered an **anonymous** request for `A02HCY0444` and
+for all six Essence 2 codes below. `A02HCY0444`'s manifest puts its Android
+member at **158,524,428 bytes**, which is the "about 158 MB" this page quotes.
+
 ## What you end up with
 
 An app that, when you tap it:
@@ -56,8 +66,25 @@ renders about **5.6 frames per second**, and playback needs 20 — see
 | A **physical `arm64-v8a` phone**, USB debugging on | every bitHuman AAR is `arm64-v8a` only; an x86_64 emulator installs and then throws `UnsatisfiedLinkError` | `adb devices` lists it — `adb` is **not** on your `PATH` by default; it ships inside the SDK at `$ANDROID_HOME/platform-tools`, which the export block below adds |
 | That phone **unlocked**, not just awake | `adb shell input tap` is delivered to whatever window has focus, and on a locked phone that is the lock screen, not your app — the tap is swallowed with no error anywhere | `adb shell dumpsys window \| grep mCurrentFocus` names your activity, not `Bouncer` |
 | **JDK 17** | the Android Gradle Plugin 8.7.3 this project pins refuses newer launcher JVMs — and refuses them illegibly: on a Homebrew JDK 26 the whole error is the string `26.0.2.1` | `"$JAVA_HOME/bin/java" -version` says `17.` — **not** bare `java -version`. Gradle launches the JVM that `JAVA_HOME` names, and bare `java` does not report it: on a Mac that *has* the required Homebrew `openjdk@17`, both `java -version` and `/usr/libexec/java_home -v 17` still print *"Unable to locate a Java Runtime"*, because a Homebrew JDK is keg-only and is never linked into `/Library/Java/JavaVirtualMachines` |
-| An **Android SDK** with platform 35 | `compileSdk = 35` below | `$ANDROID_HOME/platforms/android-35` exists |
+| An **Android SDK** with platform 35 | `compileSdk = 35` below | `$ANDROID_HOME/platforms/android-35` exists — if it does not, the line under this table installs it |
 | **Network on the phone** for the first run | the model store downloads the identity once | — |
+
+★ **No Android Studio? The SDK is two commands, and neither of them is
+obvious.** Android Studio installs the platform and `platform-tools` for you;
+a terminal-only machine has to ask. Unpack the *command-line tools only*
+package from [developer.android.com/studio](https://developer.android.com/studio)
+into `$ANDROID_HOME/cmdline-tools/latest/`, then:
+
+```bash
+yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
+"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+  "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+```
+
+The licence step is not optional and it is not automatic: without it the first
+Gradle task fails on a missing licence rather than a missing package, which
+reads like a different problem. `platform-tools` is also where `adb` comes
+from, so this is the command that satisfies two rows of the table above.
 
 ★ **Building from a terminal? Set these three, in this order.** Android Studio
 writes `local.properties` and finds `adb` for you; a plain terminal does neither
@@ -125,9 +152,12 @@ Two ways to get a directory with a Gradle wrapper in it.
 generated with the ones below, and delete the `res/` layout and theme files it
 made — this project builds its UI in code and needs no resources.
 
-**From a terminal**, if you have Gradle installed. ★ **Make the directories,
-write the seven files from [Step 3](#step-3--the-files-in-order), and run
-`gradle wrapper` last** — on Gradle 9 that order is not optional:
+**From a terminal**, if you have Gradle installed (`gradle -v`; `brew install
+gradle` on a Mac, `sdk install gradle` with SDKMAN! elsewhere — this Gradle only
+writes the wrapper, so its version barely matters and today it is 9.x). ★ **Make
+the directories, write the seven files from
+[Step 3](#step-3--the-files-in-order), and run `gradle wrapper` last** — on
+Gradle 9 that order is not optional:
 
 ```bash
 mkdir -p x2hello/app/src/main/java/com/example/x2hello && cd x2hello
@@ -812,7 +842,15 @@ dependencies {
 > pass that to `Avatar.load(...)` instead — the parameter takes any `String`,
 > so nothing else in the code below changes.
 
-2. Push your model and audio onto the device's app-private external dir (or adapt the paths in the code).
+2. Push your model and audio onto the device's app-private external dir.
+
+   ★ **The package is `com.example.bithumanhello` here, not `x2hello`, and the
+   push path is built from it.** The [Full code](#full-code) below declares that
+   package, so four places have to agree or the push lands in a directory no app
+   reads and the app reports a missing file: `namespace` and `applicationId` in
+   `app/build.gradle.kts`, the source directory
+   `app/src/main/java/com/example/bithumanhello/`, and the two paths below.
+   Pick one name and change all four.
 
 ```bash
 adb push sample-avatar.imx /sdcard/Android/data/com.example.bithumanhello/files/
@@ -820,8 +858,8 @@ adb push speech.wav        /sdcard/Android/data/com.example.bithumanhello/files/
 ```
 
 3. Drop the [Full code](#full-code) into `MainActivity.kt`, then Build and Run on the device.
-   The project skeleton is the same seven files as above; only the dependency, the
-   `minSdk`, and the activity change.
+   The project skeleton is the same seven files as above; the dependency, the
+   `minSdk`, the package name (see above) and the activity change.
 
 ### What you'll see
 
