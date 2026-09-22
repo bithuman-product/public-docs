@@ -79,7 +79,9 @@ keychain it falls back to `~/.bithuman/config`, a dotenv file at mode `0600`.
 Each device gets its own key, so revoking one laptop leaves the others alone.
 
 In CI, skip `login` entirely and export `BITHUMAN_API_SECRET`, or pipe it:
-`printf %s "$KEY" | bithuman login --with-token`.
+`printf %s "$KEY" | bithuman login --with-token`. That is also the only sign-in
+route that honours `--json` today — see
+[the machine-readable contract](#the-machine-readable-contract) below.
 
 ### Credential resolution order
 
@@ -374,6 +376,41 @@ A failure prints one object to **stderr** and leaves stdout empty:
 
 Colour is emitted only to an interactive TTY, so `--json`, `NO_COLOR`, `CI`,
 `TERM=dumb` and any pipe all silence it.
+
+### `login` does not keep this contract yet
+
+**`bithuman login` is the one command that breaks both rules above, and it is a
+defect rather than a design.** Measured on the published `cli-v2.6.26` binary on
+2026-09-22, on Linux x86_64, with stdout redirected to a file:
+
+```bash
+bithuman login --device --json > out.json
+# out.json holds the sign-in banner and the code box — seven lines of them,
+# ANSI escapes included — and no JSON object at all.
+jq . out.json
+# jq: parse error: Invalid numeric literal at line 2, column 4
+```
+
+Both sign-in flows do it, the browser one and `--device` alike. Redirecting
+stdout does not silence the colour either: `login` carried its own copies of the
+escape codes instead of going through the single gate every other command uses,
+so the non-TTY rule never reached it. Every other subcommand was checked the
+same way on the same binary and keeps the contract — `version`, `list`,
+`doctor`, `whoami` and `logout` each put one JSON object on stdout with no
+escapes, and `account`, `usage`, `token`, `pull` and `open` each put one error
+object on stderr and leave stdout empty.
+
+Until a build carrying the fix is published, a script or an agent that needs to
+sign in has a route that does honour the contract — and it is the one to prefer
+on a headless box anyway, because it needs no browser and no code to type:
+
+```bash
+printf %s "$BITHUMAN_API_SECRET" | bithuman login --with-token --json
+{"logged_in":true,"schema_version":1,"stored":"~/.bithuman/config"}
+```
+
+If you are driving `--device` from a script in the meantime, read the code from
+**stderr** and treat stdout as empty; do not pipe it to `jq`.
 
 ### Exit codes
 

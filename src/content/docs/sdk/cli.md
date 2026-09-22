@@ -253,6 +253,7 @@ Measured frame rates for every platform are on the
 | `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
 | `pip install bithuman` stops at `bithuman 2.11.6 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
 | `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` never needed it |
+| `bithuman login --device --json` prints coloured text and `jq` fails on it | `login` is the one command that does not keep the `--json` contract on `cli-v2.6.26` — measured 2026-09-22 | sign in with `printf %s "$KEY" \| bithuman login --with-token --json`, which does; [why](/sdk/cli/reference#login-does-not-keep-this-contract-yet) |
 
 With `--json`, every failure prints one JSON object to stderr with a stable
 code; without it the same failure is prose, and the exit code is the contract —
