@@ -1137,7 +1137,7 @@ the block below does, and the rest of the file keeps the `ai.bithuman.essence2`
 spelling.
 
 ```kotlin
-// app/src/main/java/com/example/e2hello/MainActivity.kt
+// e2hello/app/src/main/java/com/example/e2hello/MainActivity.kt
 package com.example.e2hello
 
 import ai.bithuman.essence2.Essence2Avatar
