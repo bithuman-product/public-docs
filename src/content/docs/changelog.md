@@ -13,9 +13,10 @@ order: 1
 ### One app can take both Expression 2 and Essence 2 — Swift package `2.14.0` (2026-09-22)
 
 Every package tag through `v2.13.8` made `Expression2` + `Essence2` in one app a
-**link failure on device**: 112 duplicate symbols, because `libessence2.a` was
-built from a library closure that also defined the `UnifiedModelHeader` objects
-the `Expression2` product already forces every consumer to link.
+**link failure on device**: 112 duplicate symbols, because the Essence 2 engine
+archive was built from a library closure that also defined the
+`UnifiedModelHeader` objects the `Expression2` product already forces every
+consumer to link.
 
 A green `swift build` never saw it — a library target is compiled, never linked,
 so the collision only fires at an app's final link. The Simulator is not a safe
