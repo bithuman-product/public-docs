@@ -146,7 +146,7 @@ Both second-generation models are on Maven Central and resolve with no account:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.7")
+    implementation("ai.bithuman:expression2-android:0.4.8")
     implementation("ai.bithuman:essence2-android:0.5.12")
 }
 ```
@@ -174,7 +174,7 @@ working, spelled exactly as it was; the one entry that is gone says so:
 The Swift package resolves anonymously:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.0")
 // product: .product(name: "Expression2", package: "homebrew-bithuman")
 ```
 

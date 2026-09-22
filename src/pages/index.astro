@@ -64,7 +64,7 @@ with bithuman.open("A23WJF0199.imx") as avatar:
     for image in avatar.render("demo_sample.wav"):
         # hand it to your display — OpenCV wants image[:, :, ::-1]
         print(image.shape)` },
-  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.7")
+  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.8")
 import ai.bithuman.expression2.Expression2Avatar
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
@@ -88,7 +88,7 @@ fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitma
     }
 }` },
   { label: "Swift", lang: "swift", code: `// Package.swift:
-//   .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
+//   .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.0")
 import Expression2
 
 // modelPath is the unpacked .avatar

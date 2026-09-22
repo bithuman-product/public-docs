@@ -45,7 +45,7 @@ and compares sha256 against the pinned `checksum:` — exactly what SwiftPM does
 #   3. fetch every binaryTarget URL and check its sha256 against the pinned
 #      `checksum:` — the same comparison SwiftPM makes
 #
-#   ./swiftpm-preflight.sh              # what `from: "2.11.0"` resolves today
+#   ./swiftpm-preflight.sh              # what `from: "2.14.0"` resolves today
 #   FLOOR=9.9.9 ./swiftpm-preflight.sh  # control: a pin nothing can satisfy
 #   TAG=v9.9.9  ./swiftpm-preflight.sh  # control: a tag that does not exist
 set -u
@@ -95,7 +95,7 @@ exit $rc
 
 ```text
 ### ARM 1 — the pin a consumer writes
-from: "2.11.0"  ->  resolves v2.13.8
+from: "2.14.0"  ->  resolves v2.14.0
 manifest        v2.13.8  (798 lines)
 products it vends:
   BithumanEngineProtocol
@@ -122,11 +122,11 @@ rc=1
 
 Four things the passing arm tells you that "just add the package" does not:
 
-- **`from: "2.11.0"` resolves `v2.13.8` today.** `from:` is a floor, not a pin:
+- **`from: "2.14.0"` resolves `v2.14.0`.** `from:` is a floor, not a pin:
   SwiftPM takes the newest tag below the next major. Write the floor, then run
   this to see what you actually get.
 - **The tags carry a `v`.** The git tags are `v2.13.8`, `v2.13.7`, `v2.4.0`;
-  SwiftPM reads them as semver, so `from: "2.11.0"` in `Package.swift` is right
+  SwiftPM reads them as semver, so `from: "2.14.0"` in `Package.swift` is right
   *and* `raw.githubusercontent.com/.../2.13.8/Package.swift` is a 404. Both are
   true at once.
 - **The six binaries come off three different releases** — `v2.4.0`, `v2.6.3`
@@ -188,7 +188,7 @@ line is what a single-tag manifest would have pointed every existing consumer
 at. SwiftPM reads absolute asset URLs out of whichever manifest it resolves, so
 an asset does not have to live on the resolved tag.
 
-**Write `from: "2.11.0"`** and let it resolve forward; the products you attach
+**Write `from: "2.14.0"`** and let it resolve forward; the products you attach
 are on [Swift SDK → Install](/sdk/ios#install).
 
 ---

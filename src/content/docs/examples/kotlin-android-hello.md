@@ -23,7 +23,7 @@ changed, and it is [further down this page](#essence-2-on-android--the-same-seve
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
-| Maven coordinate | `ai.bithuman:expression2-android:0.4.7` | `ai.bithuman:essence2-android:0.5.12` |
+| Maven coordinate | `ai.bithuman:expression2-android:0.4.8` | `ai.bithuman:essence2-android:0.5.12` |
 | bitHuman API key | **not needed** | **required**, and used twice — see that section |
 | `minSdk` | 26 | 29 |
 | Picture | 416x720 at 20 fps | the identity's own canvas at 25 fps (1080x1920 for `A21SKT4314`) |
@@ -305,7 +305,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.7")
+    implementation("ai.bithuman:expression2-android:0.4.8")
 }
 ```
 
@@ -674,7 +674,7 @@ Add the Qualcomm delegate and runtime to `app/build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.7")
+    implementation("ai.bithuman:expression2-android:0.4.8")
     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // both on Maven Central
     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // no Qualcomm account needed
 }

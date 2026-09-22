@@ -220,7 +220,7 @@ groups — what the *door* does when your key is wrong, and what the *engine* do
 when the bytes on disk are wrong.
 
 The states below were **re-driven on 2026-09-20** against the published
-**`Expression2` 2.6.3** — the engine a `from: "2.11.0"` dependency resolves today
+**`Expression2` 2.6.3** — the engine a `from: "2.14.0"` dependency resolves
 (`homebrew-bithuman`, the version [the Swift SDK page](/sdk/ios) pins) — on Apple
 Silicon, against a container as the download door serves it (17 members,
 198,632,867 bytes). Two rows are older and say so. The container reader, the

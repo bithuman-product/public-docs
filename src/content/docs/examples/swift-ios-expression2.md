@@ -313,7 +313,7 @@ options:
 packages:
   bithuman:
     url: https://github.com/bithuman-product/homebrew-bithuman.git
-    from: 2.11.0
+    from: 2.14.0
 targets:
   IOSExpression2:
     type: application
@@ -418,7 +418,7 @@ Five things happen here and each is marked in the source:
 1. **Stage the container's members by hand**, then `create(modelPath:sharedEngineDir:)`.
    The one-call form, `create(avatarContainer:…:stagingDir:)`, **works on iOS**
    from `Expression2` 2.6.3 — driven on an iPhone 15 against the package tag a
-   `from: "2.11.0"` dependency resolves today, it opened a published `.avatar`
+   `from: "2.14.0"` dependency resolves, it opened a published `.avatar`
    and reached `isReady` in 7.5 s (2026-09-20). Either is correct; the loop
    below is nine lines of public API and shows you every member as it lands.
 2. **Keep the engine inside an `actor`.** `Expression2Engine` is a plain class
@@ -1015,7 +1015,7 @@ Stated plainly, so nobody spends an afternoon finding out.
 - **The one-call container opener works again** (was broken through `Expression2`
   2.11.2, which refused every published `.avatar` by member name on iOS while
   unpacking the same file happily on macOS). Measured on an iPhone 15 on
-  2026-09-20 against the package tag a `from: "2.11.0"` dependency resolves:
+  2026-09-20 against the package tag a `from: "2.14.0"` dependency resolves:
   `create(avatarContainer:…:stagingDir:)` opened the container, staged 34 files
   and reached `isReady` at 416x720. `Renderer.load` above stages by hand, which
   is still correct and still only public API.
