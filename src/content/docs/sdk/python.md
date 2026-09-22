@@ -259,7 +259,35 @@ them apart (both measured 2026-09-21 on `bithuman` 2.11.6):
 | set but rejected | raises `NotAuthorised`: *"that key was not accepted (401) — the API secret was rejected — revoked, or from another environment."* | never reached |
 
 So a process with no key still opens the file and does real work before it
-refuses: metering bites at the first frame, not at load.
+refuses: the credential is *checked* at the first frame, not at load.
+
+## ★ Metering runs on wall clock, and only you stop it
+
+This is the one thing that surprises people, so it is stated plainly:
+
+**A self-hosted runtime is metered from the moment the model loads until you
+shut it down — not per frame.** Loading arms a heartbeat; the heartbeat is what
+bills. An idle avatar that renders nothing still meters, at the same rate as one
+that is talking. Self-hosted Essence 2 is **2 credits per minute**, so a runtime
+left alive overnight costs about **1,200 credits for ten hours**, whether or not
+a single frame was produced.
+
+```python
+avatar = await AsyncBithuman.create(...)   # ← metering starts HERE
+try:
+    ...                                    # speak, idle, speak
+finally:
+    await avatar.shutdown()                # ← and stops HERE. Nothing else stops it.
+```
+
+`runtime.stop()` and closing a frame generator end *rendering*. They do **not**
+end metering. `shutdown()` does.
+
+If you cache a runtime for reuse across requests — a sensible thing to do, since
+loading is the expensive part — then you are choosing to keep the meter running
+between them. That is fine when the gap is seconds, and expensive when the
+process outlives the traffic. Shut it down on the path that ends your session,
+and put it in a `finally` so an exception cannot leak a metered runtime.
 
 ## Run
 
