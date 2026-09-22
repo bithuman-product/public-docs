@@ -442,7 +442,24 @@ export function gradePinAgainstRecord(pin, record, recordBytes) {
  *  would look fine on their own. So a row is matched by EVIDENCE: the plane
  *  whose published fps, frame and date all appear in the cell. Both columns
  *  must resolve to the same plane, and an ambiguous row is REFUSED, never
- *  guessed. */
+ *  guessed.
+ *
+ *  ★AND THE ARTIFACT IS THE FOURTH PIECE OF EVIDENCE, because fps+frame+date is
+ *  NOT a key. Measured 2026-09-22: expression-2 published 43 fps on a 416x720
+ *  frame measured 2026-09-22 on BOTH linux-cpu (cli-v2.6.26) and android-s25plus
+ *  (expression2-android 0.4.8). Two planes, one number, one day — and the pin
+ *  builder refused the whole page, so the trunk could not be re-pinned at all.
+ *  The cell already NAMES the artifact it was measured on, and that is exactly
+ *  what tells the two apart, so it is used to narrow a tie.
+ *
+ *  ★IT NARROWS, IT NEVER WIDENS. The version is only consulted when the first
+ *  three leave more than one candidate, so no row that resolves today changes
+ *  its answer; and if the artifact does not separate them either, the row is
+ *  still REFUSED. Guessing between two planes is the failure this whole function
+ *  exists to prevent. The version is read from the cell's TRAILING artifact
+ *  segment — the "<artifact> (<date>)" the emitter always writes last — so a
+ *  digit sequence occurring earlier in the cell (a frame, a rate, a multiple of
+ *  real time) can never be mistaken for a version. */
 export function resolvePlanes(rows, record) {
   const out = [];
   const errs = [];
@@ -458,11 +475,23 @@ export function resolvePlanes(rows, record) {
         const when = r.docs_measured_on ? text.includes(`(${r.docs_measured_on})`) : true;
         return num && frame && when;
       });
-      if (hits.length !== 1) {
-        errs.push(`${label} / ${MODEL_NAME[model]}: ${hits.length === 0 ? "no record row" : `${hits.length} record rows`} match this cell — ${JSON.stringify(text)}`);
+      // ★The tie-break, and only ever a tie-break. `tail` is the cell's last
+      // " · " segment, which the emitter writes as "<artifact shown> (<date>)".
+      const sep = text.lastIndexOf(" \u00b7 ");
+      const tail = sep === -1 ? text : text.slice(sep + 3);
+      const narrowed =
+        hits.length > 1
+          ? hits.filter((r) => {
+              const v = r.measured_artifact?.version;
+              return v ? tail.includes(v) : false;
+            })
+          : hits;
+      const found = narrowed.length === 1 ? narrowed : hits;
+      if (found.length !== 1) {
+        errs.push(`${label} / ${MODEL_NAME[model]}: ${found.length === 0 ? "no record row" : `${found.length} record rows`} match this cell — ${JSON.stringify(text)}`);
         continue;
       }
-      per[model] = hits[0];
+      per[model] = found[0];
     }
     const planes = [...new Set(Object.values(per).map((r) => r.plane))];
     if (planes.length !== 1) {
@@ -969,6 +998,36 @@ async function selftest() {
     const literal = { exists: (p) => p === "/tmp/floors.json", read: () => '{"rows":[]}', gitShow: () => { throw new Error("git must not be consulted for --record"); } };
     const blob = findRecord({ record: "/tmp/floors.json" }, {}, literal);
     arm("--record is read as a literal file, with no ref to resolve", blob.bytes === '{"rows":[]}' && blob.ref === null);
+  }
+
+  {
+    // ★THE ARTIFACT TIE-BREAK, BOTH DIRECTIONS. Two planes of one model publishing
+    //  the same fps on the same frame on the same day is not hypothetical — it is
+    //  expression-2 on 2026-09-22 (linux-cpu cli-v2.6.26, android-s25plus
+    //  expression2-android 0.4.8), and before this tie-break the pin builder
+    //  refused the whole page for it. The arm that matters is the SECOND one: the
+    //  tie-break must not become a guess.
+    const twin = (v1, v2) => ({
+      rows: [
+        { model: "expression-2", plane: "linux-cpu", docs_fps: 43, docs_measured_on: "2026-09-22",
+          frame: { width: 416, height: 720 }, measured_artifact: { version: v1 } },
+        { model: "expression-2", plane: "android-s25plus", docs_fps: 43, docs_measured_on: "2026-09-22",
+          frame: { width: 416, height: 720 }, measured_artifact: { version: v2 } },
+        { model: "essence-2", plane: "linux-cpu", docs_fps: 36, docs_measured_on: "2026-09-22",
+          frame: { width: 1920, height: 1080 }, measured_artifact: { version: "cli-v2.6.26" } },
+      ],
+    });
+    const rowFor = (art) => new Map([["Linux",
+      `| Linux | Intel Core i7-13700F | 43 \u00b7 e2e-steady-state \u00b7 416x720 at 20 fps \u00b7 2.15x real time \u00b7 ${art} (2026-09-22) ` +
+      `| 36 \u00b7 e2e-steady-state \u00b7 1920x1080 at 25 fps \u00b7 1.44x real time \u00b7 cli-v2.6.26 (2026-09-22) |`]]);
+
+    const [okRows, okErrs] = resolvePlanes(rowFor("cli-v2.6.26"), twin("cli-v2.6.26", "expression2-android 0.4.8"));
+    arm("two planes with the same fps, frame and date resolve by the artifact the cell names",
+      okErrs.length === 0 && okRows.length === 1 && okRows[0].plane === "linux-cpu");
+
+    const [, ambErrs] = resolvePlanes(rowFor("cli-v2.6.26"), twin("cli-v2.6.26", "cli-v2.6.26"));
+    arm("...and when the artifact does NOT separate them either, the row is still REFUSED, never guessed",
+      ambErrs.some((e) => e.includes("2 record rows")));
   }
 
   console.log("\nGOOD ARMS — each must stay SILENT");
