@@ -443,29 +443,6 @@ Measured frame rates for every platform are on the
   complete projects printed in full: the Expression 2 app, then
   [the Essence 2 app](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed),
   which is the same seven files with three of them changed.
-- [Android API reference](/sdk/android-api) — every public class and member of
-  both artifacts, with the Kotlin signature each one actually has, read back out
-  of the published AARs rather than typed.
-- [Examples](/examples) — every runnable project, by language.
-
-> **Note** **There is nothing to `git clone` for Android, and that is
-> deliberate.** The example page above is the source: every file of both projects
-> is printed on it, and both are compiled from the **published page** on every
-> release — so the page cannot drift from a checked-in copy, because there is no
-> copy. The `bithuman-examples` repository carries the Python, Swift and web
-> projects; its `android/` directory holds notes only, and those notes name
-> coordinates several releases behind this page. Where the two disagree, this page
-> is right.
-
-**Licence.** *Proprietary — bitHuman SDK License*. The full text travels with the
-bytes: `META-INF/NOTICE.txt` inside each AAR states which part is under which
-licence, and a copy is available from [hello@bithuman.ai](mailto:hello@bithuman.ai).
-The bundled LiteRT is Apache-2.0; FFmpeg is linked statically into
-`essence2-android` under LGPL §6(a) — the relink materials are on
-[Android FFmpeg / LGPL](/legal/android-ffmpeg-lgpl).
-
-## Examples and source
-
 - **The one app you can clone and run today** —
   [`app/avatar_chat`](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat),
   a Flutter app that is the same code on Android, iOS and macOS. **On Android it
@@ -478,13 +455,28 @@ The bundled LiteRT is Apache-2.0; FFmpeg is linked statically into
   > own README says so in a table rather than letting the build fail at a
   > dependency you would have to guess at. For Apple, use the Swift package on
   > [iOS / macOS](/sdk/ios) instead, which resolves from the public tap.
-- **Nothing to clone for a bare Gradle consumer, and nothing is missing.** The two
-  coordinates at the top of this page are the entire integration; there is no
-  `android/` sample project, and the `android/` directory in `bithuman-examples`
-  holds notes only (see the note above — it names coordinates several releases
-  behind this page).
-- [Android API reference](/sdk/android-api) — the Kotlin surface, its options and
-  its error codes
+- [Android API reference](/sdk/android-api) — every public class and member of
+  both artifacts, with the Kotlin signature each one actually has, read back out
+  of the published AARs rather than typed.
+- [Examples](/examples) — every runnable project, by language.
+
+> **Note** **There is nothing to `git clone` for a bare Gradle consumer, and that
+> is deliberate.** The two coordinates at the top of this page are the entire
+> integration, and the example page above is the source: every file of both
+> projects is printed on it, and both are compiled from the **published page** on
+> every release — so the page cannot drift from a checked-in copy, because there
+> is no copy. The `bithuman-examples` repository's `android/` directory holds
+> notes only — coordinates, repositories and what a release build needs — and it
+> points here for the project itself.
+
+## Licence
+
+*Proprietary — bitHuman SDK License*. The full text travels with the bytes:
+`META-INF/NOTICE.txt` inside each AAR states which part is under which licence,
+and a copy is available from [hello@bithuman.ai](mailto:hello@bithuman.ai). The
+bundled LiteRT is Apache-2.0; FFmpeg is linked statically into
+`essence2-android` under LGPL §6(a) — the relink materials are on
+[Android FFmpeg / LGPL](/legal/android-ffmpeg-lgpl).
 
 ## See also
 
