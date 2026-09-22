@@ -8,7 +8,7 @@ order: 30
 
 ## How billing works
 
-bitHuman bills in **credits** consumed per **live minute** of avatar runtime — every minute a session is connected and the engine is rendering, whether the avatar is speaking or idling. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. On-device rails — Swift and Android/Kotlin alike — bill at the self-hosted rate; see [on-device surfaces](#on-device-surfaces-swift-and-androidkotlin). Plans top up credits monthly; overage is pay-as-you-go.
+bitHuman bills in **credits** consumed per **minute of active talking** — the minutes in which the avatar is actually speaking. **Idle time is free**: a session that is connected but not talking, or a runtime left loaded between utterances, costs nothing. You are billed for output, not for uptime. Audio-only mode (the Swift SDK without an attached avatar) is unmetered. On-device rails — Swift and Android/Kotlin alike — bill at the self-hosted rate; see [on-device surfaces](#on-device-surfaces-swift-and-androidkotlin). Plans top up credits monthly; overage is pay-as-you-go.
 
 This page is the single source for every billing number on the platform — the model guides and API pages link back here.
 

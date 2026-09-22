@@ -261,33 +261,30 @@ them apart (both measured 2026-09-21 on `bithuman` 2.11.6):
 So a process with no key still opens the file and does real work before it
 refuses: the credential is *checked* at the first frame, not at load.
 
-## ★ Metering runs on wall clock, and only you stop it
+## Billing follows the talking, not the clock
 
-This is the one thing that surprises people, so it is stated plainly:
-
-**A self-hosted runtime is metered from the moment the model loads until you
-shut it down — not per frame.** Loading arms a heartbeat; the heartbeat is what
-bills. An idle avatar that renders nothing still meters, at the same rate as one
-that is talking. Self-hosted Essence 2 is **2 credits per minute**, so a runtime
-left alive overnight costs about **1,200 credits for ten hours**, whether or not
-a single frame was produced.
+**You are billed for minutes of active talking. Idle time is free.** A runtime
+that is loaded but not speaking — between utterances, or cached for reuse
+between requests — costs nothing. Leaving one alive overnight costs nothing.
 
 ```python
-avatar = await AsyncBithuman.create(...)   # ← metering starts HERE
+avatar = await AsyncBithuman.create(...)   # loading is free
 try:
-    ...                                    # speak, idle, speak
+    ...                                    # you pay for the talking, and only that
 finally:
-    await avatar.shutdown()                # ← and stops HERE. Nothing else stops it.
+    await avatar.shutdown()                # still worth doing: it frees the model
 ```
 
-`runtime.stop()` and closing a frame generator end *rendering*. They do **not**
-end metering. `shutdown()` does.
+`shutdown()` releases the model and its memory, so it is good practice on the
+path that ends your session — but it is no longer the thing that stops the
+meter. Caching a runtime for reuse is a sensible optimisation, because loading
+is the expensive part, and it no longer carries a billing cost.
 
-If you cache a runtime for reuse across requests — a sensible thing to do, since
-loading is the expensive part — then you are choosing to keep the meter running
-between them. That is fine when the gap is seconds, and expensive when the
-process outlives the traffic. Shut it down on the path that ends your session,
-and put it in a `finally` so an exception cannot leak a metered runtime.
+> **Changed 2026-09-22.** Metering used to run on wall clock from model load
+> until `shutdown()`, so an idle runtime billed at the full rate. That is no
+> longer true, on every plane and every model. Credits charged under the old
+> behaviour have been refunded; if you think you were affected and have not seen
+> a refund, write to [hello@bithuman.ai](mailto:hello@bithuman.ai).
 
 ## Run
 
