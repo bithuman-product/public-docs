@@ -2,10 +2,10 @@
   "artifact": {
     "registry": "github-releases",
     "coordinate": "bithuman-product/homebrew-bithuman",
-    "tag": "cli-v2.6.26",
-    "version": "2.6.26",
+    "tag": "cli-v2.7.0",
+    "version": "2.7.0",
     "asset": "bithuman-x86_64-unknown-linux-gnu.tar.gz",
-    "digest": "sha256:cd50ab74c5164d0f0f8566eb6fed2dc788331e819663e0c0ca79fe91337eadd4",
+    "digest": "sha256:2edcd48eca40f3feff3b35ebc2e6bcf735d7ee2c25d04d37643df8fb044cffb7",
     "resolved_on": "2026-09-22"
   },
   "surface": {
@@ -15,17 +15,16 @@
       "help"
     ],
     "names": [
+      "__agents",
+      "__schema",
       "account",
       "avatars",
       "chat",
       "completion",
-      "credits",
       "doctor",
       "engine",
-      "gallery",
       "help",
       "info",
-      "init",
       "list",
       "login",
       "logout",
@@ -35,24 +34,20 @@
       "render",
       "run",
       "token",
-      "usage",
-      "version",
-      "whoami"
+      "version"
     ],
     "paths": [
+      "__agents",
+      "__schema",
       "account",
       "avatars",
       "chat",
       "completion",
-      "credits",
       "doctor",
       "engine",
       "engine install",
       "engine list",
-      "engine update",
-      "gallery",
       "info",
-      "init",
       "list",
       "login",
       "logout",
@@ -63,9 +58,7 @@
       "render",
       "run",
       "token",
-      "usage",
-      "version",
-      "whoami"
+      "version"
     ]
   }
 }
