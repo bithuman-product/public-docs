@@ -90,9 +90,18 @@ const BUILTIN_NAMES = ["help"];
 // The customer-facing corpus. Every published page, plus the site chrome that
 // renders on all of them — a command name in a nav label or a layout reaches a
 // reader exactly as a command name in a code fence does.
+// ★`src/openapi` AND `public/api` ARE BOTH HERE ON PURPOSE. public/api/openapi.yaml
+// is a build-time copy of src/openapi/bithuman.yaml (`npm run sync-openapi`), but it
+// is the file a developer actually FETCHES from docs.bithuman.ai/api/openapi.yaml.
+// Grading only the published copy would leave an edit to the source unseen until a
+// sync ran; grading only the source would leave the published bytes unchecked if the
+// copy ever drifted. The spec teaches real commands — `bithuman pull <AGENT_CODE>`,
+// `bithuman list --manifest`, `bithuman open` — so it is a CLI surface, not just a
+// schema. This mirrors the roots the retired-name guard beside it walks.
 const NAME_ROOTS = [
   "src/content", "src/pages", "src/components", "src/layouts",
-  "src/config", "src/data", "public/api", "README.md",
+  "src/config", "src/data", "src/openapi", "public/api",
+  "README.md", "STYLE.md",
 ];
 const NAME_EXT = /\.(md|mdx|astro|ts|tsx|js|mjs|json|yaml|yml|html|txt)$/;
 
