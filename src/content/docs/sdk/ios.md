@@ -1,10 +1,10 @@
 ---
-title: "iOS & iPadOS SDK"
-description: "Ship either second-generation model inside your own iOS, iPadOS or macOS app from one SwiftPM package: Expression 2 on any Apple Silicon device at iOS 16, Essence 2 at full resolution on iOS 26. Device floors, download sizes and a worked example for each — with a first frame from a published identity needing no account, no key and no credits."
+title: "Apple SDK — iOS, iPadOS and macOS"
+description: "Ship either second-generation model inside your own iPhone, iPad or Mac app from one SwiftPM package: Expression 2 on any Apple Silicon device at iOS 16, Essence 2 at full resolution on iOS 26. Device floors, download sizes, the four link settings Essence 2 needs, and a worked example for each — with a first frame from a published identity needing no account, no key and no credits."
 section: sdk
 group: "Platforms"
 order: 40
-label: "iOS & iPadOS"
+label: "iOS, iPadOS & macOS"
 ---
 
 One SwiftPM package vends both second-generation models —
@@ -13,6 +13,10 @@ plus `bitHumanKit`, a whole on-device voice agent built around one of them.
 
 Both models render entirely on the device, and on Apple both reach a first frame
 with **no account, no key and no credits**.
+
+Starting on a Mac rather than a phone? Go to [On a Mac](#on-a-mac) —
+everything here ships a `macos-arm64` slice, and the Mac path asks for no
+device, no profile and no entitlement.
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
@@ -62,6 +66,52 @@ Set your app's deployment target to **iOS 26 / macOS 26** when you link
 `Essence2`. The package's own floor is lower (iOS 16, macOS 13) because
 `Expression2` needs it, but the Essence 2 objects are built for 26.0 and linking
 them lower makes `ld` warn on every object.
+
+## What Essence 2 needs at link
+
+`Essence2` is a **static C library**, so nothing in it tells your target what
+Apple libraries it calls. Attaching the product compiles fine and then fails at
+the link with hundreds of undefined symbols. Four settings fix it, and all four
+are required — measured on 2026-09-22 against the artifacts `from: "2.14.0"`
+resolves, on macOS 26.5 with Xcode 26.5:
+
+```swift
+// in the target that links Essence2
+linkerSettings: [
+    .linkedLibrary("c++"),
+    .linkedFramework("VideoToolbox"),
+    .linkedFramework("Accelerate"),
+    .linkedFramework("CoreML"),
+]
+```
+
+In Xcode the same four go under your app target's *Build Phases → Link Binary
+With Libraries*: `libc++.tbd`, `VideoToolbox.framework`,
+`Accelerate.framework`, `CoreML.framework`.
+
+Each one was dropped on its own from a working link to see what it is for, so
+the symbol you are looking at names the setting you are missing:
+
+| Missing | Undefined symbols | What they are |
+|---|---|---|
+| `libc++` | 316, starting `___cxa_allocate_exception`, `operator new`, `std::__1::…` | the C++ standard library the engine is written against |
+| `VideoToolbox` | 5 — `_VTDecompressionSessionCreate`, `…DecodeFrame`, `…Invalidate`, `…FinishDelayedFrames`, `…WaitForAsynchronousFrames` | the hardware video decoder that unpacks the identity's motion |
+| `Accelerate` | 27 — `_BNNSFilter*`, `_cblas_sgemm$NEWLAPACK`, and the LAPACK entry points | the CPU matrix routines |
+| `CoreML` | 5 — `_OBJC_CLASS_$_MLModel`, `MLMultiArray`, `MLModelConfiguration`, `MLDictionaryFeatureProvider`, `MLPredictionOptions` | the on-device model runner |
+
+With all four, a plain SwiftPM executable that calls
+`be_essence2_quiesce_all()` links and runs. Nothing else is needed: Metal and
+its graph framework arrive through CoreML and Accelerate.
+
+> **Note** Every `Essence2` link also prints `ld: warning: Could not find or use
+> auto-linked framework 'CoreAudioTypes'`. `CoreAudioTypes` is not a standalone
+> framework on any current Apple platform — the reference is baked into
+> the Essence 2 static library as a linker option. It is a warning, the link succeeds, and
+> there is nothing to add.
+
+`Expression2` and `bitHumanKit` need none of this. They are Swift frameworks
+and record what they link.
+
 
 ## Minimal code
 
@@ -274,6 +324,46 @@ xcodebuild -scheme <YourScheme> -destination 'generic/platform=iOS' \
 The showcase identities above render without a key. A render of your own agent is
 metered — [pricing](/guides/pricing) is the authority.
 
+## On a Mac
+
+Every product on this page ships a `macos-arm64` slice, so a Mac is not a
+second-class target here — it is the easiest one. There is no device to pair,
+no provisioning profile, no entitlement to request and no Simulator caveat, and
+`swift run` is the whole build step.
+
+Pick the first row that is true of you:
+
+| You want | Take this | Account? |
+|---|---|---|
+| to see it work, without writing code | `brew install bithuman-product/bithuman/bithuman-cli` then `bithuman run` — the [CLI](/sdk/cli) | none |
+| an avatar inside your own Mac app, in Swift | this package: `import Expression2` (or `Essence2`), exactly as below | none, for a showcase identity |
+| an avatar from a Python script on the Mac | the macOS arm64 wheel — [Python SDK](/sdk/python) | a key |
+| a whole on-device voice agent in a Mac app | `import bitHumanKit`. Apple Silicon M3 or newer, macOS 26 | a key for avatar mode |
+
+The shortest native path is one file. Measured on a MacBook Pro (Apple M4 Max,
+macOS 26.5, Xcode 26.5, Swift 6.3.2) on 2026-09-22, against the free showcase
+identity `A23WJF0199`, with the machine busy with other work:
+
+```text
+engine ready: 416x720, isReady=true
+audio: 325451 samples, 20.34 s
+generated 407 frames in 13.02 s (31.3 FPS, 1.56x real time) -> out/first-frame.png
+```
+
+That frame reads 416x720, min 0, max 255, mean 102.91 — a picture, not an empty
+buffer. The whole program is
+[`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2):
+its `setup.sh` fetches the identity, the shared engine graphs and a WAV with no
+credential in the environment, and `swift run -c release MacOSExpression2`
+renders. First run spends most of its time compiling the engine's graphs for
+your machine; keep the staging directory and the next start is much faster.
+
+> **Note** Linking `Expression2` on a Mac prints ten linker warnings naming
+> `/Users/…/Build/Intermediates.noindex/…` — directories on the machine that
+> built the framework, not yours. The published framework carries debug paths
+> whose object files are not in the archive. The link succeeds and the binary
+> runs; there is nothing for you to do.
+
 ## Requirements
 
 Every path needs a Mac with **Xcode 26 or newer**, an Apple Developer team, and a
@@ -392,6 +482,9 @@ Measured frame rates for every platform are on the
 | `409 MODEL_NOT_GENERATED`, with your key | your agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
 | the app runs, no error, no avatar; `pull()` keeps returning `nil` | you drained synchronously on the line after `feed()` — frames arrive asynchronously | poll, as in [Minimal code](#minimal-code) |
 | the app crashes in `__cxa_finalize` as the user closes it | `be_essence2_quiesce_all()` was never called | call it from `applicationWillTerminate` |
+| hundreds of undefined symbols at an app's final link — `___cxa_…`, `std::__1::…`, `_VTDecompressionSession…`, `_BNNSFilter…`, `_OBJC_CLASS_$_MLModel` | `Essence2` is a static C library and declares none of the Apple libraries it calls | add all four link settings — [What Essence 2 needs at link](#what-essence-2-needs-at-link); the symbol names which one you are missing |
+| `ld: warning: Could not find or use auto-linked framework 'CoreAudioTypes'` | a linker option baked into the Essence 2 static library naming a framework that does not exist on its own | nothing — the link succeeds |
+| ten linker warnings naming `/Users/…/Build/Intermediates.noindex/…`, a path not on your Mac | the published `Expression2` framework carries debug paths whose object files are not in the archive | nothing — the build completes and the binary runs |
 | `product 'Expression' … not found in package 'homebrew-bithuman'` | an older product name; `swift package resolve` does not check product names, `swift build` does | name the product `Expression2` |
 | `error: unable to resolve module dependency: 'Expression2'` on a Simulator build | the default Simulator destination also builds x86_64, and no slice carries it | add `ARCHS=arm64` |
 | a link failure naming `BithumanEngineProtocol` | you took that product beside `Expression2`, which already carries a binary copy | depend on `Expression2` alone |
@@ -419,13 +512,19 @@ Measured frame rates for every platform are on the
   entitlements — start with Expression 2 unless you need the whole stack.
 - [iOS API reference](/sdk/ios-api) — the full C interface, its return codes, and
   the Swift entry points.
-- [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice only, on device, no key.
+- **On a Mac** —
+  [`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2),
+  one file: a WAV in, lip-synced frames out, no account — the run measured under
+  [On a Mac](#on-a-mac); and
+  [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice only, on device, no key.
 - [Homebrew tap](https://github.com/bithuman-product/homebrew-bithuman) — the Swift package itself.
 
-> **Note** The `bithuman-examples` repository also carries older Swift harnesses,
-> and its `swift/README.md` still describes products named `Expression` and
-> `Bithuman`. **Those products do not exist in the package this page pins** — the
-> four it vends are in the table under [Install](#install).
+> **Note** Until 2026-09-22 that repository's `swift/README.md` described
+> products named `Expression` and `Bithuman`, which have never existed in this
+> package, beside six harnesses that could not build against it. The harnesses
+> are gone and the README now names the four real products. If you are reading a
+> clone from before that date, the table under [Install](#install) is the
+> authority.
 
 ## See also
 

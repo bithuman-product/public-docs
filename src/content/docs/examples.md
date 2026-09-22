@@ -10,10 +10,11 @@ order: 1
 
 Every project below is open-source under [bithuman-product/bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main). Each tutorial page follows the same shape: **Prerequisites → Run it → What you'll see → Full code → Next steps**. Find your row and start there.
 
-> **One example in that repo is internal-only.** `swift/compare-tts` declares a
-> dependency on a path outside the repository — `../../../../bithuman-sdk-internal/engine/voice`
-> — so it cannot resolve for anyone outside bitHuman, and `swift build` fails before it
-> compiles anything. Every other package there resolves from public sources.
+> **Every Swift example in that repository builds from a clone, as of
+> 2026-09-22.** It used not to: seven of its ten Swift packages failed
+> `swift build` against the published package — one could not even resolve,
+> because it named a path outside the repository. Those have been removed and
+> the repository's own gate no longer carries an allowlist.
 
 | If you want to… | Start with | Language | Time |
 |---|---|---|---|
@@ -52,9 +53,8 @@ The streaming runtime and LiveKit voice agents. Each repo project ships an `.env
 - [Swift / iOS — Essence 2 on-device](/examples/swift-ios-essence2) — the same shape, for the full-resolution engine: a complete SwiftUI app, every file printed, that renders an Essence 2 identity entirely on the phone. The identity and the engine resources both download **with no credential**. Costs you **iOS 26** and a separate resources archive, and the two engine products cannot be attached to one app.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — SwiftUI avatar on the `bitHumanKit` package. The richest path (on-device STT + LLM + TTS) and the most demanding: iPhone 16 Pro or later, plus two Apple-approved entitlements.
 - [swift/ios-avatar](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) — complete runnable SwiftUI iOS reference app (hardware gate + entitlements).
+- [swift/macos-expression2](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2) — **the Mac answer**: one file, a WAV in and lip-synced frames out, no account and no key. Measured 2026-09-22 on an M4 Max: 407 frames at 416x720 in 13.02 s.
 - [swift/macos-voice](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice-only on-device agent: no avatar, no API key, fully offline.
-
-> **Note** **Honesty about Swift examples.** The runnable, current ones are [`ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2) — the only one measured rendering on a phone, on 2026-09-09 — [`ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar) and [`macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice). The sibling `macos-avatar` and `essence-playback` examples target SDK surfaces that are still stabilizing — treat them as previews.
 
 ## Native apps — Kotlin / Android
 
