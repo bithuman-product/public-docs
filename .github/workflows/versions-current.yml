@@ -13,6 +13,19 @@ name: Versions current
 # release list (cli-v* by tag prefix, drafts and pre-releases skipped). A
 # registry it cannot read is CANNOT CHECK, exit 2 — red, never a pass.
 # scripts/check-versions-current.mjs says what each rule grades and why.
+#
+# SINCE 2026-09-22 IT ALSO GRADES WHAT IS NOT OURS. Until then only bitHuman
+# versions were watched, so the LiveKit Swift floor on /sdk/livekit, the
+# sentence beside it calling a LiveKit release "the newest", the Qualcomm
+# coordinates on /sdk/android, and the `livekit-agents~=1.5` floor in local
+# mode could all rot with every surface green. They are graded by what each
+# claim actually asserts: a FLOOR resolves forward by itself, so it is red only
+# when upstream crosses a MAJOR; an EXACT number is red on any difference; and
+# a coordinate our own AAR pulls in is graded against THAT AAR'S POM, never
+# against the third party's newest — measured 2026-09-22, Central's head for
+# `com.qualcomm.qti:qnn-runtime` was 2.50.0 while our POM declared 2.49.0 and
+# the page was right. The hourly schedule matters more for these, not less:
+# nobody here gets told when LiveKit tags a release.
 
 on:
   push:

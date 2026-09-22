@@ -75,12 +75,97 @@
 //   V7  Changelog the newest `cli-v*` the changelog names must be the newest
 //                 CLI, and the newest version of the CLI, `bithuman` and both
 //                 Android artifacts must each have an entry.
+//   V10 3rd-party THIRD-PARTY FLOORS. A pin that resolves FORWARD on its own —
+//                 a SwiftPM `from:`/`.upToNextMajor(from:)` on someone else's
+//                 package, a `dist~=X.Y` compatible-release requirement — is
+//                 graded on the MAJOR only. See THE FAILURE POLICY below.
+//   V11 3rd-party THIRD-PARTY EXACT CLAIMS, graded to the digit:
+//                 (a) prose that dates itself — "`2.17.0` is LiveKit's newest
+//                     release" — against that project's published tags;
+//                 (b) a third-party Maven coordinate the site tells a reader a
+//                     bitHuman AAR pulls in, against THAT AAR'S PUBLISHED POM.
+//                     ★Not against the third party's own newest. Measured
+//                     2026-09-22: Maven Central's <release> for
+//                     `com.qualcomm.qti:qnn-runtime` was 2.50.0 while
+//                     `ai.bithuman:expression2-android:0.4.8`'s POM declared
+//                     2.49.0. The page says 2.49.0 and the page is RIGHT —
+//                     what a reader gets is what our POM declares. Grading a
+//                     transitive coordinate against the registry head would
+//                     have turned this repository red for a Qualcomm release
+//                     we do not ship and cannot fix here.
 //
 // WHAT IT DELIBERATELY DOES NOT GRADE: history. Changelog entries below the
 // top are dated records and stay as written. A range (`bithuman>=2.7.0`,
 // `bithuman<3`) is a requirement, not a claim about what is newest. A
 // `BITHUMAN_VERSION=cli-v…` pin in prose is a deliberate pin to an old
 // release. Grading only the forms above is what keeps those free.
+//
+// And, added 2026-09-22 with the third-party rules, the TOOLCHAIN TRIO on
+// examples/kotlin-android-hello.md — JDK 17, Gradle 8.11.1, AGP 8.7.3,
+// `compileSdk 35`, `build-tools;35.0.0`, and the FFmpeg 7.1 source tarball on
+// legal/android-ffmpeg-lgpl.md. Those are not stale pins that nobody noticed;
+// they are a TESTED COMBINATION, and the page states in prose why each one is
+// held: "AGP 8.7.3 refuses newer launcher JVMs", "Gradle 9 refuses to write a
+// wrapper into an empty directory". Grading them against Google's Maven or
+// gradle.org would go red on a toolchain the page deliberately does not use,
+// and the only way to clear that red would be to break the tutorial. Same
+// class as the `BITHUMAN_VERSION=cli-v…` pin above. The FFmpeg tarball is a
+// licence artifact with a recorded sha256 — a legal record, not an install
+// instruction. And no page on this site names an npm package, a CocoaPods
+// pod, or a Homebrew formula VERSION (`brew install ffmpeg` names no
+// version), so those lanes have nothing to grade — checked 2026-09-22 over
+// src/content + src/pages, not from memory.
+//
+// THE FAILURE POLICY, and why it is shaped this way
+// -------------------------------------------------
+// A guard that reds on every upstream patch gets switched off, and a guard
+// that stays green while a reader copies a dead pin has done nothing. The line
+// between them is not "how many versions behind" — it is WHAT THE TEXT CLAIMS:
+//
+//   A FLOOR claims "at least this, and newer is fine". `from: "2.17.0"` and
+//   `livekit-agents~=1.5` both RESOLVE FORWARD by themselves: SwiftPM takes
+//   the highest tag in the same major, pip the highest release in the same
+//   major. Upstream shipping 2.18.0 leaves the floor CORRECT and the reader
+//   CURRENT, so a finding there would be noise and also false. The one drift a
+//   floor cannot absorb is a NEW MAJOR: the day LiveKit tags 3.0.0, `from:
+//   "2.17.0"` silently parks every reader on a line upstream has left. So V10
+//   fires on a major crossing and on nothing else — at most once per upstream
+//   major, which for this package has happened once in its life.
+//
+//   AN EXACT CLAIM claims "this is the number". "`2.17.0` is LiveKit's newest
+//   release" and `com.qualcomm.qti:qnn-runtime:2.49.0` name a digit, so any
+//   difference makes the sentence false and V11 fires on any difference.
+//
+// WHY RED AND NOT A WARNING, for all three. The test this file already applies
+// at V8 — where an engine release AHEAD of the Swift package prints a warning
+// and stays green — is CAN A DOCS EDIT FIX IT? There it cannot: no page change
+// can tag another repository's package, and a red would block every unrelated
+// page. Every V10/V11 finding fails that test the other way: bump the floor,
+// correct the coordinate, or delete the sentence — all three are edits to a
+// file in THIS repository. So they are red.
+//
+// ★AND THE DURABLE FIX FOR V11a IS DELETION, which is what its finding says.
+// "`2.17.0` is LiveKit's newest release (2026-09-14)" is a sentence that
+// re-rots on somebody else's release cadence forever. The `from:` floor
+// beneath it already tells the reader everything true and needs no edit when
+// LiveKit ships 2.18.0. Removing the sentence removes the rot; chasing it
+// merely reschedules it.
+//
+// WHERE THE LINE WITH check-dependency-coordinates IS, so nobody writes a
+// third implementation. That gate widened from `ai.bithuman` to EVERY group on
+// 2026-09-21 and already asks whether `com.qualcomm.qti:qnn-runtime:2.49.0`
+// EXISTS on Central. It does, and it will go on existing for years after our
+// AAR stops declaring it. V11b asks the other question — is this the version a
+// reader actually gets — and the two together are the whole claim. Neither
+// answers the other's question; do not merge them, and do not add a third.
+//
+// AN UNREGISTERED THIRD PARTY IS NOT A PASS. V10 and V11 read small tables —
+// THIRD_PARTY_SWIFT, THIRD_PARTY_MAVEN, THIRD_PARTY_PYPI — that say where each
+// outside project's truth lives. A pin this site carries whose project is in
+// none of them is a FINDING naming the table to add it to, never a silent
+// skip. That hole is not hypothetical: this file's own note at ARTIFACTS
+// records that `ai.bithuman:sdk` was silently skipped for exactly this reason
+// until 2026-09-15.
 //
 // ★NEWEST IS NOT WHAT EVERY PLATFORM INSTALLS. Measured 2026-09-14: PyPI's
 // info.version for `bithuman` went to 3.1.6 while 3.1.6 shipped only Linux
@@ -136,6 +221,53 @@ export const ARTIFACTS = [
   { id: "cli", kind: "cli", changelog: true },
   { id: "swift", kind: "tap", changelog: false },
   { id: "swift-essence2-engine", kind: "tap-essence2", changelog: false },
+  // ★THIRD PARTIES, added 2026-09-22. Not ours, so `changelog: false`: V7 asks
+  // for an entry when WE publish, and a LiveKit release is not a bitHuman
+  // release. They sit in ARTIFACTS anyway so that one CANNOT CHECK machinery
+  // covers them — an unreachable third-party registry has to leave its
+  // subjects named and ungraded exactly like an unreachable first-party one.
+  { id: "livekit-swift", kind: "github-tags", repo: "livekit/client-sdk-swift", changelog: false },
+  { id: "livekit-agents", kind: "pypi-head", changelog: false },
+  // The POM of the newest expression2-android, which is the authority for
+  // every `com.qualcomm.qti` coordinate the site quotes. Listed AFTER
+  // expression2-android so the metadata fetch it needs is already memoised.
+  { id: "expression2-android-pom", kind: "maven-pom", of: "expression2-android", changelog: false },
+];
+
+/** V10/V11a — outside Swift packages this site pins, and where their truth is.
+ *  `name` is how the pages speak of the project in prose; it is what V11a's
+ *  sentence form is built from, so it must match the page's wording. */
+export const THIRD_PARTY_SWIFT = [
+  {
+    id: "livekit-swift",
+    name: "LiveKit",
+    // sdk/livekit.md pins this for the iOS/macOS client that renders a
+    // bitHuman avatar's track. The url is matched with and without `.git`.
+    url: "https://github.com/livekit/client-sdk-swift",
+  },
+];
+
+/** V11b — outside Maven groups this site names, each with the bitHuman AAR
+ *  whose POM decides what a reader actually resolves. `declaredBy` is the
+ *  authority, NOT the group's own <release>: see the header. */
+export const THIRD_PARTY_MAVEN = [
+  {
+    group: "com.qualcomm.qti",
+    declaredBy: "expression2-android",
+    // sdk/android.md tells a reader the AAR brings these in and they no
+    // longer type them; examples/kotlin-android-hello.md still types them.
+    // Both are claims about the AAR's POM, so both are graded against it.
+    why: "the Qualcomm accelerator runtime expression2-android declares at runtime scope",
+  },
+];
+
+/** V10 — outside PyPI distributions this site floors with `~=`. */
+export const THIRD_PARTY_PYPI = [
+  {
+    id: "livekit-agents",
+    name: "LiveKit Agents",
+    // sdk/cli/local-mode.md floors the on-device brain at `~=1.5`.
+  },
 ];
 
 /* --------------------------------------------------------------- versions */
@@ -148,6 +280,10 @@ export function cmpVer(a, b) {
   for (let i = 0; i < 3; i++) if ((A[i] || 0) !== (B[i] || 0)) return (A[i] || 0) - (B[i] || 0);
   return 0;
 }
+
+/** The major a version or a floor belongs to. `~=1.5` has no patch, so this
+ *  reads the first component and nothing else. */
+export const major = (v) => Number(String(v).replace(/^v/, "").split(".")[0]);
 
 export function newest(versions) {
   const v = versions.filter((x) => SEMVER.test(x)).sort(cmpVer);
@@ -425,21 +561,128 @@ export function shippingTable(text) {
   return out;
 }
 
-/** V6 — `from:` pins on the Swift package, in a Swift manifest or an XcodeGen spec. */
-export function tapPins(text) {
+/** Every `from:`/`exact:` pin in a Swift manifest on the package at `url`.
+ *  ONE implementation of this scan: V6 calls it for the bitHuman tap and V10
+ *  calls it for each THIRD_PARTY_SWIFT entry, so a manifest form that one rule
+ *  learns to read (`.upToNextMajor(from: "…")` among them, which the livekit
+ *  page uses) is read by both. */
+export function swiftPackagePins(text, url) {
   const out = [];
-  const swiftRe = /\.package\s*\(\s*url:\s*\\?["']https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?\\?["']/g;
+  const re = new RegExp(`\\.package\\s*\\(\\s*url:\\s*\\\\?["']${esc(url)}(?:\\.git)?\\\\?["']`, "g");
   let m;
-  while ((m = swiftRe.exec(text)) !== null) {
+  while ((m = re.exec(text)) !== null) {
     const v = /\b(?:from|exact)\s*:\s*\\?["']([0-9][0-9A-Za-z.\-]*)\\?["']/.exec(text.slice(m.index, m.index + 400));
     if (v) out.push({ version: v[1], line: lineOf(text, m.index) });
   }
+  return out;
+}
+
+const TAP_URL = "https://github.com/bithuman-product/homebrew-bithuman";
+
+/** V6 — `from:` pins on the Swift package, in a Swift manifest or an XcodeGen spec. */
+export function tapPins(text) {
+  const out = swiftPackagePins(text, TAP_URL);
   const yamlRe = /^[ \t]*url:\s*https:\/\/github\.com\/bithuman-product\/homebrew-bithuman(?:\.git)?[ \t]*$/gm;
+  let m;
   while ((m = yamlRe.exec(text)) !== null) {
     const v = /^[ \t]*(?:from|exactVersion|version)\s*:\s*["']?([0-9][0-9A-Za-z.\-]*?)["']?[ \t]*$/m.exec(
       text.slice(m.index, m.index + 300),
     );
     if (v) out.push({ version: v[1], line: lineOf(text, m.index) });
+  }
+  return out;
+}
+
+/** V10 — every Swift package pin on this page that is NOT the bitHuman tap,
+ *  matched to its THIRD_PARTY_SWIFT entry. An unmatched url comes back with
+ *  `entry: null` so the grader can say "register it", never skip it. */
+export function thirdPartySwiftPins(path, text) {
+  const out = [];
+  if (isChangelog(path)) return out;
+  const re = /\.package\s*\(\s*url:\s*\\?["']([^"'\\\n]+?)(?:\.git)?\\?["']/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const url = m[1].replace(/\/$/, "");
+    if (url === TAP_URL) continue; // V6 owns the tap
+    const v = /\b(?:from|exact)\s*:\s*\\?["']([0-9][0-9A-Za-z.\-]*)\\?["']/.exec(text.slice(m.index, m.index + 400));
+    if (!v) continue; // a bare git url with no pin claims no version
+    out.push({
+      url,
+      version: v[1],
+      line: lineOf(text, m.index),
+      entry: THIRD_PARTY_SWIFT.find((e) => e.url === url) ?? null,
+    });
+  }
+  return out;
+}
+
+/** V11b — `group:artifact:version` in a region a reader copies, for any group
+ *  that is not ours. Both forms the site uses are covered because both live in
+ *  a code region: the typed `implementation("…")` line on the Kotlin example,
+ *  and the inline-span sentence on sdk/android.md that says what the AAR
+ *  brings in. History is exempt, as everywhere else here. */
+export function thirdPartyMavenCoords(path, text) {
+  const out = [];
+  if (isChangelog(path)) return out;
+  for (const region of codeRegions(path, text)) {
+    const re = /\b([a-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_-]+)+):([A-Za-z0-9._-]+):(\d+\.\d+(?:\.\d+)?)(?![0-9.])/g;
+    let m;
+    while ((m = re.exec(region.text)) !== null) {
+      if (m[1] === "ai.bithuman") continue; // V1/V1b own ours
+      out.push({
+        group: m[1],
+        artifact: m[2],
+        version: m[3],
+        what: m[0],
+        line: lineOf(text, region.offset + m.index),
+        entry: THIRD_PARTY_MAVEN.find((e) => e.group === m[1]) ?? null,
+      });
+    }
+  }
+  return out;
+}
+
+/** V10 — `dist~=X.Y` compatible-release floors on an outside distribution.
+ *  `~=1.5` is pip's "newest 1.x", so only a new MAJOR strands it. `==` and
+ *  `>=` are not read here: V2 already grades an exact pin, and `>=` is the
+ *  requirement form this file has always left alone. */
+export function pypiFloors(path, text) {
+  const out = [];
+  if (isChangelog(path)) return out;
+  const firstParty = new Set(ARTIFACTS.filter((a) => a.kind === "pypi").map((a) => a.id));
+  for (const region of codeRegions(path, text)) {
+    const re = /(?<![A-Za-z0-9_.-])([A-Za-z][A-Za-z0-9._-]*)(?:\[[^\]]*\])?~=(\d+(?:\.\d+)*)/g;
+    let m;
+    while ((m = re.exec(region.text)) !== null) {
+      if (firstParty.has(m[1])) continue;
+      out.push({
+        dist: m[1],
+        version: m[2],
+        what: m[0],
+        line: lineOf(text, region.offset + m.index),
+        entry: THIRD_PARTY_PYPI.find((e) => e.id === m[1]) ?? null,
+      });
+    }
+  }
+  return out;
+}
+
+/** V11a — a sentence that DATES ITSELF against an outside project's head.
+ *  Both orders the English takes, and both apostrophes an editor may type. */
+export function thirdPartyNewestProse(path, text) {
+  const out = [];
+  if (isChangelog(path)) return out;
+  for (const e of THIRD_PARTY_SWIFT) {
+    const n = esc(e.name);
+    for (const re of [
+      new RegExp("`?(\\d+\\.\\d+\\.\\d+)`?\\s+is\\s+" + n + "['\u2019]s newest release", "g"),
+      new RegExp(n + "['\u2019]s newest release is\\s+\\*{0,2}`?(\\d+\\.\\d+\\.\\d+)", "g"),
+    ]) {
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        out.push({ id: e.id, name: e.name, version: m[1], what: m[0].replace(/\s+/g, " "), line: lineOf(text, m.index) });
+      }
+    }
   }
   return out;
 }
@@ -464,7 +707,7 @@ class CannotCheck extends Error {}
 export async function grade(files, registry) {
   const failures = [];
   const cannot = [];
-  const seen = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0 };
+  const seen = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0, V10: 0, V11: 0 };
   const latest = {};
 
   for (const a of ARTIFACTS) {
@@ -523,6 +766,147 @@ export async function grade(files, registry) {
           msg:
             `V6: pins the Swift package at from: "${p.version}", which resolves to ${to ?? "no tag"}; ` +
             `the newest published tag is ${tags}.`,
+        });
+      }
+    }
+
+    // V10 — a THIRD-PARTY FLOOR. Red on a MAJOR crossing and on nothing else:
+    // a floor resolves forward inside its own major by construction, so a
+    // finding on an upstream minor would be noise AND false. See THE FAILURE
+    // POLICY at the top of this file.
+    for (const p of thirdPartySwiftPins(path, text)) {
+      seen.V10++;
+      if (!p.entry) {
+        failures.push({
+          path,
+          line: p.line,
+          msg:
+            `V10: this page pins the Swift package at ${p.url} to from: "${p.version}", and that ` +
+            `project is in no table here, so nothing grades it. Add it to THIRD_PARTY_SWIFT with the ` +
+            `name the pages use for it in prose. An unregistered third party is not a pass.`,
+        });
+        continue;
+      }
+      const head = latest[p.entry.id];
+      if (head === null) {
+        unread(p.entry.id).ungraded.push(`${path}:${p.line}`);
+        continue;
+      }
+      const to = resolvesTo(p.version, head.all);
+      if (!to) {
+        failures.push({
+          path,
+          line: p.line,
+          msg:
+            `V10: pins ${p.entry.name} at from: "${p.version}", which resolves NO published tag — ` +
+            `${p.entry.name}'s newest is ${head.newest}. A floor above every tag resolves nothing at all.`,
+        });
+      } else if (major(head.newest) > major(to)) {
+        failures.push({
+          path,
+          line: p.line,
+          msg:
+            `V10: pins ${p.entry.name} (${p.url}) at from: "${p.version}". SwiftPM cannot cross a major, ` +
+            `so that floor resolves ${to} for ever, while ${p.entry.name} has published ${head.newest} — ` +
+            `a newer major line. Raise the floor to a ${major(head.newest)}.x version, after reading ` +
+            `that project's migration guide.`,
+        });
+      }
+    }
+    for (const f of pypiFloors(path, text)) {
+      seen.V10++;
+      if (!f.entry) {
+        failures.push({
+          path,
+          line: f.line,
+          msg:
+            `V10: this page floors \`${f.what}\` and \`${f.dist}\` is in no table here, so nothing ` +
+            `grades it. Add it to THIRD_PARTY_PYPI. An unregistered third party is not a pass.`,
+        });
+        continue;
+      }
+      const head = latest[f.entry.id];
+      if (head === null) {
+        unread(f.entry.id).ungraded.push(`${path}:${f.line}`);
+        continue;
+      }
+      if (major(head) > major(f.version)) {
+        failures.push({
+          path,
+          line: f.line,
+          msg:
+            `V10: \`${f.what}\` is a compatible-release floor, so pip takes the newest ${major(f.version)}.x ` +
+            `for ever; ${f.entry.name} has published ${head}, a newer major. A reader following this page ` +
+            `lands on a line upstream has left. Raise the floor to ~=${major(head)}.0 after checking the break.`,
+        });
+      }
+    }
+
+    // V11a — a sentence that dates itself against an outside project's head.
+    for (const c of thirdPartyNewestProse(path, text)) {
+      seen.V11++;
+      const head = latest[c.id];
+      if (head === null) {
+        unread(c.id).ungraded.push(`${path}:${c.line}`);
+        continue;
+      }
+      if (c.version !== head.newest) {
+        failures.push({
+          path,
+          line: c.line,
+          msg:
+            `V11: "${c.what}" — ${c.name}'s newest published tag is ${head.newest}, not ${c.version}. ` +
+            `★The durable fix is to DELETE this sentence, not to bump it: the \`from:\` floor beside it ` +
+            `is already true at every ${c.name} release and needs no edit, while a sentence naming ` +
+            `someone else's newest re-rots on their cadence for ever.`,
+        });
+      }
+    }
+
+    // V11b — a third-party coordinate, graded against the POM of the bitHuman
+    // AAR that decides it. Never against that group's own <release>: measured
+    // 2026-09-22, Central's head was 2.50.0 and our POM declared 2.49.0, and
+    // the page saying 2.49.0 was correct.
+    for (const c of thirdPartyMavenCoords(path, text)) {
+      seen.V11++;
+      if (!c.entry) {
+        failures.push({
+          path,
+          line: c.line,
+          msg:
+            `V11: this page names \`${c.what}\` and the group \`${c.group}\` is in no table here, so ` +
+            `nothing grades it. Add it to THIRD_PARTY_MAVEN with the bitHuman AAR whose POM decides it ` +
+            `(or, if nothing of ours declares it, with the authority that does). An unregistered third ` +
+            `party is not a pass.`,
+        });
+        continue;
+      }
+      const pom = latest[`${c.entry.declaredBy}-pom`];
+      if (pom === null) {
+        unread(`${c.entry.declaredBy}-pom`).ungraded.push(`${path}:${c.line}`);
+        continue;
+      }
+      const source = `ai.bithuman:${c.entry.declaredBy}:${pom.pomVersion}'s published POM`;
+      const declared = pom.deps.get(`${c.group}:${c.artifact}`);
+      if (declared === undefined) {
+        failures.push({
+          path,
+          line: c.line,
+          msg:
+            `V11: names \`${c.what}\`, but ${source} does not declare \`${c.group}:${c.artifact}\` at ` +
+            `all any more. This is the shape that survived three minors in a sibling repository: prose ` +
+            `about a dependency stays true-looking long after the dependency is gone. Either the page ` +
+            `still tells a reader to add something they no longer need, or the AAR dropped it and the ` +
+            `page has not been told.`,
+        });
+      } else if (declared !== c.version) {
+        failures.push({
+          path,
+          line: c.line,
+          msg:
+            `V11: names \`${c.what}\`; ${source} declares \`${c.group}:${c.artifact}:${declared}\`. ` +
+            `Write ${declared}. (Graded against the POM, not against ${c.group}'s own newest — what a ` +
+            `reader resolves is what our AAR declares.)`,
         });
       }
     }
@@ -625,13 +1009,15 @@ const liveRegistry = {
   tapTagsSeen: null,
   async latest(a) {
     if (a.kind === "maven") {
+      this._maven = this._maven || {};
+      if (this._maven[a.id]) return this._maven[a.id];
       const path = `maven2/ai/bithuman/${a.id}/maven-metadata.xml`;
       const url = `https://repo1.maven.org/${path}`;
       const xml = await (await get([url, `https://repo.maven.apache.org/${path}`])).text();
       const release = /<release>([^<]+)<\/release>/.exec(xml)?.[1]?.trim();
       const versions = [...xml.matchAll(/<version>([^<]+)<\/version>/g)].map((m) => m[1].trim());
       if (!release && versions.length === 0) throw new CannotCheck(`${url}: no <release> and no <version>`);
-      return release && SEMVER.test(release) ? release : newest(versions);
+      return (this._maven[a.id] = release && SEMVER.test(release) ? release : newest(versions));
     }
     if (a.kind === "pypi") {
       // Cache-busted: on 2026-09-14 PyPI's CDN served a project JSON that still
@@ -673,6 +1059,60 @@ const liveRegistry = {
       if (!m) throw new CannotCheck(`${url}: no essence2Tag — the manifest shape changed`);
       return m[1];
     }
+    // A third party's published tags. Read with git ls-remote, like the tap
+    // above and deliberately not with the GitHub API: this runs hourly on a
+    // schedule, and an unauthenticated API call for somebody else's repository
+    // is the first thing a rate limit takes. ls-remote needs no credential.
+    if (a.kind === "github-tags") {
+      let out;
+      try {
+        out = execFileSync("git", ["ls-remote", "--tags", `https://github.com/${a.repo}.git`], {
+          encoding: "utf8",
+          timeout: 120000,
+        });
+      } catch (e) {
+        throw new CannotCheck(`git ls-remote ${a.repo}: ${e.message.split("\n")[0]}`);
+      }
+      const all = out
+        .split("\n")
+        .map((l) => l.split("\t")[1])
+        .filter((r) => r && r.startsWith("refs/tags/") && !r.endsWith("^{}"))
+        .map((r) => r.slice("refs/tags/".length).replace(/^v/, ""))
+        .filter((t) => SEMVER.test(t));
+      if (all.length === 0) throw new CannotCheck(`git ls-remote ${a.repo}: no X.Y.Z tags`);
+      return { newest: newest(all), all };
+    }
+    // A third party's newest PyPI release. No platform-regression note: which
+    // wheels somebody else builds is not a claim this site makes.
+    if (a.kind === "pypi-head") {
+      const url = `https://pypi.org/pypi/${a.id}/json`;
+      const j = await (await get(`${url}?cb=${Date.now()}`, { "Cache-Control": "no-cache" })).json();
+      const v = j?.info?.version;
+      if (!v || !SEMVER.test(v)) throw new CannotCheck(`${url}: info.version is ${JSON.stringify(v)}`);
+      return v;
+    }
+    // The dependencies the newest build of one of OUR AARs actually declares.
+    // This is what a reader resolves, and it is the only honest authority for
+    // a transitive coordinate a page quotes.
+    if (a.kind === "maven-pom") {
+      const v = await this.latest({ id: a.of, kind: "maven" });
+      if (!v) throw new CannotCheck(`ai.bithuman:${a.of}: no version to read a POM for`);
+      const path = `maven2/ai/bithuman/${a.of}/${v}/${a.of}-${v}.pom`;
+      const url = `https://repo1.maven.org/${path}`;
+      const xml = await (await get([url, `https://repo.maven.apache.org/${path}`])).text();
+      if (!/<project[\s>]/.test(xml)) throw new CannotCheck(`${url}: not a POM`);
+      const deps = new Map();
+      for (const d of xml.matchAll(/<dependency>([\s\S]*?)<\/dependency>/g)) {
+        const g = /<groupId>([^<]+)<\/groupId>/.exec(d[1])?.[1]?.trim();
+        const art = /<artifactId>([^<]+)<\/artifactId>/.exec(d[1])?.[1]?.trim();
+        const ver = /<version>([^<]+)<\/version>/.exec(d[1])?.[1]?.trim();
+        if (g && art && ver) deps.set(`${g}:${art}`, ver);
+      }
+      // An EMPTY dependency list is an answer, not a failure to read: an AAR
+      // that declares nothing is exactly the state V11b must be able to
+      // report. Only an unreadable or unparsable POM is CANNOT CHECK.
+      return { of: a.of, pomVersion: v, deps };
+    }
     if (a.kind === "tap") {
       let out;
       try {
@@ -710,6 +1150,19 @@ const STUB_LATEST = {
   cli: "2.6.14",
   swift: "2.13.3",
   "swift-essence2-engine": "1.6.3",
+  // Third parties. The tag list is the real one as of 2026-09-22 minus the
+  // noise, so `resolvesTo` is exercised against a shape that exists.
+  "livekit-swift": { newest: "2.17.0", all: ["1.1.5", "1.1.6", "2.0.0", "2.15.3", "2.16.0", "2.17.0"] },
+  "livekit-agents": "1.8.2",
+  "expression2-android-pom": {
+    of: "expression2-android",
+    pomVersion: "0.4.8",
+    deps: new Map([
+      ["org.jetbrains.kotlin:kotlin-stdlib", "2.0.21"],
+      ["com.qualcomm.qti:qnn-litert-delegate", "2.49.0"],
+      ["com.qualcomm.qti:qnn-runtime", "2.49.0"],
+    ]),
+  },
 };
 const stub = (down = []) => ({
   tapTagsSeen: ["1.9.0", "2.11.0", "2.11.2", "2.13.2", "2.13.3"],
@@ -778,6 +1231,52 @@ const ARMS = [
   ["good: a page's own measurement that is not a cell", "p/examples/kotlin.md", "this phone renders about 5.6 frames per second, and playback needs 20", false],
   ["control: the performance page itself states its cells", "p/sdk/performance.md", PERF_FIXTURE, false],
   ["control: a page with no version at all", "p/x.md", "Nothing versioned here.\n", false],
+
+  /* ---- V10/V11, the third-party rules. Every defect arm here is a REWIND of
+     something the site says today, and the good arms are the drift the policy
+     deliberately stays silent about. ---- */
+
+  // V10 — a SwiftPM floor on somebody else's package.
+  ["bad: a LiveKit floor left on the 1.x line after the v2 break", "p/sdk/livekit.md",
+   '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git",\n         .upToNextMajor(from: "1.1.6"))\n```\n', true],
+  ["bad: a LiveKit floor above every published tag", "p/sdk/livekit.md",
+   '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "9.9.9")\n```\n', true],
+  ["bad: a Swift package pinned from a project no table here knows", "p/sdk/ios.md",
+   '```swift\n.package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0")\n```\n', true],
+  ["good: a LiveKit floor two minors back still resolves the newest 2.x", "p/sdk/livekit.md",
+   '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git",\n         .upToNextMajor(from: "2.15.3"))\n```\n', false],
+  ["good: the LiveKit floor the page carries today", "p/sdk/livekit.md",
+   '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git",\n         .upToNextMajor(from: "2.17.0"))\n```\n', false],
+  ["control: a third-party git url named with no pin claims no version", "p/sdk/livekit.md",
+   "a [frozen fork](https://github.com/bithuman-archive/bithuman-livekit-swift) (archived, still installable via its git URL)", false],
+
+  // V10 — a PyPI compatible-release floor.
+  ["bad: a livekit-agents floor left on 0.x after the 1.0 break", "p/sdk/cli/local-mode.md",
+   "```bash\npip install \'livekit-agents[silero]~=0.12\' supertonic\n```\n", true],
+  ["bad: a PyPI floor on a distribution no table here knows", "p/sdk/cli/local-mode.md",
+   "```bash\npip install \'pywhispercpp~=1.3\'\n```\n", true],
+  ["good: the livekit-agents floor the page carries today", "p/sdk/cli/local-mode.md",
+   "```bash\npip install \'livekit-agents[silero]~=1.5\' supertonic\n```\n", false],
+
+  // V11a — a sentence that dates itself against someone else's head.
+  ["bad: a sentence calling an older LiveKit release the newest", "p/sdk/livekit.md",
+   "`2.16.0` is LiveKit\'s newest release (2026-09-14), and the `from:` is a floor.", true],
+  ["bad: the same claim written the other way round", "p/sdk/livekit.md",
+   "LiveKit\'s newest release is **2.15.3** today.", true],
+  ["good: the sentence the page carries today", "p/sdk/livekit.md",
+   "`2.17.0` is LiveKit\'s newest release (2026-09-14), and the `from:` is a floor.", false],
+
+  // V11b — a third-party coordinate against the POM that decides it.
+  ["bad: a Qualcomm coordinate one release behind the AAR\'s POM", "p/sdk/android.md",
+   "Gradle brings in `com.qualcomm.qti:qnn-litert-delegate:2.48.0` for you.", true],
+  ["bad: the same rewind in a line the reader types", "p/examples/kotlin-android-hello.md",
+   '```kotlin\ndependencies {\n    implementation("com.qualcomm.qti:qnn-runtime:2.48.0")\n}\n```\n', true],
+  ["bad: a Maven group no table here knows", "p/examples/kotlin-android-hello.md",
+   '```kotlin\nimplementation("com.squareup.okhttp3:okhttp:5.0.0")\n```\n', true],
+  ["good: the Qualcomm coordinates the POM declares", "p/sdk/android.md",
+   "Gradle brings in `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0` for you.", false],
+  ["control: an old third-party coordinate inside the changelog\'s history", "p/changelog.md",
+   CL("2.6.14", "0.5.5", "3.1.5") + "`com.qualcomm.qti:qnn-runtime:2.48.0` and `com.google.ai.edge.litert:litert:2.2.0`\n", false],
 ];
 
 async function selftest() {
@@ -830,6 +1329,110 @@ async function selftest() {
     }
   }
 
+  // THE THIRD-PARTY RULES, beyond "something fired". A finding that does not
+  // NAME THE COORDINATE sends a fixer hunting, and three of these arms are the
+  // ones that decide whether this rule is worth having at all.
+  {
+    const checks = [];
+    const one = async (files, registry) => (await grade(files, registry ?? stub())).failures;
+
+    // (1) The finding must name the coordinate, the version written and the
+    //     version the POM declares — all three, or it is not actionable.
+    {
+      const f = await one([{ path: "p/sdk/android.md", text: "Gradle brings in `com.qualcomm.qti:qnn-runtime:2.48.0` for you." }]);
+      const m = f[0]?.msg ?? "";
+      checks.push([
+        "names: a stale Qualcomm coordinate names the artifact, 2.48.0 and 2.49.0",
+        f.length === 1 &&
+          /com\.qualcomm\.qti:qnn-runtime:2\.48\.0/.test(m) &&
+          /com\.qualcomm\.qti:qnn-runtime:2\.49\.0/.test(m) &&
+          /expression2-android:0\.4\.8/.test(m),
+        m,
+      ]);
+    }
+
+    // (2) ★THE FALSE-RED CONTROL, and the reason V11b reads a POM at all.
+    //     Measured 2026-09-22: Maven Central's <release> for
+    //     com.qualcomm.qti:qnn-runtime was 2.50.0 while
+    //     ai.bithuman:expression2-android:0.4.8's POM declared 2.49.0, and the
+    //     page saying 2.49.0 was RIGHT. So the page must stay silent, AND no
+    //     code path may ask Qualcomm what its newest is — a spy over every
+    //     registry call proves the second half positively, because silence
+    //     alone would also be produced by a rule that asked and got lucky.
+    {
+      const base = stub();
+      const asked = [];
+      const spy = { ...base, async latest(a) { asked.push(a.id); return base.latest(a); } };
+      const f = await one(
+        [{ path: "p/sdk/android.md", text: "brings in `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`" }],
+        spy,
+      );
+      checks.push([
+        "false-red: the POM decides, and Qualcomm's own head is never asked",
+        f.length === 0 && asked.length > 0 && !asked.some((id) => /qualcomm|qnn/i.test(id)),
+        `silent=${f.length === 0} registries=[${asked.join(",")}]`,
+      ]);
+    }
+
+    // (3) ★THE SIBLING-LANE CLASS, from real history. On 2026-09-04
+    //     expression-2 Android 0.3.1 stopped depending on
+    //     com.google.ai.edge.litert, and a build comment went on saying the
+    //     dependency was there. It survived three minors because nothing
+    //     graded prose against the registry. Here the group stays registered
+    //     and the POM stops declaring it: the run must go red and SAY the POM
+    //     no longer declares it, not merely disagree about a number.
+    {
+      const base = stub();
+      const gone = {
+        ...base,
+        async latest(a) {
+          if (a.id !== "expression2-android-pom") return base.latest(a);
+          return { of: "expression2-android", pomVersion: "0.4.9", deps: new Map([["org.jetbrains.kotlin:kotlin-stdlib", "2.0.21"]]) };
+        },
+      };
+      const f = await one([{ path: "p/sdk/android.md", text: "Gradle brings in `com.qualcomm.qti:qnn-runtime:2.49.0` for you." }], gone);
+      const m = f[0]?.msg ?? "";
+      checks.push([
+        "dropped: a dependency the AAR stopped declaring is red, and says so",
+        f.length === 1 && /does not declare/.test(m) && /com\.qualcomm\.qti:qnn-runtime/.test(m),
+        m,
+      ]);
+    }
+
+    // (4) A third-party registry that cannot be read leaves its subject NAMED
+    //     and ungraded and exits 2 — the same contract as a first-party one.
+    for (const [who, down, text, path] of [
+      ["livekit-swift", "livekit-swift", '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "2.17.0")', "p/sdk/livekit.md"],
+      ["the expression2-android POM", "expression2-android-pom", "`com.qualcomm.qti:qnn-runtime:2.49.0`", "p/sdk/android.md"],
+    ]) {
+      const { failures, cannot } = await grade([{ path, text }], stub([down]));
+      const c = cannot.find((x) => x.artifact === down);
+      checks.push([
+        `cannot: ${who} unreachable exits 2 and names the page it left`,
+        failures.length === 0 && !!c && c.ungraded.length === 1 && verdict(failures, cannot) === 2,
+        `cannot=${cannot.length} ungraded=${c ? c.ungraded.join(",") : "-"} exit=${verdict(failures, cannot)}`,
+      ]);
+    }
+
+    // (5) The floor policy in one line: a floor is silent across minors and
+    //     red across a major. Both halves on the same subject, so the arm is
+    //     about the POLICY and not about two different pins.
+    {
+      const quiet = await one([{ path: "p/sdk/livekit.md", text: '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "2.15.3")' }]);
+      const loud = await one([{ path: "p/sdk/livekit.md", text: '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "1.1.6")' }]);
+      checks.push([
+        "policy: a floor is silent two minors back and red across a major",
+        quiet.length === 0 && loud.length === 1 && /newer major line/.test(loud[0].msg) && /client-sdk-swift/.test(loud[0].msg),
+        `minor=${quiet.length} major=${loud.length}`,
+      ]);
+    }
+
+    for (const [name, ok, detail] of checks) {
+      if (!ok) bad++;
+      console.log(`  ${ok ? "OK  " : "FAIL"}  ${name.padEnd(64)} ${ok ? "" : detail}`);
+    }
+  }
+
   // CANNOT CHECK: an unreachable registry must never read as a pass.
   {
     const { failures, cannot } = await grade(
@@ -846,10 +1449,12 @@ async function selftest() {
   }
   // The rules must see the real pages, or every arm above is about fixtures only.
   const real = corpus();
-  const counts = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0 };
+  const counts = { V1: 0, V1b: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0, V10: 0, V11: 0 };
   for (const f of real) {
     for (const s of subjects(f.path, f.text)) counts[s.rule]++;
     counts.V6 += tapPins(f.text).length;
+    counts.V10 += thirdPartySwiftPins(f.path, f.text).length + pypiFloors(f.path, f.text).length;
+    counts.V11 += thirdPartyNewestProse(f.path, f.text).length + thirdPartyMavenCoords(f.path, f.text).length;
     if (isChangelogHead(f.path)) counts.V7++;
     if (!isChangelog(f.path) && !isPerformance(f.path)) counts.V9 += rateLiterals(f.text).length;
   }
@@ -886,7 +1491,7 @@ if (!files.some((f) => isChangelogHead(f.path))) {
   console.log("::error::no changelog.md in the corpus — V7 is grading nothing");
   process.exit(1);
 }
-for (const rule of ["V1", "V1b", "V3", "V4", "V5", "V6", "V8"]) {
+for (const rule of ["V1", "V1b", "V3", "V4", "V5", "V6", "V8", "V10", "V11"]) {
   if (seen[rule] === 0 && !cannot.length) {
     console.log(`::error::${rule} matched nothing in ${CORPUS_ROOTS.join(" + ")} — the extractor stopped seeing pages, not the pages stopped naming versions`);
     process.exit(1);
@@ -904,10 +1509,16 @@ if (seen.V5 > 0 && seen.V5 < 3) {
   process.exit(1);
 }
 
-console.log(
-  "newest published: " +
-    ARTIFACTS.map((a) => `${a.id} ${latest[a.id] ?? "CANNOT CHECK"}`).join(" · "),
-);
+/** One line per artifact. A tag list prints its head; a POM prints the build
+ *  it was read from and how many dependencies it declares, so a run's log says
+ *  what V11b actually graded against. */
+const show = (v) => {
+  if (v === null || v === undefined) return "CANNOT CHECK";
+  if (typeof v === "string") return v;
+  if (v.deps) return `${v.pomVersion} POM (${v.deps.size} declared)`;
+  return `${v.newest} (${v.all.length} tags)`;
+};
+console.log("newest published: " + ARTIFACTS.map((a) => `${a.id} ${show(latest[a.id])}`).join(" · "));
 for (const f of failures) {
   const rel = relative(ROOT, f.path);
   console.log(`::error file=${rel},line=${f.line}::${f.msg}`);
@@ -928,20 +1539,40 @@ for (const c of cannot) {
 }
 const code = verdict(failures, cannot);
 if (code === 1) {
+  // Each family gets its own count AND its own fix, because the fixes differ:
+  // a stale bitHuman version needs a changelog entry, a stale third-party one
+  // never does, and a rate literal is not a version at all.
   const rates = failures.filter((f) => f.msg.startsWith("V9:")).length;
-  const versions = failures.length - rates;
+  const third = failures.filter((f) => /^V1[01]:/.test(f.msg)).length;
+  const versions = failures.length - rates - third;
   const parts = [];
-  if (versions) parts.push(`${versions} version(s) older than the newest published`);
-  if (rates) parts.push(`${rates} rate literal(s) repeating a performance-page cell`);
+  const fixes = [];
+  if (versions) {
+    parts.push(`${versions} bitHuman version(s) older than the newest published`);
+    fixes.push("write the newest version and add its changelog entry");
+  }
+  if (third) {
+    parts.push(`${third} third-party pin(s) or coordinate(s) their own source no longer agrees with`);
+    fixes.push("follow the finding — it names the coordinate and the authority that decides it");
+  }
+  if (rates) {
+    parts.push(`${rates} rate literal(s) repeating a performance-page cell`);
+    fixes.push("state a measured rate only on /sdk/performance");
+  }
   console.log(
     `check-versions-current: ${failures.length} finding(s) — ${parts.join(", ")}` +
       (cannot.length ? `, and ${cannot.length} registr${cannot.length > 1 ? "ies" : "y"} could not be read` : "") +
-      ". Fix: write the newest version and add its changelog entry; state a measured rate only on /sdk/performance.",
+      `. Fix: ${fixes.join("; ")}.`,
   );
 } else if (code === 2) {
   console.log(`check-versions-current: CANNOT CHECK — ${cannot.length} registr${cannot.length > 1 ? "ies" : "y"} unreadable. This is not a pass.`);
 } else {
   const n = Object.values(seen).reduce((a, b) => a + b, 0);
-  console.log(`check-versions-current: OK — ${n} subject(s) across V1–V9: every version is the newest published, and no page repeats a performance cell.`);
+  console.log(
+    `check-versions-current: OK — ${n} subject(s) across V1–V11: every version is the newest ` +
+      `published, every third-party floor still reaches its project's current major, every ` +
+      `third-party coordinate matches the POM that decides it, and no page repeats a ` +
+      `performance cell.`,
+  );
 }
 process.exit(code);
