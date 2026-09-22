@@ -10,6 +10,65 @@ order: 1
 
 ## September 2026
 
+### Five commands and nine aliases are gone, and one default changed quietly — `cli-v2.7.0` (2026-09-22)
+
+`curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
+to confirm (`bithuman 2.7.0`). macOS arm64 and Linux x86_64, built from one
+commit. **This is a minor bump, not a patch, because a script written against
+`2.6.26` can stop working. Read the first two bullets before you upgrade.**
+
+- **BREAKING — retired spellings now exit 2.** `talk`, `inspect`, `download`,
+  `get`, `ls`, `browse`, `gallery`, `credits`, `agents-md`, `whoami`, `usage`,
+  `init`, `__man` and `engine update` no longer resolve. Measured on the
+  published `2.7.0` bytes from a fresh install: `bithuman whoami` prints
+  `error: unrecognized subcommand 'whoami'` and exits **2**. That is
+  deliberate — a script that used one fails loudly on its first run instead of
+  drifting — but it fails on the first run. Type `run` for `talk`, `open` for
+  `inspect`, `pull` for `download`/`get`, `list` for `ls`/`browse`/`gallery`,
+  `account` for `credits`/`whoami`/`usage`, `__agents` for `agents-md`,
+  `login` then `run` for `init`, `engine install` for `engine update`, and
+  `--help` for `__man`.
+- **BREAKING, and this one is quiet — `usage` → `account` also changes the
+  default row count, 50 → 10.** `usage --limit` returned up to **50** history
+  rows by default; its replacement `account --limit` defaults to **10**
+  (`--limit <LIMIT>  Max history rows to show (default 10)` on the published
+  binary). A script that parsed the default output and expected fifty rows
+  silently sees ten, with no error. Pass `--limit 50` to keep the old window.
+- **One name per task, and the binary finally agrees with itself about what
+  they are.** Counting aliases, `2.6.26` answered to **32** names for 17 jobs
+  and its three self-descriptions disagreed — `--help` listed 22, `completion
+  bash` 26, `__schema` 22, and `__schema` reported **0** hidden commands while
+  carrying three. `2.7.0` answers to **19**, and `--help` (17, the 19 minus the
+  two hidden), `completion bash` (19) and `__schema` (19) now agree. Both
+  counts were taken by executing every candidate name against the published
+  tarballs rather than by reading a source file.
+- **`bithuman account` answers the whole account question in one command** —
+  who the credential belongs to, the plan, the balance and the spend behind it
+  — with one exit contract: 0 when the account could be read, **77** when no
+  credential resolves (re-measured on the published bytes). `whoami`'s
+  signed-out exit 1 with a success-shaped body on stdout was the odd one out.
+  `usage`'s `--limit`, `--start`, `--end` and `--agent` are `account`'s now,
+  and its rows are in `account --json` under `usage`.
+- **`login --json` emits JSON.** On `2.6.26` both sign-in routes printed human
+  chrome to stdout — colour escapes included — and no object, so
+  `bithuman login --json | jq` failed to parse. Both routes now emit one
+  success object (`logged_in`, `email`, `alias`, `stored`), with `email` and
+  `alias` null where the route does not learn them.
+- **Offline licence messages no longer say "annual".** Two different things
+  arrive through the same `BITHUMAN_LICENSE` variable: an annual licence, and a
+  prepaid usage pack metered by render seconds, which is neither annual nor
+  unlimited. Both messages now say "offline license" and leave the term to the
+  licence. No behaviour changes — only what the CLI tells you it is doing.
+- **The engine moves to `2.11.6`, ABI 7** (`2.6.26` shipped `2.11.5`). A show
+  running on a prepaid offline pack is no longer cut off the moment the pack
+  runs out: there is a **5 minute grace** from exhaustion, anchored in the same
+  sealed record that carries the spent budget, so restarting does not hand out
+  a fresh five minutes. An Essence 2 identity also opens faster — the render
+  session is now built by whoever renders, 223 ms → 72 ms on the same identity.
+- **If you run Essence 1 self-hosted, nothing about your metering changes**, and
+  there is no time limit on a box that cannot reach the meter. Credits are the
+  gate.
+
 ### Expression 2 on Android brings its own accelerator — `ai.bithuman:expression2-android:0.4.8` (2026-09-22)
 
 Through `0.4.7` the AAR named the Qualcomm accelerator runtime in the docs and
@@ -92,7 +151,7 @@ commit. **Upgrade if you run live sessions on a machine other people can log
 in to.**
 
 - **The key pair for the local video server is no longer on its command line.**
-  A live `bithuman run` or `bithuman serve` starts a local video server with a
+  A live `bithuman run` starts a local video server with a
   freshly minted key and secret, and those were passed as command-line
   arguments — which every user on the same machine can read with `ps`, for as
   long as the session runs. They are now passed in the server's environment,
