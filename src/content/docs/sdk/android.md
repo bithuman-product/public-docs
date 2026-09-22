@@ -319,6 +319,61 @@ A terminal build needs what Android Studio sets for you: `ANDROID_HOME` (or
 An Expression 2 run of a published identity spends no credits; an Essence 2 render
 is a metered self-hosted session — [pricing](/guides/pricing) is the authority.
 
+## Shrink the release build
+
+Turn on `isMinifyEnabled` and you are shrinking a library that reaches its own
+native code **by name**: each engine method crosses into `arm64-v8a` through a
+JNI symbol that R8 is otherwise free to rename or delete. Rename one and the app
+compiles, installs, and throws `UnsatisfiedLinkError` at the first frame.
+
+**Keep the default Android file and there is nothing for you to add.**
+`proguard-android-optimize.txt` already carries the rule that covers this, so the
+template Android Studio writes is already correct — the part that matters is the
+*first* argument, which is also the easiest one to delete by accident:
+
+```kotlin
+// app/build.gradle.kts
+android {
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),  // keeps native methods
+                "proguard-rules.pro",
+            )
+        }
+    }
+}
+```
+
+Measured 2026-09-22 with R8 9.5.17 against the published `essence2-android`
+0.5.12 AAR — its own `classes.jar`, shrunk from an entry point that uses the
+public API, counting the 30 JNI names its `arm64-v8a` library actually resolves:
+
+| Release config | What happens to the engine's JNI bridge |
+|---|---|
+| default file **+** `proguard-rules.pro` | kept, **not renamed**; 22 of the 30 names survive verbatim — the other 8 are unreachable from that entry point, and a native method nothing calls is never linked |
+| `proguard-rules.pro` **only** | the bridge class is **removed from the APK entirely** — **0** of 30 |
+
+That second row is the whole failure, and it is silent until runtime.
+
+**If you replace the default file instead of adding to it**, carry this rule
+across. It is one line, it is not specific to bitHuman, and it is exactly what
+the default file was giving you:
+
+```proguard
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
+```
+
+Beyond that, neither artifact asks anything of your `proguard-rules.pro`.
+`expression2-android` ships its own rules **inside the AAR**, which Gradle
+applies to your build automatically — there is nothing to copy for it.
+`essence2-android` ships none and needs none: the rule above is sufficient,
+verified by reading its published `arm64-v8a` libraries for every class name
+they look up at runtime.
+
 ## Pin the version
 
 `0.5.12` and `0.4.8` are not "a recent version" — they are the versions this page
@@ -376,6 +431,7 @@ Measured frame rates for every platform are on the
 | `Unresolved reference: BuildConfig` | AGP 8.x defaults `buildConfig` to off | add `buildFeatures { buildConfig = true }` |
 | `unresolved reference 'MeteredDoorResolver'` | it is nested, and Kotlin does not resolve a nested class through a type alias | import `ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver` |
 | `UnsatisfiedLinkError` on an emulator | both AARs are arm64-v8a only; an x86_64 image installs, then cannot load them | run on a physical arm64 handset |
+| `UnsatisfiedLinkError` in a **release** build only, on a handset the debug build renders on fine | R8 renamed or removed the engine's JNI entry points — the release build shrinks with a `proguardFiles(...)` that dropped `getDefaultProguardFile("proguard-android-optimize.txt")` | put the default file back, or copy its native-methods rule across — see [Shrink the release build](#shrink-the-release-build) |
 | `SDK location not found` | no `ANDROID_HOME` and no `local.properties` | set one of them |
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
