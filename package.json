@@ -15,7 +15,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check:served-current": "node scripts/check-served-is-current.mjs",
-    "check:served-vocabulary": "node scripts/check-served-vocabulary.mjs --live"
+    "check:served-vocabulary": "node scripts/check-served-vocabulary.mjs --live",
+    "check:performance-floors": "node scripts/check-performance-floors.mjs"
   },
   "dependencies": {
     "astro": "^6.3.1"
