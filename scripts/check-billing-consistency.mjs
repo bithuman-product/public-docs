@@ -269,8 +269,30 @@ const RULE_CORPUS = [
 
 // The authority's own words. The failure message quotes them so the fix is
 // to point at this sentence, never to write a second definition.
-const DEFINITION = /wall-clock time a session is live and the engine is rendering/;
-const DEFINITION_IDLE = /includes idle\/silent animation/;
+// ★OWNER RULING 2026-09-22 CHANGED THE RULE THESE PATTERNS PIN. It was
+//   "wall-clock time a session is live and the engine is rendering … That
+//   includes idle/silent animation". It is now: a credit minute is a minute the
+//   avatar is ACTUALLY TALKING, and idle is free. The guard's job is unchanged
+//   and still exactly right — the authority must carry ONE definition and no
+//   page may invent a second — so only the sentence it pins moves.
+//   ★WHY THIS GUARD DID NOT CATCH THE CONTRADICTION IT WAS BUILT FOR: it grades
+//   OTHER pages against pricing.md and asserts pricing.md carries the
+//   definition, but nothing graded pricing.md against ITSELF. When the headline
+//   was updated to the new ruling and three later sites were not, the page
+//   contradicted itself on the money — "Idle time is free" in one paragraph and
+//   "idle animation … accrues" in three others — and this file read green
+//   throughout. Section 3c below closes that.
+const DEFINITION = /minute in which the avatar is \*\*actually talking\*\*/;
+const DEFINITION_IDLE = /\*\*Idle animation is free\*\*/;
+// The shapes the page must NO LONGER carry anywhere: the retired rule. Keeping
+// them as a REFUSAL rather than deleting the strings means a well-meaning
+// revert of any one paragraph is caught, not silently re-served.
+const RETIRED_ACCRUAL = [
+  /includes idle\/silent animation/i,
+  /idle animation included/i,
+  /silent still accrues/i,
+  /idle motion is rendering, and accrues/i,
+];
 // Offline `bithuman render` — the ruling's second clause: it bills the output
 // duration. Asserted on the pricing page so the CLI pages have one place to
 // link instead of each carrying their own arithmetic.
@@ -300,7 +322,7 @@ const STALE_RULES = [
 // these, the guard would be forbidding a fact, and this run says so.
 const NEGATIVE_CONTROLS = [
   "cli-v2.6.2 counts frames delivered ÷ fps, which under-counts a preview that paints below nominal fps; corrected in 2.6.3.",
-  'A "credit minute" is wall-clock time a session is live and the engine is rendering. That includes idle/silent animation.',
+  'A "credit minute" is a minute in which the avatar is **actually talking**. **Idle animation is free**.',
   "[selfhost-meter] session x2-litert-ae31a6cbf0124577 closed — beats delivered=1 failed=0 frames=85",
   "[selfhost-meter] beat seq=1 served=4.2s product=expression-2 delivered (final)",
   "Before 2.6.2 only an Expression 2 session on Linux was metered; Essence 2 on either platform was not.",
@@ -336,10 +358,25 @@ for (const rule of STALE_RULES) {
   if (!DEFINITION.test(serving) || !DEFINITION_IDLE.test(serving)) {
     failures.push(
       `guides/pricing.md: the Serving section no longer defines a credit minute as ` +
-        `"wall-clock time a session is live and the engine is rendering … includes idle/silent animation" — ` +
+        `"a minute in which the avatar is **actually talking** … **Idle animation is free**" — ` +
         `every self-host page links here for the rule, so the definition must stay on this page`
     );
   }
+  // 3c — ★THE AUTHORITY MUST NOT CONTRADICT ITSELF (added 2026-09-22).
+  //   The 09-22 ruling was applied to pricing.md's headline and missed three
+  //   later paragraphs, so the page told a customer both answers at once and
+  //   every check here stayed green. Graded over the WHOLE file, not the
+  //   Serving section, because two of the three sites were elsewhere.
+  for (const pat of RETIRED_ACCRUAL) {
+    if (pat.test(pricingMd)) {
+      failures.push(
+        `guides/pricing.md still carries the RETIRED accrual rule (${pat}) — the ` +
+          `2026-09-22 owner ruling is that idle is not billable, and this page is ` +
+          `the authority every other page links to, so it cannot say both`
+      );
+    }
+  }
+
   if (!OFFLINE_RENDER.test(serving)) {
     failures.push(
       `guides/pricing.md: the Serving section does not say what an offline \`bithuman render\` bills ` +

@@ -23,7 +23,7 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/devel
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | 2 credits/min |
 
-Self-hosted serving is half the cloud rate across the board, and on-device serving — the Swift SDK and the Android/Kotlin SDK alike — bills at the self-hosted rate. A "credit minute" is wall-clock time a session is live and the engine is rendering (on-device, the wall-clock between `chat.start()` and `chat.stop()` with an avatar attached). **That includes idle/silent animation** — a connected avatar looping its idle motion is rendering, and accrues. Only stopped, paused, or disconnected sessions stop accruing. An offline `bithuman render` bills the duration of the clip it writes, at the self-hosted rate. The second-generation models [launched July 10, 2026](/concepts/models-v2).
+Self-hosted serving is half the cloud rate across the board, and on-device serving — the Swift SDK and the Android/Kotlin SDK alike — bills at the self-hosted rate. A "credit minute" is a minute in which the avatar is **actually talking** (on-device, the talking minutes between `chat.start()` and `chat.stop()`). **Idle animation is free** — a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between utterances. An offline `bithuman render` bills the duration of the clip it writes, at the self-hosted rate. The second-generation models [launched July 10, 2026](/concepts/models-v2).
 
 Managed conversational agents bill on top of avatar serving:
 
@@ -165,7 +165,7 @@ The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short
 
 ### On-device surfaces (Swift and Android/Kotlin)
 
-Both mobile rails bill a live avatar at the **self-hosted rate** in the table above, on the same wall-clock rule: a session that is rendering accrues, idle animation included.
+Both mobile rails bill a live avatar at the **self-hosted rate** in the table above, on the same rule as every other surface: talking minutes accrue, idle animation does not.
 
 **Swift.** The SDK requests a runtime token once on `chat.start()` (sync — bad keys fail fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar. The env var on this rail is `BITHUMAN_API_KEY`, not `BITHUMAN_API_SECRET`.
 
@@ -229,7 +229,7 @@ models.
 
 - **Source code, SDK installs, documentation** — free.
 - **Audio-only Swift SDK use** — voice chat with no avatar attached is unmetered and fully offline.
-- **Stopped, paused, or disconnected sessions** — accrual stops as soon as the session ends. (Note: a *live* session that is silent still accrues — idle animation is rendering. See [What counts as a billable minute](#how-metering-works).)
+- **Idle, silent, stopped, paused or disconnected sessions** — none of them accrue. Only talking does. See [What counts as a billable minute](#how-metering-works).
 - **Failed auth** — bad keys fail fast and don't burn credits.
 - **Failed creations and renders** — automatically refunded.
 - **Model weights** — `.imx` and Expression weight downloads are free; only active runtime minutes count. Each download is still *recorded*: it writes one usage row at **0 credits** and returns its id in the `X-Bithuman-Meter-Id` response header, so a 0-credit line in [your usage](/api/reference#operation/getUsage) next to a download is the record, not a charge.
