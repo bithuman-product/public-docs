@@ -10,6 +10,26 @@ order: 1
 
 ## September 2026
 
+### One app can take both Expression 2 and Essence 2 — Swift package `2.14.0` (2026-09-22)
+
+Every package tag through `v2.13.8` made `Expression2` + `Essence2` in one app a
+**link failure on device**: 112 duplicate symbols, because `libessence2.a` was
+built from a library closure that also defined the `UnifiedModelHeader` objects
+the `Expression2` product already forces every consumer to link.
+
+A green `swift build` never saw it — a library target is compiled, never linked,
+so the collision only fires at an app's final link. The Simulator is not a safe
+check either.
+
+`v2.14.0` pins Essence 2 engine `essence2-v1.10.0`, which no longer defines
+those objects, and its `Essence2` product now links `UnifiedModelHeader`
+directly so an Essence 2-only app still resolves. Measured on the published
+archives, all three slices: `UnifiedModelHeader` defined **0**, colliding **0**,
+unmet **0**.
+
+Raise your floor to `from: "2.14.0"`. `from:` is a floor, not a pin, and an
+existing project keeps whatever `Package.resolved` already holds.
+
 ### `pip install bithuman` no longer pulls `torch` — `bithuman` 2.11.6 (2026-09-20)
 
 `pip install --upgrade bithuman`. The wheel's `bithuman[offline]` and

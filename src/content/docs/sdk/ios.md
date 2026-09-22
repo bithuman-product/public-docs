@@ -19,12 +19,15 @@ with **no account, no key and no credits**. One dependency line serves all
 three products:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.0")
 ```
 
-**Type that floor exactly — `2.13.8`, and nothing lower.** It is the tag that
-pins Essence 2 engine `essence2-v1.9.0` and Expression 2 engine `v2.6.3`,
-verified against the tags the package repository serves on 2026-09-21. `from:`
+**Type that floor exactly — `2.14.0`, and nothing lower.** It is the tag that
+pins Essence 2 engine `essence2-v1.10.0` and Expression 2 engine `v2.6.3`,
+verified against the tags the package repository serves on 2026-09-22, and it
+is the first tag on which **one app can take both `Expression2` and `Essence2`
+and link on device** — every tag below it fails that link with 112 duplicate
+symbols. `from:`
 is a *floor*, not a pin, and an existing project stays on the floor it was
 resolved against: a lower number here is the one way this page's Essence 2
 answer silently stops being true, and it throws nothing when it does. Why, and
@@ -247,7 +250,7 @@ In Xcode: *File → Add Package Dependencies…* and paste
 `Package.swift`, the whole dependency is:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.0")
 // then attach exactly ONE engine product to your target:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2",    package: "homebrew-bithuman")
@@ -271,9 +274,9 @@ checksums can be checked from any operating system:
 
 ### The floor is the number that matters
 
-**Write `2.13.8` and nothing lower.** A *fresh* resolve of `from:` does take the
+**Write `2.14.0` and nothing lower.** A *fresh* resolve of `from:` does take the
 newest tag in the same major — so on a brand-new project any 2.x floor lands on
-v2.13.8 today. That is not the case a reader is in. `from:` is satisfied by the
+v2.14.0 today. That is not the case a reader is in. `from:` is satisfied by the
 floor itself, and SwiftPM **keeps whatever `Package.resolved` already holds**, so
 an existing project — one you cloned, one a colleague resolved last month, one
 Xcode resolved before you edited the manifest — sits on the floor that was
@@ -288,7 +291,8 @@ of each tag's own `Package.swift` on 2026-09-21:
 | v2.12.1 | `essence2-v1.5.1` | the same silent refusal |
 | v2.13.0 | `essence2-v1.6.0` | the same silent refusal |
 | v2.13.2 | `essence2-v1.6.2` | the same silent refusal |
-| **v2.13.8** | **`essence2-v1.9.0`** | **speaks — the behaviour this page describes** |
+| v2.13.8 | `essence2-v1.9.0` | speaks — but `Expression2` + `Essence2` in one app **fails to link on device**, 112 duplicate symbols |
+| **v2.14.0** | **`essence2-v1.10.0`** | **speaks, and both products link in one app — the behaviour this page describes** |
 
 "Idle-only" is the whole failure: `be_essence2_create` returns 0, the identity's
 motion plays, the avatar never speaks, **nothing is thrown and nothing is logged
@@ -297,7 +301,7 @@ face that moves and does not talk.
 
 So if you inherited a project, do both halves:
 
-1. Raise the floor in the manifest to `from: "2.13.8"`.
+1. Raise the floor in the manifest to `from: "2.14.0"`.
 2. **Force the resolve** — `Package.resolved` does not move on its own. In
    Xcode: *File → Packages → Update to Latest Package Versions*. From the
    command line: `swift package update`.
@@ -603,7 +607,7 @@ Measured frame rates for every platform are on the
 > `Expression` and `Bithuman`. **Those products do not exist in the package this
 > page pins** — the four it vends are in the table under
 > [Install](#install). Where the repository README and this page disagree, this
-> page is read from the tag `from: "2.13.8"` resolves.
+> page is read from the tag `from: "2.14.0"` resolves.
 
 ## See also
 
