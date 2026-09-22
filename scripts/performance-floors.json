@@ -3,7 +3,7 @@
   "record": "models/essence-2/perf/FLOORS.json",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "e957b8c37e33b23ba118a8f959ed8f990574419db88694fc9f995e1bb66427ec",
+  "record_sha256": "6473fd130c7bca2021b8c5bd35a9db98972e0afc00b95ba1d474f44cc0d57593",
   "verified_on": "2026-09-22",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
