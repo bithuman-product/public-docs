@@ -134,6 +134,11 @@ on:
       - 'src/data/**'
       - 'src/styles/**'
       - 'public/api/**'
+      # ★2026-09-21: a file dropped in public/ can SHADOW a generated route of
+      # the same name, silently — that is how a frozen /llms.txt came to be
+      # served over src/pages/llms.txt.ts. Re-creating one of these must invoke
+      # the job that would catch it, even on a commit that touches nothing else.
+      - 'public/llms*.txt'
       - 'STYLE.md'
       - 'README.md'
   pull_request:
@@ -161,6 +166,11 @@ on:
       - 'src/data/**'
       - 'src/styles/**'
       - 'public/api/**'
+      # ★2026-09-21: a file dropped in public/ can SHADOW a generated route of
+      # the same name, silently — that is how a frozen /llms.txt came to be
+      # served over src/pages/llms.txt.ts. Re-creating one of these must invoke
+      # the job that would catch it, even on a commit that touches nothing else.
+      - 'public/llms*.txt'
       - 'STYLE.md'
       - 'README.md'
 
@@ -254,6 +264,22 @@ jobs:
       - name: Kotlin BuildConfig guard self-test
         if: always()
         run: node scripts/check-kotlin-buildconfig.mjs --selftest
+      # ★2026-09-21: check-mobile-sdk-arrival.mjs WAS WRITTEN AND WIRED INTO
+      # NOTHING. It landed on main in 24a1593 with a proven --selftest and ran
+      # on no push, no pull request and no schedule — the same failure the
+      # redirect-pairing note above records, and the same one the gate itself
+      # exists to stop one level up: a thing that works and is not reached.
+      # Measured the day it was wired: run against sdk/ios.md and sdk/android.md
+      # exactly as 24a1593 serves them, it exits 1 with three findings, one of
+      # them naming ios.md:239 — the sentence that told a reader to pin a floor
+      # leaving them on an Essence 2 engine that never speaks. It had been green
+      # in every CI run since it merged, because there had been none.
+      - name: Both mobile SDK pages answer a stranger, and pin one version
+        if: always()
+        run: node scripts/check-mobile-sdk-arrival.mjs
+      - name: Mobile SDK arrival guard proves itself
+        if: always()
+        run: node scripts/check-mobile-sdk-arrival.mjs --selftest
       # ★2026-09-09: THE FIRST EXECUTABLE LINE OF BOTH HANDSET EXAMPLES WAS
       # GRADED BY NOTHING. examples/kotlin-android-hello.md and
       # examples/swift-ios-expression2.md are whole projects printed in full, and
@@ -346,3 +372,28 @@ jobs:
 
       - name: No internal commentary in what this repo builds
         run: node scripts/check-served-comments.mjs
+
+      # ★2026-09-21: /llms.txt AND /llms-full.txt — THE TWO FILES A CODING AGENT
+      # READS — WERE BEING SERVED FROM A HAND-WRITTEN SNAPSHOT THAT SHADOWED THE
+      # GENERATED ROUTE, AND THE GATE THAT SEES IT RAN NOWHERE.
+      #
+      # src/pages/llms.txt.ts writes that file from each page's own frontmatter,
+      # so it cannot go stale. public/llms.txt was a second, frozen copy of the
+      # same URL; Astro copies public/ over the route's output with no warning,
+      # and the static one wins. Measured on the live site the day this was
+      # wired: docs.bithuman.ai/llms.txt served 3,629 bytes — the snapshot — where
+      # the route emits 25,151, and the snapshot's "facts an agent gets wrong"
+      # block still said on-device Apple needs an iPhone 16 Pro and two Apple
+      # entitlements, a floor that belongs to bitHumanKit alone and to neither
+      # shipping engine. An agent reading it would tell a developer their iPhone
+      # cannot run this.
+      #
+      # check-discoverability.mjs ALREADY graded exactly this — it reads
+      # dist/llms.txt against the content collection and exits 1 when the page
+      # list does not match — and it was wired into no workflow, so it sat red
+      # on main at 69 findings and nobody could see it. It needs a build, so it
+      # belongs in this job and not in `links` above. Deleting the two snapshots
+      # takes it from 69 findings to OK; re-adding either turns it red again.
+      - name: llms.txt lists every page, and nothing shadows the generated route
+        if: always()
+        run: node scripts/check-discoverability.mjs

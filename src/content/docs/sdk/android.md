@@ -78,12 +78,29 @@ android {
 }
 dependencies {
     implementation("ai.bithuman:expression2-android:0.4.7")
-    implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // accelerated rendering on Snapdragon handsets;
-    implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // both on Maven Central, no Qualcomm account; +67 MB of APK
+    // The two lines below are OPTIONAL and they are not small. See the paragraph
+    // under this block before you paste them.
+    implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // accelerated rendering on Snapdragon
+    implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // both on Maven Central, no Qualcomm account
 }
 ```
 
 Without the two Qualcomm lines the avatar still renders, on the CPU, slower.
+
+**Know what those two lines cost before you paste them.** Measured by building
+the same app with and without them: the APK goes from **3,508,289 B to
+73,881,473 B — a delta of 70,373,184 B, about 70 MB.** That is the download.
+What lands on the *device* is larger, because `useLegacyPackaging = true` — which
+this page requires for bitHuman's own libraries — extracts every `.so` as a real
+file: the two Qualcomm artifacts contribute **22 libraries totalling
+201,207,300 B, about 201 MB, of `arm64-v8a` on disk.** `libQnnHtpPrepare.so`
+alone is 79 MB, and six per-Hexagon skeleton libraries account for another 95 MB
+of which a given handset loads exactly one. If 201 MB of app storage is not
+acceptable, ship without them: the engine falls back to the CPU and nothing
+throws. Sizes here are decimal MB, as everywhere on this page.
+
+`2.49.0` is the pair the figures above were measured with. Maven Central also
+serves `2.50.0`; it is untested here, so the page pins what was measured.
 
 ### Essence 2
 
@@ -121,6 +138,50 @@ still installs on a device that ships no OpenCL.
 with `essence2-android` on the classpath fails the manifest merge; give each
 model its own module, or raise the whole app to 29.
 
+### Type these versions, and nothing lower
+
+`0.5.12` and `0.4.7` are not "a recent version" — they are **the versions this
+page describes**, and every number and behaviour above was measured on them.
+Older coordinates on Maven Central still resolve, still compile and still
+render. They render **differently**, and almost none of the differences throws.
+
+Read that twice, because it is the whole hazard: **there is no exception to
+catch and no API change to notice.** Between `essence2-android` 0.5.11 and
+0.5.12 the compiled Kotlin is byte-identical — the entire difference is inside
+the native library — so a compiler, an IDE, and the
+[Android API reference](/sdk/android-api) all see two indistinguishable
+releases. Only the picture is different.
+
+What an older Essence 2 pin actually gives you:
+
+| If you pin | What silently changes |
+|---|---|
+| `0.5.11` or older | **the mouth is shaped by a coarse oval rather than by the speaker's own lip outline**, so speech reads as less precise. It falls back silently — no exception, and no log a caller can see |
+| `0.5.10` or older | the mouth interior is partly **invented rather than reproduced from the identity's own footage**, so teeth can look generic on frames where the real ones were available. Measured on published `0.5.10` frames and clean from `0.5.11` |
+| `0.5.9` or older | every interruption rewinds the identity's motion to its first frame, so each new utterance restarts the whole gesture instead of continuing |
+| `0.5.8` or older | a slower, heavier start: `create()` takes ~891 ms instead of ~164 ms, resident memory is ~1,019 MB instead of ~683 MB, and **394,788,864 B is written to app storage per identity** instead of nothing |
+| `0.5.6` or older | **every render throws `MeteringRefused` on a valid, funded credential.** A refusal check fell through when a healthy meter answered "no refusal". Fixed in `0.5.7` |
+
+And for Expression 2, `0.4.6` or older ships the idle clip as the first **48**
+decoded frames of a 200-frame, 10-second loop, so the avatar wraps at 2.4 s on a
+seam the clip was never authored to have. Code that names `Expression2IdleLoop`
+also fails to compile against `0.4.6` — there the failure is loud; the cut idle
+loop is not.
+
+Gradle will never quietly move you *down* — an exact version is an exact
+version — so the only way to land on one of these is to type it. Check what you
+have before you debug anything else:
+
+```bash
+./gradlew :app:dependencies --configuration releaseRuntimeClasspath | grep ai.bithuman
+# must print essence2-android:0.5.12 and/or expression2-android:0.4.7
+```
+
+Every published version of both artifacts is listed on
+[Downloads](/downloads), and the group directory
+[`repo1.maven.org/maven2/ai/bithuman/`](https://repo1.maven.org/maven2/ai/bithuman/)
+is the registry's own answer.
+
 ## Authentication and configuration
 
 Expression 2 needs no credential at all for a published identity — no account,
@@ -130,7 +191,7 @@ places that fail differently:
 | Where | Why | What happens without it |
 |---|---|---|
 | `Essence2ModelStore` | members are served through the metered door; a download is 0 credits but is **recorded** | the first `fetch()` throws `Essence2StoreException` naming `MeteredDoorResolver` |
-| `Essence2Metering.apiSecret` | the render is a metered self-hosted session | `Essence2Avatar.create()` throws `Essence2MeteringRefused`, which prints as `MeteringRefused` |
+| `Essence2Metering.apiSecret` | the render is a metered self-hosted session | the render throws `Essence2MeteringRefused`, which prints as `MeteringRefused`. **Set it before `create()`** — `create()` is what arms the meter — but the throw lands later, on the first `pull()`: traced through the published 0.5.12 bytecode, the only construction site is on the render path, not in `create()` |
 
 **Setting one does not arm the other** — the engine's own message says so. Both
 take the same api-secret. Keys are free at
@@ -183,8 +244,22 @@ downloaded into an on-device context cache instead.
 
 ### Essence 2 — a credential in two places
 
-`Essence2ModelStore` **bakes in no default resolver.** Construct it without one
-and the first `fetch()` throws rather than guessing a host, so name it:
+`Essence2ModelStore` **has a default door and no default credential.** Construct
+it without a resolver and it uses `MeteredDoorResolver("")` against
+`https://api.bithuman.ai` — the host is right, the credential is empty — and the
+first `fetch()` throws `Essence2StoreException` rather than sending an
+unauthenticated request. The message it throws names the fix:
+
+```text
+Essence2ModelStore has no credential. Model members are served through the
+metered door and a download is 0 credits but is RECORDED, so it needs one:
+Essence2ModelStore(context, urlResolver =
+  Essence2ModelStore.MeteredDoorResolver("<api-secret or runtime token>")).
+If you run your own mirror of these members, pass
+Essence2ModelStore.PublicMirrorResolver("https://…") instead.
+```
+
+So name the resolver:
 
 ```kotlin
 val secret = BuildConfig.BITHUMAN_API_SECRET
@@ -333,7 +408,7 @@ Measured frame rates for every platform are on the [performance page](/sdk/perfo
 | `acceleratorNote` says the accelerator refused the graph | you still get frames, on the CPU | nothing to fix in your app; log it and ship |
 | the Expression 2 download is refused with `401` | that agent is private | use a [showcase](/showcase) code, or pass its owner's key: `Expression2ModelStore(context, urlResolver = Expression2ModelStore.MeteredDoorResolver(BuildConfig.BITHUMAN_API_SECRET))` |
 | `Essence2StoreException`, naming `MeteredDoorResolver` | `Essence2ModelStore` was built with no resolver; it bakes in no default host | pass `MeteredDoorResolver(secret)`, or `PublicMirrorResolver(base)` if you mirror the members yourself |
-| `MeteringRefused` at `Essence2Avatar.create()` | `Essence2Metering.apiSecret` is unset — setting the store's resolver does not arm the meter | assign `Essence2Metering.apiSecret` as well, before `create()` |
+| `MeteringRefused` on the first `pull()`, after a `create()` that looked fine | `Essence2Metering.apiSecret` is unset — setting the store's resolver does not arm the meter, and the refusal surfaces on the render path, not at `create()` | assign `Essence2Metering.apiSecret` as well, **before** `create()` — that is the call that arms the meter |
 | the manifest merge fails on `minSdk` with Essence 2 on the classpath | `essence2-android` declares `minSdk 29`; `expression2-android` declares 26 | raise the module to 29, or give each model its own module |
 | `409 MODEL_NOT_GENERATED` from the download | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent) and poll until it is listed |
 | *"no android bundle is published for THIS identity"* | that agent has an Essence 2 model but no Android bundle staged | use a code from the [example's table](/examples/kotlin-android-hello#pick-an-identity), or ask for that identity to be staged |
@@ -361,7 +436,15 @@ materials and the commands that check them are on
   [the Essence 2 app](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed),
   which is the same seven files with three of them changed.
 - [Examples](/examples) — every runnable project, by language.
-- [bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main) — the repository behind those pages.
+
+> **Note** **There is nothing to `git clone` for Android, and that is
+> deliberate.** The example page above is the source: every file of both
+> projects is printed on it, and both are compiled from the **published page**
+> on every release — so the page cannot drift from a checked-in copy, because
+> there is no copy. The `bithuman-examples` repository carries the Python,
+> Swift and web projects; its `android/` directory holds notes only, and those
+> notes name coordinates several releases behind this page. Where the two
+> disagree, this page and the version table above are right.
 
 ## See also
 

@@ -57,8 +57,28 @@ export function agentFacts(site: string): string {
     `products have different floors: \`Expression2\` runs on any Apple Silicon iPhone ` +
     `at iOS 16; \`Essence2\` on any Apple Silicon iPhone but at iOS 26; \`bitHumanKit\` ` +
     `needs an iPhone 16 Pro or newer **and two Apple entitlements Apple grants in 1–3 ` +
-    `business days**. Do not promise a same-day \`bitHumanKit\` demo: ` +
-    `[Swift SDK](${site}/sdk/ios).\n` +
+    `business days**. Only \`bitHumanKit\` has that floor and those entitlements — do ` +
+    `not apply them to the two engines, and do not promise a same-day ` +
+    `\`bitHumanKit\` demo: [Swift SDK](${site}/sdk/ios).\n` +
+    `- **On mobile, an out-of-date version is the failure that does not announce ` +
+    `itself — copy the pin from the page, never from memory or an older sample.** On ` +
+    `Apple, SwiftPM's \`from:\` is a *floor* and SwiftPM keeps whatever ` +
+    `\`Package.resolved\` already holds, so a floor below the one the page prints leaves ` +
+    `a project on an older Essence 2 engine, and on that engine an iPhone under a 16 Pro ` +
+    `warms up, refuses by name and stays idle-only — the face moves, it never speaks, ` +
+    `and **nothing is thrown**. Raise the floor, then \`swift package update\`, because ` +
+    `\`Package.resolved\` does not move on its own: ` +
+    `[the floor is the number that matters](${site}/sdk/ios#the-floor-is-the-number-that-matters). ` +
+    `On Android, older Maven coordinates still resolve, still compile and render ` +
+    `**differently**, with no exception to catch — and across some releases the Kotlin ` +
+    `API is byte-identical, so no compiler and no reference page can see it: ` +
+    `[what an older pin changes](${site}/sdk/android#type-these-versions-and-nothing-lower).\n` +
+    `- **On Android the two models differ in the one thing that decides a project: the ` +
+    `credential.** \`expression2-android\` reaches a first frame with no account and no ` +
+    `key. \`essence2-android\` needs an api-secret in **two** places — the model store's ` +
+    `resolver and \`Essence2Metering.apiSecret\` — and setting one does not arm the ` +
+    `other. Both are \`arm64-v8a\` only, both need \`useLegacyPackaging = true\`, and ` +
+    `they declare different \`minSdk\`: [Android SDK](${site}/sdk/android).\n` +
     `- **Python installs into a virtual environment.** \`pip install bithuman\` against ` +
     `a system Python on Debian or Ubuntu is refused with ` +
     `\`error: externally-managed-environment\`; create and activate a venv first: ` +

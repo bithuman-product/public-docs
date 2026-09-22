@@ -22,9 +22,14 @@ three products:
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8")
 ```
 
-`from:` is a floor, not a pin: it resolves the newest 2.x tag, which is
-**v2.13.8** — Essence 2 engine `essence2-v1.9.0`, Expression 2 engine `v2.6.3`.
-Verified against the tags the package repository serves on 2026-09-21.
+**Type that floor exactly — `2.13.8`, and nothing lower.** It is the tag that
+pins Essence 2 engine `essence2-v1.9.0` and Expression 2 engine `v2.6.3`,
+verified against the tags the package repository serves on 2026-09-21. `from:`
+is a *floor*, not a pin, and an existing project stays on the floor it was
+resolved against: a lower number here is the one way this page's Essence 2
+answer silently stops being true, and it throws nothing when it does. Why, and
+how to check what you are actually on:
+[The floor is the number that matters](#the-floor-is-the-number-that-matters).
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
@@ -96,8 +101,18 @@ no device gate.
 
 So an Essence 2 app is not held to the iPhone 16 Pro floor — the measured
 iPhone rate on the [performance page](/sdk/performance) is the other half of
-that. The iPad and macOS sentences in the same archive carry no such scoping,
-so treat M-series and M3 as real floors there.
+that.
+
+The iPad and macOS sentences are not all scoped the same way, and the
+difference is worth reading rather than summarising. Counted in the `ios-arm64`
+slice on 2026-09-21: of the four M-series hits, **two scope themselves**
+(*"…requires an iPad with M-series Apple Silicon or an iPhone 16 Pro+.
+expression-1 only: essence-2 and expression-2 carry no device gate."*) and
+**two do not** (*"bitHuman iOS SDK requires an iPad with M-series Apple Silicon
+(iPad Pro 2021 or later, iPad Air 2022 or later)."*). The unscoped pair is why
+M-series on iPad and M3 on macOS are still listed as real floors in
+[Requirements](#requirements) — treat them as real until an unscoped sentence
+stops shipping.
 
 ### Apple entitlements
 
@@ -158,7 +173,12 @@ chain hits MPSGraph before the actor's own simulator guard. Build Essence 2 on a
 device.
 
 One more Simulator fact, because the error it produces reads like a broken
-package: the simulator slices are **arm64 only**. A default
+package: **every bitHuman simulator slice is arm64 only.** The Expression 2
+engine, the Essence 2 engine and the two shared interface binaries all publish
+`ios-arm64-simulator` and nothing else. (The one exception is not ours: the
+ONNX Runtime build that ships inside the `Essence2` product publishes
+`ios-arm64_x86_64-simulator`. It does not rescue you — the bitHuman half still
+has no x86_64 slice.) A default
 `xcodebuild -destination 'generic/platform=iOS Simulator'` also builds x86_64,
 finds no slice, and fails with
 `error: unable to resolve module dependency: 'Expression2'`. Pass `ARCHS=arm64`.
@@ -234,10 +254,6 @@ In Xcode: *File → Add Package Dependencies…* and paste
 //   .product(name: "bitHumanKit", package: "homebrew-bithuman")
 ```
 
-`from:` is a floor, not a pin — it resolves the newest 2.x tag. The newest
-package tag, **2.13.8**, ships Essence 2 engine **1.9.0** and Expression 2
-engine **2.6.3**, and `from: "2.11.0"` resolves it for you.
-
 | Product | You write | What it is | Slices |
 |---|---|---|---|
 | `Expression2` | `import Expression2` | the Expression 2 engine, pre-compiled, plus the two binaries its interface needs | `ios-arm64`, `ios-arm64-simulator`, `macos-arm64` |
@@ -252,6 +268,50 @@ you so.
 Want to know the answer before Xcode does? The resolve, the assets and their
 checksums can be checked from any operating system:
 [Apple — check before you ship](/examples/apple-swiftpm-check).
+
+### The floor is the number that matters
+
+**Write `2.13.8` and nothing lower.** A *fresh* resolve of `from:` does take the
+newest tag in the same major — so on a brand-new project any 2.x floor lands on
+v2.13.8 today. That is not the case a reader is in. `from:` is satisfied by the
+floor itself, and SwiftPM **keeps whatever `Package.resolved` already holds**, so
+an existing project — one you cloned, one a colleague resolved last month, one
+Xcode resolved before you edited the manifest — sits on the floor that was
+written, not on the newest tag.
+
+The tags do not carry the engine, they **pin** one, and the pin moved. Read out
+of each tag's own `Package.swift` on 2026-09-21:
+
+| Tag a floor can leave you on | Essence 2 engine it pins | What you get on an iPhone under a 16 Pro |
+|---|---|---|
+| v2.11.0, v2.11.2 | `essence2-v1.4.0` | warm-up refuses by name, engine stays **idle-only** |
+| v2.12.1 | `essence2-v1.5.1` | the same silent refusal |
+| v2.13.0 | `essence2-v1.6.0` | the same silent refusal |
+| v2.13.2 | `essence2-v1.6.2` | the same silent refusal |
+| **v2.13.8** | **`essence2-v1.9.0`** | **speaks — the behaviour this page describes** |
+
+"Idle-only" is the whole failure: `be_essence2_create` returns 0, the identity's
+motion plays, the avatar never speaks, **nothing is thrown and nothing is logged
+where you are looking.** There is no error to search for. The only symptom is a
+face that moves and does not talk.
+
+So if you inherited a project, do both halves:
+
+1. Raise the floor in the manifest to `from: "2.13.8"`.
+2. **Force the resolve** — `Package.resolved` does not move on its own. In
+   Xcode: *File → Packages → Update to Latest Package Versions*. From the
+   command line: `swift package update`.
+
+Then read back what you are actually on, which is the only answer that counts:
+
+```bash
+# in your project directory, after resolving
+grep -A3 'homebrew-bithuman' Package.resolved
+# the "version" it prints must be 2.13.8 or newer
+```
+
+[Apple — check before you ship](/examples/apple-swiftpm-check) does the same
+check for you, from any operating system, including which engine that tag pins.
 
 ## Authentication and configuration
 
@@ -405,7 +465,10 @@ while idleTicks < 100 {
 ```
 
 If you have already unpacked a container into a directory, the older entry point
-still takes it: `Expression2Engine.create(modelPath:sharedEngineDir:)`.
+still takes it: `Expression2Engine.create(modelPath:sharedEngineDir:)`. **That
+is the one the worked example uses**, because its `setup.sh` unpacks first — so
+do not expect the two to be spelled the same way. Both are current; the
+container form above saves you the unpack step.
 
 Every file of a working app — `Info.plist`, the Xcode settings, the whole of
 `App.swift`, the unpack script — is printed on
@@ -413,8 +476,11 @@ Every file of a working app — `Info.plist`, the Xcode settings, the whole of
 
 ### Essence 2
 
-`Essence2` vends a C interface, not a Swift class. These are the declarations
-you call, copied from `Headers/be_essence2.h` in the shipped xcframework:
+`Essence2` vends a C interface, not a Swift class. The shipped
+`Headers/be_essence2.h` declares **17** `be_essence2_*` functions; these nine
+are the ones a minimal app calls, copied from that header (verified byte-for-byte
+against the `essence2-v1.9.0` xcframework on 2026-09-21, identical in all three
+slices):
 
 ```c
 int32_t be_essence2_set_api_secret(const char* api_secret);
@@ -429,6 +495,7 @@ int32_t be_essence2_pull_frame(be_essence2_handle handle,
 void    be_essence2_get_info(be_essence2_handle handle,
                              int32_t* width, int32_t* height);
 void    be_essence2_destroy(be_essence2_handle handle);
+void    be_essence2_quiesce_all(void);
 ```
 
 The call order: `create` with the path to the `.imx` you downloaded (pass `NULL`
@@ -437,7 +504,23 @@ then push 16 kHz mono **int16** audio and pull `height * width * 3` RGB frames
 until `frames_available` returns 0. `push_audio` returning `-2` means nothing
 was queued — pull frames and push the same samples again. `destroy` at the end.
 
-Two traps, both real:
+> **Warning** **`be_essence2_quiesce_all()` is not optional, and leaving it out
+> crashes your app on exit.** The header's own words: call it from the host
+> app's `applicationWillTerminate` **before** process exit — exiting with an MLX
+> eval or a Metal completion handler still in flight crashes in
+> `__cxa_finalize`. It takes no arguments and quiets every live engine. An app
+> that renders perfectly and dies as the user closes it is this call missing.
+
+The other eight the header declares, which a minimal app does not need but a
+real one will: `be_essence2_reset` (barge-in — drop what is queued and start the
+next utterance), `be_essence2_set_mode`, `be_essence2_idle_frame`,
+`be_essence2_pulled_speech_frames`, `be_essence2_render_status`,
+`be_essence2_reanchor_slots` / `be_essence2_set_playout_anchor` /
+`be_essence2_anchor_slots`. Read the header for those — it is the authority, and
+a comment in `Package.swift` that says "15 functions" and one in the shipped
+`Essence2.h` that says "16" are both stale; the count is 17.
+
+Two more traps, both real:
 
 - The header's comment above `be_essence2_create` still describes the **older**
   bundle-directory format (`.elevatedir`). The shipped binary refuses that
@@ -500,16 +583,27 @@ Measured frame rates for every platform are on the
 
 ## Examples and source
 
-- [iOS app, end to end](/examples/swift-ios-expression2) — the whole project
-  printed on one page, and [`swift/ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
+- **Expression 2** — [iOS app, end to end](/examples/swift-ios-expression2), the
+  whole project printed on one page, and [`swift/ios-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
   to clone, with a `setup.sh` that fetches the model.
-- [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — the `bitHumanKit`
-  voice agent, and [`swift/ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar)
-  to clone.
+- **Essence 2** — [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2),
+  every file printed. **The page is the source**: there is no
+  `swift/ios-essence2` directory to clone, and the page is complete without one.
+- **`bitHumanKit`** — [Swift / iOS — Hello, avatar](/examples/swift-ios-hello),
+  the on-device voice agent, and [`swift/ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar)
+  to clone. This is the path with the iPhone 16 Pro floor and the two Apple
+  entitlements — start with Expression 2 unless you need the whole stack.
 - [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice only, on device, no key.
 - [Apple — check before you ship](/examples/apple-swiftpm-check) — verify the
   resolve, the assets and their checksums from any operating system.
 - [Homebrew tap](https://github.com/bithuman-product/homebrew-bithuman) — the Swift package itself.
+
+> **Note** The `bithuman-examples` repository also carries older Swift
+> harnesses, and its `swift/README.md` still describes products named
+> `Expression` and `Bithuman`. **Those products do not exist in the package this
+> page pins** — the four it vends are in the table under
+> [Install](#install). Where the repository README and this page disagree, this
+> page is read from the tag `from: "2.13.8"` resolves.
 
 ## See also
 
