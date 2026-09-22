@@ -3,8 +3,8 @@
   "record": "models/essence-2/perf/FLOORS.json",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "f3d9cf0bb0342b0ccf819ed152e938a1406d317c760fd59001a82af956e75eeb",
-  "verified_on": "2026-09-21",
+  "record_sha256": "125497d9347e325104dbf8dcec8f9f3b02dd4308a0e675d87bcc10ba919c1e6f",
+  "verified_on": "2026-09-22",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "table_key": "all",
@@ -12,7 +12,7 @@
     {
       "label": "Cloud GPU",
       "plane": "cloud-gpu",
-      "line": "| Cloud GPU | NVIDIA RTX 4090 | 369 · 416x720 at 20 fps · 18.4x real time · hosted baked-390440281 (2026-09-20) | 112 · 1920x1080 at 25 fps · 4.48x real time · hosted 2d1302440 (2026-09-20) |",
+      "line": "| Cloud GPU | NVIDIA RTX 4090 | 369 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 18.4x real time · hosted baked-390440281 (2026-09-20) | 112 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 4.48x real time · hosted 2d1302440 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 369,
@@ -31,7 +31,7 @@
     {
       "label": "Cloud Apple silicon",
       "plane": "apple-serve",
-      "line": "| Cloud Apple silicon | Apple M4 Max | 86 · 416x720 at 20 fps · 4.3x real time · hosted moraga-expression-2-apple (2026-09-20) | 17 — not yet real time · 1920x1080 at 25 fps · 0.68x real time · hosted moraga-lib-a790181f (2026-09-20) |",
+      "line": "| Cloud Apple silicon | Apple M4 Max | 86 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 4.3x real time · hosted moraga-expression-2-apple (2026-09-20) | 17 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.68x real time · hosted moraga-lib-a790181f (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 86,
@@ -50,7 +50,7 @@
     {
       "label": "Cloud CPU",
       "plane": "modal-cpu",
-      "line": "| Cloud CPU | Modal CPU container | 18 — not yet real time · 416x720 at 20 fps · 0.9x real time · hosted expression-2-cpu-worker v25 (2026-09-20) | 6 — not yet real time · 1920x1080 at 25 fps · 0.24x real time · hosted essence-2-cpu-worker v18 (2026-09-20) |",
+      "line": "| Cloud CPU | Modal CPU container | 18 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 0.9x real time · hosted expression-2-cpu-worker v25 (2026-09-20) | 6 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.24x real time · hosted essence-2-cpu-worker v18 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 18,
@@ -69,7 +69,7 @@
     {
       "label": "macOS",
       "plane": "macos-m4",
-      "line": "| macOS | Apple M4 | 160 · 416x720 at 20 fps · 8x real time · cli-v2.6.25 (2026-09-20) | 108 · 1920x1080 at 25 fps · 4.32x real time · cli-v2.6.25 (2026-09-20) |",
+      "line": "| macOS | Apple M4 | 160 · e2e-steady-state · 416x720 at 20 fps · 8x real time · cli-v2.6.25 (2026-09-20) | 108 · e2e-steady-state · 1920x1080 at 25 fps · 4.32x real time · cli-v2.6.25 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 160,
@@ -88,7 +88,7 @@
     {
       "label": "macOS · Python",
       "plane": "python-macos",
-      "line": "| macOS · Python | Apple M4 | 159 · 416x720 at 20 fps · 7.95x real time · bithuman 2.11.5 (2026-09-20) | 117 · 1920x1080 at 25 fps · 4.68x real time · bithuman 2.11.5 (2026-09-20) |",
+      "line": "| macOS · Python | Apple M4 | 159 · e2e-steady-state · 416x720 at 20 fps · 7.95x real time · bithuman 2.11.5 (2026-09-20) | 117 · e2e-steady-state · 1920x1080 at 25 fps · 4.68x real time · bithuman 2.11.5 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 159,
@@ -107,7 +107,7 @@
     {
       "label": "Linux",
       "plane": "linux-cpu",
-      "line": "| Linux | Intel Core i7-13700F | 35 · 416x720 at 20 fps · 1.75x real time · cli-v2.6.25 (2026-09-20) | 36 · 1920x1080 at 25 fps · 1.44x real time · cli-v2.6.25 (2026-09-20) |",
+      "line": "| Linux | Intel Core i7-13700F | 35 · e2e-steady-state · 416x720 at 20 fps · 1.75x real time · cli-v2.6.25 (2026-09-20) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · cli-v2.6.25 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 35,
@@ -126,7 +126,7 @@
     {
       "label": "Linux · Python",
       "plane": "python-linux",
-      "line": "| Linux · Python | Intel Core i7-13700F | 38 · 416x720 at 20 fps · 1.9x real time · bithuman 2.11.5 (2026-09-20) | 30 · 1920x1080 at 25 fps · 1.2x real time · bithuman 2.11.5 (2026-09-20) |",
+      "line": "| Linux · Python | Intel Core i7-13700F | 38 · e2e-steady-state · 416x720 at 20 fps · 1.9x real time · bithuman 2.11.5 (2026-09-20) | 30 · e2e-steady-state · 1920x1080 at 25 fps · 1.2x real time · bithuman 2.11.5 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 38,
@@ -145,7 +145,7 @@
     {
       "label": "iOS",
       "plane": "iphone-15",
-      "line": "| iOS | iPhone 15 | 111 · 416x720 at 20 fps · 5.55x real time · bithuman-product/homebrew-bithuman :: Expression2 2.13.8 (2026-09-20) | 54 · 1920x1080 at 25 fps · 2.16x real time · essence2-v1.9.0 (2026-09-20) |",
+      "line": "| iOS | iPhone 15 | 111 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 5.55x real time · bithuman-product/homebrew-bithuman :: Expression2 2.13.8 (2026-09-20) | 54 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.16x real time · essence2-v1.9.0 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 111,
@@ -164,7 +164,7 @@
     {
       "label": "Android",
       "plane": "android-s25plus",
-      "line": "| Android | Galaxy S25+ | 43 · 416x720 at 20 fps · 2.15x real time · expression2-android 0.4.7 (2026-09-19) | 46 · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |",
+      "line": "| Android | Galaxy S25+ | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · expression2-android 0.4.7 (2026-09-19) | 46 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |",
       "cells": {
         "expression-2": {
           "docs_fps": 43,
@@ -183,7 +183,7 @@
     {
       "label": "Web",
       "plane": "web",
-      "line": "| Web | Chrome on M4 | 30 · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | 18 — not yet real time · 1920x1080 at 25 fps · 0.72x real time · bithuman-ui a1b6f7fa8 (2026-09-20) |",
+      "line": "| Web | Chrome on M4 | 30 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | 18 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.72x real time · bithuman-ui a1b6f7fa8 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 30,
