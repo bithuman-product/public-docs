@@ -346,16 +346,32 @@ android {
 }
 ```
 
-Measured 2026-09-22 with R8 9.5.17 against the published `essence2-android`
-0.5.12 AAR — its own `classes.jar`, shrunk from an entry point that uses the
-public API, counting the 30 JNI names its `arm64-v8a` library actually resolves:
+Measured 2026-09-22 by building a release APK **twice** — AGP 8.7.3, Gradle
+8.11.1, JDK 17, `isMinifyEnabled = true`, one app that opens **both** engines —
+changing nothing between the two builds but that first argument. Both builds
+succeeded. The difference is in the mapping file R8 wrote beside the APK:
 
-| Release config | What happens to the engine's JNI bridge |
-|---|---|
-| default file **+** `proguard-rules.pro` | kept, **not renamed**; 22 of the 30 names survive verbatim — the other 8 are unreachable from that entry point, and a native method nothing calls is never linked |
-| `proguard-rules.pro` **only** | the bridge class is **removed from the APK entirely** — **0** of 30 |
+| After shrinking | default file **+** `proguard-rules.pro` | `proguard-rules.pro` **only** |
+|---|---|---|
+| Essence 2's JNI bridge class | unchanged | **renamed to `a.k`** |
+| Essence 2 native method names in the APK | 9 of 30, verbatim | **0 of 30** |
+| Expression 2's native-method class | unchanged | **unchanged** |
+| Expression 2's exception class, which its native code looks up by name | unchanged | **unchanged** |
 
-That second row is the whole failure, and it is silent until runtime.
+**The class is renamed, not deleted** — which is worse, because the APK looks
+complete and installs fine. The native library still exports its
+`Java_…_nativeCreate` symbol; there is simply no longer a class of that name for
+it to bind to, so the first call throws. (Neither column keeps all 30 names:
+this probe app calls a fraction of each engine, and a native method nothing
+calls is never linked. What matters is that nothing in column one was
+*renamed*.)
+
+**Expression 2 comes through the second column untouched, and that is the
+point.** Both engines were shrunk by the same R8 invocation, in the same APK, in
+the same build — only Essence 2 lost its binding. `expression2-android` ships
+its own keep rules **inside the AAR**, which Gradle applies to your build
+whatever your `proguardFiles` line says, so it protects itself.
+`essence2-android` ships none and relies on the default file being there.
 
 **If you replace the default file instead of adding to it**, carry this rule
 across. It is one line, it is not specific to bitHuman, and it is exactly what
@@ -367,12 +383,11 @@ the default file was giving you:
 }
 ```
 
-Beyond that, neither artifact asks anything of your `proguard-rules.pro`.
-`expression2-android` ships its own rules **inside the AAR**, which Gradle
-applies to your build automatically — there is nothing to copy for it.
-`essence2-android` ships none and needs none: the rule above is sufficient,
-verified by reading its published `arm64-v8a` libraries for every class name
-they look up at runtime.
+Beyond that, neither artifact asks anything of your `proguard-rules.pro`. There
+is nothing to copy for Expression 2, and `essence2-android` needs no rule of its
+own beyond the one above — verified by reading its published `arm64-v8a`
+libraries for every class name they look up at runtime, of which there are
+none.
 
 ## Pin the version
 
@@ -431,7 +446,7 @@ Measured frame rates for every platform are on the
 | `Unresolved reference: BuildConfig` | AGP 8.x defaults `buildConfig` to off | add `buildFeatures { buildConfig = true }` |
 | `unresolved reference 'MeteredDoorResolver'` | it is nested, and Kotlin does not resolve a nested class through a type alias | import `ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver` |
 | `UnsatisfiedLinkError` on an emulator | both AARs are arm64-v8a only; an x86_64 image installs, then cannot load them | run on a physical arm64 handset |
-| `UnsatisfiedLinkError` in a **release** build only, on a handset the debug build renders on fine | R8 renamed or removed the engine's JNI entry points — the release build shrinks with a `proguardFiles(...)` that dropped `getDefaultProguardFile("proguard-android-optimize.txt")` | put the default file back, or copy its native-methods rule across — see [Shrink the release build](#shrink-the-release-build) |
+| `UnsatisfiedLinkError` in a **release** build only, on a handset the debug build renders on fine | R8 renamed the engine's JNI bridge class — the release build shrinks with a `proguardFiles(...)` that dropped `getDefaultProguardFile("proguard-android-optimize.txt")`. The APK is complete and installs; the name the native library binds to is gone | put the default file back, or copy its native-methods rule across — see [Shrink the release build](#shrink-the-release-build) |
 | `SDK location not found` | no `ANDROID_HOME` and no `local.properties` | set one of them |
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
