@@ -23,8 +23,8 @@ Always start on `www.bithuman.ai`: that host signs you in, the viewer host does
 not. Swap in your own agent code and it works the same way. The
 `rendering_mode` switch and its three values are on
 [browser rendering](/guides/browser-rendering); embedding options are on
-[deploy an embed](/guides/deploy-embed). An [Essence 1](/concepts/essence-1)
-agent renders in the tab with `?render=local` instead.
+[deploy an embed](/guides/deploy-embed). To draw the picture in the tab rather
+than stream it, use `?render=local` — see Performance below.
 
 ## Get a model
 
@@ -57,20 +57,36 @@ on bitHuman's servers and your tab decodes video, like any other stream.
 Measured rates for every platform are on the
 [performance page](/sdk/performance).
 
-You can also render **in** the tab:
+You can also render **in** the tab. Add `?render=local` to the hosted URL and
+the picture is drawn in your browser instead of streamed to it. Still nothing
+to install, still no key, and it works for **all three** models that have an
+in-browser renderer:
 
-- **Expression 2** — nothing to install. Add `?render=local` to the hosted URL
-  and the renderer runs in your tab, ahead of the rate the avatar plays at:
-  `https://www.bithuman.ai/A74NWD9723?render=local`.
-- **Essence 2** — the one published in-browser package is a **demo**. It ships
-  a single built-in identity and a recorded loop, so you can measure in-browser
-  speed on your own hardware; it cannot render your own agent. The bundle is
-  `https://models.bithuman.ai/web/essence2-web-v0.1.1/manifest.json`. The same
-  bytes are also published at the older `libelevate-web-v0.1.0` path — a
-  [retired name](/concepts/models-v2) that still works and will never be
-  removed, so saved links and already-deployed pages keep resolving. Your page
-  must be cross-origin isolated or WebAssembly drops to one thread — see the
-  troubleshooting table.
+- **Expression 2** — `https://www.bithuman.ai/A74NWD9723?render=local`
+- **Essence 2** — `https://www.bithuman.ai/A21SKT4314?render=local`, a public
+  Essence 2 agent
+- **Essence 1** — the same switch on an Essence 1 agent
+
+Expression 1 has no in-browser renderer, and an Expression 1 agent says so
+rather than showing you nothing.
+
+Essence 2 additionally needs an in-browser build for that specific identity.
+Where one has not been published the page rewrites your URL to `?render=cloud`
+and reloads, so the avatar is served rather than broken — see Troubleshooting.
+Your own agent takes the same switch as the codes above. The rate each model
+reaches in a browser is on the [performance page](/sdk/performance), measured
+on this route.
+
+Separately, one in-browser package is published so you can **measure**
+in-browser speed on your own hardware: it ships a single built-in identity and
+a recorded loop, and it cannot render your own agent — for that, use
+`?render=local` above. The bundle is
+`https://models.bithuman.ai/web/essence2-web-v0.1.1/manifest.json`. The same
+bytes are also published at the older `libelevate-web-v0.1.0` path — a
+[retired name](/concepts/models-v2) that still works and will never be
+removed, so saved links and already-deployed pages keep resolving. A page you
+host yourself must be cross-origin isolated or WebAssembly drops to one
+thread — see the troubleshooting table.
 
 ## Troubleshooting
 
@@ -78,6 +94,8 @@ You can also render **in** the tab:
 |---|---|---|
 | The hosted URL shows a page but no avatar | you opened the viewer host directly | start on `https://www.bithuman.ai/<CODE>?rendering_mode=browser` |
 | `404` on the hosted URL | the agent code is wrong or the agent is not public | check the code on the [showcase](/showcase) or in your [agents](/api/agents) |
+| `?render=local` turns into `?render=cloud` on its own and the page reloads | that Essence 2 identity has no in-browser build published yet, so the page served the avatar rather than showing you nothing | nothing to do — the conversation is the same. Try another Essence 2 agent if you specifically want the in-tab renderer |
+| `Local rendering refused. This essence-2 avatar could not load part of its identity…` | one piece of that identity did not arrive, and Essence 2 will not draw a stand-in for it | reload; if it repeats, add `?render=cloud` to watch it served while you report the agent code |
 | The in-tab renderer runs at ~8 fps instead of 20 | `crossOriginIsolated` is `false`, so WASM clamped to 1 thread | send `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp` from your own host, or ship the bundle's `coi-serviceworker.js` |
 | `WebGPU not available in this browser` | you asked for the GPU renderer on a browser with no usable GPU | ask for the software renderer, or [probe first](/examples/browser-webgpu-check#check-1--does-this-browser-have-a-usable-gpu) |
 | You want a JavaScript SDK | there is no npm package today | drive a served avatar over [LiveKit](/sdk/livekit), or embed the hosted route |

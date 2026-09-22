@@ -36,9 +36,10 @@ than a browser.
 > On **Python 3.10 or 3.14** the marker is false, pip installs the plugin with
 > *no* bitHuman wheel, and the first import fails with `ModuleNotFoundError: No
 > module named 'cv2'`; naming `bithuman` yourself on the same command line
-> fixes it. Both are fixed upstream
-> ([livekit/agents#7280](https://github.com/livekit/agents/pull/7280)) and
-> unreleased. The wheel ships for Linux x86_64, Linux aarch64 and Apple-silicon
+> fixes it. Both were fixed upstream in
+> [livekit/agents#7280](https://github.com/livekit/agents/pull/7280), which
+> merged hours *after* 1.8.2 was published and so is not in any release yet.
+> The wheel ships for Linux x86_64, Linux aarch64 and Apple-silicon
 > macOS only — see [Deploy via LiveKit](/guides/deploy-livekit#install) for the
 > full table of what fails where.
 
@@ -47,6 +48,10 @@ Install the plugin on Python 3.11, 3.12 or 3.13:
 ```bash
 pip install livekit-plugins-bithuman pillow
 ```
+
+That line pins nothing, so it gets whatever LiveKit has published. Everything
+below is **1.8.2**, which is what it installed on 2026-09-22; `pip show
+livekit-plugins-bithuman` prints what you actually got.
 
 > **Note** The plugin imports `PIL` but does not declare Pillow — install
 > `pillow` alongside it (as above), or
@@ -111,9 +116,12 @@ knowing before you design around it:
   default for it is the one you want.
 
 The fix — `"expression-2"` and `"essence-2"` as values, and the chosen model
-sent with the request so the server honours it — is open upstream as
-[livekit/agents#7366](https://github.com/livekit/agents/pull/7366) and is not
-released yet. With it, asking for a model the avatar lacks is refused before a
+sent with the request so the server honours it — **merged upstream on
+2026-09-22** as
+[livekit/agents#7366](https://github.com/livekit/agents/pull/7366). It is **not
+in a release**: 1.8.2, published 2026-09-15, is still the newest
+`livekit-plugins-bithuman` on PyPI, so `pip install` gets you the two-value
+`model` above. With it, asking for a model the avatar lacks is refused before a
 renderer starts, naming what to add. The two first-generation names keep
 working unchanged. This page will name the release that carries it once LiveKit
 ships one.
@@ -212,8 +220,12 @@ Tunables (override the defaults above without code changes): **`AVATAR_VIDEO_MAX
 **`AVATAR_VIDEO_SIMULCAST`** (default off — leave off for single-subscriber avatars).
 You should see a published track at the full engine fps with no 512→360
 downscale and no frozen intervals. *(The
-[local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) and
-[cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) examples ship with this applied.)*
+[local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence)
+example ships this as `tuned_publish.py` and imports it. The
+[cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence)
+example does not, and does not need it: it passes an `avatar_id`, so the track
+is published by a bitHuman worker that already has the fix, not by your
+process.)*
 
 ### Hardware floor (Essence, CPU)
 
@@ -251,7 +263,7 @@ Add the Swift package and attach `LiveKit` to your target:
 // Package.swift
 dependencies: [
     .package(url: "https://github.com/livekit/client-sdk-swift.git",
-             .upToNextMajor(from: "2.14.0"))
+             .upToNextMajor(from: "2.17.0"))
 ],
 targets: [
     .target(name: "MyApp", dependencies: [
@@ -259,6 +271,9 @@ targets: [
     ])
 ]
 ```
+
+`2.17.0` is LiveKit's newest release (2026-09-14), and the `from:` is a floor:
+SwiftPM takes the highest 2.x tag, so a later LiveKit 2.x needs no edit here.
 
 > **Note** Version 2 of the LiveKit Swift client has breaking changes from
 > version 1. See the [LiveKit v1→v2 migration

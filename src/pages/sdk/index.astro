@@ -16,14 +16,23 @@ import { hubMeta } from "../../config/hubs";
 //
 // It used to be the other way round, and every card carried both models. That
 // repeated the same two names five times, and it hid the thing a reader most
-// needs: the two models do NOT run in the same places. Expression 2 has a
-// documented on-device path on all five. Essence 2 has one WRITTEN on the CLI
-// and the Python library; on iPhone and on Android the SDK ships and was
-// measured on a real device, but the step-by-step is not written yet, and in a
-// browser the published package is a demo. That is a docs gap on the handsets
-// and a product limit only on the web.
-// Grouped this way the difference IS the content, rather than something a
-// reader has to reconstruct by comparing five cards.
+// needs: what DIFFERS for each model on each platform. Grouped this way that
+// difference IS the content, rather than something a reader has to reconstruct
+// by comparing five cards.
+//
+// ★2026-09-22: the Android card said "the step-by-step is not on the Android
+// page yet" and sent readers to the CLI, Python or the cloud API instead. It
+// had been written when that was true and was never re-read against the page
+// it names: sdk/android.md carries a complete Essence 2 rail — Install, the
+// dependency line, Minimal code, Get a model, Authentication — and links a
+// whole worked app. The card was the only thing standing between a reader and
+// it. The Web card had the matching defect in the other direction: it
+// described the downloadable benchmark package (one built-in identity) as if
+// that were the whole of Essence 2 in a browser, when ?render=local renders a
+// real Essence 2 agent in the tab exactly as it does for Expression 2 — which
+// is the configuration /sdk/performance's own Web row is measured on.
+// A card that describes a page must be re-read against that page, not against
+// the day it was written; both now say what their page says.
 //
 // No frame rate appears on this page. Performance is /sdk/performance, linked
 // once, and a card answers one question: "is this my platform?"
@@ -46,8 +55,6 @@ interface Card {
   href: string;
   /** The one thing that differs for this model on this platform. */
   note?: string;
-  /** Said instead of `note` where this site documents no on-device path. */
-  elsewhere?: string;
 }
 
 interface Model {
@@ -125,21 +132,21 @@ const models: Model[] = [
         name: "iOS",
         sub: "iPhone or iPad",
         href: "/sdk/ios",
-        elsewhere: "The same Swift package carries Essence 2 from 2.14.0, and it opens the `.imx` the download endpoint serves. A complete app is on [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2).",
+        note: "The same Swift package carries Essence 2 from 2.14.0, and it opens the `.imx` the download endpoint serves. A complete app is on [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2).",
       },
       {
         key: "android",
         name: "Android",
         sub: "arm64-v8a",
         href: "/sdk/android",
-        elsewhere: "The Essence 2 Android SDK is published and runs on a handset; the step-by-step is not on the [Android page](/sdk/android) yet. Until it is, use the [CLI](/sdk/cli), the [Python library](/sdk/python) or the [cloud API](/api/overview).",
+        note: "A second Maven coordinate, and a bitHuman API key. The dependency line, the code and the credential are on the [Android page](/sdk/android); a whole app is on [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed).",
       },
       {
         key: "web",
         name: "Web",
         sub: "any modern browser",
         href: "/sdk/web",
-        elsewhere: "The published in-browser package is a demo: one built-in identity, and it cannot render your own agent. Serve the avatar over the [cloud API](/api/overview) instead.",
+        note: "`?render=local` moves the render into the tab here too, for an identity that has an in-browser build; without one the avatar is served instead.",
       },
     ],
   },
@@ -202,9 +209,7 @@ const rich = (s: string) =>
                   <h2 class="name"><a href={c.href}>{c.name}</a></h2>
                   <p class="sub">{c.sub}</p>
 
-                  {(c.elsewhere ?? c.note) && (
-                    <p class="says" set:html={rich(c.elsewhere ?? c.note!)} />
-                  )}
+                  {c.note && <p class="says" set:html={rich(c.note)} />}
                 </article>
               ))}
             </div>
