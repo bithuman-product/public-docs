@@ -275,16 +275,42 @@ finally:
     await avatar.shutdown()                # still worth doing: it frees the model
 ```
 
-`shutdown()` releases the model and its memory, so it is good practice on the
-path that ends your session — but it is no longer the thing that stops the
-meter. Caching a runtime for reuse is a sensible optimisation, because loading
-is the expensive part, and it no longer carries a billing cost.
+Caching a runtime for reuse is a sensible optimisation, because loading is the
+expensive part, and it no longer carries a billing cost.
 
 > **Changed 2026-09-22.** Metering used to run on wall clock from model load
 > until `shutdown()`, so an idle runtime billed at the full rate. That is no
 > longer true — for every model, self-hosted and cloud alike. Credits charged
 > under the old behaviour have been refunded; if you were affected and have not
 > seen a refund, write to [hello@bithuman.ai](mailto:hello@bithuman.ai).
+
+### Ending a session: three calls, and only one of them frees the model
+
+`AsyncBithuman` offers three teardown calls and they are **not**
+interchangeable. What each one does was read back out of `bithuman` 2.11.6, the
+wheel PyPI serves — the file and line are in the package you just installed:
+
+| Call | What it does | What it does not do |
+|---|---|---|
+| `await avatar.stop()` | stops the frame producer, and only that; idempotent, and the runtime can be driven again afterwards (`_avatar.py:410`) | does not free the model, and does not release the credential — its own docstring says *"Does NOT release auth"* |
+| `await avatar.shutdown()` | `stop()`, then frees the model and its memory, then releases the credential (`_avatar.py:464`) | see the Essence 2 note below |
+| `avatar.cleanup()` | the synchronous form, which the LiveKit plugin calls from `AvatarSession.aclose()` (`_avatar.py:812`) | does not stop the frame producer — reach for `shutdown()` unless you are already outside the event loop |
+
+**`shutdown()` is the one to put in a `finally`.** There is no `close()`, no
+`aclose()` and no `async with` on `AsyncBithuman` — we checked the installed
+package for all three and it has none of them.
+
+> **A self-hosted [Essence 2](/concepts/essence-2) model leaves one background
+> heartbeat running after `shutdown()`.** The engine that renders Essence 2
+> keeps its own process-wide heartbeat, separate from the credential
+> `shutdown()` releases, and nothing in the teardown path stops it; it ends when
+> your process ends. **It costs you nothing** — a heartbeat that reports no
+> talking is charged nothing under the rule above — and it does not hold the
+> model in memory, which `shutdown()` has already freed. It is one thread per
+> process, not one per runtime. We are closing this in a coming release; until
+> then, a script that renders and exits needs no workaround, and a long-lived
+> service should open a runtime once and keep it rather than opening one per
+> request.
 
 ## Run
 

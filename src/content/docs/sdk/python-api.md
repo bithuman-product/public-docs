@@ -412,6 +412,33 @@ Public by spelling, and not an API this page documents. They are listed so that 
 | `bithuman.unified_header` | an `__all__` of 14 names; no part of opening an avatar goes through it |
 <!-- PYAPI:END -->
 
+## The teardown calls, and which one frees the model
+
+The table above gives each name its signature; it does not say what the call
+*does*, and for the three teardown calls on the runtime object that difference
+has cost a customer money. `stop()` and `shutdown()` are `async def` — `await`
+them. `cleanup()` is synchronous.
+
+| Call | Frees the model | Releases the credential | Stops the frame producer |
+|---|---|---|---|
+| `await avatar.stop()` | no | no | yes |
+| `await avatar.shutdown()` | yes | yes | yes |
+| `avatar.cleanup()` | yes | yes | no |
+
+`shutdown()` is the one to put in a `finally`. `stop()` is for ending a stream
+you intend to drive again — its own docstring in the shipped package reads
+*"Stop the producer task. Idempotent. Does NOT release auth."* `cleanup()` is
+the synchronous form the LiveKit plugin calls from `AvatarSession.aclose()`.
+
+There is no `close()`, no `aclose()` and no `__aexit__` on `AsyncBithuman`, so
+it is not a context manager — the plain `bithuman.open()` object above is.
+
+**A self-hosted Essence 2 model leaves one background heartbeat running after
+`shutdown()`**, on a handle separate from the credential `shutdown()` releases.
+It ends with the process, it holds no model memory, and it costs nothing
+because [billing follows the talking](/sdk/python#billing-follows-the-talking-not-the-clock),
+not the clock. The full note is on the [Python page](/sdk/python#ending-a-session-three-calls-and-only-one-of-them-frees-the-model).
+
 ## See also
 
 - [Python](/sdk/python) — install it, get a model, render your first frame
