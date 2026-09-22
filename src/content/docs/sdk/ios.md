@@ -1,6 +1,6 @@
 ---
 title: "iOS & iPadOS SDK"
-description: "Ship a bitHuman avatar inside your own iOS, iPadOS or macOS app: one SwiftPM package, the device floor and Apple entitlements each engine needs, and a first frame from a free showcase identity with no account, no key and no credits. The same package builds for macOS."
+description: "Ship either second-generation model inside your own iOS, iPadOS or macOS app from one SwiftPM package: Expression 2 on any Apple Silicon device at iOS 16, Essence 2 at full resolution on iOS 26. Device floors, download sizes, the Apple entitlements bitHumanKit needs, and a worked example for each — with a first frame from a published identity needing no account, no key and no credits."
 section: sdk
 group: "Platforms"
 order: 40
@@ -13,6 +13,42 @@ ship — [Expression 2](/concepts/expression-2) and
 whole on-device voice agent around one of them. The three have **different
 hardware floors**, so read the requirements before you buy a device or start a
 project.
+
+Both models render entirely on the device, and on Apple both reach a first frame
+with **no account, no key and no credits**. One dependency line serves all
+three products:
+
+```swift
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8")
+```
+
+`from:` is a floor, not a pin: it resolves the newest 2.x tag, which is
+**v2.13.8** — Essence 2 engine `essence2-v1.9.0`, Expression 2 engine `v2.6.3`.
+Verified against the tags the package repository serves on 2026-09-21.
+
+| | Expression 2 | Essence 2 |
+|---|---|---|
+| **What renders** | [a whole generated scene](/concepts/expression-2) — head, shoulders and background — at 416x720 | [your own portrait, animated](/concepts/essence-2), at up to 1920x1080, on that identity's own canvas |
+| **Product to attach** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2", package: "homebrew-bithuman")` |
+| **Devices** | any Apple Silicon iPhone, iPad or Mac — no hardware gate in the binary | any Apple Silicon iPhone; iPad with M-series; Mac with M3 or newer |
+| **OS floor** | iOS 16 / macOS 13 | **iOS 26 / iPadOS 26 / macOS 26** |
+| **Credential** | **none** to download or render a published identity | **none** either — the render reports itself unmetered on stderr |
+| **First-run download** | about 355 MB — identity, plus the shared engine graphs every identity uses | about 250 MB — identity, plus the engine's runtime resources |
+| **What it asks of you** | a Swift API; nothing to stage | you write a small C-interface wrapper and stage the resources yourself |
+| **Worked example** | [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) | [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) |
+
+> **Important** **Attach exactly one engine product per app.** `Expression2` and
+> `Essence2` in one target link green on the Simulator and fail at an app's final
+> link on a device and on a Mac, with duplicate symbols — the Essence 2 archive
+> carries the shared `UnifiedModelHeader` objects that `Expression2` also forces
+> into the link. There is no build setting that resolves it; see
+> [Choose an engine](#choose-an-engine).
+
+A third product, `bitHumanKit`, wraps a whole on-device voice agent around one
+engine. It is not a model: it is the stack, and it carries the only hardware
+gate and the only Apple entitlements on this page — **iPhone 16 Pro or newer**
+and a **1–3 business day** wait. If you want a rendered frame, you want one of
+the two engines above.
 
 ## Requirements
 
@@ -191,7 +227,7 @@ In Xcode: *File → Add Package Dependencies…* and paste
 `Package.swift`, the whole dependency is:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8")
 // then attach exactly ONE engine product to your target:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2",    package: "homebrew-bithuman")
@@ -244,6 +280,14 @@ shared engine graphs every identity uses. Every file below is an anonymous
 download over plain `curl`: no account, no key, no credits. The Expression 2 set
 is about **355 MB**, the Essence 2 set about **250 MB**. Verified on 2026-09-21
 with no credential in the environment.
+
+Every size on this page is a **binary** megabyte. Re-measured 2026-09-21 by
+range-requesting each URL anonymously and reading the total back off
+`Content-Range`, so the byte counts are exact and the unit is not in doubt:
+Expression 2 is 197,741,350 + 173,440,528 + 650,980 bytes, Essence 2 is
+155,399,147 + 105,353,700. The [Android SDK](/sdk/android) quotes the door's own
+`download_bytes` and so counts in decimal megabytes — the same file is a larger
+number there.
 
 **Expression 2** — three files. `A23WJF0199` is *Wise Pup*, a bitHuman-owned
 identity in the free showcase; any code on the [showcase](/showcase) works the

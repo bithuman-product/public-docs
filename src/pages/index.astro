@@ -73,7 +73,7 @@ import android.graphics.Bitmap
 
 /** [pcm16k] is 16 kHz mono float32 in [-1, 1] — one float per sample, not ShortArray. */
 fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
-    // Downloads the model the first time (~158 MB). Never on the main thread.
+    // Downloads the model the first time (about 160 MB). Never on the main thread.
     val model = Expression2ModelStore(context).fetch(agentCode)
 
     Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
