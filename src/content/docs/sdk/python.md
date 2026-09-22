@@ -282,9 +282,9 @@ is the expensive part, and it no longer carries a billing cost.
 
 > **Changed 2026-09-22.** Metering used to run on wall clock from model load
 > until `shutdown()`, so an idle runtime billed at the full rate. That is no
-> longer true, on every plane and every model. Credits charged under the old
-> behaviour have been refunded; if you think you were affected and have not seen
-> a refund, write to [hello@bithuman.ai](mailto:hello@bithuman.ai).
+> longer true — for every model, self-hosted and cloud alike. Credits charged
+> under the old behaviour have been refunded; if you were affected and have not
+> seen a refund, write to [hello@bithuman.ai](mailto:hello@bithuman.ai).
 
 ## Run
 
