@@ -50,7 +50,7 @@ export const GET: APIRoute = async () => {
   out += `- **Cloud REST API** — the \`api-secret\` header against \`https://api.bithuman.ai\`: [API overview](${SITE}/api/overview).\n`;
   out += `- **Python** — a venv, \`pip install bithuman\`, then open an avatar and take frames: [Python SDK](${SITE}/sdk/python).\n`;
   out += `- **CLI** — one binary for macOS Apple Silicon and Linux x86_64; a live avatar in the browser or an MP4 render: [CLI](${SITE}/sdk/cli) and the [CLI reference](${SITE}/sdk/cli/reference).\n`;
-  out += `- **Android and Apple** — [Android SDK](${SITE}/sdk/android), [iOS & iPadOS SDK](${SITE}/sdk/ios).\n`;
+  out += `- **Android and Apple** — [Android SDK](${SITE}/sdk/android), [Apple SDK — iOS, iPadOS and macOS](${SITE}/sdk/ios).\n`;
   out += `- **LiveKit** — a Python voice agent with a face, or a native app reaching a server-hosted avatar over WebRTC: [LiveKit integration](${SITE}/sdk/livekit).\n`;
   out += `- **MCP server (for AI agents)** — the CLI's \`bithuman mcp\` exposes the platform as Model Context Protocol tools: [MCP server](${SITE}/guides/mcp-server).\n\n`;
 
