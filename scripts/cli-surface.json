@@ -1,0 +1,71 @@
+{
+  "artifact": {
+    "registry": "github-releases",
+    "coordinate": "bithuman-product/homebrew-bithuman",
+    "tag": "cli-v2.6.26",
+    "version": "2.6.26",
+    "asset": "bithuman-x86_64-unknown-linux-gnu.tar.gz",
+    "digest": "sha256:cd50ab74c5164d0f0f8566eb6fed2dc788331e819663e0c0ca79fe91337eadd4",
+    "resolved_on": "2026-09-22"
+  },
+  "surface": {
+    "schema_version": 1,
+    "note": "Every name typeable after `bithuman`, read out of the published binary's own `__schema`. Regenerate with `node scripts/check-cli-sample-output.mjs --emit-surface`; never edit by hand.",
+    "builtins": [
+      "help"
+    ],
+    "names": [
+      "account",
+      "avatars",
+      "chat",
+      "completion",
+      "credits",
+      "doctor",
+      "engine",
+      "gallery",
+      "help",
+      "info",
+      "init",
+      "list",
+      "login",
+      "logout",
+      "mcp",
+      "open",
+      "pull",
+      "render",
+      "run",
+      "token",
+      "usage",
+      "version",
+      "whoami"
+    ],
+    "paths": [
+      "account",
+      "avatars",
+      "chat",
+      "completion",
+      "credits",
+      "doctor",
+      "engine",
+      "engine install",
+      "engine list",
+      "engine update",
+      "gallery",
+      "info",
+      "init",
+      "list",
+      "login",
+      "logout",
+      "mcp",
+      "mcp tools",
+      "open",
+      "pull",
+      "render",
+      "run",
+      "token",
+      "usage",
+      "version",
+      "whoami"
+    ]
+  }
+}

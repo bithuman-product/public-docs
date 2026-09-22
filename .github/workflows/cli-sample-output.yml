@@ -30,12 +30,14 @@ on:
       - src/content/docs/sdk/cli.md
       - src/content/docs/sdk/cli/reference.md
       - scripts/check-cli-sample-output.mjs
+      - scripts/cli-surface.json
       - .github/workflows/cli-sample-output.yml
   pull_request:
     paths:
       - src/content/docs/sdk/cli.md
       - src/content/docs/sdk/cli/reference.md
       - scripts/check-cli-sample-output.mjs
+      - scripts/cli-surface.json
       - .github/workflows/cli-sample-output.yml
   schedule:
     - cron: "41 6 * * *"
@@ -60,7 +62,12 @@ jobs:
       - name: The sample-output gate proves itself
         run: node scripts/check-cli-sample-output.mjs --selftest
 
-      - name: Both sample blocks match the published binary
+      # Grades THREE things off one download: the two sample blocks, the
+      # command names every page teaches, and scripts/cli-surface.json itself —
+      # the file bithuman-ui reads over raw.githubusercontent as its allowlist.
+      # If the binary's surface has moved, this reddens here rather than letting
+      # a second repository grade against a stale authority.
+      - name: The pages, and the surface file, match the published binary
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/check-cli-sample-output.mjs
