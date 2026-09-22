@@ -3,7 +3,7 @@
   "record": "models/essence-2/perf/FLOORS.json",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "6473fd130c7bca2021b8c5bd35a9db98972e0afc00b95ba1d474f44cc0d57593",
+  "record_sha256": "460c8647deb034ce1f5b6f3200646fba7e3f0f09b7ed1c0455710a6305258c08",
   "verified_on": "2026-09-22",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
@@ -12,32 +12,32 @@
     {
       "label": "Cloud GPU",
       "plane": "cloud-gpu",
-      "line": "| Cloud GPU | NVIDIA RTX 4090 | 369 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 18.4x real time · hosted baked-390440281 (2026-09-20) | 112 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 4.48x real time · hosted 2d1302440 (2026-09-20) |",
+      "line": "| Cloud GPU | NVIDIA RTX 4090 | 301 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 15.1x real time · hosted baked-390440281 (2026-09-22) | 103 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 4.12x real time · hosted 143b3e627 (2026-09-22) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 369,
+          "docs_fps": 301,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
-          "docs_fps": 112,
+          "docs_fps": 103,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         }
       }
     },
     {
       "label": "Cloud Apple silicon",
       "plane": "apple-serve",
-      "line": "| Cloud Apple silicon | Apple M4 Max | 86 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 4.3x real time · hosted moraga-expression-2-apple (2026-09-20) | 67 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.68x real time · hosted moraga-lib-a790181f (2026-09-22) |",
+      "line": "| Cloud Apple silicon | Apple M4 Max | 115 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 5.75x real time · hosted moraga-expression2-model-a7fdad23 (2026-09-22) | 67 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.68x real time · hosted moraga-lib-a790181f (2026-09-22) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 86,
+          "docs_fps": 115,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
           "docs_fps": 67,
@@ -69,26 +69,26 @@
     {
       "label": "macOS",
       "plane": "macos-m4",
-      "line": "| macOS | Apple M4 | 160 · e2e-steady-state · 416x720 at 20 fps · 8x real time · cli-v2.6.25 (2026-09-20) | 108 · e2e-steady-state · 1920x1080 at 25 fps · 4.32x real time · cli-v2.6.25 (2026-09-20) |",
+      "line": "| macOS | Apple M4 | 160 · e2e-steady-state · 416x720 at 20 fps · 8x real time · cli-v2.6.26 (2026-09-22) | 110 · e2e-steady-state · 1920x1080 at 25 fps · 4.4x real time · cli-v2.6.26 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 160,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
-          "docs_fps": 108,
+          "docs_fps": 110,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         }
       }
     },
     {
       "label": "macOS · Python",
       "plane": "python-macos",
-      "line": "| macOS · Python | Apple M4 | 159 · e2e-steady-state · 416x720 at 20 fps · 7.95x real time · bithuman 2.11.5 (2026-09-20) | 117 · e2e-steady-state · 1920x1080 at 25 fps · 4.68x real time · bithuman 2.11.5 (2026-09-20) |",
+      "line": "| macOS · Python | Apple M4 | 159 · e2e-steady-state · 416x720 at 20 fps · 7.95x real time · bithuman 2.11.5 (2026-09-20) | 177 · e2e-steady-state · 1920x1080 at 25 fps · 7.08x real time · bithuman 2.11.6 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 159,
@@ -97,48 +97,48 @@
           "docs_measured_on": "2026-09-20"
         },
         "essence-2": {
-          "docs_fps": 117,
+          "docs_fps": 177,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         }
       }
     },
     {
       "label": "Linux",
       "plane": "linux-cpu",
-      "line": "| Linux | Intel Core i7-13700F | 35 · e2e-steady-state · 416x720 at 20 fps · 1.75x real time · cli-v2.6.25 (2026-09-20) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · cli-v2.6.25 (2026-09-20) |",
+      "line": "| Linux | Intel Core i7-13700F | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · cli-v2.6.26 (2026-09-22) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · cli-v2.6.26 (2026-09-22) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 35,
+          "docs_fps": 43,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
           "docs_fps": 36,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         }
       }
     },
     {
       "label": "Linux · Python",
       "plane": "python-linux",
-      "line": "| Linux · Python | Intel Core i7-13700F | 38 · e2e-steady-state · 416x720 at 20 fps · 1.9x real time · bithuman 2.11.5 (2026-09-20) | 30 · e2e-steady-state · 1920x1080 at 25 fps · 1.2x real time · bithuman 2.11.5 (2026-09-20) |",
+      "line": "| Linux · Python | Intel Core i7-13700F | 46 · e2e-steady-state · 416x720 at 20 fps · 2.3x real time · bithuman 2.11.6 (2026-09-22) | 31 · e2e-steady-state · 1920x1080 at 25 fps · 1.24x real time · bithuman 2.11.6 (2026-09-22) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 38,
+          "docs_fps": 46,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
-          "docs_fps": 30,
+          "docs_fps": 31,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         }
       }
     },
@@ -164,13 +164,13 @@
     {
       "label": "Android",
       "plane": "android-s25plus",
-      "line": "| Android | Galaxy S25+ | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · expression2-android 0.4.7 (2026-09-19) | 46 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |",
+      "line": "| Android | Galaxy S25+ | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · expression2-android 0.4.8 (2026-09-22) | 46 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |",
       "cells": {
         "expression-2": {
           "docs_fps": 43,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-19"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
           "docs_fps": 46,
@@ -183,19 +183,19 @@
     {
       "label": "Web",
       "plane": "web",
-      "line": "| Web | Chrome on M4 | 30 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 1.5x real time · bithuman-ui 021a6f6 (2026-09-12) | 18 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.72x real time · bithuman-ui a1b6f7fa8 (2026-09-20) |",
+      "line": "| Web | Chrome on M4 | 30 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 1.5x real time · hosted cYAZKFlgTwrBwOKPHhQs1 (2026-09-22) | 29 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.16x real time · hosted cYAZKFlgTwrBwOKPHhQs1 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 30,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-12"
+          "docs_measured_on": "2026-09-22"
         },
         "essence-2": {
-          "docs_fps": 18,
+          "docs_fps": 29,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-22"
         }
       }
     }
