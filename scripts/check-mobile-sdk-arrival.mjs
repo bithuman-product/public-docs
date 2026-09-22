@@ -117,6 +117,141 @@ const MODELS = [
 
 const PROMISE = /\b(?:is|are)\s+pending\b|\bnot written yet\b|\bcoming soon\b|\bwalkthrough is pending\b/i;
 
+/* ─────────────────────────────────── R8 ──────────────────────────────────
+ * THE LOWEST VERSION A PAGE PRINTS IS THE ONE SOME READER WILL TYPE.
+ *
+ * Measured on src/content/docs/sdk/ios.md at origin/main 24a1593, the commit
+ * whose whole purpose was raising the SwiftPM floor from 2.11.0 to 2.13.8. The
+ * copyable block was raised. Fourteen lines below it the page still said:
+ *
+ *     `from:` is a floor, not a pin — it resolves the newest 2.x tag. The newest
+ *     package tag, **2.13.8**, … and `from: "2.11.0"` resolves it for you.
+ *
+ * That sentence is true of a FRESH resolve and false of the case a reader is
+ * in, and it re-authorises the exact number the commit had just removed —
+ * `from: "2.11.0"` leaves a project on `essence2-v1.4.0`, where an iPhone under
+ * a 16 Pro warms up, refuses by name and stays idle-only: the face moves, it
+ * never speaks, nothing is thrown.
+ *
+ * ★WHY NOTHING CAUGHT IT, which is the reason this rule is HERE and not
+ * somewhere else. Two gates already grade versions and both were green:
+ *
+ *   check-dependency-coordinates R5  grades the FLOOR for exactly this hazard
+ *                                    — but its extractor requires a
+ *                                    `.package(url: "…homebrew-bithuman…")`
+ *                                    prefix, and this `from:` sat in prose.
+ *   check-versions-current V6        grades that a `from:` RESOLVES to the
+ *                                    newest tag — and 2.11.0 does. Green, and
+ *                                    correctly so, in its own terms.
+ *
+ * Both ask the registry a question about one well-formed manifest line. Neither
+ * asks the question a reader's eye asks: OF THE NUMBERS ON THIS PAGE, WHICH ONE
+ * DO I TYPE? A page that prints two answers has already failed, whatever the
+ * registry says about either. That is a property of the PAGE, it needs no
+ * network, and this is the file that grades pages.
+ *
+ * ★AND IT IS THE ANDROID HALF THAT HAS NO REGISTRY ANSWER AT ALL. Gradle takes
+ * an exact version and never moves you down, so "does it resolve" is always yes
+ * and "is it the newest" is check-versions-current's V1. Neither can see the
+ * real Android hazard: `essence2-android` 0.5.11 and 0.5.12 ship a
+ * BYTE-IDENTICAL `classes.jar` — the whole difference is inside a `.so` — so an
+ * older pin compiles, runs, renders, and renders WRONG, with no exception, no
+ * log a caller reads, and nothing the API reference or a compiler can see. The
+ * only defence a docs page has is to print one number and never a lower one.
+ *
+ * WHAT IT CHECKS: every pin-shaped string on a graded page, grouped by what it
+ * pins, must equal the highest one printed for that thing.
+ *   - Maven      `<reverse.dns.group>:<artifact>:<version>` anywhere on the page
+ *   - SwiftPM    `from:`/`exact:` + a quoted version, on a page that names the tap
+ * PIN-SHAPED is the discriminator, deliberately, and it is the same choice
+ * check-dependency-coordinates makes: a version written in the form a developer
+ * copies is graded wherever it sits — fence, inline span or prose — and prose
+ * that merely discusses a number ("v2.13.2 pins essence2-v1.6.2", "older than
+ * 1.9.0") is free to describe history, because nobody copies it into a build.
+ *
+ * LIMIT, STATED: a page that must show a bad pin in pin shape — a negative
+ * control — cannot, on these two pages. That is the intended trade: on a page
+ * whose job is to be copied, a copyable wrong answer is the defect. Write it
+ * as a bare tag instead, the way the iOS floor table does.
+ */
+const SEMVER = String.raw`\d+\.\d+(?:\.\d+)?`;
+const TAP = "homebrew-bithuman";
+
+/** Every pin-shaped string on the page, as { key, version, line }. */
+function pins(md) {
+  const out = [];
+  const re = new RegExp(String.raw`\b([a-z][a-z0-9]*(?:\.[a-z0-9-]+)+):([A-Za-z0-9._-]+):(${SEMVER})\b`, "g");
+  let m;
+  while ((m = re.exec(md)) !== null) {
+    out.push({ key: `${m[1]}:${m[2]}`, version: m[3], line: lineOf(md, m.index), raw: m[0] });
+  }
+  if (md.includes(TAP)) {
+    const fre = new RegExp(String.raw`\b(?:from|exact)\s*:\s*["'](${SEMVER})["']`, "g");
+    while ((m = fre.exec(md)) !== null) {
+      out.push({ key: `swiftpm:${TAP}`, version: m[1], line: lineOf(md, m.index), raw: m[0] });
+    }
+  }
+  return out;
+}
+
+/** a < b, numerically, component by component. */
+function lower(a, b) {
+  const n = (s) => s.split(".").map((x) => parseInt(x, 10) || 0);
+  const A = n(a), B = n(b);
+  for (let i = 0; i < Math.max(A.length, B.length); i++) {
+    if ((A[i] || 0) !== (B[i] || 0)) return (A[i] || 0) < (B[i] || 0);
+  }
+  return false;
+}
+
+function lineOf(text, index) {
+  return text.slice(0, index).split("\n").length;
+}
+
+/* ─────────────────────────────────── R9 ──────────────────────────────────
+ * A PAGE THAT DEPENDS ON A VERSION MUST HAND THE READER A WAY TO READ BACK THE
+ * ONE THEY ACTUALLY GOT.
+ *
+ * R8 makes the page print one number. It cannot make the reader's toolchain
+ * USE it, and on both rails the toolchain is entitled not to: SwiftPM keeps a
+ * `Package.resolved` that predates the edit, and a Gradle build can be handed a
+ * different version by a platform BOM or another module. In both failures the
+ * symptom is a silent behavioural difference — on Apple an engine that never
+ * speaks and throws nothing, on Android a `classes.jar` byte-identical to the
+ * right one. A reader who cannot read back what they resolved has no way to
+ * falsify the page, and "check your version" is not actionable advice without
+ * the command that checks it.
+ *
+ * So: a graded page must carry, in a code block, the command that prints the
+ * resolved version — `Package.resolved` on the SwiftPM rail, a dependency
+ * report on the Gradle rail. Which rail is asked for is derived from the
+ * dependency lines the page itself ships, so a page cannot pass by answering
+ * for the rail it does not document.
+ */
+const READBACK = [
+  {
+    rail: "SwiftPM",
+    ships: (md) => /\.product\(\s*name:\s*"(?:Essence2|Expression2)"/.test(md),
+    re: /Package\.resolved/,
+    want: "a code block that reads `Package.resolved` back",
+  },
+  {
+    rail: "Gradle",
+    ships: (md) => /implementation\("ai\.bithuman:/.test(md),
+    re: /(?:gradlew|gradle)[^\n]*\bdependencies\b/,
+    want: "a code block running a `gradlew … dependencies` report",
+  },
+];
+
+/** The text inside every fenced code block. */
+function fences(md) {
+  const out = [];
+  const re = /^[ \t]*(`{3,}|~{3,})[^\n]*\n([\s\S]*?)^[ \t]*\1[ \t]*$/gm;
+  let m;
+  while ((m = re.exec(md)) !== null) out.push(m[2]);
+  return out.join("\n");
+}
+
 /** Everything between the end of the frontmatter and the first `## ` heading. */
 function lead(md) {
   let body = md;
@@ -202,8 +337,60 @@ function gradePage(name, md) {
   if (found.length === 0 && !/\]\(https:\/\/www\.bithuman\.ai\/developer\/api-keys\)|\]\(\/api\/authentication\)/.test(md)) {
     found.push(`${name}: R4 no page-wide link to where a credential comes from.`);
   }
+
+  found.push(...gradePins(name, md));
+  found.push(...gradeReadback(name, md));
   return found;
 }
+
+/** R8 — no pin-shaped string on the page may be lower than the highest one it
+ *  prints for the same thing. Returns findings; `pinsSeen` counts subjects. */
+function gradePins(name, md) {
+  const found = [];
+  const byKey = new Map();
+  for (const p of pins(md)) {
+    if (!byKey.has(p.key)) byKey.set(p.key, []);
+    byKey.get(p.key).push(p);
+  }
+  for (const [key, list] of byKey) {
+    pinsSeen += list.length;
+    const top = list.reduce((a, b) => (lower(a.version, b.version) ? b : a));
+    for (const p of list) {
+      if (!lower(p.version, top.version)) continue;
+      found.push(
+        `${name}:${p.line}: R8 prints \`${p.raw}\` while the same page pins ${key} at ${top.version} ` +
+          `(line ${top.line}). A version written in the form a developer copies is an instruction, ` +
+          `wherever it sits — and the lower number is the one some reader will type. On the SwiftPM ` +
+          `rail a lower \`from:\` is a FLOOR a project stays on; on the Gradle rail an older ` +
+          `coordinate compiles and renders differently with nothing thrown. Print one version, or ` +
+          `write the older one as a bare tag rather than as a pin.`,
+      );
+    }
+  }
+  return found;
+}
+
+/** R9 — the page must show how to read back the version actually resolved. */
+function gradeReadback(name, md) {
+  const found = [];
+  const code = fences(md);
+  for (const r of READBACK) {
+    if (!r.ships(md)) continue;
+    readbackSeen++;
+    if (r.re.test(code)) continue;
+    found.push(
+      `${name}: R9 documents the ${r.rail} rail and never shows the reader how to read back the ` +
+        `version they actually resolved — it needs ${r.want}. R8 makes the page print one number; ` +
+        `it cannot make a toolchain use it, and when the toolchain does not, the symptom on both ` +
+        `rails is a silent behavioural difference and nothing thrown.`,
+    );
+  }
+  return found;
+}
+
+/** Subject counters, so a green run can prove it graded something. */
+let pinsSeen = 0;
+let readbackSeen = 0;
 
 // ───────────────────────────── selftest ─────────────────────────────────────
 
@@ -227,6 +414,12 @@ Keys are free at [your API keys](https://www.bithuman.ai/developer/api-keys).
 \`\`\`kotlin
 implementation("ai.bithuman:expression2-android:0.4.7")
 implementation("ai.bithuman:essence2-android:0.5.12")
+\`\`\`
+
+Check what you actually resolved:
+
+\`\`\`bash
+./gradlew :app:dependencies --configuration releaseRuntimeClasspath | grep ai.bithuman
 \`\`\`
 `;
 
@@ -260,6 +453,46 @@ implementation("ai.bithuman:expression2-android:0.4.7")
 | you want Essence 2 on Android | the coordinate is \`implementation("ai.bithuman:essence2-android:0.5.12")\` — published and measured; a walkthrough is pending | use \`0.5.12\` |
 `;
 
+// ★THE REAL DEFECT R8 WAS WRITTEN FOR. src/content/docs/sdk/ios.md at
+// origin/main 24a1593 — the commit that raised the floor to 2.13.8 — still told
+// the reader, fourteen lines under the raised block, that the number it had just
+// removed "resolves it for you". Both gates that grade versions were green on
+// this: R5 in check-dependency-coordinates never saw the prose `from:`, and V6
+// in check-versions-current is satisfied because 2.11.0 does resolve to 2.13.8
+// on a FRESH resolve. It is the reader with an existing Package.resolved who
+// gets essence2-v1.4.0 and a face that never speaks.
+const IOS_0921 = `---
+title: "iOS SDK"
+---
+Lead.
+
+| | Expression 2 | Essence 2 |
+|---|---|---|
+| **What renders** | [a scene](/concepts/expression-2) | [your portrait](/concepts/essence-2) |
+| **Devices** | any Apple Silicon iPhone, iOS 16 | any Apple Silicon iPhone, iOS 26 |
+| **Product** | \`.product(name: "Expression2", package: "homebrew-bithuman")\` | \`.product(name: "Essence2", package: "homebrew-bithuman")\` |
+| **Credential** | none | none |
+| **Download** | 355 MB | 250 MB |
+| **Example** | [one](/examples/swift-ios-expression2) | [two](/examples/swift-ios-essence2) |
+
+## Install
+Keys are free at [your API keys](https://www.bithuman.ai/developer/api-keys).
+
+\`\`\`swift
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.13.8")
+\`\`\`
+
+\`from:\` is a floor, not a pin — it resolves the newest 2.x tag, and
+\`from: "2.11.0"\` resolves it for you.
+
+\`\`\`bash
+grep -A3 'homebrew-bithuman' Package.resolved
+\`\`\`
+`;
+
+/** IOS_0921 with the stale sentence removed — the shape the fix must reach. */
+const IOS_FIXED = IOS_0921.replace(/, and\n\`from: "2\.11\.0"\` resolves it for you\./, ".");
+
 function selftest() {
   const arms = [
     ["R7 the real android.md of 2026-09-21", ANDROID_0921, true],
@@ -276,17 +509,48 @@ function selftest() {
     ["R5 no download size", blankCell("Download", 2), true],
     ["R6 no worked example", blankCell("Example", 2), true],
     ["R4 no page-wide link to a key", GOOD.replace(/Keys are free.*/, "Keys exist."), true],
+
+    // ── R8: a pin lower than the one the page pins, wherever it is written ──
+    ["R8 the real ios.md of 2026-09-21 (prose `from:` below the block)", IOS_0921, true],
+    ["R8 an older Maven coordinate in a Troubleshooting cell", GOOD.replace(/use \`0\.5\.12\`/, "x").replace(
+      /\`\`\`bash/,
+      "| an older build | `implementation(\"ai.bithuman:essence2-android:0.5.8\")` |\n\n```bash",
+    ), true],
+    ["R8 the lead table and the Install block disagree", GOOD.replace(
+      /\| \*\*Dependency line\*\* \| \`implementation\("ai\.bithuman:expression2-android:0\.4\.7"\)\`/,
+      '| **Dependency line** | `implementation("ai.bithuman:expression2-android:0.4.1")`',
+    ), true],
+    ["R8 a third-party pin that disagrees with itself", GOOD.replace(
+      /implementation\("ai\.bithuman:essence2-android:0\.5\.12"\)\n\`\`\`/,
+      'implementation("ai.bithuman:essence2-android:0.5.12")\nimplementation("com.qualcomm.qti:qnn-runtime:2.49.0")\nimplementation("com.qualcomm.qti:qnn-runtime:2.48.0")\n```',
+    ), true],
+
+    // ── R9: the page never shows how to read back what was resolved ─────────
+    ["R9 the Gradle rail with no dependency report", GOOD.replace(/\.\/gradlew[^\n]*/, "echo hello"), true],
+    ["R9 the SwiftPM rail with no Package.resolved read-back", IOS_FIXED.replace(/grep -A3[^\n]*/, "echo hello"), true],
+
     ["GOOD fixture stays quiet", GOOD, false],
+    // The same iOS page with only that one sentence removed: R8 goes silent,
+    // which is what makes the arm above a measurement and not a coincidence.
+    ["R8 the ios.md fixture with the stale sentence removed", IOS_FIXED, false],
+    // A bare tag is not a pin. The iOS floor table names v2.11.0 on purpose,
+    // to say what it costs — and R8 must not fire on a page for saying so.
+    ["R8 an older version named as a bare tag, not a pin", IOS_FIXED.replace(
+      /## Install/,
+      "| v2.11.0 | essence2-v1.4.0 — silent refusal |\n| v2.13.8 | essence2-v1.9.0 |\n\n## Install",
+    ), false],
     ["single-model page is out of population", GOOD.replace(/essence2-android:0\.5\.12/g, "expression2-android:0.4.7"), false],
     ["a page with no dependency line is out of population", "---\ntitle: T\n---\nProse only.\n", false],
   ];
 
   let bad = 0;
+  let fire = 0, quiet = 0;
   for (const [name, md, expect] of arms) {
     const fired = gradePage("fixture", md).length > 0;
     const ok = fired === expect;
     if (!ok) bad++;
-    console.log(`  ${ok ? "OK  " : "WRONG"}  ${name.padEnd(46)} fired=${fired} expected=${expect}`);
+    if (expect) fire++; else quiet++;
+    console.log(`  ${ok ? "OK  " : "WRONG"}  ${name.padEnd(62)} fired=${fired} expected=${expect}`);
   }
 
   // MUTATION: the green fixture must be turnable red by one edit. A fixture
@@ -294,7 +558,7 @@ function selftest() {
   const mutated = withoutRow("Download");
   const mutFired = gradePage("fixture", mutated).length > 0;
   if (!mutFired) bad++;
-  console.log(`  ${mutFired ? "OK  " : "WRONG"}  MUTATION: GOOD minus one row goes red    fired=${mutFired} expected=true`);
+  console.log(`  ${mutFired ? "OK  " : "WRONG"}  ${"MUTATION: GOOD minus one row goes red".padEnd(62)} fired=${mutFired} expected=true`);
 
   // REAL CORPUS: the rules must have a live subject, or a green run means only
   // that nothing was graded.
@@ -302,17 +566,45 @@ function selftest() {
   const haveSubjects = subjects.length > 0;
   if (!haveSubjects) bad++;
   console.log(
-    `  ${haveSubjects ? "OK  " : "WRONG"}  real corpus has a subject                 n=${subjects.length} (${subjects
+    `  ${haveSubjects ? "OK  " : "WRONG"}  ${"real corpus has a subject".padEnd(62)} n=${subjects.length} (${subjects
       .map(([n]) => n)
       .join(", ")})`,
   );
+
+  // ★MUTATION ON THE REAL SUBJECT, not only on a fixture. A fixture proves the
+  // regex; only the live page proves the regex is pointed at the live page. Each
+  // graded page must be GREEN as it stands and RED under one edit that
+  // reintroduces the defect this rule exists for.
+  for (const [n, md] of subjects) {
+    const clean = gradePage(n, md).length === 0;
+    if (!clean) bad++;
+    console.log(`  ${clean ? "OK  " : "WRONG"}  ${`real corpus: ${n} is green as it stands`.padEnd(62)} findings=${gradePage(n, md).length} expected=0`);
+
+    // R8: reintroduce a lower pin, in prose, for something the page already pins.
+    const anyPin = pins(md)[0];
+    if (anyPin) {
+      const older = anyPin.raw.replace(/(\d+)\.(\d+)\.(\d+)/, (_, a, b) => `${a}.${Math.max(0, Number(b) - 1)}.0`)
+        .replace(/(\d+)\.(\d+)$/, (s) => s);
+      const red = gradePage(n, `${md}\n\nAn older build used \`${older}\`.\n`).length > 0;
+      if (!red) bad++;
+      console.log(`  ${red ? "OK  " : "WRONG"}  ${`R8 MUTATION: ${n} + a lower pin in prose goes red`.padEnd(62)} fired=${red} expected=true`);
+    }
+
+    // R9: delete every read-back command the page carries.
+    const noReadback = md.replace(/Package\.resolved/g, "X").replace(/gradlew/g, "X");
+    const red9 = gradePage(n, noReadback).length > 0;
+    if (!red9) bad++;
+    console.log(`  ${red9 ? "OK  " : "WRONG"}  ${`R9 MUTATION: ${n} minus its read-back goes red`.padEnd(62)} fired=${red9} expected=true`);
+  }
 
   if (bad) {
     console.error(`check-mobile-sdk-arrival --selftest: ${bad} arm(s) wrong — this instrument is not proven.`);
     process.exit(1);
   }
   console.log(
-    "check-mobile-sdk-arrival --selftest: OK — 10/10 defect arms fire, 3/3 good arms stay silent, the mutation arm reddens a green fixture, and the rules have a real subject.",
+    `check-mobile-sdk-arrival --selftest: OK — ${fire}/${fire} defect arms fire, ${quiet}/${quiet} good arms stay ` +
+      `silent, the mutation arm reddens a green fixture, and every real page in the population is green as it ` +
+      `stands and red under a one-edit reintroduction of R8 and of R9.`,
   );
   process.exit(0);
 }
@@ -342,8 +634,28 @@ if (findings.length) {
   console.error(`check-mobile-sdk-arrival: FAIL — ${findings.length} finding(s) across ${graded.length} multi-model page(s).`);
   process.exit(1);
 }
+
+// NON-VACUITY, per added rule. R1-R7 cannot be vacuous — they run once per
+// shipped model, and the population is defined by shipping one. R8 and R9 can
+// be: if the pin regex stops matching (a fence is reformatted, a coordinate
+// changes shape) R8 grades an empty set and prints a green. So each says how
+// many subjects it found, and zero is a failure, not a pass.
+if (pinsSeen === 0) {
+  console.error(
+    "::error::R8 found no pin-shaped string on any graded page — the extractor has gone blind, " +
+      "and a green over an empty set is the failure mode this rule actually has.",
+  );
+  process.exit(1);
+}
+if (readbackSeen === 0) {
+  console.error(
+    "::error::R9 recognised neither rail on any graded page — the rail detector has gone blind.",
+  );
+  process.exit(1);
+}
+
 console.log(
-  `check-mobile-sdk-arrival: OK — ${graded.length} multi-model SDK page(s) answer all six arrival questions for every model they ship (${graded
-    .map(([n]) => n)
-    .join(", ")}).`,
+  `check-mobile-sdk-arrival: OK — ${graded.length} multi-model SDK page(s) answer all six arrival questions for ` +
+    `every model they ship (${graded.map(([n]) => n).join(", ")}); R8 graded ${pinsSeen} pin(s) and found no page ` +
+    `printing two answers; R9 found a version read-back on ${readbackSeen} documented rail(s).`,
 );

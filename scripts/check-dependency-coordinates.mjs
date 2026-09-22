@@ -48,9 +48,10 @@
 //     manifest is asked directly instead.
 //
 // WHAT IT CHECKS, over src/content and src/pages:
-//   R1  Gradle    every `implementation("ai.bithuman:<artifact>:<version>")` —
-//                 <version> must appear in that artifact's maven-metadata.xml
-//                 on Maven Central.
+//   R1  Gradle    every `implementation("<group>:<artifact>:<version>")` —
+//                 <version> must appear in that coordinate's maven-metadata.xml
+//                 on Maven Central. EVERY group, not only ours: see the note on
+//                 the extractor for what that widening was measured to add.
 //   R2  SwiftPM   every typed dependency on the tap, in a Swift manifest
 //                 (`.package(url: "…homebrew-bithuman…", from: "X")`) or an
 //                 XcodeGen spec (`url: …homebrew-bithuman.git` + `from: X`) —
@@ -229,14 +230,34 @@ function corpus() {
 
 /* ------------------------------------------------------------- extraction */
 
-/** R1 — Gradle coordinates written in the form a developer copies. */
+/** R1 — Gradle coordinates written in the form a developer copies.
+ *
+ * ★WIDENED 2026-09-21 FROM `ai.bithuman` TO EVERY GROUP. The law at the top of
+ * this file is "every dependency this site tells a developer to type must exist
+ * at the registry that serves it", and for three weeks the rule under it read
+ * only our own group — so the two lines on sdk/android.md that a reader is told
+ * to paste beside ours,
+ *
+ *     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")
+ *     implementation("com.qualcomm.qti:qnn-runtime:2.49.0")
+ *
+ * were graded by nothing. They are not decoration: without them the Hexagon
+ * delegate is absent and the avatar renders on the CPU, and a reader whose build
+ * stops at `Could not find com.qualcomm.qti:…` never reaches a frame either way.
+ * A coordinate a page prints is a coordinate a page owns, whoever publishes it —
+ * and a third-party group is the one we are LEAST able to notice moving.
+ *
+ * Measured when widened: 4 new subjects, both artifacts present at 2.49.0 on
+ * Central. The group is now part of the key, so two groups publishing the same
+ * artifact name can never be conflated.
+ */
 export function gradleCoordinates(text) {
   const out = [];
   // Kotlin DSL  implementation("g:a:v")   and Groovy  implementation 'g:a:v'
-  const re = /\bimplementation\s*(?:\(\s*)?["']ai\.bithuman:([A-Za-z0-9._-]+):([0-9][A-Za-z0-9._-]*?)["']/g;
+  const re = /\bimplementation\s*(?:\(\s*)?["']([a-z][a-z0-9]*(?:\.[A-Za-z0-9_-]+)+):([A-Za-z0-9._-]+):([0-9][A-Za-z0-9._-]*?)["']/g;
   let m;
   while ((m = re.exec(text)) !== null) {
-    out.push({ artifact: m[1], version: m[2], line: lineOf(text, m.index) });
+    out.push({ group: m[1], artifact: m[2], version: m[3], line: lineOf(text, m.index) });
   }
   return out;
 }
@@ -447,8 +468,9 @@ function lineOf(text, index) {
 class RegistryUnreachable extends Error {}
 
 const liveRegistry = {
-  async mavenVersions(artifact) {
-    const url = `https://repo1.maven.org/maven2/ai/bithuman/${artifact}/maven-metadata.xml`;
+  async mavenVersions(coord) {
+    const [group, artifact] = coord.split(":");
+    const url = `https://repo1.maven.org/maven2/${group.replace(/\./g, "/")}/${artifact}/maven-metadata.xml`;
     let res;
     try {
       res = await fetch(url, { redirect: "follow" });
@@ -628,7 +650,7 @@ export async function grade(files, registry) {
   const failures = [];
   const seen = { maven: 0, tapVersion: 0, tapProduct: 0, pypi: 0, essence2Floor: 0 };
 
-  const mavenWanted = new Map(); // artifact -> [{version, where}]
+  const mavenWanted = new Map(); // "group:artifact" -> [{version, where}]
   const versionWanted = [];
   const productWanted = [];
   const pypiWanted = new Map(); // dist -> [{extras, spec, where}]
@@ -636,8 +658,9 @@ export async function grade(files, registry) {
   for (const { path, text } of files) {
     for (const c of gradleCoordinates(text)) {
       seen.maven++;
-      if (!mavenWanted.has(c.artifact)) mavenWanted.set(c.artifact, []);
-      mavenWanted.get(c.artifact).push({ ...c, path });
+      const coord = `${c.group}:${c.artifact}`;
+      if (!mavenWanted.has(coord)) mavenWanted.set(coord, []);
+      mavenWanted.get(coord).push({ ...c, path });
     }
     for (const v of tapVersions(text)) {
       seen.tapVersion++;
@@ -655,17 +678,17 @@ export async function grade(files, registry) {
   }
 
   // R1 — Maven Central
-  for (const [artifact, uses] of [...mavenWanted].sort()) {
-    const published = await registry.mavenVersions(artifact);
+  for (const [coord, uses] of [...mavenWanted].sort()) {
+    const published = await registry.mavenVersions(coord);
     for (const u of uses) {
       if (!published.includes(u.version)) {
         failures.push({
           path: u.path,
           line: u.line,
           msg:
-            `implementation("ai.bithuman:${artifact}:${u.version}") names a version Maven Central ` +
+            `implementation("${coord}:${u.version}") names a version Maven Central ` +
             `does not serve. Published: ${published.length ? published.join(", ") : "(none — no such artifact)"}. ` +
-            `A reader who copies this line gets "Could not find ai.bithuman:${artifact}:${u.version}".`,
+            `A reader who copies this line gets "Could not find ${coord}:${u.version}".`,
         });
       }
     }
@@ -811,6 +834,17 @@ export async function grade(files, registry) {
 
 const FIX_GOOD_GRADLE = 'x\n```kotlin\nimplementation("ai.bithuman:expression2-android:0.3.1")\n```\n';
 const FIX_BAD_GRADLE = 'x\n```kotlin\nimplementation("ai.bithuman:expression2-android:0.4.0")\n```\n';
+// ★The widening of R1 off `ai.bithuman` is only real if a third-party group can
+// turn this gate red. These two prove it: the stub publishes
+// com.qualcomm.qti:qnn-runtime at 2.48.0 and 2.49.0 and nothing else.
+const FIX_BAD_THIRD_PARTY_GRADLE =
+  'x\n```kotlin\nimplementation("com.qualcomm.qti:qnn-runtime:9.9.9")\n```\n';
+const FIX_GOOD_THIRD_PARTY_GRADLE =
+  'x\n```kotlin\nimplementation("com.qualcomm.qti:qnn-runtime:2.49.0")\n```\n';
+// A group the stub has never heard of must fail too — "no such artifact" is the
+// same verdict as "no such version", and it is what a typo'd group looks like.
+const FIX_BAD_UNKNOWN_GROUP_GRADLE =
+  'x\n```kotlin\nimplementation("com.example.nope:widget:1.0.0")\n```\n';
 const FIX_CONTROL_PROSE =
   "The probe discriminates: `ai.bithuman:expression2-android:9.9.9` returned 404, and\n" +
   "Gradle printed `Could not find ai.bithuman:expression2-android:0.2.0.`\n";
@@ -861,13 +895,14 @@ const FIX_CONTROL_LOW_FLOOR_OTHER_PRODUCT =
   '.product(name: "bitHumanKit", package: "homebrew-bithuman")\n```\n';
 
 const STUB = {
-  async mavenVersions(artifact) {
+  async mavenVersions(coord) {
     const t = {
-      "expression2-android": ["0.3.0", "0.3.1"],
-      "essence2-android": ["0.2.0", "0.3.0", "0.4.0", "0.5.0", "0.5.1"],
-      sdk: ["2.3.5", "2.3.6"],
+      "ai.bithuman:expression2-android": ["0.3.0", "0.3.1"],
+      "ai.bithuman:essence2-android": ["0.2.0", "0.3.0", "0.4.0", "0.5.0", "0.5.1"],
+      "ai.bithuman:sdk": ["2.3.5", "2.3.6"],
+      "com.qualcomm.qti:qnn-runtime": ["2.48.0", "2.49.0"],
     };
-    return t[artifact] ?? [];
+    return t[coord] ?? [];
   },
   async tapTags() {
     return ["v2.9.0", "v2.10.0", "v2.11.0", "v2.11.1", "v2.11.2", "v2.12.1", "v2.13.0", "v2.13.8"];
@@ -903,6 +938,9 @@ const STUB = {
 if (process.argv.includes("--selftest")) {
   const arms = [
     ["bad: a Gradle version never pressed (0.4.0)", FIX_BAD_GRADLE, true],
+    ["bad: a THIRD-PARTY Gradle version Central does not serve", FIX_BAD_THIRD_PARTY_GRADLE, true],
+    ["bad: a Gradle group Central has never heard of", FIX_BAD_UNKNOWN_GROUP_GRADLE, true],
+    ["good: the third-party pair sdk/android.md prints", FIX_GOOD_THIRD_PARTY_GRADLE, false],
     ["bad: a tap tag that does not exist", FIX_BAD_SWIFT_TAG, true],
     ["bad: a SwiftPM product the tap does not vend", FIX_BAD_SWIFT_PRODUCT, true],
     ["bad: an XcodeGen product the tap does not vend", FIX_BAD_XCODEGEN_PRODUCT, true],
@@ -970,7 +1008,10 @@ if (process.argv.includes("--selftest")) {
   }
   console.log(
     bad === 0
-      ? "check-dependency-coordinates --selftest: OK — 9/9 defect arms fire (one of them a mutation), 10/10 good arms stay silent, all 5 rules have real subjects."
+      ? `check-dependency-coordinates --selftest: OK — ${arms.filter((a) => a[2]).length + 1}/` +
+        `${arms.filter((a) => a[2]).length + 1} defect arms fire (one of them a mutation), ` +
+        `${arms.filter((a) => !a[2]).length}/${arms.filter((a) => !a[2]).length} good arms stay silent, ` +
+        `all 5 rules have real subjects.`
       : `check-dependency-coordinates --selftest: ${bad} arm(s) wrong`,
   );
   process.exit(bad === 0 ? 0 : 1);
