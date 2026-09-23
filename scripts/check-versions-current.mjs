@@ -535,7 +535,7 @@ const TABLE_KEYS = {
 
 /** Rows of downloads.md's "Current shipping versions" table that name a graded artifact. */
 export function shippingTable(text) {
-  const h = /^##\s+Current shipping versions\s*$/m.exec(text);
+  const h = /^##\s+Current (?:shipping )?versions\s*$/m.exec(text);
   if (!h) return [];
   const out = [];
   let idx = h.index + h[0].length;

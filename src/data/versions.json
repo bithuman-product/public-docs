@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "about": "The current published version of every bitHuman artifact. The one source for every version on docs.bithuman.ai: `node scripts/sync-versions.mjs --write` copies these into the pages, and `node scripts/sync-versions.mjs --registries` checks them against PyPI, Maven Central and the GitHub tags. Served at https://docs.bithuman.ai/versions.json.",
+  "versions": {
+    "cli": "2.7.1",
+    "python": "2.11.6",
+    "swift": "2.14.2",
+    "essence2_engine": "1.11.0",
+    "expression2_swift": "2.6.5",
+    "essence2_android": "0.5.13",
+    "expression2_android": "0.4.8",
+    "livekit_plugin": "1.8.2",
+    "flutter_plugin": "2.6.11"
+  },
+  "artifacts": [
+    {
+      "key": "cli",
+      "name": "CLI",
+      "platforms": "macOS (Apple silicon), Linux x86_64 and arm64",
+      "install": "curl -fsSL https://install.bithuman.ai | sh",
+      "registry": "GitHub release cli-v{v}",
+      "registry_url": "https://github.com/bithuman-product/homebrew-bithuman/releases",
+      "docs": "/sdk/cli"
+    },
+    {
+      "key": "python",
+      "name": "`bithuman` (Python)",
+      "platforms": "Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64",
+      "install": "pip install \"bithuman[expression-2]\"",
+      "registry": "PyPI",
+      "registry_url": "https://pypi.org/project/bithuman/",
+      "docs": "/sdk/python"
+    },
+    {
+      "key": "swift",
+      "name": "Swift package",
+      "platforms": "iOS, iPadOS and macOS on Apple silicon",
+      "install": ".package(url: \"https://github.com/bithuman-product/homebrew-bithuman.git\", from: \"{v}\")",
+      "includes": "Essence 2 engine **{essence2_engine}** · Expression 2 engine {expression2_swift}",
+      "registry": "GitHub tag v{v}",
+      "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
+      "docs": "/sdk/ios"
+    },
+    {
+      "key": "expression2_android",
+      "name": "`ai.bithuman:expression2-android`",
+      "platforms": "Android, arm64-v8a",
+      "install": "implementation(\"ai.bithuman:expression2-android:{v}\")",
+      "registry": "Maven Central",
+      "registry_url": "https://central.sonatype.com/artifact/ai.bithuman/expression2-android",
+      "docs": "/sdk/android"
+    },
+    {
+      "key": "essence2_android",
+      "name": "`ai.bithuman:essence2-android`",
+      "platforms": "Android, arm64-v8a",
+      "install": "implementation(\"ai.bithuman:essence2-android:{v}\")",
+      "registry": "Maven Central",
+      "registry_url": "https://central.sonatype.com/artifact/ai.bithuman/essence2-android",
+      "docs": "/sdk/android"
+    },
+    {
+      "key": "livekit_plugin",
+      "name": "`livekit-plugins-bithuman`",
+      "platforms": "Python 3.10–3.14",
+      "install": "pip install livekit-plugins-bithuman",
+      "registry": "PyPI",
+      "registry_url": "https://pypi.org/project/livekit-plugins-bithuman/",
+      "docs": "/sdk/livekit"
+    },
+    {
+      "key": "flutter_plugin",
+      "name": "Flutter plugin",
+      "platforms": "Android, iOS and macOS",
+      "install": "bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v{v}}}",
+      "registry": "GitHub tag flutter-plugin-v{v}",
+      "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
+      "docs": "/sdk/android"
+    }
+  ]
+}

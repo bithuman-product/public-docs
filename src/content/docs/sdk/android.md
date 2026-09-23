@@ -447,7 +447,7 @@ Measured frame rates for every platform are on the
   a Flutter app that is the same code on Android, iOS and macOS. **On Android it
   builds from a clone with no private access at all**: every engine it needs is a
   public Maven Central coordinate, so `flutter build apk` is the whole story. Its
-  plugin is pinned (`ref: flutter-plugin-v2.6.8`), so a clone builds the same
+  plugin is pinned (`ref: flutter-plugin-v2.6.11`), so a clone builds the same
   bytes on every machine.
   > ★ The same app does **not** build for iOS or macOS from a clone — the
   > plugin's Apple half stages its engines from a private repository. The app's
