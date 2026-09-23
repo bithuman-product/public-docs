@@ -619,8 +619,11 @@ if (fenceHits > FENCE_BUDGET) fatal.push(
 // the rest of the engine-ABI detail a developer never types. Four live proofs
 // still stand, so a broken tracker (which would read 0) is still caught. Do not
 // lower this again without naming which fenced block went and why.
-if (fenceHits < 4) fatal.push(
-  `only ${fenceHits} fenced-verbatim hits (expected 4+) — the fence tracker stopped ` +
+// LOWERED 4 -> 2 on 2026-09-23 (docs redesign P9a): the CLI page and the CLI
+// reference no longer print the `bithuman --version` transcript, whose
+// `libessence …` line was two of the fenced hits. Two live proofs remain.
+if (fenceHits < 2) fatal.push(
+  `only ${fenceHits} fenced-verbatim hits (expected 2+) — the fence tracker stopped ` +
   `matching \`\`\` blocks, so quoted CLI transcripts are about to be reported as prose violations`
 );
 if (markerHits.n < 10) fatal.push(`only ${markerHits.n} occurrences matched a retirement marker (expected 10+) — MARKERS or the corpus changed shape`);

@@ -51,7 +51,7 @@ authenticates automatically; there's nothing to `export`.
 
 On SSH or headless hosts where the browser can't reach the machine, use
 `bithuman login --device` and enter the short code it prints from any
-browser. See [CLI → Signing in](/sdk/cli/reference#signing-in).
+browser. See [CLI → Signing in](/sdk/cli/reference#sign-in).
 
 Because each device gets its own API secret, it's individually
 **revocable** — run `bithuman logout` on that machine, or revoke the

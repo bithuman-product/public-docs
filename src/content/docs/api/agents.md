@@ -611,7 +611,7 @@ family — the `essence-2-gpu` / `essence-2-apple` / `essence-2-cpu` force slugs
 `essence-2-ane` spelling stays accepted) and the retired
 `essence-2-light` fold onto `essence-2`). `essence-2-quality` is **no longer
 accepted** and returns a `400`. What you get per family — and what opens each file, in one
-place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).
+place: [what you get, per family](/sdk/cli/reference#bithuman-pull).
 
 > **The name in the Artifact column is the object in the store, not the file you
 > receive.** Whatever the stored object is called, the endpoint labels the
@@ -626,7 +626,7 @@ place: [what you get, per family](/sdk/cli/reference#what-you-get-per-family).
 | Family | Artifact in the store | Notes |
 |---|---|---|
 | `essence-1` | `.imx` | The portable IMX container — [runs locally](/sdk/cli/reference) in the CLI and the [Python SDK](/sdk/python). |
-| `essence-2` | `.imx` | The standard Essence 2 artifact — unified IMX container. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple); the first local play checks the licence with the cloud, so it needs your sign-in. |
+| `essence-2` | `.imx` | The standard Essence 2 artifact — unified IMX container. Size is per identity: read `Content-Length` rather than assuming a fixed figure. **Licensed weights** — renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple); the first local play checks the licence with the cloud, so it needs your sign-in. |
 | `expression-2` | `.avatar` | The per-identity Expression 2 artifact. Sizes range widely, so read `Content-Length` rather than budgeting from a figure on this page. **The `.avatar` extension is historical: it is the frozen back-compat alias of `.imx`, not a distinct encoding.** A few of the oldest agents still carry an older container form, so check with `bithuman open <file>` rather than assuming. [Runs locally](/sdk/cli/reference) on macOS (Apple Silicon) and Linux x86_64; also in the browser via [`?render=local`](/sdk/web#render-in-the-tab), and served on bitHuman's cloud. |
 | `expression-1` | usually none; `.imx` for a lip-stepped agent | Expression 1 has no per-identity artifact of its own — the shared v1 engine renders server-side from the agent's image, so the normal answer is `400 MODEL_NOT_DOWNLOADABLE`. **One case does download:** an `expression-1` agent that went through the lip step owns a baked `.imx`, and the endpoint redirects to it exactly as it does for `essence-1`. |
 

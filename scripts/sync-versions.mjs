@@ -37,6 +37,7 @@ export const PIN_FORMS = [
   { key: "essence2_android", re: new RegExp(String.raw`ai\.bithuman:essence2-android:(${SEMVER})`, "g") },
   { key: "python", re: new RegExp(String.raw`(?<![\w-])bithuman(?:\[[^\]\s]*\])?==(${SEMVER})`, "g") },
   { key: "livekit_plugin", re: new RegExp(String.raw`livekit-plugins-bithuman==(${SEMVER})`, "g") },
+  { key: "cli", re: new RegExp(String.raw`"cli"\s*:\s*"(${SEMVER})"`, "g") },
   { key: "flutter_plugin", re: new RegExp(String.raw`ref:\s*flutter-plugin-v(${SEMVER})`, "g") },
 ];
 
