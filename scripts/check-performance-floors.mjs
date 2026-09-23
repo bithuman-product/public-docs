@@ -420,7 +420,10 @@ export function gradeJsonAgainstRecord(json, pin, record, recordBytes) {
         out.push({ rule: "R2", where: JSON_PATH, why: `performance.json holds ${key} (the "${row.label}" row) and the record has no such row` });
         continue;
       }
-      if (`${r.docs_fps}` !== `${c.fps}`) out.push({ rule: "R3", where: JSON_PATH, why: `${key}: the record publishes ${r.docs_fps} fps and performance.json says ${c.fps}` });
+      // ★A HELD-SESSION ROW PUBLISHES ITS HELD MEDIAN (record: row.held.display_fps); the ledger's
+      //  docs_fps there is the worst window the floor gates on (coordinator, 2026-09-23).
+      const want = row.sustained && r.held && r.held.display_fps !== undefined ? r.held.display_fps : r.docs_fps;
+      if (`${want}` !== `${c.fps}`) out.push({ rule: "R3", where: JSON_PATH, why: `${key}: the record publishes ${want} fps and performance.json says ${c.fps}` });
       if ((r.docs_measured_on ?? null) !== (c.measured_on ?? null)) {
         out.push({ rule: "R5", where: JSON_PATH, why: `${key}: the record measured on ${r.docs_measured_on ?? "no date"} and performance.json says ${c.measured_on ?? "none"}` });
       }
