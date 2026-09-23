@@ -123,7 +123,7 @@ in 2.6.4 is identical to 2.6.3's.
   fault-injection environment variable. On 2.14.1 the same program writes
   nothing.
 
-Also corrected on [iOS SDK](/sdk/apple#authentication) while measuring this:
+Also corrected on [iOS SDK](/sdk/apple#authenticate) while measuring this:
 Essence 2 **needs an API secret** to start a session. It reads `BITHUMAN_API_SECRET`
 (essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias); with none, or a rejected one, `be_essence2_create`
 returns `-3` and says why. A sandboxed Mac app also needs **Outgoing
