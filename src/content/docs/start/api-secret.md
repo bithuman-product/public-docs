@@ -29,7 +29,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 | Python | `BITHUMAN_API_SECRET` | `api_secret=` |
 | Apple | `BITHUMAN_API_SECRET` | `Essence2Credential.set` / `Expression2Credential.set` |
 | Android | `BITHUMAN_API_SECRET` | `Essence2Metering.apiSecret` / `Expression2Metering.apiSecret` |
-| LiveKit | — | a short-lived token, never the secret ([LiveKit](/sdk/livekit#keep-your-api-secret-out-of-the-room)) |
+| LiveKit | — | a short-lived token, never the secret ([LiveKit](/sdk/livekit#authenticate)) |
 | Web embed | — | none for a public agent; an [embed token](/api/embedding) for a private one |
 
 `BITHUMAN_API_KEY` is a deprecated alias of `BITHUMAN_API_SECRET`; use the new name.
@@ -38,7 +38,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 
 - Keep the secret in the environment or a secrets manager, never in source control or on a command line.
 - Do not ship it inside an app you distribute. Fetch it from your own backend at startup instead.
-- Browsers and LiveKit rooms get short-lived tokens: an [embed token](/api/embedding) or a runtime token minted with [`POST /v1/runtime-tokens/mint`](/sdk/livekit#keep-your-api-secret-out-of-the-room).
+- Browsers and LiveKit rooms get short-lived tokens: an [embed token](/api/embedding) or a runtime token minted with [`POST /v1/runtime-tokens/mint`](/sdk/livekit#authenticate).
 - If a secret leaks, create a new one and delete the old one in the console.
 
 ## Next

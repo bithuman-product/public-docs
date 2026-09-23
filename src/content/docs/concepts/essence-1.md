@@ -29,7 +29,7 @@ In bitHuman's cloud, and on your own hardware through:
 - **The CLI** — `bithuman run` on macOS Apple Silicon and Linux x86_64; see the
   [CLI](/sdk/cli). `render` does not take Essence 1 — use the Python SDK or the
   [Video API](/api/video) for a file.
-- **The browser** — [`?render=local`](/sdk/web#render-in-the-tab).
+- **The browser** — [`?render=local`](/sdk/web#integrate-into-your-app).
 
 There is no Essence 1 product in the Swift package, and the legacy Android
 artifact `ai.bithuman:sdk` cannot authenticate on a device — on a phone, use

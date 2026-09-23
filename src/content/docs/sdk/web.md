@@ -1,6 +1,6 @@
 ---
 title: "Web"
-description: "A talking avatar in a browser tab with nothing to install — one URL or one iframe, rendered on our servers or, with ?render=local, in the visitor's own tab. Which models run in a tab, what the browser needs, and what it costs."
+description: "Put a live, talking avatar on any web page with one iframe. No install and no API secret in the browser; render in the cloud or in the visitor's tab."
 section: sdk
 group: "Platforms"
 order: 50
@@ -8,165 +8,91 @@ type: platform
 label: "Web (embed)"
 ---
 
-The browser surface is a URL and an `<iframe>`. There is no npm package and no
-key in the browser: the avatar is either streamed from our servers or, with
-`?render=local`, drawn in the visitor's own tab.
+The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an `<iframe>` and the page gets a live avatar that listens and answers. There is no npm package and no secret in the browser.
+
+| | Expression 2 | Essence 2 |
+|---|---|---|
+| **What renders** | [any character from one portrait](/concepts/expression-2) | [a photoreal person from one portrait](/concepts/essence-2) |
+| **Cloud rendering (default)** | yes | yes |
+| **In the visitor's tab (`?render=local`)** | yes | yes, when the avatar has a browser build; otherwise it switches to cloud |
+
+## Before you start
+
+- A current browser. For lip-sync rendered in the tab, a usable GPU (WebGPU).
+- An agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
+- For a private agent, an [embed token](/api/embedding) minted by your server.
 
 ## Install
 
-Nothing. Any current browser works.
+Nothing to install.
 
-## Minimal code
+## Authenticate
+
+A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions bill the agent's owner: credits pay for talking time, idle time is free, and the conversation (speech recognition, language model and voice) bills in every mode ([pricing](/guides/pricing)).
+
+## First frame
 
 ```html
-<iframe src="https://bithuman.ai/embed/A74NWD9723"
-        allow="microphone *; camera *; autoplay *" width="420" height="720"></iframe>
+<!doctype html>
+<html>
+  <body style="margin:0">
+    <iframe src="https://www.bithuman.ai/embed/A23WJF0199"
+            allow="microphone *" style="width:100%;height:100vh;border:0"></iframe>
+  </body>
+</html>
 ```
 
-Or open an agent directly — a live agent that listens and answers:
+Expected: the avatar appears, asks for the microphone, and answers when you speak. Keep the `*` in `allow`, or the microphone is blocked. To try it without a page, open [https://www.bithuman.ai/embed/A23WJF0199](https://www.bithuman.ai/embed/A23WJF0199).
 
-```text
-https://www.bithuman.ai/A74NWD9723
-```
+## Integrate into your app
 
-Always start on `www.bithuman.ai`: that host starts the session and forwards
-you to the viewer. Keep the `*` in `allow`, or the microphone will not work.
-Tokens, sizing and embedding on your own site are on
-[Embed widget](/api/embedding).
+Add parameters to the URL:
 
-## Get a model
+| Parameter | Values | Effect |
+|---|---|---|
+| `render` | `cloud` (default), `local` | Where the avatar renders: our servers, or the visitor's tab |
+| `rendering_mode` | `browser`, `avatar` | Long form of `render=local`; `avatar` renders in the tab and lip-syncs the visitor's own microphone, with no conversation |
+| `greetingLang` | a language code, for example `es` | Language of the first greeting |
+| `greetingMsg` | text | The first thing the avatar says |
 
-Every showcase agent is public: `A74NWD9723` is one, and any code on the
-[showcase](/examples#ready-made-avatars) works the same way. Your own agent's code comes from
-[Agents](/api/agents).
+Other parameters are ignored. With `render=local`, the avatar downloads once (50–200 MB, then cached) and renders in the tab with WebGPU; the conversation still runs on our servers. Without a usable GPU the avatar shows its idle motion and plays the speech without lip-sync, so use cloud rendering when you need lip-sync on every machine.
 
-## Render in the tab
-
-Add `?render=local` and the model downloads into the tab and renders there,
-instead of on our servers:
-
-```text
-https://www.bithuman.ai/A74NWD9723?render=local
-```
-
-Nothing else changes: no install, no API secret, and the conversation — speech
-recognition, the LLM and the voice — still runs on our servers.
-
-| Mode | How you ask for it | Where the avatar renders | Audio |
-|---|---|---|---|
-| **cloud** (default) | nothing, or `?render=cloud` | our servers | the agent's speech, over video |
-| **browser** | `?render=local` (long form `?rendering_mode=browser`) | the visitor's tab | the agent's speech, audio only |
-| **avatar** | `?rendering_mode=avatar` | the visitor's tab, as a puppet with no brain | the visitor's microphone |
-
-Nobody gets an in-tab render unless the URL asks, so existing deployments are
-unchanged. The landing page forwards `render`, `rendering_mode`, `compute`,
-`model`, `deployment`, `greetingLang`, `greetingMsg` and the transparent-embed
-options to the viewer; anything else you append is dropped.
-
-**Which models render in a tab:**
-
-| Model | In the tab? |
-|---|---|
-| [Expression 2](/concepts/expression-2) | yes |
-| [Essence 2](/concepts/essence-2) | yes, for an identity whose in-browser build is published — otherwise the page switches to `?render=cloud` and the avatar is served |
-| [Essence 1](/concepts/essence-1) | yes |
-| [Expression 1](/concepts/expression-1) | no — it needs a server GPU, and the viewer says so |
-
-`A21SKT4314` is a public Essence 2 agent with an in-browser build.
-
-**What the browser needs:**
-
-- **A real GPU for lip-sync.** Without one, an in-tab session still shows the
-  living idle loop and plays the agent's speech; only the lip-sync is off. If
-  you need lip-sync on every machine, use cloud rendering.
-- **Two headers, if you host the page yourself:**
-  `Cross-Origin-Opener-Policy: same-origin` and
-  `Cross-Origin-Embedder-Policy: credentialless` (or `require-corp`). Without
-  them the renderer is limited to one thread. The bitHuman-hosted pages already
-  send them.
-- **A one-time download** of 50–200 MB per agent, cached for later visits.
-
-Measured in-browser frame rates are on the [performance page](/performance).
-
-## Check a browser before you ship
-
-`navigator.gpu` existing does not mean a GPU is usable. Test for a real,
-non-software adapter:
+Check for a usable GPU before you choose `render=local`:
 
 ```js
 async function hasRealGPU() {
   if (!navigator.gpu) return false;
-  const once = async () => {
-    try { return (await navigator.gpu.requestAdapter()) ?? null; } catch { return null; }
-  };
-  // The first call of a browser session can resolve null while the GPU process
-  // starts; retry once, or a machine with a GPU reads as having none.
-  const first = await once();
-  const adapter = first === null ? await once() : first;
-  if (!adapter) return false;
-  // The software-renderer flag lives on one of two objects; read both.
-  return adapter.isFallbackAdapter !== true && adapter.info?.isFallbackAdapter !== true;
+  const once = async () => { try { return (await navigator.gpu.requestAdapter()) ?? null; } catch { return null; } };
+  const adapter = (await once()) ?? (await once());   // the first request can return null while the GPU starts
+  return !!adapter && adapter.isFallbackAdapter !== true && adapter.info?.isFallbackAdapter !== true;
 }
 ```
 
-## Authentication and billing
+If you host the page yourself and use `render=local`, send `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless`; without them the in-tab renderer runs on one thread.
 
-The browser holds no API secret. A session bills to the **agent's owner**, at the
-rates on [pricing](/guides/pricing):
+To build your own video UI instead of the hosted page, subscribe to a cloud-rendered avatar over [LiveKit](/sdk/livekit).
 
-- **The conversation always bills** — speech, the LLM and the voice — whichever
-  mode renders the avatar.
-- **In-tab rendering adds no avatar-serving charge.** Cloud rendering bills
-  serving at the cloud rate.
+## Platform notes
 
-The free tier covers a first conversation.
+- Expression 1 avatars render in the cloud only.
+- The in-tab render works for Essence 1, Expression 2, and Essence 2 avatars that have a browser build.
 
-## The downloadable runtime
+## Performance
 
-One in-browser package is published as static files so you can measure
-rendering speed on your own hardware. It ships one built-in identity and a
-recorded loop, and it cannot render your own agent — use `?render=local` for
-that. Its manifest, with a `sha256` per file:
-
-```text
-https://models.bithuman.ai/web/essence2-web-v0.1.1/manifest.json
-```
-
-The same bytes are also published at the legacy `libelevate-web-v0.1.0` path,
-kept for compatibility so saved links keep resolving. If you mirror the files
-onto your own origin, check them against the manifest:
-
-```bash
-BASE=https://models.bithuman.ai/web/essence2-web-v0.1.1
-curl -fsS "$BASE/manifest.json" -o manifest.json
-for f in index.js ort/ort.min.mjs ort/ort-wasm-simd-threaded.mjs ort/ort-wasm-simd-threaded.jsep.mjs; do
-  mkdir -p "$(dirname "$f")" && curl -fsS "$BASE/$f" -o "$f"
-  want=$(python3 -c 'import json,sys;print(json.load(open("manifest.json"))["files"][sys.argv[1]]["sha256"])' "$f")
-  [ "$want" = "$(sha256sum "$f" | cut -d' ' -f1)" ] && echo "OK       $f" || echo "MISMATCH $f"
-done
-```
+In-browser frame rates (WebGPU) are on the [performance page](/performance).
 
 ## Troubleshooting
 
-| You see | It means | Do this |
+| Symptom | Cause | Fix |
 |---|---|---|
-| A page but no avatar | you opened the viewer host directly | start on `https://www.bithuman.ai/<CODE>` |
-| `404` on the hosted URL | the agent code is wrong or the agent is not public | check the code on the [showcase](/examples#ready-made-avatars) or in your [agents](/api/agents) |
-| `?render=local` turns into `?render=cloud` and the page reloads | that Essence 2 identity has no in-browser build yet | nothing — the conversation is the same, served from the cloud |
-| `Local rendering refused. This essence-2 avatar could not load part of its identity…` | part of the identity did not arrive, and Essence 2 will not draw a stand-in | reload; if it repeats, report the agent code |
-| The in-tab renderer is far below the model's frame rate | `crossOriginIsolated` is `false`, so it runs on one thread | send the two headers above, or ship the bundle's `coi-serviceworker.js` |
-| `WebGPU not available in this browser` | the GPU renderer was requested on a browser with no usable GPU | use the default renderer, or check with `hasRealGPU()` first |
-| `?ep=webgpu` seems to do nothing | the parameter is dropped while the page signs you in | append `&ep=webgpu` after the page has loaded and reload. The older `?elevate_ep=` is a legacy name kept for compatibility |
-| You want a JavaScript SDK | there is no npm package | embed the hosted page, or drive a served avatar over [LiveKit](/sdk/livekit) |
+| The microphone never activates | `allow` is missing `microphone *` | use `allow="microphone *"` |
+| `404` | the agent code is wrong, or the agent is private | check the code; mint an [embed token](/api/embedding) for a private agent |
+| `render=local` reloads as `render=cloud` | this Essence 2 avatar has no browser build | nothing to do; it is served from the cloud |
+| In-tab rendering is slow | the page is not cross-origin isolated | send the two headers above |
+| The avatar moves but its lips do not follow | no usable GPU in this browser | use cloud rendering, or check `hasRealGPU()` first |
 
-## Examples and source
+## Reference
 
-- [`integrations/nextjs-ui`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) — a Next.js video-chat UI over LiveKit
-- [`integrations/gradio-web`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web) — the same in Gradio + FastRTC
-
-## See also
-
-- [Embed widget](/api/embedding) — the iframe on your own site
-- [LiveKit](/sdk/livekit) — a served avatar from your own JavaScript
-- [Models](/concepts/models#where-each-model-runs) — which model runs where
-- [Performance](/performance) — measured frame rates for every platform
+- [Embedding](/api/embedding): embed tokens, sizing and private agents.
+- [LiveKit](/sdk/livekit): your own UI over a cloud-rendered avatar.
+- Examples: [Next.js UI](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) · [Gradio](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web).

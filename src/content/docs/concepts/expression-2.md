@@ -39,7 +39,7 @@ For a photorealistic person animated from their own footage, compare
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
 | iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
 | Android | [`expression2-android`](/sdk/android) — a published identity renders with no key |
-| The viewer's browser | [`?render=local`](/sdk/web#render-in-the-tab) |
+| The viewer's browser | [`?render=local`](/sdk/web#integrate-into-your-app) |
 
 The file you download from
 [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model)

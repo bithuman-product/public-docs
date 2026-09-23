@@ -1,6 +1,6 @@
 ---
 title: "MCP server"
-description: "Drive bitHuman from any AI agent. The bitHuman MCP server is built into the CLI (bithuman mcp) and exposes the platform as Model Context Protocol tools for Claude Desktop, Claude Code, Cursor, and other MCP clients."
+description: "Let Claude, Cursor and other MCP clients drive bitHuman as tools: create agents, speak, embed, render. The server is built into the CLI (bithuman mcp)."
 section: sdk
 group: "Integrations"
 order: 70
@@ -9,221 +9,100 @@ slug: sdk/mcp
 label: "MCP server"
 ---
 
-The **bitHuman MCP server** lets any [Model Context Protocol](https://modelcontextprotocol.io)
-client — Claude Desktop, Claude Code, Cursor, and others — call bitHuman
-directly as tools. Ask your agent to "make an avatar that explains our pricing
-and have it speak this script," and it can generate the agent, synthesize the
-speech, and mint an embed token without you writing any glue code.
+`bithuman mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server built into the [CLI](/sdk/cli). An MCP client such as Claude Code, Claude Desktop or Cursor can then call bitHuman as tools: "make an avatar that explains our pricing, then give me an embed token" becomes a chain of tool calls.
 
-It's **built into the [bitHuman CLI](https://github.com/bithuman-product/homebrew-bithuman)** —
-just run `bithuman mcp`. The cloud tools are a thin wrapper over the
-[REST API](/api) — each tool maps to one documented endpoint — plus a
-few local tools that inspect your install and model files. Not every endpoint
-has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
-[model add](/api/agents#add-a-model-to-an-existing-agent)
-(`POST /v1/agent/{code}/models`), and the [knowledge API](/api/knowledge)
-(`/v1/knowledge`) are HTTP-only for now.
+| | Expression 2 | Essence 2 |
+|---|---|---|
+| **Create agents** | `generate_agent` with `model: "expression-2"` | `generate_agent` with `model: "essence-2"` |
+| **Render locally** | `render` tool | `render` tool |
 
-> **Note — one server.** `bithuman mcp`, inside the CLI, is the bitHuman MCP
-> server; there is no separate package. If you registered the legacy
-> `bithuman-mcp` command with your MCP client, change it to `bithuman mcp`.
+## Before you start
 
-## Install and register
+- The [CLI](/sdk/cli#install) on macOS (Apple silicon) or Linux. On Windows or in a hosted agent, call the [REST API](/api) directly.
+- An MCP client.
 
-The server is the CLI. [Install the CLI](/sdk/cli#install), then point your MCP
-client at it:
+## Install
 
-```bash
-bithuman mcp            # the server itself — this is what an MCP client launches
-bithuman mcp tools      # print the tool surface and exit
-```
-
-Client configuration is one entry:
-
-```json
-{ "command": "bithuman", "args": ["mcp"] }
-```
-
-`bithuman mcp tools` prints **28 tools — 6 local and 22 cloud** on CLI 2.7.0.
-The local six (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`,
-`render`) work against your own install and model files; the rest are the REST
-API below. Authenticate once with `bithuman login`, as for any other command.
-
-## Tools
-
-**Cloud tools** — wrap the [REST API](/api) (and platform status):
-
-| Tool | Endpoint | What it does |
-|------|----------|--------------|
-| `get_platform_status` | `status.bithuman.ai` | Live operational status of the platform + each public API. |
-| `validate_api_secret` | `POST /v1/validate` | Check the API secret (free). |
-| `get_credit_balance` | `GET /v2/credit-summaries` | Credits, plan, minutes estimate. |
-| `get_usage` | `GET /v1/usage` | Usage/metering history (paginated). |
-| `list_voices` | `GET /v1/voices` | Built-in + custom TTS voices. |
-| `text_to_speech` | `POST /v1/tts` | Synthesize speech → a WAV file. |
-| `generate_agent` | `POST /v1/agent/generate` | Create an avatar agent. Takes `prompt` / `image` / `audio` plus **`model` and `version`** — `model: "essence", version: "v2"` (or `model: "essence-2"`) creates an [Essence 2](/concepts/essence-2) agent; omitted, the platform default (`expression-1`, 250 credits) applies, never a silent upgrade. Needs CLI **2.4.1+** (or `bithuman-mcp` **0.3.4+**) — earlier servers had no `model` parameter and every creation fell to the default model. |
-| `get_agent_status` | `GET /v1/agent/status/{id}` | Poll generation progress. |
-| `get_agent` | `GET /v1/agent/{code}` | Fetch agent details. |
-| `list_agents` | `GET /v1/agents` | List your agents (paginated). |
-| `update_agent_prompt` | `POST /v1/agent/{code}` | Change an agent's prompt. |
-| `delete_agent` | `DELETE /v1/agent/{code}` | Delete an agent you own. |
-| `agent_speak` | `POST /v1/agent/{code}/speak` | Make a live agent speak. |
-| `add_agent_context` | `POST /v1/agent/{code}/add-context` | Inject silent knowledge. |
-| `get_dynamics` | `GET /v1/dynamics/{id}` | List gesture animations. |
-| `generate_dynamics` | `POST /v1/dynamics/generate` | Generate gestures. |
-| `create_embed_token` | `POST /v1/embed-tokens/request` | Mint a website embed JWT. |
-| `upload_file` | `POST /v1/files/upload` | Upload an asset → CDN URL. |
-| `create_webhook` · `list_webhooks` · `delete_webhook` · `test_webhook` | `…/v1/webhooks` | Manage signed event webhooks. |
-
-**Local tools** — no network; inspect your install and local files:
-
-| Tool | What it does |
-|------|--------------|
-| `version` | CLI + essence engine version and ABI. |
-| `doctor` | Install health; `ready` is true iff this machine can serve an avatar. |
-| `inspect_model` | Inspect a local `.imx` model file's metadata. |
-| `list_showcase` | List downloadable showcase avatars. |
-| `pull` | Download a showcase avatar or one of your agents' model files. |
-| `render` | Render an audio file against a local model file to an MP4 — needs a credential, like the command. |
-
-## Setup
-
-Install the bitHuman CLI:
+The server is the CLI; there is nothing else to install.
 
 ```bash
 curl -fsSL https://install.bithuman.ai | sh
+bithuman mcp tools      # prints the tool list and exits
 ```
 
-macOS Apple Silicon and Linux x86_64 — [more on the CLI page](/sdk/cli#install).
+## Authenticate
 
-Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
-[Developer Dashboard](https://www.bithuman.ai/developer/api-keys)). The server resolves
-your credential automatically — env → OS keychain → `~/.bithuman/config` — so you
-usually don't pass it per-client. Then register `bithuman mcp`:
+Run `bithuman login` once, or set `BITHUMAN_API_SECRET` in the client's configuration. The server reads the same credential as the CLI and never logs it.
 
-### Claude Code
+## First frame
+
+Register the server with your client.
+
+Claude Code:
 
 ```bash
 claude mcp add bithuman -- bithuman mcp
 ```
 
-If you haven't run `bithuman login`, pass the secret inline:
-`claude mcp add bithuman -e BITHUMAN_API_SECRET="<your API secret>" -- bithuman mcp`.
-
-### Claude Desktop / generic JSON config
+Claude Desktop, Cursor (`~/.cursor/mcp.json`) and other clients:
 
 ```json
-{
-  "mcpServers": {
-    "bithuman": {
-      "command": "bithuman",
-      "args": ["mcp"]
-    }
-  }
-}
+{"mcpServers": {"bithuman": {"command": "bithuman", "args": ["mcp"]}}}
 ```
 
-### Cursor
+If you have not run `bithuman login`, add `"env": {"BITHUMAN_API_SECRET": "<your API secret>"}` to that entry.
 
-In **Settings → MCP → Add new MCP server**, or in `~/.cursor/mcp.json`:
+Then ask: *"Use the bithuman tools to validate my API secret."* The client calls `validate_api_secret` and reports `{"valid": true}`.
 
-```json
-{
-  "mcpServers": {
-    "bithuman": {
-      "command": "bithuman",
-      "args": ["mcp"]
-    }
-  }
-}
-```
+## Integrate into your app
 
-If you haven't signed in with `bithuman login`, add an
-`"env": { "BITHUMAN_API_SECRET": "<your API secret>" }` block to the config.
+Ask in plain language; the client chooses and chains the tools.
 
-## Verify the connection
+| Ask | Tools it calls |
+|---|---|
+| "Create an Expression 2 avatar from this image, wait until it is ready, and give me an embed token." | `generate_agent`, `get_agent_status`, `create_embed_token` |
+| "List the female voices and read this with F1." | `list_voices`, `text_to_speech` |
+| "What is my credit balance, and what did I spend this week?" | `get_credit_balance`, `get_usage` |
+| "Register a webhook at https://example.com/hooks and send it a test event." | `create_webhook`, `test_webhook` |
+| "Download wise-pup and render this WAV to an MP4." | `pull`, `render` |
 
-After adding the server, your client should list a **bithuman** tool group. The
-quickest confirmation is to ask the agent:
+### Tools
 
-> Use the bithuman tools to validate my API secret.
+| Tool | What it does |
+|---|---|
+| `version`, `doctor` | CLI version and install health (local) |
+| `inspect_model`, `list_showcase`, `pull`, `render` | Inspect, list, download and render avatars on this machine (local) |
+| `validate_api_secret` | Check the API secret (free) |
+| `get_platform_status` | Service status from status.bithuman.ai |
+| `get_credit_balance`, `get_usage` | Balance, plan and usage history |
+| `list_voices`, `text_to_speech` | Voices, and speech saved as a WAV (spends credits) |
+| `generate_agent`, `get_agent_status` | Create an agent from an image (spends credits; always pass `model`), then poll until `ready` or `failed` |
+| `get_agent`, `list_agents`, `update_agent_prompt`, `delete_agent` | Manage your agents |
+| `agent_speak`, `add_agent_context` | Make a live agent speak, or give it background knowledge |
+| `get_dynamics`, `generate_dynamics` | List or create gestures (spends credits) |
+| `create_embed_token` | A one-hour token to embed an agent on a website |
+| `upload_file` | Upload an asset and get a URL |
+| `create_webhook`, `list_webhooks`, `delete_webhook`, `test_webhook` | Webhooks |
 
-It calls `validate_api_secret` and should reply with `{"valid": true}`. If you
-get `valid: false`, re-check your credential (`bithuman account`); if no bithuman
-tools appear at all, confirm `bithuman` is on your PATH and restart the client.
+Talking video, adding a model to an agent and knowledge bases have no tool; use the [REST API](/api).
 
-## Using it
+## Platform notes
 
-You drive everything in natural language — the agent picks the right tools and
-chains them. A few worked examples:
+- Agent creation is asynchronous: a second-generation agent takes about 2–2.5 hours. Prices are on [pricing](/guides/pricing).
+- `BITHUMAN_API_BASE` changes the API origin (default `https://api.bithuman.ai`).
+- Errors come back as structured objects with the HTTP status and a link to [Errors](/api/errors).
 
-**Stand up a talking avatar and embed it**
+## Troubleshooting
 
-> Generate an avatar of a friendly fitness coach, wait until it's ready, then
-> give me an embed token for it.
+| Symptom | Cause | Fix |
+|---|---|---|
+| No bithuman tools in the client | `bithuman` is not on the client's `PATH` | use the full path to the binary in the config, then restart the client |
+| `validate_api_secret` returns `valid: false` | no or wrong credential | `bithuman login`, or set `BITHUMAN_API_SECRET` in the config |
+| A created agent uses a first-generation model | `model` was not passed | ask for `essence-2` or `expression-2` explicitly |
+| `422` when creating an Essence 2 agent | the image is not a photoreal person | use a photo, or choose Expression 2 |
 
-The agent calls `generate_agent`, polls `get_agent_status` until `ready`
-(minutes for a first-generation model; about 2 to 2.5 hours for either
-second-generation one), then `create_embed_token` and hands you the JWT for the
-[embed widget](/api/embedding).
+## Reference
 
-**Create a photoreal Essence 2 agent**
-
-> Create an essence-2 avatar from this photo: https://…/portrait.jpg — a
-> helpful retail assistant. Tell me the agent id and poll until it's ready.
-
-The agent calls `generate_agent` with `model: "essence-2"` (equivalently
-`model: "essence", version: "v2"`) — the input must be a
-photorealistic human subject (else the API rejects it 422 **before billing**,
-see [the subject gate](/api/agents#the-essence-2-subject-gate-422)) — then
-polls `get_agent_status`. Expect the whole creation to take about 2 to 2.5
-hours, most of it in the `lip_sync` step while the identity trains
-([creation times](/api/agents#model-specific-inputs-and-creation-times)). Creation is **image-only**: never pass `video`.
-
-**Turn a script into speech**
-
-> List the female voices, then read this with F1: "Welcome to the demo."
-
-→ `list_voices`, then `text_to_speech` (saved as a WAV you can play).
-
-**Audit the account**
-
-> How many agents do I have, what's my credit balance, and what did I spend in
-> the last week?
-
-→ `list_agents` (paginated), `get_credit_balance`, and `get_usage` with a
-`start` date.
-
-**Get notified instead of polling**
-
-> Register a webhook at `https://example.com/hooks/bithuman` for agent.ready and
-> send it a test event.
-
-→ `create_webhook` (returns the one-time signing secret), then `test_webhook`.
-See [Webhooks](/api/webhooks) for verifying the `X-BitHuman-Signature` header.
-
-## Configuration
-
-| Env var | Default | Purpose |
-|---------|---------|---------|
-| `BITHUMAN_API_SECRET` | _(auto-resolved)_ | Your API secret. Resolved from env → OS keychain → `~/.bithuman/config` (set by `bithuman login`). Never logged. |
-| `BITHUMAN_API_BASE` | `https://api.bithuman.ai` | API origin. |
-
-The built-in server speaks the standard MCP **stdio** transport, so there's
-nothing else to configure. It runs where the CLI runs — macOS Apple Silicon
-and Linux x86_64 — so a hosted agent, or one on Windows, calls the
-[REST API](/api) directly instead.
-
-## Notes
-
-- **Async work.** `generate_agent` and `generate_dynamics` return immediately
-  with `processing`. Have the agent poll `get_agent_status` / `get_dynamics`
-  until `ready` (minutes for a first-generation model; about 2 to 2.5 hours for
-  either model of the [second generation](/concepts/models), which trains a
-  real per-identity model).
-- **Credits.** `generate_agent` (250 credits for the default first-generation
-  model; 500 for `essence-2`, 2000 for `expression-2` — see
-  [Pricing](/guides/pricing)) and `text_to_speech`
-  consume credits — check `get_credit_balance` first if cost matters.
-- **Errors** come back as a structured object with the HTTP status and a link to
-  the [error catalog](/api/errors); the agent can read and act on them.
+- [CLI reference](/sdk/cli/reference#mcp-server)
+- [REST API](/api) and the [OpenAPI spec](/api/openapi.yaml)
+- [For AI agents](/resources/agents)

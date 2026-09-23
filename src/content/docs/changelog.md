@@ -53,7 +53,7 @@ into LiveKit room attributes. Every participant in the room can read those.
 a one-hour token that can only start that agent's avatar, in that room, and
 the plugin carries it unchanged in place of your secret. It cannot download
 the model or call any other endpoint. See
-[Keep your API secret out of the room](/sdk/livekit#keep-your-api-secret-out-of-the-room).
+[Keep your API secret out of the room](/sdk/livekit#authenticate).
 If you have passed your API secret to the plugin, switch to the token. Then
 create a new secret and delete the old one under
 [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
