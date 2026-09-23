@@ -194,7 +194,13 @@ const BANNED = [
   // character before `api`, so `/api-keys`, `create_api_key`, `X-API-Key` and
   // `apiKey` are untouched. A THIRD PARTY's key is named by its owner — "your
   // OpenAI key", "that provider's key" — and never as a bare "API key".
+  // ★`wrap` is the same phrase broken across a line break. Found 2026-09-23 by
+  // the SERVED gate, not this one: "needs a bitHuman API\nkey in two places"
+  // on sdk/android.md read clean here — every scan below is per line — and
+  // reached docs.bithuman.ai. A source guard that a wrapped paragraph walks
+  // past is weaker than the one downstream of it; scanWrapped() closes that.
   { name: "api-key", re: /(?<![\w\/.-])api[ -]keys?\b/gi,
+    wrap: /(?<![\w\/.-])api[ \t]*\n[ \t>*]*keys?\b/gi,
     fixture: "Click Create API key, then copy your API Keys from the dashboard",
     say: "the customer's credential is an API secret — say \"API secret\" (the URL " +
          "/developer/api-keys stays). A third party's key is \"your OpenAI key\" / " +
@@ -337,6 +343,24 @@ function scanText(text) {
   return hits;
 }
 
+// A banned phrase broken across a line break, which the per-line scan cannot
+// see. Only entries that carry a `wrap` pattern are graded this way. Returns
+// the 1-based line the phrase STARTS on.
+function scanWrapped(text) {
+  const hits = [];
+  for (const b of BANNED) {
+    if (!b.wrap) continue;
+    b.wrap.lastIndex = 0;
+    let m;
+    while ((m = b.wrap.exec(text)) !== null) {
+      hits.push({ name: b.name, found: m[0].replace(/\s+/g, " "),
+                  line: text.slice(0, m.index).split("\n").length });
+      if (m.index === b.wrap.lastIndex) b.wrap.lastIndex++;
+    }
+  }
+  return hits;
+}
+
 // ── THE SIBLING-CORPUS ASSERTION ─────────────────────────────────────────────
 // ★Found by mutation 2026-09-04, not by reading: dropping ONE file from this
 // guard's walk (`&& !rel.endsWith("community.md")`) left it GREEN while eleven
@@ -457,6 +481,18 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
         );
       }
     });
+    for (const h of scanWrapped(lines.join("\n"))) {
+      const pair = `${lines[h.line - 1] || ""} ${lines[h.line] || ""}`;
+      if (CARRIERS.some((c) => c.re.test(pair))) { carried++; continue; }
+      perName.set(h.name, perName.get(h.name) + 1);
+      const b = BANNED.find((x) => x.name === h.name);
+      violations.push(
+        `${rel}:${h.line}: internal vocabulary \`${h.found}\` [${h.name}], broken across a ` +
+        `line break, on a customer-facing page.\n` +
+        `      ${pair.trim().slice(0, 150)}\n` +
+        `      → ${b.say}.`
+      );
+    }
   }
 
   // ── non-vacuity: a zero must be EARNED ─────────────────────────────────────
@@ -627,6 +663,13 @@ function selfTest() {
     short.length === full.length - 1 &&
     siblingCorpusMismatch(ROOT, short).length > 0 &&
     siblingCorpusMismatch(ROOT, full).length === 0);
+
+  // ★M8 — a phrase broken across a line break is still seen. The served gate
+  // found the first one (sdk/android.md, 2026-09-23) after this file passed it.
+  T("M8 a banned phrase wrapped across a line break is reported; the kept URL is not",
+    scanWrapped("Essence 2 needs a bitHuman API\nkey in two places").length === 1 &&
+    scanWrapped("> Developer → API\n> Keys").length === 1 &&
+    scanWrapped("open https://www.bithuman.ai/developer/api-\nkeys").length === 0);
 
   console.log(`self-test: ${arms} arms, ${fails} failed`);
   return fails ? 1 : 0;
