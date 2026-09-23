@@ -24,10 +24,7 @@ Every error follows the same structured envelope:
 }
 ```
 
-> **Important** The HTTP transport status **always matches** `status_code` and
-> `error.httpStatus` — there is no "200-on-error". An auth failure returns HTTP
-> `401`, a validation failure returns HTTP `400`, and so on. You can branch on
-> either the HTTP status line or the parsed `error.code`; they never disagree.
+The HTTP status always matches `status_code` and `error.httpStatus`; there is no "200 on error". Branch on either the status or `error.code`.
 
 ### The one exception: `502` and `504`
 
@@ -116,9 +113,7 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 
 ## Handling errors in Python
 
-> **Note** The Python examples below use
-> [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl` / `urllib` instead.
+The Python examples use [`requests`](https://pypi.org/project/requests/) (`pip install requests`).
 
 ```python
 import os

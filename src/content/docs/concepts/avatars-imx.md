@@ -61,12 +61,7 @@ bithuman pull sofia-ramirez
 showcase, about 148 MB. `bithuman list` prints every showcase slug; a slug that is
 not in that list is refused with `slug '<name>' not found in manifest`.
 
-> **A showcase slug is free; your own agent is not.** `bithuman pull <slug>`,
-> `bithuman list` and `bithuman open` all work with no credential. Pulling **your
-> own** agent by **code** does need one — `bithuman pull <AGENT_CODE>` answers
-> `MISSING_AUTH` until you run `bithuman login` or export `BITHUMAN_API_SECRET`.
-> So does *playing* any model: `bithuman run` and `bithuman render` need that
-> credential, and the minutes bill at the [published rates](/guides/pricing).
+`bithuman pull <slug>`, `bithuman list` and `bithuman open` need no credential for a sample avatar. Pulling your own agent by code, and playing any model with `bithuman run` or `bithuman render`, need `bithuman login` or `BITHUMAN_API_SECRET`; talking time bills at the [published rates](/guides/pricing).
 
 Cache locations by surface:
 
@@ -91,14 +86,7 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 | [`essence-2`](/concepts/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
 | [`expression-2`](/concepts/expression-2) | `.avatar` or `.imx`: the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple) and [Android](/sdk/android), or on the cloud. |
 
-> **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
-> for compatibility** — it predates the current product naming and survives only
-> as the extension older releases wrote, `<CODE>.lebundle.imx`. The download
-> endpoint and `bithuman pull` label the file `<CODE>.imx` today; a bundle you
-> saved under the older name keeps working, and `bithuman open` reads both, so
-> the old spelling is kept here exactly as you may still have it on disk. It is
-> not a product name and never appears in an API request: the model is
-> [`essence-2`](/concepts/essence-2).
+Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/concepts/essence-2).
 
 ## Inspecting an `.imx`
 
@@ -129,11 +117,7 @@ So a current Essence 2 bundle reports `engine: essence2-light`. That is
 expected, not a mismatch
 — the engine id names the *loader family*, not the product.
 
-> **Never send an engine id to the API.** The `model` parameter takes the
-> product names only — `essence-1`, `essence-2`, `expression-1`,
-> `expression-2` — and anything else returns
-> [`400 VALIDATION_ERROR`](/api/agents#errors). An engine id is
-> something you *read* off a file you already have, never something you *send*.
+> **Warning** Never send an engine id to the API. `model` takes only `essence-1`, `essence-2`, `expression-1` or `expression-2`; anything else returns [`400 VALIDATION_ERROR`](/api/agents#errors).
 
 ## File-format stability
 
