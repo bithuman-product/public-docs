@@ -148,7 +148,7 @@ Colour appears only on an interactive terminal.
 `bithuman version --json`:
 
 ```json
-{"abi":7,"cli":"2.7.1","libessence":"2.11.6","build":{"target":"x86_64-unknown-linux-gnu","profile":"release"},"engine":{"platform":"linux","runtime":"litert","version":"1.0.1"},"schema_version":1}
+{"abi":7,"cli":"2.7.2","libessence":"2.11.8","build":{"target":"x86_64-unknown-linux-gnu","profile":"release"},"engine":{"platform":"linux","runtime":"litert","version":"1.0.1"},"schema_version":1}
 ```
 
 `bithuman account --json` (exit 77 with no credential):

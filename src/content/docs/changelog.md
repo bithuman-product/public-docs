@@ -25,6 +25,17 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### CLI 2.7.2 — 2026-09-23
+
+Tag `cli-v2.7.2`.
+
+- **Fixed:** an Essence 2 or Expression 2 `bithuman render` no longer opens a second, billed Essence 1 session. Every such render since 2.6.4 was billed 1–2 extra credits.
+- **Changed:** you are billed for talking, never for an open room: `bithuman run` no longer bills the silence between turns, and the managed voice bills the agent's speech, not the session's length.
+- **Changed:** the reply starts about half a second after you stop talking, and Expression 2 on a Mac answers about 4 seconds sooner. The default voice model is `gpt-realtime-2.1-mini`.
+- **Fixed:** `bithuman run` works on a fresh machine. Linux ships `livekit-server`; a missing Python or an old `livekit-server` is refused with the exact install line.
+- **Changed:** Essence 2 renders faster on a Linux CPU, and `bithuman render` prints no internal diagnostics.
+- **Action:** `curl -fsSL https://install.bithuman.ai | sh`, or `brew upgrade bithuman-cli`.
+
 ### Swift package 2.14.4 — 2026-09-23
 
 Essence 2 engine 1.12.1 · Expression 2 engine 2.6.5
