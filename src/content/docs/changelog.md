@@ -10,6 +10,21 @@ order: 1
 
 ## September 2026
 
+### An API secret can no longer read your other API secrets (2026-09-23)
+
+`GET /v2/{user_id}/api-secrets/{alias}/get-value` now returns `403`
+`SECRET_REVEAL_CONSOLE_ONLY` when called with an `api-secret`. Revealing a
+stored secret is a console action, available only to the signed-in owner under
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). Until
+now, anyone holding one of your secrets could read the rest. Creating, listing
+(masked) and deleting secrets with an `api-secret` work as before. See
+[Reveal an API secret](/api/api-keys#reveal-an-api-secret).
+
+Legacy-format API secrets (the short keys issued before the current 65-character
+format) are now accepted only if bitHuman has them on record. Keys in active
+use were recorded automatically. If an old legacy key now returns `401`, create
+a new secret in the console.
+
 ### LiveKit: keep your API secret out of the room (2026-09-23)
 
 `livekit-plugins-bithuman` 1.8.2 writes whatever it is given as `api_secret`
