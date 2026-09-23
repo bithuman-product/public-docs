@@ -38,7 +38,7 @@ For a photorealistic person animated from their own footage, compare
 | bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
 | iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
-| Android | [`expression2-android`](/sdk/android) — a published identity renders with no key |
+| Android | [`expression2-android`](/sdk/android) — sessions use your API secret |
 | The viewer's browser | [`?render=local`](/sdk/web#integrate-into-your-app) |
 
 The file you download from
