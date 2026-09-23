@@ -499,5 +499,5 @@ bundled LiteRT is Apache-2.0; FFmpeg is linked statically into
 - [LiveKit](/sdk/livekit) — subscribing to a server-hosted avatar when the render
   is not on the handset
 - [Performance](/sdk/performance) — measured frame rates for every platform
-- [Where each model runs](/concepts/where-models-run) — which model to ship
+- [Where each model runs](/concepts/models#where-each-model-runs) — which model to ship
 - [SDK](/sdk) — every platform on one page

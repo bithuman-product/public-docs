@@ -55,7 +55,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 > To create an `essence-2` (500 credits) or `expression-2` (2000 credits) agent
 > instead, change the `"model"` value — or send `"auto"` and let the platform
 > pick, billing the routed model's rate. See
-> [Essence 2 & Expression 2](/concepts/models-v2). Their creation does real
+> [Essence 2 & Expression 2](/concepts/models). Their creation does real
 > per-identity work, so it takes **about 2 to 2.5 hours**
 > ([creation times](/api/agents#model-specific-inputs-and-creation-times)), not
 > the minutes below — keep polling `status` rather than applying a short
@@ -146,6 +146,6 @@ Full source: [GitHub](https://github.com/bithuman-product/bithuman-examples/tree
 
 - [API quickstart](/api/quickstart) — the full REST walkthrough
 - [Agents API](/api/agents) — generate and drive agents
-- [Essence 2 & Expression 2](/concepts/models-v2) — pick a second-generation model (creation takes about 2–2.5 h)
+- [Essence 2 & Expression 2](/concepts/models) — pick a second-generation model (creation takes about 2–2.5 h)
 - [Embed widget](/api/embedding) — put the agent on a page
 - [API reference](/api/reference) — every operation with a live console

@@ -389,7 +389,7 @@ that is what you will see in Console.app:
 [embody] %@ loaded on %@ and COMPUTES NOTHING (%@)
 ```
 
-`embody` is [deprecated](/concepts/models-v2) — the product is **Expression
+`embody` is [deprecated](/concepts/models) — the product is **Expression
 2** — but grep your logs for `[embody]`, not `[expression2]`. **Set
 `BITHUMAN_EXPRESSION2_DIR`**, not the `EMBODY` one.
 

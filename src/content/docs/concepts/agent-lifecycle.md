@@ -16,7 +16,7 @@ Generate → Store → Resolve → Live session → Speak
 
 ## 1. Generate
 
-Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus an optional portrait image and voice sample (creation is image-only — bitHuman generates the 10-second identity video internally, authored to loop seamlessly). It returns `{ agent_id, status: "processing" }` immediately — generation runs async. Measured end to end on 2026-09-20, one creation per model: `expression-1` 1 min, `essence-1` 13 min, `expression-2` 2 h 02 m, `essence-2` 2 h 09 m. Plan for under 15 minutes for either first-generation model and **about 2 to 2.5 hours** for either model of the [second generation](/concepts/models-v2) — neither of those two is the quick one.
+Call [`POST /v1/agent/generate`](/api/reference) with a prompt plus an optional portrait image and voice sample (creation is image-only — bitHuman generates the 10-second identity video internally, authored to loop seamlessly). It returns `{ agent_id, status: "processing" }` immediately — generation runs async. Measured end to end on 2026-09-20, one creation per model: `expression-1` 1 min, `essence-1` 13 min, `expression-2` 2 h 02 m, `essence-2` 2 h 09 m. Plan for under 15 minutes for either first-generation model and **about 2 to 2.5 hours** for either model of the [second generation](/concepts/models) — neither of those two is the quick one.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \

@@ -23,7 +23,7 @@ Grab a free dev key at [bithuman.ai → Developer](https://www.bithuman.ai/devel
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | 2 credits/min |
 
-Self-hosted serving is half the cloud rate across the board, and on-device serving — the Swift SDK and the Android/Kotlin SDK alike — bills at the self-hosted rate. A "credit minute" is a minute in which the avatar is **actually talking** (on-device, the talking minutes between `chat.start()` and `chat.stop()`). **Idle animation is free** — a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between utterances. An offline `bithuman render` bills the duration of the clip it writes, at the self-hosted rate. The second-generation models [launched July 10, 2026](/concepts/models-v2).
+Self-hosted serving is half the cloud rate across the board, and on-device serving — the Swift SDK and the Android/Kotlin SDK alike — bills at the self-hosted rate. A "credit minute" is a minute in which the avatar is **actually talking** (on-device, the talking minutes between `chat.start()` and `chat.stop()`). **Idle animation is free** — a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between utterances. An offline `bithuman render` bills the duration of the clip it writes, at the self-hosted rate. The second-generation models [launched July 10, 2026](/concepts/models).
 
 Managed conversational agents bill on top of avatar serving:
 
@@ -252,6 +252,6 @@ Yes. Each session bills independently while it's actively generating frames. You
 
 - [Billing API](/api/billing) — credit summaries over REST.
 - [Building avatars](/guides/building-avatars) — create an agent to run.
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and how to choose.
+- [Essence 2 & Expression 2](/concepts/models) — the second-generation models and how to choose.
 - [Rate limits & concurrency](/api/rate-limits) — request limits and the concurrency contract.
 - [Deploy via LiveKit](/guides/deploy-livekit) — the cloud-metered path.

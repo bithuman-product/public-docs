@@ -7,8 +7,7 @@ const groups = [
     label: "Start here",
     featured: true,
     cards: [
-      { title: "Where each model runs", desc: "Which model runs where, what GPU-only means, and which one to pick.", href: "/concepts/where-models-run" },
-      { title: "Which model?", desc: "The second-generation family — Essence 2 and Expression 2 — compared, with a chooser.", href: "/concepts/models-v2" },
+      { title: "Models", desc: "The four models — what each renders, where each runs, and which one to pick.", href: "/concepts/models" },
       { title: "Avatars and the .imx format", desc: "The single portable file that packages an avatar — where it comes from and how to inspect it.", href: "/concepts/avatars-imx" },
     ],
   },
@@ -20,7 +19,6 @@ const groups = [
       { title: "Talking video", desc: "Render a finished MP4 from text or audio with any model — the asynchronous output mode.", href: "/concepts/talking-video" },
       { title: "Essence 1", desc: "The first-generation avatar model — two thirds of every agent on the platform, and the one that runs on virtually any CPU. Maintained.", href: "/concepts/essence-1" },
       { title: "Expression 1", desc: "The first-generation expressive model — facial animation generated from a portrait. GPU-only, and maintained.", href: "/concepts/expression-1" },
-      { title: "Models", desc: "All four models on one page — the current pair, and the first-generation pair compared with the hardware notes behind each.", href: "/concepts/models" },
     ],
   },
   {
@@ -41,6 +39,6 @@ const groups = [
 <Hub
   title="Concepts"
   tagline={hubMeta("concepts").description}
-  ctas={[{ label: "Which model?", href: "/concepts/models-v2" }, { label: "Audio streaming", href: "/concepts/audio-streaming", variant: "secondary" }]}
+  ctas={[{ label: "Models", href: "/concepts/models" }, { label: "Audio streaming", href: "/concepts/audio-streaming", variant: "secondary" }]}
   groups={groups}
 />

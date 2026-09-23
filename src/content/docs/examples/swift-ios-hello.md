@@ -71,7 +71,7 @@ transitive SwiftPM dependencies. It is a **preview** rail.
 
 `bitHumanKit` bundles its own engine. It is not an Apple build of
 [`expression-1`](/concepts/expression-1), which is GPU-only and has no Apple
-build at all ([where each model runs](/concepts/where-models-run)). The two
+build at all ([where each model runs](/concepts/models#where-each-model-runs)). The two
 engine products in the same package — `Expression2` and `Essence2` — are
 separate products with their own APIs, and this example uses neither: see
 [Swift SDK](/sdk/ios#install).
@@ -293,4 +293,4 @@ Full source:
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent instead.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain in Python.
 - [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
-- [Where each model runs](/concepts/where-models-run) — which model to ship, and which platforms it runs on.
+- [Where each model runs](/concepts/models#where-each-model-runs) — which model to ship, and which platforms it runs on.

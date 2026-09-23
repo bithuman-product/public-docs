@@ -85,7 +85,7 @@ To select the first-generation Expression model, pass `model="expression"` to th
 > [`expression-2`](/concepts/expression-2) agent and it just works — the
 > platform resolves the model's serving tier (GPU → Apple → CPU) for
 > you at session launch, so no `model=` kwarg is needed. See
-> [Essence 2 & Expression 2](/concepts/models-v2).
+> [Essence 2 & Expression 2](/concepts/models).
 
 ## What you get
 

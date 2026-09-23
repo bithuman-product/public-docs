@@ -236,7 +236,7 @@ and Linux x86_64 — so a hosted agent, or one on Windows, calls the
 - **Async work.** `generate_agent` and `generate_dynamics` return immediately
   with `processing`. Have the agent poll `get_agent_status` / `get_dynamics`
   until `ready` (minutes for a first-generation model; about 2 to 2.5 hours for
-  either model of the [second generation](/concepts/models-v2), which trains a
+  either model of the [second generation](/concepts/models), which trains a
   real per-identity model).
 - **Credits.** `generate_agent` (250 credits for the default first-generation
   model; 500 for `essence-2`, 2000 for `expression-2` — see

@@ -88,7 +88,7 @@ python conversation.py --model ~/.cache/bithuman/showcase/sofia-ramirez.imx
 > field: `essence-2` renders at about 1.1 fps on a CPU — roughly 22x below real
 > time — while `expression-2` clears real time on a developer CPU. On a CPU-only
 > Linux box this example still runs, but the face will fall far behind the audio.
-> See [where each model runs](/concepts/where-models-run).
+> See [where each model runs](/concepts/models#where-each-model-runs).
 
 ## What you'll see
 

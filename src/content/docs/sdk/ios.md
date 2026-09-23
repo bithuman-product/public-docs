@@ -532,5 +532,5 @@ Measured frame rates for every platform are on the
   app, when the render is not on the device
 - [CLI](/sdk/cli) — the same engines on an Apple Silicon Mac, with no Xcode
 - [Performance](/sdk/performance) — measured frame rates for every platform
-- [Where each model runs](/concepts/where-models-run) — which model to ship
+- [Where each model runs](/concepts/models#where-each-model-runs) — which model to ship
 - [SDK](/sdk) — every platform on one page

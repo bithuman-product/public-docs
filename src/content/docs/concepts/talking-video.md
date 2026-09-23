@@ -89,7 +89,7 @@ Audio input is the same call with an audio block:
 | `expression-2` | Fast, expressive renders. | Available today |
 
 All four avatar models render talking video today. See
-[Essence 2 & Expression 2](/concepts/models-v2) for the full second-generation
+[Essence 2 & Expression 2](/concepts/models) for the full second-generation
 lineup.
 
 ## Cost
@@ -115,5 +115,4 @@ automatically refunded.
 
 - [Generate a talking video](/api/video) — the full API reference.
 - [Billing & credits](/api/billing) — how credits are consumed.
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose.
-- [Models](/concepts/models) — the four models, and the first-generation pair compared.
+- [Models](/concepts/models) — the four models, where each runs, and which to pick.

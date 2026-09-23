@@ -201,7 +201,7 @@ const OWNED_BY_RETIRED_NAMES = [
 const CARRIERS = [
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
-  { why: "the ONE sentence on /concepts/where-models-run that retires the word ANE by naming it",
+  { why: "the ONE sentence on /concepts/models that retires the word ANE by naming it",
     // source form `**Apple**, not "ANE"` AND the rendered form `Apple , not “ANE”` (the served gate reads the page)
     re: /lane is called \*{0,2}Apple\*{0,2} ?, not ["“]ANE["”]/ },
   { why: "`docker compose` / `docker-compose.yml` — the command a developer runs and the file they write",

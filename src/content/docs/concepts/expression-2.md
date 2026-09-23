@@ -11,7 +11,7 @@ label: "Expression 2"
 > ("Expression 2") is the second-generation expression engine and the model
 > for **stylized and universal characters** — cartoons, animals, creatures,
 > robots, and people. Available now — see
-> [Essence 2 & Expression 2](/concepts/models-v2) for the family overview.
+> [Essence 2 & Expression 2](/concepts/models) for the family overview.
 
 ## What it is
 
@@ -55,7 +55,7 @@ unchanged.
 
 For a photorealistic human, compare with [Essence 2](/concepts/essence-2).
 For the family-level decision,
-start at [Essence 2 & Expression 2](/concepts/models-v2).
+start at [Essence 2 & Expression 2](/concepts/models).
 
 ## How creation works
 
@@ -208,7 +208,7 @@ Tier slugs are an advanced, operational surface, and for production you should
 omit `?model=` and let the platform choose. What a pin actually does — including
 why a *recognized* slug fails loudly while an *unrecognized* one is ignored
 silently — is described once, on
-[pin a serving tier](/concepts/models-v2#advanced-pin-a-serving-tier). To pin
+[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier). To pin
 from the embed widget, see
 [the embed guide](/guides/deploy-embed#pin-a-serving-tier).
 
@@ -301,7 +301,7 @@ or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guid
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
+- [Essence 2 & Expression 2](/concepts/models) — the family overview and model chooser.
 - [Second-generation gallery](https://bithuman.ai/explore?gallery=v2) — talk to a live launch agent.
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.

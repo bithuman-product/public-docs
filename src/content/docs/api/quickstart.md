@@ -127,7 +127,7 @@ Prefer a custom face and persona? Generation is asynchronous — it returns an
 `agent_id` immediately. Pick the model with `model` — `expression-2` or
 `essence-2` (the pair `model: "expression"` + `version: "v2"` is also
 accepted and means the same thing). The
-[second-generation models](/concepts/models-v2) train a real per-identity
+[second-generation models](/concepts/models) train a real per-identity
 model, so they take longer and cost more — see
 [per-model creation](/api/agents#model-specific-inputs-and-creation-times) and
 [pricing](/guides/pricing). Creation is image-only: upload your own portrait —

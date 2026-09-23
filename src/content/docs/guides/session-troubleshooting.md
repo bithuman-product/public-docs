@@ -10,7 +10,7 @@ label: "Sessions & troubleshooting"
 ## Connect latency: what's normal
 
 When a session starts, the platform routes it to the best available serving
-capacity for the agent's [model](/concepts/models-v2). Two things determine
+capacity for the agent's [model](/concepts/models). Two things determine
 how fast the avatar appears:
 
 **1. Warm first line vs elastic overflow.** Every cloud model tier has an
@@ -63,7 +63,7 @@ report it with the agent code and timestamp.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: …` | Unknown or retired `model` value. The error lists the accepted names. | Use one of `essence-1`, `essence-2`, `expression-1`, `expression-2`, `auto` (or the bare `essence` / `expression` shorthands). Retired and pre-rename names are handled per [Naming & migration](/concepts/models-v2#naming--migration). No credits are charged. |
+| `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: …` | Unknown or retired `model` value. The error lists the accepted names. | Use one of `essence-1`, `essence-2`, `expression-1`, `expression-2`, `auto` (or the bare `essence` / `expression` shorthands). Retired and pre-rename names are handled per [Naming & migration](/concepts/models#naming--migration). No credits are charged. |
 | `402 INSUFFICIENT_BALANCE` | Creation costs the model's rate — 250 credits for the first-generation models, 500 for `essence-2`, 2000 for `expression-2`; `auto` bills the routed model's rate (500 or 2000). See [Pricing](/guides/pricing#creation--generation--one-time-credits). | Top up, then retry. |
 | [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) — `… requires a photorealistic human subject …` | An explicit Essence 2 creation (`essence-2`) with a cartoon / animal / stylized input — the [subject gate](/api/agents#the-essence-2-subject-gate-422) rejects it **before billing**. | Use `expression-2` for that subject, or `model: "auto"` (it routes instead of rejecting). |
 | Status `failed` with `error_message` | A pipeline step failed — the message names it (e.g. a voice or image step failure). | Failed creations are terminal for that `agent_id` and the creation credits are **automatically refunded**; fix the input and create again. |
@@ -78,9 +78,9 @@ report it with the agent code and timestamp.
 | `409 MODEL_NOT_GENERATED` — `agent <code>'s <model> model hasn't been generated yet` | You requested a model family the agent can't be launched as (via the embed-token `model` field, [talking video](/api/video), or a [model download](/api/agents#download-an-agents-model)) — a trained per-identity model that doesn't exist, `expression-1` not yet enabled on this agent (its message reads `isn't enabled on this agent yet`). | The message names the fix — follow it. Otherwise: check the agent's `supported_models` (returned on status / get / list and the embed-token response), [add the model](/api/agents#add-a-model-to-an-existing-agent), or create the agent with it. Enabling `expression-1` is [instant and free](/api/agents#using-expression-1-on-an-existing-agent). |
 | Session ends immediately with `avatar_error: "model_not_generated"` | A `?model=` URL override targeted a not-yet-generated v2 model — the session disconnects cleanly instead of hanging through dispatch retries. | Same fix as the 409 above; prefer validating via the embed-token `model` field, which rejects up front. |
 | `404 NOT_FOUND` — `No active rooms found for agent <code>` on `/speak` or `/add-context` | These endpoints target an agent with an **active session**. | Start a session first (embed, viewer, or LiveKit), then call them. |
-| `?model=` tier pin appears ignored | Unrecognized tier slugs **fall back silently** to the agent's default routing — the session plays normally, so nothing looks broken. | Check the spelling against the slug table on [pin a serving tier](/concepts/models-v2#advanced-pin-a-serving-tier); for production, omit `?model=`. |
+| `?model=` tier pin appears ignored | Unrecognized tier slugs **fall back silently** to the agent's default routing — the session plays normally, so nothing looks broken. | Check the spelling against the slug table on [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier); for production, omit `?model=`. |
 | No microphone prompt in the embed | The parent page's `Permissions-Policy` or a missing `allow` attribute blocks the mic. | Set `allow="microphone *; camera *; autoplay *"` on the iframe and allowlist the embed origin. See [Embed widget](/guides/deploy-embed). |
-| Long connect on `essence-2-gpu` / `-cpu` (or their [legacy slugs](/concepts/models-v2#naming--migration)) or `expression-2-cpu` | These forced tiers are fully elastic (scale from zero) — no always-warm first line. | Expect a cold start on the first session; keep the session URL identical to reuse warm capacity, or use the model's default route. |
+| Long connect on `essence-2-gpu` / `-cpu` (or their [legacy slugs](/concepts/models#naming--migration)) or `expression-2-cpu` | These forced tiers are fully elastic (scale from zero) — no always-warm first line. | Expect a cold start on the first session; keep the session URL identical to reuse warm capacity, or use the model's default route. |
 | In a **multi-agent room** the avatar is silent for one agent / never sends `playback_started`/`playback_finished` (its audio is dropped) | The avatar bound its audio to a different agent in the room. | The avatar pins to the agent that starts `AvatarSession`, so make sure the intended agent is the one that calls `AvatarSession.start()`. No client change is needed beyond that. See [LiveKit → Multiple agents](/sdk/livekit#multiple-agents-in-one-room). |
 
 ## Billing expectations
@@ -95,7 +95,7 @@ the meter.
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — model chooser and family overview.
+- [Essence 2 & Expression 2](/concepts/models) — model chooser and family overview.
 - [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) — per-model guides.
 - [Agents API](/api/agents) — creation, polling, and error codes.
 - [Error reference](/api/errors) — the full error envelope.

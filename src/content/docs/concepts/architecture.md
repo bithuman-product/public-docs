@@ -34,7 +34,7 @@ The one skew that is **not** supported is a Python major: `bithuman` 1.x and 3.x
 
 ## Where each model runs
 
-Which model runs on which hardware — cloud, your own servers, a phone, or the browser — is on one page: [where each model runs](/concepts/where-models-run). Measured frame rates for every platform are on the [performance page](/sdk/performance).
+Which model runs on which hardware — cloud, your own servers, a phone, or the browser — is on one page: [where each model runs](/concepts/models#where-each-model-runs). Measured frame rates for every platform are on the [performance page](/sdk/performance).
 
 ## Authentication and billing
 
@@ -49,8 +49,7 @@ The SDK never holds the long-lived secret in process memory — it exchanges the
 
 ## Where to go next
 
-- [Models](/concepts/models) — all four models, the first-generation pair in depth.
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and where each one runs.
+- [Models](/concepts/models) — the four models, where each runs, and which to pick.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — how avatars are packaged.
 - [Quickstart](/api/quickstart) — your first avatar in ~2 minutes.
 - [Python SDK](/sdk/python) — the easiest surface to script from.

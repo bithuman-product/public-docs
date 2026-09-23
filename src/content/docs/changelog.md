@@ -1019,7 +1019,7 @@ frame rate. Both fields are `null` rather than `0` when they cannot be measured.
 The `?model=` slug that pins a session to the cloud's Apple tier is now spelled
 after the tier — `essence-2-apple` and `expression-2-apple` — on
 [embed](/api/embedding), viewer and share URLs, and in the
-[tier tables](/concepts/models-v2#advanced-pin-a-serving-tier). **Nothing you
+[tier tables](/concepts/models#advanced-pin-a-serving-tier). **Nothing you
 already have breaks:** the older `essence-2-ane` and `expression-2-ane`
 spellings stay accepted forever, so saved links, embeds and share tokens keep
 routing to the same tier.
@@ -1330,7 +1330,7 @@ anonymously on 2026-09-07 before it was written here:
 - **2026-09-07 — Python `bithuman` 3.0.0.** A clean break: thirty-two public names become eight (`bithuman.open`, `Avatar`, `Avatar.render`, `AvatarError`, `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`), frames are **RGB**, the key comes from `BITHUMAN_API_SECRET` only, and essence-2 **and** expression-2 open through the same call on macOS and Linux (`bithuman[expression-2]` for the latter). An essence-2 avatar missing its recorded-mouth data is refused at `open`. The offline route is `bithuman.offline` / `bithuman[offline]` (the 2.x spellings warn until 4.0.0), and the shared audio encoder is fetched and digest-checked for you. `pip install "bithuman<3"` stays on 2.9.0. [Python SDK](/sdk/python#troubleshooting).
 - **`ai.bithuman:expression2-android:0.3.1`** (2026-09-04) is unchanged and current — see [its entry](#expression-2-android-is-031-and-google-is-no-longer-required-2026-09-04). The Kotlin hello page now carries an expression-2 and an essence-2 example, both compiled against the published AARs: [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) (rewritten on 2026-09-09 as a complete project).
 
-Also corrected on 2026-09-07: the scope matrix on [where each model runs](/concepts/where-models-run) no longer carries a "Not ruled" column — the cloud CPU serving tier is **in scope** for essence-2 and expression-2 by the 2026-09-04 dispatch ruling, and essence-1 is served from the cloud's Apple tier only (2026-09-05).
+Also corrected on 2026-09-07: the scope matrix on [where each model runs](/concepts/models#where-each-model-runs) no longer carries a "Not ruled" column — the cloud CPU serving tier is **in scope** for essence-2 and expression-2 by the 2026-09-04 dispatch ruling, and essence-1 is served from the cloud's Apple tier only (2026-09-05).
 
 ### Swift SDK `2.6.0` — Expression 2 can be handed a model (2026-09-06)
 
