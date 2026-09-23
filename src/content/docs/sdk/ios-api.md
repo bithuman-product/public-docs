@@ -16,6 +16,7 @@ Covers the Swift package at the version on [Downloads & versions](/downloads). H
 | Product | Import | What it is |
 |---|---|---|
 | `Expression2` | `Expression2` | the Expression 2 engine, Swift API |
+| `Essence2Kit` | `Essence2Kit` | the Essence 2 engine, Swift API; includes `Essence2` |
 | `Essence2` | `Essence2` (or `CLibEssence2`) | the Essence 2 engine, C interface |
 | `bitHumanKit` | `bitHumanKit` | the on-device voice agent |
 | `BithumanEngineProtocol` | `BithumanEngineProtocol` | the shared engine protocol. `Expression2` already contains it; do not add both |
@@ -48,6 +49,37 @@ var height: Int
 ```
 
 `create` throws `Expression2LoadError.meteringRefused` when the API secret is missing or rejected, or when the service cannot be reached at the start; `meteringRefusal` carries the message. `pull()` never blocks; poll it.
+
+## Essence 2 (Swift)
+
+```swift
+import Essence2Kit
+
+Essence2Credential.set(_ secret: String?)   // before create; else BITHUMAN_API_SECRET; nil clears it
+
+static func Essence2Engine.create(
+    identity: URL,                  // the Essence 2 .imx you downloaded
+    resourcesDirectory: URL? = nil, // nil: fetch the runtime files once into Application Support
+    readyTimeout: Double = 300) async throws -> Essence2Engine
+
+func feed(_ samples: [Float])               // 16 kHz mono PCM; never blocks
+func pull() -> (frame: [UInt8], speech: Bool)?   // B, G, R, width * height * 3; nil when none is ready
+func idle(into out: inout [UInt8]) -> Int   // the next idle frame; 0 means keep the current one
+func interrupt()                            // drop queued audio and frames
+func shutdown()                             // flush the last usage report, release the engine
+static func quiesceAll(timeoutMs: Int32 = 5000)   // at app exit
+var width: Int
+var height: Int
+var isReady: Bool
+var meteringRefusal: String?                // the service's refusal while this session is refused
+var runtimeFailure: String?                 // set when the engine stopped
+var pendingSamples: Int                     // fed audio the engine has not taken yet
+
+Essence2Resources.ensure() async throws -> URL   // the runtime files, fetched and sha256-checked
+Essence2Resources.releaseTag                     // the release they come from
+```
+
+`create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`.
 
 ## Essence 2 (C)
 
