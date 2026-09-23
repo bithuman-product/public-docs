@@ -14,7 +14,7 @@ const groups = [
   {
     label: "Deploy",
     cards: [
-      { title: "LiveKit", desc: "Ship to production fast with the managed LiveKit plugin.", href: "/guides/deploy-livekit" },
+      { title: "LiveKit", desc: "Put an avatar into a LiveKit agent worker with the Python plugin.", href: "/sdk/livekit" },
       { title: "Self-hosting", desc: "Run any model on your own hardware — which surface runs which model, how it is billed, the Expression 1 GPU container, and offline licensing.", href: "/guides/self-hosting" },
       { title: "Embed", desc: "Drop a live agent into any page with an iframe + embed token.", href: "/guides/deploy-embed" },
       { title: "Session troubleshooting", desc: "Diagnose stuck creations, failed sessions, and billing surprises — symptom by symptom.", href: "/guides/session-troubleshooting" },
@@ -38,6 +38,6 @@ const groups = [
 <Hub
   title="Guides"
   tagline={hubMeta("guides").description}
-  ctas={[{ label: "Building avatars", href: "/guides/building-avatars" }, { label: "Deploy with LiveKit", href: "/guides/deploy-livekit", variant: "secondary" }]}
+  ctas={[{ label: "Building avatars", href: "/guides/building-avatars" }, { label: "Deploy with LiveKit", href: "/sdk/livekit", variant: "secondary" }]}
   groups={groups}
 />

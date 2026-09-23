@@ -76,7 +76,7 @@ requests/minute.
 ## Session concurrency
 
 Each plan includes an allowance of **concurrent avatar sessions** — live
-sessions running at the same time, across cloud and self-hosted:
+sessions running at the same time on bitHuman's cloud:
 
 | Plan | Concurrent avatar sessions |
 |---|---|
@@ -99,27 +99,12 @@ session bills per minute, so run as many as your balance supports.
 | Agent generation | Queued | Heavy jobs queue and run as capacity frees up. |
 | Dynamics generation | Queued | Heavy jobs queue and run as capacity frees up. |
 
-Self-hosted deployments render on your own hardware but count toward the
-same per-plan session allowance.
+Self-hosted and on-device sessions render on your own hardware and are gated
+only by credits — see [self-hosting](/guides/self-hosting#how-self-hosting-is-billed).
 
 ## Credit rates
 
-Live sessions bill per minute by model and host; some operations are one-time.
-
-| Feature | Credits/min |
-|---|---|
-| Voice chat (managed agent, no avatar) | 10 |
-| Camera chat (managed agent, camera on) | 30 |
-| Essence 1 — cloud | 2 |
-| Essence 1 — self-hosted | 1 |
-| Expression 1 / Expression 2 / Essence 2 — cloud | 4 |
-| Expression 1 / Expression 2 / Essence 2 — self-hosted | 2 |
-
-| One-time operation | Credits |
-|---|---|
-| Agent generation — per model (v1 250 · Essence 2 500 · Expression 2 2000) | 250–2000 |
-| Dynamics generation | 250 |
-
+Rates for every model and surface are on [Pricing & credits](/guides/pricing).
 Check your balance with `GET /v2/credit-summaries` — see [Billing](/api/billing).
 
 ## Endpoint guidelines
@@ -127,7 +112,7 @@ Check your balance with `GET /v2/credit-summaries` — see [Billing](/api/billin
 | Endpoint | Guidance |
 |---|---|
 | `POST /v1/validate` | Lightweight — use for health checks. |
-| `POST /v1/agent/generate` | Heavy — a 2–5 min async operation. |
+| `POST /v1/agent/generate` | Heavy and asynchronous — minutes for first-generation models, about 2–2.5 hours for Essence 2 and Expression 2. |
 | `GET /v1/agent/status/*` | Poll at 5 s intervals; avoid sub-second polling. |
 | `POST /v1/agent/*/speak` | Per active session — agent must be in a room. |
 | `POST /v1/files/upload` | 10 MB image, 100 MB video; size limits enforced. |
@@ -205,8 +190,9 @@ refresh only when needed.
 
 ### Reuse sessions
 
-Keep avatar sessions alive between conversations instead of creating new ones —
-session creation is the most expensive operation.
+Keep an avatar session alive between conversations instead of creating a new
+one — session creation is the most expensive operation, and idle time is not
+billed.
 
 ### Check credits before heavy operations
 

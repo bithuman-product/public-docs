@@ -42,7 +42,7 @@ Back in the agent's voice settings, the premium providers you've connected unloc
 
 ## How billing works
 
-- The **default** pipeline is part of your normal per-minute [avatar runtime credits](/guides/pricing) — nothing extra.
-- **Bring-your-own** voices run on **your** provider account. bitHuman charges you only the normal avatar runtime; the voice tokens are billed to you by OpenAI / xAI / ElevenLabs / Cartesia directly.
+- The **default** pipeline is billed as part of a managed-agent conversation — the rates are on [pricing](/guides/pricing).
+- **Bring-your-own** voices run on **your** provider account: OpenAI, xAI, ElevenLabs or Cartesia bills you for the voice directly.
 
 If a bring-your-own key ever fails or is removed, the agent automatically falls back to the free multilingual pipeline — it never silently stops talking.

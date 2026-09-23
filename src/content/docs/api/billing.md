@@ -8,32 +8,11 @@ order: 30
 
 ## The credits model
 
-bitHuman bills in **credits**. The free tier includes 99 credits per month (no
-credit card); paid plans range from $20/month (Creator) to $999/month
-(Enterprise), plus contact-sales Custom for on-prem / volume. Top-up credits are
-$1 = 100 credits and never expire. Some operations are one-time costs; live
-sessions bill per minute.
-
-| Action | Cost |
-|---|---|
-| Agent generation — v1 models (`essence-1`, `expression-1`) | 250 credits (one-time, per avatar) |
-| Agent generation — Essence 2 (`essence-2` combined; Max included) | 500 credits (one-time, per avatar) |
-| Agent generation — Expression 2 (`expression-2`) | 2000 credits (one-time, per avatar) |
-| Agent generation — `auto` | The routed model's rate (500 or 2000) |
-| [Add a model to an existing agent](/api/agents#add-a-model-to-an-existing-agent) | Same per-model rates (250 / 500 / 2000); adding `expression-1` is **free** (instant enablement, no training) |
-| Dynamics generation (one-time, per avatar) | 250 credits |
-| Book creation (one-time, per book) | 250 credits |
-| Talking video — Essence 1 | 2 credits/min (rounded up) |
-| Talking video — Expression 1, Expression 2, Essence 2 | 4 credits/min (rounded up) |
-| Live session — Essence 1, self-hosted | 1 credit/min |
-| Live session — Essence 1, cloud | 2 credits/min |
-| Live session — Expression 1 / Expression 2 / Essence 2, self-hosted | 2 credits/min |
-| Live session — Expression 1 / Expression 2 / Essence 2, cloud | 4 credits/min |
-| Voice chat (managed agent, no avatar) | 10 credits/min |
-| Camera chat (managed agent, camera on) | 30 credits/min |
-
-See the [Pricing guide](/guides/pricing) for the full plan ladder (Free, Creator,
-Pro, Business, Enterprise, Custom) and annual pricing.
+bitHuman bills in **credits**: live sessions bill per minute, and creating an
+agent or a talking video is a one-time charge. Every rate, the plan ladder and
+top-ups are on [Pricing & credits](/guides/pricing) — the one place the numbers
+live. The endpoints on this page read your balance, your usage and the
+machine-readable rate schedule.
 
 ## Account status
 

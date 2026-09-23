@@ -1,193 +1,107 @@
 ---
 title: "LiveKit integration"
-description: "Connect a native Apple app to a server-hosted avatar over WebRTC, or deploy a Python voice agent with a face — both via LiveKit."
+description: "Put a bitHuman avatar into a LiveKit agent worker with the Python plugin — managed, no GPU to run — tune its video for production, and connect a native Apple app as the viewer."
 section: sdk
 group: "Reference"
 order: 80
 label: "LiveKit"
 ---
 
-## Overview
+When the avatar runs on a server and your viewers connect over WebRTC, LiveKit
+is the transport. Two integration points:
 
-When the avatar runs on a server — shared between participants, or Expression on
-a GPU — your client becomes a thin WebRTC subscriber and a Python agent runs the
-avatar. bitHuman ships two LiveKit integration points for this topology:
+- **`livekit-plugins-bithuman`** (Python) drops the avatar into any LiveKit agent
+  worker, against LiveKit Cloud or your own LiveKit server. bitHuman renders the
+  avatar; there is no GPU for you to provision.
+- **LiveKit's Swift client** connects a native iOS or macOS app as the viewer.
 
-- **Apple client** — [`livekit/client-sdk-swift`](https://github.com/livekit/client-sdk-swift),
-  LiveKit's official Swift client, connects a native iOS/macOS app to a served
-  or cloud avatar.
-- **Python deploy path** — `livekit-plugins-bithuman` drops the avatar into any
-  LiveKit agent worker, managed or self-hosted.
+## Python: the LiveKit plugin
 
-The fastest path to production is the Python plugin (~5-minute setup, no GPU to
-provision). The Apple client is for when the *viewer* is a native app rather
-than a browser.
-
-## Python: deploy via the LiveKit plugin
-
-> **Python 3.11, 3.12 or 3.13.** `livekit-plugins-bithuman` is published by
-> LiveKit, not by bitHuman; release **1.8.2** declares `bithuman<3,>=0.5.25`
-> under the marker `python_version >= "3.11" and python_version < "3.14"`, and
-> it needs `pillow`, which it does not declare — `pip install
-> livekit-plugins-bithuman pillow`. The plugin pins `bithuman<3`, which
-> resolves the newest 2.x wheel — 2.11.6 on 2026-09-20 — the same wheel the
-> [Python SDK page](/sdk/python) documents.
->
-> On **Python 3.10 or 3.14** the marker is false, pip installs the plugin with
-> *no* bitHuman wheel, and the first import fails with `ModuleNotFoundError: No
-> module named 'cv2'`; naming `bithuman` yourself on the same command line
-> fixes it. Both were fixed upstream in
-> [livekit/agents#7280](https://github.com/livekit/agents/pull/7280), which
-> merged hours *after* 1.8.2 was published and so is not in any release yet.
-> The wheel ships for Linux x86_64, Linux aarch64 and Apple-silicon
-> macOS only — see [Deploy via LiveKit](/guides/deploy-livekit#install) for the
-> full table of what fails where.
-
-Install the plugin on Python 3.11, 3.12 or 3.13:
+### Install
 
 ```bash
 pip install livekit-plugins-bithuman pillow
 ```
 
-That line pins nothing, so it gets whatever LiveKit has published. Everything
-below is **1.8.2**, which is what it installed on 2026-09-22; `pip show
-livekit-plugins-bithuman` prints what you actually got.
+That line is for **Python 3.11, 3.12 and 3.13**. On **3.10 or 3.14**, name
+`bithuman` as well — the plugin's release **1.8.2** only asks for it on
+3.11–3.13, so without it the first import fails with
+`No module named 'cv2'`:
 
-> **Note** The plugin imports `PIL` but does not declare Pillow — install
-> `pillow` alongside it (as above), or
-> `from livekit.plugins import bithuman` fails with
-> `ModuleNotFoundError: No module named 'PIL'`. Upstream fix pending with
-> LiveKit. (There is no `bithuman[agent]` extra — the plugin is its own
-> package.)
+```bash
+pip install livekit-plugins-bithuman pillow bithuman     # Python 3.10 / 3.14
+```
 
-### Authentication
+`pillow` is needed because the plugin imports it without declaring it. The
+plugin pins `bithuman<3`, which resolves the current wheel documented on the
+[Python SDK](/sdk/python) page. The plugin is LiveKit's package; a release
+after 1.8.2 needs neither extra word.
 
-Three credentials, from two places. `BITHUMAN_API_SECRET` is yours, free at
-[your API keys](https://www.bithuman.ai/developer/api-keys); `LIVEKIT_URL`, `LIVEKIT_API_KEY` and
-`LIVEKIT_API_SECRET` come from your LiveKit project, Cloud or self-hosted. The
-plugin reads none of them implicitly — pass the bitHuman secret to
-`AvatarSession` and let `livekit-agents` read the rest from the environment.
-The Swift client below authenticates differently: it takes a room token your
-own server mints, never a bitHuman key.
+### Environment
 
-The video-publishing environment variables are further down, under
-[production video tuning](#production-video-tuning-avoid-a-black-or-laggy-avatar).
+```bash
+export BITHUMAN_API_SECRET=...          # https://www.bithuman.ai/developer/api-keys
+export BITHUMAN_AGENT_ID="A78WKV4515"   # your agent code
+export LIVEKIT_URL="wss://your-project.livekit.cloud"
+export LIVEKIT_API_KEY=...
+export LIVEKIT_API_SECRET=...
+```
 
-Wire the avatar into an agent worker with a single object:
+The plugin reads the bitHuman secret only from the argument you pass;
+`livekit-agents` reads the three LiveKit variables from the environment.
+
+### Wire it into an agent worker
 
 ```python
 import os
+from livekit.agents import JobContext
 from livekit.plugins import bithuman
 
-avatar = bithuman.AvatarSession(
-    avatar_id="A78WKV4515",
-    api_secret=os.environ["BITHUMAN_API_SECRET"],
-)
-# attach to your AgentSession, then start it
+async def entrypoint(ctx: JobContext):
+    await ctx.connect()
+    await ctx.wait_for_participant()
+    avatar = bithuman.AvatarSession(
+        avatar_id=os.environ["BITHUMAN_AGENT_ID"],
+        api_secret=os.environ["BITHUMAN_API_SECRET"],
+    )
+    # ...attach the avatar to your AgentSession and start it.
 ```
 
-`AvatarSession` is the single integration point — the same call works against
-both LiveKit Cloud and a self-hosted LiveKit server, and bills at the
-[self-hosted or cloud rate](/guides/pricing) depending on whether the avatar
-GPU is yours or ours.
+`AvatarSession` is the one integration point, for LiveKit Cloud and a
+self-hosted LiveKit server alike. Each session bills at the rate on
+[pricing](/guides/pricing).
 
-### Choosing a model
+**Choosing a model.** On 1.8.2, `model=` takes only `"essence"` (the default)
+and `"expression"`, the first-generation engines. A second-generation agent is
+served as that agent's own default model, and naming a model the agent cannot
+be served as does not fail — it serves the default. So prepare the agent for
+exactly the model you want ([Models](/concepts/models)). A later plugin release
+adds `"essence-2"` and `"expression-2"`.
 
-`AvatarSession` takes a `model` argument. On the published **1.8.2** it accepts
-two values, and both name a first-generation engine:
+**Several agents in one room.** The avatar lip-syncs for, and sends
+`playback_started` / `playback_finished` to, the agent that calls
+`AvatarSession.start()`. Other agents' audio is ignored; no configuration is
+needed.
 
-| `model=` | Engine served |
+Runnable workers, each with `.env.example`, `requirements.txt` and a
+`docker-compose.yml` stack:
+
+| Example | Where the avatar runs |
 |---|---|
-| `"expression"` | Expression 1 |
-| `"essence"` (default) | Essence 1 |
+| [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) | bitHuman cloud — start here |
+| [`python/local-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) | your own server's CPU |
 
-**On 1.8.2 you cannot ask for Essence 2 or Expression 2 from the plugin.** The
-request it sends names no model — only whether the session is GPU- or CPU-bound
-— so which model a second-generation avatar is served as is decided by the
-server's default for that avatar, not by your code. Two consequences worth
-knowing before you design around it:
+## Production video tuning
 
-- Naming a model the avatar cannot be served as does not fail. Measured on
-  2026-09-20 against an avatar prepared for Expression 1 only, `model="essence"`
-  returned HTTP 200 and the session started **as Expression 1** — a different
-  model than the call asked for, with nothing said about it.
-- If you need a specific second-generation model today, prepare the avatar for
-  exactly that model (see [Avatar models](/concepts/models)) so the server's
-  default for it is the one you want.
-
-The fix — `"expression-2"` and `"essence-2"` as values, and the chosen model
-sent with the request so the server honours it — **merged upstream on
-2026-09-22** as
-[livekit/agents#7366](https://github.com/livekit/agents/pull/7366). It is **not
-in a release**: 1.8.2, published 2026-09-15, is still the newest
-`livekit-plugins-bithuman` on PyPI, so `pip install` gets you the two-value
-`model` above. With it, asking for a model the avatar lacks is refused before a
-renderer starts, naming what to add. The two first-generation names keep
-working unchanged. This page will name the release that carries it once LiveKit
-ships one.
-
-What you get:
-
-- **Managed avatar runtime** — no GPU to provision, no Docker to operate.
-- **LiveKit Cloud-compatible** — works with LiveKit Cloud and self-hosted servers.
-- **WebRTC delivery** — video streamed via LiveKit's media pipeline to any client.
-
-Two runnable LiveKit agents ship in
-[bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main/python), each with `.env.example`,
-`requirements.txt`, and a `docker-compose.yml` full stack:
-
-| Example | Where the avatar runs | Needs |
-|---|---|---|
-| [cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) | bitHuman cloud | API key + agent ID |
-| [local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) | Your server (CPU) | API key + `.imx` |
-
-## Multiple agents in one room
-
-A room can hold more than one agent participant — e.g. a facilitator agent
-plus a persona agent that drives the bitHuman avatar. The avatar binds its
-audio **to the agent that starts the `AvatarSession`**, with no configuration
-needed: `AvatarSession.start()` stamps the launching agent's identity onto the
-avatar's join token (the LiveKit `lk.publish_on_behalf` attribute), and the
-avatar worker pins its audio receiver to exactly that participant.
-
-So in a room with agents **A** (facilitator) and **B** (persona), whichever
-agent calls `AvatarSession.start(...)` is the one the avatar lip-syncs for and
-sends `playback_started` / `playback_finished` back to. Other agents' audio is
-ignored by the avatar.
-
-- **No SDK/plugin upgrade or code change** is required — this works with the
-  released `livekit-plugins-bithuman`. Just make sure the agent you want the
-  avatar to speak for is the one that starts the `AvatarSession`.
-- **Single-agent rooms are unchanged** — with one agent present, the avatar
-  binds to it exactly as before.
-
-> Previously the avatar bound to the *first* agent-kind participant it saw, so
-> in a multi-agent room it could latch onto the wrong agent — staying silent
-> for the persona and never returning playback events. Fixed on the bitHuman
-> avatar workers (2026-07); no client change needed.
-
-## Production video tuning (avoid a black or laggy avatar)
-
-> **Important for self-hosters.** By default the LiveKit plugin publishes the
-> avatar video track with no explicit encoding. LiveKit then maps a small
-> (~512×512) track to its **H480 preset — VP8, ~300 kbps, a 20 fps cap, and
-> simulcast ON** (a second encoder per session). The avatar engine renders at
-> 25 fps, so this:
->
-> - **decimates to ~20 fps with judder → "extremely laggy"**, and
-> - under CPU/encoder pressure drives WebRTC into **encoder-overuse adaptation:
->   ~1-second frozen frames (which render as a black screen) + a live 512→360
->   downscale**.
->
-> This is the most common cause of a self-hosted avatar that shows a **black
-> screen / no video, then appears but is laggy and unusable.** bitHuman's
-> *managed* workers already fix it; self-hosted agents must apply the same fix.
-
-Publish **one layer, simulcast off, H264, with explicit bitrate/fps**. Apply
-this monkey-patch **once, before** you call `avatar.start(...)`:
+**If you publish the avatar's video from your own process** — a self-hosted
+worker, not a bitHuman-hosted `avatar_id` — LiveKit's default maps a small
+avatar track to a low-bitrate VP8 preset with a 20 fps cap and simulcast on.
+Under load that decimates the video and produces frozen, black-looking frames.
+Publish one H.264 layer with explicit bitrate and frame rate, by applying this
+once, before `avatar.start(...)`:
 
 ```python
-# tuned_publish.py — import this BEFORE creating/starting bithuman.AvatarSession
+# tuned_publish.py — import this before creating/starting bithuman.AvatarSession
 import os
 from livekit import rtc
 from livekit.agents.voice.avatar import AvatarRunner
@@ -195,17 +109,15 @@ from livekit.agents.voice.avatar import AvatarRunner
 async def _tuned_publish_track(self) -> None:
     async with self._lock:
         await self._room_connected_fut
-        # audio — unchanged
         audio = rtc.LocalAudioTrack.create_audio_track("avatar_audio", self._audio_source)
         self._audio_publication = await self._room.local_participant.publish_track(
             audio, rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_MICROPHONE))
         await self._audio_publication.wait_for_subscription()
-        # video — single layer, no simulcast, H264, explicit encoding
         video = rtc.LocalVideoTrack.create_video_track("avatar_video", self._video_source)
         self._video_publication = await self._room.local_participant.publish_track(
             video, rtc.TrackPublishOptions(
                 source=rtc.TrackSource.SOURCE_CAMERA,
-                video_codec=rtc.VideoCodec.H264,                 # ~55% less encode CPU than VP8
+                video_codec=rtc.VideoCodec.H264,
                 simulcast=os.getenv("AVATAR_VIDEO_SIMULCAST", "0").lower() in ("1", "true", "yes", "on"),
                 video_encoding=rtc.VideoEncoding(
                     max_bitrate=int(os.getenv("AVATAR_VIDEO_MAX_BITRATE", "2000000")),
@@ -214,50 +126,23 @@ async def _tuned_publish_track(self) -> None:
 AvatarRunner._publish_track = _tuned_publish_track  # apply before avatar.start(...)
 ```
 
-Tunables (override the defaults above without code changes): **`AVATAR_VIDEO_MAX_BITRATE`**
-(default `2000000`; raise to 3–4 M for portraits larger than 512²),
-**`AVATAR_VIDEO_MAX_FPS`** (default `25`, the engine fps),
-**`AVATAR_VIDEO_SIMULCAST`** (default off — leave off for single-subscriber avatars).
-You should see a published track at the full engine fps with no 512→360
-downscale and no frozen intervals. *(The
-[local-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence)
-example ships this as `tuned_publish.py` and imports it. The
-[cloud-essence](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence)
-example does not, and does not need it: it passes an `avatar_id`, so the track
-is published by a bitHuman worker that already has the fix, not by your
-process.)*
+| Env | Default | Purpose |
+|---|---|---|
+| `AVATAR_VIDEO_MAX_BITRATE` | `2000000` | raise to 3–4 M for portraits larger than 512² |
+| `AVATAR_VIDEO_MAX_FPS` | `25` | the engine's frame rate |
+| `AVATAR_VIDEO_SIMULCAST` | off | leave off for single-subscriber avatars |
 
-### Hardware floor (Essence, CPU)
+`python/local-essence` ships this as `tuned_publish.py`; `python/cloud-essence`
+does not need it, because a bitHuman worker publishes its track. A self-hosted
+CPU session renders and encodes on the same cores, so budget dedicated cores
+per concurrent session. A short black frame while the engine warms up is
+expected; a track that stays black is the publish preset above.
 
-A self-hosted **Essence** session must render lip-sync **and** software-encode
-the video on CPU. Budget **dedicated cores per concurrent 25 fps session** (not
-just "a modern CPU") and disable simulcast as above — H264 + single-layer cuts
-encode CPU by ~55–82% vs the VP8/simulcast default. An oversubscribed or
-shared-vCPU box that can't sustain 25 fps produces the same laggy/frozen video.
+## Apple: LiveKit's Swift client as the viewer
 
-### A short black frame at startup is expected
-
-The track may be black for the **first moment** while the engine warms up and
-before the first audio arrives. If it stays black after frames should be
-flowing, the cause is almost always the publish preset above (a frozen/decimated
-track reads as black) — **not** a warmup issue. Gate client joins on the
-avatar being live, and apply the tuned publish first.
-
-## Apple: connect a native app via LiveKit's Swift client
-
-Use the official [`livekit/client-sdk-swift`](https://github.com/livekit/client-sdk-swift)
-— a bitHuman avatar room is a standard LiveKit room, so the upstream client
-connects to a served or cloud avatar with no bitHuman-specific setup.
-
-> **Niche case:** if you need to capture **system/app audio without holding a
-> hardware microphone**, bitHuman maintained a
-> [frozen fork](https://github.com/bithuman-archive/bithuman-livekit-swift)
-> (archived, still installable via its git URL) that adds a mic-less app-audio
-> path + sibling-process audio IPC. For everything else, use upstream.
-
-### Install
-
-Add the Swift package and attach `LiveKit` to your target:
+A bitHuman avatar room is a standard LiveKit room, so LiveKit's official
+[`client-sdk-swift`](https://github.com/livekit/client-sdk-swift) connects to it
+with no bitHuman-specific setup:
 
 ```swift
 // Package.swift
@@ -272,20 +157,6 @@ targets: [
 ]
 ```
 
-`2.17.0` is LiveKit's newest release (2026-09-14), and the `from:` is a floor:
-SwiftPM takes the highest 2.x tag, so a later LiveKit 2.x needs no edit here.
-
-> **Note** Version 2 of the LiveKit Swift client has breaking changes from
-> version 1. See the [LiveKit v1→v2 migration
-> guide](https://docs.livekit.io/reference/migration-guides/migrate-from-v1/) if
-> you are upgrading.
-
-### Connect and render
-
-Mint a room token from a server you control, connect, and subscribe to the
-agent's video track. LiveKit auto-plays subscribed audio and renders video into a
-`VideoView`:
-
 ```swift
 import LiveKit
 import UIKit
@@ -298,29 +169,29 @@ class RoomViewController: UIViewController {
         super.viewDidLoad()
         Task {
             let url = "wss://your-livekit-host"
-            let token = "your_jwt_token"      // minted server-side
+            let token = "your_jwt_token"      // minted by your own server
             try await room.connect(url: url, token: token)
-            // The Python agent publishes the avatar's video track; subscribe
-            // and attach it to remoteVideoView in your Room delegate callbacks.
+            // Subscribe to the avatar's video track and attach it to
+            // remoteVideoView in your Room delegate callbacks.
         }
     }
 }
 ```
 
-The bitHuman avatar arrives as a remote participant's video track published by
-the Python agent above — this client is the subscriber.
+The app takes a room token your server mints, never a bitHuman key. The avatar
+arrives as a remote participant's video track published by the Python agent.
 
 ## When to use which
 
 | Your viewer is… | Use |
 |---|---|
-| A browser | The Python plugin + a web LiveKit client (LiveKit's own JS SDK; bitHuman publishes [no npm package](/sdk/web)) |
-| A native iOS/macOS app | The Python plugin (server) + `livekit/client-sdk-swift` (client) |
-| On-device only, no server | The native [Swift](/sdk/ios) SDK instead |
+| A browser | the Python plugin, with LiveKit's JavaScript client — or skip LiveKit and [embed the hosted page](/sdk/web) |
+| A native iOS or macOS app | the Python plugin on your server, `client-sdk-swift` in the app |
+| On the device, with no server | the [Apple SDK](/sdk/ios) instead |
 
 ## See also
 
-- [SDK overview](/sdk) — on-device vs cloud
 - [Python SDK](/sdk/python) — the runtime the plugin wraps
-- [Swift SDK](/sdk/ios) — the on-device alternative for Apple
-- [Pricing](/guides/pricing) — self-hosted vs cloud rates
+- [Trigger avatar actions from code](/guides/avatar-actions) — gestures from your agent
+- [Embed widget](/guides/deploy-embed) — an iframe instead of LiveKit
+- [LiveKit Agents docs](https://docs.livekit.io/agents/) — the agent-worker model
