@@ -109,6 +109,7 @@ The [cloud example](https://github.com/bithuman-product/bithuman-examples/tree/m
 
 - The mint call is one per session. The token starts that session only; it expires after an hour, and a session that runs longer continues.
 - `livekit_url` in the mint call must be the URL the plugin connects to (`LIVEKIT_URL`, unless you pass `livekit_url=` to `AvatarSession.start()`).
+- If you run your own LiveKit server, use `livekit-server` 1.9.12 or newer. With older servers, browsers leave and rejoin the room every 15 s, and the video stalls each time.
 - To render the avatar on your own machine instead of the cloud, pass `model_path=` — see [Talk to an avatar on your machine](/guides/local-voice-avatar).
 
 ## Performance
@@ -124,6 +125,7 @@ Cloud frame rates are on the [performance page](/performance).
 | The mint call returns `403` | the token was minted for another agent, room or LiveKit URL | mint with the same `agent_code`, `room_name` and `livekit_url` the plugin uses |
 | The mint call returns `401` | a missing or invalid API secret | check `BITHUMAN_API_SECRET` |
 | The avatar speaks with the wrong model | the plugin serves the agent's own model | create an agent with the model you want |
+| The video stalls for 1–2 s every 15 s, or a LiveKit Meet tile goes black | `livekit-server` older than 1.9.12: the browser leaves and rejoins the room every 15 s | `brew upgrade livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux), then restart `livekit-server` |
 | Two voices play | the agent session also publishes audio | set `room_options=RoomOptions(audio_output=False)` |
 
 ## Reference
