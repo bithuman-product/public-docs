@@ -27,7 +27,7 @@ measured frame rates are on [performance](/sdk/performance).
 | Artifact | Latest version | Where it comes from |
 |---|---|---|
 | Python SDK (`bithuman`) | **2.11.6** — what `pip install bithuman` resolves, and what a `bithuman<3` pin resolves too | [PyPI](https://pypi.org/project/bithuman/) |
-| Swift package | pin **2.14.1** or newer — it ships Essence 2 engine **1.10.0** beside `Expression2` 2.6.4, one app can take both products, and it is the first tag a macOS **app** can embed and whose `Essence2` declares its own linker settings | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
+| Swift package | pin **2.14.2** or newer — it ships Essence 2 engine **1.11.0** beside `Expression2` 2.6.5 (package tag `v2.14.2`, published 2026-09-23); one app can take both products, and from 2.14.1 a macOS **app** can embed them and `Essence2` declares its own linker settings | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | bitHuman CLI | the newest release — the installer always fetches it; `bithuman --version` shows yours | [install.bithuman.ai](https://install.bithuman.ai) · [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (Apple Silicon) |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.8** — the first that brings the Qualcomm accelerator runtime itself | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
 | Android AAR (`ai.bithuman:essence2-android`) | **0.5.13** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
