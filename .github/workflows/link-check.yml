@@ -429,4 +429,4 @@ jobs:
       # move to their templates (target 160 KB).
       - name: Agent layer (llms.txt, llms-full.txt, .md twins)
         if: always()
-        run: node scripts/check-llms.mjs --full-max-kb 420
+        run: node scripts/check-llms.mjs --full-max-kb 190
