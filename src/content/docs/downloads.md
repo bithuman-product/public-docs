@@ -1,66 +1,54 @@
 ---
-title: "Downloads"
-description: "Install bitHuman on every surface: one install line per platform, the current shipping versions, which operating systems each artifact supports, and how to verify a download."
+title: "Downloads & versions"
+description: "The current version and install line of every bitHuman artifact, the operating systems each one supports, and how to verify a download."
 section: resources
 group: "Resources"
 order: 2
 ---
 
-## Get the SDK
+Every bitHuman artifact at its current release. The same data is published as JSON for scripts and agents at [/versions.json](/versions.json).
 
-One install line per platform. Each row links to the page that owns everything
-after it — a model to fetch, the minimal code, and the fixes for every refusal.
+## Current versions
 
-| Platform | Install |
-|---|---|
-| [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 and arm64 | `curl -fsSL https://install.bithuman.ai \| sh` |
-| [Python](/sdk/python) — 3.10–3.14 | `pip install "bithuman[expression-2]"` |
-| [Apple](/sdk/ios) — iPhone, iPad, Mac | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.1")` |
-| [Android](/sdk/android) — arm64-v8a | `implementation("ai.bithuman:expression2-android:0.4.8")` · `implementation("ai.bithuman:essence2-android:0.5.13")` |
-| [Web](/sdk/web) — any modern browser | nothing — one URL or one `<iframe>` |
+<!-- VERSIONS:TABLE -->
+| Artifact | Version | Runs on | Install | Published at |
+|---|---|---|---|---|
+| [CLI](/sdk/cli) | **2.7.1** | macOS (Apple silicon), Linux x86_64 and arm64 | `curl -fsSL https://install.bithuman.ai \| sh` | [GitHub release cli-v2.7.1](https://github.com/bithuman-product/homebrew-bithuman/releases) |
+| [`bithuman` (Python)](/sdk/python) | **2.11.6** | Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64 | `pip install "bithuman[expression-2]"` | [PyPI](https://pypi.org/project/bithuman/) |
+| [Swift package](/sdk/ios) | **2.14.2** (Essence 2 engine **1.11.0** · Expression 2 engine 2.6.5) | iOS, iPadOS and macOS on Apple silicon | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.2")` | [GitHub tag v2.14.2](https://github.com/bithuman-product/homebrew-bithuman) |
+| [`ai.bithuman:expression2-android`](/sdk/android) | **0.4.8** | Android, arm64-v8a | `implementation("ai.bithuman:expression2-android:0.4.8")` | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/expression2-android) |
+| [`ai.bithuman:essence2-android`](/sdk/android) | **0.5.13** | Android, arm64-v8a | `implementation("ai.bithuman:essence2-android:0.5.13")` | [Maven Central](https://central.sonatype.com/artifact/ai.bithuman/essence2-android) |
+| [`livekit-plugins-bithuman`](/sdk/livekit) | **1.8.2** | Python 3.10–3.14 | `pip install livekit-plugins-bithuman` | [PyPI](https://pypi.org/project/livekit-plugins-bithuman/) |
+| [Flutter plugin](/sdk/android) | **2.6.11** | Android, iOS and macOS | `bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v2.6.11}}` | [GitHub tag flutter-plugin-v2.6.11](https://github.com/bithuman-product/homebrew-bithuman) |
+<!-- /VERSIONS:TABLE -->
 
-Which model runs on which platform is on [Models](/concepts/models#where-each-model-runs);
-measured frame rates are on [performance](/sdk/performance).
-
-## Current shipping versions
-
-| Artifact | Latest version | Where it comes from |
-|---|---|---|
-| Python SDK (`bithuman`) | **2.11.6** — what `pip install bithuman` resolves, and what a `bithuman<3` pin resolves too | [PyPI](https://pypi.org/project/bithuman/) |
-| Swift package | pin **2.14.2** or newer — it ships Essence 2 engine **1.11.0** beside `Expression2` 2.6.5 (package tag `v2.14.2`, published 2026-09-23); one app can take both products, and from 2.14.1 a macOS **app** can embed them and `Essence2` declares its own linker settings | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
-| bitHuman CLI | the newest release — the installer always fetches it; `bithuman --version` shows yours | [install.bithuman.ai](https://install.bithuman.ai) · [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (Apple Silicon) |
-| Android AAR (`ai.bithuman:expression2-android`) | **0.4.8** — the first that brings the Qualcomm accelerator runtime itself | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
-| Android AAR (`ai.bithuman:essence2-android`) | **0.5.13** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
-| bitHuman MCP server | ships inside the CLI — [`bithuman mcp`](/guides/mcp-server) | the CLI |
-
-What each release changed is in the [changelog](/changelog).
+The web embed needs no install: one URL or one `<iframe>` ([Web](/sdk/web)). The MCP server ships inside the CLI as `bithuman mcp` ([MCP server](/guides/mcp-server)). What changed in each release is in the [changelog](/changelog).
 
 ## Supported operating systems
 
-| Platform | CLI | Python wheel | Swift package |
-|---|---|---|---|
-| **macOS, Apple Silicon** | yes | yes (macOS 14+) | yes |
-| **macOS, Intel** | no | no | — |
-| **Linux x86_64** | yes | yes | — |
-| **Linux aarch64** | yes (from 2.7.1) | yes | — |
-| **Windows** | under WSL2 | under WSL2 | — |
-| **iOS / iPadOS** | — | — | yes |
+| Platform | CLI | Python | Swift package | Android |
+|---|---|---|---|---|
+| macOS, Apple silicon | yes | yes (macOS 14+) | yes | — |
+| macOS, Intel | no | no | no | — |
+| Linux x86_64 | yes | yes | — | — |
+| Linux arm64 | yes | yes | — | — |
+| Windows | under WSL2 | under WSL2 | — | — |
+| iOS / iPadOS | — | — | yes | — |
+| Android (arm64-v8a) | — | — | — | yes |
 
-On an unsupported platform, the CLI installer names the platform and stops, and
-`pip install bithuman` stops with `bithuman 2.11.6 has NO WHEEL for this
-platform.` — neither installs anything.
+On an unsupported platform the CLI installer names the platform and stops, and `pip install bithuman` finds no wheel. Neither installs anything.
 
-**The CLI is not on PyPI.** `bithuman` is the only bitHuman package there: the
-Python library, which installs no command. The CLI comes from the installer, or
-from the Homebrew formula `bithuman-cli`. A package on PyPI with a bitHuman-like
-name that is not `bithuman` is not ours.
+The CLI is not on PyPI. The only bitHuman package on PyPI with the `bithuman` name is the Python library, and it installs no command. Get the CLI from the installer or the Homebrew formula `bithuman-cli`.
 
 ## Verify a download
 
-`install.sh` checks each tarball against the `.sha256` sidecar published beside
-it on the [releases page](https://github.com/bithuman-product/homebrew-bithuman/releases),
-prints `sha256 ok`, and stops on a mismatch. For a tarball you fetched by hand,
-put the sidecar next to it and run
-`sha256sum -c bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256` (macOS:
-`shasum -a 256 -c bithuman-aarch64-apple-darwin.tar.gz.sha256`). pip verifies
-the Python wheel against the digest PyPI publishes.
+The installer checks each tarball against the `.sha256` file published beside it on the [releases page](https://github.com/bithuman-product/homebrew-bithuman/releases), prints `sha256 ok`, and stops on a mismatch. To check a tarball you downloaded yourself, put the `.sha256` file next to it and run:
+
+```bash
+# Linux
+sha256sum -c bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256
+# macOS
+shasum -a 256 -c bithuman-aarch64-apple-darwin.tar.gz.sha256
+```
+
+pip verifies the Python wheel against the digest PyPI publishes.

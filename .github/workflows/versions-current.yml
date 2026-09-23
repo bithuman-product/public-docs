@@ -53,3 +53,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/check-versions-current.mjs
+      # G2 — ONE VERSIONS FILE. src/data/versions.json is the source; every pin
+      # on the site is a copy written by `node scripts/sync-versions.mjs --write`.
+      - name: versions.json matches what is published
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/sync-versions.mjs --registries
+      - name: Every pin on the site equals versions.json
+        # Report-only until the Apple pages move to the new template (their
+        # pins are being updated in another open change); blocking in P15.
+        continue-on-error: true
+        run: node scripts/sync-versions.mjs
