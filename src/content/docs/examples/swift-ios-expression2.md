@@ -283,14 +283,15 @@ Then **File → Add Package Dependencies…**, paste
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-choose **Up to Next Major Version** from **2.11.0**, and attach the
+choose **Up to Next Major Version** from **2.14.1**, and attach the
 **`Expression2`** product — *not* `bitHumanKit`, and not both. Attaching
 `Expression2` also brings the two binary targets its module interface needs.
 
-> **Do not attach `Expression2` and `Essence2` to the same app.** They carry
-> overlapping objects; a device build links with **116 duplicate symbols and
-> rc 1** at your app's final link, while the Simulator is green — which is how
-> a Simulator-only CI misses it. [Details](/sdk/ios#install).
+> **`Expression2` and `Essence2` may share one app from 2.14.0.** Below it they
+> carried overlapping objects and a device build failed its final link with
+> **116 duplicate symbols**, while the Simulator was green — which is how a
+> Simulator-only CI missed it. On 2026-09-23 a new app taking both from 2.14.1
+> built for an iOS device, the Simulator and macOS. [Details](/sdk/ios#pin-the-version).
 
 Finally, drag the `Model` folder from step 1 into the project and choose
 **Create folder references** (blue folder, not yellow group). The app reads it
@@ -313,7 +314,7 @@ options:
 packages:
   bithuman:
     url: https://github.com/bithuman-product/homebrew-bithuman.git
-    from: 2.14.0
+    from: 2.14.1
 targets:
   IOSExpression2:
     type: application
@@ -1074,9 +1075,10 @@ could not see your signing identities. See step 5.
 Expected. The engine is on-device Apple-Silicon inference; there is no Simulator
 path. Use a physical device.
 
-### `UnsatisfiedLinkError`-shaped link failure with 116 duplicate symbols
+### Link failure with 116 duplicate symbols
 
-You attached both `Expression2` and `Essence2`. Attach one.
+You attached both `Expression2` and `Essence2` on a tag below 2.14.0. Raise the
+floor to 2.14.1 and force the resolve ([Pin the version](/sdk/ios#pin-the-version)).
 
 ## Next steps
 
