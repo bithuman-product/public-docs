@@ -20,6 +20,7 @@ Each page below is the one place its install, model download and code live.
 | You want | Use | Models |
 |---|---|---|
 | A talking avatar or an MP4 on a Mac or Linux box, no code | [CLI](/sdk/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
+| A voice agent on your own LiveKit server, rendered on your machine | [Talk to an avatar on your machine](/guides/local-voice-avatar) | Essence 2, Expression 2 |
 | Frames or MP4 clips from your own code | [Python SDK](/sdk/python) | Essence 2, Expression 2, Essence 1 |
 | An iPhone, iPad or Mac app | [Apple SDK](/sdk/apple) | Essence 2, Expression 2 |
 | An Android app | [Android SDK](/sdk/android) | Essence 2, Expression 2 |
@@ -28,7 +29,7 @@ Each page below is the one place its install, model download and code live.
 
 The full model-by-surface matrix is on [Models](/concepts/models#where-each-model-runs).
 
-For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/sdk/livekit) with a cloud avatar, or the Expression 1 container below.
+For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/sdk/livekit): with `model_path` the avatar renders on your machine ([guide](/guides/local-voice-avatar)), with `avatar_id` in the cloud. Expression 1 uses the container below.
 
 ## A first MP4 on macOS or Linux
 

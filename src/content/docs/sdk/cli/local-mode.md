@@ -84,8 +84,6 @@ BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 | Languages | the service's | 31 for speech output |
 | Tool calling | yes | needs a 3B or larger model |
 
-The on-device classes are also importable for your own agent: `livekit.plugins.bithuman.WhisperSTT`, `LlamaCppLLM` and `SupertonicTTS`.
-
 ## Troubleshooting
 
 | Symptom | Cause | Fix |

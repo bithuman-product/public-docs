@@ -42,6 +42,7 @@ bithuman render wise-pup speech.wav
 - **Your own words:** any audio file `ffmpeg` reads works as `-a`; generate speech with [Text to speech](/api/text-to-speech).
 - **A photoreal person:** `bithuman pull sofia-ramirez` renders an Essence 2 avatar at up to 1920×1080.
 - **Scripts and CI:** add `--json` and branch on exit codes ([reference](/sdk/cli/reference#json-output)).
+- **A conversation instead of a clip:** `bithuman run wise-pup` — [Talk to an avatar on your machine](/guides/local-voice-avatar).
 
 ## Troubleshooting
 
@@ -50,6 +51,7 @@ bithuman render wise-pup speech.wav
 | `not signed in`, exit 77 | set `BITHUMAN_API_SECRET` or run `bithuman login` |
 | `ffmpeg not found`, exit 69 | install `ffmpeg`, or set `BITHUMAN_FFMPEG` |
 | `bithuman: command not found` | `export PATH="$HOME/.local/bin:$PATH"` |
+| `bithuman run` shows `Agent dispatch failed: … no response from servers` | update LiveKit to 1.13 or newer: `brew upgrade livekit` |
 
 ## Next
 

@@ -105,7 +105,20 @@ asyncio.run(main())
 | Idle between replies | keep reading `run()`: it yields idle frames when there is no speech |
 | Stop | `await avatar.shutdown()` in a `finally` (`stop()` keeps the model loaded) |
 
-For a voice agent with a face, use the [LiveKit plugin](/sdk/livekit), which is built on `AsyncBithuman`. The [Python examples](https://github.com/bithuman-product/bithuman-examples/tree/main/python) include a microphone conversation and a web UI.
+### A voice agent on your own LiveKit server
+
+The [LiveKit plugin](/sdk/livekit) runs `AsyncBithuman` inside a LiveKit Agents worker: pass `model_path` and the avatar renders in the worker's own process, next to an OpenAI Realtime voice.
+
+```python
+# excerpt: python/self-host/agent.py (bithuman-examples)
+session = AgentSession(llm=openai.realtime.RealtimeModel(model="gpt-realtime-mini", voice="coral"))
+avatar = bithuman.AvatarSession(model_path="wise-pup.imx")    # renders here; reads BITHUMAN_API_SECRET
+await avatar.start(session, room=ctx.room)
+await session.start(agent=Agent(instructions="You are a friendly assistant."),
+                    room=ctx.room, room_options=RoomOptions(audio_output=False))
+```
+
+The plugin installs `bithuman` on Python 3.11–3.13. The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
 
 ## Platform notes
 
