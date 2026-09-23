@@ -49,13 +49,9 @@ not, step 4 compiles it and needs `cmake` and a C++ toolchain on the box first.
 showcase, about 148 MB; `bithuman list` prints every showcase slug.
 
 **Install those five requirements directly** — the `pip` line above is the
-whole story. There is no extra that does it for you: `bithuman-cli[local]` is not a route
-to these packages — there is no `bithuman-cli` wheel at all any more, it was
-removed from PyPI on 2026-09-15, and the CLI comes from
-[install.bithuman.ai](https://install.bithuman.ai) or Homebrew (see
-[Downloads](/downloads)) — and `bithuman[local]` is not an extra at all: pip
-warns, **exits 0, and installs none of it**. `bithuman doctor` names the same
-five packages when they are missing.
+whole story. There is no extra that does it for you (`bithuman[local]` is not an
+extra: pip warns, exits 0 and installs none of it). `bithuman doctor` names the
+same five packages when they are missing.
 
 ### What is free, and what needs an account
 
@@ -103,13 +99,9 @@ has happened.
   boxes in stores, field engineers. The brain never waits on the network; the
   once-a-minute metering beat is all that does, and a beat that cannot be
   delivered does not stop the render.
-- **Eliminate per-minute LLM/TTS spend** — pay once for the wheel;
-  conversations are free thereafter.
+- **No per-minute LLM or TTS spend** — the brain runs on your hardware.
 - **Latency floor below network RTT** — when the speed of light to the
   nearest cloud region is itself the bottleneck.
-- **Mobile portability ramp** — the same C++ cores (whisper.cpp,
-  llama.cpp, ONNX Runtime) have first-party iOS builds, and
-  run the exact same model files.
 
 ## The stack
 
@@ -204,7 +196,7 @@ deployments, size it up too (1.5B+ recommended for non-English fluency).
 | | **Cloud (default)** | **Local (`BITHUMAN_LOCAL=1`)** |
 | --- | --- | --- |
 | Setup | `export OPENAI_API_KEY=...` | First run downloads ~860 MB once |
-| Per-conversation cost | OpenAI Realtime pricing | $0 (one-time wheel install) |
+| Per-conversation cost | OpenAI Realtime pricing | no per-minute LLM or TTS charge |
 | Network | OpenAI Realtime + LiveKit signal | LiveKit signal only (localhost) |
 | Privacy | Audio + transcripts go to OpenAI | Audio stays on box |
 | Languages | OpenAI-supported | 31 (Supertonic) for TTS; Whisper coverage for STT |

@@ -28,7 +28,7 @@ cd bithuman-examples/python/local-essence
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-pip install "bithuman<3"                                  # 2.x API (AsyncBithuman); 3.x reshaped it
+pip install "bithuman<3"                                  # the AsyncBithuman API this example uses
 pip install --force-reinstall --no-deps opencv-python     # must be LAST — see below
 ```
 
@@ -83,12 +83,9 @@ export BITHUMAN_API_SECRET="your_secret" OPENAI_API_KEY="sk-..."
 python conversation.py --model ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
 
-> **Essence 2 wants a GPU or an Apple Silicon Mac for a live conversation.**
-> `bithuman list --json` publishes the measured figure in its `note_performance`
-> field: `essence-2` renders at about 1.1 fps on a CPU — roughly 22x below real
-> time — while `expression-2` clears real time on a developer CPU. On a CPU-only
-> Linux box this example still runs, but the face will fall far behind the audio.
-> See [where each model runs](/concepts/models#where-each-model-runs).
+> **Will your machine keep up?** A live conversation needs the avatar to render
+> at least as fast as it plays — 25 fps for Essence 2, 20 for Expression 2. The
+> measured rate for each platform is on the [performance page](/sdk/performance).
 
 ## What you'll see
 

@@ -42,9 +42,8 @@ source .venv/bin/activate
 pip install "bithuman[expression-2]"
 ```
 
-**Do not skip the first two lines.** On a stock Debian or Ubuntu the bare
-`pip install` installs nothing at all and stops with (measured 2026-09-21,
-Ubuntu 26.04, Python 3.14.4):
+**Do not skip the first two lines.** On a stock Debian or Ubuntu a bare
+`pip install` installs nothing and stops with:
 
 ```text
 error: externally-managed-environment
@@ -59,33 +58,25 @@ supported way past it. If `python3 -m venv .venv` itself fails with `ensurepip
 is not available`, install the `python3-venv` package first (`sudo apt install
 -y python3-venv` on Debian and Ubuntu) and re-run the three lines.
 
-The install pulls about 160 MB of wheels and occupies about 570 MB in the venv
-(measured 2026-09-21 on Linux x86_64, Python 3.14). Every later command on this
-page assumes the venv is **active** — that is what `source .venv/bin/activate`
-does, and a new terminal needs it again.
+The install occupies about 570 MB in the venv. Every later command on this page
+assumes the venv is **active** — a new terminal needs
+`source .venv/bin/activate` again.
 
 `bithuman` 2.11.6 runs on Python 3.10–3.14 on Apple Silicon macOS (14 or
 newer), Linux x86_64 and Linux aarch64 — no Windows, Intel Mac or Alpine
-wheels. It is what an unconstrained `pip install bithuman` resolves, and what
-a `bithuman<3` pin resolves too: the 3.x line (3.0.0–3.1.10) was withdrawn
-from PyPI on 2026-09-16, and 2.11.6 carries the same engine with the 2.x
-import surface (`AsyncBithuman` and the rest) alongside the `open()` /
-`render()` surface below. **There is one extra**, `[expression-2]`, and it
-opens `.avatar` files. The Essence 2 clip-to-file route (`bithuman.offline`)
-is on the base wheel — it runs the same engine the streaming route runs, so
-nothing it needs is optional and no `torch` is installed. Writing the MP4
-needs **`ffmpeg` on `PATH`**.
+wheels. It is what `pip install bithuman` resolves, and what a `bithuman<3` pin
+resolves too; it carries the 2.x import surface (`AsyncBithuman` and the rest)
+alongside the `open()` / `render()` surface below. **There is one extra**,
+`[expression-2]`, which opens Expression 2 files. The Essence 2 clip-to-MP4
+route (`bithuman.offline`) is on the base wheel and needs **`ffmpeg` on `PATH`**.
 
 `pip install bithuman` puts **no `bithuman` command** on your `PATH` — the
 command-line tool is the [CLI](/sdk/cli), a separate install.
 
-**[essence-1](/concepts/essence-1) needs no extra at all.** It is the base
-wheel's own path — `bithuman.open` takes a first-generation `.imx`
-straight out of `pip install bithuman`, which is why the CLI and the
-[Swift](/sdk/ios) page send you here for it. The legacy
-`bithuman[offline]` and `bithuman[tessera]` extras that older instructions
-name were removed from the wheel on 2026-09-20; a requirements file that still
-asks for one installs the base wheel, and pip says so in a warning.
+**[Essence 1](/concepts/essence-1) needs no extra at all** — `bithuman.open`
+takes a first-generation `.imx` straight out of `pip install bithuman`. Older
+extras and module names are mapped on
+[Naming & migration](/concepts/models#naming--migration).
 
 ## Quickstart: the whole thing in one block
 
@@ -190,11 +181,10 @@ from bithuman.offline import render_offline
 render_offline("executive-coach.imx", "demo_sample.wav", out_mp4="rendered.mp4")
 ```
 
-**A refused offline render still leaves a file at `out_mp4`.** Measured
-2026-09-21 on 2.11.6: with no credential the call raises
-`MeteringNotArmedError` and leaves an 18 KB MP4 behind that carries the audio
-and **no video stream at all**. So a pipeline must branch on the exception, or
-count the video frames — never on the file existing:
+**A refused offline render still leaves a file at `out_mp4`.** With no
+credential the call raises `MeteringNotArmedError` and leaves a small MP4 that
+carries the audio and **no video stream**. Branch on the exception, or count the
+video frames — never on the file existing:
 
 ```bash
 ffprobe -v error -count_frames -select_streams v:0 \
@@ -241,8 +231,7 @@ An Essence 2 agent arrives as an `.imx`, an Expression 2 agent as an `.imx` or
 an `.avatar` (the same container under two names), and `bithuman.open` takes any
 of them — as it does a first-generation `essence-1` `.imx`.
 `python -m bithuman <CODE> <audio>` fetches by code into `~/.cache/bithuman/downloads`
-and, from 2.11.6, fetches the file again when the published one changed since it was cached
-(a length comparison; when it cannot be asked, the cached file is used).
+and fetches again when the published file has changed.
 
 ## Authentication
 
@@ -251,7 +240,7 @@ Set `BITHUMAN_API_SECRET` in the shell you run Python from — a key is free at
 moves the download cache off `~/.cache/bithuman`.
 
 The two credential failures happen at different moments, which is how you tell
-them apart (both measured 2026-09-21 on `bithuman` 2.11.6):
+them apart:
 
 | The key | `bithuman.open()` | The first `render()` frame |
 |---|---|---|
@@ -263,54 +252,29 @@ refuses: the credential is *checked* at the first frame, not at load.
 
 ## Billing follows the talking, not the clock
 
-**You are billed for minutes of active talking. Idle time is free.** A runtime
-that is loaded but not speaking — between utterances, or cached for reuse
-between requests — costs nothing. Leaving one alive overnight costs nothing.
-
-```python
-avatar = await AsyncBithuman.create(...)   # loading is free
-try:
-    ...                                    # you pay for the talking, and only that
-finally:
-    await avatar.shutdown()                # still worth doing: it frees the model
-```
-
-Caching a runtime for reuse is a sensible optimisation, because loading is the
-expensive part, and it no longer carries a billing cost.
-
-> **Changed 2026-09-22.** Metering used to run on wall clock from model load
-> until `shutdown()`, so an idle runtime billed at the full rate. That is no
-> longer true — for every model, self-hosted and cloud alike. Credits charged
-> under the old behaviour have been refunded; if you were affected and have not
-> seen a refund, write to [hello@bithuman.ai](mailto:hello@bithuman.ai).
+**You are billed for minutes of active talking; idle time is free.** A runtime
+that is loaded but not speaking — between utterances, or cached for reuse —
+costs nothing, so opening one runtime and keeping it is the efficient shape.
+The rule and the rates are on [pricing](/guides/pricing).
 
 ### Ending a session: three calls, and only one of them frees the model
 
 `AsyncBithuman` offers three teardown calls and they are **not**
-interchangeable. What each one does was read back out of `bithuman` 2.11.6, the
-wheel PyPI serves — the file and line are in the package you just installed:
+interchangeable:
 
 | Call | What it does | What it does not do |
 |---|---|---|
-| `await avatar.stop()` | stops the frame producer, and only that; idempotent, and the runtime can be driven again afterwards (`_avatar.py:410`) | does not free the model, and does not release the credential — its own docstring says *"Does NOT release auth"* |
-| `await avatar.shutdown()` | `stop()`, then frees the model and its memory, then releases the credential (`_avatar.py:464`) | see the Essence 2 note below |
-| `avatar.cleanup()` | the synchronous form, which the LiveKit plugin calls from `AvatarSession.aclose()` (`_avatar.py:812`) | does not stop the frame producer — reach for `shutdown()` unless you are already outside the event loop |
+| `await avatar.stop()` | stops the frame producer, and only that; idempotent, and the runtime can be driven again afterwards | does not free the model, and does not release the credential — its own docstring says *"Does NOT release auth"* |
+| `await avatar.shutdown()` | `stop()`, then frees the model and its memory, then releases the credential | see the Essence 2 note below |
+| `avatar.cleanup()` | the synchronous form, which the LiveKit plugin calls from `AvatarSession.aclose()` | does not stop the frame producer — reach for `shutdown()` unless you are already outside the event loop |
 
-**`shutdown()` is the one to put in a `finally`.** There is no `close()`, no
-`aclose()` and no `async with` on `AsyncBithuman` — we checked the installed
-package for all three and it has none of them.
+**`shutdown()` is the one to put in a `finally`.** There is no `close()`,
+`aclose()` or `async with` on `AsyncBithuman`.
 
-> **A self-hosted [Essence 2](/concepts/essence-2) model leaves one background
-> heartbeat running after `shutdown()`.** The engine that renders Essence 2
-> keeps its own process-wide heartbeat, separate from the credential
-> `shutdown()` releases, and nothing in the teardown path stops it; it ends when
-> your process ends. **It costs you nothing** — a heartbeat that reports no
-> talking is charged nothing under the rule above — and it does not hold the
-> model in memory, which `shutdown()` has already freed. It is one thread per
-> process, not one per runtime. We are closing this in a coming release; until
-> then, a script that renders and exits needs no workaround, and a long-lived
-> service should open a runtime once and keep it rather than opening one per
-> request.
+> **An [Essence 2](/concepts/essence-2) runtime leaves one background
+> heartbeat thread running after `shutdown()`**, until the process exits. It
+> costs nothing — it reports no talking — and it does not hold the model in
+> memory. A long-lived service should open a runtime once and keep it.
 
 ## Run
 
@@ -331,23 +295,14 @@ after it.
 
 ## Performance
 
-Measured frame rates for every platform are on the
-[performance page](/sdk/performance). **On Apple Silicon that page's Expression 2
-number is the [CLI](/sdk/cli)'s, and this package does not reach it.** The CLI
-renders Expression 2 through Core ML; this package runs the portable CPU runtime
-on every platform it ships for, so the same avatar renders more slowly here on a
-Mac. On Linux the CLI runs that same CPU runtime, so there the two match.
-
-A completed `render` reports its own
-steady-state rate — frames per second from the first audio push to the last
-frame, model load excluded, the same definition the CLI prints — on the
-`bithuman` logger at INFO:
+Measured frame rates for every platform, this package included, are on the
+[performance page](/sdk/performance). A completed `render` logs its own
+steady-state rate on the `bithuman` logger at INFO:
 
 ```python
 import logging
 logging.basicConfig(level=logging.INFO)
 # bithuman: render <frames> frames in <seconds> s = <rate> fps steady state
-#           (first audio push -> last frame; model load excluded)
 ```
 
 ## Troubleshooting
@@ -357,7 +312,7 @@ logging.basicConfig(level=logging.INFO)
 | `error: externally-managed-environment` from `pip install` | the distribution owns the system interpreter ([PEP 668](https://peps.python.org/pep-0668/)); pip installed nothing | create a venv first — the three lines under [Install](#install) |
 | `ensurepip is not available` from `python3 -m venv` | the venv module is packaged separately | `sudo apt install -y python3-venv` (Debian, Ubuntu), then re-run |
 | `ModuleNotFoundError: No module named 'bithuman'` | not installed in the active environment, or the venv is not activated in this terminal | `source .venv/bin/activate`, then `pip install "bithuman[expression-2]"` |
-| `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14. pip installed nothing: the release's source distribution exists only to print this (since 2026-09-20; before that, pip could quietly resolve a 1.x wheel) | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
+| `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14; pip installed nothing | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
 | `NotSupported` opening a `.avatar` | the Expression 2 extra is missing | `pip install "bithuman[expression-2]"` |
 | the first `render` raises `NotAuthorised`, *"no credential was supplied"* | no key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
 | `bithuman.open` raises `NotAuthorised`, *"that key was not accepted (401)"* | there is a key and the service rejected it — revoked, or from another environment | mint a fresh one at [your API keys](https://www.bithuman.ai/developer/api-keys) |
