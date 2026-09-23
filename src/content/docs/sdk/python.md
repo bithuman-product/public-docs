@@ -198,7 +198,7 @@ ffprobe -v error -count_frames -select_streams v:0 \
 A showcase avatar is a plain anonymous download — no account, no API secret. **Check
 the size before you start it**: an [Expression 2](/concepts/expression-2)
 avatar is 188–190 MB, an [Essence 2](/concepts/essence-2) avatar 118–148 MB
-(the sizes `bithuman list` prints; the [CLI page](/sdk/cli#the-showcase-catalogue)
+(the sizes `bithuman list` prints; the [CLI page](/examples#ready-made-avatars)
 carries the catalogue).
 
 ```bash
@@ -320,7 +320,7 @@ logging.basicConfig(level=logging.INFO)
 | `MeteringNotArmedError` from `render_offline` | same missing credential, on the offline route | `export BITHUMAN_API_SECRET=…`, or pass `api_secret=` |
 | the MP4 exists but has no picture | a refused render still writes the audio-only stub described above | set the credential, delete the stub, render again — and gate on the frame count, not the file |
 | `InvalidAvatar` on an Essence 2 file you were given | the file is not usable as published | send the agent code to [hello@bithuman.ai](mailto:hello@bithuman.ai) for re-publishing |
-| `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not a public showcase | check the code under [your agents](/api/agents) or in the [catalogue](/sdk/cli#the-showcase-catalogue) |
+| `404 NOT_FOUND` from `/v1/agent/<CODE>/model/download` | not an agent on your account, and not a public showcase | check the code under [your agents](/api/agents) or in the [catalogue](/examples#ready-made-avatars) |
 | `409 MODEL_NOT_GENERATED` from the download | the agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
 | the first `render` is slow, with a large download | the shared audio encoder and its 2 s window are being fetched, once | wait; they are cached for every later run |

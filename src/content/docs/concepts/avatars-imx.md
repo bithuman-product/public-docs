@@ -96,8 +96,8 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 | Model | Artifact | What it is |
 |---|---|---|
 | [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
-| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
-| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman open` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
+| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
+| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman open` tells you which you have. | Renders locally via the [CLI](/sdk/cli#platform-notes) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
 > for compatibility** — it predates the current product naming and survives only
@@ -120,7 +120,7 @@ bithuman open ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ### The `engine` value is a legacy name
 
 `bithuman open` reports an **`engine`** read from the container header (also
-`engine` in [`--json`](/sdk/cli/reference#the-machine-readable-contract)), and the Python runtime quotes the same
+`engine` in [`--json`](/sdk/cli/reference#json-output)), and the Python runtime quotes the same
 string verbatim in load errors — for example `backend loader for
 engine='essence2-light'`.
 
