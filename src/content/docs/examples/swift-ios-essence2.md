@@ -107,10 +107,8 @@ literal. In Xcode: *Product → Scheme → Edit Scheme… → Run → Arguments 
 Environment Variables*, add `BITHUMAN_API_SECRET` with your key. For a shipped
 app, fetch a short-lived credential from your own backend at launch and hand
 that to `be_essence2_set_api_secret` instead — the parameter takes any string,
-so nothing else in the code below changes. A self-hosted session is billed by
-the minute of wall clock, idle animation included, and the **server** prices the
-beat — no rate lives in the library ([pricing](/guides/pricing) is the
-authority).
+so nothing else in the code below changes. The **server** prices usage — no
+rate lives in the library ([pricing](/guides/pricing) is the authority).
 
 ## Pick an identity
 

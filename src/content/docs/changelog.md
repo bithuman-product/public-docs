@@ -1220,7 +1220,7 @@ unchanged.
   Verified on the published bytes from a fresh home directory on Linux
   x86_64 and on an Apple Silicon Mac, both families, with the 2.6.2 macOS
   binary as the control —
-  [the self-host guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session).
+  [the self-host guide](/guides/self-hosting#how-self-hosting-is-billed).
 - **The live preview holds its nominal frame rate.** On some Macs 2.6.2's
   preview settled at about a third of nominal with no viewers and an idle
   engine, because it trusted `sleep` to return on time and never made up a
@@ -1264,7 +1264,7 @@ unchanged.
   behind a loud `★ UNMETERED RENDER` line, and `BITHUMAN_METER_ENFORCE=1`
   turns those three cases into a refusal. Proven on the published tarballs
   from a fresh home on Linux and on an Apple Silicon Mac, with the 2.6.1
-  macOS binary as the silent control — [the self-host guide](/guides/self-host-local#the-cli-meters-a-self-hosted-session).
+  macOS binary as the silent control — [the self-host guide](/guides/self-hosting#how-self-hosting-is-billed).
 - **`bithuman run --help` says where a model renders.** It no longer claims
   essence-2 / expression-2 have "no local runtime yet" (false since 2.6.1): a
   local `.imx` renders on this machine for essence-1, essence-2 and
@@ -1696,7 +1696,7 @@ its metering**: a valid `BITHUMAN_API_SECRET` is required, sessions bill at
 the self-hosted rate (2 credits/min), and without a key the renderer is
 fail-closed — zero frames. Live streaming from your own server still runs
 through the cloud. Quickstart:
-[Self-hosted → Essence 2](/guides/deploy-self-hosted#essence-2-on-your-own-cpu).
+[Self-hosted → Essence 2](/sdk/python).
 
 Earlier entries — July 2026 back to January 2026 — are on the [changelog archive](/changelog/archive).
 

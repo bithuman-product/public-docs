@@ -37,7 +37,7 @@ matrix. Nothing here restates it.
 
 **One published route, and it is a container:**
 `sgubithuman/expression-avatar` on Docker Hub, which needs an NVIDIA GPU. The
-[self-hosted deployment guide](/guides/deploy-self-hosted) has the run
+[self-hosted deployment guide](/guides/self-hosting#the-expression-1-gpu-container) has the run
 instructions, the digest to pin and the licence terms.
 
 **There is no Apple on-device route for `expression-1`.** The Swift package we
@@ -80,4 +80,4 @@ they ship inside the self-hosting container image.
 * [Models](/concepts/models) — the four models, where each runs, and which to pick.
 * [Essence 1](/concepts/essence-1) — the other first-generation model
 * [Expression 2](/concepts/expression-2) — the recommended model for new work
-* [Self-hosted deployment](/guides/deploy-self-hosted) — the GPU container
+* [Self-hosting](/guides/self-hosting#the-expression-1-gpu-container) — the GPU container

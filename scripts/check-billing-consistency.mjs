@@ -311,6 +311,20 @@ const STALE_RULES = [
     re: /\b(?:charged|billed|bills?|metered|credits?)\b[^.\n]{0,80}?\bframes\s+(?:actually\s+)?delivered\b/gi,
     fixture: "Credits are charged per **whole minute of frames actually delivered**",
     say: "that is what one CLI build COUNTS, not the rule — describe the build's count as a fact, and link the rule" },
+  // ★2026-09-23: THE RETIRED IDLE-ACCRUAL RULE, ON EVERY PAGE — not only the
+  // authority. RETIRED_ACCRUAL below grades guides/pricing.md alone, so the
+  // same sentence stayed live wherever it had been copied: pricing's own
+  // "How metering works" ("Silence does not pause the meter … billed at the
+  // same rate as a speaking one", which no RETIRED_ACCRUAL pattern matched),
+  // /concepts/essence-2, /concepts/expression-2, /concepts/models-v2,
+  // /guides/session-troubleshooting (twice) and examples/swift-ios-essence2 —
+  // seven places telling a reader idle is billed beside the page saying it is
+  // free. A dated changelog entry may still record what the rule WAS.
+  { name: "idle is billed",
+    re: /\bidle(?:\/silent)?\s+(?:animation|stretches?|time)\b[^.\n]{0,20}?\b(?:included|accrues|is\s+billed)\b|\bincluding\s+idle(?:\/silent)?\b|\bsilence\s+does\s+not\s+pause\s+the\s+meter\b|\bbilled\s+at\s+the\s+same\s+(?:per-minute\s+)?rate\s+as\s+(?:a\s+)?speaking\b/gi,
+    fixture: "metered for the whole time a session is live — **idle/silent animation included**",
+    say: "the 2026-09-22 ruling: idle animation is free — link /guides/pricing instead of restating the rule",
+    datedChangelogMayRecord: true },
   { name: "the way Linux already was",
     re: /\bway\s+Linux\s+already\s+(?:was|did)\b/gi,
     fixture: "billed at the self-hosted rate — the way Linux already was. Up to and including 2.6.1",
@@ -326,6 +340,8 @@ const NEGATIVE_CONTROLS = [
   "[selfhost-meter] session x2-litert-ae31a6cbf0124577 closed — beats delivered=1 failed=0 frames=85",
   "[selfhost-meter] beat seq=1 served=4.2s product=expression-2 delivered (final)",
   "Before 2.6.2 only an Expression 2 session on Linux was metered; Essence 2 on either platform was not.",
+  "that is the idle loop, and idle animation is not billed.",
+  "Usage is counted on the rule in Serving: talking minutes accrue, idle animation does not.",
 ];
 
 let ruleFilesGraded = 0;
@@ -386,9 +402,11 @@ for (const rule of STALE_RULES) {
 }
 
 // 3b — no page states a contradicting rule.
+const DATED_ENTRY = /^#{2,3} .*\((\d{4}-\d{2}-\d{2})\)\s*$/;
 for (const f of RULE_CORPUS) {
   const text = readFileSync(f, "utf8");
   const rel = relative(ROOT, f);
+  const isChangelog = /(^|\/)changelog(\/[^/]+)?\.md$/.test(rel);
   ruleFilesGraded++;
   for (const rule of STALE_RULES) {
     rule.re.lastIndex = 0;
@@ -396,6 +414,8 @@ for (const f of RULE_CORPUS) {
     while ((m = rule.re.exec(text)) !== null) {
       ruleHits++;
       const line = text.slice(0, m.index).split("\n").length;
+      if (rule.datedChangelogMayRecord && isChangelog &&
+          text.slice(0, m.index).split("\n").some((l) => DATED_ENTRY.test(l))) continue;
       failures.push(
         `${rel}:${line}: states the billing rule as "${m[0].replace(/\s+/g, " ")}" — contradicts guides/pricing.md ` +
           `(a credit minute is "wall-clock time a session is live and the engine is rendering"); ${rule.say}`

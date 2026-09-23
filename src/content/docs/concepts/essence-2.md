@@ -247,16 +247,9 @@ the changelog names the version for each.
 
 ## Pricing
 
-| Surface | Rate |
-|---|---|
-| Cloud serving (all runtimes) | **4 credits/min** |
-| Self-hosted serving | **2 credits/min** |
-| Agent creation | 500 credits (one-time) |
-| [Talking-video renders](/api/video) | 4 credits per minute of output (rounded up) |
-
-Per-minute serving is metered for the whole time a session is live and the
-engine is rendering — **idle/silent animation included**. Only stopped, paused,
-or disconnected sessions stop accruing. Full schedule: [Pricing & credits](/guides/pricing).
+Serving, creation and talking-video rates are on [Pricing & credits](/guides/pricing) —
+the one place every number lives. A live session bills its talking minutes;
+idle animation is free.
 
 ## The renderer
 

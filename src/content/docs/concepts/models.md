@@ -50,7 +50,7 @@ What is published today, per surface. Each link goes to the page that installs i
 | [**Apple**](/sdk/ios) — iPhone, iPad, Mac | `Essence2` product (iOS / macOS 26) | `Expression2` product | — | — |
 | [**Android**](/sdk/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
 | [**Web**](/sdk/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
-| [**Self-hosted GPU container**](/guides/deploy-self-hosted) | — | — | — | yes |
+| [**Self-hosted GPU container**](/guides/self-hosting#the-expression-1-gpu-container) | — | — | — | yes |
 
 - **Expression 1 is GPU-only by design.** Its empty cells are not a roadmap
   item. If you need an expressive model on a Mac, a phone or in a browser, use
@@ -59,7 +59,7 @@ What is published today, per surface. Each link goes to the page that installs i
   Apple Silicon and CPU tiers. The cloud's Apple tier is bitHuman's hardware,
   not your Mac.
 - **Running on your own hardware** — every surface below the first row — is
-  billed at the self-hosted rate. See [self-hosting](/guides/self-host-local).
+  billed at the self-hosted rate. See [self-hosting](/guides/self-hosting).
 
 Measured frame rates for every platform are on the
 [performance page](/sdk/performance).
@@ -128,6 +128,9 @@ legacy names are still strings you read or type:
 | `elevate` | legacy SDK request field | Essence 2 | Accepted for compatibility; write `essence-2` |
 | `embody` | legacy request spelling | Expression 2 | Accepted for compatibility; write `expression-2` |
 | `libelevate`, `libelevate-android` | legacy library names | Essence 2 | No — the Android coordinate is `ai.bithuman:essence2-android` |
+| `bithuman.tessera_offline`, `OfflineTesseraRenderer`, `TesseraOfflineError` | legacy Python module and class names, still importable | the Essence 2 MP4 route | No — write `bithuman.offline`, `OfflineRenderer`, `render_offline`, `OfflineRenderError` |
+| `BITHUMAN_TESSERA_DIRECTOR` and the other `BITHUMAN_TESSERA_*` variables | legacy environment variables, still read | Essence 2 engine settings | No — the defaults are the fast path |
+| `bithuman[tessera]`, `bithuman[offline]` | legacy pip extras, removed from the wheel in 2.11.6 | nothing — pip warns and installs the base wheel | No — `pip install bithuman` |
 
 Saved links keep working: `essence-2-light-gpu` / `essence-2-light-cpu` still pin
 their tiers, links carrying `essence-2-light` or `essence-2-light-ane` route to
