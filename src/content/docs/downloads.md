@@ -16,7 +16,7 @@ after it — a model to fetch, the minimal code, and the fixes for every refusal
 | [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `curl -fsSL https://install.bithuman.ai \| sh` |
 | [Python](/sdk/python) — 3.10–3.14 | `pip install "bithuman[expression-2]"` |
 | [Apple](/sdk/ios) — iPhone, iPad, Mac | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.1")` |
-| [Android](/sdk/android) — arm64-v8a | `implementation("ai.bithuman:expression2-android:0.4.8")` · `implementation("ai.bithuman:essence2-android:0.5.12")` |
+| [Android](/sdk/android) — arm64-v8a | `implementation("ai.bithuman:expression2-android:0.4.8")` · `implementation("ai.bithuman:essence2-android:0.5.13")` |
 | [Web](/sdk/web) — any modern browser | nothing — one URL or one `<iframe>` |
 
 Which model runs on which platform is on [Models](/concepts/models#where-each-model-runs);
@@ -30,7 +30,7 @@ measured frame rates are on [performance](/sdk/performance).
 | Swift package | pin **2.14.1** or newer — it ships Essence 2 engine **1.10.0** beside `Expression2` 2.6.4, one app can take both products, and it is the first tag a macOS **app** can embed and whose `Essence2` declares its own linker settings | [SwiftPM](https://github.com/bithuman-product/homebrew-bithuman) |
 | bitHuman CLI | the newest release — the installer always fetches it; `bithuman --version` shows yours | [install.bithuman.ai](https://install.bithuman.ai) · [Homebrew](https://github.com/bithuman-product/homebrew-bithuman) (Apple Silicon) |
 | Android AAR (`ai.bithuman:expression2-android`) | **0.4.8** — the first that brings the Qualcomm accelerator runtime itself | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/expression2-android/) |
-| Android AAR (`ai.bithuman:essence2-android`) | **0.5.12** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
+| Android AAR (`ai.bithuman:essence2-android`) | **0.5.13** | [Maven Central](https://repo1.maven.org/maven2/ai/bithuman/essence2-android/) |
 | bitHuman MCP server | ships inside the CLI — [`bithuman mcp`](/guides/mcp-server) | the CLI |
 
 What each release changed is in the [changelog](/changelog).
