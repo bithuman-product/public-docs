@@ -25,6 +25,19 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### `essence2-android` 0.5.15 — 2026-09-23
+
+- **New:** `Essence2Credential.set(secret)` sets your API secret once. It covers the avatar download and the session, so `Essence2ModelStore(context)` needs no resolver.
+- **New:** every type an app uses is in `ai.bithuman.essence2`, including `Essence2Credential` and `Essence2MeteredDoorResolver`.
+- **Deprecated:** `Essence2Metering.apiSecret`. It still works and sets the same value.
+- **Action:** use `ai.bithuman:essence2-android:0.5.15`, and replace `Essence2Metering.apiSecret = …` with `Essence2Credential.set(…)`. See [Android](/sdk/android).
+
+### `expression2-android` 0.4.10 — 2026-09-23
+
+- **New:** `Expression2Credential.set(secret)` sets your API secret once. It covers the avatar download and the session.
+- **Deprecated:** `Expression2Metering.apiSecret`. It still works and sets the same value.
+- **Action:** use `ai.bithuman:expression2-android:0.4.10`, and replace `Expression2Metering.apiSecret = …` with `Expression2Credential.set(…)`. See [Android](/sdk/android).
+
 ### `bithuman` 2.11.7 — 2026-09-23
 
 - **Fixed:** `AsyncBithuman`, the class the LiveKit plugin uses, renders an Essence 2 avatar with the avatar's own teeth, as `bithuman.open()` does. An avatar file without its teeth is refused when it is opened.
