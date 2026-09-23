@@ -33,12 +33,12 @@ See [Building avatars](/guides/building-avatars) for the full creation flow and 
 
 ## Agent codes
 
-The `.imx` is keyed by an **agent code** (e.g. `A78WKV4515`). The **cloud runtime and REST API** resolve an agent by its code — you don't ship a file. The **on-device SDKs open a local `.imx`** — the file you downloaded for that code — and the key comes from `BITHUMAN_API_SECRET` in the environment, checked at the first frame:
+The `.imx` is keyed by an **agent code** (e.g. `A23WJF0199`). The **cloud runtime and REST API** resolve an agent by its code — you don't ship a file. The **on-device SDKs open a local `.imx`** — the file you downloaded for that code — and the key comes from `BITHUMAN_API_SECRET` in the environment, checked at the first frame:
 
 ```python
 import bithuman
 
-with bithuman.open("A78WKV4515.imx") as avatar:   # the local file — required on-device
+with bithuman.open("A23WJF0199.imx") as avatar:   # the local file — required on-device
     for image in avatar.render("speech.wav"):      # (height, width, 3) uint8, RGB
         ...
 ```
@@ -63,7 +63,7 @@ not in that list is refused with `slug '<name>' not found in manifest`.
 
 > **A showcase slug is free; your own agent is not.** `bithuman pull <slug>`,
 > `bithuman list` and `bithuman open` all work with no credential. Pulling **your
-> own** agent by **code** does need one — `bithuman pull A78WKV4515` answers
+> own** agent by **code** does need one — `bithuman pull <AGENT_CODE>` answers
 > `MISSING_AUTH` until you run `bithuman login` or export `BITHUMAN_API_SECRET`.
 > So does *playing* any model: `bithuman run` and `bithuman render` need that
 > credential, and the minutes bill at the [published rates](/guides/pricing).
@@ -78,14 +78,6 @@ Cache locations by surface:
 
 Downloads are integrity-verified and cached. Subsequent launches are instant.
 
-## What's inside
-
-You don't have to understand it, but for the curious:
-
-- **Identity weights** — a small neural net specific to the face.
-- **Reference frames** — texture atlases for the head.
-- **Voice profile** — embedding for the cloned voice (Essence).
-- **Manifest** — model version, ABI, license, and training metadata.
 
 ## One container, one file per model
 
@@ -96,8 +88,8 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 | Model | Artifact | What it is |
 |---|---|---|
 | [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
-| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
-| [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman open` tells you which you have. | Renders locally via the [CLI](/sdk/cli#platform-notes) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
+| [`essence-2`](/concepts/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
+| [`expression-2`](/concepts/expression-2) | `.avatar` or `.imx`: the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple) and [Android](/sdk/android), or on the cloud. |
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept
 > for compatibility** — it predates the current product naming and survives only
@@ -124,10 +116,7 @@ bithuman open ~/.cache/bithuman/showcase/sofia-ramirez.imx
 string verbatim in load errors — for example `backend loader for
 engine='essence2-light'`.
 
-**These engine ids are legacy names kept for compatibility.** They predate the
-current product naming and they are the literal strings every reader parses, so
-they are frozen and will not be renamed. They are spelled here exactly as you
-will see them, because you may have to match on one:
+**These engine ids are legacy names kept for compatibility.** They are the literal strings readers parse, spelled here exactly as you will see them:
 
 | `engine` in the header | The model you actually have |
 |---|---|

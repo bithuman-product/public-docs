@@ -21,8 +21,8 @@ The same agent code works on every surface that runs its model.
 
 | Model | What it renders | Pick it for |
 |---|---|---|
-| [**Essence 2**](/concepts/essence-2) (`essence-2`) | Your identity's own footage — a 10-second identity video generated from your portrait, first and last frames matched so it loops — lip-synced at up to 1920x1080, 25 fps | Photorealistic people. The default for new photoreal work |
-| [**Expression 2**](/concepts/expression-2) (`expression-2`) | A whole scene — head, shoulders and background — generated from one portrait, 416x720 at 20 fps | Stylized characters, animals, creatures and robots — and people |
+| [**Essence 2**](/concepts/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1920×1080 at 25 fps | Real people |
+| [**Expression 2**](/concepts/expression-2) (`expression-2`) | Any character (stylized, animal, robot or human) from one portrait, 416×720 at 20 fps | Characters of every kind |
 | [**Essence 1**](/concepts/essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
 | [**Expression 1**](/concepts/expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents on an NVIDIA GPU |
 
@@ -95,7 +95,7 @@ capacity. For benchmarking you can force one tier by appending `?model=` with a
 force-tier slug to the viewer or embed URL:
 
 ```text
-https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
+https://www.bithuman.ai/embed/A23WJF0199?model=expression-2-apple
 ```
 
 | Model | Force-tier slugs |
@@ -142,8 +142,8 @@ the Essence 2 default chain, and the older `essence-2-ane` / `expression-2-ane`
 spellings of the Apple tier stay accepted. A link carrying the retired
 `?model=essence-2-quality` falls back to the agent's stored model.
 
-One more naming point: the Apple lane is called **Apple**, not "ANE". It is the
-whole Apple Silicon target, not one accelerator inside it.
+One more naming point: the cloud's Apple tier is called **Apple**, not "ANE". It is the
+whole Apple silicon target, not one accelerator inside it.
 
 ## Next steps
 

@@ -10,21 +10,17 @@ label: "Essence 2"
 
 ## What it is
 
-**Essence 2** (`essence-2`) is bitHuman's photorealistic model and the default
-for real people. It animates your identity's own footage — a 10-second identity
-video generated from your portrait, at up to 1920x1080 — and renders lip-sync
-and expression over it live, at 25 fps. The mouth interior, teeth included, is
-rendered sharply rather than averaged out of the source frames.
-
-It is **fail-closed**: a model file with a required part missing is refused
-rather than played with a substituted mouth.
+**Essence 2** (`essence-2`) renders a photoreal person from one portrait, up to
+1920×1080 at 25 fps. From your portrait the platform generates a 10-second
+identity video; the model then animates lip-sync and expression over it live,
+with a sharp mouth and teeth taken from that video. A model file with a missing
+part is refused rather than played with a substitute.
 
 ## When to choose it
 
 - **A photorealistic person** — start here.
 - **Always-on and high-concurrency deployments** — kiosks, lobby displays and
-  24/7 assistants. The cloud serves it from CPU and Apple Silicon tiers as well
-  as GPU.
+  24/7 assistants.
 - **On your own hardware** — every SDK platform runs it.
 
 For a stylized character, or a scene generated from one photo, choose
