@@ -189,8 +189,9 @@ const CARRIERS = [
   // string a reader MEETS rather than writes, and the page must be able to
   // print it. Deliberately narrow — the bare word `elevate` is NOT matched,
   // only these four frozen literals.
-  { why: "the essence-2 bundle-directory format literals, printed verbatim in the engine's own refusal and carried in a meta.json `format` value",
-    re: /\.elevatedir|\.essence2dir|elevatedir-v|essence2-light-dir-v/i },
+  // ★REMOVED 2026-09-23 with its subject: the iOS Essence 2 example no longer
+  // quotes the engine's refusal for a pre-2026-09-15 bundle directory, so no page
+  // prints these literals. Re-add the carrier if a page quotes that refusal again.
   // ★2026-09-21: the published essence2-android AAR's REAL Kotlin package. The
   // `ai.bithuman.essence2.*` names are type ALIASES onto `ai.bithuman.elevate.*`,
   // and Kotlin does not resolve a nested classifier through an alias — so
