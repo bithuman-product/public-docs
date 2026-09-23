@@ -47,7 +47,7 @@ instead of on our servers:
 https://www.bithuman.ai/A74NWD9723?render=local
 ```
 
-Nothing else changes: no install, no key, and the conversation — speech
+Nothing else changes: no install, no API secret, and the conversation — speech
 recognition, the LLM and the voice — still runs on our servers.
 
 | Mode | How you ask for it | Where the avatar renders | Audio |
@@ -109,7 +109,7 @@ async function hasRealGPU() {
 
 ## Authentication and billing
 
-The browser holds no key. A session bills to the **agent's owner**, at the
+The browser holds no API secret. A session bills to the **agent's owner**, at the
 rates on [pricing](/guides/pricing):
 
 - **The conversation always bills** — speech, the LLM and the voice — whichever

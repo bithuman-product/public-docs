@@ -43,7 +43,7 @@ and that is the tested one.
 | `bithuman pull <slug \| AGENT_CODE>` | Download a showcase avatar, or your own agent's model by code |
 | `bithuman list` | Browse the showcase catalogue (alias: `avatars`) |
 | `bithuman open <file>` | Can this avatar be opened and run here? Engine, family, and every member the container carries (alias: `info`) |
-| `bithuman login` / `logout` | Sign in through the browser and mint a per-device key / revoke it |
+| `bithuman login` / `logout` | Sign in through the browser and mint a per-device API secret / revoke it |
 | `bithuman account` | Who you are signed in as, your plan, your credit balance and your spend |
 | `bithuman engine list \| install` | Inspect or fetch the per-platform Expression 2 render engine |
 | `bithuman doctor` | Host, credential, brain and cache check |
@@ -66,30 +66,31 @@ are both `bithuman account` now. A retired spelling exits 2 with
 ## Signing in
 
 ```bash
-bithuman login              # opens a browser, mints a per-device key
+bithuman login              # opens a browser, mints a per-device API secret
 bithuman login --device     # SSH / headless: prints a short code to enter elsewhere
 bithuman account            # who am I, on what plan, with how many credits
-bithuman logout             # revokes this device's key on the server
+bithuman logout             # revokes this device's API secret on the server
 ```
 
-The key is stored in your OS keychain (macOS Keychain, Linux Secret Service),
-aliased `cli@<hostname>` so you can recognise and revoke it from
-[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). With no
-keychain it falls back to `~/.bithuman/config`, a dotenv file at mode `0600`.
-Each device gets its own key, so revoking one laptop leaves the others alone.
+The API secret is stored in `~/.bithuman/config`, a dotenv file at mode `0600`,
+as a `BITHUMAN_API_SECRET=` line. It is aliased `cli@<hostname>` so you can
+recognise and revoke it from
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). The CLI
+does not use the OS keychain. Each device gets its own API secret, so revoking
+one laptop leaves the others alone.
 
 In CI, skip `login` entirely and export `BITHUMAN_API_SECRET`, or pipe it:
-`printf %s "$KEY" | bithuman login --with-token`. That is also the only sign-in
-route that honours `--json` today — see
+`printf %s "$API_SECRET" | bithuman login --with-token`. That is also the only
+sign-in route that honours `--json` today — see
 [the machine-readable contract](#the-machine-readable-contract) below.
 
 ### Credential resolution order
 
-First match wins, so an exported key always beats a logged-in one:
+An exported value beats a logged-in one:
 
 1. `BITHUMAN_API_SECRET` in the environment
-2. the OS keychain (what `bithuman login` writes)
-3. `~/.bithuman/config` (the dotenv fallback, loaded at every startup)
+2. `BITHUMAN_API_KEY` in the environment — a deprecated alias, still read; 2.7.0 let a stored login win over it, so export `BITHUMAN_API_SECRET`
+3. `~/.bithuman/config` (what `bithuman login` writes, loaded at every startup)
 
 `~/.bithuman/embedded-key` is **not** read, and a `.env` in the working
 directory is **not** auto-loaded.
@@ -304,7 +305,7 @@ and `run` need a credential.
 
 | Variable | What |
 | --- | --- |
-| `BITHUMAN_API_SECRET` | The credential. `BITHUMAN_API_KEY` is accepted as an alias for cross-SDK parity |
+| `BITHUMAN_API_SECRET` | Your API secret. (`BITHUMAN_API_KEY` is still read as a deprecated alias — see [resolution order](#credential-resolution-order)) |
 | `OPENAI_API_KEY` | Selects the OpenAI Realtime conversation brain |
 | `BITHUMAN_LOCAL` | `=1` selects the on-device brain — [local mode](/sdk/cli/local-mode) |
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Brain-side tuning, read by the Python worker rather than the binary — [local mode](/sdk/cli/local-mode#tuning) |
@@ -384,7 +385,7 @@ nothing else.** The banner, the link and the code box are routed to **stderr**,
 so over SSH you still see the code to type while stdout stays parseable.
 Executed end to end on the published `cli-v2.7.0` binary on 2026-09-23 (clean
 Ubuntu 24.04, Linux x86_64, stdout redirected to a file), each route carried
-through approval to a stored per-device key:
+through approval to a stored per-device API secret:
 
 ```bash
 bithuman login --device --json > out.json     # the code box goes to stderr
@@ -446,7 +447,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
                        "model":"expression-2","size":198632867,"description":"…"}],
  "schema_version":1}
 
-// bithuman pull <CODE> --json      a gallery CODE needs no key and costs nothing
+// bithuman pull <CODE> --json      a gallery CODE needs no API secret and costs nothing
 {"code":"A02HCY0444","path":"/…/A02HCY0444.imx","cached":false,"family":"expression-2",
  "model":"expression-2","model_source":"birth","other_models":[],"runnable_locally":true,
  "schema_version":1}

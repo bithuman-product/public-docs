@@ -64,11 +64,12 @@ mp4 directly.
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
+import os
 import requests
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "essence-2",
         "agent_code": "A80HVD8577",
@@ -89,9 +90,10 @@ print(resp.json())
 ### Audio input
 
 ```python
+import os
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "expression-2",
         "agent_code": "A80HVD8577",
@@ -109,9 +111,10 @@ in the same response — no polling. If the render exceeds the ~90-second cap yo
 get the async `{ job_id }` to poll instead.
 
 ```python
+import os
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "essence-2",
         "agent_code": "A80HVD8577",
@@ -152,12 +155,13 @@ Every 409 here names the call that fixes it. Check the agent's
 `GET /v1/video/{job_id}` — poll a render job.
 
 ```python
+import os
 import requests
 
 job_id = "vid_3f9a2c1b8e7d4a6f0b21"
 resp = requests.get(
     f"https://api.bithuman.ai/v1/video/{job_id}",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 )
 print(resp.json())
 ```

@@ -46,12 +46,12 @@ the page and start talking.
 
 ## Going further
 
-The steps above need no API key. The rest of the platform does — get an API
-secret at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys) (free tier,
+The steps above need no API secret. The rest of the platform does — get an API
+secret at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys) (free tier,
 no credit card) and export it:
 
 ```bash
-export BITHUMAN_API_SECRET=your_api_secret   # replace with the key from Developer → API Keys
+export BITHUMAN_API_SECRET="<your API secret>"   # from Developer → API Secrets
 ```
 
 Verify it with the cheapest call there is — no credits, no agent needed:
@@ -139,7 +139,7 @@ returns, so poll status rather than reading a `200` as acceptance.
 > credits cover none of them: on a free balance this call returns
 > `402 INSUFFICIENT_BALANCE` and creates nothing —
 > [the free-tier arithmetic](/guides/pricing#the-free-tier-cannot-create-an-agent).
-> Steps 1 and 2 above need no API key and create nothing.
+> Steps 1 and 2 above need no API secret and create nothing.
 
 The snippet below creates an `expression-2` agent. It needs the
 `BITHUMAN_API_SECRET` export from [Going further](#going-further) and one value

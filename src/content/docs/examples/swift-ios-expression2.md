@@ -27,7 +27,7 @@ with nothing in the loop but the phone. It was written by building it, on an
 | **Renders** | your own agent's identity, 416x720, 20 fps, entirely on the device |
 | **Driven by** | a bundled 16 kHz WAV, or live microphone input |
 | **Needs** | a physical Apple-Silicon iPhone or iPad — the Simulator cannot run this engine |
-| **Does not need** | an iPhone 16 Pro, an Apple entitlement, a network connection at run time, or an API key inside the app |
+| **Does not need** | an iPhone 16 Pro, an Apple entitlement, a network connection at run time, or an API secret inside the app |
 | **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For those, use [Hello, avatar](/examples/swift-ios-hello) or a [cloud session](/api/runtime-sessions) |
 | **Costs** | nothing at run time. The download is metered at 0; on-device rendering here is not a hosted session. See [pricing](/guides/pricing) |
 

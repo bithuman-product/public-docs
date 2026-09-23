@@ -51,7 +51,7 @@ export const GET: APIRoute = async () => {
     "start",
     `See a live agent with no setup, then choose how you run your own — the cloud REST API, ` +
       `or the SDKs and CLI on your own hardware.\n\n` +
-      `Embed an agent — paste into any page, no API key, no install:\n\n\`\`\`html\n${START_EMBED}\n\`\`\`\n\n` +
+      `Embed an agent — paste into any page, no API secret, no install:\n\n\`\`\`html\n${START_EMBED}\n\`\`\`\n\n` +
       `Run locally with the CLI — four lines to a talking avatar in your browser ` +
       `(step 2, \`bithuman login\`, is required: without a credential \`run\` and \`render\` ` +
       `stop before the first frame, exit 77; only a showcase \`pull\` is anonymous):\n\n\`\`\`bash\n${START_CLI}\n\`\`\``,

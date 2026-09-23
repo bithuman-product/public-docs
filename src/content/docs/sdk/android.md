@@ -1,6 +1,6 @@
 ---
 title: "Android SDK"
-description: "Both second-generation models on an arm64 Android handset, each from one Maven coordinate: ai.bithuman:expression2-android:0.4.8 renders a generated scene with no account and no key, and ai.bithuman:essence2-android:0.5.13 renders your own identity at full resolution with a bitHuman API key. Device floors, download sizes and a worked example for each."
+description: "Both second-generation models on an arm64 Android handset, each from one Maven coordinate: ai.bithuman:expression2-android:0.4.8 renders a generated scene with no account and no key, and ai.bithuman:essence2-android:0.5.13 renders your own identity at full resolution with a bitHuman API secret. Device floors, download sizes and a worked example for each."
 section: sdk
 group: "Platforms"
 order: 30
@@ -19,7 +19,7 @@ model, key.
 | **What renders** | [a whole generated scene](/concepts/expression-2) — head, shoulders and background — at 416x720, 20 fps | [your own portrait, animated](/concepts/essence-2), at 25 fps, on the canvas that identity was generated at |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
 | **Dependency line** | `implementation("ai.bithuman:expression2-android:0.4.8")` | `implementation("ai.bithuman:essence2-android:0.5.13")` |
-| **Credential** | **none** for a published identity — no account, no key, no credits | a bitHuman **api-secret**, in two places — [keys are free](https://www.bithuman.ai/developer/api-keys) |
+| **Credential** | **none** for a published identity — no account, no API secret, no credits | a bitHuman **API secret**, in two places — [API secrets are free](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB, into app-private storage | 226–281 MB, into app-private storage |
 | **Adds to your app** | 2.8 MB AAR, plus a 70 MB accelerator runtime you can opt out of | 12.1 MB AAR — 32.1 MB of `arm64-v8a` libraries |
 | **Worked example** | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | [the same page, second half](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed) |
@@ -91,7 +91,7 @@ dependencies {
 ### Essence 2
 
 Three differences from the block above, and each one is silent when it is missing:
-the floor is `minSdk 29`, `buildConfig` has to be switched on, and the key has to
+the floor is `minSdk 29`, `buildConfig` has to be switched on, and the API secret has to
 reach the code.
 
 ```kotlin
@@ -286,19 +286,21 @@ one, and it is asked for **twice**, in two places that fail differently:
 `Essence2Metering.apiSecret` **before** `create()` — that is the call that reads
 it — even though the refusal surfaces later, on the first `pull()`.
 
-Put the key where Gradle can read it and your source tree cannot: in
+Put the API secret where Gradle can read it and your source tree cannot: in
 `~/.gradle/gradle.properties` as `bithumanApiSecret=…`, or passed as
 `-PbithumanApiSecret=…`. The `buildConfigField` in the Essence 2 block turns it
-into `BuildConfig.BITHUMAN_API_SECRET`. Keys are free at
-[your API keys](https://www.bithuman.ai/developer/api-keys); what a session costs
+into `BuildConfig.BITHUMAN_API_SECRET`. API secrets are free at
+[your API secrets](https://www.bithuman.ai/developer/api-keys); what a session costs
 is on [pricing](/guides/pricing).
 
-> **Warning** **A `buildConfigField` bakes the key into the APK**, which is fine
-> for a local hello-world and wrong for anything you ship — a string constant is
-> readable by anyone who has the file. For a real app, fetch a short-lived
-> credential from **your** backend at startup and pass that string to
-> `MeteredDoorResolver` and to `Essence2Metering.apiSecret` instead. Nothing else
-> in the code changes. See [Authentication](/api/authentication).
+> **Warning** **A `buildConfigField` bakes the API secret into the APK**, which is
+> fine for a local hello-world and wrong for anything you ship — a string
+> constant is readable by anyone who has the file. For a real app, fetch your
+> API secret from **your** backend at startup and pass it to
+> `Essence2Metering.apiSecret` and `MeteredDoorResolver` instead of the
+> `BuildConfig` constant. `Essence2Metering.apiSecret` takes an API secret only:
+> the meter validates it at `/v1/auth/validate`, which does not accept a runtime
+> token. Nothing else in the code changes. See [Authentication](/api/authentication).
 
 A **private** Expression 2 agent needs its owner's key too, through the same kind
 of resolver — without one it answers `401`:

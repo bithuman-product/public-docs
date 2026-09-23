@@ -23,7 +23,7 @@ Open any agent's voice settings at [bithuman.ai](https://www.bithuman.ai/explore
 
 ### 1. Connect your key
 
-Go to **Developer → Integrations**, add your provider, and paste your API key. bitHuman **validates the key before saving** — an invalid key is rejected on the spot, so a saved provider is always a working one. Keys are encrypted at rest and never leave the platform in plaintext.
+Go to **Developer → Integrations**, add your provider, and paste that provider's key. bitHuman **validates the key before saving** — an invalid key is rejected on the spot, so a saved provider is always a working one. Keys are encrypted at rest and never leave the platform in plaintext.
 
 ### 2. Pick a premium voice
 

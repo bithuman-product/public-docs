@@ -126,11 +126,14 @@ async function proveDetectorReads(port) {
  *  ★THE EMPTY HOME IS PART OF THE SUBJECT, not tidiness: `bithuman login`
  *  stores a per-device key under HOME, so an arm inheriting a developer's or a
  *  runner's HOME can find a real credential and RENDER — turning every refusal
- *  arm green for the one reason that invalidates the whole gate. The three
- *  BITHUMAN_* variables are deleted for the same reason. */
+ *  arm green for the one reason that invalidates the whole gate. The
+ *  BITHUMAN_* credential variables (SECRET, its deprecated alias KEY, and
+ *  TOKEN) are deleted for the same reason. */
 function drive(bin, home, args, env = {}) {
   const base = { ...process.env, HOME: home };
   delete base.BITHUMAN_API_SECRET;
+  delete base.BITHUMAN_API_KEY;     // the deprecated alias the CLI still reads
+  delete base.BITHUMAN_API_TOKEN;   // a short-lived token a runner may carry
   delete base.BITHUMAN_UNMETERED;
   delete base.BITHUMAN_API_BASE;
   const res = spawnSync(bin, args, {
@@ -146,6 +149,8 @@ function drive(bin, home, args, env = {}) {
 function driveWatching(bin, home, args, env, port) {
   const base = { ...process.env, HOME: home };
   delete base.BITHUMAN_API_SECRET;
+  delete base.BITHUMAN_API_KEY;     // the deprecated alias the CLI still reads
+  delete base.BITHUMAN_API_TOKEN;   // a short-lived token a runner may carry
   delete base.BITHUMAN_UNMETERED;
   delete base.BITHUMAN_API_BASE;
   return new Promise((resolve) => {

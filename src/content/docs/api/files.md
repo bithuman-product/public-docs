@@ -40,11 +40,12 @@ Download a file from a publicly accessible URL.
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
+import os
 import requests
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/files/upload",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"file_url": "https://example.com/presentation.pdf", "file_type": "auto"},
 )
 print(resp.json())
@@ -61,6 +62,7 @@ Upload base64-encoded file data directly.
 | `file_type` | string | One of `auto`, `image`, `video`, `audio`, `document`, `pdf`. Any other value returns `400`. |
 
 ```python
+import os
 import base64, requests
 
 with open("document.pdf", "rb") as f:
@@ -68,7 +70,7 @@ with open("document.pdf", "rb") as f:
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/files/upload",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"file_data": file_data, "file_name": "document.pdf", "file_type": "auto"},
 )
 print(resp.json())

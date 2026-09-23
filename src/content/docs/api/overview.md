@@ -60,7 +60,7 @@ the [embed token flow](/api/embedding) instead. See
   [Embedding](/api/embedding).
 - **Track credits** — read balance and per-mode minute estimates. See
   [Billing](/api/billing).
-- **Manage keys & teams** — rotate [API keys](/api/api-keys), watch
+- **Manage keys & teams** — rotate [API secrets](/api/api-keys), watch
   [runtime sessions](/api/runtime-sessions), and run
   [organizations](/api/organizations) programmatically.
 - **Get notified** — register [webhooks](/api/webhooks) for signed

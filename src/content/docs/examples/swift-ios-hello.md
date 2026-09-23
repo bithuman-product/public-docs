@@ -48,10 +48,11 @@ pole — everything else takes minutes.
    M3, iPad Pro M1 and M2. The Simulator cannot stand in for the device.
 3. **Install Xcode 26 or newer** on a Mac, and join an Apple Developer team.
    Older Xcodes reject the Swift 6 concurrency syntax the package is built with.
-4. **Get an API key** — free at
-   [Developer → API Keys](https://www.bithuman.ai/developer/api-keys). The Swift
-   rail reads it as `BITHUMAN_API_KEY`; it is the same value every other surface
-   reads as `BITHUMAN_API_SECRET` ([authentication](/api/authentication)).
+4. **Get an API secret** — free at
+   [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). The app
+   below reads it from `BITHUMAN_API_SECRET` and hands it to `bitHumanKit` as
+   `config.apiKey` — that field keeps its published name
+   ([authentication](/api/authentication)).
    Avatar mode is metered ([pricing](/guides/pricing)); audio-only voice is not.
 5. **Leave room for the weights.** On first launch the app downloads the
    on-device model — about **1.6 GB**, cached afterwards.
@@ -153,9 +154,9 @@ them the microphone never opens, and iOS caches the denial.
 it is the whole app, 192 lines, `@main` included — and delete the `ContentView`
 Xcode generated, so there is exactly one `@main`.
 
-**5. The key.** *Product → Scheme → Edit Scheme → Run → Arguments →
-Environment Variables* → add `BITHUMAN_API_KEY` with your key. Never hard-code
-it in source.
+**5. The API secret.** *Product → Scheme → Edit Scheme → Run → Arguments →
+Environment Variables* → add `BITHUMAN_API_SECRET` with your API secret. Never
+hard-code it in source.
 
 **6. Run** on a physical iPhone 16 Pro or iPad Pro M4+.
 
@@ -247,7 +248,9 @@ final class AvatarLifecycle: ObservableObject {
             var config = VoiceChatConfig()
             config.systemPrompt = agent.systemPrompt
             config.avatar = AvatarConfig(modelPath: weights, portraitPath: portrait)
-            config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_KEY"]
+            // your API secret; bitHumanKit's field keeps its published name, apiKey
+            let env = ProcessInfo.processInfo.environment
+            config.apiKey = env["BITHUMAN_API_SECRET"] ?? env["BITHUMAN_API_KEY"] // BITHUMAN_API_KEY: the deprecated alias an older scheme may still set
 
             // 3. Start it and render frames into a view.
             let chat = VoiceChat(config: config)
@@ -279,7 +282,7 @@ Full source:
 | the "unsupported device" screen at launch | the device is below the floor — the refusal names the model it detected | use an iPhone 16 Pro / iPad Pro M4+, or ship [`Expression2`](/examples/swift-ios-expression2) on that device |
 | the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling: the entitlements are not granted yet, or not in the profile | check Apple's reply, then rebuild so the profile picks them up ([entitlements](/sdk/ios#apple-entitlements--bithumankit-only)) |
 | `error: the package manifest at '/Package.swift' cannot be accessed` | a clone from before 2026-09-09, pinning a 0.x tag | `git pull` |
-| the avatar never starts and the error mentions a key | `BITHUMAN_API_KEY` is not in the scheme's environment | add it under *Edit Scheme → Run → Arguments* |
+| the avatar never starts and the error mentions a key | `BITHUMAN_API_SECRET` is not in the scheme's environment | add it under *Edit Scheme → Run → Arguments* |
 | the microphone never opens | missing privacy strings; the OS caches the denial | keep `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` in `Info.plist` |
 | a Simulator build succeeds and proves nothing | the hardware gate reads `hw.machine`, which in a Simulator is not your phone's | test on the device ([why](/sdk/ios#build-on-a-device-not-the-simulator)) |
 
@@ -290,5 +293,5 @@ Full source:
 - [Swift SDK](/sdk/ios) — the full Apple reference: requirements, products, models, errors.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent instead.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain in Python.
-- [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.
+- [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API secret.
 - [Where each model runs](/concepts/models#where-each-model-runs) — which model to ship, and which platforms it runs on.

@@ -102,7 +102,7 @@ Only cloud voice/chat sessions record a transcript; self-hosted sessions return 
 ## Terminate a session
 
 `POST /v2/{user_id}/runtime-sessions/{session_id}/terminate` — stop **one** session. Never
-touches an API key.
+touches an API secret.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -146,5 +146,5 @@ curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime/revoke-all" \
 }
 ```
 
-This does **not** delete your keys — it suspends runtime token issuance. It's self-recoverable:
-creating a new API key clears the suspension.
+This does **not** delete your API secrets — it suspends runtime token issuance. It's self-recoverable:
+creating a new API secret clears the suspension.

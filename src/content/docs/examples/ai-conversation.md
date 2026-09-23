@@ -8,7 +8,7 @@ order: 15
 
 ## Prerequisites
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication). The runtime checks it at the first frame, so this example does not start without one.
+- A bitHuman API secret — get one at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication). The runtime checks it at the first frame, so this example does not start without one.
 - An `OPENAI_API_KEY` (the brain) — from [openai.com](https://openai.com).
 - A working microphone, and an avatar `.imx` file — [get one below](#get-an-avatar-file).
 - **On Linux, the PortAudio system library.** `sounddevice` loads it at import and no
@@ -74,7 +74,7 @@ about 148 MB. `bithuman list` prints every showcase slug; more are on
 1. Set both keys in the same shell (or copy `.env.example` to `.env` and fill it in).
 
 ```bash
-export BITHUMAN_API_SECRET="your_secret" OPENAI_API_KEY="sk-..."
+export BITHUMAN_API_SECRET="<your API secret>" OPENAI_API_KEY="sk-..."
 ```
 
 2. Run the conversation, pointing at your model. Speak into your mic; press `Q` in the window to quit.

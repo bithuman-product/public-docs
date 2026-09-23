@@ -38,11 +38,12 @@ immediately with `processing`; use the GET endpoint to check completion.
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
+import os
 import requests
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/dynamics/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"agent_id": "A80HVD8577", "duration": 5, "model": "auto"},
 )
 print(resp.json())
@@ -66,12 +67,13 @@ motions (default), 5–10 s for extended animations.
 available gestures for an agent.
 
 ```python
+import os
 import requests
 
 agent_id = "A80HVD8577"
 resp = requests.get(
     f"https://api.bithuman.ai/v1/dynamics/{agent_id}",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 )
 gestures = resp.json()["data"].get("gestures", {})
 print(list(gestures.keys()))

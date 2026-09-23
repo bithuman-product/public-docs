@@ -23,7 +23,7 @@ it.
 | Python 3.10–3.14 | the wheel is built for those; 3.15 has none | `python3 --version` |
 | Apple Silicon macOS 14+, Linux x86_64, or Linux aarch64 | no Windows, Intel Mac or musl wheel exists | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
 | A virtual environment | a system-wide `pip install` is refused on Debian and Ubuntu — see [Install](#install) | `python3 -m venv --help` |
-| `BITHUMAN_API_SECRET` | the model download is free; rendering a frame is metered and refuses without a key | `test -n "$BITHUMAN_API_SECRET" && echo set` |
+| `BITHUMAN_API_SECRET` | the model download is free; rendering a frame is metered and refuses without an API secret | `test -n "$BITHUMAN_API_SECRET" && echo set` |
 | About 1 GB of free disk | ~570 MB for the installed package, plus 118–190 MB per avatar | `df -h .` |
 | `ffmpeg` on `PATH` | only for the MP4 route, `render_offline` | `ffmpeg -version` |
 
@@ -117,9 +117,9 @@ showcase avatar; `demo_sample.wav` is 24 kHz mono, 15.0 seconds. Expression 2
 plays at 20 frames per second, so the frame count tracks the length of the
 audio you hand it.
 
-Step 2 is not optional. Left unedited, the `…` placeholder is a key the
+Step 2 is not optional. Left unedited, the `…` placeholder is a value the
 service rejects, so the run stops at `bithuman.open` with *"that key was not
-accepted (401)"*; with no key set at all it gets one step further and raises
+accepted (401)"*; with none set at all it gets one step further and raises
 `NotAuthorised` at the **first frame** — see
 [Authentication](#authentication) for both refusals and their
 exact text.
@@ -194,7 +194,7 @@ ffprobe -v error -count_frames -select_streams v:0 \
 
 ## Get a model
 
-A showcase avatar is a plain anonymous download — no account, no key. **Check
+A showcase avatar is a plain anonymous download — no account, no API secret. **Check
 the size before you start it**: an [Expression 2](/concepts/expression-2)
 avatar is 188–190 MB, an [Essence 2](/concepts/essence-2) avatar 118–148 MB
 (the sizes `bithuman list` prints; the [CLI page](/sdk/cli#the-showcase-catalogue)
@@ -235,8 +235,8 @@ and fetches again when the published file has changed.
 
 ## Authentication
 
-Set `BITHUMAN_API_SECRET` in the shell you run Python from — a key is free at
-[your API keys](https://www.bithuman.ai/developer/api-keys). `BITHUMAN_CACHE_DIR`
+Set `BITHUMAN_API_SECRET` in the shell you run Python from — an API secret is free at
+[your API secrets](https://www.bithuman.ai/developer/api-keys). `BITHUMAN_CACHE_DIR`
 moves the download cache off `~/.cache/bithuman`.
 
 The two credential failures happen at different moments, which is how you tell
@@ -247,7 +247,7 @@ them apart:
 | not set at all | succeeds | raises `NotAuthorised`: *"no credential was supplied, so this render cannot be attributed to an account. Set BITHUMAN_API_SECRET…"* |
 | set but rejected | raises `NotAuthorised`: *"that key was not accepted (401) — the API secret was rejected — revoked, or from another environment."* | never reached |
 
-So a process with no key still opens the file and does real work before it
+So a process with no API secret still opens the file and does real work before it
 refuses: the credential is *checked* at the first frame, not at load.
 
 ## Billing follows the talking, not the clock
@@ -285,7 +285,7 @@ python hello.py
 ```
 
 The download is free; **the render is metered** and refuses before the first
-frame without a key — [pricing](/guides/pricing) is the authority. An Essence 2
+frame without an API secret — [pricing](/guides/pricing) is the authority. An Essence 2
 avatar fetches the shared audio encoder automatically, once, into
 `~/.bithuman/deps` — about 377 MB. `bithuman.open(...).render(...)` fetches the
 2 s streaming window alongside it (about 450 MB in all); `render_offline(...)`
@@ -315,7 +315,7 @@ logging.basicConfig(level=logging.INFO)
 | `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14; pip installed nothing | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
 | `NotSupported` opening a `.avatar` | the Expression 2 extra is missing | `pip install "bithuman[expression-2]"` |
 | the first `render` raises `NotAuthorised`, *"no credential was supplied"* | no key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
-| `bithuman.open` raises `NotAuthorised`, *"that key was not accepted (401)"* | there is a key and the service rejected it — revoked, or from another environment | mint a fresh one at [your API keys](https://www.bithuman.ai/developer/api-keys) |
+| `bithuman.open` raises `NotAuthorised`, *"that key was not accepted (401)"* | there is an API secret and the service rejected it — revoked, or from another environment | mint a fresh one at [your API secrets](https://www.bithuman.ai/developer/api-keys) |
 | `MeteringNotArmedError` from `render_offline` | same missing credential, on the offline route | `export BITHUMAN_API_SECRET=…`, or pass `api_secret=` |
 | the MP4 exists but has no picture | a refused render still writes the audio-only stub described above | set the credential, delete the stub, render again — and gate on the frame count, not the file |
 | `InvalidAvatar` on an Essence 2 file you were given | the file is not usable as published | send the agent code to [hello@bithuman.ai](mailto:hello@bithuman.ai) for re-publishing |
@@ -324,12 +324,12 @@ logging.basicConfig(level=logging.INFO)
 | frames look blue | frames are RGB; your sink wants BGR | `image[:, :, ::-1]` |
 | the first `render` is slow, with a large download | the shared audio encoder and its 2 s window are being fetched, once | wait; they are cached for every later run |
 | the cache fills the wrong disk | downloads land in `~/.cache/bithuman` by default | set `BITHUMAN_CACHE_DIR` to move the download cache |
-| code written for a 2.x release behaves differently | `open()` / `render()` frames are RGB and the key comes from the environment; `AsyncBithuman` keeps its 2.x contract | port to the snippet above, or keep `AsyncBithuman` |
+| code written for a 2.x release behaves differently | `open()` / `render()` frames are RGB and the API secret comes from the environment; `AsyncBithuman` keeps its 2.x contract | port to the snippet above, or keep `AsyncBithuman` |
 
 ## Examples and source
 
 - [`python/quickstart`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/quickstart) — the smallest scripted path:
-  a key, a model, a first render.
+  an API secret, a model, a first render.
 - [`python/local-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) — Essence on your own CPU
   box, with a microphone script, a conversation script and a web UI.
 - [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman

@@ -51,8 +51,8 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
   from your credit balance. A live session bills its talking minutes; an MP4
   render bills the length of the clip it writes.
 - **A credential is required to render.** Sign in with `bithuman login`, or set
-  `BITHUMAN_API_SECRET` — get a key at
-  [Developer → API keys](https://www.bithuman.ai/developer/api-keys).
+  `BITHUMAN_API_SECRET` — get one at
+  [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
 - **Rendering authenticates online** and reports usage as it runs. If the
   connection drops, a session keeps a 5-minute grace.
 - **To run completely off the internet**, see [offline licensing](/guides/pricing#offline-licensing).

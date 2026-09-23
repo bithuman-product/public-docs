@@ -20,7 +20,7 @@ info:
     This machine-readable spec currently covers the core
     agent / video / dynamics / files / pricing surface. Some developer
     endpoint groups are documented in the markdown guides rather than
-    here: [API keys](https://docs.bithuman.ai/api/api-keys)
+    here: [API secrets](https://docs.bithuman.ai/api/api-keys)
     (`/v2/{user}/api-secrets*`),
     [runtime sessions](https://docs.bithuman.ai/api/runtime-sessions)
     (`/v2/{user}/runtime-sessions*`),

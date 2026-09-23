@@ -97,7 +97,7 @@ export function hubMeta(route: string): HubMeta {
 
 // The two code samples /start prints. They live here so /llms-full.txt carries
 // the same bytes the page renders.
-export const START_EMBED = `<!-- Paste into any page. No API key, no install. -->
+export const START_EMBED = `<!-- Paste into any page. No API secret, no install. -->
 <iframe
   src="https://bithuman.ai/embed/A78WKV4515"
   allow="microphone *; camera *; autoplay *"

@@ -11,7 +11,7 @@ label: "CLI — local mode"
 
 `BITHUMAN_LOCAL=1` swaps the cloud conversation brain (OpenAI Realtime) for an
 entirely in-process one — whisper.cpp + llama.cpp + Supertonic + Silero VAD. No
-LLM or TTS vendor, no API key for either, no separate servers. Same
+LLM or TTS vendor, no vendor key for either, no separate servers. Same
 `bithuman run` command, same browser URL, same avatar.
 
 Run these in order. The five packages go in **fourth**, not first: they have to
@@ -19,7 +19,7 @@ land in the venv the CLI bootstraps on your first `bithuman run`, and that
 directory does not exist until then.
 
 ```bash
-# 1 — an avatar file. `bithuman pull` is free and anonymous: no account, no key.
+# 1 — an avatar file. `bithuman pull` is free and anonymous: no account, no API secret.
 bithuman pull sofia-ramirez
 
 # 2 — sign in. This is for `run`, not for `pull`: an Essence 2 .imx will not play

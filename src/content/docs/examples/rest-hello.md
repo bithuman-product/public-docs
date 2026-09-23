@@ -8,7 +8,7 @@ order: 12
 
 ## Prerequisites
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
+- A bitHuman API secret — get one at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication).
 - `curl` and `python3` (for pretty-printing JSON) — preinstalled on macOS and most Linux. No SDK, no language runtime.
 - **At least 250 credits on the account.** Step 2 creates an agent, and creation is a one-time charge: 250 credits for `expression-1` (what this walkthrough builds), 500 for `essence-2`, 2000 for `expression-2`. The free tier's **99 credits/month covers none of them** — a free balance gets `402 INSUFFICIENT_BALANCE` and no agent. Top up or pick a plan first: [the free-tier arithmetic](/guides/pricing#the-free-tier-cannot-create-an-agent).
 - Works from any stack that can make HTTPS requests. Base URL is `https://api.bithuman.ai`; auth is the `api-secret` header on every call.
@@ -16,7 +16,7 @@ order: 12
 Export the secret once — every command on this page reads it from the environment:
 
 ```bash
-export BITHUMAN_API_SECRET=your_secret   # replace with the key from Developer → API Keys
+export BITHUMAN_API_SECRET="<your API secret>"   # from Developer → API Secrets
 ```
 
 Then confirm you can afford step 2 before you run it. This call spends nothing:
@@ -131,7 +131,7 @@ The repo ships this as runnable per-endpoint scripts (`validate.sh`, `generate-a
 ```bash
 git clone https://github.com/bithuman-product/bithuman-examples.git
 cd bithuman-examples/api/rest-api/curl
-export BITHUMAN_API_SECRET=your_secret
+export BITHUMAN_API_SECRET="<your API secret>"
 ./validate.sh
 ```
 

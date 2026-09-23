@@ -222,6 +222,8 @@ async function main() {
   for (const arm of ARMS) {
     const env = { ...process.env, HOME: join(dir, "home"), ...arm.env };
     delete env.BITHUMAN_API_SECRET;
+    delete env.BITHUMAN_API_KEY;     // the deprecated alias; a newer wheel reads it
+    delete env.BITHUMAN_API_TOKEN;   // a short-lived token a runner may carry
     if (!arm.env.BITHUMAN_UNMETERED) delete env.BITHUMAN_UNMETERED;
     const res = spawnSync(py, [join(dir, "probe.py"), arm.model || model],
       { encoding: "utf8", timeout: 900_000, env });

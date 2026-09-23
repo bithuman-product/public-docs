@@ -43,7 +43,7 @@ curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
 
 Read-only, no billing side effects. `credit_balance` is the sum of your plan and top-up
 credits. Use `user_id` in the `/v2/{user_id}/…` account endpoints
-([API keys](/api/api-keys), [Runtime sessions](/api/runtime-sessions),
+([API secrets](/api/api-keys), [Runtime sessions](/api/runtime-sessions),
 [Providers](/api/providers)).
 
 ## Get the pricing schedule
@@ -114,7 +114,7 @@ accounts and never returns `404`.)
 | `app_key` | string | no | same as `app` | Explicit subscription key for collection-scoped apps. |
 
 ```bash
-# Your own balance — just the key:
+# Your own balance — just your API secret:
 curl https://api.bithuman.ai/v2/credit-summaries \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
@@ -200,11 +200,12 @@ with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
+import os
 import requests
 
 resp = requests.get(
     "https://api.bithuman.ai/v1/usage",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
     params={"limit": 50, "start": "2026-06-01T00:00:00Z"},
 ).json()
 

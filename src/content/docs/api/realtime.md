@@ -10,7 +10,7 @@ label: "Realtime voice"
 ## Overview
 
 The Realtime API mints a **short-lived client secret** your browser (or client app) uses to
-open an OpenAI-Realtime voice session directly — without exposing your bitHuman API key or an
+open an OpenAI-Realtime voice session directly — without exposing your bitHuman API secret or an
 OpenAI key to the client. Your server calls this endpoint with its `api-secret`, hands the
 returned `value` to the client, and the client connects to OpenAI Realtime with it.
 

@@ -150,7 +150,7 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 
 | Mode | What it means | Auth |
 |---|---|---|
-| **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server, Android, CLI, REST) / `BITHUMAN_API_KEY` (Swift only) |
+| **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | your API secret — `BITHUMAN_API_SECRET` on every surface (`be_essence2_set_api_secret` / `Essence2Metering.apiSecret` / `bitHumanKit` `config.apiKey` on device) |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
 There is no unmetered mode for an avatar — see the note on `BITHUMAN_UNMETERED` [above](#serving--credits-per-live-minute).
@@ -165,9 +165,9 @@ The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short
 
 Both mobile rails bill a live avatar at the **self-hosted rate** in the table above, on the same rule as every other surface: talking minutes accrue, idle animation does not.
 
-**Swift.** The SDK requests a runtime token once on `chat.start()` (sync — bad keys fail fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar. The env var on this rail is `BITHUMAN_API_KEY`, not `BITHUMAN_API_SECRET`.
+**Swift.** The SDK requests a runtime token once on `chat.start()` (sync — a bad API secret fails fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar. On this rail (`bitHumanKit`) your API secret goes in `config.apiKey`; read it from `BITHUMAN_API_SECRET` like every other surface.
 
-**Android / Kotlin.** `ai.bithuman:essence2-android` meters every session: set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to. A metering service that cannot be reached never stops a render; a **rejected** key gets a 300-second grace and then ends the session. Details are on the [Android SDK page](/sdk/android#authentication).
+**Android / Kotlin.** `ai.bithuman:essence2-android` meters every session: set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to. A metering service that cannot be reached never stops a render; a **rejected** API secret gets a 300-second grace and then ends the session. Details are on the [Android SDK page](/sdk/android#authentication).
 
 Which SDK pulls the model onto the handset, and which handsets are supported at all, is on [getting an avatar model onto a phone](/sdk).
 
@@ -228,7 +228,7 @@ models.
 - **Source code, SDK installs, documentation** — free.
 - **Audio-only Swift SDK use** — voice chat with no avatar attached is unmetered and fully offline.
 - **Idle, silent, stopped, paused or disconnected sessions** — none of them accrue. Only talking does. See [What counts as a billable minute](#how-metering-works).
-- **Failed auth** — bad keys fail fast and don't burn credits.
+- **Failed auth** — a bad API secret fails fast and doesn't burn credits.
 - **Failed creations and renders** — automatically refunded.
 - **Model weights** — `.imx` and Expression weight downloads are free; only active runtime minutes count. Each download is still *recorded*: it writes one usage row at **0 credits** and returns its id in the `X-Bithuman-Meter-Id` response header, so a 0-credit line in [your usage](/api/reference#operation/getUsage) next to a download is the record, not a charge.
 

@@ -242,9 +242,8 @@ int32_t be_essence2_set_api_secret(const char* api_secret);
 ```
 
 The credential is taken from `be_essence2_set_api_secret()` if it was called,
-otherwise from the environment variable `BITHUMAN_API_SECRET`. Essence 2 does
-**not** read `BITHUMAN_API_KEY` (that is `bitHumanKit`'s name); the value is the
-same.
+otherwise from the environment variable `BITHUMAN_API_SECRET` — your API
+secret. essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias.
 
 ★ **The header's own comment is older than the engine it ships in.** It says a
 missing credential renders unmetered and that `be_essence2_create` returns `-3`

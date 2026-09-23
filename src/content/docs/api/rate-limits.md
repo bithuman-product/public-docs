@@ -32,9 +32,9 @@ What each cost tier covers:
 | **Read** | `GET` requests | `GET /v1/agent/status/*`, voice lists, `GET /v2/credit-summaries` |
 
 Your column is determined by your subscription; accounts without one get the
-Free limits. Plan changes reach the limiter within about a minute — no key
-rotation needed. Check your plan and keys at
-[Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
+Free limits. Plan changes reach the limiter within about a minute — no API secret
+rotation needed. Check your plan and API secrets at
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
 
 Exceeding a bucket returns `429` with a `Retry-After` header (see [Response
 headers](#response-headers)) and the standard [error envelope](/api/errors):
