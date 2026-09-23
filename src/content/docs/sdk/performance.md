@@ -35,6 +35,10 @@ the tier for each session, and the three Cloud rows show each tier.
 Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.14 · essence2-android 0.5 · expression2-android 0.4 · cloud API (September 2026).
 <!-- /FLOORS:RELEASES -->
 
+<!-- FLOORS:SUSTAINED -->
+
+<!-- /FLOORS:SUSTAINED -->
+
 ## Memory
 
 <!-- FLOORS:MEMORY -->

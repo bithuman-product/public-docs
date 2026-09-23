@@ -32,6 +32,13 @@
     },
     {
       "file": "src/content/docs/sdk/performance.md",
+      "marker": "SUSTAINED",
+      "key": null,
+      "index": 0,
+      "sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+    },
+    {
+      "file": "src/content/docs/sdk/performance.md",
       "marker": "MEMORY",
       "key": null,
       "index": 0,
