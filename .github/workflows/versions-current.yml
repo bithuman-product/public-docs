@@ -60,7 +60,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/sync-versions.mjs --registries
       - name: Every pin on the site equals versions.json
-        # Report-only until the Apple pages move to the new template (their
-        # pins are being updated in another open change); blocking in P15.
-        continue-on-error: true
         run: node scripts/sync-versions.mjs
