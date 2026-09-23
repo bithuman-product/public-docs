@@ -10,9 +10,9 @@ label: "Voices"
 
 ## Two ways to give your agent a voice
 
-| Lane | What you get | Cost |
+| Option | What you get | Cost |
 |------|--------------|------|
-| **bitHuman default** | The built-in voice pipeline — **multilingual out of the box**. Your agent auto-detects the caller's language and replies in it. No setup, no keys. | Included |
+| **bitHuman default** | The built-in voice pipeline. Your agent detects the caller's language and replies in it. No setup, no keys. | Included |
 | **Bring your own provider** | Connect your **own** OpenAI, Grok (xAI), ElevenLabs, or Cartesia key and pick that provider's premium voices — including low-latency speech-to-speech (realtime). | Runs on **your** key, billed by **your** provider |
 
 You never *have* to bring a key. The default pipeline already speaks every language. Bring your own only when you want a specific premium voice or a provider's realtime engine.
@@ -25,7 +25,7 @@ Open any agent's voice settings at [bithuman.ai](https://www.bithuman.ai/explore
 
 ### 1. Connect your key
 
-Go to **Developer → Integrations**, add your provider, and paste that provider's key. bitHuman **validates the key before saving** — an invalid key is rejected on the spot, so a saved provider is always a working one. Keys are encrypted at rest and never leave the platform in plaintext.
+Go to **Developer → Integrations** (or use the [Providers API](/api/providers)), add your provider, and paste that provider's key. bitHuman **validates the key before saving** — an invalid key is rejected on the spot, so a saved provider is always a working one. Keys are encrypted at rest and never leave the platform in plaintext.
 
 ### 2. Pick a premium voice
 
@@ -38,7 +38,7 @@ Back in the agent's voice settings, the premium providers you've connected unloc
 | **OpenAI** | Realtime voices (alloy, ash, ballad, cedar, …) | ✓ |
 | **Grok (xAI)** | Grok voices (ara, eve, rex, …) | ✓ |
 | **ElevenLabs** | Your ElevenLabs voice library | — |
-| **Cartesia** | Cartesia voices (also powers the free default) | — |
+| **Cartesia** | Cartesia voices | — |
 
 > **Tip** Realtime providers (OpenAI, Grok) give the lowest-latency, most expressive speech-to-speech — great for kiosks and live demos. ElevenLabs and Cartesia give you a specific voice on the standard pipeline.
 
