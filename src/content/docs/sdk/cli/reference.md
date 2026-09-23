@@ -377,40 +377,39 @@ A failure prints one object to **stderr** and leaves stdout empty:
 Colour is emitted only to an interactive TTY, so `--json`, `NO_COLOR`, `CI`,
 `TERM=dumb` and any pipe all silence it.
 
-### `login` does not keep this contract yet
+### `login` keeps this contract from 2.7.0
 
-**`bithuman login` is the one command that breaks both rules above, and it is a
-defect rather than a design.** Measured on the published `cli-v2.6.26` binary on
-2026-09-22, on Linux x86_64, with stdout redirected to a file:
+**Both sign-in routes put exactly one JSON object on stdout under `--json`, and
+nothing else.** The banner, the link and the code box are routed to **stderr**,
+so over SSH you still see the code to type while stdout stays parseable.
+Executed end to end on the published `cli-v2.7.0` binary on 2026-09-23 (clean
+Ubuntu 24.04, Linux x86_64, stdout redirected to a file), each route carried
+through approval to a stored per-device key:
 
 ```bash
-bithuman login --device --json > out.json
-# out.json holds the sign-in banner and the code box — seven lines of them,
-# ANSI escapes included — and no JSON object at all.
+bithuman login --device --json > out.json     # the code box goes to stderr
 jq . out.json
-# jq: parse error: Invalid numeric literal at line 2, column 4
+{"alias":"cli@<host>-<date>","email":"you@example.com","logged_in":true,"schema_version":1,"stored":"~/.bithuman/config"}
 ```
 
-Both sign-in flows do it, the browser one and `--device` alike. Redirecting
-stdout does not silence the colour either: `login` carried its own copies of the
-escape codes instead of going through the single gate every other command uses,
-so the non-TTY rule never reached it. Every other subcommand was checked the
-same way on the same binary and keeps the contract — `version`, `list`,
-`doctor`, `whoami` and `logout` each put one JSON object on stdout with no
-escapes, and `account`, `usage`, `token`, `pull` and `open` each put one error
-object on stderr and leave stdout empty.
+| route | exit | stdout | escape bytes on stdout |
+|---|---|---|---|
+| `login --device --json` | 0 | one line, one object | 0 |
+| `login --json` (browser) | 0 | one line, one object — the same five keys | 0 |
 
-Until a build carrying the fix is published, a script or an agent that needs to
-sign in has a route that does honour the contract — and it is the one to prefer
-on a headless box anyway, because it needs no browser and no code to type:
+`email` and `alias` are `null` when the route does not learn them. On
+`cli-v2.6.26` and earlier, `login` wrote the banner and the code box to stdout,
+colour escapes included, and no object at all — `jq` failed with *parse error:
+Invalid numeric literal*. Upgrade (`curl -fsSL https://install.bithuman.ai |
+sh`) if `bithuman version` reports an older CLI.
+
+On a headless box the route with nothing to approve is still the shorter one —
+no browser and no code to type:
 
 ```bash
 printf %s "$BITHUMAN_API_SECRET" | bithuman login --with-token --json
 {"logged_in":true,"schema_version":1,"stored":"~/.bithuman/config"}
 ```
-
-If you are driving `--device` from a script in the meantime, read the code from
-**stderr** and treat stdout as empty; do not pipe it to `jq`.
 
 ### Exit codes
 
