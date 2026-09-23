@@ -47,7 +47,7 @@ with duplicate symbols ([why](/sdk/apple#install)).
 - **An Apple Developer team**, and an iPhone or iPad you have paired and
   trusted. Everything here is a *device* build — see
   [Signing](#5-sign-it-and-run-it-on-the-phone) below, and the fuller
-  [signing section](/sdk/apple#run)
+  [signing section](/sdk/apple#first-frame)
   on the SDK page.
 - **An identity to render.** You have two routes, and only one of them costs
   anything:
@@ -254,7 +254,7 @@ from a number on this page.
 > Variables* (Xcode passes it to the app on the phone when you Run); in an app you
 > ship, fetch the key from your backend or the Keychain and call
 > `Expression2Credential.set(key)` before `create`. Never compile a key into the
-> app. See [Authentication](/sdk/apple#authentication).
+> app. See [Authentication](/sdk/apple#authenticate).
 
 ## 2. The Xcode project
 
@@ -300,7 +300,7 @@ choose **Up to Next Major Version** from **2.14.2**, and attach the
 > carried overlapping objects and a device build failed its final link with
 > **116 duplicate symbols**, while the Simulator was green — which is how a
 > Simulator-only CI missed it. On 2026-09-23 a new app taking both from 2.14.1
-> built for an iOS device, the Simulator and macOS. [Details](/sdk/apple#pin-the-version).
+> built for an iOS device, the Simulator and macOS. [Details](/sdk/apple#platform-notes).
 
 Finally, drag the `Model` folder from step 1 into the project and choose
 **Create folder references** (blue folder, not yellow group). The app reads it
@@ -970,7 +970,7 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > readable. `security show-keychain-info ~/Library/Keychains/login.keychain-db`
 > tells you which state you are in — `User interaction is not allowed.` means
 > locked. The full list of signing traps is on
-> [the SDK page](/sdk/apple#run).
+> [the SDK page](/sdk/apple#first-frame).
 
 ## What you'll see
 
@@ -1093,12 +1093,12 @@ path. Use a physical device.
 ### Link failure with 116 duplicate symbols
 
 You attached both `Expression2` and `Essence2` on a tag below 2.14.0. Raise the
-floor to 2.14.2 and force the resolve ([Pin the version](/sdk/apple#pin-the-version)).
+floor to 2.14.2 and force the resolve ([Pin the version](/sdk/apple#platform-notes)).
 
 ## Next steps
 
 - [Swift SDK](/sdk/apple) — the reference for every call this page makes, plus signing, compute units and the hardware floor.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-voice-agent) — the full on-device voice agent, when you are ready for the device floor and the entitlements.
-- [Pin the version](/sdk/apple#pin-the-version) — which package tag to write, and how to check what you resolved.
+- [Pin the version](/sdk/apple#platform-notes) — which package tag to write, and how to check what you resolved.
 - [Expression 2](/concepts/expression-2) — what the model is and where it runs.
 - [Agents API](/api/agents) — creating an agent and downloading its model.

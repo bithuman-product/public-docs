@@ -38,7 +38,7 @@ binary.
 `Expression2` and `Essence2` may share one target from `2.14.0`; below it a
 device build failed its final link on duplicate symbols. On 2026-09-23 a new app
 taking both from `2.14.1` built for an iOS device, the Simulator and macOS.
-[Details](/sdk/apple#pin-the-version).
+[Details](/sdk/apple#platform-notes).
 
 ## Prerequisites
 
@@ -72,7 +72,7 @@ the `Essence2` package product nor the app below asks for an entitlement, and
 the app builds and signs without one. What an entitlement buys is headroom
 above the roughly 3 GB an unentitled iOS app may hold, so if your own app grows
 past this one and is killed with no crash log, that ceiling is the first thing
-to check — [the iOS SDK page](/sdk/apple#apple-entitlements--bithumankit-only) covers requesting
+to check — [the iOS SDK page](/sdk/apple#platform-notes) covers requesting
 them.
 
 ★ **If you read the package's own `Package.swift`, you will find a comment
@@ -337,7 +337,7 @@ ONNX Runtime build its audio head calls; `UnifiedModelHeader`, which the engine
 archive references rather than carries; and `Essence2LinkSettings`, which
 declares the four Apple libraries the static archive calls (`c++`,
 `VideoToolbox`, `Accelerate`, `CoreML`). Below 2.14.1 you had to add those four
-by hand — [iOS SDK](/sdk/apple#what-essence-2-needs-at-link).
+by hand — [iOS SDK](/sdk/apple#install).
 
 ★ **`ld` will warn once per engine object, and the build is still good.** The
 manifest declares `.macOS(.v13), .iOS(.v16)` while these objects are built for
@@ -1047,7 +1047,7 @@ Each row below quotes the shipped engine's own wording where it has one.
 | `be_essence2_get_info reported a 0-pixel canvas` | the guard in `load()` firing — `get_info` answered before the engine had produced a frame | re-run; if it repeats, report the agent code. Without the guard this is a face that never moves and no message at all |
 | `ld` warns *"built for newer 'iOS' version (26.0) than being linked"*, once per object | the package manifest's `.iOS(.v16)` floor meeting objects built at iOS 26 | expected — not a fault. The error version of this is a link failure, fixed by Minimum Deployments **iOS 26.0** |
 | the app builds for the Simulator and then crashes there | expected — this is on-device Apple-Silicon inference | run on a physical device |
-| the app disappears mid-render with no crash log | iOS jetsammed it at the roughly 3 GB an unentitled app may hold | this app fits; if yours has grown past it, request the two memory entitlements ([iOS SDK](/sdk/apple#apple-entitlements--bithumankit-only)) |
+| the app disappears mid-render with no crash log | iOS jetsammed it at the roughly 3 GB an unentitled app may hold | this app fits; if yours has grown past it, request the two memory entitlements ([iOS SDK](/sdk/apple#platform-notes)) |
 | the first launch takes minutes, and does again later | the engine unpacks `agent.imx` under `NSTemporaryDirectory()`, which iOS may reclaim | expected; unpack to a directory you control and pass that instead — see the note after the code |
 
 ## Next steps
