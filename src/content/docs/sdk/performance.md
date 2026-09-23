@@ -39,6 +39,10 @@ Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.14 · 
 
 <!-- /FLOORS:SUSTAINED -->
 
+<!-- FLOORS:WALLCLOCK -->
+
+<!-- /FLOORS:WALLCLOCK -->
+
 ## Memory
 
 <!-- FLOORS:MEMORY -->
