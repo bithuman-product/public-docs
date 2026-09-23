@@ -23,12 +23,12 @@ the tier for each session, and the three Cloud rows show each tier.
 | Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |
 | Cloud API · CPU | x86 server CPU | 22 | 0.8× below real time | 27 | **1.3×** real time |
 | macOS · CLI | Apple M4 | 114 | **4.5×** real time | 168 | **8.4×** real time |
-| macOS · Python | Apple M4 | 177 | **7.0×** real time | 159 | **7.9×** real time |
+| macOS · Python | Apple M4 | 175 | **7.0×** real time | 167 | **8.3×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 36 | **1.4×** real time | 44 | **2.2×** real time |
-| Linux · Python | Intel Core i7-13700F (x86_64) | 31 | **1.2×** real time | 46 | **2.3×** real time |
+| Linux · Python | Intel Core i7-13700F (x86_64) | 36 | **1.4×** real time | 47 | **2.3×** real time |
 | iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 110 | **5.5×** real time |
-| Android | Samsung Galaxy S25+ | 46 | **1.8×** real time | 43 | **2.1×** real time |
-| Web browser (WebGPU) | Chrome on Apple M4 | 29 | **1.1×** real time | 30 | **1.5×** real time |
+| Android | Samsung Galaxy S25+ | 46 | **1.8×** real time | 47 | **2.3×** real time |
+| Web browser (WebGPU) | Chrome on Apple M4 | 42 | **1.6×** real time | 40 | **2.0×** real time |
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES -->
