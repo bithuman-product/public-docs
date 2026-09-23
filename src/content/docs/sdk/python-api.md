@@ -11,7 +11,7 @@ label: "Python API"
 How to use these in an app is on [Python](/sdk/python).
 
 <!-- PYAPI:BEGIN -->
-Generated from `bithuman` 2.11.6 as published on PyPI (Python `<3.15,>=3.10`; extras: `bithuman[expression-2]`). Names the package exports that are not listed here are internal and can change.
+Generated from `bithuman` 2.11.7 as published on PyPI (Python `<3.15,>=3.10`; extras: `bithuman[expression-2]`). Names the package exports that are not listed here are internal and can change.
 
 ## bithuman
 
