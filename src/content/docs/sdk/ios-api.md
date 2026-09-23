@@ -51,7 +51,7 @@ var height: Int
 
 ## Essence 2 (C)
 
-Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` RGB bytes. Nothing blocks except `be_essence2_quiesce_all`.
+Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
 ### Credentials
 

@@ -2,11 +2,6 @@
   "_comment": "Strings a public page must keep verbatim although a G1 pattern matches them: path, exact string, reason. Each is asserted present by scripts/check-internal-content.mjs.",
   "carriers": [
     {
-      "path": "src/content/docs/sdk/ios.md",
-      "string": "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/engines/expression-2/mac-arm64-1.0.0.engine",
-      "reason": "The only published location of the Expression 2 shared engine file a developer must download; moving it to a bitHuman domain is bithuman-models#1224."
-    },
-    {
       "path": "src/content/docs/sdk/android-api.md",
       "string": "@Deprecated(\"Enforcement is unconditional since 0.5.7; this property is ignored.\")",
       "reason": "The @Deprecated message compiled into the published essence2-android AAR, quoted verbatim by the generated reference; it changes when the SDK does (bithuman-models#1222)."
