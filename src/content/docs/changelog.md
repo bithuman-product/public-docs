@@ -25,6 +25,18 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### Swift package 2.14.4 — 2026-09-23
+
+Essence 2 engine 1.12.1 · Expression 2 engine 2.6.5
+
+- **Fixed:** building a Swift package or command-line tool that uses Essence 2 no longer prints `.pcm: No such file or directory` linker warnings. The engine itself is unchanged.
+- **Action:** set `from: "2.14.4"`, then `swift package update`. See [Apple](/sdk/apple).
+
+### Flutter plugin 2.6.14 — 2026-09-23
+
+- **Changed:** iOS and macOS use Essence 2 engine 1.12.1.
+- **Action:** pin `ref: flutter-plugin-v2.6.14`.
+
 ### `bithuman` 2.11.8 — 2026-09-23
 
 - **Fixed:** `AsyncBithuman`, the class the LiveKit plugin uses, loads an Essence 2 avatar on macOS. On 2.11.6 and 2.11.7 it failed with "No module named 'bithuman.bindings'", so a LiveKit agent with an Essence 2 avatar on a Mac could not start.
