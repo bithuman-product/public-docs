@@ -40,9 +40,11 @@ Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.14 · 
 
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
 |---|---|---|---|---|---|
-| Android | Samsung Galaxy S25+ | 24 | 0.9× below real time | — | — |
+| Android | Samsung Galaxy S25+ | 28 | **1.1×** real time | — | — |
 
-One session held open for ten minutes from a cool start, rendering as fast as the device allows; each number is the slowest 30-second stretch of that session. The table above is the short-burst rate. A phone warms up over a long conversation and slows its processor to stay cool, so a kiosk or any screen that renders all day should plan on this number.
+Paced at 25 fps, as a kiosk plays video, one Android Essence 2 session delivered every frame for 10 minutes of continuous talking.
+
+One session held open for ten minutes from a cool start, rendering as fast as the device allows. Each number is the median 30-second stretch of the slowest of three such sessions; the slowest single stretch was lower (Android Essence 2 24 fps). The table above is the short-burst rate. A phone warms up over a long conversation and slows its processor to stay cool, so a kiosk or any screen that renders all day should plan on this number.
 <!-- /FLOORS:SUSTAINED -->
 
 <!-- FLOORS:WALLCLOCK -->

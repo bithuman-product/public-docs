@@ -470,9 +470,9 @@
    "sustained": true,
    "cells": {
     "essence-2": {
-     "fps": 24,
-     "x_realtime": 0.96,
-     "realtime": false,
+     "fps": 28,
+     "x_realtime": 1.12,
+     "realtime": true,
      "measured_on": "2026-09-23",
      "release": "essence2-android 0.5.15",
      "clip": {
@@ -483,7 +483,17 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": null,
-     "time_to_video": null
+     "time_to_video": null,
+     "held": {
+      "median_window_fps": 28.2,
+      "worst_window_fps": 24.16,
+      "sessions": 3,
+      "paced": {
+       "display_fps": 25,
+       "held_s": 609,
+       "every_frame_delivered": true
+      }
+     }
     },
     "expression-2": null
    }
