@@ -3,7 +3,7 @@ title: "REST — Hello, avatar"
 description: "Zero-to-avatar with the bitHuman REST API using nothing but curl: validate, generate an agent from a prompt, poll until ready."
 section: examples
 group: "Examples"
-order: 10
+order: 50
 type: example
 label: "REST: see it talk"
 ---

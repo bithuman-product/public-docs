@@ -1,6 +1,6 @@
 ---
 title: "Examples"
-description: "Runnable bitHuman projects, one row per platform — every one is open source. Clone, set your API secret, run."
+description: "Complete, runnable bitHuman apps for every platform: clone, set your API secret, run. Each page shows the example running."
 section: examples
 group: "Examples"
 order: 0
@@ -8,54 +8,29 @@ type: hub
 label: "All examples"
 ---
 
-Every project is open source in
-[bithuman-product/bithuman-examples](https://github.com/bithuman-product/bithuman-examples/tree/main).
-The pages below print a whole project; the repository links are projects you
-clone.
+Every example is open source in [bithuman-examples](https://github.com/bithuman-product/bithuman-examples). Each page shows the app running, the few commands to run it yourself, and how to make it your own.
 
-## Start here
+<div class="example-grid">
+  <a class="example-card" href="/examples/cli"><img src="/examples/cli/hero.webp" alt="The wise-pup avatar rendered by the CLI" loading="lazy" width="416" height="720"><span><strong>CLI</strong>An MP4 or a live conversation from a terminal. macOS and Linux.</span></a>
+  <a class="example-card" href="/examples/python"><img src="/examples/python/hero.webp" alt="An Essence 2 avatar in the Python quickstart window" loading="lazy" width="540" height="988"><span><strong>Python</strong>Open an avatar, play speech through it, watch it talk.</span></a>
+  <a class="example-card" href="/examples/swift-ios-expression2"><span><strong>iOS</strong>A SwiftUI app with a talking Expression 2 avatar on iPhone.</span></a>
+  <a class="example-card" href="/examples/kotlin-android-hello"><span><strong>Android</strong>A Kotlin app rendering Essence 2 or Expression 2 on the handset.</span></a>
+  <a class="example-card" href="/sdk/web#first-frame"><span><strong>Web</strong>One iframe: a live avatar on any page.</span></a>
+  <a class="example-card" href="/examples/rest-hello"><span><strong>REST</strong>Create an agent and make it talk with curl.</span></a>
+</div>
 
-| If you want… | Start with | Time |
+## More examples
+
+| Example | Platform | What it shows |
 |---|---|---|
-| A talking avatar with no code | [CLI](/sdk/cli) | ~2 min |
-| The smallest loop in code | [Python quickstart](/sdk/python#first-frame) | ~5 min |
-| The platform from any language | [REST — Hello, avatar](/examples/rest-hello) | ~5 min |
-| An avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | ~15 min |
-| An avatar on the iPhone you have | [Swift / iOS — Expression 2](/examples/swift-ios-expression2) | ~25 min |
-| A full-resolution Essence 2 avatar on an iPhone | [Swift / iOS — Essence 2](/examples/swift-ios-essence2) | ~30 min |
-| A voice conversation, mic in, avatar out | [AI voice chat](/examples/ai-conversation) | ~10 min |
-
-## By platform
-
-**Python**
-
-- [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice in, lip-synced avatar out.
-- [`python/quickstart`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/quickstart) — an API secret, a model, a first render.
-- [`python/local-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) — Essence on your own CPU, with a microphone script and a web UI.
-- [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman cloud with LiveKit and a browser UI.
-
-**Apple — iOS and macOS**
-
-- [Swift / iOS — Expression 2](/examples/swift-ios-expression2) — a complete SwiftUI app; a published identity renders with no account, key or credits.
-- [Swift / iOS — Essence 2](/examples/swift-ios-essence2) — the same shape for the full-resolution engine (iOS 26).
-- [Swift / iOS — Hello, avatar](/examples/swift-ios-voice-agent) — `bitHumanKit`, the whole on-device voice agent (iPhone 16 Pro or later, two Apple entitlements).
-- [`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2) — one file on a Mac: a WAV in, lip-synced frames out, no account.
-- [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — a voice-only on-device agent with no avatar.
-
-**Android**
-
-- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — a complete project, every file in full. Expression 2 needs no key; the Essence 2 half of the page needs your API secret.
-
-**Web and other languages**
-
-- [REST — Hello, avatar](/examples/rest-hello) — create and drive an agent with `curl`.
-- [`api/rest-api`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api) — `curl` and Python scripts for every REST endpoint.
-- [`integrations/nextjs-ui`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) — a Next.js video-chat UI over LiveKit.
-- [`integrations/gradio-web`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web) — an avatar in the browser via Gradio + FastRTC.
-- [`integrations/java-websocket`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/java-websocket) — stream audio to an avatar server from Java.
-
-For the REST contract see the [API reference](/api/reference); for deployment
-shapes see [Guides](/guides).
+| [Voice conversation](/examples/ai-conversation) | Python | microphone in, avatar and OpenAI voice out |
+| [iOS: Essence 2](/examples/swift-ios-essence2) | iOS | a full-resolution photoreal avatar on iPhone |
+| [iOS: voice agent](/examples/swift-ios-voice-agent) | iOS | `bitHumanKit`, a complete on-device assistant |
+| [`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2) | macOS | a WAV in, lip-synced frames out, with `swift run` |
+| [`app/avatar_chat`](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) | Flutter (Android) | a voice conversation with idle and interruption |
+| [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) | Python + LiveKit | a cloud avatar in a LiveKit room, with a web UI |
+| [`integrations/nextjs-ui`](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) | Next.js | a video-chat UI over LiveKit |
+| [`api/rest-api`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api) | any language | curl and Python for every REST endpoint |
 
 ## Ready-made avatars
 
@@ -63,7 +38,7 @@ Sample avatars you can use with no account. The full list, with each avatar's mo
 
 | Avatar | Model | Try it |
 |---|---|---|
-| `wise-pup` | Expression 2 | [Talk to it in your browser](https://www.bithuman.ai/embed/A23WJF0199) · `bithuman run wise-pup` |
-| `sofia-ramirez` | Essence 2 | [Talk to it in your browser](https://www.bithuman.ai/embed/A52DHS2219) · `bithuman run sofia-ramirez` |
+| `wise-pup` | Expression 2 | [talk to it in your browser](https://www.bithuman.ai/embed/A23WJF0199) · `bithuman run wise-pup` |
+| `sofia-ramirez` | Essence 2 | [talk to it in your browser](https://www.bithuman.ai/embed/A52DHS2219) · `bithuman run sofia-ramirez` |
 
 `bithuman list` prints every sample avatar, and `bithuman pull <slug>` downloads one.
