@@ -76,7 +76,7 @@ BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 
 ## Cloud brain or on-device brain
 
-| | Cloud brain (default) | On-device brain |
+| Detail | Cloud brain (default) | On-device brain |
 |---|---|---|
 | Setup | sign in (or set `OPENAI_API_KEY`) | three steps above |
 | Where audio goes | to the speech and language service | stays on the machine |

@@ -11,7 +11,7 @@ label: "All examples"
 Every example is open source in [bithuman-examples](https://github.com/bithuman-product/bithuman-examples). Each page shows the app running, the few commands to run it yourself, and how to make it your own.
 
 <div class="example-grid">
-  <a class="example-card" href="/examples/cli"><img src="/examples/cli/hero.webp" alt="The wise-pup avatar rendered by the CLI" loading="lazy" width="416" height="720"><span><strong>CLI</strong>An MP4 or a live conversation from a terminal. macOS and Linux.</span></a>
+  <a class="example-card" href="/examples/cli"><img src="/examples/cli/hero.webp" alt="The wise-pup avatar rendered by the CLI" fetchpriority="high" width="416" height="720"><span><strong>CLI</strong>An MP4 or a live conversation from a terminal. macOS and Linux.</span></a>
   <a class="example-card" href="/examples/python"><img src="/examples/python/hero.webp" alt="An Essence 2 avatar in the Python quickstart window" loading="lazy" width="540" height="988"><span><strong>Python</strong>Open an avatar, play speech through it, watch it talk.</span></a>
   <a class="example-card" href="/examples/swift-ios-expression2"><span><strong>iOS</strong>A SwiftUI app with a talking Expression 2 avatar on iPhone.</span></a>
   <a class="example-card" href="/examples/kotlin-android-hello"><span><strong>Android</strong>A Kotlin app rendering Essence 2 or Expression 2 on the handset.</span></a>

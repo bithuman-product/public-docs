@@ -7,6 +7,8 @@ import rehypeCallouts from "./src/markdown/rehype-callouts.mjs";
 // reference (Scalar) lives at /api/reference; the rest is a bespoke theme.
 export default defineConfig({
   site: "https://docs.bithuman.ai",
+  // Inline the (small) stylesheets so no CSS request blocks the first paint.
+  build: { inlineStylesheets: "always" },
   markdown: {
     // Below 700px a table stops being a grid; each cell then has to name its
     // own column, and that name is content, so it is put there at build time.
@@ -22,7 +24,7 @@ export default defineConfig({
     // edge. src/styles/code.css gives the wrapped lines a hanging indent so a
     // wrapped command still reads as one command.
     shikiConfig: {
-      themes: { light: "github-light", dark: "github-dark" },
+      themes: { light: "github-light-high-contrast", dark: "github-dark" },
       wrap: true,
     },
   },

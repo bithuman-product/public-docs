@@ -10,7 +10,7 @@ label: "Android"
 
 Both models render on the handset: you feed 16 kHz mono speech in and pull picture frames out. After the one-time model download, the only network traffic is usage reporting.
 
-| | Expression 2 | Essence 2 |
+| Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), at the identity's own resolution, 25 fps |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |

@@ -10,7 +10,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   <div class="nav-inner">
     <div class="brand">
       <a class="brand-main" href="https://www.bithuman.ai" aria-label="bitHuman home">
-        <img src="/images/bitHuman-logo-circle.png" alt="" width="24" height="24" />
+        <img src="/images/bitHuman-logo-circle-52.webp" alt="" width="24" height="24" />
         <span>bitHuman</span>
       </a>
       <a class="brand-docs" href="/" aria-label="Docs home">docs</a>
@@ -128,6 +128,10 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   }
   .brand-main img { border-radius: 6px; }
   .brand-docs {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding-inline: 0.25rem;
     font-weight: var(--fw-regular);
     font-size: var(--ft-lg);
     color: var(--color-text-tertiary);
@@ -142,6 +146,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   .nav-link {
     display: inline-flex;
     align-items: center;
+    min-height: 32px;
     gap: 0.3rem;
     padding: 0.45rem 0.7rem;
     border-radius: var(--r-md);
