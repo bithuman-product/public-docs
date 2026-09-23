@@ -244,9 +244,9 @@ const CARRIERS = [
     re: /(?:lane|tier) is called \*{0,2}Apple\*{0,2} ?, not ["“]ANE["”]/ },
   { why: "`docker compose` / `docker-compose.yml` — the command a developer runs and the file they write",
     re: /docker[- ]compose|Compose `env_file`|docker-compose\.yml/i },
-  { why: "`compose()` / `composeFromFile()` — public streaming methods on the on-device Python and Kotlin runtimes, called by name; " +
-         "`bithuman.Bithuman.compose` is the same 2.x method as the generated Python reference names it (2.11.0 carries the 2.x surface)",
-    re: /\bcompose\(|`compose\(\)`|rt\.compose\b|\bBithuman\.compose\b|\bcomposeFromFile\b/ },
+  // ★REMOVED 2026-09-23 — `compose()` / `composeFromFile()`: the pages that called
+  // them by name (the Android example's printed project, the 2.x Python reference)
+  // now link the examples repository and the current API, so no page names them.
   // ★REMOVED 2026-09-07 — a VERBATIM LOADER ERROR that the site no longer
   // quotes. `…the native essence-2 runtime that owns the TESSERA teeth borrow`
   // was printed by CLI 2.5.x/2.6.0 when the essence-2 runtime was missing

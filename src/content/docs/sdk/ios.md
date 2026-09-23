@@ -157,6 +157,6 @@ Frame rates on iPhone and Mac for both models are on the [performance page](/per
 ## Reference
 
 - [Apple API reference](/sdk/apple-api): every Swift and C entry point.
-- Examples: [iOS Expression 2](/examples/swift-ios-expression2) · [iOS Essence 2](/examples/swift-ios-essence2) · [voice agent](/examples/swift-ios-voice-agent) · [macOS Expression 2](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2) (`swift run`).
+- Examples: [iOS Expression 2](/examples/swift-ios-expression2) · [iOS Essence 2](/examples/swift-ios-essence2) · [voice agent](/examples/swift-ios-voice-agent) · [macOS Expression 2](/examples/macos-expression2) (`swift run`).
 - Sample avatars: [Ready-made avatars](/examples#ready-made-avatars). Your own agent's model: [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) with your API secret.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

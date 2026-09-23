@@ -67,17 +67,8 @@ export const PLAY_RATES = new Set(["20", "25"]);
 const isHistory = (rel) => /(^|\/)changelog(\/[^/]+)?\.mdx?$/.test(rel);
 
 /** Named exceptions. Every entry: the file, the exact literal as it appears, and
- *  why it may stay. ★These three are on pages the docs redesign rewrites
- *  (REDESIGN.md §1.3); that lane owns the pages and removes the literals in its
- *  rewrite. They are listed rather than edited so two lanes do not rewrite one
- *  page at once. Delete an entry the moment its text is gone. */
-export const ALLOW = [
-  {
-    file: "src/content/docs/examples/swift-ios-expression2.md",
-    text: "19.3 FPS",
-    why: "a code comment recording what an @Published frame property cost on an iPhone 15; the example is rewritten by the redesign (REDESIGN §1.3 #57)",
-  },
-];
+ *  why it may stay. Delete an entry the moment its text is gone. */
+export const ALLOW = [];
 
 const RATE = /(?<![\w.])(\d+(?:\.\d+)?)\s?(?:fps|FPS|frames?\s+(?:per|a)\s+second|frames\/s)\b/g;
 const MULTIPLE = /(?<![\w.])(\d+(?:\.\d+)?)\s?[x×]\s?real[ -]?time\b/gi;
