@@ -1646,10 +1646,10 @@ paths:
         The shape is the bitHuman CLI's manifest v2, so the shipped CLI
         consumes it directly with `--manifest`.
 
-        **Performance, honestly.** `expression-2` clears realtime on a
-        developer CPU. `essence-2` renders at roughly **1.1 fps on CPU**
-        (about 22x below realtime) and wants a GPU for anything interactive —
-        `note_performance` in the reply says the same.
+        **Performance.** The reply carries no frame rates.
+        `note_performance` maps each family in the catalogue to the
+        [performance page](https://docs.bithuman.ai/sdk/performance), where the frame rates are
+        measured and published for every device.
 
         `sha256` is deliberately empty: no content digest is recorded for these
         objects yet, and the CLI skips verification on an empty value rather
@@ -3099,9 +3099,10 @@ paths:
         only on [`GET /v1/agent/{code}`](#operation/getAgent) — a caller that
         reads them from a list item reads fields that are not there.
 
-        **Deleted agents are listed too**, with `status: "deleted"` and their
-        other fields nulled. Pass `?status=ready` (or filter on the field) if
-        you want only live agents.
+        **Deleted agents are not listed and not counted.** Every page holds
+        `limit` items except the last. `pagination.total` is the number of
+        agents you reach by paging, and it is the same on every page. Pass
+        `?status=ready` if you want only agents that finished generating.
       tags: [Agent Management]
       security:
         - apiSecret: []
