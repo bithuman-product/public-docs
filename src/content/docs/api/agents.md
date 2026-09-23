@@ -82,12 +82,10 @@ model-specific identity step runs:
 | `essence-2` | `image` (or generated from prompt) — a 10-second identity video is generated from it internally (the `video` step) | Builds the Essence 2 identity bundle on a cloud GPU | **2 h 09 m** |
 | `auto` | `image` or prompt (classified automatically) | As the routed model — `essence-2` or `expression-2` | As the routed model |
 
-Those four figures are **one creation per model, measured end to end on
-2026-09-20**, from this call to `status: "ready"` on
-[`GET /v1/agent/status/{agent_id}`](#poll-status). Read them as one observed
-range rather than a guarantee: **under 15 minutes for either
-first-generation model, and about 2 to 2.5 hours for either
-second-generation one**, with individual runs going longer.
+Those figures are one observed creation per model, from this call to
+`status: "ready"` on [`GET /v1/agent/status/{agent_id}`](#poll-status). Plan for
+**under 15 minutes for either first-generation model, and about 2 to 2.5 hours
+for either second-generation one**, with individual runs going longer.
 
 **Neither second-generation model is the quick one.** `essence-2` is not a
 shortcut past `expression-2` — on that run it took slightly longer. Set your
@@ -174,8 +172,8 @@ print(resp.json())
 > `{"success": true, "status": "processing"}`, and the job only fails seconds
 > later with `Image processing failed: Failed to download after 3 attempts:
 > 404`. The credits are charged at submit and **automatically refunded** on that
-> failure (verified 2026-07-28: `-500` then `+500` within 4 s), so nothing is
-> lost — but a `200` here is not confirmation that your image was accepted. Poll
+> failure, so nothing is lost — but a `200` here is not confirmation that your
+> image was accepted. Poll
 > [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) before assuming
 > the creation started.
 
@@ -188,9 +186,6 @@ print(resp.json())
   "status": "processing"
 }
 ```
-
-> **Note** The generation endpoint is `POST /v1/agent/generate`. (Older docs
-> referenced `/v1/agent-generation` — that path is incorrect.)
 
 ### Idempotent retries — the `Idempotency-Key` header
 
@@ -246,9 +241,8 @@ from about a minute to a couple of hours depending on the model (see
 > is published separately, a little later**. Until it is,
 > [`GET /v1/agent/{code}/model/download`](#download-an-agents-model) answers
 > [`404 MODEL_ARTIFACT_NOT_READY`](/api/errors#model-errors) — a retryable
-> code, not a failure. On 2026-09-20 an `expression-2` agent was still
-> answering it 23 minutes after it went `ready`. **Retry the download on that
-> 404**; don't treat it as a broken agent.
+> code, not a failure, and it can last tens of minutes after `ready`. **Retry
+> the download on that 404**; don't treat it as a broken agent.
 
 While a run is in flight, `current_step` reports the pipeline stage:
 
@@ -385,8 +379,7 @@ print(agent["name"], agent["status"])
 }
 ```
 
-The response carries the agent's full record (abridged above; verified against
-the live API 2026-09-19) — the **persona** (`system_prompt`, `name`,
+The response carries the agent's full record (abridged above) — the **persona** (`system_prompt`, `name`,
 `description`, `language`, `gender`), the **voice** (`voice_id`), the **media**
 (`image_url`, `video_url` — the internally generated 10-second identity video —
 and `model_url`, which for the second-generation families is the **stored
