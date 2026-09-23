@@ -13,7 +13,7 @@ const featuredCases = caseStudies.slice(0, 3);
 
 const pillars = [
   { name: "Cloud API", href: "/api", cta: "Start with the API", tag: "We host the GPU — call simple REST endpoints to generate, host, and drive avatars. No infrastructure to run. Move the same avatars on-device whenever privacy or cost calls for it.", icon: "M4 7h16M4 12h16M4 17h10" },
-  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or one CLI command. Private by design: inference stays on-device, so no data leaves your hardware. Self-host or deploy on-prem, from 1 credit/min.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
+  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or one CLI command. The render stays on your device, billed in credits at the self-hosted rate.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
 ];
 
 // Every surface you can build on, named the way a developer searches for it —
@@ -39,8 +39,8 @@ const devices = [
 
 const stats = [
   { v: "20–25 fps", l: "real-time lip-sync — 20 for Expression 2, 25 for Essence 2" },
-  { v: "On-device", l: "private — data stays local" },
-  { v: "From 1 credit/min", l: "self-hosted or on-prem" },
+  { v: "On your hardware", l: "the render stays on your device" },
+  { v: "Credits", l: "one balance for cloud, self-hosted and on-device" },
 ];
 
 // Each tab quotes the platform page it stands for — /sdk/cli, /sdk/python,
@@ -48,7 +48,7 @@ const stats = [
 // sdk/android.md byte for byte by scripts/check-home-quickstart-kotlin.mjs.
 const quickstart = [
   { label: "CLI", lang: "bash", code: `# install one binary, then sign in (opens your browser)
-curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+curl -fsSL https://install.bithuman.ai | sh
 bithuman login
 # a showcase avatar — prints ~/.cache/bithuman/showcase/wise-pup.imx
 bithuman pull wise-pup
@@ -114,10 +114,7 @@ while idleTicks < 100 {
 }` },
 ];
 
-// The two mobile projects lead, because they are the only entries that end in a
-// rendered frame on a handset — and because until 2026-09-09 neither /start nor
-// the /sdk hub linked either one, so a reader who came for a phone app could
-// not reach the finished thing from anywhere on the walk.
+// The two mobile projects lead: they end in a rendered frame on a handset.
 const examples = [
   { t: "Android app, end to end (Kotlin)", d: "The whole project — no account, no API key, no credits; a frame on an arm64 handset.", href: "/examples/kotlin-android-hello" },
   { t: "iOS app, end to end (Swift)", d: "The whole SwiftUI app — a public showcase identity, no account and no key. Needs Xcode 26+, an Apple Developer team and a physical iPhone.", href: "/examples/swift-ios-expression2" },
@@ -151,7 +148,7 @@ const customerLogos = [
         <div class="hero-copy">
           <span class="eyebrow" data-reveal>Real-time Avatar Platform</span>
           <h1 data-reveal>Private, on-device visual agents</h1>
-          <p class="sub" data-reveal>Lifelike avatars that see, hear, and respond — live. Build them in a few lines of code, then run them fully on-device — CPU, Apple Silicon, the browser, or the edge — so no data leaves your hardware.</p>
+          <p class="sub" data-reveal>Lifelike avatars that see, hear, and respond — live. Build them in a few lines of code, then run them on your own hardware — CPU, Apple Silicon, phones, the browser — or let us host them.</p>
           <div class="hero-cta" data-reveal>
             <Button href="/start" size="lg">Start building</Button>
             <Button href="/showcase" variant="ghost" size="lg">Browse showcase</Button>
@@ -237,7 +234,7 @@ const customerLogos = [
         <div class="ms-copy">
           <span class="eyebrow">Pick a model by character</span>
           <h2>Essence 2 &amp; Expression 2</h2>
-          <p>Every agent starts from one portrait image — bitHuman generates the rest. <strong>Essence 2</strong> (the default) brings photorealistic people to life and serves from cloud GPUs, from your own CPU servers, and in the viewer&rsquo;s browser. <strong>Expression 2</strong> animates stylized characters and creatures — cartoons, animals, robots.</p>
+          <p>Every agent starts from one portrait image — bitHuman generates the rest. <strong>Essence 2</strong> brings photorealistic people to life. <strong>Expression 2</strong> generates the whole scene — stylized characters, animals and robots, and people too. Both run in the cloud and on every SDK platform.</p>
         </div>
         <span class="mlink">Compare the models →</span>
       </a>

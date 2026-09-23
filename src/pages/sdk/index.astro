@@ -2,43 +2,9 @@
 import Base from "../../layouts/Base.astro";
 import { hubMeta } from "../../config/hubs";
 
-// A card is a link to that platform's complete guide. Nothing opens here.
-//
-// It used to open a panel first — install / get a model / run — and put the
-// guide behind a second click. Every command in that panel was a second copy
-// of a command the guide already owned, kept in step by hand and by nothing
-// else: no check in this repo ever compared the two. One writer per command is
-// the fix and the guide is the writer, so the excerpts, the panels, the focus
-// trap and the ESC handler are gone and the card is one link. This page now
-// runs no script at all.
-//
-// Organised by MODEL, then by platform.
-//
-// It used to be the other way round, and every card carried both models. That
-// repeated the same two names five times, and it hid the thing a reader most
-// needs: what DIFFERS for each model on each platform. Grouped this way that
-// difference IS the content, rather than something a reader has to reconstruct
-// by comparing five cards.
-//
-// ★2026-09-22: the Android card said "the step-by-step is not on the Android
-// page yet" and sent readers to the CLI, Python or the cloud API instead. It
-// had been written when that was true and was never re-read against the page
-// it names: sdk/android.md carries a complete Essence 2 rail — Install, the
-// dependency line, Minimal code, Get a model, Authentication — and links a
-// whole worked app. The card was the only thing standing between a reader and
-// it. The Web card had the matching defect in the other direction: it
-// described the downloadable benchmark package (one built-in identity) as if
-// that were the whole of Essence 2 in a browser, when ?render=local renders a
-// real Essence 2 agent in the tab exactly as it does for Expression 2 — which
-// is the configuration /sdk/performance's own Web row is measured on.
-// A card that describes a page must be re-read against that page, not against
-// the day it was written; both now say what their page says.
-//
-// No frame rate appears on this page. Performance is /sdk/performance, linked
-// once, and a card answers one question: "is this my platform?"
-//
-// No command appears here. The guide is the one writer for every command it
-// documents, and this page links to it.
+// One card per platform. The card links to that platform's page, which is the
+// one place its install, model download and code live — no command appears here.
+// No frame rate appears here either: performance is /sdk/performance, linked once.
 
 const MARKS: Record<string, string> = {
   cli: `<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 9.5 10.5 12l-3 2.5M13 15h3.5"/>`,
@@ -48,112 +14,54 @@ const MARKS: Record<string, string> = {
   python: `<path d="M9 8 5 12l4 4M15 8l4 4-4 4"/>`,
 };
 
-interface Card {
-  key: string;
-  name: string;
-  sub: string;
-  href: string;
-  /** The one thing that differs for this model on this platform. */
-  note?: string;
-}
+interface Card { key: string; name: string; sub: string; href: string; note: string }
 
-interface Model {
-  id: string;
-  name: string;
-  what: string;
-  concept: string;
-  cards: Card[];
-}
-
-const models: Model[] = [
+const cards: Card[] = [
   {
-    id: "expression-2",
-    name: "Expression 2",
-    what: "The whole scene generated from your portrait — head, shoulders, background.",
-    concept: "/concepts/expression-2",
-    cards: [
-      {
-        key: "cli",
-        name: "macOS & Linux",
-        sub: "Apple Silicon · x86_64",
-        href: "/sdk/cli",
-        note: "One CLI runs both models. `bithuman run` with no argument fetches the free Wise Pup, an Expression 2 identity.",
-      },
-      {
-        key: "ios",
-        name: "Apple",
-        sub: "iPhone · iPad · Mac · Xcode 26+",
-        href: "/sdk/ios",
-        note: "Every product in the Swift package ships a `macos-arm64` slice, so this is the Mac card too — and the Mac path needs no device, no profile and no entitlement. [On a Mac](/sdk/ios#on-a-mac).",
-      },
-      {
-        key: "android",
-        name: "Android",
-        sub: "arm64-v8a · minSdk 26",
-        href: "/sdk/android",
-      },
-      {
-        key: "web",
-        name: "Web",
-        sub: "any modern browser",
-        href: "/sdk/web",
-        note: "`?render=local` moves the render into the tab; without it the avatar is served.",
-      },
-      {
-        key: "python",
-        name: "Python",
-        sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
-        href: "/sdk/python",
-        note: "One package runs both models. The `[expression-2]` extra is what opens a `.avatar`.",
-      },
-    ],
+    key: "cli",
+    name: "CLI — macOS & Linux",
+    sub: "macOS Apple Silicon · Linux x86_64",
+    href: "/sdk/cli",
+    note: "No code. `bithuman run` puts a talking avatar in your browser; `bithuman render` writes an MP4. Essence 2 and Expression 2.",
   },
   {
-    id: "essence-2",
-    name: "Essence 2",
-    what: "Your own portrait footage, animated — the identity you uploaded, lip-synced.",
-    concept: "/concepts/essence-2",
-    cards: [
-      {
-        key: "cli",
-        name: "macOS & Linux",
-        sub: "Apple Silicon · x86_64",
-        href: "/sdk/cli",
-        note: "The same CLI. `--model essence-2` picks the family when your agent has more than one.",
-      },
-      {
-        key: "python",
-        name: "Python",
-        sub: "Python 3.10–3.14 · macOS arm64 · Linux x86_64 / aarch64",
-        href: "/sdk/python",
-        note: "The same package. Live frames and the Essence 2 clip-to-MP4 route (`bithuman.offline`) both run on the base wheel; only `.avatar` files need the `[expression-2]` extra.",
-      },
-      {
-        key: "ios",
-        name: "Apple",
-        sub: "iPhone · iPad · Mac",
-        href: "/sdk/ios",
-        note: "The same Swift package carries Essence 2 from 2.14.0, and it opens the `.imx` the download endpoint serves. A complete app is on [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2).",
-      },
-      {
-        key: "android",
-        name: "Android",
-        sub: "arm64-v8a",
-        href: "/sdk/android",
-        note: "A second Maven coordinate, and a bitHuman API key. The dependency line, the code and the credential are on the [Android page](/sdk/android); a whole app is on [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed).",
-      },
-      {
-        key: "web",
-        name: "Web",
-        sub: "any modern browser",
-        href: "/sdk/web",
-        note: "`?render=local` moves the render into the tab here too, for an identity that has an in-browser build; without one the avatar is served instead.",
-      },
-    ],
+    key: "python",
+    name: "Python",
+    sub: "Python 3.10–3.14 · macOS Apple Silicon · Linux x86_64 / aarch64",
+    href: "/sdk/python",
+    note: "`pip install bithuman`: frames and MP4 clips from your own code. Essence 2 and Expression 2 (`[expression-2]` extra).",
+  },
+  {
+    key: "ios",
+    name: "Apple — iPhone, iPad, Mac",
+    sub: "one Swift package · Xcode 26+",
+    href: "/sdk/ios",
+    note: "The `Expression2` and `Essence2` products. The Mac path needs no device, profile or entitlement.",
+  },
+  {
+    key: "android",
+    name: "Android",
+    sub: "arm64-v8a · Maven Central",
+    href: "/sdk/android",
+    note: "`expression2-android` and `essence2-android`. Expression 2 renders a published identity with no key.",
+  },
+  {
+    key: "web",
+    name: "Web",
+    sub: "any modern browser",
+    href: "/sdk/web",
+    note: "An iframe or a URL, nothing to install. `?render=local` renders the avatar in the visitor's tab.",
   },
 ];
 
-/** `a [b](/c)` → HTML, so a note can carry one link without a markdown parser. */
+const others = [
+  { name: "Cloud API", href: "/api/overview", note: "We host the GPU; you call REST endpoints." },
+  { name: "LiveKit", href: "/sdk/livekit", note: "A served avatar in a LiveKit room, or a Python voice agent with a face." },
+  { name: "Self-hosting", href: "/guides/self-hosting", note: "Which surface runs which model, how it is billed, and the Expression 1 GPU container." },
+  { name: "Offline licensing", href: "/guides/pricing#offline-licensing", note: "Business and Enterprise: realtime avatars completely off the internet." },
+];
+
+/** `a [b](/c)` → HTML, so a note can carry code and one link without a markdown parser. */
 const rich = (s: string) =>
   s
     .replace(/`([^`]+)`/g, "<code>$1</code>")
@@ -166,76 +74,41 @@ const rich = (s: string) =>
 >
   <section class="sdk">
     <div class="container">
-      <h1 id="platforms">Run a bitHuman avatar on your device</h1>
-      <p class="lede">Pick a model, then your platform.</p>
+      <h1 id="platforms">Run bitHuman on your own hardware</h1>
+      <p class="lede">One page per platform — each is the one place its install, model and code live. Which model runs on which platform is on <a href="/concepts/models#where-each-model-runs">Models</a>.</p>
 
-      {/* The question a reader is actually asking, answered before the tabs.
-          Everything below assumes they already know which surface is theirs,
-          and most of the confusion this page has caused was them not knowing. */}
-      <p class="either">
-        <strong>Want to run an avatar, without writing code?</strong> That is the
-        <a href="/sdk/cli">CLI</a> — one binary, installed from
-        <a href="https://install.bithuman.ai">install.bithuman.ai</a> or Homebrew.
-        <br />
-        <strong>Want to build with one?</strong> That is an SDK: the
-        <a href="/sdk/python">Python package</a> (<code>pip install bithuman</code>),
-        or the Apple and Android SDKs below. This is also how Essence 2 and
-        Expression 2 are distributed and self-hosted.
-        <br />
-        <strong>Want neither to install?</strong> Drive it over the
-        <a href="/api/overview">cloud API</a>.
-      </p>
-
-      <nav class="tabs" aria-label="Model">
-        {models.map((m) => (
-          <a class:list={["tab", `tab-${m.id}`]} href={`#${m.id}`}>{m.name}</a>
-        ))}
-      </nav>
-
-      <div class="panes">
-        {models.map((m) => (
-          <section class="pane" id={m.id} aria-labelledby={`${m.id}-h`}>
-            <p class="what">
-              <strong id={`${m.id}-h`}>{m.name}</strong> — {m.what}{" "}
-              <a href={m.concept}>How it works</a>
-            </p>
-
-            <div class="gallery">
-              {m.cards.map((c) => (
-                <article class="card">
-                  <span class="mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><Fragment set:html={MARKS[c.key]} /></svg>
-                  </span>
-
-                  <h2 class="name"><a href={c.href}>{c.name}</a></h2>
-                  <p class="sub">{c.sub}</p>
-
-                  {c.note && <p class="says" set:html={rich(c.note)} />}
-                </article>
-              ))}
-            </div>
-          </section>
+      <div class="gallery">
+        {cards.map((c) => (
+          <article class="card">
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><Fragment set:html={MARKS[c.key]} /></svg>
+            </span>
+            <h2 class="name"><a href={c.href}>{c.name}</a></h2>
+            <p class="sub">{c.sub}</p>
+            <p class="says" set:html={rich(c.note)} />
+          </article>
         ))}
       </div>
 
-      <p class="perf">Measured frame rates for every platform and both models are on the <a href="/sdk/performance">performance page</a>.</p>
+      <nav class="also" aria-label="Other ways to run">
+        <p class="also-label">Not running it on your own device?</p>
+        <ul>
+          {others.map((o) => <li><a href={o.href}>{o.name}</a> — {o.note}</li>)}
+        </ul>
+      </nav>
 
-      {/* Every other page in this section — the hub renders no sidebar, and
-          these were reachable only from inside a platform page. */}
       <nav class="also" aria-label="Reference">
         <p class="also-label">Reference</p>
         <ul>
           <li><a href="/sdk/cli/reference">CLI reference</a> — every subcommand, flag, environment variable and exit code.</li>
-          <li><a href="/sdk/cli/local-mode">CLI local mode</a> — an on-device conversation brain, audio and transcripts stay on the box.</li>
-          <li><a href="/sdk/python-api">Python API reference</a> — every public name in the installed <code>bithuman</code> package.</li>
+          <li><a href="/sdk/cli/local-mode">CLI local mode</a> — an on-device conversation brain.</li>
+          <li><a href="/sdk/python-api">Python API reference</a> — every public name in the <code>bithuman</code> package.</li>
           <li><a href="/sdk/android-api">Android API reference</a> — every public class in the two Android artifacts.</li>
-          <li><a href="/sdk/ios-api">iOS API reference</a> — the full C interface the <code>Essence2</code> product vends, and the Expression 2 Swift entry points.</li>
-          <li><a href="/sdk/livekit">LiveKit integration</a> — a server-hosted avatar over WebRTC, or a Python voice agent with a face.</li>
-          <li><a href="/sdk/performance">Performance</a> — frames per second on reference hardware, every platform in one table.</li>
+          <li><a href="/sdk/ios-api">iOS API reference</a> — the <code>Essence2</code> C interface and the Expression 2 Swift entry points.</li>
+          <li><a href="/sdk/performance">Performance</a> — measured frame rates, every platform in one table.</li>
         </ul>
       </nav>
     </div>
-
   </section>
 </Base>
 
@@ -247,50 +120,8 @@ const rich = (s: string) =>
   .also li { margin-top: var(--space-2); }
   .also a { color: var(--color-primary); font-weight: var(--fw-medium); }
   .sdk h1 { font-size: var(--fh-2xl); max-width: 22ch; scroll-margin-top: calc(var(--nav-h) + 20px); }
-  .lede { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
-
-  /* Two links, one fragment each, so the chosen model has a URL and the back
-     button returns to the other one. */
-  .tabs { display: flex; gap: var(--space-1); margin-top: var(--space-6); border-bottom: 1px solid var(--color-border); }
-  .tab {
-    padding: 0.6rem var(--space-4);
-    margin-bottom: -1px;
-    border-bottom: 2px solid transparent;
-    font-weight: var(--fw-medium);
-    color: var(--color-text-secondary);
-    transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
-  }
-  .tab:hover { color: var(--color-text); }
-
-  .pane { display: none; }
-  /* Expression 2 until the reader asks for the other one. Where :has() is
-     unavailable both panes show, which is complete rather than broken. */
-  .panes:not(:has(:target)) .pane:first-of-type { display: block; }
-  .pane:target { display: block; }
-  .sdk:not(:has(#essence-2:target)) .tab-expression-2,
-  .sdk:has(#essence-2:target) .tab-essence-2 {
-    color: var(--color-text);
-    border-bottom-color: var(--color-primary);
-  }
-
-  .either {
-    margin-top: var(--space-5);
-    max-width: 68ch;
-    padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--color-border);
-    border-radius: var(--r-xl);
-    background: var(--color-surface);
-    font-size: var(--ft-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-  }
-  .either strong { color: var(--color-text); }
-  .either a { color: var(--color-primary); font-weight: var(--fw-medium); }
-  .either code { font-family: var(--font-mono); font-size: 0.86em; }
-
-  .what { margin-top: var(--space-5); max-width: 62ch; color: var(--color-text-secondary); }
-  .what strong { color: var(--color-text); }
-  .what a { color: var(--color-primary); font-weight: var(--fw-medium); }
+  .lede { margin-top: var(--space-3); max-width: 68ch; font-size: var(--ft-lg); color: var(--color-text-secondary); }
+  .lede a { color: var(--color-primary); font-weight: var(--fw-medium); }
 
   .gallery {
     margin-top: var(--space-5);
@@ -322,20 +153,13 @@ const rich = (s: string) =>
   .name a:focus-visible::after { outline: 2px solid var(--color-primary); outline-offset: 3px; }
   .sub { margin-top: 0.25rem; color: var(--color-text-tertiary); font-size: var(--ft-sm); }
 
-  /* The one line that differs for this model on this platform, or — where no
-     on-device path is written — where to go instead. Above the card's own
-     overlay link, so the links inside it are reachable. */
+  /* Above the card's own overlay link, so links inside it stay reachable. */
   .says { position: relative; z-index: 1; margin-top: var(--space-4); font-size: var(--ft-sm); color: var(--color-text-secondary); }
   .says :global(a) { color: var(--color-primary); font-weight: var(--fw-medium); }
   .says :global(code) { font-family: var(--font-mono); font-size: 0.86em; }
 
-  .perf { margin-top: var(--space-8); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-  .perf a { color: var(--color-text-secondary); text-decoration: underline; text-underline-offset: 2px; }
-  .perf a:hover { color: var(--color-primary); }
-
   @media (max-width: 560px) {
     .card { padding: var(--space-4); border-radius: var(--r-xl); }
     .sdk h1 { font-size: var(--fh-xl); }
-    .tab { padding-inline: var(--space-3); }
   }
 </style>

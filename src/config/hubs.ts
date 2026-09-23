@@ -29,7 +29,7 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/index.astro",
     name: "bitHuman docs",
     description:
-      "Build real-time AI avatars that run fully on-device — private by design, so audio, video, and prompts never leave your hardware. Self-host or deploy on-prem from 1 credit/min. API, SDKs, and CLI.",
+      "Build real-time AI avatars — hosted by us over a REST API, or rendered on your own hardware with the CLI and the Python, Apple, Android and Web SDKs. One credit balance for all of it.",
   },
   {
     route: "start",
@@ -57,7 +57,7 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/sdk/index.astro",
     name: "SDK",
     description:
-      "Run a bitHuman avatar on your device. Pick a model — Expression 2 or Essence 2 — then your platform: macOS, Linux, iOS, Android, Web, Python.",
+      "Run bitHuman on your own hardware — one page per platform: the CLI on macOS and Linux, Python, Apple, Android and the Web.",
     section: "sdk",
   },
   {
@@ -105,8 +105,8 @@ export const START_EMBED = `<!-- Paste into any page. No API key, no install. --
 ></iframe>`;
 
 // The canonical CLI happy path — the same four steps /sdk/cli teaches.
-export const START_CLI = `# 1 · install (Homebrew or the universal installer)
-curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+export const START_CLI = `# 1 · install (macOS Apple Silicon or Linux x86_64; \`run\` also needs livekit-server on PATH — see the CLI page)
+curl -fsSL https://install.bithuman.ai | sh
 
 # 2 · sign in (opens your browser)
 bithuman login
