@@ -15,8 +15,7 @@ Generate → Poll until ready → Resolve by code → Live session → Speak
 ```
 
 This page covers the full REST lifecycle. For the in-process SDK flow, see the
-[Python SDK](/sdk/python) and [agent lifecycle](/concepts/agent-lifecycle)
-concepts.
+[Python SDK](/sdk/python).
 
 ## Validate your key
 

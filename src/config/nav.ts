@@ -36,7 +36,7 @@ export const GROUP_ORDER: Partial<Record<SectionId, string[]>> = {
   // question — "which SDK do I want?" — across four headings and 16 pages.
   sdk: ["Platforms", "Reference"],
   // Lead with the defining product choice (Essence vs Expression) before the internals.
-  concepts: ["Models", "Core", "Architecture"],
+  concepts: ["Models", "Core"],
   guides: ["Build", "Deploy", "Integrate", "Pricing"],
   resources: ["Resources"],
   legal: ["Legal"],

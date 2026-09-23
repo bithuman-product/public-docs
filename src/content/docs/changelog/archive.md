@@ -24,7 +24,7 @@ That ratio is LPIPS — a learned perceptual image-distance metric — computed 
 inside the mouth-interior mask of the reference render, on each identity's
 held-out frames, so it is a per-identity improvement factor and not a
 cross-identity score
-([the renderer](/concepts/essence-2#the-renderer)). It was
+([the renderer](/concepts/essence-2#what-it-is)). It was
 also checked frame by frame by eye, not only by metrics. Mouth motion is
 also re-centred and wider, so speech reads as more dynamic.
 
@@ -295,7 +295,7 @@ All three are **train-on-create** via [`POST /v1/agent/generate`](/api/agents) (
 
 ### Talking video generation — new API (2026-06-29)
 
-- **New endpoints: `POST /v1/video/generate` + `GET /v1/video/{job_id}`.** Render a finished **talking-video mp4** of one of your agents from **text** or **audio**. With text input, the agent's own voice speaks your script; with audio input, your hosted `audio_url` drives the render directly. The API is asynchronous — submit a job, then poll for the public mp4 URL, output duration, and credits charged. Launch engines: **`expression-2`** (4 credits/min) and **`essence-2-quality`** (8 credits/min), billed per minute of output **rounded up**; a failed render is automatically refunded. Limits: 120 seconds of output, 5000 characters of text. See [Talking video generation](/concepts/talking-video) and the [Video API reference](/api/video).
+- **New endpoints: `POST /v1/video/generate` + `GET /v1/video/{job_id}`.** Render a finished **talking-video mp4** of one of your agents from **text** or **audio**. With text input, the agent's own voice speaks your script; with audio input, your hosted `audio_url` drives the render directly. The API is asynchronous — submit a job, then poll for the public mp4 URL, output duration, and credits charged. Launch engines: **`expression-2`** (4 credits/min) and **`essence-2-quality`** (8 credits/min), billed per minute of output **rounded up**; a failed render is automatically refunded. Limits: 120 seconds of output, 5000 characters of text. See [Talking video generation](/api/video) and the [Video API reference](/api/video).
 
 ### Agent generation — v2 model names accepted (2026-06-29)
 

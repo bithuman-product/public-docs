@@ -174,7 +174,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
 > See [Essence 2 & Expression 2](/concepts/models#which-should-i-choose)
 > for the full chooser and the [subject gate](/api/agents#the-essence-2-subject-gate-422).
 
-The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`GET /v1/agent/status/{agent_id}`](/api/reference) until `ready`, then drive the resulting `agent_code` like any other avatar. See the [agent lifecycle](/concepts/agent-lifecycle) for the full generate → resolve → speak flow.
+The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`GET /v1/agent/status/{agent_id}`](/api/reference) until `ready`, then drive the resulting `agent_code` like any other avatar. See the [agent lifecycle](/api/agents) for the full generate → resolve → speak flow.
 
 ### Media tips for generation
 
@@ -203,5 +203,4 @@ side stays free either way: `bithuman list`, `bithuman pull <slug>` and
 - [Pricing & credits](/guides/pricing) — what it costs to run.
 - [Quickstart](/api/quickstart) — run your `.imx` in 2 minutes.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — inspect what you built.
-- [Agent lifecycle](/concepts/agent-lifecycle) — generate, poll, resolve, speak.
 - [API reference](/api/reference) — generation and management endpoints.

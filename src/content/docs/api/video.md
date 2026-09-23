@@ -217,5 +217,4 @@ def wait_for_video(job_id, api_secret, timeout=600):
     raise TimeoutError("render did not finish in time")
 ```
 
-See [Talking video generation](/concepts/talking-video) for the concept and
-[Billing & credits](/api/billing) for how credits are consumed.
+See [pricing](/guides/pricing) for how credits are consumed.

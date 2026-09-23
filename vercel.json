@@ -980,6 +980,26 @@
       "source": "/examples/failure-states/",
       "destination": "/examples",
       "permanent": true
+    },
+    {
+      "source": "/concepts/agent-lifecycle",
+      "destination": "/api/agents",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/agent-lifecycle/",
+      "destination": "/api/agents",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/talking-video",
+      "destination": "/api/video",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/talking-video/",
+      "destination": "/api/video",
+      "permanent": true
     }
   ],
   "rewrites": [

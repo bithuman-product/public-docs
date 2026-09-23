@@ -1618,7 +1618,7 @@ transfer:
 - **Browser-local**: not measured.
 
 See
-[The renderer](/concepts/essence-2#the-renderer).
+[The renderer](/concepts/essence-2#what-it-is).
 
 ### The "Apple Neural Engine" tier is renamed **Apple**, and a false performance claim is withdrawn (2026-09-02)
 

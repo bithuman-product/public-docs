@@ -1,303 +1,111 @@
 ---
 title: "Expression 2"
-description: "Official guide to expression-2 — bitHuman's second-generation expression engine: per-identity training from one photo, GPU/CPU/Apple Silicon serving tiers, real-footage idle, latency expectations, and pricing."
+description: "Expression 2 — bitHuman's generative avatar model: a whole 416x720 scene generated live from one portrait, for any character. Where it runs, how an agent is created and trained, how it serves, and what to expect."
 section: concepts
 group: "Models"
 order: 4
 label: "Expression 2"
 ---
 
-> **Note — Generally available.** `expression-2`
-> ("Expression 2") is the second-generation expression engine and the model
-> for **stylized and universal characters** — cartoons, animals, creatures,
-> robots, and people. Available now — see
-> [Essence 2 & Expression 2](/concepts/models) for the family overview.
-
 ## What it is
 
-**`expression-2`** is bitHuman's second-generation expression engine: an
-audio-driven, real-time talking avatar whose motion is **fully generated**
-live from the audio — expressions, mouth, and head movement are synthesized
-each session, not replayed from a pre-rendered base.
+**Expression 2** (`expression-2`) generates the whole avatar scene live from the
+audio — expressions, mouth and head movement are synthesized each session, not
+replayed from a base video. It animates the **entire 416x720 frame** with no
+face detector or cropping step, so it works for any character: cartoons,
+animals, creatures, robots, and people.
 
-It is also **fully generative across the whole scene**: the engine animates
-the **entire 416×720 portrait frame**, not a detected face region. That is
-what makes it the model for **any character morphology** — cartoons, animals,
-creatures, robots, objects with a "face", and people alike. There is no face
-detector, cropping, or landmark step anywhere in the pipeline, so a winged
-creature or a talking appliance animates just as naturally as a headshot.
-
-What makes it different from every other bitHuman model is **per-identity
-training**. At creation time the platform builds a **small model of your
-specific identity** from a single photo. The full rendering model never ships
-anywhere; only the compact per-identity model serves your sessions — a small,
-fast build tuned to render a sharp, well-defined mouth and teeth. That
-per-identity step is why Expression 2's motion tracks the audio so closely —
-and why creation takes longer than the other models (see
-[creation](#how-creation-works) below).
-
-At serve time the engine generates the full **416×720** scene at **20 frames
-per second** and streams it over WebRTC like every other bitHuman session —
-the platform contract (push audio in, drain lip-synced video out) is
-unchanged.
+At creation the platform trains a **small model of your specific identity** from
+one photo. That per-identity model is what serves your sessions, at **20 fps**,
+and it is why creation takes a couple of hours.
 
 ## When to choose it
 
-- **You want the most lifelike generated motion in the lineup.** Expression 2
-  synthesizes expression and movement from the audio itself rather than
-  patching a base video.
-- **Your character isn't a photorealistic human.** The whole scene animates —
-  stylized, cartoon, animal, creature, robot, and object characters are
-  exactly what this engine is for (and where `model: "auto"` routes them).
-- **You only have a photo.** One image is enough — creation is image-only for every model, and Expression 2 trains straight from the photo.
-- **You want the same identity on cloud GPU, CPU, or Apple Silicon** —
-  Expression 2 serves on all three tiers (see [serving](#serving-tiers)).
+- **Your character is not a photorealistic human** — this is the model for it,
+  and where `model: "auto"` routes such inputs.
+- **You want motion generated from the audio itself**, not patched onto a base
+  video.
+- **You only have a photo** — one image is enough.
 
-For a photorealistic human, compare with [Essence 2](/concepts/essence-2).
-For the family-level decision,
-start at [Essence 2 & Expression 2](/concepts/models).
+For a photorealistic person animated from their own footage, compare
+[Essence 2](/concepts/essence-2). The side-by-side is on [Models](/concepts/models).
+
+## Where it runs
+
+| Surface | How |
+|---|---|
+| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/guides/deploy-embed) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
+| iPhone, iPad, Mac | the [Apple SDK](/sdk/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
+| Android | [`expression2-android`](/sdk/android) — a published identity renders with no key |
+| The viewer's browser | [`?render=local`](/sdk/web#render-in-the-tab) |
+
+The file you download from
+[`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model)
+or `bithuman pull <CODE>` is labelled `<CODE>.imx`; `.avatar` is the legacy
+extension for the same container. Measured frame rates per platform are on
+[performance](/sdk/performance).
 
 ## How creation works
 
-Create the agent once with
-[`POST /v1/agent/generate`](/api/agents#generate-an-agent) and
-`model: "expression-2"`. Creation is asynchronous and costs **2000 credits**
-(one-time, per agent). Expression 2 handles **any subject** — photorealistic
-or stylized — and it is the family that **works best for cartoonish,
-stylized, animal, creature, and robot characters**, which is why
-`model: "auto"` routes those inputs here, and why the Essence 2
-[subject gate](/api/agents#the-essence-2-subject-gate-422)
-points rejected creations at this model. You can also
-[add `expression-2`](/api/agents#add-a-model-to-an-existing-agent) to an
-existing agent (2000 credits — the same per-identity training runs; it uses
-the agent's stored image).
+Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
+and `model: "expression-2"`, or add `expression-2` to an existing agent with
+[`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
 
-> **When the credits leave your balance.** Creation is **charged up front, not
-> on delivery.** The 2000 credits are debited within seconds of the request
-> being accepted — at the first step of the run, before the persona, the
-> portrait, the idle clip or the two hours of training. It is a flat one-time
-> charge, unlike [live serving](/guides/pricing#serving--credits-per-live-minute),
-> which meters the minutes actually rendered: creation does not cost more when
-> training takes longer or needs more attempts internally, and it is not
-> refunded pro rata if you never launch the agent.
->
-> **What is refunded.** If the run fails early — a portrait that cannot be
-> fetched, a persona step that errors — the charge is reversed automatically,
-> typically within a minute, and a matching `credit_refund_…` row appears in
-> [`GET /v1/usage`](/api/billing#usage-history). **A creation that completes is
-> not refundable**, and completion is judged on the trained model being
-> published, not on your having launched it. So poll
-> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) to `ready` and
-> start a session while you still have the run in front of you. If an agent
-> reaches `ready` and will not serve, that is a fault worth reporting rather
-> than retrying — a second `generate` is a second 2000 credits.
+- **The input is a portrait image**, of any subject. Without one, the platform
+  generates a portrait from your prompt first. It also generates the agent's
+  10-second idle clip and prepares a voice.
+- **The per-identity training dominates the wait.** Poll
+  [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready`, or
+  wait for the completion email. Plan for **about 2 to 2.5 hours**, and treat 4
+  hours as a normal upper tail rather than a fault: training is adaptive, and an
+  identity that needs more work gets more training, never a lower bar.
+- **The charge is taken up front.** A run that fails early is refunded
+  automatically; a creation that completes is not refundable, so a second
+  `generate` is a second charge. If a `ready` agent will not serve, report it.
+- **Failures are terminal** and reported on the status endpoint as
+  `status: "failed"` with an `error_message` — see
+  [failure modes](/api/agents#creation-failure-modes).
 
-> **Note** The Python examples below use
-> [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl` / `urllib` instead.
-
-```python
-import requests
-
-import os
-
-resp = requests.post(
-    "https://api.bithuman.ai/v1/agent/generate",
-    headers={
-        "Content-Type": "application/json",
-        "api-secret": os.environ["BITHUMAN_API_SECRET"],
-    },
-    json={
-        "prompt": "You are a friendly product specialist.",
-        "image": "https://example.com/face.jpg",
-        "model": "expression-2",
-    },
-)
-print(resp.json())
-# {"success": true, "message": "Agent generation started",
-#  "agent_id": "A66GYD8664", "status": "processing"}
-```
-
-> **Note — `image` must be publicly fetchable, and this is not checked at
-> submit time.** The `https://example.com/…` URLs above are placeholders.
-> Posting one verbatim returns `HTTP 200` with
-> `{"success": true, "status": "processing"}`, and the job only fails seconds
-> later with `Image processing failed: Failed to download after 3 attempts:
-> 404`. The credits are charged at submit and **automatically refunded** on that
-> failure (verified 2026-07-28: `-500` then `+500` within 4 s), so nothing is
-> lost — but a `200` here is not confirmation that your image was accepted. Poll
-> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) before assuming
-> the creation started.
-
-
-**Inputs.** Creation is **image-only**: an `image` (URL or upload) is the
-identity source, and Expression 2 trains straight from the photo. If you omit
-it, the platform generates a portrait from your prompt first. bitHuman also
-generates the agent's **10-second idle clip internally** as part of creation,
-authored to loop seamlessly. Video input is not part of the creation contract
-and is being removed platform-wide: do not send `video` — as the rollout
-completes, a request carrying it is rejected with
-[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
-anything is billed. A voice is always prepared as part of creation — supply
-`audio` to clone one, or one is generated for you.
-
-**What happens.** Poll
-[`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status): the run moves
-through the standard steps (`payment` → `persona` → `voice_image`), then
-enters the **model-training step** (reported as `current_step: "lip_sync"`,
-~70% progress) where the per-identity model is trained and packaged on a
-training GPU. When the status reaches `ready`, the agent is servable on every
-tier.
-
-**How long.** The per-identity training step runs on a dedicated training GPU
-and is the dominant cost of creation — plan for **about 2 to 2.5 hours** end to
-end, and treat 4 hours as a normal upper tail rather than a fault. Of the 48
-creations that completed between 2026-07-15 and 2026-08-30, 39 finished inside
-12 hours; across those the **median was 2 hours 4 minutes**, the fastest 1 hour
-25 minutes, and 1 in 10 took longer than 3 hours 45 minutes. The other nine
-stalled and completed days later — rare, but real, which is why you should poll
-or wait for the email rather than time out on a fixed budget. Everything before the training step —
-persona, voice, portrait, the internally generated idle clip — accounts for only
-about 3 minutes of that; essentially the whole wait is training.
-
-The training recipe is **adaptive**: it starts from a short, efficient schedule,
-and every agent must pass the same quality checks before it ships — an identity
-that needs more work automatically climbs to more training, never a lower bar.
-That is why harder identities take longer, and why the tail is long.
-
-Build the wait into your integration: poll
-[`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status), or wait for the
-completion email, rather than holding a request open or assuming the few-minute
-wall-clock of `essence-1`.
-
-```bash
-curl https://api.bithuman.ai/v1/agent/status/A66GYD8664 \
-  -H "api-secret: $BITHUMAN_API_SECRET"
-```
-
-Creation failures are terminal and reported on the same status endpoint
-(`status: "failed"` plus `error_message`); a failed creation is not silently
-retried into a different model. See
-[failure modes](/api/agents#creation-failure-modes).
+The creation cost is on [pricing](/guides/pricing).
 
 ## Serving tiers
 
-A ready `expression-2` agent serves through every delivery surface — the
-[embed widget](/guides/deploy-embed), the viewer/share URL, the
-[REST API](/api/agents), and the [LiveKit plugin](/guides/deploy-livekit).
-By default the platform routes each session down the model's **serving
-chain — GPU → Apple → CPU** — starting at an always-warm GPU
-first line and overflowing to the next tier on capacity.
-
-For benchmarking or placement testing you can **force one runtime tier** with
-the `?model=` override on the session URL — these are the slugs Expression 2
-answers to:
-
-| `?model=` slug | Runtime | Notes |
-|---|---|---|
-| `expression-2` | The full chain (default) | GPU → Apple → CPU with automatic overflow. |
-| `expression-2-gpu` | GPU | The production GPU line with elastic cloud GPU overflow. |
-| `expression-2-cpu` | CPU | Force the CPU tier — no GPU in the path. |
-| `expression-2-apple` | Apple Silicon | Force the Apple tier; limited real-time slots. The older `expression-2-ane` spelling stays accepted for saved links, embeds and share tokens. |
-
-```text
-https://bithuman.ai/embed/A66GYD8664?model=expression-2-apple
-```
-
-Tier slugs are an advanced, operational surface, and for production you should
-omit `?model=` and let the platform choose. What a pin actually does — including
-why a *recognized* slug fails loudly while an *unrecognized* one is ignored
-silently — is described once, on
-[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier). To pin
-from the embed widget, see
-[the embed guide](/guides/deploy-embed#pin-a-serving-tier).
-
-### Where it runs
-
-Real-time streaming is carried by the **GPU and Apple tiers**. The **CPU tier
-is offline-batch-grade** — sized for offline talking-video generation and used
-as capacity overflow, not as the primary real-time line — so pin
-`expression-2-cpu` for batch and self-hosted-server work rather than
-low-latency live sessions.
-
-**On your own hardware.** Expression 2 renders locally through the
-[CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and
-Linux x86_64, through the [Python SDK](/sdk/python), on
-[Android](/sdk/android) and, in your own app, on iPhone, iPad and Mac through
-the [`Expression2` Swift product](/sdk/ios). The downloadable `.avatar`
-from [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-or `bithuman pull <code>` drives all of them; from there it is the same two
-operations as any other family, [in one place](/sdk/cli#minimal-code). The
-frame rate on each platform is on [Performance](/sdk/performance).
-
-**In the browser:** append `?render=local` to a session URL to render
-Expression 2 in the tab, so the video never leaves the machine; sessions for
-an identity with no published web bundle fall back to cloud serving. See
-[Browser rendering](/sdk/web#render-in-the-tab).
+By default each cloud session is routed down the **GPU → Apple → CPU** chain,
+starting on an always-warm GPU line and overflowing on capacity. Real-time
+sessions run on the GPU and Apple tiers; the CPU tier is sized for overflow and
+batch work. To force one tier for a benchmark, append `?model=expression-2-gpu`,
+`expression-2-apple` or `expression-2-cpu` to the session URL — how a pin
+behaves is on [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier).
+For production, omit it.
 
 ## Idle and speaking behavior
 
-As of **2026-07-02**, Expression 2 agents use **real-footage idle**: during
-silences the avatar plays the **10-second idle clip generated internally at
-creation** from the identity itself. The clip is authored to loop seamlessly
-and **forward-only** (it wraps from its last frame back to its first and never
-plays in reverse), so idle looks like a person waiting, not a video scrubbing
-back and forth. Every new creation bakes its idle clip automatically.
+During silences the avatar plays its **10-second idle clip**, generated from the
+identity at creation, looping forward-only and seamlessly. When speech starts,
+the engine hands off to generated frames with a per-identity color match, so the
+two stay visually continuous; idle resumes only after sustained silence, not in
+pauses inside a sentence. Idle animation is not billed.
 
-**The clip is played in place, never held.** The on-device SDKs decode `idle.mp4`
-with the platform's hardware decoder a few frames ahead of the display and wrap
-where the file ends, so the whole 10 s loop is shown and resident memory does not
-grow with the clip's length. Play video in place rather than loading it into memory
-— efficient compute and efficient memory management, which only requires the right
-implementation. On Apple platforms (Swift SDK `Expression2` **2.6.3**) the decoder's
-own pixel buffer is what the texture samples and no CPU touches an idle pixel; the
-Android AAR reaches the same shape in the release after **0.4.6** (see the
-[changelog](/changelog) — 0.4.6 still holds the clip's first 48 frames).
-
-When speech starts, the engine hands off from the idle clip to generated
-frames on the first rendered frame, and a per-identity color match keeps the
-two visually continuous. When speech ends, idle resumes only after sustained
-silence — brief pauses inside a sentence never flip the avatar back to idle.
-
-**Speech onset.** The Expression 2 engine renders in fixed audio chunks, so
-the first *talking* frame appears roughly **1.6 seconds** after speech audio
-begins (less when the platform bursts audio faster than real time). The lively
-real-footage idle masks this window — the avatar keeps moving naturally until
-the generated frames take over. See
-[session behavior & troubleshooting](/guides/session-troubleshooting).
-
-## Pricing
-
-Serving, creation and talking-video rates are on [Pricing & credits](/guides/pricing) —
-the one place every number lives. A live session bills its talking minutes;
-idle animation is free.
+**Speech onset.** The engine renders in fixed audio chunks, so the first
+*talking* frame appears roughly **1.6 seconds** after speech audio begins; the
+moving idle clip covers that window.
 
 ## Limits and expectations
 
-- **Output**: the full 416×720 portrait scene, generated at 20 fps; video
-  streams over WebRTC with adaptive bitrate.
-- **Creation time**: plan for about 2 to 2.5 hours (measured median 2h04m over
-  39 creations; fastest 1h25m, slowest decile beyond 3h45m — see above) — and
-  poll status rather than assuming the few-minute wall-clock of `essence-1`.
-- **Identity input**: a clear, frontal, well-lit face photo gives the best
-  result. The identity is fixed at creation — to change the face, create a new
-  agent.
-- **First session on a fresh agent** can take longer to connect while the
-  per-identity model is provisioned onto serving capacity; subsequent sessions
-  reuse it. See [troubleshooting](/guides/session-troubleshooting).
-- **Before training completes**, launch surfaces that request this model
-  reject it with `409 MODEL_NOT_GENERATED`
-  (`agent A66GYD8664's expression-2 model hasn't been generated yet`). Once
-  the agent is ready, its `supported_models` (on
-  [status / get / list](/api/agents#poll-status) and the embed-token
-  response) includes `expression-2`.
+- **Output is the full 416x720 scene at 20 fps**, over WebRTC in the cloud.
+- **A clear, frontal, well-lit photo** gives the best result. The identity is
+  fixed at creation — to change the face, create a new agent.
+- **The first session on a new agent** can take longer to connect while its
+  model is provisioned; later sessions reuse it.
+- **Before training completes**, a launch that requests this model is refused
+  with [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors). Once ready,
+  `expression-2` appears in the agent's `supported_models`.
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models) — the family overview and model chooser.
-- [Second-generation gallery](https://bithuman.ai/explore?gallery=v2) — talk to a live launch agent.
-- [Agents API](/api/agents) — full create → poll → serve lifecycle.
-- [Embed widget](/guides/deploy-embed) — ship a live session in minutes.
-- [Session behavior & troubleshooting](/guides/session-troubleshooting) — latency, idle, common errors.
-- [Download your model](/api/agents#download-an-agents-model) — the trained model's runnable `.avatar` (the current bitHuman container for all but the oldest identities), via API or `bithuman pull <code>`.
-- [Talking video generation](/concepts/talking-video) — render offline mp4s with `expression-2`.
+- [Models](/concepts/models) — the four models side by side
+- [Agents API](/api/agents) — create, poll, download
+- [Embed widget](/guides/deploy-embed) — a live session in minutes
+- [Video API](/api/video) — render an MP4 with `model: "expression-2"`
+- [Session behavior & troubleshooting](/guides/session-troubleshooting)
