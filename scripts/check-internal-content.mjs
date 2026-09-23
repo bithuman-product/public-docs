@@ -17,7 +17,8 @@
 // fixture fails every run. A correct hit is fixed by rewording, or by a named
 // CARRIER in scripts/internal-content-carriers.json (path + exact string +
 // reason), and every carrier is asserted present. Path exclusions are not
-// allowed, with one exception: the changelog is exempt from dated-log and
+// allowed, with one exception: the changelog and the legal notices (which must
+// name the exact versions and dates they cover) are exempt from dated-log and
 // version-history.
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
@@ -35,9 +36,9 @@ export const PATTERNS = [
   { name: "measure-jargon", re: /\be2e-(unpaced|steady-state|paced)\b|\bsteady[- ]state\b|\bruled shape\b|\bdrive \d{4}-\d{5}-\d{4}\b|\bpositive control\b|\bbyte-identical\b|\b30-day clock\b/gi,
     fixture: "e2e-unpaced (not re-measured on the ruled shape)" },
   { name: "dated-log", re: /\b(measured|re-measured|verified|counted|executed|run|read|tested)\b[^.\n]{0,40}\b20\d\d-\d\d-\d\d\b/gi,
-    fixture: "Measured on 2026-09-21 against the shipped header", exempt: /changelog/ },
+    fixture: "Measured on 2026-09-21 against the shipped header", exempt: /changelog|legal\// },
   { name: "version-history", re: /\b(from|through|until|since|up to|before|after)\s+`?(v|cli-v|essence2-v)?\d+\.\d+\.\d+/gi,
-    fixture: "From 2.6.20 the CLI ignores it", exempt: /changelog/ },
+    fixture: "From 2.6.20 the CLI ignores it", exempt: /changelog|legal\// },
   { name: "sha-in-prose", re: /(?<![\w/.#-])(?=[0-9a-f]*[a-f])(?=[0-9a-f]*\d)[0-9a-f]{9,40}(?![\w/-])/g,
     fixture: "fixed in core 876ce210a", prose: true },
   { name: "star", re: /★/g, fixture: "★ the load-bearing line" },
