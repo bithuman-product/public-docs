@@ -1,17 +1,58 @@
 ---
-// The generated performance headline. Its numbers are written between the
-// FLOORS:HEADLINE markers of src/partials/performance-headline.md by the
-// performance emitter; nothing here types a number.
+// The generated performance headline. The performance emitter writes a small
+// markdown table between the FLOORS:HEADLINE markers of
+// src/partials/performance-headline.md; this component only lays those cells
+// out (number, then the × real-time chip). No number is typed here.
 import { Content, rawContent } from "../partials/performance-headline.md";
-const filled = /\|/.test(rawContent());
+
+const md = rawContent().replace(/<!--[\s\S]*?-->/g, "");
+const rows = md.split("\n").filter((l) => l.startsWith("|") && !/^\|\s*-/.test(l))
+  .map((l) => l.split("|").slice(1, -1).map((c) => c.trim().replace(/\*\*/g, "")));
+const [head, ...body] = rows;
+const note = md.split("\n").find((l) => l.trim() && !l.startsWith("|"))?.replace(/\[([^\]]+)\]\([^)]*\)/g, "").trim();
+// If the emitter's table shape ever changes, fall back to rendering the partial as-is.
+const parsed = Boolean(head && body.length > 0 && body.every((r) => r.length === head.length));
+const filled = /\|/.test(md);
+const cell = (c: string) => {
+  const [fps, x] = c.split("·").map((s) => s.trim());
+  const rt = x ? parseFloat(x) >= 1 : false;
+  return { fps, x, rt };
+};
 ---
 <div class="perf-headline">
-  {filled ? <div class="prose ph-table"><Content /></div> : null}
-  <p class="ph-link"><a href="/performance">Frame rates for every platform, with memory and method →</a></p>
+  {parsed ? (
+    <div class="ph-scroll" role="region" aria-label="Frame rates by platform" tabindex="0">
+      <table class="ph">
+        <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+        <tbody>
+          {body.map((r) => (
+            <tr>
+              <th scope="row">{r[0]}</th>
+              {r.slice(1).map((c) => {
+                const { fps, x, rt } = cell(c);
+                return <td><span class="ph-fps">{fps}</span>{x && <span class:list={["ph-x", { rt }]}>{x} real time</span>}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : filled ? <div class="prose ph-raw"><Content /></div> : null}
+  {parsed && note && <p class="ph-note">{note}</p>}
+  <p class="ph-link"><a href="/performance">Every platform, with memory and method →</a></p>
 </div>
 <style>
   .perf-headline { margin-top: var(--space-4); }
-  .ph-table :global(table) { width: 100%; font-size: var(--ft-sm); }
-  .ph-table :global(p) { font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .ph-link { margin-top: var(--space-3); font-size: var(--ft-sm); }
+  .ph-scroll { overflow-x: auto; }
+  .ph { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--r-lg); overflow: hidden; }
+  .ph th, .ph td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--color-border); white-space: nowrap; }
+  .ph tbody tr:last-child th, .ph tbody tr:last-child td { border-bottom: 0; }
+  .ph thead th { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); font-weight: var(--fw-medium); background: var(--color-surface-2); }
+  .ph tbody th { font-weight: var(--fw-bold); }
+  .ph-fps { display: block; font-size: var(--ft-lg); font-weight: var(--fw-bold); color: var(--color-text); }
+  .ph-x { display: inline-block; margin-top: 0.2rem; font-size: var(--ft-xs); padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--color-surface-2); color: var(--color-text-secondary); }
+  .ph-x.rt { background: color-mix(in srgb, var(--green-500) 16%, transparent); color: var(--color-text); }
+  .ph-note { margin-top: var(--space-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ph-raw :global(table) { width: 100%; font-size: var(--ft-sm); }
+  .ph-link { margin-top: var(--space-2); font-size: var(--ft-sm); }
 </style>
