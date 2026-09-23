@@ -33,7 +33,7 @@ use the [cloud API](/api/overview) or [LiveKit](/sdk/livekit).
 
 ## A first MP4 on macOS or Linux
 
-Four commands on macOS Apple Silicon or Linux x86_64, with `ffmpeg` on `PATH`:
+Four commands on macOS Apple Silicon or Linux (x86_64 or arm64), with `ffmpeg` on `PATH`:
 
 ```bash
 curl -fsSL https://install.bithuman.ai | sh

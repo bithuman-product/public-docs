@@ -45,7 +45,7 @@ What is published today, per surface. Each link goes to the page that installs i
 | Surface | Essence 2 | Expression 2 | Essence 1 | Expression 1 |
 |---|---|---|---|---|
 | **bitHuman cloud** — [REST API](/api/overview), [embed](/api/embedding), [LiveKit](/sdk/livekit) | yes | yes | yes | yes |
-| [**CLI**](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `run`, `render` | `run`, `render` | `run` | — |
+| [**CLI**](/sdk/cli) — macOS Apple Silicon, Linux x86_64 / arm64 | `run`, `render` | `run`, `render` | `run` | — |
 | [**Python**](/sdk/python) — macOS Apple Silicon, Linux x86_64 / aarch64 | frames and MP4 clips | frames (`[expression-2]` extra) | frames | — |
 | [**Apple**](/sdk/ios) — iPhone, iPad, Mac | `Essence2` product (iOS / macOS 26) | `Expression2` product | — | — |
 | [**Android**](/sdk/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
