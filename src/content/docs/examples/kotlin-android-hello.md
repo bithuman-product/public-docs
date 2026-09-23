@@ -14,6 +14,12 @@ head from your audio — on the device, with no cloud round-trip and **no API ke
 Snapdragon 8 Elite, Android 16): 5.72 s of speech in → **117 frames** of 416×720
 out, rendered in 21.0 s, then played back in sync with the audio.
 
+**Re-run on 2026-09-23 with `expression2-android` 0.4.8**, the same files extracted
+from this page, same phone: 4.93 s of speech in → **99 frames** out, with the
+decoder on the phone's Hexagon NPU and no option set to ask for it — the log line
+read `acc=NPU routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=NPU)` with an empty
+`note`.
+
 ## Which model does this page build?
 
 Both. [Expression 2](/concepts/expression-2) is first because it is the shorter
@@ -55,9 +61,11 @@ An app that, when you tap it:
 4. plays the audio back and shows each frame on the audio clock, so the mouth
    matches what you hear.
 
-It renders first and plays second on purpose: on the all-CPU arm this phone
-renders about **5.6 frames per second**, and playback needs 20 — see
-[On-device speed](/sdk/android#performance).
+It renders first and plays second on purpose, because it is the shortest correct
+program: `feed()` renders the whole clip before it returns, so there is nothing to
+pace. A live app feeds and pulls at the same time instead — see
+[Feed the microphone](#feed-the-microphone-instead-of-a-file). The measured rate is
+on the [performance page](/sdk/performance).
 
 ## Before you start
 
@@ -386,20 +394,16 @@ class MainActivity : Activity() {
     /**
      * How the engine is built.
      *
-     * A bare Expression2Options() is all-CPU and renders on every arm64 device — start
-     * here. To try the Qualcomm accelerator, add the two QNN artifacts to
-     * app/build.gradle.kts and use:
-     *
-     *     import ai.bithuman.expression2.Routing
-     *     private val options = Expression2Options(
-     *         routing    = Routing.HTP_DECODER,
-     *         qnnOptions = Expression2Options.QNN_OPTIONS_HEXAGON_BURST,
-     *     )
+     * A bare Expression2Options() is the right start on every arm64 device. On a
+     * Snapdragon it runs the decoder on the Hexagon NPU — 0.4.8 brings the Qualcomm
+     * runtime with it, so there is nothing to add — and everywhere else it renders on
+     * the CPU. The log line below prints which one you got, and why, in
+     * avatar.acceleratorNote.
      *
      * Leaving `accelerator` at its AUTO default is what makes that safe: the SDK tries
-     * the accelerator and falls back to the CPU by itself, and says so in
-     * avatar.acceleratorNote. Writing accelerator = Accelerator.NPU turns the same
-     * refusal into a thrown exception and no frames.
+     * the accelerator and falls back to the CPU by itself. Writing
+     * accelerator = Accelerator.NPU turns a refusal into a thrown exception and no
+     * frames.
      */
     private val options = Expression2Options()
 
@@ -643,11 +647,13 @@ adb shell am start -n com.example.x2hello/.MainActivity
 plus the three padded tail frames that `flushTail()` produces past the end of the
 speech.
 
-★ **Why nothing appears for twenty seconds and then everything does.** The
-first frame arrives only when `feed()` returns, because `feed()` is where the
-compute happens: it renders every chunk whose look-ahead has arrived, and
-`pull()` then drains a queue that is already full. That is why the app renders
-the whole clip before it plays a second of it.
+★ **Why nothing appears for half a minute and then everything does.** Two costs
+come before the first frame. The first `create()` in a process compiles the graph
+for the phone's accelerator — the `initMs` field in the `engine:` log line, which
+read 30,281 ms on the 2026-09-23 run; a second `create()` in the same process does
+not pay it again. Then `feed()` does the rendering: it renders every chunk whose
+look-ahead has arrived, and `pull()` drains a queue that is already full. That is
+why the app renders the whole clip before it plays a second of it.
 
 ## When it does not work
 
@@ -667,40 +673,41 @@ the whole clip before it plays a second of it.
 | App shows the push instructions again after you pushed | the file landed in another package's directory | the path in the message is the one to use, verbatim |
 | App shows the push instructions and `adb shell input tap` changes nothing | the phone is locked — the tap goes to the keyguard | unlock it, or `am force-stop` then `am start` (Step 4) |
 | `Expression2Exception: … the QNN delegate refused it` | you asked for `Accelerator.NPU` explicitly | see the next section — do not name the accelerator |
+| the `engine:` log line says `acc=CPU` on a Snapdragon phone, and `note` names a missing `libQnnTFLiteDelegate.so` | `useLegacyPackaging = true` is missing, so the Qualcomm libraries were never extracted to disk, or the two `com.qualcomm.qti` artifacts were excluded | put `packaging { jniLibs { useLegacyPackaging = true } }` back (Step 3, file 5) |
 
-## Optional — ask for the accelerator without risking zero frames
+## The accelerator — already on, and how to leave it that way
 
-Add the Qualcomm delegate and runtime to `app/build.gradle.kts`:
+There is nothing to add for it. `expression2-android` 0.4.8 declares the Qualcomm
+delegate and runtime in its own POM (`com.qualcomm.qti:qnn-litert-delegate:2.49.0`
+and `com.qualcomm.qti:qnn-runtime:2.49.0`, both on Maven Central), so the one
+dependency line in Step 3 already brings them, and a bare `Expression2Options()`
+runs the decoder on the Hexagon NPU wherever the phone has one. On the 2026-09-23
+run above it did, on a Snapdragon 8 Elite, with no option set.
+
+Two things keep it working:
+
+- **`useLegacyPackaging = true`** (Step 3, file 5). The accelerator loads its
+  libraries as files on disk; without the line they are never extracted, and the
+  engine renders on the CPU with the reason in `acceleratorNote`.
+- **Leave `accelerator` at its `AUTO` default.** `AUTO` is the fallback, and it is
+  the whole difference between an app that renders and an app that does not:
+  naming `Accelerator.NPU` makes a refusal fatal — `Expression2Exception:
+  TfLiteInterpreterCreate returned null (graph rejected) …`, and no frames at all.
+  Under `AUTO` the SDK builds the CPU arm instead and records why in
+  `avatar.acceleratorNote`, which is why the app logs that field.
+
+To opt out of the accelerator — it is about 70 MB of your APK — exclude the
+Qualcomm group and the engine renders on the CPU, slower and otherwise the same:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8")
-    implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")   // both on Maven Central
-    implementation("com.qualcomm.qti:qnn-runtime:2.49.0")           // no Qualcomm account needed
+    implementation("ai.bithuman:expression2-android:0.4.8") {
+        exclude(group = "com.qualcomm.qti")
+    }
 }
 ```
 
-and name the **routing**, leaving `accelerator` at its `AUTO` default:
-
-```kotlin
-import ai.bithuman.expression2.Routing
-
-private val options = Expression2Options(
-    routing    = Routing.HTP_DECODER,
-    qnnOptions = Expression2Options.QNN_OPTIONS_HEXAGON_BURST,
-)
-```
-
-★ **`AUTO` is the fallback, and it is the whole difference between an app that
-renders and an app that does not.** Naming `Accelerator.NPU` makes a refusal
-fatal — `Expression2Exception: TfLiteInterpreterCreate returned null (graph
-rejected) … this device has no usable Hexagon for this graph`, and no frames at
-all. Leaving it at `AUTO` lets the SDK build the CPU arm instead and record why
-in `avatar.acceleratorNote`, which is why the app logs that field.
-
-★ **This particular refusal is a Snapdragon 8 Elite (SM8750) fact**, not a
-universal one: the Android member was tuned on an SM8550, where the same options
-run the decoder on the Hexagon. Keep `AUTO` and you get whichever is available.
+[The SDK page](/sdk/android#expression-2) has the measured size of that trade.
 
 ## Where the agent code comes from
 
@@ -749,9 +756,10 @@ fun recordMic(seconds: Int): FloatArray {
 ```
 
 Feeding a microphone live also means feeding *while* pulling — the
-SDK is built for that ([the streaming contract](/concepts/audio-streaming)), but
-remember this phone's all-CPU arm renders slower than real time, so a live app
-either asks for the accelerator or falls behind.
+SDK is built for that ([the streaming contract](/concepts/audio-streaming)). Keep
+the accelerator (see [above](#the-accelerator--already-on-and-how-to-leave-it-that-way)):
+a live app has to render at least as fast as it plays, and the CPU-only arm is the
+slower one.
 
 ## The first-generation artifact — essence-1 (`ai.bithuman:sdk:2.3.6`)
 
