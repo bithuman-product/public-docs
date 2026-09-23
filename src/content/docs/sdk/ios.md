@@ -31,17 +31,18 @@ In Xcode choose *File → Add Package Dependencies…* and paste `https://github
 .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.2")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
-//   .product(name: "Essence2",    package: "homebrew-bithuman")
+//   .product(name: "Essence2Kit", package: "homebrew-bithuman")
 //   .product(name: "bitHumanKit", package: "homebrew-bithuman")
 ```
 
 | Product | Import | What it is |
 |---|---|---|
 | `Expression2` | `import Expression2` | the Expression 2 engine with a Swift API |
-| `Essence2` | `import Essence2` | the Essence 2 engine as a C library |
+| `Essence2Kit` | `import Essence2Kit` | the Essence 2 engine with a Swift API; it includes `Essence2` |
+| `Essence2` | `import Essence2` | the Essence 2 engine as a C library, for C, C++ and plugins |
 | `bitHumanKit` | `import bitHumanKit` | a voice agent: speech recognition, language model, speech and avatar views |
 
-Every product ships `ios-arm64`, `ios-arm64-simulator` and `macos-arm64`. An app that links `Essence2` sets its deployment target to iOS 26 / macOS 26.
+Every product ships `ios-arm64`, `ios-arm64-simulator` and `macos-arm64`. An app that links `Essence2Kit` or `Essence2` sets its deployment target to iOS 26 / macOS 26.
 
 ## Authenticate
 
@@ -88,13 +89,23 @@ while idleTicks < 100 {                       // 5 s with no frame = done
 
 Expected: 20 frames per second of audio, 416×720. The first start compiles the engine for the device; later starts reuse the staging directory.
 
-Essence 2 is a C interface. Place its engine resources in your app bundle first: unzip this archive at the bundle's `Resources` root, keeping its two `.bundle` directories.
+Essence 2, with an Essence 2 avatar file (`.imx`, downloaded the same way with your agent code):
 
-```bash
-curl -fLO "https://github.com/bithuman-product/homebrew-bithuman/releases/download/essence2-v1.11.0/libessence2-resources.zip"
+```swift
+import Essence2Kit
+
+Essence2Credential.set(secret)                                    // or BITHUMAN_API_SECRET
+let engine = try await Essence2Engine.create(identity: imxURL)    // waits until the engine is ready
+engine.feed(samples)                                              // [Float], 16 kHz mono
+while let (frame, _) = engine.pull() {                            // B, G, R bytes, width * height * 3
+    show(frame, engine.width, engine.height)
+}
+engine.shutdown()
 ```
 
-Then:
+Expected: 25 frames per second of audio at the avatar's own size (for example 1920×1080). The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
+
+The same engine as a C interface, for C, C++ and plugins:
 
 ```c
 be_essence2_handle h;
@@ -107,18 +118,19 @@ while (be_essence2_frames_available(h) > 0) be_essence2_pull_frame(h, buf, w * h
 be_essence2_destroy(h);
 ```
 
-Call `be_essence2_quiesce_all(timeout_ms)` from `applicationWillTerminate`. Without it the app can crash on exit while GPU work is still running.
+Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) from `applicationWillTerminate`. Without it the app can crash on exit while GPU work is still running.
 
 ## Integrate into your app
 
-| Job | Expression 2 (Swift) | Essence 2 (C) |
+| Job | Expression 2 | Essence 2 |
 |---|---|---|
-| Stream audio as it arrives | `feed(chunk)` | `be_essence2_push_audio` |
-| Show frames | `pull()` at 20 fps | `be_essence2_pull_frame` at 25 fps |
-| End of a reply | `flushTail()` | keep pulling until `frames_available` is 0 |
-| Idle between replies | `engine.idle` | `be_essence2_idle_frame` (a `0` means keep the current frame) |
-| Interrupt the reply | `resetState(clearFrames: true)` | `be_essence2_reset` |
-| Quit | release the engine | `be_essence2_quiesce_all` |
+| Stream audio as it arrives | `feed(chunk)` | `feed(chunk)` |
+| Show frames | `pull()` at 20 fps | `pull()` at 25 fps |
+| End of a reply | `flushTail()` | keep pulling until `pull()` returns `nil` |
+| Idle between replies | `engine.idle` | `idle(into:)` (a `0` means keep the current frame) |
+| Interrupt the reply | `resetState(clearFrames: true)` | `interrupt()` |
+| Check the session | `meteringRefusal` | `meteringRefusal`, `runtimeFailure` |
+| Quit | release the engine | `shutdown()`, then `Essence2Engine.quiesceAll()` at app exit |
 
 The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftUI app with microphone input, idle and interruption.
 
@@ -142,14 +154,14 @@ Frame rates on iPhone and Mac for both models are on the [performance page](/per
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `be_essence2_create` returns `-3`, or `create` throws `meteringRefused`: *no API secret was found* | no secret | call `Essence2Credential.set` / `Expression2Credential.set`, or set `BITHUMAN_API_SECRET` in the scheme |
+| `create` throws `meteringRefused` (C: `be_essence2_create` returns `-3`): *no API secret was found* | no secret | call `Essence2Credential.set` / `Expression2Credential.set`, or set `BITHUMAN_API_SECRET` in the scheme |
 | *the API secret was rejected (401)* | revoked or mistyped secret | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys) |
 | *cannot reach bitHuman to verify your credential* | no network at first contact; in a Mac app, no Outgoing Connections entitlement | fix the network or the entitlement, then create again |
 | `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously | poll, as in the first frame |
 | crash in `__cxa_finalize` when the app quits | `be_essence2_quiesce_all()` was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
-| `ld: warning: Could not find or use auto-linked framework 'CoreAudioTypes'` | a harmless linker option in the Essence 2 library | nothing; the link succeeds |
+| `ld: warning: Could not find or use auto-linked framework 'CoreAudioTypes'` | a linker option in the Essence 2 library before 2.14.3 | update to 2.14.3; the link succeeded either way |
 | the app is killed mid-conversation with no crash log | `bitHumanKit` exceeded the default memory limit | add the two Apple entitlements |
 | `bitHuman needs an iPhone 16 Pro or newer` | `bitHumanKit`'s device floor | use `Expression2` or `Essence2` directly on that device |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
