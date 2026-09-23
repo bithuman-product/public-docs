@@ -97,6 +97,32 @@ curl https://api.bithuman.ai/v1/webhooks/{id}/deliveries \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
+## Session events
+
+Separately from the account webhooks above, an agent can POST its live
+conversation events to a URL of yours. You set this per agent, in the agent's
+settings on the dashboard: the URL, any headers to send, and which events to
+turn on.
+
+**`room.join`** — once, when a user connects:
+
+```json
+{ "agent_code": "A80HVD8577", "event_type": "room.join",
+  "data": { "room_name": "support", "participant_count": 1,
+            "session_id": "session_xyz" }, "timestamp": 1705312200.0 }
+```
+
+**`chat.push`** — once per message, from the user and from the agent:
+
+```json
+{ "agent_code": "A80HVD8577", "event_type": "chat.push",
+  "data": { "role": "user", "message": "help with order #12345",
+            "session_id": "session_xyz" }, "timestamp": 1705312285.0 }
+```
+
+These carry no signature: add a secret header in the agent's settings and check
+it in your handler. Return `200` quickly and do the work on a queue.
+
 ## Manage webhooks
 
 ```bash

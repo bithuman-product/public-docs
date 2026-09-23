@@ -193,5 +193,5 @@ arrives as a remote participant's video track published by the Python agent.
 
 - [Python SDK](/sdk/python) — the runtime the plugin wraps
 - [Trigger avatar actions from code](/guides/avatar-actions) — gestures from your agent
-- [Embed widget](/guides/deploy-embed) — an iframe instead of LiveKit
+- [Embed widget](/api/embedding) — an iframe instead of LiveKit
 - [LiveKit Agents docs](https://docs.livekit.io/agents/) — the agent-worker model

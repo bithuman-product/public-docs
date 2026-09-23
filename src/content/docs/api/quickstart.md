@@ -66,10 +66,10 @@ It always returns HTTP `200` — read the body: `{"valid": true}` means you're s
 ### Look up an agent
 
 Fetch **one of your own** agents by code. List them first — `GET /v1/agents`
-returns every agent on your account:
+returns the agents on your account, a page at a time:
 
 ```bash
-curl "https://api.bithuman.ai/v1/agents?limit=5" \
+curl "https://api.bithuman.ai/v1/agents" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -105,7 +105,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/YOUR_AGENT_CODE/speak \
 > to tell them apart. `"Agent not found for code: <code>"` means the agent is
 > not on your account; `"No active rooms found
 > for agent <code>"` means it is yours but idle — open the embed first, or start a
-> [LiveKit worker](/api/embedding).
+> [LiveKit worker](/sdk/livekit).
 
 ### Voice without an avatar
 
@@ -134,19 +134,16 @@ model, so they take longer and cost more — see
 a URL must be publicly fetchable, and it is downloaded after the request
 returns, so poll status rather than reading a `200` as acceptance.
 
-> **What this call costs, before you run it.** Creation is a one-time charge of
-> **250 credits** for `essence-1` / `expression-1`, **500 credits** for
-> `essence-2` and **2000 credits** for `expression-2` (`auto` bills whichever
-> model it routes to). The free tier's **99 credits/month** covers none of them:
-> on a free balance this call returns `402 INSUFFICIENT_BALANCE` and creates
-> nothing, so top up or choose a plan first —
+> **What this call costs, before you run it.** Creation is a one-time charge
+> per model, listed on [pricing](/guides/pricing). The free tier's monthly
+> credits cover none of them: on a free balance this call returns
+> `402 INSUFFICIENT_BALANCE` and creates nothing —
 > [the free-tier arithmetic](/guides/pricing#the-free-tier-cannot-create-an-agent).
 > Steps 1 and 2 above need no API key and create nothing.
 
-The snippet below creates an `expression-2` agent — the most expensive model at
-**2000 credits**; change `"model"` to `"essence-2"` (500) or `"expression-1"`
-(250) to spend less. It needs the `BITHUMAN_API_SECRET` export from
-[Going further](#going-further) and one value of your own, `PORTRAIT_URL`:
+The snippet below creates an `expression-2` agent. It needs the
+`BITHUMAN_API_SECRET` export from [Going further](#going-further) and one value
+of your own, `PORTRAIT_URL`:
 
 ```bash
 export PORTRAIT_URL=https://your-site.example/portrait.jpg   # a public URL to your portrait

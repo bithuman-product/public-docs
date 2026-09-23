@@ -19,7 +19,8 @@ Drop an agent onto any page as an iframe — no SDK install required:
 ></iframe>
 ```
 
-Replace `A78WKV4515` with your agent code.
+Replace `A78WKV4515` with your agent code — find it in the
+[Library](https://www.bithuman.ai/#library) or the Deploy & Share dialog.
 
 > **Warning** The iframe needs delegated `microphone` permission to hear the
 > user — and the `*` in the `allow` attribute is load-bearing. The embed URL
@@ -98,6 +99,29 @@ script tag):
 ></iframe>
 ```
 
+## Pin a serving tier
+
+To pin a session to one cloud tier for a benchmark, append a force-tier slug as
+`?model=` to the iframe URL — or, better, pass it as `model` when you mint the
+token, so a typo is refused with a `400` instead of being ignored:
+
+```html
+<iframe
+  src="https://bithuman.ai/embed/A66GYD8664?token=THE_TOKEN&model=expression-2-cpu"
+  allow="microphone *; camera *; autoplay *"
+  style="width: 400px; height: 700px; border: 0;"
+></iframe>
+```
+
+The slugs and what a pin does are on
+[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier). For
+production, omit `model` and let the platform choose.
+
+## Session events
+
+An agent can POST `room.join` and `chat.push` events to a URL of yours as its
+conversations happen — see [session events](/api/webhooks#session-events).
+
 ## Notes
 
 - The embed token is more constrained than a [runtime token](/api/authentication)
@@ -106,6 +130,8 @@ script tag):
   the browser will block microphone access (except on `localhost`).
 - The `fingerprint` should be generated once per device and persisted, so
   per-visitor rate limits track the same visitor across sessions.
+- An embedded session bills to the agent's owner at the rates on
+  [pricing](/guides/pricing).
 
 See the interactive [API reference](/api/reference) for the full request and
 response schema.

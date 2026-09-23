@@ -34,7 +34,7 @@ For a stylized character, or a scene generated from one photo, choose
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/guides/deploy-embed) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (frames, and MP4 clips with `bithuman.offline`) |
 | iPhone, iPad, Mac | the [Apple SDK](/sdk/ios)'s `Essence2` product (iOS / macOS 26) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
 | Android | [`essence2-android`](/sdk/android) — fetching the identity needs your API secret |
@@ -101,6 +101,6 @@ over the same frames. Idle animation is not billed.
 
 - [Models](/concepts/models) — the four models side by side
 - [Agents API](/api/agents) — create, poll, download
-- [Embed widget](/guides/deploy-embed) — a live session in minutes
+- [Embed widget](/api/embedding) — a live session in minutes
 - [Video API](/api/video) — render an MP4 with `model: "essence-2"`
 - [Session behavior & troubleshooting](/guides/session-troubleshooting)

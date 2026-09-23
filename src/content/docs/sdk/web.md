@@ -30,7 +30,7 @@ https://www.bithuman.ai/A74NWD9723
 Always start on `www.bithuman.ai`: that host starts the session and forwards
 you to the viewer. Keep the `*` in `allow`, or the microphone will not work.
 Tokens, sizing and embedding on your own site are on
-[Embed widget](/guides/deploy-embed).
+[Embed widget](/api/embedding).
 
 ## Get a model
 
@@ -164,7 +164,7 @@ done
 
 ## See also
 
-- [Embed widget](/guides/deploy-embed) — the iframe on your own site
+- [Embed widget](/api/embedding) — the iframe on your own site
 - [LiveKit](/sdk/livekit) — a served avatar from your own JavaScript
 - [Models](/concepts/models#where-each-model-runs) — which model runs where
 - [Performance](/sdk/performance) — measured frame rates for every platform

@@ -26,10 +26,11 @@ All endpoints are relative to this URL and require an `api-secret` header.
 
 ## Authentication
 
-Pass your API secret in the `api-secret` header on every request:
+Pass your API secret in the `api-secret` header on every request — the cheapest check is `/v1/validate`, which costs nothing:
 
-```http
-api-secret: YOUR_API_SECRET
+```bash
+curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
+# {"valid":true}
 ```
 
 Treat the secret like a password — never commit it to source control and never
