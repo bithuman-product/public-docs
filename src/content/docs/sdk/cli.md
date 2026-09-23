@@ -42,6 +42,14 @@ curl -fsSL https://install.bithuman.ai | sh
 
 The installer puts the CLI in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to change it) and verifies its checksum. If it asks you to, add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile. On Apple silicon, `brew install bithuman-product/bithuman/bithuman-cli` installs the same release. `bithuman --version` prints the CLI and engine versions.
 
+Check the install:
+
+```text
+$ bithuman --version
+libessence  2.11.6 ABI 7
+bithuman    2.7.1
+```
+
 The CLI is not on PyPI. `pip install bithuman` installs the Python library, which has no command.
 
 ## Authenticate
