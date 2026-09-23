@@ -28,9 +28,7 @@ Each page below is the one place its install, model download and code live.
 
 The full model-by-surface matrix is on [Models](/concepts/models#where-each-model-runs).
 
-There is no self-hosted LiveKit worker image for Essence 2 or Expression 2. For
-a live session on one machine, use `bithuman run`; for a hosted live session,
-use the [cloud API](/api) or [LiveKit](/sdk/livekit).
+For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/sdk/livekit) with a cloud avatar, or the Expression 1 container below.
 
 ## A first MP4 on macOS or Linux
 
@@ -49,7 +47,7 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
 ## How self-hosting is billed
 
 - **At the self-hosted rate** on [pricing](/guides/pricing#serving--credits-per-live-minute),
-  from your credit balance. A live session bills its talking minutes; an MP4
+  from your credit balance. A live session bills its talking minutes (idle is free); an MP4
   render bills the length of the clip it writes.
 - **A credential is required to render.** Sign in with `bithuman login`, or set
   `BITHUMAN_API_SECRET` — get one at
@@ -82,8 +80,7 @@ is not real time. Weights (~5 GB) download into the `bithuman-models` volume on
 the first run. Budget about 3 GB of VRAM per session; `MAX_SESSIONS` caps
 concurrency (the image ships `9`).
 
-**Pin the image.** `:latest` moves with every publish and there are no semver
-tags, so pin the digest of the image you tested:
+**Pin the image** by digest; `:latest` moves with every publish:
 
 ```bash
 docker inspect --format '{{index .RepoDigests 0}}' sgubithuman/expression-avatar:latest
@@ -105,14 +102,11 @@ multipart form data:
 |---|---|
 | `GET /ready` | `200` when the worker accepts `/launch` |
 | `GET /status` | `active_sessions`, `available_sessions`, `max_sessions` |
-| `GET /version` | `git_sha`, `image_tag`, `build_time` and uptime of the running worker |
+| `GET /version` | the running worker's version and uptime |
 | `POST /tasks/{task_id}/stop` | end one session; `GET /tasks` lists them |
 | `GET /health` | liveness, for an orchestrator's probe |
 
-**A black or laggy video** is almost always the WebRTC publish settings, not the
-engine. The container publishes one tuned H.264 layer; check the startup log
-line `video publish: WxH cap=…fps bitrate=… simulcast=…` shows
-`simulcast=False`, and tune with these if needed:
+**A black or laggy video** usually comes from the WebRTC publish settings. The container publishes one H.264 layer; tune it with:
 
 | Env | Default | Purpose |
 |---|---|---|
@@ -126,7 +120,7 @@ line `video publish: WxH cap=…fps bitrate=… simulcast=…` shows
 |---|---|---|
 | `bithuman render` refuses with `NOT_SIGNED_IN` | a render is billed, so it needs a credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
 | `ffmpeg: command not found` | the MP4 is written through ffmpeg | `brew install ffmpeg` / `sudo apt install -y ffmpeg` |
-| `pip install bithuman` says there is no wheel for this platform | wheels exist for macOS Apple Silicon and Linux x86_64 / aarch64 only | use one of those, or WSL2 on Windows |
+| `pip install bithuman` finds no wheel | wheels exist for macOS (Apple silicon) and Linux x86_64 / arm64 only | use one of those, or WSL2 on Windows |
 | `java.lang.UnsatisfiedLinkError` on an Android emulator | the libraries are `arm64-v8a` only | a physical device, or an `arm64-v8a` emulator image |
 | the Expression 1 worker never turns `/ready` | the first run is optimizing for a new GPU, or the GPU is older than Ampere | wait a few minutes; check the GPU generation |
 

@@ -42,7 +42,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate \
   -H "api-secret: $BITHUMAN_API_SECRET" | python3 -m json.tool
 ```
 
-2. Generate an agent from a text prompt (optionally add an `image` URL of a face). This is asynchronous and returns an `agent_id`. **It debits 250 credits** — the `expression-1` rate named in the body below. Name the model on every creation call: the price is the price of the model that gets built, so leaving it out leaves the cost to a server default. `"model": "essence-2"` costs 500 and `"model": "expression-2"` costs 2000 ([creation costs](/guides/pricing#creation--generation--one-time-credits)).
+2. Generate an agent from a text prompt (optionally add an `image` URL of a face). This is asynchronous and returns an `agent_id`. **It debits 250 credits** — the `expression-1` rate named in the body below. Name the model on every creation call: the price is the price of the model that gets built, so leaving it out leaves the cost to a server default. `"model": "essence-2"` costs 500 and `"model": "expression-2"` costs 2000 ([creation costs](/guides/pricing#creation--one-time-credits)).
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -139,7 +139,7 @@ export BITHUMAN_API_SECRET="<your API secret>"
 
 `validate.sh` spends nothing. `generate-agent.sh` performs a real creation and
 debits credits; it sends no `model` field, so confirm your balance and the
-[creation costs](/guides/pricing#creation--generation--one-time-credits) before
+[creation costs](/guides/pricing#creation--one-time-credits) before
 you run it.
 
 Full source: [GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api)
