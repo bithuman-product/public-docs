@@ -73,16 +73,6 @@ const isHistory = (rel) => /(^|\/)changelog(\/[^/]+)?\.mdx?$/.test(rel);
  *  page at once. Delete an entry the moment its text is gone. */
 export const ALLOW = [
   {
-    file: "src/content/docs/sdk/ios.md",
-    text: "31.3 FPS",
-    why: "a sample run's own output (M4 Max, busy machine); /sdk/ios is rewritten as /sdk/apple by the redesign (REDESIGN §1.3 #32, §3.8), which drops the fps from the sample",
-  },
-  {
-    file: "src/content/docs/sdk/ios.md",
-    text: "1.56x real time",
-    why: "the same sample line as \"31.3 FPS\"; removed with it by the /sdk/apple rewrite",
-  },
-  {
     file: "src/content/docs/examples/swift-ios-expression2.md",
     text: "19.3 FPS",
     why: "a code comment recording what an @Published frame property cost on an iPhone 15; the example is rewritten by the redesign (REDESIGN §1.3 #57)",
@@ -103,6 +93,9 @@ export function literals(text) {
     while ((m = re.exec(open)) !== null) {
       const multiple = re === MULTIPLE;
       if (!multiple && PLAY_RATES.has(m[1])) continue;
+      // ★1× IS THE THRESHOLD, NOT A MEASUREMENT: "at 1× real time or faster an avatar holds a
+      //  live conversation" states the contract every cell is read against, like the play rates.
+      if (multiple && /^1(\.0+)?$/.test(m[1])) continue;
       out.push({ value: m[1], text: m[0], line: lineOf(open, m.index), multiple });
     }
   }
@@ -178,6 +171,9 @@ function selftest() {
   arm("'frames per second' reddens", g("measured on an iPhone 15 at 52 frames per second\n").length === 1);
   arm("'frames a second' reddens", g("it sustains about 40 frames a second when warm\n").length === 1);
   arm("a multiple of real time reddens", g("that is 1.56x real time\n").length === 1 && g("that is 4.1× real time\n").length === 1);
+  arm("...but 1× — the real-time threshold itself — is the contract, not a measurement",
+    g("At 1× real time or faster, an avatar holds a live conversation.\n").length === 0
+      && g("at 1.0× real time or more\n").length === 0 && g("that is 1.5× real time\n").length === 1);
   arm("a rate in an Astro page reddens", g("<p>Up to 357 fps on a GPU</p>\n", "src/pages/index.astro").length === 1);
   arm("a rate in the llms config reddens", g("`- **Speed**: 177 fps on an M4`", "src/config/agent-facts.ts").length === 1);
   arm("a rate inside a code sample reddens (a sample is still a published number)", g("```text\ngenerated 407 frames (31.3 FPS)\n```\n").length === 1);
