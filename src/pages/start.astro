@@ -63,38 +63,16 @@ const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
         </div>
 
         <div class="fork-card">
-          <span class="fork-tag">On-device</span>
+          <span class="fork-tag">On your hardware</span>
           <h3>Run it yourself (SDK)</h3>
-          <p>Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or a single CLI command. Private and low-latency. <a href="/guides/self-hosting">Self-hosting</a> covers every surface.</p>
+          <p>The render happens on your machine, billed in credits at the self-hosted rate. One page per platform:</p>
           <ul>
-            <li>Your machine, your data</li>
-            <li><strong>On a phone the first frame is free</strong> — <a href="/sdk/android">Android</a> (beta) and <a href="/sdk/ios">iOS &amp; iPadOS</a> (preview) both render a public showcase avatar with <strong>no account, no API key and no credits</strong>. Each has a complete, copy-the-whole-page project below.</li>
-            <li>iOS also needs Apple's own kit: Xcode 26+, an Apple Developer team and a physical device</li>
-            <li>Or from code: <a href="/sdk/python">Python</a> · <a href="/sdk/web">Browser</a> · <a href="/sdk/cli">CLI</a></li>
+            <li><a href="/sdk/cli">CLI</a> — macOS &amp; Linux, no code</li>
+            <li><a href="/sdk/python">Python</a> · <a href="/sdk/ios">Apple</a> · <a href="/sdk/android">Android</a> · <a href="/sdk/web">Web</a></li>
+            <li><a href="/guides/self-hosting">Self-hosting</a> · <a href="/guides/pricing#offline-licensing">Offline licensing</a> (Business &amp; Enterprise)</li>
           </ul>
           <Button href="/sdk" variant="secondary">Get the SDK →</Button>
         </div>
-      </div>
-
-      {/* The two pages that end in a rendered frame on a handset. */}
-      <div class="phone-lane">
-        <h3>Shipping a phone app? Start at the finished project.</h3>
-        <p>Both pages print every file in full and end with a rendered frame on a real handset — copy the page, get the app.</p>
-        <div class="phone-row">
-          <a class="phone-card free" href="/examples/kotlin-android-hello">
-            <span class="phone-tag">Android · free</span>
-            <strong>Kotlin — Hello, avatar</strong>
-            <span>The whole project, seven files.</span>
-            <span class="phone-go">Open the Android project →</span>
-          </a>
-          <a class="phone-card" href="/examples/swift-ios-expression2">
-            <span class="phone-tag">iOS · free</span>
-            <strong>Swift — a talking avatar on the iPhone you have</strong>
-            <span>The whole SwiftUI app. Renders on any recent iPhone.</span>
-            <span class="phone-go">Open the iOS project →</span>
-          </a>
-        </div>
-        <p class="s-note">These projects use <code>expression-2</code>. For <code>essence-2</code> on a phone, both platforms have a complete worked example: <a href="/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed">Kotlin on Android</a> and <a href="/examples/swift-ios-essence2">Swift on iOS</a> — <a href="/sdk">what each platform needs →</a></p>
       </div>
 
       <div class="nudge">
@@ -119,11 +97,11 @@ const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
       <div class="ideas">
         <div class="idea">
           <h3>Essence 2 vs Expression 2</h3>
-          <p>Pick a model by character. <strong>Essence 2</strong> is the default for photorealistic people — it serves from cloud GPUs, from your own CPU servers, and in the viewer&rsquo;s browser. <strong>Expression 2</strong> animates stylized characters and creatures. Either way you provide one portrait image and bitHuman generates the rest. <a href="/concepts/models">Compare the models →</a></p>
+          <p>Pick a model by character. <strong>Essence 2</strong> animates a photorealistic person from their own footage. <strong>Expression 2</strong> generates the whole scene from one portrait — stylized characters, animals and creatures, and people too. Either way you provide one portrait image and bitHuman generates the rest. <a href="/concepts/models">Compare the models →</a></p>
         </div>
         <div class="idea">
-          <h3>The <code>.imx</code> file</h3>
-          <p>Every avatar is one portable <code>.imx</code> file, and every SDK opens it the same way: push audio in, take frames out. The one model that runs nowhere but a GPU server is <code>expression-1</code> &mdash; it never runs on a phone, a Mac or in a tab. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/sdk">Which model runs where &rarr;</a></p>
+          <h3>One file, one loop</h3>
+          <p>Every avatar is one portable model file, and every platform drives it the same way: push audio in, take lip-synced frames out. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/concepts/models#where-each-model-runs">Which model runs where &rarr;</a></p>
         </div>
       </div>
     </div>
@@ -134,9 +112,8 @@ const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
     <div class="container">
       <h2>Where to next</h2>
       <div class="next-row">
-        <a class="next-card" href="/examples/kotlin-android-hello">Android, end to end <span>The whole Kotlin project — free, no key</span></a>
-        <a class="next-card" href="/examples/swift-ios-expression2">iOS, end to end <span>The whole SwiftUI app — a rendered frame on an iPhone 15</span></a>
-        <a class="next-card" href="/examples">All examples <span>Copy-paste starting points for every path</span></a>
+        <a class="next-card" href="/sdk">SDK <span>Every platform, one page each</span></a>
+        <a class="next-card" href="/examples">Examples <span>Whole projects for Android, iOS, Python and REST</span></a>
         <a class="next-card" href="/guides">Guides <span>Build, deploy, embed, and price your agent</span></a>
         <a class="next-card" href="/showcase">Showcase <span>See what teams have shipped</span></a>
       </div>
@@ -169,18 +146,6 @@ const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
   .fork-card ul a { color: var(--color-primary); font-weight: var(--fw-medium); }
   .fork-card :global(.btn) { margin-top: auto; align-self: flex-start; }
 
-  /* phone lane */
-  .phone-lane { margin-top: var(--space-6); padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
-  .phone-lane h3 { font-size: var(--ft-lg); }
-  .phone-lane > p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .phone-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-4); }
-  .phone-card { display: flex; flex-direction: column; gap: 0.4rem; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface-2); transition: all var(--t-med) var(--ease); }
-  .phone-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .phone-card.free { border-color: var(--color-primary); }
-  .phone-tag { align-self: flex-start; padding: 0.15rem 0.55rem; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-xs); font-weight: var(--fw-medium); }
-  .phone-card strong { font-size: var(--ft-md); }
-  .phone-card > span:not(.phone-tag):not(.phone-go) { color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .phone-go { margin-top: auto; padding-top: var(--space-2); color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
 
   .nudge { margin-top: var(--space-6); padding: var(--space-5); border: 1px dashed var(--color-border-strong); border-radius: var(--r-xl); }
   .nudge > p:first-child { margin-bottom: var(--space-3); color: var(--color-text-secondary); }
@@ -195,12 +160,12 @@ const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
   /* next */
   .s-next { padding-block: var(--space-10); }
   .s-next h2 { font-size: var(--fh-lg); margin-bottom: var(--space-5); }
-  .next-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+  .next-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
   .next-card { display: flex; flex-direction: column; gap: 0.3rem; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); font-weight: var(--fw-medium); transition: all var(--t-med) var(--ease); }
   .next-card span { font-weight: var(--fw-regular); color: var(--color-text-tertiary); font-size: var(--ft-sm); }
   .next-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
   @media (max-width: 820px) {
-    .fork, .ideas, .next-row, .phone-row { grid-template-columns: 1fr; }
+    .fork, .ideas, .next-row { grid-template-columns: 1fr; }
   }
 </style>
