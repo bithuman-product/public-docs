@@ -28,7 +28,7 @@ Toolchain: Xcode 26 or newer, an Apple Developer team, and a physical device for
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.3")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.4")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -143,7 +143,7 @@ The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftU
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.14.3 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.14.4 or newer
   ```
 
 ## Performance
