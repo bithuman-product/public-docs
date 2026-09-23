@@ -242,10 +242,17 @@ place of the first.
 Sizes vary widely by identity, so read `Content-Length` rather than budgeting
 from a number on this page.
 
-> **Keep the secret out of the app.** On Route A there is no secret at all. On
-> Route B, `BITHUMAN_API_SECRET` is used once, on your Mac, to fetch a file.
-> Nothing in the app below reads a key, and no key ships inside it. See
-> [Authentication](/api/authentication).
+> **Downloading needs no key on Route A — rendering does, from `2.14.2`.** On
+> Route B, `BITHUMAN_API_SECRET` is used on your Mac to fetch a file. From package
+> `2.14.2` (`Expression2` v2.6.5) the engine **bills the session it serves** (talking
+> time only; idle is free) and refuses to start without your API secret:
+> `Expression2Engine.create` throws `Expression2LoadError.meteringRefused` —
+> *"refusing to serve: no API secret was found, …"*. While developing, set
+> `BITHUMAN_API_SECRET` under *Product → Scheme → Edit Scheme → Run → Environment
+> Variables* (Xcode passes it to the app on the phone when you Run); in an app you
+> ship, fetch the key from your backend or the Keychain and call
+> `Expression2Credential.set(key)` before `create`. Never compile a key into the
+> app. See [Authentication](/sdk/ios#authentication).
 
 ## 2. The Xcode project
 
@@ -283,7 +290,7 @@ Then **File → Add Package Dependencies…**, paste
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-choose **Up to Next Major Version** from **2.14.1**, and attach the
+choose **Up to Next Major Version** from **2.14.2**, and attach the
 **`Expression2`** product — *not* `bitHumanKit`, and not both. Attaching
 `Expression2` also brings the two binary targets its module interface needs.
 
@@ -314,7 +321,7 @@ options:
 packages:
   bithuman:
     url: https://github.com/bithuman-product/homebrew-bithuman.git
-    from: 2.14.1
+    from: 2.14.2
 targets:
   IOSExpression2:
     type: application
@@ -555,6 +562,12 @@ actor Renderer {
                     "missing member(s): \(missing.joined(separator: ", "))"])
         }
 
+        // From 2.14.2 the engine bills the session and needs your API secret. This reads
+        // BITHUMAN_API_SECRET (the scheme's Run environment) — which the SDK would also
+        // read on its own; an app you ship sets the key it fetched from your backend.
+        if let key = ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"], !key.isEmpty {
+            Expression2Credential.set(key)
+        }
         let e = try Expression2Engine.create(modelPath: dir, sharedEngineDir: sharedEngine)
         engine = e
         width = e.width
@@ -1078,7 +1091,7 @@ path. Use a physical device.
 ### Link failure with 116 duplicate symbols
 
 You attached both `Expression2` and `Essence2` on a tag below 2.14.0. Raise the
-floor to 2.14.1 and force the resolve ([Pin the version](/sdk/ios#pin-the-version)).
+floor to 2.14.2 and force the resolve ([Pin the version](/sdk/ios#pin-the-version)).
 
 ## Next steps
 

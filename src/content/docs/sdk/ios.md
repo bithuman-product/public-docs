@@ -31,7 +31,9 @@ device, no profile and no entitlement.
 | **Worked example** | [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) | [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) |
 
 From `2.14.1` a new app on either platform can attach **both** engine
-products, with no linker settings added by hand. Earlier tags fail in three
+products, with no linker settings added by hand. From `2.14.2` both engines
+bill **talking time only** and **both need your API secret** — `Expression2`
+included ([Authentication](#authentication)). Earlier tags fail in three
 different ways, and none of them throws, so the version you resolve matters —
 see [Pin the version](#pin-the-version).
 
@@ -42,16 +44,16 @@ In Xcode: *File → Add Package Dependencies…* and paste
 `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.1")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.2")
 // then attach the engine product(s) your app uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2",    package: "homebrew-bithuman")
 //   .product(name: "bitHumanKit", package: "homebrew-bithuman")
 ```
 
-**Write `2.14.1`, and nothing lower.** A lower floor can leave a Mac app that
-Xcode refuses to build, an Essence 2 app that fails its final link, or an
-engine that never speaks, and nothing is thrown in the last case —
+**Write `2.14.2`, and nothing lower.** A lower floor can leave a Mac app that
+Xcode refuses to build, an Essence 2 app that fails its final link, an engine
+that never speaks (nothing is thrown), or a session that bills idle time —
 [why, and how to check](#pin-the-version).
 
 | Product | You write | What it is |
@@ -259,7 +261,7 @@ curl -fL -o A62SJB3901.imx \
 # 2. the engine's runtime resources (100 MB): its Metal libraries, the idle
 #    audio and the audio encoder.
 curl -fLO \
-  "https://github.com/bithuman-product/homebrew-bithuman/releases/download/essence2-v1.10.0/libessence2-resources.zip"
+  "https://github.com/bithuman-product/homebrew-bithuman/releases/download/essence2-v1.11.0/libessence2-resources.zip"
 ```
 
 Both identity files and the shared engine artifact are `IMX\0` containers, and
@@ -300,9 +302,9 @@ variable is `BITHUMAN_API_SECRET`; `bitHumanKit` 2.4.0 takes it through
 
 | Product | Reads | Without it |
 |---|---|---|
-| `Essence2` | **`BITHUMAN_API_SECRET`**, or the API secret you pass to `be_essence2_set_api_secret()` before `be_essence2_create` | `be_essence2_create` returns `-3` and prints `refusing to serve: no credential was supplied` on stderr |
+| `Essence2` | the API secret you pass to `Essence2Credential.set(_:)` (C: `be_essence2_set_api_secret()`) before `be_essence2_create`, else **`BITHUMAN_API_SECRET`** | `be_essence2_create` returns `-3` and prints `refusing to serve: no API secret was found, so this render cannot be attributed to an account.` on stderr |
 | `bitHumanKit` | `config.apiKey` — set it to your API secret (read `BITHUMAN_API_SECRET` into it) | avatar mode fails with `VoiceChatError.missingAPIKey`; audio-only runs without one |
-| `Expression2` | nothing — it has no metering of its own | renders |
+| `Expression2` (from `2.14.2`) | the API secret you pass to `Expression2Credential.set(_:)` before `Expression2Engine.create(…)`, else **`BITHUMAN_API_SECRET`** | `create` throws `Expression2LoadError.meteringRefused` — `refusing to serve: no API secret was found, so this render cannot be attributed to an account. Call Expression2Credential.set(_:), or set BITHUMAN_API_SECRET.` — and `meteringRefusal` carries the same sentence. Below `2.14.2` `Expression2` read no credential at all. |
 
 | Action | Credential |
 |---|---|
@@ -315,20 +317,29 @@ Set it in Xcode under *Product → Scheme → Edit Scheme → Run → Arguments 
 Environment Variables*. Never hard-code it; for production, fetch it from your
 backend or the Keychain.
 
-Essence 2 checks the API secret when the session starts, and a definite answer is
-final. Measured on 2026-09-23 with `essence2-v1.10.0` (what `2.14.1` pins) in a
-new Mac app:
+Both engines check the API secret when the session starts, bill **talking
+time only** (idle is free), and survive a short outage. Measured on 2026-09-23 with
+`essence2-v1.11.0` and `Expression2` v2.6.5 (what `2.14.2` pins) in a new Mac app:
 
-| At `be_essence2_create` | Result |
-|---|---|
-| no credential | `-3`, `refusing to serve: no credential was supplied, so this render cannot be attributed to an account` |
-| an API secret the service rejects | `-3`, `refusing to serve: the API secret was rejected — revoked, or from another environment. (401)` |
-| a valid API secret | `0`; stderr prints `metering on …`, and the session's last beat is delivered when you destroy it and call `be_essence2_quiesce_all()` |
-| an API secret, but `api.bithuman.ai` cannot be reached | `0`, and stderr says `could not reach …/v1/auth/validate … PROCEEDING`. In a sandboxed Mac app that is what a missing **Outgoing Connections (Client)** entitlement looks like — see [On a Mac](#on-a-mac) |
+| At session start | `Essence2` (`be_essence2_create`) | `Expression2` (`create`) |
+|---|---|---|
+| no API secret | `-3`, `refusing to serve: no API secret was found, …` | throws `meteringRefused`, same sentence |
+| an API secret the service rejects | `-3`, `refusing to serve: the API secret was rejected — revoked, or from another environment. (401)` | throws `meteringRefused` |
+| `api.bithuman.ai` cannot be reached **at first contact** | `-3`, `refusing to serve: cannot reach bitHuman to verify your credential — check this device's network and try again; offline use requires an offline licence` — **retryable**: create again once the network is back. A sandboxed Mac app without **Outgoing Connections (Client)** lands here — see [On a Mac](#on-a-mac) | throws `meteringRefused`, same sentence, retryable |
+| a valid API secret | `0`; stderr prints `metering on … basis=talking` | ready; the same `metering on` line |
 
-A key the service starts rejecting in the middle of a session renders for a
-300-second grace behind a countdown and then refuses, after which `pull_frame`
-returns `-3` and the engine should be destroyed.
+What a session is billed, measured on the published `2.14.2` package with a real
+session per engine (talk 15 s, idle 70 s, talk 10 s): **essence-2 25.5 s,
+expression-2 23.4 s** of talking time out of ~105 s live; the idle-only interval
+reports `talking=0.0`.
+
+**An outage after the service has accepted the key** is not a refusal: the
+session keeps rendering for **300 s of rendered frames** (7,500 at 25 fps for
+Essence 2), then `pull_frame` / `idle_frame` return `-3` (Essence 2) and `pull()`
+returns `nil` (Expression 2) **retryably** — keep the handle, frames resume as soon
+as the service answers, and the outage is claimed then (measured: refused at
+7,500 frames after the last acknowledgement, resumed on reconnect). A key the
+service **rejects** mid-session (401/402/403) is final: destroy the engine.
 
 ## Run
 
@@ -395,9 +406,9 @@ your machine; keep the staging directory and the next start is much faster.
 An Xcode **app** (*File → New → Project → macOS → App*) differs from a
 `swift run` executable in three ways that matter here. Each was measured on
 2026-09-23 with a new App-template project on Xcode 26.4.1, taking
-`Expression2` and `Essence2` from `2.14.1`:
+`Expression2` and `Essence2` from `2.14.2`:
 
-1. **Resolve `2.14.1` or newer.** Xcode copies each framework of the package
+1. **Resolve `2.14.2` or newer.** Xcode copies each framework of the package
    into *Contents/Frameworks* and then validates the app. Through `2.14.0`
    the macOS frameworks had the iPhone bundle layout, and validation stops the
    build: `Framework …/Expression2.framework contains Info.plist, expected
@@ -499,7 +510,7 @@ finds no slice, and fails with `error: unable to resolve module dependency:
 ## Pin the version
 
 `from:` is a **floor, not a pin.** A fresh resolve takes the newest tag in the
-same major, so a brand-new project lands on `v2.14.1` today. That is not the case
+same major, so a brand-new project lands on `v2.14.2` today. That is not the case
 most readers are in: `from:` is satisfied by the floor itself, and SwiftPM
 **keeps whatever `Package.resolved` already holds** — so a project you cloned, or
 one a colleague resolved last month, sits on the floor that was written, not on
@@ -512,7 +523,8 @@ The tags do not carry the engine, they pin one, and the pin moved:
 | v2.11.0 – v2.13.2 | essence2-v1.4.0 – v1.6.2 | the warm-up refuses by name on an iPhone under a 16 Pro; the engine stays idle-only |
 | v2.13.8 | essence2-v1.9.0 | speaks — but `Expression2` + `Essence2` in one app fails an app's final link, 112 duplicate symbols |
 | v2.14.0 | essence2-v1.10.0 | speaks, and both products link in one app — but a macOS **app** fails Xcode's validation (the macOS frameworks are shallow bundles), and `Essence2` needs four linker settings added by hand |
-| **v2.14.1** | **essence2-v1.10.0** | **all of the above fixed: `Expression2` v2.6.4 ships versioned macOS frameworks, and `Essence2` declares its own linker settings — the behaviour this page describes** |
+| v2.14.1 | essence2-v1.10.0 | all of the above fixed — but an `Essence2` session bills its idle time too, and `Expression2` (v2.6.4) is not metered at all |
+| **v2.14.2** | **essence2-v1.11.0** | **both engines bill talking time only and need your API secret (`Expression2` v2.6.5 meters on-device sessions) — the behaviour this page describes** |
 
 "Idle-only" is the whole failure: the identity's motion plays, the avatar never
 speaks, **nothing is thrown and nothing is logged where you are looking.** There
@@ -524,7 +536,7 @@ both exit 0 on a project that cannot link as an app.
 
 So if you inherited a project, do both halves:
 
-1. Raise the floor in the manifest to `from: "2.14.1"`.
+1. Raise the floor in the manifest to `from: "2.14.2"`.
 2. **Force the resolve** — `Package.resolved` does not move on its own. In
    Xcode: *File → Packages → Update to Latest Package Versions*. From the
    command line: `swift package update`.
@@ -534,7 +546,7 @@ Then read back what you are actually on, which is the only answer that counts:
 ```bash
 # in your project directory, after resolving
 grep -A3 'homebrew-bithuman' Package.resolved
-# the "version" it prints must be 2.14.1 or newer
+# the "version" it prints must be 2.14.2 or newer
 ```
 
 ## Performance
@@ -555,9 +567,9 @@ Measured frame rates for every platform are on the
 | the app crashes in `__cxa_finalize` as the user closes it | `be_essence2_quiesce_all()` was never called | call it from `applicationWillTerminate` |
 | hundreds of undefined symbols at an app's final link — `___cxa_…`, `std::__1::…`, `_VTDecompressionSession…`, `_BNNSFilter…`, `_OBJC_CLASS_$_MLModel` | a tag below `2.14.1`: `Essence2` is a static C library, and before 2.14.1 the product declared none of the Apple libraries it calls | raise the floor to `2.14.1` and force the resolve; or, on an older tag, add all four link settings — [What Essence 2 needs at link](#what-essence-2-needs-at-link) |
 | `Framework …/Contents/Frameworks/Expression2.framework contains Info.plist, expected Versions/Current/Resources/Info.plist since the platform does not use shallow bundles` (or `UnifiedModelHeader` / `BithumanEngineProtocol`) building a **Mac app** | a tag below `2.14.1`: its macOS frameworks were iPhone-shaped bundles | raise the floor to `2.14.1` and force the resolve — [A Mac app](#a-mac-app) |
-| `be_essence2_create` returns `-3`; stderr: `refusing to serve: no credential was supplied` | Essence 2 got no API secret. It reads `BITHUMAN_API_SECRET` (essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias) | set `BITHUMAN_API_SECRET` in the scheme's environment, or call `be_essence2_set_api_secret()` before `be_essence2_create` — [Authentication](#authentication) |
+| `be_essence2_create` returns `-3`, or `Expression2Engine.create` throws; stderr: `refusing to serve: no API secret was found, …` | the engine got no API secret. Both read `BITHUMAN_API_SECRET` (and, from 2.14.2, the deprecated alias `BITHUMAN_API_KEY` with a notice) | call `Essence2Credential.set(_:)` / `Expression2Credential.set(_:)` before creating the engine, or set `BITHUMAN_API_SECRET` in the scheme's environment — [Authentication](#authentication) |
 | `be_essence2_create` returns `-3`; stderr: `refusing to serve: the API secret was rejected … (401)` | the API secret is revoked, mistyped or from another environment | create a new one at [your API secrets](https://www.bithuman.ai/developer/api-keys) |
-| a sandboxed Mac app renders Essence 2 but stderr says `could not reach https://api.bithuman.ai/v1/auth/validate` | App Sandbox without the network-client entitlement: the API secret cannot be checked and no beat leaves the machine | *Signing & Capabilities → App Sandbox → Outgoing Connections (Client)* — [A Mac app](#a-mac-app) |
+| `-3` / `meteringRefused`: `refusing to serve: cannot reach bitHuman to verify your credential …` | the service could not be reached at the first contact — from 2.14.2 that renders nothing (below 2.14.2 it rendered unverified). In a sandboxed Mac app: App Sandbox without the network-client entitlement | fix the network, then create again (retryable); on a Mac: *Signing & Capabilities → App Sandbox → Outgoing Connections (Client)* — [A Mac app](#a-mac-app) |
 | `ld: warning: Could not find or use auto-linked framework 'CoreAudioTypes'` | a linker option baked into the Essence 2 static library naming a framework that does not exist on its own | nothing — the link succeeds |
 | ten linker warnings naming `/Users/…/Build/Intermediates.noindex/…`, a path not on your Mac | the published `Expression2` framework carries debug paths whose object files are not in the archive | nothing — the build completes and the binary runs |
 | `product 'Expression' … not found in package 'homebrew-bithuman'` | an older product name; `swift package resolve` does not check product names, `swift build` does | name the product `Expression2` |

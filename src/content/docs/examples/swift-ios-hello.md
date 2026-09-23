@@ -111,10 +111,10 @@ Minimum Deployments **iOS 26.0**, Swift Language Version **6**, your team under
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-choose **Up to Next Major Version** from **2.14.1** — the same floor
+choose **Up to Next Major Version** from **2.14.2** — the same floor
 `swift/ios-avatar/Package.swift` declares — and attach the **`bitHumanKit`**
 product, only that one. Verified 2026-09-23 by listing the package's tags:
-`from: "2.14.1"` resolves **v2.14.1**, the newest 2.x tag, and `bitHumanKit`'s
+`from: "2.14.2"` resolves **v2.14.2**, the newest 2.x tag, and `bitHumanKit`'s
 own binary has ridden on tag `v2.4.0` unchanged since v2.11.0, so any floor in
 that range gives you the same framework.
 
