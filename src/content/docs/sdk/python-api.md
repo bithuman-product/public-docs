@@ -69,7 +69,7 @@ frame.
 
 Raises `InvalidAvatar` if it cannot be found or is not usable,
 `NotSupported` if it cannot run on this machine,
-`NotAuthorised` if the API secret is missing, invalid or out of credit,
+`NotAuthorised` if the key is missing, invalid or out of credit,
 and `Failed` if something else went wrong.
 
 ### Avatar
