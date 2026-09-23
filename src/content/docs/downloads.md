@@ -13,7 +13,7 @@ after it — a model to fetch, the minimal code, and the fixes for every refusal
 
 | Platform | Install |
 |---|---|
-| [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 | `curl -fsSL https://install.bithuman.ai \| sh` |
+| [CLI](/sdk/cli) — macOS Apple Silicon, Linux x86_64 and arm64 | `curl -fsSL https://install.bithuman.ai \| sh` |
 | [Python](/sdk/python) — 3.10–3.14 | `pip install "bithuman[expression-2]"` |
 | [Apple](/sdk/ios) — iPhone, iPad, Mac | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.1")` |
 | [Android](/sdk/android) — arm64-v8a | `implementation("ai.bithuman:expression2-android:0.4.8")` · `implementation("ai.bithuman:essence2-android:0.5.13")` |
@@ -42,7 +42,7 @@ What each release changed is in the [changelog](/changelog).
 | **macOS, Apple Silicon** | yes | yes (macOS 14+) | yes |
 | **macOS, Intel** | no | no | — |
 | **Linux x86_64** | yes | yes | — |
-| **Linux aarch64** | no | yes | — |
+| **Linux aarch64** | yes (from 2.7.1) | yes | — |
 | **Windows** | under WSL2 | under WSL2 | — |
 | **iOS / iPadOS** | — | — | yes |
 

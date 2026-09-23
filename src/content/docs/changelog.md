@@ -52,6 +52,29 @@ contour, and a mouth taken entirely from the identity's own footage (generated
 share **0.000000 mean / 0.000000 max** over 62 frames). See
 [Shrink the release build](/sdk/android#shrink-the-release-build).
 
+### ARM Linux can install the CLI again — `cli-v2.7.1` (2026-09-23)
+
+`curl -fsSL https://install.bithuman.ai | sh` to install or upgrade; `bithuman --version`
+to confirm (`bithuman 2.7.1`). Three downloads from one commit: macOS Apple Silicon, Linux
+x86_64 and, for the first time since `cli-v2.3.27`, **Linux arm64** (Graviton, Ampere, an
+arm64 VM or container).
+
+- **Linux arm64 renders both local model families.** Measured on the published arm64
+  download in a clean Ubuntu 24.04 arm64 container: the installer, `login`, then
+  `render` of an Essence 2 identity (75 frames, 1080×1920) and an Expression 2 identity
+  (60 frames, 416×720), with the same mouth interior as the other two platforms.
+- **`login --with-token` checks the key before storing it.** A made-up key used to be
+  stored and reported as signed in; it now exits **77** with `TOKEN_REJECTED` and nothing
+  is written. An unreachable service is exit **69** `TOKEN_UNVERIFIED`. A good key is
+  stored and the success object carries the account's `email`.
+- **`account --json` names the config file** as the `source` of a key `login` stored,
+  instead of `env BITHUMAN_API_SECRET`.
+- **A key revoked while an Essence 1 session runs now stops it**, instead of rendering on
+  unmetered.
+- **Known issue, unchanged from 2.7.0:** `bithuman render` of an Essence 1 model exits
+  **69** before rendering on every platform; `bithuman.open("model.imx").render(...)` in
+  the [Python library](/sdk/python) renders it. The fix is planned for 2.7.2.
+
 ### A new Mac app builds, and Essence 2 needs no linker flags from you — Swift package `2.14.1` (2026-09-23)
 
 Raise your floor to `from: "2.14.1"` and force the resolve (*File → Packages →

@@ -27,7 +27,7 @@ engine      <platform> <engine version> <digest>
 
 The current release and its real transcript live on
 [the CLI page](/sdk/cli#install) — the one place that names the version — and
-it is the same version on macOS arm64 and Linux x86_64. The
+it is the same version on macOS arm64, Linux x86_64 and Linux arm64. The
 first line names the engine version, a separate axis from the CLI's own number,
 printed under the engine's legacy spelling because it is the string you have to
 grep for; the product name is [essence-2](/concepts/essence-2). Do not pin a
@@ -126,7 +126,7 @@ A render with no credential, or one the service rejects, is refused outright on 
 
 | Family | The file | What `run` does |
 |---|---|---|
-| `expression-2` | `.avatar` | Renders locally on macOS Apple Silicon and Linux x86_64. The default Wise Pup avatar is this family |
+| `expression-2` | `.avatar` | Renders locally on macOS Apple Silicon and Linux (x86_64, arm64). The default Wise Pup avatar is this family |
 | `essence-2` | `.imx` (releases before 2.6.0 wrote `<CODE>.lebundle.imx`, [a legacy name kept for compatibility](/concepts/avatars-imx)) | Renders locally on both platforms since **2.6.1**. The first play fetches the shared audio encoder and checks the licence with the cloud, so it needs your sign-in. A file missing a required member is refused, exit 69 |
 | `essence-1` | `.imx` | Renders locally |
 | `expression-1` | usually none | Cloud-served. The exception is an agent that also owns a baked `.imx` — the download endpoint hands that file out, and it runs like `essence-1` |
@@ -137,7 +137,7 @@ for an `essence-1` code too.
 
 ### Where the local render happens
 
-On macOS (Apple Silicon) and Linux x86_64, both Expression 2 and Essence 2
+On macOS (Apple Silicon) and Linux (x86_64, arm64), both Expression 2 and Essence 2
 render locally, with the runtime inside the tarball. Two tools come from your
 `PATH`: `render` writes its MP4 through `ffmpeg`, and `run` spawns
 `livekit-server` — [install](/sdk/cli#install) names both.
@@ -335,24 +335,28 @@ is safe — it regenerates.
 ## Platforms with no binary
 
 The installer builds a target triple from `uname` and asks the release for that
-tarball. Exactly two targets carry one: `aarch64-apple-darwin` and
-`x86_64-unknown-linux-gnu`. On anything else it reads the release's asset list,
-names the two it does carry, and exits **1** before downloading a byte:
+tarball. From 2.7.1 three targets carry one: `aarch64-apple-darwin`,
+`x86_64-unknown-linux-gnu` and `aarch64-unknown-linux-gnu`. On anything else it
+reads the release's asset list, names the three it does carry, and exits **1**
+before downloading a byte. On an Intel Mac, measured on 2026-09-23 against the
+live installer:
 
 ```text
-install: error: the bithuman CLI is NOT published for aarch64-unknown-linux-gnu.
+install: error: the bithuman CLI is NOT published for x86_64-apple-darwin.
+install: error:   release : cli-v2.7.1
+install: error:   wanted  : bithuman-x86_64-apple-darwin.tar.gz
 install: error:   release carries:
 install: error:     bithuman-aarch64-apple-darwin.tar.gz
+install: error:     bithuman-aarch64-unknown-linux-gnu.tar.gz
 install: error:     bithuman-x86_64-unknown-linux-gnu.tar.gz
 rc=1
 ```
 
-So an **Intel Mac** and a **Linux ARM box** cannot install the CLI: there is no
-flag, no fallback and no Rosetta path. `BITHUMAN_VERSION=cli-v2.3.27` still
-resolves a published Linux-ARM tarball whose sha256 verifies, but it is months
-of render work behind and **whether that binary still runs on a current ARM
-distribution was never tested** — treat it as a stopgap. On an Intel Mac, use
-the [cloud API](/api/reference) or run the Linux binary in a container.
+So an **Intel Mac** cannot install the CLI: there is no flag, no fallback and no
+Rosetta path. Use the [cloud API](/api/reference) or run the Linux binary in a
+container. A **Linux arm64** box installs normally from 2.7.1; one pinned to an
+older release (`BITHUMAN_VERSION=cli-v2.7.0` or earlier, back to 2.4.0) is
+refused the same way, and the refusal names `cli-v2.7.1` as the pin to use.
 
 There is no PyPI route to the CLI, and there is no longer a `bithuman-cli`
 wheel: it was removed from PyPI on 2026-09-15, so asking pip for that name
@@ -431,7 +435,7 @@ A stable sysexits subset. Branch on these rather than parsing text.
 
 ```json
 // bithuman version --json
-{"abi":7,"cli":"2.7.0","libessence":"2.11.6",
+{"abi":7,"cli":"2.7.1","libessence":"2.11.6",
  "build":{"commit_short":"…","target":"x86_64-unknown-linux-gnu","built_at":"…","profile":"release"},
  "engine":{"platform":"linux","runtime":"litert","version":"1.0.1","sha256":"…","size":92473490},
  "schema_version":1}

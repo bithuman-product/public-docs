@@ -1,6 +1,6 @@
 ---
 title: "CLI — macOS and Linux"
-description: "Install one binary, sign in once, and bithuman run puts a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux x86_64. Offline MP4 render in one more command."
+description: "Install one binary, sign in once, and bithuman run puts a talking avatar at http://127.0.0.1:8088/ on macOS Apple Silicon or Linux (x86_64 or arm64). Offline MP4 render in one more command."
 section: sdk
 group: "Platforms"
 order: 10
@@ -16,7 +16,7 @@ surface for a different purpose, installed a different way.
 
 | You need | For what | Check it |
 |---|---|---|
-| macOS 14+ on Apple Silicon, or Linux x86_64 | the only two platforms with a binary | `uname -sm` |
+| macOS 14+ on Apple Silicon, or Linux on x86_64 or arm64 | the three platforms with a binary | `uname -sm` |
 | A bitHuman sign-in | `run` and `render`. Browsing and downloading need none | `bithuman account` (exit 0 = signed in) |
 | `ffmpeg` on `PATH` | `bithuman render` writes its MP4 through it | `ffmpeg -version` |
 | `livekit-server` on `PATH` | `bithuman run` spawns it for the live session | `command -v livekit-server` |
@@ -35,7 +35,7 @@ curl -fsSL https://install.bithuman.ai | sh
 ```
 
 ```bash
-# Linux x86_64 (Debian and Ubuntu package names)
+# Linux, x86_64 or arm64 (Debian and Ubuntu package names)
 sudo apt install -y ffmpeg
 curl -sSL https://get.livekit.io | bash
 curl -fsSL https://install.bithuman.ai | sh
@@ -74,18 +74,19 @@ you what you got:
 ```text
 $ bithuman --version
 libessence  2.11.6 ABI 7         # the engine inside, and the ABI it speaks
-bithuman    2.7.0                # the CLI itself
+bithuman    2.7.1                # the CLI itself
 build       …                    # commit, target and build time
 engine      …                    # the platform engine it loaded
 ```
 
 The two numbers move independently and the installer always fetches the newest
 CLI, so read yours rather than this page's — the shape is the contract, the
-digits are a snapshot (taken 2026-09-20 from the installer's own download).
+digits are a snapshot (taken 2026-09-23 from the installer's own download).
 
-Published for **macOS Apple Silicon** and **Linux x86_64** only; on an
-Intel Mac or a Linux ARM box the installer names the platform and stops without
-downloading anything ([exact output](/sdk/cli/reference#platforms-with-no-binary)).
+Published for **macOS Apple Silicon**, **Linux x86_64** and **Linux arm64**
+(Graviton, Ampere, an arm64 VM or container; from 2.7.1). On an Intel Mac the
+installer names the platform and stops without downloading anything
+([exact output](/sdk/cli/reference#platforms-with-no-binary)).
 
 ## Minimal code
 
@@ -238,7 +239,7 @@ Measured frame rates for every platform are on the
 
 | You see | It means | Do this |
 |---|---|---|
-| the installer names your platform and stops | no binary for an Intel Mac or Linux ARM | the [web](/sdk/web), the [cloud API](/api/overview), or the Linux x86_64 binary in a container |
+| the installer names your platform and stops | no binary for an Intel Mac (or a Linux arm64 box pinned to a release before 2.7.1) | the [web](/sdk/web), the [cloud API](/api/overview), or a Linux binary in a container; on Linux arm64, drop the pin |
 | `bithuman: command not found` after the install | `~/.local/bin` is not on your `PATH` | `export PATH="$HOME/.local/bin:$PATH"` — the installer prints the same line |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on your `PATH` — a script or CI shell often lacks Homebrew's `/opt/homebrew/bin` | `brew install ffmpeg` (macOS) or `sudo apt install -y ffmpeg` (Linux); in a script, `export PATH="/opt/homebrew/bin:$PATH"` or set `BITHUMAN_FFMPEG` |
 | `render` refuses with `NOT_SIGNED_IN`, no output file | no credential — `render` is billed | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
@@ -263,7 +264,7 @@ commands) and `METERING_REFUSED` (`run --offscreen`).
 
 ### What renders locally, and where
 
-| Family | macOS Apple Silicon and Linux x86_64 |
+| Family | macOS Apple Silicon, Linux x86_64 and Linux arm64 |
 |---|---|
 | [Expression 2](/concepts/expression-2) (`.avatar` or `.imx` — the same container) | `run` and `render` |
 | [Essence 2](/concepts/essence-2) (`.imx`) | `run` and `render` |
