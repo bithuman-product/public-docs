@@ -4416,7 +4416,7 @@ tags:
     description: "Get a pre-built avatar or generate one from a portrait: [https://docs.bithuman.ai/guides/building-avatars](https://docs.bithuman.ai/guides/building-avatars)."
   - name: deploy-livekit
     x-displayName: Managed (LiveKit plugin)
-    description: "Drop an avatar into a LiveKit agent worker with the plugin: [https://docs.bithuman.ai/guides/deploy-livekit](https://docs.bithuman.ai/guides/deploy-livekit)."
+    description: "Drop an avatar into a LiveKit agent worker with the plugin: [https://docs.bithuman.ai/sdk/livekit](https://docs.bithuman.ai/sdk/livekit)."
   - name: deploy-self-hosted
     x-displayName: Self-hosted GPU (Docker)
     description: "Run Expression 1 on your own NVIDIA hardware with the published image: [https://docs.bithuman.ai/guides/self-hosting#the-expression-1-gpu-container](https://docs.bithuman.ai/guides/self-hosting#the-expression-1-gpu-container)."

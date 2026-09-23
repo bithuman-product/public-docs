@@ -119,7 +119,7 @@ see [What's NOT billed](#whats-not-billed).
 
 Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem deployment, and bespoke SLAs beyond Enterprise (running completely off the internet is [offline licensing](#offline-licensing), for Business and Enterprise only): [talk to sales](https://www.bithuman.ai/sales).
 
-**Concurrent sessions** are a plan entitlement — the number of live avatar sessions your account can run at once. Enforcement is rolling out: when limits apply, a session past your plan's cap is refused with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors) rather than degrading running sessions. Details in [Rate limits & concurrency](/api/rate-limits).
+**Concurrent sessions** are a plan entitlement — the number of live cloud avatar sessions your account can run at once. Self-hosted and on-device sessions are gated only by credits. Enforcement is rolling out: when limits apply, a session past your plan's cap is refused with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors) rather than degrading running sessions. Details in [Rate limits & concurrency](/api/rate-limits).
 
 Current pricing and your live balance are in the [bitHuman dashboard](https://www.bithuman.ai/#library) — the credit balance is on the top navigation bar.
 
@@ -245,7 +245,7 @@ The current heartbeat finishes, then subsequent heartbeats fail. The Python / Do
 
 ### Can I have multiple concurrent sessions?
 
-Yes. Each session bills its own talking minutes. Your plan sets the concurrent-session entitlement — see the [plans table](#plans) (enforcement is rolling out). Self-hosted deployments are additionally bounded by your own hardware.
+Yes. Each session bills its own talking minutes. Your plan sets the cloud concurrent-session entitlement — see the [plans table](#plans) (enforcement is rolling out). Self-hosted sessions are gated only by credits, and bounded by your own hardware.
 
 ## Next steps
 
@@ -253,4 +253,4 @@ Yes. Each session bills its own talking minutes. Your plan sets the concurrent-s
 - [Building avatars](/guides/building-avatars) — create an agent to run.
 - [Essence 2 & Expression 2](/concepts/models) — the second-generation models and how to choose.
 - [Rate limits & concurrency](/api/rate-limits) — request limits and the concurrency contract.
-- [Deploy via LiveKit](/guides/deploy-livekit) — the cloud-metered path.
+- [Deploy via LiveKit](/sdk/livekit) — the cloud-metered path.

@@ -218,7 +218,7 @@ avatar previously bound to the *first* agent it saw, so with a facilitator +
 persona in the same room it could latch onto the wrong agent — staying silent
 for the persona and never returning `playback_started`/`playback_finished`.
 Server-side fix; no SDK or plugin upgrade required. See
-[LiveKit → Multiple agents](/sdk/livekit#multiple-agents-in-one-room).
+[LiveKit → Multiple agents](/sdk/livekit#wire-it-into-an-agent-worker).
 
 ### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
 

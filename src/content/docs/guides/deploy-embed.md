@@ -116,7 +116,7 @@ Endpoint setup, signature verification, and retry policy are in the [API referen
 
 - [Essence 2 & Expression 2](/concepts/models) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2).
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — connect latency, idle behavior, and common embed errors.
-- [Deploy via LiveKit](/guides/deploy-livekit) — full agent-worker integration.
+- [Deploy via LiveKit](/sdk/livekit) — full agent-worker integration.
 - [Render in the tab](/sdk/web#render-in-the-tab) — render client-side to cut server video egress.
 - [API reference](/api/reference) — embed tokens, agents, and webhooks.
 - [Pricing](/guides/pricing) — what an embedded session costs.

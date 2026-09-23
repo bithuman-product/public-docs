@@ -1000,6 +1000,16 @@
       "source": "/concepts/talking-video/",
       "destination": "/api/video",
       "permanent": true
+    },
+    {
+      "source": "/guides/deploy-livekit",
+      "destination": "/sdk/livekit",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-livekit/",
+      "destination": "/sdk/livekit",
+      "permanent": true
     }
   ],
   "rewrites": [
