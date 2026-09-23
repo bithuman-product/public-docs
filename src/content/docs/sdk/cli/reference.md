@@ -80,9 +80,11 @@ does not use the OS keychain. Each device gets its own API secret, so revoking
 one laptop leaves the others alone.
 
 In CI, skip `login` entirely and export `BITHUMAN_API_SECRET`, or pipe it:
-`printf %s "$API_SECRET" | bithuman login --with-token`. That is also the only
-sign-in route that honours `--json` today — see
-[the machine-readable contract](#the-machine-readable-contract) below.
+`printf %s "$API_SECRET" | bithuman login --with-token`. From 2.7.1 the piped
+API secret is checked with the service before anything is stored: one the service
+does not accept exits **77** (`TOKEN_REJECTED`), a service it cannot reach exits
+**69** (`TOKEN_UNVERIFIED`), and neither writes a file. Through 2.7.0 it stored
+whatever arrived and printed `"logged_in": true`, even for a made-up value.
 
 ### Credential resolution order
 
@@ -413,7 +415,7 @@ no browser and no code to type:
 
 ```bash
 printf %s "$BITHUMAN_API_SECRET" | bithuman login --with-token --json
-{"logged_in":true,"schema_version":1,"stored":"~/.bithuman/config"}
+{"alias":null,"email":"you@example.com","logged_in":true,"schema_version":1,"stored":"~/.bithuman/config"}
 ```
 
 ### Exit codes
