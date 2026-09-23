@@ -9,7 +9,7 @@ const prompt = encodeURIComponent(`Read ${abs} and help me build with bitHuman.`
 <div class="page-actions" data-page-actions data-md={md} data-pagefind-ignore>
   <button type="button" class="pa-btn" data-pa-copy aria-label="Copy this page as markdown">Copy page</button>
   <details class="pa-more">
-    <summary class="pa-btn" aria-label="More page actions">▾</summary>
+    <summary class="pa-btn" aria-label="More page actions">More ▾</summary>
     <div class="pa-menu">
       <a href={md}>View as markdown</a>
       <a href={`https://claude.ai/new?q=${prompt}`} target="_blank" rel="noopener">Open in Claude ↗</a>
@@ -36,7 +36,9 @@ const prompt = encodeURIComponent(`Read ${abs} and help me build with bitHuman.`
   .page-actions { display: inline-flex; gap: 0.25rem; align-items: center; flex: none; position: relative; }
   .pa-btn { font-size: var(--ft-xs); padding: 0.3rem 0.6rem; border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface); color: var(--color-text-secondary); cursor: pointer; list-style: none; }
   .pa-btn:hover { color: var(--color-text); border-color: var(--color-text-tertiary); }
+  .pa-more summary { list-style: none; display: inline-block; }
   .pa-more summary::-webkit-details-marker { display: none; }
+  .pa-more summary::marker { content: ""; }
   .pa-menu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 20; display: flex; flex-direction: column; min-width: 12rem; padding: 0.35rem; border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface); box-shadow: var(--shadow-md); }
   .pa-menu a { padding: 0.4rem 0.6rem; border-radius: var(--r-md); font-size: var(--ft-sm); color: var(--color-text); }
   .pa-menu a:hover { background: var(--color-surface-2); }

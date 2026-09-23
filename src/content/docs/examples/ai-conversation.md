@@ -3,7 +3,7 @@ title: "AI voice chat"
 description: "Talk to an OpenAI Realtime voice agent and watch a bitHuman avatar lip-sync the response in real time."
 section: examples
 group: "Examples"
-order: 20
+order: 21
 type: example
 label: "Python: voice conversation"
 ---
