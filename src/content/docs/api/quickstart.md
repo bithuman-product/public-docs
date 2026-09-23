@@ -1,6 +1,6 @@
 ---
 title: "API quickstart"
-description: "Pick an existing agent and get a live, talking avatar on your page in two steps — no agent generation required."
+description: "From nothing to a talking avatar over REST: embed a sample agent, check your API secret, speak, create your own agent and render a video."
 section: api
 group: "Get started"
 order: 1
@@ -8,177 +8,71 @@ type: quickstart
 label: "Quickstart"
 ---
 
-The fastest way to start: **pick an agent that already exists and embed it.**
-No generation, no polling, no credits to create one — a live, talking avatar in
-two steps. (Want your own custom face later? See
-[Generate your own agent](#generate-your-own-agent-optional).)
+A ladder: the first two steps are free and need no account; each later step builds on the one before.
 
-## 1. Pick an agent
-
-Every agent has a short **code** like `A78WKV4515`. Browse the
-[agent gallery](https://www.bithuman.ai/explore) and copy the code of any one
-you like — or use `A78WKV4515` to follow along.
-
-## 2. Embed it
-
-Drop it onto any page as an iframe. It's live and talking immediately — the user
-can speak to it and it responds:
+## 1. Embed a sample avatar (no account)
 
 ```html
-<iframe
-  src="https://bithuman.ai/embed/A78WKV4515"
-  allow="microphone *; camera *; autoplay *"
-  style="width: 100%; height: 600px; border: 0;"
-></iframe>
+<iframe src="https://www.bithuman.ai/embed/A23WJF0199" allow="microphone *" style="width:100%;height:600px;border:0"></iframe>
 ```
 
-Replace `A78WKV4515` with your chosen code. That's the whole quickstart — open
-the page and start talking.
+Open the page and talk to it. Keep the `*` in `allow`, or the microphone is blocked. For your own site in production, mint an [embed token](/api/embedding).
 
-> **Note** The iframe needs delegated `microphone` permission to hear the user,
-> and the `*` in the `allow` attribute is load-bearing — the embed URL redirects
-> cross-origin to `agent.viewer.bithuman.ai`, so a bare `allow="microphone"`
-> leaves the mic silently blocked. If your page sets a restrictive
-> `Permissions-Policy`, the avatar loads but the mic stays silent — allowlist
-> `agent.viewer.bithuman.ai`. For per-visitor
-> session tracking and rate limiting, mint a short-lived embed token on your
-> backend — see [Embedding](/api/embedding).
-
----
-
-## Going further
-
-The steps above need no API secret. The rest of the platform does — get an API
-secret at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys) (free tier,
-no credit card) and export it:
+## 2. Speak with text to speech (API secret)
 
 ```bash
-export BITHUMAN_API_SECRET="<your API secret>"   # from Developer → API Secrets
+export BITHUMAN_API_SECRET="<your API secret>"
+curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
+# → {"valid":true}
+curl -s -X POST https://api.bithuman.ai/v1/tts \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"text": "Hello from bitHuman.", "voice": "F1"}' --output hello.wav
+# → hello.wav
 ```
 
-Verify it with the cheapest call there is — no credits, no agent needed:
+`/v1/validate` always returns `200`; read `valid`. Get an API secret under [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
+
+## 3. Create your own agent (credits)
+
+Creation is a one-time charge ([pricing](/guides/pricing#creation--one-time-credits)); a free balance returns `402`. Always send `model`.
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/validate \
-  -H "api-secret: $BITHUMAN_API_SECRET"
+curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"model": "expression-2", "prompt": "You are a friendly fitness coach.", "image": "https://your-site.example/portrait.jpg"}'
+# → {"success": true, "agent_id": "A80HVD8577", "status": "processing"}
 ```
 
-It always returns HTTP `200` — read the body: `{"valid": true}` means you're set, `{"valid": false}` means the secret is missing or wrong.
-
-### Look up an agent
-
-Fetch **one of your own** agents by code. List them first — `GET /v1/agents`
-returns the agents on your account, a page at a time:
+Poll until `status` is `ready` or `failed` (about 2–2.5 hours for a second-generation model):
 
 ```bash
-curl "https://api.bithuman.ai/v1/agents" \
-  -H "api-secret: $BITHUMAN_API_SECRET"
+curl -s https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"
+# → {"success": true, "data": {"status": "ready", "progress": 1.0, …}}
 ```
 
-Then read one by its code (substitute a code from the list above):
+## 4. Make it speak in a live session
+
+Open `https://www.bithuman.ai/embed/<your agent code>`, then push text from your backend:
 
 ```bash
-curl https://api.bithuman.ai/v1/agent/YOUR_AGENT_CODE \
-  -H "api-secret: $BITHUMAN_API_SECRET"
-```
-
-> **Note** `/v1/agent/{code}` is **owner-scoped**. A gallery code you do not own
-> — including the `A78WKV4515` used for the embed above — returns
-> `404 NOT_FOUND` (`"Agent not found for code: …"`) even with a perfectly valid
-> key. That is an ownership answer, not a "this agent doesn't exist" answer:
-> the same code still embeds and still mints an
-> [embed token](/api/embedding). Only agents on your own account are readable,
-> speakable, and renderable through the [Video API](/api/video).
-
-### Make it speak from your backend
-
-When one of **your** agents has an **active session** (an embed of it, or a
-LiveKit room), push text into it and the avatar speaks it aloud:
-
-```bash
-curl -X POST https://api.bithuman.ai/v1/agent/YOUR_AGENT_CODE/speak \
-  -H "api-secret: $BITHUMAN_API_SECRET" \
-  -H "content-type: application/json" \
+curl -s -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/speak \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
   -d '{"message": "Hello! Great to meet you."}'
+# → {"agent_code": "A80HVD8577", "delivered_to_rooms": 1, …}
 ```
 
-> **Note** `/speak` and `/add-context` need both **ownership** and an active
-> session, and both failures are reported as `404 NOT_FOUND` — read the message
-> to tell them apart. `"Agent not found for code: <code>"` means the agent is
-> not on your account; `"No active rooms found
-> for agent <code>"` means it is yours but idle — open the embed first, or start a
-> [LiveKit worker](/sdk/livekit).
+`404` means the agent is not yours, or it has no live session (the message says which).
 
-### Voice without an avatar
-
-Text-to-speech needs no agent at all — one call returns a WAV:
+## 5. Render a talking video
 
 ```bash
-curl -X POST https://api.bithuman.ai/v1/tts \
-  -H "api-secret: $BITHUMAN_API_SECRET" \
-  -H "content-type: application/json" \
-  -d '{"text": "Hello from bitHuman.", "voice": "F1"}' \
-  --output hello.wav
+curl -s -X POST https://api.bithuman.ai/v1/video/generate \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"agent_code": "A80HVD8577", "model": "expression-2", "input": {"type": "text", "text": "Welcome to our store."}}'
 ```
 
-See [Text to Speech](/api/text-to-speech) for languages, voices, and streaming.
+Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `video_url` ([Talking video](/api/video)).
 
-## Generate your own agent (optional)
+## Next
 
-Prefer a custom face and persona? Generation is asynchronous — it returns an
-`agent_id` immediately. Pick the model with `model` — `expression-2` or
-`essence-2` (the pair `model: "expression"` + `version: "v2"` is also
-accepted and means the same thing). The
-[second-generation models](/concepts/models) train a real per-identity
-model, so they take longer and cost more — see
-[per-model creation](/api/agents#generate-an-agent) and
-[pricing](/guides/pricing). Creation is image-only: upload your own portrait —
-a URL must be publicly fetchable, and it is downloaded after the request
-returns, so poll status rather than reading a `200` as acceptance.
-
-> **What this call costs, before you run it.** Creation is a one-time charge
-> per model, listed on [pricing](/guides/pricing). The free tier's monthly
-> credits cover none of them: on a free balance this call returns
-> `402 INSUFFICIENT_BALANCE` and creates nothing —
-> [the free-tier arithmetic](/guides/pricing#the-free-tier-cannot-create-an-agent).
-> Steps 1 and 2 above need no API secret and create nothing.
-
-The snippet below creates an `expression-2` agent. It needs the
-`BITHUMAN_API_SECRET` export from [Going further](#going-further) and one value
-of your own, `PORTRAIT_URL`:
-
-```bash
-export PORTRAIT_URL=https://your-site.example/portrait.jpg   # a public URL to your portrait
-curl -X POST https://api.bithuman.ai/v1/agent/generate \
-  -H "api-secret: $BITHUMAN_API_SECRET" \
-  -H "content-type: application/json" \
-  -d @- <<EOF
-{
-  "prompt": "You are a friendly fitness coach.",
-  "image": "$PORTRAIT_URL",
-  "model": "expression-2",
-  "aspect_ratio": "9:16",
-  "transparency": false
-}
-EOF
-```
-
-`PORTRAIT_URL` is any publicly fetchable image of a face. Check your balance
-before and after with
-[`GET /v2/credit-summaries`](/guides/pricing#check-your-balance).
-
-Then poll [`GET /v1/agent/status/{agent_id}`](/api/agents) until `ready` and
-embed it exactly like step 2. See [Agents](/api/agents) for the full lifecycle.
-
-## Next steps
-
-- [Authentication](/api/authentication) — keys, tokens, and how auth works.
-- [Agents API](/api/agents) — generate, update, and drive agents.
-- [Embed widget](/api/embedding) — drop your agent into any page.
-- [API reference](/api/reference) — every endpoint with a live console.
-- [Python SDK](/sdk/python) — the same engine, in-process, with the canonical
-  [push-audio/drain-frames loop](/concepts/audio-streaming).
-- [Swift SDK (iOS, iPadOS, macOS)](/sdk/apple) — the same avatar rendered
-  on-device inside an iPhone, iPad or Mac app.
-- [Android SDK (Kotlin)](/sdk/android) — the same avatar on-device in an
-  Android app, from Maven Central.
+- [Agents](/api/agents) · [Talking video](/api/video) · [Embedding](/api/embedding) · [Errors](/api/errors) · [OpenAPI reference](/api/reference)

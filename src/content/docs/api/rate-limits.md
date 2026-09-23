@@ -90,8 +90,7 @@ sessions running at the same time on bitHuman's cloud:
 | Custom (contact sales) | Unlimited |
 
 Sessions beyond the allowance are rejected at session start with
-`403 CONCURRENCY_LIMIT_REACHED` (enforcement is rolling out; a session that
-is already live is never cut off mid-stream by this limit). Within the
+`403 CONCURRENCY_LIMIT_REACHED`; a session that is already live is never cut off by this limit. Within the
 allowance, usage is governed by **credits and spend caps** — each active
 session bills per minute, so run as many as your balance supports.
 
@@ -152,12 +151,7 @@ proactively instead of waiting for a `429`:
 | `Retry-After` | (On `429` only) seconds to wait before retrying. |
 | `X-Request-Id` | Correlation id for the request — include it in support reports. |
 
-> **Note** Coverage is uneven, and not in the direction you would guess.
-> Measured 2026-07-28: `POST /v1/tts` **does** return `x-ratelimit-limit` /
-> `-remaining` / `-reset` even though its body is a streamed audio response,
-> while `POST /v1/validate` returns **none** of them. Don't assume any given
-> `/v1` response carries them — read them defensively and fall back to
-> exponential backoff when they are absent.
+> **Note:** not every response carries these headers (`POST /v1/validate` has none). Read them when present, and fall back to exponential backoff.
 
 ## Recommended retry strategy
 

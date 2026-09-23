@@ -411,9 +411,7 @@ paths:
 
         Recommended polling interval: 5 seconds. Size your overall timeout to
         the model: minutes for the first-generation engines, **hours** for
-        both second-generation ones — measured 2026-09-20, `expression-2`
-        took 2 h 02 m and `essence-2` 2 h 09 m from creation to `ready`
-        (see [creation times](#operation/generateAgent)).
+        both second-generation ones (about 2–2.5 hours from creation to `ready`).
 
         **`ready` does not yet mean downloadable.** The agent can be launched
         and embedded as soon as it reports `ready`, but the downloadable
@@ -1056,8 +1054,8 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the licence with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#what-renders-locally-and-where). `essence-2-light` is a retired internal alias for this family. |
-        | `expression-2` | `<code>.avatar` — the frozen back-compat alias of `.imx`, not a distinct encoding: 96 of the 110 published objects are the current bitHuman container and 14 are still the pre-2026-07-12 CoreML zip (measured 2026-09-01; `bithuman open` reports which), ~20–90 MB per identity — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
+        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the licence with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#platform-notes). `essence-2-light` is a retired internal alias for this family. |
+        | `expression-2` | `<code>.avatar` — the same container as `.imx` under a second name (a few early identities use an older format; `bithuman open` reports which) — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
         The default response is a **302 redirect** to the artifact — the
@@ -1145,7 +1143,7 @@ paths:
             beside the container — a `web_manifest.json` and the members it
             lists (`combined_fp32.tflite`, `canon.bin`, ...) — and this serves
             a single one of them, so a browser or an Android runtime pulls only
-            the lane it runs. Same entitlement as the container, same 1-hour
+            the files it runs. Same entitlement as the container, same 1-hour
             signed URL, and the URL honours `Range` (`curl -L -r 0-1023`
             answers `206`, so OkHttp and browsers resume). Pass
             `web_manifest.json` first to learn the member names. A member of a
@@ -1924,7 +1922,7 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/embed-tokens/request \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_id": "A78WKV4515", "fingerprint": "9f3c8b1a2d4e5f6789ab"}'
+              -d '{"agent_id": "A78WKV4515", "fingerprint": "<device-fingerprint>"}'
             # → data.token is a 1-hour JWT for the embed widget
       summary: Generate embed token
       description: Generate a JWT token for embedding an avatar on a website. Use this from your backend — never expose your API secret in frontend code.
@@ -1948,7 +1946,7 @@ paths:
                 fingerprint:
                   type: string
                   description: Stable per-device hex string used for session tracking and per-visitor rate limiting. Required.
-                  example: "9f3c8b1a2d4e5f6789ab"
+                  example: "<device-fingerprint>"
                 model:
                   type: string
                   description: >-
@@ -2230,7 +2228,7 @@ paths:
                     a shorter value is rejected `400 VALIDATION_ERROR`
                     ("String should have at least 32 characters"), so omit the
                     field rather than send a short device id.
-                  example: "9f3c8b1a2d4e5f6789ab0c1d2e3f40516273849a"
+                  example: "<device-fingerprint>"
       responses:
         "200":
           description: A runtime token. `data.token` is a short-lived JWT for one session.
@@ -3478,7 +3476,7 @@ paths:
       summary: Live key check for a self-hosted runtime
       description: |
         A self-hosted container calls this once per render start and once per
-        billing beat (with a short positive cache), so **deleting a key in the
+        usage report (with a short positive cache), so **deleting a key in the
         dashboard stops that container on its next beat**. An allowlist baked
         into a container at start is not revocable; this endpoint is what makes
         it revocable.
@@ -3560,7 +3558,7 @@ paths:
               -H "Content-Type: application/json" \
               -d '{"session_id":"s-1","install_id":"i-1","seq":1,
                    "served_s":60,"billing_type":"self-hosted-essence-2-model"}'
-      summary: Report a billing beat from a self-hosted session
+      summary: Report usage from a self-hosted session
       description: |
         A self-hosted or on-device runtime posts one beat per interval to bill
         the session it is serving. Beats are the self-hosted meter: see

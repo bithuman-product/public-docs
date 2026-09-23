@@ -87,8 +87,7 @@ curl https://api.bithuman.ai/v1/pricing \
 ```
 
 `by_model` keys are the **canonical** `model` values `POST /v1/agent/generate`
-accepts. The retired `essence-2-quality` spelling is **no longer accepted**
-(removed 2026-07-29); use `essence-2`.
+accepts. The retired `essence-2-quality` spelling is not accepted; use `essence-2`.
 `essence-2` is the [photorealistic Essence 2 creation](/api/agents#generate-an-agent)
 (one 500-credit charge) and `auto`
 [classifies and routes](/api/agents#generate-an-agent),
