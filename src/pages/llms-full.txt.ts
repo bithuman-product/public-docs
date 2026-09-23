@@ -20,6 +20,7 @@ const LINKED_ONLY = new Set([
   "api/api-keys", "api/organizations", "api/runtime-sessions", "api/billing",
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
   "concepts/essence-1", "concepts/expression-1", "concepts/avatars-imx",
+  "guides/local-voice-avatar",
 ]);
 
 const included = (d: any) => {
