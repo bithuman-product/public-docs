@@ -5,7 +5,7 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "e586d41917f7bdf257b92b0f63dd6fa8f8531d958b82c4c475d1b0ebde6aec3d",
+  "record_sha256": "b40b46269acf02d5c32a186d38fa98a7ec8224c942c3ec257d44c30c66f16ff1",
   "emitter_sha256": "93ae3677e08ee53935a71caceee45ab6af4eb2de8fdf5b9653d2bcebbc81ef01",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
@@ -13,7 +13,7 @@
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "a57ffaa3cbe83f3e980d807c35c2fd81d49073e3458fb51246fcfc5e8f7cfcb8"
+    "sha256": "5d4232574eab57be6ceb957d6d77ea87306f8d54020f8db049b047f56b5121e6"
   },
   "blocks": [
     {
@@ -21,7 +21,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "d4d7229d0852b649719a59f0bf7b2f327c89239697881df214b01bc0bd342505"
+      "sha256": "362f3bdfea6542c6ed0327650a10a8c46c6cdc7dd14381afcf462ce0f412d49a"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
@@ -63,7 +63,7 @@
       "marker": "HEADLINE",
       "key": null,
       "index": 0,
-      "sha256": "c8f645d7195ccf98d7f38bddc8799c0a612d36e5fb7046e5fb3a1a3b3223334b"
+      "sha256": "0ae570f7a7d25650f4b42e7f4389a0be34ae948cb31302f3f2b0c5a1fdc5fe4e"
     }
   ],
   "table": {
@@ -83,12 +83,12 @@
       {
         "label": "Cloud API · CPU",
         "id": "modal-cpu",
-        "line": "| Cloud API · CPU | x86 server CPU | 22 | 0.8× below real time | 27 | **1.3×** real time |"
+        "line": "| Cloud API · CPU | x86 server CPU | 24 | 0.9× below real time | 31 | **1.5×** real time |"
       },
       {
         "label": "macOS · CLI",
         "id": "macos-m4",
-        "line": "| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 168 | **8.4×** real time |"
+        "line": "| macOS · CLI | Apple M4 | 104 | **4.1×** real time | 167 | **8.3×** real time |"
       },
       {
         "label": "macOS · Python",
@@ -98,7 +98,7 @@
       {
         "label": "Linux · CLI",
         "id": "linux-cpu",
-        "line": "| Linux · CLI | Intel Core i7-13700F (x86_64) | 36 | **1.4×** real time | 44 | **2.2×** real time |"
+        "line": "| Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |"
       },
       {
         "label": "Linux · Python",

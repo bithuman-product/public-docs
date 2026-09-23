@@ -106,8 +106,8 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 22,
-     "x_realtime": 0.88,
+     "fps": 24,
+     "x_realtime": 0.96,
      "realtime": false,
      "measured_on": "2026-09-23",
      "release": "cloud API",
@@ -122,8 +122,8 @@
      "time_to_video": null
     },
     "expression-2": {
-     "fps": 27,
-     "x_realtime": 1.35,
+     "fps": 31,
+     "x_realtime": 1.55,
      "realtime": true,
      "measured_on": "2026-09-23",
      "release": "cloud API",
@@ -147,11 +147,11 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 114,
-     "x_realtime": 4.56,
+     "fps": 104,
+     "x_realtime": 4.16,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "CLI 2.7.1",
+     "release": "CLI 2.7.2",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -168,11 +168,11 @@
      }
     },
     "expression-2": {
-     "fps": 168,
-     "x_realtime": 8.4,
+     "fps": 167,
+     "x_realtime": 8.35,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "CLI 2.7.1",
+     "release": "CLI 2.7.2",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -234,11 +234,11 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 36,
-     "x_realtime": 1.44,
+     "fps": 51,
+     "x_realtime": 2.04,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "CLI 2.7.1",
+     "release": "CLI 2.7.2",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -254,7 +254,7 @@
      "x_realtime": 2.2,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "CLI 2.7.1",
+     "release": "CLI 2.7.2",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
