@@ -3,7 +3,7 @@
   "record": "models/essence-2/perf/FLOORS.json",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "cf51e74a0e3a8940b92b99e539cf344e59a05375f3864706fbfaaa41e2a82ee8",
+  "record_sha256": "bbd0f06ff43bfdfa734eb466f46b3975aa61fcc632060f1d8a81a3d98d76a3a2",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
@@ -12,7 +12,7 @@
     {
       "label": "Cloud GPU",
       "plane": "cloud-gpu",
-      "line": "| Cloud GPU | NVIDIA RTX 4090 | 301 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 15.1x real time · hosted baked-390440281 (2026-09-22) | 103 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 4.12x real time · hosted 143b3e627 (2026-09-22) |",
+      "line": "| Cloud GPU | NVIDIA RTX 4090 | 301 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 15.1x real time · drive 5639-40744-0031, 28.42 s · hosted baked-390440281 (2026-09-22) | 103 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 4.12x real time · drive 5639-40744-0031, 28.42 s · hosted 143b3e627 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 301,
@@ -31,7 +31,7 @@
     {
       "label": "Cloud Apple silicon",
       "plane": "apple-serve",
-      "line": "| Cloud Apple silicon | Apple M4 Max | 115 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 5.75x real time · hosted moraga-expression2-model-a7fdad23 (2026-09-22) | 67 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.68x real time · hosted moraga-lib-a790181f (2026-09-22) |",
+      "line": "| Cloud Apple silicon | Apple M4 Max | 115 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 5.75x real time · drive 5639-40744-0031, 28.42 s · hosted moraga-expression2-model-a7fdad23 (2026-09-22) | 67 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.68x real time · drive 5639-40744-0031, 28.42 s · hosted moraga-lib-a790181f (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 115,
@@ -50,7 +50,7 @@
     {
       "label": "Cloud CPU",
       "plane": "modal-cpu",
-      "line": "| Cloud CPU | Modal CPU container | 16 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 0.8x real time · hosted expression-2-cpu-worker v26 (2026-09-23) | 6 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.24x real time · hosted essence-2-cpu-worker v20 (2026-09-23) |",
+      "line": "| Cloud CPU | Modal CPU container | 16 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 0.8x real time · drive 5639-40744-0031, 28.42 s · hosted expression-2-cpu-worker v26 (2026-09-23) | 6 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.24x real time · drive 5639-40744-0031, 28.42 s · hosted essence-2-cpu-worker v20 (2026-09-23) |",
       "cells": {
         "expression-2": {
           "docs_fps": 16,
@@ -69,7 +69,7 @@
     {
       "label": "macOS",
       "plane": "macos-m4",
-      "line": "| macOS | Apple M4 | 177 · e2e-steady-state · 416x720 at 20 fps · 8.85x real time · A02HCY0444 @ 53bb1f65e41529a7101543e7a4 · cli-v2.7.0 (2026-09-23) | 114 · e2e-steady-state · 1920x1080 at 25 fps · 4.56x real time · A23KSG5258 @ 6ea7a95a99ae1b8fa4443a5adf · cli-v2.7.0 (2026-09-23) |",
+      "line": "| macOS | Apple M4 | 177 · e2e-steady-state · 416x720 at 20 fps · 8.85x real time · drive 5639-40744-0031, 28.42 s · A02HCY0444 @ 53bb1f65e41529a7101543e7a4 · cli-v2.7.0 (2026-09-23) | 114 · e2e-steady-state · 1920x1080 at 25 fps · 4.56x real time · drive 5639-40744-0031, 28.42 s · A23KSG5258 @ 6ea7a95a99ae1b8fa4443a5adf · cli-v2.7.0 (2026-09-23) |",
       "cells": {
         "expression-2": {
           "docs_fps": 177,
@@ -88,7 +88,7 @@
     {
       "label": "macOS · Python",
       "plane": "python-macos",
-      "line": "| macOS · Python | Apple M4 | 159 · e2e-steady-state · 416x720 at 20 fps · 7.95x real time · bithuman 2.11.5 (2026-09-20) | 177 · e2e-steady-state · 1920x1080 at 25 fps · 7.08x real time · bithuman 2.11.6 (2026-09-22) |",
+      "line": "| macOS · Python | Apple M4 | 159 · e2e-steady-state · 416x720 at 20 fps · 7.95x real time · drive 5639-40744-0031, 28.42 s · bithuman 2.11.5 (2026-09-20) | 177 · e2e-steady-state · 1920x1080 at 25 fps · 7.08x real time · drive 5639-40744-0031, 28.42 s · bithuman 2.11.6 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 159,
@@ -107,7 +107,7 @@
     {
       "label": "Linux",
       "plane": "linux-cpu",
-      "line": "| Linux | Intel Core i7-13700F | 44 · e2e-steady-state · 416x720 at 20 fps · 2.2x real time · A02HCY0444 @ 53bb1f65e41529a7101543e7a4 · cli-v2.7.0 (2026-09-23) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · A23KSG5258 @ e77257b4cdb9ffceee908dcf06 · cli-v2.7.0 (2026-09-23) |",
+      "line": "| Linux | Intel Core i7-13700F | 44 · e2e-steady-state · 416x720 at 20 fps · 2.2x real time · drive 5639-40744-0031, 28.42 s · A02HCY0444 @ 53bb1f65e41529a7101543e7a4 · cli-v2.7.0 (2026-09-23) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · drive 5639-40744-0031, 28.42 s · A23KSG5258 @ e77257b4cdb9ffceee908dcf06 · cli-v2.7.0 (2026-09-23) |",
       "cells": {
         "expression-2": {
           "docs_fps": 44,
@@ -126,7 +126,7 @@
     {
       "label": "Linux · Python",
       "plane": "python-linux",
-      "line": "| Linux · Python | Intel Core i7-13700F | 46 · e2e-steady-state · 416x720 at 20 fps · 2.3x real time · bithuman 2.11.6 (2026-09-22) | 31 · e2e-steady-state · 1920x1080 at 25 fps · 1.24x real time · bithuman 2.11.6 (2026-09-22) |",
+      "line": "| Linux · Python | Intel Core i7-13700F | 46 · e2e-steady-state · 416x720 at 20 fps · 2.3x real time · drive 5639-40744-0031, 28.42 s · bithuman 2.11.6 (2026-09-22) | 31 · e2e-steady-state · 1920x1080 at 25 fps · 1.24x real time · drive 5639-40744-0031, 28.42 s · bithuman 2.11.6 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 46,
@@ -145,7 +145,7 @@
     {
       "label": "iOS",
       "plane": "iphone-15",
-      "line": "| iOS | iPhone 15 | 111 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 5.55x real time · bithuman-product/homebrew-bithuman :: Expression2 2.13.8 (2026-09-20) | 54 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.16x real time · essence2-v1.9.0 (2026-09-20) |",
+      "line": "| iOS | iPhone 15 | 111 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 5.55x real time · drive 6829-68771-0007, 16.285 s · bithuman-product/homebrew-bithuman :: Expression2 2.13.8 (2026-09-20) | 54 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 2.16x real time · drive 5639-40744-0031, 28.42 s · essence2-v1.9.0 (2026-09-20) |",
       "cells": {
         "expression-2": {
           "docs_fps": 111,
@@ -164,7 +164,7 @@
     {
       "label": "Android",
       "plane": "android-s25plus",
-      "line": "| Android | Galaxy S25+ | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · expression2-android 0.4.8 (2026-09-22) | 46 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.84x real time · essence2-android 0.5.12 (2026-09-19) |",
+      "line": "| Android | Galaxy S25+ | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · drive 5639-40744-0031, 28.42 s · expression2-android 0.4.8 (2026-09-22) | 46 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.84x real time · drive 6829-68771-0007, 16.285 s · essence2-android 0.5.12 (2026-09-19) |",
       "cells": {
         "expression-2": {
           "docs_fps": 43,
@@ -183,7 +183,7 @@
     {
       "label": "Web",
       "plane": "web",
-      "line": "| Web | Chrome on M4 | 30 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 1.5x real time · hosted cYAZKFlgTwrBwOKPHhQs1 (2026-09-22) | 29 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.16x real time · hosted cYAZKFlgTwrBwOKPHhQs1 (2026-09-22) |",
+      "line": "| Web | Chrome on M4 | 30 · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 1.5x real time · drive 5639-40744-0031, 28.42 s · hosted cYAZKFlgTwrBwOKPHhQs1 (2026-09-22) | 29 · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 1.16x real time · drive 5639-40744-0031, 28.42 s · hosted cYAZKFlgTwrBwOKPHhQs1 (2026-09-22) |",
       "cells": {
         "expression-2": {
           "docs_fps": 30,
