@@ -80,7 +80,7 @@ Open that link and allow the microphone and local-network access. The heart of `
 async def entrypoint(ctx: JobContext):
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
     session = AgentSession(llm=openai.realtime.RealtimeModel(
-        model=os.getenv("BITHUMAN_REALTIME_MODEL", "gpt-realtime-mini"),
+        model=os.getenv("BITHUMAN_REALTIME_MODEL", "gpt-realtime-2.1-mini"),
         voice=os.getenv("BITHUMAN_VOICE", "coral")))
     # The avatar renders in this process and publishes the lip-synced video and audio.
     avatar = bithuman.AvatarSession(model_path=os.environ["BITHUMAN_MODEL_PATH"])
@@ -111,7 +111,7 @@ The Python example reads these from `.env`:
 | `BITHUMAN_API_SECRET` | — | Your API secret. Rendering is metered on it. |
 | `OPENAI_API_KEY` | — | Your OpenAI key. |
 | `BITHUMAN_AVATAR` | `wise-pup` | Which avatar ([table above](#pick-the-avatar)). |
-| `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-mini` | The OpenAI Realtime model. |
+| `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-2.1-mini` | The OpenAI Realtime model. |
 | `BITHUMAN_VOICE` | `coral` | Any OpenAI Realtime voice. |
 | `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt. |
 | `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | `ws://localhost:7880`, `devkey`, `secret` | Your LiveKit server (`livekit-server --dev`). |
