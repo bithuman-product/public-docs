@@ -52,7 +52,7 @@ do, report it with the agent code and timestamp.
 Creation errors — `400 VALIDATION_ERROR`, `402 INSUFFICIENT_BALANCE`,
 `422 MODEL_SUBJECT_MISMATCH`, `400 VIDEO_INPUT_NOT_SUPPORTED` and a `failed`
 status — are listed with their fixes under
-[creation failure modes](/api/agents#creation-failure-modes). A poll that sits
+[creation failure modes](/api/agents#errors). A poll that sits
 at `current_step: "lip_sync"` for Essence 2 or Expression 2 is the training
 step, which takes about 2 to 2.5 hours: keep polling.
 
@@ -61,7 +61,7 @@ step, which takes about 2 to 2.5 hours: keep polling.
 | Symptom | Cause | Fix |
 |---|---|---|
 | Agent won't launch right after creation | Status isn't `ready` yet, or the identity artifact is still provisioning to serving capacity. | Poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready`; on the very first session, retry after a short wait. |
-| `409 MODEL_NOT_GENERATED` — `agent <code>'s <model> model hasn't been generated yet` | You requested a model family the agent can't be launched as (via the embed-token `model` field, [talking video](/api/video), or a [model download](/api/agents#download-an-agents-model)) — a trained per-identity model that doesn't exist, `expression-1` not yet enabled on this agent (its message reads `isn't enabled on this agent yet`). | The message names the fix — follow it. Otherwise: check the agent's `supported_models` (returned on status / get / list and the embed-token response), [add the model](/api/agents#add-a-model-to-an-existing-agent), or create the agent with it. Enabling `expression-1` is [instant and free](/api/agents#using-expression-1-on-an-existing-agent). |
+| `409 MODEL_NOT_GENERATED` — `agent <code>'s <model> model hasn't been generated yet` | You requested a model family the agent can't be launched as (via the embed-token `model` field, [talking video](/api/video), or a [model download](/api/agents#download-an-agents-model)) — a trained per-identity model that doesn't exist, `expression-1` not yet enabled on this agent (its message reads `isn't enabled on this agent yet`). | The message names the fix — follow it. Otherwise: check the agent's `supported_models` (returned on status / get / list and the embed-token response), [add the model](/api/agents#add-a-model-to-an-existing-agent), or create the agent with it. Enabling `expression-1` is [instant and free](/api/agents#add-a-model-to-an-existing-agent). |
 | Session ends immediately with `avatar_error: "model_not_generated"` | A `?model=` URL override targeted a not-yet-generated v2 model — the session disconnects cleanly instead of hanging through dispatch retries. | Same fix as the 409 above; prefer validating via the embed-token `model` field, which rejects up front. |
 | `404 NOT_FOUND` — `No active rooms found for agent <code>` on `/speak` or `/add-context` | These endpoints target an agent with an **active session**. | Start a session first (embed, viewer, or LiveKit), then call them. |
 | `?model=` tier pin appears ignored | Unrecognized tier slugs **fall back silently** to the agent's default routing — the session plays normally, so nothing looks broken. | Check the spelling against the slug table on [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier); for production, omit `?model=`. |

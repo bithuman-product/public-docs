@@ -59,7 +59,7 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
 > pick, billing the routed model's rate. See
 > [Essence 2 & Expression 2](/concepts/models). Their creation does real
 > per-identity work, so it takes **about 2 to 2.5 hours**
-> ([creation times](/api/agents#model-specific-inputs-and-creation-times)), not
+> ([creation times](/api/agents#generate-an-agent)), not
 > the minutes below — keep polling `status` rather than applying a short
 > timeout.
 

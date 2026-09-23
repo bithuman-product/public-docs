@@ -66,7 +66,7 @@ and `model: "expression-2"`, or add `expression-2` to an existing agent with
   `generate` is a second charge. If a `ready` agent will not serve, report it.
 - **Failures are terminal** and reported on the status endpoint as
   `status: "failed"` with an `error_message` — see
-  [failure modes](/api/agents#creation-failure-modes).
+  [failure modes](/api/agents#errors).
 
 The creation cost is on [pricing](/guides/pricing).
 

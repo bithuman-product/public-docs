@@ -41,9 +41,9 @@ One mode is always free: **audio-only** Swift SDK use — no avatar attached, fu
 | Action | Credits (one-time) | Notes |
 |---|---|---|
 | Agent creation — first generation (`essence-1`, `expression-1`) | 250 | Per [`.imx`](/concepts/avatars-imx) built from your portrait image |
-| Agent creation — `essence-2` | 500 | Trained on-create from your portrait image — see [the Essence 2 creation](/api/agents#essence-2--the-photorealistic-creation) |
+| Agent creation — `essence-2` | 500 | Trained on-create from your portrait image — see [the Essence 2 creation](/api/agents#generate-an-agent) |
 | Agent creation — `expression-2` | 2000 | Fully generative engine trained on-create from your portrait image — its per-identity training costs more to run, priced accordingly |
-| Agent creation — `auto` | 500 or 2000 | The platform [classifies your input](/api/agents#auto--let-the-platform-pick-the-model) — a photorealistic person routes to `essence-2` (500), a cartoon / animal / creature to `expression-2` (2000); you're billed the routed model's rate |
+| Agent creation — `auto` | 500 or 2000 | The platform [classifies your input](/api/agents#generate-an-agent) — a photorealistic person routes to `essence-2` (500), a cartoon / animal / creature to `expression-2` (2000); you're billed the routed model's rate |
 | Model add ([`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent)) | same per-model rates | Add a model to an existing agent; adding Expression 1 is **free** (instant, nothing trained) |
 | Dynamics generation | 250 | Per gesture / movement set generated for an agent |
 | Book creation | 250 | Per illustrated book generated from a prompt |

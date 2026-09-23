@@ -131,7 +131,7 @@ Prefer a custom face and persona? Generation is asynchronous — it returns an
 accepted and means the same thing). The
 [second-generation models](/concepts/models) train a real per-identity
 model, so they take longer and cost more — see
-[per-model creation](/api/agents#model-specific-inputs-and-creation-times) and
+[per-model creation](/api/agents#generate-an-agent) and
 [pricing](/guides/pricing). Creation is image-only: upload your own portrait —
 a URL must be publicly fetchable, and it is downloaded after the request
 returns, so poll status rather than reading a `200` as acceptance.

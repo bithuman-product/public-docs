@@ -95,7 +95,7 @@ with duplicate symbols ([why](/sdk/apple#install)).
   ★ **Route B only — budget for this before you open Xcode: creating one takes
   about 2–2.5 hours and costs 2000 credits** — an `expression-2` creation trains a
   per-identity model on an H100-class GPU. See
-  [model-specific inputs and creation times](/api/agents#model-specific-inputs-and-creation-times). Nothing on this
+  [model-specific inputs and creation times](/api/agents#generate-an-agent). Nothing on this
   page can start until that finishes, so start the creation first and read the
   rest while it trains.
 
