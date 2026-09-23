@@ -15,6 +15,7 @@
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { routeOf } from "./content-routes.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const CONTENT = join(ROOT, "src/content/docs");
@@ -78,10 +79,10 @@ const anchors = new Map();
 const customIdHeadings = [];
 
 for (const f of walk(CONTENT, [".md", ".mdx"])) {
-  const slug = relative(CONTENT, f).replace(/\.mdx?$/, "");
-  routes.add("/" + slug);
   const md = readFileSync(f, "utf8");
-  anchors.set("/" + slug, headingSlugs(md));
+  const route = routeOf(CONTENT, f, md);
+  routes.add(route);
+  anchors.set(route, headingSlugs(md));
   for (const m of md.matchAll(/^#{2,6}\s+.*(\{#[^}]+\}).*$/gm)) {
     customIdHeadings.push({ file: relative(ROOT, f), snippet: m[1] });
   }
@@ -115,7 +116,7 @@ for (const [source, destination] of redirects) {
     );
   }
   if (/^https:\/\/[a-z0-9.-]+\.bithuman\.ai(\/|$)/.test(destination)) continue; // an off-site bitHuman page (e.g. status)
-  const dest = destination.replace(/\/$/, "") || "/";
+  const dest = destination.replace(/#.*$/, "").replace(/\/$/, "") || "/";
   if (!routes.has(dest) && !redirects.has(dest)) {
     redirectFailures.push(`redirect ${source} -> ${destination} points at no known route`);
   }
@@ -130,7 +131,7 @@ let anchorsChecked = 0;
 
 for (const f of walk(CONTENT, [".md", ".mdx"])) {
   const text = readFileSync(f, "utf8");
-  const selfRoute = "/" + relative(CONTENT, f).replace(/\.mdx?$/, "");
+  const selfRoute = routeOf(CONTENT, f);
   let m;
   while ((m = LINK_RE.exec(text)) !== null) {
     const frag = m[2] ? m[2].slice(1) : "";

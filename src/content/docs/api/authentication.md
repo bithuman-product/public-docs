@@ -4,6 +4,8 @@ description: "Get an API secret, set it for the right surface, and understand ho
 section: api
 group: "Get started"
 order: 2
+type: endpoint
+label: "Authentication"
 ---
 
 ## One credential, one name

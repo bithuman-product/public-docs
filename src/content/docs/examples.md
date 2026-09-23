@@ -3,7 +3,9 @@ title: "Examples"
 description: "Runnable bitHuman projects, one row per platform — every one is open source. Clone, set your API secret, run."
 section: examples
 group: "Examples"
-order: 1
+order: 0
+type: hub
+label: "All examples"
 ---
 
 Every project is open source in
@@ -36,7 +38,7 @@ clone.
 
 - [Swift / iOS — Expression 2](/examples/swift-ios-expression2) — a complete SwiftUI app; a published identity renders with no account, key or credits.
 - [Swift / iOS — Essence 2](/examples/swift-ios-essence2) — the same shape for the full-resolution engine (iOS 26).
-- [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — `bitHumanKit`, the whole on-device voice agent (iPhone 16 Pro or later, two Apple entitlements).
+- [Swift / iOS — Hello, avatar](/examples/swift-ios-voice-agent) — `bitHumanKit`, the whole on-device voice agent (iPhone 16 Pro or later, two Apple entitlements).
 - [`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2) — one file on a Mac: a WAV in, lip-synced frames out, no account.
 - [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — a voice-only on-device agent with no avatar.
 
@@ -54,3 +56,14 @@ clone.
 
 For the REST contract see the [API reference](/api/reference); for deployment
 shapes see [Guides](/guides).
+
+## Ready-made avatars
+
+Sample avatars you can use with no account. The full list, with each avatar's model and agent code, is served as JSON at [`https://api.bithuman.ai/v1/models/showcase`](https://api.bithuman.ai/v1/models/showcase).
+
+| Avatar | Model | Try it |
+|---|---|---|
+| `wise-pup` | Expression 2 | [Talk to it in your browser](https://www.bithuman.ai/embed/A23WJF0199) · `bithuman run wise-pup` |
+| `sofia-ramirez` | Essence 2 | [Talk to it in your browser](https://www.bithuman.ai/embed/A52DHS2219) · `bithuman run sofia-ramirez` |
+
+`bithuman list` prints every sample avatar, and `bithuman pull <slug>` downloads one.

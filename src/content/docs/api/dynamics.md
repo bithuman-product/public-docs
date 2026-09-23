@@ -3,8 +3,9 @@ title: "Dynamics API"
 description: "Generate and manage conversational gesture animations — waves, nods, laughs, idle motions — for an avatar."
 section: api
 group: "Build"
-order: 12
-label: "Gestures & animations"
+order: 13
+type: endpoint
+label: "Gestures"
 ---
 
 ## Overview

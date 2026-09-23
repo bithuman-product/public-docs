@@ -3,7 +3,9 @@ title: "Trigger avatar actions from code"
 description: "Fire a specific avatar gesture/action deterministically — self-hosted or on the managed cloud — no LLM, no keywords, no randomness. With a ready-to-run example avatar."
 section: guides
 group: "Build"
-order: 2
+order: 22
+type: guide
+label: "Gestures"
 ---
 
 Avatar actions are **named video clips** ("dynamics") baked into an avatar model.

@@ -3,7 +3,9 @@ title: "REST — Hello, avatar"
 description: "Zero-to-avatar with the bitHuman REST API using nothing but curl: validate, generate an agent from a prompt, poll until ready."
 section: examples
 group: "Examples"
-order: 12
+order: 10
+type: example
+label: "REST: see it talk"
 ---
 
 ## Prerequisites

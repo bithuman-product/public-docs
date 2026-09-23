@@ -3,7 +3,9 @@ title: "Swift / iOS — Essence 2 on device"
 description: "A complete SwiftUI app that renders a full-resolution Essence 2 avatar on an iPhone, entirely on the device. Every file printed in full, every coordinate and byte count verified against the published package and the live download door on 2026-09-21."
 section: examples
 group: "Examples"
-order: 13
+order: 31
+type: example
+label: "iOS: Essence 2"
 ---
 
 This page is the whole app. Copy every block into a new Xcode project and an
@@ -26,17 +28,17 @@ binary.
 
 | | |
 |---|---|
-| **Renders** | the identity's own canvas at 25 fps — 1080x1920 for the default code — entirely on the device, [measured rates](/sdk/performance) |
+| **Renders** | the identity's own canvas at 25 fps — 1080x1920 for the default code — entirely on the device, [measured rates](/performance) |
 | **Driven by** | a 16 kHz mono WAV you make on your Mac in one command |
 | **Needs** | a physical Apple-Silicon iPhone or iPad, **iOS 26**, and `Essence2` resolved at **v2.14.2 or newer** — see [the floor](#2-the-xcode-project) |
 | **Does not need** | an agent of your own, credits to create one, or the device floor and Apple entitlements the `bitHumanKit` umbrella asks for — nothing on this path requests either. **It does need an API secret:** without one `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) |
-| **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For a whole voice agent see [Hello, avatar](/examples/swift-ios-hello) |
+| **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For a whole voice agent see [Hello, avatar](/examples/swift-ios-voice-agent) |
 | **Costs** | the identity download is anonymous and free. The render is a self-hosted session and is metered — [pricing](/guides/pricing) is the authority |
 
 `Expression2` and `Essence2` may share one target from `2.14.0`; below it a
 device build failed its final link on duplicate symbols. On 2026-09-23 a new app
 taking both from `2.14.1` built for an iOS device, the Simulator and macOS.
-[Details](/sdk/ios#pin-the-version).
+[Details](/sdk/apple#pin-the-version).
 
 ## Prerequisites
 
@@ -46,7 +48,7 @@ in order.
 | You need | Why | Check it |
 |---|---|---|
 | **A Mac with Xcode 26 or newer** | the package is built with Swift 6 strict concurrency, and the engine objects are iOS 26 | `xcodebuild -version` |
-| **A physical iPhone or iPad**, paired and trusted | this is on-device Apple-Silicon inference; the Simulator is not the supported path ([iOS SDK](/sdk/ios)) | it appears in Xcode's run destination menu |
+| **A physical iPhone or iPad**, paired and trusted | this is on-device Apple-Silicon inference; the Simulator is not the supported path ([iOS SDK](/sdk/apple)) | it appears in Xcode's run destination menu |
 | **An Apple Developer team** | a device build is a signed build | Xcode → Settings → Accounts lists it |
 | **Deployment target iOS 26.0** | 99 of the 367 objects in the published `ios-arm64` slice are built with a minimum OS of 26.0 — a lower target fails at link | set in [step 2](#2-the-xcode-project) |
 | **A bitHuman API secret** | the engine will not start a session without one — `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) | free at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication) |
@@ -61,16 +63,16 @@ many words: *"the expression-1 Expression actor (MLX DiT) requires iPhone 16 Pro
 or later (A18 Pro+). This gate is expression-1's alone: it is NOT a
 bitHuman-SDK-wide device floor, and it does NOT apply to essence-2 or
 expression-2, which carry no device gate."* [The performance
-page](/sdk/performance) is the other half of that: it carries a measured iPhone
+page](/performance) is the other half of that: it carries a measured iPhone
 15 rate, comfortably above the rate Essence 2 plays at, and it is the only place
 that number is written. The **iPhone 16 Pro floor and the two Apple memory
 entitlements belong to the `bitHumanKit` umbrella**, which
-[Hello, avatar](/examples/swift-ios-hello) uses and this page does not: neither
+[Hello, avatar](/examples/swift-ios-voice-agent) uses and this page does not: neither
 the `Essence2` package product nor the app below asks for an entitlement, and
 the app builds and signs without one. What an entitlement buys is headroom
 above the roughly 3 GB an unentitled iOS app may hold, so if your own app grows
 past this one and is killed with no crash log, that ceiling is the first thing
-to check — [the iOS SDK page](/sdk/ios#apple-entitlements--bithumankit-only) covers requesting
+to check — [the iOS SDK page](/sdk/apple#apple-entitlements--bithumankit-only) covers requesting
 them.
 
 ★ **If you read the package's own `Package.swift`, you will find a comment
@@ -79,7 +81,7 @@ carried, unqualified, a note dated 2026-09-08 reporting that on an iPhone 15 the
 Essence 2 warm-up refused with *"unsupported hardware — iPhone15,4 detected"*,
 and concluding that Essence 2 needs an iPhone 16 Pro. That was measured on
 `essence2-v1.5.x`; v2.13.8 pins `essence2-v1.9.0`, and the iPhone 15 cell on the
-[performance page](/sdk/performance) was measured on that engine on 2026-09-20,
+[performance page](/performance) was measured on that engine on 2026-09-20,
 rendering far faster than it plays. From v2.14.1 that note is marked
 superseded for the iPhone, with the refusal sentence the `essence2-v1.10.0`
 slice actually carries quoted above it. **The sentence you can act on is the version check in
@@ -306,7 +308,7 @@ of each tag's own `Package.swift` on **2026-09-21**:
 | **v2.14.2** | **`essence2-v1.11.0`** — bills talking time only (idle is free); a service unreachable at first contact refuses retryably instead of rendering unverified; after the service accepted the key, an outage renders 300 s of frames then pauses until it answers; `BITHUMAN_API_KEY` is read as a deprecated alias |
 
 Everything this page promises — no iPhone model floor, the measured iPhone rate
-on the [performance page](/sdk/performance), the `be_essence2.h` surface below —
+on the [performance page](/performance), the `be_essence2.h` surface below —
 is **essence2-v1.9.0**. On an engine older than that, an iPhone below a 16 Pro
 gets `be_essence2_create` returning 0 and then a warm-up that refuses by name
 (*"unsupported hardware — iPhone15,4 detected"*) with the engine "idle-only":
@@ -335,7 +337,7 @@ ONNX Runtime build its audio head calls; `UnifiedModelHeader`, which the engine
 archive references rather than carries; and `Essence2LinkSettings`, which
 declares the four Apple libraries the static archive calls (`c++`,
 `VideoToolbox`, `Accelerate`, `CoreML`). Below 2.14.1 you had to add those four
-by hand — [iOS SDK](/sdk/ios#what-essence-2-needs-at-link).
+by hand — [iOS SDK](/sdk/apple#what-essence-2-needs-at-link).
 
 ★ **`ld` will warn once per engine object, and the build is still good.** The
 manifest declares `.macOS(.v13), .iOS(.v16)` while these objects are built for
@@ -999,7 +1001,7 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > with your certificates installed, and the build either fails outright or
 > produces a bundle the phone rejects with `0xe800801c (No code signature
 > found.)`. Build from a logged-in graphical session. The full list of signing
-> traps is on [the SDK page](/sdk/ios).
+> traps is on [the SDK page](/sdk/apple).
 
 ## What you'll see
 
@@ -1013,7 +1015,7 @@ again. The console line to look for is
 
 Essence 2 plays at 25 frames per second, and an iPhone renders it faster than
 that — which is why this app streams rather than generating the utterance first.
-The [performance page](/sdk/performance) is the authority on every measured rate
+The [performance page](/performance) is the authority on every measured rate
 and the only page that states one.
 
 ★ **Why this app streams and the
@@ -1045,14 +1047,14 @@ Each row below quotes the shipped engine's own wording where it has one.
 | `be_essence2_get_info reported a 0-pixel canvas` | the guard in `load()` firing — `get_info` answered before the engine had produced a frame | re-run; if it repeats, report the agent code. Without the guard this is a face that never moves and no message at all |
 | `ld` warns *"built for newer 'iOS' version (26.0) than being linked"*, once per object | the package manifest's `.iOS(.v16)` floor meeting objects built at iOS 26 | expected — not a fault. The error version of this is a link failure, fixed by Minimum Deployments **iOS 26.0** |
 | the app builds for the Simulator and then crashes there | expected — this is on-device Apple-Silicon inference | run on a physical device |
-| the app disappears mid-render with no crash log | iOS jetsammed it at the roughly 3 GB an unentitled app may hold | this app fits; if yours has grown past it, request the two memory entitlements ([iOS SDK](/sdk/ios#apple-entitlements--bithumankit-only)) |
+| the app disappears mid-render with no crash log | iOS jetsammed it at the roughly 3 GB an unentitled app may hold | this app fits; if yours has grown past it, request the two memory entitlements ([iOS SDK](/sdk/apple#apple-entitlements--bithumankit-only)) |
 | the first launch takes minutes, and does again later | the engine unpacks `agent.imx` under `NSTemporaryDirectory()`, which iOS may reclaim | expected; unpack to a directory you control and pass that instead — see the note after the code |
 
 ## Next steps
 
-- [iOS & iPadOS SDK](/sdk/ios) — the reference for this package, plus signing and the hardware notes.
+- [iOS & iPadOS SDK](/sdk/apple) — the reference for this package, plus signing and the hardware notes.
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the same shape for Expression 2, which needs no key at all.
 - [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the same two models on Android, both projects in full.
 - [Essence 2](/concepts/essence-2) — what the model is and where it runs.
-- [Performance](/sdk/performance) — measured frame rates for every platform.
+- [Performance](/performance) — measured frame rates for every platform.
 - [Agents API](/api/agents) — creating an agent and downloading its model.

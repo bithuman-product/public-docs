@@ -1,42 +1,5 @@
 ---
-const cols = [
-  {
-    title: "Build",
-    links: [
-      { label: "Get started", href: "/start" },
-      { label: "API", href: "/api" },
-      { label: "SDK", href: "/sdk" },
-      { label: "Guides", href: "/guides" },
-    ],
-  },
-  {
-    title: "Learn",
-    links: [
-      { label: "Quickstart", href: "/api/quickstart" },
-      { label: "Concepts", href: "/concepts" },
-      { label: "Examples", href: "/examples" },
-      { label: "API reference", href: "/api/reference" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Showcase", href: "/showcase" },
-      { label: "Downloads", href: "/downloads" },
-      { label: "Changelog", href: "/changelog" },
-      { label: "Pricing", href: "/guides/pricing" },
-    ],
-  },
-  {
-    title: "Community",
-    links: [
-      { label: "Discord", href: "https://discord.gg/ES953n7bPA" },
-      { label: "GitHub", href: "https://github.com/bithuman-product" },
-      { label: "X / Twitter", href: "https://x.com/bithuman_ai" },
-      { label: "Support", href: "/community" },
-    ],
-  },
-];
+import { FOOTER, LEGAL_LINKS } from "../config/nav";
 const year = 2026;
 ---
 
@@ -48,17 +11,17 @@ const year = 2026;
         <span>bitHuman</span>
       </a>
       <p class="muted">
-        Real-time, on-device avatars. Audio in, lifelike face out —
-        <a href="/sdk/performance">measured</a> from a phone to an RTX 4090.
+        Realtime talking avatars from one portrait, on every platform —
+        <a href="/performance">see how fast</a>.
       </p>
     </div>
     <div class="footer-cols">
       {
-        cols.map((c) => (
+        FOOTER.map((c) => (
           <div class="footer-col">
             <p class="footer-col-title">{c.title}</p>
             {c.links.map((l) => (
-              <a href={l.href}>{l.label}</a>
+              <a href={l.href} {...(l.external ? { rel: "noopener" } : {})}>{l.label}</a>
             ))}
           </div>
         ))
@@ -68,10 +31,7 @@ const year = 2026;
   <div class="container footer-base">
     <span class="muted">© {year} bitHuman. All rights reserved.</span>
     <div class="footer-base-links">
-      <a href="https://www.bithuman.ai/legal/privacy">Privacy</a>
-      <a href="https://www.bithuman.ai/legal/terms">Terms</a>
-      <a href="/legal/eu-ai-act">EU AI Act</a>
-      <a href="/legal/android-ffmpeg-lgpl">FFmpeg / LGPL</a>
+      {LEGAL_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
     </div>
   </div>
 </footer>

@@ -25,7 +25,7 @@ export async function sitemapEntries(): Promise<{ loc: string; lastmod: string |
     entries.push({ loc, lastmod: lastModified(file) });
   };
   for (const [route, file] of Object.entries(STATIC_ROUTES)) add(route, file);
-  for (const d of docs) add(d.id, `src/content/docs/${d.id}.md`);
+  for (const d of docs) add(d.id, d.filePath ?? `src/content/docs/${d.id}.md`);
   return entries;
 }
 

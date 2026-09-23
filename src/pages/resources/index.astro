@@ -1,37 +1,10 @@
 ---
-import Hub from "../../components/Hub.astro";
+import SectionHub from "../../components/SectionHub.astro";
 import { hubMeta } from "../../config/hubs";
-
-const groups = [
-  {
-    label: "Get the SDK",
-    featured: true,
-    cards: [
-      { title: "Downloads", desc: "Install commands + the device & platform support matrix.", href: "/downloads" },
-      { title: "Changelog", desc: "Product-level release notes across the engine, SDKs, and API.", href: "/changelog" },
-    ],
-  },
-  {
-    label: "Learn",
-    cards: [
-      { title: "Examples", desc: "Runnable, copy-paste starting points for every SDK.", href: "/examples" },
-      { title: "Showcase", desc: "Live demo agents and real-world deployments.", href: "/showcase" },
-      { title: "Concepts", desc: "Models, the .imx format, streaming, and architecture.", href: "/concepts/models" },
-    ],
-  },
-  {
-    label: "Connect",
-    cards: [
-      { title: "Community", desc: "GitHub, Discord, status, and how to contribute.", href: "/community" },
-      { title: "Discord", desc: "Get help and share what you build.", href: "https://discord.gg/ES953n7bPA", external: true },
-      { title: "Status", desc: "Live service status for the bitHuman API.", href: "https://status.bithuman.ai", external: true },
-    ],
-  },
-];
 ---
-<Hub
+<SectionHub
+  section="resources"
   title="Resources"
   tagline={hubMeta("resources").description}
-  ctas={[{ label: "Downloads", href: "/downloads" }, { label: "Examples", href: "/examples", variant: "secondary" }]}
-  groups={groups}
+  ctas={[{ label: "Downloads & versions", href: "/downloads" }, { label: "Changelog", href: "/changelog", variant: "secondary" }]}
 />

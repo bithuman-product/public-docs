@@ -4,6 +4,8 @@ description: "Pick an existing agent and get a live, talking avatar on your page
 section: api
 group: "Get started"
 order: 1
+type: quickstart
+label: "Quickstart"
 ---
 
 The fastest way to start: **pick an agent that already exists and embed it.**
@@ -176,7 +178,7 @@ embed it exactly like step 2. See [Agents](/api/agents) for the full lifecycle.
 - [API reference](/api/reference) — every endpoint with a live console.
 - [Python SDK](/sdk/python) — the same engine, in-process, with the canonical
   [push-audio/drain-frames loop](/concepts/audio-streaming).
-- [Swift SDK (iOS, iPadOS, macOS)](/sdk/ios) — the same avatar rendered
+- [Swift SDK (iOS, iPadOS, macOS)](/sdk/apple) — the same avatar rendered
   on-device inside an iPhone, iPad or Mac app.
 - [Android SDK (Kotlin)](/sdk/android) — the same avatar on-device in an
   Android app, from Maven Central.

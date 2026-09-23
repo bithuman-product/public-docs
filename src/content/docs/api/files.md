@@ -3,7 +3,9 @@ title: "File Upload API"
 description: "Upload images, video, audio, and documents by URL or base64. Files are auto-organized by type and returned as CDN URLs."
 section: api
 group: "Build"
-order: 13
+order: 14
+type: endpoint
+label: "Files"
 ---
 
 ## Upload a file

@@ -3,7 +3,9 @@ title: "Building avatars"
 description: "Get a pre-built avatar or generate one from a portrait — media specs, the CO-STAR prompt framework, animal mode, and the agent-generation API."
 section: guides
 group: "Build"
-order: 0
+order: 20
+type: guide
+label: "Create your own avatar"
 ---
 
 ## Two ways to get an avatar

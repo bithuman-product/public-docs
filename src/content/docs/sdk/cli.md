@@ -4,6 +4,7 @@ description: "Install one binary, sign in once, and bithuman run puts a talking 
 section: sdk
 group: "Platforms"
 order: 10
+type: platform
 label: "CLI (macOS & Linux)"
 ---
 
@@ -58,7 +59,7 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc   # or ~/.bashrc
 
 > **There is no pip install for the CLI.** `bithuman` on PyPI is the
 > [Python library](/sdk/python) — it is the only bitHuman package on PyPI, and
-> it installs no command. The CLI and its [MCP server](/guides/mcp-server) come
+> it installs no command. The CLI and its [MCP server](/sdk/mcp) come
 > from the installer above or from Homebrew, whose formula is named
 > `bithuman-cli`. A `bithuman-cli` wheel existed on PyPI until 2026-09-15 and
 > was removed. If you find a package on PyPI with a bitHuman-like name that is
@@ -233,13 +234,13 @@ agent is metered — [pricing](/guides/pricing) is the authority.
 ## Performance
 
 Measured frame rates for every platform are on the
-[performance page](/sdk/performance).
+[performance page](/performance).
 
 ## Troubleshooting
 
 | You see | It means | Do this |
 |---|---|---|
-| the installer names your platform and stops | no binary for an Intel Mac (or a Linux arm64 box pinned to a release before 2.7.1) | the [web](/sdk/web), the [cloud API](/api/overview), or a Linux binary in a container; on Linux arm64, drop the pin |
+| the installer names your platform and stops | no binary for an Intel Mac (or a Linux arm64 box pinned to a release before 2.7.1) | the [web](/sdk/web), the [cloud API](/api), or a Linux binary in a container; on Linux arm64, drop the pin |
 | `bithuman: command not found` after the install | `~/.local/bin` is not on your `PATH` | `export PATH="$HOME/.local/bin:$PATH"` — the installer prints the same line |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on your `PATH` — a script or CI shell often lacks Homebrew's `/opt/homebrew/bin` | `brew install ffmpeg` (macOS) or `sudo apt install -y ffmpeg` (Linux); in a script, `export PATH="/opt/homebrew/bin:$PATH"` or set `BITHUMAN_FFMPEG` |
 | `render` refuses with `NOT_SIGNED_IN`, no output file | no credential — `render` is billed | `bithuman login`, or `export BITHUMAN_API_SECRET=…` ([credential order](/sdk/cli/reference#credential-resolution-order)) |
@@ -252,7 +253,7 @@ Measured frame rates for every platform are on the
 | `SLUG_NOT_FOUND`, exit 66 | the slug is not in the catalogue — it was retired, or mistyped | `bithuman list` and copy a slug from it, or take one from [the table above](#the-showcase-catalogue) |
 | the first Essence 2 `render` on a machine pauses before the first frame | it fetches one shared audio encoder (~377 MB) into `~/.bithuman/engines/essence-2/`, once | wait; every later render skips it |
 | `Error: No available formula` from `brew` | the tap is not known to Homebrew yet | `brew tap bithuman-product/bithuman`, then install again |
-| `pip install bithuman` stops at `bithuman 2.11.6 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api/overview) |
+| `pip install bithuman` stops at `bithuman 2.11.6 has NO WHEEL for this platform.` | an Intel Mac, or macOS older than 14 — pip installed nothing | Apple Silicon, or the [web](/sdk/web) / the [cloud API](/api) |
 | `bithuman doctor` reports not ready | no credential and no brain configured yet — the check working | `bithuman login`; a showcase `pull` never needed it |
 | `bithuman login --device --json` prints coloured text and `jq` fails on it | a CLI older than 2.7.0 — `login` wrote its banner to stdout through `cli-v2.6.26`; from 2.7.0 both routes print one JSON object and route the chrome to stderr | upgrade: `curl -fsSL https://install.bithuman.ai \| sh`, then `bithuman version`; [the shape](/sdk/cli/reference#login-keeps-this-contract-from-270) |
 
@@ -269,7 +270,7 @@ commands) and `METERING_REFUSED` (`run --offscreen`).
 | [Expression 2](/concepts/expression-2) (`.avatar` or `.imx` — the same container) | `run` and `render` |
 | [Essence 2](/concepts/essence-2) (`.imx`) | `run` and `render` |
 | [Essence 1](/concepts/essence-1) (`.imx`) | `run` only — `render` refuses it; use the [Python SDK](/sdk/python) or the [Video API](/api/video) for a file |
-| [Expression 1](/concepts/expression-1) | neither — GPU-only by design, served through the [cloud API](/api/overview) |
+| [Expression 1](/concepts/expression-1) | neither — GPU-only by design, served through the [cloud API](/api) |
 
 ## Examples and source
 
@@ -282,6 +283,6 @@ commands) and `METERING_REFUSED` (`run --offscreen`).
 
 - [CLI reference](/sdk/cli/reference) — every command, flag, exit code and environment variable
 - [Local mode](/sdk/cli/local-mode) — the conversation brain fully on-device
-- [iOS & macOS in Swift](/sdk/ios) — the native package; its `Expression2` product builds for Apple Silicon Macs too
+- [iOS & macOS in Swift](/sdk/apple) — the native package; its `Expression2` product builds for Apple Silicon Macs too
 - [Python](/sdk/python) — the same engines as a library
 - [SDK](/sdk) — every platform on one table

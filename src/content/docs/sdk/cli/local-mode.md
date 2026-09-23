@@ -2,9 +2,10 @@
 title: "Local mode — zero-cloud conversation"
 description: "Swap the cloud conversation brain for an on-device one — whisper.cpp + llama.cpp + Supertonic + Silero VAD — with one environment variable. Audio and transcripts stay on the box; the avatar itself is still metered against api.bithuman.ai. ~1.5 GB RAM."
 section: sdk
-group: "Reference"
-order: 72
-label: "CLI — local mode"
+group: "Platforms"
+order: 11
+type: guide
+label: "CLI: on-device brain"
 ---
 
 ## The on-device brain

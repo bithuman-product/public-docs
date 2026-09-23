@@ -52,7 +52,7 @@ const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1
 // Structured data for this page, from its own frontmatter and its last commit
 // (the sitemap's <lastmod> source) — nothing the page does not already say.
 const pageUrl = `https://docs.bithuman.ai${currentPath}`;
-const modified = lastModified(`src/content/docs/${entry.id}.md`);
+const modified = lastModified(entry.filePath ?? `src/content/docs/${entry.id}.md`);
 const crumbs = [
   { name: "Docs", item: "https://docs.bithuman.ai/" },
   { name: meta.label, item: `https://docs.bithuman.ai${meta.home}` },

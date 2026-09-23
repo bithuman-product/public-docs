@@ -1,0 +1,31 @@
+---
+// A section's hub page, generated: one card per page in the section, grouped by
+// the sidebar groups in src/config/nav.ts, each card showing the page's own
+// title and description. Nothing here is typed by hand, so a hub cannot list a
+// page the sidebar does not, or describe a page differently from the page.
+import { getCollection } from "astro:content";
+import Hub from "./Hub.astro";
+import { GROUP_ORDER, RESOURCES_MENU, type SectionId } from "../config/nav";
+
+interface Props { section: SectionId; title: string; tagline: string; ctas?: { label: string; href: string; variant?: "primary" | "secondary" }[] }
+const { section, title, tagline, ctas = [] } = Astro.props;
+const docs = (await getCollection("docs", (e: any) => !e.data.draft && e.data.section === section && e.data.type !== "hub"))
+  .sort((a: any, b: any) => (a.data.order ?? 100) - (b.data.order ?? 100));
+const groups = GROUP_ORDER[section]
+  .map((g, i) => ({
+    label: g,
+    featured: i === 0 && section !== "resources",
+    cards: docs.filter((d: any) => d.data.group === g).map((d: any) => ({
+      title: d.data.label ?? d.data.title,
+      desc: d.data.description,
+      href: "/" + d.id,
+    })),
+  }))
+  .filter((g) => g.cards.length);
+if (section === "resources") {
+  const have = new Set(groups.flatMap((g) => g.cards.map((c) => c.href)));
+  const more = RESOURCES_MENU.filter((r) => !have.has(r.href)).map((r) => ({ title: r.label, desc: "", href: r.href, external: r.external }));
+  if (more.length) groups.push({ label: "More", featured: false, cards: more as any });
+}
+---
+<Hub title={title} tagline={tagline} ctas={ctas} groups={groups} />

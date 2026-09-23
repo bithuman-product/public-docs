@@ -169,7 +169,7 @@ The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/
 
 ## Performance
 
-Frame rates on a Samsung Galaxy S25+ for both models are on the [performance page](/sdk/performance).
+Frame rates on a Samsung Galaxy S25+ for both models are on the [performance page](/performance).
 
 ## Troubleshooting
 

@@ -1,9 +1,12 @@
 ---
 title: "MCP server"
 description: "Drive bitHuman from any AI agent. The bitHuman MCP server is built into the CLI (bithuman mcp) and exposes the platform as Model Context Protocol tools for Claude Desktop, Claude Code, Cursor, and other MCP clients."
-section: guides
-group: "Integrate"
-order: 20
+section: sdk
+group: "Integrations"
+order: 70
+type: platform
+slug: sdk/mcp
+label: "MCP server"
 ---
 
 The **bitHuman MCP server** lets any [Model Context Protocol](https://modelcontextprotocol.io)
@@ -14,7 +17,7 @@ speech, and mint an embed token without you writing any glue code.
 
 It's **built into the [bitHuman CLI](https://github.com/bithuman-product/homebrew-bithuman)** —
 just run `bithuman mcp`. The cloud tools are a thin wrapper over the
-[REST API](/api/overview) — each tool maps to one documented endpoint — plus a
+[REST API](/api) — each tool maps to one documented endpoint — plus a
 few local tools that inspect your install and model files. Not every endpoint
 has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 [model add](/api/agents#add-a-model-to-an-existing-agent)
@@ -48,7 +51,7 @@ API below. Authenticate once with `bithuman login`, as for any other command.
 
 ## Tools
 
-**Cloud tools** — wrap the [REST API](/api/overview) (and platform status):
+**Cloud tools** — wrap the [REST API](/api) (and platform status):
 
 | Tool | Endpoint | What it does |
 |------|----------|--------------|
@@ -209,7 +212,7 @@ See [Webhooks](/api/webhooks) for verifying the `X-BitHuman-Signature` header.
 The built-in server speaks the standard MCP **stdio** transport, so there's
 nothing else to configure. It runs where the CLI runs — macOS Apple Silicon
 and Linux x86_64 — so a hosted agent, or one on Windows, calls the
-[REST API](/api/overview) directly instead.
+[REST API](/api) directly instead.
 
 ## Notes
 

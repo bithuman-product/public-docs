@@ -1,44 +1,10 @@
 ---
-import Hub from "../../components/Hub.astro";
+import SectionHub from "../../components/SectionHub.astro";
 import { hubMeta } from "../../config/hubs";
-
-const groups = [
-  {
-    label: "Build",
-    featured: true,
-    cards: [
-      { title: "Building avatars", desc: "Get a pre-built agent or generate one from a single portrait.", href: "/guides/building-avatars" },
-      { title: "Trigger avatar actions", desc: "Fire a specific gesture or action from code — self-hosted or on the managed cloud — no LLM, no keywords.", href: "/guides/avatar-actions" },
-    ],
-  },
-  {
-    label: "Deploy",
-    cards: [
-      { title: "LiveKit", desc: "Put an avatar into a LiveKit agent worker with the Python plugin.", href: "/sdk/livekit" },
-      { title: "Self-hosting", desc: "Run any model on your own hardware — which surface runs which model, how it is billed, the Expression 1 GPU container, and offline licensing.", href: "/guides/self-hosting" },
-      { title: "Embed widget", desc: "Drop a live agent into any page with an iframe and an embed token.", href: "/api/embedding" },
-      { title: "Session troubleshooting", desc: "Connect latency, idle behavior, and live-session errors — symptom by symptom.", href: "/guides/session-troubleshooting" },
-    ],
-  },
-  {
-    label: "Integrate",
-    cards: [
-      { title: "MCP server", desc: "Drive bitHuman from any AI agent — Claude, Cursor — over Model Context Protocol.", href: "/guides/mcp-server" },
-      { title: "Voice providers", desc: "Use the built-in voice pipeline, or bring your own OpenAI, Grok, ElevenLabs or Cartesia key.", href: "/guides/voice-providers" },
-    ],
-  },
-  {
-    label: "Pricing",
-    cards: [
-      { title: "Pricing & credits", desc: "How credits work, per-minute rates, and the free tier.", href: "/guides/pricing" },
-      { title: "Offline licensing", desc: "Business and Enterprise: realtime avatars completely off the internet — kiosks, trade shows, embedded screens.", href: "/guides/pricing#offline-licensing" },
-    ],
-  },
-];
 ---
-<Hub
+<SectionHub
+  section="guides"
   title="Guides"
   tagline={hubMeta("guides").description}
-  ctas={[{ label: "Building avatars", href: "/guides/building-avatars" }, { label: "Deploy with LiveKit", href: "/sdk/livekit", variant: "secondary" }]}
-  groups={groups}
+  ctas={[{ label: "Which model?", href: "/concepts/models" }, { label: "Performance", href: "/performance", variant: "secondary" }]}
 />

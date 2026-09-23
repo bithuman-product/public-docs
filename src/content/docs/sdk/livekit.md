@@ -2,9 +2,10 @@
 title: "LiveKit integration"
 description: "Put a bitHuman avatar into a LiveKit agent worker with the Python plugin — managed, no GPU to run — tune its video for production, and connect a native Apple app as the viewer."
 section: sdk
-group: "Reference"
-order: 80
-label: "LiveKit"
+group: "Integrations"
+order: 60
+type: platform
+label: "LiveKit agents"
 ---
 
 When the avatar runs on a server and your viewers connect over WebRTC, LiveKit
@@ -238,7 +239,7 @@ arrives as a remote participant's video track published by the Python agent.
 |---|---|
 | A browser | the Python plugin, with LiveKit's JavaScript client — or skip LiveKit and [embed the hosted page](/sdk/web) |
 | A native iOS or macOS app | the Python plugin on your server, `client-sdk-swift` in the app |
-| On the device, with no server | the [Apple SDK](/sdk/ios) instead |
+| On the device, with no server | the [Apple SDK](/sdk/apple) instead |
 
 ## See also
 

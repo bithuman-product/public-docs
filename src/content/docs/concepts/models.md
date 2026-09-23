@@ -1,10 +1,11 @@
 ---
 title: "Models"
 description: "bitHuman's four avatar models — Essence 2 and Expression 2, the current generation, and Essence 1 and Expression 1, the first — what each renders, where each runs, which to pick, and the legacy names you may still meet."
-section: concepts
-group: "Models"
-order: 0
-label: "Models"
+section: guides
+group: "Learn"
+order: 1
+type: concept
+label: "Models: which one?"
 ---
 
 bitHuman has four avatar models in two generations. **Essence 2** and
@@ -44,10 +45,10 @@ What is published today, per surface. Each link goes to the page that installs i
 
 | Surface | Essence 2 | Expression 2 | Essence 1 | Expression 1 |
 |---|---|---|---|---|
-| **bitHuman cloud** — [REST API](/api/overview), [embed](/api/embedding), [LiveKit](/sdk/livekit) | yes | yes | yes | yes |
+| **bitHuman cloud** — [REST API](/api), [embed](/api/embedding), [LiveKit](/sdk/livekit) | yes | yes | yes | yes |
 | [**CLI**](/sdk/cli) — macOS Apple Silicon, Linux x86_64 / arm64 | `run`, `render` | `run`, `render` | `run` | — |
 | [**Python**](/sdk/python) — macOS Apple Silicon, Linux x86_64 / aarch64 | frames and MP4 clips | frames (`[expression-2]` extra) | frames | — |
-| [**Apple**](/sdk/ios) — iPhone, iPad, Mac | `Essence2` product (iOS / macOS 26) | `Expression2` product | — | — |
+| [**Apple**](/sdk/apple) — iPhone, iPad, Mac | `Essence2` product (iOS / macOS 26) | `Expression2` product | — | — |
 | [**Android**](/sdk/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
 | [**Web**](/sdk/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
 | [**Self-hosted GPU container**](/guides/self-hosting#the-expression-1-gpu-container) | — | — | — | yes |
@@ -62,7 +63,7 @@ What is published today, per surface. Each link goes to the page that installs i
   billed at the self-hosted rate. See [self-hosting](/guides/self-hosting).
 
 Measured frame rates for every platform are on the
-[performance page](/sdk/performance).
+[performance page](/performance).
 
 ## How creation works
 

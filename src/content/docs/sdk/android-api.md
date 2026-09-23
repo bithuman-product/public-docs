@@ -3,7 +3,8 @@ title: "Android API reference"
 description: "Every public class in the two Android artifacts — Kotlin signatures, nullability, defaults and constants — read back out of the AARs Maven Central serves, not out of a source tree."
 section: sdk
 group: "Reference"
-order: 76
+order: 83
+type: reference
 label: "Android API"
 ---
 
@@ -914,4 +915,4 @@ A reference generated from `javap` would have listed each of these. They are in 
 - [Android](/sdk/android) — install it, get a model, render your first frame
 - [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the whole project, file by file
 - [Pricing](/guides/pricing) — what a render costs, and what refuses without an API secret
-- [Performance](/sdk/performance) — measured frame rates for every platform
+- [Performance](/performance) — measured frame rates for every platform

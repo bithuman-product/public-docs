@@ -3,7 +3,10 @@ title: "Swift / iOS — Hello, avatar"
 description: "A complete on-device voice agent on iPhone or iPad — speech in, a language model, speech out and a lip-synced avatar — built on the bitHumanKit SwiftPM package. Needs an iPhone 16 Pro or newer and two Apple entitlements, so read the requirements first."
 section: examples
 group: "Examples"
-order: 13
+order: 32
+type: example
+slug: examples/swift-ios-voice-agent
+label: "iOS: voice agent"
 ---
 
 This example is the **whole conversation**: on-device speech recognition, a
@@ -33,7 +36,7 @@ pole — everything else takes minutes.
    terminates the app mid-conversation, about half a minute into a live turn,
    when memory passes the ~3 GB default ceiling. The provisioning profile
    updates itself once they are granted. Full detail:
-   [Apple entitlements](/sdk/ios#apple-entitlements--bithumankit-only).
+   [Apple entitlements](/sdk/apple#apple-entitlements--bithumankit-only).
 
    ★ These are **entitlements**, so they are embedded in the code signature from
    the file `CODE_SIGN_ENTITLEMENTS` names. They are not `Info.plist` keys and
@@ -63,7 +66,7 @@ pole — everything else takes minutes.
 |---|---|---|
 | a rendered avatar frame on the phone you already own | [Expression 2 on the iPhone you have](/examples/swift-ios-expression2) | any Apple Silicon iPhone or iPad |
 | the whole voice conversation, avatar included | this page (`bitHumanKit`) | iPhone 16 Pro / iPad Pro M4, iOS 26, two entitlements |
-| the 1080p photoreal renderer in your own app | the `Essence2` product — [Swift SDK](/sdk/ios#requirements) | any Apple Silicon iPhone, M-series iPad or M3 Mac, OS 26 |
+| the 1080p photoreal renderer in your own app | the `Essence2` product — [Swift SDK](/sdk/apple#requirements) | any Apple Silicon iPhone, M-series iPad or M3 Mac, OS 26 |
 
 This page uses the **`bitHumanKit`** umbrella product (`import bitHumanKit`):
 an on-device avatar engine, an `.imx` avatar runtime and the renderer views in
@@ -75,7 +78,7 @@ transitive SwiftPM dependencies. It is a **preview** rail.
 build at all ([where each model runs](/concepts/models#where-each-model-runs)). The two
 engine products in the same package — `Expression2` and `Essence2` — are
 separate products with their own APIs, and this example uses neither: see
-[Swift SDK](/sdk/ios#install).
+[Swift SDK](/sdk/apple#install).
 
 ## Run it
 
@@ -280,17 +283,17 @@ Full source:
 | hundreds of `ld` lines: *"object file … was built for newer 'iOS' version (26.0) than being linked"* | the package manifest declares `.iOS(.v16)`; the engine objects are iOS 26 | expected, not a fault — build at iOS 26.0 |
 | a device link fails with **116 duplicate symbols** while the Simulator is green | `Expression2` and `Essence2` both attached on a tag below 2.14.0 | raise the floor to 2.14.1, or drop both — `bitHumanKit` needs neither |
 | the "unsupported device" screen at launch | the device is below the floor — the refusal names the model it detected | use an iPhone 16 Pro / iPad Pro M4+, or ship [`Expression2`](/examples/swift-ios-expression2) on that device |
-| the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling: the entitlements are not granted yet, or not in the profile | check Apple's reply, then rebuild so the profile picks them up ([entitlements](/sdk/ios#apple-entitlements--bithumankit-only)) |
+| the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling: the entitlements are not granted yet, or not in the profile | check Apple's reply, then rebuild so the profile picks them up ([entitlements](/sdk/apple#apple-entitlements--bithumankit-only)) |
 | `error: the package manifest at '/Package.swift' cannot be accessed` | a clone from before 2026-09-09, pinning a 0.x tag | `git pull` |
 | the avatar never starts and the error mentions a key | `BITHUMAN_API_SECRET` is not in the scheme's environment | add it under *Edit Scheme → Run → Arguments* |
 | the microphone never opens | missing privacy strings; the OS caches the denial | keep `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` in `Info.plist` |
-| a Simulator build succeeds and proves nothing | the hardware gate reads `hw.machine`, which in a Simulator is not your phone's | test on the device ([why](/sdk/ios#build-on-a-device-not-the-simulator)) |
+| a Simulator build succeeds and proves nothing | the hardware gate reads `hw.machine`, which in a Simulator is not your phone's | test on the device ([why](/sdk/apple#build-on-a-device-not-the-simulator)) |
 
 ## Next steps
 
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the same goal without the device floor, the entitlements or the 1.6 GB download.
 - [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) — the 1080p renderer in an app you build yourself, every file printed; no entitlement, no device gate.
-- [Swift SDK](/sdk/ios) — the full Apple reference: requirements, products, models, errors.
+- [Swift SDK](/sdk/apple) — the full Apple reference: requirements, products, models, errors.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent instead.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain in Python.
 - [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API secret.

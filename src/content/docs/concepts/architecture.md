@@ -1,9 +1,11 @@
 ---
 title: "Architecture"
 description: "How bitHuman is built — one portable engine, thin language SDKs on top, and your app on top of that. Audio in, lip-synced frames out, the same on every platform."
-section: concepts
-group: "Core"
-order: 5
+section: guides
+group: "Learn"
+order: 8
+type: concept
+label: "How a session works"
 ---
 
 ## The three layers

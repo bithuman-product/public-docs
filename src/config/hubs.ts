@@ -20,7 +20,7 @@ export interface HubMeta {
   /** The page's own meta description, verbatim. */
   description: string;
   /** Collection section whose pages this hub lists, if it is a section hub. */
-  section?: "api" | "sdk" | "guides" | "concepts" | "resources";
+  section?: "sdk" | "guides" | "resources";
 }
 
 export const HUBS: HubMeta[] = [
@@ -36,14 +36,6 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/start.astro",
     name: "Get started",
     description: "Go from zero to a talking, listening avatar — see one work with no setup, then pick how you run it.",
-  },
-  {
-    route: "api",
-    file: "src/pages/api/index.astro",
-    name: "API Platform",
-    description:
-      "Generate, manage, and animate realtime visual agents over REST — voice, gestures, files, and embedding, all from api.bithuman.ai. We host everything; you just call the endpoints.",
-    section: "api",
   },
   {
     route: "api/reference",
@@ -64,28 +56,15 @@ export const HUBS: HubMeta[] = [
     route: "guides",
     file: "src/pages/guides/index.astro",
     name: "Guides",
-    description: "Build, customize, and deploy realtime visual agents — from a first avatar to production.",
+    description: "Learn the models, build your own avatar, deploy it, and understand pricing.",
     section: "guides",
-  },
-  {
-    route: "concepts",
-    file: "src/pages/concepts/index.astro",
-    name: "Concepts",
-    description: "The mental model behind bitHuman — one engine, one .imx format, one push/drain loop, one model family.",
-    section: "concepts",
   },
   {
     route: "resources",
     file: "src/pages/resources/index.astro",
     name: "Resources",
-    description: "Everything around building with bitHuman — downloads, changelog, examples, and the community.",
+    description: "Downloads and versions, the changelog, support, and machine-readable files for AI agents.",
     section: "resources",
-  },
-  {
-    route: "showcase",
-    file: "src/pages/showcase/index.astro",
-    name: "Showcase",
-    description: "Real teams shipping realtime visual agents with bitHuman — museums, enterprise, retail, and more.",
   },
 ];
 

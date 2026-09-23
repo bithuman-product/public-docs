@@ -4,7 +4,9 @@ description: "REST API for generating avatars, synthesizing voice, driving live 
 section: api
 group: "Get started"
 order: 0
-label: "Overview"
+type: hub
+slug: api
+label: "Overview & endpoint index"
 ---
 
 ## What the API does
@@ -66,7 +68,7 @@ the [embed token flow](/api/embedding) instead. See
 - **Get notified** — register [webhooks](/api/webhooks) for signed
   `agent.ready` / `agent.failed` events instead of polling.
 - **Drive it from an AI agent** — every endpoint below is also exposed as a
-  tool via the [MCP server](/guides/mcp-server), so Claude, Cursor, and other
+  tool via the [MCP server](/sdk/mcp), so Claude, Cursor, and other
   MCP clients can call bitHuman directly.
 
 ## How agents are identified
@@ -89,7 +91,7 @@ the code).
   endpoint, with a live request console.
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational
   contract.
-- [MCP server](/guides/mcp-server) — call every endpoint as a tool from an AI agent.
+- [MCP server](/sdk/mcp) — call every endpoint as a tool from an AI agent.
 
 ## Status and versioning
 

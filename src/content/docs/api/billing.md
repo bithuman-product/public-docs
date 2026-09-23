@@ -2,8 +2,10 @@
 title: "Billing API"
 description: "Read a user's live credit balance and per-mode minute estimates, and understand how credits are consumed."
 section: api
-group: "Operate & reference"
-order: 30
+group: "Account"
+order: 33
+type: endpoint
+label: "Billing & usage"
 ---
 
 ## The credits model

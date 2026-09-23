@@ -1,9 +1,10 @@
 ---
 title: "Expression 1"
 description: "Expression 1 — bitHuman's first-generation expressive model: facial animation generated from a portrait at runtime, GPU-only. How it is served and self-hosted."
-section: concepts
-group: "Models"
-order: 7
+section: guides
+group: "Learn"
+order: 5
+type: concept
 label: "Expression 1"
 ---
 
