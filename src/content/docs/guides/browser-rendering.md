@@ -144,7 +144,7 @@ So: **browser rendering removes the avatar-serving line item from your bill. It
 does not make the session free.** [Pricing](/guides/pricing) is the authority.
 
 Running a model on your **own hardware** through an SDK is a different route and
-*is* metered — see [self-hosting](/guides/self-host-local). Do not read this
+*is* metered — see [self-hosting](/guides/self-hosting). Do not read this
 section as applying to it.
 
 ## Embedding it in your own app
@@ -170,5 +170,5 @@ landing page with a rendering-mode parameter. Track it in
 - [Browser runtime](/sdk/web) — the downloadable renderer's API surface.
 - [Browser — check before you ship](/examples/browser-webgpu-check) — the checks above, runnable.
 - [Deploy embed](/guides/deploy-embed) — drop a hosted avatar onto any page.
-- [Run a model on your own hardware](/guides/self-host-local) — the SDK route, per platform.
+- [Run a model on your own hardware](/guides/self-hosting) — the SDK route, per platform.
 - [Pricing](/guides/pricing) — the rates behind the billing section.

@@ -117,31 +117,30 @@ see [What's NOT billed](#whats-not-billed).
 | **Enterprise** | $999 | $9,990 | 250,000 | 200 |
 | **Custom** | Contact sales | — | Volume / on-prem | Unlimited |
 
-Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem deployment, and bespoke SLAs beyond Enterprise (running with no billing heartbeat is [offline licensing — coming soon](#offline-licensing--coming-soon), for Business and Enterprise only): [talk to sales](https://www.bithuman.ai/sales).
+Annual plans bill **12× the monthly credits up front** and save up to ~17% (about two months free on Business and Enterprise; ~15% on Creator and Pro) — choose monthly or annual at checkout. **Custom** covers volume, on-prem deployment, and bespoke SLAs beyond Enterprise (running completely off the internet is [offline licensing](#offline-licensing), for Business and Enterprise only): [talk to sales](https://www.bithuman.ai/sales).
 
 **Concurrent sessions** are a plan entitlement — the number of live avatar sessions your account can run at once. Enforcement is rolling out: when limits apply, a session past your plan's cap is refused with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors) rather than degrading running sessions. Details in [Rate limits & concurrency](/api/rate-limits).
 
 Current pricing and your live balance are in the [bitHuman dashboard](https://www.bithuman.ai/#library) — the credit balance is on the top navigation bar.
 
-## Offline licensing — coming soon
+## Offline licensing
 
-Self-hosted serving today authenticates online (a once-per-minute billing heartbeat). **Offline licensing** — running a model without that heartbeat, for trade-show stands and venues with poor connectivity — is coming soon, and it is **for Business and Enterprise customers only**. No other plan qualifies: Free, Creator and Pro cannot buy it.
+Offline licensing is available only to **Business and Enterprise** clients who
+want to run realtime avatars completely locally, off the internet — kiosks,
+trade shows, ATM machines, embedded screens.
 
-It stays **credit-based**. An offline licence is not a separate subscription with its own price list — it spends the same credits as everything else on this page, metered by the engine on your own machine instead of over the internet.
+- **Credit-based.** It spends the same credits as everything else on this page,
+  metered locally by the engine, in compiled code, at the self-hosted rate.
+- **From 100,000 credits** per licence.
+- **No time limit, and no required reconnection** while the device is offline.
+- **Not for phones.** Mobile offline is not offered; the Apple and Android SDKs
+  stay on the online path.
 
-| | |
-|---|---|
-| **Who can buy** | **Business and Enterprise only** |
-| **Models covered** | The same families your plan entitles online — Essence 1, Expression 1, Essence 2 and Expression 2 |
-| **Minimum per licence** | **100,000 credits** — a smaller bundle is refused |
-| **Maximum per licence** | **No upper limit** — there is no maximum bundle size |
-| **Rate while offline** | The self-hosted rate above: Essence 1 at 1 credit/min; Expression 1, Essence 2 and Expression 2 at 2 |
-| **Term** | **One year** from the day the licence is minted, plus a short grace period |
-| **What ends a licence** | Its credits running out, or its year running out — whichever comes first |
-| **Unspent credits** | **Not returned.** Credits still on a licence when its year ends are forfeited, so size the bundle to what you will actually render in a year |
-| **Scope** | One device, one model per licence |
+Online sessions — every other self-hosted or on-device session — authenticate
+over the internet and keep a **5-minute grace** if the connection drops.
 
-Licences are delivered as **per-device, per-model signed credit bundles**: minted once while the device is online, then valid with no further connectivity until the credits are consumed. A self-serve licence carries a required periodic check-in that reports what it has spent — every 6 hours on a device identified by fingerprint, every 3 days on one with a verified hardware key — so it is *heartbeat-free*, not *air-gapped*. Fully air-gapped licences, which never check in at all, are arranged directly with us. [Talk to sales](https://www.bithuman.ai/sales) to get on the early-access list.
+Offline licences are arranged through sales, not self-serve:
+[contact sales](https://www.bithuman.ai/sales).
 
 ## Top-up credits
 
@@ -161,7 +160,7 @@ Do not build on `BITHUMAN_UNMETERED=1`: every render is billed to an account, an
 
 ### Server-side surfaces (cloud, self-hosted Python, self-hosted GPU)
 
-The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short-lived runtime token, then heartbeat back to `api.bithuman.ai` once per minute for as long as the session is live. Each heartbeat increments your usage counter. **Silence does not pause the meter** — an idling avatar is still rendering frames, and is billed at the same rate as a speaking one.
+The Python SDK and Docker container exchange a `BITHUMAN_API_SECRET` for a short-lived runtime token, then heartbeat back to `api.bithuman.ai` once per minute for as long as the session is live. Usage is counted on the rule in [Serving](#serving--credits-per-live-minute): talking minutes accrue, idle animation does not.
 
 ### On-device surfaces (Swift and Android/Kotlin)
 
@@ -238,7 +237,7 @@ models.
 
 ### Does the on-device Swift SDK work without an internet connection?
 
-Audio-only mode is fully offline. Avatar mode authenticates once on `chat.start()` and heartbeats once per minute — with a 5-minute offline grace window after the last successful heartbeat. After that, the avatar pauses until connectivity returns. For deployments that cannot hold a per-minute connection, see [Offline licensing](#offline-licensing--coming-soon) — Business and Enterprise only, from 100,000 credits.
+Audio-only mode is fully offline. Avatar mode authenticates once on `chat.start()` and heartbeats once per minute, with a 5-minute grace window after the last successful heartbeat; after that the avatar pauses until connectivity returns. Mobile offline is not offered — see [offline licensing](#offline-licensing).
 
 ### What if I run out of credits mid-session?
 
@@ -246,7 +245,7 @@ The current heartbeat finishes, then subsequent heartbeats fail. The Python / Do
 
 ### Can I have multiple concurrent sessions?
 
-Yes. Each session bills independently while it's actively generating frames. Your plan sets the concurrent-session entitlement — see the [plans table](#plans) (enforcement is rolling out). Self-hosted deployments are additionally bounded by your own hardware.
+Yes. Each session bills its own talking minutes. Your plan sets the concurrent-session entitlement — see the [plans table](#plans) (enforcement is rolling out). Self-hosted deployments are additionally bounded by your own hardware.
 
 ## Next steps
 

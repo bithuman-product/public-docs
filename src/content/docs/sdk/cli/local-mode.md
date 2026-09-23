@@ -87,12 +87,13 @@ has happened.
 > offline; the **avatar does not**. `bithuman run` still reaches
 > `api.bithuman.ai` for credit accounting — a self-hosted Essence 2 or
 > Expression 2 session is
-> [metered](/guides/self-host-local#the-cli-meters-a-self-hosted-session) at the
+> [metered](/guides/self-hosting#how-self-hosting-is-billed) at the
 > [published self-hosted rate](/guides/pricing), and `BITHUMAN_API_SECRET` or a
 > `bithuman login` is what attributes it to your account. What local mode buys
 > you is that **audio, transcripts and generated speech never leave the box** —
-> which is the privacy property most deployments are actually asking for. For a
-> genuinely disconnected estate, talk to us: nothing on this page delivers it.
+> which is the privacy property most deployments are actually asking for. To
+> run the avatar completely off the internet, see
+> [offline licensing](/guides/pricing#offline-licensing).
 
 ## When to reach for it
 
@@ -237,7 +238,7 @@ warm-up after that is under a second.
   (`bithuman pull <slug>` → `~/.cache/bithuman/showcase/`).
 - **Avatar metering** — `bithuman run` still pings `api.bithuman.ai` for
   credit accounting (the self-hosted rate, by wall-clock, on both platforms —
-  [details](/guides/self-host-local#the-cli-meters-a-self-hosted-session));
+  [details](/guides/self-hosting#how-self-hosting-is-billed));
   deployments still need `BITHUMAN_API_SECRET`.
 - **Voice cloning** — Supertonic ships voice presets. Custom voice
   cloning is a hosted service that produces JSON style files; once you

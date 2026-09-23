@@ -80,7 +80,7 @@ Which model runs on which device — and how fast — is on two pages, and only
 there: [the SDK page](/sdk) for what each platform ships and
 [performance](/sdk/performance) for the measured frame rates.
 `expression-1` is GPU-only by design: it has no Apple, Android or browser
-build, and self-hosting it is the [NVIDIA container](/guides/deploy-self-hosted).
+build, and self-hosting it is the [NVIDIA container](/guides/self-hosting#the-expression-1-gpu-container).
 
 ### Essence 2 / Expression 2 (second generation)
 
@@ -93,7 +93,7 @@ by model. For the file each family hands you by name, and what opens it, see
 | Runtime | `essence-2` | `expression-2` |
 |---|---|---|
 | bitHuman cloud (GPU · Apple Silicon · CPU chain) | Yes | Yes |
-| Self-hosted CPU (your servers) | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); frames and whole clips through the current `bithuman` wheel on Linux and macOS ([quickstart](/guides/deploy-self-hosted#essence-2-on-your-own-cpu)), metered | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) and the `bithuman[expression-2]` wheel |
+| Self-hosted CPU (your servers) | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) — `render` and `run` — on macOS Apple Silicon and Linux x86_64 (**2.6.1**); frames and whole clips through the current `bithuman` wheel on Linux and macOS ([quickstart](/sdk/python)), metered | Local rendering via the [CLI](/sdk/cli#what-renders-locally-and-where) (macOS Apple Silicon, Linux x86_64) and the `bithuman[expression-2]` wheel |
 | On-device Apple Silicon (Mac / iOS) | The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `.imx` locally on macOS Apple Silicon (2.6.1; macOS only — there is no iOS CLI). In your own app: the [Swift](/sdk/ios#install) `Essence2` product renders the downloaded `.imx` on iPhone and Mac from **2.13.2** — you fetch the file yourself, there is **no in-app download route** | The [Swift](/sdk/ios) `Expression2` product ships both a Mac and an iPhone slice and has rendered on both. It is **engine only**, but it [takes a model path and opens the downloaded container](/sdk/ios#minimal-code), so an app with its own agent can hand it one. The [CLI](/sdk/cli#what-renders-locally-and-where) renders a downloaded `.avatar` locally on macOS Apple Silicon (macOS only — there is no iOS CLI) |
 | Android (`arm64-v8a`) | In your own app: the `ai.bithuman:essence2-android` library ([coordinate](/sdk/android#troubleshooting), [API](/sdk/android-api#essence2avatar)) | In your own app: the `ai.bithuman:expression2-android` library ([Android SDK](/sdk/android)) |
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |

@@ -189,10 +189,10 @@ Rounding out the launch — plan allowances and a documentation overhaul:
   account: Business $999/year prepacks 120,000 credits (Essence 2 +
   Expression 2); Enterprise $1,999/year prepacks 240,000 credits.
   Self-hosted minutes meter at half the cloud rate. Preview
-  at [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon).
+  at [Pricing → Offline licensing](/guides/pricing#offline-licensing).
   *Superseded:* those per-tier packages no longer apply. Offline licensing is
   Business and Enterprise only, from 100,000 credits per licence with no upper
-  limit, on a one-year term — see [Pricing → Offline licensing](/guides/pricing#offline-licensing--coming-soon)
+  limit, on a one-year term — see [Pricing → Offline licensing](/guides/pricing#offline-licensing)
   for the current terms.
 - **[Pricing](/guides/pricing) is now the single home of every number** —
   per-model serving rates (cloud and self-hosted), creation credits,

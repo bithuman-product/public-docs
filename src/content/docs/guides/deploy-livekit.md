@@ -78,7 +78,7 @@ async def entrypoint(ctx: JobContext):
     # ...attach the avatar to your AgentSession and start it.
 ```
 
-To select the first-generation Expression model, pass `model="expression"` to the session (`model` shorthands select within the first generation; a second-generation agent serves its own model automatically). To point at your **own** Essence server instead of bitHuman's cloud, pass `api_url=` — see [self-hosted deployment](/guides/deploy-self-hosted).
+To select the first-generation Expression model, pass `model="expression"` to the session (`model` shorthands select within the first generation; a second-generation agent serves its own model automatically). To point at your **own** Essence server instead of bitHuman's cloud, pass `api_url=` — see [self-hosted deployment](/guides/self-hosting).
 
 > **Second-generation agents.** Point `BITHUMAN_AGENT_ID` at an
 > [`essence-2`](/concepts/essence-2) or
@@ -111,7 +111,7 @@ See the [LiveKit Agents docs](https://docs.livekit.io/agents/) for the broader a
 ## Where to go next
 
 - [Trigger avatar actions from code](/guides/avatar-actions) — fire specific gestures deterministically from your agent code (and switch off the automatic ones).
-- [Self-hosted GPU](/guides/deploy-self-hosted) — run Expression on your own NVIDIA hardware.
+- [Self-hosted GPU](/guides/self-hosting#the-expression-1-gpu-container) — run Expression on your own NVIDIA hardware.
 - [Embed widget](/guides/deploy-embed) — drop an iframe on any page.
 - [Pricing](/guides/pricing) — the cloud-vs-self-hosted credit breakdown.
 - [API reference](/api/reference) — agents, speak, dynamics, tokens.

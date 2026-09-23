@@ -920,6 +920,26 @@
       "source": "/concepts/where-models-run/",
       "destination": "/concepts/models",
       "permanent": true
+    },
+    {
+      "source": "/guides/self-host-local",
+      "destination": "/guides/self-hosting",
+      "permanent": true
+    },
+    {
+      "source": "/guides/self-host-local/",
+      "destination": "/guides/self-hosting",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-self-hosted",
+      "destination": "/guides/self-hosting",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-self-hosted/",
+      "destination": "/guides/self-hosting",
+      "permanent": true
     }
   ],
   "rewrites": [
