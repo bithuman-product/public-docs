@@ -14,7 +14,7 @@ Both models render on the handset: you feed 16 kHz mono speech in and pull pictu
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), at the identity's own resolution, 25 fps |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
-| **Dependency** | `implementation("ai.bithuman:expression2-android:0.4.9")` | `implementation("ai.bithuman:essence2-android:0.5.14")` |
+| **Dependency** | `implementation("ai.bithuman:expression2-android:0.4.10")` | `implementation("ai.bithuman:essence2-android:0.5.15")` |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
@@ -49,8 +49,8 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.9")
-    // or: implementation("ai.bithuman:essence2-android:0.5.14")
+    implementation("ai.bithuman:expression2-android:0.4.10")
+    // or: implementation("ai.bithuman:essence2-android:0.5.15")
 }
 ```
 
@@ -59,14 +59,14 @@ Put the secret in `~/.gradle/gradle.properties` as `bithumanApiSecret=…`, outs
 `expression2-android` brings the Qualcomm accelerator runtime with it (`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`). To keep the APK small and render on the CPU instead, exclude it:
 
 ```kotlin
-implementation("ai.bithuman:expression2-android:0.4.9") {
+implementation("ai.bithuman:expression2-android:0.4.10") {
     exclude(group = "com.qualcomm.qti")
 }
 ```
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET`, or pass it in code before you create an avatar: `Expression2Metering.apiSecret` for Expression 2, `Essence2Metering.apiSecret` for Essence 2. Essence 2 downloads also take the secret, through `MeteredDoorResolver(secret)`. See [Your API secret](/api/authentication).
+Set `BITHUMAN_API_SECRET`, or pass it in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/api/authentication).
 
 Credits pay for talking time; idle time is free ([pricing](/guides/pricing)).
 
@@ -78,7 +78,7 @@ Expression 2, with the published `wise-pup` avatar (agent code `A23WJF0199`). Ca
 
 ```kotlin
 import ai.bithuman.expression2.Expression2Avatar
-import ai.bithuman.expression2.Expression2Metering
+import ai.bithuman.expression2.Expression2Credential
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
 import android.content.Context
@@ -86,7 +86,7 @@ import android.graphics.Bitmap
 
 /** [pcm16k] is 16 kHz mono float32 in [-1, 1]. */
 fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
-    Expression2Metering.apiSecret = BuildConfig.BITHUMAN_API_SECRET   // before create()
+    Expression2Credential.set(BuildConfig.BITHUMAN_API_SECRET)        // before fetch() and create()
     val model = Expression2ModelStore(context).fetch("A23WJF0199")     // ~160 MB, first run only
 
     Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
@@ -108,17 +108,14 @@ Essence 2 takes 16-bit little-endian PCM bytes, as a 16 kHz mono WAV stores them
 
 ```kotlin
 import ai.bithuman.essence2.Essence2Avatar
-import ai.bithuman.essence2.Essence2Metering
+import ai.bithuman.essence2.Essence2Credential
 import ai.bithuman.essence2.Essence2ModelStore
-import ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver   // nested class: import it from here
 import android.content.Context
 import java.nio.ByteBuffer
 
 fun render(context: Context, pcm16le: ByteArray, show: (ByteBuffer, Int, Int) -> Unit) {
-    val secret = BuildConfig.BITHUMAN_API_SECRET
-    Essence2Metering.apiSecret = secret                                       // before create()
-    val store = Essence2ModelStore(context, urlResolver = MeteredDoorResolver(secret))
-    val identity = store.fetch("A21SKT4314")                                  // 226–281 MB, first run only
+    Essence2Credential.set(BuildConfig.BITHUMAN_API_SECRET)                   // before fetch() and create()
+    val identity = Essence2ModelStore(context).fetch("A21SKT4314")            // 226–281 MB, first run only
 
     Essence2Avatar.create(identity.dir).use { avatar ->
         val frame = avatar.newFrameBuffer()   // width * height * 4, RGBA
@@ -165,7 +162,7 @@ The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/
   ./gradlew :app:dependencies --configuration releaseRuntimeClasspath | grep ai.bithuman
   ```
 
-- **Private avatars:** an avatar you created downloads with your secret. For Expression 2 pass `Expression2ModelStore.MeteredDoorResolver(secret)` as the store's `urlResolver`.
+- **Private avatars:** an avatar you created downloads with the secret you set with `Expression2Credential.set` or `Essence2Credential.set`; there is nothing else to pass.
 
 ## Performance
 

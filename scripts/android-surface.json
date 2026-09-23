@@ -4,9 +4,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.5.14",
-        "digest": "sha256:b4912bdb016b8bfd6a3b4591ce398df08954614ed944465c99ea4afe0d86717c",
-        "filename": "essence2-android-0.5.14.aar",
+        "version": "0.5.15",
+        "digest": "sha256:eb29c5dac6ba492c33377f9c9daf754aa09cd92e8d656123229aee29a95e0796",
+        "filename": "essence2-android-0.5.15.aar",
         "resolved_on": "2026-09-23"
       },
       "surface": {
@@ -90,9 +90,30 @@
                 "target_loadable": true
               },
               {
+                "name": "Essence2Bundle",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2ModelStore$Bundle",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2Credential",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2Credential",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
                 "name": "Essence2Frames",
                 "visibility": "public",
                 "target": "ai.bithuman.elevate.ElevateFrames",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2MeteredDoorResolver",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2ModelStore$MeteredDoorResolver",
                 "target_declared_public": true,
                 "target_loadable": true
               },
@@ -118,9 +139,37 @@
                 "target_loadable": true
               },
               {
+                "name": "Essence2ProgressListener",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2ModelStore$ProgressListener",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2PublicMirrorResolver",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2ModelStore$PublicMirrorResolver",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2RequestHeaders",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2ModelStore$RequestHeaders",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
                 "name": "Essence2StoreException",
                 "visibility": "public",
                 "target": "ai.bithuman.elevate.Essence2StoreException",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2UrlResolver",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2ModelStore$UrlResolver",
                 "target_declared_public": true,
                 "target_loadable": true
               }
@@ -2375,6 +2424,56 @@
             ]
           },
           {
+            "name": "ai.bithuman.elevate.Essence2Credential",
+            "kind": "object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "set",
+                "signature": "fun set(apiSecret: String?)",
+                "suspend": false,
+                "jvm": "set(Ljava/lang/String;)V",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "INSTANCE",
+                "jvm": "field INSTANCELai/bithuman/elevate/Essence2Credential;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "object-instance"
+              },
+              {
+                "name": "current$essence2_android_release",
+                "jvm": "current$essence2_android_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              }
+            ]
+          },
+          {
             "name": "ai.bithuman.elevate.Essence2Metering",
             "kind": "object",
             "modality": "final",
@@ -2409,8 +2508,9 @@
                 "mutable": true,
                 "jvm_getter": "getApiSecret()Ljava/lang/String;",
                 "jvm_setter": "setApiSecret(Ljava/lang/String;)V",
-                "jvm_field": "field apiSecretLjava/lang/String;",
-                "loadable": true
+                "jvm_field": null,
+                "loadable": true,
+                "deprecated": "Use Essence2Credential.set(secret): one setter covers the download door and the meter."
               },
               {
                 "name": "basis",
@@ -2543,6 +2643,7 @@
                   "static",
                   "synthetic"
                 ],
+                "deprecated": "Use Essence2Credential.set(secret): one setter covers the download door and the meter.",
                 "kind": "synthetic"
               },
               {
@@ -4235,6 +4336,14 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.Essence2CredentialStore",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.Essence2ModelStore$Fetch",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -4396,9 +4505,9 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 68,
-          "declared_classes": 61,
-          "public_classes": 36
+          "class_files": 70,
+          "declared_classes": 63,
+          "public_classes": 37
         }
       }
     },
@@ -4406,9 +4515,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.4.9",
-        "digest": "sha256:f01e1be683df5ebcd61d42646495355d7606a1b8ec5918bebbf52f085c20fd19",
-        "filename": "expression2-android-0.4.9.aar",
+        "version": "0.4.10",
+        "digest": "sha256:f7f182b08df027ddaf7df7038bb9e79c8b1a79c40282cc007809a13e2105e255",
+        "filename": "expression2-android-0.4.10.aar",
         "resolved_on": "2026-09-23"
       },
       "surface": {
@@ -6947,6 +7056,56 @@
             ]
           },
           {
+            "name": "ai.bithuman.expression2.Expression2Credential",
+            "kind": "object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "set",
+                "signature": "fun set(apiSecret: String?)",
+                "suspend": false,
+                "jvm": "set(Ljava/lang/String;)V",
+                "loadable": true
+              }
+            ],
+            "properties": [],
+            "loadable_undeclared": [
+              {
+                "name": "INSTANCE",
+                "jvm": "field INSTANCELai/bithuman/expression2/Expression2Credential;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "object-instance"
+              },
+              {
+                "name": "current$expression2_release",
+                "jvm": "current$expression2_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              }
+            ]
+          },
+          {
             "name": "ai.bithuman.expression2.Expression2Exception",
             "kind": "class",
             "modality": "final",
@@ -7284,8 +7443,9 @@
                 "mutable": true,
                 "jvm_getter": "getApiSecret()Ljava/lang/String;",
                 "jvm_setter": "setApiSecret(Ljava/lang/String;)V",
-                "jvm_field": "field apiSecretLjava/lang/String;",
-                "loadable": true
+                "jvm_field": null,
+                "loadable": true,
+                "deprecated": "Use Expression2Credential.set(secret): one setter covers the download door and the meter."
               },
               {
                 "name": "installId",
@@ -7335,6 +7495,7 @@
                   "static",
                   "synthetic"
                 ],
+                "deprecated": "Use Expression2Credential.set(secret): one setter covers the download door and the meter.",
                 "kind": "synthetic"
               },
               {
@@ -9644,6 +9805,14 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.Expression2CredentialStore",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Expression2ModelStore$Bundle",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -9778,9 +9947,9 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 68,
-          "declared_classes": 62,
-          "public_classes": 42
+          "class_files": 70,
+          "declared_classes": 64,
+          "public_classes": 43
         }
       }
     }

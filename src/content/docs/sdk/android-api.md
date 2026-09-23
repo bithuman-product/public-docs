@@ -13,18 +13,19 @@ How to use these classes in an app is on [Android](/sdk/android). Signatures are
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.5.14` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.5.15` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 | Class | Purpose |
 | --- | --- |
 | `Essence2Avatar` | One Essence 2 session: feed 16-bit PCM, pull RGBA frames, idle, interrupt with `resetAudio`, and `checkRender`. |
-| `Essence2ModelStore` | Downloads and caches an avatar by agent code. Needs a `urlResolver`. |
-| `Essence2ModelStore.MeteredDoorResolver` | Downloads with your API secret: `MeteredDoorResolver(secret)`. |
-| `Essence2ModelStore.PublicMirrorResolver` | Downloads from your own mirror of the avatar files. |
-| `Essence2ModelStore.UrlResolver` | The interface both resolvers implement. |
-| `Essence2ModelStore.Bundle` | A downloaded avatar; pass `dir` to `Essence2Avatar.create`. |
-| `Essence2ModelStore.ProgressListener` | Download progress callback. |
-| `Essence2Metering` | Set `apiSecret` before `create()`; `stateDir` keeps usage that could not be sent. |
+| `Essence2Credential` | Sets your API secret once: `Essence2Credential.set(secret)` covers the download and the session. |
+| `Essence2ModelStore` | Downloads and caches an avatar by agent code, with the secret from `Essence2Credential`. |
+| `Essence2MeteredDoorResolver` | Downloads with a secret you pass here instead: `Essence2MeteredDoorResolver(secret)`. |
+| `Essence2PublicMirrorResolver` | Downloads from your own mirror of the avatar files. |
+| `Essence2UrlResolver` | The interface both resolvers implement. |
+| `Essence2Bundle` | A downloaded avatar; pass `dir` to `Essence2Avatar.create`. |
+| `Essence2ProgressListener` | Download progress callback. |
+| `Essence2Metering` | `stateDir` keeps usage that could not be sent. `apiSecret` is deprecated: use `Essence2Credential`. |
 | `Essence2MeteringRefused` | Thrown when the service refuses the session (no secret, rejected secret, or offline too long). |
 | `Essence2StoreException` | Thrown when a download fails. |
 | `Essence2RenderFailed` | Thrown by `checkRender()` when the engine stopped. |
@@ -54,18 +55,25 @@ class Essence2Avatar : AutoCloseable
         fun frontendIn(bundleDir: File): File
 ```
 
+### Essence2Credential
+
+```kotlin
+object Essence2Credential
+    fun set(apiSecret: String?)
+```
+
 ### Essence2ModelStore
 
 ```kotlin
 class Essence2ModelStore
-    constructor(context: Context, rootDir: File = …, cacheBudgetBytes: Long = …, urlResolver: Essence2ModelStore.UrlResolver = …)
+    constructor(context: Context, rootDir: File = …, cacheBudgetBytes: Long = …, urlResolver: Essence2UrlResolver = …)
     val cacheBudgetBytes: Long
     val rootDir: File
-    val urlResolver: Essence2ModelStore.UrlResolver
+    val urlResolver: Essence2UrlResolver
     fun bytesOnDisk(): Long
-    fun cached(code: String): Essence2ModelStore.Bundle?
+    fun cached(code: String): Essence2Bundle?
     fun evict(code: String): Boolean
-    fun fetch(code: String, force: Boolean = …, cancelled: AtomicBoolean? = …, progress: Essence2ModelStore.ProgressListener? = …): Essence2ModelStore.Bundle
+    fun fetch(code: String, force: Boolean = …, cancelled: AtomicBoolean? = …, progress: Essence2ProgressListener? = …): Essence2Bundle
     fun listCached(): List<Essence2ModelStore.CachedIdentity>
     fun verifyDeep(code: String): Boolean
     companion object
@@ -78,43 +86,43 @@ class Essence2ModelStore
         val SLOT_KEYS: List<String>
 ```
 
-### Essence2ModelStore.MeteredDoorResolver
+### Essence2MeteredDoorResolver
 
 ```kotlin
-class Essence2ModelStore.MeteredDoorResolver : Essence2ModelStore.UrlResolver, Essence2ModelStore.RequestHeaders
+class Essence2MeteredDoorResolver : Essence2UrlResolver, Essence2RequestHeaders
     constructor(credential: String, base: String = …)
     fun headers(): Map<String, String>
     fun url(code: String, memberName: String): String
 ```
 
-### Essence2ModelStore.PublicMirrorResolver
+### Essence2PublicMirrorResolver
 
 ```kotlin
-class Essence2ModelStore.PublicMirrorResolver : Essence2ModelStore.UrlResolver
+class Essence2PublicMirrorResolver : Essence2UrlResolver
     constructor(base: String = …)
     fun url(code: String, memberName: String): String
 ```
 
-### Essence2ModelStore.UrlResolver
+### Essence2UrlResolver
 
 ```kotlin
-fun interface Essence2ModelStore.UrlResolver
+fun interface Essence2UrlResolver
     fun url(code: String, memberName: String): String
 ```
 
-### Essence2ModelStore.Bundle
+### Essence2Bundle
 
 ```kotlin
-class Essence2ModelStore.Bundle
+class Essence2Bundle
     val code: String
     val dir: File
     fun open(model: String = …, threads: Int = …, pinBigCores: Boolean = …): Essence2Frames
 ```
 
-### Essence2ModelStore.ProgressListener
+### Essence2ProgressListener
 
 ```kotlin
-fun interface Essence2ModelStore.ProgressListener
+fun interface Essence2ProgressListener
     fun onProgress(memberName: String, bytesDone: Long, bytesTotal: Long)
 ```
 
@@ -123,6 +131,7 @@ fun interface Essence2ModelStore.ProgressListener
 ```kotlin
 object Essence2Metering
     var apiBaseUrl: String?
+    @Deprecated("Use Essence2Credential.set(secret): one setter covers the download door and the meter.")
     var apiSecret: String?
     var basis: String
     @Deprecated("Enforcement is unconditional since 0.5.7; this property is ignored.")
@@ -176,19 +185,20 @@ class Essence2RenderStatus
 
 ## Expression 2
 
-Generated from `ai.bithuman:expression2-android:0.4.9` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:expression2-android:0.4.10` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 | Class | Purpose |
 | --- | --- |
 | `Expression2Avatar` | One Expression 2 session: `feed`, `pull` frames into a `Bitmap`, `flushTail`, `idleLoop`, `resetState` to interrupt. |
-| `Expression2ModelStore` | Downloads and caches an avatar by agent code. |
-| `Expression2ModelStore.MeteredDoorResolver` | Downloads a private avatar with your API secret. |
+| `Expression2Credential` | Sets your API secret once: `Expression2Credential.set(secret)` covers the download and the session. |
+| `Expression2ModelStore` | Downloads and caches an avatar by agent code, with the secret from `Expression2Credential`. |
+| `Expression2ModelStore.MeteredDoorResolver` | Downloads with a secret you pass here instead of `Expression2Credential`. |
 | `Expression2ModelStore.PublicMirrorResolver` | Downloads from your own mirror of the avatar files. |
 | `Expression2ModelStore.UrlResolver` | The interface both resolvers implement. |
 | `Expression2ModelStore.ProgressListener` | Download progress callback. |
 | `Expression2Model` | A downloaded avatar; pass it to `Expression2Avatar.create`. |
 | `Expression2Options` | Session options; the defaults use the accelerator when there is one. |
-| `Expression2Metering` | Set `apiSecret` before `create()`; `stateDir` keeps usage that could not be sent. |
+| `Expression2Metering` | `stateDir` keeps usage that could not be sent. `apiSecret` is deprecated: use `Expression2Credential`. |
 | `Expression2Frame` | Returned by `pull`: the frame's index, time and whether it is speech. |
 | `Expression2IdleLoop` | The avatar's idle clip; `next(bitmap)` draws the next frame. |
 | `Expression2Exception` | Thrown when a session cannot start or is refused. |
@@ -234,6 +244,13 @@ class Expression2Avatar : AutoCloseable
         const val SAMPLE_RATE: Int = 16000
         fun create(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar
         fun warmUp(context: Context, model: Expression2Model, options: Expression2Options = …): Expression2Avatar
+```
+
+### Expression2Credential
+
+```kotlin
+object Expression2Credential
+    fun set(apiSecret: String?)
 ```
 
 ### Expression2ModelStore
@@ -339,6 +356,7 @@ data class Expression2Options
 ```kotlin
 object Expression2Metering
     var apiBaseUrl: String?
+    @Deprecated("Use Expression2Credential.set(secret): one setter covers the download door and the meter.")
     var apiSecret: String?
     var installId: String?
     var stateDir: File?
