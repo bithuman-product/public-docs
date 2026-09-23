@@ -410,211 +410,78 @@ const KIND_ROWS = {
 };
 
 /** The whole region between the markers, from the record and nothing else. */
+// THE DOCUMENTED SURFACE (docs redesign, bithuman-models#1222). The page lists
+// these classes, in this order, with a one-line purpose; every other public
+// class stays in the record and the surface diff (check-android-api-current
+// still grades it), it is just not printed as API a developer builds with.
+export const PUBLIC_CLASSES = {
+  "essence2-android": {
+    Essence2Avatar: "One Essence 2 session: feed 16-bit PCM, pull RGBA frames, idle, interrupt with `resetAudio`, and `checkRender`.",
+    Essence2ModelStore: "Downloads and caches an avatar by agent code. Needs a `urlResolver`.",
+    "Essence2ModelStore.MeteredDoorResolver": "Downloads with your API secret: `MeteredDoorResolver(secret)`.",
+    "Essence2ModelStore.PublicMirrorResolver": "Downloads from your own mirror of the avatar files.",
+    "Essence2ModelStore.UrlResolver": "The interface both resolvers implement.",
+    "Essence2ModelStore.Bundle": "A downloaded avatar; pass `dir` to `Essence2Avatar.create`.",
+    "Essence2ModelStore.ProgressListener": "Download progress callback.",
+    Essence2Metering: "Set `apiSecret` before `create()`; `stateDir` keeps usage that could not be sent.",
+    Essence2MeteringRefused: "Thrown when the service refuses the session (no secret, rejected secret, or offline too long).",
+    Essence2StoreException: "Thrown when a download fails.",
+    Essence2RenderFailed: "Thrown by `checkRender()` when the engine stopped.",
+    Essence2RenderStatus: "What `checkRender()` reports.",
+  },
+  "expression2-android": {
+    Expression2Avatar: "One Expression 2 session: `feed`, `pull` frames into a `Bitmap`, `flushTail`, `idleLoop`, `resetState` to interrupt.",
+    Expression2ModelStore: "Downloads and caches an avatar by agent code.",
+    "Expression2ModelStore.MeteredDoorResolver": "Downloads a private avatar with your API secret.",
+    "Expression2ModelStore.PublicMirrorResolver": "Downloads from your own mirror of the avatar files.",
+    "Expression2ModelStore.UrlResolver": "The interface both resolvers implement.",
+    "Expression2ModelStore.ProgressListener": "Download progress callback.",
+    Expression2Model: "A downloaded avatar; pass it to `Expression2Avatar.create`.",
+    Expression2Options: "Session options; the defaults use the accelerator when there is one.",
+    Expression2Metering: "Set `apiSecret` before `create()`; `stateDir` keeps usage that could not be sent.",
+    Expression2Frame: "Returned by `pull`: the frame's index, time and whether it is speech.",
+    Expression2IdleLoop: "The avatar's idle clip; `next(bitmap)` draws the next frame.",
+    Expression2Exception: "Thrown when a session cannot start or is refused.",
+    Accelerator: "Which accelerator a session uses.",
+  },
+};
+
 export function renderRegion(record) {
   const out = [];
-  out.push(
-    "Each artifact below is one section: the bytes it was read from, the packages " +
-    "it declares, every public class with its members as Kotlin spells them, and " +
-    "then everything in the class files that is NOT that surface.");
-  out.push("");
-
   for (const entry of record.artifacts) {
     const a = entry.artifact;
     const s = entry.surface;
     const f = s.artifact_facts;
     const meta = ARTIFACTS.find((x) => `${GROUP}:${x.id}` === a.coordinate);
     const product = meta?.product ?? a.coordinate;
-
-    out.push(`## ${product} — ${a.coordinate}`);
-    out.push("");
-    out.push(table([
-      ["Field", "Value"],
-      ["---", "---"],
-      ["Registry", a.registry],
-      ["Coordinate", a.coordinate],
-      ["Version", a.version],
-      ["File", code(a.filename)],
-      ["Digest", code(a.digest)],
-      ["Resolved on", a.resolved_on],
-    ]));
-    out.push("");
-    out.push(table([
-      ["What the artifact declares", "Value"],
-      ["---", "---"],
-      ["`minSdk`", f.min_sdk == null ? "not stated in the manifest" : String(f.min_sdk)],
-      ["ABIs", f.abis.map(code).join(", ") || "none"],
-      ["Native libraries", f.native_libraries.map(code).join(", ") || "none"],
-      ["Permissions merged into your app", f.uses_permissions.map(code).join(", ") || "none"],
-      ["Kotlin metadata", `version ${f.kotlin_metadata_version}`],
-    ]));
-    out.push("");
-
-    // ---- packages -----------------------------------------------------------
+    const id = a.coordinate.split(":")[1];
     const aliases = s.packages.flatMap((p) => p.typealiases.filter((t) => t.visibility === "public").map((t) => ({ ...t, pkg: p.name })));
-    const publicClasses = s.classes.filter((c) => c.loadable && c.kind !== "companion-object");
-    const declaring = [...new Set(publicClasses.map((c) => pkgOf(c.name)))].sort();
-    for (const pkg of declaring) {
-      const count = publicClasses.filter((c) => pkgOf(c.name) === pkg).length;
-      const aliasPkgs = [...new Set(aliases.filter((t) => pkgOf(t.target) === pkg).map((t) => t.pkg))].sort();
-      if (allowed(pkg)) {
-        out.push(`${n(count, "public class", "public classes")} on the package ${code(pkg)}.`);
-      } else {
-        // The one retired spelling the page must carry: the import a developer
-        // types. Said once, in the sentence that says what it is.
-        out.push(
-          `${n(count, "public class", "public classes")} on the package ${code(pkg)} — a legacy ` +
-          `package name kept for compatibility, which a developer still types in an import` +
-          (aliasPkgs.length
-            ? `; ${code(aliasPkgs.join("`, `"))} below aliases ${aliases.filter((t) => pkgOf(t.target) === pkg).length} of them under product names, and a nested class is reached through the legacy package only`
-            : "") + ".");
-      }
-      out.push("");
-    }
-    for (const p of s.packages) {
-      const pub = p.typealiases.filter((t) => t.visibility === "public");
-      if (!pub.length && !p.functions.length && !p.properties.length) continue;
-      out.push(`### ${p.name}`);
-      out.push("");
-      if (pub.length) {
-        out.push(
-          `${n(pub.length, "typealias", "typealiases")}, declared by the package's Kotlin metadata and present in ` +
-          `no class file: a Kotlin caller imports these names, a Java caller cannot see them.`);
-        out.push("");
-        out.push(table([
-          ["Alias", "Declared as", "Both sides agree"],
-          ["---", "---", "---"],
-          ...pub.map((t) => [
-            code(t.name),
-            allowed(simpleOf(t.target)) ? code(simpleOf(t.target)) : "a class whose own name is withheld — it names an internal mechanism",
-            t.target_declared_public && t.target_loadable ? "yes" : t.target_loadable ? "the class is loadable and not declared public" : "the class is declared and not loadable",
-          ]),
-        ]));
-        out.push("");
-      }
-      for (const fn of p.functions) {
-        const l = memberLine(fn.signature, { deprecated: fn.deprecated });
-        out.push(l === null ? "_A top-level function is withheld: its name describes an internal mechanism._" : "```kotlin\n" + l + "\n```");
-        out.push("");
-      }
-      for (const pr of p.properties) {
-        const l = memberLine(pr.signature, { value: pr.value, deprecated: pr.deprecated });
-        out.push(l === null ? "_A top-level property is withheld: its name describes an internal mechanism._" : "```kotlin\n" + l + "\n```");
-        out.push("");
-      }
-    }
-
-    // ---- classes ------------------------------------------------------------
     const companions = new Map(s.classes.filter((c) => c.kind === "companion-object").map((c) => [c.name, c]));
-    let withheldClasses = 0;
-    const shown = [];
-    for (const c of publicClasses) {
-      const name = displayName(c, aliases);
-      if (!allowed(name)) { withheldClasses++; continue; }
-      shown.push(c);
-    }
-    shown.sort((x, y) => displayName(x, aliases).localeCompare(displayName(y, aliases), "en"));
-    out.push(`### Classes`);
+    const byName = new Map(s.classes.filter((c) => c.loadable && c.kind !== "companion-object").map((c) => [displayName(c, aliases), c]));
+    // An artifact with no documented-surface entry lists every public class,
+    // so a new artifact is never silently printed empty.
+    const pub = PUBLIC_CLASSES[id] ?? Object.fromEntries([...byName.keys()].filter(allowed).sort().map((n) => [n, ""]));
+
+    out.push(`## ${product}`);
     out.push("");
-    out.push(
-      `${n(publicClasses.length, "public class", "public classes")}, each declared public by the Kotlin ` +
-      `metadata and public in its class file.` +
-      (withheldClasses
-        ? ` ${withheldClasses} of them are not listed here: their names describe an internal mechanism, and they are not part of opening an avatar and rendering audio through it.`
-        : ""));
+    out.push(`Generated from \`${a.coordinate}:${a.version}\` as published on Maven Central. ` +
+      `\`minSdk\` ${f.min_sdk ?? "—"}, ABIs ${f.abis.map(code).join(", ") || "none"}. ` +
+      `Classes not listed here are internal and can change.`);
     out.push("");
-    for (const c of shown) {
+    out.push(table([["Class", "Purpose"], ["---", "---"],
+      ...Object.entries(pub).filter(([n]) => byName.has(n)).map(([n, why]) => [code(n), why || "—"])]));
+    out.push("");
+    for (const [n] of Object.entries(pub)) {
+      const c = byName.get(n);
+      if (!c) continue;
       const comp = c.companion ? companions.get(`${c.name}$${c.companion}`) : null;
-      const { fence, withheld, name } = renderClass(c, comp, aliases);
-      out.push(`#### ${name}`);
+      const { fence } = renderClass(c, comp, aliases);
+      out.push(`### ${n}`);
       out.push("");
       out.push(fence);
       out.push("");
-      if (withheld) {
-        out.push(`${n(withheld, "member is", "members are")} withheld: the name describes an internal mechanism.`);
-        out.push("");
-      }
     }
-
-    // ---- the rest of the class files ----------------------------------------
-    out.push("### In the class files, not the surface");
-    out.push("");
-    out.push(
-      "A reference generated from `javap` would have listed each of these. They are " +
-      "in the AAR and public to the class loader, and a Kotlin caller either cannot " +
-      "name them or never needs to.");
-    out.push("");
-    const rows = [];
-    const internalClasses = s.disagreements.internal_classes;
-    if (internalClasses.length) {
-      const names = internalClasses.map((c) => simpleOf(c.name)).filter(allowed);
-      rows.push([
-        `${n(internalClasses.length, "class", "classes")} declared \`internal\``,
-        "`public` in the class file; the Kotlin compiler refuses them from outside the artifact, Java does not",
-        names.length ? names.map(code).join(", ") + (names.length < internalClasses.length ? ` and ${internalClasses.length - names.length} whose names are withheld` : "") : "names withheld",
-      ]);
-    }
-    const byKind = new Map();
-    const internalMembers = [];
-    const other = [];
-    for (const c of s.classes) {
-      for (const u of c.loadable_undeclared) {
-        if (u.kind === "internal" || u.kind === "private" || u.kind === "protected") {
-          internalMembers.push({ cls: c, u });
-        } else if (u.kind === "other") {
-          other.push({ cls: c, u });
-        } else {
-          byKind.set(u.kind, (byKind.get(u.kind) ?? 0) + 1);
-        }
-      }
-    }
-    for (const p of s.packages) {
-      for (const u of p.loadable_undeclared) {
-        if (u.kind === "internal" || u.kind === "private" || u.kind === "protected") internalMembers.push({ cls: { name: p.name, pkg: true }, u });
-        else if (u.kind === "other") other.push({ cls: { name: p.name, pkg: true }, u });
-        else byKind.set(u.kind, (byKind.get(u.kind) ?? 0) + 1);
-      }
-    }
-    if (internalMembers.length) {
-      const perClass = new Map();
-      for (const m of internalMembers) {
-        const label = m.cls.pkg ? `the package ${m.cls.name}` : spell(simpleOf(m.cls.name), aliases);
-        perClass.set(label, (perClass.get(label) ?? 0) + 1);
-      }
-      const listed = [...perClass.entries()]
-        .sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0], "en"))
-        .map(([label, count]) => `${allowed(label) ? code(label) : "a class whose name is withheld"} (${count})`);
-      rows.push([
-        `${n(internalMembers.length, "member", "members")} declared \`internal\` on ${n(perClass.size, "class", "classes")}`,
-        "`public` in the class file — a function under a mangled name (`name$module`), a field or a constructor as is; a Java caller can call them",
-        listed.join(", "),
-      ]);
-    }
-    for (const [kind, count] of [...byKind.entries()].sort()) {
-      const [what, why] = KIND_ROWS[kind] ?? [kind, ""];
-      rows.push([`${count} ${what}`, "generated by the Kotlin compiler for Java callers", why]);
-    }
-    for (const o of other) {
-      rows.push([code(`${simpleOf(o.cls.name)}.${o.u.jvm}`), "public in the class file and claimed by no declaration", "unexplained — this row is a finding"]);
-    }
-    const notLoadable = [];
-    for (const c of s.classes) {
-      for (const x of [...c.constructors, ...c.functions, ...c.properties]) {
-        if (!x.loadable) notLoadable.push(`${simpleOf(c.name)}: ${x.signature}`);
-      }
-    }
-    for (const nl of notLoadable) {
-      rows.push([allowed(nl) ? code(nl) : "a member whose name is withheld", "declared public by the metadata, absent from the class file", "a Kotlin caller compiles against it and the class loader cannot find it — this row is a finding"]);
-    }
-    for (const c of s.disagreements.public_classes_without_metadata) {
-      rows.push([code(simpleOf(c)), "a public class with no Kotlin metadata", "written in Java, or stripped of its metadata — this row is a finding"]);
-    }
-    if (s.disagreements.synthetic_classes) {
-      rows.push([`${n(s.disagreements.synthetic_classes, "synthetic class", "synthetic classes")}`, "lambdas and `when` tables the compiler emitted", "not nameable from source"]);
-    }
-    out.push(table([["What", "Why it is not the surface", "What it is"], ["---", "---", "---"], ...rows]));
-    out.push("");
   }
-
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
 }
 
