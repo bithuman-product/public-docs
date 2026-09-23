@@ -25,6 +25,12 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### `bithuman` 2.11.7 — 2026-09-23
+
+- **Faster:** Essence 2 renders faster on a Linux CPU.
+- **Changed:** usage is reported for talking time only; idle time is free.
+- **Action:** `pip install -U bithuman`. See [Python](/sdk/python).
+
 ### Swift package 2.14.2 — 2026-09-23
 
 Essence 2 engine 1.11.0 · Expression 2 engine 2.6.5
