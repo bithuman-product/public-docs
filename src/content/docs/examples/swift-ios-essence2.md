@@ -28,7 +28,7 @@ binary.
 |---|---|
 | **Renders** | the identity's own canvas at 25 fps — 1080x1920 for the default code — entirely on the device, [measured rates](/sdk/performance) |
 | **Driven by** | a 16 kHz mono WAV you make on your Mac in one command |
-| **Needs** | a physical Apple-Silicon iPhone or iPad, **iOS 26**, and `Essence2` resolved at **v2.14.1 or newer** — see [the floor](#2-the-xcode-project) |
+| **Needs** | a physical Apple-Silicon iPhone or iPad, **iOS 26**, and `Essence2` resolved at **v2.14.2 or newer** — see [the floor](#2-the-xcode-project) |
 | **Does not need** | an agent of your own, credits to create one, or the device floor and Apple entitlements the `bitHumanKit` umbrella asks for — nothing on this path requests either. **It does need an API secret:** without one `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) |
 | **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For a whole voice agent see [Hello, avatar](/examples/swift-ios-hello) |
 | **Costs** | the identity download is anonymous and free. The render is a self-hosted session and is metered — [pricing](/guides/pricing) is the authority |
@@ -193,7 +193,7 @@ bitHuman account.
 set -euo pipefail
 cd "$(dirname "$0")"
 CODE="${1:-A21SKT4314}"
-REL=https://github.com/bithuman-product/homebrew-bithuman/releases/download/essence2-v1.10.0
+REL=https://github.com/bithuman-product/homebrew-bithuman/releases/download/essence2-v1.11.0
 ASSET=libessence2-resources.zip   # the release asset's frozen legacy name
 mkdir -p Sources/Model Sources/EngineResources
 
@@ -286,7 +286,7 @@ Then **File → Add Package Dependencies…**, paste
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-choose **Up to Next Major Version** from **2.14.1**, and attach the **`Essence2`**
+choose **Up to Next Major Version** from **2.14.2**, and attach the **`Essence2`**
 product. (You may also attach `Expression2` alongside it; every tag before
 2.14.0 fails an app's final link with 112 duplicate symbols.)
 
@@ -302,7 +302,8 @@ of each tag's own `Package.swift` on **2026-09-21**:
 | v2.13.0 | `essence2-v1.6.0` |
 | v2.13.8 | `essence2-v1.9.0` |
 | v2.14.0 | `essence2-v1.10.0` |
-| **v2.14.1** | **`essence2-v1.10.0`** — the same engine; the `Essence2` product now declares its own linker settings, and the macOS frameworks are ones a Mac app can embed |
+| v2.14.1 | `essence2-v1.10.0` — the same engine; the `Essence2` product now declares its own linker settings, and the macOS frameworks are ones a Mac app can embed |
+| **v2.14.2** | **`essence2-v1.11.0`** — bills talking time only (idle is free); a service unreachable at first contact refuses retryably instead of rendering unverified; after the service accepted the key, an outage renders 300 s of frames then pauses until it answers; `BITHUMAN_API_KEY` is read as a deprecated alias |
 
 Everything this page promises — no iPhone model floor, the measured iPhone rate
 on the [performance page](/sdk/performance), the `be_essence2.h` surface below —
@@ -312,7 +313,7 @@ gets `be_essence2_create` returning 0 and then a warm-up that refuses by name
 the identity's motion plays and it never speaks, which is the one failure on
 this page that looks like nothing at all. SwiftPM keeps whatever your
 `Package.resolved` already holds, so a floor of 2.11.0 is a floor on the wrong
-thing. Ask for 2.14.1.
+thing. Ask for 2.14.2.
 
 Check what you actually resolved, rather than what you asked for:
 
@@ -382,7 +383,7 @@ packages:
     url: https://github.com/bithuman-product/homebrew-bithuman.git
     # 2.14.1, not 2.11.0: v2.11.x pins essence2-v1.4.0, whose warm-up refuses
     # any iPhone below a 16 Pro and leaves the engine idle-only. See step 2.
-    from: 2.14.1
+    from: 2.14.2
 targets:
   IOSEssence2:
     type: application
