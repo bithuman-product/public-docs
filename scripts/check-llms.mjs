@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+// G5 — THE AGENT LAYER. Run after `npm run build`:
+//   node scripts/check-llms.mjs [--dist dist] [--full-max-kb 160]
+//
+// Fails when: /llms.txt is over 60 lines or 6 KB; a docs.bithuman.ai URL in it
+// does not resolve in the build (or an #anchor it names is missing); a content
+// page has no .md twin; /llms-full.txt is over the size cap; either file leaks
+// an HTML comment. Internal-content hits in either file are reported (G1).
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { scan } from "./check-internal-content.mjs";
+import { routeOf } from "./content-routes.mjs";
+
+const ROOT = new URL("..", import.meta.url).pathname;
+const args = process.argv.slice(2);
+const arg = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
+const DIST = join(ROOT, arg("--dist", "dist"));
+const FULL_MAX = Number(arg("--full-max-kb", "160")) * 1024;
+const fail = [];
+
+if (!existsSync(join(DIST, "llms.txt"))) { console.log("::error::no dist/llms.txt — run npm run build first"); process.exit(2); }
+const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
+const full = readFileSync(join(DIST, "llms-full.txt"), "utf8");
+const lines = llms.trimEnd().split("\n").length;
+if (lines > 60) fail.push(`llms.txt has ${lines} lines (cap 60)`);
+if (Buffer.byteLength(llms) > 6144) fail.push(`llms.txt is ${Buffer.byteLength(llms)} B (cap 6144)`);
+if (Buffer.byteLength(full) > FULL_MAX) fail.push(`llms-full.txt is ${(Buffer.byteLength(full) / 1024).toFixed(0)} KB (cap ${FULL_MAX / 1024} KB)`);
+
+// every site URL in llms.txt resolves in the build, anchors included
+const resolve = (path) => {
+  const p = decodeURIComponent(path.replace(/\/$/, "")) || "/";
+  for (const c of [p, `${p}.html`, `${p}/index.html`, p === "/" ? "/index.html" : null]) {
+    if (c && existsSync(join(DIST, c)) && statSync(join(DIST, c)).isFile()) return join(DIST, c);
+  }
+  return null;
+};
+let urls = 0;
+for (const m of llms.matchAll(/https:\/\/docs\.bithuman\.ai(\/[^\s)`>\]]*)?/g)) {
+  const [path, anchor] = (m[1] || "/").split("#");
+  urls++;
+  const f = resolve(path);
+  if (!f) { fail.push(`llms.txt links ${m[0]}, which the build does not serve`); continue; }
+  if (anchor && f.endsWith(".html") && !readFileSync(f, "utf8").includes(`id="${anchor}"`)) fail.push(`llms.txt links ${m[0]}, whose anchor is missing`);
+}
+
+// every content page has a markdown twin
+const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".md") ? [p] : []; });
+const CONTENT = join(ROOT, "src/content/docs");
+let twins = 0;
+for (const f of walk(CONTENT)) {
+  if (/^draft:\s*true/m.test(readFileSync(f, "utf8"))) continue;
+  const r = routeOf(CONTENT, f);
+  if (!existsSync(join(DIST, `${r}.md`))) fail.push(`${r} has no markdown twin at ${r}.md`);
+  else twins++;
+}
+for (const hub of ["start", "sdk", "guides", "resources", "index"]) if (!existsSync(join(DIST, `${hub}.md`))) fail.push(`hub ${hub} has no markdown twin`);
+
+// no HTML comment reaches an agent; internal content is reported
+for (const [name, text] of [["llms.txt", llms], ["llms-full.txt", full]]) {
+  const noFences = text.replace(/^```[\s\S]*?^```/gm, "");
+  if (/<!--/.test(noFences)) fail.push(`${name} carries an HTML comment`);
+  const hits = scan(`dist/${name}`, text).filter((h) => h.name !== "html-comment-leak");
+  if (hits.length) console.log(`report: ${name} has ${hits.length} internal-content hit(s): ${[...new Set(hits.map((h) => h.name))].join(", ")}`);
+}
+
+for (const f of fail) console.log(`::error::${f}`);
+console.log(`G5: llms.txt ${lines} lines / ${Buffer.byteLength(llms)} B, ${urls} URLs; llms-full.txt ${(Buffer.byteLength(full) / 1024).toFixed(0)} KB; ${twins} markdown twins — ${fail.length ? `${fail.length} FAILED` : "ok"}`);
+process.exit(fail.length ? 1 : 0);

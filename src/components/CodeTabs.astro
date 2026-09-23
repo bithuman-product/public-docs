@@ -50,19 +50,32 @@ const themes = { light: "github-light", dark: "github-dark" } as const;
   document.querySelectorAll("[data-codetabs]").forEach((root) => {
     const tabs = root.querySelectorAll(".ct-tab");
     const panels = root.querySelectorAll(".ct-panel");
+    const select = (idx: string) => {
+      tabs.forEach((t) => {
+        const on = (t as HTMLElement).dataset.tab === idx;
+        t.classList.toggle("active", on);
+        t.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      panels.forEach((p) =>
+        p.classList.toggle("active", (p as HTMLElement).dataset.panel === idx)
+      );
+    };
     tabs.forEach((tab) =>
       tab.addEventListener("click", () => {
-        const idx = (tab as HTMLElement).dataset.tab;
-        tabs.forEach((t) => {
-          const on = (t as HTMLElement).dataset.tab === idx;
-          t.classList.toggle("active", on);
-          t.setAttribute("aria-selected", on ? "true" : "false");
-        });
-        panels.forEach((p) =>
-          p.classList.toggle("active", (p as HTMLElement).dataset.panel === idx)
-        );
+        select((tab as HTMLElement).dataset.tab!);
+        // Remember the reader's language, and switch every other tab group on the page to it.
+        const label = tab.textContent?.trim() ?? "";
+        try { localStorage.setItem("bh-code-lang", label); } catch (_) {}
+        document.dispatchEvent(new CustomEvent("bh-code-lang", { detail: label }));
       })
     );
+    const follow = (label: string | null) => {
+      if (!label) return;
+      const t = [...tabs].find((x) => x.textContent?.trim() === label) as HTMLElement | undefined;
+      if (t) select(t.dataset.tab!);
+    };
+    try { follow(localStorage.getItem("bh-code-lang")); } catch (_) {}
+    document.addEventListener("bh-code-lang", (e) => follow((e as CustomEvent).detail));
     const copyBtn = root.querySelector("[data-copy]");
     copyBtn?.addEventListener("click", async () => {
       const active = root.querySelector(".ct-panel.active") as HTMLElement;
