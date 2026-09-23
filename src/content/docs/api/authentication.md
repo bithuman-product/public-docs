@@ -114,9 +114,8 @@ config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"]
 config.apiKey = await fetchFromBackend()
 ```
 
-For DMG distribution, bake the API secret into Info.plist via a build script.
-For App Store, fetch from your own backend via Keychain on first launch — don't
-bundle.
+Never ship the API secret inside an app bundle. Fetch a short-lived credential
+from your own backend on first launch and keep it in the Keychain.
 
 ## api-secret vs. runtime tokens
 

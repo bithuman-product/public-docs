@@ -96,7 +96,7 @@ export BITHUMAN_API_SECRET=…
 
 # 3 — a free showcase avatar (189 MB, no account needed) and something to say
 curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
-curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+curl -fsSLo demo_sample.wav https://docs.bithuman.ai/samples/speech.wav
 
 # 4 — render it
 cat > hello.py <<'PY'
@@ -208,7 +208,7 @@ curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/down
 curl -fL -o executive-coach.imx "https://api.bithuman.ai/v1/agent/A80HVD8577/model/download?model=essence-2"
 
 # 15 s of 24 kHz mono speech, 720 KB
-curl -fsSLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+curl -fsSLo demo_sample.wav https://docs.bithuman.ai/samples/speech.wav
 ```
 
 The same URL serves your own agent — add `-H "api-secret: $BITHUMAN_API_SECRET"`

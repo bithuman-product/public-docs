@@ -1020,6 +1020,16 @@
       "source": "/guides/deploy-embed/",
       "destination": "/api/embedding",
       "permanent": true
+    },
+    {
+      "source": "/status",
+      "destination": "https://status.bithuman.ai",
+      "permanent": false
+    },
+    {
+      "source": "/status/",
+      "destination": "https://status.bithuman.ai",
+      "permanent": false
     }
   ],
   "rewrites": [

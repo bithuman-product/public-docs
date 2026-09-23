@@ -55,9 +55,8 @@ one server-side call, shown below, and is never handed to the plugin.
 
 The plugin copies whatever you pass as `api_secret` into the avatar
 participant's LiveKit attributes. LiveKit sends participant attributes to
-everyone in the room, so any viewer can read that value. On 1.8.2 it also falls back
-to `BITHUMAN_API_SECRET` from the environment when you pass nothing. The fix
-has been reported to LiveKit privately and is not released yet.
+everyone in the room, so any viewer can read that value. It also falls back to
+`BITHUMAN_API_SECRET` from the environment when you pass nothing.
 
 So never give the plugin your API secret. In your agent worker, exchange the
 secret for a **LiveKit cloud token** and pass the token instead. The plugin

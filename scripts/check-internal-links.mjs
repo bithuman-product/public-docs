@@ -114,6 +114,7 @@ for (const [source, destination] of redirects) {
       `redirect source ${source} shadows a real page (the page becomes unreachable)`
     );
   }
+  if (/^https:\/\/[a-z0-9.-]+\.bithuman\.ai(\/|$)/.test(destination)) continue; // an off-site bitHuman page (e.g. status)
   const dest = destination.replace(/\/$/, "") || "/";
   if (!routes.has(dest) && !redirects.has(dest)) {
     redirectFailures.push(`redirect ${source} -> ${destination} points at no known route`);

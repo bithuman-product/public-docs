@@ -38,7 +38,7 @@ Four commands on macOS Apple Silicon or Linux (x86_64 or arm64), with `ffmpeg` o
 ```bash
 curl -fsSL https://install.bithuman.ai | sh
 bithuman login                    # opens your browser; in CI, export BITHUMAN_API_SECRET instead
-curl -fsSLo speech.wav https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav
+curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
 ```
 
