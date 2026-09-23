@@ -1,6 +1,6 @@
 ---
 title: "Kotlin / Android — Hello, avatar"
-description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Expression 2 needs no API key; Essence 2 needs one and renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
+description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Expression 2 needs no API secret; Essence 2 needs one and renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
 section: examples
 group: "Examples"
 order: 14
@@ -8,7 +8,7 @@ order: 14
 
 This page is a whole project, not a fragment. Create the seven files below in the
 order they appear, push one WAV, and a physical Android phone renders a talking
-head from your audio — on the device, with no cloud round-trip and **no API key**.
+head from your audio — on the device, with no cloud round-trip and **no API secret**.
 
 **Measured on 2026-09-09**, exactly these files, on a Galaxy S25+ (SM-S936U1,
 Snapdragon 8 Elite, Android 16): 5.72 s of speech in → **117 frames** of 416×720
@@ -30,7 +30,7 @@ changed, and it is [further down this page](#essence-2-on-android--the-same-seve
 | | Expression 2 | Essence 2 |
 |---|---|---|
 | Maven coordinate | `ai.bithuman:expression2-android:0.4.8` | `ai.bithuman:essence2-android:0.5.13` |
-| bitHuman API key | **not needed** | **required**, and used twice — see that section |
+| bitHuman API secret | **not needed** | **required**, and used twice — see that section |
 | `minSdk` | 26 | 29 |
 | Picture | 416x720 at 20 fps | the identity's own canvas at 25 fps (1080x1920 for `A21SKT4314`) |
 | First-run download | about 158 MB | about 238 MB |
@@ -124,7 +124,7 @@ Instead of exporting `ANDROID_HOME` you may write `echo "sdk.dir=$ANDROID_HOME"
 > local.properties` next to `settings.gradle.kts` — but that only feeds Gradle.
 `adb` still needs the `PATH` line.
 
-Android Studio gives you the JDK and the SDK. You do not need an API key, a
+Android Studio gives you the JDK and the SDK. You do not need an API secret, a
 bitHuman account, or a `.imx` file for this page — [Expression 2](/concepts/expression-2)
 identities on the public mirror are fetched by agent code alone.
 
@@ -782,7 +782,7 @@ is the longer road to a first frame.
 
 ### What essence-1 needs that Expression 2 does not
 
-- A bitHuman API secret — get one at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication). Read it from env or your app config at startup; never hardcode it.
+- A bitHuman API secret — get one at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication). Read it from env or your app config at startup; never hardcode it.
 - **Android Studio** with NDK 28.0.13004108 and compile SDK 35. Add the dependency:
 
 ```kotlin
@@ -820,7 +820,7 @@ android {
         // literal in a file you commit.
         val bithumanSecret: String =
             System.getenv("BITHUMAN_API_SECRET")
-                ?: (project.findProperty("bithuman.apiSecret") as String?)
+                ?: (project.findProperty("bithumanApiSecret") as String?)
                 ?: ""
         buildConfigField("String", "BITHUMAN_API_SECRET", "\"$bithumanSecret\"")
     }
@@ -846,9 +846,9 @@ dependencies {
 > is a string constant in the compiled artifact and anyone can read it back out.
 > It satisfies the "never hardcode it" rule in the prerequisites only in the
 > sense that the value is not in your source tree. For a real app, have the
-> device fetch a short-lived credential from **your** backend at startup and
-> pass that to `Avatar.load(...)` instead — the parameter takes any `String`,
-> so nothing else in the code below changes.
+> device fetch your API secret from **your** backend at startup and pass that
+> to `Avatar.load(...)` instead of the `BuildConfig` constant — nothing else in
+> the code below changes.
 
 2. Push your model and audio onto the device's app-private external dir.
 
@@ -926,12 +926,12 @@ on one phone, and change the three files below. `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.properties` and the root `build.gradle.kts` are
 identical; `AndroidManifest.xml` needs only its `android:label` changed.
 
-### Before you start — one key, used twice
+### Before you start — one API secret, used twice
 
-★ **Essence 2 needs a bitHuman API key and Expression 2 does not.** This is the
+★ **Essence 2 needs a bitHuman API secret and Expression 2 does not.** This is the
 one prerequisite that is not shared, and it bites in two separate places, each
-with its own refusal. Get a key at [Developer → API
-Keys](https://www.bithuman.ai/developer/api-keys) — it is free, and the free
+with its own refusal. Get one at [Developer → API
+Secrets](https://www.bithuman.ai/developer/api-keys) — it is free, and the free
 tier's monthly credits cover a session like this many times over
 ([pricing](/guides/pricing) is the authority on what a self-hosted session
 costs). Then:
@@ -942,25 +942,27 @@ costs). Then:
 | `Essence2Metering.apiSecret` | the render is a metered self-hosted session | `Essence2Avatar.create()` throws `Essence2MeteringRefused` — which prints as `MeteringRefused` — with *"refusing to serve: no credential was supplied, so this render cannot be attributed to an account. Set BITHUMAN_API_SECRET to your api-secret, or assign Essence2Metering.apiSecret…"* |
 
 ★ **Setting one does not arm the other** — the engine's own message says so.
-They take the same api-secret, and the code below assigns both.
+They take the same API secret, and the code below assigns both.
 
-Put the key where Gradle can read it and your source tree cannot. In
+Put the API secret where Gradle can read it and your source tree cannot. In
 `~/.gradle/gradle.properties`:
 
 ```properties
 # ~/.gradle/gradle.properties  — NOT in your project, NOT in source control
-bithumanApiSecret=<the key from your API keys page>
+bithumanApiSecret=<your API secret>
 ```
 
 or pass `-PbithumanApiSecret=…` on the command line. The `app/build.gradle.kts`
 below turns it into `BuildConfig.BITHUMAN_API_SECRET`.
 
-> **This bakes the key into the debug APK,** which is fine for the local
+> **This bakes the API secret into the debug APK,** which is fine for the local
 > hello-world this is and wrong for anything you ship — a `buildConfigField` is
-> a string constant anyone can read back out. For a real app, fetch a
-> short-lived credential from **your** backend at startup and pass that string
-> to `MeteredDoorResolver` and to `Essence2Metering.apiSecret` instead. Nothing
-> else in the code changes. See [Authentication](/api/authentication).
+> a string constant anyone can read back out. For a real app, fetch your API
+> secret from **your** backend at startup and pass it to
+> `Essence2Metering.apiSecret` and `MeteredDoorResolver` instead of the
+> `BuildConfig` constant. `Essence2Metering.apiSecret` takes an API secret
+> only — the meter validates it at `/v1/auth/validate`, which does not accept a
+> runtime token. Nothing else in the code changes. See [Authentication](/api/authentication).
 
 ### Pick an identity
 
@@ -1233,7 +1235,7 @@ class MainActivity : Activity() {
     private fun renderOnce() {
         val secret = BuildConfig.BITHUMAN_API_SECRET
         if (secret.isBlank()) {
-            say("No API secret. Put\n\nbithumanApiSecret=<your key>\n\nin ~/.gradle/gradle.properties and rebuild. essence-2 needs one for the download AND for the meter.")
+            say("No API secret. Put\n\nbithumanApiSecret=<your API secret>\n\nin ~/.gradle/gradle.properties and rebuild. essence-2 needs one for the download AND for the meter.")
             return
         }
 

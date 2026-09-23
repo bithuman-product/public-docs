@@ -1,6 +1,6 @@
 ---
 title: "Organizations"
-description: "Create a team, invite members, manage roles and org-scoped API keys, and track per-member usage."
+description: "Create a team, invite members, manage roles and org-scoped API secrets, and track per-member usage."
 section: api
 group: "Account & teams"
 order: 42
@@ -9,11 +9,11 @@ label: "Teams & orgs"
 
 ## Overview
 
-Organizations let a team share agents, knowledge bases, and API keys under one account, with
+Organizations let a team share agents, knowledge bases, and API secrets under one account, with
 role-based access and per-member usage tracking.
 
 Base URL `https://api.bithuman.ai`. Authenticate with your `api-secret`; the acting account is
-resolved from the key. **Organizations require a Pro, Business, or Enterprise plan** — creating
+resolved from the API secret. **Organizations require a Pro, Business, or Enterprise plan** — creating
 one or inviting members on a lower plan returns `403`.
 
 **Roles.** Every member is an `owner`, `admin`, or `member`. The table notes the minimum role
@@ -98,15 +98,15 @@ Pro+ · `409` already a member or pending.
 | `PATCH …/members/{member_id}` | admin* | Body: `role` (`admin`/`member`). Only owners can change an admin's role. |
 | `DELETE …/members/{member_id}` | admin* | Remove a member; a member can remove themselves (leave). Only owners remove admins; the owner can't leave. |
 
-## Organization API keys
+## Organization API secrets
 
-Org-scoped keys are what the [Knowledge API](/api/knowledge) and other org-shared resources use.
+Org-scoped API secrets are what the [Knowledge API](/api/knowledge) and other org-shared resources use.
 
 | Method / path | Role | Notes |
 |---|---|---|
 | `POST /v2/organizations/{org_id}/api-secrets` | admin | Body: `alias` (optional). Returns the full `secret` **once**. |
-| `GET /v2/organizations/{org_id}/api-secrets` | member | Lists keys, masked. |
-| `DELETE /v2/organizations/{org_id}/api-secrets/{alias}` | admin | Deletes a key. |
+| `GET /v2/organizations/{org_id}/api-secrets` | member | Lists API secrets, masked. |
+| `DELETE /v2/organizations/{org_id}/api-secrets/{alias}` | admin | Deletes an API secret. |
 
 ```json
 // POST → the secret is shown only on creation

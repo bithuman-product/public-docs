@@ -28,7 +28,7 @@ clone.
 **Python**
 
 - [AI voice chat](/examples/ai-conversation) — OpenAI Realtime voice in, lip-synced avatar out.
-- [`python/quickstart`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/quickstart) — an API key, a model, a first render.
+- [`python/quickstart`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/quickstart) — an API secret, a model, a first render.
 - [`python/local-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/local-essence) — Essence on your own CPU, with a microphone script and a web UI.
 - [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) — Essence on bitHuman cloud with LiveKit and a browser UI.
 

@@ -211,7 +211,7 @@ The pre-release codenames were transitional aliases and have since been retired
 
 - 2.2.0 was skipped; install 2.2.1.
 - `BITHUMAN_LOCAL=1` gave `bithuman run` a fully on-device conversation brain
-  (whisper.cpp, llama.cpp, Supertonic TTS, Silero VAD) — no API key, no network.
+  (whisper.cpp, llama.cpp, Supertonic TTS, Silero VAD) — no OpenAI key, no network.
   The wheel that carried it is gone; see [local mode](/sdk/cli/local-mode).
 - New plugins: `livekit.plugins.bithuman.{WhisperSTT, LlamaCppLLM, SupertonicTTS}`.
 

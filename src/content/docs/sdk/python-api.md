@@ -69,7 +69,7 @@ frame.
 
 Raises `InvalidAvatar` if it cannot be found or is not usable,
 `NotSupported` if it cannot run on this machine,
-`NotAuthorised` if the key is missing, invalid or out of credit,
+`NotAuthorised` if the API secret is missing, invalid or out of credit,
 and `Failed` if something else went wrong.
 
 ### Avatar
@@ -443,5 +443,5 @@ not the clock. The full note is on the [Python page](/sdk/python#ending-a-sessio
 
 - [Python](/sdk/python) — install it, get a model, render your first frame
 - [LiveKit](/sdk/livekit) — this library inside an agent worker
-- [Pricing](/guides/pricing) — what a render costs, and what refuses without a key
+- [Pricing](/guides/pricing) — what a render costs, and what refuses without an API secret
 - [Performance](/sdk/performance) — measured frame rates for every platform

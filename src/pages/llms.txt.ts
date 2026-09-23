@@ -45,7 +45,7 @@ export const GET: APIRoute = async () => {
   out += agentFacts(SITE);
 
   out += `## Start here\n\n`;
-  out += `- **Embed a hosted agent** — an \`<iframe>\` and no API key: [API quickstart](${SITE}/api/quickstart).\n`;
+  out += `- **Embed a hosted agent** — an \`<iframe>\` and no API secret: [API quickstart](${SITE}/api/quickstart).\n`;
   out += `- **Browser, nothing installed** — any showcase avatar from one URL or one iframe: [Web](${SITE}/sdk/web).\n`;
   out += `- **Cloud REST API** — the \`api-secret\` header against \`https://api.bithuman.ai\`: [API overview](${SITE}/api/overview).\n`;
   out += `- **Python** — a venv, \`pip install bithuman\`, then open an avatar and take frames: [Python SDK](${SITE}/sdk/python).\n`;
@@ -56,7 +56,7 @@ export const GET: APIRoute = async () => {
 
   out += `## Copy and run\n\n`;
   out += `The two samples [/start](${SITE}/start) prints, byte for byte.\n\n`;
-  out += `Embed a hosted agent — paste into any page; no API key, no install, no account:\n\n`;
+  out += `Embed a hosted agent — paste into any page; no API secret, no install, no account:\n\n`;
   out += `\`\`\`html\n${START_EMBED}\n\`\`\`\n\n`;
   out += `Run one on your own machine with the CLI (macOS Apple Silicon or Linux x86_64):\n\n`;
   out += `\`\`\`bash\n${START_CLI}\n\`\`\`\n\n`;
@@ -66,7 +66,7 @@ export const GET: APIRoute = async () => {
     `in or export \`BITHUMAN_API_SECRET\`.\n\n`;
 
   out += `## Machine-readable\n\n`;
-  out += `- [OpenAPI spec](${SITE}/api/openapi.yaml): the REST contract (YAML). Endpoint groups documented only in the pages, not the spec: [API keys](${SITE}/api/api-keys), [knowledge](${SITE}/api/knowledge), [organizations](${SITE}/api/organizations), [providers](${SITE}/api/providers), [runtime sessions](${SITE}/api/runtime-sessions).\n`;
+  out += `- [OpenAPI spec](${SITE}/api/openapi.yaml): the REST contract (YAML). Endpoint groups documented only in the pages, not the spec: [API secrets](${SITE}/api/api-keys), [knowledge](${SITE}/api/knowledge), [organizations](${SITE}/api/organizations), [providers](${SITE}/api/providers), [runtime sessions](${SITE}/api/runtime-sessions).\n`;
   out += `- [Interactive API console](${SITE}/api/reference): every endpoint in the spec, with try-it-out.\n`;
   out += `- [Showcase manifest](https://api.bithuman.ai/v1/models/showcase): the avatars anyone can pull, as JSON — slug, \`agent_code\`, model, size and download URL. Served with no credential; this is the list to resolve a slug against.\n`;
   out += `- [llms-full.txt](${SITE}/llms-full.txt): the entire documentation as one file, for ingestion.\n`;

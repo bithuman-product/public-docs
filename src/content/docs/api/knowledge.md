@@ -1,6 +1,6 @@
 ---
 title: "Knowledge API"
-description: "Ingest documents and URLs, build knowledge bases, and rebuild them — programmatically, with an organization API key."
+description: "Ingest documents and URLs, build knowledge bases, and rebuild them — programmatically, with an organization API secret."
 section: api
 group: "Build"
 order: 14
@@ -14,8 +14,8 @@ your agents answer from — entirely from code. It covers the ingest → create 
 resync loop: upload a file or URL, create a KB from those files, and rebuild it when the
 sources change.
 
-> **Requires an organization API key.** These endpoints are scoped to an organization —
-> use a key created under [Organizations → API keys](/api/organizations#organization-api-keys).
+> **Requires an organization API secret.** These endpoints are scoped to an organization —
+> use an API secret created under [Organizations → API secrets](/api/organizations#organization-api-secrets).
 > A personal key returns `403`. Everything you create is owned by the organization and
 > counts against its plan quotas.
 

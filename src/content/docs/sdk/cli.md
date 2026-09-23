@@ -167,13 +167,13 @@ to download.
 ## Authentication
 
 ```bash
-bithuman login            # opens a browser, stores a per-device key
+bithuman login            # opens a browser, stores a per-device API secret
 bithuman login --device   # SSH or headless: prints a code to enter elsewhere
 bithuman account          # exit 0 signed in, 77 not — the check to script
 ```
 
-In a script or in CI, set `BITHUMAN_API_SECRET` instead — a key is free at
-[your API keys](https://www.bithuman.ai/developer/api-keys). Which one wins when
+In a script or in CI, set `BITHUMAN_API_SECRET` instead — an API secret is free at
+[your API secrets](https://www.bithuman.ai/developer/api-keys). Which one wins when
 both are present, and every other variable the binary reads, is on the
 [CLI reference](/sdk/cli/reference#credential-resolution-order).
 
@@ -199,7 +199,7 @@ the download took.
 ## Run
 
 **Sign in first.** `bithuman login` opens a browser and stores a per-device
-key; `bithuman login --device` prints a code for an SSH session.
+API secret; `bithuman login --device` prints a code for an SSH session.
 
 From 2.6.20, every render path needs a credential, on both platforms. With
 none, `bithuman render` and `bithuman run` each stop before the first frame —

@@ -53,10 +53,10 @@ in 2.6.4 is identical to 2.6.3's.
   nothing.
 
 Also corrected on [iOS SDK](/sdk/ios#authentication) while measuring this:
-Essence 2 **needs a key** to start a session. It reads `BITHUMAN_API_SECRET`
-(not `BITHUMAN_API_KEY`); with no key, or a rejected one, `be_essence2_create`
+Essence 2 **needs an API secret** to start a session. It reads `BITHUMAN_API_SECRET`
+(essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias); with none, or a rejected one, `be_essence2_create`
 returns `-3` and says why. A sandboxed Mac app also needs **Outgoing
-Connections (Client)**, or the key check cannot reach the service.
+Connections (Client)**, or the check cannot reach the service.
 
 ### Five commands and nine aliases are gone, and one default changed quietly — `cli-v2.7.0` (2026-09-22)
 

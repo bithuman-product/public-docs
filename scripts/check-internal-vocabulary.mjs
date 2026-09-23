@@ -184,6 +184,38 @@ const BANNED = [
          "product. It has no public page, rate-card row, enum value, SDK, CLI or " +
          "self-host route. Name `essence-2` instead, or delete the sentence; " +
          "there is no carrier and no marker that admits it" },
+  // ★OWNER DIRECTIVE 2026-09-23: "standardize API key names to avoid
+  // confusion". The customer's credential is ONE noun, the **API secret**: the
+  // variable every SDK reads is BITHUMAN_API_SECRET, the header is
+  // `api-secret`, the console page is "API Secrets". "API key" in prose is what
+  // made a developer guess BITHUMAN_API_KEY — which Essence 2 on Apple did not
+  // read. The issuance URL /developer/api-keys STAYS (shipped binaries print
+  // it) and is not matched: the lookbehind refuses a `/`, `.`, `-` or word
+  // character before `api`, so `/api-keys`, `create_api_key`, `X-API-Key` and
+  // `apiKey` are untouched. A THIRD PARTY's key is named by its owner — "your
+  // OpenAI key", "that provider's key" — and never as a bare "API key".
+  { name: "api-key", re: /(?<![\w\/.-])api[ -]keys?\b/gi,
+    fixture: "Click Create API key, then copy your API Keys from the dashboard",
+    say: "the customer's credential is an API secret — say \"API secret\" (the URL " +
+         "/developer/api-keys stays). A third party's key is \"your OpenAI key\" / " +
+         "\"that provider's key\"" },
+  // The variable a developer guessed. It is still READ (a deprecated alias the
+  // CLI and, from their next releases, every SDK accept), so it may be named in
+  // exactly one kind of sentence: the one that says it is a deprecated alias.
+  // That sentence is the CARRIER below and is asserted present.
+  { name: "BITHUMAN_API_KEY", re: /\bBITHUMAN_API_KEY\b/g,
+    fixture: "add BITHUMAN_API_KEY to the scheme's environment",
+    say: "the variable is BITHUMAN_API_SECRET. BITHUMAN_API_KEY may appear only in " +
+         "a sentence that calls it a deprecated alias" },
+  // Short-lived credentials are passed per call and never through the
+  // environment. BITHUMAN_API_TOKEN is read only by the external LiveKit plugin
+  // and dropped by the wheel; BITHUMAN_RUNTIME_TOKEN is read by nothing;
+  // BITHUMAN_TOKEN is set nowhere. Telling a customer to set any of them is
+  // telling them to set something that does nothing.
+  { name: "token-env", re: /\bBITHUMAN_(?:API_TOKEN|RUNTIME_TOKEN|TOKEN)\b/g,
+    fixture: "export BITHUMAN_RUNTIME_TOKEN=… before you start",
+    say: "a runtime token or embed token is passed per call, never through the " +
+         "environment. The long-lived credential is BITHUMAN_API_SECRET" },
 ];
 
 // Words this file must NOT grade, because check-retired-model-names.mjs already
@@ -283,6 +315,10 @@ const CARRIERS = [
   // spelled exactly on the page — but the English word "director" beside them
   // is ours, not theirs, and is what this guard removes. A slug is a carrier;
   // the gloss around it is prose.
+  { why: "the ONE kind of sentence that may name BITHUMAN_API_KEY: the one saying it is a deprecated alias (owner directive 2026-09-23)",
+    re: /BITHUMAN_API_KEY.*deprecated alias|deprecated alias.*BITHUMAN_API_KEY/i },
+  { why: "the verbatim `note` POST /v1/runtime-sessions/revoke-all returns — program output a developer may match on; it changes when the platform's text does",
+    re: /Creating a new API key restores runtime access/ },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -551,6 +587,9 @@ function selfTest() {
     w0: "the w0rd is not a token",
     bank: "bankruptcy is not our concern",
     borrow: "borrowed is what this must never say",   // deliberately DOES match
+    "api-key": "open https://www.bithuman.ai/developer/api-keys; agents.json says type: api_key; send X-API-Key; set apiKey",
+    "BITHUMAN_API_KEY": "BITHUMAN_API_KEYS_PATH is a different name",
+    "token-env": "BITHUMAN_TOKENIZER_DIR and BITHUMAN_API_TOKENS are different names",
   };
   const twinFails = [];
   for (const [name, twin] of Object.entries(NEAR_TWINS)) {

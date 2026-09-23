@@ -12,7 +12,7 @@ One SwiftPM package vends both second-generation models —
 plus `bitHumanKit`, a whole on-device voice agent built around one of them.
 
 Both models render entirely on the device. Expression 2 reaches a first frame
-with **no account, no key and no credits**. Essence 2 needs an API key before
+with **no account, no API secret and no credits**. Essence 2 needs an API secret before
 it will start a session — [Authentication](#authentication).
 
 Starting on a Mac rather than a phone? Go to [On a Mac](#on-a-mac) —
@@ -25,7 +25,7 @@ device, no profile and no entitlement.
 | **Product to attach** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2", package: "homebrew-bithuman")` |
 | **Devices** | any Apple Silicon iPhone, iPad or Mac | any Apple Silicon iPhone; iPad with M-series; Mac with M3 or newer |
 | **OS floor** | iOS 16 / macOS 13 | **iOS 26 / iPadOS 26 / macOS 26** |
-| **Credential** | **none** to download or render a published identity | **none** to download; **an API key to render** — `BITHUMAN_API_SECRET` or `be_essence2_set_api_secret()`. With neither, `be_essence2_create` returns `-3` |
+| **Credential** | **none** to download or render a published identity | **none** to download; **an API secret to render** — `BITHUMAN_API_SECRET` or `be_essence2_set_api_secret()`. With neither, `be_essence2_create` returns `-3` |
 | **First-run download** | about 355 MB — identity, plus the shared engine graphs every identity uses | about 250 MB — identity, plus the engine's runtime resources |
 | **What it asks of you** | a Swift API; nothing to stage | you call a small C interface and stage the engine's resources yourself |
 | **Worked example** | [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) | [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) |
@@ -220,7 +220,7 @@ frames, render status and the playout counters — are on the
 
 No engine ships weights. You fetch an identity and — for Expression 2 — the
 shared engine graphs every identity uses. Every file below is an anonymous
-download over plain `curl`: no account, no key, no credits, verified 2026-09-21
+download over plain `curl`: no account, no API secret, no credits, verified 2026-09-21
 with no credential in the environment.
 
 **Expression 2** — three files. `A23WJF0199` is *Wise Pup*, a bitHuman-owned
@@ -272,7 +272,7 @@ URLs: `bithuman pull wise-pup`, `bithuman pull kwame-warm-museum-guide`, or
 `bithuman pull <YOUR_AGENT_CODE>` — see the [CLI](/sdk/cli). Your own agent's
 file comes from
 [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
-with your key.
+with your API secret.
 
 ### Showcase identities you can download right now
 
@@ -293,37 +293,38 @@ credential. Sizes here are binary megabytes.
 
 ## Authentication
 
-One credential drives every surface; the value is the same everywhere, and the
-environment-variable name depends on the product. Keys are free at
-[your API keys](https://www.bithuman.ai/developer/api-keys).
+One credential drives every surface: your API secret, free at
+[your API secrets](https://www.bithuman.ai/developer/api-keys). The environment
+variable is `BITHUMAN_API_SECRET`; `bitHumanKit` 2.4.0 takes it through
+`config.apiKey`, a field that keeps its published name.
 
 | Product | Reads | Without it |
 |---|---|---|
-| `Essence2` | **`BITHUMAN_API_SECRET`**, or the string you pass to `be_essence2_set_api_secret()` before `be_essence2_create` | `be_essence2_create` returns `-3` and prints `refusing to serve: no credential was supplied` on stderr. It does **not** read `BITHUMAN_API_KEY` |
-| `bitHumanKit` | `BITHUMAN_API_KEY` (or `config.apiKey`) | avatar mode fails with `VoiceChatError.missingAPIKey`; audio-only runs keyless |
+| `Essence2` | **`BITHUMAN_API_SECRET`**, or the API secret you pass to `be_essence2_set_api_secret()` before `be_essence2_create` | `be_essence2_create` returns `-3` and prints `refusing to serve: no credential was supplied` on stderr |
+| `bitHumanKit` | `config.apiKey` — set it to your API secret (read `BITHUMAN_API_SECRET` into it) | avatar mode fails with `VoiceChatError.missingAPIKey`; audio-only runs without one |
 | `Expression2` | nothing — it has no metering of its own | renders |
 
 | Action | Credential |
 |---|---|
 | Download a showcase identity, or the shared engine artifacts | none — anonymous, no account, no credits |
-| Download **your own** agent's model | your key, as `-H "api-secret: $BITHUMAN_API_SECRET"` |
-| Render in an app you ship | your key, in the app's environment |
+| Download **your own** agent's model | your API secret, as `-H "api-secret: $BITHUMAN_API_SECRET"` |
+| Render in an app you ship | your API secret, in the app's environment |
 | Create an agent in the first place | an account with credits — [pricing](/guides/pricing) is the authority |
 
 Set it in Xcode under *Product → Scheme → Edit Scheme → Run → Arguments →
 Environment Variables*. Never hard-code it; for production, fetch it from your
 backend or the Keychain.
 
-Essence 2 checks the key when the session starts, and a definite answer is
+Essence 2 checks the API secret when the session starts, and a definite answer is
 final. Measured on 2026-09-23 with `essence2-v1.10.0` (what `2.14.1` pins) in a
 new Mac app:
 
 | At `be_essence2_create` | Result |
 |---|---|
 | no credential | `-3`, `refusing to serve: no credential was supplied, so this render cannot be attributed to an account` |
-| a key the service rejects | `-3`, `refusing to serve: the API secret was rejected — revoked, or from another environment. (401)` |
-| a valid key | `0`; stderr prints `metering on …`, and the session's last beat is delivered when you destroy it and call `be_essence2_quiesce_all()` |
-| a key, but `api.bithuman.ai` cannot be reached | `0`, and stderr says `could not reach …/v1/auth/validate … PROCEEDING`. In a sandboxed Mac app that is what a missing **Outgoing Connections (Client)** entitlement looks like — see [On a Mac](#on-a-mac) |
+| an API secret the service rejects | `-3`, `refusing to serve: the API secret was rejected — revoked, or from another environment. (401)` |
+| a valid API secret | `0`; stderr prints `metering on …`, and the session's last beat is delivered when you destroy it and call `be_essence2_quiesce_all()` |
+| an API secret, but `api.bithuman.ai` cannot be reached | `0`, and stderr says `could not reach …/v1/auth/validate … PROCEEDING`. In a sandboxed Mac app that is what a missing **Outgoing Connections (Client)** entitlement looks like — see [On a Mac](#on-a-mac) |
 
 A key the service starts rejecting in the middle of a session renders for a
 300-second grace behind a countdown and then refuses, after which `pull_frame`
@@ -346,7 +347,7 @@ xcodebuild -scheme <YourScheme> -destination 'generic/platform=iOS' \
   -allowProvisioningUpdates build
 ```
 
-The showcase identities above render without a key. A render of your own agent is
+The showcase identities above render without an API secret. A render of your own agent is
 metered — [pricing](/guides/pricing) is the authority.
 
 ## On a Mac
@@ -362,8 +363,8 @@ Pick the first row that is true of you:
 |---|---|---|
 | to see it work, without writing code | `brew install bithuman-product/bithuman/bithuman-cli` then `bithuman run` — the [CLI](/sdk/cli) | none |
 | an avatar inside your own Mac app, in Swift | this package: `import Expression2` (or `Essence2`), exactly as below — and [A Mac app](#a-mac-app) if it is an Xcode app rather than a `swift run` executable | none for Expression 2 with a showcase identity; a key for Essence 2 |
-| an avatar from a Python script on the Mac | the macOS arm64 wheel — [Python SDK](/sdk/python) | a key |
-| a whole on-device voice agent in a Mac app | `import bitHumanKit`. Apple Silicon M3 or newer, macOS 26 | a key for avatar mode |
+| an avatar from a Python script on the Mac | the macOS arm64 wheel — [Python SDK](/sdk/python) | an API secret |
+| a whole on-device voice agent in a Mac app | `import bitHumanKit`. Apple Silicon M3 or newer, macOS 26 | an API secret for avatar mode |
 
 The shortest native path is one file. Measured on a MacBook Pro (Apple M4 Max,
 macOS 26.5, Xcode 26.5, Swift 6.3.2) on 2026-09-22, against the free showcase
@@ -549,14 +550,14 @@ Measured frame rates for every platform are on the
 | duplicate symbols at an app's final link, while `swift build` is green | a tag below v2.14.0 with both engine products attached | raise the floor to `2.14.1`; a library target is compiled, never linked, so `swift build` cannot see this |
 | `401 MISSING_AUTH` from `/v1/agent/<CODE>/model/download`, anonymously | the code and `model=` family are not a free-showcase pair. A typo'd code and the wrong family both land here | check the pair against the table above or the [showcase](/showcase); drop `model=` to take the identity's own family; for your own agent send `-H "api-secret: $BITHUMAN_API_SECRET"` |
 | `404 MODEL_ARTIFACT_NOT_READY` on a `member=` request | that member name is not in the container. The same code also means "trained, not published yet" for a whole model | check the member name first; poll only if you are downloading a model you just created ([error codes](/api/errors#error-codes)) |
-| `409 MODEL_NOT_GENERATED`, with your key | your agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
+| `409 MODEL_NOT_GENERATED`, with your API secret | your agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
 | the app runs, no error, no avatar; `pull()` keeps returning `nil` | you drained synchronously on the line after `feed()` — frames arrive asynchronously | poll, as in [Minimal code](#minimal-code) |
 | the app crashes in `__cxa_finalize` as the user closes it | `be_essence2_quiesce_all()` was never called | call it from `applicationWillTerminate` |
 | hundreds of undefined symbols at an app's final link — `___cxa_…`, `std::__1::…`, `_VTDecompressionSession…`, `_BNNSFilter…`, `_OBJC_CLASS_$_MLModel` | a tag below `2.14.1`: `Essence2` is a static C library, and before 2.14.1 the product declared none of the Apple libraries it calls | raise the floor to `2.14.1` and force the resolve; or, on an older tag, add all four link settings — [What Essence 2 needs at link](#what-essence-2-needs-at-link) |
 | `Framework …/Contents/Frameworks/Expression2.framework contains Info.plist, expected Versions/Current/Resources/Info.plist since the platform does not use shallow bundles` (or `UnifiedModelHeader` / `BithumanEngineProtocol`) building a **Mac app** | a tag below `2.14.1`: its macOS frameworks were iPhone-shaped bundles | raise the floor to `2.14.1` and force the resolve — [A Mac app](#a-mac-app) |
-| `be_essence2_create` returns `-3`; stderr: `refusing to serve: no credential was supplied` | Essence 2 got no key. It reads `BITHUMAN_API_SECRET`, **not** `BITHUMAN_API_KEY` | set `BITHUMAN_API_SECRET` in the scheme's environment, or call `be_essence2_set_api_secret()` before `be_essence2_create` — [Authentication](#authentication) |
-| `be_essence2_create` returns `-3`; stderr: `refusing to serve: the API secret was rejected … (401)` | the key is revoked, mistyped or from another environment | generate a new key at [your API keys](https://www.bithuman.ai/developer/api-keys) |
-| a sandboxed Mac app renders Essence 2 but stderr says `could not reach https://api.bithuman.ai/v1/auth/validate` | App Sandbox without the network-client entitlement: the key cannot be checked and no beat leaves the machine | *Signing & Capabilities → App Sandbox → Outgoing Connections (Client)* — [A Mac app](#a-mac-app) |
+| `be_essence2_create` returns `-3`; stderr: `refusing to serve: no credential was supplied` | Essence 2 got no API secret. It reads `BITHUMAN_API_SECRET` (essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias) | set `BITHUMAN_API_SECRET` in the scheme's environment, or call `be_essence2_set_api_secret()` before `be_essence2_create` — [Authentication](#authentication) |
+| `be_essence2_create` returns `-3`; stderr: `refusing to serve: the API secret was rejected … (401)` | the API secret is revoked, mistyped or from another environment | create a new one at [your API secrets](https://www.bithuman.ai/developer/api-keys) |
+| a sandboxed Mac app renders Essence 2 but stderr says `could not reach https://api.bithuman.ai/v1/auth/validate` | App Sandbox without the network-client entitlement: the API secret cannot be checked and no beat leaves the machine | *Signing & Capabilities → App Sandbox → Outgoing Connections (Client)* — [A Mac app](#a-mac-app) |
 | `ld: warning: Could not find or use auto-linked framework 'CoreAudioTypes'` | a linker option baked into the Essence 2 static library naming a framework that does not exist on its own | nothing — the link succeeds |
 | ten linker warnings naming `/Users/…/Build/Intermediates.noindex/…`, a path not on your Mac | the published `Expression2` framework carries debug paths whose object files are not in the archive | nothing — the build completes and the binary runs |
 | `product 'Expression' … not found in package 'homebrew-bithuman'` | an older product name; `swift package resolve` does not check product names, `swift build` does | name the product `Expression2` |
@@ -568,7 +569,7 @@ Measured frame rates for every platform are on the
 | mic or speech start fails silently | missing `Info.plist` privacy strings; the OS caches the denial | add `NSMicrophoneUsageDescription` |
 | you are looking for `essence-1` and cannot find a product for it | there is no first-generation product in the Swift package | on a Mac, render it with the [CLI](/sdk/cli) or the [Python SDK](/sdk/python); in an app, serve it from the [cloud API](/api/overview). The model itself is described on [essence-1](/concepts/essence-1) |
 | avatar disappears on re-render | a fresh renderer view on every SwiftUI update | return the same instance from `makeUIView` and `updateUIView` |
-| `bitHumanKit` avatar mode refuses with a key error | `BITHUMAN_API_KEY` unset in the app's environment | set it — `bitHumanKit` reads that name (same value as `BITHUMAN_API_SECRET`, which is the name `Essence2` reads) |
+| `bitHumanKit` avatar mode refuses with a key error | `config.apiKey` is empty | set `config.apiKey` to your API secret — read `BITHUMAN_API_SECRET` into it, as [the hello example](/examples/swift-ios-hello) does |
 
 ## Examples and source
 
@@ -590,7 +591,7 @@ Measured frame rates for every platform are on the
   [`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2),
   one file: a WAV in, lip-synced frames out, no account — the run measured under
   [On a Mac](#on-a-mac); and
-  [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice only, on device, no key.
+  [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — voice only, on device, no API secret.
 - [Homebrew tap](https://github.com/bithuman-product/homebrew-bithuman) — the Swift package itself.
 
 > **Note** Until 2026-09-22 that repository's `swift/README.md` described

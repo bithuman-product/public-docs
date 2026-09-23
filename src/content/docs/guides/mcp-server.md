@@ -105,7 +105,7 @@ claude mcp add bithuman -- bithuman mcp
 ```
 
 If you haven't run `bithuman login`, pass the secret inline:
-`claude mcp add bithuman -e BITHUMAN_API_SECRET=sk_your_secret -- bithuman mcp`.
+`claude mcp add bithuman -e BITHUMAN_API_SECRET="<your API secret>" -- bithuman mcp`.
 
 ### Claude Desktop / generic JSON config
 
@@ -136,7 +136,7 @@ In **Settings → MCP → Add new MCP server**, or in `~/.cursor/mcp.json`:
 ```
 
 If you haven't signed in with `bithuman login`, add an
-`"env": { "BITHUMAN_API_SECRET": "sk_your_secret" }` block to the config.
+`"env": { "BITHUMAN_API_SECRET": "<your API secret>" }` block to the config.
 
 ## Verify the connection
 

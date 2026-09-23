@@ -6,51 +6,56 @@ group: "Get started"
 order: 2
 ---
 
-## One credential, two names
+## One credential, one name
 
-bitHuman uses a single shared credential per account that authenticates every
-SDK and the REST API. There are two equivalent environment-variable names
-depending on which surface you're using:
+bitHuman uses a single credential per account, your **API secret**, for every
+SDK, the CLI and the REST API. It has one name everywhere:
 
-- **`BITHUMAN_API_SECRET`** — Python SDK, REST API, LiveKit plugin,
-  and CLI.
-- **`BITHUMAN_API_KEY`** — Swift SDK on Apple platforms. Same value, different
-  name to match Apple convention.
+- **`BITHUMAN_API_SECRET`** — the environment variable the Python SDK, the
+  CLI, the LiveKit plugin, Essence 2 on Apple and Android, and the
+  self-hosted containers read.
+- **`api-secret`** — the HTTP header for the REST API.
+- **`api_secret` / `apiSecret`** — the parameter name in each SDK.
 
-> **Tip** You only need a key when an **avatar is rendering**. Audio-only voice
-> agents (Swift `VoiceChat` with no `config.avatar`) run fully offline without
-> one — see [pricing](/api/billing) for what's free vs. metered.
+BITHUMAN_API_KEY is still read as a deprecated alias by the CLI; when both are
+set, `BITHUMAN_API_SECRET` wins. Set `BITHUMAN_API_SECRET` in anything new.
 
-## Get a key
+> **Tip** You only need an API secret when an **avatar is rendering**.
+> Audio-only voice agents (Swift `VoiceChat` with no `config.avatar`) run fully
+> offline without one — see [pricing](/api/billing) for what's free vs. metered.
+
+## Get an API secret
 
 1. Sign in at [bithuman.ai](https://www.bithuman.ai) (free tier, no credit
    card).
-2. Go to [Developer → API Keys](https://www.bithuman.ai/developer/api-keys).
-3. Click **Create new key**, name it (e.g. `production-mac`), and copy the
+2. Go to [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
+3. Click **Create API secret**, name it (e.g. `production-mac`), and copy the
    value. **You won't be able to view it again** — store it somewhere durable.
 
 ## Sign in from the CLI
 
-If you use the [CLI](/sdk/cli), you don't have to copy a key by hand. Run:
+If you use the [CLI](/sdk/cli), you don't have to copy an API secret by hand.
+Run:
 
 ```bash
 bithuman login
 ```
 
 This opens your browser, you sign in to your bitHuman account and approve
-the request, and the CLI mints a **per-device API key** — scoped to your
-account and aliased `cli@<hostname>` — then stores it in your OS keychain.
-From then on every CLI command (and any SDK process that inherits the
-environment) authenticates automatically; there's nothing to `export`.
+the request, and the CLI mints a **per-device API secret** — scoped to your
+account and aliased `cli@<hostname>` — then stores it in `~/.bithuman/config`
+(mode 600) as a `BITHUMAN_API_SECRET=` line. From then on every CLI command
+authenticates automatically; there's nothing to `export`.
 
 On SSH or headless hosts where the browser can't reach the machine, use
 `bithuman login --device` and enter the short code it prints from any
 browser. See [CLI → Signing in](/sdk/cli/reference#signing-in).
 
-Because each device gets its own key, it's individually **revocable** — run
-`bithuman logout` on that machine, or revoke the `cli@<hostname>` key from
-[Developer → API Keys](https://www.bithuman.ai/developer/api-keys). Revoking one
-device leaves your other keys untouched.
+Because each device gets its own API secret, it's individually
+**revocable** — run `bithuman logout` on that machine, or revoke the
+`cli@<hostname>` secret from
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). Revoking
+one device leaves your other API secrets untouched.
 
 > **CI, containers, automation** — keep setting `BITHUMAN_API_SECRET`
 > directly (next section). That path is fully supported and is what you want
@@ -61,7 +66,7 @@ device leaves your other keys untouched.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/validate \
-  -H "api-secret: YOUR_KEY"
+  -H "api-secret: <your API secret>"
 ```
 
 A `200` with `{"valid": true}` means you're good. If you have the CLI installed,
@@ -84,21 +89,34 @@ curl -X POST https://api.bithuman.ai/v1/agent/A78WKV4515/speak \
 ```python
 runtime = await AsyncBithuman.create(
     model_path="avatar.imx",
-    api_secret="your_key",
+    api_secret=os.environ["BITHUMAN_API_SECRET"],  # or leave it out: the SDK reads it itself
 )
 ```
 
-**Swift SDK** — env var or config; never hardcode in source:
+**Swift, Essence 2** — `BITHUMAN_API_SECRET` in the scheme's environment, or
+hand it over before the session starts; never hard-code it in source:
 
 ```swift
-// development: env var
-config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_KEY"]
+import Essence2
+
+// development: the scheme's environment already carries BITHUMAN_API_SECRET
+// production: fetch it from your backend or the Keychain, then:
+be_essence2_set_api_secret(apiSecret)
+```
+
+**Swift, `bitHumanKit` 2.4.0** — its configuration field keeps its published
+name, `apiKey`; put your API secret in it:
+
+```swift
+// development: read the one name every other surface uses
+config.apiKey = ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"]
 // production: fetch from your backend via Keychain
 config.apiKey = await fetchFromBackend()
 ```
 
-For DMG distribution, bake the key into Info.plist via a build script. For App
-Store, fetch from your own backend via Keychain on first launch — don't bundle.
+For DMG distribution, bake the API secret into Info.plist via a build script.
+For App Store, fetch from your own backend via Keychain on first launch — don't
+bundle.
 
 ## api-secret vs. runtime tokens
 
@@ -112,7 +130,7 @@ is authorized by a separate, short-lived **runtime token**:
 3. That token authorizes the avatar engine (heartbeat + frame production) for
    your account.
 4. Tokens auto-renew roughly every 60 seconds via the heartbeat.
-5. Bad keys fail at step 2 — fast — before any user-visible work.
+5. A bad API secret fails at step 2 — fast — before any user-visible work.
 
 The runtime token is **not** an api-secret. It can't mint other tokens; it just
 authorizes the runtime to compute frames on behalf of your account. It is
@@ -125,8 +143,8 @@ LiveKit plugin handle this loop for you — you rarely call
 
 ## Audio-only Swift mode is unmetered
 
-If you only want on-device voice chat (no lip-synced avatar), skip the API key
-entirely:
+If you only want on-device voice chat (no lip-synced avatar), skip the API
+secret entirely:
 
 ```swift
 var config = VoiceChatConfig()
@@ -139,14 +157,15 @@ try await chat.start()  // does not authenticate
 ```
 
 This mode runs fully offline (after first-launch weight downloads), bills
-nothing, and doesn't require a key.
+nothing, and doesn't require an API secret.
 
-## Rotating keys
+## Rotating API secrets
 
 Rotate from the [Developer dashboard](https://www.bithuman.ai/developer/api-keys).
-Rotation invalidates the old key immediately — there's no overlap window. Live
-sessions using the old key fail their next heartbeat (within ~60 s) and pause;
-restart with the new key to resume. Rotate during a maintenance window if you
+Create the new API secret first, move your services onto it, then revoke the old
+one. Revoking invalidates it immediately — there's no overlap window. Live
+sessions still using the old one fail their next heartbeat (within ~60 s) and
+pause; restart them with the new API secret to resume. Rotate during a maintenance window if you
 have production sessions running.
 
 ## Common errors
@@ -156,7 +175,7 @@ have production sessions running.
 | `401` `MISSING_AUTH` | `api-secret` header absent | Add the header on every request. |
 | `401` `UNAUTHORIZED` | `api-secret` header present but invalid | Re-verify the secret with `/v1/validate`; rotate if needed. |
 | `Authentication failed` (Python) | Wrong/missing `BITHUMAN_API_SECRET` | Verify with the `curl /v1/validate` recipe. |
-| `VoiceChatError.missingAPIKey` (Swift) | Avatar mode without `apiKey` set | Set `config.apiKey` or export `BITHUMAN_API_KEY`. |
+| `VoiceChatError.missingAPIKey` (`bitHumanKit`) | Avatar mode without `config.apiKey` set | Set `config.apiKey` to your API secret. |
 | Heartbeat silent after 5 min | Network dropped on-device | Reconnect; the SDK pauses the avatar after the grace window and resumes when heartbeats succeed. |
 
 See the full [error reference](/api/errors).

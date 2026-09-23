@@ -60,6 +60,15 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   audio front end of the cloud `expression-2` tier. Do not carry the Essence 2 verdict across.
   Apple Silicon (capital S), macOS, WebRTC, WebGPU, on-device, self-hosted.
 
+- **The customer's credential is the "API secret"** (owner directive 2026-09-23): the
+  variable is `BITHUMAN_API_SECRET`, the header is `api-secret`, the SDK parameter is
+  `api_secret` / `apiSecret`, the console page is **API Secrets**, and the placeholder is
+  `<your API secret>` (real API secrets have no `sk-`/`bh-` prefix — never invent one).
+  The issuance URL `https://www.bithuman.ai/developer/api-keys` keeps its path. The old
+  variable may be named only in a sentence calling it a deprecated alias. Short-lived
+  credentials are a **runtime token** or an **embed token**, passed per call, never through
+  the environment. `check-internal-vocabulary.mjs` enforces the noun and the variable.
+
 ## Units & numbers
 
 - "credits/min" (never "cr/min"); "credits" never "cr" in prose; "N credits (one-time)".

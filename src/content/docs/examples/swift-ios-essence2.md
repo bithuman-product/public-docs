@@ -29,7 +29,7 @@ binary.
 | **Renders** | the identity's own canvas at 25 fps — 1080x1920 for the default code — entirely on the device, [measured rates](/sdk/performance) |
 | **Driven by** | a 16 kHz mono WAV you make on your Mac in one command |
 | **Needs** | a physical Apple-Silicon iPhone or iPad, **iOS 26**, and `Essence2` resolved at **v2.14.1 or newer** — see [the floor](#2-the-xcode-project) |
-| **Does not need** | an agent of your own, credits to create one, or the device floor and Apple entitlements the `bitHumanKit` umbrella asks for — nothing on this path requests either. **It does need an API key:** without one `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) |
+| **Does not need** | an agent of your own, credits to create one, or the device floor and Apple entitlements the `bitHumanKit` umbrella asks for — nothing on this path requests either. **It does need an API secret:** without one `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) |
 | **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For a whole voice agent see [Hello, avatar](/examples/swift-ios-hello) |
 | **Costs** | the identity download is anonymous and free. The render is a self-hosted session and is metered — [pricing](/guides/pricing) is the authority |
 
@@ -49,7 +49,7 @@ in order.
 | **A physical iPhone or iPad**, paired and trusted | this is on-device Apple-Silicon inference; the Simulator is not the supported path ([iOS SDK](/sdk/ios)) | it appears in Xcode's run destination menu |
 | **An Apple Developer team** | a device build is a signed build | Xcode → Settings → Accounts lists it |
 | **Deployment target iOS 26.0** | 99 of the 367 objects in the published `ios-arm64` slice are built with a minimum OS of 26.0 — a lower target fails at link | set in [step 2](#2-the-xcode-project) |
-| **A bitHuman API key** | the engine will not start a session without one — `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) | free at [Developer → API Keys](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication) |
+| **A bitHuman API secret** | the engine will not start a session without one — `be_essence2_create` returns `-3` — [the key](#the-key-starts-the-session) | free at [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); see [Authentication](/api/authentication) |
 | **About 430 MB of free space on the phone** | 155 MB of identity plus 119 MB of engine resources ride in the app bundle, and the engine unpacks the identity once more at first launch — see the note below | — |
 | **About 380 MB of free space on the Mac** | `setup.sh` pulls a 155 MB `.imx` and a 105,353,700-byte zip, then unpacks the zip to 119,406,759 bytes beside it — measured 2026-09-21 by running it | `df -h .` where you will run `setup.sh` |
 | **`curl`, `unzip`, `shasum`, `python3`, `say`, `afconvert` on the Mac** | `setup.sh` in step 1 uses all six | all six ship with macOS and the Xcode Command Line Tools; `for c in curl unzip shasum python3 say afconvert; do command -v $c \|\| echo "MISSING $c"; done` |
@@ -102,16 +102,17 @@ engine `2.14.1` pins):
 
 A key the service starts rejecting in the middle of a session renders for a
 300 s grace behind a countdown, then `be_essence2_pull_frame` returns `-3` and
-no frame follows. Essence 2 reads **`BITHUMAN_API_SECRET`**, not
-`BITHUMAN_API_KEY`.
+no frame follows. Essence 2 reads **`BITHUMAN_API_SECRET`**
+(essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias other tools accept).
 
-★ **Set the key in your Xcode scheme, not in a file.** The app reads
+★ **Set your API secret in your Xcode scheme, not in a file.** The app reads
 `BITHUMAN_API_SECRET` out of its own process environment and never carries a
 literal. In Xcode: *Product → Scheme → Edit Scheme… → Run → Arguments →
-Environment Variables*, add `BITHUMAN_API_SECRET` with your key. For a shipped
-app, fetch a short-lived credential from your own backend at launch and hand
-that to `be_essence2_set_api_secret` instead — the parameter takes any string,
-so nothing else in the code below changes. The **server** prices usage — no
+Environment Variables*, add `BITHUMAN_API_SECRET` with your API secret. For a
+shipped app, fetch your API secret from your own backend (or the Keychain) at
+launch and hand it to `be_essence2_set_api_secret` — nothing else in the code
+below changes. It takes an API secret only: the engine validates it at
+`/v1/auth/validate`, which does not accept a runtime token. The **server** prices usage — no
 rate lives in the library ([pricing](/guides/pricing) is the authority).
 
 ## Pick an identity
@@ -1037,7 +1038,7 @@ Each row below quotes the shipped engine's own wording where it has one.
 | *"the shared audio front end is missing"*, or the engine starts and never becomes ready | the engine resources are not at the app bundle's resource root | add `EngineResources` as **groups** (yellow), not as a folder reference |
 | **the identity's motion plays, on a phone below an iPhone 16 Pro, and it never speaks** | **check this first**: you resolved an Essence 2 engine older than `essence2-v1.9.0`, whose warm-up refuses the device by name and leaves the engine idle-only. Nothing is thrown | raise the package floor to **2.14.0** and confirm with the two `grep`s in [step 2](#2-the-xcode-project) |
 | the identity's motion plays and it never speaks, on a phone at or above that floor | the engine's own runtime failed — this reaches you as an absence, not an error | read `be_essence2_render_status`; the app above logs it after every utterance |
-| `be_essence2_create` returns `-3` | no key, or a key the service rejected — stderr says which (`refusing to serve: …`) | set `BITHUMAN_API_SECRET` in the Run scheme (not `BITHUMAN_API_KEY`), or pass the key to `be_essence2_set_api_secret`; [the key](#the-key-starts-the-session) |
+| `be_essence2_create` returns `-3` | no API secret, or one the service rejected — stderr says which (`refusing to serve: …`) | set `BITHUMAN_API_SECRET` in the Run scheme, or pass your API secret to `be_essence2_set_api_secret`; [the API secret](#the-key-starts-the-session) |
 | every pull returns `-3` mid-session and the app stops | the service started rejecting the key during the session: 300 s grace, then it stops | check the key; generate a new one if it was revoked |
 | `be_essence2_create returned -3` at launch, before any frame | `BITHUMAN_METER_ENFORCE=1` is in the scheme's environment: it turns the startup cases into a refusal with no grace | unset it, or supply a key the service accepts |
 | `be_essence2_get_info reported a 0-pixel canvas` | the guard in `load()` firing — `get_info` answered before the engine had produced a frame | re-run; if it repeats, report the agent code. Without the guard this is a face that never moves and no message at all |

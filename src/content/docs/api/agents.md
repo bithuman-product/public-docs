@@ -152,11 +152,12 @@ open.
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
+import os
 import requests
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/agent/generate",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "prompt": "You are a professional video content creator.",
         "image": "https://example.com/avatar.jpg",
@@ -350,12 +351,13 @@ More session-time issues (connect latency, tier pinning, idle behavior):
 `GET /v1/agent/{code}` — retrieve full details for an agent by its code.
 
 ```python
+import os
 import requests
 
 code = "A80HVD8577"
 data = requests.get(
     f"https://api.bithuman.ai/v1/agent/{code}",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 ).json()
 agent = data["data"]
 print(agent["name"], agent["status"])
@@ -398,11 +400,12 @@ Paginated with `limit` (default 20, max 100) and `offset`; filter by generation
 state with `status`.
 
 ```python
+import os
 import requests
 
 resp = requests.get(
     "https://api.bithuman.ai/v1/agents",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
     params={"limit": 20, "offset": 0, "status": "ready"},
 ).json()
 
@@ -438,11 +441,12 @@ are cleaned up best-effort; usage history is retained for billing. Deleting a
 missing or non-owned agent returns `404`.
 
 ```python
+import os
 import requests
 
 requests.delete(
     "https://api.bithuman.ai/v1/agent/A80HVD8577",
-    headers={"api-secret": "YOUR_API_SECRET"},
+    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 ).json()
 # {"success": true, "agent_code": "A80HVD8577", "deleted": true}
 ```
@@ -454,12 +458,13 @@ requests.delete(
 already exist. For a new face or voice, generate a new agent.
 
 ```python
+import os
 import requests
 
 code = "A80HVD8577"
 resp = requests.post(
     f"https://api.bithuman.ai/v1/agent/{code}",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"system_prompt": "You are a professional sales assistant."},
 )
 print(resp.json())
@@ -520,11 +525,12 @@ listing the options).
 | `essence-1` | Builds the v1 `.imx` — reuses the stored identity video, or generates one internally from the stored image | stored identity video or image (else `422`) | 250 | ~10–20 min |
 
 ```python
+import os
 import requests
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/agent/A66GYD8664/models",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={"model": "expression-2"},
 )
 print(resp.json())
@@ -571,10 +577,11 @@ engine drives the agent's stored image with its stored voice at render time. So
 enabling it is **one call, instant, and free**:
 
 ```python
+import os
 import requests
 
 code = "A66GYD8664"          # an agent created with essence-1
-head = {"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"}
+head = {"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]}
 
 requests.post(f"https://api.bithuman.ai/v1/agent/{code}/models",
               headers=head, json={"model": "expression-1"})
@@ -782,11 +789,12 @@ instead.
 | `room_id` | string | no | — | Deliver to ONE session ([get one](#list-an-agents-live-sessions)). Omit to deliver to every deliverable session. |
 
 ```python
+import os
 import requests
 
 requests.post(
     "https://api.bithuman.ai/v1/agent/A12345678/add-context",
-    headers={"Content-Type": "application/json", "api-secret": "YOUR_API_SECRET"},
+    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "context": "Customer has VIP status. Preferred name: Alex. Account since 2021.",
         "type": "add_context",
