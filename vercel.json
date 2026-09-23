@@ -1104,6 +1104,10 @@
   ],
   "rewrites": [
     {
+      "source": "/performance",
+      "destination": "/sdk/performance"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/_missing/api/:path*"
     }

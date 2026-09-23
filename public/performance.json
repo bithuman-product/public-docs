@@ -1,0 +1,424 @@
+{
+ "schema": 1,
+ "generated": "2026-09-23",
+ "models": {
+  "essence-2": {
+   "fps": 25.0,
+   "width": 1920,
+   "height": 1080
+  },
+  "expression-2": {
+   "fps": 20.0,
+   "width": 416,
+   "height": 720
+  }
+ },
+ "method": "end-to-end audio in to frame out, one session, unpaced; the slowest of three quiet runs at least ten minutes apart on the published release",
+ "page": "https://docs.bithuman.ai/performance",
+ "rows": [
+  {
+   "id": "cloud-gpu",
+   "label": "Cloud API · GPU",
+   "hardware": "NVIDIA RTX 4090",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 103,
+     "x_realtime": 4.12,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "server"
+    },
+    "expression-2": {
+     "fps": 357,
+     "x_realtime": 17.85,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.17,
+     "memory_scope": "server"
+    }
+   }
+  },
+  {
+   "id": "apple-serve",
+   "label": "Cloud API · Apple silicon",
+   "hardware": "Apple M4 Max",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 67,
+     "x_realtime": 2.68,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "server"
+    },
+    "expression-2": {
+     "fps": 115,
+     "x_realtime": 5.75,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.18,
+     "memory_scope": "server"
+    }
+   }
+  },
+  {
+   "id": "modal-cpu",
+   "label": "Cloud API · CPU",
+   "hardware": "x86 server CPU",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 22,
+     "x_realtime": 0.88,
+     "realtime": false,
+     "measured_on": "2026-09-23",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "server"
+    },
+    "expression-2": {
+     "fps": 27,
+     "x_realtime": 1.35,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "server"
+    }
+   }
+  },
+  {
+   "id": "macos-m4",
+   "label": "macOS · CLI",
+   "hardware": "Apple M4",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 114,
+     "x_realtime": 4.56,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "CLI 2.7.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 1.57,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    },
+    "expression-2": {
+     "fps": 177,
+     "x_realtime": 8.85,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "CLI 2.7.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 0.91,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    }
+   }
+  },
+  {
+   "id": "python-macos",
+   "label": "macOS · Python",
+   "hardware": "Apple M4",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 177,
+     "x_realtime": 7.08,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "bithuman 2.11.6",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 1.63,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    },
+    "expression-2": {
+     "fps": 159,
+     "x_realtime": 7.95,
+     "realtime": true,
+     "measured_on": "2026-09-20",
+     "release": "bithuman 2.11.5",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 0.84,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    }
+   }
+  },
+  {
+   "id": "linux-cpu",
+   "label": "Linux · CLI",
+   "hardware": "Intel Core i7-13700F (x86_64)",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 36,
+     "x_realtime": 1.44,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "CLI 2.7.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 3.46,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    },
+    "expression-2": {
+     "fps": 44,
+     "x_realtime": 2.2,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "CLI 2.7.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 1.66,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    }
+   }
+  },
+  {
+   "id": "python-linux",
+   "label": "Linux · Python",
+   "hardware": "Intel Core i7-13700F (x86_64)",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 31,
+     "x_realtime": 1.24,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "bithuman 2.11.6",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 2.6,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    },
+    "expression-2": {
+     "fps": 46,
+     "x_realtime": 2.3,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "bithuman 2.11.6",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": 1.48,
+     "peak_gpu_gb": null,
+     "swap_gb": 0.0,
+     "memory_scope": "render"
+    }
+   }
+  },
+  {
+   "id": "iphone-15",
+   "label": "iPhone · Swift package",
+   "hardware": "iPhone 15",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 54,
+     "x_realtime": 2.16,
+     "realtime": true,
+     "measured_on": "2026-09-20",
+     "release": "Swift engine 1.9.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    },
+    "expression-2": {
+     "fps": 111,
+     "x_realtime": 5.55,
+     "realtime": true,
+     "measured_on": "2026-09-20",
+     "release": "Swift package 2.13.8",
+     "clip": {
+      "id": "6829-68771-0007",
+      "seconds": 16.285
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    }
+   }
+  },
+  {
+   "id": "android-s25plus",
+   "label": "Android",
+   "hardware": "Samsung Galaxy S25+",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 46,
+     "x_realtime": 1.84,
+     "realtime": true,
+     "measured_on": "2026-09-19",
+     "release": "essence2-android 0.5.12",
+     "clip": {
+      "id": "6829-68771-0007",
+      "seconds": 16.285
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    },
+    "expression-2": {
+     "fps": 43,
+     "x_realtime": 2.15,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "expression2-android 0.4.8",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    }
+   }
+  },
+  {
+   "id": "web",
+   "label": "Web browser (WebGPU)",
+   "hardware": "Chrome on Apple M4",
+   "published": true,
+   "cells": {
+    "essence-2": {
+     "fps": 29,
+     "x_realtime": 1.16,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    },
+    "expression-2": {
+     "fps": 30,
+     "x_realtime": 1.5,
+     "realtime": true,
+     "measured_on": "2026-09-22",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    }
+   }
+  },
+  {
+   "id": "apple-serve-launch",
+   "label": "Cloud live session · Apple silicon",
+   "hardware": "Apple M4 Max",
+   "published": false,
+   "cells": {
+    "essence-2": {
+     "fps": 136,
+     "x_realtime": 5.44,
+     "realtime": true,
+     "measured_on": "2026-09-23",
+     "release": "cloud API",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null
+    },
+    "expression-2": null
+   }
+  }
+ ]
+}

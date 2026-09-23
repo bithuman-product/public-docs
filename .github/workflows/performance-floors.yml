@@ -1,49 +1,38 @@
 name: Performance table matches the floors record
 
-# THE ONE PAGE ON THIS SITE WHOSE NUMBERS NOBODY CAN CHECK BY EYE.
+# EVERY SPEED THIS SITE PUBLISHES IS GENERATED, AND THIS IS WHERE A HAND EDIT IS CAUGHT.
 #
-# /sdk/performance is generated from `models/essence-2/perf/FLOORS.json` in
-# `bithuman-product/bithuman-models` by that repository's own tool. That tool
-# re-reads the LIVE page on a daily schedule and reddens when the two disagree —
-# from over there, after this repository has merged, on a branch that cannot fix
-# it.
-#
-# ★MEASURED 2026-09-21, from this repository's own history: at b70f331 only 2 of
-# the 18 comparable cells on the page still matched the record. Fourteen had
-# moved and four planes the record publishes had no row at all. It was closed
-# the same day by 4cdb756 and ddea10b — but nothing in THIS repository had
-# looked, or could have. That is what this workflow is: the page lives here, so
-# the check lives here.
+# bithuman-models' emitter (models/essence-2/tools/check_perf_floors.py) writes
+# every measured number between `<!-- FLOORS:… -->` markers — the performance
+# page's speed table, release line, memory table and method paragraph, the
+# headline partial, the per-platform snippets — and writes public/performance.json
+# beside them. scripts/check-performance-floors.mjs pins all of it; this workflow
+# grades the pin on every pull request, every push to main, and daily.
 #
 # WHAT EACH STEP ANSWERS, and what it cannot
-#   1. the gate's own controls — 29 defect arms that must fire, 9 good arms that
-#      must stay silent, 3 corpus controls. First, always, no network. A gate
-#      whose controls do not fire has verified nothing.
-#   2. page <-> pin and page <-> clock. No network, no credential, every event.
-#      This is the hand-edit question and the staleness question, and it is the
-#      half this repository can both answer and fix.
-#   3. served <-> pin, on the trunk only. A merged page is not a published one,
-#      and the number a customer reads during that window is the old one.
-#   4. pin <-> record. ★THIS RUNNER CANNOT DO IT. `bithuman-models` is private
-#      and this repository holds no secret, so the record is not reachable here
-#      and the gate says COULD NOT LOOK rather than MATCHED. Step 5 writes that
-#      into the job summary on every single run, so a green tick is read as
-#      "nobody hand-edited the page", never as "the numbers were re-checked
-#      against the record".
+#   1. the gates' own controls — defect arms that must fire, good arms that must
+#      stay silent, corpus controls. First, always, no network.
+#   2. blocks <-> pin, table <-> performance.json, json <-> the 30-day clock. No
+#      network, no credential. This is the hand-edit question and the staleness
+#      question, and it is the half this repository can both answer and fix.
+#   3. no measured frame rate typed outside a generated block, anywhere a page is
+#      built from (scripts/check-perf-literals.mjs).
+#   4. served <-> pin, on the trunk only, waiting out the deploy: a merged page is
+#      not a published one.
+#   5. json <-> record. ★THIS RUNNER CANNOT DO IT: bithuman-models is private and
+#      this repository holds no secret, so the gate says COULD NOT LOOK rather
+#      than MATCHED, and the summary says so on every run.
 #
-#      THE PIN IS REFRESHED BY HAND, beside the regeneration it records:
-#        python3 models/essence-2/tools/check_perf_floors.py --emit-docs \
-#          <public-docs>/src/content/docs/sdk/performance.md
-#        node scripts/check-performance-floors.mjs --write --models <bithuman-models>
-#      ★The record is read at `origin/main`, never from a working tree: measured
-#      2026-09-21, a working-tree read on a feature branch produced 52 findings
-#      that were all checkout state.
+#      THE PIN IS REFRESHED BY HAND, from a bithuman-models checkout, at origin/main:
+#        node scripts/check-performance-floors.mjs --regen --models <bithuman-models>
+#      (--regen runs origin/main's emitter over every marked file, writes
+#      public/performance.json, then pins; --write pins only if a fresh emit
+#      reproduces the files byte for byte.)
 #
-# WHAT A RED MEANS. Not "CI is broken". Either a cell on this page was edited
-# away from the measurement that produced it, or a row has aged past the
-# record's 30-day re-measure clock. Regenerate the page from the record. Never
-# edit the record to agree with the page: a floor moves with a measurement, not
-# with a docs PR.
+# WHAT A RED MEANS. A generated block or performance.json was edited away from
+# the emitter's output, a published cell passed the 30-day re-measure clock, or a
+# page typed a measured rate by hand. Regenerate from the record. Never edit the
+# record to agree with a page: a floor moves with a measurement, not a docs PR.
 
 on:
   push:
@@ -66,65 +55,62 @@ jobs:
   performance-floors:
     name: every published figure is the one the record measured
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: The gate proves it can fail (29 defect arms, 9 good arms, 3 corpus controls)
-        run: node scripts/check-performance-floors.mjs --selftest
+      - name: The gates prove they can fail (defect arms fire, good arms stay silent)
+        run: |
+          node scripts/check-performance-floors.mjs --selftest
+          node scripts/check-perf-literals.mjs --selftest
 
-      # ★WHY THIS STEP ACCEPTS 2 AND NOTHING ELSE. The gate's verdicts are
-      #   0 MATCHED, 1 DRIFTED, 2 COULD NOT LOOK. On this runner the record half
-      #   CANNOT run — `bithuman-models` is private and no secret is configured
-      #   here — so 2 is the honest verdict and expected by construction, and the
-      #   summary step below writes that next to the tick rather than leaving a
-      #   reader to infer it. 1 is a cell edited away from the record or a row
-      #   past the clock, and must fail. If a credential is ever added, this
-      #   condition is what should be removed first: a 2 would then mean the
-      #   record really could not be read, which is a failure.
-      #   ★The idiom is `cmd || rc=$?`, NOT `cmd; rc=$?`: GitHub runs `run:` under
-      #   `bash -e {0}`, and the second form aborts on the non-zero exit before rc
-      #   is read. A command on the left of `||` is exempt from -e.
-      - name: No cell has been edited away from the record, and no row has aged out
+      # ★WHY THIS STEP ACCEPTS 2. The verdicts are 0 MATCHED, 1 DRIFTED, 2 COULD
+      #   NOT LOOK. On this runner the record half cannot run (bithuman-models is
+      #   private, no secret here), so 2 is the honest verdict; the summary step
+      #   says so beside the tick. 1 is a hand edit or a cell past the clock, and
+      #   fails. ★`cmd || rc=$?`, not `cmd; rc=$?`: `run:` is `bash -e`.
+      - name: No generated block or performance.json edited, and no cell past the clock
         run: |
           rc=0; node scripts/check-performance-floors.mjs || rc=$?
           if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then exit "$rc"; fi
 
-      # ★THE TRUNK GRADES THE BYTES A CUSTOMER RECEIVES. A pull request has not
-      #   published anything yet, so asking the live site about it would grade
-      #   the previous page and print a green describing text nobody changed —
-      #   the deadlock scripts/check-served-is-current.mjs already names.
-      #   2 here is the site being unreachable, which is a transport fact and not
-      #   a docs defect; a table that DISAGREES is 1 and fails.
-      - name: docs.bithuman.ai serves the table the record generates
+      - name: No measured frame rate typed outside a generated block
+        run: node scripts/check-perf-literals.mjs
+
+      # ★THE TRUNK GRADES THE BYTES A CUSTOMER RECEIVES, once they are deployed.
+      #   A push to main races Vercel's build, so a table that still reads the
+      #   previous build is retried for up to 10 minutes before it counts; the
+      #   scheduled run grades whatever is live. 2 here is the site unreachable.
+      - name: docs.bithuman.ai serves the pinned table and performance.json
         if: github.event_name != 'pull_request'
         run: |
-          rc=0; node scripts/check-performance-floors.mjs --served https://docs.bithuman.ai || rc=$?
-          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then exit "$rc"; fi
+          for attempt in $(seq 1 20); do
+            rc=0; node scripts/check-performance-floors.mjs --served https://docs.bithuman.ai > served.log 2>&1 || rc=$?
+            if [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; then cat served.log; exit 0; fi
+            if [ "${{ github.event_name }}" != "push" ]; then break; fi
+            echo "attempt $attempt: the served site does not match the pin yet (rc=$rc); waiting for the deploy"
+            sleep 30
+          done
+          cat served.log; exit "$rc"
 
       # ★THE ANTI-SILENCE ARM. It always runs, it never fails the job, and it
-      #   writes down what this runner did NOT check — so nobody reads the green
-      #   tick above as more than it is.
+      #   writes down what this runner did NOT check.
       - name: Say out loud what this runner could not look at
         if: always()
         run: |
           {
-            echo '## /sdk/performance against the floors record'
+            echo '## Performance numbers against the floors record'
             echo
-            echo 'A green tick here means NO CELL ON THE PAGE HAS BEEN EDITED away from the'
-            echo 'pin in `scripts/performance-floors.json`, and that no row has aged past the'
-            echo 'record'"'"'s re-measure clock. It does NOT mean the pin was re-read against'
-            echo '`models/essence-2/perf/FLOORS.json`: that record is in a private repository'
-            echo 'and this runner holds no credential for it, so the gate prints COULD NOT LOOK'
-            echo 'for that half on every run here.'
-            echo
-            echo 'The record half is re-checked where the record lives — the'
-            echo '`essence-2 perf floors` workflow in `bithuman-product/bithuman-models` fetches'
-            echo 'this page daily and grades it against FLOORS.json — and by hand whenever a'
-            echo 'plane is re-measured, with `--write --models <checkout>`.'
+            echo 'A green tick means NO GENERATED BLOCK and NOT performance.json has been edited away'
+            echo 'from `scripts/performance-floors.json`, the speed table agrees with performance.json,'
+            echo 'no published cell is past the 30-day re-measure clock, and no page types a measured'
+            echo 'frame rate by hand. It does NOT mean performance.json was re-read against'
+            echo '`models/essence-2/perf/FLOORS.json`: that record is in a private repository and this'
+            echo 'runner holds no credential for it, so that half prints COULD NOT LOOK here. It is'
+            echo 're-checked where the record lives, and by hand with `--models <checkout>`.'
             echo
             echo '```'
             node scripts/check-performance-floors.mjs 2>&1 || true
