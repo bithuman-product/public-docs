@@ -1,6 +1,6 @@
 ---
 title: "Kotlin / Android — Hello, avatar"
-description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Expression 2 needs no API secret; Essence 2 needs one and renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
+description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Both need an API secret; Essence 2 renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
 section: examples
 group: "Examples"
 order: 14
@@ -8,7 +8,8 @@ order: 14
 
 This page is a whole project, not a fragment. Create the seven files below in the
 order they appear, push one WAV, and a physical Android phone renders a talking
-head from your audio — on the device, with no cloud round-trip and **no API secret**.
+head from your audio, on the device, with no cloud round-trip. Both projects read
+your API secret from `~/.gradle/gradle.properties` (`bithumanApiSecret=…`).
 
 **Measured on 2026-09-09**, exactly these files, on a Galaxy S25+ (SM-S936U1,
 Snapdragon 8 Elite, Android 16): 5.72 s of speech in → **117 frames** of 416×720
@@ -23,13 +24,13 @@ read `acc=NPU routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=NPU)` with an em
 ## Which model does this page build?
 
 Both. [Expression 2](/concepts/expression-2) is first because it is the shorter
-road to a frame: no account, no key, nothing to sign up for.
+road to a frame.
 [Essence 2](/concepts/essence-2) is the same seven files with three of them
 changed, and it is [further down this page](#essence-2-on-android--the-same-seven-files-three-of-them-changed).
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
-| Maven coordinate | `ai.bithuman:expression2-android:0.4.8` | `ai.bithuman:essence2-android:0.5.13` |
+| Maven coordinate | `ai.bithuman:expression2-android:0.4.9` | `ai.bithuman:essence2-android:0.5.14` |
 | bitHuman API secret | **not needed** | **required**, and used twice — see that section |
 | `minSdk` | 26 | 29 |
 | Picture | 416x720 at 20 fps | the identity's own canvas at 25 fps (1080x1920 for `A21SKT4314`) |
@@ -293,6 +294,8 @@ android {
     namespace  = "com.example.x2hello"
     compileSdk = 35
 
+    buildFeatures { buildConfig = true }        // BuildConfig carries the API secret
+
     defaultConfig {
         applicationId = "com.example.x2hello"
         minSdk        = 26                      // the AAR's own floor
@@ -300,6 +303,11 @@ android {
         versionCode   = 1
         versionName   = "1.0"
         ndk { abiFilters += "arm64-v8a" }       // the only ABI published
+        // Local builds only: a buildConfigField compiles the secret into the APK.
+        buildConfigField(
+            "String", "BITHUMAN_API_SECRET",
+            "\"${providers.gradleProperty("bithumanApiSecret").getOrElse("")}\"",
+        )
     }
 
     // Not optional: the SDK looks for its native libraries as real files on disk.
@@ -313,7 +321,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8")
+    implementation("ai.bithuman:expression2-android:0.4.9")
 }
 ```
 
@@ -359,6 +367,7 @@ exercise.
 package com.example.x2hello
 
 import ai.bithuman.expression2.Expression2Avatar
+import ai.bithuman.expression2.Expression2Metering
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
 import android.app.Activity
@@ -464,6 +473,8 @@ class MainActivity : Activity() {
         val expected = Math.round(seconds * Expression2Avatar.FRAMES_PER_SECOND)
         say("audio: ${pcm.size} samples = %.2f s\nfetching model $agentCode — first run downloads ~158 MB…".format(seconds))
 
+        // create() refuses without an API secret; set it first.
+        Expression2Metering.apiSecret = BuildConfig.BITHUMAN_API_SECRET
         // Blocks on the network the first time; that is why this is a worker thread.
         val model = Expression2ModelStore(this).fetch(agentCode)
         say("model ready — starting the engine…")
@@ -667,7 +678,7 @@ why the app renders the whole clip before it plays a second of it.
 | `FAILURE … Directory '…' does not contain a Gradle build` from `gradle wrapper` | you ran the wrapper before writing the files; Gradle 9 will not write a wrapper into an empty directory | write the seven files of Step 3 first, then `gradle wrapper` — [Step 2](#step-2--create-the-project) |
 | `Configuring project ':app' without an existing directory is not allowed` | `settings.gradle.kts` says `include(":app")` and there is no `app/` directory yet | `mkdir -p app/src/main/java/com/example/x2hello` (the `mkdir` line in Step 2 makes it) |
 | `UnsatisfiedLinkError` at first launch | an x86_64 emulator, or a device that is not `arm64-v8a` | use a physical arm64 phone |
-| `HTTP 400 … Object not found` naming a `web_manifest.json` URL | that agent code is not on the public mirror | [check the code first](/sdk/android#get-a-model) |
+| `HTTP 400 … Object not found` naming a `web_manifest.json` URL | that agent code is not on the public mirror | [check the code first](/sdk/android#first-frame) |
 | `speech.wav is not a RIFF/WAVE file` | you pushed an AIFF/MP3, or the push landed elsewhere | re-run the `afconvert`/`ffmpeg` line in Step 1 |
 | `need 16 kHz mono 16-bit PCM; speech.wav is 44100 Hz, 2 ch, 16-bit` | wrong sample rate or channel count | `-ac 1 -ar 16000` |
 | App shows the push instructions again after you pushed | the file landed in another package's directory | the path in the message is the one to use, verbatim |
@@ -701,13 +712,13 @@ Qualcomm group and the engine renders on the CPU, slower and otherwise the same:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8") {
+    implementation("ai.bithuman:expression2-android:0.4.9") {
         exclude(group = "com.qualcomm.qti")
     }
 }
 ```
 
-[The SDK page](/sdk/android#expression-2) has the measured size of that trade.
+[The SDK page](/sdk/android#install) has the measured size of that trade.
 
 ## Where the agent code comes from
 
@@ -718,7 +729,7 @@ MISSING_AUTH` for a private one. To use your own, `POST /v1/agent/generate` with
 `model: "expression-2"` returns an `agent_code` ([Agents](/api/agents)) — a
 private agent needs its owner's key passed to `MeteredDoorResolver`, so check
 visibility before you build a code into an app. [The SDK
-page](/sdk/android#get-a-model) carries the door's three answers and the codes
+page](/sdk/android#first-frame) carries the door's three answers and the codes
 verified anonymously on 2026-09-11.
 
 ## Feed the microphone instead of a file
@@ -775,7 +786,7 @@ push yourself, and it needs an **API secret**.
 > [the Android SDK page](/sdk/android#troubleshooting).
 >
 > **For a talking head on Android today, use the Expression 2 project at the top of
-> this page.** It needs no key and no `.imx`.
+> this page.** It needs no `.imx`.
 
 It is still published and still supported; it is second on this page because it
 is the longer road to a first frame.
@@ -1118,7 +1129,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.5.13")
+    implementation("ai.bithuman:essence2-android:0.5.14")
 }
 ```
 

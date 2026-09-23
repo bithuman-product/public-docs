@@ -72,7 +72,7 @@ with duplicate symbols ([why](/sdk/ios#install)).
   below.
 
   ★ **Why an Android agent code does not work here.** [The Android SDK
-  page](/sdk/android#get-a-model) points `Expression2ModelStore` at a mirror that
+  page](/sdk/android#first-frame) points `Expression2ModelStore` at a mirror that
   answers *anonymously*, and [the Android example](/examples/kotlin-android-hello)
   renders `A02HCY0444` with no key and no agent of your own. The reason it does
   not carry over is the **form**, not the permission. That mirror vends the

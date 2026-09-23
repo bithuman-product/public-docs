@@ -64,26 +64,27 @@ with bithuman.open("A23WJF0199.imx") as avatar:
     for image in avatar.render("demo_sample.wav"):
         # hand it to your display — OpenCV wants image[:, :, ::-1]
         print(image.shape)` },
-  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.8")
+  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.9")
 import ai.bithuman.expression2.Expression2Avatar
+import ai.bithuman.expression2.Expression2Metering
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
 import android.content.Context
 import android.graphics.Bitmap
 
-/** [pcm16k] is 16 kHz mono float32 in [-1, 1] — one float per sample, not ShortArray. */
-fun render(context: Context, agentCode: String, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
-    // Downloads the model the first time (about 160 MB). Never on the main thread.
-    val model = Expression2ModelStore(context).fetch(agentCode)
+/** [pcm16k] is 16 kHz mono float32 in [-1, 1]. */
+fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
+    Expression2Metering.apiSecret = BuildConfig.BITHUMAN_API_SECRET   // before create()
+    val model = Expression2ModelStore(context).fetch("A23WJF0199")     // ~160 MB, first run only
 
     Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
-        val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
-        avatar.feed(pcm16k)                   // renders each complete 1.6 s chunk
-        avatar.flushTail()                    // the padded tail is the last sentence
+        val frame = avatar.newFrameBitmap()   // 416 x 720, allocate once
+        avatar.feed(pcm16k)
+        avatar.flushTail()                    // end of the utterance
         while (true) {
             if (avatar.pull(frame) != null) { show(frame); continue }
             if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
-            Thread.sleep(10)                  // null means "not ready yet" — wait, do not re-ask at once
+            Thread.sleep(10)                  // null means "not ready yet"
         }
     }
 }` },
@@ -116,7 +117,7 @@ while idleTicks < 100 {
 
 // The two mobile projects lead: they end in a rendered frame on a handset.
 const examples = [
-  { t: "Android app, end to end (Kotlin)", d: "The whole project — no account, no API secret, no credits; a frame on an arm64 handset.", href: "/examples/kotlin-android-hello" },
+  { t: "Android app, end to end (Kotlin)", d: "The whole project, from Maven Central to a talking avatar on an arm64 handset.", href: "/examples/kotlin-android-hello" },
   { t: "iOS app, end to end (Swift)", d: "The whole SwiftUI app — a public showcase identity, no account and no key. Needs Xcode 26+, an Apple Developer team and a physical iPhone.", href: "/examples/swift-ios-expression2" },
   { t: "Hello, avatar (Python)", d: "Stream audio and render frames in ~20 lines.", href: "/sdk/python" },
   { t: "Voice agent + avatar", d: "A real-time conversational agent with a live face.", href: "/examples/ai-conversation" },
@@ -220,7 +221,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift. <strong>On a phone, the first frame is free</strong> — both <a href="/sdk/android">Android</a> (<a href="/examples/kotlin-android-hello">the whole project</a>) and <a href="/sdk/ios">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>) render a public showcase avatar with <strong>no account, no API secret and no credits</strong>. Android is arm64 only; iOS needs Xcode 26+, an Apple Developer team and a physical iPhone. <a href="/sdk">What each platform needs →</a></p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift. Android and iOS render on the device: <a href="/sdk/android">Android</a> (<a href="/examples/kotlin-android-hello">the whole project</a>) and <a href="/sdk/ios">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>). Both use your API secret; idle time is free. <a href="/sdk">What each platform needs →</a></p>
         <Button href="/start">Start here</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
