@@ -29,13 +29,13 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/index.astro",
     name: "bitHuman docs",
     description:
-      "Build real-time AI avatars — hosted by us over a REST API, or rendered on your own hardware with the CLI and the Python, Apple, Android and Web SDKs. One credit balance for all of it.",
+      "Realtime talking avatars from one portrait: Essence 2 for photoreal people, Expression 2 for any character. Run them from the cloud API, the web, the CLI, Python, Apple, Android and LiveKit.",
   },
   {
     route: "start",
     file: "src/pages/start.astro",
     name: "Get started",
-    description: "Go from zero to a talking, listening avatar — see one work with no setup, then pick how you run it.",
+    description: "Talk to a live avatar, get an API secret, and run your first avatar on the platform you choose.",
   },
   {
     route: "api/reference",
@@ -49,7 +49,7 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/sdk/index.astro",
     name: "SDK",
     description:
-      "Run bitHuman on your own hardware — one page per platform: the CLI on macOS and Linux, Python, Apple, Android and the Web.",
+      "Every platform bitHuman runs on: CLI, Python, Apple, Android, Web, LiveKit and MCP, with current versions and frame rates.",
     section: "sdk",
   },
   {
@@ -74,25 +74,8 @@ export function hubMeta(route: string): HubMeta {
   return h;
 }
 
-// The two code samples /start prints. They live here so /llms-full.txt carries
-// the same bytes the page renders.
-export const START_EMBED = `<!-- Paste into any page. No API secret, no install. -->
-<iframe
-  src="https://bithuman.ai/embed/A78WKV4515"
-  allow="microphone *; camera *; autoplay *"
-  style="width: 100%; height: 600px; border: 0;"
-></iframe>`;
-
-// The canonical CLI happy path — the same four steps /sdk/cli teaches.
-export const START_CLI = `# 1 · install (macOS Apple Silicon or Linux x86_64; \`run\` also needs livekit-server on PATH — see the CLI page)
-curl -fsSL https://install.bithuman.ai | sh
-
-# 2 · sign in (opens your browser)
-bithuman login
-
-# 3 · grab an avatar
-bithuman pull wise-pup            # prints ~/.cache/bithuman/showcase/wise-pup.imx
-
-# 4 · run it
-bithuman run wise-pup
-# → open the printed http://127.0.0.1:8088/<CODE> URL — a live session, brain included`;
+// The two code samples /start prints, from src/data/platforms.ts, so
+// /llms-full.txt carries the same bytes the page renders.
+import { PLATFORMS, EMBED_SNIPPET } from "../data/platforms";
+export const START_EMBED = EMBED_SNIPPET;
+export const START_CLI = PLATFORMS.find((p) => p.id === "cli")!.card!.code;

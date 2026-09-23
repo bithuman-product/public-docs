@@ -1,427 +1,71 @@
 ---
 import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
-import CodeTabs from "../components/CodeTabs.astro";
-import Playground from "../components/Playground.astro";
-import WidgetDemo from "../components/WidgetDemo.astro";
-import caseStudies from "../data/case-studies.json";
+import LiveDemo from "../components/LiveDemo.astro";
+import PathTable from "../components/PathTable.astro";
+import PerfHeadline from "../components/PerfHeadline.astro";
 import { hubMeta } from "../config/hubs";
 
 const meta = hubMeta("");
-
-const featuredCases = caseStudies.slice(0, 3);
-
-const pillars = [
-  { name: "Cloud API", href: "/api", cta: "Start with the API", tag: "We host the GPU — call simple REST endpoints to generate, host, and drive avatars. No infrastructure to run. Move the same avatars on-device whenever privacy or cost calls for it.", icon: "M4 7h16M4 12h16M4 17h10" },
-  { name: "SDK — run it yourself", href: "/sdk", cta: "Get the SDK", tag: "Run avatars on your own hardware — iOS, Android, Python, macOS, the browser, or one CLI command. The render stays on your device, billed in credits at the self-hosted rate.", icon: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5" },
-];
-
-// Every surface you can build on, named the way a developer searches for it —
-// the page each one opens is the single source for that platform.
-const platforms = [
-  { label: "iOS, iPadOS & macOS", href: "/sdk/apple" },
-  { label: "Android", href: "/sdk/android" },
-  { label: "iOS app, end to end", href: "/examples/swift-ios-expression2" },
-  { label: "Android app, end to end", href: "/examples/kotlin-android-hello" },
-  { label: "Python", href: "/sdk/python" },
-  { label: "Browser", href: "/sdk/web" },
-  { label: "macOS & Linux (CLI)", href: "/sdk/cli" },
-];
-
-// elegant device icons (line-art, theme-aware via currentColor)
-const devices = [
-  { label: "iPhone", svg: `<rect x="7" y="2" width="10" height="20" rx="2.5"/><line x1="10.5" y1="4.6" x2="13.5" y2="4.6"/>` },
-  { label: "Raspberry Pi", svg: `<rect x="3" y="6" width="18" height="12" rx="1.5"/><rect x="5.5" y="9" width="4" height="4" rx=".5"/><line x1="12.5" y1="9.5" x2="18" y2="9.5"/><line x1="12.5" y1="12" x2="18" y2="12"/><line x1="12.5" y1="14.5" x2="18" y2="14.5"/>` },
-  { label: "Mac mini", svg: `<rect x="3" y="8" width="18" height="8" rx="1.5"/><circle cx="17" cy="12" r=".9"/>` },
-  { label: "Browser", svg: `<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><circle cx="6" cy="6.2" r=".5" fill="currentColor" stroke="none"/><circle cx="8" cy="6.2" r=".5" fill="currentColor" stroke="none"/>` },
-  { label: "Cloud", svg: `<path d="M7.5 18a4 4 0 0 1 .3-8 5 5 0 0 1 9.4-1A3.6 3.6 0 0 1 17 18z"/>` },
-];
-
-const stats = [
-  { v: "20–25 fps", l: "real-time lip-sync — 20 for Expression 2, 25 for Essence 2" },
-  { v: "On your hardware", l: "the render stays on your device" },
-  { v: "Credits", l: "one balance for cloud, self-hosted and on-device" },
-];
-
-// Each tab quotes the platform page it stands for — /sdk/cli, /sdk/python,
-// /sdk/android, /sdk/apple — line for line. The Kotlin tab is held to
-// sdk/android.md byte for byte by scripts/check-home-quickstart-kotlin.mjs.
-const quickstart = [
-  { label: "CLI", lang: "bash", code: `# install one binary, then sign in (opens your browser)
-curl -fsSL https://install.bithuman.ai | sh
-bithuman login
-# a showcase avatar — prints ~/.cache/bithuman/showcase/wise-pup.imx
-bithuman pull wise-pup
-# a live avatar in your browser
-bithuman run wise-pup` },
-  { label: "Python", lang: "python", code: `# pip install "bithuman[expression-2]"
-# hello.py
-import bithuman
-
-# an Essence 2 .imx or an Expression 2 .avatar — one call
-with bithuman.open("A23WJF0199.imx") as avatar:
-    # (height, width, 3) uint8, RGB, at the avatar's own frame rate
-    for image in avatar.render("demo_sample.wav"):
-        # hand it to your display — OpenCV wants image[:, :, ::-1]
-        print(image.shape)` },
-  { label: "Kotlin", lang: "kotlin", code: `// build.gradle.kts: implementation("ai.bithuman:expression2-android:0.4.9")
-import ai.bithuman.expression2.Expression2Avatar
-import ai.bithuman.expression2.Expression2Metering
-import ai.bithuman.expression2.Expression2ModelStore
-import ai.bithuman.expression2.Expression2Options
-import android.content.Context
-import android.graphics.Bitmap
-
-/** [pcm16k] is 16 kHz mono float32 in [-1, 1]. */
-fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
-    Expression2Metering.apiSecret = BuildConfig.BITHUMAN_API_SECRET   // before create()
-    val model = Expression2ModelStore(context).fetch("A23WJF0199")     // ~160 MB, first run only
-
-    Expression2Avatar.create(context, model, Expression2Options()).use { avatar ->
-        val frame = avatar.newFrameBitmap()   // 416 x 720, allocate once
-        avatar.feed(pcm16k)
-        avatar.flushTail()                    // end of the utterance
-        while (true) {
-            if (avatar.pull(frame) != null) { show(frame); continue }
-            if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
-            Thread.sleep(10)                  // null means "not ready yet"
-        }
-    }
-}` },
-  { label: "Swift", lang: "swift", code: `// Package.swift:
-//   .package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.2")
-import Expression2
-
-// modelPath is the unpacked .avatar
-let engine = try Expression2Engine.create(modelPath: avatarDirectory,
-                                          sharedEngineDir: sharedEngineDirectory)
-engine.feed(samples)   // [Float] PCM, 16 kHz mono
-engine.flushTail()     // at the end of an utterance
-
-// Generation is asynchronous: pull() returns nil until a chunk lands, so poll.
-// 100 x 50 ms with nothing = done.
-var idleTicks = 0
-while idleTicks < 100 {
-    var got = false
-    // frame: [UInt8], BGR, engine.width * engine.height * 3
-    while let (frame, _) = engine.pull() {
-        got = true
-        show(frame)
-    }
-    if got { idleTicks = 0 } else {
-        idleTicks += 1
-        try await Task.sleep(nanoseconds: 50_000_000)
-    }
-}` },
-];
-
-// The two mobile projects lead: they end in a rendered frame on a handset.
-const examples = [
-  { t: "Android app, end to end (Kotlin)", d: "The whole project, from Maven Central to a talking avatar on an arm64 handset.", href: "/examples/kotlin-android-hello" },
-  { t: "iOS app, end to end (Swift)", d: "The whole SwiftUI app — a public showcase identity, no account and no key. Needs Xcode 26+, an Apple Developer team and a physical iPhone.", href: "/examples/swift-ios-expression2" },
-  { t: "Hello, avatar (Python)", d: "Stream audio and render frames in ~20 lines.", href: "/sdk/python" },
-  { t: "Voice agent + avatar", d: "A real-time conversational agent with a live face.", href: "/examples/ai-conversation" },
-  { t: "REST in any language", d: "Generate and drive an agent over plain HTTP.", href: "/examples/rest-hello" },
-  { t: "Run it from the CLI", d: "One binary, one command, a talking agent in your browser.", href: "/sdk/cli" },
-];
-
-// Real customers — the marks bithuman.ai's own case studies carry, copied into
-// /public/logos, drawn monochrome. Only a customer's own mark goes here: NRF
-// has no wordmark in the brand assets yet (only a favicon), so it waits.
-const customerLogos = [
-  { name: "Shopify", src: "/logos/shopify-logo.svg" },
-  { name: "Uber", src: "/logos/uber-logo.svg" },
-  { name: "Allbirds", src: "/logos/allbirds-logo.webp" },
-  { name: "Ivoclar", src: "/logos/ivoclar-logo.svg" },
-  { name: "MINT Museum", src: "/logos/mint-museum-logo.webp" },
-];
 ---
 
-<Base
-  title="bitHuman Docs — Private On-Device AI Avatars in Real Time"
-  description={meta.description}
->
-  {/* ===== HERO ===== */}
-  <section class="hero">
-    <div class="container">
-      <div class="hero-grid">
-        {/* LEFT: value prop + CTA */}
-        <div class="hero-copy">
-          <span class="eyebrow" data-reveal>Real-time Avatar Platform</span>
-          <h1 data-reveal>Private, on-device visual agents</h1>
-          <p class="sub" data-reveal>Lifelike avatars that see, hear, and respond — live. Build them in a few lines of code, then run them on your own hardware — CPU, Apple Silicon, phones, the browser — or let us host them.</p>
-          <div class="hero-cta" data-reveal>
-            <Button href="/start" size="lg">Start building</Button>
-            <Button href="/examples#ready-made-avatars" variant="ghost" size="lg">Browse showcase</Button>
-          </div>
-
-          {/* elegant device strip */}
-          <div class="devices" data-reveal>
-            {devices.map((d) => (
-              <div class="device">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><Fragment set:html={d.svg} /></svg>
-                <span>{d.label}</span>
-              </div>
-            ))}
-          </div>
-
-          <div class="hero-stats" data-reveal>
-            {stats.map((s) => (<div class="stat"><strong>{s.v}</strong><span>{s.l}</span></div>))}
-          </div>
-        </div>
-
-        {/* Hero poster is the LCP element: no data-reveal, so it paints on decode. */}
-        <div class="hero-media">
-          <Playground compact />
+<Base title="bitHuman docs" description={meta.description}>
+  <section class="home-hero">
+    <div class="container hero-grid">
+      <div>
+        <h1>Realtime talking avatars from one portrait</h1>
+        <p class="lede"><strong>Essence 2</strong> renders a photoreal person, up to 1920×1080 at 25 fps. <strong>Expression 2</strong> renders any character at 416×720, 20 fps. Run them from the cloud API, a web page, a terminal, Python, Apple and Android apps, or a LiveKit agent.</p>
+        <div class="hero-cta">
+          <Button href="/start">Get started</Button>
+          <Button href="https://www.bithuman.ai/developer/api-keys" variant="secondary" external>Get an API secret</Button>
         </div>
       </div>
-
-      {/* monochrome customer logo strip */}
-      <div class="logo-strip" data-reveal>
-        <span class="logo-strip-label">Trusted by teams shipping live agents</span>
-        <div class="logo-row">
-          {customerLogos.map((c) => (
-            <img class="logo-item" src={c.src} alt={c.name} loading="lazy" decoding="async" width="96" height="28" />
-          ))}
-        </div>
-      </div>
+      <LiveDemo />
     </div>
   </section>
 
-  {/* ===== TWO WAYS TO BUILD (the one fork, in plain language) ===== */}
-  <section class="section">
+  <section class="home-block">
     <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Two ways to build</span>
-        <h2>Let us host it, or run it yourself</h2>
-        <p>That's the only real decision — and you can switch later. Not sure? <a href="/start">Start here →</a></p>
-      </div>
-      <div class="pillars">
-        {pillars.map((p) => (
-          <a href={p.href} class="pillar" data-reveal>
-            <div class="pillar-ico"><svg width="22" height="22" viewBox="0 0 24 24"><path d={p.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <h3>{p.name}</h3><p>{p.tag}</p><span class="pillar-go">{p.cta} →</span>
-          </a>
-        ))}
-      </div>
-
-      {/* Links only — every install step stays on its own platform page. */}
-      <div class="platforms" data-reveal>
-        <span class="platforms-label">Building for a device?</span>
-        <div class="platform-row">
-          {platforms.map((p) => (<a class="platform" href={p.href}>{p.label}</a>))}
-        </div>
-      </div>
+      <h2 id="choose-your-path">Choose your path</h2>
+      <p class="muted">Every way to run bitHuman, with the first command for each. The same avatars work everywhere.</p>
+      <PathTable />
     </div>
   </section>
 
-  {/* ===== QUICKSTART ===== */}
-  <section class="section quickstart-sec">
-    <div class="container qs-grid">
-      <div class="qs-copy" data-reveal>
-        <span class="eyebrow">Quickstart</span>
-        <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift. Android and iOS render on the device: <a href="/sdk/android">Android</a> (<a href="/examples/kotlin-android-hello">the whole project</a>) and <a href="/sdk/apple">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>). Both use your API secret; idle time is free. <a href="/sdk">What each platform needs →</a></p>
-        <Button href="/start">Start here</Button>
-      </div>
-      <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
-    </div>
-  </section>
-
-  {/* ===== MODELS (one compact strip, after they've seen it work) ===== */}
-  <section class="section">
+  <section class="home-block alt">
     <div class="container">
-      <a class="models-strip" href="/concepts/models" data-reveal>
-        <div class="ms-copy">
-          <span class="eyebrow">Pick a model by character</span>
-          <h2>Essence 2 &amp; Expression 2</h2>
-          <p>Every agent starts from one portrait image — bitHuman generates the rest. <strong>Essence 2</strong> brings photorealistic people to life. <strong>Expression 2</strong> generates the whole scene — stylized characters, animals and robots, and people too. Both run in the cloud and on every SDK platform.</p>
-        </div>
-        <span class="mlink">Compare the models →</span>
-      </a>
+      <h2 id="performance">How fast it runs</h2>
+      <p class="muted">Frames per second, measured end to end. At 1× real time or faster, an avatar holds a live conversation.</p>
+      <PerfHeadline />
     </div>
   </section>
 
-  {/* ===== EMBED WIDGET (the one interactive moment on the page) ===== */}
-  <section class="section">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Embed anywhere</span>
-        <h2>Drop an agent into any site</h2>
-        <p>One line of HTML adds a live agent — pick a corner gadget or a full chat widget, then try both right here.</p>
-      </div>
-      <div data-reveal><WidgetDemo /></div>
-    </div>
-  </section>
-
-  {/* ===== EXAMPLES ===== */}
-  <section class="section">
-    <div class="container">
-      <div class="section-head show-head" data-reveal>
-        <div><span class="eyebrow">Examples</span><h2>Copy-paste starting points</h2></div>
-        <Button href="/examples" variant="secondary">All examples</Button>
-      </div>
-      <div class="cards-3">
-        {examples.map((e) => (<a class="ecard" href={e.href} data-reveal><h3>{e.t}</h3><p>{e.d}</p><span class="mlink">Open →</span></a>))}
-      </div>
-    </div>
-  </section>
-
-  {/* ===== SHOWCASE (case studies) ===== */}
-  <section class="section">
-    <div class="container">
-      <div class="section-head show-head" data-reveal>
-        <div><span class="eyebrow">Showcase</span><h2>Built with bitHuman</h2><p>Real teams shipping real-time visual agents into the world.</p></div>
-        <Button href="/examples#ready-made-avatars" variant="secondary">See all</Button>
-      </div>
-      <div class="cards-3">
-        {featuredCases.map((c) => (
-          <a class="bcard" href="/examples#ready-made-avatars" data-reveal>
-            <div class="bcard-img">
-              <img src={c.image} alt="" loading="lazy" decoding="async" width="640" height="400" />
-              <span class="bcard-org">{c.org}</span>
-            </div>
-            <div class="bcard-b">
-              <span class="pill">{c.category}</span>
-              <h3>{c.title}</h3>
-              <p>{c.summary}</p>
-              {c.metric && (
-                <div class="bcard-metric">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                  <span>{c.metric}</span>
-                </div>
-              )}
-            </div>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  {/* ===== CTA ===== */}
-  <section class="section">
-    <div class="container">
-      <div class="cta" data-reveal>
-        <h2>Ship your first visual agent today</h2>
-        <p>Free tier — 99 credits a month, no card required.</p>
-        <div class="cta-actions">
-          <Button href="/start" size="lg">Get started</Button>
-          <Button href="https://bithuman.ai/developer/api-keys" variant="secondary" size="lg" external>Get an API secret</Button>
-        </div>
-      </div>
+  <section class="home-block">
+    <div class="container three">
+      <a class="mini" href="/concepts/models"><h3>Which model?</h3><p>Essence 2 for photoreal people, Expression 2 for any character.</p></a>
+      <a class="mini" href="/guides/pricing"><h3>Pricing</h3><p>Credits pay for talking time. Idle time is free.</p></a>
+      <a class="mini" href="/examples"><h3>Examples</h3><p>Complete apps for iOS, Android, macOS, the web, Python and the CLI.</p></a>
     </div>
   </section>
 </Base>
 
 <style>
-  .hero { padding-block: var(--space-12) var(--space-10); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: var(--space-8); align-items: center; }
-  .hero-copy { display: flex; flex-direction: column; align-items: flex-start; }
-  .hero-copy .eyebrow { margin-bottom: var(--space-3); }
-  .hero h1 { font-size: clamp(2.6rem, 5.2vw, var(--fh-4xl)); }
-  .hero .sub { margin: var(--space-4) 0 0; font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 34ch; }
+  .home-hero { padding-block: var(--space-10) var(--space-8); border-bottom: 1px solid var(--color-border); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: var(--space-8); align-items: center; }
+  .home-hero h1 { font-size: var(--fh-3xl); line-height: 1.1; letter-spacing: -0.02em; }
+  .home-hero .lede { margin-top: var(--space-4); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 58ch; }
   .hero-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
-  .hero-media { min-width: 0; }
-
-  /* elegant device strip */
-  .devices { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-top: var(--space-8); }
-  .device { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--color-text-tertiary); transition: color var(--t-fast) var(--ease); }
-  .device:hover { color: var(--color-primary); }
-  .device svg { width: 34px; height: 34px; }
-  .device span { font-size: var(--ft-xs); font-weight: var(--fw-medium); }
-
-  .hero-stats { display: flex; gap: var(--space-8); margin-top: var(--space-8); flex-wrap: wrap; }
-  .stat { display: flex; flex-direction: column; }
-  .stat strong { font-size: var(--fh-md); letter-spacing: -0.02em; }
-  .stat span { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-
-  /* monochrome customer logo strip */
-  .logo-strip { margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--color-border); text-align: center; }
-  .logo-strip-label { display: block; font-size: var(--ft-xs); font-weight: var(--fw-medium); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: var(--space-5); }
-  .logo-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-8) var(--space-10); }
-  .logo-item { height: 26px; width: auto; max-width: 120px; object-fit: contain; opacity: 0.55; filter: grayscale(1); transition: opacity var(--t-fast) var(--ease), filter var(--t-fast) var(--ease); }
-  .logo-item:hover { opacity: 0.95; filter: grayscale(0); }
-
-  .pillars { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
-  .pillar { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .pillar:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .pillar-ico { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--color-primary-soft); color: var(--color-primary); margin-bottom: var(--space-4); }
-  .pillar h3 { font-size: var(--fh-md); }
-
-  /* platform row */
-  .platforms { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-5); }
-  .platforms-label { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-  .platform-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .platform { padding: 0.3rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--r-full); background: var(--color-surface); font-size: var(--ft-sm); font-weight: var(--fw-medium); transition: all var(--t-med) var(--ease); }
-  .platform:hover { border-color: var(--color-primary); color: var(--color-primary); }
-  .pillar p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
-  .pillar-go { margin-top: var(--space-4); color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-
-  .section-head { max-width: 720px; margin-bottom: var(--space-6); }
-  .section-head h2 { font-size: var(--fh-2xl); margin-top: var(--space-3); }
-  .section-head p { margin-top: var(--space-3); font-size: var(--ft-lg); color: var(--color-text-secondary); }
-
-  .cards-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
-  .cards-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
-  .mcard { display: block; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .mcard:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .mcard-top { display: flex; align-items: center; gap: var(--space-3); }
-  .mcard-top h3 { font-size: var(--fh-md); }
-  .model-tag { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
-  .mcard p { margin: var(--space-3) 0 var(--space-4); color: var(--color-text-secondary); }
-  .mlink { color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-  .models-strip { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); padding: var(--space-6) var(--space-8); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .models-strip:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
-  .models-strip .ms-copy h2 { font-size: var(--fh-lg); margin-top: var(--space-2); }
-  .models-strip .ms-copy p { margin-top: var(--space-2); color: var(--color-text-secondary); max-width: 70ch; }
-  .models-strip .mlink { flex: none; }
-  @media (max-width: 720px) { .models-strip { flex-direction: column; align-items: flex-start; gap: var(--space-3); } }
-
-  .tryit-sec { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
-  .qs-grid { display: grid; grid-template-columns: 0.8fr minmax(0, 1.2fr); gap: var(--space-8); align-items: center; }
-  .qs-grid > * { min-width: 0; }
-  .qs-copy h2 { font-size: var(--fh-xl); margin-top: var(--space-3); }
-  .qs-copy .muted { margin: var(--space-3) 0 var(--space-5); font-size: var(--ft-lg); }
-
-  .show-head { display: flex; justify-content: space-between; align-items: flex-end; max-width: none; gap: var(--space-5); }
-  .bcard { border: 1px solid var(--color-border); border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface); transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
-  .bcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .bcard-img { position: relative; aspect-ratio: 16/10; background: var(--color-surface-3); }
-  .bcard-img img { width: 100%; height: 100%; object-fit: cover; }
-  .bcard-org { position: absolute; left: var(--space-3); bottom: var(--space-3); padding: 0.2rem 0.55rem; border-radius: var(--r-sm); background: rgba(0,0,0,0.62); color: #fff; font-size: var(--ft-xs); font-weight: var(--fw-medium); backdrop-filter: blur(2px); }
-  .bcard-b { padding: var(--space-4); }
-  .bcard-b .pill { margin-bottom: var(--space-2); }
-  .bcard-b h3 { font-size: var(--ft-lg); }
-  .bcard-b p { margin-top: 0.35rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .bcard-metric { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: var(--space-3); padding: 0.3rem 0.6rem; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-xs); font-weight: var(--fw-medium); }
-  .bcard-metric svg { flex: none; }
-
-  .ecard { display: block; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .ecard:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .ecard h3 { font-size: var(--ft-lg); }
-  .ecard p { margin: 0.35rem 0 var(--space-3); color: var(--color-text-secondary); font-size: var(--ft-sm); }
-
-  .cta { text-align: center; padding: var(--space-10) var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-3xl); background: var(--color-surface-2); }
-  .cta h2 { font-size: var(--fh-2xl); }
-  .cta p { margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--ft-lg); }
-  .cta-actions { display: flex; gap: var(--space-3); justify-content: center; margin-top: var(--space-6); flex-wrap: wrap; }
-
-  @media (max-width: 980px) {
-    .qs-grid { grid-template-columns: 1fr; }
-    .pillars, .cards-3 { grid-template-columns: 1fr; }
-    .cards-2 { grid-template-columns: 1fr; }
-    /* hero stacks: media first as the product moment, then copy */
-    .hero-grid { grid-template-columns: 1fr; gap: var(--space-8); }
-    .hero-media { order: -1; max-width: 560px; margin-inline: auto; width: 100%; }
-    .hero-copy { align-items: center; text-align: center; }
-    .hero .sub { max-width: 52ch; }
-    .hero-cta, .devices, .hero-stats { justify-content: center; }
-  }
-  @media (max-width: 600px) {
-    .devices { gap: var(--space-5); }
-    .hero-stats { gap: var(--space-5); }
-    .show-head { flex-direction: column; align-items: flex-start; }
-    .logo-row { gap: var(--space-5) var(--space-6); }
-    .logo-item { height: 22px; }
+  .home-block { padding-block: var(--space-8); }
+  .home-block.alt { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
+  .home-block h2 { font-size: var(--fh-lg); margin-bottom: var(--space-2); }
+  .home-block .muted { margin-bottom: var(--space-4); }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .mini { display: block; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); color: inherit; }
+  .mini:hover { border-color: var(--color-primary); }
+  .mini h3 { font-size: var(--ft-lg); }
+  .mini p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
+  @media (max-width: 900px) {
+    .hero-grid, .three { grid-template-columns: 1fr; }
+    .home-hero h1 { font-size: var(--fh-2xl); }
   }
 </style>

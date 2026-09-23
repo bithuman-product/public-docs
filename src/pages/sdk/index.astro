@@ -1,165 +1,66 @@
 ---
 import Base from "../../layouts/Base.astro";
+import PerfHeadline from "../../components/PerfHeadline.astro";
 import { hubMeta } from "../../config/hubs";
+import versions from "../../data/versions.json";
 
-// One card per platform. The card links to that platform's page, which is the
-// one place its install, model download and code live — no command appears here.
-// No frame rate appears here either: performance is /performance, linked once.
+const V = versions.versions;
 
-const MARKS: Record<string, string> = {
-  cli: `<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 9.5 10.5 12l-3 2.5M13 15h3.5"/>`,
-  ios: `<rect x="7" y="2" width="10" height="20" rx="2.5"/><line x1="10.5" y1="4.8" x2="13.5" y2="4.8"/>`,
-  android: `<rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10" y1="18.8" x2="14" y2="18.8"/>`,
-  web: `<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><circle cx="6" cy="6.2" r=".55" fill="currentColor" stroke="none"/><circle cx="8.2" cy="6.2" r=".55" fill="currentColor" stroke="none"/>`,
-  python: `<path d="M9 8 5 12l4 4M15 8l4 4-4 4"/>`,
-};
-
-interface Card { key: string; name: string; sub: string; href: string; note: string }
-
-const cards: Card[] = [
-  {
-    key: "cli",
-    name: "CLI — macOS & Linux",
-    sub: "macOS Apple Silicon · Linux x86_64",
-    href: "/sdk/cli",
-    note: "No code. `bithuman run` puts a talking avatar in your browser; `bithuman render` writes an MP4. Essence 2 and Expression 2.",
-  },
-  {
-    key: "python",
-    name: "Python",
-    sub: "Python 3.10–3.14 · macOS Apple Silicon · Linux x86_64 / aarch64",
-    href: "/sdk/python",
-    note: "`pip install bithuman`: frames and MP4 clips from your own code. Essence 2 and Expression 2 (`[expression-2]` extra).",
-  },
-  {
-    key: "ios",
-    name: "Apple — iPhone, iPad, Mac",
-    sub: "one Swift package · Xcode 26+",
-    href: "/sdk/apple",
-    note: "The `Expression2` and `Essence2` products. The Mac path needs no device, profile or entitlement.",
-  },
-  {
-    key: "android",
-    name: "Android",
-    sub: "arm64-v8a · Maven Central",
-    href: "/sdk/android",
-    note: "`expression2-android` and `essence2-android`. Expression 2 renders a published identity with no key.",
-  },
-  {
-    key: "web",
-    name: "Web",
-    sub: "any modern browser",
-    href: "/sdk/web",
-    note: "An iframe or a URL, nothing to install. `?render=local` renders the avatar in the visitor's tab.",
-  },
+// One card per platform, with the artifact version from versions.json. The
+// platform page is the one place its install, first frame and code live.
+const platforms = [
+  { name: "CLI", sub: "macOS (Apple silicon), Linux x86_64 and arm64", href: "/sdk/cli", ver: `CLI ${V.cli}`, note: "No code: a live avatar in your browser, or an MP4 from audio." },
+  { name: "Python", sub: "Python 3.10–3.14", href: "/sdk/python", ver: `bithuman ${V.python}`, note: "Frames and MP4s from your own code; stream audio in, frames out." },
+  { name: "Apple", sub: "iOS, iPadOS, macOS · Xcode 26+", href: "/sdk/apple", ver: `Swift package ${V.swift}`, note: "The Essence2 and Expression2 products, on the device." },
+  { name: "Android", sub: "arm64-v8a · Maven Central", href: "/sdk/android", ver: `essence2-android ${V.essence2_android} · expression2-android ${V.expression2_android}`, note: "Both models on the handset." },
+  { name: "Web", sub: "any modern browser", href: "/sdk/web", ver: "nothing to install", note: "One URL or one iframe; WebGPU when the device has it." },
+  { name: "LiveKit", sub: "Python agents", href: "/sdk/livekit", ver: `livekit-plugins-bithuman ${V.livekit_plugin}`, note: "A face for a LiveKit voice agent." },
+  { name: "MCP server", sub: "Claude, Cursor and other MCP clients", href: "/sdk/mcp", ver: `in the CLI ${V.cli}`, note: "bitHuman as tools for an AI agent." },
 ];
 
-const others = [
-  { name: "Cloud API", href: "/api", note: "We host the GPU; you call REST endpoints." },
-  { name: "LiveKit", href: "/sdk/livekit", note: "A served avatar in a LiveKit room, or a Python voice agent with a face." },
-  { name: "Self-hosting", href: "/guides/self-hosting", note: "Which surface runs which model, how it is billed, and the Expression 1 GPU container." },
-  { name: "Offline licensing", href: "/guides/pricing#offline-licensing", note: "Business and Enterprise: realtime avatars completely off the internet." },
-];
-
-/** `a [b](/c)` → HTML, so a note can carry code and one link without a markdown parser. */
-const rich = (s: string) =>
-  s
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 ---
 
-<Base
-  title="SDK — bitHuman docs"
-  description={hubMeta("sdk").description}
->
+<Base title="SDKs — bitHuman docs" description={hubMeta("sdk").description}>
   <section class="sdk">
     <div class="container">
-      <h1 id="platforms">Run bitHuman on your own hardware</h1>
-      <p class="lede">One page per platform — each is the one place its install, model and code live. Which model runs on which platform is on <a href="/concepts/models#where-each-model-runs">Models</a>.</p>
+      <h1>SDKs</h1>
+      <p class="lede">Run Essence 2 and Expression 2 on your own hardware or in your own app. Every platform takes the same API secret, and credits pay for talking time only. Not sure which model? <a href="/concepts/models">Models: which one?</a></p>
 
       <div class="gallery">
-        {cards.map((c) => (
-          <article class="card">
-            <span class="mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><Fragment set:html={MARKS[c.key]} /></svg>
-            </span>
-            <h2 class="name"><a href={c.href}>{c.name}</a></h2>
-            <p class="sub">{c.sub}</p>
-            <p class="says" set:html={rich(c.note)} />
-          </article>
+        {platforms.map((p) => (
+          <a class="pcard" href={p.href}>
+            <h2>{p.name}</h2>
+            <p class="sub">{p.sub}</p>
+            <p class="note">{p.note}</p>
+            <p class="ver"><code>{p.ver}</code></p>
+          </a>
         ))}
       </div>
 
-      <nav class="also" aria-label="Other ways to run">
-        <p class="also-label">Not running it on your own device?</p>
-        <ul>
-          {others.map((o) => <li><a href={o.href}>{o.name}</a> — {o.note}</li>)}
-        </ul>
-      </nav>
+      <h2 class="sec" id="performance">How fast it runs</h2>
+      <PerfHeadline />
 
-      <nav class="also" aria-label="Reference">
-        <p class="also-label">Reference</p>
-        <ul>
-          <li><a href="/sdk/cli/reference">CLI reference</a> — every subcommand, flag, environment variable and exit code.</li>
-          <li><a href="/sdk/cli/local-mode">CLI local mode</a> — an on-device conversation brain.</li>
-          <li><a href="/sdk/python-api">Python API reference</a> — every public name in the <code>bithuman</code> package.</li>
-          <li><a href="/sdk/android-api">Android API reference</a> — every public class in the two Android artifacts.</li>
-          <li><a href="/sdk/apple-api">iOS API reference</a> — the <code>Essence2</code> C interface and the Expression 2 Swift entry points.</li>
-          <li><a href="/performance">Performance</a> — measured frame rates, every platform in one table.</li>
-        </ul>
-      </nav>
+      <p class="more">Also: <a href="/api">the cloud API</a> · <a href="/guides/self-hosting">self-hosting</a> · <a href="/guides/pricing#offline-licensing">offline licence</a> · <a href="/downloads">downloads & versions</a> · references for the <a href="/sdk/cli/reference">CLI</a>, <a href="/sdk/python-api">Python</a>, <a href="/sdk/apple-api">Apple</a> and <a href="/sdk/android-api">Android</a>.</p>
     </div>
   </section>
 </Base>
 
 <style>
-  .sdk { padding-block: var(--space-8) var(--space-12); }
-  .also { margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
-  .also-label { font-size: var(--ft-sm); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); font-weight: var(--fw-medium); }
-  .also ul { margin-top: var(--space-3); padding-left: 1.2em; color: var(--color-text-secondary); }
-  .also li { margin-top: var(--space-2); }
-  .also a { color: var(--color-primary); font-weight: var(--fw-medium); }
-  .sdk h1 { font-size: var(--fh-2xl); max-width: 22ch; scroll-margin-top: calc(var(--nav-h) + 20px); }
-  .lede { margin-top: var(--space-3); max-width: 68ch; font-size: var(--ft-lg); color: var(--color-text-secondary); }
-  .lede a { color: var(--color-primary); font-weight: var(--fw-medium); }
-
-  .gallery {
-    margin-top: var(--space-5);
-    display: grid;
-    gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr));
-    /* A card is as tall as what it says, not as tall as its tallest sibling. */
-    align-items: start;
-  }
-
-  .card {
-    position: relative;
-    min-width: 0;
-    padding: var(--space-5);
-    border: 1px solid var(--color-border);
-    border-radius: var(--r-2xl);
-    background: var(--color-surface);
-    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
-  }
-  .card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-sm); }
-
-  .mark { display: block; color: var(--color-primary); }
-  .mark svg { width: 22px; height: 22px; }
-
-  .name { margin-top: var(--space-3); font-size: var(--fh-md); letter-spacing: -0.015em; }
-  /* The whole card is the target, while the link's name stays just the platform. */
-  .name a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-  .name a:focus-visible { outline: none; }
-  .name a:focus-visible::after { outline: 2px solid var(--color-primary); outline-offset: 3px; }
-  .sub { margin-top: 0.25rem; color: var(--color-text-tertiary); font-size: var(--ft-sm); }
-
-  /* Above the card's own overlay link, so links inside it stay reachable. */
-  .says { position: relative; z-index: 1; margin-top: var(--space-4); font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .says :global(a) { color: var(--color-primary); font-weight: var(--fw-medium); }
-  .says :global(code) { font-family: var(--font-mono); font-size: 0.86em; }
-
-  @media (max-width: 560px) {
-    .card { padding: var(--space-4); border-radius: var(--r-xl); }
-    .sdk h1 { font-size: var(--fh-xl); }
-  }
+  .sdk { padding-block: var(--space-10); }
+  .sdk h1 { font-size: var(--fh-3xl); }
+  .lede { margin-top: var(--space-4); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 64ch; }
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-top: var(--space-8); }
+  .pcard { display: flex; flex-direction: column; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); color: inherit; }
+  .pcard:hover { border-color: var(--color-primary); }
+  .pcard h2 { font-size: var(--ft-lg); }
+  .pcard .sub { font-size: var(--ft-xs); color: var(--color-text-tertiary); margin-top: 0.2rem; }
+  .pcard .note { font-size: var(--ft-sm); color: var(--color-text-secondary); margin-top: var(--space-3); flex: 1; }
+  .pcard .ver { margin-top: var(--space-3); font-size: var(--ft-xs); }
+  .sec { font-size: var(--fh-lg); margin-top: var(--space-10); margin-bottom: var(--space-3); }
+  .jobs { overflow-x: auto; }
+  .jobs table { width: 100%; border-collapse: collapse; font-size: var(--ft-sm); }
+  .jobs th, .jobs td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--color-border); white-space: nowrap; }
+  .jobs th { color: var(--color-text-secondary); font-weight: var(--fw-medium); }
+  .more { margin-top: var(--space-6); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  @media (max-width: 900px) { .gallery { grid-template-columns: 1fr; } }
 </style>
