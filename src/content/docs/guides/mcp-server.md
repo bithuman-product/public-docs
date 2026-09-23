@@ -22,15 +22,8 @@ has a tool yet: [talking video](/api/video) (`POST /v1/video/generate`),
 (`/v1/knowledge`) are HTTP-only for now.
 
 > **Note — one server.** `bithuman mcp`, inside the CLI, is the bitHuman MCP
-> server. A standalone `bithuman-mcp` package was published on PyPI until
-> 2026-09-15 and has been removed, so asking pip for that name now fails
-> outright. If you registered that command with your MCP client, change it to
-> `bithuman mcp`.
->
-> **`bithuman` is the only bitHuman package on PyPI**, and it is the
-> [Python library](/sdk/python) — not the CLI and not the MCP server. The CLI
-> that carries this server installs from
-> [install.bithuman.ai](https://install.bithuman.ai) or Homebrew.
+> server; there is no separate package. If you registered the legacy
+> `bithuman-mcp` command with your MCP client, change it to `bithuman mcp`.
 
 ## Install and register
 
@@ -48,7 +41,7 @@ Client configuration is one entry:
 { "command": "bithuman", "args": ["mcp"] }
 ```
 
-`bithuman mcp tools` on cli-v2.6.20 prints **28 tools — 6 local and 22 cloud**.
+`bithuman mcp tools` prints **28 tools — 6 local and 22 cloud** on CLI 2.7.0.
 The local six (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`,
 `render`) work against your own install and model files; the rest are the REST
 API below. Authenticate once with `bithuman login`, as for any other command.
@@ -95,20 +88,10 @@ API below. Authenticate once with `bithuman login`, as for any other command.
 Install the bitHuman CLI:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh
+curl -fsSL https://install.bithuman.ai | sh
 ```
 
 macOS Apple Silicon and Linux x86_64 — [more on the CLI page](/sdk/cli#install).
-
-> **Version check for `model` / `version` support:** `bithuman --version` must
-> report CLI **2.4.1 or newer**. The current release is well
-> past that ([which version that is](/sdk/cli/reference#version)), so a fresh
-> install is already there — but an install still on
-> **2.4.0** has no `model` parameter on `generate_agent`, and every creation
-> uses the platform default model. Until your install reports 2.4.1+, upgrade
-> (`brew upgrade bithuman-cli`, or re-run
-> [install.bithuman.ai](https://install.bithuman.ai)). There is no pip
-> alternative: the standalone server was removed from PyPI on 2026-09-15.
 
 Authenticate once with `bithuman login` (or export `BITHUMAN_API_SECRET` from the
 [Developer Dashboard](https://www.bithuman.ai/developer/api-keys)). The server resolves
@@ -181,21 +164,18 @@ The agent calls `generate_agent`, polls `get_agent_status` until `ready`
 second-generation one), then `create_embed_token` and hands you the JWT for the
 [embed widget](/api/embedding).
 
-**Create a photoreal Essence 2 agent** (CLI 2.4.1+ / `bithuman-mcp` 0.3.4+)
+**Create a photoreal Essence 2 agent**
 
 > Create an essence-2 avatar from this photo: https://…/portrait.jpg — a
 > helpful retail assistant. Tell me the agent id and poll until it's ready.
 
 The agent calls `generate_agent` with `model: "essence-2"` (equivalently
-`model: "essence", version: "v2"`) — 500 credits, and the input must be a
+`model: "essence", version: "v2"`) — the input must be a
 photorealistic human subject (else the API rejects it 422 **before billing**,
 see [the subject gate](/api/agents#the-essence-2-subject-gate-422)) — then
 polls `get_agent_status`. Expect the whole creation to take about 2 to 2.5
 hours, most of it in the `lip_sync` step while the identity trains
-([creation times](/api/agents#model-specific-inputs-and-creation-times)). Creation is **image-only**: never pass `video`. The
-`bithuman-mcp` 0.3.4 schema still listed a legacy `video` field — the API
-rejects it with `400 VIDEO_INPUT_NOT_SUPPORTED` — and `bithuman-mcp` 0.3.5 and
-the CLI 2.4.1+ server have both dropped it.
+([creation times](/api/agents#model-specific-inputs-and-creation-times)). Creation is **image-only**: never pass `video`.
 
 **Turn a script into speech**
 
