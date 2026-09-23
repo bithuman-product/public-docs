@@ -121,8 +121,15 @@ bundle.
 ## api-secret vs. runtime tokens
 
 The long-lived `api-secret` is never sent to the avatar engine or any third
-party. It only ever travels to `api.bithuman.ai` over TLS. The streaming runtime
-is authorized by a separate, short-lived **runtime token**:
+party. It only ever travels to `api.bithuman.ai` over TLS. There is one
+exception you must handle yourself. The LiveKit plugin writes whatever it is
+given as `api_secret` into LiveKit room attributes, where every participant can
+read it. Give it a
+[LiveKit cloud token](/sdk/livekit#keep-your-api-secret-out-of-the-room)
+instead of your secret.
+
+The streaming runtime is authorized by a separate, short-lived **runtime
+token**:
 
 1. Your code provides the API secret to the SDK or REST request.
 2. The SDK exchanges it for a short-lived runtime token at
