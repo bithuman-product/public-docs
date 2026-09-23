@@ -624,8 +624,12 @@ if (fenceHits > FENCE_BUDGET) fatal.push(
 // LOWERED 4 -> 2 on 2026-09-23 (docs redesign P9a): the CLI page and the CLI
 // reference no longer print the `bithuman --version` transcript, whose
 // `libessence …` line was two of the fenced hits. Two live proofs remain.
-if (fenceHits < 2) fatal.push(
-  `only ${fenceHits} fenced-verbatim hits (expected 2+) — the fence tracker stopped ` +
+// LOWERED 2 -> 1 on 2026-09-23 (Swift package 2.14.3, bithuman-models #1224): /sdk/apple no
+// longer tells a developer to `curl` libessence2-resources.zip by hand — Essence2Kit fetches the
+// engine's runtime files itself — so that fenced line (one hit) went with the step it taught.
+// One live proof remains, and a broken tracker reads 0, so it is still caught.
+if (fenceHits < 1) fatal.push(
+  `only ${fenceHits} fenced-verbatim hits (expected 1+) — the fence tracker stopped ` +
   `matching \`\`\` blocks, so quoted CLI transcripts are about to be reported as prose violations`
 );
 if (markerHits.n < 10) fatal.push(`only ${markerHits.n} occurrences matched a retirement marker (expected 10+) — MARKERS or the corpus changed shape`);
