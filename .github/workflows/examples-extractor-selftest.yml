@@ -55,14 +55,14 @@ on:
     paths:
       - 'scripts/check-published-examples-build.mjs'
       - 'scripts/examples-build-gate.sh'
-      - 'src/content/docs/examples/kotlin-android-hello.md'
+      - 'src/content/docs/examples/android-expression2.md'
       - 'src/content/docs/examples/swift-ios-expression2.md'
       - '.github/workflows/examples-extractor-selftest.yml'
   pull_request:
     paths:
       - 'scripts/check-published-examples-build.mjs'
       - 'scripts/examples-build-gate.sh'
-      - 'src/content/docs/examples/kotlin-android-hello.md'
+      - 'src/content/docs/examples/android-expression2.md'
       - 'src/content/docs/examples/swift-ios-expression2.md'
       - '.github/workflows/examples-extractor-selftest.yml'
 

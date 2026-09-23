@@ -1062,6 +1062,16 @@
       "permanent": true
     },
     {
+      "source": "/examples/kotlin-android-hello",
+      "destination": "/examples/android-expression2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/kotlin-android-hello/",
+      "destination": "/examples/android-expression2",
+      "permanent": true
+    },
+    {
       "source": "/examples/swift-ios-hello",
       "destination": "/examples/swift-ios-voice-agent",
       "permanent": true

@@ -388,6 +388,6 @@ enum class Accelerator
 ## See also
 
 - [Android](/sdk/android) — install it, get a model, render your first frame
-- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the whole project, file by file
+- Examples: [Expression 2](/examples/android-expression2) · [Essence 2](/examples/android-essence2)
 - [Pricing](/guides/pricing) — what a render costs, and what refuses without an API secret
 - [Performance](/performance) — measured frame rates for every platform

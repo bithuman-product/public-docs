@@ -1054,7 +1054,7 @@ Each row below quotes the shipped engine's own wording where it has one.
 
 - [iOS & iPadOS SDK](/sdk/apple) — the reference for this package, plus signing and the hardware notes.
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the same shape for Expression 2, which needs no key at all.
-- [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) — the same two models on Android, both projects in full.
+- [Kotlin / Android — Hello, avatar](/examples/android-essence2) — the same two models on Android, both projects in full.
 - [Essence 2](/concepts/essence-2) — what the model is and where it runs.
 - [Performance](/performance) — measured frame rates for every platform.
 - [Agents API](/api/agents) — creating an agent and downloading its model.

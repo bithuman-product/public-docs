@@ -18,7 +18,7 @@ Both models render on the handset: you feed 16 kHz mono speech in and pull pictu
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
-| **Worked example** | [Android example](/examples/kotlin-android-hello) | [Android example, Essence 2](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed) |
+| **Worked example** | [Android example: Expression 2](/examples/android-expression2) | [Android example: Essence 2](/examples/android-essence2) |
 
 Toolchain: JDK 17, Gradle 8.11 or newer, Android Gradle Plugin 8.7 or newer, and a physical arm64 handset (emulators cannot load the engines).
 
@@ -56,7 +56,7 @@ dependencies {
 
 Put the secret in `~/.gradle/gradle.properties` as `bithumanApiSecret=…`, outside your source tree.
 
-`expression2-android` brings the Qualcomm accelerator runtime with it. To keep the APK small and render on the CPU instead, exclude it:
+`expression2-android` brings the Qualcomm accelerator runtime with it (`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`). To keep the APK small and render on the CPU instead, exclude it:
 
 ```kotlin
 implementation("ai.bithuman:expression2-android:0.4.9") {
@@ -190,7 +190,7 @@ Frame rates on a Samsung Galaxy S25+ for both models are on the [performance pag
 ## Reference
 
 - [Android API reference](/sdk/android-api): every public class in both AARs.
-- [Android example](/examples/kotlin-android-hello): complete Expression 2 and Essence 2 projects.
+- Examples: [Expression 2](/examples/android-expression2) · [Essence 2](/examples/android-essence2), complete apps you can clone.
 - [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): one app for Android, iOS and macOS.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
 - Licence: proprietary, bitHuman SDK License; the notice ships in each AAR. FFmpeg in `essence2-android` is LGPL: [relink materials](/legal/android-ffmpeg-lgpl).
