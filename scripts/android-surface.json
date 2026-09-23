@@ -4,9 +4,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.5.13",
-        "digest": "sha256:bd96beae50d9ab4009ccb95062b04c26ed6a3888b0185d6e994d2eda41d4b6c2",
-        "filename": "essence2-android-0.5.13.aar",
+        "version": "0.5.14",
+        "digest": "sha256:b4912bdb016b8bfd6a3b4591ce398df08954614ed944465c99ea4afe0d86717c",
+        "filename": "essence2-android-0.5.14.aar",
         "resolved_on": "2026-09-23"
       },
       "surface": {
@@ -2495,6 +2495,15 @@
                 "loadable": true
               },
               {
+                "name": "stateDir",
+                "signature": "var stateDir: File?",
+                "mutable": true,
+                "jvm_getter": "getStateDir()Ljava/io/File;",
+                "jvm_setter": "setStateDir(Ljava/io/File;)V",
+                "jvm_field": "field stateDirLjava/io/File;",
+                "loadable": true
+              },
+              {
                 "name": "unmetered",
                 "signature": "var unmetered: Boolean?",
                 "mutable": true,
@@ -2706,6 +2715,16 @@
                   "synthetic"
                 ],
                 "kind": "internal"
+              },
+              {
+                "name": "getStateDir$annotations",
+                "jvm": "getStateDir$annotations()V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
               },
               {
                 "name": "getUnmetered$annotations",
@@ -4288,6 +4307,40 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.MeterHost",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.MeterLedger",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.MeterLedger$Companion",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.MeterLedger$Record",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.MotionQueue",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -4339,12 +4392,12 @@
             }
           ],
           "public_classes_without_metadata": [],
-          "synthetic_classes": 3,
+          "synthetic_classes": 5,
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 62,
-          "declared_classes": 57,
+          "class_files": 68,
+          "declared_classes": 61,
           "public_classes": 36
         }
       }
@@ -4353,9 +4406,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.4.8",
-        "digest": "sha256:3880083e3342a411e63adbc6893f08e94470eaaab7cc38278c906f98f9b49e62",
-        "filename": "expression2-android-0.4.8.aar",
+        "version": "0.4.9",
+        "digest": "sha256:f01e1be683df5ebcd61d42646495355d7606a1b8ec5918bebbf52f085c20fd19",
+        "filename": "expression2-android-0.4.9.aar",
         "resolved_on": "2026-09-23"
       },
       "surface": {
@@ -6457,6 +6510,17 @@
                 "kind": "synthetic"
               },
               {
+                "name": "access$setMeter$p",
+                "jvm": "access$setMeter$p(Lai/bithuman/expression2/Expression2Avatar;Lai/bithuman/expression2/SelfHostMeter;)V",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
                 "name": "create",
                 "jvm": "create(Landroid/content/Context;Lai/bithuman/expression2/Expression2Model;)Lai/bithuman/expression2/Expression2Avatar;",
                 "access": [
@@ -7162,6 +7226,305 @@
                 "jvm": "<init>(Ljava/io/File;II)V",
                 "access": [
                   "public"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getMeter$expression2_release",
+                "jvm": "getMeter$expression2_release()Lai/bithuman/expression2/SelfHostMeter;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setMeter$expression2_release",
+                "jvm": "setMeter$expression2_release(Lai/bithuman/expression2/SelfHostMeter;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.expression2.Expression2Metering",
+            "kind": "object",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [],
+            "companion": null,
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [],
+            "properties": [
+              {
+                "name": "apiBaseUrl",
+                "signature": "var apiBaseUrl: String?",
+                "mutable": true,
+                "jvm_getter": "getApiBaseUrl()Ljava/lang/String;",
+                "jvm_setter": "setApiBaseUrl(Ljava/lang/String;)V",
+                "jvm_field": "field apiBaseUrlLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "apiSecret",
+                "signature": "var apiSecret: String?",
+                "mutable": true,
+                "jvm_getter": "getApiSecret()Ljava/lang/String;",
+                "jvm_setter": "setApiSecret(Ljava/lang/String;)V",
+                "jvm_field": "field apiSecretLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "installId",
+                "signature": "var installId: String?",
+                "mutable": true,
+                "jvm_getter": "getInstallId()Ljava/lang/String;",
+                "jvm_setter": "setInstallId(Ljava/lang/String;)V",
+                "jvm_field": "field installIdLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "stateDir",
+                "signature": "var stateDir: File?",
+                "mutable": true,
+                "jvm_getter": "getStateDir()Ljava/io/File;",
+                "jvm_setter": "setStateDir(Ljava/io/File;)V",
+                "jvm_field": "field stateDirLjava/io/File;",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": [
+              {
+                "name": "INSTANCE",
+                "jvm": "field INSTANCELai/bithuman/expression2/Expression2Metering;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "object-instance"
+              },
+              {
+                "name": "getApiBaseUrl$annotations",
+                "jvm": "getApiBaseUrl$annotations()V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "getApiSecret$annotations",
+                "jvm": "getApiSecret$annotations()V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "getBeatIntervalMsForTest$expression2_release",
+                "jvm": "getBeatIntervalMsForTest$expression2_release()Ljava/lang/Long;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getClock$expression2_release",
+                "jvm": "getClock$expression2_release()Lkotlin/jvm/functions/Function0;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getFlushBudgetMs$expression2_release",
+                "jvm": "getFlushBudgetMs$expression2_release()J",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getInstallId$annotations",
+                "jvm": "getInstallId$annotations()V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "getLastBeatsDelivered$expression2_release",
+                "jvm": "getLastBeatsDelivered$expression2_release()I",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getLastBeatsFailed$expression2_release",
+                "jvm": "getLastBeatsFailed$expression2_release()I",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getLastServedAckedSeconds$expression2_release",
+                "jvm": "getLastServedAckedSeconds$expression2_release()D",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getLastSessionId$expression2_release",
+                "jvm": "getLastSessionId$expression2_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getLogSink$expression2_release",
+                "jvm": "getLogSink$expression2_release()Lkotlin/jvm/functions/Function1;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getSinkFactory$expression2_release",
+                "jvm": "getSinkFactory$expression2_release()Lkotlin/jvm/functions/Function2;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getStateDir$annotations",
+                "jvm": "getStateDir$annotations()V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "resetForTest$expression2_release",
+                "jvm": "resetForTest$expression2_release()V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setBeatIntervalMsForTest$expression2_release",
+                "jvm": "setBeatIntervalMsForTest$expression2_release(Ljava/lang/Long;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setClock$expression2_release",
+                "jvm": "setClock$expression2_release(Lkotlin/jvm/functions/Function0;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setFlushBudgetMs$expression2_release",
+                "jvm": "setFlushBudgetMs$expression2_release(J)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setLastBeatsDelivered$expression2_release",
+                "jvm": "setLastBeatsDelivered$expression2_release(I)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setLastBeatsFailed$expression2_release",
+                "jvm": "setLastBeatsFailed$expression2_release(I)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setLastServedAckedSeconds$expression2_release",
+                "jvm": "setLastServedAckedSeconds$expression2_release(D)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setLastSessionId$expression2_release",
+                "jvm": "setLastSessionId$expression2_release(Ljava/lang/String;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setLogSink$expression2_release",
+                "jvm": "setLogSink$expression2_release(Lkotlin/jvm/functions/Function1;)V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "setSinkFactory$expression2_release",
+                "jvm": "setSinkFactory$expression2_release(Lkotlin/jvm/functions/Function2;)V",
+                "access": [
+                  "public",
+                  "final"
                 ],
                 "kind": "internal"
               }
@@ -9255,6 +9618,15 @@
         "disagreements": {
           "internal_classes": [
             {
+              "name": "ai.bithuman.expression2.BeatSink",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "abstract",
+                "interface"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Devices",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -9317,6 +9689,48 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.HttpBeatSink",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.MeterHost",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.MeterLedger",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.MeterLedger$Companion",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.MeterLedger$Record",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Native",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -9334,6 +9748,23 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.SelfHostMeter",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.expression2.SelfHostMeter$Companion",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Wiring",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -9343,13 +9774,13 @@
             }
           ],
           "public_classes_without_metadata": [],
-          "synthetic_classes": 2,
+          "synthetic_classes": 5,
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 55,
-          "declared_classes": 52,
-          "public_classes": 41
+          "class_files": 68,
+          "declared_classes": 62,
+          "public_classes": 42
         }
       }
     }

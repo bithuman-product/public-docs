@@ -1,6 +1,6 @@
 ---
 title: "Kotlin / Android — Hello, avatar"
-description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Expression 2 needs no API secret; Essence 2 needs one and renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
+description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Both need a free API secret to render (talking time is billed, idle is free); Essence 2 renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
 section: examples
 group: "Examples"
 order: 14
@@ -8,7 +8,8 @@ order: 14
 
 This page is a whole project, not a fragment. Create the seven files below in the
 order they appear, push one WAV, and a physical Android phone renders a talking
-head from your audio — on the device, with no cloud round-trip and **no API secret**.
+head from your audio — on the device, with no cloud round-trip. The model downloads
+anonymously; rendering needs a free **API secret** (from `expression2-android` 0.4.9).
 
 **Measured on 2026-09-09**, exactly these files, on a Galaxy S25+ (SM-S936U1,
 Snapdragon 8 Elite, Android 16): 5.72 s of speech in → **117 frames** of 416×720
@@ -23,13 +24,15 @@ read `acc=NPU routing=Routing(enc=CPU, tok14=CPU, step=CPU, dec=NPU)` with an em
 ## Which model does this page build?
 
 Both. [Expression 2](/concepts/expression-2) is first because it is the shorter
-road to a frame: no account, no key, nothing to sign up for.
+road to a frame: the model downloads with no account, and rendering needs only a
+free API secret — from `expression2-android` 0.4.9 the session is metered (talking
+time only; idle is free).
 [Essence 2](/concepts/essence-2) is the same seven files with three of them
 changed, and it is [further down this page](#essence-2-on-android--the-same-seven-files-three-of-them-changed).
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
-| Maven coordinate | `ai.bithuman:expression2-android:0.4.8` | `ai.bithuman:essence2-android:0.5.13` |
+| Maven coordinate | `ai.bithuman:expression2-android:0.4.9` | `ai.bithuman:essence2-android:0.5.14` |
 | bitHuman API secret | **not needed** | **required**, and used twice — see that section |
 | `minSdk` | 26 | 29 |
 | Picture | 416x720 at 20 fps | the identity's own canvas at 25 fps (1080x1920 for `A21SKT4314`) |
@@ -300,7 +303,14 @@ android {
         versionCode   = 1
         versionName   = "1.0"
         ndk { abiFilters += "arm64-v8a" }       // the only ABI published
+        // From 0.4.9 the engine meters the session and refuses to create one without an
+        // API secret. Read it from ~/.gradle/gradle.properties (bithumanApiSecret=…) or the
+        // environment — never from the source tree.
+        val bithumanSecret = (project.findProperty("bithumanApiSecret") as String?)
+            ?: System.getenv("BITHUMAN_API_SECRET") ?: ""
+        buildConfigField("String", "BITHUMAN_API_SECRET", "\"$bithumanSecret\"")
     }
+    buildFeatures { buildConfig = true }        // AGP 8.x defaults it OFF
 
     // Not optional: the SDK looks for its native libraries as real files on disk.
     packaging { jniLibs { useLegacyPackaging = true } }
@@ -313,7 +323,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8")
+    implementation("ai.bithuman:expression2-android:0.4.9")
 }
 ```
 
@@ -359,6 +369,7 @@ exercise.
 package com.example.x2hello
 
 import ai.bithuman.expression2.Expression2Avatar
+import ai.bithuman.expression2.Expression2Metering
 import ai.bithuman.expression2.Expression2ModelStore
 import ai.bithuman.expression2.Expression2Options
 import android.app.Activity
@@ -388,7 +399,7 @@ import java.nio.ByteOrder
  */
 class MainActivity : Activity() {
 
-    /** A PUBLIC showcase identity — the door serves it with no credential. Swap in your own agent code. */
+    /** A PUBLIC showcase identity — the door serves it with no credential (rendering needs one). Swap in your own agent code. */
     private val agentCode = "A02HCY0444"
 
     /**
@@ -468,6 +479,9 @@ class MainActivity : Activity() {
         val model = Expression2ModelStore(this).fetch(agentCode)
         say("model ready — starting the engine…")
 
+        // The session is billed (talking time only) and create() refuses without a key:
+        // "refusing to serve: no API secret was found, …". Set it before create().
+        Expression2Metering.apiSecret = BuildConfig.BITHUMAN_API_SECRET
         val t0 = System.currentTimeMillis()
         val avatar = Expression2Avatar.create(this, model, options)
         Log.i(TAG, "engine: acc=${avatar.accelerator} routing=${avatar.routing} " +
@@ -701,7 +715,7 @@ Qualcomm group and the engine renders on the CPU, slower and otherwise the same:
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8") {
+    implementation("ai.bithuman:expression2-android:0.4.9") {
         exclude(group = "com.qualcomm.qti")
     }
 }
@@ -775,7 +789,7 @@ push yourself, and it needs an **API secret**.
 > [the Android SDK page](/sdk/android#troubleshooting).
 >
 > **For a talking head on Android today, use the Expression 2 project at the top of
-> this page.** It needs no key and no `.imx`.
+> this page.** It needs no `.imx`, and only a free API secret to render.
 
 It is still published and still supported; it is second on this page because it
 is the longer road to a first frame.
@@ -1118,7 +1132,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.5.13")
+    implementation("ai.bithuman:essence2-android:0.5.14")
 }
 ```
 

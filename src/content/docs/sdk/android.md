@@ -1,6 +1,6 @@
 ---
 title: "Android SDK"
-description: "Both second-generation models on an arm64 Android handset, each from one Maven coordinate: ai.bithuman:expression2-android:0.4.8 renders a generated scene with no account and no key, and ai.bithuman:essence2-android:0.5.13 renders your own identity at full resolution with a bitHuman API secret. Device floors, download sizes and a worked example for each."
+description: "Both second-generation models on an arm64 Android handset, each from one Maven coordinate: ai.bithuman:expression2-android:0.4.9 renders a generated scene from an anonymous download, and ai.bithuman:essence2-android:0.5.14 renders your own identity at full resolution; both bill talking time only and need a bitHuman API secret to render. Device floors, download sizes and a worked example for each."
 section: sdk
 group: "Platforms"
 order: 30
@@ -18,16 +18,17 @@ model, key.
 |---|---|---|
 | **What renders** | [a whole generated scene](/concepts/expression-2) — head, shoulders and background — at 416x720, 20 fps | [your own portrait, animated](/concepts/essence-2), at 25 fps, on the canvas that identity was generated at |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
-| **Dependency line** | `implementation("ai.bithuman:expression2-android:0.4.8")` | `implementation("ai.bithuman:essence2-android:0.5.13")` |
-| **Credential** | **none** for a published identity — no account, no API secret, no credits | a bitHuman **API secret**, in two places — [API secrets are free](https://www.bithuman.ai/developer/api-keys) |
+| **Dependency line** | `implementation("ai.bithuman:expression2-android:0.4.9")` | `implementation("ai.bithuman:essence2-android:0.5.14")` |
+| **Credential** | a bitHuman **API secret** to render (from 0.4.9); a published identity downloads with none | a bitHuman **API secret**, in two places — [API secrets are free](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB, into app-private storage | 226–281 MB, into app-private storage |
 | **Adds to your app** | 2.8 MB AAR, plus a 70 MB accelerator runtime you can opt out of | 12.1 MB AAR — 32.1 MB of `arm64-v8a` libraries |
 | **Worked example** | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | [the same page, second half](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed) |
 
-**The credential is the one difference that decides the project.** Expression 2
-reaches its first frame with no account at all. Essence 2 needs a bitHuman API
-secret in two places, and setting one does not cover the other — see
-[Authentication](#authentication).
+**Both need an API secret to render** — from `expression2-android` 0.4.9 and
+`essence2-android` 0.5.14 every on-device session is billed for its **talking time
+only** (idle is free). Expression 2 downloads a published identity anonymously and
+reads the key once, before `create()`; Essence 2 needs it in two places, and
+setting one does not cover the other — see [Authentication](#authentication).
 
 ## Install
 
@@ -60,7 +61,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8")
+    implementation("ai.bithuman:expression2-android:0.4.9")
 }
 ```
 
@@ -82,7 +83,7 @@ the CPU instead. Nothing throws, and the avatar still speaks — it is just slow
 
 ```kotlin
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.4.8") {
+    implementation("ai.bithuman:expression2-android:0.4.9") {
         exclude(group = "com.qualcomm.qti")
     }
 }
@@ -109,7 +110,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }
 }
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.5.13")
+    implementation("ai.bithuman:essence2-android:0.5.14")
 }
 ```
 
@@ -220,10 +221,11 @@ Two things about that block are easy to get wrong:
   it, so `Essence2ModelStore.MeteredDoorResolver` does not compile through the
   alias — import that one nested class from its own package.
   [Why these names stay spellable](/concepts/avatars-imx#the-engine-value-is-a-legacy-name).
-- **`checkRender()` is not optional bookkeeping.** A metered session whose
-  credential the service rejects keeps rendering for a five-minute grace behind a
-  countdown and then refuses; a metering service that cannot be reached never
-  stops a render.
+- **`checkRender()` is not optional bookkeeping.** A key the service rejects is
+  refused; a service that cannot be reached at the first contact renders nothing
+  (retryable); once the service has accepted the key, an outage renders for 300 s
+  of frames and then refuses retryably until it answers, and the outage is claimed
+  then (from 0.5.14).
 
 `create()` takes nothing but the directory the store filled. The
 [worked example](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed)
@@ -237,8 +239,9 @@ Neither AAR ships weights. Each model store downloads an identity by agent code
 into app-private storage, once, and keeps it there — so the download figure is
 also roughly what the installed app grows by.
 
-**Expression 2 — no credential.** `A02HCY0444` is a published identity, and so is
-every Expression 2 identity in the [showcase](/showcase):
+**Expression 2 — an anonymous download.** `A02HCY0444` is a published identity, and so is
+every Expression 2 identity in the [showcase](/showcase). The download needs no
+credential; rendering it does (next section):
 
 ```kotlin
 val model = Expression2ModelStore(context).fetch("A02HCY0444")   // not on the main thread
@@ -274,8 +277,18 @@ endpoint with the same key.
 
 ## Authentication
 
-Expression 2 needs no credential at all for a published identity. Essence 2 needs
-one, and it is asked for **twice**, in two places that fail differently:
+Both engines bill the session they serve — **talking time only**; idle is free —
+and refuse to render without an API secret.
+
+**Expression 2 (from 0.4.9)** reads it once, before `create()`, in this order:
+`Expression2Metering.apiSecret`, then the `BITHUMAN_API_SECRET` environment
+variable, then the secret the model was fetched with through
+`Expression2ModelStore.MeteredDoorResolver`. Without one, `Expression2Avatar.create()`
+throws: *"refusing to serve: no API secret was found, so this render cannot be
+attributed to an account."* A published identity still downloads anonymously.
+Below 0.4.9 Expression 2 on Android metered nothing.
+
+**Essence 2** asks for it **twice**, in two places that fail differently:
 
 | Where | Why | Without it |
 |---|---|---|

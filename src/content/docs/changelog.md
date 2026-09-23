@@ -10,6 +10,20 @@ order: 1
 
 ## September 2026
 
+### Android and Apple SDKs bill talking time only; Expression 2 on-device needs an API secret (2026-09-23)
+
+`ai.bithuman:essence2-android:0.5.14`, `ai.bithuman:expression2-android:0.4.9` and the
+Swift package **2.14.2** (Essence 2 engine 1.11.0, `Expression2` 2.6.5) bill a self-hosted
+session for its **talking time only** — idle animation is free. A key the service never
+accepted renders nothing (retryable, e.g. when the device is offline at start); once the key
+is accepted, an outage keeps rendering for 300 seconds of frames and then pauses until the
+service answers, and the outage is billed then. **Expression 2 on Android and Apple is metered
+for the first time**: set `Expression2Metering.apiSecret` (Android) or
+`Expression2Credential.set(_:)` (Apple) — or `BITHUMAN_API_SECRET` — before creating the
+engine, or it refuses to render. Published identities still download anonymously.
+`BITHUMAN_API_KEY` is accepted as a deprecated alias of `BITHUMAN_API_SECRET`. See
+[Android](/sdk/android#authentication) and [iOS / macOS](/sdk/ios#authentication).
+
 ### An API secret can no longer read your other API secrets (2026-09-23)
 
 `GET /v2/{user_id}/api-secrets/{alias}/get-value` now returns `403`
