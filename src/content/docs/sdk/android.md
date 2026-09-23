@@ -26,7 +26,7 @@ model, key.
 
 **The credential is the one difference that decides the project.** Expression 2
 reaches its first frame with no account at all. Essence 2 needs a bitHuman API
-key in two places, and setting one does not cover the other — see
+secret in two places, and setting one does not cover the other — see
 [Authentication](#authentication).
 
 ## Install
