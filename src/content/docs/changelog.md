@@ -25,6 +25,13 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### `bithuman` 2.11.7 — 2026-09-23
+
+- **Fixed:** `AsyncBithuman`, the class the LiveKit plugin uses, renders an Essence 2 avatar with the avatar's own teeth, as `bithuman.open()` does. An avatar file without its teeth is refused when it is opened.
+- **Fixed:** on a busy machine (a CI runner, a container with a CPU limit), `render()` no longer refuses with "no frames came out of that render" when the audio has speech in it.
+- **Changed:** live sessions bill talking time only. Idle frames are free, an Expression 2 streaming session now reports its usage, and `shutdown()` sends the session's last report.
+- **Changed:** Essence 2 on a Linux CPU renders about 15% faster and peaks at about half the memory.
+
 ### Swift package 2.14.2 — 2026-09-23
 
 Essence 2 engine 1.11.0 · Expression 2 engine 2.6.5
