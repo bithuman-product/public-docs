@@ -15,10 +15,7 @@ your agents answer from — entirely from code. It covers the ingest → create 
 resync loop: upload a file or URL, create a KB from those files, and rebuild it when the
 sources change.
 
-> **Requires an organization API secret.** These endpoints are scoped to an organization —
-> use an API secret created under [Organizations → API secrets](/api/organizations#organization-api-secrets).
-> A personal key returns `403`. Everything you create is owned by the organization and
-> counts against its plan quotas.
+> **Note** These endpoints need an [organization API secret](/api/organizations#organization-api-secrets); a personal secret returns `403`. What you create belongs to the organization and counts against its quotas.
 
 Ingestion and builds run **asynchronously**: each call returns immediately with the created
 row, and conversion/indexing continues in the background. There is no per-call credit charge —

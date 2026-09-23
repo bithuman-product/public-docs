@@ -23,13 +23,7 @@ Drop an agent onto any page as an iframe — no SDK install required:
 Replace `A78WKV4515` with your agent code — find it in the
 [Library](https://www.bithuman.ai/#library) or the Deploy & Share dialog.
 
-> **Warning** The iframe needs delegated `microphone` permission to hear the
-> user — and keep the `*` in the `allow` attribute. The embed URL
-> redirects cross-origin to `agent.viewer.bithuman.ai`, so a bare
-> `allow="microphone"` (which pins to the iframe's `src` origin) leaves the
-> mic silently blocked after the redirect. Use `microphone *` (or allowlist
-> `https://agent.viewer.bithuman.ai` explicitly). The same applies if the
-> embedding page sets a restrictive `Permissions-Policy`.
+> **Warning** Write `allow="microphone *"`, with the `*`. The embed redirects to another origin, so a bare `allow="microphone"` leaves the microphone silently blocked. A restrictive `Permissions-Policy` on your page blocks it too.
 
 ## Production: mint a token
 
@@ -45,11 +39,7 @@ append it to the iframe URL.
 | `fingerprint` | string | yes | Stable per-visitor hex string. Used for per-visitor rate limiting, to key the agent's conversation memory so a returning visitor is recognised, and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
 | `model` | string | no | Request a specific avatar model for the session — a model name (`essence-1`, `expression-1`, `essence-2`, `expression-2`) or a force-tier slug (`essence-2-gpu/-apple/-cpu`, `expression-2-gpu/-cpu/-apple`; the older `-ane` spelling stays accepted for saved links, embeds and share tokens — [per model](/concepts/models#advanced-pin-a-serving-tier)). Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
-> **Reading `supported_models` back into `model`.** The mint response (and
-> `GET /v1/agent/status/{id}`) returns `supported_models`. Every entry is a
-> **public** model name and can be sent back verbatim — the internal tier
-> spellings `essence-2-light` / `essence-2-quality` are folded before the
-> response is built, so they never appear in the array.
+Every entry of `supported_models` in the mint response (and in `GET /v1/agent/status/{id}`) is a model name you can send back as `model` unchanged.
 
 ```js
 // server: mint token (api-secret never reaches the browser)

@@ -248,9 +248,19 @@ jobs:
       # G1 — no internal content in a public page (STYLE.md, "Never in a public
       # page"). Report-only while the redesign rewrites the pages; it becomes
       # --strict when the last page is on its template.
-      - name: No internal content (report)
+      - name: No internal content
         if: always()
-        run: node scripts/check-internal-content.mjs --quiet
+        run: node scripts/check-internal-content.mjs --strict
+      - name: No internal content — the checker's own arms fire
+        if: always()
+        run: node scripts/check-internal-content.mjs --self-test
+      # G3 — every page follows its type's template (STYLE.md) and the callout rules.
+      - name: Every page follows its template
+        if: always()
+        run: node scripts/check-page-template.mjs
+      - name: Page template check — every rule fires on a fixture
+        if: always()
+        run: node scripts/check-page-template.mjs --selftest
       # G8 — one navigation: every page in exactly one sidebar group of
       # src/config/nav.ts; header and footer read nav.ts.
       - name: Navigation is one list

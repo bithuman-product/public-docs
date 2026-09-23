@@ -10,43 +10,17 @@ label: "Talking video"
 
 ## Overview
 
-The Video API renders a complete **talking-video mp4** of one of your agents
-speaking — from a **text** script (the agent's voice synthesizes it) or from a
-**hosted audio** file. It is asynchronous by default: submit a job, then poll for
-the finished video URL — or pass [`wait: true`](#blocking-mode-wait-true) for a
-blocking render that returns the mp4 in the response. On success you get a public
-CDN URL, the output duration, and the credits charged.
+`POST /v1/video/generate` renders an MP4 of one of your agents speaking, from a **text** script (in the agent's voice) or a **hosted audio** file. Submit a job and poll for the URL, or pass [`wait: true`](#blocking-mode-wait-true) to get the MP4 in the response.
 
-`essence-2` renders at **1080p** — `1080×1920` portrait or `1920×1080`
-landscape, matching the source orientation and capped at the source's long side.
-`expression-2` renders at its native `416×720`.
+`essence-2` renders at up to 1080p, `1080×1920` or `1920×1080` to match the source; `expression-2` renders at `416×720`.
 
-Talking videos bill **per minute of output, rounded up**: `expression-1`,
-`expression-2`, and `essence-2` are 4 credits/min; `essence-1` is 2 credits/min (`essence-2` is the standard
-render; the former `essence-2-light` name is retired).
-
-**How the charge actually lands.** Submitting a job charges the **120-second
-cap** up front — 2 × the per-minute rate — then refunds the difference once the
-real duration is known. So a 6-second `essence-2` render moves your balance
-`−8` then `+4`, settling at the documented 4 credits, and you need **8** credits
-free at submit time, not 4. Two consequences worth designing for:
-
-- a `402 INSUFFICIENT_BALANCE` at submit reflects the *up-front cap*, so it can
-  fire even when your balance covers the render's true cost;
-- a `credit_refund_…` row appears in [`GET /v1/usage`](/api/billing) for
-  **every** render, successful or not. On success it is the true-up of the
-  over-charge; only a *full* refund of the up-front amount means the render
-  failed. Compare the refund to the charge, don't treat any refund as a failure.
+Renders bill **per minute of output, rounded up**: 4 credits/min for `essence-2`, `expression-2` and `expression-1`, 2 for `essence-1`. A job charges the 120-second maximum up front and refunds the difference when it finishes, so you need that maximum free at submit time, and every render writes a `credit_refund_…` row in [usage](/api/billing#usage-history). A failed render is refunded in full.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 ## Generate a talking video
 
-`POST /v1/video/generate` — submit a render job. **Async by default:** returns
-immediately with a `job_id` and `status: "processing"`; poll the GET endpoint for
-completion. Pass **`wait: true`** for [blocking mode](#blocking-mode-wait-true) —
-the call holds the connection until the render finishes and returns the finished
-mp4 directly.
+`POST /v1/video/generate` returns a `job_id` with `status: "processing"`; poll [`GET /v1/video/{job_id}`](#get-talking-video-status) until it completes.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -60,10 +34,6 @@ mp4 directly.
 | `wait` | boolean | no | Blocking mode. `false` (default) returns a `job_id` to poll. `true` blocks until the render finishes (up to ~90s) and returns the finished `video_url` — plus `duration_seconds` and `credits_charged` — directly in this response; if it exceeds the cap you get the async `{ job_id }` to poll instead. Accepted as a JSON/multipart field or as a `?wait=true` query parameter. |
 
 ### Text input
-
-> **Note** The Python examples below use
-> [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
 import os
@@ -138,19 +108,7 @@ print(resp.json())
 }
 ```
 
-A `402` (`INSUFFICIENT_BALANCE`) is returned at submit time if your balance can't
-cover the render. An invalid `model`, a missing/invalid `input`, or text over the
-limit returns `400` before any charge. Requesting a model the agent can't be
-launched as returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) —
-also **before any charge**: for `expression-2` / `essence-2` that means
-the trained per-identity model doesn't exist yet (`agent <code>'s <family>
-model hasn't been generated yet`); `essence-1` needs the agent's `.imx` model file (present on
-every completed essence-1 creation), and `expression-1` needs an
-expression-1 agent — or the free, instant expression-1 model add on any agent
-with an image and a voice ([how](/api/agents#add-a-model-to-an-existing-agent)).
-Every 409 here names the call that fixes it. Check the agent's
-`supported_models` on the [Agents API](/api/agents#poll-status), or
-[add the model](/api/agents#add-a-model-to-an-existing-agent) first.
+Errors are returned at submit time, before any charge: `402 INSUFFICIENT_BALANCE` if your balance cannot cover the up-front maximum; `400` for an invalid `model` or `input`, or text over the limit; [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) if the agent does not have that model yet. Check the agent's `supported_models` ([poll status](/api/agents#poll-status)) or [add the model](/api/agents#add-a-model-to-an-existing-agent).
 
 ## Get talking-video status
 
@@ -168,8 +126,7 @@ resp = requests.get(
 print(resp.json())
 ```
 
-While rendering (note: job responses echo the **public** model name you
-requested — `essence-2` reads back as-is):
+While rendering:
 
 ```json
 { "success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing", "model": "essence-2" }
@@ -198,10 +155,7 @@ When complete:
 | `credits_charged` | integer | Credits charged for this render (present when `completed`). |
 | `error` | object | Failure detail (present when `failed`); the charge is refunded. |
 
-> **Note** Treat `video_url` as **opaque** — read it from the response, never
-> construct it. Finished renders are served from a storage host that is **not**
-> `assets.bithuman.ai`, and it can change. If you allowlist egress hosts or
-> proxy the download, allowlist what the API returns.
+> **Note** Read `video_url` from the response; never construct it. The storage host can change, so allowlist what the API returns.
 
 ## Polling pattern
 

@@ -10,17 +10,11 @@ label: "Billing & usage"
 
 ## The credits model
 
-bitHuman bills in **credits**: live sessions bill per minute, and creating an
-agent or a talking video is a one-time charge. Every rate, the plan ladder and
-top-ups are on [Pricing & credits](/guides/pricing) — the one place the numbers
-live. The endpoints on this page read your balance, your usage and the
-machine-readable rate schedule.
+bitHuman bills in **credits**: talking time in a live session bills per minute (idle time is free), and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/guides/pricing). These endpoints read your balance, your usage and the rate schedule.
 
 ## Account status
 
-`GET /v1/me` — your identity, plan, and current credit balance in one call. Handy as a
-pre-flight check (it's what the CLI uses) and to look up your `user_id` for the account
-endpoints.
+`GET /v1/me` returns your identity, plan and balance in one call: a good pre-flight check, and where to find your `user_id`.
 
 ```bash
 curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
@@ -43,16 +37,11 @@ curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
 }
 ```
 
-Read-only, no billing side effects. `credit_balance` is the sum of your plan and top-up
-credits. Use `user_id` in the `/v2/{user_id}/…` account endpoints
-([API secrets](/api/api-keys), [Runtime sessions](/api/runtime-sessions),
-[Providers](/api/providers)).
+`credit_balance` is plan plus top-up credits. Use `user_id` in the `/v2/{user_id}/…` account endpoints ([API secrets](/api/api-keys), [Runtime sessions](/api/runtime-sessions), [Providers](/api/providers)).
 
 ## Get the pricing schedule
 
-`GET /v1/pricing` — the machine-readable credit schedule, so you can estimate
-cost before a billable call. Agent creation is priced **per model** — read
-`agent_generation.by_model` (there is no flat creation rate):
+`GET /v1/pricing` returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`:
 
 ```bash
 curl https://api.bithuman.ai/v1/pricing \
@@ -86,33 +75,11 @@ curl https://api.bithuman.ai/v1/pricing \
 }
 ```
 
-`by_model` keys are the **canonical** `model` values `POST /v1/agent/generate`
-accepts. The retired `essence-2-quality` spelling is not accepted; use `essence-2`.
-`essence-2` is the [photorealistic Essence 2 creation](/api/agents#generate-an-agent)
-(one 500-credit charge) and `auto`
-[classifies and routes](/api/agents#generate-an-agent),
-charging the routed model's rate — 500 for `essence-2`, 2000 for
-`expression-2` (the `auto` entry in `by_model` shows the worst case).
-[Post-generation model adds](/api/agents#add-a-model-to-an-existing-agent)
-charge the same per-model rates (adding `expression-1` is free). Authoritative
-charges are always enforced server-side — treat this endpoint as an estimate
-and reference.
+`by_model` keys are the `model` values `POST /v1/agent/generate` accepts. `auto` is charged at the rate of the model it routes to (500 or 2000); the `auto` entry shows the higher one. [Adding a model](/api/agents#add-a-model-to-an-existing-agent) to an existing agent costs the same (adding `expression-1` is free). The server enforces the actual charge; treat this schedule as an estimate.
 
 ## Check credit balance
 
-`GET /v2/credit-summaries` — returns the live balance for the **authenticated
-account** (the owner of the `api-secret`), broken down by plan vs. topup credits,
-plus an estimate of how many minutes of each session type it can afford at current
-rates. Safe to call frequently (cached read-through, no side effects).
-
-The endpoint always returns the caller's own balance; there is no way to look up
-another user. (A `user_id` query param is silently ignored — it does not switch
-accounts and never returns `404`.)
-
-| Query param | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `app` | string | no | `imaginex` | App identifier for multi-app subscription support. |
-| `app_key` | string | no | same as `app` | Explicit subscription key for collection-scoped apps. |
+`GET /v2/credit-summaries` returns the live balance of the account that owns the `api-secret`, split into plan and top-up credits, with an estimate of the minutes each session type can afford. It is safe to call often. It only ever returns your own balance; a `user_id` parameter is ignored.
 
 ```bash
 # Your own balance — just your API secret:
@@ -144,8 +111,7 @@ curl https://api.bithuman.ai/v2/credit-summaries \
       "essence_self_hosted": 1842,
       "expression_cloud": 460,
       "expression_self_hosted": 921
-    },
-    "isEnterprisePlanUser": false
+    }
   }
 }
 ```
@@ -154,11 +120,10 @@ curl https://api.bithuman.ai/v2/credit-summaries \
 
 | Field | Type | Notes |
 |---|---|---|
-| `balance` | number (float) | Sum of plan + topup + reward credits, returned as a float (e.g. `5910592.0`). Can go negative down to `-11` (grace window before suspension). |
+| `balance` | number | plan + top-up + reward credits; can go down to `-11` (the grace window before suspension) |
 | `plan_credits` | number | Remaining credits from the active subscription; resets at billing-period end. |
 | `topup_credits` | number | Credits from one-time top-ups; do not reset. |
 | `is_enterprise` | boolean | `true` for org-pooled (enterprise) billing. |
-| `isEnterprisePlanUser` | boolean | Backward-compat alias for `is_enterprise` — prefer the snake_case field. |
 | `minutes_estimate` | object | Floor-division of `balance` by each mode's credits/min rate. |
 
 There is one `minutes_estimate` key per serving mode. **The rate differs by
@@ -177,28 +142,13 @@ model** — read the key for the model you actually run:
 | `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
 
-> **`essence_*` and `expression_*` without a version are Essence 1 and Expression 1**
->
-> `essence_cloud`, `essence_self_hosted`, `expression_cloud` and
-> `expression_self_hosted` predate the second-generation models and are aliases of
-> the `essence_1_*` / `expression_1_*` rows above. **They are not the Essence 2
-> rate.** If you serve Essence 2 and read `essence_cloud`, you will
-> over-estimate your remaining minutes by 2x. Use the
-> model-specific key, or compute from the
-> [serving rates](/guides/pricing#serving--credits-per-live-minute).
-
-Estimates are advisory. The authoritative charge is always computed server-side
-at request time from the live rate schedule.
+`essence_cloud`, `essence_self_hosted`, `expression_cloud` and `expression_self_hosted` are older aliases of the `essence_1_*` and `expression_1_*` keys, **not** Essence 2 or Expression 2. The estimates are advisory; the server computes the actual charge.
 
 ## Usage history
 
 `GET /v1/usage` returns your account's metered events, newest first. Paginate
 with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
 (ISO-8601 timestamps) and `agent_code`.
-
-> **Note** The Python examples below use
-> [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl` / `urllib` instead.
 
 ```python
 import os
@@ -215,38 +165,14 @@ for ev in resp["data"]:
 print(resp["pagination"])   # {limit, offset, total, has_more}
 ```
 
-Each row carries `activity_type`, `pricing_code`, `agent_code`, `created_at`,
-and `credits_change` — the signed credit delta (usage events are recorded as
-**positive** credits consumed). This is an audit trail; for an authoritative
-balance use `GET /v2/credit-summaries` above.
+Each row carries `activity_type`, `pricing_code`, `agent_code`, `created_at` and `credits_change` (usage is recorded as positive credits consumed).
 
-> **Note — a `credit_refund_…` row does not mean something failed.**
-> [Talking-video renders](/api/video) charge the 120-second cap up front and
-> then refund the overcharge, so **every** render — successful ones included —
-> writes a matched pair. A real 6-second `essence-2` render looks like this:
->
-> ```text
-> usage_talking_video_essence_2_by_api                 8
-> credit_refund_usage_talking_video_essence_2_by_api   4      ← true-up, not a failure
-> ```
->
-> Net 4 credits, which is the published rate. Only a refund equal to the **full**
-> up-front charge means the render failed. Reconcile refunds against their
-> charge rather than alerting on the `credit_refund_` prefix.
+A [talking-video render](/api/video) charges its maximum up front and refunds the difference, so every render, successful or not, writes a charge row and a `credit_refund_…` row. Only a refund equal to the whole charge means the render failed.
 
 ## Notes
 
-- **Balance is the source of truth**, not the sum of activity rows. The activity
-  ledger is a best-effort audit trail; sub-cent rounding and historical drift
-  mean it can differ from `balance` by small amounts. Quote `balance` to users.
-- The minute estimates use floor-division on the balance and treat the
-  suspension grace window (`-11..0`) as zero minutes.
-- For suspension-status UI, compare `balance` to the documented threshold `-11`
-  rather than relying on a separate flag.
-- Check your balance before heavy operations (agent generation at 250–2000
-  credits per model, or dynamics at 250) to avoid wasted calls that fail with
-  `402` — [`GET /v1/pricing`](#get-the-pricing-schedule) gives the exact
-  per-model rates.
+- **Quote `balance` to users.** The usage history is an audit trail and can differ from the balance by rounding.
+- A balance between `-11` and `0` is the grace window before suspension; the minute estimates count it as zero.
 
 ## Errors
 
