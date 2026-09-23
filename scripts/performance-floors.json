@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "de16c4e516595cd5e13fcf860117a0fc7ca4d3497b4a8e18ecddebc31611a620",
-  "emitter_sha256": "b64ed7268d26393eddd2d1045da0dd5a06c8111611eb211e83f8562249f8738e",
+  "record_sha256": "e586d41917f7bdf257b92b0f63dd6fa8f8531d958b82c4c475d1b0ebde6aec3d",
+  "emitter_sha256": "93ae3677e08ee53935a71caceee45ab6af4eb2de8fdf5b9653d2bcebbc81ef01",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "b58a94b3148468152fff4715f4546dd9709438c3a8f91a7f36d7df8cbcde9c7e"
+    "sha256": "a57ffaa3cbe83f3e980d807c35c2fd81d49073e3458fb51246fcfc5e8f7cfcb8"
   },
   "blocks": [
     {
@@ -42,7 +42,7 @@
       "marker": "WALLCLOCK",
       "key": null,
       "index": 0,
-      "sha256": "915e8a688f18056d4e98987f2fced7374fd2b8878e1a5de4466be67bec2d870b"
+      "sha256": "d57069d523a9abebf4103aa5a40ba038f33c95a9dc0283b7947eac60ce3dd667"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
