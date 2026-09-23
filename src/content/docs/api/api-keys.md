@@ -1,6 +1,6 @@
 ---
 title: "API secrets"
-description: "Create, list, reveal, and delete your account's API secrets programmatically."
+description: "Create, list, and delete your account's API secrets programmatically."
 section: api
 group: "Account & teams"
 order: 40
@@ -8,8 +8,8 @@ order: 40
 
 ## Overview
 
-Manage your account's **API secrets** from code — create new ones, list them (masked), reveal
-one's value, or delete one. Handy for rotating API secrets or provisioning one per server.
+Manage your account's **API secrets** from code — create new ones, list them (masked), or
+delete one. Handy for rotating API secrets or provisioning one per server.
 
 Base URL `https://api.bithuman.ai`. Authenticate with an existing `api-secret`. The `{user_id}`
 in the path is your own account id — get it from [`GET /v1/me`](/api/billing#account-status).
@@ -73,18 +73,25 @@ all carry the same alias label; despite its name, the `key` field is the label, 
 
 ## Reveal an API secret
 
-`GET /v2/{user_id}/api-secrets/{alias}/get-value` — return one API secret's full value.
+`GET /v2/{user_id}/api-secrets/{alias}/get-value` is **console-only**. Only the signed-in owner
+can reveal a stored secret, in the console under
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). The request below fails:
 
 ```bash
 curl "https://api.bithuman.ai/v2/$USER_ID/api-secrets/prod-server/get-value" \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
+**`403 Forbidden`**
+
 ```json
-{ "value": "k7m2p9x4…aC8e" }
+{ "error": { "code": "SECRET_REVEAL_CONSOLE_ONLY", "httpStatus": 403,
+             "message": "A stored API secret can only be revealed in the bitHuman console …" } }
 ```
 
-Errors: `404` no API secret with that alias.
+The rule is there so that one leaked secret cannot be used to read all your other secrets. Keep
+the value that [create](#create-an-api-secret) returns. If you have lost it, create a new secret
+and delete the old one.
 
 ## Delete an API secret
 
