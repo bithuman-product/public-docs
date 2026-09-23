@@ -204,7 +204,43 @@ export function installAndExtract({ version, python = process.env.PYTHON || "pyt
 // Modules whose declared interface the page PRINTS. Everything else the wheel
 // exposes is listed by name with its status, which is the honest thing to do
 // with a module that is public by spelling and is not an API a reader calls.
-export const PAGE_MODULES = ["bithuman", "bithuman.offline", "bithuman.tessera_offline"];
+export const PAGE_MODULES = ["bithuman", "bithuman.offline"];
+
+// THE DOCUMENTED SURFACE (docs redesign, bithuman-models#1222). The reference
+// lists what a developer builds with, in this order, and nothing else: a name
+// the wheel exports but this map omits is internal (it stays in the record and
+// the surface diff, it is just not printed). `purpose` is used where the
+// shipped docstring is missing or describes internals; `methods` lists the
+// runtime methods to print from the record's signatures.
+export const PUBLIC = {
+  bithuman: {
+    open: { purpose: "Open an avatar file and return an `Avatar`. The avatar renders in your process; usage is reported to your account. " +
+      "Raises `InvalidAvatar` if the file cannot be found or used, `NotSupported` if it cannot run on this machine, " +
+      "`NotAuthorised` if the API secret is missing, rejected or out of credit, and `Failed` for anything else." },
+    Avatar: {},
+    AsyncBithuman: {
+      purpose: "The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. " +
+        "Create it with `await AsyncBithuman.create(model_path=\"avatar.imx\", api_secret=None)`; " +
+        "the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/sdk/python#integrate-into-your-app).",
+      methods: ["push_audio", "flush", "interrupt", "run", "stop", "shutdown", "get_first_frame"],
+    },
+    VideoFrame: { purpose: "One item from `AsyncBithuman.run()`: `has_image`, `bgr_image` (a BGR `numpy` array), `audio_chunk` and `frame_index`." },
+    AudioChunk: { purpose: "Audio that plays with a frame: `array` (16-bit samples) and `sample_rate`." },
+    VideoControl: {},
+    Emotion: { purpose: "Emotion labels you can attach to a `VideoControl`." },
+    EP: { purpose: "Execution-provider hint: CPU by default, or a hardware accelerator when the machine has one." },
+    AvatarError: {}, InvalidAvatar: {}, NotSupported: {}, NotAuthorised: {}, Failed: {},
+    BithumanError: { purpose: "Base class of the errors `AsyncBithuman` raises." },
+    TokenError: {}, TokenExpiredError: {}, TokenValidationError: {}, TokenRequestError: {}, AccountStatusError: {},
+    ModelError: {}, ModelNotFoundError: {}, ModelLoadError: {}, ModelSecurityError: {}, RuntimeNotReadyError: {},
+  },
+  "bithuman.offline": {
+    render_offline: {},
+    OfflineRenderer: { purpose: "Renders an Essence 2 avatar file to frames or an MP4 in one pass; `render_offline` is the one-call form. `render(audio)` takes a path or 16 kHz mono float32 samples and returns a stats dict.", memberDocs: false },
+    OfflineRenderError: { purpose: "Raised when an offline render fails." },
+    MeteringNotArmedError: { purpose: "Raised when no API secret is set, or the service refused the session." },
+  },
+};
 
 // ★See the header: these are NOT the authority, the two vocabulary guards are.
 // A symbol NAME this matches is withheld from the page and counted.
@@ -336,7 +372,7 @@ function symbolsOf(record, moduleName) {
   return m ? m.symbols : [];
 }
 
-function renderSymbol(sym) {
+function renderSymbol(sym, pub = {}) {
   const out = [];
   out.push(`### ${sym.name}`);
   out.push("");
@@ -352,7 +388,9 @@ function renderSymbol(sym) {
     }
   }
   out.push("");
-  if (sym.doc === FORMAT_WITHHELD) {
+  if (pub.purpose) {
+    out.push(pub.purpose);
+  } else if (sym.doc === FORMAT_WITHHELD) {
     out.push("_The docstring shipped with this symbol describes the container format, which is proprietary and not documented publicly. See [Avatars and the `.imx` format](/concepts/avatars-imx)._");
   } else if (sym.doc && proseAllowed(sym.doc)) {
     out.push(rst(sym.doc));
@@ -365,11 +403,17 @@ function renderSymbol(sym) {
   // document: it can be used as a context manager.
   const isCtx = all.some((m) => m.name === "__enter__") && all.some((m) => m.name === "__exit__");
   if (isCtx) out.push("Usable as a context manager: `with` closes it for you.\n");
+  for (const name of pub.methods ?? []) {
+    const h = (sym.not_in_shipped_interface ?? []).find((x) => x.name === name);
+    if (!h) continue;
+    out.push(`**\`${name}${normalizeSignature(h.signature).replace(/^\(self(, )?/, "(")}\`**`);
+    out.push("");
+  }
   for (const m of all) {
     if (isCtx && (m.name === "__enter__" || m.name === "__exit__")) continue;
     out.push(`**\`${m.name}${normalizeSignature(m.signature).replace(/^\(self(, )?/, "(")}\`**`);
     out.push("");
-    if (m.doc && proseAllowed(m.doc)) out.push(rst(m.doc));
+    if (pub.memberDocs !== false && m.doc && proseAllowed(m.doc)) out.push(rst(m.doc));
     out.push("");
   }
   return out.join("\n");
@@ -381,178 +425,39 @@ export function renderRegion(record) {
   const d = record.surface.distribution;
   const out = [];
 
-  out.push("## The wheel this page describes");
-  out.push("");
-  out.push(table([
-    ["Field", "Value"],
-    ["---", "---"],
-    ["Registry", a.registry],
-    ["Coordinate", a.coordinate],
-    ["Version", a.version],
-    ["Wheel", `\`${a.wheel}\``],
-    ["Digest", `\`${a.digest}\``],
-    ["Resolved on", a.resolved_on],
-  ]));
-  out.push("");
-  out.push(
-    `Every name below was read back out of those bytes, in a virtualenv that had ` +
-    `nothing else installed in it. Nothing here was read from a source tree.`);
-  out.push("");
-  out.push(table([
-    ["What the distribution declares", "Value"],
-    ["---", "---"],
-    ["Python versions", `\`${d.requires_python}\``],
-    // ★Written in the `dist[extra]` form a developer actually types. `tessera`
-    // alone reads as a product name — a retired one — and the guard that owns
-    // that word freezes the typed spelling and nothing else.
-    ["Extras", d.extras.map((e) => `\`${DIST}[${e}]\``).join(", ")],
-    ["Commands added to `PATH`", d.console_scripts.length ? d.console_scripts.join(", ") : "none"],
-    ["Ships type information", d.has_py_typed ? "yes — a `py.typed` marker and a type stub" : "no"],
-    ["`python -m bithuman`", record.surface.runnable_as_module ? "yes" : "no"],
-  ]));
+  out.push(`Generated from \`${a.coordinate}\` ${a.version} as published on PyPI ` +
+    `(Python \`${d.requires_python}\`; extras: ${d.extras.filter((e) => e !== "test").map((e) => `\`${DIST}[${e}]\``).join(", ") || "none"}). ` +
+    `Names the package exports that are not listed here are internal and can change.`);
   out.push("");
 
   for (const moduleName of PAGE_MODULES) {
     const mod = record.surface.modules.find((x) => x.name === moduleName);
     if (!mod) continue;
-    const shown = mod.symbols.filter((s) => nameAllowed(s.name));
-    const withheld = mod.symbols.length - shown.length;
-
+    const pub = PUBLIC[moduleName] ?? {};
+    const byName = new Map(mod.symbols.map((x) => [x.name, x]));
+    const shown = Object.keys(pub).map((n) => byName.get(n)).filter((x) => x && x.kind !== "exception");
+    if (!shown.length) continue;
     out.push(`## ${moduleName}`);
     out.push("");
-    out.push(
-      `${mod.symbols.length} name${mod.symbols.length === 1 ? "" : "s"}, ` +
-      `declared by ${mod.interface === "stub" ? "the type stub the package ships" : "the module's own `__all__`"}.`);
-    out.push("");
-    if (withheld) {
-      out.push(
-        `${withheld} of them are module constants naming an internal mechanism ` +
-        `and are not listed here; they are not part of the two calls this ` +
-        `package exists for.`);
-      out.push("");
-    }
-
-    if (moduleName === "bithuman.tessera_offline") {
-      // A deprecated alias module: every name is the SAME OBJECT as one in
-      // `bithuman.offline`. Rendered as a table so the page does not carry a
-      // second copy of the same signatures under duplicate headings.
-      out.push(table([
-        ["Name", "Kind", "Same object as"],
-        ["---", "---", "---"],
-        ...shown.map((s) => {
-          const twin = symbolsOf(record, "bithuman.offline")
-            .find((t) => t.name === s.name || t.doc === s.doc);
-          return [`\`${s.name}\``, s.kind, twin ? `\`bithuman.offline.${twin.name}\`` : "—"];
-        }),
-      ]));
-      out.push("");
-      continue;
-    }
-
-    for (const sym of shown) {
-      out.push(renderSymbol(sym));
-    }
+    for (const sym of shown) out.push(renderSymbol(sym, pub[sym.name]));
   }
 
-  // ---- exceptions ---------------------------------------------------------
-  out.push("## The exception hierarchy");
-  out.push("");
-  const excs = [];
-  for (const moduleName of PAGE_MODULES) {
-    for (const s of symbolsOf(record, moduleName)) {
-      if (s.kind !== "exception" || !nameAllowed(s.name)) continue;
-      if (excs.some((e) => e.name === s.name && e.defined_in === s.defined_in)) continue;
-      excs.push({ ...s, module: moduleName });
-    }
-  }
-  out.push(table([
-    ["Exception", "Raised from", "Inherits"],
-    ["---", "---", "---"],
-    ...excs.map((e) => [`\`${e.name}\``, `\`${e.module}\``, e.bases.map((b) => `\`${b}\``).join(", ")]),
-  ]));
-  out.push("");
-
-  // ---- what is NOT the surface -------------------------------------------
-  out.push("## Present in the wheel, not callable from it");
-  out.push("");
-  out.push(
-    "A reference generated from a source tree would have listed each of these. " +
-    "They are in the installed package and a developer cannot use them, which " +
-    "is the opposite of being public.");
+  // ---- errors -------------------------------------------------------------
+  out.push("## Errors");
   out.push("");
   const rows = [];
-  for (const mod of record.surface.modules) {
-    for (const sym of mod.symbols) {
-      for (const hidden of sym.not_in_shipped_interface ?? []) {
-        const sig = normalizeSignature(hidden.signature);
-        rows.push([
-          `\`${mod.name}.${sym.name}.${hidden.name}\``,
-          "on the runtime object, in no type stub",
-          // The signature is printed where it can be; where it names internal
-          // machinery, its SHAPE is printed instead. Either way the row stands.
-          proseAllowed(sig)
-            ? `\`${sig}\``
-            : `takes ${arity(sig)} arguments, none of them documented`,
-        ]);
-      }
-    }
-    for (const only of mod.stub_only ?? []) {
-      const alias = (mod.stub_aliases ?? {})[only];
-      rows.push([
-        `\`${mod.name}.${only}\``,
-        "declared by the type stub, absent at runtime — importing it raises `ImportError`",
-        alias ? `the type an \`audio\` argument accepts: \`${alias}\`` : "declared for type checkers only",
-      ]);
+  for (const moduleName of PAGE_MODULES) {
+    const mod = record.surface.modules.find((x) => x.name === moduleName);
+    const pub = PUBLIC[moduleName] ?? {};
+    for (const n of Object.keys(pub)) {
+      const e = mod?.symbols.find((x) => x.name === n && x.kind === "exception");
+      if (!e) continue;
+      const why = pub[n].purpose ?? (e.doc && proseAllowed(e.doc) ? rst(e.doc).split("\n")[0] : "");
+      rows.push([`\`${moduleName}.${e.name}\``, e.bases.map((b) => `\`${b}\``).join(", "), why]);
     }
   }
-  const notImportable = record.surface.modules.filter((m) => m.interface === "not-importable");
-  if (notImportable.length) {
-    rows.push([
-      `${notImportable.length} files under \`bithuman/lib/\``,
-      "listed as modules by their suffix, none of them imports",
-      "native libraries the engine opens by path",
-    ]);
-  }
-  rows.push([
-    `${record.surface.retired.length} names from the 2.x releases`,
-    "intercepted with a refusal that says what to write instead",
-    `raises \`NotSupported\`${record.surface.retired.every((r) => r.is_import_error) ? " and `ImportError`" : ""}`,
-  ]);
-  // The record says whether the wheel carries `__version__`; the 3.x line did
-  // not, the 2.11.x line does — the page follows the record, not a memory.
-  if (!record.surface.dunder_version) {
-    rows.push([
-      "`bithuman.__version__`",
-      "removed on purpose — `hasattr` answers False",
-      "read the version from `importlib.metadata`",
-    ]);
-  }
-  out.push(table([["Name", "Why it is not the surface", "What it is"], ["---", "---", "---"], ...rows]));
+  out.push(table([["Exception", "Inherits", "Meaning"], ["---", "---", "---"], ...rows]));
   out.push("");
-
-  // ---- the rest of the wheel ---------------------------------------------
-  const rest = record.surface.modules.filter(
-    (m) => !PAGE_MODULES.includes(m.name) && m.interface !== "not-importable");
-  if (rest.length) {
-    out.push("## Other modules the package exposes");
-    out.push("");
-    out.push(
-      "Public by spelling, and not an API this page documents. They are listed " +
-      "so that finding one by grep is not mistaken for finding something to call.");
-    out.push("");
-    out.push(table([
-      ["Module", "What it declares"],
-      ["---", "---"],
-      ...rest.map((m) => [
-        `\`${m.name}\``,
-        m.interface === "undeclared"
-          ? "no `__all__` — it declares nothing public"
-          : `an \`__all__\` of ${m.declared.length} name${m.declared.length === 1 ? "" : "s"}; no part of opening an avatar goes through it`,
-      ]),
-    ]));
-    out.push("");
-  }
-
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
 }
 
