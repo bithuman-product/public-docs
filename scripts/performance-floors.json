@@ -4,16 +4,16 @@
   "record": "models/essence-2/perf/FLOORS.json",
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
-  "record_ref": "origin/lane/perf-page-redesign-0923",
+  "record_ref": "origin/main",
   "record_sha256": "bda2f6baa7fb764d669e8c38adebc07b77b58184598bc9b61b26cc71190d1586",
-  "emitter_sha256": "632b98f6f4e57fef3ba9c5e39269c4ab453df0d5099aeb3edd26ee5a9458eb3a",
+  "emitter_sha256": "bb40e2d98d0c738e42353599a3335c5cb8d50cfca009bf5abfa5e0df1f24bcf3",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "21fbd7e66d25ca259b1570834080a7e532bad5fcf847e321c67fc99a4d5b9394"
+    "sha256": "78c21f726668b18e1ae41ca92247e557d09405eab3338bffa8a08a7fe91ee235"
   },
   "blocks": [
     {
@@ -42,7 +42,14 @@
       "marker": "METHOD",
       "key": null,
       "index": 0,
-      "sha256": "5114d20403c92e16a023c51b83e84eb927672e488a54663ede413587f2e54d94"
+      "sha256": "e8cb9eeee4fa0b68b4cc7c38c4a6bfa889c52437603c1f98ff5f02b04f7a1f1c"
+    },
+    {
+      "file": "src/partials/performance-headline.md",
+      "marker": "HEADLINE",
+      "key": null,
+      "index": 0,
+      "sha256": "62d119860b1ff119ed6b6a2ff215eed6b0d3365ca1586a20016bf84de8b43c6b"
     }
   ],
   "table": {

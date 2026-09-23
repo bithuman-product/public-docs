@@ -293,7 +293,7 @@
      "x_realtime": 2.16,
      "realtime": true,
      "measured_on": "2026-09-20",
-     "release": "Swift engine 1.9.0",
+     "release": "Swift package engine 1.9.0",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
