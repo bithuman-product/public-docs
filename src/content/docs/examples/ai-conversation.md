@@ -55,7 +55,7 @@ The pipeline: microphone → OpenAI Realtime (24 kHz PCM16) → `push_audio`/`fl
 ```python
 # excerpt: python/quickstart/conversation.py
 # Configure the OpenAI Realtime session, then bridge its audio into bitHuman.
-async with client.realtime.connect(model="gpt-realtime-mini") as conn:
+async with client.realtime.connect(model="gpt-realtime-2.1-mini") as conn:
     await conn.session.update(session={
         "type": "realtime",
         "instructions": "You are a friendly AI assistant. Keep responses concise.",
