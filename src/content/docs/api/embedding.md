@@ -24,7 +24,7 @@ Replace `A78WKV4515` with your agent code — find it in the
 [Library](https://www.bithuman.ai/#library) or the Deploy & Share dialog.
 
 > **Warning** The iframe needs delegated `microphone` permission to hear the
-> user — and the `*` in the `allow` attribute is load-bearing. The embed URL
+> user — and keep the `*` in the `allow` attribute. The embed URL
 > redirects cross-origin to `agent.viewer.bithuman.ai`, so a bare
 > `allow="microphone"` (which pins to the iframe's `src` origin) leaves the
 > mic silently blocked after the redirect. Use `microphone *` (or allowlist

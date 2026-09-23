@@ -56,7 +56,7 @@ one.
 | `429` | Rate Limited | Too many requests — see [rate limits](/api/rate-limits). |
 | `500` | Internal Error | Server-side error — retry or contact support. |
 | `502` / `504` | Bad Gateway / Gateway Timeout | Raised by the delivery network in front of the API, and the **only** statuses that do not carry the JSON envelope — see [the exception above](#the-one-exception-502-and-504). Transient; retry after the `Retry-After` seconds. |
-| `503` | Service Unavailable | All workers busy — retry with backoff. Also `MODEL_NOT_YET_AVAILABLE` — a second-generation family temporarily paused for your account (rare — Essence 2 / Expression 2 are GA since July 10, 2026). Transient in either case; all four avatar models render [talking video](/api/video). |
+| `503` | Service Unavailable | All workers busy — retry with backoff. Also `MODEL_NOT_YET_AVAILABLE`, a model paused for your account (not returned in normal operation). Transient in either case. |
 
 ## Error codes
 
@@ -75,7 +75,7 @@ one.
 |---|---|---|
 | `NOT_FOUND` | 404 | Returned both when no agent matches the code **and** when an agent has no active session for `/speak` / `/add-context`. Distinguish by the `message` string: `"Agent not found for code: <code>"` vs `"No active rooms found for agent <code>"`. |
 | `VALIDATION_ERROR` | 400 | Body failed schema validation. Include all required fields. |
-| `VIDEO_INPUT_NOT_SUPPORTED` | 400 | [Agent creation](/api/agents#generate-an-agent) with a `video` input. Creation is **image-only** for every model — provide a portrait `image`; bitHuman generates the 10-second identity video internally so it loops seamlessly (first frame == last frame). This rejection is rolling out platform-wide (nothing charged when it fires) — never send `video`. |
+| `VIDEO_INPUT_NOT_SUPPORTED` | 400 | [Agent creation](/api/agents#generate-an-agent) with a `video` input. Creation is **image-only** for every model — provide a portrait `image`; bitHuman generates the 10-second identity video internally so it loops seamlessly (first frame == last frame). Nothing is charged; never send `video`. |
 | `MISSING_PARAM` | 400 | A required parameter was not provided. |
 
 ### Model errors
@@ -93,7 +93,7 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 | `MODEL_SUBJECT_MISMATCH` | 422 | An explicit Essence 2 creation or add whose input is not a **photorealistic human subject** — e.g. `"essence-2 requires a photorealistic human subject; this image looks like a cartoon — use expression-2"`. Nothing is billed and no agent row is created. Use `expression-2` for stylized/non-human subjects, or `model: "auto"` to route automatically. See [the subject gate](/api/agents#generate-an-agent). |
 | `MODEL_PREREQUISITE_MISSING` | 422 | A [model add](/api/agents#add-a-model-to-an-existing-agent) needs a stored asset this agent doesn't have — a stored identity video for `essence-2` (generated internally by Essence creations, never uploaded), face image for `expression-2`, image + voice for `expression-1`, stored identity video or image for `essence-1`. Add the missing image/voice asset, then retry. |
 | `MODEL_NOT_DOWNLOADABLE` | 400 | [Model download](/api/agents#download-an-agents-model) for a family with no per-identity artifact — `expression-1` renders server-side from the agent's image. A `400` because no state change can fix it (unlike the 409s). |
-| `MODEL_NOT_YET_AVAILABLE` | 503 | Essence 2 / Expression 2 are **GA** (since July 10, 2026), so [creation](/api/agents#generate-an-agent) and [model add](/api/agents#add-a-model-to-an-existing-agent) don't return this in normal operation — it's the safety response if a v2 family is temporarily paused. All four avatar models render [talking video](/api/video), so a `503` there is transient too. Nothing charged; retry later or use another model. |
+| `MODEL_NOT_YET_AVAILABLE` | 503 | A model is paused for your account; not returned in normal operation. Retry later, or create with a first-generation model. Nothing charged; retry later or use another model. |
 | `MODEL_ARTIFACT_NOT_READY` | 404 | [Model download](/api/agents#download-an-agents-model) for a **supported** family whose artifact hasn't been published to the download store yet. Retryable — the message carries a per-family retry hint; poll on this code. |
 
 ### File operations
@@ -110,7 +110,7 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 |---|---|---|
 | `RATE_LIMITED` | 429 | Back off and retry. See [rate limits](/api/rate-limits). |
 | `SESSION_LIMIT` | 429 | Concurrent-session capacity reached. Wait for an active session to end, then retry. |
-| `CONCURRENCY_LIMIT_REACHED` | 403 | A new session start would exceed your plan's [concurrent avatar session allowance](/api/rate-limits#session-concurrency) (enforcement rolling out). End an active session or upgrade the plan, then retry — live sessions are never cut off mid-stream by this limit. |
+| `CONCURRENCY_LIMIT_REACHED` | 403 | A new session start would exceed your plan's [concurrent avatar session allowance](/api/rate-limits#session-concurrency) End an active session or upgrade the plan, then retry — live sessions are never cut off mid-stream by this limit. |
 | `NO_AVAILABLE_WORKERS` | 503 | All workers busy. Retry with exponential backoff (up to 5 times). |
 | `INTERNAL_ERROR` | 500 | Retry once. If persistent, report via [Discord](https://discord.gg/ES953n7bPA). |
 
