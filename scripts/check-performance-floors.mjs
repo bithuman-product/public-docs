@@ -594,11 +594,13 @@ export function emitFresh(corpus, src) {
   try {
     const tool = join(scratch, EMITTER_PATH);
     const rec = join(scratch, RECORD_PATH);
+    // ★AND proof/evidence (2026-09-23): a held-session row's paced record (row.held) is graded
+    //  against the proof record it cites, and without it the emitter refuses the whole page.
     // ★THE WHOLE perf/ TREE, NOT TWO FILES. The emitter grades each memory cell
     //  against its evidence file under perf/evidence/, and with only the record
     //  beside it every memory row is a structural fault (measured 2026-09-23:
     //  14 of them, rc=1). Tool and record come from ONE ref, in one archive.
-    const tar = spawnSync("sh", ["-c", `git -C "$0" archive "$1" models/essence-2/perf models/essence-2/tools | tar -x -C "$2"`, src.dir, src.ref, scratch], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+    const tar = spawnSync("sh", ["-c", `git -C "$0" archive "$1" models/essence-2/perf models/essence-2/tools models/essence-2/proof/evidence | tar -x -C "$2"`, src.dir, src.ref, scratch], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
     if (tar.status !== 0 || !existsSync(tool) || !existsSync(rec)) throw new Error(`could not extract ${src.ref}'s emitter and record from ${src.dir}: ${tar.stderr}`);
     if (readFileSync(rec, "utf8") !== src.record) throw new Error(`the archived record is not the one read at ${src.ref} — the checkout moved mid-run; run again`);
     const page = findPage(corpus);

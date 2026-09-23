@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "11c0d8c9082259e7fbeb253829cf51444c021b1a52375bcb43edafba26bec438",
-  "emitter_sha256": "c4129d17e77d3b75a33a8866a99913f04d327a860c1bbdbcf79f2c223796ab13",
+  "record_sha256": "de16c4e516595cd5e13fcf860117a0fc7ca4d3497b4a8e18ecddebc31611a620",
+  "emitter_sha256": "b64ed7268d26393eddd2d1045da0dd5a06c8111611eb211e83f8562249f8738e",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "139a4198fdc53885f12e8972edadac91f8dbe93bd660a95be74f0134022df3b9"
+    "sha256": "b58a94b3148468152fff4715f4546dd9709438c3a8f91a7f36d7df8cbcde9c7e"
   },
   "blocks": [
     {
@@ -35,7 +35,7 @@
       "marker": "SUSTAINED",
       "key": null,
       "index": 0,
-      "sha256": "64920faa5f1e6ee9a9c3926563728143bc8666b85003279425da9afd8a7840a7"
+      "sha256": "760944d5f9e10bb46ee05d123d915d8596db245547754b001b824f09b8271c1c"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
