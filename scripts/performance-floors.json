@@ -3,8 +3,8 @@
   "record": "models/essence-2/perf/FLOORS.json",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "460c8647deb034ce1f5b6f3200646fba7e3f0f09b7ed1c0455710a6305258c08",
-  "verified_on": "2026-09-22",
+  "record_sha256": "cf51e74a0e3a8940b92b99e539cf344e59a05375f3864706fbfaaa41e2a82ee8",
+  "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "table_key": "all",
@@ -50,38 +50,38 @@
     {
       "label": "Cloud CPU",
       "plane": "modal-cpu",
-      "line": "| Cloud CPU | Modal CPU container | 18 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 0.9x real time · hosted expression-2-cpu-worker v25 (2026-09-20) | 6 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.24x real time · hosted essence-2-cpu-worker v18 (2026-09-20) |",
+      "line": "| Cloud CPU | Modal CPU container | 16 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 416x720 at 20 fps · 0.8x real time · hosted expression-2-cpu-worker v26 (2026-09-23) | 6 — not yet real time · e2e-unpaced (not re-measured on the ruled shape) · 1920x1080 at 25 fps · 0.24x real time · hosted essence-2-cpu-worker v20 (2026-09-23) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 18,
+          "docs_fps": 16,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-23"
         },
         "essence-2": {
           "docs_fps": 6,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-20"
+          "docs_measured_on": "2026-09-23"
         }
       }
     },
     {
       "label": "macOS",
       "plane": "macos-m4",
-      "line": "| macOS | Apple M4 | 160 · e2e-steady-state · 416x720 at 20 fps · 8x real time · cli-v2.6.26 (2026-09-22) | 110 · e2e-steady-state · 1920x1080 at 25 fps · 4.4x real time · cli-v2.6.26 (2026-09-22) |",
+      "line": "| macOS | Apple M4 | 177 · e2e-steady-state · 416x720 at 20 fps · 8.85x real time · A02HCY0444 @ 53bb1f65e41529a7101543e7a4 · cli-v2.7.0 (2026-09-23) | 114 · e2e-steady-state · 1920x1080 at 25 fps · 4.56x real time · A23KSG5258 @ 6ea7a95a99ae1b8fa4443a5adf · cli-v2.7.0 (2026-09-23) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 160,
+          "docs_fps": 177,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-22"
+          "docs_measured_on": "2026-09-23"
         },
         "essence-2": {
-          "docs_fps": 110,
+          "docs_fps": 114,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-22"
+          "docs_measured_on": "2026-09-23"
         }
       }
     },
@@ -107,19 +107,19 @@
     {
       "label": "Linux",
       "plane": "linux-cpu",
-      "line": "| Linux | Intel Core i7-13700F | 43 · e2e-steady-state · 416x720 at 20 fps · 2.15x real time · cli-v2.6.26 (2026-09-22) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · cli-v2.6.26 (2026-09-22) |",
+      "line": "| Linux | Intel Core i7-13700F | 44 · e2e-steady-state · 416x720 at 20 fps · 2.2x real time · A02HCY0444 @ 53bb1f65e41529a7101543e7a4 · cli-v2.7.0 (2026-09-23) | 36 · e2e-steady-state · 1920x1080 at 25 fps · 1.44x real time · A23KSG5258 @ e77257b4cdb9ffceee908dcf06 · cli-v2.7.0 (2026-09-23) |",
       "cells": {
         "expression-2": {
-          "docs_fps": 43,
+          "docs_fps": 44,
           "frame": "416x720",
           "contract_fps": 20,
-          "docs_measured_on": "2026-09-22"
+          "docs_measured_on": "2026-09-23"
         },
         "essence-2": {
           "docs_fps": 36,
           "frame": "1920x1080",
           "contract_fps": 25,
-          "docs_measured_on": "2026-09-22"
+          "docs_measured_on": "2026-09-23"
         }
       }
     },
