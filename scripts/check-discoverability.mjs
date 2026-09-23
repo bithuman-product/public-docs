@@ -49,18 +49,22 @@ const collection = new Set(
     .filter((f) => !/^draft:\s*true\s*$/m.test(readFileSync(f, "utf8")))
     .map((f) => contentRoute(CONTENT, f)),
 );
-const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
-// Only the per-section blocks count as "the page list": the Start-here and
-// Machine-readable bullets link a handful of pages by hand and are allowed.
-const sectionBlock = llms.slice(llms.indexOf("\n## Site sections"));
+// The page list an agent can reach: /llms.txt plus the markdown hubs it links
+// (/index.md, /start.md, /api.md, /sdk.md, /guides.md, /examples.md,
+// /resources.md), which list every page of their section.
+const listing = ["llms.txt", "index.md", "start.md", "api.md", "sdk.md", "guides.md", "examples.md", "resources.md"]
+  .filter((f) => existsSync(join(DIST, f)))
+  .map((f) => readFileSync(join(DIST, f), "utf8"))
+  .join("\n");
 const pageList = new Set(
-  [...sectionBlock.matchAll(/^- \[[^\]]*\]\((https:\/\/docs\.bithuman\.ai\/[^)\s]+)\)/gm)].map((m) => m[1].slice(SITE.length)),
+  [...listing.matchAll(/https:\/\/docs\.bithuman\.ai(\/[^)\s`#]*)/g)].map((m) => m[1].replace(/\.md$/, "").replace(/\/$/, "") || "/"),
 );
-const isBuiltRoute = (route) => existsSync(join(DIST, route.replace(/^\//, ""), "index.html"));
+const isBuiltRoute = (route) => route === "/" || existsSync(join(DIST, route.replace(/^\//, ""), "index.html")) ||
+  (/\.[a-z0-9]+$/.test(route) && existsSync(join(DIST, route.replace(/^\//, ""))));
 const missing = [...collection].filter((p) => !pageList.has(p)).sort();
 const extra = [...pageList].filter((p) => !collection.has(p) && !isBuiltRoute(p)).sort();
 const hubs = [...pageList].filter((p) => !collection.has(p) && isBuiltRoute(p)).sort();
-for (const p of missing) fail(`llms.txt: ${p} is in the content collection and not in llms.txt`);
+for (const p of missing) fail(`${p} is in the content collection and in neither llms.txt nor a hub's .md twin`);
 for (const p of extra) fail(`llms.txt: ${p} is in llms.txt and is neither a content page nor a built page`);
 console.log(`llms.txt: ${pageList.size} page line(s) vs ${collection.size} collection page(s) + ${hubs.length} built hub(s) — ${missing.length} missing, ${extra.length} extra`);
 

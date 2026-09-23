@@ -3,6 +3,7 @@ import Base from "./Base.astro";
 import "../styles/prose.css";
 import { SECTIONS, GROUP_ORDER, type SectionId } from "../config/nav.ts";
 import { lastModified } from "../lib/git-lastmod";
+import PageActions from "../components/PageActions.astro";
 
 interface Heading {
   depth: number;
@@ -89,7 +90,7 @@ if (section === "sdk") {
 }
 ---
 
-<Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description} type="article" jsonLd={jsonLd}>
+<Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
   <div class="doc">
     {/* sidebar */}
     <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>
@@ -128,7 +129,7 @@ if (section === "sdk") {
         {entry.data.group && (<Fragment> <span>/</span> <span class="crumb-cur">{entry.data.group}</span></Fragment>)}
       </div>
       <div class="prose">
-        <h1>{entry.data.title}</h1>
+        <div class="doc-h1"><h1>{entry.data.title}</h1><PageActions md={`${currentPath}.md`} /></div>
         {entry.data.description && <p class="doc-lede">{entry.data.description}</p>}
         <slot />
       </div>

@@ -413,3 +413,10 @@ jobs:
       - name: llms.txt lists every page, and nothing shadows the generated route
         if: always()
         run: node scripts/check-discoverability.mjs
+      # G5 — the agent layer: llms.txt ≤ 60 lines / 6 KB with every URL and
+      # anchor resolving in the build, a .md twin for every page, no HTML
+      # comment in llms*.txt. The llms-full cap is a ratchet: lower it as pages
+      # move to their templates (target 160 KB).
+      - name: Agent layer (llms.txt, llms-full.txt, .md twins)
+        if: always()
+        run: node scripts/check-llms.mjs --full-max-kb 420

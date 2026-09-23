@@ -134,59 +134,65 @@ function selfTest() {
   return bad;
 }
 
-const args = process.argv.slice(2);
-if (args.includes("--self-test")) {
-  const b = selfTest();
-  console.log(b ? `self-test FAILED (${b})` : `self-test ok: ${PATTERNS.length} patterns fire on their fixtures, 0 over-matches`);
-  process.exit(b ? 1 : 0);
-}
-if (selfTest()) process.exit(1);
-
-const carriers = loadCarriers();
-const files = [];
-for (const r of ROOTS) for (const p of walk(join(ROOT, r))) files.push(relative(ROOT, p));
-const di = args.indexOf("--dist");
-if (di >= 0) {
-  const dist = join(ROOT, args[di + 1] || "dist");
-  for (const p of walk(dist).concat(readdirSync(dist).filter((n) => /\.(txt|json)$/.test(n)).map((n) => join(dist, n)))) {
-    const rel = relative(ROOT, p);
-    if (/\/_astro\//.test(rel) || /pagefind/.test(rel)) continue;
-    files.push(rel);
+function main() {
+  const args = process.argv.slice(2);
+  if (args.includes("--self-test")) {
+    const b = selfTest();
+    console.log(b ? `self-test FAILED (${b})` : `self-test ok: ${PATTERNS.length} patterns fire on their fixtures, 0 over-matches`);
+    process.exit(b ? 1 : 0);
   }
-  for (const p of walk(dist)) if (p.endsWith(".html")) files.push(relative(ROOT, p));
-}
-if (files.length < 40) { console.log(`read only ${files.length} files — the corpus moved; refusing to pass`); process.exit(2); }
+  if (selfTest()) process.exit(1);
 
-const byCat = {}, byFile = {};
-let total = 0;
-for (const rel of [...new Set(files)]) {
-  let text = readFileSync(join(ROOT, rel), "utf8");
-  if (rel.endsWith(".html")) {
-    const m = text.match(/<main[^>]*>([\s\S]*)<\/main>/);
-    text = (m ? m[1] : text).replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/g, "").replace(/<!--(\s*\/?(FLOORS|VERSIONS)[^>]*)-->/g, "").replace(/<[^>]+>/g, " ");
-  } else text = servedText(rel, text);
-  const hits = scan(rel, text, carriers);
-  if (!hits.length) continue;
-  byFile[rel] = hits;
-  for (const h of hits) { byCat[h.name] = (byCat[h.name] || 0) + 1; total++; }
-}
-
-// every carrier must still be present
-let missing = 0;
-for (const c of carriers) {
-  const p = join(ROOT, c.path);
-  if (!existsSync(p) || !readFileSync(p, "utf8").includes(c.string)) {
-    missing++;
-    console.log(`::error::carrier no longer present — remove it from internal-content-carriers.json: ${c.path}: "${c.string}"`);
+  const carriers = loadCarriers();
+  const files = [];
+  for (const r of ROOTS) for (const p of walk(join(ROOT, r))) files.push(relative(ROOT, p));
+  const di = args.indexOf("--dist");
+  if (di >= 0) {
+    const dist = join(ROOT, args[di + 1] || "dist");
+    for (const p of walk(dist).concat(readdirSync(dist).filter((n) => /\.(txt|json)$/.test(n)).map((n) => join(dist, n)))) {
+      const rel = relative(ROOT, p);
+      if (/\/_astro\//.test(rel) || /pagefind/.test(rel)) continue;
+      files.push(rel);
+    }
+    for (const p of walk(dist)) if (p.endsWith(".html")) files.push(relative(ROOT, p));
   }
+  if (files.length < 40) { console.log(`read only ${files.length} files — the corpus moved; refusing to pass`); process.exit(2); }
+
+  const byCat = {}, byFile = {};
+  let total = 0;
+  for (const rel of [...new Set(files)]) {
+    let text = readFileSync(join(ROOT, rel), "utf8");
+    if (rel.endsWith(".html")) {
+      const m = text.match(/<main[^>]*>([\s\S]*)<\/main>/);
+      text = (m ? m[1] : text).replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/g, "").replace(/<!--(\s*\/?(FLOORS|VERSIONS)[^>]*)-->/g, "").replace(/<[^>]+>/g, " ");
+    } else text = servedText(rel, text);
+    const hits = scan(rel, text, carriers);
+    if (!hits.length) continue;
+    byFile[rel] = hits;
+    for (const h of hits) { byCat[h.name] = (byCat[h.name] || 0) + 1; total++; }
+  }
+
+  // every carrier must still be present
+  let missing = 0;
+  for (const c of carriers) {
+    const p = join(ROOT, c.path);
+    if (!existsSync(p) || !readFileSync(p, "utf8").includes(c.string)) {
+      missing++;
+      console.log(`::error::carrier no longer present — remove it from internal-content-carriers.json: ${c.path}: "${c.string}"`);
+    }
+  }
+
+  const verbose = !args.includes("--quiet");
+  for (const [f, hs] of Object.entries(byFile).sort((a, b) => b[1].length - a[1].length)) {
+    console.log(`${String(hs.length).padStart(4)}  ${f}`);
+    if (verbose) for (const h of hs.slice(0, 50)) console.log(`        ${h.name.padEnd(18)} L${h.line}: ${h.found.slice(0, 80)}`);
+  }
+  console.log(`\nG1 internal content: ${total} hit(s) in ${Object.keys(byFile).length} file(s)`);
+  for (const [k, v] of Object.entries(byCat).sort((a, b) => b[1] - a[1])) console.log(`  ${k.padEnd(18)} ${v}`);
+  if (missing) process.exit(1);
+  process.exit(args.includes("--strict") && total ? 1 : 0);
+
 }
 
-const verbose = !args.includes("--quiet");
-for (const [f, hs] of Object.entries(byFile).sort((a, b) => b[1].length - a[1].length)) {
-  console.log(`${String(hs.length).padStart(4)}  ${f}`);
-  if (verbose) for (const h of hs.slice(0, 50)) console.log(`        ${h.name.padEnd(18)} L${h.line}: ${h.found.slice(0, 80)}`);
-}
-console.log(`\nG1 internal content: ${total} hit(s) in ${Object.keys(byFile).length} file(s)`);
-for (const [k, v] of Object.entries(byCat).sort((a, b) => b[1] - a[1])) console.log(`  ${k.padEnd(18)} ${v}`);
-if (missing) process.exit(1);
-process.exit(args.includes("--strict") && total ? 1 : 0);
+import { pathToFileURL } from "node:url";
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
