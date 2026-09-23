@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "875472a44d6e1fb3258097d5d17cd3159903fb60c8f51ec54b756e042ee2ee5b",
-  "emitter_sha256": "6b417708b9ea8e037cf12aa1b20ece475f977a2f4bfcfafceea2d1c982b62069",
+  "record_sha256": "11c0d8c9082259e7fbeb253829cf51444c021b1a52375bcb43edafba26bec438",
+  "emitter_sha256": "c4129d17e77d3b75a33a8866a99913f04d327a860c1bbdbcf79f2c223796ab13",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "29ec08a480d69548fe7fb63b1a64c92e9838d239d4034c7f7f41270d633f334b"
+    "sha256": "139a4198fdc53885f12e8972edadac91f8dbe93bd660a95be74f0134022df3b9"
   },
   "blocks": [
     {
@@ -21,7 +21,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "51b600282c65a7af84381975e3096a2909b5135e2118e8079177678f9d973c50"
+      "sha256": "d4d7229d0852b649719a59f0bf7b2f327c89239697881df214b01bc0bd342505"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
@@ -35,7 +35,14 @@
       "marker": "SUSTAINED",
       "key": null,
       "index": 0,
-      "sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+      "sha256": "64920faa5f1e6ee9a9c3926563728143bc8666b85003279425da9afd8a7840a7"
+    },
+    {
+      "file": "src/content/docs/sdk/performance.md",
+      "marker": "WALLCLOCK",
+      "key": null,
+      "index": 0,
+      "sha256": "915e8a688f18056d4e98987f2fced7374fd2b8878e1a5de4466be67bec2d870b"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
@@ -56,7 +63,7 @@
       "marker": "HEADLINE",
       "key": null,
       "index": 0,
-      "sha256": "efad61841892cd6eb4367d4e7a296865ca9e484c3b0e6ae029482f8010a61531"
+      "sha256": "c8f645d7195ccf98d7f38bddc8799c0a612d36e5fb7046e5fb3a1a3b3223334b"
     }
   ],
   "table": {
@@ -66,7 +73,7 @@
       {
         "label": "Cloud API · GPU",
         "id": "cloud-gpu",
-        "line": "| Cloud API · GPU | NVIDIA RTX 4090 | 103 | **4.1×** real time | 357 | **17.8×** real time |"
+        "line": "| Cloud API · GPU | NVIDIA RTX 4090 | 98 | **3.9×** real time | 340 | **17.0×** real time |"
       },
       {
         "label": "Cloud API · Apple silicon",
@@ -86,7 +93,7 @@
       {
         "label": "macOS · Python",
         "id": "python-macos",
-        "line": "| macOS · Python | Apple M4 | 175 | **7.0×** real time | 167 | **8.3×** real time |"
+        "line": "| macOS · Python | Apple M4 | 176 | **7.0×** real time | 164 | **8.2×** real time |"
       },
       {
         "label": "Linux · CLI",
@@ -96,7 +103,7 @@
       {
         "label": "Linux · Python",
         "id": "python-linux",
-        "line": "| Linux · Python | Intel Core i7-13700F (x86_64) | 36 | **1.4×** real time | 47 | **2.3×** real time |"
+        "line": "| Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |"
       },
       {
         "label": "iPhone · Swift package",
@@ -106,7 +113,7 @@
       {
         "label": "Android",
         "id": "android-s25plus",
-        "line": "| Android | Samsung Galaxy S25+ | 46 | **1.8×** real time | 47 | **2.3×** real time |"
+        "line": "| Android | Samsung Galaxy S25+ | 47 | **1.8×** real time | 48 | **2.4×** real time |"
       },
       {
         "label": "Web browser (WebGPU)",
