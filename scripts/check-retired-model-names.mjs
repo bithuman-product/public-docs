@@ -355,7 +355,8 @@ const RETIRED_ON = {
   "tessera": "2026-09-04",
   "libessence": "2026-09-04",
 };
-const DATED_HEADING = /^#{2,3} .*\((\d{4}-\d{2}-\d{2})\)\s*$/;
+// Both heading forms: "### Title (2026-09-23)" (archive) and "### Artifact 1.2.3 — 2026-09-23" (release notes).
+const DATED_HEADING = /^#{2,3} .*(?:\((\d{4}-\d{2}-\d{2})\)|— (\d{4}-\d{2}-\d{2})(?: to \d{4}-\d{2}-\d{2})?)\s*$/;
 
 const fatalPre = []; // structural failures found before the corpus scan
 const CONTEXT = 2; // lines either side
@@ -413,7 +414,7 @@ for (const rel of files) {
   lines.forEach((line, i) => {
     if (isChangelog) {
       const h = DATED_HEADING.exec(line);
-      if (h) entryDate = h[1];
+      if (h) entryDate = h[1] || h[2];
     }
     for (const { name, re, engineId, fenceIsVerbatim } of RETIRED) {
       re.lastIndex = 0;
