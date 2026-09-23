@@ -73,4 +73,4 @@ their platform's image types.
 ## Where to go next
 
 - [Quickstart](/api/quickstart) — your first avatar in ~2 minutes.
-- [Render in the tab](/sdk/web#render-in-the-tab) — run the same lip-sync client-side in the browser.
+- [Render in the tab](/sdk/web#integrate-into-your-app) — run the same lip-sync client-side in the browser.

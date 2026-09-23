@@ -126,7 +126,7 @@ party. It only ever travels to `api.bithuman.ai` over TLS. There is one
 exception you must handle yourself. The LiveKit plugin writes whatever it is
 given as `api_secret` into LiveKit room attributes, where every participant can
 read it. Give it a
-[LiveKit cloud token](/sdk/livekit#keep-your-api-secret-out-of-the-room)
+[LiveKit cloud token](/sdk/livekit#authenticate)
 instead of your secret.
 
 The streaming runtime is authorized by a separate, short-lived **runtime
