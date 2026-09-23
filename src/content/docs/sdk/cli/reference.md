@@ -242,7 +242,7 @@ second trained family, and a bare `pull` hands back the family the agent was
 |---|---|---|
 | `essence-1` | `.imx` | This CLI, the [Python SDK](/sdk/python), the [Android AAR](/sdk/android), the cloud |
 | `essence-2` | `.imx` | This CLI (2.6.1+), the [Python SDK](/sdk/python), the cloud. **Licensed weights — keep the file** |
-| `expression-2` | `.avatar` | This CLI, the [Python SDK](/sdk/python), the browser via [`?render=local`](/guides/browser-rendering), the [Apple `Expression2` product](/sdk/ios#minimal-code), the cloud |
+| `expression-2` | `.avatar` | This CLI, the [Python SDK](/sdk/python), the browser via [`?render=local`](/sdk/web#render-in-the-tab), the [Apple `Expression2` product](/sdk/ios#minimal-code), the cloud |
 | `expression-1` | usually nothing (`400 MODEL_NOT_DOWNLOADABLE`) | The cloud |
 
 All but a minority of these are the current bitHuman container — including

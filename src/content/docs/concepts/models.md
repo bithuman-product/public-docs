@@ -128,6 +128,8 @@ legacy names are still strings you read or type:
 | `elevate` | legacy SDK request field | Essence 2 | Accepted for compatibility; write `essence-2` |
 | `embody` | legacy request spelling | Expression 2 | Accepted for compatibility; write `expression-2` |
 | `libelevate`, `libelevate-android` | legacy library names | Essence 2 | No — the Android coordinate is `ai.bithuman:essence2-android` |
+| `[embody]` | the legacy prefix on every log line of the shipped Apple `Expression2` engine | Expression 2 | Grep your logs for it |
+| `BITHUMAN_EMBODY_DIR`, `EMBODY_DEBUG_FAIL_PREDICT` | legacy variables the Apple `Expression2` engine still reads beside their `EXPRESSION2_` twins | Expression 2 | No — set `BITHUMAN_EXPRESSION2_DIR` |
 | `bithuman.tessera_offline`, `OfflineTesseraRenderer`, `TesseraOfflineError` | legacy Python module and class names, still importable | the Essence 2 MP4 route | No — write `bithuman.offline`, `OfflineRenderer`, `render_offline`, `OfflineRenderError` |
 | `BITHUMAN_TESSERA_DIRECTOR` and the other `BITHUMAN_TESSERA_*` variables | legacy environment variables, still read | Essence 2 engine settings | No — the defaults are the fast path |
 | `bithuman[tessera]`, `bithuman[offline]` | legacy pip extras, removed from the wheel in 2.11.6 | nothing — pip warns and installs the base wheel | No — `pip install bithuman` |

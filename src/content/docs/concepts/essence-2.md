@@ -222,7 +222,7 @@ shipping an engine, use the [REST API](/api/overview) or a
 and renders Essence 2 **in the browser**, with no server render in the path.
 The tier activates per identity as web bundles publish; sessions without a
 published bundle fall back to cloud serving. See
-[browser rendering](/guides/browser-rendering) and the
+[browser rendering](/sdk/web#render-in-the-tab) and the
 [device/runtime matrix](/concepts/models#where-each-model-runs).
 
 ## Idle and speaking behavior
