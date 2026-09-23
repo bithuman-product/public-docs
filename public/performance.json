@@ -175,11 +175,11 @@
    "published": true,
    "cells": {
     "essence-2": {
-     "fps": 177,
-     "x_realtime": 7.08,
+     "fps": 175,
+     "x_realtime": 7.0,
      "realtime": true,
-     "measured_on": "2026-09-22",
-     "release": "bithuman 2.11.6",
+     "measured_on": "2026-09-23",
+     "release": "bithuman 2.11.7",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -190,11 +190,11 @@
      "memory_scope": "render"
     },
     "expression-2": {
-     "fps": 159,
-     "x_realtime": 7.95,
+     "fps": 167,
+     "x_realtime": 8.35,
      "realtime": true,
-     "measured_on": "2026-09-20",
-     "release": "bithuman 2.11.5",
+     "measured_on": "2026-09-23",
+     "release": "bithuman 2.11.7",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -251,11 +251,11 @@
    "published": true,
    "cells": {
     "essence-2": {
-     "fps": 31,
-     "x_realtime": 1.24,
+     "fps": 36,
+     "x_realtime": 1.44,
      "realtime": true,
-     "measured_on": "2026-09-22",
-     "release": "bithuman 2.11.6",
+     "measured_on": "2026-09-23",
+     "release": "bithuman 2.11.7",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -266,11 +266,11 @@
      "memory_scope": "render"
     },
     "expression-2": {
-     "fps": 46,
-     "x_realtime": 2.3,
+     "fps": 47,
+     "x_realtime": 2.35,
      "realtime": true,
-     "measured_on": "2026-09-22",
-     "release": "bithuman 2.11.6",
+     "measured_on": "2026-09-23",
+     "release": "bithuman 2.11.7",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -330,8 +330,8 @@
      "fps": 46,
      "x_realtime": 1.84,
      "realtime": true,
-     "measured_on": "2026-09-19",
-     "release": "essence2-android 0.5.12",
+     "measured_on": "2026-09-23",
+     "release": "essence2-android 0.5.14",
      "clip": {
       "id": "6829-68771-0007",
       "seconds": 16.285
@@ -342,14 +342,14 @@
      "memory_scope": "render"
     },
     "expression-2": {
-     "fps": 43,
-     "x_realtime": 2.15,
+     "fps": 47,
+     "x_realtime": 2.35,
      "realtime": true,
-     "measured_on": "2026-09-22",
-     "release": "expression2-android 0.4.8",
+     "measured_on": "2026-09-23",
+     "release": "expression2-android 0.4.9",
      "clip": {
-      "id": "5639-40744-0031",
-      "seconds": 28.42
+      "id": "5683-32865-0012",
+      "seconds": 21.51
      },
      "peak_ram_gb": 2.32,
      "peak_gpu_gb": null,
@@ -365,10 +365,10 @@
    "published": true,
    "cells": {
     "essence-2": {
-     "fps": 29,
-     "x_realtime": 1.16,
+     "fps": 42,
+     "x_realtime": 1.68,
      "realtime": true,
-     "measured_on": "2026-09-22",
+     "measured_on": "2026-09-23",
      "release": "cloud API",
      "clip": {
       "id": "5639-40744-0031",
@@ -380,10 +380,10 @@
      "memory_scope": null
     },
     "expression-2": {
-     "fps": 30,
-     "x_realtime": 1.5,
+     "fps": 40,
+     "x_realtime": 2.0,
      "realtime": true,
-     "measured_on": "2026-09-22",
+     "measured_on": "2026-09-23",
      "release": "cloud API",
      "clip": {
       "id": "5639-40744-0031",
