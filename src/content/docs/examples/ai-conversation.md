@@ -99,20 +99,23 @@ The pipeline: mic → OpenAI Realtime (24 kHz PCM16) → `push_audio`/`flush` in
 
 ```python
 # Configure the OpenAI Realtime session, then bridge its audio into bitHuman.
-async with client.beta.realtime.connect(model="gpt-4o-mini-realtime-preview") as conn:
+async with client.realtime.connect(model="gpt-realtime-mini") as conn:
     await conn.session.update(session={
+        "type": "realtime",
         "instructions": "You are a friendly AI assistant. Keep responses concise.",
-        "input_audio_format": "pcm16",
-        "output_audio_format": "pcm16",
-        "turn_detection": {"type": "server_vad"},
-        "voice": "coral",
+        "output_modalities": ["audio"],
+        "audio": {
+            "input": {"format": {"type": "audio/pcm", "rate": 24000},
+                      "turn_detection": {"type": "server_vad"}},
+            "output": {"format": {"type": "audio/pcm", "rate": 24000}, "voice": "coral"},
+        },
     })
 
     async for event in conn:
-        if event.type == "response.audio.delta":
+        if event.type == "response.output_audio.delta":
             # OpenAI speaks at 24 kHz — push straight into the avatar runtime.
             await runtime.push_audio(base64.b64decode(event.delta), 24000, last_chunk=False)
-        elif event.type == "response.audio.done":
+        elif event.type == "response.output_audio.done":
             await runtime.flush()
 
 # Meanwhile, the render loop draws every frame and plays its synced audio:
