@@ -83,8 +83,7 @@ the code).
 
 - [Quickstart](/api/quickstart) — make your first API call and drive a live agent.
 - [Authentication](/api/authentication) — get an API secret and runtime tokens.
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models and which to choose (`essence-2` / `expression-2` / `auto`).
-- [Models](/concepts/models) — the four models, the first-generation pair compared.
+- [Models](/concepts/models) — the four models, where each runs, and which to pick.
 - [API reference](/api/reference) — the interactive Scalar reference for every
   endpoint, with a live request console.
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational

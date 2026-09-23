@@ -383,12 +383,12 @@
     },
     {
       "source": "/concepts/models-and-planes",
-      "destination": "/concepts/where-models-run",
+      "destination": "/concepts/models",
       "permanent": true
     },
     {
       "source": "/concepts/models-and-planes/",
-      "destination": "/concepts/where-models-run",
+      "destination": "/concepts/models",
       "permanent": true
     },
     {
@@ -899,6 +899,26 @@
     {
       "source": "/legal/",
       "destination": "/legal/eu-ai-act",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models-v2",
+      "destination": "/concepts/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models-v2/",
+      "destination": "/concepts/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/where-models-run",
+      "destination": "/concepts/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/where-models-run/",
+      "destination": "/concepts/models",
       "permanent": true
     }
   ],

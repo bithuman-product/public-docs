@@ -30,7 +30,7 @@ different engine — not an earlier version of the same one.
 is served on bitHuman's cloud GPUs and has no CPU, browser or on-device build,
 so a missing Apple, browser or Android artifact for this model is **correct**.
 
-See **[Where each model runs](/concepts/where-models-run)** for the per-model
+See **[Where each model runs](/concepts/models#where-each-model-runs)** for the per-model
 matrix. Nothing here restates it.
 
 ## How to self-host it
@@ -77,8 +77,7 @@ they ship inside the self-hosting container image.
 
 ## See also
 
-* [Where each model runs](/concepts/where-models-run) — the per-model matrix
-* [Models](/concepts/models) — all four models, and the first-generation pair compared
+* [Models](/concepts/models) — the four models, where each runs, and which to pick.
 * [Essence 1](/concepts/essence-1) — the other first-generation model
 * [Expression 2](/concepts/expression-2) — the recommended model for new work
 * [Self-hosted deployment](/guides/deploy-self-hosted) — the GPU container

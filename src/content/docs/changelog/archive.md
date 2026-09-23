@@ -120,7 +120,7 @@ The `video` creation input is removed for **all models** (`essence-1`,
   (GPU / Apple Silicon / CPU / WebGPU-WASM), and the default. See
   [Essence 2](/concepts/essence-2). The premium tier of the family
   (previously `essence-2-quality`) became an internal model and is no longer
-  offered publicly; see [Naming & migration](/concepts/models-v2#naming--migration).
+  offered publicly; see [Naming & migration](/concepts/models#naming--migration).
 - **Rates unchanged.** `essence-2` stays 4 credits/min cloud, 0.5× when
   self-hosted; creation stays 500 credits.
   [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) advertises the
@@ -170,8 +170,8 @@ rollout, the model documentation gained the shipping characteristics:
   serves GPU → Apple Silicon → CPU; its on-device Apple engine shipped later,
   in [Swift SDK 2.5.0](/sdk/ios#minimal-code) — engine only, with no
   model bundle published.
-- The family overview's [device matrix](/concepts/models-v2#where-each-model-runs)
-  and [creation guide](/concepts/models-v2#how-creation-works) were refreshed
+- The family overview's [device matrix](/concepts/models#where-each-model-runs)
+  and [creation guide](/concepts/models#how-creation-works) were refreshed
   to match.
 
 ### Plan concurrency, offline licensing preview, and one pricing page (2026-07-10)
@@ -200,7 +200,7 @@ Rounding out the launch — plan allowances and a documentation overhaul:
   instead of repeating figures.
 - **Naming and migration history has one home** — every alias, retired name,
   and response-name lag is consolidated at
-  [Models → Naming & migration](/concepts/models-v2#naming--migration).
+  [Models → Naming & migration](/concepts/models#naming--migration).
 - **Every API operation ships a runnable example** — all 33 operations in
   the [interactive API reference](/api/reference) now carry copy-paste curl
   samples with realistic bodies and next-step hints.
@@ -239,12 +239,12 @@ The Essence 2 request surface is now just **`essence-2`** (plus the explicit
   **force-tier slugs** — `essence-2-gpu` / `essence-2-ane` / `essence-2-cpu`
   and `expression-2-gpu` / `expression-2-cpu` / `expression-2-ane` — pin one
   tier for benchmarking/placement testing and never overflow. See
-  [tier pinning](/concepts/models-v2#advanced-pin-a-serving-tier).
+  [tier pinning](/concepts/models#advanced-pin-a-serving-tier).
 - **Talking videos:** [`POST /v1/video/generate`](/api/video) accepts
   `essence-2` (4 credits/min) in place of the retired name;
   `essence-2-quality` (8) and `expression-2` (4) unchanged.
 - **Where each model runs:** the family overview gains a
-  [device/runtime matrix](/concepts/models-v2#where-each-model-runs) (cloud
+  [device/runtime matrix](/concepts/models#where-each-model-runs) (cloud
   tiers, self-hosted, on-device Apple Silicon, browser-local status).
 
 ### Android / Kotlin SDK docs restored (2026-07-04)
@@ -257,7 +257,7 @@ The [Android SDK](/sdk/android) page and the [Kotlin hello-avatar example](/exam
 **Essence 2 Quality** when this shipped; Light is **`essence-2`** now and
 Quality became an internal model that is no longer offered publicly — both
 retired names and the migration are documented under
-[Naming & migration](/concepts/models-v2#naming--migration).*
+[Naming & migration](/concepts/models#naming--migration).*
 
 The model-release UX wave — one creation surface across all five model families, plus post-creation adds and artifact downloads:
 
@@ -274,7 +274,7 @@ The model-release UX wave — one creation surface across all five model familie
 **Essence 2 Quality** when this shipped; Light is **`essence-2`** now and
 Quality became an internal model that is no longer offered publicly — both
 retired names and the migration are documented under
-[Naming & migration](/concepts/models-v2#naming--migration).*
+[Naming & migration](/concepts/models#naming--migration).*
 
 - **Per-model official documentation.** Each second-generation model now has a full product guide — what it is, how creation works (inputs, pipeline steps, realistic durations), serving tiers and `?model=` pinning, idle behavior, pricing, and limits: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2) — plus a new [session behavior & troubleshooting](/guides/session-troubleshooting) guide covering connect latency (warm first line vs scale-from-zero overflow), idle vs speaking behavior, and the common errors.
 - **Expression 2: real-footage idle on every creation.** During silences the avatar now plays a looping clip derived from the identity itself — cropped from your source footage when available, or captured from the trained model's rest pose for photo-only creations — instead of generated idle frames. Baked in automatically at creation; existing agents' idle clips were regenerated.
@@ -283,9 +283,9 @@ retired names and the migration are documented under
 
 ### Announced — Essence 2 & Expression 2 (launching July 10, 2026)
 
-bitHuman's two second-generation avatar models — **`essence-2`** and **`expression-2`** — are announced and **launch July 10, 2026** on every surface (the REST API, the embed widget, the dashboard, and the SDKs). Until then, `essence-1` and `expression-1` are available today. See [Essence 2 & Expression 2](/concepts/models-v2) for the full guide.
+bitHuman's two second-generation avatar models — **`essence-2`** and **`expression-2`** — are announced and **launch July 10, 2026** on every surface (the REST API, the embed widget, the dashboard, and the SDKs). Until then, `essence-1` and `expression-1` are available today. See [Essence 2 & Expression 2](/concepts/models) for the full guide.
 
-- **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model, then the engine synthesizes fully generated motion live. *(Update 2026-07-02: per-model creation-time expectations are now documented — roughly 45 minutes for `expression-2`; see the [per-model guides](/concepts/models-v2).)* Serves on three tiers — **gpu**, **cpu**, and **Apple** (the Apple tier — the slug is historical; [serving tiers](/concepts/essence-2#serving-tiers)). 4 credits/min cloud · 2 credits/min self-hosted.
+- **`expression-2`** — the second-generation expression engine. Audio-driven, real-time avatar video from a **single photo**: agent creation trains a small per-identity model, then the engine synthesizes fully generated motion live. *(Update 2026-07-02: per-model creation-time expectations are now documented — roughly 45 minutes for `expression-2`; see the [per-model guides](/concepts/models).)* Serves on three tiers — **gpu**, **cpu**, and **Apple** (the Apple tier — the slug is historical; [serving tiers](/concepts/essence-2#serving-tiers)). 4 credits/min cloud · 2 credits/min self-hosted.
 - **`essence-2-quality`** — the **highest-fidelity** tier of the Essence family: a heavy GPU renderer for close-up, hero-quality output on cloud GPUs. 8 credits/min cloud · 4 credits/min self-hosted.
 - **`essence-2-light`** — the **cost-effective** tier: an efficient renderer that runs across **gpu**, **cpu**, and **Apple** — including fully **on-device**, where audio and video never leave your hardware. 4 credits/min cloud · 2 credits/min self-hosted.
 

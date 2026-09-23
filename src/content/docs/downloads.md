@@ -84,7 +84,7 @@ build, and self-hosting it is the [NVIDIA container](/guides/deploy-self-hosted)
 
 ### Essence 2 / Expression 2 (second generation)
 
-The [second-generation models](/concepts/models-v2) resolve their runtime tier
+The [second-generation models](/concepts/models) resolve their runtime tier
 for you at session launch. Each model also produces one downloadable
 per-identity artifact — where that artifact can run **locally today** differs
 by model. For the file each family hands you by name, and what opens it, see
@@ -99,12 +99,12 @@ by model. For the file each family hands you by name, and what opens it, see
 | Browser-local (WebGPU / WASM) | Rolling out (`?render=local`) | Rolling out (`?render=local`, LiteRT.js / WebGPU, WASM fallback) |
 
 Full details, force-tier slugs, and rollout status:
-[Where each model runs](/concepts/models-v2#where-each-model-runs).
+[Where each model runs](/concepts/models#where-each-model-runs).
 
 ### Avatar resolutions
 
 Each family renders at its own native size — Essence 2 animates the identity
 at 1080p, Expression 2 generates a 416×720 scene — so there is no one frame
 size "every SDK" delivers. The [Video API](/api/video) states the output size
-per model; the [model comparison](/concepts/models-v2) states each family's
+per model; the [model comparison](/concepts/models) states each family's
 native resolution.

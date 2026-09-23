@@ -112,7 +112,7 @@ knowing before you design around it:
   returned HTTP 200 and the session started **as Expression 1** — a different
   model than the call asked for, with nothing said about it.
 - If you need a specific second-generation model today, prepare the avatar for
-  exactly that model (see [Avatar models](/concepts/models-v2)) so the server's
+  exactly that model (see [Avatar models](/concepts/models)) so the server's
   default for it is the one you want.
 
 The fix — `"expression-2"` and `"essence-2"` as values, and the chosen model

@@ -83,7 +83,7 @@ a recorded loop, and it cannot render your own agent — for that, use
 `?render=local` above. The bundle is
 `https://models.bithuman.ai/web/essence2-web-v0.1.1/manifest.json`. The same
 bytes are also published at the older `libelevate-web-v0.1.0` path — a
-[retired name](/concepts/models-v2) that still works and will never be
+[retired name](/concepts/models) that still works and will never be
 removed, so saved links and already-deployed pages keep resolving. A page you
 host yourself must be cross-origin isolated or WebAssembly drops to one
 thread — see the troubleshooting table.

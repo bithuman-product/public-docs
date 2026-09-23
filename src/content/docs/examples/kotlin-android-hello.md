@@ -1474,4 +1474,4 @@ rows are Essence 2's own, and each quotes the shipped 0.5.12 AAR's wording.
 - [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) — the same model, the same shape, on an iPhone.
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the Expression 2 project above, on an iPhone.
 - [Audio streaming](/concepts/audio-streaming) — the streaming contract that backs `composeFromFile`.
-- [Where each model runs](/concepts/where-models-run) — which model to ship, and which platforms it runs on.
+- [Where each model runs](/concepts/models#where-each-model-runs) — which model to ship, and which platforms it runs on.

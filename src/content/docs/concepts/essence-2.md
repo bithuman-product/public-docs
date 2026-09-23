@@ -12,7 +12,7 @@ label: "Essence 2"
 > photorealistic humans — as a developer you simply select `essence-2`, and
 > bitHuman serves the right tier for your hardware and quality needs.
 > Coming from an earlier model name? See
-> [Naming & migration](/concepts/models-v2#naming--migration).
+> [Naming & migration](/concepts/models#naming--migration).
 
 ## What it is
 
@@ -44,7 +44,7 @@ four ways:
 Wherever it runs, Essence 2 is **fail-closed**: a model file with a required
 member missing is refused rather than played with a substituted mouth. See
 [serving tiers](#serving-tiers) below for the cloud chain and
-[where each model runs](/concepts/where-models-run) for the full matrix.
+[where each model runs](/concepts/models#where-each-model-runs) for the full matrix.
 
 It has CPU, Apple, and browser runtimes as well as GPU —
 the right default for photorealistic humans, kiosks, high-concurrency
@@ -65,7 +65,7 @@ deployments, and privacy-sensitive environments.
 If you want fully generated motion from a single photo, choose
 [Expression 2](/concepts/expression-2). For
 the family-level decision, start at
-[Essence 2 & Expression 2](/concepts/models-v2).
+[Essence 2 & Expression 2](/concepts/models).
 
 ## How creation works
 
@@ -185,9 +185,9 @@ Tier slugs are an advanced, operational surface, and for production you should
 omit `?model=` and let the platform choose. What a pin actually does — including
 why a *recognized* slug fails loudly while an *unrecognized* one is ignored
 silently — is described once, on
-[pin a serving tier](/concepts/models-v2#advanced-pin-a-serving-tier); saved
+[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier); saved
 links carrying pre-rename or retired slugs keep working
-([Naming & migration](/concepts/models-v2#naming--migration)). To pin from the
+([Naming & migration](/concepts/models#naming--migration)). To pin from the
 embed widget, see [the embed guide](/guides/deploy-embed#pin-a-serving-tier).
 
 ### On your own device
@@ -223,7 +223,7 @@ and renders Essence 2 **in the browser**, with no server render in the path.
 The tier activates per identity as web bundles publish; sessions without a
 published bundle fall back to cloud serving. See
 [browser rendering](/guides/browser-rendering) and the
-[device/runtime matrix](/concepts/models-v2#where-each-model-runs).
+[device/runtime matrix](/concepts/models#where-each-model-runs).
 
 ## Idle and speaking behavior
 
@@ -292,7 +292,7 @@ artifact and not your setup — contact support with the agent code.
   (on [status / get / list](/api/agents#poll-status) and the embed-token
   response). During the rename rollout, server responses may still report
   the family under an earlier name — see
-  [Naming & migration](/concepts/models-v2#naming--migration).
+  [Naming & migration](/concepts/models#naming--migration).
 
 
 ## The developer journey
@@ -332,7 +332,7 @@ with runnable, verified examples:
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the family overview and model chooser.
+- [Essence 2 & Expression 2](/concepts/models) — the family overview and model chooser.
 - [Second-generation gallery](https://bithuman.ai/explore?gallery=v2) — talk to a live launch agent.
 - [Agents API](/api/agents) — full create → poll → serve lifecycle.
 - [Embed widget](/guides/deploy-embed) — ship a live session in minutes.

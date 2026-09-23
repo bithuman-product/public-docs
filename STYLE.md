@@ -11,7 +11,7 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   (`essence-2`, `expression-2`): monospace = the string you type.
 - Say "second-generation models" in prose; "v2" only in tables and the changelog.
 - Retired and internal names (`essence-2-light`, `essence-2-quality`) live in ONE place —
-  the "Naming & migration" section on `/concepts/models-v2` — everywhere else links there.
+  the "Naming & migration" section on `/concepts/models` — everywhere else links there.
   `essence-2-quality` is described strictly as a retired alias that now 400s;
   `essence-2-light` appears only in the 400-hint migration note. The phrase
   "platform-side flip" is banned from public prose.
@@ -42,7 +42,7 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   old integration learns it is dead. `scripts/check-retired-model-names.mjs`
   enforces exactly this and fails on any other use.
   (`--color-elevated` is a CSS surface token, not the product — out of scope.)
-- The generated clip is the **"identity video"**, defined once (on `/concepts/models-v2`):
+- The generated clip is the **"identity video"**, defined once (on `/concepts/models`):
   generated internally from your portrait, 10 seconds, first and last frames match so it
   loops seamlessly. Banned synonyms: source video, source footage, driver video, real
   footage (except when quoting a verbatim server message, with a link).
@@ -90,5 +90,5 @@ Every PR is expected to conform; reviewers link to the rule they are enforcing.
   ~25 words; caveats belong in prose.
 - A page opens with what the thing IS — never with naming history.
 - Single-source facts: ALL pricing numbers live only in `/guides/pricing`; the force-tier
-  table only on `/concepts/models-v2`; the device matrix only on `/concepts/architecture`.
+  table and the model × platform matrix only on `/concepts/models`.
   Everywhere else links.

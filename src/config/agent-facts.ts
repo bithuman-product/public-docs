@@ -16,7 +16,7 @@
 // ★THE RULE THIS BLOCK KEEPS: every fact below is owned by a page, and the bullet
 // links to that page. No number that /guides/pricing owns is repeated here (STYLE.md
 // single-sources all pricing numbers), and no retired model name is spelled here
-// (STYLE.md keeps those to the Naming & migration section of /concepts/models-v2).
+// (STYLE.md keeps those to the Naming & migration section of /concepts/models).
 // An index that states a number the pages later change is worse than one that links.
 
 /** The "what to get right first" section, with `site` as the link origin. */
@@ -32,7 +32,7 @@ export function agentFacts(site: string): string {
     `\`version\`) and \`auto\` — seven values in all; send one of the four explicit ` +
     `slugs unless you mean otherwise. Any other spelling returns \`400\` listing the ` +
     `seven, and the names that used to work are under "Naming & migration" on ` +
-    `[Essence 2 & Expression 2](${site}/concepts/models-v2).\n` +
+    `[Essence 2 & Expression 2](${site}/concepts/models).\n` +
     `- **Nothing defaults to Essence 2.** \`essence-2\` is the standard model for ` +
     `photorealistic people, but \`POST /v1/agent/generate\` with no \`model\` field ` +
     `creates an \`expression-1\` agent. Send \`model\` explicitly on every generate ` +

@@ -171,7 +171,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
 > note the Essence 2 family requires a photorealistic human subject, so an
 > explicit `essence-2*` creation with a non-human input is rejected with
 > [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) (nothing billed).
-> See [Essence 2 & Expression 2](/concepts/models-v2#which-should-i-choose)
+> See [Essence 2 & Expression 2](/concepts/models#which-should-i-choose)
 > for the full chooser and the [subject gate](/api/agents#the-essence-2-subject-gate-422).
 
 The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`GET /v1/agent/status/{agent_id}`](/api/reference) until `ready`, then drive the resulting `agent_code` like any other avatar. See the [agent lifecycle](/concepts/agent-lifecycle) for the full generate → resolve → speak flow.

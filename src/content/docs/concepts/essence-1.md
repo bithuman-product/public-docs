@@ -13,7 +13,7 @@ label: "Essence 1"
 > the model behind the published Python SDK, the CLI and the Android SDK. For
 > **new** photorealistic work the recommended model is
 > [`essence-2`](/concepts/essence-2) — see
-> [Essence 2 & Expression 2](/concepts/models-v2) for the comparison.
+> [Essence 2 & Expression 2](/concepts/models) for the comparison.
 
 ## What it is
 
@@ -35,7 +35,7 @@ It is a **core library plus SDKs**, not a tiered model: there is one
 
 ## Where it runs
 
-See **[Where each model runs](/concepts/where-models-run)** — that page is the
+See **[Where each model runs](/concepts/models#where-each-model-runs)** — that page is the
 single matrix for every model and is kept in step with the engineering source
 of truth. Nothing here restates it.
 
@@ -93,7 +93,6 @@ same file, fetched the same way, whichever SDK you point at it.
 
 ## See also
 
-* [Where each model runs](/concepts/where-models-run) — the per-model matrix
-* [Models](/concepts/models) — all four models, and the first-generation pair compared
+* [Models](/concepts/models) — the four models, where each runs, and which to pick.
 * [Expression 1](/concepts/expression-1) — the other first-generation model
 * [Essence 2](/concepts/essence-2) — the recommended model for new work

@@ -69,7 +69,7 @@ to pin the session to that tier:
 ```
 
 **The slugs, and what a pin does, are documented once** on
-[pin a serving tier](/concepts/models-v2#advanced-pin-a-serving-tier) — read
+[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier) — read
 that before you rely on one, because a *recognized* slug fails loudly while an
 *unrecognized* one is ignored silently. Each model guide lists its own slugs:
 [Expression 2](/concepts/expression-2#serving-tiers),
@@ -114,7 +114,7 @@ Endpoint setup, signature verification, and retry policy are in the [API referen
 
 ## Where to go next
 
-- [Essence 2 & Expression 2](/concepts/models-v2) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2).
+- [Essence 2 & Expression 2](/concepts/models) — the second-generation models, with per-model guides: [Expression 2](/concepts/expression-2), [Essence 2](/concepts/essence-2).
 - [Session behavior & troubleshooting](/guides/session-troubleshooting) — connect latency, idle behavior, and common embed errors.
 - [Deploy via LiveKit](/guides/deploy-livekit) — full agent-worker integration.
 - [Browser rendering](/guides/browser-rendering) — render client-side to cut server video egress.

@@ -4386,7 +4386,7 @@ tags:
     description: "API secrets, runtime tokens and where each surface reads its key: [https://docs.bithuman.ai/api/authentication](https://docs.bithuman.ai/api/authentication)."
   - name: models
     x-displayName: Models
-    description: "Essence 2, Expression 2 and the first generation — what each does and where each runs: [https://docs.bithuman.ai/concepts/models-v2](https://docs.bithuman.ai/concepts/models-v2)."
+    description: "Essence 2, Expression 2 and the first generation — what each does and where each runs: [https://docs.bithuman.ai/concepts/models](https://docs.bithuman.ai/concepts/models)."
   - name: pricing
     x-displayName: Pricing
     description: "Credits per minute by model and surface, creation costs and plans: [https://docs.bithuman.ai/guides/pricing](https://docs.bithuman.ai/guides/pricing)."
