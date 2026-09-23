@@ -7,8 +7,8 @@
     "swift": "2.14.2",
     "essence2_engine": "1.11.0",
     "expression2_swift": "2.6.5",
-    "essence2_android": "0.5.13",
-    "expression2_android": "0.4.8",
+    "essence2_android": "0.5.14",
+    "expression2_android": "0.4.9",
     "livekit_plugin": "1.8.2",
     "flutter_plugin": "2.6.11"
   },

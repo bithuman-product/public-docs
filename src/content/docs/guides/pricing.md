@@ -167,7 +167,7 @@ Both mobile rails bill a live avatar at the **self-hosted rate** in the table ab
 
 **Swift.** The SDK requests a runtime token once on `chat.start()` (sync — a bad API secret fails fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar. On this rail (`bitHumanKit`) your API secret goes in `config.apiKey`; read it from `BITHUMAN_API_SECRET` like every other surface.
 
-**Android / Kotlin.** `ai.bithuman:essence2-android` meters every session: set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to. A metering service that cannot be reached never stops a render; a **rejected** API secret gets a 300-second grace and then ends the session. Details are on the [Android SDK page](/sdk/android#authentication).
+**Android / Kotlin.** `ai.bithuman:essence2-android` meters every session: set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to. A metering service that cannot be reached never stops a render; a **rejected** API secret gets a 300-second grace and then ends the session. Details are on the [Android SDK page](/sdk/android#authenticate).
 
 Which SDK pulls the model onto the handset, and which handsets are supported at all, is on [getting an avatar model onto a phone](/sdk).
 

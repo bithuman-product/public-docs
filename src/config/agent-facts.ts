@@ -72,13 +72,11 @@ export function agentFacts(site: string): string {
     `On Android, older Maven coordinates still resolve, still compile and render ` +
     `**differently**, with no exception to catch — and across some releases the Kotlin ` +
     `API is byte-identical, so no compiler and no reference page can see it: ` +
-    `[what an older pin changes](${site}/sdk/android#pin-the-version).\n` +
-    `- **On Android the two models differ in the one thing that decides a project: the ` +
-    `credential.** \`expression2-android\` reaches a first frame with no account and no ` +
-    `key. \`essence2-android\` needs an api-secret in **two** places — the model store's ` +
-    `resolver and \`Essence2Metering.apiSecret\` — and setting one does not arm the ` +
-    `other. Both are \`arm64-v8a\` only, both need \`useLegacyPackaging = true\`, and ` +
-    `they declare different \`minSdk\`: [Android SDK](${site}/sdk/android).\n` +
+    `[what an older pin changes](${site}/sdk/android#platform-notes).\n` +
+    `- **On Android both models need an API secret.** Set \`Expression2Metering.apiSecret\` ` +
+    `or \`Essence2Metering.apiSecret\` before \`create()\`; Essence 2 downloads also take it ` +
+    `through \`MeteredDoorResolver\`. Both are \`arm64-v8a\` only, both need ` +
+    `\`useLegacyPackaging = true\`, and they declare different \`minSdk\`: [Android SDK](${site}/sdk/android).\n` +
     `- **Self-hosting is gated by credits alone, and it runs online.** Every ` +
     `self-hosted or on-device render authenticates over the internet. Running ` +
     `completely off the internet is offline licensing — Business and Enterprise only, ` +

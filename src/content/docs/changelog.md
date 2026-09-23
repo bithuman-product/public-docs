@@ -10,6 +10,24 @@ order: 1
 
 ## September 2026
 
+### `expression2-android` 0.4.9 — 2026-09-23
+
+`implementation("ai.bithuman:expression2-android:0.4.9")`
+
+- **Changed:** on-device Expression 2 sessions now use your API secret and bill talking time; idle is free. `Expression2Avatar.create` throws `Expression2Exception` when no API secret is set.
+- **New:** `Expression2Metering` (`apiSecret`, `apiBaseUrl`, `installId`, `stateDir`). The secret resolves from `Expression2Metering.apiSecret`, then `BITHUMAN_API_SECRET`.
+- **New:** after your API secret is accepted, a network outage is tolerated for 5 minutes of rendered video; then `pull` throws a retryable `Expression2Exception` until the connection returns. Usage that could not be sent is kept and sent at the next start.
+- **Action:** set `Expression2Metering.apiSecret` before `create`, then update the dependency. See [Android](/sdk/android).
+
+### `essence2-android` 0.5.14 — 2026-09-23
+
+`implementation("ai.bithuman:essence2-android:0.5.14")`
+
+- **Changed:** talking time is billed; idle frames are free.
+- **New:** after your API secret is accepted, a network outage is tolerated for 5 minutes of rendered video; then render calls and `idleFrame` throw a retryable `MeteringRefused` until the connection returns.
+- **New:** `Essence2Metering.stateDir`. Usage that could not be sent is kept and sent at the next session.
+- **Action:** update the dependency. See [Android](/sdk/android).
+
 ### An API secret can no longer read your other API secrets (2026-09-23)
 
 `GET /v2/{user_id}/api-secrets/{alias}/get-value` now returns `403`
@@ -50,7 +68,7 @@ only in release builds. Nothing else a caller can see changes: the Kotlin
 surface is byte-identical to `0.5.12`, and the picture is the same — the lip
 contour, and a mouth taken entirely from the identity's own footage (generated
 share **0.000000 mean / 0.000000 max** over 62 frames). See
-[Shrink the release build](/sdk/android#shrink-the-release-build).
+[Shrink the release build](/sdk/android#platform-notes).
 
 ### ARM Linux can install the CLI again — `cli-v2.7.1` (2026-09-23)
 
