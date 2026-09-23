@@ -34,7 +34,7 @@ For a photorealistic person animated from their own footage, compare
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/guides/deploy-embed) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
 | iPhone, iPad, Mac | the [Apple SDK](/sdk/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
 | Android | [`expression2-android`](/sdk/android) — a published identity renders with no key |
@@ -106,6 +106,6 @@ moving idle clip covers that window.
 
 - [Models](/concepts/models) — the four models side by side
 - [Agents API](/api/agents) — create, poll, download
-- [Embed widget](/guides/deploy-embed) — a live session in minutes
+- [Embed widget](/api/embedding) — a live session in minutes
 - [Video API](/api/video) — render an MP4 with `model: "expression-2"`
 - [Session behavior & troubleshooting](/guides/session-troubleshooting)

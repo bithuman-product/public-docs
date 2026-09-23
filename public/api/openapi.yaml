@@ -4422,7 +4422,7 @@ tags:
     description: "Run Expression 1 on your own NVIDIA hardware with the published image: [https://docs.bithuman.ai/guides/self-hosting#the-expression-1-gpu-container](https://docs.bithuman.ai/guides/self-hosting#the-expression-1-gpu-container)."
   - name: deploy-embed
     x-displayName: Browser embed
-    description: "A talking avatar on any website with one iframe and an embed token: [https://docs.bithuman.ai/guides/deploy-embed](https://docs.bithuman.ai/guides/deploy-embed)."
+    description: "A talking avatar on any website with one iframe and an embed token: [https://docs.bithuman.ai/api/embedding](https://docs.bithuman.ai/api/embedding)."
   - name: community
     x-displayName: Community
     description: "Where to find bitHuman online, get help and contribute: [https://docs.bithuman.ai/community](https://docs.bithuman.ai/community)."

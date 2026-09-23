@@ -33,41 +33,27 @@ If sessions consistently fail to connect, check the live platform status at
 
 ## Idle vs speaking: what you should see
 
-The second-generation models separate **idle** (no speech) from **speaking**
-behavior deliberately:
+During silence a second-generation avatar keeps moving: Expression 2 plays its
+idle clip, and Essence 2 keeps playing its identity video. Both loop
+forward-only, never in reverse, and idle animation is not billed. When speech
+starts, Expression 2's first talking frame lands roughly 1.6 seconds after the
+audio begins, covered by the idle clip. Details are on each model's page:
+[Expression 2](/concepts/expression-2#idle-and-speaking-behavior) ·
+[Essence 2](/concepts/essence-2#idle-and-speaking-behavior).
 
-- **Expression 2** — during silence the avatar plays a **real-footage idle
-  clip** derived from the identity (as of 2026-07-02, baked into every
-  creation). The clip loops **forward-only** — never in reverse. When the
-  agent speaks, generated frames take over on the first rendered frame; the
-  first talking frame lands roughly **1.6 seconds** after speech audio begins
-  (the engine renders in fixed audio chunks), which the moving idle footage
-  masks. Brief pauses inside a sentence do **not** flip the avatar back to
-  idle. See [Expression 2 › idle](/concepts/expression-2#idle-and-speaking-behavior).
-- **Essence 2** — the avatar animates the identity's
-  footage (the identity video generated internally at creation); for the
-  standard Essence 2, the base video loops
-  **forward-only on every tier** (as of 2026-07-02), wrapping from last frame
-  to first, while idle *and* while speaking. See
-  [Essence 2 › idle](/concepts/essence-2#idle-and-speaking-behavior).
-
-So: an avatar that keeps gently moving during silence is **working as
-designed** — that is the idle loop, and idle animation is not billed. What you
-should *not* see is frozen frames or reversed-looking motion; if you do,
-report it with the agent code and timestamp.
+What you should *not* see is frozen frames or reversed-looking motion; if you
+do, report it with the agent code and timestamp.
 
 ## Common errors
 
-### Creation (`POST /v1/agent/generate`)
+### Creation
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `400 VALIDATION_ERROR` — `Invalid model '<x>'; must be one of: …` | Unknown or retired `model` value. The error lists the accepted names. | Use one of `essence-1`, `essence-2`, `expression-1`, `expression-2`, `auto` (or the bare `essence` / `expression` shorthands). Retired and pre-rename names are handled per [Naming & migration](/concepts/models#naming--migration). No credits are charged. |
-| `402 INSUFFICIENT_BALANCE` | Creation costs the model's rate — 250 credits for the first-generation models, 500 for `essence-2`, 2000 for `expression-2`; `auto` bills the routed model's rate (500 or 2000). See [Pricing](/guides/pricing#creation--generation--one-time-credits). | Top up, then retry. |
-| [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) — `… requires a photorealistic human subject …` | An explicit Essence 2 creation (`essence-2`) with a cartoon / animal / stylized input — the [subject gate](/api/agents#the-essence-2-subject-gate-422) rejects it **before billing**. | Use `expression-2` for that subject, or `model: "auto"` (it routes instead of rejecting). |
-| Status `failed` with `error_message` | A pipeline step failed — the message names it (e.g. a voice or image step failure). | Failed creations are terminal for that `agent_id` and the creation credits are **automatically refunded**; fix the input and create again. |
-| `400 VIDEO_INPUT_NOT_SUPPORTED` — `Agent creation is image-only. …` | The request carried a `video` input. Creation is **image-only** for every model — the 10-second identity video is generated internally so it loops seamlessly. Nothing is charged. | Send a portrait `image` (or let the prompt generate one) instead of `video`. |
-| Polling seems stuck at `current_step: "lip_sync"` | For `expression-2` and `essence-2` this is the **model training step** — the longest part of creation (tens of minutes; see each model's guide). | Keep polling. Don't apply a 5-minute client timeout to v2 model creation. |
+Creation errors — `400 VALIDATION_ERROR`, `402 INSUFFICIENT_BALANCE`,
+`422 MODEL_SUBJECT_MISMATCH`, `400 VIDEO_INPUT_NOT_SUPPORTED` and a `failed`
+status — are listed with their fixes under
+[creation failure modes](/api/agents#creation-failure-modes). A poll that sits
+at `current_step: "lip_sync"` for Essence 2 or Expression 2 is the training
+step, which takes about 2 to 2.5 hours: keep polling.
 
 ### Live sessions
 
@@ -78,7 +64,7 @@ report it with the agent code and timestamp.
 | Session ends immediately with `avatar_error: "model_not_generated"` | A `?model=` URL override targeted a not-yet-generated v2 model — the session disconnects cleanly instead of hanging through dispatch retries. | Same fix as the 409 above; prefer validating via the embed-token `model` field, which rejects up front. |
 | `404 NOT_FOUND` — `No active rooms found for agent <code>` on `/speak` or `/add-context` | These endpoints target an agent with an **active session**. | Start a session first (embed, viewer, or LiveKit), then call them. |
 | `?model=` tier pin appears ignored | Unrecognized tier slugs **fall back silently** to the agent's default routing — the session plays normally, so nothing looks broken. | Check the spelling against the slug table on [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier); for production, omit `?model=`. |
-| No microphone prompt in the embed | The parent page's `Permissions-Policy` or a missing `allow` attribute blocks the mic. | Set `allow="microphone *; camera *; autoplay *"` on the iframe and allowlist the embed origin. See [Embed widget](/guides/deploy-embed). |
+| No microphone prompt in the embed | The parent page's `Permissions-Policy` or a missing `allow` attribute blocks the mic. | Set `allow="microphone *; camera *; autoplay *"` on the iframe and allowlist the embed origin. See [Embed widget](/api/embedding). |
 | Long connect on `essence-2-gpu` / `-cpu` (or their [legacy slugs](/concepts/models#naming--migration)) or `expression-2-cpu` | These forced tiers are fully elastic (scale from zero) — no always-warm first line. | Expect a cold start on the first session; keep the session URL identical to reuse warm capacity, or use the model's default route. |
 | In a **multi-agent room** the avatar is silent for one agent / never sends `playback_started`/`playback_finished` (its audio is dropped) | The avatar bound its audio to a different agent in the room. | The avatar pins to the agent that starts `AvatarSession`, so make sure the intended agent is the one that calls `AvatarSession.start()`. No client change is needed beyond that. See [LiveKit → Multiple agents](/sdk/livekit#wire-it-into-an-agent-worker). |
 
@@ -90,7 +76,7 @@ are on [pricing](/guides/pricing).
 
 ## Next steps
 
-- [Essence 2 & Expression 2](/concepts/models) — model chooser and family overview.
+- [Models](/concepts/models) — the four models and which to pick.
 - [Expression 2](/concepts/expression-2) · [Essence 2](/concepts/essence-2) — per-model guides.
 - [Agents API](/api/agents) — creation, polling, and error codes.
 - [Error reference](/api/errors) — the full error envelope.

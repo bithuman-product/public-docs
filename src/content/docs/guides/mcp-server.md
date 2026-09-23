@@ -179,7 +179,7 @@ chains them. A few worked examples:
 The agent calls `generate_agent`, polls `get_agent_status` until `ready`
 (minutes for a first-generation model; about 2 to 2.5 hours for either
 second-generation one), then `create_embed_token` and hands you the JWT for the
-[embed widget](/guides/deploy-embed).
+[embed widget](/api/embedding).
 
 **Create a photoreal Essence 2 agent** (CLI 2.4.1+ / `bithuman-mcp` 0.3.4+)
 

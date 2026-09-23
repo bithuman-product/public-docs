@@ -199,7 +199,7 @@ side stays free either way: `bithuman list`, `bithuman pull <slug>` and
 ## Next steps
 
 - [Deploy via LiveKit](/sdk/livekit) — ship it to production.
-- [Embed widget](/guides/deploy-embed) — put it on your site in one line.
+- [Embed widget](/api/embedding) — put it on your site in one line.
 - [Pricing & credits](/guides/pricing) — what it costs to run.
 - [Quickstart](/api/quickstart) — run your `.imx` in 2 minutes.
 - [Avatars and the `.imx` format](/concepts/avatars-imx) — inspect what you built.

@@ -1010,6 +1010,16 @@
       "source": "/guides/deploy-livekit/",
       "destination": "/sdk/livekit",
       "permanent": true
+    },
+    {
+      "source": "/guides/deploy-embed",
+      "destination": "/api/embedding",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-embed/",
+      "destination": "/api/embedding",
+      "permanent": true
     }
   ],
   "rewrites": [
