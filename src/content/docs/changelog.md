@@ -25,6 +25,18 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### `bithuman` 2.11.8 — 2026-09-23
+
+- **Fixed:** `AsyncBithuman`, the class the LiveKit plugin uses, loads an Essence 2 avatar on macOS. On 2.11.6 and 2.11.7 it failed with "No module named 'bithuman.bindings'", so a LiveKit agent with an Essence 2 avatar on a Mac could not start.
+- **Changed:** Essence 2 on a Linux CPU renders faster.
+- **Action:** `pip install -U bithuman`.
+
+### LiveKit plugin 1.8.4 — 2026-09-23
+
+- **Changed:** `model` accepts `essence-2` and `expression-2`. A model you name is the model that renders, or the session is refused; leave it unset and the avatar's own default is used, as before.
+- **Fixed:** the plugin no longer imports OpenCV, so it installs beside `opencv-python-headless` without a conflict.
+- **Action:** `pip install -U livekit-plugins-bithuman`.
+
 ### Swift package 2.14.3 — 2026-09-23
 
 Essence 2 engine 1.12.0 · Expression 2 engine 2.6.5
