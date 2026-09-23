@@ -20,19 +20,19 @@ the tier for each session, and the three Cloud rows show each tier.
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
 |---|---|---|---|---|---|
 | Cloud API · GPU | NVIDIA RTX 4090 | 103 | **4.1×** real time | 357 | **17.8×** real time |
-| Cloud API · Apple silicon | Apple M4 Max | 67 | **2.6×** real time | 115 | **5.7×** real time |
+| Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |
 | Cloud API · CPU | x86 server CPU | 22 | 0.8× below real time | 27 | **1.3×** real time |
-| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 177 | **8.8×** real time |
+| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 168 | **8.4×** real time |
 | macOS · Python | Apple M4 | 177 | **7.0×** real time | 159 | **7.9×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 36 | **1.4×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 31 | **1.2×** real time | 46 | **2.3×** real time |
-| iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 111 | **5.5×** real time |
+| iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 110 | **5.5×** real time |
 | Android | Samsung Galaxy S25+ | 46 | **1.8×** real time | 43 | **2.1×** real time |
 | Web browser (WebGPU) | Chrome on Apple M4 | 29 | **1.1×** real time | 30 | **1.5×** real time |
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES -->
-Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.13 · essence2-android 0.5 · expression2-android 0.4 · cloud API (September 2026).
+Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.14 · essence2-android 0.5 · expression2-android 0.4 · cloud API (September 2026).
 <!-- /FLOORS:RELEASES -->
 
 ## Memory
@@ -44,6 +44,8 @@ Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.13 · 
 | macOS · Python | Apple M4 | 1.6 GB | 0.8 GB |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 3.5 GB | 1.7 GB |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 2.6 GB | 1.5 GB |
+| iPhone · Swift package | iPhone 15 | 0.9 GB | 0.5 GB |
+| Android | Samsung Galaxy S25+ | 1.0 GB | 2.3 GB |
 
 Cloud API: nothing to provision.
 <!-- /FLOORS:MEMORY -->

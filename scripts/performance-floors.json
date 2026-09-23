@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "bda2f6baa7fb764d669e8c38adebc07b77b58184598bc9b61b26cc71190d1586",
-  "emitter_sha256": "bb40e2d98d0c738e42353599a3335c5cb8d50cfca009bf5abfa5e0df1f24bcf3",
+  "record_sha256": "786ae5aa47c18d76d90cc741802790b87742d14fe526d413701dd5e06b4c5e1d",
+  "emitter_sha256": "49d3cf9c438e2a51d6f674eab513e480454de0cc580e86a28f80c7eabdded6e5",
   "verified_on": "2026-09-23",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "78c21f726668b18e1ae41ca92247e557d09405eab3338bffa8a08a7fe91ee235"
+    "sha256": "1be0ee981db2d240b3cb10f7fa72547acf364b78228fec387bf62a9b6f81b5a1"
   },
   "blocks": [
     {
@@ -21,21 +21,21 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "50e6ee82088643682aeba72e325eca36bcc977ba0a9ed1d6e6d90b7ae6ae7b27"
+      "sha256": "7df15fc68170547b2f16acb72afe609e7865b32636435fc1c970baee8cc83205"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "d593906d65f1dc8f2c6eec6a125ae2f2cd3f4e182c97b349fe955fbae5336b19"
+      "sha256": "1857844389d7cba080383bd1d50d35c51cc85f1a417c3fc1a83373ce31f3e0bf"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
       "marker": "MEMORY",
       "key": null,
       "index": 0,
-      "sha256": "d3cb4636a12df1b99bf899f8da52df4df1f696bbf67f37861a9d9210939a9e8a"
+      "sha256": "c347ee5b2765807ec323c1687e7e1c8e5a5589d027ec09cbe98d9ce3adc7d71f"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
@@ -49,7 +49,7 @@
       "marker": "HEADLINE",
       "key": null,
       "index": 0,
-      "sha256": "62d119860b1ff119ed6b6a2ff215eed6b0d3365ca1586a20016bf84de8b43c6b"
+      "sha256": "dff074a324bc6c4030a468565d638bc6b90f6da51a0982296e1e81b0357c2bae"
     }
   ],
   "table": {
@@ -64,7 +64,7 @@
       {
         "label": "Cloud API · Apple silicon",
         "id": "apple-serve",
-        "line": "| Cloud API · Apple silicon | Apple M4 Max | 67 | **2.6×** real time | 115 | **5.7×** real time |"
+        "line": "| Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |"
       },
       {
         "label": "Cloud API · CPU",
@@ -74,7 +74,7 @@
       {
         "label": "macOS · CLI",
         "id": "macos-m4",
-        "line": "| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 177 | **8.8×** real time |"
+        "line": "| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 168 | **8.4×** real time |"
       },
       {
         "label": "macOS · Python",
@@ -94,7 +94,7 @@
       {
         "label": "iPhone · Swift package",
         "id": "iphone-15",
-        "line": "| iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 111 | **5.5×** real time |"
+        "line": "| iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 110 | **5.5×** real time |"
       },
       {
         "label": "Android",
