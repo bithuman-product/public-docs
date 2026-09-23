@@ -225,7 +225,10 @@ export function gradeTableAgainstJson(page, json, where) {
   if (!tb) return [{ rule: "J0", where, why: `no <!-- FLOORS:TABLE ${PAGE_TABLE_KEY} --> block` }];
   const t = parseTable(tb.body);
   if (typeof t === "string") return [{ rule: "J0", where, why: t }];
-  const rows = (json.rows ?? []).filter((r) => r.published !== false);
+  // ★A HELD-SESSION ROW (`sustained: true`) IS PUBLISHED IN ITS OWN BLOCK, FLOORS:SUSTAINED,
+  //  under the speed table, and never as a speed-table row (owner, 2026-09-23: the rate a
+  //  phone holds for ten minutes goes on this page, off the headline).
+  const rows = (json.rows ?? []).filter((r) => r.published !== false && !r.sustained);
   const want = rows.map((r) => r.label);
   const have = [...t.rows.keys()];
   for (const r of rows) {
@@ -263,7 +266,7 @@ export function gradeTableAgainstJson(page, json, where) {
  *  same table; every row they print must be a published JSON row, cell for cell. */
 export function gradeKeyedTables(corpus, json) {
   const out = [];
-  const byLabel = new Map((json.rows ?? []).filter((r) => r.published !== false).map((r) => [r.label, r]));
+  const byLabel = new Map((json.rows ?? []).filter((r) => r.published !== false && !r.sustained).map((r) => [r.label, r]));
   for (const rel of Object.keys(corpus).sort()) {
     for (const b of findBlocks(corpus[rel])[0]) {
       if (b.marker !== "TABLE" || b.key === PAGE_TABLE_KEY) continue;
@@ -988,6 +991,13 @@ async function selftest() {
   arm("prose edited outside the markers", grade(edit("Lede.", "A new lede about setup, 25 fps and 20 fps.")).length === 0);
   arm("a six-column table elsewhere on the page is prose", grade(edit("## Memory", `${FIX_TABLE.replace("| 103 |", "| 1 |")}\n## Memory`)).length === 0);
   arm("the half-measured row pins and grades like any other", pin.table.rows.some((r) => r.label === "Web browser (WebGPU)") && grade().length === 0);
+  {
+    const withHeld = { ...FIX_JSON, rows: [...FIX_JSON.rows, { id: "android-s25plus-sustained", label: "Android · held 10 min", hardware: "Samsung Galaxy S25+", published: true, sustained: true, cells: {
+      "essence-2": { fps: 24, x_realtime: 0.96, realtime: false, measured_on: "2026-09-23" }, "expression-2": null } }] };
+    arm("a sustained JSON row is not demanded in the speed table (it has its own block)", gradeTableAgainstJson(FIX_PAGE, withHeld, "fixture").length === 0);
+    arm("...and the same row NOT marked sustained is demanded there (the control)",
+      has(gradeTableAgainstJson(FIX_PAGE, { ...withHeld, rows: withHeld.rows.map((r) => ({ ...r, sustained: undefined })) }, "fixture"), "J1"));
+  }
   arm("a published:false JSON row is not demanded on the page", !pin.table.rows.some((r) => r.label.startsWith("Cloud live session")) && grade().length === 0);
   arm("the JSON against a record that agrees with it", gradeJsonAgainstRecord(FIX_JSON, pin, FIX_RECORD, recText).length === 0);
   arm("a cell measured exactly 30 days ago is still within the clock", grade(corpus, jsonText, "2026-10-22").length === 0);
