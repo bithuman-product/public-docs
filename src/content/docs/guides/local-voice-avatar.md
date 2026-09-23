@@ -69,10 +69,10 @@ python agent.py dev                               # terminal 2
 Expected output in terminal 2:
 
 ```text
-Open in Chrome: https://meet.livekit.io/custom?liveKitUrl=ws%3A%2F%2Flocalhost%3A7880&token=…
+Open in Chrome: http://localhost:8089/?liveKitUrl=ws%3A%2F%2Flocalhost%3A7880&token=…
 ```
 
-Open that link and allow the microphone and local-network access. The heart of `agent.py`:
+Open that link, click **Start** and allow the microphone. The heart of `agent.py`:
 
 ```python
 # excerpt: python/self-host/agent.py
@@ -81,7 +81,8 @@ async def entrypoint(ctx: JobContext):
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
     session = AgentSession(llm=openai.realtime.RealtimeModel(
         model=os.getenv("BITHUMAN_REALTIME_MODEL", "gpt-realtime-2.1-mini"),
-        voice=os.getenv("BITHUMAN_VOICE", "coral")))
+        voice=os.getenv("BITHUMAN_VOICE", "coral"),
+        turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))  # reply 0.5 s after you stop
     # The avatar renders in this process and publishes the lip-synced video and audio.
     avatar = bithuman.AvatarSession(model_path=os.environ["BITHUMAN_MODEL_PATH"])
     await avatar.start(session, room=ctx.room)
@@ -128,6 +129,6 @@ Talking time bills bitHuman credits and idle is free; OpenAI bills your own key.
 | `livekit-server not found` (exit 69) | LiveKit is not installed | `brew install livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux) |
 | The avatar never appears | No or invalid `BITHUMAN_API_SECRET` | Sign in with `bithuman login`, or set it in `.env` |
 | `This example needs Python 3.11, 3.12 or 3.13` | The plugin installs without `bithuman` on 3.10 and 3.14 | Make the venv with Python 3.11–3.13 |
-| LiveKit Meet cannot connect | Chrome blocked local-network access | Site settings → allow local network access, then reload |
+| The page says it could not connect | `livekit-server --dev` is not running | Start it, then click **Start** again |
 | Nothing happens after joining | `livekit-server --dev` or `agent.py` is not running | Start both, `livekit-server` first |
 | Another device on your network cannot join | `--dev` listens on `localhost` only | `livekit-server --dev --bind 0.0.0.0 --node-ip <your LAN IP>`; other browsers also need HTTPS for the microphone |
