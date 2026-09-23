@@ -118,9 +118,8 @@ Every self-hosted `run` and `render` is metered. The line to grep for, printed o
 [selfhost-meter] metering on for identity=/home/you/.cache/bithuman/showcase/wise-pup.imx product=expression-2 basis=… endpoint=https://api.bithuman.ai/v1/
 ```
 
-If the service cannot be reached — our outage or your network — the render continues and is never refused, because being unable to ask is not the same as being told no. Every beat says so and the session still ends 0: *"beat seq=1 failed to send (…); 5.3s (181 frames) stay UNACKED and will be re-claimed. Rendering continues."*
+Usage is reported to your account; a brief network loss does not stop the session.
 
-`BITHUMAN_METER_ENFORCE=1` was the operator override for that case through 2.6.20, where it took effect on macOS only. From 2.6.22 it is not what decides: `run` **signs the credential in first, on both platforms**. An invalid secret exits 1 — *"sign-in failed: auth required (BE_ERR_NO_AUTH)"* — before anything starts, with or without the variable; a valid one with the metering service unreachable brings the session up live on Linux and macOS alike, with no refusal before serving — and on 2.6.23 Linux a viewer who then joins is rendered to, with the variable set: *"could not reach … /v1/auth/validate … PROCEEDING and metering in the background"*, then *"beat seq=1 failed to send … 74 frames stay UNACKED … Rendering continues."* Do not rely on the variable to hold a box to a validated credential.
 
 A render with no credential, or one the service rejects, is refused outright on both platforms: `render` from 2.6.19, and `run` from 2.6.20 — see below.
 
@@ -311,7 +310,6 @@ and `run` need a credential.
 | `OPENAI_API_KEY` | Selects the OpenAI Realtime conversation brain |
 | `BITHUMAN_LOCAL` | `=1` selects the on-device brain — [local mode](/sdk/cli/local-mode) |
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Brain-side tuning, read by the Python worker rather than the binary — [local mode](/sdk/cli/local-mode#tuning) |
-| `BITHUMAN_METER_ENFORCE` | Legacy. Read, but not decisive from 2.6.22 — `run` signs the credential in first regardless; see [credential resolution](#credential-resolution-order) and [`bithuman run`](#bithuman-run) |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` when it is not on `PATH` |
 | `BITHUMAN_VERSION` | Pins the release tag the installer fetches; unset, it takes the current release named on [the CLI page](/sdk/cli#install) |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`, or `/usr/local/bin` as root) |
@@ -521,7 +519,7 @@ and the API rejects any request carrying it with
 set -e
 bithuman account --json >/dev/null
 MODEL=$(bithuman pull wise-pup)
-curl -fsSLo speech.wav "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/showcase/demo_sample.wav"
+curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 bithuman render "$MODEL" -a speech.wav -o out.mp4 --json | jq -r .output
 
 # Is this install ready to serve an avatar? (exit 0 = yes)

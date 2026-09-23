@@ -32,7 +32,7 @@ Managed conversational agents bill on top of avatar serving:
 | Managed agent — voice chat | 10 credits/min |
 | Managed agent — camera chat (vision on) | 30 credits/min |
 
-One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development-only variable, never licensed for production, and it is now gone from the shipping surfaces: the CLI ignores it entirely from 2.6.20, the public Python wheels refuse a render with no credential whether or not it is set, and the Android Essence 2 SDK no longer contains the name at all from 0.5.7.
+One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering.
 
 ## Creation & generation — one-time credits
 
@@ -153,7 +153,7 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 | **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | your API secret — `BITHUMAN_API_SECRET` on every surface (`be_essence2_set_api_secret` / `Essence2Metering.apiSecret` / `bitHumanKit` `config.apiKey` on device) |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
-There is no unmetered mode for an avatar — see the note on `BITHUMAN_UNMETERED` [above](#serving--credits-per-live-minute).
+Every avatar session is metered.
 
 ## How metering works
 

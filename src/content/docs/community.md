@@ -1,46 +1,31 @@
 ---
-title: "Community"
-description: "Where to find bitHuman online, get help, and contribute SDKs and integrations."
+title: "Community & support"
+description: "Where to get help, report a bug, and follow bitHuman releases."
 section: resources
 group: "Resources"
 order: 3
 ---
 
-## Where to find us
+## Get help
 
-- **GitHub** — [github.com/bithuman-product/homebrew-bithuman](https://github.com/bithuman-product/homebrew-bithuman). The public SDK source, runnable examples, and the source for these docs. File feature requests and bugs in [Issues](https://github.com/bithuman-product/homebrew-bithuman/issues).
-- **Discord** — [discord.gg/ES953n7bPA](https://discord.gg/ES953n7bPA). The fastest way to get help, share what you're building, and talk to the team.
-- **X (Twitter)** — [@bithuman_ai](https://x.com/bithuman_ai). Release news and announcements.
-- **Status** — [status.bithuman.ai](https://status.bithuman.ai). Live platform and API status.
-- **Email** — [hello@bithuman.ai](mailto:hello@bithuman.ai) for anything that does not belong in public.
+- **Discord**: [discord.gg/ES953n7bPA](https://discord.gg/ES953n7bPA). Share what you are building and ask the team.
+- **Email**: [hello@bithuman.ai](mailto:hello@bithuman.ai) for anything that should not be public.
+- **Status**: [status.bithuman.ai](https://status.bithuman.ai) for live platform and API status.
+- **Releases**: [@bithuman_ai](https://x.com/bithuman_ai) and the [changelog](/changelog).
 
-## Getting help
+When you ask for help, include the command you ran, the version (`bithuman --version`, or `pip show bithuman`), and the full error. Every SDK page ends with a Troubleshooting table that maps common messages to fixes.
 
-Search these docs first — every SDK page ends in a troubleshooting table that
-maps the exact message you see to the fix. If that does not cover it, post in
-Discord with the command you ran, the version (`bithuman --version`, or
-`python -c "from importlib.metadata import version; print(version('bithuman'))"`
-for the Python library) and the full error. That is usually enough
-for an answer the same day.
+## Where things live
 
-## Contributing
+| Repository | What it holds | Open an issue for |
+|---|---|---|
+| [homebrew-bithuman](https://github.com/bithuman-product/homebrew-bithuman) | SDK releases: CLI, Swift package, Flutter plugin | SDK bugs and feature requests |
+| [bithuman-examples](https://github.com/bithuman-product/bithuman-examples) | Runnable example apps for every platform | An example that does not build or run |
+| [public-docs](https://github.com/bithuman-product/public-docs) | The source of this site | A wrong or unclear page |
 
-**Bug fixes, doc corrections and examples** — open a pull request against
-[`homebrew-bithuman`](https://github.com/bithuman-product/homebrew-bithuman).
-Nothing else is needed; small, focused PRs get reviewed fastest.
+## Contribute
 
-**A new feature, flag, or file format** — open an issue first and describe the
-use case before writing code. That saves you building against a surface we are
-already changing.
-
-**An SDK for a language we do not publish yet** — tell us in an issue which
-language and what you want to build. The engine is distributed as a binary, so a
-new language binding is something we build and support rather than something you
-can add from outside; knowing there is demand is what moves it up the list.
-
-**An integration with a framework** — a LiveKit plugin, a Pipecat processor, a
-LangChain tool, a Discord bot. These live in the framework's own repository and
-use a published bitHuman SDK, so you can build and ship one without waiting on
-us. Open an issue with the link and we will add it to the docs and keep it
-working as the SDK changes. The [LiveKit integration](/sdk/livekit) is the
-worked example to copy.
+- **Doc fixes and examples**: open a pull request against the repository above that holds them. Small, focused changes are reviewed fastest.
+- **A new feature or flag**: open an issue with the use case before you write code.
+- **A new language SDK**: open an issue that names the language and what you want to build. The engine ships as a binary, so we build and support new bindings.
+- **A framework integration** (Pipecat, LangChain, and others): build it on a published SDK in the framework's own repository, then open an issue with the link and we will list it. The [LiveKit integration](/sdk/livekit) is the model to follow.
