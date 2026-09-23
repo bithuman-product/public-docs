@@ -83,11 +83,6 @@ export const ALLOW = [
     why: "the same sample line as \"31.3 FPS\"; removed with it by the /sdk/apple rewrite",
   },
   {
-    file: "src/content/docs/sdk/android.md",
-    text: "10 frames per second",
-    why: "the measured gain of sleeping before re-polling pull(); /sdk/android is rewritten by the redesign (REDESIGN §1.3 #30, \"round numbers only\")",
-  },
-  {
     file: "src/content/docs/examples/swift-ios-expression2.md",
     text: "19.3 FPS",
     why: "a code comment recording what an @Published frame property cost on an iPhone 15; the example is rewritten by the redesign (REDESIGN §1.3 #57)",
