@@ -289,7 +289,6 @@ Full source:
 - [Swift / iOS — a talking avatar on the iPhone you have](/examples/swift-ios-expression2) — the same goal without the device floor, the entitlements or the 1.6 GB download.
 - [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) — the 1080p renderer in an app you build yourself, every file printed; no entitlement, no device gate.
 - [Swift SDK](/sdk/ios) — the full Apple reference: requirements, products, models, errors.
-- [Apple — check before you ship](/examples/apple-swiftpm-check) — verify the package resolves, from any operating system.
 - [LiveKit integration](/sdk/livekit) — connect to a server-hosted agent instead.
 - [AI voice chat](/examples/ai-conversation) — add a conversational brain in Python.
 - [`swift/macos-voice`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-voice) — offline macOS voice agent: no avatar, no API key.

@@ -873,12 +873,12 @@
     },
     {
       "source": "/guides/browser-webgpu",
-      "destination": "/guides/browser-rendering",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
       "source": "/guides/browser-webgpu/",
-      "destination": "/guides/browser-rendering",
+      "destination": "/sdk/web",
       "permanent": true
     },
     {
@@ -939,6 +939,46 @@
     {
       "source": "/guides/deploy-self-hosted/",
       "destination": "/guides/self-hosting",
+      "permanent": true
+    },
+    {
+      "source": "/guides/browser-rendering",
+      "destination": "/sdk/web",
+      "permanent": true
+    },
+    {
+      "source": "/guides/browser-rendering/",
+      "destination": "/sdk/web",
+      "permanent": true
+    },
+    {
+      "source": "/examples/browser-webgpu-check",
+      "destination": "/sdk/web",
+      "permanent": true
+    },
+    {
+      "source": "/examples/browser-webgpu-check/",
+      "destination": "/sdk/web",
+      "permanent": true
+    },
+    {
+      "source": "/examples/apple-swiftpm-check",
+      "destination": "/sdk/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/apple-swiftpm-check/",
+      "destination": "/sdk/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/failure-states",
+      "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/examples/failure-states/",
+      "destination": "/examples",
       "permanent": true
     }
   ],

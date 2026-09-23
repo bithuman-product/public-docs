@@ -1082,6 +1082,6 @@ You attached both `Expression2` and `Essence2`. Attach one.
 
 - [Swift SDK](/sdk/ios) — the reference for every call this page makes, plus signing, compute units and the hardware floor.
 - [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — the full on-device voice agent, when you are ready for the device floor and the entitlements.
-- [Apple — check before you ship](/examples/apple-swiftpm-check) — preflight the package and its checksums from any machine.
+- [Pin the version](/sdk/ios#pin-the-version) — which package tag to write, and how to check what you resolved.
 - [Expression 2](/concepts/expression-2) — what the model is and where it runs.
 - [Agents API](/api/agents) — creating an agent and downloading its model.

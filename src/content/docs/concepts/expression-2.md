@@ -233,7 +233,7 @@ frame rate on each platform is on [Performance](/sdk/performance).
 **In the browser:** append `?render=local` to a session URL to render
 Expression 2 in the tab, so the video never leaves the machine; sessions for
 an identity with no published web bundle fall back to cloud serving. See
-[Browser rendering](/guides/browser-rendering).
+[Browser rendering](/sdk/web#render-in-the-tab).
 
 ## Idle and speaking behavior
 
