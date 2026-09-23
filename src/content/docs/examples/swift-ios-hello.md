@@ -110,18 +110,17 @@ Minimum Deployments **iOS 26.0**, Swift Language Version **6**, your team under
 https://github.com/bithuman-product/homebrew-bithuman.git
 ```
 
-choose **Up to Next Major Version** from **2.11.0** — the same floor
+choose **Up to Next Major Version** from **2.14.1** — the same floor
 `swift/ios-avatar/Package.swift` declares — and attach the **`bitHumanKit`**
-product, only that one. Verified 2026-09-21 by listing the package's tags:
-`from: "2.14.0"` resolves **v2.14.0**, the newest 2.x tag, and `bitHumanKit`'s
-own binary has ridden on tag `v2.4.0` unchanged since v2.11.0, so the floor and
-the ceiling give you the same framework.
+product, only that one. Verified 2026-09-23 by listing the package's tags:
+`from: "2.14.1"` resolves **v2.14.1**, the newest 2.x tag, and `bitHumanKit`'s
+own binary has ridden on tag `v2.4.0` unchanged since v2.11.0, so any floor in
+that range gives you the same framework.
 
-★ **Never attach `Expression2` and `Essence2` to one target.** They carry
-overlapping objects and an app's final link fails with **116 duplicate
-symbols** on `ios-arm64` and on `macos-arm64` — while the same code builds green
-for the Simulator, so a Simulator-only check proves nothing.
-`bitHumanKit` bundles its own engine and needs neither.
+`bitHumanKit` bundles its own engine and needs neither `Expression2` nor
+`Essence2`. (Those two may share one target from 2.14.0; below it an app's
+final link failed with **116 duplicate symbols** on `ios-arm64` and
+`macos-arm64` while the Simulator was green.)
 
 **3. Put the entitlements in a `.entitlements` file.** Under *Signing &
 Capabilities* press **+ Capability** and add *Increased Memory Limit* and
@@ -276,7 +275,7 @@ Full source:
 | the app is killed mid-turn **after** Apple granted the entitlements | the keys are in an `Info.plist`, which grants nothing; an entitlement is signed in from `CODE_SIGN_ENTITLEMENTS` | step 3 of [Run it](#run-it) |
 | the microphone never opens and no permission sheet appears | the privacy strings never reached your app target's real `Info.plist` | step 3 of [Run it](#run-it) — copy `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` across |
 | hundreds of `ld` lines: *"object file … was built for newer 'iOS' version (26.0) than being linked"* | the package manifest declares `.iOS(.v16)`; the engine objects are iOS 26 | expected, not a fault — build at iOS 26.0 |
-| a device link fails with **116 duplicate symbols** while the Simulator is green | `Expression2` and `Essence2` are both attached to one target | attach one; `bitHumanKit` needs neither |
+| a device link fails with **116 duplicate symbols** while the Simulator is green | `Expression2` and `Essence2` both attached on a tag below 2.14.0 | raise the floor to 2.14.1, or drop both — `bitHumanKit` needs neither |
 | the "unsupported device" screen at launch | the device is below the floor — the refusal names the model it detected | use an iPhone 16 Pro / iPad Pro M4+, or ship [`Expression2`](/examples/swift-ios-expression2) on that device |
 | the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling: the entitlements are not granted yet, or not in the profile | check Apple's reply, then rebuild so the profile picks them up ([entitlements](/sdk/ios#apple-entitlements--bithumankit-only)) |
 | `error: the package manifest at '/Package.swift' cannot be accessed` | a clone from before 2026-09-09, pinning a 0.x tag | `git pull` |

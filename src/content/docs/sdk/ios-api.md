@@ -1,6 +1,6 @@
 ---
 title: "iOS API reference"
-description: "The full C interface the Essence 2 product vends on Apple — every function, its arguments and its return codes, and the four link settings a target must carry — plus the Expression 2 Swift entry points, read out of the xcframework the Swift package pins, not out of a source tree."
+description: "The full C interface the Essence 2 product vends on Apple — every function, its arguments and its return codes, and the credential it reads — plus the Expression 2 Swift entry points, read out of the xcframework the Swift package pins, not out of a source tree."
 section: sdk
 group: "Reference"
 order: 77
@@ -10,11 +10,12 @@ label: "iOS API"
 The [iOS SDK](/sdk/ios) page carries the calls a working app makes. This page is
 the full list.
 
-Everything below was read on **2026-09-22** from the artifacts
-`from: "2.14.0"` resolves: the `essence2-v1.10.0` xcframework's shipped
-`Headers/be_essence2.h`, which is byte-identical in all three slices
-(`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`), and the package manifest at
-tag `v2.14.0`.
+Everything below was read on **2026-09-22** from the `essence2-v1.10.0`
+xcframework's shipped `Headers/be_essence2.h`, which is byte-identical in all
+three slices (`ios-arm64`, `ios-arm64-simulator`, `macos-arm64`), and the
+package manifest at tag `v2.14.0`. `v2.14.1` (2026-09-23) pins the same engine,
+so the C interface is unchanged; what moved is in
+[What each product needs at link](#what-each-product-needs-at-link).
 
 ## Products
 
@@ -35,16 +36,19 @@ Two combinations fail to link, and both are quiet until an app's final link:
 - A Swift module of your own also named `Essence2`.
 
 `Expression2` **+** `Essence2` in one app is supported from `2.14.0`, and fails
-below it with 112 duplicate symbols.
+below it with 112 duplicate symbols. In a **Mac app** built with Xcode, use
+`2.14.1` or newer: below it Xcode's validation refuses the macOS frameworks
+(`… since the platform does not use shallow bundles`).
 
 ### What each product needs at link
 
-`Essence2` is the only one that asks anything of your target. It is a static C
-library, so it declares none of the Apple libraries it calls and an app that
-attaches it compiles and then fails its final link:
+**From `2.14.1`, none of them asks anything of your target.** `Essence2` is a
+static C library, so it cannot declare the Apple libraries it calls; from
+`2.14.1` the product carries them itself. On `2.14.0` and earlier an app that
+attaches it compiles and then fails its final link unless you add:
 
 ```swift
-linkerSettings: [
+linkerSettings: [   // only below 2.14.1
     .linkedLibrary("c++"),
     .linkedFramework("VideoToolbox"),
     .linkedFramework("Accelerate"),
@@ -238,16 +242,21 @@ int32_t be_essence2_set_api_secret(const char* api_secret);
 ```
 
 The credential is taken from `be_essence2_set_api_secret()` if it was called,
-otherwise from the environment variable `BITHUMAN_API_SECRET`. The Swift SDK
-reads `BITHUMAN_API_KEY`; the value is the same.
+otherwise from the environment variable `BITHUMAN_API_SECRET`. Essence 2 does
+**not** read `BITHUMAN_API_KEY` (that is `bitHumanKit`'s name); the value is the
+same.
 
-There are three outcomes, and only one of them ever stops a render:
+★ **The header's own comment is older than the engine it ships in.** It says a
+missing credential renders unmetered and that `be_essence2_create` returns `-3`
+only under `BITHUMAN_METER_ENFORCE=1`. The shipped `essence2-v1.10.0` refuses at
+create instead. Measured 2026-09-23 in a new Mac app:
 
 | Situation | What happens |
 |---|---|
-| No credential, or an endpoint that cannot be reached | the session **renders**, and each unmetered render prints a line on stderr naming why. Never a refusal, however long the outage |
-| A credential the service **rejects** (401 / 402 / 403) | renders for a **300-second grace** behind a countdown while it is re-checked. A success on any check clears the clock |
-| Still rejected at 300 s | the session **refuses**: `pull_frame` and `idle_frame` return `-3` from then on, and the engine should be destroyed |
+| No credential | `be_essence2_create` returns **`-3`**; stderr: `refusing to serve: no credential was supplied, so this render cannot be attributed to an account` |
+| A credential the service **rejects** at start (401 / 402 / 403) | `be_essence2_create` returns **`-3`**; stderr: `refusing to serve: the API secret was rejected — revoked, or from another environment. (401)` |
+| A credential, but the endpoint cannot be reached | the session **starts** and stderr says `could not reach …/v1/auth/validate … PROCEEDING`; beats are retried in the background |
+| A credential the service starts rejecting mid-session | renders for a **300-second grace** behind a countdown while it is re-checked; still rejected at 300 s, `pull_frame` and `idle_frame` return `-3` from then on and the engine should be destroyed |
 
 Rates are priced by the service, not by the library — [pricing](/guides/pricing)
 is the authority.

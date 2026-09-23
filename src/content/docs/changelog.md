@@ -10,6 +10,40 @@ order: 1
 
 ## September 2026
 
+### A new Mac app builds, and Essence 2 needs no linker flags from you — Swift package `2.14.1` (2026-09-23)
+
+Raise your floor to `from: "2.14.1"` and force the resolve (*File → Packages →
+Update to Latest Package Versions*, or `swift package update`). It pins
+`Expression2` **2.6.4** and the same Essence 2 engine as `2.14.0`,
+`essence2-v1.10.0`. Nothing you call changes: every public `.swiftinterface`
+in 2.6.4 is identical to 2.6.3's.
+
+- **A macOS app can embed the frameworks.** Through `2.14.0` the macOS
+  frameworks had the iPhone bundle layout. `swift build` links them. An Xcode
+  **app** copies them into *Contents/Frameworks*, and its validation step
+  stopped the build: `… contains Info.plist, expected
+  Versions/Current/Resources/Info.plist since the platform does not use
+  shallow bundles`. That hit `Essence2` alone too, because it carries
+  `UnifiedModelHeader`. Measured 2026-09-23 with a new App-template project
+  (Xcode 26.4.1): `** BUILD FAILED **` on 2.14.0, and on 2.14.1 `** BUILD
+  SUCCEEDED **` for macOS, the iOS Simulator and an iOS device. It then
+  rendered both models on the Mac.
+- **`Essence2` declares its own linker settings.** Before, attaching it
+  compiled and then failed the final link with hundreds of undefined symbols
+  until you added `c++`, `VideoToolbox`, `Accelerate` and `CoreML` by hand.
+  From 2.14.1 the product carries them.
+- **Release builds of `Expression2` stop writing to `/tmp`.** The published
+  macOS example on 2.14.0 wrote `/tmp/expression2_canon0.bgr` (898,560 bytes)
+  and 18 lines to `/tmp/expression2_gen.txt` on every run, and honoured a
+  fault-injection environment variable. On 2.14.1 the same program writes
+  nothing.
+
+Also corrected on [iOS SDK](/sdk/ios#authentication) while measuring this:
+Essence 2 **needs a key** to start a session. It reads `BITHUMAN_API_SECRET`
+(not `BITHUMAN_API_KEY`); with no key, or a rejected one, `be_essence2_create`
+returns `-3` and says why. A sandboxed Mac app also needs **Outgoing
+Connections (Client)**, or the key check cannot reach the service.
+
 ### Five commands and nine aliases are gone, and one default changed quietly — `cli-v2.7.0` (2026-09-22)
 
 `curl -fsSL https://install.bithuman.ai | sh` to upgrade; `bithuman --version`
