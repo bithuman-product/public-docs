@@ -18,6 +18,7 @@
 
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
+import { routeOf as contentRoute } from "./content-routes.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const CONTENT = join(ROOT, "src/content/docs");
@@ -46,7 +47,7 @@ const fail = (msg) => { failures++; console.error(`::error::${msg}`); };
 const collection = new Set(
   walk(CONTENT, [".md"])
     .filter((f) => !/^draft:\s*true\s*$/m.test(readFileSync(f, "utf8")))
-    .map((f) => "/" + relative(CONTENT, f).replace(/\.md$/, "")),
+    .map((f) => contentRoute(CONTENT, f)),
 );
 const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
 // Only the per-section blocks count as "the page list": the Start-here and

@@ -59,7 +59,7 @@ export function agentFacts(site: string): string {
     `needs an iPhone 16 Pro or newer **and two Apple entitlements Apple grants in 1–3 ` +
     `business days**. Only \`bitHumanKit\` has that floor and those entitlements — do ` +
     `not apply them to the two engines, and do not promise a same-day ` +
-    `\`bitHumanKit\` demo: [Swift SDK](${site}/sdk/ios).\n` +
+    `\`bitHumanKit\` demo: [Swift SDK](${site}/sdk/apple).\n` +
     `- **On mobile, an out-of-date version is the failure that does not announce ` +
     `itself — copy the pin from the page, never from memory or an older sample.** On ` +
     `Apple, SwiftPM's \`from:\` is a *floor* and SwiftPM keeps whatever ` +
@@ -68,7 +68,7 @@ export function agentFacts(site: string): string {
     `warms up, refuses by name and stays idle-only — the face moves, it never speaks, ` +
     `and **nothing is thrown**. Raise the floor, then \`swift package update\`, because ` +
     `\`Package.resolved\` does not move on its own: ` +
-    `[pin the version](${site}/sdk/ios#pin-the-version). ` +
+    `[pin the version](${site}/sdk/apple#pin-the-version). ` +
     `On Android, older Maven coordinates still resolve, still compile and render ` +
     `**differently**, with no exception to catch — and across some releases the Kotlin ` +
     `API is byte-identical, so no compiler and no reference page can see it: ` +

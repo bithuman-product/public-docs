@@ -3,7 +3,9 @@ title: "Kotlin / Android — Hello, avatar"
 description: "Two complete Android projects — every file in full — that render a talking avatar on a physical phone from 16 kHz speech. Both need an API secret; Essence 2 renders the identity's own canvas, up to 1920x1080. Both from Maven Central, both measured on a Galaxy S25+."
 section: examples
 group: "Examples"
-order: 14
+order: 40
+type: example
+label: "Android"
 ---
 
 This page is a whole project, not a fragment. Create the seven files below in the
@@ -35,7 +37,7 @@ changed, and it is [further down this page](#essence-2-on-android--the-same-seve
 | `minSdk` | 26 | 29 |
 | Picture | 416x720 at 20 fps | the identity's own canvas at 25 fps (1080x1920 for `A21SKT4314`) |
 | First-run download | about 158 MB | about 238 MB |
-| Measured rate on a Galaxy S25+ | above its play rate | above its play rate — [performance](/sdk/performance) has both numbers |
+| Measured rate on a Galaxy S25+ | above its play rate | above its play rate — [performance](/performance) has both numbers |
 
 Everything up to that section — the phone, the JDK, `adb`, the WAV, the Gradle
 wrapper — is shared by both, so read it once and it applies to either. The rest
@@ -66,7 +68,7 @@ It renders first and plays second on purpose, because it is the shortest correct
 program: `feed()` renders the whole clip before it returns, so there is nothing to
 pace. A live app feeds and pulls at the same time instead — see
 [Feed the microphone](#feed-the-microphone-instead-of-a-file). The measured rate is
-on the [performance page](/sdk/performance).
+on the [performance page](/performance).
 
 ## Before you start
 
@@ -927,7 +929,7 @@ streaming API surface, `Fixture` and `Runtime`.
 [Essence 2](/concepts/essence-2) renders a **full-resolution** picture at 25 frames per
 second on the same handset — 1080x1920 for the identity this project uses — from one more Maven coordinate. A Galaxy S25+ renders
 it faster than it plays, on `essence2-android` 0.5.12 — [the performance
-page](/sdk/performance) carries the measured rate and is the only place it is
+page](/performance) carries the measured rate and is the only place it is
 written.
 
 Build it the way you built the project above: the phone, the JDK, `ANDROID_HOME`,

@@ -3,7 +3,8 @@ title: "Changelog archive"
 description: "Release notes from July 2026 and earlier, one short summary per release. The current changelog is /changelog."
 section: resources
 group: "Resources"
-order: 1
+order: 3
+type: changelog
 label: "Changelog archive"
 ---
 

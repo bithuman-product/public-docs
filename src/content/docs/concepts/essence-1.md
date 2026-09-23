@@ -1,9 +1,10 @@
 ---
 title: "Essence 1"
 description: "Essence 1 — bitHuman's first-generation avatar model: a pre-built identity lip-synced in real time on virtually any CPU. Where it runs, how to self-host it, and what the .imx file contains."
-section: concepts
-group: "Models"
-order: 6
+section: guides
+group: "Learn"
+order: 4
+type: concept
 label: "Essence 1"
 ---
 

@@ -3,7 +3,9 @@ title: "Pricing & credits"
 description: "How bitHuman bills — credits per active minute by model and surface, one-time creation costs, plans and concurrency, offline licensing, and how to check your balance."
 section: guides
 group: "Pricing"
-order: 30
+order: 40
+type: guide
+label: "Pricing & credits"
 ---
 
 ## How billing works

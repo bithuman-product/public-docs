@@ -113,12 +113,12 @@
     },
     {
       "source": "/sdks/swift",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/sdks/swift/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -413,12 +413,12 @@
     },
     {
       "source": "/use-cases",
-      "destination": "/showcase",
+      "destination": "/examples#ready-made-avatars",
       "permanent": false
     },
     {
       "source": "/use-cases/",
-      "destination": "/showcase",
+      "destination": "/examples#ready-made-avatars",
       "permanent": false
     },
     {
@@ -433,22 +433,12 @@
     },
     {
       "source": "/sdk/ipados",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/sdk/ipados/",
-      "destination": "/sdk/ios",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/apple",
-      "destination": "/sdk/ios",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/apple/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -463,12 +453,12 @@
     },
     {
       "source": "/ios",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/ios/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -603,12 +593,12 @@
     },
     {
       "source": "/ios-sdk",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/ios-sdk/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -623,12 +613,12 @@
     },
     {
       "source": "/swift",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/swift/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -643,32 +633,32 @@
     },
     {
       "source": "/apple",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/apple/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/iphone",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/iphone/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/sdk/swift",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/sdk/swift/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -963,12 +953,12 @@
     },
     {
       "source": "/examples/apple-swiftpm-check",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
       "source": "/examples/apple-swiftpm-check/",
-      "destination": "/sdk/ios",
+      "destination": "/sdk/apple",
       "permanent": true
     },
     {
@@ -1030,6 +1020,86 @@
       "source": "/status/",
       "destination": "https://status.bithuman.ai",
       "permanent": false
+    },
+    {
+      "source": "/sdk/ios-api",
+      "destination": "/sdk/apple-api",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios-api/",
+      "destination": "/sdk/apple-api",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios",
+      "destination": "/sdk/apple",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios/",
+      "destination": "/sdk/apple",
+      "permanent": true
+    },
+    {
+      "source": "/guides/mcp-server",
+      "destination": "/sdk/mcp",
+      "permanent": true
+    },
+    {
+      "source": "/guides/mcp-server/",
+      "destination": "/sdk/mcp",
+      "permanent": true
+    },
+    {
+      "source": "/api/overview",
+      "destination": "/api",
+      "permanent": true
+    },
+    {
+      "source": "/api/overview/",
+      "destination": "/api",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-hello",
+      "destination": "/examples/swift-ios-voice-agent",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-hello/",
+      "destination": "/examples/swift-ios-voice-agent",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/performance",
+      "destination": "/performance",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/performance/",
+      "destination": "/performance",
+      "permanent": true
+    },
+    {
+      "source": "/showcase",
+      "destination": "/examples#ready-made-avatars",
+      "permanent": true
+    },
+    {
+      "source": "/showcase/",
+      "destination": "/examples#ready-made-avatars",
+      "permanent": true
+    },
+    {
+      "source": "/concepts",
+      "destination": "/guides",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/",
+      "destination": "/guides",
+      "permanent": true
     }
   ],
   "rewrites": [

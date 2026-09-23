@@ -4,7 +4,7 @@ import { hubMeta } from "../../config/hubs";
 
 // One card per platform. The card links to that platform's page, which is the
 // one place its install, model download and code live — no command appears here.
-// No frame rate appears here either: performance is /sdk/performance, linked once.
+// No frame rate appears here either: performance is /performance, linked once.
 
 const MARKS: Record<string, string> = {
   cli: `<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 9.5 10.5 12l-3 2.5M13 15h3.5"/>`,
@@ -35,7 +35,7 @@ const cards: Card[] = [
     key: "ios",
     name: "Apple — iPhone, iPad, Mac",
     sub: "one Swift package · Xcode 26+",
-    href: "/sdk/ios",
+    href: "/sdk/apple",
     note: "The `Expression2` and `Essence2` products. The Mac path needs no device, profile or entitlement.",
   },
   {
@@ -55,7 +55,7 @@ const cards: Card[] = [
 ];
 
 const others = [
-  { name: "Cloud API", href: "/api/overview", note: "We host the GPU; you call REST endpoints." },
+  { name: "Cloud API", href: "/api", note: "We host the GPU; you call REST endpoints." },
   { name: "LiveKit", href: "/sdk/livekit", note: "A served avatar in a LiveKit room, or a Python voice agent with a face." },
   { name: "Self-hosting", href: "/guides/self-hosting", note: "Which surface runs which model, how it is billed, and the Expression 1 GPU container." },
   { name: "Offline licensing", href: "/guides/pricing#offline-licensing", note: "Business and Enterprise: realtime avatars completely off the internet." },
@@ -104,8 +104,8 @@ const rich = (s: string) =>
           <li><a href="/sdk/cli/local-mode">CLI local mode</a> — an on-device conversation brain.</li>
           <li><a href="/sdk/python-api">Python API reference</a> — every public name in the <code>bithuman</code> package.</li>
           <li><a href="/sdk/android-api">Android API reference</a> — every public class in the two Android artifacts.</li>
-          <li><a href="/sdk/ios-api">iOS API reference</a> — the <code>Essence2</code> C interface and the Expression 2 Swift entry points.</li>
-          <li><a href="/sdk/performance">Performance</a> — measured frame rates, every platform in one table.</li>
+          <li><a href="/sdk/apple-api">iOS API reference</a> — the <code>Essence2</code> C interface and the Expression 2 Swift entry points.</li>
+          <li><a href="/performance">Performance</a> — measured frame rates, every platform in one table.</li>
         </ul>
       </nav>
     </div>

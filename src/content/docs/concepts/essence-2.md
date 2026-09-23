@@ -1,9 +1,10 @@
 ---
 title: "Essence 2"
 description: "Essence 2 — bitHuman's photorealistic avatar model: your identity's own footage, lip-synced live at up to 1080p. Where it runs, how an agent is created, how it serves, and what to expect."
-section: concepts
-group: "Models"
+section: guides
+group: "Learn"
 order: 2
+type: concept
 label: "Essence 2"
 ---
 
@@ -34,16 +35,16 @@ For a stylized character, or a scene generated from one photo, choose
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (frames, and MP4 clips with `bithuman.offline`) |
-| iPhone, iPad, Mac | the [Apple SDK](/sdk/ios)'s `Essence2` product (iOS / macOS 26) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
+| iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Essence2` product (iOS / macOS 26) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
 | Android | [`essence2-android`](/sdk/android) — fetching the identity needs your API secret |
 | The viewer's browser | [`?render=local`](/sdk/web#render-in-the-tab), for an identity whose in-browser build is published |
 
 The file you download is `<CODE>.imx`, from
 [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE> --model essence-2`. Measured frame rates per platform
-are on [performance](/sdk/performance).
+are on [performance](/performance).
 
 ## How creation works
 
@@ -84,7 +85,7 @@ over the same frames. Idle animation is not billed.
 ## Limits and expectations
 
 - **Output is 25 fps on every tier.** How fast a platform can *produce* frames
-  is on [performance](/sdk/performance).
+  is on [performance](/performance).
 - **The downloadable file is about 85–105 MB**, varying per identity — read
   `Content-Length` rather than assuming a size.
 - **The identity is fixed at creation.** To change the face, create a new agent.

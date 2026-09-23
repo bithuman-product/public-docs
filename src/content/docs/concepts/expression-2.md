@@ -1,9 +1,10 @@
 ---
 title: "Expression 2"
 description: "Expression 2 — bitHuman's generative avatar model: a whole 416x720 scene generated live from one portrait, for any character. Where it runs, how an agent is created and trained, how it serves, and what to expect."
-section: concepts
-group: "Models"
-order: 4
+section: guides
+group: "Learn"
+order: 3
+type: concept
 label: "Expression 2"
 ---
 
@@ -34,9 +35,9 @@ For a photorealistic person animated from their own footage, compare
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api/overview), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
-| iPhone, iPad, Mac | the [Apple SDK](/sdk/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
+| iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
 | Android | [`expression2-android`](/sdk/android) — a published identity renders with no key |
 | The viewer's browser | [`?render=local`](/sdk/web#render-in-the-tab) |
 
@@ -44,7 +45,7 @@ The file you download from
 [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE>` is labelled `<CODE>.imx`; `.avatar` is the legacy
 extension for the same container. Measured frame rates per platform are on
-[performance](/sdk/performance).
+[performance](/performance).
 
 ## How creation works
 

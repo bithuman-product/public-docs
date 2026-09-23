@@ -2,8 +2,10 @@
 title: "Video API"
 description: "Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a CDN URL. Per-minute billing, auto-refunded on failure."
 section: api
-group: "Deliver"
-order: 20
+group: "Build"
+order: 11
+type: endpoint
+label: "Talking video"
 ---
 
 ## Overview

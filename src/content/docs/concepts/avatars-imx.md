@@ -1,9 +1,11 @@
 ---
 title: "Avatars and the .imx format"
 description: "The self-contained .imx file every bitHuman avatar ships in — one container for Essence 1, Essence 2 and Expression 2 identities — where it comes from, how it's addressed by agent code, and how to inspect it."
-section: concepts
-group: "Core"
-order: 2
+section: guides
+group: "Learn"
+order: 6
+type: concept
+label: "The avatar file"
 ---
 
 ## What an `.imx` is
@@ -16,7 +18,7 @@ Every model that renders on your own hardware uses it — a first-generation
 identity, and an [Expression 2](/concepts/expression-2) identity, which the
 download endpoint labels `.avatar`: the same container under a second
 extension. The same file opens on every on-device runtime — [Python](/sdk/python),
-[Swift](/sdk/ios) and the [CLI](/sdk/cli) — and `bithuman open` tells you which
+[Swift](/sdk/apple) and the [CLI](/sdk/cli) — and `bithuman open` tells you which
 model a file you were given holds.
 
 ## Where `.imx` files come from
@@ -94,7 +96,7 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 | Model | Artifact | What it is |
 |---|---|---|
 | [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
-| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/ios) — the first local play checks the licence with the cloud, so it needs your sign-in. |
+| [`essence-2`](/concepts/essence-2) | `.imx` | The standard Essence 2 bundle — size is per identity, so read `Content-Length` (agents created before the 2026-07-27 renderer change are larger until retrained). Licensed weights; renders locally in the [CLI](/sdk/cli#what-renders-locally-and-where), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
 | [`expression-2`](/concepts/expression-2) | `.avatar` — **usually** the current bitHuman container despite the extension, not a zip (a few identities trained before 2026-07-12 are an older zip format and stay that way). `bithuman open` tells you which you have. | Renders locally via the [CLI](/sdk/cli#what-renders-locally-and-where) on macOS (Apple Silicon) and Linux x86_64, or on bitHuman cloud. Per-platform selective download: about 26 MB on macOS, 63 MB on Linux. |
 
 > **A note on the `.lebundle` extension.** `lebundle` is a **legacy name kept

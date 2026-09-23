@@ -3,7 +3,9 @@ title: "Community & support"
 description: "Where to get help, report a bug, and follow bitHuman releases."
 section: resources
 group: "Resources"
-order: 3
+order: 4
+type: reference
+label: "Community & support"
 ---
 
 ## Get help

@@ -3,7 +3,8 @@ title: "Python API reference"
 description: "Every public name in the installed bithuman package — signatures, docstrings and the exception hierarchy — read back out of the wheel PyPI serves, not out of a source tree."
 section: sdk
 group: "Reference"
-order: 75
+order: 81
+type: reference
 label: "Python API"
 ---
 
@@ -444,4 +445,4 @@ not the clock. The full note is on the [Python page](/sdk/python#ending-a-sessio
 - [Python](/sdk/python) — install it, get a model, render your first frame
 - [LiveKit](/sdk/livekit) — this library inside an agent worker
 - [Pricing](/guides/pricing) — what a render costs, and what refuses without an API secret
-- [Performance](/sdk/performance) — measured frame rates for every platform
+- [Performance](/performance) — measured frame rates for every platform

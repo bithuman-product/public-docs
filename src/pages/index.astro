@@ -19,7 +19,7 @@ const pillars = [
 // Every surface you can build on, named the way a developer searches for it —
 // the page each one opens is the single source for that platform.
 const platforms = [
-  { label: "iOS, iPadOS & macOS", href: "/sdk/ios" },
+  { label: "iOS, iPadOS & macOS", href: "/sdk/apple" },
   { label: "Android", href: "/sdk/android" },
   { label: "iOS app, end to end", href: "/examples/swift-ios-expression2" },
   { label: "Android app, end to end", href: "/examples/kotlin-android-hello" },
@@ -44,7 +44,7 @@ const stats = [
 ];
 
 // Each tab quotes the platform page it stands for — /sdk/cli, /sdk/python,
-// /sdk/android, /sdk/ios — line for line. The Kotlin tab is held to
+// /sdk/android, /sdk/apple — line for line. The Kotlin tab is held to
 // sdk/android.md byte for byte by scripts/check-home-quickstart-kotlin.mjs.
 const quickstart = [
   { label: "CLI", lang: "bash", code: `# install one binary, then sign in (opens your browser)
@@ -152,7 +152,7 @@ const customerLogos = [
           <p class="sub" data-reveal>Lifelike avatars that see, hear, and respond — live. Build them in a few lines of code, then run them on your own hardware — CPU, Apple Silicon, phones, the browser — or let us host them.</p>
           <div class="hero-cta" data-reveal>
             <Button href="/start" size="lg">Start building</Button>
-            <Button href="/showcase" variant="ghost" size="lg">Browse showcase</Button>
+            <Button href="/examples#ready-made-avatars" variant="ghost" size="lg">Browse showcase</Button>
           </div>
 
           {/* elegant device strip */}
@@ -221,7 +221,7 @@ const customerLogos = [
       <div class="qs-copy" data-reveal>
         <span class="eyebrow">Quickstart</span>
         <h2>Your first agent in two minutes</h2>
-        <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift. Android and iOS render on the device: <a href="/sdk/android">Android</a> (<a href="/examples/kotlin-android-hello">the whole project</a>) and <a href="/sdk/ios">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>). Both use your API secret; idle time is free. <a href="/sdk">What each platform needs →</a></p>
+        <p class="muted">Install once, then drive a live agent from the CLI, Python, Kotlin or Swift. Android and iOS render on the device: <a href="/sdk/android">Android</a> (<a href="/examples/kotlin-android-hello">the whole project</a>) and <a href="/sdk/apple">iOS</a> (<a href="/examples/swift-ios-expression2">the whole app</a>). Both use your API secret; idle time is free. <a href="/sdk">What each platform needs →</a></p>
         <Button href="/start">Start here</Button>
       </div>
       <div data-reveal><CodeTabs tabs={quickstart} title="Quickstart" /></div>
@@ -272,11 +272,11 @@ const customerLogos = [
     <div class="container">
       <div class="section-head show-head" data-reveal>
         <div><span class="eyebrow">Showcase</span><h2>Built with bitHuman</h2><p>Real teams shipping real-time visual agents into the world.</p></div>
-        <Button href="/showcase" variant="secondary">See all</Button>
+        <Button href="/examples#ready-made-avatars" variant="secondary">See all</Button>
       </div>
       <div class="cards-3">
         {featuredCases.map((c) => (
-          <a class="bcard" href="/showcase" data-reveal>
+          <a class="bcard" href="/examples#ready-made-avatars" data-reveal>
             <div class="bcard-img">
               <img src={c.image} alt="" loading="lazy" decoding="async" width="640" height="400" />
               <span class="bcard-org">{c.org}</span>

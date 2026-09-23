@@ -1,9 +1,11 @@
 ---
 title: "Performance"
 description: "Frames per second for Expression 2 and Essence 2 on reference hardware — every platform in one table."
-section: sdk
-group: "Reference"
-order: 90
+section: performance
+group: "Performance"
+order: 0
+type: generated
+slug: performance
 label: "Performance"
 ---
 

@@ -4,7 +4,7 @@ description: "Who owes what under Article 50 of the EU AI Act when you build wit
 section: legal
 group: "Legal"
 order: 1
-label: "EU AI Act"
+type: reference
 ---
 
 > **This is our reading of the rules, not legal advice.** Nothing here tells you

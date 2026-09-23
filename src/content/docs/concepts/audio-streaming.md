@@ -1,9 +1,11 @@
 ---
 title: "Audio streaming"
 description: "The push/drain pattern every bitHuman SDK shares — push audio in, drain lip-synced frames out at the model's own rate — with a streaming Python example and the audio and frame formats."
-section: concepts
-group: "Core"
-order: 3
+section: guides
+group: "Learn"
+order: 7
+type: concept
+label: "Audio in, frames out"
 ---
 
 ## The push/drain pattern
@@ -64,7 +66,7 @@ their platform's image types.
 
 ## In the other SDKs
 
-- **Apple** — `feed()` PCM, then `pull()` frames. See the [Apple SDK](/sdk/ios).
+- **Apple** — `feed()` PCM, then `pull()` frames. See the [Apple SDK](/sdk/apple).
 - **Android** — `feed()` PCM, then `pull()` into a reused `Bitmap`. See the [Android SDK](/sdk/android).
 - **CLI** — `bithuman render` takes an audio file; `bithuman run` streams a live conversation. See the [CLI](/sdk/cli).
 

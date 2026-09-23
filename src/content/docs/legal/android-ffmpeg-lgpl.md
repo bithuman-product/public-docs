@@ -4,7 +4,7 @@ description: "ai.bithuman:essence2-android statically links FFmpeg 7.1 under LGP
 section: legal
 group: "Legal"
 order: 2
-label: "FFmpeg / LGPL (Android)"
+type: reference
 ---
 
 > **This is an engineering reading of the licence, not legal advice.** It

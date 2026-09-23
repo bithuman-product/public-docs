@@ -3,7 +3,9 @@ title: "Web"
 description: "A talking avatar in a browser tab with nothing to install — one URL or one iframe, rendered on our servers or, with ?render=local, in the visitor's own tab. Which models run in a tab, what the browser needs, and what it costs."
 section: sdk
 group: "Platforms"
-order: 60
+order: 50
+type: platform
+label: "Web (embed)"
 ---
 
 The browser surface is a URL and an `<iframe>`. There is no npm package and no
@@ -35,7 +37,7 @@ Tokens, sizing and embedding on your own site are on
 ## Get a model
 
 Every showcase agent is public: `A74NWD9723` is one, and any code on the
-[showcase](/showcase) works the same way. Your own agent's code comes from
+[showcase](/examples#ready-made-avatars) works the same way. Your own agent's code comes from
 [Agents](/api/agents).
 
 ## Render in the tab
@@ -84,7 +86,7 @@ options to the viewer; anything else you append is dropped.
   send them.
 - **A one-time download** of 50–200 MB per agent, cached for later visits.
 
-Measured in-browser frame rates are on the [performance page](/sdk/performance).
+Measured in-browser frame rates are on the [performance page](/performance).
 
 ## Check a browser before you ship
 
@@ -149,7 +151,7 @@ done
 | You see | It means | Do this |
 |---|---|---|
 | A page but no avatar | you opened the viewer host directly | start on `https://www.bithuman.ai/<CODE>` |
-| `404` on the hosted URL | the agent code is wrong or the agent is not public | check the code on the [showcase](/showcase) or in your [agents](/api/agents) |
+| `404` on the hosted URL | the agent code is wrong or the agent is not public | check the code on the [showcase](/examples#ready-made-avatars) or in your [agents](/api/agents) |
 | `?render=local` turns into `?render=cloud` and the page reloads | that Essence 2 identity has no in-browser build yet | nothing — the conversation is the same, served from the cloud |
 | `Local rendering refused. This essence-2 avatar could not load part of its identity…` | part of the identity did not arrive, and Essence 2 will not draw a stand-in | reload; if it repeats, report the agent code |
 | The in-tab renderer is far below the model's frame rate | `crossOriginIsolated` is `false`, so it runs on one thread | send the two headers above, or ship the bundle's `coi-serviceworker.js` |
@@ -167,4 +169,4 @@ done
 - [Embed widget](/api/embedding) — the iframe on your own site
 - [LiveKit](/sdk/livekit) — a served avatar from your own JavaScript
 - [Models](/concepts/models#where-each-model-runs) — which model runs where
-- [Performance](/sdk/performance) — measured frame rates for every platform
+- [Performance](/performance) — measured frame rates for every platform

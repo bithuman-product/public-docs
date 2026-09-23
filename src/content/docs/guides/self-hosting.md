@@ -3,7 +3,8 @@ title: "Self-hosting"
 description: "Run bitHuman models on your own hardware: which surface runs which model, a first MP4 in four commands, how self-hosting is billed, the Expression 1 GPU container, and offline licensing."
 section: guides
 group: "Deploy"
-order: 9
+order: 30
+type: guide
 label: "Self-hosting"
 ---
 
@@ -20,7 +21,7 @@ Each page below is the one place its install, model download and code live.
 |---|---|---|
 | A talking avatar or an MP4 on a Mac or Linux box, no code | [CLI](/sdk/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
 | Frames or MP4 clips from your own code | [Python SDK](/sdk/python) | Essence 2, Expression 2, Essence 1 |
-| An iPhone, iPad or Mac app | [Apple SDK](/sdk/ios) | Essence 2, Expression 2 |
+| An iPhone, iPad or Mac app | [Apple SDK](/sdk/apple) | Essence 2, Expression 2 |
 | An Android app | [Android SDK](/sdk/android) | Essence 2, Expression 2 |
 | Rendering in your visitor's browser tab | [Web](/sdk/web) (`?render=local`) | Essence 2, Expression 2, Essence 1 |
 | Expression 1 on your own NVIDIA GPU | [the Expression 1 GPU container](#the-expression-1-gpu-container) | Expression 1 |
@@ -29,7 +30,7 @@ The full model-by-surface matrix is on [Models](/concepts/models#where-each-mode
 
 There is no self-hosted LiveKit worker image for Essence 2 or Expression 2. For
 a live session on one machine, use `bithuman run`; for a hosted live session,
-use the [cloud API](/api/overview) or [LiveKit](/sdk/livekit).
+use the [cloud API](/api) or [LiveKit](/sdk/livekit).
 
 ## A first MP4 on macOS or Linux
 
@@ -133,4 +134,4 @@ line `video publish: WxH cap=…fps bitrate=… simulcast=…` shows
 
 - [Pricing](/guides/pricing) — the self-hosted rate and offline licensing
 - [Models](/concepts/models) — which model runs where
-- [Performance](/sdk/performance) — measured frame rates per platform
+- [Performance](/performance) — measured frame rates per platform

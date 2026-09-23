@@ -3,8 +3,9 @@ title: "Providers (BYOK)"
 description: "Bring your own LLM, STT, and TTS provider keys — store them encrypted and have your agents use them."
 section: api
 group: "Build"
-order: 16
-label: "Bring your own keys"
+order: 17
+type: endpoint
+label: "Voice providers"
 ---
 
 ## Overview

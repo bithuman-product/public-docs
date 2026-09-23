@@ -3,7 +3,9 @@ title: "Swift / iOS — a talking avatar on the iPhone you have"
 description: "A complete SwiftUI app that renders a lip-synced expression-2 avatar on-device at 416x720, 20 fps. No device floor, no Apple entitlement, no account and no credits — the free-gallery identity A23WJF0199 (Wise Pup) downloads with no credential. Every file printed in full."
 section: examples
 group: "Examples"
-order: 12
+order: 30
+type: example
+label: "iOS: Expression 2"
 ---
 
 This page is the whole app. Copy every block on it into a new Xcode project and
@@ -11,7 +13,7 @@ you get a bitHuman avatar talking on your own iPhone, rendered on the phone,
 with nothing in the loop but the phone. It was written by building it, on an
 **iPhone 15 (iPhone15,4), iOS 26.6.1**, with Xcode 26.3 on macOS 26.6.2.
 
-> **Why this page exists beside [Swift / iOS — Hello, avatar](/examples/swift-ios-hello).**
+> **Why this page exists beside [Swift / iOS — Hello, avatar](/examples/swift-ios-voice-agent).**
 > That one uses the `bitHumanKit` umbrella and gives you far more — on-device
 > speech recognition, a language model and text-to-speech, a whole voice agent.
 > It also asks for an **iPhone 16 Pro or later**, **two Apple entitlements that
@@ -28,7 +30,7 @@ with nothing in the loop but the phone. It was written by building it, on an
 | **Driven by** | a bundled 16 kHz WAV, or live microphone input |
 | **Needs** | a physical Apple-Silicon iPhone or iPad — the Simulator cannot run this engine |
 | **Does not need** | an iPhone 16 Pro, an Apple entitlement, a network connection at run time, or an API secret inside the app |
-| **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For those, use [Hello, avatar](/examples/swift-ios-hello) or a [cloud session](/api/runtime-sessions) |
+| **Does not include** | speech recognition, a language model or text-to-speech — the audio is yours to supply. For those, use [Hello, avatar](/examples/swift-ios-voice-agent) or a [cloud session](/api/runtime-sessions) |
 | **Costs** | nothing at run time. The download is metered at 0; on-device rendering here is not a hosted session. See [pricing](/guides/pricing) |
 
 ★ **Essence 2 is not on this page, and that is deliberate.** It is a different
@@ -36,7 +38,7 @@ engine on a different product, with its own requirements and its own walkthrough
 [Essence 2 on iPhone](/examples/swift-ios-essence2), a complete app of the same
 shape. This page is `expression-2`, which needs no iOS 26 and no separate
 resources archive. Do not attach both products to one app — they fail at link
-with duplicate symbols ([why](/sdk/ios#install)).
+with duplicate symbols ([why](/sdk/apple#install)).
 
 ## Prerequisites
 
@@ -45,7 +47,7 @@ with duplicate symbols ([why](/sdk/ios#install)).
 - **An Apple Developer team**, and an iPhone or iPad you have paired and
   trusted. Everything here is a *device* build — see
   [Signing](#5-sign-it-and-run-it-on-the-phone) below, and the fuller
-  [signing section](/sdk/ios#run)
+  [signing section](/sdk/apple#run)
   on the SDK page.
 - **An identity to render.** You have two routes, and only one of them costs
   anything:
@@ -252,7 +254,7 @@ from a number on this page.
 > Variables* (Xcode passes it to the app on the phone when you Run); in an app you
 > ship, fetch the key from your backend or the Keychain and call
 > `Expression2Credential.set(key)` before `create`. Never compile a key into the
-> app. See [Authentication](/sdk/ios#authentication).
+> app. See [Authentication](/sdk/apple#authentication).
 
 ## 2. The Xcode project
 
@@ -298,7 +300,7 @@ choose **Up to Next Major Version** from **2.14.2**, and attach the
 > carried overlapping objects and a device build failed its final link with
 > **116 duplicate symbols**, while the Simulator was green — which is how a
 > Simulator-only CI missed it. On 2026-09-23 a new app taking both from 2.14.1
-> built for an iOS device, the Simulator and macOS. [Details](/sdk/ios#pin-the-version).
+> built for an iOS device, the Simulator and macOS. [Details](/sdk/apple#pin-the-version).
 
 Finally, drag the `Model` folder from step 1 into the project and choose
 **Create folder references** (blue folder, not yellow group). The app reads it
@@ -372,7 +374,7 @@ targets:
 The bundle keys every iOS app needs, plus one for the microphone button. The
 bundled-speech demo needs no permission at all, and **neither engine on this
 rail needs the increased-memory entitlements** that
-[Hello, avatar](/examples/swift-ios-hello) requires — those belong to the
+[Hello, avatar](/examples/swift-ios-voice-agent) requires — those belong to the
 `bitHumanKit` umbrella.
 
 ```xml
@@ -968,7 +970,7 @@ xcrun devicectl device process launch --device <YOUR-DEVICE-UDID> --console \
 > readable. `security show-keychain-info ~/Library/Keychains/login.keychain-db`
 > tells you which state you are in — `User interaction is not allowed.` means
 > locked. The full list of signing traps is on
-> [the SDK page](/sdk/ios#run).
+> [the SDK page](/sdk/apple#run).
 
 ## What you'll see
 
@@ -1006,7 +1008,7 @@ takes a few seconds longer than later ones, because that is where CoreML compile
 the graphs on the device.
 
 **An iPhone 15 is two generations below the floor
-[Hello, avatar](/examples/swift-ios-hello) refuses at launch.** `Expression2` has
+[Hello, avatar](/examples/swift-ios-voice-agent) refuses at launch.** `Expression2` has
 no device gate at all.
 
 ★ **Why this example generates the whole utterance before it plays it.** The
@@ -1023,7 +1025,7 @@ Stated plainly, so nobody spends an afternoon finding out.
 
 - **This project is Expression 2 only.** Essence 2 on an iPhone is the
   package's `Essence2` product, which opens the `.imx` you download from
-  **2.13.2** — see [Essence 2 on-device](/sdk/ios#install). A walkthrough
+  **2.13.2** — see [Essence 2 on-device](/sdk/apple#install). A walkthrough
   shaped like this one is
   [Essence 2 on iPhone](/examples/swift-ios-essence2).
 - **The one-call container opener works again** (was broken through `Expression2`
@@ -1040,7 +1042,7 @@ Stated plainly, so nobody spends an afternoon finding out.
   asset.
 - **No conversation.** There is no speech recognition, no language model and no
   text-to-speech here — you supply the audio. For the full voice agent see
-  [Hello, avatar](/examples/swift-ios-hello); for a server-driven avatar see
+  [Hello, avatar](/examples/swift-ios-voice-agent); for a server-driven avatar see
   [LiveKit (Apple)](/sdk/livekit).
 - **Your identity only.** The app renders the agent whose `<CODE>` you passed to
   `setup.sh`. There is no published identity you can point it at without an
@@ -1091,12 +1093,12 @@ path. Use a physical device.
 ### Link failure with 116 duplicate symbols
 
 You attached both `Expression2` and `Essence2` on a tag below 2.14.0. Raise the
-floor to 2.14.2 and force the resolve ([Pin the version](/sdk/ios#pin-the-version)).
+floor to 2.14.2 and force the resolve ([Pin the version](/sdk/apple#pin-the-version)).
 
 ## Next steps
 
-- [Swift SDK](/sdk/ios) — the reference for every call this page makes, plus signing, compute units and the hardware floor.
-- [Swift / iOS — Hello, avatar](/examples/swift-ios-hello) — the full on-device voice agent, when you are ready for the device floor and the entitlements.
-- [Pin the version](/sdk/ios#pin-the-version) — which package tag to write, and how to check what you resolved.
+- [Swift SDK](/sdk/apple) — the reference for every call this page makes, plus signing, compute units and the hardware floor.
+- [Swift / iOS — Hello, avatar](/examples/swift-ios-voice-agent) — the full on-device voice agent, when you are ready for the device floor and the entitlements.
+- [Pin the version](/sdk/apple#pin-the-version) — which package tag to write, and how to check what you resolved.
 - [Expression 2](/concepts/expression-2) — what the model is and where it runs.
 - [Agents API](/api/agents) — creating an agent and downloading its model.

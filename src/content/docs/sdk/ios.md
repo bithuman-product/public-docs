@@ -3,8 +3,10 @@ title: "Apple SDK — iOS, iPadOS and macOS"
 description: "Ship either second-generation model inside your own iPhone, iPad or Mac app from one SwiftPM package: Expression 2 on any Apple Silicon device at iOS 16, Essence 2 at full resolution on iOS 26. Device floors, download sizes, what a Mac app needs, the key Essence 2 reads, and a worked example for each — Expression 2 reaches a first frame from a published identity with no account, no key and no credits."
 section: sdk
 group: "Platforms"
-order: 40
-label: "iOS, iPadOS & macOS"
+order: 30
+type: platform
+slug: sdk/apple
+label: "Apple (iOS, iPadOS, macOS)"
 ---
 
 One SwiftPM package vends both second-generation models —
@@ -216,7 +218,7 @@ it; those older spellings are legacy names kept for compatibility
 
 The nine other functions the header declares — barge-in, display modes, idle
 frames, render status and the playout counters — are on the
-[iOS API reference](/sdk/ios-api).
+[iOS API reference](/sdk/apple-api).
 
 ## Get a model
 
@@ -226,7 +228,7 @@ download over plain `curl`: no account, no API secret, no credits, verified 2026
 with no credential in the environment.
 
 **Expression 2** — three files. `A23WJF0199` is *Wise Pup*, a bitHuman-owned
-identity in the free showcase; any code on the [showcase](/showcase) works the
+identity in the free showcase; any code on the [showcase](/examples#ready-made-avatars) works the
 same way, and so does your own agent once you add
 `-H "api-secret: $BITHUMAN_API_SECRET"`:
 
@@ -459,7 +461,7 @@ iPhone 16 Pro floor.** Neither engine product is held to it: `Expression2` has n
 hardware gate at all, and from `essence2-v1.9.0` Essence 2 renders on any Apple
 Silicon iPhone — an iPhone 15 was measured rendering Essence 2 at 1920x1080
 faster than the rate it plays at, and that cell is on the
-[performance page](/sdk/performance).
+[performance page](/performance).
 
 > **Note** If you read `Package.swift` you will find a comment saying Essence 2
 > needs an iPhone 16 Pro. It is dated 2026-09-08 and was measured on an earlier
@@ -552,7 +554,7 @@ grep -A3 'homebrew-bithuman' Package.resolved
 ## Performance
 
 Measured frame rates for every platform are on the
-[performance page](/sdk/performance).
+[performance page](/performance).
 
 ## Troubleshooting
 
@@ -560,7 +562,7 @@ Measured frame rates for every platform are on the
 |---|---|---|
 | the avatar's face moves but never speaks, and nothing is thrown | an engine older than `essence2-v1.9.0` refused the hardware at warm-up | raise the floor to `2.14.1` and force the resolve — [Pin the version](#pin-the-version) |
 | duplicate symbols at an app's final link, while `swift build` is green | a tag below v2.14.0 with both engine products attached | raise the floor to `2.14.1`; a library target is compiled, never linked, so `swift build` cannot see this |
-| `401 MISSING_AUTH` from `/v1/agent/<CODE>/model/download`, anonymously | the code and `model=` family are not a free-showcase pair. A typo'd code and the wrong family both land here | check the pair against the table above or the [showcase](/showcase); drop `model=` to take the identity's own family; for your own agent send `-H "api-secret: $BITHUMAN_API_SECRET"` |
+| `401 MISSING_AUTH` from `/v1/agent/<CODE>/model/download`, anonymously | the code and `model=` family are not a free-showcase pair. A typo'd code and the wrong family both land here | check the pair against the table above or the [showcase](/examples#ready-made-avatars); drop `model=` to take the identity's own family; for your own agent send `-H "api-secret: $BITHUMAN_API_SECRET"` |
 | `404 MODEL_ARTIFACT_NOT_READY` on a `member=` request | that member name is not in the container. The same code also means "trained, not published yet" for a whole model | check the member name first; poll only if you are downloading a model you just created ([error codes](/api/errors#error-codes)) |
 | `409 MODEL_NOT_GENERATED`, with your API secret | your agent has no model of that family yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then poll `GET /v1/agent/<CODE>` until it is listed |
 | the app runs, no error, no avatar; `pull()` keeps returning `nil` | you drained synchronously on the line after `feed()` — frames arrive asynchronously | poll, as in [Minimal code](#minimal-code) |
@@ -579,9 +581,9 @@ Measured frame rates for every platform are on the
 | the app is killed mid-conversation, no crash log | the ~3 GB memory ceiling, on the `bitHumanKit` path | request both [Apple entitlements](#apple-entitlements--bithumankit-only) and declare them in `Info.plist` |
 | `bitHuman needs an iPhone 16 Pro or newer` at launch | `bitHumanKit`'s own device floor. There is no override | ship `Expression2` or `Essence2` on that device, or move above the floor |
 | mic or speech start fails silently | missing `Info.plist` privacy strings; the OS caches the denial | add `NSMicrophoneUsageDescription` |
-| you are looking for `essence-1` and cannot find a product for it | there is no first-generation product in the Swift package | on a Mac, render it with the [CLI](/sdk/cli) or the [Python SDK](/sdk/python); in an app, serve it from the [cloud API](/api/overview). The model itself is described on [essence-1](/concepts/essence-1) |
+| you are looking for `essence-1` and cannot find a product for it | there is no first-generation product in the Swift package | on a Mac, render it with the [CLI](/sdk/cli) or the [Python SDK](/sdk/python); in an app, serve it from the [cloud API](/api). The model itself is described on [essence-1](/concepts/essence-1) |
 | avatar disappears on re-render | a fresh renderer view on every SwiftUI update | return the same instance from `makeUIView` and `updateUIView` |
-| `bitHumanKit` avatar mode refuses with a key error | `config.apiKey` is empty | set `config.apiKey` to your API secret — read `BITHUMAN_API_SECRET` into it, as [the hello example](/examples/swift-ios-hello) does |
+| `bitHumanKit` avatar mode refuses with a key error | `config.apiKey` is empty | set `config.apiKey` to your API secret — read `BITHUMAN_API_SECRET` into it, as [the hello example](/examples/swift-ios-voice-agent) does |
 
 ## Examples and source
 
@@ -592,12 +594,12 @@ Measured frame rates for every platform are on the
 - **Essence 2** — [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2),
   every file printed. **The page is the source**: there is no
   `swift/ios-essence2` directory to clone, and the page is complete without one.
-- **`bitHumanKit`** — [Swift / iOS — Hello, avatar](/examples/swift-ios-hello),
+- **`bitHumanKit`** — [Swift / iOS — Hello, avatar](/examples/swift-ios-voice-agent),
   the on-device voice agent, and
   [`swift/ios-avatar`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-avatar)
   to clone. This is the path with the iPhone 16 Pro floor and the two Apple
   entitlements — start with Expression 2 unless you need the whole stack.
-- [iOS API reference](/sdk/ios-api) — the full C interface, its return codes, and
+- [iOS API reference](/sdk/apple-api) — the full C interface, its return codes, and
   the Swift entry points.
 - **On a Mac** —
   [`swift/macos-expression2`](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2),
@@ -618,6 +620,6 @@ Measured frame rates for every platform are on the
 - [LiveKit](/sdk/livekit) — subscribing to a server-hosted avatar from a native
   app, when the render is not on the device
 - [CLI](/sdk/cli) — the same engines on an Apple Silicon Mac, with no Xcode
-- [Performance](/sdk/performance) — measured frame rates for every platform
+- [Performance](/performance) — measured frame rates for every platform
 - [Where each model runs](/concepts/models#where-each-model-runs) — which model to ship
 - [SDK](/sdk) — every platform on one page

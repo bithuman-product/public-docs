@@ -3,8 +3,9 @@ title: "Realtime API"
 description: "Mint a short-lived client secret to open an OpenAI-Realtime voice session directly from the browser."
 section: api
 group: "Build"
-order: 15
-label: "Realtime voice"
+order: 16
+type: endpoint
+label: "Realtime"
 ---
 
 ## Overview

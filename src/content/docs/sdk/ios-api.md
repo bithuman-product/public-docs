@@ -3,11 +3,13 @@ title: "iOS API reference"
 description: "The full C interface the Essence 2 product vends on Apple — every function, its arguments and its return codes, and the credential it reads — plus the Expression 2 Swift entry points, read out of the xcframework the Swift package pins, not out of a source tree."
 section: sdk
 group: "Reference"
-order: 77
-label: "iOS API"
+order: 82
+type: reference
+slug: sdk/apple-api
+label: "Apple API"
 ---
 
-The [iOS SDK](/sdk/ios) page carries the calls a working app makes. This page is
+The [iOS SDK](/sdk/apple) page carries the calls a working app makes. This page is
 the full list.
 
 Everything below was read on **2026-09-22** from the `essence2-v1.10.0`
@@ -73,7 +75,7 @@ platform; the link succeeds and there is nothing to add.
 
 `Expression2`, `bitHumanKit` and `BithumanEngineProtocol` are Swift modules and
 record their own dependencies — you add nothing. More detail, with the Xcode
-equivalent, is on the [Apple SDK page](/sdk/ios#what-essence-2-needs-at-link).
+equivalent, is on the [Apple SDK page](/sdk/apple#what-essence-2-needs-at-link).
 
 ## Expression 2 — Swift
 
@@ -270,8 +272,8 @@ are legacy names kept for compatibility —
 
 ## See also
 
-- [Apple SDK](/sdk/ios) — install, a worked minimal app, device floors, and the Mac path
+- [Apple SDK](/sdk/apple) — install, a worked minimal app, device floors, and the Mac path
 - [Swift / iOS — Essence 2 on device](/examples/swift-ios-essence2) — a complete
   app, every file printed
 - [Android API reference](/sdk/android-api) — the same surface on the handsets
-- [Performance](/sdk/performance) — measured frame rates for every platform
+- [Performance](/performance) — measured frame rates for every platform

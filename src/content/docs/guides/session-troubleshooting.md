@@ -3,7 +3,8 @@ title: "Session behavior & troubleshooting"
 description: "What to expect from a live avatar session — connect latency, warm vs overflow capacity, idle vs speaking behavior — and how to diagnose the common errors."
 section: guides
 group: "Deploy"
-order: 14
+order: 31
+type: guide
 label: "Sessions & troubleshooting"
 ---
 

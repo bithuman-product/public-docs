@@ -3,7 +3,9 @@ title: "Changelog"
 description: "Release notes and version history for the bitHuman platform."
 section: resources
 group: "Resources"
-order: 1
+order: 2
+type: changelog
+label: "Changelog"
 ---
 
 > **Note** Product-level changes only. For per-version notes, see the [Python SDK release history](https://pypi.org/project/bithuman/#history) and the [SDK releases](https://github.com/bithuman-product/homebrew-bithuman/releases). Entries from July 2026 and earlier are on the [changelog archive](/changelog/archive).
@@ -121,7 +123,7 @@ in 2.6.4 is identical to 2.6.3's.
   fault-injection environment variable. On 2.14.1 the same program writes
   nothing.
 
-Also corrected on [iOS SDK](/sdk/ios#authentication) while measuring this:
+Also corrected on [iOS SDK](/sdk/apple#authentication) while measuring this:
 Essence 2 **needs an API secret** to start a session. It reads `BITHUMAN_API_SECRET`
 (essence2-v1.10.0 does not read BITHUMAN_API_KEY, the deprecated alias); with none, or a rejected one, `be_essence2_create`
 returns `-3` and says why. A sandboxed Mac app also needs **Outgoing
@@ -584,7 +586,7 @@ partial on every one of them. The fix removes the generated part entirely.
 
 - On macOS the end of a render no longer waits on fixed timers. Output is
   unchanged and Linux is unchanged — a drop-in upgrade. Rates are on the
-  [performance page](/sdk/performance).
+  [performance page](/performance).
 
 ### `bithuman` 3.1.7: Expression 2 on a Mac renders on the same CoreML engine as the macOS CLI (2026-09-14)
 
@@ -625,7 +627,7 @@ partial on every one of them. The fix removes the generated part entirely.
 - On Linux, Essence 2 frame assembly uses more cores, and `bithuman render`
   encodes with the bitHuman cloud's settings: far less CPU time, the same or a
   better picture, somewhat larger files.
-- macOS is unchanged. Rates are on the [performance page](/sdk/performance).
+- macOS is unchanged. Rates are on the [performance page](/performance).
 
 ### Essence 2's audio step does less work on iPhone and Mac — Swift SDK 2.13.3 (2026-09-14)
 
@@ -726,7 +728,7 @@ partial on every one of them. The fix removes the generated part entirely.
 - A rejected key renders for 300 seconds of grace; after that
   `be_essence2_pull_frame` and `be_essence2_idle_frame` return `-3`. An
   unreachable meter never stops a render. Billing is unchanged. See
-  [the Swift page](/sdk/ios#install).
+  [the Swift page](/sdk/apple#install).
 
 ### CLI `2.6.3` — a live self-hosted session is billed on wall-clock (2026-09-07)
 
@@ -785,7 +787,7 @@ partial on every one of them. The fix removes the generated part entirely.
   renderer graph, which Android does not run. The single-frame graph Android
   uses was rebuilt on 2026-09-03, on one identity so far.
 - Essence 2 still does not render in real time on a flagship phone. See
-  [Performance](/sdk/performance).
+  [Performance](/performance).
 
 ### essence-2 lands on Maven Central — both families now have a public Android SDK (2026-09-03)
 

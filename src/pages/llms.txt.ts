@@ -47,12 +47,12 @@ export const GET: APIRoute = async () => {
   out += `## Start here\n\n`;
   out += `- **Embed a hosted agent** — an \`<iframe>\` and no API secret: [API quickstart](${SITE}/api/quickstart).\n`;
   out += `- **Browser, nothing installed** — any showcase avatar from one URL or one iframe: [Web](${SITE}/sdk/web).\n`;
-  out += `- **Cloud REST API** — the \`api-secret\` header against \`https://api.bithuman.ai\`: [API overview](${SITE}/api/overview).\n`;
+  out += `- **Cloud REST API** — the \`api-secret\` header against \`https://api.bithuman.ai\`: [API overview](${SITE}/api).\n`;
   out += `- **Python** — a venv, \`pip install bithuman\`, then open an avatar and take frames: [Python SDK](${SITE}/sdk/python).\n`;
   out += `- **CLI** — one binary for macOS Apple Silicon and Linux x86_64; a live avatar in the browser or an MP4 render: [CLI](${SITE}/sdk/cli) and the [CLI reference](${SITE}/sdk/cli/reference).\n`;
-  out += `- **Android and Apple** — [Android SDK](${SITE}/sdk/android), [Apple SDK — iOS, iPadOS and macOS](${SITE}/sdk/ios).\n`;
+  out += `- **Android and Apple** — [Android SDK](${SITE}/sdk/android), [Apple SDK — iOS, iPadOS and macOS](${SITE}/sdk/apple).\n`;
   out += `- **LiveKit** — a Python voice agent with a face, or a native app reaching a server-hosted avatar over WebRTC: [LiveKit integration](${SITE}/sdk/livekit).\n`;
-  out += `- **MCP server (for AI agents)** — the CLI's \`bithuman mcp\` exposes the platform as Model Context Protocol tools: [MCP server](${SITE}/guides/mcp-server).\n\n`;
+  out += `- **MCP server (for AI agents)** — the CLI's \`bithuman mcp\` exposes the platform as Model Context Protocol tools: [MCP server](${SITE}/sdk/mcp).\n\n`;
 
   out += `## Copy and run\n\n`;
   out += `The two samples [/start](${SITE}/start) prints, byte for byte.\n\n`;

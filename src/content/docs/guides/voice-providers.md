@@ -2,8 +2,10 @@
 title: "Voice providers"
 description: "Every agent speaks every language for free on bitHuman's built-in voice pipeline — or bring your own OpenAI, Grok, ElevenLabs, or Cartesia key to unlock premium voices that run on your account."
 section: guides
-group: "Integrate"
-order: 10
+group: "Build"
+order: 21
+type: guide
+label: "Voices"
 ---
 
 ## Two ways to give your agent a voice

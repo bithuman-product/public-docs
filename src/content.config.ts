@@ -11,7 +11,9 @@ const docs = defineCollection({
     title: z.string(),
     description: z.string().optional().default(""),
     // top-level pillar / area this page belongs to
-    section: z.enum(["api", "sdk", "concepts", "guides", "examples", "resources", "legal"]),
+    section: z.enum(["start", "api", "sdk", "guides", "examples", "performance", "resources", "legal"]),
+    // the page template it follows (STYLE.md "Page shapes"; scripts/check-page-template.mjs)
+    type: z.enum(["hub", "quickstart", "platform", "endpoint", "guide", "reference", "example", "concept", "changelog", "generated"]),
     // sub-section heading shown in the sidebar group
     group: z.string().optional().default(""),
     // sidebar label override (defaults to title)

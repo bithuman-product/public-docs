@@ -3,7 +3,9 @@ title: "AI voice chat"
 description: "Talk to an OpenAI Realtime voice agent and watch a bitHuman avatar lip-sync the response in real time."
 section: examples
 group: "Examples"
-order: 15
+order: 20
+type: example
+label: "Python: voice conversation"
 ---
 
 ## Prerequisites
@@ -85,7 +87,7 @@ python conversation.py --model ~/.cache/bithuman/showcase/sofia-ramirez.imx
 
 > **Will your machine keep up?** A live conversation needs the avatar to render
 > at least as fast as it plays — 25 fps for Essence 2, 20 for Expression 2. The
-> measured rate for each platform is on the [performance page](/sdk/performance).
+> measured rate for each platform is on the [performance page](/performance).
 
 ## What you'll see
 

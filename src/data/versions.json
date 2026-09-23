@@ -39,7 +39,7 @@
       "includes": "Essence 2 engine **{essence2_engine}** · Expression 2 engine {expression2_swift}",
       "registry": "GitHub tag v{v}",
       "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
-      "docs": "/sdk/ios"
+      "docs": "/sdk/apple"
     },
     {
       "key": "expression2_android",

@@ -2,8 +2,10 @@
 title: "Rate limits & quotas"
 description: "Plan-tiered request limits by endpoint cost tier, the 429 / Retry-After contract, credit rates, and a recommended retry strategy."
 section: api
-group: "Operate & reference"
-order: 32
+group: "Reference"
+order: 41
+type: reference
+label: "Rate limits"
 ---
 
 ## Request limits

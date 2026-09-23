@@ -1,18 +1,7 @@
 ---
-const links = [
-  { label: "Get started", href: "/start" },
-  { label: "API", href: "/api" },
-  { label: "SDK", href: "/sdk" },
-  { label: "Guides", href: "/guides" },
-  { label: "Showcase", href: "/showcase" },
-];
-const resources = [
-  { label: "Examples", href: "/examples" },
-  { label: "Concepts", href: "/concepts" },
-  { label: "Changelog", href: "/changelog" },
-  { label: "Downloads", href: "/downloads" },
-  { label: "Community", href: "/community" },
-];
+import { TOP_NAV, RESOURCES_MENU, API_SECRET_URL } from "../config/nav";
+const links = TOP_NAV;
+const resources = RESOURCES_MENU;
 const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || path.startsWith(href + "/");
 ---
@@ -43,7 +32,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
           >
         </button>
         <div class="dd-menu">
-          {resources.map((r) => <a href={r.href}>{r.label}</a>)}
+          {resources.map((r) => <a href={r.href} {...(r.external ? { target: "_blank", rel: "noopener" } : {})}>{r.label}{r.external ? " ↗" : ""}</a>)}
         </div>
       </div>
     </nav>
@@ -68,7 +57,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
         <span class="status-dot"></span>
         <span class="status-txt">Status</span>
       </a>
-      <a class="btn-cta" href="https://bithuman.ai/developer/api-keys" target="_blank" rel="noopener">Get an API secret</a>
+      <a class="btn-cta" href={API_SECRET_URL} target="_blank" rel="noopener">Get an API secret</a>
       <button class="icon-btn menu-btn" aria-label="Menu" onclick="__bhToggleMenu()">
         <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
       </button>
@@ -79,9 +68,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     {links.map((l) => <a href={l.href}>{l.label}</a>)}
     <div class="mm-sep"></div>
     {resources.map((r) => <a href={r.href}>{r.label}</a>)}
-    <a href="https://status.bithuman.ai" target="_blank" rel="noopener">Status</a>
     <div class="mm-sep"></div>
-    <a class="mm-cta" href="https://bithuman.ai/developer/api-keys" target="_blank" rel="noopener">Get an API secret →</a>
+    <a class="mm-cta" href={API_SECRET_URL} target="_blank" rel="noopener">Get an API secret →</a>
   </div>
 </header>
 

@@ -4,6 +4,7 @@ description: "A venv, pip install bithuman, one free model — open an avatar, r
 section: sdk
 group: "Platforms"
 order: 20
+type: platform
 label: "Python"
 ---
 
@@ -296,7 +297,7 @@ after it.
 ## Performance
 
 Measured frame rates for every platform, this package included, are on the
-[performance page](/sdk/performance). A completed `render` logs its own
+[performance page](/performance). A completed `render` logs its own
 steady-state rate on the `bithuman` logger at INFO:
 
 ```python
@@ -312,7 +313,7 @@ logging.basicConfig(level=logging.INFO)
 | `error: externally-managed-environment` from `pip install` | the distribution owns the system interpreter ([PEP 668](https://peps.python.org/pep-0668/)); pip installed nothing | create a venv first — the three lines under [Install](#install) |
 | `ensurepip is not available` from `python3 -m venv` | the venv module is packaged separately | `sudo apt install -y python3-venv` (Debian, Ubuntu), then re-run |
 | `ModuleNotFoundError: No module named 'bithuman'` | not installed in the active environment, or the venv is not activated in this terminal | `source .venv/bin/activate`, then `pip install "bithuman[expression-2]"` |
-| `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14; pip installed nothing | a supported platform (Windows: WSL2), or the [cloud API](/api/overview) |
+| `bithuman 2.11.6 has NO WHEEL for this platform.` from `pip install` | no wheel for this platform — Intel Mac, Windows, musl, or a Python outside 3.10–3.14; pip installed nothing | a supported platform (Windows: WSL2), or the [cloud API](/api) |
 | `NotSupported` opening a `.avatar` | the Expression 2 extra is missing | `pip install "bithuman[expression-2]"` |
 | the first `render` raises `NotAuthorised`, *"no credential was supplied"* | no key in the running shell | `export BITHUMAN_API_SECRET=…` in the shell you run `python` from |
 | `bithuman.open` raises `NotAuthorised`, *"that key was not accepted (401)"* | there is an API secret and the service rejected it — revoked, or from another environment | mint a fresh one at [your API secrets](https://www.bithuman.ai/developer/api-keys) |
@@ -346,5 +347,5 @@ logging.basicConfig(level=logging.INFO)
 - [LiveKit](/sdk/livekit) — running this library inside an agent worker, and
   the interpreter range that path needs
 - [CLI](/sdk/cli) — the same engines as a binary
-- [Performance](/sdk/performance) — measured frame rates for every platform
+- [Performance](/performance) — measured frame rates for every platform
 - [SDK](/sdk) — every platform on one page

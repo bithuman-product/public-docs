@@ -2,9 +2,10 @@
 title: "Organizations"
 description: "Create a team, invite members, manage roles and org-scoped API secrets, and track per-member usage."
 section: api
-group: "Account & teams"
-order: 42
-label: "Teams & orgs"
+group: "Account"
+order: 32
+type: endpoint
+label: "Organizations"
 ---
 
 ## Overview
