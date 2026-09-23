@@ -123,22 +123,11 @@ Best results: front-facing, high-contrast, well-lit, face filling the frame. Sid
 
 ## Generate programmatically
 
-The same upload + packaging flow is available over HTTP — generate agents from your own service. Call [`POST /v1/agent/generate`](/api/reference) with:
-
-- **`prompt`** — system instructions for the agent's personality.
-- **`image`** — portrait URL (the 10-second identity video is generated from it internally). Best results from [one clear figure, neutral expression, facing the camera, relaxed pose, face unobstructed](#what-makes-a-good-photo).
-- **`audio`** — voice sample URL (3–10 s of clean speech) for voice cloning.
-- **`model`** — which avatar model to build. An omitted `model` defaults to `expression-1` (Expression 1, 250 credits, since 2026-07-12); send `"auto"` to let the platform pick between the second-generation models, or name one explicitly.
-
-Video is not part of the creation contract for any model and is being removed
-platform-wide: do not send `video` — as the rollout completes, a request
-carrying it is rejected with
-[`400 VIDEO_INPUT_NOT_SUPPORTED`](/api/errors#agent-operations) before
-anything is billed.
-
-Set your API secret in the shell first — the call is rejected without it, and it is
-read from the environment, never pasted into the body (see
-[Authentication](/api/authentication)):
+The same flow is available over HTTP: [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
+with a `prompt`, a portrait `image` URL, an optional `audio` voice sample (3–10 s
+of clean speech) and a `model`. Send `"auto"` to let the platform pick —
+a photorealistic person routes to Essence 2, anything else to Expression 2 —
+because an omitted `model` creates an Expression 1 agent.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -152,29 +141,12 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
   }'
 ```
 
-> **Note — `image` must be publicly fetchable, and this is not checked at
-> submit time.** The `https://example.com/…` URLs above are placeholders.
-> Posting one verbatim returns `HTTP 200` with
-> `{"success": true, "status": "processing"}`, and the job only fails seconds
-> later with `Image processing failed: Failed to download after 3 attempts:
-> 404`. The credits are charged at submit and **automatically refunded** on that
-> failure (verified 2026-07-28: `-500` then `+500` within 4 s), so nothing is
-> lost — but a `200` here is not confirmation that your image was accepted. Poll
-> [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) before assuming
-> the creation started.
-
-
-> **Choosing a model.** `"auto"` classifies your input — a photorealistic
-> person routes to [`essence-2`](/concepts/essence-2), a stylized / animal /
-> creature / robot to [`expression-2`](/concepts/expression-2). You can also
-> name a model directly (`essence-2` or `expression-2`);
-> note the Essence 2 family requires a photorealistic human subject, so an
-> explicit `essence-2*` creation with a non-human input is rejected with
-> [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) (nothing billed).
-> See [Essence 2 & Expression 2](/concepts/models#which-should-i-choose)
-> for the full chooser and the [subject gate](/api/agents#the-essence-2-subject-gate-422).
-
-The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`GET /v1/agent/status/{agent_id}`](/api/reference) until `ready`, then drive the resulting `agent_code` like any other avatar. See the [agent lifecycle](/api/agents) for the full generate → resolve → speak flow.
+The `example.com` URLs are placeholders — the image must be publicly fetchable,
+and it is fetched after the call returns, so poll
+[`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready` rather
+than reading the `200` as acceptance. Request fields, failure modes and creation
+times are on the [Agents API](/api/agents); which model to pick is on
+[Models](/concepts/models#which-should-i-choose).
 
 ### Media tips for generation
 
@@ -183,18 +155,11 @@ The call returns immediately with `{ agent_id, status: "processing" }`. Poll [`G
 
 ## What it costs
 
-Creation is a one-time charge per agent — 250 credits for the
-first-generation models, 500 for `essence-2`,
-2000 for `expression-2`; `auto` bills the routed model's rate. Serving then
-bills per active minute. Every number lives on one page:
-[Pricing & credits](/guides/pricing).
-
-**A free account cannot generate an agent.** The free tier's monthly credit
-allowance is smaller than the cheapest creation charge above, so the call in this
-section needs a paid plan — see [Pricing & credits](/guides/pricing) for the
-allowance and the plan that covers the model you want. Everything on the download
-side stays free either way: `bithuman list`, `bithuman pull <slug>` and
-`bithuman open` need no account at all.
+Creation is a one-time charge per agent, and serving then bills per talking
+minute — every number is on [Pricing & credits](/guides/pricing). The free tier's
+monthly credits do not cover any creation, so generating an agent needs a paid
+plan or a top-up. Downloading and inspecting showcase avatars stays free:
+`bithuman list`, `bithuman pull <slug>` and `bithuman open` need no account.
 
 ## Next steps
 

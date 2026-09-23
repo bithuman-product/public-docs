@@ -32,7 +32,7 @@ Managed conversational agents bill on top of avatar serving:
 | Managed agent — voice chat | 10 credits/min |
 | Managed agent — camera chat (vision on) | 30 credits/min |
 
-One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development-only variable, never licensed for production, and it is now gone from the shipping surfaces: the CLI ignores it entirely from 2.6.20, the public Python wheels refuse a render with no credential whether or not it is set, and the Android Essence 2 SDK no longer carries the name at all from 0.5.7.
+One mode is always free: **audio-only** Swift SDK use — no avatar attached, fully offline, no metering. `BITHUMAN_UNMETERED=1` is a development-only variable, never licensed for production, and it is now gone from the shipping surfaces: the CLI ignores it entirely from 2.6.20, the public Python wheels refuse a render with no credential whether or not it is set, and the Android Essence 2 SDK no longer contains the name at all from 0.5.7.
 
 ## Creation & generation — one-time credits
 
@@ -151,10 +151,9 @@ Need more before your next reset? Top up any time at **$1 = 100 credits**. Top-u
 | Mode | What it means | Auth |
 |---|---|---|
 | **Metered (default)** | Your `BITHUMAN_API_SECRET` exchanges for a runtime token; a heartbeat fires once per minute while frames are flowing. Both cloud and self-hosted run this way. | `BITHUMAN_API_SECRET` (server, Android, CLI, REST) / `BITHUMAN_API_KEY` (Swift only) |
-| **Unmetered dev mode** | `BITHUMAN_UNMETERED=1` is a development-only variable that no shipping surface honours: the CLI ignores it from 2.6.20, the public Python wheels refuse a credential-less render with it set, and the Android Essence 2 SDK no longer contains the name at all from 0.5.7 | none, where it still applies |
 | **Audio-only** | Swift SDK with no avatar config attached. Fully offline, never reaches the auth endpoint. | none |
 
-Do not build on `BITHUMAN_UNMETERED=1`: every render is billed to an account, and a key is free to obtain.
+There is no unmetered mode for an avatar — see the note on `BITHUMAN_UNMETERED` [above](#serving--credits-per-live-minute).
 
 ## How metering works
 
@@ -168,7 +167,7 @@ Both mobile rails bill a live avatar at the **self-hosted rate** in the table ab
 
 **Swift.** The SDK requests a runtime token once on `chat.start()` (sync — bad keys fail fast with `VoiceChatError.authenticationFailed`), then heartbeats once per minute while the avatar is attached. Audio-only mode doesn't authenticate or heartbeat at all. If the device loses connectivity mid-session, the SDK has a **5-minute offline grace period** before it surfaces a billing error and pauses the avatar. The env var on this rail is `BITHUMAN_API_KEY`, not `BITHUMAN_API_SECRET`.
 
-**Android / Kotlin.** `ai.bithuman:essence2-android` meters from **0.5.1** and no earlier version — 0.4.0 does not meter at all, and 0.5.0 renders a rejected key for ever. Set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to. Through **0.5.6** a session with no credential still rendered, logging `★ UNMETERED RENDER`; **0.5.7 removes that banner and the `BITHUMAN_UNMETERED` variable with it** — read from the published AAR, both appear twice in 0.5.6 and not at all in 0.5.7. `ai.bithuman:sdk` (essence-1) is stricter — `Avatar.load` throws without a secret. Both follow the same failure rule as every other runtime: a metering service that cannot be reached never stops a render, while a **rejected** key gets a 300-second grace and then ends the session. The measured detail is on the [Android SDK page](/sdk/android#troubleshooting).
+**Android / Kotlin.** `ai.bithuman:essence2-android` meters every session: set `Essence2Metering.apiSecret`, or the `BITHUMAN_API_SECRET` environment variable, to the account the session bills to. A metering service that cannot be reached never stops a render; a **rejected** key gets a 300-second grace and then ends the session. Details are on the [Android SDK page](/sdk/android#authentication).
 
 Which SDK pulls the model onto the handset, and which handsets are supported at all, is on [getting an avatar model onto a phone](/sdk).
 

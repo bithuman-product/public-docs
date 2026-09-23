@@ -1,6 +1,6 @@
 ---
 title: "Audio streaming"
-description: "The push/drain pattern every bitHuman SDK shares — push 16-bit PCM in, drain lip-synced frames out at the model's own rate — with the canonical minimal Python loop and the audio/frame formats."
+description: "The push/drain pattern every bitHuman SDK shares — push audio in, drain lip-synced frames out at the model's own rate — with a streaming Python example and the audio and frame formats."
 section: concepts
 group: "Core"
 order: 3
@@ -8,110 +8,65 @@ order: 3
 
 ## The push/drain pattern
 
-Every SDK and the runtime use the same shape — audio in, video out:
+Every SDK has the same shape — audio in, video out:
 
-1. **Push** 16-bit PCM audio chunks as they arrive (mic, TTS, WebRTC).
-2. **Drain** lip-synced video frames at the model's own rate — 25 fps for Essence, 20 fps for Expression 2.
+1. **Push** audio as it arrives — a microphone, TTS, a WebRTC track.
+2. **Drain** lip-synced frames at the model's own rate — 25 fps for Essence 2 and
+   Essence 1, 20 fps for Expression 2.
 
-That's the entire surface area. The same two calls drive both [Essence and Expression](/concepts/models) — including the [second-generation `essence-2` and `expression-2`](/concepts/models) — across Python, Swift, and the CLI.
+The engine buffers between the two, so your audio source and your render loop
+never have to run in lockstep.
 
-<div class="bh-flow"><span class="bh-node">push audio</span><span class="bh-sep">→</span><span class="bh-node">engine ticks</span><span class="bh-sep">→</span><span class="bh-node">pull frame</span><span class="bh-sep">→</span><span class="bh-node">render</span></div>
+<div class="bh-flow"><span class="bh-node">push audio</span><span class="bh-sep">→</span><span class="bh-node">engine</span><span class="bh-sep">→</span><span class="bh-node">pull frame</span><span class="bh-sep">→</span><span class="bh-node">render</span></div>
 
-You feed PCM in as fast as it arrives and drain visual frames out on a fixed clock — 25 fps for Essence, 20 fps for Expression 2 — the engine buffers between the two so your audio source and your render loop never have to stay in lockstep.
+## In Python
 
-## The minimal Python loop
-
-This is the canonical, copy-pasteable loop. Other pages link here rather than repeating it.
+`render()` takes audio a chunk at a time and yields frames as it goes, so a
+stream and a file are the same program:
 
 ```python
-import asyncio, os
 import numpy as np
-import soundfile as sf
-from bithuman import AsyncBithuman
+import bithuman
 
-# bithuman 2.3 is library-only — the old bithuman.audio helpers were
-# removed. Inline what we need: load a WAV, downmix to mono, convert
-# float32 → int16 PCM. (The SDK resamples to 16 kHz internally, so the
-# loader can hand back any sample rate.)
-def load_audio(path: str) -> tuple[np.ndarray, int]:
-    audio, sr = sf.read(path, dtype="float32", always_2d=False)
-    if audio.ndim > 1:
-        audio = audio.mean(axis=1)
-    return audio, sr
+def chunks(path="speech16k.raw", ms=40):
+    """16 kHz mono int16 audio, delivered a chunk at a time — a mic, TTS or a socket."""
+    pcm = np.fromfile(path, dtype=np.int16)
+    step = 16000 * ms // 1000
+    for i in range(0, len(pcm), step):
+        yield pcm[i:i + step]
 
-def float32_to_int16(arr: np.ndarray) -> np.ndarray:
-    return (np.clip(arr, -1.0, 1.0) * 32767.0).astype(np.int16)
-
-async def main():
-    rt = await AsyncBithuman.create(
-        model_path="avatar.imx",
-        api_secret=os.environ["BITHUMAN_API_SECRET"],
-    )
-
-    pcm, sr = load_audio("speech.wav")
-    pcm = float32_to_int16(pcm)
-    chunk = sr // 100                       # 10 ms chunks
-    for i in range(0, len(pcm), chunk):
-        await rt.push_audio(pcm[i:i + chunk].tobytes(), sr, last_chunk=False)
-    await rt.flush()
-
-    async for frame in rt.run():
-        if frame.has_image:
-            image = frame.bgr_image         # numpy (H, W, 3) uint8
-        if frame.end_of_speech:
-            break
-    await rt.stop()
-
-asyncio.run(main())
+frames = 0
+with bithuman.open("wise-pup.imx") as avatar:
+    for image in avatar.render(chunks()):      # frames come out as audio goes in
+        frames += 1                            # image: (height, width, 3) uint8, RGB
+print(frames, image.shape)
 ```
 
-The on-device SDK always renders a local `.imx`, so `create()` needs `model_path`; you can also pass `agent_code` for billing attribution. Resolving an avatar purely by code (no local file) is the cloud/REST path — see [Avatars & .imx](/concepts/avatars-imx).
-
-> **Debian/Ubuntu** `create()` failing with `Problem with the SSL CA cert` is
-> **fixed in 2.3.4** — the SDK auto-discovers your distro's CA bundle on Linux,
-> no configuration needed. If you must stay on ≤ 2.3.3, either upgrade
-> (recommended) or symlink once:
-> `sudo mkdir -p /etc/pki/tls/certs && sudo ln -s /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt`.
-> Note `CURL_CA_BUNDLE` / `SSL_CERT_FILE` override auto-discovery when set — a
-> stale value breaks auth even on 2.3.4. Details in
-> [Python SDK troubleshooting](/sdk/python#troubleshooting).
+Install, the model download and the credential are on the
+[Python SDK](/sdk/python) page. `speech16k.raw` is any speech converted with
+`ffmpeg -i speech.wav -ac 1 -ar 16000 -f s16le speech16k.raw`.
 
 ## Audio format
 
 | Property | Value |
 |---|---|
-| Encoding | 16-bit signed PCM (`int16`) |
-| Channels | Mono |
-| Sample rate | Any (the SDK auto-resamples) |
-| Chunk size | Anything; 10–40 ms is typical |
-
-Push raw `int16` PCM bytes plus the sample rate — the SDK resamples internally. The `load_audio` / `float32_to_int16` helpers are inlined in the loop above; the old `bithuman.audio` module was removed in the 2.3 slim wheel.
+| Encoding | 16-bit signed PCM (`int16`), or `float32` in [-1, 1] |
+| Channels | mono |
+| Sample rate | 16 kHz for decoded samples; a file path in any format ffmpeg reads is converted for you |
+| Chunk size | anything; 10–40 ms is typical |
 
 ## Frame format
 
-Each yielded `frame` exposes:
+Frames arrive at the model's own rate, whatever the chunk size: 25 fps for
+Essence 2 (up to 1920x1080, the identity's own canvas) and 20 fps for Expression 2
+(416x720). Python yields RGB `uint8` arrays; the Apple and Android SDKs hand you
+their platform's image types.
 
-| Field | Type | What it is |
-|---|---|---|
-| `bgr_image` | `numpy.ndarray` (H, W, 3) `uint8` | The rendered video frame, BGR channel order |
-| `audio_chunk` | `AudioChunk` | Audio aligned with the frame. An object exposing `.array` (numpy samples), `.bytes` (raw PCM), and `.duration` (seconds) — not raw `bytes`. |
-| `has_image` | `bool` | `False` for filler frames during silence |
-| `end_of_speech` | `bool` | `True` on the last frame of a turn |
+## In the other SDKs
 
-Frames arrive at the model's own rate — **25 fps** for Essence, **20 fps** for Expression 2 — regardless of audio chunk size.
-
-## When the avatar isn't speaking
-
-During silence the runtime emits filler frames (`has_image=False`) so your render loop keeps its cadence. Skip them, or render a static idle frame.
-
-## Mapping to other SDKs
-
-The push/drain shape is identical everywhere — only the language idioms change:
-
-- **Python** — `await rt.push_audio(...)` / `async for frame in rt.run()`. See the [Python SDK](/sdk/python).
-- **Swift** — push PCM into the chat session, receive frames on the render callback. See the [Swift SDK](/sdk/ios).
-
-All SDKs that target the same engine ABI produce byte-equivalent frames from the same audio — see [Architecture](/concepts/architecture) for the compatibility matrix.
+- **Apple** — `feed()` PCM, then `pull()` frames. See the [Apple SDK](/sdk/ios).
+- **Android** — `feed()` PCM, then `pull()` into a reused `Bitmap`. See the [Android SDK](/sdk/android).
+- **CLI** — `bithuman render` takes an audio file; `bithuman run` streams a live conversation. See the [CLI](/sdk/cli).
 
 ## Where to go next
 
