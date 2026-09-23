@@ -10,6 +10,20 @@ order: 1
 
 ## September 2026
 
+### A release build that brings its own ProGuard file keeps Essence 2 working — `essence2-android` 0.5.13 (2026-09-23)
+
+`ai.bithuman:essence2-android:0.5.13` on Maven Central. The AAR now ships its
+own keep rule for the engine's JNI bridge, as `expression2-android` already did,
+so `isMinifyEnabled = true` works with any `proguardFiles(...)` line. On
+`0.5.12` and older, a release build that replaced Android's default ProGuard
+file instead of adding to it had the bridge renamed and threw
+`UnsatisfiedLinkError` at the first `create()` — measured on a Galaxy S25+, and
+only in release builds. Nothing else a caller can see changes: the Kotlin
+surface is byte-identical to `0.5.12`, and the picture is the same — the lip
+contour, and a mouth taken entirely from the identity's own footage (generated
+share **0.000000 mean / 0.000000 max** over 62 frames). See
+[Shrink the release build](/sdk/android#shrink-the-release-build).
+
 ### A new Mac app builds, and Essence 2 needs no linker flags from you — Swift package `2.14.1` (2026-09-23)
 
 Raise your floor to `from: "2.14.1"` and force the resolve (*File → Packages →

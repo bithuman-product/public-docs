@@ -29,7 +29,7 @@ changed, and it is [further down this page](#essence-2-on-android--the-same-seve
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
-| Maven coordinate | `ai.bithuman:expression2-android:0.4.8` | `ai.bithuman:essence2-android:0.5.12` |
+| Maven coordinate | `ai.bithuman:expression2-android:0.4.8` | `ai.bithuman:essence2-android:0.5.13` |
 | bitHuman API key | **not needed** | **required**, and used twice — see that section |
 | `minSdk` | 26 | 29 |
 | Picture | 416x720 at 20 fps | the identity's own canvas at 25 fps (1080x1920 for `A21SKT4314`) |
@@ -1116,7 +1116,7 @@ android {
 }
 
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.5.12")
+    implementation("ai.bithuman:essence2-android:0.5.13")
 }
 ```
 

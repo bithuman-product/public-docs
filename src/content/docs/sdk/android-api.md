@@ -48,10 +48,10 @@ Each artifact below is one section: the bytes it was read from, the packages it 
 | --- | --- |
 | Registry | maven-central |
 | Coordinate | ai.bithuman:essence2-android |
-| Version | 0.5.12 |
-| File | `essence2-android-0.5.12.aar` |
-| Digest | `sha256:8512fc644bcbed156d5656409082faf0e02eabbbf699e4e757d35213995823ac` |
-| Resolved on | 2026-09-22 |
+| Version | 0.5.13 |
+| File | `essence2-android-0.5.13.aar` |
+| Digest | `sha256:bd96beae50d9ab4009ccb95062b04c26ed6a3888b0185d6e994d2eda41d4b6c2` |
+| Resolved on | 2026-09-23 |
 
 | What the artifact declares | Value |
 | --- | --- |
@@ -449,7 +449,7 @@ A reference generated from `javap` would have listed each of these. They are in 
 | Version | 0.4.8 |
 | File | `expression2-android-0.4.8.aar` |
 | Digest | `sha256:3880083e3342a411e63adbc6893f08e94470eaaab7cc38278c906f98f9b49e62` |
-| Resolved on | 2026-09-22 |
+| Resolved on | 2026-09-23 |
 
 | What the artifact declares | Value |
 | --- | --- |

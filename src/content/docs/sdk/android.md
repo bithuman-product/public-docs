@@ -1,6 +1,6 @@
 ---
 title: "Android SDK"
-description: "Both second-generation models on an arm64 Android handset, each from one Maven coordinate: ai.bithuman:expression2-android:0.4.8 renders a generated scene with no account and no key, and ai.bithuman:essence2-android:0.5.12 renders your own identity at full resolution with a bitHuman API key. Device floors, download sizes and a worked example for each."
+description: "Both second-generation models on an arm64 Android handset, each from one Maven coordinate: ai.bithuman:expression2-android:0.4.8 renders a generated scene with no account and no key, and ai.bithuman:essence2-android:0.5.13 renders your own identity at full resolution with a bitHuman API key. Device floors, download sizes and a worked example for each."
 section: sdk
 group: "Platforms"
 order: 30
@@ -18,7 +18,7 @@ model, key.
 |---|---|---|
 | **What renders** | [a whole generated scene](/concepts/expression-2) — head, shoulders and background — at 416x720, 20 fps | [your own portrait, animated](/concepts/essence-2), at 25 fps, on the canvas that identity was generated at |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
-| **Dependency line** | `implementation("ai.bithuman:expression2-android:0.4.8")` | `implementation("ai.bithuman:essence2-android:0.5.12")` |
+| **Dependency line** | `implementation("ai.bithuman:expression2-android:0.4.8")` | `implementation("ai.bithuman:essence2-android:0.5.13")` |
 | **Credential** | **none** for a published identity — no account, no key, no credits | a bitHuman **api-secret**, in two places — [keys are free](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB, into app-private storage | 226–281 MB, into app-private storage |
 | **Adds to your app** | 2.8 MB AAR, plus a 70 MB accelerator runtime you can opt out of | 12.1 MB AAR — 32.1 MB of `arm64-v8a` libraries |
@@ -109,7 +109,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }
 }
 dependencies {
-    implementation("ai.bithuman:essence2-android:0.5.12")
+    implementation("ai.bithuman:essence2-android:0.5.13")
 }
 ```
 
@@ -124,9 +124,9 @@ own module, or raise the whole app to 29.
 
 > **Important** **Type these versions exactly, and nothing lower.** An older
 > coordinate still resolves, still compiles and renders **differently**, with no
-> exception and no log — `essence2-android` 0.5.11 and 0.5.12 ship a
+> exception and no log — `essence2-android` 0.5.11, 0.5.12 and 0.5.13 ship a
 > byte-identical `classes.jar`, so a compiler, an IDE and the
-> [API reference](/sdk/android-api) all see two indistinguishable releases. Only
+> [API reference](/sdk/android-api) all see three indistinguishable releases. Only
 > the picture differs. See [Pin the version](#pin-the-version).
 
 ## Minimal code
@@ -321,61 +321,46 @@ is a metered self-hosted session — [pricing](/guides/pricing) is the authority
 
 ## Shrink the release build
 
-Turn on `isMinifyEnabled` and you are shrinking a library that reaches its own
-native code **by name**: each engine method crosses into `arm64-v8a` through a
-JNI symbol that R8 is otherwise free to rename or delete. Rename one and the app
-compiles, installs, and throws `UnsatisfiedLinkError` at the first frame.
-
-**Keep the default Android file and there is nothing for you to add.**
-`proguard-android-optimize.txt` already carries the rule that covers this, so the
-template Android Studio writes is already correct — the part that matters is the
-*first* argument, which is also the easiest one to delete by accident:
+Turn on `isMinifyEnabled` and there is **nothing to add**, whatever your
+`proguardFiles(...)` line says. Each engine reaches its native code by name
+through JNI, and each AAR now ships its own keep rule for that boundary
+(`proguard.txt` inside the AAR, which Gradle applies to your R8 run
+automatically) — `expression2-android` since before 0.4.8, `essence2-android`
+from **0.5.13**.
 
 ```kotlin
-// app/build.gradle.kts
+// app/build.gradle.kts — either line works; the AARs protect themselves
 android {
     buildTypes {
         release {
             isMinifyEnabled = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),  // keeps native methods
+                getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // or: proguardFiles("proguard-rules.pro")
         }
     }
 }
 ```
 
-Measured 2026-09-22 by building a release APK **twice** — AGP 8.7.3, Gradle
-8.11.1, JDK 17, `isMinifyEnabled = true`, one app that opens **both** engines —
-changing nothing between the two builds but that first argument. Both builds
-succeeded. The difference is in the mapping file R8 wrote beside the APK:
+**Measured 2026-09-23** on a Galaxy S25+ with this site's own
+[Essence 2 project](/examples/kotlin-android-hello#essence-2-on-android--the-same-seven-files-three-of-them-changed),
+resolved from Maven Central with `isMinifyEnabled = true` and
+`proguardFiles("proguard-rules.pro")` **only** — the default file left out:
 
-| After shrinking | default file **+** `proguard-rules.pro` | `proguard-rules.pro` **only** |
+| `essence2-android` | What R8 did to the engine's JNI bridge | On the handset |
 |---|---|---|
-| Essence 2's JNI bridge class | unchanged | **renamed to `a.k`** |
-| Essence 2 native method names in the APK | 9 of 30, verbatim | **0 of 30** |
-| Expression 2's native-method class | unchanged | **unchanged** |
-| Expression 2's exception class, which its native code looks up by name | unchanged | **unchanged** |
+| 0.5.12 | renamed it — `ai.bithuman.elevate.NativeBridge -> a.P` in the build's `mapping.txt` | the identity downloads, then the first `create()` throws `UnsatisfiedLinkError: No implementation found for long a.P.l(…)` |
+| **0.5.13** | kept it, and the 19 native methods the app reaches, by name | renders and plays, with its audio |
 
-**The class is renamed, not deleted** — which is worse, because the APK looks
-complete and installs fine. The native library still exports its
-`Java_…_nativeCreate` symbol; there is simply no longer a class of that name for
-it to bind to, so the first call throws. (Neither column keeps all 30 names:
-this probe app calls a fraction of each engine, and a native method nothing
-calls is never linked. What matters is that nothing in column one was
-*renamed*.)
+The rename is the dangerous kind: the APK is complete, installs, and only a
+release build fails — a debug build never shrinks, so it renders fine.
+`expression2-android` 0.4.8 came through the same R8 run untouched.
 
-**Expression 2 comes through the second column untouched, and that is the
-point.** Both engines were shrunk by the same R8 invocation, in the same APK, in
-the same build — only Essence 2 lost its binding. `expression2-android` ships
-its own keep rules **inside the AAR**, which Gradle applies to your build
-whatever your `proguardFiles` line says, so it protects itself.
-`essence2-android` ships none and relies on the default file being there.
-
-**If you replace the default file instead of adding to it**, carry this rule
-across. It is one line, it is not specific to bitHuman, and it is exactly what
-the default file was giving you:
+**Pinned to `essence2-android` 0.5.12 or older?** Keep
+`getDefaultProguardFile("proguard-android-optimize.txt")` in the list, or, if
+you replace the default file, carry its one native-methods rule into your own:
 
 ```proguard
 -keepclasseswithmembernames,includedescriptorclasses class * {
@@ -383,15 +368,11 @@ the default file was giving you:
 }
 ```
 
-Beyond that, neither artifact asks anything of your `proguard-rules.pro`. There
-is nothing to copy for Expression 2, and `essence2-android` needs no rule of its
-own beyond the one above — verified by reading its published `arm64-v8a`
-libraries for every class name they look up at runtime, of which there are
-none.
+Beyond that, neither artifact asks anything of your `proguard-rules.pro`.
 
 ## Pin the version
 
-`0.5.12` and `0.4.8` are not "a recent version" — they are the versions this page
+`0.5.13` and `0.4.8` are not "a recent version" — they are the versions this page
 describes, and every number and behaviour on it was measured on them. Older
 coordinates on Maven Central still resolve, still compile and still render. They
 render **differently**, and almost none of the differences throws.
@@ -403,6 +384,7 @@ notice.** What an older pin actually gives you:
 |---|---|
 | `expression2-android` 0.4.7 or older | the Qualcomm accelerator runtime is not declared, so unless you add it by hand the engine renders on the CPU at a fraction of the frame rate |
 | `expression2-android` 0.4.6 or older | the idle clip is cut to its first 48 decoded frames of a 200-frame, 10-second loop, so the avatar wraps at 2.4 s on a seam it was never authored to have. Code naming `Expression2IdleLoop` also fails to compile — there the failure is loud; the cut idle clip is not |
+| `essence2-android` 0.5.12 or older | the AAR carries no keep rule for its own JNI bridge, so a **release** build whose `proguardFiles(...)` leaves out `getDefaultProguardFile(...)` renames it and throws `UnsatisfiedLinkError` at the first `create()` — debug builds are unaffected, which is why it reaches a store build unnoticed. See [Shrink the release build](#shrink-the-release-build) |
 | `essence2-android` 0.5.11 or older | the mouth is shaped by a coarse oval rather than by the speaker's own lip outline, so speech reads as less precise. No exception, and no log a caller can see |
 | `essence2-android` 0.5.10 or older | the mouth interior is partly invented rather than reproduced from the identity's own footage, so teeth can look generic on frames where the real ones were available |
 | `essence2-android` 0.5.9 or older | every interruption rewinds the identity's motion to its first frame, so each new utterance restarts the whole gesture instead of continuing |
@@ -415,7 +397,7 @@ before you debug anything else:
 
 ```bash
 ./gradlew :app:dependencies --configuration releaseRuntimeClasspath | grep ai.bithuman
-# must print essence2-android:0.5.12 and/or expression2-android:0.4.8
+# must print essence2-android:0.5.13 and/or expression2-android:0.4.8
 ```
 
 Every published version of both artifacts is listed on [Downloads](/downloads), and
@@ -446,7 +428,7 @@ Measured frame rates for every platform are on the
 | `Unresolved reference: BuildConfig` | AGP 8.x defaults `buildConfig` to off | add `buildFeatures { buildConfig = true }` |
 | `unresolved reference 'MeteredDoorResolver'` | it is nested, and Kotlin does not resolve a nested class through a type alias | import `ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver` |
 | `UnsatisfiedLinkError` on an emulator | both AARs are arm64-v8a only; an x86_64 image installs, then cannot load them | run on a physical arm64 handset |
-| `UnsatisfiedLinkError` in a **release** build only, on a handset the debug build renders on fine | R8 renamed the engine's JNI bridge class — the release build shrinks with a `proguardFiles(...)` that dropped `getDefaultProguardFile("proguard-android-optimize.txt")`. The APK is complete and installs; the name the native library binds to is gone | put the default file back, or copy its native-methods rule across — see [Shrink the release build](#shrink-the-release-build) |
+| `UnsatisfiedLinkError` in a **release** build only, on a handset the debug build renders on fine | you are on `essence2-android` 0.5.12 or older, and R8 renamed the engine's JNI bridge class because the release build's `proguardFiles(...)` dropped `getDefaultProguardFile("proguard-android-optimize.txt")`. The APK is complete and installs; the name the native library binds to is gone | move to `0.5.13`, which keeps its own bridge — or put the default file back — see [Shrink the release build](#shrink-the-release-build) |
 | `SDK location not found` | no `ANDROID_HOME` and no `local.properties` | set one of them |
 | AGP fails with `What went wrong: 26.0.2.1` (or another bare version) | `JAVA_HOME` points at a JDK newer than 17 | use a JDK 17 launcher |
 | `gradle wrapper` refuses an empty directory | Gradle 9 | write `settings.gradle.kts` and `app/` first, the wrapper last |
