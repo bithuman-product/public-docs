@@ -35,8 +35,6 @@ export const TEMPLATES = {
 /** Pages that do not follow their template yet. Each entry says why, and the
  *  check refuses an entry whose page already conforms. */
 export const EXCEPTIONS = {
-  "src/content/docs/examples/ai-conversation.md":
-    "its example folder (python/local-essence) is being reworked in bithuman-examples #59; the page follows once that lands",
 };
 
 const EXEMPT = /(^|\/)(legal\/|changelog(\/|\.md$))/;

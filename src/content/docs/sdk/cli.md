@@ -23,7 +23,8 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 | macOS 14+ on Apple silicon, or Linux on x86_64 or arm64 | the binary | `uname -sm` |
 | A bitHuman sign-in or API secret | `run` and `render` (browsing and downloading need none) | `bithuman account` exits 0 |
 | `ffmpeg` on `PATH` | `render` | `ffmpeg -version` |
-| `livekit-server` on `PATH` | `run` | `command -v livekit-server` |
+| `livekit-server` 1.13 or newer (the Linux download includes it) | `run` | `livekit-server --version`; update with `brew upgrade livekit` |
+| Python 3.11 or newer | `run` (its voice agent) | `python3 --version` |
 
 ## Install
 
@@ -92,9 +93,23 @@ bithuman run wise-pup
 | Inspect an avatar | `bithuman open <avatar>` |
 | Render | `bithuman render <avatar> in.wav -o out.mp4` (a code or name is downloaded on first use) |
 | Serve a live session | `bithuman run <avatar>`; `--host <LAN address>` to expose it (`0.0.0.0` also needs `BITHUMAN_ALLOW_PUBLIC_BIND=1`) |
+| Talk with your own OpenAI key | `export OPENAI_API_KEY=…` before `bithuman run` ([voice settings](#voice-settings)) |
 | Run the brain on your own hardware | [on-device brain](/sdk/cli/local-mode) |
 | Drive it from an AI agent | `bithuman mcp` ([MCP server](/sdk/mcp)) |
 | Script it | add `--json`: every failure prints one JSON object with a stable code, and the exit code is the contract ([reference](/sdk/cli/reference#exit-codes)) |
+
+### Voice settings
+
+`bithuman run` starts a voice agent on OpenAI Realtime. With `OPENAI_API_KEY` set it runs on your key; without it, on your bitHuman account. The rest is read from the environment:
+
+| Variable | Default | What it does |
+|---|---|---|
+| `OPENAI_API_KEY` | — | Your OpenAI key |
+| `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-mini` | The OpenAI Realtime model |
+| `BITHUMAN_VOICE` | `alloy` | Any OpenAI Realtime voice |
+| `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt |
+
+The whole setup, and the same conversation in your own Python code: [Talk to an avatar on your machine](/guides/local-voice-avatar).
 
 ## Platform notes
 
@@ -115,6 +130,7 @@ Frame rates for the CLI on macOS and Linux are on the [performance page](/perfor
 | `sign-in failed: auth required`, exit 1 | the credential was rejected | `bithuman login` again, or create a new API secret |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on `PATH` (common in scripts) | install it, or set `BITHUMAN_FFMPEG` to its path |
 | `run` says the `livekit-server` binary was not found | `livekit-server` is not installed | `brew install livekit`, or `curl -sSL https://get.livekit.io \| bash` |
+| the page shows `Agent dispatch failed: … no response from servers` | `livekit-server` older than 1.13 | `brew upgrade livekit` |
 | `SLUG_NOT_FOUND`, exit 66 | the slug is not in the sample list | `bithuman list` and copy a slug |
 | `pull <CODE>` fails with `404 NOT_FOUND` | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that kind | [add the model](/api/agents#add-a-model-to-an-existing-agent), or pass the `--model` it has |

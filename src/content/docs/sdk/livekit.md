@@ -17,7 +17,7 @@ label: "LiveKit agents"
 
 ## Before you start
 
-- Python 3.10–3.14 and a LiveKit project (its URL and credentials).
+- Python 3.11–3.13 (the plugin installs `bithuman` only there) and a LiveKit project (its URL and credentials).
 - A bitHuman agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
 - An [API secret](/start/api-secret), and an OpenAI key for the voice model in the example.
 
@@ -48,7 +48,8 @@ import os
 
 import aiohttp
 from dotenv import load_dotenv
-from livekit.agents import Agent, AgentSession, JobContext, RoomOutputOptions, WorkerOptions, cli
+from livekit.agents import Agent, AgentSession, JobContext, WorkerOptions, cli
+from livekit.agents.voice.room_io import RoomOptions
 from livekit.plugins import bithuman, openai, silero
 
 load_dotenv()
@@ -81,7 +82,7 @@ async def entrypoint(ctx: JobContext):
     await session.start(
         agent=Agent(instructions="You are a friendly assistant. Keep answers short."),
         room=ctx.room,
-        room_output_options=RoomOutputOptions(audio_enabled=False),   # the avatar publishes the audio
+        room_options=RoomOptions(audio_output=False),   # the avatar publishes the audio
     )
 
 
@@ -98,6 +99,7 @@ python agent.py dev
 
 - **Your own client.** The avatar is a normal LiveKit participant: any LiveKit client SDK (JavaScript, Swift, Kotlin) subscribes to its video and audio tracks. The app takes a room token from your server, never a bitHuman secret.
 - **Choosing a model.** The plugin serves the agent's own model. Do not pass `model=`; create the agent with the model you want ([Models](/concepts/models)).
+- **Rendering on your own machine.** Pass `model_path=` (an avatar file) instead of `avatar_id=`: the avatar renders inside the worker's process on its CPU, and the API secret stays in that process. Runnable example: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
 - **Several agents in one room.** The avatar lip-syncs the agent that calls `AvatarSession.start()` and ignores other agents' audio.
 - **Gestures.** Trigger avatar actions from your agent: [Gestures](/guides/avatar-actions).
 
@@ -107,7 +109,7 @@ The [cloud example](https://github.com/bithuman-product/bithuman-examples/tree/m
 
 - The mint call is one per session. The token starts that session only; it expires after an hour, and a session that runs longer continues.
 - `livekit_url` in the mint call must be the URL the plugin connects to (`LIVEKIT_URL`, unless you pass `livekit_url=` to `AvatarSession.start()`).
-- To render the avatar on your own server instead of the cloud, see [Self-hosting](/guides/self-hosting).
+- To render the avatar on your own machine instead of the cloud, pass `model_path=` — see [Talk to an avatar on your machine](/guides/local-voice-avatar).
 
 ## Performance
 
@@ -122,7 +124,7 @@ Cloud frame rates are on the [performance page](/performance).
 | The mint call returns `403` | the token was minted for another agent, room or LiveKit URL | mint with the same `agent_code`, `room_name` and `livekit_url` the plugin uses |
 | The mint call returns `401` | a missing or invalid API secret | check `BITHUMAN_API_SECRET` |
 | The avatar speaks with the wrong model | the plugin serves the agent's own model | create an agent with the model you want |
-| Two voices play | the agent session also publishes audio | set `RoomOutputOptions(audio_enabled=False)` |
+| Two voices play | the agent session also publishes audio | set `room_options=RoomOptions(audio_output=False)` |
 
 ## Reference
 
