@@ -16,7 +16,9 @@
     "astro": "astro",
     "check:served-current": "node scripts/check-served-is-current.mjs",
     "check:served-vocabulary": "node scripts/check-served-vocabulary.mjs --live",
-    "check:performance-floors": "node scripts/check-performance-floors.mjs"
+    "check:performance-floors": "node scripts/check-performance-floors.mjs",
+    "check:perf-literals": "node scripts/check-perf-literals.mjs",
+    "perf:regen": "node scripts/check-performance-floors.mjs --regen --models"
   },
   "dependencies": {
     "astro": "^6.3.1"

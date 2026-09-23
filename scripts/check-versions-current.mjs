@@ -199,6 +199,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
+import { findBlocks, withoutBlocks } from "./floors-blocks.mjs";
 
 const HERE = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const rootArg = process.argv.indexOf("--root");
@@ -374,7 +375,9 @@ function corpus() {
 // current page only: an archive names no current version by construction.
 const isChangelog = (p) => /(^|\/)changelog(\/[^/]+)?\.mdx?$/.test(p);
 const isChangelogHead = (p) => /(^|\/)changelog\.mdx?$/.test(p);
-const isPerformance = (p) => /(^|\/)sdk\/performance\.mdx?$/.test(p);
+// ★THE PAGE MAY LIVE AT /sdk/performance OR /performance (REDESIGN §3.9 moves it).
+//  A path that stops matching is how V9 would go silently inert: no page, no cells.
+const isPerformance = (p) => /(^|\/)(sdk\/)?performance\.mdx?$/.test(p);
 /** The rates a model PLAYS at — product constants, never a measurement. */
 const PLAY_RATES = new Set(["20", "25"]);
 
@@ -384,9 +387,25 @@ const PLAY_RATES = new Set(["20", "25"]);
 export function performanceCells(text) {
   const out = new Map();
   let columns = ["Expression 2", "Essence 2"];
+  // ★THE READER TABLE (2026-09-23, REDESIGN §3.3): | Runs on | Hardware |
+  //  Essence 2 fps | Essence 2 × real time | Expression 2 fps | … | — the fps is
+  //  its own cell, found by its header, not by position.
+  let fpsCols = null;
   for (const line of text.split("\n")) {
     if (!/^\|/.test(line)) continue;
     const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+    if (/^runs on$/i.test(cells[0] ?? "")) {
+      fpsCols = cells.map((c, i) => [c, i]).filter(([c]) => / fps$/.test(c)).map(([c, i]) => [c.replace(/ fps$/, ""), i]);
+      continue;
+    }
+    if (fpsCols) {
+      if (/^-+$/.test((cells[0] ?? "").replace(/:/g, ""))) continue;
+      for (const [model, i] of fpsCols) {
+        const m = /^(\d+(?:\.\d+)?)$/.exec(cells[i] ?? "");
+        if (m && !out.has(m[1])) out.set(m[1], `${cells[0]} · ${model}`);
+      }
+      continue;
+    }
     if (cells.length !== 4) continue;
     if (/^platform$/i.test(cells[0])) {
       columns = [cells[2], cells[3]];
@@ -403,6 +422,10 @@ export function performanceCells(text) {
 
 /** Rate literals on a page: the number written next to fps / frames per second. */
 export function rateLiterals(text) {
+  // ★A GENERATED BLOCK IS THE ONE WRITER, NOT A COPY. The emitter writes the same
+  //  numbers into FLOORS:HEADLINE / keyed FLOORS:TABLE blocks on other pages; those
+  //  spans are blanked (line numbers kept) so only hand-typed text is graded.
+  text = withoutBlocks(text, findBlocks(text)[0]);
   const out = [];
   const re = /(\d+(?:\.\d+)?)\s*(fps|frames per second)/g;
   let m;
@@ -1187,6 +1210,12 @@ const CL = (firstCli, e2, py) =>
   "### Older (2026-09-11)\n\nCLI `cli-v2.6.6`, `ai.bithuman:expression2-android:0.4.1`.\n";
 
 const PERF_FIXTURE =
+  "| Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |\n" +
+  "|---|---|---|---|---|---|\n" +
+  "| iPhone · Swift package | iPhone 15 | 52 | **2.0×** real time | 118 | **5.9×** real time |\n" +
+  "| Web browser (WebGPU) | Chrome on Apple M4 | — | — | 30 | **1.5×** real time |\n";
+/** The table this page published until 2026-09-23, kept so the older shape stays parsed. */
+const PERF_FIXTURE_V1 =
   "| Platform | Reference hardware | Expression 2 | Essence 2 |\n|---|---|---:|---:|\n" +
   "| iOS | iPhone 15 | 118 | 52 |\n| Web | Chrome on M4 | 30 | being re-measured |\n";
 
@@ -1230,6 +1259,11 @@ const ARMS = [
   ["good: the model play rate is a product constant, not a cell", "p/concepts/essence-2.md", "lip-synced live at ~25 frames per second, and 20 fps for the other model", false],
   ["good: a page's own measurement that is not a cell", "p/examples/kotlin.md", "this phone renders about 5.6 frames per second, and playback needs 20", false],
   ["control: the performance page itself states its cells", "p/sdk/performance.md", PERF_FIXTURE, false],
+  ["control: the page at its new home states its cells", "p/performance.md", PERF_FIXTURE, false],
+  ["control: a generated FLOORS:HEADLINE block states cells by construction", "p/concepts/models.md",
+   "<!-- FLOORS:HEADLINE -->\n| | iPhone 15 |\n|---|---|\n| **Essence 2** | **52 fps** · 2.0× |\n<!-- /FLOORS:HEADLINE -->\n", false],
+  ["bad: a cell typed right after a generated block", "p/concepts/models.md",
+   "<!-- FLOORS:HEADLINE -->\n| x |\n<!-- /FLOORS:HEADLINE -->\nAn iPhone does 118 fps.\n", true],
   ["control: a page with no version at all", "p/x.md", "Nothing versioned here.\n", false],
 
   /* ---- V10/V11, the third-party rules. Every defect arm here is a REWIND of
@@ -1292,6 +1326,15 @@ async function selftest() {
     const ok = fired === mustFire && cannot.length === 0;
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${name.padEnd(64)} fired=${fired} expected=${mustFire}`);
+  }
+  // V9 reads BOTH table shapes: a parser that silently found no cells would make
+  // every "bad" arm above pass for the wrong reason, so the cells are counted.
+  {
+    const now = performanceCells(PERF_FIXTURE);
+    const v1 = performanceCells(PERF_FIXTURE_V1);
+    const ok = now.has("52") && now.has("118") && now.has("30") && !now.has("2.0") && now.size === 3 && v1.has("118") && v1.has("52");
+    if (!ok) bad++;
+    console.log(`  ${ok ? "OK  " : "FAIL"}  ${"V9 reads the reader table's fps cells (and only those) and the older shape".padEnd(64)} cells=${[...now.keys()].join(",")}`);
   }
   // PLATFORM REGRESSION: the case measured 2026-09-14.
   {

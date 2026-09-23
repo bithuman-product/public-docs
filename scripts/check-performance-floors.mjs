@@ -1,80 +1,53 @@
 #!/usr/bin/env node
-// THE PERFORMANCE TABLE IS A MEASUREMENT, AND THIS REPOSITORY IS WHERE IT CAN
-// BE EDITED BY HAND.
+// THE PERFORMANCE NUMBERS ARE A MEASUREMENT, AND THIS REPOSITORY IS WHERE THEY
+// CAN BE EDITED BY HAND.
 //
 // WHY THIS EXISTS
 // ---------------
-// /sdk/performance is GENERATED. Its table lives between
-// `<!-- FLOORS:TABLE all -->` markers and is written by the one tool that owns
-// the numbers:
+// Every speed this site publishes is GENERATED. bithuman-models' emitter
 //
 //     python3 models/essence-2/tools/check_perf_floors.py \
-//       --emit-docs <public-docs>/src/content/docs/sdk/performance.md
+//       --emit-docs <page> --emit-json public/performance.json
 //
-// That tool lives in `bithuman-product/bithuman-models` beside
-// `models/essence-2/perf/FLOORS.json`, the record it emits from, and its own
-// workflow re-reads the LIVE page on a daily schedule and reddens when the two
-// disagree. So the page is guarded — from the other repository, after it has
-// merged.
+// reads models/essence-2/perf/FLOORS.json (the measurement record) and writes
+// the numbers between `<!-- FLOORS:… -->` markers: the performance page's speed
+// table, its release line, memory table and method paragraph, the headline
+// partial the landing page, /start and the SDK hub import, and per-platform
+// snippets, plus /performance.json beside them. The record's own workflow
+// re-reads the LIVE page daily and reddens when the two disagree, but from the
+// other repository, after this one has merged, on a branch that cannot fix it.
 //
-// ★THE HOLE THAT LEAVES, AND THE ONLY THING THIS FILE IS FOR. The page is in
-// THIS repository. A pull request here can retype a cell, delete a row, or
-// merge a rebase that drops the regenerated table, and nothing in this
-// repository looks: there is no gate here that has ever read the performance
-// table. The other repository's schedule finds it the next morning, on a branch
-// that cannot fix it, and in the meantime docs.bithuman.ai serves a number
-// nobody measured. Every gate in `scripts/` exists because a claim went stale
-// with nothing watching; this is the same failure with the measurement that is
-// hardest to re-derive by eye.
+// ★THE HOLE THAT LEAVES, AND THE ONLY THING THIS FILE IS FOR. A pull request
+// here can retype a cell, drop a row, hand-edit performance.json, or merge a
+// rebase that loses a regenerated block, and nothing else in this repository
+// looks. So this gate grades every generated block against a PIN.
 //
-// ★AND THIS IS NOT A SECOND EMITTER. It generates no cell, computes no fps and
-// holds no opinion about what a plane should measure. It grades the page
-// against `scripts/performance-floors.json` — a PIN of the exact rows the
-// emitter produced, the fields they came from, and the sha256 of the record
-// bytes they were verified against. `--write` refreshes that pin, and REFUSES
-// to do it from the page alone: a pin taken from a hand-edited page would
-// launder the edit into a record, which is the one way to make this file lie.
+// ★AND THIS IS NOT A SECOND EMITTER. It computes no fps. The pin is taken only
+// when a fresh emit from bithuman-models `origin/main` reproduces every
+// generated block and performance.json BYTE FOR BYTE (`--write`), so a pin can
+// never launder a hand edit into a record. Between pins, the one semantic check
+// it makes is that the page's speed table and performance.json AGREE: every
+// row, fps and multiple of real time on the page is the one the JSON carries.
+// That is how a hand edit to BOTH files (with a hand-edited pin) is still caught.
 //
 // WHY THE RECORD IS PINNED RATHER THAN FETCHED
 // --------------------------------------------
-// `bithuman-models` is PRIVATE (measured 2026-09-21: api.github.com and
-// raw.githubusercontent both answer 404 anonymously) and this repository holds
-// no secret — `grep -rn 'secrets\.' .github/workflows/` returns nothing. A gate
-// whose only source is unreachable would print CANNOT LOOK on every run and be
-// disabled inside a week: "a permanently inert check that reads as configured",
-// which check-served-is-current.mjs already names as the trap it was designed
-// around. So the two questions are separated, and each gets its own answer:
+// `bithuman-models` is PRIVATE and this repository holds no secret, so the
+// record is unreachable from CI. The questions are separated:
 //
-//   page  <-> pin      always runnable, no network, no credential. This is the
-//                      hand-edit question, and it is the one this repository
-//                      can actually answer and actually fix.
-//   pin   <-> record   needs the record. Runnable on a devbox with a
-//                      `bithuman-models` checkout, and in CI only if a token is
-//                      ever configured. When it cannot run, it says COULD NOT
-//                      LOOK — never "matched", and never silently nothing.
+//   blocks <-> pin     always: has a generated block or performance.json been
+//                      edited since the emitter wrote it?
+//   table  <-> json    always: does the page say what the JSON says?
+//   json   <-> clock   always: is every published cell inside the record's
+//                      re-measure clock (30 days)? The calendar moves with no
+//                      push, so the workflow also runs daily.
+//   json   <-> record  needs the record (a devbox checkout, `--models`); in CI
+//                      it prints COULD NOT LOOK, never "matched".
+//   served <-> pin     on the trunk: what docs.bithuman.ai actually serves.
 //
-// THE CURRENCY BLOCK
-// ------------------
-// Each cell already names the day its own series ran. What it did not say is
-// whether that day is still recent. The record keeps a re-measure clock
-// (`stale_after_days`, 30) and nothing published it, so a cell measured in
-// July looked exactly like one measured this morning — the same defect the
-// record's own `docs_measured_on` key was added to fix, one layer out.
-//
-// So the page carries a per-row currency table between
-// `<!-- PERF-CURRENCY -->` markers, and this gate regenerates and grades it.
-// ★IT STATES A VERDICT, NOT AN AGE. "9 days old" would be wrong tomorrow and
-// would redden this gate every single night for a page nobody touched. "within
-// the 30-day clock: yes" changes once, on the day a row crosses — which is
-// exactly the morning someone should be told. The scheduled run is what makes
-// that a live fact rather than a sentence from the day it was typed.
-//
-// WHAT IT DELIBERATELY DOES NOT GRADE
-//   * whether a number is GOOD. Floors, targets and the no-regression ratchet
-//     are the record's subject and are enforced where the measuring happens.
-//   * the emitted note paragraphs below the table. `--docs-check` grades those
-//     against the record; restating them here would be the second
-//     implementation this file exists to avoid.
+// RETIRED FOR GOOD (REDESIGN.md §3.1): the per-row currency table
+// (`PERF-CURRENCY`) and the investigation-log notes (`FLOORS:NOTES`). Either
+// marker anywhere on the site is a failure.
 //
 // EXIT 0 MATCHED · 1 DRIFTED · 2 COULD NOT LOOK (a failure you can see, never
 // a pass).
@@ -83,57 +56,44 @@
 //   node scripts/check-performance-floors.mjs
 //   node scripts/check-performance-floors.mjs --served https://docs.bithuman.ai
 //   node scripts/check-performance-floors.mjs --models ../bithuman-models
+//   node scripts/check-performance-floors.mjs --regen --models ../bithuman-models
 //   node scripts/check-performance-floors.mjs --write --models ../bithuman-models
 //   node scripts/check-performance-floors.mjs --selftest
+//
+//   --regen  runs origin/main's emitter over every file that carries FLOORS
+//            markers and writes public/performance.json, then pins.
+//   --write  pins what is on disk, and REFUSES unless a fresh emit reproduces it.
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { execFileSync } from "node:child_process";
-import { join } from "node:path";
+import { execFileSync, spawnSync } from "node:child_process";
+import { join, dirname } from "node:path";
+import { tmpdir } from "node:os";
+import { findBlocks, filesWithBlocks, RETIRED_MARKERS } from "./floors-blocks.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const PAGE = "src/content/docs/sdk/performance.md";
 const PIN = "scripts/performance-floors.json";
+const JSON_PATH = "public/performance.json";
 const RECORD_PATH = "models/essence-2/perf/FLOORS.json";
-const SERVED_ROUTE = "/sdk/performance";
+const EMITTER_PATH = "models/essence-2/tools/check_perf_floors.py";
+/** Where generated blocks may live: pages, the partials they import, Astro pages. */
+const BLOCK_ROOTS = ["src/content", "src/partials", "src/pages"];
+/** The page is the one file carrying the merged speed table. */
+const PAGE_TABLE_KEY = "all";
 
-// ★THE RECORD IS READ FROM `origin/main`, NOT FROM A WORKING TREE.
-// Measured 2026-09-21 on this box: the sibling `bithuman-models` checkout sat
-// on a feature branch with `models/essence-2/perf/FLOORS.json` MODIFIED, and a
-// working-tree read graded this page against 52 findings that were pure
-// checkout state — cells the record moved past days ago, `apple-serve` and
-// `modal-cpu` rows that did not exist on that branch at all. Every one of them
-// was noise, and a gate that cries wolf 52 times is a gate somebody adds
-// `|| true` to. What the page publishes is what `main` holds, so `main` is
-// what it is graded against, and the run SAYS which ref it read.
+// ★THE RECORD IS READ FROM `origin/main`, NOT FROM A WORKING TREE. Measured
+// 2026-09-21: a working-tree read on a feature branch graded this page against
+// 52 findings that were pure checkout state.
 const RECORD_REF = "origin/main";
 
-// The page keys its generated table; the record's emitter accepts `all` (every
-// platform row with the Python rows marked) or the split `platform` + `python`
-// pair. This repository publishes the merged shape.
-const TABLE_OPEN = /<!--\s*FLOORS:TABLE\s+([A-Za-z0-9_-]+)\s*-->/g;
-const TABLE_CLOSE = /<!--\s*\/FLOORS:TABLE\s*-->/g;
-const CURRENCY_OPEN = "<!-- PERF-CURRENCY -->";
-const CURRENCY_CLOSE = "<!-- /PERF-CURRENCY -->";
+// ★THE PLAY RATE IS A PRODUCT CONSTANT, NOT A MEASUREMENT. It is read from
+// performance.json's own `models` block; this pair is only the fallback that
+// lets a malformed JSON be named rather than crash. Expression 2 plays at 20,
+// Essence 2 at 25.
+const MODEL_NAME = { "essence-2": "Essence 2", "expression-2": "Expression 2" };
 
-// ★THE CONTRACT RATE IS A PRODUCT CONSTANT, NOT A MEASUREMENT, and it is stated
-// here only so a pinned cell can be REFUSED when it carries neither. It is the
-// same pair the record's own tool holds in `MODEL_REALTIME_FPS` and the same
-// pair STYLE.md calls a product constant: Expression 2 plays at 20 fps,
-// Essence 2 at 25. Nothing here derives an fps from it.
-const CONTRACT_FPS = { "expression-2": 20, "essence-2": 25 };
-const MODEL_COLUMN = { "expression-2": 2, "essence-2": 3 };
-const MODEL_NAME = { "expression-2": "Expression 2", "essence-2": "Essence 2" };
-
-/** The published figure opens its cell: the emitter writes the number first,
- *  then the frame, the multiple and the subject. Anchoring there is not a
- *  nicety — measured 2026-09-21, a loose match read the `v18` in
- *  "essence-2-cpu-worker v18" and the `6` inside "a1b6f7fa8" as published
- *  figures, and two rows resolved to two planes each. A number that can be
- *  found anywhere in a cell is not a number, it is a substring. */
-export const opensWith = (text, fps) => new RegExp(`^${String(fps).replace(".", "\\.")}(\\s|$)`).test(String(text).trim());
-
-/* ------------------------------------------------------------------ dates */
+const sha256 = (s) => createHash("sha256").update(s).digest("hex");
+const isoToday = () => new Date().toISOString().slice(0, 10);
 
 /** Whole days between two ISO dates, or null when either is unreadable. */
 export function ageDays(measured, today) {
@@ -143,467 +103,528 @@ export function ageDays(measured, today) {
   return Math.floor((b - a) / 86400000);
 }
 
-const isoToday = () => new Date().toISOString().slice(0, 10);
+/* --------------------------------------------------------- the corpus */
 
-/* ------------------------------------------------------- reading the page */
-
-/** (slots, faults) — the span BETWEEN each keyed table's markers.
- *
- *  ★A MALFORMED MARKER IS A FAULT, NEVER A GUESS. The record's emitter makes
- *  the same refusal for the same reason: a page whose markers no longer pair up
- *  is a page the emitter will not write into, so grading it against the pin
- *  would grade text the emitter has stopped maintaining. */
-export function tableSlots(page) {
-  const opens = [...page.matchAll(TABLE_OPEN)];
-  const closes = [...page.matchAll(TABLE_CLOSE)];
-  if (!opens.length && !closes.length) {
-    return [{}, ["the page carries no <!-- FLOORS:TABLE k --> marker: the generated table is gone"]];
-  }
-  const faults = [];
-  const slots = {};
-  if (opens.length !== closes.length) {
-    faults.push(
-      `the page carries ${opens.length} table marker(s) and ${closes.length} closing marker(s): ` +
-        "every <!-- FLOORS:TABLE k --> must be paired with <!-- /FLOORS:TABLE -->",
-    );
-  }
-  for (let i = 0; i < opens.length; i++) {
-    const k = opens[i][1];
-    const nextOpen = i + 1 < opens.length ? opens[i + 1].index : page.length;
-    const close = closes.find((c) => c.index >= opens[i].index + opens[i][0].length && c.index < nextOpen);
-    if (!close) {
-      faults.push(`the page's <!-- FLOORS:TABLE ${k} --> marker is not closed before the next one`);
-      continue;
-    }
-    if (k in slots) {
-      faults.push(`the page carries more than one <!-- FLOORS:TABLE ${k} --> marker; each table is keyed once`);
-      continue;
-    }
-    slots[k] = page.slice(opens[i].index + opens[i][0].length, close.index);
-  }
-  return [faults.length ? {} : slots, faults];
-}
-
-/** Every generated row in a table span, keyed by its first column.
- *  The header and the alignment rule are skipped; everything else is a row. */
-export function tableRows(span) {
-  const out = new Map();
-  for (const raw of span.split("\n")) {
-    const line = raw.trim();
-    if (!line.startsWith("|") || line.includes("---") || /^\|\s*Platform\s*\|/.test(line)) continue;
-    out.set(line.split("|")[1].trim(), line);
-  }
+/** {rel: text} for every file that carries a FLOORS marker (or a retired one). */
+export function loadCorpus(root = ROOT) {
+  const out = {};
+  for (const rel of filesWithBlocks(root, BLOCK_ROOTS)) out[rel] = readFileSync(join(root, rel), "utf8");
+  // a retired marker with no FLOORS block beside it must still be seen
+  for (const rel of filesWithRetired(root)) if (!(rel in out)) out[rel] = readFileSync(join(root, rel), "utf8");
   return out;
 }
 
-/** The cells of a generated row, by column index. */
+function filesWithRetired(root) {
+  const hits = [];
+  try {
+    const r = spawnSync("grep", ["-rlE", "PERF-CURRENCY|FLOORS:NOTES", ...BLOCK_ROOTS], { cwd: root, encoding: "utf8" });
+    for (const l of (r.stdout || "").split("\n")) if (l.trim()) hits.push(l.trim());
+  } catch {
+    /* grep missing: the FLOORS walk still sees any file that also has a block */
+  }
+  return hits;
+}
+
+/** The performance page: the ONE file whose table is keyed `all`. */
+export function findPage(corpus) {
+  const hits = Object.entries(corpus).filter(([, t]) => findBlocks(t)[0].some((b) => b.marker === "TABLE" && b.key === PAGE_TABLE_KEY));
+  if (hits.length === 1) return { rel: hits[0][0], text: hits[0][1], why: null };
+  return {
+    rel: null,
+    text: null,
+    why: hits.length
+      ? `${hits.length} files carry <!-- FLOORS:TABLE ${PAGE_TABLE_KEY} -->: ${hits.map(([r]) => r).join(", ")} — the speed table is published once`
+      : `no file under ${BLOCK_ROOTS.join(", ")} carries <!-- FLOORS:TABLE ${PAGE_TABLE_KEY} --> — the generated speed table is gone`,
+  };
+}
+
+/** src/content/docs/sdk/performance.md -> /sdk/performance ; …/docs/performance.md -> /performance */
+export function routeOf(rel) {
+  const m = /^src\/content\/docs\/(.+?)\.mdx?$/.exec(rel ?? "");
+  return m ? `/${m[1].replace(/\/index$/, "")}` : null;
+}
+
+/** Every generated block on the site, in a stable order. */
+export function allBlocks(corpus) {
+  const blocks = [];
+  const faults = [];
+  for (const rel of Object.keys(corpus).sort()) {
+    const [bs, fs] = findBlocks(corpus[rel]);
+    fs.forEach((f) => faults.push({ rule: "B0", where: rel, why: f }));
+    const seen = {};
+    for (const b of bs) {
+      const id = `${b.marker}${b.key ? ` ${b.key}` : ""}`;
+      seen[id] = (seen[id] ?? 0) + 1;
+      blocks.push({ file: rel, marker: b.marker, key: b.key, index: seen[id] - 1, body: b.body, line: b.line });
+    }
+    for (const r of RETIRED_MARKERS) {
+      if (r.re.test(corpus[rel])) {
+        faults.push({
+          rule: "B1",
+          where: rel,
+          why:
+            `${rel} carries ${r.name}. It is retired for good (REDESIGN §3.1): staleness is the ` +
+            "emitter's refusal and this gate's clock, and the notes were an investigation log. Delete the block.",
+        });
+      }
+    }
+  }
+  return [blocks, faults];
+}
+
+const blockId = (b) => `${b.file} · ${b.marker}${b.key ? ` ${b.key}` : ""}${b.index ? ` #${b.index + 1}` : ""}`;
+
+/* ------------------------------------------------ the speed table (§3.3) */
+
 const cellsOf = (line) => line.split("|").slice(1, -1).map((c) => c.trim());
 
-/* ------------------------------------------------- page <-> pin (rule P*) */
-
-/** What CHANGED between two versions of one row, in words a fixer can act on.
- *  A whole-line diff names the row; this names the cell and the field, because
- *  "this row is different" sends a reader to compare two long strings by eye. */
-export function describeRowChange(pinned, found) {
-  const a = cellsOf(pinned.line);
-  const b = cellsOf(found);
-  const notes = [];
-  for (const [model, col] of Object.entries(MODEL_COLUMN)) {
-    if (a[col] === b[col]) continue;
-    const cell = pinned.cells[model];
-    const was = [];
-    if (cell && cell.docs_fps !== null && !opensWith(b[col] ?? "", cell.docs_fps)) {
-      was.push(`the ${MODEL_NAME[model]} number is no longer ${cell.docs_fps}`);
+/** {header, cols, rows: Map(label -> line)} for a table span, or a fault string. */
+export function parseTable(span) {
+  const lines = span.split("\n").map((l) => l.trim()).filter((l) => l.startsWith("|"));
+  if (lines.length < 2) return "the speed table has no rows";
+  const header = cellsOf(lines[0]);
+  const cols = { label: 0, hardware: 1 };
+  for (const [model, name] of Object.entries(MODEL_NAME)) {
+    cols[`${model}:fps`] = header.indexOf(`${name} fps`);
+    cols[`${model}:x`] = header.indexOf(`${name} × real time`);
+    if (cols[`${model}:fps`] < 0 || cols[`${model}:x`] < 0) {
+      return `the speed table's header has no "${name} fps" / "${name} × real time" columns: | ${header.join(" | ")} |`;
     }
-    if (cell && cell.frame && !(b[col] ?? "").includes(cell.frame)) {
-      was.push(`the frame is no longer ${cell.frame}`);
-    }
-    if (cell && cell.contract_fps && !(b[col] ?? "").includes(`at ${cell.contract_fps} fps`)) {
-      was.push(`the contract rate is no longer "at ${cell.contract_fps} fps"`);
-    }
-    if (cell && cell.docs_measured_on && !(b[col] ?? "").includes(`(${cell.docs_measured_on})`)) {
-      was.push(`the measurement date is no longer ${cell.docs_measured_on}`);
-    }
-    notes.push(
-      `${MODEL_NAME[model]}: ${was.length ? was.join("; ") : "the cell text changed"}\n` +
-        `      pinned: ${a[col]}\n      page:   ${b[col]}`,
-    );
   }
-  return notes.length ? notes.join("\n    ") : `the row changed outside both model cells\n      pinned: ${pinned.line}\n      page:   ${found}`;
+  const rows = new Map();
+  for (const l of lines.slice(1)) {
+    if (/^\|[\s:|-]+\|$/.test(l)) continue;
+    rows.set(cellsOf(l)[0], l);
+  }
+  return { header: lines[0], cols, rows };
 }
 
-/** Findings for the generated table. Empty means the page is the emitter's
- *  output, cell for cell. */
-export function gradePage(page, pin, where = PAGE) {
-  const [slots, faults] = tableSlots(page);
-  const out = faults.map((why) => ({ rule: "P0", where, why }));
-  if (faults.length) return out;
-  const span = slots[pin.table_key];
-  if (span === undefined) {
-    out.push({
-      rule: "P0",
-      where,
-      why:
-        `the page carries no table keyed ${JSON.stringify(pin.table_key)} (it has: ` +
-        `${Object.keys(slots).map((k) => JSON.stringify(k)).join(", ") || "none"}). ` +
-        "The pin records the shape the record's emitter was asked for; a page in another shape " +
-        "is not the one that was verified.",
-    });
-    return out;
-  }
-  const found = tableRows(span);
-  for (const row of pin.rows) {
-    const got = found.get(row.label);
-    if (got === undefined) {
-      out.push({
-        rule: "P1",
-        where,
-        why: `the generated table no longer carries the ${row.label} row:\n    ${row.line}`,
-      });
+/** The play rate per model, from the JSON (fallback: the contract pair). */
+const rateOf = (json, model) => Number(json?.models?.[model]?.fps ?? { "essence-2": 25, "expression-2": 20 }[model]);
+
+/** One decimal, TRUNCATED (REDESIGN §3.3: a 0.98 must never read 1.0). Integer
+ *  arithmetic, so 357/20 is 17.8 and not a float's 17.85 → 17.9. */
+export function truncTenths(fps, rate) {
+  const t = Math.floor((Math.round(fps * 1000) * 10) / Math.round(rate * 1000));
+  return (t / 10).toFixed(1);
+}
+
+/** What the page's two cells for one model must say, given the JSON cell. The
+ *  badge is decided on the UNROUNDED ratio. */
+export function expectedCells(cell, rate) {
+  if (!cell || cell.fps === null || cell.fps === undefined) return ["—", "—"];
+  const x = truncTenths(cell.fps, rate);
+  return [String(cell.fps), cell.fps / rate >= 1 ? `**${x}×** real time` : `${x}× below real time`];
+}
+
+/** Page table <-> performance.json. Findings; empty means they agree cell for cell. */
+export function gradeTableAgainstJson(page, json, where) {
+  const out = [];
+  const [blocks] = findBlocks(page);
+  const tb = blocks.find((b) => b.marker === "TABLE" && b.key === PAGE_TABLE_KEY);
+  if (!tb) return [{ rule: "J0", where, why: `no <!-- FLOORS:TABLE ${PAGE_TABLE_KEY} --> block` }];
+  const t = parseTable(tb.body);
+  if (typeof t === "string") return [{ rule: "J0", where, why: t }];
+  const rows = (json.rows ?? []).filter((r) => r.published !== false);
+  const want = rows.map((r) => r.label);
+  const have = [...t.rows.keys()];
+  for (const r of rows) {
+    const line = t.rows.get(r.label);
+    if (line === undefined) {
+      out.push({ rule: "J1", where, why: `performance.json publishes the "${r.label}" row and the speed table does not carry it` });
       continue;
     }
-    if (got !== row.line) {
-      out.push({ rule: "P2", where, why: `the ${row.label} row has been edited away from the record.\n    ${describeRowChange(row, got)}` });
+    const c = cellsOf(line);
+    if (c[t.cols.hardware] !== r.hardware) {
+      out.push({ rule: "J2", where, why: `${r.label}: the hardware reads "${c[t.cols.hardware]}" and performance.json says "${r.hardware}"` });
+    }
+    for (const model of Object.keys(MODEL_NAME)) {
+      const [wf, wx] = expectedCells(r.cells?.[model], rateOf(json, model));
+      const gf = c[t.cols[`${model}:fps`]];
+      const gx = c[t.cols[`${model}:x`]];
+      if (gf !== wf) {
+        out.push({ rule: "J3", where, why: `${r.label} / ${MODEL_NAME[model]}: the page says ${JSON.stringify(gf)} fps and performance.json says ${JSON.stringify(wf)}` });
+      }
+      if (gx !== wx) {
+        out.push({ rule: "J4", where, why: `${r.label} / ${MODEL_NAME[model]}: the page says ${JSON.stringify(gx)} and ${wf} fps at the play rate is ${JSON.stringify(wx)}` });
+      }
     }
   }
-  const pinned = new Set(pin.rows.map((r) => r.label));
-  for (const [label, line] of found) {
-    if (!pinned.has(label)) {
-      out.push({
-        rule: "P3",
-        where,
-        why: `the generated table carries a row the record does not generate:\n    ${line}`,
-      });
-    }
+  for (const label of have) {
+    if (!want.includes(label)) out.push({ rule: "J5", where, why: `the speed table carries a "${label}" row that performance.json does not publish:\n    ${t.rows.get(label)}` });
+  }
+  if (!out.length && want.join("\n") !== have.join("\n")) {
+    out.push({ rule: "J6", where, why: `the rows are in a different order from performance.json:\n    page: ${have.join(" / ")}\n    json: ${want.join(" / ")}` });
   }
   return out;
 }
 
-/* ------------------------------------------------ the currency block (C*) */
-
-/** The row's measured dates, collapsed when both cells agree. */
-function measuredShown(row) {
-  const dated = Object.entries(MODEL_COLUMN)
-    .map(([model]) => [model, row.cells[model]?.docs_measured_on ?? null])
-    .filter(([, d]) => d !== null);
-  if (!dated.length) return "not published";
-  const unique = [...new Set(dated.map(([, d]) => d))];
-  if (unique.length === 1 && dated.length === Object.keys(MODEL_COLUMN).length) return unique[0];
-  return dated.map(([model, d]) => `${MODEL_NAME[model]} ${d}`).join(" · ");
-}
-
-/** "yes", or the named cells that are past the clock.
- *
- *  ★NO DAY COUNT. See the header: an age in the page is wrong the next morning
- *  and would redden the nightly run forever. This verdict moves once, on the
- *  day a row crosses, which is the day it is worth saying. */
-function currencyShown(row, clock, today) {
-  const past = [];
-  let dated = 0;
-  for (const model of Object.keys(MODEL_COLUMN)) {
-    const on = row.cells[model]?.docs_measured_on;
-    if (!on) continue;
-    dated++;
-    const age = ageDays(on, today);
-    if (age === null || age > clock) past.push(MODEL_NAME[model]);
-  }
-  if (!dated) return "no current source — the cell says so";
-  if (!past.length) return "yes";
-  if (past.length === dated) return `**no** — past the clock, due a re-measure`;
-  return `**no** for ${past.join(" and ")} — past the clock, due a re-measure`;
-}
-
-/** The whole currency table, between (not including) its markers. */
-export function currencyBlock(pin, today) {
-  const clock = pin.stale_after_days;
-  const lines = [`| Row | Measured | Within the ${clock}-day clock |`, "|---|---|---|"];
-  for (const row of pin.rows) {
-    lines.push(`| ${row.label} | ${measuredShown(row)} | ${currencyShown(row, clock, today)} |`);
-  }
-  return lines.join("\n");
-}
-
-export function gradeCurrency(page, pin, today, where = PAGE) {
-  const a = page.indexOf(CURRENCY_OPEN);
-  const b = page.indexOf(CURRENCY_CLOSE);
-  if (a === -1 || b === -1 || b < a) {
-    return [{
-      rule: "C0",
-      where,
-      why:
-        `the page carries no paired ${CURRENCY_OPEN} … ${CURRENCY_CLOSE} block. ` +
-        "Without it a reader cannot tell a cell measured this morning from one measured in July, " +
-        "which is the whole reason the record keeps a re-measure clock.",
-    }];
-  }
-  const have = page.slice(a + CURRENCY_OPEN.length, b).trim();
-  const want = currencyBlock(pin, today);
-  if (have === want) return [];
-  const haveRows = tableRows(have);
-  const wantRows = tableRows(want);
+/** The per-platform snippets (`<!-- FLOORS:TABLE cli -->` …) carry rows of the
+ *  same table; every row they print must be a published JSON row, cell for cell. */
+export function gradeKeyedTables(corpus, json) {
   const out = [];
-  for (const [label, line] of wantRows) {
-    const got = haveRows.get(label);
-    if (got === undefined) out.push({ rule: "C1", where, why: `the currency table is missing the ${label} row:\n    ${line}` });
-    else if (got !== line) {
-      out.push({
-        rule: "C2",
-        where,
-        why: `the ${label} row's currency is out of date as of ${today}:\n    says: ${got}\n    is:   ${line}`,
-      });
+  const byLabel = new Map((json.rows ?? []).filter((r) => r.published !== false).map((r) => [r.label, r]));
+  for (const rel of Object.keys(corpus).sort()) {
+    for (const b of findBlocks(corpus[rel])[0]) {
+      if (b.marker !== "TABLE" || b.key === PAGE_TABLE_KEY) continue;
+      const where = `${rel} · TABLE ${b.key}`;
+      const t = parseTable(b.body);
+      if (typeof t === "string") {
+        out.push({ rule: "K0", where, why: t });
+        continue;
+      }
+      if (!t.rows.size) out.push({ rule: "K0", where, why: "the snippet has no rows" });
+      for (const [label, line] of t.rows) {
+        const r = byLabel.get(label);
+        if (!r) {
+          out.push({ rule: "K1", where, why: `the snippet carries a "${label}" row that performance.json does not publish` });
+          continue;
+        }
+        const c = cellsOf(line);
+        for (const model of Object.keys(MODEL_NAME)) {
+          const [wf, wx] = expectedCells(r.cells?.[model], rateOf(json, model));
+          if (c[t.cols[`${model}:fps`]] !== wf || c[t.cols[`${model}:x`]] !== wx) {
+            out.push({ rule: "K2", where, why: `${label} / ${MODEL_NAME[model]}: the snippet says ${JSON.stringify([c[t.cols[`${model}:fps`]], c[t.cols[`${model}:x`]]])} and performance.json says ${JSON.stringify([wf, wx])}` });
+          }
+        }
+      }
     }
-  }
-  for (const [label, line] of haveRows) {
-    if (!wantRows.has(label)) out.push({ rule: "C3", where, why: `the currency table carries a row the table does not:\n    ${line}` });
-  }
-  if (!out.length) {
-    out.push({ rule: "C4", where, why: `the currency block differs from the generated one outside its rows:\n--- page\n${have}\n--- generated\n${want}` });
   }
   return out;
 }
 
-/* --------------------------------------------- pin <-> record (rule R*) */
+/** performance.json against itself: each cell's multiple and badge follow from
+ *  its fps and the model's play rate. */
+export function gradeJsonSelf(json, where = JSON_PATH) {
+  const out = [];
+  if (!Array.isArray(json?.rows)) return [{ rule: "J7", where, why: "performance.json has no rows array" }];
+  for (const m of Object.keys(MODEL_NAME)) {
+    if (!(rateOf(json, m) > 0)) out.push({ rule: "J7", where, why: `performance.json states no play rate for ${m}` });
+  }
+  for (const r of json.rows) {
+    for (const [m, c] of Object.entries(r.cells ?? {})) {
+      if (!c || c.fps === null || c.fps === undefined) continue;
+      const x = c.fps / rateOf(json, m);
+      if (typeof c.x_realtime === "number" && Math.abs(c.x_realtime - x) > 0.006) {
+        out.push({ rule: "J8", where, why: `${r.id ?? r.label} / ${m}: x_realtime ${c.x_realtime} is not ${c.fps} ÷ ${rateOf(json, m)}` });
+      }
+      if (typeof c.realtime === "boolean" && c.realtime !== x >= 1) {
+        out.push({ rule: "J8", where, why: `${r.id ?? r.label} / ${m}: realtime is ${c.realtime} at ${c.fps} fps against a play rate of ${rateOf(json, m)}` });
+      }
+    }
+  }
+  return out;
+}
 
-const sha256 = (s) => createHash("sha256").update(s).digest("hex");
+/** The re-measure clock, on every published cell's own day. */
+export function gradeClock(json, days, today, where = JSON_PATH) {
+  const out = [];
+  for (const r of json.rows ?? []) {
+    if (r.published === false) continue;
+    for (const [m, c] of Object.entries(r.cells ?? {})) {
+      if (!c || c.fps === null || c.fps === undefined) continue;
+      const age = ageDays(c.measured_on, today);
+      if (age === null) out.push({ rule: "A1", where, why: `${r.label} / ${MODEL_NAME[m] ?? m}: no readable measured_on ("${c.measured_on}")` });
+      else if (age > days) {
+        out.push({ rule: "A2", where, why: `${r.label} / ${MODEL_NAME[m] ?? m} was measured ${c.measured_on}, ${age} days ago — past the ${days}-day re-measure clock. Re-measure it in bithuman-models, then --regen.` });
+      }
+    }
+  }
+  return out;
+}
 
-/** Index a FLOORS record by `<model>/<plane>`. */
-const recordRows = (record) => new Map(record.rows.map((r) => [`${r.model}/${r.plane}`, r]));
+/* ------------------------------------------------ blocks <-> pin (rule B*) */
 
-/** Findings for the pin itself: is it still what the record says?
- *
- *  This is the half that needs the private record. It is never inferred and
- *  never skipped quietly — the caller reports COULD NOT LOOK when it has no
- *  record to hand this. */
-export function gradePinAgainstRecord(pin, record, recordBytes) {
+export function gradeBlocks(corpus, jsonText, pin) {
+  const [blocks, out] = allBlocks(corpus);
+  const pinned = new Map(pin.blocks.map((b) => [blockId(b), b]));
+  const found = new Map(blocks.map((b) => [blockId(b), b]));
+  for (const [id, p] of pinned) {
+    const b = found.get(id);
+    if (!b) {
+      out.push({ rule: "B2", where: p.file, why: `the generated block ${id} is gone (a rebase that dropped it, or a page that moved without --write)` });
+      continue;
+    }
+    if (sha256(b.body) !== p.sha256) {
+      out.push({ rule: "B3", where: p.file, why: `${id} (line ${b.line}) has been edited away from what the emitter wrote.${describeTableChange(p, b, pin)}` });
+    }
+  }
+  for (const [id, b] of found) {
+    if (!pinned.has(id)) {
+      out.push({ rule: "B4", where: b.file, why: `${id} (line ${b.line}) is a generated block the pin does not hold — run --regen, which emits into it and pins it` });
+    }
+  }
+  if (jsonText === null) out.push({ rule: "B5", where: JSON_PATH, why: `${JSON_PATH} is missing` });
+  else if (sha256(jsonText) !== pin.json.sha256) {
+    out.push({ rule: "B5", where: JSON_PATH, why: `${JSON_PATH} is not the file the emitter wrote (pinned ${pin.json.sha256.slice(0, 16)}…, now ${sha256(jsonText).slice(0, 16)}…)` });
+  }
+  return out;
+}
+
+/** For the speed table, name the rows that changed, so a reader need not diff
+ *  two long strings by eye. */
+function describeTableChange(p, b, pin) {
+  if (!(p.marker === "TABLE" && p.key === PAGE_TABLE_KEY && pin.table)) return "";
+  const t = parseTable(b.body);
+  if (typeof t === "string") return `\n    ${t}`;
+  const notes = [];
+  for (const r of pin.table.rows) {
+    const got = t.rows.get(r.label);
+    if (got === undefined) notes.push(`row "${r.label}" deleted:\n      pinned: ${r.line}`);
+    else if (got !== r.line) notes.push(`row "${r.label}":\n      pinned: ${r.line}\n      page:   ${got}`);
+  }
+  for (const [label, line] of t.rows) if (!pin.table.rows.some((r) => r.label === label)) notes.push(`row "${label}" added:\n      page:   ${line}`);
+  return notes.length ? `\n    ${notes.join("\n    ")}` : "";
+}
+
+/** The pin itself: its format, the ref it was taken at, and where the page is. */
+export function gradePinMeta(pin, page) {
+  const out = [];
+  if (pin.format !== 2) out.push({ rule: "B9", where: PIN, why: `the pin is format ${pin.format ?? 1}; this gate reads format 2 — run --regen` });
+  if (pin.record_ref !== RECORD_REF) {
+    out.push({ rule: "B8", where: PIN, why: `the pin was taken at ${pin.record_ref ?? "no ref"}, not ${RECORD_REF} — a PREVIEW emit. Re-run --regen once that branch has merged.` });
+  }
+  if (!page.rel) out.push({ rule: "B6", where: "src/content/docs", why: page.why });
+  else if (page.rel !== pin.page) out.push({ rule: "B7", where: page.rel, why: `the speed table now lives in ${page.rel}; the pin was taken with it in ${pin.page}. A moved page is re-pinned with --write.` });
+  return out;
+}
+
+/* --------------------------------------------- json <-> record (rule R*) */
+
+export function gradeJsonAgainstRecord(json, pin, record, recordBytes) {
   const out = [];
   if (recordBytes !== undefined && sha256(recordBytes) !== pin.record_sha256) {
     out.push({
       rule: "R0",
       where: PIN,
       why:
-        `the record's bytes have moved since this pin was taken (pinned ${pin.record_sha256.slice(0, 16)}…, ` +
-        `record is ${sha256(recordBytes).slice(0, 16)}…). That is expected the moment a plane is re-measured; ` +
-        "it means the page and this pin both have to be regenerated, in that order.",
+        `the record's bytes have moved since this pin was taken (pinned ${pin.record_sha256.slice(0, 16)}…, record is ${sha256(recordBytes).slice(0, 16)}…). ` +
+        "Expected the moment a row is re-measured: run --regen.",
     });
   }
   if (record.stale_after_days !== pin.stale_after_days) {
-    out.push({
-      rule: "R1",
-      where: PIN,
-      why: `the record's re-measure clock is ${record.stale_after_days} days and the pin publishes ${pin.stale_after_days}`,
-    });
+    out.push({ rule: "R1", where: PIN, why: `the record's re-measure clock is ${record.stale_after_days} days and the pin holds ${pin.stale_after_days}` });
   }
-  const by = recordRows(record);
-  for (const row of pin.rows) {
-    for (const [model, cell] of Object.entries(row.cells)) {
-      const key = `${model}/${row.plane}`;
+  const by = new Map(record.rows.map((r) => [`${r.model}/${r.plane}`, r]));
+  const inJson = new Set();
+  for (const row of json.rows ?? []) {
+    for (const [model, c] of Object.entries(row.cells ?? {})) {
+      if (!c || c.fps === null || c.fps === undefined) continue;
+      const key = `${model}/${row.id}`;
+      inJson.add(key);
       const r = by.get(key);
       if (!r) {
-        out.push({ rule: "R2", where: PIN, why: `the pin holds ${key} (the ${row.label} row) and the record has no such row` });
+        out.push({ rule: "R2", where: JSON_PATH, why: `performance.json holds ${key} (the "${row.label}" row) and the record has no such row` });
         continue;
       }
-      if (`${r.docs_fps}` !== `${cell.docs_fps}`) {
-        out.push({ rule: "R3", where: PIN, why: `${key}: the record publishes ${r.docs_fps} fps and the page states ${cell.docs_fps}` });
-      }
-      const frame = r.frame ? `${r.frame.width}x${r.frame.height}` : null;
-      if (frame !== cell.frame) {
-        out.push({ rule: "R4", where: PIN, why: `${key}: the record's frame is ${frame ?? "unstated"} and the page states ${cell.frame ?? "none"}` });
-      }
-      if ((r.docs_measured_on ?? null) !== cell.docs_measured_on) {
-        out.push({
-          rule: "R5",
-          where: PIN,
-          why: `${key}: the record measured on ${r.docs_measured_on ?? "no date"} and the page states ${cell.docs_measured_on ?? "none"}`,
-        });
+      if (`${r.docs_fps}` !== `${c.fps}`) out.push({ rule: "R3", where: JSON_PATH, why: `${key}: the record publishes ${r.docs_fps} fps and performance.json says ${c.fps}` });
+      if ((r.docs_measured_on ?? null) !== (c.measured_on ?? null)) {
+        out.push({ rule: "R5", where: JSON_PATH, why: `${key}: the record measured on ${r.docs_measured_on ?? "no date"} and performance.json says ${c.measured_on ?? "none"}` });
       }
     }
   }
-  // A plane the record publishes and the page does not carry at all. The page's
-  // shape is the docs owner's call, so this is reported once, by plane, rather
-  // than demanding a row: a reader who cannot see a hosted rung cannot know it
-  // served their render.
-  const onPage = new Set(pin.rows.flatMap((r) => Object.keys(r.cells).map((m) => `${m}/${r.plane}`)));
   for (const [key, r] of by) {
-    if (!onPage.has(key) && r.docs_fps !== null && r.docs_fps !== undefined) {
-      out.push({ rule: "R6", where: PAGE, why: `the record publishes ${key} at ${r.docs_fps} fps and the page has no cell for it` });
+    if (!inJson.has(key) && r.docs_fps !== null && r.docs_fps !== undefined) {
+      out.push({ rule: "R6", where: JSON_PATH, why: `the record publishes ${key} at ${r.docs_fps} fps and performance.json has no cell for it` });
     }
+  }
+  return out;
+}
+
+/* ------------------------------------------------------ the served site */
+
+/** The speed table as the site hands it to a browser: label -> cells as text. */
+export function tableFromHtml(html) {
+  const rows = new Map();
+  for (const t of html.matchAll(/<table[\s\S]*?<\/table>/g)) {
+    const trs = [...t[0].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)].map(([, tr]) =>
+      [...tr.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/g)].map(([, c]) => htmlText(c)),
+    );
+    // ★THE SPEED TABLE, NOT EVERY "Runs on" TABLE. The memory table below it opens
+    //  with the same column, and reading both merged its rows over the speed rows
+    //  (measured on the first build of this page, 2026-09-23).
+    if (!trs.length || trs[0][0] !== "Runs on" || !trs[0].some((h) => / fps$/.test(h))) continue;
+    for (const cells of trs.slice(1)) if (cells[0]) rows.set(cells[0], cells);
+    break;
+  }
+  return rows;
+}
+
+const htmlText = (c) =>
+  c
+    // rehype-table-labels puts the column name inside each cell for narrow
+    // screens; it is markup, not content.
+    .replace(/<span[^>]*class="[^"]*(?:col-label|table-label)[^"]*"[^>]*>[\s\S]*?<\/span>/g, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/\s+/g, " ")
+    .trim();
+
+/** A markdown cell as it reads once rendered: emphasis and code marks gone. */
+const mdText = (c) => c.replace(/\*\*|`/g, "").replace(/\s+/g, " ").trim();
+
+export function gradeServed(html, jsonText, pin, origin) {
+  const where = `${origin}${pin.served_route}`;
+  const out = [];
+  const found = tableFromHtml(html ?? "");
+  if (!found.size) out.push({ rule: "S0", where, why: "no speed table (a table headed \"Runs on\") in the served HTML" });
+  else {
+    for (const r of pin.table.rows) {
+      const got = found.get(r.label);
+      const want = cellsOf(r.line).map(mdText);
+      if (got === undefined) out.push({ rule: "S1", where, why: `the served table has no "${r.label}" row` });
+      else if (got.join(" | ") !== want.join(" | ")) {
+        out.push({ rule: "S2", where, why: `the served "${r.label}" row is not the pinned one:\n      pinned: ${want.join(" | ")}\n      served: ${got.join(" | ")}` });
+      }
+    }
+    for (const label of found.keys()) if (!pin.table.rows.some((r) => r.label === label)) out.push({ rule: "S3", where, why: `the served table carries a "${label}" row the pin does not` });
+  }
+  if (jsonText === null) out.push({ rule: "S4", where: `${origin}/performance.json`, why: "the site does not serve /performance.json" });
+  else if (sha256(jsonText) !== pin.json.sha256) {
+    out.push({ rule: "S4", where: `${origin}/performance.json`, why: `the served performance.json is not the pinned one (${sha256(jsonText).slice(0, 16)}… vs ${pin.json.sha256.slice(0, 16)}…)` });
   }
   return out;
 }
 
 /* ------------------------------------------------------ building the pin */
 
-/** Resolve each page row to the record plane its two cells actually came from.
- *
- *  ★DERIVED, NOT COPIED. The emitter's plane order and row labels live in
- *  `check_perf_floors.py`; restating them here would be a second list to keep
- *  up to date, and the day the two disagreed this gate would grade the wrong
- *  plane's numbers against the right plane's row — silently, because both lists
- *  would look fine on their own. So a row is matched by EVIDENCE: the plane
- *  whose published fps, frame and date all appear in the cell. Both columns
- *  must resolve to the same plane, and an ambiguous row is REFUSED, never
- *  guessed.
- *
- *  ★AND THE ARTIFACT IS THE FOURTH PIECE OF EVIDENCE, because fps+frame+date is
- *  NOT a key. Measured 2026-09-22: expression-2 published 43 fps on a 416x720
- *  frame measured 2026-09-22 on BOTH linux-cpu (cli-v2.6.26) and android-s25plus
- *  (expression2-android 0.4.8). Two planes, one number, one day — and the pin
- *  builder refused the whole page, so the trunk could not be re-pinned at all.
- *  The cell already NAMES the artifact it was measured on, and that is exactly
- *  what tells the two apart, so it is used to narrow a tie.
- *
- *  ★IT NARROWS, IT NEVER WIDENS. The version is only consulted when the first
- *  three leave more than one candidate, so no row that resolves today changes
- *  its answer; and if the artifact does not separate them either, the row is
- *  still REFUSED. Guessing between two planes is the failure this whole function
- *  exists to prevent. The version is read from the cell's TRAILING artifact
- *  segment — the "<artifact> (<date>)" the emitter always writes last — so a
- *  digit sequence occurring earlier in the cell (a frame, a rate, a multiple of
- *  real time) can never be mistaken for a version. */
-export function resolvePlanes(rows, record) {
-  const out = [];
-  const errs = [];
-  for (const [label, line] of rows) {
-    const cells = cellsOf(line);
-    const per = {};
-    for (const [model, col] of Object.entries(MODEL_COLUMN)) {
-      const text = cells[col] ?? "";
-      const hits = record.rows.filter((r) => {
-        if (r.model !== model || r.docs_fps === null || r.docs_fps === undefined) return false;
-        const num = opensWith(text, r.docs_fps);
-        const frame = r.frame ? text.includes(`${r.frame.width}x${r.frame.height}`) : true;
-        const when = r.docs_measured_on ? text.includes(`(${r.docs_measured_on})`) : true;
-        return num && frame && when;
-      });
-      // ★The tie-break, and only ever a tie-break. `tail` is the cell's last
-      // " · " segment, which the emitter writes as "<artifact shown> (<date>)".
-      const sep = text.lastIndexOf(" \u00b7 ");
-      const tail = sep === -1 ? text : text.slice(sep + 3);
-      const narrowed =
-        hits.length > 1
-          ? hits.filter((r) => {
-              const v = r.measured_artifact?.version;
-              return v ? tail.includes(v) : false;
-            })
-          : hits;
-      const found = narrowed.length === 1 ? narrowed : hits;
-      if (found.length !== 1) {
-        errs.push(`${label} / ${MODEL_NAME[model]}: ${found.length === 0 ? "no record row" : `${found.length} record rows`} match this cell — ${JSON.stringify(text)}`);
-        continue;
-      }
-      per[model] = found[0];
-    }
-    const planes = [...new Set(Object.values(per).map((r) => r.plane))];
-    if (planes.length !== 1) {
-      if (Object.keys(per).length === Object.keys(MODEL_COLUMN).length) {
-        errs.push(`${label}: the two cells resolve to different planes (${planes.join(", ")})`);
-      }
-      continue;
-    }
-    out.push({
-      label,
-      plane: planes[0],
-      line,
-      cells: Object.fromEntries(
-        Object.entries(per).map(([model, r]) => [
-          model,
-          {
-            docs_fps: r.docs_fps,
-            frame: r.frame ? `${r.frame.width}x${r.frame.height}` : null,
-            contract_fps: CONTRACT_FPS[model],
-            docs_measured_on: r.docs_measured_on ?? null,
-          },
-        ]),
-      ),
-    });
+/** The pin, from a corpus that the caller has ALREADY verified is the emitter's
+ *  own output. Throws rather than pin a page whose table disagrees with its JSON. */
+export function buildPin(corpus, jsonText, recordBytes, emitterBytes, today, ref = RECORD_REF) {
+  const page = findPage(corpus);
+  if (!page.rel) throw new Error(`REFUSING to pin: ${page.why}`);
+  const [blocks, faults] = allBlocks(corpus);
+  if (faults.length) throw new Error(`REFUSING to pin:\n  ${faults.map((f) => `[${f.rule}] ${f.where}: ${f.why}`).join("\n  ")}`);
+  const json = JSON.parse(jsonText);
+  const record = JSON.parse(recordBytes);
+  const disagree = [...gradeJsonSelf(json), ...gradeTableAgainstJson(page.text, json, page.rel), ...gradeKeyedTables(corpus, json), ...gradeJsonAgainstRecord(json, { record_sha256: sha256(recordBytes), stale_after_days: record.stale_after_days }, record, recordBytes)];
+  if (disagree.length) {
+    throw new Error(`REFUSING to pin — the page, performance.json and the record disagree:\n  ${disagree.map((f) => `[${f.rule}] ${f.why}`).join("\n  ")}`);
   }
-  return [out, errs];
-}
-
-/** The pin, rebuilt from a page that the record VERIFIES. Throws rather than
- *  writing a pin it could not stand behind. */
-export function buildPin(page, record, recordBytes, today, previous, ref = RECORD_REF) {
-  const [slots, faults] = tableSlots(page);
-  if (faults.length) throw new Error(`REFUSING to pin a page with malformed table markers:\n  ${faults.join("\n  ")}`);
-  const keys = Object.keys(slots);
-  const key = previous && keys.includes(previous.table_key) ? previous.table_key : keys[0];
-  if (!key) throw new Error("REFUSING to pin: the page carries no generated table");
-  const [rows, errs] = resolvePlanes(tableRows(slots[key]), record);
-  if (errs.length) {
-    throw new Error(
-      "REFUSING to pin a cell the record does not hold — this is what a hand-edited number looks like:\n  " +
-        errs.join("\n  ") +
-        "\n  Regenerate the page from the record first:\n" +
-        "    python3 models/essence-2/tools/check_perf_floors.py --emit-docs " +
-        PAGE,
-    );
-  }
-  for (const row of rows) {
-    for (const [model, cell] of Object.entries(row.cells)) {
-      const col = cellsOf(row.line)[MODEL_COLUMN[model]] ?? "";
-      if (cell.frame && !col.includes(`at ${cell.contract_fps} fps`)) {
-        throw new Error(
-          `REFUSING to pin ${row.label} / ${MODEL_NAME[model]}: the cell states a frame but not the contract rate ` +
-            `"at ${cell.contract_fps} fps". A rate beside a frame is what stops the two models' numbers being read against each other.`,
-        );
-      }
-    }
-  }
+  const t = parseTable(blocks.find((b) => b.file === page.rel && b.marker === "TABLE" && b.key === PAGE_TABLE_KEY).body);
+  const byLabel = new Map(json.rows.map((r) => [r.label, r]));
   return {
     $comment:
-      "Generated by scripts/check-performance-floors.mjs --write. The rows are the exact lines " +
-      "models/essence-2/tools/check_perf_floors.py --emit-docs wrote into " + PAGE + ", and the fields " +
-      "beside each one are what they were verified against in that run's FLOORS.json. Do not hand-edit: " +
-      "regenerate the page from the record, then re-run --write against the same record.",
+      "Generated by scripts/check-performance-floors.mjs --write/--regen. Every sha256 below is of text that " +
+      "bithuman-models' emitter (origin/main) reproduced byte for byte from the record named here. Do not hand-edit: " +
+      "run --regen --models <bithuman-models>.",
+    format: 2,
     record: RECORD_PATH,
+    emitter: EMITTER_PATH,
     source_repo: "bithuman-product/bithuman-models",
     record_ref: ref,
     record_sha256: sha256(recordBytes),
+    emitter_sha256: emitterBytes === null ? null : sha256(emitterBytes),
     verified_on: today,
     stale_after_days: record.stale_after_days,
-    page: PAGE,
-    table_key: key,
-    rows,
+    page: page.rel,
+    served_route: routeOf(page.rel),
+    json: { path: JSON_PATH, sha256: sha256(jsonText) },
+    blocks: blocks.map((b) => ({ file: b.file, marker: b.marker, key: b.key, index: b.index, sha256: sha256(b.body) })),
+    table: {
+      key: PAGE_TABLE_KEY,
+      header: t.header,
+      rows: [...t.rows].map(([label, line]) => ({ label, id: byLabel.get(label)?.id ?? null, line })),
+    },
   };
 }
 
-/* -------------------------------------------------------- finding the record */
+/* ------------------------------------------- the record and the emitter */
 
-/** Every door this gate knows, tried in order, with what it found at each.
- *  ★The REASONS are returned even on success, because "I could not look" has to
- *  name the door it could not open — a bare CANNOT LOOK is the same silence the
- *  verdict exists to break. */
-export function findRecord(opts, env, fs) {
+/** The record and the emitter at origin/main, or why not. Never a working tree. */
+export function findSources(opts, env, fs) {
   const tried = [];
+  const ref = opts.ref ?? RECORD_REF;
   const doors = [];
-  if (opts.models) doors.push([`--models ${opts.models}`, opts.models, true]);
-  if (env.BITHUMAN_MODELS) doors.push(["$BITHUMAN_MODELS", env.BITHUMAN_MODELS, true]);
-  doors.push(["a sibling checkout", join(ROOT, "..", "bithuman-models"), true]);
-  // ★A LITERAL FILE IS NEVER SECOND-GUESSED. `--record` is how a fixture, a
-  //  downloaded blob or a CI artifact is handed in; there is no ref to resolve.
-  if (opts.record) doors.unshift([`--record ${opts.record}`, opts.record, false]);
-  for (const [why, where, isRepo] of doors) {
-    if (isRepo) {
-      const git = fs.gitShow(where, RECORD_REF, RECORD_PATH);
-      if (git.bytes !== null) return { bytes: git.bytes, from: `${where} at ${RECORD_REF}`, ref: RECORD_REF, tried };
-      tried.push(`${why}: ${where} — ${git.why}`);
-      // ★NO SILENT FALLBACK TO THE WORKING TREE. A checkout whose `origin/main`
-      //  cannot be read is a checkout this gate cannot trust, and reading the
-      //  branch someone happens to be on instead is how the 52-finding run
-      //  happened. Fetch the repository, or hand the blob in with --record.
-      continue;
-    }
-    if (!fs.exists(where)) {
-      tried.push(`${why}: ${where} — not present`);
-      continue;
-    }
-    try {
-      return { bytes: fs.read(where), from: where, ref: null, tried };
-    } catch (e) {
-      tried.push(`${why}: ${where} — ${e.message}`);
-    }
+  if (opts.models) doors.push([`--models ${opts.models}`, opts.models]);
+  if (env.BITHUMAN_MODELS) doors.push(["$BITHUMAN_MODELS", env.BITHUMAN_MODELS]);
+  doors.push(["a sibling checkout", join(ROOT, "..", "bithuman-models")]);
+  if (opts.record) {
+    // a literal blob (a fixture, a CI artifact): no ref, and no emitter
+    if (fs.exists(opts.record)) return { record: fs.read(opts.record), emitter: null, dir: null, from: opts.record, ref: null, tried };
+    tried.push(`--record ${opts.record}: not present`);
   }
-  return { bytes: null, from: null, ref: null, tried };
+  for (const [why, dir] of doors) {
+    const rec = fs.gitShow(dir, ref, RECORD_PATH);
+    if (rec.bytes === null) {
+      tried.push(`${why}: ${dir} — ${rec.why}`);
+      continue;
+    }
+    const em = fs.gitShow(dir, ref, EMITTER_PATH);
+    return { record: rec.bytes, emitter: em.bytes, dir, from: `${dir} at ${ref}`, ref, tried };
+  }
+  return { record: null, emitter: null, dir: null, from: null, ref: null, tried };
+}
+
+const realFs = {
+  exists: (p) => existsSync(p),
+  read: (p) => readFileSync(p, "utf8"),
+  gitShow: (dir, ref, path) => {
+    // ★A DIRECTORY WITHOUT A .git IS NOT A CHECKOUT: `git -C` searches upward and
+    //  would read another repository's record as this one's.
+    if (!existsSync(join(dir, ".git"))) return { bytes: null, why: `no .git in ${dir} — not a bithuman-models checkout` };
+    try {
+      return {
+        bytes: execFileSync("git", ["-C", dir, "show", `${ref}:${path}`], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "pipe"] }),
+        why: null,
+      };
+    } catch (e) {
+      return { bytes: null, why: `git show ${ref}:${path} failed — ${String(e.stderr || e.message).trim().split("\n")[0]}` };
+    }
+  },
+};
+
+/** Run origin/main's emitter over copies of every block-carrying markdown file,
+ *  in a scratch tree. Returns {files: {rel: text}, json, log}. The repository is
+ *  not touched; the caller decides whether to write or to compare. */
+export function emitFresh(corpus, src) {
+  const scratch = mkdtempSync(join(process.env.TMPDIR || tmpdir(), "perf-emit-"));
+  try {
+    const tool = join(scratch, EMITTER_PATH);
+    const rec = join(scratch, RECORD_PATH);
+    // ★THE WHOLE perf/ TREE, NOT TWO FILES. The emitter grades each memory cell
+    //  against its evidence file under perf/evidence/, and with only the record
+    //  beside it every memory row is a structural fault (measured 2026-09-23:
+    //  14 of them, rc=1). Tool and record come from ONE ref, in one archive.
+    const tar = spawnSync("sh", ["-c", `git -C "$0" archive "$1" models/essence-2/perf models/essence-2/tools | tar -x -C "$2"`, src.dir, src.ref, scratch], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+    if (tar.status !== 0 || !existsSync(tool) || !existsSync(rec)) throw new Error(`could not extract ${src.ref}'s emitter and record from ${src.dir}: ${tar.stderr}`);
+    if (readFileSync(rec, "utf8") !== src.record) throw new Error(`the archived record is not the one read at ${src.ref} — the checkout moved mid-run; run again`);
+    const page = findPage(corpus);
+    if (!page.rel) throw new Error(page.why);
+    const out = { files: {}, json: null, log: [] };
+    for (const rel of Object.keys(corpus).sort()) {
+      if (!/\.mdx?$/.test(rel)) {
+        if (findBlocks(corpus[rel])[0].length) throw new Error(`${rel} carries FLOORS markers, and the emitter writes markdown only — move the block into a partial and import it`);
+        continue;
+      }
+      const copy = join(scratch, "site", rel);
+      mkdirSync(dirname(copy), { recursive: true });
+      writeFileSync(copy, corpus[rel]);
+      const args = [tool, "--floors", rec, "--allow-no-measurement", "--emit-docs", copy];
+      const jsonOut = join(scratch, "performance.json");
+      if (rel === page.rel) args.push("--emit-json", jsonOut);
+      const r = spawnSync("python3", args, { encoding: "utf8", env: { ...process.env, TMPDIR: scratch }, maxBuffer: 64 * 1024 * 1024 });
+      // ★rc 5 is the emitter's "UNRUN-ALLOWED": nothing was MEASURED in this run,
+      //  which is exactly right for an emit, and the page was written. Anything
+      //  else is a refusal (a stale row, a retired marker, a leak) and stops here.
+      if (r.status !== 0 && r.status !== 5) {
+        throw new Error(`the emitter refused ${rel} (rc=${r.status}):\n${(r.stdout + r.stderr).split("\n").filter((l) => /refus|REFUS|error|Error|fault|RED/.test(l)).slice(-15).join("\n")}`);
+      }
+      out.files[rel] = readFileSync(copy, "utf8");
+      out.log.push(`${rel}: ${(r.stdout.match(/^(rewrote|wrote) .*$/gm) ?? ["(no block written)"]).join("; ")}`);
+      if (rel === page.rel) out.json = existsSync(jsonOut) ? readFileSync(jsonOut, "utf8") : null;
+    }
+    if (out.json === null) throw new Error("the emitter wrote no performance.json (does origin/main's emitter support --emit-json?)");
+    return out;
+  } finally {
+    rmSync(scratch, { recursive: true, force: true });
+  }
 }
 
 /* ---------------------------------------------------------------- verdict */
@@ -613,99 +634,21 @@ export function verdict(drift, couldNotLook) {
   return couldNotLook ? 2 : 0;
 }
 
-/* ------------------------------------------------------------- the served page */
-
-/** The generated table as the SITE hands it to a browser.
- *
- *  ★A SOURCE FILE IS NOT A PUBLISHED CLAIM. `check-served-vocabulary.mjs` and
- *  `check-served-comments.mjs` already grade the bytes docs.bithuman.ai serves
- *  for the same reason: between a merged page and a deployed one there is a
- *  window, and the number a customer reads during it is the old one. */
-export function tableFromHtml(html) {
-  const rows = new Map();
-  for (const m of html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {
-    const cells = [...m[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/g)].map(([, c]) =>
-      c
-        // the site's rehype-table-labels plugin puts the column name inside each
-        // cell for narrow screens; it is markup, not content.
-        .replace(/<span[^>]*class="[^"]*(?:col-label|table-label)[^"]*"[^>]*>[\s\S]*?<\/span>/g, "")
-        .replace(/<[^>]+>/g, "")
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&nbsp;/g, " ")
-        .replace(/\s+/g, " ")
-        .trim(),
-    );
-    if (cells.length !== 4 || !cells[0] || /^platform$/i.test(cells[0])) continue;
-    rows.set(cells[0], `| ${cells.join(" | ")} |`);
-  }
-  return rows;
-}
-
-/** Findings for the served table. Markdown emphasis in a cell would survive as
- *  markup, so this compares the four cells rather than the raw line. */
-export function gradeServed(html, pin, origin) {
-  const where = `${origin}${SERVED_ROUTE}`;
-  const found = tableFromHtml(html);
-  if (!found.size) return [{ rule: "S0", where, why: "no performance table in the served HTML — the page did not render, or its shape changed" }];
-  const out = [];
-  for (const row of pin.rows) {
-    const got = found.get(row.label);
-    if (got === undefined) out.push({ rule: "S1", where, why: `the served table has no ${row.label} row` });
-    else if (got !== row.line) {
-      out.push({ rule: "S2", where, why: `the served ${row.label} row is not the pinned one.\n    ${describeRowChange(row, got)}` });
-    }
-  }
-  const pinned = new Set(pin.rows.map((r) => r.label));
-  for (const [label, line] of found) {
-    if (!pinned.has(label)) out.push({ rule: "S3", where, why: `the served table carries a row the record does not generate:\n    ${line}` });
-  }
-  return out;
-}
-
-/* ------------------------------------------------------------------- main */
-
-const realFs = {
-  exists: (p) => existsSync(p),
-  read: (p) => readFileSync(p, "utf8"),
-  /** The blob at <ref>:<path> in a git working copy, or why not.
-   *  Never the working tree — see RECORD_REF. */
-  gitShow: (dir, ref, path) => {
-    // ★A DIRECTORY WITHOUT A .git IS NOT A CHECKOUT. `git -C` searches UPWARD for
-    //  one, so a bare path would silently resolve `origin/main` in whatever
-    //  repository happens to be above it — another repository's record, read as
-    //  this one's, with a perfectly normal-looking green.
-    if (!existsSync(join(dir, ".git"))) return { bytes: null, why: `no .git in ${dir} — not a bithuman-models checkout` };
-    try {
-      return {
-        bytes: execFileSync("git", ["-C", dir, "show", `${ref}:${path}`], {
-          encoding: "utf8",
-          maxBuffer: 64 * 1024 * 1024,
-          stdio: ["ignore", "pipe", "pipe"],
-        }),
-        why: null,
-      };
-    } catch (e) {
-      const said = String(e.stderr || e.message).trim().split("\n")[0];
-      return { bytes: null, why: `git show ${ref}:${path} failed — ${said}` };
-    }
-  },
-};
-
 function parseArgs(argv) {
   const opts = { today: isoToday() };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--selftest" || a === "--self-test") opts.selftest = true;
     else if (a === "--write") opts.write = true;
+    else if (a === "--regen") opts.regen = true;
     else if (a === "--models") opts.models = argv[++i];
     else if (a === "--record") opts.record = argv[++i];
+    // ★FOR A PREVIEW ONLY: emit from another ref of bithuman-models (a PR branch
+    //  before it merges). The pin records the ref it was taken at; a pin whose
+    //  record_ref is not origin/main is not the published state.
+    else if (a === "--ref") opts.ref = argv[++i];
     else if (a === "--served") opts.served = (argv[++i] || "https://docs.bithuman.ai").replace(/\/$/, "");
     else if (a === "--today") opts.today = argv[++i];
-    else if (a === "--page") opts.page = argv[++i];
     else if (a === "--help" || a === "-h") opts.help = true;
     else {
       console.error(`unknown argument: ${a}`);
@@ -717,23 +660,19 @@ function parseArgs(argv) {
 
 const HELP = `usage:
   check-performance-floors.mjs [--served <origin>] [--models <dir> | --record <file>] [--today <ISO>]
-  check-performance-floors.mjs --write --models <dir>
+  check-performance-floors.mjs --regen --models <dir>     emit from origin/main, then pin
+  check-performance-floors.mjs --write --models <dir>     pin, only if a fresh emit reproduces the files
   check-performance-floors.mjs --selftest
-
-  page  <-> pin     always graded: has a cell been edited away from the record?
-  page  <-> clock   always graded: does the currency block still hold today?
-  pin   <-> record  graded only when the record is reachable; COULD NOT LOOK otherwise.
-  served<-> pin     graded with --served: what docs.bithuman.ai actually hands a browser.
 
 exit 0 MATCHED · 1 DRIFTED · 2 COULD NOT LOOK (never a pass)`;
 
 function report(title, findings) {
   if (!findings.length) return;
   console.error(`\n${title}`);
-  for (const f of findings) {
-    console.error(`  [${f.rule}] ${f.where}`);
-    console.error(`    ${f.why}`);
-  }
+  findings.forEach((f, i) => {
+    console.error(`  ${i + 1}. [${f.rule}] ${f.where}`);
+    console.error(`     ${f.why}`);
+  });
 }
 
 async function main() {
@@ -741,364 +680,337 @@ async function main() {
   if (opts.help) return void console.log(HELP);
   if (opts.selftest) return void (await selftest());
 
-  const pagePath = opts.page ? opts.page : join(ROOT, PAGE);
+  const corpus = loadCorpus();
+  const jsonPath = join(ROOT, JSON_PATH);
   const pinPath = join(ROOT, PIN);
-  if (!existsSync(pagePath)) {
-    console.error(`CANNOT LOOK: ${pagePath} is not present`);
-    process.exit(2);
-  }
-  const page = readFileSync(pagePath, "utf8");
+  const src = findSources(opts, process.env, realFs);
 
-  const rec = findRecord(opts, process.env, realFs);
-
-  if (opts.write) {
-    if (!rec.bytes) {
-      console.error("REFUSING to --write without the record. A pin taken from the page alone would");
-      console.error("launder a hand-edited number into a record of a measurement. Doors tried:");
-      for (const t of rec.tried) console.error(`  ${t}`);
+  if (opts.regen || opts.write) {
+    if (src.ref && src.ref !== RECORD_REF) console.error(`★PREVIEW: emitting from ${src.ref}, not ${RECORD_REF}. Do not land a pin taken this way.`);
+    if (!src.record || !src.emitter || !src.dir) {
+      console.error("REFUSING: --regen and --write need bithuman-models' record AND emitter at origin/main. Doors tried:");
+      for (const t of src.tried) console.error(`  ${t}`);
       process.exit(2);
     }
-    const record = JSON.parse(rec.bytes);
-    const previous = existsSync(pinPath) ? JSON.parse(readFileSync(pinPath, "utf8")) : null;
-    const pin = buildPin(page, record, rec.bytes, opts.today, previous, rec.ref);
+    let fresh;
+    try {
+      fresh = emitFresh(corpus, src);
+    } catch (e) {
+      console.error(`REFUSING: ${e.message}`);
+      process.exit(1);
+    }
+    const onDisk = existsSync(jsonPath) ? readFileSync(jsonPath, "utf8") : null;
+    if (opts.regen) {
+      for (const [rel, text] of Object.entries(fresh.files)) if (text !== corpus[rel]) writeFileSync(join(ROOT, rel), text);
+      writeFileSync(jsonPath, fresh.json);
+      fresh.log.forEach((l) => console.log(`  emitted ${l}`));
+      console.log(`  wrote ${JSON_PATH}`);
+    } else {
+      const differ = Object.entries(fresh.files).filter(([rel, text]) => text !== corpus[rel]).map(([rel]) => rel);
+      if (fresh.json !== onDisk) differ.push(JSON_PATH);
+      if (differ.length) {
+        console.error("REFUSING to pin: a fresh emit from ${src.ref} does not reproduce these files byte for byte —");
+        differ.forEach((d) => console.error(`  ${d}`));
+        console.error("That is what a hand edit (or an emit from another ref) looks like. Run --regen instead.");
+        process.exit(1);
+      }
+    }
+    const now = loadCorpus();
+    const pin = buildPin(now, readFileSync(jsonPath, "utf8"), src.record, src.emitter, opts.today, src.ref);
     writeFileSync(pinPath, `${JSON.stringify(pin, null, 2)}\n`);
-    const block = currencyBlock(pin, opts.today);
-    const a = page.indexOf(CURRENCY_OPEN);
-    const b = page.indexOf(CURRENCY_CLOSE);
-    if (a === -1 || b === -1 || b < a) {
-      console.error(`the page carries no paired ${CURRENCY_OPEN} … ${CURRENCY_CLOSE} block — add it, then re-run --write`);
-      process.exit(2);
-    }
-    writeFileSync(pagePath, `${page.slice(0, a + CURRENCY_OPEN.length)}\n${block}\n${page.slice(b)}`);
-    console.log(`wrote ${PIN} (${pin.rows.length} rows, record ${pin.record_sha256.slice(0, 16)}…) from ${rec.from}`);
-    console.log(`wrote the currency block into ${PAGE} as of ${opts.today}`);
+    console.log(`wrote ${PIN}: ${pin.blocks.length} generated blocks, ${pin.table.rows.length} table rows, record ${pin.record_sha256.slice(0, 16)}… from ${src.from}`);
     return;
   }
 
   if (!existsSync(pinPath)) {
-    console.error(`CANNOT LOOK: ${PIN} is not present — run --write against a bithuman-models checkout`);
+    console.error(`CANNOT LOOK: ${PIN} is not present — run --regen against a bithuman-models checkout`);
     process.exit(2);
   }
   const pin = JSON.parse(readFileSync(pinPath, "utf8"));
-
-  const drift = [...gradePage(page, pin), ...gradeCurrency(page, pin, opts.today)];
-  let recordLine;
-  if (rec.bytes) {
-    const findings = gradePinAgainstRecord(pin, JSON.parse(rec.bytes), rec.bytes);
-    drift.push(...findings);
-    recordLine = findings.length
-      ? `DRIFTED — ${findings.length} finding(s) against ${rec.from}`
-      : `MATCHED — ${pin.rows.length} rows against ${rec.from}`;
-  } else {
-    recordLine = "COULD NOT LOOK — the record was not reachable from this run";
+  const jsonText = existsSync(jsonPath) ? readFileSync(jsonPath, "utf8") : null;
+  const page = findPage(corpus);
+  const drift = [];
+  drift.push(...gradePinMeta(pin, page));
+  drift.push(...gradeBlocks(corpus, jsonText, pin));
+  let json = null;
+  if (jsonText !== null) {
+    try {
+      json = JSON.parse(jsonText);
+    } catch (e) {
+      drift.push({ rule: "J7", where: JSON_PATH, why: `not JSON: ${e.message}` });
+    }
   }
+  if (json) {
+    drift.push(...gradeJsonSelf(json));
+    if (page.rel) drift.push(...gradeTableAgainstJson(page.text, json, page.rel));
+    drift.push(...gradeKeyedTables(corpus, json));
+    drift.push(...gradeClock(json, pin.stale_after_days, opts.today));
+  }
+
+  let recordLine;
+  if (src.record && json) {
+    const f = gradeJsonAgainstRecord(json, pin, JSON.parse(src.record), src.record);
+    if (src.emitter && pin.emitter_sha256 && sha256(src.emitter) !== pin.emitter_sha256) {
+      f.push({ rule: "R7", where: PIN, why: `origin/main's emitter has changed since this pin was taken — its output may have too. Run --regen.` });
+    }
+    drift.push(...f);
+    recordLine = f.length ? `DRIFTED — ${f.length} finding(s) against ${src.from}` : `MATCHED — performance.json against ${src.from}`;
+  } else recordLine = "COULD NOT LOOK — the record was not reachable from this run";
 
   let servedLine = "not asked (pass --served <origin>)";
   let servedCouldNotLook = false;
   if (opts.served) {
-    let html = null;
-    try {
-      const r = await fetch(`${opts.served}${SERVED_ROUTE}`, { redirect: "follow" });
-      if (r.status === 200) html = await r.text();
-      else servedLine = `COULD NOT LOOK — ${opts.served}${SERVED_ROUTE} answered ${r.status}`;
-    } catch (e) {
-      servedLine = `COULD NOT LOOK — ${opts.served}${SERVED_ROUTE}: ${e.message}`;
-    }
-    if (html === null) servedCouldNotLook = true;
-    else {
-      const findings = gradeServed(html, pin, opts.served);
-      drift.push(...findings);
-      servedLine = findings.length ? `DRIFTED — ${findings.length} finding(s)` : `MATCHED — ${pin.rows.length} rows as served by ${opts.served}`;
+    const get = async (path) => {
+      try {
+        const r = await fetch(`${opts.served}${path}`, { redirect: "follow", headers: { "cache-control": "no-cache" } });
+        return r.status === 200 ? { text: await r.text() } : { why: `${opts.served}${path} answered ${r.status}` };
+      } catch (e) {
+        return { why: `${opts.served}${path}: ${e.message}` };
+      }
+    };
+    const html = await get(pin.served_route);
+    const sj = await get("/performance.json");
+    if (html.text === undefined && sj.text === undefined) {
+      servedCouldNotLook = true;
+      servedLine = `COULD NOT LOOK — ${html.why}; ${sj.why}`;
+    } else {
+      const f = gradeServed(html.text ?? null, sj.text ?? null, pin, opts.served);
+      drift.push(...f);
+      servedLine = f.length ? `DRIFTED — ${f.length} finding(s)` : `MATCHED — ${pin.table.rows.length} rows and performance.json as served by ${opts.served}`;
     }
   }
 
-  const pageFindings = drift.filter((f) => f.rule.startsWith("P"));
-  const currencyFindings = drift.filter((f) => f.rule.startsWith("C"));
-  console.log(`check-performance-floors — ${PAGE} against ${PIN} (today ${opts.today})`);
-  console.log(`  page  <-> pin     ${pageFindings.length ? `DRIFTED — ${pageFindings.length} finding(s)` : `MATCHED — ${pin.rows.length} rows, ${pin.rows.reduce((n, r) => n + Object.keys(r.cells).length, 0)} cells`}`);
-  console.log(`  page  <-> clock   ${currencyFindings.length ? `DRIFTED — ${currencyFindings.length} finding(s)` : `MATCHED — ${pin.stale_after_days}-day clock, ${pastClock(pin, opts.today)} row(s) past it`}`);
-  console.log(`  pin   <-> record  ${recordLine}`);
-  console.log(`  served<-> pin     ${servedLine}`);
-  if (!rec.bytes) {
+  const count = (p) => drift.filter((f) => p.test(f.rule)).length;
+  console.log(`check-performance-floors — ${pin.page} + ${JSON_PATH} against ${PIN} (today ${opts.today})`);
+  console.log(`  blocks <-> pin     ${count(/^B/) ? `DRIFTED — ${count(/^B/)} finding(s)` : `MATCHED — ${pin.blocks.length} generated blocks and performance.json`}`);
+  console.log(`  table  <-> json    ${count(/^[JK]/) ? `DRIFTED — ${count(/^[JK]/)} finding(s)` : `MATCHED — ${pin.table.rows.length} rows, and every per-platform snippet`}`);
+  console.log(`  json   <-> clock   ${count(/^A/) ? `DRIFTED — ${count(/^A/)} cell(s) past the ${pin.stale_after_days}-day clock` : `MATCHED — every published cell within ${pin.stale_after_days} days`}`);
+  console.log(`  json   <-> record  ${recordLine}`);
+  console.log(`  served <-> pin     ${servedLine}`);
+  if (!src.record) {
     console.log("  doors tried for the record:");
-    for (const t of rec.tried) console.log(`    ${t}`);
-    console.log("  ★COULD NOT LOOK is not a pass. It means the pin was not re-read against the");
-    console.log("   record on this run: a number changed in bithuman-models since the pin was");
-    console.log("   taken would not be visible here.");
+    for (const t of src.tried) console.log(`    ${t}`);
+    console.log("  ★COULD NOT LOOK is not a pass: a number re-measured in bithuman-models since the pin");
+    console.log("   was taken would not be visible here.");
   }
-
-  report("DRIFTED — the published table is not what the record measured:", drift);
+  report("DRIFTED — what is published is not what the emitter wrote from the record:", drift);
   if (drift.length) {
-    console.error("\n  how to fix: regenerate the page FROM the record, never the other way round —");
-    console.error("    python3 models/essence-2/tools/check_perf_floors.py --emit-docs " + PAGE);
-    console.error("    node scripts/check-performance-floors.mjs --write --models <bithuman-models>");
-    console.error("  ★Do not edit a cell by hand and do not edit FLOORS.json to agree with a page.");
+    console.error("\n  how to fix: regenerate FROM the record, never the other way round —");
+    console.error("    node scripts/check-performance-floors.mjs --regen --models <bithuman-models>");
+    console.error("  ★Do not edit a generated block or performance.json by hand, and do not edit FLOORS.json to agree with a page.");
   }
-  const rc = verdict(drift, !rec.bytes || servedCouldNotLook);
+  const rc = verdict(drift, !src.record || servedCouldNotLook);
   console.log(`\nVERDICT: ${["MATCHED", "DRIFTED", "COULD NOT LOOK"][rc]} (rc=${rc})`);
   process.exit(rc);
 }
 
-function pastClock(pin, today) {
-  let n = 0;
-  for (const row of pin.rows) {
-    if (currencyShown(row, pin.stale_after_days, today) !== "yes") n++;
-  }
-  return n;
-}
-
 /* ---------------------------------------------------------------- selftest */
 
-// ★A GATE WHOSE CONTROLS DO NOT FIRE HAS VERIFIED NOTHING. Every defect arm
-// below is a real edit someone could make to this page — a retyped number, a
-// changed date, a dropped row, a rebase that lost the markers — and each one
-// must redden. Every good arm is a change that must stay silent, because a gate
-// that fires on correct work gets turned off.
+// ★A GATE WHOSE CONTROLS DO NOT FIRE HAS VERIFIED NOTHING. The arms run on a
+// FIXTURE site (so they hold whatever the real page says) and then on the real
+// corpus as controls. Every defect arm is an edit someone could make; every good
+// arm is a change that must stay silent, because a gate that fires on correct
+// work gets turned off.
+
+const FIX_TODAY = "2026-09-23";
+const FIX_JSON = {
+  schema: 1,
+  generated: FIX_TODAY,
+  models: { "essence-2": { fps: 25, width: 1920, height: 1080 }, "expression-2": { fps: 20, width: 416, height: 720 } },
+  rows: [
+    { id: "cloud-gpu", label: "Cloud API · GPU", hardware: "NVIDIA RTX 4090", published: true, cells: {
+      "essence-2": { fps: 103, x_realtime: 4.12, realtime: true, measured_on: "2026-09-22" },
+      "expression-2": { fps: 357, x_realtime: 17.85, realtime: true, measured_on: "2026-09-23" } } },
+    { id: "modal-cpu", label: "Cloud API · CPU", hardware: "x86 server CPU, 8 vCPU", published: true, cells: {
+      "essence-2": { fps: 22, x_realtime: 0.88, realtime: false, measured_on: "2026-09-23" },
+      "expression-2": { fps: 27, x_realtime: 1.35, realtime: true, measured_on: "2026-09-23" } } },
+    // ★THE HALF-MEASURED ROW: one model published, the other not yet. It must pin
+    //  and grade like any other, with its empty cells as "—".
+    { id: "web", label: "Web browser (WebGPU)", hardware: "Chrome on Apple M4", published: true, cells: {
+      "essence-2": { fps: 29, x_realtime: 1.16, realtime: true, measured_on: "2026-09-22" },
+      "expression-2": null } },
+    // a live-session measurement that is recorded but not a table row
+    { id: "apple-serve-launch", label: "Cloud live session · Apple silicon", hardware: "Apple M4 Max", published: false, cells: {
+      "essence-2": { fps: 136, x_realtime: 5.44, realtime: true, measured_on: "2026-09-23" } } },
+  ],
+};
+const FIX_TABLE =
+  "| Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |\n" +
+  "|---|---|---|---|---|---|\n" +
+  "| Cloud API · GPU | NVIDIA RTX 4090 | 103 | **4.1×** real time | 357 | **17.8×** real time |\n" +
+  "| Cloud API · CPU | x86 server CPU, 8 vCPU | 22 | 0.8× below real time | 27 | **1.3×** real time |\n" +
+  "| Web browser (WebGPU) | Chrome on Apple M4 | 29 | **1.1×** real time | — | — |\n";
+const FIX_PAGE =
+  "---\ntitle: Performance\n---\n\nLede.\n\n## Frame rate\n\n<!-- FLOORS:TABLE all -->\n" + FIX_TABLE + "<!-- /FLOORS:TABLE -->\n\n" +
+  "<!-- FLOORS:RELEASES -->\nMeasured on current releases: CLI 2.7 · cloud API (September 2026).\n<!-- /FLOORS:RELEASES -->\n\n" +
+  "## Memory\n\n<!-- FLOORS:MEMORY -->\n| Runs on | Hardware | Essence 2 peak RAM | Expression 2 peak RAM |\n|---|---|---|---|\n| macOS · CLI | Apple M4 | 1.6 GB | 0.9 GB |\n<!-- /FLOORS:MEMORY -->\n\n" +
+  "## How we measure\n\n<!-- FLOORS:METHOD -->\n**How we measure.** One paragraph.\n<!-- /FLOORS:METHOD -->\n";
+const FIX_PARTIAL = "<!-- FLOORS:HEADLINE -->\n| | Cloud API |\n|---|---|\n| **Essence 2** | **103 fps** · 4.1× |\n<!-- /FLOORS:HEADLINE -->\n";
+const FIX_RECORD = {
+  stale_after_days: 30,
+  rows: [
+    { model: "essence-2", plane: "cloud-gpu", docs_fps: 103, docs_measured_on: "2026-09-22" },
+    { model: "expression-2", plane: "cloud-gpu", docs_fps: 357, docs_measured_on: "2026-09-23" },
+    { model: "essence-2", plane: "modal-cpu", docs_fps: 22, docs_measured_on: "2026-09-23" },
+    { model: "expression-2", plane: "modal-cpu", docs_fps: 27, docs_measured_on: "2026-09-23" },
+    { model: "essence-2", plane: "web", docs_fps: 29, docs_measured_on: "2026-09-22" },
+    { model: "expression-2", plane: "web", docs_fps: null, docs_measured_on: null },
+    { model: "essence-2", plane: "apple-serve-launch", docs_fps: 136, docs_measured_on: "2026-09-23" },
+  ],
+};
+
 async function selftest() {
-  const pin = JSON.parse(readFileSync(join(ROOT, PIN), "utf8"));
-  const page = readFileSync(join(ROOT, PAGE), "utf8");
-  const TODAY = pin.verified_on;
   let bad = 0;
   const arm = (name, ok) => {
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${name}`);
   };
-
-  const grade = (p, today = TODAY) => [...gradePage(p, pin), ...gradeCurrency(p, pin, today)];
-  const slowCell = () => pin.rows.find((r) =>
-    Object.keys(r.cells).some((m) => cellsOf(r.line)[MODEL_COLUMN[m]].includes("not yet real time")));
-  const first = pin.rows[0];
-  const swapFps = (p, row, model, to) => {
-    const cells = cellsOf(row.line);
-    const col = MODEL_COLUMN[model];
-    const edited = cells.slice();
-    edited[col] = edited[col].replace(String(row.cells[model].docs_fps), String(to));
-    return p.replace(row.line, `| ${edited.join(" | ")} |`);
+  const P = "src/content/docs/sdk/performance.md";
+  const H = "src/partials/performance-headline.md";
+  const jsonText = `${JSON.stringify(FIX_JSON, null, 1)}\n`;
+  const recText = JSON.stringify(FIX_RECORD);
+  const W = "src/content/docs/sdk/web.md";
+  const FIX_SNIPPET =
+    "## Performance\n\n<!-- FLOORS:TABLE web -->\n" + FIX_TABLE.split("\n").filter((l, i) => i < 2 || l.startsWith("| Web browser")).join("\n") + "\n<!-- /FLOORS:TABLE -->\n";
+  const corpus = { [P]: FIX_PAGE, [H]: FIX_PARTIAL, [W]: FIX_SNIPPET };
+  const pin = buildPin(corpus, jsonText, recText, "emitter-bytes", FIX_TODAY);
+  /** every always-on rule, as the default run grades them */
+  const grade = (c = corpus, j = jsonText, today = FIX_TODAY) => {
+    const page = findPage(c);
+    const json = JSON.parse(j);
+    return [
+      ...gradePinMeta(pin, page),
+      ...gradeBlocks(c, j, pin),
+      ...gradeJsonSelf(json),
+      ...(page.rel ? gradeTableAgainstJson(page.text, json, page.rel) : []),
+      ...gradeKeyedTables(c, json),
+      ...gradeClock(json, pin.stale_after_days, today),
+    ];
   };
+  const edit = (from, to, file = P) => ({ ...corpus, [file]: corpus[file].replace(from, to) });
+  const has = (f, rule, re = /./) => f.some((x) => x.rule === rule && re.test(x.why));
 
   console.log("DEFECT ARMS — each must FIRE");
   {
-    // THE MUTATION ARM the whole file turns on: a known-green page, one cell
-    // retyped, nothing else. This is the 2026-09-14 failure in miniature —
-    // a page stating a number the record had already moved past.
-    const mutated = swapFps(page, first, "essence-2", 999);
-    const f = grade(mutated);
-    arm(`mutation: ${first.label} / Essence 2 retyped ${first.cells["essence-2"].docs_fps} -> 999 reddens`,
-      f.some((x) => x.rule === "P2"));
-    arm("mutation: the finding names the cell and the field, not just the row",
-      f.some((x) => x.rule === "P2" && x.why.includes("Essence 2") && x.why.includes("number is no longer")));
+    const f = grade(edit("| 103 | **4.1×** real time |", "| 999 | **4.1×** real time |"));
+    arm("mutation: Cloud API · GPU / Essence 2 retyped 103 -> 999 reddens (block and JSON both)", has(f, "B3") && has(f, "J3", /999/));
+    arm("mutation: the finding names the row and shows pinned vs page", has(f, "B3", /Cloud API · GPU[\s\S]*pinned:[\s\S]*page:/));
   }
-  arm("a date retyped in a cell reddens", grade(page.replace(`(${first.cells["essence-2"].docs_measured_on})`, "(2026-01-01)")).some((x) => x.rule === "P2"));
-  arm("a frame retyped in a cell reddens", grade(page.replace(first.cells["essence-2"].frame, "640x480")).some((x) => x.rule === "P2"));
-  arm("the contract rate removed from a cell reddens", grade(page.replace(` at ${first.cells["essence-2"].contract_fps} fps`, "")).some((x) => x.rule === "P2"));
-  arm("a whole row deleted reddens", grade(page.replace(`${first.line}\n`, "")).some((x) => x.rule === "P1"));
-  arm("a row the record does not generate reddens",
-    grade(page.replace(first.line, `${first.line}\n| Toaster | A toaster | 900 | 900 |`)).some((x) => x.rule === "P3"));
+  arm("a multiple of real time retyped reddens", has(grade(edit("**17.8×** real time", "**17.9×** real time")), "J4"));
+  arm("a below-real-time cell relabelled as real time reddens", has(grade(edit("0.8× below real time", "**0.8×** real time")), "J4"));
+  arm("a half-measured row's empty cell given a number reddens", has(grade(edit("| 29 | **1.1×** real time | — | — |", "| 29 | **1.1×** real time | 31 | **1.5×** real time |")), "J3"));
+  arm("a whole row deleted reddens", has(grade(edit("| Cloud API · CPU | x86 server CPU, 8 vCPU | 22 | 0.8× below real time | 27 | **1.3×** real time |\n", "")), "J1"));
+  arm("a row the JSON does not publish reddens", has(grade(edit("| Web browser", "| Toaster | A toaster | 9 | **0.3×** real time | 9 | **0.4×** real time |\n| Web browser")), "J5"));
+  arm("a hardware string retyped reddens", has(grade(edit("| NVIDIA RTX 4090 |", "| NVIDIA RTX 5090 |")), "J2"));
+  arm("performance.json hand-edited reddens", has(grade(corpus, jsonText.replace('"fps": 103', '"fps": 104')), "B5"));
+  arm("page AND performance.json edited to agree still reddens (the pin holds both)",
+    (() => {
+      const c = edit("| 103 | **4.1×** real time |", "| 104 | **4.1×** real time |");
+      return has(grade(c, jsonText.replace('"fps": 103', '"fps": 104')), "B3") && has(grade(c, jsonText.replace('"fps": 103', '"fps": 104')), "B5");
+    })());
+  arm("a headline partial edited by hand reddens", has(grade(edit("**103 fps**", "**110 fps**", H)), "B3", /HEADLINE/));
+  arm("a generated block dropped by a rebase reddens", has(grade(edit(/<!-- FLOORS:METHOD -->[\s\S]*<!-- \/FLOORS:METHOD -->\n/, "")), "B2"));
+  arm("a generated block nobody pinned reddens", has(grade({ ...corpus, "src/content/docs/sdk/cli.md": `x\n${FIX_PARTIAL}` }), "B4"));
+  arm("a per-platform snippet's cell retyped reddens (block and JSON both)", (() => {
+    const f = grade(edit("| 29 | **1.1×** real time |", "| 39 | **1.5×** real time |", W));
+    return has(f, "B3", /TABLE web/) && has(f, "K2", /Web browser/);
+  })());
+  arm("a per-platform snippet carrying a row the JSON does not publish reddens",
+    has(grade(edit("<!-- /FLOORS:TABLE -->", "| Toaster | A toaster | 9 | **0.3×** real time | — | — |\n<!-- /FLOORS:TABLE -->", W)), "K1"));
+  arm("PERF-CURRENCY coming back reddens", has(grade(edit("## Memory", "<!-- PERF-CURRENCY -->\n| Row | Measured |\n<!-- /PERF-CURRENCY -->\n\n## Memory")), "B1", /PERF-CURRENCY/));
+  arm("FLOORS:NOTES coming back reddens", has(grade(edit("## Memory", "<!-- FLOORS:NOTES -->\nlog\n<!-- /FLOORS:NOTES -->\n\n## Memory")), "B1", /FLOORS:NOTES/));
+  arm("a pin taken at a PREVIEW ref (a branch, not origin/main) reddens", has(gradePinMeta({ ...pin, record_ref: "origin/lane/x" }, findPage(corpus)), "B8"));
+  arm("a page that moved without a re-pin reddens", has(grade({ [P.replace("sdk/", "")]: FIX_PAGE, [H]: FIX_PARTIAL, [W]: FIX_SNIPPET }), "B7"));
+  arm("an unclosed marker reddens", has(grade(edit("<!-- /FLOORS:RELEASES -->", "")), "B0"));
+  arm("the speed table on two pages reddens", has(grade({ ...corpus, "src/content/docs/performance.md": FIX_PAGE }), "B6"));
+  arm("the speed table gone reddens", has(grade(edit("<!-- FLOORS:TABLE all -->", "<!-- FLOORS:TABLE cli -->")), "B6"));
+  arm("JSON whose realtime flag contradicts its fps reddens", has(grade(corpus, jsonText.replace('"realtime": false', '"realtime": true')), "J8"));
   {
-    // ★A CELL UNDER ITS MODEL'S PLAY RATE READS "N — not yet real time", and it
-    //  is a published measurement like any other. The Cloud CPU and Cloud Apple
-    //  silicon rows are made entirely of them and are the rows a reader is most
-    //  likely to be surprised by, so a gate that quietly treated them as a
-    //  status would be blind exactly where it is most needed.
-    const slow = slowCell();
-    const model = slow && Object.keys(MODEL_COLUMN).find((m) => cellsOf(slow.line)[MODEL_COLUMN[m]].includes("not yet real time"));
-    arm("retyping a 'not yet real time' cell reddens", Boolean(slow) && grade(swapFps(page, slow, model, 4242)).some((x) => x.rule === "P2"));
-  }
-  arm("the table markers dropped by a rebase reddens", grade(page.replace("<!-- /FLOORS:TABLE -->", "")).some((x) => x.rule === "P0"));
-  arm("a table keyed something the pin did not verify reddens",
-    grade(page.replace("<!-- FLOORS:TABLE all -->", "<!-- FLOORS:TABLE platform -->")).some((x) => x.rule === "P0"));
-  arm("the currency block deleted reddens", grade(page.replace(CURRENCY_OPEN, "")).some((x) => x.rule === "C0"));
-  arm("a currency row edited to claim a date the cell does not carry reddens",
-    grade(page.replace(`| ${first.label} | ${measuredShown(first)} |`, `| ${first.label} | 2020-01-01 |`)).some((x) => x.rule === "C2"));
-  {
-    // THE CLOCK ARM. Nothing on the page changes; the calendar does. A page
-    // that was correct when it merged says "yes" about a row that has since
-    // aged out, and the nightly run is what turns that into a red.
-    const late = ageDays(first.cells["essence-2"].docs_measured_on, TODAY);
-    const future = new Date(Date.parse(`${TODAY}T00:00:00Z`) + (pin.stale_after_days - late + 1) * 86400000)
-      .toISOString()
-      .slice(0, 10);
-    const f = grade(page, future);
-    arm(`a row past the ${pin.stale_after_days}-day clock reddens on ${future} with the page untouched`,
-      f.some((x) => x.rule === "C2" && /past the clock/.test(x.why)));
+    // THE CLOCK ARM. Nothing changes but the calendar.
+    const f = grade(corpus, jsonText, "2026-10-23");
+    arm("a cell past the 30-day clock reddens on 2026-10-23 with every file untouched", has(f, "A2", /Cloud API · GPU \/ Essence 2/) && !has(f, "A2", /Expression 2 was measured 2026-09-23/));
   }
   {
-    const f = gradePinAgainstRecord(pin, { stale_after_days: pin.stale_after_days, rows: recordFixture(pin, { fps: 1 }) }, undefined);
-    arm("the record moving a number away from the pin reddens", f.some((x) => x.rule === "R3"));
+    const r = (patch) => ({ ...FIX_RECORD, rows: FIX_RECORD.rows.map((x) => (x.plane === "cloud-gpu" && x.model === "essence-2" ? { ...x, ...patch } : x)) });
+    arm("the record moving a number away from the JSON reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, r({ docs_fps: 110 })), "R3"));
+    arm("the record moving a date away from the JSON reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, r({ docs_measured_on: "2026-09-30" })), "R5"));
+    arm("a JSON cell the record does not hold reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, rows: FIX_RECORD.rows.slice(1) }), "R2"));
+    arm("a published record cell with no JSON cell reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, rows: [...FIX_RECORD.rows, { model: "essence-2", plane: "forgotten", docs_fps: 11 }] }), "R6"));
+    arm("the record's bytes moving since the pin reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, FIX_RECORD, `${recText} `), "R0"));
+    arm("the record changing its clock reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, stale_after_days: 7 }), "R1"));
   }
   {
-    const f = gradePinAgainstRecord(pin, { stale_after_days: pin.stale_after_days, rows: recordFixture(pin, { date: "2020-02-02" }) }, undefined);
-    arm("the record moving a date away from the pin reddens", f.some((x) => x.rule === "R5"));
+    // THE SERVED ARMS. The site can serve an older build than the repository holds.
+    const html = (rows) =>
+      `<table><thead><tr>${cellsOf(FIX_TABLE.split("\n")[0]).map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>` +
+      rows.map((l) => `<tr>${cellsOf(l).map((c) => `<td><span class="col-label">x</span>${c.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")}</td>`).join("")}</tr>`).join("") +
+      "</tbody></table>";
+    const MEM = '<table><tr><th>Runs on</th><th>Hardware</th><th>Essence 2 peak RAM</th><th>Expression 2 peak RAM</th></tr><tr><td>Cloud API · GPU</td><td>x</td><td>1.6 GB</td><td>0.9 GB</td></tr></table>';
+    const good = html(pin.table.rows.map((r) => r.line)) + MEM;
+    const stale = html(pin.table.rows.map((r, i) => (i ? r.line : r.line.replace("| 103 |", "| 99 |")))) + MEM;
+    arm("a served table one build behind reddens", has(gradeServed(stale, jsonText, pin, "https://x"), "S2"));
+    arm("a served page with no speed table reddens", has(gradeServed("<p>nothing</p>", jsonText, pin, "https://x"), "S0"));
+    arm("a served performance.json one build behind reddens", has(gradeServed(good, jsonText.replace("103", "99"), pin, "https://x"), "S4"));
+    arm("the served arm is not vacuous — the matching fixture (with the memory table after it) is silent", gradeServed(good, jsonText, pin, "https://x").length === 0);
   }
   {
-    const f = gradePinAgainstRecord(pin, { stale_after_days: pin.stale_after_days, rows: recordFixture(pin, { drop: true }) }, undefined);
-    arm("a pinned plane the record no longer holds reddens", f.some((x) => x.rule === "R2"));
-  }
-  {
-    const f = gradePinAgainstRecord(pin, { stale_after_days: 7, rows: recordFixture(pin, {}) }, undefined);
-    arm("the record changing its re-measure clock reddens", f.some((x) => x.rule === "R1"));
-  }
-  {
-    const rows = recordFixture(pin, {});
-    rows.push({ model: "essence-2", plane: "a-plane-the-page-forgot", docs_fps: 11, frame: { width: 1, height: 1 }, docs_measured_on: TODAY });
-    const f = gradePinAgainstRecord(pin, { stale_after_days: pin.stale_after_days, rows }, undefined);
-    arm("a published plane with no cell on the page reddens", f.some((x) => x.rule === "R6"));
-  }
-  {
-    const bytes = JSON.stringify({ rows: [] });
-    const f = gradePinAgainstRecord(pin, { stale_after_days: pin.stale_after_days, rows: recordFixture(pin, {}) }, bytes);
-    arm("the record's bytes moving since the pin was taken reddens", f.some((x) => x.rule === "R0"));
-  }
-  {
-    // THE SERVED ARM. The site can serve an older build than the repository
-    // holds, and that is the number a customer reads.
-    const html = htmlFixture(pin.rows.map((r) => r.line));
-    const stale = htmlFixture(pin.rows.map((r, i) => (i ? r.line : swapFps(r.line, r, "essence-2", 7))));
-    arm("a served table one build behind reddens", gradeServed(stale, pin, "https://x").some((x) => x.rule === "S2"));
-    arm("a served page with no table reddens", gradeServed("<p>nothing</p>", pin, "https://x").some((x) => x.rule === "S0"));
-    arm("the served arm is not vacuous — the matching fixture is silent", gradeServed(html, pin, "https://x").length === 0);
-  }
-  {
-    // --write must refuse a page whose cell the record does not hold.
     let refused = false;
     try {
-      buildPin(swapFps(page, first, "essence-2", 999), { stale_after_days: pin.stale_after_days, rows: recordFixture(pin, {}) }, "{}", TODAY, pin);
+      buildPin(edit("| 103 |", "| 999 |"), jsonText, recText, null, FIX_TODAY);
     } catch (e) {
       refused = /REFUSING to pin/.test(e.message);
     }
-    arm("--write refuses to pin a hand-edited cell", refused);
+    arm("the pin builder refuses a page that disagrees with its JSON", refused);
+    let refused2 = false;
+    try {
+      buildPin(corpus, jsonText.replace('"fps": 103', '"fps": 104'), recText, null, FIX_TODAY);
+    } catch (e) {
+      refused2 = /REFUSING to pin/.test(e.message) && /R3/.test(e.message);
+    }
+    arm("the pin builder refuses a JSON that disagrees with the record", refused2);
   }
   {
-    // COULD NOT LOOK is its own outcome, and it is not a pass.
     const blind = { exists: () => false, read: () => "", gitShow: () => ({ bytes: null, why: "no such repository" }) };
-    const rec = findRecord({ models: "/nowhere" }, {}, blind);
-    arm("no record reachable is COULD NOT LOOK, not MATCHED", rec.bytes === null && verdict([], true) === 2);
-    arm("COULD NOT LOOK names every door it tried", rec.tried.length >= 2 && rec.tried.every((t) => /no such repository|not present/.test(t)));
-    arm("COULD NOT LOOK is distinct from DRIFTED", verdict([{ rule: "P1" }], true) === 1 && verdict([], false) === 0);
-
-    // ★NO SILENT FALLBACK. A checkout whose origin/main cannot be read must be
-    //  refused outright, not read from whatever branch is checked out — that is
-    //  the 52-finding run this gate was corrected for on 2026-09-21.
-    const dirty = {
-      exists: () => true,
-      read: () => "THE WORKING TREE, WHICH MUST NEVER BE READ",
-      gitShow: () => ({ bytes: null, why: "git show origin/main:… failed — fatal: invalid object name" }),
-    };
-    const refused = findRecord({ models: "/a/dirty/checkout" }, {}, dirty);
-    arm("a checkout whose origin/main cannot be read is refused, not read from its working tree",
-      refused.bytes === null && refused.tried.some((t) => /invalid object name/.test(t)));
-
-    // and the door that DOES open names the ref it read, so a green says what
-    // it was green against.
-    const good = { exists: () => true, read: () => "", gitShow: () => ({ bytes: '{"rows":[]}', why: null }) };
-    const open = findRecord({ models: "/a/good/checkout" }, {}, good);
-    arm("a record that was read names its ref", open.ref === "origin/main" && /origin\/main/.test(open.from));
-
-    // --record is a literal blob and is never resolved through git.
-    const literal = { exists: (p) => p === "/tmp/floors.json", read: () => '{"rows":[]}', gitShow: () => { throw new Error("git must not be consulted for --record"); } };
-    const blob = findRecord({ record: "/tmp/floors.json" }, {}, literal);
-    arm("--record is read as a literal file, with no ref to resolve", blob.bytes === '{"rows":[]}' && blob.ref === null);
-  }
-
-  {
-    // ★THE ARTIFACT TIE-BREAK, BOTH DIRECTIONS. Two planes of one model publishing
-    //  the same fps on the same frame on the same day is not hypothetical — it is
-    //  expression-2 on 2026-09-22 (linux-cpu cli-v2.6.26, android-s25plus
-    //  expression2-android 0.4.8), and before this tie-break the pin builder
-    //  refused the whole page for it. The arm that matters is the SECOND one: the
-    //  tie-break must not become a guess.
-    const twin = (v1, v2) => ({
-      rows: [
-        { model: "expression-2", plane: "linux-cpu", docs_fps: 43, docs_measured_on: "2026-09-22",
-          frame: { width: 416, height: 720 }, measured_artifact: { version: v1 } },
-        { model: "expression-2", plane: "android-s25plus", docs_fps: 43, docs_measured_on: "2026-09-22",
-          frame: { width: 416, height: 720 }, measured_artifact: { version: v2 } },
-        { model: "essence-2", plane: "linux-cpu", docs_fps: 36, docs_measured_on: "2026-09-22",
-          frame: { width: 1920, height: 1080 }, measured_artifact: { version: "cli-v2.6.26" } },
-      ],
-    });
-    const rowFor = (art) => new Map([["Linux",
-      `| Linux | Intel Core i7-13700F | 43 \u00b7 e2e-steady-state \u00b7 416x720 at 20 fps \u00b7 2.15x real time \u00b7 ${art} (2026-09-22) ` +
-      `| 36 \u00b7 e2e-steady-state \u00b7 1920x1080 at 25 fps \u00b7 1.44x real time \u00b7 cli-v2.6.26 (2026-09-22) |`]]);
-
-    const [okRows, okErrs] = resolvePlanes(rowFor("cli-v2.6.26"), twin("cli-v2.6.26", "expression2-android 0.4.8"));
-    arm("two planes with the same fps, frame and date resolve by the artifact the cell names",
-      okErrs.length === 0 && okRows.length === 1 && okRows[0].plane === "linux-cpu");
-
-    const [, ambErrs] = resolvePlanes(rowFor("cli-v2.6.26"), twin("cli-v2.6.26", "cli-v2.6.26"));
-    arm("...and when the artifact does NOT separate them either, the row is still REFUSED, never guessed",
-      ambErrs.some((e) => e.includes("2 record rows")));
+    const s = findSources({ models: "/nowhere" }, {}, blind);
+    arm("no record reachable is COULD NOT LOOK, not MATCHED", s.record === null && verdict([], true) === 2);
+    arm("COULD NOT LOOK names every door it tried", s.tried.length >= 2 && s.tried.every((t) => /no such repository/.test(t)));
+    arm("COULD NOT LOOK is distinct from DRIFTED", verdict([{ rule: "B3" }], true) === 1 && verdict([], false) === 0);
+    const dirty = { exists: () => true, read: () => "THE WORKING TREE", gitShow: () => ({ bytes: null, why: "git show origin/main:… failed — fatal: invalid object name" }) };
+    const r = findSources({ models: "/a/dirty/checkout" }, {}, dirty);
+    arm("a checkout whose origin/main cannot be read is refused, not read from its working tree", r.record === null && r.tried.some((t) => /invalid object name/.test(t)));
+    const good = { exists: () => true, read: () => "", gitShow: (_d, _r, p) => ({ bytes: p === RECORD_PATH ? '{"rows":[]}' : "emitter", why: null }) };
+    const o = findSources({ models: "/a/good/checkout" }, {}, good);
+    arm("a record that was read names its ref, and comes with origin/main's emitter", o.ref === "origin/main" && /origin\/main/.test(o.from) && o.emitter === "emitter");
   }
 
   console.log("\nGOOD ARMS — each must stay SILENT");
-  arm("the page as published, against its own pin", grade(page).length === 0);
-  arm("prose edited outside the markers", grade(`${page}\n\nA new paragraph about setup.\n`).length === 0);
-  // ★ONLY THE SPAN BETWEEN THE MARKERS IS GRADED. A four-column table anywhere
-  //  else on the page — an example, a fenced block, another section — is prose,
-  //  and a gate that reddened for it would be fixed by deleting the example.
-  arm("a four-column table elsewhere on the page is not the generated one",
-    grade(`${page}\n\n| Platform | Reference hardware | Expression 2 | Essence 2 |\n|---|---|---|---|\n| Toaster | A toaster | 900 | 900 |\n`).length === 0);
-  arm("the pin against a record that still agrees with it",
-    gradePinAgainstRecord(pin, { stale_after_days: pin.stale_after_days, rows: recordFixture(pin, {}) }, undefined).length === 0);
-  arm("a cell reading 'not yet real time' is pinned and graded like any other", Boolean(slowCell()) && grade(page).length === 0);
-  arm("a row measured today is within the clock", currencyShown(first, pin.stale_after_days, first.cells["essence-2"].docs_measured_on) === "yes");
-  arm("a row measured exactly on the clock is still within it",
-    currencyShown(first, pin.stale_after_days, shift(first.cells["essence-2"].docs_measured_on, pin.stale_after_days)) === "yes");
+  arm("the fixture site as pinned", grade().length === 0);
+  arm("prose edited outside the markers", grade(edit("Lede.", "A new lede about setup, 25 fps and 20 fps.")).length === 0);
+  arm("a six-column table elsewhere on the page is prose", grade(edit("## Memory", `${FIX_TABLE.replace("| 103 |", "| 1 |")}\n## Memory`)).length === 0);
+  arm("the half-measured row pins and grades like any other", pin.table.rows.some((r) => r.label === "Web browser (WebGPU)") && grade().length === 0);
+  arm("a published:false JSON row is not demanded on the page", !pin.table.rows.some((r) => r.label.startsWith("Cloud live session")) && grade().length === 0);
+  arm("the JSON against a record that agrees with it", gradeJsonAgainstRecord(FIX_JSON, pin, FIX_RECORD, recText).length === 0);
+  arm("a cell measured exactly 30 days ago is still within the clock", grade(corpus, jsonText, "2026-10-22").length === 0);
+  arm("truncation, not rounding: 357/20 is 17.8 and 22/25 is 0.8", truncTenths(357, 20) === "17.8" && truncTenths(22, 25) === "0.8" && truncTenths(24.99, 25) === "0.9");
+  arm("the route follows the page when it moves", routeOf(P) === "/sdk/performance" && routeOf("src/content/docs/performance.md") === "/performance");
+
+  console.log("\nCORPUS CONTROLS — the real site");
   {
-    // ★A LANE WITH NO CURRENT SOURCE SAYS SO. The bar this page is held to is
-    //  that a row never carries a stale figure in place of an honest gap, so
-    //  the currency column has to have a word for "the record publishes nothing
-    //  here" that is not "yes". Every cell on the page has a source today; this
-    //  arm keeps the path alive so it is correct the first day one does not.
-    const orphan = { label: "Some Future Lane", plane: "not-measured", line: "| Some Future Lane | — | not measured yet | not measured yet |", cells: {} };
-    const block = currencyBlock({ ...pin, rows: [orphan] }, TODAY);
-    arm("a row with no record entry reads as having no source, never as current",
-      block.includes("not published") && block.includes("no current source") && !/\|\s*yes\s*\|/.test(block));
+    const real = loadCorpus();
+    const page = findPage(real);
+    const realPin = existsSync(join(ROOT, PIN)) ? JSON.parse(readFileSync(join(ROOT, PIN), "utf8")) : null;
+    const realJson = existsSync(join(ROOT, JSON_PATH)) ? readFileSync(join(ROOT, JSON_PATH), "utf8") : null;
+    arm("the real site carries exactly one speed table", Boolean(page.rel));
+    arm("the real pin is format 2 and names that page", realPin?.format === 2 && realPin.page === page.rel);
+    arm("the real performance.json exists and its table agrees with it",
+      realJson !== null && page.rel !== null && gradeTableAgainstJson(page.text, JSON.parse(realJson), page.rel).length === 0);
+    arm("the real site carries no retired marker", allBlocks(real)[1].filter((f) => f.rule === "B1").length === 0);
+    arm("every published real cell has a date the clock can read",
+      realJson !== null && gradeClock(JSON.parse(realJson), 100000, isoToday()).length === 0);
   }
-  arm("a row one day past the clock is not",
-    currencyShown(first, pin.stale_after_days, shift(first.cells["essence-2"].docs_measured_on, pin.stale_after_days + 1)) !== "yes");
 
-  console.log("\nCORPUS CONTROLS — the arms above must be grading something");
-  arm("the pin holds every row the page's table carries", (() => {
-    const [slots] = tableSlots(page);
-    return tableRows(slots[pin.table_key]).size === pin.rows.length && pin.rows.length > 0;
-  })());
-  arm("every pinned cell carries a frame, a contract rate and a date",
-    pin.rows.every((r) => Object.values(r.cells).every((c) => c.frame && c.contract_fps && c.docs_measured_on)));
-  arm("both contract rates are on the page, and they differ",
-    new Set(pin.rows.flatMap((r) => Object.values(r.cells).map((c) => c.contract_fps))).size === 2);
-
-  console.log(bad ? `\nFAILED — ${bad} arm(s)` : `\nPASSED — 0 failure(s); every defect arm fired and every good arm stayed silent`);
+  console.log(bad ? `\nFAILED — ${bad} arm(s)` : "\nPASSED — every defect arm fired and every good arm stayed silent");
   process.exit(bad ? 1 : 0);
 }
-
-/** A record shaped like the real one, derived from the pin, with one field
- *  broken on request. Keeps the R-arms honest without a 780 KB fixture. */
-function recordFixture(pin, { fps, date, drop } = {}) {
-  const rows = [];
-  for (const r of pin.rows) {
-    for (const [model, c] of Object.entries(r.cells)) {
-      if (drop && rows.length === 0) continue;
-      const [w, h] = (c.frame ?? "0x0").split("x").map(Number);
-      rows.push({
-        model,
-        plane: r.plane,
-        docs_fps: fps && rows.length === 0 ? c.docs_fps + fps : c.docs_fps,
-        frame: { width: w, height: h },
-        docs_measured_on: date && rows.length === 0 ? date : c.docs_measured_on,
-      });
-    }
-  }
-  return rows;
-}
-
-const htmlFixture = (lines) =>
-  "<table><thead><tr><th>Platform</th><th>Reference hardware</th><th>Expression 2</th><th>Essence 2</th></tr></thead><tbody>" +
-  lines
-    .map((l) => `<tr>${cellsOf(l).map((c) => `<td>${c.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</td>`).join("")}</tr>`)
-    .join("") +
-  "</tbody></table>";
-
-const shift = (iso, days) => new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
 
 main();
