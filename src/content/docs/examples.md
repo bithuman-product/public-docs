@@ -18,7 +18,7 @@ clone.
 | If you want… | Start with | Time |
 |---|---|---|
 | A talking avatar with no code | [CLI](/sdk/cli) | ~2 min |
-| The smallest loop in code | [Python quickstart](/sdk/python#quickstart-the-whole-thing-in-one-block) | ~5 min |
+| The smallest loop in code | [Python quickstart](/sdk/python#first-frame) | ~5 min |
 | The platform from any language | [REST — Hello, avatar](/examples/rest-hello) | ~5 min |
 | An avatar in an Android app | [Kotlin / Android — Hello, avatar](/examples/kotlin-android-hello) | ~15 min |
 | An avatar on the iPhone you have | [Swift / iOS — Expression 2](/examples/swift-ios-expression2) | ~25 min |
