@@ -53,7 +53,6 @@ One session held open for ten minutes from a cool start, rendering as fast as th
 | Runs on | Hardware | Essence 2, first run | Essence 2, after that | Expression 2, first run | Expression 2, after that |
 |---|---|---|---|---|---|
 | macOS · CLI | Apple M4 | 9.6 s | 7.8 s | — | — |
-| macOS · Python | Apple M4 | 7.8 s | 6.2 s | — | — |
 
 Seconds from starting the command to a finished MP4 of a 10-second clip, for the whole process: loading, rendering, encoding and exit. Each number is the slowest of three runs. "First run" is a fresh install with the model files already downloaded. "After that" is every later render on the same machine. Lip sync is checked on every run: no run published here plays more than 40 ms off the audio.
 <!-- /FLOORS:WALLCLOCK -->
