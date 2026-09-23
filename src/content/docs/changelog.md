@@ -10,6 +10,19 @@ order: 1
 
 ## September 2026
 
+### LiveKit: keep your API secret out of the room (2026-09-23)
+
+`livekit-plugins-bithuman` 1.8.2 writes whatever it is given as `api_secret`
+into LiveKit room attributes. Every participant in the room can read those.
+`POST /v1/runtime-tokens/mint` now takes `"scope": "livekit-cloud"`. It returns
+a one-hour token that can only start that agent's avatar, in that room, and
+the plugin carries it unchanged in place of your secret. It cannot download
+the model or call any other endpoint. See
+[Keep your API secret out of the room](/sdk/livekit#keep-your-api-secret-out-of-the-room).
+If you have passed your API secret to the plugin, switch to the token. Then
+create a new secret and delete the old one under
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
+
 ### A release build that brings its own ProGuard file keeps Essence 2 working — `essence2-android` 0.5.13 (2026-09-23)
 
 `ai.bithuman:essence2-android:0.5.13` on Maven Central. The AAR now ships its

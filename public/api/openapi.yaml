@@ -2099,6 +2099,15 @@ paths:
         answers `404`, exactly like a code you do not own. It expires in one
         hour and is not refreshable — mint another.
 
+        **LiveKit plugin.** With `"scope": "livekit-cloud"` this mints the token
+        to pass to `livekit-plugins-bithuman` as `api_secret` instead of your API
+        secret. The plugin writes that value into LiveKit room attributes, where
+        every participant can read it. This token can only start this agent's
+        cloud avatar session. It is also bound to `room_name` and `livekit_url`
+        when you send them, and it bills your account. For another agent, room
+        or LiveKit server it answers `403`. It cannot download the model or call
+        any other endpoint. See [LiveKit integration](/sdk/livekit).
+
         Call this from your server. Never ship the api-secret this endpoint
         consumes to a client.
       tags: [Authentication]
@@ -2116,6 +2125,24 @@ paths:
                   type: string
                   example: "A78WKV4515"
                   description: The one agent this token may act for.
+                scope:
+                  type: string
+                  enum: [runtime-heartbeat, livekit-cloud]
+                  default: runtime-heartbeat
+                  description: >-
+                    `livekit-cloud` mints the launch-only token for the LiveKit
+                    plugin's cloud mode. Omit it for the runtime token described
+                    above.
+                room_name:
+                  type: string
+                  description: >-
+                    `livekit-cloud` only. Binds the token to this LiveKit room.
+                livekit_url:
+                  type: string
+                  example: "wss://your-project.livekit.cloud"
+                  description: >-
+                    `livekit-cloud` only. Binds the token to this LiveKit
+                    server. It must be the URL the plugin connects to.
       responses:
         "200":
           description: A scoped token.
@@ -2131,7 +2158,7 @@ paths:
                     type: integer
                     description: Unix seconds; one hour from minting.
         "400":
-          description: "`agent_code` is required."
+          description: "`agent_code` is required, or `scope` is not one of the two values."
         "401":
           description: Missing or invalid api-secret.
 

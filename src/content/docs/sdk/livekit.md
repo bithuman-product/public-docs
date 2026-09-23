@@ -47,25 +47,77 @@ export LIVEKIT_API_KEY=...
 export LIVEKIT_API_SECRET=...
 ```
 
-The plugin reads the bitHuman secret only from the argument you pass;
-`livekit-agents` reads the three LiveKit variables from the environment.
+These stay in your agent worker's process. `livekit-agents` reads the three
+LiveKit variables from the environment. Your bitHuman API secret is used for
+one server-side call, shown below, and is never handed to the plugin.
+
+### Keep your API secret out of the room
+
+The plugin copies whatever you pass as `api_secret` into the avatar
+participant's LiveKit attributes. LiveKit sends participant attributes to
+everyone in the room, so any viewer can read that value. On 1.8.2 it also falls back
+to `BITHUMAN_API_SECRET` from the environment when you pass nothing. The fix
+has been reported to LiveKit privately and is not released yet.
+
+So never give the plugin your API secret. In your agent worker, exchange the
+secret for a **LiveKit cloud token** and pass the token instead. The plugin
+carries it unchanged, and bitHuman accepts it wherever the plugin used to send
+the secret.
 
 ### Wire it into an agent worker
 
 ```python
 import os
+
+import aiohttp
 from livekit.agents import JobContext
 from livekit.plugins import bithuman
+
+
+async def livekit_cloud_token(agent_code: str, room_name: str) -> str:
+    """A one-hour token that can only start this agent's avatar in this room."""
+    async with aiohttp.ClientSession() as http:
+        async with http.post(
+            "https://api.bithuman.ai/v1/runtime-tokens/mint",
+            headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
+            json={
+                "agent_code": agent_code,
+                "scope": "livekit-cloud",
+                "room_name": room_name,
+                "livekit_url": os.environ["LIVEKIT_URL"],
+            },
+        ) as resp:
+            resp.raise_for_status()
+            return (await resp.json())["scoped_token"]
+
 
 async def entrypoint(ctx: JobContext):
     await ctx.connect()
     await ctx.wait_for_participant()
+    agent_code = os.environ["BITHUMAN_AGENT_ID"]
     avatar = bithuman.AvatarSession(
-        avatar_id=os.environ["BITHUMAN_AGENT_ID"],
-        api_secret=os.environ["BITHUMAN_API_SECRET"],
+        avatar_id=agent_code,
+        api_secret=await livekit_cloud_token(agent_code, ctx.room.name),
     )
     # ...attach the avatar to your AgentSession and start it.
 ```
+
+Mint one token per session, as above. A viewer who reads the token from the
+room can do nothing useful with it:
+
+- **It starts one session only.** The token starts this agent's avatar, in
+  this room, on this LiveKit server, and bills your account exactly as the
+  secret would. For any other agent, room or LiveKit server it answers `403`.
+- **It lasts one hour.** You need it only to start the session. A session
+  that runs longer keeps running and keeps billing normally.
+- **It opens nothing else.** It cannot download the agent's model or call any
+  other endpoint. An expired or altered token answers `401`.
+
+`livekit_url` must be the address the plugin connects to. That is
+`LIVEKIT_URL` unless you pass `livekit_url=` to `AvatarSession.start()`; if you
+do, mint with that same value.
+The mint call is
+`POST /v1/runtime-tokens/mint` in the [API reference](/api/reference).
 
 `AvatarSession` is the one integration point, for LiveKit Cloud and a
 self-hosted LiveKit server alike. Each session bills at the rate on
