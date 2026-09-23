@@ -1,0 +1,4 @@
+{
+    "_comment": "Strings a public page must keep verbatim although a G1 pattern matches them: path, exact string, reason. Each is asserted present by scripts/check-internal-content.mjs.",
+    "carriers": []
+}

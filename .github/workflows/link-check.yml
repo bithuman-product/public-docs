@@ -245,6 +245,12 @@ jobs:
       - name: Internal-vocabulary guard self-test
         if: always()
         run: node scripts/check-internal-vocabulary.mjs --self-test
+      # G1 — no internal content in a public page (STYLE.md, "Never in a public
+      # page"). Report-only while the redesign rewrites the pages; it becomes
+      # --strict when the last page is on its template.
+      - name: No internal content (report)
+        if: always()
+        run: node scripts/check-internal-content.mjs --quiet
       # ★A MODEL WE BILL FOR MUST HAVE A PAGE. Measured 2026-09-02 and again
       # 2026-09-05 against the live site: the three second-generation concept
       # pages answered 200 and /concepts/essence-1 and /concepts/expression-1
