@@ -10,7 +10,7 @@ label: "CLI (macOS & Linux)"
 
 One binary, no code: `bithuman run` opens a live conversation with an avatar in your browser, and `bithuman render` turns an audio file into an MP4. To program against the models instead, use [Python](/sdk/python).
 
-| | Expression 2 | Essence 2 |
+| Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1920×1080 at 25 fps |
 | **`run` and `render`** | both | both |

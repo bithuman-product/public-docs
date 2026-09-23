@@ -11,7 +11,7 @@ label: "MCP server"
 
 `bithuman mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server built into the [CLI](/sdk/cli). An MCP client such as Claude Code, Claude Desktop or Cursor can then call bitHuman as tools: "make an avatar that explains our pricing, then give me an embed token" becomes a chain of tool calls.
 
-| | Expression 2 | Essence 2 |
+| Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **Create agents** | `generate_agent` with `model: "expression-2"` | `generate_agent` with `model: "essence-2"` |
 | **Render locally** | `render` tool | `render` tool |

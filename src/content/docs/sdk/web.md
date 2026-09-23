@@ -10,7 +10,7 @@ label: "Web (embed)"
 
 The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an `<iframe>` and the page gets a live avatar that listens and answers. There is no npm package and no secret in the browser.
 
-| | Expression 2 | Essence 2 |
+| Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2) | [a photoreal person from one portrait](/concepts/essence-2) |
 | **Cloud rendering (default)** | yes | yes |

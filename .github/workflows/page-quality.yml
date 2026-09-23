@@ -1,0 +1,27 @@
+name: Page quality
+
+# G11 + G12: Lighthouse (mobile) on representative pages of the built site.
+# Accessibility 100 (axe-core, 0 violations), SEO 100, best practices >= 95,
+# performance >= 90 (target 95).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: accessibility, performance, best practices, SEO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run build
+      - name: Lighthouse on the built pages
+        run: node scripts/check-quality.mjs

@@ -10,7 +10,7 @@ label: "LiveKit agents"
 
 `livekit-plugins-bithuman` adds a bitHuman avatar to any LiveKit agent worker, on LiveKit Cloud or your own LiveKit server. bitHuman renders the avatar and publishes its video and audio into the room; you provision no GPU.
 
-| | Expression 2 | Essence 2 |
+| Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **Works with the plugin** | yes | yes |
 | **Which model is served** | the agent's own model | the agent's own model |

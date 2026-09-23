@@ -26,7 +26,7 @@ the party that uses it. The European Commission's own FAQ addresses the case
 directly: a company selling an AI avatar API is the **provider**, and the
 customer using that API is the **deployer**.
 
-| | Party | What that means here |
+| Detail | Party | What that means here |
 |---|---|---|
 | **Provider** | bitHuman | We place `essence-2` and `expression-2` on the market under our own name. |
 | **Deployer** | You | You use them under your authority, in your product, in front of your users. |

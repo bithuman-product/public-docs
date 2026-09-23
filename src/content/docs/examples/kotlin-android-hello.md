@@ -30,7 +30,7 @@ road to a frame.
 [Essence 2](/concepts/essence-2) is the same seven files with three of them
 changed, and it is [further down this page](#essence-2-on-android--the-same-seven-files-three-of-them-changed).
 
-| | Expression 2 | Essence 2 |
+| Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | Maven coordinate | `ai.bithuman:expression2-android:0.4.9` | `ai.bithuman:essence2-android:0.5.14` |
 | bitHuman API secret | **not needed** | **required**, and used twice — see that section |

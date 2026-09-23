@@ -26,7 +26,7 @@ binary.
 
 ## What you get, and what you do not
 
-| | |
+| Detail | |
 |---|---|
 | **Renders** | the identity's own canvas at 25 fps — 1080x1920 for the default code — entirely on the device, [measured rates](/performance) |
 | **Driven by** | a 16 kHz mono WAV you make on your Mac in one command |

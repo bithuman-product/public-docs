@@ -24,7 +24,7 @@ with nothing in the loop but the phone. It was written by building it, on an
 
 ## What you get, and what you do not
 
-| | |
+| Detail | |
 |---|---|
 | **Renders** | your own agent's identity, 416x720, 20 fps, entirely on the device |
 | **Driven by** | a bundled 16 kHz WAV, or live microphone input |
