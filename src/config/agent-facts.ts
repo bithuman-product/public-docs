@@ -32,7 +32,7 @@ export function agentFacts(site: string): string {
     `\`version\`) and \`auto\` — seven values in all; send one of the four explicit ` +
     `slugs unless you mean otherwise. Any other spelling returns \`400\` listing the ` +
     `seven, and the names that used to work are under "Naming & migration" on ` +
-    `[Essence 2 & Expression 2](${site}/concepts/models).\n` +
+    `[Models](${site}/concepts/models#naming--migration).\n` +
     `- **Nothing defaults to Essence 2.** \`essence-2\` is the standard model for ` +
     `photorealistic people, but \`POST /v1/agent/generate\` with no \`model\` field ` +
     `creates an \`expression-1\` agent. Send \`model\` explicitly on every generate ` +
@@ -79,6 +79,11 @@ export function agentFacts(site: string): string {
     `resolver and \`Essence2Metering.apiSecret\` — and setting one does not arm the ` +
     `other. Both are \`arm64-v8a\` only, both need \`useLegacyPackaging = true\`, and ` +
     `they declare different \`minSdk\`: [Android SDK](${site}/sdk/android).\n` +
+    `- **Self-hosting is gated by credits alone, and it runs online.** Every ` +
+    `self-hosted or on-device render authenticates over the internet. Running ` +
+    `completely off the internet is offline licensing — Business and Enterprise only, ` +
+    `arranged through sales, not self-serve, and not offered on phones: ` +
+    `[offline licensing](${site}/guides/pricing#offline-licensing).\n` +
     `- **Python installs into a virtual environment.** \`pip install bithuman\` against ` +
     `a system Python on Debian or Ubuntu is refused with ` +
     `\`error: externally-managed-environment\`; create and activate a venv first: ` +
