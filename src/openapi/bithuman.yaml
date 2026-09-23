@@ -1715,6 +1715,17 @@ paths:
                           example: 198106157
                         votes:
                           type: integer
+                        image_url:
+                          type: string
+                          description: >-
+                            The identity's public poster (its thumbnail, else its
+                            image) — the picture a gallery card shows. Empty when
+                            the identity has neither.
+                        gender:
+                          type: string
+                          description: >-
+                            The identity's stored gender (e.g. `feminine`,
+                            `masculine`), for matching a voice. Empty when unset.
         "429":
           $ref: "#/components/responses/RateLimitedByAddress"
 
