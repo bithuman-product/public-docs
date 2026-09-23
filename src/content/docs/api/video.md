@@ -147,7 +147,7 @@ the trained per-identity model doesn't exist yet (`agent <code>'s <family>
 model hasn't been generated yet`); `essence-1` needs the agent's `.imx` model file (present on
 every completed essence-1 creation), and `expression-1` needs an
 expression-1 agent — or the free, instant expression-1 model add on any agent
-with an image and a voice ([how](/api/agents#using-expression-1-on-an-existing-agent)).
+with an image and a voice ([how](/api/agents#add-a-model-to-an-existing-agent)).
 Every 409 here names the call that fixes it. Check the agent's
 `supported_models` on the [Agents API](/api/agents#poll-status), or
 [add the model](/api/agents#add-a-model-to-an-existing-agent) first.

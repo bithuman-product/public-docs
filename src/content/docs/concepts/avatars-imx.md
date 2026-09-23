@@ -143,7 +143,7 @@ expected, not a mismatch
 > **Never send an engine id to the API.** The `model` parameter takes the
 > product names only — `essence-1`, `essence-2`, `expression-1`,
 > `expression-2` — and anything else returns
-> [`400 VALIDATION_ERROR`](/api/agents#creation-failure-modes). An engine id is
+> [`400 VALIDATION_ERROR`](/api/agents#errors). An engine id is
 > something you *read* off a file you already have, never something you *send*.
 
 ## File-format stability

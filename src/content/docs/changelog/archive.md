@@ -117,7 +117,7 @@ label: "Changelog archive"
 are now `essence-2` and an internal model — see
 [Naming & migration](/concepts/models#naming--migration).*
 
-- `model: "auto"` on [`POST /v1/agent/generate`](/api/agents#auto--let-the-platform-pick-the-model)
+- `model: "auto"` on [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
   routes a photorealistic person to `essence-2` and a cartoon, animal or
   creature to `expression-2`. An explicit Essence 2 creation of anything but a
   photorealistic human gets `422 MODEL_SUBJECT_MISMATCH` before billing.
