@@ -1,0 +1,36 @@
+---
+// "Choose your path": one row per way to run bitHuman, from src/data/platforms.ts.
+import { PLATFORMS } from "../data/platforms";
+---
+<div class="path-table" role="region" aria-label="Choose your path" tabindex="0">
+  <table>
+    <thead><tr><th scope="col">You want to…</th><th scope="col">Use</th><th scope="col">Needs</th><th scope="col">First command</th><th scope="col">Time</th></tr></thead>
+    <tbody>
+      {PLATFORMS.map((p) => (
+        <tr>
+          <td data-label="You want to…"><a href={p.docs}>{p.want}</a></td>
+          <td data-label="Use">{p.use}</td>
+          <td data-label="Needs">{p.needs}</td>
+          <td data-label="First command">{p.id === "offline" ? <a href="/guides/pricing#offline-licensing">Contact sales</a> : <code class="pt-cmd">{p.first}</code>}</td>
+          <td data-label="Time" class="pt-time">{p.time}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<style>
+  .path-table { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--r-lg); }
+  .path-table table { width: 100%; border-collapse: collapse; font-size: var(--ft-sm); }
+  .path-table th { text-align: left; font-weight: var(--fw-medium); color: var(--color-text-secondary); background: var(--color-surface-2); padding: 0.6rem 0.8rem; white-space: nowrap; }
+  .path-table td { padding: 0.6rem 0.8rem; border-top: 1px solid var(--color-border); vertical-align: top; }
+  .path-table td:first-child a { font-weight: var(--fw-medium); }
+  .pt-time { white-space: nowrap; }
+  .pt-cmd { font-size: 0.8rem; word-break: break-all; }
+  @media (max-width: 700px) {
+    .path-table { border: 0; overflow: visible; }
+    .path-table thead { display: none; }
+    .path-table tr { display: block; border: 1px solid var(--color-border); border-radius: var(--r-lg); padding: var(--space-3); margin-bottom: var(--space-3); }
+    .path-table td { display: block; border: 0; padding: 0.2rem 0; }
+    .path-table td::before { content: attr(data-label); display: block; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  }
+</style>

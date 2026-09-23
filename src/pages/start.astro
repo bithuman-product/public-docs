@@ -1,171 +1,86 @@
 ---
 import Base from "../layouts/Base.astro";
-import Button from "../components/Button.astro";
 import CodeTabs from "../components/CodeTabs.astro";
-import Playground from "../components/Playground.astro";
-import { hubMeta, START_CLI, START_EMBED } from "../config/hubs";
+import LiveDemo from "../components/LiveDemo.astro";
+import PathTable from "../components/PathTable.astro";
+import PerfHeadline from "../components/PerfHeadline.astro";
+import { hubMeta } from "../config/hubs";
+import { PLATFORMS } from "../data/platforms";
 
 const meta = hubMeta("start");
-// The canonical CLI happy path — the same four steps src/content/docs/sdk/cli.md
-// teaches; the bytes live in src/config/hubs.ts so /llms-full.txt carries them too.
-const cliRun = [{ label: "macOS / Linux", lang: "bash", code: START_CLI }];
-const embed = [{ label: "HTML", lang: "html", code: START_EMBED }];
+const next = (docs: string) => (docs.startsWith("/sdk/") ? `${docs}#first-frame` : docs);
 ---
 
 <Base title="Get started — bitHuman docs" description={meta.description}>
-  {/* HERO */}
   <section class="s-hero">
     <div class="container">
-      <span class="eyebrow">Get started</span>
-      <h1>Your first visual agent</h1>
-      <p class="lede">A real-time avatar that sees, hears, and talks back. See one work right now with no setup — then choose how you want to run your own.</p>
+      <h1>Get started</h1>
+      <p class="lede">Realtime talking avatars from one portrait: Essence 2 for photoreal people, Expression 2 for any character. Talk to one now, then pick how you run your own.</p>
     </div>
   </section>
 
-  {/* STEP 1 — SEE IT WORK (no setup) */}
-  <section class="s-step">
-    <div class="container">
-      <div class="s-head">
-        <span class="s-num">1</span>
-        <div>
-          <h2>See one work — no setup</h2>
-          <p>Pick an agent and hit <strong>Launch</strong> to talk to a live avatar in your browser. No account, no install.</p>
-        </div>
-      </div>
-      <Playground />
-      <p class="s-note">Want it on your own site? Drop in one <code>&lt;iframe&gt;</code> — it needs no API secret. Keep the <code>*</code> in <code>allow</code>; without it the microphone will not work. Details: <a href="/api/quickstart">API quickstart</a>.</p>
-      <CodeTabs tabs={embed} title="Embed an agent" />
-      <p class="s-note"><strong>Or run the model on your own machine — still with no setup.</strong> Add <code>?render=local</code> to any agent's page and the model downloads into your tab and renders there, instead of on our GPU. No account, no install, no API secret: <a href="https://www.bithuman.ai/A74NWD9723?render=local" target="_blank" rel="noopener">try it on a showcase agent →</a> The first visit fetches the model (50–200 MB, depending on the agent) and later visits use the cached copy. The agent's own model decides which engine runs — you don't choose one. If that agent has no browser bundle yet, the session quietly falls back to our GPU rather than showing you a wrong face. <a href="/sdk/web#render-in-the-tab">How browser rendering works →</a></p>
-    </div>
-  </section>
-
-  {/* STEP 2 — PICK YOUR PATH */}
-  <section class="s-step alt">
-    <div class="container">
-      <div class="s-head">
-        <span class="s-num">2</span>
-        <div>
-          <h2>Choose how you run it</h2>
-          <p>There's only one real decision: let us host it, or run it on your own hardware. You can switch later — it's the same engine and the same avatars either way.</p>
-        </div>
-      </div>
-
-      <div class="fork">
-        <div class="fork-card">
-          <span class="fork-tag">Cloud</span>
-          <h3>Use the cloud API</h3>
-          <p>We host the GPU. Call simple REST endpoints to generate, host, and drive avatars. Best for web apps and zero-ops backends.</p>
-          <ul>
-            <li>No infrastructure to run</li>
-            <li>Works from any language over HTTP</li>
-          </ul>
-          <Button href="/api/quickstart">Start with the API</Button>
-        </div>
-
-        <div class="fork-card">
-          <span class="fork-tag">On your hardware</span>
-          <h3>Run it yourself (SDK)</h3>
-          <p>The render happens on your machine, billed in credits at the self-hosted rate. One page per platform:</p>
-          <ul>
-            <li><a href="/sdk/cli">CLI</a> — macOS &amp; Linux, no code</li>
-            <li><a href="/sdk/python">Python</a> · <a href="/sdk/apple">Apple</a> · <a href="/sdk/android">Android</a> · <a href="/sdk/web">Web</a></li>
-            <li><a href="/guides/self-hosting">Self-hosting</a> · <a href="/guides/pricing#offline-licensing">Offline licensing</a> (Business &amp; Enterprise)</li>
-          </ul>
-          <Button href="/sdk" variant="secondary">Get the SDK →</Button>
-        </div>
-      </div>
-
-      <div class="nudge">
-        <p><strong>Not sure?</strong> Most people start on-device — it is <strong>four lines</strong> to a talking avatar in your browser:</p>
-        <CodeTabs tabs={cliRun} title="Run locally with the CLI" />
-        <p class="s-note">Step 2 (<code>bithuman login</code>) is required: without a credential, <code>run</code> and <code>render</code> stop before the first frame (exit 77). In CI, set <code>BITHUMAN_API_SECRET</code>. Only a showcase <code>pull</code> is anonymous. Conversation is billed per minute — see <a href="/guides/pricing">pricing</a>.</p>
-        <p class="s-note">Full walkthrough: <a href="/sdk/cli">the CLI page →</a></p>
+  <section class="s-block">
+    <div class="container s-demo">
+      <LiveDemo />
+      <div>
+        <h2 id="api-secret">Your API secret</h2>
+        <p>Everything except the web embed uses an API secret. Create one in the console, then export it:</p>
+        <CodeTabs tabs={[{ label: "Shell", lang: "bash", code: `export BITHUMAN_API_SECRET="<your API secret>"` }]} />
+        <p class="s-small"><a href="https://www.bithuman.ai/developer/api-keys">Create an API secret ↗</a> · <a href="/start/api-secret">How the API secret works</a></p>
       </div>
     </div>
   </section>
 
-  {/* STEP 3 — GOOD TO KNOW */}
-  <section class="s-step">
+  <section class="s-block alt">
     <div class="container">
-      <div class="s-head">
-        <span class="s-num">3</span>
-        <div>
-          <h2>Two ideas worth knowing</h2>
-          <p>That's all the vocabulary you need to read the rest of the docs.</p>
-        </div>
-      </div>
-      <div class="ideas">
-        <div class="idea">
-          <h3>Essence 2 vs Expression 2</h3>
-          <p>Pick a model by character. <strong>Essence 2</strong> animates a photorealistic person from their own footage. <strong>Expression 2</strong> generates the whole scene from one portrait — stylized characters, animals and creatures, and people too. Either way you provide one portrait image and bitHuman generates the rest. <a href="/concepts/models">Compare the models →</a></p>
-        </div>
-        <div class="idea">
-          <h3>One file, one loop</h3>
-          <p>Every avatar is one portable model file, and every platform drives it the same way: push audio in, take lip-synced frames out. <a href="/concepts/avatars-imx">How avatars work &rarr;</a> &middot; <a href="/concepts/models#where-each-model-runs">Which model runs where &rarr;</a></p>
-        </div>
-      </div>
+      <h2 id="choose-your-path">Choose your path</h2>
+      <PathTable />
     </div>
   </section>
 
-  {/* WHERE NEXT */}
-  <section class="s-next">
+  <section class="s-block">
     <div class="container">
-      <h2>Where to next</h2>
-      <div class="next-row">
-        <a class="next-card" href="/sdk">SDK <span>Every platform, one page each</span></a>
-        <a class="next-card" href="/examples">Examples <span>Whole projects for Android, iOS, Python and REST</span></a>
-        <a class="next-card" href="/guides">Guides <span>Build, deploy, embed, and price your agent</span></a>
-        <a class="next-card" href="/examples#ready-made-avatars">Showcase <span>See what teams have shipped</span></a>
-      </div>
+      <h2 id="run-it">Run it</h2>
+      <p class="muted">Each block runs as pasted after you export your API secret.</p>
+      {PLATFORMS.filter((p) => p.card).map((p) => (
+        <article class="s-card" id={p.id}>
+          <h3>{p.want} <span class="s-use">· {p.use}</span></h3>
+          <CodeTabs tabs={[{ label: p.use.split(" (")[0], lang: p.card!.lang, code: p.card!.code }]} />
+          <p class="s-expect"><strong>Expected:</strong> {p.card!.expect}</p>
+          <p class="s-next"><a href={next(p.docs)}>Next: {p.use.split(" (")[0]} →</a></p>
+        </article>
+      ))}
+      <article class="s-card" id="apps">
+        <h3>Ship an app <span class="s-use">· Apple, Android</span></h3>
+        <p>Add the dependency, then follow the platform page's first frame:</p>
+        <CodeTabs tabs={PLATFORMS.filter((p) => p.id === "apple" || p.id === "android").map((p) => ({ label: p.id === "apple" ? "Swift" : "Kotlin", lang: p.id === "apple" ? "swift" : "kotlin", code: p.first }))} />
+        <p class="s-next"><a href="/sdk/apple#first-frame">Apple →</a> · <a href="/sdk/android#first-frame">Android →</a> · <a href="/sdk/livekit">LiveKit →</a> · <a href="/sdk/mcp">MCP →</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="s-block alt">
+    <div class="container">
+      <h2 id="performance">How fast it runs</h2>
+      <PerfHeadline />
+      <p class="s-small"><a href="/concepts/models">Which model?</a> · <a href="/guides/pricing">Pricing: credits pay for talking time; idle time is free</a> · <a href="/examples">Examples</a></p>
     </div>
   </section>
 </Base>
 
 <style>
-  .s-hero { padding-block: var(--space-12) var(--space-10); border-bottom: 1px solid var(--color-border); }
-  .s-hero h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
-  .s-hero .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
-
-  .s-step { padding-block: var(--space-10); border-bottom: 1px solid var(--color-border); }
-  .s-step.alt { background: var(--color-surface-2); }
-  .s-head { display: flex; gap: var(--space-4); align-items: flex-start; margin-bottom: var(--space-6); max-width: 70ch; }
-  .s-num { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-weight: var(--fw-bold); font-size: var(--ft-md); }
-  .s-head h2 { font-size: var(--fh-xl); }
-  .s-head p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-lg); }
-  .s-note { margin-top: var(--space-4); color: var(--color-text-tertiary); font-size: var(--ft-sm); }
-  .s-note a { color: var(--color-primary); font-weight: var(--fw-medium); }
-
-  /* fork */
-  .fork { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
-  .fork-card { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--r-2xl); background: var(--color-surface); }
-  .fork-tag { align-self: flex-start; padding: 0.2rem 0.6rem; border-radius: var(--r-full); background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-xs); font-weight: var(--fw-medium); margin-bottom: var(--space-3); }
-  .fork-card h3 { font-size: var(--fh-md); }
-  .fork-card > p { margin-top: var(--space-2); color: var(--color-text-secondary); }
-  .fork-card ul { margin: var(--space-3) 0 var(--space-5); padding-left: 1.1rem; color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .fork-card ul li { margin: 0.25rem 0; }
-  .fork-card ul a { color: var(--color-primary); font-weight: var(--fw-medium); }
-  .fork-card :global(.btn) { margin-top: auto; align-self: flex-start; }
-
-
-  .nudge { margin-top: var(--space-6); padding: var(--space-5); border: 1px dashed var(--color-border-strong); border-radius: var(--r-xl); }
-  .nudge > p:first-child { margin-bottom: var(--space-3); color: var(--color-text-secondary); }
-
-  /* ideas */
-  .ideas { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
-  .idea { padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
-  .idea h3 { font-size: var(--ft-lg); }
-  .idea p { margin-top: var(--space-2); color: var(--color-text-secondary); font-size: var(--ft-sm); }
-  .idea a { color: var(--color-primary); font-weight: var(--fw-medium); }
-
-  /* next */
-  .s-next { padding-block: var(--space-10); }
-  .s-next h2 { font-size: var(--fh-lg); margin-bottom: var(--space-5); }
-  .next-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
-  .next-card { display: flex; flex-direction: column; gap: 0.3rem; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); font-weight: var(--fw-medium); transition: all var(--t-med) var(--ease); }
-  .next-card span { font-weight: var(--fw-regular); color: var(--color-text-tertiary); font-size: var(--ft-sm); }
-  .next-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-
-  @media (max-width: 820px) {
-    .fork, .ideas, .next-row { grid-template-columns: 1fr; }
-  }
+  .s-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
+  .s-hero h1 { font-size: var(--fh-3xl); }
+  .s-hero .lede { margin-top: var(--space-4); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
+  .s-block { padding-block: var(--space-8); }
+  .s-block.alt { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
+  .s-block h2 { font-size: var(--fh-lg); margin-bottom: var(--space-3); }
+  .s-demo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: start; }
+  .s-demo p { margin-block: var(--space-3); }
+  .s-card { margin-top: var(--space-6); }
+  .s-card h3 { font-size: var(--ft-lg); margin-bottom: var(--space-3); }
+  .s-use { color: var(--color-text-tertiary); font-weight: var(--fw-regular); }
+  .s-expect, .s-next, .s-small { margin-top: var(--space-3); font-size: var(--ft-sm); }
+  .s-expect { color: var(--color-text-secondary); }
+  @media (max-width: 900px) { .s-demo { grid-template-columns: 1fr; } }
 </style>

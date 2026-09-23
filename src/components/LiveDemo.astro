@@ -1,0 +1,36 @@
+---
+// The one live demo on the site: the Wise Pup sample avatar, embedded on click.
+import { DEMO_AGENT, EMBED_URL } from "../data/platforms";
+---
+<div class="live-demo" data-live-demo>
+  <img src="/images/demo-wise-pup-960.webp" srcset="/images/demo-wise-pup-640.webp 640w, /images/demo-wise-pup-960.webp 960w" sizes="(max-width: 700px) 100vw, 560px" width="960" height="536" alt={`${DEMO_AGENT.name}, a sample Expression 2 avatar`} fetchpriority="high" decoding="async" />
+  <button class="ld-launch" type="button" data-src={EMBED_URL}><span class="dot" aria-hidden="true"></span> Talk to {DEMO_AGENT.name}</button>
+  <p class="ld-note">Live, in your browser. No account. Allow the microphone when asked.</p>
+</div>
+<script>
+  document.querySelectorAll("[data-live-demo]").forEach((root) => {
+    const btn = root.querySelector(".ld-launch") as HTMLButtonElement;
+    btn?.addEventListener("click", () => {
+      const f = document.createElement("iframe");
+      f.src = btn.dataset.src!;
+      f.allow = "microphone *; autoplay *";
+      f.title = "bitHuman live avatar";
+      f.className = "ld-frame";
+      root.querySelector("img")?.remove();
+      btn.remove();
+      root.prepend(f);
+      root.classList.add("live");
+    });
+  });
+</script>
+<style>
+  .live-demo { position: relative; border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface-2); border: 1px solid var(--color-border); aspect-ratio: 960 / 536; }
+  .live-demo.live { aspect-ratio: auto; }
+  .live-demo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .live-demo :global(.ld-frame) { width: 100%; height: 600px; border: 0; display: block; }
+  .ld-launch { position: absolute; left: 50%; bottom: var(--space-8); transform: translateX(-50%); display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border: 0; border-radius: 999px; background: var(--color-primary); color: #fff; font-weight: var(--fw-medium); font-size: var(--ft-md); box-shadow: var(--shadow-md); cursor: pointer; }
+  .ld-launch:hover { background: var(--coral-700); }
+  .ld-launch .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+  .ld-note { position: absolute; left: 0; right: 0; bottom: var(--space-2); text-align: center; font-size: var(--ft-xs); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6); margin: 0; }
+  .live-demo.live .ld-note { position: static; color: var(--color-text-tertiary); text-shadow: none; padding: var(--space-2); }
+</style>

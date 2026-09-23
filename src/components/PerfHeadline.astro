@@ -1,0 +1,17 @@
+---
+// The generated performance headline. Its numbers are written between the
+// FLOORS:HEADLINE markers of src/partials/performance-headline.md by the
+// performance emitter; nothing here types a number.
+import { Content, rawContent } from "../partials/performance-headline.md";
+const filled = /\|/.test(rawContent());
+---
+<div class="perf-headline">
+  {filled ? <div class="prose ph-table"><Content /></div> : null}
+  <p class="ph-link"><a href="/performance">Frame rates for every platform, with memory and method →</a></p>
+</div>
+<style>
+  .perf-headline { margin-top: var(--space-4); }
+  .ph-table :global(table) { width: 100%; font-size: var(--ft-sm); }
+  .ph-table :global(p) { font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ph-link { margin-top: var(--space-3); font-size: var(--ft-sm); }
+</style>

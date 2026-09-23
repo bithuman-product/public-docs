@@ -1460,6 +1460,7 @@ async function selftest() {
   }
   for (const [rule, n] of Object.entries(counts)) {
     if (rule === "V2") continue; // no page pins with == today; the fixture arm proves it fires
+    if (rule === "V1b") continue; // the .astro pages render versions from versions.json; the fixture arm proves it fires
     const ok = n > 0;
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${(rule + " finds subjects in the real corpus").padEnd(64)} n=${n}`);
@@ -1491,7 +1492,10 @@ if (!files.some((f) => isChangelogHead(f.path))) {
   console.log("::error::no changelog.md in the corpus — V7 is grading nothing");
   process.exit(1);
 }
-for (const rule of ["V1", "V1b", "V3", "V4", "V5", "V6", "V8", "V10", "V11"]) {
+// V1b is graded when it fires but is not required to: the .astro pages render
+// their versions from src/data/versions.json (graded by sync-versions.mjs
+// --registries), so a landing page with no literal coordinate is correct.
+for (const rule of ["V1", "V3", "V4", "V5", "V6", "V8", "V10", "V11"]) {
   if (seen[rule] === 0 && !cannot.length) {
     console.log(`::error::${rule} matched nothing in ${CORPUS_ROOTS.join(" + ")} — the extractor stopped seeing pages, not the pages stopped naming versions`);
     process.exit(1);
