@@ -57,7 +57,7 @@ Download the `wise-pup` sample avatar, the shared Expression 2 engine and a spee
 
 ```bash
 curl -fL -o A23WJF0199.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
-curl -fLO "https://tmoobjxlwcwvxvjeppzq.supabase.co/storage/v1/object/public/web/engines/expression-2/mac-arm64-1.0.0.engine"
+curl -fLO "https://github.com/bithuman-product/homebrew-bithuman/releases/download/expression2-engine-mac-arm64-1.0.0/mac-arm64-1.0.0.engine"
 curl -fL -o speech16k.wav "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2&member=demo_speech_16k.wav"
 ```
 
@@ -101,7 +101,7 @@ be_essence2_handle h;
 be_essence2_set_api_secret(secret);                    // or Essence2Credential.set in Swift
 if (be_essence2_create(imx_path, NULL, 0, &h) != 0) { /* -3: no secret, rejected, or no network */ }
 while (!be_essence2_is_ready(h)) { /* show be_essence2_idle_frame() meanwhile */ }
-int32_t w, hgt; be_essence2_get_info(h, &w, &hgt);     // frame is w * hgt * 3 RGB bytes
+int32_t w, hgt; be_essence2_get_info(h, &w, &hgt);     // frame is w * hgt * 3 BGR bytes
 be_essence2_push_audio(h, pcm16k_int16, count);        // -2: pull frames, then push again
 while (be_essence2_frames_available(h) > 0) be_essence2_pull_frame(h, buf, w * hgt * 3);
 be_essence2_destroy(h);
