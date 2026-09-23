@@ -115,6 +115,5 @@ All SDKs that target the same engine ABI produce byte-equivalent frames from the
 
 ## Where to go next
 
-- [Agent lifecycle](/concepts/agent-lifecycle) — generate an agent, then stream it.
 - [Quickstart](/api/quickstart) — your first avatar in ~2 minutes.
 - [Render in the tab](/sdk/web#render-in-the-tab) — run the same lip-sync client-side in the browser.

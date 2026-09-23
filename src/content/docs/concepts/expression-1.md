@@ -1,83 +1,45 @@
 ---
 title: "Expression 1"
-description: "Official guide to expression-1 — bitHuman's first-generation expressive avatar model: audio-driven facial animation from a portrait, GPU-only, how it is served and self-hosted, what it costs, and what the .imx artifact contains."
+description: "Expression 1 — bitHuman's first-generation expressive model: facial animation generated from a portrait at runtime, GPU-only. How it is served and self-hosted."
 section: concepts
 group: "Models"
 order: 7
 label: "Expression 1"
 ---
 
-> **Note — first generation, and still maintained.** `expression-1` is
-> bitHuman's original expressive model and is **not deprecated**: it is what
-> `?model=expression` serves, it is the default model when `/v1/agent/generate`
-> is called with no `model`, and thousands of live agents run on it today. For
-> **new** expressive work the recommended model is
-> [`expression-2`](/concepts/expression-2).
-
 ## What it is
 
-`expression-1` animates a face from a **portrait image** rather than replaying
-a pre-recorded identity: you give it audio, and it generates the facial motion
-to match. That is what makes it expressive, and it is also why it needs more
-hardware than [`essence-1`](/concepts/essence-1).
+**Expression 1** (`expression-1`) animates a face from a **portrait image** at
+runtime: you give it audio, and it generates the facial motion to match, with no
+per-identity build step. It is maintained, not deprecated; `?model=expression`
+serves it, and it is what `/v1/agent/generate` creates when the request names no
+`model`.
 
-`-1` is naming symmetry with [Expression 2](/concepts/expression-2), which is a
-different engine — not an earlier version of the same one.
+It is a different engine from [Expression 2](/concepts/expression-2), not an
+earlier version of it. For **new** expressive work, Expression 2 is the
+recommended model.
 
 ## Where it runs
 
-**GPU only.** That is an explicit product decision, not a gap: `expression-1`
-is served on bitHuman's cloud GPUs and has no CPU, browser or on-device build,
-so a missing Apple, browser or Android artifact for this model is **correct**.
+**On an NVIDIA GPU only**, by design. bitHuman serves it from cloud GPUs, and you
+can run it on your own GPU with
+[the Expression 1 GPU container](/guides/self-hosting#the-expression-1-gpu-container).
+There is no CPU, Apple, Android or browser build, and none is planned. For an
+expressive model on a Mac, a phone or in a browser, use Expression 2.
 
-See **[Where each model runs](/concepts/models#where-each-model-runs)** for the per-model
-matrix. Nothing here restates it.
+## What the file is
 
-## How to self-host it
+Usually nothing to download: Expression 1 renders from the agent's portrait, so
+the download endpoint answers
+[`400 MODEL_NOT_DOWNLOADABLE`](/api/errors#model-errors) for most agents.
+An agent that went through the lip step owns a baked `.imx`, and the endpoint
+serves that file. The engine weights are not part of any download; they ship
+inside the container image.
 
-**One published route, and it is a container:**
-`sgubithuman/expression-avatar` on Docker Hub, which needs an NVIDIA GPU. The
-[self-hosted deployment guide](/guides/self-hosting#the-expression-1-gpu-container) has the run
-instructions, the digest to pin and the licence terms.
-
-**There is no Apple on-device route for `expression-1`.** The Swift package we
-publish exposes `bitHumanKit`, `BithumanEngineProtocol` and `Expression2`;
-there is no Expression **1** engine type in it to import. If you need an
-avatar that runs on a Mac or an iPhone without a GPU server, use
-[`essence-1`](/concepts/essence-1) or [`essence-2`](/concepts/essence-2)
-instead.
-
-## What it costs
-
-Billed per live minute at the first-generation expressive rate, with a one-time
-agent-creation charge. **All numbers live on one page:**
-[Pricing & credits](/guides/pricing). The live rate card your key sees is
-`GET /v1/pricing`.
-
-## What the artifact is
-
-`expression-1` shares the [`.imx` container](/concepts/avatars-imx) and the
-same public store as [`essence-1`](/concepts/essence-1) — the two
-first-generation models have one artifact format between them. You fetch it
-the same way:
-
-```bash
-curl -H "api-secret: $BITHUMAN_API_SECRET" \
-  https://api.bithuman.ai/v1/agent/<CODE>/model/download
-```
-
-★ **Not every `expression-1` agent has one.** The model can animate from a
-portrait without a per-identity file, so an agent created that way has nothing
-to download and the endpoint answers `unavailable` for it. That is the designed
-behaviour, not a broken agent: if you need a downloadable artifact, check the
-response rather than assuming one exists.
-
-The engine weights are a separate thing and are not part of your download —
-they ship inside the self-hosting container image.
+Rates are on [pricing](/guides/pricing).
 
 ## See also
 
-* [Models](/concepts/models) — the four models, where each runs, and which to pick.
+* [Models](/concepts/models) — the four models, where each runs, and which to pick
 * [Essence 1](/concepts/essence-1) — the other first-generation model
 * [Expression 2](/concepts/expression-2) — the recommended model for new work
-* [Self-hosting](/guides/self-hosting#the-expression-1-gpu-container) — the GPU container

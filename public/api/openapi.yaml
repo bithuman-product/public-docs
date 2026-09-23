@@ -4398,7 +4398,7 @@ tags:
     description: "The push/drain contract every SDK shares — PCM in, lip-synced frames out: [https://docs.bithuman.ai/concepts/audio-streaming](https://docs.bithuman.ai/concepts/audio-streaming)."
   - name: agent-lifecycle
     x-displayName: Agent lifecycle
-    description: "Generate, poll, resolve and drive an agent over the API and SDKs: [https://docs.bithuman.ai/concepts/agent-lifecycle](https://docs.bithuman.ai/concepts/agent-lifecycle)."
+    description: "Generate, poll, resolve and drive an agent over the API and SDKs: [https://docs.bithuman.ai/api/agents](https://docs.bithuman.ai/api/agents)."
   - name: sdk-python
     x-displayName: Python SDK
     description: "`pip install bithuman` — open an avatar, render audio through it, take frames: [https://docs.bithuman.ai/sdk/python](https://docs.bithuman.ai/sdk/python)."

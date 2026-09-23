@@ -152,5 +152,4 @@ The `.imx` format is **forward-compatible within a major version**. The first ti
 
 - [Building avatars](/guides/building-avatars) — design likeness, voice, and personality.
 - [Audio streaming](/concepts/audio-streaming) — drive the `.imx` with audio.
-- [Agent lifecycle](/concepts/agent-lifecycle) — generate, resolve, and go live.
 - [CLI reference](/sdk/cli) — `bithuman open`, `pull`, `list`, and more.

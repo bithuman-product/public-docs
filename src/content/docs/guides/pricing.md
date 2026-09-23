@@ -58,7 +58,7 @@ than the debit (the charge is still the routed model's rate, 500 or 2000).
 
 ## Talking video — per minute of output
 
-[Talking-video renders](/concepts/talking-video) bill per minute of finished output, **rounded up** (minimum one minute). A failed render is automatically refunded.
+[Talking-video renders](/api/video) bill per minute of finished output, **rounded up** (minimum one minute). A failed render is automatically refunded.
 
 
 | Model | Per minute of output |

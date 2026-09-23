@@ -1,98 +1,54 @@
 ---
 title: "Essence 1"
-description: "Official guide to essence-1 — bitHuman's first-generation avatar model: what it is, where it runs, how to self-host it with the Python SDK, the CLI or the Android SDK, what it costs, and what the .imx artifact contains."
+description: "Essence 1 — bitHuman's first-generation avatar model: a pre-built identity lip-synced in real time on virtually any CPU. Where it runs, how to self-host it, and what the .imx file contains."
 section: concepts
 group: "Models"
 order: 6
 label: "Essence 1"
 ---
 
-> **Note — first generation, and still maintained.** `essence-1` is bitHuman's
-> original avatar model. It is **not deprecated**: it runs the majority of the
-> agents on the platform today, it is what `?model=essence` serves, and it is
-> the model behind the published Python SDK, the CLI and the Android SDK. For
-> **new** photorealistic work the recommended model is
-> [`essence-2`](/concepts/essence-2) — see
-> [Essence 2 & Expression 2](/concepts/models) for the comparison.
-
 ## What it is
 
-`essence-1` is a portable rendering core with a stable C ABI, wrapped by every
-bitHuman SDK. You give it 16 kHz mono PCM; it gives you 25 fps avatar video
-frames, lip-synced to that audio, by reading a pre-built identity out of an
-[`.imx` avatar file](/concepts/avatars-imx).
+**Essence 1** (`essence-1`) is bitHuman's original avatar model, and it is
+maintained, not deprecated. It reads a pre-built identity out of an
+[`.imx` file](/concepts/avatars-imx), plays its base motion, and patches the
+mouth in real time to match 16 kHz mono audio, at 25 fps. It runs on virtually
+any CPU — no GPU, no accelerator — and supports custom gestures. `?model=essence`
+serves it.
 
-Two properties are the reason it is still here:
-
-* **It runs on virtually any CPU.** No GPU, no accelerator, no cloud round
-  trip. A Raspberry Pi is enough for a 256×256 avatar.
-* **It is the widest published surface we have.** The Python wheel, the CLI and
-  the Android SDK all ship it, and all three resolve for a stranger with no
-  bitHuman account.
-
-It is a **core library plus SDKs**, not a tiered model: there is one
-`essence-1`, and no light/max variants.
+For **new** photorealistic work, the recommended model is
+[Essence 2](/concepts/essence-2).
 
 ## Where it runs
 
-See **[Where each model runs](/concepts/models#where-each-model-runs)** — that page is the
-single matrix for every model and is kept in step with the engineering source
-of truth. Nothing here restates it.
+In bitHuman's cloud, and on your own hardware through:
 
-The short version: bitHuman serves `essence-1` for you in the cloud, and you
-may also run it yourself on macOS, in a browser, or in an Android app.
+- **Python** — `pip install bithuman` opens an Essence 1 `.imx` with no extra;
+  see the [Python SDK](/sdk/python).
+- **The CLI** — `bithuman run` on macOS Apple Silicon and Linux x86_64; see the
+  [CLI](/sdk/cli). `render` does not take Essence 1 — use the Python SDK or the
+  [Video API](/api/video) for a file.
+- **The browser** — [`?render=local`](/sdk/web#render-in-the-tab).
 
-## How to self-host it
+There is no Essence 1 product in the Swift package, and the legacy Android
+artifact `ai.bithuman:sdk` cannot authenticate on a device — on a phone, use
+Essence 2 or Expression 2. The full matrix is on
+[Models](/concepts/models#where-each-model-runs).
 
-Three published routes, all resolvable without a bitHuman-issued artifact
-beyond your own agent's `.imx`:
+## What the file is
 
-* **Python** — `pip install bithuman`, then open the `.imx` with the two-call
-  surface the [Python SDK](/sdk/python) page documents (`AsyncBithuman`, the
-  2.x spelling, is carried alongside it and keeps working). PyPI serves **2.11.6** with wheels for CPython 3.10–3.14 on macOS arm64, Linux x86_64 and
-  Linux aarch64. There is **no Windows wheel**.
-* **CLI** — the `bithuman` binary from the public Homebrew tap, with macOS
-  arm64 and Linux x86_64 builds. See the [CLI overview](/sdk/cli).
-* **Android** — `ai.bithuman:sdk` on Maven Central. ★ **The published `2.3.6`
-  cannot authenticate on an Android device** — `Avatar.load` throws
-  `be_auth_authenticate: status=11` on every device because the artifact's
-  native library ships with no CA trust store. For an on-device talking head on
-  Android today use [expression-2](/concepts/expression-2)
-  (`ai.bithuman:expression2-android`), which needs no key at all; essence-1 on
-  Android is on the [Android SDK](/sdk/android#troubleshooting)
-  page.
-
-**In your own Apple app:** the Swift package we publish today exposes
-`bitHumanKit`, `BithumanEngineProtocol` and `Expression2`. There is **no
-standalone Essence product in it yet**, so an iOS or macOS app cannot import
-`essence-1` directly — use the Python SDK or the CLI on a Mac, or serve it from
-bitHuman's cloud. This is stated here rather than left to be discovered at
-`swift build`.
-
-## What it costs
-
-`essence-1` is billed per live minute like every other model, at the
-first-generation rate, and agent creation is a one-time charge. **All numbers
-live on one page:** [Pricing & credits](/guides/pricing). The live rate card
-your key sees is `GET /v1/pricing`.
-
-## What the artifact is
-
-One file: `<CODE>.imx`, an encrypted [`.imx` container](/concepts/avatars-imx)
-holding the identity, and optionally baked-in idle and keyword action clips.
-You fetch it with:
+One file, `<CODE>.imx`: the identity, and optionally baked-in idle and gesture
+clips. Download it with `bithuman pull <CODE> --model essence-1`, or:
 
 ```bash
-curl -H "api-secret: $BITHUMAN_API_SECRET" \
-  https://api.bithuman.ai/v1/agent/<CODE>/model/download
+curl -L -o "<CODE>.imx" -H "api-secret: $BITHUMAN_API_SECRET" \
+  "https://api.bithuman.ai/v1/agent/<CODE>/model/download?model=essence-1"
 ```
 
-or with `bithuman pull <CODE>`. `essence-1` artifacts are served from a public
-URL, so the download is a redirect rather than a short-lived signed link — the
-same file, fetched the same way, whichever SDK you point at it.
+Rates are on [pricing](/guides/pricing).
 
 ## See also
 
-* [Models](/concepts/models) — the four models, where each runs, and which to pick.
+* [Models](/concepts/models) — the four models, where each runs, and which to pick
 * [Expression 1](/concepts/expression-1) — the other first-generation model
 * [Essence 2](/concepts/essence-2) — the recommended model for new work
