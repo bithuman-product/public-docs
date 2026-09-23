@@ -25,6 +25,21 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### Swift package 2.14.3 — 2026-09-23
+
+Essence 2 engine 1.12.0 · Expression 2 engine 2.6.5
+
+- **New:** `Essence2Kit`, a Swift API for Essence 2 with the same shape as `Expression2Engine`: `create`, `feed`, `pull`, `idle(into:)`, `interrupt`, `shutdown`. It sets the API secret with `Essence2Credential.set(_:)` and fetches the engine's runtime files for you.
+- **Fixed:** apps that link Essence 2 no longer get a `CoreAudioTypes` linker warning.
+- **Fixed:** the C header now says what the engine delivers: frames are B, G, R.
+- **New:** `be_essence2_last_refusal` returns the reason behind a `-3`.
+- **Action:** set `from: "2.14.3"` and take the `Essence2Kit` product. See [Apple](/sdk/apple).
+
+### Flutter plugin 2.6.13 — 2026-09-23
+
+- **Changed:** Android uses `essence2-android` 0.5.15 and `expression2-android` 0.4.10. iOS and macOS use Essence 2 engine 1.12.0.
+- **Action:** pin `ref: flutter-plugin-v2.6.13`.
+
 ### `essence2-android` 0.5.15 — 2026-09-23
 
 - **New:** `Essence2Credential.set(secret)` sets your API secret once. It covers the avatar download and the session, so `Essence2ModelStore(context)` needs no resolver.

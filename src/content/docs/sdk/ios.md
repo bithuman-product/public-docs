@@ -28,7 +28,7 @@ Toolchain: Xcode 26 or newer, an Apple Developer team, and a physical device for
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.2")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.3")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -143,7 +143,7 @@ The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftU
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.14.2 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.14.3 or newer
   ```
 
 ## Performance
@@ -161,7 +161,6 @@ Frame rates on iPhone and Mac for both models are on the [performance page](/per
 | crash in `__cxa_finalize` when the app quits | `be_essence2_quiesce_all()` was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
-| `ld: warning: Could not find or use auto-linked framework 'CoreAudioTypes'` | a linker option in the Essence 2 library before 2.14.3 | update to 2.14.3; the link succeeded either way |
 | the app is killed mid-conversation with no crash log | `bitHumanKit` exceeded the default memory limit | add the two Apple entitlements |
 | `bitHuman needs an iPhone 16 Pro or newer` | `bitHumanKit`'s device floor | use `Expression2` or `Essence2` directly on that device |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
