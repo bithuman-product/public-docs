@@ -70,7 +70,7 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 
 ### CLI 2.7.3 — 2026-09-24
 
-Tag `cli-v2.7.3`. Engine libessence 2.11.9.
+Tag `cli-v2.7.3`.
 
 - **Changed:** one short command line. `bithuman --help` lists 13 commands and 10 flags; `run` takes `--host` and `--port`. `render <avatar> <audio>` takes the audio as its second argument, writes `<avatar>.mp4` unless you pass `-o`, and, like `run` and `open`, accepts an agent code or a sample avatar's name and downloads it on first use.
 - **Changed:** every old spelling (`-a`, `--offscreen`, `--cloud`, `--allow-public-bind`, `chat`, `info`, `avatars`, …) still works until 2.9.0 and prints one line on stderr naming what to use instead; `--json` output is unchanged. The full list is in [Renamed in 2.7.3](/sdk/cli/reference#renamed-in-273).
