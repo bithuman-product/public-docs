@@ -106,10 +106,10 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 24,
-     "x_realtime": 0.96,
-     "realtime": false,
-     "measured_on": "2026-09-23",
+     "fps": 29,
+     "x_realtime": 1.16,
+     "realtime": true,
+     "measured_on": "2026-09-24",
      "release": "cloud API",
      "clip": {
       "id": "5639-40744-0031",
