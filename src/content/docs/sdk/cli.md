@@ -22,7 +22,7 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 |---|---|---|
 | macOS 14+ on Apple silicon, or Linux on x86_64 or arm64 | the binary | `uname -sm` |
 | A bitHuman sign-in or API secret | `run` and `render` (browsing and downloading need none) | `bithuman account` exits 0 |
-| `ffmpeg` on `PATH` | `render` | `ffmpeg -version` |
+| `ffmpeg` on `PATH` | `render`, and `run` with an Essence 2 avatar | `ffmpeg -version` |
 | `livekit-server` 1.13 or newer (the Linux download includes it) | `run` | `livekit-server --version`; update with `brew upgrade livekit` |
 | Python 3.11 or newer | `run` (its voice agent) | `python3 --version` |
 
@@ -127,6 +127,7 @@ Frame rates for the CLI on macOS and Linux are on the [performance page](/perfor
 | `not signed in`, exit 77, nothing written | no credential | `bithuman login`, or set `BITHUMAN_API_SECRET` |
 | `sign-in failed: auth required`, exit 1 | the credential was rejected | `bithuman login` again, or create a new API secret |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on `PATH` (common in scripts) | install it, or set `BITHUMAN_FFMPEG` to its path |
+| `run` with an Essence 2 avatar: no avatar in the page, and the terminal shows `essence-2: ffmpeg not found` | `ffmpeg` is not on `PATH` | `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
 | `run` says the `livekit-server` binary was not found | `livekit-server` is not installed | `brew install livekit`, or `curl -sSL https://get.livekit.io \| bash` |
 | `run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run` (it needs 1.13 or newer)` | an old `livekit-server` found on `PATH` | `brew upgrade livekit` (macOS), or reinstall with `curl -fsSL https://install.bithuman.ai \| sh` (Linux) |
 | `SLUG_NOT_FOUND`, exit 66 | the slug is not in the sample list | `bithuman list` and copy a slug |
