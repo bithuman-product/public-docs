@@ -25,6 +25,19 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### Swift package 2.15.0 — 2026-09-24
+
+Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
+
+- **Fixed:** Expression 2 lip sync. The mouth moved about 65 ms ahead of the voice; it now lines up (about 15 ms). To do this, the first frame of each stream is shown twice; a stream still carries the same number of frames.
+- **New:** `Expression2Download.avatar(agentCode:)` and `Essence2Download.identity(agentCode:)` download an avatar file from your app. They fetch the smaller Apple build of the file, check its sha256 and keep it in the app's Caches, so a second call downloads nothing. See [Apple](/sdk/apple#download-an-avatar-in-the-app).
+- **Action:** set `from: "2.15.0"`, then `swift package update`.
+
+### Flutter plugin 2.6.15 — 2026-09-24
+
+- **Changed:** iOS and macOS use Expression 2 engine 2.7.0, which fixes lip sync.
+- **Action:** pin `ref: flutter-plugin-v2.6.15`.
+
 ### `bithuman` 2.11.9 — 2026-09-24
 
 - **Fixed:** a rendered MP4's sound starts on its first sample. `python -m bithuman` wrote the audio 64 ms late, so the mouth moved ahead of the voice on every render.

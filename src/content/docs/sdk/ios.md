@@ -28,7 +28,7 @@ Toolchain: Xcode 26 or newer, an Apple Developer team, and a physical device for
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.14.4")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.15.0")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -134,6 +134,17 @@ Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) fr
 
 The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftUI app with microphone input, idle and interruption.
 
+### Download an avatar in the app
+
+Your app can download an avatar file itself, using the secret you set in [Authenticate](#authenticate):
+
+```swift
+let avatarURL = try await Expression2Download.avatar(agentCode: "A23WJF0199")   // Expression 2
+let imxURL = try await Essence2Download.identity(agentCode: "A52DHS2219")      // Essence 2
+```
+
+Both return a local file to pass to `create`. They download the Apple build of the avatar, which is smaller than the full file, and refuse a file whose sha256 does not match. Files are kept in the app's Caches directory under their sha256, so a second call for the same avatar downloads nothing. Pass `directory:` to keep them somewhere else. The shared Expression 2 engine file is not an avatar; download it from the release as shown above.
+
 ## Platform notes
 
 - **A Mac app built in Xcode:** the App template turns on App Sandbox. Under *Signing & Capabilities → App Sandbox*, tick **Outgoing Connections (Client)**, or the engines cannot check your secret. Add the `.imx` files and engine resources to the app bundle; a sandboxed app reads only its bundle and container.
@@ -143,7 +154,7 @@ The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftU
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.14.4 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.15.0 or newer
   ```
 
 ## Performance
