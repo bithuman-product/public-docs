@@ -1618,9 +1618,9 @@ paths:
         - lang: shell
           label: bitHuman CLI
           source: |
-            bithuman list --manifest https://api.bithuman.ai/v1/models/showcase
-            bithuman pull bolt --manifest https://api.bithuman.ai/v1/models/showcase
-            bithuman run ~/.cache/bithuman/showcase/bolt.imx --audio hello.wav --output out.mp4
+            bithuman list                              # this catalogue, with what is cached
+            bithuman pull bolt                         # download one ahead of time
+            bithuman render bolt hello.wav -o out.mp4  # or let render download it
       summary: List the freely downloadable showcase models
       description: |
         The catalogue of **Essence 2** and **Expression 2** showcase identities
@@ -1641,8 +1641,8 @@ paths:
         the gallery are **not** here — being viewable is a different permission
         from the weights being distributable.
 
-        The shape is the bitHuman CLI's manifest v2, so the shipped CLI
-        consumes it directly with `--manifest`.
+        The shape is the bitHuman CLI's manifest v2; `bithuman list` and
+        `bithuman pull` read this catalogue.
 
         **Performance.** The reply carries no frame rates.
         `note_performance` maps each family in the catalogue to the

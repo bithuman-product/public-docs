@@ -14,11 +14,11 @@ Covers the CLI at the version on [Downloads & versions](/downloads). The binary 
 
 | Command | Purpose |
 |---|---|
-| `bithuman run [avatar]` | Live avatar in your browser. No argument runs `wise-pup`. Alias: `chat` |
-| `bithuman render <file> -a <audio>` | Audio in, MP4 out |
-| `bithuman pull <slug \| AGENT_CODE>` | Download a sample avatar, or your own agent's model |
-| `bithuman list` | List the sample avatars. Alias: `avatars` |
-| `bithuman open <file>` | Check that an avatar opens here, and list its contents. Alias: `info` |
+| `bithuman run [avatar]` | Live avatar in your browser. No argument runs `wise-pup` |
+| `bithuman render <avatar> <audio>` | Audio in, MP4 out |
+| `bithuman pull <avatar>` | Download a sample avatar, or your own agent's model, ahead of time |
+| `bithuman list [--mine]` | List the sample avatars, or yours |
+| `bithuman open <avatar>` | Check that an avatar opens here, and list its contents |
 | `bithuman login` / `logout` | Sign in and store a per-device API secret / revoke it |
 | `bithuman account` | Your account, plan, credit balance and recent usage |
 | `bithuman engine list \| install [mac\|linux]` | Inspect or fetch the Expression 2 render engine |
@@ -26,7 +26,7 @@ Covers the CLI at the version on [Downloads & versions](/downloads). The binary 
 | `bithuman mcp` | MCP server over stdio; `bithuman mcp tools` lists its tools |
 | `bithuman completion <shell>` | Completions for bash, zsh, fish, elvish, powershell |
 
-A command outside this list exits 2 with `unrecognized subcommand`.
+A command outside this list exits 2 with `unrecognized subcommand`. Everywhere, `<avatar>` is an agent code (`A24EKJ8433`), a sample avatar's name (`wise-pup`), or a file (`wise-pup.imx`); `run`, `render` and `open` download a code or name on first use. `--json`, `-h` and `-V` (root only) work on every command.
 
 ## Sign in
 
@@ -51,14 +51,10 @@ A `.env` file in the working directory is not read.
 
 | Flag | Default | Purpose |
 |---|---|---|
-| `--host` | `127.0.0.1` | Bind address. `0.0.0.0` also needs `--allow-public-bind` |
+| `--host` | `127.0.0.1` | Bind address. `0.0.0.0` also needs `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
 | `--port` | `8088` | HTTP port |
-| `--max-sessions` | CPU count | Concurrent sessions; extra launches are refused |
-| `--embedded-livekit` | on with a model argument | Start a `livekit-server` child (the binary must be on `PATH`) |
-| `--embedded-livekit-port` | — | Port for that child |
-| `--cloud` | off | Serve from the cloud instead of this machine; takes an agent code |
 
-A file runs locally: Expression 2 (`.avatar` or `.imx`), Essence 2 and Essence 1 (`.imx`). An Essence 2 or Expression 2 agent code opens a cloud session. Expression 1 is cloud-only.
+`run` starts everything a session needs: a local `livekit-server` (it must be on `PATH`) and the conversation brain. A file runs locally: Expression 2 (`.avatar` or `.imx`), Essence 2 and Essence 1 (`.imx`). An Essence 2 or Expression 2 agent code opens a cloud session. Expression 1 is cloud-only.
 
 The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 200 MB). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([on-device brain](/sdk/cli/local-mode)).
 
@@ -66,10 +62,8 @@ The conversation brain: signed in, `run` uses the managed brain and installs it 
 
 | Flag | Default | Purpose |
 |---|---|---|
-| `-a`, `--audio <PATH>` | required | Any format `ffmpeg` reads (Essence 1: 16 kHz mono PCM WAV) |
-| `-o`, `--output <PATH>` | `output.mp4` | Output file |
-| `--quality <PRESET>` | `MEDIUM` | `LOW`, `MEDIUM`, `HIGH` |
-| `--target-size <SIZE>` | `1280` | Essence 1 only: longest side, or `WxH` |
+| `<audio>` | required | The second argument: any format `ffmpeg` reads (Essence 1: 16 kHz mono PCM WAV) |
+| `-o`, `--output <PATH>` | `<avatar>.mp4` | Output file |
 | `--limit <N>` | none | Stop after N frames |
 
 | Model | Output |
@@ -107,13 +101,16 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | Variable | Effect |
 |---|---|
 | `BITHUMAN_API_SECRET` | Your API secret (`BITHUMAN_API_KEY` is a deprecated alias) |
+| `BITHUMAN_API_BASE` | API base URL (default `https://api.bithuman.ai`) |
+| `BITHUMAN_CACHE_DIR` | Cache root (default `~/.cache/bithuman`) |
+| `BITHUMAN_ALLOW_PUBLIC_BIND` | `1` lets `run --host 0.0.0.0` listen on every interface |
 | `OPENAI_API_KEY` | Use OpenAI Realtime as the conversation brain |
 | `BITHUMAN_LOCAL` | `1` runs the brain on this machine ([on-device brain](/sdk/cli/local-mode)) |
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | On-device brain settings ([tuning](/sdk/cli/local-mode#tuning)) |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` |
 | `BITHUMAN_VERSION` | Release tag for the installer to fetch (default: newest) |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`) |
-| `BITHUMAN_JSON`, `BITHUMAN_QUIET`, `BITHUMAN_NO_COLOR` | Default for the matching global flag |
+| `NO_COLOR` | Turn colour off |
 | `RUST_LOG` | Log filter (default `bithuman_serve=info,warn`) |
 
 ## Cache
@@ -195,8 +192,8 @@ Colour appears only on an interactive terminal.
 |---|---|---|
 | 0 | success | |
 | 1 | GENERIC | runtime error; `doctor` not ready; a rejected credential at sign-in |
-| 2 | USAGE | bad arguments; `--host 0.0.0.0` without `--allow-public-bind` |
-| 66 | NOINPUT | file, slug or model not found; not an avatar file; `--cloud` given a path |
+| 2 | USAGE | bad arguments; `--host 0.0.0.0` without `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
+| 66 | NOINPUT | file, slug or model not found; not an avatar file |
 | 69 | UNAVAILABLE | network, engine or service unavailable; incomplete model file; `ffmpeg` missing |
 | 70 | SOFTWARE | internal error (Essence 1 `render`) |
 | 77 | NOPERM | not signed in, out of credits, or forbidden |
@@ -224,10 +221,25 @@ bithuman token       # the resolved secret on stdout (exit 77 if none)
 # First render on a new machine: check the credential first, then render.
 set -e
 bithuman account --json >/dev/null          # exit 77: run `bithuman login`
-MODEL=$(bithuman pull wise-pup)
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
-bithuman render "$MODEL" -a speech.wav -o out.mp4 --json | jq -r .output
+bithuman render wise-pup speech.wav -o out.mp4 --json | jq -r .output
 
 # Is this install ready to serve? (exit 0 = yes)
 bithuman doctor --json | jq -e .ready >/dev/null
 ```
+
+## Renamed in 2.7.3
+
+The old spellings still work until 2.9.0. Each prints one line on stderr naming what to use instead, and `--json` output is unchanged.
+
+| Was | Now |
+|---|---|
+| `render X -a in.wav` | `render X in.wav` |
+| `render` writing `output.mp4` | `render` writes `<avatar>.mp4` unless you pass `-o` |
+| `render --quality`, `--target-size` | one preset, each avatar's default size |
+| `run --allow-public-bind` | `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
+| `run --cloud`, `--offscreen`, `--frames`, `--embedded-livekit`, `--livekit-*` | not needed: `run <avatar>` picks and starts what it needs; frames without a window come from `render --limit N` |
+| `chat`, `info`, `avatars`, `list --agents` | `run`, `open`, `list`, `list --mine` |
+| `list --limit/--offset/--status`, `account --start/--end/--agent` | the full list; filter the `--json` output |
+| `--api-base`, `--dest` | `BITHUMAN_API_BASE`, `BITHUMAN_CACHE_DIR` |
+| `--quiet`, `--no-color`, `BITHUMAN_JSON/QUIET/NO_COLOR` | `--json`, `NO_COLOR=1` |

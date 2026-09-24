@@ -69,7 +69,7 @@ Render the sample speech through the `wise-pup` sample avatar:
 ```bash
 bithuman login
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
-bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
+bithuman render wise-pup speech.wav -o out.mp4
 # → out.mp4: 416×720, 300 frames, 15.0 s
 ```
 
@@ -89,9 +89,9 @@ bithuman run wise-pup
 | List the sample avatars | `bithuman list` (the same list as `https://api.bithuman.ai/v1/models/showcase`) |
 | Download one | `bithuman pull <slug>` prints the cached path; `--force` downloads again |
 | Download your own agent | `bithuman pull <AGENT_CODE> --model essence-2` (needs sign-in) |
-| Inspect a file | `bithuman open avatar.imx` |
-| Render a file | `bithuman render avatar.imx -a in.wav -o out.mp4` |
-| Serve a live session | `bithuman run avatar.imx`; `--host <LAN address>` to expose it (`0.0.0.0` also needs `--allow-public-bind`) |
+| Inspect an avatar | `bithuman open <avatar>` |
+| Render | `bithuman render <avatar> in.wav -o out.mp4` (a code or name is downloaded on first use) |
+| Serve a live session | `bithuman run <avatar>`; `--host <LAN address>` to expose it (`0.0.0.0` also needs `BITHUMAN_ALLOW_PUBLIC_BIND=1`) |
 | Run the brain on your own hardware | [on-device brain](/sdk/cli/local-mode) |
 | Drive it from an AI agent | `bithuman mcp` ([MCP server](/sdk/mcp)) |
 | Script it | add `--json`: every failure prints one JSON object with a stable code, and the exit code is the contract ([reference](/sdk/cli/reference#exit-codes)) |
@@ -118,7 +118,7 @@ Frame rates for the CLI on macOS and Linux are on the [performance page](/perfor
 | `SLUG_NOT_FOUND`, exit 66 | the slug is not in the sample list | `bithuman list` and copy a slug |
 | `pull <CODE>` fails with `404 NOT_FOUND` | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that kind | [add the model](/api/agents#add-a-model-to-an-existing-agent), or pass the `--model` it has |
-| `PUBLIC_BIND_REFUSED`, exit 2 | `--host 0.0.0.0` without consent | use a LAN address, or add `--allow-public-bind` |
+| `PUBLIC_BIND_REFUSED`, exit 2 | `--host 0.0.0.0` without consent | use a LAN address, or set `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
 | the installer names your platform and stops | no binary for this platform | see Platform notes |
 | `Error: No available formula` from `brew` | the tap is not added | `brew tap bithuman-product/bithuman`, then install again |
 

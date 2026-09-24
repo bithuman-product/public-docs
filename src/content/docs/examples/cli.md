@@ -27,7 +27,7 @@ label: "CLI"
 curl -fsSL https://install.bithuman.ai | sh
 export BITHUMAN_API_SECRET="<your API secret>"
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
-bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o wise-pup.mp4
+bithuman render wise-pup speech.wav
 ```
 
 ![Terminal: the installer, bithuman pull and bithuman render writing wise-pup.mp4](/examples/cli/terminal.webp)
