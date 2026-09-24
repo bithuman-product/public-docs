@@ -63,7 +63,9 @@ Create the new secret, move your services to it, then revoke the old one under [
 | Status | Code | Cause | Fix |
 |---|---|---|---|
 | `401` | `MISSING_AUTH` | no `api-secret` header | send the header on every request |
-| `401` | `UNAUTHORIZED` | the secret is invalid or revoked | check it with `/v1/validate`; create a new one |
+| `401` | `UNAUTHORIZED` | the secret is invalid, or a revoked secret on a REST endpoint | check it with `/v1/validate`; create a new one |
+| `403` | `RUNTIME_SUSPENDED` | a revoked secret on a token endpoint (`/v1/runtime-tokens/*`, `/v1/embed-tokens/request`) | create a new secret and move your services to it |
+| `403` | `RUNTIME_SUSPENDED` | runtime access is suspended for the account; the message says so | contact support |
 | `403` | `SECRET_REVEAL_CONSOLE_ONLY` | reading a stored secret's value with an API secret | reveal secrets in the console |
 
 All codes: [Errors](/api/errors).

@@ -45,6 +45,7 @@ one.
 | `400` | Bad Request | Malformed JSON, missing required parameter (`MISSING_PARAM`), failed validation (`VALIDATION_ERROR`), or a request that can never succeed as posed (`MODEL_NOT_DOWNLOADABLE`). |
 | `401` | Unauthorized | Invalid `api-secret` (`UNAUTHORIZED`) or absent `api-secret` header (`MISSING_AUTH`). |
 | `402` | Payment Required | Insufficient credits — top up to continue. |
+| `403` | Forbidden | The credential is known but refused here: a revoked secret on a token endpoint (`RUNTIME_SUSPENDED`), or a session limit (`CONCURRENCY_LIMIT_REACHED`). |
 | `404` | Not Found | Agent, resource, or endpoint doesn't exist — or a model artifact not published to the download store yet (`MODEL_ARTIFACT_NOT_READY`, retryable). |
 | `409` | Conflict | The request is valid but the agent's **state** doesn't allow it yet (`MODEL_NOT_GENERATED`, `AGENT_NOT_READY`) — a state change (generate/add the model, wait for `ready`) fixes it. |
 | `413` | Payload Too Large | File exceeds the size limit. |
@@ -63,6 +64,7 @@ one.
 |---|---|---|
 | `UNAUTHORIZED` | 401 | The `api-secret` header is present but invalid. Get a valid secret from [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). |
 | `MISSING_AUTH` | 401 | The `api-secret` header is absent. Add it to your request. |
+| `RUNTIME_SUSPENDED` | 403 | A token endpoint refused the secret: it was revoked (create a new one), or runtime access is suspended (contact support). |
 | `ACCOUNT_SUSPENDED` | 401/403 | Balance below the `-11` suspension floor. Top up, then contact support if it persists. |
 | `INSUFFICIENT_BALANCE` | 402 | Top up credits at [www.bithuman.ai](https://www.bithuman.ai). |
 
