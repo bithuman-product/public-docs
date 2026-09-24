@@ -230,7 +230,7 @@ bithuman doctor --json | jq -e .ready >/dev/null
 
 ## Renamed in 2.7.3
 
-The old spellings still work until 2.9.0. Each prints one line on stderr naming what to use instead, and `--json` output is unchanged.
+The old spellings still work for now. Each prints one line on stderr naming what to use instead, and `--json` output is unchanged.
 
 | Was | Now |
 |---|---|
