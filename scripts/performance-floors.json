@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "fe2bbd6fb4da9ba906b073b87de5309cec82a79edfb2796968a700b1e99533b7",
-  "emitter_sha256": "93ae3677e08ee53935a71caceee45ab6af4eb2de8fdf5b9653d2bcebbc81ef01",
+  "record_sha256": "15fdb92b804d37d85beb21b93aefacd71e32a8ff303a8b0f84acf2f2277c4f01",
+  "emitter_sha256": "7e5ee3d3fa7eb73b40f9856fa7af091e6211e692b3078c7d0af0cd00f5efcfa4",
   "verified_on": "2026-09-24",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "feb1c773a95109736dbad4b1d3d2bf7be21c46fbdd5ac95c3f29ba5582c05719"
+    "sha256": "14f20e0a0bf46f6f1671c23092865d60ddc61592cc986e6abfae5a953f38fb51"
   },
   "blocks": [
     {
@@ -21,14 +21,14 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "779eda3a68f317825669f81ba6a82d96e87231f8f5ae3cd007c163522fee2772"
+      "sha256": "fc0dbb705e714a06cbd38885df38ecfd5f07003e43326d7fbcb0de21f72df6a7"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "1857844389d7cba080383bd1d50d35c51cc85f1a417c3fc1a83373ce31f3e0bf"
+      "sha256": "c804660b6f77fdae34c550326fd7ccc7eca149835d25c5f11c89b7c5111ffb8e"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
@@ -94,6 +94,11 @@
         "label": "macOS · Python",
         "id": "python-macos",
         "line": "| macOS · Python | Apple M4 | 176 | **7.0×** real time | 164 | **8.2×** real time |"
+      },
+      {
+        "label": "macOS · Swift package",
+        "id": "macos-sdk",
+        "line": "| macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |"
       },
       {
         "label": "Linux · CLI",
