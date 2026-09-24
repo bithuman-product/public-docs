@@ -27,6 +27,7 @@ The CLI starts `livekit-server`, the voice agent and the avatar, then opens its 
 # macOS (Apple silicon): installs livekit-server too
 brew install bithuman-product/bithuman/bithuman-cli
 # Linux x86_64 or arm64: the download includes livekit-server
+sudo apt install -y ffmpeg python3-venv            # Ubuntu/Debian; macOS gets both from brew
 curl -fsSL https://install.bithuman.ai | sh
 
 bithuman login                                   # opens your browser; in CI, export BITHUMAN_API_SECRET instead
@@ -129,6 +130,7 @@ Talking time bills bitHuman credits and idle is free; OpenAI bills your own key.
 | The video stalls for 1–2 s every 15 s, or a LiveKit Meet tile goes black | `livekit-server` older than 1.9.12: the browser leaves and rejoins the room every 15 s | `brew upgrade livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux), then restart `livekit-server` |
 | `livekit-server not found` (exit 69) | LiveKit is not installed | `brew install livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux) |
 | The avatar never appears | No or invalid `BITHUMAN_API_SECRET` | Sign in with `bithuman login`, or set it in `.env` |
+| The avatar never appears; the terminal shows `essence-2: ffmpeg not found` | Essence 2 unpacks its avatar with `ffmpeg` | `sudo apt install -y ffmpeg`, then run again |
 | `This example needs Python 3.11, 3.12 or 3.13` | The plugin installs without `bithuman` on 3.10 and 3.14 | Make the venv with Python 3.11–3.13 |
 | The page says it could not connect | `livekit-server --dev` is not running | Start it, then click **Start** again |
 | Nothing happens after joining | `livekit-server --dev` or `agent.py` is not running | Start both, `livekit-server` first |
