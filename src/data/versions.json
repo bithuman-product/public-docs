@@ -7,10 +7,10 @@
     "swift": "2.15.0",
     "essence2_engine": "1.12.1",
     "expression2_swift": "2.7.0",
-    "essence2_android": "0.5.15",
-    "expression2_android": "0.4.10",
+    "essence2_android": "0.6.0",
+    "expression2_android": "0.5.0",
     "livekit_plugin": "1.8.4",
-    "flutter_plugin": "2.6.15"
+    "flutter_plugin": "2.6.16"
   },
   "artifacts": [
     {

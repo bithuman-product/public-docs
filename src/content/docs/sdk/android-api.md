@@ -13,7 +13,7 @@ How to use these classes in an app is on [Android](/sdk/android). Signatures are
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.5.15` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.6.0` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 | Class | Purpose |
 | --- | --- |
@@ -82,6 +82,7 @@ class Essence2ModelStore
         const val DONOR_CAP: Int = 1024
         const val STORE_FORMAT: String = "essence2_android_store.v1"
         const val STORE_MANIFEST: String = "android_store.v1.json"
+        @Deprecated("Member names are the engine's; the store resolves them itself. No replacement is needed.")
         val DEFAULT_MEMBERS: Map<String, String>
         val SLOT_KEYS: List<String>
 ```
@@ -185,7 +186,7 @@ class Essence2RenderStatus
 
 ## Expression 2
 
-Generated from `ai.bithuman:expression2-android:0.4.10` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:expression2-android:0.5.0` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 | Class | Purpose |
 | --- | --- |
@@ -270,11 +271,11 @@ class Expression2ModelStore
     fun verifyDeep(code: String): Boolean
     companion object
         const val ANDROID_BLOCK: String = "android"
-        const val CANON: String = "canon.bin"
         const val DEFAULT_DOOR_URL: String = "https://api.bithuman.ai"
-        const val IDLE: String = "idle.mp4"
         const val MANIFEST: String = "web_manifest.json"
-        const val MODEL: String = "combined_fp32.tflite"
+        val CANON: String
+        val IDLE: String
+        val MODEL: String
         val REQUIRED: List<String>
 ```
 
