@@ -51,6 +51,7 @@ from dotenv import load_dotenv
 from livekit.agents import Agent, AgentSession, JobContext, WorkerOptions, cli
 from livekit.agents.voice.room_io import RoomOptions
 from livekit.plugins import bithuman, openai, silero
+from openai.types.realtime.realtime_audio_input_turn_detection import ServerVad
 
 load_dotenv()
 
@@ -73,7 +74,14 @@ async def entrypoint(ctx: JobContext):
     await ctx.wait_for_participant()
     agent_code = os.environ["BITHUMAN_AGENT_ID"]
 
-    session = AgentSession(llm=openai.realtime.RealtimeModel(voice="coral"), vad=silero.VAD.load())
+    session = AgentSession(
+        llm=openai.realtime.RealtimeModel(
+            voice="coral",
+            # reply 0.5 s after the user stops (the plugin default waits up to ~4 s)
+            turn_detection=ServerVad(type="server_vad", silence_duration_ms=500, create_response=True, interrupt_response=True),
+        ),
+        vad=silero.VAD.load(),
+    )
     avatar = bithuman.AvatarSession(
         avatar_id=agent_code,
         api_secret=await livekit_cloud_token(agent_code, ctx.room.name),

@@ -100,13 +100,11 @@ bithuman run wise-pup
 
 ### Voice settings
 
-`bithuman run` starts a voice agent on OpenAI Realtime. With `OPENAI_API_KEY` set it runs on your key; without it, on your bitHuman account. The rest is read from the environment:
+`bithuman run` starts a voice agent on OpenAI Realtime. It answers about half a second after you stop talking. Both settings are read from the environment:
 
 | Variable | Default | What it does |
 |---|---|---|
-| `OPENAI_API_KEY` | — | Your OpenAI key |
-| `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-mini` | The OpenAI Realtime model |
-| `BITHUMAN_VOICE` | `alloy` | Any OpenAI Realtime voice |
+| `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account. |
 | `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt |
 
 The whole setup, and the same conversation in your own Python code: [Talk to an avatar on your machine](/guides/local-voice-avatar).
@@ -130,7 +128,7 @@ Frame rates for the CLI on macOS and Linux are on the [performance page](/perfor
 | `sign-in failed: auth required`, exit 1 | the credential was rejected | `bithuman login` again, or create a new API secret |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on `PATH` (common in scripts) | install it, or set `BITHUMAN_FFMPEG` to its path |
 | `run` says the `livekit-server` binary was not found | `livekit-server` is not installed | `brew install livekit`, or `curl -sSL https://get.livekit.io \| bash` |
-| the page shows `Agent dispatch failed: … no response from servers` | `livekit-server` older than 1.13 | `brew upgrade livekit` |
+| `run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run` (it needs 1.13 or newer)` | an old `livekit-server` found on `PATH` | `brew upgrade livekit` (macOS), or reinstall with `curl -fsSL https://install.bithuman.ai \| sh` (Linux) |
 | `SLUG_NOT_FOUND`, exit 66 | the slug is not in the sample list | `bithuman list` and copy a slug |
 | `pull <CODE>` fails with `404 NOT_FOUND` | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that kind | [add the model](/api/agents#add-a-model-to-an-existing-agent), or pass the `--model` it has |

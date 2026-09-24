@@ -111,7 +111,8 @@ The [LiveKit plugin](/sdk/livekit) runs `AsyncBithuman` inside a LiveKit Agents 
 
 ```python
 # excerpt: python/self-host/agent.py (bithuman-examples)
-session = AgentSession(llm=openai.realtime.RealtimeModel(model="gpt-realtime-2.1-mini", voice="coral"))
+session = AgentSession(llm=openai.realtime.RealtimeModel(model="gpt-realtime-2.1-mini", voice="coral",
+    turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))   # reply 0.5 s after you stop
 avatar = bithuman.AvatarSession(model_path="wise-pup.imx")    # renders here; reads BITHUMAN_API_SECRET
 await avatar.start(session, room=ctx.room)
 await session.start(agent=Agent(instructions="You are a friendly assistant."),

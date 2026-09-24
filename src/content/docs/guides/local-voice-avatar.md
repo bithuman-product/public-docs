@@ -125,7 +125,7 @@ Talking time bills bitHuman credits and idle is free; OpenAI bills your own key.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `Agent dispatch failed: … no response from servers` | An old `livekit-server` | Use livekit-server 1.13 or newer: `brew upgrade livekit` |
+| `bithuman run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run`` | The CLI needs livekit-server 1.13 or newer | `brew upgrade livekit` (macOS), or reinstall the CLI (Linux: its download includes one) |
 | The video stalls for 1–2 s every 15 s, or a LiveKit Meet tile goes black | `livekit-server` older than 1.9.12: the browser leaves and rejoins the room every 15 s | `brew upgrade livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux), then restart `livekit-server` |
 | `livekit-server not found` (exit 69) | LiveKit is not installed | `brew install livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux) |
 | The avatar never appears | No or invalid `BITHUMAN_API_SECRET` | Sign in with `bithuman login`, or set it in `.env` |
