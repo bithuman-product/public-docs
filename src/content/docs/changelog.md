@@ -60,6 +60,14 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 - **Changed:** iOS and macOS use Expression 2 engine 2.7.0, which fixes lip sync.
 - **Action:** pin `ref: flutter-plugin-v2.6.15`.
 
+### `bithuman` 2.11.10 — 2026-09-24
+
+- **Fixed:** Expression 2 lip sync on macOS. The bundled Apple renderer was out of sync by 40–70 ms; it now stays within 25 ms.
+- **Fixed:** when a reply is interrupted, `AsyncBithuman` no longer bills the frames the interruption throws away. Before, an interrupted reply could add several seconds of talking time.
+- **Changed:** `python -m bithuman render <avatar> <audio>` and `python -m bithuman list` use the same command line as the CLI.
+- **Changed:** Expression 2 starts replying about half a second sooner.
+- **Action:** `pip install -U bithuman`.
+
 ### `bithuman` 2.11.9 — 2026-09-24
 
 - **Fixed:** a rendered MP4's sound starts on its first sample. `python -m bithuman` wrote the audio 64 ms late, so the mouth moved ahead of the voice on every render.

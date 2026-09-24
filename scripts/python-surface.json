@@ -2,16 +2,16 @@
   "artifact": {
     "registry": "pypi",
     "coordinate": "bithuman",
-    "version": "2.11.9",
-    "digest": "sha256:5632fa517796787071c6b3f1ab44c9537273089253aeebd154008de257240923",
+    "version": "2.11.10",
+    "digest": "sha256:2037ac07476e33a463fde857e272a43335b21064f637ffe76aff7d599acb00ff",
     "resolved_on": "2026-09-24",
-    "wheel": "bithuman-2.11.9-cp314-cp314-manylinux_2_28_x86_64.whl"
+    "wheel": "bithuman-2.11.10-cp314-cp314-manylinux_2_28_x86_64.whl"
   },
   "surface": {
     "package": "bithuman",
     "distribution": {
       "name": "bithuman",
-      "version": "2.11.9",
+      "version": "2.11.10",
       "requires_python": "<3.15,>=3.10",
       "extras": [
         "expression-2",
@@ -28,7 +28,7 @@
         "name": "bithuman",
         "interface": "stub",
         "stub": "__init__.pyi",
-        "doc": "bithuman — run an avatar on this machine.\n\n    import bithuman\n    avatar = bithuman.open(\"A63GVG1577.imx\")\n    for image in avatar.render(audio):\n        show(image)\n\nTwo operations: **open an avatar, then render audio through it.**  Frames come\nback as ``(height, width, 3)`` uint8 arrays in RGB order, at the avatar's own\nframe rate.  ``audio`` is 16 kHz mono — a buffer, the path of an audio file, or\nan iterable of buffers for a live stream; passing a stream instead of a whole\nclip is the same call.\n\n**Both families open the same way.**  essence-2 and expression-2 avatars are\nthe same two lines above; nothing in your code says which one you have.\nexpression-2 needs one extra package on this machine::\n\n    pip install \"bithuman[expression-2]\"\n\nEight names, and that is the whole surface::\n\n    open  ·  Avatar.render  ·  Avatar\n    AvatarError  ·  InvalidAvatar  ·  NotSupported  ·  NotAuthorised  ·  Failed\n\nThere is nothing to configure.  This package runs the avatar on this machine,\nin your process, so there is nothing left to choose about where or how it runs\n— you chose that when you chose this package instead of the cloud one.\n\nA key belongs in the environment, not in your code::\n\n    export BITHUMAN_API_SECRET=...        # rendering is metered\n\n**One command, if you would rather not write anything.**  Give it an avatar\nand some audio and it writes a video::\n\n    python -m bithuman A63GVG1577 speech.wav       # -> A63GVG1577.mp4\n\nThe avatar can be a ten-character code — it is fetched once, which is free —\nor a file you already have.  Run it with no arguments to see the avatars your\nkey can open.\n\nNo audio to hand?  This package ships 15 s of speech at\n``bithuman/assets/demo_sample.wav`` — ``python -m bithuman --help`` prints its\npath on this machine.\n\n★``pip install bithuman`` never puts a command on your PATH, and the line\nabove is why it does not have to.  That is an invariant, not an accident:\na pip-installed command named ``bithuman`` would overwrite the one Homebrew\nputs at the same path, so ``tests/test_no_console_script.py`` fails if a\nfuture release grows one.  ``python -m`` needs no script and cannot collide\nwith one.  The full command-line tool is still a separate artifact::\n\n    curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\n\n**Pinned to ``bithuman<3``?  This release still answers.**  2.11.0 carries\nthe complete 2.x import surface alongside the two operations above —\n``AsyncBithuman``, ``Bithuman``, ``AudioChunk``, ``VideoFrame``,\n``VideoControl``, the ``Fixture``/``Runtime`` handles and the 2.x exception\nhierarchy all import and work::\n\n    from bithuman import AsyncBithuman\n    runtime = await AsyncBithuman.create(model_path=\"A63GVG1577.imx\",\n                                         api_secret=\"bh-...\")\n\nThat is what keeps ``livekit-plugins-bithuman`` — which pins ``bithuman<3``\nand imports ``AsyncBithuman`` — working with nothing to change.  The two\noperations above are still the whole *taught* surface; the 2.x names are\ncarried for compatibility, not taught.  One name changed meaning and is\nlisted in the source below: ``Avatar`` is what ``open()`` returns, and 2.x's\nsynchronous ``Avatar`` is reachable as ``Bithuman``.",
+        "doc": "bithuman — run an avatar on this machine.\n\n    import bithuman\n    avatar = bithuman.open(\"A63GVG1577.imx\")\n    for image in avatar.render(audio):\n        show(image)\n\nTwo operations: **open an avatar, then render audio through it.**  Frames come\nback as ``(height, width, 3)`` uint8 arrays in RGB order, at the avatar's own\nframe rate.  ``audio`` is 16 kHz mono — a buffer, the path of an audio file, or\nan iterable of buffers for a live stream; passing a stream instead of a whole\nclip is the same call.\n\n**Both families open the same way.**  essence-2 and expression-2 avatars are\nthe same two lines above; nothing in your code says which one you have.\nexpression-2 needs one extra package on this machine::\n\n    pip install \"bithuman[expression-2]\"\n\nEight names, and that is the whole surface::\n\n    open  ·  Avatar.render  ·  Avatar\n    AvatarError  ·  InvalidAvatar  ·  NotSupported  ·  NotAuthorised  ·  Failed\n\nThere is nothing to configure.  This package runs the avatar on this machine,\nin your process, so there is nothing left to choose about where or how it runs\n— you chose that when you chose this package instead of the cloud one.\n\nA key belongs in the environment, not in your code::\n\n    export BITHUMAN_API_SECRET=...        # rendering is metered\n\n**One command, if you would rather not write anything.**  Give it an avatar\nand some audio and it writes a video::\n\n    python -m bithuman render A63GVG1577 speech.wav    # -> A63GVG1577.mp4\n\nThe avatar can be a ten-character code — it is fetched once, which is free —\na showcase name, or a file you already have.  ``python -m bithuman list\n--mine`` shows the avatars your key can open.\n\nNo audio to hand?  This package ships 15 s of speech at\n``bithuman/assets/demo_sample.wav`` — ``python -m bithuman --help`` prints its\npath on this machine.\n\n★``pip install bithuman`` never puts a command on your PATH, and the line\nabove is why it does not have to.  That is an invariant, not an accident:\na pip-installed command named ``bithuman`` would overwrite the one Homebrew\nputs at the same path, so ``tests/test_no_console_script.py`` fails if a\nfuture release grows one.  ``python -m`` needs no script and cannot collide\nwith one.  The full command-line tool is still a separate artifact::\n\n    curl -fsSL https://raw.githubusercontent.com/bithuman-product/homebrew-bithuman/main/install.sh | sh\n\n**Pinned to ``bithuman<3``?  This release still answers.**  2.11.0 carries\nthe complete 2.x import surface alongside the two operations above —\n``AsyncBithuman``, ``Bithuman``, ``AudioChunk``, ``VideoFrame``,\n``VideoControl``, the ``Fixture``/``Runtime`` handles and the 2.x exception\nhierarchy all import and work::\n\n    from bithuman import AsyncBithuman\n    runtime = await AsyncBithuman.create(model_path=\"A63GVG1577.imx\",\n                                         api_secret=\"bh-...\")\n\nThat is what keeps ``livekit-plugins-bithuman`` — which pins ``bithuman<3``\nand imports ``AsyncBithuman`` — working with nothing to change.  The two\noperations above are still the whole *taught* surface; the 2.x names are\ncarried for compatibility, not taught.  One name changed meaning and is\nlisted in the source below: ``Avatar`` is what ``open()`` returns, and 2.x's\nsynchronous ``Avatar`` is reachable as ``Bithuman``.",
         "declared": [
           "open",
           "Avatar",
@@ -701,14 +701,14 @@
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.9'"
+            "value": "'2.11.10'"
           },
           {
             "name": "__core_version__",
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.9'"
+            "value": "'2.11.10'"
           },
           {
             "name": "__abi_version__",
