@@ -25,6 +25,14 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### `bithuman` 2.11.9 — 2026-09-24
+
+- **Fixed:** a rendered MP4's sound starts on its first sample. `python -m bithuman` wrote the audio 64 ms late, so the mouth moved ahead of the voice on every render.
+- **Fixed:** Expression 2 lip sync: the mouth no longer leads the voice.
+- **Changed:** `AsyncBithuman` streams Expression 2 at a steady 20 frames a second, through replies and interruptions.
+- **Changed:** a first render downloads less: the 8-second speech encoder is fetched only when a render needs it.
+- **Action:** `pip install -U bithuman`.
+
 ### CLI 2.7.2 — 2026-09-23
 
 Tag `cli-v2.7.2`.
