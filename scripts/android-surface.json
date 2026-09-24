@@ -4,10 +4,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.5.15",
-        "digest": "sha256:eb29c5dac6ba492c33377f9c9daf754aa09cd92e8d656123229aee29a95e0796",
-        "filename": "essence2-android-0.5.15.aar",
-        "resolved_on": "2026-09-23"
+        "version": "0.6.0",
+        "digest": "sha256:d295f1b71fde9c6867a88b0c878255df663bbb8e29acfde5e26884ece4ba922b",
+        "filename": "essence2-android-0.6.0.aar",
+        "resolved_on": "2026-09-24"
       },
       "surface": {
         "artifact_facts": {
@@ -3096,6 +3096,28 @@
                 "kind": "internal"
               },
               {
+                "name": "RETRY_BUDGET",
+                "jvm": "field RETRY_BUDGETI",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 8,
+                "kind": "internal"
+              },
+              {
+                "name": "RETRY_WINDOW_MS",
+                "jvm": "field RETRY_WINDOW_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 600000,
+                "kind": "internal"
+              },
+              {
                 "name": "REVALIDATE_BUDGET_MS",
                 "jvm": "field REVALIDATE_BUDGET_MSJ",
                 "access": [
@@ -3175,6 +3197,17 @@
               {
                 "name": "access$getSHA256_HEX$cp",
                 "jvm": "access$getSHA256_HEX$cp()Lkotlin/text/Regex;",
+                "access": [
+                  "public",
+                  "static",
+                  "final",
+                  "synthetic"
+                ],
+                "kind": "synthetic"
+              },
+              {
+                "name": "access$getSLOT_ROLES$cp",
+                "jvm": "access$getSLOT_ROLES$cp()Ljava/util/Map;",
                 "access": [
                   "public",
                   "static",
@@ -3568,7 +3601,8 @@
                 "jvm_getter": null,
                 "jvm_setter": null,
                 "jvm_field": "field DEFAULT_MEMBERSLjava/util/Map;",
-                "loadable": true
+                "loadable": true,
+                "deprecated": "Member names are the engine's; the store resolves them itself. No replacement is needed."
               },
               {
                 "name": "SLOT_KEYS",
@@ -3657,6 +3691,26 @@
                   "public",
                   "static",
                   "synthetic"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "getDEFAULT_MEMBERS$annotations",
+                "jvm": "getDEFAULT_MEMBERS$annotations()V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "deprecated": "Member names are the engine's; the store resolves them itself. No replacement is needed.",
+                "kind": "synthetic"
+              },
+              {
+                "name": "getSLOT_ROLES$essence2_android_release",
+                "jvm": "getSLOT_ROLES$essence2_android_release()Ljava/util/Map;",
+                "access": [
+                  "public",
+                  "final"
                 ],
                 "kind": "internal"
               },
@@ -4344,6 +4398,15 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.Essence2ModelStore$Companion$DEFAULT_MEMBERS$1",
+              "declared_visibility": "local",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.Essence2ModelStore$Fetch",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -4409,6 +4472,14 @@
             },
             {
               "name": "ai.bithuman.elevate.HttpBeatSink",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
+              "name": "ai.bithuman.elevate.MemberNames",
               "declared_visibility": "internal",
               "runtime_access": [
                 "public",
@@ -4505,8 +4576,8 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 70,
-          "declared_classes": 63,
+          "class_files": 72,
+          "declared_classes": 65,
           "public_classes": 37
         }
       }
@@ -4515,10 +4586,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.4.10",
-        "digest": "sha256:f7f182b08df027ddaf7df7038bb9e79c8b1a79c40282cc007809a13e2105e255",
-        "filename": "expression2-android-0.4.10.aar",
-        "resolved_on": "2026-09-23"
+        "version": "0.5.0",
+        "digest": "sha256:628e4682c6bc102b92ff691e9d29672dc84f693d2c072d217ec9d3cb735c09e4",
+        "filename": "expression2-android-0.5.0.aar",
+        "resolved_on": "2026-09-24"
       },
       "surface": {
         "artifact_facts": {
@@ -8241,6 +8312,28 @@
                 "kind": "internal"
               },
               {
+                "name": "RETRY_BUDGET",
+                "jvm": "field RETRY_BUDGETI",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 8,
+                "kind": "internal"
+              },
+              {
+                "name": "RETRY_WINDOW_MS",
+                "jvm": "field RETRY_WINDOW_MSJ",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "constant": 600000,
+                "kind": "internal"
+              },
+              {
                 "name": "STALL_BUDGET_MS",
                 "jvm": "field STALL_BUDGET_MSJ",
                 "access": [
@@ -8478,16 +8571,6 @@
                 "value": "android"
               },
               {
-                "name": "CANON",
-                "signature": "const val CANON: String",
-                "mutable": false,
-                "jvm_getter": null,
-                "jvm_setter": null,
-                "jvm_field": "field CANONLjava/lang/String;",
-                "loadable": true,
-                "value": "canon.bin"
-              },
-              {
                 "name": "DEFAULT_DOOR_URL",
                 "signature": "const val DEFAULT_DOOR_URL: String",
                 "mutable": false,
@@ -8496,16 +8579,6 @@
                 "jvm_field": "field DEFAULT_DOOR_URLLjava/lang/String;",
                 "loadable": true,
                 "value": "https://api.bithuman.ai"
-              },
-              {
-                "name": "IDLE",
-                "signature": "const val IDLE: String",
-                "mutable": false,
-                "jvm_getter": null,
-                "jvm_setter": null,
-                "jvm_field": "field IDLELjava/lang/String;",
-                "loadable": true,
-                "value": "idle.mp4"
               },
               {
                 "name": "MANIFEST",
@@ -8518,14 +8591,31 @@
                 "value": "web_manifest.json"
               },
               {
+                "name": "CANON",
+                "signature": "val CANON: String",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field CANONLjava/lang/String;",
+                "loadable": true
+              },
+              {
+                "name": "IDLE",
+                "signature": "val IDLE: String",
+                "mutable": false,
+                "jvm_getter": null,
+                "jvm_setter": null,
+                "jvm_field": "field IDLELjava/lang/String;",
+                "loadable": true
+              },
+              {
                 "name": "MODEL",
-                "signature": "const val MODEL: String",
+                "signature": "val MODEL: String",
                 "mutable": false,
                 "jvm_getter": null,
                 "jvm_setter": null,
                 "jvm_field": "field MODELLjava/lang/String;",
-                "loadable": true,
-                "value": "combined_fp32.tflite"
+                "loadable": true
               },
               {
                 "name": "REQUIRED",
@@ -9866,6 +9956,14 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.MemberNames",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.MeterHost",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -9947,8 +10045,8 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 70,
-          "declared_classes": 64,
+          "class_files": 71,
+          "declared_classes": 65,
           "public_classes": 43
         }
       }

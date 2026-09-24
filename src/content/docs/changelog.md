@@ -14,6 +14,7 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 | Date | Artifact | Change | What to do |
 |---|---|---|---|
+| 2026-09-24 | expression2-android 0.5.0 | `Expression2ModelStore.MODEL`, `CANON` and `IDLE` are no longer compile-time constants | read them at runtime; a `when` branch or annotation that used them as constants must change |
 | 2026-09-23 | Swift package 2.14.2 | `Expression2Engine.create` refuses without an API secret | call `Expression2Credential.set(_:)` or set `BITHUMAN_API_SECRET` |
 | 2026-09-23 | expression2-android 0.4.9 | `Expression2Avatar.create` refuses without an API secret | set `Expression2Metering.apiSecret` |
 | 2026-09-22 | CLI 2.7.0 | retired command spellings exit 2; `account --limit` defaults to 10 | use the [current names](/sdk/cli/reference#commands); pass `--limit 50` for the old window |
@@ -24,6 +25,27 @@ What changed in each release, newest first. Current versions are on [Downloads &
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## September 2026
+
+### essence2-android 0.6.0 — 2026-09-24
+
+- **Changed:** after a pause in the conversation, the first frame of the next reply arrives sooner (about 1,090 → 242 ms on a Galaxy S25+). The picture is otherwise unchanged: frames are identical to 0.5.15.
+- **Changed:** a failed download is retried on one budget shared by the whole store, so a service outage is not met with a burst of retries.
+- **Changed:** the `-sources.jar` and `-javadoc.jar` on Maven Central are placeholders; the API reference is [Android API](/sdk/android-api).
+- **Deprecated (still works):** `Essence2ModelStore.DEFAULT_MEMBERS`. No replacement is needed.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.6.0")`.
+
+### expression2-android 0.5.0 — 2026-09-24
+
+- **Fixed:** lip sync. The mouth moved ahead of the voice; it now lines up. The first frame of each stream is shown twice; a stream still carries the same number of frames.
+- **Changed:** a failed download is retried on one budget shared by the whole store.
+- **Changed:** the `-sources.jar` and `-javadoc.jar` on Maven Central are placeholders; the API reference is [Android API](/sdk/android-api).
+- **Breaking (source only):** `Expression2ModelStore.MODEL`, `CANON` and `IDLE` keep their values but are no longer compile-time constants.
+- **Action:** `implementation("ai.bithuman:expression2-android:0.5.0")`.
+
+### Flutter plugin 2.6.16 — 2026-09-24
+
+- **Changed:** Android uses essence2-android 0.6.0 and expression2-android 0.5.0.
+- **Action:** pin `ref: flutter-plugin-v2.6.16`.
 
 ### Swift package 2.15.0 — 2026-09-24
 

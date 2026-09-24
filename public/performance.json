@@ -468,8 +468,8 @@
      "fps": 28,
      "x_realtime": 1.12,
      "realtime": true,
-     "measured_on": "2026-09-23",
-     "release": "essence2-android 0.5.15",
+     "measured_on": "2026-09-24",
+     "release": "essence2-android 0.6.0",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -480,8 +480,8 @@
      "memory_scope": null,
      "time_to_video": null,
      "held": {
-      "median_window_fps": 28.2,
-      "worst_window_fps": 24.16,
+      "median_window_fps": 28.84,
+      "worst_window_fps": 26.48,
       "sessions": 3,
       "paced": {
        "display_fps": 25,

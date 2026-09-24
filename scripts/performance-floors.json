@@ -5,7 +5,7 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "771595fdf0cfdb0584c5a8726ed96a8d03b55d141a44ed203da83e9cfdc510b8",
+  "record_sha256": "fe2bbd6fb4da9ba906b073b87de5309cec82a79edfb2796968a700b1e99533b7",
   "emitter_sha256": "93ae3677e08ee53935a71caceee45ab6af4eb2de8fdf5b9653d2bcebbc81ef01",
   "verified_on": "2026-09-24",
   "stale_after_days": 30,
@@ -13,7 +13,7 @@
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "77ff19a956b4e3dfe8fde549e992899e20cdc3985ab71e7206c4891bbde42409"
+    "sha256": "feb1c773a95109736dbad4b1d3d2bf7be21c46fbdd5ac95c3f29ba5582c05719"
   },
   "blocks": [
     {
@@ -35,7 +35,7 @@
       "marker": "SUSTAINED",
       "key": null,
       "index": 0,
-      "sha256": "760944d5f9e10bb46ee05d123d915d8596db245547754b001b824f09b8271c1c"
+      "sha256": "152a04a9501463d0b8225b1dd94cee760c7f8c49b92166c3445eaa9db26351fb"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
