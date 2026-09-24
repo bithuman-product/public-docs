@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "b40b46269acf02d5c32a186d38fa98a7ec8224c942c3ec257d44c30c66f16ff1",
+  "record_sha256": "771595fdf0cfdb0584c5a8726ed96a8d03b55d141a44ed203da83e9cfdc510b8",
   "emitter_sha256": "93ae3677e08ee53935a71caceee45ab6af4eb2de8fdf5b9653d2bcebbc81ef01",
-  "verified_on": "2026-09-23",
+  "verified_on": "2026-09-24",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "5d4232574eab57be6ceb957d6d77ea87306f8d54020f8db049b047f56b5121e6"
+    "sha256": "77ff19a956b4e3dfe8fde549e992899e20cdc3985ab71e7206c4891bbde42409"
   },
   "blocks": [
     {
@@ -21,7 +21,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "362f3bdfea6542c6ed0327650a10a8c46c6cdc7dd14381afcf462ce0f412d49a"
+      "sha256": "779eda3a68f317825669f81ba6a82d96e87231f8f5ae3cd007c163522fee2772"
     },
     {
       "file": "src/content/docs/sdk/performance.md",
@@ -83,7 +83,7 @@
       {
         "label": "Cloud API · CPU",
         "id": "modal-cpu",
-        "line": "| Cloud API · CPU | x86 server CPU | 24 | 0.9× below real time | 31 | **1.5×** real time |"
+        "line": "| Cloud API · CPU | x86 server CPU | 24 | 0.9× below real time | 27 | **1.3×** real time |"
       },
       {
         "label": "macOS · CLI",

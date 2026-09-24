@@ -21,7 +21,7 @@ the tier for each session, and the three Cloud rows show each tier.
 |---|---|---|---|---|---|
 | Cloud API · GPU | NVIDIA RTX 4090 | 98 | **3.9×** real time | 340 | **17.0×** real time |
 | Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |
-| Cloud API · CPU | x86 server CPU | 24 | 0.9× below real time | 31 | **1.5×** real time |
+| Cloud API · CPU | x86 server CPU | 24 | 0.9× below real time | 27 | **1.3×** real time |
 | macOS · CLI | Apple M4 | 104 | **4.1×** real time | 167 | **8.3×** real time |
 | macOS · Python | Apple M4 | 176 | **7.0×** real time | 164 | **8.2×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |
