@@ -227,6 +227,47 @@
    }
   },
   {
+   "id": "macos-sdk",
+   "label": "macOS · Swift package",
+   "hardware": "Apple M4",
+   "published": true,
+   "sustained": false,
+   "cells": {
+    "essence-2": {
+     "fps": 120,
+     "x_realtime": 4.8,
+     "realtime": true,
+     "measured_on": "2026-09-24",
+     "release": "Swift package 2.15.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "time_to_video": null
+    },
+    "expression-2": {
+     "fps": 177,
+     "x_realtime": 8.85,
+     "realtime": true,
+     "measured_on": "2026-09-24",
+     "release": "Swift package 2.15.0",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "time_to_video": null
+    }
+   }
+  },
+  {
    "id": "linux-cpu",
    "label": "Linux · CLI",
    "hardware": "Intel Core i7-13700F (x86_64)",

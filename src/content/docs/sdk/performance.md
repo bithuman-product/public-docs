@@ -24,6 +24,7 @@ the tier for each session, and the three Cloud rows show each tier.
 | Cloud API · CPU | x86 server CPU | 24 | 0.9× below real time | 27 | **1.3×** real time |
 | macOS · CLI | Apple M4 | 104 | **4.1×** real time | 167 | **8.3×** real time |
 | macOS · Python | Apple M4 | 176 | **7.0×** real time | 164 | **8.2×** real time |
+| macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |
 | iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 110 | **5.5×** real time |
@@ -32,7 +33,7 @@ the tier for each session, and the three Cloud rows show each tier.
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES -->
-Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.14 · essence2-android 0.5 · expression2-android 0.4 · cloud API (September 2026).
+Measured on current releases: CLI 2.7 · bithuman 2.11 · Swift package 2.14 · Swift package 2.15 · essence2-android 0.5 · expression2-android 0.4 · cloud API (September 2026).
 <!-- /FLOORS:RELEASES -->
 
 <!-- FLOORS:SUSTAINED -->
