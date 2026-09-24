@@ -4,13 +4,13 @@
   "versions": {
     "cli": "2.7.2",
     "python": "2.11.9",
-    "swift": "2.14.4",
+    "swift": "2.15.0",
     "essence2_engine": "1.12.1",
-    "expression2_swift": "2.6.5",
+    "expression2_swift": "2.7.0",
     "essence2_android": "0.5.15",
     "expression2_android": "0.4.10",
     "livekit_plugin": "1.8.4",
-    "flutter_plugin": "2.6.14"
+    "flutter_plugin": "2.6.15"
   },
   "artifacts": [
     {

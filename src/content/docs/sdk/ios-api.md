@@ -46,9 +46,13 @@ var idle: [UInt8]?                       // the next idle frame
 func resetState(clearFrames: Bool)       // interrupt: drop queued audio and frames
 var width: Int
 var height: Int
+
+static func Expression2Download.avatar(   // download an avatar file; sha256-checked, cached
+    agentCode: String,
+    directory: URL? = nil) async throws -> URL   // nil: Caches/bitHuman/expression2/avatars
 ```
 
-`create` throws `Expression2LoadError.meteringRefused` when the API secret is missing or rejected, or when the service cannot be reached at the start; `meteringRefusal` carries the message. `pull()` never blocks; poll it.
+`create` throws `Expression2LoadError.meteringRefused` when the API secret is missing or rejected, or when the service cannot be reached at the start; `meteringRefusal` carries the message. `pull()` never blocks; poll it. `Expression2Download.avatar` throws `Expression2Download.Failure` when the download is refused, fails, or does not match its sha256.
 
 ## Essence 2 (Swift)
 
@@ -77,9 +81,13 @@ var pendingSamples: Int                     // fed audio the engine has not take
 
 Essence2Resources.ensure() async throws -> URL   // the runtime files, fetched and sha256-checked
 Essence2Resources.releaseTag                     // the release they come from
+
+static func Essence2Download.identity(   // download an avatar file; sha256-checked, cached
+    agentCode: String,
+    directory: URL? = nil) async throws -> URL   // nil: Caches/bitHuman/essence2/avatars
 ```
 
-`create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`.
+`create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`. `Essence2Download.identity` throws `.resourcesUnavailable` when the download is refused, fails, or does not match its sha256.
 
 ## Essence 2 (C)
 
