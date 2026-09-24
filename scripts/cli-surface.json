@@ -2,11 +2,11 @@
   "artifact": {
     "registry": "github-releases",
     "coordinate": "bithuman-product/homebrew-bithuman",
-    "tag": "cli-v2.7.2",
-    "version": "2.7.2",
+    "tag": "cli-v2.7.3",
+    "version": "2.7.3",
     "asset": "bithuman-x86_64-unknown-linux-gnu.tar.gz",
-    "digest": "sha256:c412c70c4179a43c64313f1170e4b0d857b3d49375e71714d68b4402556da22a",
-    "resolved_on": "2026-09-23"
+    "digest": "sha256:a65f4b7adc07e30fb99dc534e1815170e7487ca439bb321a9874137096595f88",
+    "resolved_on": "2026-09-24"
   },
   "surface": {
     "schema_version": 1,
