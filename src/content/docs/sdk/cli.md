@@ -47,8 +47,8 @@ Check the install:
 
 ```text
 $ bithuman --version
-libessence  2.11.9 ABI 7
-bithuman    2.7.3
+libessence  2.11.10 ABI 7
+bithuman    2.7.4
 ```
 
 The CLI is not on PyPI. `pip install bithuman` installs the Python library, which has no command.

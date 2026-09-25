@@ -82,6 +82,17 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 - **Changed:** a first render downloads less: the 8-second speech encoder is fetched only when a render needs it.
 - **Action:** `pip install -U bithuman`.
 
+### CLI 2.7.4 — 2026-09-25
+
+Tag `cli-v2.7.4`.
+
+- **Fixed:** in a live Expression 2 `bithuman run`, the mouth now moves with the voice. Every audio chunk goes out with the frame rendered from it. On 2.7.3 the voice led the mouth by about 1.6 s on Apple Silicon and 0.55 s on Linux.
+- **Fixed:** a live Expression 2 session on Linux bills only the frames you saw. Frames rendered and never shown are no longer billed: the rest of a reply you interrupt, the silent padding after each reply, and the warm-up.
+- **Fixed:** `bithuman run --host <address>` now works with the built-in conversation. Before, the conversation looked for the server on `127.0.0.1` and every session failed.
+- **Fixed:** a local Essence 2 or Expression 2 session without ffmpeg stops before it opens and says how to install ffmpeg. The resting clip between turns works with ffmpeg 9.
+- **Changed:** the first frame of an Essence 2 `render` or `run` arrives about 1.3 s sooner.
+- **Action:** `curl -fsSL https://install.bithuman.ai | sh`, or `brew upgrade bithuman-cli`.
+
 ### CLI 2.7.3 — 2026-09-24
 
 Tag `cli-v2.7.3`.
