@@ -82,6 +82,8 @@ and serve it anywhere its model runs.
   anything is billed; `auto` routes it to Expression 2 instead.
 - **An omitted `model` creates an Expression 1 agent.** Send `essence-2`,
   `expression-2` or `auto` explicitly.
+- **The dashboard starts on Expression 2.** Pick Essence 2 in the model dialog,
+  or switch the version to V1 for Essence 1 or Expression 1.
 - **An existing agent can gain a model** with
   [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
 

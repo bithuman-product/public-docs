@@ -48,7 +48,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -d '{"model": "auto", "prompt": "You are a friendly receptionist.", "image": "https://example.com/headshot.jpg"}'
 ```
 
-The response carries an `agent_id`. Creation takes about 2–2.5 hours for the second-generation models. You can also create an agent in the dashboard at [bithuman.ai](https://www.bithuman.ai/explore).
+The response carries an `agent_id`. Creation takes about 2–2.5 hours for the second-generation models. You can also create an agent in the dashboard at [bithuman.ai](https://www.bithuman.ai/explore), which starts on Expression 2.
 
 ## 4. Wait until it is ready
 
