@@ -2,16 +2,16 @@
   "artifact": {
     "registry": "pypi",
     "coordinate": "bithuman",
-    "version": "2.11.11",
-    "digest": "sha256:134292bcd318da8d56fe10dff8f5379d5adca097be9b64dad1a4ba3021c640fb",
+    "version": "2.11.12",
+    "digest": "sha256:ed846dd92f6035b2e8aa1ab9e28864d81731213f99c4be599a2cf12a4d674b33",
     "resolved_on": "2026-09-25",
-    "wheel": "bithuman-2.11.11-cp314-cp314-manylinux_2_28_x86_64.whl"
+    "wheel": "bithuman-2.11.12-cp314-cp314-manylinux_2_28_x86_64.whl"
   },
   "surface": {
     "package": "bithuman",
     "distribution": {
       "name": "bithuman",
-      "version": "2.11.11",
+      "version": "2.11.12",
       "requires_python": "<3.15,>=3.10",
       "extras": [
         "expression-2",
@@ -701,14 +701,14 @@
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.11'"
+            "value": "'2.11.12'"
           },
           {
             "name": "__core_version__",
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.11'"
+            "value": "'2.11.12'"
           },
           {
             "name": "__abi_version__",
