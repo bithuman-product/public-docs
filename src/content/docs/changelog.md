@@ -71,6 +71,11 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 - **Changed:** iOS and macOS use Expression 2 engine 2.7.0, which fixes lip sync.
 - **Action:** pin `ref: flutter-plugin-v2.6.15`.
 
+### `bithuman` 2.11.11 — 2026-09-25
+
+- **Changed:** an offline render — `bithuman.open(...).render(audio)` and `python -m bithuman render` — is billed for the length of the video it produces (frames ÷ frame rate), the same as the `bithuman` CLI and the Video API. It was billed for the time the render took, so a fast machine paid for a fraction of the video. Live avatars (`AsyncBithuman`, the LiveKit plugin) are unchanged: they bill the seconds the avatar talks, and idle is free. Renders made before this release are not billed again.
+- **Action:** `pip install -U bithuman`.
+
 ### `bithuman` 2.11.10 — 2026-09-24
 
 - **Fixed:** Expression 2 lip sync on macOS. The bundled Apple renderer was out of sync by 40–70 ms; it now stays within 25 ms.
