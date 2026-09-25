@@ -417,6 +417,7 @@ const KIND_ROWS = {
 export const PUBLIC_CLASSES = {
   "essence2-android": {
     Essence2Avatar: "One Essence 2 session: feed 16-bit PCM, pull RGBA frames, idle, interrupt with `resetAudio`, and `checkRender`.",
+    Essence2HardwareFrame: "Returned by `pullHardwareBuffer()` / `idleHardwareBuffer()` after `useHardwareBuffers()`: the frame as an RGBA `HardwareBuffer` your renderer samples directly. Close it after presenting.",
     Essence2Credential: "Sets your API secret once: `Essence2Credential.set(secret)` covers the download and the session.",
     Essence2ModelStore: "Downloads and caches an avatar by agent code, with the secret from `Essence2Credential`.",
     Essence2MeteredDoorResolver: "Downloads with a secret you pass here instead: `Essence2MeteredDoorResolver(secret)`.",

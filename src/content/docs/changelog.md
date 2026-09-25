@@ -26,6 +26,12 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### essence2-android 0.7.0 — 2026-09-25
+
+- **Changed:** a long session holds a higher frame rate on the same handset. The held-for-10-minutes figure on a Galaxy S25+ is on [Performance](/performance). Frames are unchanged.
+- **Added:** zero-copy frame delivery. After `useHardwareBuffers()`, `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly; close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes unless you call `useHardwareBuffers()`.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.7.0")`.
+
 ### essence2-android 0.6.0 — 2026-09-24
 
 - **Changed:** after a pause in the conversation, the first frame of the next reply arrives sooner (about 1,090 → 242 ms on a Galaxy S25+). The picture is otherwise unchanged: frames are identical to 0.5.15.

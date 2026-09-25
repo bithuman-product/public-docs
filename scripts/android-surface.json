@@ -4,10 +4,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.6.0",
-        "digest": "sha256:d295f1b71fde9c6867a88b0c878255df663bbb8e29acfde5e26884ece4ba922b",
-        "filename": "essence2-android-0.6.0.aar",
-        "resolved_on": "2026-09-24"
+        "version": "0.7.0",
+        "digest": "sha256:48e8fef7ce0333d29116b10ccc1e61a1c87de391ef00180f42c0d72ae052f5a2",
+        "filename": "essence2-android-0.7.0.aar",
+        "resolved_on": "2026-09-25"
       },
       "surface": {
         "artifact_facts": {
@@ -107,6 +107,13 @@
                 "name": "Essence2Frames",
                 "visibility": "public",
                 "target": "ai.bithuman.elevate.ElevateFrames",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2HardwareFrame",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2HardwareFrame",
                 "target_declared_public": true,
                 "target_loadable": true
               },
@@ -1883,8 +1890,71 @@
                 "kind": "internal"
               },
               {
+                "name": "enableHardwareBuffers$essence2_android_release",
+                "jvm": "enableHardwareBuffers$essence2_android_release(I)Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "flushBorrowInto$essence2_android_release",
+                "jvm": "flushBorrowInto$essence2_android_release(Ljava/nio/ByteBuffer;)I",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "hardwareBuffer$essence2_android_release",
+                "jvm": "hardwareBuffer$essence2_android_release(I)Landroid/hardware/HardwareBuffer;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "hardwareBufferVerify$essence2_android_release",
+                "jvm": "hardwareBufferVerify$essence2_android_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "idleFrameInto$essence2_android_release",
+                "jvm": "idleFrameInto$essence2_android_release(Ljava/nio/ByteBuffer;)I",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "lastHardwareBufferSlot$essence2_android_release",
+                "jvm": "lastHardwareBufferSlot$essence2_android_release()I",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "purgeBorrow$essence2_android_release",
                 "jvm": "purgeBorrow$essence2_android_release()I",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
+                "name": "releaseHardwareBuffer$essence2_android_release",
+                "jvm": "releaseHardwareBuffer$essence2_android_release(I)V",
                 "access": [
                   "public",
                   "final"
@@ -2120,6 +2190,13 @@
                 "loadable": true
               },
               {
+                "name": "idleHardwareBuffer",
+                "signature": "fun idleHardwareBuffer(): Essence2HardwareFrame?",
+                "suspend": false,
+                "jvm": "idleHardwareBuffer()Lai/bithuman/elevate/Essence2HardwareFrame;",
+                "loadable": true
+              },
+              {
                 "name": "newFrameBuffer",
                 "signature": "fun newFrameBuffer(): ByteBuffer",
                 "suspend": false,
@@ -2134,10 +2211,24 @@
                 "loadable": true
               },
               {
+                "name": "pullHardwareBuffer",
+                "signature": "fun pullHardwareBuffer(): Essence2HardwareFrame?",
+                "suspend": false,
+                "jvm": "pullHardwareBuffer()Lai/bithuman/elevate/Essence2HardwareFrame;",
+                "loadable": true
+              },
+              {
                 "name": "resetAudio",
                 "signature": "fun resetAudio(startFrame: Int = …, forward: Boolean = …, wrap: Boolean = …)",
                 "suspend": false,
                 "jvm": "resetAudio(IZZ)V",
+                "loadable": true
+              },
+              {
+                "name": "useHardwareBuffers",
+                "signature": "fun useHardwareBuffers(slots: Int = …)",
+                "suspend": false,
+                "jvm": "useHardwareBuffers(I)V",
                 "loadable": true
               }
             ],
@@ -2279,6 +2370,15 @@
                 "kind": "jvm-static"
               },
               {
+                "name": "hardwareBufferVerify$essence2_android_release",
+                "jvm": "hardwareBufferVerify$essence2_android_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "resetAudio",
                 "jvm": "resetAudio()V",
                 "access": [
@@ -2308,6 +2408,25 @@
               {
                 "name": "resetAudio$default",
                 "jvm": "resetAudio$default(Lai/bithuman/elevate/Essence2Avatar;IZZILjava/lang/Object;)V",
+                "access": [
+                  "public",
+                  "static",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              },
+              {
+                "name": "useHardwareBuffers",
+                "jvm": "useHardwareBuffers()V",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "jvm-overload"
+              },
+              {
+                "name": "useHardwareBuffers$default",
+                "jvm": "useHardwareBuffers$default(Lai/bithuman/elevate/Essence2Avatar;IILjava/lang/Object;)V",
                 "access": [
                   "public",
                   "static",
@@ -2470,6 +2589,68 @@
                   "final"
                 ],
                 "kind": "internal"
+              }
+            ]
+          },
+          {
+            "name": "ai.bithuman.elevate.Essence2HardwareFrame",
+            "kind": "class",
+            "modality": "final",
+            "is_data": false,
+            "is_fun_interface": false,
+            "runtime_access": [
+              "public",
+              "final"
+            ],
+            "loadable": true,
+            "type_parameters": "",
+            "supertypes": [
+              "AutoCloseable"
+            ],
+            "companion": "Companion",
+            "nested_public": [],
+            "enum_entries": [],
+            "sealed_subclasses": [],
+            "constructors": [],
+            "functions": [
+              {
+                "name": "close",
+                "signature": "fun close()",
+                "suspend": false,
+                "jvm": "close()V",
+                "loadable": true
+              }
+            ],
+            "properties": [
+              {
+                "name": "buffer",
+                "signature": "val buffer: HardwareBuffer",
+                "mutable": false,
+                "jvm_getter": "getBuffer()Landroid/hardware/HardwareBuffer;",
+                "jvm_setter": null,
+                "jvm_field": "field bufferLandroid/hardware/HardwareBuffer;",
+                "loadable": true
+              }
+            ],
+            "loadable_undeclared": [
+              {
+                "name": "<init>",
+                "jvm": "<init>(Landroid/hardware/HardwareBuffer;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/internal/DefaultConstructorMarker;)V",
+                "access": [
+                  "public",
+                  "synthetic"
+                ],
+                "kind": "default-argument-bridge"
+              },
+              {
+                "name": "Companion",
+                "jvm": "field CompanionLai/bithuman/elevate/Essence2HardwareFrame$Companion;",
+                "access": [
+                  "public",
+                  "static",
+                  "final"
+                ],
+                "kind": "object-instance"
               }
             ]
           },
@@ -4398,6 +4579,15 @@
               ]
             },
             {
+              "name": "ai.bithuman.elevate.Essence2HardwareFrame$Companion",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "static",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.elevate.Essence2ModelStore$Companion$DEFAULT_MEMBERS$1",
               "declared_visibility": "local",
               "runtime_access": [
@@ -4576,9 +4766,9 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 72,
-          "declared_classes": 65,
-          "public_classes": 37
+          "class_files": 74,
+          "declared_classes": 67,
+          "public_classes": 38
         }
       }
     },
@@ -4589,7 +4779,7 @@
         "version": "0.5.0",
         "digest": "sha256:628e4682c6bc102b92ff691e9d29672dc84f693d2c072d217ec9d3cb735c09e4",
         "filename": "expression2-android-0.5.0.aar",
-        "resolved_on": "2026-09-24"
+        "resolved_on": "2026-09-25"
       },
       "surface": {
         "artifact_facts": {
