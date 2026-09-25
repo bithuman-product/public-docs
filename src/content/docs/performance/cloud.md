@@ -15,7 +15,7 @@ You don't choose the hardware: the service picks the tier for each session, and 
 |---|---|---|---|---|---|
 | Cloud API · GPU | NVIDIA RTX 4090 | 98 | **3.9×** real time | 340 | **17.0×** real time |
 | Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |
-| Cloud API · CPU | x86 server CPU | 29 | **1.1×** real time | 27 | **1.3×** real time |
+| Cloud API · CPU | x86 server CPU | 28 | **1.1×** real time | 27 | **1.3×** real time |
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES cloud -->
