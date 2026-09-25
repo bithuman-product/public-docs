@@ -23,7 +23,7 @@ Essence 2 plays at 25 fps (1920×1080) and Expression 2 at 20 fps (416×720). **
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |
 | iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 110 | **5.5×** real time |
-| Android | Samsung Galaxy S25+ | 47 | **1.8×** real time | 48 | **2.4×** real time |
+| Android | Samsung Galaxy S25+ | 52 | **2.0×** real time | 48 | **2.4×** real time |
 | Web browser (WebGPU) | Chrome on Apple M4 | 42 | **1.6×** real time | 38 | **1.9×** real time |
 <!-- /FLOORS:TABLE -->
 

@@ -11,7 +11,7 @@ label: "How we measure"
 ## Method
 
 <!-- FLOORS:RELEASES -->
-Measured in September 2026 on CLI 2.7.2, bithuman 2.11.10, Swift package 2.14.2, Swift package 2.15.0, essence2-android 0.5.15, expression2-android 0.4.10, the hosted web viewer and the cloud API.
+Measured in September 2026 on CLI 2.7.2, bithuman 2.11.10, Swift package 2.14.2, Swift package 2.15.0, essence2-android 0.7.0, expression2-android 0.4.10, the hosted web viewer and the cloud API.
 <!-- /FLOORS:RELEASES -->
 
 <!-- FLOORS:METHOD -->
