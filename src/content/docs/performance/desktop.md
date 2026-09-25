@@ -8,7 +8,7 @@ type: generated
 label: "Desktop"
 ---
 
-How fast each model renders on your own Mac or Linux machine, for each way you can run it. Pick the row for the product you use: the CLI, Python and the Swift package render at different rates on the same machine.
+Pick the row for the product you use: the CLI, Python and the Swift package render at different rates on the same machine.
 
 <!-- FLOORS:TABLE desktop -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |

@@ -8,7 +8,7 @@ type: generated
 label: "Cloud API"
 ---
 
-How fast the hosted service renders each model. You don't choose the hardware: the service picks the tier for each session, and each row is one tier.
+You don't choose the hardware: the service picks the tier for each session, and each row is one tier.
 
 <!-- FLOORS:TABLE cloud -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |

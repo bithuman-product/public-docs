@@ -8,7 +8,7 @@ type: generated
 label: "Web browser"
 ---
 
-How fast the in-browser engine renders each model when the avatar runs in the visitor's own tab (`render=local`). By default the avatar renders on the [cloud API](/performance/cloud) and streams to the page.
+These figures are for the avatar rendering in the visitor's own tab (`render=local`). By default the avatar renders on the [cloud API](/performance/cloud) and streams to the page.
 
 <!-- FLOORS:TABLE web -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |

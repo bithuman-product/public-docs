@@ -9,7 +9,7 @@ slug: performance
 label: "Overview"
 ---
 
-How fast each model renders, by where you run it. Essence 2 plays at 25 fps (1920×1080) and Expression 2 at 20 fps (416×720). **× real time** is the rendered frame rate divided by that playback rate: at 1.0× or more, the avatar keeps up with a live conversation.
+Essence 2 plays at 25 fps (1920×1080) and Expression 2 at 20 fps (416×720). **× real time** is the rendered frame rate divided by that playback rate: at 1.0× or more, the avatar keeps up with a live conversation.
 
 <!-- FLOORS:TABLE all -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
@@ -34,5 +34,5 @@ Each figure is one avatar session rendering as fast as the hardware allows. On t
 - [Cloud API](/performance/cloud): the hosted service, per tier (GPU, Apple silicon and CPU).
 - [Desktop](/performance/desktop): the CLI, Python and the Swift package on a Mac; the CLI and Python on Linux.
 - [Mobile](/performance/mobile): iPhone and Android, including one session held for 10 minutes.
-- [Web browser](/performance/web): the avatar rendering in the visitor's browser with WebGPU.
+- [Web browser](/performance/web): render throughput in Chrome on Apple M4 with WebGPU.
 - [How we measure](/performance/method): method, releases measured, memory, time to a finished video, and the raw data.

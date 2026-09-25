@@ -8,7 +8,7 @@ type: generated
 label: "Mobile"
 ---
 
-How fast each model renders on the phone itself, with the Apple and Android SDKs: first a short burst, then one session held for 10 minutes.
+First a short burst on each phone, then one session held for 10 minutes.
 
 <!-- FLOORS:TABLE mobile -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
