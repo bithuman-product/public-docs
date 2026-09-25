@@ -26,6 +26,18 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### Swift package 2.16.0 — 2026-09-25
+
+Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0
+
+- **Fixed:** an app that links its own `mlx-swift` now links beside Essence 2, also with `-ObjC` or `-all_load`. Essence 2 no longer contains MLX, and its download is 22 MB instead of 171 MB.
+- **Action:** set `from: "2.16.0"`, then `swift package update`.
+
+### Flutter plugin 2.6.17 — 2026-09-25
+
+- **Changed:** iOS and macOS use Essence 2 engine 1.13.0, which contains no MLX.
+- **Action:** pin `ref: flutter-plugin-v2.6.17`.
+
 ### Dashboard — 2026-09-25
 
 - **Changed:** Explore opens the V2 gallery of Essence 2 and Expression 2 agents. Switch to V1 for the classic gallery; your choice is remembered.
