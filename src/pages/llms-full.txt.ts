@@ -21,6 +21,8 @@ const LINKED_ONLY = new Set([
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
   "concepts/essence-1", "concepts/expression-1", "concepts/avatars-imx",
   "guides/local-voice-avatar",
+  // The performance overview carries every row; these sub-pages repeat them per platform.
+  "performance/cloud", "performance/desktop", "performance/mobile",
 ]);
 
 const included = (d: any) => {

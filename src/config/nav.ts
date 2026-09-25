@@ -33,7 +33,7 @@ export const GROUP_ORDER: Record<SectionId, string[]> = {
   sdk: ["Platforms", "Integrations", "Reference"],
   guides: ["Learn", "Build", "Deploy", "Pricing"],
   examples: ["Examples"],
-  performance: ["Performance"],
+  performance: ["Overview", "By platform", "Method"],
   resources: ["Resources"],
   legal: ["Legal"],
 };

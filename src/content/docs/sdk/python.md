@@ -130,7 +130,7 @@ The plugin installs `bithuman` on Python 3.11–3.13. The runnable example with 
 
 ## Performance
 
-Frame rates for Python on macOS and Linux are on the [performance page](/performance). A finished `render` logs its own rate on the `bithuman` logger at INFO.
+Frame rates for Python on macOS and Linux are on [Desktop performance](/performance/desktop). A finished `render` logs its own rate on the `bithuman` logger at INFO.
 
 ## Troubleshooting
 

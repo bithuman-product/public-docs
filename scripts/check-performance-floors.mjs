@@ -408,7 +408,9 @@ export function gradeJsonAgainstRecord(json, pin, record, recordBytes) {
   if (record.stale_after_days !== pin.stale_after_days) {
     out.push({ rule: "R1", where: PIN, why: `the record's re-measure clock is ${record.stale_after_days} days and the pin holds ${pin.stale_after_days}` });
   }
-  const by = new Map(record.rows.map((r) => [`${r.model}/${r.plane}`, r]));
+  // A plane may publish under a public id (the record row's docs_public_id), so the
+  // record is keyed the way performance.json names it.
+  const by = new Map(record.rows.map((r) => [`${r.model}/${r.docs_public_id || r.plane}`, r]));
   const inJson = new Set();
   for (const row of json.rows ?? []) {
     for (const [model, c] of Object.entries(row.cells ?? {})) {
@@ -439,21 +441,44 @@ export function gradeJsonAgainstRecord(json, pin, record, recordBytes) {
 
 /* ------------------------------------------------------ the served site */
 
-/** The speed table as the site hands it to a browser: label -> cells as text. */
+/** The speed table as the site hands it to a browser: label -> cells as text.
+ *  `rows.compact` says which layout was served: the six Markdown columns, or the
+ *  one-cell-per-model layout src/markdown/rehype-perf-tables.mjs builds (a table
+ *  with class "perf-table", each model cell reading "98 fps 3.9×"). */
 export function tableFromHtml(html) {
   const rows = new Map();
-  for (const t of html.matchAll(/<table[\s\S]*?<\/table>/g)) {
+  rows.compact = false;
+  for (const t of html.matchAll(/<table([^>]*)>[\s\S]*?<\/table>/g)) {
     const trs = [...t[0].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)].map(([, tr]) =>
       [...tr.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/g)].map(([, c]) => htmlText(c)),
     );
     // ★THE SPEED TABLE, NOT EVERY "Runs on" TABLE. The memory table below it opens
     //  with the same column, and reading both merged its rows over the speed rows
-    //  (measured on the first build of this page, 2026-09-23).
-    if (!trs.length || trs[0][0] !== "Runs on" || !trs[0].some((h) => / fps$/.test(h))) continue;
+    //  (measured on the first build of this page, 2026-09-23). The compact speed
+    //  table is marked by its class; the memory table never carries it.
+    const compact = /class="[^"]*\bperf-table\b/.test(t[1]);
+    if (!trs.length || trs[0][0] !== "Runs on" || !(compact || trs[0].some((h) => / fps$/.test(h)))) continue;
     for (const cells of trs.slice(1)) if (cells[0]) rows.set(cells[0], cells);
+    rows.compact = compact;
     break;
   }
   return rows;
+}
+
+/** A pinned six-column Markdown row as the compact layout shows it:
+ *  [label, hardware, "98 fps 3.9×", "340 fps 17.0×"]. A dash stays a dash. */
+export function compactCells(line) {
+  const c = cellsOf(line).map(mdText);
+  const out = [c[0], c[1]];
+  for (let i = 2; i + 1 < c.length; i += 2) {
+    if (c[i] === "—") {
+      out.push("—");
+      continue;
+    }
+    const m = /^(\d+(?:\.\d+)?)×/.exec(c[i + 1]);
+    out.push(m ? `${c[i]} fps ${m[1]}×` : `${c[i]} fps`);
+  }
+  return out;
 }
 
 const htmlText = (c) =>
@@ -483,7 +508,7 @@ export function gradeServed(html, jsonText, pin, origin) {
   else {
     for (const r of pin.table.rows) {
       const got = found.get(r.label);
-      const want = cellsOf(r.line).map(mdText);
+      const want = found.compact ? compactCells(r.line) : cellsOf(r.line).map(mdText);
       if (got === undefined) out.push({ rule: "S1", where, why: `the served table has no "${r.label}" row` });
       else if (got.join(" | ") !== want.join(" | ")) {
         out.push({ rule: "S2", where, why: `the served "${r.label}" row is not the pinned one:\n      pinned: ${want.join(" | ")}\n      served: ${got.join(" | ")}` });
@@ -829,7 +854,7 @@ const FIX_JSON = {
     { id: "cloud-gpu", label: "Cloud API · GPU", hardware: "NVIDIA RTX 4090", published: true, cells: {
       "essence-2": { fps: 103, x_realtime: 4.12, realtime: true, measured_on: "2026-09-22" },
       "expression-2": { fps: 357, x_realtime: 17.85, realtime: true, measured_on: "2026-09-23" } } },
-    { id: "modal-cpu", label: "Cloud API · CPU", hardware: "x86 server CPU, 8 vCPU", published: true, cells: {
+    { id: "cloud-cpu", label: "Cloud API · CPU", hardware: "x86 server CPU, 8 vCPU", published: true, cells: {
       "essence-2": { fps: 22, x_realtime: 0.88, realtime: false, measured_on: "2026-09-23" },
       "expression-2": { fps: 27, x_realtime: 1.35, realtime: true, measured_on: "2026-09-23" } } },
     // ★THE HALF-MEASURED ROW: one model published, the other not yet. It must pin
@@ -859,8 +884,8 @@ const FIX_RECORD = {
   rows: [
     { model: "essence-2", plane: "cloud-gpu", docs_fps: 103, docs_measured_on: "2026-09-22" },
     { model: "expression-2", plane: "cloud-gpu", docs_fps: 357, docs_measured_on: "2026-09-23" },
-    { model: "essence-2", plane: "modal-cpu", docs_fps: 22, docs_measured_on: "2026-09-23" },
-    { model: "expression-2", plane: "modal-cpu", docs_fps: 27, docs_measured_on: "2026-09-23" },
+    { model: "essence-2", plane: "cpu-internal", docs_public_id: "cloud-cpu", docs_fps: 22, docs_measured_on: "2026-09-23" },
+    { model: "expression-2", plane: "cpu-internal", docs_public_id: "cloud-cpu", docs_fps: 27, docs_measured_on: "2026-09-23" },
     { model: "essence-2", plane: "web", docs_fps: 29, docs_measured_on: "2026-09-22" },
     { model: "expression-2", plane: "web", docs_fps: null, docs_measured_on: null },
     { model: "essence-2", plane: "apple-serve-launch", docs_fps: 136, docs_measured_on: "2026-09-23" },
@@ -960,6 +985,17 @@ async function selftest() {
     arm("a served page with no speed table reddens", has(gradeServed("<p>nothing</p>", jsonText, pin, "https://x"), "S0"));
     arm("a served performance.json one build behind reddens", has(gradeServed(good, jsonText.replace("103", "99"), pin, "https://x"), "S4"));
     arm("the served arm is not vacuous — the matching fixture (with the memory table after it) is silent", gradeServed(good, jsonText, pin, "https://x").length === 0);
+    // THE COMPACT LAYOUT (rehype-perf-tables.mjs): one cell per model, "98 fps" then a "3.9×" chip.
+    const chtml = (rows) =>
+      `<table class="perf-table"><thead><tr><th>Runs on</th><th>Hardware</th><th class="perf-model">Essence 2</th><th class="perf-model">Expression 2</th></tr></thead><tbody>` +
+      rows.map((l) => `<tr>${compactCells(l).map((c, i) => {
+        const m = i > 1 && /^(\S+) fps (\S+)$/.exec(c);
+        return `<td data-label="x"><span class="td-v">${m ? `<span class="perf-fps">${m[1]} fps</span> <span class="perf-x is-rt">${m[2]}</span>` : c}</span></td>`;
+      }).join("")}</tr>`).join("") + "</tbody></table>";
+    const cgood = MEM + chtml(pin.table.rows.map((r) => r.line));
+    arm("the compact layout as built is read and matches the pin (memory table before it ignored)", gradeServed(cgood, jsonText, pin, "https://x").length === 0);
+    arm("a compact cell one build behind reddens", has(gradeServed(chtml(pin.table.rows.map((r, i) => (i ? r.line : r.line.replace("| 103 |", "| 99 |")))), jsonText, pin, "https://x"), "S2"));
+    arm("a compact chip whose multiple changed reddens", has(gradeServed(chtml(pin.table.rows.map((r) => r.line)).replace(">4.1×<", ">4.2×<"), jsonText, pin, "https://x"), "S2"));
   }
   {
     let refused = false;

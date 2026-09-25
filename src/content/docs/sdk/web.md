@@ -79,7 +79,7 @@ To build your own video UI instead of the hosted page, subscribe to a cloud-rend
 
 ## Performance
 
-In-browser frame rates (WebGPU) are on the [performance page](/performance).
+In-browser frame rates (WebGPU) are on [Web browser performance](/performance/web).
 
 ## Troubleshooting
 
