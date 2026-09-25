@@ -80,6 +80,16 @@ The calls and the live-streaming loop are on [Android](/sdk/android).
 - **Your own avatar:** create one with the [Agents API](/api/agents) with `"model": "essence-2"`, then pass its agent code to `fetch`. The same resolver downloads it with your secret.
 - **Live speech:** feed 16 kHz mono 16-bit audio as it arrives and pull frames at 25 fps; call `endOfAudio()` at the end of each reply and `idle(buffer)` between replies.
 - **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and sets the same property.
+- **Zero-copy frames (essence2-android 0.7.0 and newer):** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()` ([Android API](/sdk/android-api)).
+
+  ```kotlin
+  val avatar = Essence2Avatar.create(bundleDir)
+  avatar.useHardwareBuffers()            // once, before the first frame
+  avatar.feed(pcm)
+  avatar.pullHardwareBuffer()?.use { frame ->
+      renderer.draw(frame.buffer)        // e.g. an EGLImage / Vulkan import, or Bitmap.wrapHardwareBuffer
+  }
+  ```
 
 ## Troubleshooting
 

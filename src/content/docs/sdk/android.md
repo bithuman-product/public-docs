@@ -147,17 +147,6 @@ In a live conversation, keep one avatar open and stream into it.
 | Interrupt the reply | `resetState(true)` | `resetAudio()` |
 | Check the session | `Expression2Exception` from `create` or `pull` | `checkRender()` |
 
-**Zero-copy frames (Essence 2).** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()`.
-
-```kotlin
-val avatar = Essence2Avatar.create(bundleDir)
-avatar.useHardwareBuffers()            // once, before the first frame
-avatar.feed(pcm)
-avatar.pullHardwareBuffer()?.use { frame ->
-    renderer.draw(frame.buffer)        // e.g. an EGLImage / Vulkan import, or Bitmap.wrapHardwareBuffer
-}
-```
-
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
 
 The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle and interruption, and it builds for Android from a clone.
