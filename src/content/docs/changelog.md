@@ -87,6 +87,15 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 - **Changed:** a first render downloads less: the 8-second speech encoder is fetched only when a render needs it.
 - **Action:** `pip install -U bithuman`.
 
+### CLI 2.7.6 — 2026-09-25
+
+Tag `cli-v2.7.6`.
+
+- **Changed:** a live Essence 1 reply starts about 0.8 s sooner. The CLI measures how much audio the avatar needs before its first frame (about 0.2 s) instead of waiting a fixed second.
+- **Fixed:** Essence 1 lip sync in a live session: the mouth moved about 0.1 s ahead of the voice; it is now within 30 ms, and the voice never runs ahead of the mouth.
+- **Fixed:** an Expression 2 video rendered on Linux is billed for its length. A 15.0 s video was billed 15.5 s for silent frames past the end of the audio.
+- **Action:** `curl -fsSL https://install.bithuman.ai | sh`, or `brew upgrade bithuman-cli`.
+
 ### CLI 2.7.5 — 2026-09-25
 
 Tag `cli-v2.7.5`.
