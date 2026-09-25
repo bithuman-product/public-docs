@@ -175,6 +175,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | the app is killed mid-conversation with no crash log | `bitHumanKit` exceeded the default memory limit | add the two Apple entitlements |
 | `bitHuman needs an iPhone 16 Pro or newer` | `bitHumanKit`'s device floor | use `Expression2` or `Essence2` directly on that device |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
+| you want Essence 1 on a Mac or iPhone | the Swift package has no Essence 1 product | on a Mac, `pip install bithuman` and use the [Python SDK](/sdk/python); in an app, use the [cloud API](/api); see [Essence 1](/concepts/essence-1) |
 
 ## Reference
 

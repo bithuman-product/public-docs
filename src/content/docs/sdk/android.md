@@ -183,6 +183,7 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 | `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |
 | `Unresolved reference 'MeteredDoorResolver'` | Kotlin does not resolve a nested class through a type alias | import `ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver` |
 | `UnsatisfiedLinkError` on an emulator | the engines are `arm64-v8a` only | run on a physical arm64 handset |
+| you want Essence 1 on Android | the first-generation artifact, `ai.bithuman:sdk:2.3.6`, cannot authenticate on a device | use Essence 2 or Expression 2 on the phone, or serve Essence 1 from the [cloud API](/api); see [Essence 1](/concepts/essence-1) |
 
 ## Reference
 
