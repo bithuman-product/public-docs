@@ -26,6 +26,11 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### Dashboard — 2026-09-25
+
+- **Changed:** Explore opens the V2 gallery of Essence 2 and Expression 2 agents. Switch to V1 for the classic gallery; your choice is remembered.
+- **Changed:** a new agent starts on Expression 2. Essence 2, Essence 1 and Expression 1 stay one click away in the model dialog.
+
 ### essence2-android 0.7.0 — 2026-09-25
 
 - **Changed:** a long session holds a higher frame rate on the same handset. The held-for-10-minutes figure on a Galaxy S25+ is on [Performance](/performance). Frames are unchanged.
