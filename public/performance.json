@@ -507,7 +507,7 @@
      "x_realtime": 1.32,
      "realtime": true,
      "measured_on": "2026-09-25",
-     "release": "Swift engine 1.12.1",
+     "release": "Swift package 2.15.0",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
