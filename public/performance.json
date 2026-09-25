@@ -103,7 +103,7 @@
    }
   },
   {
-   "id": "modal-cpu",
+   "id": "cloud-cpu",
    "label": "Cloud API · CPU",
    "hardware": "x86 server CPU",
    "published": true,

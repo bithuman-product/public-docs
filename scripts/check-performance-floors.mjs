@@ -408,7 +408,9 @@ export function gradeJsonAgainstRecord(json, pin, record, recordBytes) {
   if (record.stale_after_days !== pin.stale_after_days) {
     out.push({ rule: "R1", where: PIN, why: `the record's re-measure clock is ${record.stale_after_days} days and the pin holds ${pin.stale_after_days}` });
   }
-  const by = new Map(record.rows.map((r) => [`${r.model}/${r.plane}`, r]));
+  // A plane may publish under a public id (the record row's docs_public_id), so the
+  // record is keyed the way performance.json names it.
+  const by = new Map(record.rows.map((r) => [`${r.model}/${r.docs_public_id || r.plane}`, r]));
   const inJson = new Set();
   for (const row of json.rows ?? []) {
     for (const [model, c] of Object.entries(row.cells ?? {})) {
@@ -852,7 +854,7 @@ const FIX_JSON = {
     { id: "cloud-gpu", label: "Cloud API · GPU", hardware: "NVIDIA RTX 4090", published: true, cells: {
       "essence-2": { fps: 103, x_realtime: 4.12, realtime: true, measured_on: "2026-09-22" },
       "expression-2": { fps: 357, x_realtime: 17.85, realtime: true, measured_on: "2026-09-23" } } },
-    { id: "modal-cpu", label: "Cloud API · CPU", hardware: "x86 server CPU, 8 vCPU", published: true, cells: {
+    { id: "cloud-cpu", label: "Cloud API · CPU", hardware: "x86 server CPU, 8 vCPU", published: true, cells: {
       "essence-2": { fps: 22, x_realtime: 0.88, realtime: false, measured_on: "2026-09-23" },
       "expression-2": { fps: 27, x_realtime: 1.35, realtime: true, measured_on: "2026-09-23" } } },
     // ★THE HALF-MEASURED ROW: one model published, the other not yet. It must pin
@@ -882,8 +884,8 @@ const FIX_RECORD = {
   rows: [
     { model: "essence-2", plane: "cloud-gpu", docs_fps: 103, docs_measured_on: "2026-09-22" },
     { model: "expression-2", plane: "cloud-gpu", docs_fps: 357, docs_measured_on: "2026-09-23" },
-    { model: "essence-2", plane: "modal-cpu", docs_fps: 22, docs_measured_on: "2026-09-23" },
-    { model: "expression-2", plane: "modal-cpu", docs_fps: 27, docs_measured_on: "2026-09-23" },
+    { model: "essence-2", plane: "cpu-internal", docs_public_id: "cloud-cpu", docs_fps: 22, docs_measured_on: "2026-09-23" },
+    { model: "expression-2", plane: "cpu-internal", docs_public_id: "cloud-cpu", docs_fps: 27, docs_measured_on: "2026-09-23" },
     { model: "essence-2", plane: "web", docs_fps: 29, docs_measured_on: "2026-09-22" },
     { model: "expression-2", plane: "web", docs_fps: null, docs_measured_on: null },
     { model: "essence-2", plane: "apple-serve-launch", docs_fps: 136, docs_measured_on: "2026-09-23" },
