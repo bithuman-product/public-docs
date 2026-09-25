@@ -579,6 +579,38 @@
     },
     "expression-2": null
    }
+  },
+  {
+   "id": "web-sustained",
+   "label": "Web browser (WebGPU) · held 10 min",
+   "hardware": "Chrome on Apple M4",
+   "published": true,
+   "sustained": true,
+   "cells": {
+    "essence-2": null,
+    "expression-2": {
+     "fps": 41,
+     "x_realtime": 2.05,
+     "realtime": true,
+     "measured_on": "2026-09-25",
+     "release": "web viewer",
+     "clip": {
+      "id": "varied1800s-heldout",
+      "seconds": 1800.25
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "memory_release": null,
+     "time_to_video": null,
+     "held": {
+      "median_window_fps": 41.6,
+      "worst_window_fps": 41.27,
+      "sessions": 4
+     }
+    }
+   }
   }
  ]
 }

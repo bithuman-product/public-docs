@@ -28,8 +28,11 @@ Measured in September 2026 on Swift package 2.14.2, Swift package 2.15.0, essenc
 |---|---|---|---|---|---|
 | iPhone · Swift package | iPhone 15 | 33 | **1.3×** real time | 103 | **5.1×** real time |
 | Android | Samsung Galaxy S25+ | 33 | **1.3×** real time | — | — |
+| Web browser (WebGPU) | Chrome on Apple M4 | — | — | 41 | **2.0×** real time |
 
-One session held open for ten minutes from a cool start on Swift package 2.15.0 and essence2-android 0.7.0, rendering as fast as the device allows. Each number is the median 30-second stretch of the slowest of that row's sessions (four on iPhone · Swift package, three on Android); the slowest single stretch was lower (iPhone · Swift package Essence 2 31 fps; iPhone · Swift package Expression 2 100 fps; Android Essence 2 33 fps). A phone warms up over a long conversation and slows its processor to stay cool, so a kiosk or any screen that renders all day should plan on this number rather than the short-burst rate.
+One session held open for ten minutes from a cool start on Swift package 2.15.0, essence2-android 0.7.0 and web viewer, rendering as fast as the device allows. Each number is the median 30-second stretch of the slowest of that row's sessions (four on iPhone · Swift package, three on Android, four on Web browser (WebGPU)); the slowest single stretch was lower (iPhone · Swift package Essence 2 31 fps; iPhone · Swift package Expression 2 100 fps; Android Essence 2 33 fps; Web browser (WebGPU) Expression 2 41 fps). A phone warms up over a long conversation and slows its processor to stay cool, so a kiosk or any screen that renders all day should plan on this number rather than the short-burst rate.
+
+The Web browser row is the engine's render throughput with WebGPU in Chrome on an Apple M4, measured in a visible (headed) browser window. It is not the frame rate a visitor sees on the page, where the voice and the display share the browser with the engine.
 <!-- /FLOORS:SUSTAINED -->
 
 ## What the numbers mean
