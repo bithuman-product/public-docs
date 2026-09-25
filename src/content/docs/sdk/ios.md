@@ -30,7 +30,7 @@ Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or E
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.15.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.16.0")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -149,6 +149,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 
 ## Platform notes
 
+- **Your own MLX:** Essence 2 contains no MLX. Link your own `mlx-swift` (`MLX`, `MLXNN`) in the same target, also with `-ObjC` or `-all_load`; nothing to embed. Requires Swift package 2.16.0 or newer.
 - **A Mac app built in Xcode:** the App template turns on App Sandbox. Under *Signing & Capabilities → App Sandbox*, tick **Outgoing Connections (Client)**, or the engines cannot check your secret. Add the `.imx` files and engine resources to the app bundle; a sandboxed app reads only its bundle and container.
 - **Simulator:** simulator slices are arm64 only; pass `ARCHS=arm64`. Essence 2 does not run in the Simulator (`be_essence2_create` returns `-2`); Expression 2 does.
 - **`bitHumanKit`:** needs an iPhone 16 Pro or newer (or iPad Pro M4, 16 GB) and two Apple entitlements, `com.apple.developer.kernel.increased-memory-limit` and `com.apple.developer.kernel.extended-virtual-addressing`. Request them under *Account → Membership → Request Additional Capabilities*; Apple replies in 1–3 business days. The engines need no entitlement.
@@ -156,7 +157,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.15.0 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.16.0 or newer
   ```
 
 ## Performance
@@ -173,6 +174,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously | poll, as in the first frame |
 | crash in `__cxa_finalize` when the app quits | `be_essence2_quiesce_all()` was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
+| `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.16.0"`, then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
 | the app is killed mid-conversation with no crash log | `bitHumanKit` exceeded the default memory limit | add the two Apple entitlements |
 | `bitHuman needs an iPhone 16 Pro or newer` | `bitHumanKit`'s device floor | use `Expression2` or `Essence2` directly on that device |
