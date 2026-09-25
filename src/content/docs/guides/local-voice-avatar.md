@@ -135,3 +135,4 @@ Talking time bills bitHuman credits and idle is free; OpenAI bills your own key.
 | The page says it could not connect | `livekit-server --dev` is not running | Start it, then click **Start** again |
 | Nothing happens after joining | `livekit-server --dev` or `agent.py` is not running | Start both, `livekit-server` first |
 | Another device on your network cannot join | `--dev` listens on `localhost` only | `livekit-server --dev --bind 0.0.0.0 --node-ip <your LAN IP>`; other browsers also need HTTPS for the microphone |
+| On a Mac, your own page with no microphone, on the same machine as the avatar, fails with `could not establish pc connection` | Chrome hides the machine's local addresses until the page has microphone permission | call `navigator.mediaDevices.getUserMedia({ audio: true })` before connecting, or open the page from another device |
