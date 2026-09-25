@@ -26,6 +26,8 @@ The same agent code works on every surface that runs its model.
 | [**Essence 1**](/concepts/essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
 | [**Expression 1**](/concepts/expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents on an NVIDIA GPU |
 
+Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
+
 ## Which should I choose?
 
 - **A photorealistic person, anywhere** — Essence 2.
