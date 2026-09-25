@@ -22,7 +22,7 @@ const LINKED_ONLY = new Set([
   "concepts/essence-1", "concepts/expression-1", "concepts/avatars-imx",
   "guides/local-voice-avatar",
   // The performance overview carries every row; these sub-pages repeat them per platform.
-  "performance/cloud", "performance/desktop", "performance/mobile",
+  "performance/cloud", "performance/desktop", "performance/mobile", "performance/web",
 ]);
 
 const included = (d: any) => {
