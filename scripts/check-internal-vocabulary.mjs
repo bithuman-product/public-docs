@@ -180,10 +180,10 @@ const BANNED = [
   // `essence_2_max_cloud` has no word boundary after `max` and must still fire.
   { name: "essence-2-max", re: /\bessence[-_ ]?2[-_ ]?max(?![a-z])/gi,
     fixture: "essence-2-max (rate key essence_2_max_cloud, spelled essence2max in one SDK, Essence 2 Max in prose) is GPU only",
-    say: "INTERNAL PROTOTYPE — a pure-teacher reference model that is not a " +
-         "product. It has no public page, rate-card row, enum value, SDK, CLI or " +
-         "self-host route. Name `essence-2` instead, or delete the sentence; " +
-         "there is no carrier and no marker that admits it" },
+    say: "ENTERPRISE PLAN ONLY — the site names it in exactly one sentence, " +
+         "\"Essence 2 Max is available on the Enterprise plan only. Contact sales to " +
+         "enable it.\" (owner rulings 2026-09-10 + 2026-09-25). Anywhere else, name " +
+         "`essence-2` instead or delete the sentence: no enum, example, quickstart or rate row" },
   // ★OWNER DIRECTIVE 2026-09-23: "standardize API key names to avoid
   // confusion". The customer's credential is ONE noun, the **API secret**: the
   // variable every SDK reads is BITHUMAN_API_SECRET, the header is
@@ -237,6 +237,15 @@ const OWNED_BY_RETIRED_NAMES = [
 // ★These are not exemptions for prose. Every one of them is a string that, if
 // this guard forced it off the page, a developer could no longer type.
 const CARRIERS = [
+  // ★THE ONE LINE THAT MAY NAME ESSENCE 2 MAX. Owner ruling 2026-09-10 removed it from public
+  //  exposure, docs included; owner ruling 2026-09-25 ("essence-2-max is only reserved for
+  //  enterprise customers — make it clear") and his direct decision the same day admit ONE
+  //  sentence, on /concepts/models, /guides/pricing and llms.txt. The name is carried only when
+  //  the SAME sentence says "Enterprise plan only", so this is also the must-mark guard: any other
+  //  mention of the name still fails. bithuman-models tools/check_taught_surface.py
+  //  INTERNAL_ONLY_DOCS_CARRIERS holds the same pattern.
+  { why: "the ruled Enterprise-only sentence for Essence 2 Max (owner rulings 2026-09-10 + 2026-09-25)",
+    re: /\bEssence 2 Max\b[^.\n]*\bEnterprise plan only\b/ },
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
   { why: "the ONE sentence on /concepts/models that retires the word ANE by naming it",
@@ -636,6 +645,19 @@ function selfTest() {
   }
   T(`M2 no pattern fires on its legitimate near-twin${twinFails.length ? " — " + twinFails.join("; ") : ""}`,
     twinFails.length === 0);
+
+  // M2b — the Enterprise-only sentence is the ONLY carrier of Essence 2 Max: the ruled sentence
+  //       is carried, the name alone is not, and the marker in another sentence is not.
+  {
+    const e2max = BANNED.find((b) => b.name === "essence-2-max");
+    const carried = (line) => CARRIERS.some((c) => c.re.test(line));
+    const hits = (line) => { e2max.re.lastIndex = 0; return e2max.re.test(line); };
+    const ok = "Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.";
+    T("M2b the ruled Enterprise-only sentence carries Essence 2 Max; the bare name and a marker in another sentence do not",
+      hits(ok) && carried(ok)
+      && hits("Essence 2 Max renders at 1080p.") && !carried("Essence 2 Max renders at 1080p.")
+      && !carried("Essence 2 Max is fast. Enterprise plan only."));
+  }
 
   // M3 — the two checkers grade disjoint word sets.
   const overlap = BANNED.filter((b) =>

@@ -73,6 +73,8 @@ The cheapest creation costs 250 credits, more than a free month. A creation you 
 
 Annual plans bill twelve months of credits up front. Concurrent sessions limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED` ([rate limits](/api/rate-limits)). Self-hosted and on-device sessions are limited only by credits.
 
+Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
+
 ## Offline licensing
 
 Business and Enterprise plans can run realtime avatars fully offline, for kiosks, trade shows, ATMs and embedded screens.
