@@ -13,11 +13,12 @@ How to use these classes in an app is on [Android](/sdk/android). Signatures are
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.6.0` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.7.0` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 | Class | Purpose |
 | --- | --- |
 | `Essence2Avatar` | One Essence 2 session: feed 16-bit PCM, pull RGBA frames, idle, interrupt with `resetAudio`, and `checkRender`. |
+| `Essence2HardwareFrame` | Returned by `pullHardwareBuffer()` / `idleHardwareBuffer()` after `useHardwareBuffers()`: the frame as an RGBA `HardwareBuffer` your renderer samples directly. Close it after presenting. |
 | `Essence2Credential` | Sets your API secret once: `Essence2Credential.set(secret)` covers the download and the session. |
 | `Essence2ModelStore` | Downloads and caches an avatar by agent code, with the secret from `Essence2Credential`. |
 | `Essence2MeteredDoorResolver` | Downloads with a secret you pass here instead: `Essence2MeteredDoorResolver(secret)`. |
@@ -45,14 +46,25 @@ class Essence2Avatar : AutoCloseable
     fun feed(pcm16le: ByteArray, offset: Int = …, count: Int = …)
     fun feed(samples: FloatArray, offset: Int = …, count: Int = …)
     fun idle(dst: ByteBuffer): Boolean
+    fun idleHardwareBuffer(): Essence2HardwareFrame?
     fun newFrameBuffer(): ByteBuffer
     fun pull(dst: ByteBuffer): Boolean
+    fun pullHardwareBuffer(): Essence2HardwareFrame?
     fun resetAudio(startFrame: Int = …, forward: Boolean = …, wrap: Boolean = …)
+    fun useHardwareBuffers(slots: Int = …)
     companion object
         const val W2V_MEMBER: String = "w2v_ess_fp16_v1.onnx"
         const val W2V_MEMBER_TEACHER: String = "wav2vec2_fp32_8s.onnx"
         fun create(bundleDir: File, w2v: File? = …, threads: Int = …, frames: Essence2Frames? = …): Essence2Avatar
         fun frontendIn(bundleDir: File): File
+```
+
+### Essence2HardwareFrame
+
+```kotlin
+class Essence2HardwareFrame : AutoCloseable
+    val buffer: HardwareBuffer
+    fun close()
 ```
 
 ### Essence2Credential

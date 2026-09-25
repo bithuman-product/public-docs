@@ -14,7 +14,7 @@ Both models render on the handset: you feed 16 kHz mono speech in and pull pictu
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), at the identity's own resolution, 25 fps |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
-| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.0")` | `implementation("ai.bithuman:essence2-android:0.6.0")` |
+| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.0")` | `implementation("ai.bithuman:essence2-android:0.7.0")` |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
@@ -50,7 +50,7 @@ android {
 }
 dependencies {
     implementation("ai.bithuman:expression2-android:0.5.0")
-    // or: implementation("ai.bithuman:essence2-android:0.6.0")
+    // or: implementation("ai.bithuman:essence2-android:0.7.0")
 }
 ```
 
@@ -146,6 +146,17 @@ In a live conversation, keep one avatar open and stream into it.
 | Idle between replies | `avatar.idleLoop?.next(bitmap)` | `idle(buffer)` |
 | Interrupt the reply | `resetState(true)` | `resetAudio()` |
 | Check the session | `Expression2Exception` from `create` or `pull` | `checkRender()` |
+
+**Zero-copy frames (Essence 2).** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()`.
+
+```kotlin
+val avatar = Essence2Avatar.create(bundleDir)
+avatar.useHardwareBuffers()            // once, before the first frame
+avatar.feed(pcm)
+avatar.pullHardwareBuffer()?.use { frame ->
+    renderer.draw(frame.buffer)        // e.g. an EGLImage / Vulkan import, or Bitmap.wrapHardwareBuffer
+}
+```
 
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
 
