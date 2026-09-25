@@ -122,7 +122,7 @@ The [cloud example](https://github.com/bithuman-product/bithuman-examples/tree/m
 
 ## Performance
 
-Cloud frame rates are on the [performance page](/performance).
+Cloud frame rates are on [Cloud API performance](/performance/cloud).
 
 ## Troubleshooting
 

@@ -159,7 +159,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 
 ## Performance
 
-Frame rates on iPhone and Mac for both models are on the [performance page](/performance).
+Frame rates for both models are on [Mobile performance](/performance/mobile) for iPhone and [Desktop performance](/performance/desktop) for Mac.
 
 ## Troubleshooting
 

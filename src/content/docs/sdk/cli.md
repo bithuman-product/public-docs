@@ -117,7 +117,7 @@ The whole setup, and the same conversation in your own Python code: [Talk to an 
 
 ## Performance
 
-Frame rates for the CLI on macOS and Linux are on the [performance page](/performance).
+Frame rates for the CLI on macOS and Linux are on [Desktop performance](/performance/desktop).
 
 ## Troubleshooting
 

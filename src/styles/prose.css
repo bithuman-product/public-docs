@@ -130,6 +130,28 @@
 /* An address or a path in a cell must break rather than widen the row. */
 .prose td code, .prose td a { overflow-wrap: anywhere; }
 
+/* The generated performance tables (src/markdown/rehype-perf-tables.mjs): one
+   cell per model, the frame rate then the multiple of real time as the same
+   chip the headline on the landing page carries. */
+.prose table.perf-table td:nth-child(2) { color: var(--color-text-secondary); }
+.prose table.perf-table td.perf-cell { white-space: nowrap; }
+.prose .perf-fps { display: inline-block; min-width: 4.3em; font-weight: var(--fw-medium); color: var(--color-text); }
+.prose .perf-x {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: var(--ft-xs);
+  line-height: 1.5;
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+}
+.prose .perf-x.is-rt { background: color-mix(in srgb, var(--green-500) 16%, transparent); color: var(--color-text); }
+.prose .perf-x.is-below { background: color-mix(in srgb, var(--amber-500) 18%, transparent); color: var(--color-text); }
+.prose td.perf-cell.is-dash { color: var(--color-text-tertiary); }
+/* The release line the emitter writes under a table is that table's caption. */
+.prose p.perf-caption { margin-top: calc(-1 * var(--space-3)); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+
 /* Too narrow for a grid: a table stops being one. Each row becomes a card of
    labelled values, so nothing is clipped and nothing has to be dragged
    sideways. The column names come from rehype-table-labels.mjs at build time,
@@ -159,6 +181,9 @@
   .prose td[align="right"] { text-align: left; }
   .prose td.is-status { font-size: var(--ft-sm); }
   .prose td:empty { display: none; }
+  /* A performance row's platform is the card's title rather than a labelled value. */
+  .prose table.perf-table td:first-child { display: block; padding-bottom: 0.45rem; font-size: var(--ft-md); }
+  .prose table.perf-table td:first-child::before { content: none; }
   .prose td[data-label]::before {
     content: attr(data-label);
     font-size: var(--ft-xs);

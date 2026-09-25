@@ -37,6 +37,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "server",
+     "memory_release": null,
      "time_to_video": null
     },
     "expression-2": {
@@ -53,6 +54,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.17,
      "memory_scope": "server",
+     "memory_release": null,
      "time_to_video": null
     }
    }
@@ -78,6 +80,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "server",
+     "memory_release": null,
      "time_to_video": null
     },
     "expression-2": {
@@ -94,6 +97,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.18,
      "memory_scope": "server",
+     "memory_release": null,
      "time_to_video": null
     }
    }
@@ -119,6 +123,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "server",
+     "memory_release": null,
      "time_to_video": null
     },
     "expression-2": {
@@ -135,6 +140,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "server",
+     "memory_release": null,
      "time_to_video": null
     }
    }
@@ -160,11 +166,13 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "CLI 2.7.0",
      "time_to_video": {
       "clip_seconds": 10.0,
       "first_run_s": 9.61,
       "after_that_s": 7.84,
-      "measured_on": "2026-09-23"
+      "measured_on": "2026-09-23",
+      "release": "CLI 2.7.1"
      }
     },
     "expression-2": {
@@ -181,6 +189,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "CLI 2.7.0",
      "time_to_video": null
     }
    }
@@ -193,11 +202,11 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 176,
-     "x_realtime": 7.04,
+     "fps": 174,
+     "x_realtime": 6.96,
      "realtime": true,
-     "measured_on": "2026-09-23",
-     "release": "bithuman 2.11.8",
+     "measured_on": "2026-09-24",
+     "release": "bithuman 2.11.10",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -206,14 +215,15 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "bithuman 2.11.6",
      "time_to_video": null
     },
     "expression-2": {
      "fps": 164,
      "x_realtime": 8.2,
      "realtime": true,
-     "measured_on": "2026-09-23",
-     "release": "bithuman 2.11.8",
+     "measured_on": "2026-09-24",
+     "release": "bithuman 2.11.10",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -222,6 +232,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "bithuman 2.11.6",
      "time_to_video": null
     }
    }
@@ -247,6 +258,7 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": null,
+     "memory_release": null,
      "time_to_video": null
     },
     "expression-2": {
@@ -263,6 +275,7 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": null,
+     "memory_release": null,
      "time_to_video": null
     }
    }
@@ -288,6 +301,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "CLI 2.7.0",
      "time_to_video": null
     },
     "expression-2": {
@@ -304,6 +318,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "CLI 2.7.0",
      "time_to_video": null
     }
    }
@@ -319,8 +334,8 @@
      "fps": 50,
      "x_realtime": 2.0,
      "realtime": true,
-     "measured_on": "2026-09-23",
-     "release": "bithuman 2.11.8",
+     "measured_on": "2026-09-24",
+     "release": "bithuman 2.11.10",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -329,14 +344,15 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "bithuman 2.11.6",
      "time_to_video": null
     },
     "expression-2": {
      "fps": 47,
      "x_realtime": 2.35,
      "realtime": true,
-     "measured_on": "2026-09-23",
-     "release": "bithuman 2.11.8",
+     "measured_on": "2026-09-24",
+     "release": "bithuman 2.11.10",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -345,6 +361,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "bithuman 2.11.6",
      "time_to_video": null
     }
    }
@@ -361,7 +378,7 @@
      "x_realtime": 2.16,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "Swift package engine 1.11.0",
+     "release": "Swift package 2.14.2",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -370,6 +387,7 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": "session",
+     "memory_release": "Swift engine 1.10.0",
      "time_to_video": null
     },
     "expression-2": {
@@ -386,6 +404,7 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": "session",
+     "memory_release": "Swift package 2.14.1",
      "time_to_video": null
     }
    }
@@ -411,6 +430,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "essence2-android 0.5.13",
      "time_to_video": null
     },
     "expression-2": {
@@ -427,6 +447,7 @@
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
+     "memory_release": "expression2-android 0.4.8",
      "time_to_video": null
     }
    }
@@ -443,7 +464,7 @@
      "x_realtime": 1.68,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "cloud API",
+     "release": "web viewer",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -452,14 +473,15 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": null,
+     "memory_release": null,
      "time_to_video": null
     },
     "expression-2": {
-     "fps": 40,
-     "x_realtime": 2.0,
+     "fps": 38,
+     "x_realtime": 1.9,
      "realtime": true,
      "measured_on": "2026-09-23",
-     "release": "cloud API",
+     "release": "web viewer",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -468,34 +490,9 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": null,
+     "memory_release": null,
      "time_to_video": null
     }
-   }
-  },
-  {
-   "id": "apple-serve-launch",
-   "label": "Cloud live session · Apple silicon",
-   "hardware": "Apple M4 Max",
-   "published": false,
-   "sustained": false,
-   "cells": {
-    "essence-2": {
-     "fps": 136,
-     "x_realtime": 5.44,
-     "realtime": true,
-     "measured_on": "2026-09-23",
-     "release": "cloud API",
-     "clip": {
-      "id": "5639-40744-0031",
-      "seconds": 28.42
-     },
-     "peak_ram_gb": null,
-     "peak_gpu_gb": null,
-     "swap_gb": null,
-     "memory_scope": null,
-     "time_to_video": null
-    },
-    "expression-2": null
    }
   },
   {
@@ -519,16 +516,12 @@
      "peak_gpu_gb": null,
      "swap_gb": null,
      "memory_scope": null,
+     "memory_release": null,
      "time_to_video": null,
      "held": {
       "median_window_fps": 28.84,
       "worst_window_fps": 26.48,
-      "sessions": 3,
-      "paced": {
-       "display_fps": 25,
-       "held_s": 609,
-       "every_frame_delivered": true
-      }
+      "sessions": 3
      }
     },
     "expression-2": null

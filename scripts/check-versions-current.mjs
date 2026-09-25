@@ -377,7 +377,9 @@ const isChangelog = (p) => /(^|\/)changelog(\/[^/]+)?\.mdx?$/.test(p);
 const isChangelogHead = (p) => /(^|\/)changelog\.mdx?$/.test(p);
 // ★THE PAGE MAY LIVE AT /sdk/performance OR /performance (REDESIGN §3.9 moves it).
 //  A path that stops matching is how V9 would go silently inert: no page, no cells.
-const isPerformance = (p) => /(^|\/)(sdk\/)?performance\.mdx?$/.test(p);
+// ★AND ITS SUB-PAGES (2026-09-24): /performance/cloud, /desktop, /mobile, /web and
+//  /method carry the same generated rows, so they are the performance page too.
+const isPerformance = (p) => /(^|\/)(sdk\/)?performance(\/[a-z-]+)?\.mdx?$/.test(p);
 /** The rates a model PLAYS at — product constants, never a measurement. */
 const PLAY_RATES = new Set(["20", "25"]);
 

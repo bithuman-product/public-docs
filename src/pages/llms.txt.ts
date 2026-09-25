@@ -3,6 +3,8 @@ import { agentFacts } from "../config/agent-facts";
 import { PLATFORMS } from "../data/platforms";
 import headline from "../partials/performance-headline.md?raw";
 import { existsSync } from "node:fs";
+import { getCollection } from "astro:content";
+import { inSidebarOrder } from "../lib/sidebar-order";
 
 // /llms.txt — the short index for AI agents (llmstxt.org): what bitHuman is,
 // the key facts, one command per path, the performance headline, and where the
@@ -31,7 +33,12 @@ export const GET: APIRoute = async () => {
   const table = headline.replace(/<!--[\s\S]*?-->/g, "").trim();
   out += `## Performance\n\n`;
   if (table) out += `${table.replace(/\]\(\//g, `](${SITE}/`)}\n\n`;
-  out += `Every platform, with memory: ${SITE}/performance.md${existsSync("public/performance.json") ? ` · data: ${SITE}/performance.json` : ""}\n\n`;
+  out += `Every platform: ${SITE}/performance.md${existsSync("public/performance.json") ? ` · data: ${SITE}/performance.json` : ""}\n`;
+  // The performance sub-pages, from the collection, in sidebar order.
+  const perf = inSidebarOrder(await getCollection("docs", (e: any) => !e.data.draft && e.data.section === "performance"))
+    .filter((d: any) => d.id !== "performance");
+  if (perf.length) out += `By platform: ${perf.map((d: any) => `${d.data.label ?? d.data.title} ${SITE}/${d.id}.md`).join(" · ")}\n`;
+  out += `\n`;
 
   out += `## Docs (markdown)\n\n`;
   out += `- Get started: ${SITE}/start.md\n`;
