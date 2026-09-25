@@ -23,6 +23,8 @@ One Swift package carries both models, plus `bitHumanKit`, a complete on-device 
 
 Toolchain: Xcode 26 or newer, an Apple Developer team, and a physical device for iPhone builds. On a Mac, `swift run` is enough: no device, profile or entitlement.
 
+Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/sdk/python) or [CLI](/sdk/cli) on a desktop. See [Essence 1](/concepts/essence-1).
+
 ## Install
 
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
@@ -175,7 +177,6 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | the app is killed mid-conversation with no crash log | `bitHumanKit` exceeded the default memory limit | add the two Apple entitlements |
 | `bitHuman needs an iPhone 16 Pro or newer` | `bitHumanKit`'s device floor | use `Expression2` or `Essence2` directly on that device |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
-| you want Essence 1 on a Mac or iPhone | the Swift package has no Essence 1 product | on a Mac, `pip install bithuman` and use the [Python SDK](/sdk/python); in an app, use the [cloud API](/api); see [Essence 1](/concepts/essence-1) |
 
 ## Reference
 

@@ -22,6 +22,8 @@ Both models render on the handset: you feed 16 kHz mono speech in and pull pictu
 
 Toolchain: JDK 17, Gradle 8.11 or newer, Android Gradle Plugin 8.7 or newer, and a physical arm64 handset (emulators cannot load the engines).
 
+Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/sdk/python) or [CLI](/sdk/cli) on a desktop. See [Essence 1](/concepts/essence-1).
+
 ## Install
 
 Add Maven Central, restrict the build to `arm64-v8a`, and turn on legacy packaging so the engines' native libraries are extracted to disk. The API secret reaches your code through `BuildConfig`.
@@ -183,7 +185,6 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 | `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |
 | `Unresolved reference 'MeteredDoorResolver'` | Kotlin does not resolve a nested class through a type alias | import `ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver` |
 | `UnsatisfiedLinkError` on an emulator | the engines are `arm64-v8a` only | run on a physical arm64 handset |
-| you want Essence 1 on Android | the first-generation artifact, `ai.bithuman:sdk:2.3.6`, cannot authenticate on a device | use Essence 2 or Expression 2 on the phone, or serve Essence 1 from the [cloud API](/api); see [Essence 1](/concepts/essence-1) |
 
 ## Reference
 

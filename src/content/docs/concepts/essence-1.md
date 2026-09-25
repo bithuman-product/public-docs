@@ -31,9 +31,9 @@ In bitHuman's cloud, and on your own hardware through:
   [Video API](/api/video) for a file.
 - **The browser** — [`?render=local`](/sdk/web#integrate-into-your-app).
 
-There is no Essence 1 product in the Swift package, and the legacy Android
-artifact `ai.bithuman:sdk` cannot authenticate on a device — on a phone, use
-Essence 2 or Expression 2. The full matrix is on
+Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or
+Expression 2 on devices, or run Essence 1 from the cloud API or the Python SDK
+or CLI on a desktop. The full matrix is on
 [Models](/concepts/models#where-each-model-runs).
 
 ## What the file is
