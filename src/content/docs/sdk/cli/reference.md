@@ -35,7 +35,7 @@ A command outside this list exits 2 with `unrecognized subcommand`. Everywhere, 
 bithuman login                 # browser sign-in; stores a per-device API secret
 bithuman login --device        # over SSH: prints a code to enter elsewhere
 printf %s "$BITHUMAN_API_SECRET" | bithuman login --with-token   # CI: checks the secret, then stores it
-bithuman logout                # revokes this device's secret
+bithuman logout                # revokes the secret login stored on this device
 ```
 
 The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostname>` under [API Secrets](https://www.bithuman.ai/developer/api-keys), so each device can be revoked alone. `--with-token` exits 77 (`TOKEN_REJECTED`) for a secret the service refuses and 69 (`TOKEN_UNVERIFIED`) when the service cannot be reached; neither stores anything.
@@ -44,9 +44,12 @@ The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostn
 
 1. `BITHUMAN_API_SECRET` in the environment
 2. `BITHUMAN_API_KEY` in the environment (a deprecated alias)
-3. `~/.bithuman/config`, written by `bithuman login`
+3. A `.env` file in the working directory: its `BITHUMAN_API_SECRET` line, else its `BITHUMAN_API_KEY` line. No other line of the file is read.
+4. `~/.bithuman/config`, written by `bithuman login`
 
-A `.env` file in the working directory is not read.
+`bithuman account --json` reports which of these supplied the secret.
+
+`bithuman logout` revokes only the secret in `~/.bithuman/config`, then deletes it. A secret from the environment or a `.env` file is never revoked; logout names where it comes from instead.
 
 ## bithuman run
 
