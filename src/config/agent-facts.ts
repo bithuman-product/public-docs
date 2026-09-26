@@ -8,7 +8,7 @@ const V = versions.versions;
 export function agentFacts(site: string): string {
   return (
     `## Key facts\n\n` +
-    `- Credential: one API secret for every surface. Env \`BITHUMAN_API_SECRET\`; REST header \`api-secret\` (not \`Authorization\`). Get one: https://www.bithuman.ai/developer/api-keys · ${site}/start/api-secret.md\n` +
+    `- Credential: one API secret for every surface. Env \`BITHUMAN_API_SECRET\`, except in a LiveKit worker: there name it \`BITHUMAN_MASTER_SECRET\` and use it only to mint a room token, because livekit-plugins-bithuman reads \`BITHUMAN_API_SECRET\` itself and copies it into the room (${site}/sdk/livekit.md). REST header \`api-secret\` (not \`Authorization\`). Get one: https://www.bithuman.ai/developer/api-keys · ${site}/start/api-secret.md\n` +
     `- Billing: credits pay for talking time; idle time is free. Prices: ${site}/guides/pricing.md\n` +
     `- Creating an agent: always send \`model\` ("essence-2" or "expression-2"); poll until \`status\` is \`ready\` or \`failed\`. ${site}/api/agents.md\n` +
     `- Model names: Essence 2, Expression 2 in prose; \`essence-2\`, \`expression-2\` in code. Essence 1 and Expression 1 are the first generation.\n` +

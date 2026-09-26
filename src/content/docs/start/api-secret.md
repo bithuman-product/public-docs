@@ -29,7 +29,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 | Python | `BITHUMAN_API_SECRET` | `api_secret=` |
 | Apple | `BITHUMAN_API_SECRET` | `Essence2Credential.set` / `Expression2Credential.set` |
 | Android | `BITHUMAN_API_SECRET` | `Essence2Credential.set` / `Expression2Credential.set` |
-| LiveKit | — | a short-lived token, never the secret ([LiveKit](/sdk/livekit#authenticate)) |
+| LiveKit worker | `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET` | a short-lived token minted from it, never the secret ([LiveKit](/sdk/livekit#authenticate)) |
 | Web embed | — | none for a public agent; an [embed token](/api/embedding) for a private one |
 
 `BITHUMAN_API_KEY` is a deprecated alias of `BITHUMAN_API_SECRET`; use the new name.
