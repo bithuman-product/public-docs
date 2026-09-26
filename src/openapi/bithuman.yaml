@@ -2284,7 +2284,10 @@ paths:
               properties:
                 model:
                   type: string
-                  description: OpenAI Realtime model. Defaults to the current bitHuman default.
+                  description: >-
+                    OpenAI Realtime model. Defaults to `gpt-realtime-mini`, the one
+                    model a standard API secret can mint; `gpt-realtime` needs an
+                    entitlement on your account (403 `PLAN_REQUIRED` otherwise).
                   example: "gpt-realtime-mini"
       responses:
         "200":

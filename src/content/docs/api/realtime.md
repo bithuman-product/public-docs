@@ -23,7 +23,7 @@ Base URL `https://api.bithuman.ai`. Authenticate with the `api-secret` header.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `model` | string | no | OpenAI Realtime model to request. Defaults to the current bitHuman default (`gpt-realtime-mini`). |
+| `model` | string | no | OpenAI Realtime model. Defaults to `gpt-realtime-mini`, the one model a standard API secret can mint; `gpt-realtime` needs an entitlement on your account (otherwise `403 PLAN_REQUIRED`; contact sales). |
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/realtime/ephemeral-token \
@@ -51,8 +51,9 @@ curl -X POST https://api.bithuman.ai/v1/realtime/ephemeral-token \
 ## Limits & billing
 
 - **Balance-gated:** minting needs a positive balance (`402 INSUFFICIENT_BALANCE`).
+- **Models:** a standard API secret mints `gpt-realtime-mini` only; full `gpt-realtime` requires an entitlement (`403 PLAN_REQUIRED` otherwise).
 - **Rate limit:** up to 20 mints per minute per account (`429 RATE_LIMITED`).
-- Other errors: `401` missing/invalid key · `404` account not found · `502` if OpenAI is
+- Other errors: `401` missing/invalid key · `403 PLAN_REQUIRED` a model your account is not entitled to · `404` account not found · `502` if OpenAI is
   unreachable or rejects the request.
 
 > Mint on the **server** and pass only the `value` to the client. Never ship your `api-secret`
