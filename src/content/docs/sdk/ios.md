@@ -15,10 +15,10 @@ One Swift package carries both models. Both models render on the device and bill
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1920×1080 at 25 fps |
 | **Devices** | any Apple silicon iPhone, iPad or Mac; iOS 16 / macOS 13 | any Apple silicon iPhone, M-series iPad, M3 or newer Mac; iOS 26 / macOS 26 |
-| **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2", package: "homebrew-bithuman")` |
+| **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2Kit", package: "homebrew-bithuman")` (Swift), or `.product(name: "Essence2", package: "homebrew-bithuman")` (C) |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 355 MB (avatar + shared engine) | about 250 MB (avatar + engine resources) |
-| **API** | Swift (`Expression2Engine`) | C (`be_essence2_*`) |
+| **API** | Swift (`Expression2Engine`) | Swift (`Essence2Engine`), or C (`be_essence2_*`) |
 | **Worked example** | [iOS: Expression 2](/examples/swift-ios-expression2) | [iOS: Essence 2](/examples/swift-ios-essence2) |
 
 Toolchain: Xcode 26 or newer, an Apple Developer team, and a physical device for iPhone builds. On a Mac, `swift run` is enough: no device, profile or entitlement.

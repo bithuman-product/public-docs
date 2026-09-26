@@ -12,6 +12,7 @@ export function agentFacts(site: string): string {
     `- Billing: credits pay for talking time; idle time is free. Prices: ${site}/guides/pricing.md\n` +
     `- Creating an agent: always send \`model\` ("essence-2" or "expression-2"); poll until \`status\` is \`ready\` or \`failed\`. ${site}/api/agents.md\n` +
     `- Model names: Essence 2, Expression 2 in prose; \`essence-2\`, \`expression-2\` in code. Essence 1 and Expression 1 are the first generation.\n` +
+    `- Where each runs: on devices (Apple, Android) Essence 2 and Expression 2 only; Essence 1 also on the CLI, Python and the web; Expression 1 in the cloud only. ${site}/concepts/models.md\n` +
     `- Essence 2 Max is available on the Enterprise plan only. Contact sales to enable it: https://www.bithuman.ai/sales\n` +
     `- Sample avatars (no account): Essence 2 \`sofia-ramirez\` (A52DHS2219), Expression 2 \`wise-pup\` (A23WJF0199). Full list: https://api.bithuman.ai/v1/models/showcase\n` +
     `- Sample audio: ${site}/samples/speech.wav (15 s, 24 kHz mono)\n` +
