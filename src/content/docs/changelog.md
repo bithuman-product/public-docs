@@ -367,6 +367,13 @@ Tag `cli-v2.7.1`.
 
 - **Fixed:** usage reporting when a live Linux session is ended with Ctrl-C; upgrade recommended.
 
+### Swift package 2.13.8 — 2026-09-20
+
+Essence 2 engine 1.9.0
+
+- **Changed:** the inside of an Essence 2 avatar's mouth comes from the identity's own footage; the Flutter plugin (2.6.7) moves to the same engine.
+- **Action:** update to the current package.
+
 ### `bithuman` 2.11.5 — 2026-09-19
 
 - **Changed:** `bithuman.offline` renders through the same engine session as `bithuman.open()`, so a file render matches a live render, on macOS too. The offline route needs no extra.
@@ -397,6 +404,11 @@ Tag `cli-v2.7.1`.
 ### `essence2-android` 0.5.11 — 2026-09-19
 
 - **Fixed:** the inside of the mouth comes entirely from the identity's own video again.
+
+### `bithuman` 2.11.2 — 2026-09-17
+
+- **Changed:** a maintenance release, superseded the next day by 2.11.3.
+- **Action:** `pip install -U bithuman`.
 
 ### CLI 2.6.22 — 2026-09-17
 
@@ -502,6 +514,14 @@ Expression 2 engine 2.6.3
 
 - **New:** Essence 2 renders locally on macOS and Linux (`bithuman pull <CODE> --model essence-2`, then `render` or `run`).
 - **Changed:** self-hosted sessions are metered. A secret the service rejects gets 5 minutes, then the session stops.
+
+### Swift package 2.11.0 to 2.13.2 — 2026-09-09 to 2026-09-13
+
+Essence 2 engine 1.5.1 to 1.6.2
+
+- **Fixed:** the Essence 2 engine's resources archive is complete again (1.5.1), and a downloaded Essence 2 model opens in the iOS engine (1.6.0 to 1.6.2).
+- **Changed:** the binary targets carry a `Binary` suffix; `import Essence2` and `import Expression2` are unchanged.
+- **Action:** update to the current package.
 
 ### Swift package 2.8.0 to 2.10.0 — 2026-09-07
 
