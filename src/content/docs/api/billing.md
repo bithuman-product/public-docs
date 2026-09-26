@@ -99,24 +99,24 @@ curl https://api.bithuman.ai/v2/credit-summaries \
 {
   "success": true,
   "data": {
-    "user_id": "229be55d-1c1e-42b9-8517-a22c742668ef",
-    "balance": 1842.0,
-    "plan_credits": 99.0,
-    "topup_credits": 1743.0,
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "balance": 1200.0,
+    "plan_credits": 200.0,
+    "topup_credits": 1000.0,
     "is_enterprise": false,
     "minutes_estimate": {
-      "essence_2_cloud": 460,
-      "essence_2_self_hosted": 921,
-      "expression_2_cloud": 460,
-      "expression_2_self_hosted": 921,
-      "essence_1_cloud": 921,
-      "essence_1_self_hosted": 1842,
-      "expression_1_cloud": 460,
-      "voice_chat": 184,
-      "camera_chat": 61,
-      "essence_cloud": 921,
-      "essence_self_hosted": 1842,
-      "expression_cloud": 460
+      "essence_2_cloud": 300,
+      "essence_2_self_hosted": 600,
+      "expression_2_cloud": 300,
+      "expression_2_self_hosted": 600,
+      "essence_1_cloud": 600,
+      "essence_1_self_hosted": 1200,
+      "expression_1_cloud": 300,
+      "voice_chat": 120,
+      "camera_chat": 40,
+      "essence_cloud": 600,
+      "essence_self_hosted": 1200,
+      "expression_cloud": 300
     }
   }
 }
@@ -170,7 +170,7 @@ for ev in resp["data"]:
 print(resp["pagination"])   # {limit, offset, total, has_more}
 ```
 
-Each row carries `activity_type`, `pricing_code`, `agent_code`, `created_at` and `credits_change` (usage is recorded as positive credits consumed).
+Each row carries `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants.
 
 A [talking-video render](/api/video) charges its maximum up front and refunds the difference, so every render, successful or not, writes a charge row and a `credit_refund_…` row. Only a refund equal to the whole charge means the render failed.
 
@@ -185,7 +185,9 @@ A [talking-video render](/api/video) charges its maximum up front and refunds th
 |---|---|---|
 | `401` | `UNAUTHORIZED` / `MISSING_AUTH` | Missing or invalid `api-secret`. |
 | `402` | `INSUFFICIENT_BALANCE` | Balance too low for the requested operation. |
+| `429` | `RATE_LIMITED` | Too many requests; honour `Retry-After`. |
 | `500` | `INTERNAL_ERROR` | Upstream database error. |
+| `503` | `SERVICE_UNAVAILABLE` | Transient; retry after `Retry-After`. |
 
 See [Rate limits](/api/rate-limits) for the plan-tiered request limits and the
 full [error reference](/api/errors).

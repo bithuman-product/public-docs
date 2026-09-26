@@ -14,7 +14,7 @@ Every REST call carries your API secret in the `api-secret` header. The same sec
 |---|---|---|---|
 | `POST` | `/v1/validate` | Check an API secret | free |
 | `POST` | `/v1/runtime-tokens/request` | Exchange the secret for a short-lived runtime token (the SDKs do this for you) | free |
-| `POST` | `/v1/runtime-tokens/mint` | A one-hour token for one agent in one LiveKit room | free |
+| `POST` | `/v1/runtime-tokens/mint` | A one-hour token scoped to one agent: for the LiveKit plugin (`"scope": "livekit-cloud"`, bound to a room when you send `room_name`/`livekit_url`) or, without `scope`, a Bearer credential for downloading that agent's model on a device | free |
 | `POST` | `/v1/embed-tokens/request` | A one-hour token for a browser embed ([Embedding](/api/embedding)) | free |
 
 ## POST /v1/validate
@@ -46,7 +46,7 @@ Exchanges the API secret for a short-lived runtime token that authorizes renderi
 
 ## POST /v1/runtime-tokens/mint
 
-Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. The request and a complete worker are on [LiveKit](/sdk/livekit#authenticate).
+Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. Send `room_name` and `livekit_url` to bind the LiveKit token to one room and server. The request and a complete worker are on [LiveKit](/sdk/livekit#authenticate).
 
 ## Keep the secret safe
 

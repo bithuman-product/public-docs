@@ -20,9 +20,9 @@ downloads and direct base64 uploads. Files are automatically organized by type:
 | **Audio** | `assets/audio/` | `.mp3`, `.wav`, `.flac`, `.aac`, `.ogg`, `.m4a` |
 | **Documents** | `assets/docs/` | `.pdf`, `.doc`, `.docx`, `.txt`, `.rtf`, `.ppt`, `.pptx`, `.xls`, `.xlsx`, `.csv` |
 
-The category comes from the file's own bytes — `file_type` and the extension
-are checked against them, not trusted over them, so a file that disagrees with
-its own name returns `415` instead of landing in the wrong folder.
+The category comes from the file's own bytes: bytes from a different category
+than `file_type` (for example an image sent as `document`) return `415`. Within
+a category the name is stored as sent.
 
 SVG is not accepted. An uploaded file is served from a public address, and a
 browser opening an SVG would run the script inside it as if it came from us;
@@ -34,7 +34,8 @@ Download a file from a publicly accessible URL.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `file_url` | string | URL of the file to download. The last segment of its path supplies the filename, so that segment must carry a supported extension. |
+| `file_url` | string | Public URL of the file. Without `file_name`, its last path segment is the filename. |
+| `file_name` | string | Optional. The filename to store, with a supported extension; required when the URL's last path segment has none (signed or query URLs). |
 | `file_type` | string | One of `auto`, `image`, `video`, `audio`, `document`, `pdf`. Any other value returns `400`. |
 
 > **Note** The Python examples below use

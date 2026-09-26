@@ -47,21 +47,21 @@ curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions?window=live" \
   "success": true,
   "data": {
     "active_count": 1,
-    "live_burn_rate_cr_per_min": 12.5,
-    "credits_this_hour": 340,
+    "live_burn_rate_cr_per_min": 4,
+    "credits_this_hour": 52,
     "sessions": [
       {
         "id": "a3f1c8e2-…-9b02",
         "agent_code": "agent_greeter",
         "agent_name": "Greeter",
-        "billing_type": "usage_agent_video_chat_on_imaginex",
+        "billing_type": "usage_essence_2_model_cloud",
         "key_alias": "prod-server",
         "room_name": "room_a3f1c8e2",
         "started": "2026-07-15T15:20:00Z",
         "last_seen": "2026-07-15T15:33:00Z",
         "minutes": 13.0,
-        "credits": 162,
-        "burn_rate_cr_per_min": 12.5,
+        "credits": 52,
+        "burn_rate_cr_per_min": 4,
         "status": "live",
         "has_transcript": true
       }
@@ -71,7 +71,7 @@ curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions?window=live" \
 ```
 
 The KPIs (`active_count`, `live_burn_rate_cr_per_min`, `credits_this_hour`) are account-wide over
-the last hour; `sessions` is the filtered list. Use a session's `id` for the calls below.
+the last hour; `sessions` is the filtered list. `billing_type` is the pricing code the session bills under; see `GET /v1/pricing`. Use a session's `id` for the calls below.
 
 ## Read a transcript
 
@@ -143,7 +143,7 @@ curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime/revoke-all" \
 ```json
 {
   "success": true,
-  "data": { "revoked": true, "effective_in_seconds": 420, "runtime_suspended": true,
+  "data": { "revoked": true, "effective_in_seconds": 320, "runtime_suspended": true,
             "note": "All runtime keys disabled. Creating a new API key restores runtime access." }
 }
 ```
