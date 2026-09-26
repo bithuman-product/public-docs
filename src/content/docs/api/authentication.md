@@ -44,6 +44,8 @@ print(r.json())
 
 Exchanges the API secret for a short-lived runtime token that authorizes rendering for your account. The Python SDK, the LiveKit plugin and the self-hosted containers call it for you and renew the token while a session runs; call it yourself only when you build your own runtime integration. A runtime token cannot create other tokens or call other endpoints.
 
+Sent with `mode`, the same endpoint starts a cloud avatar in your LiveKit room instead: [Cloud avatar without the plugin](/api/cloud-avatar).
+
 ## POST /v1/runtime-tokens/mint
 
 Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. Send `room_name` and `livekit_url` to bind the LiveKit token to one room and server. The request and a complete worker are on [LiveKit](/sdk/livekit#authenticate).
