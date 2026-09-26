@@ -27,7 +27,6 @@ Every example is open source in [bithuman-examples](https://github.com/bithuman-
 |---|---|---|
 | [Voice conversation](/examples/ai-conversation) | Python | microphone in, avatar and OpenAI voice out |
 | [iOS: Essence 2](/examples/swift-ios-essence2) | iOS | a full-resolution photoreal avatar on iPhone |
-| [iOS: voice agent](/examples/swift-ios-voice-agent) | iOS | `bitHumanKit`, a complete on-device assistant |
 | [`app/avatar_chat`](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) | Flutter (Android) | a voice conversation with idle and interruption |
 | [`python/self-host`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/self-host) | Python + LiveKit | your own LiveKit server, OpenAI Realtime, the avatar rendered on your machine ([guide](/guides/local-voice-avatar)) |
 | [`python/cloud-essence`](https://github.com/bithuman-product/bithuman-examples/tree/main/python/cloud-essence) | Python + LiveKit | a cloud avatar in a LiveKit room, with a web UI |

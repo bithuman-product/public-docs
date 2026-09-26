@@ -5,11 +5,6 @@
       "path": "src/content/docs/sdk/android-api.md",
       "string": "@Deprecated(\"Enforcement is unconditional since 0.5.7; this property is ignored.\")",
       "reason": "The @Deprecated message compiled into the published essence2-android AAR, quoted verbatim by the generated reference; it changes when the SDK does (bithuman-models#1222)."
-    },
-    {
-      "path": "src/content/docs/guides/self-hosting.md",
-      "string": "sgubithuman/expression-avatar",
-      "reason": "The published Docker image name a developer types to run Expression 1 on their own GPU; moving it to an org namespace with version tags is platform#667."
     }
   ]
 }

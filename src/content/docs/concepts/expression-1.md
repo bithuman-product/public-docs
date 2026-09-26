@@ -1,6 +1,6 @@
 ---
 title: "Expression 1"
-description: "Expression 1 — bitHuman's first-generation expressive model: facial animation generated from a portrait at runtime, GPU-only. How it is served and self-hosted."
+description: "Expression 1 — bitHuman's first-generation expressive model: facial animation generated from a portrait at runtime, served in the bitHuman cloud. Where it runs and what it costs."
 section: guides
 group: "Learn"
 order: 5
@@ -22,11 +22,11 @@ recommended model.
 
 ## Where it runs
 
-**On an NVIDIA GPU only**, by design. bitHuman serves it from cloud GPUs, and you
-can run it on your own GPU with
-[the Expression 1 GPU container](/guides/self-hosting#the-expression-1-gpu-container).
+**In the bitHuman cloud only**, by design, on cloud GPUs.
 There is no CPU, Apple, Android or browser build, and none is planned. For an
 expressive model on a Mac, a phone or in a browser, use Expression 2.
+
+Expression 1 is offered as a cloud model. The earlier self-hosted GPU container is legacy: existing deployments keep working and are billed at the listed rate; new deployments should use the cloud API.
 
 ## What the file is
 
@@ -34,8 +34,7 @@ Usually nothing to download: Expression 1 renders from the agent's portrait, so
 the download endpoint answers
 [`400 MODEL_NOT_DOWNLOADABLE`](/api/errors#model-errors) for most agents.
 An agent that went through the lip step owns a baked `.imx`, and the endpoint
-serves that file. The engine weights are not part of any download; they ship
-inside the container image.
+serves that file. The engine weights are not part of any download.
 
 Rates are on [pricing](/guides/pricing).
 

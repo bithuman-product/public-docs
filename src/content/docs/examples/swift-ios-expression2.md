@@ -82,4 +82,4 @@ More on [Apple: Troubleshooting](/sdk/apple#troubleshooting).
 
 ## Next
 
-- [iOS voice agent](/examples/swift-ios-voice-agent) · [macOS example](/examples/macos-expression2) · [Apple SDK](/sdk/apple) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
+- [macOS example](/examples/macos-expression2) · [Apple SDK](/sdk/apple) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)

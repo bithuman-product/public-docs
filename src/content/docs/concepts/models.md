@@ -24,7 +24,7 @@ The same agent code works on every surface that runs its model.
 | [**Essence 2**](/concepts/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1920×1080 at 25 fps | Real people |
 | [**Expression 2**](/concepts/expression-2) (`expression-2`) | Any character (stylized, animal, robot or human) from one portrait, 416×720 at 20 fps | Characters of every kind |
 | [**Essence 1**](/concepts/essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
-| [**Expression 1**](/concepts/expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents on an NVIDIA GPU |
+| [**Expression 1**](/concepts/expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents, in the cloud |
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
 
@@ -35,9 +35,9 @@ Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://
 - **Not sure** — create with `model: "auto"`: a photorealistic person routes to
   Essence 2, anything else to Expression 2.
 - **On a phone, a Mac or in a browser** — Essence 2 or Expression 2. Expression 1
-  runs only on a GPU, and that is permanent.
+  runs only in the bitHuman cloud, and that is permanent.
 - **Maintaining a first-generation agent** — keep it. Essence 1 runs on any CPU
-  you host; Expression 1 runs on a GPU.
+  you host; Expression 1 runs in the bitHuman cloud.
 
 Rates for every model are on [pricing](/guides/pricing).
 
@@ -53,9 +53,8 @@ What is published today, per surface. Each link goes to the page that installs i
 | [**Apple**](/sdk/apple) — iPhone, iPad, Mac | `Essence2` product (iOS / macOS 26) | `Expression2` product | — | — |
 | [**Android**](/sdk/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
 | [**Web**](/sdk/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
-| [**Self-hosted GPU container**](/guides/self-hosting#the-expression-1-gpu-container) | — | — | — | yes |
 
-- **Expression 1 is GPU-only by design.** Its empty cells are not a roadmap
+- **Expression 1 is cloud-only by design.** Its empty cells are not a roadmap
   item. If you need an expressive model on a Mac, a phone or in a browser, use
   Expression 2.
 - **The cloud routes each session for you**, down the model's chain of GPU,
