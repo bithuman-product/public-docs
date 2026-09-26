@@ -15,9 +15,9 @@ file of identity weights, textures and a manifest (model version, ABI, licence)
 that an [engine](/concepts/architecture) reads to animate one specific face.
 Every model that renders on your own hardware uses it — a first-generation
 [Essence 1](/concepts/essence-1) identity, an [Essence 2](/concepts/essence-2)
-identity, and an [Expression 2](/concepts/expression-2) identity, which the
-download endpoint labels `.avatar`: the same container under a second
-extension. The same file opens on every on-device runtime — [Python](/sdk/python),
+identity, and an [Expression 2](/concepts/expression-2) identity. Every download is
+named `<CODE>.imx`; older Expression 2 files may carry the legacy `.avatar`
+extension, which opens the same way. The same file opens on every on-device runtime — [Python](/sdk/python),
 [Swift](/sdk/apple) and the [CLI](/sdk/cli) — and `bithuman open` tells you which
 model a file you were given holds.
 
@@ -67,8 +67,8 @@ Cache locations by surface:
 
 | Surface | Cache location |
 |---|---|
-| Python / Swift (Essence) | `~/.cache/bithuman/models/` |
-| Showcase pulls (CLI) | `~/.cache/bithuman/showcase/` |
+| CLI | pulls in `~/.cache/bithuman/showcase/` (samples) and `~/.cache/bithuman/agents/` (your agents); unpacked copies in `~/.cache/bithuman/bundles/` |
+| Python | unpacked copies in `~/.cache/bithuman/avatars/`; engine files in `~/.bithuman/deps/` |
 | Swift (Expression on Mac/iPad) | `~/.cache/bithuman/expression/` |
 
 Downloads are integrity-verified and cached. Subsequent launches are instant.
@@ -84,14 +84,15 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 |---|---|---|
 | [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
 | [`essence-2`](/concepts/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
-| [`expression-2`](/concepts/expression-2) | `.avatar` or `.imx`: the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple) and [Android](/sdk/android), or on the cloud. |
+| [`expression-2`](/concepts/expression-2) | `.imx` (older downloads: `.avatar`): the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple) and [Android](/sdk/android), or on the cloud. |
 
 Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/concepts/essence-2).
 
 ## Inspecting an `.imx`
 
-Use the CLI to dump model metadata — version, ABI, resolution, and license. This
-reads the file on your own disk, so it needs no account and no network:
+`bithuman open <file>` prints the container format, the model family
+(`Family: essence-2 (Essence 2)`) and the files inside; `--json` adds the
+manifest. It reads the file on your own disk, so it needs no account and no network:
 
 ```bash
 bithuman open ~/.cache/bithuman/showcase/sofia-ramirez.imx
@@ -110,18 +111,18 @@ engine='essence2-light'`.
 |---|---|
 | `essence1` | [Essence 1](/concepts/essence-1) — also the value an older container with no header resolves to |
 | `essence2-light` | **[Essence 2](/concepts/essence-2)** — request it as `essence-2` |
-| `essence2-quality` | A retired premium tier of Essence 2 — not a model you can request; treat the file as **[Essence 2](/concepts/essence-2)** |
+| `essence2-quality` | Essence 2 Max (Enterprise plan only) — not a model you can request on other plans; treat the file as **[Essence 2](/concepts/essence-2)** |
 | `expression2` | **[Expression 2](/concepts/expression-2)** — request it as `expression-2` |
 
 So a current Essence 2 bundle reports `engine: essence2-light`. The model is
 **Essence 2**, requested as `essence-2`: the engine id names the *loader family*,
 not the product, so the value is expected, not a mismatch.
 
-> **Warning** Never send an engine id to the API. `model` takes only `essence-1`, `essence-2`, `expression-1` or `expression-2`; anything else returns [`400 VALIDATION_ERROR`](/api/agents#errors).
+> **Warning** Never send an engine id to the API. `model` takes `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1`; any other value returns [`400 VALIDATION_ERROR`](/api/agents#errors).
 
 ## File-format stability
 
-The `.imx` format is **forward-compatible within a major version**. The first time you open an older `.imx` with a newer runtime, the runtime warms it up and silently upgrades the file. Keep the runtime warm in production to avoid paying that warm-up cost per session.
+The `.imx` format is **forward-compatible within a major version**. The first open unpacks the file into that cache, using about its size again on disk; later opens reuse it. Your file is never rewritten.
 
 ## Where to go next
 

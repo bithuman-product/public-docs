@@ -12,7 +12,7 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1920×1080 at 25 fps |
+| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
 | **`run` and `render`** | both | both |
 | **Download per avatar** | about 190 MB | 118–148 MB, plus a 377 MB shared audio encoder once |
 

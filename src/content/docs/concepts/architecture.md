@@ -26,8 +26,8 @@ You integrate at the SDK layer. The engine is built into each SDK, so your app n
 
 ## What stays true across every surface
 
-- **One model file, every surface.** The same audio produces the same frames in every SDK.
-- **A stable public API.** Patches never break your source, minors add without removing, and majors call out breaks explicitly.
+- **One model file, every surface.** The same audio drives the same lip-sync on every SDK; pixels can differ slightly between hardware backends.
+- **A stable public API.** Deprecated options keep working with a warning until the next major, and majors call out breaks explicitly.
 - **Surfaces mix.** The Swift SDK in your iOS app with the Python package on your backend is supported; keep each one current — [Downloads](/downloads#current-versions) lists the current versions.
 - **One credential.** The same key drives every surface; how it is exchanged and billed is on [Authentication](/api/authentication) and [pricing](/guides/pricing).
 

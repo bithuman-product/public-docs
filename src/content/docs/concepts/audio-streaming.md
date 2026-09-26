@@ -60,14 +60,14 @@ Install, the model download and the credential are on the
 ## Frame format
 
 Frames arrive at the model's own rate, whatever the chunk size: 25 fps for
-Essence 2 (up to 1920x1080, the identity's own canvas) and 20 fps for Expression 2
+Essence 2 (up to 1080p: the identity's own canvas, 1080×1920 portrait for a standard identity) and 20 fps for Expression 2
 (416x720). Python yields RGB `uint8` arrays; the Apple and Android SDKs hand you
 their platform's image types.
 
 ## In the other SDKs
 
 - **Apple** — `feed()` PCM, then `pull()` frames. See the [Apple SDK](/sdk/apple).
-- **Android** — `feed()` PCM, then `pull()` into a reused `Bitmap`. See the [Android SDK](/sdk/android).
+- **Android** — `feed()` PCM, then `pull()` into a reused buffer: a `Bitmap` for Expression 2, an RGBA `ByteBuffer` for Essence 2. See the [Android SDK](/sdk/android).
 - **CLI** — `bithuman render` takes an audio file; `bithuman run` streams a live conversation. See the [CLI](/sdk/cli).
 
 ## Where to go next

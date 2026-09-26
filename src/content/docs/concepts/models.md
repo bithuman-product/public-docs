@@ -21,7 +21,7 @@ The same agent code works on every surface that runs its model.
 
 | Model | What it renders | Pick it for |
 |---|---|---|
-| [**Essence 2**](/concepts/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1920×1080 at 25 fps | Real people |
+| [**Essence 2**](/concepts/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1080p at 25 fps (1080×1920 portrait for a standard identity) | Real people |
 | [**Expression 2**](/concepts/expression-2) (`expression-2`) | Any character (stylized, animal, robot or human) from one portrait, 416×720 at 20 fps | Characters of every kind |
 | [**Essence 1**](/concepts/essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
 | [**Expression 1**](/concepts/expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents, in the cloud |
@@ -124,17 +124,16 @@ legacy names are still strings you read or type:
 
 | Legacy name you may meet | Where | What it means | Do you type it? |
 |---|---|---|---|
-| `essence` | the `model` field in the showcase manifest and in `agents.model` | Essence 1 | Yes — an accepted request spelling |
+| `essence`, `expression` | older `?model=` links and request bodies | Essence 1, Expression 1 | No — write `essence-1` / `expression-1` |
 | `essence2-light` | the `Engine:` line from `bithuman open` — a [legacy engine value](/concepts/avatars-imx#the-engine-value-is-a-legacy-name) | Essence 2 | No — read the `Family:` line |
-| `essence-2-light` | retired tier name (the old Light tier), still stored in older `agents.model` rows | Essence 2 | No — write `essence-2`. A request naming it gets a `400` with a hint |
-| `essence-2-quality` | retired internal premium tier, in older billing rows | a separate retired tier, not Essence 2 | No — a request naming it gets a `400` |
-| `.lebundle.imx` | the legacy file extension an older release saved | an Essence 2 model file | Only if you already have one; `bithuman open` reads it |
-| `elevate` | legacy SDK request field | Essence 2 | Accepted for compatibility; write `essence-2` |
-| `embody` | legacy request spelling | Expression 2 | Accepted for compatibility; write `expression-2` |
-| `libelevate`, `libelevate-android` | legacy library names | Essence 2 | No — the Android coordinate is `ai.bithuman:essence2-android` |
-| `libelevate-web` | the legacy path of the in-browser Essence 2 runtime under `models.bithuman.ai/web/` | Essence 2 in a browser | No — embed with `https://www.bithuman.ai/embed/<CODE>` |
-| `[embody]` | the legacy prefix on every log line of the shipped Apple `Expression2` engine | Expression 2 | Grep your logs for it |
+| `essence-2-light` | the retired tier name (the old Light tier) | Essence 2 | No — a request naming it gets a `400`; write `essence-2` |
+| `elevate`, `essence-2-quality` | retired names of the premium tier, now Essence 2 Max (Enterprise plan only) | a separate tier, not Essence 2 | No — a request naming them gets a `400` |
+| `embody` | a retired request spelling | Expression 2 | No — a request naming it gets a `400` naming `expression-2` |
+| `.lebundle.imx`, `.avatar` | older file extensions | an Essence 2 or Expression 2 model file | Only if you already have one; it opens as-is |
+| `[embody]` | the legacy prefix on log lines of the Apple `Expression2` engine | Expression 2 | Grep your logs for it |
 | `BITHUMAN_EMBODY_DIR`, `EMBODY_DEBUG_FAIL_PREDICT` | legacy variables the Apple `Expression2` engine still reads beside their `EXPRESSION2_` twins | Expression 2 | No — set `BITHUMAN_EXPRESSION2_DIR` |
+| `libelevate`, `libelevate-android` | legacy library names | Essence 2 | No — the Android coordinate is `ai.bithuman:essence2-android` |
+| `libelevate-web` | the legacy path of the in-browser runtime | Essence 2 in a browser | No — embed with `https://www.bithuman.ai/embed/<CODE>` |
 | `bithuman.tessera_offline`, `OfflineTesseraRenderer`, `TesseraOfflineError` | legacy Python module and class names, still importable | the Essence 2 MP4 route | No — write `bithuman.offline`, `OfflineRenderer`, `render_offline`, `OfflineRenderError` |
 | `BITHUMAN_TESSERA_DIRECTOR` and the other `BITHUMAN_TESSERA_*` variables | legacy environment variables, still read | Essence 2 engine settings | No — the defaults are the fast path |
 | `bithuman[tessera]`, `bithuman[offline]` | legacy pip extras, removed from the wheel in 2.11.6 | nothing — pip warns and installs the base wheel | No — `pip install bithuman` |

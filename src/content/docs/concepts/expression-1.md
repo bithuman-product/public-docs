@@ -12,7 +12,7 @@ label: "Expression 1"
 
 **Expression 1** (`expression-1`) animates a face from a **portrait image** at
 runtime: you give it audio, and it generates the facial motion to match, with no
-per-identity build step. It is maintained, not deprecated; `?model=expression`
+per-identity build step. It is maintained, not deprecated; `?model=expression-1`
 serves it, and it is what `/v1/agent/generate` creates when the request names no
 `model`.
 
@@ -26,15 +26,12 @@ recommended model.
 There is no CPU, Apple, Android or browser build, and none is planned. For an
 expressive model on a Mac, a phone or in a browser, use Expression 2.
 
-Expression 1 is offered as a cloud model. The earlier self-hosted GPU container is legacy: existing deployments keep working and are billed at the listed rate; new deployments should use the cloud API.
-
 ## What the file is
 
 Usually nothing to download: Expression 1 renders from the agent's portrait, so
 the download endpoint answers
-[`400 MODEL_NOT_DOWNLOADABLE`](/api/errors#model-errors) for most agents.
-An agent that went through the lip step owns a baked `.imx`, and the endpoint
-serves that file. The engine weights are not part of any download.
+[`400 MODEL_NOT_DOWNLOADABLE`](/api/errors#model-errors) for most agents; a few
+older agents have a downloadable `.imx`, which the endpoint serves. The engine weights are not part of any download.
 
 Rates are on [pricing](/guides/pricing).
 

@@ -35,11 +35,11 @@ Every example is open source in [bithuman-examples](https://github.com/bithuman-
 
 ## Ready-made avatars
 
-Sample avatars you can use with no account. The full list, with each avatar's model and agent code, is served as JSON at [`https://api.bithuman.ai/v1/models/showcase`](https://api.bithuman.ai/v1/models/showcase).
+Sample avatars you can open in a browser with no account. The CLI needs `bithuman login` and bills your credits. The full list, with each avatar's model and agent code, is served as JSON at [`https://api.bithuman.ai/v1/models/showcase`](https://api.bithuman.ai/v1/models/showcase).
 
 | Avatar | Model | Try it |
 |---|---|---|
-| `wise-pup` | Expression 2 | [talk to it in your browser](https://www.bithuman.ai/embed/A23WJF0199) · `bithuman run wise-pup` |
-| `sofia-ramirez` | Essence 2 | [talk to it in your browser](https://www.bithuman.ai/embed/A52DHS2219) · `bithuman run sofia-ramirez` |
+| `wise-pup` | Expression 2 | [talk to it in your browser](https://www.bithuman.ai/embed/A23WJF0199) · `bithuman login && bithuman run wise-pup` |
+| `sofia-ramirez` | Essence 2 | [talk to it in your browser](https://www.bithuman.ai/embed/A52DHS2219) · `bithuman login && bithuman run sofia-ramirez` |
 
-`bithuman list` prints every sample avatar, and `bithuman pull <slug>` downloads one.
+`bithuman list` prints every sample avatar, and `bithuman pull <slug>` downloads one (no account needed).
