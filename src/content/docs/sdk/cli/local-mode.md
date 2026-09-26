@@ -16,7 +16,7 @@ Audio, transcripts and generated speech never leave the machine. The avatar sess
 
 - The [CLI](/sdk/cli#install), signed in (`bithuman login`, or `BITHUMAN_API_SECRET`).
 - About 1 GB of disk and 1.5 GB of free memory.
-- `cmake` and a C++ compiler, where `llama-cpp-python` has no prebuilt wheel for your Python.
+- `cmake` and a C++ compiler: `llama-cpp-python` builds from source (several minutes).
 
 ## 1. Download an avatar and start the brain once
 
@@ -79,6 +79,7 @@ BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 | Detail | Cloud brain (default) | On-device brain |
 |---|---|---|
 | Setup | sign in (or set `OPENAI_API_KEY`) | three steps above |
+| Cost | the managed voice-chat rate, 10 credits/min ([pricing](/guides/pricing)); with `OPENAI_API_KEY`, your OpenAI bill instead | no brain charge |
 | Where audio goes | to the speech and language service | stays on the machine |
 | Memory | about 300 MB (the avatar) | about 1.5 GB |
 | Languages | the service's | 31 for speech output |

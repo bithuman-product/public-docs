@@ -23,6 +23,7 @@ Covers the CLI at the version on [Downloads & versions](/downloads). The binary 
 | `bithuman account` | Your account, plan, credit balance and recent usage |
 | `bithuman engine list \| install [mac\|linux]` | Inspect or fetch the Expression 2 render engine |
 | `bithuman doctor` | Check the install, credential, brain and cache |
+| `bithuman version` | CLI, engine and build versions |
 | `bithuman mcp` | MCP server over stdio; `bithuman mcp tools` lists its tools |
 | `bithuman completion <shell>` | Completions for bash, zsh, fish, elvish, powershell |
 
@@ -56,7 +57,7 @@ A `.env` file in the working directory is not read.
 
 `run` starts everything a session needs: a local `livekit-server` (it must be on `PATH`) and the conversation brain. A file runs locally: Expression 2 (`.avatar` or `.imx`), Essence 2 and Essence 1 (`.imx`). An Essence 2 or Expression 2 agent code opens a cloud session. Expression 1 is cloud-only.
 
-The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 200 MB). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([on-device brain](/sdk/cli/local-mode)).
+The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 350 MB on disk). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([on-device brain](/sdk/cli/local-mode)).
 
 ## bithuman render
 
@@ -82,7 +83,7 @@ bithuman pull "$AGENT_CODE"                     # your agent: needs sign-in → 
 bithuman pull "$AGENT_CODE" --model essence-2   # when the agent has more than one model
 ```
 
-`pull` prints only the cached path on stdout, so `MODEL=$(bithuman pull wise-pup)` captures it. A second `pull` downloads again when the published file changed; `--force` always does. An agent with several models returns the one it was created with unless you pass `--model`; `--json` lists the others in `other_models`. A slug not in `bithuman list` exits 66 (`SLUG_NOT_FOUND`).
+`pull` prints only the cached path on stdout, so `MODEL=$(bithuman pull wise-pup)` captures it. A second `pull` downloads again when the published file changed; `--force` always does. An agent with several models returns the one it was created with unless you pass `--model`; `--json` lists the others in `other_models`. A slug not in `bithuman list` exits 66 (`SLUG_NOT_FOUND`). `--model essence-1 | essence-2 | expression-2` picks which of the agent's models to download.
 
 ## bithuman open
 
@@ -94,7 +95,7 @@ The Expression 2 engine ships with the CLI. `bithuman engine install` fetches it
 
 ## bithuman doctor
 
-Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only when a credential and a brain are both available.
+Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only when a credential, a brain, the agent worker, the audio encoder and `ffmpeg` are all available. The first `bithuman run` sets up the worker, so a fresh install reports not ready until then.
 
 ## Environment variables
 
@@ -108,10 +109,12 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `BITHUMAN_LOCAL` | `1` runs the brain on this machine ([on-device brain](/sdk/cli/local-mode)) |
 | `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | On-device brain settings ([tuning](/sdk/cli/local-mode#tuning)) |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` |
-| `BITHUMAN_VERSION` | Release tag for the installer to fetch (default: newest) |
+| `BITHUMAN_VERSION` | Release tag for the installer, set on the `sh` side of the pipe: `curl -fsSL https://install.bithuman.ai \| BITHUMAN_VERSION=cli-v2.7.8 sh` |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`) |
 | `NO_COLOR` | Turn colour off |
-| `RUST_LOG` | Log filter (default `bithuman_serve=info,warn`) |
+| `BITHUMAN_LICENSE_FILE` | Path to a signed offline licence (Business and Enterprise, [offline licensing](/guides/pricing#offline-licensing)) |
+| `BITHUMAN_THREADS` | Render threads (default: one per CPU the process may use, up to 16) |
+| `BITHUMAN_INSTALL_ID` | This install's id in usage reports (default: a random id kept in `~/.bithuman/install_id`) |
 
 ## Cache
 
@@ -121,6 +124,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `~/.cache/bithuman/agents/<code>` | Your agents' models |
 | `~/.cache/bithuman/run` | Session state and logs |
 | `~/.cache/bithuman/brain-venv` | The conversation brain |
+| `~/.cache/bithuman/bundles` | Unpacked avatars (about the size of each avatar again) |
 | `~/.bithuman/engines` | Render engines, including the Essence 2 audio encoder (about 377 MB) |
 | `~/.cache/huggingface`, `~/.cache/supertonic` | On-device brain weights |
 
@@ -128,7 +132,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 
 ## Platforms
 
-Binaries: `aarch64-apple-darwin`, `x86_64-unknown-linux-gnu`, `aarch64-unknown-linux-gnu`. On any other platform the installer lists these three and exits 1 without downloading. There is no Intel Mac or native Windows binary; use WSL2, a Linux container, or the [cloud API](/api).
+Binaries: `aarch64-apple-darwin`, `x86_64-unknown-linux-gnu`, `aarch64-unknown-linux-gnu`. On any other platform the installer names the platform, says what is supported, and exits 1 without downloading. There is no Intel Mac or native Windows binary; use WSL2, a Linux container, or the [cloud API](/api).
 
 ## JSON output
 
@@ -148,7 +152,7 @@ Colour appears only on an interactive terminal.
 {"abi":7,"cli":"2.7.8","libessence":"2.11.12","build":{"target":"x86_64-unknown-linux-gnu","profile":"release"},"engine":{"platform":"linux","runtime":"litert","version":"1.0.1"},"schema_version":1}
 ```
 
-`bithuman account --json` (exit 77 with no credential):
+`bithuman account --json` (exit 77 with no credential; `--limit <N>`, default 10, sets how many recent charges to show):
 
 ```json
 {"logged_in": true, "source": "env BITHUMAN_API_SECRET", "email": "you@example.com", "plan": "creator", "credit_balance": 1000, "account_status": "active", "out_of_credits": false, "usage": {"data": [], "pagination": {"total": 0}}}
@@ -166,10 +170,10 @@ Colour appears only on an interactive terminal.
 {"schema_version": 1, "code": "A23WJF0199", "path": "/home/you/.cache/bithuman/showcase/wise-pup.imx", "cached": false, "family": "expression-2", "model": "expression-2", "other_models": [], "runnable_locally": true}
 ```
 
-`bithuman render … --json` also carries `render_seconds` and `render_fps`, how long the engine took and how fast it produced frames (`fps` is the file's playback rate):
+`bithuman render … --json` also carries `render_seconds` and `render_fps`, how long the engine took and how fast it produced frames (`fps` is the file's playback rate). `frames / fps` is the clip length; `seconds` is the wall time of the whole command:
 
 ```json
-{"output": "out.mp4", "bytes": 1234567, "seconds": 15.0, "width": 416, "height": 720, "frames": 300, "fps": 20}
+{"schema_version": 1, "output": "out.mp4", "bytes": 1234567, "seconds": 21.4, "width": 416, "height": 720, "frames": 300, "fps": 20, "render_seconds": 6.2, "render_fps": 48.4}
 ```
 
 `bithuman login --json` (both routes; the code box goes to stderr):
@@ -178,10 +182,12 @@ Colour appears only on an interactive terminal.
 {"schema_version": 1, "logged_in": true, "email": "you@example.com", "alias": "cli@your-host", "stored": "~/.bithuman/config"}
 ```
 
+`alias` is null with `--with-token`.
+
 `bithuman run … --json` prints one event when the session is live:
 
 ```json
-{"event": "session_started", "url": "http://127.0.0.1:8088/", "host": "127.0.0.1", "port": 8088}
+{"schema_version": 1, "event": "session_started", "url": "http://127.0.0.1:8088/WISEPUP", "code": "WISEPUP", "host": "127.0.0.1", "port": 8088, "cost_per_min": 10, "credit_balance": 99}
 ```
 
 `bithuman doctor --json` exits 0 when `"ready": true`. The values above are examples; the shapes are stable, and `schema_version` changes when they are not.
@@ -191,12 +197,12 @@ Colour appears only on an interactive terminal.
 | Code | Name | Meaning |
 |---|---|---|
 | 0 | success | |
-| 1 | GENERIC | runtime error; `doctor` not ready; a rejected credential at sign-in |
+| 1 | GENERIC | runtime error; `doctor` not ready; a browser or device sign-in that failed or timed out |
 | 2 | USAGE | bad arguments; `--host 0.0.0.0` without `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
 | 66 | NOINPUT | file, slug or model not found; not an avatar file |
 | 69 | UNAVAILABLE | network, engine or service unavailable; incomplete model file; `ffmpeg` missing |
 | 70 | SOFTWARE | internal error (Essence 1 `render`) |
-| 77 | NOPERM | not signed in, out of credits, or forbidden |
+| 77 | NOPERM | not signed in, a rejected or revoked secret (including `login --with-token`), out of credits, or forbidden |
 | 130 | — | interrupted with Ctrl-C (a live Expression 2 session exits 0 after draining) |
 
 ### Introspection
@@ -213,7 +219,7 @@ bithuman token       # the resolved secret on stdout (exit 77 if none)
 {"mcpServers": {"bithuman": {"command": "bithuman", "args": ["mcp"]}}}
 ```
 
-`bithuman mcp` speaks the Model Context Protocol over stdio. `bithuman mcp tools --json` lists the tools: local ones (version, doctor, open, list, pull, render) and ones that call the bitHuman API. Tools that create agents, speech or gestures spend credits. The full list is on [MCP server](/sdk/mcp#tools).
+`bithuman mcp` speaks the Model Context Protocol over stdio. `bithuman mcp tools --json` lists the tools: local ones (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`, `render`) and ones that call the bitHuman API. Tools that create agents, speech or gestures spend credits. The full list is on [MCP server](/sdk/mcp#tools).
 
 ## Recipes
 
