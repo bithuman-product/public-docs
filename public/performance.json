@@ -426,11 +426,11 @@
       "id": "6829-68771-0007",
       "seconds": 16.285
      },
-     "peak_ram_gb": 0.97,
+     "peak_ram_gb": 0.95,
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
-     "memory_release": "essence2-android 0.5.13",
+     "memory_release": "essence2-android 0.7.0",
      "time_to_video": null
     },
     "expression-2": {
@@ -443,11 +443,11 @@
       "id": "5683-32865-0012",
       "seconds": 21.51
      },
-     "peak_ram_gb": 2.32,
+     "peak_ram_gb": 2.31,
      "peak_gpu_gb": null,
      "swap_gb": 0.0,
      "memory_scope": "render",
-     "memory_release": "expression2-android 0.4.8",
+     "memory_release": "expression2-android 0.5.0",
      "time_to_video": null
     }
    }
