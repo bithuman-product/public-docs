@@ -22,12 +22,14 @@ The table and the billing rule under it are generated from [`GET /v1/pricing`](/
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | — |
 
-Managed conversational agents bill on top of avatar serving:
+A managed conversational agent bills ONE all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.
 
 | Surface | Rate |
 |---|---|
-| Managed agent — voice chat | 10 credits/min |
+| Managed agent — voice chat (all-inclusive) | 10 credits/min |
 | Managed agent — camera on (vision chat; replaces the chat rate) | 30 credits/min |
+
+An avatar-only session (your own agent through the plugin or the API) that renders in the viewer's browser bills the model's **self-hosted** rate above. Inside a managed agent's chat the all-inclusive rate covers it.
 
 How live sessions are billed: active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum.
 <!-- /PRICING:REALTIME -->

@@ -67,9 +67,14 @@ export function render(rt) {
   const chat = rt.hosted?.chat_line, camera = rt.hosted?.camera_chat_line;
   if (chat || camera) {
     note(chat); note(camera);
-    out += `\nManaged conversational agents bill on top of avatar serving:\n\n| Surface | Rate |\n|---|---|\n`;
-    if (chat) out += `| Managed agent — voice chat | ${per(chat.rate)} |\n`;
+    out += `\nA managed conversational agent bills ONE all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.\n\n| Surface | Rate |\n|---|---|\n`;
+    if (chat) out += `| Managed agent — voice chat (all-inclusive) | ${per(chat.rate)} |\n`;
     if (camera) out += `| Managed agent — camera on (vision chat; replaces the chat rate) | ${per(camera.rate)} |\n`;
+  }
+  // an AVATAR-ONLY session (the customer's own agent) rendered in the browser bills the
+  // self-hosted column (GET /v1/pricing realtime.in_browser, owner 2026-09-26)
+  if (rt.in_browser?.surface === "connected-postpaid") {
+    out += `\nAn avatar-only session (your own agent through the plugin or the API) that renders in the viewer's browser bills the model's **self-hosted** rate above. Inside a managed agent's chat the all-inclusive rate covers it.\n`;
   }
   out += "\n";
   // The guide states the BASIS verbatim; the `rounding` enum is an API field value and

@@ -36,14 +36,14 @@
         "rate": 10,
         "rounding": "session_seconds_floor_carry",
         "basis": "active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum",
-        "note": "Billed on top of the avatar's hosted rate for agents hosted on bitHuman (ImagineX); for essence-1 agents it is the only realtime charge."
+        "note": "All-inclusive for agents hosted on bitHuman (ImagineX): it covers the avatar, rendered in our cloud or in the viewer's browser, so a hosted chat session has no separate avatar charge (essence-1, essence-2, expression-1, expression-2)."
       },
       "camera_chat_line": {
         "pricing_code": "usage_agent_video_chat_on_imaginex",
         "rate": 30,
         "rounding": "session_seconds_floor_carry",
         "basis": "active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum",
-        "note": "The chat line's rate when the agent's camera (vision) chat is on: it replaces chat_line for that session, billed on top of the avatar's hosted rate."
+        "note": "The chat line's rate when the agent's camera (vision) chat is on: it replaces chat_line for that session and is likewise all-inclusive."
       }
     },
     "self_hosted": {
@@ -68,6 +68,10 @@
         }
       }
     },
-    "note": "Idle time is free everywhere. `rounding` and `basis` state the rule in force right now for each rate. Authoritative charges are made server-side; this is a reference, never lower than the debit."
+    "in_browser": {
+      "surface": "connected-postpaid",
+      "note": "An avatar-only session (your own agent through the plugin or the API) that renders in the viewer's browser bills the model's self_hosted rate above; inside a hosted chat session the chat line covers it. A model with no self_hosted rate does not render in the browser."
+    },
+    "note": "Live sessions bill active session time, talking or idle, to the exact second. `rounding` and `basis` state the rule in force right now for each rate. Authoritative charges are made server-side; this is a reference, never lower than the debit."
   }
 }
