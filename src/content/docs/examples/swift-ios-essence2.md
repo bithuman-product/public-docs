@@ -8,9 +8,9 @@ type: example
 label: "iOS: Essence 2"
 ---
 
-A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1920×1080) at 25 fps. **Speak** plays the line again.
+A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1080p) at 25 fps. **Speak** plays the line again.
 
-`Sources/App.swift` drives the engine through its C interface (`import Essence2`). A Swift app can use `Essence2Kit` instead ([Apple](/sdk/apple)): it wraps the same engine and fetches its runtime files for you.
+`Sources/App.swift` uses `Essence2Kit` ([Apple](/sdk/apple)): `Essence2Engine.create(identity:resourcesDirectory:)` opens the bundled avatar, and `frames(following:)` paces the picture to the audio player.
 
 ## Requirements
 
@@ -18,7 +18,7 @@ A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks 
 |---|---|
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
 | A physical iPhone, or an M-series iPad, on iOS 26 | the Simulator cannot run the engine; no Apple entitlement is needed |
-| Swift package **2.16.0** or newer, `Essence2` product | the project already depends on it |
+| Swift package **2.17.2** or newer, `Essence2Kit` product | the project already depends on it |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 | About 430 MB free on the phone and 380 MB on the Mac | the avatar and the engine resources ride in the app bundle |
 
@@ -34,7 +34,7 @@ cd bithuman-examples/swift/ios-essence2
 
 ## Set your API secret
 
-In Xcode: **Product → Scheme → Edit Scheme → Run → Environment Variables**, add `BITHUMAN_API_SECRET`. The app reads it at launch and passes it to `be_essence2_set_api_secret`.
+In Xcode: **Product → Scheme → Edit Scheme → Run → Environment Variables**, add `BITHUMAN_API_SECRET`. The app reads it at launch and passes it to `Essence2Credential.set(_:)`.
 
 ## Run it
 
@@ -56,14 +56,13 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
 
 ## How it works
 
-1. **Credential first:** `be_essence2_set_api_secret` is called before the engine is created.
-2. **One actor owns the engine:** the handle is a raw pointer, so an actor keeps it off the main thread and makes the app compile under Swift 6.
-3. **Wait for ready:** `be_essence2_create` returns quickly and the engine prepares in the background; poll `be_essence2_is_ready` before pushing audio.
-4. **Stream, don't collect:** one 1080×1920 frame is 6.2 MB, so the app pulls one frame per display tick and draws it.
-5. **Push with retry:** `be_essence2_push_audio` returns `-2` when its buffer is full; pull frames, then push the same samples again.
-6. **Draw on a 40 ms grid:** 25 fps, scheduled against absolute times so small sleep errors do not add up.
+1. **Credential first:** `Essence2Credential.set(_:)` is called before the engine is created.
+2. **Open the avatar:** `Essence2Engine.create(identity:resourcesDirectory:)` opens the bundled `.imx` with the engine's runtime files from `Sources/EngineResources`.
+3. **One draw loop:** `frames(following: player)` hands out 25 frames a second for the life of the app: idle motion between replies, and a reply's frames as the player plays their audio.
+4. **Speak:** `feed(_:)` the reply's 16 kHz samples, then `flushTail()`; the draw loop starts the reply's audio with its first speech frame, so the lips stay on the voice.
+5. **Stream, don't collect:** one 1080×1920 frame is 6.2 MB, so the app draws each frame as it arrives.
 
-`Sources/App.swift` is the whole app. The full C API is on [Apple](/sdk/apple#integrate-into-your-app) and [Apple API reference](/sdk/apple-api).
+`Sources/App.swift` is the whole app. The full API is on [Apple](/sdk/apple#integrate-into-your-app) and [Apple API reference](/sdk/apple-api).
 
 ## Make it your own
 
@@ -78,18 +77,18 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
   | calm-product-specialist-advisor | `A24EKJ8433` | 1280×720 |
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "essence-2"`), then run `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
-- **Ship it:** fetch the secret from your backend or the Keychain at launch and pass it to `be_essence2_set_api_secret`; never put it in the app bundle.
+- **Ship it:** fetch the secret from your backend or the Keychain at launch and pass it to `Essence2Credential.set(_:)`; never put it in the app bundle.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| `be_essence2_create` returns `-3` | no API secret, or the service rejected it (stderr says which): set `BITHUMAN_API_SECRET` in the Run scheme |
-| `be_essence2_create` returns `-2`, *"the download is incomplete"* | re-run `./setup.sh`; it checks the download |
+| `create` throws `Essence2KitError.meteringRefused(reason:)` | no API secret, or the service rejected it (`reason` says which): set `BITHUMAN_API_SECRET` in the Run scheme |
+| `create` throws `.identityUnreadable` | re-run `./setup.sh`; it checks the download |
 | *"the shared audio front end is missing"*, or the engine never becomes ready | add `Sources/EngineResources` as a **group**, not a folder reference |
-| The avatar moves but never speaks | resolve Swift package **2.16.0** or newer (*File → Packages → Update to Latest Package Versions*) |
+| The avatar moves but never speaks | resolve Swift package **2.17.2** or newer (*File → Packages → Update to Latest Package Versions*) |
 | The link fails naming a newer minimum OS | set Minimum Deployments to **iOS 26.0** |
-| `no such module 'Essence2'` | attach the `Essence2` product to the app target |
+| `no such module 'Essence2Kit'` | attach the `Essence2Kit` product to the app target |
 | `ld` warns *"built for newer 'iOS' version (26.0)"* once per object | expected; the build is good |
 | It builds for the Simulator and crashes there | run on a physical device |
 
