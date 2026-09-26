@@ -8,7 +8,7 @@ type: endpoint
 label: "Agents"
 ---
 
-An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/sdk/web), the SDKs, [talking video](/api/video) and live sessions. Creation costs credits per model ([pricing](/guides/pricing)); everything else on this page is free.
+An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/sdk/web), the SDKs, [talking video](/api/video) and live sessions. Creation and model adds cost credits per model ([pricing](/guides/pricing)); everything else on this page is free.
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -39,7 +39,9 @@ An agent is an avatar (face, voice and persona) identified by a short code such 
 | `aspect_ratio` | string | no | `16:9` (default), `9:16` or `1:1` |
 | `framing` | string | no | `portrait` (default) or `full_body` |
 | `transparency` | boolean | no | `true` generates on a green-screen background for chroma key |
-| `agent_id` | string | no | Your own identifier |
+| `agent_id` | string | no | Leave it out; a fresh code is generated. If it names an agent you already own, that agent is regenerated in place (it returns to `processing`); another account's code returns `404` |
+
+Essence 2 Max is available on the Enterprise plan only; other plans get `403 PLAN_REQUIRED`. [Contact sales](https://www.bithuman.ai/sales) to enable it.
 
 Headers: `api-secret`, and optionally `Idempotency-Key`: a repeated request with the same key returns the first response and starts no second creation.
 
@@ -73,7 +75,7 @@ print(resp.json())
 ### Notes
 
 - Creation takes minutes for `essence-1` and `expression-1`, and about 2–2.5 hours for `essence-2` and `expression-2`. Set your polling timeout per model.
-- `essence-2` needs a photoreal person: another subject returns `422 MODEL_SUBJECT_MISMATCH` before anything is charged. `auto` routes people to `essence-2` and everything else to `expression-2`.
+- `essence-2` needs a photoreal person: another subject returns `422 MODEL_SUBJECT_MISMATCH` before anything is charged. An `essence-2` creation or add also checks the photo's face before charging: a face too small in frame, or several similar-sized faces, returns `422 IMAGE_FACE_UNSUITABLE` — upload a closer photo of one person. `auto` routes people to `essence-2` and everything else to `expression-2`.
 - A `200` does not mean the image was fetched. An unreachable `image` fails the creation a few seconds later (refunded); poll [status](#poll-status) to confirm. Creation is image-only: a `video` field returns `400 VIDEO_INPUT_NOT_SUPPORTED`.
 - At most two `essence-2` creations run at once per account; a third fails at once with a capacity message and no charge.
 
@@ -86,7 +88,7 @@ curl https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITHUMA
 ```
 
 ```json
-{"success": true, "data": {"agent_id": "A80HVD8577", "status": "ready", "progress": 1.0, "current_step": "done", "error_message": null, "model_url": "https://…", "supported_models": ["expression-2"], "name": "Museum Guide"}}
+{"success": true, "data": {"agent_id": "A80HVD8577", "status": "ready", "progress": 1.0, "current_step": "done", "error_message": null, "model_url": "https://…", "supported_models": ["expression-2"], "model_status": {"expression-2": {"state": "ready", "reason": null}}, "name": "Museum Guide"}}
 ```
 
 | `current_step` | Progress | Stage |
@@ -101,8 +103,9 @@ curl https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITHUMA
 ```python
 import os, time, requests
 
-def wait_until_ready(agent_id):
-    while True:
+def wait_until_ready(agent_id, timeout_s=3 * 3600):
+    deadline = time.time() + timeout_s
+    while time.time() < deadline:
         r = requests.get(f"https://api.bithuman.ai/v1/agent/status/{agent_id}",
                          headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]}, timeout=30)
         if r.ok:
@@ -112,11 +115,13 @@ def wait_until_ready(agent_id):
             if data["status"] == "failed":
                 raise RuntimeError(data["error_message"])
         time.sleep(5)   # creation continues server-side through transient errors
+    raise TimeoutError(agent_id)
 ```
 
 ### Notes
 
 - `supported_models` lists the models the agent can be launched as, spelled as `model` values you can send back.
+- `model_status` gives each requested model's state (`pending`, `ready`, `failed`). Models never requested are absent.
 - The downloadable model file is published shortly after `ready`; until then the [download](#download-an-agents-model) returns `404 MODEL_ARTIFACT_NOT_READY`. Retry.
 
 ## Get an agent
@@ -173,12 +178,12 @@ curl -X DELETE https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITH
 
 `POST /v1/agent/{code}/models` with `{"model": "<model>"}` adds a model to a `ready` agent without re-creating it. Re-adding a model the agent has costs nothing, and a failed add is refunded.
 
-| `model` | Needs | Time |
-|---|---|---|
-| `expression-1` | a stored image and voice | instant, free |
-| `expression-2` | a stored image | about 2–2.5 h |
-| `essence-2` | a stored identity video and a photoreal person | about 2–2.5 h |
-| `essence-1` | a stored image or identity video | 10–20 min |
+| `model` | Needs | Time | Credits |
+|---|---|---|---|
+| `expression-1` | a stored image and voice | instant | free |
+| `expression-2` | a stored image | about 2–2.5 h | 2000 |
+| `essence-2` | a stored identity video and a photoreal person | about 2–2.5 h | 500 |
+| `essence-1` | a stored image or identity video | 10–20 min | 250 |
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/models \
@@ -190,7 +195,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/models \
 {"success": true, "agent_id": "A80HVD8577", "model": "essence-2", "status": "processing", "supported_models": ["expression-2"]}
 ```
 
-Poll [status](#poll-status) until `supported_models` includes the new model. Errors: `409 AGENT_NOT_READY`, `422 MODEL_PREREQUISITE_MISSING`, `422 MODEL_SUBJECT_MISMATCH`.
+Poll [status](#poll-status) until `model_status["essence-2"].state` is `ready` or `failed`. The top-level `status` stays `ready` during an add. A failed add is refunded, and its `reason` says why. Errors: `409 AGENT_NOT_READY`, `422 MODEL_PREREQUISITE_MISSING`, `422 MODEL_SUBJECT_MISMATCH`.
 
 ## Download an agent's model
 
@@ -210,6 +215,7 @@ Name the output file yourself (`-o`). Add `?redirect=false` to get the URL as JS
 | Status | Code | Meaning |
 |---|---|---|
 | `400` | `MODEL_NOT_DOWNLOADABLE` | the model has no file (`expression-1`) |
+| `403` | `PLAN_REQUIRED` | the model is not in your plan; the message names the plan |
 | `404` | `MODEL_ARTIFACT_NOT_READY` | published shortly after `ready`; retry |
 | `409` | `MODEL_NOT_GENERATED` | the agent does not have that model; [add it](#add-a-model-to-an-existing-agent) |
 
@@ -259,12 +265,15 @@ curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/add-context \
 | `400` | `VIDEO_INPUT_NOT_SUPPORTED` | `video` in a creation request |
 | `401` | `UNAUTHORIZED` | missing or invalid `api-secret` |
 | `402` | `INSUFFICIENT_BALANCE` | not enough credits to create |
+| `403` | `PLAN_REQUIRED` | the model is not in your plan; the message names the plan |
 | `404` | `MODEL_ARTIFACT_NOT_READY` | the model file is not published yet; retry |
 | `404` | `NOT_FOUND` | unknown agent, or no live session for speak or add-context |
 | `409` | `AGENT_NOT_READY` | adding a model to an agent that is not `ready` |
 | `409` | `MODEL_NOT_GENERATED` | the agent does not have the requested model |
+| `410` | `AGENT_DELETED` / `AGENT_PURGED` | the agent was deleted; model download, gestures and talking video refuse it |
 | `422` | `MODEL_PREREQUISITE_MISSING` | the agent lacks an asset the model needs |
+| `422` | `IMAGE_FACE_UNSUITABLE` | the face is too small or there are several faces |
 | `422` | `MODEL_SUBJECT_MISMATCH` | `essence-2` for a subject that is not a photoreal person |
 | `503` | `MODEL_NOT_YET_AVAILABLE` | a model is paused for your account (not returned in normal operation) |
 
-All codes: [Errors](/api/errors). Legacy parameters: `model: "essence"` or `"expression"` with `version: "v1"` or `"v2"` still select a model; `duration` is ignored.
+All codes: [Errors](/api/errors).

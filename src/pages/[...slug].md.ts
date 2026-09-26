@@ -87,7 +87,7 @@ export const GET: APIRoute = async ({ props }) => {
     return md(twin("Get started", "/start", hubMeta("start").description, body));
   }
   if (hub === "api/reference") {
-    const body = `The complete contract is the OpenAPI 3 spec: ${SITE}/api/openapi.yaml. Authenticate with the \`api-secret\` header ([Authentication](${SITE}/api/authentication.md)). Each endpoint group also has a page: [API](${SITE}/api.md).\n\n## Endpoints\n\n${endpointTable()}`;
+    const body = `The OpenAPI 3 spec (${SITE}/api/openapi.yaml) covers the /v1 endpoints. The account endpoints under /v2 and knowledge have their own pages: [Organizations](${SITE}/api/organizations.md) · [Providers](${SITE}/api/providers.md) · [Runtime sessions](${SITE}/api/runtime-sessions.md) · [API secrets](${SITE}/api/api-keys.md) · [Knowledge](${SITE}/api/knowledge.md). Authenticate with the \`api-secret\` header ([Authentication](${SITE}/api/authentication.md)).\n\n## Endpoints\n\n${endpointTable()}`;
     return md(twin("REST API reference", "/api/reference", hubMeta("api/reference").description, body));
   }
   if (hub === "sdk") {

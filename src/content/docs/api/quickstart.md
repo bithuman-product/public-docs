@@ -8,7 +8,7 @@ type: quickstart
 label: "Quickstart"
 ---
 
-A ladder: the first two steps are free and need no account; each later step builds on the one before.
+A ladder: step 1 needs no account, step 2 needs a free API secret, and steps 3–5 spend credits. Each step builds on the one before.
 
 ## 1. Embed a sample avatar (no account)
 

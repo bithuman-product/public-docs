@@ -6,7 +6,7 @@ group: "Get started"
 order: 0
 type: hub
 slug: api
-label: "Overview & endpoint index"
+label: "Overview"
 ---
 
 ## What the API does
@@ -24,6 +24,8 @@ https://api.bithuman.ai
 ```
 
 All endpoints are relative to this URL and require an `api-secret` header.
+
+Every endpoint, with a live console: [API reference](/api/reference) (raw spec: https://docs.bithuman.ai/api/openapi.yaml).
 [Get a free API secret →](https://www.bithuman.ai/developer/api-keys)
 
 ## Authentication
@@ -66,10 +68,11 @@ the [embed token flow](/api/embedding) instead. See
   [runtime sessions](/api/runtime-sessions), and run
   [organizations](/api/organizations) programmatically.
 - **Get notified** — register [webhooks](/api/webhooks) for signed
-  `agent.ready` / `agent.failed` events instead of polling.
-- **Drive it from an AI agent** — every endpoint below is also exposed as a
-  tool via the [MCP server](/sdk/mcp), so Claude, Cursor, and other
-  MCP clients can call bitHuman directly.
+  `agent.ready` / `agent.failed` and `video.completed` / `video.failed` events
+  instead of polling.
+- **Drive it from an AI agent** — the [MCP server](/sdk/mcp) (`bithuman mcp`)
+  exposes the common endpoints (agents, speech, gestures, files, embed tokens,
+  webhooks, balance) as tools for Claude, Cursor and other MCP clients.
 
 ## How agents are identified
 
@@ -87,14 +90,15 @@ the code).
 - [Quickstart](/api/quickstart) — make your first API call and drive a live agent.
 - [Authentication](/api/authentication) — get an API secret and runtime tokens.
 - [Models](/concepts/models) — the four models, where each runs, and which to pick.
-- [API reference](/api/reference) — the interactive Scalar reference for every
-  endpoint, with a live request console.
+- [API reference](/api/reference) — the interactive reference for the core
+  endpoints (the OpenAPI file is at /api/openapi.yaml).
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational
   contract.
-- [MCP server](/sdk/mcp) — call every endpoint as a tool from an AI agent.
+- [MCP server](/sdk/mcp) — call the common endpoints as tools from an AI agent.
 
 ## Status and versioning
 
-`v1` endpoints are generally available. Breaking changes ship under new path
-prefixes (`/v2/...`); new endpoints land additively without forcing migrations.
+Endpoints are stable and change additively. The `/v1` and `/v2` prefixes are
+part of each endpoint's path, not a version switch; use each path exactly as
+documented.
 Live API status is at [status.bithuman.ai](https://status.bithuman.ai).
