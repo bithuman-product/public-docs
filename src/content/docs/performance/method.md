@@ -23,9 +23,9 @@ Frames per second from speech audio in to finished video frame out, for one avat
 <!-- FLOORS:MEMORY -->
 | Runs on | Hardware | Essence 2 | Expression 2 | Measured on |
 |---|---|---|---|---|
-| macOS · CLI | Apple M4 | 1.6 GB | 0.9 GB | CLI 2.7.0 |
+| macOS · CLI | Apple M4 | 1.0 GB | 0.9 GB | CLI 2.7.8 |
 | macOS · Python | Apple M4 | 1.2 GB | 0.8 GB | bithuman 2.11.12 |
-| Linux · CLI | Intel Core i7-13700F (x86_64) | 3.5 GB | 1.7 GB | CLI 2.7.0 |
+| Linux · CLI | Intel Core i7-13700F (x86_64) | 2.2 GB | 1.6 GB | CLI 2.7.8 |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 1.0 GB | 1.5 GB | bithuman 2.11.12 |
 | iPhone · Swift package | iPhone 15 | 0.9 GB | 0.5 GB | Swift engine 1.10.0, Swift package 2.14.1 |
 | Android | Samsung Galaxy S25+ | 1.0 GB | 2.3 GB | essence2-android 0.7.0, expression2-android 0.5.0 |
@@ -38,9 +38,9 @@ Peak memory (RAM) of one render, or of one session on a phone, on the release in
 
 | Runs on | Hardware | Essence 2, first run | Essence 2, after that | Expression 2, first run | Expression 2, after that |
 |---|---|---|---|---|---|
-| macOS · CLI | Apple M4 | 9.6 s | 7.8 s | — | — |
+| macOS · CLI | Apple M4 | 4.0 s | 4.8 s | — | — |
 
-Seconds from starting the command to a finished MP4 of a 10-second clip, for the whole process: loading, rendering, encoding and exit, timed on CLI 2.7.1. Each number is the slowest of three runs. "First run" is a fresh install with the model files already downloaded. "After that" is every later render on the same machine. Lip sync is checked on every run: no run published here plays more than 40 ms off the audio.
+Seconds from starting the command to a finished MP4 of a 10-second clip, for the whole process: loading, rendering, encoding and exit, timed on CLI 2.7.8. Each number is the slowest of three runs. "First run" is a fresh install with the model files already downloaded. "After that" is every later render on the same machine. Lip sync is checked on every run: no run published here plays more than 40 ms off the audio.
 <!-- /FLOORS:WALLCLOCK -->
 
 ## Raw data

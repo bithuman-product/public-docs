@@ -5,7 +5,7 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "90451eb8c9471c645280e15dd7d7a6b04176b5285c85c7fb4f52b4b728ff0690",
+  "record_sha256": "c8266e180f98786aab4ca1a6f60fab53626e1c85331ef3335b3fa5ad70b4f668",
   "emitter_sha256": "67ea88ee5de3f266dbc520242deb1709411c200aa6c8731b3e204bb455afc1c2",
   "verified_on": "2026-09-26",
   "stale_after_days": 30,
@@ -13,7 +13,7 @@
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "48b0a650279705850722d05cb6335794796493843b26ccc4efe51e319b5d9033"
+    "sha256": "cee9b8c41fe817b0fdf432a40e61a3188ba175b7a46dec1d1c7e36428c6d4a8c"
   },
   "blocks": [
     {
@@ -35,7 +35,7 @@
       "marker": "TABLE",
       "key": "desktop",
       "index": 0,
-      "sha256": "6fd95adfaf3e9a43de235f9b0e4ccdc3b5c359440a8cdd0224666d8c6174a223"
+      "sha256": "ec608a8a3bc68d6bc16abff8295fd6ca83170f5d8a48735d14fba068d995d9cb"
     },
     {
       "file": "src/content/docs/performance/desktop.md",
@@ -63,14 +63,14 @@
       "marker": "MEMORY",
       "key": null,
       "index": 0,
-      "sha256": "e72b65a0f3bfd8c6d93ab8b62f2ae0a4cdb35440e989d2e21b529f7637298f11"
+      "sha256": "4733bf083f9b49d51095e72778e1bd12926d98fd8d4bd1e2f1d7f82f256d59b1"
     },
     {
       "file": "src/content/docs/performance/method.md",
       "marker": "WALLCLOCK",
       "key": null,
       "index": 0,
-      "sha256": "67da33950131e103fb304ae75ce624c21f8b9ea60533d1756dac540cebc2198e"
+      "sha256": "e4030fab73bc8b09f8a4e14283ec9f6897cc74d45e259c856837d9c61f5bbb42"
     },
     {
       "file": "src/content/docs/performance/mobile.md",
@@ -112,14 +112,14 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "2ad39f577c3b81294fd98e345724ca29d552935c5d5617170f42c0903a44a594"
+      "sha256": "20b24bcf681ec1f360a869ba76e77f2218973548eb3b6c9abb428572903504b2"
     },
     {
       "file": "src/partials/performance-headline.md",
       "marker": "HEADLINE",
       "key": null,
       "index": 0,
-      "sha256": "0927a6c1cbd868cadb54e68028d607642bec439579995d70dcc5bd03d3fd147d"
+      "sha256": "3b8ed8e419492a10751950fbd262a11989c6b989c5f11881d72b2968766eca96"
     }
   ],
   "table": {
@@ -144,7 +144,7 @@
       {
         "label": "macOS · CLI",
         "id": "macos-m4",
-        "line": "| macOS · CLI | Apple M4 | 104 | **4.1×** real time | 167 | **8.3×** real time |"
+        "line": "| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 165 | **8.2×** real time |"
       },
       {
         "label": "macOS · Python",
