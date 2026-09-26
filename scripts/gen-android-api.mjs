@@ -354,8 +354,24 @@ function memberLine(sig, extra = {}) {
 /** A class as one ```kotlin fence: its header, constructors, properties,
  *  functions, and its companion's members. Returns the fence and the number
  *  of members withheld. */
-function renderClass(c, companion, aliases) {
+// MEMBERS THAT ARE PUBLIC IN THE BYTECODE BUT NOT API (audit #68). Engine
+// bookkeeping a caller never reads or sets: kept in the record (the surface diff
+// still grades it), withheld from the page. The product marks them `internal` in
+// a later AAR; until then this list is the allowlist's other half.
+export const HIDDEN_MEMBERS = {
+  Essence2Avatar: ["W2V_MEMBER_TEACHER", "frontendIn"],
+  Essence2ModelStore: ["DONOR_CAP", "STORE_FORMAT", "SLOT_KEYS"],
+  Essence2Metering: ["basis", "flushBudgetMs", "fps", "lastBeatsDelivered", "lastBeatsFailed", "lastServedAckedSeconds", "lastSessionId"],
+  Expression2Metering: ["basis", "flushBudgetMs", "fps", "lastBeatsDelivered", "lastBeatsFailed", "lastServedAckedSeconds", "lastSessionId"],
+};
+const memberName = (sig) => (/(?:fun|val|var)\s+(?:[\w.<>, ]+\.)?(\w+)/.exec(sig) || [])[1];
+
+function renderClass(c, companion, aliases, undocumented = new Set()) {
   const name = displayName(c, aliases);
+  const hidden = new Set(HIDDEN_MEMBERS[name] || []);
+  // a member whose signature names a class this page does not document is not
+  // API a caller can use either (Essence2Frames, Routing, Expression2Backend, …)
+  const namesUndocumented = (sig) => [...undocumented].some((u) => new RegExp(`(?<![\\w.])${u}(?![\\w])`).test(sig));
   const sp = (sig) => spell(sig, aliases);
   const lines = [];
   let withheld = 0;
@@ -379,12 +395,17 @@ function renderClass(c, companion, aliases) {
       if (l === null) withheld++; else out.push(l);
     }
     for (const x of cls.properties) {
-      const l = memberLine(sp(x.signature), { value: x.value, deprecated: x.deprecated });
+      // a `var` with a private setter is read-only to a caller: print it as `val`
+      let sig = sp(x.signature);
+      if (/^var /.test(sig) && !x.jvm_setter) sig = sig.replace(/^var /, "val ");
+      if (hidden.has(memberName(sig)) || namesUndocumented(sig)) { withheld++; continue; }
+      const l = memberLine(sig, { value: x.value, deprecated: x.deprecated });
       if (l === null) withheld++; else out.push(l);
     }
     let generated = 0;
     for (const x of cls.functions) {
       if (cls.is_data && DATA_GENERATED.test(x.signature)) { generated++; continue; }
+      if (hidden.has(memberName(x.signature)) || namesUndocumented(sp(x.signature))) { withheld++; continue; }
       const l = memberLine(sp(x.signature), { deprecated: x.deprecated });
       if (l === null) withheld++; else out.push(l);
     }
@@ -429,7 +450,6 @@ export const PUBLIC_CLASSES = {
     Essence2MeteringRefused: "Thrown when the service refuses the session (no secret, rejected secret, or offline too long).",
     Essence2StoreException: "Thrown when a download fails.",
     Essence2RenderFailed: "Thrown by `checkRender()` when the engine stopped.",
-    Essence2RenderStatus: "What `checkRender()` reports.",
   },
   "expression2-android": {
     Expression2Avatar: "One Expression 2 session: `feed`, `pull` frames into a `Bitmap`, `flushTail`, `idleLoop`, `resetState` to interrupt.",
@@ -509,7 +529,8 @@ export function renderRegion(record) {
       const c = byName.get(n);
       if (!c) continue;
       const comp = c.companion ? companions.get(`${c.name}$${c.companion}`) : null;
-      const { fence } = renderClass(c, comp, aliases);
+      const undocumented = new Set([...byName.keys()].filter((k) => !(k in pub)).map((k) => k.split(".").pop()));
+      const { fence } = renderClass(c, comp, aliases, undocumented);
       out.push(`### ${n}`);
       out.push("");
       out.push(fence);
