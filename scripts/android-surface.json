@@ -4,10 +4,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.7.0",
-        "digest": "sha256:48e8fef7ce0333d29116b10ccc1e61a1c87de391ef00180f42c0d72ae052f5a2",
-        "filename": "essence2-android-0.7.0.aar",
-        "resolved_on": "2026-09-25"
+        "version": "0.8.0",
+        "digest": "sha256:f672e292b1a18d67ea53f4c96a4ccbc5a7cefb7e8d819510aad1218444539b4d",
+        "filename": "essence2-android-0.8.0.aar",
+        "resolved_on": "2026-09-26"
       },
       "surface": {
         "artifact_facts": {
@@ -156,6 +156,20 @@
                 "name": "Essence2PublicMirrorResolver",
                 "visibility": "public",
                 "target": "ai.bithuman.elevate.Essence2ModelStore$PublicMirrorResolver",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2RenderFailed",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2RenderFailed",
+                "target_declared_public": true,
+                "target_loadable": true
+              },
+              {
+                "name": "Essence2RenderStatus",
+                "visibility": "public",
+                "target": "ai.bithuman.elevate.Essence2RenderStatus",
                 "target_declared_public": true,
                 "target_loadable": true
               },
@@ -2727,8 +2741,9 @@
                 "mutable": true,
                 "jvm_getter": "getFps()D",
                 "jvm_setter": "setFps(D)V",
-                "jvm_field": "field fpsD",
-                "loadable": true
+                "jvm_field": null,
+                "loadable": true,
+                "deprecated": "Ignored since 0.8.0: the meter uses the engine's own 25 fps."
               },
               {
                 "name": "installId",
@@ -2906,6 +2921,7 @@
                   "static",
                   "synthetic"
                 ],
+                "deprecated": "Ignored since 0.8.0: the meter uses the engine's own 25 fps.",
                 "kind": "synthetic"
               },
               {
@@ -4762,11 +4778,11 @@
             }
           ],
           "public_classes_without_metadata": [],
-          "synthetic_classes": 5,
+          "synthetic_classes": 6,
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 74,
+          "class_files": 75,
           "declared_classes": 67,
           "public_classes": 38
         }
@@ -4779,7 +4795,7 @@
         "version": "0.5.0",
         "digest": "sha256:628e4682c6bc102b92ff691e9d29672dc84f693d2c072d217ec9d3cb735c09e4",
         "filename": "expression2-android-0.5.0.aar",
-        "resolved_on": "2026-09-25"
+        "resolved_on": "2026-09-26"
       },
       "surface": {
         "artifact_facts": {

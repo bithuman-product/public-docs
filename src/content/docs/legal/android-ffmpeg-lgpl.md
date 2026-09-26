@@ -19,14 +19,14 @@ Central beside the AAR — no request to make, nobody to ask.
 **The offer:**
 
 ```text
-https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.7/essence2-android-0.5.7-relink.zip
+https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.8.0/essence2-android-0.8.0-relink.zip
 ```
 
 Same group, same artifact, same version as the AAR — classifier `relink`,
 extension `zip`. Anyone who can download the library can download the
-materials. This page names `0.5.7`, Central's `<release>` on 2026-09-15; the
-offer travels with every version, so every permanent AAR from `0.2.0` on names
-its own kit at the same shape of URL.
+materials. This page names `0.8.0`, the current release; the offer travels with
+every version, so every permanent AAR from `0.2.0` on names its own kit at the
+same shape of URL.
 
 ---
 
@@ -40,16 +40,16 @@ and no relink kit is published for it. That is correct, not a gap:
 
 | Coordinate | FFmpeg linked in? | Relink offer |
 |---|---|---|
-| `ai.bithuman:essence2-android:0.5.13` | **yes** — statically, into `lible_jni.so` | **published** (below); `0.2.0` through `0.5.12` each carry their own kit at the same shape of URL |
-| `ai.bithuman:expression2-android:0.4.1` | no — it carries LiteRT (Apache-2.0) | none needed |
+| `ai.bithuman:essence2-android:0.8.0` | **yes** — statically, into `lible_jni.so` | **published** (below); every version from `0.2.0` carries its own kit at the same shape of URL |
+| `ai.bithuman:expression2-android:0.5.0` | no — it carries LiteRT (Apache-2.0) | none needed |
 | `ai.bithuman:sdk` 1.12.1 – 2.3.7 (deprecated) | **yes** — statically, into `libessence_jni.so` | **written offer**, §6(c) — [below](#aibithumansdk-deprecated--a-written-offer-6c) |
 
 Measured, with the two AARs side by side — the second command is the control
 that makes the first mean something:
 
 ```bash
-curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.7/essence2-android-0.5.7.aar
-curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.4.1/expression2-android-0.4.1.aar
+curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.8.0/essence2-android-0.8.0.aar
+curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.5.0/expression2-android-0.5.0.aar
 unzip -q -o essence2.aar    jni/arm64-v8a/lible_jni.so    -d e2
 unzip -q -o expression2.aar jni/arm64-v8a/libexpr2jni.so  -d x2
 nm -D --defined-only e2/jni/arm64-v8a/lible_jni.so   | grep -cE ' T (av_|avcodec_|sws_)'
@@ -57,16 +57,13 @@ nm -D --defined-only x2/jni/arm64-v8a/libexpr2jni.so | grep -cE ' T (av_|avcodec
 ```
 
 ```text
-618
+622
 0
 rc=1
 ```
 
-618 FFmpeg symbols **defined** inside the essence-2 library; zero in the
-expression-2 one. First run on Linux x86_64 on 2026-09-03 against the artifacts as published, and
-**re-run 2026-09-14 against Central's current `<release>` on both sides —
-`essence2-android:0.5.7` and `expression2-android:0.4.1`** — with the same three
-lines of output.
+The first count is the FFmpeg symbols **defined** inside the essence-2 library (622 in
+`0.8.0`); the second is zero, for the expression-2 one.
 
 **The `rc=1` is the second `grep -c`, and it is the expected answer.** `grep`
 exits 1 when it matches nothing, so a count of zero and a non-zero exit are the
@@ -179,6 +176,8 @@ readelf -d e2/jni/arm64-v8a/lible_jni.so | grep NEEDED
  0x0000000000000001 (NEEDED)             Shared library: [libandroid.so]
  0x0000000000000001 (NEEDED)             Shared library: [liblog.so]
  0x0000000000000001 (NEEDED)             Shared library: [libdl.so]
+ 0x0000000000000001 (NEEDED)             Shared library: [libnativewindow.so]
+ 0x0000000000000001 (NEEDED)             Shared library: [libmediandk.so]
  0x0000000000000001 (NEEDED)             Shared library: [libm.so]
  0x0000000000000001 (NEEDED)             Shared library: [libc++_shared.so]
  0x0000000000000001 (NEEDED)             Shared library: [libc.so]
@@ -192,11 +191,10 @@ to relink has to be served with materials — which is what §6(a) asks for.
 
 ## What is in the kit
 
-Fifteen files. Fetch it and check the count yourself (re-run 2026-09-14 on
-`0.5.7`: HTTP 200, 15,701,210 B, the same fifteen names):
+Fifteen files in `0.8.0`. Fetch it and check the count yourself:
 
 ```bash
-curl -fsSL -o relink.zip https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.7/essence2-android-0.5.7-relink.zip
+curl -fsSL -o relink.zip https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.8.0/essence2-android-0.8.0-relink.zip
 unzip -Z1 relink.zip | grep -v '/$' | wc -l
 ```
 
@@ -206,7 +204,7 @@ rc=0
 ```
 
 ```text
-essence2-android-0.5.7-relink/
+essence2-android-0.8.0-relink/
 ├── MANIFEST.json                       machine-readable summary + sha256 of every file
 ├── NOTICE.txt                          the same NOTICE that ships inside the AAR
 ├── README.md
@@ -225,7 +223,7 @@ essence2-android-0.5.7-relink/
 │   ├── link_command.raw.txt
 │   └── relink.sh                       substitutes your FFmpeg prefix and relinks
 └── verify/
-    └── undefined_ffmpeg_symbols.txt    the 30-symbol surface your build must resolve
+    └── undefined_ffmpeg_symbols.txt    the FFmpeg symbols your build must resolve
 ```
 
 **No patches are applied to FFmpeg**, so "including whatever changes were used
@@ -237,7 +235,7 @@ in the work" is the empty set — and you can check that rather than take it.
 
 ```bash
 mkdir -p rl && unzip -q -o relink.zip -d rl
-cd rl/essence2-android-0.5.7-relink/ffmpeg && sha256sum -c ffmpeg-7.1.tar.xz.sha256
+cd rl/essence2-android-0.8.0-relink/ffmpeg && sha256sum -c ffmpeg-7.1.tar.xz.sha256
 ```
 
 ```text
@@ -250,7 +248,7 @@ surface undefined.** This is what makes the relink possible: your FFmpeg
 supplies these, ours does not get baked in.
 
 ```bash
-cd rl/essence2-android-0.5.7-relink
+cd rl/essence2-android-0.8.0-relink
 nm --undefined-only objects/lible_jni_relink.a | awk '{print $NF}' | sort -u > undef.txt
 nm --defined-only   objects/lible_jni_relink.a | awk '{print $NF}' | sort -u > def.txt
 miss=0; dup=0
@@ -262,14 +260,15 @@ ar t objects/lible_jni_relink.a | wc -l
 ```
 
 ```text
-listed=30 missing=0 defined=0
+listed=31 missing=0 defined=0
 control fired
-30
+35
 rc=0
 ```
 
-All 30 symbols in the shipped list really are undefined in the archive, none of
-them is defined by it, and the archive holds its 30 translation units. The
+Every symbol in the shipped list (31 in `0.8.0`) really is undefined in the archive,
+none of them is defined by it, and the last line is the archive's member count
+(35 in `0.8.0`). The
 `av_zzz_not_a_symbol` line is the negative control — without it, a `grep` that
 silently matched everything would print the same reassuring numbers.
 
@@ -279,11 +278,11 @@ in the shipped bytes, not on this page:
 ```bash
 unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip'
 curl -o /dev/null -s -w '%{http_code}\n' -L "$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip')"
-curl -o /dev/null -s -w '%{http_code}\n' -L "https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.7/essence2-android-0.5.7-relinkX.zip"
+curl -o /dev/null -s -w '%{http_code}\n' -L "https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.8.0/essence2-android-0.8.0-relinkX.zip"
 ```
 
 ```text
-https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.5.7/essence2-android-0.5.7-relink.zip
+https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.8.0/essence2-android-0.8.0-relink.zip
 200
 404
 rc=0
@@ -296,8 +295,9 @@ Maven Central answering 200 to everything.
 
 ## What is not in the kit, and why that is allowed
 
-**Not included:** the Android NDK (the compiler) and Bionic — `libc`, `libm`,
-`libdl`, `liblog`, `libandroid`. §6 exempts "anything that is normally
+**Not included:** the Android NDK (the compiler) and the platform's own system
+libraries — `libc`, `libm`, `libdl`, `liblog`, `libandroid`, `libnativewindow`,
+`libmediandk`. §6 exempts "anything that is normally
 distributed … with the major components (compiler, kernel, and so on) of the
 operating system on which the executable runs".
 
@@ -316,8 +316,7 @@ this obligation be met without publishing the engine.
 ## Status of the relink itself
 
 > **UNVERIFIED on this page.** Every command above was executed on Linux
-> x86_64 on 2026-09-03 and re-executed on 2026-09-14 against Central's current
-> `<release>` artifacts. **`relink.sh` was
+> x86_64 against the artifacts as Maven Central serves them. **`relink.sh` was
 > not run here** — it needs an Android NDK toolchain and an FFmpeg built for
 > `arm64-v8a`, neither of which exists on the machine that checked this page.
 > Treat the relink as *offered and materially complete* — which is what the
@@ -347,8 +346,8 @@ we want it: [hello@bithuman.ai](mailto:hello@bithuman.ai).
 | NDK | 28.0.13004108 |
 | Android API | 29 |
 | ABI | `arm64-v8a` |
-| FFmpeg symbols defined in `lible_jni.so` | 618 (re-counted in `0.5.7`'s `lible_jni.so`, 2026-09-15; unchanged from `0.5.6`) |
-| FFmpeg symbols undefined in the relink archive | 30 |
+| FFmpeg symbols defined in `lible_jni.so` | 622 in `0.8.0` (the first command above prints it) |
+| FFmpeg symbols undefined in the relink archive | 31 in `0.8.0` (`verify/undefined_ffmpeg_symbols.txt`) |
 
 The other licence texts travel inside the AAR too — `META-INF/licenses/`
 carries `ffmpeg-7.1-COPYING.LGPLv2.1.txt`, `highway-1.3.0-LICENSE.txt`,
