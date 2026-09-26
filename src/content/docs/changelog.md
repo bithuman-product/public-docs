@@ -114,6 +114,16 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 - **Changed:** a first render downloads less: the 8-second speech encoder is fetched only when a render needs it.
 - **Action:** `pip install -U bithuman`.
 
+### CLI 2.7.7 — 2026-09-26
+
+Tag `cli-v2.7.7`.
+
+- **Fixed:** lip sync in live `bithuman run` sessions. The voice trailed the mouth by about 0.1–0.2 s on macOS and Linux; each frame is now released with its own audio.
+- **Changed:** a self-hosted Essence 1 session is billed for the seconds the avatar talks, like Essence 2 and Expression 2. It was billed for every whole minute the session was open, idle included. Idle is free.
+- **Changed:** a live Essence 2 reply is no longer billed for the short transition into and out of speech, which carries none of your audio.
+- **Changed:** `bithuman list` and showcase names ask again when the service does not answer, and `bithuman list` exits 69 (service unavailable) when it cannot be reached.
+- **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
+
 ### CLI 2.7.6 — 2026-09-25
 
 Tag `cli-v2.7.6`.
