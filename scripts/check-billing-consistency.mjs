@@ -98,14 +98,21 @@ function parseRates(md) {
     );
     return rates;
   }
-  const ROW = /^\|(.+?)\|\s*([\d.]+)\s*credits?\/min\s*\|\s*([\d.]+)\s*credits?\/min\s*\|/gm;
+  // Since 2026-09-26 the table is generated from GET /v1/pricing (scripts/sync-pricing.mjs).
+  // A model the API publishes no self-hosted rate for shows "—" there; if the page
+  // states a legacy self-hosted rate for it in prose (a line naming the model's id,
+  // "legacy" and the rate), that is the rate its `_self_hosted` estimate divides by.
+  const ROW = /^\|(.+?)\|\s*([\d.]+)\s*credits?\/min\s*\|\s*(?:([\d.]+)\s*credits?\/min|—)\s*\|/gm;
   let m;
   while ((m = ROW.exec(serving)) !== null) {
     const id = /`([a-z0-9-]+)`/.exec(m[1]);
     if (!id) continue; // header/separator rows and any prose row
     const key = id[1].replace(/-/g, "_");
     rates[`${key}_cloud`] = Number(m[2]);
-    rates[`${key}_self_hosted`] = Number(m[3]);
+    if (m[3] !== undefined) { rates[`${key}_self_hosted`] = Number(m[3]); continue; }
+    const legacy = serving.split("\n").find((l) => !l.startsWith("|") && l.includes(`\`${id[1]}\``) && /\blegacy\b/i.test(l));
+    const lr = legacy && /([\d.]+)\s*credits?\/min/.exec(legacy);
+    if (lr) rates[`${key}_self_hosted`] = Number(lr[1]);
   }
 
   // Managed conversational agents — a single-rate table keyed by surface name,
@@ -118,6 +125,9 @@ function parseRates(md) {
     if (label.includes("voice")) rates.voice_chat = Number(row[1]);
     else if (label.includes("camera")) rates.camera_chat = Number(row[1]);
   }
+  // The camera (vision) rate is not in GET /v1/pricing, so the page states it in one sentence.
+  const cam = /camera on \(vision\) bills ([\d.]+) credits?\/min/i.exec(serving);
+  if (cam && !("camera_chat" in rates)) rates.camera_chat = Number(cam[1]);
   for (const k of ["voice_chat", "camera_chat"]) {
     if (!(k in rates)) {
       failures.push(

@@ -1,0 +1,66 @@
+{
+  "source": "GET https://api.bithuman.ai/v1/pricing data.realtime",
+  "fetched_on": "2026-09-26",
+  "realtime": {
+    "unit": "credits_per_minute",
+    "available": true,
+    "hosted": {
+      "by_model": {
+        "essence-1": {
+          "pricing_code": "usage_essence_model_cloud",
+          "rate": 2,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        },
+        "essence-2": {
+          "pricing_code": "usage_essence_2_model_cloud",
+          "rate": 4,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        },
+        "expression-1": {
+          "pricing_code": "usage_expression_model_cloud",
+          "rate": 4,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        },
+        "expression-2": {
+          "pricing_code": "usage_expression_2_model_cloud",
+          "rate": 4,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        }
+      },
+      "chat_line": {
+        "pricing_code": "usage_agent_chat_on_imaginex",
+        "rate": 10,
+        "rounding": "minutes_min1",
+        "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute",
+        "note": "Billed on top of the avatar's hosted rate for agents hosted on bitHuman (ImagineX); for essence-1 agents it is the only realtime charge."
+      }
+    },
+    "self_hosted": {
+      "by_model": {
+        "essence-1": {
+          "pricing_code": "usage_essence_model_self_hosted",
+          "rate": 1,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        },
+        "essence-2": {
+          "pricing_code": "usage_essence_2_model_self_hosted",
+          "rate": 2,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        },
+        "expression-2": {
+          "pricing_code": "usage_expression_2_model_self_hosted",
+          "rate": 2,
+          "rounding": "minutes_min1",
+          "basis": "talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute"
+        }
+      }
+    },
+    "note": "Idle time is free everywhere. `rounding` and `basis` state the rule in force right now for each rate. Authoritative charges are made server-side; this is a reference, never lower than the debit."
+  }
+}

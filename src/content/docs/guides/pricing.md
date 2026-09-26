@@ -12,23 +12,30 @@ Credits pay for talking time. Idle time is free. Every platform (cloud, self-hos
 
 ## Serving — credits per live minute
 
+The table and the billing rule under it are generated from [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) (`data.realtime`).
+
+<!-- PRICING:REALTIME -->
 | Model | Cloud | Self-hosted and on-device |
 |---|---|---|
 | [Essence 2](/concepts/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
 | [Expression 2](/concepts/expression-2) (`expression-2`) | 4 credits/min | 2 credits/min |
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
-| [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | 2 credits/min |
-
-Expression 1 is a cloud model; its self-hosted rate applies to the legacy self-hosted GPU container only.
-
-A credit minute is a minute in which the avatar is **actually talking**. **Idle animation is free**: a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between replies. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+| [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | — |
 
 Managed conversational agents bill on top of avatar serving:
 
 | Surface | Rate |
 |---|---|
 | Managed agent — voice chat | 10 credits/min |
-| Managed agent — camera chat (vision on) | 30 credits/min |
+
+How talking time is billed (`rounding: minutes_min1`): talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute.
+<!-- /PRICING:REALTIME -->
+
+A credit minute is a minute in which the avatar is **actually talking**. **Idle animation is free**: a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between replies. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+
+A managed agent with the camera on (vision) bills 30 credits/min instead of the voice-chat rate.
+
+Expression 1 (`expression-1`) is a cloud model; the legacy self-hosted GPU container bills 2 credits/min.
 
 ## Creation — one-time credits
 

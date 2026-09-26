@@ -41,7 +41,7 @@ curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
 
 ## Get the pricing schedule
 
-`GET /v1/pricing` returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`:
+`GET /v1/pricing` returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with the `rounding` rule and `basis` in force. [Pricing & credits](/guides/pricing) is generated from this response.
 
 ```bash
 curl https://api.bithuman.ai/v1/pricing \
@@ -70,6 +70,14 @@ curl https://api.bithuman.ai/v1/pricing \
       "rates": { "essence-1": 2, "expression-1": 4, "essence-2": 4, "expression-2": 4 }
     },
     "dynamics_generation": { "flat": 250, "note": "…" },
+    "realtime": {
+      "unit": "credits_per_minute",
+      "hosted": {
+        "by_model": { "essence-2": { "rate": 4, "rounding": "minutes_min1", "basis": "…" }, "…": {} },
+        "chat_line": { "rate": 10, "rounding": "minutes_min1", "basis": "…" }
+      },
+      "self_hosted": { "by_model": { "essence-2": { "rate": 2, "rounding": "minutes_min1", "basis": "…" }, "…": {} } }
+    },
     "notes": "Authoritative charges are enforced server-side at request time. …"
   }
 }
