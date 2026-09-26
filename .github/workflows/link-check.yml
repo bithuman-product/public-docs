@@ -254,11 +254,17 @@ jobs:
       # G1 — no internal content in a public page (STYLE.md, "Never in a public
       # page"). Report-only while the redesign rewrites the pages; it becomes
       # --strict when the last page is on its template.
+      # The private host/infrastructure terms come from a secret (a public denylist
+      # would publish them); --require-private refuses to pass without them.
       - name: No internal content
         if: always()
-        run: node scripts/check-internal-content.mjs --strict
+        env:
+          INTERNAL_DENYLIST: ${{ secrets.INTERNAL_DENYLIST }}
+        run: node scripts/check-internal-content.mjs --strict --require-private
       - name: No internal content — the checker's own arms fire
         if: always()
+        env:
+          INTERNAL_DENYLIST: ${{ secrets.INTERNAL_DENYLIST }}
         run: node scripts/check-internal-content.mjs --self-test
       # G3 — every page follows its type's template (STYLE.md) and the callout rules.
       - name: Every page follows its template
@@ -437,4 +443,6 @@ jobs:
       # 96 KB; the check fails when a page falls out of every section file.
       - name: Agent layer (llms.txt, llms-full.txt, llms/<section>.txt, .md twins)
         if: always()
+        env:
+          INTERNAL_DENYLIST: ${{ secrets.INTERNAL_DENYLIST }}
         run: node scripts/check-llms.mjs --full-max-kb 190 --section-max-kb 96

@@ -44,11 +44,11 @@
 // --------------------------------------------
 // A GitHub-hosted runner has no Android SDK and no Xcode, and `macos-latest`
 // has no Android SDK either. This gate therefore CANNOT live in CI here; it
-// runs on `echelon`, the Mac that has Xcode 26.3, a JDK 17, an Android SDK with
-// platform 35, and both handsets. See scripts/examples-build-gate.sh (the host
-// runner) and .github/workflows/examples-extractor-selftest.yml (the half that
-// CAN run here: this file's own --selftest, so the extractor cannot rot
-// unnoticed between host runs).
+// runs daily on a private build Mac that has Xcode, a JDK 17 and an Android SDK
+// with platform 35, driven by a runner outside this repository that pins this
+// file to origin/main before grading. .github/workflows/examples-extractor-selftest.yml
+// is the half that CAN run here: this file's own --selftest and --controls, so
+// the extractor cannot rot unnoticed between host runs.
 //
 // WHAT IT DOES
 // ------------
@@ -68,8 +68,8 @@
 //              `generic/platform=iOS` with CODE_SIGNING_ALLOWED=NO.
 //   5. ASSERT  a real artifact: the APK exists and carries `lib/arm64-v8a/*.so`;
 //              the `.app` exists and carries a Mach-O executable.
-//   6. CLEAN   the whole run tree, including DerivedData, always (echelon's data
-//              volume runs at ~11 GiB free). --keep opts out, for debugging.
+//   6. CLEAN   the whole run tree, including DerivedData, always (the build Mac's
+//              data volume runs low on free space). --keep opts out, for debugging.
 //
 // ★NO SIGNING. The iOS arm builds for a generic iOS device with signing off, on
 // purpose. A gate that needs a provisioning profile goes red when a keychain is
@@ -401,7 +401,7 @@ async function controlsInSource(repoRoot, examplesDir) {
     }
     const n = controlTokenCount(text, m.from);
     if (n === 0) {
-      console.log(`::error::THE ${arm.toUpperCase()} FAILURE CONTROL HAS GONE BLIND: bithuman-examples/${srcRel} no longer contains ${JSON.stringify(m.from)}. scripts/examples-build-gate.sh --mutate would mutate nothing, its build would SUCCEED, and a control that cannot fail is not a control. Fix MUTATIONS.${arm} in this file to name a symbol the example really calls.`);
+      console.log(`::error::THE ${arm.toUpperCase()} FAILURE CONTROL HAS GONE BLIND: bithuman-examples/${srcRel} no longer contains ${JSON.stringify(m.from)}. the host runner's --mutate would mutate nothing, its build would SUCCEED, and a control that cannot fail is not a control. Fix MUTATIONS.${arm} in this file to name a symbol the example really calls.`);
       bad++;
     } else {
       console.log(`  ok  ${arm}: bithuman-examples/${srcRel} calls ${JSON.stringify(m.from)} (${n}x) — the mutation has something to rename`);
