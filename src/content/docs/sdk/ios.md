@@ -17,7 +17,7 @@ One Swift package carries both models. Both models render on the device and bill
 | **Devices** | any Apple silicon iPhone, iPad or Mac; iOS 16 / macOS 13 | any Apple silicon iPhone, M-series iPad, M3 or newer Mac; iOS 26 / macOS 26 |
 | **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2Kit", package: "homebrew-bithuman")` (Swift), or `.product(name: "Essence2", package: "homebrew-bithuman")` (C) |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
-| **First-run download** | about 355 MB (avatar + shared engine) | about 250 MB (avatar + engine resources) |
+| **First-run download** | about 370 MB (avatar + shared engine) | about 250 MB (avatar + engine resources) |
 | **API** | Swift (`Expression2Engine`) | Swift (`Essence2Engine`), or C (`be_essence2_*`) |
 | **Worked example** | [iOS: Expression 2](/examples/swift-ios-expression2) | [iOS: Essence 2](/examples/swift-ios-essence2) |
 
@@ -123,7 +123,7 @@ Expected: 25 frames per second at the avatar's own size (for example 1920×1080)
 
 `pull()` also works, paced the same way: call it from a display link or a timer as often as you like and it returns at most 25 frames a second (`nil` means keep showing the current frame). A loop that pulls every 40 ms and stops at the first `speech: false` frame after the reply still works.
 
-The same engine as a C interface, for C, C++ and plugins:
+The same engine as a C interface, for C, C++ and plugins. The C interface does not fetch its runtime files: put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.14.0 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.14.0) at the root of your app bundle's resources (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
 
 ```c
 be_essence2_handle h;
@@ -131,8 +131,24 @@ be_essence2_set_api_secret(secret);                    // or Essence2Credential.
 if (be_essence2_create(imx_path, NULL, 0, &h) != 0) { /* -3: no secret, rejected, or no network */ }
 while (!be_essence2_is_ready(h)) { /* show be_essence2_idle_frame() meanwhile */ }
 int32_t w, hgt; be_essence2_get_info(h, &w, &hgt);     // frame is w * hgt * 3 BGR bytes
-be_essence2_push_audio(h, pcm16k_int16, count);        // -2: pull frames, then push again
-while (be_essence2_frames_available(h) > 0) be_essence2_pull_frame(h, buf, w * hgt * 3);
+int32_t fed = 0, spoke = 0;
+for (;;) {                                             // once per display tick, 25 fps
+    while (fed < count) {                              // push 0.2 s at a time
+        int32_t n = count - fed < 3200 ? count - fed : 3200;
+        if (be_essence2_push_audio(h, pcm16k_int16 + fed, n) != 0) break;   // -2: ring full, retry next tick
+        fed += n;
+        if (fed == count) be_essence2_end_utterance(h);   // the reply's audio is complete
+    }
+    int32_t got = be_essence2_pull_frame(h, buf, w * hgt * 3);   // bytes; 0 none yet; -3 refused
+    if (got < 0) break;
+    if (got > 0) {
+        show(buf, got);
+        int32_t kind = be_essence2_last_frame_kind(h);
+        if (kind == BE_ESSENCE2_FRAME_SPEECH) spoke = 1;
+        else if (spoke && kind == BE_ESSENCE2_FRAME_IDLE) break;   // idle after speech: the reply is over
+    }
+    usleep(40000);
+}
 be_essence2_destroy(h);
 ```
 
@@ -149,7 +165,7 @@ Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) fr
 | Idle between replies | `engine.idle` | `frames()` / `pull()` keep returning idle frames (`isSpeech == false`) |
 | Interrupt the reply | `resetState(clearFrames: true)` | `interrupt()` |
 | Check the session | `meteringRefusal` | `meteringRefusal`, `runtimeFailure` |
-| Quit | release the engine | `shutdown()`, then `Essence2Engine.quiesceAll()` at app exit |
+| Quit | `shutdown()` | `shutdown()`, then `Essence2Engine.quiesceAll()` at app exit |
 
 For offline rendering, set `engine.pacing = .unpaced` and Essence 2 hands out frames as fast as it renders them.
 
@@ -190,7 +206,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | *the API secret was rejected (401)* | revoked or mistyped secret | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys) |
 | *cannot reach bitHuman to verify your credential* | no network at first contact; in a Mac app, no Outgoing Connections entitlement | fix the network or the entitlement, then create again |
 | `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously, and Essence 2 hands out at most 25 a second | poll, as in the first frame, or use `frames()` |
-| crash in `__cxa_finalize` when the app quits | `be_essence2_quiesce_all()` was not called | call it from `applicationWillTerminate` |
+| crash in `__cxa_finalize` when the app quits | `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all`) was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
 | `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.17.1"`, then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |

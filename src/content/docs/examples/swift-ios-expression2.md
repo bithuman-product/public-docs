@@ -13,7 +13,7 @@ label: "iOS: Expression 2"
   <figcaption>A frame the <code>ios-expression2</code> app drew on an iPhone 15 (iOS 26), rendering the <code>wise-pup</code> sample avatar on the phone with Swift package 2.14.2.</figcaption>
 </figure>
 
-A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to it** drives the avatar from the microphone, live. Everything renders on the device at 416×720, 20 fps; no server is involved.
+A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to it** drives the avatar from the microphone, live. Everything renders on the device at 416×720, 20 fps; rendered on the device; the engine contacts bitHuman only to check your API secret and report session time.
 
 ## Requirements
 

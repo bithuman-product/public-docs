@@ -10,15 +10,15 @@ label: "iOS: Essence 2"
 
 A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1920×1080) at 25 fps. **Speak** plays the line again.
 
-`Essence2` is a C library: the `be_essence2_*` functions in `be_essence2.h` are the whole API, and the `Renderer` actor in `App.swift` is the Swift wrapper you would otherwise write yourself.
+`Sources/App.swift` drives the engine through its C interface (`import Essence2`). A Swift app can use `Essence2Kit` instead ([Apple](/sdk/apple)): it wraps the same engine and fetches its runtime files for you.
 
 ## Requirements
 
 | You need | Notes |
 |---|---|
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
-| A physical iPhone or iPad with Apple silicon, on iOS 26 | the Simulator cannot run the engine; no Apple entitlement is needed |
-| Swift package **2.14.2** or newer, `Essence2` product | the project already depends on it |
+| A physical iPhone, or an M-series iPad, on iOS 26 | the Simulator cannot run the engine; no Apple entitlement is needed |
+| Swift package **2.16.0** or newer, `Essence2` product | the project already depends on it |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 | About 430 MB free on the phone and 380 MB on the Mac | the avatar and the engine resources ride in the app bundle |
 
@@ -77,7 +77,7 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
   | afro-latina-astrophysics-mentor | `A23KSG5258` | 1920×1080 |
   | calm-product-specialist-advisor | `A24EKJ8433` | 1280×720 |
 
-- **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "essence-2"`), then run `setup.sh` with its code and `BITHUMAN_API_SECRET` set.
+- **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "essence-2"`), then run `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
 - **Ship it:** fetch the secret from your backend or the Keychain at launch and pass it to `be_essence2_set_api_secret`; never put it in the app bundle.
 
 ## Troubleshooting
@@ -87,7 +87,7 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
 | `be_essence2_create` returns `-3` | no API secret, or the service rejected it (stderr says which): set `BITHUMAN_API_SECRET` in the Run scheme |
 | `be_essence2_create` returns `-2`, *"the download is incomplete"* | re-run `./setup.sh`; it checks the download |
 | *"the shared audio front end is missing"*, or the engine never becomes ready | add `Sources/EngineResources` as a **group**, not a folder reference |
-| The avatar moves but never speaks | resolve Swift package **2.14.2** or newer (*File → Packages → Update to Latest Package Versions*) |
+| The avatar moves but never speaks | resolve Swift package **2.16.0** or newer (*File → Packages → Update to Latest Package Versions*) |
 | The link fails naming a newer minimum OS | set Minimum Deployments to **iOS 26.0** |
 | `no such module 'Essence2'` | attach the `Essence2` product to the app target |
 | `ld` warns *"built for newer 'iOS' version (26.0)"* once per object | expected; the build is good |
