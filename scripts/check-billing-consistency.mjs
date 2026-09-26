@@ -281,7 +281,7 @@ const RULE_CORPUS = [
 
 // The authority's own words. The failure message quotes them so the fix is
 // to point at this sentence, never to write a second definition.
-// ★OWNER RULING 2026-09-22 CHANGED THE RULE THESE PATTERNS PIN. It was
+// A PRODUCT RULE CHANGE CHANGED WHAT THESE PATTERNS PIN. It was
 //   "wall-clock time a session is live and the engine is rendering … That
 //   includes idle/silent animation". It is now: a credit minute is a minute the
 //   avatar is ACTUALLY TALKING, and idle is free. The guard's job is unchanged
@@ -294,7 +294,7 @@ const RULE_CORPUS = [
 //   contradicted itself on the money — "Idle time is free" in one paragraph and
 //   "idle animation … accrues" in three others — and this file read green
 //   throughout. Section 3c below closes that.
-// ★OWNER RULING 2026-09-26 (~13:35Z) CHANGED THE RULE AGAIN: "bill users regardless of
+// THE RULE CHANGED AGAIN: "bill users regardless of
 //   talking or idle, as the avatar is working regardless" — one rule everywhere, active
 //   session time by the exact second. The authority now says so; the talking-only
 //   sentences below are RETIRED on this page.
@@ -328,7 +328,7 @@ const STALE_RULES = [
     fixture: "Credits are charged per **whole minute of frames actually delivered**",
     say: "that is what one CLI build COUNTS, not the rule — describe the build's count as a fact, and link the rule" },
   // (2026-09-26: the cross-page "idle is billed" rule is RETIRED with the talking-only
-  // ruling it enforced — under the owner's 2026-09-26 ruling idle IS billed. The pages that
+  // ruling it enforced — under the current rule idle IS billed. The pages that
   // still say idle is free are being rewritten; this guard pins the authority, 3a/3c.)
   { name: "the way Linux already was",
     re: /\bway\s+Linux\s+already\s+(?:was|did)\b/gi,
@@ -390,7 +390,7 @@ for (const rule of STALE_RULES) {
     if (pat.test(pricingMd)) {
       failures.push(
         `guides/pricing.md still carries the RETIRED accrual rule (${pat}) — the ` +
-          `2026-09-22 owner ruling is that idle is not billable, and this page is ` +
+          `current rule is that a running session bills its time, talking or idle, and this page is ` +
           `the authority every other page links to, so it cannot say both`
       );
     }

@@ -3,7 +3,7 @@
 //
 // WHY THIS EXISTS
 // ---------------
-// Owner rulings, 2026-09-04, verbatim:
+// Product rules:
 //
 //   "borrow is a tech internal concept and should never be exposed to client
 //    side — expression-2 is fundamentally a different model than essence-2
@@ -139,7 +139,7 @@ const BANNED = [
     fixture: "the quality director gained 2.1x from WebGPU",
     say: "the neural graph inside the engine — say 'the model' or name the " +
          "product. ★`directory` is a different word and is not matched" },
-  // ★OWNER RULING 2026-09-12: "there is no such thing called ane — only the Apple
+  // PRODUCT RULE: "there is no such thing called ane — only the Apple
   // plane". The word survives ONLY inside the frozen slugs (`essence-2-ane`,
   // `expression-2-ane`, `essence-2-light-ane`) a saved link or embed carries; as a
   // bare word in prose it is banned. The lookarounds exclude the slug spellings.
@@ -169,7 +169,7 @@ const BANNED = [
          "SDK, CLI, wheel or self-host route. It appears in NO customer-facing " +
          "artifact — there is no carrier and no marker that admits it" },
   // ★essence-2-max is the same kind of entry as dream-1: a PRODUCT NAME, not a
-  // mechanism word. Owner ruling 2026-09-10: "remove essence-2-max from public
+  // mechanism word. PRODUCT RULE: "remove essence-2-max from public
   // exposure altogether including docs etc. because essence-2-max is only for
   // internal reference and prototype". Only two product names face a customer
   // (essence-2, expression-2). The pattern covers every spelling the estate has
@@ -182,9 +182,9 @@ const BANNED = [
     fixture: "essence-2-max (rate key essence_2_max_cloud, spelled essence2max in one SDK, Essence 2 Max in prose) is GPU only",
     say: "ENTERPRISE PLAN ONLY — the site names it in exactly one sentence, " +
          "\"Essence 2 Max is available on the Enterprise plan only. Contact sales to " +
-         "enable it.\" (owner rulings 2026-09-10 + 2026-09-25). Anywhere else, name " +
+         "enable it.\" (product rule). Anywhere else, name " +
          "`essence-2` instead or delete the sentence: no enum, example, quickstart or rate row" },
-  // ★OWNER DIRECTIVE 2026-09-23: "standardize API key names to avoid
+  // PRODUCT RULE: "standardize API key names to avoid
   // confusion". The customer's credential is ONE noun, the **API secret**: the
   // variable every SDK reads is BITHUMAN_API_SECRET, the header is
   // `api-secret`, the console page is "API Secrets". "API key" in prose is what
@@ -237,14 +237,14 @@ const OWNED_BY_RETIRED_NAMES = [
 // ★These are not exemptions for prose. Every one of them is a string that, if
 // this guard forced it off the page, a developer could no longer type.
 const CARRIERS = [
-  // ★THE ONE LINE THAT MAY NAME ESSENCE 2 MAX. Owner ruling 2026-09-10 removed it from public
-  //  exposure, docs included; owner ruling 2026-09-25 ("essence-2-max is only reserved for
+  // ★THE ONE LINE THAT MAY NAME ESSENCE 2 MAX. a product rule removed it from public
+  //  exposure, docs included; a later rule ("essence-2-max is only reserved for
   //  enterprise customers — make it clear") and his direct decision the same day admit ONE
   //  sentence, on /concepts/models, /guides/pricing and llms.txt. The name is carried only when
   //  the SAME sentence says "Enterprise plan only", so this is also the must-mark guard: any other
   //  mention of the name still fails. bithuman-models tools/check_taught_surface.py
   //  INTERNAL_ONLY_DOCS_CARRIERS holds the same pattern.
-  { why: "the ruled Enterprise-only sentence for Essence 2 Max (owner rulings 2026-09-10 + 2026-09-25)",
+  { why: "the ruled Enterprise-only sentence for Essence 2 Max (product rule)",
     re: /\bEssence 2 Max\b[^.\n]*\bEnterprise plan only\b/ },
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
@@ -330,7 +330,7 @@ const CARRIERS = [
   // spelled exactly on the page — but the English word "director" beside them
   // is ours, not theirs, and is what this guard removes. A slug is a carrier;
   // the gloss around it is prose.
-  { why: "the ONE kind of sentence that may name BITHUMAN_API_KEY: the one saying it is a deprecated alias (owner directive 2026-09-23)",
+  { why: "the ONE kind of sentence that may name BITHUMAN_API_KEY: the one saying it is a deprecated alias (product rule)",
     re: /BITHUMAN_API_KEY.*deprecated alias|deprecated alias.*BITHUMAN_API_KEY/i },
   { why: "the verbatim `note` POST /v1/runtime-sessions/revoke-all returns — program output a developer may match on; it changes when the platform's text does",
     re: /Creating a new API key restores runtime access/ },

@@ -60,7 +60,7 @@ name: Internal links
 #    that now, and refuses to pass if any root it lists stops contributing files
 #    (which is how the corpus would silently shrink back).
 #
-# 4. Retired product names — the 2026-09-02 owner ruling is that a developer
+# 4. Retired product names — the product rule is that a developer
 #    reading this site meets only essence-2 and expression-2. `elevate`,
 #    `embody`, `essence-2-light`, `essence-2-quality` and `lebundle` are
 #    DEPRECATED. ★Deprecate is not rename: the strings a developer must TYPE —
@@ -73,7 +73,7 @@ name: Internal links
 #    retired /concepts/ URLs still redirect to a real page. It refuses to pass
 #    vacuously: if a frozen carrier stops appearing in the corpus at all, that
 #    is a rename and it exits non-zero.
-# 5. Internal vocabulary — the 2026-09-04 owner rulings: "borrow is a tech
+# 5. Internal vocabulary — the product rules: "borrow is a tech
 #    internal concept and should never be exposed to client side" and "as a
 #    developer they don't need to know any technical details at all". ★The
 #    figure first written here was 371, which this file's own instrument does

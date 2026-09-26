@@ -226,7 +226,7 @@ export function gradeTableAgainstJson(page, json, where) {
   const t = parseTable(tb.body);
   if (typeof t === "string") return [{ rule: "J0", where, why: t }];
   // ★A HELD-SESSION ROW (`sustained: true`) IS PUBLISHED IN ITS OWN BLOCK, FLOORS:SUSTAINED,
-  //  under the speed table, and never as a speed-table row (owner, 2026-09-23: the rate a
+  //  under the speed table, and never as a speed-table row (product rule: the rate a
   //  phone holds for ten minutes goes on this page, off the headline).
   const rows = (json.rows ?? []).filter((r) => r.published !== false && !r.sustained);
   const want = rows.map((r) => r.label);
