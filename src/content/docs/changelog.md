@@ -44,6 +44,7 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ### Billing — 2026-09-26
 
+- **Changed:** a managed conversational agent bills one all-inclusive rate (10 credits/min, or 30 with the camera on). It covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser; there is no separate avatar charge. An avatar-only session (your own agent through the plugin or the API) that renders in the browser bills the model's self-hosted rate. Rates are on [pricing](/guides/pricing).
 - **Changed:** realtime sessions bill active session time, talking or idle, by the exact second, with no per-session minimum. A session's fraction of a credit carries to your next session. This replaces the talking-only billing announced earlier the same day. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/guides/pricing).
 - **Changed:** Expression 1 avatar sessions are now metered to your account at the standard cloud rate. Rates are on [pricing](/guides/pricing).
 
