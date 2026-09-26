@@ -12,7 +12,7 @@ The `bithuman` package renders avatars in your own Python code: file in, frames 
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1920×1080 at 25 fps |
+| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
 | **Install** | `pip install "bithuman[expression-2]"` | included in the same install |
 | **Frames** | RGB `numpy` arrays, `(height, width, 3)` `uint8` | the same |
 

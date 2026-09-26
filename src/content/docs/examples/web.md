@@ -21,7 +21,7 @@ One `<iframe>` gives a page a live avatar that listens, thinks and answers: spee
 |---|---|
 | A current browser | Chrome, Edge, Safari or Firefox |
 | A local web server | the page must be served over `http://localhost` or HTTPS for the microphone to work |
-| Nothing else | the sample avatar needs no account; your own avatar needs an [embed token](/api/embedding) |
+| Nothing else | no account for the sample avatar; your own agent works the same way while its Anonymous Share setting is on, and its sessions bill you |
 
 ## Get the code
 
@@ -61,11 +61,11 @@ The avatar greets you within a few seconds. Speak, or type into the **Type or sp
 
 ## How it works
 
-The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a real-time session: your microphone audio goes to the agent, and the agent's voice and video come back. `allow="microphone *"` lets the iframe ask for the microphone; without the `*` the browser blocks it. URL parameters, sizing and events are on [Web](/sdk/web).
+The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a real-time session: your microphone audio goes to the agent, and the agent's voice and video come back. `allow="microphone *"` lets the iframe ask for the microphone; without the `*` the browser blocks it. URL parameters are on [Web](/sdk/web); session events on [Embedding](/api/embedding).
 
 ## Make it your own
 
-- **Your own avatar:** replace `A23WJF0199` with your agent code. A private agent needs an [embed token](/api/embedding) minted by your server with your API secret; never put the secret in the page.
+- **Your own avatar:** replace `A23WJF0199` with your agent code. Anyone with the code can open it and sessions bill your account; turn off Anonymous Share in the agent's sharing settings to stop that.
 - **Push what it says:** from your backend, `POST /v1/agent/{code}/speak` makes a live avatar say a line ([Agents](/api/agents)).
 - **Size and layout:** any width and height work; keep roughly a 7:12 portrait shape for Expression 2 avatars.
 
@@ -75,7 +75,7 @@ The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a re
 |---|---|
 | No microphone prompt | keep `microphone *` (and `camera *` for camera chat) in `allow`, and serve the page from `localhost` or HTTPS |
 | A blank frame | check [status.bithuman.ai](https://status.bithuman.ai), then reload |
-| Your own avatar does not load | a private agent needs an [embed token](/api/embedding) from your server |
+| Your own avatar shows `Embedding is disabled for this agent` | turn Anonymous Share back on in the agent's sharing settings |
 
 ## Next
 

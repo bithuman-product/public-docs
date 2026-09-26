@@ -14,7 +14,7 @@ label: "Essence 1"
 maintained, not deprecated. It reads a pre-built identity out of an
 [`.imx` file](/concepts/avatars-imx), plays its base motion, and patches the
 mouth in real time to match 16 kHz mono audio, at 25 fps. It runs on virtually
-any CPU — no GPU, no accelerator — and supports custom gestures. `?model=essence`
+any CPU — no GPU, no accelerator — and supports custom gestures. `?model=essence-1`
 serves it.
 
 For **new** photorealistic work, the recommended model is

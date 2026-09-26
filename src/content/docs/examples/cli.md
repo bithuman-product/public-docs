@@ -40,7 +40,7 @@ bithuman render wise-pup speech.wav
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) (or on bitHuman), then `bithuman pull <AGENT_CODE>` and render it the same way.
 - **Your own words:** any audio file `ffmpeg` reads works as the second argument; generate speech with [Text to speech](/api/text-to-speech).
-- **A photoreal person:** `bithuman pull sofia-ramirez` renders an Essence 2 avatar at up to 1920×1080.
+- **A photoreal person:** `bithuman render sofia-ramirez speech.wav` renders Essence 2 (this avatar is 1080×1920 portrait, 25 fps).
 - **Scripts and CI:** add `--json` and branch on exit codes ([reference](/sdk/cli/reference#json-output)).
 - **A conversation instead of a clip:** `bithuman run wise-pup` — [Talk to an avatar on your machine](/guides/local-voice-avatar).
 
@@ -51,7 +51,7 @@ bithuman render wise-pup speech.wav
 | `not signed in`, exit 77 | set `BITHUMAN_API_SECRET` or run `bithuman login` |
 | `ffmpeg not found`, exit 69 | install `ffmpeg`, or set `BITHUMAN_FFMPEG` |
 | `bithuman: command not found` | `export PATH="$HOME/.local/bin:$PATH"` |
-| `bithuman run` exits 69: `livekit-server … is too old` | update LiveKit to 1.13 or newer: `brew upgrade livekit` |
+| `bithuman run` exits 69: `livekit-server … is too old` | `brew upgrade livekit` (macOS), or rerun the installer (Linux: its download includes livekit-server) |
 
 ## Next
 

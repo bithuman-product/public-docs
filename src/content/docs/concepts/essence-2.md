@@ -11,7 +11,7 @@ label: "Essence 2"
 ## What it is
 
 **Essence 2** (`essence-2`) renders a photoreal person from one portrait, up to
-1920×1080 at 25 fps. From your portrait the platform generates a 10-second
+1080p at 25 fps: the identity's own canvas, 1080×1920 portrait for a standard identity. From your portrait the platform generates a 10-second
 identity video; the model then animates lip-sync and expression over it live,
 with a sharp mouth and teeth taken from that video. A model file with a missing
 part is refused rather than played with a substitute.
@@ -76,13 +76,13 @@ production, omit it.
 The identity video plays continuously and loops **forward-only**: at its last
 frame it wraps to the first, and it never plays in reverse. While idle it is
 pure playback of your footage; while talking, the animated face is rendered
-over the same frames. Idle animation is not billed.
+over the same frames. A running session bills talking and idle time alike ([pricing](/guides/pricing)).
 
 ## Limits and expectations
 
 - **Output is 25 fps on every tier.** How fast a platform can *produce* frames
   is on [performance](/performance).
-- **The downloadable file is about 85–105 MB**, varying per identity — read
+- **The downloadable file is about 140–160 MB**, varying per identity — read
   `Content-Length` rather than assuming a size.
 - **The identity is fixed at creation.** To change the face, create a new agent.
 - **The first session on a new agent** can take longer to connect while the

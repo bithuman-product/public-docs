@@ -20,7 +20,7 @@ An avatar is a face, a voice and a personality, packaged as one agent with a sho
 
 | You have | Use |
 |---|---|
-| A photo of a real person | `essence-2`: photoreal, up to 1920×1080 |
+| A photo of a real person | `essence-2`: photoreal, up to 1080p |
 | A character, animal, robot or illustration | `expression-2`: any subject |
 | Not sure | `auto`: people go to `essence-2`, everything else to `expression-2` |
 

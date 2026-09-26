@@ -13,7 +13,7 @@ One Swift package carries both models. Both models render on the device and bill
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1920×1080 at 25 fps |
+| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
 | **Devices** | any Apple silicon iPhone, iPad or Mac; iOS 16 / macOS 13 | any Apple silicon iPhone, M-series iPad, M3 or newer Mac; iOS 26 / macOS 26 |
 | **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2Kit", package: "homebrew-bithuman")` (Swift), or `.product(name: "Essence2", package: "homebrew-bithuman")` (C) |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
@@ -119,7 +119,7 @@ for await frame in engine.frames(following: player) {             // 25 frames p
 engine.shutdown()
 ```
 
-Expected: 25 frames per second at the avatar's own size (for example 1920×1080), idle motion between replies and speech while a reply plays. `frames(following: player)` hands out each speech frame when the player has played its audio, so voice and lips stay together however long the reply is and whatever your output's start latency; a frame that would be shown late is skipped. Measured on a Mac over an 85 s reply: within 25 ms, with no drift from start to end. If your audio does not go through an `AVAudioPlayerNode`, pass your own clock: `frames(audioClock: { secondsOfThisReplyPlayed })`. The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
+Expected: 25 frames per second at the avatar's own size (for example 1080×1920), idle motion between replies and speech while a reply plays. `frames(following: player)` hands out each speech frame when the player has played its audio, so voice and lips stay together however long the reply is and whatever your output's start latency; a frame that would be shown late is skipped. Measured on a Mac over an 85 s reply: within 25 ms, with no drift from start to end. If your audio does not go through an `AVAudioPlayerNode`, pass your own clock: `frames(audioClock: { secondsOfThisReplyPlayed })`. The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
 
 `pull()` also works, paced the same way: call it from a display link or a timer as often as you like and it returns at most 25 frames a second (`nil` means keep showing the current frame). A loop that pulls every 40 ms and stops at the first `speech: false` frame after the reply still works.
 

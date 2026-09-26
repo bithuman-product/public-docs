@@ -45,10 +45,13 @@ BITHUMAN_MODEL=expression-2 ./generate-agent.sh "You are a friendly fitness coac
 ## Expected output
 
 ```text
-{"valid": true}
+{
+    "valid": true
+}
+Checking credit balance...
 Balance:        … credits
 …
-{"success": true, "agent_id": "A80HVD8577", "status": "processing"}
+{"success": true, "agent_id": "<agent_id>", "status": "processing"}
   Status: processing  Progress: 10%
 …
 Agent is ready!
@@ -77,7 +80,7 @@ Open `https://www.bithuman.ai/embed/<agent_id>` and talk to your agent. While th
 | Symptom | Fix |
 |---|---|
 | `402 INSUFFICIENT_BALANCE` | the balance is below the creation cost: [top up](/guides/pricing#top-up-credits) |
-| `401 UNAUTHORIZED` | the secret is wrong or revoked: create a new one |
+| `validate.sh` prints `"valid": false` | the secret is wrong or revoked: create a new one |
 | `404` from `speak.sh` | the agent has no live session: open its embed page first |
 | The status stays at `lip_sync` for a long time | that is the training step (about 2 hours); keep polling |
 

@@ -86,7 +86,7 @@ During silences the avatar plays its **10-second idle clip**, generated from the
 identity at creation, looping forward-only and seamlessly. When speech starts,
 the engine hands off to generated frames with a per-identity color match, so the
 two stay visually continuous; idle resumes only after sustained silence, not in
-pauses inside a sentence. Idle animation is not billed.
+pauses inside a sentence. A running session bills talking and idle time alike ([pricing](/guides/pricing)).
 
 **Speech onset.** The engine renders in fixed audio chunks, so the first
 *talking* frame appears roughly **1.6 seconds** after speech audio begins; the
