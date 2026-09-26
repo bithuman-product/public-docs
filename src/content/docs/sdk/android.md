@@ -190,6 +190,6 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 
 - [Android API reference](/sdk/android-api): every public class in both AARs.
 - Examples: [Expression 2](/examples/android-expression2) · [Essence 2](/examples/android-essence2), complete apps you can clone.
-- [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): one app for Android, iOS and macOS.
+- [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): builds for Android. Its iOS and macOS builds do not work from the published plugin tag yet; a fix is coming.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
 - Licence: proprietary, bitHuman SDK License; the notice ships in each AAR. FFmpeg in `essence2-android` is LGPL: [relink materials](/legal/android-ffmpeg-lgpl).
