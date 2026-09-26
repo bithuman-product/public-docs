@@ -10,7 +10,7 @@ label: "CLI"
 
 <figure class="showcase">
   <video controls preload="none" playsinline poster="/examples/cli/hero.webp" width="416" height="720" src="/examples/cli/clip.mp4"></video>
-  <figcaption>The <code>wise-pup</code> sample avatar, rendered by <code>bithuman render</code> with CLI 2.7.1 on an Apple M4 Mac.</figcaption>
+  <figcaption>The <code>wise-pup</code> sample avatar, rendered by <code>bithuman render</code> on an Apple M4 Mac.</figcaption>
 </figure>
 
 ## Requirements

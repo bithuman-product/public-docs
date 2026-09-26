@@ -174,12 +174,12 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `Expression2Exception` from `create()` naming the API secret | no secret set | set `Expression2Metering.apiSecret` before `create()` |
-| `MeteringRefused` on the first Essence 2 `pull()` | `Essence2Metering.apiSecret` is unset; the store's resolver does not cover it | set `Essence2Metering.apiSecret` before `create()` |
-| `Essence2StoreException` naming `MeteredDoorResolver` | the Essence 2 store was built without a resolver | pass `MeteredDoorResolver(secret)` |
+| `Expression2Exception` from `create()` naming the API secret | no secret set | call `Expression2Credential.set(secret)` before `fetch()` and `create()` |
+| `MeteringRefused` on the first Essence 2 `pull()` | no secret set | call `Essence2Credential.set(secret)` before `fetch()` and `create()` |
+| `Essence2StoreException` naming `MeteredDoorResolver` | no secret set when the store was built | call `Essence2Credential.set(secret)` before you build `Essence2ModelStore` |
 | Expression 2 renders slowly; `acceleratorNote` says no `libQnnTFLiteDelegate.so` | the accelerator runtime was excluded, or legacy packaging is off | keep the dependency whole and set `useLegacyPackaging = true` |
 | The first Expression 2 `create()` takes about 45 s | the accelerator prepares the model once per process | create once, on a background thread, at app start |
-| Download refused with `401` | the avatar is private | pass its owner's API secret through the store's resolver |
+| Download refused with `401` | the avatar is private | set its owner's API secret with `Expression2Credential.set` or `Essence2Credential.set` |
 | `409 MODEL_NOT_GENERATED` on download | the agent has no model of that kind yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then retry |
 | Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |
 | `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |

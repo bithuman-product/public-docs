@@ -15,6 +15,8 @@ How to use these classes in an app is on [Android](/sdk/android). Signatures are
 
 Generated from `ai.bithuman:essence2-android:0.7.0` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
+Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import them by name: `import ai.bithuman.elevate.Essence2RenderFailed`, `import ai.bithuman.elevate.Essence2RenderStatus`.
+
 | Class | Purpose |
 | --- | --- |
 | `Essence2Avatar` | One Essence 2 session: feed 16-bit PCM, pull RGBA frames, idle, interrupt with `resetAudio`, and `checkRender`. |
@@ -199,6 +201,8 @@ class Essence2RenderStatus
 ## Expression 2
 
 Generated from `ai.bithuman:expression2-android:0.5.0` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+
+Import: `import ai.bithuman.expression2.*`.
 
 | Class | Purpose |
 | --- | --- |

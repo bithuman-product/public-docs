@@ -125,13 +125,13 @@ await session.start(agent=Agent(instructions="You are a friendly assistant."),
                     room=ctx.room, room_options=RoomOptions(audio_output=False))
 ```
 
-In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass it explicitly: the plugin reads `BITHUMAN_API_SECRET` by itself and, for a cloud avatar, copies it into the room ([LiveKit](/sdk/livekit#authenticate)). The plugin installs `bithuman` on Python 3.11–3.13. The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
+In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass it explicitly: the plugin reads `BITHUMAN_API_SECRET` by itself and, for a cloud avatar, copies it into the room ([LiveKit](/sdk/livekit#authenticate)). The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
 
 ## Platform notes
 
 - The first Essence 2 render downloads a shared audio encoder (about 377 MB, plus about 70 MB for streaming) to `~/.bithuman/deps`, once.
 - `BITHUMAN_CACHE_DIR` moves the download cache from `~/.cache/bithuman`.
-- `python -m bithuman <AGENT_CODE> <audio>` downloads your own agent's model by code and renders it.
+- `python -m bithuman render <AGENT_CODE> <audio>` downloads your own agent's model by code and renders it.
 - A process with no API secret opens the file and refuses at the first frame; a rejected secret refuses at `open`.
 
 ## Performance

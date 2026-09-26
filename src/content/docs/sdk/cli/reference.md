@@ -62,7 +62,7 @@ The conversation brain: signed in, `run` uses the managed brain and installs it 
 
 | Flag | Default | Purpose |
 |---|---|---|
-| `<audio>` | required | The second argument: any format `ffmpeg` reads (Essence 1: 16 kHz mono PCM WAV) |
+| `<audio>` | required | The second argument: any format `ffmpeg` reads |
 | `-o`, `--output <PATH>` | `<avatar>.mp4` | Output file |
 | `--limit <N>` | none | Stop after N frames |
 

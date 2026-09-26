@@ -113,9 +113,9 @@ engine='essence2-light'`.
 | `essence2-quality` | A retired premium tier of Essence 2 — not a model you can request; treat the file as **[Essence 2](/concepts/essence-2)** |
 | `expression2` | **[Expression 2](/concepts/expression-2)** — request it as `expression-2` |
 
-So a current Essence 2 bundle reports `engine: essence2-light`. That is
-expected, not a mismatch
-— the engine id names the *loader family*, not the product.
+So a current Essence 2 bundle reports `engine: essence2-light`. The model is
+**Essence 2**, requested as `essence-2`: the engine id names the *loader family*,
+not the product, so the value is expected, not a mismatch.
 
 > **Warning** Never send an engine id to the API. `model` takes only `essence-1`, `essence-2`, `expression-1` or `expression-2`; anything else returns [`400 VALIDATION_ERROR`](/api/agents#errors).
 

@@ -10,7 +10,7 @@ label: "Android: Essence 2"
 
 <figure class="showcase">
   <video controls preload="none" playsinline poster="/examples/android/essence2.webp" width="540" height="1005" src="/examples/android/essence2.mp4"></video>
-  <figcaption>The <code>essence2-hello</code> app on a Samsung Galaxy S25+, rendering the <code>sofia-ramirez</code> sample avatar at 1080×1920 on the phone with <code>essence2-android</code> 0.5.14.</figcaption>
+  <figcaption>The <code>essence2-hello</code> app on a Samsung Galaxy S25+, rendering the <code>sofia-ramirez</code> sample avatar at 1080×1920 on the phone with <code>essence2-android</code>.</figcaption>
 </figure>
 
 The app downloads the `sofia-ramirez` sample avatar once, renders every frame of a speech clip on the phone, then plays the audio with the frames in sync. Tap the screen to replay.
