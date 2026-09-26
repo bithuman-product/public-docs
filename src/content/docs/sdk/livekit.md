@@ -17,7 +17,7 @@ label: "LiveKit agents"
 
 ## Before you start
 
-- Python 3.11–3.13 (the plugin installs `bithuman` only there) and a LiveKit project (its URL and credentials).
+- Python 3.10–3.14 and a LiveKit project (its URL and credentials).
 - A bitHuman agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
 - An [API secret](/start/api-secret), and an OpenAI key for the voice model in the example.
 
@@ -131,7 +131,6 @@ Cloud frame rates are on [Cloud API performance](/performance/cloud).
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `No module named 'cv2'` on import | on Python 3.10 or 3.14 the plugin does not pull `bithuman` | install `bithuman` too, as in the install line |
 | `No module named 'PIL'` | the plugin needs Pillow | install `pillow` |
 | The mint call returns `403` | the token was minted for another agent, room or LiveKit URL | mint with the same `agent_code`, `room_name` and `livekit_url` the plugin uses |
 | The mint call returns `401` | a missing or invalid API secret | check `BITHUMAN_MASTER_SECRET` |

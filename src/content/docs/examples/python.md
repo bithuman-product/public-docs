@@ -10,7 +10,7 @@ label: "Python"
 
 <figure class="showcase">
   <video controls preload="none" playsinline poster="/examples/python/hero.webp" width="540" height="960" src="/examples/python/clip.mp4"></video>
-  <figcaption>The <code>sofia-ramirez</code> Essence 2 sample avatar in the quickstart's window, with bithuman 2.11.6 on an Apple M4 Mac.</figcaption>
+  <figcaption>The <code>sofia-ramirez</code> Essence 2 sample avatar in the quickstart's window on an Apple M4 Mac.</figcaption>
 </figure>
 
 ## Requirements

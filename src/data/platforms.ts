@@ -76,12 +76,12 @@ bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
     },
   },
   {
-    id: "apple", want: "Ship an iPhone, iPad or Mac app", use: "Apple (Swift package)", needs: "Xcode 26+",
+    id: "apple", want: "Ship an iPhone, iPad or Mac app", use: "Apple (Swift package)", needs: "Xcode 26+, API secret",
     first: `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "${V.swift}")`,
     time: "15 min", docs: "/sdk/apple", models: both,
   },
   {
-    id: "android", want: "Ship an Android app", use: "Android", needs: "arm64 device",
+    id: "android", want: "Ship an Android app", use: "Android", needs: "arm64 device, API secret",
     first: `implementation("ai.bithuman:expression2-android:${V.expression2_android}")`,
     time: "15 min", docs: "/sdk/android", models: both,
   },

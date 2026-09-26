@@ -471,6 +471,37 @@ export function renderRegion(record) {
       `\`minSdk\` ${f.min_sdk ?? "—"}, ABIs ${f.abis.map(code).join(", ") || "none"}. ` +
       `Classes not listed here are internal and can change.`);
     out.push("");
+    // WHICH IMPORT. The page never named a package, so a documented class that
+    // has no alias in the product package (essence2-android 0.7.0:
+    // Essence2RenderFailed and Essence2RenderStatus) did not resolve with the
+    // documented imports: `catch (e: Essence2RenderFailed)` failed to compile.
+    // Say the product package, and name each listed class that lives elsewhere
+    // by the exact import a developer types.
+    {
+      const importOf = (name) => {
+        const top = name.split(".")[0];
+        const al = aliases.find((t) => t.name === top);
+        if (al) return { pkg: al.pkg, name: top };
+        const c = byName.get(top);
+        return c ? { pkg: pkgOf(c.name), name: top } : null;
+      };
+      const where = new Map();
+      for (const [nm] of Object.entries(pub)) {
+        if (!byName.has(nm)) continue;
+        const w = importOf(nm);
+        if (!w) continue;
+        if (!where.has(w.pkg)) where.set(w.pkg, new Set());
+        where.get(w.pkg).add(w.name);
+      }
+      const ranked = [...where.entries()].sort((x, y) => y[1].size - x[1].size);
+      if (ranked.length) {
+        let line = `Import: ${code(`import ${ranked[0][0]}.*`)}.`;
+        const rest = ranked.slice(1).flatMap(([pkg, names]) => [...names].sort().map((nm) => code(`import ${pkg}.${nm}`)));
+        if (rest.length) line += ` Not in that package yet, so import ${rest.length === 1 ? "it" : "them"} by name: ${rest.join(", ")}.`;
+        out.push(line);
+        out.push("");
+      }
+    }
     out.push(table([["Class", "Purpose"], ["---", "---"],
       ...Object.entries(pub).filter(([n]) => byName.has(n)).map(([n, why]) => [code(n), why || "—"])]));
     out.push("");

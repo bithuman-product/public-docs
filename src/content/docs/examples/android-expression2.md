@@ -10,7 +10,7 @@ label: "Android: Expression 2"
 
 <figure class="showcase">
   <video controls preload="none" playsinline poster="/examples/android/expression2.webp" width="540" height="1005" src="/examples/android/expression2.mp4"></video>
-  <figcaption>The <code>expression2-hello</code> app on a Samsung Galaxy S25+, rendering the <code>wise-pup</code> sample avatar on the phone with <code>expression2-android</code> 0.4.9.</figcaption>
+  <figcaption>The <code>expression2-hello</code> app on a Samsung Galaxy S25+, rendering the <code>wise-pup</code> sample avatar on the phone with <code>expression2-android</code>.</figcaption>
 </figure>
 
 The app downloads the `wise-pup` sample avatar once, renders every frame of a speech clip on the phone, then plays the audio with the frames in sync. Tap the screen to replay.

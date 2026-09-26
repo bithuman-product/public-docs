@@ -46,7 +46,7 @@ The first run downloads the avatar and sets up the voice agent, which takes a mi
 
 ## With Python
 
-A plain [LiveKit Agents](https://docs.livekit.io/agents/) program: you run `livekit-server` (1.9.12 or newer; check with `livekit-server --version`), and the avatar renders inside `agent.py`. Use Python 3.11–3.13. The CLI checks its `livekit-server` version for you.
+A plain [LiveKit Agents](https://docs.livekit.io/agents/) program: you run `livekit-server` (1.9.12 or newer; check with `livekit-server --version`), and the avatar renders inside `agent.py`. Use Python 3.10–3.14. The CLI checks its `livekit-server` version for you.
 
 ```bash
 # 1. LiveKit server
@@ -132,7 +132,6 @@ Talking time bills bitHuman credits and idle is free; OpenAI bills your own key.
 | `livekit-server not found` (exit 69) | LiveKit is not installed | `brew install livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux) |
 | The avatar never appears | No or invalid API secret | CLI: `bithuman login`. Python example: set `BITHUMAN_MASTER_SECRET` in `.env` |
 | The avatar never appears; the terminal shows `essence-2: ffmpeg not found` | Essence 2 unpacks its avatar with `ffmpeg` | `sudo apt install -y ffmpeg`, then run again |
-| `This example needs Python 3.11, 3.12 or 3.13` | The plugin installs without `bithuman` on 3.10 and 3.14 | Make the venv with Python 3.11–3.13 |
 | The page says it could not connect | `livekit-server --dev` is not running | Start it, then click **Start** again |
 | Nothing happens after joining | `livekit-server --dev` or `agent.py` is not running | Start both, `livekit-server` first |
 | Another device on your network cannot join | `--dev` listens on `localhost` only | `livekit-server --dev --bind 0.0.0.0 --node-ip <your LAN IP>`; other browsers also need HTTPS for the microphone |
