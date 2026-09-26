@@ -83,15 +83,12 @@ paths:
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
               -d '{
+                "model": "expression-2",
                 "prompt": "You are a friendly fitness coach who motivates users.",
                 "image": "https://example.com/face.jpg",
-                "model": "expression",
-                "version": "v2",
-                "aspect_ratio": "9:16",
-                "framing": "portrait"
+                "aspect_ratio": "9:16"
               }'
-            # model+version selects the engine: expression+v2 → Expression 2.
-            # Omit both to default to expression + v1 (Expression 1).
+            # Always send model: essence-2 | expression-2 | auto (picks by subject).
             # → {"success": true, "agent_id": "A95SXN5716", "status": "processing"}
             # then poll GET /v1/agent/status/A95SXN5716
       summary: Generate a new agent
@@ -108,9 +105,8 @@ paths:
 
         **Selecting a model.** Always send `model`: `essence-2`,
         `expression-2`, `auto`, `essence-1` or `expression-1`. An omitted
-        `model` creates an `expression-1` agent. The older family + `version`
-        form (`essence` or `expression` with `v1` / `v2`) still selects a
-        model; new integrations should send the full name.
+        `model` creates an `expression-1` agent. A model outside your plan
+        returns `403 PLAN_REQUIRED`.
 
         **Creation time depends on the model** (the second-generation models
         train a per-identity model, so don't apply a 5-minute client
@@ -169,8 +165,10 @@ paths:
                     URL to a face image for avatar appearance. For the best
                     likeness use a photo with one clear figure, a neutral
                     expression, facing the camera, a relaxed pose, and no
-                    occlusion of the face. This is guidance, not validation —
-                    nothing inspects or rejects the photo you send.
+                    occlusion of the face. Essence 2 needs a photoreal person
+                    with the face clearly in frame; otherwise 422
+                    `MODEL_SUBJECT_MISMATCH` or `IMAGE_FACE_UNSUITABLE`, before
+                    any charge.
                   example: "https://example.com/face.jpg"
                 audio:
                   type: string
@@ -212,18 +210,12 @@ paths:
                     seamlessly); this parameter is ignored.
                 model:
                   type: string
-                  enum: [essence-2, expression-2, auto, essence-1, expression-1, essence, expression]
-                  default: expression-1
+                  enum: [essence-2, expression-2, auto, essence-1, expression-1]
                   example: expression-2
                   description: >-
-                    The model to create. Always send it: `essence-2`,
-                    `expression-2`, `auto`, `essence-1` or `expression-1`. An
-                    omitted `model` creates an `expression-1` agent (a
-                    first-generation model at the 250-credit rate); it never
-                    silently selects a second-generation model or a higher
-                    price. The family names `essence` and `expression` are the
-                    older form: combined with `version` (`v1` / `v2`) they
-                    still select a model.
+                    Which model to create. Always send it; if omitted, an
+                    `expression-1` agent is created (250 credits). A model
+                    outside your plan returns `403 PLAN_REQUIRED`.
 
 
                     **`essence-2`** is the second-generation Essence model for
@@ -241,20 +233,6 @@ paths:
                     `400 VALIDATION_ERROR`. Identity inputs and creation times
                     differ per model — see the endpoint description table and
                     [Essence vs Expression](#tag/models).
-                version:
-                  type: string
-                  enum: [v1, v2]
-                  default: v1
-                  example: v2
-                  deprecated: true
-                  description: >-
-                    **Older form — send a full name in `model` instead.**
-                    Engine generation for the chosen `model` family. `v1`
-                    (default) selects the first-generation engine (Essence 1 /
-                    Expression 1, 250 credits); `v2` selects the
-                    second-generation engine (Essence 2, 500 credits, or
-                    Expression 2, 2000 credits). Ignored when `model` is a full
-                    engine name or `auto`.
       responses:
         "200":
           description: Generation started
@@ -318,6 +296,14 @@ paths:
                       httpStatus: 400
                     status: "error"
                     status_code: 400
+        "403":
+          description: >-
+            `PLAN_REQUIRED` — the model is not in your plan; the message
+            names the plan. Contact sales.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "422":
           description: >-
             `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
@@ -327,7 +313,10 @@ paths:
             and before any agent row is created. Use `expression-2` for
             cartoon / animal / creature / robot subjects, or `model: "auto"`
             (which never rejects — it routes instead). A classifier outage never
-            blocks creation (the gate fails open).
+            blocks creation (the gate fails open). `IMAGE_FACE_UNSUITABLE` — an
+            Essence 2 creation whose photo has a face too small in frame, or
+            several similar-sized faces; upload a closer photo of one person.
+            Nothing is charged.
           content:
             application/json:
               schema:
@@ -404,9 +393,9 @@ paths:
         and embedded as soon as it reports `ready`, but the downloadable
         model file is published separately, shortly afterwards. Until it is,
         `GET /v1/agent/{code}/model/download` answers
-        `404 MODEL_ARTIFACT_NOT_READY` — a retryable code, not a failure. On
-        2026-09-20 an `expression-2` agent was still answering it 23 minutes
-        after it reported `ready`. Poll the download on that code.
+        `404 MODEL_ARTIFACT_NOT_READY` — a retryable code, not a failure. It
+        can take a few minutes after `ready`; poll the download while it
+        answers `404 MODEL_ARTIFACT_NOT_READY`.
       tags: [Agent Generation]
       parameters:
         - name: agent_id
@@ -1112,9 +1101,8 @@ paths:
             tier slugs (`essence-2-apple`,
             `essence-2-gpu`, `essence-2-cpu`, `expression-2-gpu`; the older
             `essence-2-ane` spelling stays accepted) fold onto
-            their family. `essence-2-quality` is **no longer accepted** — it
-            was retired on 2026-07-29 and now returns `400 VALIDATION_ERROR`;
-            send `essence-2`. Any other unrecognized value returns the
+            their family. `essence-2-quality` returns `400`; send
+            `essence-2`. Any other unrecognized value returns the
             same `400`, listing the downloadable families.
           example: "expression-2"
         - name: member
@@ -1565,14 +1553,14 @@ paths:
                         example: "membership_pro"
                       credit_balance:
                         type: integer
-                        example: 5836982
+                        example: 1240
                         description: Total spendable credits = plan + topup + reward.
                       plan_credits_remaining:
                         type: integer
-                        example: 5055
+                        example: 1000
                       topup_credits_remaining:
                         type: integer
-                        example: 5831600
+                        example: 240
                       account_status:
                         type: string
                         example: "active"
@@ -1770,9 +1758,7 @@ paths:
                             description: >-
                               One-time creation cost per canonical `model`
                               value accepted by `POST /v1/agent/generate`.
-                              The pre-rename `essence-2-quality` spelling was
-                              removed on 2026-07-29 — sending it now returns
-                              a `400`.
+                              `essence-2-quality` returns a `400`.
                             example:
                               essence-1: 250
                               expression-1: 250
@@ -1833,19 +1819,6 @@ paths:
       security:
         - apiSecret: []
       parameters:
-        - name: app
-          in: query
-          required: false
-          description: App identifier for multi-app subscription support.
-          schema:
-            type: string
-            default: imaginex
-        - name: app_key
-          in: query
-          required: false
-          description: Explicit subscription key for collection-scoped apps. Defaults to the same value as `app`.
-          schema:
-            type: string
       responses:
         "200":
           description: Credit balance retrieved
@@ -1865,8 +1838,8 @@ paths:
                       balance:
                         type: number
                         format: float
-                        description: Sum of plan + topup + reward credits, returned as a float (e.g. 5910592.0).
-                        example: 5910592.0
+                        description: Sum of plan + topup + reward credits, returned as a float (e.g. 1240.0).
+                        example: 1240.0
                       plan_credits:
                         type: number
                         format: float
@@ -2169,8 +2142,8 @@ paths:
       description: >-
         Exchange your API secret for a short-lived runtime token that authorizes one
         avatar session. The SDKs call this for you; call it directly when building a
-        custom runtime. This is a billing endpoint — it meters credits for the session's
-        model per the schedule in `GET /v1/pricing`.
+        custom runtime. Free to call; the session it authorizes is billed per
+        `GET /v1/pricing`.
 
 
         **`fingerprint` must be at least 32 characters** when you send it.
@@ -3249,7 +3222,7 @@ paths:
                   description: Event types to subscribe to. Omit or pass `[]` to receive all.
                   items:
                     type: string
-                    enum: [agent.ready, agent.failed]
+                    enum: [agent.ready, agent.failed, video.completed, video.failed]
                   example: ["agent.ready", "agent.failed"]
                 description:
                   type: string
@@ -3439,8 +3412,7 @@ paths:
         "429":
           $ref: "#/components/responses/RateLimited"
 
-  # ── Self-hosting: the two routes a self-hosted runtime actually calls ──
-  # (added 2026-09-07; both answered live and were absent from this file.)
+  # ── Self-hosting: the two routes a self-hosted runtime calls ──
   /v1/auth/validate:
     post:
       operationId: validateSelfHostedKey
@@ -4472,10 +4444,9 @@ tags:
     description: Identity, plan, credits, and pricing.
   - name: Self-hosting
     description: |
-      The three routes a self-hosted or on-device runtime calls: fetch the
-      per-agent bundle it serves, check that its key is still live, and report
-      the wall-clock it served. Self-hosted sessions are billed per minute —
-      see [Pricing](#tag/pricing).
+      The two routes a self-hosted or on-device runtime calls: check that its
+      key is still live, and report the session time it served. See
+      [Pricing](#tag/pricing).
   - name: Status
     description: |
       Is the API currently refusing work? Unauthenticated, always HTTP 200 —
@@ -4484,7 +4455,7 @@ tags:
   - name: Webhooks
     description: |
       Register HTTPS endpoints to receive signed event notifications when
-      async work finishes (today: `agent.ready`, `agent.failed`). Each
+      async work finishes (`agent.ready`, `agent.failed`, `video.completed`, `video.failed`). Each
       delivery carries an `X-BitHuman-Signature: sha256=<hmac>` header — verify
       it with the secret returned once at creation.
   - name: Embedding
