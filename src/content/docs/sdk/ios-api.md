@@ -18,7 +18,6 @@ Covers the Swift package at the version on [Downloads & versions](/downloads). H
 | `Expression2` | `Expression2` | the Expression 2 engine, Swift API |
 | `Essence2Kit` | `Essence2Kit` | the Essence 2 engine, Swift API; includes `Essence2` |
 | `Essence2` | `Essence2` (or `CLibEssence2`) | the Essence 2 engine, C interface |
-| `bitHumanKit` | `bitHumanKit` | the on-device voice agent |
 | `BithumanEngineProtocol` | `BithumanEngineProtocol` | the shared engine protocol. `Expression2` already contains it; do not add both |
 
 All products ship `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-arm64`.

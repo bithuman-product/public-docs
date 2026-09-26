@@ -19,6 +19,8 @@ Credits pay for talking time. Idle time is free. Every platform (cloud, self-hos
 | [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
 | [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | 2 credits/min |
 
+Expression 1 is a cloud model; its self-hosted rate applies to the legacy self-hosted GPU container only.
+
 A credit minute is a minute in which the avatar is **actually talking**. **Idle animation is free**: a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between replies. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
 Managed conversational agents bill on top of avatar serving:
@@ -139,7 +141,6 @@ Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by t
 
 - Idle, paused, stopped or disconnected sessions.
 - API secrets, SDK installs and model downloads (a download writes a 0-credit usage row).
-- A `bitHumanKit` voice session with no avatar attached.
 - Failed creations and renders (refunded) and failed authentication.
 
 ## Next

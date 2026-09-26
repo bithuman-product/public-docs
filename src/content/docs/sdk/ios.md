@@ -9,7 +9,7 @@ slug: sdk/apple
 label: "Apple (iOS, iPadOS, macOS)"
 ---
 
-One Swift package carries both models, plus `bitHumanKit`, a complete on-device voice agent. Both models render on the device and bill talking time to your API secret.
+One Swift package carries both models. Both models render on the device and bill talking time to your API secret.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -34,7 +34,6 @@ In Xcode choose *File → Add Package Dependencies…* and paste `https://github
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
-//   .product(name: "bitHumanKit", package: "homebrew-bithuman")
 ```
 
 | Product | Import | What it is |
@@ -42,13 +41,14 @@ In Xcode choose *File → Add Package Dependencies…* and paste `https://github
 | `Expression2` | `import Expression2` | the Expression 2 engine with a Swift API |
 | `Essence2Kit` | `import Essence2Kit` | the Essence 2 engine with a Swift API; it includes `Essence2` |
 | `Essence2` | `import Essence2` | the Essence 2 engine as a C library, for C, C++ and plugins |
-| `bitHumanKit` | `import bitHumanKit` | a voice agent: speech recognition, language model, speech and avatar views |
 
 Every product ships `ios-arm64`, `ios-arm64-simulator` and `macos-arm64`. An app that links `Essence2Kit` or `Essence2` sets its deployment target to iOS 26 / macOS 26.
 
+`bitHumanKit` 2.4.0 is legacy and frozen; new apps use `Expression2` or `Essence2Kit`.
+
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the scheme's environment, or pass it in code before you create an engine: `Expression2Credential.set(secret)` or `Essence2Credential.set(secret)`. `bitHumanKit` takes it as `config.apiKey`. See [Your API secret](/start/api-secret).
+Set `BITHUMAN_API_SECRET` in the scheme's environment, or pass it in code before you create an engine: `Expression2Credential.set(secret)` or `Essence2Credential.set(secret)`. See [Your API secret](/start/api-secret).
 
 Credits pay for talking time; idle time is free ([pricing](/guides/pricing)). If the network drops after your secret is accepted, the session keeps rendering for 5 minutes, then pauses until the connection returns.
 
@@ -152,8 +152,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 - **Your own MLX:** Essence 2 contains no MLX. Link your own `mlx-swift` (`MLX`, `MLXNN`) in the same target, also with `-ObjC` or `-all_load`; nothing to embed. Requires Swift package 2.16.0 or newer.
 - **A Mac app built in Xcode:** the App template turns on App Sandbox. Under *Signing & Capabilities → App Sandbox*, tick **Outgoing Connections (Client)**, or the engines cannot check your secret. Add the `.imx` files and engine resources to the app bundle; a sandboxed app reads only its bundle and container.
 - **Simulator:** simulator slices are arm64 only; pass `ARCHS=arm64`. Essence 2 does not run in the Simulator (`be_essence2_create` returns `-2`); Expression 2 does.
-- **`bitHumanKit`:** needs an iPhone 16 Pro or newer (or iPad Pro M4, 16 GB) and two Apple entitlements, `com.apple.developer.kernel.increased-memory-limit` and `com.apple.developer.kernel.extended-virtual-addressing`. Request them under *Account → Membership → Request Additional Capabilities*; Apple replies in 1–3 business days. The engines need no entitlement.
-- **Privacy strings:** add `NSMicrophoneUsageDescription` to hear the user, and `NSSpeechRecognitionUsageDescription` if you use `bitHumanKit` recognition.
+- **Privacy strings:** add `NSMicrophoneUsageDescription` to hear the user,.
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
@@ -176,13 +175,11 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
 | `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.16.0"`, then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
-| the app is killed mid-conversation with no crash log | `bitHumanKit` exceeded the default memory limit | add the two Apple entitlements |
-| `bitHuman needs an iPhone 16 Pro or newer` | `bitHumanKit`'s device floor | use `Expression2` or `Essence2` directly on that device |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
 
 ## Reference
 
 - [Apple API reference](/sdk/apple-api): every Swift and C entry point.
-- Examples: [iOS Expression 2](/examples/swift-ios-expression2) · [iOS Essence 2](/examples/swift-ios-essence2) · [voice agent](/examples/swift-ios-voice-agent) · [macOS Expression 2](/examples/macos-expression2) (`swift run`).
+- Examples: [iOS Expression 2](/examples/swift-ios-expression2) · [iOS Essence 2](/examples/swift-ios-essence2) · [macOS Expression 2](/examples/macos-expression2) (`swift run`).
 - Sample avatars: [Ready-made avatars](/examples#ready-made-avatars). Your own agent's model: [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) with your API secret.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
