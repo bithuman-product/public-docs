@@ -5,7 +5,7 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "8e77088662841a1119030ef641646f77bea1e3327e9f6e5304997728d39635aa",
+  "record_sha256": "e25f553da083aa071e148f8a12ed69cbcd386188785c26f06cdc8ece03405498",
   "emitter_sha256": "edc079e7d9aa4ce8906d23620da62f06207980f67538e7b74d73e1600fc4b13f",
   "verified_on": "2026-09-26",
   "stale_after_days": 30,
@@ -13,7 +13,7 @@
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "154b156833c8cd729c1d23594eaf2f2ffc8044a7f0f2d5ee095d4cc5f8486e93"
+    "sha256": "db1438d6d9e290716fddd6a4ac705aa05142108c3e351ee9a48b368587d2ebf0"
   },
   "blocks": [
     {
@@ -35,21 +35,21 @@
       "marker": "TABLE",
       "key": "desktop",
       "index": 0,
-      "sha256": "ec608a8a3bc68d6bc16abff8295fd6ca83170f5d8a48735d14fba068d995d9cb"
+      "sha256": "01df914c9682657d52adad6fc09ee2a758b99e80440744ff487a91747e5289d0"
     },
     {
       "file": "src/content/docs/performance/desktop.md",
       "marker": "RELEASES",
       "key": "desktop",
       "index": 0,
-      "sha256": "9e5c11dc6718b70d4e576fbc63aac7397ececb1f54385933f7e5be7c339d99f6"
+      "sha256": "89dc77173f04ef00b477d4fe972cf9d91d2f9376fd3fe4eb754427f65fd9d62c"
     },
     {
       "file": "src/content/docs/performance/method.md",
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "342f0c635374597f9418951f7cc50924f3839993087dc715cbd137d66d4e15c6"
+      "sha256": "e5b34d49361c64af06313d94568eb723b133e471262eca61cd2fd2325cea2717"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -112,7 +112,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "20b24bcf681ec1f360a869ba76e77f2218973548eb3b6c9abb428572903504b2"
+      "sha256": "cfd6e010187cdee0a2d6dc592aadb409ac0d9a8cdac2954c7bbdf5252ab4acae"
     },
     {
       "file": "src/partials/performance-headline.md",
@@ -164,7 +164,7 @@
       {
         "label": "Linux · Python",
         "id": "python-linux",
-        "line": "| Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |"
+        "line": "| Linux · Python | Intel Core i7-13700F (x86_64) | 49 | **1.9×** real time | 47 | **2.3×** real time |"
       },
       {
         "label": "iPhone · Swift package",
