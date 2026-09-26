@@ -114,6 +114,14 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 - **Changed:** a first render downloads less: the 8-second speech encoder is fetched only when a render needs it.
 - **Action:** `pip install -U bithuman`.
 
+### CLI 2.7.8 — 2026-09-26
+
+Tag `cli-v2.7.8`.
+
+- **Fixed:** Expression 2 on Linux runs at full speed in a container limited to fewer CPUs than the machine has (for example `docker run --cpus=4`). It started one thread per machine CPU and ran several times slower than real time; it now sizes its threads to the CPUs it may use.
+- **Changed:** each install sends its own stable, random install id with its usage, so two installs that share one API secret are no longer billed as one.
+- **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
+
 ### CLI 2.7.7 — 2026-09-26
 
 Tag `cli-v2.7.7`.
