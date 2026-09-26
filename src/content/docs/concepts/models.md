@@ -50,7 +50,7 @@ What is published today, per surface. Each link goes to the page that installs i
 | **bitHuman cloud** — [REST API](/api), [embed](/api/embedding), [LiveKit](/sdk/livekit) | yes | yes | yes | yes |
 | [**CLI**](/sdk/cli) — macOS Apple Silicon, Linux x86_64 / arm64 | `run`, `render` | `run`, `render` | `run` | — |
 | [**Python**](/sdk/python) — macOS Apple Silicon, Linux x86_64 / aarch64 | frames and MP4 clips | frames (`[expression-2]` extra) | frames | — |
-| [**Apple**](/sdk/apple) — iPhone, iPad, Mac | `Essence2` product (iOS / macOS 26) | `Expression2` product | — | — |
+| [**Apple**](/sdk/apple) — iPhone, iPad, Mac | `Essence2Kit` product (iOS / macOS 26) | `Expression2` product | — | — |
 | [**Android**](/sdk/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
 | [**Web**](/sdk/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
 

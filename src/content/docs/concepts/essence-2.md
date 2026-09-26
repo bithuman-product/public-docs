@@ -33,7 +33,7 @@ For a stylized character, or a scene generated from one photo, choose
 |---|---|
 | bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (frames, and MP4 clips with `bithuman.offline`) |
-| iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Essence2` product (iOS / macOS 26) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
+| iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Essence2Kit` product (iOS / macOS 26; `Essence2` for C) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
 | Android | [`essence2-android`](/sdk/android) — fetching the identity needs your API secret |
 | The viewer's browser | [`?render=local`](/sdk/web#integrate-into-your-app), for an identity whose in-browser build is published |
 
