@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "3f64bb8596b387100b7a43b753ded1cf93ef5736dc0ccf60f44e3d15a02f412e",
+  "record_sha256": "27ef8b004b7aa12d08f490526e0934cac97fd71c08775dd82e486646679b3929",
   "emitter_sha256": "67ea88ee5de3f266dbc520242deb1709411c200aa6c8731b3e204bb455afc1c2",
-  "verified_on": "2026-09-25",
+  "verified_on": "2026-09-26",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "3eab2c76f254432e039ad4d57dcc38ff33823df53836c756bf6bcdc8b3f3e11a"
+    "sha256": "ca251a83891e74338583e04094dedee6bf14ab5f1ca8b8f8755b768106559876"
   },
   "blocks": [
     {
@@ -35,21 +35,21 @@
       "marker": "TABLE",
       "key": "desktop",
       "index": 0,
-      "sha256": "2d341ad401851f9f9137b12eac325891f0ed00692e499eafba98f02acf963cf5"
+      "sha256": "6fd95adfaf3e9a43de235f9b0e4ccdc3b5c359440a8cdd0224666d8c6174a223"
     },
     {
       "file": "src/content/docs/performance/desktop.md",
       "marker": "RELEASES",
       "key": "desktop",
       "index": 0,
-      "sha256": "9d9b51ee425dc77f3d391472a089a73354ef8fe63fdfc101057a53a07f2753dd"
+      "sha256": "c81b51b2ab6d9057cc253b1723a0c7d54e28ce90db24e827b49f5fd6b80dcba0"
     },
     {
       "file": "src/content/docs/performance/method.md",
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "001430de130e24a4c5ebdc54452f984fe1e8dd7e5f0a1e4c7cf297455c1406af"
+      "sha256": "a05a756e09a23e0049fbe3657a37ae64cd01327a7438e9940eca917d3cad6071"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -63,7 +63,7 @@
       "marker": "MEMORY",
       "key": null,
       "index": 0,
-      "sha256": "899dc4653ba054fed6a8aa0c6a63d59407f815d2cd548bae05ec0a212bd64337"
+      "sha256": "eced178f87b93ab8f95702579978a2e47c98eca08984fa936ef77fdb563f8e95"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -84,7 +84,7 @@
       "marker": "RELEASES",
       "key": "mobile",
       "index": 0,
-      "sha256": "64cc9871dd4964da20ec7ccfbc733993bced68bb2cc5069fc296264a29ff5e2c"
+      "sha256": "00dc5277dd7068e6bd1587b8c5ddfb5ed7551b5db61c506a9c35814284f0ee15"
     },
     {
       "file": "src/content/docs/performance/mobile.md",
@@ -112,7 +112,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "d10dd764cd1b4f3b6c5fba3c48cf2382e0ef81c2711c7b2d0f8bc04ed9788057"
+      "sha256": "2ad39f577c3b81294fd98e345724ca29d552935c5d5617170f42c0903a44a594"
     },
     {
       "file": "src/partials/performance-headline.md",
@@ -149,7 +149,7 @@
       {
         "label": "macOS · Python",
         "id": "python-macos",
-        "line": "| macOS · Python | Apple M4 | 174 | **6.9×** real time | 164 | **8.2×** real time |"
+        "line": "| macOS · Python | Apple M4 | 174 | **6.9×** real time | 169 | **8.4×** real time |"
       },
       {
         "label": "macOS · Swift package",

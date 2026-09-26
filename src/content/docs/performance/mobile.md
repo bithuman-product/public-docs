@@ -18,7 +18,7 @@ First a short burst on each phone, then one session held for 10 minutes.
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES mobile -->
-Measured in September 2026 on Swift package 2.14.2, Swift package 2.15.0, essence2-android 0.7.0 and expression2-android 0.4.10.
+Measured in September 2026 on Swift package 2.15.0, Swift package 2.16.0, essence2-android 0.7.0 and expression2-android 0.4.10.
 <!-- /FLOORS:RELEASES -->
 
 <!-- FLOORS:SUSTAINED -->

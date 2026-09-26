@@ -11,7 +11,7 @@ label: "How we measure"
 ## Method
 
 <!-- FLOORS:RELEASES -->
-Measured in September 2026 on CLI 2.7.2, bithuman 2.11.10, Swift package 2.14.2, Swift package 2.15.0, essence2-android 0.7.0, expression2-android 0.4.10, the hosted web viewer and the cloud API.
+Measured in September 2026 on CLI 2.7.2, bithuman 2.11.12, Swift package 2.15.0, Swift package 2.16.0, essence2-android 0.7.0, expression2-android 0.4.10, the hosted web viewer and the cloud API.
 <!-- /FLOORS:RELEASES -->
 
 <!-- FLOORS:METHOD -->
@@ -24,9 +24,9 @@ Frames per second from speech audio in to finished video frame out, for one avat
 | Runs on | Hardware | Essence 2 | Expression 2 | Measured on |
 |---|---|---|---|---|
 | macOS · CLI | Apple M4 | 1.6 GB | 0.9 GB | CLI 2.7.0 |
-| macOS · Python | Apple M4 | 1.6 GB | 0.8 GB | bithuman 2.11.6 |
+| macOS · Python | Apple M4 | 1.2 GB | 0.8 GB | bithuman 2.11.12 |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 3.5 GB | 1.7 GB | CLI 2.7.0 |
-| Linux · Python | Intel Core i7-13700F (x86_64) | 2.6 GB | 1.5 GB | bithuman 2.11.6 |
+| Linux · Python | Intel Core i7-13700F (x86_64) | 1.0 GB | 1.5 GB | bithuman 2.11.12 |
 | iPhone · Swift package | iPhone 15 | 0.9 GB | 0.5 GB | Swift engine 1.10.0, Swift package 2.14.1 |
 | Android | Samsung Galaxy S25+ | 1.0 GB | 2.3 GB | essence2-android 0.5.13, expression2-android 0.4.8 |
 
