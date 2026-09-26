@@ -14,7 +14,7 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
 | **`run` and `render`** | both | both |
-| **Download per avatar** | about 190 MB | 118–148 MB, plus a 377 MB shared audio encoder once |
+| **Download per avatar** | about 190 MB | 140–160 MB, plus a shared audio encoder (about 66 MB) once |
 
 ## Before you start
 
@@ -110,7 +110,7 @@ The whole setup, and the same conversation in your own Python code: [Talk to an 
 ## Platform notes
 
 - Essence 1 avatars work with `run` only; for a file use [Python](/sdk/python) or the [video API](/api/video). Expression 1 runs on the [cloud API](/api).
-- The first Essence 2 render on a machine downloads a 377 MB shared audio encoder to `~/.bithuman/engines/essence-2/` once.
+- The first Essence 2 render on a machine downloads a shared audio encoder (about 66 MB) to `~/.bithuman/engines/essence-2/` once.
 - Intel Macs and Windows have no binary. Use WSL2 on Windows, or the [web embed](/sdk/web) or [cloud API](/api).
 
 ## Performance

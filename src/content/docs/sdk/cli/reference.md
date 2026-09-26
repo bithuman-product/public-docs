@@ -125,7 +125,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `~/.cache/bithuman/run` | Session state and logs |
 | `~/.cache/bithuman/brain-venv` | The conversation brain |
 | `~/.cache/bithuman/bundles` | Unpacked avatars (about the size of each avatar again) |
-| `~/.bithuman/engines` | Render engines, including the Essence 2 audio encoder (about 377 MB) |
+| `~/.bithuman/engines` | Render engines, including the Essence 2 audio encoder (about 66 MB) |
 | `~/.cache/huggingface`, `~/.cache/supertonic` | On-device brain weights |
 
 `bithuman doctor` prints each size. Deleting `~/.cache/bithuman` is safe.
