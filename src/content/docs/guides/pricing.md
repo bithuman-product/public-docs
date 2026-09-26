@@ -29,7 +29,7 @@ Managed conversational agents bill on top of avatar serving:
 | Managed agent — voice chat | 10 credits/min |
 | Managed agent — camera on (vision chat; replaces the chat rate) | 30 credits/min |
 
-How talking time is billed: active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum.
+How live sessions are billed: active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum.
 <!-- /PRICING:REALTIME -->
 
 A session bills while it is **running**, whether the avatar is talking or idle, to the exact second: seconds × rate ÷ 60, rounded down per session, with the fraction carried to your next session. A stopped or disconnected session accrues nothing. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.

@@ -8,7 +8,7 @@ type: guide
 label: "Your API secret"
 ---
 
-One API secret works on every surface: the REST API, the CLI, Python, Apple, Android and LiveKit. Credits pay for talking time; idle time is free ([pricing](/guides/pricing)).
+One API secret works on every surface: the REST API, the CLI, Python, Apple, Android and LiveKit. Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
 
 ## Get one
 

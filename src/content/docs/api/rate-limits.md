@@ -43,7 +43,7 @@ A plan change reaches the limiter within about a minute; no new secret is needed
 | Enterprise | 200 |
 | Custom (contact sales) | Unlimited |
 
-A session over the allowance is refused at start with `403 CONCURRENCY_LIMIT_REACHED`; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up. Sessions you render on your own hardware are limited only by your credits ([self-hosting](/guides/self-hosting)). Credits pay for talking time; idle time is free ([pricing](/guides/pricing)).
+A session over the allowance is refused at start with `403 CONCURRENCY_LIMIT_REACHED`; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up. Sessions you render on your own hardware are limited only by your credits ([self-hosting](/guides/self-hosting)). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
 
 ## Response headers
 
@@ -80,7 +80,7 @@ def api_request_with_retry(url, headers, max_retries=3):
 
 - **Use [webhooks](/api/webhooks), not polling,** for `agent.ready` and `agent.failed`. If you poll status, poll every 5 seconds or slower.
 - **Cache agent details** from `GET /v1/agent/{code}`; they rarely change.
-- **Keep a session open** between conversations rather than starting a new one; idle time is free.
+- **Reuse a session** for back-to-back conversations rather than starting a new one; note that an open session bills its time, talking or idle.
 - **Check your balance** with `GET /v2/credit-summaries` before creating an agent ([creation costs](/guides/pricing#creation--one-time-credits)), to avoid a `402`.
 
 More capacity comes with a higher [plan](/guides/pricing#plans); for more than Enterprise, [talk to sales](https://www.bithuman.ai/sales).

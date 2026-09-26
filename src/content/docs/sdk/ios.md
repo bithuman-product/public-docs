@@ -9,7 +9,7 @@ slug: sdk/apple
 label: "Apple (iOS, iPadOS, macOS)"
 ---
 
-One Swift package carries both models. Both models render on the device and bill talking time to your API secret.
+One Swift package carries both models. Both models render on the device and bill session time to your API secret.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -50,7 +50,7 @@ Every product ships `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-a
 
 Set `BITHUMAN_API_SECRET` in the scheme's environment, or pass it in code before you create an engine: `Expression2Credential.set(secret)` or `Essence2Credential.set(secret)`. See [Your API secret](/start/api-secret).
 
-Credits pay for talking time; idle time is free ([pricing](/guides/pricing)). If the network drops after your secret is accepted, the session keeps rendering for 5 minutes, then pauses until the connection returns.
+Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)). If the network drops after your secret is accepted, the session keeps rendering for 5 minutes, then pauses until the connection returns.
 
 > **Warning:** do not compile the secret into an app you distribute. Fetch it from your own backend at startup and keep it in the Keychain.
 

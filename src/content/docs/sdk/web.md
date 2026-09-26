@@ -28,7 +28,7 @@ Nothing to install.
 
 ## Authenticate
 
-A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions bill the agent's owner: credits pay for talking time, idle time is free, and the conversation (speech recognition, language model and voice) bills in every mode ([pricing](/guides/pricing)).
+A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions bill the agent's owner: credits pay for session time, talking or idle, and the conversation (speech recognition, language model and voice) bills in every mode ([pricing](/guides/pricing)).
 
 ## First frame
 

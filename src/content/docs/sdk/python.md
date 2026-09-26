@@ -38,7 +38,7 @@ Install into a virtual environment: Debian and Ubuntu refuse a system-wide `pip 
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the shell that runs Python, or pass `api_secret=`. See [Your API secret](/start/api-secret). Credits pay for talking time; idle time is free ([pricing](/guides/pricing)). Downloading a sample avatar needs no account.
+Set `BITHUMAN_API_SECRET` in the shell that runs Python, or pass `api_secret=`. See [Your API secret](/start/api-secret). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)). Downloading a sample avatar needs no account.
 
 ## First frame
 

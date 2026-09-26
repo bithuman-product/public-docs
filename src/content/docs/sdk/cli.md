@@ -61,7 +61,7 @@ bithuman login --device   # over SSH: prints a code to enter in any browser
 bithuman account          # exit 0 when signed in
 ```
 
-Sign in first, because every render path needs a credential: without one, `run` and `render` stop before the first frame with exit 77 and write nothing. In scripts and CI, set `BITHUMAN_API_SECRET` instead of signing in ([Your API secret](/start/api-secret)). Credits pay for talking time; idle time is free ([pricing](/guides/pricing)). Listing, downloading and opening avatars need no account.
+Sign in first, because every render path needs a credential: without one, `run` and `render` stop before the first frame with exit 77 and write nothing. In scripts and CI, set `BITHUMAN_API_SECRET` instead of signing in ([Your API secret](/start/api-secret)). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)). Listing, downloading and opening avatars need no account.
 
 ## First frame
 
