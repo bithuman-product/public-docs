@@ -1,6 +1,6 @@
 ---
 title: "FFmpeg / LGPL — the Android relink offer"
-description: "ai.bithuman:essence2-android statically links FFmpeg 7.1 under LGPL-2.1. This is the section 6(a) offer: where the relink materials are, what is in them, and the commands that check every claim on this page."
+description: "ai.bithuman:essence2-android statically links FFmpeg 7.1 under LGPL-2.1. This is the section 6(a) offer: where the relink materials are, what is in them, and the commands that check every claim on this page. The deprecated ai.bithuman:sdk carries a section 6(c) written offer."
 section: legal
 group: "Legal"
 order: 2
@@ -32,15 +32,17 @@ its own kit at the same shape of URL.
 
 ## Which artifact this applies to
 
-**Only `ai.bithuman:essence2-android`.** The other two Android artifacts do not
-carry FFmpeg, so no §6(a) obligation attaches to them and no relink kit is
-published for them. That is correct, not a gap:
+**`ai.bithuman:essence2-android`**, with a relink kit published beside every AAR, and the
+deprecated **`ai.bithuman:sdk`**, which has a written offer instead
+([below](#aibithumansdk-deprecated--a-written-offer-6c)).
+`ai.bithuman:expression2-android` does not carry FFmpeg, so no §6 obligation attaches to it
+and no relink kit is published for it. That is correct, not a gap:
 
 | Coordinate | FFmpeg linked in? | Relink offer |
 |---|---|---|
 | `ai.bithuman:essence2-android:0.5.13` | **yes** — statically, into `lible_jni.so` | **published** (below); `0.2.0` through `0.5.12` each carry their own kit at the same shape of URL |
 | `ai.bithuman:expression2-android:0.4.1` | no — it carries LiteRT (Apache-2.0) | none needed |
-| `ai.bithuman:sdk:2.3.6` | not audited on this page | — |
+| `ai.bithuman:sdk` 1.12.1 – 2.3.7 (deprecated) | **yes** — statically, into `libessence_jni.so` | **written offer**, §6(c) — [below](#aibithumansdk-deprecated--a-written-offer-6c) |
 
 Measured, with the two AARs side by side — the second command is the control
 that makes the first mean something:
@@ -70,6 +72,95 @@ lines of output.
 exits 1 when it matches nothing, so a count of zero and a non-zero exit are the
 same fact stated twice. If you wrap this in `set -e` the script stops here on
 the *correct* result — check the printed number, not the exit status.
+
+---
+
+## `ai.bithuman:sdk` (deprecated) — a written offer, §6(c)
+
+`ai.bithuman:sdk` is the Android SDK that `ai.bithuman:essence2-android` replaced.
+Seventeen versions were published, **1.12.1 through 2.3.6**. Every one of them links
+FFmpeg statically into the SDK's native library under `jni/arm64-v8a/` (the file the commands
+below read), and **none of them shipped a
+licence notice**: not for FFmpeg and not for the other libraries listed below. That was our
+omission.
+
+**2.3.7 is the final release.** It ships the same `classes.jar` and the same native
+libraries as 2.3.6, byte for byte. It adds `META-INF/NOTICE.txt`, the licence texts under
+`META-INF/licenses/`, and the offer below in `META-INF/LGPL-RELINK-OFFER.txt`. Its POM
+marks the coordinate deprecated and points to `ai.bithuman:essence2-android`.
+
+**The offer.** For at least three years from the date you received any of these versions,
+bitHuman will give anyone who asks, for no more than the cost of performing the
+distribution:
+
+1. the complete corresponding source code of the FFmpeg release linked into that version;
+2. the rest of that native library for that version, the "work that uses the Library", as
+   object code, with the link command and a script, so you can modify FFmpeg and relink.
+
+We don't have the original build objects. We do have the source of every version,
+archived under its release tag. When a request arrives, we build
+the relink materials from that tagged source. To ask, write to
+[hello@bithuman.ai](mailto:hello@bithuman.ai) and name the version.
+
+**Why this is §6(c) and not the §6(a) kit that essence-2 publishes.** A kit on Central
+needs the object code from the build that produced the library. For these versions that
+build output was not kept, and the Android FFmpeg itself was cross-built by hand rather
+than by an archived script. So we offer the materials in writing instead, as §6(c)
+allows.
+
+### What each version carries
+
+Read from the published bytes, not from build notes:
+
+| Versions | FFmpeg (static) | Also statically linked | Bundled beside it |
+|---|---|---|---|
+| 1.12.1 – 1.13.0 | FFmpeg (libavformat, libavcodec, libavutil, libswscale, libswresample). The binary carries no FFmpeg version string. | OpenSSL 3.4.0, libcurl, HDF5 1.14.5, libjpeg-turbo 3.1.91, libwebp, KISS FFT | ONNX Runtime 1.26.0, libc++ |
+| 1.14.0 – 2.3.6 | The **6.1** series (`Lavf60.16.100`) | same | same |
+| 2.3.7 | 2.3.6's bytes | same | same |
+
+- libcurl carries no version string in the binary. The archived build script pins
+  **8.10.1**, the same script that pins OpenSSL 3.4.0, and that version does match the
+  binary.
+- The FFmpeg build contains **no GPL-only or non-free component**: no x264, x265 or Xvid
+  encoder wrapper, and no libpostproc. So the FFmpeg code is under LGPL-2.1-or-later.
+
+Check it yourself. The second `grep` is the control:
+
+```bash
+curl -fsSL -o sdk.aar https://repo1.maven.org/maven2/ai/bithuman/sdk/2.3.6/sdk-2.3.6.aar
+unzip -q -o sdk.aar jni/arm64-v8a/libessence_jni.so -d sdk
+strings -n 5 sdk/jni/arm64-v8a/libessence_jni.so | grep -oE 'Lavf[0-9.]+|OpenSSL [0-9.]+|HDF5 library version: [0-9.]+|libjpeg-turbo version [0-9.]+' | sort -u
+strings -n 5 sdk/jni/arm64-v8a/libessence_jni.so | grep -cE 'x264_encoder_open|x264_param_default|pp_postprocess'
+```
+
+```text
+HDF5 library version: 1.14.5
+Lavf60.16.100
+libjpeg-turbo version 3.1.91
+OpenSSL 3.4.0
+0
+```
+
+And the 2.3.7 claim, that only notices were added:
+
+```bash
+curl -fsSL -o old.aar https://repo1.maven.org/maven2/ai/bithuman/sdk/2.3.6/sdk-2.3.6.aar
+curl -fsSL -o new.aar https://repo1.maven.org/maven2/ai/bithuman/sdk/2.3.7/sdk-2.3.7.aar
+for f in classes.jar jni/arm64-v8a/libessence_jni.so jni/arm64-v8a/libonnxruntime.so jni/arm64-v8a/libc++_shared.so; do
+  [ "$(unzip -p old.aar $f | sha256sum)" = "$(unzip -p new.aar $f | sha256sum)" ] && echo "same  $f" || echo "DIFF  $f"
+done
+unzip -Z1 new.aar | grep '^META-INF/' | grep -vc '/$'
+```
+
+```text
+same  classes.jar
+same  jni/arm64-v8a/libessence_jni.so
+same  jni/arm64-v8a/libonnxruntime.so
+same  jni/arm64-v8a/libc++_shared.so
+17
+```
+
+(17 = the 16 files 2.3.7 adds plus the `aar-metadata.properties` that every AAR carries.)
 
 ---
 
