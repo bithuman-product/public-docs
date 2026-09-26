@@ -236,6 +236,17 @@ paths:
                     `400 VALIDATION_ERROR`. Identity inputs and creation times
                     differ per model — see the endpoint description table and
                     [Essence vs Expression](#tag/models).
+                version:
+                  type: string
+                  enum: [v1, v2]
+                  default: v1
+                  deprecated: true
+                  description: >-
+                    **Older form — send a full model name in `model` instead.**
+                    With a bare family name in `model` (`essence` or
+                    `expression`), `v1` selects the first-generation model and
+                    `v2` the second-generation one. Ignored when `model` is a
+                    full model name or `auto`.
       responses:
         "200":
           description: Generation started
