@@ -50,9 +50,7 @@ curl -X POST https://api.bithuman.ai/v1/realtime/ephemeral-token \
 
 ## Limits & billing
 
-- **Balance-gated:** you must have a positive credit balance to mint (`402 INSUFFICIENT_BALANCE`
-  otherwise). No credits are deducted at mint time — realtime voice is metered per active minute
-  (10 credits/min) once the session runs. See [Pricing](/guides/pricing).
+- **Balance-gated:** minting needs a positive balance (`402 INSUFFICIENT_BALANCE`).
 - **Rate limit:** up to 20 mints per minute per account (`429 RATE_LIMITED`).
 - Other errors: `401` missing/invalid key · `404` account not found · `502` if OpenAI is
   unreachable or rejects the request.

@@ -2256,8 +2256,8 @@ paths:
       description: >-
         Mint a short-lived OpenAI-Realtime client secret so a browser can open a realtime
         voice session without your API secret. Mint on the server and pass only `data.value`
-        to the client. Balance-gated; rate-limited to 20/min. Realtime voice is metered at
-        10 credits/min once the session runs.
+        to the client. Balance-gated: minting needs a positive balance
+        (402 INSUFFICIENT_BALANCE). Rate-limited to 20/min.
       tags: [Voice]
       security:
         - apiSecret: []
