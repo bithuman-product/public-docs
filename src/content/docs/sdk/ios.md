@@ -30,7 +30,7 @@ Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or E
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.17.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.17.1")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -175,7 +175,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.17.0 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.17.1 or newer
   ```
 
 ## Performance
