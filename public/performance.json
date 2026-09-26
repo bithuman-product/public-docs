@@ -331,11 +331,11 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 50,
-     "x_realtime": 2.0,
+     "fps": 49,
+     "x_realtime": 1.96,
      "realtime": true,
-     "measured_on": "2026-09-25",
-     "release": "bithuman 2.11.12",
+     "measured_on": "2026-09-26",
+     "release": "bithuman 2.11.13",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -351,8 +351,8 @@
      "fps": 47,
      "x_realtime": 2.35,
      "realtime": true,
-     "measured_on": "2026-09-25",
-     "release": "bithuman 2.11.12",
+     "measured_on": "2026-09-26",
+     "release": "bithuman 2.11.13",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42

@@ -21,7 +21,7 @@ Essence 2 plays at 25 fps (up to 1080p; 1080×1920 portrait for a standard ident
 | macOS · Python | Apple M4 | 174 | **6.9×** real time | 169 | **8.4×** real time |
 | macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |
-| Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |
+| Linux · Python | Intel Core i7-13700F (x86_64) | 49 | **1.9×** real time | 47 | **2.3×** real time |
 | iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 111 | **5.5×** real time |
 | Android | Samsung Galaxy S25+ | 52 | **2.0×** real time | 48 | **2.4×** real time |
 | Web browser (WebGPU) | Chrome on Apple M4 | 42 | **1.6×** real time | 38 | **1.9×** real time |
