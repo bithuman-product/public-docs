@@ -122,6 +122,7 @@ The [cloud example](https://github.com/bithuman-product/bithuman-examples/tree/m
 - `livekit_url` in the mint call must be the URL the plugin connects to (`LIVEKIT_URL`, unless you pass `livekit_url=` to `AvatarSession.start()`).
 - If you run your own LiveKit server, use `livekit-server` 1.9.12 or newer. With older servers, browsers leave and rejoin the room every 15 s, and the video stalls each time.
 - To render the avatar on your own machine instead of the cloud, pass `model_path=` — see [Talk to an avatar on your machine](/guides/local-voice-avatar).
+- When the avatar renders on your own machine (`model_path=`) with Expression 2, the mouth can move about 0.1 s before the voice. LiveKit's avatar runner holds up to 100 ms of audio before playing it, and the plugin publishes each picture as soon as it is rendered. A fix is proposed upstream in [livekit/agents#7492](https://github.com/livekit/agents/pull/7492). Avatars rendered in the cloud (`avatar_id=`) are not affected.
 
 ## Performance
 
