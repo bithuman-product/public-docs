@@ -26,6 +26,17 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### CLI 2.8.0 — 2026-09-26
+
+Tag `cli-v2.8.0`.
+
+- **Changed:** avatars download at about half the size. `pull`, `run` and `render` fetch only the parts this computer uses: an Essence 2 avatar is about 70–90 MB instead of 150 MB, and an Expression 2 avatar about 35 MB on a Mac or 65 MB on Linux instead of 200 MB. Every download is checked against its published digest, and the rendered video is the same.
+- **Changed:** the bitHuman brain (the voice chat that needs no OpenAI key) and a prepaid offline pack count active session time, talking or idle, the same rule as every bitHuman surface.
+- **Changed:** `BITHUMAN_API_BASE` and `--api-base` accept only `https://api.bithuman.ai` or another `https://*.bithuman.ai` address; any other value is ignored with a notice.
+- **Fixed:** `bithuman logout` revokes only the secret `bithuman login` stored. A secret from the environment or a `./.env` file is never revoked.
+- **Fixed:** the notice that a newer CLI is available always finds the newest CLI release.
+- **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
+
 ### `bithuman` 2.11.13 — 2026-09-26
 
 - **Fixed:** an Expression 2 reply through `AsyncBithuman` (and the LiveKit plugin) plays through without the brief pause about a second in, where the face froze and the voice stopped. A reply that is already complete starts sooner, and a reply pushed in a single call starts once its first part is rendered instead of after all of it.
