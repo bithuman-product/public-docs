@@ -201,6 +201,12 @@ jobs:
       - name: Check billing consistency
         if: always()
         run: node scripts/check-billing-consistency.mjs
+      # The realtime price table is generated from GET /v1/pricing (src/data/pricing.json,
+      # refreshed by `node scripts/sync-pricing.mjs --fetch --write` with a free account's
+      # secret). Offline here: the block must be the render of the snapshot, never hand text.
+      - name: The realtime price table is the render of the /v1/pricing snapshot
+        if: always()
+        run: node scripts/sync-pricing.mjs
       # No documented `model` example may name a model its own endpoint's enum
       # does not list (the 2026-07-29 essence-2-quality incident). See note 3
       # above for the half of the drift this cannot see and where that runs.
