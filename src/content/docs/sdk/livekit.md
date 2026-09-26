@@ -24,7 +24,7 @@ label: "LiveKit agents"
 ## Install
 
 ```bash
-pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman pillow bithuman python-dotenv
+pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv
 ```
 
 ## Authenticate
@@ -132,7 +132,6 @@ Cloud frame rates are on [Cloud API performance](/performance/cloud).
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `No module named 'PIL'` | the plugin needs Pillow | install `pillow` |
 | The mint call returns `403` | the token was minted for another agent, room or LiveKit URL | mint with the same `agent_code`, `room_name` and `livekit_url` the plugin uses |
 | The mint call returns `401` | a missing or invalid API secret | check `BITHUMAN_MASTER_SECRET` |
 | The avatar speaks with the wrong model | the plugin serves the agent's own model | create an agent with the model you want |

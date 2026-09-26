@@ -8,7 +8,7 @@ type: changelog
 label: "Changelog"
 ---
 
-What changed in each release, newest first. Current versions are on [Downloads & versions](/downloads) and in [/versions.json](/versions.json). Entries before August 2026 are in the [archive](/changelog/archive).
+What changed in each release, newest day first (grouped by artifact within a day). Current versions are on [Downloads & versions](/downloads) and in [/versions.json](/versions.json). Entries before August 2026 are in the [archive](/changelog/archive).
 
 ## Breaking changes
 
@@ -74,6 +74,7 @@ Essence 2 engine 1.14.0 · Expression 2 engine 2.7.0
 ### Flutter plugin 2.6.18 — 2026-09-26
 
 - **Changed:** iOS and macOS use Essence 2 engine 1.14.0, whose usage reports name the install. Android is unchanged.
+- iOS and macOS do not build from the published tag yet; use the plugin on Android.
 
 ### Swift package 2.16.0 — 2026-09-25
 
@@ -86,6 +87,7 @@ Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0
 
 - **Changed:** iOS and macOS use Essence 2 engine 1.13.0, which contains no MLX.
 - **Action:** pin `ref: flutter-plugin-v2.6.17`.
+- iOS and macOS do not build from the published tag yet; use the plugin on Android.
 
 ### Dashboard — 2026-09-25
 
@@ -131,6 +133,7 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 
 - **Changed:** iOS and macOS use Expression 2 engine 2.7.0, which fixes lip sync.
 - **Action:** pin `ref: flutter-plugin-v2.6.15`.
+- iOS and macOS do not build from the published tag yet; use the plugin on Android.
 
 ### `bithuman` 2.11.12 — 2026-09-25
 
@@ -140,7 +143,7 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 
 ### `bithuman` 2.11.11 — 2026-09-25
 
-- **Changed:** an offline render — `bithuman.open(...).render(audio)` and `python -m bithuman render` — is billed for the length of the video it produces (frames ÷ frame rate), the same as the `bithuman` CLI and the Video API. It was billed for the time the render took, so a fast machine paid for a fraction of the video. Live avatars (`AsyncBithuman`, the LiveKit plugin) are unchanged: they bill the seconds the avatar talks, and idle is free. Renders made before this release are not billed again.
+- **Changed:** an offline render — `bithuman.open(...).render(audio)` and `python -m bithuman render` — is billed for the length of the video it produces (frames ÷ frame rate) at the self-hosted rate, the same as `bithuman render` in the CLI. It was billed for the time the render took. Live avatars (`AsyncBithuman`, the LiveKit plugin) are unchanged: they bill the seconds the avatar talks, and idle is free. Renders made before this release are not billed again.
 - **Action:** `pip install -U bithuman`.
 
 ### `bithuman` 2.11.10 — 2026-09-24
@@ -234,6 +237,7 @@ Essence 2 engine 1.12.1 · Expression 2 engine 2.6.5
 
 - **Changed:** iOS and macOS use Essence 2 engine 1.12.1.
 - **Action:** pin `ref: flutter-plugin-v2.6.14`.
+- iOS and macOS do not build from the published tag yet; use the plugin on Android.
 
 ### `bithuman` 2.11.8 — 2026-09-23
 
@@ -261,6 +265,7 @@ Essence 2 engine 1.12.0 · Expression 2 engine 2.6.5
 
 - **Changed:** Android uses `essence2-android` 0.5.15 and `expression2-android` 0.4.10. iOS and macOS use Essence 2 engine 1.12.0.
 - **Action:** pin `ref: flutter-plugin-v2.6.13`.
+- iOS and macOS do not build from the published tag yet; use the plugin on Android.
 
 ### `essence2-android` 0.5.15 — 2026-09-23
 
@@ -451,7 +456,6 @@ Expression 2 engine 2.6.3
 ### `essence2-android` 0.5.7 — 2026-09-15
 
 - **Breaking:** the `ElevateFrames` constructor (legacy `ai.bithuman.elevate` package, kept for compatibility) drops its execution-provider argument.
-- **Removed:** the development-only unmetered variable.
 
 ### CLI 2.6.20 — 2026-09-14
 

@@ -22,9 +22,10 @@ Article 50 comes from assuming their vendor carries it.
 ## Who is who
 
 The Act splits duties between the party that puts an AI system on the market and
-the party that uses it. The European Commission's own FAQ addresses the case
-directly: a company selling an AI avatar API is the **provider**, and the
-customer using that API is the **deployer**.
+the party that uses it. Under the Act's definitions, bitHuman, which places the
+models on the market under its own name, is the **provider**, and you, using them
+under your authority, are the **deployer**; the Commission FAQ lists avatars among
+the systems whose providers owe Article 50(1).
 
 | Detail | Party | What that means here |
 |---|---|---|

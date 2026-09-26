@@ -81,9 +81,12 @@ export async function sectionLinked(s: LlmsSection): Promise<any[]> {
 }
 
 function choosePath(): string {
-  let out = `# Choose your path\n\nURL: ${SITE}/start\n\n`;
+  // The same content as /start.md: the path table, then each runnable card.
+  let out = `# Get started\n\nURL: ${SITE}/start\n\n## Choose your path\n\n`;
   out += "| You want to… | Use | Needs | First command |\n|---|---|---|---|\n";
-  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | \`${p.first.replace(/\|/g, "\\|")}\` |\n`;
+  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? "— ([contact sales](https://www.bithuman.ai/sales))" : "`" + p.first.replace(/\|/g, "\\|") + "`"} |\n`;
+  out += `\n## Run it\n`;
+  for (const p of PLATFORMS.filter((x) => x.card)) out += `\n### ${p.want}: ${p.use}\n\n\`\`\`${p.card!.lang}\n${p.card!.code}\n\`\`\`\n\nExpected: ${p.card!.expect}\n`;
   return out;
 }
 

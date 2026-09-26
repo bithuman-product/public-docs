@@ -26,9 +26,9 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 |---|---|---|
 | REST API | — | header `api-secret` |
 | CLI | `BITHUMAN_API_SECRET` | `bithuman login` stores a credential for you |
-| Python | `BITHUMAN_API_SECRET` | `api_secret=` |
+| Python | `BITHUMAN_API_SECRET` (read by `bithuman.open`) | `api_secret=` on `AsyncBithuman.create()` and `bithuman.offline.render_offline()` only; `bithuman.open()` reads the environment |
 | Apple | `BITHUMAN_API_SECRET` | `Essence2Credential.set` / `Expression2Credential.set` |
-| Android | `BITHUMAN_API_SECRET` | `Essence2Credential.set` / `Expression2Credential.set` |
+| Android | — | `Essence2Credential.set(secret)` / `Expression2Credential.set(secret)` before `fetch()` and `create()`; fetch the secret from your backend in a shipped app |
 | LiveKit worker | `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET` | a short-lived token minted from it, never the secret ([LiveKit](/sdk/livekit#authenticate)) |
 | Web embed | — | none for a public agent; an [embed token](/api/embedding) for a private one |
 
