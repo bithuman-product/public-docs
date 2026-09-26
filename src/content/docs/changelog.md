@@ -26,6 +26,12 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### expression2-android 0.5.1 — 2026-09-26
+
+- **Fixed:** billing can no longer be changed from app code: the meter's endpoint, whether from `Expression2Metering.apiBaseUrl` or the `BITHUMAN_API_URL` environment variables, is honoured only for an `https://` bitHuman host.
+- **Added:** each installation names itself on the meter: a random id is kept in the app's storage. Set `Expression2Metering.installId` or `BITHUMAN_INSTALL_ID` to choose it yourself.
+- **Action:** `implementation("ai.bithuman:expression2-android:0.5.1")`.
+
 ### essence2-android 0.8.0 — 2026-09-26
 
 - **Fixed:** billing can no longer be changed from app code. `Essence2Metering.fps` is ignored (deprecated, still compiles), and the meter's endpoint, whether from `apiBaseUrl` or the `BITHUMAN_API_URL` environment variables, is honoured only for an `https://` bitHuman host.

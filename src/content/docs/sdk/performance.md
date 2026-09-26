@@ -15,7 +15,7 @@ Essence 2 plays at 25 fps (up to 1080p; 1080×1920 portrait for a standard ident
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
 |---|---|---|---|---|---|
 | Cloud API · GPU | NVIDIA RTX 4090 | 98 | **3.9×** real time | 340 | **17.0×** real time |
-| Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |
+| Cloud API · Apple silicon | Apple M4 Max | 71 | **2.8×** real time | 111 | **5.5×** real time |
 | Cloud API · CPU | x86 server CPU | 28 | **1.1×** real time | 27 | **1.3×** real time |
 | macOS · CLI | Apple M4 | 114 | **4.5×** real time | 165 | **8.2×** real time |
 | macOS · Python | Apple M4 | 174 | **6.9×** real time | 169 | **8.4×** real time |

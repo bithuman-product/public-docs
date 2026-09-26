@@ -171,7 +171,7 @@ class Essence2RenderFailed : IllegalStateException
 
 ## Expression 2
 
-Generated from `ai.bithuman:expression2-android:0.5.0` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:expression2-android:0.5.1` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.expression2.*`.
 
