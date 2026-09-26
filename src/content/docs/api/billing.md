@@ -10,7 +10,7 @@ label: "Billing & usage"
 
 ## The credits model
 
-bitHuman bills in **credits**: talking time in a live session bills per minute (idle time is free), and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/guides/pricing). These endpoints read your balance, your usage and the rate schedule.
+bitHuman bills in **credits**: talking time in a live session bills by the exact second at a per-minute rate (idle time is free), and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/guides/pricing). These endpoints read your balance, your usage and the rate schedule.
 
 ## Account status
 
@@ -73,10 +73,10 @@ curl https://api.bithuman.ai/v1/pricing \
     "realtime": {
       "unit": "credits_per_minute",
       "hosted": {
-        "by_model": { "essence-2": { "rate": 4, "rounding": "minutes_min1", "basis": "…" }, "…": {} },
-        "chat_line": { "rate": 10, "rounding": "minutes_min1", "basis": "…" }
+        "by_model": { "essence-2": { "rate": 4, "rounding": "seconds_floor_carry", "basis": "…" }, "…": {} },
+        "chat_line": { "rate": 10, "rounding": "seconds_floor_carry", "basis": "…" }
       },
-      "self_hosted": { "by_model": { "essence-2": { "rate": 2, "rounding": "minutes_min1", "basis": "…" }, "…": {} } }
+      "self_hosted": { "by_model": { "essence-2": { "rate": 2, "rounding": "seconds_floor_carry", "basis": "…" }, "…": {} } }
     },
     "notes": "Authoritative charges are enforced server-side at request time. …"
   }

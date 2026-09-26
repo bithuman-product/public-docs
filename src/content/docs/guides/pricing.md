@@ -28,7 +28,7 @@ Managed conversational agents bill on top of avatar serving:
 |---|---|
 | Managed agent — voice chat | 10 credits/min |
 
-How talking time is billed (`rounding: minutes_min1`): talking time only (idle is free), in whole talking minutes x rate; a session that talks at all bills at least one minute.
+How talking time is billed (`rounding: seconds_floor_carry`): exact talking seconds x rate / 60 (idle is free), rounded down per session with the remainder carried to your next session; no minimum.
 <!-- /PRICING:REALTIME -->
 
 A credit minute is a minute in which the avatar is **actually talking**. **Idle animation is free**: a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between replies. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
