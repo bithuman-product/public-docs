@@ -1,6 +1,6 @@
 ---
 title: "Pricing & credits"
-description: "Credits pay for talking time; idle time is free. Rates per model and platform, creation costs, plans, offline licensing, and how to check your balance."
+description: "Credits pay for active session time, talking or idle, by the exact second. Rates per model and platform, creation costs, plans, offline licensing, and how to check your balance."
 section: guides
 group: "Pricing"
 order: 40
@@ -8,7 +8,7 @@ type: guide
 label: "Pricing & credits"
 ---
 
-Credits pay for talking time. Idle time is free. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here.
+Credits pay for the time an avatar session is running, talking or idle, billed by the exact second. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here.
 
 ## Serving — credits per live minute
 
@@ -29,10 +29,10 @@ Managed conversational agents bill on top of avatar serving:
 | Managed agent — voice chat | 10 credits/min |
 | Managed agent — camera on (vision chat; replaces the chat rate) | 30 credits/min |
 
-How talking time is billed: exact talking seconds x rate / 60 (idle is free), rounded down per session with the remainder carried to your next session; no minimum.
+How talking time is billed: active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum.
 <!-- /PRICING:REALTIME -->
 
-A credit minute is a minute in which the avatar is **actually talking**. **Idle animation is free**: a connected avatar looping its idle motion accrues nothing, and neither does a runtime left loaded between replies. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+A session bills while it is **running**, whether the avatar is talking or idle, to the exact second: seconds × rate ÷ 60, rounded down per session, with the fraction carried to your next session. A stopped or disconnected session accrues nothing. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
 Expression 1 (`expression-1`) is a cloud model; the legacy self-hosted GPU container bills 2 credits/min.
 
@@ -145,7 +145,7 @@ Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by t
 
 ## What is not billed
 
-- Idle, paused, stopped or disconnected sessions.
+- Stopped or disconnected sessions.
 - API secrets, SDK installs and model downloads (a download writes a 0-credit usage row).
 - Failed creations and renders (refunded) and failed authentication.
 

@@ -293,16 +293,20 @@ const RULE_CORPUS = [
 //   contradicted itself on the money — "Idle time is free" in one paragraph and
 //   "idle animation … accrues" in three others — and this file read green
 //   throughout. Section 3c below closes that.
-const DEFINITION = /minute in which the avatar is \*\*actually talking\*\*/;
-const DEFINITION_IDLE = /\*\*Idle animation is free\*\*/;
+// ★OWNER RULING 2026-09-26 (~13:35Z) CHANGED THE RULE AGAIN: "bill users regardless of
+//   talking or idle, as the avatar is working regardless" — one rule everywhere, active
+//   session time by the exact second. The authority now says so; the talking-only
+//   sentences below are RETIRED on this page.
+const DEFINITION = /bills while it is \*\*running\*\*, whether the avatar is talking or idle/;
+const DEFINITION_IDLE = /A stopped or disconnected session accrues nothing/;
 // The shapes the page must NO LONGER carry anywhere: the retired rule. Keeping
 // them as a REFUSAL rather than deleting the strings means a well-meaning
 // revert of any one paragraph is caught, not silently re-served.
 const RETIRED_ACCRUAL = [
-  /includes idle\/silent animation/i,
-  /idle animation included/i,
-  /silent still accrues/i,
-  /idle motion is rendering, and accrues/i,
+  // the 2026-09-22 talking-only rule, retired by the 2026-09-26 ruling
+  /\*\*Idle animation is free\*\*/i,
+  /\bIdle time is free\b/i,
+  /minute in which the avatar is \*\*actually talking\*\*/i,
 ];
 // Offline `bithuman render` — the ruling's second clause: it bills the output
 // duration. Asserted on the pricing page so the CLI pages have one place to
@@ -322,20 +326,9 @@ const STALE_RULES = [
     re: /\b(?:charged|billed|bills?|metered|credits?)\b[^.\n]{0,80}?\bframes\s+(?:actually\s+)?delivered\b/gi,
     fixture: "Credits are charged per **whole minute of frames actually delivered**",
     say: "that is what one CLI build COUNTS, not the rule — describe the build's count as a fact, and link the rule" },
-  // ★2026-09-23: THE RETIRED IDLE-ACCRUAL RULE, ON EVERY PAGE — not only the
-  // authority. RETIRED_ACCRUAL below grades guides/pricing.md alone, so the
-  // same sentence stayed live wherever it had been copied: pricing's own
-  // "How metering works" ("Silence does not pause the meter … billed at the
-  // same rate as a speaking one", which no RETIRED_ACCRUAL pattern matched),
-  // /concepts/essence-2, /concepts/expression-2, /concepts/models-v2,
-  // /guides/session-troubleshooting (twice) and examples/swift-ios-essence2 —
-  // seven places telling a reader idle is billed beside the page saying it is
-  // free. A dated changelog entry may still record what the rule WAS.
-  { name: "idle is billed",
-    re: /\bidle(?:\/silent)?\s+(?:animation|stretches?|time)\b[^.\n]{0,20}?\b(?:included|accrues|is\s+billed)\b|\bincluding\s+idle(?:\/silent)?\b|\bsilence\s+does\s+not\s+pause\s+the\s+meter\b|\bbilled\s+at\s+the\s+same\s+(?:per-minute\s+)?rate\s+as\s+(?:a\s+)?speaking\b/gi,
-    fixture: "metered for the whole time a session is live — **idle/silent animation included**",
-    say: "the 2026-09-22 ruling: idle animation is free — link /guides/pricing instead of restating the rule",
-    datedChangelogMayRecord: true },
+  // (2026-09-26: the cross-page "idle is billed" rule is RETIRED with the talking-only
+  // ruling it enforced — under the owner's 2026-09-26 ruling idle IS billed. The pages that
+  // still say idle is free are being rewritten; this guard pins the authority, 3a/3c.)
   { name: "the way Linux already was",
     re: /\bway\s+Linux\s+already\s+(?:was|did)\b/gi,
     fixture: "billed at the self-hosted rate — the way Linux already was. Up to and including 2.6.1",
@@ -347,12 +340,10 @@ const STALE_RULES = [
 // these, the guard would be forbidding a fact, and this run says so.
 const NEGATIVE_CONTROLS = [
   "cli-v2.6.2 counts frames delivered ÷ fps, which under-counts a preview that paints below nominal fps; corrected in 2.6.3.",
-  'A "credit minute" is a minute in which the avatar is **actually talking**. **Idle animation is free**.',
+  "A session bills while it is **running**, whether the avatar is talking or idle, to the exact second.",
   "[selfhost-meter] session x2-litert-ae31a6cbf0124577 closed — beats delivered=1 failed=0 frames=85",
   "[selfhost-meter] beat seq=1 served=4.2s product=expression-2 delivered (final)",
   "Before 2.6.2 only an Expression 2 session on Linux was metered; Essence 2 on either platform was not.",
-  "that is the idle loop, and idle animation is not billed.",
-  "Usage is counted on the rule in Serving: talking minutes accrue, idle animation does not.",
 ];
 
 let ruleFilesGraded = 0;
@@ -385,7 +376,7 @@ for (const rule of STALE_RULES) {
   if (!DEFINITION.test(serving) || !DEFINITION_IDLE.test(serving)) {
     failures.push(
       `guides/pricing.md: the Serving section no longer defines a credit minute as ` +
-        `"a minute in which the avatar is **actually talking** … **Idle animation is free**" — ` +
+        `"bills while it is **running**, whether the avatar is talking or idle … A stopped or disconnected session accrues nothing" — ` +
         `every self-host page links here for the rule, so the definition must stay on this page`
     );
   }
