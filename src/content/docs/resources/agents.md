@@ -15,7 +15,8 @@ Everything on this site is available in a form an agent can read without parsing
 | File | What it holds |
 |---|---|
 | [/llms.txt](/llms.txt) | A short index: key facts, one command per platform, performance, and links |
-| [/llms-full.txt](/llms-full.txt) | Getting started, the API, every platform page and the guides in one file |
+| [/llms-full.txt](/llms-full.txt) | Getting started, the REST API and every platform page in one file |
+| [/llms/start.txt](/llms/start.txt), [/llms/api.txt](/llms/api.txt), [/llms/sdk.txt](/llms/sdk.txt), [/llms/guides.txt](/llms/guides.txt) | The same text one section at a time; the guides (models, pricing, self-hosting and more) are in `/llms/guides.txt` |
 | `<any page>.md` | Every page as markdown, for example [/sdk/python.md](/sdk/python.md). Each HTML page links its twin with `rel="alternate"` |
 | [/api/openapi.yaml](/api/openapi.yaml) | The REST API as OpenAPI 3 |
 | [/versions.json](/versions.json) | The current version and install line of every artifact |
