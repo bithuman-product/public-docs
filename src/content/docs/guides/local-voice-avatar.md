@@ -10,7 +10,7 @@ label: "Local voice avatar"
 
 Everything except the voice model runs on your computer. LiveKit is the stock `livekit-server`, OpenAI Realtime listens, thinks and speaks on your own `OPENAI_API_KEY`, and the bitHuman avatar renders on your CPU — no GPU needed.
 
-The avatar name picks the model: `wise-pup` is Expression 2, `sofia-ramirez` is Essence 2, or pass your own agent code or avatar file. You need two secrets: `BITHUMAN_API_SECRET` (both models refuse to render without it) and `OPENAI_API_KEY`.
+The avatar name picks the model: `wise-pup` is Expression 2, `sofia-ramirez` is Essence 2, or pass your own agent code or avatar file. You need two secrets: your bitHuman API secret (both models refuse to render without it) and `OPENAI_API_KEY`.
 
 ```text
 Your browser  <──>  livekit-server  <──>  the agent: OpenAI Realtime hears you and replies;
@@ -60,7 +60,7 @@ python3.13 -m venv .venv && . .venv/bin/activate  # Ubuntu 24.04: python3.12
 pip install -r requirements.txt
 
 # 3. Keys: in .env, never on the command line
-cp .env.example .env                              # fill BITHUMAN_API_SECRET and OPENAI_API_KEY
+cp .env.example .env                              # fill BITHUMAN_MASTER_SECRET and OPENAI_API_KEY
 
 # 4. Run, in two terminals
 livekit-server --dev                              # terminal 1
@@ -85,7 +85,8 @@ async def entrypoint(ctx: JobContext):
         voice=os.getenv("BITHUMAN_VOICE", "coral"),
         turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))  # reply 0.5 s after you stop
     # The avatar renders in this process and publishes the lip-synced video and audio.
-    avatar = bithuman.AvatarSession(model_path=os.environ["BITHUMAN_MODEL_PATH"])
+    avatar = bithuman.AvatarSession(model_path=os.environ["BITHUMAN_MODEL_PATH"],
+                                    api_secret=os.environ["BITHUMAN_MASTER_SECRET"])
     await avatar.start(session, room=ctx.room)
     await session.start(agent=Agent(instructions="You are a friendly assistant."),
                         room=ctx.room, room_options=RoomOptions(audio_output=False))
@@ -110,7 +111,7 @@ The Python example reads these from `.env`:
 
 | Variable | Default | What it does |
 |---|---|---|
-| `BITHUMAN_API_SECRET` | — | Your API secret. Rendering is metered on it. |
+| `BITHUMAN_MASTER_SECRET` | — | Your API secret, passed to the plugin explicitly. Rendering is metered on it. A LiveKit worker never gets `BITHUMAN_API_SECRET`: the plugin reads that name by itself and, for a cloud avatar, copies it into the room. `agent.py` refuses to start while it is set. |
 | `OPENAI_API_KEY` | — | Your OpenAI key. |
 | `BITHUMAN_AVATAR` | `wise-pup` | Which avatar ([table above](#pick-the-avatar)). |
 | `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-2.1-mini` | The OpenAI Realtime model. |
@@ -129,7 +130,7 @@ Talking time bills bitHuman credits and idle is free; OpenAI bills your own key.
 | `bithuman run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run`` | The CLI needs livekit-server 1.13 or newer | `brew upgrade livekit` (macOS), or reinstall the CLI (Linux: its download includes one) |
 | The video stalls for 1–2 s every 15 s, or a LiveKit Meet tile goes black | `livekit-server` older than 1.9.12: the browser leaves and rejoins the room every 15 s | `brew upgrade livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux), then restart `livekit-server` |
 | `livekit-server not found` (exit 69) | LiveKit is not installed | `brew install livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux) |
-| The avatar never appears | No or invalid `BITHUMAN_API_SECRET` | Sign in with `bithuman login`, or set it in `.env` |
+| The avatar never appears | No or invalid API secret | CLI: `bithuman login`. Python example: set `BITHUMAN_MASTER_SECRET` in `.env` |
 | The avatar never appears; the terminal shows `essence-2: ffmpeg not found` | Essence 2 unpacks its avatar with `ffmpeg` | `sudo apt install -y ffmpeg`, then run again |
 | `This example needs Python 3.11, 3.12 or 3.13` | The plugin installs without `bithuman` on 3.10 and 3.14 | Make the venv with Python 3.11–3.13 |
 | The page says it could not connect | `livekit-server --dev` is not running | Start it, then click **Start** again |

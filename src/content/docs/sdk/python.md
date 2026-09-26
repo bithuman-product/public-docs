@@ -118,13 +118,14 @@ The [LiveKit plugin](/sdk/livekit) runs `AsyncBithuman` inside a LiveKit Agents 
 # excerpt: python/self-host/agent.py (bithuman-examples)
 session = AgentSession(llm=openai.realtime.RealtimeModel(model="gpt-realtime-2.1-mini", voice="coral",
     turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))   # reply 0.5 s after you stop
-avatar = bithuman.AvatarSession(model_path="wise-pup.imx")    # renders here; reads BITHUMAN_API_SECRET
+avatar = bithuman.AvatarSession(model_path="wise-pup.imx",    # renders here
+                                api_secret=os.environ["BITHUMAN_MASTER_SECRET"])
 await avatar.start(session, room=ctx.room)
 await session.start(agent=Agent(instructions="You are a friendly assistant."),
                     room=ctx.room, room_options=RoomOptions(audio_output=False))
 ```
 
-The plugin installs `bithuman` on Python 3.11–3.13. The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
+In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass it explicitly: the plugin reads `BITHUMAN_API_SECRET` by itself and, for a cloud avatar, copies it into the room ([LiveKit](/sdk/livekit#authenticate)). The plugin installs `bithuman` on Python 3.11–3.13. The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
 
 ## Platform notes
 

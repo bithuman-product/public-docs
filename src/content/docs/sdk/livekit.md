@@ -29,10 +29,12 @@ pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman pillow bith
 
 ## Authenticate
 
-Keep your API secret in the worker's environment, and never pass it to the plugin. The plugin copies whatever you pass as `api_secret` into the avatar participant's attributes, which every participant in the room can read. Instead, exchange the secret for a one-hour token that can only start this agent's avatar in this room (`POST /v1/runtime-tokens/mint` with `"scope": "livekit-cloud"`), and pass that token.
+Keep your API secret in the worker's environment as `BITHUMAN_MASTER_SECRET`, and use it only to mint a one-hour token that can start this agent's avatar in this room (`POST /v1/runtime-tokens/mint` with `"scope": "livekit-cloud"`). Pass that token to the plugin, never the secret.
+
+> **Warning** Never set `BITHUMAN_API_SECRET` in a LiveKit worker's environment (plugin 1.8.4 and older). The plugin reads it by itself whenever `api_secret=` is omitted and copies it into the avatar's participant attributes, which everyone in the room can read.
 
 ```bash
-export BITHUMAN_API_SECRET="<your API secret>"
+export BITHUMAN_MASTER_SECRET="<your API secret>"   # not BITHUMAN_API_SECRET: the plugin reads that one itself
 export BITHUMAN_AGENT_ID=A23WJF0199
 export LIVEKIT_URL=wss://your-project.livekit.cloud
 export LIVEKIT_API_KEY=… LIVEKIT_API_SECRET=…
@@ -61,7 +63,7 @@ async def livekit_cloud_token(agent_code: str, room_name: str) -> str:
     async with aiohttp.ClientSession() as http:
         async with http.post(
             "https://api.bithuman.ai/v1/runtime-tokens/mint",
-            headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
+            headers={"api-secret": os.environ["BITHUMAN_MASTER_SECRET"]},
             json={"agent_code": agent_code, "scope": "livekit-cloud",
                   "room_name": room_name, "livekit_url": os.environ["LIVEKIT_URL"]},
         ) as resp:
@@ -108,7 +110,7 @@ python agent.py dev
 - **Your own client.** The avatar is a normal LiveKit participant: any LiveKit client SDK (JavaScript, Swift, Kotlin) subscribes to its video and audio tracks. The app takes a room token from your server, never a bitHuman secret.
 - **Choosing a model.** The plugin serves the agent's own model. Do not pass `model=`; create the agent with the model you want ([Models](/concepts/models)).
 - **A photo instead of an agent.** `avatar_image=` with no `avatar_id` animates the photo on Expression 1 only. On every other model the launch is refused with `400 VALIDATION_ERROR` before anything is billed: [create an agent](/api/agents#generate-an-agent) from the photo and pass its code as `avatar_id`.
-- **Rendering on your own machine.** Pass `model_path=` (an avatar file) instead of `avatar_id=`: the avatar renders inside the worker's process on its CPU, and the API secret stays in that process. Runnable example: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
+- **Rendering on your own machine.** Pass `model_path=` (an avatar file) instead of `avatar_id=`, and the secret explicitly: `api_secret=os.environ["BITHUMAN_MASTER_SECRET"]`. The avatar renders inside the worker's process on its CPU, and the secret stays in that process. Runnable example: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
 - **Several agents in one room.** The avatar lip-syncs the agent that calls `AvatarSession.start()` and ignores other agents' audio.
 - **Gestures.** Trigger avatar actions from your agent: [Gestures](/guides/avatar-actions).
 
@@ -132,7 +134,7 @@ Cloud frame rates are on [Cloud API performance](/performance/cloud).
 | `No module named 'cv2'` on import | on Python 3.10 or 3.14 the plugin does not pull `bithuman` | install `bithuman` too, as in the install line |
 | `No module named 'PIL'` | the plugin needs Pillow | install `pillow` |
 | The mint call returns `403` | the token was minted for another agent, room or LiveKit URL | mint with the same `agent_code`, `room_name` and `livekit_url` the plugin uses |
-| The mint call returns `401` | a missing or invalid API secret | check `BITHUMAN_API_SECRET` |
+| The mint call returns `401` | a missing or invalid API secret | check `BITHUMAN_MASTER_SECRET` |
 | The avatar speaks with the wrong model | the plugin serves the agent's own model | create an agent with the model you want |
 | The video stalls for 1–2 s every 15 s, or a LiveKit Meet tile goes black | `livekit-server` older than 1.9.12: the browser leaves and rejoins the room every 15 s | `brew upgrade livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux), then restart `livekit-server` |
 | Two voices play | the agent session also publishes audio | set `room_options=RoomOptions(audio_output=False)` |

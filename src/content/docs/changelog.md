@@ -26,6 +26,11 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### LiveKit docs and examples — 2026-09-26
+
+- **Changed:** a LiveKit worker keeps your API secret as `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`. `livekit-plugins-bithuman` 1.8.4 and older reads `BITHUMAN_API_SECRET` by itself whenever `api_secret=` is omitted, and copies it into the avatar's participant attributes, which everyone in the room can read. The [LiveKit page](/sdk/livekit#authenticate) and the LiveKit examples now use the new name and refuse to start while the old one is set.
+- **Action:** rename the variable in your worker's environment and mint a room token from it. If a worker ran a cloud avatar with `BITHUMAN_API_SECRET` set and no `api_secret=`, create a new secret and delete the old one in the console.
+
 ### Billing — 2026-09-26
 
 - **Changed:** realtime sessions are now billed by exact talking seconds, with no per-session minimum. A session's fraction of a credit carries to your next session. Idle time stays free. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/guides/pricing).
