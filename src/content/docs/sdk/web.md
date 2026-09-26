@@ -14,7 +14,7 @@ The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2) | [a photoreal person from one portrait](/concepts/essence-2) |
 | **Cloud rendering (default)** | yes | yes |
-| **In the visitor's tab (`?render=local`)** | yes | yes, when the avatar has a browser build; otherwise it switches to cloud |
+| **In the visitor's tab (`?render=local`)** | yes, with WebGPU; otherwise it switches to cloud | yes, with WebGPU and a browser build; otherwise it switches to cloud |
 
 ## Before you start
 
@@ -55,7 +55,7 @@ Add parameters to the URL:
 | `greetingLang` | a language code, for example `es` | Language of the first greeting |
 | `greetingMsg` | text | The first thing the avatar says |
 
-Other parameters are ignored. With `render=local`, the avatar downloads once (50–200 MB, then cached) and renders in the tab with WebGPU; the conversation still runs on our servers. Without a usable GPU the avatar shows its idle motion and plays the speech without lip-sync, so use cloud rendering when you need lip-sync on every machine.
+A private agent also takes `token`, and a session can pin its model with `model`; both are on [Embedding](/api/embedding). Other parameters are ignored. With `render=local`, the avatar downloads once (50–200 MB, then cached) and renders in the tab with WebGPU; the conversation still runs on our servers. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
 
 Check for a usable GPU before you choose `render=local`:
 
@@ -68,7 +68,7 @@ async function hasRealGPU() {
 }
 ```
 
-If you host the page yourself and use `render=local`, send `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless`; without them the in-tab renderer runs on one thread.
+Do not send `Cross-Origin-Embedder-Policy` from the page that holds the iframe: the embed does not send one itself, so the browser refuses to load it.
 
 To build your own video UI instead of the hosted page, subscribe to a cloud-rendered avatar over [LiveKit](/sdk/livekit).
 
@@ -87,9 +87,8 @@ In-browser frame rates (WebGPU) are on [Web browser performance](/performance/we
 |---|---|---|
 | The microphone never activates | `allow` is missing `microphone *` | use `allow="microphone *"` |
 | `404` | the agent code is wrong, or the agent is private | check the code; mint an [embed token](/api/embedding) for a private agent |
-| `render=local` reloads as `render=cloud` | this Essence 2 avatar has no browser build | nothing to do; it is served from the cloud |
-| In-tab rendering is slow | the page is not cross-origin isolated | send the two headers above |
-| The avatar moves but its lips do not follow | no usable GPU in this browser | use cloud rendering, or check `hasRealGPU()` first |
+| `render=local` reloads as `render=cloud` | no usable GPU (WebGPU) in this browser, or this Essence 2 avatar has no browser build | nothing to do; it is served from the cloud. Check `hasRealGPU()` first to choose the mode yourself |
+| The iframe shows a browser error page | your page sends `Cross-Origin-Embedder-Policy` | remove that header from the page that holds the iframe |
 
 ## Reference
 
