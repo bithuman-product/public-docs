@@ -39,7 +39,7 @@ curl -X POST https://api.bithuman.ai/v2/organizations \
 ```
 
 ```json
-{ "id": "org_a1b2c3", "name": "Acme Inc", "slug": "acme-inc", "owner_user_id": "user_123",
+{ "id": "0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d", "name": "Acme Inc", "slug": "acme-inc", "owner_user_id": "3f9a2c1b-8e7d-4a6f-9b21-c4d5e6f70812",
   "plan": "membership_business", "max_members": 25, "created_at": "2026-07-15T10:00:00Z" }
 ```
 
@@ -64,10 +64,10 @@ members too; regular members see only active ones.
 
 ```json
 {
-  "org_id": "org_a1b2c3",
+  "org_id": "0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
   "members": [
-    { "id": "mem_1", "user_id": "user_123", "email": "owner@acme.com", "role": "owner", "status": "active" },
-    { "id": "mem_3", "email": "invitee@acme.com", "role": "admin", "status": "pending" }
+    { "id": "8a0e1f2a-3b4c-4d5e-9f6a-7b8c9d0e1f2a", "user_id": "3f9a2c1b-8e7d-4a6f-9b21-c4d5e6f70812", "email": "owner@acme.com", "role": "owner", "status": "active" },
+    { "id": "9b1f2a3b-4c5d-4e6f-8a7b-8c9d0e1f2a3b", "email": "invitee@acme.com", "role": "admin", "status": "pending" }
   ],
   "total": 2
 }
@@ -83,11 +83,11 @@ members too; regular members see only active ones.
 | `role` | string | no | `admin` or `member` (default `member`). |
 
 ```json
-{ "message": "Invitation created", "invite_token": "…", "member_id": "mem_9" }
+{ "message": "Invitation sent", "invite_token": "…", "member_id": "8a0e5c6d-7e8f-4a9b-8c0d-1e2f3a4b5c6d", "email_sent": true, "invite_url": "https://www.bithuman.ai/invite?token=…" }
 ```
 
-The invite token is valid 7 days; the invite link is `…/invite?token=<token>` (emailed if SMTP
-is configured, otherwise share it yourself). Errors: `403` seat limit reached or owner no longer
+The invite is valid 7 days. We email `invite_url` to the invitee; if `email_sent` is false,
+send them the link yourself. Errors: `403` seat limit reached or owner no longer
 Pro+ · `409` already a member or pending.
 
 ### Other member operations
@@ -114,16 +114,24 @@ Org-scoped API secrets are what the [Knowledge API](/api/knowledge) and other or
 { "alias": "ci-pipeline", "secret": "k7m2…aC8e" }
 ```
 
+## Share an agent with the org
+
+| Method / path | Role | Notes |
+|---|---|---|
+| `GET /v2/agents/{agent_code}/share-org` | owner or org member | Returns `{agent_code, org_id, shared, can_share}`. |
+| `POST /v2/agents/{agent_code}/share-org` | see notes | Body `{"org_id": "<org uuid>"}` shares the agent (the agent's owner, who must be a member); `{"org_id": null}` unshares it (the owner or any active member). |
+
 ## Usage & audit
 
 | Method / path | Role | Notes |
 |---|---|---|
 | `GET /v2/organizations/{org_id}/usage` | admin | Per-member credit usage, highest first. |
 | `GET /v2/organizations/{org_id}/audit-log` | admin | Recent org events; `?limit` (default 50, max 200). |
+| `GET /v2/organizations/{org_id}/credits` | member | Balance of the wallet that funds this workspace (the owner's). |
 
 ```json
 // usage
-{ "org_id": "org_a1b2c3", "usage": [ { "user_id": "user_456", "email": "dev@acme.com", "total_credits_used": 1240.5 } ] }
+{ "org_id": "0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d", "usage": [ { "user_id": "7c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f", "email": "dev@acme.com", "total_credits_used": 1240.5 } ] }
 ```
 
 Audit events include `create_org`, `invite_member`, `accept_invite`, `update_role`,

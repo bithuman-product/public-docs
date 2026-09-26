@@ -51,7 +51,7 @@ the [embed token flow](/api/embedding) instead. See
 - **Drive live sessions** — make a hosted agent speak or inject silent
   knowledge into an active room. See [Agents](/api/agents).
 - **Add gestures** — generate and toggle conversational animations. See
-  [Dynamics](/api/dynamics).
+  [Gestures](/api/dynamics).
 - **Ground agents in your docs** — ingest files and URLs into knowledge bases from
   code. See [Knowledge](/api/knowledge).
 - **Add realtime voice** — mint a browser client secret for OpenAI-Realtime

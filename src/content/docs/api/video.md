@@ -20,11 +20,13 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 ## Generate a talking video
 
-`POST /v1/video/generate` returns a `job_id` with `status: "processing"`; poll [`GET /v1/video/{job_id}`](#get-talking-video-status) until it completes.
+**Before you start:** you need an agent you own. List yours with `curl https://api.bithuman.ai/v1/agents -H "api-secret: $BITHUMAN_API_SECRET"` and `export BITHUMAN_AGENT_CODE=A…`. The free plan cannot create one ([Pricing](/guides/pricing#the-free-tier-cannot-create-an-agent)).
+
+`POST /v1/video/generate` returns a `job_id` with `status: "processing"`; poll [`GET /v1/video/{job_id}`](#get-talking-video-status) until it completes, or register a [webhook](/api/webhooks) for `video.completed` / `video.failed`.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, or `essence-2`. All four render talking video today. |
+| `model` | string | yes | Engine: `essence-1`, `expression-1`, `expression-2`, or `essence-2`. All four render talking video today. A model outside your plan returns `403 PLAN_REQUIRED`. |
 | `agent_code` | string | yes | An agent you own — supplies the avatar identity (and, for text, the default voice). |
 | `input` | object | yes | The render source — see below. |
 | `input.type` | string | yes | `text` or `audio`. |
@@ -36,15 +38,14 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 ### Text input
 
 ```python
-import os
-import requests
+import os, requests
 
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
     headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "essence-2",
-        "agent_code": "A80HVD8577",
+        "agent_code": os.environ["BITHUMAN_AGENT_CODE"],
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
     },
 )
@@ -62,13 +63,13 @@ print(resp.json())
 ### Audio input
 
 ```python
-import os
+import os, requests
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
     headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "expression-2",
-        "agent_code": "A80HVD8577",
+        "agent_code": os.environ["BITHUMAN_AGENT_CODE"],
         "input": {"type": "audio", "audio_url": "https://example.com/speech.wav"},
     },
 )
@@ -83,13 +84,13 @@ in the same response — no polling. If the render exceeds the ~90-second cap yo
 get the async `{ job_id }` to poll instead.
 
 ```python
-import os
+import os, requests
 resp = requests.post(
     "https://api.bithuman.ai/v1/video/generate",
     headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
     json={
         "model": "essence-2",
-        "agent_code": "A80HVD8577",
+        "agent_code": os.environ["BITHUMAN_AGENT_CODE"],
         "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
         "wait": True,
     },
@@ -115,8 +116,7 @@ Errors are returned at submit time, before any charge: `402 INSUFFICIENT_BALANCE
 `GET /v1/video/{job_id}` — poll a render job.
 
 ```python
-import os
-import requests
+import os, requests
 
 job_id = "vid_3f9a2c1b8e7d4a6f0b21"
 resp = requests.get(

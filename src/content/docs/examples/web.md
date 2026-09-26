@@ -42,7 +42,7 @@ Save this as `index.html`:
 </head>
 <body>
   <iframe src="https://www.bithuman.ai/embed/A23WJF0199"
-          allow="microphone *" width="420" height="720"></iframe>
+          allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
 </body>
 </html>
 ```
@@ -73,7 +73,7 @@ The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a re
 
 | Symptom | Fix |
 |---|---|
-| No microphone prompt | keep `allow="microphone *"` on the iframe, and serve the page from `localhost` or HTTPS |
+| No microphone prompt | keep `microphone *` (and `camera *` for camera chat) in `allow`, and serve the page from `localhost` or HTTPS |
 | A blank frame | check [status.bithuman.ai](https://status.bithuman.ai), then reload |
 | Your own avatar does not load | a private agent needs an [embed token](/api/embedding) from your server |
 

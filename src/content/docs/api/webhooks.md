@@ -8,9 +8,10 @@ type: endpoint
 label: "Webhooks"
 ---
 
-Agent generation is asynchronous — minutes for the first-generation models,
-about 2 to 2.5 hours for either second-generation one. Instead of polling
-`GET /v1/agent/status/{id}`, register a **webhook** and bitHuman will POST a
+Agent generation and talking-video renders are asynchronous — agent creation takes
+minutes for the first-generation models and about 2 to 2.5 hours for either
+second-generation one. Instead of polling `GET /v1/agent/status/{id}` or
+`GET /v1/video/{job_id}`, register a **webhook** and bitHuman will POST a
 signed event to your endpoint the moment the work finishes.
 
 ## Events
@@ -19,6 +20,9 @@ signed event to your endpoint the moment the work finishes.
 |-------|------------|
 | `agent.ready` | An agent finished generating and is ready to use. |
 | `agent.failed` | Agent generation failed (`data.error` has the reason). |
+| `video.completed` | A `POST /v1/video/generate` render finished. `data` has the same shape as `GET /v1/video/{job_id}`: `job_id`, `status`, `model`, `video_url`, `duration_seconds`, `credits_charged`. |
+| `video.failed` | A render failed. `data.error.message` has the reason, and the charge is refunded. |
+| `ping` | Sent only by `POST /v1/webhooks/{id}/test`. |
 
 More event types will be added over time. Subscribe to a subset, or omit
 `events` (or pass `[]`) to receive all of them.
@@ -48,6 +52,8 @@ curl -X POST https://api.bithuman.ai/v1/webhooks \
   }
 }
 ```
+
+Keep the id for the calls below: `export WEBHOOK_ID=<data.id from the response>`.
 
 > The `secret` is returned **only once**. Store it — it signs every delivery and
 > is redacted from all later responses.
@@ -91,11 +97,11 @@ change the bytes and break the signature.
 ## Delivery & retries
 
 - Respond `2xx` quickly (within 10s). Do heavy work asynchronously.
-- Failed deliveries are retried up to **3 times** with backoff.
+- Each delivery is attempted up to 3 times (immediately, then after 2 s and 5 s); each attempt times out after 10 s.
 - Every attempt is logged. Inspect recent attempts:
 
 ```bash
-curl https://api.bithuman.ai/v1/webhooks/{id}/deliveries \
+curl https://api.bithuman.ai/v1/webhooks/$WEBHOOK_ID/deliveries \
   -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
@@ -129,13 +135,13 @@ it in your handler. Return `200` quickly and do the work on a queue.
 
 ```bash
 # Send a test ping to confirm reachability
-curl -X POST https://api.bithuman.ai/v1/webhooks/{id}/test -H "api-secret: $BITHUMAN_API_SECRET"
+curl -X POST https://api.bithuman.ai/v1/webhooks/$WEBHOOK_ID/test -H "api-secret: $BITHUMAN_API_SECRET"
 
 # List
 curl https://api.bithuman.ai/v1/webhooks -H "api-secret: $BITHUMAN_API_SECRET"
 
 # Delete
-curl -X DELETE https://api.bithuman.ai/v1/webhooks/{id} -H "api-secret: $BITHUMAN_API_SECRET"
+curl -X DELETE https://api.bithuman.ai/v1/webhooks/$WEBHOOK_ID -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
 See the [API reference](/api/reference#tag/webhooks) for the full schema.

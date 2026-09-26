@@ -1,5 +1,5 @@
 ---
-title: "Dynamics API"
+title: "Gestures API"
 description: "Generate and manage conversational gesture animations — waves, nods, laughs, idle motions — for an avatar."
 section: api
 group: "Build"
@@ -10,8 +10,8 @@ label: "Gestures"
 
 ## Overview
 
-Dynamics are conversational gesture animations (wave, nod, laugh, idle motions)
-for an avatar. Generate them asynchronously, then toggle them on to make the
+Gestures are conversational animations (wave, nod, laugh, idle motions) for an
+Essence 1 avatar; the API paths use the word `dynamics`. Generate them asynchronously, then toggle them on to make the
 gesture model the active one for live sessions. During conversation, gestures fire
 automatically on keyword mapping — or you can trigger an exact gesture from your code.
 Dynamics generation costs 250 credits.
@@ -32,7 +32,7 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `agent_id` | string | yes | — | Agent ID to generate dynamics for. |
 | `image_url` | string | no | from agent | Source image URL. Defaults to the agent's primary image. |
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
-| `model` | string | no | `seedance` | Gesture-video generation preset: `seedance` (default) or `auto` (recommended — selects the best backend). The retired `kling` value is still accepted but is coerced to `seedance`. |
+| `model` | string | no | — | Leave it out. (`auto` and `seedance` are accepted and select the same gesture model.) |
 
 > **Note** The Python examples below use
 > [`requests`](https://pypi.org/project/requests/), which is not in the standard
@@ -45,7 +45,7 @@ import requests
 resp = requests.post(
     "https://api.bithuman.ai/v1/dynamics/generate",
     headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    json={"agent_id": "A80HVD8577", "duration": 5, "model": "auto"},
+    json={"agent_id": "A80HVD8577", "duration": 5},
 )
 print(resp.json())
 ```
@@ -76,6 +76,7 @@ resp = requests.get(
     f"https://api.bithuman.ai/v1/dynamics/{agent_id}",
     headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
 )
+resp.raise_for_status()
 gestures = resp.json()["data"].get("gestures", {})
 print(list(gestures.keys()))
 ```
@@ -116,11 +117,9 @@ successful update, background-movements regeneration is automatically triggered.
 | `dynamics.enabled` | boolean | no | Enable or disable dynamics for this agent. |
 | `toggle_enabled` | boolean | no | `true` switches to the dynamics model; `false` restores the default talking model. |
 
-```json
-{
-  "dynamics": { "enabled": true },
-  "toggle_enabled": true
-}
+```bash
+curl -X PUT https://api.bithuman.ai/v1/dynamics/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET" \
+  -H "Content-Type: application/json" -d '{"dynamics": {"enabled": true}, "toggle_enabled": true}'
 ```
 
 ```json

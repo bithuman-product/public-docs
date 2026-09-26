@@ -33,7 +33,7 @@ You can only manage your own API secrets.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `alias` | string | no | A label for the API secret (≤32 chars). Auto-generated if omitted. |
+| `alias` | string | no | A label for the API secret. Auto-generated (a timestamp) if omitted; send `{}` (a request with no body returns `400`). |
 
 ```bash
 curl -X POST "https://api.bithuman.ai/v2/$USER_ID/api-secrets" \
@@ -48,7 +48,7 @@ listed in plaintext later.
 { "alias": "prod-server", "secret": "k7m2p9x4…Sn3Q8vT1w…aC8e" }
 ```
 
-Errors: `409` alias already exists · `404` account not found.
+Errors (body `{"detail": "…"}`): `409` alias already exists · `403` the `user_id` in the path is not yours · `404` account not found.
 
 ## List API secrets
 

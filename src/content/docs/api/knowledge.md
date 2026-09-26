@@ -10,19 +10,22 @@ label: "Knowledge"
 
 ## Overview
 
-The Knowledge API lets you ingest source material and build **knowledge bases (KBs)**
-your agents answer from — entirely from code. It covers the ingest → create → build →
-resync loop: upload a file or URL, create a KB from those files, and rebuild it when the
-sources change.
+The Knowledge API lets you ingest sources and build **knowledge bases (KBs)** from code;
+attach a knowledge base to an agent in the dashboard. It covers the ingest → create →
+build → resync loop: upload a file or URL, create a KB from those files, and rebuild it
+when the sources change.
 
-> **Note** These endpoints need an [organization API secret](/api/organizations#organization-api-secrets); a personal secret returns `403`. What you create belongs to the organization and counts against its quotas.
+> **Note** These endpoints need an [organization API secret](/api/organizations#organization-api-secrets); a personal secret returns `403`. What you create belongs to the organization.
 
 Ingestion and builds run **asynchronously**: each call returns immediately with the created
-row, and conversion/indexing continues in the background. There is no per-call credit charge —
-limits are your plan's file-count and KB-count quotas, plus a build concurrency cap (1 at a
-time) and a daily build cap (20/day).
+row, and conversion/indexing continues in the background. There is no per-call credit charge
+and no file or knowledge-base quota. Builds run one at a time per account, up to 20 per day.
 
-Base URL `https://api.bithuman.ai`. Authenticate with the `api-secret` header.
+Base URL `https://api.bithuman.ai`. Authenticate with the `api-secret` header:
+
+```bash
+export ORG_API_SECRET="<organization API secret>"
+```
 
 ## Ingest a file or URL
 
@@ -73,8 +76,7 @@ curl -X POST https://api.bithuman.ai/v1/knowledge/files \
 ```
 
 Use the returned `id` when creating a KB. Errors: `413` file over 100 MB · `422` empty file,
-missing `file`/`url`, non-public URL, or bad `sync_freq` · `409` `QUOTA_EXCEEDED` (file-count
-limit reached).
+missing `file`/`url`, non-public URL, or bad `sync_freq`.
 
 ## Create a knowledge base
 
@@ -109,8 +111,7 @@ curl -X POST https://api.bithuman.ai/v1/knowledge/kbs \
 
 `build_dispatched` is `true` only when `build` was `true`, files were attached, and the build
 queued successfully. The KB is still created (`201`) otherwise — build it later with the
-rebuild call. Errors: `404` a `file_id` doesn't exist · `403` a `file_id` isn't yours · `409`
-`QUOTA_EXCEEDED` (KB-count limit).
+rebuild call. Errors: `404` a `file_id` doesn't exist · `403` a `file_id` isn't yours.
 
 ## List knowledge bases
 
@@ -164,6 +165,7 @@ Errors: `404` unknown KB · `422` `KB_EMPTY` (no source files) · `409` `BUILD_I
 
 ## Scope & limits
 
-The `/v1/knowledge` surface covers ingest → create → build → resync. Status polling, agent
-attach/detach, sharing, Q&A curation, and build history are managed in the dashboard (the
-session-authed `/v2/knowledge` surface) and aren't on the developer key yet.
+The `/v1/knowledge` surface covers ingest → create → build → resync. Attaching a knowledge
+base to an agent, sharing, Q&A curation and build history are in the
+[dashboard](https://www.bithuman.ai) only. To follow a build, list your KBs
+(`GET /v1/knowledge/kbs`) and read `status` and `built_rev`.

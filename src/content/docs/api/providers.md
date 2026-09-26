@@ -158,8 +158,8 @@ Requests to your endpoint carry the visitor's identifier in the standard OpenAI
 
 The value is resolved in this order, and the first one present wins:
 
-1. the **`endUserId`** claim in the embed token you minted (also accepted as
-   `fingerprint`) — see [Embedding](/api/embedding#production-mint-a-token);
+1. the **`fingerprint`** you passed to [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token)
+   (it travels in the token as its `endUserId` claim);
 2. an explicit **`?end_user_id=`** on the embed URL (aliases: `endUserId`,
    `visitor_id`, `fingerprint`);
 3. the **session correlator** — a per-conversation identifier we generate.

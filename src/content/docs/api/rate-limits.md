@@ -23,14 +23,14 @@ Requests are limited **per account** (every API secret on the account shares the
 | Cost tier | Covers |
 |---|---|
 | **Generate** | heavy jobs: `POST /v1/agent/generate`, `POST /v1/dynamics/generate`, video generation |
-| **Write** | every other `POST`, `PUT`, `PATCH`, `DELETE`, including `POST /v1/tts` |
-| **Read** | `GET` requests, such as `GET /v1/agent/status/*` and `GET /v2/credit-summaries` |
+| **Write** | every other `POST`, `PUT`, `PATCH`, `DELETE`, including `POST /v1/tts`, plus `GET /v1/agent/{code}/sessions` |
+| **Read** | other `GET` requests, such as `GET /v1/agent/status/*` and `GET /v2/credit-summaries` |
 
 A plan change reaches the limiter within about a minute; no new secret is needed. Over the limit, the API returns `429 RATE_LIMITED` with a `Retry-After` header and the standard [error envelope](/api/errors).
 
 **Never limited:** webhook deliveries, and the runtime-token routes (`/v1/runtime-tokens*`, `/v1/runtime/*`) that keep a live session authenticated. A live session is never cut off with a `429`.
 
-**Failed authentication** is throttled per client IP at 30 failures per minute. Anonymous endpoints (token mints, `/v1/me`, CLI login) allow 120 requests per minute per IP.
+**Failed authentication** is throttled per client IP at 30 failures per minute. Routes that check the secret themselves (embed-token and realtime mints, `/v1/me`, CLI sign-in) are limited per client IP, at 120 requests per minute, instead of per account.
 
 ## Session concurrency
 
@@ -43,7 +43,11 @@ A plan change reaches the limiter within about a minute; no new secret is needed
 | Enterprise | 200 |
 | Custom (contact sales) | Unlimited |
 
-A session over the allowance is refused at start with `403 CONCURRENCY_LIMIT_REACHED`; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up. Sessions you render on your own hardware are limited only by your credits ([self-hosting](/guides/self-hosting)). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
+A session over the allowance is refused at start with `403 CONCURRENCY_LIMIT_REACHED`; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up.
+
+**Session length.** One continuous session can run up to 24 hours in the cloud and 7 days self-hosted. It then ends with `403 SESSION_DURATION_LIMIT`; start a new session to continue. For longer unattended installs (kiosks), [contact sales](https://www.bithuman.ai/sales).
+
+Sessions you render on your own hardware are limited only by your credits ([self-hosting](/guides/self-hosting)). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
 
 ## Response headers
 
@@ -61,20 +65,22 @@ Not every response carries them (`POST /v1/validate` has none); fall back to bac
 
 ## Recommended retry strategy
 
-Retry `429` and `503` with exponential backoff and jitter, honouring `Retry-After`:
+Retry `429` and `5xx` with exponential backoff and jitter, honouring `Retry-After`:
 
 ```python
 import time, random, requests
 
-def api_request_with_retry(url, headers, max_retries=3):
+def call(method, url, max_retries=5, **kw):
     for attempt in range(max_retries):
-        resp = requests.post(url, headers=headers)
-        if resp.status_code not in (429, 503):
+        resp = requests.request(method, url, timeout=30, **kw)
+        if resp.status_code not in (429, 502, 503, 504):
             return resp
         wait = float(resp.headers.get("Retry-After", 2 ** attempt))
         time.sleep(wait + random.uniform(0, 1))
     return resp
 ```
+
+Usage: `call("POST", "https://api.bithuman.ai/v1/tts", headers=h, json={...})`.
 
 ## Best practices
 

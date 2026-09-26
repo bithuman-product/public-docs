@@ -13,17 +13,13 @@ label: "Embedding"
 Drop an agent onto any page as an iframe — no SDK install required:
 
 ```html
-<iframe
-  src="https://bithuman.ai/embed/A78WKV4515"
-  allow="microphone *; camera *; autoplay *"
-  style="width: 100%; height: 600px; border: 0;"
-></iframe>
+<iframe src="https://www.bithuman.ai/embed/A78WKV4515" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
 ```
 
 Replace `A78WKV4515` with your agent code — find it in the
 [Library](https://www.bithuman.ai/#library) or the Deploy & Share dialog.
 
-> **Warning** Write `allow="microphone *"`, with the `*`. The embed redirects to another origin, so a bare `allow="microphone"` leaves the microphone silently blocked. A restrictive `Permissions-Policy` on your page blocks it too.
+> **Warning** Keep `microphone *` (and `camera *` for camera chat) in `allow`, with the `*`. The embed redirects to another origin, so a bare `allow="microphone"` leaves the microphone silently blocked. A restrictive `Permissions-Policy` on your page blocks it too.
 
 ## Production: mint a token
 
@@ -36,13 +32,14 @@ append it to the iframe URL.
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `agent_id` | string | yes | Agent code (e.g. `A78WKV4515`). |
-| `fingerprint` | string | yes | Stable per-visitor hex string. Used for per-visitor rate limiting, to key the agent's conversation memory so a returning visitor is recognised, and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
-| `model` | string | no | Request a specific avatar model for the session — a model name (`essence-1`, `expression-1`, `essence-2`, `expression-2`) or a force-tier slug (`essence-2-gpu/-apple/-cpu`, `expression-2-gpu/-cpu/-apple`; the older `-ane` spelling stays accepted for saved links, embeds and share tokens — [per model](/concepts/models#advanced-pin-a-serving-tier)). Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
+| `fingerprint` | string | yes | Stable per-visitor string (any format). Used for per-visitor rate limiting, to key the agent's conversation memory so a returning visitor is recognised, and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
+| `model` | string | no | Optional model name: `essence-1`, `expression-1`, `essence-2` or `expression-2`. To pin a serving tier see [Models](/concepts/models#advanced-pin-a-serving-tier). A model outside your plan returns `403 PLAN_REQUIRED`. Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
 Every entry of `supported_models` in the mint response (and in `GET /v1/agent/status/{id}`) is a model name you can send back as `model` unchanged.
 
 ```js
 // server: mint token (api-secret never reaches the browser)
+const visitorFingerprint = "3f9a2c1b8e7d4a6f0b21c4d5e6f70812"; // one stable id per visitor, persisted
 const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
   method: "POST",
   headers: {
@@ -51,7 +48,7 @@ const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
   },
   body: JSON.stringify({
     agent_id: "A78WKV4515",
-    fingerprint: visitorFingerprint, // stable per-device hex
+    fingerprint: visitorFingerprint,
   }),
 });
 const { data: { token } } = await res.json();
@@ -66,47 +63,25 @@ const { data: { token } } = await res.json();
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "sid": "f3c9...",
-    "supported_models": ["essence-2", "expression-2"]
+    "model": "expression-2",
+    "supported_models": ["essence-1", "expression-2"]
   }
 }
 ```
 
 The `token` is a **1-hour, HS256-signed JWT**. Mint one per visitor session.
 `supported_models` lists the canonical model families the agent can be
-launched as right now (useful for building your own model picker); when you
-requested a `model`, the response also echoes the `model` baked into the
-token.
+launched as right now (useful for building your own model picker). The
+response always includes the `model` baked into the token (the agent's own
+model when you omit it).
 
 ### Use the token in the iframe
 
-Pass it as a query string (or as the `data-token` attribute on the embed widget
-script tag):
+Pass it as a query string:
 
 ```html
-<iframe
-  src="https://bithuman.ai/embed/A78WKV4515?token=THE_TOKEN"
-  allow="microphone *; camera *; autoplay *"
-  style="width: 100%; height: 600px; border: 0;"
-></iframe>
+<iframe src="https://www.bithuman.ai/embed/A78WKV4515?token=THE_TOKEN" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
 ```
-
-## Pin a serving tier
-
-To pin a session to one cloud tier for a benchmark, append a force-tier slug as
-`?model=` to the iframe URL — or, better, pass it as `model` when you mint the
-token, so a typo is refused with a `400` instead of being ignored:
-
-```html
-<iframe
-  src="https://bithuman.ai/embed/A66GYD8664?token=THE_TOKEN&model=expression-2-cpu"
-  allow="microphone *; camera *; autoplay *"
-  style="width: 400px; height: 700px; border: 0;"
-></iframe>
-```
-
-The slugs and what a pin does are on
-[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier). For
-production, omit `model` and let the platform choose.
 
 ## Session events
 
