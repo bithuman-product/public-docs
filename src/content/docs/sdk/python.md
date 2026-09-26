@@ -59,11 +59,16 @@ print(len(frames), "frames of", frames[0].shape)
 
 `render` takes a path to any audio file `ffmpeg` reads, or already-decoded 16 kHz mono audio (`int16` or `float32` arrays, or raw 16-bit bytes). Frames are RGB; OpenCV expects BGR, so write one with `cv2.imwrite("frame.png", image[:, :, ::-1])`. The same call opens Essence 2 and Essence 1 `.imx` files.
 
-To write an MP4 instead, use the offline route (Essence 2, needs `ffmpeg`):
+To write an MP4 instead, use the offline route (Essence 2, needs `ffmpeg`). Download the `sofia-ramirez` Essence 2 sample first:
+
+```bash
+curl -fL -o sofia-ramirez.imx "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2"
+```
 
 ```python
 from bithuman.offline import render_offline
-render_offline("executive-coach.imx", "speech.wav", out_mp4="out.mp4")
+render_offline("sofia-ramirez.imx", "speech.wav", out_mp4="out.mp4")
+# → out.mp4: 1080×1920 with the speech, 15.2 s
 ```
 
 ## Integrate into your app
