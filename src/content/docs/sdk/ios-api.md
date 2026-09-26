@@ -1,6 +1,6 @@
 ---
 title: "Apple API reference"
-description: "Every entry point in the Swift package: the Expression2 Swift API, the Essence2 C interface, credentials and return codes."
+description: "Every entry point in the Swift package: the Expression2 and Essence2Kit Swift APIs, the Essence2 C interface, credentials and return codes."
 section: sdk
 group: "Reference"
 order: 82
@@ -27,31 +27,39 @@ All products ship `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-arm
 ```swift
 import Expression2
 
-Expression2Credential.set(_ apiSecret: String)          // before create; else BITHUMAN_API_SECRET
+Expression2Credential.set(_ secret: String?)   // before create; else BITHUMAN_API_SECRET; nil clears it
 
 static func Expression2Engine.create(
-    avatarContainer: URL,          // the .imx you downloaded
-    sharedEngineContainer: URL,    // the shared .engine file
-    stagingDir: URL) throws -> Expression2Engine
+    avatarContainer: URL,             // the .imx you downloaded
+    sharedEngineContainer: URL? = nil, // the shared .engine file
+    sharedEngineDir: URL? = nil,
+    stagingDir: URL,
+    warmSpeech: [Float]? = nil) throws -> Expression2Engine
 
 static func Expression2Engine.create(   // for containers you already unpacked
     modelPath: URL,
-    sharedEngineDir: URL) throws -> Expression2Engine
+    sharedEngineDir: URL? = nil,
+    warmSpeech: [Float]? = nil) throws -> Expression2Engine
 
-func feed(_ samples: [Float])            // 16 kHz mono PCM
-func flushTail()                         // end of an utterance
-func pull() -> ([UInt8], Int)?           // BGR, width * height * 3; nil until a frame is ready
-var idle: [UInt8]?                       // the next idle frame
-func resetState(clearFrames: Bool)       // interrupt: drop queued audio and frames
-var width: Int
-var height: Int
+func feed(_ samples: [Float])                   // 16 kHz mono PCM
+func flushTail()                                // end of an utterance
+func pull() -> (frame: [UInt8], speech: Bool)?  // BGR, width * height * 3; nil until a frame is ready
+var idle: [UInt8]?                              // the next idle frame
+func idle(into buffer: inout [UInt8]) -> Int    // the next idle frame into your buffer; bytes written
+func resetState(clearFrames: Bool = true)       // interrupt: drop queued audio and frames
+func shutdown()                                 // waits for the last usage report
+var isReady: Bool
+var hasPendingTail: Bool
+var queuedFrames: Int
+var meteringRefusal: String?
+let width: Int, height: Int
 
 static func Expression2Download.avatar(   // download an avatar file; sha256-checked, cached
     agentCode: String,
     directory: URL? = nil) async throws -> URL   // nil: Caches/bitHuman/expression2/avatars
 ```
 
-`create` throws `Expression2LoadError.meteringRefused` when the API secret is missing or rejected, or when the service cannot be reached at the start; `meteringRefusal` carries the message. `pull()` never blocks; poll it. `Expression2Download.avatar` throws `Expression2Download.Failure` when the download is refused, fails, or does not match its sha256.
+`create` throws `Expression2LoadError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start; `meteringRefusal` carries the message. `pull()` never blocks; poll it. `Expression2Download.avatar` throws `Expression2Download.Failure` when the download is refused, fails, or does not match its sha256.
 
 ## Essence 2 (Swift)
 
@@ -113,6 +121,8 @@ Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(in
 
 Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
+The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.14.0 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.14.0) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+
 ### Credentials
 
 | Function | Purpose |
@@ -123,10 +133,11 @@ Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B,
 
 | Function | Purpose | Returns |
 |---|---|---|
-| `be_essence2_create(const char* imx_path, const char* motion_dir, int32_t chunk, be_essence2_handle* out)` | Opens an avatar. Pass `NULL` and `0` for the last-but-one arguments | `0`; `-1` bad argument; `-2` the file could not be opened; `-3` the session was refused (no secret, rejected secret, or no network at the start) |
+| `be_essence2_create(const char* imx_path, const char* motion_dir, int32_t chunk, be_essence2_handle* out)` | Opens an avatar. Pass `NULL` for `motion_dir` and `0` for `chunk` | `0`; `-1` bad argument; `-2` the file could not be opened; `-3` the session was refused (no secret, rejected secret, or no network at the start) |
 | `be_essence2_is_ready(h)` | Warm-up finished; speech frames can flow | `1` or `0` |
 | `be_essence2_destroy(h)` | Releases one engine; background work drains on its own | — |
 | `be_essence2_quiesce_all(int32_t timeout_ms)` | Stops every engine and waits for GPU work. Call from `applicationWillTerminate` | engines stopped |
+| `be_essence2_last_refusal(char* out, int32_t capacity)` | The sentence behind the latest `-3` (no secret, rejected secret, or cannot reach bitHuman) | its full byte length; `0` if nothing was refused |
 
 ### Audio and frames
 

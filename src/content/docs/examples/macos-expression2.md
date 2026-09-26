@@ -13,14 +13,14 @@ label: "macOS: Expression 2"
   <figcaption>Frames from the <code>macos-expression2</code> example on an Apple M4 iMac, with the speech clip it rendered (Swift package 2.14.2, the <code>wise-pup</code> sample avatar).</figcaption>
 </figure>
 
-The shortest native Apple path: a command-line tool that opens an avatar, feeds it a 16 kHz WAV and pulls 416×720 frames, with no server. It writes the first frame to `out/first-frame.png`; the clip above muxes every frame it pulled with the audio.
+The shortest native Apple path: a command-line tool that opens an avatar, feeds it a 16 kHz WAV and pulls 416×720 frames, rendered on this Mac; the engine contacts bitHuman only to check your API secret and report session time. It writes the first frame to `out/first-frame.png`; the clip above muxes every frame it pulled with the audio.
 
 ## Requirements
 
 | You need | Notes |
 |---|---|
-| A Mac with Apple silicon, Xcode 26 or newer | macOS 13 or newer |
-| About 800 MB of disk | 365 MB of downloads, plus the folder the engine unpacks them into |
+| A Mac with Apple silicon on macOS 15.6 or newer, with Xcode 26 or newer | the built tool runs on macOS 13 or newer |
+| About 800 MB of disk | about 370 MB of downloads (avatar + shared engine), plus the folder the engine unpacks them into |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
 ## Get the code
