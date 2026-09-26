@@ -4792,9 +4792,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.5.0",
-        "digest": "sha256:628e4682c6bc102b92ff691e9d29672dc84f693d2c072d217ec9d3cb735c09e4",
-        "filename": "expression2-android-0.5.0.aar",
+        "version": "0.5.1",
+        "digest": "sha256:ac8bc75b46545c04c0bfd3ff539b3b5dd607546c2e6a5c9d1d25525ba3deae66",
+        "filename": "expression2-android-0.5.1.aar",
         "resolved_on": "2026-09-26"
       },
       "surface": {
@@ -10247,11 +10247,11 @@
             }
           ],
           "public_classes_without_metadata": [],
-          "synthetic_classes": 5,
+          "synthetic_classes": 6,
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 71,
+          "class_files": 72,
           "declared_classes": 65,
           "public_classes": 43
         }

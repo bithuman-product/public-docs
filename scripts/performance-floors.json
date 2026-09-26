@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "e25f553da083aa071e148f8a12ed69cbcd386188785c26f06cdc8ece03405498",
-  "emitter_sha256": "edc079e7d9aa4ce8906d23620da62f06207980f67538e7b74d73e1600fc4b13f",
+  "record_sha256": "0e88baf7123f411127ae51281b2561872f87d016e70f3ebb5ae8cf7932fa97a8",
+  "emitter_sha256": "ffd8b9e6675e9294eb30a960c4d65b712c627f96c542dd0861d40bfbbdb95d66",
   "verified_on": "2026-09-26",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "db1438d6d9e290716fddd6a4ac705aa05142108c3e351ee9a48b368587d2ebf0"
+    "sha256": "9ce2fcc3cfeeb2d8a04999abcdaf18adca25a62b04193842d6ff8cb65072606c"
   },
   "blocks": [
     {
@@ -21,7 +21,7 @@
       "marker": "TABLE",
       "key": "cloud",
       "index": 0,
-      "sha256": "1a157d7d5c45428c74294c014b0c97bd98eaa6f8d107eb9870a696968d5cdefc"
+      "sha256": "dc62322d3226d20b21962845b042ca6af83d503567747733bab9b3f90029e566"
     },
     {
       "file": "src/content/docs/performance/cloud.md",
@@ -112,7 +112,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "cfd6e010187cdee0a2d6dc592aadb409ac0d9a8cdac2954c7bbdf5252ab4acae"
+      "sha256": "c06cbbb65bafc5587e0709f357bccffb38caf07e338c40103a7215117db91c8d"
     },
     {
       "file": "src/partials/performance-headline.md",
@@ -134,7 +134,7 @@
       {
         "label": "Cloud API · Apple silicon",
         "id": "apple-serve",
-        "line": "| Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |"
+        "line": "| Cloud API · Apple silicon | Apple M4 Max | 71 | **2.8×** real time | 111 | **5.5×** real time |"
       },
       {
         "label": "Cloud API · CPU",

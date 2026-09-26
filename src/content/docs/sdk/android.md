@@ -14,7 +14,7 @@ Both models render on the handset: you feed 16 kHz mono speech in and pull pictu
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), at the identity's own resolution, 25 fps |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
-| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.0")` | `implementation("ai.bithuman:essence2-android:0.8.0")` |
+| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.1")` | `implementation("ai.bithuman:essence2-android:0.8.0")` |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
@@ -51,7 +51,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.5.0")
+    implementation("ai.bithuman:expression2-android:0.5.1")
     // or: implementation("ai.bithuman:essence2-android:0.8.0")
 }
 ```
@@ -61,7 +61,7 @@ Put the secret in `~/.gradle/gradle.properties` as `bithumanApiSecret=…`, outs
 `expression2-android` brings the Qualcomm accelerator runtime with it (`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`). To keep the APK small and render on the CPU instead, exclude it:
 
 ```kotlin
-implementation("ai.bithuman:expression2-android:0.5.0") {
+implementation("ai.bithuman:expression2-android:0.5.1") {
     exclude(group = "com.qualcomm.qti")
 }
 ```
