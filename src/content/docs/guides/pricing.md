@@ -34,7 +34,7 @@ How live sessions are billed: active session time, talking or idle: exact second
 
 A session bills while it is **running**, whether the avatar is talking or idle, to the exact second: seconds × rate ÷ 60, rounded down per session, with the fraction carried to your next session. A stopped or disconnected session accrues nothing. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
-Expression 1 (`expression-1`) is a cloud model; the legacy self-hosted GPU container bills 2 credits/min.
+Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 
 ## Creation — one-time credits
 
@@ -129,19 +129,17 @@ curl https://api.bithuman.ai/v2/credit-summaries -H "api-secret: $BITHUMAN_API_S
       "essence_1_cloud": 2620,
       "essence_1_self_hosted": 5240,
       "expression_1_cloud": 1310,
-      "expression_1_self_hosted": 2620,
       "voice_chat": 524,
       "camera_chat": 174,
       "essence_cloud": 2620,
       "essence_self_hosted": 5240,
-      "expression_cloud": 1310,
-      "expression_self_hosted": 2620
+      "expression_cloud": 1310
     }
   }
 }
 ```
 
-Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by that rate. The unversioned `essence_*` and `expression_*` keys are the first-generation models; for Essence 2 read `essence_2_*`.
+Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by that rate. The response also carries `expression_1_self_hosted` and `expression_self_hosted`, left from a retired container: Expression 1 has no self-hosted mode, so ignore them. The unversioned `essence_*` and `expression_*` keys are the first-generation models; for Essence 2 read `essence_2_*`.
 
 ## What is not billed
 

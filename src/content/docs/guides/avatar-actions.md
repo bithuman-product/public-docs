@@ -10,19 +10,21 @@ label: "Gestures"
 
 Gestures are named clips baked into an avatar, such as `mini_wave_hello` or `clap_cheer`. Your code plays one by name, when it chooses: on an app event, a timer, or an allow-listed tool call. Nothing plays at random.
 
+Gestures are an Essence 1 feature; Essence 2 and Expression 2 avatars have no gesture clips.
+
 ## Before you start
 
-- An avatar with gestures generated ([Gestures API](/api/dynamics)), or the sample `A06DKG5760` ("Rascal Ravioli"), which has them.
+- An Essence 1 agent of yours with gestures generated ([Gestures API](/api/dynamics)).
 - A LiveKit agent worker with the bitHuman plugin ([LiveKit](/sdk/livekit)).
 
 ## 1. List the gesture names
 
 ```bash
-curl -s https://api.bithuman.ai/v1/dynamics/A06DKG5760 -H "api-secret: $BITHUMAN_API_SECRET"
+curl -s https://api.bithuman.ai/v1/dynamics/$AGENT_CODE -H "api-secret: $BITHUMAN_API_SECRET"
 # → {"success": true, "data": {"status": "ready", "gestures": {"mini_wave_hello": "…", "clap_cheer": "…"}}}
 ```
 
-The keys of `gestures` are the names you play. `A06DKG5760` has `mini_wave_hello`, `clap_cheer`, `heart_hands`, `laugh_react`, `blow_kiss_heart`, `thumbs_up_pulse`, `celebration_jump` and `talk_head_nod_subtle`.
+The keys of `gestures` are the names you play, for example `mini_wave_hello` or `clap_cheer`.
 
 ## 2. Play one
 
@@ -49,7 +51,7 @@ await avatar.runtime.push(VideoControl(action="mini_wave_hello"))
 
 ## 3. Wire it to your events
 
-As an allow-listed tool, so the language model can ask for a gesture only from your set:
+As an allow-listed tool, so the language model can ask for a gesture only from your set. This tool is for a self-hosted avatar (`AvatarSession(model_path=…)`). For a cloud avatar, put the `perform_rpc` call from step 2 in the tool body instead.
 
 ```python
 from livekit.agents import function_tool, RunContext

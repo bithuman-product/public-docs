@@ -1,6 +1,6 @@
 ---
 title: "Voice providers"
-description: "Every agent speaks every language for free on bitHuman's built-in voice pipeline — or bring your own OpenAI, Grok, ElevenLabs, or Cartesia key to unlock premium voices that run on your account."
+description: "Every agent speaks every language on bitHuman's built-in voice pipeline, included in the voice chat rate — or bring your own OpenAI, Grok, ElevenLabs, or Cartesia key for premium voices."
 section: guides
 group: "Build"
 order: 21
@@ -12,8 +12,8 @@ label: "Voices"
 
 | Option | What you get | Cost |
 |------|--------------|------|
-| **bitHuman default** | The built-in voice pipeline. Your agent detects the caller's language and replies in it. No setup, no keys. | Included |
-| **Bring your own provider** | Connect your **own** OpenAI, Grok (xAI), ElevenLabs, or Cartesia key and pick that provider's premium voices — including low-latency speech-to-speech (realtime). | Runs on **your** key, billed by **your** provider |
+| **bitHuman default** | The built-in voice pipeline. Your agent detects the caller's language and replies in it. No setup, no keys. | Included in the voice chat rate ([pricing](/guides/pricing)) |
+| **Bring your own provider** | Connect your **own** OpenAI, Grok (xAI), ElevenLabs, or Cartesia key and pick that provider's premium voices — including low-latency speech-to-speech (realtime). | The same voice chat rate, plus your provider's charges on your key |
 
 You never *have* to bring a key. The default pipeline already speaks every language. Bring your own only when you want a specific premium voice or a provider's realtime engine.
 
@@ -25,7 +25,7 @@ Open any agent's voice settings at [bithuman.ai](https://www.bithuman.ai/explore
 
 ### 1. Connect your key
 
-Go to **Developer → Integrations** (or use the [Providers API](/api/providers)), add your provider, and paste that provider's key. bitHuman **validates the key before saving** — an invalid key is rejected on the spot, so a saved provider is always a working one. Keys are encrypted at rest and never leave the platform in plaintext.
+Go to **Developer → Integrations**, add your provider, and paste that provider's key; bitHuman checks the key there before saving and rejects an invalid one. The [Providers API](/api/providers) stores a key as sent, without a check, so start one session to confirm it works. Keys are encrypted at rest and never leave the platform in plaintext.
 
 ### 2. Pick a premium voice
 
@@ -44,7 +44,7 @@ Back in the agent's voice settings, the premium providers you've connected unloc
 
 ## How billing works
 
-- The **default** pipeline is billed as part of a managed-agent conversation — the rates are on [pricing](/guides/pricing).
-- **Bring-your-own** voices run on **your** provider account: OpenAI, xAI, ElevenLabs or Cartesia bills you for the voice directly.
+- Every managed-agent conversation bills the voice chat rate, whichever voice it uses ([pricing](/guides/pricing)).
+- A bring-your-own voice or realtime model is also billed by your provider on your key.
 
-If a bring-your-own key ever fails or is removed, the agent automatically falls back to the free multilingual pipeline — it never silently stops talking.
+If a bring-your-own key ever fails or is removed, the agent automatically falls back to the built-in multilingual pipeline — it never silently stops talking.

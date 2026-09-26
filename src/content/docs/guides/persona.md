@@ -8,7 +8,12 @@ type: guide
 label: "Write a persona"
 ---
 
-The persona is the avatar's system prompt: who it is, what it is for, and how it answers. Set it as `prompt` when you [create the agent](/guides/building-avatars), or change it later with [`POST /v1/agent/{code}`](/api/agents#update-an-agent).
+The persona is the avatar's system prompt: who it is, what it is for, and how it answers. Set it as `prompt` when you [create the agent](/guides/building-avatars), or change it later by sending it as `system_prompt` ([update an agent](/api/agents#update-an-agent)):
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/agent/<code> -H "Content-Type: application/json" \
+  -H "api-secret: $BITHUMAN_API_SECRET" -d '{"system_prompt": "CONTEXT: ..."}'
+```
 
 ## Before you start
 

@@ -55,13 +55,14 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const CONTENT = join(ROOT, "src/content/docs");
 const PRICING = join(CONTENT, "guides/pricing.md");
 
-// The four unversioned keys the API still returns. Documented as aliases of the
-// first-generation rows — NOT the Essence 2 rate.
+// The unversioned keys the API still returns. Documented as aliases of the
+// first-generation rows — NOT the Essence 2 rate. `expression_self_hosted`
+// (and `expression_1_self_hosted`) are no longer serving modes: Expression 1 is
+// cloud-only, so the pages tell callers to ignore them and the examples omit them.
 const LEGACY_ALIASES = {
   essence_cloud: "essence_1_cloud",
   essence_self_hosted: "essence_1_self_hosted",
   expression_cloud: "expression_1_cloud",
-  expression_self_hosted: "expression_1_self_hosted",
 };
 
 const failures = [];

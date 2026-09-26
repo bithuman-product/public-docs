@@ -25,7 +25,7 @@ If sessions keep failing to connect, check [status.bithuman.ai](https://status.b
 
 ## 2. Idle and speaking
 
-During silence the avatar keeps moving: Expression 2 plays its idle clip and Essence 2 its identity video, both looping smoothly. When speech starts, the lips follow the audio; Expression 2's first talking frame arrives about 1.6 seconds after the audio starts, covered by the idle motion. Idle time is free ([pricing](/guides/pricing)).
+During silence the avatar keeps moving: Expression 2 plays its idle clip and Essence 2 its identity video, both looping smoothly. When speech starts, the lips follow the audio; Expression 2's first talking frame arrives about 1.6 seconds after the audio starts, covered by the idle motion. A running session bills whether the avatar is talking or idle ([pricing](/guides/pricing)); end sessions you are not using.
 
 ## Check it worked
 
