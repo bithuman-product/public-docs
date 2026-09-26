@@ -26,6 +26,17 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### `bithuman` 2.11.13 — 2026-09-26
+
+- **Fixed:** an Expression 2 reply through `AsyncBithuman` (and the LiveKit plugin) plays through without the brief pause about a second in, where the face froze and the voice stopped. A reply that is already complete starts sooner, and a reply pushed in a single call starts once its first part is rendered instead of after all of it.
+- **Fixed:** the Expression 2 and Essence 2 CPU runtimes size their thread pools to the CPUs a container allows instead of the machine's total core count, so Expression 2 in a CPU-limited container renders at full speed. `BITHUMAN_THREADS` still overrides.
+- **Fixed:** a long idle no longer grows the process by dozens of threads.
+- **Fixed:** a reply pushed to `AsyncBithuman` in a single call is metered in full; about 80% of it was before.
+- **Changed:** a streamed Expression 2 reply renders exactly the frames `bithuman.open()` renders for the same audio.
+- **Changed:** the offline renderer raises `FileNotFoundError` naming the path when the avatar file does not exist, and refuses another kind of avatar by its product name.
+- **Changed:** usage reports name the installation with a random id kept in `~/.bithuman/install_id`, the same file the `bithuman` CLI uses. Set `BITHUMAN_INSTALL_ID` to choose your own.
+- **Action:** `pip install -U bithuman`.
+
 ### LiveKit docs and examples — 2026-09-26
 
 - **Changed:** a LiveKit worker keeps your API secret as `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`. `livekit-plugins-bithuman` 1.8.4 and older reads `BITHUMAN_API_SECRET` by itself whenever `api_secret=` is omitted, and copies it into the avatar's participant attributes, which everyone in the room can read. The [LiveKit page](/sdk/livekit#authenticate) and the LiveKit examples now use the new name and refuse to start while the old one is set.
