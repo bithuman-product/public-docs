@@ -18,7 +18,7 @@ Essence 2 plays at 25 fps (1920×1080) and Expression 2 at 20 fps (416×720). **
 | Cloud API · Apple silicon | Apple M4 Max | 70 | **2.8×** real time | 111 | **5.5×** real time |
 | Cloud API · CPU | x86 server CPU | 28 | **1.1×** real time | 27 | **1.3×** real time |
 | macOS · CLI | Apple M4 | 104 | **4.1×** real time | 167 | **8.3×** real time |
-| macOS · Python | Apple M4 | 174 | **6.9×** real time | 164 | **8.2×** real time |
+| macOS · Python | Apple M4 | 174 | **6.9×** real time | 169 | **8.4×** real time |
 | macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |

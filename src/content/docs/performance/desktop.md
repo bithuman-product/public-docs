@@ -14,14 +14,14 @@ Pick the row for the product you use: the CLI, Python and the Swift package rend
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
 |---|---|---|---|---|---|
 | macOS · CLI | Apple M4 | 104 | **4.1×** real time | 167 | **8.3×** real time |
-| macOS · Python | Apple M4 | 174 | **6.9×** real time | 164 | **8.2×** real time |
+| macOS · Python | Apple M4 | 174 | **6.9×** real time | 169 | **8.4×** real time |
 | macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 47 | **2.3×** real time |
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES desktop -->
-Measured in September 2026 on CLI 2.7.2, bithuman 2.11.10 and Swift package 2.15.0.
+Measured in September 2026 on CLI 2.7.2, bithuman 2.11.12 and Swift package 2.15.0.
 <!-- /FLOORS:RELEASES -->
 
 ## What the numbers mean
