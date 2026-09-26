@@ -1072,6 +1072,16 @@
       "permanent": true
     },
     {
+      "source": "/examples/swift-ios-voice-agent",
+      "destination": "/sdk/apple",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-voice-agent/",
+      "destination": "/sdk/apple",
+      "permanent": true
+    },
+    {
       "source": "/examples/swift-ios-hello",
       "destination": "/sdk/apple",
       "permanent": true
