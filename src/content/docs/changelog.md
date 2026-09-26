@@ -26,6 +26,13 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### Swift package 2.17.3 — 2026-09-27
+
+Essence 2 engine 1.14.2 · Expression 2 engine 2.7.0
+
+- **Fixed:** memory stays flat in long Essence 2 sessions. Before this release, an app that fed audio without a pause grew by about 1 MB per second of speech. On an iPhone that could end a session after about 35 minutes.
+- **Action:** set `from: "2.17.3"`, then `swift package update`.
+
 ### Flutter plugin 2.6.19 — 2026-09-26
 
 - **Changed:** on Android, Essence 2 frames reach the screen without a CPU copy. On a Galaxy S25+ this uses about 8% less CPU, and the frames are unchanged.
