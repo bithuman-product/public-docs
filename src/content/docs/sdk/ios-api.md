@@ -66,8 +66,18 @@ static func Essence2Engine.create(
     readyTimeout: Double = 300) async throws -> Essence2Engine
 
 func feed(_ samples: [Float])               // 16 kHz mono PCM; never blocks
-func pull() -> (frame: [UInt8], speech: Bool)?   // B, G, R, width * height * 3; nil when none is ready
-func idle(into out: inout [UInt8]) -> Int   // the next idle frame; 0 means keep the current one
+func flushTail()                            // the reply's audio is complete; it ends now, not after 0.6 s of silence
+func frames(following player: AVAudioPlayerNode) -> AsyncStream<Essence2Frame>  // speech frames on the player's audio
+func frames(audioClock: (@Sendable () -> Double?)? = nil) -> AsyncStream<Essence2Frame>  // your clock: seconds of the reply played
+                                            // every frame, 25 per second, until shutdown or cancellation
+func events() -> AsyncStream<Essence2Event> // .replyStarted, .replyEnded (once per reply)
+func nextFrame(audioClock:) async -> Essence2Frame?   // waits for the next frame; nil after shutdown
+func pullFrame(audioClock:) -> Essence2Frame?         // the next frame if one is due; nil means keep the current one
+func pull() -> (frame: [UInt8], speech: Bool)?   // the same, as bytes + speech flag
+func idle(into out: inout [UInt8]) -> Int   // the next frame into your buffer; 0 means keep the current one
+var pacing: Essence2Pacing                  // .realtime (default, 25 fps) or .unpaced (offline rendering)
+var droppedFrames: Int                      // frames skipped to keep a reply on its audio's timeline
+static let framesPerSecond: Double          // 25
 func interrupt()                            // drop queued audio and frames
 func shutdown()                             // flush the last usage report, release the engine
 static func quiesceAll(timeoutMs: Int32 = 5000)   // at app exit
@@ -78,6 +88,15 @@ var meteringRefusal: String?                // the service's refusal while this 
 var runtimeFailure: String?                 // set when the engine stopped
 var pendingSamples: Int                     // fed audio the engine has not taken yet
 
+struct Essence2Frame {
+    let bgr: [UInt8]                        // B, G, R, width * height * 3
+    let width: Int, height: Int
+    let isSpeech: Bool                      // the mouth is driven by your audio
+    let endsReply: Bool                     // the first frame after a reply (once per reply)
+    let index: Int                          // frames handed out before this one
+    let audioTime: Double?                  // speech frames: seconds into the reply's audio (0, 0.04, …)
+}
+
 Essence2Resources.ensure() async throws -> URL   // the runtime files, fetched and sha256-checked
 Essence2Resources.releaseTag                     // the release they come from
 
@@ -85,6 +104,8 @@ static func Essence2Download.identity(   // download an avatar file; sha256-chec
     agentCode: String,
     directory: URL? = nil) async throws -> URL   // nil: Caches/bitHuman/essence2/avatars
 ```
+
+Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(into:)`) draws from the same engine and hands out at most 25 frames a second. A reply's first speech frame anchors its timeline: frame *k* is due *k*/25 s later, and a frame that would be shown a full frame late is skipped, so a reply never drifts from its audio.
 
 `create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`. `Essence2Download.identity` throws `.resourcesUnavailable` when the download is refused, fails, or does not match its sha256.
 
@@ -117,6 +138,8 @@ Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B,
 | `be_essence2_get_info(h, int32_t* width, int32_t* height)` | Frame size for the current mode | — |
 | `be_essence2_idle_frame(h, uint8_t* out, int32_t capacity)` | Next idle frame | bytes written; `0` keep the current frame; `-3` refused |
 | `be_essence2_reset(h)` | Interrupt: drops queued audio and frames | — |
+| `be_essence2_end_utterance(h)` | The reply's audio is complete: the rest renders and eases to rest now, not after 0.6 s without audio | `0`; `-1` bad handle |
+| `be_essence2_last_frame_kind(h)` | What the last pulled frame shows: `BE_ESSENCE2_FRAME_IDLE` (0), `_SPEECH` (1) or `_RAMP` (2, easing back to rest). A reply is over when an idle frame follows its speech | kind; `-1` before any frame |
 
 ### Display and status
 
