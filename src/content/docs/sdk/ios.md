@@ -110,7 +110,7 @@ while true {
 engine.shutdown()
 ```
 
-Expected: 25 frames per second of audio at the avatar's own size (for example 1920×1080). The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
+Expected: 25 frames per second of audio at the avatar's own size (for example 1920×1080). Between replies `pull()` keeps returning idle frames (`speech: false`) as fast as you call it, so pace the calls to your display, 25 per second. The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
 
 The same engine as a C interface, for C, C++ and plugins:
 
