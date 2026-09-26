@@ -22,7 +22,7 @@ A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to i
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
 | A physical iPhone or iPad with Apple silicon | the Simulator cannot run the engine; no Apple entitlement is needed |
 | The bitHuman CLI | `setup.sh` uses it once: `brew install bithuman-product/bithuman/bithuman-cli` |
-| An [API secret](/start/api-secret) | the engine bills talking time; idle is free |
+| An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
 ## Get the code
 

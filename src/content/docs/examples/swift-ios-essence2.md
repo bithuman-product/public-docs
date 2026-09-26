@@ -19,7 +19,7 @@ A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks 
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
 | A physical iPhone or iPad with Apple silicon, on iOS 26 | the Simulator cannot run the engine; no Apple entitlement is needed |
 | Swift package **2.14.2** or newer, `Essence2` product | the project already depends on it |
-| An [API secret](/start/api-secret) | the engine bills talking time; idle is free |
+| An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 | About 430 MB free on the phone and 380 MB on the Mac | the avatar and the engine resources ride in the app bundle |
 
 ## Get the code

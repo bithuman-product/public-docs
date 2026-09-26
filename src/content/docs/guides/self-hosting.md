@@ -47,7 +47,7 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
 ## How self-hosting is billed
 
 - **At the self-hosted rate** on [pricing](/guides/pricing#serving--credits-per-live-minute),
-  from your credit balance. A live session bills its talking minutes (idle is free); an MP4
+  from your credit balance. A live session bills its session time, talking or idle; an MP4
   render bills the length of the clip it writes.
 - **A credential is required to render.** Sign in with `bithuman login`, or set
   `BITHUMAN_API_SECRET` — get one at

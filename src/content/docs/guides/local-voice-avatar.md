@@ -121,7 +121,7 @@ The Python example reads these from `.env`:
 
 ## What you pay
 
-Talking time bills bitHuman credits and idle is free; OpenAI bills your own key. See [Pricing](/guides/pricing).
+Session time, talking or idle, bills bitHuman credits; OpenAI bills your own key. See [Pricing](/guides/pricing).
 
 ## Troubleshooting
 

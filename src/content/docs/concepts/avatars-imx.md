@@ -61,7 +61,7 @@ bithuman pull sofia-ramirez
 showcase, about 148 MB. `bithuman list` prints every showcase slug; a slug that is
 not in that list is refused with `slug '<name>' not found in manifest`.
 
-`bithuman pull <slug>`, `bithuman list` and `bithuman open` need no credential for a sample avatar. Pulling your own agent by code, and playing any model with `bithuman run` or `bithuman render`, need `bithuman login` or `BITHUMAN_API_SECRET`; talking time bills at the [published rates](/guides/pricing).
+`bithuman pull <slug>`, `bithuman list` and `bithuman open` need no credential for a sample avatar. Pulling your own agent by code, and playing any model with `bithuman run` or `bithuman render`, need `bithuman login` or `BITHUMAN_API_SECRET`; session time bills at the [published rates](/guides/pricing).
 
 Cache locations by surface:
 

@@ -70,7 +70,7 @@ implementation("ai.bithuman:expression2-android:0.5.0") {
 
 Set `BITHUMAN_API_SECRET`, or pass it in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/api/authentication).
 
-Credits pay for talking time; idle time is free ([pricing](/guides/pricing)).
+Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
 
 > **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only. A shipped app fetches the secret from your own backend at startup.
 

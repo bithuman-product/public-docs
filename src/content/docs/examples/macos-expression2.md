@@ -21,7 +21,7 @@ The shortest native Apple path: a command-line tool that opens an avatar, feeds 
 |---|---|
 | A Mac with Apple silicon, Xcode 26 or newer | macOS 13 or newer |
 | About 800 MB of disk | 365 MB of downloads, plus the folder the engine unpacks them into |
-| An [API secret](/start/api-secret) | the engine bills talking time; idle is free |
+| An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
 ## Get the code
 

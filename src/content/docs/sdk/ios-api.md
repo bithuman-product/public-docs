@@ -130,4 +130,4 @@ Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B,
 
 ## Sessions and billing
 
-A session checks the API secret when it starts and reports talking time; idle time is free. If the network drops after the secret is accepted, frames continue for 5 minutes of rendered video, then `pull_frame` and `idle_frame` return `-3` (Essence 2) or `pull()` returns `nil` (Expression 2) until the connection returns. A secret rejected mid-session is final: destroy the engine. Prices are on [pricing](/guides/pricing).
+A session checks the API secret when it starts and reports its session time, talking or idle. If the network drops after the secret is accepted, frames continue for 5 minutes of rendered video, then `pull_frame` and `idle_frame` return `-3` (Essence 2) or `pull()` returns `nil` (Expression 2) until the connection returns. A secret rejected mid-session is final: destroy the engine. Prices are on [pricing](/guides/pricing).

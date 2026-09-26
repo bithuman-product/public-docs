@@ -22,7 +22,7 @@ The app downloads the `wise-pup` sample avatar once, renders every frame of a sp
 | A physical `arm64-v8a` Android phone, USB debugging on | emulators cannot load the engine |
 | JDK 17 and an Android SDK with platform 35 | the project pins Gradle 8.11.1 and Android Gradle Plugin 8.7.3 |
 | `adb` on your `PATH` | it ships in `$ANDROID_HOME/platform-tools` |
-| An [API secret](/start/api-secret) | the engine bills talking time; idle is free |
+| An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
 ## Get the code
 

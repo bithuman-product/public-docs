@@ -74,7 +74,7 @@ export function render(rt) {
   out += "\n";
   // The guide states the BASIS verbatim; the `rounding` enum is an API field value and
   // stays on the API reference page, not in customer prose (owner docs rule).
-  for (const e of bases.values()) out += `How talking time is billed: ${e.basis}.\n`;
+  for (const e of bases.values()) out += `How live sessions are billed: ${e.basis}.\n`;
   return out;
 }
 
