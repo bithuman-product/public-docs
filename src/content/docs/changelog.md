@@ -26,6 +26,10 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ## September 2026
 
+### Billing — 2026-09-26
+
+- **Changed:** Expression 1 avatar sessions are now metered to your account at the standard cloud rate, talking time only. Rates are on [pricing](/guides/pricing).
+
 ### Swift package 2.16.0 — 2026-09-25
 
 Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0

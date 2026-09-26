@@ -23,6 +23,7 @@ const LINKED_ONLY = new Set([
   "guides/local-voice-avatar",
   // The performance overview carries every row; these sub-pages repeat them per platform.
   "performance/cloud", "performance/desktop", "performance/mobile", "performance/web",
+  "performance/method",
 ]);
 
 const included = (d: any) => {
