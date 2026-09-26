@@ -43,6 +43,8 @@ Peak memory (RAM) of one render, or of one session on a phone, on the release in
 Seconds from starting the command to a finished MP4 of a 10-second clip, for the whole process: loading, rendering, encoding and exit, timed on CLI 2.7.8. Each number is the slowest of three runs. "First run" is a fresh install with the model files already downloaded. "After that" is every later render on the same machine. Lip sync is checked on every run: no run published here plays more than 40 ms off the audio.
 <!-- /FLOORS:WALLCLOCK -->
 
+Later renders are not faster: the model files are already downloaded on the first run, so both columns measure the same work, within run-to-run variation.
+
 ## Raw data
 
 [performance.json](/performance.json) holds every published cell: frame rate, × real time, release, date, the speech clip it was measured on, and memory. The pages under [Performance](/performance) are generated from it.

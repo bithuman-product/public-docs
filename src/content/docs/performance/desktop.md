@@ -27,7 +27,7 @@ Measured in September 2026 on CLI 2.7.8, bithuman 2.11.12 and Swift package 2.15
 ## What the numbers mean
 
 - Each figure is one render of a reference speech clip, as fast as the machine allows, with nothing else running.
-- The macOS CLI Essence 2 figure was measured with 8 render threads. The Linux CLI uses default settings.
+- The macOS CLI Essence 2 figure was measured with `BITHUMAN_THREADS=8`; by default the CLI uses one thread per CPU it may use, up to 16. The Linux CLI uses default settings.
 - Only these two machines are measured: an Apple M4 Mac and an Intel Core i7-13700F desktop. Other processors render at other rates.
 
 Memory per render is on [How we measure](/performance/method#memory). Setup for each product: [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple).

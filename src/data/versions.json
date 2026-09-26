@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "about": "The current published version of every bitHuman artifact. The one source for every version on docs.bithuman.ai: `node scripts/sync-versions.mjs --write` copies these into the pages, and `node scripts/sync-versions.mjs --registries` checks them against PyPI, Maven Central and the GitHub tags. Served at https://docs.bithuman.ai/versions.json.",
+  "about": "The current published version and install line of every bitHuman artifact.",
   "versions": {
     "cli": "2.7.8",
     "python": "2.11.13",
@@ -71,7 +71,7 @@
     {
       "key": "flutter_plugin",
       "name": "Flutter plugin",
-      "platforms": "Android (iOS and macOS do not build from the published tag yet; a fix is coming)",
+      "platforms": "Android (iOS and macOS do not build from the published tag yet)",
       "install": "bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v{v}}}",
       "registry": "GitHub tag flutter-plugin-v{v}",
       "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",

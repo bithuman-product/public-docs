@@ -6,6 +6,7 @@ import { GROUP_ORDER, type SectionId } from "../config/nav";
 import { PLATFORMS } from "../data/platforms";
 import versions from "../data/versions.json";
 import specText from "../openapi/bithuman.yaml?raw";
+import headline from "../partials/performance-headline.md?raw";
 
 // /<page>.md — every docs page as clean markdown, for AI agents and for the
 // "Copy page" button. Content pages serve their own source; the section hubs
@@ -29,9 +30,16 @@ async function hubBody(section: SectionId): Promise<string> {
   return out;
 }
 
+// The generated performance headline (the same table the HTML landing and /start
+// show), with absolute links, so the .md twins carry it too.
+function perfSection(): string {
+  const table = (headline as string).replace(/<!--[\s\S]*?-->/g, "").trim();
+  return table ? `\n## How fast it runs\n\n${table.replace(/\]\(\//g, `](${SITE}/`)}\n\nEvery platform: ${SITE}/performance.md\n` : "";
+}
+
 function pathTable(): string {
   let out = "| You want to… | Use | Needs | First command | Docs |\n|---|---|---|---|---|\n";
-  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | \`${p.first.replace(/\|/g, "\\|")}\` | ${SITE}${p.docs.split("#")[0]}.md |\n`;
+  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? "— ([contact sales](https://www.bithuman.ai/sales))" : "`" + p.first.replace(/\|/g, "\\|") + "`"} | ${SITE}${p.docs.split("#")[0]}.md${p.docs.includes("#") ? "#" + p.docs.split("#")[1] : ""} |\n`;
   return out;
 }
 
@@ -78,11 +86,12 @@ export const GET: APIRoute = async ({ props }) => {
   const V = versions.versions;
   if (hub === "index") {
     return md(twin("bitHuman docs", "/", hubMeta("").description,
-      `## Choose your path\n\n${pathTable()}\n## Sections\n\n- [Get started](${SITE}/start.md)\n- [API](${SITE}/api.md)\n- [SDKs](${SITE}/sdk.md)\n- [Guides](${SITE}/guides.md)\n- [Examples](${SITE}/examples.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
+      `## Choose your path\n\n${pathTable()}\n## Sections\n\n- [Get started](${SITE}/start.md)\n- [API](${SITE}/api.md)\n- [SDKs](${SITE}/sdk.md)\n- [Guides](${SITE}/guides.md)\n- [Examples](${SITE}/examples.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n` + perfSection()));
   }
   if (hub === "start") {
     let body = `## Choose your path\n\n${pathTable()}\n## Run it\n`;
-    for (const p of PLATFORMS.filter((x) => x.card)) body += `\n### ${p.want} (${p.use})\n\n\`\`\`${p.card!.lang}\n${p.card!.code}\n\`\`\`\n\nExpected: ${p.card!.expect}\n`;
+    for (const p of PLATFORMS.filter((x) => x.card)) body += `\n### ${p.want}: ${p.use}\n\n\`\`\`${p.card!.lang}\n${p.card!.code}\n\`\`\`\n\nExpected: ${p.card!.expect}\n`;
+    body += perfSection();
     body += await hubBody("start");
     return md(twin("Get started", "/start", hubMeta("start").description, body));
   }

@@ -8,7 +8,7 @@ type: generated
 label: "Cloud API"
 ---
 
-You don't choose the hardware: the service picks the tier for each session, and each row is one tier.
+By default the service picks the tier for each session; each row is one tier. To benchmark one tier you can pin it ([pin a serving tier](/concepts/models#advanced-pin-a-serving-tier)); in production, let the service choose.
 
 <!-- FLOORS:TABLE cloud -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |

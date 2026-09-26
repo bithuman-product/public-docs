@@ -26,6 +26,12 @@ const fail = [];
 
 if (!existsSync(join(DIST, "llms.txt"))) { console.log("::error::no dist/llms.txt — run npm run build first"); process.exit(2); }
 const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
+// The billing rule an agent reads first (owner ruling 2026-09-26 13:35Z): realtime
+// bills active session time, talking or idle. The old "talking time / idle is free"
+// wording survived in the key facts after the pages moved on; fail on it here.
+for (const re of [/idle time is free/i, /\bidle is free\b/i, /pay for talking time/i, /talking time only/i]) {
+  if (re.test(llms)) fail.push(`llms.txt still states the retired billing rule (${re}) — realtime bills active session time, talking or idle`);
+}
 const full = readFileSync(join(DIST, "llms-full.txt"), "utf8");
 const lines = llms.trimEnd().split("\n").length;
 if (lines > 60) fail.push(`llms.txt has ${lines} lines (cap 60)`);

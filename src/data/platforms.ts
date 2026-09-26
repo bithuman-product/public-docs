@@ -67,10 +67,12 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
     first: "curl -fsSL https://install.bithuman.ai | sh", time: "3 min", docs: "/sdk/cli", models: both,
     card: {
       lang: "bash",
-      code: `curl -fsSL https://install.bithuman.ai | sh
+      code: `# macOS: brew install ffmpeg   ·   Debian/Ubuntu: sudo apt install -y ffmpeg
+curl -fsSL https://install.bithuman.ai | sh
+export PATH="$HOME/.local/bin:$PATH"
 bithuman login
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
-bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
+bithuman render wise-pup speech.wav -o out.mp4
 # → out.mp4: 15 s of a talking avatar`,
       expect: "out.mp4, 15 seconds of the avatar saying the sample. `bithuman run wise-pup` opens a live conversation instead.",
     },
@@ -87,7 +89,7 @@ bithuman render "$(bithuman pull wise-pup)" -a speech.wav -o out.mp4
   },
   {
     id: "livekit", want: "Add a face to a LiveKit voice agent", use: "LiveKit", needs: "API secret",
-    first: "pip install livekit-plugins-bithuman pillow", time: "10 min", docs: "/sdk/livekit", models: both,
+    first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv', time: "10 min", docs: "/sdk/livekit", models: both,
   },
   {
     id: "mcp", want: "Drive it from Claude or Cursor", use: "MCP server", needs: "sign-in",

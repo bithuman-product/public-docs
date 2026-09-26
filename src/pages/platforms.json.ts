@@ -14,7 +14,7 @@ export const GET: APIRoute = () =>
       demo_embed: EMBED_URL,
       versions: versions.versions,
       platforms: PLATFORMS.map((p) => ({
-        id: p.id, want: p.want, use: p.use, needs: p.needs, first_command: p.first, models: p.models,
+        id: p.id, want: p.want, use: p.use, needs: p.needs, first_command: p.id === "offline" ? null : p.first, ...(p.id === "offline" ? { contact: "https://www.bithuman.ai/sales" } : {}), models: p.models,
         docs: `${SITE}${p.docs}`, markdown: `${SITE}${p.docs.split("#")[0]}.md`,
       })),
     }, null, 2) + "\n",
