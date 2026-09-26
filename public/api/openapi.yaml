@@ -210,12 +210,15 @@ paths:
                     seamlessly); this parameter is ignored.
                 model:
                   type: string
-                  enum: [essence-2, expression-2, auto, essence-1, expression-1]
+                  enum: [essence-2, expression-2, auto, essence-1, expression-1, essence, expression]
                   example: expression-2
                   description: >-
                     Which model to create. Always send it; if omitted, an
                     `expression-1` agent is created (250 credits). A model
-                    outside your plan returns `403 PLAN_REQUIRED`.
+                    outside your plan returns `403 PLAN_REQUIRED`. The bare
+                    family names `essence` and `expression` are still accepted
+                    for older integrations (they select the version-1 model);
+                    new code should send a full model name.
 
 
                     **`essence-2`** is the second-generation Essence model for
