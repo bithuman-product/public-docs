@@ -15,7 +15,7 @@ How to use these classes in an app is on [Android](/sdk/android). Signatures are
 
 Generated from `ai.bithuman:essence2-android:0.7.0` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
-Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import them by name: `import ai.bithuman.elevate.Essence2RenderFailed`, `import ai.bithuman.elevate.Essence2RenderStatus`.
+Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import it by name: `import ai.bithuman.elevate.Essence2RenderFailed`.
 
 | Class | Purpose |
 | --- | --- |
@@ -32,7 +32,6 @@ Import: `import ai.bithuman.essence2.*`. Not in that package yet, so import them
 | `Essence2MeteringRefused` | Thrown when the service refuses the session (no secret, rejected secret, or offline too long). |
 | `Essence2StoreException` | Thrown when a download fails. |
 | `Essence2RenderFailed` | Thrown by `checkRender()` when the engine stopped. |
-| `Essence2RenderStatus` | What `checkRender()` reports. |
 
 ### Essence2Avatar
 
@@ -56,9 +55,6 @@ class Essence2Avatar : AutoCloseable
     fun useHardwareBuffers(slots: Int = …)
     companion object
         const val W2V_MEMBER: String = "w2v_ess_fp16_v1.onnx"
-        const val W2V_MEMBER_TEACHER: String = "wav2vec2_fp32_8s.onnx"
-        fun create(bundleDir: File, w2v: File? = …, threads: Int = …, frames: Essence2Frames? = …): Essence2Avatar
-        fun frontendIn(bundleDir: File): File
 ```
 
 ### Essence2HardwareFrame
@@ -93,12 +89,9 @@ class Essence2ModelStore
     companion object
         const val BUNDLE_MANIFEST: String = "manifest.json"
         const val DEFAULT_DOOR_URL: String = "https://api.bithuman.ai"
-        const val DONOR_CAP: Int = 1024
-        const val STORE_FORMAT: String = "essence2_android_store.v1"
         const val STORE_MANIFEST: String = "android_store.v1.json"
         @Deprecated("Member names are the engine's; the store resolves them itself. No replacement is needed.")
         val DEFAULT_MEMBERS: Map<String, String>
-        val SLOT_KEYS: List<String>
 ```
 
 ### Essence2MeteredDoorResolver
@@ -131,7 +124,6 @@ fun interface Essence2UrlResolver
 class Essence2Bundle
     val code: String
     val dir: File
-    fun open(model: String = …, threads: Int = …, pinBigCores: Boolean = …): Essence2Frames
 ```
 
 ### Essence2ProgressListener
@@ -148,16 +140,9 @@ object Essence2Metering
     var apiBaseUrl: String?
     @Deprecated("Use Essence2Credential.set(secret): one setter covers the download door and the meter.")
     var apiSecret: String?
-    var basis: String
     @Deprecated("Enforcement is unconditional since 0.5.7; this property is ignored.")
     var enforce: Boolean?
-    var flushBudgetMs: Long
-    var fps: Double
     var installId: String?
-    var lastBeatsDelivered: Int
-    var lastBeatsFailed: Int
-    var lastServedAckedSeconds: Double
-    var lastSessionId: String?
     var stateDir: File?
     @Deprecated("The unmetered escape was removed in 0.5.7; this property is ignored.")
     var unmetered: Boolean?
@@ -182,20 +167,6 @@ class Essence2StoreException : RuntimeException
 class Essence2RenderFailed : IllegalStateException
     constructor(message: String, detail: String)
     val detail: String
-```
-
-### Essence2RenderStatus
-
-```kotlin
-class Essence2RenderStatus
-    constructor()
-    fun check(status: Int, failures: Long, reason: String)
-    fun checkDelivery(queueEmpty: Boolean, detail: String)
-    fun delivered(): Long
-    fun noteDelivered()
-    fun noteEndOfAudio()
-    fun noteFed()
-    fun startUtterance()
 ```
 
 ## Expression 2
@@ -227,7 +198,6 @@ Import: `import ai.bithuman.expression2.*`.
 class Expression2Avatar : AutoCloseable
     val accelerator: Accelerator
     val acceleratorNote: String
-    val backends: List<Expression2Backend>
     val frameBytes: Int
     val hasPendingTail: Boolean
     val height: Int
@@ -239,10 +209,9 @@ class Expression2Avatar : AutoCloseable
     val overlapActive: Boolean
     val pendingAudioSlices: Int
     val queuedFrames: Int
-    val routing: Routing
     val stepHistoryInputIndex: Int
     val width: Int
-    var idleLoopUnavailableReason: String?
+    val idleLoopUnavailableReason: String?
     fun beginSegment()
     fun close()
     fun feed(samples: FloatArray, offset: Int = …, count: Int = …)
@@ -253,7 +222,6 @@ class Expression2Avatar : AutoCloseable
     fun pull(dst: ByteBuffer): Expression2Frame?
     fun pump()
     fun resetState(clearFrames: Boolean = …)
-    fun stats(): Expression2Stats
     companion object
         const val FRAMES_PER_SECOND: Int = 20
         const val FRAME_HEIGHT: Int = 720
@@ -358,7 +326,6 @@ data class Expression2Options
     val maxQueuedFrames: Int
     val overlapDecoder: Boolean?
     val qnnOptions: String
-    val routing: Routing?
     val threads: Int
     // data class: copy, componentN, equals, hashCode and toString as Kotlin generates them
     companion object
@@ -398,9 +365,9 @@ data class Expression2Frame
 class Expression2IdleLoop : AutoCloseable
     val height: Int
     val width: Int
-    var frameCount: Int
-    var lastIndex: Int
-    var wraps: Int
+    val frameCount: Int
+    val lastIndex: Int
+    val wraps: Int
     fun close()
     fun next(dst: Bitmap): Int
 ```
