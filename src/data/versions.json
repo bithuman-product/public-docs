@@ -3,7 +3,7 @@
   "about": "The current published version of every bitHuman artifact. The one source for every version on docs.bithuman.ai: `node scripts/sync-versions.mjs --write` copies these into the pages, and `node scripts/sync-versions.mjs --registries` checks them against PyPI, Maven Central and the GitHub tags. Served at https://docs.bithuman.ai/versions.json.",
   "versions": {
     "cli": "2.7.8",
-    "python": "2.11.12",
+    "python": "2.11.13",
     "swift": "2.16.0",
     "essence2_engine": "1.13.0",
     "expression2_swift": "2.7.0",
