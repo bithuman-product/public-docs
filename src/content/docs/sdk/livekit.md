@@ -111,6 +111,7 @@ python agent.py dev
 - **Choosing a model.** The plugin serves the agent's own model. Do not pass `model=`; create the agent with the model you want ([Models](/concepts/models)).
 - **A photo instead of an agent.** `avatar_image=` with no `avatar_id` animates the photo on Expression 1 only. On every other model the launch is refused with `400 VALIDATION_ERROR` before anything is billed: [create an agent](/api/agents#generate-an-agent) from the photo and pass its code as `avatar_id`.
 - **Rendering on your own machine.** Pass `model_path=` (an avatar file) instead of `avatar_id=`, and the secret explicitly: `api_secret=os.environ["BITHUMAN_MASTER_SECRET"]`. The avatar renders inside the worker's process on its CPU, and the secret stays in that process. Runnable example: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
+- **Without the plugin.** If your voice pipeline is not a LiveKit Agents worker, start the avatar with one REST call and stream it your audio: [Cloud avatar without the plugin](/api/cloud-avatar).
 - **Several agents in one room.** The avatar lip-syncs the agent that calls `AvatarSession.start()` and ignores other agents' audio.
 - **Gestures.** Trigger avatar actions from your agent: [Gestures](/guides/avatar-actions).
 

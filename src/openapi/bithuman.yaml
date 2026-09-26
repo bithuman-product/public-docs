@@ -2152,12 +2152,30 @@ paths:
               -H "content-type: application/json" \
               -d '{"agent_code": "A78WKV4515"}'
             # → data.token is a short-lived runtime JWT the SDK uses to run a session
-      summary: Request a runtime token
+        - lang: shell
+          label: cURL (start a cloud avatar)
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
+              -H "api-secret: $BITHUMAN_API_SECRET" \
+              -H "content-type: application/json" \
+              -d '{"mode": "gpu", "model": "essence-2", "agent_id": "<your agent code>",
+                   "livekit_url": "wss://your-project.livekit.cloud",
+                   "livekit_token": "<avatar join token>", "room_name": "your-room"}'
+            # → {"avatar_session_started": true, "model": "essence-2", ...}
+      summary: Request a runtime token, or start a cloud avatar
       description: >-
         Exchange your API secret for a short-lived runtime token that authorizes one
         avatar session. The SDKs call this for you; call it directly when building a
         custom runtime. Free to call; the session it authorizes is billed per
         `GET /v1/pricing`.
+
+
+        **With `mode`, the same endpoint starts a cloud avatar** in your LiveKit
+        room instead: send `mode`, `agent_id` (or `image` for an Expression 1
+        photo), `livekit_url`, `livekit_token` and `room_name`. The avatar joins
+        as `bithuman-avatar-agent` and lip-syncs the audio you stream to it. The
+        token, audio and latency rules are on
+        [Cloud avatar without the plugin](https://docs.bithuman.ai/api/cloud-avatar).
 
 
         **`fingerprint` must be at least 32 characters** when you send it.
@@ -2172,58 +2190,137 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                agent_code:
-                  type: string
-                  description: Agent code the session runs (attribution + transcript).
-                  example: "A78WKV4515"
-                billing_type:
-                  type: string
-                  description: Selects the model and pricing schedule for the session.
-                  example: "agent-voice-chat"
-                room_name:
-                  type: string
-                  description: LiveKit room name to associate the session with its transcript.
-                user_id:
-                  type: string
-                  description: Optional. Attribute billing to a specific end-user (owner override).
-                fingerprint:
-                  type: string
-                  minLength: 32
-                  description: >-
-                    Optional runtime-instance fingerprint (analytics only).
-                    When present it must be **at least 32 characters** —
-                    a shorter value is rejected `400 VALIDATION_ERROR`
-                    ("String should have at least 32 characters"), so omit the
-                    field rather than send a short device id.
-                  example: "<device-fingerprint>"
+              oneOf:
+                - title: Runtime token
+                  type: object
+                  properties:
+                    agent_code:
+                      type: string
+                      description: Agent code the session runs (attribution + transcript).
+                      example: "A78WKV4515"
+                    billing_type:
+                      type: string
+                      description: Selects the model and pricing schedule for the session.
+                      example: "agent-voice-chat"
+                    room_name:
+                      type: string
+                      description: LiveKit room name to associate the session with its transcript.
+                    user_id:
+                      type: string
+                      description: Optional. Attribute billing to a specific end-user (owner override).
+                    fingerprint:
+                      type: string
+                      minLength: 32
+                      description: >-
+                        Optional runtime-instance fingerprint (analytics only).
+                        When present it must be **at least 32 characters** —
+                        a shorter value is rejected `400 VALIDATION_ERROR`
+                        ("String should have at least 32 characters"), so omit the
+                        field rather than send a short device id.
+                      example: "<device-fingerprint>"
+                - title: Start a cloud avatar
+                  type: object
+                  required: [mode]
+                  properties:
+                    mode:
+                      type: string
+                      description: >-
+                        `gpu`. Sending `mode` is what makes this call start an
+                        avatar. The older value `cpu` also works and requires
+                        `agent_id`.
+                      example: "gpu"
+                    model:
+                      type: string
+                      description: >-
+                        The model to render: essence-1, essence-2, expression-1
+                        or expression-2. Recommended. Left out, the server picks
+                        from `mode` and the agent's models; the response's `model`
+                        says which one launched.
+                      example: "essence-2"
+                    agent_id:
+                      type: string
+                      description: The agent code. Required unless `image` is sent.
+                    image:
+                      type: string
+                      description: >-
+                        Expression 1 only, with no `agent_id`: a portrait as a public
+                        http(s) URL (fetched with a plain GET, must answer 200 without
+                        authentication), raw base64, or a `data:image/...;base64,` URI.
+                        JPEG or PNG, one face, head and shoulders.
+                    livekit_url:
+                      type: string
+                      description: Your LiveKit server URL.
+                      example: "wss://your-project.livekit.cloud"
+                    livekit_token:
+                      type: string
+                      description: >-
+                        The avatar's LiveKit join token: identity
+                        `bithuman-avatar-agent`, kind `agent`, attribute
+                        `lk.publish_on_behalf` set to your audio sender's identity.
+                    room_name:
+                      type: string
+                      description: The LiveKit room the avatar joins.
+                      example: "your-room"
+                    version:
+                      type: string
+                      description: "`v1` or `v2`, with a bare family name only (`essence` + `v2` = essence-2)."
       responses:
         "200":
-          description: A runtime token. `data.token` is a short-lived JWT for one session.
+          description: >-
+            A runtime token (`data.token` is a short-lived JWT for one session), or,
+            when the body has `mode`, the cloud avatar is starting: a flat object
+            with `avatar_session_started: true` and `model`, the model the session
+            launched as, plus echoes of `mode`, `agent_id` and `image` and your
+            `user_id`.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
+                oneOf:
+                  - title: Runtime token
                     type: object
                     properties:
-                      token: { type: string }
-                      transaction_id: { type: string }
-                  status: { type: string, example: success }
-                  status_code: { type: integer, example: 200 }
-              example:
-                data:
-                  transaction_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                status: success
-                status_code: 200
+                      data:
+                        type: object
+                        properties:
+                          token: { type: string }
+                          transaction_id: { type: string }
+                      status: { type: string, example: success }
+                      status_code: { type: integer, example: 200 }
+                  - title: Cloud avatar started
+                    type: object
+                    properties:
+                      avatar_session_started: { type: boolean, example: true }
+                      model: { type: string, example: "essence-2" }
+                      mode: { type: string, example: "gpu" }
+                      agent_id: { type: string, nullable: true }
+                      image: { type: string, nullable: true }
+                      user_id: { type: string }
+              examples:
+                runtimeToken:
+                  summary: Runtime token
+                  value:
+                    data:
+                      transaction_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    status: success
+                    status_code: 200
+                cloudAvatar:
+                  summary: Cloud avatar started
+                  value:
+                    avatar_session_started: true
+                    model: "essence-2"
+                    mode: "gpu"
+                    agent_id: "<your agent code>"
+                    image: null
+                    user_id: "<your user id>"
         "400":
           description: >-
             `VALIDATION_ERROR` — a field failed validation. The most common
             cause is a `fingerprint` shorter than 32 characters; the message
-            names the field and the rule.
+            names the field and the rule. For a cloud avatar, also: `image`
+            without `agent_id` on a model other than Expression 1, or an
+            Essence 1 session without `livekit_url`, `livekit_token` and
+            `room_name`; nothing is launched or billed.
           content:
             application/json:
               schema:
@@ -2249,7 +2346,32 @@ paths:
                 status: "error"
                 status_code: 402
         "403":
-          description: Key revoked, account suspended, or concurrency limit reached.
+          description: >-
+            Key revoked, account suspended, concurrency limit reached, or (cloud
+            avatar) the requested model is not in your plan (`PLAN_REQUIRED`).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: "Cloud avatar: no agent with this `agent_id` that you can start."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: >-
+            Cloud avatar: `VALIDATION_ERROR`, the agent cannot be served as the
+            requested model, or its own model is not ready yet. Nothing is
+            launched or billed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: >-
+            Cloud avatar: no capacity right now, or a temporary failure. Retry
+            after the `Retry-After` header.
           content:
             application/json:
               schema:

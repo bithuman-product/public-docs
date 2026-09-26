@@ -26,6 +26,9 @@ recommended model.
 There is no CPU, Apple, Android or browser build, and none is planned. For an
 expressive model on a Mac, a phone or in a browser, use Expression 2.
 
+Cloud output is 512×512 at 25 fps. Expression 1 can also animate a photo with no
+agent: see [Cloud avatar without the plugin](/api/cloud-avatar#a-photo-instead-of-an-agent).
+
 ## What the file is
 
 Usually nothing to download: Expression 1 renders from the agent's portrait, so
