@@ -21,7 +21,7 @@ Pick the row for the product you use: the CLI, Python and the Swift package rend
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES desktop -->
-Measured in September 2026 on CLI 2.7.2, bithuman 2.11.12 and Swift package 2.15.0.
+Measured in September 2026 on CLI 2.7.8, bithuman 2.11.12 and Swift package 2.15.0.
 <!-- /FLOORS:RELEASES -->
 
 ## What the numbers mean
