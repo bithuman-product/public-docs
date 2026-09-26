@@ -646,7 +646,11 @@ if (fenceHits < 1) fatal.push(
   `matching \`\`\` blocks, so quoted CLI transcripts are about to be reported as prose violations`
 );
 if (markerHits.n < 10) fatal.push(`only ${markerHits.n} occurrences matched a retirement marker (expected 10+) — MARKERS or the corpus changed shape`);
-if (historyHits < 3) fatal.push(`only ${historyHits} occurrences resolved as dated changelog history (expected 3+) — the DATED_HEADING parse broke, so the changelog is no longer being dated-checked`);
+// ★Floor 3 -> 2 (2026-09-26): the corpus had 5 dated hits; the three `essence-2-quality`
+// mentions in changelog/archive.md were reworded to the current public name (Essence 2 Max,
+// Enterprise plan only), leaving the two dated `essence-2-light` lines (2026-06-26, 06-29).
+// Two resolved dated hits still prove the DATED_HEADING parse runs; zero or one means it broke.
+if (historyHits < 2) fatal.push(`only ${historyHits} occurrences resolved as dated changelog history (expected 2+) — the DATED_HEADING parse broke, so the changelog is no longer being dated-checked`);
 if (engineIdHits < 3) fatal.push(`only ${engineIdHits} container engine ids (essence2-light / essence2-quality) seen in an \`engine\`-field context (expected 3+) — either the loader error and the mapping table were deleted (they are frozen carriers a developer reads) or the unhyphenated pattern stopped matching, which is the exact blind spot this check was added to close`);
 for (const [why, n] of carrierHits) {
   if (n === 0) fatal.push(`frozen carrier never seen in the corpus (${why}) — it was renamed or deleted, which is exactly what must not happen`);

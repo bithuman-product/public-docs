@@ -114,7 +114,7 @@ label: "Changelog archive"
 ### Pick-for-me creation, model adds & downloads (2026-07-02)
 
 *Named as of today: the tiers then called **Essence 2 Light** and **Essence 2 Quality**
-are now `essence-2` and an internal model — see
+are now `essence-2` and Essence 2 Max (Enterprise plan only) — see
 [Naming & migration](/concepts/models#naming--migration).*
 
 - `model: "auto"` on [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
@@ -147,22 +147,22 @@ are now `essence-2` and an internal model — see
 
 - New [`POST /v1/video/generate` and `GET /v1/video/{job_id}`](/api/video)
   render a talking-video mp4 of your agent from text or audio, asynchronously.
-  Launch engines are `expression-2` and `essence-2-quality`, billed per minute
-  of output rounded up; a failed render is refunded.
+  Launch engines are `expression-2` and Essence 2 Max (Enterprise plan only),
+  billed per minute of output rounded up; a failed render is refunded.
 
 ### Agent generation — v2 model names accepted (2026-06-29)
 
-`POST /v1/agent/generate` accepts `essence-2-quality`, `expression-2` and
-`essence-2-light` as `model` values, ahead of the v2 launch.
+`POST /v1/agent/generate` accepts `expression-2`, `essence-2-light` and
+Essence 2 Max (Enterprise plan only) as `model` values, ahead of the v2 launch.
 
 *Update 2026-06-30:* the pre-release aliases (`elevate`, `embody`, `embody-gpu`,
 `essence-2-mobile`) were retired and return a `400 VALIDATION_ERROR`.
 
 ### Model naming — versioned public taxonomy (2026-06-26)
 
-Model families get versioned public names — `essence-1`, `essence-2-quality`,
-`essence-2-light`, `expression-1`, `expression-2` — on agent generation and the
-viewer. `essence` and `expression` map to `essence-1` / `expression-1`.
+Model families get versioned public names — `essence-1`, `essence-2-light`,
+`expression-1`, `expression-2` and Essence 2 Max (Enterprise plan only) — on agent
+generation and the viewer. `essence` and `expression` map to `essence-1` / `expression-1`.
 
 The pre-release codenames were transitional aliases and have since been retired
 (see the 2026-06-29 entry). Share links are unaffected.
