@@ -47,6 +47,12 @@ What changed in each release, newest first. Current versions are on [Downloads &
 - **Changed:** realtime sessions bill active session time, talking or idle, by the exact second, with no per-session minimum. A session's fraction of a credit carries to your next session. This replaces the talking-only billing announced earlier the same day. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/guides/pricing).
 - **Changed:** Expression 1 avatar sessions are now metered to your account at the standard cloud rate. Rates are on [pricing](/guides/pricing).
 
+### Swift package 2.17.1 — 2026-09-26
+
+Essence 2 engine 1.14.0 · Expression 2 engine 2.7.0
+
+- **Fixed:** reading `width`, `height`, `isReady` or `runtimeFailure` after `shutdown()` no longer crashes the app.
+
 ### Swift package 2.17.0 — 2026-09-26
 
 Essence 2 engine 1.14.0 · Expression 2 engine 2.7.0
@@ -55,7 +61,7 @@ Essence 2 engine 1.14.0 · Expression 2 engine 2.7.0
 - **New:** `flushTail()` ends a reply's audio at once instead of after 0.6 s of silence; `pacing = .unpaced` renders offline as fast as the device allows.
 - **Changed:** `pull()` and `idle(into:)` hand out at most 25 frames a second. A tight loop no longer receives hundreds of idle frames a second; `nil` still means keep the current frame. The 40 ms loop from 2.16.0 keeps working.
 - **Changed:** usage reports name the install with a random id kept in the app's Application Support directory (`BITHUMAN_INSTALL_ID` overrides it).
-- **Action:** set `from: "2.17.0"`, then `swift package update`. Move a display loop to `frames(following:)`.
+- **Action:** set `from: "2.17.1"`, then `swift package update`. Move a display loop to `frames(following:)`.
 
 ### Flutter plugin 2.6.18 — 2026-09-26
 
