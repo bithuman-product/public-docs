@@ -42,7 +42,7 @@ In Xcode choose *File → Add Package Dependencies…* and paste `https://github
 | `Essence2Kit` | `import Essence2Kit` | the Essence 2 engine with a Swift API; it includes `Essence2` |
 | `Essence2` | `import Essence2` | the Essence 2 engine as a C library, for C, C++ and plugins |
 
-Every product ships `ios-arm64`, `ios-arm64-simulator` and `macos-arm64`. An app that links `Essence2Kit` or `Essence2` sets its deployment target to iOS 26 / macOS 26.
+Every product ships `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-arm64`. An app that links `Essence2Kit` or `Essence2` sets its deployment target to iOS 26 / macOS 26.
 
 `bitHumanKit` 2.4.0 is legacy and frozen; new apps use `Expression2` or `Essence2Kit`.
 
@@ -99,8 +99,13 @@ import Essence2Kit
 Essence2Credential.set(secret)                                    // or BITHUMAN_API_SECRET
 let engine = try await Essence2Engine.create(identity: imxURL)    // waits until the engine is ready
 engine.feed(samples)                                              // [Float], 16 kHz mono
-while let (frame, _) = engine.pull() {                            // B, G, R bytes, width * height * 3
-    show(frame, engine.width, engine.height)
+var spoke = false
+while true {
+    if let (frame, speech) = engine.pull() {                      // B, G, R bytes, width * height * 3
+        show(frame, engine.width, engine.height)
+        if speech { spoke = true } else if spoke { break }        // the first idle frame after the reply
+    }
+    try await Task.sleep(nanoseconds: 40_000_000)                 // pull at 25 fps, as a display does
 }
 engine.shutdown()
 ```
@@ -128,7 +133,7 @@ Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) fr
 |---|---|---|
 | Stream audio as it arrives | `feed(chunk)` | `feed(chunk)` |
 | Show frames | `pull()` at 20 fps | `pull()` at 25 fps |
-| End of a reply | `flushTail()` | keep pulling until `pull()` returns `nil` |
+| End of a reply | `flushTail()` | `pull()` returns `speech: false` again (idle frames follow; it does not return `nil`) |
 | Idle between replies | `engine.idle` | `idle(into:)` (a `0` means keep the current frame) |
 | Interrupt the reply | `resetState(clearFrames: true)` | `interrupt()` |
 | Check the session | `meteringRefusal` | `meteringRefusal`, `runtimeFailure` |
