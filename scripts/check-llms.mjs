@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 // G5 — THE AGENT LAYER. Run after `npm run build`:
-//   node scripts/check-llms.mjs [--dist dist] [--full-max-kb 160]
+//   node scripts/check-llms.mjs [--dist dist] [--full-max-kb 160] [--section-max-kb 96]
 //
 // Fails when: /llms.txt is over 60 lines or 6 KB; a docs.bithuman.ai URL in it
 // does not resolve in the build (or an #anchor it names is missing); a content
-// page has no .md twin; /llms-full.txt is over the size cap; either file leaks
-// an HTML comment. Internal-content hits in either file are reported (G1).
+// page has no .md twin; /llms-full.txt or a /llms/<section>.txt is over its size
+// cap; any of them leaks an HTML comment. Internal-content hits are reported (G1).
+//
+// Coverage (src/lib/llms-sections.ts): every start, API, platform, guide and
+// performance page is inlined in exactly one /llms/<section>.txt or listed there
+// as linked-only (.md twin), and everything /llms-full.txt inlines is in a
+// section file. So a page cannot drop out of the agent layer when a file is split.
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { scan } from "./check-internal-content.mjs";
@@ -16,6 +21,7 @@ const args = process.argv.slice(2);
 const arg = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 const DIST = join(ROOT, arg("--dist", "dist"));
 const FULL_MAX = Number(arg("--full-max-kb", "160")) * 1024;
+const SECTION_MAX = Number(arg("--section-max-kb", "96")) * 1024;
 const fail = [];
 
 if (!existsSync(join(DIST, "llms.txt"))) { console.log("::error::no dist/llms.txt — run npm run build first"); process.exit(2); }
@@ -55,8 +61,37 @@ for (const f of walk(CONTENT)) {
 }
 for (const hub of ["start", "sdk", "guides", "resources", "index"]) if (!existsSync(join(DIST, `${hub}.md`))) fail.push(`hub ${hub} has no markdown twin`);
 
+// the section files: capped, and together they cover every page an agent needs once
+const SECDIR = join(DIST, "llms");
+const sections = existsSync(SECDIR) ? readdirSync(SECDIR).filter((n) => n.endsWith(".txt")).sort() : [];
+if (!sections.length) fail.push("no dist/llms/<section>.txt files (src/pages/llms/[section].txt.ts)");
+const inlined = (text) => new Set([...text.matchAll(/^URL: https:\/\/docs\.bithuman\.ai(\/\S*)?$/gm)].map((m) => m[1] || "/"));
+const where = new Map();
+const secText = {};
+for (const n of sections) {
+  const t = readFileSync(join(SECDIR, n), "utf8");
+  secText[n] = t;
+  if (Buffer.byteLength(t) > SECTION_MAX) fail.push(`llms/${n} is ${(Buffer.byteLength(t) / 1024).toFixed(0)} KB (cap ${SECTION_MAX / 1024} KB)`);
+  for (const r of inlined(t)) where.set(r, [...(where.get(r) || []), n]);
+}
+for (const [r, ns] of where) if (ns.length > 1) fail.push(`${r} is inlined in ${ns.length} section files (${ns.join(", ")})`);
+for (const r of inlined(full)) if (!where.has(r)) fail.push(`llms-full.txt inlines ${r}, which no llms/<section>.txt carries`);
+const linkedAll = sections.map((n) => secText[n]).join("\n");
+let covered = 0;
+for (const f of walk(CONTENT)) {
+  const src = readFileSync(f, "utf8");
+  if (/^draft:\s*true/m.test(src)) continue;
+  const sec = (src.match(/^section:\s*"?(\w+)/m) || [])[1];
+  const type = (src.match(/^type:\s*"?(\w+)/m) || [])[1];
+  const wanted = ["start", "api", "guides", "performance"].includes(sec) || (sec === "sdk" && ["platform", "guide"].includes(type));
+  if (!wanted) continue;
+  const r = routeOf(CONTENT, f);
+  if (where.has(r) || linkedAll.includes(`https://docs.bithuman.ai${r}.md`)) covered++;
+  else fail.push(`${r} (${sec}) is in no llms/<section>.txt, inlined or linked`);
+}
+
 // no HTML comment reaches an agent; internal content is reported
-for (const [name, text] of [["llms.txt", llms], ["llms-full.txt", full]]) {
+for (const [name, text] of [["llms.txt", llms], ["llms-full.txt", full], ...sections.map((n) => [`llms/${n}`, secText[n]])]) {
   const noFences = text.replace(/^```[\s\S]*?^```/gm, "");
   if (/<!--/.test(noFences)) fail.push(`${name} carries an HTML comment`);
   const hits = scan(`dist/${name}`, text).filter((h) => h.name !== "html-comment-leak");
@@ -64,5 +99,7 @@ for (const [name, text] of [["llms.txt", llms], ["llms-full.txt", full]]) {
 }
 
 for (const f of fail) console.log(`::error::${f}`);
-console.log(`G5: llms.txt ${lines} lines / ${Buffer.byteLength(llms)} B, ${urls} URLs; llms-full.txt ${(Buffer.byteLength(full) / 1024).toFixed(0)} KB; ${twins} markdown twins — ${fail.length ? `${fail.length} FAILED` : "ok"}`);
+const kb = (t) => (Buffer.byteLength(t) / 1024).toFixed(0);
+console.log(`G5: llms.txt ${lines}/60 lines, ${Buffer.byteLength(llms)}/6144 B, ${urls} URLs; llms-full.txt ${kb(full)}/${FULL_MAX / 1024} KB; ` +
+  `sections ${sections.map((n) => `${n} ${kb(secText[n])}`).join(", ")} (cap ${SECTION_MAX / 1024} KB each), ${covered} pages covered; ${twins} markdown twins — ${fail.length ? `${fail.length} FAILED` : "ok"}`);
 process.exit(fail.length ? 1 : 0);
