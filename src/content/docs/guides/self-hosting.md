@@ -10,8 +10,9 @@ label: "Self-hosting"
 
 Self-hosting means the render happens on your hardware — a Mac, a Linux box, a
 phone or a browser tab. It is billed in credits at the
-self-hosted rate, and **credits are the only gate**: there is no separate
-licence to buy and no time limit. Downloading a model is free.
+self-hosted rate. Online, credits are the only gate: no licence to buy and no
+time limit. Fully offline use needs an [offline licence](/guides/pricing#offline-licensing)
+(Business and Enterprise). Downloading a model is free.
 
 ## Pick your surface
 
@@ -28,7 +29,7 @@ Each page below is the one place its install, model download and code live.
 
 The full model-by-surface matrix is on [Models](/concepts/models#where-each-model-runs).
 
-For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/sdk/livekit): with `model_path` the avatar renders on your machine ([guide](/guides/local-voice-avatar)), with `avatar_id` in the cloud. Expression 1 uses the container below.
+For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/sdk/livekit): with `model_path` the avatar renders on your machine ([guide](/guides/local-voice-avatar)), with `avatar_id` in the cloud. Expression 1 is cloud-only: use the [cloud API](/api).
 
 ## A first MP4 on macOS or Linux
 
@@ -61,7 +62,7 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
 | Symptom | Cause | Fix |
 |---|---|---|
 | `bithuman render` refuses with `NOT_SIGNED_IN` | a render is billed, so it needs a credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
-| `ffmpeg: command not found` | the MP4 is written through ffmpeg | `brew install ffmpeg` / `sudo apt install -y ffmpeg` |
+| `bithuman render` exits 69: `ffmpeg not found` | the MP4 is written through ffmpeg | `brew install ffmpeg` / `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
 | `pip install bithuman` finds no wheel | wheels exist for macOS (Apple silicon) and Linux x86_64 / arm64 only | use one of those, or WSL2 on Windows |
 | `java.lang.UnsatisfiedLinkError` on an Android emulator | the libraries are `arm64-v8a` only | a physical device, or an `arm64-v8a` emulator image |
 

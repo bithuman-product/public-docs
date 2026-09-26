@@ -112,13 +112,11 @@ curl https://api.bithuman.ai/v2/credit-summaries \
       "essence_1_cloud": 921,
       "essence_1_self_hosted": 1842,
       "expression_1_cloud": 460,
-      "expression_1_self_hosted": 921,
       "voice_chat": 184,
       "camera_chat": 61,
       "essence_cloud": 921,
       "essence_self_hosted": 1842,
-      "expression_cloud": 460,
-      "expression_self_hosted": 921
+      "expression_cloud": 460
     }
   }
 }
@@ -146,11 +144,10 @@ model** — read the key for the model you actually run:
 | `essence_1_cloud` | Essence 1 on bitHuman cloud | balance ÷ 2 |
 | `essence_1_self_hosted` | Essence 1 on your hardware | balance ÷ 1 |
 | `expression_1_cloud` | Expression 1 on bitHuman cloud | balance ÷ 4 |
-| `expression_1_self_hosted` | Expression 1 on your hardware | balance ÷ 2 |
 | `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
 
-`essence_cloud`, `essence_self_hosted`, `expression_cloud` and `expression_self_hosted` are older aliases of the `essence_1_*` and `expression_1_*` keys, **not** Essence 2 or Expression 2. The estimates are advisory; the server computes the actual charge.
+`essence_cloud`, `essence_self_hosted` and `expression_cloud` are older aliases of the `essence_1_*` and `expression_1_*` keys, **not** Essence 2 or Expression 2. The response also carries `expression_1_self_hosted` and `expression_self_hosted`, left from a retired container: Expression 1 has no self-hosted mode, so ignore them. The estimates are advisory; the server computes the actual charge.
 
 ## Usage history
 
