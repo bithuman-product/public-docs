@@ -55,7 +55,9 @@ Add parameters to the URL:
 | `greetingLang` | a language code, for example `es` | Language of the first greeting |
 | `greetingMsg` | text | The first thing the avatar says |
 
-A private agent also takes `token`, and a session can pin its model with `model`; both are on [Embedding](/api/embedding). Other parameters are ignored. With `render=local`, the avatar downloads once (50–200 MB, then cached) and renders in the tab with WebGPU; the conversation still runs on our servers. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
+A private agent also takes `token`, and a session can pin its model with `model`; both are on [Embedding](/api/embedding). Other parameters are ignored.
+
+`render=local` works for any avatar you can embed, and it is off by default: without it, every session renders in the cloud and streams to the page. With it, the avatar's web bundle (50–200 MB, then cached) is downloaded to the viewer's browser and the avatar renders in the tab with WebGPU; the conversation still runs on our servers. For a private agent this needs an embed token minted by the agent's owner, the same one the iframe already uses. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
 
 Check for a usable GPU before you choose `render=local`:
 
