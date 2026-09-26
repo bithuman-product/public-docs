@@ -251,7 +251,7 @@ const NAME_SCREEN = [
   /essence2[-_](light|quality)/i,
   /\bdream[-_ ]?1\b/i,
 ];
-// ★THE CONTAINER FORMAT IS PROPRIETARY AND CLOSED (owner ruling, 2026-09-16).
+// ★THE CONTAINER FORMAT IS PROPRIETARY AND CLOSED (product rule).
 // Naming the format and the extension a customer receives is fine — it is on
 // every file they download. The LAYOUT is not: the magic, the version bytes,
 // the table of contents, the field widths and order, the sibling family's

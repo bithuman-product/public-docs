@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// THE REALTIME PRICE TABLE IS THE API'S (coordinator ruling 2026-09-26, after platform #879/#880).
+// THE REALTIME PRICE TABLE IS THE API'S (product rule).
 //
 // /guides/pricing's "Serving" table used to be typed by hand. GET /v1/pricing now
 // publishes the realtime rates (`data.realtime`), each with the rounding rule and
@@ -72,13 +72,13 @@ export function render(rt) {
     if (camera) out += `| Managed agent — camera on (vision chat; replaces the chat rate) | ${per(camera.rate)} |\n`;
   }
   // an AVATAR-ONLY session (the customer's own agent) rendered in the browser bills the
-  // self-hosted column (GET /v1/pricing realtime.in_browser, owner 2026-09-26)
+  // self-hosted column (GET /v1/pricing realtime.in_browser, product rule)
   if (rt.in_browser?.surface === "connected-postpaid") {
     out += `\nAn avatar-only session (your own agent through the plugin or the API) that renders in the viewer's browser bills the model's **self-hosted** rate above. Inside a managed agent's chat the all-inclusive rate covers it.\n`;
   }
   out += "\n";
   // The guide states the BASIS verbatim; the `rounding` enum is an API field value and
-  // stays on the API reference page, not in customer prose (owner docs rule).
+  // stays on the API reference page, not in customer prose (docs rule).
   for (const e of bases.values()) out += `How live sessions are billed: ${e.basis}.\n`;
   return out;
 }

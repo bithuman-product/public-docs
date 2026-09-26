@@ -26,7 +26,7 @@ const fail = [];
 
 if (!existsSync(join(DIST, "llms.txt"))) { console.log("::error::no dist/llms.txt — run npm run build first"); process.exit(2); }
 const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
-// The billing rule an agent reads first (owner ruling 2026-09-26 13:35Z): realtime
+// The billing rule an agent reads first (product rule): realtime
 // bills active session time, talking or idle. The old "talking time / idle is free"
 // wording survived in the key facts after the pages moved on; fail on it here.
 for (const re of [/idle time is free/i, /\bidle is free\b/i, /pay for talking time/i, /talking time only/i]) {

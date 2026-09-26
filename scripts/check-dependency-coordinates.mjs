@@ -122,7 +122,7 @@
 //     published versions.
 //
 // ─────────────────────────────────────────────────────────────────────────────
-// PUBLISHED-COORDINATE POLICY (owner ruling, 2026-09-15). This gate enforces
+// PUBLISHED-COORDINATE POLICY (product rule). This gate enforces
 // the last line of it; the rest is written here because this is the file that
 // reasons about what a registry does and does not guarantee.
 //

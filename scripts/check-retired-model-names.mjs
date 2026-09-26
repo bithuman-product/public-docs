@@ -3,7 +3,7 @@
 //
 // WHY THIS EXISTS
 // ---------------
-// The owner's 2026-09-02 ruling: a developer reading this site should meet only
+// The product rule: a developer reading this site should meet only
 // **essence-2** and **expression-2**. `elevate`, `embody`, `essence-2-light`,
 // `essence-2-quality`, `lebundle` and their variants are DEPRECATED.
 //
@@ -122,7 +122,7 @@ const RETIRED = [
   { name: "essence2-light",    re: /essence2[-_]light/gi,   engineId: true },
   { name: "essence2-quality",  re: /essence2[-_]quality/gi, engineId: true },
   // ── ★ADDED 2026-09-04 — the two names this guard could not see ───────────
-  // Owner ruling 2026-09-04: *"tessera is internal code name and isn't needed
+  // PRODUCT RULE: *"tessera is internal code name and isn't needed
   // anymore — we only need essence-1/2, expression-1/2 and nothing beyond
   // that."* `docs/NAMING.md` §6a is the vocabulary (six products, nothing
   // else); `docs/NAMING-LEDGER.md` §G is the per-carrier verdict for these two
@@ -363,7 +363,7 @@ const RETIRED_ON = {
   // on 2026-09-02 (it hands out `<CODE>.imx`). Entries before that date
   // described the file by the name it actually had.
   "lebundle": "2026-09-02",
-  // Retired by the 2026-09-04 owner ruling (NAMING.md §6a). Every changelog
+  // Retired by the product rule (NAMING.md §6a). Every changelog
   // entry on this site predates it, so the changelog keeps its spellings and
   // this guard says so out loud rather than letting them pass unexplained.
   "tessera": "2026-09-04",
