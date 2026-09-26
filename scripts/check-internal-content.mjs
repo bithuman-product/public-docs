@@ -26,10 +26,25 @@ import { join, relative } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 
+// PRIVATE TERMS. A denylist of internal host names and infrastructure ids would
+// publish the very names it forbids, and this repository is public. So those
+// terms are not in this file: they come from the environment, INTERNAL_DENYLIST
+// (literal terms separated by newlines or commas), which CI fills from a
+// repository secret; the list itself lives in a private repository. Without it
+// the generic patterns below still run, and `--require-private` (what CI passes)
+// refuses to report a pass. A hit on a private term is printed as
+// "[private term]", never the term: a public repository's CI logs are public.
+const PRIVATE_TERMS = (process.env.INTERNAL_DENYLIST || "").split(/[\n,]/).map((t) => t.trim()).filter(Boolean);
+const escapeRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const PRIVATE_RE = PRIVATE_TERMS.length
+  ? new RegExp(`\\b(?:${PRIVATE_TERMS.map(escapeRe).join("|")})\\b`, "gi") : null;
+
 export const PATTERNS = [
-  { name: "internal-host", re: /\b(moraga|lafayette|orinda|echelon|alpharetta)\b|\btailnet\b|\/home\/(?!you\b|user\b|runner\b)\w+/gi,
-    fixture: "hosted on moraga-serve-03" },
-  { name: "infra-id", re: /tmoobjxlwcwvxvjeppzq|supabase\.co|sgubithuman|\bModal\b|\bbaked-\d+|\bhosted [a-z0-9]+-[a-z0-9-]{4,}/g,
+  { name: "internal-host", re: /\btailnet\b|\/home\/(?!you\b|user\b|runner\b)\w+/gi,
+    fixture: "the notes in /home/alice/scratch" },
+  ...(PRIVATE_RE ? [{ name: "private-term", re: PRIVATE_RE, redact: true,
+    fixture: `hosted on ${PRIVATE_TERMS[0]}-serve-03` }] : []),
+  { name: "infra-id", re: /supabase\.co|\bModal\b|\bbaked-\d+|\bhosted [a-z0-9]+-[a-z0-9-]{4,}/g,
     fixture: "the Modal CPU container" },
   { name: "governance", re: /\bowner (ruling|directive|decision)s?\b|\bby owner\b|\bruled\b|\brulings?\b|\blanes?\b|\bsecond reader\b|\breader that did not write\b|\bcontrol query\b/gi,
     fixture: "by owner ruling, the lane ships it" },
@@ -106,7 +121,7 @@ export function scan(rel, text, carriers = []) {
         }
         return false;
       });
-      if (!covered) hits.push({ name: pat.name, found: m[0], line: text.slice(0, at).split("\n").length });
+      if (!covered) hits.push({ name: pat.name, found: pat.redact ? "[private term]" : m[0], line: text.slice(0, at).split("\n").length });
       if (m.index === pat.re.lastIndex) pat.re.lastIndex++;
     }
   }
@@ -119,8 +134,14 @@ function selfTest() {
     p.re.lastIndex = 0;
     const ok = p.re.test(p.fixture);
     p.re.lastIndex = 0;
-    if (!ok) { bad++; console.log(`BLIND ${p.name}: cannot match its own fixture "${p.fixture}"`); }
+    if (!ok) { bad++; console.log(`BLIND ${p.name}: cannot match its own fixture "${p.redact ? "[private]" : p.fixture}"`); }
   }
+  // every private term must fire on its own, not only the first one the fixture names
+  PRIVATE_TERMS.forEach((t, i) => {
+    PRIVATE_RE.lastIndex = 0;
+    if (!PRIVATE_RE.test(`see ${t} for details`)) { bad++; console.log(`BLIND private-term #${i + 1}: cannot match itself`); }
+    PRIVATE_RE.lastIndex = 0;
+  });
   // negative controls: sentences a correct page may carry
   const clean = [
     "Essence 2 plays at 25 fps. Requires bithuman 2.11 or newer.",
@@ -137,9 +158,14 @@ function selfTest() {
 
 function main() {
   const args = process.argv.slice(2);
+  if (args.includes("--require-private") && !PRIVATE_TERMS.length) {
+    console.log("::error::INTERNAL_DENYLIST is empty: the private host/infrastructure terms were not graded, so this cannot pass. " +
+                "Set the repository secret INTERNAL_DENYLIST (the list lives in a private repository).");
+    process.exit(2);
+  }
   if (args.includes("--self-test")) {
     const b = selfTest();
-    console.log(b ? `self-test FAILED (${b})` : `self-test ok: ${PATTERNS.length} patterns fire on their fixtures, 0 over-matches`);
+    console.log(b ? `self-test FAILED (${b})` : `self-test ok: ${PATTERNS.length} patterns fire on their fixtures (${PRIVATE_TERMS.length} private term(s)), 0 over-matches`);
     process.exit(b ? 1 : 0);
   }
   if (selfTest()) process.exit(1);

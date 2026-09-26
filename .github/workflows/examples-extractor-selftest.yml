@@ -13,10 +13,10 @@ name: Handset examples — the half CI can run
 # `ubuntu-latest` has neither Xcode nor an Android SDK. `macos-latest` has Xcode
 # and NO Android SDK. There is no hosted runner on which both arms build, and a
 # gate split across two runners that each skip half the subject is a gate that
-# reports green for a page nobody compiled. So the compiling half runs on
-# `echelon` — the Mac with Xcode 26.3, JDK 17, an Android SDK with platform 35 —
-# scheduled from lafayette's crontab by scripts/examples-build-gate.sh, and it
-# pages a human through tools/guard_page.py when it goes red.
+# reports green for a page nobody compiled. So the compiling half runs daily on a
+# private build Mac that has Xcode, a JDK 17 and an Android SDK (platform 35),
+# driven by a scheduler outside this repository that pages a human when it goes
+# red. That runner pins this file's bytes to origin/main before it grades.
 #
 # WHAT IS LEFT FOR THIS WORKFLOW, AND WHY IT IS WORTH A JOB
 # --------------------------------------------------------
@@ -47,21 +47,19 @@ name: Handset examples — the half CI can run
 # WHAT THIS WORKFLOW DOES NOT DO: it does not compile anything. A green here
 # says the instrument is sound. It says nothing whatever about whether the
 # published code builds — only the host gate can say that, and its verdict
-# arrives in Slack.
+# arrives out of band.
 
 on:
   push:
     branches: ['**']
     paths:
       - 'scripts/check-published-examples-build.mjs'
-      - 'scripts/examples-build-gate.sh'
       - 'src/content/docs/examples/android-expression2.md'
       - 'src/content/docs/examples/swift-ios-expression2.md'
       - '.github/workflows/examples-extractor-selftest.yml'
   pull_request:
     paths:
       - 'scripts/check-published-examples-build.mjs'
-      - 'scripts/examples-build-gate.sh'
       - 'src/content/docs/examples/android-expression2.md'
       - 'src/content/docs/examples/swift-ios-expression2.md'
       - '.github/workflows/examples-extractor-selftest.yml'
@@ -87,131 +85,3 @@ jobs:
       - name: The host gate's failure control still has a subject
         if: always()
         run: node scripts/check-published-examples-build.mjs --controls
-
-      # The runner is a shell script that cron executes unattended on lafayette;
-      # a syntax error in it is a gate that never runs, which looks exactly like
-      # a gate that is green. `bash -n` is cheap and catches precisely that.
-      - name: No remote arm grades on ssh's exit code
-        # echelon runs Tailscale SSH; tailscaled execs the command under login(1),
-        # which does not propagate the child's status, so `ssh echelon "exit 3"`
-        # returns 0. The host gate's verdict used to be that number. This guard
-        # refuses any arm that goes back to reading it, and its --selftest proves
-        # the guard can still refuse (mutant caught, sentinel form passed, and the
-        # audited exemption withdrawn when its sentinel is deleted).
-        run: |
-          node scripts/check-remote-arm-verdicts.mjs --selftest
-          node scripts/check-remote-arm-verdicts.mjs
-
-      - name: The host runner parses
-        if: always()
-        run: bash -n scripts/examples-build-gate.sh
-
-      # ★THE INTERPRETER THE *CRON JOB* GETS, NOT THE ONE YOUR SHELL HAS.
-      # MEASURED 2026-09-09: the first installed form of this gate resolved node
-      # with a bare `command -v node`. cron on lafayette gives a job
-      # PATH=/usr/bin:/bin, that box has no node in /usr/bin (it is under ~/.nvm),
-      # and the nightly beat therefore exited 2 — "node is not on PATH here" — on
-      # every run. It could never once have been green, and it would have paged
-      # UNPROVEN every morning until somebody stopped reading the name. It passed
-      # for every human who ran it, because a login shell has nvm on PATH.
-      #
-      # So this asserts the resolver's BEHAVIOUR, with its own control:
-      #   * with an interpreter reachable, --which-node exits 0 and names it;
-      #   * with PATH and HOME pointing at nothing, it must exit 2 and say
-      #     UNPROVEN — never 0, because a gate that cannot run must not report
-      #     that it ran.
-      - name: The runner finds a node the way cron would, and says UNPROVEN when it cannot
-        if: always()
-        run: |
-          # ★`shell: bash -e` IS THE DEFAULT, AND IT BROKE BOTH CONTROLS HERE.
-          # MEASURED 2026-09-09: this workflow was RED on main from the moment
-          # it was added — twice, runs 34327650638 and 34329195969 — and not
-          # because anything it grades was wrong. Under `-e`, `out=$(cmd); rc=$?`
-          # ABORTS AT THE ASSIGNMENT when cmd exits non-zero, so the step died
-          # the instant the control did what a control is for, before a single
-          # assertion ran. The failure even reads like the assertion failing.
-          # Every check below is an explicit `test … || exit 1`, so -e buys
-          # nothing here and costs the whole control.
-          set -u +e
-          out=$(bash scripts/examples-build-gate.sh --which-node); rc=$?
-          echo "$out"
-          test $rc -eq 0 || { echo "::error::--which-node exited $rc where a node is plainly available"; exit 1; }
-          case "$out" in *node:*) ;; *) echo "::error::--which-node exited 0 without naming an interpreter"; exit 1 ;; esac
-
-          # THE CONTROL: a sandbox PATH with the four tools the resolver itself
-          # needs and NO node, an empty HOME so there is no ~/.nvm, and the
-          # absolute-candidate list injected at a path that does not exist. This
-          # has to be built rather than assumed: `PATH=/nonexistent` alone would
-          # not test anything on a runner that ships /usr/local/bin/node.
-          sb=$(mktemp -d); mkdir -p "$sb/bin" "$sb/home"
-          for t in date ls sort tail; do ln -s "$(command -v $t)" "$sb/bin/$t"; done
-          out2=$(env -i PATH="$sb/bin" HOME="$sb/home" GATE_NODE_CANDIDATES="$sb/nope/node" \
-                   /bin/bash scripts/examples-build-gate.sh --which-node 2>&1); rc2=$?
-          echo "control: rc=$rc2 :: $out2"
-          test $rc2 -eq 2 || { echo "::error::with no interpreter anywhere the runner exited $rc2, not 2 — a gate that cannot run must report UNPROVEN, never a pass"; exit 1; }
-          case "$out2" in *UNPROVEN*) ;; *) echo "::error::the no-node arm exited 2 without saying UNPROVEN"; exit 1 ;; esac
-
-      # ★The host gate is the only thing that compiles these pages, and it is
-      # scheduled OUTSIDE this repository. If its script is deleted or renamed
-      # here, cron keeps running a path that no longer exists and the estate
-      # loses the gate silently. Assert the two files reference each other.
-      - name: The runner and the checker still name each other
-        if: always()
-        run: |
-          set -e
-          test -x scripts/examples-build-gate.sh \
-            || { echo "::error::scripts/examples-build-gate.sh is not executable — cron runs it with bash, but keep the bit honest"; exit 1; }
-          grep -q 'check-published-examples-build.mjs' scripts/examples-build-gate.sh \
-            || { echo "::error::the host runner no longer invokes check-published-examples-build.mjs"; exit 1; }
-          grep -q 'examples-build-gate.sh' scripts/check-published-examples-build.mjs \
-            || { echo "::error::the checker no longer documents its host runner — the next reader will not find where this gate actually runs"; exit 1; }
-
-      # ★AND THE GRADER'S OWN BYTES. Added 2026-09-09, auditing the gate the
-      # same night it was installed. Everything above pins the SUBJECT — the
-      # pages are fetched live, the host checkout resets to origin/main, and
-      # check_host_tools_versioned.py hashes examples-build-gate.sh against
-      # origin/main every morning. Nothing pinned check-published-examples-build.mjs:
-      # no crontab line names it (only the runner does), so the host-tool
-      # registry never discovers it, and the runner's own `git fetch` failure
-      # path says WARNING and RUNS ANYWAY. A hand-edited or months-old grader
-      # would have reported the identical GREEN on today's pages.
-      #
-      # The arm is hermetic: a throwaway repo in the runner's temp dir with the
-      # real runner and a stand-in grader, its own refs/remotes/origin/main, and
-      # GATE_SELF_UPDATED=1 so nothing is fetched or reset. Then the control —
-      # ONE byte appended to the grader — must exit 2 and say so. A pin whose
-      # red has never been seen is not a pin.
-      - name: The runner refuses to grade with a grader that is not origin/main's
-        if: always()
-        run: |
-          # ★`shell: bash -e` IS THE DEFAULT, AND IT BROKE BOTH CONTROLS HERE.
-          # MEASURED 2026-09-09: this workflow was RED on main from the moment
-          # it was added — twice, runs 34327650638 and 34329195969 — and not
-          # because anything it grades was wrong. Under `-e`, `out=$(cmd); rc=$?`
-          # ABORTS AT THE ASSIGNMENT when cmd exits non-zero, so the step died
-          # the instant the control did what a control is for, before a single
-          # assertion ran. The failure even reads like the assertion failing.
-          # Every check below is an explicit `test … || exit 1`, so -e buys
-          # nothing here and costs the whole control.
-          set -u +e
-          r=$(mktemp -d); mkdir -p "$r/scripts"
-          cp scripts/examples-build-gate.sh "$r/scripts/"
-          cp scripts/check-published-examples-build.mjs "$r/scripts/"
-          git -C "$r" init -q .
-          git -C "$r" -c user.email=ci@local -c user.name=ci add -A
-          git -C "$r" -c user.email=ci@local -c user.name=ci commit -qm pin
-          git -C "$r" update-ref refs/remotes/origin/main HEAD
-
-          out=$(GATE_SELF_UPDATED=1 /bin/bash "$r/scripts/examples-build-gate.sh" --selftest 2>&1); rc=$?
-          echo "$out"
-          test $rc -eq 0 || { echo "::error::the runner exited $rc on a grader that IS origin/main's blob — the pin is red on a clean tree"; exit 1; }
-          case "$out" in *"grader pinned"*) ;; *) echo "::error::the runner ran without saying which blob it pinned"; exit 1 ;; esac
-
-          # THE CONTROL: the same tree, one byte added to the grader.
-          printf '\n// hand-edited on the box\n' >> "$r/scripts/check-published-examples-build.mjs"
-          out2=$(GATE_SELF_UPDATED=1 /bin/bash "$r/scripts/examples-build-gate.sh" --selftest 2>&1); rc2=$?
-          echo "control: rc=$rc2"
-          echo "$out2"
-          test $rc2 -eq 2 || { echo "::error::a grader that is on NO commit was accepted (exit $rc2) — the gate would report a green produced by bytes nobody published"; exit 1; }
-          case "$out2" in *"THE GRADER IS NOT THE PUBLISHED GRADER"*) ;; *) echo "::error::the pin exited 2 without naming the defect"; exit 1 ;; esac
-          case "$out2" in *"selftest GREEN"*) echo "::error::the runner went on to GRADE with unpinned bytes before refusing"; exit 1 ;; *) ;; esac
