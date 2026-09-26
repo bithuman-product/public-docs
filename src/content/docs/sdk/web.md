@@ -57,17 +57,29 @@ Add parameters to the URL:
 
 A private agent also takes `token`, and a session can pin its model with `model`; both are on [Embedding](/api/embedding). Other parameters are ignored.
 
-`render=local` works for any avatar you can embed, and it is off by default: without it, every session renders in the cloud and streams to the page. With it, the avatar's web bundle (50–200 MB, then cached) is downloaded to the viewer's browser and the avatar renders in the tab with WebGPU; the conversation still runs on our servers. For a private agent this needs an embed token minted by the agent's owner, the same one the iframe already uses. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
+`render=local` works for any avatar you can embed, and it is off by default: without it, every session renders in the cloud and streams to the page. For a private agent it needs an embed token minted by the agent's owner, the same one the iframe already uses. The conversation always runs on our servers.
 
-Check for a usable GPU before you choose `render=local`:
+With `render=local`, each device proves it can keep up before it renders:
+
+1. **First visit on a device.** The avatar streams from the cloud at once. In the background the page downloads the avatar's web bundle (50–200 MB, then cached) and measures how fast this device renders it.
+2. **The device passes.** From the next session on, the avatar renders in the tab.
+3. **The device fails.** The avatar keeps streaming from the cloud, and the page shows this notice: "Your device can't render this avatar locally, so it's streaming from the cloud."
+
+The page remembers the result for this browser and GPU for 30 days, and measures again after a browser update. To pass, a device must render faster than real time:
+- with WebGPU: at least 1.25× the avatar's playback rate;
+- without WebGPU: at least 2×.
+
+The page tells yours which mode it chose with a `message` event:
 
 ```js
-async function hasRealGPU() {
-  if (!navigator.gpu) return false;
-  const once = async () => { try { return (await navigator.gpu.requestAdapter()) ?? null; } catch { return null; } };
-  const adapter = (await once()) ?? (await once());   // the first request can return null while the GPU starts
-  return !!adapter && adapter.isFallbackAdapter !== true && adapter.info?.isFallbackAdapter !== true;
-}
+window.addEventListener("message", (e) => {
+  if (e.data?.type !== "bithuman:render-mode") return;
+  // e.data.mode: "local" | "cloud"
+  // e.data.reason: "ok" | "probing" | "no-webgpu" | "software-adapter" | "unsupported-browser"
+  //                | "below-realtime" | "probe-failed" | "no-web-bundle"
+  // e.data.next: "local" when this device passed and the next session renders in the tab
+  // e.data.bar: the bar the device was measured against
+});
 ```
 
 Do not send `Cross-Origin-Embedder-Policy` from the page that holds the iframe: the embed does not send one itself, so the browser refuses to load it.
@@ -89,7 +101,7 @@ In-browser frame rates (WebGPU) are on [Web browser performance](/performance/we
 |---|---|---|
 | The microphone never activates | `allow` is missing `microphone *` | use `allow="microphone *"` |
 | `404` | the agent code is wrong, or the agent is private | check the code; mint an [embed token](/api/embedding) for a private agent |
-| `render=local` reloads as `render=cloud` | no usable GPU (WebGPU) in this browser, or this Essence 2 avatar has no browser build | nothing to do; it is served from the cloud. Check `hasRealGPU()` first to choose the mode yourself |
+| `render=local` reloads as `render=cloud` | this device has not passed the local-render check yet (first visit), failed it, or this avatar has no browser build | nothing to do; it is served from the cloud. Listen for `bithuman:render-mode` to see why |
 | The iframe shows a browser error page | your page sends `Cross-Origin-Embedder-Policy` | remove that header from the page that holds the iframe |
 
 ## Reference
