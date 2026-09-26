@@ -4,8 +4,8 @@
   "versions": {
     "cli": "2.7.8",
     "python": "2.11.13",
-    "swift": "2.17.1",
-    "essence2_engine": "1.14.0",
+    "swift": "2.17.2",
+    "essence2_engine": "1.14.1",
     "expression2_swift": "2.7.0",
     "essence2_android": "0.7.0",
     "expression2_android": "0.5.0",

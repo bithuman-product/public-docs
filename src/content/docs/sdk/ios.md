@@ -30,7 +30,7 @@ Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or E
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.17.1")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.17.2")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -175,7 +175,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.17.1 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.17.2 or newer
   ```
 
 ## Performance
@@ -192,7 +192,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously, and Essence 2 hands out at most 25 a second | poll, as in the first frame, or use `frames()` |
 | crash in `__cxa_finalize` when the app quits | `be_essence2_quiesce_all()` was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
-| `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.17.1"`, then `swift package update` |
+| `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.17.2"`, then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
 
