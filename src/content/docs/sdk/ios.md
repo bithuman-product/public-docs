@@ -30,7 +30,7 @@ Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or E
 In Xcode choose *File → Add Package Dependencies…* and paste `https://github.com/bithuman-product/homebrew-bithuman.git`. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.16.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.17.0")
 // then attach the products your target uses:
 //   .product(name: "Expression2", package: "homebrew-bithuman")
 //   .product(name: "Essence2Kit", package: "homebrew-bithuman")
@@ -95,22 +95,33 @@ Essence 2, with an Essence 2 avatar file (`.imx`, downloaded the same way with y
 
 ```swift
 import Essence2Kit
+import AVFoundation
 
 Essence2Credential.set(secret)                                    // or BITHUMAN_API_SECRET
 let engine = try await Essence2Engine.create(identity: imxURL)    // waits until the engine is ready
+
+let audio = AVAudioEngine(), player = AVAudioPlayerNode()         // your app's audio output
+let format = AVAudioFormat(standardFormatWithSampleRate: 16000, channels: 1)!
+audio.attach(player); audio.connect(player, to: audio.mainMixerNode, format: format); try audio.start()
+let reply = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(samples.count))!
+reply.frameLength = reply.frameCapacity
+samples.withUnsafeBufferPointer { reply.floatChannelData![0].update(from: $0.baseAddress!, count: samples.count) }
+
 engine.feed(samples)                                              // [Float], 16 kHz mono
-var spoke = false
-while true {
-    if let (frame, speech) = engine.pull() {                      // B, G, R bytes, width * height * 3
-        show(frame, engine.width, engine.height)
-        if speech { spoke = true } else if spoke { break }        // the first idle frame after the reply
+engine.flushTail()                                                // that is the whole reply
+for await frame in engine.frames(following: player) {             // 25 frames per second
+    show(frame.bgr, frame.width, frame.height)                    // B, G, R bytes, width * height * 3
+    if frame.audioTime == 0 {                                     // the reply's first speech frame:
+        player.stop(); player.scheduleBuffer(reply); player.play()  // start its audio now
     }
-    try await Task.sleep(nanoseconds: 40_000_000)                 // pull at 25 fps, as a display does
+    if frame.endsReply { break }                                  // the reply is over; idle frames follow
 }
 engine.shutdown()
 ```
 
-Expected: 25 frames per second of audio at the avatar's own size (for example 1920×1080). Between replies `pull()` keeps returning idle frames (`speech: false`) as fast as you call it, so pace the calls to your display, 25 per second. The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
+Expected: 25 frames per second at the avatar's own size (for example 1920×1080), idle motion between replies and speech while a reply plays. `frames(following: player)` hands out each speech frame when the player has played its audio, so voice and lips stay together however long the reply is and whatever your output's start latency; a frame that would be shown late is skipped. Measured on a Mac over an 85 s reply: within 25 ms, with no drift from start to end. If your audio does not go through an `AVAudioPlayerNode`, pass your own clock: `frames(audioClock: { secondsOfThisReplyPlayed })`. The first `create` downloads the engine's three runtime files (about 112 MB) from the package's release, checks their sha256 and keeps them in Application Support. To ship them in your app instead, pass `resourcesDirectory:`.
+
+`pull()` also works, paced the same way: call it from a display link or a timer as often as you like and it returns at most 25 frames a second (`nil` means keep showing the current frame). A loop that pulls every 40 ms and stops at the first `speech: false` frame after the reply still works.
 
 The same engine as a C interface, for C, C++ and plugins:
 
@@ -132,12 +143,15 @@ Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) fr
 | Job | Expression 2 | Essence 2 |
 |---|---|---|
 | Stream audio as it arrives | `feed(chunk)` | `feed(chunk)` |
-| Show frames | `pull()` at 20 fps | `pull()` at 25 fps |
-| End of a reply | `flushTail()` | `pull()` returns `speech: false` again (idle frames follow; it does not return `nil`) |
-| Idle between replies | `engine.idle` | `idle(into:)` (a `0` means keep the current frame) |
+| Show frames | `pull()`, which returns frames as soon as they render: show them at 20 fps | `frames(following:)`, or `pull()` paced to 25 fps |
+| End of a reply | `flushTail()`; the reply is over when `pull()` returns `nil` and `hasPendingTail` is false | `flushTail()` ends the reply's audio; the first frame after it has `endsReply`, and `events()` reports `.replyEnded` |
+| Start the reply's audio | with its first frame | with its first speech frame (`audioTime == 0`, or `events()` `.replyStarted`); `frames(following: player)` keeps the picture on it |
+| Idle between replies | `engine.idle` | `frames()` / `pull()` keep returning idle frames (`isSpeech == false`) |
 | Interrupt the reply | `resetState(clearFrames: true)` | `interrupt()` |
 | Check the session | `meteringRefusal` | `meteringRefusal`, `runtimeFailure` |
 | Quit | release the engine | `shutdown()`, then `Essence2Engine.quiesceAll()` at app exit |
+
+For offline rendering, set `engine.pacing = .unpaced` and Essence 2 hands out frames as fast as it renders them.
 
 The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftUI app with microphone input, idle and interruption.
 
@@ -161,7 +175,7 @@ Both return a local file to pass to `create`. They download the Apple build of t
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 
   ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.16.0 or newer
+  grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.17.0 or newer
   ```
 
 ## Performance
@@ -175,7 +189,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | `create` throws `meteringRefused` (C: `be_essence2_create` returns `-3`): *no API secret was found* | no secret | call `Essence2Credential.set` / `Expression2Credential.set`, or set `BITHUMAN_API_SECRET` in the scheme |
 | *the API secret was rejected (401)* | revoked or mistyped secret | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys) |
 | *cannot reach bitHuman to verify your credential* | no network at first contact; in a Mac app, no Outgoing Connections entitlement | fix the network or the entitlement, then create again |
-| `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously | poll, as in the first frame |
+| `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously, and Essence 2 hands out at most 25 a second | poll, as in the first frame, or use `frames()` |
 | crash in `__cxa_finalize` when the app quits | `be_essence2_quiesce_all()` was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
 | `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.16.0"`, then `swift package update` |
