@@ -26,6 +26,12 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### Flutter plugin 2.6.19 — 2026-09-26
+
+- **Changed:** on Android, Essence 2 frames reach the screen without a CPU copy. On a Galaxy S25+ this uses about 8% less CPU, and the frames are unchanged.
+- **Changed:** Android uses `essence2-android` 0.8.0 and `expression2-android` 0.5.1, which bill correctly whatever the app sets and name each installation on the meter. iOS and macOS are unchanged.
+- **Action:** set `ref: flutter-plugin-v2.6.19` in your `pubspec.yaml`.
+
 ### expression2-android 0.5.1 — 2026-09-26
 
 - **Fixed:** billing can no longer be changed from app code: the meter's endpoint, whether from `Expression2Metering.apiBaseUrl` or the `BITHUMAN_API_URL` environment variables, is honoured only for an `https://` bitHuman host.
