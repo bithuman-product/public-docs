@@ -10,7 +10,7 @@ label: "Billing & usage"
 
 ## The credits model
 
-bitHuman bills in **credits**: talking time in a live session bills by the exact second at a per-minute rate (idle time is free), and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/guides/pricing). These endpoints read your balance, your usage and the rate schedule.
+bitHuman bills in **credits**: time in a live session, talking or idle, bills by the exact second at a per-minute rate, and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/guides/pricing). These endpoints read your balance, your usage and the rate schedule.
 
 ## Account status
 

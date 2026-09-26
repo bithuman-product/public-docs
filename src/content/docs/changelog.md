@@ -44,7 +44,7 @@ What changed in each release, newest first. Current versions are on [Downloads &
 
 ### Billing — 2026-09-26
 
-- **Changed:** realtime sessions are now billed by exact talking seconds, with no per-session minimum. A session's fraction of a credit carries to your next session. Idle time stays free. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/guides/pricing).
+- **Changed:** realtime sessions bill active session time, talking or idle, by the exact second, with no per-session minimum. A session's fraction of a credit carries to your next session. This replaces the talking-only billing announced earlier the same day. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/guides/pricing).
 - **Changed:** Expression 1 avatar sessions are now metered to your account at the standard cloud rate, talking time only. Rates are on [pricing](/guides/pricing).
 
 ### Swift package 2.16.0 — 2026-09-25
