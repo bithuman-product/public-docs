@@ -103,37 +103,31 @@ paths:
         **Agent creation is image-only.** Provide a portrait `image` (or let
         the prompt generate one) — bitHuman generates a **10-second
         identity video internally**, authored to loop seamlessly (its
-        first and last frames match). Video input is not part of the creation
-        contract for any model and is being removed platform-wide: do not
-        send `video` — as the rollout completes, a request carrying it is
-        rejected with `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is
-        billed.
+        first and last frames match). A `video` field is rejected with
+        `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is billed.
 
-        **Selecting an engine.** Send `model` (`expression` default, or
-        `essence`) + `version` (`v1` default, or `v2`). `expression`+`v2` →
-        Expression 2, `essence`+`v2` → Essence 2, and so on. Omitting both
-        gives Expression 1. Full engine names (`essence-1` … `expression-2`)
-        and `auto` are still accepted directly.
+        **Selecting a model.** Always send `model`: `essence-2`,
+        `expression-2`, `auto`, `essence-1` or `expression-1`. An omitted
+        `model` creates an `expression-1` agent. The older family + `version`
+        form (`essence` or `expression` with `v1` / `v2`) still selects a
+        model; new integrations should send the full name.
 
-        **Creation time depends on the resolved engine** (the second-generation
-        models train real per-identity models — don't apply a 5-minute client
+        **Creation time depends on the model** (the second-generation models
+        train a per-identity model, so don't apply a 5-minute client
         timeout):
 
-        | model + version | engine | identity input | creation time |
-        |---|---|---|---|
-        | `expression` + `v1` (default) | Expression 1 | image (or generated from prompt) | **1 min** |
-        | `essence` + `v1` | Essence 1 | image (or generated from prompt) | **13 min** |
-        | `expression` + `v2` | Expression 2 | image (or generated from prompt) | **2 h 02 m** |
-        | `essence` + `v2` | Essence 2 | image (or generated from prompt) — a 10-second identity video is generated internally | **2 h 09 m** — **both Essence 2 models from one creation** |
-        | `auto` | classified | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
+        | `model` | identity input | creation time |
+        |---|---|---|
+        | `essence-2` | image (or generated from prompt); a 10-second identity video is generated internally | about 2–2.5 h |
+        | `expression-2` | image (or generated from prompt) | about 2–2.5 h |
+        | `auto` | image or prompt (classified automatically) | as the routed model (`essence-2` or `expression-2`) |
+        | `essence-1` | image (or generated from prompt) | under 15 min |
+        | `expression-1` (the default when `model` is omitted) | image (or generated from prompt) | about 1 min |
 
-        Those are one creation per engine, measured end to end on
-        **2026-09-20** from this call to `status: "ready"` on
-        `GET /v1/agent/status/{agent_id}`. Read them as one observed range,
-        not a guarantee: **under 15 minutes for either first-generation
-        engine, and about 2 to 2.5 hours for either second-generation one**,
-        with individual runs going longer. Neither second-generation engine
-        is the fast one — size timeouts in hours for both.
+        Times run from this call to `status: "ready"` on
+        `GET /v1/agent/status/{agent_id}`. They are a typical range, not a
+        guarantee, and individual runs can take longer: size timeouts in
+        hours for the second-generation models.
 
         **Picking the right family:** `essence-2` works best for
         photorealistic human figures; `expression-2` works best for
@@ -214,37 +208,28 @@ paths:
                   deprecated: true
                   description: >-
                     **Deprecated — omit it.** The internally generated
-                    identity/driver video is standardizing on 10 seconds
-                    (authored to loop seamlessly); the parameter is ignored
-                    as that rollout completes.
+                    identity video is 10 seconds (authored to loop
+                    seamlessly); this parameter is ignored.
                 model:
                   type: string
-                  enum: [expression, essence, essence-1, essence-2, expression-1, expression-2, auto]
-                  default: expression
-                  example: expression
+                  enum: [essence-2, expression-2, auto, essence-1, expression-1, essence, expression]
+                  default: expression-1
+                  example: expression-2
                   description: >-
-                    Avatar model **family**: `expression` (default) or
-                    `essence`, combined with `version` (`v1` / `v2`) to select
-                    the engine — `expression`+`v1` → Expression 1,
-                    `essence`+`v2` → Essence 2, and so on. **Essence** is the
-                    photorealistic-human engine; **Expression** drives stylized /
-                    cartoon / creature characters (and photorealistic figures on
-                    v1). An omitted `model` defaults to `expression` at version
-                    `v1` (Expression 1) — a v1 engine at the 250-credit rate; an
-                    omitted model never silently selects a v2 engine or a higher
-                    price.
+                    The model to create. Always send it: `essence-2`,
+                    `expression-2`, `auto`, `essence-1` or `expression-1`. An
+                    omitted `model` creates an `expression-1` agent (a
+                    first-generation model at the 250-credit rate); it never
+                    silently selects a second-generation model or a higher
+                    price. The family names `essence` and `expression` are the
+                    older form: combined with `version` (`v1` / `v2`) they
+                    still select a model.
 
 
-                    You may still pass a **full engine name** directly
-                    (`essence-1`, `essence-2`, `expression-1`, `expression-2`)
-                    or `auto`; those pass through unchanged and `version` is
-                    ignored, so existing integrations keep working.
                     **`essence-2`** is the second-generation Essence model for
                     photorealistic people — one 500-credit creation that runs
                     everywhere from on-device (CPU / Apple Silicon) up to
-                    cloud GPU. (`essence-2-light` is a retired alias — the
-                    public name is `essence-2`.) Request it as `essence-2`
-                    (or `essence` + `v2`).
+                    cloud GPU.
                     **`expression-2`** is the second-generation
                     expression engine — audio-driven real-time avatar video from
                     a single photo (creation trains a per-identity model —
@@ -261,7 +246,9 @@ paths:
                   enum: [v1, v2]
                   default: v1
                   example: v2
+                  deprecated: true
                   description: >-
+                    **Older form — send a full name in `model` instead.**
                     Engine generation for the chosen `model` family. `v1`
                     (default) selects the first-generation engine (Essence 1 /
                     Expression 1, 250 credits); `v2` selects the
@@ -968,10 +955,8 @@ paths:
                   type: string
                   enum: [essence-1, essence-2, expression-1, expression-2]
                   description: >-
-                    The model to add. The Essence 2 tiers are not individually
-                    addable — `essence-2` is the one combined add (Light train
-                    + Quality from the same identity video). Anything else
-                    returns `400 VALIDATION_ERROR` listing these options.
+                    The model to add. Anything else returns
+                    `400 VALIDATION_ERROR` listing these options.
                   example: "expression-2"
       responses:
         "200":
@@ -1054,7 +1039,7 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the licence with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#platform-notes). `essence-2-light` is a retired internal alias for this family. |
+        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the licence with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#platform-notes). |
         | `expression-2` | `<code>.avatar` — the same container as `.imx` under a second name (a few early identities use an older format; `bithuman open` reports which) — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
@@ -1086,7 +1071,7 @@ paths:
         not a charge. The order matters both ways: a meter that refuses
         (`402`) or fails (`500`) returns no URL at all.
 
-        The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/commands) wraps
+        The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/reference) wraps
         this endpoint: `bithuman pull <AGENT_CODE>` downloads the artifact,
         recognizes its model family, and prints what to do next.
 
@@ -1123,8 +1108,8 @@ paths:
             type: string
             enum: [essence-1, essence-2, expression-2]
           description: >-
-            Artifact family. Defaults to the agent's own model. The retired
-            `essence-2-light` name and the runtime tier slugs (`essence-2-apple`,
+            Artifact family. Defaults to the agent's own model. The runtime
+            tier slugs (`essence-2-apple`,
             `essence-2-gpu`, `essence-2-cpu`, `expression-2-gpu`; the older
             `essence-2-ane` spelling stays accepted) fold onto
             their family. `essence-2-quality` is **no longer accepted** — it
@@ -1646,7 +1631,7 @@ paths:
 
         **Performance.** The reply carries no frame rates.
         `note_performance` maps each family in the catalogue to the
-        [performance page](https://docs.bithuman.ai/sdk/performance), where the frame rates are
+        [performance page](https://docs.bithuman.ai/performance), where the frame rates are
         measured and published for every device.
 
         `sha256` is deliberately empty: no content digest is recorded for these
@@ -1955,10 +1940,7 @@ paths:
                     `essence-2`, `expression-2`) or a
                     force-tier slug that pins one serving tier
                     (`expression-2-gpu/-cpu/-apple`, `essence-2-gpu/-apple/-cpu`; the older
-                    `-ane` spelling of the Apple tier stays accepted;
-                    the legacy `essence-2-light-gpu/-cpu` slugs still pin
-                    their tiers, and retired `essence-2-light(-ane)` values
-                    route to the `essence-2` chain). This is the **early
+                    `-ane` spelling of the Apple tier stays accepted). This is the **early
                     artifact gate**: if the requested model folds onto the
                     `expression-2` / `essence-2` families and the
                     agent's trained per-identity model hasn't been generated
@@ -2615,9 +2597,7 @@ paths:
                     Avatar engine. `essence-1` (2 credits/min) and
                     `expression-1` (4 credits/min) are the classic v1 engines,
                     available today. `expression-2` (4 credits/min) and `essence-2`
-                    (4 credits/min, the standard distilled renderer — the
-                    former `essence-2-light` name, which is no longer
-                    accepted) are the v2 engines.
+                    (4 credits/min) are the v2 engines.
                   example: "essence-2"
                 agent_code:
                   type: string
@@ -4414,7 +4394,7 @@ tags:
   ##########################################################################
   - name: overview
     x-displayName: Overview
-    description: "What bitHuman is, where an avatar renders and what you can build: [https://docs.bithuman.ai/api/overview](https://docs.bithuman.ai/api/overview)."
+    description: "What bitHuman is, where an avatar renders and what you can build: [https://docs.bithuman.ai/api](https://docs.bithuman.ai/api)."
   - name: quickstart
     x-displayName: Quickstart
     description: "Your first talking avatar, with curl and a hosted agent: [https://docs.bithuman.ai/api/quickstart](https://docs.bithuman.ai/api/quickstart)."
@@ -4441,7 +4421,7 @@ tags:
     description: "`pip install bithuman` — open an avatar, render audio through it, take frames: [https://docs.bithuman.ai/sdk/python](https://docs.bithuman.ai/sdk/python)."
   - name: sdk-swift
     x-displayName: Swift SDK
-    description: "The SwiftPM package for iPhone, iPad and Mac: [https://docs.bithuman.ai/sdk/ios](https://docs.bithuman.ai/sdk/ios)."
+    description: "The SwiftPM package for iPhone, iPad and Mac: [https://docs.bithuman.ai/sdk/apple](https://docs.bithuman.ai/sdk/apple)."
   - name: cli
     x-displayName: CLI (bithuman)
     description: "One binary for macOS Apple Silicon and Linux x86_64 — a live avatar in the browser or an MP4 render: [https://docs.bithuman.ai/sdk/cli](https://docs.bithuman.ai/sdk/cli)."
@@ -4455,8 +4435,8 @@ tags:
     x-displayName: Managed (LiveKit plugin)
     description: "Drop an avatar into a LiveKit agent worker with the plugin: [https://docs.bithuman.ai/sdk/livekit](https://docs.bithuman.ai/sdk/livekit)."
   - name: deploy-self-hosted
-    x-displayName: Self-hosted GPU (Docker)
-    description: "Run Expression 1 on your own NVIDIA hardware with the published image: [https://docs.bithuman.ai/guides/self-hosting#the-expression-1-gpu-container](https://docs.bithuman.ai/guides/self-hosting#the-expression-1-gpu-container)."
+    x-displayName: Self-hosting
+    description: "Run Essence 2, Expression 2 and Essence 1 on your own hardware (a Mac, a Linux box, a phone or a browser tab); Expression 1 runs in the cloud only: [https://docs.bithuman.ai/guides/self-hosting](https://docs.bithuman.ai/guides/self-hosting)."
   - name: deploy-embed
     x-displayName: Browser embed
     description: "A talking avatar on any website with one iframe and an embed token: [https://docs.bithuman.ai/api/embedding](https://docs.bithuman.ai/api/embedding)."

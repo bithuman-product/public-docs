@@ -184,6 +184,56 @@ for (const f of walk(CONTENT, [".md", ".mdx"])) {
   }
 }
 
+// --- 2c. The OpenAPI spec (served as /api/openapi.yaml, rendered at /api/reference) ---
+// Its descriptions link the docs by absolute URL and each other by Scalar anchor
+// (#tag/<name>, #operation/<id>, #tag/<name>/operation/<id>). None of that was
+// checked: the spec carried a dead /guides/self-hosting anchor and four links to
+// redirecting routes. Absolute docs URLs are held to the same rule as page links
+// (a known route, never a redirect source, and the heading anchor must exist), and
+// every in-spec anchor must name a tag or operationId the spec defines.
+const SPEC = join(ROOT, "src/openapi/bithuman.yaml");
+let specLinks = 0;
+{
+  const spec = readFileSync(SPEC, "utf8");
+  const where = (i) => `src/openapi/bithuman.yaml:${spec.slice(0, i).split("\n").length}`;
+  const tagBlock = spec.slice(spec.search(/^tags:\s*$/m));
+  const tagSlugs = new Set([...tagBlock.matchAll(/^  - name: (.+?)\s*$/gm)].map((m) => m[1].replace(/^["']|["']$/g, "").replace(/ /g, "-")));
+  const opIds = new Set([...spec.matchAll(/operationId:\s*(\S+)/g)].map((m) => m[1]));
+  if (tagSlugs.size < 5 || opIds.size < 5) {
+    failures.push({ file: "src/openapi/bithuman.yaml", target: "tags/operationIds", note: ` — read ${tagSlugs.size} tags and ${opIds.size} operationIds; the parser went blind` });
+  }
+  const DOCS_URL = /https:\/\/docs\.bithuman\.ai(\/[A-Za-z0-9/_-]*)?(#[A-Za-z0-9_-]+)?(?![A-Za-z0-9/_.#-]*\.[a-z0-9]{2,4}\b)/g;
+  const REL_URL = /\]\((\/[^)\s#]*)(#[^)\s]*)?\)/g;
+  for (const re of [DOCS_URL, REL_URL]) {
+    for (const m of spec.matchAll(re)) {
+      let target = (m[1] ?? "/").replace(/\/$/, "") || "/";
+      const frag = m[2] ? m[2].slice(1) : "";
+      if (/\.[a-z0-9]{2,4}$/i.test(target)) continue;
+      specLinks++;
+      if (!routes.has(target)) {
+        const note = redirects.has(target) ? ` (redirects to ${redirects.get(target)} — link the canonical page instead)` : "";
+        failures.push({ file: where(m.index), target, note });
+        continue;
+      }
+      if (frag && anchors.has(target)) {
+        anchorsChecked++;
+        if (!anchors.get(target).has(frag)) {
+          anchorFailures.push({ file: where(m.index), target: `${target}#${frag}`, known: [...anchors.get(target)] });
+        }
+      }
+    }
+  }
+  for (const m of spec.matchAll(/\(#((?:tag\/[^)/\s]+)(?:\/operation\/[^)\s]+)?|operation\/[^)\s]+)\)/g)) {
+    specLinks++;
+    anchorsChecked++;
+    const parts = m[1].split("/");
+    const ok = parts[0] === "tag"
+      ? tagSlugs.has(parts[1]) && (parts.length < 4 || opIds.has(parts[3]))
+      : opIds.has(parts[1]);
+    if (!ok) failures.push({ file: where(m.index), target: `#${m[1]}`, note: " — no such tag or operationId in the spec" });
+  }
+}
+
 // `## Title {#custom-id}` is not supported by Astro's markdown: the literal
 // braces render into the heading text and the id becomes `title-custom-id`.
 for (const { file, snippet } of customIdHeadings) {
@@ -241,5 +291,6 @@ if (anchorsChecked === 0) {
 
 console.log(
   `OK — all internal links resolve (${routes.size} routes known, ` +
-    `${redirects.size} redirects checked, ${anchorsChecked} anchors resolved).`
+    `${redirects.size} redirects checked, ${anchorsChecked} anchors resolved; ` +
+    `${specLinks} links and anchors in the OpenAPI spec).`
 );
