@@ -64,13 +64,17 @@ export function render(rt) {
     note(h); note(s);
     out += `| ${label} (\`${m}\`) | ${h ? per(h.rate) : "—"} | ${s ? per(s.rate) : "—"} |\n`;
   }
-  const chat = rt.hosted?.chat_line;
-  if (chat) {
-    note(chat);
-    out += `\nManaged conversational agents bill on top of avatar serving:\n\n| Surface | Rate |\n|---|---|\n| Managed agent — voice chat | ${per(chat.rate)} |\n`;
+  const chat = rt.hosted?.chat_line, camera = rt.hosted?.camera_chat_line;
+  if (chat || camera) {
+    note(chat); note(camera);
+    out += `\nManaged conversational agents bill on top of avatar serving:\n\n| Surface | Rate |\n|---|---|\n`;
+    if (chat) out += `| Managed agent — voice chat | ${per(chat.rate)} |\n`;
+    if (camera) out += `| Managed agent — camera on (vision chat; replaces the chat rate) | ${per(camera.rate)} |\n`;
   }
   out += "\n";
-  for (const e of bases.values()) out += `How talking time is billed (\`rounding: ${e.rounding}\`): ${e.basis}.\n`;
+  // The guide states the BASIS verbatim; the `rounding` enum is an API field value and
+  // stays on the API reference page, not in customer prose (owner docs rule).
+  for (const e of bases.values()) out += `How talking time is billed: ${e.basis}.\n`;
   return out;
 }
 

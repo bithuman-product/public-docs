@@ -125,7 +125,8 @@ function parseRates(md) {
     if (label.includes("voice")) rates.voice_chat = Number(row[1]);
     else if (label.includes("camera")) rates.camera_chat = Number(row[1]);
   }
-  // The camera (vision) rate is not in GET /v1/pricing, so the page states it in one sentence.
+  // Since 2026-09-26 GET /v1/pricing publishes the camera (vision) rate and the generated
+  // table carries it; a page that still states it in a sentence is also accepted.
   const cam = /camera on \(vision\) bills ([\d.]+) credits?\/min/i.exec(serving);
   if (cam && !("camera_chat" in rates)) rates.camera_chat = Number(cam[1]);
   for (const k of ["voice_chat", "camera_chat"]) {
