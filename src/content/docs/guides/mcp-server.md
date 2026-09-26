@@ -75,7 +75,7 @@ Ask in plain language; the client chooses and chains the tools.
 | `validate_api_secret` | Check the API secret (free) |
 | `get_platform_status` | Service status from status.bithuman.ai |
 | `get_credit_balance`, `get_usage` | Balance, plan and usage history |
-| `list_voices`, `text_to_speech` | Voices, and speech saved as a WAV (spends credits) |
+| `list_voices`, `text_to_speech` | Voices, and speech saved as a WAV (free) |
 | `generate_agent`, `get_agent_status` | Create an agent from an image (spends credits; always pass `model`), then poll until `ready` or `failed` |
 | `get_agent`, `list_agents`, `update_agent_prompt`, `delete_agent` | Manage your agents |
 | `agent_speak`, `add_agent_context` | Make a live agent speak, or give it background knowledge |

@@ -24,24 +24,22 @@ One binary, no code: `bithuman run` opens a live conversation with an avatar in 
 | A bitHuman sign-in or API secret | `run` and `render` (browsing and downloading need none) | `bithuman account` exits 0 |
 | `ffmpeg` on `PATH` | `render`, and `run` with an Essence 2 avatar | `ffmpeg -version` |
 | `livekit-server` 1.13 or newer (the Linux download includes it) | `run` | `livekit-server --version`; update with `brew upgrade livekit` |
-| Python 3.11 or newer | `run` (its voice agent) | `python3 --version` |
+| Python 3.11 or newer with `venv` (`python3-venv` on Debian/Ubuntu) | `run` (its voice agent) | `python3 --version` |
 
 ## Install
 
 ```bash
-# macOS (Apple silicon)
-brew install ffmpeg livekit
-curl -fsSL https://install.bithuman.ai | sh
+# macOS (Apple silicon): also installs ffmpeg, livekit-server and Python
+brew install bithuman-product/bithuman/bithuman-cli
 ```
 
 ```bash
-# Linux, x86_64 or arm64 (Debian/Ubuntu)
-sudo apt install -y ffmpeg
-curl -sSL https://get.livekit.io | bash
+# Linux, x86_64 or arm64 (Debian/Ubuntu); the download includes livekit-server
+sudo apt install -y ffmpeg python3-venv
 curl -fsSL https://install.bithuman.ai | sh
 ```
 
-The installer puts the CLI in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to change it) and verifies its checksum. If it asks you to, add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile. On Apple silicon, `brew install bithuman-product/bithuman/bithuman-cli` installs the same release. `bithuman --version` prints the CLI and engine versions.
+The installer puts the CLI in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to change it) and verifies its checksum. If it asks you to, add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile. On macOS, `curl -fsSL https://install.bithuman.ai | sh` installs the same release (then `brew install ffmpeg livekit` yourself). `bithuman --version` prints the CLI and engine versions.
 
 Check the install:
 
@@ -81,7 +79,7 @@ bithuman run wise-pup
 # → open the printed http://127.0.0.1:8088/<CODE> and allow the microphone
 ```
 
-`bithuman run wise-pup` is a live session with the brain: it starts a local `livekit-server` and the conversation brain (the first run installs the brain, about 200 MB, in one to two minutes). `render` accepts any audio format `ffmpeg` reads.
+`bithuman run wise-pup` is a live session with the brain: it starts a local `livekit-server` and the conversation brain (the first run installs the brain, about 350 MB on disk, in one to two minutes). `render` accepts any audio format `ffmpeg` reads.
 
 ## Integrate into your app
 
@@ -104,7 +102,7 @@ bithuman run wise-pup
 
 | Variable | Default | What it does |
 |---|---|---|
-| `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account. |
+| `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account at the managed voice-chat rate, 10 credits per minute ([pricing](/guides/pricing)). |
 | `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt |
 
 The whole setup, and the same conversation in your own Python code: [Talk to an avatar on your machine](/guides/local-voice-avatar).
@@ -125,17 +123,17 @@ Frame rates for the CLI on macOS and Linux are on [Desktop performance](/perform
 |---|---|---|
 | `bithuman: command not found` | `~/.local/bin` is not on `PATH` | `export PATH="$HOME/.local/bin:$PATH"` |
 | `not signed in`, exit 77, nothing written | no credential | `bithuman login`, or set `BITHUMAN_API_SECRET` |
-| `sign-in failed: auth required`, exit 1 | the credential was rejected | `bithuman login` again, or create a new API secret |
+| `your credential is invalid or expired` or `the API secret was rejected`, exit 77 | the secret was revoked or mistyped | `bithuman login` again, or create a new API secret |
+| `bithuman login` prints `token exchange failed` or times out, exit 1 | the browser or device approval did not complete | run `bithuman login` (or `--device`) again |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on `PATH` (common in scripts) | install it, or set `BITHUMAN_FFMPEG` to its path |
 | `run` with an Essence 2 avatar: no avatar in the page, and the terminal shows `essence-2: ffmpeg not found` | `ffmpeg` is not on `PATH` | `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
-| `run` says the `livekit-server` binary was not found | `livekit-server` is not installed | `brew install livekit`, or `curl -sSL https://get.livekit.io \| bash` |
+| `run` says the `livekit-server` binary was not found | `livekit-server` is not installed | `brew install livekit` (macOS), or rerun the installer (Linux) |
 | `run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run` (it needs 1.13 or newer)` | an old `livekit-server` found on `PATH` | `brew upgrade livekit` (macOS), or reinstall with `curl -fsSL https://install.bithuman.ai \| sh` (Linux) |
 | `SLUG_NOT_FOUND`, exit 66 | the slug is not in the sample list | `bithuman list` and copy a slug |
 | `pull <CODE>` fails with `404 NOT_FOUND` | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that kind | [add the model](/api/agents#add-a-model-to-an-existing-agent), or pass the `--model` it has |
 | `PUBLIC_BIND_REFUSED`, exit 2 | `--host 0.0.0.0` without consent | use a LAN address, or set `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
 | the installer names your platform and stops | no binary for this platform | see Platform notes |
-| `Error: No available formula` from `brew` | the tap is not added | `brew tap bithuman-product/bithuman`, then install again |
 
 ## Reference
 
