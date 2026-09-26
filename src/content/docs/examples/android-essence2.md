@@ -68,8 +68,8 @@ rendered 347 frames in 13 s — playing…
 
 `MainActivity.kt` does four things, all from `ai.bithuman:essence2-android`:
 
-1. sets `Essence2Metering.apiSecret` from `BuildConfig`;
-2. downloads the avatar with `Essence2ModelStore(..., urlResolver = MeteredDoorResolver(secret)).fetch(agentCode)` (`A52DHS2219` by default). Essence 2 uses the secret twice: once for usage, once for the download;
+1. sets your API secret once with `Essence2Credential.set(BuildConfig.BITHUMAN_API_SECRET)`, which covers the download and the session;
+2. downloads the avatar with `Essence2ModelStore(this).fetch(agentCode)` (`A52DHS2219` by default);
 3. opens it with `Essence2Avatar.create(identity.dir)` on a background thread;
 4. calls `feed(pcm)` and `endOfAudio()`, then `pull(frame)` until every frame is out: one frame per 40 ms of audio.
 
@@ -77,9 +77,9 @@ The calls and the live-streaming loop are on [Android](/sdk/android).
 
 ## Make it your own
 
-- **Your own avatar:** create one with the [Agents API](/api/agents) with `"model": "essence-2"`, then pass its agent code to `fetch`. The same resolver downloads it with your secret.
+- **Your own avatar:** create one with the [Agents API](/api/agents) with `"model": "essence-2"`, then pass its agent code to `fetch`; the secret you set with `Essence2Credential.set` downloads it.
 - **Live speech:** feed 16 kHz mono 16-bit audio as it arrives and pull frames at 25 fps; call `endOfAudio()` at the end of each reply and `idle(buffer)` between replies.
-- **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and sets the same property.
+- **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and passes it to `Essence2Credential.set`.
 - **Zero-copy frames (essence2-android 0.7.0 and newer):** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()` ([Android API](/sdk/android-api)).
 
   ```kotlin

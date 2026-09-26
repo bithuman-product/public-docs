@@ -68,7 +68,7 @@ implementation("ai.bithuman:expression2-android:0.5.0") {
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET`, or pass it in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/api/authentication).
+Pass your API secret in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
 
 Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
 
@@ -104,7 +104,7 @@ fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
 }
 ```
 
-Expected: `show` receives about 20 frames per second of audio, and the avatar's lips follow the speech. The first `create()` in a process prepares the accelerator and takes about 45 seconds; do it once, at app start.
+Expected: `show` receives about 20 frames per second of audio, and the avatar's lips follow the speech. The first `create()` in a process prepares the accelerator and takes about 30–45 seconds; do it once, at app start.
 
 Essence 2 takes 16-bit little-endian PCM bytes, as a 16 kHz mono WAV stores them, and fills an RGBA `ByteBuffer` sized from the identity:
 
@@ -129,7 +129,8 @@ fun render(context: Context, pcm16le: ByteArray, show: (ByteBuffer, Int, Int) ->
             idle++
             Thread.sleep(10)
         }
-        avatar.checkRender()                  // throws if the service refused the session
+        avatar.checkRender()                  // throws Essence2RenderFailed if the engine stopped
+        // a refused session throws Essence2MeteringRefused from pull() or idle()
     }
 }
 ```
@@ -147,7 +148,7 @@ In a live conversation, keep one avatar open and stream into it.
 | End of a reply | `flushTail()` | `endOfAudio()` |
 | Idle between replies | `avatar.idleLoop?.next(bitmap)` | `idle(buffer)` |
 | Interrupt the reply | `resetState(true)` | `resetAudio()` |
-| Check the session | `Expression2Exception` from `create` or `pull` | `checkRender()` |
+| Check the session | `Expression2Exception` from `create` or `pull` | `Essence2MeteringRefused` from `pull`/`idle`; `checkRender()` throws `Essence2RenderFailed` if the engine stopped |
 
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
 
@@ -176,20 +177,20 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 |---|---|---|
 | `Expression2Exception` from `create()` naming the API secret | no secret set | call `Expression2Credential.set(secret)` before `fetch()` and `create()` |
 | `MeteringRefused` on the first Essence 2 `pull()` | no secret set | call `Essence2Credential.set(secret)` before `fetch()` and `create()` |
-| `Essence2StoreException` naming `MeteredDoorResolver` | no secret set when the store was built | call `Essence2Credential.set(secret)` before you build `Essence2ModelStore` |
+| `Essence2StoreException` from `fetch()` | no secret was set when the store downloaded | call `Essence2Credential.set(secret)` before `fetch()` |
 | Expression 2 renders slowly; `acceleratorNote` says no `libQnnTFLiteDelegate.so` | the accelerator runtime was excluded, or legacy packaging is off | keep the dependency whole and set `useLegacyPackaging = true` |
-| The first Expression 2 `create()` takes about 45 s | the accelerator prepares the model once per process | create once, on a background thread, at app start |
+| The first Expression 2 `create()` takes about 30–45 s | the accelerator prepares the model once per process | create once, on a background thread, at app start |
 | Download refused with `401` | the avatar is private | set its owner's API secret with `Expression2Credential.set` or `Essence2Credential.set` |
 | `409 MODEL_NOT_GENERATED` on download | the agent has no model of that kind yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then retry |
 | Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |
 | `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |
-| `Unresolved reference 'MeteredDoorResolver'` | Kotlin does not resolve a nested class through a type alias | import `ai.bithuman.elevate.Essence2ModelStore.MeteredDoorResolver` |
+| `Unresolved reference 'MeteredDoorResolver'` | the resolver's public name is `Essence2MeteredDoorResolver` | you rarely need it: `Essence2Credential.set(secret)` covers downloads. To pass a secret explicitly: `import ai.bithuman.essence2.Essence2MeteredDoorResolver`, then `Essence2ModelStore(context, urlResolver = Essence2MeteredDoorResolver(secret))` |
 | `UnsatisfiedLinkError` on an emulator | the engines are `arm64-v8a` only | run on a physical arm64 handset |
 
 ## Reference
 
 - [Android API reference](/sdk/android-api): every public class in both AARs.
 - Examples: [Expression 2](/examples/android-expression2) · [Essence 2](/examples/android-essence2), complete apps you can clone.
-- [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): builds for Android. Its iOS and macOS builds do not work from the published plugin tag yet; a fix is coming.
+- [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): a complete voice conversation for Android.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
 - Licence: proprietary, bitHuman SDK License; the notice ships in each AAR. FFmpeg in `essence2-android` is LGPL: [relink materials](/legal/android-ffmpeg-lgpl).

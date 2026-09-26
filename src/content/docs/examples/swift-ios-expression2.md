@@ -63,7 +63,7 @@ The same three calls run on a Mac: [macOS example](/examples/macos-expression2).
 
 ## Make it your own
 
-- **Your own avatar:** create one with the [Agents API](/api/agents), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
+- **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "expression-2"`), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
 - **Your own voice pipeline:** feed the audio your text-to-speech produces into `feed`, in chunks, as it arrives.
 - **Ship it:** don't put the secret in the app bundle. Fetch it from your backend or the Keychain and call `Expression2Credential.set(key)` before `create`.
 - **A photoreal person:** the [iOS Essence 2 example](/examples/swift-ios-essence2) renders an Essence 2 avatar at full resolution.
