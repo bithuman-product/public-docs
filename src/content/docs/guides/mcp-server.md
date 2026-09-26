@@ -89,7 +89,7 @@ Talking video, adding a model to an agent and knowledge bases have no tool; use 
 ## Platform notes
 
 - Agent creation is asynchronous: a second-generation agent takes about 2–2.5 hours. Prices are on [pricing](/guides/pricing).
-- `BITHUMAN_API_BASE` changes the API origin (default `https://api.bithuman.ai`).
+- `BITHUMAN_API_BASE` changes the API origin (default `https://api.bithuman.ai`; only `https://*.bithuman.ai` addresses are accepted).
 - Errors come back as structured objects with the HTTP status and a link to [Errors](/api/errors).
 
 ## Troubleshooting

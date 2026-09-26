@@ -105,7 +105,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | Variable | Effect |
 |---|---|
 | `BITHUMAN_API_SECRET` | Your API secret (`BITHUMAN_API_KEY` is a deprecated alias) |
-| `BITHUMAN_API_BASE` | API base URL (default `https://api.bithuman.ai`) |
+| `BITHUMAN_API_BASE` | API base URL: `https://api.bithuman.ai` (the default) or another `https://*.bithuman.ai` address; any other value is ignored with a notice |
 | `BITHUMAN_CACHE_DIR` | Cache root (default `~/.cache/bithuman`) |
 | `BITHUMAN_ALLOW_PUBLIC_BIND` | `1` lets `run --host 0.0.0.0` listen on every interface |
 | `OPENAI_API_KEY` | Use OpenAI Realtime as the conversation brain |
