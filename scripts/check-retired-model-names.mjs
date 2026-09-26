@@ -93,6 +93,16 @@ const RETIRED = [
   { name: "lebundle",          re: /lebundle/gi },
   { name: "Essence 2 Light",   re: /Essence 2 Light/g },
   { name: "Essence 2 Quality", re: /Essence 2 Quality/g },
+  // The bare tier word. "Light train + Quality" sat in the OpenAPI spec's model-add
+  // description for weeks: none of the spellings above match the word `Light` on
+  // its own, so the retired tier survived as prose. Owner: there is no "light"
+  // anything, only Essence 2. English "light" (lighting, a light background,
+  // lightweight) is not matched: only Light as a tier/model noun, or paired with Quality.
+  { name: "Light (tier)",      re: /\bLight[- ](?:train|tier|model|renderer|engine|bundle|artifact|variant|plane)s?\b|\blight[- ](?:train|tier)s?\b|\bLight\s*\+\s*Quality\b/g,
+    // Only an explicit retirement word rescues it: "Light train + Quality" sat beside a
+    // `400 VALIDATION_ERROR` sentence, and the generic markers (400, VALIDATION_ERROR,
+    // alias ...) would have read that as "plainly marked as retired". It was not.
+    strongMarkersOnly: true },
   // Retired 2026-06-30 beside `elevate` and `embody` (see the 2026-06-29 and
   // 2026-06-26 changelog entries, which name all three as transitional aliases
   // that now 400). No pattern above matched it, so a NEW page could have used
@@ -333,6 +343,8 @@ const MARKERS = [
   /previously/i, /no longer/i, /since been/i, /was consolidated/i,
 ];
 
+const STRONG_MARKERS = [/retir(ed|ing|ement)/i, /former(ly)?/i, /legacy/i, /deprecat/i, /no longer/i];
+
 // ── (c) CONTEMPORANEOUS HISTORY — the dated changelog ────────────────────────
 // A changelog entry dated BEFORE a name was retired described the product by the
 // name it actually had that day. Rewriting it would falsify the record, so it is
@@ -344,6 +356,7 @@ const RETIRED_ON = {
   "embody": "2026-06-30",
   "essence-2-light": "2026-07-05",
   "Essence 2 Light": "2026-07-05",
+  "Light (tier)": "2026-07-05",
   "essence-2-quality": "2026-07-29",
   "Essence 2 Quality": "2026-07-29",
   // The download endpoint stopped labelling the essence-2 file `.lebundle.imx`
@@ -417,7 +430,7 @@ for (const rel of files) {
       const h = DATED_HEADING.exec(line);
       if (h) entryDate = h[1] || h[2];
     }
-    for (const { name, re, engineId, fenceIsVerbatim } of RETIRED) {
+    for (const { name, re, engineId, fenceIsVerbatim, strongMarkersOnly } of RETIRED) {
       re.lastIndex = 0;
       if (!re.test(line)) continue;
       totalHits++;
@@ -458,7 +471,7 @@ for (const rel of files) {
       while (lo > i - CONTEXT && lo > 0 && lines[lo - 1].trim() !== "") lo--;
       while (hi < i + CONTEXT && hi < lines.length - 1 && lines[hi + 1].trim() !== "") hi++;
       const window = lines.slice(lo, hi + 1).join("\n");
-      if (MARKERS.some((m) => m.test(window))) { markerHits.n++; continue; }
+      if ((strongMarkersOnly ? STRONG_MARKERS : MARKERS).some((m) => m.test(window))) { markerHits.n++; continue; }
       if (isChangelog && entryDate && RETIRED_ON[name] && entryDate <= RETIRED_ON[name]) {
         historyHits++; continue; // contemporaneous: the name was live on that date
       }

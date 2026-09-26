@@ -126,7 +126,7 @@ legacy names are still strings you read or type:
 |---|---|---|---|
 | `essence` | the `model` field in the showcase manifest and in `agents.model` | Essence 1 | Yes — an accepted request spelling |
 | `essence2-light` | the `Engine:` line from `bithuman open` — a [legacy engine value](/concepts/avatars-imx#the-engine-value-is-a-legacy-name) | Essence 2 | No — read the `Family:` line |
-| `essence-2-light` | retired tier name, still stored in older `agents.model` rows | Essence 2 | No — write `essence-2`. A request naming it gets a `400` with a hint |
+| `essence-2-light` | retired tier name (the old Light tier), still stored in older `agents.model` rows | Essence 2 | No — write `essence-2`. A request naming it gets a `400` with a hint |
 | `essence-2-quality` | retired internal premium tier, in older billing rows | a separate retired tier, not Essence 2 | No — a request naming it gets a `400` |
 | `.lebundle.imx` | the legacy file extension an older release saved | an Essence 2 model file | Only if you already have one; `bithuman open` reads it |
 | `elevate` | legacy SDK request field | Essence 2 | Accepted for compatibility; write `essence-2` |
