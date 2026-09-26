@@ -73,7 +73,7 @@ while let (frame, _) = engine.pull() { /* 416×720 BGR, 3 bytes per pixel */ }
 
 ## Make it your own
 
-- **Your own avatar:** create one with the [Agents API](/api/agents), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
+- **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "expression-2"`), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
 - **Your own audio:** any 16 kHz mono 16-bit WAV works as `Model/speech16k.wav`; `afconvert -f WAVE -d LEI16@16000 -c 1 in.m4a Model/speech16k.wav` converts one.
 - **A window instead of a file:** the [iOS example](/examples/swift-ios-expression2) is the same engine in a SwiftUI app with a microphone button, and it also builds for iPad.
 

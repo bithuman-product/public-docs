@@ -61,13 +61,13 @@ rendered 277 frames in 36 s — playing…
 277 frames, 13.87 s — tap to replay
 ```
 
-277 frames for 13.87 seconds of audio is 20 fps. Most of that time is the one-time download (about 160 MB) and `create()` preparing the model for the NPU, which takes about 30 seconds once per app process; the frames themselves render in a few seconds.
+277 frames for 13.87 seconds of audio is 20 fps. Most of that time is the one-time download (about 160 MB) and `create()` preparing the model for the NPU, which takes about 30–45 seconds once per app process; the frames themselves render in a few seconds.
 
 ## How it works
 
 `MainActivity.kt` does four things, all from `ai.bithuman:expression2-android`:
 
-1. sets `Expression2Metering.apiSecret` from `BuildConfig`;
+1. sets your API secret once with `Expression2Credential.set(BuildConfig.BITHUMAN_API_SECRET)`, which covers the download and the session;
 2. downloads the avatar with `Expression2ModelStore(this).fetch(agentCode)` (`A23WJF0199` by default);
 3. opens it with `Expression2Avatar.create(this, model, options)` on a background thread;
 4. calls `feed(pcm)` and `flushTail()`, then `pull(frame)` until every frame is out: one frame per 50 ms of audio.
@@ -76,9 +76,9 @@ The calls, the live-streaming loop and the accelerator are on [Android](/sdk/and
 
 ## Make it your own
 
-- **Your own avatar:** create one with the [Agents API](/api/agents), then pass its agent code to `fetch`. A private avatar downloads with your secret through `Expression2ModelStore.MeteredDoorResolver(secret)`.
+- **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "expression-2"`), then pass its agent code to `fetch`; the secret you set with `Expression2Credential.set` downloads it.
 - **Live speech:** feed microphone audio (16 kHz mono float from `AudioRecord` with `ENCODING_PCM_FLOAT`) as it arrives and pull frames at 20 fps; call `flushTail()` at the end of each reply.
-- **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and sets the same property.
+- **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and passes it to `Expression2Credential.set`.
 
 ## Troubleshooting
 
