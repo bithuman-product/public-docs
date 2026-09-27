@@ -24,10 +24,10 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 98,
-     "x_realtime": 3.92,
+     "fps": 104,
+     "x_realtime": 4.16,
      "realtime": true,
-     "measured_on": "2026-09-23",
+     "measured_on": "2026-09-27",
      "release": "cloud API",
      "clip": {
       "id": "5639-40744-0031",
@@ -35,7 +35,7 @@
      },
      "peak_ram_gb": null,
      "peak_gpu_gb": null,
-     "swap_gb": 0.0,
+     "swap_gb": 1.02,
      "memory_scope": "server",
      "memory_release": null,
      "time_to_video": null
@@ -153,11 +153,11 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 114,
-     "x_realtime": 4.56,
+     "fps": 106,
+     "x_realtime": 4.24,
      "realtime": true,
-     "measured_on": "2026-09-26",
-     "release": "CLI 2.7.8",
+     "measured_on": "2026-09-27",
+     "release": "CLI 2.8.1",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -176,11 +176,11 @@
      }
     },
     "expression-2": {
-     "fps": 165,
-     "x_realtime": 8.25,
+     "fps": 168,
+     "x_realtime": 8.4,
      "realtime": true,
-     "measured_on": "2026-09-26",
-     "release": "CLI 2.7.8",
+     "measured_on": "2026-09-27",
+     "release": "CLI 2.8.1",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -288,11 +288,11 @@
    "sustained": false,
    "cells": {
     "essence-2": {
-     "fps": 51,
-     "x_realtime": 2.04,
+     "fps": 50,
+     "x_realtime": 2.0,
      "realtime": true,
-     "measured_on": "2026-09-26",
-     "release": "CLI 2.7.8",
+     "measured_on": "2026-09-27",
+     "release": "CLI 2.8.1",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -308,8 +308,8 @@
      "fps": 44,
      "x_realtime": 2.2,
      "realtime": true,
-     "measured_on": "2026-09-26",
-     "release": "CLI 2.7.8",
+     "measured_on": "2026-09-27",
+     "release": "CLI 2.8.1",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
