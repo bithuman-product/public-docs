@@ -586,7 +586,35 @@
       }
      }
     },
-    "expression-2": null
+    "expression-2": {
+     "fps": 44,
+     "x_realtime": 2.2,
+     "realtime": true,
+     "measured_on": "2026-09-27",
+     "release": "expression2-android 0.5.2",
+     "clip": {
+      "id": "5683-32865-0012",
+      "seconds": 21.51
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "memory_release": null,
+     "time_to_video": null,
+     "held": {
+      "median_window_fps": 44.8,
+      "worst_window_fps": 37.33,
+      "sessions": 3,
+      "memory": {
+       "metric": "pss",
+       "start_mib": 752,
+       "end_mib": 785,
+       "growth_mib": 34,
+       "budget_mib": 75
+      }
+     }
+    }
    }
   },
   {
