@@ -3,15 +3,23 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Icon from "../components/Icon.astro";
 import LiveDemo from "../components/LiveDemo.astro";
-import PerfHeadline from "../components/PerfHeadline.astro";
 import { hubMeta } from "../config/hubs";
 import { START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
+import { headlineData } from "../lib/perf-headline";
 
 // The front door: what bitHuman is and where to click, as cards. Each card is
 // one link and one line; the detail lives on the page it opens. The platform
-// table with first commands is on /start, the full performance record on
+// table with first commands is on /start, the frame rates and method on
 // /performance, and the model comparison on /concepts/models.
 const meta = hubMeta("");
+
+// Each model card draws its speed as bars of "× real time" per platform, from
+// the generated headline only. One shared scale across both cards (the largest
+// multiple fills the track) so the two cards compare honestly; the tick marks 1×.
+const speed = headlineData();
+const maxMultiple = speed ? Math.max(...speed.flatMap((r) => r.cells.map((c) => c.value))) : 1;
+const pct = (v: number) => `${Math.max(1.5, Math.min(100, (v / maxMultiple) * 100)).toFixed(2)}%`;
+const speedFor = (model: string) => speed?.find((r) => r.model === model)?.cells ?? [];
 ---
 
 <Base title="bitHuman docs — realtime AI avatars on-device, self-hosted or offline" description={meta.description}>
@@ -75,30 +83,45 @@ const meta = hubMeta("");
         <a class="band-more" href="/concepts/models">Compare models <Icon name="arrow" size={16} /></a>
       </div>
       <ul class="cards cards-2" role="list">
-        {MODELS.map((m) => (
-          <li>
-            <a class="card model" href={m.href}>
-              <img src={m.image.src} width={m.image.width} height={m.image.height} alt={m.image.alt} loading="lazy" decoding="async" />
-              <span class="model-body">
-                <h3>{m.title}</h3>
-                <p>{m.line}</p>
-                <span class="specs">{m.specs.map((s) => <span class="spec">{s}</span>)}</span>
-              </span>
-            </a>
-          </li>
-        ))}
+        {MODELS.map((m) => {
+          const cells = speedFor(m.title);
+          const allRealtime = cells.length > 0 && cells.every((c) => c.value >= 1);
+          return (
+            <li>
+              <a class="card model" href={m.href}>
+                <img src={m.image.src} width={m.image.width} height={m.image.height} alt={m.image.alt} loading="lazy" decoding="async" />
+                <span class="model-body">
+                  <h3>{m.title}</h3>
+                  <p>{m.line}</p>
+                  {cells.length > 0 && (
+                    <span class="rt">
+                      <span class="rt-cap">
+                        <span>{allRealtime ? "Faster than real time on" : "Speed against real time"}</span>
+                        <span class="rt-key" aria-hidden="true"><span class="rt-tick"></span>1×</span>
+                      </span>
+                      <dl class="rt-rows">
+                        {cells.map((c) => (
+                          <div class="rt-row">
+                            <dt>{c.platform}</dt>
+                            <dd>
+                              <span class="rt-track" aria-hidden="true" style={`--w:${pct(c.value)};--one:${pct(1)}`}><span class="rt-bar"></span><span class="rt-one"></span></span>
+                              <span class="rt-val">{c.multiple}<span class="sr"> real time</span></span>
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </span>
+                  )}
+                </span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
-      <p class="note">{MODELS_NOTE}</p>
-    </div>
-  </section>
-
-  <section class="band tint" aria-labelledby="performance">
-    <div class="container">
-      <div class="band-head">
-        <h2 id="performance">Performance</h2>
-        <a class="band-more" href="/performance">Every platform and how we measure <Icon name="arrow" size={16} /></a>
+      <div class="models-foot">
+        <p class="note">{MODELS_NOTE}</p>
+        <a class="band-more" href="/performance">How we measure <Icon name="arrow" size={16} /></a>
       </div>
-      <PerfHeadline compact />
     </div>
   </section>
 
@@ -138,7 +161,6 @@ const meta = hubMeta("");
 
   /* ---- sections ---- */
   .band { padding-block: var(--space-6); }
-  .band.tint { background: var(--color-surface-2); border-block: 1px solid var(--color-border); padding-block: var(--space-8); margin-block: var(--space-4); }
   .band.last { padding-bottom: var(--space-6); }
   .band-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap; }
   .band h2 { font-size: var(--fh-md); letter-spacing: -0.01em; }
@@ -175,12 +197,26 @@ const meta = hubMeta("");
 
   /* ---- models ---- */
   .model { flex-direction: row; align-items: stretch; gap: var(--space-5); padding: var(--space-3); }
-  .model img { width: 132px; aspect-ratio: 3 / 4; height: auto; object-fit: cover; object-position: 50% 12%; border-radius: var(--r-lg); background: var(--color-surface-2); flex: none; }
-  .model-body { display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); padding-right: var(--space-3); }
+  .model img { width: 150px; aspect-ratio: 3 / 4; height: auto; align-self: center; object-fit: cover; object-position: 50% 12%; border-radius: var(--r-lg); background: var(--color-surface-2); flex: none; }
+  .model-body { display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-3) var(--space-2) 0; min-width: 0; flex: 1; }
   .model h3 { font-size: var(--ft-xl); }
-  .specs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
-  .spec { font-size: var(--ft-xs); font-weight: var(--fw-medium); padding: 0.2rem 0.55rem; border-radius: var(--r-full); background: var(--color-surface-2); color: var(--color-text-secondary); border: 1px solid var(--color-border); }
-  .note { margin-top: var(--space-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .models-foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2) var(--space-4); flex-wrap: wrap; margin-top: var(--space-3); }
+  .note { font-size: var(--ft-sm); color: var(--color-text-secondary); flex: 1 1 32rem; }
+
+  /* speed bars: × real time per platform, one shared scale, 1× tick */
+  .rt { display: block; margin-top: var(--space-2); }
+  .rt-cap { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); font-size: var(--ft-xs); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+  .rt-key { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--color-text-tertiary); }
+  .rt-key .rt-tick { width: 2px; height: 12px; border-radius: 1px; background: var(--color-text-secondary); }
+  .rt-rows { margin: 0; display: grid; gap: 0.4rem; }
+  .rt-row { display: grid; grid-template-columns: 4.75rem minmax(0, 1fr); align-items: center; gap: var(--space-2); }
+  .rt-row dt { font-size: var(--ft-xs); color: var(--color-text-secondary); white-space: nowrap; }
+  .rt-row dd { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) 2.6rem; align-items: center; gap: var(--space-2); }
+  .rt-track { position: relative; height: 8px; border-radius: 4px; background: var(--color-surface-3); }
+  .rt-bar { position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: 4px; background: var(--color-primary); }
+  .rt-one { position: absolute; top: -3px; bottom: -3px; left: var(--one); width: 2px; margin-left: -1px; border-radius: 1px; background: var(--color-text-secondary); box-shadow: 0 0 0 1px var(--color-surface); }
+  .rt-val { font-size: var(--ft-sm); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-text); text-align: right; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   /* ---- guides ---- */
   .guides { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
@@ -235,8 +271,11 @@ const meta = hubMeta("");
     .deploy .card { display: grid; grid-template-columns: auto 1fr; column-gap: var(--space-3); row-gap: var(--space-1); }
     .deploy .card-icon { grid-row: span 2; margin-bottom: 0; }
     .deploy .card-title { align-self: end; }
-    .model img { width: 96px; }
+    .model { gap: var(--space-3); }
+    .model img { width: 84px; align-self: flex-start; }
     .model-body { padding-right: var(--space-1); }
+    .rt-row { grid-template-columns: 3.9rem minmax(0, 1fr); gap: var(--space-1); }
+    .rt-row dd { grid-template-columns: minmax(0, 1fr) 2.4rem; }
     .model h3 { font-size: var(--ft-lg); }
   }
 </style>

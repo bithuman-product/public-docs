@@ -3,8 +3,8 @@
 // sees and the file an agent reads name the same links.
 //
 // Every card is one link and one short line. Longer text belongs on the page
-// the card links to. No frame rate or price is typed here: performance comes
-// from the generated headline, prices from /guides/pricing.
+// the card links to. No frame rate, multiple or price is typed here: speed comes
+// from the generated headline (src/lib/perf-headline.ts), prices from /guides/pricing.
 
 export interface HomeCard {
   title: string;
@@ -40,18 +40,17 @@ export interface ModelCard {
   title: string;
   line: string;
   href: string;
-  specs: string[];
   image: { src: string; width: number; height: number; alt: string };
 }
 
 /** "Models": the current generation. */
 export const MODELS: ModelCard[] = [
   {
-    title: "Essence 2", line: "A photoreal person from one portrait.", href: "/concepts/essence-2", specs: ["Up to 1080p", "25 fps"],
+    title: "Essence 2", line: "A photoreal person from one portrait.", href: "/concepts/essence-2",
     image: { src: "/examples/android/essence2.webp", width: 540, height: 1005, alt: "sofia-ramirez, a sample Essence 2 avatar" },
   },
   {
-    title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/concepts/expression-2", specs: ["416×720", "20 fps"],
+    title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/concepts/expression-2",
     image: { src: "/examples/ios/hero.webp", width: 416, height: 720, alt: "wise-pup, a sample Expression 2 avatar" },
   },
 ];
