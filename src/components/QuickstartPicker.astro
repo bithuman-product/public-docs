@@ -1,0 +1,116 @@
+---
+// "What are you building?" on /start (docs spec §5.1 #2): pick a platform and
+// see its 3–4 copy-ready steps, what you should get, the time, what it needs
+// and the models, then go on to that platform's first frame. The pick is kept
+// in ?platform= and in storage, and switches platform tabs across the site.
+// With JavaScript off every platform's steps show, one after another.
+import PlatformSwitcher from "./PlatformSwitcher.astro";
+import Only from "./Only.astro";
+import CodeTabs from "./CodeTabs.astro";
+import Chip from "./Chip.astro";
+import Availability from "./Availability.astro";
+import { QUICKSTART, firstFrame } from "../data/platforms";
+import { RENDERS_LABEL } from "../data/labels";
+
+interface Props { initial?: (typeof QUICKSTART)[number]["id"] }
+const { initial = "web" } = Astro.props;
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+/** `code` in data strings → <code>. */
+const md = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+---
+
+<div class="qp" data-pagefind-ignore="all">
+  <PlatformSwitcher label="What are you building?" initial={initial} url
+    options={QUICKSTART.map((q) => ({ id: q.id, label: q.label, icon: q.icon }))} />
+  {QUICKSTART.map((q) => (
+    <Only platform={q.id} active={q.id === initial}>
+      <article class="qp-panel" id={`qp-${q.id}`} aria-labelledby={`qp-${q.id}-h`}>
+        <div class="qp-main">
+          <h3 id={`qp-${q.id}-h`}>{q.title}</h3>
+          <div class="chip-row">
+            {q.renders.map((r) => <Chip kind="where" label={RENDERS_LABEL[r]} />)}
+            {q.plan && <Availability plan={q.plan} />}
+          </div>
+          <dl class="qp-meta">
+            {q.time && <div><dt>Time</dt><dd>{q.time}</dd></div>}
+            <div><dt>Needs</dt><dd>{q.needs.join(" · ")}</dd></div>
+            <div><dt>Models</dt><dd>{q.models.join(", ")}</dd></div>
+          </dl>
+          {q.steps.length > 0 && (
+            <ol class="qp-steps">
+              {q.steps.map((s) => (
+                <li>
+                  <p class="qp-step">{s.title}</p>
+                  {s.code && <CodeTabs tabs={[{ label: s.code.label, lang: s.code.lang, code: s.code.code }]} />}
+                  {s.text && <p class="qp-text" set:html={md(s.text)} />}
+                </li>
+              ))}
+            </ol>
+          )}
+          {q.note && <p class="qp-note" set:html={md(q.note)} />}
+          <div class="qp-actions">
+            {q.id === "offline" && <a class="qp-btn" href="https://www.bithuman.ai/sales">Contact sales</a>}
+            <a class:list={["qp-btn", { "qp-quiet": q.id === "offline" }]} href={firstFrame(q.next.href)}>Next: {q.next.label} <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <aside class="qp-expect" aria-label={`What you get: ${q.label}`}>
+          <p class="qp-label">{q.steps.length ? "What you should see" : "Good to know"}</p>
+          {q.expect.media && (
+            <figure class="qp-fig">
+              {q.expect.media.src ? (
+                <video controls preload="none" playsinline poster={q.expect.media.poster} width={q.expect.media.width} height={q.expect.media.height} src={q.expect.media.src} />
+              ) : (
+                <img src={q.expect.media.poster} alt="" width={q.expect.media.width} height={q.expect.media.height} loading="lazy" decoding="async" />
+              )}
+              <figcaption>{q.expect.media.caption}</figcaption>
+            </figure>
+          )}
+          <p class="qp-text" set:html={md(q.expect.text)} />
+        </aside>
+      </article>
+    </Only>
+  ))}
+</div>
+
+<style>
+  .qp { display: grid; gap: var(--s-5); margin-top: var(--s-4); }
+  .qp-panel { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: var(--s-8); padding: var(--s-6); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); box-shadow: var(--shadow-sm); }
+  :global(.only) + :global(.only) .qp-panel { margin-top: var(--s-5); }
+  :global(.js) :global(.only) + :global(.only) .qp-panel { margin-top: 0; }
+  .qp-main { min-width: 0; }
+  .qp-main h3 { margin: 0; font-size: var(--fh-md); letter-spacing: -0.01em; }
+  .qp-main .chip-row { margin-top: var(--s-2); }
+  .qp-meta { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-5); margin: var(--s-3) 0 0; font-size: var(--ft-sm); }
+  .qp-meta div { display: flex; gap: var(--s-2); }
+  .qp-meta dt { color: var(--color-text-tertiary); }
+  .qp-meta dd { margin: 0; color: var(--color-text); }
+  .qp-steps { counter-reset: qp; list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; gap: var(--s-4); }
+  .qp-steps > li { counter-increment: qp; position: relative; padding-left: 2.25rem; min-width: 0; }
+  .qp-steps > li::before {
+    content: counter(qp); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 1.6rem; height: 1.6rem;
+    border-radius: 50%; background: var(--color-surface-2); border: 1px solid var(--color-border); font-size: var(--ft-xs); font-weight: var(--fw-bold); color: var(--color-text);
+  }
+  .qp-step { margin: 0 0 var(--s-2); padding-top: 0.15rem; font-weight: var(--fw-medium); color: var(--color-text); }
+  .qp-text { margin: var(--s-2) 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .qp-note { margin: var(--s-5) 0 0; padding: var(--s-3) var(--s-4); border-left: 3px solid var(--color-border-strong); background: var(--color-surface-2); border-radius: 0 var(--r-md) var(--r-md) 0; font-size: var(--ft-sm); color: var(--color-text); }
+  .qp-text :global(code), .qp-note :global(code) { font-size: 0.9em; }
+  .qp-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-5); }
+  .qp-btn { display: inline-flex; align-items: center; gap: var(--s-2); padding: 0.55rem 1.05rem; border-radius: var(--r-pill); background: var(--color-primary); color: var(--color-on-primary); font-size: var(--ft-sm); font-weight: var(--fw-medium); text-decoration: none; }
+  .qp-btn:hover { background: var(--color-primary-hover); color: var(--color-on-primary); }
+  .qp-btn.qp-quiet { background: none; color: var(--color-text); border: 1px solid var(--color-border-strong); }
+  .qp-btn.qp-quiet:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  .qp-expect { min-width: 0; }
+  .qp-label { margin: 0 0 var(--s-2); font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
+  .qp-fig { margin: 0; }
+  .qp-fig video, .qp-fig img { display: block; width: 100%; max-height: 420px; height: auto; object-fit: contain; border-radius: var(--r-lg); border: 1px solid var(--color-border); background: var(--color-surface-2); }
+  .qp-fig figcaption { margin-top: var(--s-2); font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  @media (max-width: 900px) {
+    .qp-panel { grid-template-columns: minmax(0, 1fr); gap: var(--s-5); padding: var(--s-5); }
+    .qp-fig video, .qp-fig img { max-width: 260px; }
+  }
+  @media (max-width: 560px) {
+    .qp-panel { padding: var(--s-4); }
+    .qp-steps > li { padding-left: 0; }
+    .qp-step { padding-left: 2.25rem; min-height: 1.6rem; }
+  }
+</style>

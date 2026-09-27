@@ -1,0 +1,38 @@
+---
+// The credit calculator's behaviour and look. Its markup, the default result
+// and the worked examples are drawn at build time by the ```credit-calculator
+// block (src/lib/doc-blocks.ts) from pricing.json and plans.json. Without
+// JavaScript the form is hidden and the worked examples stay.
+---
+
+<script>
+  import "../scripts/calculator";
+</script>
+
+<style is:global>
+  .cc { display: none; gap: var(--s-4); margin: var(--s-5) 0 var(--s-3); padding: var(--s-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); box-shadow: var(--shadow-sm); }
+  .js .cc { display: grid; }
+  .cc-modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); min-width: 0; margin: 0; padding: 0; border: 0; }
+  .cc-modes legend, .cc-num > span:first-child { margin-bottom: var(--s-2); padding: 0; font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); }
+  .cc-mode { display: flex; align-items: flex-start; gap: var(--s-2); padding: var(--s-3); border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface); cursor: pointer; }
+  .cc-mode:has(input:checked) { border-color: var(--color-primary); background: var(--color-primary-soft); }
+  .cc-mode input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--color-primary); }
+  .cc-mode input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .cc-mode strong { display: block; font-size: var(--ft-sm); line-height: var(--lh-snug); color: var(--color-text); }
+  .cc-mode strong + span { display: block; margin-top: 2px; font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .cc-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+  .cc-num > span:first-child { display: block; }
+  .cc-in { display: flex; align-items: center; padding-right: var(--s-3); border: 1px solid var(--color-border-strong); border-radius: var(--r-md); background: var(--color-bg); }
+  .cc-in:focus-within { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+  .cc-in input { width: 100%; min-width: 0; padding: 0.5rem 0.65rem; border: 0; background: none; color: var(--color-text); font: inherit; font-size: var(--ft-md); font-variant-numeric: tabular-nums; }
+  .cc-in input:focus { outline: none; }
+  .cc-unit { font-size: var(--ft-xs); color: var(--color-text-tertiary); white-space: nowrap; }
+  .cc-out { display: grid; gap: 2px; padding: var(--s-4) var(--s-5); border-radius: var(--r-lg); background: var(--color-surface-2); }
+  .cc-big { font-size: var(--fh-lg); font-weight: var(--fw-bold); letter-spacing: -0.01em; color: var(--color-text); font-variant-numeric: tabular-nums; }
+  .cc-usd, .cc-plan { font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .cc-plan { color: var(--color-text); font-weight: var(--fw-medium); }
+  .cc .cc-note { margin: 0; font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .cc-examples { margin: var(--s-4) 0 var(--s-6); }
+  .cc-examples .cc-ex-title { margin: 0 0 var(--s-2); font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text-secondary); }
+  @media (max-width: 700px) { .cc-modes, .cc-nums { grid-template-columns: minmax(0, 1fr); } .cc { padding: var(--s-4); } }
+</style>

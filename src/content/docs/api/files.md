@@ -41,16 +41,10 @@ Download a file from a publicly accessible URL.
 > [`requests`](https://pypi.org/project/requests/), which is not in the standard
 > library — `pip install requests` first, or use `curl` / `urllib` instead.
 
-```python
-import os
-import requests
-
-resp = requests.post(
-    "https://api.bithuman.ai/v1/files/upload",
-    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    json={"file_url": "https://example.com/presentation.pdf", "file_type": "auto"},
-)
-print(resp.json())
+```bash
+curl -X POST https://api.bithuman.ai/v1/files/upload \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"file_url": "https://example.com/presentation.pdf", "file_type": "auto"}'
 ```
 
 ## Method 2: direct upload

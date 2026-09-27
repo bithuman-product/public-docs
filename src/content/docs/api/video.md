@@ -36,19 +36,10 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 ### Text input
 
-```python
-import os, requests
-
-resp = requests.post(
-    "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    json={
-        "model": "essence-2",
-        "agent_code": os.environ["BITHUMAN_AGENT_CODE"],
-        "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
-    },
-)
-print(resp.json())
+```bash
+curl -X POST https://api.bithuman.ai/v1/video/generate \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"model": "essence-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "text", "text": "Hello, welcome to bitHuman."}}'
 ```
 
 ```json
@@ -61,18 +52,10 @@ print(resp.json())
 
 ### Audio input
 
-```python
-import os, requests
-resp = requests.post(
-    "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    json={
-        "model": "expression-2",
-        "agent_code": os.environ["BITHUMAN_AGENT_CODE"],
-        "input": {"type": "audio", "audio_url": "https://example.com/speech.wav"},
-    },
-)
-print(resp.json())
+```bash
+curl -X POST https://api.bithuman.ai/v1/video/generate \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"model": "expression-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "audio", "audio_url": "https://example.com/speech.wav"}}'
 ```
 
 ### Blocking mode (`wait: true`)
@@ -82,19 +65,10 @@ parameter) to hold the connection until the render finishes and get the mp4 back
 in the same response — no polling. If the render exceeds the ~90-second cap you
 get the async `{ job_id }` to poll instead.
 
-```python
-import os, requests
-resp = requests.post(
-    "https://api.bithuman.ai/v1/video/generate",
-    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    json={
-        "model": "essence-2",
-        "agent_code": os.environ["BITHUMAN_AGENT_CODE"],
-        "input": {"type": "text", "text": "Hello, welcome to bitHuman."},
-        "wait": True,
-    },
-)
-print(resp.json())
+```bash
+curl -X POST https://api.bithuman.ai/v1/video/generate \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"model": "essence-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "text", "text": "Hello, welcome to bitHuman."}, "wait": true}'
 ```
 
 ```json
@@ -114,15 +88,8 @@ Errors are returned at submit time, before any charge: `402 INSUFFICIENT_BALANCE
 
 `GET /v1/video/{job_id}` — poll a render job.
 
-```python
-import os, requests
-
-job_id = "vid_3f9a2c1b8e7d4a6f0b21"
-resp = requests.get(
-    f"https://api.bithuman.ai/v1/video/{job_id}",
-    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
-)
-print(resp.json())
+```bash
+curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
 While rendering:

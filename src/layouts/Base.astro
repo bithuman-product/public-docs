@@ -207,9 +207,8 @@ const ogImage = new URL(image, site).href;
       (function () {
         document.querySelectorAll("pre").forEach(function (pre) {
           // The tabbed sample, the playground and the embed demo already draw a
-          // bar with their own copy control; the API reference is a
-          // third-party renderer. Everything else gets the card.
-          if (pre.closest(".bh-code, .references-rendered, .ct-panel, .pg-code, .wd-code")) return;
+          // bar with their own copy control. Everything else gets the card.
+          if (pre.closest(".bh-code, .ct-panel, .pg-code, .wd-code")) return;
           var code = pre.querySelector("code");
           if (!code) return;
 
@@ -223,7 +222,9 @@ const ogImage = new URL(image, site).href;
           btn.type = "button";
           btn.textContent = "Copy";
           btn.addEventListener("click", function () {
-            navigator.clipboard.writeText(code.innerText).then(function () {
+            // Copy leaves out the "# →" lines that show a command's output.
+            var text = code.innerText.split("\n").filter(function (l) { return !/^\s*(#|\/\/)\s?→/.test(l); }).join("\n");
+            navigator.clipboard.writeText(text).then(function () {
               btn.textContent = "Copied";
               btn.setAttribute("data-copied", "");
               setTimeout(function () {

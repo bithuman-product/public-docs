@@ -2,10 +2,14 @@
 // The page-weight budget (docs spec §4.3), on the built HTML:
 //   * first-party JavaScript per page  ≤ 25 KB gzipped (Pagefind loads on ⌘K, not counted)
 //   * any one script                   ≤ 5 KB gzipped (one widget, one budget)
-//   * third-party script               none, except the pages listed in THIRD_PARTY_OK
+//   * third-party script               none, on every page (the API reference is static since W3)
 //   * inlined CSS per page             ≤ 30 KB gzipped
+//   * each interactive widget          its own budget (WIDGETS, spec §3.2): the widget's
+//                                      script in src/scripts, bundled with everything it
+//                                      imports and minified, gzipped
 //
 //   node scripts/check-js-budget.mjs            # dist/ after npm run build
+//   node scripts/check-js-budget.mjs --widgets  # the widget budgets only (no build needed)
 //   node scripts/check-js-budget.mjs --selftest
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -15,8 +19,16 @@ const ROOT = join(import.meta.dirname, "..");
 const DIST = join(ROOT, "dist");
 const KB = 1024;
 export const BUDGET = { pageJs: 25 * KB, script: 5 * KB, css: 30 * KB };
-/** The API explorer embeds Scalar until the static reference replaces it (W3). */
-const THIRD_PARTY_OK = new Set(["api/reference/index.html"]);
+/** Pages allowed a third-party script: none since the static API reference (W3). */
+const THIRD_PARTY_OK = new Set([]);
+/** Per-widget budgets, gzipped (docs spec §3.2 and §4.3). */
+export const WIDGETS = {
+  "tabs-sync": 2 * KB,
+  "picker": 2 * KB,
+  "perf-explorer": 5 * KB,
+  "calculator": 3 * KB,
+  "matrix-filter": 2 * KB,
+};
 
 const gz = (s) => gzipSync(Buffer.from(s), { level: 9 }).length;
 
@@ -58,14 +70,46 @@ function selftest() {
   ok("a 6 KB script fires the per-script budget", grade("a/index.html", `<script>${rnd(900)}</script>`).faults.some((f) => f.includes("per script")));
   ok("six 5 KB scripts fire the page budget", grade("a/index.html", Array.from({ length: 6 }, () => `<script>${rnd(700)}</script>`).join("")).faults.some((f) => f.includes("first-party JS")));
   ok("a third-party script fires", grade("a/index.html", '<script src="https://cdn.example/x.js"></script>').faults.some((f) => f.includes("third-party")));
-  ok("a third-party script on the allowed page passes", grade("api/reference/index.html", '<script src="https://cdn.example/x.js"></script>').faults.length === 0);
+  ok("a third-party script on the API reference fires too", grade("api/reference/index.html", '<script src="https://cdn.example/x.js"></script>').faults.some((f) => f.includes("third-party")));
+  ok("a widget over its budget fires", gradeWidget("calculator", 4 * KB).length === 1);
+  ok("a widget within its budget passes", gradeWidget("calculator", 2 * KB).length === 0);
+  ok("an unbudgeted widget fires", gradeWidget("new-thing", 100).length === 1);
   ok("heavy inline CSS fires", grade("a/index.html", `<style>${rnd(6000)}</style>`).faults.some((f) => f.includes("CSS")));
   console.log(bad ? "selftest RED" : "selftest GREEN (every arm fired)");
   return bad ? 1 : 0;
 }
 
-function main() {
+export function gradeWidget(name, size) {
+  const budget = WIDGETS[name];
+  if (budget === undefined) return [`src/scripts/${name}.ts has no budget in WIDGETS (scripts/check-js-budget.mjs)`];
+  return size > budget ? [`widget ${name}: ${(size / KB).toFixed(2)} KB gzipped (budget ${budget / KB} KB)`] : [];
+}
+
+/** Bundle each widget script the way a page loads it (with its imports, minified) and weigh it. */
+async function widgets() {
+  let esbuild;
+  try { esbuild = await import("esbuild"); } catch { console.log("::error::esbuild is not installed (it comes with astro): npm ci"); return 2; }
+  const dir = join(ROOT, "src/scripts");
+  const faults = [];
+  const sizes = [];
+  for (const f of readdirSync(dir).filter((n) => n.endsWith(".ts"))) {
+    const name = f.replace(/\.ts$/, "");
+    if (name === "platform-state") continue; // a module the widgets import, weighed inside each of them
+    const out = await esbuild.build({ entryPoints: [join(dir, f)], bundle: true, minify: true, format: "esm", write: false, target: "es2020", logLevel: "silent" });
+    const size = gz(out.outputFiles[0].text);
+    sizes.push(`${name} ${(size / KB).toFixed(2)}`);
+    faults.push(...gradeWidget(name, size));
+  }
+  for (const f of faults) console.log(`::error::${f}`);
+  console.log(`${faults.length ? "FAIL" : "OK"}: widgets (KB gz): ${sizes.join(", ")}`);
+  return faults.length ? 1 : 0;
+}
+
+async function main() {
   if (process.argv.includes("--selftest")) return selftest();
+  if (process.argv.includes("--widgets")) return widgets();
+  const w = await widgets();
+  if (w === 2) return 2;
   if (!existsSync(join(DIST, "index.html"))) { console.log("::error::no dist/ — run npm run build first"); return 2; }
   const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".html") ? [p] : []; });
   const readLocal = (src) => { const p = join(DIST, src.split("?")[0]); return existsSync(p) ? readFileSync(p, "utf8") : null; };
@@ -82,6 +126,6 @@ function main() {
   }
   for (const f of faults) console.log(`::error::${f}`);
   console.log(`${faults.length ? "FAIL" : "OK"}: ${n} pages; heaviest JS ${(maxJs.v / KB).toFixed(1)} KB gz (${maxJs.page}), heaviest CSS ${(maxCss.v / KB).toFixed(1)} KB gz (${maxCss.page}); budgets ${BUDGET.pageJs / KB} / ${BUDGET.script / KB} per script / ${BUDGET.css / KB} KB CSS`);
-  return faults.length ? 1 : 0;
+  return faults.length || w ? 1 : 0;
 }
-process.exit(main());
+process.exit(await main());

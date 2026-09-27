@@ -215,6 +215,9 @@ jobs:
       - name: × real time is floored to one decimal, as the emitter does (formatMultiple)
         if: always()
         run: node --test src/lib/format-multiple.test.ts
+      - name: The interactive widgets' logic (tab and platform state, the credit calculator, curl → Python and Node samples)
+        if: always()
+        run: node --test src/lib/ui-state.test.ts src/lib/calculator.test.ts src/lib/curl-samples.test.mjs
       - name: Honest claims only (banned words and DO NOT CLAIM rows)
         if: always()
         run: node scripts/check-claims.mjs
@@ -447,9 +450,17 @@ jobs:
         if: always()
         run: node scripts/check-redirects.mjs
 
-      - name: Page weight within budget (JS ≤25 KB, ≤5 KB per script, CSS ≤30 KB, no third-party JS)
+      - name: Page weight within budget (JS ≤25 KB, ≤5 KB per script, each widget its own budget, CSS ≤30 KB, no third-party JS)
         if: always()
         run: node scripts/check-js-budget.mjs
+
+      - name: The JavaScript-off checker proves itself
+        if: always()
+        run: node scripts/check-no-js.mjs --selftest
+
+      - name: Every interactive page reads with JavaScript off (explorer, calculator, picker, matrices, API reference and samples)
+        if: always()
+        run: node scripts/check-no-js.mjs
 
       - name: Search lands the words developers type on the right page
         if: always()

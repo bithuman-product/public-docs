@@ -1,5 +1,10 @@
 ---
+// Code in tabs, rendered at build time. With JavaScript off every panel shows
+// under its label; with it on one panel shows, and src/scripts/tabs-sync.ts
+// keeps every group with the same key (lang, platform, model) on the reader's
+// last choice, site-wide. Copy leaves out the `# →` lines that show output.
 import { Code } from "astro:components";
+import { groupOf, keyFor, stripOutput, type StateName } from "../lib/ui-state";
 
 interface Tab {
   label: string;
@@ -9,83 +14,61 @@ interface Tab {
 interface Props {
   tabs: Tab[];
   title?: string;
+  /** Which choice these tabs follow; inferred from the labels when omitted. */
+  group?: StateName;
 }
-const { tabs, title } = Astro.props;
+const { tabs, title, group } = Astro.props;
+const name = group ?? groupOf(tabs.map((t) => t.label));
 const themes = { light: "github-light-high-contrast", dark: "github-dark" } as const;
+// A stable id from the content, so builds are reproducible.
+let h = 0;
+for (const c of JSON.stringify(tabs)) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0;
+const uid = `ct-${(h >>> 0).toString(36)}`;
+const single = tabs.length === 1;
 ---
 
-<div class="codetabs" data-codetabs>
+<div class="codetabs" data-codetabs data-tabs={single ? undefined : ""} data-group={name}>
   <div class="ct-bar">
-    <div class="ct-tabs" role="tablist" aria-label={title ?? "Code examples"}>
-      {
-        tabs.map((t, i) => (
-          <button
-            class:list={["ct-tab", { active: i === 0 }]}
-            role="tab"
-            aria-selected={i === 0 ? "true" : "false"}
-            data-tab={i}
-          >
+    {single ? (
+      <span class="ct-one">{tabs[0].label}</span>
+    ) : (
+      <div class="ct-tabs" role="tablist" aria-label={title ?? "Code examples"}>
+        {tabs.map((t, i) => (
+          <button type="button" class:list={["ct-tab", { active: i === 0 }]} role="tab" id={`${uid}-${i}`} aria-controls={`${uid}-${i}-p`}
+            aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1} data-tab={t.label} data-key={keyFor(name, t.label)}>
             {t.label}
           </button>
-        ))
-      }
-    </div>
-    <button class="ct-copy" data-copy aria-label="Copy code">
+        ))}
+      </div>
+    )}
+    <button type="button" class="ct-copy" data-copy aria-label="Copy code">
       <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"></rect><path d="M3 11V3.5A1.5 1.5 0 0 1 4.5 2H11" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg>
       <span>Copy</span>
     </button>
   </div>
   <div class="ct-panels">
-    {
-      tabs.map((t, i) => (
-        <div class:list={["ct-panel", { active: i === 0 }]} data-panel={i} data-raw={t.code}>
-          <Code code={t.code} lang={t.lang as any} themes={themes} />
-        </div>
-      ))
-    }
+    {tabs.map((t, i) => (
+      <div class:list={["ct-panel", { active: i === 0 }]} role={single ? undefined : "tabpanel"} id={`${uid}-${i}-p`}
+        aria-labelledby={single ? undefined : `${uid}-${i}`} data-raw={stripOutput(t.code)}>
+        {!single && <p class="ct-label">{t.label}</p>}
+        <Code code={t.code} lang={t.lang as any} themes={themes} />
+      </div>
+    ))}
   </div>
 </div>
 
 <script>
-  document.querySelectorAll("[data-codetabs]").forEach((root) => {
-    const tabs = root.querySelectorAll(".ct-tab");
-    const panels = root.querySelectorAll(".ct-panel");
-    const select = (idx: string) => {
-      tabs.forEach((t) => {
-        const on = (t as HTMLElement).dataset.tab === idx;
-        t.classList.toggle("active", on);
-        t.setAttribute("aria-selected", on ? "true" : "false");
-      });
-      panels.forEach((p) =>
-        p.classList.toggle("active", (p as HTMLElement).dataset.panel === idx)
-      );
-    };
-    tabs.forEach((tab) =>
-      tab.addEventListener("click", () => {
-        select((tab as HTMLElement).dataset.tab!);
-        // Remember the reader's language, and switch every other tab group on the page to it.
-        const label = tab.textContent?.trim() ?? "";
-        try { localStorage.setItem("bh-code-lang", label); } catch (_) {}
-        document.dispatchEvent(new CustomEvent("bh-code-lang", { detail: label }));
-      })
-    );
-    const follow = (label: string | null) => {
-      if (!label) return;
-      const t = [...tabs].find((x) => x.textContent?.trim() === label) as HTMLElement | undefined;
-      if (t) select(t.dataset.tab!);
-    };
-    try { follow(localStorage.getItem("bh-code-lang")); } catch (_) {}
-    document.addEventListener("bh-code-lang", (e) => follow((e as CustomEvent).detail));
-    const copyBtn = root.querySelector("[data-copy]");
-    copyBtn?.addEventListener("click", async () => {
-      const active = root.querySelector(".ct-panel.active") as HTMLElement;
+  import "../scripts/tabs-sync";
+  document.querySelectorAll<HTMLElement>("[data-codetabs]").forEach((root) => {
+    const btn = root.querySelector<HTMLElement>("[data-copy]");
+    btn?.addEventListener("click", async () => {
+      const active = root.querySelector<HTMLElement>(".ct-panel.active");
       try {
         await navigator.clipboard.writeText(active?.dataset.raw ?? "");
-        const label = copyBtn.querySelector("span")!;
-        const prev = label.textContent;
+        const label = btn.querySelector("span")!;
         label.textContent = "Copied";
-        setTimeout(() => (label.textContent = prev), 1400);
-      } catch (e) {}
+        setTimeout(() => (label.textContent = "Copy"), 1400);
+      } catch (_) {}
     });
   });
 </script>
@@ -119,6 +102,7 @@ const themes = { light: "github-light-high-contrast", dark: "github-dark" } as c
   }
   .ct-tab:hover { color: var(--color-text); }
   .ct-tab.active { color: var(--color-primary); background: var(--color-primary-soft); }
+  .ct-tab:focus-visible, .ct-copy:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
   .ct-copy {
     display: inline-flex;
     align-items: center;
@@ -132,8 +116,14 @@ const themes = { light: "github-light-high-contrast", dark: "github-dark" } as c
     transition: color var(--t-fast) var(--ease);
   }
   .ct-copy:hover { color: var(--color-text); }
-  .ct-panel { display: none; }
-  .ct-panel.active { display: block; }
+  .ct-one { padding: 0.32rem 0.7rem; font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); }
+  .ct-tabs { display: none; }
+  :global(.js) .ct-tabs { display: flex; }
+  .ct-label { margin: 0; padding: var(--s-2) var(--space-5) 0; font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); }
+  :global(.js) .ct-label { display: none; }
+  :global(.js) .ct-panel:not(.active) { display: none; }
+  .ct-panel + .ct-panel { border-top: 1px solid var(--color-border); }
+  :global(.js) .ct-panel + .ct-panel { border-top: 0; }
   .codetabs :global(pre) {
     margin: 0;
     padding: var(--space-4) var(--space-5);

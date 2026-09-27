@@ -3,12 +3,13 @@ import { getCollection } from "astro:content";
 import { twin, SITE } from "../lib/markdown-twin";
 import { hubMeta } from "../config/hubs";
 import { GROUP_ORDER, type SectionId } from "../config/nav";
-import { PLATFORMS, PLATFORM_PAGES } from "../data/platforms";
+import { PLATFORMS, PLATFORM_PAGES, QUICKSTART, firstFrame } from "../data/platforms";
 import { HERO, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
 import { PERF_BAND } from "../data/perf-band";
 import { perfCell, perfRow, PERF_MODELS } from "../lib/perf";
 import versions from "../data/versions.json";
-import specText from "../openapi/bithuman.yaml?raw";
+import { apiSpec } from "../lib/openapi";
+import { explorerClaim } from "../lib/doc-blocks";
 import headline from "../partials/performance-headline.md?raw";
 
 // /<page>.md — every docs page as clean markdown, for AI agents and for the
@@ -50,30 +51,32 @@ function pathTable(): string {
   return out;
 }
 
-// /api/reference is a Scalar page (client-rendered), so it has no source body to
-// serve. Its twin lists every operation from the spec itself (method, path,
-// summary), so an agent can find an endpoint without running JavaScript, and
-// points at the full contract. Parsed line by line: the spec's layout is fixed
-// (paths at 2 spaces, methods at 4, summary at 6).
+// /api/reference's twin lists every operation (method, path, summary) with a
+// link to its anchor on the page, from the same parsed spec the page renders,
+// and points at the full contract.
 function endpointTable(): string {
-  const rows: string[] = [];
-  let inPaths = false, path = "", method = "";
-  for (const line of (specText as string).split("\n")) {
-    if (/^paths:\s*$/.test(line)) { inPaths = true; continue; }
-    if (inPaths && /^\S/.test(line)) break;
-    if (!inPaths) continue;
-    let m = /^  (\/\S*):\s*$/.exec(line);
-    if (m) { path = m[1]; method = ""; continue; }
-    m = /^    (get|post|put|patch|delete):\s*$/.exec(line);
-    if (m) { method = m[1].toUpperCase(); continue; }
-    m = /^      summary:\s*(.+?)\s*$/.exec(line);
-    if (m && path && method) {
-      rows.push(`| ${method} | \`${path}\` | ${m[1].replace(/^["']|["']$/g, "").replace(/\|/g, "\\|")} |`);
-      method = "";
-    }
-  }
-  if (rows.length < 10) throw new Error(`api/reference.md: read only ${rows.length} operations from the spec; the parser went blind`);
+  const rows = apiSpec().tags.flatMap((t) => t.operations.map((op) =>
+    `| ${op.method} | \`${op.path}\` | [${op.summary.replace(/\|/g, "\\|")}](${SITE}/api/reference#${op.id}) |`));
+  if (rows.length < 10) throw new Error(`api/reference.md: read only ${rows.length} operations from the spec`);
   return `| Method | Path | What it does |\n|---|---|---|\n${rows.join("\n")}\n`;
+}
+
+/** /start's picker as markdown: each platform's steps, what you get and where next. */
+function quickstartMd(): string {
+  let out = "";
+  for (const q of QUICKSTART) {
+    out += `\n### ${q.label}: ${q.title}\n\n`;
+    out += [q.time ? `Time: ${q.time}` : "", `Needs: ${q.needs.join(", ")}`, `Models: ${q.models.join(", ")}`].filter(Boolean).join(" · ") + "\n";
+    q.steps.forEach((st, i) => {
+      out += `\n${i + 1}. ${st.title}\n`;
+      if (st.code) out += `\n\`\`\`${st.code.lang}\n${st.code.code}\n\`\`\`\n`;
+      if (st.text) out += `\n${st.text}\n`;
+    });
+    if (q.note) out += `\n${q.note}\n`;
+    const [path, hash] = firstFrame(q.next.href).split("#");
+    out += `\nExpected: ${q.expect.text}\n\nNext: [${q.next.label}](${SITE}${path}.md${hash ? `#${hash}` : ""})\n`;
+  }
+  return out;
 }
 
 export async function getStaticPaths() {
@@ -109,9 +112,9 @@ export const GET: APIRoute = async ({ props }) => {
       `## Sections\n\n- [Get started](${SITE}/start.md)\n- [Platforms](${SITE}/platforms.md)\n- [Deploy](${SITE}/deploy.md)\n- [Models](${SITE}/models.md)\n- [Build](${SITE}/build.md)\n- [API](${SITE}/api.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }
   if (hub === "start") {
-    let body = `## Choose your platform\n\n${pathTable()}\n## Run it\n`;
-    for (const p of PLATFORMS.filter((x) => x.card)) body += `\n### ${p.want}: ${p.use}\n\n\`\`\`${p.card!.lang}\n${p.card!.code}\n\`\`\`\n\nExpected: ${p.card!.expect}\n`;
+    let body = `## Choose your platform\n\n${pathTable()}\n## Pick your platform and run it\n\nEach block runs as pasted after \`export BITHUMAN_API_SECRET=…\`.\n${quickstartMd()}`;
     body += perfSection();
+    body += `\n${explorerClaim()} Every configuration: ${SITE}/performance.md\n`;
     body += await hubBody("start");
     return md(twin("Quickstart", "/start", hubMeta("start").description, body));
   }

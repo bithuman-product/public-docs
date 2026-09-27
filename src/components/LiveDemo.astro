@@ -6,6 +6,8 @@
 // when the tab stays hidden, and a real recording when the live embed does not
 // come up. The embed URL is never a crawlable link: the script opens it.
 import { DEMOS, DEMO_CAP_SECONDS, embedUrl, type DemoModel } from "../data/demo";
+import { FLAGS } from "../data/flags";
+import LiveDemoModes from "./LiveDemoModes.astro";
 
 interface Props {
   /** Which models to offer; the first is shown first. */
@@ -55,7 +57,8 @@ const sizes = "(max-width: 560px) calc(100vw - 32px), 440px";
     <button class="ld-btn" type="button" data-end hidden>End</button>
     <button class="ld-btn ld-quiet" type="button" data-record>Watch a recording</button>
   </div>
-  <p class="ld-s29">The avatar renders in the bitHuman cloud, and the conversation runs on bitHuman's servers.</p>
+  {(FLAGS.demoInTab || FLAGS.demoMirror) && <LiveDemoModes inTab={FLAGS.demoInTab} mirror={FLAGS.demoMirror} />}
+  <p class="ld-s29" data-s29>The avatar renders in the bitHuman cloud, and the conversation runs on bitHuman's servers.</p>
 </section>
 
 <script>
@@ -142,7 +145,8 @@ const sizes = "(max-width: 560px) calc(100vw - 32px), 440px";
       reset();
       const d = cur.dataset;
       const f = document.createElement("iframe");
-      f.src = d.src!;
+      // A demo mode (flagged, LiveDemoModes.astro) adds its query: render=local or rendering_mode=avatar.
+      f.src = d.src! + (root.dataset.query ? `?${root.dataset.query}` : "");
       f.allow = "microphone *; autoplay *";
       f.title = `Live avatar: ${d.name} (${d.modelName})`;
       f.className = "ld-frame";

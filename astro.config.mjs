@@ -6,9 +6,10 @@ import rehypePerfTables from "./src/markdown/rehype-perf-tables.mjs";
 import rehypeEmbedNofollow from "./src/markdown/rehype-embed-nofollow.mjs";
 import remarkCodeTabs from "./src/markdown/remark-code-tabs.mjs";
 import remarkDocBlocks from "./src/markdown/remark-doc-blocks.mjs";
+import remarkApiSamples from "./src/markdown/remark-api-samples.mjs";
 
-// Custom Astro theme modeled on developers.openai.com. The embedded API
-// reference (Scalar) lives at /api/reference; the rest is a bespoke theme.
+// Custom Astro theme modeled on developers.openai.com. The API reference at
+// /api/reference is drawn from src/openapi/bithuman.yaml at build time.
 export default defineConfig({
   site: "https://docs.bithuman.ai",
   // Inline the (small) stylesheets so no CSS request blocks the first paint.
@@ -20,10 +21,12 @@ export default defineConfig({
     // leading bold label the same way, so the stylesheet can tell them apart.
     // The generated performance tables are laid out one cell per model first
     // (rehype-perf-tables.mjs), so the column labels are the merged ones.
-    // Consecutive fences marked tab="…" become one tab group (static; JS only switches).
+    // On /api/* pages a curl example gains Python and Node tabs generated from it
+    // (remark-api-samples.mjs). Consecutive fences marked tab="…" become one tab
+    // group (static; JS only switches).
     // A fence named for a generated block (```perf, ```model-matrix, …) becomes
     // that block, drawn from the data files at build time (src/lib/doc-blocks.ts).
-    remarkPlugins: [remarkDocBlocks, remarkCodeTabs],
+    remarkPlugins: [remarkDocBlocks, remarkApiSamples, remarkCodeTabs],
     // A link to an /embed/ URL opens a billable live session: never followed by crawlers.
     rehypePlugins: [rehypePerfTables, rehypeTableLabels, rehypeCallouts, rehypeEmbedNofollow],
     // Dual Shiki themes so code blocks match the site theme:

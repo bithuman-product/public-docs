@@ -17,7 +17,7 @@ info:
     require an `api-secret` header.
     [Get an API secret →](https://www.bithuman.ai/developer/api-keys)
 
-    This machine-readable spec currently covers the core
+    This machine-readable spec covers the core
     agent / video / dynamics / files / pricing surface. Some developer
     endpoint groups are documented in the markdown guides rather than
     here: [API secrets](https://docs.bithuman.ai/api/api-keys)
@@ -284,8 +284,7 @@ paths:
             accepted model names), or a `video` input
             (`VIDEO_INPUT_NOT_SUPPORTED` — agent creation is image-only; the
             10-second identity video is generated internally so it loops
-            without a seam; this rejection is rolling out platform-wide, so
-            never send `video`). Rejected before dispatch; no credits
+            without a seam; never send `video`). Rejected before dispatch; no credits
             charged.
           content:
             application/json:
@@ -4301,7 +4300,7 @@ components:
       description: |
         Too many requests from this network address. These routes carry their
         own credential and are checked by the service behind them, so there is
-        no account to meter at the front door — they get one flat limit per
+        no account to meter at the edge — they get one flat limit per
         address (120 requests/minute) instead of the per-plan cost tiers, and
         no `X-RateLimit-*` headers. Wait `Retry-After` seconds and retry. See
         [Rate limits](https://docs.bithuman.ai/api/rate-limits).

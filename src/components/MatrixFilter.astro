@@ -1,0 +1,22 @@
+---
+// The filter above the full model × place matrix and the five deployment
+// modes. Its markup is drawn at build time by the ```model-matrix and
+// ```deploy-matrix blocks (src/lib/doc-blocks.ts); DocLayout renders this
+// component only on a page that places one of them.
+---
+
+<script>
+  import "../scripts/matrix-filter";
+</script>
+
+<style is:global>
+  .mx-filter { display: none; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-4) 0 var(--s-3); }
+  .js .mx-filter { display: flex; }
+  .mx-filter button { padding: 0.3rem 0.8rem; border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface); color: var(--color-text-secondary); font: inherit; font-size: var(--ft-sm); line-height: 1.35; cursor: pointer; }
+  .mx-filter button:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  .mx-filter button[aria-checked="true"] { border-color: transparent; background: var(--color-primary-soft); color: var(--color-primary); font-weight: var(--fw-medium); }
+  .mx-filter button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .mx-off { display: none !important; }
+  .mm-how { font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .mx-one .dm-card { grid-column: 1 / -1; }
+</style>

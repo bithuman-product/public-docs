@@ -3,8 +3,9 @@
 Source for [docs.bithuman.ai](https://docs.bithuman.ai) — bitHuman's developer
 platform. A custom **Astro 6** site styled after
 [developers.openai.com](https://developers.openai.com/) (semantic design tokens,
-light/dark, Shiki code, brand coral `#FF5757` + Roboto). The embedded API
-reference is rendered with **Scalar** at `/api/reference`.
+light/dark, Shiki code, brand coral `#FF5757` + Roboto). The API
+reference at `/api/reference` is rendered from the OpenAPI spec at build time,
+with no third-party script.
 
 ## Local dev
 
@@ -23,7 +24,9 @@ src/
   config/nav.ts          Sections, sidebar groups, header, Resources menu, footer
   data/                  One source per fact: versions, pricing, platforms, demo avatars, offline copy
   layouts/               Base (head, nav, footer) and DocLayout (sidebar, chips, Next, pager)
-  components/            Card, Chip, LiveDemo, CodeTabs, PerfHeadline and the rest of the design system
+  components/            Card, Chip, LiveDemo, CodeTabs, QuickstartPicker, PlatformSwitcher and the rest of the design system
+  scripts/               The small browser scripts: tab and platform state, the explorer, the calculator, filters
+  lib/                   Build-time helpers: data blocks, the OpenAPI reader, the curl → Python and Node generator
   styles/                tokens.css (light/dark tokens), components.css, prose.css
   pages/                 The home page, /start, the hubs, llms files and markdown twins
   openapi/bithuman.yaml  OpenAPI spec -> synced to public/api/openapi.yaml
