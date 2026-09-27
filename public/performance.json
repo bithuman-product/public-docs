@@ -624,7 +624,35 @@
    "published": true,
    "sustained": true,
    "cells": {
-    "essence-2": null,
+    "essence-2": {
+     "fps": 54,
+     "x_realtime": 2.16,
+     "realtime": true,
+     "measured_on": "2026-09-27",
+     "release": "web viewer",
+     "clip": {
+      "id": "varied1800s-heldout",
+      "seconds": 1800.25
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "memory_release": null,
+     "time_to_video": null,
+     "held": {
+      "median_window_fps": 54.37,
+      "worst_window_fps": 50,
+      "sessions": 3,
+      "memory": {
+       "metric": "phys_footprint",
+       "start_mib": 3151,
+       "end_mib": 3096,
+       "growth_mib": -55,
+       "budget_mib": 315
+      }
+     }
+    },
     "expression-2": {
      "fps": 41,
      "x_realtime": 2.05,
