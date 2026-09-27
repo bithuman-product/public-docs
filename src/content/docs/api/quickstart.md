@@ -8,7 +8,7 @@ type: quickstart
 label: "Quickstart"
 ---
 
-A ladder: step 1 needs no account, step 2 needs a free API secret, and steps 3–5 spend credits. Each step builds on the one before.
+A ladder: step 1 needs no account, step 2 needs an API secret (the Creator plan or higher), and steps 3–5 spend credits. Each step builds on the one before.
 
 ## 1. Embed a sample avatar (no account)
 
@@ -34,7 +34,7 @@ curl -s -X POST https://api.bithuman.ai/v1/tts \
 
 ## 3. Create your own agent (credits)
 
-Creation is a one-time charge ([pricing](/guides/pricing#creation--one-time-credits)); a free balance returns `402`. Always send `model`.
+Creation is a one-time charge ([pricing](/guides/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Always send `model`.
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/agent/generate \

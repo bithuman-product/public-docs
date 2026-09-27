@@ -10,7 +10,7 @@ type: reference
 > **This is our reading of the rules, not legal advice.** Nothing here tells you
 > that your product is compliant. If you ship into the EU, take your own advice.
 
-The EU AI Act's transparency rules — **Article 50** — begin applying on
+The EU AI Act's transparency rules — **Article 50** — have applied since
 **2 August 2026**. They cover systems that talk to people, and content that is
 generated or manipulated by AI. Both describe what you build with bitHuman.
 

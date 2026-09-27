@@ -16,7 +16,7 @@ Four shell scripts over the REST API: check your secret, check your balance, cre
 |---|---|
 | An [API secret](/start/api-secret) | every call sends it in the `api-secret` header |
 | `curl` and `python3` | `python3` only formats the JSON |
-| Credits for one creation | 2000 for Expression 2, 500 for Essence 2 ([pricing](/guides/pricing#creation--one-time-credits)); a free balance cannot create an agent |
+| Credits for one creation | 2000 for Expression 2, 500 for Essence 2 ([pricing](/guides/pricing#creation--one-time-credits)); creation needs the Creator plan or higher |
 
 To try an avatar with no account and no credits first, use the [Web example](/examples/web).
 

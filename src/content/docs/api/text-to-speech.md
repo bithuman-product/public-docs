@@ -17,7 +17,7 @@ codes** — opaque handles for a voice you've designed in the
 ## Authentication
 
 Every call uses your bitHuman API secret in the `api-secret` header. Get one at
-[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys) (free tier, no card),
+[Developer → API Secrets](https://www.bithuman.ai/developer/api-keys) (the Creator plan or higher),
 then export it so the examples below pick it up:
 
 ```bash
@@ -62,7 +62,7 @@ with open("voice.wav", "wb") as f:
 | `voice` | string | Built-in voice id (`M1`–`M5`, `F1`–`F5`). Defaults to `M1`. |
 | `voice_code` | string | A designed-voice handle (see [Voice codes](#voice-codes)). Takes precedence over `voice`. |
 | `axes` | object | Inline tuning — see [Tuning a voice](#tuning-a-voice). Ignored when `voice_code` is set. |
-| `language` | string | ISO-2 code. 30+ languages supported (call `GET /v1/voices` / the playground for the current list — the advertised count and the live server list don't always match exactly). Defaults to `en`. |
+| `language` | string | ISO-2 code. Call `GET /v1/voices` for the current list of languages. Defaults to `en`. |
 | `total_steps` | integer | Quality vs. speed: `5` fast, `8` balanced (default), `12` highest. |
 | `speed` | number | Playback rate, `0.7`–`2.0`. Defaults to `1.05`. |
 

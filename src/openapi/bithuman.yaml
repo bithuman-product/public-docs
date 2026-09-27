@@ -15,7 +15,7 @@ info:
 
     All endpoints are relative to `https://api.bithuman.ai` and
     require an `api-secret` header.
-    [Get a free API secret →](https://www.bithuman.ai/developer/api-keys)
+    [Get an API secret →](https://www.bithuman.ai/developer/api-keys)
 
     This machine-readable spec currently covers the core
     agent / video / dynamics / files / pricing surface. Some developer
@@ -1042,7 +1042,7 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the licence with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#platform-notes). |
+        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the license with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#platform-notes). |
         | `expression-2` | `<code>.avatar` — the same container as `.imx` under a second name (a few early identities use an older format; `bithuman open` reports which) — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
@@ -2376,72 +2376,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
-  /v1/realtime/ephemeral-token:
-    post:
-      operationId: requestRealtimeToken
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl -X POST https://api.bithuman.ai/v1/realtime/ephemeral-token \
-              -H "api-secret: $BITHUMAN_API_SECRET" \
-              -H "content-type: application/json" -d '{}'
-            # → data.value is an OpenAI client secret; hand it to the browser
-      summary: Mint a realtime client secret
-      description: >-
-        Mint a short-lived OpenAI-Realtime client secret so a browser can open a realtime
-        voice session without your API secret. Mint on the server and pass only `data.value`
-        to the client. Balance-gated: minting needs a positive balance
-        (402 INSUFFICIENT_BALANCE). Rate-limited to 20/min.
-      tags: [Voice]
-      security:
-        - apiSecret: []
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                model:
-                  type: string
-                  description: >-
-                    OpenAI Realtime model. Defaults to `gpt-realtime-mini`, the one
-                    model a standard API secret can mint; `gpt-realtime` needs an
-                    entitlement on your account (403 `PLAN_REQUIRED` otherwise).
-                  example: "gpt-realtime-mini"
-      responses:
-        "200":
-          description: A client secret. Mint one per session.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      value: { type: string }
-                      expires_at: { type: integer }
-                      model: { type: string }
-                  status: { type: string, example: success }
-                  status_code: { type: integer, example: 200 }
-              example:
-                data:
-                  value: "ek_68f0c2..."
-                  expires_at: 1751500000
-                  model: "gpt-realtime-mini"
-                status: success
-                status_code: 200
-        "402":
-          description: Out of credits.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "429":
-          $ref: "#/components/responses/RateLimitedByAddress"
 
   /v1/dynamics/generate:
     post:

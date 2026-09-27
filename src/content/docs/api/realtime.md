@@ -89,8 +89,8 @@ connection times out, usually 8–10 seconds later, and those seconds are billed
 - Other errors: `401` missing or invalid key · `503` the relay is at capacity (retry after the
   `Retry-After` seconds).
 
-## Retired: the ephemeral-token mint
+## Retired: the client-secret mint
 
-`POST /v1/realtime/ephemeral-token` is **retired** and answers `410 ENDPOINT_RETIRED`. It
-handed the client a raw OpenAI client secret (`ek_…`). Connect through the relay or
+The earlier realtime token mint, which handed the client an OpenAI client secret (`ek_…`),
+is **retired** and answers `410 ENDPOINT_RETIRED`. Connect through the relay or
 `/v1/realtime/connect` instead; CLI 2.8.1 and later already do.

@@ -7,7 +7,7 @@ order: 2
 type: reference
 ---
 
-> **This is an engineering reading of the licence, not legal advice.** It
+> **This is an engineering reading of the license, not legal advice.** It
 > describes what the shipped artifact does and how the obligation is
 > discharged. If you redistribute our AAR inside your own product, take your
 > own advice about your own obligations.
@@ -78,11 +78,11 @@ the *correct* result — check the printed number, not the exit status.
 Seventeen versions were published, **1.12.1 through 2.3.6**. Every one of them links
 FFmpeg statically into the SDK's native library under `jni/arm64-v8a/` (the file the commands
 below read), and **none of them shipped a
-licence notice**: not for FFmpeg and not for the other libraries listed below. That was our
+license notice**: not for FFmpeg and not for the other libraries listed below. That was our
 omission.
 
 **2.3.7 is the final release.** It ships the same `classes.jar` and the same native
-libraries as 2.3.6, byte for byte. It adds `META-INF/NOTICE.txt`, the licence texts under
+libraries as 2.3.6, byte for byte. It adds `META-INF/NOTICE.txt`, the license texts under
 `META-INF/licenses/`, and the offer below in `META-INF/LGPL-RELINK-OFFER.txt`. Its POM
 marks the coordinate deprecated and points to `ai.bithuman:essence2-android`.
 
@@ -338,7 +338,7 @@ we want it: [hello@bithuman.ai](mailto:hello@bithuman.ai).
 | Field | Value |
 |---|---|
 | FFmpeg version | 7.1 |
-| FFmpeg licence, as `configure` selected it | LGPL version 2.1 or later |
+| FFmpeg license, as `configure` selected it | LGPL version 2.1 or later |
 | `--enable-gpl` / `--enable-nonfree` | `0` / `0` |
 | Patches applied | `0` |
 | Upstream source | `https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz` |
@@ -349,7 +349,7 @@ we want it: [hello@bithuman.ai](mailto:hello@bithuman.ai).
 | FFmpeg symbols defined in `lible_jni.so` | 622 in `0.8.1` (the first command above prints it) |
 | FFmpeg symbols undefined in the relink archive | 31 in `0.8.1` (`verify/undefined_ffmpeg_symbols.txt`) |
 
-The other licence texts travel inside the AAR too — `META-INF/licenses/`
+The other license texts travel inside the AAR too — `META-INF/licenses/`
 carries `ffmpeg-7.1-COPYING.LGPLv2.1.txt`, `highway-1.3.0-LICENSE.txt`,
 `llvm-libcxx-LICENSE.txt` and `onnxruntime-1.26.0-LICENSE.txt`. See the
 [Android SDK page](/sdk/android) for the coordinates and what is measured

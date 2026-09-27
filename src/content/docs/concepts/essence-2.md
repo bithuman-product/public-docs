@@ -13,14 +13,12 @@ label: "Essence 2"
 **Essence 2** (`essence-2`) renders a photoreal person from one portrait, up to
 1080p at 25 fps: the identity's own canvas, 1080×1920 portrait for a standard identity. From your portrait the platform generates a 10-second
 identity video; the model then animates lip-sync and expression over it live,
-with a sharp mouth and teeth taken from that video. A model file with a missing
-part is refused rather than played with a substitute.
+with a sharp mouth and teeth taken from that video.
 
 ## When to choose it
 
 - **A photorealistic person** — start here.
-- **Always-on and high-concurrency deployments** — kiosks, lobby displays and
-  24/7 assistants.
+- **Always-on displays** — kiosks, lobby screens and 24/7 assistants.
 - **On your own hardware** — every SDK platform runs it.
 
 For a stylized character, or a scene generated from one photo, choose
@@ -31,7 +29,7 @@ For a stylized character, or a scene generated from one photo, choose
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (frames, and MP4 clips with `bithuman.offline`) |
 | iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Essence2Kit` product (iOS / macOS 26; `Essence2` for C) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
 | Android | [`essence2-android`](/sdk/android) — fetching the identity needs your API secret |
@@ -63,9 +61,8 @@ The creation cost is on [pricing](/guides/pricing).
 
 ## Serving tiers
 
-By default each cloud session is routed down the **GPU → Apple → CPU** chain and
-overflows to the next tier on capacity. The Apple tier is bitHuman's Apple
-Silicon, not your Mac. To force one tier for a benchmark, append
+The bitHuman cloud picks a serving tier for each session. The Apple tier runs on
+bitHuman's Apple silicon, not your Mac. To force one tier for a benchmark, append
 `?model=essence-2-gpu`, `essence-2-apple` or `essence-2-cpu` to the session
 URL — how a pin behaves is on
 [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier). For
@@ -90,9 +87,6 @@ over the same frames. A running session bills talking and idle time alike ([pric
 - **Before training completes**, a launch that requests this model is refused
   with [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors). Once ready,
   `essence-2` appears in the agent's `supported_models`.
-- **Renderer improvements roll out per identity.** An agent created earlier
-  keeps its build until it is retrained; nothing in the API or the price
-  changes.
 
 ## Next steps
 

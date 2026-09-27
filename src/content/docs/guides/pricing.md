@@ -34,7 +34,7 @@ An avatar-only session (your own agent through the plugin or the API) that rende
 How live sessions are billed: active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum.
 <!-- /PRICING:REALTIME -->
 
-A session bills while it is **running**, whether the avatar is talking or idle, to the exact second: seconds × rate ÷ 60, rounded down per session, with the fraction carried to your next session. A stopped or disconnected session accrues nothing. An offline render (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+A session bills while it is **running**, whether the avatar is talking or idle, to the exact second: seconds × rate ÷ 60, rounded down per session, with the fraction carried to your next session. A stopped or disconnected session accrues nothing. File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
 Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 
@@ -46,7 +46,7 @@ Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 | Create an agent: `essence-2` | 500 |
 | Create an agent: `expression-2` | 2000 |
 | Create an agent: `auto` | the routed model's rate (500 or 2000) |
-| [Add a model](/api/agents#add-a-model-to-an-existing-agent) to an agent | the same per-model rates; Expression 1 is free |
+| [Add a model](/api/agents#add-a-model-to-an-existing-agent) to an agent | the same per-model rates; 0 for Expression 1 |
 | Generate gestures (dynamics) | 250 |
 
 A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) returns this schedule as JSON.
@@ -62,42 +62,41 @@ A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#ge
 | `essence-1` | 2 credits |
 | `expression-1` | 4 credits |
 
-## Free tier
-
-99 credits a month, no card required; unused credits do not roll over. That serves an existing agent for about 24 minutes of cloud Essence 2 or Expression 2, or 49 minutes self-hosted.
-
-### The free tier cannot create an agent
-
-The cheapest creation costs 250 credits, more than a free month. A creation you cannot pay for returns [`402 INSUFFICIENT_BALANCE`](/api/errors) and creates nothing. [Top up](#top-up-credits) or choose a [plan](#plans) first.
-
 ## Plans
 
-| Plan | Monthly | Yearly | Credits / month | Concurrent cloud sessions |
-|---|---|---|---|---|
-| **Free** | $0 | — | 99 | 1 |
-| **Creator** | $20 | $204 | 1,800 | 3 |
-| **Pro** | $99 | $1,010 | 10,000 | 10 |
-| **Business** | $299 | $2,990 | 50,000 | 50 |
-| **Enterprise** | $999 | $9,990 | 250,000 | 200 |
-| **Custom** | [Contact sales](https://www.bithuman.ai/sales) | — | volume or on-prem | unlimited |
+From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or higher. Free accounts cannot create agents or buy credit top-ups. A Free account with top-up credits bought before 2026-09-27 keeps API and SDK access until those credits are spent. The exact responses are under [`PLAN_REQUIRED`](/api/errors#authentication).
 
-Annual plans bill twelve months of credits up front. Concurrent sessions limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED` ([rate limits](/api/rate-limits)). Self-hosted and on-device sessions are limited only by credits.
+| Plan | Monthly | Yearly | Credits / month | Agents | Concurrent cloud sessions |
+|---|---|---|---|---|---|
+| **Creator** | $20 | $204 | 1,800 | 7 | 3 |
+| **Pro** | $99 | $1,010 | 10,000 | 40 | 10 |
+| **Business** | $299 | $2,990 | 50,000 | 200 | 50 |
+| **Enterprise** | $999 | $9,990 | 250,000 | unlimited | 200 |
+| **Custom** | [Contact sales](https://www.bithuman.ai/sales) | — | by agreement | by agreement | by agreement |
+
+Annual plans bill twelve months of credits up front.
+
+- **Agents:** a creation over your plan's limit returns `403 AGENT_LIMIT_REACHED`. Existing agents keep working.
+- **Concurrent sessions** limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED` ([rate limits](/api/rate-limits)). Self-hosted and on-device sessions are limited only by credits.
+- **Creation costs credits:** a creation you cannot pay for returns [`402 INSUFFICIENT_BALANCE`](/api/errors) and creates nothing.
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
 
 ## Offline licensing
 
-Business and Enterprise plans can run realtime avatars fully offline, for kiosks, trade shows, ATMs and embedded screens.
+Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux PCs and terminals; arranged through sales.
 
-- **Credit-based:** the same credits, metered on the device, at the self-hosted rate.
-- **From 100,000 credits** per licence, with no time limit and no required reconnection.
-- **Not for phones:** the Apple and Android SDKs stay online.
+- **Models:** Essence 1, Essence 2 and Expression 2.
+- **Credit-based:** from 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection.
+- **Creation is online:** you create the avatar from a portrait in the bitHuman cloud; the finished avatar model then runs on your machines.
+- **Not for phones:** the Swift package and the Android SDK stay online.
+- **Not file rendering:** `bithuman render` writes a video file and signs in online; it needs no offline license.
 
-Offline licences are arranged through sales: [contact sales](https://www.bithuman.ai/sales).
+[Contact sales](https://www.bithuman.ai/sales) to arrange an offline license.
 
 ## Top-up credits
 
-Top up any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
+On the Creator plan or higher, top up any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
 
 ## Connectivity
 
@@ -141,12 +140,12 @@ curl https://api.bithuman.ai/v2/credit-summaries -H "api-secret: $BITHUMAN_API_S
 }
 ```
 
-Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by that rate. The response also carries `expression_1_self_hosted` and `expression_self_hosted`, left from a retired container: Expression 1 has no self-hosted mode, so ignore them. The unversioned `essence_*` and `expression_*` keys are the first-generation models; for Essence 2 read `essence_2_*`.
+Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by that rate. Ignore `expression_1_self_hosted` and `expression_self_hosted`: Expression 1 has no self-hosted mode. The unversioned `essence_*` and `expression_*` keys are the first-generation models; for Essence 2 read `essence_2_*`.
 
 ## What is not billed
 
 - Stopped or disconnected sessions.
-- API secrets, SDK installs and model downloads (a download writes a 0-credit usage row).
+- API secrets, SDK installs and model downloads.
 - Failed creations and renders (refunded) and failed authentication.
 
 ## Next

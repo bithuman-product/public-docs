@@ -9,10 +9,11 @@ label: "Self-hosting"
 ---
 
 Self-hosting means the render happens on your hardware — a Mac, a Linux box, a
-phone or a browser tab. It is billed in credits at the
-self-hosted rate. Online, credits are the only gate: no licence to buy and no
-time limit. Fully offline use needs an [offline licence](/guides/pricing#offline-licensing)
-(Business and Enterprise). Downloading a model is free.
+phone or a browser tab. It needs the Creator plan or higher and is billed in
+credits at the self-hosted rate; online, there is no license to buy. Running
+fully offline needs an [offline license](/guides/pricing#offline-licensing):
+Business and Enterprise, on Linux PCs and terminals, arranged through sales.
+Downloading a model is free.
 
 ## Pick your surface
 
@@ -42,7 +43,7 @@ curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 bithuman render wise-pup speech.wav -o out.mp4
 ```
 
-`out.mp4` is the free Wise Pup avatar speaking the 15-second sample. The rest of
+`out.mp4` is the Wise Pup sample avatar speaking the 15-second sample. The rest of
 the CLI — live sessions, your own agents, every flag — is on [the CLI page](/sdk/cli).
 
 ## How self-hosting is billed
@@ -64,7 +65,7 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
 | `bithuman render` refuses with `NOT_SIGNED_IN` | a render is billed, so it needs a credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
 | `bithuman render` exits 69: `ffmpeg not found` | the MP4 is written through ffmpeg | `brew install ffmpeg` / `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
 | `pip install bithuman` finds no wheel | wheels exist for macOS (Apple silicon) and Linux x86_64 / arm64 only | use one of those, or WSL2 on Windows |
-| `java.lang.UnsatisfiedLinkError` on an Android emulator | the libraries are `arm64-v8a` only | a physical device, or an `arm64-v8a` emulator image |
+| `java.lang.UnsatisfiedLinkError` on an Android emulator | the engines load on a physical `arm64-v8a` device only | run on a physical Android device |
 
 ## Next steps
 

@@ -98,7 +98,7 @@ bithuman run wise-pup
 
 ### Voice settings
 
-`bithuman run` starts a voice agent on OpenAI Realtime. It answers about half a second after you stop talking. Both settings are read from the environment:
+`bithuman run` starts a voice agent on OpenAI Realtime. Both settings are read from the environment:
 
 | Variable | Default | What it does |
 |---|---|---|

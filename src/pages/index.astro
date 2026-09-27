@@ -62,13 +62,14 @@ const speedFor = (model: string) => speed?.find((r) => r.model === model)?.cells
       <div class="band-head">
         <h2 id="deployment">Choose your deployment</h2>
       </div>
-      <ul class="cards cards-4 deploy" role="list">
+      <ul class="cards cards-3 deploy" role="list">
         {DEPLOYMENTS.map((c) => (
-          <li>
+          <li class={c.wide ? "wide" : undefined}>
             <a class="card" href={c.href}>
               <span class="card-icon"><Icon name={c.icon} /></span>
               <span class="card-title"><h3>{c.title}</h3>{c.badge && <span class="badge">{c.badge}</span>}</span>
               <p>{c.line}</p>
+              {c.note && <p class="card-note">{c.note}</p>}
             </a>
           </li>
         ))}
@@ -174,6 +175,13 @@ const speedFor = (model: string) => speed?.find((r) => r.model === model)?.cells
   .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
   .cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .cards-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cards > li.wide { grid-column: 1 / -1; }
+  .wide .card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-4); row-gap: var(--space-1); align-items: start; }
+  .wide .card-icon { grid-row: span 3; margin-bottom: 0; }
+  .wide .card-title, .wide .card p { grid-column: 2; }
+  .wide .card p { max-width: 72ch; }
+  .card .card-note { font-weight: var(--fw-medium); color: var(--color-text); }
   .cards > li { display: flex; }
   .card {
     display: flex; flex-direction: column; gap: var(--space-2); width: 100%;
@@ -271,6 +279,9 @@ const speedFor = (model: string) => speed?.find((r) => r.model === model)?.cells
     .deploy .card { display: grid; grid-template-columns: auto 1fr; column-gap: var(--space-3); row-gap: var(--space-1); }
     .deploy .card-icon { grid-row: span 2; margin-bottom: 0; }
     .deploy .card-title { align-self: end; }
+    .deploy .wide .card-icon { grid-row: auto; }
+    .deploy .wide .card-title { align-self: center; }
+    .deploy .wide .card p { grid-column: 1 / -1; }
     .model { gap: var(--space-3); }
     .model img { width: 84px; align-self: flex-start; }
     .model-body { padding-right: var(--space-1); }

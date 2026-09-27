@@ -2,6 +2,7 @@
 // the cards on /start, /platforms.json and the top of /llms.txt all render from
 // this file. Versions come from versions.json, never typed here.
 import versions from "./versions.json";
+import { OFFLINE_LICENSE_COPY } from "./offline";
 
 const V = versions.versions;
 
@@ -22,6 +23,8 @@ export interface Platform {
   /** Platform page; its #first-frame anchor is where the card's Next goes */
   docs: string;
   models: string[];
+  /** A line shown under the row (the offline row quotes the approved offline-license copy) */
+  note?: string;
   /** The /start card: a few lines that run as pasted, and what they print */
   card?: { lang: string; code: string; expect: string };
 }
@@ -96,7 +99,8 @@ bithuman render wise-pup speech.wav -o out.mp4
     first: "claude mcp add bithuman -- bithuman mcp", time: "2 min", docs: "/sdk/mcp", models: both,
   },
   {
-    id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Offline licence", needs: "Business or Enterprise plan",
+    id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Fully offline", needs: "Business or Enterprise plan",
     first: "Contact sales", time: "—", docs: "/guides/pricing#offline-licensing", models: both,
+    note: OFFLINE_LICENSE_COPY,
   },
 ];

@@ -16,14 +16,24 @@ Rules for everything under `src/content/docs` and `src/pages`. Each rule is one 
 
 | Term | Text |
 |---|---|
-| Essence 2 | A photoreal person from one portrait. Up to 1920×1080, 25 fps. |
-| Expression 2 | Any character (stylized, animal, robot or human) from one portrait. 416×720, 20 fps. |
+| Essence 2 | A photoreal person from one portrait. Up to 1920×1080. |
+| Expression 2 | Any character (stylized, animal, robot or human) from one portrait. 416×720. |
 | Essence 1 / Expression 1 | First-generation models, maintained. |
-| Billing | Credits pay for talking time. Idle time is free. |
-| Offline | Business and Enterprise plans can run realtime avatars fully offline, for kiosks, trade shows, ATMs and embedded screens. Credit-based, from 100,000 credits. Contact sales. |
-| Sample avatars | Essence 2 `sofia-ramirez`, Expression 2 `wise-pup` |
+| Speed | "{x}× real time", floored to one decimal, with the hardware named. Never a frame rate on a card, hub, lede or llms opener. |
+| Billing | Realtime usage bills active session time, talking or idle, to the second. Never "talking time" or "idle is free". |
+| Plan | "the Creator plan or higher" for API and SDK use. Never "free tier", "free key", "free account" or "free SDK". |
+| Where it runs | bitHuman cloud · Your servers (self-hosted) · On the device · Fully offline · CPU only (no GPU). Use the set as written; never "VPC". |
+| Renders / runs | The avatar **renders** (device, browser, server, cloud); the conversation **runs** (your stack, the CLI's local conversation brain, or bitHuman's servers). |
+| Offline | "Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens." Then: "Linux PCs and terminals; arranged through sales." Models: Essence 1, Essence 2, Expression 2. Quote it from `src/data/offline.ts`; never paraphrase. |
+| File rendering | `bithuman render` and `bithuman.offline` write a video file and sign in online. Never call them "offline" rendering. |
+| Sample avatars | Essence 2 `sofia-ramirez`, Expression 2 `wise-pup`; "your agent" is the placeholder `$AGENT_CODE` |
 | Embed | `https://www.bithuman.ai/embed/<CODE>` with `allow="microphone *"`; the demo agent is `A23WJF0199` |
-| Apple | "Apple (iOS, iPadOS, macOS)" for the SDK; "Swift package" for the artifact |
+| Apple | The iOS & iPadOS and macOS pages; "the Swift package" for the artifact (products `Expression2`, `Essence2Kit`, `Essence2`) |
+| Android | "the Android SDK" (`essence2-android`, `expression2-android`); "Android arm64"; a physical device, never an emulator |
+| Spelling | license (US), Apple silicon, iPhone, iPad, WebGPU, realtime |
+| Companions | AI companion, companionship, conversation practice, coaching. Never therapy or mental-health framing. |
+
+Banned words: leading, world's first, best-in-class, seamless, revolutionary, scale infinitely, 1000×, highest quality, most cost-effective, instant, blazing. A claim is a fact with a source, never an adjective.
 
 ## Never in a public page [check-internal-content]
 
@@ -64,7 +74,7 @@ Rules for everything under `src/content/docs` and `src/pages`. Each rule is one 
 
 ## Numbers and units
 
-- "25 fps", "4.1×", "1.6 GB", "~160 MB download", "2–3 h" (en dash), "credits" (never "cr"), "credits/min".
+- "2.0× real time", "1.6 GB", "~160 MB download", "2–3 h" (en dash), "credits" (never "cr"), "credits/min".
 - Pricing numbers appear only on `/guides/pricing`. Frame rates appear only in the generated performance tables. [check-billing-consistency, check-performance-floors]
 
 ## Page shapes
