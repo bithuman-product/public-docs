@@ -13,7 +13,7 @@ These figures are for the avatar rendering in the visitor's own tab (`render=loc
 <!-- FLOORS:TABLE web -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
 |---|---|---|---|---|---|
-| Web browser (WebGPU) | Chrome on Apple M4 | 42 | **1.6×** real time | 38 | **1.9×** real time |
+| Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7×** real time | 39 | **1.9×** real time |
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES web -->

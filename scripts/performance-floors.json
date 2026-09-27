@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "e4d643d013c2ab8c47f3f57690295c0ba3a67530454457685d3b83c1ca8be0d9",
-  "emitter_sha256": "31597c5db03e0712a27a72035fb359874183d5e37ef7bdee0f4acdc1483a06de",
+  "record_sha256": "6dfe363602f6cc04c97a85323fd41fafb87a0889785d503e3a1ab22391a94318",
+  "emitter_sha256": "04e9474cdd1e9759c58f58801a5bcefc7b305a5e821405a67af6f6f26bbae1a2",
   "verified_on": "2026-09-27",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "aa2af725d14feef1684f934a231f0439500e3a2db87ddb10d63d88b7fb2e36c7"
+    "sha256": "e700540daaa025595edc70a3c397f754cbe0e27751d04e7af0e54323ff1b14a1"
   },
   "blocks": [
     {
@@ -63,7 +63,7 @@
       "marker": "MEMORY",
       "key": null,
       "index": 0,
-      "sha256": "4733bf083f9b49d51095e72778e1bd12926d98fd8d4bd1e2f1d7f82f256d59b1"
+      "sha256": "074fd971ceb94e85e57632269b5cf67cc17130bcc729de1a58204ebeaaab2fb6"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -98,7 +98,7 @@
       "marker": "TABLE",
       "key": "web",
       "index": 0,
-      "sha256": "bd1f6659bea7a94c2dfcf1b3cfe40fb0142d3096271146dd9301e3ea40f2205d"
+      "sha256": "ba6f8ab76ed0530a175177c67b2c55a053b4e1f1d4bea1e3843a676c887e90c9"
     },
     {
       "file": "src/content/docs/performance/web.md",
@@ -112,7 +112,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "aaee6fdb9d169cd2f54c684b7d8804525974493e37408ee4bb59196bb6f8c131"
+      "sha256": "e888e7b056a1dcfcbb68122449a47a353c7d672eb447b7405beed86ed3170261"
     },
     {
       "file": "src/partials/performance-headline.md",
@@ -179,7 +179,7 @@
       {
         "label": "Web browser (WebGPU)",
         "id": "web",
-        "line": "| Web browser (WebGPU) | Chrome on Apple M4 | 42 | **1.6×** real time | 38 | **1.9×** real time |"
+        "line": "| Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7×** real time | 39 | **1.9×** real time |"
       }
     ]
   }

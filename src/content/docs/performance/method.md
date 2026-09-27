@@ -29,6 +29,7 @@ Frames per second from speech audio in to finished video frame out, for one avat
 | Linux · Python | Intel Core i7-13700F (x86_64) | 1.0 GB | 1.5 GB | bithuman 2.11.12 |
 | iPhone · Swift package | iPhone 15 | 0.9 GB | 0.5 GB | Swift engine 1.10.0, Swift package 2.14.1 |
 | Android | Samsung Galaxy S25+ | 1.0 GB | 2.3 GB | essence2-android 0.7.0, expression2-android 0.5.0 |
+| Web browser (WebGPU) | Chrome on Apple M4 | 3.0 GB (Chrome tab memory footprint) | 1.8 GB (Chrome tab memory footprint) | — |
 
 Peak memory (RAM) of one render, or of one session on a phone, on the release in the last column. Cloud API: nothing to provision.
 <!-- /FLOORS:MEMORY -->

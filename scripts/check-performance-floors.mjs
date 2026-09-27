@@ -431,7 +431,14 @@ export function gradeJsonAgainstRecord(json, pin, record, recordBytes) {
       }
     }
   }
+  // ★A RUNG ROW IS AN ENGINE FLOOR, NOT A VISITOR FIGURE (2026-09-27). The record's
+  //  axes.planes.<plane>.rung (e.g. web-wasm, the in-browser last rung) names a row the emitter
+  //  deliberately keeps OFF the page and performance.json (check_perf_floors.py PLANE_RUNGS: "no
+  //  public cell presents it as a visitor figure"); its docs_fps is the floor tool's own cell.
+  //  Requiring it here refused every regen after the first rung row landed.
+  const rungs = new Set(Object.entries(record.axes?.planes ?? {}).filter(([, v]) => v && v.rung).map(([k]) => k));
   for (const [key, r] of by) {
+    if (rungs.has(r.plane)) continue;
     if (!inJson.has(key) && r.docs_fps !== null && r.docs_fps !== undefined) {
       out.push({ rule: "R6", where: JSON_PATH, why: `the record publishes ${key} at ${r.docs_fps} fps and performance.json has no cell for it` });
     }
@@ -969,6 +976,8 @@ async function selftest() {
     arm("the record moving a date away from the JSON reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, r({ docs_measured_on: "2026-09-30" })), "R5"));
     arm("a JSON cell the record does not hold reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, rows: FIX_RECORD.rows.slice(1) }), "R2"));
     arm("a published record cell with no JSON cell reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, rows: [...FIX_RECORD.rows, { model: "essence-2", plane: "forgotten", docs_fps: 11 }] }), "R6"));
+    arm("a RUNG row (an engine floor the emitter keeps off the page) is not required in the JSON", !has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, axes: { planes: { "web-wasm": { rung: "wasm" } } }, rows: [...FIX_RECORD.rows, { model: "essence-2", plane: "web-wasm", docs_fps: 28 }] }), "R6"));
+    arm("...but the same row with no rung declaration still reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, rows: [...FIX_RECORD.rows, { model: "essence-2", plane: "web-wasm", docs_fps: 28 }] }), "R6"));
     arm("the record's bytes moving since the pin reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, FIX_RECORD, `${recText} `), "R0"));
     arm("the record changing its clock reddens", has(gradeJsonAgainstRecord(FIX_JSON, pin, { ...FIX_RECORD, stale_after_days: 7 }), "R1"));
   }
