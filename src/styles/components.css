@@ -6,7 +6,7 @@
 /* Roboto's metric twin, so the swap from the fallback does not move the page. */
 @font-face {
   font-family: "Roboto Fallback";
-  src: local("Arial"), local("Helvetica Neue"), local("Helvetica");
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans"), local("Arimo"), local("Helvetica Neue"), local("Helvetica");
   size-adjust: 100.3%;
   ascent-override: 92.4%;
   descent-override: 24.3%;
@@ -86,3 +86,20 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .band-head p { margin: 0; flex-basis: 100%; font-size: var(--ft-sm); color: var(--color-text-secondary); }
 .band-more { display: inline-flex; align-items: center; gap: 0.3rem; font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-primary); }
 .band-more:hover { color: var(--color-primary-hover); }
+
+/* ---- code tabs written in markdown (remark-code-tabs) ----
+   Without JavaScript every panel shows under its label; with it, one panel
+   and a tab bar. */
+.md-tabs { margin: var(--s-4) 0; }
+.mdt-bar { display: none; gap: var(--s-1); flex-wrap: wrap; margin-bottom: var(--s-2); }
+.js .mdt-bar { display: flex; }
+.mdt-tab {
+  padding: 0.3rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--r-pill);
+  background: var(--color-surface); color: var(--color-text-secondary);
+  font: inherit; font-size: var(--ft-sm); font-weight: var(--fw-medium); cursor: pointer;
+}
+.mdt-tab:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+.mdt-tab[aria-selected="true"] { color: var(--color-primary); background: var(--color-primary-soft); border-color: transparent; }
+.mdt-label { margin: var(--s-3) 0 var(--s-1) !important; font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); }
+.js .mdt-label { display: none; }
+.js .mdt-panel:not(.active) { display: none; }

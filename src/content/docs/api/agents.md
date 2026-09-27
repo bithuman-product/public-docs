@@ -46,7 +46,7 @@ Headers: `api-secret`, and optionally `Idempotency-Key`: a repeated request with
 
 ### Example
 
-```bash
+```bash tab="curl"
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -H "Content-Type: application/json" \
   -H "api-secret: $BITHUMAN_API_SECRET" \
@@ -54,7 +54,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
   -d '{"model": "expression-2", "prompt": "You are a cheerful museum guide.", "image": "https://example.com/portrait.jpg"}'
 ```
 
-```python
+```python tab="Python"
 import os, requests
 
 resp = requests.post(
@@ -179,7 +179,7 @@ curl -X DELETE https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITH
 
 | `model` | Needs | Time | Credits |
 |---|---|---|---|
-| `expression-1` | a stored image and voice | instant | free |
+| `expression-1` | a stored image and voice | immediate | free |
 | `expression-2` | a stored image | about 2–2.5 h | 2000 |
 | `essence-2` | a stored identity video and a photoreal person | about 2–2.5 h | 500 |
 | `essence-1` | a stored image or identity video | 10–20 min | 250 |

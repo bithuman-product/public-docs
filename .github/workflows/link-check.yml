@@ -198,6 +198,27 @@ jobs:
       - name: Every redirect resolves with and without the trailing slash
         if: always()
         run: node scripts/check-redirect-trailing-slash.mjs
+      - name: The redirects are generated from scripts/ia-map.json (no chains, no shadows, every destination built)
+        if: always()
+        run: node scripts/gen-redirects.mjs --check
+      - name: The redirect checker proves itself
+        if: always()
+        run: node scripts/check-redirects.mjs --selftest
+      - name: Honest claims only (banned words and DO NOT CLAIM rows)
+        if: always()
+        run: node scripts/check-claims.mjs
+      - name: The claims checker proves itself
+        if: always()
+        run: node scripts/check-claims.mjs --selftest
+      - name: Offline copy is the approved sentence, or a link to it
+        if: always()
+        run: node scripts/check-offline-copy.mjs
+      - name: The offline-copy checker proves itself
+        if: always()
+        run: node scripts/check-offline-copy.mjs --selftest
+      - name: The page-weight checker proves itself
+        if: always()
+        run: node scripts/check-js-budget.mjs --selftest
       - name: Check billing consistency
         if: always()
         run: node scripts/check-billing-consistency.mjs
@@ -410,6 +431,26 @@ jobs:
 
       - name: No internal commentary in what this repo builds
         run: node scripts/check-served-comments.mjs
+
+      - name: Every redirect lands on a built page and anchor
+        if: always()
+        run: node scripts/check-redirects.mjs
+
+      - name: Page weight within budget (JS ≤25 KB, ≤5 KB per script, CSS ≤30 KB, no third-party JS)
+        if: always()
+        run: node scripts/check-js-budget.mjs
+
+      - name: Search lands the words developers type on the right page
+        if: always()
+        run: node scripts/check-search.mjs
+
+      - name: Honest claims in the built twins and llms files too
+        if: always()
+        run: node scripts/check-claims.mjs
+
+      - name: Offline copy in the built twins and llms files too
+        if: always()
+        run: node scripts/check-offline-copy.mjs
 
       # ★2026-09-21: /llms.txt AND /llms-full.txt — THE TWO FILES A CODING AGENT
       # READS — WERE BEING SERVED FROM A HAND-WRITTEN SNAPSHOT THAT SHADOWED THE

@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 10
 type: platform
+searchTitle: "iOS & iPadOS: the Swift package"
 renders: ["device"]
 artifacts: ["swift"]
 platforms: ["ios", "ipados", "macos"]

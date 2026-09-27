@@ -106,8 +106,9 @@ const hasChips = !!(data.availability || data.renders?.length || data.artifacts?
 const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
 // On a hub the comparison comes first and the demo closes the page (under its "Try it" section).
 const demoAtEnd = data.type === "hub";
-// Release notes are records: searchable, but ranked below the pages they describe.
-const weight = data.type === "changelog" ? "0.2" : undefined;
+// Release notes are records and the generated references are lookups: both
+// searchable, but ranked below the pages a reader starts from.
+const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && section === "platforms" ? "0.5" : undefined;
 ---
 
 <Base title={`${data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
@@ -143,10 +144,10 @@ const weight = data.type === "changelog" ? "0.2" : undefined;
     <article class="doc-main" data-pagefind-filter={`section:${meta.label}`}>
       <nav class="doc-crumb" aria-label="Breadcrumb" data-pagefind-ignore>
         <a href="/">Docs</a> <span aria-hidden="true">/</span> <a href={meta.home}>{meta.label}</a>
-        {data.group && (<Fragment> <span aria-hidden="true">/</span> <span class="crumb-cur">{data.group}</span></Fragment>)}
+        {data.group && data.group !== meta.label && (<Fragment> <span aria-hidden="true">/</span> <span class="crumb-cur">{data.group}</span></Fragment>)}
       </nav>
-      <div class="prose">
-        <div class="doc-h1"><h1>{data.title}</h1><PageActions md={`${currentPath}.md`} /></div>
+      <div class="prose" data-pagefind-weight={weight}>
+        <div class="doc-h1"><h1 data-pagefind-meta={data.searchTitle ? `title:${data.searchTitle}` : undefined}>{data.title}</h1><PageActions md={`${currentPath}.md`} /></div>
         {data.description && <p class="doc-lede">{data.description}</p>}
         {hasChips && (
           <div class="chip-row doc-chips" data-pagefind-ignore>
@@ -156,7 +157,7 @@ const weight = data.type === "changelog" ? "0.2" : undefined;
           </div>
         )}
         {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
-        <div class="doc-body" data-pagefind-weight={weight}><slot /></div>
+        <div class="doc-body"><slot /></div>
         {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>
       <NextCards items={nextCards} />
@@ -204,6 +205,7 @@ const weight = data.type === "changelog" ? "0.2" : undefined;
   </div>
 
   <script>
+    import "../scripts/md-tabs";
     document.querySelectorAll("[data-side-toggle]").forEach((b) => {
       b.addEventListener("click", () => {
         const side = b.closest("[data-doc-side]");
@@ -274,6 +276,7 @@ const weight = data.type === "changelog" ? "0.2" : undefined;
   .doc-lede { font-size: var(--ft-lg); color: var(--color-text-secondary); margin-top: 0 !important; }
   .doc-chips { margin-top: calc(-1 * var(--s-2)) !important; }
   .doc-demo { margin-block: var(--s-6) var(--s-8); }
+  .doc-demo :global(.ld) { max-width: 380px; margin-inline: 0; }
   .doc-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-4); margin-top: var(--s-8); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
   .doc-meta a { color: var(--color-text-secondary); }
   .doc-meta a:hover { color: var(--color-primary); }
