@@ -960,7 +960,7 @@ async function selftest() {
   arm("PERF-CURRENCY coming back reddens", has(grade(edit("## Memory", "<!-- PERF-CURRENCY -->\n| Row | Measured |\n<!-- /PERF-CURRENCY -->\n\n## Memory")), "B1", /PERF-CURRENCY/));
   arm("FLOORS:NOTES coming back reddens", has(grade(edit("## Memory", "<!-- FLOORS:NOTES -->\nlog\n<!-- /FLOORS:NOTES -->\n\n## Memory")), "B1", /FLOORS:NOTES/));
   arm("a pin taken at a PREVIEW ref (a branch, not origin/main) reddens", has(gradePinMeta({ ...pin, record_ref: "origin/lane/x" }, findPage(corpus)), "B8"));
-  arm("a page that moved without a re-pin reddens", has(grade({ [P.replace("sdk/", "")]: FIX_PAGE, [H]: FIX_PARTIAL, [W]: FIX_SNIPPET }), "B7"));
+  arm("a page that moved without a re-pin reddens", has(grade({ [P.replace("performance/index.md", "speed.md")]: FIX_PAGE, [H]: FIX_PARTIAL, [W]: FIX_SNIPPET }), "B7"));
   arm("an unclosed marker reddens", has(grade(edit("<!-- /FLOORS:RELEASES -->", "")), "B0"));
   arm("the speed table on two pages reddens", has(grade({ ...corpus, "src/content/docs/performance.md": FIX_PAGE }), "B6"));
   arm("the speed table gone reddens", has(grade(edit("<!-- FLOORS:TABLE all -->", "<!-- FLOORS:TABLE cli -->")), "B6"));
