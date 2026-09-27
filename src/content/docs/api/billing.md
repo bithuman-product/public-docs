@@ -170,7 +170,7 @@ for ev in resp["data"]:
 print(resp["pagination"])   # {limit, offset, total, has_more}
 ```
 
-Each row carries `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants.
+Each row carries `source` (`cloud`, `self-hosted`, `api`, `dashboard`, `render`), `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants: read it (or `source`) rather than parsing `pricing_code`, whose spellings are frozen ledger keys. `activity_type` is an internal label: it leaves the response on 2026-12-26; read `source` instead.
 
 A [talking-video render](/api/video) charges its maximum up front and refunds the difference, so every render, successful or not, writes a charge row and a `credit_refund_…` row. Only a refund equal to the whole charge means the render failed.
 

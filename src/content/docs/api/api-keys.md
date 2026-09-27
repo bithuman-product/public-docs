@@ -25,7 +25,7 @@ export USER_ID=$(curl -s https://api.bithuman.ai/v1/me \
   | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['user_id'])")
 ```
 
-You can only manage your own API secrets.
+You can only manage your own API secrets: `{user_id}` must be your own id (any other id answers `403`). `GET /v1/me` returns it.
 
 ## Create an API secret
 

@@ -43,7 +43,7 @@ The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostn
 ### Credential resolution order
 
 1. `BITHUMAN_API_SECRET` in the environment
-2. `BITHUMAN_API_KEY` in the environment (a deprecated alias)
+2. `BITHUMAN_API_KEY` in the environment (a deprecated alias; read until CLI 3.0, no earlier than 2026-12-26)
 3. A `.env` file in the working directory: its `BITHUMAN_API_SECRET` line, else its `BITHUMAN_API_KEY` line (the deprecated alias). No other line of the file is read.
 4. `~/.bithuman/config`, written by `bithuman login`
 
