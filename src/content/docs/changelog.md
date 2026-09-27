@@ -26,6 +26,17 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### CLI 2.8.1 — 2026-09-27
+
+Tag `cli-v2.8.1`.
+
+- **Fixed:** opening a `bithuman run` page link no longer starts a billed session in a room nobody joins (a link preview, a prefetch or a reload). A session starts when a person joins; a room nobody joins within 90 seconds ends without starting.
+- **Changed:** with the bitHuman brain (no OpenAI key of your own), the voice connects through bitHuman's own service with your API secret, and says in plain words why it stopped (out of credits, the 60-minute session limit, a rejected secret).
+- **Fixed:** a long Essence 2 session no longer grows in memory while the avatar talks.
+- **Changed:** `--help` examples use the free `wise-pup` avatar; `bithuman list` says rendering needs `bithuman login`; with `--json`, a mistyped command prints one JSON error (`USAGE`, exit 2).
+- **Fixed:** a long-running `bithuman run` uses a re-published avatar file for the next session without a restart.
+- **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
+
 ### Swift package 2.17.3 — 2026-09-27
 
 Essence 2 engine 1.14.2 · Expression 2 engine 2.7.0
