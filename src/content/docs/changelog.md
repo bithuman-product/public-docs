@@ -36,22 +36,6 @@ What changed in each release, newest day first (grouped by artifact within a day
 - **Changed:** Android uses `essence2-android` 0.8.1 (memory stays flat in long sessions) and `expression2-android` 0.5.2.
 - **Action:** pin `ref: flutter-plugin-v2.6.20` and pass your API secret to `BithumanRealtimeSession(apiKey:)`.
 
-### Realtime API — 2026-09-27
-
-- **Changed:** `POST /v1/realtime/ephemeral-token` is retired and answers `410`. Connect through the [realtime relay](/api/realtime) with your API secret.
-### expression2-android 0.5.2 — 2026-09-27
-
-- **Changed:** the Hexagon accelerator prepares the decoder once and keeps it. On a Galaxy S25+, `create()` took about 31 s on every launch through 0.5.1; with 0.5.2 the first launch takes about 15 s and later launches 1–2 s. Replies start as fast as before, and frames are unchanged.
-- **Added:** read-only `Expression2Backend` fields report whether the prepared decoder was reused and how long it took.
-- **Action:** `implementation("ai.bithuman:expression2-android:0.5.2")`.
-### Swift package 2.18.0 — 2026-09-27
-
-Essence 2 engine 1.14.2 · Expression 2 engine 2.18.0
-
-- **New:** Expression 2 hands out one stream of frames to show: `frames(audioClock:)` at 20 frames per second, idle motion between replies and each speech frame when your player has played its audio. Each frame says whether it is speech (`isSpeech`) and which one ends the reply (`endsReply`); `events()` reports `.replyStarted` and `.replyEnded` once per reply, and `interrupt()` cuts a reply. `pull()` is unchanged.
-- **Fixed:** an Expression 2 session that only shows its idle animation is billed for its active time, like any other session.
-- **Action:** set `from: "2.18.0"`, then `swift package update`.
-
 ### CLI 2.8.1 — 2026-09-27
 
 Tag `cli-v2.8.1`.
