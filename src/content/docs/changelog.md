@@ -33,6 +33,11 @@ Essence 2 engine 1.14.2 · Expression 2 engine 2.7.0
 - **Fixed:** memory stays flat in long Essence 2 sessions. Before this release, an app that fed audio without a pause grew by about 1 MB per second of speech. On an iPhone that could end a session after about 35 minutes.
 - **Action:** set `from: "2.17.3"`, then `swift package update`.
 
+### essence2-android 0.8.1 — 2026-09-27
+
+- **Fixed:** memory no longer grows while an avatar speaks without pausing. Through 0.8.0 the audio frontend kept every frame of an utterance, about 1 MiB per second of speech, until `endOfAudio()`, `resetAudio()` or a 600 ms pause in `feed()`. Turn-by-turn conversation stayed bounded; an app that fed audio continuously grew for as long as it spoke. On a Galaxy S25+, ten minutes of one continuous utterance now holds at about 920 MiB, where 0.8.0 reached 1,473 MiB. Frames are unchanged.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.8.1")`, especially if your app streams audio without pauses.
+
 ### Flutter plugin 2.6.19 — 2026-09-26
 
 - **Changed:** on Android, Essence 2 frames reach the screen without a CPU copy. On a Galaxy S25+ this uses about 8% less CPU, and the frames are unchanged.
