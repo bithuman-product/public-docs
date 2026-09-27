@@ -2,10 +2,10 @@
   "artifact": {
     "registry": "github-releases",
     "coordinate": "bithuman-product/homebrew-bithuman",
-    "tag": "cli-v2.8.1",
-    "version": "2.8.1",
+    "tag": "cli-v2.8.2",
+    "version": "2.8.2",
     "asset": "bithuman-x86_64-unknown-linux-gnu.tar.gz",
-    "digest": "sha256:caf0c03ff35bfbb1101693a688280b0ba2aa40d3c2f06c4d8d4f960431b3d231",
+    "digest": "sha256:f72c3e26707373b5a228dc6e3c67ff15121976825cf36e8f2e67a4dc60f1e0c3",
     "resolved_on": "2026-09-27"
   },
   "surface": {
