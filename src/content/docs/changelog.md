@@ -69,6 +69,17 @@ Tag `cli-v2.8.0`.
 - **Fixed:** the notice that a newer CLI is available always finds the newest CLI release.
 - **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
 
+### `bithuman` 2.11.14 — 2026-09-27
+
+- **Fixed:** `bithuman.open()` with no API secret, offline licence or prepaid pack refuses at once, before it loads the model or downloads anything, and names `BITHUMAN_API_SECRET` and where to get one.
+- **Fixed:** a first Essence 2 open on a fresh machine downloads 66 MB instead of 444 MB; the 377 MB audio encoder is fetched only when the avatar uses it. Rendered frames are identical.
+- **Fixed:** memory stays flat when an Essence 2 avatar speaks without a pause; it grew about 1 MB per second of speech.
+- **Changed:** a live avatar reports its whole active session, talking or idle, as the billing rule says; an idle stretch was billed for at most a few minutes of it.
+- **Changed:** usage reports go only to bithuman.ai hosts.
+- **Changed:** `AsyncBithuman.sync_to(sink)` shows each picture when its voice plays; with the LiveKit `AvatarRunner`, an Expression 2 mouth led its voice by about 120 ms at a browser viewer and now leads by about 60 ms.
+- **Changed:** prepaid offline packs are debited for the whole active session; the CPU runtimes find a CPU quota set on the process's own cgroup; a load failure names the product.
+- **Action:** `pip install -U bithuman`.
+
 ### `bithuman` 2.11.13 — 2026-09-26
 
 - **Fixed:** an Expression 2 reply through `AsyncBithuman` (and the LiveKit plugin) plays through without the brief pause about a second in, where the face froze and the voice stopped. A reply that is already complete starts sooner, and a reply pushed in a single call starts once its first part is rendered instead of after all of it.
