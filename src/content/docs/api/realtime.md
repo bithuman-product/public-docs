@@ -55,7 +55,26 @@ The Flutter plugin (2.6.20+) and the CLI (2.8.1+) connect this way for you.
 
 `POST /v1/realtime/connect?model=gpt-realtime-mini`, with the SDP offer as the request body
 (`Content-Type: application/sdp`). A `201` carries the SDP answer; set it as the remote
-description on your peer connection.
+description on your peer connection. The `X-Bithuman-Call` response header names the call.
+
+**End the call when you are done.** Billing stops the moment you hang up:
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/realtime/connect \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" \
+  -d '{"action": "hangup", "call": "<X-Bithuman-Call>"}'
+```
+
+```js
+// browser: start the call from your server (it holds the api-secret), then on close:
+pc.close();
+await fetch("/your-server/hangup", { method: "POST", body: JSON.stringify({ call }) });
+// your server: POST https://api.bithuman.ai/v1/realtime/connect
+//   {"action": "hangup", "call": call}  with the same api-secret that started it
+```
+
+If a client only closes its peer connection without hanging up, the call ends when the
+connection times out, usually 8–10 seconds later, and those seconds are billed.
 
 ## Limits & billing
 
