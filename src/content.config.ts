@@ -32,6 +32,8 @@ const docs = defineCollection({
     models: z.array(z.enum(["essence-2", "expression-2", "essence-2-max", "essence-1", "expression-1"])).optional(),
     // the PLAN_v2 SAFE claim ids the page makes (required on deploy and privacy pages)
     claims: z.array(z.string()).optional(),
+    // what a reader needs, as chips under the H1 (the fixed "Needs" vocabulary, STYLE.md)
+    needs: z.array(z.enum(["Physical device", "Apple silicon", "Linux x86_64 / arm64", "API secret"])).optional(),
     // the artifacts whose current version the chips row shows (keys of versions.json)
     artifacts: z.array(z.enum(["swift", "essence2_android", "expression2_android", "python", "cli", "livekit_plugin", "flutter_plugin"])).optional(),
     // a live sample avatar under the lede: one model, or both with a switch

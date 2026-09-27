@@ -5,7 +5,8 @@ import { hubMeta } from "../config/hubs";
 import { GROUP_ORDER, type SectionId } from "../config/nav";
 import { PLATFORMS, PLATFORM_PAGES } from "../data/platforms";
 import { HERO, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
-import { headlineData } from "../lib/perf-headline";
+import { PERF_BAND } from "../data/perf-band";
+import { perfCell, perfRow, PERF_MODELS } from "../lib/perf";
 import versions from "../data/versions.json";
 import specText from "../openapi/bithuman.yaml?raw";
 import headline from "../partials/performance-headline.md?raw";
@@ -98,11 +99,12 @@ export const GET: APIRoute = async ({ props }) => {
       `# ${HERO.title}\n\n${HERO.line}\n\nQuickstart: ${SITE}/start.md · API reference: ${SITE}/api/reference.md\n\n` +
       `## Start building\n\n${cards(START_BUILDING)}\n\nOne command per path: ${SITE}/start.md#choose-your-platform\n\n` +
       `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n` +
-      `## Models\n\n${MODELS.map((m) => {
-        const cells = headlineData()?.find((r) => r.model === m.title)?.cells ?? [];
-        const speed = cells.length ? ` Times real time: ${cells.map((c) => `${c.platform} ${c.multiple}`).join(", ")}.` : "";
-        return `- [${m.title}](${mdUrl(m.href)}): ${m.line}${speed}`;
-      }).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md · How we measure: ${SITE}/performance.md\n\n` +
+      `## Runs everywhere\n\nMeasured times real time (seconds of avatar video rendered per second; 1.0× or more holds a live conversation). Every configuration and the method: ${SITE}/performance.md\n\n` +
+      PERF_BAND.map((f) => {
+        const x = (id: string) => PERF_MODELS.map((m) => `${m.name} ${perfCell(id, m.id)?.x ?? "—"}`).join(", ");
+        return `- [${f.title}](${mdUrl(f.href)}) (${perfRow(f.row).hardware}, ${f.where}): ${x(f.row)}${f.held ? `; held 10 min: ${x(f.held)}` : ""}`;
+      }).join("\n") + "\n\n" +
+      `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}`).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md\n\n` +
       `## Build\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
       `## Sections\n\n- [Get started](${SITE}/start.md)\n- [Platforms](${SITE}/platforms.md)\n- [Deploy](${SITE}/deploy.md)\n- [Models](${SITE}/models.md)\n- [Build](${SITE}/build.md)\n- [API](${SITE}/api.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }

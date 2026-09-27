@@ -1,11 +1,12 @@
 ---
 title: "Essence 2"
-description: "Essence 2 — bitHuman's photorealistic avatar model: your identity's own footage, lip-synced live at up to 1080p. Where it runs, how an agent is created, how it serves, and what to expect."
+description: "Essence 2 renders a photoreal person from one portrait: the identity's own footage, lip-synced live, on the device or in the bitHuman cloud."
 section: models
 group: "Models"
 order: 10
 type: concept
 models: ["essence-2"]
+claims: ["S1", "S3", "S13", "S21", "S28"]
 demo: "essence-2"
 renders: ["device", "server", "cloud"]
 next: ["/platforms", "/build/create-avatar", "/models/expression-2"]
@@ -14,7 +15,7 @@ next: ["/platforms", "/build/create-avatar", "/models/expression-2"]
 ## What it is
 
 **Essence 2** (`essence-2`) renders a photoreal person from one portrait, up to
-1080p at 25 fps: the identity's own canvas, 1080×1920 portrait for a standard identity. From your portrait the platform generates a 10-second
+1080p: the identity's own canvas, 1080×1920 portrait for a standard identity. From your portrait the platform generates a 10-second
 identity video; the model then animates lip-sync and expression over it live,
 with a sharp mouth and teeth taken from that video.
 
@@ -30,18 +31,16 @@ For a stylized character, or a scene generated from one photo, choose
 
 ## Where it runs
 
-| Surface | How |
-|---|---|
-| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/platforms/livekit) |
-| macOS and Linux | the [CLI](/platforms/cli) (`run`, `render`) and the [Python SDK](/platforms/python) (frames, and MP4 clips with `bithuman.offline`) |
-| iPhone, iPad, Mac | the [Swift package](/platforms/ios)'s `Essence2Kit` product (iOS / macOS 26; `Essence2` for C) — a complete app is on [Swift / iOS — Essence 2](/examples/ios-essence-2) |
-| Android | [`essence2-android`](/platforms/android) — fetching the identity needs your API secret |
-| The viewer's browser | [`?render=local`](/platforms/web#integrate-into-your-app), for an identity whose in-browser build is published |
+```model-matrix
+model: essence-2
+```
+
+A complete app for iPhone and iPad is the [iOS Essence 2 example](/examples/ios-essence-2); for Android, the [Android Essence 2 example](/examples/android-essence-2).
 
 The file you download is `<CODE>.imx`, from
 [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
-or `bithuman pull <CODE> --model essence-2`. Measured frame rates per platform
-are on [performance](/performance).
+or `bithuman pull <CODE> --model essence-2`. How fast it renders on each device
+is on [performance](/performance).
 
 ## How creation works
 
@@ -64,12 +63,7 @@ The creation cost is on [pricing](/pricing).
 
 ## Serving tiers
 
-The bitHuman cloud picks a serving tier for each session. The Apple tier runs on
-bitHuman's Apple silicon, not your Mac. To force one tier for a benchmark, append
-`?model=essence-2-gpu`, `essence-2-apple` or `essence-2-cpu` to the session
-URL — how a pin behaves is on
-[pin a serving tier](/models#advanced-pin-a-serving-tier). For
-production, omit it.
+In the bitHuman cloud, the service picks the hardware for each session. To benchmark one tier, see [pin a tier for a benchmark](/performance#pin-a-tier-for-a-benchmark); in production, let the service choose.
 
 ## Idle and speaking behavior
 
@@ -80,8 +74,8 @@ over the same frames. A running session bills talking and idle time alike ([pric
 
 ## Limits and expectations
 
-- **Output is 25 fps on every tier.** How fast a platform can *produce* frames
-  is on [performance](/performance).
+- **Output plays at 25 frames a second** everywhere it runs. How fast a platform
+  renders is on [performance](/performance).
 - **The downloadable file is about 140–160 MB**, varying per identity — read
   `Content-Length` rather than assuming a size.
 - **The identity is fixed at creation.** To change the face, create a new agent.

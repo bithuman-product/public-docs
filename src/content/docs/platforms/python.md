@@ -1,23 +1,41 @@
 ---
 title: "Python"
-description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon) and Linux."
+description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon) and Linux, where it needs no GPU."
 section: platforms
 group: "Code & terminal"
 order: 10
 type: platform
 renders: ["server", "no-gpu"]
+needs: ["API secret"]
 artifacts: ["python"]
 platforms: ["python"]
-next: ["/build/voice-agent", "/platforms/python/reference", "/deploy/self-hosted"]
+models: ["essence-2", "expression-2"]
+claims: ["S2", "S3", "S4", "S7", "S10"]
+next: ["/build/voice-agent", "/platforms/python/reference", "/deploy/cpu"]
 ---
 
-The `bithuman` package renders avatars in your own Python code: file in, frames out, or a live stream of audio in and frames out. To run an avatar without code, use the [CLI](/platforms/cli).
+<div class="lead">
+<div class="lead-text">
+
+The `bithuman` package renders avatars in your own Python code on your own machine: a file in and frames out, or a live stream of audio in and frames out. To run an avatar without code, use the [CLI](/platforms/cli).
+
+> **Note:** On Linux, Python renders both models on the CPU alone, no GPU. On macOS it renders on Apple silicon. See [CPU only (no GPU)](/deploy/cpu).
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), up to 1080p at 25 fps |
+| **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Install** | `pip install "bithuman[expression-2]"` | included in the same install |
 | **Frames** | RGB `numpy` arrays, `(height, width, 3)` `uint8` | the same |
+
+</div>
+
+<figure class="showcase">
+  <video controls preload="none" playsinline poster="/examples/python/hero.webp" width="540" height="960" src="/examples/python/clip.mp4"></video>
+  <figcaption>The <code>sofia-ramirez</code> Essence 2 sample avatar in the quickstart's window on an Apple M4 Mac.</figcaption>
+</figure>
+
+</div>
+
 
 ## Before you start
 
@@ -78,11 +96,6 @@ render_offline("sofia-ramirez.imx", "speech.wav", out_mp4="out.mp4")
 
 The quickstart from the examples repository: open an avatar and watch it speak in a window.
 
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/python/hero.webp" width="540" height="960" src="/examples/python/clip.mp4"></video>
-  <figcaption>The <code>sofia-ramirez</code> Essence 2 sample avatar in the quickstart's window on an Apple M4 Mac.</figcaption>
-</figure>
-
 ### Requirements
 
 | You need | Notes |
@@ -117,6 +130,7 @@ A window titled **bitHuman avatar** opens and the avatar speaks the bundled `spe
 For a live conversation, `AsyncBithuman` takes audio as it arrives and yields frames and audio at the model's rate:
 
 ```python
+# excerpt: show() and play() are your own display and audio output
 import asyncio, soundfile as sf
 from bithuman import AsyncBithuman
 
@@ -131,7 +145,7 @@ async def main():
 
     task = asyncio.create_task(speak())
     try:
-        async for frame in avatar.run():                              # paced at 20 or 25 fps
+        async for frame in avatar.run():                              # paced at the model's play rate
             if frame.has_image:
                 show(frame.bgr_image)                                 # BGR numpy array
             if frame.audio_chunk:
@@ -158,7 +172,7 @@ The [LiveKit plugin](/platforms/livekit) runs `AsyncBithuman` inside a LiveKit A
 ```python
 # excerpt: python/self-host/agent.py (bithuman-examples)
 session = AgentSession(llm=openai.realtime.RealtimeModel(model="gpt-realtime-2.1-mini", voice="coral",
-    turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))   # reply 0.5 s after you stop
+    turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))   # end of turn after 0.5 s of silence
 avatar = bithuman.AvatarSession(model_path="wise-pup.imx",    # renders here
                                 api_secret=os.environ["BITHUMAN_MASTER_SECRET"])
 await avatar.start(session, room=ctx.room)
@@ -166,7 +180,7 @@ await session.start(agent=Agent(instructions="You are a friendly assistant."),
                     room=ctx.room, room_options=RoomOptions(audio_output=False))
 ```
 
-In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass it explicitly: the plugin reads `BITHUMAN_API_SECRET` by itself and, for a cloud avatar, copies it into the room ([LiveKit](/platforms/livekit#authenticate)). The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/build/voice-agent#with-python).
+In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass it explicitly ([LiveKit](/platforms/livekit#authenticate)). The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/build/voice-agent#with-python).
 
 ## Platform notes
 
@@ -177,7 +191,11 @@ In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass i
 
 ## Performance
 
-Frame rates for Python on macOS and Linux are on [Desktop performance](/performance#desktop). A finished `render` logs its own rate on the `bithuman` logger at INFO.
+```perf
+python-linux python-macos
+```
+
+A finished `render` logs its own rate on the `bithuman` logger at INFO.
 
 ## Troubleshooting
 

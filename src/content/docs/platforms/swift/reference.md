@@ -7,7 +7,7 @@ order: 10
 type: reference
 ---
 
-Covers the Swift package at the version on [Downloads & versions](/downloads). How to use these calls in an app is on [Apple](/platforms/ios).
+Covers the Swift package at the version on [Downloads & versions](/downloads). How to use these calls in an app is on [iOS & iPadOS](/platforms/ios) and [macOS](/platforms/macos).
 
 ## Products
 
@@ -135,7 +135,36 @@ Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(in
 
 Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
-The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.14.0 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.14.0) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.14.2 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.14.2) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+
+### A minimal loop
+
+```c
+be_essence2_handle h;
+be_essence2_set_api_secret(secret);                    // or Essence2Credential.set in Swift
+if (be_essence2_create(imx_path, NULL, 0, &h) != 0) { /* -3: no secret, rejected, or no network */ }
+while (!be_essence2_is_ready(h)) { /* show be_essence2_idle_frame() meanwhile */ }
+int32_t w, hgt; be_essence2_get_info(h, &w, &hgt);     // frame is w * hgt * 3 BGR bytes
+int32_t fed = 0, spoke = 0;
+for (;;) {                                             // once per display tick, 25 a second
+    while (fed < count) {                              // push 0.2 s at a time
+        int32_t n = count - fed < 3200 ? count - fed : 3200;
+        if (be_essence2_push_audio(h, pcm16k_int16 + fed, n) != 0) break;   // -2: ring full, retry next tick
+        fed += n;
+        if (fed == count) be_essence2_end_utterance(h);   // the reply's audio is complete
+    }
+    int32_t got = be_essence2_pull_frame(h, buf, w * hgt * 3);   // bytes; 0 none yet; -3 refused
+    if (got < 0) break;
+    if (got > 0) {
+        show(buf, got);
+        int32_t kind = be_essence2_last_frame_kind(h);
+        if (kind == BE_ESSENCE2_FRAME_SPEECH) spoke = 1;
+        else if (spoke && kind == BE_ESSENCE2_FRAME_IDLE) break;   // idle after speech: the reply is over
+    }
+    usleep(40000);
+}
+be_essence2_destroy(h);
+```
 
 ### Credentials
 

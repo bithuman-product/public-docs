@@ -8,6 +8,7 @@
 import { OFFLINE_LICENSE_SENTENCE, OFFLINE_LICENSE_TERMS } from "./offline";
 import { PLATFORM_PAGES } from "./platforms";
 import { DEMOS } from "./demo";
+import { DEPLOYMENTS as MODES } from "./deployments";
 
 export interface HomeCard {
   title: string;
@@ -32,14 +33,12 @@ export const HERO = {
 /** "Start building": one card per platform page. */
 export const START_BUILDING: HomeCard[] = PLATFORM_PAGES.map((p) => ({ title: p.title, line: p.line, href: p.href, icon: p.icon }));
 
-/** "Where it runs": the deployment modes, then the hardware lens. */
-export const DEPLOYMENTS: HomeCard[] = [
-  { title: "bitHuman cloud", line: "bitHuman renders the avatar and streams it: the web embed, the REST API or LiveKit.", href: "/deploy#bithuman-cloud", icon: "cloud" },
-  { title: "Your servers", line: "The CLI, Python or the LiveKit plugin on your own Mac or Linux machines.", href: "/deploy/self-hosted", icon: "server" },
-  { title: "On the device", line: "Inside your app on iPhone, iPad, Mac or Android, or in a WebGPU browser tab.", href: "/deploy#on-the-device", icon: "devices" },
-  { title: "CPU only (no GPU)", line: "Both models run live on a standard Linux PC with no GPU.", href: "/deploy#cpu-only-no-gpu", icon: "cpu" },
-  { title: "Fully offline", line: OFFLINE_LICENSE_SENTENCE, note: OFFLINE_LICENSE_TERMS, href: "/deploy#fully-offline", icon: "offline", badge: "Business & Enterprise", wide: true },
-];
+/** "Where it runs": the deployment modes, then the hardware lens, each to its
+ *  own page. The offline card quotes the approved sentence and spans the row. */
+export const DEPLOYMENTS: HomeCard[] = MODES.map((d) =>
+  d.id === "offline"
+    ? { title: d.name, line: OFFLINE_LICENSE_SENTENCE, note: OFFLINE_LICENSE_TERMS, href: d.href, icon: d.icon, badge: "Business & Enterprise", wide: true }
+    : { title: d.name, line: d.line, href: d.href, icon: d.icon });
 
 export interface ModelCard {
   title: string;

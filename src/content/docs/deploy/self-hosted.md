@@ -1,75 +1,91 @@
 ---
 title: "Your servers (self-hosted)"
-description: "Run bitHuman models on your own hardware: which surface runs which model, a first MP4 in four commands, how self-hosting is billed, and offline licensing."
+description: "Run the CLI, the Python SDK or the LiveKit plugin on your own Mac or Linux machines. When the avatar renders on your hardware, its audio and video stay there."
 section: deploy
 group: "Modes"
 order: 20
-type: guide
+type: deploy
+searchTitle: "Your servers (self-hosted): self-host bitHuman on your own machines"
+availability: "creator"
 renders: ["server", "no-gpu"]
-next: ["/deploy", "/platforms/cli", "/platforms/python"]
+models: ["essence-2", "expression-2", "essence-1"]
+claims: ["S2", "S3", "S4", "S5", "S6", "S7", "S9", "S10", "S26", "S31"]
+next: ["/platforms/cli", "/platforms/python", "/platforms/livekit"]
 ---
 
-Self-hosting means the render happens on your hardware — a Mac, a Linux box, a
-phone or a browser tab. It needs the Creator plan or higher and is billed in
-credits at the self-hosted rate; online, there is no license to buy. Running
-fully offline needs an [offline license](/pricing#offline-licensing):
-Business and Enterprise, on Linux PCs and terminals, arranged through sales.
-Downloading a model is free.
+## What it is
 
-## Pick your surface
-
-Each page below is the one place its install, model download and code live.
+The avatar renders on machines you run: a Mac with Apple silicon, or a Linux PC or server on x86_64 or arm64, including one with no GPU. You choose where the conversation runs. There is no license to buy for online self-hosting: it needs the Creator plan or higher and bills credits at the self-hosted rate.
 
 | You want | Use | Models |
 |---|---|---|
-| A talking avatar or an MP4 on a Mac or Linux box, no code | [CLI](/platforms/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
-| A voice agent on your own LiveKit server, rendered on your machine | [Talk to an avatar on your machine](/build/voice-agent) | Essence 2, Expression 2 |
+| A talking avatar or an MP4, no code | [CLI](/platforms/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
 | Frames or MP4 clips from your own code | [Python SDK](/platforms/python) | Essence 2, Expression 2, Essence 1 |
-| An iPhone, iPad or Mac app | [iOS & iPadOS](/platforms/ios) | Essence 2, Expression 2 |
-| An Android app | [Android SDK](/platforms/android) | Essence 2, Expression 2 |
-| Rendering in your visitor's browser tab | [Web](/platforms/web) (`?render=local`) | Essence 2, Expression 2, Essence 1 |
+| A voice agent in your own LiveKit rooms, rendered on your machine | [LiveKit plugin](/platforms/livekit) with `model_path=` ([guide](/build/voice-agent)) | Essence 2, Expression 2 |
 
-The full model-by-surface matrix is on [Models](/models#where-each-model-runs).
+## Where it renders
 
-For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/platforms/livekit): with `model_path` the avatar renders on your machine ([guide](/build/voice-agent)), with `avatar_id` in the cloud. Expression 1 is cloud-only: use the [cloud API](/api).
+```dataflow
+servers
+```
 
-## A first MP4 on macOS or Linux
+When the avatar renders on your hardware, its audio and video stay there. For the conversation, the CLI's [local conversation brain](/platforms/cli/local-brain) keeps speech recognition, the language model and the voice on the machine, or you bring any OpenAI-compatible language model, including one in your own network ([Providers](/api/providers)). Self-hosted sessions store no transcript at bitHuman.
 
-Four commands on macOS Apple Silicon or Linux (x86_64 or arm64), with `ffmpeg` on `PATH`:
+## Models available here
 
-```bash
+```model-matrix
+place: servers
+```
+
+## Speed
+
+```perf
+linux-cpu python-linux macos-m4 python-macos
+```
+
+## Price
+
+```price
+servers
+```
+
+Rendering an MP4 (`bithuman render`, or `render()` in Python) bills the length of the video it writes, at the same rate.
+
+## Limits
+
+- **Credential:** rendering needs a credential. Sign in with `bithuman login`, or set `BITHUMAN_API_SECRET` ([Your API secret](/start/api-secret)).
+- **Network:** a session checks your credential when it starts and keeps rendering through a network drop of up to 5 minutes. Usage reports carry no audio, video, images or conversation text.
+- **Sessions:** self-hosted sessions are limited by credits.
+- **Operating systems:** macOS on Apple silicon; Linux on x86_64 or arm64. On Windows, use WSL2.
+- **Off the internet:** see [Fully offline](/deploy/offline).
+
+## First command
+
+```bash tab="CLI"
 curl -fsSL https://install.bithuman.ai | sh
-bithuman login                    # opens your browser; in CI, export BITHUMAN_API_SECRET instead
+bithuman login                    # in CI, export BITHUMAN_API_SECRET instead
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 bithuman render wise-pup speech.wav -o out.mp4
 ```
 
-`out.mp4` is the Wise Pup sample avatar speaking the 15-second sample. The rest of
-the CLI — live sessions, your own agents, every flag — is on [the CLI page](/platforms/cli).
+```bash tab="Python"
+python3 -m venv .venv && source .venv/bin/activate
+pip install "bithuman[expression-2]"
+export BITHUMAN_API_SECRET="<your API secret>"
+curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+```
 
-## How self-hosting is billed
+```bash tab="LiveKit"
+pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv
+# pass model_path="wise-pup.imx" to bithuman.AvatarSession: /build/voice-agent
+```
 
-- **At the self-hosted rate** on [pricing](/pricing#serving--credits-per-live-minute),
-  from your credit balance. A live session bills its session time, talking or idle; an MP4
-  render bills the length of the clip it writes.
-- **A credential is required to render.** Sign in with `bithuman login`, or set
-  `BITHUMAN_API_SECRET` — get one at
-  [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
-- **Rendering authenticates online** and reports usage as it runs. If the
-  connection drops, a session keeps a 5-minute grace.
-- **To run completely off the internet**, see [offline licensing](/pricing#offline-licensing).
+`out.mp4` is the `wise-pup` sample avatar speaking the 15-second sample. The CLI's `ffmpeg` and live-session setup is on [CLI](/platforms/cli#before-you-start).
 
-## Troubleshooting
+## Choosing between modes
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `bithuman render` refuses with `NOT_SIGNED_IN` | a render is billed, so it needs a credential | `bithuman login`, or `export BITHUMAN_API_SECRET=…` |
-| `bithuman render` exits 69: `ffmpeg not found` | the MP4 is written through ffmpeg | `brew install ffmpeg` / `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
-| `pip install bithuman` finds no wheel | wheels exist for macOS (Apple silicon) and Linux x86_64 / arm64 only | use one of those, or WSL2 on Windows |
-| `java.lang.UnsatisfiedLinkError` on an Android emulator | the engines load on a physical `arm64-v8a` device only | run on a physical Android device |
-
-## Next steps
-
-- [Pricing](/pricing) — the self-hosted rate and offline licensing
-- [Models](/models) — which model runs where
-- [Performance](/performance) — measured frame rates per platform
+- **A Linux PC with no GPU:** [CPU only (no GPU)](/deploy/cpu).
+- **Inside an app on the phone, Mac or browser:** [On the device](/deploy/on-device).
+- **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
+- **No internet at the site:** [Fully offline](/deploy/offline).
+- **All five side by side:** [Deployment options](/deploy).

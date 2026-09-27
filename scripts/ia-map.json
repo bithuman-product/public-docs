@@ -235,28 +235,23 @@
  "repoint": [
   {
    "source": "/macos",
-   "new": "/platforms/macos",
-   "interim": "/platforms/ios#on-a-mac"
+   "new": "/platforms/macos"
   },
   {
    "source": "/mac",
-   "new": "/platforms/macos",
-   "interim": "/platforms/ios#on-a-mac"
+   "new": "/platforms/macos"
   },
   {
    "source": "/sdk/macos",
-   "new": "/platforms/macos",
-   "interim": "/platforms/ios#on-a-mac"
+   "new": "/platforms/macos"
   },
   {
    "source": "/sdks/flutter",
-   "new": "/platforms/flutter",
-   "interim": "/platforms/android#flutter"
+   "new": "/platforms/flutter"
   },
   {
    "source": "/integrations/flutter",
-   "new": "/platforms/flutter",
-   "interim": "/platforms/android#flutter"
+   "new": "/platforms/flutter"
   },
   {
    "source": "/concepts/essence-2-max",
@@ -296,35 +291,29 @@
   },
   {
    "source": "/mobile",
-   "new": "/deploy/on-device",
-   "interim": "/deploy#on-the-device"
+   "new": "/deploy/on-device"
   },
   {
    "source": "/sdk/mobile",
-   "new": "/deploy/on-device",
-   "interim": "/deploy#on-the-device"
+   "new": "/deploy/on-device"
   }
  ],
  "short": [
   {
    "source": "/offline",
-   "new": "/deploy/offline",
-   "interim": "/deploy#fully-offline"
+   "new": "/deploy/offline"
   },
   {
    "source": "/cpu",
-   "new": "/deploy/cpu",
-   "interim": "/deploy#cpu-only-no-gpu"
+   "new": "/deploy/cpu"
   },
   {
    "source": "/no-gpu",
-   "new": "/deploy/cpu",
-   "interim": "/deploy#cpu-only-no-gpu"
+   "new": "/deploy/cpu"
   },
   {
    "source": "/on-device",
-   "new": "/deploy/on-device",
-   "interim": "/deploy#on-the-device"
+   "new": "/deploy/on-device"
   },
   {
    "source": "/self-hosting",
@@ -340,13 +329,11 @@
   },
   {
    "source": "/flutter",
-   "new": "/platforms/flutter",
-   "interim": "/platforms/android#flutter"
+   "new": "/platforms/flutter"
   },
   {
    "source": "/sdk/flutter",
-   "new": "/platforms/flutter",
-   "interim": "/platforms/android#flutter"
+   "new": "/platforms/flutter"
   },
   {
    "source": "/web",
@@ -423,6 +410,10 @@
   {
    "source": "/llms/guides.txt",
    "new": "/llms/build.txt"
+  },
+  {
+   "source": "/data-flows",
+   "new": "/deploy/privacy"
   }
  ],
  "legacy": [

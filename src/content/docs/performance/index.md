@@ -113,7 +113,7 @@ Memory per render is on [How we measure](/performance/method#memory). Setup for 
 
 ## Cloud
 
-By default the service picks the tier for each session; each row is one tier. To benchmark one tier you can pin it ([pin a serving tier](/models#advanced-pin-a-serving-tier)); in production, let the service choose.
+By default the service picks the tier for each session; each row is one tier. To benchmark one tier you can pin it ([below](#pin-a-tier-for-a-benchmark)); in production, let the service choose.
 
 <!-- FLOORS:TABLE cloud -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
@@ -130,3 +130,22 @@ Measured in September 2026 on the cloud API.
 - Each figure is how fast one finished video is delivered, including encoding the video file, on a server with no other sessions.
 - With other sessions on the same server, a session can render more slowly than shown.
 - A live conversation plays at the model's own rate, 25 fps for Essence 2 and 20 fps for Expression 2. Speed above that makes a video file finish sooner; it does not put more frames on screen.
+
+### Pin a tier for a benchmark
+
+To measure one tier, append `?model=` with a tier slug to the viewer or embed URL:
+
+```text
+https://www.bithuman.ai/embed/A23WJF0199?model=expression-2-apple
+```
+
+| Model | Tier slugs |
+|---|---|
+| `essence-2` | `essence-2-gpu` · `essence-2-apple` · `essence-2-cpu` |
+| `expression-2` | `expression-2-gpu` · `expression-2-apple` · `expression-2-cpu` |
+
+- **A recognized slug pins the session** to that tier: if the tier is unavailable, the session fails rather than playing elsewhere.
+- **An unrecognized slug is ignored** and the session plays as usual. If a pin seems to have no effect, check the spelling.
+- **To be told about a typo**, set the embed token's `model` field instead: an unknown value is refused with a `400` listing the accepted names when you [mint the token](/api/embedding#production-mint-a-token).
+
+In production, omit `?model=` and let the service choose.

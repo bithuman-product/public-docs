@@ -1,122 +1,56 @@
 ---
 title: "Compare models"
-description: "bitHuman's four avatar models — Essence 2 and Expression 2, the current generation, and Essence 1 and Expression 1, the first — what each renders, where each runs, which to pick, and the legacy names you may still meet."
+description: "Essence 2 renders a photoreal person and Expression 2 any character, each from one portrait. Where each model renders, which to pick, and how an avatar is created."
 section: models
 group: "Models"
 order: 0
 type: concept
 models: ["essence-2", "expression-2", "essence-1", "expression-1"]
+claims: ["S1", "S3", "S12", "S13", "S21", "S28"]
 demo: "both"
 next: ["/models/essence-2", "/models/expression-2", "/deploy"]
 ---
 
-bitHuman has four avatar models in two generations. **Essence 2** and
-**Expression 2** are the current generation — start there for anything new.
-**Essence 1** and **Expression 1** are the first generation; they stay
-supported, and nothing changes for agents that already use them.
+Every model reads the same [`.imx` avatar file](/models/avatar-file) and has the same shape: [push audio in, take lip-synced frames out](/models/how-it-works#audio-in-frames-out). The same agent works on every platform that runs its model.
 
-Every model reads the same [`.imx` container](/models/avatar-file) and has
-the same shape: [push audio in, take lip-synced frames out](/models/how-it-works#audio-in-frames-out).
-The same agent code works on every surface that runs its model.
+## The models
 
-## The four models
-
-| Model | What it renders | Pick it for |
-|---|---|---|
-| [**Essence 2**](/models/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1080p at 25 fps (1080×1920 portrait for a standard identity) | Real people |
-| [**Expression 2**](/models/expression-2) (`expression-2`) | Any character (stylized, animal, robot or human) from one portrait, 416×720 at 20 fps | Characters of every kind |
-| [**Essence 1**](/models/first-generation#essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
-| [**Expression 1**](/models/first-generation#expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents, in the cloud |
+```model-cards
+```
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
 
+Essence 1 and Expression 1 are the [first generation](/models/first-generation). They stay supported, and nothing changes for agents that use them.
+
 ## Which should I choose?
 
-- **A photorealistic person, anywhere** — Essence 2.
-- **A stylized or non-human character, or a whole generated scene** — Expression 2.
-- **Not sure** — create with `model: "auto"`: a photorealistic person routes to
-  Essence 2, anything else to Expression 2.
-- **On a phone, a Mac or in a browser** — Essence 2 or Expression 2. Expression 1
-  runs only in the bitHuman cloud, and that is permanent.
-- **Maintaining a first-generation agent** — keep it. Essence 1 runs on any CPU
-  you host; Expression 1 runs in the bitHuman cloud.
-
-Rates for every model are on [pricing](/pricing).
+- **A photorealistic person:** Essence 2.
+- **A stylized or non-human character, or a whole generated scene:** Expression 2.
+- **Not sure:** create with `model: "auto"`. A photorealistic person routes to Essence 2, anything else to Expression 2.
+- **On a phone, a Mac or in a browser:** Essence 2 or Expression 2.
+- **Maintaining a first-generation agent:** keep it. Essence 1 runs on your own CPU; Expression 1 runs in the bitHuman cloud.
 
 ## Where each model runs
 
-What is published today, per surface. Each link goes to the page that installs it.
+Each place links to the page that sets it up.
 
-| Surface | Essence 2 | Expression 2 | Essence 1 | Expression 1 |
-|---|---|---|---|---|
-| **bitHuman cloud** — [REST API](/api), [embed](/api/embedding), [LiveKit](/platforms/livekit) | yes | yes | yes | yes |
-| [**CLI**](/platforms/cli) — macOS Apple Silicon, Linux x86_64 / arm64 | `run`, `render` | `run`, `render` | `run` | — |
-| [**Python**](/platforms/python) — macOS Apple Silicon, Linux x86_64 / aarch64 | frames and MP4 clips | frames (`[expression-2]` extra) | frames | — |
-| [**Apple**](/platforms/ios) — iPhone, iPad, Mac | `Essence2Kit` product (iOS / macOS 26) | `Expression2` product | — | — |
-| [**Android**](/platforms/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
-| [**Web**](/platforms/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
+```model-matrix
+```
 
-- **Expression 1 is cloud-only by design.** Its empty cells are not a roadmap
-  item. If you need an expressive model on a Mac, a phone or in a browser, use
-  Expression 2.
-- **The cloud routes each session for you**, down the model's chain of GPU,
-  Apple Silicon and CPU tiers. The cloud's Apple tier is bitHuman's hardware,
-  not your Mac.
-- **Running on your own hardware** — every surface below the first row — is
-  billed at the self-hosted rate. See [self-hosting](/deploy/self-hosted).
-
-Measured frame rates for every platform are on the
-[performance page](/performance).
+Rendering on your own hardware, every place but the bitHuman cloud, bills at the self-hosted rate ([pricing](/pricing)). How fast each model renders on each device: [Performance](/performance).
 
 ## How creation works
 
-You create an agent once — with
-[`POST /v1/agent/generate`](/api/agents#generate-an-agent) or the dashboard —
-and serve it anywhere its model runs.
+You create an agent once, with [`POST /v1/agent/generate`](/api/agents#generate-an-agent) or in the bitHuman app, and serve it anywhere its model runs.
 
-- **The input is a portrait image.** Essence 2 generates its identity video from
-  it; Expression 2 trains straight from the photo. An uploaded image is treated
-  as a reference and regenerated to a standard framing.
-- **Both second-generation models train on create.** Allow **about 2 to 2.5
-  hours**, and poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status)
-  until the status is `ready` or `failed` — `success` is not terminal.
-- **Essence 2 needs a photorealistic human subject.** A stylized input is
-  rejected with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before
-  anything is billed; `auto` routes it to Expression 2 instead.
-- **An omitted `model` creates an Expression 1 agent.** Send `essence-2`,
-  `expression-2` or `auto` explicitly.
-- **The dashboard starts on Expression 2.** Pick Essence 2 in the model dialog,
-  or switch the version to V1 for Essence 1 or Expression 1.
-- **An existing agent can gain a model** with
-  [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
+- **The input is one portrait image.** Essence 2 generates its identity video from it; Expression 2 trains straight from the photo. An uploaded image is treated as a reference and regenerated to a standard framing.
+- **Creation happens in the bitHuman cloud;** the finished avatar model then runs on your devices.
+- **Both second-generation models train on create.** Allow about 2 to 2.5 hours, and poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until the status is `ready` or `failed` (`success` is not terminal).
+- **Essence 2 needs a photorealistic human subject.** A stylized input is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead.
+- **Always send `model`.** An omitted `model` creates an Expression 1 agent; send `essence-2`, `expression-2` or `auto`.
+- **An existing agent can gain a model** with [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
 
-Request fields, creation costs and failure modes are on the
-[Agents API](/api/agents).
-
-## Advanced: pin a serving tier
-
-By default the platform routes a session down the model's chain and overflows on
-capacity. For benchmarking you can force one tier by appending `?model=` with a
-force-tier slug to the viewer or embed URL:
-
-```text
-https://www.bithuman.ai/embed/A23WJF0199?model=expression-2-apple
-```
-
-| Model | Force-tier slugs |
-|---|---|
-| `essence-2` | `essence-2-gpu` · `essence-2-apple` · `essence-2-cpu` |
-| `expression-2` | `expression-2-gpu` · `expression-2-apple` · `expression-2-cpu` |
-
-- **A recognized slug pins the session** and never overflows: if that tier is
-  unavailable, the session fails rather than playing elsewhere.
-- **An unrecognized slug is ignored silently** and the session plays on the
-  default chain. If a pin seems to have no effect, check the spelling.
-- **To be told about a typo**, set the embed token's `model` field instead: an
-  unknown value is refused with a `400` listing the accepted names when you
-  [mint the token](/api/embedding#production-mint-a-token).
-
-For production, omit `?model=` and let the platform choose.
+What creation costs is on [pricing](/pricing#creation--one-time-credits); request fields and failure modes are on the [Agents API](/api/agents).
 
 ## Naming & migration
 
@@ -148,10 +82,3 @@ spellings of the Apple tier stay accepted. A link carrying the retired
 
 One more naming point: the cloud's Apple tier is called **Apple**, not "ANE". It is the
 whole Apple silicon target, not one accelerator inside it.
-
-## Next steps
-
-- [Essence 2](/models/essence-2) · [Expression 2](/models/expression-2) — the per-model guides
-- [SDK](/platforms) — install a model on your own hardware
-- [Agents API](/api/agents) — create, poll and download
-- [Pricing & credits](/pricing) — what each model costs to run

@@ -71,11 +71,11 @@
     {
       "key": "flutter_plugin",
       "name": "Flutter plugin",
-      "platforms": "Android (iOS and macOS do not build from the published tag yet)",
+      "platforms": "Android (arm64-v8a); iOS and macOS build from the published tag",
       "install": "bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v{v}}}",
       "registry": "GitHub tag flutter-plugin-v{v}",
       "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
-      "docs": "/platforms/android"
+      "docs": "/platforms/flutter"
     }
   ]
 }

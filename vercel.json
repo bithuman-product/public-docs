@@ -493,12 +493,12 @@
     },
     {
       "source": "/cpu",
-      "destination": "/deploy#cpu-only-no-gpu",
+      "destination": "/deploy/cpu",
       "permanent": true
     },
     {
       "source": "/cpu/",
-      "destination": "/deploy#cpu-only-no-gpu",
+      "destination": "/deploy/cpu",
       "permanent": true
     },
     {
@@ -509,6 +509,16 @@
     {
       "source": "/credits/",
       "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/data-flows",
+      "destination": "/deploy/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/data-flows/",
+      "destination": "/deploy/privacy",
       "permanent": true
     },
     {
@@ -733,12 +743,12 @@
     },
     {
       "source": "/flutter",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
       "source": "/flutter/",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
@@ -1043,12 +1053,12 @@
     },
     {
       "source": "/integrations/flutter",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
       "source": "/integrations/flutter/",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
@@ -1173,22 +1183,22 @@
     },
     {
       "source": "/mac",
-      "destination": "/platforms/ios#on-a-mac",
+      "destination": "/platforms/macos",
       "permanent": true
     },
     {
       "source": "/mac/",
-      "destination": "/platforms/ios#on-a-mac",
+      "destination": "/platforms/macos",
       "permanent": true
     },
     {
       "source": "/macos",
-      "destination": "/platforms/ios#on-a-mac",
+      "destination": "/platforms/macos",
       "permanent": true
     },
     {
       "source": "/macos/",
-      "destination": "/platforms/ios#on-a-mac",
+      "destination": "/platforms/macos",
       "permanent": true
     },
     {
@@ -1203,12 +1213,12 @@
     },
     {
       "source": "/mobile",
-      "destination": "/deploy#on-the-device",
+      "destination": "/deploy/on-device",
       "permanent": true
     },
     {
       "source": "/mobile/",
-      "destination": "/deploy#on-the-device",
+      "destination": "/deploy/on-device",
       "permanent": true
     },
     {
@@ -1233,32 +1243,32 @@
     },
     {
       "source": "/no-gpu",
-      "destination": "/deploy#cpu-only-no-gpu",
+      "destination": "/deploy/cpu",
       "permanent": true
     },
     {
       "source": "/no-gpu/",
-      "destination": "/deploy#cpu-only-no-gpu",
+      "destination": "/deploy/cpu",
       "permanent": true
     },
     {
       "source": "/offline",
-      "destination": "/deploy#fully-offline",
+      "destination": "/deploy/offline",
       "permanent": true
     },
     {
       "source": "/offline/",
-      "destination": "/deploy#fully-offline",
+      "destination": "/deploy/offline",
       "permanent": true
     },
     {
       "source": "/on-device",
-      "destination": "/deploy#on-the-device",
+      "destination": "/deploy/on-device",
       "permanent": true
     },
     {
       "source": "/on-device/",
-      "destination": "/deploy#on-the-device",
+      "destination": "/deploy/on-device",
       "permanent": true
     },
     {
@@ -1533,12 +1543,12 @@
     },
     {
       "source": "/sdk/flutter",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
       "source": "/sdk/flutter/",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
@@ -1603,12 +1613,12 @@
     },
     {
       "source": "/sdk/macos",
-      "destination": "/platforms/ios#on-a-mac",
+      "destination": "/platforms/macos",
       "permanent": true
     },
     {
       "source": "/sdk/macos/",
-      "destination": "/platforms/ios#on-a-mac",
+      "destination": "/platforms/macos",
       "permanent": true
     },
     {
@@ -1623,12 +1633,12 @@
     },
     {
       "source": "/sdk/mobile",
-      "destination": "/deploy#on-the-device",
+      "destination": "/deploy/on-device",
       "permanent": true
     },
     {
       "source": "/sdk/mobile/",
-      "destination": "/deploy#on-the-device",
+      "destination": "/deploy/on-device",
       "permanent": true
     },
     {
@@ -1713,12 +1723,12 @@
     },
     {
       "source": "/sdks/flutter",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {
       "source": "/sdks/flutter/",
-      "destination": "/platforms/android#flutter",
+      "destination": "/platforms/flutter",
       "permanent": true
     },
     {

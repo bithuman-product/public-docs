@@ -1,23 +1,41 @@
 ---
 title: "CLI"
-description: "Run a live avatar in your browser or render an MP4 from the terminal, on macOS (Apple silicon) and Linux (x86_64, arm64). No code."
+description: "Render an MP4 or run a live avatar from the terminal, on macOS (Apple silicon) and Linux (x86_64, arm64), with no code. On Linux it needs no GPU."
 section: platforms
 group: "Code & terminal"
 order: 20
 type: platform
 renders: ["server", "no-gpu"]
+needs: ["API secret"]
 artifacts: ["cli"]
 platforms: ["cli"]
-next: ["/build/voice-agent", "/platforms/cli/local-brain", "/platforms/cli/reference"]
+models: ["essence-2", "expression-2"]
+claims: ["S2", "S3", "S4", "S6", "S10"]
+next: ["/build/voice-agent", "/platforms/cli/local-brain", "/deploy/cpu"]
 ---
 
-One binary, no code: `bithuman run` opens a live conversation with an avatar in your browser, and `bithuman render` turns an audio file into an MP4. To program against the models instead, use [Python](/platforms/python).
+<div class="lead">
+<div class="lead-text">
+
+One binary, no code: `bithuman render` turns an audio file into a talking-avatar MP4, and `bithuman run` opens a live conversation with an avatar in your browser. It renders on your own machine. To program against the models instead, use [Python](/platforms/python).
+
+> **Note:** On Linux, both models run live on the CPU alone, no GPU. See [CPU only (no GPU)](/deploy/cpu).
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), up to 1080p at 25 fps |
-| **`run` and `render`** | both | both |
+| **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
+| **`render` and `run`** | both | both |
 | **Download per avatar** | about 190 MB | 140–160 MB, plus a shared audio encoder (about 66 MB) once |
+
+</div>
+
+<figure class="showcase">
+  <video controls preload="none" playsinline poster="/examples/cli/hero.webp" width="416" height="720" src="/examples/cli/clip.mp4"></video>
+  <figcaption>The <code>wise-pup</code> sample avatar, rendered by <code>bithuman render</code> on an Apple M4 Mac.</figcaption>
+</figure>
+
+</div>
+
 
 ## Before you start
 
@@ -82,16 +100,11 @@ bithuman run wise-pup
 # → open the printed http://127.0.0.1:8088/<CODE> and allow the microphone
 ```
 
-`bithuman run wise-pup` is a live session with the brain: it starts a local `livekit-server` and the conversation brain (the first run installs the brain, about 350 MB on disk, in one to two minutes). `render` accepts any audio format `ffmpeg` reads.
+`render` accepts any audio format `ffmpeg` reads. `bithuman run` needs two more things from [Before you start](#before-you-start): `livekit-server` and Python. It starts a local `livekit-server` and the voice agent; the first run installs the agent, about 350 MB on disk, in one to two minutes.
 
 ## Complete example
 
 From a fresh machine to a talking-avatar MP4 in four commands.
-
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/cli/hero.webp" width="416" height="720" src="/examples/cli/clip.mp4"></video>
-  <figcaption>The <code>wise-pup</code> sample avatar, rendered by <code>bithuman render</code> on an Apple M4 Mac.</figcaption>
-</figure>
 
 ### Requirements
 
@@ -114,13 +127,13 @@ bithuman render wise-pup speech.wav
 
 ### Expected output
 
-`wise-pup.mp4`: 416×720 at 20 fps, as long as the audio (15 seconds for the sample). To talk to the avatar instead, run `bithuman run wise-pup` and open the printed URL (this also needs `livekit-server`; see [CLI](/platforms/cli#before-you-start)).
+`wise-pup.mp4`: 416×720, as long as the audio (15 seconds for the sample). To talk to the avatar instead, run `bithuman run wise-pup` and open the printed URL (this also needs `livekit-server`; see [CLI](/platforms/cli#before-you-start)).
 
 ### Make it your own
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) (or on bitHuman), then `bithuman pull <AGENT_CODE>` and render it the same way.
 - **Your own words:** any audio file `ffmpeg` reads works as the second argument; generate speech with [Text to speech](/api/text-to-speech).
-- **A photoreal person:** `bithuman render sofia-ramirez speech.wav` renders Essence 2 (this avatar is 1080×1920 portrait, 25 fps).
+- **A photoreal person:** `bithuman render sofia-ramirez speech.wav` renders Essence 2 (this avatar is 1080×1920 portrait).
 - **Scripts and CI:** add `--json` and branch on exit codes ([reference](/platforms/cli/reference#json-output)).
 - **A conversation instead of a clip:** `bithuman run wise-pup` — [Talk to an avatar on your machine](/build/voice-agent).
 
@@ -158,7 +171,9 @@ The whole setup, and the same conversation in your own Python code: [Talk to an 
 
 ## Performance
 
-Frame rates for the CLI on macOS and Linux are on [Desktop performance](/performance#desktop).
+```perf
+linux-cpu macos-m4
+```
 
 ## Troubleshooting
 
