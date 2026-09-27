@@ -48,6 +48,22 @@ var idle: [UInt8]?                              // the next idle frame
 func idle(into buffer: inout [UInt8]) -> Int    // the next idle frame into your buffer; bytes written
 func resetState(clearFrames: Bool = true)       // interrupt: drop queued audio and frames
 func shutdown()                                 // waits for the last usage report
+
+// Since Swift package 2.18.0: one stream of frames to show, idle between replies, 20 fps.
+func frames(audioClock: (@Sendable () -> Double?)? = nil) -> AsyncStream<Expression2Frame>  // your clock: seconds of the reply played
+func nextFrame(audioClock: (@Sendable () -> Double?)? = nil) async -> Expression2Frame?     // the next frame when it is due; nil after shutdown
+func events() -> AsyncStream<Expression2Event>  // .replyStarted, .replyEnded (once per reply)
+func interrupt()                                // drop queued audio and frames (resetState)
+var droppedFrames: Int                          // frames skipped to keep a reply on its audio's timeline
+static let framesPerSecond: Double              // 20
+
+struct Expression2Frame {
+    let bgr: [UInt8]; let width: Int; let height: Int   // B, G, R bytes, width * height * 3
+    let isSpeech: Bool                                   // false: idle motion between replies
+    let endsReply: Bool                                  // the first frame after the reply's audio ran out
+    let index: Int
+    let audioTime: Double?                               // seconds into the reply's audio; 0 = its first frame, start the audio
+}
 var isReady: Bool
 var hasPendingTail: Bool
 var queuedFrames: Int
