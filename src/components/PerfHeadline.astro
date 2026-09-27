@@ -5,6 +5,12 @@
 // out (number, then the × real-time chip). No number is typed here.
 import { Content, rawContent } from "../partials/performance-headline.md";
 
+interface Props {
+  /** The home page's strip: tighter cells, and no link of its own (the section heading carries it). */
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+
 const md = rawContent().replace(/<!--[\s\S]*?-->/g, "");
 const rows = md.split("\n").filter((l) => l.startsWith("|") && !/^\|\s*-/.test(l))
   .map((l) => l.split("|").slice(1, -1).map((c) => c.trim().replace(/\*\*/g, "")));
@@ -19,8 +25,27 @@ const cell = (c: string) => {
   return { fps, x, rt };
 };
 ---
-<div class="perf-headline">
-  {parsed ? (
+<div class:list={["perf-headline", { compact }]}>
+  {parsed && compact ? (
+    <ul class="ph-tiles" role="list" aria-label="Frame rates by platform">
+      {head.slice(1).map((platform, i) => (
+        <li class="ph-tile">
+          <p class="ph-plat">{platform}</p>
+          <dl>
+            {body.map((r) => {
+              const { fps, x, rt } = cell(r[i + 1]);
+              return (
+                <div class="ph-row">
+                  <dt>{r[0]}</dt>
+                  <dd><span class="ph-fps">{fps}</span>{x && <span class:list={["ph-x", { rt }]}>{x}<span class="ph-sr"> real time</span></span>}</dd>
+                </div>
+              );
+            })}
+          </dl>
+        </li>
+      ))}
+    </ul>
+  ) : parsed ? (
     <div class="ph-scroll" role="region" aria-label="Frame rates by platform" tabindex="0">
       <table class="ph">
         <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
@@ -39,7 +64,7 @@ const cell = (c: string) => {
     </div>
   ) : filled ? <div class="prose ph-raw"><Content /></div> : null}
   {parsed && note && <p class="ph-note">{note}</p>}
-  <p class="ph-link"><a href="/performance">Every platform and how we measure →</a></p>
+  {!compact && <p class="ph-link"><a href="/performance">Every platform and how we measure →</a></p>}
 </div>
 <style>
   .perf-headline { margin-top: var(--space-4); }
@@ -55,4 +80,22 @@ const cell = (c: string) => {
   .ph-note { margin-top: var(--space-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
   .ph-raw :global(table) { width: 100%; font-size: var(--ft-sm); }
   .ph-link { margin-top: var(--space-2); font-size: var(--ft-sm); }
+  .compact { margin-top: 0; }
+  .ph-tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+  .ph-tile { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
+  .ph-plat { font-size: var(--ft-xs); font-weight: var(--fw-medium); letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+  .ph-tile dl { margin: 0; display: grid; gap: var(--space-2); }
+  .ph-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+  .ph-row dt { font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ph-row dd { margin: 0; display: inline-flex; align-items: baseline; gap: 0.4rem; white-space: nowrap; }
+  .compact .ph-fps { display: inline; font-size: var(--ft-md); }
+  .compact .ph-x { margin: 0; }
+  .ph-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .compact .ph-note { margin-top: var(--space-3); font-size: var(--ft-xs); }
+  @media (max-width: 900px) { .ph-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) {
+    .ph-tile { padding: var(--space-3); }
+    .ph-row { display: block; }
+    .ph-row dt { font-size: var(--ft-xs); }
+  }
 </style>
