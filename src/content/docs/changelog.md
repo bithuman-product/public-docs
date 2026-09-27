@@ -33,7 +33,7 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 - **Changed:** the realtime voice session takes your bitHuman API secret and connects through bitHuman's [realtime relay](/api/realtime); there is no `ek_…` token to mint. The conversation is billed to your account at 10 credits per minute, the avatar included. A refusal a retry cannot fix (a rejected secret, no credits, the time limit) stops the session once and is reported on `errorStream`.
 - **Fixed:** iOS and macOS build from the published tag. They link the published Expression 2 (2.18.0) and Essence 2 (1.14.2) engines.
-- **Changed:** Android uses `essence2-android` 0.8.1 (memory stays flat in long sessions).
+- **Changed:** Android uses `essence2-android` 0.8.1 (memory stays flat in long sessions) and `expression2-android` 0.5.2.
 - **Action:** pin `ref: flutter-plugin-v2.6.20` and pass your API secret to `BithumanRealtimeSession(apiKey:)`.
 
 ### Realtime API — 2026-09-27
