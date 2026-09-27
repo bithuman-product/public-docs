@@ -141,20 +141,17 @@ function modelMatrix(arg: string, mode: Mode): string {
     `\nFully offline is for Business and Enterprise clients, arranged through sales ([Fully offline](/deploy/offline)).\n`;
 }
 
-/** The current generation as cards: a portrait for each public model, from its
- *  live sample avatar. */
+/** The current generation as cards: what each renders, where, and its sample
+ *  avatar (the live demo above them shows the portraits). */
 function modelCards(mode: Mode): string {
   const current = MODELS.filter((m) => m.generation === "current");
-  const chipsFor = (_m: (typeof MODELS)[number]) => ["Renders on the device", "bitHuman cloud"];
-  if (mode === "twin") return current.map((m) => `- [${m.name}](${m.href}): ${m.renders} (${chipsFor(m).join(", ")})`).join("\n") + "\n";
+  const chips = ["Renders on the device", "bitHuman cloud"];
+  if (mode === "twin") return current.map((m) => `- [${m.name}](${m.href}): ${m.renders} (${chips.join(", ")})`).join("\n") + "\n";
   const card = (m: (typeof MODELS)[number]) => {
     const demo = (DEMOS as Record<string, (typeof DEMOS)["essence-2"]>)[m.id];
-    const fig = demo
-      ? `<picture class="card-figure"><source type="image/avif" srcset="${demo.poster}-480.avif"><img src="${demo.poster}-480.webp" width="480" height="600" alt="${esc(demo.slug)}, the ${esc(m.name)} sample avatar" loading="lazy" decoding="async"></picture>`
-      : "";
-    return `<li><a class="card card-model${demo ? "" : " card-plain"}" href="${m.href}">${fig}<span class="card-body"><span class="card-title"><strong>${esc(m.name)}</strong></span>` +
-      `<span class="card-line">${esc(m.renders[0].toUpperCase() + m.renders.slice(1))}.</span>` +
-      `<span class="card-chips">${chipsFor(m).map((c) => `<span class="chip">${esc(c)}</span>`).join("")}</span></span></a></li>`;
+    return `<li><a class="card card-link" href="${m.href}"><span class="card-body"><span class="card-title"><strong>${esc(m.name)}</strong></span>` +
+      `<span class="card-line">${esc(m.renders[0].toUpperCase() + m.renders.slice(1))}.${demo ? ` Sample avatar: <code>${esc(demo.slug)}</code>.` : ""}</span>` +
+      `<span class="card-chips">${chips.map((c) => `<span class="chip">${esc(c)}</span>`).join("")}</span></span></a></li>`;
   };
   return `<ul class="card-grid model-cards" role="list">${current.map(card).join("")}</ul>`;
 }
