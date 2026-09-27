@@ -14,7 +14,7 @@ Both models render on the handset: you feed 16 kHz mono speech in and pull pictu
 |---|---|---|
 | **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), at the identity's own resolution, 25 fps |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
-| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.1")` | `implementation("ai.bithuman:essence2-android:0.8.1")` |
+| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.2")` | `implementation("ai.bithuman:essence2-android:0.8.1")` |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
@@ -51,7 +51,7 @@ android {
     packaging { jniLibs { useLegacyPackaging = true } }   // required
 }
 dependencies {
-    implementation("ai.bithuman:expression2-android:0.5.1")
+    implementation("ai.bithuman:expression2-android:0.5.2")
     // or: implementation("ai.bithuman:essence2-android:0.8.1")
 }
 ```
@@ -61,7 +61,7 @@ Put the secret in `~/.gradle/gradle.properties` as `bithumanApiSecret=…`, outs
 `expression2-android` brings the Qualcomm accelerator runtime with it (`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`). To keep the APK small and render on the CPU instead, exclude it:
 
 ```kotlin
-implementation("ai.bithuman:expression2-android:0.5.1") {
+implementation("ai.bithuman:expression2-android:0.5.2") {
     exclude(group = "com.qualcomm.qti")
 }
 ```
@@ -104,7 +104,7 @@ fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
 }
 ```
 
-Expected: `show` receives about 20 frames per second of audio, and the avatar's lips follow the speech. The first `create()` in a process prepares the accelerator and takes about 30–45 seconds; do it once, at app start.
+Expected: `show` receives about 20 frames per second of audio, and the avatar's lips follow the speech. The first `create()` after install prepares the accelerator and takes about 15 seconds; later launches reuse it and `create()` takes 1–2 seconds. Create once, at app start.
 
 Essence 2 takes 16-bit little-endian PCM bytes, as a 16 kHz mono WAV stores them, and fills an RGBA `ByteBuffer` sized from the identity:
 
@@ -179,7 +179,7 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 | `MeteringRefused` on the first Essence 2 `pull()` | no secret set | call `Essence2Credential.set(secret)` before `fetch()` and `create()` |
 | `Essence2StoreException` from `fetch()` | no secret was set when the store downloaded | call `Essence2Credential.set(secret)` before `fetch()` |
 | Expression 2 renders slowly; `acceleratorNote` says no `libQnnTFLiteDelegate.so` | the accelerator runtime was excluded, or legacy packaging is off | keep the dependency whole and set `useLegacyPackaging = true` |
-| The first Expression 2 `create()` takes about 30–45 s | the accelerator prepares the model once per process | create once, on a background thread, at app start |
+| The first Expression 2 `create()` after install takes about 15 s | the accelerator prepares the decoder once and keeps it; later launches take 1–2 s | create on a background thread at app start; only the first launch after install pays it (and again after an SDK or OS update) |
 | Download refused with `401` | the avatar is private | set its owner's API secret with `Expression2Credential.set` or `Essence2Credential.set` |
 | `409 MODEL_NOT_GENERATED` on download | the agent has no model of that kind yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then retry |
 | Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |

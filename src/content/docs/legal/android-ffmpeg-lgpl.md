@@ -41,7 +41,7 @@ and no relink kit is published for it. That is correct, not a gap:
 | Coordinate | FFmpeg linked in? | Relink offer |
 |---|---|---|
 | `ai.bithuman:essence2-android:0.8.1` | **yes** — statically, into `lible_jni.so` | **published** (below); every version from `0.2.0` carries its own kit at the same shape of URL |
-| `ai.bithuman:expression2-android:0.5.1` | no — it carries LiteRT (Apache-2.0) | none needed |
+| `ai.bithuman:expression2-android:0.5.2` | no — it carries LiteRT (Apache-2.0) | none needed |
 | `ai.bithuman:sdk` 1.12.1 – 2.3.7 (deprecated) | **yes** — statically, into `libessence_jni.so` | **written offer**, §6(c) — [below](#aibithumansdk-deprecated--a-written-offer-6c) |
 
 Measured, with the two AARs side by side — the second command is the control
@@ -49,7 +49,7 @@ that makes the first mean something:
 
 ```bash
 curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.8.1/essence2-android-0.8.1.aar
-curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.5.1/expression2-android-0.5.1.aar
+curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.5.2/expression2-android-0.5.2.aar
 unzip -q -o essence2.aar    jni/arm64-v8a/lible_jni.so    -d e2
 unzip -q -o expression2.aar jni/arm64-v8a/libexpr2jni.so  -d x2
 nm -D --defined-only e2/jni/arm64-v8a/lible_jni.so   | grep -cE ' T (av_|avcodec_|sws_)'

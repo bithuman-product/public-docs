@@ -4792,9 +4792,9 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:expression2-android",
-        "version": "0.5.1",
-        "digest": "sha256:ac8bc75b46545c04c0bfd3ff539b3b5dd607546c2e6a5c9d1d25525ba3deae66",
-        "filename": "expression2-android-0.5.1.aar",
+        "version": "0.5.2",
+        "digest": "sha256:7415aad6c9b73cd8fb91a4f1aa34fbcc79010657c33120a77274bbf619161bcd",
+        "filename": "expression2-android-0.5.2.aar",
         "resolved_on": "2026-09-27"
       },
       "surface": {
@@ -7121,6 +7121,15 @@
                 "kind": "default-argument-bridge"
               },
               {
+                "name": "getLOG_TAG$expression2_release",
+                "jvm": "getLOG_TAG$expression2_release()Ljava/lang/String;",
+                "access": [
+                  "public",
+                  "final"
+                ],
+                "kind": "internal"
+              },
+              {
                 "name": "warmUp",
                 "jvm": "warmUp(Landroid/content/Context;Lai/bithuman/expression2/Expression2Model;)Lai/bithuman/expression2/Expression2Avatar;",
                 "access": [
@@ -7306,6 +7315,69 @@
                 "jvm_getter": "getQnnContextCacheWasWarm()Z",
                 "jvm_setter": null,
                 "jvm_field": "field qnnContextCacheWasWarmZ",
+                "loadable": true
+              },
+              {
+                "name": "decWarmupDec8Ms",
+                "signature": "var decWarmupDec8Ms: Double",
+                "mutable": true,
+                "jvm_getter": "getDecWarmupDec8Ms()D",
+                "jvm_setter": "setDecWarmupDec8Ms$expression2_release(D)V",
+                "jvm_field": "field decWarmupDec8MsD",
+                "loadable": true
+              },
+              {
+                "name": "decWarmupFirstMs",
+                "signature": "var decWarmupFirstMs: Double",
+                "mutable": true,
+                "jvm_getter": "getDecWarmupFirstMs()D",
+                "jvm_setter": "setDecWarmupFirstMs$expression2_release(D)V",
+                "jvm_field": "field decWarmupFirstMsD",
+                "loadable": true
+              },
+              {
+                "name": "decWarmupSecondMs",
+                "signature": "var decWarmupSecondMs: Double",
+                "mutable": true,
+                "jvm_getter": "getDecWarmupSecondMs()D",
+                "jvm_setter": "setDecWarmupSecondMs$expression2_release(D)V",
+                "jvm_field": "field decWarmupSecondMsD",
+                "loadable": true
+              },
+              {
+                "name": "qnnColdCompileMs",
+                "signature": "var qnnColdCompileMs: Double",
+                "mutable": true,
+                "jvm_getter": "getQnnColdCompileMs()D",
+                "jvm_setter": "setQnnColdCompileMs$expression2_release(D)V",
+                "jvm_field": "field qnnColdCompileMsD",
+                "loadable": true
+              },
+              {
+                "name": "qnnContextSerialized",
+                "signature": "var qnnContextSerialized: Boolean",
+                "mutable": true,
+                "jvm_getter": "getQnnContextSerialized()Z",
+                "jvm_setter": "setQnnContextSerialized$expression2_release(Z)V",
+                "jvm_field": "field qnnContextSerializedZ",
+                "loadable": true
+              },
+              {
+                "name": "qnnPersistMs",
+                "signature": "var qnnPersistMs: Double",
+                "mutable": true,
+                "jvm_getter": "getQnnPersistMs()D",
+                "jvm_setter": "setQnnPersistMs$expression2_release(D)V",
+                "jvm_field": "field qnnPersistMsD",
+                "loadable": true
+              },
+              {
+                "name": "qnnRestoreDegraded",
+                "signature": "var qnnRestoreDegraded: Boolean",
+                "mutable": true,
+                "jvm_getter": "getQnnRestoreDegraded()Z",
+                "jvm_setter": "setQnnRestoreDegraded$expression2_release(Z)V",
+                "jvm_field": "field qnnRestoreDegradedZ",
                 "loadable": true
               }
             ],
@@ -10084,6 +10156,14 @@
               ]
             },
             {
+              "name": "ai.bithuman.expression2.DecoderContextCache",
+              "declared_visibility": "internal",
+              "runtime_access": [
+                "public",
+                "final"
+              ]
+            },
+            {
               "name": "ai.bithuman.expression2.Devices",
               "declared_visibility": "internal",
               "runtime_access": [
@@ -10251,8 +10331,8 @@
           "unreadable_metadata": []
         },
         "counts": {
-          "class_files": 72,
-          "declared_classes": 65,
+          "class_files": 73,
+          "declared_classes": 66,
           "public_classes": 43
         }
       }
