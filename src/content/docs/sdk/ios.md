@@ -218,7 +218,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 | crash in `__cxa_finalize` when the app quits | `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all`) was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
 | `duplicate symbol` naming `MLX` at the final link | Swift package older than 2.16.0 | set `from: "2.18.0"`, then `swift package update` |
-| Essence 2 memory keeps rising during a long session that feeds audio without pauses | Swift package older than 2.17.3 | set `from: "2.17.3"`, then `swift package update` |
+| Essence 2 memory keeps rising during a long session that feeds audio without pauses | Swift package older than 2.17.3 | set `from: "2.18.0"`, then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
 
