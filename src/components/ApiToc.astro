@@ -1,0 +1,19 @@
+---
+// The API reference's endpoint list, by tag: the sidebar on a wide screen and
+// a closed "Jump to an endpoint" disclosure on a phone.
+import type { Tag } from "../lib/openapi";
+interface Props { tags: Tag[]; label: string }
+const { tags, label } = Astro.props;
+---
+<nav class="ar-toc" aria-label={label}>
+  {tags.map((t) => (
+    <div class="ar-toc-group">
+      <a class="ar-toc-tag" href={`#tag/${t.slug}`}>{t.name}</a>
+      <ul>
+        {t.operations.map((op) => (
+          <li><a href={`#${op.id}`}><span class={`ar-m ar-m-${op.method.toLowerCase()}`}>{op.method === "DELETE" ? "DEL" : op.method}</span><span>{op.summary}</span></a></li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</nav>

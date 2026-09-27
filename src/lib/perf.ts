@@ -19,6 +19,8 @@ export interface PerfCell {
   release: string;
   measured_on: string;
   realtime: boolean;
+  /** The speech clip the row rendered */
+  clip?: { id: string; seconds: number };
 }
 export interface PerfRowData {
   id: string;

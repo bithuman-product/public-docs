@@ -10,6 +10,10 @@ import Availability from "../components/Availability.astro";
 import VersionBadge from "../components/VersionBadge.astro";
 import NextCards from "../components/NextCards.astro";
 import LiveDemo from "../components/LiveDemo.astro";
+import PerfExplorer from "../components/PerfExplorer.astro";
+import CreditCalculator from "../components/CreditCalculator.astro";
+import MatrixFilter from "../components/MatrixFilter.astro";
+import { widgetsIn } from "../lib/doc-blocks";
 import { RENDERS_LABEL } from "../data/labels";
 
 interface Heading {
@@ -103,6 +107,8 @@ if (section === "platforms" && data.type === "platform") {
   });
 }
 const hasChips = !!(data.availability || data.renders?.length || data.needs?.length || data.artifacts?.length);
+// The interactive blocks this page places bring their script and styles; other pages carry none.
+const widgets = widgetsIn(entry.body ?? "");
 const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
 // On a hub the comparison comes first and the demo closes the page (under its "Try it" section).
 // Under the lede the demo's poster is the largest thing on screen, so it loads eagerly
@@ -189,6 +195,9 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
         )
       }
     </article>
+    {widgets.has("perf-explorer") && <PerfExplorer />}
+    {widgets.has("calculator") && <CreditCalculator />}
+    {widgets.has("matrix-filter") && <MatrixFilter />}
 
     {/* on-this-page TOC */}
     <aside class="doc-toc" aria-label="Page outline" data-pagefind-ignore>
@@ -210,7 +219,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   </div>
 
   <script>
-    import "../scripts/md-tabs";
+    import "../scripts/tabs-sync";
     document.querySelectorAll("[data-side-toggle]").forEach((b) => {
       b.addEventListener("click", () => {
         const side = b.closest("[data-doc-side]");

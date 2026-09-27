@@ -1,0 +1,51 @@
+---
+// A choice the reader makes once and the site keeps (docs spec §4.1): the
+// platform (or model) as a radio group. It shows only with JavaScript; with
+// it off every <Only> block shows, each under its own heading. The choice is
+// read from ?platform=, then storage, then `initial`, and a pick updates every
+// <Only> block and every platform tab group on the site (src/scripts/picker.ts).
+import Icon from "./Icon.astro";
+import type { StateName } from "../lib/ui-state";
+
+interface Option { id: string; label: string; icon?: string }
+interface Props {
+  options: Option[];
+  label: string;
+  /** The site-wide choice this switcher sets */
+  state?: StateName;
+  /** The option shown before the reader picks */
+  initial: string;
+  /** Also write the pick to the address bar, so the page can be shared as picked */
+  url?: boolean;
+}
+const { options, label, state = "platform", initial, url = false } = Astro.props;
+---
+
+<div class="psw" role="radiogroup" aria-label={label} data-switcher data-state={state} data-default={initial} data-url={url ? "" : undefined}>
+  {options.map((o) => (
+    <button type="button" role="radio" aria-checked={o.id === initial ? "true" : "false"} tabindex={o.id === initial ? 0 : -1} data-key={o.id}>
+      {o.icon && <Icon name={o.icon} size={16} />}<span>{o.label}</span>
+    </button>
+  ))}
+</div>
+<p class="sr" aria-live="polite" data-switcher-status></p>
+
+<script>
+  import "../scripts/picker";
+</script>
+
+<style>
+  .psw { display: none; flex-wrap: wrap; gap: var(--s-2); }
+  :global(.js) .psw { display: flex; }
+  .psw button {
+    display: inline-flex; align-items: center; gap: var(--s-2); padding: 0.45rem 0.9rem;
+    border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface);
+    color: var(--color-text-secondary); font: inherit; font-size: var(--ft-sm); font-weight: var(--fw-medium); line-height: 1.3; cursor: pointer;
+    transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  }
+  .psw button :global(svg) { color: var(--color-text-tertiary); }
+  .psw button:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  .psw button[aria-checked="true"] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
+  .psw button[aria-checked="true"] :global(svg) { color: currentColor; }
+  .psw button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+</style>

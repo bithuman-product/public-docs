@@ -1,0 +1,14 @@
+---
+// Content for one platform (or model). With JavaScript on it shows only when
+// the reader's choice matches (set by <PlatformSwitcher>); with it off every
+// block shows, so each needs its own heading. `active` marks the block shown
+// before any choice, so the page does not shift when the script runs.
+import type { StateName } from "../lib/ui-state";
+interface Props { platform: string; state?: StateName; active?: boolean }
+const { platform, state = "platform", active = false } = Astro.props;
+---
+<div class:list={["only", { on: active }]} data-only={platform} data-only-state={state}><slot /></div>
+
+<style>
+  :global(.js) .only:not(.on) { display: none; }
+</style>

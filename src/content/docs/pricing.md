@@ -81,6 +81,13 @@ Annual plans bill twelve months of credits up front.
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
 
+## Estimate a month
+
+Choose where the avatar renders, then how long sessions run. The estimate counts active session time, talking or idle, at the rates above.
+
+```credit-calculator
+```
+
 ## Offline licensing
 
 Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux PCs and terminals; arranged through sales.

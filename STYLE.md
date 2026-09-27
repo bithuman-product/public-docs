@@ -65,8 +65,8 @@ The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and id
 - Runnable as pasted after `export BITHUMAN_API_SECRET=…`, or the first line is `# excerpt: …` / `// excerpt: …`.
 - Secrets only from the environment. Never a literal. [check-placeholders]
 - Every fence names its language; `json` blocks parse. Show the output under every first-run block.
-- API pages go curl → Python → Node `fetch`.
-- Consecutive fences that show the same step in different languages are tabs: give each fence `tab="Swift"` (the label) in its meta. [remark-code-tabs]
+- API pages go curl → Python → Node `fetch`. On `/api/*` pages write the curl only: the Python and Node tabs are generated from that same command at build time. A command the generator cannot convert (a pipe, a form upload, an `export`) stays curl alone. To use a variable inside a JSON body, splice it: `'{"agent_code": "'"$BITHUMAN_AGENT_CODE"'"}'`. [remark-api-samples, check-no-js]
+- Consecutive fences that show the same step in different languages are tabs: give each fence `tab="Swift"` (the label) in its meta. Tab groups follow the reader's last choice across the site, by kind: languages, platforms (`iOS & iPadOS`, `Android`, `Web`…) or models (`Essence 2`, `Expression 2`). The kind is read from the labels; name it on the first fence with `group="platform"` when the labels are ambiguous. [remark-code-tabs, tabs-sync]
 - One placeholder per value: `$AGENT_CODE`, `$BITHUMAN_API_SECRET`, `$WEBHOOK_ID`.
 
 ## Caveats
@@ -133,6 +133,10 @@ A fenced block named for a block is drawn at build time from the data files (`sr
 | ```` ```dataflow ```` + a mode | where it renders, where the conversation runs, what reaches bitHuman | `dataflows.ts` |
 | ```` ```price ```` + a mode, ```` ```session-caps ```` | one mode's rate; cloud sessions per plan | `pricing.json`, `plans.json` |
 | ```` ```partial ```` + a name | a shared passage (`src/partials/<name>.md`), such as the Swift install on iOS and macOS | `src/partials` |
+| ```` ```perf-explorer ```` | every published row as bars, per model, with the held-for-10-minutes rows (on `/performance`) | `public/performance.json`, `perf-groups.ts` |
+| ```` ```credit-calculator ```` | credits and dollars a month for a usage pattern, with worked examples (on `/pricing`) | `pricing.json`, `plans.json` |
+
+The explorer, the calculator and the filter above a full ```` ```model-matrix ```` or ```` ```deploy-matrix ```` bring a small script, loaded only on the page that places them. With JavaScript off everything they draw still shows. [check-no-js, check-js-budget]
 
 Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is available on the Enterprise plan only." It has no page, card, matrix row or chip. [check-internal-vocabulary]
 

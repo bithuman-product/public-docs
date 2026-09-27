@@ -2,18 +2,13 @@
 import Base from "../layouts/Base.astro";
 import CodeTabs from "../components/CodeTabs.astro";
 import LiveDemo from "../components/LiveDemo.astro";
-import Card from "../components/Card.astro";
-import Expected from "../components/Expected.astro";
 import Availability from "../components/Availability.astro";
-import PerfHeadline from "../components/PerfHeadline.astro";
+import QuickstartPicker from "../components/QuickstartPicker.astro";
 import { hubMeta } from "../config/hubs";
 import { API_SECRET_URL } from "../config/nav";
-import { PLATFORMS, PLATFORM_PAGES } from "../data/platforms";
-import { RENDERS_LABEL } from "../data/labels";
+import { explorerClaim } from "../lib/doc-blocks";
 
 const meta = hubMeta("start");
-const next = (docs: string) => (docs.startsWith("/platforms/") && !docs.includes("#") ? `${docs}#first-frame` : docs);
-const offline = PLATFORMS.find((p) => p.id === "offline")!;
 ---
 
 <Base title="Quickstart — bitHuman docs" description={meta.description}>
@@ -44,43 +39,16 @@ const offline = PLATFORMS.find((p) => p.id === "offline")!;
 
   <section class="s-block alt">
     <div class="container">
-      <h2 id="choose-your-platform"><span class="step">3</span> Choose your platform</h2>
-      <ul class="card-grid cols-3" role="list">
-        {PLATFORM_PAGES.map((p) => (
-          <li><Card variant="platform" href={p.href} title={p.title} line={p.line} icon={p.icon}
-            chips={[...p.renders.map((r) => RENDERS_LABEL[r]), ...(p.time ? [`First result in ${p.time}`] : [])]} /></li>
-        ))}
-      </ul>
-      <p class="s-small s-offline"><strong>Fully offline:</strong> {offline.note} <a href="https://www.bithuman.ai/sales">Contact sales</a> · <a href="/deploy/offline">Details</a></p>
+      <h2 id="choose-your-platform"><span class="step">3</span> Pick your platform</h2>
+      <p class="s-intro">What are you building? The steps below run as pasted after you export your API secret, and end at that platform's first frame.</p>
+      <QuickstartPicker />
     </div>
   </section>
 
-  <section class="s-block">
-    <div class="container">
-      <h2 id="run-it"><span class="step">4</span> Run it</h2>
-      <p class="muted">Each block runs as pasted after you export your API secret.</p>
-      {PLATFORMS.filter((p) => p.card).map((p) => (
-        <article class="s-run" id={p.id}>
-          <h3>{p.want} <span class="s-use">· {p.use}</span></h3>
-          <CodeTabs tabs={[{ label: p.use.split(" (")[0], lang: p.card!.lang, code: p.card!.code }]} />
-          <Expected><p>{p.card!.expect}</p></Expected>
-          <p class="s-next"><a href={next(p.docs)}>Next: {p.use.split(" (")[0]} →</a></p>
-        </article>
-      ))}
-      <article class="s-run" id="apps">
-        <h3>Ship an app <span class="s-use">· Swift package, Android SDK</span></h3>
-        <p>Add the dependency, then follow the platform page's first frame:</p>
-        <CodeTabs tabs={PLATFORMS.filter((p) => p.id === "apple" || p.id === "android").map((p) => ({ label: p.id === "apple" ? "Swift" : "Kotlin", lang: p.id === "apple" ? "swift" : "kotlin", code: p.first }))} />
-        <p class="s-next"><a href="/platforms/ios#first-frame">iOS & iPadOS →</a> · <a href="/platforms/android#first-frame">Android →</a> · <a href="/platforms/livekit">LiveKit →</a> · <a href="/build/mcp">Claude & Cursor (MCP) →</a></p>
-      </article>
-    </div>
-  </section>
-
-  <section class="s-block alt">
-    <div class="container">
-      <h2 id="performance">How fast it renders</h2>
-      <PerfHeadline />
-      <p class="s-small"><a href="/models">Which model?</a> · <a href="/pricing">Pricing: credits pay for active session time, talking or idle</a> · <a href="/examples">Example gallery</a></p>
+  <section class="s-block s-last">
+    <div class="container s-more">
+      <p class="s-claim">{explorerClaim()} <a href="/performance">See every configuration →</a></p>
+      <p class="s-small"><a href="/models">Which model?</a> · <a href="/pricing">Pricing: credits pay for active session time, talking or idle</a> · <a href="/platforms">All platforms</a> · <a href="/examples">Example gallery</a></p>
     </div>
   </section>
 </Base>
@@ -99,12 +67,10 @@ const offline = PLATFORMS.find((p) => p.id === "offline")!;
   .s-demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-12); align-items: start; }
   .s-demo p { margin-block: var(--s-3); }
   .s-demo :global(.ld) { margin: var(--s-4) 0 0; }
-  .s-run { margin-top: var(--s-8); }
-  .s-run h3 { font-size: var(--ft-lg); margin-bottom: var(--s-3); }
-  .s-use { color: var(--color-text-tertiary); font-weight: var(--fw-regular); }
-  .s-next, .s-small { margin-top: var(--s-3); font-size: var(--ft-sm); }
-  .s-offline { margin-top: var(--s-5); max-width: 80ch; color: var(--color-text-secondary); }
-  .card-grid { margin-top: var(--s-4); }
+  .s-intro { max-width: 70ch; color: var(--color-text-secondary); }
+  .s-small { margin-top: var(--s-3); font-size: var(--ft-sm); }
+  .s-last { padding-block: var(--s-8); }
+  .s-claim { margin: 0; font-size: var(--ft-lg); font-weight: var(--fw-medium); color: var(--color-text); }
   @media (max-width: 900px) { .s-demo { grid-template-columns: 1fr; gap: var(--s-8); } }
   @media (max-width: 560px) { .s-hero h1 { font-size: var(--fh-xl); } .s-block { padding-block: var(--s-8); } }
 </style>

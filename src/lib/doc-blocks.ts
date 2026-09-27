@@ -10,6 +10,9 @@
 //   ```dataflow              where one mode renders, where the conversation runs, what reaches bitHuman
 //   ```price                 one mode's rate, from pricing.json
 //   ```session-caps          concurrent cloud sessions per plan, from plans.json
+//   ```perf-explorer         every published performance row as bars, with a model
+//                            switch and the held-for-10-minutes rows (/performance)
+//   ```credit-calculator     credits and dollars a month for a usage pattern (/pricing)
 //   ```partial               a shared passage from src/partials/<name>.md (the Swift
 //                            install and credential text iOS and macOS both carry)
 //
@@ -20,7 +23,9 @@
 // markdown (expandBlocks, called by src/lib/markdown-twin.ts).
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { perfRow, perfCell, rowName, noGpu, PERF_MODELS } from "./perf.ts";
+import { perfRow, perfCell, rowName, noGpu, perfData, PERF_MODELS, type PerfRowData } from "./perf.ts";
+import { formatMultiple } from "./format-multiple.ts";
+import { calculate, planLine, fmtInt, fmtUsd, type CalcData, type CalcMode } from "./calculator.ts";
 import { PERF_GROUPS } from "../data/perf-groups.ts";
 import { MODELS, PLACES, MATRIX, type ModelId, type PlaceId } from "../data/models.ts";
 import { DEPLOYMENTS } from "../data/deployments.ts";
@@ -28,7 +33,11 @@ import { DATAFLOWS, type ModeId } from "../data/dataflows.ts";
 import { DEMOS } from "../data/demo.ts";
 
 export type Mode = "page" | "twin";
-export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial"]);
+export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator"]);
+/** Blocks drawn as HTML on the page (the rest become markdown). */
+export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator"]);
+/** Blocks that bring a script to the page (DocLayout loads it only there). */
+export const WIDGET_BLOCKS: Record<string, string> = { "perf-explorer": "perf-explorer", "credit-calculator": "calculator", "model-matrix": "matrix-filter", "deploy-matrix": "matrix-filter" };
 
 const readJson = (rel: string) => JSON.parse(readFileSync(join(process.cwd(), rel), "utf8"));
 let pricingCache: any, plansCache: any;
@@ -137,9 +146,18 @@ function modelMatrix(arg: string, mode: Mode): string {
     return table(["Model", ...ps.map(placeLink)], MODELS.map((m) => [modelLink(m), ...ps.map((p) => yes(MATRIX[m.id][p.id].ok))]));
   }
   if (arg) throw new Error(`\`\`\`model-matrix: "${arg}" is not "model: <id>" or "place: <id>"`);
-  const rows = PLACES.map((p) => [placeLink(p), ...MODELS.map((m) => yes(MATRIX[m.id][p.id].ok))]);
-  return table(["Where", ...MODELS.map((m) => m.name)], rows) +
-    `\nFully offline is for Business and Enterprise clients, arranged through sales ([Fully offline](/deploy/offline)).\n`;
+  const foot = `\nFully offline is for Business and Enterprise clients, arranged through sales ([Fully offline](/deploy/offline)).\n`;
+  if (mode === "twin") {
+    const rows = PLACES.map((p) => [placeLink(p), ...MODELS.map((m) => yes(MATRIX[m.id][p.id].ok))]);
+    return table(["Where", ...MODELS.map((m) => m.name)], rows) + foot;
+  }
+  // On the page each cell also says how (the product or command), and a filter
+  // above the table (shown only with JavaScript) narrows it to one place.
+  const cell = (c: { ok: boolean; how?: string }) => (c.ok ? `Yes${c.how ? `<br><span class="mm-how">${inlineHtml(c.how)}</span>` : ""}` : "—");
+  const rows = PLACES.map((p) => [placeLink(p), ...MODELS.map((m) => cell(MATRIX[m.id][p.id]))]);
+  const filter = `<div class="mx-filter" role="radiogroup" aria-label="Show one place" data-mx-filter="model-matrix">` +
+    [`<button type="button" role="radio" aria-checked="true" tabindex="0" data-mx="">All places</button>`, ...PLACES.map((p) => `<button type="button" role="radio" aria-checked="false" tabindex="-1" data-mx="${p.id}">${esc(p.name)}</button>`)].join("") + `</div>\n\n`;
+  return filter + table(["Where", ...MODELS.map((m) => m.name)], rows) + foot;
 }
 
 /** The current generation as cards: what each renders, where, and its sample
@@ -185,10 +203,12 @@ function deployMatrix(mode: Mode): string {
   }
   // On the page, one card per mode: five columns of prose do not fit a reading column.
   const card = (d: (typeof DEPLOYMENTS)[number], i: number) =>
-    `<li class="dm-card${d.id === "offline" ? " dm-wide" : ""}"><div class="dm-head"><a href="${d.href}">${esc(d.name)}</a><span class="chip chip-plan">${esc(PLAN_LABEL[d.plan])}</span></div>` +
+    `<li class="dm-card${d.id === "offline" ? " dm-wide" : ""}" data-mx-item="${d.id}"><div class="dm-head"><a href="${d.href}">${esc(d.name)}</a><span class="chip chip-plan">${esc(PLAN_LABEL[d.plan])}</span></div>` +
     `<dl>${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${inlineHtml(v[i])}</dd></div>`).join("")}</dl></li>`;
   const link = (s: string) => s.replace(/\[([^\]]+)\]\((\/[^)]*)\)/g, (_, t, h) => `<a href="${h}">${t}</a>`);
-  return `<ul class="deploy-cards" role="list">${DEPLOYMENTS.map(card).join("")}</ul><p class="dm-foot">${link(esc(foot))}</p>`;
+  const filter = `<div class="mx-filter" role="radiogroup" aria-label="Show one mode" data-mx-filter="deploy-matrix">` +
+    [`<button type="button" role="radio" aria-checked="true" tabindex="0" data-mx="">All five</button>`, ...DEPLOYMENTS.map((d) => `<button type="button" role="radio" aria-checked="false" tabindex="-1" data-mx="${d.id}">${esc(d.name)}</button>`)].join("") + `</div>`;
+  return `<div class="doc-block-deploy-matrix" data-mx-root>${filter}<ul class="deploy-cards" role="list">${DEPLOYMENTS.map(card).join("")}</ul><p class="dm-foot">${link(esc(foot))}</p></div>`;
 }
 
 function dataflow(id: string): string {
@@ -222,6 +242,104 @@ function sessionCaps(): string {
     `On-device and self-hosted sessions are limited by credits ([plans](/pricing#plans)).\n`;
 }
 
+// ---------------------------------------------------------------- performance explorer
+/** Every published row, in its reader group (on-device first). A row the
+ *  groups do not name yet is still drawn, under "More configurations", so the
+ *  explorer never leaves a published measurement out. */
+export function explorerGroups(): { id: string; title: string; anchor: string; rows: PerfRowData[] }[] {
+  const published = perfData().rows.filter((r) => r.published);
+  const named = new Set(PERF_GROUPS.flatMap((g) => g.rows));
+  const groups = PERF_GROUPS.map((g) => ({ id: g.id, title: g.title, anchor: g.anchor, rows: g.rows.map((id) => published.find((r) => r.id === id)).filter((r): r is PerfRowData => !!r) }));
+  const rest = published.filter((r) => !named.has(r.id));
+  if (rest.length) groups.push({ id: "more", title: "More configurations", anchor: "", rows: rest });
+  return groups.filter((g) => g.rows.length);
+}
+
+/** The explorer's claim, worded down when any published cell is under 1.0×. */
+export function explorerClaim(): string {
+  const cells = perfData().rows.filter((r) => r.published).flatMap((r) => PERF_MODELS.map((m) => r.cells[m.id]).filter((c): c is NonNullable<typeof c> => !!c));
+  const under = cells.filter((c) => c.x_realtime < 1).length;
+  return under ? `${cells.length - under} of ${cells.length} published measurements render faster than real time.` : "Every configuration we publish renders faster than real time.";
+}
+
+const AXIS = 10; // the bars run 0–10×; a longer value is capped with its number shown
+
+function explorerRow(r: PerfRowData, model: (typeof PERF_MODELS)[number]): string {
+  const c = r.cells[model.id];
+  const cpu = noGpu(r.id);
+  const tags = [r.sustained ? `<span class="chip chip-tag">held 10 min</span>` : "", cpu ? `<span class="chip chip-tag pe-cpu">CPU only (no GPU)</span>` : ""].join("");
+  const head = `<th scope="row"><span class="pe-hw">${esc(r.hardware)}</span><span class="pe-sub">${esc(rowName(r.id))}</span>${tags}</th>`;
+  if (!c) return `<tr class="pe-row${r.sustained ? " pe-held" : ""}" data-row="${esc(r.id)}">${head}<td><span class="xrt-none">—<span class="sr"> not measured</span></span></td></tr>`;
+  const x = formatMultiple(c.x_realtime);
+  const capped = c.x_realtime > AXIS;
+  const v = Math.min(c.x_realtime, AXIS) / AXIS;
+  const clip = c.clip?.seconds ? ` · ${Math.floor(c.clip.seconds * 10) / 10} s speech clip` : "";
+  const detail = `${r.hardware}${cpu ? ", CPU only (no GPU)" : ""} · ${c.release}${r.sustained ? " · held 10 min" : ""} · measured ${c.measured_on}${clip} · ${c.fps} frames rendered per second`;
+  return `<tr class="pe-row${r.sustained ? " pe-held" : ""}${cpu ? " pe-nogpu" : ""}" data-row="${esc(r.id)}">${head}` +
+    `<td><span class="pe-bar${capped ? " pe-cap" : ""}${c.x_realtime < 1 ? " pe-below" : ""}" style="--v:${v.toFixed(3)}"><span class="pe-fill"></span><span class="pe-x">${esc(x)}<span class="sr"> real time</span></span></span>` +
+    `<details class="pe-d"><summary>Details<span class="sr"> for ${esc(r.hardware)}, ${esc(rowName(r.id))}</span></summary><span>${esc(detail)}</span></details></td></tr>`;
+}
+
+function perfExplorer(mode: Mode): string {
+  const groups = explorerGroups();
+  const claim = explorerClaim();
+  if (mode === "twin") return `${claim} The tables below list every published configuration.\n`;
+  const models = PERF_MODELS.map((m, i) => `<button type="button" role="radio" aria-checked="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-model="${m.id}">${esc(m.name)}</button>`).join("");
+  const panel = (m: (typeof PERF_MODELS)[number]) =>
+    `<div class="pe-panel" data-model-panel="${m.id}"><p class="pe-mh">${esc(m.name)}</p>` +
+    groups.map((g) => `<table class="pe-table"><caption>${esc(g.title)}</caption>` +
+      `<thead class="sr"><tr><th scope="col">Configuration</th><th scope="col">${esc(m.name)}, × real time</th></tr></thead><tbody>` +
+      g.rows.map((r) => explorerRow(r, m)).join("") + `</tbody></table>`).join("") + `</div>`;
+  const count = groups.reduce((a, g) => a + g.rows.length, 0);
+  return `<section class="pe" data-perf-explorer data-model="${PERF_MODELS[0].id}" aria-label="Performance explorer" data-pagefind-ignore>` +
+    `<div class="pe-top"><p class="pe-claim">${esc(claim)}</p>` +
+    `<div class="pe-controls"><div class="seg" role="radiogroup" aria-label="Model">${models}</div>` +
+    `<label class="pe-toggle"><input type="checkbox" data-held> Held for 10 minutes</label></div></div>` +
+    `<ul class="pe-legend" role="list"><li><span class="pe-key-line" aria-hidden="true"></span>1.0×: holds a live conversation</li><li><span class="pe-key-cpu" aria-hidden="true"></span>CPU only (no GPU)</li><li class="pe-leg-held"><span class="pe-key-held" aria-hidden="true"></span>held for 10 minutes</li><li>Bars run to 10×; a longer bar shows its number</li></ul>` +
+    PERF_MODELS.map(panel).join("") +
+    `<p class="pe-foot" aria-live="polite" data-pe-status>${count} published configurations, each measured on the named hardware and release. Select Details for the release, date and clip.</p></section>`;
+}
+
+// ---------------------------------------------------------------- credit calculator
+export function calcData(): CalcData {
+  const ps = plans().plans as CalcData["plans"];
+  return {
+    rates: { device: rateFor("self_hosted"), cloud: rateFor("hosted"), chat: chatRate() },
+    credits_per_usd: plans().topup.credits_per_usd,
+    plans: ps.map(({ id, name, monthly_usd, credits_per_month, cloud_concurrent_sessions }) => ({ id, name, monthly_usd, credits_per_month, cloud_concurrent_sessions })),
+  };
+}
+const CALC_MODES: { id: CalcMode; name: string; line: (d: CalcData) => string }[] = [
+  { id: "device", name: "On the device or your servers", line: (d) => `${perMinute(d.rates.device)}` },
+  { id: "cloud", name: "bitHuman cloud avatar", line: (d) => `${perMinute(d.rates.cloud)}` },
+  { id: "chat", name: "Managed voice chat, all-inclusive", line: (d) => `${perMinute(d.rates.chat)}` },
+];
+const CALC_DEFAULT = { mode: "device" as CalcMode, minutes: 60, days: 30, sessions: 1 };
+
+function creditCalculator(mode: Mode): string {
+  const d = calcData();
+  const examples = CALC_MODES.map((m) => {
+    const r = calculate(d, { ...CALC_DEFAULT, mode: m.id });
+    return [m.name, m.line(d), fmtInt(r.credits), fmtUsd(r.usd), r.plan ? r.plan.name : "Custom"];
+  });
+  const head = ["Mode", "Rate", "Credits a month", "At the top-up rate", "Smallest plan that covers it"];
+  if (mode === "twin") return `One avatar session running ${CALC_DEFAULT.minutes} minutes a day for ${CALC_DEFAULT.days} days, billed as active session time, talking or idle:\n\n${table(head, examples)}`;
+  const r0 = calculate(d, CALC_DEFAULT);
+  const radios = CALC_MODES.map((m) => `<label class="cc-mode"><input type="radio" name="cc-mode" value="${m.id}"${m.id === CALC_DEFAULT.mode ? " checked" : ""}><span><strong>${esc(m.name)}</strong><span>${esc(m.line(d))}</span></span></label>`).join("");
+  const num = (id: string, label: string, v: number, max: number, unit: string) =>
+    `<label class="cc-num"><span>${label}</span><span class="cc-in"><input type="number" inputmode="numeric" name="${id}" min="0" max="${max}" step="1" value="${v}"><span class="cc-unit">${unit}</span></span></label>`;
+  return `<form class="cc" data-calculator aria-label="Credit calculator" data-pagefind-ignore>` +
+    `<script type="application/json" data-calc>${JSON.stringify(d).replace(/</g, "\\u003c")}</script>` +
+    `<fieldset class="cc-modes"><legend>Where the avatar renders</legend>${radios}</fieldset>` +
+    `<div class="cc-nums">${num("minutes", "Minutes a day", CALC_DEFAULT.minutes, 1440, "min")}${num("days", "Days a month", CALC_DEFAULT.days, 31, "days")}${num("sessions", "Sessions at once", CALC_DEFAULT.sessions, 10000, "at once")}</div>` +
+    `<output class="cc-out" aria-live="polite" data-out><span class="cc-big"><span data-credits>${fmtInt(r0.credits)}</span> credits a month</span>` +
+    `<span class="cc-usd">About <span data-usd>${fmtUsd(r0.usd)}</span> at the top-up rate of $1 = ${d.credits_per_usd} credits</span>` +
+    `<span class="cc-plan" data-plan>${esc(planLine(r0, CALC_DEFAULT.mode))}</span></output>` +
+    `<p class="cc-note">Every mode bills active session time, talking or idle, to the second. <a href="/deploy/offline">Fully offline</a> is arranged through sales.</p></form>` +
+    `<div class="cc-examples"><p class="cc-ex-title">${CALC_DEFAULT.minutes} minutes a day, ${CALC_DEFAULT.days} days, one session at a time</p>` +
+    `<table><thead><tr>${head.map((h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${examples.map((row) => `<tr>${row.map((c, i) => (i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`)).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
 // ---------------------------------------------------------------- entry points
 /** The markdown for one block. `page` output may carry inline HTML chips. */
 export function blockMarkdown(lang: string, body: string, mode: Mode): string {
@@ -235,12 +353,26 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "dataflow": return dataflow(arg);
     case "price": return price(arg);
     case "session-caps": return sessionCaps();
+    case "perf-explorer": return perfExplorer(mode);
+    case "credit-calculator": return creditCalculator(mode);
     case "partial": {
       if (!/^[a-z0-9-]+$/.test(arg)) throw new Error(`\`\`\`partial: "${arg}" is not a partial name`);
       return readFileSync(join(process.cwd(), "src/partials", `${arg}.md`), "utf8").replace(/<!--[\s\S]*?-->\n?/g, "");
     }
   }
   throw new Error(`unknown block \`\`\`${lang}`);
+}
+
+/** The widget scripts a markdown page needs, from the blocks it places: the
+ *  explorer, the calculator, and the filter of a full matrix (a one-model or
+ *  one-place slice has none). */
+export function widgetsIn(md: string): Set<string> {
+  const out = new Set<string>();
+  for (const m of md.matchAll(/^```([a-z-]+)[ \t]*\n([\s\S]*?)^```[ \t]*$/gm)) {
+    const w = WIDGET_BLOCKS[m[1]];
+    if (w && !(m[1] === "model-matrix" && m[2].trim())) out.add(w);
+  }
+  return out;
 }
 
 /** The .md twin form: every block fence replaced by its plain markdown. */

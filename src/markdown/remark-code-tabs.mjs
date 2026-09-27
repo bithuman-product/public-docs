@@ -5,9 +5,17 @@
 //
 // Static at build time: with JavaScript off every panel shows, stacked under
 // its label; with it on (the `.js` class Base sets) one panel shows and the
-// tab bar switches them (src/scripts/md-tabs.ts), remembering the reader's
-// language across the site.
+// tab bar switches them (src/scripts/tabs-sync.ts).
+//
+// Each group has a key (`data-group`): `lang` (curl, Python, Node, Swift…),
+// `platform` (iOS & iPadOS, Android, Web…) or `model` (Essence 2, Expression 2),
+// inferred from its labels or named on the first fence with `group="platform"`.
+// A choice in one group switches every group with the same key on the site,
+// and is remembered (src/lib/ui-state.ts).
+import { groupOf, keyFor } from "../lib/ui-state.ts";
+
 const TAB = /\btab="([^"]+)"/;
+const GROUP = /\bgroup="(lang|platform|model)"/;
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 
 export default function remarkCodeTabs() {
@@ -25,13 +33,15 @@ export default function remarkCodeTabs() {
         i--;
         const g = `mdt-${++group}`;
         const labels = run.map((c) => TAB.exec(c.meta)[1]);
+        const name = GROUP.exec(run[0].meta || "")?.[1] ?? groupOf(labels);
+        const aria = { lang: "Code examples", platform: "Platform", model: "Model" }[name];
         const html = (value) => ({ type: "html", value });
         out.push(html(
-          `<div class="md-tabs" data-md-tabs><div class="mdt-bar" role="tablist" aria-label="Code examples">` +
-          labels.map((l, k) => `<button type="button" role="tab" class="mdt-tab" id="${g}-${k}" aria-controls="${g}-${k}-p" aria-selected="${k === 0}" tabindex="${k === 0 ? 0 : -1}" data-tab="${esc(l)}">${esc(l)}</button>`).join("") +
+          `<div class="md-tabs" data-md-tabs data-tabs data-group="${name}"><div class="mdt-bar" role="tablist" aria-label="${aria}">` +
+          labels.map((l, k) => `<button type="button" role="tab" class="mdt-tab" id="${g}-${k}" aria-controls="${g}-${k}-p" aria-selected="${k === 0}" tabindex="${k === 0 ? 0 : -1}" data-tab="${esc(l)}" data-key="${esc(keyFor(name, l))}">${esc(l)}</button>`).join("") +
           `</div>`));
         run.forEach((c, k) => {
-          c.meta = (c.meta || "").replace(TAB, "").trim() || null;
+          c.meta = (c.meta || "").replace(TAB, "").replace(GROUP, "").trim() || null;
           out.push(html(`<div class="mdt-panel${k === 0 ? " active" : ""}" role="tabpanel" id="${g}-${k}-p" aria-labelledby="${g}-${k}" data-tab="${esc(labels[k])}"><p class="mdt-label">${esc(labels[k])}</p>`));
           out.push(c);
           out.push(html(`</div>`));

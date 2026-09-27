@@ -151,6 +151,11 @@
   /* Chips: neutral surfaces; an icon, never a new brand colour, says the kind. */
   --chip-bg: var(--gray-50);
   --chip-border: var(--gray-200);
+  /* Charts (bars drawn from performance.json): one neutral ink, and green for
+     the configurations that render with no GPU. */
+  --bar: #3d4452;
+  --bar-2: #8a93a3;
+  --bar-cpu: #13804a;
 }
 
 /* ============================ DARK ============================ */
@@ -189,4 +194,7 @@
   --flow-egress: #6cb4ff;
   --chip-bg: #1a1a1f;
   --chip-border: #2e2e36;
+  --bar: #c7ccd6;
+  --bar-2: #6e7584;
+  --bar-cpu: #3fcf8e;
 }

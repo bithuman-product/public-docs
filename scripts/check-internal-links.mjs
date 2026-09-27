@@ -189,8 +189,9 @@ for (const f of walk(CONTENT, [".md", ".mdx"])) {
 }
 
 // --- 2c. The OpenAPI spec (served as /api/openapi.yaml, rendered at /api/reference) ---
-// Its descriptions link the docs by absolute URL and each other by Scalar anchor
-// (#tag/<name>, #operation/<id>, #tag/<name>/operation/<id>). None of that was
+// Its descriptions link the docs by absolute URL and each other by anchor
+// (#tag/<name>, #operation/<id>, #tag/<name>/operation/<id>; the static
+// reference page maps each to its own tag and operationId anchors). None of that was
 // checked: the spec carried a dead /deploy/self-hosted anchor and four links to
 // redirecting routes. Absolute docs URLs are held to the same rule as page links
 // (a known route, never a redirect source, and the heading anchor must exist), and

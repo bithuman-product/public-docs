@@ -24,6 +24,8 @@ export const QUERIES = [
   { q: "CPU", top: "/deploy/cpu", wave: "W2" },
   { q: "no GPU", top: "/deploy/cpu", wave: "W2" },
   { q: "WebGPU", top: "/platforms/web", wave: "W2" },
+  { q: "getShowcaseManifest", top: "/api/reference", wave: "W3" },
+  { q: "downloadAgentModel", top: "/api/reference", wave: "W3" },
 ];
 
 if (!existsSync(join(DIST, "pagefind/pagefind.js"))) { console.log("::error::no dist/pagefind — run npm run build first"); process.exit(2); }

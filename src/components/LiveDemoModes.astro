@@ -1,0 +1,56 @@
+---
+// Two more ways to try a sample avatar, built behind flags (src/data/flags.ts,
+// owner item O2) and rendered only when a flag is on:
+//   in this tab  the avatar renders in the visitor's tab with WebGPU
+//                (`render=local`). Offered only after a WebGPU adapter check,
+//                with the one-time download shown before anything loads.
+//   mirror       the avatar lip-syncs the visitor's own microphone in the tab,
+//                with no conversation (`rendering_mode=avatar`).
+// The session limits of <LiveDemo> apply unchanged: a click starts it, one at
+// a time, a visible time cap, and a recording when the live demo fails.
+interface Props { inTab: boolean; mirror: boolean }
+const { inTab, mirror } = Astro.props;
+---
+
+<fieldset class="ldm" data-demo-modes hidden>
+  <legend class="sr">Where the demo renders</legend>
+  <label><input type="radio" name="ld-mode" value="" checked /> bitHuman cloud</label>
+  {inTab && <label data-needs-gpu hidden><input type="radio" name="ld-mode" value="render=local" /> In this tab (WebGPU)</label>}
+  {mirror && <label data-needs-gpu hidden><input type="radio" name="ld-mode" value="rendering_mode=avatar" /> Mirror my voice</label>}
+  <p class="ldm-note" data-mode-note hidden>The avatar's web bundle downloads to this browser once (50–200 MB), then comes from the cache.</p>
+</fieldset>
+<p class="ldm-badge" data-mode-badge hidden></p>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-demo-modes]").forEach(async (box) => {
+    const root = box.closest<HTMLElement>("[data-live-demo]")!;
+    const note = box.querySelector<HTMLElement>("[data-mode-note]")!;
+    const badge = root.querySelector<HTMLElement>("[data-mode-badge]")!;
+    const s29 = root.querySelector<HTMLElement>("[data-s29]");
+    let gpu = false;
+    try { gpu = !!(await (navigator as any).gpu?.requestAdapter()); } catch (_) {}
+    if (!gpu) return; // no usable GPU: the demo stays in the bitHuman cloud, as it is without the flag
+    box.querySelectorAll<HTMLElement>("[data-needs-gpu]").forEach((l) => (l.hidden = false));
+    box.hidden = false;
+    const cloud = s29?.textContent ?? "";
+    box.addEventListener("change", (e) => {
+      const v = (e.target as HTMLInputElement).value;
+      root.dataset.query = v;
+      note.hidden = !v;
+      badge.hidden = false;
+      badge.textContent = v ? "Rendering: in this tab (WebGPU)" : "Rendering: bitHuman cloud";
+      if (s29) s29.textContent = v === "render=local"
+        ? "The avatar renders in this tab with WebGPU, and the conversation runs on bitHuman's servers."
+        : v ? "The avatar renders in this tab with WebGPU from your microphone; there is no conversation." : cloud;
+    });
+  });
+</script>
+
+<style>
+  .ldm { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin: 0; padding: 0; border: 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ldm[hidden], .ldm [hidden], .ldm-badge[hidden] { display: none; }
+  .ldm label { display: inline-flex; align-items: center; gap: var(--s-1); cursor: pointer; }
+  .ldm input { accent-color: var(--color-primary); }
+  .ldm-note { flex-basis: 100%; margin: 0; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .ldm-badge { margin: 0; font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text); }
+</style>
