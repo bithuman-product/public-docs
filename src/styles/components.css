@@ -148,8 +148,8 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 
 /* ---- the model cards on /models (the ```model-cards block) ---- */
 .prose ul.model-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.model-cards .card-model .card-title strong { font-size: var(--ft-xl); }
-@media (max-width: 1100px) { .prose ul.model-cards { grid-template-columns: 1fr; } }
+.model-cards .card-title strong { font-size: var(--ft-lg); }
+@media (max-width: 640px) { .prose ul.model-cards { grid-template-columns: 1fr; } }
 
 /* ---- the five deployment modes side by side (the ```deploy-matrix block) ---- */
 .prose ul.deploy-cards { list-style: none; margin: var(--s-5) 0 var(--s-3); padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
