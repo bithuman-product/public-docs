@@ -16,10 +16,10 @@ Every mode uses the same avatar and the same API secret. What changes is where t
 
 | | bitHuman cloud | Your servers | On the device | Fully offline |
 |---|---|---|---|---|
-| **The avatar renders** | on bitHuman's servers, in the US | on your Mac or Linux machines | on the iPhone, iPad, Mac or Android phone in front of the user, or in a WebGPU browser tab | on your Linux PCs and terminals |
-| **The conversation runs** | on bitHuman's voice service, with your own provider keys if you like | where you choose: the CLI's local conversation brain, your own services, or bitHuman's | where your app chooses; with the web embed, on bitHuman's servers | see [Fully offline](#fully-offline) |
-| **What reaches bitHuman** | the session's audio and conversation, to run it | a credential check at the start, the avatar download, and usage reports with no audio, video or conversation text | the same as your servers when you use your own voice and language services | see [Fully offline](#fully-offline) |
-| **Network** | required | needed to start; rendering continues through a drop of up to 5 minutes | the same as your servers | off the internet |
+| **The avatar renders** | on bitHuman's servers, in the US | on your Mac or Linux machines | on the phone, tablet or Mac in front of the user, or in a WebGPU browser tab | on your Linux PCs and terminals |
+| **The conversation runs** | on bitHuman's voice service, or with your provider keys | your choice: the local conversation brain, your services or bitHuman's | your app's choice; with the web embed, on bitHuman's servers | [see below](#fully-offline) |
+| **What reaches bitHuman** | the session's audio and conversation, to run it | a credential check, the avatar download, and usage reports with no audio, video or text | the same as your servers, with your own voice and language services | [see below](#fully-offline) |
+| **Network** | required | to start; rendering continues through a drop of up to 5 minutes | the same as your servers | off the internet |
 | **Models** | Essence 2, Expression 2, Essence 1, Expression 1 | Essence 2, Expression 2; Essence 1 on the CLI and Python | Essence 2, Expression 2 | Essence 1, Essence 2, Expression 2 |
 | **Plan** | Creator plan or higher | Creator plan or higher | Creator plan or higher | Business & Enterprise |
 

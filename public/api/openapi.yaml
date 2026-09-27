@@ -99,7 +99,7 @@ paths:
 
         **Agent creation is image-only.** Provide a portrait `image` (or let
         the prompt generate one) — bitHuman generates a **10-second
-        identity video internally**, authored to loop seamlessly (its
+        identity video internally**, authored to loop without a seam (its
         first and last frames match). A `video` field is rejected with
         `400 VIDEO_INPUT_NOT_SUPPORTED` before anything is billed.
 
@@ -207,7 +207,7 @@ paths:
                   description: >-
                     **Deprecated — omit it.** The internally generated
                     identity video is 10 seconds (authored to loop
-                    seamlessly); this parameter is ignored.
+                    without a seam); this parameter is ignored.
                 model:
                   type: string
                   enum: [essence-2, expression-2, auto, essence-1, expression-1, essence, expression]
@@ -284,7 +284,7 @@ paths:
             accepted model names), or a `video` input
             (`VIDEO_INPUT_NOT_SUPPORTED` — agent creation is image-only; the
             10-second identity video is generated internally so it loops
-            seamlessly; this rejection is rolling out platform-wide, so
+            without a seam; this rejection is rolling out platform-wide, so
             never send `video`). Rejected before dispatch; no credits
             charged.
           content:
@@ -306,7 +306,7 @@ paths:
                   value:
                     error:
                       code: "VIDEO_INPUT_NOT_SUPPORTED"
-                      message: "Agent creation is image-only. Provide a portrait `image`; bitHuman generates a 10-second idle/driver video internally so it loops seamlessly (first frame == last frame). Video input is not accepted for any model (essence-1, expression-1, essence-2, expression-2)."
+                      message: "Agent creation is image-only. Provide a portrait `image`; bitHuman generates a 10-second idle/driver video internally so it loops without a seam (first frame == last frame). Video input is not accepted for any model (essence-1, expression-1, essence-2, expression-2)."
                       httpStatus: 400
                     status: "error"
                     status_code: 400
@@ -927,7 +927,7 @@ paths:
 
         | model | what happens | prerequisites | credits | time |
         |---|---|---|---|---|
-        | `expression-1` | **instant enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
+        | `expression-1` | **immediate enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
         | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | the same training an `expression-2` creation runs — about 2–2.5 h (see [creation times](#operation/generateAgent)) |
         | `essence-2` | trains Essence 2 from the agent's stored identity video (generated internally at creation) | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | the same training an `essence-2` creation runs — about 2–2.5 h (see [creation times](#operation/generateAgent)) |
         | `essence-1` | builds the v1 `.imx` from the agent's stored identity video (or generates one internally from the stored image) | stored identity video or image | 250 | ~10–20 min |
@@ -964,7 +964,7 @@ paths:
       responses:
         "200":
           description: >-
-            Model added (`status: "ready"` — instant/already available) or the
+            Model added (`status: "ready"` — immediate or already available) or the
             add started (`status: "processing"` — poll supported_models).
           content:
             application/json:
@@ -982,7 +982,7 @@ paths:
                     enum: [ready, processing]
                   credits:
                     type: integer
-                    description: Credits charged for this add (0 for instant enablement / already available).
+                    description: Credits charged for this add (0 for immediate enablement or when already available).
                   supported_models:
                     type: array
                     items:
@@ -3898,7 +3898,7 @@ components:
           nullable: true
           description: >-
             The agent's identity video URL — generated internally at
-            creation (10 seconds, authored to loop seamlessly). Read-only
+            creation (10 seconds, authored to loop without a seam). Read-only
             output; video is never a creation input.
         video_path:
           type: string
@@ -4471,8 +4471,8 @@ tags:
     x-displayName: CLI (bithuman)
     description: "One binary for macOS Apple Silicon and Linux x86_64 — a live avatar in the browser or an MP4 render: [https://docs.bithuman.ai/platforms/cli](https://docs.bithuman.ai/platforms/cli)."
   - name: local-mode
-    x-displayName: Local mode (on-device brain)
-    description: "Swap the cloud conversation brain for an on-device one: [https://docs.bithuman.ai/platforms/cli/local-brain](https://docs.bithuman.ai/platforms/cli/local-brain)."
+    x-displayName: Local conversation brain
+    description: "Run the conversation brain on your own Mac or Linux machine instead of the cloud: [https://docs.bithuman.ai/platforms/cli/local-brain](https://docs.bithuman.ai/platforms/cli/local-brain)."
   - name: building-avatars
     x-displayName: Building avatars
     description: "Get a pre-built avatar or generate one from a portrait: [https://docs.bithuman.ai/build/create-avatar](https://docs.bithuman.ai/build/create-avatar)."

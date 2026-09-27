@@ -22,11 +22,11 @@ Checks the secret in the `api-secret` header. Always returns `200`; read `valid`
 
 ### Example
 
-```bash
+```bash tab="curl"
 curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
-```python
+```python tab="Python"
 import os, requests
 
 r = requests.post("https://api.bithuman.ai/v1/validate", headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]})

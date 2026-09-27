@@ -131,3 +131,6 @@ jobs:
 
       - name: No note to ourselves reaches a reader
         run: node scripts/check-served-comments.mjs --live "$ORIGIN"
+
+      - name: Every redirect is one 308 to a live page, and every old sitemap URL still answers
+        run: node scripts/check-redirects-live.mjs --origin "$ORIGIN"

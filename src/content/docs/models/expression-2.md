@@ -85,7 +85,7 @@ For production, omit it.
 ## Idle and speaking behavior
 
 During silences the avatar plays its **10-second idle clip**, generated from the
-identity at creation, looping forward-only and seamlessly. When speech starts,
+identity at creation, looping forward-only without a seam. When speech starts,
 the engine hands off to generated frames with a per-identity color match, so the
 two stay visually continuous; idle resumes only after sustained silence, not in
 pauses inside a sentence. A running session bills talking and idle time alike ([pricing](/pricing)).

@@ -70,7 +70,7 @@ Cache locations by surface:
 | Python | unpacked copies in `~/.cache/bithuman/avatars/`; engine files in `~/.bithuman/deps/` |
 | Swift (Expression on Mac/iPad) | `~/.cache/bithuman/expression/` |
 
-Downloads are integrity-verified and cached. Subsequent launches are instant.
+Downloads are integrity-verified and cached. Later launches skip the download.
 
 
 ## One container, one file per model

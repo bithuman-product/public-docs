@@ -124,7 +124,7 @@ a player instead of saving a file — handy for quick local testing:
 curl -sN -X POST https://api.bithuman.ai/v1/tts \
   -H "api-secret: $BITHUMAN_API_SECRET" \
   -H "content-type: application/json" \
-  -d '{"text": "Playing instantly.", "voice_code": "YOUR_VOICE_CODE"}' \
+  -d '{"text": "Playing right away.", "voice_code": "YOUR_VOICE_CODE"}' \
   | ffplay -autoexit -nodisp -i -
 ```
 

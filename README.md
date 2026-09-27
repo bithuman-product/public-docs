@@ -6,10 +6,6 @@ platform. A custom **Astro 6** site styled after
 light/dark, Shiki code, brand coral `#FF5757` + Roboto). The embedded API
 reference is rendered with **Scalar** at `/api/reference`.
 
-> Status: **rebuild in progress.** The landing page + design system are live;
-> pillar/section pages are being migrated from the old Mintlify docs
-> (`bithuman-product/bithuman-sdk-public/docs`) and the OpenAPI prose tags.
-
 ## Local dev
 
 ```bash
@@ -23,26 +19,30 @@ npm run build      # static output -> dist/
 
 ```
 src/
-  layouts/Base.astro     Shell: head/SEO, nav, footer, theme init
-  components/            Nav, Footer, Button, CodeTabs (Shiki), LiveAvatar, Stub
-  styles/                tokens.css (design tokens, light/dark) + global.css
-  pages/
-    index.astro          Landing page (OpenAI-style: hero + pillars + showcase)
-    api/reference.astro  Scalar API reference (renders public/api/openapi.yaml)
-    {api,sdk,...}/       Pillar + resource pages (stubs during migration)
-  openapi/bithuman.yaml  OpenAPI 3.1 spec -> synced to public/api/openapi.yaml
-public/
-  images/                Brand + agent imagery referenced across pages
+  content/docs/          The markdown pages; the file path is the URL
+  config/nav.ts          Sections, sidebar groups, header, Resources menu, footer
+  data/                  One source per fact: versions, pricing, platforms, demo avatars, offline copy
+  layouts/               Base (head, nav, footer) and DocLayout (sidebar, chips, Next, pager)
+  components/            Card, Chip, LiveDemo, CodeTabs, PerfHeadline and the rest of the design system
+  styles/                tokens.css (light/dark tokens), components.css, prose.css
+  pages/                 The home page, /start, the hubs, llms files and markdown twins
+  openapi/bithuman.yaml  OpenAPI spec -> synced to public/api/openapi.yaml
+scripts/                 The gates CI runs, and the generators (redirects, versions, pricing)
+STYLE.md                 The style guide: voice, terminology, claims, templates, budgets
 ```
 
 ## Information architecture
 
-Two product pillars + resources, mirroring developers.openai.com:
+Organized by the developer's question. The header is Get started · Platforms · Deploy · Models · Build · API · Performance, then Resources.
 
-- **API Platform** (`/api`) — REST: agents, Voice/TTS, dynamics, embedding + the Scalar reference
-- **SDK** (`/platforms`) — Python, Swift (Apple), JS/TS, and the CLI
-- **Showcase** (`/showcase`) — live demo agents + forkable reference apps
-- **Resources** — Examples, Changelog, Downloads, Community
+- **Get started** (`/start`): the quickstart, the API secret.
+- **Platforms** (`/platforms`): iOS & iPadOS, Android, Web, Python, the CLI, LiveKit, REST, and the SDK references.
+- **Deploy** (`/deploy`): the bitHuman cloud, your servers, on the device, CPU only (no GPU), fully offline, and pricing.
+- **Models** (`/models`): Essence 2, Expression 2, the first generation, how it works, the avatar file.
+- **Build** (`/build`): create your own avatar, persona, voices, recipes, and the example gallery (`/examples`).
+- **API** (`/api`), **Performance** (`/performance`), **Resources** (`/resources`).
+
+A page that moves gets a row in `scripts/ia-map.json`; `node scripts/gen-redirects.mjs` regenerates the redirects in `vercel.json`, and CI checks them before and after each deploy.
 
 ## API reference
 

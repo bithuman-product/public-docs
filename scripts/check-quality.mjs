@@ -3,11 +3,11 @@
 // Lighthouse (mobile preset) on representative pages. Lighthouse's
 // accessibility category is axe-core, so a 100 there is 0 axe violations.
 //
-//   node scripts/check-quality.mjs [--pages / /start /platforms ...] [--perf-min 90]
+//   node scripts/check-quality.mjs [--pages / /start /platforms ...] [--perf-min 95]
 //
-// Fails when accessibility < 100, SEO < 100, best practices < 95, or
-// performance < --perf-min (default 90; the target is 95, and a page between
-// the two is reported). Needs Chrome and `npx lighthouse`.
+// Fails when accessibility, SEO or best practices are below 100, or
+// performance is below --perf-min (default 95, the docs spec's budget).
+// Needs Chrome and `npx lighthouse`.
 import { createServer } from "node:http";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
@@ -19,14 +19,14 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const DIST = join(ROOT, "dist");
 const args = process.argv.slice(2);
 const flag = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
-const PERF_MIN = Number(flag("--perf-min", "90"));
+const PERF_MIN = Number(flag("--perf-min", "95"));
 const pi = args.indexOf("--pages");
 const PAGES = pi >= 0 ? args.slice(pi + 1).filter((a) => a.startsWith("/")) :
-  ["/", "/start", "/platforms", "/platforms/python", "/api/agents", "/examples", "/performance"];
+  ["/", "/start", "/platforms", "/platforms/python", "/platforms/web", "/deploy", "/models/essence-2", "/api/agents", "/examples", "/performance"];
 
 if (!existsSync(join(DIST, "index.html"))) { console.log("::error::no dist/ — run npm run build first"); process.exit(2); }
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json",
-  ".webp": "image/webp", ".png": "image/png", ".svg": "image/svg+xml", ".mp4": "video/mp4", ".md": "text/markdown", ".txt": "text/plain",
+  ".webp": "image/webp", ".avif": "image/avif", ".png": "image/png", ".svg": "image/svg+xml", ".mp4": "video/mp4", ".md": "text/markdown", ".txt": "text/plain",
   ".woff2": "font/woff2", ".xml": "application/xml", ".yaml": "text/yaml", ".wav": "audio/wav" };
 const server = createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
@@ -56,7 +56,9 @@ let fail = 0;
 for (const page of PAGES) {
   let report;
   try {
-    report = await lighthouse(base + page);
+    // A run that crashes (Chrome can die under a busy runner) is retried once;
+    // two crashes in a row are a failure.
+    try { report = await lighthouse(base + page); } catch { report = await lighthouse(base + page); }
     if (scores(report).performance < PERF_MIN) {
       const again = await lighthouse(base + page);
       console.log(`  (${page}: performance ${scores(report).performance} on the first run, ${scores(again).performance} on the second; keeping the better)`);
@@ -71,7 +73,7 @@ for (const page of PAGES) {
   const faults = [];
   if (s.accessibility < 100) faults.push(`accessibility ${s.accessibility} < 100`);
   if (s.seo < 100) faults.push(`SEO ${s.seo} < 100`);
-  if (s["best-practices"] < 95) faults.push(`best practices ${s["best-practices"]} < 95`);
+  if (s["best-practices"] < 100) faults.push(`best practices ${s["best-practices"]} < 100`);
   if (s.performance < PERF_MIN) faults.push(`performance ${s.performance} < ${PERF_MIN}`);
   const failing = Object.entries(report.audits)
     .filter(([, a]) => a.score !== null && a.score < 1 && ["binary"].includes(a.scoreDisplayMode))
