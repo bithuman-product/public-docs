@@ -44,7 +44,7 @@ The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostn
 
 1. `BITHUMAN_API_SECRET` in the environment
 2. `BITHUMAN_API_KEY` in the environment (a deprecated alias; read until CLI 3.0, no earlier than 2026-12-26)
-3. A `.env` file in the working directory: its `BITHUMAN_API_SECRET` line, else its `BITHUMAN_API_KEY` line (the deprecated alias). No other line of the file is read.
+3. A `.env` file in the working directory: its `BITHUMAN_API_SECRET` line, else its `BITHUMAN_API_KEY` line (the deprecated alias). No other line of the file is read. Deprecated: the CLI prints a notice when it uses this file, and CLI 2.9 stops reading it; export `BITHUMAN_API_SECRET` or run `bithuman login` once.
 4. `~/.bithuman/config`, written by `bithuman login`
 
 `bithuman account --json` reports which of these supplied the secret.
@@ -105,7 +105,6 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | Variable | Effect |
 |---|---|
 | `BITHUMAN_API_SECRET` | Your API secret (`BITHUMAN_API_KEY` is a deprecated alias) |
-| `BITHUMAN_API_BASE` | API base URL: `https://api.bithuman.ai` (the default) or another `https://*.bithuman.ai` address; any other value is ignored with a notice |
 | `BITHUMAN_CACHE_DIR` | Cache root (default `~/.cache/bithuman`) |
 | `BITHUMAN_ALLOW_PUBLIC_BIND` | `1` lets `run --host 0.0.0.0` listen on every interface |
 | `OPENAI_API_KEY` | Use OpenAI Realtime as the conversation brain |
@@ -250,5 +249,6 @@ The old spellings still work for now. Each prints one line on stderr naming what
 | `run --cloud`, `--offscreen`, `--frames`, `--embedded-livekit`, `--livekit-*` | not needed: `run <avatar>` picks and starts what it needs; frames without a window come from `render --limit N` |
 | `chat`, `info`, `avatars`, `list --agents` | `run`, `open`, `list`, `list --mine` |
 | `list --limit/--offset/--status`, `account --start/--end/--agent` | the full list; filter the `--json` output |
-| `--api-base`, `--dest` | `BITHUMAN_API_BASE`, `BITHUMAN_CACHE_DIR` |
+| `--api-base` | not needed: the CLI talks to `https://api.bithuman.ai` |
+| `--dest` | `BITHUMAN_CACHE_DIR` |
 | `--quiet`, `--no-color`, `BITHUMAN_JSON/QUIET/NO_COLOR` | `--json`, `NO_COLOR=1` |

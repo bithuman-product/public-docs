@@ -26,7 +26,7 @@ In bitHuman's cloud, and on your own hardware through:
 
 - **Python** — `pip install bithuman` opens an Essence 1 `.imx` with no extra;
   see the [Python SDK](/sdk/python).
-- **The CLI** — `bithuman run` on macOS Apple Silicon and Linux x86_64; see the
+- **The CLI** — `bithuman run` on macOS Apple Silicon and Linux x86_64 and arm64; see the
   [CLI](/sdk/cli). `render` does not take Essence 1 — use the Python SDK or the
   [Video API](/api/video) for a file.
 - **The browser** — [`?render=local`](/sdk/web#integrate-into-your-app).
