@@ -29,7 +29,7 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/index.astro",
     name: "bitHuman docs",
     description:
-      "Realtime talking avatars from one portrait: Essence 2 for photoreal people, Expression 2 for any character. Run them from the cloud API, the web, the CLI, Python, Apple, Android and LiveKit.",
+      "Build realtime AI avatars that run on iPhone, Android, Mac, Linux and in the browser, on your own servers, or fully offline on Business and Enterprise plans. Essence 2 and Expression 2.",
   },
   {
     route: "start",
