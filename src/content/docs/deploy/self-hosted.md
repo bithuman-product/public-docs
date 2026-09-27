@@ -25,7 +25,7 @@ Each page below is the one place its install, model download and code live.
 | A talking avatar or an MP4 on a Mac or Linux box, no code | [CLI](/platforms/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
 | A voice agent on your own LiveKit server, rendered on your machine | [Talk to an avatar on your machine](/build/voice-agent) | Essence 2, Expression 2 |
 | Frames or MP4 clips from your own code | [Python SDK](/platforms/python) | Essence 2, Expression 2, Essence 1 |
-| An iPhone, iPad or Mac app | [Apple SDK](/platforms/ios) | Essence 2, Expression 2 |
+| An iPhone, iPad or Mac app | [iOS & iPadOS](/platforms/ios) | Essence 2, Expression 2 |
 | An Android app | [Android SDK](/platforms/android) | Essence 2, Expression 2 |
 | Rendering in your visitor's browser tab | [Web](/platforms/web) (`?render=local`) | Essence 2, Expression 2, Essence 1 |
 

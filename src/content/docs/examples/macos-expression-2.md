@@ -86,4 +86,4 @@ while let (frame, _) = engine.pull() { /* 416×720 BGR, 3 bytes per pixel */ }
 
 ## Next
 
-- [iOS example](/examples/ios-expression-2) · [Apple SDK](/platforms/ios) · [CLI example](/platforms/cli#complete-example) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)
+- [iOS example](/examples/ios-expression-2) · [iOS & iPadOS](/platforms/ios) · [CLI example](/platforms/cli#complete-example) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)

@@ -32,10 +32,10 @@
   transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
 a.card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-a.card:hover .card-title :is(h2, h3, h4) { color: var(--color-primary); }
+a.card:hover .card-title :is(h2, h3, h4, strong) { color: var(--color-primary); }
 .card-body { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; flex: 1; }
 .card-title { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); }
-.card-title :is(h2, h3, h4) { margin: 0; font-size: var(--ft-md); font-weight: var(--fw-bold); letter-spacing: -0.01em; line-height: var(--lh-snug); color: var(--color-text); transition: color var(--t-fast) var(--ease); }
+.card-title :is(h2, h3, h4, strong) { margin: 0; font-size: var(--ft-md); font-weight: var(--fw-bold); letter-spacing: -0.01em; line-height: var(--lh-snug); color: var(--color-text); transition: color var(--t-fast) var(--ease); }
 .card-line { font-size: var(--ft-sm); line-height: var(--lh-snug); color: var(--color-text-secondary); }
 .card-note { font-size: var(--ft-sm); line-height: var(--lh-snug); font-weight: var(--fw-medium); color: var(--color-text); }
 .card-chips { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-2); margin-top: auto; padding-top: var(--s-1); }
@@ -44,17 +44,18 @@ a.card:hover .card-title :is(h2, h3, h4) { color: var(--color-primary); }
   border-radius: var(--r-md); background: var(--color-primary-soft); color: var(--color-primary);
 }
 .card-ext { position: absolute; top: var(--s-4); right: var(--s-4); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-.card-media { display: block; overflow: hidden; border-radius: var(--r-md); background: var(--color-surface-2); }
-.card-media img { display: block; width: 100%; height: auto; }
+.card-figure { display: block; overflow: hidden; border-radius: var(--r-md); background: var(--color-surface-2); }
+.card-figure img { display: block; width: 100%; height: auto; }
 /* wide: icon beside the text */
 .card-wide { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-4); align-items: start; }
 .card-wide .card-line { max-width: 72ch; }
 /* media: a poster above the text */
-.card-media.card-media { margin: calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) var(--s-1); border-radius: var(--r-lg) var(--r-lg) 0 0; }
+.card-media { overflow: hidden; }
+.card-media .card-figure { margin: calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) var(--s-1); border-radius: var(--r-lg) var(--r-lg) 0 0; }
 /* model: a portrait beside the text */
 .card-model { flex-direction: row; align-items: stretch; gap: var(--s-5); padding: var(--s-3); }
-.card-model .card-media { margin: 0; width: 132px; flex: none; align-self: center; border-radius: var(--r-md); }
-.card-model .card-media img { aspect-ratio: 4 / 5; height: auto; object-fit: cover; object-position: 50% 15%; }
+.card-model .card-figure { margin: 0; width: 132px; flex: none; align-self: center; border-radius: var(--r-md); }
+.card-model .card-figure img { aspect-ratio: 4 / 5; height: auto; object-fit: cover; object-position: 50% 15%; }
 .card-model .card-body { justify-content: center; padding: var(--s-2) var(--s-3) var(--s-2) 0; }
 .card-model .card-title :is(h2, h3) { font-size: var(--ft-xl); }
 /* platform: icon above, version chip at the foot */
@@ -63,9 +64,9 @@ a.card:hover .card-title :is(h2, h3, h4) { color: var(--color-primary); }
 @media (max-width: 560px) {
   .card { padding: var(--s-4); }
   .card-model { padding: var(--s-3); gap: var(--s-3); }
-  .card-model .card-media { width: 88px; align-self: flex-start; }
+  .card-model .card-figure { width: 88px; align-self: flex-start; }
   .card-model .card-title :is(h2, h3) { font-size: var(--ft-lg); }
-  .card-media.card-media { margin: calc(-1 * var(--s-4)) calc(-1 * var(--s-4)) var(--s-1); }
+  .card-media .card-figure { margin: calc(-1 * var(--s-4)) calc(-1 * var(--s-4)) var(--s-1); }
 }
 @media (prefers-reduced-motion: reduce) { .card, a.card:hover { transition: none; transform: none; } }
 
