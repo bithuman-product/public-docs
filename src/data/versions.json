@@ -2,7 +2,7 @@
   "schema": 1,
   "about": "The current published version and install line of every bitHuman artifact.",
   "versions": {
-    "cli": "2.8.0",
+    "cli": "2.8.1",
     "python": "2.11.14",
     "swift": "2.17.3",
     "essence2_engine": "1.14.2",
