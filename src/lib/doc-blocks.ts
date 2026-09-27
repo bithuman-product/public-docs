@@ -81,8 +81,9 @@ function perfBlock(ids: string[], mode: Mode): string {
     return [name, ...PERF_MODELS.map((m) => xrtHtml(id, m.id))];
   });
   const head = mode === "twin" ? ["Configuration", "Hardware", ...PERF_MODELS.map((m) => m.name), "Measured"] : ["Configuration", ...PERF_MODELS.map((m) => m.name)];
-  const note = `Times real time: seconds of avatar video rendered per second. At 1.0× or more, an avatar holds a live conversation.` +
-    (mode === "page" ? " Select a figure for its release and date." : "") + ` [All configurations and how we measure](${more}).`;
+  const note = mode === "page"
+    ? `Times real time: seconds of avatar video rendered per second. At 1.0× or more, an avatar holds a live conversation. Select a figure for its release and date. [All configurations and how we measure](${more}).`
+    : `× real time: seconds of video rendered per second; 1.0× or more holds a live conversation ([method](${more})).`;
   return `${table(head, rows)}\n${note}\n`;
 }
 
@@ -105,7 +106,7 @@ function whyBlock(platform: string, mode: Mode): string {
   const key = WHY_FOR[platform];
   if (!key) throw new Error(`\`\`\`why-on-device: unknown platform "${platform}" (${Object.keys(WHY_FOR).join(", ")})`);
   const lines = WHY[key]();
-  if (mode === "twin") return `**Why render on the device**\n\n${lines.map((l) => `- **${l.title}:** ${l.text}`).join("\n")}\n`;
+  if (mode === "twin") return `Why render on the device:\n\n${lines.map((l) => `- ${l.title}: ${l.text}`).join("\n")}\n`;
   const link = (s: string) => s.replace(/\[([^\]]+)\]\((\/[^)]*)\)/g, (_, t, h) => `<a href="${h}">${t}</a>`);
   return `<aside class="why" aria-label="Why render on the device"><p class="why-title">Why render on the device</p><ul>` +
     lines.map((l) => `<li><strong>${esc(l.title)}</strong><span>${link(inlineHtml(l.text))}</span></li>`).join("") + `</ul></aside>`;
