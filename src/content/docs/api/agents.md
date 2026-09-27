@@ -32,7 +32,7 @@ An agent is an avatar (face, voice and persona) identified by a short code such 
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | always send it | `essence-2` (a photoreal person), `expression-2` (any character), `auto` (the platform picks from the image), `essence-1` or `expression-1`. Omitted, the API creates an `expression-1` agent |
+| `model` | string | always send it | `essence-2` (a photoreal person), `expression-2` (any character), `auto` (the platform picks from the image), `essence-1` or `expression-1`. Omitted, the API still creates an `expression-1` agent and warns (`MODEL_DEFAULT_DEPRECATED`); **from 2026-12-26 `model` is required**, and the bare names `essence` and `expression` (and the `version` field) are refused with a `400` naming the replacement. |
 | `image` | string | no | Portrait URL (publicly fetchable) or base64. Used as a reference; a portrait is generated from `prompt` when omitted |
 | `prompt` | string | no | System prompt and personality |
 | `audio` | string | no | Voice sample URL or base64, for voice cloning |
