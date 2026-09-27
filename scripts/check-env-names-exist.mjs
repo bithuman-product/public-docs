@@ -54,12 +54,12 @@ const UA = "bithuman-public-docs-env-name-check (+https://github.com/bithuman-pr
 // exactly the kind of confident wrong answer this check exists to prevent.
 //
 // ★DISCOVERED, NOT LISTED, and that is the point. A hardcoded list cannot tell
-// you it has gone incomplete: add sdk/cli/serve.md tomorrow and a stale list
+// you it has gone incomplete: add platforms/cli/serve.md tomorrow and a stale list
 // grades two pages, finds nothing wrong, and prints the same green as a full
 // run. Under-coverage and a clean bill of health are indistinguishable in the
 // output, which is the failure this whole file exists to argue against. So the
 // corpus is read off disk every run and PRINTED, and an empty one refuses.
-const PAGE_ROOT = "src/content/docs/sdk";
+const PAGE_ROOT = "src/content/docs/platforms";
 function cliPages(root = ROOT) {
   const pages = [];
   const top = join(root, PAGE_ROOT, "cli.md");
