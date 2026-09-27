@@ -14,6 +14,7 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 | Date | Artifact | Change | What to do |
 |---|---|---|---|
+| CLI 2.9 (announced 2026-09-27) | CLI | the CLI stops reading the API secret from a `.env` file in the working directory | export `BITHUMAN_API_SECRET`, or run `bithuman login` once |
 | 2026-12-26 (announced 2026-09-27) | REST API | `POST /v1/agent/generate` requires `model`; the bare names `essence` / `expression` and the `version` field are refused with a `400` | send `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1` |
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
@@ -29,6 +30,18 @@ What changed in each release, newest day first (grouped by artifact within a day
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## September 2026
+
+### CLI 2.8.2 — 2026-09-27
+
+Tag `cli-v2.8.2`.
+
+- **Changed:** `bithuman run <CODE>` with a code that is not one of your agents plays the free gallery avatar with that code, the way `pull`, `render` and `open` already did.
+- **Changed:** `bithuman open` names the model (for example Essence 2 or Expression 2). Asking `pull` for a model a gallery avatar does not have names the models it does have (`MODEL_NOT_GENERATED`).
+- **Changed:** with `BITHUMAN_LOCAL=1`, `run` checks that the on-device voice packages are installed before the session starts, and prints the one command that installs them.
+- **Deprecated:** reading the API secret from a `.env` file in the working directory prints a notice; CLI 2.9 stops reading it. Export `BITHUMAN_API_SECRET`, or run `bithuman login` once.
+- **Deprecated:** `BITHUMAN_API_KEY` names its end: CLI 3.0, no earlier than 2026-12-26. Rename it to `BITHUMAN_API_SECRET` (same value).
+- **Changed:** `BITHUMAN_API_BASE` is no longer a documented setting; the CLI talks to `https://api.bithuman.ai`.
+- **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
 
 ### Flutter plugin 2.6.20 — 2026-09-27
 
