@@ -105,6 +105,8 @@ if (section === "platforms" && data.type === "platform") {
 const hasChips = !!(data.availability || data.renders?.length || data.needs?.length || data.artifacts?.length);
 const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
 // On a hub the comparison comes first and the demo closes the page (under its "Try it" section).
+// Under the lede the demo's poster is the largest thing on screen, so it loads eagerly
+// with high priority (a lazy image waits for layout and costs the page its LCP).
 const demoAtEnd = data.type === "hub";
 // Release notes are records and the generated references are lookups: both
 // searchable, but ranked below the pages a reader starts from.
@@ -159,7 +161,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
             {(data.artifacts ?? []).map((a: any) => <VersionBadge artifact={a} />)}
           </div>
         )}
-        {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
+        {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} eager /></div>}
         <div class="doc-body"><slot /></div>
         {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>

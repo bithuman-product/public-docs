@@ -12,6 +12,7 @@ import { createServer } from "node:http";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
 import { execFile } from "node:child_process";
+import { gzipSync } from "node:zlib";
 import { promisify } from "node:util";
 const run = promisify(execFile);   // async: the static server must keep answering while Lighthouse runs
 
@@ -39,8 +40,18 @@ const server = createServer((req, res) => {
   if (existsSync(f) && statSync(f).isDirectory()) f = join(f, "index.html");
   else if (!existsSync(f) && existsSync(f + ".html")) f += ".html";
   if (!existsSync(f)) { res.writeHead(404); res.end(); return; }
-  res.writeHead(200, { "Content-Type": TYPES[extname(f)] ?? "application/octet-stream" });
-  res.end(readFileSync(f));
+  // Compressed like production: docs.bithuman.ai serves text gzip/brotli, and an
+  // uncompressed 90 KB page read ~0.4 s slower on Lighthouse's slow-4G model than
+  // any visitor sees it, which made the score swing around the bar between runs.
+  const type = TYPES[extname(f)] ?? "application/octet-stream";
+  const body = readFileSync(f);
+  if (/^(text\/|application\/(json|xml)|image\/svg)/.test(type) && /\bgzip\b/.test(req.headers["accept-encoding"] ?? "")) {
+    res.writeHead(200, { "Content-Type": type, "Content-Encoding": "gzip", Vary: "Accept-Encoding" });
+    res.end(gzipSync(body));
+    return;
+  }
+  res.writeHead(200, { "Content-Type": type });
+  res.end(body);
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const base = `http://127.0.0.1:${server.address().port}`;
