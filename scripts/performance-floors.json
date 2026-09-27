@@ -5,7 +5,7 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "e92db04e0fdd2a46087fec23b691d2776ec57676f22516f2815aff3e5b2b2084",
+  "record_sha256": "b51c9fb3a8cc7e056d5c88055ff344f05777ed8b9b399c0451995f8f6bffb31e",
   "emitter_sha256": "9f0ba775536bf973302d079c488ae7655010e34331f98db3fd85b00d9ba92287",
   "verified_on": "2026-09-27",
   "stale_after_days": 30,
@@ -13,7 +13,7 @@
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "22faaf9125eb2a276963e69e7745b11c046c89798b299a4cc1f26962b5ff0016"
+    "sha256": "fcb268061d6f4a8c5f654a344aaaee86051f2c0af127f8a201572576dc3e9a92"
   },
   "blocks": [
     {
@@ -49,7 +49,7 @@
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "0ffde7b6f7911b0d65a6d33f882df11ae83eecc32e16db0724cec9160dba8fcc"
+      "sha256": "a9c21fc7293a52eab122ce93e9ab6d6585c3a2389599b84e8109b99e0dfcc823"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -84,7 +84,7 @@
       "marker": "RELEASES",
       "key": "mobile",
       "index": 0,
-      "sha256": "00dc5277dd7068e6bd1587b8c5ddfb5ed7551b5db61c506a9c35814284f0ee15"
+      "sha256": "70c1db514340e5699f6aa61589b5be8164727b60d21a1a4ab1f7c4dac305bbd6"
     },
     {
       "file": "src/content/docs/performance/mobile.md",
