@@ -4,7 +4,7 @@
 //
 // WHY THIS EXISTS
 // ---------------
-// MEASURED on src/content/docs/sdk/android.md as it stood on 2026-09-21, at
+// MEASURED on src/content/docs/platforms/android.md as it stood on 2026-09-21, at
 // 188 lines:
 //
 //   Expression 2 had `## Install` with a copyable
@@ -17,8 +17,8 @@
 //   NOT pending: examples/kotlin-android-hello.md had carried the complete
 //   Essence 2 project, every file, since 0.5.12 landed.
 //
-//   THREE other pages deep-linked readers to `/sdk/android#troubleshooting` to
-//   find that coordinate: downloads.md once, concepts/essence-2.md twice. A
+//   THREE other pages deep-linked readers to `/platforms/android#troubleshooting` to
+//   find that coordinate: downloads.md once, models/essence-2.md twice. A
 //   developer asking "how do I ship Essence 2 on Android" was sent, by our own
 //   links, into a defect list.
 //
@@ -53,7 +53,7 @@
 //
 // WHAT IT CHECKS, for every src/content/docs/sdk/*.md that ships 2+ models, and
 // for each model it ships, against that model's own column of the lead table:
-//   R1  what it is   — a link to /concepts/<slug>
+//   R1  what it is   — a link to /models/<slug>
 //   R2  devices      — a device or OS floor (minSdk N, iOS N, arm64, Apple Silicon)
 //   R3  dependency   — the copyable dependency line for THAT model
 //   R4  credential   — a credential answer, and the page links somewhere to get one
@@ -91,7 +91,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const SDK = join(ROOT, "src/content/docs/sdk");
+const SDK = join(ROOT, "src/content/docs/platforms");
 
 // The prose spelling and the API slug are vocabulary, fixed by STYLE.md; which
 // of them a PAGE ships is derived from the page. `dep` is the copyable form,
@@ -120,7 +120,7 @@ const PROMISE = /\b(?:is|are)\s+pending\b|\bnot written yet\b|\bcoming soon\b|\b
 /* ─────────────────────────────────── R8 ──────────────────────────────────
  * THE LOWEST VERSION A PAGE PRINTS IS THE ONE SOME READER WILL TYPE.
  *
- * Measured on src/content/docs/sdk/ios.md at origin/main 24a1593, the commit
+ * Measured on src/content/docs/platforms/ios.md at origin/main 24a1593, the commit
  * whose whole purpose was raising the SwiftPM floor from 2.11.0 to 2.13.8. The
  * copyable block was raised. Fourteen lines below it the page still said:
  *
@@ -324,7 +324,7 @@ function gradePage(name, md) {
     const miss = (r, what) => {
       if (!r.test(col)) found.push(`${name}: ${m.prose} column of the lead table does not answer ${what}.`);
     };
-    miss(new RegExp(`\\(/concepts/${m.slug}\\)`), "R1 what it is (a link to /concepts/" + m.slug + ")");
+    miss(new RegExp(`\\(/models/${m.slug}\\)`), "R1 what it is (a link to /models/" + m.slug + ")");
     miss(/minSdk\s*`?\s*\d+|iOS\s+\d+|iPadOS\s+\d+|macOS\s+\d+|Apple Silicon|arm64/i, "R2 which devices");
     if (!m.dep.some((re) => re.test(col))) {
       found.push(`${name}: ${m.prose} column of the lead table carries no copyable dependency line.`);
@@ -401,7 +401,7 @@ Lead sentence.
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [a scene](/concepts/expression-2) | [your portrait](/concepts/essence-2) |
+| **What renders** | [a scene](/models/expression-2) | [your portrait](/models/essence-2) |
 | **Devices** | arm64, minSdk 26 | arm64, minSdk 29 |
 | **Dependency line** | \`implementation("ai.bithuman:expression2-android:0.4.7")\` | \`implementation("ai.bithuman:essence2-android:0.5.12")\` |
 | **Credential** | none | required, a key |
@@ -453,7 +453,7 @@ implementation("ai.bithuman:expression2-android:0.4.7")
 | you want Essence 2 on Android | the coordinate is \`implementation("ai.bithuman:essence2-android:0.5.12")\` — published and measured; a walkthrough is pending | use \`0.5.12\` |
 `;
 
-// ★THE REAL DEFECT R8 WAS WRITTEN FOR. src/content/docs/sdk/ios.md at
+// ★THE REAL DEFECT R8 WAS WRITTEN FOR. src/content/docs/platforms/ios.md at
 // origin/main 24a1593 — the commit that raised the floor to 2.13.8 — still told
 // the reader, fourteen lines under the raised block, that the number it had just
 // removed "resolves it for you". Both gates that grade versions were green on
@@ -468,12 +468,12 @@ Lead.
 
 | | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [a scene](/concepts/expression-2) | [your portrait](/concepts/essence-2) |
+| **What renders** | [a scene](/models/expression-2) | [your portrait](/models/essence-2) |
 | **Devices** | any Apple Silicon iPhone, iOS 16 | any Apple Silicon iPhone, iOS 26 |
 | **Product** | \`.product(name: "Expression2", package: "homebrew-bithuman")\` | \`.product(name: "Essence2", package: "homebrew-bithuman")\` |
 | **Credential** | none | none |
 | **Download** | 355 MB | 250 MB |
-| **Example** | [one](/examples/swift-ios-expression2) | [two](/examples/swift-ios-essence2) |
+| **Example** | [one](/examples/ios-expression-2) | [two](/examples/ios-essence-2) |
 
 ## Install
 Keys are free at [your API keys](https://www.bithuman.ai/developer/api-keys).
@@ -616,7 +616,7 @@ function pages() {
   }
   return readdirSync(SDK)
     .filter((f) => f.endsWith(".md"))
-    .map((f) => [`sdk/${f}`, readFileSync(join(SDK, f), "utf8")]);
+    .map((f) => [`platforms/${f}`, readFileSync(join(SDK, f), "utf8")]);
 }
 
 if (process.argv.includes("--selftest")) selftest();

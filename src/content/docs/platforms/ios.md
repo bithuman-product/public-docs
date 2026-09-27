@@ -1,29 +1,31 @@
 ---
-title: "Apple"
-description: "Add an Essence 2 or Expression 2 avatar to an iPhone, iPad or Mac app. One Swift package; both models render on the device."
-section: sdk
-group: "Platforms"
-order: 30
+title: "iOS & iPadOS"
+description: "The Swift package renders Essence 2 and Expression 2 on the device in iOS and iPadOS apps, and in Mac apps: one package, both models, no render server."
+section: platforms
+group: "Apps"
+order: 10
 type: platform
-slug: sdk/apple
-label: "Apple (iOS, iPadOS, macOS)"
+renders: ["device"]
+artifacts: ["swift"]
+platforms: ["ios", "ipados", "macos"]
+next: ["/examples/ios-expression-2", "/examples/ios-essence-2", "/platforms/swift/reference"]
 ---
 
 One Swift package carries both models. Both models render on the device and bill session time to your API secret.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
+| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), up to 1080p at 25 fps |
 | **Devices** | any Apple silicon iPhone, iPad or Mac; iOS 16 / macOS 13 | any Apple silicon iPhone, M-series iPad, M3 or newer Mac; iOS 26 / macOS 26 |
 | **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2Kit", package: "homebrew-bithuman")` (Swift), or `.product(name: "Essence2", package: "homebrew-bithuman")` (C) |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 370 MB (avatar + shared engine) | about 250 MB (avatar + engine resources) |
 | **API** | Swift (`Expression2Engine`) | Swift (`Essence2Engine`), or C (`be_essence2_*`) |
-| **Worked example** | [iOS: Expression 2](/examples/swift-ios-expression2) | [iOS: Essence 2](/examples/swift-ios-essence2) |
+| **Worked example** | [iOS: Expression 2](/examples/ios-expression-2) | [iOS: Essence 2](/examples/ios-essence-2) |
 
 Toolchain: Xcode 26 or newer, an Apple Developer team, and a physical device for iPhone builds. On a Mac, `swift run` is enough: no device, profile or entitlement.
 
-Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/sdk/python) or [CLI](/sdk/cli) on a desktop. See [Essence 1](/concepts/essence-1).
+Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/platforms/python) or [CLI](/platforms/cli) on a desktop. See [Essence 1](/models/first-generation#essence-1).
 
 ## Install
 
@@ -50,7 +52,7 @@ Every product ships `ios-arm64`, `ios-arm64-simulator` (arm64 only) and `macos-a
 
 Set `BITHUMAN_API_SECRET` in the scheme's environment, or pass it in code before you create an engine: `Expression2Credential.set(secret)` or `Essence2Credential.set(secret)`. See [Your API secret](/start/api-secret).
 
-Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)). If the network drops after your secret is accepted, the session keeps rendering for 5 minutes, then pauses until the connection returns.
+Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)). If the network drops after your secret is accepted, the session keeps rendering for 5 minutes, then pauses until the connection returns.
 
 > **Warning:** do not compile the secret into an app you distribute. Fetch it from your own backend at startup and keep it in the Keychain.
 
@@ -184,7 +186,7 @@ Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) fr
 
 For offline rendering, set `engine.pacing = .unpaced` and Essence 2 hands out frames as fast as it renders them.
 
-The [Expression 2 example](/examples/swift-ios-expression2) is a complete SwiftUI app with microphone input, idle and interruption.
+The [Expression 2 example](/examples/ios-expression-2) is a complete SwiftUI app with microphone input, idle and interruption.
 
 ### Download an avatar in the app
 
@@ -200,7 +202,6 @@ Both return a local file to pass to `create`. They download the Apple build of t
 ## Platform notes
 
 - **Your own MLX:** Essence 2 contains no MLX. Link your own `mlx-swift` (`MLX`, `MLXNN`) in the same target, also with `-ObjC` or `-all_load`; nothing to embed. Requires Swift package 2.16.0 or newer.
-- **A Mac app built in Xcode:** the App template turns on App Sandbox. Under *Signing & Capabilities → App Sandbox*, tick **Outgoing Connections (Client)**, or the engines cannot check your secret. Add the `.imx` files and engine resources to the app bundle; a sandboxed app reads only its bundle and container.
 - **Simulator:** simulator slices are arm64 only; pass `ARCHS=arm64`. Essence 2 does not run in the Simulator (`be_essence2_create` returns `-2`); Expression 2 does.
 - **Privacy strings:** add `NSMicrophoneUsageDescription` to hear the user.
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
@@ -209,9 +210,15 @@ Both return a local file to pass to `create`. They download the Apple build of t
   grep -A3 homebrew-bithuman Package.resolved   # "version" must be 2.18.0 or newer
   ```
 
+### On a Mac
+
+The same package runs in Mac apps on Apple silicon: Expression 2 from macOS 13, Essence 2 from macOS 26 on an M3 or newer Mac. From a terminal, `swift run` is enough, with no device, profile or entitlement; the [macOS Expression 2 example](/examples/macos-expression-2) is one Swift file.
+
+- **A Mac app built in Xcode:** the App template turns on App Sandbox. Under *Signing & Capabilities → App Sandbox*, tick **Outgoing Connections (Client)**, or the engines cannot check your secret. Add the `.imx` files and engine resources to the app bundle; a sandboxed app reads only its bundle and container.
+
 ## Performance
 
-Frame rates for both models are on [Mobile performance](/performance/mobile) for iPhone and [Desktop performance](/performance/desktop) for Mac.
+Frame rates for both models are on [Mobile performance](/performance#mobile) for iPhone and [Desktop performance](/performance#desktop) for Mac.
 
 ## Troubleshooting
 
@@ -230,7 +237,7 @@ Frame rates for both models are on [Mobile performance](/performance/mobile) for
 
 ## Reference
 
-- [Apple API reference](/sdk/apple-api): every Swift and C entry point.
-- Examples: [iOS Expression 2](/examples/swift-ios-expression2) · [iOS Essence 2](/examples/swift-ios-essence2) · [macOS Expression 2](/examples/macos-expression2) (`swift run`).
+- [Apple API reference](/platforms/swift/reference): every Swift and C entry point.
+- Examples: [iOS Expression 2](/examples/ios-expression-2) · [iOS Essence 2](/examples/ios-essence-2) · [macOS Expression 2](/examples/macos-expression-2) (`swift run`).
 - Sample avatars: [Ready-made avatars](/examples#ready-made-avatars). Your own agent's model: [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) with your API secret.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

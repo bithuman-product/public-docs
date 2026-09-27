@@ -2,7 +2,7 @@ name: Android API reference current
 
 # THE ANDROID API REFERENCE STILL DESCRIBES THE AARs MAVEN CENTRAL SERVES TODAY.
 #
-# /sdk/android-api is generated: a script resolves the newest published version
+# /platforms/android/reference is generated: a script resolves the newest published version
 # of each Android artifact, downloads that exact .aar, verifies it against the
 # .sha256 and .sha512 sidecars Central publishes beside it, and reads the public
 # surface back out of the bytes — the Kotlin metadata AND the class files, and
@@ -28,7 +28,7 @@ on:
   push:
     branches: [main]
     paths:
-      - src/content/docs/sdk/android-api.md
+      - src/content/docs/platforms/android/reference.md
       - scripts/android-surface.json
       - scripts/gen-android-api.mjs
       - scripts/check-android-api-current.mjs
@@ -36,7 +36,7 @@ on:
       - .github/workflows/android-api-current.yml
   pull_request:
     paths:
-      - src/content/docs/sdk/android-api.md
+      - src/content/docs/platforms/android/reference.md
       - scripts/android-surface.json
       - scripts/gen-android-api.mjs
       - scripts/check-android-api-current.mjs

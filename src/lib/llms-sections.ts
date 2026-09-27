@@ -8,11 +8,11 @@ import { PLATFORMS } from "../data/platforms";
 // are built from these definitions, so a page is inlined in exactly one section
 // and the one-file text and the section files cannot disagree.
 //
-//   /llms/start.txt   choose your path, the API secret, the performance overview
-//   /llms/api.txt     the REST API
-//   /llms/sdk.txt     every platform page (CLI, Python, Apple, Android, Web, LiveKit, MCP)
-//   /llms/guides.txt  models, pricing, self-hosting, avatars and the other guides
-//   /llms-full.txt    start + api + sdk in one fetch; guides are linked
+//   /llms/start.txt      the quickstart, the API secret, performance
+//   /llms/api.txt        the REST API
+//   /llms/platforms.txt  every platform page (iOS & iPadOS, Android, Web, Python, CLI, LiveKit, REST)
+//   /llms/build.txt      models, deployment options, pricing, self-hosting and the build guides
+//   /llms-full.txt       start + api + platforms in one fetch; build is linked
 //
 // scripts/check-llms.mjs caps each file and fails when a page is in no section
 // (and not linked-only) or in two, so no page can drop out of the agent layer.
@@ -23,15 +23,13 @@ import { PLATFORMS } from "../data/platforms";
 export const LINKED_ONLY = new Set([
   "api/api-keys", "api/organizations", "api/runtime-sessions", "api/billing",
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
-  "concepts/essence-1", "concepts/expression-1", "concepts/avatars-imx",
-  "guides/local-voice-avatar",
-  // The performance overview carries every row; these sub-pages repeat them per platform.
-  "performance/cloud", "performance/desktop", "performance/mobile", "performance/web",
+  "models/first-generation", "models/avatar-file",
+  "build/voice-agent",
   "performance/method",
 ]);
 
 export interface LlmsSection {
-  id: "start" | "api" | "sdk" | "guides";
+  id: "start" | "api" | "platforms" | "build";
   title: string;
   /** One line on what the file holds, shown in every index. */
   summary: string;
@@ -52,14 +50,16 @@ export const LLMS_SECTIONS: LlmsSection[] = [
     has: (d) => d.data.section === "api",
   },
   {
-    id: "sdk", title: "Platforms", inFull: true,
-    summary: "CLI, Python, Apple, Android, Web, LiveKit, MCP",
-    has: (d) => d.data.section === "sdk" && (d.data.type === "platform" || d.data.type === "guide"),
+    id: "platforms", title: "Platforms", inFull: true,
+    summary: "iOS & iPadOS, Android, Web, Python, CLI, LiveKit, REST",
+    has: (d) => d.data.section === "platforms" && (d.data.type === "platform" || d.data.type === "guide"),
   },
   {
-    id: "guides", title: "Guides", inFull: false,
-    summary: "models, pricing, self-hosting, building avatars, personas, voices",
-    has: (d) => d.data.section === "guides",
+    id: "build", title: "Models, deploy and build", inFull: false,
+    summary: "models, deployment options, pricing, self-hosting, building avatars, personas, voices",
+    has: (d) =>
+      d.data.section === "models" || d.data.section === "deploy" || d.id === "resources/troubleshooting" ||
+      (d.data.section === "build" && ["guide", "platform", "recipe"].includes(d.data.type)),
   },
 ];
 
@@ -82,7 +82,7 @@ export async function sectionLinked(s: LlmsSection): Promise<any[]> {
 
 function choosePath(): string {
   // The same content as /start.md: the path table, then each runnable card.
-  let out = `# Get started\n\nURL: ${SITE}/start\n\n## Choose your path\n\n`;
+  let out = `# Quickstart\n\nURL: ${SITE}/start\n\n## Choose your platform\n\n`;
   out += "| You want to… | Use | Needs | First command |\n|---|---|---|---|\n";
   for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? "— ([contact sales](https://www.bithuman.ai/sales))" : "`" + p.first.replace(/\|/g, "\\|") + "`"} |\n`;
   for (const p of PLATFORMS.filter((x) => x.note)) out += `\n${p.use}: ${p.note}\n`;
@@ -103,7 +103,7 @@ export async function sectionBody(s: LlmsSection): Promise<string> {
 async function linkedLines(sections: LlmsSection[]): Promise<string> {
   let out = "";
   for (const s of sections) for (const d of await sectionLinked(s)) out += `- ${d.data.title} — ${SITE}/${d.id}.md\n`;
-  out += `- Examples: ${SITE}/examples.md · changelog: ${SITE}/changelog.md · API references: ${SITE}/sdk/cli/reference.md, ${SITE}/sdk/python-api.md, ${SITE}/sdk/apple-api.md, ${SITE}/sdk/android-api.md\n`;
+  out += `- Examples: ${SITE}/examples.md · changelog: ${SITE}/changelog.md · API references: ${SITE}/platforms/cli/reference.md, ${SITE}/platforms/python/reference.md, ${SITE}/platforms/swift/reference.md, ${SITE}/platforms/android/reference.md\n`;
   return out;
 }
 
@@ -120,7 +120,7 @@ export async function sectionFile(s: LlmsSection): Promise<string> {
     LLMS_SECTIONS.filter((o) => o.id !== s.id).map((o) => sectionUrl(o.id)).join(" · ")}\n\n`;
   out += agentFacts(SITE);
   out += `## Contents\n\n`;
-  if (s.id === "start") out += `- Choose your path — ${SITE}/start\n`;
+  if (s.id === "start") out += `- Quickstart — ${SITE}/start\n`;
   for (const d of await sectionDocs(s)) out += `- ${d.data.title} — ${SITE}/${d.id}\n`;
   const linked = await linkedLines([s]);
   out += `\nLinked, not inlined (read the .md twin):\n${linked}`;
@@ -136,7 +136,7 @@ export async function fullFile(): Promise<string> {
   out += `## Contents\n\n`;
   out += `This file inlines ${FULL_SCOPE}. The same text by section, and the sections not inlined here:\n\n${sectionIndex()}\n`;
   for (const s of inFull) {
-    if (s.id === "start") out += `- Choose your path — ${SITE}/start\n`;
+    if (s.id === "start") out += `- Quickstart — ${SITE}/start\n`;
     for (const d of await sectionDocs(s)) out += `- ${d.data.title} — ${SITE}/${d.id}\n`;
   }
   out += `\nIn ${out_.map((s) => sectionUrl(s.id)).join(", ")} (or read the .md twin):\n`;

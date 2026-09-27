@@ -1,11 +1,10 @@
 ---
-title: "Trigger gestures from code"
+title: "Gestures (Essence 1)"
 description: "Play a named gesture (wave, nod, clap) on an avatar exactly when your code asks, on a cloud avatar or a self-hosted one."
-section: guides
-group: "Build"
-order: 22
+section: build
+group: "Create"
+order: 40
 type: guide
-label: "Gestures"
 ---
 
 Gestures are named clips baked into an avatar, such as `mini_wave_hello` or `clap_cheer`. Your code plays one by name, when it chooses: on an app event, a timer, or an allow-listed tool call. Nothing plays at random.
@@ -15,7 +14,7 @@ Gestures are an Essence 1 feature; Essence 2 and Expression 2 avatars have no ge
 ## Before you start
 
 - An Essence 1 agent of yours with gestures generated ([Gestures API](/api/dynamics)).
-- A LiveKit agent worker with the bitHuman plugin ([LiveKit](/sdk/livekit)).
+- A LiveKit agent worker with the bitHuman plugin ([LiveKit](/platforms/livekit)).
 
 ## 1. List the gesture names
 
@@ -92,4 +91,4 @@ The cloud call returns `animation_triggered: true`; the avatar plays the clip, t
 
 ## Next
 
-- [Gestures API](/api/dynamics) · [LiveKit](/sdk/livekit) · [Python](/sdk/python)
+- [Gestures API](/api/dynamics) · [LiveKit](/platforms/livekit) · [Python](/platforms/python)

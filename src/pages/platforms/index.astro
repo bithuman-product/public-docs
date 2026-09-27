@@ -1,0 +1,83 @@
+---
+import Base from "../../layouts/Base.astro";
+import Card from "../../components/Card.astro";
+import PerfHeadline from "../../components/PerfHeadline.astro";
+import { hubMeta } from "../../config/hubs";
+import { PLATFORM_PAGES } from "../../data/platforms";
+import { RENDERS_LABEL, versionLabel } from "../../data/labels";
+
+// The one catalogue of platforms: a card per platform page, grouped the way
+// the sidebar is. Each card names where the avatar renders, the time to a
+// first result and the current version, from src/data/platforms.ts and
+// versions.json. Nothing here is typed twice.
+const meta = hubMeta("platforms");
+const GROUPS = [
+  { name: "Apps", line: "The avatar renders inside your app, on the device in front of the user." },
+  { name: "Code & terminal", line: "Render on your own Mac or Linux machine, including a PC with no GPU." },
+  { name: "Agents & APIs", line: "Add a face to a voice agent, or drive agents and videos over HTTPS." },
+] as const;
+const REFERENCES = [
+  { title: "Swift reference", href: "/platforms/swift/reference" },
+  { title: "Android reference", href: "/platforms/android/reference" },
+  { title: "Python reference", href: "/platforms/python/reference" },
+  { title: "CLI reference", href: "/platforms/cli/reference" },
+];
+---
+
+<Base title="Platforms — bitHuman docs" description={meta.description}>
+  <div class="container hub">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>Platforms</span></nav>
+    <h1>Platforms</h1>
+    <p class="lede">{meta.description}</p>
+
+    {GROUPS.map((g) => (
+      <section class="hub-group" aria-labelledby={`g-${g.name.replace(/\W+/g, "-").toLowerCase()}`}>
+        <div class="band-head">
+          <h2 id={`g-${g.name.replace(/\W+/g, "-").toLowerCase()}`}>{g.name}</h2>
+          <p>{g.line}</p>
+        </div>
+        <ul class="card-grid cols-3" role="list">
+          {PLATFORM_PAGES.filter((p) => p.group === g.name).map((p) => (
+            <li>
+              <Card variant="platform" href={p.href} title={p.title} line={p.line} icon={p.icon}
+                chips={[...p.renders.map((r) => RENDERS_LABEL[r]), ...(p.time ? [`First result in ${p.time}`] : []), ...p.artifacts.map(versionLabel)]} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <section class="hub-group" aria-labelledby="your-stack">
+      <div class="band-head"><h2 id="your-stack">Your stack</h2></div>
+      <div class="stack">
+        <p>The Swift and Android SDKs take any 16 kHz mono speech your pipeline produces and return frames, so any speech-recognition, language-model and voice stack works. For a managed agent, bring your own language model: any OpenAI-compatible endpoint, including one in your own network (<a href="/api/providers">Providers (BYOK)</a>).</p>
+        <p>How the pieces fit: <a href="/models/how-it-works">How it works</a> · where each model runs: <a href="/models#where-each-model-runs">Compare models</a> · where it runs and what reaches bitHuman: <a href="/deploy">Deployment options</a>.</p>
+      </div>
+    </section>
+
+    <section class="hub-group" aria-labelledby="sdk-reference">
+      <div class="band-head"><h2 id="sdk-reference">SDK reference</h2></div>
+      <ul class="card-grid cols-4" role="list">
+        {REFERENCES.map((r) => <li><Card href={r.href} title={r.title} /></li>)}
+      </ul>
+    </section>
+
+    <section class="hub-group" aria-labelledby="performance">
+      <div class="band-head"><h2 id="performance">How fast it renders</h2></div>
+      <PerfHeadline />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .hub { padding-block: var(--s-8) var(--s-12); }
+  .crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-3); }
+  .crumb a { color: var(--color-text-tertiary); }
+  .crumb a:hover { color: var(--color-primary); }
+  .hub h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
+  .hub-group { margin-top: var(--s-10); }
+  .stack { max-width: 72ch; color: var(--color-text-secondary); font-size: var(--ft-md); }
+  .stack p + p { margin-top: var(--s-3); font-size: var(--ft-sm); }
+  @media (max-width: 560px) { .hub h1 { font-size: var(--fh-xl); } }
+</style>

@@ -2,10 +2,9 @@
 title: "Authentication"
 description: "Authenticate REST calls with the api-secret header, check a secret with /v1/validate, and use short-lived tokens where a secret must not go."
 section: api
-group: "Get started"
-order: 2
+group: "Start"
+order: 10
 type: endpoint
-label: "Authentication"
 ---
 
 Every REST call carries your API secret in the `api-secret` header. The same secret works for the SDKs and the CLI ([Your API secret](/start/api-secret)). Create one under [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); the value is shown once.
@@ -48,7 +47,7 @@ Sent with `mode`, the same endpoint starts a cloud avatar in your LiveKit room i
 
 ## POST /v1/runtime-tokens/mint
 
-Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. Send `room_name` and `livekit_url` to bind the LiveKit token to one room and server. The request and a complete worker are on [LiveKit](/sdk/livekit#authenticate).
+Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. Send `room_name` and `livekit_url` to bind the LiveKit token to one room and server. The request and a complete worker are on [LiveKit](/platforms/livekit#authenticate).
 
 ## Keep the secret safe
 

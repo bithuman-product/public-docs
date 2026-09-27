@@ -3,8 +3,8 @@ name: Internal links
 # Docs correctness checks that nothing else resolves.
 #
 # 1. Internal links — the round-2 docs audit found several dead ones
-#    (e.g. /sdk/kotlin when the page is /sdk/android, /concepts/pricing when
-#    it's /guides/pricing, /api/voice when it's /api/text-to-speech). They rot
+#    (e.g. /sdk/kotlin when the page is /platforms/android, /concepts/pricing when
+#    it's /pricing, /api/voice when it's /api/text-to-speech). They rot
 #    silently because nothing resolves them. scripts/check-internal-links.mjs
 #    collects every valid route (content collection + explicit pages) and fails
 #    if any markdown link to an internal /route doesn't resolve.
@@ -18,7 +18,7 @@ name: Internal links
 #    anyone running Essence 2. scripts/check-billing-consistency.mjs re-derives
 #    every documented estimate from the pricing table and fails on disagreement.
 #    ★2026-09-07: it also grades the billing RULE, not only the numbers.
-#    guides/pricing.md defines a credit minute (wall-clock, idle animation
+#    pricing.md defines a credit minute (wall-clock, idle animation
 #    included; an offline `bithuman render` bills its output duration) and no
 #    other page may state a different one — three pages and llms.txt served
 #    "per whole minute of frames delivered, not wall-clock" beside it for two
@@ -280,7 +280,7 @@ jobs:
         run: node scripts/check-nav-consistency.mjs
       # ★A MODEL WE BILL FOR MUST HAVE A PAGE. Measured 2026-09-02 and again
       # 2026-09-05 against the live site: the three second-generation concept
-      # pages answered 200 and /concepts/essence-1 and /concepts/expression-1
+      # pages answered 200 and /models/first-generation#essence-1 and /models/first-generation#expression-1
       # both 404'd — two models on the rate card with no page at all. That is
       # the one defect no other checker here can see, because every one of them
       # grades bytes that exist and a missing page has none. The population is
@@ -313,7 +313,7 @@ jobs:
       # on no push, no pull request and no schedule — the same failure the
       # redirect-pairing note above records, and the same one the gate itself
       # exists to stop one level up: a thing that works and is not reached.
-      # Measured the day it was wired: run against sdk/ios.md and sdk/android.md
+      # Measured the day it was wired: run against platforms/ios.md and platforms/android.md
       # exactly as 24a1593 serves them, it exits 1 with three findings, one of
       # them naming ios.md:239 — the sentence that told a reader to pin a floor
       # leaving them on an Essence 2 engine that never speaks. It had been green
@@ -326,7 +326,7 @@ jobs:
         run: node scripts/check-mobile-sdk-arrival.mjs --selftest
       # ★2026-09-09: THE FIRST EXECUTABLE LINE OF BOTH HANDSET EXAMPLES WAS
       # GRADED BY NOTHING. examples/kotlin-android-hello.md and
-      # examples/swift-ios-expression2.md are whole projects printed in full, and
+      # examples/ios-expression-2.md are whole projects printed in full, and
       # each opens with a dependency coordinate whose truth lives in ANOTHER
       # SYSTEM — Maven Central, and the SwiftPM tap's tags and product list. Every
       # other checker in this job resolves a claim against bytes already in this
@@ -353,7 +353,7 @@ jobs:
       # ★2026-09-09: THE ONLY ANDROID CODE ON THE HOME PAGE TAUGHT THE ONE
       # ANDROID ARTIFACT THAT CANNOT RENDER ON A HANDSET. The Quickstart
       # "Kotlin" tab in src/pages/index.astro named `ai.bithuman:sdk:2.3.6` —
-      # essence-1, which sdk/android.md documents as unable to authenticate on a
+      # essence-1, which platforms/android.md documents as unable to authenticate on a
       # device — while the rail that works (`expression-2`, measured at 213
       # frames on a Galaxy S25+ with no account, no API key and no credits) was
       # nowhere on the front page. No gate here could see it: the coordinate
@@ -361,7 +361,7 @@ jobs:
       # `essence-1` is a current un-retired name, so check-retired-model-names
       # passes it too. Existing and rendering are different questions.
       # The fix is structural rather than editorial — the home page now quotes
-      # sdk/android.md's expression-2 loop BYTE FOR BYTE, and this gate fails if
+      # platforms/android.md's expression-2 loop BYTE FOR BYTE, and this gate fails if
       # either side is edited alone, so the front page cannot drift away from the
       # page that owns the rail. Firing proven on the real tree the same day from
       # both directions (one character changed on the home page; one character

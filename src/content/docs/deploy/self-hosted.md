@@ -1,17 +1,18 @@
 ---
-title: "Self-hosting"
+title: "Your servers (self-hosted)"
 description: "Run bitHuman models on your own hardware: which surface runs which model, a first MP4 in four commands, how self-hosting is billed, and offline licensing."
-section: guides
-group: "Deploy"
-order: 30
+section: deploy
+group: "Modes"
+order: 20
 type: guide
-label: "Self-hosting"
+renders: ["server", "no-gpu"]
+next: ["/deploy", "/platforms/cli", "/platforms/python"]
 ---
 
 Self-hosting means the render happens on your hardware — a Mac, a Linux box, a
 phone or a browser tab. It needs the Creator plan or higher and is billed in
 credits at the self-hosted rate; online, there is no license to buy. Running
-fully offline needs an [offline license](/guides/pricing#offline-licensing):
+fully offline needs an [offline license](/pricing#offline-licensing):
 Business and Enterprise, on Linux PCs and terminals, arranged through sales.
 Downloading a model is free.
 
@@ -21,16 +22,16 @@ Each page below is the one place its install, model download and code live.
 
 | You want | Use | Models |
 |---|---|---|
-| A talking avatar or an MP4 on a Mac or Linux box, no code | [CLI](/sdk/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
-| A voice agent on your own LiveKit server, rendered on your machine | [Talk to an avatar on your machine](/guides/local-voice-avatar) | Essence 2, Expression 2 |
-| Frames or MP4 clips from your own code | [Python SDK](/sdk/python) | Essence 2, Expression 2, Essence 1 |
-| An iPhone, iPad or Mac app | [Apple SDK](/sdk/apple) | Essence 2, Expression 2 |
-| An Android app | [Android SDK](/sdk/android) | Essence 2, Expression 2 |
-| Rendering in your visitor's browser tab | [Web](/sdk/web) (`?render=local`) | Essence 2, Expression 2, Essence 1 |
+| A talking avatar or an MP4 on a Mac or Linux box, no code | [CLI](/platforms/cli) | Essence 2 and Expression 2 (`run`, `render`); Essence 1 (`run`) |
+| A voice agent on your own LiveKit server, rendered on your machine | [Talk to an avatar on your machine](/build/voice-agent) | Essence 2, Expression 2 |
+| Frames or MP4 clips from your own code | [Python SDK](/platforms/python) | Essence 2, Expression 2, Essence 1 |
+| An iPhone, iPad or Mac app | [Apple SDK](/platforms/ios) | Essence 2, Expression 2 |
+| An Android app | [Android SDK](/platforms/android) | Essence 2, Expression 2 |
+| Rendering in your visitor's browser tab | [Web](/platforms/web) (`?render=local`) | Essence 2, Expression 2, Essence 1 |
 
-The full model-by-surface matrix is on [Models](/concepts/models#where-each-model-runs).
+The full model-by-surface matrix is on [Models](/models#where-each-model-runs).
 
-For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/sdk/livekit): with `model_path` the avatar renders on your machine ([guide](/guides/local-voice-avatar)), with `avatar_id` in the cloud. Expression 1 is cloud-only: use the [cloud API](/api).
+For a live session on one machine, use `bithuman run`. For a live session in your own LiveKit rooms, use the [LiveKit plugin](/platforms/livekit): with `model_path` the avatar renders on your machine ([guide](/build/voice-agent)), with `avatar_id` in the cloud. Expression 1 is cloud-only: use the [cloud API](/api).
 
 ## A first MP4 on macOS or Linux
 
@@ -44,11 +45,11 @@ bithuman render wise-pup speech.wav -o out.mp4
 ```
 
 `out.mp4` is the Wise Pup sample avatar speaking the 15-second sample. The rest of
-the CLI — live sessions, your own agents, every flag — is on [the CLI page](/sdk/cli).
+the CLI — live sessions, your own agents, every flag — is on [the CLI page](/platforms/cli).
 
 ## How self-hosting is billed
 
-- **At the self-hosted rate** on [pricing](/guides/pricing#serving--credits-per-live-minute),
+- **At the self-hosted rate** on [pricing](/pricing#serving--credits-per-live-minute),
   from your credit balance. A live session bills its session time, talking or idle; an MP4
   render bills the length of the clip it writes.
 - **A credential is required to render.** Sign in with `bithuman login`, or set
@@ -56,7 +57,7 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
   [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
 - **Rendering authenticates online** and reports usage as it runs. If the
   connection drops, a session keeps a 5-minute grace.
-- **To run completely off the internet**, see [offline licensing](/guides/pricing#offline-licensing).
+- **To run completely off the internet**, see [offline licensing](/pricing#offline-licensing).
 
 ## Troubleshooting
 
@@ -69,6 +70,6 @@ the CLI — live sessions, your own agents, every flag — is on [the CLI page](
 
 ## Next steps
 
-- [Pricing](/guides/pricing) — the self-hosted rate and offline licensing
-- [Models](/concepts/models) — which model runs where
+- [Pricing](/pricing) — the self-hosted rate and offline licensing
+- [Models](/models) — which model runs where
 - [Performance](/performance) — measured frame rates per platform

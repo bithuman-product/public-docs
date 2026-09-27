@@ -6,9 +6,9 @@ Rules for everything under `src/content/docs` and `src/pages`. Each rule is one 
 
 - **bitHuman**, in any position. Apple silicon, macOS, WebRTC, WebGPU, on-device, self-hosted.
 - Models in prose: **Essence 2, Expression 2, Essence 1, Expression 1**. In code and API values: `essence-2`, `expression-2`, `essence-1`, `expression-1`. [check-retired-model-names]
-- Retired names (`essence-2-light`, `essence-2-quality`, `elevate`, `embody`, `lebundle`, `embody-gpu`, `essence-2-mobile`) appear only in the "Naming & migration" section of `/concepts/models`, a `400` hint, or the changelog. Strings a developer must type or parse (file names, URL paths, tier slugs, engine ids such as `essence2-light`) stay spelled exactly and are documented once. [check-retired-model-names]
+- Retired names (`essence-2-light`, `essence-2-quality`, `elevate`, `embody`, `lebundle`, `embody-gpu`, `essence-2-mobile`) appear only in the "Naming & migration" section of `/models`, a `400` hint, or the changelog. Strings a developer must type or parse (file names, URL paths, tier slugs, engine ids such as `essence2-light`) stay spelled exactly and are documented once. [check-retired-model-names]
 - The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and identifiers. [check-internal-vocabulary]
-- The generated clip is the "identity video", defined once on `/concepts/models`. [check-internal-vocabulary]
+- The generated clip is the "identity video", defined once on `/models`. [check-internal-vocabulary]
 - The credential is the **API secret**: variable `BITHUMAN_API_SECRET` (`BITHUMAN_API_KEY` is a deprecated alias), header `api-secret`, parameter `api_secret` / `apiSecret`, placeholder `<your API secret>`. Short-lived credentials are a **runtime token** or an **embed token**. [check-internal-vocabulary]
 - Where it runs: "Runs on", "platform", "the cloud API". Never our internal words for serving targets, and never "tier" except the cloud tier slugs on `/performance`. [check-internal-vocabulary, check-internal-content]
 
@@ -75,7 +75,7 @@ Banned words: leading, world's first, best-in-class, seamless, revolutionary, sc
 ## Numbers and units
 
 - "2.0× real time", "1.6 GB", "~160 MB download", "2–3 h" (en dash), "credits" (never "cr"), "credits/min".
-- Pricing numbers appear only on `/guides/pricing`. Frame rates appear only in the generated performance tables. [check-billing-consistency, check-performance-floors]
+- Pricing numbers appear only on `/pricing`. Frame rates appear only in the generated performance tables. [check-billing-consistency, check-performance-floors]
 
 ## Page shapes
 

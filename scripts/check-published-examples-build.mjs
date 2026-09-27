@@ -2,7 +2,7 @@
 // THE TWO HANDSET EXAMPLES MUST COMPILE — AS PUBLISHED, FROM WHERE THE PAGE SENDS THE READER.
 //
 // ★THE SUBJECT MOVED (docs redesign, 2026-09-23). The example pages no longer
-// print the projects: /examples/android-expression2 and /examples/swift-ios-expression2
+// print the projects: /examples/android-expression-2 and /examples/ios-expression-2
 // tell the reader to `git clone bithuman-examples` and `cd` into one directory,
 // and that directory is what the reader builds. So this gate now grades exactly
 // that, in two steps: (1) the SERVED page still sends the reader to the directory
@@ -13,7 +13,7 @@
 //
 // WHY THIS EXISTS
 // ---------------
-// examples/kotlin-android-hello.md and examples/swift-ios-expression2.md are
+// examples/kotlin-android-hello.md and examples/ios-expression-2.md are
 // ~2,000 lines of instructions that end with a talking avatar on a real phone.
 // Every one of them is a whole project printed in full, and until today NOTHING
 // in this repo compiled a line of it. What the other checkers here grade:
@@ -353,8 +353,8 @@ async function makeFixture(dir) {
 // The docs side of the subject: the page source must still send the reader to
 // the directory whose code the mutation renames.
 const CONTROL_SOURCES = {
-  android: "src/content/docs/examples/android-expression2.md",
-  ios: "src/content/docs/examples/swift-ios-expression2.md",
+  android: "src/content/docs/examples/android-expression-2.md",
+  ios: "src/content/docs/examples/ios-expression-2.md",
 };
 
 export function controlTokenCount(text, token) {
@@ -497,8 +497,8 @@ const KEEP = flag("--keep");
 const MUTATE = flag("--mutate");
 
 const PAGES = {
-  android: { route: "/examples/android-expression2", dir: "android/expression2-hello", files: ANDROID_FILES },
-  ios: { route: "/examples/swift-ios-expression2", dir: "swift/ios-expression2", files: IOS_FILES },
+  android: { route: "/examples/android-expression-2", dir: "android/expression2-hello", files: ANDROID_FILES },
+  ios: { route: "/examples/ios-expression-2", dir: "swift/ios-expression2", files: IOS_FILES },
 };
 
 async function loadPage(which) {

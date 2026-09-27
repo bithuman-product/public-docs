@@ -3,7 +3,8 @@ import { TOP_NAV, RESOURCES_MENU, API_SECRET_URL } from "../config/nav";
 const links = TOP_NAV;
 const resources = RESOURCES_MENU;
 const path = Astro.url.pathname;
-const isActive = (href: string) => path === href || path.startsWith(href + "/");
+const under = (href: string) => path === href || path.startsWith(href + "/");
+const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match ?? [])].some(under);
 ---
 
 <header class="nav" data-pagefind-ignore>
@@ -19,7 +20,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     <nav class="nav-links" aria-label="Primary">
       {
         links.map((l) => (
-          <a href={l.href} class:list={["nav-link", { active: isActive(l.href) }]}>
+          <a href={l.href} class:list={["nav-link", { active: isActive(l) }]} aria-current={isActive(l) ? "page" : undefined}>
             {l.label}
           </a>
         ))
@@ -259,7 +260,15 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   .menu-btn { display: none; }
   .mobile-menu { display: none; }
 
-  @media (max-width: 900px) {
+  /* Seven sections and Resources: the status pill (also in Resources) and the
+     CTA give way before the links do, and below 1060px the menu takes over. */
+  @media (max-width: 1400px) {
+    .status-pill { display: none; }
+    .nav-links { gap: 0.1rem; margin-left: var(--space-2); }
+    .nav-link { padding-inline: 0.55rem; }
+  }
+  @media (max-width: 1200px) { .btn-cta { display: none; } }
+  @media (max-width: 1060px) {
     .nav-inner { gap: var(--space-3); }
     .nav-links { display: none; }
     .menu-btn { display: inline-flex; }

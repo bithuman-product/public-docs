@@ -2,7 +2,7 @@
  * Give every table a scroll wrapper, and stamp every cell with its column name.
  *
  * A table is a grid, and a grid needs width. At 390px the four-column
- * troubleshooting tables on /sdk/cli were a column of clipped paths, and the
+ * troubleshooting tables on /platforms/cli were a column of clipped paths, and the
  * only way to read one was to drag it sideways inside a box with no visible
  * edge. Below 700px src/styles/prose.css therefore stops treating a table as a
  * grid and makes each row a card of labelled values — and a stacked cell has to

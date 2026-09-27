@@ -36,7 +36,7 @@
 //   4. Writes scripts/android-surface.json: the artifact record plus the whole
 //      public surface, whether or not the page prints it.
 //   5. Renders the page region between the ANDROIDAPI markers on
-//      src/content/docs/sdk/android-api.md from that record.
+//      src/content/docs/platforms/android/reference.md from that record.
 //
 // THE RECORD names each artifact as {registry, coordinate, version, digest,
 // filename, resolved_on}. ★`filename` is not optional: a Maven release carries
@@ -77,7 +77,7 @@ import { join } from "node:path";
 
 export const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 export const RECORD_PATH = join(ROOT, "scripts/android-surface.json");
-export const PAGE_PATH = join(ROOT, "src/content/docs/sdk/android-api.md");
+export const PAGE_PATH = join(ROOT, "src/content/docs/platforms/android/reference.md");
 export const EXTRACTOR = join(ROOT, "scripts/android-api-extract.java");
 
 export const BEGIN = "<!-- ANDROIDAPI:BEGIN -->";

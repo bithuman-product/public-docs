@@ -2,10 +2,9 @@
 title: "Webhooks"
 description: "Receive signed event notifications when async work finishes — register an endpoint, verify the HMAC signature, and inspect delivery attempts."
 section: api
-group: "Deliver"
-order: 21
+group: "Live sessions"
+order: 40
 type: endpoint
-label: "Webhooks"
 ---
 
 Agent generation and talking-video renders are asynchronous — agent creation takes

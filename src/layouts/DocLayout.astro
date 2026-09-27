@@ -1,9 +1,16 @@
 ---
 import Base from "./Base.astro";
 import "../styles/prose.css";
-import { SECTIONS, GROUP_ORDER, type SectionId } from "../config/nav.ts";
+import { SECTIONS, GROUP_ORDER, SIDEBAR_LINKS, type SectionId } from "../config/nav.ts";
+import { HUBS } from "../config/hubs";
 import { lastModified } from "../lib/git-lastmod";
 import PageActions from "../components/PageActions.astro";
+import Chip from "../components/Chip.astro";
+import Availability from "../components/Availability.astro";
+import VersionBadge from "../components/VersionBadge.astro";
+import NextCards from "../components/NextCards.astro";
+import LiveDemo from "../components/LiveDemo.astro";
+import { RENDERS_LABEL } from "../data/labels";
 
 interface Heading {
   depth: number;
@@ -16,55 +23,62 @@ interface Props {
   headings: Heading[];
 }
 const { entry, all, headings } = Astro.props;
-const section: SectionId = entry.data.section;
+const data = entry.data;
+const section: SectionId = data.section;
 const meta = SECTIONS[section] ?? { label: "Docs", home: "/" };
 
-// build sidebar: same-section pages, grouped by `group`, ordered by `order`
+// The sidebar: this section's pages plus its .astro pages (SIDEBAR_LINKS),
+// grouped in GROUP_ORDER, then by `order`. A page's label is its H1.
 const slugOf = (e: any) => "/" + e.id.replace(/\/index$/, "").replace(/\.md$/, "");
-const inSection = all
-  .filter((e) => e.data.section === section && !e.data.draft)
-  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+type Item = { href: string; label: string; order: number };
+const items: (Item & { group: string })[] = [
+  ...all
+    .filter((e) => e.data.section === section && !e.data.draft)
+    .map((e) => ({ href: slugOf(e), label: e.data.title, order: e.data.order ?? 100, group: e.data.group || "" })),
+  ...(SIDEBAR_LINKS[section] ?? []),
+];
+const groups: [string, Item[]][] = (GROUP_ORDER[section] ?? [])
+  .map((g) => [g, items.filter((i) => i.group === g).sort((a, b) => a.order - b.order || a.label.localeCompare(b.label))] as [string, Item[]])
+  .filter(([, list]) => list.length > 0);
 
-const groupsMap = new Map<string, any[]>();
-for (const e of inSection) {
-  const g = e.data.group || "";
-  if (!groupsMap.has(g)) groupsMap.set(g, []);
-  groupsMap.get(g)!.push(e);
-}
-const explicitOrder = GROUP_ORDER[section] ?? [];
-const groups = [...groupsMap.entries()].sort((a, b) => {
-  const ia = explicitOrder.indexOf(a[0]);
-  const ib = explicitOrder.indexOf(b[0]);
-  if (ia !== -1 || ib !== -1) return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
-  const ma = Math.min(...a[1].map((e: any) => e.data.order ?? 100));
-  const mb = Math.min(...b[1].map((e: any) => e.data.order ?? 100));
-  return ma - mb;
-});
-
-const currentPath = "/" + entry.id.replace(/\/index$/, "").replace(/\.md$/, "");
+const currentPath = slugOf(entry);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 // sequential prev/next across the section (in sidebar display order)
-const flatNav = groups.flatMap(([, items]) => items);
-const curIdx = flatNav.findIndex((e: any) => slugOf(e) === currentPath);
+const flatNav = groups.flatMap(([, list]) => list);
+const curIdx = flatNav.findIndex((i) => i.href === currentPath);
 const prevPage = curIdx > 0 ? flatNav[curIdx - 1] : null;
 const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1] : null;
 
+// "Next" cards: the paths in `next`, named by their own H1 and description.
+const describe = (href: string) => {
+  const path = href.split("#")[0];
+  const e = all.find((x) => slugOf(x) === path);
+  if (e) return { href, title: e.data.title, line: e.data.description };
+  const h = HUBS.find((x) => "/" + x.route === path || (x.route === "" && path === "/"));
+  if (h) return { href, title: h.name, line: h.description };
+  throw new Error(`${entry.id}: next names ${href}, which is not a docs page`);
+};
+const nextCards = (data.next ?? []).map(describe);
+
 // Structured data for this page, from its own frontmatter and its last commit
-// (the sitemap's <lastmod> source) — nothing the page does not already say.
+// (the sitemap's <lastmod> source): nothing the page does not already say.
 const pageUrl = `https://docs.bithuman.ai${currentPath}`;
-const modified = lastModified(entry.filePath ?? `src/content/docs/${entry.id}.md`);
+const sourceFile = entry.filePath ?? `src/content/docs/${entry.id}.md`;
+const modified = lastModified(sourceFile);
+const modifiedLabel = modified ? new Date(modified).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }) : null;
+const editUrl = `https://github.com/bithuman-product/public-docs/edit/main/${sourceFile}`;
 const crumbs = [
   { name: "Docs", item: "https://docs.bithuman.ai/" },
   { name: meta.label, item: `https://docs.bithuman.ai${meta.home}` },
-  { name: entry.data.title, item: pageUrl },
+  { name: data.title, item: pageUrl },
 ];
 const jsonLd: Record<string, unknown>[] = [
   {
     "@type": "TechArticle",
     "@id": `${pageUrl}#article`,
-    headline: entry.data.title,
-    ...(entry.data.description ? { description: entry.data.description } : {}),
+    headline: data.title,
+    ...(data.description ? { description: data.description } : {}),
     url: pageUrl,
     inLanguage: "en",
     ...(modified ? { dateModified: modified } : {}),
@@ -77,20 +91,26 @@ const jsonLd: Record<string, unknown>[] = [
     itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: c.item })),
   },
 ];
-if (section === "sdk") {
+if (section === "platforms" && data.type === "platform") {
   jsonLd.push({
     "@type": "SoftwareApplication",
     "@id": `${pageUrl}#software`,
-    name: entry.data.title,
-    ...(entry.data.description ? { description: entry.data.description } : {}),
+    name: data.title,
+    ...(data.description ? { description: data.description } : {}),
     url: pageUrl,
     applicationCategory: "DeveloperApplication",
     publisher: { "@id": "https://www.bithuman.ai/#organization" },
   });
 }
+const hasChips = !!(data.availability || data.renders?.length || data.artifacts?.length);
+const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
+// On a hub the comparison comes first and the demo closes the page (under its "Try it" section).
+const demoAtEnd = data.type === "hub";
+// Release notes are records: searchable, but ranked below the pages they describe.
+const weight = data.type === "changelog" ? "0.2" : undefined;
 ---
 
-<Base title={`${entry.data.title} — bitHuman docs`} description={entry.data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
+<Base title={`${data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
   <div class="doc">
     {/* sidebar */}
     <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>
@@ -98,54 +118,65 @@ if (section === "sdk") {
         <span>{meta.label}</span>
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 5 7 8.5 10.5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
-      <div class="side-inner">
+      <nav class="side-inner" aria-label={meta.label}>
         <a class="side-home" href={meta.home}>{meta.label}</a>
         {
-          groups.map(([g, items]) => (
+          groups.map(([g, list]) => (
             <div class="side-group">
               {g && <p class="side-glabel">{g}</p>}
               <ul>
-                {items.map((e: any) => {
-                  const href = slugOf(e);
-                  return (
-                    <li>
-                      <a href={href} class:list={["side-link", { active: href === currentPath }]}>
-                        {e.data.label ?? e.data.title}
-                      </a>
-                    </li>
-                  );
-                })}
+                {list.map((i) => (
+                  <li>
+                    <a href={i.href} class:list={["side-link", { active: i.href === currentPath }]} aria-current={i.href === currentPath ? "page" : undefined}>
+                      {i.label}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           ))
         }
-      </div>
+      </nav>
     </aside>
 
     {/* content */}
-    <article class="doc-main">
-      <div class="doc-crumb" data-pagefind-ignore>
-        <a href="/">Docs</a> <span>/</span> <a href={meta.home}>{meta.label}</a>
-        {entry.data.group && (<Fragment> <span>/</span> <span class="crumb-cur">{entry.data.group}</span></Fragment>)}
-      </div>
+    <article class="doc-main" data-pagefind-filter={`section:${meta.label}`}>
+      <nav class="doc-crumb" aria-label="Breadcrumb" data-pagefind-ignore>
+        <a href="/">Docs</a> <span aria-hidden="true">/</span> <a href={meta.home}>{meta.label}</a>
+        {data.group && (<Fragment> <span aria-hidden="true">/</span> <span class="crumb-cur">{data.group}</span></Fragment>)}
+      </nav>
       <div class="prose">
-        <div class="doc-h1"><h1>{entry.data.title}</h1><PageActions md={`${currentPath}.md`} /></div>
-        {entry.data.description && <p class="doc-lede">{entry.data.description}</p>}
-        <slot />
+        <div class="doc-h1"><h1>{data.title}</h1><PageActions md={`${currentPath}.md`} /></div>
+        {data.description && <p class="doc-lede">{data.description}</p>}
+        {hasChips && (
+          <div class="chip-row doc-chips" data-pagefind-ignore>
+            {data.availability && <Availability plan={data.availability} />}
+            {(data.renders ?? []).map((r: keyof typeof RENDERS_LABEL) => <Chip kind="where" label={RENDERS_LABEL[r]} />)}
+            {(data.artifacts ?? []).map((a: any) => <VersionBadge artifact={a} />)}
+          </div>
+        )}
+        {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
+        <div class="doc-body" data-pagefind-weight={weight}><slot /></div>
+        {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>
+      <NextCards items={nextCards} />
+      <footer class="doc-meta" data-pagefind-ignore>
+        {modifiedLabel && <span>Last updated <time datetime={modified!}>{modifiedLabel}</time></span>}
+        <a href={editUrl} rel="noopener">Edit this page on GitHub</a>
+      </footer>
       {
         (prevPage || nextPage) && (
           <nav class="doc-pager" aria-label="Previous and next page" data-pagefind-ignore>
             {prevPage ? (
-              <a class="pager" href={slugOf(prevPage)}>
+              <a class="pager" href={prevPage.href}>
                 <span>← Previous</span>
-                <strong>{prevPage.data.label ?? prevPage.data.title}</strong>
+                <strong>{prevPage.label}</strong>
               </a>
             ) : <span />}
             {nextPage && (
-              <a class="pager next" href={slugOf(nextPage)}>
+              <a class="pager next" href={nextPage.href}>
                 <span>Next →</span>
-                <strong>{nextPage.data.label ?? nextPage.data.title}</strong>
+                <strong>{nextPage.label}</strong>
               </a>
             )}
           </nav>
@@ -241,7 +272,12 @@ if (section === "sdk") {
   .doc-crumb span { margin: 0 0.3rem; }
   .doc-crumb .crumb-cur { margin: 0; color: var(--color-text-secondary); }
   .doc-lede { font-size: var(--ft-lg); color: var(--color-text-secondary); margin-top: 0 !important; }
-  .doc-pager { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
+  .doc-chips { margin-top: calc(-1 * var(--s-2)) !important; }
+  .doc-demo { margin-block: var(--s-6) var(--s-8); }
+  .doc-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-4); margin-top: var(--s-8); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+  .doc-meta a { color: var(--color-text-secondary); }
+  .doc-meta a:hover { color: var(--color-primary); }
+  .doc-pager { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-5); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
   .pager { display: flex; flex-direction: column; gap: 0.2rem; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); transition: all var(--t-fast) var(--ease); max-width: 48%; }
   .pager:hover { border-color: var(--color-primary); }
   .pager.next { text-align: right; align-items: flex-end; margin-left: auto; }

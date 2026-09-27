@@ -1,14 +1,13 @@
 ---
-title: "Python API reference"
+title: "Python reference"
 description: "Every public class and function in the bithuman package: signatures, what each does, and the errors it raises."
-section: sdk
-group: "Reference"
-order: 81
+section: platforms
+group: "SDK reference"
+order: 30
 type: reference
-label: "Python API"
 ---
 
-How to use these in an app is on [Python](/sdk/python).
+How to use these in an app is on [Python](/platforms/python).
 
 <!-- PYAPI:BEGIN -->
 Generated from `bithuman` 2.11.14 as published on PyPI (Python `<3.15,>=3.10`; extras: `bithuman[expression-2]`). Names the package exports that are not listed here are internal and can change.
@@ -46,7 +45,7 @@ close the iterator; the avatar is ready for the next `render`.
 
 ### AsyncBithuman
 
-The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. Create it with `await AsyncBithuman.create(model_path="avatar.imx", api_secret=None)`; the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/sdk/python#integrate-into-your-app).
+The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. Create it with `await AsyncBithuman.create(model_path="avatar.imx", api_secret=None)`; the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/platforms/python#integrate-into-your-app).
 
 **`push_audio(data: bytes, sample_rate: int, last_chunk: bool = True) -> None`**
 
@@ -150,4 +149,4 @@ Put `shutdown()` in a `finally`. `AsyncBithuman` is not an async context manager
 
 `bithuman.tessera_offline` still imports as an alias of `bithuman.offline`.
 Its classes `OfflineTesseraRenderer` and `TesseraOfflineError` are `OfflineRenderer` and `OfflineRenderError` under older names.
-Use the new names; the full list is on [Naming & migration](/concepts/models#naming--migration).
+Use the new names; the full list is on [Naming & migration](/models#naming--migration).

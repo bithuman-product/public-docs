@@ -1,11 +1,10 @@
 ---
-title: "macOS example: Expression 2"
+title: "macOS Expression 2"
 description: "Render a talking Expression 2 avatar on a Mac from one Swift file: a speech WAV goes in, lip-synced frames come out, all on the machine."
-section: examples
+section: build
 group: "Examples"
-order: 33
+order: 30
 type: example
-label: "macOS: Expression 2"
 ---
 
 <figure class="showcase">
@@ -69,13 +68,13 @@ engine.flushTail()        // end of the utterance
 while let (frame, _) = engine.pull() { /* 416×720 BGR, 3 bytes per pixel */ }
 ```
 
-`pull()` returns `nil` until a chunk of frames is ready, so the example polls until it has drained them all. The API is on [Apple](/sdk/apple).
+`pull()` returns `nil` until a chunk of frames is ready, so the example polls until it has drained them all. The API is on [Apple](/platforms/ios).
 
 ## Make it your own
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "expression-2"`), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
 - **Your own audio:** any 16 kHz mono 16-bit WAV works as `Model/speech16k.wav`; `afconvert -f WAVE -d LEI16@16000 -c 1 in.m4a Model/speech16k.wav` converts one.
-- **A window instead of a file:** the [iOS example](/examples/swift-ios-expression2) is the same engine in a SwiftUI app with a microphone button, and it also builds for iPad.
+- **A window instead of a file:** the [iOS example](/examples/ios-expression-2) is the same engine in a SwiftUI app with a microphone button, and it also builds for iPad.
 
 ## Troubleshooting
 
@@ -87,4 +86,4 @@ while let (frame, _) = engine.pull() { /* 416×720 BGR, 3 bytes per pixel */ }
 
 ## Next
 
-- [iOS example](/examples/swift-ios-expression2) · [Apple SDK](/sdk/apple) · [CLI example](/examples/cli) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)
+- [iOS example](/examples/ios-expression-2) · [Apple SDK](/platforms/ios) · [CLI example](/platforms/cli#complete-example) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2)

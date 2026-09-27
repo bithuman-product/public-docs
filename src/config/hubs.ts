@@ -20,7 +20,7 @@ export interface HubMeta {
   /** The page's own meta description, verbatim. */
   description: string;
   /** Collection section whose pages this hub lists, if it is a section hub. */
-  section?: "sdk" | "guides" | "resources";
+  section?: "platforms" | "build" | "resources";
 }
 
 export const HUBS: HubMeta[] = [
@@ -29,41 +29,41 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/index.astro",
     name: "bitHuman docs",
     description:
-      "Build realtime AI avatars that run on iPhone, Android, Mac, Linux and in the browser, on your own servers, or fully offline on Business and Enterprise plans. Essence 2 and Expression 2.",
+      "Build realtime talking avatars that render on iPhone, iPad, Android, Mac, a Linux PC with no GPU, or the browser. Quickstarts, SDKs, API and measured performance.",
   },
   {
     route: "start",
     file: "src/pages/start.astro",
-    name: "Get started",
+    name: "Quickstart",
     description: "Talk to a live avatar, get an API secret, and run your first avatar on the platform you choose.",
   },
   {
     route: "api/reference",
     file: "src/openapi/bithuman.yaml",
-    name: "REST API reference",
+    name: "API reference",
     description:
-      "Every endpoint in the bitHuman OpenAPI spec — agents, voice, talking video, embedding, billing, webhooks — with try-it-out. The same contract is served raw at /api/openapi.yaml.",
+      "Every endpoint in the bitHuman OpenAPI spec: agents, voice, talking video, embedding, billing and webhooks. The same contract is served raw at /api/openapi.yaml.",
   },
   {
-    route: "sdk",
-    file: "src/pages/sdk/index.astro",
-    name: "SDK",
+    route: "platforms",
+    file: "src/pages/platforms/index.astro",
+    name: "Platforms",
     description:
-      "Every platform bitHuman runs on: CLI, Python, Apple, Android, Web, LiveKit and MCP, with current versions and frame rates.",
-    section: "sdk",
+      "Every platform bitHuman runs on: iOS & iPadOS, macOS, Android, Flutter, the web, Python, the CLI, LiveKit and the REST API, with where the avatar renders and the current version.",
+    section: "platforms",
   },
   {
-    route: "guides",
-    file: "src/pages/guides/index.astro",
-    name: "Guides",
-    description: "Learn the models, build your own avatar, deploy it, and understand pricing.",
-    section: "guides",
+    route: "build",
+    file: "src/pages/build/index.astro",
+    name: "Build",
+    description: "Create your own avatar, give it a persona and a voice, and follow recipes for a voice agent and for Claude and Cursor. Then browse the example gallery.",
+    section: "build",
   },
   {
     route: "resources",
     file: "src/pages/resources/index.astro",
     name: "Resources",
-    description: "Downloads and versions, the changelog, support, and machine-readable files for AI agents.",
+    description: "Downloads and versions, the changelog, pricing, troubleshooting, support, and machine-readable files for AI agents.",
     section: "resources",
   },
 ];

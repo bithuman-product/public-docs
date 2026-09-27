@@ -1,11 +1,14 @@
 ---
 title: "Essence 2"
 description: "Essence 2 — bitHuman's photorealistic avatar model: your identity's own footage, lip-synced live at up to 1080p. Where it runs, how an agent is created, how it serves, and what to expect."
-section: guides
-group: "Learn"
-order: 2
+section: models
+group: "Models"
+order: 10
 type: concept
-label: "Essence 2"
+models: ["essence-2"]
+demo: "essence-2"
+renders: ["device", "server", "cloud"]
+next: ["/platforms", "/build/create-avatar", "/models/expression-2"]
 ---
 
 ## What it is
@@ -22,18 +25,18 @@ with a sharp mouth and teeth taken from that video.
 - **On your own hardware** — every SDK platform runs it.
 
 For a stylized character, or a scene generated from one photo, choose
-[Expression 2](/concepts/expression-2). The side-by-side is on
-[Models](/concepts/models).
+[Expression 2](/models/expression-2). The side-by-side is on
+[Models](/models).
 
 ## Where it runs
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) |
-| macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (frames, and MP4 clips with `bithuman.offline`) |
-| iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Essence2Kit` product (iOS / macOS 26; `Essence2` for C) — a complete app is on [Swift / iOS — Essence 2](/examples/swift-ios-essence2) |
-| Android | [`essence2-android`](/sdk/android) — fetching the identity needs your API secret |
-| The viewer's browser | [`?render=local`](/sdk/web#integrate-into-your-app), for an identity whose in-browser build is published |
+| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/platforms/livekit) |
+| macOS and Linux | the [CLI](/platforms/cli) (`run`, `render`) and the [Python SDK](/platforms/python) (frames, and MP4 clips with `bithuman.offline`) |
+| iPhone, iPad, Mac | the [Apple SDK](/platforms/ios)'s `Essence2Kit` product (iOS / macOS 26; `Essence2` for C) — a complete app is on [Swift / iOS — Essence 2](/examples/ios-essence-2) |
+| Android | [`essence2-android`](/platforms/android) — fetching the identity needs your API secret |
+| The viewer's browser | [`?render=local`](/platforms/web#integrate-into-your-app), for an identity whose in-browser build is published |
 
 The file you download is `<CODE>.imx`, from
 [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
@@ -57,7 +60,7 @@ and `model: "essence-2"`, or add `essence-2` to an existing agent with
   little later; until then the download endpoint answers a retryable
   `404 MODEL_ARTIFACT_NOT_READY`.
 
-The creation cost is on [pricing](/guides/pricing).
+The creation cost is on [pricing](/pricing).
 
 ## Serving tiers
 
@@ -65,7 +68,7 @@ The bitHuman cloud picks a serving tier for each session. The Apple tier runs on
 bitHuman's Apple silicon, not your Mac. To force one tier for a benchmark, append
 `?model=essence-2-gpu`, `essence-2-apple` or `essence-2-cpu` to the session
 URL — how a pin behaves is on
-[pin a serving tier](/concepts/models#advanced-pin-a-serving-tier). For
+[pin a serving tier](/models#advanced-pin-a-serving-tier). For
 production, omit it.
 
 ## Idle and speaking behavior
@@ -73,7 +76,7 @@ production, omit it.
 The identity video plays continuously and loops **forward-only**: at its last
 frame it wraps to the first, and it never plays in reverse. While idle it is
 pure playback of your footage; while talking, the animated face is rendered
-over the same frames. A running session bills talking and idle time alike ([pricing](/guides/pricing)).
+over the same frames. A running session bills talking and idle time alike ([pricing](/pricing)).
 
 ## Limits and expectations
 
@@ -90,8 +93,8 @@ over the same frames. A running session bills talking and idle time alike ([pric
 
 ## Next steps
 
-- [Models](/concepts/models) — the four models side by side
+- [Models](/models) — the four models side by side
 - [Agents API](/api/agents) — create, poll, download
 - [Embed widget](/api/embedding) — a live session in minutes
 - [Video API](/api/video) — render an MP4 with `model: "essence-2"`
-- [Session behavior & troubleshooting](/guides/session-troubleshooting)
+- [Session behavior & troubleshooting](/resources/troubleshooting)

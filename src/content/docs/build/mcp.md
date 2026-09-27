@@ -1,15 +1,13 @@
 ---
-title: "MCP server"
+title: "Claude & Cursor (MCP)"
 description: "Let Claude, Cursor and other MCP clients drive bitHuman as tools: create agents, speak, embed, render. The server is built into the CLI (bithuman mcp)."
-section: sdk
-group: "Integrations"
-order: 70
+section: build
+group: "Recipes"
+order: 50
 type: platform
-slug: sdk/mcp
-label: "MCP server"
 ---
 
-`bithuman mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server built into the [CLI](/sdk/cli). An MCP client such as Claude Code, Claude Desktop or Cursor can then call bitHuman as tools: "make an avatar that explains our pricing, then give me an embed token" becomes a chain of tool calls.
+`bithuman mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server built into the [CLI](/platforms/cli). An MCP client such as Claude Code, Claude Desktop or Cursor can then call bitHuman as tools: "make an avatar that explains our pricing, then give me an embed token" becomes a chain of tool calls.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -18,7 +16,7 @@ label: "MCP server"
 
 ## Before you start
 
-- The [CLI](/sdk/cli#install) on macOS (Apple silicon) or Linux. On Windows or in a hosted agent, call the [REST API](/api) directly.
+- The [CLI](/platforms/cli#install) on macOS (Apple silicon) or Linux. On Windows or in a hosted agent, call the [REST API](/api) directly.
 - An MCP client.
 
 ## Install
@@ -88,7 +86,7 @@ Talking video, adding a model to an agent and knowledge bases have no tool; use 
 
 ## Platform notes
 
-- Agent creation is asynchronous: a second-generation agent takes about 2–2.5 hours. Prices are on [pricing](/guides/pricing).
+- Agent creation is asynchronous: a second-generation agent takes about 2–2.5 hours. Prices are on [pricing](/pricing).
 - Errors come back as structured objects with the HTTP status and a link to [Errors](/api/errors).
 
 ## Troubleshooting
@@ -102,6 +100,6 @@ Talking video, adding a model to an agent and knowledge bases have no tool; use 
 
 ## Reference
 
-- [CLI reference](/sdk/cli/reference#mcp-server)
+- [CLI reference](/platforms/cli/reference#mcp-server)
 - [REST API](/api) and the [OpenAPI spec](/api/openapi.yaml)
 - [For AI agents](/resources/agents)

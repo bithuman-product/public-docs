@@ -1,11 +1,14 @@
 ---
 title: "Expression 2"
 description: "Expression 2 — bitHuman's generative avatar model: a whole 416x720 scene generated live from one portrait, for any character. Where it runs, how an agent is created and trained, how it serves, and what to expect."
-section: guides
-group: "Learn"
-order: 3
+section: models
+group: "Models"
+order: 20
 type: concept
-label: "Expression 2"
+models: ["expression-2"]
+demo: "expression-2"
+renders: ["device", "server", "cloud"]
+next: ["/platforms", "/build/create-avatar", "/models/essence-2"]
 ---
 
 ## What it is
@@ -29,17 +32,17 @@ and it is why creation takes a couple of hours.
 - **You only have a photo** — one image is enough.
 
 For a photorealistic person animated from their own footage, compare
-[Essence 2](/concepts/essence-2). The side-by-side is on [Models](/concepts/models).
+[Essence 2](/models/essence-2). The side-by-side is on [Models](/models).
 
 ## Where it runs
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) |
-| macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
-| iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
-| Android | [`expression2-android`](/sdk/android) — sessions use your API secret |
-| The viewer's browser | [`?render=local`](/sdk/web#integrate-into-your-app) |
+| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/platforms/livekit) |
+| macOS and Linux | the [CLI](/platforms/cli) (`run`, `render`) and the [Python SDK](/platforms/python) (`[expression-2]` extra) |
+| iPhone, iPad, Mac | the [Apple SDK](/platforms/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/ios-expression-2) |
+| Android | [`expression2-android`](/platforms/android) — sessions use your API secret |
+| The viewer's browser | [`?render=local`](/platforms/web#integrate-into-your-app) |
 
 The file you download from
 [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model)
@@ -68,7 +71,7 @@ and `model: "expression-2"`, or add `expression-2` to an existing agent with
   `status: "failed"` with an `error_message` — see
   [failure modes](/api/agents#errors).
 
-The creation cost is on [pricing](/guides/pricing).
+The creation cost is on [pricing](/pricing).
 
 ## Serving tiers
 
@@ -76,7 +79,7 @@ The bitHuman cloud picks a serving tier for each session. Every published
 configuration, including a desktop CPU with no GPU, renders faster than real
 time ([performance](/performance)). To force one tier for a benchmark, append `?model=expression-2-gpu`,
 `expression-2-apple` or `expression-2-cpu` to the session URL — how a pin
-behaves is on [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier).
+behaves is on [pin a serving tier](/models#advanced-pin-a-serving-tier).
 For production, omit it.
 
 ## Idle and speaking behavior
@@ -85,7 +88,7 @@ During silences the avatar plays its **10-second idle clip**, generated from the
 identity at creation, looping forward-only and seamlessly. When speech starts,
 the engine hands off to generated frames with a per-identity color match, so the
 two stay visually continuous; idle resumes only after sustained silence, not in
-pauses inside a sentence. A running session bills talking and idle time alike ([pricing](/guides/pricing)).
+pauses inside a sentence. A running session bills talking and idle time alike ([pricing](/pricing)).
 
 **Speech onset.** The engine renders in fixed audio chunks; the moving idle
 clip covers the start of each reply.
@@ -103,8 +106,8 @@ clip covers the start of each reply.
 
 ## Next steps
 
-- [Models](/concepts/models) — the four models side by side
+- [Models](/models) — the four models side by side
 - [Agents API](/api/agents) — create, poll, download
 - [Embed widget](/api/embedding) — a live session in minutes
 - [Video API](/api/video) — render an MP4 with `model: "expression-2"`
-- [Session behavior & troubleshooting](/guides/session-troubleshooting)
+- [Session behavior & troubleshooting](/resources/troubleshooting)

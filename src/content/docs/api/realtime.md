@@ -1,11 +1,11 @@
 ---
-title: "Realtime API"
+title: "Realtime relay"
 description: "Open a metered OpenAI-Realtime voice session through bitHuman: a WebSocket relay or a server-brokered WebRTC call."
 section: api
-group: "Build"
-order: 16
+group: "Live sessions"
+order: 30
 type: endpoint
-label: "Realtime"
+next: ["/api/authentication", "/pricing", "/api/errors"]
 ---
 
 ## Overview

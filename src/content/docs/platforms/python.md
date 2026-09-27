@@ -1,18 +1,21 @@
 ---
 title: "Python"
 description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon) and Linux."
-section: sdk
-group: "Platforms"
-order: 20
+section: platforms
+group: "Code & terminal"
+order: 10
 type: platform
-label: "Python"
+renders: ["server", "no-gpu"]
+artifacts: ["python"]
+platforms: ["python"]
+next: ["/build/voice-agent", "/platforms/python/reference", "/deploy/self-hosted"]
 ---
 
-The `bithuman` package renders avatars in your own Python code: file in, frames out, or a live stream of audio in and frames out. To run an avatar without code, use the [CLI](/sdk/cli).
+The `bithuman` package renders avatars in your own Python code: file in, frames out, or a live stream of audio in and frames out. To run an avatar without code, use the [CLI](/platforms/cli).
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
+| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), up to 1080p at 25 fps |
 | **Install** | `pip install "bithuman[expression-2]"` | included in the same install |
 | **Frames** | RGB `numpy` arrays, `(height, width, 3)` `uint8` | the same |
 
@@ -38,7 +41,7 @@ Install into a virtual environment: Debian and Ubuntu refuse a system-wide `pip 
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the shell that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()` or `bithuman.offline.render_offline()`. See [Your API secret](/start/api-secret). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)). Downloading a sample avatar needs no account.
+Set `BITHUMAN_API_SECRET` in the shell that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()` or `bithuman.offline.render_offline()`. See [Your API secret](/start/api-secret). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)). Downloading a sample avatar needs no account.
 
 ## First frame
 
@@ -70,6 +73,44 @@ from bithuman.offline import render_offline
 render_offline("sofia-ramirez.imx", "speech.wav", out_mp4="out.mp4")
 # → out.mp4: 1080×1920 with the speech, 15.2 s
 ```
+
+## Complete example
+
+The quickstart from the examples repository: open an avatar and watch it speak in a window.
+
+<figure class="showcase">
+  <video controls preload="none" playsinline poster="/examples/python/hero.webp" width="540" height="960" src="/examples/python/clip.mp4"></video>
+  <figcaption>The <code>sofia-ramirez</code> Essence 2 sample avatar in the quickstart's window on an Apple M4 Mac.</figcaption>
+</figure>
+
+### Requirements
+
+| You need | Notes |
+|---|---|
+| Python 3.10–3.14 | on macOS (Apple silicon) or Linux (x86_64, arm64) |
+| An [API secret](/start/api-secret) | |
+| A desktop session | the example opens a window |
+
+### Run it
+
+```bash
+git clone https://github.com/bithuman-product/bithuman-examples.git
+cd bithuman-examples/python/quickstart
+python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+export BITHUMAN_API_SECRET="<your API secret>"
+python local-avatar.py
+```
+
+### Expected output
+
+A window titled **bitHuman avatar** opens and the avatar speaks the bundled `speech.wav`. The first run downloads the sample avatar (about 150 MB). To write an MP4 instead of opening a window, run `python -m bithuman ~/.cache/bithuman/models/A52DHS2219.imx speech.wav`.
+
+### Make it your own
+
+- **Your own avatar:** pass `--model` with your agent's `.imx`, downloaded with the [Agents API](/api/agents#download-an-agents-model) or `bithuman pull <AGENT_CODE>`.
+- **Your own audio:** pass any audio file; or stream microphone audio with `AsyncBithuman` ([Integrate into your app](/platforms/python#integrate-into-your-app)).
+- **A conversation:** `cloud-avatar.py` in the same folder connects the avatar to an OpenAI voice agent over LiveKit ([LiveKit](/platforms/livekit)).
+- **A web app:** send the frames from `render()` to your own video stream, or use the [web embed](/platforms/web).
 
 ## Integrate into your app
 
@@ -112,7 +153,7 @@ asyncio.run(main())
 
 ### A voice agent on your own LiveKit server
 
-The [LiveKit plugin](/sdk/livekit) runs `AsyncBithuman` inside a LiveKit Agents worker: pass `model_path` and the avatar renders in the worker's own process, next to an OpenAI Realtime voice.
+The [LiveKit plugin](/platforms/livekit) runs `AsyncBithuman` inside a LiveKit Agents worker: pass `model_path` and the avatar renders in the worker's own process, next to an OpenAI Realtime voice.
 
 ```python
 # excerpt: python/self-host/agent.py (bithuman-examples)
@@ -125,7 +166,7 @@ await session.start(agent=Agent(instructions="You are a friendly assistant."),
                     room=ctx.room, room_options=RoomOptions(audio_output=False))
 ```
 
-In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass it explicitly: the plugin reads `BITHUMAN_API_SECRET` by itself and, for a cloud avatar, copies it into the room ([LiveKit](/sdk/livekit#authenticate)). The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/guides/local-voice-avatar#with-python).
+In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass it explicitly: the plugin reads `BITHUMAN_API_SECRET` by itself and, for a cloud avatar, copies it into the room ([LiveKit](/platforms/livekit#authenticate)). The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/build/voice-agent#with-python).
 
 ## Platform notes
 
@@ -136,7 +177,7 @@ In a LiveKit worker, keep your API secret as `BITHUMAN_MASTER_SECRET` and pass i
 
 ## Performance
 
-Frame rates for Python on macOS and Linux are on [Desktop performance](/performance/desktop). A finished `render` logs its own rate on the `bithuman` logger at INFO.
+Frame rates for Python on macOS and Linux are on [Desktop performance](/performance#desktop). A finished `render` logs its own rate on the `bithuman` logger at INFO.
 
 ## Troubleshooting
 
@@ -153,9 +194,10 @@ Frame rates for Python on macOS and Linux are on [Desktop performance](/performa
 | Frames look blue | frames are RGB and your display wants BGR | `image[:, :, ::-1]` |
 | Raw audio plays slow and long | decoded audio must be 16 kHz mono | pass a file path, or resample to 16 kHz |
 | `404 NOT_FOUND` downloading a model | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
+| The example window never opens (`GUI: NONE`) | the headless OpenCV build won the install | `pip install --force-reinstall --no-deps opencv-python` |
 
 ## Reference
 
-- [Python API reference](/sdk/python-api): every public class and function.
+- [Python API reference](/platforms/python/reference): every public class and function.
 - [Python examples](https://github.com/bithuman-product/bithuman-examples/tree/main/python): quickstart, local conversation, cloud with LiveKit.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

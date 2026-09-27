@@ -1,11 +1,10 @@
 ---
-title: "Video API"
+title: "Talking video API"
 description: "Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a CDN URL. Per-minute billing, auto-refunded on failure."
 section: api
-group: "Build"
-order: 11
+group: "Speech & video"
+order: 20
 type: endpoint
-label: "Talking video"
 ---
 
 ## Overview
@@ -20,7 +19,7 @@ Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 ## Generate a talking video
 
-**Before you start:** you need an agent you own. List yours with `curl https://api.bithuman.ai/v1/agents -H "api-secret: $BITHUMAN_API_SECRET"` and `export BITHUMAN_AGENT_CODE=A…`. Creating one needs the Creator plan or higher ([Pricing](/guides/pricing#plans)).
+**Before you start:** you need an agent you own. List yours with `curl https://api.bithuman.ai/v1/agents -H "api-secret: $BITHUMAN_API_SECRET"` and `export BITHUMAN_AGENT_CODE=A…`. Creating one needs the Creator plan or higher ([Pricing](/pricing#plans)).
 
 `POST /v1/video/generate` returns a `job_id` with `status: "processing"`; poll [`GET /v1/video/{job_id}`](#get-talking-video-status) until it completes, or register a [webhook](/api/webhooks) for `video.completed` / `video.failed`.
 
@@ -177,4 +176,4 @@ def wait_for_video(job_id, api_secret, timeout=600):
     raise TimeoutError("render did not finish in time")
 ```
 
-See [pricing](/guides/pricing) for how credits are consumed.
+See [pricing](/pricing) for how credits are consumed.

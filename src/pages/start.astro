@@ -2,85 +2,109 @@
 import Base from "../layouts/Base.astro";
 import CodeTabs from "../components/CodeTabs.astro";
 import LiveDemo from "../components/LiveDemo.astro";
-import PathTable from "../components/PathTable.astro";
+import Card from "../components/Card.astro";
+import Expected from "../components/Expected.astro";
+import Availability from "../components/Availability.astro";
 import PerfHeadline from "../components/PerfHeadline.astro";
 import { hubMeta } from "../config/hubs";
-import { PLATFORMS } from "../data/platforms";
+import { API_SECRET_URL } from "../config/nav";
+import { PLATFORMS, PLATFORM_PAGES } from "../data/platforms";
+import { RENDERS_LABEL } from "../data/labels";
 
 const meta = hubMeta("start");
-const next = (docs: string) => (docs.startsWith("/sdk/") ? `${docs}#first-frame` : docs);
+const next = (docs: string) => (docs.startsWith("/platforms/") && !docs.includes("#") ? `${docs}#first-frame` : docs);
+const offline = PLATFORMS.find((p) => p.id === "offline")!;
 ---
 
-<Base title="Get started — bitHuman docs" description={meta.description}>
+<Base title="Quickstart — bitHuman docs" description={meta.description}>
   <section class="s-hero">
     <div class="container">
-      <h1>Get started</h1>
-      <p class="lede">Realtime talking avatars from one portrait: Essence 2 for photoreal people, Expression 2 for any character. Talk to one now, then pick how you run your own.</p>
+      <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>Get started</span></nav>
+      <h1>Quickstart</h1>
+      <p class="lede">Talk to a live avatar now, get an API secret, then run your own on the platform you choose. Essence 2 renders a photoreal person; Expression 2 renders any character.</p>
     </div>
   </section>
 
   <section class="s-block">
     <div class="container s-demo">
-      <LiveDemo />
       <div>
-        <h2 id="api-secret">Your API secret</h2>
-        <p>Everything except the web embed uses an API secret. Create one in the console, then export it:</p>
+        <h2 id="talk-to-an-avatar"><span class="step">1</span> Talk to an avatar</h2>
+        <p>Pick a model and start a live conversation in this page: no install and no account.</p>
+        <LiveDemo label="Talk to a live avatar" />
+      </div>
+      <div>
+        <h2 id="api-secret"><span class="step">2</span> Get your API secret</h2>
+        <p>Everything except the web embed uses an API secret. Create one in the bitHuman app, then export it:</p>
+        <div class="chip-row"><Availability plan="creator" /></div>
         <CodeTabs tabs={[{ label: "Shell", lang: "bash", code: `export BITHUMAN_API_SECRET="<your API secret>"` }]} />
-        <p class="s-small"><a href="https://www.bithuman.ai/developer/api-keys">Create an API secret ↗</a> · <a href="/start/api-secret">How the API secret works</a></p>
+        <p class="s-small"><a href={API_SECRET_URL}>Create an API secret ↗</a> · <a href="/start/api-secret">How the API secret works</a></p>
       </div>
     </div>
   </section>
 
   <section class="s-block alt">
     <div class="container">
-      <h2 id="choose-your-path">Choose your path</h2>
-      <PathTable />
+      <h2 id="choose-your-platform"><span class="step">3</span> Choose your platform</h2>
+      <ul class="card-grid cols-3" role="list">
+        {PLATFORM_PAGES.map((p) => (
+          <li><Card variant="platform" href={p.href} title={p.title} line={p.line} icon={p.icon}
+            chips={[...p.renders.map((r) => RENDERS_LABEL[r]), ...(p.time ? [`First result in ${p.time}`] : [])]} /></li>
+        ))}
+      </ul>
+      <p class="s-small s-offline"><strong>Fully offline:</strong> {offline.note} <a href="https://www.bithuman.ai/sales">Contact sales</a> · <a href="/deploy#fully-offline">Details</a></p>
     </div>
   </section>
 
   <section class="s-block">
     <div class="container">
-      <h2 id="run-it">Run it</h2>
+      <h2 id="run-it"><span class="step">4</span> Run it</h2>
       <p class="muted">Each block runs as pasted after you export your API secret.</p>
       {PLATFORMS.filter((p) => p.card).map((p) => (
-        <article class="s-card" id={p.id}>
+        <article class="s-run" id={p.id}>
           <h3>{p.want} <span class="s-use">· {p.use}</span></h3>
           <CodeTabs tabs={[{ label: p.use.split(" (")[0], lang: p.card!.lang, code: p.card!.code }]} />
-          <p class="s-expect"><strong>Expected:</strong> {p.card!.expect}</p>
+          <Expected><p>{p.card!.expect}</p></Expected>
           <p class="s-next"><a href={next(p.docs)}>Next: {p.use.split(" (")[0]} →</a></p>
         </article>
       ))}
-      <article class="s-card" id="apps">
-        <h3>Ship an app <span class="s-use">· Apple, Android</span></h3>
+      <article class="s-run" id="apps">
+        <h3>Ship an app <span class="s-use">· Swift package, Android SDK</span></h3>
         <p>Add the dependency, then follow the platform page's first frame:</p>
         <CodeTabs tabs={PLATFORMS.filter((p) => p.id === "apple" || p.id === "android").map((p) => ({ label: p.id === "apple" ? "Swift" : "Kotlin", lang: p.id === "apple" ? "swift" : "kotlin", code: p.first }))} />
-        <p class="s-next"><a href="/sdk/apple#first-frame">Apple →</a> · <a href="/sdk/android#first-frame">Android →</a> · <a href="/sdk/livekit">LiveKit →</a> · <a href="/sdk/mcp">MCP →</a></p>
+        <p class="s-next"><a href="/platforms/ios#first-frame">iOS & iPadOS →</a> · <a href="/platforms/android#first-frame">Android →</a> · <a href="/platforms/livekit">LiveKit →</a> · <a href="/build/mcp">Claude & Cursor (MCP) →</a></p>
       </article>
     </div>
   </section>
 
   <section class="s-block alt">
     <div class="container">
-      <h2 id="performance">How fast it runs</h2>
+      <h2 id="performance">How fast it renders</h2>
       <PerfHeadline />
-      <p class="s-small"><a href="/concepts/models">Which model?</a> · <a href="/guides/pricing">Pricing: credits pay for session time, talking or idle</a> · <a href="/examples">Examples</a></p>
+      <p class="s-small"><a href="/models">Which model?</a> · <a href="/pricing">Pricing: credits pay for active session time, talking or idle</a> · <a href="/examples">Example gallery</a></p>
     </div>
   </section>
 </Base>
 
 <style>
-  .s-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
-  .s-hero h1 { font-size: var(--fh-3xl); }
-  .s-hero .lede { margin-top: var(--space-4); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
-  .s-block { padding-block: var(--space-8); }
+  .s-hero { padding-block: var(--s-8) var(--s-6); border-bottom: 1px solid var(--color-border); }
+  .crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-3); }
+  .crumb a { color: var(--color-text-tertiary); }
+  .crumb a:hover { color: var(--color-primary); }
+  .s-hero h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .s-hero .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
+  .s-block { padding-block: var(--s-10); }
   .s-block.alt { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
-  .s-block h2 { font-size: var(--fh-lg); margin-bottom: var(--space-3); }
-  .s-demo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: start; }
-  .s-demo p { margin-block: var(--space-3); }
-  .s-card { margin-top: var(--space-6); }
-  .s-card h3 { font-size: var(--ft-lg); margin-bottom: var(--space-3); }
+  .s-block h2 { display: flex; align-items: center; gap: var(--s-3); font-size: var(--fh-lg); margin-bottom: var(--s-3); }
+  .step { display: inline-grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-sm); font-weight: var(--fw-bold); }
+  .s-demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-12); align-items: start; }
+  .s-demo p { margin-block: var(--s-3); }
+  .s-demo :global(.ld) { margin: var(--s-4) 0 0; }
+  .s-run { margin-top: var(--s-8); }
+  .s-run h3 { font-size: var(--ft-lg); margin-bottom: var(--s-3); }
   .s-use { color: var(--color-text-tertiary); font-weight: var(--fw-regular); }
-  .s-expect, .s-next, .s-small { margin-top: var(--space-3); font-size: var(--ft-sm); }
-  .s-expect { color: var(--color-text-secondary); }
-  @media (max-width: 900px) { .s-demo { grid-template-columns: 1fr; } }
+  .s-next, .s-small { margin-top: var(--s-3); font-size: var(--ft-sm); }
+  .s-offline { margin-top: var(--s-5); max-width: 80ch; color: var(--color-text-secondary); }
+  .card-grid { margin-top: var(--s-4); }
+  @media (max-width: 900px) { .s-demo { grid-template-columns: 1fr; gap: var(--s-8); } }
+  @media (max-width: 560px) { .s-hero h1 { font-size: var(--fh-xl); } .s-block { padding-block: var(--s-8); } }
 </style>

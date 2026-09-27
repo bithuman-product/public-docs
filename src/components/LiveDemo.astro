@@ -1,36 +1,244 @@
 ---
-// The one live demo on the site: the Wise Pup sample avatar, embedded on click.
-import { DEMO_AGENT, EMBED_URL } from "../data/platforms";
+// A live sample avatar per model, in the same no-account web embed a customer
+// uses. Nothing loads until a click (the owner's rule for embeds). A session is
+// bounded here: one at a time per visitor (other tabs and other demos end when
+// one starts), a visible countdown from the moment the avatar is live, an end
+// when the tab stays hidden, and a real recording when the live embed does not
+// come up. The embed URL is never a crawlable link: the script opens it.
+import { DEMOS, DEMO_CAP_SECONDS, embedUrl, type DemoModel } from "../data/demo";
+
+interface Props {
+  /** Which models to offer; the first is shown first. */
+  models?: DemoModel[];
+  /** The page's largest image (the home hero): load the poster at high priority. */
+  eager?: boolean;
+  /** Heading level for the demo's accessible name, when the page needs one. */
+  label?: string;
+}
+const { models = ["essence-2", "expression-2"], eager = false, label = "Live demo" } = Astro.props;
+const demos = models.map((m) => DEMOS[m]);
+const first = demos[0];
+const capMin = Math.round(DEMO_CAP_SECONDS / 60);
+const sizes = "(max-width: 560px) calc(100vw - 32px), 440px";
 ---
-<div class="live-demo" data-live-demo>
-  <img src="/images/demo-wise-pup-960.webp" srcset="/images/demo-wise-pup-640.webp 640w, /images/demo-wise-pup-960.webp 960w" sizes="(max-width: 700px) 100vw, 560px" width="960" height="536" alt={`${DEMO_AGENT.name}, a sample Expression 2 avatar`} fetchpriority="high" decoding="async" />
-  <button class="ld-launch" type="button" data-src={EMBED_URL}><span class="dot" aria-hidden="true"></span> Talk to {DEMO_AGENT.name}</button>
-  <p class="ld-note">Live, in your browser. No account. Allow the microphone when asked.</p>
-</div>
+
+<section class="ld" data-live-demo data-cap={DEMO_CAP_SECONDS} aria-label={label} data-pagefind-ignore>
+  {demos.length > 1 && (
+    <div class="ld-switch" role="radiogroup" aria-label="Model">
+      {demos.map((d, i) => (
+        <button type="button" role="radio" aria-checked={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1} data-pick={d.model}>
+          {d.modelName}<span class="ld-kind">{d.kind}</span>
+        </button>
+      ))}
+    </div>
+  )}
+  <div class="ld-stage" data-stage>
+    {demos.map((d, i) => (
+      <div class="ld-poster" data-poster={d.model} data-src={embedUrl(d.code)} data-name={d.name} data-model-name={d.modelName}
+        data-clip={d.clip.src} data-clip-poster={d.clip.poster} data-clip-w={d.clip.width} data-clip-h={d.clip.height} data-clip-caption={d.clip.caption}
+        hidden={i > 0}>
+        <picture>
+          <source type="image/avif" srcset={`${d.poster}-480.avif 480w, ${d.poster}-960.avif 960w`} sizes={sizes} />
+          <img src={`${d.poster}-480.webp`} srcset={`${d.poster}-480.webp 480w, ${d.poster}-960.webp 960w`} sizes={sizes}
+            width="480" height="600" alt={`${d.slug}, the ${d.modelName} sample avatar`}
+            loading={eager && i === 0 ? "eager" : "lazy"} fetchpriority={eager && i === 0 ? "high" : undefined} decoding="async" />
+        </picture>
+      </div>
+    ))}
+    <button class="ld-launch" type="button" data-launch>
+      <span class="ld-dot" aria-hidden="true"></span><span data-launch-label>Talk to {first.name}</span>
+    </button>
+  </div>
+  <div class="ld-bar">
+    <p class="ld-status" data-status aria-live="polite">Live in your browser, no account. Up to {capMin} minutes; allow the microphone when asked.</p>
+    <span class="ld-timer" data-timer role="timer" hidden></span>
+    <button class="ld-btn" type="button" data-end hidden>End</button>
+    <button class="ld-btn ld-quiet" type="button" data-record>Watch a recording</button>
+  </div>
+  <p class="ld-s29">The avatar renders in the bitHuman cloud, and the conversation runs on bitHuman's servers.</p>
+</section>
+
 <script>
-  document.querySelectorAll("[data-live-demo]").forEach((root) => {
-    const btn = root.querySelector(".ld-launch") as HTMLButtonElement;
-    btn?.addEventListener("click", () => {
+  // One demo session per visitor: a start here ends the others, in this tab and in other tabs.
+  let channel: BroadcastChannel | null = null;
+  try { channel = new BroadcastChannel("bh-live-demo"); } catch (_) {}
+  const me = Math.random().toString(36).slice(2);
+
+  document.querySelectorAll<HTMLElement>("[data-live-demo]").forEach((root) => {
+    const cap = Number(root.dataset.cap) || 180;
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector(s) as T;
+    const stage = $<HTMLElement>("[data-stage]");
+    const launch = $<HTMLButtonElement>("[data-launch]");
+    const status = $<HTMLElement>("[data-status]");
+    const timer = $<HTMLElement>("[data-timer]");
+    const endBtn = $<HTMLButtonElement>("[data-end]");
+    const recBtn = $<HTMLButtonElement>("[data-record]");
+    const picks = [...root.querySelectorAll<HTMLButtonElement>("[data-pick]")];
+    const posters = [...root.querySelectorAll<HTMLElement>("[data-poster]")];
+    let cur = posters[0];
+    let frame: HTMLIFrameElement | null = null;
+    let clip: HTMLElement | null = null;
+    let timers: number[] = [];
+    let tick = 0;
+    let left = cap;
+    const intro = status.textContent ?? "";
+
+    const clear = () => { timers.forEach(clearTimeout); timers = []; clearInterval(tick); tick = 0; timer.hidden = true; };
+    const say = (t: string) => { status.textContent = t; };
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+    const reset = () => {
+      clear();
+      frame?.remove(); frame = null;
+      clip?.remove(); clip = null;
+      root.classList.remove("live", "rec");
+      cur.hidden = false;
+      launch.hidden = false;
+      endBtn.hidden = true;
+      recBtn.hidden = false;
+    };
+    const stop = (why: string) => { if (!frame) return; reset(); say(why); };
+
+    const showClip = (why: string) => {
+      reset();
+      const d = cur.dataset;
+      const fig = document.createElement("figure");
+      fig.className = "ld-clip";
+      const v = document.createElement("video");
+      Object.assign(v, { controls: true, playsInline: true, preload: "metadata", poster: d.clipPoster!, src: d.clip! });
+      v.width = Number(d.clipW); v.height = Number(d.clipH);
+      const caption = document.createElement("figcaption");
+      caption.textContent = d.clipCaption!;
+      fig.append(v, caption);
+      stage.append(fig);
+      clip = fig;
+      cur.hidden = true;
+      launch.hidden = true;
+      recBtn.hidden = true;
+      root.classList.add("rec");
+      say(why);
+      const again = document.createElement("button");
+      again.type = "button"; again.className = "ld-btn"; again.textContent = "Try it live";
+      again.addEventListener("click", () => { reset(); start(); });
+      fig.append(again);
+    };
+
+    const countdown = () => {
+      left = cap;
+      timer.hidden = false;
+      const draw = () => { timer.textContent = `${mmss(left)} left`; };
+      draw();
+      tick = window.setInterval(() => {
+        left--; draw();
+        if (left <= 0) stop(`The demo ends after ${Math.round(cap / 60)} minutes. Talk again, or build your own from the quickstart.`);
+      }, 1000);
+    };
+
+    const start = () => {
+      if (!navigator.onLine) return showClip("You are offline, so here is a recording.");
+      document.dispatchEvent(new CustomEvent("bh-demo-start", { detail: root }));
+      channel?.postMessage({ start: me });
+      reset();
+      const d = cur.dataset;
       const f = document.createElement("iframe");
-      f.src = btn.dataset.src!;
+      f.src = d.src!;
       f.allow = "microphone *; autoplay *";
-      f.title = "bitHuman live avatar";
+      f.title = `Live avatar: ${d.name} (${d.modelName})`;
       f.className = "ld-frame";
-      root.querySelector("img")?.remove();
-      btn.remove();
-      root.prepend(f);
+      let loaded = false;
+      f.addEventListener("load", () => { loaded = true; });
+      stage.prepend(f);
+      frame = f;
+      cur.hidden = true;
+      launch.hidden = true;
+      endBtn.hidden = false;
+      recBtn.hidden = true;
       root.classList.add("live");
+      say(`Tap to talk in the frame, then allow the microphone.`);
+      later(20000, () => { if (frame === f && !loaded) showClip("The live demo did not load, so here is a recording."); });
+      // A session ends within the cap even if the embed never reports it is live.
+      later((cap + 150) * 1000, () => stop("The demo session ended."));
+    };
+
+    addEventListener("message", (e) => {
+      if (!frame || e.source !== frame.contentWindow) return;
+      const t = (e.data && e.data.type) || "";
+      if (t === "bithuman:viewer-ready") {
+        say("Connecting to the avatar…");
+        later(120000, () => { if (frame && !tick) showClip("The live demo is busy right now, so here is a recording."); });
+      } else if (t === "bithuman:avatar-live") {
+        if (!tick) { say(`Live: say hello to ${cur.dataset.name}.`); countdown(); }
+      } else if (t === "bithuman_session_end") {
+        stop("Session ended.");
+      }
+    });
+
+    const pick = (btn: HTMLButtonElement) => {
+      if (frame || clip) { reset(); say(intro); }
+      picks.forEach((b) => { const on = b === btn; b.setAttribute("aria-checked", String(on)); b.tabIndex = on ? 0 : -1; });
+      posters.forEach((p) => { p.hidden = p.dataset.poster !== btn.dataset.pick; });
+      cur = posters.find((p) => !p.hidden) ?? posters[0];
+      launch.querySelector("[data-launch-label]")!.textContent = `Talk to ${cur.dataset.name}`;
+    };
+    picks.forEach((b, i) => {
+      b.addEventListener("click", () => pick(b));
+      b.addEventListener("keydown", (e) => {
+        const d = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        const n = picks[(i + d + picks.length) % picks.length];
+        n.focus(); pick(n);
+      });
+    });
+
+    launch.addEventListener("click", start);
+    endBtn.addEventListener("click", () => stop("Session ended."));
+    recBtn.addEventListener("click", () => showClip("A recording of this avatar. Start a live conversation any time."));
+    document.addEventListener("bh-demo-start", (e) => { if ((e as CustomEvent).detail !== root) stop("Ended, because another demo started."); });
+    if (channel) channel.onmessage = (e) => { if (e.data?.start && e.data.start !== me) stop("Ended, because a demo started in another tab."); };
+    document.addEventListener("visibilitychange", () => {
+      if (!frame) return;
+      if (document.hidden) later(30000, () => { if (document.hidden) stop("Ended while the tab was in the background."); });
     });
   });
 </script>
+
 <style>
-  .live-demo { position: relative; border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface-2); border: 1px solid var(--color-border); aspect-ratio: 960 / 536; }
-  .live-demo.live { aspect-ratio: auto; }
-  .live-demo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .live-demo :global(.ld-frame) { width: 100%; height: 600px; border: 0; display: block; }
-  .ld-launch { position: absolute; left: 50%; bottom: var(--space-8); transform: translateX(-50%); display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border: 0; border-radius: 999px; background: var(--color-primary); color: #fff; font-weight: var(--fw-medium); font-size: var(--ft-md); box-shadow: var(--shadow-md); cursor: pointer; }
-  .ld-launch:hover { background: var(--coral-700); }
-  .ld-launch .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-  .ld-note { position: absolute; left: 0; right: 0; bottom: var(--space-2); text-align: center; font-size: var(--ft-xs); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6); margin: 0; }
-  .live-demo.live .ld-note { position: static; color: var(--color-text-tertiary); text-shadow: none; padding: var(--space-2); }
+  .ld { display: grid; gap: var(--s-3); width: 100%; max-width: 440px; margin-inline: auto; }
+  .ld-switch { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-1); padding: var(--s-1); border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface-2); }
+  .ld-switch button {
+    display: flex; flex-direction: column; align-items: center; gap: 0; padding: 0.4rem 0.75rem; border: 0; border-radius: var(--r-pill);
+    background: none; color: var(--color-text-secondary); font: inherit; font-size: var(--ft-sm); font-weight: var(--fw-medium); line-height: 1.25; cursor: pointer;
+  }
+  .ld-switch button[aria-checked="true"] { background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-sm); }
+  .ld-kind { font-size: var(--ft-xs); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
+  .ld-stage { position: relative; aspect-ratio: 4 / 5; border-radius: var(--r-xl); overflow: hidden; background: var(--color-surface-3); border: 1px solid var(--color-border); }
+  .ld-poster, .ld-poster picture, .ld-poster img { display: block; width: 100%; height: 100%; }
+  .ld-poster img { object-fit: cover; object-position: 50% 20%; }
+  .ld-poster[hidden] { display: none; }
+  .ld-stage :global(.ld-frame) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #0b0b0d; }
+  .ld-launch {
+    position: absolute; left: 50%; bottom: var(--s-6); transform: translateX(-50%);
+    display: inline-flex; align-items: center; gap: var(--s-2); padding: 0.75rem 1.25rem; border: 0; border-radius: var(--r-pill);
+    background: var(--color-primary); color: var(--color-on-primary); font: inherit; font-size: var(--ft-md); font-weight: var(--fw-medium);
+    box-shadow: var(--shadow-md); cursor: pointer; white-space: nowrap;
+  }
+  .ld-launch:hover { background: var(--color-primary-hover); }
+  .ld-launch[hidden] { display: none; }
+  .ld-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .ld-bar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2) var(--s-3); min-height: 2.25rem; }
+  .ld-status { flex: 1 1 14rem; margin: 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ld-timer { font-size: var(--ft-sm); font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--color-text); }
+  .ld-btn {
+    padding: 0.35rem 0.8rem; border: 1px solid var(--color-border-strong); border-radius: var(--r-pill); background: var(--color-surface);
+    color: var(--color-text); font: inherit; font-size: var(--ft-sm); font-weight: var(--fw-medium); cursor: pointer;
+  }
+  .ld-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  .ld-quiet { border-color: transparent; background: none; color: var(--color-text-secondary); padding-inline: 0.4rem; }
+  .ld-btn[hidden] { display: none; }
+  .ld-s29 { margin: 0; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .ld-stage :global(.ld-clip) { position: absolute; inset: 0; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto auto; gap: var(--s-2); padding-bottom: var(--s-3); background: var(--color-surface-2); justify-items: center; }
+  .ld-stage :global(.ld-clip video) { width: 100%; height: 100%; object-fit: contain; background: #0b0b0d; }
+  .ld-stage :global(.ld-clip figcaption) { padding-inline: var(--s-4); font-size: var(--ft-xs); color: var(--color-text-secondary); text-align: center; }
 </style>

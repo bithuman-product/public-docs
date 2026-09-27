@@ -10,12 +10,12 @@
 // stale one is a customer-facing billing error, not a typo.
 //
 // They rot in a specific way: someone updates the rate table on
-// guides/pricing.md and the example JSON keeps the OLD arithmetic, or a new
+// pricing.md and the example JSON keeps the OLD arithmetic, or a new
 // model ships and its key never reaches the examples. Nothing resolves the two
 // against each other, exactly as nothing resolved internal links before
 // check-internal-links.mjs.
 //
-// So: guides/pricing.md's serving table is the declared source of truth for
+// So: pricing.md's serving table is the declared source of truth for
 // rates (the page says so itself — "This page is the single source for every
 // billing number on the platform"). This script re-derives every documented
 // minutes_estimate value from that table and fails if they disagree.
@@ -32,7 +32,7 @@
 //      value. They are the documented 2x/4x over-estimate trap, so if they ever
 //      silently start meaning Essence 2 the docs must not keep saying they
 //      don't.
-//   5. The billing RULE itself: guides/pricing.md defines a credit minute as
+//   5. The billing RULE itself: pricing.md defines a credit minute as
 //      wall-clock time a session is live (idle animation included) and an
 //      offline `bithuman render` as billing its output duration; no other page
 //      may state a different rule ("per whole minute of frames delivered, not
@@ -53,7 +53,7 @@ import { join, relative } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const CONTENT = join(ROOT, "src/content/docs");
-const PRICING = join(CONTENT, "guides/pricing.md");
+const PRICING = join(CONTENT, "pricing.md");
 
 // The unversioned keys the API still returns. Documented as aliases of the
 // first-generation rows — NOT the Essence 2 rate. `expression_self_hosted`
@@ -78,9 +78,9 @@ function walk(dir, exts) {
   return out;
 }
 
-// --- 1. Parse the declared rate table out of guides/pricing.md -------------
+// --- 1. Parse the declared rate table out of pricing.md -------------
 // Serving table rows look like:
-//   | [Essence 2](/concepts/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
+//   | [Essence 2](/models/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
 // The model KEY comes from the backticked model id, so a label reword can't
 // silently repoint a rate.
 function parseRates(md) {
@@ -94,7 +94,7 @@ function parseRates(md) {
   const serving = section(md, /^Serving\b/);
   if (serving === null) {
     failures.push(
-      `guides/pricing.md: could not find a "## Serving …" section — ` +
+      `pricing.md: could not find a "## Serving …" section — ` +
         `the rate table is the source of truth for every example on the site`
     );
     return rates;
@@ -133,7 +133,7 @@ function parseRates(md) {
   for (const k of ["voice_chat", "camera_chat"]) {
     if (!(k in rates)) {
       failures.push(
-        `guides/pricing.md: no managed-agent rate row resolved to \`${k}\` — ` +
+        `pricing.md: no managed-agent rate row resolved to \`${k}\` — ` +
           `the managed-agent table drives the ${k} estimate`
       );
     }
@@ -250,7 +250,7 @@ if (examples === 0) {
 //
 // WHY. On 2026-09-07 the cli-v2.6.2 docs pass wrote the CLI's IMPLEMENTATION
 // as the billing rule on three pages — "charged per whole minute of frames
-// actually delivered, not wall-clock" — while guides/pricing.md, the declared
+// actually delivered, not wall-clock" — while pricing.md, the declared
 // authority, says a credit minute is "wall-clock time a session is live and
 // the engine is rendering … That includes idle/silent animation". Both were
 // served side by side for about two hours. Owner ruling the same day: the
@@ -259,7 +259,7 @@ if (examples === 0) {
 // the RULE those numbers apply to, so the contradiction landed green.
 //
 // WHAT IT GRADES
-//   3a. guides/pricing.md's Serving section CARRIES the definition — asserted
+//   3a. pricing.md's Serving section CARRIES the definition — asserted
 //       present, so if the authority is reworded this cannot pass vacuously
 //       while every other page still quotes the old words.
 //   3b. No customer-facing file states a contradicting rule. The patterns are
@@ -322,7 +322,7 @@ const STALE_RULES = [
   { name: "per minute of frames",
     re: /\bper\s+(?:whole\s+)?minutes?\s+of\s+frames\b/gi,
     fixture: "metered at 2 credits per minute of frames on both platforms",
-    say: "a session bills by wall-clock, an offline render by its output duration — link /guides/pricing" },
+    say: "a session bills by wall-clock, an offline render by its output duration — link /pricing" },
   { name: "billed on frames delivered",
     re: /\b(?:charged|billed|bills?|metered|credits?)\b[^.\n]{0,80}?\bframes\s+(?:actually\s+)?delivered\b/gi,
     fixture: "Credits are charged per **whole minute of frames actually delivered**",
@@ -376,7 +376,7 @@ for (const rule of STALE_RULES) {
   const serving = section(pricingMd, /^Serving\b/) ?? "";
   if (!DEFINITION.test(serving) || !DEFINITION_IDLE.test(serving)) {
     failures.push(
-      `guides/pricing.md: the Serving section no longer defines a credit minute as ` +
+      `pricing.md: the Serving section no longer defines a credit minute as ` +
         `"bills while it is **running**, whether the avatar is talking or idle … A stopped or disconnected session accrues nothing" — ` +
         `every self-host page links here for the rule, so the definition must stay on this page`
     );
@@ -389,7 +389,7 @@ for (const rule of STALE_RULES) {
   for (const pat of RETIRED_ACCRUAL) {
     if (pat.test(pricingMd)) {
       failures.push(
-        `guides/pricing.md still carries the RETIRED accrual rule (${pat}) — the ` +
+        `pricing.md still carries the RETIRED accrual rule (${pat}) — the ` +
           `current rule is that a running session bills its time, talking or idle, and this page is ` +
           `the authority every other page links to, so it cannot say both`
       );
@@ -398,7 +398,7 @@ for (const rule of STALE_RULES) {
 
   if (!OFFLINE_RENDER.test(serving)) {
     failures.push(
-      `guides/pricing.md: the Serving section does not say what an offline \`bithuman render\` bills ` +
+      `pricing.md: the Serving section does not say what an offline \`bithuman render\` bills ` +
         `(the output duration) — the CLI pages link here for it instead of carrying their own arithmetic`
     );
   }
@@ -420,7 +420,7 @@ for (const f of RULE_CORPUS) {
       if (rule.datedChangelogMayRecord && isChangelog &&
           text.slice(0, m.index).split("\n").some((l) => DATED_ENTRY.test(l))) continue;
       failures.push(
-        `${rel}:${line}: states the billing rule as "${m[0].replace(/\s+/g, " ")}" — contradicts guides/pricing.md ` +
+        `${rel}:${line}: states the billing rule as "${m[0].replace(/\s+/g, " ")}" — contradicts pricing.md ` +
           `(a credit minute is "wall-clock time a session is live and the engine is rendering"); ${rule.say}`
       );
     }
@@ -435,7 +435,7 @@ if (failures.length) {
     console.error(`    ::error::${msg}`);
   }
   console.error(
-    `\nRates in play (from guides/pricing.md):\n  ` +
+    `\nRates in play (from pricing.md):\n  ` +
       Object.entries(rates)
         .sort()
         .map(([k, v]) => `${k} = ${v} credits/min`)

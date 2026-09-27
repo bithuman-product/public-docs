@@ -2,7 +2,7 @@
    bitHuman docs — code
 
    One treatment wherever code appears: the prose blocks Markdown produces, the
-   platform cards on /sdk, the tabbed samples on the home page, the playground.
+   platform cards on /platforms, the tabbed samples on the home page, the playground.
 
    A code line WRAPS. It used to scroll inside a box with no visible edge, so
    the first command a developer types read
@@ -35,7 +35,7 @@
   overflow: hidden;
 }
 /* The bar carries the language on the left and Copy on the right. A block with
-   no language — the commands on the /sdk cards — gets just the button. */
+   no language — the commands on the /platforms cards — gets just the button. */
 .bh-code-bar {
   display: flex;
   align-items: center;

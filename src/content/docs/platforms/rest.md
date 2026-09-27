@@ -1,24 +1,30 @@
 ---
-title: "API quickstart"
-description: "From nothing to a talking avatar over REST: embed a sample agent, check your API secret, speak, create your own agent and render a video."
-section: api
-group: "Get started"
-order: 1
-type: quickstart
-label: "Quickstart"
+title: "REST API"
+description: "Call bitHuman from any backend over HTTPS: check your API secret, speak with text to speech, create your own agent, drive a live session and render a talking video."
+section: platforms
+group: "Agents & APIs"
+order: 20
+type: platform
+renders: ["cloud"]
+next: ["/api/agents", "/api/video", "/api/reference"]
+availability: creator
 ---
 
-A ladder: step 1 needs no account, step 2 needs an API secret (the Creator plan or higher), and steps 3–5 spend credits. Each step builds on the one before.
+The REST API creates and manages agents, speaks with text to speech, pushes lines into live sessions and renders talking videos. Every call is HTTPS with your API secret in a header, from any language that can make a request.
 
-## 1. Embed a sample avatar (no account)
+## Before you start
 
-```html
-<iframe src="https://www.bithuman.ai/embed/A23WJF0199" allow="microphone *" style="width:100%;height:600px;border:0"></iframe>
-```
+- An [API secret](/start/api-secret). API use needs the Creator plan or higher.
+- `curl`, or any HTTP client.
+- Credits for anything beyond a check: creating an agent is a one-time charge ([pricing](/pricing#creation--one-time-credits)).
 
-Open the page and talk to it. Keep the `*` in `allow`, or the microphone is blocked. For your own site in production, mint an [embed token](/api/embedding).
+To try an avatar with no account first, use the [web embed](/platforms/web).
 
-## 2. Speak with text to speech (API secret)
+## Authenticate
+
+Send your API secret in the `api-secret` header on every call. `POST /v1/validate` checks it and spends nothing; it always returns `200`, so read `valid`. The full rules are on [Authentication](/api/authentication).
+
+## First frame
 
 ```bash
 export BITHUMAN_API_SECRET="<your API secret>"
@@ -32,9 +38,64 @@ curl -s -X POST https://api.bithuman.ai/v1/tts \
 
 `/v1/validate` always returns `200`; read `valid`. Get an API secret under [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
 
-## 3. Create your own agent (credits)
+## Complete example
 
-Creation is a one-time charge ([pricing](/guides/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Always send `model`.
+Four shell scripts from the examples repository: check your secret, check your balance, create an agent from a prompt, then talk to it in the browser.
+
+### Get the code
+
+```bash
+git clone https://github.com/bithuman-product/bithuman-examples.git
+cd bithuman-examples/api/rest-api/curl
+```
+
+### Run it
+
+```bash
+./validate.sh && ./check-credits.sh
+BITHUMAN_MODEL=expression-2 ./generate-agent.sh "You are a friendly fitness coach."
+```
+
+`validate.sh` and `check-credits.sh` spend nothing. `generate-agent.sh` spends one creation charge, then polls until the agent is ready (about 2 to 2.5 hours for a second-generation model; a failed creation is refunded).
+
+### Expected output
+
+```text
+{
+    "valid": true
+}
+Checking credit balance...
+Balance:        … credits
+…
+{"success": true, "agent_id": "<agent_id>", "status": "processing"}
+  Status: processing  Progress: 10%
+…
+Agent is ready!
+```
+
+Open `https://www.bithuman.ai/embed/<agent_id>` and talk to your agent. While that page is open, `./speak.sh <agent_id> "Hello!"` makes it say a line.
+
+### How it works
+
+| Script | Endpoint |
+|---|---|
+| `validate.sh` | [`POST /v1/validate`](/api/authentication#post-v1validate): always `200`; read `valid` |
+| `check-credits.sh` | [`GET /v2/credit-summaries`](/api/billing): balance and plan |
+| `generate-agent.sh` | [`POST /v1/agent/generate`](/api/agents#generate-an-agent), then [`GET /v1/agent/status/{id}`](/api/agents#poll-status) until `ready` or `failed` |
+| `speak.sh` | [`POST /v1/agent/{code}/speak`](/api/agents): needs a live session |
+
+### Make it your own
+
+- **A face of your own:** add `"image": "https://…/portrait.jpg"` to the JSON in `generate-agent.sh`.
+- **A photoreal person:** `BITHUMAN_MODEL=essence-2`, or `auto` to let the platform choose.
+- **A video instead of a live session:** [`POST /v1/video/generate`](/api/video) renders your agent saying a line to an MP4.
+- **Other languages:** [`api/rest-api/python`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api/python) has the same calls in Python.
+
+## Integrate into your app
+
+### Create your own agent
+
+Creation is a one-time charge ([pricing](/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Always send `model`.
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -50,7 +111,7 @@ curl -s https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITH
 # → {"success": true, "data": {"status": "ready", "progress": 1.0, …}}
 ```
 
-## 4. Make it speak in a live session
+### Make it speak in a live session
 
 Open `https://www.bithuman.ai/embed/<your agent code>`, then push text from your backend:
 
@@ -63,7 +124,15 @@ curl -s -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/speak \
 
 `404` means the agent is not yours, or it has no live session (the message says which).
 
-## 5. Render a talking video
+To show a sample agent with no account, embed it:
+
+```html
+<iframe src="https://www.bithuman.ai/embed/A23WJF0199" allow="microphone *" style="width:100%;height:600px;border:0"></iframe>
+```
+
+Open the page and talk to it. Keep the `*` in `allow`, or the microphone is blocked. For your own site in production, mint an [embed token](/api/embedding).
+
+### Render a talking video
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/video/generate \
@@ -73,6 +142,18 @@ curl -s -X POST https://api.bithuman.ai/v1/video/generate \
 
 Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `video_url` ([Talking video](/api/video)).
 
-## Next
+## Troubleshooting
 
-- [Agents](/api/agents) · [Talking video](/api/video) · [Embedding](/api/embedding) · [Errors](/api/errors) · [OpenAPI reference](/api/reference)
+| Symptom | Cause | Fix |
+|---|---|---|
+| `402 INSUFFICIENT_BALANCE` | the balance is below the creation cost | [top up](/pricing#top-up-credits) |
+| `validate.sh` prints `"valid": false` | the secret is wrong or revoked | create a new one |
+| The status stays at `lip_sync` for a long time | that is the training step (about 2 hours) | keep polling |
+| `404` from `speak.sh` or `/v1/agent/{code}/speak` | the agent is not yours, or it has no live session | the message says which; open its embed page first |
+
+All error codes: [Errors](/api/errors).
+
+## Reference
+
+- [API reference](/api/reference): every endpoint, generated from the OpenAPI spec.
+- [Agents](/api/agents) · [Talking video API](/api/video) · [Text to speech](/api/text-to-speech) · [Embedding](/api/embedding) · [Errors](/api/errors)

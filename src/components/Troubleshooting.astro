@@ -1,0 +1,26 @@
+---
+// Symptom, cause, fix. The same three columns as every markdown troubleshooting table.
+interface Row { symptom: string; cause: string; fix: string }
+interface Props { rows: Row[]; caption?: string }
+const { rows, caption } = Astro.props;
+---
+<div class="ts" role="region" aria-label={caption ?? "Troubleshooting"} tabindex="0">
+  <table>
+    {caption && <caption>{caption}</caption>}
+    <thead><tr><th scope="col">Symptom</th><th scope="col">Cause</th><th scope="col">Fix</th></tr></thead>
+    <tbody>{rows.map((r) => <tr><td data-label="Symptom" set:html={r.symptom} /><td data-label="Cause" set:html={r.cause} /><td data-label="Fix" set:html={r.fix} /></tr>)}</tbody>
+  </table>
+</div>
+<style>
+  .ts { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--r-md); }
+  .ts table { width: 100%; border-collapse: collapse; font-size: var(--ft-sm); }
+  .ts th { text-align: left; background: var(--color-surface-2); color: var(--color-text-secondary); font-weight: var(--fw-medium); padding: var(--s-2) var(--s-3); }
+  .ts td { border-top: 1px solid var(--color-border); padding: var(--s-2) var(--s-3); vertical-align: top; }
+  @media (max-width: 700px) {
+    .ts thead { display: none; }
+    .ts tr, .ts td { display: block; }
+    .ts tr { border-top: 1px solid var(--color-border); padding: var(--s-2) 0; }
+    .ts td { border: 0; padding: var(--s-1) var(--s-3); }
+    .ts td::before { content: attr(data-label); display: block; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  }
+</style>

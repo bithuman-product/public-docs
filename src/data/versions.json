@@ -20,7 +20,7 @@
       "install": "curl -fsSL https://install.bithuman.ai | sh",
       "registry": "GitHub release cli-v{v}",
       "registry_url": "https://github.com/bithuman-product/homebrew-bithuman/releases",
-      "docs": "/sdk/cli"
+      "docs": "/platforms/cli"
     },
     {
       "key": "python",
@@ -29,7 +29,7 @@
       "install": "pip install \"bithuman[expression-2]\"",
       "registry": "PyPI",
       "registry_url": "https://pypi.org/project/bithuman/",
-      "docs": "/sdk/python"
+      "docs": "/platforms/python"
     },
     {
       "key": "swift",
@@ -39,7 +39,7 @@
       "includes": "Essence 2 engine **{essence2_engine}** · Expression 2 engine {expression2_swift}",
       "registry": "GitHub tag v{v}",
       "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
-      "docs": "/sdk/apple"
+      "docs": "/platforms/ios"
     },
     {
       "key": "expression2_android",
@@ -48,7 +48,7 @@
       "install": "implementation(\"ai.bithuman:expression2-android:{v}\")",
       "registry": "Maven Central",
       "registry_url": "https://central.sonatype.com/artifact/ai.bithuman/expression2-android",
-      "docs": "/sdk/android"
+      "docs": "/platforms/android"
     },
     {
       "key": "essence2_android",
@@ -57,7 +57,7 @@
       "install": "implementation(\"ai.bithuman:essence2-android:{v}\")",
       "registry": "Maven Central",
       "registry_url": "https://central.sonatype.com/artifact/ai.bithuman/essence2-android",
-      "docs": "/sdk/android"
+      "docs": "/platforms/android"
     },
     {
       "key": "livekit_plugin",
@@ -66,7 +66,7 @@
       "install": "pip install livekit-plugins-bithuman",
       "registry": "PyPI",
       "registry_url": "https://pypi.org/project/livekit-plugins-bithuman/",
-      "docs": "/sdk/livekit"
+      "docs": "/platforms/livekit"
     },
     {
       "key": "flutter_plugin",
@@ -75,7 +75,7 @@
       "install": "bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v{v}}}",
       "registry": "GitHub tag flutter-plugin-v{v}",
       "registry_url": "https://github.com/bithuman-product/homebrew-bithuman",
-      "docs": "/sdk/android"
+      "docs": "/platforms/android"
     }
   ]
 }

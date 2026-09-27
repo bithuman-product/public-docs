@@ -3,9 +3,8 @@ title: "Changelog archive"
 description: "Release notes from July 2026 and earlier, one short summary per release. The current changelog is /changelog."
 section: resources
 group: "Resources"
-order: 3
+order: 30
 type: changelog
-label: "Changelog archive"
 ---
 
 > **Note** This is the archive. Entries from August 2026 onwards are on the
@@ -30,7 +29,7 @@ label: "Changelog archive"
 
 ### Run Expression 2 locally from the CLI (2026-07-16)
 
-- The [bitHuman CLI](/sdk/cli) renders `expression-2` avatars on your own
+- The [bitHuman CLI](/platforms/cli) renders `expression-2` avatars on your own
   hardware (Apple Silicon macOS, Linux x86_64), with the render engine inside
   the CLI. `bithuman run` with no arguments renders the free Wise Pup avatar.
 
@@ -44,7 +43,7 @@ label: "Changelog archive"
 
 - Expression 2 creation adapts training per identity: every agent passes the
   same quality checks, and an identity that needs more work gets more training.
-  No action needed. See [Expression 2](/concepts/expression-2#how-creation-works).
+  No action needed. See [Expression 2](/models/expression-2#how-creation-works).
 
 ### Agent creation is image-only (2026-07-10)
 
@@ -59,8 +58,8 @@ label: "Changelog archive"
 
 - `essence-2` is the standard tier name — the former `essence-2-light` was
   consolidated into it on 2026-07-05 — and the premium tier is no longer offered
-  publicly. See [Naming & migration](/concepts/models#naming--migration).
-- Rates are unchanged. The model guide is at [/concepts/essence-2](/concepts/essence-2);
+  publicly. See [Naming & migration](/models#naming--migration).
+- Rates are unchanged. The model guide is at [/models/essence-2](/models/essence-2);
   the old `/concepts/essence-2-light` and `/concepts/essence-2-quality` URLs redirect.
 
 ### Expression 2 creation price: 2000 credits (2026-07-10)
@@ -85,8 +84,8 @@ label: "Changelog archive"
   returns `403 CONCURRENCY_LIMIT_REACHED`, and live sessions are never cut off.
   See [Session concurrency](/api/rate-limits#session-concurrency).
 - Offline licensing was previewed; its terms have since changed — see
-  [Pricing → Offline licensing](/guides/pricing#offline-licensing).
-- [Pricing](/guides/pricing) is now the single home of every rate, and naming
+  [Pricing → Offline licensing](/pricing#offline-licensing).
+- [Pricing](/pricing) is now the single home of every rate, and naming
   history lives under Models → Naming & migration.
 
 ### Multi-agent avatar rooms — audio binds to the launching agent (2026-07-09)
@@ -94,7 +93,7 @@ label: "Changelog archive"
 - In a room with several agents, the cloud avatar binds its audio to the agent
   that started the `AvatarSession` (via `lk.publish_on_behalf`), not the first
   agent it sees. Server-side; no upgrade needed. See
-  [LiveKit → Multiple agents](/sdk/livekit#integrate-into-your-app).
+  [LiveKit → Multiple agents](/platforms/livekit#integrate-into-your-app).
 
 ### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
 
@@ -103,11 +102,11 @@ label: "Changelog archive"
   existing agents and saved links keep working.
 - New force-tier slugs (`essence-2-gpu` / `-ane` / `-cpu`, `expression-2-gpu` /
   `-cpu` / `-ane`) pin one serving tier and never overflow. See
-  [tier pinning](/concepts/models#advanced-pin-a-serving-tier).
+  [tier pinning](/models#advanced-pin-a-serving-tier).
 
 ### Android / Kotlin SDK docs restored (2026-07-04)
 
-- The [Android SDK](/sdk/android) page and the Kotlin hello-avatar example are
+- The [Android SDK](/platforms/android) page and the Kotlin hello-avatar example are
   back. `ai.bithuman:sdk:2.3.6` (essence-1, arm64-v8a) was unchanged; only its
   documentation had been removed.
 
@@ -115,7 +114,7 @@ label: "Changelog archive"
 
 *Named as of today: the tiers then called **Essence 2 Light** and **Essence 2 Quality**
 are now `essence-2` and Essence 2 Max (Enterprise plan only) — see
-[Naming & migration](/concepts/models#naming--migration).*
+[Naming & migration](/models#naming--migration).*
 
 - `model: "auto"` on [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
   routes a photorealistic person to `essence-2` and a cartoon, animal or
@@ -128,8 +127,8 @@ are now `essence-2` and Essence 2 Max (Enterprise plan only) — see
 ### Official model guides + natural idle for the second generation (2026-07-02)
 
 - Each second-generation model has its own guide —
-  [Expression 2](/concepts/expression-2) and [Essence 2](/concepts/essence-2) —
-  plus a [session troubleshooting](/guides/session-troubleshooting) guide.
+  [Expression 2](/models/expression-2) and [Essence 2](/models/essence-2) —
+  plus a [session troubleshooting](/resources/troubleshooting) guide.
 - Expression 2 idles on a looping clip of the identity itself, and idle loops
   always play forward.
 - Agent responses carry `supported_models`; asking for a model the agent has not
@@ -139,7 +138,7 @@ are now `essence-2` and Essence 2 Max (Enterprise plan only) — see
 
 - `essence-2` and `expression-2` are announced for July 10, 2026 on every
   surface; `essence-1` and `expression-1` stay fully supported. See
-  [Essence 2 & Expression 2](/concepts/models).
+  [Essence 2 & Expression 2](/models).
 
 ## June 2026
 
@@ -195,7 +194,7 @@ The pre-release codenames were transitional aliases and have since been retired
 ### 2.3.0 (2026-05-28) — layered architecture + PyPI wheel split
 
 - `pip install bithuman` is now the Python library only; install the CLI with
-  Homebrew or the universal installer ([the CLI page](/sdk/cli)). The Python and
+  Homebrew or the universal installer ([the CLI page](/platforms/cli)). The Python and
   Swift APIs are unchanged.
 - The CLI keeps `run`, `render`, `info`, `pull`, `list`, `doctor` and `init`;
   legacy 1.x verbs stay removed.
@@ -213,7 +212,7 @@ The pre-release codenames were transitional aliases and have since been retired
 - 2.2.0 was skipped; install 2.2.1.
 - `BITHUMAN_LOCAL=1` gave `bithuman run` a fully on-device conversation brain
   (whisper.cpp, llama.cpp, Supertonic TTS, Silero VAD) — no OpenAI key, no network.
-  The wheel that carried it is gone; see [local mode](/sdk/cli/local-mode).
+  The wheel that carried it is gone; see [local mode](/platforms/cli/local-brain).
 - New plugins: `livekit.plugins.bithuman.{WhisperSTT, LlamaCppLLM, SupertonicTTS}`.
 
 ### Python SDK `bithuman` 2.1.0 (2026-05-24) — figure → avatar

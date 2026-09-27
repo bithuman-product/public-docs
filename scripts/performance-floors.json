@@ -9,36 +9,36 @@
   "emitter_sha256": "9f0ba775536bf973302d079c488ae7655010e34331f98db3fd85b00d9ba92287",
   "verified_on": "2026-09-27",
   "stale_after_days": 30,
-  "page": "src/content/docs/sdk/performance.md",
-  "served_route": "/sdk/performance",
+  "page": "src/content/docs/performance/index.md",
+  "served_route": "/performance",
   "json": {
     "path": "public/performance.json",
     "sha256": "fcb268061d6f4a8c5f654a344aaaee86051f2c0af127f8a201572576dc3e9a92"
   },
   "blocks": [
     {
-      "file": "src/content/docs/performance/cloud.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "TABLE",
       "key": "cloud",
       "index": 0,
       "sha256": "e9801ce5cc2c59e8cbe3f44f067a0620e95cde24547c0c97c58eb9d8b7b8304d"
     },
     {
-      "file": "src/content/docs/performance/cloud.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "RELEASES",
       "key": "cloud",
       "index": 0,
       "sha256": "f5ab2513170fcb2e598a6951dd6eff9771e1970e264f640b08e341b2e84c045c"
     },
     {
-      "file": "src/content/docs/performance/desktop.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "TABLE",
       "key": "desktop",
       "index": 0,
       "sha256": "44f0239326a01b99c906ac2b5e4948a6cb9c44479fd3fbfeef4abf26114b706b"
     },
     {
-      "file": "src/content/docs/performance/desktop.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "RELEASES",
       "key": "desktop",
       "index": 0,
@@ -73,42 +73,42 @@
       "sha256": "e4030fab73bc8b09f8a4e14283ec9f6897cc74d45e259c856837d9c61f5bbb42"
     },
     {
-      "file": "src/content/docs/performance/mobile.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "TABLE",
       "key": "mobile",
       "index": 0,
       "sha256": "ee02ecd16b0b897f10c5db08db72864a6e06d224cfad63f513975d89c273989b"
     },
     {
-      "file": "src/content/docs/performance/mobile.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "RELEASES",
       "key": "mobile",
       "index": 0,
       "sha256": "70c1db514340e5699f6aa61589b5be8164727b60d21a1a4ab1f7c4dac305bbd6"
     },
     {
-      "file": "src/content/docs/performance/mobile.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "SUSTAINED",
       "key": null,
       "index": 0,
       "sha256": "d65f836c3904cc25aa80c3735b8135cb8397e5479e58b3fefa448a47317414f9"
     },
     {
-      "file": "src/content/docs/performance/web.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "TABLE",
       "key": "web",
       "index": 0,
       "sha256": "ba6f8ab76ed0530a175177c67b2c55a053b4e1f1d4bea1e3843a676c887e90c9"
     },
     {
-      "file": "src/content/docs/performance/web.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "RELEASES",
       "key": "web",
       "index": 0,
       "sha256": "329d8dfeb19c7e737d4c671f5e18edfddad0983d6274c9fcdb62f6d8eead2918"
     },
     {
-      "file": "src/content/docs/sdk/performance.md",
+      "file": "src/content/docs/performance/index.md",
       "marker": "TABLE",
       "key": "all",
       "index": 0,
@@ -124,62 +124,62 @@
   ],
   "table": {
     "key": "all",
-    "header": "| Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |",
+    "header": "| Runs on | Hardware | Essence 2 fps | Essence 2 \u00d7 real time | Expression 2 fps | Expression 2 \u00d7 real time |",
     "rows": [
       {
-        "label": "Cloud API · GPU",
+        "label": "Cloud API \u00b7 GPU",
         "id": "cloud-gpu",
-        "line": "| Cloud API · GPU | NVIDIA RTX 4090 | 104 | **4.1×** real time | 340 | **17.0×** real time |"
+        "line": "| Cloud API \u00b7 GPU | NVIDIA RTX 4090 | 104 | **4.1\u00d7** real time | 340 | **17.0\u00d7** real time |"
       },
       {
-        "label": "Cloud API · Apple silicon",
+        "label": "Cloud API \u00b7 Apple silicon",
         "id": "apple-serve",
-        "line": "| Cloud API · Apple silicon | Apple M4 Max | 71 | **2.8×** real time | 111 | **5.5×** real time |"
+        "line": "| Cloud API \u00b7 Apple silicon | Apple M4 Max | 71 | **2.8\u00d7** real time | 111 | **5.5\u00d7** real time |"
       },
       {
-        "label": "Cloud API · CPU",
+        "label": "Cloud API \u00b7 CPU",
         "id": "cloud-cpu",
-        "line": "| Cloud API · CPU | x86 server CPU | 28 | **1.1×** real time | 27 | **1.3×** real time |"
+        "line": "| Cloud API \u00b7 CPU | x86 server CPU | 28 | **1.1\u00d7** real time | 27 | **1.3\u00d7** real time |"
       },
       {
-        "label": "macOS · CLI",
+        "label": "macOS \u00b7 CLI",
         "id": "macos-m4",
-        "line": "| macOS · CLI | Apple M4 | 106 | **4.2×** real time | 168 | **8.4×** real time |"
+        "line": "| macOS \u00b7 CLI | Apple M4 | 106 | **4.2\u00d7** real time | 168 | **8.4\u00d7** real time |"
       },
       {
-        "label": "macOS · Python",
+        "label": "macOS \u00b7 Python",
         "id": "python-macos",
-        "line": "| macOS · Python | Apple M4 | 174 | **6.9×** real time | 169 | **8.4×** real time |"
+        "line": "| macOS \u00b7 Python | Apple M4 | 174 | **6.9\u00d7** real time | 169 | **8.4\u00d7** real time |"
       },
       {
-        "label": "macOS · Swift package",
+        "label": "macOS \u00b7 Swift package",
         "id": "macos-sdk",
-        "line": "| macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |"
+        "line": "| macOS \u00b7 Swift package | Apple M4 | 120 | **4.8\u00d7** real time | 177 | **8.8\u00d7** real time |"
       },
       {
-        "label": "Linux · CLI",
+        "label": "Linux \u00b7 CLI",
         "id": "linux-cpu",
-        "line": "| Linux · CLI | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 44 | **2.2×** real time |"
+        "line": "| Linux \u00b7 CLI | Intel Core i7-13700F (x86_64) | 50 | **2.0\u00d7** real time | 44 | **2.2\u00d7** real time |"
       },
       {
-        "label": "Linux · Python",
+        "label": "Linux \u00b7 Python",
         "id": "python-linux",
-        "line": "| Linux · Python | Intel Core i7-13700F (x86_64) | 49 | **1.9×** real time | 47 | **2.3×** real time |"
+        "line": "| Linux \u00b7 Python | Intel Core i7-13700F (x86_64) | 49 | **1.9\u00d7** real time | 47 | **2.3\u00d7** real time |"
       },
       {
-        "label": "iPhone · Swift package",
+        "label": "iPhone \u00b7 Swift package",
         "id": "iphone-15",
-        "line": "| iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 111 | **5.5×** real time |"
+        "line": "| iPhone \u00b7 Swift package | iPhone 15 | 54 | **2.1\u00d7** real time | 111 | **5.5\u00d7** real time |"
       },
       {
         "label": "Android",
         "id": "android-s25plus",
-        "line": "| Android | Samsung Galaxy S25+ | 52 | **2.0×** real time | 48 | **2.4×** real time |"
+        "line": "| Android | Samsung Galaxy S25+ | 52 | **2.0\u00d7** real time | 48 | **2.4\u00d7** real time |"
       },
       {
         "label": "Web browser (WebGPU)",
         "id": "web",
-        "line": "| Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7×** real time | 39 | **1.9×** real time |"
+        "line": "| Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7\u00d7** real time | 39 | **1.9\u00d7** real time |"
       }
     ]
   }

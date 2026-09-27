@@ -1,11 +1,13 @@
 ---
-title: "Models"
+title: "Compare models"
 description: "bitHuman's four avatar models — Essence 2 and Expression 2, the current generation, and Essence 1 and Expression 1, the first — what each renders, where each runs, which to pick, and the legacy names you may still meet."
-section: guides
-group: "Learn"
-order: 1
+section: models
+group: "Models"
+order: 0
 type: concept
-label: "Models: which one?"
+models: ["essence-2", "expression-2", "essence-1", "expression-1"]
+demo: "both"
+next: ["/models/essence-2", "/models/expression-2", "/deploy"]
 ---
 
 bitHuman has four avatar models in two generations. **Essence 2** and
@@ -13,18 +15,18 @@ bitHuman has four avatar models in two generations. **Essence 2** and
 **Essence 1** and **Expression 1** are the first generation; they stay
 supported, and nothing changes for agents that already use them.
 
-Every model reads the same [`.imx` container](/concepts/avatars-imx) and has
-the same shape: [push audio in, take lip-synced frames out](/concepts/audio-streaming).
+Every model reads the same [`.imx` container](/models/avatar-file) and has
+the same shape: [push audio in, take lip-synced frames out](/models/how-it-works#audio-in-frames-out).
 The same agent code works on every surface that runs its model.
 
 ## The four models
 
 | Model | What it renders | Pick it for |
 |---|---|---|
-| [**Essence 2**](/concepts/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1080p at 25 fps (1080×1920 portrait for a standard identity) | Real people |
-| [**Expression 2**](/concepts/expression-2) (`expression-2`) | Any character (stylized, animal, robot or human) from one portrait, 416×720 at 20 fps | Characters of every kind |
-| [**Essence 1**](/concepts/essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
-| [**Expression 1**](/concepts/expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents, in the cloud |
+| [**Essence 2**](/models/essence-2) (`essence-2`) | A photoreal person from one portrait, up to 1080p at 25 fps (1080×1920 portrait for a standard identity) | Real people |
+| [**Expression 2**](/models/expression-2) (`expression-2`) | Any character (stylized, animal, robot or human) from one portrait, 416×720 at 20 fps | Characters of every kind |
+| [**Essence 1**](/models/first-generation#essence-1) (`essence-1`) | First generation: pre-rendered base motion with the mouth patched in real time | Existing agents, custom gestures, low-power CPUs |
+| [**Expression 1**](/models/first-generation#expression-1) (`expression-1`) | First generation: facial animation driven from a portrait at runtime | Existing agents, in the cloud |
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
 
@@ -39,7 +41,7 @@ Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://
 - **Maintaining a first-generation agent** — keep it. Essence 1 runs on any CPU
   you host; Expression 1 runs in the bitHuman cloud.
 
-Rates for every model are on [pricing](/guides/pricing).
+Rates for every model are on [pricing](/pricing).
 
 ## Where each model runs
 
@@ -47,12 +49,12 @@ What is published today, per surface. Each link goes to the page that installs i
 
 | Surface | Essence 2 | Expression 2 | Essence 1 | Expression 1 |
 |---|---|---|---|---|
-| **bitHuman cloud** — [REST API](/api), [embed](/api/embedding), [LiveKit](/sdk/livekit) | yes | yes | yes | yes |
-| [**CLI**](/sdk/cli) — macOS Apple Silicon, Linux x86_64 / arm64 | `run`, `render` | `run`, `render` | `run` | — |
-| [**Python**](/sdk/python) — macOS Apple Silicon, Linux x86_64 / aarch64 | frames and MP4 clips | frames (`[expression-2]` extra) | frames | — |
-| [**Apple**](/sdk/apple) — iPhone, iPad, Mac | `Essence2Kit` product (iOS / macOS 26) | `Expression2` product | — | — |
-| [**Android**](/sdk/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
-| [**Web**](/sdk/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
+| **bitHuman cloud** — [REST API](/api), [embed](/api/embedding), [LiveKit](/platforms/livekit) | yes | yes | yes | yes |
+| [**CLI**](/platforms/cli) — macOS Apple Silicon, Linux x86_64 / arm64 | `run`, `render` | `run`, `render` | `run` | — |
+| [**Python**](/platforms/python) — macOS Apple Silicon, Linux x86_64 / aarch64 | frames and MP4 clips | frames (`[expression-2]` extra) | frames | — |
+| [**Apple**](/platforms/ios) — iPhone, iPad, Mac | `Essence2Kit` product (iOS / macOS 26) | `Expression2` product | — | — |
+| [**Android**](/platforms/android) — arm64 | `essence2-android` | `expression2-android` | — | — |
+| [**Web**](/platforms/web) — rendered in the viewer's tab | per identity, where an in-browser build exists | yes | yes | — |
 
 - **Expression 1 is cloud-only by design.** Its empty cells are not a roadmap
   item. If you need an expressive model on a Mac, a phone or in a browser, use
@@ -61,7 +63,7 @@ What is published today, per surface. Each link goes to the page that installs i
   Apple Silicon and CPU tiers. The cloud's Apple tier is bitHuman's hardware,
   not your Mac.
 - **Running on your own hardware** — every surface below the first row — is
-  billed at the self-hosted rate. See [self-hosting](/guides/self-hosting).
+  billed at the self-hosted rate. See [self-hosting](/deploy/self-hosted).
 
 Measured frame rates for every platform are on the
 [performance page](/performance).
@@ -125,7 +127,7 @@ legacy names are still strings you read or type:
 | Legacy name you may meet | Where | What it means | Do you type it? |
 |---|---|---|---|
 | `essence`, `expression` | older `?model=` links and request bodies | Essence 1, Expression 1 | No — write `essence-1` / `expression-1` |
-| `essence2-light` | the `Engine:` line from `bithuman open` — a [legacy engine value](/concepts/avatars-imx#the-engine-value-is-a-legacy-name) | Essence 2 | No — read the `Family:` line |
+| `essence2-light` | the `Engine:` line from `bithuman open` — a [legacy engine value](/models/avatar-file#the-engine-value-is-a-legacy-name) | Essence 2 | No — read the `Family:` line |
 | `essence-2-light` | the retired tier name (the old Light tier) | Essence 2 | No — a request naming it gets a `400`; write `essence-2` |
 | `elevate`, `essence-2-quality` | retired names of the premium tier, now Essence 2 Max (Enterprise plan only) | a separate tier, not Essence 2 | No — a request naming them gets a `400` |
 | `embody` | a retired request spelling | Expression 2 | No — a request naming it gets a `400` naming `expression-2` |
@@ -149,7 +151,7 @@ whole Apple silicon target, not one accelerator inside it.
 
 ## Next steps
 
-- [Essence 2](/concepts/essence-2) · [Expression 2](/concepts/expression-2) — the per-model guides
-- [SDK](/sdk) — install a model on your own hardware
+- [Essence 2](/models/essence-2) · [Expression 2](/models/expression-2) — the per-model guides
+- [SDK](/platforms) — install a model on your own hardware
 - [Agents API](/api/agents) — create, poll and download
-- [Pricing & credits](/guides/pricing) — what each model costs to run
+- [Pricing & credits](/pricing) — what each model costs to run

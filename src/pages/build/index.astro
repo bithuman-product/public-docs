@@ -1,0 +1,14 @@
+---
+import SectionHub from "../../components/SectionHub.astro";
+import { hubMeta } from "../../config/hubs";
+---
+<SectionHub
+  section="build"
+  title="Build"
+  tagline={hubMeta("build").description}
+  lines={{
+    Create: "Make the avatar yours: its face, its persona, its voice.",
+    Recipes: "End to end, from an empty folder to a working result.",
+    Examples: "Complete apps you can clone and run, with a recording of each.",
+  }}
+/>

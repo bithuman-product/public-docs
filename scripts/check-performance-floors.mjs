@@ -138,7 +138,7 @@ export function findPage(corpus) {
   };
 }
 
-/** src/content/docs/sdk/performance.md -> /sdk/performance ; …/docs/performance.md -> /performance */
+/** src/content/docs/performance/index.md -> /performance ; …/docs/performance.md -> /performance */
 export function routeOf(rel) {
   const m = /^src\/content\/docs\/(.+?)\.mdx?$/.exec(rel ?? "");
   return m ? `/${m[1].replace(/\/index$/, "")}` : null;
@@ -905,11 +905,11 @@ async function selftest() {
     if (!ok) bad++;
     console.log(`  ${ok ? "OK  " : "FAIL"}  ${name}`);
   };
-  const P = "src/content/docs/sdk/performance.md";
+  const P = "src/content/docs/performance/index.md";
   const H = "src/partials/performance-headline.md";
   const jsonText = `${JSON.stringify(FIX_JSON, null, 1)}\n`;
   const recText = JSON.stringify(FIX_RECORD);
-  const W = "src/content/docs/sdk/web.md";
+  const W = "src/content/docs/platforms/web.md";
   const FIX_SNIPPET =
     "## Performance\n\n<!-- FLOORS:TABLE web -->\n" + FIX_TABLE.split("\n").filter((l, i) => i < 2 || l.startsWith("| Web browser")).join("\n") + "\n<!-- /FLOORS:TABLE -->\n";
   const corpus = { [P]: FIX_PAGE, [H]: FIX_PARTIAL, [W]: FIX_SNIPPET };
@@ -950,7 +950,7 @@ async function selftest() {
     })());
   arm("a headline partial edited by hand reddens", has(grade(edit("**103 fps**", "**110 fps**", H)), "B3", /HEADLINE/));
   arm("a generated block dropped by a rebase reddens", has(grade(edit(/<!-- FLOORS:METHOD -->[\s\S]*<!-- \/FLOORS:METHOD -->\n/, "")), "B2"));
-  arm("a generated block nobody pinned reddens", has(grade({ ...corpus, "src/content/docs/sdk/cli.md": `x\n${FIX_PARTIAL}` }), "B4"));
+  arm("a generated block nobody pinned reddens", has(grade({ ...corpus, "src/content/docs/platforms/cli.md": `x\n${FIX_PARTIAL}` }), "B4"));
   arm("a per-platform snippet's cell retyped reddens (block and JSON both)", (() => {
     const f = grade(edit("| 29 | **1.1×** real time |", "| 39 | **1.5×** real time |", W));
     return has(f, "B3", /TABLE web/) && has(f, "K2", /Web browser/);
@@ -1052,7 +1052,7 @@ async function selftest() {
   arm("the JSON against a record that agrees with it", gradeJsonAgainstRecord(FIX_JSON, pin, FIX_RECORD, recText).length === 0);
   arm("a cell measured exactly 30 days ago is still within the clock", grade(corpus, jsonText, "2026-10-22").length === 0);
   arm("truncation, not rounding: 357/20 is 17.8 and 22/25 is 0.8", truncTenths(357, 20) === "17.8" && truncTenths(22, 25) === "0.8" && truncTenths(24.99, 25) === "0.9");
-  arm("the route follows the page when it moves", routeOf(P) === "/sdk/performance" && routeOf("src/content/docs/performance.md") === "/performance");
+  arm("the route follows the page when it moves", routeOf(P) === "/performance" && routeOf("src/content/docs/sdk/performance.md") === "/sdk/performance");
 
   console.log("\nCORPUS CONTROLS — the real site");
   {

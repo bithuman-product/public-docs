@@ -70,7 +70,7 @@ for (const r of ROOTS) walk(r);
 // ("Asserted equal at the bottom") with no code behind it: the ROOTS array and
 // the EXT regex were duplicated by hand in both files and nothing compared
 // them. Proved by mutation the same day — adding a single `&&
-// !rel.endsWith("community.md")` to this walk's twin left BOTH guards GREEN
+// !rel.endsWith("support.md")` to this walk's twin left BOTH guards GREEN
 // while eleven mechanism words sat unread on that page. A per-root and a
 // minimum-file-count control both passed, because losing ONE file breaks
 // neither.
@@ -244,7 +244,7 @@ const CARRIERS = [
   // ★THE PERMIT STAYS, FOR THE OPPOSITE REASON. The spelling must remain
   // WRITABLE here because five pages now have to NAME the extra to say it was
   // removed (changelog.md:16,28,1591; downloads.md:61; self-host-local.md:167;
-  // sdk/python.md:42). Deleting the permit would redden the very notes that
+  // platforms/python.md:42). Deleting the permit would redden the very notes that
   // carry the retirement — and the fatal-if-zero check below would then fire on
   // `tessera` for the second reason it names. A carrier row that protects a
   // retirement note is not the same as one that protects a live coordinate, and
@@ -281,7 +281,7 @@ const CARRIERS = [
   //     (§G: System.loadLibrary/dlopen resolve them by exact name inside an
   //      installed app; readelf -d reports SONAME=libengine-backend-essence2-light.so)
   // Its ONE occurrence on this site was `libessence.a` in the "Adding a new
-  // language SDK" checklist on /community — an internal contributor handbook
+  // language SDK" checklist on /support — an internal contributor handbook
   // for a binding nobody outside bitHuman can build, since the engine ships as
   // a binary. That page was rewritten to "where to get help and how to
   // contribute" on 2026-09-13, so the string now matches 0 lines and this
@@ -456,7 +456,7 @@ for (const rel of files) {
           `      → \`${name}\` is a frozen manifest value a developer READS off a\n` +
           `        file (\`bithuman info\`, \`--json\` \`engine\`, the loader error), never a\n` +
           `        product name and never a valid \`model\` value. Say which product it\n` +
-          `        means — see /concepts/avatars-imx#the-engine-value-is-a-legacy-name —\n` +
+          `        means — see /models/avatar-file#the-engine-value-is-a-legacy-name —\n` +
           `        or use the product name: essence-2.`
         );
         continue;
@@ -484,7 +484,7 @@ for (const rel of files) {
         `      ${line.trim().slice(0, 140)}\n` +
         `      → Use ${CANON[name] || "essence-2 / expression-2"}. If a developer must TYPE\n` +
         `        this string, keep it and say plainly it is a legacy name kept for\n` +
-        `        compatibility (see /concepts/avatars-imx for the .lebundle note), or add\n` +
+        `        compatibility (see /models/avatar-file for the .lebundle note), or add\n` +
         `        it to CARRIERS in this file with the reason it is frozen. For \`tessera\`\n` +
         `        and \`libessence\` the per-carrier verdicts are docs/NAMING-LEDGER.md §G\n` +
         `        in bithuman-models — do not invent a new one here.`
@@ -495,8 +495,8 @@ for (const rel of files) {
 
 // ── ACCEPT-BOTH: the old URLs must still resolve ─────────────────────────────
 const REDIRECTS = [
-  ["/concepts/essence-2-light",   "/concepts/essence-2",     "src/content/docs/concepts/essence-2.md"],
-  ["/concepts/essence-2-quality", "/concepts/essence-2",     "src/content/docs/concepts/essence-2.md"],
+  ["/concepts/essence-2-light",   "/models/essence-2",     "src/content/docs/models/essence-2.md"],
+  ["/concepts/essence-2-quality", "/models/essence-2",     "src/content/docs/models/essence-2.md"],
 ];
 // ★Read defensively. Found by mutation 2026-09-04: pointed at a tree with no
 // corpus — the exact case the zero-file control below exists for — this line
@@ -629,7 +629,7 @@ if (fenceHits > FENCE_BUDGET) fatal.push(
 // number quietly nudged. This is a LIVENESS control on the fence tracker, not a
 // budget: it exists so that a tracker which stopped matching ``` blocks cannot
 // read green. The corpus lost one fenced occurrence that day — the ASCII
-// engine-layering block on /concepts/architecture, a second drawing of the
+// engine-layering block on /models/how-it-works, a second drawing of the
 // three-layer stack already rendered above it on the same page, removed with
 // the rest of the engine-ABI detail a developer never types. Four live proofs
 // still stand, so a broken tracker (which would read 0) is still caught. Do not
@@ -637,7 +637,7 @@ if (fenceHits > FENCE_BUDGET) fatal.push(
 // LOWERED 4 -> 2 on 2026-09-23 (docs redesign P9a): the CLI page and the CLI
 // reference no longer print the `bithuman --version` transcript, whose
 // `libessence …` line was two of the fenced hits. Two live proofs remain.
-// LOWERED 2 -> 1 on 2026-09-23 (Swift package 2.14.3, bithuman-models #1224): /sdk/apple no
+// LOWERED 2 -> 1 on 2026-09-23 (Swift package 2.14.3, bithuman-models #1224): /platforms/ios no
 // longer tells a developer to `curl` libessence2-resources.zip by hand — Essence2Kit fetches the
 // engine's runtime files itself — so that fenced line (one hit) went with the step it taught.
 // One live proof remains, and a broken tracker reads 0, so it is still caught.

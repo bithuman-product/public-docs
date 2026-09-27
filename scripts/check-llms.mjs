@@ -65,7 +65,7 @@ for (const f of walk(CONTENT)) {
   if (!existsSync(join(DIST, `${r}.md`))) fail.push(`${r} has no markdown twin at ${r}.md`);
   else twins++;
 }
-for (const hub of ["start", "sdk", "guides", "resources", "index"]) if (!existsSync(join(DIST, `${hub}.md`))) fail.push(`hub ${hub} has no markdown twin`);
+for (const hub of ["start", "platforms", "build", "resources", "index"]) if (!existsSync(join(DIST, `${hub}.md`))) fail.push(`hub ${hub} has no markdown twin`);
 
 // the section files: capped, and together they cover every page an agent needs once
 const SECDIR = join(DIST, "llms");
@@ -89,7 +89,9 @@ for (const f of walk(CONTENT)) {
   if (/^draft:\s*true/m.test(src)) continue;
   const sec = (src.match(/^section:\s*"?(\w+)/m) || [])[1];
   const type = (src.match(/^type:\s*"?(\w+)/m) || [])[1];
-  const wanted = ["start", "api", "guides", "performance"].includes(sec) || (sec === "sdk" && ["platform", "guide"].includes(type));
+  const r0 = routeOf(CONTENT, f);
+  const wanted = ["start", "api", "performance", "models", "deploy"].includes(sec) || r0 === "/resources/troubleshooting" ||
+    (sec === "platforms" && ["platform", "guide"].includes(type)) || (sec === "build" && ["guide", "platform", "recipe"].includes(type));
   if (!wanted) continue;
   const r = routeOf(CONTENT, f);
   if (where.has(r) || linkedAll.includes(`https://docs.bithuman.ai${r}.md`)) covered++;

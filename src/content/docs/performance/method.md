@@ -1,11 +1,10 @@
 ---
-title: "How we measure performance"
+title: "How we measure"
 description: "How the Essence 2 and Expression 2 frame rates are measured, which releases they were measured on, memory per render, time to a finished video, and the raw data."
 section: performance
-group: "Method"
-order: 5
+group: "Performance"
+order: 10
 type: generated
-label: "How we measure"
 ---
 
 ## Method

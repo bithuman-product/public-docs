@@ -1,18 +1,17 @@
 ---
-title: "Voice providers"
+title: "Voices"
 description: "Every agent speaks every language on bitHuman's built-in voice pipeline, included in the voice chat rate — or bring your own OpenAI, Grok, ElevenLabs, or Cartesia key for premium voices."
-section: guides
-group: "Build"
-order: 21
+section: build
+group: "Create"
+order: 30
 type: guide
-label: "Voices"
 ---
 
 ## Two ways to give your agent a voice
 
 | Option | What you get | Cost |
 |------|--------------|------|
-| **bitHuman default** | The built-in voice pipeline. Your agent detects the caller's language and replies in it. No setup, no keys. | Included in the voice chat rate ([pricing](/guides/pricing)) |
+| **bitHuman default** | The built-in voice pipeline. Your agent detects the caller's language and replies in it. No setup, no keys. | Included in the voice chat rate ([pricing](/pricing)) |
 | **Bring your own provider** | Connect your **own** OpenAI, Grok (xAI), ElevenLabs, or Cartesia key and pick that provider's premium voices — including low-latency speech-to-speech (realtime). | The same voice chat rate, plus your provider's charges on your key |
 
 You never *have* to bring a key. The default pipeline already speaks every language. Bring your own only when you want a specific premium voice or a provider's realtime engine.
@@ -44,7 +43,7 @@ Back in the agent's voice settings, the premium providers you've connected unloc
 
 ## How billing works
 
-- Every managed-agent conversation bills the voice chat rate, whichever voice it uses ([pricing](/guides/pricing)).
+- Every managed-agent conversation bills the voice chat rate, whichever voice it uses ([pricing](/pricing)).
 - A bring-your-own voice or realtime model is also billed by your provider on your key.
 
 If a bring-your-own key ever fails or is removed, the agent automatically falls back to the built-in multilingual pipeline — it never silently stops talking.

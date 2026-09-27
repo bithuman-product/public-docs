@@ -2,7 +2,7 @@ name: Handset examples — the half CI can run
 
 # THE TWO HANDSET EXAMPLE PAGES ARE COMPILED BY A GATE THAT CANNOT LIVE HERE.
 #
-# examples/kotlin-android-hello.md and examples/swift-ios-expression2.md are two
+# examples/kotlin-android-hello.md and examples/ios-expression-2.md are two
 # whole projects printed in full — about 2,000 lines that end with a talking
 # avatar on a real phone. Until 2026-09-09 nothing in this repo compiled a line
 # of either. scripts/check-published-examples-build.mjs now does: it FETCHES the
@@ -56,15 +56,15 @@ on:
     paths:
       - 'scripts/check-published-examples-build.mjs'
       - 'scripts/examples-build-gate.sh'
-      - 'src/content/docs/examples/android-expression2.md'
-      - 'src/content/docs/examples/swift-ios-expression2.md'
+      - 'src/content/docs/examples/android-expression-2.md'
+      - 'src/content/docs/examples/ios-expression-2.md'
       - '.github/workflows/examples-extractor-selftest.yml'
   pull_request:
     paths:
       - 'scripts/check-published-examples-build.mjs'
       - 'scripts/examples-build-gate.sh'
-      - 'src/content/docs/examples/android-expression2.md'
-      - 'src/content/docs/examples/swift-ios-expression2.md'
+      - 'src/content/docs/examples/android-expression-2.md'
+      - 'src/content/docs/examples/ios-expression-2.md'
       - '.github/workflows/examples-extractor-selftest.yml'
 
 permissions:
