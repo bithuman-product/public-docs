@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "8279c9f0a648492eb98c8d465d9499a9df4cc3be78a8b3bf7257a1d7993a8903",
-  "emitter_sha256": "ffd8b9e6675e9294eb30a960c4d65b712c627f96c542dd0861d40bfbbdb95d66",
+  "record_sha256": "e4d643d013c2ab8c47f3f57690295c0ba3a67530454457685d3b83c1ca8be0d9",
+  "emitter_sha256": "31597c5db03e0712a27a72035fb359874183d5e37ef7bdee0f4acdc1483a06de",
   "verified_on": "2026-09-27",
   "stale_after_days": 30,
   "page": "src/content/docs/sdk/performance.md",
   "served_route": "/sdk/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "c565312aba2031640abea97d4865b1f1ab090f178b335d7414d09e2c21ed9c52"
+    "sha256": "aa2af725d14feef1684f934a231f0439500e3a2db87ddb10d63d88b7fb2e36c7"
   },
   "blocks": [
     {
@@ -21,7 +21,7 @@
       "marker": "TABLE",
       "key": "cloud",
       "index": 0,
-      "sha256": "dc62322d3226d20b21962845b042ca6af83d503567747733bab9b3f90029e566"
+      "sha256": "e9801ce5cc2c59e8cbe3f44f067a0620e95cde24547c0c97c58eb9d8b7b8304d"
     },
     {
       "file": "src/content/docs/performance/cloud.md",
@@ -35,21 +35,21 @@
       "marker": "TABLE",
       "key": "desktop",
       "index": 0,
-      "sha256": "01df914c9682657d52adad6fc09ee2a758b99e80440744ff487a91747e5289d0"
+      "sha256": "44f0239326a01b99c906ac2b5e4948a6cb9c44479fd3fbfeef4abf26114b706b"
     },
     {
       "file": "src/content/docs/performance/desktop.md",
       "marker": "RELEASES",
       "key": "desktop",
       "index": 0,
-      "sha256": "89dc77173f04ef00b477d4fe972cf9d91d2f9376fd3fe4eb754427f65fd9d62c"
+      "sha256": "30f649034c45fdc35c257a29826369e64df4f0de44c5b04e26c6c48cef46120b"
     },
     {
       "file": "src/content/docs/performance/method.md",
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "e5b34d49361c64af06313d94568eb723b133e471262eca61cd2fd2325cea2717"
+      "sha256": "0ffde7b6f7911b0d65a6d33f882df11ae83eecc32e16db0724cec9160dba8fcc"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -112,14 +112,14 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "c06cbbb65bafc5587e0709f357bccffb38caf07e338c40103a7215117db91c8d"
+      "sha256": "aaee6fdb9d169cd2f54c684b7d8804525974493e37408ee4bb59196bb6f8c131"
     },
     {
       "file": "src/partials/performance-headline.md",
       "marker": "HEADLINE",
       "key": null,
       "index": 0,
-      "sha256": "3b8ed8e419492a10751950fbd262a11989c6b989c5f11881d72b2968766eca96"
+      "sha256": "3f1c7a3cfaaf4d35b4342294bc9827f593ce96f15f2ba276e6f92d4b998afec8"
     }
   ],
   "table": {
@@ -129,7 +129,7 @@
       {
         "label": "Cloud API · GPU",
         "id": "cloud-gpu",
-        "line": "| Cloud API · GPU | NVIDIA RTX 4090 | 98 | **3.9×** real time | 340 | **17.0×** real time |"
+        "line": "| Cloud API · GPU | NVIDIA RTX 4090 | 104 | **4.1×** real time | 340 | **17.0×** real time |"
       },
       {
         "label": "Cloud API · Apple silicon",
@@ -144,7 +144,7 @@
       {
         "label": "macOS · CLI",
         "id": "macos-m4",
-        "line": "| macOS · CLI | Apple M4 | 114 | **4.5×** real time | 165 | **8.2×** real time |"
+        "line": "| macOS · CLI | Apple M4 | 106 | **4.2×** real time | 168 | **8.4×** real time |"
       },
       {
         "label": "macOS · Python",
@@ -159,7 +159,7 @@
       {
         "label": "Linux · CLI",
         "id": "linux-cpu",
-        "line": "| Linux · CLI | Intel Core i7-13700F (x86_64) | 51 | **2.0×** real time | 44 | **2.2×** real time |"
+        "line": "| Linux · CLI | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 44 | **2.2×** real time |"
       },
       {
         "label": "Linux · Python",
