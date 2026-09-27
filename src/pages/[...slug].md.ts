@@ -5,6 +5,7 @@ import { hubMeta } from "../config/hubs";
 import { GROUP_ORDER, type SectionId } from "../config/nav";
 import { PLATFORMS } from "../data/platforms";
 import { START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
+import { headlineData } from "../lib/perf-headline";
 import versions from "../data/versions.json";
 import specText from "../openapi/bithuman.yaml?raw";
 import headline from "../partials/performance-headline.md?raw";
@@ -93,9 +94,13 @@ export const GET: APIRoute = async ({ props }) => {
       `Realtime talking avatars from one portrait. Quickstart: ${SITE}/start.md · API reference: ${SITE}/api/reference.md\n\n` +
       `## Start building\n\n${cards(START_BUILDING)}\n\nOne command per path: ${SITE}/start.md#choose-your-path\n\n` +
       `## Choose your deployment\n\n${cards(DEPLOYMENTS)}\n\n` +
-      `## Models\n\n${cards(MODELS)}\n\n${MODELS_NOTE} ${SITE}/concepts/models.md\n\n` +
+      `## Models\n\n${MODELS.map((m) => {
+        const cells = headlineData()?.find((r) => r.model === m.title)?.cells ?? [];
+        const speed = cells.length ? ` Times real time: ${cells.map((c) => `${c.platform} ${c.multiple}`).join(", ")}.` : "";
+        return `- [${m.title}](${mdUrl(m.href)}): ${m.line}${speed}`;
+      }).join("\n")}\n\n${MODELS_NOTE} ${SITE}/concepts/models.md · How we measure: ${SITE}/performance.md\n\n` +
       `## Popular guides\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)})`).join("\n")}\n\n` +
-      `## Sections\n\n- [Get started](${SITE}/start.md)\n- [API](${SITE}/api.md)\n- [SDKs](${SITE}/sdk.md)\n- [Guides](${SITE}/guides.md)\n- [Examples](${SITE}/examples.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n` + perfSection()));
+      `## Sections\n\n- [Get started](${SITE}/start.md)\n- [API](${SITE}/api.md)\n- [SDKs](${SITE}/sdk.md)\n- [Guides](${SITE}/guides.md)\n- [Examples](${SITE}/examples.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }
   if (hub === "start") {
     let body = `## Choose your path\n\n${pathTable()}\n## Run it\n`;
