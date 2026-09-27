@@ -113,7 +113,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `BITHUMAN_VERSION` | Release tag for the installer, set on the `sh` side of the pipe: `curl -fsSL https://install.bithuman.ai \| BITHUMAN_VERSION=cli-v2.7.8 sh` |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`) |
 | `NO_COLOR` | Turn colour off |
-| `BITHUMAN_LICENSE_FILE` | Path to a signed offline license (Business and Enterprise, [offline licensing](/pricing#offline-licensing)) |
+| `BITHUMAN_LICENSE_FILE` | Path to a signed offline license (Business and Enterprise, [offline licensing](/deploy/offline)) |
 | `BITHUMAN_THREADS` | Render threads (default: one per CPU the process may use, up to 16) |
 | `BITHUMAN_INSTALL_ID` | This install's id in usage reports (default: a random id kept in `~/.bithuman/install_id`) |
 

@@ -60,7 +60,29 @@ for (const c of ["src/components/Nav.astro", "src/components/Footer.astro"]) {
   const hard = [...s.matchAll(/\{\s*label:\s*"[^"]+",\s*href:/g)].length;
   if (hard) fail.push(`${c} carries ${hard} hand-typed link object(s); put them in src/config/nav.ts`);
 }
+// From W2: a card on the home page or a hub is a page, never an anchor on
+// another page. A card that lands mid-page reads as a broken link, and the
+// section it pointed at moves with every rewrite. The sources that define
+// home and hub cards are graded; a menu or an inline link may still use one.
+const CARD_SOURCES = ["src/data/home.ts", "src/data/platforms.ts", "src/data/deployments.ts", "src/data/perf-band.ts", "src/config/hubs.ts",
+  "src/pages/index.astro", "src/pages/platforms/index.astro", "src/pages/build/index.astro", "src/pages/resources/index.astro", "src/components/SectionHub.astro", "src/components/Hub.astro"];
+let cardTargets = 0;
+for (const rel of CARD_SOURCES) {
+  const p = join(ROOT, rel);
+  if (!existsSync(p)) continue;
+  const lines = readFileSync(p, "utf8").split("\n");
+  lines.forEach((l, i) => {
+    if (/^\s*(\/\/|\*|\/\*)/.test(l)) return;
+    for (const m of l.matchAll(/\b(?:href|docs):\s*["'`](\/[^"'`]*)["'`]|<Card[^>]*\bhref=["'](\/[^"']*)["']/g)) {
+      const target = m[1] ?? m[2];
+      cardTargets++;
+      if (target.includes("#")) fail.push(`${rel}:${i + 1}: a card targets the anchor ${target}; link the page itself`);
+    }
+  });
+}
+if (cardTargets < 20) fail.push(`card sources yielded only ${cardTargets} targets — the extractor stopped seeing cards`);
+
 if (pages < 40) { console.log(`::error::read only ${pages} pages — the corpus moved`); process.exit(2); }
 for (const f of fail) console.log(`::error::${f}`);
-console.log(fail.length ? `\nG8: ${fail.length} navigation fault(s)` : `G8 ok: ${pages} pages, each in one sidebar group; header and footer from nav.ts`);
+console.log(fail.length ? `\nG8: ${fail.length} navigation fault(s)` : `G8 ok: ${pages} pages, each in one sidebar group; header and footer from nav.ts; ${cardTargets} home and hub card targets, none an anchor`);
 process.exit(fail.length ? 1 : 0);

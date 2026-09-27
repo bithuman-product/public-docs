@@ -92,7 +92,7 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Not for phones:** the Swift package and the Android SDK stay online.
 - **Not file rendering:** `bithuman render` writes a video file and signs in online; it needs no offline license.
 
-[Contact sales](https://www.bithuman.ai/sales) to arrange an offline license.
+[Contact sales](https://www.bithuman.ai/sales) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
 
 ## Top-up credits
 

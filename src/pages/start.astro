@@ -51,7 +51,7 @@ const offline = PLATFORMS.find((p) => p.id === "offline")!;
             chips={[...p.renders.map((r) => RENDERS_LABEL[r]), ...(p.time ? [`First result in ${p.time}`] : [])]} /></li>
         ))}
       </ul>
-      <p class="s-small s-offline"><strong>Fully offline:</strong> {offline.note} <a href="https://www.bithuman.ai/sales">Contact sales</a> · <a href="/deploy#fully-offline">Details</a></p>
+      <p class="s-small s-offline"><strong>Fully offline:</strong> {offline.note} <a href="https://www.bithuman.ai/sales">Contact sales</a> · <a href="/deploy/offline">Details</a></p>
     </div>
   </section>
 

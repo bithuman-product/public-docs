@@ -427,6 +427,28 @@ for (const f of RULE_CORPUS) {
   }
 }
 
+// --- 3c. The Plans table on pricing.md agrees with src/data/plans.json -----
+// GET /v1/pricing returns no plans, so plans.json is the docs' one copy of the
+// plan limits; the table readers see is checked against it cell by cell.
+let planRows = 0;
+{
+  const plans = JSON.parse(readFileSync(join(ROOT, "src/data/plans.json"), "utf8"));
+  const plansSection = section(pricingMd, /^Plans$/) ?? "";
+  const num = (s) => (s == null ? null : Number(String(s).replace(/[$,*]/g, "").trim()));
+  for (const p of plans.plans) {
+    const row = plansSection.split("\n").find((l) => new RegExp(`^\\|\\s*\\*\\*${p.name}\\*\\*\\s*\\|`).test(l));
+    if (!row) { failures.push(`pricing.md: the Plans table has no row for ${p.name} (src/data/plans.json)`); continue; }
+    const c = row.split("|").slice(2, -1).map((x) => x.trim());
+    const want = [p.monthly_usd, p.yearly_usd, p.credits_per_month, p.agents, p.cloud_concurrent_sessions];
+    const got = [num(c[0]), num(c[1]), num(c[2]), c[3] === "unlimited" ? null : num(c[3]), num(c[4])];
+    want.forEach((w, i) => {
+      if (w !== got[i]) failures.push(`pricing.md: Plans row ${p.name}, column ${i + 2} reads "${c[i]}" but src/data/plans.json says ${w ?? "unlimited"}`);
+    });
+    planRows++;
+  }
+  if (!new RegExp(`\\$1 = ${plans.topup.credits_per_usd} credits`).test(pricingMd)) failures.push(`pricing.md: the top-up rate is not "$1 = ${plans.topup.credits_per_usd} credits" (src/data/plans.json)`);
+}
+
 // --- 4. Report -------------------------------------------------------------
 if (failures.length) {
   console.error(`Found ${failures.length} billing-consistency problem(s):\n`);
@@ -449,5 +471,5 @@ console.log(
     `(${assertions} value(s) re-derived, ${Object.keys(rates).length} rates parsed); ` +
     `billing rule: ${ruleFilesGraded} file(s) carry no rule but the pricing page's ` +
     `(${firings}/${STALE_RULES.length} patterns fired on their fixtures, ` +
-    `${NEGATIVE_CONTROLS.length} allowed sentences held).`
+    `${NEGATIVE_CONTROLS.length} allowed sentences held); ${planRows} plan row(s) match src/data/plans.json.`
 );

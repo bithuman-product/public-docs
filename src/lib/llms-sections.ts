@@ -17,14 +17,14 @@ import { PLATFORMS } from "../data/platforms";
 // scripts/check-llms.mjs caps each file and fails when a page is in no section
 // (and not linked-only) or in two, so no page can drop out of the agent layer.
 
-// Account administration, less-used endpoints, first-generation concepts and the
-// per-platform performance sub-pages are linked with their .md twins rather than
-// inlined, to keep each file one fetch for an agent.
+// Account administration, less-used endpoints, first-generation concepts, the
+// CLI's local conversation brain and the method page are linked with their .md
+// twins rather than inlined, to keep each file one fetch for an agent.
 export const LINKED_ONLY = new Set([
   "api/api-keys", "api/organizations", "api/runtime-sessions", "api/billing",
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
   "models/first-generation", "models/avatar-file",
-  "build/voice-agent",
+  "build/voice-agent", "platforms/cli/local-brain",
   "performance/method",
 ]);
 
@@ -51,7 +51,7 @@ export const LLMS_SECTIONS: LlmsSection[] = [
   },
   {
     id: "platforms", title: "Platforms", inFull: true,
-    summary: "iOS & iPadOS, Android, Web, Python, CLI, LiveKit, REST",
+    summary: "iOS & iPadOS, macOS, Android, Flutter, Web, Python, CLI, LiveKit, REST",
     has: (d) => d.data.section === "platforms" && (d.data.type === "platform" || d.data.type === "guide"),
   },
   {

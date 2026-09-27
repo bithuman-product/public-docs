@@ -1,31 +1,52 @@
 ---
 title: "Android"
-description: "Add an Essence 2 or Expression 2 avatar to an Android app. Both models render on the handset from one Maven Central dependency."
+description: "The Android SDK renders Essence 2 and Expression 2 on Android phones, from one Maven Central dependency."
 section: platforms
 group: "Apps"
 order: 30
 type: platform
 renders: ["device"]
+needs: ["Physical device", "API secret"]
 artifacts: ["expression2_android", "essence2_android"]
-platforms: ["android", "flutter"]
-next: ["/examples/android-expression-2", "/examples/android-essence-2", "/platforms/android/reference"]
+platforms: ["android"]
+models: ["essence-2", "expression-2"]
+claims: ["S1", "S2", "S8", "S10", "S13", "S26", "S30", "S32"]
+next: ["/examples/android-expression-2", "/examples/android-essence-2", "/platforms/flutter"]
 ---
 
-Both models render on the handset: you feed 16 kHz mono speech in and pull picture frames out. After the one-time model download, the only network traffic is usage reporting.
+<div class="lead">
+<div class="lead-text">
+
+Both models render on the phone: you feed 16 kHz mono speech in and pull picture frames out. After the one-time model download, the only network traffic is usage reporting. Each model is one Maven Central dependency.
+
+```why-on-device
+android
+```
+
+</div>
+
+<figure class="showcase">
+  <video controls preload="none" playsinline muted poster="/examples/android/essence2.webp" width="540" height="1006" src="/examples/android/essence2.mp4"></video>
+  <figcaption>The <code>sofia-ramirez</code> sample avatar (Essence 2) on a Samsung Galaxy S25+, rendered on the phone by the Android SDK.</figcaption>
+</figure>
+
+</div>
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), at the identity's own resolution, 25 fps |
-| **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
+| **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
+| **Devices** | a physical `arm64-v8a` phone, `minSdk 26` | a physical `arm64-v8a` phone, `minSdk 29` |
 | **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.2")` | `implementation("ai.bithuman:essence2-android:0.8.1")` |
-| **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
+| **Credential** | an [API secret](/start/api-secret), Creator plan or higher | an API secret, Creator plan or higher |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
-| **Worked example** | [Android example: Expression 2](/examples/android-expression-2) | [Android example: Essence 2](/examples/android-essence-2) |
+| **Worked example** | [Android Expression 2](/examples/android-expression-2) | [Android Essence 2](/examples/android-essence-2) |
 
-Toolchain: JDK 17, Gradle 8.11 or newer, Android Gradle Plugin 8.7 or newer, and a physical arm64 handset (emulators cannot load the engines).
+## Before you start
 
-Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/platforms/python) or [CLI](/platforms/cli) on a desktop. See [Essence 1](/models/first-generation#essence-1).
+- **JDK 17, Gradle 8.11 or newer and Android Gradle Plugin 8.7 or newer.**
+- **A physical arm64 phone.** Emulators cannot load the engines.
+- **Essence 1** is not available on phones: use Essence 2 or Expression 2 on devices ([First generation](/models/first-generation)).
 
 ## Install
 
@@ -73,7 +94,7 @@ implementation("ai.bithuman:expression2-android:0.5.2") {
 
 Pass your API secret in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
 
-Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)).
+A shipped app holds the secret on the phone, so give each app its own secret that you can rotate or revoke ([API secrets](https://www.bithuman.ai/developer/api-keys)). Credits pay for active session time, talking or idle, billed to the second ([pricing](/pricing)).
 
 > **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only. A shipped app fetches the secret from your own backend at startup.
 
@@ -107,7 +128,7 @@ fun render(context: Context, pcm16k: FloatArray, show: (Bitmap) -> Unit) {
 }
 ```
 
-Expected: `show` receives about 20 frames per second of audio, and the avatar's lips follow the speech. The first `create()` after install prepares the accelerator and takes about 15 seconds; later launches reuse it and `create()` takes 1–2 seconds. Create once, at app start.
+Expected: `show` receives 20 frames for each second of audio, and the avatar's lips follow the speech. The first `create()` after install prepares the accelerator once and takes noticeably longer than later launches, which reuse it. Create once, at app start, on a background thread.
 
 Essence 2 takes 16-bit little-endian PCM bytes, as a 16 kHz mono WAV stores them, and fills an RGBA `ByteBuffer` sized from the identity:
 
@@ -120,7 +141,7 @@ import java.nio.ByteBuffer
 
 fun render(context: Context, pcm16le: ByteArray, show: (ByteBuffer, Int, Int) -> Unit) {
     Essence2Credential.set(BuildConfig.BITHUMAN_API_SECRET)                   // before fetch() and create()
-    val identity = Essence2ModelStore(context).fetch("A21SKT4314")            // 226–281 MB, first run only
+    val identity = Essence2ModelStore(context).fetch("A52DHS2219")            // sofia-ramirez; 226–281 MB, first run only
 
     Essence2Avatar.create(identity.dir).use { avatar ->
         val frame = avatar.newFrameBuffer()   // width * height * 4, RGBA
@@ -140,6 +161,13 @@ fun render(context: Context, pcm16le: ByteArray, show: (ByteBuffer, Int, Int) ->
 
 Frame size belongs to the identity (portrait 1080×1920, landscape 1920×1080 or 1280×720). Read `avatar.width` and `avatar.height`; do not hard-code them.
 
+## Complete example
+
+Two apps you can clone and run on a phone, each with idle motion between replies:
+
+- [Android Expression 2](/examples/android-expression-2): the `wise-pup` sample avatar.
+- [Android Essence 2](/examples/android-essence-2): the `sofia-ramirez` sample avatar at full resolution.
+
 ## Integrate into your app
 
 In a live conversation, keep one avatar open and stream into it.
@@ -147,7 +175,7 @@ In a live conversation, keep one avatar open and stream into it.
 | Job | Expression 2 | Essence 2 |
 |---|---|---|
 | Stream audio as it arrives | `feed(chunk)` per chunk | `feed(chunk)` per chunk |
-| Show frames | `pull(bitmap)` at 20 fps | `pull(buffer)` at 25 fps |
+| Show frames | `pull(bitmap)`, 20 a second | `pull(buffer)`, 25 a second |
 | End of a reply | `flushTail()` | `endOfAudio()` |
 | Idle between replies | `avatar.idleLoop?.next(bitmap)` | `idle(buffer)` |
 | Interrupt the reply | `resetState(true)` | `resetAudio()` |
@@ -155,7 +183,7 @@ In a live conversation, keep one avatar open and stream into it.
 
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
 
-The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle and interruption, and it builds for Android from a clone. From plugin 2.6.20 its voice session connects through bitHuman's [realtime relay](/api/realtime) with your API secret; no token is minted.
+For a Flutter app, the [Flutter plugin](/platforms/flutter) wraps these engines.
 
 ## Platform notes
 
@@ -170,13 +198,11 @@ The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/
 
 - **Private avatars:** an avatar you created downloads with the secret you set with `Expression2Credential.set` or `Essence2Credential.set`; there is nothing else to pass.
 
-### Flutter
-
-The Flutter plugin renders on Android today; iOS and macOS do not build from its published tag yet. Its dependency line and current version are on [Downloads & versions](/downloads), and the [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle and interruption.
-
 ## Performance
 
-Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance](/performance#mobile).
+```perf
+android-s25plus android-s25plus-sustained
+```
 
 ## Troubleshooting
 
@@ -186,7 +212,7 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 | `MeteringRefused` on the first Essence 2 `pull()` | no secret set | call `Essence2Credential.set(secret)` before `fetch()` and `create()` |
 | `Essence2StoreException` from `fetch()` | no secret was set when the store downloaded | call `Essence2Credential.set(secret)` before `fetch()` |
 | Expression 2 renders slowly; `acceleratorNote` says no `libQnnTFLiteDelegate.so` | the accelerator runtime was excluded, or legacy packaging is off | keep the dependency whole and set `useLegacyPackaging = true` |
-| The first Expression 2 `create()` after install takes about 15 s | the accelerator prepares the decoder once and keeps it; later launches take 1–2 s | create on a background thread at app start; only the first launch after install pays it (and again after an SDK or OS update) |
+| The first Expression 2 `create()` after install is slow | the accelerator prepares the decoder once and keeps it; later launches reuse it | create on a background thread at app start; only the first launch after install pays it (and again after an SDK or OS update) |
 | Download refused with `401` | the avatar is private | set its owner's API secret with `Expression2Credential.set` or `Essence2Credential.set` |
 | `409 MODEL_NOT_GENERATED` on download | the agent has no model of that kind yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then retry |
 | Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |
@@ -198,6 +224,6 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 
 - [Android API reference](/platforms/android/reference): every public class in both AARs.
 - Examples: [Expression 2](/examples/android-expression-2) · [Essence 2](/examples/android-essence-2), complete apps you can clone.
-- [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): a complete voice conversation for Android.
+- [Flutter](/platforms/flutter): the Flutter plugin, built on these engines.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
 - FFmpeg in `essence2-android` is LGPL: [relink materials](/legal/android-ffmpeg-lgpl).

@@ -65,7 +65,7 @@ curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 python -c 'import bithuman
 with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.wav")), "frames")'
 # → 300 frames`,
-      expect: "300 frames of 416×720 video: 15 seconds of speech at 20 fps.",
+      expect: "300 frames of 416×720 video: the 15 seconds of sample speech.",
     },
   },
   {
@@ -103,7 +103,7 @@ bithuman render wise-pup speech.wav -o out.mp4
   },
   {
     id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Fully offline", needs: "Business or Enterprise plan",
-    first: "Contact sales", time: "—", docs: "/deploy#fully-offline", models: both,
+    first: "Contact sales", time: "—", docs: "/deploy/offline", models: both,
     note: OFFLINE_LICENSE_COPY,
   },
 ];
@@ -127,12 +127,12 @@ export interface PlatformPage {
 export const PLATFORM_PAGES: PlatformPage[] = [
   { id: "ios", title: "iOS & iPadOS", href: "/platforms/ios", icon: "phone", group: "Apps",
     line: "One Swift package. The avatar renders on the iPhone or iPad.", renders: ["device"], artifacts: ["swift"], time: "15 min" },
-  { id: "macos", title: "macOS", href: "/platforms/ios#on-a-mac", icon: "laptop", group: "Apps",
-    line: "The same Swift package in a Mac app, or from a terminal with swift run.", renders: ["device"], artifacts: ["swift"], time: "15 min" },
+  { id: "macos", title: "macOS", href: "/platforms/macos", icon: "laptop", group: "Apps",
+    line: "The same Swift package in a Mac app, or from a terminal with swift run.", renders: ["device"], artifacts: ["swift"], time: "5 min" },
   { id: "android", title: "Android", href: "/platforms/android", icon: "android", group: "Apps",
     line: "One Maven Central dependency. The avatar renders on the phone.", renders: ["device"], artifacts: ["expression2_android", "essence2_android"], time: "15 min" },
-  { id: "flutter", title: "Flutter", href: "/platforms/android#flutter", icon: "flutter", group: "Apps",
-    line: "The Flutter plugin, on Android today.", renders: ["device"], artifacts: ["flutter_plugin"] },
+  { id: "flutter", title: "Flutter", href: "/platforms/flutter", icon: "flutter", group: "Apps",
+    line: "One plugin for a Flutter app. The avatar renders on the phone.", renders: ["device"], artifacts: ["flutter_plugin"] },
   { id: "web", title: "Web", href: "/platforms/web", icon: "globe", group: "Apps",
     line: "One iframe on any page. The avatar renders in the cloud, or in the tab with WebGPU.", renders: ["cloud", "browser"], artifacts: [], time: "1 min" },
   { id: "python", title: "Python", href: "/platforms/python", icon: "braces", group: "Code & terminal",

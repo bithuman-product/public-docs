@@ -22,7 +22,12 @@ const flag = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] 
 const PERF_MIN = Number(flag("--perf-min", "95"));
 const pi = args.indexOf("--pages");
 const PAGES = pi >= 0 ? args.slice(pi + 1).filter((a) => a.startsWith("/")) :
-  ["/", "/start", "/platforms", "/platforms/python", "/platforms/web", "/deploy", "/models/essence-2", "/api/agents", "/examples", "/performance"];
+  ["/", "/start", "/platforms", "/api/agents", "/examples", "/performance",
+    // W2: every platform page, every deploy page and the models pages
+    "/platforms/ios", "/platforms/macos", "/platforms/android", "/platforms/flutter", "/platforms/web",
+    "/platforms/python", "/platforms/cli", "/platforms/livekit", "/platforms/rest",
+    "/deploy", "/deploy/cloud", "/deploy/self-hosted", "/deploy/on-device", "/deploy/cpu", "/deploy/offline", "/deploy/privacy",
+    "/models", "/models/essence-2", "/models/expression-2", "/pricing"];
 
 if (!existsSync(join(DIST, "index.html"))) { console.log("::error::no dist/ — run npm run build first"); process.exit(2); }
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json",

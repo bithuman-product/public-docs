@@ -17,6 +17,13 @@ export const QUERIES = [
   { q: "Swift", top: "/platforms/ios", wave: "W1" },
   { q: "pricing", top: "/pricing", wave: "W1" },
   { q: "self-host", top: "/deploy/self-hosted", wave: "W1" },
+  { q: "iOS", top: "/platforms/ios", wave: "W2" },
+  { q: "macOS", top: "/platforms/macos", wave: "W2" },
+  { q: "Flutter", top: "/platforms/flutter", wave: "W2" },
+  { q: "offline", top: "/deploy/offline", wave: "W2" },
+  { q: "CPU", top: "/deploy/cpu", wave: "W2" },
+  { q: "no GPU", top: "/deploy/cpu", wave: "W2" },
+  { q: "WebGPU", top: "/platforms/web", wave: "W2" },
 ];
 
 if (!existsSync(join(DIST, "pagefind/pagefind.js"))) { console.log("::error::no dist/pagefind — run npm run build first"); process.exit(2); }

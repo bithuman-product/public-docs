@@ -32,7 +32,7 @@ const SEMVER = String.raw`\d+\.\d+\.\d+`;
 // key → pattern with exactly one capture group: the version.
 export const PIN_FORMS = [
   { key: "swift", re: new RegExp(String.raw`homebrew-bithuman(?:\.git)?"\s*,\s*(?:from:\s*|\.upToNextMajor\(from:\s*|exact:\s*)"(${SEMVER})"`, "g") },
-  { key: "essence2_engine", re: new RegExp(String.raw`releases/download/essence2-v(${SEMVER})(?![\\d.])`, "g") },
+  { key: "essence2_engine", re: new RegExp(String.raw`releases/(?:download|tag)/essence2-v(${SEMVER})(?![\\d.])`, "g") },
   { key: "expression2_android", re: new RegExp(String.raw`ai\.bithuman:expression2-android:(${SEMVER})`, "g") },
   { key: "essence2_android", re: new RegExp(String.raw`ai\.bithuman:essence2-android:(${SEMVER})`, "g") },
   { key: "python", re: new RegExp(String.raw`(?<![\w-])bithuman(?:\[[^\]\s]*\])?==(${SEMVER})`, "g") },

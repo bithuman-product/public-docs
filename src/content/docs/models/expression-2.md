@@ -1,11 +1,12 @@
 ---
 title: "Expression 2"
-description: "Expression 2 — bitHuman's generative avatar model: a whole 416x720 scene generated live from one portrait, for any character. Where it runs, how an agent is created and trained, how it serves, and what to expect."
+description: "Expression 2 renders any character from one portrait: the whole scene generated live from the audio, on the device or in the bitHuman cloud."
 section: models
 group: "Models"
 order: 20
 type: concept
 models: ["expression-2"]
+claims: ["S1", "S3", "S13", "S21", "S28"]
 demo: "expression-2"
 renders: ["device", "server", "cloud"]
 next: ["/platforms", "/build/create-avatar", "/models/essence-2"]
@@ -20,8 +21,8 @@ face detector or cropping step, so it works for any character: cartoons,
 animals, creatures, robots, and people.
 
 At creation the platform trains a **small model of your specific identity** from
-one photo. That per-identity model is what serves your sessions, at **20 fps**,
-and it is why creation takes a couple of hours.
+one photo. That per-identity model is what serves your sessions, and it is why
+creation takes a couple of hours.
 
 ## When to choose it
 
@@ -36,18 +37,16 @@ For a photorealistic person animated from their own footage, compare
 
 ## Where it runs
 
-| Surface | How |
-|---|---|
-| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/platforms/livekit) |
-| macOS and Linux | the [CLI](/platforms/cli) (`run`, `render`) and the [Python SDK](/platforms/python) (`[expression-2]` extra) |
-| iPhone, iPad, Mac | the [Swift package](/platforms/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/ios-expression-2) |
-| Android | [`expression2-android`](/platforms/android) — sessions use your API secret |
-| The viewer's browser | [`?render=local`](/platforms/web#integrate-into-your-app) |
+```model-matrix
+model: expression-2
+```
+
+Complete apps: [iOS Expression 2](/examples/ios-expression-2), [macOS Expression 2](/examples/macos-expression-2) and [Android Expression 2](/examples/android-expression-2).
 
 The file you download from
 [`GET /v1/agent/{code}/model/download?model=expression-2`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE>` is labelled `<CODE>.imx`; `.avatar` is the legacy
-extension for the same container. Measured frame rates per platform are on
+extension for the same container. How fast it renders on each device is on
 [performance](/performance).
 
 ## How creation works
@@ -59,28 +58,14 @@ and `model: "expression-2"`, or add `expression-2` to an existing agent with
 - **The input is a portrait image**, of any subject. Without one, the platform
   generates a portrait from your prompt first. It also generates the agent's
   10-second idle clip and prepares a voice.
-- **The per-identity training dominates the wait.** Poll
-  [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready`, or
-  wait for the completion email. Plan for **about 2 to 2.5 hours**, and treat 4
-  hours as a normal upper tail rather than a fault: training is adaptive, and an
-  identity that needs more work gets more training, never a lower bar.
-- **The charge is taken up front.** A run that fails early is refunded
-  automatically; a creation that completes is not refundable, so a second
-  `generate` is a second charge. If a `ready` agent will not serve, report it.
-- **Failures are terminal** and reported on the status endpoint as
-  `status: "failed"` with an `error_message` — see
-  [failure modes](/api/agents#errors).
+- **Training takes about 2 to 2.5 hours;** an identity that needs more work gets more, so up to 4 hours is normal. Poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready` or `failed`, or wait for the completion email.
+- **A run that fails is refunded;** a completed creation is not, so a second `generate` is a second charge ([failure modes](/api/agents#errors)).
 
 The creation cost is on [pricing](/pricing).
 
 ## Serving tiers
 
-The bitHuman cloud picks a serving tier for each session. Every published
-configuration, including a desktop CPU with no GPU, renders faster than real
-time ([performance](/performance)). To force one tier for a benchmark, append `?model=expression-2-gpu`,
-`expression-2-apple` or `expression-2-cpu` to the session URL — how a pin
-behaves is on [pin a serving tier](/models#advanced-pin-a-serving-tier).
-For production, omit it.
+Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)). In the bitHuman cloud, the service picks the hardware for each session; to benchmark one tier, see [pin a tier for a benchmark](/performance#pin-a-tier-for-a-benchmark).
 
 ## Idle and speaking behavior
 
@@ -95,7 +80,7 @@ clip covers the start of each reply.
 
 ## Limits and expectations
 
-- **Output is the full 416x720 scene at 20 fps**, over WebRTC in the cloud.
+- **Output is the full 416×720 scene**, playing at 20 frames a second.
 - **A clear, frontal, well-lit photo** gives the best result. The identity is
   fixed at creation — to change the face, create a new agent.
 - **The first session on a new agent** can take longer to connect while its

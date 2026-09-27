@@ -1,23 +1,36 @@
 ---
 title: "Web: embed and WebGPU"
-description: "Put a live, talking avatar on any web page with one iframe. It renders in the bitHuman cloud, or in the visitor's tab with WebGPU; there is no install and no API secret in the browser."
+description: "Put a live, talking avatar on any web page with one iframe. It renders in the bitHuman cloud, or in the visitor's tab with WebGPU."
 section: platforms
 group: "Apps"
 order: 50
 type: platform
+searchTitle: "Web: embed and WebGPU in the browser"
 demo: "both"
 renders: ["cloud", "browser"]
 platforms: ["web"]
-next: ["/api/embedding", "/platforms/rest", "/deploy"]
+models: ["essence-2", "expression-2"]
+claims: ["S1", "S2", "S29", "S17"]
+next: ["/api/embedding", "/platforms/rest", "/deploy/on-device"]
 ---
 
-The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an `<iframe>` and the page gets a live avatar that listens and answers. There is no npm package and no secret in the browser.
+<div class="lead">
+<div class="lead-text">
 
-| Detail | Expression 2 | Essence 2 |
-|---|---|---|
-| **What renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
-| **Cloud rendering (default)** | yes | yes |
-| **In the visitor's tab (`?render=local`)** | yes, with WebGPU; otherwise it switches to cloud | yes, with WebGPU and a browser build; otherwise it switches to cloud |
+The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an `<iframe>` and the page gets a live avatar that listens and answers. By default the avatar renders in the bitHuman cloud and streams to the page; with `render=local` it renders in the visitor's tab with WebGPU. There is no npm package, no install and no secret in the browser.
+
+```why-on-device
+web
+```
+
+</div>
+
+<figure class="showcase">
+  <video controls preload="none" playsinline muted poster="/examples/web/hero.webp" width="460" height="760" src="/examples/web/clip.mp4"></video>
+  <figcaption>The <code>wise-pup</code> sample avatar in a plain HTML page in Chrome, answering a typed question (the recording has no sound).</figcaption>
+</figure>
+
+</div>
 
 ## Before you start
 
@@ -46,11 +59,6 @@ Expected: the avatar appears, asks for the microphone, and answers when you spea
 ## Complete example
 
 A whole page with a live avatar: one HTML file and a local web server.
-
-<figure class="showcase">
-  <video controls preload="none" playsinline muted poster="/examples/web/hero.webp" width="460" height="760" src="/examples/web/clip.mp4"></video>
-  <figcaption>The <code>wise-pup</code> sample avatar in a plain HTML page in Chrome, answering a typed question (the recording has no sound).</figcaption>
-</figure>
 
 ### Requirements
 
@@ -119,7 +127,14 @@ Add parameters to the URL:
 
 A private agent also takes `token`, and a session can pin its model with `model`; both are on [Embedding](/api/embedding). Other parameters are ignored.
 
-`render=local` works for any avatar you can embed, and it is off by default: without it, every session renders in the cloud and streams to the page. With it, the avatar's web bundle (50–200 MB, then cached) is downloaded to the viewer's browser and the avatar renders in the tab with WebGPU; the conversation still runs on our servers. For a private agent this needs an embed token minted by the agent's owner, the same one the iframe already uses. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
+### Render in the visitor's tab (WebGPU)
+
+`render=local` renders the avatar in the visitor's browser tab with WebGPU. It works for any avatar you can embed and is off by default: without it, every session renders in the bitHuman cloud and streams to the page.
+
+- **One download:** the avatar's web bundle (50–200 MB) downloads to the browser once, then comes from the cache. Tell visitors before it starts on a metered connection.
+- **Fallback:** a browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
+- **Where the conversation runs:** with the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
+- **Private agents:** the embed token the iframe already uses covers it ([Embedding](/api/embedding)).
 
 Check for a usable GPU before you choose `render=local`:
 
@@ -130,9 +145,21 @@ async function hasRealGPU() {
   const adapter = (await once()) ?? (await once());   // the first request can return null while the GPU starts
   return !!adapter && adapter.isFallbackAdapter !== true && adapter.info?.isFallbackAdapter !== true;
 }
+const mode = (await hasRealGPU()) ? "local" : "cloud";
+iframe.src = `https://www.bithuman.ai/embed/A23WJF0199?render=${mode}`;
 ```
 
 Do not send `Cross-Origin-Embedder-Policy` from the page that holds the iframe: the embed does not send one itself, so the browser refuses to load it.
+
+### React and other frameworks
+
+There is no npm package: the embed is an iframe in any framework. In React:
+
+```jsx
+export function Avatar({ code }) {
+  return <iframe src={`https://www.bithuman.ai/embed/${code}`} allow="microphone *" style={{ width: "100%", height: 600, border: 0 }} title="Talking avatar" />;
+}
+```
 
 To build your own video UI instead of the hosted page, subscribe to a cloud-rendered avatar over [LiveKit](/platforms/livekit).
 
@@ -143,7 +170,11 @@ To build your own video UI instead of the hosted page, subscribe to a cloud-rend
 
 ## Performance
 
-In-browser frame rates (WebGPU) are on [Web browser performance](/performance#web).
+Measured in the tab with WebGPU. The figures are the engine's render speed in Chrome on an Apple M4, not the frame rate a visitor sees.
+
+```perf
+web web-sustained
+```
 
 ## Troubleshooting
 

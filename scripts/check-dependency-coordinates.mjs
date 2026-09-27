@@ -47,7 +47,7 @@
 //     their build. There is no Xcode in this CI and there never will be, so the
 //     manifest is asked directly instead.
 //
-// WHAT IT CHECKS, over src/content and src/pages:
+// WHAT IT CHECKS, over src/content, src/pages and src/partials:
 //   R1  Gradle    every `implementation("<group>:<artifact>:<version>")` —
 //                 <version> must appear in that coordinate's maven-metadata.xml
 //                 on Maven Central. EVERY group, not only ours: see the note on
@@ -186,7 +186,8 @@ import { join, relative } from "node:path";
 import { execFileSync } from "node:child_process";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const CORPUS_ROOTS = ["src/content", "src/pages"];
+// src/partials: passages a page includes with ```partial (the Swift install is one).
+const CORPUS_ROOTS = ["src/content", "src/pages", "src/partials"];
 const TAP = "bithuman-product/homebrew-bithuman";
 const TAP_URL = `https://github.com/${TAP}.git`;
 

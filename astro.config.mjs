@@ -5,6 +5,7 @@ import rehypeCallouts from "./src/markdown/rehype-callouts.mjs";
 import rehypePerfTables from "./src/markdown/rehype-perf-tables.mjs";
 import rehypeEmbedNofollow from "./src/markdown/rehype-embed-nofollow.mjs";
 import remarkCodeTabs from "./src/markdown/remark-code-tabs.mjs";
+import remarkDocBlocks from "./src/markdown/remark-doc-blocks.mjs";
 
 // Custom Astro theme modeled on developers.openai.com. The embedded API
 // reference (Scalar) lives at /api/reference; the rest is a bespoke theme.
@@ -20,7 +21,9 @@ export default defineConfig({
     // The generated performance tables are laid out one cell per model first
     // (rehype-perf-tables.mjs), so the column labels are the merged ones.
     // Consecutive fences marked tab="…" become one tab group (static; JS only switches).
-    remarkPlugins: [remarkCodeTabs],
+    // A fence named for a generated block (```perf, ```model-matrix, …) becomes
+    // that block, drawn from the data files at build time (src/lib/doc-blocks.ts).
+    remarkPlugins: [remarkDocBlocks, remarkCodeTabs],
     // A link to an /embed/ URL opens a billable live session: never followed by crawlers.
     rehypePlugins: [rehypePerfTables, rehypeTableLabels, rehypeCallouts, rehypeEmbedNofollow],
     // Dual Shiki themes so code blocks match the site theme:

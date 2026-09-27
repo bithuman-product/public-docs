@@ -17,7 +17,7 @@ A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks 
 |---|---|
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
 | A physical iPhone, or an M-series iPad, on iOS 26 | the Simulator cannot run the engine; no Apple entitlement is needed |
-| Swift package **2.17.2** or newer, `Essence2Kit` product | the project already depends on it |
+| Swift package **2.18.0** or newer, `Essence2Kit` product | the project depends on it; a fresh clone resolves the newest release |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 | About 430 MB free on the phone and 380 MB on the Mac | the avatar and the engine resources ride in the app bundle |
 
@@ -85,7 +85,7 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
 | `create` throws `Essence2KitError.meteringRefused(reason:)` | no API secret, or the service rejected it (`reason` says which): set `BITHUMAN_API_SECRET` in the Run scheme |
 | `create` throws `.identityUnreadable` | re-run `./setup.sh`; it checks the download |
 | *"the shared audio front end is missing"*, or the engine never becomes ready | add `Sources/EngineResources` as a **group**, not a folder reference |
-| The avatar moves but never speaks | resolve Swift package **2.17.2** or newer (*File → Packages → Update to Latest Package Versions*) |
+| The avatar moves but never speaks | resolve Swift package **2.18.0** or newer (*File → Packages → Update to Latest Package Versions*) |
 | The link fails naming a newer minimum OS | set Minimum Deployments to **iOS 26.0** |
 | `no such module 'Essence2Kit'` | attach the `Essence2Kit` product to the app target |
 | `ld` warns *"built for newer 'iOS' version (26.0)"* once per object | expected; the build is good |

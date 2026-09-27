@@ -56,11 +56,11 @@ The first launch creates the app's files folder and says that `speech.wav` is mi
 `adb logcat -s X2HELLO` shows the download, the engine starting on the phone's NPU, then:
 
 ```text
-rendered 277 frames in 36 s — playing…
+rendered 277 frames in … s — playing…
 277 frames, 13.87 s — tap to replay
 ```
 
-277 frames for 13.87 seconds of audio is 20 fps. Most of that time is the one-time download (about 160 MB) and `create()` preparing the model for the NPU, which takes about 30–45 seconds once per app process; the frames themselves render in a few seconds.
+277 frames for 13.87 seconds of audio is 20 frames a second. On the first launch after install, most of the wait is the one-time download (about 160 MB) and `create()` preparing the model for the accelerator; later launches reuse it, and the frames themselves render in a few seconds.
 
 ## How it works
 

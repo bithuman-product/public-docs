@@ -5,22 +5,18 @@ import Icon from "../components/Icon.astro";
 import Card from "../components/Card.astro";
 import Chip from "../components/Chip.astro";
 import LiveDemo from "../components/LiveDemo.astro";
+import RunsEverywhere from "../components/RunsEverywhere.astro";
 import { hubMeta } from "../config/hubs";
 import { HERO, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
 import { versionLabel, type Artifact } from "../data/labels";
-import { headlineData } from "../lib/perf-headline";
 
-// The front door: a live avatar first, then where to click, as cards. Each card
-// is one link and one line; the detail lives on the page it opens. Speed comes
-// from the generated headline only, as times real time, on-device first.
+// The front door: a live avatar first, then the measured proof, then where to
+// click, as cards. Each card is one link and one line; the detail lives on the
+// page it opens. Speed comes from performance.json only (the Runs everywhere
+// band), as times real time, on-device first.
 const meta = hubMeta("");
 const STRIP: Artifact[] = ["swift", "expression2_android", "essence2_android", "python", "cli", "flutter_plugin"];
 
-const speed = headlineData();
-const onDeviceFirst = (cells: { platform: string }[]) => [...cells].sort((a, b) => Number(/cloud/i.test(a.platform)) - Number(/cloud/i.test(b.platform)));
-const maxMultiple = speed ? Math.max(...speed.flatMap((r) => r.cells.map((c) => c.value))) : 1;
-const pct = (v: number) => `${Math.max(1.5, Math.min(100, (v / maxMultiple) * 100)).toFixed(2)}%`;
-const speedFor = (model: string) => onDeviceFirst(speed?.find((r) => r.model === model)?.cells ?? []) as { platform: string; multiple: string; value: number }[];
 const deployMain = DEPLOYMENTS.filter((d) => !d.wide);
 const deployWide = DEPLOYMENTS.filter((d) => d.wide);
 ---
@@ -42,6 +38,12 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
       <div class="hero-demo" id="demo">
         <LiveDemo eager label="Talk to a live avatar" />
       </div>
+    </div>
+  </section>
+
+  <section class="band band-proof">
+    <div class="container">
+      <RunsEverywhere />
     </div>
   </section>
 
@@ -82,39 +84,16 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
         <a class="band-more" href="/models">Compare models <Icon name="arrow" size={16} /></a>
       </div>
       <ul class="card-grid cols-2" role="list">
-        {MODELS.map((m) => {
-          const cells = speedFor(m.title);
-          return (
-            <li>
-              <Card variant="model" href={m.href} title={m.title} line={m.line}
-                media={{ src: `${m.poster}-480.webp`, avif: `${m.poster}-480.avif`, width: 480, height: 600, alt: m.alt, sizes: "132px" }}>
-                {cells.length > 0 && (
-                  <span class="rt">
-                    <span class="rt-cap">
-                      <span>Times real time</span>
-                      <span class="rt-key" aria-hidden="true"><span class="rt-tick"></span>1×</span>
-                    </span>
-                    <dl class="rt-rows">
-                      {cells.map((c) => (
-                        <div class="rt-row">
-                          <dt>{c.platform}</dt>
-                          <dd>
-                            <span class="rt-track" aria-hidden="true" style={`--w:${pct(c.value)};--one:${pct(1)}`}><span class="rt-bar"></span><span class="rt-one"></span></span>
-                            <span class="rt-val">{c.multiple}<span class="sr"> real time</span></span>
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </span>
-                )}
-              </Card>
-            </li>
-          );
-        })}
+        {MODELS.map((m) => (
+          <li>
+            <Card variant="model" href={m.href} title={m.title} line={m.line}
+              media={{ src: `${m.poster}-480.webp`, avif: `${m.poster}-480.avif`, width: 480, height: 600, alt: m.alt, sizes: "132px" }} />
+          </li>
+        ))}
       </ul>
       <div class="models-foot">
         <p class="note">{MODELS_NOTE}</p>
-        <a class="band-more" href="/performance">How we measure <Icon name="arrow" size={16} /></a>
+        <a class="band-more" href="/models/first-generation">First generation <Icon name="arrow" size={16} /></a>
       </div>
     </div>
   </section>
@@ -168,20 +147,7 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
   .models-foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2) var(--s-4); flex-wrap: wrap; margin-top: var(--s-4); }
   .note { font-size: var(--ft-sm); color: var(--color-text-secondary); flex: 1 1 32rem; margin: 0; }
 
-  /* speed bars: × real time per platform, one shared scale, 1× tick */
-  .rt { display: block; margin-top: var(--s-1); }
-  .rt-cap { display: flex; justify-content: space-between; align-items: center; gap: var(--s-2); font-size: var(--ft-xs); color: var(--color-text-secondary); margin-bottom: var(--s-2); }
-  .rt-key { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--color-text-tertiary); }
-  .rt-key .rt-tick { width: 2px; height: 12px; border-radius: 1px; background: var(--color-text-secondary); }
-  .rt-rows { margin: 0; display: grid; gap: 0.4rem; }
-  .rt-row { display: grid; grid-template-columns: 4.75rem minmax(0, 1fr); align-items: center; gap: var(--s-2); }
-  .rt-row dt { font-size: var(--ft-xs); color: var(--color-text-secondary); white-space: nowrap; }
-  .rt-row dd { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) 2.6rem; align-items: center; gap: var(--s-2); }
-  .rt-track { position: relative; height: 8px; border-radius: 4px; background: var(--color-surface-3); }
-  .rt-bar { position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: 4px; background: var(--color-primary); }
-  .rt-one { position: absolute; top: -3px; bottom: -3px; left: var(--one); width: 2px; margin-left: -1px; border-radius: 1px; background: var(--color-text-secondary); box-shadow: 0 0 0 1px var(--color-surface); }
-  .rt-val { font-size: var(--ft-sm); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-text); text-align: right; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .band-proof { padding-top: var(--s-4); }
 
   /* ---- resources ---- */
   .res { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2); }
@@ -204,7 +170,5 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
     .hero h1 { font-size: var(--fh-xl); }
     .hero .lede { font-size: var(--ft-lg); }
     .band { padding-block: var(--s-6); }
-    .rt-row { grid-template-columns: 3.9rem minmax(0, 1fr); gap: var(--s-1); }
-    .rt-row dd { grid-template-columns: minmax(0, 1fr) 2.4rem; }
   }
 </style>

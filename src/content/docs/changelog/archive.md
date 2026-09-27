@@ -102,7 +102,7 @@ type: changelog
   existing agents and saved links keep working.
 - New force-tier slugs (`essence-2-gpu` / `-ane` / `-cpu`, `expression-2-gpu` /
   `-cpu` / `-ane`) pin one serving tier and never overflow. See
-  [tier pinning](/models#advanced-pin-a-serving-tier).
+  [tier pinning](/performance#pin-a-tier-for-a-benchmark).
 
 ### Android / Kotlin SDK docs restored (2026-07-04)
 

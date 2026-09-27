@@ -188,7 +188,7 @@ The Python example reads these from `.env`:
 
 | Variable | Default | What it does |
 |---|---|---|
-| `BITHUMAN_MASTER_SECRET` | — | Your API secret, passed to the plugin explicitly. Rendering is metered on it. A LiveKit worker never gets `BITHUMAN_API_SECRET`: the plugin reads that name by itself and, for a cloud avatar, copies it into the room. `agent.py` refuses to start while it is set. |
+| `BITHUMAN_MASTER_SECRET` | — | Your API secret, passed to the plugin explicitly. Rendering is metered on it. In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`; `agent.py` refuses to start while `BITHUMAN_API_SECRET` is set. |
 | `OPENAI_API_KEY` | — | Your OpenAI key. |
 | `BITHUMAN_AVATAR` | `wise-pup` | Which avatar ([table above](#pick-the-avatar)). |
 | `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-2.1-mini` | The OpenAI Realtime model. |

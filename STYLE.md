@@ -55,7 +55,7 @@ The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and id
 
 ## Numbers
 
-- Speed comes only from `public/performance.json` and the generated headline, through the generated tables and components. Never type a number. [check-performance-floors, check-perf-literals]
+- Speed comes only from `public/performance.json` and the generated headline, through the generated tables and components (`RunsEverywhere`, `XrtChip`, the ```` ```perf ```` block). Never type a number. × real time is floored to one decimal by `src/lib/format-multiple.ts`. No frame rate on a card, a hub, a lede or the home page. [check-performance-floors, check-perf-literals, check-perf-render]
 - Prices come only from `src/data/pricing.json` (synced from `/v1/pricing`) and appear on `/pricing`. [check-billing-consistency, sync-pricing]
 - Versions come only from `src/data/versions.json`: edit it, then `node scripts/sync-versions.mjs --write`. [sync-versions, check-versions-current]
 - Units: "2.0× real time", "1.6 GB", "~160 MB download", "2–3 h" (en dash), "credits" (never "cr"), "credits/min".
@@ -101,7 +101,7 @@ H2 names are stable anchors. A section that does not apply is omitted, never wri
 
 | Type | H2 sections, in order (required in bold) |
 |---|---|
-| `platform` | What you get → Before you start → Install → **Authenticate** → **First frame** → Complete example → **Integrate into your app** → Platform notes → Performance → **Troubleshooting** → **Reference** |
+| `platform` | (the lead: what you get, a real capture, the why-on-device box on device pages, the model comparison table) → Before you start → Install → **Authenticate** → **First frame** → Complete example → **Integrate into your app** → Platform notes → Performance → **Troubleshooting** → **Reference** |
 | `recipe` | What you'll build → **Steps** → How it works → Make it your own → **Troubleshooting** → Next |
 | `concept` | a one-sentence definition, a diagram first, 3–5 key ideas, In code, Where it runs, Related |
 | `endpoint` | summary and method chips → Authentication → per operation: Request → Example (curl, Python, Node) → Response → Errors → Related guide |
@@ -118,6 +118,25 @@ H2 names are stable anchors. A section that does not apply is omitted, never wri
 - Chip labels: **Where** "Renders on the device", "No GPU", "In the browser (WebGPU)", "Your servers", "bitHuman cloud"; **Needs** "Physical device", "Apple silicon", "Linux x86_64 / arm64", "API secret"; **Plan** "Creator plan or higher", "Business & Enterprise", "Enterprise only".
 - Only avatars move. `prefers-reduced-motion` and Save-Data show posters only. One icon set (`Icon.astro`).
 - Every capture names its device, OS, release and avatar. No fps overlays, stock art or customer brands.
+
+## Generated blocks in markdown
+
+A fenced block named for a block is drawn at build time from the data files (`src/lib/doc-blocks.ts`); the `.md` twins and llms files get the same block as plain markdown. A page never types what a block draws.
+
+| Fence | Draws | From |
+|---|---|---|
+| ```` ```perf ```` + row ids | the × real time rows, with hardware, release and date one click away | `public/performance.json` |
+| ```` ```why-on-device ```` + `ios`, `macos`, `android`, `flutter` or `web` | the three-line "why render on the device" box (S30, S26, S10; S29 on the web) | `pricing.json`, `plans.json` |
+| ```` ```model-matrix ```` [+ `model: <id>` or `place: <ids>`] | which model renders where, whole or as a slice | `src/data/models.ts` |
+| ```` ```model-cards ```` | the current models as portrait cards | `models.ts`, `demo.ts` |
+| ```` ```deploy-matrix ```` | the five modes side by side | `deployments.ts`, `dataflows.ts`, `pricing.json` |
+| ```` ```dataflow ```` + a mode | where it renders, where the conversation runs, what reaches bitHuman | `dataflows.ts` |
+| ```` ```price ```` + a mode, ```` ```session-caps ```` | one mode's rate; cloud sessions per plan | `pricing.json`, `plans.json` |
+| ```` ```partial ```` + a name | a shared passage (`src/partials/<name>.md`), such as the Swift install on iOS and macOS | `src/partials` |
+
+Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is available on the Enterprise plan only." It has no page, card, matrix row or chip. [check-internal-vocabulary]
+
+A home or hub card links a page, never an anchor on another page. [check-nav-consistency]
 
 ## Live demos
 

@@ -1,7 +1,10 @@
 // The markdown an agent reads for a page: its title, URL and description, then
-// its body with site-relative links made absolute and generator markers
-// (<!-- FLOORS:… -->, <!-- VERSIONS:… -->, region markers) removed. Used by the
+// its body with site-relative links made absolute, generator markers
+// (<!-- FLOORS:… -->, <!-- VERSIONS:… -->, region markers) removed, and the
+// generated blocks (```perf, ```model-matrix, …) drawn as plain markdown. Used by the
 // per-page .md twins and by /llms-full.txt, so both carry the same text.
+
+import { expandBlocks } from "./doc-blocks.ts";
 
 export const SITE = "https://docs.bithuman.ai";
 
@@ -25,6 +28,6 @@ export function twin(title: string, route: string, description: string, body: st
   const url = `${SITE}${route === "/" ? "" : route}`;
   let out = `# ${title}\n\nURL: ${url}\n`;
   if (description) out += `\n> ${description}\n`;
-  out += `\n${absolutize(stripComments(body)).trim()}\n`;
+  out += `\n${absolutize(expandBlocks(stripComments(body))).trim()}\n`;
   return out;
 }

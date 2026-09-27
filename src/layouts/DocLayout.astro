@@ -102,13 +102,15 @@ if (section === "platforms" && data.type === "platform") {
     publisher: { "@id": "https://www.bithuman.ai/#organization" },
   });
 }
-const hasChips = !!(data.availability || data.renders?.length || data.artifacts?.length);
+const hasChips = !!(data.availability || data.renders?.length || data.needs?.length || data.artifacts?.length);
 const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
 // On a hub the comparison comes first and the demo closes the page (under its "Try it" section).
 const demoAtEnd = data.type === "hub";
 // Release notes are records and the generated references are lookups: both
 // searchable, but ranked below the pages a reader starts from.
-const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && section === "platforms" ? "0.5" : undefined;
+// An example page names its platform in its title ("iOS Expression 2"), so it
+// ranks just below that platform's own page for the platform's name.
+const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && section === "platforms" ? "0.5" : data.type === "example" ? "0.6" : undefined;
 ---
 
 <Base title={`${data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
@@ -153,6 +155,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
           <div class="chip-row doc-chips" data-pagefind-ignore>
             {data.availability && <Availability plan={data.availability} />}
             {(data.renders ?? []).map((r: keyof typeof RENDERS_LABEL) => <Chip kind="where" label={RENDERS_LABEL[r]} />)}
+            {(data.needs ?? []).map((n: string) => <Chip kind="needs" label={n} />)}
             {(data.artifacts ?? []).map((a: any) => <VersionBadge artifact={a} />)}
           </div>
         )}

@@ -1,0 +1,18 @@
+---
+// One "× real time" figure from public/performance.json, floored to one decimal
+// (src/lib/format-multiple.ts). The hardware, release and date open under it:
+// a <details>, so it works with a click or Enter and no script. The markdown
+// form is the ```perf block (src/lib/doc-blocks.ts), which draws the same chip.
+import { perfCell, type PerfModel } from "../lib/perf.ts";
+interface Props { row: string; model: PerfModel; label?: string }
+const { row, model, label } = Astro.props;
+const c = perfCell(row, model);
+---
+{c ? (
+  <details class:list={["xrt", { "xrt-below": !c.realtime }]}>
+    <summary>{label && <span class="xrt-m">{label}</span>}<span class="xrt-x">{c.x}</span><span class="xrt-u"> real time</span></summary>
+    <span class="xrt-pop">{c.detail}</span>
+  </details>
+) : (
+  <span class="xrt-none">{label && <span class="xrt-m">{label}</span>}—<span class="sr"> not measured</span></span>
+)}

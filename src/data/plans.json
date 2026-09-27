@@ -1,0 +1,53 @@
+{
+  "source": "The plan limits the docs publish. GET /v1/pricing does not return plans, so this file is the docs' one copy of them: the Plans table on /pricing and the rates on the platform and deploy pages must agree with it (scripts/check-billing-consistency.mjs).",
+  "api_plan_required_from": "2026-10-12",
+  "topup": {
+    "credits_per_usd": 100,
+    "min_plan": "creator"
+  },
+  "plans": [
+    {
+      "id": "creator",
+      "name": "Creator",
+      "monthly_usd": 20,
+      "yearly_usd": 204,
+      "credits_per_month": 1800,
+      "agents": 7,
+      "cloud_concurrent_sessions": 3
+    },
+    {
+      "id": "pro",
+      "name": "Pro",
+      "monthly_usd": 99,
+      "yearly_usd": 1010,
+      "credits_per_month": 10000,
+      "agents": 40,
+      "cloud_concurrent_sessions": 10
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "monthly_usd": 299,
+      "yearly_usd": 2990,
+      "credits_per_month": 50000,
+      "agents": 200,
+      "cloud_concurrent_sessions": 50
+    },
+    {
+      "id": "enterprise",
+      "name": "Enterprise",
+      "monthly_usd": 999,
+      "yearly_usd": 9990,
+      "credits_per_month": 250000,
+      "agents": null,
+      "cloud_concurrent_sessions": 200
+    }
+  ],
+  "offline": {
+    "min_credits": 100000,
+    "plans": [
+      "business",
+      "enterprise"
+    ]
+  }
+}

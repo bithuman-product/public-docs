@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Card from "../../components/Card.astro";
-import PerfHeadline from "../../components/PerfHeadline.astro";
+import RunsEverywhere from "../../components/RunsEverywhere.astro";
 import { hubMeta } from "../../config/hubs";
 import { PLATFORM_PAGES } from "../../data/platforms";
 import { RENDERS_LABEL, versionLabel } from "../../data/labels";
@@ -62,10 +62,9 @@ const REFERENCES = [
       </ul>
     </section>
 
-    <section class="hub-group" aria-labelledby="performance">
-      <div class="band-head"><h2 id="performance">How fast it renders</h2></div>
-      <PerfHeadline />
-    </section>
+    <div class="hub-group">
+      <RunsEverywhere id="performance" />
+    </div>
   </div>
 </Base>
 

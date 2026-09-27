@@ -1,0 +1,104 @@
+---
+// "Runs everywhere": six real configurations, on-device first, each with its
+// measured × real time for both models (and, on phones, the 10-minute held
+// figure). Row ids live in src/data/perf-band.ts; every number comes from
+// public/performance.json at build time. Static HTML and CSS; the detail under
+// each figure is a <details>.
+import DeviceFrame from "./DeviceFrame.astro";
+import XrtChip from "./XrtChip.astro";
+import Icon from "./Icon.astro";
+import { PERF_BAND } from "../data/perf-band.ts";
+import { perfData, perfRow, perfCell, PERF_MODELS } from "../lib/perf.ts";
+
+interface Props { heading?: "h2" | "h3"; id?: string }
+const { heading = "h2", id = "runs-everywhere" } = Astro.props;
+const H = heading;
+const data = perfData();
+const published = data.rows.filter((r) => r.published);
+// The band's sentence is a claim; it is only made while every published cell holds it.
+const allRealtime = published.every((r) => Object.values(r.cells).every((c) => !c || c.x_realtime >= 1));
+const date = new Date(`${data.generated}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+const frames = PERF_BAND.map((f) => ({ ...f, hardware: perfRow(f.row).hardware }));
+---
+<section class="re" aria-labelledby={id}>
+  <div class="re-head">
+    <H id={id}>Runs everywhere</H>
+    <p>
+      {allRealtime ? "Measured faster than real time on every configuration we publish" : "Measured on every configuration we publish"},
+      including 10-minute held runs on iPhone and Android. Updated {date}.
+      <a class="band-more" href="/performance/method">How we measure <Icon name="arrow" size={16} /></a>
+    </p>
+  </div>
+  <ul class="re-grid" role="list">
+    {frames.map((f) => (
+      <li class="rf">
+        <div class="rf-top">
+          <span class="rf-device"><DeviceFrame device={f.device} /></span>
+          <span class="rf-name">
+            <a href={f.href}>{f.title}</a>
+            <span class="rf-where">{f.where}</span>
+          </span>
+        </div>
+        <dl class="rf-x">
+          {PERF_MODELS.map((m) => (
+            <div><dt>{m.name}</dt><dd><XrtChip row={f.row} model={m.id} /></dd></div>
+          ))}
+        </dl>
+        {f.held && (
+          <p class="rf-held">
+            Held 10 min:
+            {PERF_MODELS.map((m, i) => {
+              const c = perfCell(f.held!, m.id);
+              return <span>{i > 0 && " · "}<span class="sr">{m.name} </span>{c ? c.x : "—"}</span>;
+            })}
+          </p>
+        )}
+        <p class="rf-hw">{f.hardware}</p>
+      </li>
+    ))}
+  </ul>
+  <p class="re-foot">Times real time: seconds of avatar video rendered per second. At 1.0× or more, an avatar holds a live conversation. <a href="/performance">Every configuration</a></p>
+</section>
+
+<style>
+  .re-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }
+  .re-head :is(h2, h3) { margin: 0; font-size: var(--fh-md); letter-spacing: -0.01em; }
+  .re-head p { margin: 0; flex-basis: 100%; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .re-head .band-more { margin-left: var(--s-1); white-space: nowrap; text-decoration: underline; text-underline-offset: 2px; }
+  .re-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+  .rf {
+    display: flex; flex-direction: column; gap: var(--s-3); min-width: 0; padding: var(--s-4) var(--s-5);
+    border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface);
+    transition: border-color var(--t-fast) var(--ease);
+  }
+  .rf:hover { border-color: var(--color-border-strong); }
+  .rf-top { display: flex; align-items: center; gap: var(--s-3); }
+  .rf-device { display: inline-grid; place-items: center; width: 52px; height: 52px; flex: none; border-radius: var(--r-md); background: var(--color-surface-2); color: var(--color-text-secondary); }
+  .rf-name { display: flex; flex-direction: column; min-width: 0; }
+  .rf-name a { font-size: var(--ft-md); font-weight: var(--fw-bold); color: var(--color-text); }
+  .rf-name a:hover { color: var(--color-primary); }
+  .rf-where { font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .rf-x { margin: 0; display: grid; gap: var(--s-2); }
+  .rf-x > div { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-2); }
+  .rf-x dt { padding-top: 0.2rem; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .rf-x dd { margin: 0; text-align: right; }
+  .rf-x :global(.xrt-pop) { text-align: right; margin-left: auto; }
+  .rf-held { margin: 0; font-size: var(--ft-xs); color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+  .rf-held > span { color: var(--color-text); font-weight: var(--fw-medium); }
+  .rf-hw { margin: auto 0 0; padding-top: var(--s-2); border-top: 1px solid var(--color-border); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .re-foot { margin: var(--s-3) 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .re-foot a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 2px; }
+  @media (max-width: 1000px) { .re-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) {
+    .re-grid { gap: var(--s-3); }
+    .rf { padding: var(--s-3); gap: var(--s-2); }
+    .rf-top { flex-direction: column; align-items: flex-start; gap: var(--s-2); }
+    .rf-device { width: 40px; height: 40px; }
+    .rf-device :global(svg) { width: 34px; height: 34px; }
+    .rf-x > div { flex-direction: column; gap: 0.15rem; }
+    .rf-x dt { padding: 0; font-size: var(--ft-xs); }
+    .rf-x dd { text-align: left; }
+    .rf-x :global(.xrt-pop) { text-align: left; margin-left: 0; }
+    .rf-x :global(.xrt-x) { font-size: var(--ft-sm); }
+  }
+</style>
