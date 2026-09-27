@@ -29,6 +29,12 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### expression2-android 0.5.2 — 2026-09-27
+
+- **Changed:** the Hexagon accelerator prepares the decoder once and keeps it. On a Galaxy S25+, `create()` took about 31 s on every launch through 0.5.1; with 0.5.2 the first launch takes about 15 s and later launches 1–2 s. Replies start as fast as before, and frames are unchanged.
+- **Added:** read-only `Expression2Backend` fields report whether the prepared decoder was reused and how long it took.
+- **Action:** `implementation("ai.bithuman:expression2-android:0.5.2")`.
+
 ### CLI 2.8.1 — 2026-09-27
 
 Tag `cli-v2.8.1`.

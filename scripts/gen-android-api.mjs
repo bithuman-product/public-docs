@@ -466,6 +466,7 @@ export const PUBLIC_CLASSES = {
     Expression2IdleLoop: "The avatar's idle clip; `next(bitmap)` draws the next frame.",
     Expression2Exception: "Thrown when a session cannot start or is refused.",
     Accelerator: "Which accelerator a session uses.",
+    Expression2Backend: "Read-only, one per model part: the device it runs on and, on the accelerator, whether the prepared decoder was reused and how long preparing it took.",
   },
 };
 

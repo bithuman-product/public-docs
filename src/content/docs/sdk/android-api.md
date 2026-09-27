@@ -171,7 +171,7 @@ class Essence2RenderFailed : IllegalStateException
 
 ## Expression 2
 
-Generated from `ai.bithuman:expression2-android:0.5.1` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:expression2-android:0.5.2` as published on Maven Central. `minSdk` 26, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.expression2.*`.
 
@@ -191,6 +191,7 @@ Import: `import ai.bithuman.expression2.*`.
 | `Expression2IdleLoop` | The avatar's idle clip; `next(bitmap)` draws the next frame. |
 | `Expression2Exception` | Thrown when a session cannot start or is refused. |
 | `Accelerator` | Which accelerator a session uses. |
+| `Expression2Backend` | Read-only, one per model part: the device it runs on and, on the accelerator, whether the prepared decoder was reused and how long preparing it took. |
 
 ### Expression2Avatar
 
@@ -198,6 +199,7 @@ Import: `import ai.bithuman.expression2.*`.
 class Expression2Avatar : AutoCloseable
     val accelerator: Accelerator
     val acceleratorNote: String
+    val backends: List<Expression2Backend>
     val frameBytes: Int
     val hasPendingTail: Boolean
     val height: Int
@@ -384,6 +386,27 @@ class Expression2Exception : RuntimeException
 ```kotlin
 enum class Accelerator
     AUTO, NPU, CPU
+```
+
+### Expression2Backend
+
+```kotlin
+data class Expression2Backend
+    constructor(modelPath: String, device: Device, modelLoadMs: Double, interpreterCreateMs: Double, qnnContextCacheWasWarm: Boolean, qnnContextCacheBytesBefore: Long, qnnContextCacheBytesAfter: Long)
+    val interpreterCreateMs: Double
+    val modelLoadMs: Double
+    val modelPath: String
+    val qnnContextCacheBytesAfter: Long
+    val qnnContextCacheBytesBefore: Long
+    val qnnContextCacheWasWarm: Boolean
+    var decWarmupDec8Ms: Double
+    var decWarmupFirstMs: Double
+    var decWarmupSecondMs: Double
+    var qnnColdCompileMs: Double
+    var qnnContextSerialized: Boolean
+    var qnnPersistMs: Double
+    var qnnRestoreDegraded: Boolean
+    // data class: copy, componentN, equals, hashCode and toString as Kotlin generates them
 ```
 <!-- ANDROIDAPI:END -->
 
