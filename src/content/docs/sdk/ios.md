@@ -83,15 +83,21 @@ let reply = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount
 reply.frameLength = reply.frameCapacity
 samples.withUnsafeBufferPointer { reply.floatChannelData![0].update(from: $0.baseAddress!, count: samples.count) }
 
-// seconds of the current reply your player has played (nil before it starts)
-func played(_ p: AVAudioPlayerNode) -> Double? {
-    guard let t = p.lastRenderTime, let pt = p.playerTime(forNodeTime: t) else { return nil }
-    return Double(pt.sampleTime) / pt.sampleRate
+// seconds of the current reply your player has played (nil before it starts); frames() reads it
+// off the main actor, so the player goes in a Sendable box
+final class PlayedSeconds: @unchecked Sendable {
+    let node: AVAudioPlayerNode
+    init(_ node: AVAudioPlayerNode) { self.node = node }
+    func callAsFunction() -> Double? {
+        guard let t = node.lastRenderTime, let pt = node.playerTime(forNodeTime: t) else { return nil }
+        return Double(pt.sampleTime) / pt.sampleRate
+    }
 }
+let played = PlayedSeconds(player)
 
 engine.feed(samples)   // [Float], 16 kHz mono
 engine.flushTail()     // end of the reply
-for await frame in engine.frames(audioClock: { played(player) }) {   // 20 frames per second
+for await frame in engine.frames(audioClock: { played() }) {         // 20 frames per second
     show(frame.bgr, frame.width, frame.height)                        // B, G, R bytes
     if frame.audioTime == 0 { player.scheduleBuffer(reply); player.play() }   // the reply's first frame: start its audio
     if frame.endsReply { break }                                      // the reply is over; idle frames follow
