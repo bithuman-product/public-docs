@@ -377,8 +377,8 @@
      "fps": 54,
      "x_realtime": 2.16,
      "realtime": true,
-     "measured_on": "2026-09-26",
-     "release": "Swift package 2.16.0",
+     "measured_on": "2026-09-27",
+     "release": "Swift package 2.17.3",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -394,8 +394,8 @@
      "fps": 111,
      "x_realtime": 5.55,
      "realtime": true,
-     "measured_on": "2026-09-24",
-     "release": "Swift package 2.15.0",
+     "measured_on": "2026-09-27",
+     "release": "Swift package 2.18.0",
      "clip": {
       "id": "6829-68771-0007",
       "seconds": 16.285
