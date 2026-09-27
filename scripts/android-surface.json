@@ -4,10 +4,10 @@
       "artifact": {
         "registry": "maven-central",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.8.0",
-        "digest": "sha256:f672e292b1a18d67ea53f4c96a4ccbc5a7cefb7e8d819510aad1218444539b4d",
-        "filename": "essence2-android-0.8.0.aar",
-        "resolved_on": "2026-09-26"
+        "version": "0.8.1",
+        "digest": "sha256:e04bec0cef42b245b505b6c146c5118e324f935d1725d79044d53ac1d3ebf587",
+        "filename": "essence2-android-0.8.1.aar",
+        "resolved_on": "2026-09-27"
       },
       "surface": {
         "artifact_facts": {
@@ -4795,7 +4795,7 @@
         "version": "0.5.1",
         "digest": "sha256:ac8bc75b46545c04c0bfd3ff539b3b5dd607546c2e6a5c9d1d25525ba3deae66",
         "filename": "expression2-android-0.5.1.aar",
-        "resolved_on": "2026-09-26"
+        "resolved_on": "2026-09-27"
       },
       "surface": {
         "artifact_facts": {
