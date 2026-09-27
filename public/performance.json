@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-09-26",
+ "generated": "2026-09-27",
  "models": {
   "essence-2": {
    "fps": 25.0,
@@ -556,11 +556,11 @@
    "sustained": true,
    "cells": {
     "essence-2": {
-     "fps": 33,
-     "x_realtime": 1.32,
+     "fps": 37,
+     "x_realtime": 1.48,
      "realtime": true,
-     "measured_on": "2026-09-25",
-     "release": "essence2-android 0.7.0",
+     "measured_on": "2026-09-27",
+     "release": "essence2-android 0.8.1",
      "clip": {
       "id": "5639-40744-0031",
       "seconds": 28.42
@@ -572,9 +572,16 @@
      "memory_release": null,
      "time_to_video": null,
      "held": {
-      "median_window_fps": 33.95,
-      "worst_window_fps": 33.0,
-      "sessions": 3
+      "median_window_fps": 37.05,
+      "worst_window_fps": 32.36,
+      "sessions": 3,
+      "memory": {
+       "metric": "pss",
+       "start_mib": 932,
+       "end_mib": 927,
+       "growth_mib": 0,
+       "budget_mib": 92
+      }
      }
     },
     "expression-2": null
