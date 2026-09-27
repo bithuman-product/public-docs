@@ -40,7 +40,7 @@ For a photorealistic person animated from their own footage, compare
 |---|---|
 | bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/platforms/livekit) |
 | macOS and Linux | the [CLI](/platforms/cli) (`run`, `render`) and the [Python SDK](/platforms/python) (`[expression-2]` extra) |
-| iPhone, iPad, Mac | the [Apple SDK](/platforms/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/ios-expression-2) |
+| iPhone, iPad, Mac | the [Swift package](/platforms/ios)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/ios-expression-2) |
 | Android | [`expression2-android`](/platforms/android) — sessions use your API secret |
 | The viewer's browser | [`?render=local`](/platforms/web#integrate-into-your-app) |
 

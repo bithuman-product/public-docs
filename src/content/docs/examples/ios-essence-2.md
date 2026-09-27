@@ -95,4 +95,4 @@ More on [Apple: Troubleshooting](/platforms/ios#troubleshooting).
 
 ## Next
 
-- [iOS example: Expression 2](/examples/ios-expression-2) · [Android example: Essence 2](/examples/android-essence-2) · [Apple SDK](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-essence2)
+- [iOS example: Expression 2](/examples/ios-expression-2) · [Android example: Essence 2](/examples/android-essence-2) · [iOS & iPadOS](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-essence2)

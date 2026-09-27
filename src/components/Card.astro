@@ -25,7 +25,7 @@ const H = `h${h}` as "h2" | "h3" | "h4";
 ---
 <a class:list={["card", `card-${variant}`, { "card-wide": wide }]} href={href} {...(external ? { target: "_blank", rel: "noopener" } : {})}>
   {media && (
-    <picture class="card-media">
+    <picture class="card-figure">
       {media.avif && <source type="image/avif" srcset={media.avif} sizes={media.sizes} />}
       <img src={media.src} srcset={media.srcset} sizes={media.sizes} width={media.width} height={media.height} alt={media.alt}
         loading={media.eager ? "eager" : "lazy"} decoding="async" />

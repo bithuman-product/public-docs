@@ -28,7 +28,7 @@ You integrate at the SDK layer. The engine is built into each SDK, so your app n
 
 - **One model file, every surface.** The same audio drives the same lip-sync on every SDK; pixels can differ slightly between hardware backends.
 - **A stable public API.** Deprecated options keep working with a warning until the next major, and majors call out breaks explicitly.
-- **Surfaces mix.** The Swift SDK in your iOS app with the Python package on your backend is supported; keep each one current — [Downloads](/downloads#current-versions) lists the current versions.
+- **Surfaces mix.** The Swift package in your iOS app with the Python package on your backend is supported; keep each one current — [Downloads](/downloads#current-versions) lists the current versions.
 - **One credential.** The same key drives every surface; how it is exchanged and billed is on [Authentication](/api/authentication) and [pricing](/pricing).
 
 ## Audio in, frames out
@@ -84,11 +84,11 @@ Install, the model download and the credential are on the
 
 Frames arrive at the model's own rate, whatever the chunk size: 25 fps for
 Essence 2 (up to 1080p: the identity's own canvas, 1080×1920 portrait for a standard identity) and 20 fps for Expression 2
-(416x720). Python yields RGB `uint8` arrays; the Apple and Android SDKs hand you
+(416x720). Python yields RGB `uint8` arrays; the Swift package and the Android SDK hand you
 their platform's image types.
 
 ### In the other SDKs
 
-- **Apple** — `feed()` PCM, then `pull()` frames. See the [Apple SDK](/platforms/ios).
+- **Apple** — `feed()` PCM, then `pull()` frames. See the [Swift package](/platforms/ios).
 - **Android** — `feed()` PCM, then `pull()` into a reused buffer: a `Bitmap` for Expression 2, an RGBA `ByteBuffer` for Essence 2. See the [Android SDK](/platforms/android).
 - **CLI** — `bithuman render` takes an audio file; `bithuman run` streams a live conversation. See the [CLI](/platforms/cli).

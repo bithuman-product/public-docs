@@ -81,4 +81,4 @@ More on [Apple: Troubleshooting](/platforms/ios#troubleshooting).
 
 ## Next
 
-- [macOS example](/examples/macos-expression-2) · [Apple SDK](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
+- [macOS example](/examples/macos-expression-2) · [iOS & iPadOS](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
