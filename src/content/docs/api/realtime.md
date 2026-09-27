@@ -32,10 +32,24 @@ exactly as you would to OpenAI: `session.update`, `input_audio_buffer.append`,
 repeats it is accepted, and one that changes it is answered with an `error` event whose
 code is `MODEL_LOCKED`.
 
-```bash
-wscat -c "wss://api.bithuman.ai/v1/realtime?model=gpt-realtime-mini" \
-  -H "api-secret: $BITHUMAN_API_SECRET"
+```python
+import asyncio, json, os, websockets
+
+async def main():
+    async with websockets.connect(
+        "wss://api.bithuman.ai/v1/realtime?model=gpt-realtime-mini",
+        additional_headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
+    ) as ws:
+        print(json.loads(await ws.recv())["type"])   # session.created
+        await ws.send(json.dumps({"type": "session.update", "session": {
+            "type": "realtime", "instructions": "Answer in one sentence.",
+            "output_modalities": ["audio"]}}))
+        print(json.loads(await ws.recv())["type"])   # session.updated
+
+asyncio.run(main())
 ```
+
+The Flutter plugin (2.6.20+) and the CLI (2.8.1+) connect this way for you.
 
 ## WebRTC
 
