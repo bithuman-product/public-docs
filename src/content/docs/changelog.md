@@ -39,7 +39,7 @@ Tag `cli-v2.8.2`.
 - **Changed:** `bithuman open` names the model (for example Essence 2 or Expression 2). Asking `pull` for a model a gallery avatar does not have names the models it does have (`MODEL_NOT_GENERATED`).
 - **Changed:** with `BITHUMAN_LOCAL=1`, `run` checks that the on-device voice packages are installed before the session starts, and prints the one command that installs them.
 - **Deprecated:** reading the API secret from a `.env` file in the working directory prints a notice; CLI 2.9 stops reading it. Export `BITHUMAN_API_SECRET`, or run `bithuman login` once.
-- **Deprecated:** `BITHUMAN_API_KEY` names its end: CLI 3.0, no earlier than 2026-12-26. Rename it to `BITHUMAN_API_SECRET` (same value).
+- **Deprecated:** the deprecated alias `BITHUMAN_API_KEY` is read until CLI 3.0 (no earlier than 2026-12-26). Rename it to `BITHUMAN_API_SECRET` (same value).
 - **Changed:** `BITHUMAN_API_BASE` is no longer a documented setting; the CLI talks to `https://api.bithuman.ai`.
 - **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
 
