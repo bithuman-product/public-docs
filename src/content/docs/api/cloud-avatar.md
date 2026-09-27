@@ -1,16 +1,15 @@
 ---
-title: "Cloud avatar without the plugin"
+title: "Cloud avatar in your room"
 description: "Start a bitHuman cloud avatar in your own LiveKit room with one REST call, then stream it your TTS audio. No LiveKit plugin or agent framework needed."
 section: api
-group: "Deliver"
-order: 22
+group: "Live sessions"
+order: 20
 type: endpoint
-label: "Cloud avatar (no plugin)"
 ---
 
 ## Overview
 
-A cloud avatar is a participant in your LiveKit room. It lip-syncs the audio you send it, and it publishes the video and that audio as its own tracks. The [LiveKit plugin](/sdk/livekit) does all of this for a Python LiveKit Agents worker. Use this page when your voice pipeline is something else. You will:
+A cloud avatar is a participant in your LiveKit room. It lip-syncs the audio you send it, and it publishes the video and that audio as its own tracks. The [LiveKit plugin](/platforms/livekit) does all of this for a Python LiveKit Agents worker. Use this page when your voice pipeline is something else. You will:
 
 1. Mint a LiveKit join token for the avatar.
 2. Start the session with `POST /v1/runtime-tokens/request`. The avatar then joins your room.
@@ -75,7 +74,7 @@ curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
 
 A `200` response means the session is starting. `avatar_session_started` is `true`, and `model` is the model the session launched as. The response also echoes `mode`, `agent_id` and `image`, and includes your `user_id`.
 
-The session is billed at the model's cloud rate for as long as it runs ([Pricing](/guides/pricing)). It ends in any of these cases:
+The session is billed at the model's cloud rate for as long as it runs ([Pricing](/pricing)). It ends in any of these cases:
 
 - The last user leaves the room.
 - You remove `bithuman-avatar-agent` from the room.

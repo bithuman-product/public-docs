@@ -20,10 +20,23 @@ const ROOT = join(import.meta.dirname, "..");
 const DOCS = join(ROOT, "src/content/docs");
 
 export const TEMPLATES = {
+  // A. Platform page (docs spec §3.3 A). A section that does not apply is
+  // omitted (a web page has nothing to install), so Install is not required.
   platform: {
-    order: ["What you get", "Before you start", "Install", "Authenticate", "First frame",
-      "Integrate into your app", "Platform notes", "Performance", "Troubleshooting", "Reference"],
-    required: ["Install", "Authenticate", "First frame", "Integrate into your app", "Troubleshooting", "Reference"],
+    order: ["What you get", "Before you start", "Install", "Authenticate", "First frame", "Complete example",
+      "Integrate into your app", "Platform notes", "Performance", "Troubleshooting", "Reference", "Next"],
+    required: ["Authenticate", "First frame", "Integrate into your app", "Troubleshooting", "Reference"],
+  },
+  // B. Recipe (§3.3 B): the outcome, the steps with a check each, how it works.
+  recipe: {
+    order: ["What you'll build", "Steps", "How it works", "Make it your own", "Troubleshooting", "Next"],
+    required: ["Steps", "Troubleshooting"],
+  },
+  // E. Deploy mode (§3.3 E): what it is, where it renders and what reaches
+  // bitHuman, the models, the speed, the price, the limits.
+  deploy: {
+    order: ["What it is", "Where it renders", "Models available here", "Speed", "Price", "Limits", "First command", "Choosing between modes"],
+    required: ["What it is", "Where it renders", "Models available here", "Speed", "Price", "Limits", "Choosing between modes"],
   },
   example: {
     order: ["Requirements", "Get the code", "Set up the app", "Set your API secret", "Run it",
@@ -120,6 +133,11 @@ function selftest() {
   ok("two callouts in one section fire", grade(`---\ntype: guide\n---\n## A\n\n> one\n\ntext\n\n> two\n`).faults.some((f) => f.includes("per section")));
   ok("a 40-word callout fires", grade(callouts(1, 40)).faults.some((f) => f.includes("words")));
   ok("a pages without a template type is only graded on callouts", grade(`---\ntype: reference\n---\n## Anything\n`).faults.length === 0);
+  const pf = (h2s) => `---\ntype: platform\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}`;
+  ok("a platform page with nothing to install passes", grade(pf(["Authenticate", "First frame", "Complete example", "Integrate into your app", "Troubleshooting", "Reference"])).faults.length === 0);
+  ok("a platform page missing First frame fires", grade(pf(["Authenticate", "Integrate into your app", "Troubleshooting", "Reference"])).faults.some((f) => f.includes("First frame")));
+  ok("a deploy page missing Limits fires", grade(`---\ntype: deploy\n---\n## What it is\n\nx\n## Where it renders\n\nx\n## Models available here\n\nx\n## Speed\n\nx\n## Price\n\nx\n## Choosing between modes\n\nx\n`).faults.some((f) => f.includes("Limits")));
+  ok("a recipe without Steps fires", grade(`---\ntype: recipe\n---\n## How it works\n\nx\n## Troubleshooting\n\nx\n`).faults.some((f) => f.includes("Steps")));
   console.log(fails.length ? `selftest RED: ${fails.join(", ")}` : "selftest GREEN (every rule fired)");
   return fails.length ? 1 : 0;
 }

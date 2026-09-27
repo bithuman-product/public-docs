@@ -1,14 +1,13 @@
 ---
 title: "CLI reference"
 description: "Every bithuman command, flag, environment variable, exit code and --json shape."
-section: sdk
-group: "Reference"
-order: 80
+section: platforms
+group: "SDK reference"
+order: 40
 type: reference
-label: "CLI reference"
 ---
 
-Covers the CLI at the version on [Downloads & versions](/downloads). The binary describes itself too: `bithuman <command> --help`, and `bithuman __schema` prints the full command, flag and exit-code tree as JSON. The quickstart is on [CLI](/sdk/cli).
+Covers the CLI at the version on [Downloads & versions](/downloads). The binary describes itself too: `bithuman <command> --help`, and `bithuman __schema` prints the full command, flag and exit-code tree as JSON. The quickstart is on [CLI](/platforms/cli).
 
 ## Commands
 
@@ -60,7 +59,7 @@ The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostn
 
 `run` starts everything a session needs: a local `livekit-server` (it must be on `PATH`) and the conversation brain. A file runs locally: Expression 2 (`.avatar` or `.imx`), Essence 2 and Essence 1 (`.imx`). An Essence 2 or Expression 2 agent code opens a cloud session. Expression 1 is cloud-only.
 
-The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 350 MB on disk). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([on-device brain](/sdk/cli/local-mode)).
+The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 350 MB on disk). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([local conversation brain](/platforms/cli/local-brain)).
 
 ## bithuman render
 
@@ -90,7 +89,7 @@ bithuman pull "$AGENT_CODE" --model essence-2   # when the agent has more than o
 
 ## bithuman open
 
-Succeeds, or refuses with one of four kinds: `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`. On success it prints the engine, the model and every member with its size. The `engine` value is a legacy identifier ([the engine value](/concepts/avatars-imx#the-engine-value-is-a-legacy-name)), not a `model` value.
+Succeeds, or refuses with one of four kinds: `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`. On success it prints the engine, the model and every member with its size. The `engine` value is a legacy identifier ([the engine value](/models/avatar-file#the-engine-value-is-a-legacy-name)), not a `model` value.
 
 ## bithuman engine
 
@@ -108,13 +107,13 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `BITHUMAN_CACHE_DIR` | Cache root (default `~/.cache/bithuman`) |
 | `BITHUMAN_ALLOW_PUBLIC_BIND` | `1` lets `run --host 0.0.0.0` listen on every interface |
 | `OPENAI_API_KEY` | Use OpenAI Realtime as the conversation brain |
-| `BITHUMAN_LOCAL` | `1` runs the brain on this machine ([on-device brain](/sdk/cli/local-mode)) |
-| `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | On-device brain settings ([tuning](/sdk/cli/local-mode#tuning)) |
+| `BITHUMAN_LOCAL` | `1` runs the brain on this machine ([local conversation brain](/platforms/cli/local-brain)) |
+| `BITHUMAN_LOCAL_*`, `BITHUMAN_INSTRUCTIONS` | Local conversation brain settings ([tuning](/platforms/cli/local-brain#tuning)) |
 | `BITHUMAN_FFMPEG` | Path to `ffmpeg` |
 | `BITHUMAN_VERSION` | Release tag for the installer, set on the `sh` side of the pipe: `curl -fsSL https://install.bithuman.ai \| BITHUMAN_VERSION=cli-v2.7.8 sh` |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`) |
 | `NO_COLOR` | Turn colour off |
-| `BITHUMAN_LICENSE_FILE` | Path to a signed offline license (Business and Enterprise, [offline licensing](/guides/pricing#offline-licensing)) |
+| `BITHUMAN_LICENSE_FILE` | Path to a signed offline license (Business and Enterprise, [offline licensing](/pricing#offline-licensing)) |
 | `BITHUMAN_THREADS` | Render threads (default: one per CPU the process may use, up to 16) |
 | `BITHUMAN_INSTALL_ID` | This install's id in usage reports (default: a random id kept in `~/.bithuman/install_id`) |
 
@@ -128,7 +127,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `~/.cache/bithuman/brain-venv` | The conversation brain |
 | `~/.cache/bithuman/bundles` | Unpacked avatars (about the size of each avatar again) |
 | `~/.bithuman/engines` | Render engines, including the Essence 2 audio encoder (about 66 MB) |
-| `~/.cache/huggingface`, `~/.cache/supertonic` | On-device brain weights |
+| `~/.cache/huggingface`, `~/.cache/supertonic` | Local conversation brain weights |
 
 `bithuman doctor` prints each size. Deleting `~/.cache/bithuman` is safe.
 
@@ -221,7 +220,7 @@ bithuman token       # the resolved secret on stdout (exit 77 if none)
 {"mcpServers": {"bithuman": {"command": "bithuman", "args": ["mcp"]}}}
 ```
 
-`bithuman mcp` speaks the Model Context Protocol over stdio. `bithuman mcp tools --json` lists the tools: local ones (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`, `render`) and ones that call the bitHuman API. Tools that create agents, speech or gestures spend credits. The full list is on [MCP server](/sdk/mcp#tools).
+`bithuman mcp` speaks the Model Context Protocol over stdio. `bithuman mcp tools --json` lists the tools: local ones (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`, `render`) and ones that call the bitHuman API. Tools that create agents, speech or gestures spend credits. The full list is on [MCP server](/build/mcp#tools).
 
 ## Recipes
 

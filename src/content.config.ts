@@ -1,26 +1,43 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
-// Docs content collection — plain Markdown pages migrated from the old
-// Mintlify site + OpenAPI prose. Rendered by src/pages/[...slug].astro
-// inside the 3-column DocLayout. Sidebar grouping is driven by `section`
-// (the pillar) + `group` (the sub-section), ordered by `order`.
+// The docs content collection: plain Markdown pages, rendered by
+// src/pages/[...slug].astro inside DocLayout. The file path is the URL (no
+// `slug:` overrides). The sidebar groups a section's pages by `group` (the
+// order is GROUP_ORDER in src/config/nav.ts), then by `order`. The H1 is the
+// sidebar label, so there is no separate label field.
 const docs = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/docs" }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional().default(""),
-    // top-level pillar / area this page belongs to
-    section: z.enum(["start", "api", "sdk", "guides", "examples", "performance", "resources", "legal"]),
-    // the page template it follows (STYLE.md "Page shapes"; scripts/check-page-template.mjs)
-    type: z.enum(["hub", "quickstart", "platform", "endpoint", "guide", "reference", "example", "concept", "changelog", "generated"]),
-    // sub-section heading shown in the sidebar group
+    // the section this page belongs to (the header item it sits under)
+    section: z.enum(["start", "platforms", "deploy", "models", "build", "api", "performance", "resources"]),
+    // the page template it follows (STYLE.md "Page templates"; scripts/check-page-template.mjs)
+    type: z.enum([
+      "hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy",
+      "guide", "reference", "example", "changelog", "generated", "legal",
+    ]),
+    // the sidebar group it sits in
     group: z.string().optional().default(""),
-    // sidebar label override (defaults to title)
-    label: z.string().optional(),
     // ordering within the group
     order: z.number().optional().default(100),
     draft: z.boolean().optional().default(false),
+    // the plan chip under the H1
+    availability: z.enum(["creator", "business-enterprise", "enterprise"]).optional(),
+    // where the avatar renders, as chips under the H1
+    renders: z.array(z.enum(["device", "browser", "server", "cloud", "offline", "no-gpu"])).optional(),
+    // the platforms and models the page is about (search filters and chips)
+    platforms: z.array(z.string()).optional(),
+    models: z.array(z.enum(["essence-2", "expression-2", "essence-2-max", "essence-1", "expression-1"])).optional(),
+    // the PLAN_v2 SAFE claim ids the page makes (required on deploy and privacy pages)
+    claims: z.array(z.string()).optional(),
+    // the artifacts whose current version the chips row shows (keys of versions.json)
+    artifacts: z.array(z.enum(["swift", "essence2_android", "expression2_android", "python", "cli", "livekit_plugin", "flutter_plugin"])).optional(),
+    // a live sample avatar under the lede: one model, or both with a switch
+    demo: z.enum(["essence-2", "expression-2", "both"]).optional(),
+    // 1–3 docs paths shown as the "Next" cards at the foot of the page
+    next: z.array(z.string()).max(3).optional(),
   }),
 });
 

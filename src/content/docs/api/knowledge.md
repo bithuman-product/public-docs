@@ -1,11 +1,10 @@
 ---
-title: "Knowledge API"
+title: "Knowledge"
 description: "Ingest documents and URLs, build knowledge bases, and rebuild them — programmatically, with an organization API secret."
 section: api
-group: "Build"
-order: 15
+group: "Agents"
+order: 20
 type: endpoint
-label: "Knowledge"
 ---
 
 ## Overview

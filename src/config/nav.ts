@@ -7,46 +7,62 @@
 
 export type SectionId =
   | "start"
+  | "platforms"
+  | "deploy"
+  | "models"
+  | "build"
   | "api"
-  | "sdk"
-  | "guides"
-  | "examples"
   | "performance"
-  | "resources"
-  | "legal";
+  | "resources";
 
+/** The sections, organized by the developer's question (start now, which
+ *  platform, where it runs, which avatar, how to build X, what the endpoint
+ *  takes, how fast, everything else). */
 export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
   start: { label: "Get started", home: "/start" },
+  platforms: { label: "Platforms", home: "/platforms" },
+  deploy: { label: "Deploy", home: "/deploy" },
+  models: { label: "Models", home: "/models" },
+  build: { label: "Build", home: "/build" },
   api: { label: "API", home: "/api" },
-  sdk: { label: "SDKs", home: "/sdk" },
-  guides: { label: "Guides", home: "/guides" },
-  examples: { label: "Examples", home: "/examples" },
   performance: { label: "Performance", home: "/performance" },
   resources: { label: "Resources", home: "/resources" },
-  legal: { label: "Legal", home: "/legal/eu-ai-act" },
 };
 
 /** Sidebar groups per section, in display order. A page's `group` must be one of these. */
 export const GROUP_ORDER: Record<SectionId, string[]> = {
   start: ["Get started"],
-  api: ["Get started", "Build", "Deliver", "Account", "Reference"],
-  sdk: ["Platforms", "Integrations", "Reference"],
-  guides: ["Learn", "Build", "Deploy", "Pricing"],
-  examples: ["Examples"],
-  performance: ["Overview", "By platform", "Method"],
-  resources: ["Resources"],
-  legal: ["Legal"],
+  platforms: ["Apps", "Code & terminal", "Agents & APIs", "SDK reference"],
+  deploy: ["Overview", "Modes"],
+  models: ["Models", "Concepts"],
+  build: ["Create", "Recipes", "Examples"],
+  api: ["Start", "Agents", "Speech & video", "Live sessions", "Account", "Reference"],
+  performance: ["Performance"],
+  resources: ["Resources", "Legal"],
 };
 
-export interface NavLink { label: string; href: string; external?: boolean }
+export interface NavLink { label: string; href: string; external?: boolean; match?: string[] }
 
-/** The header, left to right. */
+/** Sidebar entries that are not markdown pages (the .astro pages), placed in
+ *  a group by `order` like any page. Their label is the page's H1. */
+export const SIDEBAR_LINKS: Partial<Record<SectionId, { group: string; label: string; href: string; order: number }[]>> = {
+  start: [
+    { group: "Get started", label: "Quickstart", href: "/start", order: 10 },
+    { group: "Get started", label: "Choose your platform", href: "/platforms", order: 30 },
+  ],
+  api: [
+    { group: "Reference", label: "API reference", href: "/api/reference", order: 10 },
+  ],
+};
+
+/** The header, left to right. `match` lists the other path prefixes a section owns. */
 export const TOP_NAV: NavLink[] = [
   { label: "Get started", href: "/start" },
+  { label: "Platforms", href: "/platforms" },
+  { label: "Deploy", href: "/deploy", match: ["/pricing"] },
+  { label: "Models", href: "/models" },
+  { label: "Build", href: "/build", match: ["/examples"] },
   { label: "API", href: "/api" },
-  { label: "SDKs", href: "/sdk" },
-  { label: "Guides", href: "/guides" },
-  { label: "Examples", href: "/examples" },
   { label: "Performance", href: "/performance" },
 ];
 
@@ -54,14 +70,16 @@ export const TOP_NAV: NavLink[] = [
 export const RESOURCES_MENU: NavLink[] = [
   { label: "Downloads & versions", href: "/downloads" },
   { label: "Changelog", href: "/changelog" },
-  { label: "Community & support", href: "/community" },
+  { label: "Pricing and credits", href: "/pricing" },
+  { label: "Troubleshooting", href: "/resources/troubleshooting" },
+  { label: "Support & community", href: "/support" },
   { label: "For AI agents", href: "/resources/agents" },
   { label: "Status", href: "https://status.bithuman.ai", external: true },
 ];
 
 export const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
 
-/** Footer columns: the header's sections, then resources, then community. */
+/** Footer columns: the header's sections, then resources, community and legal. */
 export const FOOTER: { title: string; links: NavLink[] }[] = [
   { title: "Docs", links: TOP_NAV },
   { title: "Resources", links: RESOURCES_MENU },
@@ -71,7 +89,6 @@ export const FOOTER: { title: string; links: NavLink[] }[] = [
       { label: "Discord", href: "https://discord.gg/ES953n7bPA", external: true },
       { label: "GitHub", href: "https://github.com/bithuman-product", external: true },
       { label: "X", href: "https://x.com/bithuman_ai", external: true },
-      { label: "Pricing", href: "/guides/pricing" },
     ],
   },
 ];

@@ -1,18 +1,18 @@
 ---
 title: "Create your own avatar"
 description: "Turn a portrait, a voice sample and a prompt into your own avatar: what to upload, how to write the persona, and the API call."
-section: guides
-group: "Build"
-order: 20
+section: build
+group: "Create"
+order: 10
 type: guide
-label: "Create your own avatar"
+next: ["/build/persona", "/build/voices", "/models"]
 ---
 
 An avatar is a face, a voice and a personality, packaged as one agent with a short code. Use a [sample avatar](/examples#ready-made-avatars) to start, or create your own from one portrait.
 
 ## Before you start
 
-- An [API secret](/start/api-secret) on the Creator plan or higher, and credits for the creation ([pricing](/guides/pricing#creation--one-time-credits)).
+- An [API secret](/start/api-secret) on the Creator plan or higher, and credits for the creation ([pricing](/pricing#creation--one-time-credits)).
 - A portrait image at a public URL (or create one from a prompt).
 - Optionally, 3–10 seconds of clean speech for voice cloning.
 
@@ -24,7 +24,7 @@ An avatar is a face, a voice and a personality, packaged as one agent with a sho
 | A character, animal, robot or illustration | `expression-2`: any subject |
 | Not sure | `auto`: people go to `essence-2`, everything else to `expression-2` |
 
-More on the difference: [Models](/concepts/models).
+More on the difference: [Models](/models).
 
 ## 2. Pick the inputs
 
@@ -60,7 +60,7 @@ Open `https://www.bithuman.ai/embed/<agent_id>` in a browser and talk to it, or 
 
 ## Variations
 
-- **Write a better persona** with [the persona guide](/guides/persona).
+- **Write a better persona** with [the persona guide](/build/persona).
 - **Add another model** later without re-creating the agent: [add a model](/api/agents#add-a-model-to-an-existing-agent).
 - **Change the prompt** at any time: [update an agent](/api/agents#update-an-agent).
 
@@ -76,4 +76,4 @@ Open `https://www.bithuman.ai/embed/<agent_id>` in a browser and talk to it, or 
 
 ## Next
 
-- [Agents API](/api/agents) · [Persona](/guides/persona) · [Voices](/guides/voice-providers)
+- [Agents API](/api/agents) · [Persona](/build/persona) · [Voices](/build/voices)

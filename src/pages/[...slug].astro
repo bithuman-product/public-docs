@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const docs = await getCollection("docs", (e: any) => !e.data.draft);
   return docs.map((entry: any) => ({
     // entry.id is the path under src/content/docs without extension,
-    // e.g. "api/quickstart" -> /api/quickstart ; "api" -> /api
+    // e.g. "api/quickstart" -> /platforms/rest ; "api" -> /api
     params: { slug: entry.id.replace(/\.md$/, "").replace(/\/index$/, "") },
     props: { entry, all: docs },
   }));

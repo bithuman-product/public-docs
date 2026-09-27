@@ -2,7 +2,7 @@
 // Static internal-link checker for the docs content.
 //
 // Round-2 audit found several dead in-site links (e.g. /sdk/kotlin when the
-// page is /sdk/android, /concepts/pricing when it's /guides/pricing). Those
+// page is /platforms/android, /concepts/pricing when it's /pricing). Those
 // rot silently because nothing resolves them. This script collects every
 // valid route, then flags any markdown link to an internal /route that does
 // not resolve — failing CI so link rot is caught in the PR.
@@ -94,6 +94,10 @@ for (const f of walk(PAGES, [".astro"])) {
   r = r.replace(/\/index$/, "").replace(/^index$/, "");
   routes.add("/" + r);
 }
+// The generated agent files are routes too (src/pages/llms*.ts): a redirect may land on one.
+routes.add("/llms.txt");
+routes.add("/llms-full.txt");
+for (const m of readFileSync(join(ROOT, "src/lib/llms-sections.ts"), "utf8").matchAll(/^\s*id:\s*"([a-z-]+)",\s*title:/gm)) routes.add(`/llms/${m[1]}.txt`);
 
 // --- 1b. Load the vercel.json redirect map ---
 // Redirects are part of the routing surface: a destination that resolves
@@ -187,7 +191,7 @@ for (const f of walk(CONTENT, [".md", ".mdx"])) {
 // --- 2c. The OpenAPI spec (served as /api/openapi.yaml, rendered at /api/reference) ---
 // Its descriptions link the docs by absolute URL and each other by Scalar anchor
 // (#tag/<name>, #operation/<id>, #tag/<name>/operation/<id>). None of that was
-// checked: the spec carried a dead /guides/self-hosting anchor and four links to
+// checked: the spec carried a dead /deploy/self-hosted anchor and four links to
 // redirecting routes. Absolute docs URLs are held to the same rule as page links
 // (a known route, never a redirect source, and the heading anchor must exist), and
 // every in-spec anchor must name a tag or operationId the spec defines.

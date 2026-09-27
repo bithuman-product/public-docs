@@ -40,7 +40,7 @@ public/
 Two product pillars + resources, mirroring developers.openai.com:
 
 - **API Platform** (`/api`) — REST: agents, Voice/TTS, dynamics, embedding + the Scalar reference
-- **SDK** (`/sdk`) — Python, Swift (Apple), JS/TS, and the CLI
+- **SDK** (`/platforms`) — Python, Swift (Apple), JS/TS, and the CLI
 - **Showcase** (`/showcase`) — live demo agents + forkable reference apps
 - **Resources** — Examples, Changelog, Downloads, Community
 
@@ -73,7 +73,7 @@ git rev-parse --short HEAD
 
 # 2. Fetch the LIVE page — cache-busted — and grep for a string that exists
 #    only in the new build. Pick a distinctive sentence from your own diff.
-curl -sS "https://docs.bithuman.ai/concepts/essence-2?cb=$(date +%s)" \
+curl -sS "https://docs.bithuman.ai/models/essence-2?cb=$(date +%s)" \
   | grep -c "head-upsample"
 
 # 3. Zero means the site is still serving the old build. Investigate the alias

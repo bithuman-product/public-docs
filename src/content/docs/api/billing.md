@@ -1,16 +1,15 @@
 ---
-title: "Billing API"
+title: "Billing & usage"
 description: "Read a user's live credit balance and per-mode minute estimates, and understand how credits are consumed."
 section: api
 group: "Account"
-order: 33
+order: 30
 type: endpoint
-label: "Billing & usage"
 ---
 
 ## The credits model
 
-bitHuman bills in **credits**: time in a live session, talking or idle, bills by the exact second at a per-minute rate, and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/guides/pricing). These endpoints read your balance, your usage and the rate schedule.
+bitHuman bills in **credits**: time in a live session, talking or idle, bills by the exact second at a per-minute rate, and creating an agent or rendering a talking video is a one-time charge. Every rate is on [Pricing & credits](/pricing). These endpoints read your balance, your usage and the rate schedule.
 
 ## Account status
 
@@ -41,7 +40,7 @@ curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
 
 ## Get the pricing schedule
 
-`GET /v1/pricing` returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with the `rounding` rule and `basis` in force. [Pricing & credits](/guides/pricing) is generated from this response.
+`GET /v1/pricing` returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with the `rounding` rule and `basis` in force. [Pricing & credits](/pricing) is generated from this response.
 
 ```bash
 curl https://api.bithuman.ai/v1/pricing \
@@ -194,5 +193,5 @@ full [error reference](/api/errors).
 
 ## Next steps
 
-- [Pricing & credits](/guides/pricing) — how credits and per-minute rates work
+- [Pricing & credits](/pricing) — how credits and per-minute rates work
 - [Rate limits](/api/rate-limits) — quotas and limits per endpoint

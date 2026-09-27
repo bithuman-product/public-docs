@@ -2,10 +2,9 @@
 title: "Gestures API"
 description: "Generate and manage conversational gesture animations — waves, nods, laughs, idle motions — for an avatar."
 section: api
-group: "Build"
-order: 13
+group: "Agents"
+order: 40
 type: endpoint
-label: "Gestures"
 ---
 
 ## Overview
@@ -20,7 +19,7 @@ Dynamics generation costs 250 credits.
 > `runtime.push(VideoControl(action="…"))`. Managed cloud: send a `trigger_dynamics`
 > RPC to the avatar participant (`avatar.avatar_identity`). Both are deterministic —
 > no keyword, no randomness. See
-> [Trigger avatar actions from code](/guides/avatar-actions).
+> [Trigger avatar actions from code](/build/gestures).
 
 ## Generate dynamics
 

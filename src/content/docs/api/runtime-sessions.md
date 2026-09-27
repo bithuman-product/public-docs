@@ -2,10 +2,9 @@
 title: "Runtime sessions"
 description: "List live avatar sessions, read a session transcript, terminate a session, or revoke every runtime key at once."
 section: api
-group: "Account"
-order: 31
+group: "Live sessions"
+order: 50
 type: endpoint
-label: "Runtime sessions"
 ---
 
 ## Overview

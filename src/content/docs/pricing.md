@@ -1,11 +1,10 @@
 ---
-title: "Pricing & credits"
+title: "Pricing and credits"
 description: "Credits pay for active session time, talking or idle, by the exact second. Rates per model and platform, creation costs, plans, offline licensing, and how to check your balance."
-section: guides
-group: "Pricing"
-order: 40
+section: deploy
+group: "Overview"
+order: 20
 type: guide
-label: "Pricing & credits"
 ---
 
 Credits pay for the time an avatar session is running, talking or idle, billed by the exact second. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here.
@@ -17,10 +16,10 @@ The table and the billing rule under it are generated from [`GET /v1/pricing`](/
 <!-- PRICING:REALTIME -->
 | Model | Cloud | Self-hosted and on-device |
 |---|---|---|
-| [Essence 2](/concepts/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
-| [Expression 2](/concepts/expression-2) (`expression-2`) | 4 credits/min | 2 credits/min |
-| [Essence 1](/concepts/essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
-| [Expression 1](/concepts/expression-1) (`expression-1`) | 4 credits/min | — |
+| [Essence 2](/models/essence-2) (`essence-2`) | 4 credits/min | 2 credits/min |
+| [Expression 2](/models/expression-2) (`expression-2`) | 4 credits/min | 2 credits/min |
+| [Essence 1](/models/first-generation#essence-1) (`essence-1`) | 2 credits/min | 1 credit/min |
+| [Expression 1](/models/first-generation#expression-1) (`expression-1`) | 4 credits/min | — |
 
 A managed conversational agent bills ONE all-inclusive rate: it covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser.
 
@@ -151,4 +150,4 @@ Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by t
 
 ## Next
 
-- [Billing API](/api/billing) · [Rate limits](/api/rate-limits) · [Create your own avatar](/guides/building-avatars)
+- [Billing API](/api/billing) · [Rate limits](/api/rate-limits) · [Create your own avatar](/build/create-avatar)

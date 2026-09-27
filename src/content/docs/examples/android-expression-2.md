@@ -1,11 +1,10 @@
 ---
-title: "Android example: Expression 2"
+title: "Android Expression 2"
 description: "A complete Kotlin app that renders a talking Expression 2 avatar on an Android phone: clone it, add your API secret, build and run."
-section: examples
+section: build
 group: "Examples"
 order: 40
 type: example
-label: "Android: Expression 2"
 ---
 
 <figure class="showcase">
@@ -72,7 +71,7 @@ rendered 277 frames in 36 s — playing…
 3. opens it with `Expression2Avatar.create(this, model, options)` on a background thread;
 4. calls `feed(pcm)` and `flushTail()`, then `pull(frame)` until every frame is out: one frame per 50 ms of audio.
 
-The calls, the live-streaming loop and the accelerator are on [Android](/sdk/android).
+The calls, the live-streaming loop and the accelerator are on [Android](/platforms/android).
 
 ## Make it your own
 
@@ -89,8 +88,8 @@ The calls, the live-streaming loop and the accelerator are on [Android](/sdk/and
 | The build refuses the JDK | use JDK 17 (`java -version`) |
 | The app says `speech.wav` is missing | run the `adb push` line, then restart the app |
 
-More on [Android: Troubleshooting](/sdk/android#troubleshooting).
+More on [Android: Troubleshooting](/platforms/android#troubleshooting).
 
 ## Next
 
-- [Android example: Essence 2](/examples/android-essence2) · [Android SDK](/sdk/android) · [Android API reference](/sdk/android-api) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/android/expression2-hello)
+- [Android example: Essence 2](/examples/android-essence-2) · [Android SDK](/platforms/android) · [Android API reference](/platforms/android/reference) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/android/expression2-hello)

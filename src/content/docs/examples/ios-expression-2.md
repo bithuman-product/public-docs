@@ -1,11 +1,10 @@
 ---
-title: "iOS example: Expression 2"
+title: "iOS Expression 2"
 description: "A complete SwiftUI app that renders a talking Expression 2 avatar on an iPhone or iPad, on the device: clone it, fetch the avatar, set your API secret, run."
-section: examples
+section: build
 group: "Examples"
-order: 30
+order: 20
 type: example
-label: "iOS: Expression 2"
 ---
 
 <figure class="showcase">
@@ -59,14 +58,14 @@ The avatar appears and idles. Tap **Speak**: it says the sample line with its li
 3. `pull()` returns the next frame, or `nil` until a chunk of frames is ready, so the app feeds and drains at the same time;
 4. a display loop shows one frame per 50 ms of audio, on the audio clock.
 
-The same three calls run on a Mac: [macOS example](/examples/macos-expression2). The API is on [Apple](/sdk/apple) and [Apple API reference](/sdk/apple-api).
+The same three calls run on a Mac: [macOS example](/examples/macos-expression-2). The API is on [Apple](/platforms/ios) and [Apple API reference](/platforms/swift/reference).
 
 ## Make it your own
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "expression-2"`), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
 - **Your own voice pipeline:** feed the audio your text-to-speech produces into `feed`, in chunks, as it arrives.
 - **Ship it:** don't put the secret in the app bundle. Fetch it from your backend or the Keychain and call `Expression2Credential.set(key)` before `create`.
-- **A photoreal person:** the [iOS Essence 2 example](/examples/swift-ios-essence2) renders an Essence 2 avatar at full resolution.
+- **A photoreal person:** the [iOS Essence 2 example](/examples/ios-essence-2) renders an Essence 2 avatar at full resolution.
 
 ## Troubleshooting
 
@@ -78,8 +77,8 @@ The same three calls run on a Mac: [macOS example](/examples/macos-expression2).
 | The view stays empty and nothing throws | keep polling `pull()` while you feed; it returns `nil` between chunks |
 | It builds for the Simulator and crashes there | run on a physical device |
 
-More on [Apple: Troubleshooting](/sdk/apple#troubleshooting).
+More on [Apple: Troubleshooting](/platforms/ios#troubleshooting).
 
 ## Next
 
-- [macOS example](/examples/macos-expression2) · [Apple SDK](/sdk/apple) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)
+- [macOS example](/examples/macos-expression-2) · [Apple SDK](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-expression2)

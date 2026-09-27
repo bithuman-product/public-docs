@@ -1,16 +1,15 @@
 ---
-title: "iOS example: Essence 2"
+title: "iOS Essence 2"
 description: "A complete SwiftUI app that renders a photoreal Essence 2 avatar at full resolution on an iPhone or iPad, on the device: four files, one setup script."
-section: examples
+section: build
 group: "Examples"
-order: 31
+order: 21
 type: example
-label: "iOS: Essence 2"
 ---
 
 A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1080p) at 25 fps. **Speak** plays the line again.
 
-`Sources/App.swift` uses `Essence2Kit` ([Apple](/sdk/apple)): `Essence2Engine.create(identity:resourcesDirectory:)` opens the bundled avatar, and `frames(following:)` paces the picture to the audio player.
+`Sources/App.swift` uses `Essence2Kit` ([Apple](/platforms/ios)): `Essence2Engine.create(identity:resourcesDirectory:)` opens the bundled avatar, and `frames(following:)` paces the picture to the audio player.
 
 ## Requirements
 
@@ -62,7 +61,7 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
 4. **Speak:** `feed(_:)` the reply's 16 kHz samples, then `flushTail()`; the draw loop starts the reply's audio with its first speech frame, so the lips stay on the voice.
 5. **Stream, don't collect:** one 1080×1920 frame is 6.2 MB, so the app draws each frame as it arrives.
 
-`Sources/App.swift` is the whole app. The full API is on [Apple](/sdk/apple#integrate-into-your-app) and [Apple API reference](/sdk/apple-api).
+`Sources/App.swift` is the whole app. The full API is on [Apple](/platforms/ios#integrate-into-your-app) and [Apple API reference](/platforms/swift/reference).
 
 ## Make it your own
 
@@ -92,8 +91,8 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
 | `ld` warns *"built for newer 'iOS' version (26.0)"* once per object | expected; the build is good |
 | It builds for the Simulator and crashes there | run on a physical device |
 
-More on [Apple: Troubleshooting](/sdk/apple#troubleshooting).
+More on [Apple: Troubleshooting](/platforms/ios#troubleshooting).
 
 ## Next
 
-- [iOS example: Expression 2](/examples/swift-ios-expression2) · [Android example: Essence 2](/examples/android-essence2) · [Apple SDK](/sdk/apple) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-essence2)
+- [iOS example: Expression 2](/examples/ios-expression-2) · [Android example: Essence 2](/examples/android-essence-2) · [Apple SDK](/platforms/ios) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/ios-essence2)

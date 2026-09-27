@@ -93,8 +93,8 @@ async function main() {
     arm("★prose after a code block is still graded (the exclusion is not a page-wide pass)",
         findings("<pre>fine</pre><p>:::caution[x]</p>", "x").length === 1);
     arm("the finding says WHERE and WHY",
-        (() => { const f = findings("<p>:::x</p>", "/guides/pricing")[0];
-                 return f.where === "/guides/pricing" && f.why.includes("directive"); })());
+        (() => { const f = findings("<p>:::x</p>", "/pricing")[0];
+                 return f.where === "/pricing" && f.why.includes("directive"); })());
     console.log(bad ? `\nFAILED — ${bad} arm(s)` : "\nPASSED — 0 failure(s)");
     process.exit(bad ? 1 : 0);
   }

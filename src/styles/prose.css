@@ -119,7 +119,7 @@
 .prose th:first-child, .prose td:first-child { padding-left: 0; }
 .prose th:last-child, .prose td:last-child { padding-right: 0; }
 /* The first column is the key a reader scans down. It wraps like any other
-   cell: held on one line it took 518 of 728px on /sdk/cli and left the
+   cell: held on one line it took 518 of 728px on /platforms/cli and left the
    "Do this" column 17 lines tall, and at 390px, where each row is a card, it
    was the one thing that made the page scroll sideways. */
 .prose tbody td:first-child { font-weight: var(--fw-medium); color: var(--color-text); }

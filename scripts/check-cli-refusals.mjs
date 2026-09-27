@@ -178,7 +178,7 @@ const ARMS = [
     args: (m) => ["render", "/nonexistent/missing.imx", "-a", "/nonexistent/a.wav", "-o", "/dev/null", "--json"],
     env: {}, expectCode: 66, expectName: "MODEL_NOT_FOUND" },
   { id: "render refuses with no credential",
-    why: "sdk/cli.md and the changelog say render stops before the first frame, having written nothing",
+    why: "platforms/cli.md and the changelog say render stops before the first frame, having written nothing",
     args: (m, out) => ["render", m, "-a", m, "-o", out, "--json"],
     env: {}, expectCode: 77, expectName: "NOT_SIGNED_IN", expectNoOutput: true },
   // ★THE REASON CODE MOVED, THE REFUSAL DID NOT. Through cli-v2.6.20 a

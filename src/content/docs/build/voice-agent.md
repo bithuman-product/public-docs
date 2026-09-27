@@ -1,11 +1,11 @@
 ---
-title: "Talk to an avatar on your machine"
+title: "Voice agent"
 description: "A voice avatar on your own computer: LiveKit runs locally, OpenAI Realtime listens and speaks on your own key, and the bitHuman avatar renders on your CPU. One CLI command, or a short Python agent."
-section: guides
-group: "Deploy"
-order: 29
+section: build
+group: "Recipes"
+order: 10
 type: guide
-label: "Local voice avatar"
+next: ["/platforms/cli", "/platforms/python", "/build/voices"]
 ---
 
 Everything except the voice model runs on your computer. LiveKit is the stock `livekit-server`, OpenAI Realtime listens, thinks and speaks on your own `OPENAI_API_KEY`, and the bitHuman avatar renders on your CPU — no GPU needed.
@@ -17,7 +17,7 @@ Your browser  <──>  livekit-server  <──>  the agent: OpenAI Realtime hea
 (localhost)         (your machine)        bitHuman renders the face from the reply's voice
 ```
 
-Use [the CLI](#with-the-cli) for a talking avatar with no code, or [Python](#with-python) for your own agent code.
+Use [the CLI](#with-the-cli) for a talking avatar with no code, [Python](#with-python) for your own agent code, or the [Python voice conversation](#python-voice-conversation) for a desktop window with no LiveKit server.
 
 ## With the CLI
 
@@ -42,7 +42,7 @@ Expected output:
   Opening your browser… (Ctrl-C to stop.)
 ```
 
-The first run downloads the avatar and sets up the voice agent, which takes a minute or two and needs Python 3.11 or newer. Allow the microphone and say "hi": the avatar answers, lip-synced, and stops when you talk over it. The voice settings are on [CLI](/sdk/cli#voice-settings).
+The first run downloads the avatar and sets up the voice agent, which takes a minute or two and needs Python 3.11 or newer. Allow the microphone and say "hi": the avatar answers, lip-synced, and stops when you talk over it. The voice settings are on [CLI](/platforms/cli#voice-settings).
 
 ## With Python
 
@@ -94,6 +94,83 @@ async def entrypoint(ctx: JobContext):
 
 Swap the `RealtimeModel` for any LiveKit speech-to-text, LLM and text-to-speech plugins; the avatar lines stay the same.
 
+## Python voice conversation
+
+The same conversation in a desktop window, with no LiveKit server and no browser: your microphone goes to OpenAI Realtime, and the reply's voice drives a bitHuman avatar rendered on your machine.
+
+### Requirements
+
+- A bitHuman API secret ([Developer → API Secrets](https://www.bithuman.ai/developer/api-keys)) and an `OPENAI_API_KEY`.
+- Python 3.10–3.14 in a virtualenv, a microphone and speakers.
+- On Linux, the PortAudio library: `sudo apt install libportaudio2`.
+
+### Get the code
+
+```bash
+git clone https://github.com/bithuman-product/bithuman-examples.git
+cd bithuman-examples/python/quickstart
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+bithuman pull sofia-ramirez 2>/dev/null || curl -fsSL --create-dirs -o ~/.cache/bithuman/showcase/sofia-ramirez.imx \
+  "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2"
+```
+
+`sofia-ramirez` is a sample avatar (Essence 2, about 148 MB); downloading it needs no credential.
+
+```bash
+export BITHUMAN_API_SECRET="<your API secret>" OPENAI_API_KEY="<your OpenAI key>"
+```
+
+### Run it
+
+```bash
+python conversation.py --model ~/.cache/bithuman/showcase/sofia-ramirez.imx
+```
+
+Speak into your microphone; press `Q` in the window to quit.
+
+A window opens with the avatar at rest. When you stop speaking, the avatar answers, lip-synced, and you hear the reply through your speakers.
+
+### How it works
+
+The pipeline: microphone → OpenAI Realtime (24 kHz PCM16) → `push_audio`/`flush` into the runtime → lip-synced frames and audio out. The heart of `conversation.py`:
+
+```python
+# excerpt: python/quickstart/conversation.py
+# Configure the OpenAI Realtime session, then bridge its audio into bitHuman.
+async with client.realtime.connect(model="gpt-realtime-2.1-mini") as conn:
+    await conn.session.update(session={
+        "type": "realtime",
+        "instructions": "You are a friendly AI assistant. Keep responses concise.",
+        "output_modalities": ["audio"],
+        "audio": {
+            "input": {"format": {"type": "audio/pcm", "rate": 24000},
+                      "turn_detection": {"type": "server_vad"}},
+            "output": {"format": {"type": "audio/pcm", "rate": 24000}, "voice": "coral"},
+        },
+    })
+
+    async for event in conn:
+        if event.type == "response.output_audio.delta":
+            # OpenAI speaks at 24 kHz — push straight into the avatar runtime.
+            await runtime.push_audio(base64.b64decode(event.delta), 24000, last_chunk=False)
+        elif event.type == "response.output_audio.done":
+            await runtime.flush()
+
+# Meanwhile, the render loop draws every frame and plays its synced audio:
+async for frame in runtime.run():
+    if frame.has_image:
+        cv2.imshow("bitHuman", frame.bgr_image)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+    if frame.audio_chunk:
+        speaker_buf.extend(frame.audio_chunk.array.tobytes())
+```
+
+- **Personality:** edit the `instructions` string.
+- **Voice:** pass `--voice` with any OpenAI Realtime voice.
+- **Another avatar:** `bithuman list` prints every sample slug; pass the file with `--model`.
+
 ## Pick the avatar
 
 `bithuman run <value>`, or `BITHUMAN_AVATAR=<value>` in the Python example's `.env`:
@@ -121,7 +198,7 @@ The Python example reads these from `.env`:
 
 ## What you pay
 
-Session time, talking or idle, bills bitHuman credits; OpenAI bills your own key. See [Pricing](/guides/pricing).
+Session time, talking or idle, bills bitHuman credits; OpenAI bills your own key. See [Pricing](/pricing).
 
 ## Troubleshooting
 
@@ -136,3 +213,7 @@ Session time, talking or idle, bills bitHuman credits; OpenAI bills your own key
 | Nothing happens after joining | `livekit-server --dev` or `agent.py` is not running | Start both, `livekit-server` first |
 | Another device on your network cannot join | `--dev` listens on `localhost` only | `livekit-server --dev --bind 0.0.0.0 --node-ip <your LAN IP>`; other browsers also need HTTPS for the microphone |
 | On a Mac, your own page with no microphone, on the same machine as the avatar, fails with `could not establish pc connection` | Chrome hides the machine's local addresses until the page has microphone permission | call `navigator.mediaDevices.getUserMedia({ audio: true })` before connecting, or open the page from another device |
+| `OSError: PortAudio library not found` | the system library is missing | `sudo apt install libportaudio2` (Debian, Ubuntu) |
+| `cv2.error: … The function is not implemented` | the headless OpenCV build won the install | `pip install --force-reinstall --no-deps opencv-python` |
+| `error: externally-managed-environment` | outside the virtualenv | `. .venv/bin/activate` |
+| No microphone input on macOS | the terminal has no microphone permission | System Settings → Privacy & Security → Microphone |

@@ -196,7 +196,7 @@ const BANNED = [
   // OpenAI key", "that provider's key" — and never as a bare "API key".
   // ★`wrap` is the same phrase broken across a line break. Found 2026-09-23 by
   // the SERVED gate, not this one: "needs a bitHuman API\nkey in two places"
-  // on sdk/android.md read clean here — every scan below is per line — and
+  // on platforms/android.md read clean here — every scan below is per line — and
   // reached docs.bithuman.ai. A source guard that a wrapped paragraph walks
   // past is weaker than the one downstream of it; scanWrapped() closes that.
   { name: "api-key", re: /(?<![\w\/.-])api[ -]keys?\b/gi,
@@ -240,7 +240,7 @@ const CARRIERS = [
   // ★THE ONE LINE THAT MAY NAME ESSENCE 2 MAX. a product rule removed it from public
   //  exposure, docs included; a later rule ("essence-2-max is only reserved for
   //  enterprise customers — make it clear") and his direct decision the same day admit ONE
-  //  sentence, on /concepts/models, /guides/pricing and llms.txt. The name is carried only when
+  //  sentence, on /models, /pricing and llms.txt. The name is carried only when
   //  the SAME sentence says "Enterprise plan only", so this is also the must-mark guard: any other
   //  mention of the name still fails. bithuman-models tools/check_taught_surface.py
   //  INTERNAL_ONLY_DOCS_CARRIERS holds the same pattern.
@@ -248,7 +248,7 @@ const CARRIERS = [
     re: /\bEssence 2 Max\b[^.\n]*\bEnterprise plan only\b/ },
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
-  { why: "the ONE sentence on /concepts/models that retires the word ANE by naming it",
+  { why: "the ONE sentence on /models that retires the word ANE by naming it",
     // source form `**Apple**, not "ANE"` AND the rendered form `Apple , not “ANE”` (the served gate reads the page)
     re: /(?:lane|tier) is called \*{0,2}Apple\*{0,2} ?, not ["“]ANE["”]/ },
   { why: "`docker compose` / `docker-compose.yml` — the command a developer runs and the file they write",
@@ -372,7 +372,7 @@ function scanWrapped(text) {
 
 // ── THE SIBLING-CORPUS ASSERTION ─────────────────────────────────────────────
 // ★Found by mutation 2026-09-04, not by reading: dropping ONE file from this
-// guard's walk (`&& !rel.endsWith("community.md")`) left it GREEN while eleven
+// guard's walk (`&& !rel.endsWith("support.md")`) left it GREEN while eleven
 // mechanism words sat unread on that page. The per-root control passed (the
 // root still contributed files) and the minimum-count control passed (106 of
 // 107 is well over the floor of 20). Only a comparison against the OTHER
@@ -680,14 +680,14 @@ function selfTest() {
   // the root still contributes files, and 106 is far above the floor of 20.
   // Only the sibling comparison sees it, so it is exercised directly.
   const full = collect(ROOT);
-  const short = full.filter((f) => !f.endsWith("community.md"));
+  const short = full.filter((f) => !f.endsWith("support.md"));
   T("M7 a corpus one file short of the sibling's is refused",
     short.length === full.length - 1 &&
     siblingCorpusMismatch(ROOT, short).length > 0 &&
     siblingCorpusMismatch(ROOT, full).length === 0);
 
   // ★M8 — a phrase broken across a line break is still seen. The served gate
-  // found the first one (sdk/android.md, 2026-09-23) after this file passed it.
+  // found the first one (platforms/android.md, 2026-09-23) after this file passed it.
   T("M8 a banned phrase wrapped across a line break is reported; the kept URL is not",
     scanWrapped("Essence 2 needs a bitHuman API\nkey in two places").length === 1 &&
     scanWrapped("> Developer → API\n> Keys").length === 1 &&

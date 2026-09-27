@@ -50,9 +50,9 @@ const collection = new Set(
     .map((f) => contentRoute(CONTENT, f)),
 );
 // The page list an agent can reach: /llms.txt plus the markdown hubs it links
-// (/index.md, /start.md, /api.md, /sdk.md, /guides.md, /examples.md,
+// (/index.md, /start.md, /platforms.md, /deploy.md, /models.md, /build.md, /api.md, /examples.md,
 // /resources.md), which list every page of their section.
-const listing = ["llms.txt", "index.md", "start.md", "api.md", "sdk.md", "guides.md", "examples.md", "resources.md"]
+const listing = ["llms.txt", "index.md", "start.md", "platforms.md", "deploy.md", "models.md", "build.md", "api.md", "examples.md", "resources.md"]
   .filter((f) => existsSync(join(DIST, f)))
   .map((f) => readFileSync(join(DIST, f), "utf8"))
   .join("\n");

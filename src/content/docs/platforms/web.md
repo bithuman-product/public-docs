@@ -1,18 +1,21 @@
 ---
-title: "Web"
-description: "Put a live, talking avatar on any web page with one iframe. No install and no API secret in the browser; render in the cloud or in the visitor's tab."
-section: sdk
-group: "Platforms"
+title: "Web: embed and WebGPU"
+description: "Put a live, talking avatar on any web page with one iframe. It renders in the bitHuman cloud, or in the visitor's tab with WebGPU; there is no install and no API secret in the browser."
+section: platforms
+group: "Apps"
 order: 50
 type: platform
-label: "Web (embed)"
+demo: "both"
+renders: ["cloud", "browser"]
+platforms: ["web"]
+next: ["/api/embedding", "/platforms/rest", "/deploy"]
 ---
 
 The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an `<iframe>` and the page gets a live avatar that listens and answers. There is no npm package and no secret in the browser.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2) | [a photoreal person from one portrait](/concepts/essence-2) |
+| **What renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Cloud rendering (default)** | yes | yes |
 | **In the visitor's tab (`?render=local`)** | yes, with WebGPU; otherwise it switches to cloud | yes, with WebGPU and a browser build; otherwise it switches to cloud |
 
@@ -22,13 +25,9 @@ The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an
 - An agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
 - For a private agent, an [embed token](/api/embedding) minted by your server.
 
-## Install
-
-Nothing to install.
-
 ## Authenticate
 
-A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions bill the agent's owner: credits pay for session time, talking or idle, and the conversation (speech recognition, language model and voice) bills in every mode ([pricing](/guides/pricing)).
+A public agent needs no credential. For a private agent, your server mints an [embed token](/api/embedding) with your API secret and passes it to the page. Sessions bill the agent's owner: credits pay for session time, talking or idle, and the conversation (speech recognition, language model and voice) bills in every mode ([pricing](/pricing)).
 
 ## First frame
 
@@ -43,6 +42,69 @@ A public agent needs no credential. For a private agent, your server mints an [e
 ```
 
 Expected: the avatar appears, asks for the microphone, and answers when you speak. Keep the `*` in `allow`, or the microphone is blocked. To try it without a page, open [https://www.bithuman.ai/embed/A23WJF0199](https://www.bithuman.ai/embed/A23WJF0199).
+
+## Complete example
+
+A whole page with a live avatar: one HTML file and a local web server.
+
+<figure class="showcase">
+  <video controls preload="none" playsinline muted poster="/examples/web/hero.webp" width="460" height="760" src="/examples/web/clip.mp4"></video>
+  <figcaption>The <code>wise-pup</code> sample avatar in a plain HTML page in Chrome, answering a typed question (the recording has no sound).</figcaption>
+</figure>
+
+### Requirements
+
+| You need | Notes |
+|---|---|
+| A current browser | Chrome, Edge, Safari or Firefox |
+| A local web server | the page must be served over `http://localhost` or HTTPS for the microphone to work |
+| Nothing else | no account for the sample avatar; your own agent works the same way while its Anonymous Share setting is on, and its sessions bill you |
+
+### Get the code
+
+Save this as `index.html`:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bitHuman web embed</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0f1115; }
+    body { display: flex; align-items: center; justify-content: center; }
+    iframe { border: 0; border-radius: 16px; }
+  </style>
+</head>
+<body>
+  <iframe src="https://www.bithuman.ai/embed/A23WJF0199"
+          allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
+</body>
+</html>
+```
+
+### Run it
+
+```bash
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:8765/` and allow the microphone.
+
+### Expected output
+
+The avatar greets you within a few seconds. Speak, or type into the **Type or speak…** box, and it answers out loud with its lips in sync. The red button ends the session.
+
+### How it works
+
+The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a real-time session: your microphone audio goes to the agent, and the agent's voice and video come back. `allow="microphone *"` lets the iframe ask for the microphone; without the `*` the browser blocks it. URL parameters are on [Web](/platforms/web); session events on [Embedding](/api/embedding).
+
+### Make it your own
+
+- **Your own avatar:** replace `A23WJF0199` with your agent code. Anyone with the code can open it and sessions bill your account; turn off Anonymous Share in the agent's sharing settings to stop that.
+- **Push what it says:** from your backend, `POST /v1/agent/{code}/speak` makes a live avatar say a line ([Agents](/api/agents)).
+- **Size and layout:** any width and height work; keep roughly a 7:12 portrait shape for Expression 2 avatars.
 
 ## Integrate into your app
 
@@ -72,7 +134,7 @@ async function hasRealGPU() {
 
 Do not send `Cross-Origin-Embedder-Policy` from the page that holds the iframe: the embed does not send one itself, so the browser refuses to load it.
 
-To build your own video UI instead of the hosted page, subscribe to a cloud-rendered avatar over [LiveKit](/sdk/livekit).
+To build your own video UI instead of the hosted page, subscribe to a cloud-rendered avatar over [LiveKit](/platforms/livekit).
 
 ## Platform notes
 
@@ -81,7 +143,7 @@ To build your own video UI instead of the hosted page, subscribe to a cloud-rend
 
 ## Performance
 
-In-browser frame rates (WebGPU) are on [Web browser performance](/performance/web).
+In-browser frame rates (WebGPU) are on [Web browser performance](/performance#web).
 
 ## Troubleshooting
 
@@ -91,9 +153,11 @@ In-browser frame rates (WebGPU) are on [Web browser performance](/performance/we
 | `404` | the agent code is wrong, or the agent is private | check the code; mint an [embed token](/api/embedding) for a private agent |
 | `render=local` reloads as `render=cloud` | no usable GPU (WebGPU) in this browser, or this Essence 2 avatar has no browser build | nothing to do; it is served from the cloud. Check `hasRealGPU()` first to choose the mode yourself |
 | The iframe shows a browser error page | your page sends `Cross-Origin-Embedder-Policy` | remove that header from the page that holds the iframe |
+| A blank frame | a service problem | check [status.bithuman.ai](https://status.bithuman.ai), then reload |
+| Your own avatar shows `Embedding is disabled for this agent` | its Anonymous Share setting is off | turn Anonymous Share back on in the agent's sharing settings |
 
 ## Reference
 
 - [Embedding](/api/embedding): embed tokens, sizing and private agents.
-- [LiveKit](/sdk/livekit): your own UI over a cloud-rendered avatar.
+- [LiveKit](/platforms/livekit): your own UI over a cloud-rendered avatar.
 - Examples: [Next.js UI](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) · [Gradio](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web).

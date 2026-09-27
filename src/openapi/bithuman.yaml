@@ -1042,7 +1042,7 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the license with the cloud, so it needs a sign-in: https://docs.bithuman.ai/sdk/cli#platform-notes). |
+        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the license with the cloud, so it needs a sign-in: https://docs.bithuman.ai/platforms/cli#platform-notes). |
         | `expression-2` | `<code>.avatar` — the same container as `.imx` under a second name (a few early identities use an older format; `bithuman open` reports which) — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 
@@ -1066,7 +1066,7 @@ paths:
         **poll on that code**.
 
         **Every grant is recorded.** A model download costs **0 credits** on
-        the [pricing table](https://docs.bithuman.ai/guides/pricing) — only
+        the [pricing table](https://docs.bithuman.ai/pricing) — only
         runtime minutes bill — but the grant still writes exactly one usage row
         before the URL is issued, under the family's self-hosted pricing code,
         and hands you its id in `X-Bithuman-Meter-Id`. The rows show up in
@@ -1074,7 +1074,7 @@ paths:
         not a charge. The order matters both ways: a meter that refuses
         (`402`) or fails (`500`) returns no URL at all.
 
-        The [bitHuman CLI](https://docs.bithuman.ai/sdk/cli/reference) wraps
+        The [bitHuman CLI](https://docs.bithuman.ai/platforms/cli/reference) wraps
         this endpoint: `bithuman pull <AGENT_CODE>` downloads the artifact,
         recognizes its model family, and prints what to do next.
 
@@ -1188,7 +1188,7 @@ paths:
                 The id of the single `activities` row this grant wrote. Every
                 download is metered BEFORE the URL is issued — a model download
                 costs **0 credits** on the published
-                [pricing table](https://docs.bithuman.ai/guides/pricing), and 0
+                [pricing table](https://docs.bithuman.ai/pricing), and 0
                 is a price, not a reason to skip the record. The row carries
                 the family's self-hosted pricing code (e.g.
                 `usage_essence_2_model_self_hosted`) and appears in
@@ -1225,7 +1225,7 @@ paths:
                 The id of the single `activities` row this grant wrote. Every
                 download is metered BEFORE the URL is issued — a model download
                 costs **0 credits** on the published
-                [pricing table](https://docs.bithuman.ai/guides/pricing), and 0
+                [pricing table](https://docs.bithuman.ai/pricing), and 0
                 is a price, not a reason to skip the record. The row carries
                 the family's self-hosted pricing code (e.g.
                 `usage_essence_2_model_self_hosted`) and appears in
@@ -2084,7 +2084,7 @@ paths:
         cloud avatar session. It is also bound to `room_name` and `livekit_url`
         when you send them, and it bills your account. For another agent, room
         or LiveKit server it answers `403`. It cannot download the model or call
-        any other endpoint. See [LiveKit integration](/sdk/livekit).
+        any other endpoint. See [LiveKit integration](/platforms/livekit).
 
         Call this from your server. Never ship the api-secret this endpoint
         consumes to a client.
@@ -4442,58 +4442,58 @@ tags:
     description: "What bitHuman is, where an avatar renders and what you can build: [https://docs.bithuman.ai/api](https://docs.bithuman.ai/api)."
   - name: quickstart
     x-displayName: Quickstart
-    description: "Your first talking avatar, with curl and a hosted agent: [https://docs.bithuman.ai/api/quickstart](https://docs.bithuman.ai/api/quickstart)."
+    description: "Your first talking avatar, with curl and a hosted agent: [https://docs.bithuman.ai/platforms/rest](https://docs.bithuman.ai/platforms/rest)."
   - name: auth-guide
     x-displayName: Authentication
     description: "API secrets, runtime tokens and where each surface reads its key: [https://docs.bithuman.ai/api/authentication](https://docs.bithuman.ai/api/authentication)."
   - name: models
     x-displayName: Models
-    description: "Essence 2, Expression 2 and the first generation — what each does and where each runs: [https://docs.bithuman.ai/concepts/models](https://docs.bithuman.ai/concepts/models)."
+    description: "Essence 2, Expression 2 and the first generation — what each does and where each runs: [https://docs.bithuman.ai/models](https://docs.bithuman.ai/models)."
   - name: pricing
     x-displayName: Pricing
-    description: "Credits per minute by model and surface, creation costs and plans: [https://docs.bithuman.ai/guides/pricing](https://docs.bithuman.ai/guides/pricing)."
+    description: "Credits per minute by model and surface, creation costs and plans: [https://docs.bithuman.ai/pricing](https://docs.bithuman.ai/pricing)."
   - name: avatars-imx
     x-displayName: Avatars & .imx files
-    description: "The downloadable model file, how it is addressed by agent code and how to inspect it: [https://docs.bithuman.ai/concepts/avatars-imx](https://docs.bithuman.ai/concepts/avatars-imx)."
+    description: "The downloadable model file, how it is addressed by agent code and how to inspect it: [https://docs.bithuman.ai/models/avatar-file](https://docs.bithuman.ai/models/avatar-file)."
   - name: audio-streaming
     x-displayName: Audio streaming
-    description: "The push/drain contract every SDK shares — PCM in, lip-synced frames out: [https://docs.bithuman.ai/concepts/audio-streaming](https://docs.bithuman.ai/concepts/audio-streaming)."
+    description: "The push/drain contract every SDK shares — PCM in, lip-synced frames out: [https://docs.bithuman.ai/models/how-it-works#audio-in-frames-out](https://docs.bithuman.ai/models/how-it-works#audio-in-frames-out)."
   - name: agent-lifecycle
     x-displayName: Agent lifecycle
     description: "Generate, poll, resolve and drive an agent over the API and SDKs: [https://docs.bithuman.ai/api/agents](https://docs.bithuman.ai/api/agents)."
   - name: sdk-python
     x-displayName: Python SDK
-    description: "`pip install bithuman` — open an avatar, render audio through it, take frames: [https://docs.bithuman.ai/sdk/python](https://docs.bithuman.ai/sdk/python)."
+    description: "`pip install bithuman` — open an avatar, render audio through it, take frames: [https://docs.bithuman.ai/platforms/python](https://docs.bithuman.ai/platforms/python)."
   - name: sdk-swift
     x-displayName: Swift SDK
-    description: "The SwiftPM package for iPhone, iPad and Mac: [https://docs.bithuman.ai/sdk/apple](https://docs.bithuman.ai/sdk/apple)."
+    description: "The SwiftPM package for iPhone, iPad and Mac: [https://docs.bithuman.ai/platforms/ios](https://docs.bithuman.ai/platforms/ios)."
   - name: cli
     x-displayName: CLI (bithuman)
-    description: "One binary for macOS Apple Silicon and Linux x86_64 — a live avatar in the browser or an MP4 render: [https://docs.bithuman.ai/sdk/cli](https://docs.bithuman.ai/sdk/cli)."
+    description: "One binary for macOS Apple Silicon and Linux x86_64 — a live avatar in the browser or an MP4 render: [https://docs.bithuman.ai/platforms/cli](https://docs.bithuman.ai/platforms/cli)."
   - name: local-mode
     x-displayName: Local mode (on-device brain)
-    description: "Swap the cloud conversation brain for an on-device one: [https://docs.bithuman.ai/sdk/cli/local-mode](https://docs.bithuman.ai/sdk/cli/local-mode)."
+    description: "Swap the cloud conversation brain for an on-device one: [https://docs.bithuman.ai/platforms/cli/local-brain](https://docs.bithuman.ai/platforms/cli/local-brain)."
   - name: building-avatars
     x-displayName: Building avatars
-    description: "Get a pre-built avatar or generate one from a portrait: [https://docs.bithuman.ai/guides/building-avatars](https://docs.bithuman.ai/guides/building-avatars)."
+    description: "Get a pre-built avatar or generate one from a portrait: [https://docs.bithuman.ai/build/create-avatar](https://docs.bithuman.ai/build/create-avatar)."
   - name: deploy-livekit
     x-displayName: Managed (LiveKit plugin)
-    description: "Drop an avatar into a LiveKit agent worker with the plugin: [https://docs.bithuman.ai/sdk/livekit](https://docs.bithuman.ai/sdk/livekit)."
+    description: "Drop an avatar into a LiveKit agent worker with the plugin: [https://docs.bithuman.ai/platforms/livekit](https://docs.bithuman.ai/platforms/livekit)."
   - name: deploy-self-hosted
     x-displayName: Self-hosting
-    description: "Run Essence 2, Expression 2 and Essence 1 on your own hardware (a Mac, a Linux box, a phone or a browser tab); Expression 1 runs in the cloud only: [https://docs.bithuman.ai/guides/self-hosting](https://docs.bithuman.ai/guides/self-hosting)."
+    description: "Run Essence 2, Expression 2 and Essence 1 on your own hardware (a Mac, a Linux box, a phone or a browser tab); Expression 1 runs in the cloud only: [https://docs.bithuman.ai/deploy/self-hosted](https://docs.bithuman.ai/deploy/self-hosted)."
   - name: deploy-embed
     x-displayName: Browser embed
     description: "A talking avatar on any website with one iframe and an embed token: [https://docs.bithuman.ai/api/embedding](https://docs.bithuman.ai/api/embedding)."
   - name: community
     x-displayName: Community
-    description: "Where to find bitHuman online, get help and contribute: [https://docs.bithuman.ai/community](https://docs.bithuman.ai/community)."
+    description: "Where to find bitHuman online, get help and contribute: [https://docs.bithuman.ai/support](https://docs.bithuman.ai/support)."
   - name: changelog
     x-displayName: Changelog & releases
     description: "Release notes and version history: [https://docs.bithuman.ai/changelog](https://docs.bithuman.ai/changelog)."
   - name: support
     x-displayName: Support & status
-    description: "Help, Discord and the status page: [https://docs.bithuman.ai/community](https://docs.bithuman.ai/community)."
+    description: "Help, Discord and the status page: [https://docs.bithuman.ai/support](https://docs.bithuman.ai/support)."
   - name: Authentication
     description: Verify API credentials with `POST /v1/validate`.
   - name: Voice

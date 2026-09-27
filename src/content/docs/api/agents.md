@@ -2,13 +2,12 @@
 title: "Agents"
 description: "Create an avatar agent from a portrait, poll until it is ready, then manage it, download its model, and make it speak in live sessions."
 section: api
-group: "Build"
+group: "Agents"
 order: 10
 type: endpoint
-label: "Agents"
 ---
 
-An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/sdk/web), the SDKs, [talking video](/api/video) and live sessions. Creation and model adds cost credits per model ([pricing](/guides/pricing)); everything else on this page is free.
+An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/platforms/web), the SDKs, [talking video](/api/video) and live sessions. Creation and model adds cost credits per model ([pricing](/pricing)); everything else on this page is free.
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -199,7 +198,7 @@ Poll [status](#poll-status) until `model_status["essence-2"].state` is `ready` o
 
 ## Download an agent's model
 
-`GET /v1/agent/{code}/model/download` redirects (`302`) to the agent's model file, a `.imx` container, for the [SDKs](/sdk) and [CLI](/sdk/cli). Pass `?model=` to choose a model when the agent has several; the default is the model it was created with. Sample avatars download with no credential; your own agents need the `api-secret` header.
+`GET /v1/agent/{code}/model/download` redirects (`302`) to the agent's model file, a `.imx` container, for the [SDKs](/platforms) and [CLI](/platforms/cli). Pass `?model=` to choose a model when the agent has several; the default is the model it was created with. Sample avatars download with no credential; your own agents need the `api-secret` header.
 
 ```bash
 curl -fL -o A80HVD8577.imx -H "api-secret: $BITHUMAN_API_SECRET" \

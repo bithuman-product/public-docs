@@ -57,7 +57,7 @@
 //                 green: no docs edit can fix an untagged package, and turning
 //                 this repository red for another lane's release step would
 //                 block every unrelated page change.
-//   V9  Rates     ONE WRITER FOR A MEASURED RATE. sdk/performance.md is emitted
+//   V9  Rates     ONE WRITER FOR A MEASURED RATE. performance/index.md is emitted
 //                 from the floors record; no other page may state a number that
 //                 equals one of its cells next to "fps" or "frames per second".
 //                 Measured 2026-09-14: sdk/ios said "measured on an iPhone 15 at
@@ -242,7 +242,7 @@ export const THIRD_PARTY_SWIFT = [
   {
     id: "livekit-swift",
     name: "LiveKit",
-    // sdk/livekit.md pins this for the iOS/macOS client that renders a
+    // platforms/livekit.md pins this for the iOS/macOS client that renders a
     // bitHuman avatar's track. The url is matched with and without `.git`.
     url: "https://github.com/livekit/client-sdk-swift",
   },
@@ -255,7 +255,7 @@ export const THIRD_PARTY_MAVEN = [
   {
     group: "com.qualcomm.qti",
     declaredBy: "expression2-android",
-    // sdk/android.md tells a reader the AAR brings these in and they no
+    // platforms/android.md tells a reader the AAR brings these in and they no
     // longer type them; examples/kotlin-android-hello.md still types them.
     // Both are claims about the AAR's POM, so both are graded against it.
     why: "the Qualcomm accelerator runtime expression2-android declares at runtime scope",
@@ -267,7 +267,7 @@ export const THIRD_PARTY_PYPI = [
   {
     id: "livekit-agents",
     name: "LiveKit Agents",
-    // sdk/cli/local-mode.md floors the on-device brain at `~=1.5`.
+    // platforms/cli/local-brain.md floors the on-device brain at `~=1.5`.
   },
 ];
 
@@ -375,9 +375,9 @@ function corpus() {
 // current page only: an archive names no current version by construction.
 const isChangelog = (p) => /(^|\/)changelog(\/[^/]+)?\.mdx?$/.test(p);
 const isChangelogHead = (p) => /(^|\/)changelog\.mdx?$/.test(p);
-// ★THE PAGE MAY LIVE AT /sdk/performance OR /performance (REDESIGN §3.9 moves it).
+// ★THE PAGE MAY LIVE AT /performance OR /performance (REDESIGN §3.9 moves it).
 //  A path that stops matching is how V9 would go silently inert: no page, no cells.
-// ★AND ITS SUB-PAGES (2026-09-24): /performance/cloud, /desktop, /mobile, /web and
+// ★AND ITS SUB-PAGES (2026-09-24): /performance#cloud, /desktop, /mobile, /web and
 //  /method carry the same generated rows, so they are the performance page too.
 const isPerformance = (p) => /(^|\/)(sdk\/)?performance(\/[a-z-]+)?\.mdx?$/.test(p);
 /** The rates a model PLAYS at — product constants, never a measurement. */
@@ -644,7 +644,7 @@ export function thirdPartySwiftPins(path, text) {
 /** V11b — `group:artifact:version` in a region a reader copies, for any group
  *  that is not ours. Both forms the site uses are covered because both live in
  *  a code region: the typed `implementation("…")` line on the Kotlin example,
- *  and the inline-span sentence on sdk/android.md that says what the AAR
+ *  and the inline-span sentence on platforms/android.md that says what the AAR
  *  brings in. History is exempt, as everywhere else here. */
 export function thirdPartyMavenCoords(path, text) {
   const out = [];
@@ -949,7 +949,7 @@ export async function grade(files, registry) {
               `V9: "${r.what}" repeats the performance page's ${cells.get(r.value)} cell (${r.value}), ` +
               `which is emitted from the floors record by its one writer. When that cell moves, this ` +
               `copy silently becomes false — sdk/ios said 33 while the cell already said 52. ` +
-              `State the rate only on /sdk/performance and link to it.`,
+              `State the rate only on /performance and link to it.`,
           });
         }
       }
@@ -1223,48 +1223,48 @@ const PERF_FIXTURE_V1 =
 
 const ARMS = [
   // defects — each must fire
-  ["bad: the pre-#70 Android coordinate (0.5.3)", "p/sdk/android.md", '`implementation("ai.bithuman:essence2-android:0.5.3")`', true],
-  ["bad: `bithuman` 3.1.4 stated as current", "p/sdk/python.md", "`bithuman` 3.1.4 runs on Python 3.10–3.14", true],
-  ["bad: PyPI serves an old version across a line break", "p/concepts/essence-1.md", "PyPI serves\n  **3.1.4** with wheels", true],
+  ["bad: the pre-#70 Android coordinate (0.5.3)", "p/platforms/android.md", '`implementation("ai.bithuman:essence2-android:0.5.3")`', true],
+  ["bad: `bithuman` 3.1.4 stated as current", "p/platforms/python.md", "`bithuman` 3.1.4 runs on Python 3.10–3.14", true],
+  ["bad: PyPI serves an old version across a line break", "p/models/first-generation.md", "PyPI serves\n  **3.1.4** with wheels", true],
   ["bad: an exact pip pin to an old version", "p/x.md", '```bash\npip install "bithuman==3.1.4"\n```\n', true],
-  ["bad: sample --version output naming an old CLI", "p/sdk/cli.md", "```text\nlibessence  3.1.4 ABI 7\nbithuman    2.6.13\n```\n", true],
-  ["bad: sample version --json naming an old CLI", "p/sdk/cli/reference.md", '```json\n{"abi":7,"cli":"2.6.13","libessence":"3.1.4"}\n```\n', true],
+  ["bad: sample --version output naming an old CLI", "p/platforms/cli.md", "```text\nlibessence  3.1.4 ABI 7\nbithuman    2.6.13\n```\n", true],
+  ["bad: sample version --json naming an old CLI", "p/platforms/cli/reference.md", '```json\n{"abi":7,"cli":"2.6.13","libessence":"3.1.4"}\n```\n', true],
   ["bad: the downloads table naming an old wheel", "p/downloads.md", TABLE("3.1.4", "0.5.5"), true],
   ["bad: the downloads table naming an old AAR", "p/downloads.md", TABLE("3.1.5", "0.5.3"), true],
-  ["bad: a Swift pin that resolves to an old major", "p/sdk/ios.md", '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "1.9.0")\n```\n', true],
+  ["bad: a Swift pin that resolves to an old major", "p/platforms/ios.md", '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "1.9.0")\n```\n', true],
   ["bad: the pre-#70 landing-page coordinate (0.5.3)", "p/pages/start.astro", '<p>the Android library <code>ai.bithuman:essence2-android:0.5.3</code> is published</p>', true],
   ["bad: a changelog whose newest CLI entry is not the newest CLI", "p/changelog.md", CL("2.6.13", "0.5.5", "3.1.5"), true],
   ["bad: a changelog with no entry for the newest AAR", "p/changelog.md", CL("2.6.14", "0.5.3", "3.1.5"), true],
   ["bad: a changelog with no entry for the newest wheel", "p/changelog.md", CL("2.6.14", "0.5.5", "3.1.4"), true],
   // current text — each must stay silent
-  ["good: the current Android coordinates", "p/sdk/android.md", '```kotlin\nimplementation("ai.bithuman:essence2-android:0.5.5")\nimplementation("ai.bithuman:expression2-android:0.4.1")\n```\n', false],
-  ["good: `bithuman` 3.1.5 stated as current", "p/sdk/python.md", "`bithuman` 3.1.5 runs on Python 3.10–3.14", false],
-  ["good: sample output naming the newest CLI", "p/sdk/cli.md", '```text\nbithuman    2.6.14\n```\n```json\n{"cli":"2.6.14"}\n```\n', false],
-  ["good: a quoted pip guard line is a sentence, not --version output", "p/sdk/python.md", "| `bithuman 2.11.5 has NO WHEEL for this platform.` | no wheel |\n```text\n        bithuman 2.11.5 has NO WHEEL for this platform.\n```\n", false],
+  ["good: the current Android coordinates", "p/platforms/android.md", '```kotlin\nimplementation("ai.bithuman:essence2-android:0.5.5")\nimplementation("ai.bithuman:expression2-android:0.4.1")\n```\n', false],
+  ["good: `bithuman` 3.1.5 stated as current", "p/platforms/python.md", "`bithuman` 3.1.5 runs on Python 3.10–3.14", false],
+  ["good: sample output naming the newest CLI", "p/platforms/cli.md", '```text\nbithuman    2.6.14\n```\n```json\n{"cli":"2.6.14"}\n```\n', false],
+  ["good: a quoted pip guard line is a sentence, not --version output", "p/platforms/python.md", "| `bithuman 2.11.5 has NO WHEEL for this platform.` | no wheel |\n```text\n        bithuman 2.11.5 has NO WHEEL for this platform.\n```\n", false],
   ["good: the current downloads table", "p/downloads.md", TABLE("3.1.5", "0.5.5"), false],
-  ["good: from: 2.11.0 resolves to the newest 2.x tag", "p/sdk/ios.md", '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")\n```\n', false],
+  ["good: from: 2.11.0 resolves to the newest 2.x tag", "p/platforms/ios.md", '```swift\n.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.11.0")\n```\n', false],
   ["good: a changelog with every newest entry", "p/changelog.md", CL("2.6.14", "0.5.5", "3.1.5"), false],
   // history and ranges — each must stay silent
   ["control: a version range is a requirement, not a claim", "p/guides/actions.md", '> **Requires `bithuman>=2.7.0`** (`pip install "bithuman>=2.7.0"`) and `pip install "bithuman<3"`', false],
-  ["control: a deliberate pin to an old CLI release", "p/sdk/cli/reference.md", "`BITHUMAN_VERSION=cli-v2.3.27` still resolves a Linux-ARM tarball", false],
+  ["control: a deliberate pin to an old CLI release", "p/platforms/cli/reference.md", "`BITHUMAN_VERSION=cli-v2.3.27` still resolves a Linux-ARM tarball", false],
   ["control: old coordinates in prose about history", "p/examples/failure-states.md", "produced against **`ai.bithuman:expression2-android:0.3.1`** — the version current that day", false],
   ["control: old versions inside the changelog's history", "p/changelog.md", CL("2.6.14", "0.5.5", "3.1.5") + "`bithuman` 2.3.9 and `implementation(\"ai.bithuman:essence2-android:0.2.0\")`\n", false],
   ["control: a minimum version is not a claim", "p/guides/mcp.md", "Needs CLI **2.4.1+** and `bithuman` 3.1.2+", false],
   ["good: the current landing-page coordinate", "p/pages/start.astro", "<code>ai.bithuman:essence2-android:0.5.5</code> and implementation(\"ai.bithuman:expression2-android:0.4.1\")", false],
   ["good: a newer entry citing an older CLI above the newest CLI's entry", "p/changelog.md", "### Python (2026-09-13)\n\nThe change `cli-v2.6.13` made.\n\n" + CL("2.6.14", "0.5.5", "3.1.5"), false],
-  ["bad: the newest Swift package tag named as an older tag", "p/sdk/ios.md", "The newest package tag, **2.13.2**, ships Essence 2 engine **1.6.3**.", true],
-  ["bad: an older Essence 2 engine named as what the newest tag ships", "p/sdk/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.2**.", true],
-  ["good: the newest tag and the engine it ships", "p/sdk/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**.", false],
+  ["bad: the newest Swift package tag named as an older tag", "p/platforms/ios.md", "The newest package tag, **2.13.2**, ships Essence 2 engine **1.6.3**.", true],
+  ["bad: an older Essence 2 engine named as what the newest tag ships", "p/platforms/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.2**.", true],
+  ["good: the newest tag and the engine it ships", "p/platforms/ios.md", "The newest package tag, **2.13.3**, ships Essence 2 engine **1.6.3**.", false],
   ["control: a minimum Swift version is not a claim about the newest", "p/downloads.md", "Essence 2 in your own iOS or macOS app works from **2.13.2** — it opens the file you download.", false],
-  ["bad: a page repeating a performance cell", "p/sdk/ios.md", "measured on an iPhone 15 at 52 frames per second", true],
-  ["bad: a page repeating the other column's cell", "p/sdk/web.md", "the browser renders at 118 fps today", true],
-  ["good: the model play rate is a product constant, not a cell", "p/concepts/essence-2.md", "lip-synced live at ~25 frames per second, and 20 fps for the other model", false],
+  ["bad: a page repeating a performance cell", "p/platforms/ios.md", "measured on an iPhone 15 at 52 frames per second", true],
+  ["bad: a page repeating the other column's cell", "p/platforms/web.md", "the browser renders at 118 fps today", true],
+  ["good: the model play rate is a product constant, not a cell", "p/models/essence-2.md", "lip-synced live at ~25 frames per second, and 20 fps for the other model", false],
   ["good: a page's own measurement that is not a cell", "p/examples/kotlin.md", "this phone renders about 5.6 frames per second, and playback needs 20", false],
-  ["control: the performance page itself states its cells", "p/sdk/performance.md", PERF_FIXTURE, false],
+  ["control: the performance page itself states its cells", "p/performance/index.md", PERF_FIXTURE, false],
   ["control: the page at its new home states its cells", "p/performance.md", PERF_FIXTURE, false],
-  ["control: a generated FLOORS:HEADLINE block states cells by construction", "p/concepts/models.md",
+  ["control: a generated FLOORS:HEADLINE block states cells by construction", "p/models/index.md",
    "<!-- FLOORS:HEADLINE -->\n| | iPhone 15 |\n|---|---|\n| **Essence 2** | **52 fps** · 2.0× |\n<!-- /FLOORS:HEADLINE -->\n", false],
-  ["bad: a cell typed right after a generated block", "p/concepts/models.md",
+  ["bad: a cell typed right after a generated block", "p/models/index.md",
    "<!-- FLOORS:HEADLINE -->\n| x |\n<!-- /FLOORS:HEADLINE -->\nAn iPhone does 118 fps.\n", true],
   ["control: a page with no version at all", "p/x.md", "Nothing versioned here.\n", false],
 
@@ -1273,43 +1273,43 @@ const ARMS = [
      deliberately stays silent about. ---- */
 
   // V10 — a SwiftPM floor on somebody else's package.
-  ["bad: a LiveKit floor left on the 1.x line after the v2 break", "p/sdk/livekit.md",
+  ["bad: a LiveKit floor left on the 1.x line after the v2 break", "p/platforms/livekit.md",
    '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git",\n         .upToNextMajor(from: "1.1.6"))\n```\n', true],
-  ["bad: a LiveKit floor above every published tag", "p/sdk/livekit.md",
+  ["bad: a LiveKit floor above every published tag", "p/platforms/livekit.md",
    '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "9.9.9")\n```\n', true],
-  ["bad: a Swift package pinned from a project no table here knows", "p/sdk/ios.md",
+  ["bad: a Swift package pinned from a project no table here knows", "p/platforms/ios.md",
    '```swift\n.package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0")\n```\n', true],
-  ["good: a LiveKit floor two minors back still resolves the newest 2.x", "p/sdk/livekit.md",
+  ["good: a LiveKit floor two minors back still resolves the newest 2.x", "p/platforms/livekit.md",
    '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git",\n         .upToNextMajor(from: "2.15.3"))\n```\n', false],
-  ["good: the LiveKit floor the page carries today", "p/sdk/livekit.md",
+  ["good: the LiveKit floor the page carries today", "p/platforms/livekit.md",
    '```swift\n.package(url: "https://github.com/livekit/client-sdk-swift.git",\n         .upToNextMajor(from: "2.17.0"))\n```\n', false],
-  ["control: a third-party git url named with no pin claims no version", "p/sdk/livekit.md",
+  ["control: a third-party git url named with no pin claims no version", "p/platforms/livekit.md",
    "a [frozen fork](https://github.com/bithuman-archive/bithuman-livekit-swift) (archived, still installable via its git URL)", false],
 
   // V10 — a PyPI compatible-release floor.
-  ["bad: a livekit-agents floor left on 0.x after the 1.0 break", "p/sdk/cli/local-mode.md",
+  ["bad: a livekit-agents floor left on 0.x after the 1.0 break", "p/platforms/cli/local-brain.md",
    "```bash\npip install \'livekit-agents[silero]~=0.12\' supertonic\n```\n", true],
-  ["bad: a PyPI floor on a distribution no table here knows", "p/sdk/cli/local-mode.md",
+  ["bad: a PyPI floor on a distribution no table here knows", "p/platforms/cli/local-brain.md",
    "```bash\npip install \'pywhispercpp~=1.3\'\n```\n", true],
-  ["good: the livekit-agents floor the page carries today", "p/sdk/cli/local-mode.md",
+  ["good: the livekit-agents floor the page carries today", "p/platforms/cli/local-brain.md",
    "```bash\npip install \'livekit-agents[silero]~=1.5\' supertonic\n```\n", false],
 
   // V11a — a sentence that dates itself against someone else's head.
-  ["bad: a sentence calling an older LiveKit release the newest", "p/sdk/livekit.md",
+  ["bad: a sentence calling an older LiveKit release the newest", "p/platforms/livekit.md",
    "`2.16.0` is LiveKit\'s newest release (2026-09-14), and the `from:` is a floor.", true],
-  ["bad: the same claim written the other way round", "p/sdk/livekit.md",
+  ["bad: the same claim written the other way round", "p/platforms/livekit.md",
    "LiveKit\'s newest release is **2.15.3** today.", true],
-  ["good: the sentence the page carries today", "p/sdk/livekit.md",
+  ["good: the sentence the page carries today", "p/platforms/livekit.md",
    "`2.17.0` is LiveKit\'s newest release (2026-09-14), and the `from:` is a floor.", false],
 
   // V11b — a third-party coordinate against the POM that decides it.
-  ["bad: a Qualcomm coordinate one release behind the AAR\'s POM", "p/sdk/android.md",
+  ["bad: a Qualcomm coordinate one release behind the AAR\'s POM", "p/platforms/android.md",
    "Gradle brings in `com.qualcomm.qti:qnn-litert-delegate:2.48.0` for you.", true],
   ["bad: the same rewind in a line the reader types", "p/examples/kotlin-android-hello.md",
    '```kotlin\ndependencies {\n    implementation("com.qualcomm.qti:qnn-runtime:2.48.0")\n}\n```\n', true],
   ["bad: a Maven group no table here knows", "p/examples/kotlin-android-hello.md",
    '```kotlin\nimplementation("com.squareup.okhttp3:okhttp:5.0.0")\n```\n', true],
-  ["good: the Qualcomm coordinates the POM declares", "p/sdk/android.md",
+  ["good: the Qualcomm coordinates the POM declares", "p/platforms/android.md",
    "Gradle brings in `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0` for you.", false],
   ["control: an old third-party coordinate inside the changelog\'s history", "p/changelog.md",
    CL("2.6.14", "0.5.5", "3.1.5") + "`com.qualcomm.qti:qnn-runtime:2.48.0` and `com.google.ai.edge.litert:litert:2.2.0`\n", false],
@@ -1322,7 +1322,7 @@ async function selftest() {
     // every arm is graded beside it — except the arm that IS that page.
     const corpusFiles = isPerformance(path)
       ? [{ path, text }]
-      : [{ path, text }, { path: "p/sdk/performance.md", text: PERF_FIXTURE }];
+      : [{ path, text }, { path: "p/performance/index.md", text: PERF_FIXTURE }];
     const { failures, cannot } = await grade(corpusFiles, stub());
     const fired = failures.length > 0;
     const ok = fired === mustFire && cannot.length === 0;
@@ -1355,7 +1355,7 @@ async function selftest() {
     // Mac resolves 3.1.5. The finding must say both halves.
     const base = stub();
     const hinted = await grade(
-      [{ path: "p/sdk/python.md", text: "`bithuman` 3.1.5 runs on Python" }],
+      [{ path: "p/platforms/python.md", text: "`bithuman` 3.1.5 runs on Python" }],
       {
         ...base,
         async latest(a) { return a.id === "bithuman" ? "3.1.6" : base.latest(a); },
@@ -1384,7 +1384,7 @@ async function selftest() {
     // (1) The finding must name the coordinate, the version written and the
     //     version the POM declares — all three, or it is not actionable.
     {
-      const f = await one([{ path: "p/sdk/android.md", text: "Gradle brings in `com.qualcomm.qti:qnn-runtime:2.48.0` for you." }]);
+      const f = await one([{ path: "p/platforms/android.md", text: "Gradle brings in `com.qualcomm.qti:qnn-runtime:2.48.0` for you." }]);
       const m = f[0]?.msg ?? "";
       checks.push([
         "names: a stale Qualcomm coordinate names the artifact, 2.48.0 and 2.49.0",
@@ -1409,7 +1409,7 @@ async function selftest() {
       const asked = [];
       const spy = { ...base, async latest(a) { asked.push(a.id); return base.latest(a); } };
       const f = await one(
-        [{ path: "p/sdk/android.md", text: "brings in `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`" }],
+        [{ path: "p/platforms/android.md", text: "brings in `com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`" }],
         spy,
       );
       checks.push([
@@ -1435,7 +1435,7 @@ async function selftest() {
           return { of: "expression2-android", pomVersion: "0.4.9", deps: new Map([["org.jetbrains.kotlin:kotlin-stdlib", "2.0.21"]]) };
         },
       };
-      const f = await one([{ path: "p/sdk/android.md", text: "Gradle brings in `com.qualcomm.qti:qnn-runtime:2.49.0` for you." }], gone);
+      const f = await one([{ path: "p/platforms/android.md", text: "Gradle brings in `com.qualcomm.qti:qnn-runtime:2.49.0` for you." }], gone);
       const m = f[0]?.msg ?? "";
       checks.push([
         "dropped: a dependency the AAR stopped declaring is red, and says so",
@@ -1447,8 +1447,8 @@ async function selftest() {
     // (4) A third-party registry that cannot be read leaves its subject NAMED
     //     and ungraded and exits 2 — the same contract as a first-party one.
     for (const [who, down, text, path] of [
-      ["livekit-swift", "livekit-swift", '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "2.17.0")', "p/sdk/livekit.md"],
-      ["the expression2-android POM", "expression2-android-pom", "`com.qualcomm.qti:qnn-runtime:2.49.0`", "p/sdk/android.md"],
+      ["livekit-swift", "livekit-swift", '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "2.17.0")', "p/platforms/livekit.md"],
+      ["the expression2-android POM", "expression2-android-pom", "`com.qualcomm.qti:qnn-runtime:2.49.0`", "p/platforms/android.md"],
     ]) {
       const { failures, cannot } = await grade([{ path, text }], stub([down]));
       const c = cannot.find((x) => x.artifact === down);
@@ -1463,8 +1463,8 @@ async function selftest() {
     //     red across a major. Both halves on the same subject, so the arm is
     //     about the POLICY and not about two different pins.
     {
-      const quiet = await one([{ path: "p/sdk/livekit.md", text: '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "2.15.3")' }]);
-      const loud = await one([{ path: "p/sdk/livekit.md", text: '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "1.1.6")' }]);
+      const quiet = await one([{ path: "p/platforms/livekit.md", text: '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "2.15.3")' }]);
+      const loud = await one([{ path: "p/platforms/livekit.md", text: '.package(url: "https://github.com/livekit/client-sdk-swift.git", from: "1.1.6")' }]);
       checks.push([
         "policy: a floor is silent two minors back and red across a major",
         quiet.length === 0 && loud.length === 1 && /newer major line/.test(loud[0].msg) && /client-sdk-swift/.test(loud[0].msg),
@@ -1481,7 +1481,7 @@ async function selftest() {
   // CANNOT CHECK: an unreachable registry must never read as a pass.
   {
     const { failures, cannot } = await grade(
-      [{ path: "p/sdk/python.md", text: "`bithuman` 3.1.4 runs on Python" }],
+      [{ path: "p/platforms/python.md", text: "`bithuman` 3.1.4 runs on Python" }],
       stub(["bithuman"]),
     );
     const c = cannot.find((x) => x.artifact === "bithuman");
@@ -1606,7 +1606,7 @@ if (code === 1) {
   }
   if (rates) {
     parts.push(`${rates} rate literal(s) repeating a performance-page cell`);
-    fixes.push("state a measured rate only on /sdk/performance");
+    fixes.push("state a measured rate only on /performance");
   }
   console.log(
     `check-versions-current: ${failures.length} finding(s) — ${parts.join(", ")}` +

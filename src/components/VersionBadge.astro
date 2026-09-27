@@ -1,0 +1,8 @@
+---
+// The current version of one artifact, from src/data/versions.json. Never typed.
+import Chip from "./Chip.astro";
+import { versionLabel, type Artifact } from "../data/labels";
+interface Props { artifact: Artifact; href?: string }
+const { artifact, href = "/downloads" } = Astro.props;
+---
+<Chip kind="version" label={versionLabel(artifact)} href={href} />

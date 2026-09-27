@@ -28,7 +28,7 @@
 //   2. Downloads the Linux x86_64 tarball, extracts it, and runs
 //      `bithuman version --json` on a fresh HOME.
 //   3. Compares cli, libessence and abi against BOTH sample blocks:
-//      sdk/cli.md's `--version` text and sdk/cli/reference.md's JSON shape.
+//      platforms/cli.md's `--version` text and platforms/cli/reference.md's JSON shape.
 //
 // EXIT 0 the page matches the binary · 1 it does not · 2 the binary could not
 // be obtained or run. Two is a failure you can see, never a pass.
@@ -50,8 +50,8 @@ const ASSET = "bithuman-x86_64-unknown-linux-gnu.tar.gz";
 const UA = "bithuman-public-docs-cli-sample-check (+https://github.com/bithuman-product/public-docs)";
 
 const PAGES = {
-  text: "src/content/docs/sdk/cli.md",
-  json: "src/content/docs/sdk/cli/reference.md",
+  text: "src/content/docs/platforms/cli.md",
+  json: "src/content/docs/platforms/cli/reference.md",
 };
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -120,7 +120,7 @@ const HISTORICAL = [/^src\/content\/docs\/changelog\.md$/, /^src\/content\/docs\
 // A row whose page no longer carries that name is STALE and is RED — the same
 // discipline the retired-name ratchet in bithuman-ui uses for its allow rows.
 const DENIAL_ROWS = [
-  // e.g. ["src/content/docs/sdk/cli.md", "fingerprint"],
+  // e.g. ["src/content/docs/platforms/cli.md", "fingerprint"],
 ];
 
 /** Every name typeable after `bithuman`, read out of the binary's own schema. */

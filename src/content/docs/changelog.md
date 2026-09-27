@@ -3,9 +3,8 @@ title: "Changelog"
 description: "Release notes for every bitHuman artifact: CLI, Python, Swift package, Android, API and LiveKit plugin."
 section: resources
 group: "Resources"
-order: 2
+order: 20
 type: changelog
-label: "Changelog"
 ---
 
 What changed in each release, newest day first (grouped by artifact within a day). Current versions are on [Downloads & versions](/downloads) and in [/versions.json](/versions.json). Entries before August 2026 are in the [archive](/changelog/archive).
@@ -22,7 +21,7 @@ What changed in each release, newest day first (grouped by artifact within a day
 | 2026-09-24 | expression2-android 0.5.0 | `Expression2ModelStore.MODEL`, `CANON` and `IDLE` are no longer compile-time constants | read them at runtime; a `when` branch or annotation that used them as constants must change |
 | 2026-09-23 | Swift package 2.14.2 | `Expression2Engine.create` refuses without an API secret | call `Expression2Credential.set(_:)` or set `BITHUMAN_API_SECRET` |
 | 2026-09-23 | expression2-android 0.4.9 | `Expression2Avatar.create` refuses without an API secret | set `Expression2Metering.apiSecret` |
-| 2026-09-22 | CLI 2.7.0 | retired command spellings exit 2; `account --limit` defaults to 10 | use the [current names](/sdk/cli/reference#commands); pass `--limit 50` for the old window |
+| 2026-09-22 | CLI 2.7.0 | retired command spellings exit 2; `account --limit` defaults to 10 | use the [current names](/platforms/cli/reference#commands); pass `--limit 50` for the old window |
 | 2026-09-16 | bithuman 2.11.0 | the 3.x releases are withdrawn from PyPI | unpin 3.x; `pip install bithuman` |
 | 2026-09-16 | expression2-android 0.4.7 | `idleLoop` is an `Expression2IdleLoop`, not a `List<Bitmap>` | call `idleLoop?.next(bitmap)` |
 | 2026-09-16 | Swift package 2.13.5 | `Expression2Engine.idleLoop` removed | use `idleNextPixelBuffer()` or `idle(into:)` |
@@ -140,14 +139,14 @@ Tag `cli-v2.8.0`.
 
 ### LiveKit docs and examples — 2026-09-26
 
-- **Changed:** a LiveKit worker keeps your API secret as `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`. `livekit-plugins-bithuman` 1.8.4 and older reads `BITHUMAN_API_SECRET` by itself whenever `api_secret=` is omitted, and copies it into the avatar's participant attributes, which everyone in the room can read. The [LiveKit page](/sdk/livekit#authenticate) and the LiveKit examples now use the new name and refuse to start while the old one is set.
+- **Changed:** a LiveKit worker keeps your API secret as `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`. `livekit-plugins-bithuman` 1.8.4 and older reads `BITHUMAN_API_SECRET` by itself whenever `api_secret=` is omitted, and copies it into the avatar's participant attributes, which everyone in the room can read. The [LiveKit page](/platforms/livekit#authenticate) and the LiveKit examples now use the new name and refuse to start while the old one is set.
 - **Action:** rename the variable in your worker's environment and mint a room token from it. If a worker ran a cloud avatar with `BITHUMAN_API_SECRET` set and no `api_secret=`, create a new secret and delete the old one in the console.
 
 ### Billing — 2026-09-26
 
-- **Changed:** a managed conversational agent bills one all-inclusive rate (10 credits/min, or 30 with the camera on). It covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser; there is no separate avatar charge. An avatar-only session (your own agent through the plugin or the API) that renders in the browser bills the model's self-hosted rate. Rates are on [pricing](/guides/pricing).
-- **Changed:** realtime sessions bill active session time, talking or idle, by the exact second, with no per-session minimum. A session's fraction of a credit carries to your next session. This replaces the talking-only billing announced earlier the same day. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/guides/pricing).
-- **Changed:** Expression 1 avatar sessions are now metered to your account at the standard cloud rate. Rates are on [pricing](/guides/pricing).
+- **Changed:** a managed conversational agent bills one all-inclusive rate (10 credits/min, or 30 with the camera on). It covers the avatar, whether it renders in the bitHuman cloud or in the viewer's browser; there is no separate avatar charge. An avatar-only session (your own agent through the plugin or the API) that renders in the browser bills the model's self-hosted rate. Rates are on [pricing](/pricing).
+- **Changed:** realtime sessions bill active session time, talking or idle, by the exact second, with no per-session minimum. A session's fraction of a credit carries to your next session. This replaces the talking-only billing announced earlier the same day. Talking-video renders are unchanged: whole minutes of output, minimum one minute. Rates are on [pricing](/pricing).
+- **Changed:** Expression 1 avatar sessions are now metered to your account at the standard cloud rate. Rates are on [pricing](/pricing).
 
 ### Swift package 2.17.2 — 2026-09-26
 
@@ -205,7 +204,7 @@ Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0
 
 - **Changed:** after a pause in the conversation, the first frame of the next reply arrives sooner (about 1,090 → 242 ms on a Galaxy S25+). The picture is otherwise unchanged: frames are identical to 0.5.15.
 - **Changed:** a failed download is retried on one budget shared by the whole store, so a service outage is not met with a burst of retries.
-- **Changed:** the `-sources.jar` and `-javadoc.jar` on Maven Central are placeholders; the API reference is [Android API](/sdk/android-api).
+- **Changed:** the `-sources.jar` and `-javadoc.jar` on Maven Central are placeholders; the API reference is [Android API](/platforms/android/reference).
 - **Deprecated (still works):** `Essence2ModelStore.DEFAULT_MEMBERS`. No replacement is needed.
 - **Action:** `implementation("ai.bithuman:essence2-android:0.6.0")`.
 
@@ -213,7 +212,7 @@ Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0
 
 - **Fixed:** lip sync. The mouth moved ahead of the voice; it now lines up. The first frame of each stream is shown twice; a stream still carries the same number of frames.
 - **Changed:** a failed download is retried on one budget shared by the whole store.
-- **Changed:** the `-sources.jar` and `-javadoc.jar` on Maven Central are placeholders; the API reference is [Android API](/sdk/android-api).
+- **Changed:** the `-sources.jar` and `-javadoc.jar` on Maven Central are placeholders; the API reference is [Android API](/platforms/android/reference).
 - **Breaking (source only):** `Expression2ModelStore.MODEL`, `CANON` and `IDLE` keep their values but are no longer compile-time constants.
 - **Action:** `implementation("ai.bithuman:expression2-android:0.5.0")`.
 
@@ -227,7 +226,7 @@ Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0
 Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 
 - **Fixed:** Expression 2 lip sync. The mouth moved about 65 ms ahead of the voice; it now lines up (about 15 ms). To do this, the first frame of each stream is shown twice; a stream still carries the same number of frames.
-- **New:** `Expression2Download.avatar(agentCode:)` and `Essence2Download.identity(agentCode:)` download an avatar file from your app. They fetch the smaller Apple build of the file, check its sha256 and keep it in the app's Caches, so a second call downloads nothing. See [Apple](/sdk/apple#download-an-avatar-in-the-app).
+- **New:** `Expression2Download.avatar(agentCode:)` and `Essence2Download.identity(agentCode:)` download an avatar file from your app. They fetch the smaller Apple build of the file, check its sha256 and keep it in the app's Caches, so a second call downloads nothing. See [Apple](/platforms/ios#download-an-avatar-in-the-app).
 - **Action:** set `from: "2.15.0"`, then `swift package update`.
 
 ### Flutter plugin 2.6.15 — 2026-09-24
@@ -313,7 +312,7 @@ Tag `cli-v2.7.4`.
 Tag `cli-v2.7.3`.
 
 - **Changed:** one short command line. `bithuman --help` lists 13 commands and 10 flags; `run` takes `--host` and `--port`. `render <avatar> <audio>` takes the audio as its second argument, writes `<avatar>.mp4` unless you pass `-o`, and, like `run` and `open`, accepts an agent code or a sample avatar's name and downloads it on first use.
-- **Changed:** every old spelling (`-a`, `--offscreen`, `--cloud`, `--allow-public-bind`, `chat`, `info`, `avatars`, …) still works until 2.9.0 and prints one line on stderr naming what to use instead; `--json` output is unchanged. The full list is in [Renamed in 2.7.3](/sdk/cli/reference#renamed-in-273).
+- **Changed:** every old spelling (`-a`, `--offscreen`, `--cloud`, `--allow-public-bind`, `chat`, `info`, `avatars`, …) still works until 2.9.0 and prints one line on stderr naming what to use instead; `--json` output is unchanged. The full list is in [Renamed in 2.7.3](/platforms/cli/reference#renamed-in-273).
 - **Action:** `curl -fsSL https://install.bithuman.ai | sh`, or `brew upgrade bithuman-cli`.
 
 ### CLI 2.7.2 — 2026-09-23
@@ -332,7 +331,7 @@ Tag `cli-v2.7.2`.
 Essence 2 engine 1.12.1 · Expression 2 engine 2.6.5
 
 - **Fixed:** building a Swift package or command-line tool that uses Essence 2 no longer prints `.pcm: No such file or directory` linker warnings. The engine itself is unchanged.
-- **Action:** set `from: "2.14.4"`, then `swift package update`. See [Apple](/sdk/apple).
+- **Action:** set `from: "2.14.4"`, then `swift package update`. See [Apple](/platforms/ios).
 
 ### Flutter plugin 2.6.14 — 2026-09-23
 
@@ -360,7 +359,7 @@ Essence 2 engine 1.12.0 · Expression 2 engine 2.6.5
 - **Fixed:** apps that link Essence 2 no longer get a `CoreAudioTypes` linker warning.
 - **Fixed:** the C header now says what the engine delivers: frames are B, G, R.
 - **New:** `be_essence2_last_refusal` returns the reason behind a `-3`.
-- **Action:** set `from: "2.14.3"` and take the `Essence2Kit` product. See [Apple](/sdk/apple).
+- **Action:** set `from: "2.14.3"` and take the `Essence2Kit` product. See [Apple](/platforms/ios).
 
 ### Flutter plugin 2.6.13 — 2026-09-23
 
@@ -373,13 +372,13 @@ Essence 2 engine 1.12.0 · Expression 2 engine 2.6.5
 - **New:** `Essence2Credential.set(secret)` sets your API secret once. It covers the avatar download and the session, so `Essence2ModelStore(context)` needs no resolver.
 - **New:** every type an app uses is in `ai.bithuman.essence2`, including `Essence2Credential` and `Essence2MeteredDoorResolver`.
 - **Deprecated:** `Essence2Metering.apiSecret`. It still works and sets the same value.
-- **Action:** use `ai.bithuman:essence2-android:0.5.15`, and replace `Essence2Metering.apiSecret = …` with `Essence2Credential.set(…)`. See [Android](/sdk/android).
+- **Action:** use `ai.bithuman:essence2-android:0.5.15`, and replace `Essence2Metering.apiSecret = …` with `Essence2Credential.set(…)`. See [Android](/platforms/android).
 
 ### `expression2-android` 0.4.10 — 2026-09-23
 
 - **New:** `Expression2Credential.set(secret)` sets your API secret once. It covers the avatar download and the session.
 - **Deprecated:** `Expression2Metering.apiSecret`. It still works and sets the same value.
-- **Action:** use `ai.bithuman:expression2-android:0.4.10`, and replace `Expression2Metering.apiSecret = …` with `Expression2Credential.set(…)`. See [Android](/sdk/android).
+- **Action:** use `ai.bithuman:expression2-android:0.4.10`, and replace `Expression2Metering.apiSecret = …` with `Expression2Credential.set(…)`. See [Android](/platforms/android).
 
 ### `bithuman` 2.11.7 — 2026-09-23
 
@@ -397,14 +396,14 @@ Essence 2 engine 1.11.0 · Expression 2 engine 2.6.5
 - **Changed:** Expression 2 now uses your API secret, like Essence 2 (`Expression2Credential.set(_:)` or `BITHUMAN_API_SECRET`).
 - **Changed:** if the service cannot be reached when a session starts, `create` refuses with a retryable error. After the secret is accepted, a network loss is tolerated for 5 minutes of rendered video.
 - **New:** `BITHUMAN_API_KEY` is read as a deprecated alias.
-- **Action:** set `from: "2.14.2"`, then `swift package update`. See [Apple](/sdk/apple).
+- **Action:** set `from: "2.14.2"`, then `swift package update`. See [Apple](/platforms/ios).
 
 ### `expression2-android` 0.4.9 — 2026-09-23
 
 - **Changed:** on-device Expression 2 sessions use your API secret and bill talking time; idle is free. `Expression2Avatar.create` throws `Expression2Exception` without a secret.
 - **New:** `Expression2Metering` (`apiSecret`, `apiBaseUrl`, `installId`, `stateDir`).
 - **New:** after the secret is accepted, a network loss is tolerated for 5 minutes of rendered video; usage that could not be sent is kept and sent at the next start.
-- **Action:** set `Expression2Metering.apiSecret` before `create`, then use `ai.bithuman:expression2-android:0.4.9`. See [Android](/sdk/android).
+- **Action:** set `Expression2Metering.apiSecret` before `create`, then use `ai.bithuman:expression2-android:0.4.9`. See [Android](/platforms/android).
 
 ### `essence2-android` 0.5.14 — 2026-09-23
 
@@ -417,7 +416,7 @@ Essence 2 engine 1.11.0 · Expression 2 engine 2.6.5
 
 - **Changed:** revealing a stored API secret is console-only. `GET /v2/{user_id}/api-secrets/{alias}/get-value` with an `api-secret` returns `403 SECRET_REVEAL_CONSOLE_ONLY`. See [API secrets](/api/api-keys#reveal-an-api-secret).
 - **Changed:** short legacy-format secrets work only if bitHuman has them on record; create a new secret if an old one returns `401`.
-- **New:** `POST /v1/runtime-tokens/mint` takes `"scope": "livekit-cloud"`: a one-hour token that starts one agent's avatar in one room. Pass it to the LiveKit plugin instead of your secret ([LiveKit](/sdk/livekit#authenticate)).
+- **New:** `POST /v1/runtime-tokens/mint` takes `"scope": "livekit-cloud"`: a one-hour token that starts one agent's avatar in one room. Pass it to the LiveKit plugin instead of your secret ([LiveKit](/platforms/livekit#authenticate)).
 
 ### `essence2-android` 0.5.13 — 2026-09-23
 
@@ -658,4 +657,4 @@ Essence 2 engine 1.5.1 to 1.6.2
 
 - **New:** Essence 2 renders on your own Linux CPU, to frames or an MP4, with your API secret.
 
-Questions and bug reports: [Community & support](/community).
+Questions and bug reports: [Community & support](/support).

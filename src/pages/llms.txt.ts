@@ -19,9 +19,9 @@ const SITE = "https://docs.bithuman.ai";
 export const GET: APIRoute = async () => {
   let out = `# bitHuman\n\n`;
   out +=
-    `> Realtime talking avatars from one portrait. Essence 2 renders a photoreal person (up to 1920x1080, 25 fps); ` +
-    `Expression 2 renders any character (416x720, 20 fps). Run them from the cloud API, a web embed, the CLI, Python, ` +
-    `Apple and Android apps, LiveKit agents, or an MCP client.\n\n`;
+    `> Realtime talking avatars from one portrait. Essence 2 renders a photoreal person; Expression 2 renders any character. ` +
+    `They render on the device (iPhone, iPad, Mac, Android arm64, a Linux PC with no GPU, a WebGPU browser) or in the bitHuman cloud. ` +
+    `Every published configuration is measured faster than real time: ${SITE}/performance\n\n`;
   out += agentFacts(SITE);
 
   out += `## Start: one command per path\n\n`;
@@ -38,11 +38,11 @@ export const GET: APIRoute = async () => {
   const perf = inSidebarOrder(await getCollection("docs", (e: any) => !e.data.draft && e.data.section === "performance"))
     .filter((d: any) => d.id !== "performance");
   out += `Every platform: ${SITE}/performance.md${existsSync("public/performance.json") ? ` · data: ${SITE}/performance.json` : ""}`;
-  if (perf.length) out += ` · by platform: ${perf.map((d: any) => `${d.data.label ?? d.data.title} ${SITE}/${d.id}.md`).join(" · ")}`;
+  if (perf.length) out += ` · ${perf.map((d: any) => `${d.data.title} ${SITE}/${d.id}.md`).join(" · ")}`;
   out += `\n\n`;
 
   out += `## Docs (markdown)\n\n`;
-  out += `- Hubs: ${["start", "api", "sdk", "guides", "examples", "changelog"].map((h) => `${SITE}/${h}.md`).join(" · ")}\n`;
+  out += `- Hubs: ${["start", "platforms", "deploy", "models", "build", "api", "examples", "changelog"].map((h) => `${SITE}/${h}.md`).join(" · ")}\n`;
   out += `- For AI agents (files, MCP, rules): ${SITE}/resources/agents.md · OpenAPI: ${SITE}/api/openapi.yaml\n`;
   const rest = LLMS_SECTIONS.filter((s) => !s.inFull);
   out += `- Full text in one fetch (${FULL_SCOPE}): ${SITE}/llms-full.txt\n`;

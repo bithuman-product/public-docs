@@ -1,20 +1,21 @@
 ---
-title: "On-device brain"
-description: "Run the avatar's conversation brain on your own machine (speech recognition, language model, speech) with one environment variable. Audio and transcripts stay on the box."
-section: sdk
-group: "Platforms"
-order: 11
+title: "Local conversation brain"
+description: "The CLI's local conversation brain: speech recognition, the language model and the voice run on your Mac or Linux machine with one environment variable (BITHUMAN_LOCAL=1). Audio and transcripts stay on the machine."
+section: platforms
+group: "Code & terminal"
+order: 30
 type: guide
-label: "CLI: on-device brain"
+renders: ["server", "no-gpu"]
+artifacts: ["cli"]
 ---
 
 `BITHUMAN_LOCAL=1 bithuman run` replaces the cloud conversation brain with one that runs on your machine: whisper.cpp for speech recognition, llama.cpp for the language model, Supertonic for speech, and Silero for voice detection. The command, the browser URL and the avatar stay the same.
 
-Audio, transcripts and generated speech never leave the machine. The avatar session is still reported to your account, so `run` needs a sign-in and a network connection. Running realtime avatars off the internet is a separate arrangement: the [offline license](/guides/pricing#offline-licensing) (Business and Enterprise).
+Audio, transcripts and generated speech never leave the machine. The avatar session is still reported to your account, so `run` needs a sign-in and a network connection. Running realtime avatars off the internet is a separate arrangement: the [offline license](/pricing#offline-licensing) (Business and Enterprise).
 
 ## Before you start
 
-- The [CLI](/sdk/cli#install), signed in (`bithuman login`, or `BITHUMAN_API_SECRET`).
+- The [CLI](/platforms/cli#install), signed in (`bithuman login`, or `BITHUMAN_API_SECRET`).
 - About 1 GB of disk and 1.5 GB of free memory.
 - `cmake` and a C++ compiler: `llama-cpp-python` builds from source (several minutes).
 
@@ -27,7 +28,7 @@ bithuman run sofia-ramirez      # press Ctrl-C once the URL prints
 
 The first `run` creates the brain's Python environment at `~/.cache/bithuman/brain-venv`.
 
-## 2. Install the on-device brain into that environment
+## 2. Install the local conversation brain into that environment
 
 ```bash
 ~/.cache/bithuman/brain-venv/bin/python -m pip install \
@@ -51,7 +52,7 @@ BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 
 | Variable | Default | Effect |
 |---|---|---|
-| `BITHUMAN_LOCAL` | unset | `1` uses the on-device brain |
+| `BITHUMAN_LOCAL` | unset | `1` uses the local conversation brain |
 | `BITHUMAN_LOCAL_WHISPER` | `tiny.en` | Speech-recognition model: `tiny.en`, `base.en`, or multilingual `tiny`, `base`, `small`, `medium`, `large-v3-turbo` |
 | `BITHUMAN_LOCAL_LLM` | `Qwen/Qwen2.5-0.5B-Instruct-GGUF` | Any Hugging Face GGUF chat model |
 | `BITHUMAN_LOCAL_LLM_FILE` | `qwen2.5-0.5b-instruct-q4_k_m.gguf` | The GGUF file in that repository |
@@ -74,12 +75,12 @@ export BITHUMAN_LOCAL_WHISPER=small BITHUMAN_LOCAL_LANG=ko BITHUMAN_LOCAL_VOICE=
 BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 ```
 
-## Cloud brain or on-device brain
+## Cloud brain or local conversation brain
 
-| Detail | Cloud brain (default) | On-device brain |
+| Detail | Cloud brain (default) | Local conversation brain |
 |---|---|---|
 | Setup | sign in (or set `OPENAI_API_KEY`) | three steps above |
-| Cost | the managed voice-chat rate, 10 credits/min ([pricing](/guides/pricing)); with `OPENAI_API_KEY`, your OpenAI bill instead | no brain charge |
+| Cost | the managed voice-chat rate, 10 credits/min ([pricing](/pricing)); with `OPENAI_API_KEY`, your OpenAI bill instead | no brain charge |
 | Where audio goes | to the speech and language service | stays on the machine |
 | Memory | about 300 MB (the avatar) | about 1.5 GB |
 | Languages | the service's | 31 for speech output |
@@ -98,6 +99,6 @@ BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 
 ## Next
 
-- [CLI reference](/sdk/cli/reference)
-- [Self-hosting](/guides/self-hosting)
-- [Pricing](/guides/pricing)
+- [CLI reference](/platforms/cli/reference)
+- [Self-hosting](/deploy/self-hosted)
+- [Pricing](/pricing)

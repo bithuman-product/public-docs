@@ -7,10 +7,10 @@
 // MEASURED against the live site on 2026-09-02 and again on 2026-09-05, with
 // the 200s as the positive control that the fetch discriminates:
 //
-//     /concepts/essence-2       200
-//     /concepts/expression-2    200
-//     /concepts/essence-1       404   ← a model we bill for
-//     /concepts/expression-1    404   ← a model we bill for
+//     /models/essence-2       200
+//     /models/expression-2    200
+//     /models/first-generation#essence-1       404   ← a model we bill for
+//     /models/first-generation#expression-1    404   ← a model we bill for
 //
 // A developer who learns the URL pattern from any second-generation model and
 // applies it to a first-generation one got nothing. Not a wrong page — NO
@@ -21,7 +21,7 @@
 // THE POPULATION, AND WHY IT COMES FROM THE PRICING TABLE
 // ------------------------------------------------------
 // The list of models is NOT typed here. It is read from the "Serving — credits
-// per live minute" table in guides/pricing.md, which is this site's own
+// per live minute" table in pricing.md, which is this site's own
 // customer-facing authority for what a customer can be billed for. That gives
 // exactly the right rule, in one sentence:
 //
@@ -47,13 +47,13 @@
 // docs.bithuman.ai is built by Vercel from the PUSHED tree, so a file that is
 // only in a working copy is a file the site does not have. Measured against the
 // live site on 2026-09-06, with the 200s as the positive control and
-// /concepts/zzz-not-a-page as the negative:
+// /models/zzz-not-a-page as the negative:
 //
-//     /concepts/essence-2       200   73,215 B
-//     /concepts/expression-2    200   48,003 B
-//     /concepts/essence-1       404   ← on disk, untracked
-//     /concepts/expression-1    404   ← on disk, untracked
-//     /concepts/zzz-not-a-page  404   ← negative control
+//     /models/essence-2       200   73,215 B
+//     /models/expression-2    200   48,003 B
+//     /models/first-generation#essence-1       404   ← on disk, untracked
+//     /models/first-generation#expression-1    404   ← on disk, untracked
+//     /models/zzz-not-a-page  404   ← negative control
 //
 // An untracked page is INVISIBLE to every rule that reads bytes, because the
 // bytes are right there. So rule 4 below asks git, not the filesystem. That is
@@ -61,7 +61,7 @@
 // publishes it.
 //
 // WHAT IT CHECKS
-//   1. every model in the serving table has src/content/docs/concepts/<slug>.md
+//   1. every model in the serving table has src/content/docs/models/<slug>.md
 //   2. that file is not a draft and carries a title
 //   3. the pricing row LINKS to that page — a page nothing points at is a page
 //      nobody finds
@@ -84,8 +84,8 @@ import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 const ROOT = new URL("..", import.meta.url).pathname;
-const PRICING = `${ROOT}src/content/docs/guides/pricing.md`;
-const CONCEPTS = `${ROOT}src/content/docs/concepts`;
+const PRICING = `${ROOT}src/content/docs/pricing.md`;
+const CONCEPTS = `${ROOT}src/content/docs/models`;
 const HEADING = "## Serving — credits per live minute";
 
 function die(msg) {
@@ -95,7 +95,7 @@ function die(msg) {
 
 // ── the population, read from the rate card ─────────────────────────────────
 // A row looks like:
-//   | [Essence 2](/concepts/essence-2) (`essence-2`) | 4 credits/min | ... |
+//   | [Essence 2](/models/essence-2) (`essence-2`) | 4 credits/min | ... |
 // The backticked token is the model id; the link (if any) is where the row
 // sends a reader.
 export function servingRows(text) {
@@ -119,12 +119,20 @@ export function servingRows(text) {
   return rows.length ? rows : null;
 }
 
+// The first-generation models share one page, one H2 each (anchor = model id).
+const SHARED = { "essence-1": "first-generation", "expression-1": "first-generation" };
+/** Where a model's page lives: its file under models/ and the URL a row must link. */
+export function where(id) {
+  const file = SHARED[id] ?? id;
+  return { file, href: SHARED[id] ? `/models/${file}#${id}` : `/models/${id}` };
+}
+
 export function findings(rows, pageExists, pageTracked = () => true) {
   const out = [];
   for (const r of rows) {
     if (!pageExists(r.id)) {
       out.push(`${r.id}: billed on the rate card and has NO ` +
-               `/concepts/${r.id} page. A developer who learned the URL ` +
+               `/models/${r.id} page. A developer who learned the URL ` +
                `pattern from another model gets a 404.`);
       continue;
     }
@@ -133,15 +141,15 @@ export function findings(rows, pageExists, pageTracked = () => true) {
     // missing one — and rules 1-3 cannot tell the difference, because the bytes
     // they grade are present.
     if (!pageTracked(r.id)) {
-      out.push(`${r.id}: src/content/docs/concepts/${r.id}.md exists on this ` +
+      out.push(`${r.id}: src/content/docs/models/${r.id}.md exists on this ` +
                `disk but is NOT TRACKED BY GIT, so it is not in the tree the ` +
-               `site is built from and /concepts/${r.id} will 404 for every ` +
-               `reader. Fix: git add src/content/docs/concepts/${r.id}.md`);
+               `site is built from and /models/${r.id} will 404 for every ` +
+               `reader. Fix: git add src/content/docs/models/${r.id}.md`);
       continue;
     }
-    if (r.href !== `/concepts/${r.id}`) {
+    if (r.href !== where(r.id).href) {
       out.push(`${r.id}: the rate-card row does not link to ` +
-               `/concepts/${r.id} (links to ${r.href ?? "nothing"}). ` +
+               `${where(r.id).href} (links to ${r.href ?? "nothing"}). ` +
                `A page nothing points at is a page nobody finds.`);
     }
   }
@@ -153,7 +161,7 @@ if (!existsSync(PRICING)) die(`cannot read ${PRICING}`);
 const pricing = readFileSync(PRICING, "utf8");
 const rows = servingRows(pricing);
 if (!rows) {
-  die(`found no "${HEADING}" table in guides/pricing.md — the shape this ` +
+  die(`found no "${HEADING}" table in pricing.md — the shape this ` +
       `checker reads has changed. Refusing to report a clean site off a ` +
       `parse that found nothing.`);
 }
@@ -162,9 +170,12 @@ const pages = new Set(
   readdirSync(CONCEPTS).filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, "")));
 const pageExists = (id) => {
-  if (!pages.has(id)) return false;
-  const body = readFileSync(`${CONCEPTS}/${id}.md`, "utf8");
-  return /^title:\s*\S/m.test(body) && !/^draft:\s*true\s*$/m.test(body);
+  const { file } = where(id);
+  if (!pages.has(file)) return false;
+  const body = readFileSync(`${CONCEPTS}/${file}.md`, "utf8");
+  const ok = /^title:\s*\S/m.test(body) && !/^draft:\s*true\s*$/m.test(body);
+  // a shared page carries the model as its own H2, whose slug is the model id
+  return ok && (!SHARED[id] || body.split("\n").some((l) => l.startsWith("## ") && l.slice(3).trim().toLowerCase().replace(/\s+/g, "-") === id));
 };
 
 // ── ★ what git will actually publish ────────────────────────────────────────
@@ -176,7 +187,7 @@ const pageExists = (id) => {
 let trackedConceptPages;
 try {
   const out = execFileSync(
-    "git", ["-C", ROOT, "ls-files", "--", "src/content/docs/concepts"],
+    "git", ["-C", ROOT, "ls-files", "--", "src/content/docs/models"],
     { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   trackedConceptPages = new Set(
     out.split("\n").filter(Boolean)
@@ -188,33 +199,33 @@ try {
       `and 404 on the site for a day. Refusing to pass.`);
 }
 if (trackedConceptPages.size === 0) {
-  die(`git reports ZERO tracked files under src/content/docs/concepts. That ` +
+  die(`git reports ZERO tracked files under src/content/docs/models. That ` +
       `is not a clean site, it is a broken query — refusing to grade every ` +
       `page as untracked or as fine off a result that found nothing.`);
 }
-const pageTracked = (id) => trackedConceptPages.has(id);
+const pageTracked = (id) => trackedConceptPages.has(where(id).file);
 
 const real = findings(rows, pageExists, pageTracked);
 
 // ── firing control: each rule must fail on its own fixture, in this run ─────
 const control = [
   ["missing page",
-   findings([{ id: "zz-fixture", href: "/concepts/zz-fixture" }],
+   findings([{ id: "zz-fixture", href: "/models/zz-fixture" }],
             () => false, () => true)],
   ["untracked page",
-   findings([{ id: "zz-fixture", href: "/concepts/zz-fixture" }],
+   findings([{ id: "zz-fixture", href: "/models/zz-fixture" }],
             () => true, () => false)],
   ["unlinked page",
    findings([{ id: "zz-fixture", href: null }], () => true, () => true)],
   ["wrong link",
-   findings([{ id: "zz-fixture", href: "/guides/pricing" }],
+   findings([{ id: "zz-fixture", href: "/pricing" }],
             () => true, () => true)],
 ];
 const blind = control.filter(([, f]) => f.length === 0).map(([n]) => n);
 // and the negative half: a well-formed row must produce NOTHING, or the rules
 // above are firing on everything and prove nothing.
 const falsePositive =
-  findings([{ id: "zz-fixture", href: "/concepts/zz-fixture" }],
+  findings([{ id: "zz-fixture", href: "/models/zz-fixture" }],
            () => true, () => true);
 
 console.log(`check-model-concept-pages: ${rows.length} billable model(s) on ` +
@@ -236,5 +247,5 @@ if (real.length) {
   process.exit(1);
 }
 console.log(`check-model-concept-pages: OK — every model on the rate card ` +
-            `has a /concepts/ page of its own, TRACKED IN GIT so the build ` +
+            `has a /models/ page of its own, TRACKED IN GIT so the build ` +
             `will publish it, and its row links to it.`);

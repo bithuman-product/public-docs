@@ -181,7 +181,7 @@ async function main() {
   const seen = pages.reduce((n, [, html]) => n + commentsOutsideCode(html).length, 0);
   if (seen === 0) {
     console.error("REFUSING TO PASS VACUOUSLY — 0 HTML comments found in any page outside <pre>/<code>.");
-    console.error("  This site serves a few short ones (the emitter's note markers on /sdk/performance).");
+    console.error("  This site serves a few short ones (the emitter's note markers on /performance).");
     console.error("  Zero means the comment reader or the build stopped producing what this grades.");
     process.exit(2);
   }

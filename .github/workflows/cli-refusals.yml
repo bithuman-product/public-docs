@@ -30,16 +30,16 @@ on:
   push:
     branches: [main]
     paths:
-      - src/content/docs/sdk/cli.md
-      - src/content/docs/guides/pricing.md
+      - src/content/docs/platforms/cli.md
+      - src/content/docs/pricing.md
       - src/content/docs/changelog.md
       - scripts/check-cli-refusals.mjs
       - scripts/credential-claims.json
       - .github/workflows/cli-refusals.yml
   pull_request:
     paths:
-      - src/content/docs/sdk/cli.md
-      - src/content/docs/guides/pricing.md
+      - src/content/docs/platforms/cli.md
+      - src/content/docs/pricing.md
       - src/content/docs/changelog.md
       - scripts/check-cli-refusals.mjs
       - scripts/credential-claims.json

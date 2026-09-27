@@ -5,7 +5,7 @@
 // WHY THIS EXISTS
 // ---------------
 // The two pages that end with a talking avatar on a real handset —
-// examples/kotlin-android-hello.md and examples/swift-ios-expression2.md — are
+// examples/kotlin-android-hello.md and examples/ios-expression-2.md — are
 // whole projects printed in full. Their FIRST executable line is a dependency
 // coordinate, and if that coordinate does not resolve the reader never reaches
 // any other line on the page. Nothing in this repo graded those coordinates.
@@ -109,7 +109,7 @@
 //
 //     THE RESIDUAL GAP, STATED RATHER THAN PAPERED OVER: this rule grades the
 //     COPYABLE form only, so a version named in prose — the changelog's own
-//     history, the version stamps in sdk/performance.md — is not graded, and
+//     history, the version stamps in performance/index.md — is not graded, and
 //     after a deletion some of those now name versions that no longer resolve.
 //     That exemption used to be justified by immutability. It no longer is, so
 //     it is now a deliberate choice with a named cost: a changelog is a record
@@ -160,7 +160,7 @@
 // WHAT IT DELIBERATELY DOES NOT GRADE, and why the discriminator is the typed
 // form and not the string: this site quotes coordinates that are SUPPOSED not to
 // resolve — `ai.bithuman:expression2-android:9.9.9` is a stated negative control
-// in sdk/android.md, `Could not find ai.bithuman:expression2-android:0.2.0.` is
+// in platforms/android.md, `Could not find ai.bithuman:expression2-android:0.2.0.` is
 // a pasted Gradle failure in sdk/android-verify.md, and `from: "0.8.1"` in
 // sdk/swift.md is a documented resolution failure. None of those is written in
 // the form a developer copies into a build file. Grading `implementation(...)`,
@@ -235,7 +235,7 @@ function corpus() {
  * ★WIDENED 2026-09-21 FROM `ai.bithuman` TO EVERY GROUP. The law at the top of
  * this file is "every dependency this site tells a developer to type must exist
  * at the registry that serves it", and for three weeks the rule under it read
- * only our own group — so the two lines on sdk/android.md that a reader is told
+ * only our own group — so the two lines on platforms/android.md that a reader is told
  * to paste beside ours,
  *
  *     implementation("com.qualcomm.qti:qnn-litert-delegate:2.49.0")
@@ -940,7 +940,7 @@ if (process.argv.includes("--selftest")) {
     ["bad: a Gradle version never pressed (0.4.0)", FIX_BAD_GRADLE, true],
     ["bad: a THIRD-PARTY Gradle version Central does not serve", FIX_BAD_THIRD_PARTY_GRADLE, true],
     ["bad: a Gradle group Central has never heard of", FIX_BAD_UNKNOWN_GROUP_GRADLE, true],
-    ["good: the third-party pair sdk/android.md prints", FIX_GOOD_THIRD_PARTY_GRADLE, false],
+    ["good: the third-party pair platforms/android.md prints", FIX_GOOD_THIRD_PARTY_GRADLE, false],
     ["bad: a tap tag that does not exist", FIX_BAD_SWIFT_TAG, true],
     ["bad: a SwiftPM product the tap does not vend", FIX_BAD_SWIFT_PRODUCT, true],
     ["bad: an XcodeGen product the tap does not vend", FIX_BAD_XCODEGEN_PRODUCT, true],

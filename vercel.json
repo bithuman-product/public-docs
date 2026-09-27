@@ -2,253 +2,33 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/introduction",
-      "destination": "/",
+      "source": "/android",
+      "destination": "/platforms/android",
       "permanent": true
     },
     {
-      "source": "/introduction/",
-      "destination": "/",
+      "source": "/android/",
+      "destination": "/platforms/android",
       "permanent": true
     },
     {
-      "source": "/guides/eu-ai-act",
-      "destination": "/legal/eu-ai-act",
+      "source": "/android-sdk",
+      "destination": "/platforms/android",
       "permanent": true
     },
     {
-      "source": "/guides/eu-ai-act/",
-      "destination": "/legal/eu-ai-act",
+      "source": "/android-sdk/",
+      "destination": "/platforms/android",
       "permanent": true
     },
     {
-      "source": "/getting-started/quickstart",
-      "destination": "/api/quickstart",
+      "source": "/api-keys",
+      "destination": "/api/api-keys",
       "permanent": true
     },
     {
-      "source": "/getting-started/quickstart/",
-      "destination": "/api/quickstart",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/authentication",
-      "destination": "/api/authentication",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/authentication/",
-      "destination": "/api/authentication",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/models",
-      "destination": "/concepts/models",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/models/",
-      "destination": "/concepts/models",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/pricing",
-      "destination": "/guides/pricing",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/pricing/",
-      "destination": "/guides/pricing",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/cli",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/cli/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/architecture",
-      "destination": "/concepts/architecture",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/architecture/",
-      "destination": "/concepts/architecture",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/compatibility",
-      "destination": "/concepts/architecture",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/compatibility/",
-      "destination": "/concepts/architecture",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/device-matrix",
-      "destination": "/downloads",
-      "permanent": true
-    },
-    {
-      "source": "/getting-started/device-matrix/",
-      "destination": "/downloads",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/python",
-      "destination": "/sdk/python",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/python/",
-      "destination": "/sdk/python",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/swift",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/swift/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/kotlin",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/kotlin/",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/flutter",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/sdks/flutter/",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/integrations/flutter",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/integrations/flutter/",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/examples/overview",
-      "destination": "/examples",
-      "permanent": true
-    },
-    {
-      "source": "/examples/overview/",
-      "destination": "/examples",
-      "permanent": true
-    },
-    {
-      "source": "/cli",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/cli/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/cli/overview",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/cli/overview/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/cli/install",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/cli/install/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/cli/commands",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/cli/commands/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/cli/configuration",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/cli/configuration/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/cli/local-mode",
-      "destination": "/sdk/cli/local-mode",
-      "permanent": true
-    },
-    {
-      "source": "/cli/local-mode/",
-      "destination": "/sdk/cli/local-mode",
-      "permanent": true
-    },
-    {
-      "source": "/cli/agents",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/cli/agents/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/guides/local-mode",
-      "destination": "/sdk/cli/local-mode",
-      "permanent": true
-    },
-    {
-      "source": "/guides/local-mode/",
-      "destination": "/sdk/cli/local-mode",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deployment",
-      "destination": "/guides",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deployment/",
-      "destination": "/guides",
+      "source": "/api-keys/",
+      "destination": "/api/api-keys",
       "permanent": true
     },
     {
@@ -262,53 +42,13 @@
       "permanent": true
     },
     {
-      "source": "/api-reference/overview",
-      "destination": "/api",
+      "source": "/api-reference/agent-context",
+      "destination": "/api/agents",
       "permanent": true
     },
     {
-      "source": "/api-reference/overview/",
-      "destination": "/api",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/rate-limits",
-      "destination": "/api/rate-limits",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/rate-limits/",
-      "destination": "/api/rate-limits",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/errors",
-      "destination": "/api/errors",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/errors/",
-      "destination": "/api/errors",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/runtime-tokens",
-      "destination": "/api/authentication",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/runtime-tokens/",
-      "destination": "/api/authentication",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/credit-summaries",
-      "destination": "/api/billing",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/credit-summaries/",
-      "destination": "/api/billing",
+      "source": "/api-reference/agent-context/",
+      "destination": "/api/agents",
       "permanent": true
     },
     {
@@ -332,23 +72,13 @@
       "permanent": true
     },
     {
-      "source": "/api-reference/agent-context",
-      "destination": "/api/agents",
+      "source": "/api-reference/credit-summaries",
+      "destination": "/api/billing",
       "permanent": true
     },
     {
-      "source": "/api-reference/agent-context/",
-      "destination": "/api/agents",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/file-upload",
-      "destination": "/api/files",
-      "permanent": true
-    },
-    {
-      "source": "/api-reference/file-upload/",
-      "destination": "/api/files",
+      "source": "/api-reference/credit-summaries/",
+      "destination": "/api/billing",
       "permanent": true
     },
     {
@@ -362,6 +92,56 @@
       "permanent": true
     },
     {
+      "source": "/api-reference/errors",
+      "destination": "/api/errors",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/errors/",
+      "destination": "/api/errors",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/file-upload",
+      "destination": "/api/files",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/file-upload/",
+      "destination": "/api/files",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/overview",
+      "destination": "/api",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/overview/",
+      "destination": "/api",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/rate-limits",
+      "destination": "/api/rate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/rate-limits/",
+      "destination": "/api/rate-limits",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/runtime-tokens",
+      "destination": "/api/authentication",
+      "permanent": true
+    },
+    {
+      "source": "/api-reference/runtime-tokens/",
+      "destination": "/api/authentication",
+      "permanent": true
+    },
+    {
       "source": "/api-reference/voice",
       "destination": "/api/text-to-speech",
       "permanent": true
@@ -372,54 +152,24 @@
       "permanent": true
     },
     {
-      "source": "/concepts/essence-2-quality",
-      "destination": "/concepts/essence-2",
+      "source": "/api/overview",
+      "destination": "/api",
       "permanent": true
     },
     {
-      "source": "/concepts/essence-2-quality/",
-      "destination": "/concepts/essence-2",
+      "source": "/api/overview/",
+      "destination": "/api",
       "permanent": true
     },
     {
-      "source": "/concepts/models-and-planes",
-      "destination": "/concepts/models",
+      "source": "/api/quickstart",
+      "destination": "/platforms/rest",
       "permanent": true
     },
     {
-      "source": "/concepts/models-and-planes/",
-      "destination": "/concepts/models",
+      "source": "/api/quickstart/",
+      "destination": "/platforms/rest",
       "permanent": true
-    },
-    {
-      "source": "/concepts/essence-2-light",
-      "destination": "/concepts/essence-2",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/essence-2-light/",
-      "destination": "/concepts/essence-2",
-      "permanent": true
-    },
-    {
-      "source": "/roadmap",
-      "destination": "/changelog",
-      "permanent": true
-    },
-    {
-      "source": "/roadmap/",
-      "destination": "/changelog",
-      "permanent": true
-    },
-    {
-      "source": "/use-cases",
-      "destination": "/examples#ready-made-avatars",
-      "permanent": false
-    },
-    {
-      "source": "/use-cases/",
-      "destination": "/examples#ready-made-avatars",
-      "permanent": false
     },
     {
       "source": "/api/voice",
@@ -432,52 +182,572 @@
       "permanent": true
     },
     {
-      "source": "/sdk/ipados",
-      "destination": "/sdk/apple",
+      "source": "/apple",
+      "destination": "/platforms/ios",
       "permanent": true
     },
     {
-      "source": "/sdk/ipados/",
-      "destination": "/sdk/apple",
+      "source": "/apple/",
+      "destination": "/platforms/ios",
       "permanent": true
     },
     {
-      "source": "/sdk/kotlin",
-      "destination": "/sdk/android",
+      "source": "/billing",
+      "destination": "/pricing",
       "permanent": true
     },
     {
-      "source": "/sdk/kotlin/",
-      "destination": "/sdk/android",
+      "source": "/billing/",
+      "destination": "/pricing",
       "permanent": true
     },
     {
-      "source": "/ios",
-      "destination": "/sdk/apple",
+      "source": "/browser",
+      "destination": "/platforms/web",
       "permanent": true
     },
     {
-      "source": "/ios/",
-      "destination": "/sdk/apple",
+      "source": "/browser/",
+      "destination": "/platforms/web",
       "permanent": true
     },
     {
-      "source": "/android",
-      "destination": "/sdk/android",
+      "source": "/cli",
+      "destination": "/platforms/cli",
       "permanent": true
     },
     {
-      "source": "/android/",
-      "destination": "/sdk/android",
+      "source": "/cli/",
+      "destination": "/platforms/cli",
       "permanent": true
     },
     {
-      "source": "/quickstart",
+      "source": "/cli/agents",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/cli/agents/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/cli/commands",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/cli/commands/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/cli/configuration",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/cli/configuration/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/cli/install",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/cli/install/",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/cli/local-mode",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/cli/local-mode/",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/cli/overview",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/cli/overview/",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/community",
+      "destination": "/support",
+      "permanent": true
+    },
+    {
+      "source": "/community/",
+      "destination": "/support",
+      "permanent": true
+    },
+    {
+      "source": "/concepts",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/agent-lifecycle",
+      "destination": "/api/agents",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/agent-lifecycle/",
+      "destination": "/api/agents",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/architecture",
+      "destination": "/models/how-it-works",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/architecture/",
+      "destination": "/models/how-it-works",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/audio-streaming",
+      "destination": "/models/how-it-works#audio-in-frames-out",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/audio-streaming/",
+      "destination": "/models/how-it-works#audio-in-frames-out",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/avatars-imx",
+      "destination": "/models/avatar-file",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/avatars-imx/",
+      "destination": "/models/avatar-file",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-1",
+      "destination": "/models/first-generation#essence-1",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-1/",
+      "destination": "/models/first-generation#essence-1",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2/",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-light",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-light/",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-max",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-max/",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-quality",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/essence-2-quality/",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/expression-1",
+      "destination": "/models/first-generation#expression-1",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/expression-1/",
+      "destination": "/models/first-generation#expression-1",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/expression-2",
+      "destination": "/models/expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/expression-2/",
+      "destination": "/models/expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models/",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models-and-planes",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models-and-planes/",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models-v2",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/models-v2/",
+      "destination": "/models",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/pricing",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/pricing/",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/talking-video",
+      "destination": "/api/video",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/talking-video/",
+      "destination": "/api/video",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/where-models-run",
+      "destination": "/models#where-each-model-runs",
+      "permanent": true
+    },
+    {
+      "source": "/concepts/where-models-run/",
+      "destination": "/models#where-each-model-runs",
+      "permanent": true
+    },
+    {
+      "source": "/cookbook",
+      "destination": "/build",
+      "permanent": true
+    },
+    {
+      "source": "/cookbook/",
+      "destination": "/build",
+      "permanent": true
+    },
+    {
+      "source": "/costs",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/costs/",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/cpu",
+      "destination": "/deploy#cpu-only-no-gpu",
+      "permanent": true
+    },
+    {
+      "source": "/cpu/",
+      "destination": "/deploy#cpu-only-no-gpu",
+      "permanent": true
+    },
+    {
+      "source": "/credits",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/credits/",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/enterprise",
+      "destination": "/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/enterprise/",
+      "destination": "/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/essence-2",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/essence-2/",
+      "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/ai-conversation",
+      "destination": "/build/voice-agent#python-voice-conversation",
+      "permanent": true
+    },
+    {
+      "source": "/examples/ai-conversation/",
+      "destination": "/build/voice-agent#python-voice-conversation",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android-essence2",
+      "destination": "/examples/android-essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android-essence2/",
+      "destination": "/examples/android-essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android-expression2",
+      "destination": "/examples/android-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android-expression2/",
+      "destination": "/examples/android-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/apple-swiftpm-check",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/apple-swiftpm-check/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/browser-webgpu-check",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/examples/browser-webgpu-check/",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli",
+      "destination": "/platforms/cli#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli/",
+      "destination": "/platforms/cli#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli-hello",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli-hello/",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/examples/failure-states",
+      "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/examples/failure-states/",
+      "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/examples/kotlin-android-hello",
+      "destination": "/examples/android-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/kotlin-android-hello/",
+      "destination": "/examples/android-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/macos-expression2",
+      "destination": "/examples/macos-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/macos-expression2/",
+      "destination": "/examples/macos-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/overview",
+      "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/examples/overview/",
+      "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python",
+      "destination": "/platforms/python#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/",
+      "destination": "/platforms/python#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python-hello",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python-hello/",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/examples/rest-hello",
+      "destination": "/platforms/rest#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/rest-hello/",
+      "destination": "/platforms/rest#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-essence2",
+      "destination": "/examples/ios-essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-essence2/",
+      "destination": "/examples/ios-essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-expression2",
+      "destination": "/examples/ios-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-expression2/",
+      "destination": "/examples/ios-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-hello",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-hello/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-voice-agent",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/swift-ios-voice-agent/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/examples/web",
+      "destination": "/platforms/web#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/web/",
+      "destination": "/platforms/web#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/expression-2",
+      "destination": "/models/expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/expression-2/",
+      "destination": "/models/expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/flutter",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/flutter/",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/get-started",
       "destination": "/start",
       "permanent": true
     },
     {
-      "source": "/quickstart/",
+      "source": "/get-started/",
       "destination": "/start",
       "permanent": true
     },
@@ -492,513 +762,133 @@
       "permanent": true
     },
     {
-      "source": "/sdk/mobile",
-      "destination": "/sdk",
+      "source": "/getting-started/architecture",
+      "destination": "/models/how-it-works",
       "permanent": true
     },
     {
-      "source": "/sdk/mobile/",
-      "destination": "/sdk",
+      "source": "/getting-started/architecture/",
+      "destination": "/models/how-it-works",
       "permanent": true
     },
     {
-      "source": "/mobile",
-      "destination": "/sdk",
+      "source": "/getting-started/authentication",
+      "destination": "/api/authentication",
       "permanent": true
     },
     {
-      "source": "/mobile/",
-      "destination": "/sdk",
+      "source": "/getting-started/authentication/",
+      "destination": "/api/authentication",
       "permanent": true
     },
     {
-      "source": "/pricing",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/cli",
+      "destination": "/platforms/cli",
       "permanent": true
     },
     {
-      "source": "/pricing/",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/cli/",
+      "destination": "/platforms/cli",
       "permanent": true
     },
     {
-      "source": "/credits",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/compatibility",
+      "destination": "/models/how-it-works",
       "permanent": true
     },
     {
-      "source": "/credits/",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/compatibility/",
+      "destination": "/models/how-it-works",
       "permanent": true
     },
     {
-      "source": "/billing",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/device-matrix",
+      "destination": "/downloads",
       "permanent": true
     },
     {
-      "source": "/billing/",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/device-matrix/",
+      "destination": "/downloads",
       "permanent": true
     },
     {
-      "source": "/costs",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/models",
+      "destination": "/models",
       "permanent": true
     },
     {
-      "source": "/costs/",
-      "destination": "/guides/pricing",
+      "source": "/getting-started/models/",
+      "destination": "/models",
       "permanent": true
     },
     {
-      "source": "/api-keys",
-      "destination": "/api/api-keys",
+      "source": "/getting-started/pricing",
+      "destination": "/pricing",
       "permanent": true
     },
     {
-      "source": "/api-keys/",
-      "destination": "/api/api-keys",
+      "source": "/getting-started/pricing/",
+      "destination": "/pricing",
       "permanent": true
     },
     {
-      "source": "/keys",
-      "destination": "/api/api-keys",
+      "source": "/getting-started/quickstart",
+      "destination": "/platforms/rest",
       "permanent": true
     },
     {
-      "source": "/keys/",
-      "destination": "/api/api-keys",
+      "source": "/getting-started/quickstart/",
+      "destination": "/platforms/rest",
       "permanent": true
     },
     {
-      "source": "/get-started",
-      "destination": "/start",
+      "source": "/guides",
+      "destination": "/build",
       "permanent": true
     },
     {
-      "source": "/get-started/",
-      "destination": "/start",
+      "source": "/guides/",
+      "destination": "/build",
       "permanent": true
     },
     {
-      "source": "/sdks",
-      "destination": "/sdk",
+      "source": "/guides/avatar-actions",
+      "destination": "/build/gestures",
       "permanent": true
     },
     {
-      "source": "/sdks/",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/ios-sdk",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/ios-sdk/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/android-sdk",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/android-sdk/",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/swift",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/swift/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/kotlin",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/kotlin/",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/apple",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/apple/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/iphone",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/iphone/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/swift",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/swift/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/overview",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/overview/",
-      "destination": "/sdk",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/overview",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/overview/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/install",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/install/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/commands",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/commands/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/configuration",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/configuration/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/agents",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/agents/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/javascript",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/javascript/",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/wasm",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/wasm/",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/browser",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/browser/",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/browser",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/browser/",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/examples/cli-hello",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/examples/cli-hello/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/examples/python-hello",
-      "destination": "/sdk/python",
-      "permanent": true
-    },
-    {
-      "source": "/examples/python-hello/",
-      "destination": "/sdk/python",
-      "permanent": true
-    },
-    {
-      "source": "/macos",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/macos/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/mac",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/mac/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/python",
-      "destination": "/sdk/python",
-      "permanent": true
-    },
-    {
-      "source": "/python/",
-      "destination": "/sdk/python",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/verified",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/cli/verified/",
-      "destination": "/sdk/cli/reference",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/android-verify",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/android-verify/",
-      "destination": "/sdk/android",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/essence-2-max",
-      "destination": "/concepts/essence-2",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/essence-2-max/",
-      "destination": "/concepts/essence-2",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deploy-essence-2-max",
-      "destination": "/concepts/essence-2",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deploy-essence-2-max/",
-      "destination": "/concepts/essence-2",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/macos",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/sdk/macos/",
-      "destination": "/sdk/cli",
-      "permanent": true
-    },
-    {
-      "source": "/guides/browser-webgpu",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/guides/browser-webgpu/",
-      "destination": "/sdk/web",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/pricing",
-      "destination": "/guides/pricing",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/pricing/",
-      "destination": "/guides/pricing",
-      "permanent": true
-    },
-    {
-      "source": "/legal",
-      "destination": "/legal/eu-ai-act",
-      "permanent": true
-    },
-    {
-      "source": "/legal/",
-      "destination": "/legal/eu-ai-act",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/models-v2",
-      "destination": "/concepts/models",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/models-v2/",
-      "destination": "/concepts/models",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/where-models-run",
-      "destination": "/concepts/models",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/where-models-run/",
-      "destination": "/concepts/models",
-      "permanent": true
-    },
-    {
-      "source": "/guides/self-host-local",
-      "destination": "/guides/self-hosting",
-      "permanent": true
-    },
-    {
-      "source": "/guides/self-host-local/",
-      "destination": "/guides/self-hosting",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deploy-self-hosted",
-      "destination": "/guides/self-hosting",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deploy-self-hosted/",
-      "destination": "/guides/self-hosting",
+      "source": "/guides/avatar-actions/",
+      "destination": "/build/gestures",
       "permanent": true
     },
     {
       "source": "/guides/browser-rendering",
-      "destination": "/sdk/web",
+      "destination": "/platforms/web",
       "permanent": true
     },
     {
       "source": "/guides/browser-rendering/",
-      "destination": "/sdk/web",
+      "destination": "/platforms/web",
       "permanent": true
     },
     {
-      "source": "/examples/browser-webgpu-check",
-      "destination": "/sdk/web",
+      "source": "/guides/browser-webgpu",
+      "destination": "/platforms/web",
       "permanent": true
     },
     {
-      "source": "/examples/browser-webgpu-check/",
-      "destination": "/sdk/web",
+      "source": "/guides/browser-webgpu/",
+      "destination": "/platforms/web",
       "permanent": true
     },
     {
-      "source": "/examples/apple-swiftpm-check",
-      "destination": "/sdk/apple",
+      "source": "/guides/building-avatars",
+      "destination": "/build/create-avatar",
       "permanent": true
     },
     {
-      "source": "/examples/apple-swiftpm-check/",
-      "destination": "/sdk/apple",
-      "permanent": true
-    },
-    {
-      "source": "/examples/failure-states",
-      "destination": "/examples",
-      "permanent": true
-    },
-    {
-      "source": "/examples/failure-states/",
-      "destination": "/examples",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/agent-lifecycle",
-      "destination": "/api/agents",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/agent-lifecycle/",
-      "destination": "/api/agents",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/talking-video",
-      "destination": "/api/video",
-      "permanent": true
-    },
-    {
-      "source": "/concepts/talking-video/",
-      "destination": "/api/video",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deploy-livekit",
-      "destination": "/sdk/livekit",
-      "permanent": true
-    },
-    {
-      "source": "/guides/deploy-livekit/",
-      "destination": "/sdk/livekit",
+      "source": "/guides/building-avatars/",
+      "destination": "/build/create-avatar",
       "permanent": true
     },
     {
@@ -1012,83 +902,743 @@
       "permanent": true
     },
     {
-      "source": "/status",
-      "destination": "https://status.bithuman.ai",
-      "permanent": false
-    },
-    {
-      "source": "/status/",
-      "destination": "https://status.bithuman.ai",
-      "permanent": false
-    },
-    {
-      "source": "/sdk/ios-api",
-      "destination": "/sdk/apple-api",
+      "source": "/guides/deploy-essence-2-max",
+      "destination": "/models",
       "permanent": true
     },
     {
-      "source": "/sdk/ios-api/",
-      "destination": "/sdk/apple-api",
+      "source": "/guides/deploy-essence-2-max/",
+      "destination": "/models",
       "permanent": true
     },
     {
-      "source": "/sdk/ios",
-      "destination": "/sdk/apple",
+      "source": "/guides/deploy-livekit",
+      "destination": "/platforms/livekit",
       "permanent": true
     },
     {
-      "source": "/sdk/ios/",
-      "destination": "/sdk/apple",
+      "source": "/guides/deploy-livekit/",
+      "destination": "/platforms/livekit",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-self-hosted",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deploy-self-hosted/",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deployment",
+      "destination": "/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/guides/deployment/",
+      "destination": "/deploy",
+      "permanent": true
+    },
+    {
+      "source": "/guides/eu-ai-act",
+      "destination": "/legal/eu-ai-act",
+      "permanent": true
+    },
+    {
+      "source": "/guides/eu-ai-act/",
+      "destination": "/legal/eu-ai-act",
+      "permanent": true
+    },
+    {
+      "source": "/guides/local-mode",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/guides/local-mode/",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/guides/local-voice-avatar",
+      "destination": "/build/voice-agent",
+      "permanent": true
+    },
+    {
+      "source": "/guides/local-voice-avatar/",
+      "destination": "/build/voice-agent",
       "permanent": true
     },
     {
       "source": "/guides/mcp-server",
-      "destination": "/sdk/mcp",
+      "destination": "/build/mcp",
       "permanent": true
     },
     {
       "source": "/guides/mcp-server/",
-      "destination": "/sdk/mcp",
+      "destination": "/build/mcp",
       "permanent": true
     },
     {
-      "source": "/api/overview",
-      "destination": "/api",
+      "source": "/guides/persona",
+      "destination": "/build/persona",
       "permanent": true
     },
     {
-      "source": "/api/overview/",
-      "destination": "/api",
+      "source": "/guides/persona/",
+      "destination": "/build/persona",
       "permanent": true
     },
     {
-      "source": "/examples/kotlin-android-hello",
-      "destination": "/examples/android-expression2",
+      "source": "/guides/pricing",
+      "destination": "/pricing",
       "permanent": true
     },
     {
-      "source": "/examples/kotlin-android-hello/",
-      "destination": "/examples/android-expression2",
+      "source": "/guides/pricing/",
+      "destination": "/pricing",
       "permanent": true
     },
     {
-      "source": "/examples/swift-ios-voice-agent",
-      "destination": "/sdk/apple",
+      "source": "/guides/self-host-local",
+      "destination": "/deploy/self-hosted",
       "permanent": true
     },
     {
-      "source": "/examples/swift-ios-voice-agent/",
-      "destination": "/sdk/apple",
+      "source": "/guides/self-host-local/",
+      "destination": "/deploy/self-hosted",
       "permanent": true
     },
     {
-      "source": "/examples/swift-ios-hello",
-      "destination": "/sdk/apple",
+      "source": "/guides/self-hosting",
+      "destination": "/deploy/self-hosted",
       "permanent": true
     },
     {
-      "source": "/examples/swift-ios-hello/",
-      "destination": "/sdk/apple",
+      "source": "/guides/self-hosting/",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/guides/session-troubleshooting",
+      "destination": "/resources/troubleshooting",
+      "permanent": true
+    },
+    {
+      "source": "/guides/session-troubleshooting/",
+      "destination": "/resources/troubleshooting",
+      "permanent": true
+    },
+    {
+      "source": "/guides/voice-providers",
+      "destination": "/build/voices",
+      "permanent": true
+    },
+    {
+      "source": "/guides/voice-providers/",
+      "destination": "/build/voices",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/flutter",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/flutter/",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/introduction",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/introduction/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ios",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/ios/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/ios-sdk",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/ios-sdk/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/ipad",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/ipad/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/iphone",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/iphone/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/keys",
+      "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/keys/",
+      "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/kotlin",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/kotlin/",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/legal",
+      "destination": "/legal/eu-ai-act",
+      "permanent": true
+    },
+    {
+      "source": "/legal/",
+      "destination": "/legal/eu-ai-act",
+      "permanent": true
+    },
+    {
+      "source": "/livekit",
+      "destination": "/platforms/livekit",
+      "permanent": true
+    },
+    {
+      "source": "/livekit/",
+      "destination": "/platforms/livekit",
+      "permanent": true
+    },
+    {
+      "source": "/llms/guides.txt",
+      "destination": "/llms/build.txt",
+      "permanent": true
+    },
+    {
+      "source": "/llms/guides.txt/",
+      "destination": "/llms/build.txt",
+      "permanent": true
+    },
+    {
+      "source": "/llms/sdk.txt",
+      "destination": "/llms/platforms.txt",
+      "permanent": true
+    },
+    {
+      "source": "/llms/sdk.txt/",
+      "destination": "/llms/platforms.txt",
+      "permanent": true
+    },
+    {
+      "source": "/local-brain",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/local-brain/",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/mac",
+      "destination": "/platforms/ios#on-a-mac",
+      "permanent": true
+    },
+    {
+      "source": "/mac/",
+      "destination": "/platforms/ios#on-a-mac",
+      "permanent": true
+    },
+    {
+      "source": "/macos",
+      "destination": "/platforms/ios#on-a-mac",
+      "permanent": true
+    },
+    {
+      "source": "/macos/",
+      "destination": "/platforms/ios#on-a-mac",
+      "permanent": true
+    },
+    {
+      "source": "/mcp",
+      "destination": "/build/mcp",
+      "permanent": true
+    },
+    {
+      "source": "/mcp/",
+      "destination": "/build/mcp",
+      "permanent": true
+    },
+    {
+      "source": "/mobile",
+      "destination": "/deploy#on-the-device",
+      "permanent": true
+    },
+    {
+      "source": "/mobile/",
+      "destination": "/deploy#on-the-device",
+      "permanent": true
+    },
+    {
+      "source": "/models/essence-1",
+      "destination": "/models/first-generation#essence-1",
+      "permanent": true
+    },
+    {
+      "source": "/models/essence-1/",
+      "destination": "/models/first-generation#essence-1",
+      "permanent": true
+    },
+    {
+      "source": "/models/expression-1",
+      "destination": "/models/first-generation#expression-1",
+      "permanent": true
+    },
+    {
+      "source": "/models/expression-1/",
+      "destination": "/models/first-generation#expression-1",
+      "permanent": true
+    },
+    {
+      "source": "/no-gpu",
+      "destination": "/deploy#cpu-only-no-gpu",
+      "permanent": true
+    },
+    {
+      "source": "/no-gpu/",
+      "destination": "/deploy#cpu-only-no-gpu",
+      "permanent": true
+    },
+    {
+      "source": "/offline",
+      "destination": "/deploy#fully-offline",
+      "permanent": true
+    },
+    {
+      "source": "/offline/",
+      "destination": "/deploy#fully-offline",
+      "permanent": true
+    },
+    {
+      "source": "/on-device",
+      "destination": "/deploy#on-the-device",
+      "permanent": true
+    },
+    {
+      "source": "/on-device/",
+      "destination": "/deploy#on-the-device",
+      "permanent": true
+    },
+    {
+      "source": "/on-prem",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/on-prem/",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/performance/android",
+      "destination": "/performance#mobile",
+      "permanent": true
+    },
+    {
+      "source": "/performance/android/",
+      "destination": "/performance#mobile",
+      "permanent": true
+    },
+    {
+      "source": "/performance/cloud",
+      "destination": "/performance#cloud",
+      "permanent": true
+    },
+    {
+      "source": "/performance/cloud/",
+      "destination": "/performance#cloud",
+      "permanent": true
+    },
+    {
+      "source": "/performance/desktop",
+      "destination": "/performance#desktop",
+      "permanent": true
+    },
+    {
+      "source": "/performance/desktop/",
+      "destination": "/performance#desktop",
+      "permanent": true
+    },
+    {
+      "source": "/performance/ios",
+      "destination": "/performance#mobile",
+      "permanent": true
+    },
+    {
+      "source": "/performance/ios/",
+      "destination": "/performance#mobile",
+      "permanent": true
+    },
+    {
+      "source": "/performance/mobile",
+      "destination": "/performance#mobile",
+      "permanent": true
+    },
+    {
+      "source": "/performance/mobile/",
+      "destination": "/performance#mobile",
+      "permanent": true
+    },
+    {
+      "source": "/performance/web",
+      "destination": "/performance#web",
+      "permanent": true
+    },
+    {
+      "source": "/performance/web/",
+      "destination": "/performance#web",
+      "permanent": true
+    },
+    {
+      "source": "/python",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/python/",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart/",
+      "destination": "/start",
+      "permanent": true
+    },
+    {
+      "source": "/rest",
+      "destination": "/platforms/rest",
+      "permanent": true
+    },
+    {
+      "source": "/rest/",
+      "destination": "/platforms/rest",
+      "permanent": true
+    },
+    {
+      "source": "/roadmap",
+      "destination": "/changelog",
+      "permanent": true
+    },
+    {
+      "source": "/roadmap/",
+      "destination": "/changelog",
+      "permanent": true
+    },
+    {
+      "source": "/sdk",
+      "destination": "/platforms",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/",
+      "destination": "/platforms",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android/",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android-api",
+      "destination": "/platforms/android/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android-api/",
+      "destination": "/platforms/android/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android-verify",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/android-verify/",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/apple",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/apple/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/apple-api",
+      "destination": "/platforms/swift/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/apple-api/",
+      "destination": "/platforms/swift/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/browser",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/browser/",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/agents",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/agents/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/commands",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/commands/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/configuration",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/configuration/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/install",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/install/",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/local-mode",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/local-mode/",
+      "destination": "/platforms/cli/local-brain",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/overview",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/overview/",
+      "destination": "/platforms/cli",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/reference",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/reference/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/verified",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/cli/verified/",
+      "destination": "/platforms/cli/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/flutter",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/flutter/",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios-api",
+      "destination": "/platforms/swift/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ios-api/",
+      "destination": "/platforms/swift/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ipados",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/ipados/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/javascript",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/javascript/",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/kotlin",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/kotlin/",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/livekit",
+      "destination": "/platforms/livekit",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/livekit/",
+      "destination": "/platforms/livekit",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/macos",
+      "destination": "/platforms/ios#on-a-mac",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/macos/",
+      "destination": "/platforms/ios#on-a-mac",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/mcp",
+      "destination": "/build/mcp",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/mcp/",
+      "destination": "/build/mcp",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/mobile",
+      "destination": "/deploy#on-the-device",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/mobile/",
+      "destination": "/deploy#on-the-device",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/overview",
+      "destination": "/platforms",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/overview/",
+      "destination": "/platforms",
       "permanent": true
     },
     {
@@ -1102,23 +1652,203 @@
       "permanent": true
     },
     {
+      "source": "/sdk/python",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/python/",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/python-api",
+      "destination": "/platforms/python/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/python-api/",
+      "destination": "/platforms/python/reference",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/swift",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/swift/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/wasm",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/wasm/",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/web",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdk/web/",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/sdks",
+      "destination": "/platforms",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/",
+      "destination": "/platforms",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/flutter",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/flutter/",
+      "destination": "/platforms/android#flutter",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/kotlin",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/kotlin/",
+      "destination": "/platforms/android",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/python",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/python/",
+      "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/swift",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/sdks/swift/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/self-hosted",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/self-hosted/",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/self-hosting",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
+      "source": "/self-hosting/",
+      "destination": "/deploy/self-hosted",
+      "permanent": true
+    },
+    {
       "source": "/showcase",
-      "destination": "/examples#ready-made-avatars",
+      "destination": "/examples",
       "permanent": true
     },
     {
       "source": "/showcase/",
-      "destination": "/examples#ready-made-avatars",
+      "destination": "/examples",
       "permanent": true
     },
     {
-      "source": "/concepts",
-      "destination": "/guides",
+      "source": "/status",
+      "destination": "https://status.bithuman.ai",
+      "permanent": false
+    },
+    {
+      "source": "/status/",
+      "destination": "https://status.bithuman.ai",
+      "permanent": false
+    },
+    {
+      "source": "/swift",
+      "destination": "/platforms/ios",
       "permanent": true
     },
     {
-      "source": "/concepts/",
-      "destination": "/guides",
+      "source": "/swift/",
+      "destination": "/platforms/ios",
+      "permanent": true
+    },
+    {
+      "source": "/troubleshooting",
+      "destination": "/resources/troubleshooting",
+      "permanent": true
+    },
+    {
+      "source": "/troubleshooting/",
+      "destination": "/resources/troubleshooting",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials",
+      "destination": "/build",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/",
+      "destination": "/build",
+      "permanent": true
+    },
+    {
+      "source": "/use-cases",
+      "destination": "/build",
+      "permanent": true
+    },
+    {
+      "source": "/use-cases/",
+      "destination": "/build",
+      "permanent": true
+    },
+    {
+      "source": "/web",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/web/",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/webgpu",
+      "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/webgpu/",
+      "destination": "/platforms/web",
       "permanent": true
     }
   ],

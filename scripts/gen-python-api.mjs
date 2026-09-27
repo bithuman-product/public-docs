@@ -37,7 +37,7 @@
 //   4. Writes scripts/python-surface.json: the artifact record plus the whole
 //      public surface, whether or not the page prints it.
 //   5. Renders the page region between the PYAPI markers on
-//      src/content/docs/sdk/python-api.md from that record.
+//      src/content/docs/platforms/python/reference.md from that record.
 //
 // THE RECORD names the artifact in the shape the performance record uses —
 // {registry, coordinate, version, digest, resolved_on} — plus the wheel
@@ -77,7 +77,7 @@ import { join } from "node:path";
 
 export const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 export const RECORD_PATH = join(ROOT, "scripts/python-surface.json");
-export const PAGE_PATH = join(ROOT, "src/content/docs/sdk/python-api.md");
+export const PAGE_PATH = join(ROOT, "src/content/docs/platforms/python/reference.md");
 export const EXTRACTOR = join(ROOT, "scripts/python-api-extract.py");
 
 export const BEGIN = "<!-- PYAPI:BEGIN -->";
@@ -221,7 +221,7 @@ export const PUBLIC = {
     AsyncBithuman: {
       purpose: "The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. " +
         "Create it with `await AsyncBithuman.create(model_path=\"avatar.imx\", api_secret=None)`; " +
-        "the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/sdk/python#integrate-into-your-app).",
+        "the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/platforms/python#integrate-into-your-app).",
       methods: ["push_audio", "flush", "interrupt", "run", "stop", "shutdown", "get_first_frame"],
     },
     VideoFrame: { purpose: "One item from `AsyncBithuman.run()`: `has_image`, `bgr_image` (a BGR `numpy` array), `audio_chunk` and `frame_index`." },
@@ -391,7 +391,7 @@ function renderSymbol(sym, pub = {}) {
   if (pub.purpose) {
     out.push(pub.purpose);
   } else if (sym.doc === FORMAT_WITHHELD) {
-    out.push("_The docstring shipped with this symbol describes the container format, which is proprietary and not documented publicly. See [Avatars and the `.imx` format](/concepts/avatars-imx)._");
+    out.push("_The docstring shipped with this symbol describes the container format, which is proprietary and not documented publicly. See [Avatars and the `.imx` format](/models/avatar-file)._");
   } else if (sym.doc && proseAllowed(sym.doc)) {
     out.push(rst(sym.doc));
   } else if (sym.doc) {

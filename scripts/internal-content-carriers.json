@@ -2,7 +2,7 @@
   "_comment": "Strings a public page must keep verbatim although a G1 pattern matches them: path, exact string, reason. Each is asserted present by scripts/check-internal-content.mjs.",
   "carriers": [
     {
-      "path": "src/content/docs/sdk/android-api.md",
+      "path": "src/content/docs/platforms/android/reference.md",
       "string": "@Deprecated(\"Enforcement is unconditional since 0.5.7; this property is ignored.\")",
       "reason": "The @Deprecated message compiled into the published essence2-android AAR, quoted verbatim by the generated reference; it changes when the SDK does (bithuman-models#1222)."
     }

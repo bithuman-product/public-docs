@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // THE REALTIME PRICE TABLE IS THE API'S (product rule).
 //
-// /guides/pricing's "Serving" table used to be typed by hand. GET /v1/pricing now
+// /pricing's "Serving" table used to be typed by hand. GET /v1/pricing now
 // publishes the realtime rates (`data.realtime`), each with the rounding rule and
 // the basis in force, so the page is generated from it:
 //
 //   src/data/pricing.json        a snapshot of GET /v1/pricing `data.realtime`, written
 //                                only by this script (--fetch)
-//   <!-- PRICING:REALTIME -->    the block on guides/pricing.md, rendered from the snapshot;
+//   <!-- PRICING:REALTIME -->    the block on pricing.md, rendered from the snapshot;
 //                                `basis` and `rounding` are printed VERBATIM, so when the
 //                                rule changes server-side the next --fetch --write changes
 //                                the page, with no hand text to forget
@@ -32,7 +32,7 @@ import { join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const SNAP = join(ROOT, "src/data/pricing.json");
-const PAGE = join(ROOT, "src/content/docs/guides/pricing.md");
+const PAGE = join(ROOT, "src/content/docs/pricing.md");
 const OPEN = "<!-- PRICING:REALTIME -->", CLOSE = "<!-- /PRICING:REALTIME -->";
 const args = process.argv.slice(2);
 const has = (f) => args.includes(f);
@@ -40,10 +40,10 @@ const arg = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : un
 
 // Rows in the order the page has always shown them; the label and concept link are the page's.
 const MODELS = [
-  ["essence-2", "[Essence 2](/concepts/essence-2)"],
-  ["expression-2", "[Expression 2](/concepts/expression-2)"],
-  ["essence-1", "[Essence 1](/concepts/essence-1)"],
-  ["expression-1", "[Expression 1](/concepts/expression-1)"],
+  ["essence-2", "[Essence 2](/models/essence-2)"],
+  ["expression-2", "[Expression 2](/models/expression-2)"],
+  ["essence-1", "[Essence 1](/models/first-generation#essence-1)"],
+  ["expression-1", "[Expression 1](/models/first-generation#expression-1)"],
 ];
 
 const per = (r) => `${r} credit${r === 1 ? "" : "s"}/min`;
@@ -119,11 +119,11 @@ const want = `${OPEN}\n${render(snap.realtime)}${CLOSE}`;
 const have = page.slice(a, b + CLOSE.length);
 if (has("--write")) {
   if (have !== want) writeFileSync(PAGE, page.slice(0, a) + want + page.slice(b + CLOSE.length));
-  console.log(have === want ? "block already current" : `rewrote the ${OPEN} block in guides/pricing.md`);
+  console.log(have === want ? "block already current" : `rewrote the ${OPEN} block in pricing.md`);
   process.exit(0);
 }
 if (have !== want) {
-  console.error(`::error::guides/pricing.md's ${OPEN} block is not what src/data/pricing.json renders (hand edit, or a snapshot without --write). Run: node scripts/sync-pricing.mjs --write`);
+  console.error(`::error::pricing.md's ${OPEN} block is not what src/data/pricing.json renders (hand edit, or a snapshot without --write). Run: node scripts/sync-pricing.mjs --write`);
   process.exit(1);
 }
 console.log(`pricing: the realtime block is the render of the /v1/pricing snapshot (${snap.fetched_on})`);

@@ -1,0 +1,88 @@
+/* ============================================================================
+   The design system's shared pieces: cards, card grids and chips. Every page
+   draws these; components add only layout of their own.
+   ========================================================================== */
+
+/* Roboto's metric twin, so the swap from the fallback does not move the page. */
+@font-face {
+  font-family: "Roboto Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica");
+  size-adjust: 100.3%;
+  ascent-override: 92.4%;
+  descent-override: 24.3%;
+  line-gap-override: 0%;
+}
+
+/* ---- card grid ---- */
+.card-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
+.card-grid.cols-1 { --cols: 1; }
+.card-grid.cols-2 { --cols: 2; }
+.card-grid.cols-3 { --cols: 3; }
+.card-grid.cols-4 { --cols: 4; }
+.card-grid > li { display: flex; min-width: 0; }
+.card-grid > li.span-all, .card-grid > .card-wide { grid-column: 1 / -1; }
+@media (max-width: 1000px) { .card-grid.cols-4, .card-grid.cols-3 { --cols: 2; } }
+@media (max-width: 640px) { .card-grid.cols-4, .card-grid.cols-3, .card-grid.cols-2 { --cols: 1; } }
+
+/* ---- card ---- */
+.card {
+  position: relative; display: flex; flex-direction: column; gap: var(--s-2); width: 100%; min-width: 0;
+  padding: var(--s-5); border: 1px solid var(--color-border); border-radius: var(--r-lg);
+  background: var(--color-surface); color: inherit; text-decoration: none;
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+a.card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+a.card:hover .card-title :is(h2, h3, h4) { color: var(--color-primary); }
+.card-body { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; flex: 1; }
+.card-title { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); }
+.card-title :is(h2, h3, h4) { margin: 0; font-size: var(--ft-md); font-weight: var(--fw-bold); letter-spacing: -0.01em; line-height: var(--lh-snug); color: var(--color-text); transition: color var(--t-fast) var(--ease); }
+.card-line { font-size: var(--ft-sm); line-height: var(--lh-snug); color: var(--color-text-secondary); }
+.card-note { font-size: var(--ft-sm); line-height: var(--lh-snug); font-weight: var(--fw-medium); color: var(--color-text); }
+.card-chips { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-2); margin-top: auto; padding-top: var(--s-1); }
+.card-icon {
+  display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none;
+  border-radius: var(--r-md); background: var(--color-primary-soft); color: var(--color-primary);
+}
+.card-ext { position: absolute; top: var(--s-4); right: var(--s-4); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
+.card-media { display: block; overflow: hidden; border-radius: var(--r-md); background: var(--color-surface-2); }
+.card-media img { display: block; width: 100%; height: auto; }
+/* wide: icon beside the text */
+.card-wide { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-4); align-items: start; }
+.card-wide .card-line { max-width: 72ch; }
+/* media: a poster above the text */
+.card-media.card-media { margin: calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) var(--s-1); border-radius: var(--r-lg) var(--r-lg) 0 0; }
+/* model: a portrait beside the text */
+.card-model { flex-direction: row; align-items: stretch; gap: var(--s-5); padding: var(--s-3); }
+.card-model .card-media { margin: 0; width: 132px; flex: none; align-self: center; border-radius: var(--r-md); }
+.card-model .card-media img { aspect-ratio: 4 / 5; height: auto; object-fit: cover; object-position: 50% 15%; }
+.card-model .card-body { justify-content: center; padding: var(--s-2) var(--s-3) var(--s-2) 0; }
+.card-model .card-title :is(h2, h3) { font-size: var(--ft-xl); }
+/* platform: icon above, version chip at the foot */
+.card-platform { padding: var(--s-4); }
+.card-platform .card-icon { width: 36px; height: 36px; }
+@media (max-width: 560px) {
+  .card { padding: var(--s-4); }
+  .card-model { padding: var(--s-3); gap: var(--s-3); }
+  .card-model .card-media { width: 88px; align-self: flex-start; }
+  .card-model .card-title :is(h2, h3) { font-size: var(--ft-lg); }
+  .card-media.card-media { margin: calc(-1 * var(--s-4)) calc(-1 * var(--s-4)) var(--s-1); }
+}
+@media (prefers-reduced-motion: reduce) { .card, a.card:hover { transition: none; transform: none; } }
+
+/* ---- chip ---- */
+.chip {
+  display: inline-flex; align-items: center; gap: 0.3rem; max-width: 100%;
+  padding: 0.15rem 0.55rem; border: 1px solid var(--chip-border); border-radius: var(--r-pill);
+  background: var(--chip-bg); color: var(--color-text-secondary);
+  font-size: var(--ft-xs); font-weight: var(--fw-medium); line-height: 1.5; white-space: nowrap; text-decoration: none;
+}
+.chip svg { flex: none; color: var(--color-text-tertiary); }
+a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-3) 0 0; padding: 0; list-style: none; }
+
+/* ---- section heads on hubs and home ---- */
+.band-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2) var(--s-4); flex-wrap: wrap; margin-bottom: var(--s-4); }
+.band-head h2 { margin: 0; font-size: var(--fh-md); letter-spacing: -0.01em; }
+.band-head p { margin: 0; flex-basis: 100%; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+.band-more { display: inline-flex; align-items: center; gap: 0.3rem; font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-primary); }
+.band-more:hover { color: var(--color-primary-hover); }

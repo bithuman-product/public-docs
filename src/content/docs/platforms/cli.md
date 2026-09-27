@@ -1,18 +1,21 @@
 ---
 title: "CLI"
 description: "Run a live avatar in your browser or render an MP4 from the terminal, on macOS (Apple silicon) and Linux (x86_64, arm64). No code."
-section: sdk
-group: "Platforms"
-order: 10
+section: platforms
+group: "Code & terminal"
+order: 20
 type: platform
-label: "CLI (macOS & Linux)"
+renders: ["server", "no-gpu"]
+artifacts: ["cli"]
+platforms: ["cli"]
+next: ["/build/voice-agent", "/platforms/cli/local-brain", "/platforms/cli/reference"]
 ---
 
-One binary, no code: `bithuman run` opens a live conversation with an avatar in your browser, and `bithuman render` turns an audio file into an MP4. To program against the models instead, use [Python](/sdk/python).
+One binary, no code: `bithuman run` opens a live conversation with an avatar in your browser, and `bithuman render` turns an audio file into an MP4. To program against the models instead, use [Python](/platforms/python).
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), up to 1080p at 25 fps |
+| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), up to 1080p at 25 fps |
 | **`run` and `render`** | both | both |
 | **Download per avatar** | about 190 MB | 140–160 MB, plus a shared audio encoder (about 66 MB) once |
 
@@ -59,7 +62,7 @@ bithuman login --device   # over SSH: prints a code to enter in any browser
 bithuman account          # exit 0 when signed in
 ```
 
-Sign in first, because every render path needs a credential: without one, `run` and `render` stop before the first frame with exit 77 and write nothing. In scripts and CI, set `BITHUMAN_API_SECRET` instead of signing in ([Your API secret](/start/api-secret)). Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)). Listing, downloading and opening avatars need no account.
+Sign in first, because every render path needs a credential: without one, `run` and `render` stop before the first frame with exit 77 and write nothing. In scripts and CI, set `BITHUMAN_API_SECRET` instead of signing in ([Your API secret](/start/api-secret)). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)). Listing, downloading and opening avatars need no account.
 
 ## First frame
 
@@ -81,6 +84,46 @@ bithuman run wise-pup
 
 `bithuman run wise-pup` is a live session with the brain: it starts a local `livekit-server` and the conversation brain (the first run installs the brain, about 350 MB on disk, in one to two minutes). `render` accepts any audio format `ffmpeg` reads.
 
+## Complete example
+
+From a fresh machine to a talking-avatar MP4 in four commands.
+
+<figure class="showcase">
+  <video controls preload="none" playsinline poster="/examples/cli/hero.webp" width="416" height="720" src="/examples/cli/clip.mp4"></video>
+  <figcaption>The <code>wise-pup</code> sample avatar, rendered by <code>bithuman render</code> on an Apple M4 Mac.</figcaption>
+</figure>
+
+### Requirements
+
+| You need | Notes |
+|---|---|
+| macOS (Apple silicon) or Linux (x86_64, arm64) | |
+| An [API secret](/start/api-secret) | or `bithuman login` |
+| `ffmpeg` | `brew install ffmpeg` or `sudo apt install -y ffmpeg` |
+
+### Run it
+
+```bash
+curl -fsSL https://install.bithuman.ai | sh
+export BITHUMAN_API_SECRET="<your API secret>"
+curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
+bithuman render wise-pup speech.wav
+```
+
+![Terminal: the installer, bithuman pull and bithuman render writing wise-pup.mp4](/examples/cli/terminal.webp)
+
+### Expected output
+
+`wise-pup.mp4`: 416×720 at 20 fps, as long as the audio (15 seconds for the sample). To talk to the avatar instead, run `bithuman run wise-pup` and open the printed URL (this also needs `livekit-server`; see [CLI](/platforms/cli#before-you-start)).
+
+### Make it your own
+
+- **Your own avatar:** create one with the [Agents API](/api/agents) (or on bitHuman), then `bithuman pull <AGENT_CODE>` and render it the same way.
+- **Your own words:** any audio file `ffmpeg` reads works as the second argument; generate speech with [Text to speech](/api/text-to-speech).
+- **A photoreal person:** `bithuman render sofia-ramirez speech.wav` renders Essence 2 (this avatar is 1080×1920 portrait, 25 fps).
+- **Scripts and CI:** add `--json` and branch on exit codes ([reference](/platforms/cli/reference#json-output)).
+- **A conversation instead of a clip:** `bithuman run wise-pup` — [Talk to an avatar on your machine](/build/voice-agent).
+
 ## Integrate into your app
 
 | Job | Command |
@@ -92,9 +135,9 @@ bithuman run wise-pup
 | Render | `bithuman render <avatar> in.wav -o out.mp4` (a code or name is downloaded on first use) |
 | Serve a live session | `bithuman run <avatar>`; `--host <LAN address>` to expose it (`0.0.0.0` also needs `BITHUMAN_ALLOW_PUBLIC_BIND=1`) |
 | Talk with your own OpenAI key | `export OPENAI_API_KEY=…` before `bithuman run` ([voice settings](#voice-settings)) |
-| Run the brain on your own hardware | [on-device brain](/sdk/cli/local-mode) |
-| Drive it from an AI agent | `bithuman mcp` ([MCP server](/sdk/mcp)) |
-| Script it | add `--json`: every failure prints one JSON object with a stable code, and the exit code is the contract ([reference](/sdk/cli/reference#exit-codes)) |
+| Run the brain on your own hardware | [local conversation brain](/platforms/cli/local-brain) |
+| Drive it from an AI agent | `bithuman mcp` ([MCP server](/build/mcp)) |
+| Script it | add `--json`: every failure prints one JSON object with a stable code, and the exit code is the contract ([reference](/platforms/cli/reference#exit-codes)) |
 
 ### Voice settings
 
@@ -102,20 +145,20 @@ bithuman run wise-pup
 
 | Variable | Default | What it does |
 |---|---|---|
-| `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account at the managed voice-chat rate, 10 credits per minute ([pricing](/guides/pricing)). |
+| `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account at the managed voice-chat rate, 10 credits per minute ([pricing](/pricing)). |
 | `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt |
 
-The whole setup, and the same conversation in your own Python code: [Talk to an avatar on your machine](/guides/local-voice-avatar).
+The whole setup, and the same conversation in your own Python code: [Talk to an avatar on your machine](/build/voice-agent).
 
 ## Platform notes
 
-- Essence 1 avatars work with `run` only; for a file use [Python](/sdk/python) or the [video API](/api/video). Expression 1 runs on the [cloud API](/api).
+- Essence 1 avatars work with `run` only; for a file use [Python](/platforms/python) or the [video API](/api/video). Expression 1 runs on the [cloud API](/api).
 - The first Essence 2 render on a machine downloads a shared audio encoder (about 66 MB) to `~/.bithuman/engines/essence-2/` once.
-- Intel Macs and Windows have no binary. Use WSL2 on Windows, or the [web embed](/sdk/web) or [cloud API](/api).
+- Intel Macs and Windows have no binary. Use WSL2 on Windows, or the [web embed](/platforms/web) or [cloud API](/api).
 
 ## Performance
 
-Frame rates for the CLI on macOS and Linux are on [Desktop performance](/performance/desktop).
+Frame rates for the CLI on macOS and Linux are on [Desktop performance](/performance#desktop).
 
 ## Troubleshooting
 
@@ -137,7 +180,7 @@ Frame rates for the CLI on macOS and Linux are on [Desktop performance](/perform
 
 ## Reference
 
-- [CLI reference](/sdk/cli/reference): every command, flag, exit code and environment variable.
-- [On-device brain](/sdk/cli/local-mode): run the conversation fully on your hardware.
+- [CLI reference](/platforms/cli/reference): every command, flag, exit code and environment variable.
+- [Local conversation brain](/platforms/cli/local-brain): run the conversation fully on your hardware.
 - [CLI example scripts](https://github.com/bithuman-product/bithuman-examples/tree/main/api/cli): live stream, offline render, REST.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).

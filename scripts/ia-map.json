@@ -1,0 +1,960 @@
+{
+ "$comment": "The one source of truth for moved URLs. scripts/gen-redirects.mjs turns it into vercel.json's redirects: every old URL answers one 308 straight to its final page (chains are collapsed), with a trailing-slash twin. `new` is the final page; while that page is not built yet, `interim` is used instead. `legacy` holds the redirects that existed before the 2026-09 IA change, with their original destinations; the generator re-points them through `moves` and `repoint`. A legacy source that is now a page is dropped. `sitemap_2026_09` is the sitemap before the change: check-redirects-live.mjs asserts each still answers 200, or one 308 then 200.",
+ "moves": [
+  {
+   "old": "/sdk",
+   "new": "/platforms",
+   "action": "move"
+  },
+  {
+   "old": "/sdk/apple",
+   "new": "/platforms/ios",
+   "action": "split"
+  },
+  {
+   "old": "/sdk/android",
+   "new": "/platforms/android",
+   "action": "move"
+  },
+  {
+   "old": "/sdk/web",
+   "new": "/platforms/web",
+   "action": "move"
+  },
+  {
+   "old": "/examples/web",
+   "new": "/platforms/web#complete-example",
+   "action": "merge"
+  },
+  {
+   "old": "/sdk/python",
+   "new": "/platforms/python",
+   "action": "move"
+  },
+  {
+   "old": "/examples/python",
+   "new": "/platforms/python#complete-example",
+   "action": "merge"
+  },
+  {
+   "old": "/sdk/cli",
+   "new": "/platforms/cli",
+   "action": "move"
+  },
+  {
+   "old": "/examples/cli",
+   "new": "/platforms/cli#complete-example",
+   "action": "merge"
+  },
+  {
+   "old": "/sdk/cli/local-mode",
+   "new": "/platforms/cli/local-brain",
+   "action": "move"
+  },
+  {
+   "old": "/sdk/livekit",
+   "new": "/platforms/livekit",
+   "action": "move"
+  },
+  {
+   "old": "/api/quickstart",
+   "new": "/platforms/rest",
+   "action": "merge"
+  },
+  {
+   "old": "/examples/rest-hello",
+   "new": "/platforms/rest#complete-example",
+   "action": "merge"
+  },
+  {
+   "old": "/sdk/apple-api",
+   "new": "/platforms/swift/reference",
+   "action": "move"
+  },
+  {
+   "old": "/sdk/android-api",
+   "new": "/platforms/android/reference",
+   "action": "move"
+  },
+  {
+   "old": "/sdk/python-api",
+   "new": "/platforms/python/reference",
+   "action": "move"
+  },
+  {
+   "old": "/sdk/cli/reference",
+   "new": "/platforms/cli/reference",
+   "action": "move"
+  },
+  {
+   "old": "/guides/self-hosting",
+   "new": "/deploy/self-hosted",
+   "action": "move"
+  },
+  {
+   "old": "/guides/pricing",
+   "new": "/pricing",
+   "action": "move"
+  },
+  {
+   "old": "/concepts/models",
+   "new": "/models",
+   "action": "move"
+  },
+  {
+   "old": "/concepts/essence-2",
+   "new": "/models/essence-2",
+   "action": "move"
+  },
+  {
+   "old": "/concepts/expression-2",
+   "new": "/models/expression-2",
+   "action": "move"
+  },
+  {
+   "old": "/concepts/essence-1",
+   "new": "/models/first-generation#essence-1",
+   "action": "merge"
+  },
+  {
+   "old": "/concepts/expression-1",
+   "new": "/models/first-generation#expression-1",
+   "action": "merge"
+  },
+  {
+   "old": "/concepts/architecture",
+   "new": "/models/how-it-works",
+   "action": "merge"
+  },
+  {
+   "old": "/concepts/audio-streaming",
+   "new": "/models/how-it-works#audio-in-frames-out",
+   "action": "merge"
+  },
+  {
+   "old": "/concepts/avatars-imx",
+   "new": "/models/avatar-file",
+   "action": "move"
+  },
+  {
+   "old": "/guides",
+   "new": "/build",
+   "action": "move"
+  },
+  {
+   "old": "/guides/building-avatars",
+   "new": "/build/create-avatar",
+   "action": "move"
+  },
+  {
+   "old": "/guides/persona",
+   "new": "/build/persona",
+   "action": "move"
+  },
+  {
+   "old": "/guides/voice-providers",
+   "new": "/build/voices",
+   "action": "move"
+  },
+  {
+   "old": "/guides/avatar-actions",
+   "new": "/build/gestures",
+   "action": "move"
+  },
+  {
+   "old": "/guides/local-voice-avatar",
+   "new": "/build/voice-agent",
+   "action": "merge"
+  },
+  {
+   "old": "/examples/ai-conversation",
+   "new": "/build/voice-agent#python-voice-conversation",
+   "action": "merge"
+  },
+  {
+   "old": "/sdk/mcp",
+   "new": "/build/mcp",
+   "action": "move"
+  },
+  {
+   "old": "/examples/swift-ios-expression2",
+   "new": "/examples/ios-expression-2",
+   "action": "move"
+  },
+  {
+   "old": "/examples/swift-ios-essence2",
+   "new": "/examples/ios-essence-2",
+   "action": "move"
+  },
+  {
+   "old": "/examples/macos-expression2",
+   "new": "/examples/macos-expression-2",
+   "action": "move"
+  },
+  {
+   "old": "/examples/android-expression2",
+   "new": "/examples/android-expression-2",
+   "action": "move"
+  },
+  {
+   "old": "/examples/android-essence2",
+   "new": "/examples/android-essence-2",
+   "action": "move"
+  },
+  {
+   "old": "/performance/cloud",
+   "new": "/performance#cloud",
+   "action": "merge"
+  },
+  {
+   "old": "/performance/desktop",
+   "new": "/performance#desktop",
+   "action": "merge"
+  },
+  {
+   "old": "/performance/mobile",
+   "new": "/performance#mobile",
+   "action": "merge"
+  },
+  {
+   "old": "/performance/web",
+   "new": "/performance#web",
+   "action": "merge"
+  },
+  {
+   "old": "/guides/session-troubleshooting",
+   "new": "/resources/troubleshooting",
+   "action": "move"
+  },
+  {
+   "old": "/community",
+   "new": "/support",
+   "action": "move"
+  }
+ ],
+ "repoint": [
+  {
+   "source": "/macos",
+   "new": "/platforms/macos",
+   "interim": "/platforms/ios#on-a-mac"
+  },
+  {
+   "source": "/mac",
+   "new": "/platforms/macos",
+   "interim": "/platforms/ios#on-a-mac"
+  },
+  {
+   "source": "/sdk/macos",
+   "new": "/platforms/macos",
+   "interim": "/platforms/ios#on-a-mac"
+  },
+  {
+   "source": "/sdks/flutter",
+   "new": "/platforms/flutter",
+   "interim": "/platforms/android#flutter"
+  },
+  {
+   "source": "/integrations/flutter",
+   "new": "/platforms/flutter",
+   "interim": "/platforms/android#flutter"
+  },
+  {
+   "source": "/concepts/essence-2-max",
+   "new": "/models"
+  },
+  {
+   "source": "/guides/deploy-essence-2-max",
+   "new": "/models"
+  },
+  {
+   "source": "/guides/deployment",
+   "new": "/deploy"
+  },
+  {
+   "source": "/concepts",
+   "new": "/models"
+  },
+  {
+   "source": "/use-cases",
+   "new": "/build"
+  },
+  {
+   "source": "/showcase",
+   "new": "/examples"
+  },
+  {
+   "source": "/guides/self-host-local",
+   "new": "/deploy/self-hosted"
+  },
+  {
+   "source": "/guides/deploy-self-hosted",
+   "new": "/deploy/self-hosted"
+  },
+  {
+   "source": "/concepts/where-models-run",
+   "new": "/models#where-each-model-runs"
+  },
+  {
+   "source": "/mobile",
+   "new": "/deploy/on-device",
+   "interim": "/deploy#on-the-device"
+  },
+  {
+   "source": "/sdk/mobile",
+   "new": "/deploy/on-device",
+   "interim": "/deploy#on-the-device"
+  }
+ ],
+ "short": [
+  {
+   "source": "/offline",
+   "new": "/deploy/offline",
+   "interim": "/deploy#fully-offline"
+  },
+  {
+   "source": "/cpu",
+   "new": "/deploy/cpu",
+   "interim": "/deploy#cpu-only-no-gpu"
+  },
+  {
+   "source": "/no-gpu",
+   "new": "/deploy/cpu",
+   "interim": "/deploy#cpu-only-no-gpu"
+  },
+  {
+   "source": "/on-device",
+   "new": "/deploy/on-device",
+   "interim": "/deploy#on-the-device"
+  },
+  {
+   "source": "/self-hosting",
+   "new": "/deploy/self-hosted"
+  },
+  {
+   "source": "/self-hosted",
+   "new": "/deploy/self-hosted"
+  },
+  {
+   "source": "/on-prem",
+   "new": "/deploy/self-hosted"
+  },
+  {
+   "source": "/flutter",
+   "new": "/platforms/flutter",
+   "interim": "/platforms/android#flutter"
+  },
+  {
+   "source": "/sdk/flutter",
+   "new": "/platforms/flutter",
+   "interim": "/platforms/android#flutter"
+  },
+  {
+   "source": "/web",
+   "new": "/platforms/web"
+  },
+  {
+   "source": "/webgpu",
+   "new": "/platforms/web"
+  },
+  {
+   "source": "/livekit",
+   "new": "/platforms/livekit"
+  },
+  {
+   "source": "/mcp",
+   "new": "/build/mcp"
+  },
+  {
+   "source": "/cookbook",
+   "new": "/build"
+  },
+  {
+   "source": "/tutorials",
+   "new": "/build"
+  },
+  {
+   "source": "/enterprise",
+   "new": "/deploy"
+  },
+  {
+   "source": "/essence-2",
+   "new": "/models/essence-2"
+  },
+  {
+   "source": "/expression-2",
+   "new": "/models/expression-2"
+  },
+  {
+   "source": "/troubleshooting",
+   "new": "/resources/troubleshooting"
+  },
+  {
+   "source": "/rest",
+   "new": "/platforms/rest"
+  },
+  {
+   "source": "/ipad",
+   "new": "/platforms/ios"
+  },
+  {
+   "source": "/models/essence-1",
+   "new": "/models/first-generation#essence-1"
+  },
+  {
+   "source": "/models/expression-1",
+   "new": "/models/first-generation#expression-1"
+  },
+  {
+   "source": "/performance/ios",
+   "new": "/performance#mobile"
+  },
+  {
+   "source": "/performance/android",
+   "new": "/performance#mobile"
+  },
+  {
+   "source": "/local-brain",
+   "new": "/platforms/cli/local-brain"
+  },
+  {
+   "source": "/llms/sdk.txt",
+   "new": "/llms/platforms.txt"
+  },
+  {
+   "source": "/llms/guides.txt",
+   "new": "/llms/build.txt"
+  }
+ ],
+ "legacy": [
+  {
+   "source": "/introduction",
+   "destination": "/"
+  },
+  {
+   "source": "/guides/eu-ai-act",
+   "destination": "/legal/eu-ai-act"
+  },
+  {
+   "source": "/getting-started/quickstart",
+   "destination": "/api/quickstart"
+  },
+  {
+   "source": "/getting-started/authentication",
+   "destination": "/api/authentication"
+  },
+  {
+   "source": "/getting-started/models",
+   "destination": "/concepts/models"
+  },
+  {
+   "source": "/getting-started/pricing",
+   "destination": "/guides/pricing"
+  },
+  {
+   "source": "/getting-started/cli",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/getting-started/architecture",
+   "destination": "/concepts/architecture"
+  },
+  {
+   "source": "/getting-started/compatibility",
+   "destination": "/concepts/architecture"
+  },
+  {
+   "source": "/getting-started/device-matrix",
+   "destination": "/downloads"
+  },
+  {
+   "source": "/sdks/python",
+   "destination": "/sdk/python"
+  },
+  {
+   "source": "/sdks/swift",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/sdks/kotlin",
+   "destination": "/sdk/android"
+  },
+  {
+   "source": "/sdks/flutter",
+   "destination": "/sdk"
+  },
+  {
+   "source": "/integrations/flutter",
+   "destination": "/sdk"
+  },
+  {
+   "source": "/examples/overview",
+   "destination": "/examples"
+  },
+  {
+   "source": "/cli",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/cli/overview",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/cli/install",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/cli/commands",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/cli/configuration",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/cli/local-mode",
+   "destination": "/sdk/cli/local-mode"
+  },
+  {
+   "source": "/cli/agents",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/guides/local-mode",
+   "destination": "/sdk/cli/local-mode"
+  },
+  {
+   "source": "/guides/deployment",
+   "destination": "/guides"
+  },
+  {
+   "source": "/api-reference",
+   "destination": "/api/reference"
+  },
+  {
+   "source": "/api-reference/overview",
+   "destination": "/api"
+  },
+  {
+   "source": "/api-reference/rate-limits",
+   "destination": "/api/rate-limits"
+  },
+  {
+   "source": "/api-reference/errors",
+   "destination": "/api/errors"
+  },
+  {
+   "source": "/api-reference/runtime-tokens",
+   "destination": "/api/authentication"
+  },
+  {
+   "source": "/api-reference/credit-summaries",
+   "destination": "/api/billing"
+  },
+  {
+   "source": "/api-reference/agent-generation",
+   "destination": "/api/agents"
+  },
+  {
+   "source": "/api-reference/agent-management",
+   "destination": "/api/agents"
+  },
+  {
+   "source": "/api-reference/agent-context",
+   "destination": "/api/agents"
+  },
+  {
+   "source": "/api-reference/file-upload",
+   "destination": "/api/files"
+  },
+  {
+   "source": "/api-reference/dynamics",
+   "destination": "/api/dynamics"
+  },
+  {
+   "source": "/api-reference/voice",
+   "destination": "/api/text-to-speech"
+  },
+  {
+   "source": "/concepts/essence-2-quality",
+   "destination": "/concepts/essence-2"
+  },
+  {
+   "source": "/concepts/models-and-planes",
+   "destination": "/concepts/models"
+  },
+  {
+   "source": "/concepts/essence-2-light",
+   "destination": "/concepts/essence-2"
+  },
+  {
+   "source": "/roadmap",
+   "destination": "/changelog"
+  },
+  {
+   "source": "/use-cases",
+   "destination": "/examples#ready-made-avatars"
+  },
+  {
+   "source": "/api/voice",
+   "destination": "/api/text-to-speech"
+  },
+  {
+   "source": "/sdk/ipados",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/sdk/kotlin",
+   "destination": "/sdk/android"
+  },
+  {
+   "source": "/ios",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/android",
+   "destination": "/sdk/android"
+  },
+  {
+   "source": "/quickstart",
+   "destination": "/start"
+  },
+  {
+   "source": "/getting-started",
+   "destination": "/start"
+  },
+  {
+   "source": "/sdk/mobile",
+   "destination": "/sdk"
+  },
+  {
+   "source": "/mobile",
+   "destination": "/sdk"
+  },
+  {
+   "source": "/pricing",
+   "destination": "/guides/pricing"
+  },
+  {
+   "source": "/credits",
+   "destination": "/guides/pricing"
+  },
+  {
+   "source": "/billing",
+   "destination": "/guides/pricing"
+  },
+  {
+   "source": "/costs",
+   "destination": "/guides/pricing"
+  },
+  {
+   "source": "/api-keys",
+   "destination": "/api/api-keys"
+  },
+  {
+   "source": "/keys",
+   "destination": "/api/api-keys"
+  },
+  {
+   "source": "/get-started",
+   "destination": "/start"
+  },
+  {
+   "source": "/sdks",
+   "destination": "/sdk"
+  },
+  {
+   "source": "/ios-sdk",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/android-sdk",
+   "destination": "/sdk/android"
+  },
+  {
+   "source": "/swift",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/kotlin",
+   "destination": "/sdk/android"
+  },
+  {
+   "source": "/apple",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/iphone",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/sdk/swift",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/sdk/overview",
+   "destination": "/sdk"
+  },
+  {
+   "source": "/sdk/cli/overview",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/sdk/cli/install",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/sdk/cli/commands",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/sdk/cli/configuration",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/sdk/cli/agents",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/sdk/javascript",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/sdk/wasm",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/sdk/browser",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/browser",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/examples/cli-hello",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/examples/python-hello",
+   "destination": "/sdk/python"
+  },
+  {
+   "source": "/macos",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/mac",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/python",
+   "destination": "/sdk/python"
+  },
+  {
+   "source": "/sdk/cli/verified",
+   "destination": "/sdk/cli/reference"
+  },
+  {
+   "source": "/sdk/android-verify",
+   "destination": "/sdk/android"
+  },
+  {
+   "source": "/concepts/essence-2-max",
+   "destination": "/concepts/essence-2"
+  },
+  {
+   "source": "/guides/deploy-essence-2-max",
+   "destination": "/concepts/essence-2"
+  },
+  {
+   "source": "/sdk/macos",
+   "destination": "/sdk/cli"
+  },
+  {
+   "source": "/guides/browser-webgpu",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/concepts/pricing",
+   "destination": "/guides/pricing"
+  },
+  {
+   "source": "/legal",
+   "destination": "/legal/eu-ai-act"
+  },
+  {
+   "source": "/concepts/models-v2",
+   "destination": "/concepts/models"
+  },
+  {
+   "source": "/concepts/where-models-run",
+   "destination": "/concepts/models"
+  },
+  {
+   "source": "/guides/self-host-local",
+   "destination": "/guides/self-hosting"
+  },
+  {
+   "source": "/guides/deploy-self-hosted",
+   "destination": "/guides/self-hosting"
+  },
+  {
+   "source": "/guides/browser-rendering",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/examples/browser-webgpu-check",
+   "destination": "/sdk/web"
+  },
+  {
+   "source": "/examples/apple-swiftpm-check",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/examples/failure-states",
+   "destination": "/examples"
+  },
+  {
+   "source": "/concepts/agent-lifecycle",
+   "destination": "/api/agents"
+  },
+  {
+   "source": "/concepts/talking-video",
+   "destination": "/api/video"
+  },
+  {
+   "source": "/guides/deploy-livekit",
+   "destination": "/sdk/livekit"
+  },
+  {
+   "source": "/guides/deploy-embed",
+   "destination": "/api/embedding"
+  },
+  {
+   "source": "/status",
+   "destination": "https://status.bithuman.ai",
+   "permanent": false
+  },
+  {
+   "source": "/sdk/ios-api",
+   "destination": "/sdk/apple-api"
+  },
+  {
+   "source": "/sdk/ios",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/guides/mcp-server",
+   "destination": "/sdk/mcp"
+  },
+  {
+   "source": "/api/overview",
+   "destination": "/api"
+  },
+  {
+   "source": "/examples/kotlin-android-hello",
+   "destination": "/examples/android-expression2"
+  },
+  {
+   "source": "/examples/swift-ios-voice-agent",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/examples/swift-ios-hello",
+   "destination": "/sdk/apple"
+  },
+  {
+   "source": "/sdk/performance",
+   "destination": "/performance"
+  },
+  {
+   "source": "/showcase",
+   "destination": "/examples#ready-made-avatars"
+  },
+  {
+   "source": "/concepts",
+   "destination": "/guides"
+  }
+ ],
+ "sitemap_2026_09": [
+  "/",
+  "/start",
+  "/api/reference",
+  "/sdk",
+  "/guides",
+  "/resources",
+  "/api",
+  "/api/agents",
+  "/api/api-keys",
+  "/api/authentication",
+  "/api/billing",
+  "/api/cloud-avatar",
+  "/api/dynamics",
+  "/api/embedding",
+  "/api/errors",
+  "/api/files",
+  "/api/knowledge",
+  "/api/organizations",
+  "/api/providers",
+  "/api/quickstart",
+  "/api/rate-limits",
+  "/api/realtime",
+  "/api/runtime-sessions",
+  "/api/text-to-speech",
+  "/api/video",
+  "/api/webhooks",
+  "/changelog",
+  "/changelog/archive",
+  "/community",
+  "/concepts/architecture",
+  "/concepts/audio-streaming",
+  "/concepts/avatars-imx",
+  "/concepts/essence-1",
+  "/concepts/essence-2",
+  "/concepts/expression-1",
+  "/concepts/expression-2",
+  "/concepts/models",
+  "/downloads",
+  "/examples",
+  "/examples/ai-conversation",
+  "/examples/android-essence2",
+  "/examples/android-expression2",
+  "/examples/cli",
+  "/examples/macos-expression2",
+  "/examples/python",
+  "/examples/rest-hello",
+  "/examples/swift-ios-essence2",
+  "/examples/swift-ios-expression2",
+  "/examples/web",
+  "/guides/avatar-actions",
+  "/guides/building-avatars",
+  "/guides/local-voice-avatar",
+  "/guides/persona",
+  "/guides/pricing",
+  "/guides/self-hosting",
+  "/guides/session-troubleshooting",
+  "/guides/voice-providers",
+  "/legal/android-ffmpeg-lgpl",
+  "/legal/eu-ai-act",
+  "/performance",
+  "/performance/cloud",
+  "/performance/desktop",
+  "/performance/method",
+  "/performance/mobile",
+  "/performance/web",
+  "/resources/agents",
+  "/sdk/android",
+  "/sdk/android-api",
+  "/sdk/apple",
+  "/sdk/apple-api",
+  "/sdk/cli",
+  "/sdk/cli/local-mode",
+  "/sdk/cli/reference",
+  "/sdk/livekit",
+  "/sdk/mcp",
+  "/sdk/python",
+  "/sdk/python-api",
+  "/sdk/web",
+  "/start/api-secret"
+ ]
+}

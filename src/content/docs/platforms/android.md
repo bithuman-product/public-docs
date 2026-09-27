@@ -1,28 +1,31 @@
 ---
 title: "Android"
 description: "Add an Essence 2 or Expression 2 avatar to an Android app. Both models render on the handset from one Maven Central dependency."
-section: sdk
-group: "Platforms"
-order: 40
+section: platforms
+group: "Apps"
+order: 30
 type: platform
-label: "Android"
+renders: ["device"]
+artifacts: ["expression2_android", "essence2_android"]
+platforms: ["android", "flutter"]
+next: ["/examples/android-expression-2", "/examples/android-essence-2", "/platforms/android/reference"]
 ---
 
 Both models render on the handset: you feed 16 kHz mono speech in and pull picture frames out. After the one-time model download, the only network traffic is usage reporting.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
-| **What renders** | [any character from one portrait](/concepts/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/concepts/essence-2), at the identity's own resolution, 25 fps |
+| **What renders** | [any character from one portrait](/models/expression-2), 416×720 at 20 fps | [a photoreal person from one portrait](/models/essence-2), at the identity's own resolution, 25 fps |
 | **Devices** | `arm64-v8a` handset, `minSdk 26` | `arm64-v8a` handset, `minSdk 29` |
 | **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.2")` | `implementation("ai.bithuman:essence2-android:0.8.1")` |
 | **Credential** | an [API secret](https://www.bithuman.ai/developer/api-keys) | an [API secret](https://www.bithuman.ai/developer/api-keys) |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
-| **Worked example** | [Android example: Expression 2](/examples/android-expression2) | [Android example: Essence 2](/examples/android-essence2) |
+| **Worked example** | [Android example: Expression 2](/examples/android-expression-2) | [Android example: Essence 2](/examples/android-essence-2) |
 
 Toolchain: JDK 17, Gradle 8.11 or newer, Android Gradle Plugin 8.7 or newer, and a physical arm64 handset (emulators cannot load the engines).
 
-Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/sdk/python) or [CLI](/sdk/cli) on a desktop. See [Essence 1](/concepts/essence-1).
+Essence 1 isn't supported on Android or in the Swift package. Use Essence 2 or Expression 2 on devices, or run Essence 1 from the [cloud API](/api) or the [Python SDK](/platforms/python) or [CLI](/platforms/cli) on a desktop. See [Essence 1](/models/first-generation#essence-1).
 
 ## Install
 
@@ -70,7 +73,7 @@ implementation("ai.bithuman:expression2-android:0.5.2") {
 
 Pass your API secret in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
 
-Credits pay for session time, talking or idle, by the exact second ([pricing](/guides/pricing)).
+Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)).
 
 > **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only. A shipped app fetches the secret from your own backend at startup.
 
@@ -167,9 +170,13 @@ The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/
 
 - **Private avatars:** an avatar you created downloads with the secret you set with `Expression2Credential.set` or `Essence2Credential.set`; there is nothing else to pass.
 
+### Flutter
+
+The Flutter plugin renders on Android today; iOS and macOS do not build from its published tag yet. Its dependency line and current version are on [Downloads & versions](/downloads), and the [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle and interruption.
+
 ## Performance
 
-Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance](/performance/mobile).
+Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance](/performance#mobile).
 
 ## Troubleshooting
 
@@ -189,8 +196,8 @@ Frame rates on a Samsung Galaxy S25+ for both models are on [Mobile performance]
 
 ## Reference
 
-- [Android API reference](/sdk/android-api): every public class in both AARs.
-- Examples: [Expression 2](/examples/android-expression2) · [Essence 2](/examples/android-essence2), complete apps you can clone.
+- [Android API reference](/platforms/android/reference): every public class in both AARs.
+- Examples: [Expression 2](/examples/android-expression-2) · [Essence 2](/examples/android-essence-2), complete apps you can clone.
 - [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat): a complete voice conversation for Android.
 - [Changelog](/changelog) and [Downloads & versions](/downloads).
 - FFmpeg in `essence2-android` is LGPL: [relink materials](/legal/android-ffmpeg-lgpl).

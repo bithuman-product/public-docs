@@ -1,11 +1,10 @@
 ---
-title: "API secrets"
+title: "API secrets API"
 description: "Create, list, and delete your account's API secrets programmatically."
 section: api
 group: "Account"
-order: 30
+order: 10
 type: endpoint
-label: "API secrets"
 ---
 
 ## Overview

@@ -1,10 +1,10 @@
 ---
-title: "FFmpeg / LGPL — the Android relink offer"
+title: "FFmpeg / LGPL"
 description: "ai.bithuman:essence2-android statically links FFmpeg 7.1 under LGPL-2.1. This is the section 6(a) offer: where the relink materials are, what is in them, and the commands that check every claim on this page. The deprecated ai.bithuman:sdk carries a section 6(c) written offer."
-section: legal
+section: resources
 group: "Legal"
-order: 2
-type: reference
+order: 20
+type: legal
 ---
 
 > **This is an engineering reading of the license, not legal advice.** It
@@ -352,5 +352,5 @@ we want it: [hello@bithuman.ai](mailto:hello@bithuman.ai).
 The other license texts travel inside the AAR too — `META-INF/licenses/`
 carries `ffmpeg-7.1-COPYING.LGPLv2.1.txt`, `highway-1.3.0-LICENSE.txt`,
 `llvm-libcxx-LICENSE.txt` and `onnxruntime-1.26.0-LICENSE.txt`. See the
-[Android SDK page](/sdk/android) for the coordinates and what is measured
+[Android SDK page](/platforms/android) for the coordinates and what is measured
 about the artifact itself.

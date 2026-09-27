@@ -3,6 +3,7 @@
    ========================================================================== */
 @import "./tokens.css";
 @import "./code.css";
+@import "./components.css";
 
 *,
 *::before,

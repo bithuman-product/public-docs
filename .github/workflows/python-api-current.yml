@@ -2,7 +2,7 @@ name: Python API reference current
 
 # THE PYTHON API REFERENCE STILL DESCRIBES THE WHEEL PyPI SERVES TODAY.
 #
-# /sdk/python-api is generated: a script installs the newest published wheel
+# /platforms/python/reference is generated: a script installs the newest published wheel
 # into an empty virtualenv and reads the public surface back out of the
 # installed bytes. Nothing on that page was typed, and nothing on it was read
 # from a source tree — a symbol that exists in source and is not exported by the
@@ -29,7 +29,7 @@ on:
   push:
     branches: [main]
     paths:
-      - src/content/docs/sdk/python-api.md
+      - src/content/docs/platforms/python/reference.md
       - scripts/python-surface.json
       - scripts/gen-python-api.mjs
       - scripts/check-python-api-current.mjs
@@ -37,7 +37,7 @@ on:
       - .github/workflows/python-api-current.yml
   pull_request:
     paths:
-      - src/content/docs/sdk/python-api.md
+      - src/content/docs/platforms/python/reference.md
       - scripts/python-surface.json
       - scripts/gen-python-api.mjs
       - scripts/check-python-api-current.mjs

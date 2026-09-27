@@ -1,14 +1,13 @@
 ---
-title: "Write an agent persona"
+title: "Persona"
 description: "Write the system prompt that gives an avatar its personality, with the CO-STAR framework and a worked example."
-section: guides
-group: "Build"
-order: 21
+section: build
+group: "Create"
+order: 20
 type: guide
-label: "Write a persona"
 ---
 
-The persona is the avatar's system prompt: who it is, what it is for, and how it answers. Set it as `prompt` when you [create the agent](/guides/building-avatars), or change it later by sending it as `system_prompt` ([update an agent](/api/agents#update-an-agent)):
+The persona is the avatar's system prompt: who it is, what it is for, and how it answers. Set it as `prompt` when you [create the agent](/build/create-avatar), or change it later by sending it as `system_prompt` ([update an agent](/api/agents#update-an-agent)):
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/<code> -H "Content-Type: application/json" \
@@ -57,4 +56,4 @@ Talk to the agent (`https://www.bithuman.ai/embed/<code>`) and ask three questio
 
 ## Next
 
-- [Create your own avatar](/guides/building-avatars) · [Knowledge](/api/knowledge) · [Voices](/guides/voice-providers)
+- [Create your own avatar](/build/create-avatar) · [Knowledge](/api/knowledge) · [Voices](/build/voices)

@@ -1,11 +1,10 @@
 ---
-title: "Android example: Essence 2"
+title: "Android Essence 2"
 description: "A complete Kotlin app that renders a talking photoreal Essence 2 avatar at full resolution on an Android phone: clone it, add your API secret, build and run."
-section: examples
+section: build
 group: "Examples"
 order: 41
 type: example
-label: "Android: Essence 2"
 ---
 
 <figure class="showcase">
@@ -73,14 +72,14 @@ rendered 347 frames in 13 s — playing…
 3. opens it with `Essence2Avatar.create(identity.dir)` on a background thread;
 4. calls `feed(pcm)` and `endOfAudio()`, then `pull(frame)` until every frame is out: one frame per 40 ms of audio.
 
-The calls and the live-streaming loop are on [Android](/sdk/android).
+The calls and the live-streaming loop are on [Android](/platforms/android).
 
 ## Make it your own
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) with `"model": "essence-2"`, then pass its agent code to `fetch`; the secret you set with `Essence2Credential.set` downloads it.
 - **Live speech:** feed 16 kHz mono 16-bit audio as it arrives and pull frames at 25 fps; call `endOfAudio()` at the end of each reply and `idle(buffer)` between replies.
 - **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and passes it to `Essence2Credential.set`.
-- **Zero-copy frames (essence2-android 0.7.0 and newer):** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()` ([Android API](/sdk/android-api)).
+- **Zero-copy frames (essence2-android 0.7.0 and newer):** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()` ([Android API](/platforms/android/reference)).
 
   ```kotlin
   val avatar = Essence2Avatar.create(bundleDir)
@@ -101,8 +100,8 @@ The calls and the live-streaming loop are on [Android](/sdk/android).
 | The build refuses the JDK | use JDK 17 (`java -version`) |
 | The app says `speech.wav` is missing | run the `adb push` line, then restart the app |
 
-More on [Android: Troubleshooting](/sdk/android#troubleshooting).
+More on [Android: Troubleshooting](/platforms/android#troubleshooting).
 
 ## Next
 
-- [Android example: Expression 2](/examples/android-expression2) · [Android SDK](/sdk/android) · [Android API reference](/sdk/android-api) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/android/essence2-hello)
+- [Android example: Expression 2](/examples/android-expression-2) · [Android SDK](/platforms/android) · [Android API reference](/platforms/android/reference) · [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/android/essence2-hello)

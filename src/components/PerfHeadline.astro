@@ -2,35 +2,36 @@
 // The generated performance headline. The performance emitter writes a small
 // markdown table between the FLOORS:HEADLINE markers of
 // src/partials/performance-headline.md; this component only lays those cells
-// out (number, then the × real-time chip). No number is typed here.
+// out as times real time, on-device first. No number is typed here, and no
+// frame rate is shown: the speed a reader compares is the multiple.
 import { Content, rawContent } from "../partials/performance-headline.md";
 
 const md = rawContent().replace(/<!--[\s\S]*?-->/g, "");
 const rows = md.split("\n").filter((l) => l.startsWith("|") && !/^\|\s*-/.test(l))
   .map((l) => l.split("|").slice(1, -1).map((c) => c.trim().replace(/\*\*/g, "")));
 const [head, ...body] = rows;
-const note = md.split("\n").find((l) => l.trim() && !l.startsWith("|"))?.replace(/\[([^\]]+)\]\([^)]*\)/g, "").trim();
 // If the emitter's table shape ever changes, fall back to rendering the partial as-is.
 const parsed = Boolean(head && body.length > 0 && body.every((r) => r.length === head.length));
 const filled = /\|/.test(md);
 const cell = (c: string) => {
-  const [fps, x] = c.split("·").map((s) => s.trim());
-  const rt = x ? parseFloat(x) >= 1 : false;
-  return { fps, x, rt };
+  const x = (c.split("·")[1] ?? "").trim();
+  return { x, rt: x ? parseFloat(x) >= 1 : false };
 };
+// On-device columns first; the cloud column last.
+const order = parsed ? head.map((_, i) => i).slice(1).sort((a, b) => Number(/cloud/i.test(head[a])) - Number(/cloud/i.test(head[b])) || a - b) : [];
 ---
 <div class="perf-headline">
   {parsed ? (
-    <div class="ph-scroll" role="region" aria-label="Frame rates by platform" tabindex="0">
+    <div class="ph-scroll" role="region" aria-label="Times real time by platform" tabindex="0">
       <table class="ph">
-        <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+        <thead><tr><th scope="col">{head[0]}</th>{order.map((i) => <th scope="col">{head[i]}</th>)}</tr></thead>
         <tbody>
           {body.map((r) => (
             <tr>
               <th scope="row">{r[0]}</th>
-              {r.slice(1).map((c) => {
-                const { fps, x, rt } = cell(c);
-                return <td><span class="ph-fps">{fps}</span>{x && <span class:list={["ph-x", { rt }]}>{x} real time</span>}</td>;
+              {order.map((i) => {
+                const { x, rt } = cell(r[i]);
+                return <td><span class:list={["ph-x", { rt }]}>{x}</span><span class="ph-unit"> real time</span></td>;
               })}
             </tr>
           ))}
@@ -38,7 +39,7 @@ const cell = (c: string) => {
       </table>
     </div>
   ) : filled ? <div class="prose ph-raw"><Content /></div> : null}
-  {parsed && note && <p class="ph-note">{note}</p>}
+  {parsed && <p class="ph-note">Each figure is how many times faster than real time the avatar renders. At 1.0× or more it holds a live conversation.</p>}
   <p class="ph-link"><a href="/performance">Every platform and how we measure →</a></p>
 </div>
 <style>
@@ -49,9 +50,8 @@ const cell = (c: string) => {
   .ph tbody tr:last-child th, .ph tbody tr:last-child td { border-bottom: 0; }
   .ph thead th { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); font-weight: var(--fw-medium); background: var(--color-surface-2); }
   .ph tbody th { font-weight: var(--fw-bold); }
-  .ph-fps { display: block; font-size: var(--ft-lg); font-weight: var(--fw-bold); color: var(--color-text); }
-  .ph-x { display: inline-block; margin-top: 0.2rem; font-size: var(--ft-xs); padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--color-surface-2); color: var(--color-text-secondary); }
-  .ph-x.rt { background: color-mix(in srgb, var(--green-500) 16%, transparent); color: var(--color-text); }
+  .ph-x { font-size: var(--ft-lg); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-text); }
+  .ph-unit { display: block; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
   .ph-note { margin-top: var(--space-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
   .ph-raw :global(table) { width: 100%; font-size: var(--ft-sm); }
   .ph-link { margin-top: var(--space-2); font-size: var(--ft-sm); }

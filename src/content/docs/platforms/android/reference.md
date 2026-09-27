@@ -1,14 +1,13 @@
 ---
-title: "Android API reference"
+title: "Android reference"
 description: "Every public class in essence2-android and expression2-android: Kotlin signatures and what each class is for."
-section: sdk
-group: "Reference"
-order: 83
+section: platforms
+group: "SDK reference"
+order: 20
 type: reference
-label: "Android API"
 ---
 
-How to use these classes in an app is on [Android](/sdk/android). Signatures are Kotlin; `name: Type = …` has a default.
+How to use these classes in an app is on [Android](/platforms/android). Signatures are Kotlin; `name: Type = …` has a default.
 
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
@@ -412,7 +411,7 @@ data class Expression2Backend
 
 ## See also
 
-- [Android](/sdk/android) — install it, get a model, render your first frame
-- Examples: [Expression 2](/examples/android-expression2) · [Essence 2](/examples/android-essence2)
-- [Pricing](/guides/pricing) — what a render costs, and what refuses without an API secret
+- [Android](/platforms/android) — install it, get a model, render your first frame
+- Examples: [Expression 2](/examples/android-expression-2) · [Essence 2](/examples/android-essence-2)
+- [Pricing](/pricing) — what a render costs, and what refuses without an API secret
 - [Performance](/performance) — measured frame rates for every platform

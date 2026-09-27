@@ -21,7 +21,7 @@ for (const m of navSrc.matchAll(/(\w+):\s*\{\s*label:\s*"[^"]+",\s*home:\s*"([^"
 
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".md") ? [p] : []; });
 const routes = new Set();
-const TYPES = new Set(["hub", "quickstart", "platform", "endpoint", "guide", "reference", "example", "concept", "changelog", "generated"]);
+const TYPES = new Set(["hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy", "guide", "reference", "example", "changelog", "generated", "legal"]);
 let pages = 0;
 for (const f of walk(CONTENT)) {
   const rel = relative(ROOT, f);
@@ -34,6 +34,12 @@ for (const f of walk(CONTENT)) {
   if (!groups[sec]) fail.push(`${rel}: section "${sec}" is not a section in nav.ts`);
   else if (!groups[sec].includes(grp)) fail.push(`${rel}: group "${grp}" is not a sidebar group of section "${sec}" (${groups[sec].join(", ")})`);
   if (!TYPES.has(type)) fail.push(`${rel}: type "${type}" is not a page template (${[...TYPES].join(", ")})`);
+  // The H1 is the sidebar label: there is no second name for a page.
+  if (/^label:/m.test(fm)) fail.push(`${rel}: a \`label:\` field; the H1 (title) is the sidebar label`);
+  if (/^slug:/m.test(fm)) fail.push(`${rel}: a \`slug:\` override; the file path is the URL`);
+  // Every page leads somewhere else in the docs.
+  const body = md.slice(md.indexOf("\n---", 4) + 4);
+  if (!/\]\(\/[^)\s]|href="\//.test(body) && !/^next:/m.test(fm)) fail.push(`${rel}: no link to another docs page`);
   const r = routeOf(CONTENT, f, md);
   if (routes.has(r)) fail.push(`${rel}: route ${r} is served by two pages`);
   routes.add(r);

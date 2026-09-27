@@ -15,9 +15,9 @@ name: Versions current
 # scripts/check-versions-current.mjs says what each rule grades and why.
 #
 # SINCE 2026-09-22 IT ALSO GRADES WHAT IS NOT OURS. Until then only bitHuman
-# versions were watched, so the LiveKit Swift floor on /sdk/livekit, the
+# versions were watched, so the LiveKit Swift floor on /platforms/livekit, the
 # sentence beside it calling a LiveKit release "the newest", the Qualcomm
-# coordinates on /sdk/android, and the `livekit-agents~=1.5` floor in local
+# coordinates on /platforms/android, and the `livekit-agents~=1.5` floor in local
 # mode could all rot with every surface green. They are graded by what each
 # claim actually asserts: a FLOOR resolves forward by itself, so it is red only
 # when upstream crosses a MAJOR; an EXACT number is red on any difference; and

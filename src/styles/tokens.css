@@ -38,7 +38,7 @@
   --red-500: #e5484d;
 
   /* ---- typography ---- */
-  --font-sans: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Roboto", "Roboto Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Roboto Mono", ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
   --fw-regular: 400;
@@ -75,6 +75,7 @@
   --r-2xl: 1.25rem;
   --r-3xl: 1.5rem;
   --r-full: 9999px;
+  --r-pill: 999px;
 
   /* ---- spacing rhythm ---- */
   --space-1: 0.25rem;
@@ -87,6 +88,18 @@
   --space-10: 4rem;
   --space-12: 6rem;
   --space-16: 8rem;
+  /* the 4-px scale new components use (--s-n = n × 4 px) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  /* type: the hero H1 */
+  --fh-hero: 2.75rem;
 
   /* ---- layout ---- */
   --container: 1200px;
@@ -133,6 +146,11 @@
   --shadow-glow: 0 0 0 1px rgba(255, 87, 87, 0.18), 0 14px 50px rgba(255, 87, 87, 0.16);
 
   --grid-line: rgba(20, 20, 30, 0.05);
+  /* Diagrams only: the arrow for what leaves the device (5.9:1 on white). */
+  --flow-egress: #0b5fc0;
+  /* Chips: neutral surfaces; an icon, never a new brand colour, says the kind. */
+  --chip-bg: var(--gray-50);
+  --chip-border: var(--gray-200);
 }
 
 /* ============================ DARK ============================ */
@@ -168,4 +186,7 @@
   --shadow-glow: 0 0 0 1px rgba(255, 111, 111, 0.25), 0 14px 60px rgba(255, 87, 87, 0.2);
 
   --grid-line: rgba(255, 255, 255, 0.045);
+  --flow-egress: #6cb4ff;
+  --chip-bg: #1a1a1f;
+  --chip-border: #2e2e36;
 }

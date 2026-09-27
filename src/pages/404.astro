@@ -1,25 +1,26 @@
 ---
 import Base from "../layouts/Base.astro";
+import Card from "../components/Card.astro";
 
 // Without this page a mistyped or stale URL answered with the host's own plain
 // text — "The page could not be found / NOT_FOUND / iad1::…" — no navigation,
-// no search, no way back. This site moves URLs often enough to carry 176
-// redirects, so landing on one that was missed is a normal thing to happen to a
+// no search, no way back. This site moves URLs often enough to carry
+// hundreds of redirects, so landing on one that was missed is a normal thing to happen to a
 // reader, and it should leave them inside the docs.
 
 const places = [
-  { title: "Get started", desc: "A live agent in your browser, then your own.", href: "/start" },
-  { title: "SDK", desc: "Install and run on macOS, Linux, iOS, Android, Web or Python.", href: "/sdk" },
-  { title: "API", desc: "Generate, drive and embed agents over REST.", href: "/api" },
-  { title: "Guides", desc: "Build, deploy and integrate, end to end.", href: "/guides" },
-  { title: "Examples", desc: "Whole projects printed in full, copy-paste ready.", href: "/examples" },
-  { title: "Changelog", desc: "What shipped, and when.", href: "/changelog" },
+  { title: "Quickstart", desc: "Talk to a live avatar, then run your own.", href: "/start" },
+  { title: "Platforms", desc: "iOS & iPadOS, Android, Web, Python, the CLI, LiveKit and REST.", href: "/platforms" },
+  { title: "Deployment options", desc: "The bitHuman cloud, your servers, on the device, no GPU, fully offline.", href: "/deploy" },
+  { title: "Models", desc: "Essence 2 and Expression 2, and where each renders.", href: "/models" },
+  { title: "Build", desc: "Recipes, your own avatar and the example gallery.", href: "/build" },
+  { title: "API", desc: "Create, drive and embed agents over REST.", href: "/api" },
 ];
 ---
 
 <Base
   title="Page not found — bitHuman docs"
-  description="That page is not here. Search the docs, or start from the SDK, the API or the guides."
+  description="That page is not here. Search the docs, or start from the quickstart, the platforms or the API."
 >
   <section class="nf">
     <div class="container">
@@ -36,14 +37,9 @@ const places = [
         <a class="home" href="/">Docs home</a>
       </p>
 
-      <div class="grid">
-        {places.map((p) => (
-          <a class="card" href={p.href}>
-            <strong>{p.title}</strong>
-            <span>{p.desc}</span>
-          </a>
-        ))}
-      </div>
+      <ul class="card-grid cols-3 grid" role="list">
+        {places.map((p) => <li><Card href={p.href} title={p.title} line={p.desc} h={2} /></li>)}
+      </ul>
     </div>
   </section>
 </Base>
@@ -73,23 +69,5 @@ const places = [
   }
   .home:hover { color: var(--color-text); border-color: var(--color-border-strong); }
 
-  .grid {
-    margin-top: var(--space-8);
-    display: grid;
-    gap: var(--space-3);
-    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
-  }
-  .card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--r-lg);
-    background: var(--color-surface);
-    transition: border-color var(--t-fast) var(--ease);
-  }
-  .card:hover { border-color: var(--color-primary); }
-  .card strong { font-weight: var(--fw-medium); }
-  .card span { font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .grid { margin-top: var(--space-8); }
 </style>

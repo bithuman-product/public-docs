@@ -175,7 +175,7 @@ function selftest() {
       return f.some((x) => x.what === "malformed generated block") && f.some((x) => x.what === "118 fps");
     })());
   arm("a closing marker with no opener is a fault", g("text\n<!-- /FLOORS:HEADLINE -->\n").some((x) => x.what === "malformed generated block"));
-  arm("an allow entry covers only its own file", g("31.3 FPS\n", "src/content/docs/sdk/web.md", [{ file: "src/content/docs/sdk/ios.md", text: "31.3 FPS", why: "t" }]).length === 1);
+  arm("an allow entry covers only its own file", g("31.3 FPS\n", "src/content/docs/platforms/web.md", [{ file: "src/content/docs/platforms/ios.md", text: "31.3 FPS", why: "t" }]).length === 1);
   arm("a range whose top is not a play rate reddens", g("renders 40–60 fps\n").length === 1);
 
   console.log("\nGOOD ARMS — each must stay SILENT");
@@ -184,7 +184,7 @@ function selftest() {
   arm("a generated FLOORS:HEADLINE block is exempt", g(HEAD).length === 0);
   arm("a generated keyed table is exempt", g("<!-- FLOORS:TABLE all -->\n| Cloud API | 357 | **17.8×** real time |\n<!-- /FLOORS:TABLE -->\n").length === 0);
   arm("two generated blocks on one page are both exempt", g(`${HEAD}\nprose\n${HEAD}`).length === 0);
-  arm("a named allow entry is honoured", g("31.3 FPS\n", "src/content/docs/sdk/ios.md", [{ file: "src/content/docs/sdk/ios.md", text: "31.3 FPS", why: "t" }]).length === 0);
+  arm("a named allow entry is honoured", g("31.3 FPS\n", "src/content/docs/platforms/ios.md", [{ file: "src/content/docs/platforms/ios.md", text: "31.3 FPS", why: "t" }]).length === 0);
   arm("the changelog is dated history", g("- 0.5.12: Android Essence 2 went from 52 to 46 fps\n", "src/content/docs/changelog.md").length === 0);
   arm("the changelog archive is dated history", g("- rendered at 12 fps\n", "src/content/docs/changelog/archive.md").length === 0);
   arm("a placeholder is not a number", g("render <frames> frames in <seconds> s = <rate> fps\n").length === 0);

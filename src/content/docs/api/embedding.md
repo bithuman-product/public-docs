@@ -1,11 +1,10 @@
 ---
-title: "Embedding API"
+title: "Embedding"
 description: "Mint short-lived JWT tokens from your backend and embed a talking avatar on any website via an iframe."
 section: api
-group: "Deliver"
-order: 20
+group: "Live sessions"
+order: 10
 type: endpoint
-label: "Embedding"
 ---
 
 ## Embed an avatar
@@ -33,7 +32,7 @@ append it to the iframe URL.
 |---|---|---|---|
 | `agent_id` | string | yes | Your agent's code. |
 | `fingerprint` | string | yes | Stable per-visitor string (any format). Used for per-visitor rate limiting and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
-| `model` | string | no | Optional model name: `essence-1`, `expression-1`, `essence-2` or `expression-2`. To pin a serving tier see [Models](/concepts/models#advanced-pin-a-serving-tier). A model outside your plan returns `403 PLAN_REQUIRED`. Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
+| `model` | string | no | Optional model name: `essence-1`, `expression-1`, `essence-2` or `expression-2`. To pin a serving tier see [Models](/models#advanced-pin-a-serving-tier). A model outside your plan returns `403 PLAN_REQUIRED`. Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
 Every entry of `supported_models` in the mint response (and in `GET /v1/agent/status/{id}`) is a model name you can send back as `model` unchanged.
 
@@ -97,7 +96,7 @@ conversations happen — see [session events](/api/webhooks#session-events).
 - The `fingerprint` should be generated once per device and persisted, so
   per-visitor rate limits track the same visitor across sessions.
 - An embedded session bills to the agent's owner at the rates on
-  [pricing](/guides/pricing).
+  [pricing](/pricing).
 
 See the interactive [API reference](/api/reference) for the full request and
 response schema.

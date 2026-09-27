@@ -1,24 +1,23 @@
 ---
-title: "Avatars and the .imx format"
+title: "The avatar file"
 description: "The self-contained .imx file every bitHuman avatar ships in — one container for Essence 1, Essence 2 and Expression 2 identities — where it comes from, how it's addressed by agent code, and how to inspect it."
-section: guides
-group: "Learn"
-order: 6
+section: models
+group: "Concepts"
+order: 20
 type: concept
-label: "The avatar file"
 ---
 
 ## What an `.imx` is
 
 An `.imx` file is the container a bitHuman avatar ships in: one self-contained
 file of identity weights, textures and a manifest (model version, ABI, license)
-that an [engine](/concepts/architecture) reads to animate one specific face.
+that an [engine](/models/how-it-works) reads to animate one specific face.
 Every model that renders on your own hardware uses it — a first-generation
-[Essence 1](/concepts/essence-1) identity, an [Essence 2](/concepts/essence-2)
-identity, and an [Expression 2](/concepts/expression-2) identity. Every download is
+[Essence 1](/models/first-generation#essence-1) identity, an [Essence 2](/models/essence-2)
+identity, and an [Expression 2](/models/expression-2) identity. Every download is
 named `<CODE>.imx`; older Expression 2 files may carry the legacy `.avatar`
-extension, which opens the same way. The same file opens on every on-device runtime — [Python](/sdk/python),
-[Swift](/sdk/apple) and the [CLI](/sdk/cli) — and `bithuman open` tells you which
+extension, which opens the same way. The same file opens on every on-device runtime — [Python](/platforms/python),
+[Swift](/platforms/ios) and the [CLI](/platforms/cli) — and `bithuman open` tells you which
 model a file you were given holds.
 
 ## Where `.imx` files come from
@@ -29,7 +28,7 @@ model a file you were given holds.
 | **Dashboard** | Upload a portrait + voice samples in [bithuman.ai → Studio](https://www.bithuman.ai). |
 | **API** | [`POST /v1/agent/generate`](/api/reference) returns an `agent_code` whose `.imx` you can download. |
 
-See [Building avatars](/guides/building-avatars) for the full creation flow and media tips.
+See [Building avatars](/build/create-avatar) for the full creation flow and media tips.
 
 ## Agent codes
 
@@ -61,7 +60,7 @@ bithuman pull sofia-ramirez
 showcase, about 148 MB. `bithuman list` prints every showcase slug; a slug that is
 not in that list is refused with `slug '<name>' not found in manifest`.
 
-`bithuman pull <slug>`, `bithuman list` and `bithuman open` need no credential for a sample avatar. Pulling your own agent by code, and playing any model with `bithuman run` or `bithuman render`, need `bithuman login` or `BITHUMAN_API_SECRET`; session time bills at the [published rates](/guides/pricing).
+`bithuman pull <slug>`, `bithuman list` and `bithuman open` need no credential for a sample avatar. Pulling your own agent by code, and playing any model with `bithuman run` or `bithuman render`, need `bithuman login` or `BITHUMAN_API_SECRET`; session time bills at the [published rates](/pricing).
 
 Cache locations by surface:
 
@@ -82,11 +81,11 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 
 | Model | Artifact | What it is |
 |---|---|---|
-| [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
-| [`essence-2`](/concepts/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the license with the cloud, so it needs your sign-in. |
-| [`expression-2`](/concepts/expression-2) | `.imx` (older downloads: `.avatar`): the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple) and [Android](/sdk/android), or on the cloud. |
+| [`essence-1`](/models/first-generation#essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/platforms/python) and the [CLI](/platforms/cli)'s `run`. |
+| [`essence-2`](/models/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/platforms/cli#platform-notes), the [Python SDK](/platforms/python), the [Android library](/platforms/android) and the Swift [`Essence2` product](/platforms/ios) — the first local play checks the license with the cloud, so it needs your sign-in. |
+| [`expression-2`](/models/expression-2) | `.imx` (older downloads: `.avatar`): the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/platforms/cli), [Python](/platforms/python), [Apple](/platforms/ios) and [Android](/platforms/android), or on the cloud. |
 
-Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/concepts/essence-2).
+Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/models/essence-2).
 
 ## Inspecting an `.imx`
 
@@ -101,7 +100,7 @@ bithuman open ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ### The `engine` value is a legacy name
 
 `bithuman open` reports an **`engine`** read from the container header (also
-`engine` in [`--json`](/sdk/cli/reference#json-output)), and the Python runtime quotes the same
+`engine` in [`--json`](/platforms/cli/reference#json-output)), and the Python runtime quotes the same
 string verbatim in load errors — for example `backend loader for
 engine='essence2-light'`.
 
@@ -109,10 +108,10 @@ engine='essence2-light'`.
 
 | `engine` in the header | The model you actually have |
 |---|---|
-| `essence1` | [Essence 1](/concepts/essence-1) — also the value an older container with no header resolves to |
-| `essence2-light` | **[Essence 2](/concepts/essence-2)** — request it as `essence-2` |
-| `essence2-quality` | Essence 2 Max (Enterprise plan only) — not a model you can request on other plans; treat the file as **[Essence 2](/concepts/essence-2)** |
-| `expression2` | **[Expression 2](/concepts/expression-2)** — request it as `expression-2` |
+| `essence1` | [Essence 1](/models/first-generation#essence-1) — also the value an older container with no header resolves to |
+| `essence2-light` | **[Essence 2](/models/essence-2)** — request it as `essence-2` |
+| `essence2-quality` | Essence 2 Max (Enterprise plan only) — not a model you can request on other plans; treat the file as **[Essence 2](/models/essence-2)** |
+| `expression2` | **[Expression 2](/models/expression-2)** — request it as `expression-2` |
 
 So a current Essence 2 bundle reports `engine: essence2-light`. The model is
 **Essence 2**, requested as `essence-2`: the engine id names the *loader family*,
@@ -126,6 +125,6 @@ The `.imx` format is **forward-compatible within a major version**. The first op
 
 ## Where to go next
 
-- [Building avatars](/guides/building-avatars) — design likeness, voice, and personality.
-- [Audio streaming](/concepts/audio-streaming) — drive the `.imx` with audio.
-- [CLI reference](/sdk/cli) — `bithuman open`, `pull`, `list`, and more.
+- [Building avatars](/build/create-avatar) — design likeness, voice, and personality.
+- [Audio streaming](/models/how-it-works#audio-in-frames-out) — drive the `.imx` with audio.
+- [CLI reference](/platforms/cli) — `bithuman open`, `pull`, `list`, and more.

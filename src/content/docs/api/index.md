@@ -2,11 +2,9 @@
 title: "API overview"
 description: "REST API for generating avatars, synthesizing voice, driving live sessions, and embedding agents — from any language."
 section: api
-group: "Get started"
+group: "Start"
 order: 0
 type: hub
-slug: api
-label: "Overview"
 ---
 
 ## What the API does
@@ -70,7 +68,7 @@ the [embed token flow](/api/embedding) instead. See
 - **Get notified** — register [webhooks](/api/webhooks) for signed
   `agent.ready` / `agent.failed` and `video.completed` / `video.failed` events
   instead of polling.
-- **Drive it from an AI agent** — the [MCP server](/sdk/mcp) (`bithuman mcp`)
+- **Drive it from an AI agent** — the [MCP server](/build/mcp) (`bithuman mcp`)
   exposes the common endpoints (agents, speech, gestures, files, embed tokens,
   webhooks, balance) as tools for Claude, Cursor and other MCP clients.
 
@@ -87,14 +85,14 @@ the code).
 
 ## Next steps
 
-- [Quickstart](/api/quickstart) — make your first API call and drive a live agent.
+- [Quickstart](/platforms/rest) — make your first API call and drive a live agent.
 - [Authentication](/api/authentication) — get an API secret and runtime tokens.
-- [Models](/concepts/models) — the four models, where each runs, and which to pick.
+- [Models](/models) — the four models, where each runs, and which to pick.
 - [API reference](/api/reference) — the interactive reference for the core
   endpoints (the OpenAPI file is at /api/openapi.yaml).
 - [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational
   contract.
-- [MCP server](/sdk/mcp) — call the common endpoints as tools from an AI agent.
+- [MCP server](/build/mcp) — call the common endpoints as tools from an AI agent.
 
 ## Status and versioning
 

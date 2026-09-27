@@ -1,0 +1,43 @@
+---
+// The one card on the site. Home, the hubs, NextCards and the example gallery
+// all draw this: one link, a title, one line, and optional media, icon, chips
+// and badge. A variant only changes the layout, never the colours.
+import Icon from "./Icon.astro";
+
+interface Media { src: string; width: number; height: number; alt: string; srcset?: string; sizes?: string; avif?: string; eager?: boolean }
+interface Props {
+  href: string;
+  title: string;
+  line?: string;
+  variant?: "link" | "media" | "model" | "stat" | "platform";
+  icon?: string;
+  media?: Media;
+  chips?: string[];
+  badge?: string;
+  note?: string;
+  /** The heading level inside the card (the page's outline decides). */
+  h?: 2 | 3 | 4;
+  external?: boolean;
+  wide?: boolean;
+}
+const { href, title, line, variant = "link", icon, media, chips = [], badge, note, h = 3, external = false, wide = false } = Astro.props;
+const H = `h${h}` as "h2" | "h3" | "h4";
+---
+<a class:list={["card", `card-${variant}`, { "card-wide": wide }]} href={href} {...(external ? { target: "_blank", rel: "noopener" } : {})}>
+  {media && (
+    <picture class="card-media">
+      {media.avif && <source type="image/avif" srcset={media.avif} sizes={media.sizes} />}
+      <img src={media.src} srcset={media.srcset} sizes={media.sizes} width={media.width} height={media.height} alt={media.alt}
+        loading={media.eager ? "eager" : "lazy"} decoding="async" />
+    </picture>
+  )}
+  {icon && <span class="card-icon"><Icon name={icon} /></span>}
+  <span class="card-body">
+    <span class="card-title"><H>{title}</H>{badge && <span class="chip chip-plan">{badge}</span>}</span>
+    {line && <span class="card-line">{line}</span>}
+    {note && <span class="card-note">{note}</span>}
+    <slot />
+    {chips.length > 0 && <span class="card-chips">{chips.map((c) => <span class="chip">{c}</span>)}</span>}
+  </span>
+  {external && <span class="card-ext" aria-hidden="true">↗</span>}
+</a>

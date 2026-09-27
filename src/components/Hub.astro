@@ -1,82 +1,55 @@
 ---
+// A hub page: an H1, one line of purpose, then groups of cards. The cards are
+// the site's one Card; a hub adds no card style of its own.
 import Base from "../layouts/Base.astro";
 import Button from "./Button.astro";
+import Card from "./Card.astro";
 
-interface Card { title: string; desc: string; href: string; badge?: string; external?: boolean; }
-interface Group { label: string; featured?: boolean; cards: Card[]; }
+interface HubCard { title: string; desc: string; href: string; badge?: string; external?: boolean; }
+interface Group { label: string; line?: string; cards: HubCard[]; }
 interface CTA { label: string; href: string; variant?: "primary" | "secondary"; external?: boolean; }
 interface Props {
-  /** Only when it says something the title does not — never a repeat of it. */
-  eyebrow?: string;
   title: string;
   tagline: string;
   ctas?: CTA[];
   groups: Group[];
 }
-const { eyebrow, title, tagline, ctas = [], groups } = Astro.props;
+const { title, tagline, ctas = [], groups } = Astro.props;
+const idOf = (s: string) => "g-" + s.replace(/\W+/g, "-").toLowerCase();
 ---
 
 <Base title={`${title} — bitHuman docs`} description={tagline}>
-  <section class="hub-hero">
-    <div class="container">
-      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-      <h1>{title}</h1>
-      <p class="tagline">{tagline}</p>
-      {
-        ctas.length > 0 && (
-          <div class="hub-cta">
-            {ctas.map((c) => (
-              <Button href={c.href} variant={c.variant ?? "primary"} external={c.external}>{c.label}</Button>
-            ))}
-          </div>
-        )
-      }
-    </div>
-  </section>
-
-  {
-    groups.map((g) => (
-      <section class="hub-group">
-        <div class="container">
-          <h2 class="hub-glabel">{g.label}</h2>
-          <div class:list={["hub-cards", { featured: g.featured }]}>
-            {g.cards.map((c) => (
-              <a class="hub-card" href={c.href} target={c.external ? "_blank" : undefined} rel={c.external ? "noopener" : undefined}>
-                <div class="hc-top">
-                  <h3>{c.title}</h3>
-                  {c.badge && <span class="pill hc-badge">{c.badge}</span>}
-                </div>
-                <p>{c.desc}</p>
-                {c.external && <span class="hc-go">Open ↗</span>}
-              </a>
-            ))}
-          </div>
+  <div class="container hub">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>{title}</span></nav>
+    <h1>{title}</h1>
+    <p class="lede">{tagline}</p>
+    {ctas.length > 0 && (
+      <div class="hub-cta">
+        {ctas.map((c) => <Button href={c.href} variant={c.variant ?? "primary"} external={c.external}>{c.label}</Button>)}
+      </div>
+    )}
+    {groups.map((g) => (
+      <section class="hub-group" aria-labelledby={idOf(g.label)}>
+        <div class="band-head">
+          <h2 id={idOf(g.label)}>{g.label}</h2>
+          {g.line && <p>{g.line}</p>}
         </div>
+        <ul class="card-grid cols-3" role="list">
+          {g.cards.map((c) => <li><Card href={c.href} title={c.title} line={c.desc || undefined} badge={c.badge} external={c.external} /></li>)}
+        </ul>
       </section>
-    ))
-  }
+    ))}
+  </div>
 </Base>
 
 <style>
-  .hub-hero { padding-block: var(--space-10) var(--space-6); border-bottom: 1px solid var(--color-border); }
-  .hub-hero h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
-  .hub-hero .tagline { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); max-width: 60ch; }
-  .hub-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
-
-  .hub-group { padding-block: var(--space-8) 0; }
-  .hub-group:last-of-type { padding-bottom: var(--space-10); }
-  .hub-glabel { font-size: var(--ft-sm); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-4); font-weight: var(--fw-medium); }
-  .hub-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
-  .hub-cards.featured { grid-template-columns: repeat(2, 1fr); }
-  .hub-card { display: flex; flex-direction: column; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); transition: all var(--t-med) var(--ease); }
-  .hub-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .featured .hub-card { padding: var(--space-6); }
-  .hc-top { display: flex; align-items: center; gap: var(--space-3); }
-  .hc-top h3 { font-size: var(--ft-lg); }
-  .featured .hc-top h3 { font-size: var(--fh-md); }
-  .hc-badge { background: var(--color-primary-soft); color: var(--color-primary); border-color: transparent; }
-  .hub-card p { margin: var(--space-2) 0 var(--space-4); color: var(--color-text-secondary); font-size: var(--ft-sm); flex: 1; }
-  .hc-go { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--color-primary); font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-
-  @media (max-width: 900px) { .hub-cards, .hub-cards.featured { grid-template-columns: 1fr; } }
+  .hub { padding-block: var(--s-8) var(--s-12); }
+  .crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-3); }
+  .crumb a { color: var(--color-text-tertiary); }
+  .crumb a:hover { color: var(--color-primary); }
+  .hub h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
+  .hub-cta { display: flex; gap: var(--s-3); margin-top: var(--s-6); flex-wrap: wrap; }
+  .hub-group { margin-top: var(--s-10); }
+  @media (max-width: 560px) { .hub h1 { font-size: var(--fh-xl); } }
 </style>

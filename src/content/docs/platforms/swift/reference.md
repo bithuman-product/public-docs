@@ -1,15 +1,13 @@
 ---
-title: "Apple API reference"
+title: "Swift reference"
 description: "Every entry point in the Swift package: the Expression2 and Essence2Kit Swift APIs, the Essence2 C interface, credentials and return codes."
-section: sdk
-group: "Reference"
-order: 82
+section: platforms
+group: "SDK reference"
+order: 10
 type: reference
-slug: sdk/apple-api
-label: "Apple API"
 ---
 
-Covers the Swift package at the version on [Downloads & versions](/downloads). How to use these calls in an app is on [Apple](/sdk/apple).
+Covers the Swift package at the version on [Downloads & versions](/downloads). How to use these calls in an app is on [Apple](/platforms/ios).
 
 ## Products
 
@@ -180,4 +178,4 @@ The C library does not download its runtime files. Before `be_essence2_create`, 
 
 ## Sessions and billing
 
-A session checks the API secret when it starts and reports its session time, talking or idle. If the network drops after the secret is accepted, frames continue for 5 minutes of rendered video, then `pull_frame` and `idle_frame` return `-3` (Essence 2) or `pull()` returns `nil` (Expression 2) until the connection returns. A secret rejected mid-session is final: destroy the engine. Prices are on [pricing](/guides/pricing).
+A session checks the API secret when it starts and reports its session time, talking or idle. If the network drops after the secret is accepted, frames continue for 5 minutes of rendered video, then `pull_frame` and `idle_frame` return `-3` (Essence 2) or `pull()` returns `nil` (Expression 2) until the connection returns. A secret rejected mid-session is final: destroy the engine. Prices are on [pricing](/pricing).

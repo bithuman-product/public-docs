@@ -3,7 +3,7 @@
 // Lighthouse (mobile preset) on representative pages. Lighthouse's
 // accessibility category is axe-core, so a 100 there is 0 axe violations.
 //
-//   node scripts/check-quality.mjs [--pages / /start /sdk ...] [--perf-min 90]
+//   node scripts/check-quality.mjs [--pages / /start /platforms ...] [--perf-min 90]
 //
 // Fails when accessibility < 100, SEO < 100, best practices < 95, or
 // performance < --perf-min (default 90; the target is 95, and a page between
@@ -22,7 +22,7 @@ const flag = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] 
 const PERF_MIN = Number(flag("--perf-min", "90"));
 const pi = args.indexOf("--pages");
 const PAGES = pi >= 0 ? args.slice(pi + 1).filter((a) => a.startsWith("/")) :
-  ["/", "/start", "/sdk", "/sdk/python", "/api/agents", "/examples", "/performance"];
+  ["/", "/start", "/platforms", "/platforms/python", "/api/agents", "/examples", "/performance"];
 
 if (!existsSync(join(DIST, "index.html"))) { console.log("::error::no dist/ — run npm run build first"); process.exit(2); }
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json",
