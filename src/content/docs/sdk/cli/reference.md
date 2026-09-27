@@ -114,7 +114,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `BITHUMAN_VERSION` | Release tag for the installer, set on the `sh` side of the pipe: `curl -fsSL https://install.bithuman.ai \| BITHUMAN_VERSION=cli-v2.7.8 sh` |
 | `BITHUMAN_INSTALL_DIR` | Where the installer puts the binary (default `~/.local/bin`) |
 | `NO_COLOR` | Turn colour off |
-| `BITHUMAN_LICENSE_FILE` | Path to a signed offline licence (Business and Enterprise, [offline licensing](/guides/pricing#offline-licensing)) |
+| `BITHUMAN_LICENSE_FILE` | Path to a signed offline license (Business and Enterprise, [offline licensing](/guides/pricing#offline-licensing)) |
 | `BITHUMAN_THREADS` | Render threads (default: one per CPU the process may use, up to 16) |
 | `BITHUMAN_INSTALL_ID` | This install's id in usage reports (default: a random id kept in `~/.bithuman/install_id`) |
 
@@ -141,7 +141,7 @@ Binaries: `aarch64-apple-darwin`, `x86_64-unknown-linux-gnu`, `aarch64-unknown-l
 With `--json`, a command prints exactly one JSON object on stdout and nothing else. Success objects carry `"schema_version": 1`. A failure prints one object to stderr, with a `hint` when there is a next step:
 
 ```json
-{"error": {"code": "NOT_AUTHENTICATED", "kind": "NotAuthorised", "command": "account", "message": "not signed in", "hint": "run `bithuman login` (free, one tap) — or set BITHUMAN_API_SECRET"}}
+{"error": {"code": "USAGE", "kind": "Failed", "command": "renders", "message": "unrecognized subcommand 'renders'", "hint": "run `bithuman --help`"}}
 ```
 
 Colour appears only on an interactive terminal.

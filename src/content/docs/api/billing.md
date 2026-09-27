@@ -126,7 +126,7 @@ curl https://api.bithuman.ai/v2/credit-summaries \
 
 | Field | Type | Notes |
 |---|---|---|
-| `balance` | number | plan + top-up + reward credits; can go down to `-11` (the grace window before suspension) |
+| `balance` | number | plan + top-up + reward credits; can dip slightly below `0` before the account is suspended |
 | `plan_credits` | number | Remaining credits from the active subscription; resets at billing-period end. |
 | `topup_credits` | number | Credits from one-time top-ups; do not reset. |
 | `is_enterprise` | boolean | `true` for org-pooled (enterprise) billing. |
@@ -147,7 +147,7 @@ model** — read the key for the model you actually run:
 | `voice_chat` | Managed cloud agent, no avatar | balance ÷ 10 |
 | `camera_chat` | Managed cloud agent, camera on | balance ÷ 30 |
 
-`essence_cloud`, `essence_self_hosted` and `expression_cloud` are older aliases of the `essence_1_*` and `expression_1_*` keys, **not** Essence 2 or Expression 2. The response also carries `expression_1_self_hosted` and `expression_self_hosted`, left from a retired container: Expression 1 has no self-hosted mode, so ignore them. The estimates are advisory; the server computes the actual charge.
+`essence_cloud`, `essence_self_hosted` and `expression_cloud` are older aliases of the `essence_1_*` and `expression_1_*` keys, **not** Essence 2 or Expression 2. Ignore `expression_1_self_hosted` and `expression_self_hosted`: Expression 1 has no self-hosted mode. The estimates are advisory; the server computes the actual charge.
 
 ## Usage history
 
@@ -170,14 +170,14 @@ for ev in resp["data"]:
 print(resp["pagination"])   # {limit, offset, total, has_more}
 ```
 
-Each row carries `source` (how the charge happened: `chat`, `cloud`, `self_hosted`, `browser`, `offline_render`, `offline_pack`, `realtime_voice`, `video_api`, `creation`, `generation`, `refund`, `credit` or `other`), `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants: read it (or `source`) rather than parsing `pricing_code`, whose spellings are frozen ledger keys. `activity_type` is an internal label: it leaves the response on 2026-12-26; read `source` instead.
+Each row carries `source` (how the charge happened: `chat`, `cloud`, `self_hosted`, `browser`, `offline_render`, `offline_pack`, `realtime_voice`, `video_api`, `creation`, `generation`, `refund`, `credit` or `other`), `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants: read it (or `source`) rather than parsing `pricing_code`, whose spellings never change. `activity_type` is deprecated: it leaves the response on 2026-12-26; read `source` instead.
 
 A [talking-video render](/api/video) charges its maximum up front and refunds the difference, so every render, successful or not, writes a charge row and a `credit_refund_…` row. Only a refund equal to the whole charge means the render failed.
 
 ## Notes
 
 - **Quote `balance` to users.** The usage history is an audit trail and can differ from the balance by rounding.
-- A balance between `-11` and `0` is the grace window before suspension; the minute estimates count it as zero.
+- A balance slightly below `0` is allowed before suspension; the minute estimates count it as zero.
 
 ## Errors
 
@@ -186,7 +186,7 @@ A [talking-video render](/api/video) charges its maximum up front and refunds th
 | `401` | `UNAUTHORIZED` / `MISSING_AUTH` | Missing or invalid `api-secret`. |
 | `402` | `INSUFFICIENT_BALANCE` | Balance too low for the requested operation. |
 | `429` | `RATE_LIMITED` | Too many requests; honour `Retry-After`. |
-| `500` | `INTERNAL_ERROR` | Upstream database error. |
+| `500` | `INTERNAL_ERROR` | Server error; retry with backoff. |
 | `503` | `SERVICE_UNAVAILABLE` | Transient; retry after `Retry-After`. |
 
 See [Rate limits](/api/rate-limits) for the plan-tiered request limits and the

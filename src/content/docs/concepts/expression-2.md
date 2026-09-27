@@ -35,7 +35,7 @@ For a photorealistic person animated from their own footage, compare
 
 | Surface | How |
 |---|---|
-| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) — routed down a GPU → Apple Silicon → CPU chain |
+| bitHuman cloud | the [REST API](/api), the [embed widget](/api/embedding) and [LiveKit](/sdk/livekit) |
 | macOS and Linux | the [CLI](/sdk/cli) (`run`, `render`) and the [Python SDK](/sdk/python) (`[expression-2]` extra) |
 | iPhone, iPad, Mac | the [Apple SDK](/sdk/apple)'s `Expression2` product — a complete app is on [Swift / iOS — Expression 2](/examples/swift-ios-expression2) |
 | Android | [`expression2-android`](/sdk/android) — sessions use your API secret |
@@ -72,10 +72,9 @@ The creation cost is on [pricing](/guides/pricing).
 
 ## Serving tiers
 
-By default each cloud session is routed down the **GPU → Apple → CPU** chain,
-starting on an always-warm GPU line and overflowing on capacity. Real-time
-sessions run on the GPU and Apple tiers; the CPU tier is sized for overflow and
-batch work. To force one tier for a benchmark, append `?model=expression-2-gpu`,
+The bitHuman cloud picks a serving tier for each session. Every published
+configuration, including a desktop CPU with no GPU, renders faster than real
+time ([performance](/performance)). To force one tier for a benchmark, append `?model=expression-2-gpu`,
 `expression-2-apple` or `expression-2-cpu` to the session URL — how a pin
 behaves is on [pin a serving tier](/concepts/models#advanced-pin-a-serving-tier).
 For production, omit it.
@@ -88,9 +87,8 @@ the engine hands off to generated frames with a per-identity color match, so the
 two stay visually continuous; idle resumes only after sustained silence, not in
 pauses inside a sentence. A running session bills talking and idle time alike ([pricing](/guides/pricing)).
 
-**Speech onset.** The engine renders in fixed audio chunks, so the first
-*talking* frame appears roughly **1.6 seconds** after speech audio begins; the
-moving idle clip covers that window.
+**Speech onset.** The engine renders in fixed audio chunks; the moving idle
+clip covers the start of each reply.
 
 ## Limits and expectations
 

@@ -13,10 +13,10 @@ label: "Embedding"
 Drop an agent onto any page as an iframe — no SDK install required:
 
 ```html
-<iframe src="https://www.bithuman.ai/embed/A78WKV4515" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
+<iframe src="https://www.bithuman.ai/embed/A23WJF0199" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
 ```
 
-Replace `A78WKV4515` with your agent code — find it in the
+`A23WJF0199` is the `wise-pup` sample avatar (Expression 2). Replace it with your agent code — find it in the
 [Library](https://www.bithuman.ai/#library) or the Deploy & Share dialog.
 
 > **Warning** Keep `microphone *` (and `camera *` for camera chat) in `allow`, with the `*`. The embed redirects to another origin, so a bare `allow="microphone"` leaves the microphone silently blocked. A restrictive `Permissions-Policy` on your page blocks it too.
@@ -31,8 +31,8 @@ append it to the iframe URL.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `agent_id` | string | yes | Agent code (e.g. `A78WKV4515`). |
-| `fingerprint` | string | yes | Stable per-visitor string (any format). Used for per-visitor rate limiting, to key the agent's conversation memory so a returning visitor is recognised, and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
+| `agent_id` | string | yes | Your agent's code. |
+| `fingerprint` | string | yes | Stable per-visitor string (any format). Used for per-visitor rate limiting and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
 | `model` | string | no | Optional model name: `essence-1`, `expression-1`, `essence-2` or `expression-2`. To pin a serving tier see [Models](/concepts/models#advanced-pin-a-serving-tier). A model outside your plan returns `403 PLAN_REQUIRED`. Validated **early**: unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
 Every entry of `supported_models` in the mint response (and in `GET /v1/agent/status/{id}`) is a model name you can send back as `model` unchanged.
@@ -47,7 +47,7 @@ const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
     "content-type": "application/json",
   },
   body: JSON.stringify({
-    agent_id: "A78WKV4515",
+    agent_id: process.env.BITHUMAN_AGENT_CODE, // your agent's code
     fingerprint: visitorFingerprint,
   }),
 });
@@ -80,7 +80,7 @@ model when you omit it).
 Pass it as a query string:
 
 ```html
-<iframe src="https://www.bithuman.ai/embed/A78WKV4515?token=THE_TOKEN" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
+<iframe src="https://www.bithuman.ai/embed/YOUR_AGENT_CODE?token=THE_TOKEN" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
 ```
 
 ## Session events

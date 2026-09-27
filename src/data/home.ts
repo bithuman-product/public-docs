@@ -5,6 +5,7 @@
 // Every card is one link and one short line. Longer text belongs on the page
 // the card links to. No frame rate, multiple or price is typed here: speed comes
 // from the generated headline (src/lib/perf-headline.ts), prices from /guides/pricing.
+import { OFFLINE_LICENSE_SENTENCE, OFFLINE_LICENSE_TERMS } from "./offline";
 
 export interface HomeCard {
   title: string;
@@ -14,6 +15,10 @@ export interface HomeCard {
   icon: string;
   /** A short plan or availability label shown as a chip */
   badge?: string;
+  /** A second, quieter line under `line` */
+  note?: string;
+  /** Spans the whole row */
+  wide?: boolean;
 }
 
 /** "Start building": one card per platform, linking its first page. */
@@ -30,10 +35,10 @@ export const START_BUILDING: HomeCard[] = [
 
 /** "Choose your deployment": where the avatar renders. */
 export const DEPLOYMENTS: HomeCard[] = [
-  { title: "Cloud", line: "bitHuman renders and streams it. Use the API, an embed or LiveKit.", href: "/api", icon: "cloud" },
-  { title: "Self-hosted", line: "The CLI or Python on your own Mac or Linux machine.", href: "/guides/self-hosting", icon: "server" },
-  { title: "On-device", line: "Inside your app on iPhone, iPad, Mac, Android or a WebGPU browser.", href: "/concepts/models#where-each-model-runs", icon: "devices" },
-  { title: "Offline", line: "Kiosks, trade shows and ATMs with no network, under an offline license.", href: "/guides/pricing#offline-licensing", icon: "offline", badge: "Business & Enterprise" },
+  { title: "bitHuman cloud", line: "bitHuman renders and streams it. Use the API, an embed or LiveKit.", href: "/api", icon: "cloud" },
+  { title: "Your servers", line: "The CLI or Python on your own Mac or Linux machine.", href: "/guides/self-hosting", icon: "server" },
+  { title: "On the device", line: "Inside your app on iPhone, iPad, Mac, Android or a WebGPU browser.", href: "/concepts/models#where-each-model-runs", icon: "devices" },
+  { title: "Fully offline", line: OFFLINE_LICENSE_SENTENCE, note: OFFLINE_LICENSE_TERMS, href: "/guides/pricing#offline-licensing", icon: "offline", badge: "Business & Enterprise", wide: true },
 ];
 
 export interface ModelCard {

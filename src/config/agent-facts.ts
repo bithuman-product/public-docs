@@ -2,6 +2,7 @@
 // and /llms-full.txt both open with it. Each fact links the page that owns it;
 // no price is repeated here (pricing lives on /guides/pricing).
 import versions from "../data/versions.json";
+import { OFFLINE_LICENSE_COPY } from "../data/offline";
 
 const V = versions.versions;
 
@@ -18,6 +19,6 @@ export function agentFacts(site: string): string {
     `- Sample audio: ${site}/samples/speech.wav (15 s, 24 kHz mono)\n` +
     `- Current versions: CLI ${V.cli} · bithuman (Python) ${V.python} · Swift package ${V.swift} · essence2-android ${V.essence2_android} · expression2-android ${V.expression2_android} · livekit-plugins-bithuman ${V.livekit_plugin}. ${site}/versions.json\n` +
     `- Python installs into a virtual environment (\`python3 -m venv .venv\`); a system Python on Debian/Ubuntu refuses \`pip install\`.\n` +
-    `- Offline: Business and Enterprise plans can run realtime avatars fully offline (kiosks, trade shows, ATMs, embedded screens), from 100,000 credits; contact sales. ${site}/guides/pricing.md\n\n`
+    `- Fully offline: ${OFFLINE_LICENSE_COPY} Models: Essence 1, Essence 2, Expression 2. Not the same as file rendering (\`bithuman render\`), which signs in online. ${site}/guides/pricing.md#offline-licensing\n\n`
   );
 }

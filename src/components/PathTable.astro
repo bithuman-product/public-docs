@@ -8,7 +8,7 @@ import { PLATFORMS } from "../data/platforms";
     <tbody>
       {PLATFORMS.map((p) => (
         <tr>
-          <td data-label="You want to…"><a href={p.docs}>{p.want}</a></td>
+          <td data-label="You want to…"><a href={p.docs}>{p.want}</a>{p.note && <p class="pt-note">{p.note}</p>}</td>
           <td data-label="Use">{p.use}</td>
           <td data-label="Needs">{p.needs}</td>
           <td data-label="First command">{p.id === "offline" ? <a href="/guides/pricing#offline-licensing">Contact sales</a> : <code class="pt-cmd">{p.first}</code>}</td>
@@ -25,6 +25,7 @@ import { PLATFORMS } from "../data/platforms";
   .path-table td { padding: 0.6rem 0.8rem; border-top: 1px solid var(--color-border); vertical-align: top; }
   .path-table td:first-child a { font-weight: var(--fw-medium); }
   .pt-time { white-space: nowrap; }
+  .pt-note { margin: 0.35rem 0 0; max-width: 46ch; font-size: var(--ft-xs); line-height: var(--lh-snug); color: var(--color-text-secondary); }
   .pt-cmd { font-size: 0.8rem; word-break: break-all; }
   @media (max-width: 700px) {
     .path-table { border: 0; overflow: visible; }

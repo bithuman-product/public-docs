@@ -42,6 +42,7 @@ function perfSection(): string {
 function pathTable(): string {
   let out = "| You want to… | Use | Needs | First command | Docs |\n|---|---|---|---|---|\n";
   for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? "— ([contact sales](https://www.bithuman.ai/sales))" : "`" + p.first.replace(/\|/g, "\\|") + "`"} | ${SITE}${p.docs.split("#")[0]}.md${p.docs.includes("#") ? "#" + p.docs.split("#")[1] : ""} |\n`;
+  for (const p of PLATFORMS.filter((x) => x.note)) out += `\n${p.use}: ${p.note}\n`;
   return out;
 }
 
@@ -88,8 +89,8 @@ export const GET: APIRoute = async ({ props }) => {
   const V = versions.versions;
   if (hub === "index") {
     const mdUrl = (href: string) => { const [path, hash] = href.split("#"); return `${SITE}${path}.md${hash ? `#${hash}` : ""}`; };
-    const cards = (xs: { title: string; line: string; href: string; badge?: string }[]) =>
-      xs.map((c) => `- [${c.title}](${mdUrl(c.href)})${c.badge ? ` (${c.badge})` : ""}: ${c.line}`).join("\n");
+    const cards = (xs: { title: string; line: string; href: string; badge?: string; note?: string }[]) =>
+      xs.map((c) => `- [${c.title}](${mdUrl(c.href)})${c.badge ? ` (${c.badge})` : ""}: ${c.line}${c.note ? ` ${c.note}` : ""}`).join("\n");
     return md(twin("bitHuman docs", "/", hubMeta("").description,
       `Realtime talking avatars from one portrait. Quickstart: ${SITE}/start.md · API reference: ${SITE}/api/reference.md\n\n` +
       `## Start building\n\n${cards(START_BUILDING)}\n\nOne command per path: ${SITE}/start.md#choose-your-path\n\n` +

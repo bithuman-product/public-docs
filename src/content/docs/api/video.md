@@ -14,13 +14,13 @@ label: "Talking video"
 
 `essence-2` renders at up to 1080p, `1080×1920` or `1920×1080` to match the source; `expression-2` renders at `416×720`.
 
-Renders bill **per minute of output, rounded up**: 4 credits/min for `essence-2`, `expression-2` and `expression-1`, 2 for `essence-1`. A job charges the 120-second maximum up front and refunds the difference when it finishes, so you need that maximum free at submit time, and every render writes a `credit_refund_…` row in [usage](/api/billing#usage-history). A failed render is refunded in full.
+Renders bill **per minute of output, rounded up**: 4 credits/min for `essence-2`, `expression-2` and `expression-1`, 2 for `essence-1`. A job charges the 120-second maximum up front and refunds the difference when it finishes, so your balance must cover that maximum at submit time. A failed render is refunded in full.
 
 Limits: up to **120 seconds** of output and **5000 characters** of text.
 
 ## Generate a talking video
 
-**Before you start:** you need an agent you own. List yours with `curl https://api.bithuman.ai/v1/agents -H "api-secret: $BITHUMAN_API_SECRET"` and `export BITHUMAN_AGENT_CODE=A…`. The free plan cannot create one without a top-up ([Pricing](/guides/pricing#the-free-tier-cannot-create-an-agent)).
+**Before you start:** you need an agent you own. List yours with `curl https://api.bithuman.ai/v1/agents -H "api-secret: $BITHUMAN_API_SECRET"` and `export BITHUMAN_AGENT_CODE=A…`. Creating one needs the Creator plan or higher ([Pricing](/guides/pricing#plans)).
 
 `POST /v1/video/generate` returns a `job_id` with `status: "processing"`; poll [`GET /v1/video/{job_id}`](#get-talking-video-status) until it completes, or register a [webhook](/api/webhooks) for `video.completed` / `video.failed`.
 

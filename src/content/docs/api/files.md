@@ -11,14 +11,14 @@ label: "Files"
 ## Upload a file
 
 `POST /v1/files/upload` — upload a file for processing. Supports both URL
-downloads and direct base64 uploads. Files are automatically organized by type:
+downloads and direct base64 uploads. Each file belongs to one category:
 
-| Category | Storage path | Extensions |
-|---|---|---|
-| **Images** | `assets/image/` | `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, `.bmp` |
-| **Videos** | `assets/video/` | `.mp4`, `.avi`, `.mov`, `.wmv`, `.flv`, `.webm`, `.mkv` |
-| **Audio** | `assets/audio/` | `.mp3`, `.wav`, `.flac`, `.aac`, `.ogg`, `.m4a` |
-| **Documents** | `assets/docs/` | `.pdf`, `.doc`, `.docx`, `.txt`, `.rtf`, `.ppt`, `.pptx`, `.xls`, `.xlsx`, `.csv` |
+| Category | Extensions |
+|---|---|
+| **Images** | `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, `.bmp` |
+| **Videos** | `.mp4`, `.avi`, `.mov`, `.wmv`, `.flv`, `.webm`, `.mkv` |
+| **Audio** | `.mp3`, `.wav`, `.flac`, `.aac`, `.ogg`, `.m4a` |
+| **Documents** | `.pdf`, `.doc`, `.docx`, `.txt`, `.rtf`, `.ppt`, `.pptx`, `.xls`, `.xlsx`, `.csv` |
 
 The category comes from the file's own bytes: bytes from a different category
 than `file_type` (for example an image sent as `document`) return `415`. Within

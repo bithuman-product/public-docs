@@ -11,7 +11,7 @@ label: "The avatar file"
 ## What an `.imx` is
 
 An `.imx` file is the container a bitHuman avatar ships in: one self-contained
-file of identity weights, textures and a manifest (model version, ABI, licence)
+file of identity weights, textures and a manifest (model version, ABI, license)
 that an [engine](/concepts/architecture) reads to animate one specific face.
 Every model that renders on your own hardware uses it — a first-generation
 [Essence 1](/concepts/essence-1) identity, an [Essence 2](/concepts/essence-2)
@@ -57,7 +57,7 @@ bithuman pull sofia-ramirez
 # → ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
 
-`sofia-ramirez` (agent code `A52DHS2219`) is an Essence 2 identity in the free
+`sofia-ramirez` (agent code `A52DHS2219`) is an Essence 2 sample identity from the
 showcase, about 148 MB. `bithuman list` prints every showcase slug; a slug that is
 not in that list is refused with `slug '<name>' not found in manifest`.
 
@@ -83,7 +83,7 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 | Model | Artifact | What it is |
 |---|---|---|
 | [`essence-1`](/concepts/essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/sdk/python) and the [CLI](/sdk/cli)'s `run`. |
-| [`essence-2`](/concepts/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the licence with the cloud, so it needs your sign-in. |
+| [`essence-2`](/concepts/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/sdk/cli#platform-notes), the [Python SDK](/sdk/python), the [Android library](/sdk/android) and the Swift [`Essence2` product](/sdk/apple) — the first local play checks the license with the cloud, so it needs your sign-in. |
 | [`expression-2`](/concepts/expression-2) | `.imx` (older downloads: `.avatar`): the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/sdk/cli), [Python](/sdk/python), [Apple](/sdk/apple) and [Android](/sdk/android), or on the cloud. |
 
 Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/concepts/essence-2).

@@ -10,7 +10,7 @@ label: "CLI: on-device brain"
 
 `BITHUMAN_LOCAL=1 bithuman run` replaces the cloud conversation brain with one that runs on your machine: whisper.cpp for speech recognition, llama.cpp for the language model, Supertonic for speech, and Silero for voice detection. The command, the browser URL and the avatar stay the same.
 
-Audio, transcripts and generated speech never leave the machine. The avatar session is still reported to your account, so `run` needs a sign-in and a network connection. Running with no network at all is the [offline licence](/guides/pricing#offline-licensing) (Business and Enterprise).
+Audio, transcripts and generated speech never leave the machine. The avatar session is still reported to your account, so `run` needs a sign-in and a network connection. Running realtime avatars off the internet is a separate arrangement: the [offline license](/guides/pricing#offline-licensing) (Business and Enterprise).
 
 ## Before you start
 

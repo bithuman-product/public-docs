@@ -26,7 +26,7 @@ https://api.bithuman.ai
 All endpoints are relative to this URL and require an `api-secret` header.
 
 Every endpoint, with a live console: [API reference](/api/reference) (raw spec: https://docs.bithuman.ai/api/openapi.yaml).
-[Get a free API secret →](https://www.bithuman.ai/developer/api-keys)
+[Get an API secret →](https://www.bithuman.ai/developer/api-keys)
 
 ## Authentication
 

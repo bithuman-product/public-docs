@@ -12,7 +12,7 @@ An avatar is a face, a voice and a personality, packaged as one agent with a sho
 
 ## Before you start
 
-- An [API secret](/start/api-secret) and credits for the creation ([pricing](/guides/pricing#creation--one-time-credits); a free month cannot pay for one).
+- An [API secret](/start/api-secret) on the Creator plan or higher, and credits for the creation ([pricing](/guides/pricing#creation--one-time-credits)).
 - A portrait image at a public URL (or create one from a prompt).
 - Optionally, 3–10 seconds of clean speech for voice cloning.
 
