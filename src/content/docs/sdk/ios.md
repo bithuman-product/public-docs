@@ -68,6 +68,7 @@ Then render (the `mac` engine file is the right one for iPhone apps too):
 
 ```swift
 import Expression2
+import AVFoundation
 
 Expression2Credential.set(ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"] ?? "")
 let engine = try Expression2Engine.create(
@@ -75,21 +76,29 @@ let engine = try Expression2Engine.create(
     sharedEngineContainer: sharedEngineURL,  // mac-arm64-1.0.0.engine
     stagingDir: stagingURL)                  // any writable directory; keep it between launches
 
-engine.feed(samples)   // [Float], 16 kHz mono
-engine.flushTail()     // end of the utterance
+let audio = AVAudioEngine(), player = AVAudioPlayerNode()         // your app's audio output
+let format = AVAudioFormat(standardFormatWithSampleRate: 16000, channels: 1)!
+audio.attach(player); audio.connect(player, to: audio.mainMixerNode, format: format); try audio.start()
+let reply = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(samples.count))!
+reply.frameLength = reply.frameCapacity
+samples.withUnsafeBufferPointer { reply.floatChannelData![0].update(from: $0.baseAddress!, count: samples.count) }
 
-var idleTicks = 0
-while idleTicks < 100 {                       // 5 s with no frame = done
-    var got = false
-    while let (frame, _) = engine.pull() {    // BGR, width * height * 3 bytes
-        got = true
-        show(frame)
-    }
-    if got { idleTicks = 0 } else { idleTicks += 1; try await Task.sleep(nanoseconds: 50_000_000) }
+// seconds of the current reply your player has played (nil before it starts)
+func played(_ p: AVAudioPlayerNode) -> Double? {
+    guard let t = p.lastRenderTime, let pt = p.playerTime(forNodeTime: t) else { return nil }
+    return Double(pt.sampleTime) / pt.sampleRate
+}
+
+engine.feed(samples)   // [Float], 16 kHz mono
+engine.flushTail()     // end of the reply
+for await frame in engine.frames(audioClock: { played(player) }) {   // 20 frames per second
+    show(frame.bgr, frame.width, frame.height)                        // B, G, R bytes
+    if frame.audioTime == 0 { player.scheduleBuffer(reply); player.play() }   // the reply's first frame: start its audio
+    if frame.endsReply { break }                                      // the reply is over; idle frames follow
 }
 ```
 
-Expected: 20 frames per second of audio, 416×720. The first start compiles the engine for the device; later starts reuse the staging directory.
+Expected: 20 frames per second, 416×720, idle motion between replies and speech while a reply plays; each speech frame is handed out when your player has played its audio. The first start compiles the engine for the device; later starts reuse the staging directory. `pull()` still returns frames as soon as they render, for your own pacing.
 
 Essence 2, with an Essence 2 avatar file (`.imx`, downloaded the same way with your agent code):
 
@@ -159,11 +168,11 @@ Call `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all(timeout_ms)`) fr
 | Job | Expression 2 | Essence 2 |
 |---|---|---|
 | Stream audio as it arrives | `feed(chunk)` | `feed(chunk)` |
-| Show frames | `pull()`, which returns frames as soon as they render: show them at 20 fps | `frames(following:)`, or `pull()` paced to 25 fps |
-| End of a reply | `flushTail()`; the reply is over when `pull()` returns `nil` and `hasPendingTail` is false | `flushTail()` ends the reply's audio; the first frame after it has `endsReply`, and `events()` reports `.replyEnded` |
-| Start the reply's audio | with its first frame | with its first speech frame (`audioTime == 0`, or `events()` `.replyStarted`); `frames(following: player)` keeps the picture on it |
-| Idle between replies | `engine.idle` | `frames()` / `pull()` keep returning idle frames (`isSpeech == false`) |
-| Interrupt the reply | `resetState(clearFrames: true)` | `interrupt()` |
+| Show frames | `frames(audioClock:)` (20 fps, on your player's clock), or `pull()`, which returns frames as soon as they render | `frames(following:)`, or `pull()` paced to 25 fps |
+| End of a reply | `flushTail()`; the first frame after it has `endsReply`, and `events()` reports `.replyEnded` | `flushTail()` ends the reply's audio; the first frame after it has `endsReply`, and `events()` reports `.replyEnded` |
+| Start the reply's audio | with its first frame (`audioTime == 0`, or `events()` `.replyStarted`) | with its first speech frame (`audioTime == 0`, or `events()` `.replyStarted`); `frames(following: player)` keeps the picture on it |
+| Idle between replies | `frames()` keeps returning idle frames (`isSpeech == false`), or `engine.idle` | `frames()` / `pull()` keep returning idle frames (`isSpeech == false`) |
+| Interrupt the reply | `interrupt()` | `interrupt()` |
 | Check the session | `meteringRefusal` | `meteringRefusal`, `runtimeFailure` |
 | Quit | `shutdown()` | `shutdown()`, then `Essence2Engine.quiesceAll()` at app exit |
 
