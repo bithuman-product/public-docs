@@ -29,6 +29,16 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### Flutter plugin 2.6.20 — 2026-09-27
+
+- **Changed:** the realtime voice session takes your bitHuman API secret and connects through bitHuman's [realtime relay](/api/realtime); there is no `ek_…` token to mint. The conversation is billed to your account at 10 credits per minute, the avatar included. A refusal a retry cannot fix (a rejected secret, no credits, the time limit) stops the session once and is reported on `errorStream`.
+- **Fixed:** iOS and macOS build from the published tag. They link the published Expression 2 (2.18.0) and Essence 2 (1.14.2) engines.
+- **Changed:** Android uses `essence2-android` 0.8.1 (memory stays flat in long sessions).
+- **Action:** pin `ref: flutter-plugin-v2.6.20` and pass your API secret to `BithumanRealtimeSession(apiKey:)`.
+
+### Realtime API — 2026-09-27
+
+- **Changed:** `POST /v1/realtime/ephemeral-token` is retired and answers `410`. Connect through the [realtime relay](/api/realtime) with your API secret.
 ### expression2-android 0.5.2 — 2026-09-27
 
 - **Changed:** the Hexagon accelerator prepares the decoder once and keeps it. On a Galaxy S25+, `create()` took about 31 s on every launch through 0.5.1; with 0.5.2 the first launch takes about 15 s and later launches 1–2 s. Replies start as fast as before, and frames are unchanged.

@@ -152,7 +152,7 @@ In a live conversation, keep one avatar open and stream into it.
 
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
 
-The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle and interruption, and it builds for Android from a clone.
+The [Flutter example app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle and interruption, and it builds for Android from a clone. From plugin 2.6.20 its voice session connects through bitHuman's [realtime relay](/api/realtime) with your API secret; no token is minted.
 
 ## Platform notes
 
