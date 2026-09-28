@@ -56,6 +56,8 @@ test("search lands the words developers type on the right page first", { skip: !
 });
 
 test("search takes a section and a limit, and refuses an empty query", { skip: !built }, () => {
+  const kiosk = tool("search", { query: "kiosk" }).results[0];
+  assert.doesNotMatch(kiosk.text, /URL: https:/, "a snippet starts after the twin's header");
   const { results } = tool("search", { query: "secret", section: "API", limit: 3 });
   assert.ok(results.length > 0 && results.length <= 3);
   assert.ok(results.every((r) => r.section === "API"));

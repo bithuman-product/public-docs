@@ -126,7 +126,9 @@ export function rank(prepared, query, { section, limit = 8 } = {}) {
 
 /** A short excerpt around the first query word in a page's text. */
 export function snippet(doc, query, width = 220) {
-  const text = doc.text.replace(/```[\s\S]*?```/g, " ").replace(/[#>*`|]/g, " ").replace(/\]\([^)]*\)/g, "]").replace(/[[\]]/g, "").replace(/\s+/g, " ").trim();
+  // the twin opens with "# Title", "URL: …" and "> description": the excerpt starts after them
+  const body = doc.text.replace(/^# .*\n+URL: \S+\n+(?:> .*\n+)?/, "");
+  const text = body.replace(/```[\s\S]*?```/g, " ").replace(/\(https?:\/\/[^)\s]*\)/g, "").replace(/[#>*`|]/g, " ").replace(/\]\([^)]*\)/g, "]").replace(/[[\]]/g, "").replace(/\s+/g, " ").trim();
   const words = tokens(query).filter((t) => !STOP.has(t));
   const low = text.toLowerCase();
   let at = -1;
