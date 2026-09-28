@@ -6,6 +6,7 @@ group: "Recipes"
 order: 10
 type: guide
 next: ["/platforms/cli", "/platforms/python", "/build/voices"]
+artifacts: ["cli", "python"]
 ---
 
 Everything except the voice model runs on your computer. LiveKit is the stock `livekit-server`, OpenAI Realtime listens, thinks and speaks on your own `OPENAI_API_KEY`, and the bitHuman avatar renders on your CPU — no GPU needed.

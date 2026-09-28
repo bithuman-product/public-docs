@@ -13,13 +13,15 @@ interface Props {
   tagline: string;
   ctas?: CTA[];
   groups: Group[];
+  /** The search section label this hub belongs to (the section chips in ⌘K search). */
+  section?: string;
 }
-const { title, tagline, ctas = [], groups } = Astro.props;
+const { title, tagline, ctas = [], groups, section } = Astro.props;
 const idOf = (s: string) => "g-" + s.replace(/\W+/g, "-").toLowerCase();
 ---
 
 <Base title={`${title} — bitHuman docs`} description={tagline}>
-  <div class="container hub">
+  <div class="container hub" data-pagefind-filter={section ? `section:${section}` : undefined}>
     <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>{title}</span></nav>
     <h1>{title}</h1>
     <p class="lede">{tagline}</p>

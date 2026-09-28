@@ -1,13 +1,39 @@
 ---
 title: "Troubleshooting"
-description: "What to expect when a live avatar session starts, idles and speaks, and how to fix the common session errors."
+description: "Where to fix a problem on each platform and recipe, what a working live session looks like, and the fixes for the common session errors."
 section: resources
 group: "Resources"
 order: 40
 type: guide
 ---
 
-What a live session looks like when it works, and what to do when it does not.
+Every platform and recipe page ends with a Troubleshooting table for its own problems; this page links them all, then covers the live session itself.
+
+## By platform
+
+| Platform | Its Troubleshooting table |
+|---|---|
+| iOS & iPadOS | [Swift package on iPhone and iPad](/platforms/ios#troubleshooting) |
+| macOS | [Swift package on the Mac](/platforms/macos#troubleshooting) |
+| Android | [Android SDK](/platforms/android#troubleshooting) |
+| Flutter | [Flutter plugin](/platforms/flutter#troubleshooting) |
+| Web | [Web embed](/platforms/web#troubleshooting) |
+| Python | [Python SDK](/platforms/python#troubleshooting) |
+| CLI | [CLI](/platforms/cli#troubleshooting) |
+| LiveKit | [LiveKit plugin](/platforms/livekit#troubleshooting) |
+| REST API | [REST](/platforms/rest#troubleshooting) · every error code: [Errors](/api/errors) |
+
+## By task
+
+| Task | Its Troubleshooting table |
+|---|---|
+| Create an avatar | [Create an avatar](/build/create-avatar#troubleshooting) · creation errors: [Agents API](/api/agents#errors) |
+| A voice agent | [Voice agent](/build/voice-agent#troubleshooting) |
+| A companion app | [Companion app](/build/companion-app#troubleshooting) |
+| A kiosk | [Kiosk](/build/kiosk#troubleshooting) |
+| A talking video | [Talking video](/build/talking-video#troubleshooting) |
+| Persona and gestures | [Persona](/build/persona#troubleshooting) · [Gestures](/build/gestures#troubleshooting) |
+| Claude, Cursor and other MCP clients | [MCP server](/build/mcp#troubleshooting) |
 
 ## Before you start
 

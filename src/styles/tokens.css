@@ -76,19 +76,14 @@
   --r-3xl: 1.5rem;
   --r-full: 9999px;
   --r-pill: 999px;
+  /* device frames and framed media (a phone's bezel, its screen, a gallery tile) */
+  --r-hair: 2px;
+  --r-frame: 18px;
+  --r-device: 22px;
+  --r-device-screen: 17px;
 
   /* ---- spacing rhythm ---- */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-8: 3rem;
-  --space-10: 4rem;
-  --space-12: 6rem;
-  --space-16: 8rem;
-  /* the 4-px scale new components use (--s-n = n × 4 px) */
+  /* the one spacing scale: --s-n = n × 4 px */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
@@ -98,6 +93,8 @@
   --s-8: 32px;
   --s-10: 40px;
   --s-12: 48px;
+  --s-16: 64px;
+  --s-24: 96px;
   /* type: the hero H1 */
   --fh-hero: 2.75rem;
 
@@ -156,6 +153,17 @@
   --bar: #3d4452;
   --bar-2: #8a93a3;
   --bar-cpu: #13804a;
+  /* surfaces that stay dark in both themes: video letterbox, device bezel, overlays */
+  --color-on-primary: #ffffff;
+  --color-scrim: rgba(10, 10, 14, 0.5);
+  --color-media-bg: #0b0b0d;
+  --color-bezel: #0e0e11;
+  --color-overlay: rgba(12, 12, 16, 0.72);
+  --color-on-overlay: #ffffff;
+  /* the status pill in the header */
+  --color-status-ok: #2fcc66;
+  --color-status-warn: #ff9500;
+  --color-status-down: #e74c3c;
 }
 
 /* ============================ DARK ============================ */
@@ -197,4 +205,5 @@
   --bar: #c7ccd6;
   --bar-2: #6e7584;
   --bar-cpu: #3fcf8e;
+  --color-scrim: rgba(0, 0, 0, 0.6);
 }

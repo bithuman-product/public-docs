@@ -11,6 +11,7 @@ import versions from "../data/versions.json";
 import { apiSpec } from "../lib/openapi";
 import { explorerClaim } from "../lib/doc-blocks";
 import headline from "../partials/performance-headline.md?raw";
+import { resolvedHighlights } from "../lib/highlights";
 
 // /<page>.md — every docs page as clean markdown, for AI agents and for the
 // "Copy page" button. Content pages serve their own source; the section hubs
@@ -109,6 +110,7 @@ export const GET: APIRoute = async ({ props }) => {
       }).join("\n") + "\n\n" +
       `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}`).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md\n\n` +
       `## Build\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
+      `## What's new\n\n${resolvedHighlights().slice(0, 3).map((h) => `- [${h.title}](${mdUrl(h.href)}) (${h.entry.heading}): ${h.line}`).join("\n")}\n\nEvery release: ${SITE}/changelog.md · RSS: ${SITE}/changelog.xml\n\n` +
       `## Sections\n\n- [Get started](${SITE}/start.md)\n- [Platforms](${SITE}/platforms.md)\n- [Deploy](${SITE}/deploy.md)\n- [Models](${SITE}/models.md)\n- [Build](${SITE}/build.md)\n- [API](${SITE}/api.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }
   if (hub === "start") {

@@ -6,6 +6,7 @@ import Card from "../components/Card.astro";
 import Chip from "../components/Chip.astro";
 import LiveDemo from "../components/LiveDemo.astro";
 import RunsEverywhere from "../components/RunsEverywhere.astro";
+import WhatsNew from "../components/WhatsNew.astro";
 import { hubMeta } from "../config/hubs";
 import { HERO, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
 import { versionLabel, type Artifact } from "../data/labels";
@@ -107,6 +108,12 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
       <ul class="card-grid cols-3 compact" role="list">
         {GUIDES.map((g) => <li><Card href={g.href} title={g.title} line={g.line} icon={g.icon} variant="platform" /></li>)}
       </ul>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="whats-new">
+    <div class="container">
+      <WhatsNew />
     </div>
   </section>
 

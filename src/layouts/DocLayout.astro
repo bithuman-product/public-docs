@@ -19,6 +19,7 @@ import Diagram from "../components/Diagram.astro";
 import DataFlowExplorer from "../components/DataFlowExplorer.astro";
 import Walkthrough from "../components/Walkthrough.astro";
 import { widgetsIn } from "../lib/doc-blocks";
+import ChangelogFilter from "../components/ChangelogFilter.astro";
 import { RENDERS_LABEL } from "../data/labels";
 
 interface Heading {
@@ -51,7 +52,8 @@ const groups: [string, Item[]][] = (GROUP_ORDER[section] ?? [])
   .filter(([, list]) => list.length > 0);
 
 const currentPath = slugOf(entry);
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+// The changelog lists months only: a hundred release headings are not an outline.
+const toc = headings.filter((h) => h.depth === 2 || (h.depth === 3 && entry.data.type !== "changelog"));
 
 // sequential prev/next across the section (in sidebar display order)
 const flatNav = groups.flatMap(([, list]) => list);
@@ -77,6 +79,11 @@ const sourceFile = entry.filePath ?? `src/content/docs/${entry.id}.md`;
 const modified = lastModified(sourceFile);
 const modifiedLabel = modified ? new Date(modified).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }) : null;
 const editUrl = `https://github.com/bithuman-product/public-docs/edit/main/${sourceFile}`;
+// No analytics on the docs, so feedback is an issue: titled with the page, its URL in the body.
+const issueUrl = `https://github.com/bithuman-product/public-docs/issues/new?${new URLSearchParams({
+  title: `Docs: ${data.title}`,
+  body: `Page: https://docs.bithuman.ai/${currentPath.replace(/^\//, "")}\n\nWhat was missing or wrong:\n`,
+}).toString()}`;
 const crumbs = [
   { name: "Docs", item: "https://docs.bithuman.ai/" },
   { name: meta.label, item: `https://docs.bithuman.ai${meta.home}` },
@@ -180,7 +187,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
       <NextCards items={nextCards} />
       <footer class="doc-meta" data-pagefind-ignore>
         {modifiedLabel && <span>Last updated <time datetime={modified!}>{modifiedLabel}</time></span>}
-        <a href={editUrl} rel="noopener">Edit this page on GitHub</a>
+        <span class="doc-meta-links"><a href={issueUrl} rel="noopener">Something missing or wrong? Open an issue</a><a href={editUrl} rel="noopener">Edit this page on GitHub</a></span>
       </footer>
       {
         (prevPage || nextPage) && (
@@ -209,6 +216,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
     {widgets.has("diagram") && <Diagram />}
     {widgets.has("dataflow") && <DataFlowExplorer />}
     {widgets.has("walkthrough") && <Walkthrough />}
+    {widgets.has("changelog") && <ChangelogFilter />}
 
     {/* on-this-page TOC */}
     <aside class="doc-toc" aria-label="Page outline" data-pagefind-ignore>
@@ -275,25 +283,25 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
     margin-inline: auto;
     display: grid;
     grid-template-columns: 248px minmax(0, 1fr) 200px;
-    gap: var(--space-8);
-    padding-inline: var(--space-5);
+    gap: var(--s-12);
+    padding-inline: var(--s-6);
     align-items: start;
   }
   /* sidebar */
-  .doc-side { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; padding-block: var(--space-6); }
-  .side-home { display: block; font-weight: var(--fw-bold); font-size: var(--ft-md); margin-bottom: var(--space-4); }
+  .doc-side { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; padding-block: var(--s-8); }
+  .side-home { display: block; font-weight: var(--fw-bold); font-size: var(--ft-md); margin-bottom: var(--s-4); }
   .side-toggle { display: none; width: 100%; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface); color: var(--color-text); font: inherit; font-weight: var(--fw-medium); font-size: var(--ft-sm); }
   .side-toggle svg { transition: transform var(--t-fast) var(--ease); }
   .doc-side.open .side-toggle svg { transform: rotate(180deg); }
-  .side-group { margin-bottom: var(--space-5); }
-  .side-glabel { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+  .side-group { margin-bottom: var(--s-6); }
+  .side-glabel { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--s-2); }
   .side-group ul { list-style: none; padding: 0; margin: 0; }
   .side-link { display: block; padding: 0.32rem 0.6rem; margin-left: -0.6rem; border-radius: var(--r-md); font-size: var(--ft-sm); color: var(--color-text-secondary); border-left: 2px solid transparent; }
   .side-link:hover { color: var(--color-text); background: var(--color-surface-2); }
   .side-link.active { color: var(--color-primary); font-weight: var(--fw-medium); background: var(--color-primary-soft); border-left-color: var(--color-primary); }
   /* content */
-  .doc-main { padding-block: var(--space-8); min-width: 0; }
-  .doc-crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--space-4); }
+  .doc-main { padding-block: var(--s-12); min-width: 0; }
+  .doc-crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-4); }
   .doc-crumb a { color: var(--color-text-tertiary); }
   .doc-crumb a:hover { color: var(--color-primary); }
   .doc-crumb span { margin: 0 0.3rem; }
@@ -305,15 +313,16 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   .doc-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-4); margin-top: var(--s-8); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
   .doc-meta a { color: var(--color-text-secondary); }
   .doc-meta a:hover { color: var(--color-primary); }
-  .doc-pager { display: flex; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-5); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
-  .pager { display: flex; flex-direction: column; gap: 0.2rem; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); transition: all var(--t-fast) var(--ease); max-width: 48%; }
+  .doc-meta-links { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
+  .doc-pager { display: flex; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-6); padding-top: var(--s-8); border-top: 1px solid var(--color-border); }
+  .pager { display: flex; flex-direction: column; gap: 0.2rem; padding: var(--s-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); transition: all var(--t-fast) var(--ease); max-width: 48%; }
   .pager:hover { border-color: var(--color-primary); }
   .pager.next { text-align: right; align-items: flex-end; margin-left: auto; }
   .pager span { font-size: var(--ft-xs); color: var(--color-text-tertiary); }
   .pager strong { color: var(--color-primary); font-size: var(--ft-sm); }
   /* toc */
-  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--space-8); font-size: var(--ft-sm); min-width: 0; }
-  .toc-label { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--s-12); font-size: var(--ft-sm); min-width: 0; }
+  .toc-label { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--s-2); }
   .doc-toc ul { list-style: none; padding: 0; margin: 0; }
   /* A heading can be a file path. Without this the 200px rail was 328px wide
      and pushed the whole page sideways on a 1440px screen. */
@@ -325,11 +334,11 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   @media (max-width: 1080px) { .doc { grid-template-columns: 230px minmax(0,1fr); } .doc-toc { display: none; } }
   @media (max-width: 820px) {
     .doc { grid-template-columns: 1fr; gap: 0; }
-    .doc-side { position: static; height: auto; overflow: visible; padding-block: var(--space-4); border-bottom: 1px solid var(--color-border); }
+    .doc-side { position: static; height: auto; overflow: visible; padding-block: var(--s-4); border-bottom: 1px solid var(--color-border); }
     .side-toggle { display: flex; }
-    .doc-side .side-inner { display: none; padding-top: var(--space-3); }
+    .doc-side .side-inner { display: none; padding-top: var(--s-3); }
     .doc-side.open .side-inner { display: block; }
     .side-home { display: none; }
-    .doc-main { padding-block: var(--space-6); }
+    .doc-main { padding-block: var(--s-8); }
   }
 </style>

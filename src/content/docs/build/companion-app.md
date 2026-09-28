@@ -13,6 +13,7 @@ platforms: ["ios", "android"]
 models: ["essence-2", "expression-2"]
 claims: ["S1", "S10", "S24", "S30", "S32"]
 next: ["/platforms/ios", "/platforms/android", "/deploy/on-device"]
+artifacts: ["swift", "expression2_android", "essence2_android"]
 ---
 
 ## What you'll build

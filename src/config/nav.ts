@@ -72,6 +72,8 @@ export const RESOURCES_MENU: NavLink[] = [
   { label: "Changelog", href: "/changelog" },
   { label: "Pricing and credits", href: "/pricing" },
   { label: "Troubleshooting", href: "/resources/troubleshooting" },
+  { label: "FAQ", href: "/resources/faq" },
+  { label: "Glossary", href: "/resources/glossary" },
   { label: "Support & community", href: "/support" },
   { label: "For AI agents", href: "/resources/agents" },
   { label: "Status", href: "https://status.bithuman.ai", external: true },

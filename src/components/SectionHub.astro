@@ -5,7 +5,7 @@
 // page the sidebar does not, or describe a page differently from the page.
 import { getCollection } from "astro:content";
 import Hub from "./Hub.astro";
-import { GROUP_ORDER, RESOURCES_MENU, type SectionId } from "../config/nav";
+import { GROUP_ORDER, RESOURCES_MENU, SECTIONS, type SectionId } from "../config/nav";
 
 interface Props {
   section: SectionId;
@@ -36,4 +36,4 @@ if (section === "resources") {
   if (more.length) groups.push({ label: "More", line: undefined, cards: more as any });
 }
 ---
-<Hub title={title} tagline={tagline} ctas={ctas} groups={groups} />
+<Hub title={title} tagline={tagline} ctas={ctas} groups={groups} section={SECTIONS[section].label} />

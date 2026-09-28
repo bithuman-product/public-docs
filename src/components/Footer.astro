@@ -40,13 +40,13 @@ const year = 2026;
   .footer {
     border-top: 1px solid var(--color-border);
     background: var(--color-surface-2);
-    margin-top: var(--space-12);
+    margin-top: var(--s-24);
   }
   .footer-inner {
     display: grid;
     grid-template-columns: 1.3fr 2.2fr;
-    gap: var(--space-8);
-    padding-block: var(--space-10) var(--space-8);
+    gap: var(--s-12);
+    padding-block: var(--s-16) var(--s-12);
   }
   .footer-brand .brand {
     display: inline-flex;
@@ -55,8 +55,8 @@ const year = 2026;
     font-weight: var(--fw-bold);
     font-size: var(--ft-lg);
   }
-  .footer-brand .brand img { border-radius: 6px; }
-  .footer-brand p { margin-top: var(--space-3); max-width: 34ch; font-size: var(--ft-sm); }
+  .footer-brand .brand img { border-radius: var(--r-sm); }
+  .footer-brand p { margin-top: var(--s-3); max-width: 34ch; font-size: var(--ft-sm); }
   /* The tagline names what the one-writer record measures, so the word that
      makes that claim links to the record's own page. */
   .footer-brand p a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
@@ -64,7 +64,7 @@ const year = 2026;
   .footer-cols {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-5);
+    gap: var(--s-6);
   }
   .footer-col-title {
     font-weight: var(--fw-bold);
@@ -72,7 +72,7 @@ const year = 2026;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--color-text-tertiary);
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--s-3);
   }
   .footer-col a {
     display: block;
@@ -85,16 +85,16 @@ const year = 2026;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-block: var(--space-5);
+    padding-block: var(--s-6);
     border-top: 1px solid var(--color-border);
     font-size: var(--ft-sm);
   }
-  .footer-base-links { display: flex; gap: var(--space-5); }
+  .footer-base-links { display: flex; gap: var(--s-6); }
   .footer-base-links a { color: var(--color-text-secondary); }
   .footer-base-links a:hover { color: var(--color-text); }
 
   @media (max-width: 860px) {
-    .footer-inner { grid-template-columns: 1fr; gap: var(--space-6); }
-    .footer-cols { grid-template-columns: repeat(2, 1fr); gap: var(--space-6); }
+    .footer-inner { grid-template-columns: 1fr; gap: var(--s-8); }
+    .footer-cols { grid-template-columns: repeat(2, 1fr); gap: var(--s-8); }
   }
 </style>

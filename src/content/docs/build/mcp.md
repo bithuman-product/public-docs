@@ -5,6 +5,7 @@ section: build
 group: "Recipes"
 order: 50
 type: platform
+artifacts: ["cli"]
 ---
 
 `bithuman mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server built into the [CLI](/platforms/cli). An MCP client such as Claude Code, Claude Desktop or Cursor can then call bitHuman as tools: "make an avatar that explains our pricing, then give me an embed token" becomes a chain of tool calls.

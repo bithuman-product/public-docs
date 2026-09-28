@@ -34,13 +34,15 @@ import { DEMOS } from "../data/demo.ts";
 import { figureBlock, galleryBlock, githubBlock } from "./showcase.ts";
 import { diagramHtml, diagramText } from "./diagrams.ts";
 import { dataflowExplorer } from "./dataflow-explorer.ts";
+import { resolvedHighlights, shortDate } from "./highlights.ts";
+import { TAGS, parseChangelog } from "./changelog.ts";
 
 export type Mode = "page" | "twin";
 export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator",
-  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected"]);
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected", "highlights", "changelog-filter"]);
 /** Blocks drawn as HTML on the page (the rest become markdown). */
 export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator",
-  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer"]);
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "highlights", "changelog-filter"]);
 /** Blocks whose body is markdown the page draws inside a wrapper (the twin
  *  keeps the markdown under a label). Written with four backticks when the
  *  body holds a fence of its own. */
@@ -49,7 +51,8 @@ export const WRAP_BLOCKS: Record<string, [string, string]> = {
 };
 /** Blocks that bring a script or styles to the page (DocLayout loads them only there). */
 export const WIDGET_BLOCKS: Record<string, string> = { "perf-explorer": "perf-explorer", "credit-calculator": "calculator", "model-matrix": "matrix-filter", "deploy-matrix": "matrix-filter",
-  figure: "figure", "example-gallery": "gallery", diagram: "diagram", "dataflow-explorer": "dataflow" };
+  figure: "figure", "example-gallery": "gallery", diagram: "diagram", "dataflow-explorer": "dataflow",
+  highlights: "changelog", "changelog-filter": "changelog" };
 
 const readJson = (rel: string) => JSON.parse(readFileSync(join(process.cwd(), rel), "utf8"));
 let pricingCache: any, plansCache: any;
@@ -352,6 +355,31 @@ function creditCalculator(mode: Mode): string {
     `<table><thead><tr>${head.map((h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${examples.map((row) => `<tr>${row.map((c, i) => (i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`)).join("")}</tr>`).join("")}</tbody></table></div>`;
 }
 
+// ---------------------------------------------------------------- changelog
+/** The month's highlights: cards that jump to each release (page), or a list (twin). */
+function highlightsBlock(mode: Mode): string {
+  const hs = resolvedHighlights();
+  if (mode === "twin") {
+    return hs.map((h) => `- **${h.title}** (${h.entry.heading}, ${h.tagLabel}): ${h.line} [Release notes](/changelog#${h.entry.anchor}) · [Docs](${h.href})`).join("\n") + "\n";
+  }
+  return `<ul class="card-grid hl-grid" role="list">` + hs.map((h) =>
+    `<li data-tag="${h.entry.tag}"><a class="card card-link hl-card" href="#${h.entry.anchor}"><span class="card-body">` +
+    `<span class="hl-meta"><span class="chip cl-chip" data-tag="${h.entry.tag}">${esc(h.tagLabel)}</span>${h.entry.date ? `<time datetime="${h.entry.date}">${shortDate(h.entry.date)}</time>` : ""}</span>` +
+    `<span class="card-title"><strong>${inlineHtml(h.title)}</strong></span><span class="card-line">${inlineHtml(h.line)}</span>` +
+    `</span></a></li>`).join("") + `</ul>`;
+}
+
+/** The platform filter over the releases below it (hidden until its script runs; the twin has none). */
+function changelogFilter(mode: Mode): string {
+  if (mode === "twin") return "";
+  const used = new Set(parseChangelog(readFileSync(join(process.cwd(), "src/content/docs/changelog.md"), "utf8")).map((e) => e.tag));
+  const tags = TAGS.filter((t) => used.has(t.id));
+  return `<div class="cl-filter" role="group" aria-label="Show releases for" data-pagefind-ignore hidden>` +
+    `<button type="button" class="cl-f" data-tag="" aria-pressed="true">All</button>` +
+    tags.map((t) => `<button type="button" class="cl-f" data-tag="${t.id}" aria-pressed="false">${esc(t.label)}</button>`).join("") +
+    `</div><p class="cl-count" aria-live="polite" hidden></p>`;
+}
+
 // ---------------------------------------------------------------- entry points
 /** The markdown for one block. `page` output may carry inline HTML chips. */
 export function blockMarkdown(lang: string, body: string, mode: Mode): string {
@@ -374,6 +402,8 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "diagram": return mode === "page" ? diagramHtml(arg) : diagramText(arg);
     case "dataflow-explorer": return dataflowExplorer(mode);
     case "expected": return mode === "page" ? body : `Expected:\n\n${body.trim()}\n`;
+    case "highlights": return highlightsBlock(mode);
+    case "changelog-filter": return changelogFilter(mode);
     case "partial": {
       if (!/^[a-z0-9-]+$/.test(arg)) throw new Error(`\`\`\`partial: "${arg}" is not a partial name`);
       return readFileSync(join(process.cwd(), "src/partials", `${arg}.md`), "utf8").replace(/<!--[\s\S]*?-->\n?/g, "");

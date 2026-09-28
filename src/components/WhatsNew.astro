@@ -1,0 +1,32 @@
+---
+// The home page's "What's new": the first three changelog highlights
+// (src/data/highlights.ts), each with its platform tag and release date from
+// /changelog, linking to the page where the change is used.
+import Icon from "./Icon.astro";
+import { resolvedHighlights, shortDate } from "../lib/highlights";
+
+const items = resolvedHighlights().slice(0, 3);
+const code = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/`([^`]+)`/g, "<code>$1</code>");
+---
+<div class="band-head">
+  <h2 id="whats-new">What's new</h2>
+  <a class="band-more" href="/changelog">Changelog <Icon name="arrow" size={16} /></a>
+</div>
+<ul class="card-grid cols-3 wn" role="list" aria-labelledby="whats-new">
+  {items.map((h) => (
+    <li>
+      <a class="card card-link" href={h.href}>
+        <span class="card-body">
+          <span class="wn-meta"><span class="chip">{h.tagLabel}</span>{h.entry.date && <time datetime={h.entry.date}>{shortDate(h.entry.date)} · {h.release}</time>}</span>
+          <span class="card-title"><h3 set:html={code(h.title)} /></span>
+          <span class="card-line" set:html={code(h.line)} />
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .wn-meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .wn :global(.card-line code), .wn h3 :global(code) { font-size: 0.86em; }
+</style>

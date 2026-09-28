@@ -414,6 +414,26 @@
   {
    "source": "/data-flows",
    "new": "/deploy/privacy"
+  },
+  {
+   "source": "/faq",
+   "new": "/resources/faq"
+  },
+  {
+   "source": "/glossary",
+   "new": "/resources/glossary"
+  },
+  {
+   "source": "/for-agents",
+   "new": "/resources/agents"
+  },
+  {
+   "source": "/rss",
+   "new": "/changelog.xml"
+  },
+  {
+   "source": "/changelog/rss",
+   "new": "/changelog.xml"
   }
  ],
  "assets": [
@@ -476,6 +496,54 @@
   {
    "source": "/examples/web/hero.webp",
    "new": "/examples/web-embed/poster.webp"
+  },
+  {
+   "source": "/bitHuman-circle.webp",
+   "new": "/bithuman-mark.png"
+  },
+  {
+   "source": "/images/bitHuman-logo-circle.png",
+   "new": "/bithuman-mark.png"
+  },
+  {
+   "source": "/bitHuman-logo.webp",
+   "new": "/images/og-card.jpg"
+  },
+  {
+   "source": "/images/bithuman-logo.png",
+   "new": "/images/og-card.jpg"
+  },
+  {
+   "source": "/images/bithuman-banner.jpg",
+   "new": "/images/og-card.jpg"
+  },
+  {
+   "source": "/images/bitHuman_banner_black.jpg",
+   "new": "/images/og-card.jpg"
+  },
+  {
+   "source": "/og-image.jpg",
+   "new": "/images/og-card.jpg"
+  },
+  {
+   "source": "/images/demo-wise-pup-640.webp",
+   "new": "/images/demo/wise-pup-480.webp"
+  },
+  {
+   "source": "/images/demo-wise-pup-960.webp",
+   "new": "/images/demo/wise-pup-960.webp"
+  },
+  {
+   "source": "/images/example-agent-images.jpg",
+   "new": "/images/demo/sofia-ramirez-960.webp"
+  },
+  {
+   "source": "/images/image-guide.jpg",
+   "new": "/images/demo/sofia-ramirez-960.webp"
+  },
+  {
+   "source": "/images/openai.svg",
+   "new": "/images/og-card.jpg"
   }
  ],
  "legacy": [

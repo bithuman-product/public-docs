@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content";
 import { inSidebarOrder } from "./sidebar-order";
-import { agentFacts } from "../config/agent-facts";
+import { agentFacts, agentInstructions } from "../config/agent-facts";
 import { twin, SITE } from "./markdown-twin";
 import { PLATFORMS } from "../data/platforms";
 
@@ -8,29 +8,29 @@ import { PLATFORMS } from "../data/platforms";
 // are built from these definitions, so a page is inlined in exactly one section
 // and the one-file text and the section files cannot disagree.
 //
-//   /llms/start.txt      the quickstart, the API secret, performance
+//   /llms/start.txt      the quickstart, the API secret, performance, FAQ, glossary
+//   /llms/platforms.txt  every platform page (iOS & iPadOS, macOS, Android, Flutter, Web, Python, CLI, LiveKit, REST)
+//   /llms/deploy.txt     where it runs: the five deployment modes, privacy, pricing
+//   /llms/models.txt     Essence 2, Expression 2, the first generation, how it works
+//   /llms/build.txt      the recipes and guides: avatars, personas, voices, gestures, MCP, troubleshooting
 //   /llms/api.txt        the REST API
-//   /llms/platforms.txt  every platform page (iOS & iPadOS, Android, Web, Python, CLI, LiveKit, REST)
-//   /llms/build.txt      models, deployment options, pricing, self-hosting and the build guides
-//   /llms-full.txt       start + api + platforms in one fetch; build is linked
+//   /llms-full.txt       start + platforms + api in one fetch; deploy, models and build are linked
 //
 // scripts/check-llms.mjs caps each file and fails when a page is in no section
 // (and not linked-only) or in two, so no page can drop out of the agent layer.
 
-// Account administration, less-used endpoints, first-generation concepts, the
-// CLI's local conversation brain, the method page and the step-by-step recipes
-// are linked with their .md twins rather than inlined, to keep each file one
-// fetch for an agent.
+// Account administration, less-used endpoints, the CLI's local conversation
+// brain and the method page are linked with their .md twins rather than
+// inlined, to keep each file one fetch for an agent.
 export const LINKED_ONLY = new Set([
   "api/api-keys", "api/organizations", "api/runtime-sessions", "api/billing",
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
-  "models/first-generation", "models/avatar-file",
-  "build/voice-agent", "build/kiosk", "build/companion-app", "build/talking-video", "platforms/cli/local-brain",
-  "performance/method",
+  "platforms/cli/local-brain",
+  "performance/method", "resources/faq", "resources/glossary",
 ]);
 
 export interface LlmsSection {
-  id: "start" | "api" | "platforms" | "build";
+  id: "start" | "platforms" | "deploy" | "models" | "build" | "api";
   title: string;
   /** One line on what the file holds, shown in every index. */
   summary: string;
@@ -42,13 +42,8 @@ export interface LlmsSection {
 export const LLMS_SECTIONS: LlmsSection[] = [
   {
     id: "start", title: "Get started", inFull: true,
-    summary: "choose your path, your API secret, performance",
-    has: (d) => d.data.section === "start" || d.data.section === "performance",
-  },
-  {
-    id: "api", title: "REST API", inFull: true,
-    summary: "agents, realtime, video, voice, embedding, errors, rate limits",
-    has: (d) => d.data.section === "api",
+    summary: "choose your path, your API secret, performance, FAQ, glossary",
+    has: (d) => d.data.section === "start" || d.data.section === "performance" || d.id === "resources/faq" || d.id === "resources/glossary",
   },
   {
     id: "platforms", title: "Platforms", inFull: true,
@@ -56,18 +51,31 @@ export const LLMS_SECTIONS: LlmsSection[] = [
     has: (d) => d.data.section === "platforms" && (d.data.type === "platform" || d.data.type === "guide"),
   },
   {
-    id: "build", title: "Models, deploy and build", inFull: false,
-    summary: "models, deployment options, pricing, self-hosting, building avatars, personas, voices",
-    has: (d) =>
-      d.data.section === "models" || d.data.section === "deploy" || d.id === "resources/troubleshooting" ||
-      (d.data.section === "build" && ["guide", "platform", "recipe"].includes(d.data.type)),
+    id: "deploy", title: "Deploy", inFull: false,
+    summary: "on the device, CPU only, your servers, bitHuman cloud, fully offline; privacy; pricing",
+    has: (d) => d.data.section === "deploy",
+  },
+  {
+    id: "models", title: "Models", inFull: false,
+    summary: "Essence 2, Expression 2, Essence 2 Max, the first generation, how it works",
+    has: (d) => d.data.section === "models",
+  },
+  {
+    id: "build", title: "Build", inFull: false,
+    summary: "voice agent, companion app, kiosk, talking video, avatars, personas, voices, gestures, MCP, troubleshooting",
+    has: (d) => d.id === "resources/troubleshooting" || (d.data.section === "build" && ["guide", "platform", "recipe"].includes(d.data.type)),
+  },
+  {
+    id: "api", title: "REST API", inFull: true,
+    summary: "agents, realtime, video, voice, embedding, errors, rate limits",
+    has: (d) => d.data.section === "api",
   },
 ];
 
 export const sectionUrl = (id: string) => `${SITE}/llms/${id}.txt`;
 
 /** What /llms-full.txt inlines, in words (the sections marked inFull). */
-export const FULL_SCOPE = "getting started, the REST API and every platform page";
+export const FULL_SCOPE = "getting started, every platform page and the REST API";
 
 /** The pages a section inlines, in sidebar order. */
 export async function sectionDocs(s: LlmsSection): Promise<any[]> {
@@ -119,7 +127,9 @@ export function sectionIndex(): string {
 export async function sectionFile(s: LlmsSection): Promise<string> {
   let out = `# bitHuman — ${s.title} (${s.summary})\n\n> ${INTRO} · other sections: ${
     LLMS_SECTIONS.filter((o) => o.id !== s.id).map((o) => sectionUrl(o.id)).join(" · ")}\n\n`;
-  out += agentFacts(SITE);
+  // The rules, then a pointer: where it runs and the key facts are in /llms.txt,
+  // which keeps each section file one fetch (they are capped).
+  out += agentInstructions(SITE) + `Where each model runs, the key facts and one command per path: ${SITE}/llms.txt\n\n`;
   out += `## Contents\n\n`;
   if (s.id === "start") out += `- Quickstart — ${SITE}/start\n`;
   for (const d of await sectionDocs(s)) out += `- ${d.data.title} — ${SITE}/${d.id}\n`;

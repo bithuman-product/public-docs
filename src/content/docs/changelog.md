@@ -7,7 +7,17 @@ order: 20
 type: changelog
 ---
 
-What changed in each release, newest day first (grouped by artifact within a day). Current versions are on [Downloads & versions](/downloads) and in [/versions.json](/versions.json). Entries before August 2026 are in the [archive](/changelog/archive).
+What changed in each release, newest day first (grouped by artifact within a day). Current versions are on [Downloads & versions](/downloads) and in [/versions.json](/versions.json). Follow new releases with the [RSS feed](/changelog.xml). Entries before August 2026 are in the [archive](/changelog/archive).
+
+```changelog-filter
+```
+
+## Highlights
+
+The releases of September 2026 worth a look first.
+
+```highlights
+```
 
 ## Breaking changes
 

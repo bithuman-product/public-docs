@@ -13,6 +13,7 @@ platforms: ["cli"]
 models: ["essence-2", "expression-2"]
 claims: ["S3", "S4", "S10", "S11", "S20"]
 next: ["/deploy/cpu", "/platforms/cli", "/deploy/offline"]
+artifacts: ["cli"]
 ---
 
 ## What you'll build

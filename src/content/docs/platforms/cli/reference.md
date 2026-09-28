@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 40
 type: reference
+artifacts: ["cli"]
 ---
 
 Covers the CLI at the version on [Downloads & versions](/downloads). The binary describes itself too: `bithuman <command> --help`, and `bithuman __schema` prints the full command, flag and exit-code tree as JSON. The quickstart is on [CLI](/platforms/cli).

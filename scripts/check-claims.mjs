@@ -36,9 +36,10 @@ export const CLAIMS = [
   ["style", "British spelling of license", /\blicence\b/i],
 ];
 
-const SCAN = ["src/content", "src/data", "src/config", "src/pages", "src/partials", "src/components", "src/layouts", "src/lib", "src/openapi"];
+// public/skills is the installable agent skill and api/ the docs MCP server: both are read by agents.
+const SCAN = ["src/content", "src/data", "src/config", "src/pages", "src/partials", "src/components", "src/layouts", "src/lib", "src/openapi", "public/skills", "api"];
 const SKIP = /(^|\/)changelog(\/|\.md$)/;
-const EXT = /\.(md|mdx|astro|ts|json|yaml)$/;
+const EXT = /\.(md|mdx|astro|ts|json|yaml|js|mjs)$/;
 
 export function scan(text) {
   const hits = [];

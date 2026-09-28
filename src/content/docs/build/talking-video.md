@@ -13,6 +13,7 @@ platforms: ["cli", "python", "rest"]
 models: ["essence-2", "expression-2"]
 claims: ["S3", "S4", "S14"]
 next: ["/api/video", "/platforms/cli", "/platforms/python"]
+artifacts: ["cli", "python"]
 ---
 
 ## What you'll build
