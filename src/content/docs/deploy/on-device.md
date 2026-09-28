@@ -66,7 +66,7 @@ device
 
 ```swift tab="iOS & iPadOS"
 // Package.swift (or Xcode → Add Package Dependencies)
-.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.19.0")
+.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.19.1")
 ```
 
 ```kotlin tab="Android"

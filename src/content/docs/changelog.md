@@ -40,6 +40,11 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### Swift package 2.19.1 · Flutter plugin 2.6.22 — 2026-09-28
+
+- **Security (macOS):** the macOS engine core is rebuilt so that only its public interface is linkable. Please update: `.package(url: …, from: "2.19.1")`, or pin `ref: flutter-plugin-v2.6.22` and re-run the plugin's `scripts/bootstrap.sh`.
+- iPhone and iPad are unaffected. Expression 2 (2.19.0) and Essence 2 (1.15.0) are unchanged.
+
 ### Swift package 2.19.0 — 2026-09-28
 
 Tag `v2.19.0`.
