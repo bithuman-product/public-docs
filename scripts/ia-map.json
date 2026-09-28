@@ -255,11 +255,11 @@
   },
   {
    "source": "/concepts/essence-2-max",
-   "new": "/models"
+   "new": "/models#the-models"
   },
   {
    "source": "/guides/deploy-essence-2-max",
-   "new": "/models"
+   "new": "/models#the-models"
   },
   {
    "source": "/guides/deployment",
@@ -434,6 +434,18 @@
   {
    "source": "/changelog/rss",
    "new": "/changelog.xml"
+  },
+  {
+   "source": "/kiosk",
+   "new": "/build/kiosk"
+  },
+  {
+   "source": "/companion",
+   "new": "/build/companion-app"
+  },
+  {
+   "source": "/essence-2-max",
+   "new": "/models#the-models"
   }
  ],
  "assets": [

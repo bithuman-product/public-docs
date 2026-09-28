@@ -192,7 +192,11 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Open the page and allow the microphone", text: "The avatar appears, asks for the microphone and answers when you speak." },
       { title: "Render in the visitor's tab (optional)", text: "Add `?render=local` to the embed URL: with WebGPU the avatar renders in the tab, and without a usable GPU it renders in the bitHuman cloud. The avatar's web bundle downloads once (50–200 MB), then comes from the cache." },
     ],
-    expect: { text: "A live avatar in your page that listens and answers.", media: captureMedia("web-embed") },
+    // The still is the avatar the snippet above embeds (the Expression 2 sample), so what you paste and what you see match.
+    expect: {
+      text: "A live avatar in your page that listens and answers.",
+      media: { poster: `${pup.poster}-480.webp`, width: 480, height: 600, caption: `${pup.slug}, the ${pup.modelName} sample avatar this embed opens.` },
+    },
     next: { href: "/platforms/web", label: "Web: embed and WebGPU" },
     note: "With the web embed the conversation runs on bitHuman's servers, including when the avatar renders in the tab.",
   },

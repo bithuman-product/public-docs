@@ -13,6 +13,15 @@
   line-gap-override: 0%;
 }
 
+/* Arrows (→ ↗) and ⌘ from a font the device already has. Roboto draws them from
+   its math and symbols subsets: two extra font files (about 50 KB) on every page
+   for three glyphs. These faces come after Google's in the page, so they are
+   tried first for that range only; on a device with none of these fonts the
+   glyphs come from Google's subsets, as before. Weights match Google's faces. */
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 400; src: local("Roboto"), local("Segoe UI Symbol"), local("Apple Symbols"), local("DejaVu Sans"); unicode-range: U+2190-21FF, U+2318; }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 500; src: local("Roboto Medium"), local("Roboto"), local("Segoe UI Symbol"), local("Apple Symbols"), local("DejaVu Sans"); unicode-range: U+2190-21FF, U+2318; }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 700; src: local("Roboto Bold"), local("Roboto"), local("Segoe UI Symbol"), local("Apple Symbols"), local("DejaVu Sans Bold"), local("DejaVu Sans"); unicode-range: U+2190-21FF, U+2318; }
+
 /* ---- card grid ---- */
 .card-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
 .card-grid.cols-1 { --cols: 1; }
