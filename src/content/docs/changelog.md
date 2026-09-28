@@ -40,6 +40,12 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### `bithuman` 2.11.16 — 2026-09-28
+
+- **New:** `python -m bithuman pack redeem` installs a prepaid offline pack (Business and Enterprise) on the machine that runs it: it binds the account's unredeemed pack to this machine and installs it. `python -m bithuman pack redeem PURCHASE_ID` redeems a named one; `--file PACK` installs a saved pack with no network. Afterwards `python -m bithuman render` of an avatar the pack covers needs no network and no API secret until the pack is spent.
+- **Changed:** a refused redeem says in plain words what to do (the plan, the platform, a pack already installed) and that nothing was spent.
+- **Action:** `pip install -U bithuman`.
+
 ### `bithuman` 2.11.15 — 2026-09-27
 
 - **New:** `bithuman.open(path).render(audio, out_mp4="out.mp4")` writes the MP4 (H.264 with the speech) and returns the number of frames, for every model. It is the one offline route.
