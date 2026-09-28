@@ -136,7 +136,7 @@ Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(in
 
 Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
-The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.14.2 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.14.2) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.0 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.0) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
 
 ### A minimal loop
 
