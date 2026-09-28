@@ -148,7 +148,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 
 ## Platforms
 
-Binaries: `aarch64-apple-darwin`, `x86_64-unknown-linux-gnu`, `aarch64-unknown-linux-gnu`. On any other platform the installer names the platform, says what is supported, and exits 1 without downloading. There is no Intel Mac or native Windows binary; use WSL2, a Linux container, or the [cloud API](/api).
+Binaries: `aarch64-apple-darwin`, `x86_64-unknown-linux-gnu`, `aarch64-unknown-linux-gnu`, `x86_64-pc-windows-msvc`. On any other platform the installer names the platform, says what is supported, and exits 1 without downloading. There is no Intel Mac binary; use a Linux container or the [cloud API](/api).
 
 ## JSON output
 

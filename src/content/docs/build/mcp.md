@@ -17,7 +17,7 @@ artifacts: ["cli"]
 
 ## Before you start
 
-- The [CLI](/platforms/cli#install) on macOS (Apple silicon) or Linux. On Windows or in a hosted agent, call the [REST API](/api) directly.
+- The [CLI](/platforms/cli#install) on macOS (Apple silicon), Linux or Windows. In a hosted agent, call the [REST API](/api) directly.
 - An MCP client.
 
 ## Install
