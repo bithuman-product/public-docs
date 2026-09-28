@@ -41,7 +41,7 @@ Creating the avatar from a portrait happens in the bitHuman cloud; the finished 
 place: offline
 ```
 
-Essence 1 runs fully offline on Linux x86_64 today. Essence 2 and Expression 2 offline come later. Expression 1 runs in the bitHuman cloud only.
+Essence 1 runs fully offline on Linux (x86_64 and ARM64) today. Essence 2 and Expression 2 offline come later. Expression 1 runs in the bitHuman cloud only.
 
 ## Speed
 
@@ -61,9 +61,9 @@ offline
 
 ## First command
 
-Available today: **Essence 1 on Linux x86_64**. Essence 2 and Expression 2 come later.
+Available today: **Essence 1 on Linux x86_64 and Linux ARM64**. Essence 2 and Expression 2 come later.
 
-1. **Buy a pack** for the [offline license](/deploy/offline) in the console (**Developer → Offline licenses**), choosing the model and the platform it will run on. A pack is at least 100,000 credits at the self-hosted rate. You can cancel it for a full refund until a machine redeems it. Through the API: `POST /v1/offline/entitlements` with `"platform": "linux-x86_64"`.
+1. **Buy a pack** for the [offline license](/deploy/offline) in the console (**Developer → Offline licenses**), choosing the model and the platform it will run on. A pack is at least 100,000 credits at the self-hosted rate. You can cancel it for a full refund until a machine redeems it. Through the API: `POST /v1/offline/entitlements` with `"platform": "linux-x86_64"` or `"linux-aarch64"`.
 2. **Redeem it once, on the machine that will run it**, while it is online, with bitHuman 2.11.16 or later and your account's API secret:
 
    ```bash
