@@ -51,6 +51,12 @@ Tag `cli-v2.8.4`.
 - **Fixed:** `render --json` `seconds` is the video's length (frames / fps), as in the Python package; the render's wall time is `wall_seconds`.
 - **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
 
+### `bithuman` 2.11.17 — 2026-09-28
+
+- **New:** an installed offline pack now covers Essence 2 and Expression 2 avatars too: `bithuman.open()`, `render()` and `python -m bithuman render` need no network and no API secret when an installed pack covers the avatar, and every frame is metered on the machine against the pack (Expression 2 at its own 20 fps).
+- **New:** on macOS (Apple silicon) a pack is kept in the system keychain, sealed by the Secure Enclave where the Mac has one. Offline packs open platform by platform; where one is not available yet, `python -m bithuman pack redeem` says so and nothing is spent.
+- **Action:** `pip install -U bithuman`.
+
 ### Swift package 2.19.1 · Flutter plugin 2.6.22 — 2026-09-28
 
 - **Security (macOS):** the macOS engine core is rebuilt so that only its public interface is linkable. Please update: `.package(url: …, from: "2.19.1")`, or pin `ref: flutter-plugin-v2.6.22` and re-run the plugin's `scripts/bootstrap.sh`.
