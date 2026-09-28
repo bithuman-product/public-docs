@@ -35,7 +35,7 @@ ios-expression-2 eager
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
-| **Devices** | any Apple silicon iPhone or iPad, iOS 16 or newer | any Apple silicon iPhone, an M-series iPad, iOS 26 or newer |
+| **Devices** | iPhone or iPad, iOS 16 or newer; measured on iPhone 15 only | iPhone, or an M-series iPad, iOS 26 or newer; measured on iPhone 15 only |
 | **Product** | `.product(name: "Expression2", package: "homebrew-bithuman")` | `.product(name: "Essence2Kit", package: "homebrew-bithuman")` (Swift), or `.product(name: "Essence2", package: "homebrew-bithuman")` (C) |
 | **Credential** | an [API secret](/start/api-secret), Creator plan or higher | an API secret, Creator plan or higher |
 | **First-run download** | about 370 MB (avatar and shared engine) | about 250 MB (avatar and engine resources) |
