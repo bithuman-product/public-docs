@@ -128,7 +128,7 @@ function draw(d: Diagram): { svg: string; h: number } {
 
 // ---------------------------------------------------------------- the diagrams
 
-const SERVERS_DESC_TAIL = "The conversation runs where you choose: the CLI's local conversation brain, your own services, or bitHuman's. bitHuman receives a credential check, the avatar download and usage reports with no audio, video, images or conversation text.";
+const SERVERS_DESC_TAIL = "The conversation runs where you choose: the CLI's local conversation brain, your own services, or bitHuman's. For the rendering, bitHuman receives a credential check, the avatar download and usage reports with no audio, video, images or conversation text.";
 
 function serversLike(zone: string, renders: string, stays: string): Pick<Diagram, "groups" | "links"> {
   return {
@@ -147,11 +147,11 @@ function serversLike(zone: string, renders: string, stays: string): Pick<Diagram
 export const DIAGRAMS: Record<string, () => Diagram> = {
   engine: () => ({
     title: "The engine: speech in, frames out",
-    desc: "Your app pushes 16 kHz mono speech into the bitHuman engine and pulls lip-synced frames out. The same engine and the same avatar file sit inside the Swift package, the Android SDK, the Python SDK, the CLI and the browser.",
+    desc: "Your app pushes 16 kHz mono speech into the bitHuman engine and pulls lip-synced frames out. The same engine sits inside the Swift package, the Android SDK, the Python SDK, the CLI and the web embed.",
     claims: ["S1", "S24"],
     groups: [
       { label: "Speech in", rows: [{ title: "16 kHz mono audio", sub: "a microphone, text to speech or a WebRTC track" }] },
-      { label: "Inside every SDK", rows: [{ title: "The bitHuman engine", sub: "renders the avatar from one model file, on the device or your server", tone: "accent" }] },
+      { label: "Inside every SDK", rows: [{ title: "The bitHuman engine", sub: "renders the avatar on the device, on your server or in the browser", tone: "accent" }] },
       { label: "Frames out", rows: [{ title: "Lip-synced video", sub: "at the model's own rate, drawn by your app" }] },
     ],
     links: [[{ x: 180, label: "push audio" }], [{ x: 180, label: "pull frames" }]],

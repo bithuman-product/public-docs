@@ -183,7 +183,7 @@ async for frame in runtime.run():
 
 ## Barge-in
 
-Talk over the avatar and it stops mid-sentence, then listens: that is barge-in, and every path here supports it.
+Talk over the avatar and it stops mid-sentence, then listens: that is barge-in.
 
 - **The CLI and the Python agent:** the voice model's turn detection hears you start talking and cancels its reply; LiveKit Agents then clears the avatar's buffered audio and frames, so the mouth stops with the voice. In the Python agent it is `interrupt_response=True` on the turn detection, shown above.
 - **Your own loop in Python:** when your speech detection fires, call `interrupt()` on the runtime and clear any reply audio you still hold. `run()` carries on with idle frames. With OpenAI Realtime, the event to watch is `input_audio_buffer.speech_started`:
