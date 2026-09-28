@@ -96,8 +96,7 @@ Choose where the avatar renders, then how long sessions run. The estimate counts
 
 Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux PCs and terminals; arranged through sales.
 
-- **Models:** Essence 1, Essence 2 and Expression 2.
-- **Linux offline: coming with bitHuman 2.11.16.** Essence 1 on Linux x86_64 comes first. Version 2.11.16 adds `python -m bithuman pack redeem`, which installs a pack on the machine that runs it. Essence 2 and Expression 2 follow.
+- **Models:** Essence 1 first, on Linux x86_64, coming with bitHuman 2.11.16 (it adds `python -m bithuman pack redeem`, which installs a pack on the machine that runs it). Essence 2 and Expression 2 offline come later.
 - **Credit-based:** from 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection.
 - **Creation is online:** you create the avatar from a portrait in the bitHuman cloud; the finished avatar model then runs on your machines.
 - **Not for phones:** the Swift package and the Android SDK stay online.

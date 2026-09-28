@@ -8,7 +8,7 @@ type: deploy
 searchTitle: "Fully offline: realtime avatars off the internet, for kiosks and terminals"
 availability: "business-enterprise"
 renders: ["offline"]
-models: ["essence-1", "essence-2", "expression-2"]
+models: ["essence-1"]
 claims: ["S11", "S12", "S13", "S21"]
 next: ["/deploy/cpu", "/pricing", "/deploy"]
 ---
@@ -41,7 +41,7 @@ Creating the avatar from a portrait happens in the bitHuman cloud; the finished 
 place: offline
 ```
 
-Essence 1, Essence 2 and Expression 2 run fully offline; Expression 1 runs in the bitHuman cloud only.
+Essence 1 comes first, on Linux x86_64 with bitHuman 2.11.16. Essence 2 and Expression 2 offline come later. Expression 1 runs in the bitHuman cloud only.
 
 ## Speed
 
