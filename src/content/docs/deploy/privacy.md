@@ -21,7 +21,7 @@ Two things decide what leaves your hardware: where the avatar **renders**, and w
 | **Transcripts at bitHuman** | stored with the agent | none stored | none stored |
 | **Your API secret** | on your server; browsers get scoped embed tokens | on your machine | held by your app on the device |
 
-[Fully offline](/deploy/offline) runs on Linux PCs and terminals with no required reconnection; it is arranged through sales.
+[Fully offline](/deploy/offline) runs on Linux and macOS computers (Apple silicon) with no required reconnection; it is bought in the console or through sales.
 
 ## What leaves your hardware
 

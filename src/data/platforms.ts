@@ -115,8 +115,8 @@ bithuman render wise-pup speech.wav -o out.mp4
   },
   {
     id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Fully offline",
-    renders: "on your Linux PCs and terminals", conversation: "agreed with sales for your site", credential: "a pack, redeemed once on the machine while it is online",
-    needs: "Business or Enterprise plan; Essence 1 on Linux",
+    renders: "on your Linux and macOS computers", conversation: "agreed with sales for your site", credential: "a pack, redeemed once on the machine while it is online",
+    needs: "Business or Enterprise plan; Essence 1 on Linux or an Apple silicon Mac",
     first: "Contact sales", time: "—", docs: "/deploy/offline", models: ["essence-1"],
     note: OFFLINE_LICENSE_COPY,
   },

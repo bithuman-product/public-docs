@@ -78,7 +78,7 @@ export const MATRIX: Record<ModelId, Record<PlaceId, Cell>> = {
     browser: { ok: true, how: "`render=local`" },
     servers: { ok: true, how: "CLI (`run`), Python" },
     cloud: { ok: true, how: "web embed, REST API, LiveKit" },
-    offline: { ok: true, how: "Linux x86_64 and ARM64, bitHuman 2.11.16 or later; Business & Enterprise" },
+    offline: { ok: true, how: "Linux x86_64 and ARM64 (bitHuman 2.11.16 or later), macOS on Apple silicon (2.11.17 or later, Python); Business & Enterprise" },
   },
   "expression-1": {
     ios: no, mac: no, android: no, cpu: no, browser: no, servers: no,

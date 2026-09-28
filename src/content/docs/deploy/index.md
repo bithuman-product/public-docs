@@ -33,7 +33,7 @@ Essence 2 and Expression 2 render on iPhone, iPad, Mac and Android, or in a WebG
 
 ## Fully offline
 
-Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux PCs and terminals; arranged through sales. [Fully offline](/deploy/offline)
+Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux and macOS computers (Apple silicon); bought in the console or through sales. [Fully offline](/deploy/offline)
 
 ## Choosing a mode
 
