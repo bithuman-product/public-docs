@@ -46,7 +46,7 @@ Tag `cli-v2.8.4`.
 
 - **New:** an offline pack now covers Essence 2 and Expression 2 renders too. Once `bithuman pack redeem` has installed a pack for the model, `bithuman render` of that avatar needs no network and no API secret until the pack is spent. A spent pack, or one that is not for this machine, stops the render with exit 77 and says which; it never falls back to billing the account. Offline packs open platform by platform.
 - **New:** `bithuman pull <CODE>` also fetches the engine files the avatar's model needs to render (the Essence 2 audio frontend; the Expression 2 engine on macOS). While online, pull each avatar and redeem once; after that, rendering needs no network.
-- **New:** the CLI runs natively on Windows 10 and 11 (x86_64): `irm https://install.bithuman.ai/windows | iex`, or Scoop. Rendering on the machine and offline packs are not in the Windows build yet.
+- **New:** the CLI runs natively on Windows 10 and 11 (x86_64): `irm https://install.bithuman.ai/windows | iex`. Rendering on the machine and offline packs are not in the Windows build yet.
 - **Changed:** `bithuman pack status` lists every installed pack, one line per model (`--json`: `packs`).
 - **Fixed:** `render --json` `seconds` is the video's length (frames / fps), as in the Python package; the render's wall time is `wall_seconds`.
 - **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
