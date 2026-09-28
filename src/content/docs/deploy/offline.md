@@ -41,7 +41,7 @@ Creating the avatar from a portrait happens in the bitHuman cloud; the finished 
 place: offline
 ```
 
-Essence 1 runs fully offline today on Linux (x86_64 and ARM64) and on macOS with Apple silicon. Essence 2 and Expression 2 run fully offline on Linux x86_64 (bitHuman 2.11.17 or later). All of them through the Python package. Expression 1 runs in the bitHuman cloud only.
+Essence 1 runs fully offline today on Linux (x86_64 and ARM64) and on macOS with Apple silicon. Essence 2 and Expression 2 run fully offline on Linux x86_64 (bitHuman 2.11.17 or later). On Linux, the Python package and the bitHuman CLI (2.8.4 or later) both run offline packs; on a Mac, the Python package. Expression 1 runs in the bitHuman cloud only.
 
 ## Speed
 
@@ -73,10 +73,10 @@ Available today: **Essence 1** on Linux x86_64, Linux ARM64 and macOS (Apple sil
    python -m bithuman pack redeem
    ```
 
-   For Expression 2, install `"bithuman[expression-2]>=2.11.17"` instead.
+   For Expression 2, install `"bithuman[expression-2]>=2.11.17"` instead. With the bitHuman CLI on Linux (2.8.4 or later), `bithuman pack redeem` with `BITHUMAN_API_SECRET` set does the same.
 
    This binds the pack to this machine and installs it; on a Mac it is sealed with the Mac's Secure Enclave. If the install step fails, `python -m bithuman pack redeem --file <pack>` retries it from the copy kept in `~/.bithuman/packs/`, with no connection and no second charge.
-3. **Prepare the machine once while online.** Render your avatar once before you disconnect (`python -m bithuman render <avatar> <audio>`). This downloads the avatar and the engine files its model needs, and the pack meters it like any render.
+3. **Prepare the machine once while online.** Render your avatar once before you disconnect (`python -m bithuman render <avatar> <audio>`), or with the CLI run `bithuman pull <avatar>`. This downloads the avatar and the engine files its model needs; a render is metered by the pack like any other.
 4. **Run offline.** The machine now renders with no network and no API secret until the pack's credits are spent. Credits are metered on the machine, at the self-hosted rate for active session time. It never has to reconnect.
 
 ## Choosing between modes
