@@ -1,5 +1,5 @@
 {
- "$comment": "The one source of truth for moved URLs. scripts/gen-redirects.mjs turns it into vercel.json's redirects: every old URL answers one 308 straight to its final page (chains are collapsed), with a trailing-slash twin. `new` is the final page; while that page is not built yet, `interim` is used instead. `legacy` holds the redirects that existed before the 2026-09 IA change, with their original destinations; the generator re-points them through `moves` and `repoint`. A legacy source that is now a page is dropped. `sitemap_2026_09` is the sitemap before the change: check-redirects-live.mjs asserts each still answers 200, or one 308 then 200.",
+ "$comment": "The one source of truth for moved URLs. scripts/gen-redirects.mjs turns it into vercel.json's redirects: every old URL answers one 308 straight to its final page (chains are collapsed), with a trailing-slash twin. `new` is the final page; while that page is not built yet, `interim` is used instead. `legacy` holds the redirects that existed before the 2026-09 IA change, with their original destinations; the generator re-points them through `moves` and `repoint`. A legacy source that is now a page is dropped. `assets` moves a published media file (a capture's poster or clip) to its new path; its `new` is a file in public/. `sitemap_2026_09` is the sitemap before the change: check-redirects-live.mjs asserts each still answers 200, or one 308 then 200.",
  "moves": [
   {
    "old": "/sdk",
@@ -414,6 +414,68 @@
   {
    "source": "/data-flows",
    "new": "/deploy/privacy"
+  }
+ ],
+ "assets": [
+  {
+   "source": "/examples/android/essence2.mp4",
+   "new": "/examples/android-essence-2/clip.mp4"
+  },
+  {
+   "source": "/examples/android/essence2.webp",
+   "new": "/examples/android-essence-2/poster.webp"
+  },
+  {
+   "source": "/examples/android/expression2.mp4",
+   "new": "/examples/android-expression-2/clip.mp4"
+  },
+  {
+   "source": "/examples/android/expression2.webp",
+   "new": "/examples/android-expression-2/poster.webp"
+  },
+  {
+   "source": "/examples/cli/clip.mp4",
+   "new": "/examples/cli-linux/clip.mp4"
+  },
+  {
+   "source": "/examples/cli/hero.webp",
+   "new": "/examples/cli-linux/poster.webp"
+  },
+  {
+   "source": "/examples/cli/terminal.webp",
+   "new": "/examples/cli-linux/poster.webp"
+  },
+  {
+   "source": "/examples/ios/hero.webp",
+   "new": "/examples/ios-expression-2/poster.webp"
+  },
+  {
+   "source": "/examples/macos/clip.mp4",
+   "new": "/examples/macos-expression-2/clip.mp4"
+  },
+  {
+   "source": "/examples/macos/hero.webp",
+   "new": "/examples/macos-expression-2/poster.webp"
+  },
+  {
+   "source": "/examples/python/clip.mp4",
+   "new": "/examples/python-macos/clip.mp4"
+  },
+  {
+   "source": "/examples/python/hero.webp",
+   "new": "/examples/python-macos/poster.webp"
+  },
+  {
+   "source": "/examples/python/terminal.webp",
+   "new": "/examples/python-macos/poster.webp"
+  },
+  {
+   "source": "/examples/web/clip.mp4",
+   "new": "/examples/web-embed/clip.mp4"
+  },
+  {
+   "source": "/examples/web/hero.webp",
+   "new": "/examples/web-embed/poster.webp"
   }
  ],
  "legacy": [

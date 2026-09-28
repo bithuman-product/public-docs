@@ -31,13 +31,25 @@ import { MODELS, PLACES, MATRIX, type ModelId, type PlaceId } from "../data/mode
 import { DEPLOYMENTS } from "../data/deployments.ts";
 import { DATAFLOWS, type ModeId } from "../data/dataflows.ts";
 import { DEMOS } from "../data/demo.ts";
+import { figureBlock, galleryBlock, githubBlock } from "./showcase.ts";
+import { diagramHtml, diagramText } from "./diagrams.ts";
+import { dataflowExplorer } from "./dataflow-explorer.ts";
 
 export type Mode = "page" | "twin";
-export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator"]);
+export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator",
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected"]);
 /** Blocks drawn as HTML on the page (the rest become markdown). */
-export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator"]);
-/** Blocks that bring a script to the page (DocLayout loads it only there). */
-export const WIDGET_BLOCKS: Record<string, string> = { "perf-explorer": "perf-explorer", "credit-calculator": "calculator", "model-matrix": "matrix-filter", "deploy-matrix": "matrix-filter" };
+export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator",
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer"]);
+/** Blocks whose body is markdown the page draws inside a wrapper (the twin
+ *  keeps the markdown under a label). Written with four backticks when the
+ *  body holds a fence of its own. */
+export const WRAP_BLOCKS: Record<string, [string, string]> = {
+  expected: [`<details class="expected" open><summary>Expected</summary><div class="expected-body">`, `</div></details>`],
+};
+/** Blocks that bring a script or styles to the page (DocLayout loads them only there). */
+export const WIDGET_BLOCKS: Record<string, string> = { "perf-explorer": "perf-explorer", "credit-calculator": "calculator", "model-matrix": "matrix-filter", "deploy-matrix": "matrix-filter",
+  figure: "figure", "example-gallery": "gallery", diagram: "diagram", "dataflow-explorer": "dataflow" };
 
 const readJson = (rel: string) => JSON.parse(readFileSync(join(process.cwd(), rel), "utf8"));
 let pricingCache: any, plansCache: any;
@@ -344,6 +356,7 @@ function creditCalculator(mode: Mode): string {
 /** The markdown for one block. `page` output may carry inline HTML chips. */
 export function blockMarkdown(lang: string, body: string, mode: Mode): string {
   const arg = body.trim();
+  if (lang === "expected" && !arg) throw new Error("```expected needs a body: what the reader should see");
   switch (lang) {
     case "perf": return perfBlock(arg.split(/\s+/).filter(Boolean), mode);
     case "why-on-device": return whyBlock(arg, mode);
@@ -355,6 +368,12 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "session-caps": return sessionCaps();
     case "perf-explorer": return perfExplorer(mode);
     case "credit-calculator": return creditCalculator(mode);
+    case "figure": return figureBlock(arg, mode);
+    case "example-gallery": return galleryBlock(mode);
+    case "github-examples": return githubBlock(mode);
+    case "diagram": return mode === "page" ? diagramHtml(arg) : diagramText(arg);
+    case "dataflow-explorer": return dataflowExplorer(mode);
+    case "expected": return mode === "page" ? body : `Expected:\n\n${body.trim()}\n`;
     case "partial": {
       if (!/^[a-z0-9-]+$/.test(arg)) throw new Error(`\`\`\`partial: "${arg}" is not a partial name`);
       return readFileSync(join(process.cwd(), "src/partials", `${arg}.md`), "utf8").replace(/<!--[\s\S]*?-->\n?/g, "");
@@ -368,15 +387,19 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
  *  one-place slice has none). */
 export function widgetsIn(md: string): Set<string> {
   const out = new Set<string>();
-  for (const m of md.matchAll(/^```([a-z-]+)[ \t]*\n([\s\S]*?)^```[ \t]*$/gm)) {
-    const w = WIDGET_BLOCKS[m[1]];
-    if (w && !(m[1] === "model-matrix" && m[2].trim())) out.add(w);
+  for (const m of md.matchAll(/^(`{3,})([a-z-]+)[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm)) {
+    const w = WIDGET_BLOCKS[m[2]];
+    if (w && !(m[2] === "model-matrix" && m[3].trim())) out.add(w);
   }
+  // the gallery's cards are figures (the same frames and loops)
+  if (out.has("gallery")) out.add("figure");
+  // a recipe's "## Steps" becomes a walkthrough (src/markdown/rehype-walkthrough.mjs)
+  if (/^## Steps[ \t]*$/m.test(md)) out.add("walkthrough");
   return out;
 }
 
 /** The .md twin form: every block fence replaced by its plain markdown. */
 export function expandBlocks(md: string): string {
-  return md.replace(/^```([a-z-]+)[ \t]*\n([\s\S]*?)^```[ \t]*$/gm, (all, lang: string, body: string) =>
+  return md.replace(/^(`{3,})([a-z-]+)[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm, (all, _f: string, lang: string, body: string) =>
     BLOCK_LANGS.has(lang) ? blockMarkdown(lang, body, "twin").trimEnd() : all);
 }

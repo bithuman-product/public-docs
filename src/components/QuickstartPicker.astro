@@ -58,7 +58,7 @@ const md = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
           {q.expect.media && (
             <figure class="qp-fig">
               {q.expect.media.src ? (
-                <video controls preload="none" playsinline poster={q.expect.media.poster} width={q.expect.media.width} height={q.expect.media.height} src={q.expect.media.src} />
+                <video controls preload="none" playsinline poster={q.expect.media.poster} width={q.expect.media.width} height={q.expect.media.height} src={q.expect.media.src}>{q.expect.media.captions && <track kind="captions" srclang="en" label="English" src={q.expect.media.captions} default />}</video>
               ) : (
                 <img src={q.expect.media.poster} alt="" width={q.expect.media.width} height={q.expect.media.height} loading="lazy" decoding="async" />
               )}

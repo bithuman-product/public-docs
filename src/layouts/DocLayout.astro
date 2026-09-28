@@ -13,6 +13,11 @@ import LiveDemo from "../components/LiveDemo.astro";
 import PerfExplorer from "../components/PerfExplorer.astro";
 import CreditCalculator from "../components/CreditCalculator.astro";
 import MatrixFilter from "../components/MatrixFilter.astro";
+import Figure from "../components/Figure.astro";
+import Gallery from "../components/Gallery.astro";
+import Diagram from "../components/Diagram.astro";
+import DataFlowExplorer from "../components/DataFlowExplorer.astro";
+import Walkthrough from "../components/Walkthrough.astro";
 import { widgetsIn } from "../lib/doc-blocks";
 import { RENDERS_LABEL } from "../data/labels";
 
@@ -106,7 +111,7 @@ if (section === "platforms" && data.type === "platform") {
     publisher: { "@id": "https://www.bithuman.ai/#organization" },
   });
 }
-const hasChips = !!(data.availability || data.renders?.length || data.needs?.length || data.artifacts?.length);
+const hasChips = !!(data.time || data.availability || data.renders?.length || data.needs?.length || data.artifacts?.length);
 // The interactive blocks this page places bring their script and styles; other pages carry none.
 const widgets = widgetsIn(entry.body ?? "");
 const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
@@ -161,6 +166,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
         {data.description && <p class="doc-lede">{data.description}</p>}
         {hasChips && (
           <div class="chip-row doc-chips" data-pagefind-ignore>
+            {data.time && <Chip kind="time" label={data.time} />}
             {data.availability && <Availability plan={data.availability} />}
             {(data.renders ?? []).map((r: keyof typeof RENDERS_LABEL) => <Chip kind="where" label={RENDERS_LABEL[r]} />)}
             {(data.needs ?? []).map((n: string) => <Chip kind="needs" label={n} />)}
@@ -198,6 +204,11 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
     {widgets.has("perf-explorer") && <PerfExplorer />}
     {widgets.has("calculator") && <CreditCalculator />}
     {widgets.has("matrix-filter") && <MatrixFilter />}
+    {widgets.has("figure") && <Figure />}
+    {widgets.has("gallery") && <Gallery />}
+    {widgets.has("diagram") && <Diagram />}
+    {widgets.has("dataflow") && <DataFlowExplorer />}
+    {widgets.has("walkthrough") && <Walkthrough />}
 
     {/* on-this-page TOC */}
     <aside class="doc-toc" aria-label="Page outline" data-pagefind-ignore>

@@ -25,10 +25,9 @@ web
 
 </div>
 
-<figure class="showcase">
-  <video controls preload="none" playsinline muted poster="/examples/web/hero.webp" width="460" height="760" src="/examples/web/clip.mp4"></video>
-  <figcaption>The <code>wise-pup</code> sample avatar in a plain HTML page in Chrome, answering a typed question (the recording has no sound).</figcaption>
-</figure>
+```figure
+web-embed
+```
 
 </div>
 
@@ -135,6 +134,10 @@ A private agent also takes `token`, and a session can pin its model with `model`
 - **Fallback:** a browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync.
 - **Where the conversation runs:** with the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
 - **Private agents:** the embed token the iframe already uses covers it ([Embedding](/api/embedding)).
+
+```diagram
+topology web-local
+```
 
 Check for a usable GPU before you choose `render=local`:
 

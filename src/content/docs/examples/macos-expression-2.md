@@ -7,10 +7,9 @@ order: 30
 type: example
 ---
 
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/macos/hero.webp" width="416" height="720" src="/examples/macos/clip.mp4"></video>
-  <figcaption>Frames from the <code>macos-expression2</code> example on an Apple M4 iMac, with the speech clip it rendered (Swift package 2.14.2, the <code>wise-pup</code> sample avatar).</figcaption>
-</figure>
+```figure
+macos-expression-2 eager
+```
 
 The shortest native Apple path: a command-line tool that opens an avatar, feeds it a 16 kHz WAV and pulls 416×720 frames, rendered on this Mac; the engine contacts bitHuman only to check your API secret and report session time. It writes the first frame to `out/first-frame.png`; the clip above muxes every frame it pulled with the audio.
 
@@ -69,6 +68,49 @@ while let (frame, _) = engine.pull() { /* 416×720 BGR, 3 bytes per pixel */ }
 ```
 
 `pull()` returns `nil` until a chunk of frames is ready, so the example polls until it has drained them all. The API is on [Apple](/platforms/ios).
+
+## The code that matters
+
+The whole render path of `Sources/main.swift`: open the avatar, feed the utterance, drain the frames.
+
+```swift
+// excerpt: swift/macos-expression2/Sources/main.swift
+// 1. Open the identity. Both downloads are containers, opened as they are;
+//    `stagingDir` is a writable directory the engine unpacks them into once.
+//    Keep it between runs and the next start is much faster.
+let engine = try Expression2Engine.create(
+    avatarContainer: model.appendingPathComponent("agent.imx"),
+    sharedEngineContainer: model.appendingPathComponent("shared-engine.imx"),
+    stagingDir: model.appendingPathComponent("staged"))
+print("engine ready: \(engine.width)x\(engine.height), isReady=\(engine.isReady)")
+
+let samples = try readPCM(model.appendingPathComponent("speech16k.wav"))
+print("audio: \(samples.count) samples, "
+    + String(format: "%.2f s", Double(samples.count) / 16_000))
+
+// 2. Feed the whole utterance, then drain. Generation is asynchronous:
+//    `pull()` returns nil until a chunk of frames lands, so a drain on the
+//    line after `feed()` gets nothing at all. Poll — 100 idle ticks is done.
+let started = Date()
+engine.feed(samples)
+engine.flushTail()
+
+var frames = 0, idleTicks = 0
+while idleTicks < 100 {
+    var got = false
+    while let (frame, _) = engine.pull() {
+        if frames == 0 {
+            writePNG(frame, width: engine.width, height: engine.height,
+                     to: out.appendingPathComponent("first-frame.png"))
+        }
+        frames += 1
+        got = true
+    }
+    if got { idleTicks = 0 } else { idleTicks += 1; usleep(50_000) }
+}
+```
+
+The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/swift/macos-expression2/Sources/main.swift).
 
 ## Make it your own
 

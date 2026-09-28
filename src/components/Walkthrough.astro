@@ -1,0 +1,43 @@
+---
+// A recipe's steps (src/markdown/rehype-walkthrough.mjs turns "## Steps" into
+// a numbered list, each step deep-linkable as #step-n). The script keeps the
+// "Done" ticks in browser storage and draws the progress; without it the
+// steps read as numbered sections and the ticks hide.
+---
+
+<script>
+  import "../scripts/walkthrough";
+</script>
+
+<style is:global>
+  .walk { margin: var(--s-4) 0 var(--s-8); counter-reset: walk; }
+  .walk-bar, .prose .walk-status { display: none; }
+  .js .walk-bar { display: block; position: sticky; top: calc(var(--nav-h) + 8px); z-index: 2; margin-bottom: var(--s-2); }
+  .walk-track { display: block; height: 4px; border-radius: var(--r-pill); background: var(--color-surface-3); overflow: hidden; }
+  .walk-fill { display: block; height: 100%; width: calc(var(--v, 0) * 100%); background: var(--color-primary); transition: width var(--t-med) var(--ease); }
+  .js .prose .walk-status { display: block; margin: 0 0 var(--s-4); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .prose ol.walk-steps { list-style: none; margin: 0; padding: 0; }
+  .prose .walk-step { position: relative; margin: 0; padding: 0 0 var(--s-6) 48px; counter-increment: walk; }
+  .walk-step::before {
+    content: counter(walk); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 32px; height: 32px;
+    border: 1px solid var(--color-border-strong); border-radius: 50%; background: var(--color-surface);
+    font-size: var(--ft-sm); font-weight: var(--fw-bold); color: var(--color-text); font-variant-numeric: tabular-nums;
+  }
+  .walk-step:not(:last-child)::after { content: ""; position: absolute; left: 15.5px; top: 40px; bottom: 8px; width: 1px; background: var(--color-border); }
+  .walk-step.is-done::before { content: "✓"; border-color: var(--color-primary); background: var(--color-primary); color: var(--color-on-primary); }
+  .prose .walk-step > h3.walk-h { margin: 4px 0 var(--s-3); scroll-margin-top: calc(var(--nav-h) + 24px); }
+  .walk-done { display: none; }
+  .js .walk-done {
+    display: inline-flex; align-items: center; gap: var(--s-2); margin-top: var(--s-2); min-height: 34px; padding: 0 var(--s-3);
+    border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface);
+    color: var(--color-text-secondary); font: inherit; font-size: var(--ft-sm); font-weight: var(--fw-medium); cursor: pointer;
+  }
+  .walk-done:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  .walk-done:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .walk-box { width: 14px; height: 14px; border: 1.5px solid currentColor; border-radius: 4px; }
+  .walk-done[aria-pressed="true"] { border-color: transparent; background: var(--color-primary-soft); color: var(--color-primary); }
+  .walk-done[aria-pressed="true"] .walk-box { background: currentColor; box-shadow: inset 0 0 0 2px var(--color-surface); }
+  .prose .walk-finish { margin: 0; padding: var(--s-4) var(--s-5); border: 1px solid var(--color-primary); border-radius: var(--r-lg); background: var(--color-primary-soft); font-weight: var(--fw-medium); color: var(--color-text); }
+  @media (max-width: 560px) { .prose .walk-step { padding-left: 40px; } .walk-step::before { width: 28px; height: 28px; } .walk-step:not(:last-child)::after { left: 13.5px; top: 36px; } }
+  @media (prefers-reduced-motion: reduce) { .walk-fill { transition: none; } }
+</style>

@@ -17,6 +17,10 @@
 //                   converts; no third-party script
 //   /api/*          the request examples carry curl, Python and Node tabs, each
 //                   panel labelled for a reader with no script
+//   /examples       every example is a card with its poster and provenance
+//   /deploy/privacy the data-flow explorer draws every mode, every data kind
+//   /build/*        a recipe's steps are all in the page, numbered, each with
+//                   its "Expected" check
 //
 //   node scripts/check-no-js.mjs            # dist/ after npm run build
 //   node scripts/check-no-js.mjs --selftest # every rule fires on a fixture
@@ -26,6 +30,8 @@ import yaml from "js-yaml";
 import { formatMultiple } from "../src/lib/format-multiple.ts";
 import { PLACES } from "../src/data/models.ts";
 import { DEPLOYMENTS } from "../src/data/deployments.ts";
+import { EXAMPLES, provenanceLine } from "../src/data/examples.ts";
+import { FLOW_MODES, DATA_KINDS } from "../src/data/dataflows.ts";
 
 const ROOT = join(import.meta.dirname, "..");
 const DIST = join(ROOT, "dist");
@@ -111,6 +117,39 @@ export function gradeDeploy(html, modes) {
   return f;
 }
 
+export function gradeGallery(html, examples, prov = () => "") {
+  const f = [];
+  const t = text(html);
+  for (const e of examples) {
+    if (!html.includes(`href="${e.href}"`)) f.push(`/examples: no card for ${e.title}`);
+    if (!html.includes(`/examples/${e.capture}/poster.webp`)) f.push(`/examples: ${e.title} has no poster`);
+    const line = prov(e.capture);
+    if (line && !t.includes(line)) f.push(`/examples: ${e.title} does not say where it was captured`);
+  }
+  return f;
+}
+
+export function gradeDataflow(html, modes, kinds) {
+  const f = [];
+  for (const m of modes) {
+    const i = html.indexOf(`data-dfx-panel="${m.id}"`);
+    if (i < 0) { f.push(`/deploy/privacy: no panel for ${m.name}`); continue; }
+    const panel = element(html, html.lastIndexOf("<div", i), "div");
+    for (const k of kinds) if (!text(panel).includes(k.name)) f.push(`/deploy/privacy: ${m.name} says nothing about ${k.name}`);
+  }
+  return f;
+}
+
+export function gradeRecipe(route, html) {
+  const f = [];
+  const steps = [...html.matchAll(/<li class="walk-step" id="step-(\d+)"/g)].map((m) => Number(m[1]));
+  if (steps.length < 2) f.push(`${route}: the steps are not in the page`);
+  steps.forEach((n, i) => { if (n !== i + 1) f.push(`${route}: step ${i + 1} is numbered ${n}`); });
+  const checks = (html.match(/<details class="expected" open>/g) ?? []).length;
+  if (checks < steps.length) f.push(`${route}: ${steps.length} steps but ${checks} "Expected" checks`);
+  return f;
+}
+
 export function gradeReference(html, spec) {
   const f = [];
   if (/<script\b[^>]*\bsrc=["']https?:\/\//i.test(html)) f.push("/api/reference: loads a third-party script");
@@ -173,6 +212,15 @@ function selftest() {
   ok("an unlabelled panel fires", gradeApiPage("x", api.replace('<p class="mdt-label">curl</p>', "")).some((x) => x.includes("no label")));
   ok("a matrix missing a place fires", gradeModels('<style>.doc-block-model-matrix{}</style><div class="doc-block doc-block-model-matrix"><td>Mac</td></div>', [{ name: "Mac" }, { name: "Android" }]).length === 1);
   ok("a missing deploy card fires", gradeDeploy('<li data-mx-item="cloud">', [{ id: "cloud", name: "c" }, { id: "cpu", name: "CPU" }]).length === 1);
+  const ex = [{ title: "A", href: "/a", capture: "c1" }];
+  ok("a gallery card without its poster fires", gradeGallery('<a href="/a">A</a>', ex).some((x) => x.includes("poster")));
+  ok("a complete gallery passes", gradeGallery('<a href="/a">A</a><img src="/examples/c1/poster.webp"><span>Captured on X</span>', ex, () => "Captured on X").length === 0);
+  const dfx = '<div class="dfx-panel" data-dfx-panel="cloud"><span>Portrait</span></div>';
+  ok("a data-flow panel missing a kind fires", gradeDataflow(dfx, [{ id: "cloud", name: "Cloud" }], [{ name: "Portrait" }, { name: "Live audio" }]).length === 1);
+  ok("a missing data-flow mode fires", gradeDataflow(dfx, [{ id: "cpu", name: "CPU" }], [{ name: "Portrait" }]).length === 1);
+  const walk = (n, e) => Array.from({ length: n }, (_, i) => `<li class="walk-step" id="step-${i + 1}">`).join("") + '<details class="expected" open>'.repeat(e);
+  ok("a recipe with a check per step passes", gradeRecipe("/r", walk(3, 3)).length === 0);
+  ok("a step without its check fires", gradeRecipe("/r", walk(3, 2)).some((x) => x.includes("Expected")));
   console.log(bad ? "selftest RED" : "selftest GREEN (every rule fired)");
   return bad ? 1 : 0;
 }
@@ -190,7 +238,14 @@ function main() {
     ...gradeModels(page("models"), PLACES),
     ...gradeDeploy(page("deploy"), DEPLOYMENTS),
     ...gradeReference(page("api/reference"), spec),
+    ...gradeGallery(page("examples"), EXAMPLES, provenanceLine),
+    ...gradeDataflow(page("deploy/privacy"), FLOW_MODES, DATA_KINDS),
   ];
+  for (const d of readdirSync(join(DIST, "build"), { withFileTypes: true })) {
+    if (!d.isDirectory()) continue;
+    const html = page(`build/${d.name}`);
+    if (html.includes('class="walk"')) faults.push(...gradeRecipe(`/build/${d.name}`, html));
+  }
   let withNode = 0;
   for (const d of readdirSync(join(DIST, "api"), { withFileTypes: true })) {
     if (!d.isDirectory() || d.name === "reference") continue;

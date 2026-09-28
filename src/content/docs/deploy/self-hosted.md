@@ -29,6 +29,10 @@ The avatar renders on machines you run: a Mac with Apple silicon, or a Linux PC 
 servers
 ```
 
+```diagram
+topology servers
+```
+
 When the avatar renders on your hardware, its audio and video stay there. For the conversation, the CLI's [local conversation brain](/platforms/cli/local-brain) keeps speech recognition, the language model and the voice on the machine, or you bring any OpenAI-compatible language model, including one in your own network ([Providers](/api/providers)). Self-hosted sessions store no transcript at bitHuman.
 
 ## Models available here

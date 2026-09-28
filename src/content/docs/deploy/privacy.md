@@ -5,7 +5,7 @@ section: deploy
 group: "Overview"
 order: 10
 type: guide
-claims: ["S4", "S5", "S6", "S7", "S8", "S9", "S14", "S15", "S16", "S17", "S18", "S21", "S29", "S30"]
+claims: ["S1", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S14", "S15", "S16", "S17", "S18", "S20", "S21", "S24", "S25", "S29", "S30"]
 next: ["/deploy", "/deploy/on-device", "/deploy/self-hosted"]
 ---
 
@@ -22,6 +22,13 @@ Two things decide what leaves your hardware: where the avatar **renders**, and w
 | **Your API secret** | on your server; browsers get scoped embed tokens | on your machine | held by your app on the device |
 
 [Fully offline](/deploy/offline) runs on Linux PCs and terminals with no required reconnection; it is arranged through sales.
+
+## What leaves your hardware
+
+Pick a mode to see where each kind of data goes. Rows marked **Reaches bitHuman** are what crosses from your hardware to bitHuman.
+
+```dataflow-explorer
+```
 
 ## Rendering on your hardware
 

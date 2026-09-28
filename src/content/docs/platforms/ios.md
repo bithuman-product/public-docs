@@ -26,10 +26,9 @@ ios
 
 </div>
 
-<figure class="showcase">
-  <img src="/examples/ios/hero.webp" alt="The wise-pup avatar mid-sentence on an iPhone 15" width="416" height="720" loading="lazy" decoding="async">
-  <figcaption>A frame rendered on an iPhone 15 (iOS 26) by the <a href="/examples/ios-expression-2">iOS Expression 2 example</a>, Swift package 2.14.2, with the <code>wise-pup</code> sample avatar.</figcaption>
-</figure>
+```figure
+ios-expression-2 eager
+```
 
 </div>
 

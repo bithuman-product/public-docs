@@ -38,10 +38,12 @@ export const TEMPLATES = {
     order: ["What it is", "Where it renders", "Models available here", "Speed", "Price", "Limits", "First command", "Choosing between modes"],
     required: ["What it is", "Where it renders", "Models available here", "Speed", "Price", "Limits", "Choosing between modes"],
   },
+  // Example (§3.3): the run, what you see, and "The code that matters" (the
+  // core lines, verbatim from bithuman-examples: scripts/check-example-excerpts.mjs).
   example: {
     order: ["Requirements", "Get the code", "Set up the app", "Set your API secret", "Run it",
-      "Expected output", "How it works", "Make it your own", "Troubleshooting", "Next"],
-    required: ["Requirements", "Run it", "Expected output", "Troubleshooting", "Next"],
+      "Expected output", "How it works", "The code that matters", "Make it your own", "Troubleshooting", "Next"],
+    required: ["Requirements", "Run it", "Expected output", "The code that matters", "Troubleshooting", "Next"],
   },
 };
 
@@ -120,11 +122,12 @@ function selftest() {
   const fails = [];
   const ok = (name, cond) => { console.log(`  ${cond ? "PASS" : "FAIL"}  ${name}`); if (!cond) fails.push(name); };
   const ex = (h2s, extra = "") => `---\ntype: example\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}${extra}`;
-  const good = ["Requirements", "Get the code", "Run it", "Expected output", "Troubleshooting", "Next"];
+  const good = ["Requirements", "Get the code", "Run it", "Expected output", "The code that matters", "Troubleshooting", "Next"];
   ok("a conforming example passes", grade(ex(good)).faults.length === 0);
   ok("a missing required section fires", grade(ex(good.filter((h) => h !== "Expected output"))).faults.some((f) => f.includes("missing")));
   ok("an unknown section fires", grade(ex([...good.slice(0, 3), "Full code", ...good.slice(3)])).faults.some((f) => f.includes("not a example")));
-  ok("a reordered section fires", grade(ex(["Requirements", "Expected output", "Run it", "Troubleshooting", "Next"])).faults.some((f) => f.includes("comes before")));
+  ok("a reordered section fires", grade(ex(["Requirements", "Expected output", "Run it", "The code that matters", "Troubleshooting", "Next"])).faults.some((f) => f.includes("comes before")));
+  ok("an example without the code that matters fires", grade(ex(good.filter((h) => h !== "The code that matters"))).faults.some((f) => f.includes("The code that matters")));
   ok("a ## inside a code fence is not a section", grade(ex(good, "```bash\n## Not a heading\n```\n")).faults.length === 0);
   const callouts = (n, words = 5, sameSection = false) => `---\ntype: guide\n---\n` +
     Array.from({ length: n }, (_, i) => `${sameSection ? "" : `## S${i}\n`}\n> ${"w ".repeat(words)}\n\ntext\n`).join("\n");

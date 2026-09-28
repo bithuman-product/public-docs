@@ -37,6 +37,10 @@ A session bills while it is **running**, whether the avatar is talking or idle, 
 
 Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 
+```diagram
+lifecycle
+```
+
 ## Creation — one-time credits
 
 | Action | Credits |

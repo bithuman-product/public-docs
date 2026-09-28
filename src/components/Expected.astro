@@ -7,9 +7,4 @@ const { summary = "Expected", open = true } = Astro.props;
   <summary>{summary}</summary>
   <div class="expected-body"><slot /></div>
 </details>
-<style>
-  .expected { margin-top: var(--s-3); border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface-2); font-size: var(--ft-sm); }
-  .expected summary { cursor: pointer; padding: var(--s-2) var(--s-3); font-weight: var(--fw-medium); color: var(--color-text); }
-  .expected-body { padding: 0 var(--s-3) var(--s-3); color: var(--color-text-secondary); }
-  .expected-body :global(p) { margin: 0; }
-</style>
+<!-- styles: components.css (".prose details.expected"), shared with the ```expected block -->

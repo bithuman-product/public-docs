@@ -7,10 +7,9 @@ order: 40
 type: example
 ---
 
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/android/expression2.webp" width="540" height="1005" src="/examples/android/expression2.mp4"></video>
-  <figcaption>The <code>expression2-hello</code> app on a Samsung Galaxy S25+, rendering the <code>wise-pup</code> sample avatar on the phone with <code>expression2-android</code>.</figcaption>
-</figure>
+```figure
+android-expression-2 eager
+```
 
 The app downloads the `wise-pup` sample avatar once, renders every frame of a speech clip on the phone, then plays the audio with the frames in sync. Tap the screen to replay.
 
@@ -72,6 +71,35 @@ rendered 277 frames in … s — playing…
 4. calls `feed(pcm)` and `flushTail()`, then `pull(frame)` until every frame is out: one frame per 50 ms of audio.
 
 The calls, the live-streaming loop and the accelerator are on [Android](/platforms/android).
+
+## The code that matters
+
+The render path of `MainActivity.kt`, as it is in the repository: set the secret, fetch the avatar, feed the speech, pull frames until the tail is out.
+
+```kotlin
+// excerpt: android/expression2-hello/app/src/main/java/com/example/x2hello/MainActivity.kt
+Expression2Credential.set(secret)
+// …
+// Blocks on the network the first time; that is why this is a worker thread.
+val model = Expression2ModelStore(this).fetch(agentCode)
+// …
+val avatar = Expression2Avatar.create(this, model, options)
+// …
+avatar.use {
+    val frame = avatar.newFrameBitmap()   // ARGB_8888, 416 x 720 — allocate once
+    avatar.feed(pcm)                      // renders each complete 1.6 s chunk
+    avatar.flushTail()                    // the padded tail is the last sentence
+    while (true) {
+        if (avatar.pull(frame) != null) {
+        // …
+        }
+        if (!avatar.hasPendingTail && avatar.queuedFrames == 0) break
+        // A null is "not ready yet". pull() never renders, so asking again at
+        // once just burns a core the engine needs — wait, then ask again.
+        Thread.sleep(10)
+```
+
+The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/android/expression2-hello/app/src/main/java/com/example/x2hello/MainActivity.kt).
 
 ## Make it your own
 

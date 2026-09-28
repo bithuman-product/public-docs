@@ -4,6 +4,7 @@
 import versions from "./versions.json";
 import { OFFLINE_LICENSE_COPY } from "./offline";
 import { DEMOS, embedUrl } from "./demo";
+import { captureMedia } from "./examples.ts";
 
 const V = versions.versions;
 
@@ -168,7 +169,7 @@ export interface Quickstart {
   models: string[];
   renders: import("./labels").Renders[];
   steps: QuickstartStep[];
-  expect: { text: string; media?: { src?: string; poster: string; width: number; height: number; caption: string } };
+  expect: { text: string; media?: { src?: string; poster: string; width: number; height: number; caption: string; captions?: string } };
   /** The page to continue on; a platform page opens at its #first-frame (firstFrame()) */
   next: { href: string; label: string };
   /** The plan chip, when one is needed */
@@ -191,7 +192,7 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Open the page and allow the microphone", text: "The avatar appears, asks for the microphone and answers when you speak." },
       { title: "Render in the visitor's tab (optional)", text: "Add `?render=local` to the embed URL: with WebGPU the avatar renders in the tab, and without a usable GPU it renders in the bitHuman cloud. The avatar's web bundle downloads once (50–200 MB), then comes from the cache." },
     ],
-    expect: { text: "A live avatar in your page that listens and answers.", media: { src: "/examples/web/clip.mp4", poster: "/examples/web/hero.webp", width: 460, height: 760, caption: "The wise-pup sample avatar in a plain HTML page in Chrome (the recording has no sound)." } },
+    expect: { text: "A live avatar in your page that listens and answers.", media: captureMedia("web-embed") },
     next: { href: "/platforms/web", label: "Web: embed and WebGPU" },
     note: "With the web embed the conversation runs on bitHuman's servers, including when the avatar renders in the tab.",
   },
@@ -203,7 +204,7 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Download the sample avatar", code: { lang: "bash", label: "Shell", code: `curl -fL -o ${pup.code}.imx "https://api.bithuman.ai/v1/agent/${pup.code}/model/download?model=expression-2"` }, text: "The iOS page also fetches the shared engine and a 16 kHz speech clip." },
       { title: "Feed audio, draw frames", code: { lang: "swift", label: "Swift", code: `// excerpt: the core loop; the complete first frame is on the iOS page\nimport Expression2\n\nExpression2Credential.set(apiSecret)\nlet engine = try Expression2Engine.create(\n    avatarContainer: avatarURL, sharedEngineContainer: sharedEngineURL, stagingDir: stagingURL)\nengine.feed(samples)      // [Float], 16 kHz mono\nengine.flushTail()        // end of the reply\nfor await frame in engine.frames(audioClock: { played() }) {\n    show(frame.bgr, frame.width, frame.height)\n    if frame.endsReply { break }\n}` } },
     ],
-    expect: { text: "The avatar's lips follow the speech, rendered on the iPhone or iPad.", media: { poster: "/examples/ios/hero.webp", width: 416, height: 720, caption: "The wise-pup avatar mid-sentence on an iPhone 15." } },
+    expect: { text: "The avatar's lips follow the speech, rendered on the iPhone or iPad.", media: captureMedia("ios-expression-2") },
     next: { href: "/platforms/ios", label: "iOS & iPadOS" },
   },
   {
@@ -213,7 +214,7 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Clone the macOS example", code: { lang: "bash", label: "Shell", code: "git clone https://github.com/bithuman-product/bithuman-examples.git\ncd bithuman-examples/swift/macos-expression2\n./setup.sh" } },
       { title: "Run it", code: { lang: "bash", label: "Shell", code: `${SECRET}\nswift run -c release MacOSExpression2` } },
     ],
-    expect: { text: "Frames rendered from the sample speech, and out/first-frame.png on disk.", media: { src: "/examples/macos/clip.mp4", poster: "/examples/macos/hero.webp", width: 416, height: 720, caption: "The macOS Expression 2 example on an Apple M4 iMac with the wise-pup sample avatar." } },
+    expect: { text: "Frames rendered from the sample speech, and out/first-frame.png on disk.", media: captureMedia("macos-expression-2") },
     next: { href: "/platforms/macos", label: "macOS" },
   },
   {
@@ -224,7 +225,7 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Keep the API secret out of your source", text: "Put `bithumanApiSecret=…` in `~/.gradle/gradle.properties`; the Android page reads it into `BuildConfig`." },
       { title: "Feed audio, pull frames", code: { lang: "kotlin", label: "Kotlin", code: `// excerpt: off the main thread; pcm16k is 16 kHz mono float\nExpression2Credential.set(BuildConfig.BITHUMAN_API_SECRET)\nval model = Expression2ModelStore(context).fetch("${pup.code}")   // first run only\nExpression2Avatar.create(context, model, Expression2Options()).use { avatar ->\n    val frame = avatar.newFrameBitmap()\n    avatar.feed(pcm16k)\n    avatar.flushTail()\n    while (avatar.hasPendingTail || avatar.queuedFrames > 0) {\n        if (avatar.pull(frame) != null) show(frame) else Thread.sleep(10)\n    }\n}` } },
     ],
-    expect: { text: "20 frames for each second of audio, with the avatar's lips following the speech.", media: { src: "/examples/android/expression2.mp4", poster: "/examples/android/expression2.webp", width: 540, height: 1005, caption: "The wise-pup sample avatar (Expression 2) on a Samsung Galaxy S25+, rendered on the phone." } },
+    expect: { text: "20 frames for each second of audio, with the avatar's lips following the speech.", media: captureMedia("android-expression-2") },
     next: { href: "/platforms/android", label: "Android" },
   },
   {
@@ -257,7 +258,7 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Sign in", code: { lang: "bash", label: "Shell", code: "bithuman login" } },
       { title: "Render a talking video", code: { lang: "bash", label: "Shell", code: `${SPEECH}\nbithuman render wise-pup speech.wav -o out.mp4\n# → out.mp4: 416×720, 300 frames, 15.0 s` }, text: "`bithuman run wise-pup` opens a live conversation instead." },
     ],
-    expect: { text: "out.mp4, 15 seconds of the avatar saying the sample. On Linux both models run on the CPU alone, with no GPU.", media: { src: "/examples/cli/clip.mp4", poster: "/examples/cli/hero.webp", width: 416, height: 720, caption: "The wise-pup sample avatar, rendered by bithuman render on an Apple M4 Mac." } },
+    expect: { text: "out.mp4, 15 seconds of the avatar saying the sample. On Linux both models run on the CPU alone, with no GPU.", media: captureMedia("cli-linux") },
     next: { href: "/platforms/cli", label: "CLI" },
   },
   {

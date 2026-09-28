@@ -1,0 +1,43 @@
+---
+// "What leaves your hardware" on /deploy/privacy (the ```dataflow-explorer
+// block, drawn at build time by src/lib/dataflow-explorer.ts from
+// src/data/dataflows.ts, where every cell cites its S row). Pick a mode and
+// the rows show where each kind of data goes; what reaches bitHuman is marked
+// in --flow-egress. Without JavaScript every mode shows, one under another.
+---
+
+<script>
+  import "../scripts/dataflow";
+</script>
+
+<style is:global>
+  .dfx { margin: var(--s-5) 0 var(--s-8); padding: var(--s-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
+  .dfx-modes { display: none; }
+  .js .dfx-modes { display: inline-flex; border-radius: 18px; }
+  .prose ul.dfx-legend { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); margin: var(--s-4) 0 var(--s-2); padding: 0; list-style: none; font-size: var(--ft-xs); color: var(--color-text-secondary); }
+  .prose .dfx-legend li { margin: 0; display: inline-flex; align-items: center; gap: 6px; }
+  .dfx-dot { flex: none; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--dfx, var(--color-text-tertiary)); }
+  .dfx-out { --dfx: var(--flow-egress); }
+  .dfx-bh { --dfx: color-mix(in srgb, var(--flow-egress) 55%, var(--color-surface)); }
+  .dfx-stays { --dfx: var(--bar-cpu); }
+  .dfx-yours { --dfx: var(--color-text-secondary); }
+  .dfx-in { --dfx: var(--color-border-strong); }
+  .dfx-panel + .dfx-panel { margin-top: var(--s-5); }
+  .js .dfx-panel { display: none; margin-top: 0; }
+  .js .dfx-panel.on { display: block; }
+  .prose .dfx-mh { margin: var(--s-3) 0 var(--s-2); font-weight: var(--fw-bold); color: var(--color-text); }
+  .js .dfx-mh { display: none; }
+  .prose ul.dfx-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-border); }
+  .prose .dfx-row { margin: 0; display: grid; grid-template-columns: 11rem 12.5rem minmax(0, 1fr); gap: var(--s-1) var(--s-4); align-items: baseline; padding: var(--s-3) var(--s-2); border-bottom: 1px solid var(--color-border); font-size: var(--ft-sm); line-height: var(--lh-snug); }
+  .dfx-row.dfx-out { background: color-mix(in srgb, var(--flow-egress) 7%, transparent); }
+  .dfx-kind { font-weight: var(--fw-medium); color: var(--color-text); }
+  .dfx-dir { display: inline-flex; align-items: center; gap: 7px; font-weight: var(--fw-medium); color: var(--color-text-secondary); }
+  .dfx-row.dfx-out .dfx-dir { color: var(--flow-egress); }
+  .dfx-text { color: var(--color-text-secondary); }
+  .prose .dfx-foot { margin: var(--s-4) 0 0; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  @media (max-width: 760px) {
+    .dfx { padding: var(--s-4) var(--s-3); }
+    .prose .dfx-row { grid-template-columns: minmax(0, 1fr) auto; padding: var(--s-3) var(--s-1); }
+    .dfx-text { grid-column: 1 / -1; }
+  }
+</style>
