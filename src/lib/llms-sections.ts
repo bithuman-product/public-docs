@@ -3,6 +3,7 @@ import { inSidebarOrder } from "./sidebar-order";
 import { agentFacts, agentInstructions } from "../config/agent-facts";
 import { twin, SITE } from "./markdown-twin";
 import { PLATFORMS } from "../data/platforms";
+import { contactSalesUrl } from "../config/nav";
 
 // The agent text, split by section. /llms-full.txt and every /llms/<section>.txt
 // are built from these definitions, so a page is inlined in exactly one section
@@ -10,7 +11,7 @@ import { PLATFORMS } from "../data/platforms";
 //
 //   /llms/start.txt      the quickstart, the API secret, performance, FAQ, glossary
 //   /llms/platforms.txt  every platform page (iOS & iPadOS, macOS, Android, Flutter, Web, Python, CLI, LiveKit, REST)
-//   /llms/deploy.txt     where it runs: the five deployment modes, privacy, pricing
+//   /llms/deploy.txt     where it runs: the four deployment modes, CPU only, privacy, pricing
 //   /llms/models.txt     Essence 2, Expression 2, the first generation, how it works
 //   /llms/build.txt      the recipes and guides: avatars, personas, voices, gestures, MCP, troubleshooting
 //   /llms/api.txt        the REST API
@@ -52,7 +53,7 @@ export const LLMS_SECTIONS: LlmsSection[] = [
   },
   {
     id: "deploy", title: "Deploy", inFull: false,
-    summary: "on the device, CPU only, your servers, bitHuman cloud, fully offline; privacy; pricing",
+    summary: "bitHuman cloud, your servers, on the device, fully offline; CPU only; privacy; pricing",
     has: (d) => d.data.section === "deploy",
   },
   {
@@ -93,7 +94,7 @@ function choosePath(): string {
   // The same content as /start.md: the path table, then each runnable card.
   let out = `# Quickstart\n\nURL: ${SITE}/start\n\n## Choose your platform\n\n`;
   out += "| You want to… | Use | Needs | First command |\n|---|---|---|---|\n";
-  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? "— ([contact sales](https://www.bithuman.ai/sales))" : "`" + p.first.replace(/\|/g, "\\|") + "`"} |\n`;
+  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? `— ([contact sales](${contactSalesUrl("offline")}))` : "`" + p.first.replace(/\|/g, "\\|") + "`"} |\n`;
   for (const p of PLATFORMS.filter((x) => x.note)) out += `\n${p.use}: ${p.note}\n`;
   out += `\n## Run it\n`;
   for (const p of PLATFORMS.filter((x) => x.card)) out += `\n### ${p.want}: ${p.use}\n\n\`\`\`${p.card!.lang}\n${p.card!.code}\n\`\`\`\n\nExpected: ${p.card!.expect}\n`;
@@ -116,7 +117,7 @@ async function linkedLines(sections: LlmsSection[]): Promise<string> {
   return out;
 }
 
-const INTRO = `Realtime talking avatars from one portrait. Index: ${SITE}/llms.txt · every page is also served as markdown at <url>.md · OpenAPI: ${SITE}/api/openapi.yaml`;
+const INTRO = `Real-time talking avatars from one portrait. Index: ${SITE}/llms.txt · every page is also served as markdown at <url>.md · OpenAPI: ${SITE}/api/openapi.yaml`;
 
 /** The section files an index lists: one line each. */
 export function sectionIndex(): string {

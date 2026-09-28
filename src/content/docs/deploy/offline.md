@@ -1,11 +1,11 @@
 ---
 title: "Fully offline"
-description: "Realtime avatars that run completely locally, off the internet, on Linux PCs and terminals: for Business and Enterprise clients, arranged through sales."
+description: "Real-time avatars that run completely locally, off the internet, on Linux PCs and terminals, for Business and Enterprise clients."
 section: deploy
 group: "Modes"
 order: 50
 type: deploy
-searchTitle: "Fully offline: realtime avatars off the internet, for kiosks and terminals"
+searchTitle: "Fully offline: real-time avatars off the internet, for kiosks and terminals"
 availability: "business-enterprise"
 renders: ["offline"]
 models: ["essence-1"]
@@ -21,7 +21,7 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Billing:** credit-based, from 100,000 credits, metered on the machine.
 - **Connectivity:** no required reconnection.
 
-[Contact sales](https://www.bithuman.ai/sales) to arrange an offline license.
+[Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license.
 
 ## Where it renders
 
@@ -81,4 +81,6 @@ Available today: **Essence 1 on Linux x86_64 and Linux ARM64**. Essence 2 and Ex
 - **Your own machines, online:** [Your servers](/deploy/self-hosted).
 - **Inside an app on the phone or in the browser:** [On the device](/deploy/on-device).
 - **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
-- **All five side by side:** [Deployment options](/deploy).
+- **All four side by side:** [Deployment options](/deploy).
+
+The overview to share with your team is on bithuman.ai: [offline AI avatars for kiosks and terminals](https://www.bithuman.ai/offline).

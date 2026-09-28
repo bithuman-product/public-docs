@@ -17,7 +17,7 @@ Requests are limited **per account** (every API secret on the account shares the
 | **Write** | 30 | 60 | 180 | 360 | 720 |
 | **Read** | 120 | 240 | 720 | 1440 | 2880 |
 
-\* Enterprise defaults; custom limits are available from [sales](https://www.bithuman.ai/sales).
+\* Enterprise defaults; custom limits are available from [sales](https://www.bithuman.ai/enterprise?topic=api-rate-limits#contact).
 
 | Cost tier | Covers |
 |---|---|
@@ -44,7 +44,7 @@ A plan change reaches the limiter within about a minute; no new secret is needed
 
 A session over the allowance is refused at start with `403 CONCURRENCY_LIMIT_REACHED`; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up.
 
-**Session length.** One continuous session can run up to 24 hours in the cloud and 7 days self-hosted. It then ends with `403 SESSION_DURATION_LIMIT`; start a new session to continue. For longer unattended installs (kiosks), [contact sales](https://www.bithuman.ai/sales).
+**Session length.** One continuous session can run up to 24 hours in the cloud and 7 days self-hosted. It then ends with `403 SESSION_DURATION_LIMIT`; start a new session to continue. For longer unattended installs (kiosks), [contact sales](https://www.bithuman.ai/enterprise?topic=api-rate-limits#contact).
 
 Sessions you render on your own hardware are limited only by your credits ([self-hosting](/deploy/self-hosted)). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)).
 
@@ -88,4 +88,4 @@ Usage: `call("POST", "https://api.bithuman.ai/v1/tts", headers=h, json={...})`.
 - **Reuse a session** for back-to-back conversations rather than starting a new one; note that an open session bills its time, talking or idle.
 - **Check your balance** with `GET /v2/credit-summaries` before creating an agent ([creation costs](/pricing#creation--one-time-credits)), to avoid a `402`.
 
-More capacity comes with a higher [plan](/pricing#plans); for more than Enterprise, [talk to sales](https://www.bithuman.ai/sales).
+More capacity comes with a higher [plan](/pricing#plans); for more than Enterprise, [contact sales](https://www.bithuman.ai/enterprise?topic=api-rate-limits#contact).

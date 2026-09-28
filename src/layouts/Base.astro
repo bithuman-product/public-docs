@@ -70,7 +70,7 @@ const ogImage = new URL(ogPath, site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* JSON-LD: the site-wide Organization + SoftwareApplication (src/config/site-jsonld.ts), plus whatever the page adds */}
+    {/* JSON-LD: the site-wide SoftwareApplication (src/config/site-jsonld.ts; the Organization is referenced by @id only), plus whatever the page adds */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@graph": [...jsonLd, ...siteGraph(site)],

@@ -1,4 +1,4 @@
-// The filter above the model × place matrix (/models) and the five deployment
+// The filter above the model × place matrix (/models) and the four deployment
 // modes (/deploy): one choice shows one place or one mode; "All" shows every
 // one. The markup is drawn at build time (src/lib/doc-blocks.ts); with
 // JavaScript off the filter is hidden and everything shows.

@@ -10,6 +10,7 @@ import CodeTabs from "./CodeTabs.astro";
 import Chip from "./Chip.astro";
 import Availability from "./Availability.astro";
 import { QUICKSTART, firstFrame } from "../data/platforms";
+import { contactSalesUrl } from "../config/nav";
 import { RENDERS_LABEL } from "../data/labels";
 
 interface Props { initial?: (typeof QUICKSTART)[number]["id"] }
@@ -49,7 +50,7 @@ const md = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
           )}
           {q.note && <p class="qp-note" set:html={md(q.note)} />}
           <div class="qp-actions">
-            {q.id === "offline" && <a class="qp-btn" href="https://www.bithuman.ai/sales">Contact sales</a>}
+            {q.id === "offline" && <a class="qp-btn" href={contactSalesUrl("offline")}>Contact sales</a>}
             <a class:list={["qp-btn", { "qp-quiet": q.id === "offline" }]} href={firstFrame(q.next.href)}>Next: {q.next.label} <span aria-hidden="true">→</span></a>
           </div>
         </div>

@@ -81,4 +81,4 @@ Next steps: [Web](/platforms/web), [REST API](/platforms/rest), [LiveKit](/platf
 - **Render inside your app on the phone, Mac or browser:** [On the device](/deploy/on-device).
 - **A Linux PC with no GPU:** [CPU only (no GPU)](/deploy/cpu).
 - **No internet at the site:** [Fully offline](/deploy/offline).
-- **All five side by side:** [Deployment options](/deploy).
+- **All four side by side:** [Deployment options](/deploy).

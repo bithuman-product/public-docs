@@ -75,7 +75,7 @@ From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or hi
 | **Pro** | $99 | $1,010 | 10,000 | 40 | 10 |
 | **Business** | $299 | $2,990 | 50,000 | 200 | 50 |
 | **Enterprise** | $999 | $9,990 | 250,000 | unlimited | 200 |
-| **Custom** | [Contact sales](https://www.bithuman.ai/sales) | — | by agreement | by agreement | by agreement |
+| **Custom** | [Contact sales](https://www.bithuman.ai/enterprise?topic=pricing#contact) | — | by agreement | by agreement | by agreement |
 
 Annual plans bill twelve months of credits up front.
 
@@ -83,7 +83,7 @@ Annual plans bill twelve months of credits up front.
 - **Concurrent sessions** limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED` ([rate limits](/api/rate-limits)). Self-hosted and on-device sessions are limited only by credits.
 - **Creation costs credits:** a creation you cannot pay for returns [`402 INSUFFICIENT_BALANCE`](/api/errors) and creates nothing.
 
-Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.
+Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=pricing#contact) to enable it.
 
 ## Estimate a month
 
@@ -109,7 +109,7 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Not for phones:** the Swift package and the Android SDK stay online.
 - **Not file rendering:** `bithuman render` writes a video file and signs in online; it needs no offline license.
 
-[Contact sales](https://www.bithuman.ai/sales) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
+[Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
 
 ## Top-up credits
 

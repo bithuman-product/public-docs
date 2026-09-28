@@ -66,7 +66,7 @@ The [credit calculator](/pricing) turns your minutes into credits and a plan.
 
 ### How is a session billed?
 
-Realtime usage bills active session time, talking or idle, to the second. End sessions you are not using. The Video API bills whole minutes of output ([Pricing](/pricing)).
+Real-time usage bills active session time, talking or idle, to the second. End sessions you are not using. The Video API bills whole minutes of output ([Pricing](/pricing)).
 
 ## Connectivity and data
 

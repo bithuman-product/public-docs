@@ -34,7 +34,7 @@ export function dataflowExplorer(mode: "page" | "twin"): string {
       }).join("") + `</ul></div>`;
   };
   return `<div class="dfx" data-dfx-root role="group" aria-label="What leaves your hardware, by mode" data-pagefind-ignore>` +
-    `<div class="seg dfx-modes" role="radiogroup" aria-label="Deployment mode">${chips}</div>` +
+    `<div class="seg dfx-modes" role="radiogroup" aria-label="Where the avatar renders">${chips}</div>` +
     `<ul class="dfx-legend" role="list">${(["out", "stays", "yours", "in", "bh"] as Direction[]).map((d) => `<li class="dfx-${d}"><span class="dfx-dot" aria-hidden="true"></span>${DIRECTION_LABEL[d]}</li>`).join("")}</ul>` +
     FLOW_MODES.map(panel).join("") +
     `<p class="dfx-foot" aria-live="polite" data-dfx-status>Usage reports never contain audio, video, images or conversation text.</p></div>`;

@@ -33,7 +33,7 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
 export const GROUP_ORDER: Record<SectionId, string[]> = {
   start: ["Get started"],
   platforms: ["Apps", "Code & terminal", "Agents & APIs", "SDK reference"],
-  deploy: ["Overview", "Modes", "Use cases"],
+  deploy: ["Overview", "Modes", "Hardware", "Use cases"],
   models: ["Models", "Concepts"],
   build: ["Create", "Recipes", "Examples"],
   api: ["Start", "Agents", "Speech & video", "Live sessions", "Account", "Reference"],
@@ -80,6 +80,11 @@ export const RESOURCES_MENU: NavLink[] = [
 ];
 
 export const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
+
+/** "Contact sales": the contact form on bithuman.ai/enterprise. `topic` preselects
+ *  the form's deployment or industry where bithuman.ai knows it (offline, banking,
+ *  healthcare) and otherwise tags the enquiry with the docs page it came from. */
+export const contactSalesUrl = (topic: string) => `https://www.bithuman.ai/enterprise?topic=${topic}#contact`;
 
 /** Footer columns: the header's sections, then resources, community and legal. */
 export const FOOTER: { title: string; links: NavLink[] }[] = [

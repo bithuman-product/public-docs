@@ -1,7 +1,8 @@
 // The built site's JSON-LD, as the text a search engine or an AI agent reads
 // from it. Every page's <head> carries a <script type="application/ld+json">:
-// the site-wide Organization and SoftwareApplication (src/config/site-jsonld.ts,
-// placed by src/layouts/Base.astro) plus the nodes the page adds. The values
+// the site-wide SoftwareApplication (src/config/site-jsonld.ts, placed by
+// src/layouts/Base.astro; the Organization is referenced by @id only) plus the
+// nodes the page adds. The values
 // are generated from the data files, so the source holds no claim to grade:
 // the gates grade the rendered graph through this module, and a gate that
 // strips a page's <script> elements keeps this text (withJsonLdText).

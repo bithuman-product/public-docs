@@ -92,4 +92,4 @@ pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dote
 - **Inside an app on the phone, Mac or browser:** [On the device](/deploy/on-device).
 - **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
 - **No internet at the site:** [Fully offline](/deploy/offline).
-- **All five side by side:** [Deployment options](/deploy).
+- **All four side by side:** [Deployment options](/deploy).

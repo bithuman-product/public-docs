@@ -2,9 +2,9 @@ import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { twin, SITE } from "../lib/markdown-twin";
 import { hubMeta } from "../config/hubs";
-import { GROUP_ORDER, type SectionId } from "../config/nav";
+import { GROUP_ORDER, contactSalesUrl, type SectionId } from "../config/nav";
 import { PLATFORMS, PLATFORM_PAGES, QUICKSTART, firstFrame } from "../data/platforms";
-import { HERO, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
+import { HERO, START_BUILDING, DEPLOYMENTS, CPU_NOTE, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
 import { PERF_BAND } from "../data/perf-band";
 import { perfCell, perfRow, PERF_MODELS } from "../lib/perf";
 import versions from "../data/versions.json";
@@ -47,7 +47,7 @@ function perfSection(): string {
 
 function pathTable(): string {
   let out = "| You want to… | Use | Needs | First command | Docs |\n|---|---|---|---|---|\n";
-  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? "— ([contact sales](https://www.bithuman.ai/sales))" : "`" + p.first.replace(/\|/g, "\\|") + "`"} | ${SITE}${p.docs.split("#")[0]}.md${p.docs.includes("#") ? "#" + p.docs.split("#")[1] : ""} |\n`;
+  for (const p of PLATFORMS) out += `| ${p.want} | ${p.use} | ${p.needs} | ${p.id === "offline" ? `— ([contact sales](${contactSalesUrl("offline")}))` : "`" + p.first.replace(/\|/g, "\\|") + "`"} | ${SITE}${p.docs.split("#")[0]}.md${p.docs.includes("#") ? "#" + p.docs.split("#")[1] : ""} |\n`;
   for (const p of PLATFORMS.filter((x) => x.note)) out += `\n${p.use}: ${p.note}\n`;
   return out;
 }
@@ -102,7 +102,7 @@ export const GET: APIRoute = async ({ props }) => {
     return md(twin("bitHuman docs", "/", hubMeta("").description,
       `# ${HERO.title}\n\n${HERO.line}\n\nQuickstart: ${SITE}/start.md · API reference: ${SITE}/api/reference.md\n\n` +
       `## Start building\n\n${cards(START_BUILDING)}\n\nOne command per path: ${SITE}/start.md#choose-your-platform\n\n` +
-      `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n` +
+      `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n${CPU_NOTE.line}: [${CPU_NOTE.title}](${mdUrl(CPU_NOTE.href)}).\n\n` +
       `## Runs everywhere\n\nMeasured times real time (seconds of avatar video rendered per second; 1.0× or more holds a live conversation). Every configuration and the method: ${SITE}/performance.md\n\n` +
       PERF_BAND.map((f) => {
         const x = (id: string) => PERF_MODELS.map((m) => `${m.name} ${perfCell(id, m.id)?.x ?? "—"}`).join(", ");

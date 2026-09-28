@@ -16,7 +16,7 @@ export const TOOLS = [
     name: "search",
     title: "Search the bitHuman docs",
     description:
-      "Search docs.bithuman.ai (bitHuman realtime avatar SDKs, the REST API, deployment options, models, pricing). " +
+      "Search docs.bithuman.ai (bitHuman real-time avatar SDKs, the REST API, deployment options, models, pricing). " +
       "Returns the best-matching pages, each with an id to pass to `fetch`.",
     inputSchema: {
       type: "object",

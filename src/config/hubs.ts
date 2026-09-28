@@ -29,7 +29,7 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/index.astro",
     name: "bitHuman docs",
     description:
-      "Build realtime talking avatars that render on iPhone, iPad, Android, Mac, a Linux PC with no GPU, or the browser. Quickstarts, SDKs, API and measured performance.",
+      "Build real-time talking avatars that render on iPhone, iPad, Android, Mac, a Linux PC with no GPU, or the browser. Quickstarts, SDKs, API and measured performance.",
   },
   {
     route: "start",

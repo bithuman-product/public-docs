@@ -12,9 +12,9 @@ type: guide
 | Option | What you get | Cost |
 |------|--------------|------|
 | **bitHuman default** | The built-in voice pipeline. Your agent detects the caller's language and replies in it. No setup, no keys. | Included in the voice chat rate ([pricing](/pricing)) |
-| **Bring your own provider** | Connect your **own** OpenAI, Grok (xAI), ElevenLabs, or Cartesia key and pick that provider's premium voices — including low-latency speech-to-speech (realtime). | The same voice chat rate, plus your provider's charges on your key |
+| **Bring your own provider** | Connect your **own** OpenAI, Grok (xAI), ElevenLabs, or Cartesia key and pick that provider's premium voices — including low-latency speech-to-speech (real-time). | The same voice chat rate, plus your provider's charges on your key |
 
-You never *have* to bring a key. The default pipeline already speaks every language. Bring your own only when you want a specific premium voice or a provider's realtime engine.
+You never *have* to bring a key. The default pipeline already speaks every language. Bring your own only when you want a specific premium voice or a provider's real-time engine.
 
 ## Use the default (nothing to do)
 
@@ -32,18 +32,18 @@ Back in the agent's voice settings, the premium providers you've connected unloc
 
 ## Supported providers
 
-| Provider | Voices you can select | Realtime (speech-to-speech) |
+| Provider | Voices you can select | Real-time (speech-to-speech) |
 |----------|-----------------------|:---------------------------:|
 | **OpenAI** | Realtime voices (alloy, ash, ballad, cedar, …) | ✓ |
 | **Grok (xAI)** | Grok voices (ara, eve, rex, …) | ✓ |
 | **ElevenLabs** | Your ElevenLabs voice library | — |
 | **Cartesia** | Cartesia voices | — |
 
-> **Tip** Realtime providers (OpenAI, Grok) give the lowest-latency, most expressive speech-to-speech — great for kiosks and live demos. ElevenLabs and Cartesia give you a specific voice on the standard pipeline.
+> **Tip** Real-time providers (OpenAI, Grok) give the lowest-latency, most expressive speech-to-speech — great for kiosks and live demos. ElevenLabs and Cartesia give you a specific voice on the standard pipeline.
 
 ## How billing works
 
 - Every managed-agent conversation bills the voice chat rate, whichever voice it uses ([pricing](/pricing)).
-- A bring-your-own voice or realtime model is also billed by your provider on your key.
+- A bring-your-own voice or real-time model is also billed by your provider on your key.
 
 If a bring-your-own key ever fails or is removed, the agent automatically falls back to the built-in multilingual pipeline — it never silently stops talking.

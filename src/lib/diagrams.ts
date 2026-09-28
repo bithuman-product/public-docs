@@ -15,6 +15,7 @@
 // PLAN_v2 SAFE claim (the S rows listed per diagram), nothing more.
 
 import { OFFLINE_LICENSE_COPY } from "../data/offline.ts";
+import { MODELS, MATRIX } from "../data/models.ts";
 
 type Tone = "plain" | "accent" | "muted";
 interface Box { title: string; sub?: string; tone?: Tone }
@@ -24,6 +25,15 @@ interface Group { label: string; bh?: boolean; rows: (Box | [Box, Box])[] }
 interface Link { label?: string; kind?: "data" | "out" | "in"; x: number; both?: boolean }
 interface Note { text: string; badge?: boolean }
 export interface Diagram { title: string; desc: string; claims: string[]; groups: Group[]; links?: Link[][]; notes?: Note[]; rail?: boolean }
+
+/** The offline row of the model × place matrix (src/data/models.ts), in words:
+ *  the models that run fully offline now, and those marked "Coming later". */
+function offlineModels(): { now: string; later: string } {
+  const names = (keep: (ok: boolean, how?: string) => boolean) =>
+    MODELS.filter((m) => keep(MATRIX[m.id].offline.ok, MATRIX[m.id].offline.how)).map((m) => m.name);
+  const list = (a: string[]) => (a.length < 2 ? a.join("") : `${a.slice(0, -1).join(", ")} and ${a[a.length - 1]}`);
+  return { now: list(names((ok) => ok)), later: list(names((ok, how) => !ok && how === "Coming later")) };
+}
 
 const W = 360, PAD = 10, ZPAD = 14, ZHEAD = 26, GAP = 8, LINK = 62, LINE = 15;
 const SUB_PX = 11.5;
@@ -172,7 +182,7 @@ export const DIAGRAMS: Record<string, () => Diagram> = {
 
   lifecycle: () => ({
     title: "A session and what it bills",
-    desc: "A realtime session bills active session time, talking or idle, to the second, from the moment it starts until it ends. Online self-hosted and on-device sessions check your credential when they start and keep rendering through a network drop of up to 5 minutes.",
+    desc: "A real-time session bills active session time, talking or idle, to the second, from the moment it starts until it ends. Online self-hosted and on-device sessions check your credential when they start and keep rendering through a network drop of up to 5 minutes.",
     claims: ["S20", "S10"],
     rail: true,
     groups: [
@@ -256,19 +266,22 @@ export const DIAGRAMS: Record<string, () => Diagram> = {
     links: [[{ x: 110, kind: "out", label: "usage only: no audio, video or text" }, { x: 250, kind: "in", label: "the avatar, once" }]],
   }),
 
-  "topology-offline": () => ({
-    title: "Fully offline",
-    desc: `${OFFLINE_LICENSE_COPY} The avatar renders on the machine and usage is metered there, with no required reconnection. Models: Essence 1, Essence 2 and Expression 2.`,
-    claims: ["S11", "S12"],
-    groups: [
-      { label: "A Linux PC or terminal", rows: [
-        { title: "The avatar renders on the machine", tone: "accent" },
-        { title: "Usage is metered on the machine", sub: "no required reconnection" },
-        { title: "Essence 1 · Essence 2 · Expression 2", tone: "muted" },
-      ] },
-    ],
-    notes: [{ text: "Business & Enterprise · arranged through sales", badge: true }],
-  }),
+  "topology-offline": () => {
+    const { now, later } = offlineModels();
+    return {
+      title: "Fully offline",
+      desc: `${OFFLINE_LICENSE_COPY} The avatar renders on the machine and usage is metered there, with no required reconnection. Models: ${now} now${later ? `; ${later} later` : ""}.`,
+      claims: ["S11", "S12"],
+      groups: [
+        { label: "A Linux PC or terminal", rows: [
+          { title: "The avatar renders on the machine", tone: "accent" },
+          { title: "Usage is metered on the machine", sub: "no required reconnection" },
+          { title: `${now} now`, sub: later ? `${later} later` : undefined, tone: "muted" },
+        ] },
+      ],
+      notes: [{ text: "Business & Enterprise · arranged through sales", badge: true }],
+    };
+  },
 
   "topology-web-local": () => ({
     title: "The web embed with render=local",

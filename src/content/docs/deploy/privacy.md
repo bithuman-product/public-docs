@@ -56,6 +56,8 @@ Avatar creation from a portrait happens in the bitHuman cloud; the finished avat
 - **Access:** organization roles (owner, admin, member), an audit-log API, API-secret rotation with immediate revocation, and scoped runtime and embed tokens so browsers never hold your secret ([Organizations](/api/organizations), [API secrets](/api/api-keys)).
 - **Region:** avatars in the bitHuman cloud render in the US.
 
+The overview to share with your team is on bithuman.ai: [security and privacy](https://www.bithuman.ai/security).
+
 ## Retention and deletion
 
 Deleting an agent deletes its records, including transcripts, and its model files ([Agents](/api/agents)).

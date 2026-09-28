@@ -40,7 +40,7 @@ An agent is an avatar (face, voice and persona) identified by a short code such 
 | `transparency` | boolean | no | `true` generates on a green-screen background for chroma key |
 | `agent_id` | string | no | Leave it out; a fresh code is generated. If it names an agent you already own, that agent is regenerated in place (it returns to `processing`); another account's code returns `404` |
 
-Essence 2 Max is available on the Enterprise plan only; other plans get `403 PLAN_REQUIRED`. [Contact sales](https://www.bithuman.ai/sales) to enable it.
+Essence 2 Max is available on the Enterprise plan only; other plans get `403 PLAN_REQUIRED`. [Contact sales](https://www.bithuman.ai/enterprise?topic=api-agents#contact) to enable it.
 
 Headers: `api-secret`, and optionally `Idempotency-Key`: a repeated request with the same key returns the first response and starts no second creation.
 
