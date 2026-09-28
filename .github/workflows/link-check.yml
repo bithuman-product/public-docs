@@ -146,6 +146,13 @@ on:
       - 'middleware.js'
       - 'public/skills/**'
       - 'package.json'
+      # the build's own code: the markdown blocks, the llms files, the widgets and
+      # the partials all generate what these checks read
+      - 'src/lib/**'
+      - 'src/markdown/**'
+      - 'src/scripts/**'
+      - 'src/partials/**'
+      - 'astro.config.mjs'
   pull_request:
     paths:
       - 'src/content/**'
@@ -183,6 +190,13 @@ on:
       - 'middleware.js'
       - 'public/skills/**'
       - 'package.json'
+      # the build's own code: the markdown blocks, the llms files, the widgets and
+      # the partials all generate what these checks read
+      - 'src/lib/**'
+      - 'src/markdown/**'
+      - 'src/scripts/**'
+      - 'src/partials/**'
+      - 'astro.config.mjs'
 
 permissions:
   contents: read
