@@ -10,12 +10,18 @@ import { contactSalesUrl } from "../config/nav";
 // and the one-file text and the section files cannot disagree.
 //
 //   /llms/start.txt      the quickstart, the API secret, performance, FAQ, glossary
-//   /llms/platforms.txt  every platform page (iOS & iPadOS, macOS, Android, Flutter, Web, Python, CLI, LiveKit, REST)
+//   /llms/platforms.txt  the code-and-terminal and agent platform pages (Python, CLI, Windows, LiveKit, REST)
+//   /llms/apps.txt       the app platform pages (iOS & iPadOS, macOS, Android, Flutter, Web)
 //   /llms/deploy.txt     where it runs: the four deployment modes, CPU only, privacy, pricing
 //   /llms/models.txt     Essence 2, Expression 2, the first generation, how it works
 //   /llms/build.txt      the recipes and guides: avatars, personas, voices, gestures, MCP, troubleshooting
 //   /llms/api.txt        the REST API
-//   /llms-full.txt       start + platforms + api in one fetch; deploy, models and build are linked
+//   /llms-full.txt       start + platforms + api in one fetch; apps, deploy, models and build are linked
+//
+// ★WHY APPS HAS ITS OWN FILE (2026-09-28): /llms/platforms.txt had reached 98,211 of its
+// 98,304-byte cap and /llms-full.txt 191,288 of 194,560, so a new platform page (Windows)
+// fit nowhere. The app pages (group "Apps" in PLATFORM_PAGES) moved to /llms/apps.txt,
+// linked from /llms-full.txt like deploy, models and build. No page left the agent layer.
 //
 // scripts/check-llms.mjs caps each file and fails when a page is in no section
 // (and not linked-only) or in two, so no page can drop out of the agent layer.
@@ -31,7 +37,7 @@ export const LINKED_ONLY = new Set([
 ]);
 
 export interface LlmsSection {
-  id: "start" | "platforms" | "deploy" | "models" | "build" | "api";
+  id: "start" | "platforms" | "apps" | "deploy" | "models" | "build" | "api";
   title: string;
   /** One line on what the file holds, shown in every index. */
   summary: string;
@@ -39,6 +45,8 @@ export interface LlmsSection {
   inFull: boolean;
   has: (d: any) => boolean;
 }
+
+const isPlatformPage = (d: any) => d.data.section === "platforms" && (d.data.type === "platform" || d.data.type === "guide");
 
 export const LLMS_SECTIONS: LlmsSection[] = [
   {
@@ -48,8 +56,13 @@ export const LLMS_SECTIONS: LlmsSection[] = [
   },
   {
     id: "platforms", title: "Platforms", inFull: true,
-    summary: "iOS & iPadOS, macOS, Android, Flutter, Web, Python, CLI, LiveKit, REST",
-    has: (d) => d.data.section === "platforms" && (d.data.type === "platform" || d.data.type === "guide"),
+    summary: "Python, CLI, Windows, LiveKit, REST",
+    has: (d) => isPlatformPage(d) && d.data.group !== "Apps",
+  },
+  {
+    id: "apps", title: "App platforms", inFull: false,
+    summary: "iOS & iPadOS, macOS, Android, Flutter, Web",
+    has: (d) => isPlatformPage(d) && d.data.group === "Apps",
   },
   {
     id: "deploy", title: "Deploy", inFull: false,
@@ -76,7 +89,7 @@ export const LLMS_SECTIONS: LlmsSection[] = [
 export const sectionUrl = (id: string) => `${SITE}/llms/${id}.txt`;
 
 /** What /llms-full.txt inlines, in words (the sections marked inFull). */
-export const FULL_SCOPE = "getting started, every platform page and the REST API";
+export const FULL_SCOPE = "getting started, the code, terminal and agent platform pages (Python, CLI, Windows, LiveKit, REST) and the REST API; the app platform pages are in /llms/apps.txt";
 
 /** The pages a section inlines, in sidebar order. */
 export async function sectionDocs(s: LlmsSection): Promise<any[]> {
