@@ -284,8 +284,12 @@ const CARRIERS = [
   // /guides/deploy-essence-2-max page, deleted under the essence-2-max removal
   // ruling; its `"source":` line in vercel.json is the only place that path may
   // still be spelled, and it exists so a saved link lands on /concepts/essence-2.
-  { why: "the retired /concepts/ and /guides/ URLs, both spellings, which must keep redirecting for saved links",
-    re: /"source"\s*:\s*"\/(concepts|guides)\/[a-z0-9-]+\/?"/i },
+  // ★WIDENED 2026-09-28 TO THE ONE SHORT URL /essence-2-max — a path a reader
+  // TYPES into the address bar. It is a `"source":` line only and lands on the
+  // ruled Enterprise-only sentence on /models; no page, card or row names the
+  // model, so the one-sentence rule is unchanged. Keyed on that exact path.
+  { why: "the retired /concepts/ and /guides/ URLs and the /essence-2-max short URL, both spellings, which must keep redirecting",
+    re: /"source"\s*:\s*"\/(?:(?:concepts|guides)\/[a-z0-9-]+|essence-2-max)\/?"/i },
   { why: "`be_runtime_tick_compose*` — exported C ABI entry points, resolved by the dynamic loader by exact name",
     re: /be_runtime_tick_compose\w*/i },
   { why: "BITHUMAN_TESSERA_DIRECTOR — an env var a customer sets in their own launcher; the reader takes it by exact name",

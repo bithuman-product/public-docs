@@ -322,6 +322,16 @@
       "permanent": true
     },
     {
+      "source": "/companion",
+      "destination": "/build/companion-app",
+      "permanent": true
+    },
+    {
+      "source": "/companion/",
+      "destination": "/build/companion-app",
+      "permanent": true
+    },
+    {
       "source": "/concepts",
       "destination": "/models",
       "permanent": true
@@ -403,12 +413,12 @@
     },
     {
       "source": "/concepts/essence-2-max",
-      "destination": "/models",
+      "destination": "/models#the-models",
       "permanent": true
     },
     {
       "source": "/concepts/essence-2-max/",
-      "destination": "/models",
+      "destination": "/models#the-models",
       "permanent": true
     },
     {
@@ -569,6 +579,16 @@
     {
       "source": "/essence-2/",
       "destination": "/models/essence-2",
+      "permanent": true
+    },
+    {
+      "source": "/essence-2-max",
+      "destination": "/models#the-models",
+      "permanent": true
+    },
+    {
+      "source": "/essence-2-max/",
+      "destination": "/models#the-models",
       "permanent": true
     },
     {
@@ -1123,12 +1143,12 @@
     },
     {
       "source": "/guides/deploy-essence-2-max",
-      "destination": "/models",
+      "destination": "/models#the-models",
       "permanent": true
     },
     {
       "source": "/guides/deploy-essence-2-max/",
-      "destination": "/models",
+      "destination": "/models#the-models",
       "permanent": true
     },
     {
@@ -1419,6 +1439,16 @@
     {
       "source": "/keys/",
       "destination": "/api/api-keys",
+      "permanent": true
+    },
+    {
+      "source": "/kiosk",
+      "destination": "/build/kiosk",
+      "permanent": true
+    },
+    {
+      "source": "/kiosk/",
+      "destination": "/build/kiosk",
       "permanent": true
     },
     {

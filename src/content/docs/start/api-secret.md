@@ -45,4 +45,4 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 ## Next
 
 - [REST authentication](/api/authentication): the header, validation and error codes.
-- [Choose your path](/start#choose-your-path).
+- [Pick your platform](/start#choose-your-platform).

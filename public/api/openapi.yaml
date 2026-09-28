@@ -235,7 +235,7 @@ paths:
                     `expression-2`. Retired engine names return
                     `400 VALIDATION_ERROR`. Identity inputs and creation times
                     differ per model — see the endpoint description table and
-                    [Essence vs Expression](#tag/models).
+                    [Compare models](https://docs.bithuman.ai/models).
                 version:
                   type: string
                   enum: [v1, v2]
@@ -3586,7 +3586,7 @@ paths:
       description: |
         A self-hosted or on-device runtime posts one beat per interval to bill
         the session it is serving. Beats are the self-hosted meter: see
-        [Pricing](#tag/pricing) for the per-minute rate.
+        [Pricing](https://docs.bithuman.ai/pricing) for the per-minute rate.
 
         **Billing is wall-clock, and idle time counts.** A beat reports the
         seconds of session that elapsed, not frames rendered.
@@ -4076,7 +4076,7 @@ components:
           example: "usage_essence_model_self_hosted"
         app:
           type: string
-          example: "imaginex"
+          example: "my-app"
         agent_code:
           type: [string, "null"]
         credits_change:
@@ -4518,7 +4518,7 @@ tags:
     description: |
       The two routes a self-hosted or on-device runtime calls: check that its
       key is still live, and report the session time it served. See
-      [Pricing](#tag/pricing).
+      [Pricing](https://docs.bithuman.ai/pricing).
   - name: Status
     description: |
       Is the API currently refusing work? Unauthenticated, always HTTP 200 —
