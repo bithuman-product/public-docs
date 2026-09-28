@@ -92,5 +92,5 @@ The whole first frame for each: [iOS & iPadOS](/platforms/ios#first-frame) · [A
 - **The fewest moving parts, any device:** [bitHuman cloud](/deploy/cloud).
 - **Your own Mac or Linux machines:** [Your servers](/deploy/self-hosted).
 - **A Linux PC with no GPU:** [CPU only (no GPU)](/deploy/cpu).
-- **No internet at the site:** [Fully offline](/deploy/offline); not for phones, Mac or the browser.
+- **No internet at the site:** [Fully offline](/deploy/offline); on a Mac through the Python package, not inside a Swift-package app, a phone or the browser.
 - **All four side by side:** [Deployment options](/deploy).

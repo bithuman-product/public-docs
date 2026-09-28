@@ -15,7 +15,7 @@ bitHuman turns speech into a real-time talking avatar from one portrait. Essence
 - Use two verbs: the avatar **renders** (on the device, in the browser, on your server or in the bitHuman cloud); the conversation **runs** (in the user's own stack, in the CLI's local conversation brain, or on bitHuman's servers).
 - Send `model` (`"essence-2"` or `"expression-2"`) when creating an agent, and poll until `status` is `ready` or `failed`.
 - Take versions from https://docs.bithuman.ai/versions.json, speed from https://docs.bithuman.ai/performance.json (× real time, with the device) and prices from `GET https://api.bithuman.ai/v1/pricing`, sent with the `api-secret` header (it returns 401 without one). Do not type them from memory.
-- Do not claim offline operation on phones, Mac or the browser, a conversation brain on phones, or any certification.
+- Do not claim offline operation on phones, in the browser or in Swift-package apps (a Mac runs Essence 1 offline only through the Python package), a conversation brain on phones, or any certification.
 
 ## 1. Pick a path
 

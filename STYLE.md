@@ -39,7 +39,7 @@ The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and id
 ## Claims
 
 - Publish only PLAN_v2's SAFE claims. The DO NOT CLAIM rows are patterns in `scripts/check-claims.mjs`; an exception needs a reason and an expiry in `scripts/claims-exceptions.json`. [check-claims]
-- Never: data "never leaves" the device without the metering qualifier; air-gapped; offline for Expression 1, phones, Mac or the browser; an offline term; Raspberry Pi, Jetson or NVIDIA as a self-host target; native Windows; sub-second or reply-latency numbers; any, mid-range or older phones; battery; sessions per server; uptime or an SLA; any compliance certification; device tokens; per-user memory; customer logos.
+- Never: data "never leaves" the device without the metering qualifier; air-gapped; offline for Expression 1, phones, the browser or Swift-package apps (a Mac is offline only through the Python package, Essence 1); an offline term; Raspberry Pi, Jetson or NVIDIA as a self-host target; native Windows; sub-second or reply-latency numbers; any, mid-range or older phones; battery; sessions per server; uptime or an SLA; any compliance certification; device tokens; per-user memory; customer logos.
 - Offline copy is the approved sentence, word for word, followed by "Linux and macOS computers (Apple silicon); bought in the console or through sales." Code imports it from `src/data/offline.ts`; a page that only mentions the license links to `/deploy#fully-offline`. [check-offline-copy]
 - Web privacy copy always carries: "With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab."
 
