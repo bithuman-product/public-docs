@@ -52,7 +52,7 @@ lifecycle
 | [Add a model](/api/agents#add-a-model-to-an-existing-agent) to an agent | the same per-model rates; 0 for Expression 1 |
 | Generate gestures (dynamics) | 250 |
 
-A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) returns this schedule as JSON.
+A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) returns this schedule as JSON; send your API secret in the `api-secret` header.
 
 ## Talking video — per minute of output
 

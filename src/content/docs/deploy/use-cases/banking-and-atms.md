@@ -65,3 +65,5 @@ A session bills while it runs, talking or idle, so close it when the branch clos
 ## Agreements
 
 Healthcare and financial-services deployments are set up under an enterprise agreement and review. [Contact sales](https://www.bithuman.ai/sales) to start one.
+
+Overviews to share with your team, on bithuman.ai: [AI avatars for banking and ATMs](https://www.bithuman.ai/use-cases/banking-atm), [Security and privacy](https://www.bithuman.ai/security) and [Enterprise](https://www.bithuman.ai/enterprise).

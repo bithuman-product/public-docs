@@ -58,7 +58,7 @@ device
 ## Limits
 
 - **Network:** a session checks your credential when it starts and keeps rendering through a network drop of up to 5 minutes.
-- **Devices:** iPhone, iPad and Android need a physical device, not a simulator or an emulator. Essence 2 on Apple needs iOS 26 or macOS 26.
+- **Devices:** Android, and Essence 2 on iPhone and iPad, need a physical device, not an emulator or the Simulator; Expression 2 also runs in the iOS Simulator. Essence 2 on Apple needs iOS 26 or macOS 26.
 - **Sessions:** on-device sessions are limited by credits, not by a session cap.
 - **First run:** each avatar downloads once (about 160–370 MB, by model and platform), then stays on the device.
 

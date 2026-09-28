@@ -3,7 +3,8 @@
 // instructions and points at /llms.txt, so an agent that fetched only one file
 // still reads the rules. Each fact links the
 // page that owns it; no price is repeated here (prices live on /pricing and
-// GET /v1/pricing), and speed is drawn from performance.json, never typed.
+// GET /v1/pricing, which needs the api-secret header), and speed is drawn from
+// performance.json, never typed.
 import versions from "../data/versions.json";
 import { OFFLINE_LICENSE_COPY } from "../data/offline";
 import { perfCell, perfRow } from "../lib/perf";
@@ -18,8 +19,8 @@ export function agentInstructions(site: string): string {
     `- Always send \`model\` ("essence-2" or "expression-2") when creating an agent; poll until \`status\` is \`ready\` or \`failed\`.\n` +
     `- API and SDK use requires the Creator plan or higher. Never tell a user they can build on a free plan.\n` +
     `- In a LiveKit worker, name the secret \`BITHUMAN_MASTER_SECRET\` and pass a minted token (${site}/platforms/livekit.md).\n` +
-    `- Say where things happen: the avatar renders (device, browser, server, cloud); the conversation runs (your stack, the CLI's local conversation brain, or bitHuman's servers).\n` +
-    `- Quote speed only from ${site}/performance.json (× real time, with the device). Quote prices only from GET https://api.bithuman.ai/v1/pricing.\n` +
+    `- Say where the avatar renders (device, browser, server, cloud) and the conversation runs (your stack, the CLI's local conversation brain, bitHuman's servers).\n` +
+    `- Quote speed only from ${site}/performance.json (× real time, with the device), prices only from GET https://api.bithuman.ai/v1/pricing (\`api-secret\` header).\n` +
     `- Do not claim offline on phones, Mac or the browser, a conversation brain on phones, or any certification.\n\n`
   );
 }

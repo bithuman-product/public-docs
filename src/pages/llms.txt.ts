@@ -41,7 +41,7 @@ export const GET: APIRoute = async () => {
     out += `| ${where(f)} | ${cell("essence-2")} | ${cell("expression-2")} |\n`;
   }
   out += `\n## Docs (markdown)\n\n`;
-  out += `- Any page as markdown: add \`.md\` to its URL, or send \`Accept: text/markdown\`. Speed: ${SITE}/performance/method.md\n`;
+  out += `- Any page as markdown: add \`.md\` to its URL or send \`Accept: text/markdown\`. Speed: ${SITE}/performance/method.md\n`;
   out += `- By section: ${LLMS_SECTIONS.map((s) => sectionUrl(s.id)).join(" · ")} · start, platforms and api in one fetch: ${SITE}/llms-full.txt\n`;
   out += `- Docs MCP server: ${SITE}${MCP_PATH} · agent skill: ${SITE}${SKILL_PATH} · ${SITE}/resources/agents.md\n`;
   out += `- OpenAPI: ${SITE}/api/openapi.yaml · changelog: ${SITE}/changelog.md\n`;
