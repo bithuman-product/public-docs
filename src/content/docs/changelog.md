@@ -40,6 +40,18 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### Swift package 2.19.0 — 2026-09-28
+
+Tag `v2.19.0`.
+
+- **Changed:** the Expression 2 engine moves to 2.19.0 and the Essence 2 engine to 1.15.0. On a Mac, both engines now take their licensing and metering core from a new `EngineCore` binary target. The `Expression2`, `Essence2` and `Essence2Kit` products link it for you, with `Security` and `curl`. iPhone and iPad builds link nothing new.
+- **Action:** update to 2.19.0. A Mac app that links the engine archives outside SwiftPM must also link `EngineCore.xcframework` from the [essence2-v1.15.0 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.0), plus `Security` and `curl`.
+
+### Flutter plugin 2.6.21 — 2026-09-28
+
+- **Changed:** iOS and macOS link the Swift package 2.19.0 engines (Expression 2 2.19.0, Essence 2 1.15.0), and on macOS the pod also links `EngineCore`. Android is unchanged: `essence2-android` 0.8.1 and `expression2-android` 0.5.2.
+- **Action:** pin `ref: flutter-plugin-v2.6.21` and run the plugin's `scripts/bootstrap.sh` again.
+
 ### CLI 2.8.3 — 2026-09-28
 
 Tag `cli-v2.8.3`.
