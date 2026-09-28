@@ -2,7 +2,7 @@
 title: "CPU only (no GPU)"
 description: "Both models run live on a standard Linux PC with no GPU."
 section: deploy
-group: "Modes"
+group: "Hardware"
 order: 40
 type: deploy
 searchTitle: "CPU only (no GPU): Linux PCs without a graphics card"
@@ -16,7 +16,7 @@ next: ["/platforms/cli", "/platforms/python", "/deploy/offline"]
 
 ## What it is
 
-Essence 2 and Expression 2 render live on the processor of an ordinary Linux PC, with no graphics card: with the [CLI](/platforms/cli) or the [Python SDK](/platforms/python), on Linux x86_64 or arm64. It suits screens that run all day where a GPU is not practical: kiosks, lobby screens, and servers without GPUs.
+Essence 2 and Expression 2 render live on the processor of an ordinary Linux PC, with no graphics card: with the [CLI](/platforms/cli) or the [Python SDK](/platforms/python), on Linux x86_64 or arm64. It suits screens that run all day where a GPU is not practical: kiosks, lobby screens, and servers without GPUs. It is not a fifth mode: it is [Your servers](/deploy/self-hosted) on a PC with no GPU.
 
 ## Where it renders
 
@@ -84,4 +84,4 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
 - **On your own Macs, or Linux machines you already run:** [Your servers](/deploy/self-hosted).
 - **Inside an app on the phone or in the browser:** [On the device](/deploy/on-device).
 - **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
-- **All five side by side:** [Deployment options](/deploy).
+- **All four side by side:** [Deployment options](/deploy).

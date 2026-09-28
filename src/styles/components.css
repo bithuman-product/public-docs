@@ -177,11 +177,10 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .model-cards .card-title strong { font-size: var(--ft-lg); }
 @media (max-width: 640px) { .prose ul.model-cards { grid-template-columns: 1fr; } }
 
-/* ---- the five deployment modes side by side (the ```deploy-matrix block) ---- */
+/* ---- the four deployment modes side by side, two by two (the ```deploy-matrix block) ---- */
 .prose ul.deploy-cards { list-style: none; margin: var(--s-5) 0 var(--s-3); padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
 .prose .deploy-cards > li { margin: 0; }
 .dm-card { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-4) var(--s-5); border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface); }
-.dm-card.dm-wide { grid-column: 1 / -1; }
 .dm-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); flex-wrap: wrap; }
 .prose .dm-head a { font-size: var(--ft-lg); font-weight: var(--fw-bold); color: var(--color-text); text-decoration: none; }
 .prose .dm-head a:hover { color: var(--color-primary); }
@@ -189,12 +188,8 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .dm-card dl > div { display: grid; gap: 0.15rem; padding-top: var(--s-2); border-top: 1px solid var(--color-border); }
 .dm-card dt { font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-tertiary); }
 .dm-card dd { margin: 0; font-size: var(--ft-sm); line-height: var(--lh-snug); color: var(--color-text-secondary); }
-.dm-wide dl { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); }
 .prose .dm-foot { font-size: var(--ft-sm); color: var(--color-text-secondary); }
-@media (max-width: 900px) {
-  .prose ul.deploy-cards { grid-template-columns: 1fr; }
-  .dm-wide dl { grid-template-columns: 1fr; }
-}
+@media (max-width: 900px) { .prose ul.deploy-cards { grid-template-columns: 1fr; } }
 
 /* ---- a platform page's lead: what you get, beside a real capture ---- */
 .prose .lead { display: grid; grid-template-columns: minmax(0, 1fr) 212px; gap: var(--s-6); align-items: start; margin: var(--s-5) 0; }

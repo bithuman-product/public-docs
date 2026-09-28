@@ -93,4 +93,4 @@ The whole first frame for each: [iOS & iPadOS](/platforms/ios#first-frame) · [A
 - **Your own Mac or Linux machines:** [Your servers](/deploy/self-hosted).
 - **A Linux PC with no GPU:** [CPU only (no GPU)](/deploy/cpu).
 - **No internet at the site:** [Fully offline](/deploy/offline); not for phones, Mac or the browser.
-- **All five side by side:** [Deployment options](/deploy).
+- **All four side by side:** [Deployment options](/deploy).

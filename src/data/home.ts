@@ -8,7 +8,7 @@
 import { OFFLINE_LICENSE_SENTENCE, OFFLINE_LICENSE_TERMS } from "./offline";
 import { PLATFORM_PAGES } from "./platforms";
 import { DEMOS } from "./demo";
-import { DEPLOYMENTS as MODES } from "./deployments";
+import { DEPLOYMENTS as MODES, CPU_ONLY } from "./deployments";
 
 export interface HomeCard {
   title: string;
@@ -26,19 +26,23 @@ export interface HomeCard {
 
 /** The promise under the H1 (docs spec §1.1). */
 export const HERO = {
-  title: "Realtime talking avatars that render on the device",
+  title: "Real-time talking avatars that render on the device",
   line: "Turn one portrait into a lip-synced avatar. Render it on iPhone, iPad, Android, Mac, a Linux PC with no GPU or in a WebGPU browser, or stream it from the bitHuman cloud.",
 };
 
 /** "Start building": one card per platform page. */
 export const START_BUILDING: HomeCard[] = PLATFORM_PAGES.map((p) => ({ title: p.title, line: p.line, href: p.href, icon: p.icon }));
 
-/** "Where it runs": the deployment modes, then the hardware lens, each to its
- *  own page. The offline card quotes the approved sentence and spans the row. */
+/** "Where it runs": the four deployment modes, each to its own page. The
+ *  offline card quotes the approved sentence and spans the row. */
 export const DEPLOYMENTS: HomeCard[] = MODES.map((d) =>
   d.id === "offline"
     ? { title: d.name, line: OFFLINE_LICENSE_SENTENCE, note: OFFLINE_LICENSE_TERMS, href: d.href, icon: d.icon, badge: "Business & Enterprise", wide: true }
     : { title: d.name, line: d.line, href: d.href, icon: d.icon });
+
+/** The note under the modes: CPU only (no GPU) is Your servers on a Linux PC
+ *  with no GPU, not a fifth mode. */
+export const CPU_NOTE = { line: CPU_ONLY.line.replace(/\.$/, ""), title: CPU_ONLY.name, href: CPU_ONLY.href };
 
 export interface ModelCard {
   title: string;

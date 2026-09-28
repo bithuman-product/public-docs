@@ -1,6 +1,6 @@
 ---
 title: "Deployment options"
-description: "The avatar renders in one of five places. Pick the one that matches where your users are and what may leave their device."
+description: "The avatar renders in one of four places. Pick the one that matches where your users are and what may leave their device."
 section: deploy
 group: "Overview"
 order: 0
@@ -25,13 +25,11 @@ bitHuman renders the avatar in the US and streams it to your page, app or LiveKi
 
 The CLI, Python or the LiveKit plugin on your own Mac or Linux machines. When the avatar renders on your hardware, its audio and video stay there. [Your servers](/deploy/self-hosted)
 
+> **Note:** No GPU? Both models run live on a standard Linux PC with no GPU: [CPU only (no GPU)](/deploy/cpu).
+
 ## On the device
 
 Essence 2 and Expression 2 render on iPhone, iPad, Mac and Android, or in a WebGPU browser tab. [On the device](/deploy/on-device)
-
-## CPU only (no GPU)
-
-Both models run live on a standard Linux PC with no GPU. [CPU only (no GPU)](/deploy/cpu)
 
 ## Fully offline
 
@@ -44,6 +42,8 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Want the lowest per-minute rate?** Render on the device or on your servers ([rates](/pricing)).
 - **No reliable internet at the site?** [Fully offline](/deploy/offline), on the Business and Enterprise plans.
 - **Planning for a branch, a clinic or a show floor?** Start from [Use cases](/deploy/use-cases).
+
+The overview to share with your team is on bithuman.ai: [where AI avatars run](https://www.bithuman.ai/deployment).
 
 ## Try it
 

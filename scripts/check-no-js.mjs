@@ -11,7 +11,7 @@
 //   /start          the quickstart picker: every platform's panel, heading,
 //                   steps and "Next" link
 //   /models         the full model × place matrix, one row per place
-//   /deploy         all five deployment modes
+//   /deploy         all four deployment modes
 //   /api/reference  every operation in the OpenAPI spec, each with an anchor,
 //                   and curl, Python and Node samples where the spec's curl
 //                   converts; no third-party script

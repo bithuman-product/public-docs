@@ -19,7 +19,7 @@ An avatar on a branch screen, a teller terminal or an ATM greets customers, answ
 | A Linux PC or terminal, x86_64 or arm64, with no GPU | the CLI or the Python SDK render it on the CPU ([CPU only (no GPU)](/deploy/cpu)) |
 | An Android terminal (arm64) | the Android SDK renders it inside your app ([Android](/platforms/android)) |
 | Screens fed from your own servers | the CLI, the Python SDK or the LiveKit plugin on your Mac or Linux machines ([Your servers](/deploy/self-hosted)) |
-| Windows-based terminals | [talk to us](https://www.bithuman.ai/sales) |
+| Windows-based terminals | [contact sales](https://www.bithuman.ai/enterprise?topic=banking#contact) |
 
 How fast each model renders on a standard desktop CPU: [Performance](/performance).
 
@@ -64,6 +64,6 @@ A session bills while it runs, talking or idle, so close it when the branch clos
 
 ## Agreements
 
-Healthcare and financial-services deployments are set up under an enterprise agreement and review. [Contact sales](https://www.bithuman.ai/sales) to start one.
+Healthcare and financial-services deployments are set up under an enterprise agreement and review. [Contact sales](https://www.bithuman.ai/enterprise?topic=banking#contact) to start one.
 
 Overviews to share with your team, on bithuman.ai: [AI avatars for banking and ATMs](https://www.bithuman.ai/use-cases/banking-atm), [Security and privacy](https://www.bithuman.ai/security) and [Enterprise](https://www.bithuman.ai/enterprise).

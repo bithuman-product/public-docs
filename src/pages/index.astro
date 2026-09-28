@@ -8,7 +8,8 @@ import LiveDemo from "../components/LiveDemo.astro";
 import RunsEverywhere from "../components/RunsEverywhere.astro";
 import WhatsNew from "../components/WhatsNew.astro";
 import { hubMeta } from "../config/hubs";
-import { HERO, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
+import { HERO, START_BUILDING, DEPLOYMENTS, CPU_NOTE, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
+import { contactSalesUrl } from "../config/nav";
 import { versionLabel, type Artifact } from "../data/labels";
 
 // The front door: a live avatar first, then the measured proof, then where to
@@ -22,7 +23,7 @@ const deployMain = DEPLOYMENTS.filter((d) => !d.wide);
 const deployWide = DEPLOYMENTS.filter((d) => d.wide);
 ---
 
-<Base title="bitHuman Docs: realtime AI avatar SDK for iOS, Android, web and Linux" description={meta.description}>
+<Base title="bitHuman Docs: real-time AI avatar SDK for iOS, Android, web and Linux" description={meta.description}>
   <section class="hero" aria-labelledby="home-title">
     <div class="container hero-grid">
       <div class="hero-copy">
@@ -66,7 +67,7 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
         <h2 id="where-it-runs">Where it runs</h2>
         <a class="band-more" href="/deploy">Deployment options <Icon name="arrow" size={16} /></a>
       </div>
-      <ul class="card-grid cols-4" role="list">
+      <ul class="card-grid cols-3" role="list">
         {deployMain.map((c) => <li><Card href={c.href} title={c.title} line={c.line} icon={c.icon} /></li>)}
         {deployWide.map((c) => (
           <li class="span-all">
@@ -74,7 +75,7 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
           </li>
         ))}
       </ul>
-      <p class="band-foot">Fully offline is arranged through sales: <a href="https://www.bithuman.ai/sales">Contact sales</a>.</p>
+      <p class="band-foot">{CPU_NOTE.line}: <a href={CPU_NOTE.href}>{CPU_NOTE.title}</a>. Fully offline is arranged through sales: <a href={contactSalesUrl("offline")}>Contact sales</a>.</p>
     </div>
   </section>
 

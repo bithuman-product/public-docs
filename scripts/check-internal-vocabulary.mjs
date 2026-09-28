@@ -700,7 +700,7 @@ function selfTest() {
     const e2max = BANNED.find((b) => b.name === "essence-2-max");
     const carried = (line) => CARRIERS.some((c) => c.re.test(line));
     const hits = (line) => { e2max.re.lastIndex = 0; return e2max.re.test(line); };
-    const ok = "Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/sales) to enable it.";
+    const ok = "Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=models#contact) to enable it.";
     T("M2b the ruled Enterprise-only sentence carries Essence 2 Max; the bare name and a marker in another sentence do not",
       hits(ok) && carried(ok)
       && hits("Essence 2 Max renders at 1080p.") && !carried("Essence 2 Max renders at 1080p.")

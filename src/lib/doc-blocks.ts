@@ -6,7 +6,7 @@
 //   ```why-on-device         the three-line "why on the device" box (ios, macos, android, web)
 //   ```model-matrix          the model × place matrix; "model: essence-2" or "place: offline" for a slice
 //   ```model-cards           the current models as portrait cards (models.ts, demo.ts)
-//   ```deploy-matrix         the five deployment modes side by side
+//   ```deploy-matrix         the four deployment modes side by side, and the CPU-only note
 //   ```dataflow              where one mode renders, where the conversation runs, what reaches bitHuman
 //   ```price                 one mode's rate, from pricing.json
 //   ```session-caps          concurrent cloud sessions per plan, from plans.json
@@ -30,7 +30,7 @@ import { formatMultiple } from "./format-multiple.ts";
 import { calculate, planLine, fmtInt, fmtUsd, type CalcData, type CalcMode } from "./calculator.ts";
 import { PERF_GROUPS } from "../data/perf-groups.ts";
 import { MODELS, PLACES, MATRIX, type ModelId, type PlaceId } from "../data/models.ts";
-import { DEPLOYMENTS } from "../data/deployments.ts";
+import { DEPLOYMENTS, CPU_ONLY, deploymentById } from "../data/deployments.ts";
 import { DATAFLOWS, DEVICE_METERING_ONLY, type ModeId } from "../data/dataflows.ts";
 import { DEMOS } from "../data/demo.ts";
 import { figureBlock, galleryBlock, githubBlock } from "./showcase.ts";
@@ -214,25 +214,26 @@ function deployMatrix(mode: Mode): string {
     ["Products", DEPLOYMENTS.map((d) => d.surfaces)],
     ["Models", DEPLOYMENTS.map((d) => d.models)],
   ];
-  const foot = `Every mode bills active session time, talking or idle, to the second ([pricing](/pricing)).`;
+  // CPU only (no GPU) is Your servers on a PC with no GPU: a note under the modes, not a fifth one.
+  const foot = `${CPU_ONLY.line.replace(/\.$/, "")}: [${CPU_ONLY.name}](${CPU_ONLY.href}). Every mode bills active session time, talking or idle, to the second ([pricing](/pricing)).`;
   if (mode === "twin") {
     const head = ["Compare", ...DEPLOYMENTS.map((d) => `[${d.name}](${d.href})`)];
     const body = [...rows.map(([k, v]) => [`**${k}**`, ...v]), ["**Plan**", ...DEPLOYMENTS.map((d) => PLAN_LABEL[d.plan])]];
     return table(head, body) + `\n${foot}\n`;
   }
-  // On the page, one card per mode: five columns of prose do not fit a reading column.
+  // On the page, one card per mode: four columns of prose do not fit a reading column.
   const card = (d: (typeof DEPLOYMENTS)[number], i: number) =>
-    `<li class="dm-card${d.id === "offline" ? " dm-wide" : ""}" data-mx-item="${d.id}"><div class="dm-head"><a href="${d.href}">${esc(d.name)}</a><span class="chip chip-plan">${esc(PLAN_LABEL[d.plan])}</span></div>` +
+    `<li class="dm-card" data-mx-item="${d.id}"><div class="dm-head"><a href="${d.href}">${esc(d.name)}</a><span class="chip chip-plan">${esc(PLAN_LABEL[d.plan])}</span></div>` +
     `<dl>${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${inlineHtml(v[i])}</dd></div>`).join("")}</dl></li>`;
   const link = (s: string) => s.replace(/\[([^\]]+)\]\((\/[^)]*)\)/g, (_, t, h) => `<a href="${h}">${t}</a>`);
   const filter = `<div class="mx-filter" role="radiogroup" aria-label="Show one mode" data-mx-filter="deploy-matrix">` +
-    [`<button type="button" role="radio" aria-checked="true" tabindex="0" data-mx="">All five</button>`, ...DEPLOYMENTS.map((d) => `<button type="button" role="radio" aria-checked="false" tabindex="-1" data-mx="${d.id}">${esc(d.name)}</button>`)].join("") + `</div>`;
+    [`<button type="button" role="radio" aria-checked="true" tabindex="0" data-mx="">All four</button>`, ...DEPLOYMENTS.map((d) => `<button type="button" role="radio" aria-checked="false" tabindex="-1" data-mx="${d.id}">${esc(d.name)}</button>`)].join("") + `</div>`;
   return `<div class="doc-block-deploy-matrix" data-mx-root>${filter}<ul class="deploy-cards" role="list">${DEPLOYMENTS.map(card).join("")}</ul><p class="dm-foot">${link(esc(foot))}</p></div>`;
 }
 
 function dataflow(id: string): string {
-  const d = DEPLOYMENTS.find((x) => x.id === id);
-  if (!d) throw new Error(`\`\`\`dataflow: unknown mode "${id}" (${DEPLOYMENTS.map((x) => x.id).join(", ")})`);
+  const d = deploymentById(id);
+  if (!d) throw new Error(`\`\`\`dataflow: unknown mode "${id}" (${[...DEPLOYMENTS, CPU_ONLY].map((x) => x.id).join(", ")})`);
   const f = DATAFLOWS[d.id];
   return table(["Question", d.name], [
     ["Where the avatar renders", f.renders],
@@ -243,7 +244,7 @@ function dataflow(id: string): string {
 }
 
 function price(id: string): string {
-  const d = DEPLOYMENTS.find((x) => x.id === id);
+  const d = deploymentById(id);
   if (!d) throw new Error(`\`\`\`price: unknown mode "${id}"`);
   if (d.rate === "sales") {
     return `From ${plans().offline.min_credits.toLocaleString("en-US")} credits, credit-based and metered on the machine. Business & Enterprise; arranged through sales.\n`;
@@ -251,7 +252,7 @@ function price(id: string): string {
   const n = rateFor(d.rate);
   const chat = d.rate === "hosted" ? ` A managed agent's voice chat bills ${perMinute(chatRate())}, all-inclusive: the avatar is part of it.` : "";
   return `${perMinute(n)} of active session time for Essence 2 and Expression 2, about ${usd(n)} a minute at the top-up rate of $1 = ${plans().topup.credits_per_usd} credits.${chat} ` +
-    `Realtime usage bills active session time, talking or idle, to the second. Every rate: [Pricing and credits](/pricing).\n`;
+    `Real-time usage bills active session time, talking or idle, to the second. Every rate: [Pricing and credits](/pricing).\n`;
 }
 
 /** S31: concurrent bitHuman cloud sessions per plan, from plans.json. */

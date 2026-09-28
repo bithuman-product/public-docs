@@ -8,7 +8,7 @@
 import versions from "../data/versions.json";
 import { OFFLINE_LICENSE_COPY } from "../data/offline";
 import { perfCell, perfRow } from "../lib/perf";
-import { API_SECRET_URL } from "./nav";
+import { API_SECRET_URL, contactSalesUrl } from "./nav";
 
 const V = versions.versions;
 
@@ -38,7 +38,7 @@ export function agentWhere(site: string): string {
   return (
     `## Where it runs\n\n` +
     `- On the device: Essence 2 and Expression 2 render on iPhone, iPad and Mac (Swift package), Android arm64 (Android SDK), macOS and Linux (CLI, Python). Android, and Essence 2 on iPhone and iPad, need a physical device. The SDKs only render your voice stack's 16 kHz mono speech (resample OpenAI Realtime's 24 kHz): ${site}/build/companion-app.md\n` +
-    `- No GPU: both models run live on a standard Linux PC with no GPU (${xrt("linux-cpu")}). ${site}/deploy/cpu.md\n` +
+    `- No GPU: both models run live on a standard Linux PC (${xrt("linux-cpu")}). ${site}/deploy/cpu.md\n` +
     `- In the browser: WebGPU renders the avatar in the tab, falling back to cloud rendering; the conversation runs on bitHuman's servers.\n` +
     `- Your servers: the CLI, the Python SDK and the LiveKit plugin on your machines; audio and video stay there.\n` +
     `- Fully offline: ${OFFLINE_LICENSE_COPY} Essence 1 on Linux x86_64/ARM64 now (bitHuman 2.11.16+); Essence 2 and Expression 2 later. Not for phones. (Not the same as file rendering with \`bithuman render\`, which signs in online.) ${site}/deploy/offline.md\n` +
@@ -52,7 +52,7 @@ export function agentKeyFacts(site: string): string {
     `## Key facts\n\n` +
     `- Credential: one API secret for every surface, from the environment as \`BITHUMAN_API_SECRET\`. REST header \`api-secret\` (not \`Authorization\`). Apps fetch it from your backend; never compile it in. Get one: ${API_SECRET_URL} · ${site}/start/api-secret.md\n` +
     `- Billing: credits pay for active session time, talking or idle, by the exact second; the Video API bills whole minutes of output (minimum 1). ${site}/pricing.md\n` +
-    `- Model names: Essence 2, Expression 2 in prose; \`essence-2\`, \`expression-2\` in code. Essence 1 and Expression 1 are the first generation. Essence 2 Max is available on the Enterprise plan only. Contact sales to enable it: https://www.bithuman.ai/sales · ${site}/models.md\n` +
+    `- Model names: Essence 2, Expression 2 in prose; \`essence-2\`, \`expression-2\` in code. Essence 1 and Expression 1 are the first generation. Essence 2 Max is available on the Enterprise plan only. Contact sales: ${contactSalesUrl("models")} · ${site}/models.md\n` +
     `- Sample avatars (no account): Essence 2 \`sofia-ramirez\` (A52DHS2219), Expression 2 \`wise-pup\` (A23WJF0199). Sample audio: ${site}/samples/speech.wav (15 s, 24 kHz mono)\n` +
     `- Current versions: CLI ${V.cli} · bithuman (Python) ${V.python} · Swift package ${V.swift} · essence2-android ${V.essence2_android} · expression2-android ${V.expression2_android} · livekit-plugins-bithuman ${V.livekit_plugin}. ${site}/versions.json\n` +
     `- Python: use a venv (\`python3 -m venv .venv\`); Debian/Ubuntu's system Python refuses \`pip install\`.\n\n`

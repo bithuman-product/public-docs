@@ -52,7 +52,7 @@ the [embed token flow](/api/embedding) instead. See
   [Gestures](/api/dynamics).
 - **Ground agents in your docs** — ingest files and URLs into knowledge bases from
   code. See [Knowledge](/api/knowledge).
-- **Add realtime voice** — mint a browser client secret for OpenAI-Realtime
+- **Add real-time voice** — mint a browser client secret for OpenAI-Realtime
   sessions. See [Realtime](/api/realtime).
 - **Bring your own keys** — use your own LLM/STT/TTS provider keys. See
   [Providers](/api/providers).

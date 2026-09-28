@@ -89,12 +89,14 @@ export const DATA_KINDS: { id: DataKind; name: string }[] = [
   { id: "usage", name: "Usage reports" },
 ];
 
+/** The four deployment modes, then two variants that change what crosses:
+ *  CPU only (Your servers on a PC with no GPU) and the web embed with render=local. */
 export const FLOW_MODES: { id: FlowMode; name: string }[] = [
   { id: "cloud", name: "bitHuman cloud" },
   { id: "servers", name: "Your servers" },
   { id: "device", name: "On the device" },
-  { id: "cpu", name: "CPU only (no GPU)" },
   { id: "offline", name: "Fully offline" },
+  { id: "cpu", name: "CPU only (no GPU)" },
   { id: "web-local", name: "Web embed, render=local" },
 ];
 

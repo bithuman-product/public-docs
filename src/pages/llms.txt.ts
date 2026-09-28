@@ -20,7 +20,7 @@ const SITE = "https://docs.bithuman.ai";
 export const GET: APIRoute = async () => {
   let out = `# bitHuman\n\n`;
   out +=
-    `> Realtime talking avatars from one portrait. Essence 2 renders a photoreal person; Expression 2 renders any character. ` +
+    `> Real-time talking avatars from one portrait. Essence 2 renders a photoreal person; Expression 2 renders any character. ` +
     `They render on the device (iPhone, iPad, Mac, Android arm64, a Linux PC with no GPU, a WebGPU browser) or in the bitHuman cloud. ` +
     `Every published configuration is measured faster than real time: ${SITE}/performance\n\n`;
   out += agentInstructions(SITE) + agentWhere(SITE) + agentKeyFacts(SITE);

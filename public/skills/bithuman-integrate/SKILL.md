@@ -1,11 +1,11 @@
 ---
 name: bithuman-integrate
-description: Add a bitHuman realtime talking avatar (Essence 2 or Expression 2) to an app, a website, a Python or LiveKit voice agent, or a terminal. Use when a user asks to integrate bitHuman, render a talking avatar from speech, or choose between on-device, browser, self-hosted and bitHuman cloud rendering.
+description: Add a bitHuman real-time talking avatar (Essence 2 or Expression 2) to an app, a website, a Python or LiveKit voice agent, or a terminal. Use when a user asks to integrate bitHuman, render a talking avatar from speech, or choose between on-device, browser, self-hosted and bitHuman cloud rendering.
 ---
 
 # Integrate a bitHuman avatar
 
-bitHuman turns speech into a realtime talking avatar from one portrait. Essence 2 renders a photoreal person; Expression 2 renders any character. The docs are at https://docs.bithuman.ai; every page is also markdown at `<url>.md`, and the index is https://docs.bithuman.ai/llms.txt.
+bitHuman turns speech into a real-time talking avatar from one portrait. Essence 2 renders a photoreal person; Expression 2 renders any character. The docs are at https://docs.bithuman.ai; every page is also markdown at `<url>.md`, and the index is https://docs.bithuman.ai/llms.txt.
 
 ## Rules
 
@@ -59,4 +59,4 @@ Get a secret: https://www.bithuman.ai/developer/api-keys. Details: https://docs.
 
 ## 5. Check it worked
 
-The avatar appears, moves while idle and its lips follow the speech. Realtime sessions bill active session time, talking or idle, to the second; end sessions you are not using. If something fails, read https://docs.bithuman.ai/resources/troubleshooting.md and the platform page's Troubleshooting table.
+The avatar appears, moves while idle and its lips follow the speech. Real-time sessions bill active session time, talking or idle, to the second; end sessions you are not using. If something fails, read https://docs.bithuman.ai/resources/troubleshooting.md and the platform page's Troubleshooting table.

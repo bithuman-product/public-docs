@@ -36,7 +36,7 @@ What each term means here, and the page that owns it.
 | **CPU only (no GPU)** | The avatar renders on a standard Linux PC with no graphics card. [CPU only](/deploy/cpu) |
 | **Your servers** | You run the CLI, the Python SDK or the LiveKit plugin on machines you control. [Your servers](/deploy/self-hosted) |
 | **bitHuman cloud** | The avatar renders on bitHuman's servers and streams to any screen. [bitHuman cloud](/deploy/cloud) |
-| **Fully offline** | A license for realtime avatars with no internet connection. [Fully offline](/deploy/offline) |
+| **Fully offline** | A license for real-time avatars with no internet connection. [Fully offline](/deploy/offline) |
 | **File rendering** | Turning an audio file into a talking-avatar video with `bithuman render` or the Python SDK. It signs in online; it is not the [offline license](/deploy/offline). [Talking video](/build/talking-video) |
 | **WebGPU** | The browser graphics interface the web embed uses to render the avatar in the tab (`render=local`). [Web](/platforms/web) |
 | **Local conversation brain** | The CLI mode (`BITHUMAN_LOCAL=1`) that runs speech recognition, the language model and the voice on a Mac or Linux PC. [Local conversation brain](/platforms/cli/local-brain) |
@@ -50,7 +50,7 @@ What each term means here, and the page that owns it.
 | **Embed token** | A short-lived token your server mints so a web page can open a private agent without the secret. [Embedding](/api/embedding) |
 | **Runtime token** | A short-lived token for a LiveKit room or a download, minted with the API secret. [Authentication](/api/authentication) |
 | **Credits** | What usage is paid in. [Pricing and credits](/pricing) |
-| **Active session time** | What realtime usage bills: the time a session is open, talking or idle, to the second. [Pricing](/pricing) |
+| **Active session time** | What real-time usage bills: the time a session is open, talking or idle, to the second. [Pricing](/pricing) |
 | **Creator plan** | The plan API and SDK use requires, or a higher one. [Plans](/pricing) |
 
 ## Older names

@@ -22,14 +22,14 @@ Rules for everything under `src/content/docs` and `src/pages`. Each rule is one 
 | the Android SDK (`essence2-android`, `expression2-android`); the Flutter plugin; the Python SDK (`bithuman`); the CLI; the LiveKit plugin | — |
 | the web embed; the bitHuman app (bithuman.ai) | dashboard, Studio, console, widget (mixed) |
 | API secret · runtime token · embed token; `BITHUMAN_API_SECRET` (`BITHUMAN_API_KEY` is the deprecated alias), header `api-secret` | API key, bearer [check-internal-vocabulary] |
-| bitHuman cloud · Your servers (self-hosted) · On the device · Fully offline · CPU only (no GPU) | Cloud/Self-hosted/On-device/Offline as a mixed set; "VPC" |
+| the four modes: bitHuman cloud · Your servers (self-hosted) · On the device · Fully offline; CPU only (no GPU) is a note beside them (Your servers on a PC with no GPU) | Cloud/Self-hosted/On-device/Offline as a mixed set; "five modes"; "VPC" |
 | the avatar **renders** (device, browser, server, cloud); the conversation **runs** (your stack, the CLI's local conversation brain, bitHuman's servers) | "runs locally" for a web embed |
 | Local conversation brain (the CLI on macOS and Linux, `BITHUMAN_LOCAL=1`) | "on-device brain" [check-claims] |
-| offline license (disconnected realtime) vs **file rendering** (`bithuman render`, `bithuman.offline`; signs in online) | "offline render" |
+| offline license (disconnected real-time use) vs **file rendering** (`bithuman render`, `bithuman.offline`; signs in online) | "offline render" |
 | {x}× real time, floored to one decimal, with the hardware named | a frame rate on a card, hub, lede or llms opener |
 | active session time, talking or idle, billed to the second | "talking time", "idle is free" [check-claims] |
 | the Creator plan or higher | free tier, free key, free SDK [check-claims] |
-| license (US), Apple silicon, iPhone, iPad, Android arm64, Linux x86_64 / arm64, WebGPU, realtime | licence, Apple Silicon, "any phone" [check-claims] |
+| license (US), Apple silicon, iPhone, iPad, Android arm64, Linux x86_64 / arm64, WebGPU, real-time ("realtime" only in the approved offline sentence and in names: OpenAI Realtime, `/v1/realtime`) | licence, Apple Silicon, "any phone" [check-claims] |
 | gestures (prose); `dynamics` (API paths only) | avatar actions |
 | sample avatars `sofia-ramirez` (Essence 2) and `wise-pup` (Expression 2); placeholder `$AGENT_CODE` | customer or showcase codes as "your agent" |
 | AI companion, companionship, conversation practice, coaching | therapy, mental-health support, loneliness [check-claims] |
@@ -131,7 +131,7 @@ A fenced block named for a block is drawn at build time from the data files (`sr
 | ```` ```why-on-device ```` + `ios`, `macos`, `android`, `flutter` or `web` | the three-line "why render on the device" box (S30, S26, S10; S29 on the web) | `pricing.json`, `plans.json` |
 | ```` ```model-matrix ```` [+ `model: <id>` or `place: <ids>`] | which model renders where, whole or as a slice | `src/data/models.ts` |
 | ```` ```model-cards ```` | the current models as portrait cards | `models.ts`, `demo.ts` |
-| ```` ```deploy-matrix ```` | the five modes side by side | `deployments.ts`, `dataflows.ts`, `pricing.json` |
+| ```` ```deploy-matrix ```` | the four modes side by side, and the CPU-only note | `deployments.ts`, `dataflows.ts`, `pricing.json` |
 | ```` ```dataflow ```` + a mode | where it renders, where the conversation runs, what reaches bitHuman | `dataflows.ts` |
 | ```` ```price ```` + a mode, ```` ```session-caps ```` | one mode's rate; cloud sessions per plan | `pricing.json`, `plans.json` |
 | ```` ```partial ```` + a name | a shared passage (`src/partials/<name>.md`), such as the Swift install on iOS and macOS | `src/partials` |

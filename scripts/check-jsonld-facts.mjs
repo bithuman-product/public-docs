@@ -4,8 +4,9 @@
 //
 // WHY THIS EXISTS
 // ---------------
-// The site-wide Organization and SoftwareApplication (src/config/site-jsonld.ts,
-// placed by src/layouts/Base.astro on every page) are what search engines and
+// The site-wide SoftwareApplication (src/config/site-jsonld.ts, placed by
+// src/layouts/Base.astro on every page; the Organization is referenced by @id
+// only, www.bithuman.ai defines it) is what search engines and
 // AI agents read first. The block they replaced said "Free tier available; low
 // per-minute cost from 1 credit/min self-hosted" with a price of "0" for months
 // after the plans changed, and no gate saw it: check-billing-consistency reads

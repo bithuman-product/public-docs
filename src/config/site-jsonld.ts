@@ -1,5 +1,8 @@
-// The site-wide structured data: the Organization and the SoftwareApplication
-// that src/layouts/Base.astro puts in the JSON-LD graph of every page. Search
+// The site-wide structured data: the SoftwareApplication that
+// src/layouts/Base.astro puts in the JSON-LD graph of every page. The
+// Organization is bitHuman's one node on www.bithuman.ai; the docs only
+// reference its @id (publisher, author), so there is one logo and one
+// description for the company, not a second definition here. Search
 // engines and AI agents read this block first, so it says only what the pages
 // say, read from the same data the pages render:
 //
@@ -18,7 +21,7 @@
 // check-perf-literals and check-jsonld-facts (rates, plan prices and names,
 // platforms) read it out of dist/.
 import { HERO, MODELS } from "../data/home";
-import { DEPLOYMENTS } from "../data/deployments";
+import { DEPLOYMENTS, CPU_ONLY } from "../data/deployments";
 import { PLATFORM_PAGES, QUICKSTART } from "../data/platforms";
 import { DEVICE_METERING_ONLY, WEB_EMBED_CONVERSATION } from "../data/dataflows";
 import { OFFLINE_LICENSE_COPY } from "../data/offline";
@@ -99,7 +102,9 @@ function offers(site: URL) {
 }
 
 function features(): string[] {
-  const modes = DEPLOYMENTS.filter((m) => m.id !== "offline").map((m) => `${m.name} — ${lower(m.line)}`);
+  // The online modes, then the CPU-only note (Your servers on a PC with no GPU);
+  // the offline license closes the list in its approved words.
+  const modes = [...DEPLOYMENTS.filter((m) => m.id !== "offline"), CPU_ONLY].map((m) => `${m.name} — ${lower(m.line)}`);
   // Speed as times real time from the generated headline; the claim over every
   // published configuration words itself down when a cell falls under 1.0×.
   const speed = (headlineData() ?? []).map((r) => `${r.model}, × real time: ${r.cells.map((c) => `${c.platform} ${c.multiple}`).join(", ")}`);
@@ -114,17 +119,10 @@ function features(): string[] {
   ];
 }
 
-/** The two site-wide nodes, for the page's @graph. */
+/** The site-wide node, for the page's @graph. The Organization is referenced by
+ *  ORGANIZATION_ID only; www.bithuman.ai defines it. */
 export function siteGraph(site: URL): Record<string, unknown>[] {
   return [
-    {
-      "@type": "Organization",
-      "@id": ORGANIZATION_ID,
-      name: "bitHuman",
-      url: "https://www.bithuman.ai",
-      logo: new URL("/favicon.png", site).href, // 128 px: a logo needs 112 px or more
-      description: "bitHuman makes realtime talking avatars from one portrait, rendered on the device or in the bitHuman cloud.",
-    },
     {
       "@type": "SoftwareApplication",
       "@id": SOFTWARE_ID,
