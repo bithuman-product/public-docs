@@ -84,8 +84,9 @@ Pass it as a query string:
 
 ## Session events
 
-An agent can POST `room.join` and `chat.push` events to a URL of yours as its
-conversations happen — see [session events](/api/webhooks#session-events).
+Every conversation on an embed of your agent can POST `room.join` and `chat.push`
+events, including the text of every message, to a URL on your account. See
+[session events](/api/webhooks#session-events).
 
 ## Notes
 

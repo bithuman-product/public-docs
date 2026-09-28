@@ -115,16 +115,20 @@ then once for every message, the visitor's and the agent's.
 On the dashboard, open **Developer → Webhooks**
 ([www.bithuman.ai/developer?tab=webhooks](https://www.bithuman.ai/developer?tab=webhooks)):
 
-1. Enter your **Endpoint URL** (a public `https://` URL).
-2. Add **Authentication Headers**, e.g. `X-Webhook-Secret: <a long random value>`.
+1. Switch webhooks **on**. The fields appear once it's enabled.
+2. Enter your **Endpoint URL**. It must be a public `https://` URL; private and
+   local addresses are refused.
+3. Add **Authentication Headers**, e.g. `X-Webhook-Secret: <a long random value>`.
    Deliveries are not signed, so check this header in your handler.
-3. Under **Event Subscriptions**, turn on `room.join` and/or `chat.push`.
-4. **Save settings**, then **Test** to send a sample delivery.
+4. Under **Event Subscriptions**, turn on `room.join` and/or `chat.push`.
+5. **Save settings**, then **Test** to send a sample delivery.
 
-The setting belongs to your **account**, not to one agent: it covers every
-conversation that runs on your account, including every embed of your agents,
-which always runs on the owner's account. Sessions you host yourself with the
-SDK on your own machines send no session events.
+The setting belongs to an **account**, not to one agent. An embed of your agent
+always reports to **you**, the owner. A conversation on www.bithuman.ai reports
+to the account signed in there. So when you chat with your own agent, the
+events come to you. When another signed-in user chats with it, they go to that
+user's setting instead. Sessions you host yourself with the SDK, including
+cloud-avatar sessions driven by your own agent, send no session events.
 
 ### What a delivery looks like
 
@@ -132,7 +136,8 @@ Each event is an HTTP `POST` with `Content-Type: application/json` and your
 headers. `timestamp` values are Unix seconds with a fractional part.
 
 **`room.join`** fires once, when the conversation starts.
-`participant_count` includes the agent and the avatar.
+`participant_count` is the number of participants in the room at that moment.
+Depending on the model, that can already include the agent and its avatar.
 
 ```json
 { "agent_id": "A80HVD8577", "event_type": "room.join",
@@ -153,15 +158,27 @@ for what the agent said, including its greeting.
   "timestamp": 1790607268.895705 }
 ```
 
-`agent_id` is the agent's code. `session_id` is the same on every event of one
-conversation, so use it to group messages. Order them by `data.timestamp`.
-Each message arrives whole, once it is finished, not word by word.
+`agent_id` is the agent's code. Group messages by `session_id` and order them
+by `data.timestamp`. Each message arrives once it's finished, not word by word.
+A reply the visitor interrupts arrives as far as it got.
+
+Two cases where `session_id` does not map one-to-one to a conversation:
+- If a session restarts mid-conversation, it gets a new `session_id` with no
+  new `room.join`.
+- A kiosk that resets between visitors keeps one `room.join` and one
+  `session_id` for every visitor.
 
 ### Delivery
 
 - There is **one attempt** per event, with a 10-second timeout, and no
-  retries. Return `200` quickly and do the work on a queue.
-- Anything other than `200` counts as a failure and is not re-sent.
+  retries.
+- Answer **exactly `200`**. Anything else, including `201` or `204`, counts as a
+  failure and is not re-sent.
+- Point the URL straight at your handler. A redirect can turn the POST into a
+  GET and drop the body.
+- **Answer fast.** The conversation waits for your `room.join` response before
+  it starts, so a slow endpoint delays the avatar's first words by up to 10
+  seconds. Return `200` at once and do the work on a queue.
 - **Test** sends `{"event_type": "test", "agent_id": "test_agent_123", ...}` with
   your headers plus `X-Test-Webhook: true`.
 
