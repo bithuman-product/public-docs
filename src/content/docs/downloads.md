@@ -33,9 +33,11 @@ The web embed needs no install: one URL or one `<iframe>` ([Web](/platforms/web)
 | macOS, Intel | no | no | no | — |
 | Linux x86_64 | yes | yes | — | — |
 | Linux arm64 | yes | yes | — | — |
-| Windows | under WSL2 | under WSL2 | — | — |
+| Windows 10/11, x86_64 | yes: cloud sessions and MCP (on-machine rendering under WSL2) | under WSL2 | — | — |
 | iOS / iPadOS | — | — | yes | — |
 | Android (arm64-v8a) | — | — | — | yes |
+
+On Windows, install the CLI from PowerShell with `irm https://install.bithuman.ai/windows | iex`: it checks the download against its published SHA256, installs `bithuman.exe` into `%LOCALAPPDATA%\bithuman\bin` and adds that folder to your `PATH`. With Scoop: `scoop bucket add bithuman https://github.com/bithuman-product/homebrew-bithuman`, then `scoop install bithuman`.
 
 On an unsupported platform the CLI installer names the platform and stops, and `pip install bithuman` finds no wheel. Neither installs anything.
 
@@ -51,5 +53,12 @@ sha256sum -c bithuman-x86_64-unknown-linux-gnu.tar.gz.sha256
 # macOS
 shasum -a 256 -c bithuman-aarch64-apple-darwin.tar.gz.sha256
 ```
+
+```powershell
+# Windows (PowerShell): compare with the hash in the .sha256 file
+(Get-FileHash bithuman-x86_64-pc-windows-msvc.zip -Algorithm SHA256).Hash
+```
+
+The Windows build isn't code-signed. If you download the .zip from the browser, SmartScreen may ask you to confirm (More info → Run anyway). The install script avoids this. Verify with the published SHA256.
 
 pip verifies the Python wheel against the digest PyPI publishes.

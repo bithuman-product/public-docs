@@ -59,7 +59,12 @@ sudo apt install -y ffmpeg python3-venv
 curl -fsSL https://install.bithuman.ai | sh
 ```
 
-The installer puts the CLI in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to change it) and verifies its checksum. If it asks you to, add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile. On macOS, `curl -fsSL https://install.bithuman.ai | sh` installs the same release (then `brew install ffmpeg livekit` yourself). `bithuman --version` prints the CLI and engine versions.
+```powershell
+# Windows 10/11 x86_64 (PowerShell): cloud sessions and MCP
+irm https://install.bithuman.ai/windows | iex
+```
+
+The installer puts the CLI in `~/.local/bin` (set `BITHUMAN_INSTALL_DIR` to change it) and verifies its checksum. If it asks you to, add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile. On macOS `curl` works too (then `brew install ffmpeg livekit`). `bithuman --version` prints the CLI and engine versions.
 
 Check the install:
 
@@ -164,7 +169,7 @@ The whole setup, and the same conversation in your own Python code: [Talk to an 
 
 - Essence 1 avatars work with `run` only; for a file use [Python](/platforms/python) or the [video API](/api/video). Expression 1 runs on the [cloud API](/api).
 - The first Essence 2 render on a machine downloads a shared audio encoder (about 66 MB) to `~/.bithuman/engines/essence-2/` once.
-- Intel Macs and Windows have no binary. Use WSL2 on Windows, or the [web embed](/platforms/web) or [cloud API](/api).
+- Intel Macs have no binary. On Windows (not code-signed; [Downloads](/downloads)) everything renders in the cloud; use WSL2 to render locally.
 
 ## Performance
 
