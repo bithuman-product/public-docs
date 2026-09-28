@@ -63,8 +63,9 @@ bithuman render kwame-warm-museum-guide speech.wav -o kwame.mp4
 ```python tab="Python"
 # Needs the bithuman package, ffmpeg on PATH and BITHUMAN_API_SECRET in the environment.
 # The avatar file comes from `bithuman pull sofia-ramirez`, or the download URL on /platforms/python.
-from bithuman.offline import render_offline
-render_offline("sofia-ramirez.imx", "speech.wav", out_mp4="out.mp4")
+import bithuman
+frames = bithuman.open("sofia-ramirez.imx").render("speech.wav", out_mp4="out.mp4")
+print(frames, "frames written")
 ```
 
 ```bash tab="REST"
@@ -74,7 +75,7 @@ curl -X POST https://api.bithuman.ai/v1/video/generate \
 ```
 
 ```expected
-An MP4 as long as the speech: `kwame.mp4` or `out.mp4` on your machine, or a `video_url` in the REST response (`"status": "completed"`). A render that takes longer than the wait returns a `job_id` to [poll](/api/video#get-talking-video-status).
+An MP4 as long as the speech: `kwame.mp4`, or `out.mp4` with the number of frames written, on your machine; or a `video_url` in the REST response (`"status": "completed"`). A render that takes longer than the wait returns a `job_id` to [poll](/api/video#get-talking-video-status).
 ```
 
 ### Check the file
@@ -107,6 +108,6 @@ The same engine renders a live conversation and a file: speech goes in and lip-s
 | Symptom | Fix |
 |---|---|
 | `bithuman render` exits with code 77 | No API secret: export `BITHUMAN_API_SECRET`, or run `bithuman login` once. |
-| An MP4 with sound and no picture | The render was refused: set the secret, delete the file, render again. |
+| The render is refused before it starts | Set `BITHUMAN_API_SECRET` for an account on the Creator plan or higher, then render again. |
 | `402 INSUFFICIENT_BALANCE` from the REST API | Your balance must cover the longest render up front; the difference is refunded when it finishes ([Talking video API](/api/video)). |
 | `409 MODEL_NOT_GENERATED` | The agent has no model of that kind yet: check its `supported_models`, or [add the model](/api/agents#add-a-model-to-an-existing-agent). |
