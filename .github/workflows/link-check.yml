@@ -141,6 +141,11 @@ on:
       - 'public/llms*.txt'
       - 'STYLE.md'
       - 'README.md'
+      # W5: the docs MCP function, the markdown negotiation middleware and the agent skill
+      - 'api/**'
+      - 'middleware.js'
+      - 'public/skills/**'
+      - 'package.json'
   pull_request:
     paths:
       - 'src/content/**'
@@ -173,6 +178,11 @@ on:
       - 'public/llms*.txt'
       - 'STYLE.md'
       - 'README.md'
+      # W5: the docs MCP function, the markdown negotiation middleware and the agent skill
+      - 'api/**'
+      - 'middleware.js'
+      - 'public/skills/**'
+      - 'package.json'
 
 permissions:
   contents: read
@@ -465,6 +475,18 @@ jobs:
       - name: Search lands the words developers type on the right page
         if: always()
         run: node scripts/check-search.mjs
+
+      - name: The docs MCP server answers MCP and its search lands the same words on the same pages
+        if: always()
+        run: node --test src/lib/docs-mcp.test.mjs
+
+      - name: The orphan-asset checker proves itself
+        if: always()
+        run: node scripts/check-orphan-assets.mjs --selftest
+
+      - name: Every file in public/ is referenced by something the site serves
+        if: always()
+        run: node scripts/check-orphan-assets.mjs
 
       - name: The media checker proves itself
         if: always()

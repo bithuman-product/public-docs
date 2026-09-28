@@ -53,7 +53,7 @@ button {
 
 ::selection {
   background: var(--coral-500);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 /* ---- layout helpers ---- */
@@ -61,24 +61,24 @@ button {
   width: 100%;
   max-width: var(--container);
   margin-inline: auto;
-  padding-inline: var(--space-5);
+  padding-inline: var(--s-6);
 }
 
 .section {
-  padding-block: var(--space-12);
+  padding-block: var(--s-24);
 }
 @media (max-width: 760px) {
-  .section { padding-block: var(--space-10); }
+  .section { padding-block: var(--s-16); }
 }
 @media (max-width: 560px) {
-  .container { padding-inline: var(--space-4); }
-  .section { padding-block: var(--space-8); }
+  .container { padding-inline: var(--s-4); }
+  .section { padding-block: var(--s-12); }
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--s-2);
   font-size: var(--ft-sm);
   font-weight: var(--fw-medium);
   color: var(--color-primary);
@@ -88,14 +88,14 @@ button {
 
 .section-head {
   max-width: 720px;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--s-8);
 }
 .section-head h2 {
   font-size: var(--fh-2xl);
-  margin-top: var(--space-3);
+  margin-top: var(--s-3);
 }
 .section-head p {
-  margin-top: var(--space-3);
+  margin-top: var(--s-3);
   font-size: var(--ft-lg);
   color: var(--color-text-secondary);
 }
@@ -106,7 +106,7 @@ button {
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--s-2);
   padding: 0.3rem 0.7rem;
   border-radius: var(--r-full);
   font-size: var(--ft-xs);

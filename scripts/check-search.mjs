@@ -11,25 +11,8 @@ import { join } from "node:path";
 const ROOT = join(import.meta.dirname, "..");
 const DIST = join(ROOT, "dist");
 
-/** query -> the page that must be the first result (and the wave that added it). */
-export const QUERIES = [
-  { q: "quickstart", top: "/start", wave: "W1" },
-  { q: "Swift", top: "/platforms/ios", wave: "W1" },
-  { q: "pricing", top: "/pricing", wave: "W1" },
-  { q: "self-host", top: "/deploy/self-hosted", wave: "W1" },
-  { q: "iOS", top: "/platforms/ios", wave: "W2" },
-  { q: "macOS", top: "/platforms/macos", wave: "W2" },
-  { q: "Flutter", top: "/platforms/flutter", wave: "W2" },
-  { q: "offline", top: "/deploy/offline", wave: "W2" },
-  { q: "CPU", top: "/deploy/cpu", wave: "W2" },
-  { q: "no GPU", top: "/deploy/cpu", wave: "W2" },
-  { q: "WebGPU", top: "/platforms/web", wave: "W2" },
-  { q: "kiosk", top: "/build/kiosk", wave: "W4" },
-  { q: "companion", top: "/build/companion-app", wave: "W4" },
-  { q: "barge-in", top: "/build/voice-agent", wave: "W4" },
-  { q: "getShowcaseManifest", top: "/api/reference", wave: "W3" },
-  { q: "downloadAgentModel", top: "/api/reference", wave: "W3" },
-];
+import { QUERIES } from "./search-queries.mjs";
+export { QUERIES };
 
 if (!existsSync(join(DIST, "pagefind/pagefind.js"))) { console.log("::error::no dist/pagefind — run npm run build first"); process.exit(2); }
 const srv = createServer((q, r) => {

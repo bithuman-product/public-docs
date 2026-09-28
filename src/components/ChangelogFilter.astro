@@ -1,0 +1,35 @@
+---
+// The changelog's highlights and platform filter. Their markup is drawn at
+// build time by the ```highlights and ```changelog-filter blocks
+// (src/lib/doc-blocks.ts), and each release is wrapped in a tagged
+// <section class="cl-entry"> by src/markdown/rehype-changelog.mjs. With
+// JavaScript off, the filter stays hidden and every release shows.
+---
+
+<script>
+  import "../scripts/changelog-filter";
+</script>
+
+<style is:global>
+  .prose ul.hl-grid { list-style: none; margin: var(--s-4) 0 var(--s-6); padding: 0; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
+  .prose ul.hl-grid > li { margin: 0; padding: 0; }
+  .prose ul.hl-grid > li::before { content: none; }
+  .prose .hl-card { text-decoration: none; height: 100%; }
+  .hl-meta { display: flex; align-items: center; gap: var(--s-2); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .hl-card .card-title strong { font-size: var(--ft-md); line-height: var(--lh-snug); color: var(--color-text); }
+  .prose .hl-card code { padding: 0; border: 0; background: none; font-size: 0.86em; color: inherit; }
+
+  .cl-filter { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-4) 0 var(--s-2); }
+  .cl-filter[hidden] { display: none; }
+  .cl-f { padding: 0.3rem 0.8rem; border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface); color: var(--color-text-secondary); font: inherit; font-size: var(--ft-sm); line-height: 1.35; cursor: pointer; }
+  .cl-f:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  .cl-f[aria-pressed="true"] { border-color: transparent; background: var(--color-primary-soft); color: var(--color-primary); font-weight: var(--fw-medium); }
+  .cl-f:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .prose .cl-count { margin: 0 0 var(--s-4); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+
+  .cl-entry { margin: 0; }
+  .cl-entry[hidden], .hl-grid > li[hidden] { display: none; }
+  .prose .cl-entry > h3 { margin-bottom: var(--s-1); }
+  .prose .cl-tags { margin: 0 0 var(--s-3); }
+  .prose h2[hidden] { display: none; }
+</style>

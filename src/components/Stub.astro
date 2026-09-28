@@ -29,14 +29,14 @@ const { title, kicker = "Documentation", intro = "" } = Astro.props;
 
 <style>
   .stub { min-height: 62vh; display: flex; align-items: center; }
-  .stub-inner { max-width: 700px; padding-block: var(--space-12); }
+  .stub-inner { max-width: 700px; padding-block: var(--s-24); }
   .back { color: var(--color-text-tertiary); font-size: var(--ft-sm); }
   .back:hover { color: var(--color-primary); }
-  .stub h1 { font-size: var(--fh-3xl); margin-top: var(--space-3); }
-  .stub .lede { margin-top: var(--space-4); font-size: var(--ft-xl); color: var(--color-text-secondary); }
+  .stub h1 { font-size: var(--fh-3xl); margin-top: var(--s-3); }
+  .stub .lede { margin-top: var(--s-4); font-size: var(--ft-xl); color: var(--color-text-secondary); }
   .wip {
     display: inline-block;
-    margin-top: var(--space-5);
+    margin-top: var(--s-6);
     padding: 0.4rem 0.9rem;
     border-radius: var(--r-full);
     background: var(--color-primary-soft);
@@ -44,5 +44,5 @@ const { title, kicker = "Documentation", intro = "" } = Astro.props;
     font-size: var(--ft-sm);
     font-weight: var(--fw-medium);
   }
-  .stub-cta { display: flex; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; align-items: center; }
+  .stub-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; align-items: center; }
 </style>

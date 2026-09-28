@@ -2,7 +2,9 @@
 // G5 — THE AGENT LAYER. Run after `npm run build`:
 //   node scripts/check-llms.mjs [--dist dist] [--full-max-kb 160] [--section-max-kb 96]
 //
-// Fails when: /llms.txt is over 60 lines or 6 KB; a docs.bithuman.ai URL in it
+// Fails when: /llms.txt is over 60 lines or 6 KB, names fps in its first 1,000
+// characters, lacks the "Instructions for AI agents" heading or the verbatim
+// offline sentence; a docs.bithuman.ai URL in it
 // does not resolve in the build (or an #anchor it names is missing); a content
 // page has no .md twin; /llms-full.txt or a /llms/<section>.txt is over its size
 // cap; any of them leaks an HTML comment. Internal-content hits are reported (G1).
@@ -32,6 +34,18 @@ const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
 for (const re of [/idle time is free/i, /\bidle is free\b/i, /pay for talking time/i, /talking time only/i]) {
   if (re.test(llms)) fail.push(`llms.txt still states the retired billing rule (${re}) — realtime bills active session time, talking or idle`);
 }
+// The opener (docs spec §6): an agent reads × real time, never a frame rate,
+// in the first screen; the rules come first; the offline license is the
+// owner-approved sentence, verbatim, with its platform and sales line.
+if (/\bfps\b/i.test(llms.slice(0, 1000))) fail.push("llms.txt names a frame rate (fps) in its first 1,000 characters; speed is × real time");
+if (!/^## Instructions for AI agents$/m.test(llms)) fail.push('llms.txt has no "## Instructions for AI agents" heading');
+{
+  const src = readFileSync(join(ROOT, "src/data/offline.ts"), "utf8");
+  const sentence = /OFFLINE_LICENSE_SENTENCE =\s*"([^"]+)"/.exec(src)?.[1];
+  const terms = /OFFLINE_LICENSE_TERMS = "([^"]+)"/.exec(src)?.[1];
+  if (!sentence || !terms) fail.push("could not read the approved offline sentence from src/data/offline.ts");
+  else if (!llms.includes(`${sentence} ${terms}`)) fail.push("llms.txt does not carry the approved offline sentence verbatim, followed by its platform and sales line");
+}
 const full = readFileSync(join(DIST, "llms-full.txt"), "utf8");
 const lines = llms.trimEnd().split("\n").length;
 if (lines > 60) fail.push(`llms.txt has ${lines} lines (cap 60)`);
@@ -46,10 +60,13 @@ const resolve = (path) => {
   }
   return null;
 };
+// Paths answered by a Vercel function, not a built file (vercel.json rewrites).
+const SERVED_BY_FUNCTION = new Set(["/docs-mcp"]);
 let urls = 0;
 for (const m of llms.matchAll(/https:\/\/docs\.bithuman\.ai(\/[^\s)`>\]]*)?/g)) {
   const [path, anchor] = (m[1] || "/").split("#");
   urls++;
+  if (SERVED_BY_FUNCTION.has(path)) continue;
   const f = resolve(path);
   if (!f) { fail.push(`llms.txt links ${m[0]}, which the build does not serve`); continue; }
   if (anchor && f.endsWith(".html") && !readFileSync(f, "utf8").includes(`id="${anchor}"`)) fail.push(`llms.txt links ${m[0]}, whose anchor is missing`);

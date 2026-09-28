@@ -98,6 +98,11 @@ for (const f of walk(PAGES, [".astro"])) {
 routes.add("/llms.txt");
 routes.add("/llms-full.txt");
 for (const m of readFileSync(join(ROOT, "src/lib/llms-sections.ts"), "utf8").matchAll(/^\s*id:\s*"([a-z-]+)",\s*title:/gm)) routes.add(`/llms/${m[1]}.txt`);
+// Endpoints that write one file (src/pages/changelog.xml.ts → /changelog.xml, versions.json, …).
+for (const f of walk(PAGES, [".ts"])) {
+  const r = relative(PAGES, f).replace(/\.ts$/, "");
+  if (!r.includes("[") && /\.[a-z]+$/.test(r)) routes.add("/" + r);
+}
 
 // --- 1b. Load the vercel.json redirect map ---
 // Redirects are part of the routing surface: a destination that resolves

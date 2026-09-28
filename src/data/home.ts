@@ -73,6 +73,7 @@ export const RESOURCES: { title: string; href: string; icon: string }[] = [
   { title: "Pricing and credits", href: "/pricing", icon: "list" },
   { title: "Downloads & versions", href: "/downloads", icon: "file" },
   { title: "Changelog", href: "/changelog", icon: "list" },
-  { title: "llms.txt for AI agents", href: "/llms.txt", icon: "file" },
+  { title: "FAQ", href: "/resources/faq", icon: "chat" },
+  { title: "For AI agents: llms.txt, MCP, skill", href: "/resources/agents", icon: "code" },
   { title: "Support & community", href: "/support", icon: "chat" },
 ];

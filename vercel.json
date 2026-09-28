@@ -202,6 +202,26 @@
       "permanent": true
     },
     {
+      "source": "/bitHuman-circle.webp",
+      "destination": "/bithuman-mark.png",
+      "permanent": true
+    },
+    {
+      "source": "/bitHuman-circle.webp/",
+      "destination": "/bithuman-mark.png",
+      "permanent": true
+    },
+    {
+      "source": "/bitHuman-logo.webp",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/bitHuman-logo.webp/",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
       "source": "/browser",
       "destination": "/platforms/web",
       "permanent": true
@@ -209,6 +229,16 @@
     {
       "source": "/browser/",
       "destination": "/platforms/web",
+      "permanent": true
+    },
+    {
+      "source": "/changelog/rss",
+      "destination": "/changelog.xml",
+      "permanent": true
+    },
+    {
+      "source": "/changelog/rss/",
+      "destination": "/changelog.xml",
       "permanent": true
     },
     {
@@ -892,6 +922,16 @@
       "permanent": true
     },
     {
+      "source": "/faq",
+      "destination": "/resources/faq",
+      "permanent": true
+    },
+    {
+      "source": "/faq/",
+      "destination": "/resources/faq",
+      "permanent": true
+    },
+    {
       "source": "/flutter",
       "destination": "/platforms/flutter",
       "permanent": true
@@ -899,6 +939,16 @@
     {
       "source": "/flutter/",
       "destination": "/platforms/flutter",
+      "permanent": true
+    },
+    {
+      "source": "/for-agents",
+      "destination": "/resources/agents",
+      "permanent": true
+    },
+    {
+      "source": "/for-agents/",
+      "destination": "/resources/agents",
       "permanent": true
     },
     {
@@ -999,6 +1049,16 @@
     {
       "source": "/getting-started/quickstart/",
       "destination": "/platforms/rest",
+      "permanent": true
+    },
+    {
+      "source": "/glossary",
+      "destination": "/resources/glossary",
+      "permanent": true
+    },
+    {
+      "source": "/glossary/",
+      "destination": "/resources/glossary",
       "permanent": true
     },
     {
@@ -1199,6 +1259,96 @@
     {
       "source": "/guides/voice-providers/",
       "destination": "/build/voices",
+      "permanent": true
+    },
+    {
+      "source": "/images/bitHuman-logo-circle.png",
+      "destination": "/bithuman-mark.png",
+      "permanent": true
+    },
+    {
+      "source": "/images/bitHuman-logo-circle.png/",
+      "destination": "/bithuman-mark.png",
+      "permanent": true
+    },
+    {
+      "source": "/images/bitHuman_banner_black.jpg",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/bitHuman_banner_black.jpg/",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/bithuman-banner.jpg",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/bithuman-banner.jpg/",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/bithuman-logo.png",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/bithuman-logo.png/",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/demo-wise-pup-640.webp",
+      "destination": "/images/demo/wise-pup-480.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/demo-wise-pup-640.webp/",
+      "destination": "/images/demo/wise-pup-480.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/demo-wise-pup-960.webp",
+      "destination": "/images/demo/wise-pup-960.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/demo-wise-pup-960.webp/",
+      "destination": "/images/demo/wise-pup-960.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/example-agent-images.jpg",
+      "destination": "/images/demo/sofia-ramirez-960.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/example-agent-images.jpg/",
+      "destination": "/images/demo/sofia-ramirez-960.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/image-guide.jpg",
+      "destination": "/images/demo/sofia-ramirez-960.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/image-guide.jpg/",
+      "destination": "/images/demo/sofia-ramirez-960.webp",
+      "permanent": true
+    },
+    {
+      "source": "/images/openai.svg",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/images/openai.svg/",
+      "destination": "/images/og-card.jpg",
       "permanent": true
     },
     {
@@ -1412,6 +1562,16 @@
       "permanent": true
     },
     {
+      "source": "/og-image.jpg",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
+      "source": "/og-image.jpg/",
+      "destination": "/images/og-card.jpg",
+      "permanent": true
+    },
+    {
       "source": "/on-device",
       "destination": "/deploy/on-device",
       "permanent": true
@@ -1529,6 +1689,16 @@
     {
       "source": "/roadmap/",
       "destination": "/changelog",
+      "permanent": true
+    },
+    {
+      "source": "/rss",
+      "destination": "/changelog.xml",
+      "permanent": true
+    },
+    {
+      "source": "/rss/",
+      "destination": "/changelog.xml",
       "permanent": true
     },
     {
@@ -2014,8 +2184,18 @@
   ],
   "rewrites": [
     {
+      "source": "/docs-mcp",
+      "destination": "/api/docs-mcp"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/_missing/api/:path*"
     }
-  ]
+  ],
+  "functions": {
+    "api/docs-mcp.js": {
+      "includeFiles": "dist/docs-mcp-index.json",
+      "maxDuration": 10
+    }
+  }
 }

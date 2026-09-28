@@ -42,6 +42,12 @@ export function builtRoutes() {
     const route = "/" + rel.replace(/(^|\/)index$/, "");
     r.add(route === "/" ? "/" : route.replace(/\/$/, ""));
   }
+  // endpoints that write one file (/changelog.xml, /versions.json, …)
+  for (const f of walk(PAGES, ".ts")) {
+    const rel = relative(PAGES, f).replace(/\.ts$/, "");
+    if (rel.includes("[") || !/\.[a-z]+$/.test(rel)) continue;
+    r.add("/" + rel);
+  }
   const llms = readFileSync(join(ROOT, "src/lib/llms-sections.ts"), "utf8");
   for (const m of llms.matchAll(/^\s*id:\s*"([a-z-]+)",\s*title:/gm)) r.add(`/llms/${m[1]}.txt`);
   for (const f of ["/llms.txt", "/llms-full.txt"]) r.add(f);

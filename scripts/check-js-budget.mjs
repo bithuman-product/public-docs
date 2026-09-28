@@ -34,6 +34,8 @@ export const WIDGETS = {
   "dataflow": 4 * KB,
   "walkthrough": 3 * KB,
   "radio-group": 1 * KB,
+  // W5: the changelog's platform filter
+  "changelog-filter": 1 * KB,
 };
 
 const gz = (s) => gzipSync(Buffer.from(s), { level: 9 }).length;

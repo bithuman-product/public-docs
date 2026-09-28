@@ -113,10 +113,10 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
     height: var(--nav-h);
     max-width: var(--container-wide);
     margin-inline: auto;
-    padding-inline: var(--space-5);
+    padding-inline: var(--s-6);
     display: flex;
     align-items: center;
-    gap: var(--space-5);
+    gap: var(--s-6);
   }
   .brand { display: inline-flex; align-items: center; gap: 0.4rem; flex: none; }
   .brand-main {
@@ -127,7 +127,7 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
     font-size: var(--ft-lg);
     letter-spacing: -0.02em;
   }
-  .brand-main img { border-radius: 6px; }
+  .brand-main img { border-radius: var(--r-sm); }
   .brand-docs {
     display: inline-flex;
     align-items: center;
@@ -142,7 +142,7 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    margin-left: var(--space-3);
+    margin-left: var(--s-3);
   }
   .nav-link {
     display: inline-flex;
@@ -253,9 +253,9 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
     flex-shrink: 0;
     transition: background var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
   }
-  .status-pill.op .status-dot { background: #2fcc66; box-shadow: 0 0 0 3px rgba(47, 204, 102, 0.18); }
-  .status-pill.deg .status-dot { background: #ff9500; box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.18); }
-  .status-pill.down .status-dot { background: #e74c3c; box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.18); }
+  .status-pill.op .status-dot { background: var(--color-status-ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-status-ok) 18%, transparent); }
+  .status-pill.deg .status-dot { background: var(--color-status-warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-status-warn) 18%, transparent); }
+  .status-pill.down .status-dot { background: var(--color-status-down); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-status-down) 18%, transparent); }
 
   .menu-btn { display: none; }
   .mobile-menu { display: none; }
@@ -264,12 +264,12 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
      CTA give way before the links do, and below 1060px the menu takes over. */
   @media (max-width: 1400px) {
     .status-pill { display: none; }
-    .nav-links { gap: 0.1rem; margin-left: var(--space-2); }
+    .nav-links { gap: 0.1rem; margin-left: var(--s-2); }
     .nav-link { padding-inline: 0.55rem; }
   }
   @media (max-width: 1200px) { .btn-cta { display: none; } }
   @media (max-width: 1060px) {
-    .nav-inner { gap: var(--space-3); }
+    .nav-inner { gap: var(--s-3); }
     .nav-links { display: none; }
     .menu-btn { display: inline-flex; }
     #nav-search kbd, .btn-cta, .status-txt { display: none; }
@@ -280,7 +280,7 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
       /* Closed state must zero the block padding too: with max-height: 0 the
          padding still renders (height floors at 0, padding does not), so the
          first link used to peek out beneath the header. */
-      padding: 0 var(--space-5);
+      padding: 0 var(--s-6);
       background: var(--color-bg);
       max-height: 0;
       overflow: hidden;
@@ -290,7 +290,7 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
       max-height: 70vh;
       /* Short viewports: the menu's bottom CTA must stay reachable under the cap */
       overflow-y: auto;
-      padding: var(--space-3) var(--space-5) var(--space-5);
+      padding: var(--s-3) var(--s-6) var(--s-6);
       border-bottom: 1px solid var(--color-border);
     }
     .mobile-menu a {
@@ -303,11 +303,11 @@ const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match
     .mm-sep { height: 1px; background: var(--color-border); margin: 0.4rem 0; }
     .mobile-menu a.mm-cta {
       background: var(--color-primary);
-      color: #fff;
+      color: var(--color-on-primary);
       text-align: center;
       font-weight: var(--fw-bold);
       margin-top: 0.2rem;
     }
-    .mobile-menu a.mm-cta:hover { background: var(--color-primary-hover); color: #fff; }
+    .mobile-menu a.mm-cta:hover { background: var(--color-primary-hover); color: var(--color-on-primary); }
   }
 </style>

@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 10
 type: reference
+artifacts: ["swift"]
 ---
 
 Covers the Swift package at the version on [Downloads & versions](/downloads). How to use these calls in an app is on [iOS & iPadOS](/platforms/ios) and [macOS](/platforms/macos).

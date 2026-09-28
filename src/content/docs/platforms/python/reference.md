@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 30
 type: reference
+artifacts: ["python"]
 ---
 
 How to use these in an app is on [Python](/platforms/python).

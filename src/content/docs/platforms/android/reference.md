@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 20
 type: reference
+artifacts: ["expression2_android", "essence2_android"]
 ---
 
 How to use these classes in an app is on [Android](/platforms/android). Signatures are Kotlin; `name: Type = …` has a default.

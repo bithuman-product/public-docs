@@ -59,8 +59,12 @@ const listing = ["llms.txt", "index.md", "start.md", "platforms.md", "deploy.md"
 const pageList = new Set(
   [...listing.matchAll(/https:\/\/docs\.bithuman\.ai(\/[^)\s`#]*)/g)].map((m) => m[1].replace(/\.md$/, "").replace(/\/$/, "") || "/"),
 );
-const isBuiltRoute = (route) => route === "/" || existsSync(join(DIST, route.replace(/^\//, ""), "index.html")) ||
-  (/\.[a-z0-9]+$/.test(route) && existsSync(join(DIST, route.replace(/^\//, ""))));
+// /docs-mcp is served by a Vercel function (vercel.json rewrites), not a built file.
+const SERVED_BY_FUNCTION = new Set(["/docs-mcp"]);
+const isBuiltRoute = (route) => route === "/" || SERVED_BY_FUNCTION.has(route) || existsSync(join(DIST, route.replace(/^\//, ""), "index.html")) ||
+  (/\.[a-z0-9]+$/.test(route) && existsSync(join(DIST, route.replace(/^\//, "")))) ||
+  // a markdown file served as is (the agent skill): the listing strips its .md
+  existsSync(join(DIST, `${route.replace(/^\//, "")}.md`));
 const missing = [...collection].filter((p) => !pageList.has(p)).sort();
 const extra = [...pageList].filter((p) => !collection.has(p) && !isBuiltRoute(p)).sort();
 const hubs = [...pageList].filter((p) => !collection.has(p) && isBuiltRoute(p)).sort();

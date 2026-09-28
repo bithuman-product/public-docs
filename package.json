@@ -11,7 +11,7 @@
     "prebuild": "npm run sync-openapi",
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build --force && pagefind --site dist",
+    "build": "astro build --force && node scripts/gen-og.mjs && node scripts/gen-docs-index.mjs && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "check:served-current": "node scripts/check-served-is-current.mjs",
@@ -29,6 +29,9 @@
     "micromark-extension-gfm": "^3.0.0"
   },
   "devDependencies": {
-    "pagefind": "^1.5.2"
+    "@fontsource/roboto": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "pagefind": "^1.5.2",
+    "satori": "^0.33.5"
   }
 }
