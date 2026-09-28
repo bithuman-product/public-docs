@@ -116,8 +116,8 @@ bithuman render wise-pup speech.wav -o out.mp4
   {
     id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Fully offline",
     renders: "on your Linux and macOS computers", conversation: "agreed with sales for your site", credential: "a pack, redeemed once on the machine while it is online",
-    needs: "Business or Enterprise plan; Essence 1 on Linux or an Apple silicon Mac",
-    first: "Contact sales", time: "—", docs: "/deploy/offline", models: ["essence-1"],
+    needs: "Business or Enterprise plan; Essence 1 on Linux or an Apple silicon Mac, Essence 2 and Expression 2 on Linux x86_64",
+    first: "Contact sales", time: "—", docs: "/deploy/offline", models: ["essence-2", "expression-2", "essence-1"],
     note: OFFLINE_LICENSE_COPY,
   },
 ];
@@ -301,8 +301,8 @@ export const QUICKSTART: Quickstart[] = [
   },
   {
     id: "offline", plan: "business-enterprise", label: "Kiosk / offline", title: "A kiosk, fully offline", icon: "offline",
-    needs: ["Business or Enterprise plan", "Essence 1 on Linux (x86_64, ARM64) today; Essence 2 and Expression 2 later"],
-    models: ["Essence 1"], renders: ["offline"],
+    needs: ["Business or Enterprise plan", "Essence 1 on Linux (x86_64, ARM64) and Apple silicon Macs; Essence 2 and Expression 2 on Linux x86_64"],
+    models: ["Essence 2", "Expression 2", "Essence 1"], renders: ["offline"],
     steps: [],
     expect: { text: "For a kiosk that stays online, the CLI renders both models live on a Linux PC with no GPU: pick Terminal." },
     next: { href: "/deploy/offline", label: "Fully offline" },

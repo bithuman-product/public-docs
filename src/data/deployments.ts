@@ -50,7 +50,7 @@ export const DEPLOYMENTS: Deployment[] = [
     id: "offline", name: "Fully offline", href: "/deploy/offline", anchor: "fully-offline", icon: "offline", plan: "business-enterprise", rate: "sales",
     line: "Real-time avatars off the internet, on Linux and macOS computers.",
     surfaces: "Linux PCs and terminals, Macs with Apple silicon (Python)",
-    models: "Essence 1 (Linux x86_64 and ARM64, macOS on Apple silicon); Essence 2 and Expression 2 later",
+    models: "Essence 1 (Linux x86_64 and ARM64, macOS on Apple silicon); Essence 2 and Expression 2 (Linux x86_64)",
   },
 ];
 

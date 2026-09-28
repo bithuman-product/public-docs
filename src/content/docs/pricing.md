@@ -103,7 +103,7 @@ What an Essence 2 or Expression 2 avatar costs inside an iPhone, Android, Mac or
 
 Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux and macOS computers (Apple silicon); bought in the console or through sales.
 
-- **Models:** Essence 1, available now on Linux (x86_64 and ARM64, bitHuman 2.11.16 or later) and on macOS with Apple silicon (bitHuman 2.11.17 or later, Python): buy a pack in the console, then run `python -m bithuman pack redeem` once on the machine ([how](/deploy/offline#first-command)). Essence 2 and Expression 2 offline come later.
+- **Models:** Essence 1 on Linux (x86_64 and ARM64, bitHuman 2.11.16 or later) and on macOS with Apple silicon (2.11.17 or later); Essence 2 and Expression 2 on Linux x86_64 (2.11.17 or later); all through the Python package, available now: buy a pack in the console, then run `python -m bithuman pack redeem` once on the machine ([how](/deploy/offline#first-command)). Essence 2 and Expression 2 on other platforms come later.
 - **Credit-based:** from 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection.
 - **Creation is online:** you create the avatar from a portrait in the bitHuman cloud; the finished avatar model then runs on your machines.
 - **Not for phones:** the Swift package and the Android SDK stay online.
