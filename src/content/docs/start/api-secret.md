@@ -1,6 +1,6 @@
 ---
 title: "Your API secret"
-description: "The one credential for every bitHuman surface: where to get it, where each platform reads it, and how to keep it off devices."
+description: "The one credential for every bitHuman surface: where to get it, where each platform reads it, and what a shipped app holds."
 section: start
 group: "Get started"
 order: 20
@@ -38,9 +38,14 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 ## Keep it safe
 
 - Keep the secret in the environment or a secrets manager, never in source control or on a command line.
-- Do not ship it inside an app you distribute. Fetch it from your own backend at startup instead.
 - Browsers and LiveKit rooms get short-lived tokens: an [embed token](/api/embedding) or a runtime token minted with [`POST /v1/runtime-tokens/mint`](/platforms/livekit#authenticate).
 - If a secret leaks, create a new one and delete the old one in the console.
+
+## What a shipped app holds
+
+```partial
+shipped-app-secret
+```
 
 ## Next
 

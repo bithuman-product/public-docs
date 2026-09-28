@@ -92,6 +92,13 @@ Choose where the avatar renders, then how long sessions run. The estimate counts
 ```credit-calculator
 ```
 
+## Budget an app
+
+What an Essence 2 or Expression 2 avatar costs inside an iPhone, Android, Mac or web app, per minute of active session time. Creating your own avatar is a one-time cost ([Creation](#creation--one-time-credits)); the [companion app](/build/companion-app) recipe shows how to close the avatar when the app leaves the screen.
+
+```app-budget
+```
+
 ## Offline licensing
 
 Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux PCs and terminals; arranged through sales.

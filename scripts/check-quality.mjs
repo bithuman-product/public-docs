@@ -34,7 +34,10 @@ const PAGES = pi >= 0 ? args.slice(pi + 1).filter((a) => a.startsWith("/")) :
     // W4: the recipes, a diagram-first concept page and an example page
     "/build/kiosk", "/build/companion-app", "/build/talking-video", "/build/voice-agent",
     "/models/how-it-works", "/examples/android-essence-2",
-    "/changelog", "/resources/faq", "/resources/glossary", "/resources/troubleshooting", "/resources/agents"];
+    "/changelog", "/resources/faq", "/resources/glossary", "/resources/troubleshooting", "/resources/agents",
+    // W6: the website widget recipe and the use-case guides
+    "/build/website-widget", "/deploy/use-cases", "/deploy/use-cases/banking-and-atms", "/deploy/use-cases/healthcare",
+    "/deploy/use-cases/events-and-trade-shows"];
 
 if (!existsSync(join(DIST, "index.html"))) { console.log("::error::no dist/ — run npm run build first"); process.exit(2); }
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json",

@@ -5,6 +5,7 @@ section: platforms
 group: "Code & terminal"
 order: 10
 type: platform
+searchTitle: "Python SDK: real-time avatars in your Python code"
 renders: ["server", "no-gpu"]
 needs: ["API secret"]
 artifacts: ["python"]
@@ -122,6 +123,7 @@ A window titled **bitHuman avatar** opens and the avatar speaks the bundled `spe
 - **Your own avatar:** pass `--model` with your agent's `.imx`, downloaded with the [Agents API](/api/agents#download-an-agents-model) or `bithuman pull <AGENT_CODE>`.
 - **Your own audio:** pass any audio file; or stream microphone audio with `AsyncBithuman` ([Integrate into your app](/platforms/python#integrate-into-your-app)).
 - **A conversation:** `cloud-avatar.py` in the same folder connects the avatar to an OpenAI voice agent over LiveKit ([LiveKit](/platforms/livekit)).
+- **A desktop companion:** `conversation.py` in the same folder talks with you through OpenAI Realtime, with your OpenAI key ([Companion app](/build/companion-app)).
 - **A web app:** send the frames from `render()` to your own video stream, or use the [web embed](/platforms/web).
 
 ## Integrate into your app

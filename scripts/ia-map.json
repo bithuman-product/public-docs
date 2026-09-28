@@ -271,7 +271,7 @@
   },
   {
    "source": "/use-cases",
-   "new": "/build"
+   "new": "/deploy/use-cases"
   },
   {
    "source": "/showcase",

@@ -13,6 +13,8 @@
 //   ```perf-explorer         every published performance row as bars, with a model
 //                            switch and the held-for-10-minutes rows (/performance)
 //   ```credit-calculator     credits and dollars a month for a usage pattern (/pricing)
+//   ```app-budget            what an avatar costs inside an app, per mode (/pricing);
+//                            `example` for the one-user worked example alone
 //   ```partial               a shared passage from src/partials/<name>.md (the Swift
 //                            install and credential text iOS and macOS both carry)
 //
@@ -38,7 +40,7 @@ import { resolvedHighlights, shortDate } from "./highlights.ts";
 import { TAGS, parseChangelog } from "./changelog.ts";
 
 export type Mode = "page" | "twin";
-export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator",
+export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator", "app-budget",
   "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected", "highlights", "changelog-filter"]);
 /** Blocks drawn as HTML on the page (the rest become markdown). */
 export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator",
@@ -357,6 +359,41 @@ function creditCalculator(mode: Mode): string {
     `<table><thead><tr>${head.map((h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${examples.map((row) => `<tr>${row.map((c, i) => (i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`)).join("")}</tr>`).join("")}</tbody></table></div>`;
 }
 
+// ---------------------------------------------------------------- budget an app
+/** The one-user worked example: sessions adding up to APP_MINUTES a day on the device. */
+const APP_MINUTES = 20;
+function appExample(d: CalcData): string {
+  const r = calculate(d, { mode: "device", minutes: APP_MINUTES, days: 30, sessions: 1 });
+  return `One user whose sessions add up to ${APP_MINUTES} minutes a day on the device uses about ${fmtInt(r.credits)} credits a month (${fmtUsd(r.usd)} at the top-up rate).`;
+}
+
+/** What an avatar costs inside an app, per mode, from pricing.json and plans.json. */
+function appBudget(arg: string): string {
+  const d = calcData();
+  if (arg === "example") return `${appExample(d)}\n`;
+  if (arg) throw new Error(`\`\`\`app-budget: "${arg}" is not empty or "example"`);
+  const modes = [
+    { name: "On the device or your servers", rate: d.rates.device, stack: "your own services", caps: "limited by credits" },
+    { name: "bitHuman cloud avatar", rate: d.rates.cloud, stack: "your own services", caps: "[per plan](/pricing#plans)" },
+    { name: "Managed voice chat, all-inclusive", rate: d.rates.chat, stack: "included", caps: "[per plan](/pricing#plans)" },
+  ];
+  const creator = d.plans.find((p) => p.id === "creator");
+  const business = d.plans.find((p) => p.id === "business");
+  if (!creator || !business) throw new Error("plans.json: the Creator and Business plans are required for ```app-budget");
+  const perCredit = business.monthly_usd / business.credits_per_month;
+  const rows = [
+    ["Credits per minute of active session time", ...modes.map((m) => String(m.rate))],
+    [`At the top-up rate ($1 = ${d.credits_per_usd} credits)`, ...modes.map((m) => `about $${(m.rate / d.credits_per_usd).toFixed(2)} a minute`)],
+    [`At the ${business.name} plan's credit price`, ...modes.map((m) => `about $${(m.rate * perCredit).toFixed(3)} a minute`)],
+    [`Minutes in a ${creator.name} month (${fmtInt(creator.credits_per_month)} credits)`, ...modes.map((m) => fmtInt(Math.floor(creator.credits_per_month / m.rate)))],
+    ["Speech, language model and voice", ...modes.map((m) => m.stack)],
+    ["Sessions at once", ...modes.map((m) => m.caps)],
+  ];
+  return table(["Mode", ...modes.map((m) => m.name)], rows) +
+    `\n- **Idle is billed.** A session bills for as long as it runs, talking or idle. End it when the user leaves, and show a still frame when nobody is talking.\n` +
+    `- **Worked example.** ${appExample(d)}\n`;
+}
+
 // ---------------------------------------------------------------- changelog
 /** The month's highlights: cards that jump to each release (page), or a list (twin). */
 function highlightsBlock(mode: Mode): string {
@@ -398,6 +435,7 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "session-caps": return sessionCaps();
     case "perf-explorer": return perfExplorer(mode);
     case "credit-calculator": return creditCalculator(mode);
+    case "app-budget": return appBudget(arg);
     case "figure": return figureBlock(arg, mode);
     case "example-gallery": return galleryBlock(mode);
     case "github-examples": return githubBlock(mode);

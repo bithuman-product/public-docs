@@ -2183,12 +2183,12 @@
     },
     {
       "source": "/use-cases",
-      "destination": "/build",
+      "destination": "/deploy/use-cases",
       "permanent": true
     },
     {
       "source": "/use-cases/",
-      "destination": "/build",
+      "destination": "/deploy/use-cases",
       "permanent": true
     },
     {
