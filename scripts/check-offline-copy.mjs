@@ -5,10 +5,11 @@
 // sales", or it links to the page that does. The sentence itself lives once,
 // in src/data/offline.ts; code imports it and never types it.
 //
-//   node scripts/check-offline-copy.mjs            # markdown, code, and (when built) twins + llms
+//   node scripts/check-offline-copy.mjs            # markdown, code, and (when built) twins, llms and JSON-LD
 //   node scripts/check-offline-copy.mjs --selftest
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
+import { builtJsonLd, jsonLdNodes, nodeText } from "./jsonld.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const src = readFileSync(join(ROOT, "src/data/offline.ts"), "utf8");
@@ -37,6 +38,10 @@ export function gradeMarkdown(text) {
   return faults;
 }
 
+/** JSON-LD: each node of a page's structured data is one section. A node that
+ *  names the license carries the approved sentence and the terms, verbatim. */
+export const gradeJsonLdNode = (node) => gradeMarkdown(nodeText(node));
+
 /** Code: the sentence is typed only in src/data/offline.ts; other code imports it. */
 export function gradeCode(text) {
   const faults = [];
@@ -58,6 +63,10 @@ function selftest() {
   ok("a paraphrase fires", gradeMarkdown(`## X\n\nOffline license is only available to Enterprise clients.\n`).length > 0);
   ok("code that types the copy fires", gradeCode(`const x = "an offline license for kiosks";`).length === 1);
   ok("a comment is not copy", gradeCode(`// the offline license copy lives in offline.ts`).length === 0);
+  const ld = (o) => jsonLdNodes(`<script type="application/ld+json">${JSON.stringify({ "@graph": [o] })}</script>`)[0];
+  ok("a JSON-LD node quoting the approved copy passes", gradeJsonLdNode(ld({ featureList: ["Runs everywhere.", `${SENTENCE} ${TERMS}`] })).length === 0);
+  ok("a JSON-LD node that names the license without the copy fires", gradeJsonLdNode(ld({ featureList: ["An offline license for kiosks, from sales."] })).length > 0);
+  ok("a JSON-LD node that paraphrases the copy fires", gradeJsonLdNode(ld({ description: "Offline license is only available to Enterprise clients." })).length > 0);
   console.log(bad ? "selftest RED" : "selftest GREEN (every rule fired)");
   return bad ? 1 : 0;
 }
@@ -83,8 +92,17 @@ function main() {
       for (const x of gradeMarkdown(readFileSync(f, "utf8"))) faults.push(`${rel}: ${x}`);
     }
   }
+  // each page's JSON-LD, every distinct node once
+  let nodes = 0;
+  if (existsSync(join(dist, "index.html"))) {
+    const ld = builtJsonLd(dist, { root: ROOT, skip: (rel) => /changelog/.test(rel) });
+    faults.push(...ld.faults);
+    if (!ld.nodes.length) faults.push("dist/ is built but no page carries JSON-LD — the reader of the head moved; refusing to pass");
+    nodes = ld.nodes.length;
+    for (const node of ld.nodes) for (const x of gradeJsonLdNode(node.node)) faults.push(`${node.page} JSON-LD (${node.type}): ${x}`);
+  }
   for (const f of faults) console.log(`::error::${f}`);
-  console.log(faults.length ? `offline copy: ${faults.length} finding(s)` : `offline copy ok: ${n} files; every offline-license mention carries the approved sentence or links to it`);
+  console.log(faults.length ? `offline copy: ${faults.length} finding(s)` : `offline copy ok: ${n} files${nodes ? ` and ${nodes} JSON-LD node(s)` : ""}; every offline-license mention carries the approved sentence or links to it`);
   return faults.length ? 1 : 0;
 }
 process.exit(main());

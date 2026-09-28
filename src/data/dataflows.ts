@@ -7,6 +7,15 @@
 
 export type ModeId = "cloud" | "servers" | "device" | "cpu" | "offline";
 
+/** What reaches bitHuman when an app renders the avatar on the device (S30), in
+ *  the pages' own words: the "What reaches bitHuman" card and the site-wide
+ *  JSON-LD quote it. "Never leaves" is never said without this qualifier. */
+export const DEVICE_METERING_ONLY =
+  "When the avatar renders in your app on the device and you use your own voice and language services, bitHuman receives usage metering only, never audio, video or conversation text.";
+/** The line web privacy copy always carries (STYLE.md, Claims). */
+export const WEB_EMBED_CONVERSATION =
+  "With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab.";
+
 export interface DataFlow {
   /** Where the avatar renders */
   renders: string;

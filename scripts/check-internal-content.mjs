@@ -23,6 +23,7 @@
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
+import { jsonLdNodes, nodeText } from "./jsonld.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 
@@ -190,8 +191,11 @@ function main() {
   for (const rel of [...new Set(files)]) {
     let text = readFileSync(join(ROOT, rel), "utf8");
     if (rel.endsWith(".html")) {
+      // The page's JSON-LD (in <head>) is read by every crawler: graded with the page.
+      let ld = "";
+      try { ld = jsonLdNodes(text).map(nodeText).join("\n") + "\n"; } catch (e) { ld = `${e.message}\n`; }
       const m = text.match(/<main[^>]*>([\s\S]*)<\/main>/);
-      text = (m ? m[1] : text).replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/g, "").replace(/<!--(\s*\/?(FLOORS|VERSIONS)[^>]*)-->/g, "").replace(/<[^>]+>/g, " ");
+      text = ld + (m ? m[1] : text).replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/g, "").replace(/<!--(\s*\/?(FLOORS|VERSIONS)[^>]*)-->/g, "").replace(/<[^>]+>/g, " ");
     } else text = servedText(rel, text);
     const hits = scan(rel, text, carriers);
     if (!hits.length) continue;

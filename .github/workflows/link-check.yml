@@ -518,13 +518,24 @@ jobs:
         if: always()
         run: node scripts/check-example-excerpts.mjs
 
-      - name: Honest claims in the built twins and llms files too
+      # The site-wide JSON-LD (src/config/site-jsonld.ts) is generated from the
+      # data files, so its source holds no claim to grade: these four read the
+      # structured data out of every built page's <head>.
+      - name: Honest claims in the built twins, llms files and JSON-LD too
         if: always()
         run: node scripts/check-claims.mjs
 
-      - name: Offline copy in the built twins and llms files too
+      - name: Offline copy in the built twins, llms files and JSON-LD too
         if: always()
         run: node scripts/check-offline-copy.mjs
+
+      - name: No internal vocabulary in the built JSON-LD
+        if: always()
+        run: node scripts/check-internal-vocabulary.mjs
+
+      - name: The built JSON-LD states speed only as published × real time (no frame rate, no resolution)
+        if: always()
+        run: node scripts/check-perf-literals.mjs
 
       # ★2026-09-21: /llms.txt AND /llms-full.txt — THE TWO FILES A CODING AGENT
       # READS — WERE BEING SERVED FROM A HAND-WRITTEN SNAPSHOT THAT SHADOWED THE
