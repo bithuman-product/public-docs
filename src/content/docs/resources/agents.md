@@ -25,8 +25,8 @@ curl -H "Accept: text/markdown" https://docs.bithuman.ai/platforms/python
 | File | What it holds |
 |---|---|
 | [/llms.txt](/llms.txt) | The index: rules for agents, where each model runs, key facts, one command per platform, speed, and links |
-| [/llms-full.txt](/llms-full.txt) | Getting started, every platform page and the REST API in one file |
-| [/llms/start.txt](/llms/start.txt), [/llms/platforms.txt](/llms/platforms.txt), [/llms/deploy.txt](/llms/deploy.txt), [/llms/models.txt](/llms/models.txt), [/llms/build.txt](/llms/build.txt), [/llms/api.txt](/llms/api.txt) | The same text one section at a time |
+| [/llms-full.txt](/llms-full.txt) | Getting started, the Python, CLI, Windows, LiveKit and REST platform pages, and the REST API in one file |
+| [/llms/start.txt](/llms/start.txt), [/llms/platforms.txt](/llms/platforms.txt), [/llms/apps.txt](/llms/apps.txt) (iOS & iPadOS, macOS, Android, Flutter, Web), [/llms/deploy.txt](/llms/deploy.txt), [/llms/models.txt](/llms/models.txt), [/llms/build.txt](/llms/build.txt), [/llms/api.txt](/llms/api.txt) | The same text one section at a time |
 | [/api/openapi.yaml](/api/openapi.yaml) | The REST API as OpenAPI 3 |
 | [/versions.json](/versions.json) | The current version and install line of every artifact |
 | [/platforms.json](/platforms.json) | Every way to run bitHuman, with its first command and docs |

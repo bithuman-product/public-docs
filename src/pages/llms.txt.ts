@@ -42,7 +42,10 @@ export const GET: APIRoute = async () => {
   }
   out += `\n## Docs (markdown)\n\n`;
   out += `- Any page as markdown: add \`.md\` to its URL or send \`Accept: text/markdown\`. Speed: ${SITE}/performance/method.md\n`;
-  out += `- By section: ${LLMS_SECTIONS.map((s) => sectionUrl(s.id)).join(" · ")} · start, platforms and api in one fetch: ${SITE}/llms-full.txt\n`;
+  // One full URL, then the sibling file names: seven full URLs no longer fit the 6 KB
+  // cap once the app platforms got their own file (2026-09-28).
+  const [first, ...rest] = LLMS_SECTIONS;
+  out += `- By section: ${sectionUrl(first.id)} and beside it ${rest.map((s) => `${s.id}.txt`).join(" · ")} (apps.txt: the app platforms) · start, platforms and api in one fetch: ${SITE}/llms-full.txt\n`;
   out += `- Docs MCP server: ${SITE}${MCP_PATH} · agent skill: ${SITE}${SKILL_PATH} · ${SITE}/resources/agents.md\n`;
   out += `- OpenAPI: ${SITE}/api/openapi.yaml · changelog: ${SITE}/changelog.md\n`;
 
