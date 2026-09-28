@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Honest claims only (docs spec §5.2 and PLAN_v2 §2): no banned word and no
 // claim from the DO NOT CLAIM list reaches a reader. Scans the sources a page
-// is built from and, after a build, the markdown twins and llms files.
+// is built from and, after a build, the markdown twins, the llms files and the
+// JSON-LD every page carries in its <head> (the site-wide graph is generated
+// from the data files, so only the built bytes show what it claims).
 //
 //   node scripts/check-claims.mjs            # src/ (and dist/ when built)
 //   node scripts/check-claims.mjs --selftest # every pattern fires on a fixture
@@ -10,6 +12,7 @@
 // expiry. The changelog and its archive are dated records and are not scanned.
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
+import { builtJsonLd, jsonLdNodes, nodeText } from "./jsonld.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 
@@ -71,6 +74,18 @@ function selftest() {
     console.log(`  ${n ? "FAIL" : "PASS"}  quiet on "${f}"`);
     if (n) bad++;
   }
+  // The built JSON-LD is read as text: every string value of every node.
+  const ld = (o) => `<head><script type="application/ld+json">${JSON.stringify(o)}</script></head>`;
+  const ldHits = (html) => jsonLdNodes(html).flatMap((n) => scan(nodeText(n))).length;
+  const arms = [
+    ["fires on claims inside a page's JSON-LD (featureList and offers)", ldHits(ld({ "@graph": [{ "@type": "SoftwareApplication", featureList: ["audio never leaves your hardware", "Runs on Raspberry Pi"], offers: { description: "Free tier available" } }] })) === 3],
+    ["quiet on a clean JSON-LD node", ldHits(ld({ "@graph": [{ "@type": "Organization", description: "bitHuman makes realtime talking avatars from one portrait." }] })) === 0],
+    ["a JSON-LD block that does not parse is a fault, not a pass", (() => { try { jsonLdNodes('<script type="application/ld+json">{"@graph": [</script>'); return false; } catch { return true; } })()],
+  ];
+  for (const [name, ok] of arms) {
+    console.log(`  ${ok ? "PASS" : "FAIL"}  ${name}`);
+    if (!ok) bad++;
+  }
   console.log(bad ? "selftest RED" : "selftest GREEN (every pattern fired, no false positive on the controls)");
   return bad ? 1 : 0;
 }
@@ -96,8 +111,23 @@ function main() {
     for (const h of hits) { console.log(`::error file=${rel},line=${h.line}::${h.id} ${h.what}: "${h.text}"`); bad++; }
     seen++;
   }
+  // what search engines and agents read first, once built: each page's JSON-LD,
+  // every distinct node once (no exceptions: the structured data states only
+  // what the pages state)
+  let ld = { nodes: [], pages: 0, faults: [] };
+  if (existsSync(join(dist, "index.html"))) {
+    ld = builtJsonLd(dist, { root: ROOT, skip: (rel) => /(^|\/)changelog(\/|\.html$)/.test(rel) });
+    for (const f of ld.faults) { console.log(`::error::${f}`); bad++; }
+    if (!ld.nodes.length) { console.log("::error::dist/ is built but no page carries JSON-LD — the reader of the head moved; refusing to pass"); bad++; }
+    for (const n of ld.nodes) {
+      const hits = scan(n.text);
+      for (const h of hits) console.log(`::error file=${n.page}::${h.id} ${h.what} in the JSON-LD (${n.type}): "${h.text}"`);
+      if (hits.length) { bad += hits.length; seen++; }
+    }
+  }
   for (const e of exceptions) if (!used.has(e.file)) { console.log(`::error::claims-exceptions.json names ${e.file}, which no longer trips the check — delete the entry`); bad++; }
-  console.log(bad ? `claims: ${bad} finding(s) in ${seen} file(s)` : `claims ok: ${files.length} files scanned, ${CLAIMS.length} patterns, ${exceptions.length} named exception(s)`);
+  const ldNote = ld.pages ? `, ${ld.nodes.length} JSON-LD node(s) on ${ld.pages} built page(s)` : "";
+  console.log(bad ? `claims: ${bad} finding(s) in ${seen} file(s)` : `claims ok: ${files.length} files scanned${ldNote}, ${CLAIMS.length} patterns, ${exceptions.length} named exception(s)`);
   return bad ? 1 : 0;
 }
 process.exit(main());

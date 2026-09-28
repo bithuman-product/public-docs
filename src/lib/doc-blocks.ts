@@ -29,7 +29,7 @@ import { calculate, planLine, fmtInt, fmtUsd, type CalcData, type CalcMode } fro
 import { PERF_GROUPS } from "../data/perf-groups.ts";
 import { MODELS, PLACES, MATRIX, type ModelId, type PlaceId } from "../data/models.ts";
 import { DEPLOYMENTS } from "../data/deployments.ts";
-import { DATAFLOWS, type ModeId } from "../data/dataflows.ts";
+import { DATAFLOWS, DEVICE_METERING_ONLY, type ModeId } from "../data/dataflows.ts";
 import { DEMOS } from "../data/demo.ts";
 import { figureBlock, galleryBlock, githubBlock } from "./showcase.ts";
 import { diagramHtml, diagramText } from "./diagrams.ts";
@@ -114,7 +114,7 @@ function perfBlock(ids: string[], mode: Mode): string {
 // ---------------------------------------------------------------- why on the device
 const WHY: Record<string, () => { title: string; text: string }[]> = {
   device: () => [
-    { title: "What reaches bitHuman", text: "When the avatar renders in your app on the device and you use your own voice and language services, bitHuman receives usage metering only, never audio, video or conversation text." },
+    { title: "What reaches bitHuman", text: DEVICE_METERING_ONLY },
     { title: "What it costs", text: `${perMinute(rateFor("self_hosted"))} of active session time on the device, against ${rateFor("hosted")} for a bitHuman cloud avatar: about ${usd(rateFor("self_hosted"))} and ${usd(rateFor("hosted"))} a minute at the top-up rate ([pricing](/pricing)).` },
     { title: "When the network drops", text: "A session checks your credential when it starts and keeps rendering through a network drop of up to 5 minutes." },
   ],

@@ -14,6 +14,7 @@
 //
 // EXIT 0 clean + instrument demonstrably fires · 1 a hit · 2 cannot measure
 import { readFileSync, readdirSync } from "node:fs";
+import { withJsonLdText } from "./jsonld.mjs";
 
 // usage:
 //   node scripts/check-served-vocabulary.mjs --live [origin]
@@ -109,8 +110,10 @@ console.log(`lifted ${BANNED.length} banned pattern(s) + ${CARRIERS.length} carr
 console.log(`  grading ${GRADED.length} word(s): ${GRADED.map((g) => g.name).join(", ")}`);
 
 // ── rendered text from served HTML ───────────────────────────────────────────
+// The page's JSON-LD is text a crawler reads, so it is kept (as its string
+// values) before the page's scripts are stripped.
 function text(html) {
-  return html
+  return withJsonLdText(html)
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, " ")
@@ -146,12 +149,14 @@ function renderedCarrier(c) {
 // excused by any §G carrier, which the negative control below then proves.
 for (const v of VERBATIM) if (!v.fixture) v.fixture = `the ${v.name} pipeline renders the frame`;
 const dead = [];
+const inJsonLd = (t) => `<head><script type="application/ld+json">${JSON.stringify({ "@graph": [{ description: t }] })}</script></head>`;
 for (const b of GRADED) {
-  const fired = new RegExp(b.re.source, b.re.flags).test(text(`<p>${b.fixture}</p>`));
+  const fired = new RegExp(b.re.source, b.re.flags).test(text(`<p>${b.fixture}</p>`))
+    && new RegExp(b.re.source, b.re.flags).test(text(inJsonLd(b.fixture)));
   if (!fired) dead.push(b.name);
 }
 if (dead.length) { console.error("BLIND INSTRUMENT — pattern(s) cannot match own fixture: " + dead.join(", ")); process.exit(2); }
-console.log(`positive control: ${GRADED.length}/${GRADED.length} pattern(s) fired on their own fixture through the html->text path`);
+console.log(`positive control: ${GRADED.length}/${GRADED.length} pattern(s) fired on their own fixture through the html->text path, in the body and in the JSON-LD`);
 
 // ★NEGATIVE CONTROL on the projection above. A backtick made optional must not
 // turn a carrier into a wildcard: each banned fixture is re-tested against
@@ -220,7 +225,7 @@ if (!corpus.length) { console.error("CANNOT MEASURE: empty corpus"); process.exi
 // applies unchanged. \u0001 marks a fence, \u0002 a dated heading; both are
 // inserted before tags are stripped so they survive into the text domain.
 function blockLines(html) {
-  let h = html
+  let h = withJsonLdText(html)
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, " ")

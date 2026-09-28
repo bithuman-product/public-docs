@@ -1,10 +1,4 @@
 {
   "$comment": "Named exceptions to scripts/check-claims.mjs. Each one says why, and until when. The check refuses an entry whose file no longer trips it.",
-  "exceptions": [
-    {
-      "file": "src/layouts/Base.astro",
-      "reason": "The site-wide JSON-LD (O1) is the owner's to correct: it is outside every docs wave until the owner rules on the replacement.",
-      "expires": "the O1 owner ruling"
-    }
-  ]
+  "exceptions": []
 }

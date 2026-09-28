@@ -39,15 +39,24 @@
 // `<!-- FLOORS:HEADLINE -->…<!-- /FLOORS:HEADLINE -->` block and let the emitter
 // fill it. Never add the number to ALLOW to get a green.
 //
+// THE BUILT JSON-LD. Every page's structured data states speed, and its source
+// (src/config/site-jsonld.ts) types no number: it reads the generated headline
+// and performance.json. So once dist/ is built the rendered graph is graded
+// instead: no frame rate at all (the play rates included) and no resolution —
+// structured data states speed as × real time only — and every multiple in it
+// is a published cell of public/performance.json, floored as formatMultiple
+// floors it. The changelog pages are dated history and are not graded.
+//
 // USAGE
 //   node scripts/check-perf-literals.mjs
 //   node scripts/check-perf-literals.mjs --selftest
 //
 // EXIT 0 clean · 1 a hand-typed measured rate (or a malformed marker)
 
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { findBlocks, withoutBlocks, lineOf, walk } from "./floors-blocks.mjs";
+import { builtJsonLd } from "./jsonld.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 export const ROOTS = [
@@ -93,6 +102,32 @@ export function literals(text) {
   return { hits: out.sort((a, b) => a.line - b.line), faults };
 }
 
+/** A frame rate or a resolution: neither belongs in the structured data. */
+const LD_FRAME_RATE = /\b\d+(?:\.\d+)?\s?(?:fps|FPS)\b|\bfps\b|\bframes?\s+(?:per|a)\s+second\b|\bframes\/s\b/i;
+const LD_RESOLUTION = /\b\d{3,4}\s?[x×]\s?\d{3,4}\b|\b(?:480|720|1080|1440|2160)p\b|\b[48]K\b/;
+const LD_MULTIPLE = /(?<![\w.])(\d+(?:\.\d+)?)\s?×(?!\s?\d)/g;
+
+/** Faults in one JSON-LD node's text, against the set of published multiples
+ *  (each as formatMultiple prints it, e.g. "4.1×"). */
+export function gradeJsonLdText(text, published) {
+  const faults = [];
+  const fr = LD_FRAME_RATE.exec(text);
+  if (fr) faults.push(`a frame rate ("${fr[0]}"): structured data states speed as × real time only`);
+  const res = LD_RESOLUTION.exec(text);
+  if (res) faults.push(`a resolution ("${res[0]}"): structured data makes no resolution claim`);
+  for (const m of text.matchAll(LD_MULTIPLE)) {
+    if (/^1(\.0+)?$/.test(m[1])) continue; // 1.0× is the real-time threshold, not a measurement
+    if (!published.has(`${m[1]}×`)) faults.push(`"${m[0]}" is not a published cell of performance.json`);
+  }
+  return faults;
+}
+
+/** Every published cell's multiple, floored to one decimal as the pages print it. */
+export async function publishedMultiples(perf) {
+  const { formatMultiple } = await import(new URL("../src/lib/format-multiple.ts", import.meta.url).href);
+  return new Set(perf.rows.filter((r) => r.published).flatMap((r) => Object.values(r.cells).filter(Boolean).map((c) => formatMultiple(c.x_realtime))));
+}
+
 /** (failures, allowed, stale) for a corpus of {rel, text}. */
 export function grade(files, allow = ALLOW) {
   const failures = [];
@@ -122,11 +157,26 @@ function corpus() {
   return walk(ROOT, ROOTS).map((rel) => ({ rel, text: readFileSync(join(ROOT, rel), "utf8") }));
 }
 
-function main() {
+/** The built JSON-LD's failures, or null when dist/ is not built. */
+async function builtFailures() {
+  const dist = join(ROOT, "dist");
+  if (!existsSync(join(dist, "index.html"))) return null;
+  const ld = builtJsonLd(dist, { root: ROOT, skip: (rel) => /(^|\/)changelog(\/|\.html$)/.test(rel) });
+  const failures = ld.faults.map((f) => ({ rel: f, line: 0, what: "JSON-LD", why: "does not parse" }));
+  if (!ld.nodes.length) failures.push({ rel: "dist/", line: 0, what: "JSON-LD", why: "no built page carries JSON-LD — the reader of the <head> moved" });
+  const published = await publishedMultiples(JSON.parse(readFileSync(join(ROOT, "public/performance.json"), "utf8")));
+  for (const n of ld.nodes) for (const why of gradeJsonLdText(n.text, published)) failures.push({ rel: n.page, line: 0, what: `JSON-LD (${n.type})`, why });
+  return { failures, nodes: ld.nodes.length, pages: ld.pages };
+}
+
+async function main() {
   if (process.argv.includes("--selftest") || process.argv.includes("--self-test")) return selftest();
   const files = corpus();
   const { failures, allowed, stale } = grade(files);
-  console.log(`check-perf-literals — ${files.length} files under ${ROOTS.join(", ")}`);
+  const built = await builtFailures();
+  if (built) failures.push(...built.failures);
+  console.log(`check-perf-literals — ${files.length} files under ${ROOTS.join(", ")}` +
+    (built ? `, and the built JSON-LD (${built.nodes} distinct node(s) on ${built.pages} page(s))` : "; the built JSON-LD is graded once dist/ is built"));
   for (const a of allowed) console.log(`  allowed  ${a.rel}:${a.line}  "${a.text}" — ${a.why}`);
   for (const s of stale) {
     console.log(`  ★STALE ALLOW ENTRY — "${s.text}" is no longer in ${s.file}. Delete it from ALLOW in scripts/check-perf-literals.mjs.`);
@@ -138,16 +188,18 @@ function main() {
       "\n  Every measured speed is generated from bithuman-models' perf/FLOORS.json. Link to the\n" +
         "  performance page (/performance) instead, or place a <!-- FLOORS:HEADLINE --> …\n" +
         "  <!-- /FLOORS:HEADLINE --> block and let the emitter fill it. The play rates (20 fps\n" +
-        "  Expression 2, 25 fps Essence 2) are exempt: they are the output contract.",
+        "  Expression 2, 25 fps Essence 2) are exempt: they are the output contract. In the built\n" +
+        "  JSON-LD nothing is exempt: it states speed as × real time from a published cell only.",
     );
     process.exit(1);
   }
-  console.log(`\nOK — no measured rate outside a generated block (${allowed.length} named exception(s), ${stale.length} stale).`);
+  console.log(`\nOK — no measured rate outside a generated block (${allowed.length} named exception(s), ${stale.length} stale)` +
+    (built ? "; the built JSON-LD states speed only as published × real time." : "."));
 }
 
 /* ---------------------------------------------------------------- selftest */
 
-function selftest() {
+async function selftest() {
   let bad = 0;
   const arm = (name, ok) => {
     if (!ok) bad++;
@@ -192,6 +244,17 @@ function selftest() {
   arm("a jq template is not a literal", g("\"\\(.fps) fps, \\(.x_realtime)x real time\"\n").length === 0);
   arm("a version number is not a rate", g("bithuman 2.11.6 and 25fpsx\n").length === 0);
 
+  console.log("\nBUILT JSON-LD — structured data states speed as published × real time only");
+  const pub = new Set(["4.1×", "17.0×", "2.0×"]);
+  const j = (t) => gradeJsonLdText(t, pub);
+  arm("a frame rate reddens, the play rates included", j("Real-time lip-sync — 25 fps (Essence 2), 20 fps (Expression 2)").length === 1 && j("up to 25 frames per second").length === 1);
+  arm("a resolution reddens", j("renders 1920×1080 video").length === 1 && j("a 1080p avatar").length === 1 && j("416x720 frames").length === 1);
+  arm("a multiple that is not a published cell reddens", j("Essence 2, × real time: Cloud API 9.9×").length === 1);
+  arm("...and one copied from a published cell is silent", j("Essence 2, × real time: Cloud API 4.1×, Android 2.0×; Expression 2 17.0×").length === 0);
+  arm("1.0× is the threshold, not a measurement", j("at 1.0× or more an avatar holds a live conversation").length === 0);
+  arm("the published set is floored as the pages floor it", (await publishedMultiples({ rows: [{ published: true, cells: { a: { x_realtime: 4.16 }, b: null } }, { published: false, cells: { a: { x_realtime: 9.9 } } }] })).has("4.1×")
+    && !(await publishedMultiples({ rows: [{ published: false, cells: { a: { x_realtime: 9.9 } } }] })).has("9.9×"));
+
   console.log("\nCORPUS CONTROLS — the arms above must be grading something");
   const files = corpus();
   arm("the corpus is non-trivial (the docs collection and the pages are scanned)",
@@ -205,4 +268,4 @@ function selftest() {
   process.exit(bad ? 1 : 0);
 }
 
-main();
+await main();

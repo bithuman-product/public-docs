@@ -57,6 +57,7 @@
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
+import { builtJsonLd, jsonLdNodes, nodeText } from "./jsonld.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 
@@ -419,6 +420,32 @@ function siblingCorpusMismatch(root, mine) {
   return msg;
 }
 
+// ── THE BUILT JSON-LD ────────────────────────────────────────────────────────
+// Every page's <head> carries structured data that search engines and agents
+// read before the page: the site-wide graph (src/config/site-jsonld.ts) is
+// generated from the data files, so its SOURCE holds no words to grade. Once
+// dist/ is built, every distinct node is graded here with the same patterns
+// and the same carriers, one string value per line.
+function gradeJsonLd(nodes) {
+  const violations = [];
+  let carried = 0;
+  for (const n of nodes) {
+    for (const line of nodeText(n.node).split("\n")) {
+      for (const h of scanText(line)) {
+        if (CARRIERS.some((c) => c.re.test(line))) { carried++; continue; }
+        const b = BANNED.find((x) => x.name === h.name);
+        violations.push(
+          `${n.page} JSON-LD (${n.type}): internal vocabulary \`${h.found}\` [${h.name}] in ` +
+          `the structured data every crawler reads.\n` +
+          `      ${line.trim().slice(0, 150)}\n` +
+          `      → ${b.say}.`
+        );
+      }
+    }
+  }
+  return { violations, carried };
+}
+
 function run({ verbose = true, root = ROOT, files = null } = {}) {
   const fatal = [];
   const violations = [];
@@ -508,6 +535,20 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
     }
   }
 
+  // ── the built JSON-LD, on a real run once dist/ exists ──────────────────────
+  let ld = null;
+  if (!files && existsSync(root + "dist/index.html")) {
+    ld = builtJsonLd(root + "dist", { root });
+    for (const f of ld.faults) fatal.push(`the built JSON-LD cannot be read: ${f}`);
+    if (!ld.nodes.length) fatal.push(
+      `dist/ is built but no page carries JSON-LD — the reader of the <head> ` +
+      `moved, so the structured data is unguarded`
+    );
+    const g = gradeJsonLd(ld.nodes);
+    violations.push(...g.violations);
+    carried += g.carried;
+  }
+
   // ── non-vacuity: a zero must be EARNED ─────────────────────────────────────
   if (corpus.length === 0) fatal.push(
     `the corpus is EMPTY — 0 files scanned. Every count below is 0 because ` +
@@ -553,6 +594,9 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
     console.log(`  frozen carriers  ${CARRIERS.length} present on the site; ` +
                 `${carried} occurrence(s) of a mechanism word excused as a literal`);
     console.log(`  per-word         ${[...perName].map(([k, v]) => `${k}=${v}`).join(" ")}`);
+    if (!files) console.log(ld
+      ? `  built JSON-LD    ${ld.nodes.length} distinct node(s) on ${ld.pages} page(s) graded`
+      : `  built JSON-LD    not graded: no dist/ (the served-comments job grades it after the build)`);
     // ★Printed from the same array the fatal list is built from, so it cannot
     // claim agreement while the run fails beneath it.
     if (!files) console.log(`  ★corpus control  ${siblingFatal.length === 0 ? "same 107-file corpus as check-retired-model-names.mjs" : "DIVERGED from check-retired-model-names.mjs"}`.replace("107", String(corpus.length)));
@@ -696,6 +740,19 @@ function selfTest() {
     scanWrapped("Essence 2 needs a bitHuman API\nkey in two places").length === 1 &&
     scanWrapped("> Developer → API\n> Keys").length === 1 &&
     scanWrapped("open https://www.bithuman.ai/developer/api-\nkeys").length === 0);
+
+  // M9 — the structured data is graded like prose: a banned word in any string
+  //      value of a page's JSON-LD is reported, a carrier still excuses its own
+  //      sentence, and a node with neither is clean.
+  {
+    const html = (o) => `<head><script type="application/ld+json">${JSON.stringify({ "@graph": [o] })}</script></head>`;
+    const nodes = (o) => jsonLdNodes(html(o)).map((node) => ({ page: "dist/x.html", type: "t", node }));
+    const bad = gradeJsonLd(nodes({ "@type": "SoftwareApplication", featureList: ["Runs on the Apple plane", "the bank of mouth shapes"] }));
+    const carried = gradeJsonLd(nodes({ description: "Essence 2 Max is available on the Enterprise plan only." }));
+    const clean = gradeJsonLd(nodes({ description: "Realtime talking avatars from one portrait." }));
+    T("M9 a mechanism word in a page's JSON-LD is reported; a carrier excuses its sentence; clean data passes",
+      bad.violations.length === 2 && carried.violations.length === 0 && carried.carried === 1 && clean.violations.length === 0);
+  }
 
   console.log(`self-test: ${arms} arms, ${fails} failed`);
   return fails ? 1 : 0;

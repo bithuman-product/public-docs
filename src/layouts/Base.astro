@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Search from "../components/Search.astro";
+import { siteGraph } from "../config/site-jsonld";
 
 interface Props {
   title?: string;
@@ -69,43 +70,10 @@ const ogImage = new URL(ogPath, site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* JSON-LD: Organization + SoftwareApplication (site-wide), plus whatever the page adds */}
+    {/* JSON-LD: the site-wide Organization + SoftwareApplication (src/config/site-jsonld.ts), plus whatever the page adds */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@graph": [
-        ...jsonLd,
-        {
-          "@type": "Organization",
-          "@id": "https://www.bithuman.ai/#organization",
-          "name": "bitHuman",
-          "url": "https://www.bithuman.ai",
-          "logo": "https://docs.bithuman.ai/bithuman-mark.png",
-          "description": "bitHuman builds private, on-device AI avatars that turn any photo into a real-time video agent — self-hostable and deployable on-prem."
-        },
-        {
-          "@type": "SoftwareApplication",
-          "@id": "https://www.bithuman.ai/#software",
-          "name": "bitHuman",
-          "applicationCategory": "DeveloperApplication",
-          "operatingSystem": "macOS, Linux, iOS, iPadOS, Android, Web, Raspberry Pi OS",
-          "url": "https://www.bithuman.ai",
-          "publisher": { "@id": "https://www.bithuman.ai/#organization" },
-          "description": "On-device AI avatar runtime and SDKs. Turn a photo into a real-time avatar (up to 25 fps) that runs fully on your own hardware — private by design, self-hostable and on-prem. Runs on CPU (including Raspberry Pi), NVIDIA GPU, and Apple Silicon.",
-          "featureList": [
-            "On-device inference — audio, video, and prompts never leave your hardware",
-            "Real-time lip-sync — 25 fps (Essence 2), 20 fps (Expression 2)",
-            "Runs on CPU (incl. Raspberry Pi), NVIDIA GPU, and Apple Silicon",
-            "Self-hosted and on-prem deployment",
-            "Low per-minute cost, from 1 credit/min self-hosted"
-          ],
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD",
-            "description": "Free tier available; low per-minute cost from 1 credit/min self-hosted."
-          }
-        }
-      ]
+      "@graph": [...jsonLd, ...siteGraph(site)],
     })} />
 
     {/* Fonts: Roboto + Roboto Mono (bitHuman brand) */}
