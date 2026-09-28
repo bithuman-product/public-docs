@@ -12,12 +12,14 @@
 //                                                       calcData(), the /pricing calculator's source
 //   the offline license                                 src/data/offline.ts, verbatim
 //
-// No number, price, plan name or offline wording is typed here. The built
-// graph is graded like prose: check-claims, check-offline-copy,
-// check-internal-vocabulary and check-perf-literals read it out of dist/.
+// No number, price, plan name or offline wording is typed here
+// (check-jsonld-facts refuses one). The built graph is graded like prose:
+// check-claims, check-offline-copy, check-internal-vocabulary,
+// check-perf-literals and check-jsonld-facts (rates, plan prices and names,
+// platforms) read it out of dist/.
 import { HERO, MODELS } from "../data/home";
 import { DEPLOYMENTS } from "../data/deployments";
-import { PLATFORM_PAGES } from "../data/platforms";
+import { PLATFORM_PAGES, QUICKSTART } from "../data/platforms";
 import { DEVICE_METERING_ONLY, WEB_EMBED_CONVERSATION } from "../data/dataflows";
 import { OFFLINE_LICENSE_COPY } from "../data/offline";
 import plansData from "../data/plans.json";
@@ -30,14 +32,16 @@ export const SOFTWARE_ID = "https://www.bithuman.ai/#software";
 
 /** The operating systems the SDKs run on. Each name is held to what the site
  *  publishes for it: its platform page, and a published performance.json row
- *  where one is measured. When either is gone the build fails, so the metadata
- *  cannot keep a platform the pages dropped. There is no Windows entry: the
- *  docs send Windows users to WSL2. */
+ *  where one is measured. A qualifier in parentheses is a requirement the
+ *  platform's /start panel lists under "needs" (the Mac panel: Apple silicon;
+ *  Intel Macs are not supported). When any of these is gone the build fails,
+ *  so the metadata cannot keep a platform or a looser requirement the pages
+ *  dropped. There is no Windows entry: the docs send Windows users to WSL2. */
 const RUNS_ON: { os: string; page: string; row?: string }[] = [
   { os: "iOS", page: "ios", row: "iphone-15" },
   { os: "iPadOS", page: "ios" },
   { os: "Android", page: "android", row: "android-s25plus" },
-  { os: "macOS", page: "macos", row: "macos-sdk" },
+  { os: "macOS (Apple silicon)", page: "macos", row: "macos-sdk" },
   { os: "Linux", page: "cli", row: "linux-cpu" },
   { os: "Web browser", page: "web", row: "web" },
 ];
@@ -47,13 +51,17 @@ function operatingSystems(): string {
     const p = PLATFORM_PAGES.find((x) => x.id === r.page);
     const word = r.os.split(" ")[0];
     if (!p || !`${p.title} ${p.line}`.includes(word)) throw new Error(`site-jsonld: no platform page "${r.page}" naming ${word}`);
+    const needs = /\(([^)]+)\)/.exec(r.os)?.[1];
+    if (needs && !QUICKSTART.find((q) => q.id === r.page)?.needs.includes(needs)) throw new Error(`site-jsonld: the "${r.page}" /start panel does not list "${needs}" under needs`);
     if (r.row) perfRow(r.row); // throws on an unknown or unpublished row
   }
   return RUNS_ON.map((r) => r.os).join(", ");
 }
 
-/** "The CLI…" → "the CLI…", "A photoreal…" → "a photoreal…"; a leading acronym ("REST") or brand stays as written. */
-const lower = (s: string) => (/^[A-Z](?![A-Z])/.test(s) ? s[0].toLowerCase() + s.slice(1) : s);
+/** "The CLI…" → "the CLI…", "A photoreal…" → "a photoreal…". Only a leading
+ *  plain English word is lowercased; any other first word (an acronym such as
+ *  "REST", or a name such as "LiveKit", "WebGPU", "Python") stays as written. */
+const lower = (s: string) => (/^(?:A|An|Any|The|Both|Each|Every|Inside|In|On|Your)\b/.test(s) ? s[0].toLowerCase() + s.slice(1) : s);
 const perMinute = (n: number) => `${n} credit${n === 1 ? "" : "s"}/min`;
 
 interface Plan { id: string; name: string; monthly_usd: number; credits_per_month: number }
@@ -114,7 +122,7 @@ export function siteGraph(site: URL): Record<string, unknown>[] {
       "@id": ORGANIZATION_ID,
       name: "bitHuman",
       url: "https://www.bithuman.ai",
-      logo: new URL("/bithuman-mark.png", site).href,
+      logo: new URL("/favicon.png", site).href, // 128 px: a logo needs 112 px or more
       description: "bitHuman makes realtime talking avatars from one portrait, rendered on the device or in the bitHuman cloud.",
     },
     {
