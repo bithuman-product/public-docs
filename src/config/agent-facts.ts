@@ -22,7 +22,7 @@ export function agentInstructions(site: string): string {
     `- In a LiveKit worker, name the secret \`BITHUMAN_MASTER_SECRET\` and pass a minted token (${site}/platforms/livekit.md).\n` +
     `- Say where the avatar renders (device, browser, server, cloud) and the conversation runs (your stack, the CLI's local conversation brain, bitHuman's servers).\n` +
     `- Quote prices only from ${site}/pricing.md and speed only from ${site}/performance.json (× real time, with the device).\n` +
-    `- Do not claim offline on phones, Mac or the browser, or a conversation brain on phones; for compliance, describe the architecture.\n\n`
+    `- Never claim offline on phones, browsers or Swift apps, or a conversation brain on phones; for compliance, describe the architecture.\n\n`
   );
 }
 
@@ -42,7 +42,7 @@ export function agentWhere(site: string): string {
     `- No GPU: both models run live on a standard Linux PC (${xrt("linux-cpu")}). ${site}/deploy/cpu.md\n` +
     `- In the browser: WebGPU renders the avatar in the tab, falling back to cloud rendering; the conversation runs on bitHuman's servers.\n` +
     `- Your servers: the CLI, the Python SDK and the LiveKit plugin on your machines; audio and video stay there.\n` +
-    `- Fully offline: ${OFFLINE_LICENSE_COPY} Essence 1 on Linux x86_64/ARM64 now (bitHuman 2.11.16+); Essence 2 and Expression 2 later. Not for phones. (Not the same as file rendering with \`bithuman render\`, which signs in online.) ${site}/deploy/offline.md\n` +
+    `- Fully offline: ${OFFLINE_LICENSE_COPY} Essence 1 now on Linux x86_64/ARM64 and Apple silicon Macs (Python, bitHuman 2.11.17+); Essence 2 and Expression 2 later; \`bithuman render\` is online. ${site}/deploy/offline.md\n` +
     `- bitHuman cloud: REST API, web embed, LiveKit; renders in the US.\n\n`
   );
 }
