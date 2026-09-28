@@ -11,14 +11,14 @@ type: example
 ios-expression-2 eager
 ```
 
-A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to it** drives the avatar from the microphone, live. Everything renders on the device at 416×720, 20 frames a second; the engine contacts bitHuman only to check your API secret and report session time.
+A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to it** drives the avatar from the microphone, live. Everything renders on the device; the engine contacts bitHuman only to check your API secret and report session time.
 
 ## Requirements
 
 | You need | Notes |
 |---|---|
 | A Mac with Xcode 26 or newer, and an Apple Developer team | a device build is a signed build |
-| A physical iPhone or iPad with Apple silicon | the Simulator cannot run the engine; no Apple entitlement is needed |
+| A physical iPhone or iPad with Apple silicon, or the iOS Simulator | Expression 2 also runs in the Simulator (arm64); judge speed on a device. No Apple entitlement is needed |
 | The bitHuman CLI | `setup.sh` uses it once: `brew install bithuman-product/bithuman/bithuman-cli` |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
@@ -42,7 +42,7 @@ In Xcode: **Product → Scheme → Edit Scheme → Run → Environment Variables
 open IOSExpression2.xcodeproj
 ```
 
-Pick your team under **Signing & Capabilities**, choose your iPhone as the run destination, and press **Run**.
+Pick your team under **Signing & Capabilities**, choose your iPhone or an iPhone simulator as the run destination, and press **Run**.
 
 ## Expected output
 
@@ -55,7 +55,7 @@ The avatar appears and idles. Tap **Speak**: it says the sample line with its li
 1. `Expression2Engine.create(modelPath:sharedEngineDir:)` opens the avatar;
 2. `feed(samples)` takes 16 kHz mono float audio as it arrives, and `flushTail()` ends a reply;
 3. `pull()` returns the next frame, or `nil` until a chunk of frames is ready, so the app feeds and drains at the same time;
-4. a display loop shows one frame per 50 ms of audio, on the audio clock.
+4. a display loop shows each frame when the player reaches its audio, on the audio clock.
 
 The same three calls run on a Mac: [macOS example](/examples/macos-expression-2). The API is on [Apple](/platforms/ios) and [Apple API reference](/platforms/swift/reference).
 
@@ -105,7 +105,7 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 - **Your own avatar:** create one with the [Agents API](/api/agents) (`"model": "expression-2"`), then `BITHUMAN_API_SECRET=… ./setup.sh <AGENT_CODE>`.
 - **Your own voice pipeline:** feed the audio your text-to-speech produces into `feed`, in chunks, as it arrives.
 - **Ship it:** don't put the secret in the app bundle. Fetch it from your backend or the Keychain and call `Expression2Credential.set(key)` before `create`.
-- **A photoreal person:** the [iOS Essence 2 example](/examples/ios-essence-2) renders an Essence 2 avatar at full resolution.
+- **A photoreal person:** the [iOS Essence 2 example](/examples/ios-essence-2) renders an Essence 2 avatar on the device.
 
 ## Troubleshooting
 
@@ -115,7 +115,7 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 | `missing w2v_frontend_cpuAndNE.mlpackage` | run `./setup.sh` again; it stages the shared engine files |
 | `the bithuman CLI is not on PATH` from `setup.sh` | `brew install bithuman-product/bithuman/bithuman-cli`, then rerun |
 | The view stays empty and nothing throws | keep polling `pull()` while you feed; it returns `nil` between chunks |
-| It builds for the Simulator and crashes there | run on a physical device |
+| `unable to resolve module dependency: 'Expression2'` on a Simulator build | the simulator slices are arm64 only: pick an iPhone simulator on an Apple silicon Mac, or add `ARCHS=arm64` |
 
 More on [Apple: Troubleshooting](/platforms/ios#troubleshooting).
 

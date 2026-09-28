@@ -64,7 +64,7 @@ curl -fsSL https://docs.bithuman.ai/skills/bithuman-integrate/SKILL.md -o .claud
 2. API and SDK use requires the Creator plan or higher.
 3. Read the API secret from the environment (`BITHUMAN_API_SECRET`); never write it into code or a command line. In a LiveKit worker, name it `BITHUMAN_MASTER_SECRET` and pass a minted token.
 4. Say where things happen: the avatar renders (device, browser, server, cloud); the conversation runs (your stack, the CLI's local conversation brain, or bitHuman's servers).
-5. Take versions from [/versions.json](/versions.json), speed from [/performance.json](/performance.json) and prices from `GET https://api.bithuman.ai/v1/pricing`, not from memory or an older sample.
+5. Take versions from [/versions.json](/versions.json), speed from [/performance.json](/performance.json) and prices from `GET https://api.bithuman.ai/v1/pricing` (send the `api-secret` header; without it the call returns `401`), not from memory or an older sample.
 
 ## Next
 

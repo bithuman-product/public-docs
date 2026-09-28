@@ -36,3 +36,7 @@ A Linux PC with no GPU (x86_64 or arm64) or a Mac with Apple silicon, running th
 ```price
 cpu
 ```
+
+## Share it with your team
+
+The overviews on bithuman.ai: [AI avatars for trade shows, museums and kiosks](https://www.bithuman.ai/use-cases/trade-shows-kiosks) and [Enterprise](https://www.bithuman.ai/enterprise).

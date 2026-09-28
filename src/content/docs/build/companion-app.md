@@ -243,7 +243,7 @@ The avatar closes while the app is in the background, and comes back without a n
 
 ### Run it on a phone
 
-Build to a physical iPhone or iPad (iOS 26), or to a physical arm64 Android phone. The iOS Simulator and Android emulators cannot run the engine.
+Build to a physical iPhone or iPad (iOS 26), or to a physical arm64 Android phone. Essence 2 and the Android SDK need a physical device; Expression 2 also runs in the iOS Simulator.
 
 ```expected
 The companion idles, answers and can be interrupted, rendered on the phone.
@@ -256,6 +256,8 @@ topology device
 ```
 
 The avatar renders inside your app, from 16 kHz mono speech to picture frames. When you use your own voice and language services, bitHuman receives usage metering only, never audio, video or conversation text. A session checks your API secret when it starts and keeps rendering through a network drop of up to 5 minutes.
+
+The overview to share with your team is on bithuman.ai: [AI avatars for app developers](https://www.bithuman.ai/developers).
 
 ## Make it your own
 
@@ -279,7 +281,7 @@ example
 | Symptom | Fix |
 |---|---|
 | Opening the avatar fails with a metering refusal | Set the API secret before the download and the first `create`, on the Creator plan or higher. |
-| It works on a phone but not in the Simulator or an emulator | Expected: the engine needs a physical device. |
+| It works on a phone but not in the Simulator or an emulator | Expected: Essence 2 and the Android SDK need a physical device; Expression 2 also runs in the iOS Simulator. |
 | The lips run ahead of the voice | Start the reply's audio with its first speech frame (`audioTime == 0` in Swift), not when you feed it. |
 | The reply is cut short | Mark the end of each reply once: `flushTail()` in Swift, `endOfAudio()` in Kotlin. |
 | The mouth runs slow and the reply lasts too long | The speech is not 16 kHz: [resample it](#resample-speech-to-16-khz) before you feed it. |

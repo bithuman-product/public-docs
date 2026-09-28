@@ -43,3 +43,5 @@ Organization roles (owner, admin, member), an audit-log API, API-secret rotation
 ## Agreements
 
 Healthcare and financial-services deployments are set up under an enterprise agreement and review. [Contact sales](https://www.bithuman.ai/sales) to start one.
+
+Overviews to share with your team, on bithuman.ai: [AI avatars for healthcare](https://www.bithuman.ai/use-cases/healthcare), [Security and privacy](https://www.bithuman.ai/security) and [Enterprise](https://www.bithuman.ai/enterprise).

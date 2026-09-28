@@ -40,7 +40,7 @@ Yes, with the iframe embed; there is no npm package. [Web](/platforms/web#react-
 
 ### Can I test on the iPhone Simulator or an Android emulator?
 
-Use a physical device. Essence 2 on Apple needs a physical iPhone or iPad, not the Simulator, and Android needs a physical arm64 device, not an emulator.
+Expression 2 runs in the iOS Simulator. Essence 2 on Apple needs a physical iPhone or iPad, not the Simulator, and Android needs a physical arm64 device, not an emulator.
 
 ### Does a computer need a GPU?
 
