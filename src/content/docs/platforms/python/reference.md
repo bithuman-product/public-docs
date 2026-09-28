@@ -10,7 +10,7 @@ type: reference
 How to use these in an app is on [Python](/platforms/python).
 
 <!-- PYAPI:BEGIN -->
-Generated from `bithuman` 2.11.14 as published on PyPI (Python `<3.15,>=3.10`; extras: `bithuman[expression-2]`). Names the package exports that are not listed here are internal and can change.
+Generated from `bithuman` 2.11.15 as published on PyPI (Python `<3.15,>=3.10`; extras: `bithuman[expression-2]`). Names the package exports that are not listed here are internal and can change.
 
 ## bithuman
 
@@ -28,20 +28,14 @@ An open avatar.  Get one from `bithuman.open`.
 
 Usable as a context manager: `with` closes it for you.
 
-**`render(audio: Audio) -> Iterator[np.ndarray]`**
+**`render(audio: Audio, out_mp4: str) -> int`**
 
-Yield the frames for `audio`.
+Yield the frames for `audio`, or, with `out_mp4=`, write them to an MP4.
 
-`audio` is 16 kHz mono — a buffer (bytes, or an int16/float array),
-the path of an audio file, or an **iterable of those** for a live
-stream.  Passing a stream instead of a whole clip is the same call.
-
-Each frame is a `(height, width, 3)` uint8 array in RGB order.
-Frames arrive in order, at the avatar's own frame rate — which is a
-property of the avatar, not something to choose.
-
-To stop early — a person interrupting the avatar — stop consuming and
-close the iterator; the avatar is ready for the next `render`.
+`render(audio, out_mp4="out.mp4")` is THE offline route (owner B4, 2026-09-27; it
+replaces `bithuman.offline.render_offline`): it writes H.264 video plus the speech (when
+`audio` is a file path) and returns the number of frames written. Without `out_mp4` it
+returns the frame iterator described below.
 
 ### AsyncBithuman
 
@@ -100,7 +94,7 @@ encoded (h264 + the source audio muxed when `audio` is a path).
 ### OfflineRenderer
 
 ```python
-OfflineRenderer(imx_path: str, *, api_secret: Optional[str] = None, api_url: Optional[str] = None, threads: Optional[int] = None, model_key: Optional[str] = None, tags: str = 'offline-render')
+OfflineRenderer(*args, **kwargs)
 ```
 
 Renders an Essence 2 avatar file to frames or an MP4 in one pass; `render_offline` is the one-call form. `render(audio)` takes a path or 16 kHz mono float32 samples and returns a stats dict.

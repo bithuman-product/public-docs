@@ -30,6 +30,13 @@ What changed in each release, newest day first (grouped by artifact within a day
 
 ## September 2026
 
+### `bithuman` 2.11.15 — 2026-09-27
+
+- **New:** `bithuman.open(path).render(audio, out_mp4="out.mp4")` writes the MP4 (H.264 with the speech) and returns the number of frames, for every model. It is the one offline route.
+- **Fixed:** an Essence 1 file render (`bithuman.open(...).render(...)` or `python -m bithuman render`) billed every frame twice; a render of N seconds of video now bills N seconds. Live `AsyncBithuman` sessions were not affected.
+- **Deprecated** (removed in bithuman 4.0, no earlier than 2026-12-26; each prints one warning naming the replacement): `bithuman.offline` (`render_offline`, `OfflineRenderer`), the deprecated alias `BITHUMAN_API_KEY`, `token=` on `AsyncBithuman.create`, and the name `bithuman.AsyncAvatar`. `python -m bithuman` stops reading the API secret from `./.env` in the next release.
+- **Action:** `pip install -U bithuman`.
+
 ### CLI 2.8.2 — 2026-09-27
 
 Tag `cli-v2.8.2`.

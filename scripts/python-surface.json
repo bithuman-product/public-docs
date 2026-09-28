@@ -2,16 +2,16 @@
   "artifact": {
     "registry": "pypi",
     "coordinate": "bithuman",
-    "version": "2.11.14",
-    "digest": "sha256:c259c7a5e6d83e4eed5f2542f1fa9dc707b3ffd4adbfbca4a2b55ffa2f84515c",
-    "resolved_on": "2026-09-27",
-    "wheel": "bithuman-2.11.14-cp314-cp314-manylinux_2_28_x86_64.whl"
+    "version": "2.11.15",
+    "digest": "sha256:3c34beb85baa66a8348195f089122607fad8eb98f37207890a54d50411488182",
+    "resolved_on": "2026-09-28",
+    "wheel": "bithuman-2.11.15-cp312-cp312-manylinux_2_28_x86_64.whl"
   },
   "surface": {
     "package": "bithuman",
     "distribution": {
       "name": "bithuman",
-      "version": "2.11.14",
+      "version": "2.11.15",
       "requires_python": "<3.15,>=3.10",
       "extras": [
         "expression-2",
@@ -106,9 +106,9 @@
               },
               {
                 "name": "render",
-                "signature": "(self, audio: Audio) -> Iterator[np.ndarray]",
-                "doc": "Yield the frames for ``audio``.\n\n``audio`` is 16 kHz mono — a buffer (bytes, or an int16/float array),\nthe path of an audio file, or an **iterable of those** for a live\nstream.  Passing a stream instead of a whole clip is the same call.\n\nEach frame is a ``(height, width, 3)`` uint8 array in RGB order.\nFrames arrive in order, at the avatar's own frame rate — which is a\nproperty of the avatar, not something to choose.\n\nTo stop early — a person interrupting the avatar — stop consuming and\nclose the iterator; the avatar is ready for the next ``render``.",
-                "runtime_signature": "(self, audio) -> \"Iterator['object']\""
+                "signature": "(self, audio: Audio, out_mp4: str) -> int",
+                "doc": "Yield the frames for ``audio``, or, with ``out_mp4=``, write them to an MP4.\n\n``render(audio, out_mp4=\"out.mp4\")`` is THE offline route (owner B4, 2026-09-27; it\nreplaces ``bithuman.offline.render_offline``): it writes H.264 video plus the speech (when\n``audio`` is a file path) and returns the number of frames written. Without ``out_mp4`` it\nreturns the frame iterator described below.",
+                "runtime_signature": "(self, audio, out_mp4: \"'str | None'\" = None)"
               }
             ],
             "constructor_signature": null
@@ -209,7 +209,7 @@
           {
             "name": "AsyncBithuman",
             "kind": "class",
-            "doc": "Async-first facade over libessence for parity with legacy\n`bithuman.AsyncBithuman`. Construct via ``await AsyncAvatar.create(...)``.\n\nNOTE (consolidation): this is the relocated *internal* native\nfacade, kept reachable so nothing Phase-1/2 is lost. The public,\ncanonical async class is ``bithuman.AsyncBithuman``\n(``bithuman.runtime_async``); ``bithuman.AsyncAvatar`` is an alias\nof THAT. The Phase-1/2 loader lives in\n:class:`bithuman._loader.NativeFixtureLoaderMixin` (single\nsource of truth) and is inherited here AND by the canonical\n``AsyncBithuman``.\n\nLifecycle:\n\n    avatar = await AsyncAvatar.create(model_path=..., api_secret=...)\n    await avatar.push_audio(pcm_bytes, sample_rate=16_000, last_chunk=True)\n    async for frame in avatar.run():\n        ...\n    await avatar.shutdown()",
+            "doc": "The live-streaming API, public as ``bithuman.AsyncBithuman``.\nConstruct via ``await bithuman.AsyncBithuman.create(...)``.\n\nNOTE (consolidation): this is the relocated *internal* native\nfacade, kept reachable so nothing Phase-1/2 is lost. The public,\ncanonical async class is ``bithuman.AsyncBithuman``\n(``bithuman.runtime_async``); ``bithuman.AsyncAvatar`` is an alias\nof THAT. The Phase-1/2 loader lives in\n:class:`bithuman._loader.NativeFixtureLoaderMixin` (single\nsource of truth) and is inherited here AND by the canonical\n``AsyncBithuman``.\n\nLifecycle:\n\n    avatar = await AsyncAvatar.create(model_path=..., api_secret=...)\n    await avatar.push_audio(pcm_bytes, sample_rate=16_000, last_chunk=True)\n    async for frame in avatar.run():\n        ...\n    await avatar.shutdown()",
             "bases": [
               "NativeFixtureLoaderMixin"
             ],
@@ -298,7 +298,7 @@
           {
             "name": "AsyncAvatar",
             "kind": "class",
-            "doc": "Async-first facade over libessence for parity with legacy\n`bithuman.AsyncBithuman`. Construct via ``await AsyncAvatar.create(...)``.\n\nNOTE (consolidation): this is the relocated *internal* native\nfacade, kept reachable so nothing Phase-1/2 is lost. The public,\ncanonical async class is ``bithuman.AsyncBithuman``\n(``bithuman.runtime_async``); ``bithuman.AsyncAvatar`` is an alias\nof THAT. The Phase-1/2 loader lives in\n:class:`bithuman._loader.NativeFixtureLoaderMixin` (single\nsource of truth) and is inherited here AND by the canonical\n``AsyncBithuman``.\n\nLifecycle:\n\n    avatar = await AsyncAvatar.create(model_path=..., api_secret=...)\n    await avatar.push_audio(pcm_bytes, sample_rate=16_000, last_chunk=True)\n    async for frame in avatar.run():\n        ...\n    await avatar.shutdown()",
+            "doc": "The live-streaming API, public as ``bithuman.AsyncBithuman``.\nConstruct via ``await bithuman.AsyncBithuman.create(...)``.\n\nNOTE (consolidation): this is the relocated *internal* native\nfacade, kept reachable so nothing Phase-1/2 is lost. The public,\ncanonical async class is ``bithuman.AsyncBithuman``\n(``bithuman.runtime_async``); ``bithuman.AsyncAvatar`` is an alias\nof THAT. The Phase-1/2 loader lives in\n:class:`bithuman._loader.NativeFixtureLoaderMixin` (single\nsource of truth) and is inherited here AND by the canonical\n``AsyncBithuman``.\n\nLifecycle:\n\n    avatar = await AsyncAvatar.create(model_path=..., api_secret=...)\n    await avatar.push_audio(pcm_bytes, sample_rate=16_000, last_chunk=True)\n    async for frame in avatar.run():\n        ...\n    await avatar.shutdown()",
             "bases": [
               "NativeFixtureLoaderMixin"
             ],
@@ -709,14 +709,14 @@
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.14'"
+            "value": "'2.11.15'"
           },
           {
             "name": "__core_version__",
             "kind": "constant",
             "doc": "",
             "value_type": "str",
-            "value": "'2.11.14'"
+            "value": "'2.11.15'"
           },
           {
             "name": "__abi_version__",
@@ -821,9 +821,9 @@
             "kind": "class",
             "doc": "Offline CPU renderer for an **essence-2** ``.imx``/bundle dir.\nMetering is armed at CONSTRUCTION (billing key first); the teeth borrow is\narmed at construction too, and an avatar that cannot borrow is refused\nhere, before any frame exists.\n\nThe model is called **essence-2** — that is the only name to write.\n``essence2-light`` below is not a second product name: it is the\nfrozen ``engine`` literal stamped inside every essence-2 container,\nread back off the file and compared here. It is a value you may READ\nout of a bundle, never one you type.",
             "bases": [
-              "object"
+              "OfflineRenderer"
             ],
-            "defined_in": "bithuman._offline",
+            "defined_in": "bithuman.offline",
             "not_in_shipped_interface": [],
             "members": [
               {
@@ -847,7 +847,7 @@
                 "doc": "Render ``audio`` (a path, or float32 16 kHz mono PCM) to full\nRGB frames. ``on_frame(frame_hw3_u8, frame_idx)`` receives every\nframe; returns the honest stats dict (CPU-class fps)."
               }
             ],
-            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'Optional[int]' = None, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
+            "constructor_signature": "(*args, **kwargs)"
           },
           {
             "name": "OfflineRenderError",
@@ -950,9 +950,9 @@
             "kind": "class",
             "doc": "Offline CPU renderer for an **essence-2** ``.imx``/bundle dir.\nMetering is armed at CONSTRUCTION (billing key first); the teeth borrow is\narmed at construction too, and an avatar that cannot borrow is refused\nhere, before any frame exists.\n\nThe model is called **essence-2** — that is the only name to write.\n``essence2-light`` below is not a second product name: it is the\nfrozen ``engine`` literal stamped inside every essence-2 container,\nread back off the file and compared here. It is a value you may READ\nout of a bundle, never one you type.",
             "bases": [
-              "object"
+              "OfflineRenderer"
             ],
-            "defined_in": "bithuman._offline",
+            "defined_in": "bithuman.offline",
             "not_in_shipped_interface": [],
             "members": [
               {
@@ -976,7 +976,7 @@
                 "doc": "Render ``audio`` (a path, or float32 16 kHz mono PCM) to full\nRGB frames. ``on_frame(frame_hw3_u8, frame_idx)`` receives every\nframe; returns the honest stats dict (CPU-class fps)."
               }
             ],
-            "constructor_signature": "(imx_path: 'str', *, api_secret: 'Optional[str]' = None, api_url: 'Optional[str]' = None, threads: 'Optional[int]' = None, model_key: 'Optional[str]' = None, tags: 'str' = 'offline-render')"
+            "constructor_signature": "(*args, **kwargs)"
           },
           {
             "name": "render_offline",
