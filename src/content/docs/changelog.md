@@ -23,7 +23,7 @@ The releases of September 2026 worth a look first.
 
 | Date | Artifact | Change | What to do |
 |---|---|---|---|
-| CLI 2.9 (announced 2026-09-27) | CLI | the CLI stops reading the API secret from a `.env` file in the working directory | export `BITHUMAN_API_SECRET`, or run `bithuman login` once |
+| CLI 2.9, no earlier than 2026-12-26 (announced 2026-09-27) | CLI | the CLI stops reading the API secret from a `.env` file in the working directory | export `BITHUMAN_API_SECRET`, or run `bithuman login` once |
 | 2026-12-26 (announced 2026-09-27) | REST API | `POST /v1/agent/generate` requires `model`; the bare names `essence` / `expression` and the `version` field are refused with a `400` | send `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1` |
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
@@ -39,6 +39,14 @@ The releases of September 2026 worth a look first.
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## September 2026
+
+### CLI 2.8.3 — 2026-09-28
+
+Tag `cli-v2.8.3`.
+
+- **New:** `bithuman pack redeem` installs a prepaid offline pack (Business and Enterprise) on the machine that runs it; `bithuman pack status` shows the render-seconds left. Afterwards `bithuman render` of an Essence 1 avatar the pack covers needs no network and no API secret until the pack is spent. The MCP server adds the `pack_redeem` tool. Offline packs open platform by platform; where the CLI's support has not opened yet, the redeem says to use `python -m bithuman pack redeem`, and nothing is spent.
+- **Changed:** the removals announced for CLI 2.9 (the `./.env` read, the spellings retired in 2.7.3) ship no earlier than 2026-12-26; the notices say so.
+- **Action:** `brew upgrade bithuman-cli` or `curl -fsSL https://install.bithuman.ai | sh`.
 
 ### `bithuman` 2.11.16 — 2026-09-28
 

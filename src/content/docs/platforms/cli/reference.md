@@ -22,6 +22,7 @@ Covers the CLI at the version on [Downloads & versions](/downloads). The binary 
 | `bithuman login` / `logout` | Sign in and store a per-device API secret / revoke it |
 | `bithuman account` | Your account, plan, credit balance and recent usage |
 | `bithuman engine list \| install [mac\|linux]` | Inspect or fetch the Expression 2 render engine |
+| `bithuman pack redeem [purchase \| file]` / `pack status` | Install a prepaid offline pack on this machine / show the render-seconds left |
 | `bithuman doctor` | Check the install, credential, brain and cache |
 | `bithuman version` | CLI, engine and build versions |
 | `bithuman mcp` | MCP server over stdio; `bithuman mcp tools` lists its tools |
@@ -44,7 +45,7 @@ The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostn
 
 1. `BITHUMAN_API_SECRET` in the environment
 2. `BITHUMAN_API_KEY` in the environment (a deprecated alias; read until CLI 3.0, no earlier than 2026-12-26)
-3. A `.env` file in the working directory: its `BITHUMAN_API_SECRET` line, else its `BITHUMAN_API_KEY` line (the deprecated alias). No other line of the file is read. Deprecated: the CLI prints a notice when it uses this file, and CLI 2.9 stops reading it; export `BITHUMAN_API_SECRET` or run `bithuman login` once.
+3. A `.env` file in the working directory: its `BITHUMAN_API_SECRET` line, else its `BITHUMAN_API_KEY` line (the deprecated alias). No other line of the file is read. Deprecated: the CLI prints a notice when it uses this file, and CLI 2.9 (no earlier than 2026-12-26) stops reading it; export `BITHUMAN_API_SECRET` or run `bithuman login` once.
 4. `~/.bithuman/config`, written by `bithuman login`
 
 `bithuman account --json` reports which of these supplied the secret.
@@ -95,6 +96,19 @@ Succeeds, or refuses with one of four kinds: `InvalidAvatar`, `NotSupported`, `N
 ## bithuman engine
 
 The Expression 2 engine ships with the CLI. `bithuman engine install` fetches it again (idempotent); `bithuman engine install linux` fetches the other platform's for a cross-build. The argument is `mac` or `linux`.
+
+## bithuman pack
+
+Offline packs (Business and Enterprise) let a machine render with no network. Buy the pack online, then run this on the machine that will render:
+
+```bash
+bithuman pack redeem            # the account's unredeemed pack
+bithuman pack redeem ent_...    # a named purchase
+bithuman pack redeem ./PACK.bhl # a saved pack, with no network
+bithuman pack status            # render-seconds left
+```
+
+`redeem` binds the pack to this machine and installs it. The signed pack is kept at `~/.bithuman/packs/<pack_id>.bhl` (mode `0600`) first, so a failed install is retried by passing that file. Afterwards `bithuman render` of an avatar the pack covers needs no network and no API secret until the pack is spent. A refusal names what to do (the plan, the platform, a pack already installed) and nothing is spent. Where the CLI's offline support has not opened yet, it says to use `python -m bithuman pack redeem` on the same machine. Plans and rates: [offline licensing](/pricing#offline-licensing).
 
 ## bithuman doctor
 
@@ -221,7 +235,7 @@ bithuman token       # the resolved secret on stdout (exit 77 if none)
 {"mcpServers": {"bithuman": {"command": "bithuman", "args": ["mcp"]}}}
 ```
 
-`bithuman mcp` speaks the Model Context Protocol over stdio. `bithuman mcp tools --json` lists the tools: local ones (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`, `render`) and ones that call the bitHuman API. Tools that create agents, speech or gestures spend credits. The full list is on [MCP server](/build/mcp#tools).
+`bithuman mcp` speaks the Model Context Protocol over stdio. `bithuman mcp tools --json` lists the tools: local ones (`version`, `doctor`, `inspect_model`, `list_showcase`, `pull`, `render`, `pack_redeem`) and ones that call the bitHuman API. Tools that create agents, speech or gestures spend credits. The full list is on [MCP server](/build/mcp#tools).
 
 ## Recipes
 
