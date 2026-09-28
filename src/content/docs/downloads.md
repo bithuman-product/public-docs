@@ -37,7 +37,7 @@ The web embed needs no install: one URL or one `<iframe>` ([Web](/platforms/web)
 | iOS / iPadOS | — | — | yes | — |
 | Android (arm64-v8a) | — | — | — | yes |
 
-On Windows, install the CLI from PowerShell with `irm https://install.bithuman.ai/windows | iex`: it checks the download against its published SHA256, installs `bithuman.exe` into `%LOCALAPPDATA%\bithuman\bin` and adds that folder to your `PATH`. With Scoop: `scoop bucket add bithuman https://github.com/bithuman-product/homebrew-bithuman`, then `scoop install bithuman`.
+On Windows, install the CLI from PowerShell with `irm https://install.bithuman.ai/windows | iex`: it checks the download against its published SHA256, installs `bithuman.exe` into `%LOCALAPPDATA%\bithuman\bin` and adds that folder to your `PATH`.
 
 On an unsupported platform the CLI installer names the platform and stops, and `pip install bithuman` finds no wheel. Neither installs anything.
 
