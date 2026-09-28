@@ -168,7 +168,9 @@ function modelMatrix(arg: string, mode: Mode): string {
   }
   // On the page each cell also says how (the product or command), and a filter
   // above the table (shown only with JavaScript) narrows it to one place.
-  const cell = (c: { ok: boolean; how?: string }) => (c.ok ? `Yes${c.how ? `<br><span class="mm-how">${inlineHtml(c.how)}</span>` : ""}` : "—");
+  const cell = (c: { ok: boolean; how?: string }) =>
+    c.ok ? `Yes${c.how ? `<br><span class="mm-how">${inlineHtml(c.how)}</span>` : ""}`
+      : c.how ? `Not yet<br><span class="mm-how">${inlineHtml(c.how)}</span>` : "—";
   const rows = PLACES.map((p) => [placeLink(p), ...MODELS.map((m) => cell(MATRIX[m.id][p.id]))]);
   const filter = `<div class="mx-filter" role="radiogroup" aria-label="Show one place" data-mx-filter="model-matrix">` +
     [`<button type="button" role="radio" aria-checked="true" tabindex="0" data-mx="">All places</button>`, ...PLACES.map((p) => `<button type="button" role="radio" aria-checked="false" tabindex="-1" data-mx="${p.id}">${esc(p.name)}</button>`)].join("") + `</div>\n\n`;

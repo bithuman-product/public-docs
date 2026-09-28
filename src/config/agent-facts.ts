@@ -40,7 +40,7 @@ export function agentWhere(site: string): string {
     `- No GPU: both models run live on a standard Linux PC with no GPU (${xrt("linux-cpu")}). ${site}/deploy/cpu.md\n` +
     `- In the browser: WebGPU renders the avatar in the tab, falling back to cloud rendering; the conversation runs on bitHuman's servers.\n` +
     `- Your servers: the CLI, the Python SDK and the LiveKit plugin on your machines; audio and video stay there.\n` +
-    `- Fully offline: ${OFFLINE_LICENSE_COPY} Models: Essence 1, Essence 2, Expression 2. (Not the same as file rendering with \`bithuman render\`, which signs in online.) ${site}/deploy/offline.md\n` +
+    `- Fully offline: ${OFFLINE_LICENSE_COPY} Essence 1 first (Linux x86_64, bitHuman 2.11.16); Essence 2 and Expression 2 later. Not for phones. (Not the same as file rendering with \`bithuman render\`, which signs in online.) ${site}/deploy/offline.md\n` +
     `- bitHuman cloud: REST API, web embed, LiveKit; renders in the US.\n\n`
   );
 }

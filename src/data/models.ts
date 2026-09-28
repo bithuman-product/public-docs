@@ -58,7 +58,7 @@ export const MATRIX: Record<ModelId, Record<PlaceId, Cell>> = {
     browser: { ok: true, how: "`render=local`, for identities with a browser build" },
     servers: { ok: true, how: "CLI, Python, LiveKit plugin" },
     cloud: { ok: true, how: "web embed, REST API, LiveKit" },
-    offline: { ok: true, how: "Business & Enterprise, through sales" },
+    offline: { ok: false, how: "Coming later" },
   },
   "expression-2": {
     ios: { ok: true, how: "Swift package, `Expression2`" },
@@ -68,7 +68,7 @@ export const MATRIX: Record<ModelId, Record<PlaceId, Cell>> = {
     browser: { ok: true, how: "`render=local`" },
     servers: { ok: true, how: "CLI, Python, LiveKit plugin" },
     cloud: { ok: true, how: "web embed, REST API, LiveKit" },
-    offline: { ok: true, how: "Business & Enterprise, through sales" },
+    offline: { ok: false, how: "Coming later" },
   },
   "essence-1": {
     ios: no,
@@ -78,7 +78,7 @@ export const MATRIX: Record<ModelId, Record<PlaceId, Cell>> = {
     browser: { ok: true, how: "`render=local`" },
     servers: { ok: true, how: "CLI (`run`), Python" },
     cloud: { ok: true, how: "web embed, REST API, LiveKit" },
-    offline: { ok: true, how: "Business & Enterprise, through sales" },
+    offline: { ok: false, how: "Coming with bitHuman 2.11.16: Linux x86_64, Business & Enterprise" },
   },
   "expression-1": {
     ios: no, mac: no, android: no, cpu: no, browser: no, servers: no,
