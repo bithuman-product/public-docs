@@ -164,6 +164,8 @@ export function Avatar({ code }) {
 }
 ```
 
+For a floating avatar, one script tag adds a widget to any page, Next.js included ([Website widget](/build/website-widget)). The persona and your own model are settings on the agent ([Providers](/api/providers)), so there is no server to run.
+
 To build your own video UI instead of the hosted page, subscribe to a cloud-rendered avatar over [LiveKit](/platforms/livekit).
 
 ## Platform notes

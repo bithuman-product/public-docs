@@ -33,7 +33,7 @@ export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
 export const GROUP_ORDER: Record<SectionId, string[]> = {
   start: ["Get started"],
   platforms: ["Apps", "Code & terminal", "Agents & APIs", "SDK reference"],
-  deploy: ["Overview", "Modes"],
+  deploy: ["Overview", "Modes", "Use cases"],
   models: ["Models", "Concepts"],
   build: ["Create", "Recipes", "Examples"],
   api: ["Start", "Agents", "Speech & video", "Live sessions", "Account", "Reference"],

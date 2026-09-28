@@ -30,7 +30,7 @@ export const GET: APIRoute = async () => {
     if (p.id === "offline" || p.id === "web") continue;
     out += `- ${p.use}: \`${p.first}\` · ${SITE}${p.docs.split("#")[0]}.md\n`;
   }
-  out += `- Web embed: an iframe of https://www.bithuman.ai/embed/<agent code> with allow="microphone *" · ${SITE}/platforms/web.md\n\n`;
+  out += `- Web embed: an iframe of https://www.bithuman.ai/embed/<agent code> with allow="microphone *", or a widget; no npm package · ${SITE}/platforms/web.md\n\n`;
 
   // Speed as times real time, on-device first, from the same rows as the home band.
   const where = (f: (typeof PERF_BAND)[number]) =>
@@ -41,10 +41,10 @@ export const GET: APIRoute = async () => {
     out += `| ${where(f)} | ${cell("essence-2")} | ${cell("expression-2")} |\n`;
   }
   out += `\n## Docs (markdown)\n\n`;
-  out += `- Any page as markdown: add \`.md\` to its URL, or send \`Accept: text/markdown\`. Every speed row, with release and date: ${SITE}/performance.md · ${SITE}/performance.json · method: ${SITE}/performance/method.md\n`;
+  out += `- Any page as markdown: add \`.md\` to its URL, or send \`Accept: text/markdown\`. Speed: ${SITE}/performance/method.md\n`;
   out += `- By section: ${LLMS_SECTIONS.map((s) => sectionUrl(s.id)).join(" · ")} · start, platforms and api in one fetch: ${SITE}/llms-full.txt\n`;
-  out += `- Docs MCP server (search, fetch): ${SITE}${MCP_PATH} · agent skill: ${SITE}${SKILL_PATH} · ${SITE}/resources/agents.md\n`;
-  out += `- OpenAPI: ${SITE}/api/openapi.yaml · changelog: ${SITE}/changelog.md · feed: ${SITE}/changelog.xml\n`;
+  out += `- Docs MCP server: ${SITE}${MCP_PATH} · agent skill: ${SITE}${SKILL_PATH} · ${SITE}/resources/agents.md\n`;
+  out += `- OpenAPI: ${SITE}/api/openapi.yaml · changelog: ${SITE}/changelog.md\n`;
 
   return new Response(out, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 };

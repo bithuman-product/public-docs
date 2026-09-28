@@ -31,6 +31,10 @@ export interface Platform {
   note?: string;
   /** The /start card: a few lines that run as pasted, and what they print */
   card?: { lang: string; code: string; expect: string };
+  /** For agents (/platforms.json): where the avatar renders, where the conversation runs, and the credential */
+  renders?: string;
+  conversation?: string;
+  credential?: string;
 }
 
 const both = ["essence-2", "expression-2"];
@@ -38,11 +42,13 @@ const both = ["essence-2", "expression-2"];
 export const PLATFORMS: Platform[] = [
   {
     id: "web", want: "Put an avatar on a website", use: "Web embed", needs: "nothing",
+    renders: "in the bitHuman cloud, or in the visitor's tab with WebGPU (render=local)", conversation: "on bitHuman's servers", credential: "none for a public agent; an embed token for a private one",
     first: EMBED_SNIPPET, time: "1 min", docs: "/platforms/web", models: both,
     card: { lang: "html", code: EMBED_SNIPPET, expect: "A live avatar in your page that listens and answers. Allow the microphone when the browser asks." },
   },
   {
     id: "rest", want: "Call it from any backend", use: "REST API", needs: "API secret",
+    renders: "in the bitHuman cloud", conversation: "on bitHuman's servers, or with your own provider keys", credential: "API secret, header api-secret",
     first: `curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"`,
     time: "2 min", docs: "/platforms/rest", models: both,
     card: {
@@ -55,6 +61,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
   },
   {
     id: "python", want: "Render or stream from Python", use: "Python", needs: "API secret",
+    renders: "on your machine: macOS (Apple silicon) or Linux x86_64 / arm64", conversation: "your code", credential: "API secret (BITHUMAN_API_SECRET)",
     first: `pip install "bithuman[expression-2]"`, time: "5 min", docs: "/platforms/python", models: both,
     card: {
       lang: "bash",
@@ -71,6 +78,7 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
   },
   {
     id: "cli", want: "Run it from a terminal", use: "CLI (macOS arm64, Linux x86_64 / arm64)", needs: "sign-in",
+    renders: "on your machine: macOS (Apple silicon) or Linux x86_64 / arm64", conversation: "bitHuman's voice chat, your own OpenAI account, or the local conversation brain (BITHUMAN_LOCAL=1)", credential: "bithuman login, or BITHUMAN_API_SECRET",
     first: "curl -fsSL https://install.bithuman.ai | sh", time: "3 min", docs: "/platforms/cli", models: both,
     card: {
       lang: "bash",
@@ -86,16 +94,19 @@ bithuman render wise-pup speech.wav -o out.mp4
   },
   {
     id: "apple", want: "Ship an iPhone, iPad or Mac app", use: "iOS & iPadOS (Swift package)", needs: "Xcode 26+, API secret",
+    renders: "on the iPhone, iPad or Mac", conversation: "your app's own speech, language and voice services", credential: "API secret, fetched from your backend in a shipped app",
     first: `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "${V.swift}")`,
     time: "15 min", docs: "/platforms/ios", models: both,
   },
   {
     id: "android", want: "Ship an Android app", use: "Android", needs: "arm64 device, API secret",
+    renders: "on the Android phone (arm64, a physical device)", conversation: "your app's own speech, language and voice services", credential: "API secret, fetched from your backend in a shipped app",
     first: `implementation("ai.bithuman:expression2-android:${V.expression2_android}")`,
     time: "15 min", docs: "/platforms/android", models: both,
   },
   {
     id: "livekit", want: "Add a face to a LiveKit voice agent", use: "LiveKit", needs: "API secret",
+    renders: "on your server (model_path) or in the bitHuman cloud", conversation: "your LiveKit agent", credential: "BITHUMAN_MASTER_SECRET on the worker; a minted token for a cloud avatar",
     first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv', time: "10 min", docs: "/platforms/livekit", models: both,
   },
   {
@@ -104,6 +115,7 @@ bithuman render wise-pup speech.wav -o out.mp4
   },
   {
     id: "offline", want: "Run fully offline (kiosk, trade show, ATM)", use: "Fully offline",
+    renders: "on your Linux PCs and terminals", conversation: "agreed with sales for your site", credential: "a pack, redeemed once on the machine while it is online",
     needs: "Business or Enterprise plan; Essence 1 on Linux",
     first: "Contact sales", time: "—", docs: "/deploy/offline", models: ["essence-1"],
     note: OFFLINE_LICENSE_COPY,

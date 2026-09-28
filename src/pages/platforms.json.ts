@@ -12,9 +12,11 @@ export const GET: APIRoute = () =>
     JSON.stringify({
       schema: 1,
       demo_embed: EMBED_URL,
+      privacy: `${SITE}/deploy/privacy`,
       versions: versions.versions,
       platforms: PLATFORMS.map((p) => ({
         id: p.id, want: p.want, use: p.use, needs: p.needs, first_command: p.id === "offline" ? null : p.first, ...(p.id === "offline" ? { contact: "https://www.bithuman.ai/sales" } : {}), models: p.models,
+        ...(p.renders ? { renders: p.renders, conversation: p.conversation, credential: p.credential } : {}),
         docs: `${SITE}${p.docs}`, markdown: `${SITE}${p.docs.split("#")[0]}.md`,
       })),
     }, null, 2) + "\n",

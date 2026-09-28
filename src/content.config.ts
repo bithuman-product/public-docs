@@ -40,8 +40,8 @@ const docs = defineCollection({
     time: z.string().regex(/^\d+(–\d+)? min$/).optional(),
     // a live sample avatar under the lede: one model, or both with a switch
     demo: z.enum(["essence-2", "expression-2", "both"]).optional(),
-    // the title search results show, when the H1 alone does not name what readers type
-    // (the iOS page is "iOS & iPadOS"; its result says it is the Swift package)
+    // the title search results show (site search, and the page's <title> for search engines), when
+    // the H1 alone does not name what readers type (the iOS page is "iOS & iPadOS"; its result says it is the Swift package)
     searchTitle: z.string().optional(),
     // 1–3 docs paths shown as the "Next" cards at the foot of the page
     next: z.array(z.string()).max(3).optional(),

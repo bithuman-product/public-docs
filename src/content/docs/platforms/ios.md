@@ -5,7 +5,7 @@ section: platforms
 group: "Apps"
 order: 10
 type: platform
-searchTitle: "iOS & iPadOS: the Swift package"
+searchTitle: "iOS & iPadOS SDK: the Swift package for real-time avatars"
 renders: ["device"]
 needs: ["Physical device", "API secret"]
 artifacts: ["swift"]
@@ -171,6 +171,8 @@ Two SwiftUI apps you can clone and run on an iPhone or iPad, each with a microph
 | Quit | `shutdown()` | `shutdown()`, then `Essence2Engine.quiesceAll()` from `applicationWillTerminate` |
 
 For file rendering, set `engine.pacing = .unpaced`: Essence 2 then hands out frames as fast as it renders them. If your audio does not go through an `AVAudioPlayerNode`, pass your own clock: `frames(audioClock: { secondsOfThisReplyPlayed })`.
+
+Resample 24 kHz speech (OpenAI Realtime's) to 16 kHz, and close the avatar when the app leaves the screen: [Companion app](/build/companion-app#resample-speech-to-16-khz).
 
 ### Download an avatar in the app
 

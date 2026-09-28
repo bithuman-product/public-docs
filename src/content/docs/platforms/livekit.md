@@ -40,7 +40,7 @@ pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dote
 
 ## Authenticate
 
-In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass a minted token. For a cloud avatar, the worker mints a one-hour token that can start only this agent's avatar in this room (`POST /v1/runtime-tokens/mint` with `"scope": "livekit-cloud"`), as in the worker below.
+In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass a minted token. For a cloud avatar, the worker mints a one-hour token that can start only this agent's avatar in this room (`POST /v1/runtime-tokens/mint` with `"scope": "livekit-cloud"`), as in the worker below. The plugin's PyPI page, which LiveKit maintains, sets `BITHUMAN_API_SECRET` instead; for a cloud avatar, use the minted token shown here.
 
 ```bash
 export BITHUMAN_MASTER_SECRET="<your API secret>"

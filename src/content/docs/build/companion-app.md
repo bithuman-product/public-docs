@@ -39,7 +39,7 @@ android-essence-2 eager
 
 ## Steps
 
-The code in each step is from two example apps that bithuman-examples builds in CI: [iOS Essence 2](/examples/ios-essence-2) (Swift) and [Android Essence 2](/examples/android-essence-2) (Kotlin). Expression 2, for a character instead of a person, has the same shape.
+The code in each step is from two example apps that bithuman-examples builds in CI: [iOS Essence 2](/examples/ios-essence-2) (Swift) and [Android Essence 2](/examples/android-essence-2) (Kotlin); the resample converter is one you add to your app. Expression 2, for a character instead of a person, has the same shape.
 
 ### Pick the avatar
 
@@ -60,7 +60,7 @@ Your app builds with `import Essence2Kit`, or with `ai.bithuman.essence2` on the
 
 ### Set your API secret
 
-One call covers the avatar's download and the session. A shipped app holds the secret on the device, so give each app its own secret that you can rotate or revoke; a build you ship fetches it from your own backend at startup.
+One call covers the avatar's download and the session. Set it before anything downloads:
 
 ```swift tab="Swift"
 // excerpt: swift/ios-essence2/Sources/App.swift
@@ -73,6 +73,10 @@ Essence2Credential.set(ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"
 //    One setter covers the store's download and the engine's meter;
 //    create() refuses without it.
 Essence2Credential.set(secret)
+```
+
+```partial
+shipped-app-secret
 ```
 
 ```expected
@@ -100,6 +104,74 @@ Essence2Avatar.create(identity.dir).use { avatar ->
 
 ```expected
 The first run downloads the avatar once, then it stays on the device. The avatar shows idle motion before it says anything.
+```
+
+### Resample speech to 16 kHz
+
+The engines take 16 kHz mono speech. A voice service that returns another rate needs one conversion first: OpenAI Realtime, for example, returns 24 kHz 16-bit PCM. Keep one converter for the whole reply and pass each chunk through it before you feed the avatar:
+
+```swift tab="Swift"
+// Add to your app: 24 kHz 16-bit mono PCM in, the 16 kHz [Float] that feed(_:) takes out.
+import AVFoundation
+
+final class To16k {
+    private let from = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 24_000, channels: 1, interleaved: false)!
+    private let to = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 1, interleaved: false)!
+    private lazy var converter = AVAudioConverter(from: from, to: to)!
+
+    func convert(_ pcm24k: Data) -> [Float] {
+        let n = AVAudioFrameCount(pcm24k.count / 2)
+        guard n > 0, let input = AVAudioPCMBuffer(pcmFormat: from, frameCapacity: n),
+              let output = AVAudioPCMBuffer(pcmFormat: to, frameCapacity: n) else { return [] }
+        input.frameLength = n
+        pcm24k.withUnsafeBytes { input.int16ChannelData![0].update(from: $0.bindMemory(to: Int16.self).baseAddress!, count: Int(n)) }
+        var given = false
+        _ = converter.convert(to: output, error: nil) { _, status in
+            if given { status.pointee = .noDataNow; return nil }
+            given = true
+            status.pointee = .haveData
+            return input
+        }
+        return Array(UnsafeBufferPointer(start: output.floatChannelData![0], count: Int(output.frameLength)))
+    }
+}
+```
+
+```kotlin tab="Kotlin"
+// Add to your app: 24 kHz 16-bit mono PCM in; floats() for Expression 2, pcm16() for Essence 2.
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
+class To16k {
+    private var rest = FloatArray(0)   // input not used yet
+    private var pos = 0.0              // read position in the input, in samples
+
+    fun floats(pcm24k: ByteArray): FloatArray {
+        val s = ByteBuffer.wrap(pcm24k).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer()
+        val input = rest + FloatArray(s.remaining()) { s.get() / 32768f }
+        val out = ArrayList<Float>()
+        while (pos + 1 < input.size) {
+            val i = pos.toInt()
+            val f = (pos - i).toFloat()
+            out.add(input[i] * (1 - f) + input[i + 1] * f)
+            pos += 1.5                   // 24 000 / 16 000
+        }
+        rest = input.copyOfRange(pos.toInt(), input.size)
+        pos -= pos.toInt()
+        return out.toFloatArray()
+    }
+
+    fun pcm16(pcm24k: ByteArray): ByteArray {
+        val f = floats(pcm24k)
+        val b = ByteBuffer.allocate(f.size * 2).order(ByteOrder.LITTLE_ENDIAN)
+        for (x in f) b.putShort((x.coerceIn(-1f, 1f) * 32767).toInt().toShort())
+        return b.array()
+    }
+}
+```
+
+```expected
+Each 24 kHz chunk comes out as two thirds as many 16 kHz samples, and the lips keep pace with the voice. Speech fed at the wrong rate makes the mouth run slow and long.
 ```
 
 ### Speak a reply
@@ -157,6 +229,18 @@ When your speech recognition hears the user start talking over the avatar, stop 
 The mouth stops with the voice, and the next reply starts cleanly.
 ```
 
+### Close the avatar with the screen
+
+A session bills active session time, talking or idle, for as long as the avatar is open, so a companion left on screen keeps billing.
+
+- When the app moves to the background, shut the avatar down: `shutdown()` in Swift, `close()` in Kotlin. Create it again when the app returns; the avatar file stays on the device, so nothing downloads again.
+- When nobody has spoken for a while, show a still frame and close the avatar.
+- When the app quits, call `Essence2Engine.quiesceAll()` in Swift, from `applicationWillTerminate`.
+
+```expected
+The avatar closes while the app is in the background, and comes back without a new download when the user returns.
+```
+
 ### Run it on a phone
 
 Build to a physical iPhone or iPad (iOS 26), or to a physical arm64 Android phone. The iOS Simulator and Android emulators cannot run the engine.
@@ -178,11 +262,16 @@ The avatar renders inside your app, from 16 kHz mono speech to picture frames. W
 - **A character instead of a person:** Expression 2 renders any character from one portrait, with the same calls ([iOS & iPadOS](/platforms/ios), [Android](/platforms/android)).
 - **One codebase:** the [Flutter plugin](/platforms/flutter) wraps both engines.
 - **Its personality:** it lives in your language model's prompt. The avatar only renders the speech it is given.
+- **The conversation on bitHuman's servers instead:** the [web embed](/platforms/web) runs a managed agent with your persona (`system_prompt`) and, through [Providers](/api/providers#openai-compatible-endpoints-self-hosted-proxies-gateways), your own OpenAI-compatible model. A [LiveKit](/platforms/livekit) agent can use a bitHuman cloud avatar. Both render in the cloud (the web embed can also render in the tab); their rates are on [Pricing](/pricing).
 
 What it costs on the device:
 
 ```price
 device
+```
+
+```app-budget
+example
 ```
 
 ## Troubleshooting
@@ -193,4 +282,5 @@ device
 | It works on a phone but not in the Simulator or an emulator | Expected: the engine needs a physical device. |
 | The lips run ahead of the voice | Start the reply's audio with its first speech frame (`audioTime == 0` in Swift), not when you feed it. |
 | The reply is cut short | Mark the end of each reply once: `flushTail()` in Swift, `endOfAudio()` in Kotlin. |
+| The mouth runs slow and the reply lasts too long | The speech is not 16 kHz: [resample it](#resample-speech-to-16-khz) before you feed it. |
 | The first start is slow | The first run downloads the avatar; later starts open it from the device. |

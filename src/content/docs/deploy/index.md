@@ -43,6 +43,7 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Must audio and video stay on your network?** [Your servers](/deploy/self-hosted) or [on the device](/deploy/on-device), with the [local conversation brain](/platforms/cli/local-brain) or your own models. What reaches bitHuman in each: [Data flows & privacy](/deploy/privacy).
 - **Want the lowest per-minute rate?** Render on the device or on your servers ([rates](/pricing)).
 - **No reliable internet at the site?** [Fully offline](/deploy/offline), on the Business and Enterprise plans.
+- **Planning for a branch, a clinic or a show floor?** Start from [Use cases](/deploy/use-cases).
 
 ## Try it
 

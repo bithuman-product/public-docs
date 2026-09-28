@@ -40,7 +40,7 @@ Organized by the developer's question. The header is Get started · Platforms ·
 
 - **Get started** (`/start`): the quickstart, the API secret.
 - **Platforms** (`/platforms`): iOS & iPadOS, Android, Web, Python, the CLI, LiveKit, REST, and the SDK references.
-- **Deploy** (`/deploy`): the bitHuman cloud, your servers, on the device, CPU only (no GPU), fully offline, and pricing.
+- **Deploy** (`/deploy`): the bitHuman cloud, your servers, on the device, CPU only (no GPU), fully offline, pricing, and the use-case guides (`/deploy/use-cases`).
 - **Models** (`/models`): Essence 2, Expression 2, the first generation, how it works, the avatar file.
 - **Build** (`/build`): create your own avatar, persona, voices, recipes, and the example gallery (`/examples`).
 - **API** (`/api`), **Performance** (`/performance`), **Resources** (`/resources`).

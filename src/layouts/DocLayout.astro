@@ -130,10 +130,11 @@ const demoAtEnd = data.type === "hub";
 // searchable, but ranked below the pages a reader starts from.
 // An example page names its platform in its title ("iOS Expression 2"), so it
 // ranks just below that platform's own page for the platform's name.
+// The browser tab and search engines show the search title when a page has one (the H1 stays the sidebar label).
 const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && section === "platforms" ? "0.5" : data.type === "example" ? "0.6" : undefined;
 ---
 
-<Base title={`${data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
+<Base title={`${data.searchTitle ?? data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
   <div class="doc">
     {/* sidebar */}
     <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>

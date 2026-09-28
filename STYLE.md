@@ -137,6 +137,7 @@ A fenced block named for a block is drawn at build time from the data files (`sr
 | ```` ```partial ```` + a name | a shared passage (`src/partials/<name>.md`), such as the Swift install on iOS and macOS | `src/partials` |
 | ```` ```perf-explorer ```` | every published row as bars, per model, with the held-for-10-minutes rows (on `/performance`) | `public/performance.json`, `perf-groups.ts` |
 | ```` ```credit-calculator ```` | credits and dollars a month for a usage pattern, with worked examples (on `/pricing`) | `pricing.json`, `plans.json` |
+| ```` ```app-budget ```` [+ `example`] | what an avatar costs inside an app, per mode, or the one-user worked example alone (on `/pricing` and the companion recipe) | `pricing.json`, `plans.json` |
 | ```` ```figure ```` + a capture id [+ `eager` above the fold] | a real capture in its device frame, its loop playing while on screen, "Play with sound" with captions, the provenance line | `src/data/examples.ts` |
 | ```` ```example-gallery ````, ```` ```github-examples ```` | every example as a filterable card; the projects with no recording yet (on `/examples`) | `examples.ts` |
 | ```` ```diagram ```` + `engine`, `creation`, `lifecycle`, `livekit`, `livekit-local` or `topology <mode>` | one of the canonical diagrams | `src/lib/diagrams.ts` |

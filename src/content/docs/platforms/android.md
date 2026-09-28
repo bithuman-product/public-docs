@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 30
 type: platform
+searchTitle: "Android SDK (Kotlin): on-device talking avatars"
 renders: ["device"]
 needs: ["Physical device", "API secret"]
 artifacts: ["expression2_android", "essence2_android"]
@@ -91,11 +92,13 @@ implementation("ai.bithuman:expression2-android:0.5.2") {
 
 ## Authenticate
 
-Pass your API secret in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
+Pass your API secret ([create one](https://www.bithuman.ai/developer/api-keys)) in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
 
-A shipped app holds the secret on the phone, so give each app its own secret that you can rotate or revoke ([API secrets](https://www.bithuman.ai/developer/api-keys)). Credits pay for active session time, talking or idle, billed to the second ([pricing](/pricing)).
+Credits pay for active session time, talking or idle, billed to the second ([pricing](/pricing)).
 
-> **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only. A shipped app fetches the secret from your own backend at startup.
+> **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only.
+
+Every copy of a shipped app carries its secret, so treat it as exposed: fetch it from your backend at startup, give each app its own secret, and rotate it if usage looks wrong ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
 
 ## First frame
 
@@ -173,12 +176,16 @@ In a live conversation, keep one avatar open and stream into it.
 
 | Job | Expression 2 | Essence 2 |
 |---|---|---|
+| Audio in | 16 kHz mono `FloatArray`, −1 to 1 | 16 kHz mono 16-bit little-endian PCM `ByteArray` |
 | Stream audio as it arrives | `feed(chunk)` per chunk | `feed(chunk)` per chunk |
 | Show frames | `pull(bitmap)`, 20 a second | `pull(buffer)`, 25 a second |
 | End of a reply | `flushTail()` | `endOfAudio()` |
 | Idle between replies | `avatar.idleLoop?.next(bitmap)` | `idle(buffer)` |
 | Interrupt the reply | `resetState(true)` | `resetAudio()` |
 | Check the session | `Expression2Exception` from `create` or `pull` | `Essence2MeteringRefused` from `pull`/`idle`; `checkRender()` throws `Essence2RenderFailed` if the engine stopped |
+| Close it | `close()` | `close()` |
+
+Resample 24 kHz speech (OpenAI Realtime's) to 16 kHz, and close the avatar when the app leaves the screen: [Companion app](/build/companion-app#resample-speech-to-16-khz).
 
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
 
