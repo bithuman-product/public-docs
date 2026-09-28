@@ -107,7 +107,7 @@ The avatar fills the screen with no browser chrome. The first time, allow the mi
 
 A session checks your API secret when it starts and keeps rendering through a network drop of up to 5 minutes, so this kiosk needs the network to start a conversation.
 
-For a site with no internet at all: Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux PCs and terminals; arranged through sales. See [Fully offline](/deploy/offline).
+For a site with no internet at all: Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux and macOS computers (Apple silicon); bought in the console or through sales. See [Fully offline](/deploy/offline).
 
 ```expected
 Online, the kiosk is ready: it needs the network each time a session starts. For fully offline, talk to [sales](https://www.bithuman.ai/enterprise?topic=offline#contact) before you deploy.

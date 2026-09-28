@@ -279,7 +279,7 @@ export const DIAGRAMS: Record<string, () => Diagram> = {
           { title: `${now} now`, sub: later ? `${later} later` : undefined, tone: "muted" },
         ] },
       ],
-      notes: [{ text: "Business & Enterprise · arranged through sales", badge: true }],
+      notes: [{ text: "Business & Enterprise · console or sales", badge: true }],
     };
   },
 

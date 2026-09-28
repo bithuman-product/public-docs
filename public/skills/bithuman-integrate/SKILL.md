@@ -30,7 +30,7 @@ bitHuman turns speech into a real-time talking avatar from one portrait. Essence
 | A terminal, kiosk or quick test | the CLI (`bithuman`) | on the machine (macOS arm64, Linux x86_64 / arm64) | https://docs.bithuman.ai/platforms/cli.md |
 | Any backend | the REST API | bitHuman cloud | https://docs.bithuman.ai/platforms/rest.md |
 
-Fully offline operation is a separate license, arranged through sales: https://docs.bithuman.ai/deploy/offline.md. All modes side by side: https://docs.bithuman.ai/deploy.md.
+Fully offline operation is a separate license for Business and Enterprise, bought in the console or through sales: https://docs.bithuman.ai/deploy/offline.md. All modes side by side: https://docs.bithuman.ai/deploy.md.
 
 ## 2. Install
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 // Offline copy is the owner-approved sentence, word for word (docs spec §5.2):
 // every mention of the offline license is either in a section that carries the
-// verbatim sentence together with "Linux PCs and terminals; arranged through
-// sales", or it links to the page that does. The sentence itself lives once,
+// verbatim sentence together with the terms line (OFFLINE_LICENSE_TERMS), or it links to the page that does. The sentence itself lives once,
 // in src/data/offline.ts; code imports it and never types it.
 //
 //   node scripts/check-offline-copy.mjs            # markdown, code, and (when built) twins, llms and JSON-LD

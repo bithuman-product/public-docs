@@ -163,7 +163,7 @@ function modelMatrix(arg: string, mode: Mode): string {
     return table(["Model", ...ps.map(placeLink)], MODELS.map((m) => [modelLink(m), ...ps.map((p) => yes(MATRIX[m.id][p.id].ok))]));
   }
   if (arg) throw new Error(`\`\`\`model-matrix: "${arg}" is not "model: <id>" or "place: <id>"`);
-  const foot = `\nFully offline is for Business and Enterprise clients, arranged through sales ([Fully offline](/deploy/offline)).\n`;
+  const foot = `\nFully offline is for Business and Enterprise clients, bought in the console or through sales ([Fully offline](/deploy/offline)).\n`;
   if (mode === "twin") {
     const rows = PLACES.map((p) => [placeLink(p), ...MODELS.map((m) => yes(MATRIX[m.id][p.id].ok))]);
     return table(["Where", ...MODELS.map((m) => m.name)], rows) + foot;
@@ -197,7 +197,7 @@ function modelCards(mode: Mode): string {
 // ---------------------------------------------------------------- deployment modes
 function priceText(id: ModeId): string {
   const d = DEPLOYMENTS.find((x) => x.id === id)!;
-  if (d.rate === "sales") return `from ${plans().offline.min_credits.toLocaleString("en-US")} credits; arranged through sales`;
+  if (d.rate === "sales") return `from ${plans().offline.min_credits.toLocaleString("en-US")} credits; bought in the console or through sales`;
   const n = rateFor(d.rate);
   return `${perMinute(n)} (Essence 2, Expression 2)`;
 }
@@ -247,7 +247,7 @@ function price(id: string): string {
   const d = deploymentById(id);
   if (!d) throw new Error(`\`\`\`price: unknown mode "${id}"`);
   if (d.rate === "sales") {
-    return `From ${plans().offline.min_credits.toLocaleString("en-US")} credits, credit-based and metered on the machine. Business & Enterprise; arranged through sales.\n`;
+    return `From ${plans().offline.min_credits.toLocaleString("en-US")} credits, credit-based and metered on the machine. Business & Enterprise; bought in the console or through sales.\n`;
   }
   const n = rateFor(d.rate);
   const chat = d.rate === "hosted" ? ` A managed agent's voice chat bills ${perMinute(chatRate())}, all-inclusive: the avatar is part of it.` : "";
@@ -355,7 +355,7 @@ function creditCalculator(mode: Mode): string {
     `<output class="cc-out" aria-live="polite" data-out><span class="cc-big"><span data-credits>${fmtInt(r0.credits)}</span> credits a month</span>` +
     `<span class="cc-usd">About <span data-usd>${fmtUsd(r0.usd)}</span> at the top-up rate of $1 = ${d.credits_per_usd} credits</span>` +
     `<span class="cc-plan" data-plan>${esc(planLine(r0, CALC_DEFAULT.mode))}</span></output>` +
-    `<p class="cc-note">Every mode bills active session time, talking or idle, to the second. <a href="/deploy/offline">Fully offline</a> is arranged through sales.</p></form>` +
+    `<p class="cc-note">Every mode bills active session time, talking or idle, to the second. <a href="/deploy/offline">Fully offline</a> is bought in the console or through sales.</p></form>` +
     `<div class="cc-examples"><p class="cc-ex-title">${CALC_DEFAULT.minutes} minutes a day, ${CALC_DEFAULT.days} days, one session at a time</p>` +
     `<table><thead><tr>${head.map((h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${examples.map((row) => `<tr>${row.map((c, i) => (i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`)).join("")}</tr>`).join("")}</tbody></table></div>`;
 }

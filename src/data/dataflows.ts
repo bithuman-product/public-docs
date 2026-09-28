@@ -59,7 +59,7 @@ export const DATAFLOWS: Record<ModeId, DataFlow> = {
     claims: ["S3", "S4", "S5", "S10"],
   },
   offline: {
-    renders: "on your Linux PCs and terminals",
+    renders: "on your Linux and macOS computers",
     conversation: "agreed with sales for your site",
     reaches: "usage is metered on the machine; no reconnection is required",
     network: "off the internet; creating the avatar happens online first",
@@ -148,7 +148,7 @@ export const CROSSINGS: Record<FlowMode, Record<DataKind, Crossing>> = {
     transcripts: { dir: "stays", text: "stay on the machine", claim: "S11" },
     knowledge: { dir: "stays", text: "agreed with sales for your site", claim: "S11" },
     "provider-keys": { dir: "stays", text: "agreed with sales for your site", claim: "S11" },
-    secret: { dir: "stays", text: "arranged through sales, for Business & Enterprise", claim: "S11" },
+    secret: { dir: "stays", text: "bought in the console or through sales, for Business & Enterprise", claim: "S11" },
     usage: { dir: "stays", text: "metered on the machine; no required reconnection", claim: "S11" },
   },
   "web-local": {

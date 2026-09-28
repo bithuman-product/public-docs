@@ -80,7 +80,7 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
 
 ## Choosing between modes
 
-- **Off the internet, on Linux PCs and terminals:** [Fully offline](/deploy/offline), for Business and Enterprise.
+- **Off the internet, on Linux and macOS computers:** [Fully offline](/deploy/offline), for Business and Enterprise.
 - **On your own Macs, or Linux machines you already run:** [Your servers](/deploy/self-hosted).
 - **Inside an app on the phone or in the browser:** [On the device](/deploy/on-device).
 - **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
