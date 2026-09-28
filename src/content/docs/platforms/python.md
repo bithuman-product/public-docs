@@ -59,7 +59,7 @@ Install into a virtual environment: Debian and Ubuntu refuse a system-wide `pip 
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the shell that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()` or `bithuman.offline.render_offline()`. See [Your API secret](/start/api-secret). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)). Downloading a sample avatar needs no account.
+Set `BITHUMAN_API_SECRET` in the shell that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. See [Your API secret](/start/api-secret). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)). Downloading a sample avatar needs no account.
 
 ## First frame
 
@@ -80,15 +80,15 @@ print(len(frames), "frames of", frames[0].shape)
 
 `render` takes a path to any audio file `ffmpeg` reads, or already-decoded 16 kHz mono audio (`int16` or `float32` arrays, or raw 16-bit bytes). Frames are RGB; OpenCV expects BGR, so write one with `cv2.imwrite("frame.png", image[:, :, ::-1])`. The same call opens Essence 2 and Essence 1 `.imx` files.
 
-To write an MP4 instead, use the offline route (Essence 2, needs `ffmpeg`). Download the `sofia-ramirez` Essence 2 sample first:
+To write an MP4 instead, pass `out_mp4=` to the same `render` (any model, needs `ffmpeg`); it returns the number of frames written. Download the `sofia-ramirez` Essence 2 sample first:
 
 ```bash
 curl -fL -o sofia-ramirez.imx "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2"
 ```
 
 ```python
-from bithuman.offline import render_offline
-render_offline("sofia-ramirez.imx", "speech.wav", out_mp4="out.mp4")
+import bithuman
+bithuman.open("sofia-ramirez.imx").render("speech.wav", out_mp4="out.mp4")
 # → out.mp4: 1080×1920 with the speech, 15.2 s
 ```
 
@@ -207,8 +207,8 @@ A finished `render` logs its own rate on the `bithuman` logger at INFO.
 | `NotSupported` opening an Expression 2 file | the extra is missing | `pip install "bithuman[expression-2]"` |
 | `NotAuthorised` at the first frame: *no credential was supplied* | no secret in this shell | `export BITHUMAN_API_SECRET=…` |
 | `NotAuthorised` at `open`: *that key was not accepted (401)* | the secret was rejected | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys) |
-| `MeteringNotArmedError` from `render_offline` | no secret | set `BITHUMAN_API_SECRET`, or pass `api_secret=` |
-| An MP4 with sound and no picture | a refused `render_offline` leaves the audio track | set the secret, delete the file, render again; check the frame count, not the file |
+| `NotAuthorised: no API secret was found` from `bithuman.open` | no secret | set `BITHUMAN_API_SECRET`; nothing is rendered or written |
+| An MP4 with sound and no picture | a refused render through the deprecated `render_offline` leaves the audio track | render with `bithuman.open(path).render(audio, out_mp4=...)`, which refuses before it writes anything; check the frame count it returns |
 | Frames look blue | frames are RGB and your display wants BGR | `image[:, :, ::-1]` |
 | Raw audio plays slow and long | decoded audio must be 16 kHz mono | pass a file path, or resample to 16 kHz |
 | `404 NOT_FOUND` downloading a model | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
