@@ -7,7 +7,7 @@ order: 21
 type: example
 ---
 
-A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1080p) at 25 fps. **Speak** plays the line again.
+A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1080p). **Speak** plays the line again.
 
 `Sources/App.swift` uses `Essence2Kit` ([Apple](/platforms/ios)): `Essence2Engine.create(identity:resourcesDirectory:)` opens the bundled avatar, and `frames(following:)` paces the picture to the audio player.
 
@@ -62,6 +62,44 @@ The first launch unpacks the avatar and prepares the engine, so it is slower tha
 5. **Stream, don't collect:** one 1080×1920 frame is 6.2 MB, so the app draws each frame as it arrives.
 
 `Sources/App.swift` is the whole app. The full API is on [Apple](/platforms/ios#integrate-into-your-app) and [Apple API reference](/platforms/swift/reference).
+
+## The code that matters
+
+`Sources/App.swift` sets the secret, opens the avatar, and draws the frames `frames(following:)` hands out, starting the reply's audio with its first speech frame:
+
+```swift
+// excerpt: swift/ios-essence2/Sources/App.swift
+Essence2Credential.set(ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"])
+// …
+let e = try await Essence2Engine.create(identity: imx, resourcesDirectory: Payload.resources)
+```
+
+```swift
+// excerpt: swift/ios-essence2/Sources/App.swift
+/// 5a. The draw loop, for the life of the app. `frames(following:)` paces itself
+/// (25 per second): idle motion between replies, and a reply's frames as the player
+/// plays their audio. Start the reply's audio with its first speech frame.
+private func startLoop(_ e: Essence2Engine) {
+    loop?.cancel()
+    let frames = e.frames(following: player)
+    loop = Task { [weak self] in
+        for await f in frames {
+            guard let self else { return }
+            if f.audioTime == 0, let r = self.reply {
+                self.player.stop()
+                self.player.scheduleBuffer(r)
+                self.player.play()
+            }
+            if let cg = makeCGImage(bgr: f.bgr, f.width, f.height) {
+                self.sink.show(cg)
+                self.hasFrame = true
+            }
+    // …
+    e.feed(samples)
+    e.flushTail()
+```
+
+The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/swift/ios-essence2/Sources/App.swift).
 
 ## Make it your own
 

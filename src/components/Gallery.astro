@@ -1,0 +1,59 @@
+---
+// The example gallery on /examples (the ```example-gallery block, drawn at
+// build time by src/lib/showcase.ts from src/data/examples.ts): one card per
+// example, each a real capture in its device frame with its provenance, the
+// command that gets the code and how long a first run takes. The filters
+// (where it renders, model, platform) need JavaScript and are hidden without
+// it; every card shows then.
+---
+
+<script>
+  import "../scripts/gallery";
+</script>
+
+<style is:global>
+  .gal { margin: var(--s-5) 0 var(--s-8); }
+  .gal-filters { display: none; flex-direction: column; gap: var(--s-3); margin-bottom: var(--s-5); }
+  .js .gal-filters { display: flex; }
+  .gal-row2 { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
+  .gal-filters .seg { border-radius: 18px; }
+  .gal-sel select {
+    min-height: 38px; padding: 0 2rem 0 0.9rem; border: 1px solid var(--color-border); border-radius: var(--r-pill);
+    background: var(--color-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 14 14'%3E%3Cpath d='M3.5 5 7 8.5 10.5 5' fill='none' stroke='%236a6a7a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.8rem center;
+    color: var(--color-text); font: inherit; font-size: var(--ft-sm); font-weight: var(--fw-medium); appearance: none; cursor: pointer;
+  }
+  .gal-sel select:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .prose ul.gal-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: var(--s-4); }
+  .prose .gal-grid > li { margin: 0; display: flex; min-width: 0; }
+  .gal-grid > li[hidden] { display: none; }
+  .gal-card { flex-direction: row; align-items: stretch; gap: var(--s-4); padding: var(--s-3); }
+  .gal-card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow-md); }
+  .gal-card:hover .gal-link { color: var(--color-primary); }
+  .gal-stage { flex: none; width: 128px; align-self: flex-start; }
+  .gal-stage .fig-media { aspect-ratio: 9 / 16 !important; }
+  .gal-card .card-body { padding: var(--s-1) var(--s-1) var(--s-1) 0; gap: var(--s-2); }
+  .prose .gal-card h2 { margin: 0; padding: 0; border: 0; font-size: var(--ft-md); line-height: var(--lh-snug); letter-spacing: -0.01em; }
+  .prose a.gal-link { color: var(--color-text); text-decoration: none; }
+  .gal-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .gal-link:focus-visible { outline: none; }
+  .gal-link:focus-visible::after { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .gal-card .card-chips { margin-top: 0; padding-top: 0; }
+  .gal-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2); }
+  .gal-prov { font-size: var(--ft-xs); line-height: var(--lh-snug); color: var(--color-text-tertiary); }
+  .gal-get { display: block; margin-top: auto; padding-top: var(--s-2); border-top: 1px solid var(--color-border); }
+  .prose .gal-get code { display: block; padding: 0; background: none; border: 0; font-size: var(--ft-xs); line-height: var(--lh-snug); color: var(--color-text-secondary); overflow-wrap: anywhere; }
+  .gal-time { flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); white-space: nowrap; }
+  .gal-note { position: relative; z-index: 1; font-size: var(--ft-xs); line-height: var(--lh-snug); color: var(--color-text-secondary); }
+  .prose .gal-status { margin: var(--s-3) 0 0; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .prose .gal-empty { margin: var(--s-4) 0 0; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .gal-empty button { padding: 0; border: 0; background: none; color: var(--color-primary); font: inherit; font-weight: var(--fw-medium); cursor: pointer; text-decoration: underline; }
+  /* complete projects on GitHub with no recording here yet */
+  .prose ul.gal-gh { list-style: none; margin: var(--s-4) 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+  .prose .gal-gh > li { margin: 0; display: flex; flex-direction: column; gap: var(--s-1); padding: var(--s-3) var(--s-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface); }
+  .prose a.gal-gh-repo { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 var(--s-2); color: var(--color-text); text-decoration: none; }
+  .prose a.gal-gh-repo:hover strong { color: var(--color-primary); }
+  .prose .gal-gh-repo code { padding: 0; background: none; border: 0; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
+  .gal-gh-line { font-size: var(--ft-sm); line-height: var(--lh-snug); color: var(--color-text-secondary); }
+  @media (max-width: 640px) { .prose ul.gal-gh { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .gal-stage { width: 96px; } .gal-card { gap: var(--s-3); } }
+</style>

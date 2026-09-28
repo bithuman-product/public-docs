@@ -29,10 +29,9 @@ One binary, no code: `bithuman render` turns an audio file into a talking-avatar
 
 </div>
 
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/cli/hero.webp" width="416" height="720" src="/examples/cli/clip.mp4"></video>
-  <figcaption>The <code>wise-pup</code> sample avatar, rendered by <code>bithuman render</code> on an Apple M4 Mac.</figcaption>
-</figure>
+```figure
+cli-linux eager
+```
 
 </div>
 
@@ -122,8 +121,6 @@ export BITHUMAN_API_SECRET="<your API secret>"
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
 bithuman render wise-pup speech.wav
 ```
-
-![Terminal: the installer, bithuman pull and bithuman render writing wise-pup.mp4](/examples/cli/terminal.webp)
 
 ### Expected output
 

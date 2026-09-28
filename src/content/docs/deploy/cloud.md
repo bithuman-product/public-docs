@@ -23,6 +23,10 @@ The fewest moving parts: bitHuman renders the avatar in the cloud and streams it
 cloud
 ```
 
+```diagram
+topology cloud
+```
+
 A managed agent's conversation runs on bitHuman's voice service with your persona, or with the voice and language providers whose keys you connect ([Voices](/build/voices), [Providers](/api/providers)). Traffic is encrypted in transit: HTTPS, and WebRTC media over DTLS-SRTP.
 
 ## Models available here

@@ -572,6 +572,46 @@
       "permanent": true
     },
     {
+      "source": "/examples/android/essence2.mp4",
+      "destination": "/examples/android-essence-2/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/essence2.mp4/",
+      "destination": "/examples/android-essence-2/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/essence2.webp",
+      "destination": "/examples/android-essence-2/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/essence2.webp/",
+      "destination": "/examples/android-essence-2/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/expression2.mp4",
+      "destination": "/examples/android-expression-2/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/expression2.mp4/",
+      "destination": "/examples/android-expression-2/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/expression2.webp",
+      "destination": "/examples/android-expression-2/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/android/expression2.webp/",
+      "destination": "/examples/android-expression-2/poster.webp",
+      "permanent": true
+    },
+    {
       "source": "/examples/apple-swiftpm-check",
       "destination": "/platforms/ios",
       "permanent": true
@@ -612,6 +652,36 @@
       "permanent": true
     },
     {
+      "source": "/examples/cli/clip.mp4",
+      "destination": "/examples/cli-linux/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli/clip.mp4/",
+      "destination": "/examples/cli-linux/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli/hero.webp",
+      "destination": "/examples/cli-linux/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli/hero.webp/",
+      "destination": "/examples/cli-linux/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli/terminal.webp",
+      "destination": "/examples/cli-linux/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/cli/terminal.webp/",
+      "destination": "/examples/cli-linux/poster.webp",
+      "permanent": true
+    },
+    {
       "source": "/examples/failure-states",
       "destination": "/examples",
       "permanent": true
@@ -619,6 +689,16 @@
     {
       "source": "/examples/failure-states/",
       "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/examples/ios/hero.webp",
+      "destination": "/examples/ios-expression-2/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/ios/hero.webp/",
+      "destination": "/examples/ios-expression-2/poster.webp",
       "permanent": true
     },
     {
@@ -639,6 +719,26 @@
     {
       "source": "/examples/macos-expression2/",
       "destination": "/examples/macos-expression-2",
+      "permanent": true
+    },
+    {
+      "source": "/examples/macos/clip.mp4",
+      "destination": "/examples/macos-expression-2/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/macos/clip.mp4/",
+      "destination": "/examples/macos-expression-2/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/macos/hero.webp",
+      "destination": "/examples/macos-expression-2/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/macos/hero.webp/",
+      "destination": "/examples/macos-expression-2/poster.webp",
       "permanent": true
     },
     {
@@ -669,6 +769,36 @@
     {
       "source": "/examples/python-hello/",
       "destination": "/platforms/python",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/clip.mp4",
+      "destination": "/examples/python-macos/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/clip.mp4/",
+      "destination": "/examples/python-macos/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/hero.webp",
+      "destination": "/examples/python-macos/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/hero.webp/",
+      "destination": "/examples/python-macos/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/terminal.webp",
+      "destination": "/examples/python-macos/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/python/terminal.webp/",
+      "destination": "/examples/python-macos/poster.webp",
       "permanent": true
     },
     {
@@ -729,6 +859,26 @@
     {
       "source": "/examples/web/",
       "destination": "/platforms/web#complete-example",
+      "permanent": true
+    },
+    {
+      "source": "/examples/web/clip.mp4",
+      "destination": "/examples/web-embed/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/web/clip.mp4/",
+      "destination": "/examples/web-embed/clip.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/examples/web/hero.webp",
+      "destination": "/examples/web-embed/poster.webp",
+      "permanent": true
+    },
+    {
+      "source": "/examples/web/hero.webp/",
+      "destination": "/examples/web-embed/poster.webp",
       "permanent": true
     },
     {

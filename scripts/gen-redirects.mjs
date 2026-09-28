@@ -14,7 +14,7 @@
 //     is dropped, and listed);
 //   * every source has its trailing-slash twin.
 // Anchors are checked against the built HTML by scripts/check-redirects.mjs.
-import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { routeOf } from "./content-routes.mjs";
 
@@ -82,6 +82,14 @@ export function generate() {
   }
   for (const r of MAP.repoint) set(r.source, pick(r, "repoint"), true, "repoint");
   for (const s of MAP.short) set(s.source, pick(s, "short"), true, "short");
+  // A moved media file: the destination is a file this repo publishes, not a page.
+  const assets = new Set();
+  for (const a of MAP.assets ?? []) {
+    if (!existsSync(join(ROOT, "public", a.new)) || !statSync(join(ROOT, "public", a.new)).isFile()) { errors.push(`asset ${a.source}: ${a.new} is not a file in public/`); continue; }
+    if (existsSync(join(ROOT, "public", a.source))) { errors.push(`asset ${a.source} is still a file in public/, so the redirect would never run`); continue; }
+    dest.set(a.source, { destination: a.new, permanent: true });
+    assets.add(a.source);
+  }
 
   // Collapse chains: follow a destination that is itself a source.
   for (const [src, v] of dest) {
@@ -96,7 +104,7 @@ export function generate() {
     v.destination = d;
   }
   for (const [src, v] of dest) {
-    if (external(v.destination)) continue;
+    if (external(v.destination) || assets.has(src)) continue;
     if (!built.has(pathOf(v.destination))) errors.push(`${src} -> ${v.destination}: not a built page`);
   }
 

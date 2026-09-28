@@ -26,10 +26,9 @@ macos
 
 </div>
 
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/macos/hero.webp" width="416" height="720" src="/examples/macos/clip.mp4"></video>
-  <figcaption>The <a href="/examples/macos-expression-2">macOS Expression 2 example</a> on an Apple M4 iMac, Swift package 2.14.2, with the <code>wise-pup</code> sample avatar and the speech clip it rendered.</figcaption>
-</figure>
+```figure
+macos-expression-2 eager
+```
 
 </div>
 
@@ -89,9 +88,24 @@ let engine = try Expression2Engine.create(
     avatarContainer: model.appendingPathComponent("agent.imx"),
     sharedEngineContainer: model.appendingPathComponent("shared-engine.imx"),
     stagingDir: model.appendingPathComponent("staged"))
-engine.feed(samples)      // 16 kHz mono float, any length
-engine.flushTail()        // end of the utterance
-while let (frame, _) = engine.pull() { /* 416×720 BGR, 3 bytes per pixel */ }
+// …
+let started = Date()
+engine.feed(samples)
+engine.flushTail()
+// …
+var frames = 0, idleTicks = 0
+while idleTicks < 100 {
+    var got = false
+    while let (frame, _) = engine.pull() {
+        if frames == 0 {
+            writePNG(frame, width: engine.width, height: engine.height,
+                     to: out.appendingPathComponent("first-frame.png"))
+        }
+        frames += 1
+        got = true
+    }
+    if got { idleTicks = 0 } else { idleTicks += 1; usleep(50_000) }
+}
 ```
 
 ## Complete example

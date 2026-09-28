@@ -7,10 +7,9 @@ order: 41
 type: example
 ---
 
-<figure class="showcase">
-  <video controls preload="none" playsinline poster="/examples/android/essence2.webp" width="540" height="1005" src="/examples/android/essence2.mp4"></video>
-  <figcaption>The <code>essence2-hello</code> app on a Samsung Galaxy S25+, rendering the <code>sofia-ramirez</code> sample avatar at 1080×1920 on the phone with <code>essence2-android</code>.</figcaption>
-</figure>
+```figure
+android-essence-2 eager
+```
 
 The app downloads the `sofia-ramirez` sample avatar once, renders every frame of a speech clip on the phone, then plays the audio with the frames in sync. Tap the screen to replay.
 
@@ -73,6 +72,45 @@ rendered 347 frames in 13 s — playing…
 4. calls `feed(pcm)` and `endOfAudio()`, then `pull(frame)` until every frame is out: one frame per 40 ms of audio.
 
 The calls and the live-streaming loop are on [Android](/platforms/android).
+
+## The code that matters
+
+The render path of `MainActivity.kt`, as it is in the repository: the credential, the download, then feed and pull until the utterance is out.
+
+```kotlin
+// excerpt: android/essence2-hello/app/src/main/java/com/example/e2hello/MainActivity.kt
+// 1. The CREDENTIAL, once, before anything downloads or opens an engine.
+//    One setter covers the store's download and the engine's meter;
+//    create() refuses without it.
+Essence2Credential.set(secret)
+// …
+// 2. The STORE downloads with the credential set above.
+//    Blocks on the network the first time; that is why this is a worker thread.
+val store = Essence2ModelStore(this)
+val identity = store.fetch(agentCode, progress = { member, done, total ->
+    if (done == total) Log.i(TAG, "fetched $member ($total B)")
+})
+// …
+Essence2Avatar.create(identity.dir).use { avatar ->
+    // …
+    val frame = avatar.newFrameBuffer()   // direct, width * height * 4, RGBA
+    // …
+    avatar.feed(pcm)                      // 16-bit little-endian PCM bytes, as read
+    avatar.endOfAudio()                   // "that is the whole utterance"
+    // …
+    var quietMs = 0
+    while (quietMs < 5_000) {             // 5 s with no frame at all = finished
+        frame.clear()
+        if (avatar.pull(frame)) {         // true = a frame was written
+            quietMs = 0
+            frame.rewind()
+    // …
+    // A render that failed must not reach you as silence: checkRender()
+    // turns a zero-frame render into a throw that names the reason.
+    avatar.checkRender()
+```
+
+The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/android/essence2-hello/app/src/main/java/com/example/e2hello/MainActivity.kt).
 
 ## Make it your own
 

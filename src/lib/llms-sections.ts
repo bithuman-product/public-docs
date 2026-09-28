@@ -18,13 +18,14 @@ import { PLATFORMS } from "../data/platforms";
 // (and not linked-only) or in two, so no page can drop out of the agent layer.
 
 // Account administration, less-used endpoints, first-generation concepts, the
-// CLI's local conversation brain and the method page are linked with their .md
-// twins rather than inlined, to keep each file one fetch for an agent.
+// CLI's local conversation brain, the method page and the step-by-step recipes
+// are linked with their .md twins rather than inlined, to keep each file one
+// fetch for an agent.
 export const LINKED_ONLY = new Set([
   "api/api-keys", "api/organizations", "api/runtime-sessions", "api/billing",
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
   "models/first-generation", "models/avatar-file",
-  "build/voice-agent", "platforms/cli/local-brain",
+  "build/voice-agent", "build/kiosk", "build/companion-app", "build/talking-video", "platforms/cli/local-brain",
   "performance/method",
 ]);
 

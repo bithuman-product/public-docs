@@ -1,0 +1,52 @@
+---
+// Real captures: the ```figure block (one capture in its device frame, with
+// its provenance) and the example gallery's cards. The markup is drawn at build
+// time by src/lib/showcase.ts from src/data/examples.ts; DocLayout renders this
+// component only on a page that places one. The script plays a muted loop
+// only while it is on screen (never with reduced motion or Save-Data) and
+// swaps in the recording with sound and captions on a click.
+---
+
+<script>
+  import "../scripts/figure";
+</script>
+
+<style is:global>
+  /* the frame: a phone's bezel, or a window's title bar */
+  .fig-media { position: relative; display: block; overflow: hidden; width: 100%; box-sizing: border-box; background: var(--color-surface-3); border: 1px solid var(--color-border); border-radius: var(--r-lg); isolation: isolate; }
+  .fig-media > picture, .fig-media img, .fig-media video { display: block; width: 100%; height: 100%; }
+  .fig-media img, .fig-media video { object-fit: cover; object-position: 50% 30%; margin: 0 !important; border: 0 !important; border-radius: inherit !important; max-height: none !important; background: none !important; }
+  .fig-media > :is(.fig-loop, .fig-clip) { position: absolute; left: var(--dev-pad, 0); top: var(--dev-top, 0); width: calc(100% - 2 * var(--dev-pad, 0px)); height: calc(100% - var(--dev-top, 0px) - var(--dev-pad, 0px)); }
+  /* The loop sits 1 px inside the poster on every side: a strictly smaller paint
+     is never a new Largest Contentful Paint, so a loop starting after load
+     cannot move the page's LCP from the poster to itself. */
+  .fig-media > .fig-loop { left: calc(var(--dev-pad, 0px) + 1px); top: calc(var(--dev-top, 0px) + 1px); width: calc(100% - 2 * var(--dev-pad, 0px) - 2px); height: calc(100% - var(--dev-top, 0px) - var(--dev-pad, 0px) - 2px); }
+  .fig-loop { opacity: 0; transition: opacity var(--t-med) var(--ease); pointer-events: none; }
+  .fig-loop.on { opacity: 1; }
+  .fig-clip { object-fit: contain !important; background: #000 !important; z-index: 2; }
+  /* the loop covers exactly the poster (never a pixel more, so it is not a new, larger paint) */
+  .dev-iphone, .dev-android { --dev-pad: 5px; --dev-top: 5px; padding: var(--dev-pad); border: 0; background: #0e0e11; border-radius: 22px; box-shadow: 0 0 0 1px var(--color-border-strong); }
+  .dev-iphone > picture, .dev-android > picture { overflow: hidden; border-radius: 17px; }
+  .dev-iphone > :is(.fig-loop, .fig-clip), .dev-android > :is(.fig-loop, .fig-clip) { border-radius: 17px !important; }
+  .dev-mac, .dev-linux-pc, .dev-browser, .dev-terminal { --dev-top: 18px; padding-top: var(--dev-top); }
+  .dev-mac::before, .dev-linux-pc::before, .dev-browser::before, .dev-terminal::before {
+    content: ""; position: absolute; top: 6px; left: 9px; width: 30px; height: 6px;
+    background: radial-gradient(circle 3px at 3px 3px, var(--gray-400) 98%, transparent) 0 0 / 11px 6px repeat-x;
+  }
+  .dev-mac > picture img, .dev-linux-pc > picture img, .dev-browser > picture img, .dev-terminal > picture img { border-radius: 0 !important; }
+  /* "Play with sound": a pill over the capture */
+  .fig-sound {
+    position: absolute; z-index: 1; left: 50%; bottom: 12px; transform: translateX(-50%);
+    display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 14px; border-radius: var(--r-pill);
+    background: rgba(12, 12, 16, 0.72); color: #fff !important; font-size: var(--ft-sm); font-weight: var(--fw-medium);
+    text-decoration: none !important; white-space: nowrap; backdrop-filter: blur(6px);
+  }
+  .fig-sound:hover { background: rgba(12, 12, 16, 0.86); }
+  .fig-sound:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  /* a figure on a page */
+  .prose figure.fig { margin: var(--s-5) 0 var(--s-6); max-width: 280px; text-align: left; }
+  .prose figure.fig figcaption { margin-top: var(--s-2); font-size: var(--ft-xs); line-height: var(--lh-snug); color: var(--color-text-tertiary); }
+  .prose .lead > figure.fig { max-width: none; }
+  @media (max-width: 760px) { .prose figure.fig { max-width: 240px; } .prose .lead > figure.fig { margin-inline: auto; } }
+  @media (prefers-reduced-motion: reduce) { .fig-loop { display: none; } }
+</style>

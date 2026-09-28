@@ -37,7 +37,7 @@ const sizes = "(max-width: 560px) calc(100vw - 32px), 440px";
   <div class="ld-stage" data-stage>
     {demos.map((d, i) => (
       <div class="ld-poster" data-poster={d.model} data-src={embedUrl(d.code)} data-name={d.name} data-model-name={d.modelName}
-        data-clip={d.clip.src} data-clip-poster={d.clip.poster} data-clip-w={d.clip.width} data-clip-h={d.clip.height} data-clip-caption={d.clip.caption}
+        data-clip={d.clip.src} data-clip-poster={d.clip.poster} data-clip-w={d.clip.width} data-clip-h={d.clip.height} data-clip-caption={d.clip.caption} data-clip-vtt={d.clip.captions}
         hidden={i > 0}>
         <picture>
           <source type="image/avif" srcset={`${d.poster}-480.avif 480w, ${d.poster}-960.avif 960w`} sizes={sizes} />
@@ -111,6 +111,11 @@ const sizes = "(max-width: 560px) calc(100vw - 32px), 440px";
       const v = document.createElement("video");
       Object.assign(v, { controls: true, playsInline: true, preload: "metadata", poster: d.clipPoster!, src: d.clip! });
       v.width = Number(d.clipW); v.height = Number(d.clipH);
+      if (d.clipVtt) {
+        const t = document.createElement("track");
+        Object.assign(t, { kind: "captions", srclang: "en", label: "English", src: d.clipVtt, default: true });
+        v.append(t);
+      }
       const caption = document.createElement("figcaption");
       caption.textContent = d.clipCaption!;
       fig.append(v, caption);

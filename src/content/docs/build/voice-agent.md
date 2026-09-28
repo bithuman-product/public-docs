@@ -12,9 +12,8 @@ Everything except the voice model runs on your computer. LiveKit is the stock `l
 
 The avatar name picks the model: `wise-pup` is Expression 2, `sofia-ramirez` is Essence 2, or pass your own agent code or avatar file. You need two secrets: your bitHuman API secret (both models refuse to render without it) and `OPENAI_API_KEY`.
 
-```text
-Your browser  <──>  livekit-server  <──>  the agent: OpenAI Realtime hears you and replies;
-(localhost)         (your machine)        bitHuman renders the face from the reply's voice
+```diagram
+livekit-local
 ```
 
 Use [the CLI](#with-the-cli) for a talking avatar with no code, [Python](#with-python) for your own agent code, or the [Python voice conversation](#python-voice-conversation) for a desktop window with no LiveKit server.
@@ -79,17 +78,20 @@ Open that link, click **Start** and allow the microphone. The heart of `agent.py
 # excerpt: python/self-host/agent.py
 @server.rtc_session()
 async def entrypoint(ctx: JobContext):
-    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)  # the agent listens; it never needs your camera
     session = AgentSession(llm=openai.realtime.RealtimeModel(
         model=os.getenv("BITHUMAN_REALTIME_MODEL", "gpt-realtime-2.1-mini"),
         voice=os.getenv("BITHUMAN_VOICE", "coral"),
-        turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))  # reply 0.5 s after you stop
-    # The avatar renders in this process and publishes the lip-synced video and audio.
+        # reply 0.5 s after you stop (the plugin's default semantic VAD can wait ~4 s)
+        turn_detection=ServerVad(type="server_vad", silence_duration_ms=500, create_response=True,
+                                 interrupt_response=True)))
+    # Local mode: the avatar renders in this process and publishes the lip-synced video AND audio.
     avatar = bithuman.AvatarSession(model_path=os.environ["BITHUMAN_MODEL_PATH"],
                                     api_secret=os.environ["BITHUMAN_MASTER_SECRET"])
     await avatar.start(session, room=ctx.room)
-    await session.start(agent=Agent(instructions="You are a friendly assistant."),
-                        room=ctx.room, room_options=RoomOptions(audio_output=False))
+    await session.start(
+        agent=Agent(instructions=os.getenv("BITHUMAN_INSTRUCTIONS", "You are a friendly assistant. Keep answers short.")),
+        room=ctx.room, room_options=RoomOptions(audio_output=False, close_on_disconnect=False))
 ```
 
 Swap the `RealtimeModel` for any LiveKit speech-to-text, LLM and text-to-speech plugins; the avatar lines stay the same.
@@ -137,39 +139,65 @@ The pipeline: microphone → OpenAI Realtime (24 kHz PCM16) → `push_audio`/`fl
 
 ```python
 # excerpt: python/quickstart/conversation.py
-# Configure the OpenAI Realtime session, then bridge its audio into bitHuman.
 async with client.realtime.connect(model="gpt-realtime-2.1-mini") as conn:
     await conn.session.update(session={
         "type": "realtime",
         "instructions": "You are a friendly AI assistant. Keep responses concise.",
         "output_modalities": ["audio"],
         "audio": {
-            "input": {"format": {"type": "audio/pcm", "rate": 24000},
+            "input": {"format": {"type": "audio/pcm", "rate": OPENAI_SAMPLE_RATE},
                       "turn_detection": {"type": "server_vad"}},
-            "output": {"format": {"type": "audio/pcm", "rate": 24000}, "voice": "coral"},
+            "output": {"format": {"type": "audio/pcm", "rate": OPENAI_SAMPLE_RATE},
+                       "voice": args.voice},
         },
     })
-
-    async for event in conn:
-        if event.type == "response.output_audio.delta":
-            # OpenAI speaks at 24 kHz — push straight into the avatar runtime.
-            await runtime.push_audio(base64.b64decode(event.delta), 24000, last_chunk=False)
-        elif event.type == "response.output_audio.done":
+# …
+async for event in conn:
+    if event.type == "response.output_audio.delta":
+        await ai_audio_queue.put(base64.b64decode(event.delta))
+    elif event.type == "response.output_audio.done":
+        await ai_audio_queue.put(None)
+# …
+async def push_to_bithuman():
+    while True:
+        data = await ai_audio_queue.get()
+        if data is None:
             await runtime.flush()
-
-# Meanwhile, the render loop draws every frame and plays its synced audio:
+        else:
+            await runtime.push_audio(data, OPENAI_SAMPLE_RATE, last_chunk=False)
+# …
 async for frame in runtime.run():
     if frame.has_image:
-        cv2.imshow("bitHuman", frame.bgr_image)
+        cv2.imshow(WINDOW, frame.bgr_image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
+
     if frame.audio_chunk:
-        speaker_buf.extend(frame.audio_chunk.array.tobytes())
+        with speaker_lock:
+            speaker_buf.extend(frame.audio_chunk.array.tobytes())
 ```
 
 - **Personality:** edit the `instructions` string.
 - **Voice:** pass `--voice` with any OpenAI Realtime voice.
 - **Another avatar:** `bithuman list` prints every sample slug; pass the file with `--model`.
+
+## Barge-in
+
+Talk over the avatar and it stops mid-sentence, then listens: that is barge-in, and every path here supports it.
+
+- **The CLI and the Python agent:** the voice model's turn detection hears you start talking and cancels its reply; LiveKit Agents then clears the avatar's buffered audio and frames, so the mouth stops with the voice. In the Python agent it is `interrupt_response=True` on the turn detection, shown above.
+- **Your own loop in Python:** when your speech detection fires, call `interrupt()` on the runtime and clear any reply audio you still hold. `run()` carries on with idle frames. With OpenAI Realtime, the event to watch is `input_audio_buffer.speech_started`:
+
+```python
+# excerpt: barge-in, in the event loop of conversation.py
+elif event.type == "input_audio_buffer.speech_started":   # the user started talking
+    runtime.interrupt()                                     # drop the rest of the reply
+```
+
+- **On the device:** `interrupt()` in Swift and Flutter; `resetState(true)` for Expression 2 and `resetAudio()` for Essence 2 on Android ([Companion app](/build/companion-app#let-the-user-interrupt)).
+- **A cloud avatar without the plugin:** perform the RPC `lk.clear_buffer` on the avatar ([Cloud avatar](/api/cloud-avatar)).
+
+Barge-in does not change billing: a session bills active session time, talking or idle, to the second.
 
 ## Pick the avatar
 

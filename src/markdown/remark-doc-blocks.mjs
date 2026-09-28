@@ -9,7 +9,7 @@
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { gfm } from "micromark-extension-gfm";
 import { gfmFromMarkdown } from "mdast-util-gfm";
-import { BLOCK_LANGS, HTML_BLOCKS, blockMarkdown } from "../lib/doc-blocks.ts";
+import { BLOCK_LANGS, HTML_BLOCKS, WRAP_BLOCKS, blockMarkdown } from "../lib/doc-blocks.ts";
 
 export default function remarkDocBlocks() {
   return (tree, file) => {
@@ -26,7 +26,10 @@ export default function remarkDocBlocks() {
           }
           if (HTML_BLOCKS.has(child.lang)) { out.push({ type: "html", value: md }); continue; }
           const parsed = fromMarkdown(md, { extensions: [gfm()], mdastExtensions: [gfmFromMarkdown()] });
-          out.push({ type: "html", value: `<div class="doc-block doc-block-${child.lang}">` }, ...parsed.children, { type: "html", value: "</div>" });
+          // a wrapped body (```expected) may hold fences and links of its own: walk it too
+          walk(parsed);
+          const [open, close] = WRAP_BLOCKS[child.lang] ?? [`<div class="doc-block doc-block-${child.lang}">`, "</div>"];
+          out.push({ type: "html", value: open }, ...parsed.children, { type: "html", value: close });
           continue;
         }
         walk(child);

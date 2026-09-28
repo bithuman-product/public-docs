@@ -5,7 +5,8 @@
 //
 // No imports, so the gate can load this file with Node alone.
 
-export type DeviceKind = "iphone" | "android" | "mac" | "browser" | "linux-pc" | "terminal" | "cloud";
+export type { DeviceKind } from "./device-frames.ts";
+import type { DeviceKind } from "./device-frames.ts";
 
 export interface BandFrame {
   /** What the frame is called on the page */

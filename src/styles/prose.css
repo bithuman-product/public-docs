@@ -266,37 +266,14 @@
   margin: var(--space-5) 0;
 }
 
-/* ---- reusable diagram primitives (used in raw HTML inside Markdown) ---- */
-.bh-stack { display: flex; flex-direction: column; gap: 0.6rem; margin: var(--space-6) 0; }
-.bh-layer {
-  border: 1px solid var(--color-border);
-  border-radius: var(--r-lg);
-  background: var(--color-surface-2);
-  padding: var(--space-4) var(--space-5);
-}
-.bh-layer .bh-l-title { font-weight: var(--fw-bold); display: flex; align-items: center; gap: 0.5rem; }
-.bh-layer .bh-l-sub { color: var(--color-text-secondary); font-size: var(--ft-sm); margin-top: 0.2rem; }
-.bh-layer.bh-accent { border-color: var(--color-primary); background: var(--color-primary-soft); }
-.bh-tag { font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); border: 1px solid var(--color-border); border-radius: var(--r-full); padding: 0.05rem 0.5rem; }
-.bh-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem; }
-.bh-cols .bh-cell { border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface); padding: 0.7rem 0.85rem; font-size: var(--ft-sm); }
-.bh-flow { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: var(--space-5) 0; }
-.bh-flow .bh-node { border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface-2); padding: 0.5rem 0.8rem; font-size: var(--ft-sm); font-weight: var(--fw-medium); }
-.bh-flow .bh-sep { color: var(--color-primary); font-weight: var(--fw-bold); }
-
 /* Page title row: the H1 and the page actions (copy as markdown, open in an assistant). */
 .doc-h1 { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
 .doc-h1 h1 { margin: 0; }
 @media (max-width: 700px) { .doc-h1 { flex-direction: column; gap: var(--space-2); } }
 
-/* Example showcase: a real capture of the example running. */
-.prose figure.showcase { margin: var(--space-5) 0 var(--space-6); text-align: center; }
-.prose figure.showcase video, .prose figure.showcase img { max-width: 100%; height: auto; max-height: 560px; border-radius: var(--r-xl); border: 1px solid var(--color-border); background: var(--color-surface-2); }
-.prose figure.showcase figcaption { margin-top: var(--space-2); font-size: var(--ft-sm); color: var(--color-text-secondary); }
 /* Cards inside a markdown page are the site's one card (components.css);
    only the prose defaults that would restyle them are undone here. */
 .prose ul.card-grid { padding: 0; margin: var(--space-5) 0; list-style: none; }
 .prose ul.card-grid > li { margin: 0; }
 .prose a.card { color: inherit; text-decoration: none; }
 .prose .card-figure img { margin: 0; border: 0; border-radius: 0; }
-.prose .gallery .card-figure img { width: 100%; height: 220px; object-fit: cover; object-position: center 20%; background: var(--color-surface-2); }

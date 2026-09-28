@@ -8,21 +8,21 @@ type: concept
 next: ["/models/avatar-file", "/platforms", "/models"]
 ---
 
+```diagram
+engine
+```
+
 ## The three layers
 
-bitHuman is one portable engine with thin language bindings on top, and your app on top of that. Every layer reads the same [model file](/models/avatar-file) and produces the same lip-synced frames — on an iPhone, a Mac, a Linux box, a browser, or a cloud GPU.
+bitHuman is one portable engine with thin language bindings on top, and your app on top of that. Every layer reads the same [model file](/models/avatar-file) and produces the same lip-synced frames, on an iPhone, a Mac, a Linux PC, in a browser or in the bitHuman cloud.
 
-<div class="bh-stack">
-  <div class="bh-layer"><div class="bh-l-title">Apps &amp; tools</div><div class="bh-l-sub">the bitHuman CLI · your own app · LiveKit transport for WebRTC</div></div>
-  <div class="bh-layer"><div class="bh-l-title">Language SDKs</div><div class="bh-l-sub">Python · Swift · Kotlin — thin, idiomatic bindings over the same engine; the browser through the hosted URL or an iframe</div></div>
-  <div class="bh-layer bh-accent"><div class="bh-l-title">The bitHuman engine</div><div class="bh-l-sub">The portable avatar renderer, shipped inside every SDK — nothing separate to install. macOS · iOS · Android · Linux · the browser</div></div>
-</div>
+| Layer | What it is |
+|---|---|
+| **Apps and tools** | the bitHuman CLI, your own app, LiveKit for WebRTC transport |
+| **Language SDKs** | Python, Swift and Kotlin: thin bindings over the same engine; the browser through the web embed |
+| **The bitHuman engine** | the avatar renderer, inside every SDK, so there is nothing separate to install: macOS, iOS, Android, Linux and the browser |
 
-Every layer drives the same pipeline — audio goes in, lip-synced frames come out:
-
-<div class="bh-flow"><span class="bh-node">16 kHz mono audio</span><span class="bh-sep">→</span><span class="bh-node">bitHuman engine</span><span class="bh-sep">→</span><span class="bh-node">lip-synced frames</span></div>
-
-You integrate at the SDK layer. The engine is built into each SDK, so your app needs the bitHuman dependency and nothing else. To pick a platform, start at [SDK](/platforms); which model runs where is on [Models](/models#where-each-model-runs).
+You integrate at the SDK layer. The engine is built into each SDK, so your app needs the bitHuman dependency and nothing else. To pick a platform, start at [Platforms](/platforms); which model runs where is on [Models](/models#where-each-model-runs).
 
 ## What stays true across every surface
 
@@ -41,8 +41,6 @@ Every SDK has the same shape — audio in, video out:
 
 The engine buffers between the two, so your audio source and your render loop
 never have to run in lockstep.
-
-<div class="bh-flow"><span class="bh-node">push audio</span><span class="bh-sep">→</span><span class="bh-node">engine</span><span class="bh-sep">→</span><span class="bh-node">pull frame</span><span class="bh-sep">→</span><span class="bh-node">render</span></div>
 
 ### In Python
 

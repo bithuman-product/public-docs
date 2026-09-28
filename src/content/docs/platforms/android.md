@@ -25,10 +25,9 @@ android
 
 </div>
 
-<figure class="showcase">
-  <video controls preload="none" playsinline muted poster="/examples/android/essence2.webp" width="540" height="1006" src="/examples/android/essence2.mp4"></video>
-  <figcaption>The <code>sofia-ramirez</code> sample avatar (Essence 2) on a Samsung Galaxy S25+, rendered on the phone by the Android SDK.</figcaption>
-</figure>
+```figure
+android-essence-2 eager
+```
 
 </div>
 

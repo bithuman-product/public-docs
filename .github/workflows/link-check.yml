@@ -466,6 +466,22 @@ jobs:
         if: always()
         run: node scripts/check-search.mjs
 
+      - name: The media checker proves itself
+        if: always()
+        run: node scripts/check-media.mjs --selftest
+
+      - name: Real captures stay within budget, loops are muted, clips carry captions, video loads on demand
+        if: always()
+        run: node scripts/check-media.mjs
+
+      - name: The excerpt checker proves itself
+        if: always()
+        run: node scripts/check-example-excerpts.mjs --selftest
+
+      - name: Every "excerpt:" code block is verbatim from bithuman-examples main (the projects its CI builds)
+        if: always()
+        run: node scripts/check-example-excerpts.mjs
+
       - name: Honest claims in the built twins and llms files too
         if: always()
         run: node scripts/check-claims.mjs

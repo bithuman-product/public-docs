@@ -7,10 +7,9 @@ order: 20
 type: example
 ---
 
-<figure class="showcase">
-  <img src="/examples/ios/hero.webp" alt="The wise-pup avatar mid-sentence, as drawn by the example app on an iPhone 15" width="416" height="720">
-  <figcaption>A frame the <code>ios-expression2</code> app drew on an iPhone 15 (iOS 26), rendering the <code>wise-pup</code> sample avatar on the phone with Swift package 2.14.2.</figcaption>
-</figure>
+```figure
+ios-expression-2 eager
+```
 
 A SwiftUI app: **Speak** plays a speech clip through the avatar, and **Talk to it** drives the avatar from the microphone, live. Everything renders on the device at 416×720, 20 frames a second; the engine contacts bitHuman only to check your API secret and report session time.
 
@@ -59,6 +58,47 @@ The avatar appears and idles. Tap **Speak**: it says the sample line with its li
 4. a display loop shows one frame per 50 ms of audio, on the audio clock.
 
 The same three calls run on a Mac: [macOS example](/examples/macos-expression-2). The API is on [Apple](/platforms/ios) and [Apple API reference](/platforms/swift/reference).
+
+## The code that matters
+
+`Sources/App.swift` keeps the engine in an actor, then feeds the speech in 100 ms chunks and takes frames out as they appear:
+
+```swift
+// excerpt: swift/ios-expression2/Sources/App.swift
+actor Renderer {
+    private var engine: Expression2Engine?
+        // …
+        let e = try Expression2Engine.create(modelPath: dir, sharedEngineDir: sharedEngine)
+        engine = e
+    // …
+    func idleFrame() -> [UInt8]? { engine?.idle }
+    func feed(_ samples: [Float]) { engine?.feed(samples) }
+    func flushTail() { engine?.flushTail() }
+    func reset() { engine?.resetState(clearFrames: true) }
+    // …
+    func pullOne() -> [UInt8]? { engine?.pull()?.frame }
+    func queued() -> Int { engine?.queuedFrames ?? 0 }
+}
+```
+
+```swift
+// excerpt: swift/ios-expression2/Sources/App.swift
+var i = 0
+while i < pcm.count {
+    let j = min(i + chunk, pcm.count)
+    await renderer.feed(Array(pcm[i..<j]))
+    i = j
+    // Generation is ASYNCHRONOUS — pull() returns nil until a chunk of
+    // frames lands, so this usually takes nothing on the first passes and
+    // then keeps up. It is not a busy-wait: it only removes what is ready.
+    while let f = await renderer.pullOne() {
+        if let cg = makeCGImage(f, w, h) { frames.append(cg) }
+    }
+}
+await renderer.flushTail()
+```
+
+The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-examples/blob/main/swift/ios-expression2/Sources/App.swift).
 
 ## Make it your own
 

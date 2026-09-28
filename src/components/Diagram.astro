@@ -1,0 +1,33 @@
+---
+// Styles for the canonical diagrams (the ```diagram block, drawn at build time
+// as inline SVG by src/lib/diagrams.ts). No script: the drawing is static and
+// follows light and dark through the tokens. What leaves your hardware for
+// bitHuman is always drawn in --flow-egress.
+---
+
+<style is:global>
+  .prose figure.dg { margin: var(--s-6) 0; padding: var(--s-5) var(--s-5) var(--s-4); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); }
+  .dg svg { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; font-family: var(--font-sans); overflow: visible; }
+  .dg-z rect { fill: var(--color-surface-2); stroke: var(--color-border-strong); stroke-width: 1; }
+  .dg-z text { fill: var(--color-text-tertiary); font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; }
+  .dg-bh rect { fill: color-mix(in srgb, var(--flow-egress) 7%, var(--color-surface)); stroke: color-mix(in srgb, var(--flow-egress) 45%, var(--color-border)); stroke-dasharray: 5 3; }
+  .dg-bh text { fill: var(--flow-egress); }
+  .dg-n rect { fill: var(--color-surface); stroke: var(--color-border-strong); stroke-width: 1; }
+  .dg-accent rect { fill: var(--color-primary-soft); stroke: var(--color-primary); }
+  .dg-muted rect { fill: var(--color-surface-2); stroke: var(--color-border); }
+  .dg-t { fill: var(--color-text); font-size: 12.5px; font-weight: 700; }
+  .dg-s { fill: var(--color-text-secondary); font-size: 11.5px; }
+  .dg-e path { fill: none; stroke: var(--color-text-tertiary); stroke-width: 1.6; }
+  .dg-e polygon { fill: var(--color-text-tertiary); }
+  .dg-e text { fill: var(--color-text-secondary); font-size: 11px; font-weight: 500; }
+  .dg-out path { stroke: var(--flow-egress); stroke-width: 2.2; }
+  .dg-out polygon { fill: var(--flow-egress); }
+  .dg-out text { fill: var(--flow-egress); font-weight: 700; }
+  .dg-rail line { stroke: var(--color-primary); stroke-width: 3; stroke-linecap: round; }
+  .dg-badge rect { fill: var(--color-primary-soft); stroke: var(--color-primary); }
+  .dg-badge text { fill: var(--color-primary); font-size: 11.5px; font-weight: 700; }
+  .dg-note { fill: var(--color-text-secondary); font-size: 11.5px; }
+  .prose .dg figcaption { max-width: 68ch; margin: var(--s-4) auto 0; font-size: var(--ft-sm); line-height: var(--lh-normal); color: var(--color-text-secondary); }
+  .prose .dg figcaption strong { color: var(--color-text); }
+  @media (max-width: 560px) { .prose figure.dg { padding: var(--s-3) var(--s-3) var(--s-3); } }
+</style>

@@ -50,6 +50,10 @@ export LIVEKIT_API_KEY=… LIVEKIT_API_SECRET=…
 export OPENAI_API_KEY=…
 ```
 
+```diagram
+livekit
+```
+
 ## First frame
 
 A complete worker (`agent.py`):

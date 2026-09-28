@@ -4,6 +4,7 @@ import rehypeTableLabels from "./src/markdown/rehype-table-labels.mjs";
 import rehypeCallouts from "./src/markdown/rehype-callouts.mjs";
 import rehypePerfTables from "./src/markdown/rehype-perf-tables.mjs";
 import rehypeEmbedNofollow from "./src/markdown/rehype-embed-nofollow.mjs";
+import rehypeWalkthrough from "./src/markdown/rehype-walkthrough.mjs";
 import remarkCodeTabs from "./src/markdown/remark-code-tabs.mjs";
 import remarkDocBlocks from "./src/markdown/remark-doc-blocks.mjs";
 import remarkApiSamples from "./src/markdown/remark-api-samples.mjs";
@@ -28,7 +29,8 @@ export default defineConfig({
     // that block, drawn from the data files at build time (src/lib/doc-blocks.ts).
     remarkPlugins: [remarkDocBlocks, remarkApiSamples, remarkCodeTabs],
     // A link to an /embed/ URL opens a billable live session: never followed by crawlers.
-    rehypePlugins: [rehypePerfTables, rehypeTableLabels, rehypeCallouts, rehypeEmbedNofollow],
+    // A recipe's "## Steps" becomes a walkthrough: numbered steps, #step-n links, progress.
+    rehypePlugins: [rehypePerfTables, rehypeTableLabels, rehypeCallouts, rehypeEmbedNofollow, rehypeWalkthrough],
     // Dual Shiki themes so code blocks match the site theme:
     // clean light in light mode, dark in dark mode (toggled via [data-theme]).
     // wrap: true — a long line has to stay readable and copyable at 390px. With

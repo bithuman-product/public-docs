@@ -29,6 +29,10 @@ Offline license is only available to Business and Enterprise clients who want to
 offline
 ```
 
+```diagram
+topology offline
+```
+
 Creating the avatar from a portrait happens in the bitHuman cloud; the finished avatar model then runs on your machines.
 
 ## Models available here

@@ -9,6 +9,8 @@
 // time or when the tab stays hidden, and a recorded clip stands in when the
 // live embed does not come up.
 
+import { captureMedia } from "./examples.ts";
+
 export type DemoModel = "essence-2" | "expression-2";
 
 export interface Demo {
@@ -24,7 +26,7 @@ export interface Demo {
   /** Poster base path: <poster>-480.{avif,webp} and <poster>-960.{avif,webp}, 4:5 */
   poster: string;
   /** A real recording of this avatar, shown when the live demo is unavailable */
-  clip: { src: string; poster: string; width: number; height: number; caption: string };
+  clip: { src?: string; poster: string; width: number; height: number; caption: string; captions?: string };
 }
 
 /** The live session ends after this many seconds on screen. */
@@ -41,13 +43,8 @@ export const DEMOS: Record<DemoModel, Demo> = {
     name: "Sofia",
     kind: "a photoreal person",
     poster: "/images/demo/sofia-ramirez",
-    clip: {
-      src: "/examples/android/essence2.mp4",
-      poster: "/examples/android/essence2.webp",
-      width: 540,
-      height: 1006,
-      caption: "A recording of sofia-ramirez (Essence 2) on a Samsung Galaxy S25+, rendered by the Android SDK.",
-    },
+    // the same embed a site uses, recorded with sound in Chrome
+    clip: captureMedia("web-embed"),
   },
   "expression-2": {
     model: "expression-2",
@@ -57,12 +54,6 @@ export const DEMOS: Record<DemoModel, Demo> = {
     name: "Wise Pup",
     kind: "any character",
     poster: "/images/demo/wise-pup",
-    clip: {
-      src: "/examples/android/expression2.mp4",
-      poster: "/examples/android/expression2.webp",
-      width: 540,
-      height: 1006,
-      caption: "A recording of wise-pup (Expression 2) on a Samsung Galaxy S25+, rendered by the Android SDK.",
-    },
+    clip: captureMedia("android-expression-2"),
   },
 };

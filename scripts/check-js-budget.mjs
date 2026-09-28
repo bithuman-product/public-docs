@@ -28,6 +28,12 @@ export const WIDGETS = {
   "perf-explorer": 5 * KB,
   "calculator": 3 * KB,
   "matrix-filter": 2 * KB,
+  // W4: real captures, the example gallery, the data-flow explorer, recipe steps
+  "figure": 1 * KB,
+  "gallery": 2 * KB,
+  "dataflow": 4 * KB,
+  "walkthrough": 3 * KB,
+  "radio-group": 1 * KB,
 };
 
 const gz = (s) => gzipSync(Buffer.from(s), { level: 9 }).length;

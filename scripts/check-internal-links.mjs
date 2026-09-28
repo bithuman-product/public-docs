@@ -13,7 +13,7 @@
 //
 // Pure Node, no deps. Exit 1 on any unresolved internal link.
 
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { routeOf } from "./content-routes.mjs";
 
@@ -121,7 +121,9 @@ for (const [source, destination] of redirects) {
   }
   if (/^https:\/\/[a-z0-9.-]+\.bithuman\.ai(\/|$)/.test(destination)) continue; // an off-site bitHuman page (e.g. status)
   const dest = destination.replace(/#.*$/, "").replace(/\/$/, "") || "/";
-  if (!routes.has(dest) && !redirects.has(dest)) {
+  // a moved media file (scripts/ia-map.json "assets") lands on a file this repo publishes
+  const isFile = /\.[a-z0-9]{2,5}$/.test(dest) && existsSync(join(ROOT, "public", dest));
+  if (!routes.has(dest) && !redirects.has(dest) && !isFile) {
     redirectFailures.push(`redirect ${source} -> ${destination} points at no known route`);
   }
 }

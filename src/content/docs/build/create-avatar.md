@@ -10,6 +10,10 @@ next: ["/build/persona", "/build/voices", "/models"]
 
 An avatar is a face, a voice and a personality, packaged as one agent with a short code. Use a [sample avatar](/examples#ready-made-avatars) to start, or create your own from one portrait.
 
+```diagram
+creation
+```
+
 ## Before you start
 
 - An [API secret](/start/api-secret) on the Creator plan or higher, and credits for the creation ([pricing](/pricing#creation--one-time-credits)).

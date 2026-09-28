@@ -62,7 +62,7 @@ The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and id
 
 ## Code samples
 
-- Runnable as pasted after `export BITHUMAN_API_SECRET=…`, or the first line is `# excerpt: …` / `// excerpt: …`.
+- Runnable as pasted after `export BITHUMAN_API_SECRET=…`, or the first line is `# excerpt: …` / `// excerpt: …`. An excerpt of a project in bithuman-examples names its file (`// excerpt: android/essence2-hello/app/…/MainActivity.kt`) and copies its lines verbatim, with `// …` between runs; the project's CI builds it and the gate grades the page against main. `node scripts/check-example-excerpts.mjs --make <path> 12-18,40-52` prints one. [check-example-excerpts]
 - Secrets only from the environment. Never a literal. [check-placeholders]
 - Every fence names its language; `json` blocks parse. Show the output under every first-run block.
 - API pages go curl → Python → Node `fetch`. On `/api/*` pages write the curl only: the Python and Node tabs are generated from that same command at build time. A command the generator cannot convert (a pipe, a form upload, an `export`) stays curl alone. To use a variable inside a JSON body, splice it: `'{"agent_code": "'"$BITHUMAN_AGENT_CODE"'"}'`. [remark-api-samples, check-no-js]
@@ -102,12 +102,12 @@ H2 names are stable anchors. A section that does not apply is omitted, never wri
 | Type | H2 sections, in order (required in bold) |
 |---|---|
 | `platform` | (the lead: what you get, a real capture, the why-on-device box on device pages, the model comparison table) → Before you start → Install → **Authenticate** → **First frame** → Complete example → **Integrate into your app** → Platform notes → Performance → **Troubleshooting** → **Reference** |
-| `recipe` | What you'll build → **Steps** → How it works → Make it your own → **Troubleshooting** → Next |
+| `recipe` | What you'll build (the outcome beside a real capture) → **Steps** (each `### ` a step with an ```` ```expected ```` check) → How it works (a diagram) → Make it your own → **Troubleshooting** → Next. `time:` in the frontmatter is the chip "20 min". |
 | `concept` | a one-sentence definition, a diagram first, 3–5 key ideas, In code, Where it runs, Related |
 | `endpoint` | summary and method chips → Authentication → per operation: Request → Example (curl, Python, Node) → Response → Errors → Related guide |
 | `deploy` | **What it is** → **Where it renders** → **Models available here** → **Speed** → **Price** → **Limits** → First command → **Choosing between modes** |
 | `hub` | one line of purpose, the chooser or matrix, cards; no copy longer than 60 words outside the cards |
-| `example` | **Requirements** → Get the code → Set up the app → Set your API secret → **Run it** → **Expected output** → How it works → Make it your own → **Troubleshooting** → **Next** |
+| `example` | **Requirements** → Get the code → Set up the app → Set your API secret → **Run it** → **Expected output** → How it works → **The code that matters** (verbatim excerpts) → Make it your own → **Troubleshooting** → **Next** |
 
 `quickstart`, `guide`, `reference`, `generated`, `changelog` and `legal` keep their own shapes.
 
@@ -118,6 +118,8 @@ H2 names are stable anchors. A section that does not apply is omitted, never wri
 - Chip labels: **Where** "Renders on the device", "No GPU", "In the browser (WebGPU)", "Your servers", "bitHuman cloud"; **Needs** "Physical device", "Apple silicon", "Linux x86_64 / arm64", "API secret"; **Plan** "Creator plan or higher", "Business & Enterprise", "Enterprise only".
 - Only avatars move. `prefers-reduced-motion` and Save-Data show posters only. One icon set (`Icon.astro`).
 - Every capture names its device, OS, release and avatar. No fps overlays, stock art or customer brands.
+- Captures are registered once in `src/data/examples.ts` (poster AVIF + WebP ≤480 px wide, a muted AV1 + H.264 loop ≤300 KB, the recording with sound and WebVTT captions) and placed with ```` ```figure ````. A moved media file gets an `assets` row in `scripts/ia-map.json`. [check-media]
+- Diagrams are ```` ```diagram ```` blocks: inline SVG on the tokens, one style, a caption that is also the screen-reader and twin text. What leaves your hardware for bitHuman is drawn in `--flow-egress`; the offline diagram shows only a Linux PC or terminal and quotes the approved sentence.
 
 ## Generated blocks in markdown
 
@@ -135,8 +137,13 @@ A fenced block named for a block is drawn at build time from the data files (`sr
 | ```` ```partial ```` + a name | a shared passage (`src/partials/<name>.md`), such as the Swift install on iOS and macOS | `src/partials` |
 | ```` ```perf-explorer ```` | every published row as bars, per model, with the held-for-10-minutes rows (on `/performance`) | `public/performance.json`, `perf-groups.ts` |
 | ```` ```credit-calculator ```` | credits and dollars a month for a usage pattern, with worked examples (on `/pricing`) | `pricing.json`, `plans.json` |
+| ```` ```figure ```` + a capture id [+ `eager` above the fold] | a real capture in its device frame, its loop playing while on screen, "Play with sound" with captions, the provenance line | `src/data/examples.ts` |
+| ```` ```example-gallery ````, ```` ```github-examples ```` | every example as a filterable card; the projects with no recording yet (on `/examples`) | `examples.ts` |
+| ```` ```diagram ```` + `engine`, `creation`, `lifecycle`, `livekit`, `livekit-local` or `topology <mode>` | one of the canonical diagrams | `src/lib/diagrams.ts` |
+| ```` ```dataflow-explorer ```` | where each kind of data goes, per mode, each cell citing its S row (on `/deploy/privacy`) | `dataflows.ts` |
+| ```` ```expected ```` + markdown | the "Expected" check under a step (a `<details>`, open) | the page |
 
-The explorer, the calculator and the filter above a full ```` ```model-matrix ```` or ```` ```deploy-matrix ```` bring a small script, loaded only on the page that places them. With JavaScript off everything they draw still shows. [check-no-js, check-js-budget]
+The explorer, the calculator, the filter above a full ```` ```model-matrix ```` or ```` ```deploy-matrix ````, figures, the gallery, the data-flow explorer and a recipe's steps bring a small script, loaded only on the page that places them. With JavaScript off everything they draw still shows. [check-no-js, check-js-budget]
 
 Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is available on the Enterprise plan only." It has no page, card, matrix row or chip. [check-internal-vocabulary]
 

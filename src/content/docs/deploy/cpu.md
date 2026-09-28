@@ -24,6 +24,10 @@ Essence 2 and Expression 2 render live on the processor of an ordinary Linux PC,
 cpu
 ```
 
+```diagram
+topology cpu
+```
+
 When the avatar renders on your hardware, its audio and video stay there. With the CLI's [local conversation brain](/platforms/cli/local-brain), speech recognition, the language model and the voice run on the machine too; the session still reports usage online.
 
 ## Models available here

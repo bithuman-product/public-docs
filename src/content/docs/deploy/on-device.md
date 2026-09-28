@@ -25,6 +25,10 @@ The mobile SDKs take any 16 kHz mono speech your pipeline produces and return fr
 device
 ```
 
+```diagram
+topology device
+```
+
 - **In your app:** when the avatar renders in your app on the device and you use your own voice and language services, bitHuman receives usage metering only, never audio, video or conversation text.
 - **On Android:** after the one-time model download, the only network traffic is usage reporting.
 - **In the browser:** with the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
