@@ -55,6 +55,6 @@ export const DEPLOYMENTS: Deployment[] = [
     id: "offline", name: "Fully offline", href: "/deploy/offline", anchor: "fully-offline", icon: "offline", plan: "business-enterprise", rate: "sales",
     line: "Realtime avatars off the internet, on Linux PCs and terminals.",
     surfaces: "Linux PCs and terminals",
-    models: "Essence 1 first (with bitHuman 2.11.16); Essence 2 and Expression 2 later",
+    models: "Essence 1 (Linux x86_64); Essence 2 and Expression 2 later",
   },
 ];
