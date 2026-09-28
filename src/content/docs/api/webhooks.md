@@ -106,29 +106,64 @@ curl https://api.bithuman.ai/v1/webhooks/$WEBHOOK_ID/deliveries \
 
 ## Session events
 
-Separately from the account webhooks above, an agent can POST its live
-conversation events to a URL of yours. You set this per agent, in the agent's
-settings on the dashboard: the URL, any headers to send, and which events to
-turn on.
+Separately from the account webhooks above, bitHuman can POST each live
+conversation to a URL of yours as it happens: once when a visitor connects,
+then once for every message, the visitor's and the agent's.
 
-**`room.join`** — once, when a user connects:
+### Set it up
+
+On the dashboard, open **Developer → Webhooks**
+([www.bithuman.ai/developer?tab=webhooks](https://www.bithuman.ai/developer?tab=webhooks)):
+
+1. Enter your **Endpoint URL** (a public `https://` URL).
+2. Add **Authentication Headers**, e.g. `X-Webhook-Secret: <a long random value>`.
+   Deliveries are not signed, so check this header in your handler.
+3. Under **Event Subscriptions**, turn on `room.join` and/or `chat.push`.
+4. **Save settings**, then **Test** to send a sample delivery.
+
+The setting belongs to your **account**, not to one agent: it covers every
+conversation that runs on your account, including every embed of your agents,
+which always runs on the owner's account. Sessions you host yourself with the
+SDK on your own machines send no session events.
+
+### What a delivery looks like
+
+Each event is an HTTP `POST` with `Content-Type: application/json` and your
+headers. `timestamp` values are Unix seconds with a fractional part.
+
+**`room.join`** fires once, when the conversation starts.
+`participant_count` includes the agent and the avatar.
 
 ```json
-{ "agent_code": "A80HVD8577", "event_type": "room.join",
-  "data": { "room_name": "support", "participant_count": 1,
-            "session_id": "session_xyz" }, "timestamp": 1705312200.0 }
+{ "agent_id": "A80HVD8577", "event_type": "room.join",
+  "data": { "room_name": "room-A80HVD8577-qtrJ-cOFR", "participant_count": 3,
+            "session_id": "8d947f06-2c36-4d98-aafe-b232da2433ff" },
+  "timestamp": 1790607253.5575945 }
 ```
 
-**`chat.push`** — once per message, from the user and from the agent:
+**`chat.push`** fires once per completed message. `role` is `"user"` for what
+the visitor said or typed (the speech transcript, for voice) and `"assistant"`
+for what the agent said, including its greeting.
 
 ```json
-{ "agent_code": "A80HVD8577", "event_type": "chat.push",
-  "data": { "role": "user", "message": "help with order #12345",
-            "session_id": "session_xyz" }, "timestamp": 1705312285.0 }
+{ "agent_id": "A80HVD8577", "event_type": "chat.push",
+  "data": { "role": "assistant", "message": "I'm Pip, your friendly science fox!",
+            "session_id": "8d947f06-2c36-4d98-aafe-b232da2433ff",
+            "timestamp": 1790607268.8956978 },
+  "timestamp": 1790607268.895705 }
 ```
 
-These carry no signature: add a secret header in the agent's settings and check
-it in your handler. Return `200` quickly and do the work on a queue.
+`agent_id` is the agent's code. `session_id` is the same on every event of one
+conversation, so use it to group messages. Order them by `data.timestamp`.
+Each message arrives whole, once it is finished, not word by word.
+
+### Delivery
+
+- There is **one attempt** per event, with a 10-second timeout, and no
+  retries. Return `200` quickly and do the work on a queue.
+- Anything other than `200` counts as a failure and is not re-sent.
+- **Test** sends `{"event_type": "test", "agent_id": "test_agent_123", ...}` with
+  your headers plus `X-Test-Webhook: true`.
 
 ## Manage webhooks
 
