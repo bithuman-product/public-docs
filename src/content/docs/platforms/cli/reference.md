@@ -105,10 +105,10 @@ Offline packs (Business and Enterprise) let a machine render with no network. Bu
 bithuman pack redeem            # the account's unredeemed pack
 bithuman pack redeem ent_...    # a named purchase
 bithuman pack redeem ./PACK.bhl # a saved pack, with no network
-bithuman pack status            # render-seconds left
+bithuman pack status            # render-seconds left, one line per model
 ```
 
-`redeem` binds the pack to this machine and installs it. The signed pack is kept at `~/.bithuman/packs/<pack_id>.bhl` (mode `0600`) first, so a failed install is retried by passing that file. Afterwards `bithuman render` of an avatar the pack covers needs no network and no API secret until the pack is spent. A refusal names what to do (the plan, the platform, a pack already installed) and nothing is spent. Where the CLI's offline support has not opened yet, it says to use `python -m bithuman pack redeem` on the same machine. Plans and rates: [offline licensing](/pricing#offline-licensing).
+`redeem` binds the pack to this machine and installs it. The signed pack is kept at `~/.bithuman/packs/<pack_id>.bhl` (mode `0600`) first, so a failed install is retried by passing that file. Afterwards `bithuman render` of an avatar the pack covers needs no network and no API secret until the pack is spent. From CLI 2.8.4 a pack covers Essence 2 and Expression 2 as well as Essence 1. `bithuman pull <CODE>` also fetches the engine files the avatar's model needs, so pull each avatar and redeem once while online; after that rendering needs no network. A spent pack, or one that is not for this machine, stops the render with exit 77 and says which; it never falls back to billing your account. A refusal names what to do (the plan, the platform, a pack already installed) and nothing is spent. Where the CLI's offline support has not opened yet, it says to use `python -m bithuman pack redeem` on the same machine. Plans and rates: [offline licensing](/pricing#offline-licensing).
 
 ## bithuman doctor
 
@@ -186,10 +186,10 @@ Colour appears only on an interactive terminal.
 {"schema_version": 1, "code": "A23WJF0199", "path": "/home/you/.cache/bithuman/showcase/wise-pup.imx", "cached": false, "family": "expression-2", "model": "expression-2", "other_models": [], "runnable_locally": true}
 ```
 
-`bithuman render … --json` also carries `render_seconds` and `render_fps`, how long the engine took and how fast it produced frames (`fps` is the file's playback rate). `frames / fps` is the clip length; `seconds` is the wall time of the whole command:
+`bithuman render … --json` also carries `render_seconds` and `render_fps`, how long the engine took and how fast it produced frames (`fps` is the file's playback rate). `seconds` is the clip length (`frames / fps`); `wall_seconds` is the wall time of the whole command (CLI 2.8.3 and earlier reported that wall time as `seconds`):
 
 ```json
-{"schema_version": 1, "output": "out.mp4", "bytes": 1234567, "seconds": 21.4, "width": 416, "height": 720, "frames": 300, "fps": 20, "render_seconds": 6.2, "render_fps": 48.4}
+{"schema_version": 1, "output": "out.mp4", "bytes": 1234567, "seconds": 15.0, "wall_seconds": 21.4, "width": 416, "height": 720, "frames": 300, "fps": 20, "render_seconds": 6.2, "render_fps": 48.4}
 ```
 
 `bithuman login --json` (both routes; the code box goes to stderr):
