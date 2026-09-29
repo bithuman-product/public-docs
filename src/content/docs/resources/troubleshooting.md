@@ -70,6 +70,19 @@ The avatar appears, moves while idle, and its lips follow the agent's speech. Fr
 
 Creation errors and their fixes are on [Agents](/api/agents#errors).
 
+### Plan and credit refusals
+
+Every SDK and the CLI refuse a render or session the same way, with the service's reason in the message (the CLI exits 77). Each code, its link field and the exact wording: [Errors](/api/errors#plan-and-credit-refusals).
+
+| The message says | Cause | Fix |
+|---|---|---|
+| *API and SDK access starts at the Creator plan* | from 2026-10-12, a Free account's API secret (`403 PLAN_REQUIRED`) | [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
+| *the API secret was rejected*, *was not accepted* or *account suspended* | a revoked or mistyped secret; from 2026-10-12, an older SDK or CLI also says this for a Free account | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys); if a new secret is refused too, [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
+| *already running as many sessions as its plan allows* | the plan's [concurrent cloud sessions](/api/rate-limits#session-concurrency) (`403 CONCURRENCY_LIMIT_REACHED`) | end a session, or [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
+| *as many agents as its plan allows*, or `403 AGENT_LIMIT_REACHED` | a new agent would pass the plan's agent limit; existing agents keep working | delete an agent, or [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
+| *no credits remaining* or *out of bitHuman credits* | no credits left (`402 INSUFFICIENT_BALANCE`) | [top up](https://www.bithuman.ai/billing#credits) on the Creator plan or higher |
+| *this account is suspended* | runtime access is suspended (`403 RUNTIME_SUSPENDED`) | [contact support](/support); a plan change does not clear it |
+
 ## Next
 
 - [Models](/models) · [Agents API](/api/agents) · [Errors](/api/errors)

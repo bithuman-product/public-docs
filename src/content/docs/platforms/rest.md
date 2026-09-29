@@ -146,7 +146,7 @@ Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `vide
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `402 INSUFFICIENT_BALANCE` | the balance is below the creation cost | [top up](/pricing#top-up-credits) |
+| `402 INSUFFICIENT_BALANCE` | the balance is below the creation cost | [top up](https://www.bithuman.ai/billing#credits) |
 | `validate.sh` prints `"valid": false` | the secret is wrong or revoked | create a new one |
 | The status stays at `lip_sync` for a long time | that is the training step (about 2 hours) | keep polling |
 | `404` from `speak.sh` or `/v1/agent/{code}/speak` | the agent is not yours, or it has no live session | the message says which; open its embed page first |

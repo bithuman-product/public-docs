@@ -33,16 +33,11 @@ A plan change reaches the limiter within about a minute; no new secret is needed
 
 ## Session concurrency
 
-| Plan | Concurrent cloud avatar sessions |
-|---|---|
-| Free | 1 |
-| Creator | 3 |
-| Pro | 10 |
-| Business | 50 |
-| Enterprise | 200 |
-| Custom (contact sales) | Unlimited |
+```session-caps
+table
+```
 
-A session over the allowance is refused at start with `403 CONCURRENCY_LIMIT_REACHED`; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up.
+A session over the allowance is refused at start with [`403 CONCURRENCY_LIMIT_REACHED`](/api/errors#plan-and-credit-refusals), whose `upgrade_url` links the plans; a live session is never cut off by this limit. Agent and dynamics generation jobs queue and run as capacity frees up.
 
 **Session length.** One continuous session can run up to 24 hours in the cloud and 7 days self-hosted. It then ends with `403 SESSION_DURATION_LIMIT`; start a new session to continue. For longer unattended installs (kiosks), [contact sales](https://www.bithuman.ai/enterprise?topic=api-rate-limits#contact).
 

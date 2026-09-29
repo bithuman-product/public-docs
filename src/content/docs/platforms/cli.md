@@ -129,7 +129,7 @@ bithuman render wise-pup speech.wav
 
 ### Expected output
 
-`wise-pup.mp4`: 416×720, as long as the audio (15 seconds for the sample). To talk to the avatar instead, run `bithuman run wise-pup` and open the printed URL (this also needs `livekit-server`; see [CLI](/platforms/cli#before-you-start)).
+`wise-pup.mp4`: 416×720, as long as the audio (15 seconds for the sample).
 
 ### Make it your own
 
@@ -156,14 +156,12 @@ bithuman render wise-pup speech.wav
 
 ### Voice settings
 
-`bithuman run` starts a voice agent on OpenAI Realtime. Both settings are read from the environment:
+`bithuman run` starts a voice agent on OpenAI Realtime ([the whole setup, and the same conversation in Python](/build/voice-agent)). Both settings are read from the environment:
 
 | Variable | Default | What it does |
 |---|---|---|
 | `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account at the managed voice-chat rate, 10 credits per minute ([pricing](/pricing)). |
 | `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt |
-
-The whole setup, and the same conversation in your own Python code: [Talk to an avatar on your machine](/build/voice-agent).
 
 ## Platform notes
 
@@ -183,7 +181,7 @@ linux-cpu macos-m4
 |---|---|---|
 | `bithuman: command not found` | `~/.local/bin` is not on `PATH` | `export PATH="$HOME/.local/bin:$PATH"` |
 | `not signed in`, exit 77, nothing written | no credential | `bithuman login`, or set `BITHUMAN_API_SECRET` |
-| `your credential is invalid or expired` or `the API secret was rejected`, exit 77 | the secret was revoked or mistyped | `bithuman login` again, or create a new API secret |
+| `your credential is invalid or expired` or `the API secret was rejected`, exit 77 | the secret was revoked or mistyped; from 2026-10-12, a Free account | `bithuman login` again, or create a new API secret; on Free, [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
 | `bithuman login` prints `token exchange failed` or times out, exit 1 | the browser or device approval did not complete | run `bithuman login` (or `--device`) again |
 | `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on `PATH` (common in scripts) | install it, or set `BITHUMAN_FFMPEG` to its path |
 | `run` with an Essence 2 avatar: no avatar in the page, and the terminal shows `essence-2: ffmpeg not found` | `ffmpeg` is not on `PATH` | `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
