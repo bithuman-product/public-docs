@@ -79,6 +79,7 @@ add default 0 links:cli-sample-from-surface "node scripts/check-cli-sample-outpu
 add default 0 links:internal-vocabulary     "node scripts/check-internal-vocabulary.mjs && node scripts/check-internal-vocabulary.mjs --self-test"
 add default 0 links:internal-content        "node scripts/check-internal-content.mjs --strict --require-private && node scripts/check-internal-content.mjs --self-test"
 add default 0 links:page-template           "node scripts/check-page-template.mjs && node scripts/check-page-template.mjs --selftest"
+add default 0 links:shell-tokens            "node scripts/check-shell-tokens.mjs --selftest && node scripts/check-shell-tokens.mjs"
 add default 0 links:nav-consistency         "node scripts/check-nav-consistency.mjs"
 add default 0 links:model-concept-pages     "node scripts/check-model-concept-pages.mjs"
 add default 0 links:placeholders            "node scripts/check-placeholders.mjs"

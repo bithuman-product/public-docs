@@ -1,19 +1,40 @@
 ---
-// The foot of every page: one to three places to go next, as cards.
-import Card from "./Card.astro";
+// The foot of a page: "Next steps", one row per place to go next (title and
+// one line), between hairlines. Cards are for hubs only.
 interface Item { href: string; title: string; line?: string }
 interface Props { items: Item[] }
 const { items } = Astro.props;
 ---
 {items.length > 0 && (
-  <nav class="next-cards" aria-labelledby="next-cards-title" data-pagefind-ignore>
-    <h2 id="next-cards-title" class="next-title">Next</h2>
-    <div class:list={["card-grid", `cols-${Math.min(items.length, 3)}`]}>
-      {items.map((i) => <Card href={i.href} title={i.title} line={i.line} h={3} />)}
-    </div>
+  <nav class="next-steps" aria-labelledby="next-steps-title" data-pagefind-ignore>
+    <h2 id="next-steps-title" class="next-title">Next steps</h2>
+    <ul>
+      {items.map((i) => (
+        <li>
+          <a href={i.href}>
+            <span class="ns-title">{i.title}</span>
+            {i.line && <span class="ns-line">{i.line}</span>}
+            <span class="ns-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
   </nav>
 )}
 <style>
-  .next-cards { margin-top: var(--s-12); }
-  .next-title { font-size: var(--ft-sm); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin: 0 0 var(--s-3); }
+  .next-steps { margin-top: var(--s-12); }
+  .next-title { font-size: var(--ft-lg); font-weight: var(--fw-medium); line-height: var(--lh-18); letter-spacing: 0; margin: 0 0 var(--s-3); }
+  .next-steps ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-border); }
+  .next-steps li { border-bottom: 1px solid var(--color-border); }
+  .next-steps a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--s-4);
+    padding: var(--s-3) 0;
+    color: var(--color-text);
+  }
+  .ns-title { font-size: var(--ft-md); font-weight: var(--fw-medium); }
+  .ns-line { grid-column: 1; font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ns-arrow { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--color-text-tertiary); transition: transform var(--t-fast) var(--ease); }
+  .next-steps a:hover .ns-arrow { transform: translateX(2px); color: var(--color-text); }
 </style>

@@ -82,24 +82,23 @@ export const RESOURCES_MENU: NavLink[] = [
 
 export const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
 
+/** The header's "Console": the developer dashboard on bithuman.ai. */
+export const CONSOLE_URL = "https://www.bithuman.ai/developer";
+
+/** The footer's first row (one design everywhere); the second row is LEGAL_LINKS and the ©. */
+export const FOOTER_LINKS: NavLink[] = [
+  { label: "Status", href: "https://status.bithuman.ai", external: true },
+  { label: "Changelog", href: "/changelog" },
+  { label: "Downloads", href: "/downloads" },
+  { label: "llms.txt", href: "/llms.txt" },
+  { label: "GitHub", href: "https://github.com/bithuman-product", external: true },
+  { label: "bithuman.ai", href: "https://www.bithuman.ai", external: true },
+];
+
 /** "Contact sales": the contact form on bithuman.ai/enterprise. `topic` preselects
  *  the form's deployment or industry where bithuman.ai knows it (offline, banking,
  *  healthcare) and otherwise tags the enquiry with the docs page it came from. */
 export const contactSalesUrl = (topic: string) => `https://www.bithuman.ai/enterprise?topic=${topic}#contact`;
-
-/** Footer columns: the header's sections, then resources, community and legal. */
-export const FOOTER: { title: string; links: NavLink[] }[] = [
-  { title: "Docs", links: TOP_NAV },
-  { title: "Resources", links: RESOURCES_MENU },
-  {
-    title: "Community",
-    links: [
-      { label: "Discord", href: "https://discord.gg/ES953n7bPA", external: true },
-      { label: "GitHub", href: "https://github.com/bithuman-product", external: true },
-      { label: "X", href: "https://x.com/bithuman_ai", external: true },
-    ],
-  },
-];
 
 export const LEGAL_LINKS: NavLink[] = [
   { label: "Privacy", href: "https://www.bithuman.ai/legal/privacy", external: true },

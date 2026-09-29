@@ -5,9 +5,6 @@ import { SECTIONS, GROUP_ORDER, SIDEBAR_LINKS, type SectionId } from "../config/
 import { HUBS } from "../config/hubs";
 import { lastModified } from "../lib/git-lastmod";
 import PageActions from "../components/PageActions.astro";
-import Chip from "../components/Chip.astro";
-import Availability from "../components/Availability.astro";
-import VersionBadge from "../components/VersionBadge.astro";
 import NextCards from "../components/NextCards.astro";
 import LiveDemo from "../components/LiveDemo.astro";
 import PerfExplorer from "../components/PerfExplorer.astro";
@@ -20,7 +17,7 @@ import DataFlowExplorer from "../components/DataFlowExplorer.astro";
 import Walkthrough from "../components/Walkthrough.astro";
 import { widgetsIn } from "../lib/doc-blocks";
 import ChangelogFilter from "../components/ChangelogFilter.astro";
-import { RENDERS_LABEL } from "../data/labels";
+import { RENDERS_LABEL, PLAN_LABEL, versionLabel } from "../data/labels";
 
 interface Heading {
   depth: number;
@@ -52,8 +49,8 @@ const groups: [string, Item[]][] = (GROUP_ORDER[section] ?? [])
   .filter(([, list]) => list.length > 0);
 
 const currentPath = slugOf(entry);
-// The changelog lists months only: a hundred release headings are not an outline.
-const toc = headings.filter((h) => h.depth === 2 || (h.depth === 3 && entry.data.type !== "changelog"));
+// "On this page" lists H2s only, at most 8 (H3 ids stay on the page).
+const toc = headings.filter((h) => h.depth === 2).slice(0, 8);
 
 // sequential prev/next across the section (in sidebar display order)
 const flatNav = groups.flatMap(([, list]) => list);
@@ -118,7 +115,15 @@ if (section === "platforms" && data.type === "platform") {
     publisher: { "@id": "https://www.bithuman.ai/#organization" },
   });
 }
-const hasChips = !!(data.time || data.availability || data.renders?.length || data.needs?.length || data.artifacts?.length);
+// The meta line under the lead replaces the chips: plain text, "·" between items.
+// The plan and the versions keep their links (text colour).
+const metaItems: { label: string; href?: string }[] = [
+  ...(data.time ? [{ label: data.time }] : []),
+  ...(data.availability ? [{ label: PLAN_LABEL[data.availability as keyof typeof PLAN_LABEL], href: "/pricing" }] : []),
+  ...(data.renders ?? []).map((r: keyof typeof RENDERS_LABEL) => ({ label: RENDERS_LABEL[r] })),
+  ...(data.needs ?? []).map((n: string) => ({ label: n })),
+  ...(data.artifacts ?? []).map((a: any) => ({ label: versionLabel(a), href: "/downloads" })),
+];
 // The interactive blocks this page places bring their script and styles; other pages carry none.
 const widgets = widgetsIn(entry.body ?? "");
 const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.demo ? [data.demo] : null;
@@ -135,15 +140,24 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
 ---
 
 <Base title={`${data.searchTitle ?? data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
+  {/* Below 768 px the section's pages sit in the header drawer, under the tabs. */}
+  <nav class="drawer-side" slot="drawer" aria-label={meta.label}>
+    <a class="drawer-home" href={meta.home}>{meta.label}</a>
+    {groups.map(([g, list]) => (
+      <div class="side-group">
+        {g && g !== meta.label && <p class="side-glabel">{g}</p>}
+        <ul>
+          {list.map((i) => (
+            <li><a href={i.href} class:list={["side-link", { active: i.href === currentPath }]}>{i.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </nav>
   <div class="doc">
-    {/* sidebar */}
+    {/* sidebar: the current tab only */}
     <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>
-      <button class="side-toggle" data-side-toggle aria-expanded="false">
-        <span>{meta.label}</span>
-        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 5 7 8.5 10.5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </button>
       <nav class="side-inner" aria-label={meta.label}>
-        <a class="side-home" href={meta.home}>{meta.label}</a>
         {
           groups.map(([g, list]) => (
             <div class="side-group">
@@ -165,49 +179,51 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
 
     {/* content */}
     <article class="doc-main" data-pagefind-filter={`section:${meta.label}`}>
-      <nav class="doc-crumb" aria-label="Breadcrumb" data-pagefind-ignore>
-        <a href="/">Docs</a> <span aria-hidden="true">/</span> <a href={meta.home}>{meta.label}</a>
-        {data.group && data.group !== meta.label && (<Fragment> <span aria-hidden="true">/</span> <span class="crumb-cur">{data.group}</span></Fragment>)}
-      </nav>
+      {/* No desktop breadcrumbs (the JSON-LD BreadcrumbList stays); a phone gets "‹ Section". */}
+      <a class="doc-back" href={meta.home} data-pagefind-ignore>‹ {meta.label}</a>
       <div class="prose" data-pagefind-weight={weight}>
-        <div class="doc-h1"><h1 data-pagefind-meta={data.searchTitle ? `title:${data.searchTitle}` : undefined}>{data.title}</h1><PageActions md={`${currentPath}.md`} /></div>
-        {data.description && <p class="doc-lede">{data.description}</p>}
-        {hasChips && (
-          <div class="chip-row doc-chips" data-pagefind-ignore>
-            {data.time && <Chip kind="time" label={data.time} />}
-            {data.availability && <Availability plan={data.availability} />}
-            {(data.renders ?? []).map((r: keyof typeof RENDERS_LABEL) => <Chip kind="where" label={RENDERS_LABEL[r]} />)}
-            {(data.needs ?? []).map((n: string) => <Chip kind="needs" label={n} />)}
-            {(data.artifacts ?? []).map((a: any) => <VersionBadge artifact={a} />)}
-          </div>
-        )}
+        <header class="doc-head">
+          <h1 data-pagefind-meta={data.searchTitle ? `title:${data.searchTitle}` : undefined}>{data.title}</h1>
+          {data.description && <p class="doc-lede">{data.description}</p>}
+          {metaItems.length > 0 && (
+            <p class="doc-metaline" data-pagefind-ignore>
+              {metaItems.map((m, i) => (
+                <Fragment>{i > 0 && <span class="dm-sep" aria-hidden="true"> · </span>}{m.href ? <a href={m.href}>{m.label}</a> : <span>{m.label}</span>}</Fragment>
+              ))}
+            </p>
+          )}
+          <div class="doc-head-actions"><PageActions md={`${currentPath}.md`} /></div>
+        </header>
         {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} eager /></div>}
         <div class="doc-body"><slot /></div>
         {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>
       <NextCards items={nextCards} />
-      <footer class="doc-meta" data-pagefind-ignore>
-        {modifiedLabel && <span>Last updated <time datetime={modified!}>{modifiedLabel}</time></span>}
-        <span class="doc-meta-links"><a href={issueUrl} rel="noopener">Something missing or wrong? Open an issue</a><a href={editUrl} rel="noopener">Edit this page on GitHub</a></span>
-      </footer>
       {
         (prevPage || nextPage) && (
           <nav class="doc-pager" aria-label="Previous and next page" data-pagefind-ignore>
             {prevPage ? (
               <a class="pager" href={prevPage.href}>
-                <span>← Previous</span>
-                <strong>{prevPage.label}</strong>
+                <span>Previous</span>
+                <strong>‹ {prevPage.label}</strong>
               </a>
             ) : <span />}
             {nextPage && (
               <a class="pager next" href={nextPage.href}>
-                <span>Next →</span>
-                <strong>{nextPage.label}</strong>
+                <span>Next</span>
+                <strong>{nextPage.label} ›</strong>
               </a>
             )}
           </nav>
         )
       }
+      <footer class="doc-meta" data-pagefind-ignore>
+        {modifiedLabel && <span>Updated <time datetime={modified!}>{modifiedLabel}</time></span>}
+        {modifiedLabel && <span aria-hidden="true">·</span>}
+        <a href={editUrl} rel="noopener">Edit</a>
+        <span aria-hidden="true">·</span>
+        <a href={issueUrl} rel="noopener">Report an issue</a>
+      </footer>
     </article>
     {widgets.has("perf-explorer") && <PerfExplorer />}
     {widgets.has("calculator") && <CreditCalculator />}
@@ -219,7 +235,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
     {widgets.has("walkthrough") && <Walkthrough />}
     {widgets.has("changelog") && <ChangelogFilter />}
 
-    {/* on-this-page TOC */}
+    {/* on-this-page TOC (≥1280 px): H2s only, then "Copy page" */}
     <aside class="doc-toc" aria-label="Page outline" data-pagefind-ignore>
       {
         toc.length > 0 && (
@@ -227,26 +243,18 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
             <p class="toc-label">On this page</p>
             <ul>
               {toc.map((h) => (
-                <li class:list={[`toc-d${h.depth}`]}>
-                  <a href={`#${h.slug}`}>{h.text}</a>
-                </li>
+                <li><a href={`#${h.slug}`}>{h.text}</a></li>
               ))}
             </ul>
           </nav>
         )
       }
+      <div class="toc-actions"><PageActions md={`${currentPath}.md`} /></div>
     </aside>
   </div>
 
   <script>
     import "../scripts/tabs-sync";
-    document.querySelectorAll("[data-side-toggle]").forEach((b) => {
-      b.addEventListener("click", () => {
-        const side = b.closest("[data-doc-side]");
-        const open = side!.classList.toggle("open");
-        b.setAttribute("aria-expanded", open ? "true" : "false");
-      });
-    });
 
     // "On this page" marks the section you are reading. The rail already drew a
     // transparent left border for it and nothing ever turned the border on, so
@@ -283,63 +291,71 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
     max-width: var(--container-wide);
     margin-inline: auto;
     display: grid;
-    grid-template-columns: 248px minmax(0, 1fr) 200px;
+    grid-template-columns: var(--side-w) minmax(0, 1fr) var(--toc-w);
     gap: var(--s-12);
     padding-inline: var(--s-6);
     align-items: start;
   }
-  /* sidebar */
-  .doc-side { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; padding-block: var(--s-8); }
-  .side-home { display: block; font-weight: var(--fw-bold); font-size: var(--ft-md); margin-bottom: var(--s-4); }
-  .side-toggle { display: none; width: 100%; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface); color: var(--color-text); font: inherit; font-weight: var(--fw-medium); font-size: var(--ft-sm); }
-  .side-toggle svg { transition: transform var(--t-fast) var(--ease); }
-  .doc-side.open .side-toggle svg { transform: rotate(180deg); }
+  /* sidebar: group labels 14/500 text, items 14/400 text-2 in 32 px rows, the
+     active item a surface-2 pill */
+  .doc-side { position: sticky; top: var(--nav-h); max-height: calc(100vh - var(--nav-h)); overflow-y: auto; padding-block: var(--s-8); }
   .side-group { margin-bottom: var(--s-6); }
-  .side-glabel { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--s-2); }
+  .side-glabel { font-size: var(--ft-sm); font-weight: var(--fw-medium); line-height: var(--lh-14); color: var(--color-text); margin-bottom: var(--s-1); }
   .side-group ul { list-style: none; padding: 0; margin: 0; }
-  .side-link { display: block; padding: 0.32rem 0.6rem; margin-left: -0.6rem; border-radius: var(--r-md); font-size: var(--ft-sm); color: var(--color-text-secondary); border-left: 2px solid transparent; }
-  .side-link:hover { color: var(--color-text); background: var(--color-surface-2); }
-  .side-link.active { color: var(--color-primary); font-weight: var(--fw-medium); background: var(--color-primary-soft); border-left-color: var(--color-primary); }
+  .side-link { display: flex; align-items: center; min-height: 32px; padding: var(--s-1) var(--s-3); margin-left: calc(-1 * var(--s-3)); border-radius: var(--r-6); font-size: var(--ft-sm); line-height: var(--lh-14); color: var(--color-text-secondary); transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
+  .side-link:hover { color: var(--color-text); }
+  .side-link.active { color: var(--color-text); background: var(--color-surface-3); }
+  /* the drawer copy (below 768 px only) */
+  .drawer-side { display: flex; flex-direction: column; }
+  .drawer-home { font-weight: var(--fw-medium); color: var(--color-text) !important; }
+  .drawer-side .side-group { margin: var(--s-2) 0 0; }
+  .drawer-side .side-link { margin-left: 0; padding-inline: var(--s-3); font-size: var(--ft-md); }
   /* content */
-  .doc-main { padding-block: var(--s-12); min-width: 0; }
-  .doc-crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-4); }
-  .doc-crumb a { color: var(--color-text-tertiary); }
-  .doc-crumb a:hover { color: var(--color-primary); }
-  .doc-crumb span { margin: 0 0.3rem; }
-  .doc-crumb .crumb-cur { margin: 0; color: var(--color-text-secondary); }
-  .doc-lede { font-size: var(--ft-lg); color: var(--color-text-secondary); margin-top: 0 !important; }
-  .doc-chips { margin-top: calc(-1 * var(--s-2)) !important; }
+  .doc-main { padding-block: var(--s-8) var(--s-12); min-width: 0; max-width: var(--wide-w); }
+  .doc-back { display: none; font-size: var(--ft-sm); color: var(--color-text-secondary); margin-bottom: var(--s-3); }
+  .doc-head { margin-bottom: var(--s-8); }
+  .doc-head :global(h1) { font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: var(--fw-bold); letter-spacing: -0.01em; margin: 0; }
+  .doc-lede { margin-top: var(--s-3) !important; font-size: var(--ft-lg); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: var(--text-w); }
+  .doc-metaline { margin-top: var(--s-3) !important; font-size: var(--ft-sm); line-height: var(--lh-14); color: var(--color-text-tertiary); }
+  .doc-metaline a { color: var(--color-text-tertiary); text-decoration: none; }
+  .doc-metaline a:hover { color: var(--color-text); }
+  .doc-head-actions { margin-top: var(--s-4); }
   .doc-demo { margin-block: var(--s-6) var(--s-8); }
   .doc-demo :global(.ld) { max-width: 380px; margin-inline: 0; }
-  .doc-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-4); margin-top: var(--s-8); font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-  .doc-meta a { color: var(--color-text-secondary); }
-  .doc-meta a:hover { color: var(--color-primary); }
-  .doc-meta-links { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
-  .doc-pager { display: flex; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-6); padding-top: var(--s-8); border-top: 1px solid var(--color-border); }
-  .pager { display: flex; flex-direction: column; gap: 0.2rem; padding: var(--s-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); transition: all var(--t-fast) var(--ease); max-width: 48%; }
-  .pager:hover { border-color: var(--color-primary); }
+  .doc-pager { display: flex; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-12); }
+  .pager { display: flex; flex-direction: column; gap: var(--s-1); max-width: 48%; color: var(--color-text); }
   .pager.next { text-align: right; align-items: flex-end; margin-left: auto; }
   .pager span { font-size: var(--ft-xs); color: var(--color-text-tertiary); }
-  .pager strong { color: var(--color-primary); font-size: var(--ft-sm); }
+  .pager strong { font-size: var(--ft-sm); font-weight: var(--fw-medium); }
+  .pager:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+  .doc-meta { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-8); padding-top: var(--s-4); border-top: 1px solid var(--color-border); font-size: var(--ft-xs); line-height: var(--lh-12); color: var(--color-text-tertiary); }
+  .doc-meta a { color: var(--color-text-tertiary); }
+  .doc-meta a:hover { color: var(--color-text); }
   /* toc */
-  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--s-12); font-size: var(--ft-sm); min-width: 0; }
-  .toc-label { font-size: var(--ft-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: var(--s-2); }
+  .doc-toc { position: sticky; top: var(--nav-h); padding-block: var(--s-8); font-size: var(--ft-sm); min-width: 0; }
+  .toc-label { font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text); margin-bottom: var(--s-2); }
   .doc-toc ul { list-style: none; padding: 0; margin: 0; }
-  /* A heading can be a file path. Without this the 200px rail was 328px wide
-     and pushed the whole page sideways on a 1440px screen. */
-  .doc-toc a { display: block; padding: 0.22rem 0; color: var(--color-text-tertiary); border-left: 2px solid transparent; padding-left: 0.6rem; overflow-wrap: anywhere; }
+  /* A heading can be a file path: wrap it inside the 200 px rail. */
+  .doc-toc a { display: block; padding: var(--s-1) 0 var(--s-1) var(--s-3); line-height: var(--lh-14); color: var(--color-text-secondary); border-left: 2px solid transparent; overflow-wrap: anywhere; transition: color var(--t-fast) var(--ease); }
   .doc-toc a:hover { color: var(--color-text); }
-  .doc-toc a.here { color: var(--color-text); border-left-color: var(--color-primary); }
-  .toc-d3 a { padding-left: 1.3rem; font-size: var(--ft-xs); }
+  .doc-toc a.here { color: var(--color-text); border-left-color: var(--color-text); }
+  .toc-actions { margin-top: var(--s-6); }
+  .doc-head-actions { display: none; }
 
-  @media (max-width: 1080px) { .doc { grid-template-columns: 230px minmax(0,1fr); } .doc-toc { display: none; } }
-  @media (max-width: 820px) {
-    .doc { grid-template-columns: 1fr; gap: 0; }
-    .doc-side { position: static; height: auto; overflow: visible; padding-block: var(--s-4); border-bottom: 1px solid var(--color-border); }
-    .side-toggle { display: flex; }
-    .doc-side .side-inner { display: none; padding-top: var(--s-3); }
-    .doc-side.open .side-inner { display: block; }
-    .side-home { display: none; }
-    .doc-main { padding-block: var(--s-8); }
+  /* 1024–1279: no TOC; "Copy page" moves to the end of the page head */
+  @media (max-width: 1279px) {
+    .doc { grid-template-columns: var(--side-w) minmax(0, 1fr); }
+    .doc-toc { display: none; }
+    .doc-head-actions { display: block; }
+  }
+  /* below 1024: the sidebar goes; 768–1023 keeps the tab row, below 768 the drawer holds it */
+  @media (max-width: 1023px) {
+    .doc { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .doc-side { display: none; }
+    .doc-back { display: inline-block; }
+  }
+  @media (max-width: 767px) {
+    .doc { padding-inline: var(--s-4); }
+    .doc-main { padding-block: var(--s-6) var(--s-8); }
   }
 </style>

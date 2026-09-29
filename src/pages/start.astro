@@ -14,7 +14,7 @@ const meta = hubMeta("start");
 <Base title="Quickstart — bitHuman docs" description={meta.description}>
   <section class="s-hero" data-pagefind-filter="section:Get started">
     <div class="container">
-      <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>Get started</span></nav>
+      <a class="crumb" href="/" data-pagefind-ignore>‹ Docs</a>
       <h1>Quickstart</h1>
       <p class="lede">Talk to a live avatar now, get an API secret, then run your own on the platform you choose. Essence 2 renders a photoreal person; Expression 2 renders any character.</p>
     </div>
@@ -55,15 +55,15 @@ const meta = hubMeta("start");
 
 <style>
   .s-hero { padding-block: var(--s-8) var(--s-6); border-bottom: 1px solid var(--color-border); }
-  .crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-3); }
-  .crumb a { color: var(--color-text-tertiary); }
-  .crumb a:hover { color: var(--color-primary); }
+  /* No desktop breadcrumbs (docs v2); a phone gets "‹ Docs". */
+  .crumb { display: none; font-size: var(--ft-sm); color: var(--color-text-secondary); margin-bottom: var(--s-3); }
+  @media (max-width: 767px) { .crumb { display: inline-block; } }
   .s-hero h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
   .s-hero .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
   .s-block { padding-block: var(--s-10); }
   .s-block.alt { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
   .s-block h2 { display: flex; align-items: center; gap: var(--s-3); font-size: var(--fh-lg); margin-bottom: var(--s-3); }
-  .step { display: inline-grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-sm); font-weight: var(--fw-bold); }
+  .step { display: inline-grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--ft-sm); font-weight: var(--fw-medium); }
   .s-demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-12); align-items: start; }
   .s-demo p { margin-block: var(--s-3); }
   .s-demo :global(.ld) { margin: var(--s-4) 0 0; }
