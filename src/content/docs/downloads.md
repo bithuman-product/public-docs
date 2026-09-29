@@ -33,7 +33,7 @@ The web embed needs no install: one URL or one `<iframe>` ([Web](/platforms/web)
 | macOS, Intel | no | no | no | — |
 | Linux x86_64 | yes | yes | — | — |
 | Linux arm64 | yes | yes | — | — |
-| Windows 10/11, x86_64 | yes: cloud sessions and MCP (on-machine rendering under WSL2) | under WSL2 | — | — |
+| Windows 10/11, x86_64 | yes: cloud sessions and MCP | yes (Windows 11, 2.11.18+; [Windows](/platforms/windows)) | — | — |
 | iOS / iPadOS | — | — | yes | — |
 | Android (arm64-v8a) | — | — | — | yes |
 

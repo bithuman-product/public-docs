@@ -53,7 +53,7 @@ cpu
 ## Limits
 
 - **Network:** a session checks your credential when it starts and keeps rendering through a network drop of up to 5 minutes. Usage reports carry no audio, video, images or conversation text.
-- **Operating system:** Linux on x86_64 or arm64. On Windows, use WSL2 or the [web embed](/platforms/web); Intel Macs are not supported.
+- **Operating system:** Linux on x86_64 or arm64, or Windows 11 on x86_64 with [Python](/platforms/windows); Intel Macs are not supported.
 - **Sessions:** self-hosted sessions are limited by credits.
 
 ## First command

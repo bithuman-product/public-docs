@@ -1,6 +1,6 @@
 ---
 title: "Python"
-description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon) and Linux, where it needs no GPU."
+description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon), Linux and Windows, where it needs no GPU."
 section: platforms
 group: "Code & terminal"
 order: 10
@@ -20,7 +20,7 @@ next: ["/build/voice-agent", "/platforms/python/reference", "/deploy/cpu"]
 
 The `bithuman` package renders avatars in your own Python code on your own machine: a file in and frames out, or a live stream of audio in and frames out. To run an avatar without code, use the [CLI](/platforms/cli).
 
-> **Note:** On Linux, Python renders both models on the CPU alone, no GPU. On macOS it renders on Apple silicon. See [CPU only (no GPU)](/deploy/cpu).
+> **Note:** On Linux and Windows, Python renders both models on the CPU alone, no GPU. On macOS it renders on Apple silicon. Windows has its own page: [Windows](/platforms/windows). See [CPU only (no GPU)](/deploy/cpu).
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -42,7 +42,7 @@ python-macos eager
 | You need | Check |
 |---|---|
 | Python 3.10–3.14 | `python3 --version` |
-| macOS 14+ on Apple silicon, Linux x86_64 or Linux arm64 | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
+| macOS 14+ on Apple silicon, Linux x86_64 or Linux arm64, or [Windows 11 x86_64](/platforms/windows) | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
 | An API secret | [Your API secret](/start/api-secret) |
 | About 1 GB of disk (570 MB package, 118–190 MB per avatar) | `df -h .` |
 | `ffmpeg` on `PATH`, for MP4 output only | `ffmpeg -version` |
@@ -193,7 +193,7 @@ In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass it explic
 ## Performance
 
 ```perf
-python-linux python-macos
+python-linux python-macos python-windows
 ```
 
 A finished `render` logs its own rate on the `bithuman` logger at INFO.
@@ -204,7 +204,7 @@ A finished `render` logs its own rate on the `bithuman` logger at INFO.
 |---|---|---|
 | `error: externally-managed-environment` | `pip` targeted the system Python | create and activate a venv |
 | `ModuleNotFoundError: No module named 'bithuman'` | the venv is not active in this terminal | `source .venv/bin/activate` |
-| `pip` finds no wheel | Intel Mac, Windows, musl, or Python outside 3.10–3.14 | use a supported platform (WSL2 on Windows) |
+| `pip` finds no wheel | Intel Mac, Windows on Arm, musl, or Python outside 3.10–3.14 | use a supported platform ([Windows](/platforms/windows) needs 64-bit Python on x86_64) |
 | `NotSupported` opening an Expression 2 file | the extra is missing | `pip install "bithuman[expression-2]"` |
 | `NotAuthorised`: *no credential was supplied* (first frame) or *no API secret was found* (`open`) | no secret in this shell | `export BITHUMAN_API_SECRET=…`; nothing is rendered or written |
 | `NotAuthorised` at `open`: *that API secret was not accepted* | the secret was rejected; from 2026-10-12, a Free account | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys); on Free, [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
