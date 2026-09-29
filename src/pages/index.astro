@@ -140,7 +140,7 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
   .banner-row { padding-top: var(--s-6); }
   .hero { padding-block: var(--s-8) var(--s-8); }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: var(--s-12); align-items: center; }
-  .hero h1 { font-size: var(--fh-hero); line-height: 1.08; letter-spacing: -0.025em; max-width: 18ch; }
+  .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -0.025em; max-width: 18ch; }
   .hero .lede { margin-top: var(--s-5); font-size: var(--ft-xl); line-height: var(--lh-snug); color: var(--color-text-secondary); max-width: 46ch; }
   .hero-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; }
   .strip { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2); }
@@ -182,7 +182,6 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
   @media (max-width: 560px) {
     .banner-row { padding-top: var(--s-4); }
     .hero { padding-block: var(--s-6) var(--s-6); }
-    .hero h1 { font-size: var(--fh-xl); }
     .hero .lede { font-size: var(--ft-lg); }
     .band { padding-block: var(--s-6); }
   }

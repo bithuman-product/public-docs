@@ -47,7 +47,9 @@ export function figureBlock(arg: string, mode: "page" | "twin"): string {
   const eager = flags.includes("eager");
   const note = c.provenance.note ? ` ${esc(c.provenance.note)}` : "";
   return `<figure class="fig" data-fig data-pagefind-ignore="all">${mediaHtml(c.id, { eager, sizes: "(max-width: 760px) 240px, 320px", sound: true })}` +
-    `<figcaption><span class="fig-prov">${esc(provenanceLine(c.id))}.${note}</span></figcaption></figure>`;
+    // One 12 px caption line; the full provenance sits behind a disclosure (and stays whole in the twin).
+    `<figcaption><span class="fig-cap">Measured with ${esc(c.provenance.release)}</span>` +
+    `<details class="fig-more"><summary>Capture details</summary><span class="fig-prov">${esc(provenanceLine(c.id))}.${note}</span></details></figcaption></figure>`;
 }
 
 const chips = (e: Example) =>
