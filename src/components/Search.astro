@@ -160,13 +160,13 @@ const ORDER = Object.values(SECTIONS).map((s) => s.label);
   .sm-q { flex: 1; min-width: 0; border: 0; background: none; color: var(--color-text); font: inherit; font-size: var(--ft-lg); padding: var(--s-1) 0; }
   .sm-q:focus { outline: none; }
   .sm-q::-webkit-search-cancel-button { display: none; }
-  .sm-head:focus-within { box-shadow: inset 0 -2px 0 var(--color-primary); }
   .sm-close { flex: none; font-size: var(--ft-xs); color: var(--color-text-tertiary); background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--r-sm); padding: 0.2rem 0.45rem; cursor: pointer; }
   .sm-facets { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: var(--s-3) var(--s-4) 0; }
   .sm-facets[hidden] { display: none; }
-  .sm-facets :global(.sm-facet) { padding: 0.2rem 0.7rem; border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface); color: var(--color-text-secondary); font: inherit; font-size: var(--ft-xs); font-weight: var(--fw-regular); cursor: pointer; }
+  .sm-facets :global(.sm-facet) { padding: 0.2rem 0.7rem; border: 0; border-radius: var(--r-pill); background: none; color: var(--color-text-secondary); font: inherit; font-size: var(--ft-xs); font-weight: var(--fw-regular); cursor: pointer; }
   .sm-facets :global(.sm-facet span) { color: var(--color-text-tertiary); font-weight: var(--fw-regular); margin-left: 0.15rem; }
-  .sm-facets :global(.sm-facet[aria-pressed="true"]) { border-color: transparent; background: var(--color-primary-soft); color: var(--color-primary); }
+  .sm-facets :global(.sm-facet:hover) { color: var(--color-text); }
+  .sm-facets :global(.sm-facet[aria-pressed="true"]) { background: var(--color-surface-3); color: var(--color-text); }
   .sm-facets :global(.sm-facet:focus-visible) { outline: 2px solid var(--color-primary); outline-offset: 2px; }
   .sm-body { overflow-y: auto; padding: var(--s-2) var(--s-2) var(--s-3); }
   .sm-status { margin: var(--s-1) var(--s-2) var(--s-2); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
@@ -176,10 +176,10 @@ const ORDER = Object.values(SECTIONS).map((s) => s.label);
   .sm-results :global(.sm-hit:hover), .sm-results :global(.sm-hit:focus-visible) { background: var(--color-surface-2); outline: none; }
   .sm-results :global(.sm-hit:focus-visible) { box-shadow: inset 0 0 0 2px var(--color-primary); }
   .sm-results :global(.sm-top) { display: flex; align-items: center; gap: var(--s-2); min-width: 0; }
-  .sm-results :global(.sm-sec) { flex: none; padding: 0 0.45rem; border: 1px solid var(--chip-border); border-radius: var(--r-pill); background: var(--chip-bg); font-size: var(--ft-xs); line-height: 1.6; color: var(--color-text-secondary); }
+  .sm-results :global(.sm-sec) { flex: none; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
   .sm-results :global(.sm-title) { font-weight: var(--fw-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sm-results :global(.sm-ex) { font-size: var(--ft-sm); line-height: var(--lh-snug); color: var(--color-text-secondary); }
-  .sm-results :global(mark) { background: var(--color-primary-soft); color: inherit; padding: 0 0.1em; border-radius: var(--r-xs); }
+  .sm-results :global(mark) { background: none; color: var(--color-text); font-weight: var(--fw-medium); }
   .sm-results :global(.sm-subs) { margin: -0.1rem 0 var(--s-1) var(--s-4); border-left: 1px solid var(--color-border); }
   .sm-results :global(.sm-sub) { padding: var(--s-1) var(--s-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
   .sm-popular[hidden] { display: none; }

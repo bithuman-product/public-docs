@@ -83,6 +83,9 @@ const hasDrawer = Astro.slots.has("drawer");
       {resources.map((r) => <a href={r.href}>{r.label}</a>)}
     </nav>
     <div class="mm-sep"></div>
+    <nav class="mm-group mm-console" aria-label="Account">
+      <a href={CONSOLE_URL} rel="noopener">Console</a>
+    </nav>
     <a class="mm-cta" href={API_SECRET_URL} target="_blank" rel="noopener">Get API secret</a>
   </div>
 </header>

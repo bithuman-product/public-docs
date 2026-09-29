@@ -142,7 +142,6 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
 <Base title={`${data.searchTitle ?? data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
   {/* Below 768 px the section's pages sit in the header drawer, under the tabs. */}
   <nav class="drawer-side" slot="drawer" aria-label={meta.label}>
-    <a class="drawer-home" href={meta.home}>{meta.label}</a>
     {groups.map(([g, list]) => (
       <div class="side-group">
         {g && g !== meta.label && <p class="side-glabel">{g}</p>}
@@ -180,8 +179,8 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
     {/* content */}
     <article class="doc-main" data-pagefind-filter={`section:${meta.label}`}>
       {/* No desktop breadcrumbs (the JSON-LD BreadcrumbList stays); a phone gets "‹ Section". */}
-      <a class="doc-back" href={meta.home} data-pagefind-ignore>‹ {meta.label}</a>
       <div class="prose" data-pagefind-weight={weight}>
+        <a class="doc-back" href={meta.home} data-pagefind-ignore>‹ {meta.label}</a>
         <header class="doc-head">
           <h1 data-pagefind-meta={data.searchTitle ? `title:${data.searchTitle}` : undefined}>{data.title}</h1>
           {data.description && <p class="doc-lede">{data.description}</p>}
@@ -307,13 +306,18 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   .side-link.active { color: var(--color-text); background: var(--color-surface-3); }
   /* the drawer copy (below 768 px only) */
   .drawer-side { display: flex; flex-direction: column; }
-  .drawer-home { font-weight: var(--fw-medium); color: var(--color-text) !important; }
-  .drawer-side .side-group { margin: var(--s-2) 0 0; }
+  .drawer-side .side-group { margin: 0; }
+  .drawer-side .side-group + .side-group { margin-top: var(--s-2); }
   .drawer-side .side-link { margin-left: 0; padding-inline: var(--s-3); font-size: var(--ft-md); }
   /* content */
   .doc-main { padding-block: var(--s-8) var(--s-12); min-width: 0; max-width: var(--wide-w); }
-  .doc-back { display: none; font-size: var(--ft-sm); color: var(--color-text-secondary); margin-bottom: var(--s-3); }
+  /* the crumb sits in the prose text track, so it lines up with the H1 */
+  .prose > .doc-back { display: none; justify-self: start; font-size: var(--ft-sm); color: var(--color-text-secondary); text-decoration: none; margin: 0 0 var(--s-3); }
+  .prose > .doc-back:hover { color: var(--color-text); }
+  /* page head to body is 32: nothing in the head or at the top of the body adds to it */
   .doc-head { margin-bottom: var(--s-8); }
+  .doc-head > :global(:last-child), .doc-head > :global(p) { margin-bottom: 0 !important; }
+  .doc-body > :global(:first-child) { margin-top: 0 !important; }
   .doc-head :global(h1) { font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: var(--fw-bold); letter-spacing: -0.01em; margin: 0; }
   .doc-lede { margin-top: var(--s-3) !important; font-size: var(--ft-lg); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: var(--text-w); }
   .doc-metaline { margin-top: var(--s-3) !important; font-size: var(--ft-sm); line-height: var(--lh-14); color: var(--color-text-tertiary); }
@@ -352,7 +356,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   @media (max-width: 1023px) {
     .doc { grid-template-columns: minmax(0, 1fr); gap: 0; }
     .doc-side { display: none; }
-    .doc-back { display: inline-block; }
+    .prose > .doc-back { display: inline-block; }
   }
   @media (max-width: 767px) {
     .doc { padding-inline: var(--s-4); }

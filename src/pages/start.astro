@@ -58,7 +58,7 @@ const meta = hubMeta("start");
   /* No desktop breadcrumbs (docs v2); a phone gets "‹ Docs". */
   .crumb { display: none; font-size: var(--ft-sm); color: var(--color-text-secondary); margin-bottom: var(--s-3); }
   @media (max-width: 767px) { .crumb { display: inline-block; } }
-  .s-hero h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .s-hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -0.02em; }
   .s-hero .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
   .s-block { padding-block: var(--s-10); }
   .s-block.alt { background: var(--color-surface-2); border-block: 1px solid var(--color-border); }
@@ -72,5 +72,5 @@ const meta = hubMeta("start");
   .s-last { padding-block: var(--s-8); }
   .s-claim { margin: 0; font-size: var(--ft-lg); font-weight: var(--fw-medium); color: var(--color-text); }
   @media (max-width: 900px) { .s-demo { grid-template-columns: 1fr; gap: var(--s-8); } }
-  @media (max-width: 560px) { .s-hero h1 { font-size: var(--fh-xl); } .s-block { padding-block: var(--s-8); } }
+  @media (max-width: 560px) { .s-block { padding-block: var(--s-8); } }
 </style>
