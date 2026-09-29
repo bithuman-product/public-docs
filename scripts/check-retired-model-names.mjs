@@ -523,50 +523,18 @@ for (const [from, to, page] of REDIRECTS) {
   );
 }
 
-// ── CI actually RUNS on everything this file reads ───────────────────────────
-// ★THE DEFECT THIS CLOSES. This checker only protects a file if the workflow
-// that invokes it is TRIGGERED by a change to that file. On 2026-09-02 it was
-// not: the job's `paths:` filter listed src/content, src/pages, src/openapi,
-// scripts and its own file — so a commit that deleted a frozen
-// /concepts/ redirect from vercel.json ran NO workflow, even though the
-// assertion below catches that deletion in a fraction of a second when it runs.
-// A green checkbox meant "nothing I watch changed", not "the redirects survive".
-//
-// So the corpus and the trigger set must not be allowed to drift apart again:
-// every ROOT scanned here, plus vercel.json, must be covered by a trigger glob.
-// Parsed line-wise rather than with a YAML dependency, matching the
-// no-dependencies rule these four checkers share.
-const WF = ".github/workflows/link-check.yml";
+// ── CI actually RUNS this checker ────────────────────────────────────────────
+// ★THE DEFECT THIS CLOSES. On 2026-09-02 a GitHub workflow's `paths:` filter
+// skipped this checker for a commit that only touched vercel.json, so deleting
+// a frozen /concepts/ redirect landed green. GitHub Actions was removed on
+// 2026-09-29 (owner directive); validation is now `ci/run-local.sh`, which has
+// no path filter and runs every default step on every invocation. What can
+// still drift is the runner forgetting this checker, so assert it names it.
+const WF = "ci/run-local.sh";
 if (!existsSync(ROOT + WF)) {
   fatalPre.push(`${WF} is missing — nothing invokes this checker, so every check below is decorative`);
-} else {
-  const wfLines = readFileSync(ROOT + WF, "utf8").split("\n");
-  const globs = new Set();
-  let inPaths = false;
-  for (const raw of wfLines) {
-    if (/^\s*paths:\s*$/.test(raw)) { inPaths = true; continue; }
-    if (!inPaths) continue;
-    const m = /^\s*-\s*'([^']+)'\s*$/.exec(raw);
-    if (m) { globs.add(m[1]); continue; }
-    if (/^\s*#/.test(raw) || raw.trim() === "") continue; // comments inside the list
-    inPaths = false;
-  }
-  // A glob covers a path if the path equals it, or the glob is `<dir>/**` and
-  // the path is that dir or under it.
-  const covered = (rel) => [...globs].some((g) =>
-    g === rel || (g.endsWith("/**") && (rel === g.slice(0, -3) || rel.startsWith(g.slice(0, -2))))
-  );
-  if (globs.size < 5) {
-    fatalPre.push(`parsed only ${globs.size} trigger glob(s) from ${WF} — the paths: block moved or changed shape, so this coverage check is no longer reading it`);
-  }
-  for (const r of new Set([...ROOTS, "vercel.json"])) {
-    if (!covered(r)) fatalPre.push(
-      `${WF} has no \`paths:\` glob covering \`${r}\`, but this checker reads it. ` +
-      `A commit touching only \`${r}\` would run no workflow, so this checker could ` +
-      `not fail on it — which is how deleting a frozen redirect once landed green. ` +
-      `Add \`${r}\` (or a \`${r}/**\` glob) to BOTH the push and pull_request path lists.`
-    );
-  }
+} else if (!readFileSync(ROOT + WF, "utf8").includes("scripts/check-retired-model-names.mjs")) {
+  fatalPre.push(`${WF} no longer runs scripts/check-retired-model-names.mjs, so this checker could not fail on anything. Add it back as a default step.`);
 }
 
 // ── non-vacuity: refuse to pass by finding nothing ───────────────────────────

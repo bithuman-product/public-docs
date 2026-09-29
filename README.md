@@ -30,7 +30,7 @@ src/
   styles/                tokens.css (light/dark tokens), components.css, prose.css
   pages/                 The home page, /start, the hubs, llms files and markdown twins
   openapi/bithuman.yaml  OpenAPI spec -> synced to public/api/openapi.yaml
-scripts/                 The gates CI runs, and the generators (redirects, versions, pricing)
+scripts/                 The gates ci/run-local.sh runs, and the generators (redirects, versions, pricing)
 STYLE.md                 The style guide: voice, terminology, claims, templates, budgets
 ```
 
@@ -45,7 +45,7 @@ Organized by the developer's question. The header is Get started · Platforms ·
 - **Build** (`/build`): create your own avatar, persona, voices, recipes, and the example gallery (`/examples`).
 - **API** (`/api`), **Performance** (`/performance`), **Resources** (`/resources`).
 
-A page that moves gets a row in `scripts/ia-map.json`; `node scripts/gen-redirects.mjs` regenerates the redirects in `vercel.json`, and CI checks them before and after each deploy.
+A page that moves gets a row in `scripts/ia-map.json`; `node scripts/gen-redirects.mjs` regenerates the redirects in `vercel.json`, and `ci/run-local.sh` checks them before merging (`--served` after each deploy).
 
 ## API reference
 
@@ -87,7 +87,7 @@ Do the same for `/llms.txt` and `/sitemap.xml` when the change adds or removes a
 page — they are generated at build time and are the quickest signal that the
 build you are looking at is the build you pushed.
 
-**A page that carries a `TKTK` marker is not publishable at all** — CI is red
+**A page that carries a `TKTK` marker is not publishable at all** — `ci/run-local.sh` is red
 until the marker is resolved (`scripts/check-placeholders.mjs`), and
 `drafts/` holds page-sized text whose subject is not yet true. See
 `drafts/README.md`.
