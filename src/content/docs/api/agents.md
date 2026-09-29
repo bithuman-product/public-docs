@@ -132,7 +132,7 @@ curl https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITHUMAN_API_S
 ```
 
 ```json
-{"success": true, "data": {"code": "A80HVD8577", "status": "ready", "model": "expression-2", "supported_models": ["expression-2"], "name": "Museum Guide", "system_prompt": "You are a cheerful museum guide.", "image_url": "https://…/image.jpg"}}
+{"success": true, "data": {"code": "A80HVD8577", "status": "ready", "model": "expression-2", "supported_models": ["expression-2"], "name": "Museum Guide", "system_prompt": "You are a cheerful museum guide.", "language": "en", "voice_id": "bf0a246a-8642-498a-9950-80c35e9276b5", "image_url": "https://…/image.jpg"}}
 ```
 
 ## List your agents
@@ -149,7 +149,7 @@ curl "https://api.bithuman.ai/v1/agents?status=ready&limit=20" -H "api-secret: $
 
 ## Update an agent
 
-`POST /v1/agent/{code}` changes the `system_prompt`, the voice-provider selection (`providers`, see [Voice providers](/api/providers)), or both. Send at least one, or the call returns `400 MISSING_PARAM`. The name is generated and cannot be set.
+`POST /v1/agent/{code}` changes the `system_prompt`, the voice-provider selection (`providers`, see [Voice providers](/api/providers)), or both. Send at least one, or the call returns `400 MISSING_PARAM`. The name is generated and cannot be set. The voice cannot be set here: change it in the bitHuman app ([Voices](/build/voices#change-the-voice)).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577 \

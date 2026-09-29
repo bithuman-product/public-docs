@@ -18,7 +18,7 @@ creation
 
 - An [API secret](/start/api-secret) on the Creator plan or higher, and credits for the creation ([pricing](/pricing#creation--one-time-credits)).
 - A portrait image at a public URL (or create one from a prompt).
-- Optionally, 3–10 seconds of clean speech for voice cloning.
+- Optionally, a voice sample for cloning: 30 seconds or more of clean speech from one speaker. Longer clean samples are fine; the whole file is used.
 
 ## 1. Choose a model
 
@@ -35,7 +35,7 @@ More on the difference: [Models](/models).
 | Input | Use for | Limits |
 |---|---|---|
 | Image | the face | under 10 MB; one clear figure, neutral expression, facing the camera, face unobstructed |
-| Voice | voice cloning | under 1 minute of clean speech (MP3, WAV or M4A), no music |
+| Voice | voice cloning | 30 seconds or more of clean speech, one speaker, no music (MP3, WAV or M4A); the whole file is used |
 | Prompt | the personality | required when there is no image |
 
 ### What makes a good photo
@@ -79,6 +79,7 @@ Open `https://www.bithuman.ai/embed/<agent_id>` in a browser and talk to it, or 
 | `failed` with an image error | the image URL is not publicly fetchable | host the image publicly and create again (the failed creation is refunded) |
 | The likeness is off | a side profile, several people or poor light | crop to one front-facing person in good light |
 | The voice sounds noisy | background noise or music in the sample | re-record in a quiet room |
+| The live voice differs from the preview | the clone was not applied, or Realtime mode is on | [check the voice your agent uses](/build/voices#check-the-voice-your-agent-uses) |
 
 ## Next
 

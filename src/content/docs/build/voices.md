@@ -20,6 +20,37 @@ You never *have* to bring a key. The default pipeline already speaks every langu
 
 Open any agent's voice settings at [bithuman.ai](https://www.bithuman.ai/explore). The **bitHuman voice** section is marked *Included* — design a voice, clone one, or pick from the gallery. It's multilingual automatically, so there's no language toggle to manage.
 
+## Clone a voice
+
+Cloning, designing and previewing voices is free.
+
+1. Open the agent's voice settings in the bitHuman app and choose **Clone Voice**.
+2. Upload or record 30 seconds or more of clean speech from one speaker, with no music. Longer clean samples are fine; the whole file is used.
+3. Select **Clone Voice** and keep the window open. Cloning takes about a minute.
+4. Select **Preview** to hear the new voice.
+5. Select **Apply to Agent**. Until you apply it, the agent keeps its previous voice.
+
+To clone from the API instead, send the sample as `audio` when you [create an agent](/api/agents#generate-an-agent).
+
+## Check the voice your agent uses
+
+- **In the bitHuman app:** open the agent's voice settings and select **Preview**. It plays the voice saved on the agent.
+- **With the API:** [`GET /v1/agent/{code}`](/api/agents#get-an-agent) returns the saved voice as `data.voice_id`.
+
+```bash
+curl https://api.bithuman.ai/v1/agent/$AGENT_CODE -H "api-secret: $BITHUMAN_API_SECRET"
+```
+
+```json
+{"success": true, "data": {"code": "A80HVD8577", "language": "en", "voice_id": "bf0a246a-8642-498a-9950-80c35e9276b5"}}
+```
+
+## Change the voice
+
+Change an agent's voice in the bitHuman app: apply a clone, a designed voice or a gallery voice in the agent's voice settings. The API cannot set the voice; [`POST /v1/agent/{code}`](/api/agents#update-an-agent) changes only the prompt and the voice providers.
+
+**Realtime mode uses its own voice.** With **Realtime mode** on, or an OpenAI or Grok real-time voice selected, the agent speaks that provider's voice instead of the saved voice. To use your clone, turn **Realtime mode** off in the agent's **Providers** settings and save. To clear a real-time voice from the API, send `{"providers": {"realtime": "default"}}` to [`POST /v1/agent/{code}`](/api/agents#update-an-agent).
+
 ## Bring your own voice provider
 
 ### 1. Connect your key
@@ -47,3 +78,11 @@ Back in the agent's voice settings, the premium providers you've connected unloc
 - A bring-your-own voice or real-time model is also billed by your provider on your key.
 
 If a bring-your-own key ever fails or is removed, the agent automatically falls back to the built-in multilingual pipeline — it never silently stops talking.
+
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| The preview sounded right, the live agent does not | the clone was previewed but never applied | clone again, then select **Apply to Agent** |
+| The live agent speaks a different voice than **Preview** | **Realtime mode** is on, or a real-time voice is selected | turn **Realtime mode** off in the agent's **Providers** settings and save |
+| `voice_id` and **Preview** are right, the live voice still differs | a voice fallback during that session | contact support with the session time; each session records the voice it used |
