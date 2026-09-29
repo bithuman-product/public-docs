@@ -157,23 +157,42 @@ Requests to your endpoint carry the visitor's identifier in the standard OpenAI
 
 The value is resolved in this order, and the first one present wins:
 
-1. the **`fingerprint`** you passed to [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token)
-   (it travels in the token as its `endUserId` claim). Mint the token with the
-   agent owner's API secret and pass it to the embed as `?token=`;
+1. the **`fingerprint`** your backend passed when it minted the visitor's embed
+   token with [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token)
+   (it travels in the token as its `endUserId` claim);
 2. the **session correlator** — a per-conversation identifier we generate.
 
-Option 1 is *durable*: mint the same string for a returning visitor and you get
-the same value on every call, across sessions. Option 2 is the automatic
-fallback so the field is **never empty** for your endpoint, but it changes each
-session — if you see a value that varies per conversation, that means no durable
-identifier reached us and you should set one.
+To get a durable value, mint the embed token on your backend with your own id for
+the end user as its `fingerprint`, and pass the token to the iframe:
 
-A visitor id in the embed URL itself (`?end_user_id=`, `endUserId`, `visitor_id`
-or `fingerprint`) is **ignored**: anyone can edit a URL, so only a token minted
-on your backend can carry one.
+```js
+// server: mint one token per visitor session (the api-secret never reaches the browser)
+const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
+  method: "POST",
+  headers: {
+    "api-secret": process.env.BITHUMAN_API_SECRET,
+    "content-type": "application/json",
+  },
+  body: JSON.stringify({
+    agent_id: process.env.BITHUMAN_AGENT_CODE, // your agent's code
+    fingerprint: visitorId, // your stable id for this end user, the same on every visit
+  }),
+});
+const { data: { token } } = await res.json();
+```
 
-> If you supply `endUserId` and still see a changing value, tell us — that is a
-> bug, not a configuration issue.
+```html
+<iframe src="https://www.bithuman.ai/embed/YOUR_AGENT_CODE?token=THE_TOKEN" allow="microphone *; camera *; autoplay *" style="width:100%;height:100vh;border:0"></iframe>
+```
+
+Mint the same `fingerprint` for a returning visitor and your endpoint sees the same
+`user` on every call, across sessions. The session correlator is the automatic
+fallback so the field is **never empty**, but it changes each session — if you see
+a value that varies per conversation, the embed was opened without a token minted
+this way.
+
+> If you mint tokens with a stable `fingerprint` and still see a changing value,
+> tell us — that is a bug, not a configuration issue.
 
 Two limits worth knowing:
 
