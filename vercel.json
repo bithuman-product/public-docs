@@ -1292,26 +1292,6 @@
       "permanent": true
     },
     {
-      "source": "/images/bitHuman_banner_black.jpg",
-      "destination": "/images/og-card.jpg",
-      "permanent": true
-    },
-    {
-      "source": "/images/bitHuman_banner_black.jpg/",
-      "destination": "/images/og-card.jpg",
-      "permanent": true
-    },
-    {
-      "source": "/images/bithuman-banner.jpg",
-      "destination": "/images/og-card.jpg",
-      "permanent": true
-    },
-    {
-      "source": "/images/bithuman-banner.jpg/",
-      "destination": "/images/og-card.jpg",
-      "permanent": true
-    },
-    {
       "source": "/images/bithuman-logo.png",
       "destination": "/images/og-card.jpg",
       "permanent": true
