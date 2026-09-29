@@ -13,9 +13,20 @@
 #   ci/run-local.sh --served   post-deploy checks against the served site only
 #                              (run after each production deploy; ORIGIN=... to override)
 #   ci/run-local.sh --full     default + --served
-#   ci/run-local.sh --no-cap   do not wrap heavy steps in a systemd scope
+#   ci/run-local.sh --no-cap   do not wrap steps in the systemd scope (still takes a
+#                              host CI slot)
+#   ci/run-local.sh --wait-timeout S   max wait for a host CI slot / the exclusive
+#                              lock (default 7200, 0 = forever; exit 75 on timeout)
+#   ci/run-local.sh --host orinda      run the suite on orinda, only while orinda's
+#                              measurement lock is free (default: local)
 #   ci/run-local.sh --keep-going is the default (like `if: always()`); a step never
 #                              stops the ones after it.
+#
+# HOST GATE (ci/host-gate.sh, 2026-09-29): at most 2 local-CI suites at once across ALL
+# repos on this host; a 3rd prints "waiting for a CI slot". EVERY step (node, astro build,
+# Lighthouse) runs under systemd-run MemoryMax=8G/CPUQuota=400% + nice 19, and Lighthouse
+# additionally waits for the EXCLUSIVE host lock (no other suite running) so its
+# timing-based score is stable.
 #
 # Secrets: GH_TOKEN (for the GitHub release lookups) falls back to `gh auth token`;
 # INTERNAL_DENYLIST falls back to the private list in bithuman-product/platform.
@@ -28,15 +39,17 @@ cd "$ROOT"
 ORIGIN="${ORIGIN:-https://docs.bithuman.ai}"
 export ORIGIN
 
-MODE=default; ONLY=""; CAP=1; LIST=0
+MODE=default; ONLY=""; CAP=1; LIST=0; HOST=local; FWD=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --list) LIST=1 ;;
-    --only) ONLY="${2:?--only needs a step name}"; shift ;;
-    --full) MODE=full ;;
-    --served) MODE=served ;;
-    --no-cap) CAP=0 ;;
-    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
+    --only) ONLY="${2:?--only needs a step name}"; FWD+=("$1" "$2"); shift ;;
+    --full) MODE=full; FWD+=("$1") ;;
+    --served) MODE=served; FWD+=("$1") ;;
+    --no-cap) CAP=0; FWD+=("$1") ;;
+    --host) HOST="${2:?--host needs local|orinda}"; shift ;;
+    --wait-timeout) export LOCAL_CI_WAIT_S="${2:?--wait-timeout needs seconds}"; FWD+=("$1" "$2"); shift ;;
+    -h|--help) sed -n '2,35p' "$0"; exit 0 ;;
     *) echo "unknown flag: $1" >&2; exit 64 ;;
   esac
   shift
@@ -94,10 +107,12 @@ add default 0 built:discoverability         "need_dist && node scripts/check-dis
 add default 0 built:llms-caps               "need_dist && node scripts/check-llms.mjs --full-max-kb 190 --section-max-kb 96"
 add default 0 built:served-markup           "need_dist && node scripts/check-served-markup.mjs --self-test && node scripts/check-served-markup.mjs"
 
-# page-quality.yml (Lighthouse on the built site; needs Chrome). NOT wrapped in the
-# nice/CPUQuota scope: the performance score is timing-based, and at nice 19 on a
-# loaded host a page scored 91 that scores 100 unthrottled (measured 2026-09-29).
-add default 0 page-quality:lighthouse       "need_dist && node scripts/check-quality.mjs"
+# page-quality.yml (Lighthouse on the built site; needs Chrome). Capped like every
+# step, and it first takes the EXCLUSIVE host lock (no other CI suite running): the
+# performance score is timing-based, and on a host loaded by other suites a page scored
+# 91 that scores 100 alone (measured 2026-09-29). Quiet host, not an uncapped Chrome.
+add default 1 page-quality:lighthouse       "need_dist && node scripts/check-quality.mjs"
+EXCLUSIVE_STEPS=" page-quality:lighthouse "
 
 # performance-floors.yml
 add default 0 perf:floors-selftests         "node scripts/check-performance-floors.mjs --selftest && node scripts/check-perf-literals.mjs --selftest"
@@ -217,17 +232,27 @@ examples_runner_checks() {
 }
 export -f need_dist with_py312 with_java17 examples_runner_checks
 
+case "$HOST" in local|orinda) ;; *) echo "--host must be local or orinda" >&2; exit 2 ;; esac
+# shellcheck source=ci/host-gate.sh
+. "$ROOT/ci/host-gate.sh"
+if [ "$HOST" = orinda ]; then
+  # Toolchain this suite needs on the offload host (Node 22, Chrome, python3.12, gh).
+  lci_offload_orinda public-docs 'n=$(node -p "process.versions.node.split(\".\")[0]" 2>/dev/null || echo 0); [ "$n" -ge 22 ] || ls -d ~/.nvm/versions/node/v22.*/bin >/dev/null 2>&1 || { echo "node >= 22 not found (have $(node -v 2>/dev/null || echo none))"; exit 1; }; for t in python3.12 gh git flock systemd-run; do command -v $t >/dev/null || { echo "$t not found"; exit 1; }; done; command -v google-chrome >/dev/null || command -v chromium >/dev/null || { echo "Chrome not found"; exit 1; }' "${FWD[@]+"${FWD[@]}"}"
+fi
+
+# EVERY step runs under this cap (node checks, npm ci, astro build, Lighthouse alike).
 WRAP=()
 if [ "$CAP" = 1 ] && command -v systemd-run >/dev/null && systemctl --user show-environment >/dev/null 2>&1; then
   WRAP=(systemd-run --user --scope --quiet -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=400% nice -n 19)
 fi
 
 SHA="$(git rev-parse HEAD)"
+lci_gate_begin "public-docs@${SHA:0:12}"
 LOGDIR="${CI_LOG_DIR:-${TMPDIR:-/tmp}/public-docs-local-ci-${SHA:0:12}}"
 mkdir -p "$LOGDIR"
 
 if [ ! -d node_modules ] || [ package-lock.json -nt node_modules/.package-lock.json ]; then
-  echo "npm ci ..."; "${WRAP[@]}" npm ci --no-audit --no-fund >"$LOGDIR/npm-ci.log" 2>&1 \
+  echo "npm ci ..."; lci_run "${WRAP[@]}" npm ci --no-audit --no-fund >"$LOGDIR/npm-ci.log" 2>&1 \
     || { tail -40 "$LOGDIR/npm-ci.log"; echo "LOCAL CI FAIL sha=$SHA steps=0 (npm ci failed)"; exit 1; }
 fi
 
@@ -239,16 +264,18 @@ selected() {
 }
 
 if [ "$MODE" = served ] && [ -z "$ONLY" ] && [ ! -f dist/index.html ]; then
-  echo "served:vocabulary compares against a local build; building first"; "${WRAP[@]}" npm run build >"$LOGDIR/build.log" 2>&1 || true
+  echo "served:vocabulary compares against a local build; building first"; lci_run "${WRAP[@]}" npm run build >"$LOGDIR/build.log" 2>&1 || true
 fi
 
 pass=0; fail=0; n=0; FAILED=()
 for i in "${!NAMES[@]}"; do
   selected "$i" || continue
   name=${NAMES[$i]}; log="$LOGDIR/${name//:/_}.log"; n=$((n+1)); t0=$(date +%s)
-  if [ "${HEAVY[$i]}" = 1 ] && [ ${#WRAP[@]} -gt 0 ]; then cmd=("${WRAP[@]}" bash -c "${CMDS[$i]}")
-  else cmd=(bash -c "${CMDS[$i]}"); fi
-  if "${cmd[@]}" >"$log" 2>&1 </dev/null; then
+  cmd=("${WRAP[@]}" bash -c "${CMDS[$i]}")   # HEAVY[] is informational: every step is capped
+  excl=0; case "$EXCLUSIVE_STEPS" in *" $name "*) excl=1; lci_exclusive_begin "$name"; t0=$(date +%s) ;; esac
+  if lci_run "${cmd[@]}" >"$log" 2>&1 </dev/null; then ok=1; else ok=0; fi
+  [ $excl = 1 ] && lci_exclusive_end
+  if [ $ok = 1 ]; then
     pass=$((pass+1)); printf 'PASS %-36s %4ss\n' "$name" "$(( $(date +%s)-t0 ))"
   else
     fail=$((fail+1)); FAILED+=("$name"); printf 'FAIL %-36s %4ss  log: %s\n' "$name" "$(( $(date +%s)-t0 ))" "$log"
