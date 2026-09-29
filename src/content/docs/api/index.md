@@ -5,6 +5,7 @@ section: api
 group: "Start"
 order: 0
 type: hub
+llms: api
 ---
 
 ## What the API does

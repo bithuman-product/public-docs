@@ -5,6 +5,7 @@ section: build
 group: "Recipes"
 order: 30
 type: recipe
+llms: build
 time: "5 min"
 availability: "creator"
 renders: ["no-gpu", "server", "cloud"]

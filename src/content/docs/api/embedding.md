@@ -5,6 +5,7 @@ section: api
 group: "Live sessions"
 order: 10
 type: endpoint
+llms: api
 ---
 
 ## Embed an avatar

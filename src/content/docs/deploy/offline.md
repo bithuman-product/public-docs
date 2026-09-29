@@ -5,6 +5,7 @@ section: deploy
 group: "Modes"
 order: 50
 type: deploy
+llms: deploy
 searchTitle: "Fully offline: real-time avatars off the internet, for kiosks and terminals"
 availability: "business-enterprise"
 renders: ["offline"]

@@ -5,6 +5,7 @@ section: models
 group: "Concepts"
 order: 20
 type: concept
+llms: models
 ---
 
 ## What an `.imx` is

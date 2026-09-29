@@ -5,6 +5,7 @@ section: api
 group: "Agents"
 order: 30
 type: endpoint
+llms: api
 ---
 
 ## Upload a file

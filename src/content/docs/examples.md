@@ -5,6 +5,7 @@ section: build
 group: "Examples"
 order: 0
 type: hub
+llms: linked
 ---
 
 Every example is open source in [bithuman-examples](https://github.com/bithuman-product/bithuman-examples). Each card is a real recording and names the device, release and avatar it was captured with. Step-by-step builds are in the recipes: [kiosk](/build/kiosk), [companion app](/build/companion-app), [talking video](/build/talking-video) and [voice agent](/build/voice-agent).

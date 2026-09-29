@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 20
 type: changelog
+llms: none
 ---
 
 What changed in each release, newest day first (grouped by artifact within a day). Current versions are on [Downloads & versions](/downloads) and in [/versions.json](/versions.json). Follow new releases with the [RSS feed](/changelog.xml). Entries before August 2026 are in the [archive](/changelog/archive).

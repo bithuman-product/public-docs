@@ -5,6 +5,7 @@ section: build
 group: "Recipes"
 order: 50
 type: platform
+llms: build
 artifacts: ["cli"]
 ---
 

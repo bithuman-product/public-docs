@@ -11,6 +11,15 @@ export const SERVER_INFO = { name: "bithuman-docs", title: "bitHuman docs", vers
 export const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 const SITE = "https://docs.bithuman.ai";
 
+// The `section` filter takes the docs' tab labels and their earlier names, so a
+// client installed before a tab was renamed keeps getting results. Every name
+// normalises to one tab (server side), and pages match on that tab.
+export const SECTION_LABELS = ["Overview", "Platforms", "Models", "Guides", "Deploy", "Performance", "API reference"];
+export const SECTION_ALIASES = { "Get started": "Overview", Resources: "Overview", Build: "Guides", API: "API reference" };
+const SECTION_ENUM = [...SECTION_LABELS, ...Object.keys(SECTION_ALIASES)];
+/** The tab a section name (a label or an alias) stands for. */
+export const canonicalSection = (name) => SECTION_ALIASES[name] ?? name;
+
 export const TOOLS = [
   {
     name: "search",
@@ -25,7 +34,7 @@ export const TOOLS = [
         section: {
           type: "string",
           description: "Limit to one section.",
-          enum: ["Get started", "Platforms", "Deploy", "Models", "Build", "API", "Performance", "Resources"],
+          enum: SECTION_ENUM,
         },
         limit: { type: "integer", minimum: 1, maximum: 20, description: "How many results (default 8)." },
       },
@@ -105,7 +114,7 @@ export function rank(prepared, query, { section, limit = 8 } = {}) {
   const phrase = String(query).toLowerCase().trim();
   const out = [];
   for (const d of prepared.docs) {
-    if (section && d.section !== section) continue;
+    if (section && canonicalSection(d.section) !== canonicalSection(section)) continue;
     let s = 0;
     let hit = 0;
     for (const t of q) {

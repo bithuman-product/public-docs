@@ -7,7 +7,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { prepare, handleBody, handleMessage, normalizeId, tokens } from "./docs-mcp.mjs";
+import { prepare, handleBody, handleMessage, normalizeId, tokens, TOOLS, SECTION_LABELS, SECTION_ALIASES, canonicalSection } from "./docs-mcp.mjs";
 import { QUERIES } from "../../scripts/search-queries.mjs";
 
 const INDEX = join(import.meta.dirname, "../../dist/docs-mcp-index.json");
@@ -60,9 +60,31 @@ test("search takes a section and a limit, and refuses an empty query", { skip: !
   assert.doesNotMatch(kiosk.text, /URL: https:/, "a snippet starts after the twin's header");
   const { results } = tool("search", { query: "secret", section: "API", limit: 3 });
   assert.ok(results.length > 0 && results.length <= 3);
-  assert.ok(results.every((r) => r.section === "API"));
+  assert.ok(results.every((r) => canonicalSection(r.section) === "API reference"));
   const empty = call("tools/call", { name: "search", arguments: { query: " " } }).result;
   assert.equal(empty.isError, true);
+});
+
+test("the section filter takes the tab labels and every earlier name", () => {
+  const en = TOOLS.find((t) => t.name === "search").inputSchema.properties.section.enum;
+  // Clients installed before the docs v2 tabs send these names; they must keep working.
+  for (const old of ["Get started", "Platforms", "Deploy", "Models", "Build", "API", "Performance", "Resources"]) assert.ok(en.includes(old), `enum keeps "${old}"`);
+  for (const label of ["Overview", "Platforms", "Models", "Guides", "Deploy", "Performance", "API reference"]) assert.ok(en.includes(label), `enum has "${label}"`);
+  assert.equal(new Set(en).size, en.length, "no name twice");
+  for (const [alias, tab] of Object.entries(SECTION_ALIASES)) {
+    assert.ok(SECTION_LABELS.includes(tab), `${alias} → ${tab}, a tab label`);
+    assert.equal(canonicalSection(alias), tab);
+  }
+  for (const label of SECTION_LABELS) assert.equal(canonicalSection(label), label);
+});
+
+test("an alias and its tab label filter to the same pages", { skip: !built }, () => {
+  const ids = (section) => tool("search", { query: "secret", section, limit: 20 }).results.map((r) => r.id).join(" ");
+  assert.ok(ids("API").length > 0);
+  assert.equal(ids("API"), ids("API reference"));
+  assert.equal(ids("Build"), ids("Guides"));
+  assert.equal(ids("Get started"), ids("Overview"));
+  assert.equal(ids("Resources"), ids("Overview"));
 });
 
 test("fetch returns the page's markdown twin", { skip: !built }, () => {

@@ -5,6 +5,7 @@ section: build
 group: "Recipes"
 order: 10
 type: guide
+llms: build
 next: ["/platforms/cli", "/platforms/python", "/build/voices"]
 artifacts: ["cli", "python"]
 ---

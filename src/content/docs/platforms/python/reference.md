@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 30
 type: reference
+llms: linked
 artifacts: ["python"]
 ---
 

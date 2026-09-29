@@ -5,6 +5,7 @@ section: resources
 group: "Legal"
 order: 10
 type: legal
+llms: none
 next: ["/build/persona", "/support"]
 ---
 

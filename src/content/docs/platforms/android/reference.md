@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 20
 type: reference
+llms: linked
 artifacts: ["expression2_android", "essence2_android"]
 ---
 

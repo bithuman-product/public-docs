@@ -5,6 +5,7 @@ section: platforms
 group: "Code & terminal"
 order: 20
 type: platform
+llms: platforms
 renders: ["server", "no-gpu"]
 needs: ["API secret"]
 artifacts: ["cli"]

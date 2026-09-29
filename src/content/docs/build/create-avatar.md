@@ -5,6 +5,7 @@ section: build
 group: "Create"
 order: 10
 type: guide
+llms: build
 next: ["/build/persona", "/build/voices", "/models"]
 ---
 

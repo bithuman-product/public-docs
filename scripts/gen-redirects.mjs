@@ -14,6 +14,9 @@
 //     is dropped, and listed);
 //   * every source has its trailing-slash twin.
 // Anchors are checked against the built HTML by scripts/check-redirects.mjs.
+// `moves_2026_10` (docs v2 whole-page moves) are rows like `moves`; a destination
+// whose #fragment is a key of scripts/anchors-moved.json is re-pointed to its
+// new home.
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { routeOf } from "./content-routes.mjs";
@@ -22,6 +25,8 @@ const ROOT = join(import.meta.dirname, "..");
 const CONTENT = join(ROOT, "src/content/docs");
 const PAGES = join(ROOT, "src/pages");
 const MAP = JSON.parse(readFileSync(join(ROOT, "scripts/ia-map.json"), "utf8"));
+// "/old#id" → "/new#id": the docs v2 anchor moves (scripts/anchors-moved.json)
+const ANCHORS = JSON.parse(readFileSync(join(ROOT, "scripts/anchors-moved.json"), "utf8")).moved ?? {};
 
 const walk = (d, ext) => readdirSync(d).flatMap((n) => {
   const p = join(d, n);
@@ -80,7 +85,7 @@ export function generate() {
     }
     dest.set(src, { destination: d, permanent });
   };
-  for (const m of MAP.moves) set(m.old, pick({ ...m, source: m.old }, "move"), true, "move");
+  for (const m of [...MAP.moves, ...(MAP.moves_2026_10 ?? [])]) set(m.old, pick({ ...m, source: m.old }, "move"), true, "move");
   for (const l of MAP.legacy) {
     if (dest.has(l.source)) continue;
     // Internal redirects are all permanent (308); an external one keeps what it had.
@@ -106,6 +111,9 @@ export function generate() {
       d = next.includes("#") || !frag ? next : next + frag;
       hops++;
     }
+    // A fragment that moved off its page (anchors-moved.json) goes straight to its
+    // new home: one server 308, no JavaScript hop on the kept page.
+    while (!external(d) && d.includes("#") && ANCHORS[d] && hops < 10) { d = ANCHORS[d]; hops++; }
     if (hops >= 10) errors.push(`redirect loop at ${src}`);
     v.destination = d;
   }

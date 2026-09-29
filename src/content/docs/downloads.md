@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 10
 type: reference
+llms: linked
 ---
 
 Every bitHuman artifact at its current release. The same data is published as JSON for scripts and agents at [/versions.json](/versions.json).

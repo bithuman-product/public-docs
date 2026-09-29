@@ -5,6 +5,7 @@ section: resources
 group: "News"
 order: 10
 type: guide
+llms: none
 searchTitle: "bitHuman news and announcements"
 ---
 

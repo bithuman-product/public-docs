@@ -5,6 +5,7 @@ section: build
 group: "Examples"
 order: 20
 type: example
+llms: linked
 ---
 
 ```figure

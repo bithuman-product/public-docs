@@ -5,6 +5,7 @@ section: deploy
 group: "Hardware"
 order: 40
 type: deploy
+llms: deploy
 searchTitle: "CPU only (no GPU): Linux PCs without a graphics card"
 availability: "creator"
 renders: ["no-gpu", "server"]

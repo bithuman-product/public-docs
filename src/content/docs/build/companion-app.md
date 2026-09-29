@@ -5,6 +5,7 @@ section: build
 group: "Recipes"
 order: 15
 type: recipe
+llms: build
 time: "45 min"
 availability: "creator"
 renders: ["device"]

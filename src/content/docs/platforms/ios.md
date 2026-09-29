@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 10
 type: platform
+llms: apps
 searchTitle: "iOS & iPadOS SDK: the Swift package for real-time avatars"
 renders: ["device"]
 needs: ["Physical device", "API secret"]

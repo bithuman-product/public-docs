@@ -5,6 +5,7 @@ section: platforms
 group: "Agents & APIs"
 order: 20
 type: platform
+llms: platforms
 renders: ["cloud"]
 next: ["/api/agents", "/api/video", "/api/reference"]
 availability: creator

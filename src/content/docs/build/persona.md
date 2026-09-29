@@ -5,6 +5,7 @@ section: build
 group: "Create"
 order: 20
 type: guide
+llms: build
 ---
 
 The persona is the avatar's system prompt: who it is, what it is for, and how it answers. Set it as `prompt` when you [create the agent](/build/create-avatar), or change it later by sending it as `system_prompt` ([update an agent](/api/agents#update-an-agent)):

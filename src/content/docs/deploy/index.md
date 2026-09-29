@@ -5,6 +5,7 @@ section: deploy
 group: "Overview"
 order: 0
 type: hub
+llms: deploy
 claims: ["S1", "S3", "S4", "S5", "S10", "S11", "S12", "S13", "S14", "S20", "S21", "S26", "S29", "S30", "S31"]
 demo: "both"
 next: ["/deploy/privacy", "/pricing", "/models"]

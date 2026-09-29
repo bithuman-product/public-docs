@@ -5,6 +5,7 @@ section: deploy
 group: "Use cases"
 order: 30
 type: guide
+llms: deploy
 searchTitle: "Events and trade shows: a booth avatar on unreliable Wi-Fi"
 claims: ["S3", "S4", "S6", "S10", "S20", "S21"]
 next: ["/build/kiosk", "/deploy/cpu", "/deploy/offline"]

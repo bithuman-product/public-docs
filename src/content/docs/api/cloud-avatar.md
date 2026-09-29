@@ -5,6 +5,7 @@ section: api
 group: "Live sessions"
 order: 20
 type: endpoint
+llms: api
 ---
 
 ## Overview

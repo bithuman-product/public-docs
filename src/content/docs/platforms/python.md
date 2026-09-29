@@ -5,6 +5,7 @@ section: platforms
 group: "Code & terminal"
 order: 10
 type: platform
+llms: platforms
 searchTitle: "Python SDK: real-time avatars in your Python code"
 renders: ["server", "no-gpu"]
 needs: ["API secret"]

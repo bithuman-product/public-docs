@@ -5,6 +5,7 @@ section: api
 group: "Account"
 order: 30
 type: endpoint
+llms: api
 ---
 
 ## The credits model

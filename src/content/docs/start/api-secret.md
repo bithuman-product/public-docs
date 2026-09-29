@@ -5,6 +5,7 @@ section: start
 group: "Get started"
 order: 20
 type: guide
+llms: start
 availability: creator
 next: ["/start", "/platforms", "/api/authentication"]
 ---

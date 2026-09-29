@@ -5,6 +5,7 @@ section: performance
 group: "Performance"
 order: 0
 type: generated
+llms: start
 next: ["/performance/method", "/deploy", "/platforms"]
 ---
 

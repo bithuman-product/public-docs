@@ -1,0 +1,22 @@
+---
+// Mechanism A of the docs v2 moves (SPEC §4): an anchor that moved off a page that
+// stays. The page's `moved:` frontmatter maps each old id to its new home
+// ("/platforms/swift/app#complete-example"). Each old id keeps a one-line stub
+// with a plain link (it works without JavaScript), and a tiny script sends a
+// reader who arrives on the old #id straight to the new place. The rows are
+// generated from the anchor snapshot (scripts/anchors-moved.json) and
+// scripts/check-anchor-coverage.mjs keeps the two in step. Not in the .md twin.
+interface Props { moved: Record<string, string> }
+const { moved } = Astro.props;
+const rows = Object.entries(moved);
+---
+{rows.length > 0 && (
+  <div class="moved-stubs" data-pagefind-ignore>
+    {rows.map(([id, to]) => <p id={id} class="moved-stub">This section moved: <a href={to}>{to.replace(/^\//, "docs.bithuman.ai/")}</a></p>)}
+    <script is:inline data-moved={JSON.stringify(moved)}>(()=>{var m=JSON.parse(document.currentScript.dataset.moved),g=()=>{var t=m[decodeURIComponent(location.hash.slice(1))];t&&location.replace(t)};g();addEventListener("hashchange",g)})()</script>
+  </div>
+)}
+<style>
+  .moved-stubs { margin-top: 32px; }
+  .moved-stub { margin: 0 0 4px; font-size: var(--fs-14); color: var(--color-text-secondary); }
+</style>

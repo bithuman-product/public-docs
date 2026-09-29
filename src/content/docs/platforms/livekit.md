@@ -5,6 +5,7 @@ section: platforms
 group: "Agents & APIs"
 order: 10
 type: platform
+llms: platforms
 renders: ["cloud", "server"]
 needs: ["API secret"]
 artifacts: ["livekit_plugin"]

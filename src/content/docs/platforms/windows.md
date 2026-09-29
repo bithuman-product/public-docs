@@ -5,6 +5,7 @@ section: platforms
 group: "Code & terminal"
 order: 15
 type: platform
+llms: platforms
 searchTitle: "Windows: real-time avatars on a Windows PC, no GPU"
 renders: ["server", "no-gpu"]
 needs: ["API secret"]

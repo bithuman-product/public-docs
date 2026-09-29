@@ -21,7 +21,15 @@ for (const m of navSrc.matchAll(/(\w+):\s*\{\s*label:\s*"[^"]+",\s*home:\s*"([^"
 
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".md") ? [p] : []; });
 const routes = new Set();
-const TYPES = new Set(["hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy", "guide", "reference", "example", "changelog", "generated", "legal"]);
+const TYPES = new Set(["hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy", "guide", "reference", "example", "changelog", "generated", "legal",
+  // docs v2 templates (SPEC §1, §5): the same list as src/content.config.ts
+  "landing", "platform-app", "model", "troubleshooting", "catalogue", "record"]);
+// docs v2 (SPEC §8): a sidebar group holds 2–8 pages. Report-only until W2b lands
+// the 7-tab nav (two 1-page groups today); GROUP_SIZE_FAILS=1 then makes it a fault.
+const GROUP_MIN = 2, GROUP_MAX = 8, GROUP_SIZE_FAILS = 0;
+const groupCount = {};
+const parents = [];
+const sectionOf = {};
 let pages = 0;
 for (const f of walk(CONTENT)) {
   const rel = relative(ROOT, f);
@@ -41,8 +49,26 @@ for (const f of walk(CONTENT)) {
   const body = md.slice(md.indexOf("\n---", 4) + 4);
   if (!/\]\(\/[^)\s]|href="\//.test(body) && !/^next:/m.test(fm)) fail.push(`${rel}: no link to another docs page`);
   const r = routeOf(CONTENT, f, md);
+  const key = `${sec} / ${grp}`;
+  groupCount[key] = (groupCount[key] || 0) + 1;
+  sectionOf[r] = sec;
+  const parent = get("parent");
+  if (parent !== undefined) parents.push({ rel, r, sec, parent });
   if (routes.has(r)) fail.push(`${rel}: route ${r} is served by two pages`);
   routes.add(r);
+}
+// `parent:` names a built page of the same section, one level up the URL, never itself.
+for (const { rel, r, sec, parent } of parents) {
+  if (parent === r) fail.push(`${rel}: parent is the page itself`);
+  else if (!routes.has(parent)) fail.push(`${rel}: parent ${parent} is not a content page`);
+  else if (sectionOf[parent] !== sec) fail.push(`${rel}: parent ${parent} is in section "${sectionOf[parent]}", this page in "${sec}"`);
+  else if (!r.startsWith(parent + "/")) fail.push(`${rel}: parent ${parent} is not a URL prefix of ${r}`);
+  else if (parents.some((p) => p.r === parent)) fail.push(`${rel}: parent ${parent} has a parent itself (one level only)`);
+}
+const groupWarn = Object.entries(groupCount).filter(([, n]) => n < GROUP_MIN || n > GROUP_MAX).map(([k, n]) => `group "${k}" holds ${n} page(s); a group holds ${GROUP_MIN}–${GROUP_MAX}`);
+for (const w of groupWarn) {
+  if (GROUP_SIZE_FAILS) fail.push(w);
+  else console.log(`::warning::${w} (report-only until W2b)`);
 }
 const astroRoutes = new Set();
 const walkA = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walkA(p) : n.endsWith(".astro") ? [p] : []; });

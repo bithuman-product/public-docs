@@ -17,7 +17,22 @@ const docs = defineCollection({
     type: z.enum([
       "hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy",
       "guide", "reference", "example", "changelog", "generated", "legal",
+      // docs v2 templates (SPEC §1 budgets, §5); pages move onto them wave by wave
+      "landing", "platform-app", "model", "troubleshooting", "catalogue", "record",
     ]),
+    // docs v2 (SPEC §8 G8): the route of the page this one was split from or belongs
+    // under ("/platforms/swift" for "/platforms/swift/app"); same section, one level.
+    parent: z.string().regex(/^\/[a-z0-9/-]*$/).optional(),
+    // which agent-layer file carries the page (src/lib/llms-sections.ts; scripts/check-llms.mjs):
+    // one of the /llms/<section>.txt files, `linked` (in no section file, but named by the
+    // llms files as a URL or .md twin), or `none` (only from check-llms' reasoned allowlist).
+    // It alone decides membership, so moving a page in the nav never moves it in the agent layer.
+    llms: z.enum(["start", "platforms", "apps", "deploy", "models", "build", "api", "linked", "none"]),
+    // anchors that moved off this page while the page stays (docs v2 SPEC §4, mechanism A):
+    // old id → its new home ("/platforms/swift/app#complete-example"). Rendered as a stub
+    // line plus a jump (src/components/MovedAnchors.astro); scripts/anchors-moved.json is
+    // the reviewed map, and scripts/check-anchor-coverage.mjs keeps the two in step.
+    moved: z.record(z.string().regex(/^[a-z0-9][a-z0-9-]*$/), z.string().regex(/^\/[a-z0-9/-]*(#[A-Za-z0-9-]+)?$/)).optional(),
     // the sidebar group it sits in
     group: z.string().optional().default(""),
     // ordering within the group

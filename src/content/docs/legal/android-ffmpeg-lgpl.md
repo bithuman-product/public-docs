@@ -5,6 +5,7 @@ section: resources
 group: "Legal"
 order: 20
 type: legal
+llms: none
 ---
 
 > **This is an engineering reading of the license, not legal advice.** It

@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 50
 type: reference
+llms: start
 searchTitle: "FAQ: frequently asked questions"
 claims: ["S1", "S2", "S3", "S5", "S6", "S7", "S10", "S20", "S24", "S26", "S27", "S29", "S30", "S32"]
 next: ["/start", "/deploy", "/pricing"]

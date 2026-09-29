@@ -41,6 +41,21 @@ export function grade(redirects, dist) {
   return faults;
 }
 
+/** Every old sitemap URL is a built page, or the source of one redirect that lands on one. */
+export function gradeSitemaps(redirects, dist, lists) {
+  const faults = [];
+  const bySource = new Map(redirects.map((r) => [r.source, r.destination]));
+  for (const [name, urls] of Object.entries(lists)) {
+    for (const u of urls) {
+      if (served(dist, u)) continue;
+      const d = bySource.get(u) ?? bySource.get(u.replace(/\/$/, ""));
+      if (d === undefined) { faults.push(`${name} ${u}: neither a built page nor a redirect source`); continue; }
+      if (!/^https?:\/\//.test(d) && !served(dist, d.split("#")[0])) faults.push(`${name} ${u} -> ${d}: the build serves no destination`);
+    }
+  }
+  return faults;
+}
+
 function selftest() {
   const fx = join(ROOT, "scripts", "fixtures", "redirects");
   const ok = (name, cond) => { console.log(`  ${cond ? "PASS" : "FAIL"}  ${name}`); return cond ? 0 : 1; };
@@ -51,6 +66,9 @@ function selftest() {
   bad += ok("a chain fires", grade([{ source: "/a", destination: "/b" }, { source: "/b", destination: "/page" }], fx).some((f) => f.includes("chain")));
   bad += ok("a source that is a page fires", grade([{ source: "/page", destination: "/other" }], fx).some((f) => f.includes("hides it")));
   bad += ok("an external destination is not graded", grade([{ source: "/status", destination: "https://status.example" }], fx).length === 0);
+  bad += ok("a sitemap URL that is a page passes", gradeSitemaps([], fx, { t: ["/page"] }).length === 0);
+  bad += ok("a sitemap URL redirected to a page passes", gradeSitemaps([{ source: "/gone", destination: "/page#here" }], fx, { t: ["/gone"] }).length === 0);
+  bad += ok("a sitemap URL with no page and no redirect fires", gradeSitemaps([], fx, { t: ["/gone"] }).some((f) => f.includes("neither")));
   console.log(bad ? "selftest RED" : "selftest GREEN (every arm fired)");
   return bad ? 1 : 0;
 }
@@ -59,9 +77,10 @@ function main() {
   if (process.argv.includes("--selftest")) return selftest();
   if (!existsSync(join(DIST, "index.html"))) { console.log("::error::no dist/ — run npm run build first"); return 2; }
   const { redirects } = JSON.parse(readFileSync(join(ROOT, "vercel.json"), "utf8"));
-  const faults = grade(redirects, DIST);
+  const ia = JSON.parse(readFileSync(join(ROOT, "scripts", "ia-map.json"), "utf8"));
+  const faults = [...grade(redirects, DIST), ...gradeSitemaps(redirects, DIST, { sitemap_2026_09: ia.sitemap_2026_09, sitemap_2026_10: ia.sitemap_2026_10 })];
   for (const f of faults) console.log(`::error file=vercel.json::${f}`);
-  console.log(faults.length ? `redirects: ${faults.length} fault(s)` : `redirects ok: ${redirects.length} entries land on built pages and anchors`);
+  console.log(faults.length ? `redirects: ${faults.length} fault(s)` : `redirects ok: ${redirects.length} entries land on built pages and anchors; ${ia.sitemap_2026_09.length} + ${ia.sitemap_2026_10.length} old sitemap URLs (2026-09, 2026-10) resolve`);
   return faults.length ? 1 : 0;
 }
 process.exit(main());

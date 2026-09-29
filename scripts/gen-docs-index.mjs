@@ -15,10 +15,26 @@ const ROOT = join(import.meta.dirname, "..");
 const args = process.argv.slice(2);
 const DIST = join(ROOT, args.includes("--dist") ? args[args.indexOf("--dist") + 1] : "dist");
 const SITE = "https://docs.bithuman.ai";
-const SECTION_BY_PREFIX = {
-  "": "Get started", start: "Get started", platforms: "Platforms", deploy: "Deploy", pricing: "Deploy", models: "Models",
-  build: "Build", examples: "Build", api: "API", performance: "Performance",
-};
+// A page whose HTML carries no section filter (a hub) takes the header item that owns
+// its first path segment, read from src/config/nav.ts TOP_NAV (href and `match`), so the
+// MCP sections follow the navigation; "/" takes the first item; anything else is Resources.
+function sectionByPrefix() {
+  const nav = readFileSync(join(ROOT, "src/config/nav.ts"), "utf8");
+  const top = /export const TOP_NAV[^=]*=\s*\[([\s\S]*?)\n\];/.exec(nav)?.[1];
+  if (!top) throw new Error("gen-docs-index: cannot read TOP_NAV from src/config/nav.ts");
+  const out = {};
+  for (const m of top.matchAll(/\{\s*label:\s*"([^"]+)",\s*href:\s*"([^"]+)"(?:,\s*match:\s*\[([^\]]*)\])?/g)) {
+    const [, label, href, match] = m;
+    if (!("" in out)) out[""] = label;
+    for (const p of [href, ...[...(match ?? "").matchAll(/"([^"]+)"/g)].map((x) => x[1])]) {
+      const seg = p.split("/")[1] ?? "";
+      if (seg && !(seg in out)) out[seg] = label;
+    }
+  }
+  if (Object.keys(out).length < 5) throw new Error(`gen-docs-index: TOP_NAV gave only ${Object.keys(out).length} prefixes`);
+  return out;
+}
+const SECTION_BY_PREFIX = sectionByPrefix();
 
 const walk = (d) => readdirSync(d).flatMap((n) => {
   const p = join(d, n);

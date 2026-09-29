@@ -5,6 +5,7 @@ section: deploy
 group: "Modes"
 order: 30
 type: deploy
+llms: deploy
 availability: "creator"
 renders: ["device", "browser"]
 needs: ["Physical device"]

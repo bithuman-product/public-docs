@@ -5,6 +5,7 @@ section: deploy
 group: "Modes"
 order: 20
 type: deploy
+llms: deploy
 searchTitle: "Your servers (self-hosted): self-host bitHuman on your own machines"
 availability: "creator"
 renders: ["server", "no-gpu"]

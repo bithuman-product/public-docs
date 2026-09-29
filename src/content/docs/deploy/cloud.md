@@ -5,6 +5,7 @@ section: deploy
 group: "Modes"
 order: 10
 type: deploy
+llms: deploy
 availability: "creator"
 renders: ["cloud"]
 models: ["essence-2", "expression-2", "essence-1", "expression-1"]

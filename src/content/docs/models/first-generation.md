@@ -5,6 +5,7 @@ section: models
 group: "Models"
 order: 40
 type: concept
+llms: models
 models: ["essence-1", "expression-1"]
 next: ["/models", "/models/essence-2", "/models/expression-2"]
 ---

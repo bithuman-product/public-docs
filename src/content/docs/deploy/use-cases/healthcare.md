@@ -5,6 +5,7 @@ section: deploy
 group: "Use cases"
 order: 20
 type: guide
+llms: deploy
 searchTitle: "Healthcare: avatars in clinics and hospitals, with patient data in your environment"
 claims: ["S4", "S5", "S6", "S7", "S9", "S14", "S15", "S17", "S18", "S19", "S21", "S24", "S30"]
 next: ["/deploy/privacy", "/deploy/self-hosted", "/platforms/cli/local-brain"]
