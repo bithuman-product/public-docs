@@ -40,6 +40,14 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### `bithuman` 2.11.18 — 2026-09-29
+
+- **New:** `pip install bithuman` installs on Windows 10 and 11 (x86_64, Python 3.10–3.14). Essence 2 and Expression 2 avatars open and render on the machine as on macOS and Linux; Essence 1 renders in the cloud with the Video API. The wheel carries the Visual C++ runtime it needs.
+- **New:** `python -m bithuman pull <AVATAR>` gets an avatar onto the machine together with the engine files its model fetches on the first render. While online, pull each avatar once, and `python -m bithuman pack redeem` once for an offline pack; after that, rendering needs no network. The same verb, `--model` and `--force` as the `bithuman` CLI.
+- **Changed:** a refusal because of the account's plan says so ("API and SDK access starts at the Creator plan", with one link to the plans) instead of calling the API secret revoked; a plan's session limit and a suspended account have their own sentences, and an account out of credits points to [/billing#credits](https://www.bithuman.ai/billing#credits). What is refused, and the exception raised, are unchanged.
+- **Changed:** `render(out_mp4=...)` writes the MP4 with the platform's own H.264 encoder where there is one (VideoToolbox on macOS, Media Foundation on Windows), and with x264 otherwise; `python -m bithuman render --json` carries `wall_seconds`, as the CLI does. On Apple silicon, Expression 2 renders through the same render host CLI 2.8.4 ships.
+- **Action:** `pip install -U bithuman`.
+
 ### CLI 2.8.4 — 2026-09-28
 
 Tag `cli-v2.8.4`.

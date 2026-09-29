@@ -3,7 +3,7 @@
   "about": "The current published version and install line of every bitHuman artifact.",
   "versions": {
     "cli": "2.8.4",
-    "python": "2.11.17",
+    "python": "2.11.18",
     "swift": "2.19.1",
     "essence2_engine": "1.15.0",
     "expression2_swift": "2.19.0",
