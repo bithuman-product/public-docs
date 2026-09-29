@@ -122,8 +122,13 @@ curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions/a3f1c8e2-…/
 }
 ```
 
-For a cloud session this ends the LiveKit room; for a self-hosted runtime it closes the activity
-record (the runtime is on your hardware). Errors: `404` no such session (or not yours).
+The session stops counting toward your plan's concurrent sessions at once. What else happens depends on where it runs:
+
+- A conversation on bitHuman's servers (the web embed, the bitHuman app): its room is closed and `ended` is `true`.
+- A [cloud avatar in your own LiveKit room](/api/cloud-avatar): the avatar leaves at its next billing check, within about a minute, and `ended` is `false`. Delete the room on your LiveKit server to end it at once.
+- A self-hosted runtime: the activity record is closed; stop the process on your hardware.
+
+To find a cloud avatar's `session_id`, list sessions with `window=live&kind=conversations` and take the `id` whose `room_name` is your room. Errors: `404` no such session (or not yours).
 
 ## Revoke all keys
 
