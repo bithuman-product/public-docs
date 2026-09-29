@@ -72,7 +72,7 @@ curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
 | `livekit_token` | yes | The avatar's join token from the step above. |
 | `room_name` | yes | The room the avatar joins. |
 
-A `200` response means the session is starting. `avatar_session_started` is `true`, and `model` is the model the session launched as. The response also echoes `mode`, `agent_id` and `image`, and includes your `user_id`.
+A `200` response means the session is starting. `avatar_session_started` is `true`, and `model` is the model the session launched as. `session_id` is the session's handle: [end it or read it](/api/runtime-sessions#end-a-cloud-avatar-session) by that id. The response also echoes `mode`, `agent_id` and `image`, and includes your `user_id`.
 
 The session is billed at the model's cloud rate for as long as it runs ([Pricing](/pricing)). It ends in any of these cases:
 
@@ -80,7 +80,7 @@ The session is billed at the model's cloud rate for as long as it runs ([Pricing
 - You remove `bithuman-avatar-agent` from the room.
 - The room closes.
 
-An ended session stops counting toward your plan's [concurrent sessions](/api/rate-limits#session-concurrency) within 2 minutes of its end. To free its slot at once, [terminate it](/api/runtime-sessions#terminate-a-session): list your live sessions and use the `id` of the one whose `room_name` is your room.
+An ended session stops counting toward your plan's [concurrent sessions](/api/rate-limits#session-concurrency) within 2 minutes of its end. To end a session and free its slot at once, [end it by its `session_id`](/api/runtime-sessions#end-a-cloud-avatar-session).
 
 ## Send the audio
 

@@ -23,7 +23,7 @@ info:
     here: [API secrets](https://docs.bithuman.ai/api/api-keys)
     (`/v2/{user}/api-secrets*`),
     [runtime sessions](https://docs.bithuman.ai/api/runtime-sessions)
-    (`/v2/{user}/runtime-sessions*`),
+    (`/v2/{user}/runtime-sessions*`, `/v1/runtime-sessions/{session_id}*`),
     [organizations](https://docs.bithuman.ai/api/organizations)
     (`/v2/organizations*`),
     [providers](https://docs.bithuman.ai/api/providers)
@@ -2336,6 +2336,7 @@ paths:
                       image: { type: string, nullable: true }
                       user_id: { type: string }
                       plan_notice: { type: string, description: "Free accounts, until 2026-10-12." }
+                      session_id: { type: string, example: "cs_4f1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e", description: "End or read the session by this id: /v1/runtime-sessions/{session_id}." }
               examples:
                 runtimeToken:
                   summary: Runtime token

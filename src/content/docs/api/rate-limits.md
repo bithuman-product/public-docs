@@ -21,7 +21,7 @@ Requests are limited **per account** (every API secret on the account shares the
 
 | Cost tier | Covers |
 |---|---|
-| **Generate** | heavy jobs: `POST /v1/agent/generate`, `POST /v1/dynamics/generate`, video generation |
+| **Generate** | heavy jobs: `POST /v1/agent/generate`, `POST /v1/dynamics/generate`, video generation; also `POST /v1/runtime-sessions/{session_id}/end` |
 | **Write** | every other `POST`, `PUT`, `PATCH`, `DELETE`, including `POST /v1/tts`, plus `GET /v1/agent/{code}/sessions` |
 | **Read** | other `GET` requests, such as `GET /v1/agent/status/*` and `GET /v2/credit-summaries` |
 
