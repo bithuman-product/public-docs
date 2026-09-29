@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 40
 type: reference
+llms: linked
 artifacts: ["cli"]
 ---
 

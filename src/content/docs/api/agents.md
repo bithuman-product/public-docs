@@ -5,6 +5,7 @@ section: api
 group: "Agents"
 order: 10
 type: endpoint
+llms: api
 ---
 
 An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/platforms/web), the SDKs, [talking video](/api/video) and live sessions. Creation and model adds cost credits per model ([pricing](/pricing)); everything else on this page is free.

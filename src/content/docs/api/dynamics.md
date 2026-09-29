@@ -5,6 +5,7 @@ section: api
 group: "Agents"
 order: 40
 type: endpoint
+llms: api
 ---
 
 ## Overview

@@ -5,6 +5,7 @@ section: api
 group: "Live sessions"
 order: 30
 type: endpoint
+llms: api
 next: ["/api/authentication", "/pricing", "/api/errors"]
 ---
 

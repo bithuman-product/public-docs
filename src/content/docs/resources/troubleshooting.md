@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 40
 type: guide
+llms: build
 ---
 
 Every platform and recipe page ends with a Troubleshooting table for its own problems; this page links them all, then covers the live session itself.

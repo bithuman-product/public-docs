@@ -5,6 +5,7 @@ section: deploy
 group: "Use cases"
 order: 10
 type: guide
+llms: deploy
 searchTitle: "Banking and ATMs: avatars on branch screens, teller terminals and ATMs"
 claims: ["S3", "S4", "S5", "S6", "S7", "S9", "S10", "S19", "S20", "S21"]
 next: ["/deploy/cpu", "/build/kiosk", "/deploy/privacy"]

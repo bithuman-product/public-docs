@@ -5,6 +5,7 @@ section: build
 group: "Create"
 order: 40
 type: guide
+llms: build
 ---
 
 Gestures are named clips baked into an avatar, such as `mini_wave_hello` or `clap_cheer`. Your code plays one by name, when it chooses: on an app event, a timer, or an allow-listed tool call. Nothing plays at random.

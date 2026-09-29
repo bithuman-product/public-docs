@@ -17,6 +17,7 @@ import DataFlowExplorer from "../components/DataFlowExplorer.astro";
 import Walkthrough from "../components/Walkthrough.astro";
 import { widgetsIn } from "../lib/doc-blocks";
 import ChangelogFilter from "../components/ChangelogFilter.astro";
+import MovedAnchors from "../components/MovedAnchors.astro";
 import { RENDERS_LABEL, PLAN_LABEL, versionLabel } from "../data/labels";
 
 interface Heading {
@@ -195,6 +196,7 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
         </header>
         {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} eager /></div>}
         <div class="doc-body"><slot /></div>
+        {data.moved && <MovedAnchors moved={data.moved} />}
         {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>
       <NextCards items={nextCards} />

@@ -9,10 +9,12 @@
 // page has no .md twin; /llms-full.txt or a /llms/<section>.txt is over its size
 // cap; any of them leaks an HTML comment. Internal-content hits are reported (G1).
 //
-// Coverage (src/lib/llms-sections.ts): every start, API, platform, guide and
-// performance page is inlined in exactly one /llms/<section>.txt or listed there
-// as linked-only (.md twin), and everything /llms-full.txt inlines is in a
-// section file. So a page cannot drop out of the agent layer when a file is split.
+// Coverage (src/lib/llms-sections.ts): every page names its file in the `llms:`
+// frontmatter field; a page with a section value is inlined in exactly that
+// /llms/<section>.txt or listed there as linked-only (.md twin), a `linked` page is
+// named by an llms file, `none` needs a reason in LLMS_NONE, and everything
+// /llms-full.txt inlines is in a section file. So a page cannot drop out of the
+// agent layer when a file is split or the navigation moves it.
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { scan } from "./check-internal-content.mjs";
@@ -100,20 +102,48 @@ for (const n of sections) {
 for (const [r, ns] of where) if (ns.length > 1) fail.push(`${r} is inlined in ${ns.length} section files (${ns.join(", ")})`);
 for (const r of inlined(full)) if (!where.has(r)) fail.push(`llms-full.txt inlines ${r}, which no llms/<section>.txt carries`);
 const linkedAll = sections.map((n) => secText[n]).join("\n");
+// Membership is the page's `llms:` field (src/content.config.ts), never its nav
+// section or type: every page names one; a section value means the page is inlined
+// in that file or listed there as linked-only; `linked` means some llms file names
+// the page (URL or .md twin); `none` is allowed only from this reasoned allowlist.
+const LLMS_VALUES = ["start", "platforms", "apps", "deploy", "models", "build", "api", "linked", "none"];
+const LLMS_NONE = {
+  "/changelog": "a record of releases; agents read versions from /downloads and the key facts",
+  "/changelog/archive": "older changelog entries, a record",
+  "/legal/android-ffmpeg-lgpl": "a licence notice, not integration text (the llms files already link it where it applies)",
+  "/legal/eu-ai-act": "a legal statement, not integration text (the llms files already link it where it applies)",
+  "/support": "people and channels to contact, not integration text",
+  "/news": "dated announcements; the News hub gets its llms line with the nav wave (docs v2 W2b)",
+  "/news/2026-09-29-any-character-live-on-device": "a dated post (record)",
+  "/news/2026-09-29-faster-than-real-time": "a dated post (record)",
+};
+const layerAll = [llms, full, linkedAll].join("\n");
 let covered = 0;
+const seenNone = new Set();
 for (const f of walk(CONTENT)) {
   const src = readFileSync(f, "utf8");
   if (/^draft:\s*true/m.test(src)) continue;
-  const sec = (src.match(/^section:\s*"?(\w+)/m) || [])[1];
-  const type = (src.match(/^type:\s*"?(\w+)/m) || [])[1];
-  const r0 = routeOf(CONTENT, f);
-  const wanted = ["start", "api", "performance", "models", "deploy"].includes(sec) || r0 === "/resources/troubleshooting" ||
-    (sec === "platforms" && ["platform", "guide"].includes(type)) || (sec === "build" && ["guide", "platform", "recipe"].includes(type));
-  if (!wanted) continue;
   const r = routeOf(CONTENT, f);
-  if (where.has(r) || linkedAll.includes(`https://docs.bithuman.ai${r}.md`)) covered++;
-  else fail.push(`${r} (${sec}) is in no llms/<section>.txt, inlined or linked`);
+  const fm = src.split(/^---$/m)[1] ?? "";
+  const val = (fm.match(/^llms:\s*"?([\w-]+)"?\s*$/m) || [])[1];
+  if (!val) { fail.push(`${r} has no llms: field (one of ${LLMS_VALUES.join(" | ")})`); continue; }
+  if (!LLMS_VALUES.includes(val)) { fail.push(`${r} has llms: ${val} (want one of ${LLMS_VALUES.join(" | ")})`); continue; }
+  if (val === "none") {
+    seenNone.add(r);
+    if (!LLMS_NONE[r]) fail.push(`${r} has llms: none, which is not in check-llms' reasoned allowlist (LLMS_NONE)`);
+    continue;
+  }
+  if (val === "linked") {
+    if (new RegExp(`https://docs\\.bithuman\\.ai${r.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\\.md)?(?![\\w/-])`).test(layerAll)) covered++;
+    else fail.push(`${r} has llms: linked, but no llms file names it`);
+    continue;
+  }
+  const n = `${val}.txt`;
+  if (secText[n] === undefined) { fail.push(`${r} has llms: ${val}, but there is no llms/${n}`); continue; }
+  if ((where.get(r) || []).includes(n) || secText[n].includes(`https://docs.bithuman.ai${r}.md`)) covered++;
+  else fail.push(`${r} (llms: ${val}) is in llms/${n} neither inlined nor linked`);
 }
+for (const r of Object.keys(LLMS_NONE)) if (!seenNone.has(r)) fail.push(`LLMS_NONE lists ${r}, which is not a page with llms: none (remove the entry)`);
 
 // no HTML comment reaches an agent; internal content is reported
 for (const [name, text] of [["llms.txt", llms], ["llms-full.txt", full], ...sections.map((n) => [`llms/${n}`, secText[n]])]) {

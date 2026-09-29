@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 80
 type: reference
+llms: linked
 searchTitle: "For AI agents: llms.txt, docs MCP server and agent skill"
 next: ["/build/mcp", "/start", "/api/reference"]
 ---

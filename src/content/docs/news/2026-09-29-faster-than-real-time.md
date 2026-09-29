@@ -5,6 +5,7 @@ section: resources
 group: "News"
 order: 30
 type: guide
+llms: none
 searchTitle: "News: Essence 2 and Expression 2 render faster than real time on the device"
 models: ["essence-2", "expression-2"]
 next: ["/performance", "/performance/method", "/deploy/on-device"]

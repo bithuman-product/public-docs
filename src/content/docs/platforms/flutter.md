@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 40
 type: platform
+llms: apps
 searchTitle: "Flutter: the bitHuman Flutter plugin"
 renders: ["device"]
 needs: ["Physical device", "API secret"]

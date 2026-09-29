@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 30
 type: platform
+llms: apps
 searchTitle: "Android SDK (Kotlin): on-device talking avatars"
 renders: ["device"]
 needs: ["Physical device", "API secret"]

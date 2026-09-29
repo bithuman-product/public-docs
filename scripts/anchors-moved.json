@@ -1,0 +1,4 @@
+{
+ "$comment": "Docs v2 anchor moves (SPEC §4, mechanism A and fragment re-points): \"/old/page#id\" → \"/new/page#id\". Generated per wave from the snapshot diff (node scripts/check-anchor-coverage.mjs --suggest) and reviewed. A row whose old page is still built must also sit in that page's `moved:` frontmatter (the stub line and the jump); scripts/gen-redirects.mjs re-points any redirect destination with a moved fragment straight here; scripts/check-anchor-coverage.mjs gives every id of scripts/anchors-snapshot.json a home.",
+ "moved": {}
+}

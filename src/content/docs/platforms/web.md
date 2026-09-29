@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 50
 type: platform
+llms: apps
 searchTitle: "Web: embed and WebGPU in the browser"
 demo: "both"
 renders: ["cloud", "browser"]

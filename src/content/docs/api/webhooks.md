@@ -5,6 +5,7 @@ section: api
 group: "Live sessions"
 order: 40
 type: endpoint
+llms: api
 ---
 
 Agent generation and talking-video renders are asynchronous — agent creation takes

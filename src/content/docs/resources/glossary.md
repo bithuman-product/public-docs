@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 60
 type: reference
+llms: start
 searchTitle: "Glossary: bitHuman terms and older names"
 next: ["/models", "/deploy", "/resources/faq"]
 ---

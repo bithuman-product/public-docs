@@ -5,6 +5,7 @@ section: build
 group: "Create"
 order: 30
 type: guide
+llms: build
 ---
 
 ## Two ways to give your agent a voice

@@ -5,6 +5,7 @@ section: build
 group: "Examples"
 order: 21
 type: example
+llms: linked
 ---
 
 A SwiftUI app that opens an Essence 2 avatar, shows its idle motion, and speaks a line with the lips in sync, all rendered on the phone at the avatar's own resolution (up to 1080p). **Speak** plays the line again.

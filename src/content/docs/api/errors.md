@@ -5,6 +5,7 @@ section: api
 group: "Reference"
 order: 20
 type: reference
+llms: api
 ---
 
 ## Error response format

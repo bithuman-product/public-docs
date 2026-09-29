@@ -5,6 +5,7 @@ section: api
 group: "Start"
 order: 10
 type: endpoint
+llms: api
 ---
 
 Every REST call carries your API secret in the `api-secret` header. The same secret works for the SDKs and the CLI ([Your API secret](/start/api-secret)). Create one under [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys); the value is shown once.

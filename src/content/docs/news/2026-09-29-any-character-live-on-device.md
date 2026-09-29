@@ -5,6 +5,7 @@ section: resources
 group: "News"
 order: 20
 type: guide
+llms: none
 searchTitle: "News: any character, live, rendered on the user's device"
 models: ["essence-2", "expression-2"]
 demo: "both"

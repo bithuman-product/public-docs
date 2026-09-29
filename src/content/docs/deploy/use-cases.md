@@ -5,6 +5,7 @@ section: deploy
 group: "Use cases"
 order: 0
 type: guide
+llms: deploy
 claims: ["S3", "S4", "S19", "S29", "S30"]
 next: ["/deploy/use-cases/banking-and-atms", "/deploy/use-cases/healthcare", "/deploy/use-cases/events-and-trade-shows"]
 ---

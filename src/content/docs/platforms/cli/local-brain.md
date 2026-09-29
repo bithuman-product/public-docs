@@ -5,6 +5,7 @@ section: platforms
 group: "Code & terminal"
 order: 30
 type: guide
+llms: platforms
 renders: ["server", "no-gpu"]
 artifacts: ["cli"]
 ---

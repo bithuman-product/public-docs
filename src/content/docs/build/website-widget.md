@@ -5,6 +5,7 @@ section: build
 group: "Recipes"
 order: 12
 type: recipe
+llms: build
 time: "5 min"
 renders: ["cloud", "browser"]
 platforms: ["web"]

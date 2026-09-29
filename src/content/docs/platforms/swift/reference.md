@@ -5,6 +5,7 @@ section: platforms
 group: "SDK reference"
 order: 10
 type: reference
+llms: linked
 artifacts: ["swift"]
 ---
 

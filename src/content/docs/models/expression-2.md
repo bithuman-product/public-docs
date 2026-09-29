@@ -5,6 +5,7 @@ section: models
 group: "Models"
 order: 20
 type: concept
+llms: models
 models: ["expression-2"]
 claims: ["S1", "S3", "S13", "S21", "S28"]
 demo: "expression-2"

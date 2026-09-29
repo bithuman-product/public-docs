@@ -5,6 +5,7 @@ section: models
 group: "Concepts"
 order: 10
 type: concept
+llms: models
 next: ["/models/avatar-file", "/platforms", "/models"]
 ---
 

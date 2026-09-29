@@ -5,6 +5,7 @@ section: resources
 group: "Resources"
 order: 30
 type: changelog
+llms: none
 ---
 
 > **Note** This is the archive. Entries from August 2026 onwards are on the

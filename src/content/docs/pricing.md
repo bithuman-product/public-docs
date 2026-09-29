@@ -5,6 +5,7 @@ section: deploy
 group: "Overview"
 order: 20
 type: guide
+llms: deploy
 ---
 
 Credits pay for the time an avatar session is running, talking or idle, billed by the exact second. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here.

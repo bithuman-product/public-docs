@@ -5,6 +5,7 @@ section: api
 group: "Reference"
 order: 30
 type: reference
+llms: api
 ---
 
 ## Request limits

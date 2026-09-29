@@ -5,6 +5,7 @@ section: platforms
 group: "Apps"
 order: 20
 type: platform
+llms: apps
 searchTitle: "macOS: Mac apps and terminal tools on Apple silicon"
 renders: ["device"]
 needs: ["Apple silicon", "API secret"]

@@ -5,6 +5,7 @@ section: deploy
 group: "Overview"
 order: 10
 type: guide
+llms: deploy
 claims: ["S1", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S14", "S15", "S16", "S17", "S18", "S20", "S21", "S24", "S25", "S29", "S30"]
 next: ["/deploy", "/deploy/on-device", "/deploy/self-hosted"]
 ---

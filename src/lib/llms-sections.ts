@@ -23,12 +23,15 @@ import { contactSalesUrl } from "../config/nav";
 // fit nowhere. The app pages (group "Apps" in PLATFORM_PAGES) moved to /llms/apps.txt,
 // linked from /llms-full.txt like deploy, models and build. No page left the agent layer.
 //
-// scripts/check-llms.mjs caps each file and fails when a page is in no section
-// (and not linked-only) or in two, so no page can drop out of the agent layer.
+// A page's section is its `llms:` frontmatter field, never its nav `section` or
+// `type`, so a navigation change cannot move a page in or out of the agent layer.
+// scripts/check-llms.mjs requires the field on every page, caps each file and
+// fails when a page is in no section (and not linked-only) or in two.
 
 // Account administration, less-used endpoints, the CLI's local conversation
 // brain and the method page are linked with their .md twins rather than
-// inlined, to keep each file one fetch for an agent.
+// inlined, to keep each file one fetch for an agent. Each still names its
+// section in `llms:`; this set only decides inlined or linked within it.
 export const LINKED_ONLY = new Set([
   "api/api-keys", "api/organizations", "api/runtime-sessions", "api/billing",
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
@@ -43,46 +46,46 @@ export interface LlmsSection {
   summary: string;
   /** Inlined in /llms-full.txt as well as its own file. */
   inFull: boolean;
+  /** Reads the page's `llms:` field and nothing else. */
   has: (d: any) => boolean;
 }
 
-const isPlatformPage = (d: any) => d.data.section === "platforms" && (d.data.type === "platform" || d.data.type === "guide");
 
 export const LLMS_SECTIONS: LlmsSection[] = [
   {
     id: "start", title: "Get started", inFull: true,
     summary: "choose your path, your API secret, performance, FAQ, glossary",
-    has: (d) => d.data.section === "start" || d.data.section === "performance" || d.id === "resources/faq" || d.id === "resources/glossary",
+    has: (d) => d.data.llms === "start",
   },
   {
     id: "platforms", title: "Platforms", inFull: true,
     summary: "Python, CLI, Windows, LiveKit, REST",
-    has: (d) => isPlatformPage(d) && d.data.group !== "Apps",
+    has: (d) => d.data.llms === "platforms",
   },
   {
     id: "apps", title: "App platforms", inFull: false,
     summary: "iOS & iPadOS, macOS, Android, Flutter, Web",
-    has: (d) => isPlatformPage(d) && d.data.group === "Apps",
+    has: (d) => d.data.llms === "apps",
   },
   {
     id: "deploy", title: "Deploy", inFull: false,
     summary: "bitHuman cloud, your servers, on the device, fully offline; CPU only; privacy; pricing",
-    has: (d) => d.data.section === "deploy",
+    has: (d) => d.data.llms === "deploy",
   },
   {
     id: "models", title: "Models", inFull: false,
     summary: "Essence 2, Expression 2, Essence 2 Max, the first generation, how it works",
-    has: (d) => d.data.section === "models",
+    has: (d) => d.data.llms === "models",
   },
   {
     id: "build", title: "Build", inFull: false,
     summary: "voice agent, companion app, kiosk, talking video, avatars, personas, voices, gestures, MCP, troubleshooting",
-    has: (d) => d.id === "resources/troubleshooting" || (d.data.section === "build" && ["guide", "platform", "recipe"].includes(d.data.type)),
+    has: (d) => d.data.llms === "build",
   },
   {
     id: "api", title: "REST API", inFull: true,
     summary: "agents, realtime, video, voice, embedding, errors, rate limits",
-    has: (d) => d.data.section === "api",
+    has: (d) => d.data.llms === "api",
   },
 ];
 
