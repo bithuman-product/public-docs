@@ -2207,5 +2207,6 @@
       "includeFiles": "dist/docs-mcp-index.json",
       "maxDuration": 10
     }
-  }
+  },
+  "ignoreCommand": "bash scripts/vercel-ignore.sh --preview-always ."
 }
