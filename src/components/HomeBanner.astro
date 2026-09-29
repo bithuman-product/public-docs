@@ -1,0 +1,35 @@
+---
+// The bitHuman banner across the top of the home page, one image per theme
+// (owner, 2026-09-29: "for docs.bithuman.ai we can reuse the banner photo
+// above too as they are quite compelling"). Both images are in the page and
+// [data-theme] on <html> shows one, the way the nav's sun and moon icons swap,
+// so a reader's theme toggle swaps the banner with no script and no request.
+// The light image is the one a first paint needs (the markup's default theme);
+// the dark one waits (lazy) until it is shown. Both are cut to the light
+// banner's 1400:391 frame, so a toggle does not move the page.
+const light = "/images/banner/bithuman-banner";
+const dark = "/images/banner/bithuman-banner-black";
+const sizes = "(max-width: 560px) calc(100vw - 32px), (max-width: 1200px) calc(100vw - 48px), 1152px";
+---
+
+<figure class="home-banner" data-pagefind-ignore>
+  <picture class="hb-light">
+    <source type="image/webp" srcset={`${light}-800.webp 800w, ${light}-1400.webp 1400w`} sizes={sizes} />
+    <img src="/images/bithuman-banner.jpg" width="1400" height="391" alt="bitHuman" decoding="async" />
+  </picture>
+  <picture class="hb-dark">
+    <source type="image/webp" srcset={`${dark}-800.webp 800w, ${dark}-1386.webp 1386w`} sizes={sizes} />
+    <img src="/images/bitHuman_banner_black.jpg" width="1386" height="554" alt="bitHuman" loading="lazy" decoding="async" />
+  </picture>
+</figure>
+
+<style>
+  .home-banner { margin: 0; }
+  .home-banner img {
+    display: block; width: 100%; height: auto; aspect-ratio: 1400 / 391;
+    object-fit: cover; object-position: 50% 50%; border-radius: var(--r-lg);
+  }
+  .hb-dark { display: none; }
+  :root[data-theme="dark"] .hb-light { display: none; }
+  :root[data-theme="dark"] .hb-dark { display: block; }
+</style>
