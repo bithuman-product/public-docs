@@ -85,6 +85,7 @@ add default 0 links:placeholders            "node scripts/check-placeholders.mjs
 add default 0 links:kotlin-buildconfig      "node scripts/check-kotlin-buildconfig.mjs && node scripts/check-kotlin-buildconfig.mjs --selftest"
 add default 0 links:mobile-sdk-arrival      "node scripts/check-mobile-sdk-arrival.mjs && node scripts/check-mobile-sdk-arrival.mjs --selftest"
 add default 0 links:dependency-coordinates  "node scripts/check-dependency-coordinates.mjs && node scripts/check-dependency-coordinates.mjs --selftest"
+add default 0 links:og-cast-selftest        "node scripts/gen-og.mjs --selftest"
 add default 0 links:openapi-in-sync         "npm run sync-openapi --silent && git diff --exit-code -- public/api/openapi.yaml"
 
 # link-check.yml / job `served-comments` (built bytes; needs the build step)
