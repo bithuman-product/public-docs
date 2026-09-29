@@ -325,6 +325,8 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   .doc-metaline a:hover { color: var(--color-text); }
   .doc-head-actions { margin-top: var(--s-4); }
   .doc-demo { margin-block: var(--s-6) var(--s-8); }
+  /* a demo right under the head keeps the same 32 (grid margins do not collapse) */
+  .doc-head + .doc-demo { margin-top: 0; }
   .doc-demo :global(.ld) { max-width: 380px; margin-inline: 0; }
   .doc-pager { display: flex; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-12); }
   .pager { display: flex; flex-direction: column; gap: var(--s-1); max-width: 48%; color: var(--color-text); }
