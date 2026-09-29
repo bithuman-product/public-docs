@@ -52,11 +52,16 @@ public-docs and bithuman-models; keep it identical):
 - **Every step is capped:** `systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=0
   -p CPUQuota=400% nice -n 19`, node, tsc, lint, vitest, `next build`, `astro build` and
   Lighthouse alike. `--no-cap` drops the cap but **still takes a slot**.
+- **Slots go out first come, first served** (FIFO, 2026-09-29). Each waiting suite holds a
+  ticket in `~/_locks/local-ci/queue/`; only the oldest live one may take a free slot (the
+  wait line says `queue position P of N`). A killed waiter's ticket is removed by the next.
 - **Lighthouse/perf steps take the EXCLUSIVE host lock** (`host.lock`: every suite holds it
   shared) and so run only when no other CI suite is running, instead of running uncapped.
   A step waiting for it blocks new suites from starting (`turnstile.lock`), so it cannot
-  starve.
-- `bash ci/host-gate.sh status` shows who holds which slot and the host lock.
+  starve; but it first YIELDS while any suite has queued for a slot longer than
+  `LOCAL_CI_EXCL_YIELD_S` (600 s), so it cannot starve them either. A hold longer than
+  `LOCAL_CI_EXCL_MAX_S` (900 s) logs a WARNING (`LOCAL_CI_EXCL_ENFORCE=1`: `timeout` too).
+- `bash ci/host-gate.sh status` shows who holds which slot, the host lock, and the queue.
 - **`--host orinda`** (optional; default stays local): runs the suite on orinda over ssh,
   only while orinda's measurement lock is free. It takes that lock with
   `~/bin_mlock.sh acquire local-ci-<repo>-...` on orinda (refused while a measurement holds
