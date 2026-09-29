@@ -38,7 +38,7 @@ export const GROUP_ORDER: Record<SectionId, string[]> = {
   build: ["Create", "Recipes", "Examples"],
   api: ["Start", "Agents", "Speech & video", "Live sessions", "Account", "Reference"],
   performance: ["Performance"],
-  resources: ["Resources", "Legal"],
+  resources: ["Resources", "News", "Legal"],
 };
 
 export interface NavLink { label: string; href: string; external?: boolean; match?: string[] }
@@ -70,6 +70,7 @@ export const TOP_NAV: NavLink[] = [
 export const RESOURCES_MENU: NavLink[] = [
   { label: "Downloads & versions", href: "/downloads" },
   { label: "Changelog", href: "/changelog" },
+  { label: "News", href: "/news" },
   { label: "Pricing and credits", href: "/pricing" },
   { label: "Troubleshooting", href: "/resources/troubleshooting" },
   { label: "FAQ", href: "/resources/faq" },
