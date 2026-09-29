@@ -19,44 +19,37 @@
    ========================================================================== */
 
 :root {
-  --code-lh: 1.6;
-  --code-fs: 0.84rem;
+  --code-lh: var(--lh-14);
+  --code-fs: var(--fs-14);
   --code-indent: 2.25ch;
 }
 
 /* ---- the card ---------------------------------------------------------- */
 /* .bh-code is put around every <pre> at load; without scripting the <pre>
-   below still stands on its own and reads correctly. */
+   below still stands on its own and reads correctly. Surface, a 1 px line,
+   radius 10, and a ghost copy icon in the corner. A 36 px bar appears only
+   when the block carries a caption ("Terminal", "Expected output") or tabs. */
 .bh-code {
+  position: relative;
   margin: var(--s-6) 0;
   border: 1px solid var(--color-border);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-10);
   background: var(--color-code-bg);
   overflow: hidden;
 }
-/* The bar carries the language on the left and Copy on the right. A block with
-   no language — the commands on the /platforms cards — gets just the button. */
 .bh-code-bar {
+  position: absolute;
+  top: var(--s-2);
+  right: var(--s-2);
+  z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: var(--s-3);
-  padding: 0.3rem 0.4rem 0.3rem 0.85rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface-2);
-}
-.bh-code-lang {
-  margin-right: auto;
-  font-size: var(--ft-xs);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-tertiary);
 }
 .bh-code > pre {
   margin: 0;
   border: 0;
   border-radius: 0;
+  padding-right: var(--s-12);
   background: transparent !important;
 }
 /* One base for every code block on the site, so a block reads correctly before
@@ -64,33 +57,31 @@
 pre {
   padding: var(--s-4);
   border: 1px solid var(--color-border);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-10);
   background: var(--color-code-bg);
 }
 
-/* ---- the copy button --------------------------------------------------- */
+/* ---- the copy button: a ghost icon ------------------------------------- */
 .code-copy {
   flex: none;
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.6rem;
-  font-family: var(--font-sans);
-  font-size: var(--ft-xs);
-  font-weight: var(--fw-medium);
-  color: var(--color-text-secondary);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--r-sm);
-  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--color-text-tertiary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-6);
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
 .code-copy:hover {
   color: var(--color-text);
-  border-color: var(--color-border-strong);
+  background: var(--color-surface-3);
 }
-.code-copy[data-copied] {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
+.code-copy[data-copied] { color: var(--color-text); }
+.code-copy svg { width: 16px; height: 16px; }
 
 /* ---- the code itself --------------------------------------------------- */
 pre {

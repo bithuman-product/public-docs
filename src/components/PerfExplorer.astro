@@ -10,9 +10,10 @@
 </script>
 
 <style is:global>
-  .pe { margin: var(--s-6) 0 var(--s-8); padding: var(--s-5); border: 1px solid var(--color-border); border-radius: var(--r-xl); background: var(--color-surface); box-shadow: var(--shadow-sm); }
+  /* no box (docs v2): one control row, a one-line legend, one disclosure per section */
+  .pe { margin: var(--s-6) 0 var(--s-8); padding: 0; border: 0; background: none; }
   .pe-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-5); }
-  .pe .pe-claim { margin: 0; font-size: var(--ft-lg); font-weight: var(--fw-bold); line-height: var(--lh-snug); letter-spacing: -0.01em; color: var(--color-text); }
+  .pe .pe-claim { margin: 0; font-size: var(--ft-lg); font-weight: var(--fw-medium); line-height: var(--lh-snug); letter-spacing: -0.01em; color: var(--color-text); }
   .pe-controls { display: none; align-items: center; flex-wrap: wrap; gap: var(--s-3) var(--s-4); }
   .js .pe-controls { display: flex; }
   .pe-toggle input:focus-visible, .pe-d summary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
@@ -25,14 +26,14 @@
   .pe-key-cpu, .pe-key-held { display: inline-block; width: 12px; height: 10px; margin-right: 6px; border-radius: var(--r-hair); background: var(--bar-cpu); vertical-align: -1px; }
   .pe-key-held { background: repeating-linear-gradient(135deg, var(--bar) 0 3px, var(--bar-2) 3px 5px); }
   .js .pe:not([data-held]) .pe-leg-held { display: none; }
-  .pe .pe-mh { margin: var(--s-6) 0 0; font-size: var(--ft-md); font-weight: var(--fw-bold); color: var(--color-text); }
+  .pe .pe-mh { margin: var(--s-6) 0 0; font-size: var(--ft-md); font-weight: var(--fw-medium); color: var(--color-text); }
   .js .pe-mh { display: none; }
   .js .pe-panel { display: none; }
   .js .pe[data-model="essence-2"] [data-model-panel="essence-2"],
   .js .pe[data-model="expression-2"] [data-model-panel="expression-2"] { display: block; }
   .js .pe:not([data-held]) .pe-held { display: none; }
   .pe .pe-table { display: table; width: 100%; margin: var(--s-5) 0 0; border: 0; border-collapse: collapse; font-size: var(--ft-sm); }
-  .pe .pe-table caption { padding: 0 0 var(--s-1); text-align: left; font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
+  .pe .pe-table caption { padding: 0 0 var(--s-1); text-align: left; font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
   .pe .pe-table tr { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; }
   .pe .pe-table tbody tr + tr { border-top: 1px solid var(--color-border); }
   .pe .pe-table tbody tr:hover td { background: none; }
@@ -48,7 +49,7 @@
   .pe-held .pe-fill { background: repeating-linear-gradient(135deg, var(--bar) 0 6px, var(--bar-2) 6px 10px); }
   .pe-cap .pe-fill { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); }
   .pe-below .pe-fill { background: var(--color-text-tertiary); }
-  .pe-x { font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-text); white-space: nowrap; }
+  .pe-x { font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--color-text); white-space: nowrap; }
   .pe .pe-d { margin: 2px 0 0; border: 0; border-radius: 0; background: none; font-size: var(--ft-xs); color: var(--color-text-secondary); }
   .pe .pe-d summary { display: inline-flex; width: fit-content; padding: 0; gap: 0.35rem; font-size: var(--ft-xs); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
   .pe .pe-d summary::before { width: 0.3rem; height: 0.3rem; }
@@ -56,7 +57,6 @@
   .pe .pe-d > span { display: block; margin: 2px 0 0; line-height: var(--lh-snug); }
   .pe .pe-foot { margin: var(--s-4) 0 0; font-size: var(--ft-xs); color: var(--color-text-tertiary); }
   @media (max-width: 700px) {
-    .pe { padding: var(--s-4); }
     .pe .pe-table, .pe .pe-table tbody { display: block; }
     .pe .pe-table caption { display: block; }
     .pe .pe-table tr { display: grid; grid-template-columns: minmax(0, 1fr); padding: var(--s-2) 0; }

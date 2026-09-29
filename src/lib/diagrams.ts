@@ -90,7 +90,7 @@ function draw(d: Diagram): { svg: string; h: number } {
     }
     const zh = cy - GAP + ZPAD - y;
     svg += `<g class="dg-z${g.bh ? " dg-bh" : ""}"><rect x="${zx}" y="${y}" width="${zw}" height="${zh}" rx="14"/>` +
-      `<text x="${zx + 14}" y="${y + 18}">${esc(g.label.toUpperCase())}</text></g>` + placed.map(boxSvg).join("");
+      `<text x="${zx + 14}" y="${y + 18}">${esc(g.label)}</text></g>` + placed.map(boxSvg).join("");
     bounds.push({ top: y, bottom: y + zh });
     y += zh + (gi < d.groups.length - 1 ? LINK : 0);
   });

@@ -1,45 +1,60 @@
 ---
-// Beside every page title: copy the page as markdown, open the markdown, or ask
-// an AI assistant about the page. The markdown is the page's /<page>.md twin.
+// "Copy page ▾" (docs v2 shell): one split control. The button copies the
+// page's /<page>.md twin; the chevron opens View as Markdown · Open in ChatGPT
+// · Open in Claude. It sits under the TOC at ≥1280 px, otherwise at the end
+// of the page head.
 interface Props { md: string }
 const { md } = Astro.props;
 const abs = `https://docs.bithuman.ai${md}`;
 const prompt = encodeURIComponent(`Read ${abs} and help me build with bitHuman.`);
 ---
 <div class="page-actions" data-page-actions data-md={md} data-pagefind-ignore>
-  <button type="button" class="pa-btn" data-pa-copy aria-label="Copy page as markdown">Copy page</button>
+  <button type="button" class="pa-copy" data-pa-copy aria-label="Copy page as markdown">
+    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"></rect><path d="M11 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6.5A1.5 1.5 0 0 0 3 11h.5" fill="none" stroke="currentColor" stroke-width="1.3"></path></svg>
+    <span data-pa-label>Copy page</span>
+  </button>
   <details class="pa-more">
-    <summary class="pa-btn" aria-label="More page actions">More ▾</summary>
+    <summary class="pa-chev" aria-label="More ways to use this page">
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+    </summary>
     <div class="pa-menu">
-      <a href={md}>View as markdown</a>
-      <a href={`https://claude.ai/new?q=${prompt}`} target="_blank" rel="noopener">Open in Claude ↗</a>
-      <a href={`https://chatgpt.com/?q=${prompt}`} target="_blank" rel="noopener">Open in ChatGPT ↗</a>
+      <a href={md}>View as Markdown</a>
+      <a href={`https://chatgpt.com/?q=${prompt}`} target="_blank" rel="noopener">Open in ChatGPT</a>
+      <a href={`https://claude.ai/new?q=${prompt}`} target="_blank" rel="noopener">Open in Claude</a>
     </div>
   </details>
 </div>
 <script>
   document.querySelectorAll("[data-page-actions]").forEach((root) => {
     const btn = root.querySelector("[data-pa-copy]") as HTMLButtonElement;
+    const label = root.querySelector("[data-pa-label]") as HTMLElement;
     btn?.addEventListener("click", async () => {
       try {
         const r = await fetch((root as HTMLElement).dataset.md!);
         await navigator.clipboard.writeText(await r.text());
-        btn.textContent = "Copied";
+        label.textContent = "Copied";
       } catch (_) {
-        btn.textContent = "Copy failed";
+        label.textContent = "Copy failed";
       }
-      setTimeout(() => (btn.textContent = "Copy page"), 1400);
+      setTimeout(() => (label.textContent = "Copy page"), 1400);
     });
+    const more = root.querySelector("details");
+    document.addEventListener("click", (e) => { if (more?.open && !more.contains(e.target as Node)) more.open = false; });
   });
 </script>
 <style>
-  .page-actions { display: inline-flex; gap: 0.25rem; align-items: center; flex: none; position: relative; }
-  .pa-btn { font-size: var(--ft-xs); padding: 0.3rem 0.6rem; border: 1px solid var(--color-border); border-radius: var(--r-md); background: var(--color-surface); color: var(--color-text-secondary); cursor: pointer; list-style: none; }
-  .pa-btn:hover { color: var(--color-text); border-color: var(--color-text-tertiary); }
-  .pa-more summary { list-style: none; display: inline-block; }
+  .page-actions { display: inline-flex; align-items: stretch; flex: none; position: relative; border: 1px solid var(--color-border); border-radius: var(--r-6); background: var(--color-bg); }
+  .pa-copy, .pa-chev { display: inline-flex; align-items: center; gap: var(--s-2); padding: var(--s-1) var(--s-3); border: 0; background: none; font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); cursor: pointer; list-style: none; transition: color var(--t-fast) var(--ease); }
+  .pa-chev { height: 100%; padding: var(--s-1) var(--s-2); border-left: 1px solid var(--color-border); }
+  .pa-copy:hover, .pa-chev:hover { color: var(--color-text); }
+  /* not a prose disclosure: undo .prose details / summary inside the page head */
+  .page-actions details.pa-more { display: flex; margin: 0; border: 0; }
+  .page-actions summary.pa-chev { min-height: 0; font-weight: var(--fw-regular); }
+  .page-actions summary.pa-chev::before { content: none; }
+  .page-actions details.pa-more > .pa-menu { margin: 0; }
   .pa-more summary::-webkit-details-marker { display: none; }
   .pa-more summary::marker { content: ""; }
-  .pa-menu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 20; display: flex; flex-direction: column; min-width: 12rem; padding: 0.35rem; border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface); box-shadow: var(--shadow-md); }
-  .pa-menu a { padding: 0.4rem 0.6rem; border-radius: var(--r-md); font-size: var(--ft-sm); color: var(--color-text); }
+  .pa-menu { position: absolute; left: 0; top: calc(100% + 4px); z-index: 20; display: flex; flex-direction: column; min-width: 12rem; padding: var(--s-1); border: 1px solid var(--color-border); border-radius: var(--r-10); background: var(--color-bg); box-shadow: var(--shadow-md); }
+  .pa-menu a { padding: var(--s-2) var(--s-3); border-radius: var(--r-6); font-size: var(--fs-14); color: var(--color-text); }
   .pa-menu a:hover { background: var(--color-surface-2); }
 </style>

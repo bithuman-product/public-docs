@@ -40,7 +40,7 @@ const ogImage = new URL(ogPath, site).href;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -103,24 +103,23 @@ const ogImage = new URL(ogPath, site).href;
       />
     </noscript>
 
-    {/* No-FOUC theme init: set [data-theme] before paint */}
+    {/* Theme: follows the system (tokens.css reads prefers-color-scheme); a
+         choice made with the header toggle is stored and pinned before paint. */}
     <script is:inline>
       (function () {
         try {
           var t = localStorage.getItem("bh-theme");
-          if (!t)
-            t = window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
-          document.documentElement.setAttribute("data-theme", t);
+          if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
         } catch (e) {}
         document.documentElement.classList.add("js");
       })();
     </script>
   </head>
   <body>
+    {/* The agent hint: first node in <body>, visually hidden, not in search, not in the twin. */}
+    <p class="agent-hint" data-agent-hint data-pagefind-ignore>Docs index: <a href="/llms.txt">/llms.txt</a> · every page as Markdown: add .md</p>
     <a class="skip-link" href="#main" data-pagefind-ignore>Skip to content</a>
-    <Nav />
+    {Astro.slots.has("drawer") ? <Nav><slot name="drawer" slot="drawer" /></Nav> : <Nav />}
     <main id="main">
       <slot />
     </main>
@@ -129,10 +128,11 @@ const ogImage = new URL(ogPath, site).href;
 
     {/* theme toggle + scroll reveal */}
     <script is:inline>
-      // Theme toggle
+      // Theme toggle: flips whatever is showing now (the system's or a stored choice).
       window.__bhToggleTheme = function () {
         var el = document.documentElement;
-        var next = el.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        var cur = el.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        var next = cur === "dark" ? "light" : "dark";
         el.setAttribute("data-theme", next);
         try {
           localStorage.setItem("bh-theme", next);
@@ -170,16 +170,18 @@ const ogImage = new URL(ogPath, site).href;
         }, 2500);
       })();
       // Mobile nav
-      window.__bhToggleMenu = function () {
-        document.documentElement.classList.toggle("nav-open");
+      window.__bhToggleMenu = function (btn) {
+        var open = document.documentElement.classList.toggle("nav-open");
+        if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
       };
       // Every code block on the site — prose, platform cards, tabbed samples —
-      // gets the same card: a bar naming the language and a Copy button that is
-      // always visible. The button used to appear on hover only, which a phone
-      // cannot do, and it lived inside the <pre>, so it scrolled away with the
-      // code. The text is read at click time so a block filled in later (the
+      // gets the same card: surface, a 1 px line, and a ghost copy icon that is
+      // always visible (a phone cannot hover) and stays put when the code wraps.
+      // The text is read at click time so a block filled in later (the
       // playground) copies what is on screen.
       (function () {
+        var ICON_COPY = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>';
+        var ICON_DONE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.5 3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         document.querySelectorAll("pre").forEach(function (pre) {
           // The tabbed sample, the playground and the embed demo already draw a
           // bar with their own copy control. Everything else gets the card.
@@ -191,29 +193,26 @@ const ogImage = new URL(ogPath, site).href;
           card.className = "bh-code";
           var bar = document.createElement("div");
           bar.className = "bh-code-bar";
-          var langName = pre.getAttribute("data-language");
           var btn = document.createElement("button");
           btn.className = "code-copy";
           btn.type = "button";
-          btn.textContent = "Copy";
+          btn.setAttribute("aria-label", "Copy");
+          btn.title = "Copy";
+          btn.innerHTML = ICON_COPY;
           btn.addEventListener("click", function () {
             // Copy leaves out the "# →" lines that show a command's output.
             var text = code.innerText.split("\n").filter(function (l) { return !/^\s*(#|\/\/)\s?→/.test(l); }).join("\n");
             navigator.clipboard.writeText(text).then(function () {
-              btn.textContent = "Copied";
+              btn.innerHTML = ICON_DONE;
+              btn.setAttribute("aria-label", "Copied");
               btn.setAttribute("data-copied", "");
               setTimeout(function () {
-                btn.textContent = "Copy";
+                btn.innerHTML = ICON_COPY;
+                btn.setAttribute("aria-label", "Copy");
                 btn.removeAttribute("data-copied");
               }, 1400);
             }).catch(function () {});
           });
-          if (langName) {
-            var lang = document.createElement("span");
-            lang.className = "bh-code-lang";
-            lang.textContent = langName;
-            bar.appendChild(lang);
-          }
           bar.appendChild(btn);
 
           pre.replaceWith(card);
@@ -235,6 +234,17 @@ const ogImage = new URL(ogPath, site).href;
         border-radius: var(--r-md);
       }
       .skip-link:focus { left: 12px; top: 12px; }
+      .agent-hint {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
     </style>
   </body>
 </html>

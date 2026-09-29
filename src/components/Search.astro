@@ -164,7 +164,7 @@ const ORDER = Object.values(SECTIONS).map((s) => s.label);
   .sm-close { flex: none; font-size: var(--ft-xs); color: var(--color-text-tertiary); background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--r-sm); padding: 0.2rem 0.45rem; cursor: pointer; }
   .sm-facets { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: var(--s-3) var(--s-4) 0; }
   .sm-facets[hidden] { display: none; }
-  .sm-facets :global(.sm-facet) { padding: 0.2rem 0.7rem; border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface); color: var(--color-text-secondary); font: inherit; font-size: var(--ft-xs); font-weight: var(--fw-medium); cursor: pointer; }
+  .sm-facets :global(.sm-facet) { padding: 0.2rem 0.7rem; border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface); color: var(--color-text-secondary); font: inherit; font-size: var(--ft-xs); font-weight: var(--fw-regular); cursor: pointer; }
   .sm-facets :global(.sm-facet span) { color: var(--color-text-tertiary); font-weight: var(--fw-regular); margin-left: 0.15rem; }
   .sm-facets :global(.sm-facet[aria-pressed="true"]) { border-color: transparent; background: var(--color-primary-soft); color: var(--color-primary); }
   .sm-facets :global(.sm-facet:focus-visible) { outline: 2px solid var(--color-primary); outline-offset: 2px; }
@@ -183,7 +183,7 @@ const ORDER = Object.values(SECTIONS).map((s) => s.label);
   .sm-results :global(.sm-subs) { margin: -0.1rem 0 var(--s-1) var(--s-4); border-left: 1px solid var(--color-border); }
   .sm-results :global(.sm-sub) { padding: var(--s-1) var(--s-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
   .sm-popular[hidden] { display: none; }
-  .sm-label { margin: var(--s-1) var(--s-2) var(--s-2); font-size: var(--ft-xs); font-weight: var(--fw-medium); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-tertiary); }
+  .sm-label { margin: var(--s-1) var(--s-2) var(--s-2); font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
   .sm-popular a { display: block; padding: var(--s-2) var(--s-3); border-radius: var(--r-md); color: var(--color-text); text-decoration: none; font-size: var(--ft-sm); }
   .sm-popular a:hover, .sm-popular a:focus-visible { background: var(--color-surface-2); outline: none; }
   .sm-popular a:focus-visible { box-shadow: inset 0 0 0 2px var(--color-primary); }

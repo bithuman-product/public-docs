@@ -19,7 +19,7 @@ interface Props {
 }
 const { tabs, title, group } = Astro.props;
 const name = group ?? groupOf(tabs.map((t) => t.label));
-const themes = { light: "github-light-high-contrast", dark: "github-dark" } as const;
+import { codeTheme } from "../lib/code-theme.mjs";
 // A stable id from the content, so builds are reproducible.
 let h = 0;
 for (const c of JSON.stringify(tabs)) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0;
@@ -51,7 +51,7 @@ const single = tabs.length === 1;
       <div class:list={["ct-panel", { active: i === 0 }]} role={single ? undefined : "tabpanel"} id={`${uid}-${i}-p`}
         aria-labelledby={single ? undefined : `${uid}-${i}`} data-raw={stripOutput(t.code)}>
         {!single && <p class="ct-label">{t.label}</p>}
-        <Code code={t.code} lang={t.lang as any} themes={themes} />
+        <Code code={t.code} lang={t.lang as any} theme={codeTheme as any} />
       </div>
     ))}
   </div>
@@ -116,10 +116,10 @@ const single = tabs.length === 1;
     transition: color var(--t-fast) var(--ease);
   }
   .ct-copy:hover { color: var(--color-text); }
-  .ct-one { padding: 0.32rem 0.7rem; font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); }
+  .ct-one { padding: 0.32rem 0.7rem; font-size: var(--ft-xs); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
   .ct-tabs { display: none; }
   :global(.js) .ct-tabs { display: flex; }
-  .ct-label { margin: 0; padding: var(--s-2) var(--s-6) 0; font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); }
+  .ct-label { margin: 0; padding: var(--s-2) var(--s-6) 0; font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
   :global(.js) .ct-label { display: none; }
   :global(.js) .ct-panel:not(.active) { display: none; }
   .ct-panel + .ct-panel { border-top: 1px solid var(--color-border); }

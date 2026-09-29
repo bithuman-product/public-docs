@@ -28,11 +28,7 @@
   .dev-iphone, .dev-android { --dev-pad: 5px; --dev-top: 5px; padding: var(--dev-pad); border: 0; background: var(--color-bezel); border-radius: var(--r-device); box-shadow: 0 0 0 1px var(--color-border-strong); }
   .dev-iphone > picture, .dev-android > picture { overflow: hidden; border-radius: var(--r-device-screen); }
   .dev-iphone > :is(.fig-loop, .fig-clip), .dev-android > :is(.fig-loop, .fig-clip) { border-radius: var(--r-device-screen) !important; }
-  .dev-mac, .dev-linux-pc, .dev-browser, .dev-terminal { --dev-top: 18px; padding-top: var(--dev-top); }
-  .dev-mac::before, .dev-linux-pc::before, .dev-browser::before, .dev-terminal::before {
-    content: ""; position: absolute; top: 6px; left: 9px; width: 30px; height: 6px;
-    background: radial-gradient(circle 3px at 3px 3px, var(--gray-400) 98%, transparent) 0 0 / 11px 6px repeat-x;
-  }
+  /* window frames: a plain 1 px frame, no title bar and no window dots (docs v2) */
   .dev-mac > picture img, .dev-linux-pc > picture img, .dev-browser > picture img, .dev-terminal > picture img { border-radius: 0 !important; }
   /* "Play with sound": a pill over the capture */
   .fig-sound {
@@ -41,7 +37,7 @@
     background: var(--color-overlay); color: var(--color-on-overlay) !important; font-size: var(--ft-sm); font-weight: var(--fw-medium);
     text-decoration: none !important; white-space: nowrap; backdrop-filter: blur(6px);
   }
-  .fig-sound:hover { background: rgba(12, 12, 16, 0.86); }
+  .fig-sound:hover { background: var(--color-overlay-strong); }
   .fig-sound:focus-visible { outline: 2px solid var(--color-on-overlay); outline-offset: 2px; }
   /* a figure on a page */
   .prose figure.fig { margin: var(--s-5) 0 var(--s-6); max-width: 280px; text-align: left; }

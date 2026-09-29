@@ -14,7 +14,7 @@ import { apiSpec, mdHtml, type Operation } from "../../lib/openapi";
 const title = "API reference";
 const description = hubMeta("api/reference").description;
 const api = apiSpec();
-const themes = { light: "github-light-high-contrast", dark: "github-dark" } as const;
+import { codeTheme } from "../../lib/code-theme.mjs";
 const statusKind = (s: string) => (s.startsWith("2") ? "ok" : s.startsWith("3") ? "redirect" : s.startsWith("4") ? "client" : "server");
 const lead = (op: Operation) => op.params.filter((p) => p.where !== "header" || !/^(api-secret|authorization)$/i.test(p.name));
 const jsonLd = [{
@@ -103,15 +103,15 @@ const GUIDES = [
                       {op.samples.map((s, k) => (
                         <div class:list={["mdt-panel", { active: k === 0 }]} role="tabpanel" id={`${op.id}-t${k}-p`} aria-labelledby={`${op.id}-t${k}`}>
                           <p class="mdt-label">{s.label}</p>
-                          <Code code={s.code} lang={s.lang as any} themes={themes} />
+                          <Code code={s.code} lang={s.lang as any} theme={codeTheme as any} />
                         </div>
                       ))}
                     </div>
-                  ) : op.samples.map((s) => <Code code={s.code} lang={s.lang as any} themes={themes} />)}
+                  ) : op.samples.map((s) => <Code code={s.code} lang={s.lang as any} theme={codeTheme as any} />)}
                   {op.responses.filter((r) => r.example).slice(0, 1).map((r) => (
                     <div class="ar-example">
                       <p class="ar-h">Response <span class={`ar-s ar-s-${statusKind(r.status)}`}>{r.status}</span></p>
-                      <Code code={r.example!} lang="json" themes={themes} />
+                      <Code code={r.example!} lang="json" theme={codeTheme as any} />
                     </div>
                   ))}
                 </div>
@@ -132,14 +132,14 @@ const GUIDES = [
 <style is:global>
   .ar { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s-10); max-width: var(--container-wide, 1400px); margin: 0 auto; padding: 0 var(--s-6); }
   .ar-side { position: sticky; top: calc(var(--nav-h) + var(--s-4)); align-self: start; max-height: calc(100vh - var(--nav-h) - var(--s-8)); overflow-y: auto; padding: var(--s-6) 0 var(--s-8); font-size: var(--ft-sm); }
-  .ar-side-h, .ar-toc-m > summary { display: flex; align-items: center; gap: var(--s-2); margin: 0 0 var(--s-3); font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
+  .ar-side-h, .ar-toc-m > summary { display: flex; align-items: center; gap: var(--s-2); margin: 0 0 var(--s-3); font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
   .ar-count { padding: 0 6px; border-radius: var(--r-pill); background: var(--color-surface-2); color: var(--color-text-secondary); }
   .ar-side .ar-toc-group + .ar-toc-group, .ar-toc-m .ar-toc-group + .ar-toc-group { margin-top: var(--s-4); }
   .ar .ar-toc-tag { display: block; margin-bottom: var(--s-1); font-weight: var(--fw-medium); color: var(--color-text); }
   .ar .ar-toc ul { list-style: none; margin: 0; padding: 0; }
   .ar .ar-toc li a { display: flex; align-items: baseline; gap: var(--s-2); padding: 3px 0; color: var(--color-text-secondary); line-height: var(--lh-snug); }
   .ar .ar-toc li a:hover { color: var(--color-text); }
-  .ar .ar-toc .ar-m { flex: none; width: 2.6rem; font-size: 0.66rem; }
+  .ar .ar-toc .ar-m { flex: none; width: 2.6rem; font-size: var(--fs-12); }
   .ar-toc-m { display: none; margin-top: var(--s-4); padding: var(--s-3) var(--s-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); font-size: var(--ft-sm); }
   .ar-toc-m > summary { margin: 0; cursor: pointer; list-style: none; }
   .ar-toc-m > summary::-webkit-details-marker { display: none; }
@@ -154,7 +154,7 @@ const GUIDES = [
   .ar-facts li { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--s-3); }
   .ar-facts li > span:first-child { color: var(--color-text-tertiary); }
   .ar-note { margin-top: var(--s-4); max-width: 80ch; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .ar-main code { font-family: var(--font-mono); font-size: 0.88em; overflow-wrap: anywhere; }
+  .ar-main code { font-family: var(--font-mono); font-size: var(--fs-14); overflow-wrap: anywhere; }
   .ar-main a { color: var(--color-primary); font-weight: var(--fw-medium); }
   /* A link inside running text is underlined, not told apart by colour alone. */
   .ar-desc a, .ar-note a, .ar-table a, .ar-resp a, .ar-facts a { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--color-primary) 45%, transparent); text-underline-offset: 2px; }
@@ -173,7 +173,7 @@ const GUIDES = [
   .ar-path { font-size: var(--ft-md) !important; font-weight: var(--fw-medium); color: var(--color-text); }
   .ar-sum { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); margin-top: var(--s-1); font-weight: var(--fw-medium); color: var(--color-text); }
   .ar-chip { font-weight: var(--fw-regular); }
-  .ar-m { display: inline-block; padding: 1px 7px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: 0.72rem; font-weight: var(--fw-bold); letter-spacing: 0.02em; text-align: center; background: var(--color-surface-3); color: var(--color-text); }
+  .ar-m { display: inline-block; padding: 1px 7px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: var(--fs-12); font-weight: var(--fw-regular); letter-spacing: 0.02em; text-align: center; background: var(--color-surface-3); color: var(--color-text); }
   .ar-m-get { background: color-mix(in srgb, var(--green-500) 16%, transparent); }
   .ar-m-post { background: color-mix(in srgb, var(--blue-500) 16%, transparent); }
   .ar-m-put, .ar-m-patch { background: color-mix(in srgb, var(--amber-500) 20%, transparent); }
@@ -183,11 +183,11 @@ const GUIDES = [
   .ar-code { position: sticky; top: calc(var(--nav-h) + var(--s-4)); display: grid; gap: var(--s-3); }
   .ar-code pre { margin: 0; padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); border: 1px solid var(--color-border); font-size: var(--ft-xs); max-height: 420px; overflow: auto; }
   .ar-code .md-tabs { margin: 0; }
-  .ar-h { display: flex; align-items: center; gap: var(--s-2); margin: var(--s-4) 0 var(--s-2); font-size: var(--ft-xs); font-weight: var(--fw-medium); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
+  .ar-h { display: flex; align-items: center; gap: var(--s-2); margin: var(--s-4) 0 var(--s-2); font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
   .ar-example .ar-h { margin-top: 0; }
   .ar-ct { text-transform: none; letter-spacing: 0; font-family: var(--font-mono); color: var(--color-text-secondary); }
   .ar-table { width: 100%; border-collapse: collapse; font-size: var(--ft-sm); }
-  .ar-table th { padding: 0 var(--s-3) var(--s-1) 0; border-bottom: 1px solid var(--color-border-strong); text-align: left; font-size: var(--ft-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); }
+  .ar-table th { padding: 0 var(--s-3) var(--s-1) 0; border-bottom: 1px solid var(--color-border-strong); text-align: left; font-size: var(--ft-xs); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
   .ar-table td { padding: var(--s-2) var(--s-3) var(--s-2) 0; border-bottom: 1px solid var(--color-border); vertical-align: top; color: var(--color-text-secondary); }
   .ar-table td:first-child { white-space: nowrap; color: var(--color-text); }
   .ar-table td p { margin: 0; }
@@ -195,7 +195,7 @@ const GUIDES = [
   .ar-resp { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-2); font-size: var(--ft-sm); color: var(--color-text-secondary); }
   .ar-resp li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: var(--s-3); align-items: start; }
   .ar-resp li p { margin: 0; }
-  .ar-s { display: inline-block; padding: 1px 6px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: var(--ft-xs); font-weight: var(--fw-bold); text-align: center; background: var(--color-surface-3); color: var(--color-text); }
+  .ar-s { display: inline-block; padding: 1px 6px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: var(--ft-xs); font-weight: var(--fw-regular); text-align: center; background: var(--color-surface-3); color: var(--color-text); }
   .ar-s-ok { background: color-mix(in srgb, var(--green-500) 16%, transparent); }
   .ar-s-client { background: color-mix(in srgb, var(--amber-500) 20%, transparent); }
   .ar-s-server { background: color-mix(in srgb, var(--red-500) 16%, transparent); }

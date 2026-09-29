@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns:
     [full-start] minmax(0, 1fr)
-    [text-start] min(100%, 46rem) [text-end]
+    [text-start] min(100%, var(--text-w)) [text-end]
     minmax(0, 1fr) [full-end];
   font-size: var(--ft-md);
   line-height: var(--lh-normal);
@@ -20,44 +20,61 @@
 .prose > :first-child { margin-top: 0; }
 
 .prose h1 {
-  font-size: var(--fh-2xl);
-  letter-spacing: -0.025em;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
   margin-bottom: var(--s-3);
 }
 .prose h2 {
-  font-size: var(--fh-lg);
+  font-size: var(--fs-22);
+  line-height: var(--lh-22);
+  font-weight: var(--fw-bold);
   margin-top: var(--s-12);
-  margin-bottom: var(--s-3);
-  padding-top: var(--s-2);
+  margin-bottom: var(--s-4);
   scroll-margin-top: calc(var(--nav-h) + 20px);
 }
 .prose h3 {
-  font-size: var(--fh-md);
+  font-size: var(--fs-18);
+  line-height: var(--lh-18);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0;
   margin-top: var(--s-8);
   margin-bottom: var(--s-2);
   scroll-margin-top: calc(var(--nav-h) + 20px);
 }
-.prose h4 { font-size: var(--ft-lg); margin-top: var(--s-6); margin-bottom: var(--s-2); }
+.prose h4 { font-size: var(--fs-16); line-height: var(--lh-16); font-weight: var(--fw-medium); letter-spacing: 0; margin-top: var(--s-6); margin-bottom: var(--s-2); }
 
 .prose p { margin: var(--s-4) 0; color: var(--color-text); }
-.prose a { color: var(--color-primary); text-decoration: none; font-weight: var(--fw-medium); }
-.prose a:hover { text-decoration: underline; }
+/* Prose links are www's .mk-link: coral text, a 1 px underline at a 3 px
+   offset. Links in tables, cards and other chrome use the text colour. */
+.prose a, .mk-link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  font-weight: inherit;
+}
+.prose a:hover, .mk-link:hover { color: var(--color-primary-hover); }
+.prose td a, .prose th a {
+  color: var(--color-text);
+  text-decoration-color: var(--color-border-strong);
+}
+.prose td a:hover { text-decoration-color: currentColor; }
 
 .prose ul, .prose ol { margin: var(--s-4) 0; padding-left: 1.4rem; }
 .prose li { margin: 0.4rem 0; }
 .prose li::marker { color: var(--color-text-tertiary); }
 
-.prose strong { font-weight: var(--fw-bold); }
+.prose strong, .prose b { font-weight: var(--fw-medium); color: var(--color-text); }
 .prose hr { border: 0; border-top: 1px solid var(--color-border); margin: var(--s-12) 0; }
 
 /* inline code */
 .prose :not(pre) > code {
   font-family: var(--font-mono);
-  font-size: 0.85em;
-  background: var(--color-surface-3);
+  font-size: var(--fs-14);
+  background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-radius: var(--r-sm);
-  padding: 0.1rem 0.36rem;
+  border-radius: var(--r-6);
+  padding: 0.05rem 0.3rem;
   color: var(--color-text);
 }
 
@@ -80,8 +97,8 @@
   background:
     linear-gradient(to right, var(--color-bg), transparent) left center,
     linear-gradient(to left, var(--color-bg), transparent) right center,
-    radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.13), transparent) left center,
-    radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.13), transparent) right center;
+    radial-gradient(farthest-side at 0 50%, var(--color-scroll-shade), transparent) left center,
+    radial-gradient(farthest-side at 100% 50%, var(--color-scroll-shade), transparent) right center;
   background-repeat: no-repeat;
   background-size: 28px 100%, 28px 100%, 12px 100%, 12px 100%;
   background-attachment: local, local, scroll, scroll;
@@ -94,13 +111,11 @@
   font-variant-numeric: tabular-nums;
 }
 .prose th {
-  padding: 0 0.9rem 0.55rem;
+  padding: 0 0.9rem var(--s-2);
   text-align: left;
-  font-size: var(--ft-xs);
+  font-size: var(--ft-sm);
   font-weight: var(--fw-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--color-text-tertiary);
+  color: var(--color-text);
   border-bottom: 1px solid var(--color-border-strong);
   white-space: nowrap;
   vertical-align: bottom;
@@ -109,7 +124,7 @@
   padding: 0.7rem 0.9rem;
   border-bottom: 1px solid var(--color-border);
   vertical-align: top;
-  line-height: var(--lh-snug);
+  line-height: var(--lh-14);
 }
 /* Markdown's own column alignment, which an author style would otherwise win. */
 .prose th[align="right"], .prose td[align="right"] { text-align: right; }
@@ -126,7 +141,7 @@
 .prose tbody tr:last-child td { border-bottom: 0; }
 .prose tbody tr:hover td { background: var(--color-surface-2); }
 /* A cell that carries a status rather than a figure says so quietly. */
-.prose td.is-status { color: var(--color-text-tertiary); font-size: var(--ft-xs); font-weight: var(--fw-regular); }
+.prose td.is-status { color: var(--color-text-tertiary); font-weight: var(--fw-regular); }
 /* An address or a path in a cell must break rather than widen the row. */
 .prose td code, .prose td a { overflow-wrap: anywhere; }
 
@@ -142,12 +157,12 @@
   padding: 0.05rem 0.45rem;
   border-radius: var(--r-pill);
   font-size: var(--ft-xs);
-  line-height: 1.5;
-  background: var(--color-surface-2);
+  line-height: var(--lh-12);
+  background: var(--color-surface-3);
   color: var(--color-text-secondary);
 }
-.prose .perf-x.is-rt { background: color-mix(in srgb, var(--green-500) 16%, transparent); color: var(--color-text); }
-.prose .perf-x.is-below { background: color-mix(in srgb, var(--amber-500) 18%, transparent); color: var(--color-text); }
+.prose .perf-x.is-rt { color: var(--color-text); }
+.prose .perf-x.is-below { color: var(--color-text-tertiary); }
 .prose td.perf-cell.is-dash { color: var(--color-text-tertiary); }
 /* The release line the emitter writes under a table is that table's caption. */
 .prose p.perf-caption { margin-top: calc(-1 * var(--s-3)); font-size: var(--ft-sm); color: var(--color-text-secondary); }
@@ -164,8 +179,17 @@
     margin-bottom: var(--s-3);
     padding: var(--s-3) var(--s-4);
     border: 1px solid var(--color-border);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-10);
     background: var(--color-surface-2);
+  }
+  /* A two-column table reads as label/value rows between hairlines, not cards. */
+  .prose table:has(thead th:last-child:nth-child(2)) tr {
+    margin: 0;
+    padding: var(--s-2) 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    background: none;
   }
   .prose tbody tr:hover td { background: none; }
   .prose tr:last-child { margin-bottom: 0; }
@@ -179,7 +203,6 @@
   }
   .prose td:first-child, .prose td:last-child { padding-inline: 0; }
   .prose td[align="right"] { text-align: left; }
-  .prose td.is-status { font-size: var(--ft-sm); }
   .prose td:empty { display: none; }
   /* A performance row's platform is the card's title rather than a labelled value. */
   .prose table.perf-table td:first-child { display: block; padding-bottom: 0.45rem; font-size: var(--ft-md); }
@@ -187,31 +210,27 @@
   .prose td[data-label]::before {
     content: attr(data-label);
     font-size: var(--ft-xs);
-    font-weight: var(--fw-medium);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    line-height: 1.6;
+    line-height: var(--lh-12);
     color: var(--color-text-tertiary);
   }
 }
 
-/* Disclosure — detail that would otherwise compete with what it explains. */
+/* Disclosure: a chevron and a 14/500 summary between hairlines. */
 .prose details {
   margin: var(--s-6) 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--r-lg);
-  background: var(--color-surface-2);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 .prose summary {
-  padding: 0.7rem var(--s-4);
+  padding: var(--s-3) 0;
   font-size: var(--ft-sm);
   font-weight: var(--fw-medium);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   cursor: pointer;
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: var(--s-2);
 }
 .prose summary::-webkit-details-marker { display: none; }
 .prose summary::before {
@@ -224,52 +243,29 @@
   transition: transform var(--t-fast) var(--ease);
 }
 .prose details[open] summary::before { transform: rotate(45deg); }
-.prose summary:hover { color: var(--color-text); }
-.prose details > :not(summary) { margin-inline: var(--s-4); }
 .prose details > :last-child { margin-bottom: var(--s-4); }
 
-/* blockquote → callout. A quote that opens with a bold Note / Tip / Warning /
-   Important label is classed by rehype-callouts.mjs at build time and takes
-   the colour of its kind on the border and on a glyph before the label; any
-   other quote keeps the coral box. Same box, same padding, for all five. */
+/* blockquote → callout: one neutral style (a 1 px line, radius 10, the
+   surface). rehype-callouts.mjs still classes Note / Tip / Warning / Important;
+   the bold lead-in word carries the severity, not a colour. */
 .prose blockquote {
-  --callout: var(--color-primary);
-  --callout-glyph: none;
   margin: var(--s-6) 0;
-  padding: var(--s-4) var(--s-6);
-  border-left: 3px solid var(--callout);
-  border-radius: var(--r-md);
-  background: color-mix(in srgb, var(--callout) 7%, var(--color-bg));
+  padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-10);
+  background: var(--color-surface-2);
   color: var(--color-text);
 }
-.prose blockquote p { margin: 0.3rem 0; }
-.prose blockquote.is-note      { --callout: var(--blue-500);  --callout-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.6' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M8 7v4.2M8 4.6v.2' stroke='%23000' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
-.prose blockquote.is-tip       { --callout: var(--green-500); --callout-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 11.2a4.3 4.3 0 1 1 5 0v1.3H5.5z' fill='none' stroke='%23000' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M6.3 14.6h3.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); }
-.prose blockquote.is-warning   { --callout: var(--amber-500); --callout-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.2 14.4 13.4H1.6z' fill='none' stroke='%23000' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M8 6.4v3.4M8 11.5v.2' stroke='%23000' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
-.prose blockquote.is-important { --callout: var(--red-500);   --callout-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.6' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M8 4.6v4.2M8 11.2v.2' stroke='%23000' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E"); }
-/* The glyph sits inline before the label, so nothing about the box moves. */
-.prose blockquote[class*="is-"] > p:first-of-type > strong:first-child::before {
-  content: "";
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  margin-right: 0.4em;
-  vertical-align: -0.12em;
-  background: var(--callout);
-  -webkit-mask: var(--callout-glyph) center / contain no-repeat;
-  mask: var(--callout-glyph) center / contain no-repeat;
-}
+.prose blockquote p { margin: var(--s-1) 0; }
+.prose blockquote > :first-child { margin-top: 0; }
+.prose blockquote > :last-child { margin-bottom: 0; }
 
 .prose img {
-  border-radius: var(--r-lg);
+  border-radius: var(--r-media);
   border: 1px solid var(--color-border);
   margin: var(--s-6) 0;
 }
 
-/* Page title row: the H1 and the page actions (copy as markdown, open in an assistant). */
-.doc-h1 { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); }
-.doc-h1 h1 { margin: 0; }
-@media (max-width: 700px) { .doc-h1 { flex-direction: column; gap: var(--s-2); } }
 
 /* Cards inside a markdown page are the site's one card (components.css);
    only the prose defaults that would restyle them are undone here. */

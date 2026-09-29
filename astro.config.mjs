@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { codeTheme } from "./src/lib/code-theme.mjs";
 import rehypeTableLabels from "./src/markdown/rehype-table-labels.mjs";
 import rehypeCallouts from "./src/markdown/rehype-callouts.mjs";
 import rehypePerfTables from "./src/markdown/rehype-perf-tables.mjs";
@@ -33,8 +34,8 @@ export default defineConfig({
     // A recipe's "## Steps" becomes a walkthrough: numbered steps, #step-n links, progress.
     // On the changelog each release becomes a tagged entry the platform filter can hide.
     rehypePlugins: [rehypePerfTables, rehypeTableLabels, rehypeCallouts, rehypeEmbedNofollow, rehypeWalkthrough, rehypeChangelog],
-    // Dual Shiki themes so code blocks match the site theme:
-    // clean light in light mode, dark in dark mode (toggled via [data-theme]).
+    // One Shiki theme of CSS variables (src/lib/code-theme.mjs): the colours are
+    // tokens in src/styles/tokens.css, so code follows the site theme.
     // wrap: true — a long line has to stay readable and copyable at 390px. With
     // wrap off Shiki puts `overflow-x: auto` in the element's own style
     // attribute, which no stylesheet can override, and the install command read
@@ -42,7 +43,7 @@ export default defineConfig({
     // edge. src/styles/code.css gives the wrapped lines a hanging indent so a
     // wrapped command still reads as one command.
     shikiConfig: {
-      themes: { light: "github-light-high-contrast", dark: "github-dark" },
+      theme: codeTheme,
       wrap: true,
     },
   },

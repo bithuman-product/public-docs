@@ -21,7 +21,7 @@
   .walk-step::before {
     content: counter(walk); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 32px; height: 32px;
     border: 1px solid var(--color-border-strong); border-radius: 50%; background: var(--color-surface);
-    font-size: var(--ft-sm); font-weight: var(--fw-bold); color: var(--color-text); font-variant-numeric: tabular-nums;
+    font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text); font-variant-numeric: tabular-nums;
   }
   .walk-step:not(:last-child)::after { content: ""; position: absolute; left: 15.5px; top: 40px; bottom: 8px; width: 1px; background: var(--color-border); }
   .walk-step.is-done::before { content: "✓"; border-color: var(--color-primary); background: var(--color-primary); color: var(--color-on-primary); }
