@@ -275,8 +275,12 @@ paths:
             `expression-2` costs 2000 credits; `essence-2` costs 500;
             `auto` bills the
             routed model's rate (500 or 2000); the v1 families (`essence-1`,
-            `expression-1`) cost 250. Top up to continue. Returns error code
-            `INSUFFICIENT_BALANCE`.
+            `expression-1`) cost 250. Returns error code
+            `INSUFFICIENT_BALANCE`; top up at the error's `topup_url`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "400":
           description: >-
             Body failed validation — malformed JSON, an invalid / retired
@@ -311,12 +315,36 @@ paths:
                     status_code: 400
         "403":
           description: >-
-            `PLAN_REQUIRED` — the model is not in your plan; the message
-            names the plan. Contact sales.
+            `PLAN_REQUIRED` — the model is not in your plan (the message
+            names the plan; contact sales), or a Free account, which cannot
+            create agents. `AGENT_LIMIT_REACHED` — a new agent would pass your
+            plan's agent limit; existing agents keep working. Both carry
+            `upgrade_url`; nothing is charged.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+              examples:
+                plan_required:
+                  summary: A Free account creating an agent
+                  value:
+                    error:
+                      code: "PLAN_REQUIRED"
+                      message: "Creating agents starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing."
+                      httpStatus: 403
+                      upgrade_url: "https://www.bithuman.ai/pricing"
+                    status: "error"
+                    status_code: 403
+                agent_limit_reached:
+                  summary: The plan's agent limit
+                  value:
+                    error:
+                      code: "AGENT_LIMIT_REACHED"
+                      message: "Your Creator plan includes 7 agents and you have 7. Existing agents keep working; delete one or upgrade at https://www.bithuman.ai/pricing to create more."
+                      httpStatus: 403
+                      upgrade_url: "https://www.bithuman.ai/pricing"
+                    status: "error"
+                    status_code: 403
         "422":
           description: >-
             `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
@@ -2270,7 +2298,18 @@ paths:
             when the body has `mode`, the cloud avatar is starting: a flat object
             with `avatar_session_started: true` and `model`, the model the session
             launched as, plus echoes of `mode`, `agent_id` and `image` and your
-            `user_id`.
+            `user_id`. Until 2026-10-12, a Free account's runtime token also
+            carries `plan_notice` and the `X-Bithuman-Plan-Notice` header; show
+            it as sent.
+          headers:
+            X-Bithuman-Plan-Notice:
+              schema:
+                type: string
+              description: >-
+                The same text as `plan_notice`: "Free-plan API and SDK access
+                ends on 2026-10-12. Upgrade at https://www.bithuman.ai/pricing
+                to keep it.", or, for a Free account keeping access on top-up
+                credits bought before 2026-09-27, the wording that says so.
           content:
             application/json:
               schema:
@@ -2332,7 +2371,9 @@ paths:
                 status: "error"
                 status_code: 400
         "402":
-          description: Insufficient credit balance.
+          description: >-
+            `INSUFFICIENT_BALANCE` — not enough credits to start. Top up at the
+            error's `topup_url`.
           content:
             application/json:
               schema:
@@ -2340,18 +2381,50 @@ paths:
               example:
                 error:
                   code: "INSUFFICIENT_BALANCE"
-                  message: "Not enough credits to start a session"
+                  message: "Insufficient balance to complete this action. Please add funds to continue."
                   httpStatus: 402
+                  topup_url: "https://www.bithuman.ai/billing#credits"
                 status: "error"
                 status_code: 402
         "403":
           description: >-
-            Key revoked, account suspended, concurrency limit reached, or (cloud
-            avatar) the requested model is not in your plan (`PLAN_REQUIRED`).
+            `PLAN_REQUIRED` — from 2026-10-12, a Free account's API secret, or
+            (cloud avatar) a model not in your plan. `CONCURRENCY_LIMIT_REACHED`
+            — a new cloud session would pass your plan's concurrent sessions;
+            live sessions are never cut off. Both carry `upgrade_url`.
+            `RUNTIME_SUSPENDED` — the key was revoked, or runtime access is
+            suspended (no link; a plan change does not clear it).
+            `ACCOUNT_SUSPENDED` — the balance is too far below zero.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+              examples:
+                plan_required:
+                  summary: A Free account from 2026-10-12
+                  value:
+                    error:
+                      code: "PLAN_REQUIRED"
+                      message: "API and SDK access starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing to keep using your API secret."
+                      httpStatus: 403
+                      upgrade_url: "https://www.bithuman.ai/pricing"
+                    status: "error"
+                    status_code: 403
+                concurrency_limit_reached:
+                  summary: The plan's concurrent cloud sessions
+                  value:
+                    error:
+                      code: "CONCURRENCY_LIMIT_REACHED"
+                      message: "Your Creator plan allows 3 cloud avatar sessions at once, and 3 are running (3/3). End a session, or upgrade your plan at https://www.bithuman.ai/pricing."
+                      details:
+                        tier: "Creator"
+                        cap: 3
+                        active: 3
+                        upgrade_url: "https://www.bithuman.ai/pricing"
+                      upgrade_url: "https://www.bithuman.ai/pricing"
+                      httpStatus: 403
+                    status: "error"
+                    status_code: 403
         "404":
           description: "Cloud avatar: no agent with this `agent_id` that you can start."
           content:
@@ -3647,15 +3720,47 @@ paths:
                   example: "self-hosted-essence-2-model"
       responses:
         "200":
-          description: The interval is durably recorded. Advance the meter clock.
+          description: >-
+            The interval is durably recorded. Advance the meter clock. Until
+            2026-10-12, a Free account's answer also carries `plan_notice` and
+            the `X-Bithuman-Plan-Notice` header; show it as sent.
+          headers:
+            X-Bithuman-Plan-Notice:
+              schema:
+                type: string
+              description: >-
+                The same text as `plan_notice`: "Free-plan API and SDK access
+                ends on 2026-10-12. Upgrade at https://www.bithuman.ai/pricing
+                to keep it.", or, for a Free account keeping access on top-up
+                credits bought before 2026-09-27, the wording that says so.
         "400":
           description: Malformed beat (`session_id` and a positive `seq` are required).
         "401":
           description: Definite — unknown, revoked or disabled key.
         "402":
           description: |
-            Balance depleted or account suspended. Do **not** advance the meter
-            clock; keep rendering.
+            Balance depleted (`error.type` `insufficient_balance`, with a
+            `topup_url`) or account suspended (`account_suspended`). Do **not**
+            advance the meter clock; keep rendering.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SelfHostError"
+              example:
+                accepted: false
+                error:
+                  type: "insufficient_balance"
+                  message: "credit balance depleted; top up to continue metered service"
+                  topup_url: "https://www.bithuman.ai/billing#credits"
+        "403":
+          description: |
+            `PLAN_REQUIRED` (`error.type` `plan_required`): from 2026-10-12, a
+            Free account's API secret, with an `upgrade_url`; or a product your
+            plan does not include.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SelfHostError"
         "429":
           $ref: "#/components/responses/RateLimitedFailedAuth"
         "503":
@@ -3764,6 +3869,14 @@ components:
               example: 401
             message:
               type: string
+            upgrade_url:
+              type: string
+              description: On a `plan_required` refusal (403), where to choose a plan.
+              example: "https://www.bithuman.ai/pricing"
+            topup_url:
+              type: string
+              description: On an `insufficient_balance` refusal (402), where to top up credits.
+              example: "https://www.bithuman.ai/billing#credits"
     ProviderSelection:
       description: >-
         Which provider one capability uses. `"default"` is the
@@ -4179,6 +4292,25 @@ components:
             httpStatus:
               type: integer
               example: 401
+            upgrade_url:
+              type: string
+              description: >-
+                On `PLAN_REQUIRED`, `AGENT_LIMIT_REACHED` and
+                `CONCURRENCY_LIMIT_REACHED` (403): where to choose a plan. Send
+                the user there instead of retrying. See
+                [Plan and credit refusals](https://docs.bithuman.ai/api/errors#plan-and-credit-refusals).
+              example: "https://www.bithuman.ai/pricing"
+            topup_url:
+              type: string
+              description: >-
+                On `INSUFFICIENT_BALANCE` (402): where to top up credits.
+              example: "https://www.bithuman.ai/billing#credits"
+            details:
+              type: object
+              description: >-
+                Code-specific fields. `CONCURRENCY_LIMIT_REACHED` sends `tier`,
+                `cap`, `active` and `upgrade_url`.
+              additionalProperties: true
         status:
           type: string
           example: "error"

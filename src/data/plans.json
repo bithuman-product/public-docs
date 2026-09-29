@@ -5,6 +5,9 @@
     "credits_per_usd": 100,
     "min_plan": "creator"
   },
+  "free": {
+    "cloud_concurrent_sessions": 1
+  },
   "plans": [
     {
       "id": "creator",

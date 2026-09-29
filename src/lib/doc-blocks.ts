@@ -9,7 +9,8 @@
 //   ```deploy-matrix         the four deployment modes side by side, and the CPU-only note
 //   ```dataflow              where one mode renders, where the conversation runs, what reaches bitHuman
 //   ```price                 one mode's rate, from pricing.json
-//   ```session-caps          concurrent cloud sessions per plan, from plans.json
+//   ```session-caps          concurrent cloud sessions per plan, from plans.json;
+//                            `table` for every plan, Free first, as a table
 //   ```perf-explorer         every published performance row as bars, with a model
 //                            switch and the held-for-10-minutes rows (/performance)
 //   ```credit-calculator     credits and dollars a month for a usage pattern (/pricing)
@@ -255,9 +256,19 @@ function price(id: string): string {
     `Real-time usage bills active session time, talking or idle, to the second. Every rate: [Pricing and credits](/pricing).\n`;
 }
 
-/** S31: concurrent bitHuman cloud sessions per plan, from plans.json. */
-function sessionCaps(): string {
+/** S31: concurrent bitHuman cloud sessions per plan, from plans.json. `table`:
+ *  every plan, Free first, as the table /api/rate-limits prints. */
+function sessionCaps(arg = ""): string {
   const ps = plans().plans as { name: string; cloud_concurrent_sessions: number }[];
+  if (arg === "table") {
+    const free = plans().free?.cloud_concurrent_sessions;
+    if (typeof free !== "number" || ps.some((p) => typeof p.cloud_concurrent_sessions !== "number")) {
+      throw new Error("plans.json: free.cloud_concurrent_sessions and every plan's cloud_concurrent_sessions are required for ```session-caps table");
+    }
+    return table(["Plan", "Concurrent cloud avatar sessions"],
+      [["Free", String(free)], ...ps.map((p) => [p.name, String(p.cloud_concurrent_sessions)]), ["Custom (contact sales)", "Unlimited"]]);
+  }
+  if (arg) throw new Error(`\`\`\`session-caps: "${arg}" is not a variant (none, or "table")`);
   return `bitHuman cloud sessions are limited per plan: ${ps.map((p) => `${p.name} ${p.cloud_concurrent_sessions}`).join(", ")} concurrent sessions. ` +
     `On-device and self-hosted sessions are limited by credits ([plans](/pricing#plans)).\n`;
 }
@@ -433,7 +444,7 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "deploy-matrix": return deployMatrix(mode);
     case "dataflow": return dataflow(arg);
     case "price": return price(arg);
-    case "session-caps": return sessionCaps();
+    case "session-caps": return sessionCaps(arg);
     case "perf-explorer": return perfExplorer(mode);
     case "credit-calculator": return creditCalculator(mode);
     case "app-budget": return appBudget(arg);

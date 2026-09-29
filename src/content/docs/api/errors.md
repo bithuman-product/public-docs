@@ -41,8 +41,8 @@ transient: retry after `Retry-After` seconds when present, otherwise back off.
 | `302` | Redirect | Not an error — [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) redirects to the artifact URL by default. |
 | `400` | Bad Request | Malformed JSON, missing required parameter (`MISSING_PARAM`), failed validation (`VALIDATION_ERROR`), or a request that can never succeed as posed (`MODEL_NOT_DOWNLOADABLE`). |
 | `401` | Unauthorized | Invalid `api-secret` (`UNAUTHORIZED`) or absent `api-secret` header (`MISSING_AUTH`). |
-| `402` | Payment Required | Insufficient credits — top up to continue. |
-| `403` | Forbidden | The credential is known but refused here: a revoked secret on a token endpoint (`RUNTIME_SUSPENDED`), a session limit (`CONCURRENCY_LIMIT_REACHED`, `SESSION_DURATION_LIMIT`), a model outside your plan (`PLAN_REQUIRED`), or a secret's value read with an API secret (`SECRET_REVEAL_CONSOLE_ONLY`). |
+| `402` | Payment Required | Not enough credits (`INSUFFICIENT_BALANCE`): top up at the error's `topup_url`. |
+| `403` | Forbidden | The credential is known but refused here: a [plan limit](#plan-and-credit-refusals) (`PLAN_REQUIRED`, `AGENT_LIMIT_REACHED`, `CONCURRENCY_LIMIT_REACHED`), a revoked secret on a token endpoint (`RUNTIME_SUSPENDED`), a session's length (`SESSION_DURATION_LIMIT`), or a secret's value read with an API secret (`SECRET_REVEAL_CONSOLE_ONLY`). |
 | `404` | Not Found | Agent, resource, or endpoint doesn't exist — or a model artifact not published to the download store yet (`MODEL_ARTIFACT_NOT_READY`, retryable). |
 | `410` | Gone | The agent was deleted (`AGENT_DELETED`, `AGENT_PURGED`). |
 | `409` | Conflict | The request is valid but the agent's **state** doesn't allow it yet (`MODEL_NOT_GENERATED`, `AGENT_NOT_READY`) — a state change (generate/add the model, wait for `ready`) fixes it. |
@@ -62,12 +62,22 @@ transient: retry after `Retry-After` seconds when present, otherwise back off.
 |---|---|---|
 | `UNAUTHORIZED` | 401 | The `api-secret` header is present but invalid. Get a valid secret from [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys). |
 | `MISSING_AUTH` | 401 | The `api-secret` header is absent. Add it to your request. |
-| `RUNTIME_SUSPENDED` | 403 | A token endpoint refused the secret: it was revoked (create a new one), or runtime access is suspended (contact support). |
-| `ACCOUNT_SUSPENDED` | 403 | Your balance is too far below zero. Top up; contact support if it persists. |
-| `PLAN_REQUIRED` | 403 | Your plan does not include this. The `message` says which case applies: **(a)** the model you named is not in your plan; the message names the plan. [Contact sales](https://www.bithuman.ai/enterprise?topic=api-errors#contact). **(b)** Free-plan API/SDK use from **2026-10-12 00:00 UTC**: "API and SDK access starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing to keep using your API secret." Until then, responses to Free accounts carry a `plan_notice` field and an `X-Bithuman-Plan-Notice` header: "Free-plan API and SDK access ends on 2026-10-12. Upgrade at https://www.bithuman.ai/pricing to keep it." A Free account holding top-up credits purchased before 2026-09-27 keeps API/SDK access until those credits are used up. **(c)** Free-plan agent creation: "Creating agents starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing." **(d)** A Free-plan credit top-up: "Credit top-ups start at the Creator plan. Upgrade at https://www.bithuman.ai/pricing." [Upgrade](https://www.bithuman.ai/pricing). |
-| `AGENT_LIMIT_REACHED` | 403 | Creating an agent would exceed your plan's agent limit (Creator 7, Pro 40, Business 200, Enterprise unlimited): "Your {Plan} plan includes {N} agents and you have {M}. Existing agents keep working; delete one or upgrade at https://www.bithuman.ai/pricing to create more." Existing agents are never removed. |
 | `SECRET_REVEAL_CONSOLE_ONLY` | 403 | An API secret tried to read a stored secret's value. Reveal it in the console, or create a new secret. |
-| `INSUFFICIENT_BALANCE` | 402 | Top up credits at [www.bithuman.ai](https://www.bithuman.ai). |
+
+### Plan and credit refusals
+
+A plan or credit refusal names its fix in a link field of `error`: send the user there rather than retrying.
+
+| Code | HTTP | Resolution |
+|---|---|---|
+| `PLAN_REQUIRED` | 403 | Your plan does not include this; the `message` says what. From **2026-10-12 00:00 UTC**, a Free account's API secret gets "API and SDK access starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing to keep using your API secret." A Free account creating an agent gets "Creating agents starts at the Creator plan. Upgrade at https://www.bithuman.ai/pricing.", and buying a top-up "Credit top-ups start at the Creator plan. Upgrade at https://www.bithuman.ai/pricing." A model outside your plan: the message names the plan; [contact sales](https://www.bithuman.ai/enterprise?topic=api-errors#contact). Link: `upgrade_url`. |
+| `AGENT_LIMIT_REACHED` | 403 | A new agent would pass your plan's agent limit (Creator 7, Pro 40, Business 200, Enterprise unlimited): "Your {Plan} plan includes {N} agents and you have {M}. Existing agents keep working; delete one or upgrade at https://www.bithuman.ai/pricing to create more." Link: `upgrade_url`. |
+| `CONCURRENCY_LIMIT_REACHED` | 403 | A new session would pass your plan's [concurrent cloud sessions](/api/rate-limits#session-concurrency); the message names the limit and how many are running. End a session or upgrade; live sessions are never cut off. Link: `upgrade_url`, also in `details`. |
+| `INSUFFICIENT_BALANCE` | 402 | Not enough credits for this action. Top up (Creator plan or higher; on Free, choose a plan), then retry. Link: `topup_url`. |
+| `ACCOUNT_SUSPENDED` | 403 | Your balance is too far below zero. Top up; contact support if it persists. No link. |
+| `RUNTIME_SUSPENDED` | 403 | A token endpoint refused the secret: it was revoked (create a new one), or runtime access is suspended (contact support). A plan change does not clear it. No link. |
+
+Until 2026-10-12, a Free account's runtime-token and meter responses carry a `plan_notice` field and an `X-Bithuman-Plan-Notice` header: "Free-plan API and SDK access ends on 2026-10-12. Upgrade at https://www.bithuman.ai/pricing to keep it." A Free account that keeps access on top-up credits bought before 2026-09-27 gets its own wording ([Plans](/pricing#plans)). Show `plan_notice` as sent. [Choose a plan](https://www.bithuman.ai/pricing?from=docs) · [top up](https://www.bithuman.ai/billing#credits).
 
 ### Agent operations
 
@@ -111,7 +121,6 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 | Code | HTTP | Resolution |
 |---|---|---|
 | `RATE_LIMITED` | 429 | Back off and retry. See [rate limits](/api/rate-limits). |
-| `CONCURRENCY_LIMIT_REACHED` | 403 | A new session start would exceed your plan's [concurrent avatar session allowance](/api/rate-limits#session-concurrency). End an active session or upgrade the plan, then retry — live sessions are never cut off mid-stream by this limit. |
 | `SESSION_DURATION_LIMIT` | 403 | One session ran past the maximum continuous length. Start a new session; your account is fine. |
 | `SERVICE_UNAVAILABLE` | 503 | A dependency is briefly unavailable or at capacity. Nothing was changed. Retry after `Retry-After` seconds, with backoff. |
 | `UPSTREAM_UNAVAILABLE` / `UPSTREAM_TIMEOUT` | 502 / 504 | Transient. Retry with backoff. |
@@ -144,7 +153,4 @@ else:
     print(resp.status_code, "retry after", resp.headers.get("Retry-After"))
 ```
 
-Retry `429` and `5xx`. Fix the request for any other `4xx`.
-
-For `429` and `5xx`, use exponential backoff with jitter — see
-[rate limits](/api/rate-limits) for the recommended retry strategy.
+Retry `429` and `5xx` with exponential backoff and jitter ([rate limits](/api/rate-limits)). For a [plan or credit refusal](#plan-and-credit-refusals), follow its link field; fix the request for any other `4xx`.

@@ -67,7 +67,7 @@ A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#ge
 
 ## Plans
 
-From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or higher. Free accounts cannot create agents or buy credit top-ups. A Free account with top-up credits bought before 2026-09-27 keeps API and SDK access until those credits are spent. The exact responses are under [`PLAN_REQUIRED`](/api/errors#authentication).
+From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or higher; a Free account's API secret is then refused with `403 PLAN_REQUIRED`. Free accounts cannot create agents or buy credit top-ups. A Free account with top-up credits bought before 2026-09-27 keeps API and SDK access until those credits are spent; until the cutoff its `plan_notice` reads: "Free-plan API and SDK access ends on 2026-10-12; this account keeps it until the top-up credits it bought before 2026-09-27 are spent. Upgrade at https://www.bithuman.ai/pricing to keep it after that." Every response and its fix: [Plan and credit refusals](/api/errors#plan-and-credit-refusals). [Choose a plan](https://www.bithuman.ai/pricing?from=docs).
 
 | Plan | Monthly | Yearly | Credits / month | Agents | Concurrent cloud sessions |
 |---|---|---|---|---|---|
@@ -79,9 +79,9 @@ From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or hi
 
 Annual plans bill twelve months of credits up front.
 
-- **Agents:** a creation over your plan's limit returns `403 AGENT_LIMIT_REACHED`. Existing agents keep working.
-- **Concurrent sessions** limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED` ([rate limits](/api/rate-limits)). Self-hosted and on-device sessions are limited only by credits.
-- **Creation costs credits:** a creation you cannot pay for returns [`402 INSUFFICIENT_BALANCE`](/api/errors) and creates nothing.
+- **Agents:** a creation over your plan's limit returns `403 AGENT_LIMIT_REACHED`, with an `upgrade_url`. Existing agents keep working.
+- **Concurrent sessions** limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED`, with an `upgrade_url` ([rate limits](/api/rate-limits#session-concurrency)). Self-hosted and on-device sessions are limited only by credits.
+- **Creation costs credits:** a creation you cannot pay for returns [`402 INSUFFICIENT_BALANCE`](/api/errors#plan-and-credit-refusals), with a `topup_url`, and creates nothing.
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=pricing#contact) to enable it.
 
@@ -113,7 +113,7 @@ Offline license is only available to Business and Enterprise clients who want to
 
 ## Top-up credits
 
-On the Creator plan or higher, top up any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
+On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits) any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
 
 ## Connectivity
 
@@ -122,7 +122,7 @@ On the Creator plan or higher, top up any time at **$1 = 100 credits**. Top-up c
 | No API secret, or a rejected one, at the start | the session does not start |
 | No network when a session starts | the session does not start; retry when connected |
 | The network drops after the session started | the session continues for 5 minutes, then pauses until the connection returns; usage is reported when it does |
-| Credits run out | the session stops at the next usage report; top up to continue |
+| Credits run out | the session stops at the next usage report; [top up](https://www.bithuman.ai/billing#credits) to continue |
 
 ## Check your balance
 

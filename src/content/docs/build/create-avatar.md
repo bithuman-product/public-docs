@@ -72,7 +72,9 @@ Open `https://www.bithuman.ai/embed/<agent_id>` in a browser and talk to it, or 
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `402 INSUFFICIENT_BALANCE` | not enough credits | top up or choose a plan |
+| `402 INSUFFICIENT_BALANCE` | not enough credits | [top up](https://www.bithuman.ai/billing#credits) (the error's `topup_url`) |
+| `403 PLAN_REQUIRED` | a Free account, which cannot create agents, or a model outside your plan | [choose a plan](https://www.bithuman.ai/pricing?from=docs) (the error's `upgrade_url`) |
+| `403 AGENT_LIMIT_REACHED` | your plan's agent limit; existing agents keep working | delete an agent, or [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
 | `422 MODEL_SUBJECT_MISMATCH` | `essence-2` for a subject that is not a photoreal person | use `expression-2` or `auto` |
 | `failed` with an image error | the image URL is not publicly fetchable | host the image publicly and create again (the failed creation is refunded) |
 | The likeness is off | a side profile, several people or poor light | crop to one front-facing person in good light |
