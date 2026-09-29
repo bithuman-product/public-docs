@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-09-27",
+ "generated": "2026-09-29",
  "models": {
   "essence-2": {
    "fps": 25.0,
@@ -362,6 +362,49 @@
      "swap_gb": 0.0,
      "memory_scope": "render",
      "memory_release": "bithuman 2.11.12",
+     "time_to_video": null
+    }
+   }
+  },
+  {
+   "id": "python-windows",
+   "label": "Windows · Python",
+   "hardware": "Intel Core i7-13700F (x86_64), 8 threads",
+   "published": true,
+   "sustained": false,
+   "cells": {
+    "essence-2": {
+     "fps": 30,
+     "x_realtime": 1.2,
+     "realtime": true,
+     "measured_on": "2026-09-29",
+     "release": "bithuman 2.11.18",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "memory_release": null,
+     "time_to_video": null
+    },
+    "expression-2": {
+     "fps": 21,
+     "x_realtime": 1.05,
+     "realtime": true,
+     "measured_on": "2026-09-29",
+     "release": "bithuman 2.11.18",
+     "clip": {
+      "id": "5639-40744-0031",
+      "seconds": 28.42
+     },
+     "peak_ram_gb": null,
+     "peak_gpu_gb": null,
+     "swap_gb": null,
+     "memory_scope": null,
+     "memory_release": null,
      "time_to_video": null
     }
    }

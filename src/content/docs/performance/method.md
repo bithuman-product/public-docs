@@ -10,7 +10,7 @@ type: generated
 ## Method
 
 <!-- FLOORS:RELEASES -->
-Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13, Swift package 2.15.0, Swift package 2.17.3, Swift package 2.18.0, essence2-android 0.7.0, expression2-android 0.4.10, the hosted web viewer and the cloud API.
+Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13, bithuman 2.11.18, Swift package 2.15.0, Swift package 2.17.3, Swift package 2.18.0, essence2-android 0.7.0, expression2-android 0.4.10, the hosted web viewer and the cloud API.
 <!-- /FLOORS:RELEASES -->
 
 <!-- FLOORS:METHOD -->

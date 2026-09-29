@@ -24,6 +24,7 @@ next: ["/performance/method", "/deploy", "/platforms"]
 | macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 49 | **1.9×** real time | 47 | **2.3×** real time |
+| Windows · Python | Intel Core i7-13700F (x86_64), 8 threads | 30 | **1.2×** real time | 21 | **1.0×** real time |
 | iPhone · Swift package | iPhone 15 | 54 | **2.1×** real time | 111 | **5.5×** real time |
 | Android | Samsung Galaxy S25+ | 52 | **2.0×** real time | 48 | **2.4×** real time |
 | Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7×** real time | 39 | **1.9×** real time |
@@ -102,10 +103,11 @@ Pick the row for the product you use: the CLI, Python and the Swift package rend
 | macOS · Swift package | Apple M4 | 120 | **4.8×** real time | 177 | **8.8×** real time |
 | Linux · CLI | Intel Core i7-13700F (x86_64) | 50 | **2.0×** real time | 44 | **2.2×** real time |
 | Linux · Python | Intel Core i7-13700F (x86_64) | 49 | **1.9×** real time | 47 | **2.3×** real time |
+| Windows · Python | Intel Core i7-13700F (x86_64), 8 threads | 30 | **1.2×** real time | 21 | **1.0×** real time |
 <!-- /FLOORS:TABLE -->
 
 <!-- FLOORS:RELEASES desktop -->
-Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13 and Swift package 2.15.0.
+Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13, bithuman 2.11.18 and Swift package 2.15.0.
 <!-- /FLOORS:RELEASES -->
 
 - Each figure is one render of a reference speech clip, as fast as the machine allows, with nothing else running.
