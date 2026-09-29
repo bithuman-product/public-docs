@@ -28,8 +28,8 @@
 //     4. every "<Name> plan" or "<Name> tier" names a plan in plans.json, and
 //        nothing offers a free plan, tier or trial;
 //     5. the site-wide nodes name no platform the site does not publish as a
-//        place bitHuman runs: no Windows or WSL (the docs send Windows users to
-//        WSL2 until it ships), no NVIDIA or CUDA (on the site NVIDIA is only
+//        place bitHuman runs: no WSL (Windows runs natively since 2026-09-29,
+//        with its own page and a measured row), no NVIDIA or CUDA (on the site NVIDIA is only
 //        the bitHuman cloud's GPU), no Raspberry Pi or Jetson; and macOS is
 //        "macOS (Apple silicon)", as every macOS page requires.
 //   Source (src/config/site-jsonld.ts and src/layouts/Base.astro): no typed
@@ -80,7 +80,7 @@ const TOPUP = /^\s*=\s*(\d[\d,]*)\s*credits?\b/;
 const PLAN_WORD = /\b([A-Z][A-Za-z]+) (?:plans?|tier)\b/g;
 const NOT_A_NAME = new Set(["The", "A", "An", "Any", "Every", "Each", "Your", "This", "That", "Which", "Our", "Their", "One", "Paid", "Monthly", "Yearly", "Annual", "Higher", "Same"]);
 const FREE = /\bfree (?:plan|tier|trial)s?\b/i;
-const OFF_SITE = /\bWindows\b|\bWSL2?\b|\bNVIDIA\b|\bCUDA\b|\bRaspberry Pi\b|\bJetson\b/gi;
+const OFF_SITE = /\bWSL2?\b|\bNVIDIA\b|\bCUDA\b|\bRaspberry Pi\b|\bJetson\b/gi;
 const PRICED = new Set(["Offer", "AggregateOffer", "PriceSpecification", "UnitPriceSpecification", "CompoundPriceSpecification"]);
 const num = (s) => Number(String(s).replace(/,/g, ""));
 
@@ -162,11 +162,12 @@ function selftest() {
   fires("an offer priced 0", sw({ offers: { "@type": "AggregateOffer", lowPrice: 0, highPrice: plan.monthly_usd, offerCount: 1, offers: [{ "@type": "Offer", price: "0", priceCurrency: "USD" }] } }), 2);
   fires("an offerCount that is not the offers listed", sw({ offers: { "@type": "AggregateOffer", lowPrice: plan.monthly_usd, highPrice: plan.monthly_usd, offerCount: 4, offers: [{ "@type": "Offer", price: plan.monthly_usd }] } }));
   fires("the old NVIDIA wording in the site node: \"Runs on CPU, NVIDIA GPU, and Apple Silicon.\"", sw({ description: "Runs on CPU, NVIDIA GPU, and Apple Silicon." }));
-  fires("a Windows claim in the site node: \"Runs natively on Windows.\"", sw({ description: "Runs natively on Windows." }));
+  fires("a WSL claim in the site node: \"Runs on Windows under WSL2.\"", sw({ description: "Runs on Windows under WSL2." }));
+  ok("quiet on Windows in operatingSystem (it ships natively since 2026-09-29)", gradeNode(sw({ operatingSystem: "iOS, Android, macOS (Apple silicon), Linux, Windows" }), f).length === 0);
   fires("Raspberry Pi OS in the site node's operatingSystem", sw({ operatingSystem: "iOS, Android, Linux, Raspberry Pi OS" }));
   fires("macOS without Apple silicon in operatingSystem", sw({ operatingSystem: "iOS, macOS, Linux" }));
   ok("quiet on a clean site node built from the data", gradeNode(sw({
-    operatingSystem: "iOS, iPadOS, Android, macOS (Apple silicon), Linux, Web browser",
+    operatingSystem: "iOS, iPadOS, Android, macOS (Apple silicon), Linux, Windows, Web browser",
     featureList: [...f.rates.keys()].map((n) => `${n} credits/min`),
     offers: {
       "@type": "AggregateOffer", lowPrice: plan.monthly_usd, highPrice: plan.monthly_usd, offerCount: 1,
