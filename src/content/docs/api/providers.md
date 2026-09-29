@@ -158,16 +158,19 @@ Requests to your endpoint carry the visitor's identifier in the standard OpenAI
 The value is resolved in this order, and the first one present wins:
 
 1. the **`fingerprint`** you passed to [`POST /v1/embed-tokens/request`](/api/embedding#production-mint-a-token)
-   (it travels in the token as its `endUserId` claim);
-2. an explicit **`?end_user_id=`** on the embed URL (aliases: `endUserId`,
-   `visitor_id`, `fingerprint`);
-3. the **session correlator** — a per-conversation identifier we generate.
+   (it travels in the token as its `endUserId` claim). Mint the token with the
+   agent owner's API secret and pass it to the embed as `?token=`;
+2. the **session correlator** — a per-conversation identifier we generate.
 
-Options 1 and 2 are *durable*: mint or pass the same string for a returning
-visitor and you get the same value on every call, across sessions. Option 3 is
-the automatic fallback so the field is **never empty** for your endpoint, but it
-changes each session — if you see a value that varies per conversation, that
-means no durable identifier reached us and you should set one.
+Option 1 is *durable*: mint the same string for a returning visitor and you get
+the same value on every call, across sessions. Option 2 is the automatic
+fallback so the field is **never empty** for your endpoint, but it changes each
+session — if you see a value that varies per conversation, that means no durable
+identifier reached us and you should set one.
+
+A visitor id in the embed URL itself (`?end_user_id=`, `endUserId`, `visitor_id`
+or `fingerprint`) is **ignored**: anyone can edit a URL, so only a token minted
+on your backend can carry one.
 
 > If you supply `endUserId` and still see a changing value, tell us — that is a
 > bug, not a configuration issue.
@@ -176,10 +179,10 @@ Two limits worth knowing:
 
 - **Sent only to your own endpoint.** Agents on bitHuman's default LLM do not
   send it, and neither does the fallback if your endpoint is unreachable.
-- **Treat it as a hint, not an authenticated identity.** The value originates in
-  the page that embeds the agent, so a determined visitor can change it. Use it
-  to group and attribute traffic; do not use it alone to authorise access to one
-  user's data.
+- **Treat it as a hint, not an authenticated identity.** The value is whatever your
+  backend put in the token it minted, so it is only as trustworthy as that
+  backend's own notion of the visitor. Use it to group and attribute traffic; do
+  not use it alone to authorise access to one user's data.
 
 Each request also carries `X-LiveKit-Room-ID` and `X-LiveKit-Job-ID` headers.
 Those identify the live session, not the person, and are useful for correlating a
