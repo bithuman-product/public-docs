@@ -3,13 +3,15 @@
    draws these; components add only layout of their own.
    ========================================================================== */
 
-/* Roboto's metric twin, so the swap from the fallback does not move the page. */
+/* Roboto's metric twin, so the swap from the fallback does not move the page.
+   size-adjust is measured against Google's Roboto (Arial and Liberation Sans set
+   text about 2% wider); the overrides keep the same vertical metrics. */
 @font-face {
   font-family: "Roboto Fallback";
   src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans"), local("Arimo"), local("Helvetica Neue"), local("Helvetica");
-  size-adjust: 100.3%;
-  ascent-override: 92.4%;
-  descent-override: 24.3%;
+  size-adjust: 98.3%;
+  ascent-override: 94.3%;
+  descent-override: 24.8%;
   line-gap-override: 0%;
 }
 
