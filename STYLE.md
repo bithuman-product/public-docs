@@ -1,6 +1,6 @@
 # docs.bithuman.ai style guide
 
-Rules for everything under `src/content/docs` and `src/pages`. Each rule is one line; the gate that enforces it is named in brackets. Every gate runs in `.github/workflows/`.
+Rules for everything under `src/content/docs` and `src/pages`. Each rule is one line; the gate that enforces it is named in brackets. Every gate runs in `ci/run-local.sh` (GitHub Actions was removed on 2026-09-29; see `ci/README.md`).
 
 ## Voice
 
