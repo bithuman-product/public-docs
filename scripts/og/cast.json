@@ -1,0 +1,137 @@
+{
+  "$comment": "The characters an Open Graph card may show (scripts/gen-og.mjs), one 400x500 still each in scripts/og/<id>.jpg. All are public showcase characters on the marketing likeness allowlist, reviewed and approved by the owner on 2026-09-29 (\"I don't like we repeat the same image for different cards - we have many expression-2 avatars we should fully use them for avarieties\"; \"for docs.bithuman.ai and for showcase we should use variety expression-2 agents and some essence-2 agents\"). Two allowlisted characters on a green-screen background are left out. child: true = a child character, never shown on a companion, dating or relationship page. Add a character only once it is on that allowlist.",
+  "cast": [
+    {
+      "id": "wise-pup",
+      "name": "Wise Pup",
+      "model": "expression-2"
+    },
+    {
+      "id": "pip-the-red-panda-barista",
+      "name": "Pip",
+      "model": "expression-2"
+    },
+    {
+      "id": "whimsical-bee-entertainer",
+      "name": "Whimsical Bee",
+      "model": "expression-2",
+      "child": true
+    },
+    {
+      "id": "shelly-tidewater",
+      "name": "Shelly Tidewater",
+      "model": "expression-2"
+    },
+    {
+      "id": "milo-the-curious-inventor",
+      "name": "Milo",
+      "model": "expression-2",
+      "child": true
+    },
+    {
+      "id": "maya-linden-casual-chat-companion",
+      "name": "Maya Linden",
+      "model": "expression-2"
+    },
+    {
+      "id": "robin-your-pour-over-barista",
+      "name": "Robin",
+      "model": "expression-2"
+    },
+    {
+      "id": "pirate-trivia-host",
+      "name": "Captain Quizbeard",
+      "model": "expression-2"
+    },
+    {
+      "id": "ben-carver-friendly-everyday-helper",
+      "name": "Ben Carver",
+      "model": "expression-2"
+    },
+    {
+      "id": "gio-the-curious-giraffe-guide",
+      "name": "Gio",
+      "model": "expression-2"
+    },
+    {
+      "id": "grumblewick",
+      "name": "Grumblewick",
+      "model": "expression-2"
+    },
+    {
+      "id": "bolt",
+      "name": "Bolt",
+      "model": "expression-2"
+    },
+    {
+      "id": "mochi",
+      "name": "Mochi",
+      "model": "expression-2"
+    },
+    {
+      "id": "sprocket",
+      "name": "Sprocket",
+      "model": "expression-2"
+    },
+    {
+      "id": "rusty",
+      "name": "Rusty",
+      "model": "expression-2"
+    },
+    {
+      "id": "peanut",
+      "name": "Peanut",
+      "model": "expression-2"
+    },
+    {
+      "id": "yuki",
+      "name": "Yuki",
+      "model": "expression-2"
+    },
+    {
+      "id": "chef-waddles",
+      "name": "Chef Waddles",
+      "model": "expression-2"
+    },
+    {
+      "id": "naps",
+      "name": "Naps",
+      "model": "expression-2"
+    },
+    {
+      "id": "captain-axl",
+      "name": "Captain Axl",
+      "model": "expression-2"
+    },
+    {
+      "id": "toasty",
+      "name": "Toasty",
+      "model": "expression-2"
+    },
+    {
+      "id": "flicker",
+      "name": "Flicker",
+      "model": "expression-2"
+    },
+    {
+      "id": "afro-latina-astrophysics-mentor",
+      "name": "Mari",
+      "model": "essence-2"
+    },
+    {
+      "id": "sofia-ramirez",
+      "name": "Sofia Ramirez",
+      "model": "essence-2"
+    },
+    {
+      "id": "kwame-warm-museum-guide",
+      "name": "Kwame",
+      "model": "essence-2"
+    },
+    {
+      "id": "executive-coach-for-clear-decisions",
+      "name": "Ethan",
+      "model": "essence-2"
+    }
+  ]
+}

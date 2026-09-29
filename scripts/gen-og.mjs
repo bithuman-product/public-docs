@@ -6,12 +6,17 @@
 // pages ask for and fails when one is missing.
 //
 // Text is drawn from bundled Roboto (@fontsource/roboto), not system fonts, so
-// the cards are the same on every build machine. The avatars are the two public
-// sample avatars (scripts/og/*.jpg, from public/images/demo): Essence 2 on
-// Essence 2 pages, Expression 2 on Expression 2 pages, otherwise alternating by
-// page so a feed of links does not repeat one face.
+// the cards are the same on every build machine. The avatar is one of the
+// allowlisted showcase characters in scripts/og/cast.json (a still each in
+// scripts/og/<id>.jpg): an Essence 2 person on Essence 2 pages, an Expression 2
+// character on Expression 2 pages, otherwise any of them (mostly Expression 2).
+// The pick is a hash of the page path, so a page keeps its card from build to
+// build and a feed of links does not repeat one face (owner, 2026-09-29: "I
+// don't like we repeat the same image for different cards"). A child character
+// never appears on a companion, dating or relationship page.
 //
 //   node scripts/gen-og.mjs [--dist dist] [--only /platforms/ios]
+//   node scripts/gen-og.mjs --selftest   # the pick rules, without a build
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { createRequire } from "node:module";
@@ -32,10 +37,12 @@ const FONTS = [
   { name: "Roboto", data: font(700), weight: 700, style: "normal" },
 ];
 const dataUri = (file, type) => `data:${type};base64,${readFileSync(file).toString("base64")}`;
-const AVATAR = {
-  "essence-2": { src: dataUri(join(ROOT, "scripts/og/sofia-ramirez.jpg"), "image/jpeg"), label: "Essence 2 · sofia-ramirez" },
-  "expression-2": { src: dataUri(join(ROOT, "scripts/og/wise-pup.jpg"), "image/jpeg"), label: "Expression 2 · wise-pup" },
-};
+const MODEL_NAME = { "essence-2": "Essence 2", "expression-2": "Expression 2" };
+const CAST = JSON.parse(readFileSync(join(ROOT, "scripts/og/cast.json"), "utf8")).cast.map((c) => ({
+  ...c,
+  src: dataUri(join(ROOT, `scripts/og/${c.id}.jpg`), "image/jpeg"),
+  label: `${MODEL_NAME[c.model]} · ${c.name}`,
+}));
 const MARK = dataUri(join(ROOT, "public/bithuman-mark.png"), "image/png");
 
 // the light theme's tokens (src/styles/tokens.css)
@@ -49,10 +56,14 @@ const walk = (d) => readdirSync(d).flatMap((n) => {
   return statSync(p).isDirectory() ? walk(p) : n === "index.html" ? [p] : [];
 });
 
-function pickAvatar(path, i) {
-  if (/essence/.test(path)) return "essence-2";
-  if (/expression/.test(path)) return "expression-2";
-  return i % 2 ? "expression-2" : "essence-2";
+// FNV-1a: a stable 32-bit hash of the page path
+const hash = (s) => [...s].reduce((h, ch) => Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0, 2166136261);
+const GROWN_UPS_ONLY = /companion|dating|relationship|romanc|girlfriend|boyfriend/i;
+
+function pickAvatar(path, title = "", cast = CAST) {
+  const model = /essence/.test(path) ? "essence-2" : /expression/.test(path) ? "expression-2" : null;
+  const pool = cast.filter((c) => (!model || c.model === model) && !(c.child && GROWN_UPS_ONLY.test(`${path} ${title}`)));
+  return pool[hash(path) % pool.length];
 }
 
 const h = (type, style, children) => ({ type, props: { style, children } });
@@ -73,18 +84,42 @@ function card({ eyebrow, title, description, avatar }) {
       h("div", { display: "flex", fontSize: 24, fontWeight: 500, color: C.muted }, "docs.bithuman.ai"),
     ]),
     h("div", { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: 460, background: C.surface, borderLeft: `1px solid ${C.border}` }, [
-      { type: "img", props: { src: AVATAR[avatar].src, width: 320, height: 400, style: { borderRadius: 28, objectFit: "cover", boxShadow: "0 12px 40px rgba(29,29,34,0.18)" } } },
-      h("div", { display: "flex", marginTop: 22, fontSize: 22, color: C.muted, fontWeight: 500 }, AVATAR[avatar].label),
+      { type: "img", props: { src: avatar.src, width: 320, height: 400, style: { borderRadius: 28, objectFit: "cover", boxShadow: "0 12px 40px rgba(29,29,34,0.18)" } } },
+      h("div", { display: "flex", marginTop: 22, fontSize: 22, color: C.muted, fontWeight: 500 }, avatar.label),
     ]),
   ]);
 }
 
 const clip = (s, n) => (s.length > n ? s.slice(0, s.lastIndexOf(" ", n - 1)).replace(/[,;:·–—-]\s*$/, "") + "…" : s);
 
+function selftest() {
+  const faults = [];
+  const paths = ["/", "/start", "/models/essence-2", "/models/expression-2", "/build/companion-app", "/platforms/ios", "/platforms/android", "/deploy/cloud", "/api/agents", "/pricing"];
+  for (const p of paths) {
+    const a = pickAvatar(p);
+    if (a !== pickAvatar(p)) faults.push(`${p}: the pick is not stable`);
+    if (/essence/.test(p) && a.model !== "essence-2") faults.push(`${p}: ${a.id} is not an Essence 2 character`);
+    if (/expression/.test(p) && a.model !== "expression-2") faults.push(`${p}: ${a.id} is not an Expression 2 character`);
+  }
+  // a child character is never picked for a companion page, whatever the hash lands on
+  const kids = CAST.filter((c) => c.child);
+  if (!kids.length) faults.push("no child character in the cast, so the companion rule is untested");
+  for (const k of kids) {
+    const onlyKid = [k, { ...k, id: "grown-up", child: false }];
+    for (const p of ["/build/companion-app", "/a/b", "/x"]) if (pickAvatar(p, "A companion for your users", onlyKid).child) faults.push(`${k.id} picked for a companion page`);
+  }
+  const general = paths.filter((p) => !/essence|expression/.test(p));
+  const seen = new Set(general.map((p) => pickAvatar(p).id));
+  if (seen.size < general.length / 2) faults.push(`${general.length} general pages share ${seen.size} faces: not varied`);
+  console.log(faults.length ? `selftest RED:\n  ${faults.join("\n  ")}` : `selftest GREEN (${CAST.length} characters; stable, model-matched, companion-safe, varied)`);
+  process.exit(faults.length ? 1 : 0);
+}
+if (args.includes("--selftest")) selftest();
+
 let made = 0;
 const missing = [];
 const pages = walk(DIST).sort();
-for (const [i, file] of pages.entries()) {
+for (const file of pages) {
   const html = readFileSync(file, "utf8");
   const og = /<meta property="og:image" content="https:\/\/docs\.bithuman\.ai(\/og\/[^"]+\.jpg)"/.exec(html)?.[1];
   if (!og) continue;
@@ -93,7 +128,7 @@ for (const [i, file] of pages.entries()) {
   const title = meta(html, /<meta property="og:title" content="([^"]*)"/).replace(/\s*[|·—–-]\s*bitHuman Docs$/i, "");
   const description = clip(meta(html, /<meta property="og:description" content="([^"]*)"/), 150);
   const eyebrow = meta(html, /data-pagefind-filter="section:([^"]+)"/) || (path === "/" ? "" : "Docs");
-  const svg = await satori(card({ eyebrow, title: clip(title, 90), description, avatar: pickAvatar(path, i) }), { width: 1200, height: 630, fonts: FONTS });
+  const svg = await satori(card({ eyebrow, title: clip(title, 90), description, avatar: pickAvatar(path, title) }), { width: 1200, height: 630, fonts: FONTS });
   const png = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } }).render().asPng();
   const out = join(DIST, og);
   mkdirSync(dirname(out), { recursive: true });
