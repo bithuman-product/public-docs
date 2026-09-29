@@ -2298,9 +2298,11 @@ paths:
             when the body has `mode`, the cloud avatar is starting: a flat object
             with `avatar_session_started: true` and `model`, the model the session
             launched as, plus echoes of `mode`, `agent_id` and `image` and your
-            `user_id`. Until 2026-10-12, a Free account's runtime token also
-            carries `plan_notice` and the `X-Bithuman-Plan-Notice` header; show
-            it as sent.
+            `user_id`. Until 2026-10-12, a Free account's runtime token and cloud
+            avatar start also carry `plan_notice` and the `X-Bithuman-Plan-Notice`
+            header; show it as sent. From 2026-10-12, a Free account's cloud avatar
+            start is refused with `403 PLAN_REQUIRED` before anything is launched or
+            billed.
           headers:
             X-Bithuman-Plan-Notice:
               schema:
@@ -2333,6 +2335,7 @@ paths:
                       agent_id: { type: string, nullable: true }
                       image: { type: string, nullable: true }
                       user_id: { type: string }
+                      plan_notice: { type: string, description: "Free accounts, until 2026-10-12." }
               examples:
                 runtimeToken:
                   summary: Runtime token

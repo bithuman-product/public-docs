@@ -80,6 +80,8 @@ The session is billed at the model's cloud rate for as long as it runs ([Pricing
 - You remove `bithuman-avatar-agent` from the room.
 - The room closes.
 
+An ended session stops counting toward your plan's [concurrent sessions](/api/rate-limits#session-concurrency) within 2 minutes of its end. To free its slot at once, [terminate it](/api/runtime-sessions#terminate-a-session): list your live sessions and use the `id` of the one whose `room_name` is your room.
+
 ## Send the audio
 
 Send each reply as one LiveKit byte stream:
@@ -142,7 +144,7 @@ Photo sessions work on Expression 1 only. On every other model, the request is r
 |---|---|---|
 | `400` | `VALIDATION_ERROR` | One of these: a field is missing or invalid; `image` was sent without `agent_id` for a model other than Expression 1; an Essence 1 session was started without `livekit_url`, `livekit_token` and `room_name`. Nothing is launched or billed. |
 | `401` | `MISSING_AUTH` / `UNAUTHORIZED` | The `api-secret` header is missing or invalid. |
-| `403` | `PLAN_REQUIRED` | The model is not in your plan. |
+| `403` | `PLAN_REQUIRED` | The model is not in your plan, or, from 2026-10-12, your account is on the Free plan. Nothing is launched or billed. |
 | `403` | `CONCURRENCY_LIMIT_REACHED` | The session would exceed your plan's concurrent sessions ([Rate limits](/api/rate-limits)). |
 | `404` | `NOT_FOUND` | No agent with this code that you can start. |
 | `409` | `VALIDATION_ERROR` | The agent can't be served as the requested model, or its own model isn't ready yet. |
