@@ -107,7 +107,7 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Credit-based:** from 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection.
 - **Creation is online:** you create the avatar from a portrait in the bitHuman cloud; the finished avatar model then runs on your machines.
 - **Not for phones:** the Swift package and the Android SDK stay online.
-- **Not file rendering:** `bithuman render` writes a video file and signs in online; it needs no offline license.
+- **File rendering:** `bithuman render` signs in online and needs no offline license; with an installed pack that covers the avatar, it renders with no network and spends the pack.
 
 [Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
 
