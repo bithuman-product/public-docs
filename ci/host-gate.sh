@@ -11,14 +11,38 @@
 #   $LOCAL_CI_LOCK_DIR (default ~/_locks/local-ci)/
 #     slot1.lock .. slotN.lock  at most N (LOCAL_CI_SLOTS, default 2) suites at once,
 #                               across every repo and user of this $HOME
+#     queue/<ns>-<pid>-<host>   one FIFO ticket per suite WAITING for a slot (arrival time in
+#                               ns, pid, host; body = the pid's /proc start time + who)
 #     host.lock                 every running suite holds it SHARED; a Lighthouse/perf
 #                               step takes it EXCLUSIVE (= no other suite running)
 #     turnstile.lock            writer preference: a step waiting for EXCLUSIVE holds it,
 #                               so no NEW suite starts under it (no starvation)
 #     slotN.holder              who holds slot N (informational; the flock is the truth)
+#     exclusive.holder          who holds host.lock EXCLUSIVE, since when (informational)
 #
 # flock(1) locks die with the process, so a killed suite can never leave a slot taken.
 # Lock files are never deleted (deleting a flock file breaks the mutex).
+#
+# FIFO (2026-09-29 pm; a suite waited 44 min as the OLDEST waiter while newer runs won the
+# old 5 s `flock -n` race): lci_gate_begin writes a ticket atomically, and only the OLDEST
+# live ticket (the head) may take a free slot, so slots go out in arrival order. The first
+# LOCAL_CI_SLOTS waiters poll every 1 s, the rest every 2 s. A waiter drops its ticket the
+# moment it holds a slot, on timeout, and in its EXIT trap. Any waiter removes dead tickets:
+# pid gone, or the pid was reused (its /proc start time differs from the ticket's); another
+# host's ticket is dead once not refreshed for LOCAL_CI_STALE_S. A STOPPED waiter (^Z,
+# SIGSTOP) keeps its ticket but is skipped, so it cannot stall the queue. Waiters still
+# running the pre-FIFO copy of this file have no ticket and keep trying `flock -n` every
+# 5 s: if one of them takes the slot the head was due, the head simply keeps waiting (no
+# deadlock: neither side ever waits on the other's ticket); they disappear as those runs
+# finish.
+#
+# Lighthouse fairness: lci_exclusive_begin YIELDS while any queued ticket has waited more
+# than LOCAL_CI_EXCL_YIELD_S: it does not take the turnstile until no such ticket remains
+# (they get their slots first), or until its own wait deadline (then exit 75, like every
+# wait here). Otherwise writer preference as before. An exclusive hold longer than
+# LOCAL_CI_EXCL_MAX_S logs a WARNING (and `status` flags it); with LOCAL_CI_EXCL_ENFORCE=1
+# (the caller opts in) lci_run also runs the exclusive step under timeout(1) for what is
+# left of that budget (exit 124 when it fires; a shell function cannot be run that way).
 #
 # API (bash):  lci_gate_begin <label>         wait for a slot (+ shared host lock)
 #              lci_exclusive_begin <step>     wait until no other suite runs
@@ -26,17 +50,28 @@
 #              lci_run <cmd...>               run a child WITHOUT the lock fds (a daemon a
 #                                             step leaves behind can't pin a slot)
 #              lci_offload_orinda <repo> <preflight-shell> <args...>   see --host orinda
-# CLI:         bash ci/host-gate.sh status    who holds what, right now
+# CLI:         bash ci/host-gate.sh status    who holds what, and the queue, right now
 #
 # Knobs: LOCAL_CI_WAIT_S (default 7200; 0 = wait forever; run-local.sh --wait-timeout S)
 #        LOCAL_CI_SLOTS (2), LOCAL_CI_LOCK_DIR (~/_locks/local-ci), LOCAL_CI_POLL_S (60)
+#        LOCAL_CI_EXCL_YIELD_S (600), LOCAL_CI_EXCL_MAX_S (900; 0 = no warning),
+#        LOCAL_CI_EXCL_ENFORCE (0), LOCAL_CI_STALE_S (300)
 
 LCI_LOCK_DIR="${LOCAL_CI_LOCK_DIR:-$HOME/_locks/local-ci}"
 LCI_SLOTS="${LOCAL_CI_SLOTS:-2}"
 LCI_WAIT_S="${LOCAL_CI_WAIT_S:-7200}"
 LCI_POLL_S="${LOCAL_CI_POLL_S:-60}"
+LCI_EXCL_YIELD_S="${LOCAL_CI_EXCL_YIELD_S:-600}"
+LCI_EXCL_MAX_S="${LOCAL_CI_EXCL_MAX_S:-900}"
+LCI_STALE_S="${LOCAL_CI_STALE_S:-300}"
+LCI_QDIR="$LCI_LOCK_DIR/queue"
+LCI_HOSTNAME="$(uname -n)"; LCI_HOSTNAME="${LCI_HOSTNAME%%.*}"
 LCI_SLOT=""; LCI_SLOT_FD=""; LCI_HOST_FD=""; LCI_TURN_FD=""; LCI_LABEL=""; LCI_T0=""
 LCI_ON=0
+LCI_TICKET=""; LCI_TICKET_BODY=""; LCI_POS=0
+LCI_EXCL=0; LCI_EXCL_T=0; LCI_EXCL_STEP=""; LCI_EXCL_WD=""
+LCI_Q=(); LCI_QW=(); LCI_QI=(); LCI_QSTOP=(); LCI_QDEAD=()
+LCI_OLD_N=0; LCI_OLD_W=0; LCI_OLD_I=""; LCI_ST_STATE=""; LCI_ST_START=""
 
 lci__log() { echo "[host-gate] $*" >&2; }
 lci__now() { date +%s; }
@@ -60,7 +95,106 @@ lci__holders() {  # one line per live slot holder
   [ $any = 0 ] || echo "  (no slot holders)"
 }
 
+# lci__stat <pid>: LCI_ST_STATE (R/S/D/T/...) and LCI_ST_START (/proc start time, field 22)
+# from /proc/<pid>/stat, read with builtins (no subshell: $BASHPID stays ours). 1 = gone.
+lci__stat() {
+  local s a
+  LCI_ST_STATE=""; LCI_ST_START=""
+  { read -r s <"/proc/$1/stat"; } 2>/dev/null || return 1
+  s="${s##*) }"                               # comm may hold spaces and ')'
+  IFS=' ' read -r -a a <<<"$s"
+  LCI_ST_STATE="${a[0]:-}"; LCI_ST_START="${a[19]:-}"
+  return 0
+}
+
+lci__ticket_write() {  # atomic (write + rename): a reader never sees half a ticket
+  local tmp="$LCI_QDIR/.tmp-${LCI_TICKET##*/}"
+  mkdir -p "$LCI_QDIR" 2>/dev/null || return 1
+  printf '%s\n' "$LCI_TICKET_BODY" >"$tmp" 2>/dev/null || return 1
+  mv -f "$tmp" "$LCI_TICKET" 2>/dev/null
+}
+
+lci__ticket_new() {
+  local ns me="$BASHPID" user now_iso
+  ns="$(date +%s%N)"
+  case "$ns" in ''|*[!0-9]*) ns="$(date +%s)000000000" ;; esac    # no %N (BSD date)
+  lci__stat "$me" || LCI_ST_START="-"
+  user="$(id -un)"; now_iso="$(date -u +%FT%TZ)"
+  LCI_TICKET="$LCI_QDIR/$ns-$me-$LCI_HOSTNAME"
+  LCI_TICKET_BODY="$(printf '%s\nlabel=%s pid=%s user=%s since=%s cwd=%s' "${LCI_ST_START:--}" \
+    "$LCI_LABEL" "$me" "$user" "$now_iso" "$PWD")"
+  lci__ticket_write
+}
+
+lci__ticket_rm() {
+  if [ -n "$LCI_TICKET" ]; then
+    rm -f "$LCI_TICKET" "$LCI_QDIR/.tmp-${LCI_TICKET##*/}" 2>/dev/null || true
+    LCI_TICKET=""
+  fi
+  return 0
+}
+
+# lci__queue_scan: LCI_Q = live, runnable tickets, oldest first (LCI_QW = waited s, LCI_QI =
+# who); LCI_QSTOP = stopped ones ("waited|who"). Removes dead tickets (LCI_REAP=0: only
+# lists them in LCI_QDEAD, for `status`).
+lci__queue_scan() {
+  local LC_ALL=C f n rest ns pid host st info now mt dead
+  LCI_Q=(); LCI_QW=(); LCI_QI=(); LCI_QSTOP=(); LCI_QDEAD=()
+  now="$(lci__now)"
+  for f in "$LCI_QDIR"/*; do
+    n="${f##*/}"; ns="${n%%-*}"; rest="${n#*-}"; pid="${rest%%-*}"; host="${rest#*-}"
+    case "$ns" in ''|*[!0-9]*) continue ;; esac               # not a ticket (or no match)
+    case "$pid" in ''|*[!0-9]*) continue ;; esac
+    st=""; info=""
+    { read -r st; read -r info; } 2>/dev/null <"$f" || continue  # removed under us
+    dead=0; LCI_ST_STATE=""
+    if [ "$host" = "$LCI_HOSTNAME" ]; then
+      if [ -d /proc/self ]; then
+        if ! lci__stat "$pid"; then dead=1
+        elif [ "$st" != "-" ] && [ "$st" != "$LCI_ST_START" ]; then dead=1; fi   # pid reused
+      elif ! kill -0 "$pid" 2>/dev/null; then dead=1; fi
+    else                                         # another host sharing this dir: heartbeat
+      mt="$(date -r "$f" +%s 2>/dev/null)" || mt="$now"
+      [ $(( now - mt )) -le "$LCI_STALE_S" ] || dead=1
+    fi
+    if [ $dead = 1 ]; then
+      if [ "${LCI_REAP:-1}" = 1 ]; then
+        if rm "$f" 2>/dev/null; then lci__log "removed a dead queue ticket ($n: $info)"; fi
+      else LCI_QDEAD+=("$n: $info"); fi
+      continue
+    fi
+    case "$LCI_ST_STATE" in
+      T|t) LCI_QSTOP+=("$(( now - ns / 1000000000 ))|$info"); continue ;;
+    esac
+    LCI_Q+=("$f"); LCI_QW+=("$(( now - ns / 1000000000 ))"); LCI_QI+=("$info")
+  done
+  return 0
+}
+
+lci__queue_pos() {  # LCI_POS = 1-based position of our ticket in LCI_Q (0 = not in it)
+  local i
+  LCI_POS=0
+  for i in "${!LCI_Q[@]}"; do
+    if [ "${LCI_Q[$i]}" = "$LCI_TICKET" ]; then LCI_POS=$(( i + 1 )); break; fi
+  done
+  return 0
+}
+
+lci__queue_show() {  # the queue, oldest first (status + the first "waiting" line)
+  local i
+  lci__queue_scan
+  if [ ${#LCI_Q[@]} = 0 ] && [ ${#LCI_QSTOP[@]} = 0 ] && [ ${#LCI_QDEAD[@]} = 0 ]; then
+    echo "  queue: empty"; return 0
+  fi
+  echo "  queue: ${#LCI_Q[@]} waiting for a slot, oldest first (only #1 may take a free slot):"
+  for i in "${!LCI_Q[@]}"; do echo "    #$(( i + 1 )) waited ${LCI_QW[$i]}s  ${LCI_QI[$i]}"; done
+  for i in "${LCI_QSTOP[@]+"${LCI_QSTOP[@]}"}"; do echo "    (STOPPED, skipped) waited ${i%%|*}s  ${i#*|}"; done
+  for i in "${LCI_QDEAD[@]+"${LCI_QDEAD[@]}"}"; do echo "    (dead; the next waiter removes it) $i"; done
+  return 0
+}
+
 lci__timeout() {
+  lci__ticket_rm
   lci__log "TIMEOUT: waited ${LCI_WAIT_S}s for $1. Current holders:"
   lci__holders >&2
   lci__log "raise --wait-timeout / LOCAL_CI_WAIT_S (0 = forever), or run later."
@@ -81,6 +215,8 @@ lci__flock_wait() {
   done
 }
 
+lci__on_exit() { lci__ticket_rm; lci_gate_end; }
+
 lci_gate_begin() {
   LCI_LABEL="${1:-local-ci}"; LCI_T0="$(lci__now)"
   if ! command -v flock >/dev/null 2>&1; then
@@ -90,24 +226,37 @@ lci_gate_begin() {
   mkdir -p "$LCI_LOCK_DIR"
   exec {LCI_HOST_FD}>>"$LCI_LOCK_DIR/host.lock"
   exec {LCI_TURN_FD}>>"$LCI_LOCK_DIR/turnstile.lock"
-  local i fd announced=0 left last
-  last="$(lci__now)"
+  trap 'lci__on_exit' EXIT                    # from here on: the ticket goes on any exit
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+  lci__ticket_new || { lci__log "cannot write a queue ticket under $LCI_QDIR"; exit 75; }
+  local i fd announced=0 left last beat head=0
+  last="$(lci__now)"; beat="$last"
   while :; do
-    for i in $(seq 1 "$LCI_SLOTS"); do
-      exec {fd}>>"$LCI_LOCK_DIR/slot$i.lock"
-      if flock -n "$fd"; then LCI_SLOT="$i"; LCI_SLOT_FD="$fd"; break 2; fi
-      exec {fd}>&-
-    done
-    if [ $announced = 0 ]; then
-      lci__log "waiting for a CI slot ($LCI_SLOTS max on $(hostname -s), $LCI_LABEL, pid $$). Holders:"
-      lci__holders >&2; announced=1
+    [ -e "$LCI_TICKET" ] || lci__ticket_write || true    # removed by hand: same place again
+    lci__queue_scan; lci__queue_pos
+    if [ "$LCI_POS" = 1 ]; then               # FIFO: only the oldest live waiter takes a slot
+      for i in $(seq 1 "$LCI_SLOTS"); do
+        exec {fd}>>"$LCI_LOCK_DIR/slot$i.lock"
+        if flock -n "$fd"; then LCI_SLOT="$i"; LCI_SLOT_FD="$fd"; break 2; fi
+        exec {fd}>&-
+      done
     fi
+    if [ $announced = 0 ]; then
+      lci__log "waiting for a CI slot ($LCI_SLOTS max on $LCI_HOSTNAME, $LCI_LABEL, pid $$; queue position $LCI_POS of ${#LCI_Q[@]}). Holders:"
+      lci__holders >&2; lci__queue_show >&2; announced=1
+    elif [ "$LCI_POS" = 1 ] && [ $head = 0 ]; then
+      lci__log "first in the queue after $(( $(lci__now) - LCI_T0 ))s: taking the next free CI slot"
+    fi
+    [ "$LCI_POS" = 1 ] && head=1 || head=0
     left="$(lci__left)"; [ -z "$left" ] || [ "$left" -gt 0 ] || lci__timeout "a CI slot"
-    sleep 5
+    if [ "$LCI_POS" -ge 1 ] && [ "$LCI_POS" -le "$LCI_SLOTS" ]; then sleep 1; else sleep 2; fi
+    if [ $(( $(lci__now) - beat )) -ge 30 ]; then beat="$(lci__now)"; touch "$LCI_TICKET" 2>/dev/null || true; fi
     if [ $(( $(lci__now) - last )) -ge "$LCI_POLL_S" ]; then
-      last="$(lci__now)"; lci__log "still waiting for a CI slot ($(( last - LCI_T0 ))s)"
+      last="$(lci__now)"; lci__log "still waiting for a CI slot ($(( last - LCI_T0 ))s; queue position $LCI_POS of ${#LCI_Q[@]})"
     fi
   done
+  lci__ticket_rm
   [ $announced = 1 ] && lci__log "got CI slot $LCI_SLOT after $(( $(lci__now) - LCI_T0 ))s"
   # Writer preference: pass the turnstile (a waiting EXCLUSIVE step holds it), then share.
   lci__flock_wait -x "$LCI_TURN_FD" "the turnstile (a Lighthouse/perf step is waiting for the host)"
@@ -116,14 +265,12 @@ lci_gate_begin() {
   printf 'label=%s pid=%s user=%s since=%s cwd=%s\n' "$LCI_LABEL" "$$" "$(id -un)" \
     "$(date -u +%FT%TZ)" "$PWD" >"$LCI_LOCK_DIR/slot$LCI_SLOT.holder" 2>/dev/null || true
   LCI_ON=1
-  trap 'lci_gate_end' EXIT
-  trap 'exit 130' INT
-  trap 'exit 143' TERM
   lci__log "slot $LCI_SLOT/$LCI_SLOTS held by $LCI_LABEL (pid $$); lock dir $LCI_LOCK_DIR"
 }
 
 lci_gate_end() {
   [ "$LCI_ON" = 1 ] || return 0
+  lci__excl_clear
   local f="$LCI_LOCK_DIR/slot$LCI_SLOT.holder"
   grep -q "pid=$$ " "$f" 2>/dev/null && rm -f "$f"
   [ -n "$LCI_HOST_FD" ] && exec {LCI_HOST_FD}>&-
@@ -132,23 +279,111 @@ lci_gate_end() {
   LCI_ON=0
 }
 
+# LCI_OLD_N = queued tickets that waited > LOCAL_CI_EXCL_YIELD_S (oldest: LCI_OLD_W s, LCI_OLD_I)
+lci__old_tickets() {
+  local i
+  LCI_OLD_N=0; LCI_OLD_W=0; LCI_OLD_I=""
+  lci__queue_scan
+  for i in "${!LCI_Q[@]}"; do
+    if [ "${LCI_QW[$i]}" -gt "$LCI_EXCL_YIELD_S" ]; then
+      LCI_OLD_N=$(( LCI_OLD_N + 1 ))
+      if [ "${LCI_QW[$i]}" -gt "$LCI_OLD_W" ]; then LCI_OLD_W="${LCI_QW[$i]}"; LCI_OLD_I="${LCI_QI[$i]}"; fi
+    fi
+  done
+  return 0
+}
+
+lci__excl_yield() {  # <step>: wait while suites queued for a slot waited > YIELD_S (bounded)
+  local announced=0 last left
+  last="$(lci__now)"
+  while :; do
+    lci__old_tickets
+    if [ "$LCI_OLD_N" = 0 ]; then
+      [ $announced = 0 ] || lci__log "done yielding after $(( $(lci__now) - LCI_T0 ))s; $1 now queues for the EXCLUSIVE host lock"
+      return 0
+    fi
+    if [ $announced = 0 ]; then
+      lci__log "YIELDING: $LCI_OLD_N suite(s) queued for a CI slot > ${LCI_EXCL_YIELD_S}s (oldest ${LCI_OLD_W}s: $LCI_OLD_I); $1 ($LCI_LABEL, pid $$) lets them start before it takes the turnstile"
+      announced=1
+    fi
+    left="$(lci__left)"
+    if [ -n "$left" ]; then [ "$left" -gt 0 ] || lci__timeout "the EXCLUSIVE host lock for $1 (yielding to suites queued > ${LCI_EXCL_YIELD_S}s)"; fi
+    sleep 2
+    if [ $(( $(lci__now) - last )) -ge "$LCI_POLL_S" ]; then
+      last="$(lci__now)"; lci__log "still yielding ($(( last - LCI_T0 ))s; $LCI_OLD_N queued > ${LCI_EXCL_YIELD_S}s, oldest ${LCI_OLD_W}s)"
+    fi
+  done
+}
+
+lci__excl_watch() {  # a helper WITHOUT the lock fds: WARN once the hold passes EXCL_MAX_S
+  LCI_EXCL_WD=""
+  [ "$LCI_EXCL_MAX_S" -gt 0 ] 2>/dev/null || return 0
+  local parent="$BASHPID"
+  (
+    exec {LCI_SLOT_FD}>&- {LCI_HOST_FD}>&- {LCI_TURN_FD}>&- </dev/null >/dev/null
+    while kill -0 "$parent" 2>/dev/null; do
+      if [ $(( $(lci__now) - LCI_EXCL_T )) -ge "$LCI_EXCL_MAX_S" ]; then
+        lci__log "WARNING: $LCI_EXCL_STEP ($LCI_LABEL, pid $parent) has held the EXCLUSIVE host lock $(( $(lci__now) - LCI_EXCL_T ))s > LOCAL_CI_EXCL_MAX_S=${LCI_EXCL_MAX_S}s; every other CI suite is blocked$([ "${LOCAL_CI_EXCL_ENFORCE:-0}" = 1 ] && echo "; timeout(1) ends the step now" || echo " (LOCAL_CI_EXCL_ENFORCE=1 would cap it with timeout)")"
+        exit 0
+      fi
+      sleep 2 2>/dev/null
+    done
+  ) &
+  LCI_EXCL_WD=$!
+  return 0
+}
+
+lci__excl_clear() {  # end of an exclusive hold: stop the helper, drop the record, report
+  [ "$LCI_EXCL" = 1 ] || return 0
+  local d line f="$LCI_LOCK_DIR/exclusive.holder"
+  if [ -n "$LCI_EXCL_WD" ]; then
+    kill "$LCI_EXCL_WD" 2>/dev/null || true; wait "$LCI_EXCL_WD" 2>/dev/null || true; LCI_EXCL_WD=""
+  fi
+  line=""; { read -r line <"$f"; } 2>/dev/null || true
+  case "$line" in *" pid=$$ "*) rm -f "$f" ;; esac
+  d=$(( $(lci__now) - LCI_EXCL_T ))
+  if [ "$LCI_EXCL_MAX_S" -gt 0 ] 2>/dev/null && [ "$d" -gt "$LCI_EXCL_MAX_S" ]; then
+    lci__log "WARNING: EXCLUSIVE host lock for $LCI_EXCL_STEP was held ${d}s > LOCAL_CI_EXCL_MAX_S=${LCI_EXCL_MAX_S}s"
+  else
+    lci__log "EXCLUSIVE host lock for $LCI_EXCL_STEP released after ${d}s"
+  fi
+  LCI_EXCL=0
+  return 0
+}
+
 lci_exclusive_begin() {
   [ "$LCI_ON" = 1 ] || return 0
   LCI_T0="$(lci__now)"
   flock -u "$LCI_HOST_FD"                     # drop shared first (else two waiters deadlock)
-  lci__flock_wait -x "$LCI_TURN_FD" "the turnstile (another exclusive step is queued)"
+  while :; do
+    lci__excl_yield "$1"                      # fairness: long-queued suites go first
+    lci__flock_wait -x "$LCI_TURN_FD" "the turnstile (another exclusive step is queued)"
+    lci__old_tickets
+    [ "$LCI_OLD_N" = 0 ] && break
+    flock -u "$LCI_TURN_FD"                   # one crossed the threshold meanwhile: yield again
+  done
   lci__flock_wait -x "$LCI_HOST_FD" "the EXCLUSIVE host lock for $1 (no other CI suite running)"
   flock -u "$LCI_TURN_FD"
+  LCI_EXCL=1; LCI_EXCL_T="$(lci__now)"; LCI_EXCL_STEP="$1"
+  printf 'label=%s step=%s pid=%s since=%s t=%s\n' "$LCI_LABEL" "$1" "$$" "$(date -u +%FT%TZ)" \
+    "$LCI_EXCL_T" >"$LCI_LOCK_DIR/exclusive.holder" 2>/dev/null || true
+  lci__excl_watch
   lci__log "EXCLUSIVE host lock held for $1"
 }
 
 lci_exclusive_end() {
   [ "$LCI_ON" = 1 ] || return 0
   flock -s "$LCI_HOST_FD"                     # downgrade; we hold -x so this cannot block
+  lci__excl_clear
 }
 
 lci_run() {
-  if [ "$LCI_ON" = 1 ]; then "$@" {LCI_SLOT_FD}>&- {LCI_HOST_FD}>&- {LCI_TURN_FD}>&-
+  if [ "$LCI_ON" = 1 ]; then
+    if [ "$LCI_EXCL" = 1 ] && [ "${LOCAL_CI_EXCL_ENFORCE:-0}" = 1 ] && [ "$LCI_EXCL_MAX_S" -gt 0 ] 2>/dev/null; then
+      local rem=$(( LCI_EXCL_MAX_S - ( $(lci__now) - LCI_EXCL_T ) ))
+      [ "$rem" -gt 0 ] || rem=1
+      timeout -k 30 "$rem" "$@" {LCI_SLOT_FD}>&- {LCI_HOST_FD}>&- {LCI_TURN_FD}>&-
+    else "$@" {LCI_SLOT_FD}>&- {LCI_HOST_FD}>&- {LCI_TURN_FD}>&-; fi
   else "$@"; fi
 }
 
@@ -171,6 +406,7 @@ lci_offload_orinda() {
     lci__log "offload REFUSED: $host lacks the toolchain for $repo:"; printf '%s\n' "$out" | sed 's/^/    /' >&2
     lci__log "the default (local, gated) still works: rerun without --host"; exit 75
   fi
+  # shellcheck disable=SC2088  # the ~ expands on the remote host, on purpose
   out="$("${ssh_[@]}" "~/bin_mlock.sh acquire $lane $mins $(printf %q "local-ci $repo suite offloaded from $(hostname -s)")" 2>&1)"; rc=$?
   if [ $rc != 0 ]; then
     lci__log "offload REFUSED: $host measurement lock is not free:"; printf '%s\n' "$out" | sed 's/^/    /' >&2
@@ -198,7 +434,17 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
       mkdir -p "$LCI_LOCK_DIR"; lci__holders
       if flock -n -x "$LCI_LOCK_DIR/host.lock" true 2>/dev/null; then echo "  host.lock: free"
       elif flock -n -s "$LCI_LOCK_DIR/host.lock" true 2>/dev/null; then echo "  host.lock: shared (suites running)"
-      else echo "  host.lock: EXCLUSIVE (a Lighthouse/perf step is running)"; fi ;;
+      else
+        echo "  host.lock: EXCLUSIVE (a Lighthouse/perf step is running)"
+        x=""; { read -r x <"$LCI_LOCK_DIR/exclusive.holder"; } 2>/dev/null || true
+        xt="${x##* t=}"; case "$xt" in ''|*[!0-9]*) xt="" ;; esac
+        if [ -n "$xt" ]; then
+          xd=$(( $(lci__now) - xt )); xo=""
+          [ "$LCI_EXCL_MAX_S" -gt 0 ] 2>/dev/null && [ "$xd" -gt "$LCI_EXCL_MAX_S" ] && xo="  OVER LOCAL_CI_EXCL_MAX_S=${LCI_EXCL_MAX_S}s"
+          echo "    held ${xd}s by ${x% t=*}$xo"
+        fi
+      fi
+      LCI_REAP=0 lci__queue_show ;;
     *) echo "usage: bash ci/host-gate.sh status" >&2; exit 2 ;;
   esac
 fi
