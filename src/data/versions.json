@@ -25,7 +25,7 @@
     {
       "key": "python",
       "name": "`bithuman` (Python)",
-      "platforms": "Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64",
+      "platforms": "Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64, Windows 11 x86_64",
       "install": "pip install \"bithuman[expression-2]\"",
       "registry": "PyPI",
       "registry_url": "https://pypi.org/project/bithuman/",
