@@ -58,7 +58,7 @@ offline
 - **Linux PCs and terminals, and Macs with Apple silicon** (the Python package, bitHuman 2.11.17 or later, on macOS). Phones and browsers stay online, and so do apps built on the Swift package: the Swift package, the Android SDK and the web embed check your credential when a session starts.
 - **Creation is online:** you create the avatar from a portrait in the bitHuman cloud before it runs offline.
 - **One pack per process:** an engaged pack meters every avatar its process renders, so run each model (Essence 1, Essence 2, Expression 2) in its own process.
-- **Not file rendering:** `bithuman render` and Python's `bithuman.offline` write a video file and sign in online, on any plan that can render.
+- **File rendering:** without a pack, `bithuman render` and Python's `render()` sign in online and bill your account. With an installed pack that covers the avatar, they render with no network and no API secret, and spend the pack.
 
 ## First command
 
