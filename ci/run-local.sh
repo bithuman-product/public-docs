@@ -26,7 +26,9 @@
 # repos on this host; a 3rd prints "waiting for a CI slot". EVERY step (node, astro build,
 # Lighthouse) runs under systemd-run MemoryMax=8G/CPUQuota=400% + nice 19, and Lighthouse
 # additionally waits for the EXCLUSIVE host lock (no other suite running) so its
-# timing-based score is stable.
+# timing-based score is stable. The EXCLUSIVE_STEPS run LAST, together, in ONE exclusive
+# pass after every other step (shared): a suite never interleaves exclusive and shared
+# phases, and while that pass waits its turn the suite gives its slot back (host-gate.sh).
 #
 # Secrets: GH_TOKEN (for the GitHub release lookups) falls back to `gh auth token`;
 # INTERNAL_DENYLIST falls back to the private list in bithuman-product/platform.
@@ -49,7 +51,7 @@ while [ $# -gt 0 ]; do
     --no-cap) CAP=0; FWD+=("$1") ;;
     --host) HOST="${2:?--host needs local|orinda}"; shift ;;
     --wait-timeout) export LOCAL_CI_WAIT_S="${2:?--wait-timeout needs seconds}"; FWD+=("$1" "$2"); shift ;;
-    -h|--help) sed -n '2,35p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,37p' "$0"; exit 0 ;;
     *) echo "unknown flag: $1" >&2; exit 64 ;;
   esac
   shift
@@ -155,12 +157,19 @@ add manual 0 manual:perf-floors-vs-models   "node scripts/check-performance-floo
 add manual 0 manual:deployment-exists       "gh api 'repos/bithuman-product/public-docs/deployments?sha=<sha>' --jq length  # after a merge: Vercel must have created a deployment (served-matches-main.yml)"
 add manual 0 manual:vercel-deploy           "Vercel git integration deploys main; not a check this script can run"
 
+# Run order: every step in registry order, then the EXCLUSIVE_STEPS last (one exclusive pass).
+ORDER=(); XORDER=()
+for i in "${!NAMES[@]}"; do
+  case "$EXCLUSIVE_STEPS" in *" ${NAMES[$i]} "*) XORDER+=("$i") ;; *) ORDER+=("$i") ;; esac
+done
+
 if [ "$LIST" = 1 ]; then
-  for i in "${!NAMES[@]}"; do
+  for i in "${ORDER[@]}" "${XORDER[@]+"${XORDER[@]}"}"; do
     case "${KINDS[$i]}" in
       default) k="default" ;; served) k="served (--served/--full, after a deploy)" ;;
       manual) k="manual (host/secret needed)" ;;
     esac
+    case "$EXCLUSIVE_STEPS" in *" ${NAMES[$i]} "*) k="$k, LAST: exclusive pass (no other CI suite running)" ;; esac
     printf '%-36s %s\n' "${NAMES[$i]}" "$k"
     [ "${KINDS[$i]}" = manual ] && printf '    %s\n' "${CMDS[$i]}"
   done
@@ -270,20 +279,35 @@ if [ "$MODE" = served ] && [ -z "$ONLY" ] && [ ! -f dist/index.html ]; then
 fi
 
 pass=0; fail=0; n=0; FAILED=()
-for i in "${!NAMES[@]}"; do
-  selected "$i" || continue
+run_step() {  # <index>: run one step (capped), print PASS/FAIL, count it
+  local i=$1 name log t0 cmd ok
   name=${NAMES[$i]}; log="$LOGDIR/${name//:/_}.log"; n=$((n+1)); t0=$(date +%s)
   cmd=("${WRAP[@]}" bash -c "${CMDS[$i]}")   # HEAVY[] is informational: every step is capped
-  excl=0; case "$EXCLUSIVE_STEPS" in *" $name "*) excl=1; lci_exclusive_begin "$name"; t0=$(date +%s) ;; esac
   if lci_run "${cmd[@]}" >"$log" 2>&1 </dev/null; then ok=1; else ok=0; fi
-  [ $excl = 1 ] && lci_exclusive_end
   if [ $ok = 1 ]; then
     pass=$((pass+1)); printf 'PASS %-36s %4ss\n' "$name" "$(( $(date +%s)-t0 ))"
   else
     fail=$((fail+1)); FAILED+=("$name"); printf 'FAIL %-36s %4ss  log: %s\n' "$name" "$(( $(date +%s)-t0 ))" "$log"
     tail -15 "$log" | sed 's/^/     | /'
   fi
+}
+
+for i in "${ORDER[@]}"; do
+  if selected "$i"; then run_step "$i"; fi
 done
+# The Lighthouse/perf steps LAST, in ONE exclusive pass: lci_exclusive_begin gives the slot
+# back while it waits its turn (host-gate.sh), so the suite does not keep a slot idle.
+XSEL=(); XNAMES=""
+for i in "${XORDER[@]+"${XORDER[@]}"}"; do
+  if selected "$i"; then XSEL+=("$i"); XNAMES+="${XNAMES:+,}${NAMES[$i]}"; fi
+done
+if [ ${#XSEL[@]} -gt 0 ]; then
+  # tally first: a wait timeout (exit 75) in this pass must not hide the shared results
+  echo "shared steps: $pass passed, $fail failed${FAILED[0]:+ (${FAILED[*]})}; exclusive pass (last): $XNAMES"
+  lci_exclusive_begin "$XNAMES"
+  for i in "${XSEL[@]}"; do run_step "$i"; done
+  lci_exclusive_end
+fi
 
 [ $n -gt 0 ] || { echo "no step matched '${ONLY}'"; exit 64; }
 [ $fail -eq 0 ] && verdict=PASS || verdict=FAIL

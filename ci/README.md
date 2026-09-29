@@ -29,7 +29,8 @@ printed. `BITHUMAN_*` variables are scrubbed so no refusal driver sees a
 credential. EVERY step (node checks, npm ci, the build, Lighthouse, published binaries)
 runs under `systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=0 -p CPUQuota=400%
 nice -n 19` when systemd is available, behind the host gate below; Lighthouse also waits for
-the exclusive host lock. Per-step logs go to `$CI_LOG_DIR` (default
+the exclusive host lock, and runs LAST: every other step first (shared), then the
+`EXCLUSIVE_STEPS` in one exclusive pass. Per-step logs go to `$CI_LOG_DIR` (default
 `$TMPDIR/public-docs-local-ci-<sha>`).
 
 Output: one `PASS`/`FAIL` line per step, then
@@ -57,9 +58,13 @@ public-docs and bithuman-models; keep it identical):
   wait line says `queue position P of N`). A killed waiter's ticket is removed by the next.
 - **Lighthouse/perf steps take the EXCLUSIVE host lock** (`host.lock`: every suite holds it
   shared) and so run only when no other CI suite is running, instead of running uncapped.
-  A step waiting for it blocks new suites from starting (`turnstile.lock`), so it cannot
-  starve; but it first YIELDS while any suite has queued for a slot longer than
-  `LOCAL_CI_EXCL_YIELD_S` (600 s), so it cannot starve them either. A hold longer than
+  Once it is its turn, the step holds a slot and `turnstile.lock` while the running suites
+  finish, so no new suite starts under it (it cannot starve). It first YIELDS while any suite
+  has queued for a slot longer than `LOCAL_CI_EXCL_YIELD_S` (600 s), and whenever it has to
+  wait for its turn (yield, or the turnstile is held) it RELEASES its slot and re-queues
+  (`EXCLUSIVE step=…` in `status`), so it does not keep a slot idle while suites queue. Its
+  queue order is its suite's original arrival, or the time it re-queued once a suite queued
+  behind that arrival has waited longer than `LOCAL_CI_EXCL_YIELD_S`. A hold longer than
   `LOCAL_CI_EXCL_MAX_S` (900 s) logs a WARNING (`LOCAL_CI_EXCL_ENFORCE=1`: `timeout` too).
 - `bash ci/host-gate.sh status` shows who holds which slot, the host lock, and the queue.
 - **`--host orinda`** (optional; default stays local): runs the suite on orinda over ssh,
