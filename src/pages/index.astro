@@ -7,15 +7,16 @@ import Chip from "../components/Chip.astro";
 import LiveDemo from "../components/LiveDemo.astro";
 import RunsEverywhere from "../components/RunsEverywhere.astro";
 import WhatsNew from "../components/WhatsNew.astro";
+import HomeBanner from "../components/HomeBanner.astro";
 import { hubMeta } from "../config/hubs";
 import { HERO, START_BUILDING, DEPLOYMENTS, CPU_NOTE, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
 import { contactSalesUrl } from "../config/nav";
 import { versionLabel, type Artifact } from "../data/labels";
 
-// The front door: a live avatar first, then the measured proof, then where to
-// click, as cards. Each card is one link and one line; the detail lives on the
-// page it opens. Speed comes from performance.json only (the Runs everywhere
-// band), as times real time, on-device first.
+// The front door: the bitHuman banner, then a live avatar, then the measured
+// proof, then where to click, as cards. Each card is one link and one line;
+// the detail lives on the page it opens. Speed comes from performance.json
+// only (the Runs everywhere band), as times real time, on-device first.
 const meta = hubMeta("");
 const STRIP: Artifact[] = ["swift", "expression2_android", "essence2_android", "python", "cli", "flutter_plugin"];
 
@@ -24,6 +25,10 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
 ---
 
 <Base title="bitHuman Docs: real-time AI avatar SDK for iOS, Android, web and Linux" description={meta.description}>
+  <div class="container banner-row">
+    <HomeBanner />
+  </div>
+
   <section class="hero" aria-labelledby="home-title">
     <div class="container hero-grid">
       <div class="hero-copy">
@@ -131,8 +136,9 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
 </Base>
 
 <style>
-  /* ---- hero ---- */
-  .hero { padding-block: var(--s-10) var(--s-8); }
+  /* ---- banner, then hero ---- */
+  .banner-row { padding-top: var(--s-6); }
+  .hero { padding-block: var(--s-8) var(--s-8); }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: var(--s-12); align-items: center; }
   .hero h1 { font-size: var(--fh-hero); line-height: 1.08; letter-spacing: -0.025em; max-width: 18ch; }
   .hero .lede { margin-top: var(--s-5); font-size: var(--ft-xl); line-height: var(--lh-snug); color: var(--color-text-secondary); max-width: 46ch; }
@@ -174,7 +180,8 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
     .hero h1 { max-width: 20ch; }
   }
   @media (max-width: 560px) {
-    .hero { padding-block: var(--s-8) var(--s-6); }
+    .banner-row { padding-top: var(--s-4); }
+    .hero { padding-block: var(--s-6) var(--s-6); }
     .hero h1 { font-size: var(--fh-xl); }
     .hero .lede { font-size: var(--ft-lg); }
     .band { padding-block: var(--s-6); }

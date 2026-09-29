@@ -7,7 +7,6 @@
 // from the generated headline (src/lib/perf-headline.ts), prices from /pricing.
 import { OFFLINE_LICENSE_SENTENCE, OFFLINE_LICENSE_TERMS } from "./offline";
 import { PLATFORM_PAGES } from "./platforms";
-import { DEMOS } from "./demo";
 import { DEPLOYMENTS as MODES, CPU_ONLY } from "./deployments";
 
 export interface HomeCard {
@@ -48,15 +47,18 @@ export interface ModelCard {
   title: string;
   line: string;
   href: string;
-  /** Poster base path (4:5), from the live demo's avatar */
+  /** Poster base path (4:5): <poster>-480.{avif,webp} */
   poster: string;
   alt: string;
 }
 
-/** "Models": the current generation, shown with their live sample avatars. */
+/** "Models": the current generation, each shown with one of its public
+ *  showcase characters. Not the live demo's two samples: the hero above already
+ *  shows those, and the owner asked for variety over one repeated face
+ *  (2026-09-29: "I don't like we repeat the same image for different cards"). */
 export const MODELS: ModelCard[] = [
-  { title: "Essence 2", line: "A photoreal person from one portrait.", href: "/models/essence-2", poster: DEMOS["essence-2"].poster, alt: "sofia-ramirez, the Essence 2 sample avatar" },
-  { title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/models/expression-2", poster: DEMOS["expression-2"].poster, alt: "wise-pup, the Expression 2 sample avatar" },
+  { title: "Essence 2", line: "A photoreal person from one portrait.", href: "/models/essence-2", poster: "/images/cast/kwame-warm-museum-guide", alt: "Kwame, an Essence 2 avatar" },
+  { title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/models/expression-2", poster: "/images/cast/pip-the-red-panda-barista", alt: "Pip the red panda barista, an Expression 2 avatar" },
 ];
 
 export const MODELS_NOTE = "Essence 2 Max is available on the Enterprise plan only. Essence 1 and Expression 1 are the first generation.";
