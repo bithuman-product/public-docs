@@ -5,15 +5,15 @@
   "emitter": "models/essence-2/tools/check_perf_floors.py",
   "source_repo": "bithuman-product/bithuman-models",
   "record_ref": "origin/main",
-  "record_sha256": "453d5910fda2d1b7b452821c3a030da1a6e9e3fbf983bd2acd712e249e1e67e6",
-  "emitter_sha256": "75d1dc81bf73fb7962b80b5bc91e87478cbd0a6cd2f7f758e0578de8247f1161",
-  "verified_on": "2026-09-27",
+  "record_sha256": "7ee8c3536a0a9445bed3caa639e94da648525212763bee538294fe5580b9dab0",
+  "emitter_sha256": "e2d239c8c0d7815ce3bffb60866bcfd5216c067a622e545d1cc8b8df2343226a",
+  "verified_on": "2026-09-29",
   "stale_after_days": 30,
   "page": "src/content/docs/performance/index.md",
   "served_route": "/performance",
   "json": {
     "path": "public/performance.json",
-    "sha256": "adb0c7aecd76debfb721d339a3c09df7f4276b528303d7d85f955fe1441552ec"
+    "sha256": "36bb28359fa5417476728de573c82a61200484d8ba2068a925d139b578a38052"
   },
   "blocks": [
     {
@@ -21,7 +21,7 @@
       "marker": "TABLE",
       "key": "all",
       "index": 0,
-      "sha256": "e888e7b056a1dcfcbb68122449a47a353c7d672eb447b7405beed86ed3170261"
+      "sha256": "87b725496f2510e88d33c8007dded6f3d9697231975d1ca9849c038f43924627"
     },
     {
       "file": "src/content/docs/performance/index.md",
@@ -63,14 +63,14 @@
       "marker": "TABLE",
       "key": "desktop",
       "index": 0,
-      "sha256": "44f0239326a01b99c906ac2b5e4948a6cb9c44479fd3fbfeef4abf26114b706b"
+      "sha256": "c7fec89a5dc1698247373ef79991667662ec6e71e2d7942bf3749d2b11915b97"
     },
     {
       "file": "src/content/docs/performance/index.md",
       "marker": "RELEASES",
       "key": "desktop",
       "index": 0,
-      "sha256": "30f649034c45fdc35c257a29826369e64df4f0de44c5b04e26c6c48cef46120b"
+      "sha256": "78bd96f10152e485c295b28b0cebb4592d35e1460cbee145f423c36aca3c2189"
     },
     {
       "file": "src/content/docs/performance/index.md",
@@ -91,7 +91,7 @@
       "marker": "RELEASES",
       "key": null,
       "index": 0,
-      "sha256": "a9c21fc7293a52eab122ce93e9ab6d6585c3a2389599b84e8109b99e0dfcc823"
+      "sha256": "eae611bb47f2750c486584f046d66900261414f7940ee5a80010f67a088cea7e"
     },
     {
       "file": "src/content/docs/performance/method.md",
@@ -165,6 +165,11 @@
         "label": "Linux · Python",
         "id": "python-linux",
         "line": "| Linux · Python | Intel Core i7-13700F (x86_64) | 49 | **1.9×** real time | 47 | **2.3×** real time |"
+      },
+      {
+        "label": "Windows · Python",
+        "id": "python-windows",
+        "line": "| Windows · Python | Intel Core i7-13700F (x86_64), 8 threads | 30 | **1.2×** real time | 21 | **1.0×** real time |"
       },
       {
         "label": "iPhone · Swift package",
