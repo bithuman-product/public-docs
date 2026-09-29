@@ -83,6 +83,8 @@ add default 0 links:internal-content        "node scripts/check-internal-content
 add default 0 links:page-template           "node scripts/check-page-template.mjs && node scripts/check-page-template.mjs --selftest"
 add default 0 links:shell-tokens            "node scripts/check-shell-tokens.mjs --selftest && node scripts/check-shell-tokens.mjs"
 add default 0 links:nav-consistency         "node scripts/check-nav-consistency.mjs"
+# docs v2 (SPEC §8): new gates, report-only in W2a; each flips to fail when its wave lands
+add default 0 links:page-budget             "node scripts/check-page-budget.mjs --selftest && node scripts/check-page-budget.mjs"
 add default 0 links:model-concept-pages     "node scripts/check-model-concept-pages.mjs"
 add default 0 links:placeholders            "node scripts/check-placeholders.mjs"
 add default 0 links:kotlin-buildconfig      "node scripts/check-kotlin-buildconfig.mjs && node scripts/check-kotlin-buildconfig.mjs --selftest"
@@ -110,6 +112,10 @@ add default 0 built:jsonld-facts            "need_dist && node scripts/check-jso
 add default 0 built:discoverability         "need_dist && node scripts/check-discoverability.mjs"
 add default 0 built:llms-caps               "need_dist && node scripts/check-llms.mjs --full-max-kb 190 --section-max-kb 96"
 add default 0 built:served-markup           "need_dist && node scripts/check-served-markup.mjs --self-test && node scripts/check-served-markup.mjs"
+# docs v2 (SPEC §4, §8): report-only in W2a (anchor coverage flips in W3, boilerplate in W4)
+add default 0 built:anchor-coverage         "need_dist && node scripts/check-anchor-coverage.mjs --selftest && node scripts/check-anchor-coverage.mjs --report"
+add default 0 built:boilerplate             "need_dist && node scripts/check-boilerplate.mjs --selftest && node scripts/check-boilerplate.mjs"
+add default 1 built:noise-audit             "need_dist && node scripts/noise-audit.mjs"
 
 # page-quality.yml (Lighthouse on the built site; needs Chrome). Capped like every
 # step, and it first takes the EXCLUSIVE host lock (no other CI suite running): the

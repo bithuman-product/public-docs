@@ -1,0 +1,7 @@
+{
+ "$comment": "Ruled partials that stay word for word on every carrier (SPEC §1 principle 2, §8 check-boilerplate). Each entry: a substring of the sentence and the reason. Never add an entry to make a copy go away; give the fact one home and link to it.",
+ "allow": [
+  { "match": "Offline license is only available to Business and Enterprise clients", "reason": "the offline copy: OFFLINE_LICENSE_SENTENCE in src/data/offline.ts, kept verbatim on every carrier by check-offline-copy" },
+  { "match": "Essence 2 Max is available on the Enterprise plan only", "reason": "the Essence 2 Max sentence stays word for word where it is today, no new mentions" }
+ ]
+}
