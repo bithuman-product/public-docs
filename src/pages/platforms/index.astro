@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Card from "../../components/Card.astro";
+import PlatformsBanner from "../../components/PlatformsBanner.astro";
 import RunsEverywhere from "../../components/RunsEverywhere.astro";
 import { hubMeta } from "../../config/hubs";
 import { PLATFORM_PAGES } from "../../data/platforms";
@@ -29,6 +30,7 @@ const REFERENCES = [
     <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>Platforms</span></nav>
     <h1>Platforms</h1>
     <p class="lede">{meta.description}</p>
+    <div class="banner"><PlatformsBanner /></div>
 
     {GROUPS.map((g) => (
       <section class="hub-group" aria-labelledby={`g-${g.name.replace(/\W+/g, "-").toLowerCase()}`}>
@@ -75,6 +77,7 @@ const REFERENCES = [
   .crumb a:hover { color: var(--color-primary); }
   .hub h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
   .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
+  .banner { margin-top: var(--s-6); }
   .hub-group { margin-top: var(--s-10); }
   .stack { max-width: 72ch; color: var(--color-text-secondary); font-size: var(--ft-md); }
   .stack p + p { margin-top: var(--s-3); font-size: var(--ft-sm); }
