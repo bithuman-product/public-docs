@@ -51,6 +51,14 @@ Tag `flutter-plugin-v2.6.25`.
 - **Faster:** smoother Android rendering, a quicker reveal, and on iOS/macOS the avatar package is unpacked once instead of on every launch; opening and closing the mic no longer stalls the UI on Android.
 - **Action:** pin `ref: flutter-plugin-v2.6.25`.
 
+### `bithuman` 2.11.19 — 2026-09-30
+
+- **Fix:** if the startup credential check is lost in transit, or the service answers 5xx or 429, `bithuman.open()` asks once more before it refuses. A 2xx, 401, 402 or 403 is never repeated.
+- On Apple silicon, Expression 2 renders through the render host that the `bithuman` CLI 2.8.5 ships. That host checks your API secret and bills its own session, so each session is still billed once.
+- Essence 2: the renderer can apply the mouth structure carried in an avatar's template. Avatars without that structure render as before.
+- Pins PyAV below 19 to avoid a thread leak in Expression 2 idle clips.
+- **Action:** `pip install -U bithuman`.
+
 ### CLI 2.8.5 — 2026-09-30
 
 Tag `cli-v2.8.5`.
