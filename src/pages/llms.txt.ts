@@ -23,7 +23,7 @@ export const GET: APIRoute = async () => {
     `> Real-time talking avatars from one portrait. Essence 2 renders a photoreal person; Expression 2 renders any character. ` +
     `They render on the device (iPhone, iPad, Mac, Android arm64, a Linux PC with no GPU, a WebGPU browser) or in the bitHuman cloud. ` +
     `Every published configuration is measured faster than real time: ${SITE}/performance\n\n`;
-  out += agentInstructions(SITE) + agentWhere(SITE) + agentKeyFacts(SITE);
+  out += agentInstructions(SITE) + agentWhere(SITE, { speedBelow: true }) + agentKeyFacts(SITE);
 
   out += `## Start: one command per path\n\n`;
   for (const p of PLATFORMS) {

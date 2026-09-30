@@ -2,8 +2,8 @@
 title: "Android"
 description: "The Android SDK renders Essence 2 and Expression 2 on Android phones, from one Maven Central dependency."
 section: platforms
-group: "Apps"
-order: 30
+group: "Android"
+order: 10
 type: platform
 llms: apps
 searchTitle: "Android SDK (Kotlin): on-device talking avatars"

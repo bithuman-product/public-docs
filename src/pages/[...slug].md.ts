@@ -25,11 +25,12 @@ const route = (id: string) => id.replace(/\/index$/, "");
 const md = (s: string) =>
   new Response(s, { headers: { "Content-Type": "text/markdown; charset=utf-8" } });
 
-async function hubBody(section: SectionId): Promise<string> {
+async function hubBody(section: SectionId, only?: string[]): Promise<string> {
+  // Every page of the section, children (`parent:`) included, so an agent reaches each from a hub twin.
   const docs = (await getCollection("docs", (e: any) => !e.data.draft && e.data.section === section))
     .sort((a: any, b: any) => (a.data.order ?? 100) - (b.data.order ?? 100));
   let out = "";
-  for (const g of GROUP_ORDER[section]) {
+  for (const g of GROUP_ORDER[section].filter((x) => !only || only.includes(x))) {
     const items = docs.filter((d: any) => d.data.group === g);
     if (!items.length) continue;
     out += `\n## ${g}\n\n`;
@@ -91,7 +92,13 @@ export const GET: APIRoute = async ({ props }) => {
   const { entry, hub } = props as any;
   if (entry) {
     // A section's home page (type: hub) also lists every page in its section.
-    const list = entry.data.type === "hub" ? `\n\n## Pages in this section\n${await hubBody(entry.data.section)}` : "";
+    // A hub whose pages sit under it (`parent:`, /examples) lists those instead.
+    const kids = entry.data.type === "hub"
+      ? (await getCollection("docs", (e: any) => !e.data.draft && e.data.parent === `/${route(entry.id)}`)).sort((a: any, b: any) => (a.data.order ?? 100) - (b.data.order ?? 100))
+      : [];
+    const list = entry.data.type !== "hub" ? "" : kids.length
+      ? `\n\n## Pages in this section\n\n${kids.map((d: any) => `- [${d.data.title}](${SITE}/${route(d.id)}.md): ${d.data.description}`).join("\n")}\n`
+      : `\n\n## Pages in this section\n${await hubBody(entry.data.section)}`;
     return md(twin(entry.data.title, `/${route(entry.id)}`, entry.data.description, (entry.body ?? "") + list));
   }
   const V = versions.versions;
@@ -111,13 +118,13 @@ export const GET: APIRoute = async ({ props }) => {
       `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}`).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md\n\n` +
       `## Build\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
       `## What's new\n\n${resolvedHighlights().slice(0, 3).map((h) => `- [${h.title}](${mdUrl(h.href)}) (${h.entry.heading}): ${h.line}`).join("\n")}\n\nEvery release: ${SITE}/changelog.md · RSS: ${SITE}/changelog.xml\n\n` +
-      `## Sections\n\n- [Get started](${SITE}/start.md)\n- [Platforms](${SITE}/platforms.md)\n- [Deploy](${SITE}/deploy.md)\n- [Models](${SITE}/models.md)\n- [Build](${SITE}/build.md)\n- [API](${SITE}/api.md)\n- [Performance](${SITE}/performance.md)\n- [Resources](${SITE}/resources.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
+      `## Sections\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) · [Resources](${SITE}/resources.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }
   if (hub === "start") {
     let body = `## Choose your platform\n\n${pathTable()}\n## Pick your platform and run it\n\nEach block runs as pasted after \`export BITHUMAN_API_SECRET=…\`.\n${quickstartMd()}`;
     body += perfSection();
     body += `\n${explorerClaim()} Every configuration: ${SITE}/performance.md\n`;
-    body += await hubBody("start");
+    body += await hubBody("overview", ["Get started"]);
     return md(twin("Quickstart", "/start", hubMeta("start").description, body));
   }
   if (hub === "api/reference") {
@@ -129,5 +136,6 @@ export const GET: APIRoute = async ({ props }) => {
     const body = `Current versions: CLI ${V.cli} · bithuman (Python) ${V.python} · Swift package ${V.swift} · essence2-android ${V.essence2_android} · expression2-android ${V.expression2_android} · livekit-plugins-bithuman ${V.livekit_plugin} · Flutter plugin ${V.flutter_plugin}. Machine-readable: ${SITE}/versions.json\n\n## Every platform\n\n${cards}\n` + (await hubBody("platforms"));
     return md(twin("Platforms", "/platforms", hubMeta("platforms").description, body));
   }
-  return md(twin(hub === "build" ? "Build" : "Resources", `/${hub}`, hubMeta(hub).description, await hubBody(hub)));
+  if (hub === "resources") return md(twin("Resources", "/resources", hubMeta(hub).description, await hubBody("overview", ["Help", "Resources"])));
+  return md(twin("Guides", "/build", hubMeta(hub).description, await hubBody("build")));
 };

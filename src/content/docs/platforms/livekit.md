@@ -2,7 +2,7 @@
 title: "LiveKit"
 description: "Give a LiveKit voice agent a face with the bitHuman Python plugin: a cloud-rendered avatar in your room, or an avatar rendered on your own server."
 section: platforms
-group: "Agents & APIs"
+group: "LiveKit"
 order: 10
 type: platform
 llms: platforms

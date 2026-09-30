@@ -3,7 +3,7 @@ title: "Billing & usage"
 description: "Read a user's live credit balance and per-mode minute estimates, and understand how credits are consumed."
 section: api
 group: "Account"
-order: 30
+order: 10
 type: endpoint
 llms: api
 ---

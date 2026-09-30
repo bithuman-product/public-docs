@@ -5,7 +5,7 @@
 // page the sidebar does not, or describe a page differently from the page.
 import { getCollection } from "astro:content";
 import Hub from "./Hub.astro";
-import { GROUP_ORDER, RESOURCES_MENU, SECTIONS, type SectionId } from "../config/nav";
+import { GROUP_ORDER, SIDEBAR_LINKS, SECTIONS, type SectionId } from "../config/nav";
 
 interface Props {
   section: SectionId;
@@ -14,26 +14,29 @@ interface Props {
   ctas?: { label: string; href: string; variant?: "primary" | "secondary" }[];
   /** One line under a group's heading. */
   lines?: Record<string, string>;
+  /** Only these sidebar groups (the /resources hub shows Overview's Help and Resources). */
+  only?: string[];
+  /** Old group ids kept on the group that took their pages (so saved links still land). */
+  was?: Record<string, string[]>;
 }
-const { section, title, tagline, ctas = [], lines = {} } = Astro.props;
+const { section, title, tagline, ctas = [], lines = {}, only, was = {} } = Astro.props;
 const route = (id: string) => "/" + id.replace(/\/index$/, "");
-const docs = (await getCollection("docs", (e: any) => !e.data.draft && e.data.section === section))
+// A page with `parent:` is reached from its parent, so it gets no card of its own.
+const docs = (await getCollection("docs", (e: any) => !e.data.draft && e.data.section === section && !e.data.parent))
   .sort((a: any, b: any) => (a.data.order ?? 100) - (b.data.order ?? 100));
+const links = SIDEBAR_LINKS[section] ?? [];
 const groups = GROUP_ORDER[section]
+  .filter((g) => !only || only.includes(g))
   .map((g) => ({
     label: g,
     line: lines[g],
+    was: was[g],
     cards: docs.filter((d: any) => d.data.group === g).map((d: any) => ({
       title: d.data.title,
       desc: d.data.description,
       href: route(d.id),
-    })),
+    })).concat(links.filter((l) => l.group === g).map((l) => ({ title: l.label, desc: "", href: l.href, external: l.external } as any))),
   }))
   .filter((g) => g.cards.length);
-if (section === "resources") {
-  const have = new Set(groups.flatMap((g) => g.cards.map((c) => c.href)));
-  const more = RESOURCES_MENU.filter((r) => !have.has(r.href)).map((r) => ({ title: r.label, desc: "", href: r.href, external: r.external }));
-  if (more.length) groups.push({ label: "More", line: undefined, cards: more as any });
-}
 ---
 <Hub title={title} tagline={tagline} ctas={ctas} groups={groups} section={SECTIONS[section].label} />

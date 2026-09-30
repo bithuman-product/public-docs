@@ -1,11 +1,12 @@
 ---
 title: "Changelog archive"
 description: "Release notes from July 2026 and earlier, one short summary per release. The current changelog is /changelog."
-section: resources
+section: overview
 group: "Resources"
-order: 30
+order: 21
 type: changelog
 llms: none
+parent: /changelog
 ---
 
 > **Note** This is the archive. Entries from August 2026 onwards are on the

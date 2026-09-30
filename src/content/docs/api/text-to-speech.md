@@ -2,8 +2,8 @@
 title: "Text to speech"
 description: "Turn text into natural speech with bitHuman's real-time TTS — built-in voices, inline tuning, and shareable voice codes designed in the playground."
 section: api
-group: "Speech & video"
-order: 10
+group: "Media"
+order: 20
 type: endpoint
 llms: api
 ---

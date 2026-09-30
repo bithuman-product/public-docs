@@ -2,7 +2,7 @@
 title: "bitHuman cloud"
 description: "bitHuman renders the avatar on its servers and streams it to your page, app or LiveKit room: the web embed, the REST API or the LiveKit plugin."
 section: deploy
-group: "Modes"
+group: "Where it renders"
 order: 10
 type: deploy
 llms: deploy

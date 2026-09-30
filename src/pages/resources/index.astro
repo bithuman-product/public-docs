@@ -3,7 +3,9 @@ import SectionHub from "../../components/SectionHub.astro";
 import { hubMeta } from "../../config/hubs";
 ---
 <SectionHub
-  section="resources"
+  section="overview"
+  only={["Help", "Resources"]}
+  was={{ Help: ["g-more"], Resources: ["g-news", "g-legal"] }}
   title="Resources"
   tagline={hubMeta("resources").description}
   ctas={[{ label: "Downloads & versions", href: "/downloads" }, { label: "Changelog", href: "/changelog", variant: "secondary" }]}

@@ -2,7 +2,7 @@
 title: "iOS & iPadOS"
 description: "The Swift package renders Essence 2 and Expression 2 on iPhone and iPad."
 section: platforms
-group: "Apps"
+group: "Swift"
 order: 10
 type: platform
 llms: apps

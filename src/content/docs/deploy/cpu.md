@@ -2,8 +2,8 @@
 title: "CPU only (no GPU)"
 description: "Both models run live on a standard Linux PC with no GPU."
 section: deploy
-group: "Hardware"
-order: 40
+group: "Where it renders"
+order: 30
 type: deploy
 llms: deploy
 searchTitle: "CPU only (no GPU): Linux PCs without a graphics card"

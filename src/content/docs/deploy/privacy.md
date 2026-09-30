@@ -2,7 +2,7 @@
 title: "Data flows & privacy"
 description: "What reaches bitHuman in each deployment mode: where the avatar renders, where the conversation runs, what usage reports carry, and what bitHuman stores."
 section: deploy
-group: "Overview"
+group: "Privacy & compliance"
 order: 10
 type: guide
 llms: deploy

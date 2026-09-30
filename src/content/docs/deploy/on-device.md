@@ -2,8 +2,8 @@
 title: "On the device"
 description: "Essence 2 and Expression 2 render on the device in front of the user: iPhone, iPad and Mac, Android phones, or a WebGPU browser tab."
 section: deploy
-group: "Modes"
-order: 30
+group: "Where it renders"
+order: 40
 type: deploy
 llms: deploy
 availability: "creator"

@@ -2,8 +2,8 @@
 title: "CLI"
 description: "Render an MP4 or run a live avatar from the terminal, on macOS (Apple silicon) and Linux (x86_64, arm64), with no code. On Linux it needs no GPU."
 section: platforms
-group: "Code & terminal"
-order: 20
+group: "CLI"
+order: 10
 type: platform
 llms: platforms
 renders: ["server", "no-gpu"]

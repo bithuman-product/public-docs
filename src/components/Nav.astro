@@ -4,16 +4,12 @@
 // and the one primary pill. Row 2: the section tabs, the active one with a
 // 2 px coral underline; from 768 to 1279 px the row scrolls, below 768 px the
 // tabs, the section's own pages (the `drawer` slot) and the CTA sit in a drawer.
-import { TOP_NAV, RESOURCES_MENU, API_SECRET_URL, CONSOLE_URL } from "../config/nav";
+import { TOP_NAV, API_SECRET_URL, CONSOLE_URL } from "../config/nav";
 const links = TOP_NAV;
-// Status lives in the footer; the header menu keeps the docs pages.
-const resources = RESOURCES_MENU.filter((r) => !r.external);
+// Status lives in the footer; the Overview tab holds the resource pages.
 const path = Astro.url.pathname;
-const under = (href: string) => path === href || path.startsWith(href + "/");
+const under = (href: string) => path === href || (href !== "/" && path.startsWith(href + "/"));
 const isActive = (l: { href: string; match?: string[] }) => [l.href, ...(l.match ?? [])].some(under);
-// One active tab: Resources lights up only when no section tab claims the page
-// (/pricing is in both the Deploy section and the Resources menu).
-const resActive = !links.some(isActive) && resources.some((r) => under(r.href));
 const hasDrawer = Astro.slots.has("drawer");
 ---
 
@@ -58,17 +54,6 @@ const hasDrawer = Astro.slots.has("drawer");
           </a>
         ))
       }
-      <details class="nav-dd">
-        <summary class:list={["nav-tab", { active: resActive }]}>
-          Resources
-          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"
-            ><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg
-          >
-        </summary>
-        <div class="dd-menu">
-          {resources.map((r) => <a href={r.href}>{r.label}</a>)}
-        </div>
-      </details>
     </nav>
   </div>
 
@@ -78,10 +63,6 @@ const hasDrawer = Astro.slots.has("drawer");
     </nav>
     {hasDrawer && <div class="mm-sep"></div>}
     {hasDrawer && <div class="mm-section"><slot name="drawer" /></div>}
-    <div class="mm-sep"></div>
-    <nav class="mm-group" aria-label="Resources">
-      {resources.map((r) => <a href={r.href}>{r.label}</a>)}
-    </nav>
     <div class="mm-sep"></div>
     <nav class="mm-group mm-console" aria-label="Account">
       <a href={CONSOLE_URL} rel="noopener">Console</a>
@@ -95,12 +76,6 @@ const hasDrawer = Astro.slots.has("drawer");
   // hint should name the key the reader actually has.
   if (!/Mac|iPhone|iPad|iPod/.test(navigator.platform)) {
     document.querySelectorAll("[data-search-key]").forEach((k) => (k.textContent = "Ctrl K"));
-  }
-  // The Resources menu closes when focus or a click goes elsewhere.
-  const dd = document.querySelector<HTMLDetailsElement>(".nav-dd");
-  if (dd) {
-    document.addEventListener("click", (e) => { if (dd.open && !dd.contains(e.target as Node)) dd.open = false; });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") dd.open = false; });
   }
   // Keep the active tab in view when the row scrolls (768–1279 px).
   document.querySelector(".nav-tab.active")?.scrollIntoView({ block: "nearest", inline: "center" });
@@ -234,31 +209,6 @@ const hasDrawer = Astro.slots.has("drawer");
     height: 2px;
     background: var(--color-primary);
   }
-  .nav-dd { position: relative; display: flex; }
-  .nav-dd summary { list-style: none; }
-  .nav-dd summary::-webkit-details-marker { display: none; }
-  .nav-dd summary::marker { content: ""; }
-  .nav-dd[open] summary svg { transform: rotate(180deg); }
-  .dd-menu {
-    position: absolute;
-    top: 100%;
-    left: calc(-1 * var(--s-3));
-    z-index: 110;
-    min-width: 220px;
-    padding: var(--s-1);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--r-10);
-    box-shadow: var(--shadow-md);
-  }
-  .dd-menu a {
-    display: block;
-    padding: var(--s-2) var(--s-3);
-    border-radius: var(--r-6);
-    font-size: var(--ft-sm);
-    color: var(--color-text-secondary);
-  }
-  .dd-menu a:hover { background: var(--color-surface-2); color: var(--color-text); }
 
   /* the drawer (below 768 px) */
   .mobile-menu { display: none; }
@@ -268,8 +218,6 @@ const hasDrawer = Astro.slots.has("drawer");
     /* The tab row scrolls instead of dropping tabs (the 1024 px bug). */
     .nav-row2 { overflow-x: auto; scrollbar-width: none; }
     .nav-row2::-webkit-scrollbar { display: none; }
-    .nav-dd { position: static; }
-    .dd-menu { left: auto; right: var(--s-6); top: calc(var(--nav-h) - 1px); position: fixed; }
   }
   /* 768–1023: the tab row stays and a drawer holds the section's pages */
   @media (max-width: 1023px) {

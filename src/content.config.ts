@@ -12,7 +12,7 @@ const docs = defineCollection({
     title: z.string(),
     description: z.string().optional().default(""),
     // the section this page belongs to (the header item it sits under)
-    section: z.enum(["start", "platforms", "deploy", "models", "build", "api", "performance", "resources"]),
+    section: z.enum(["overview", "platforms", "models", "build", "deploy", "performance", "api"]),
     // the page template it follows (STYLE.md "Page templates"; scripts/check-page-template.mjs)
     type: z.enum([
       "hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy",

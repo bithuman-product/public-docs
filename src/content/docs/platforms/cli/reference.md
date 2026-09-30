@@ -2,11 +2,13 @@
 title: "CLI reference"
 description: "Every bithuman command, flag, environment variable, exit code and --json shape."
 section: platforms
-group: "SDK reference"
-order: 40
+group: "CLI"
+order: 50
 type: reference
 llms: linked
 artifacts: ["cli"]
+moved:
+  renamed-in-273: /resources/renamed#renamed-in-273
 ---
 
 Covers the CLI at the version on [Downloads & versions](/downloads). The binary describes itself too: `bithuman <command> --help`, and `bithuman __schema` prints the full command, flag and exit-code tree as JSON. The quickstart is on [CLI](/platforms/cli).
@@ -250,20 +252,3 @@ bithuman render wise-pup speech.wav -o out.mp4 --json | jq -r .output
 # Is this install ready to serve? (exit 0 = yes)
 bithuman doctor --json | jq -e .ready >/dev/null
 ```
-
-## Renamed in 2.7.3
-
-The old spellings still work for now. Each prints one line on stderr naming what to use instead, and `--json` output is unchanged.
-
-| Was | Now |
-|---|---|
-| `render X -a in.wav` | `render X in.wav` |
-| `render` writing `output.mp4` | `render` writes `<avatar>.mp4` unless you pass `-o` |
-| `render --quality`, `--target-size` | one preset, each avatar's default size |
-| `run --allow-public-bind` | `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
-| `run --cloud`, `--offscreen`, `--frames`, `--embedded-livekit`, `--livekit-*` | not needed: `run <avatar>` picks and starts what it needs; frames without a window come from `render --limit N` |
-| `chat`, `info`, `avatars`, `list --agents` | `run`, `open`, `list`, `list --mine` |
-| `list --limit/--offset/--status`, `account --start/--end/--agent` | the full list; filter the `--json` output |
-| `--api-base` | not needed: the CLI talks to `https://api.bithuman.ai` |
-| `--dest` | `BITHUMAN_CACHE_DIR` |
-| `--quiet`, `--no-color`, `BITHUMAN_JSON/QUIET/NO_COLOR` | `--json`, `NO_COLOR=1` |

@@ -2,8 +2,8 @@
 title: "Realtime relay"
 description: "Open a metered OpenAI-Realtime voice session through bitHuman: a WebSocket relay or a server-brokered WebRTC call."
 section: api
-group: "Live sessions"
-order: 30
+group: "Basics"
+order: 50
 type: endpoint
 llms: api
 next: ["/api/authentication", "/pricing", "/api/errors"]

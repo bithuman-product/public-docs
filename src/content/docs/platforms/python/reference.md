@@ -2,8 +2,8 @@
 title: "Python reference"
 description: "Every public class and function in the bithuman package: signatures, what each does, and the errors it raises."
 section: platforms
-group: "SDK reference"
-order: 30
+group: "Python"
+order: 50
 type: reference
 llms: linked
 artifacts: ["python"]

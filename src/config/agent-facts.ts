@@ -34,12 +34,14 @@ function xrt(id: string): string {
   return `${parts} real time on ${perfRow(id).hardware}`;
 }
 
-/** Where each model renders and where the conversation runs. */
-export function agentWhere(site: string): string {
+/** Where each model renders and where the conversation runs. `speedBelow`: the
+ *  file prints the speed table right after (llms.txt), so the no-GPU line leaves
+ *  the numbers to it instead of saying them twice. */
+export function agentWhere(site: string, { speedBelow = false } = {}): string {
   return (
     `## Where it runs\n\n` +
     `- On the device: Essence 2 and Expression 2 render on iPhone, iPad and Mac (Swift package), Android arm64 (Android SDK), macOS and Linux (CLI, Python), Windows 11 x86_64 (Python). Android, and Essence 2 on iPhone and iPad, need a physical device. The SDKs only render your voice stack's 16 kHz mono speech (resample OpenAI Realtime's 24 kHz): ${site}/build/companion-app.md\n` +
-    `- No GPU: both models run live on a standard Linux PC (${xrt("linux-cpu")}). ${site}/deploy/cpu.md\n` +
+    `- No GPU: both models run live on a standard Linux PC${speedBelow ? "" : ` (${xrt("linux-cpu")})`}. ${site}/deploy/cpu.md\n` +
     `- In the browser: WebGPU renders the avatar in the tab, falling back to cloud rendering; the conversation runs on bitHuman's servers.\n` +
     `- Your servers: the CLI, the Python SDK and the LiveKit plugin on your machines; audio and video stay there.\n` +
     `- Fully offline: ${OFFLINE_LICENSE_COPY} Essence 1 on Linux and Apple silicon Macs, Essence 2 and Expression 2 on Linux x86_64 (Python 2.11.17+, CLI 2.8.4+). ${site}/deploy/offline.md\n` +

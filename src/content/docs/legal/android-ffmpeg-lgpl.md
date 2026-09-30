@@ -1,9 +1,9 @@
 ---
 title: "FFmpeg / LGPL"
 description: "ai.bithuman:essence2-android statically links FFmpeg 7.1 under LGPL-2.1. This is the section 6(a) offer: where the relink materials are, what is in them, and the commands that check every claim on this page. The deprecated ai.bithuman:sdk carries a section 6(c) written offer."
-section: resources
-group: "Legal"
-order: 20
+section: overview
+group: "Resources"
+order: 70
 type: legal
 llms: none
 ---

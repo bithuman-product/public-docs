@@ -2,8 +2,8 @@
 title: "REST API"
 description: "Call bitHuman from any backend over HTTPS: check your API secret, speak with text to speech, create your own agent, drive a live session and render a talking video."
 section: platforms
-group: "Agents & APIs"
-order: 20
+group: "REST"
+order: 10
 type: platform
 llms: platforms
 renders: ["cloud"]

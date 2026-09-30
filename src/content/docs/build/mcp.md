@@ -2,7 +2,7 @@
 title: "Claude & Cursor (MCP)"
 description: "Let Claude, Cursor and other MCP clients drive bitHuman as tools: create agents, speak, embed, render. The server is built into the CLI (bithuman mcp)."
 section: build
-group: "Recipes"
+group: "Apps"
 order: 50
 type: platform
 llms: build

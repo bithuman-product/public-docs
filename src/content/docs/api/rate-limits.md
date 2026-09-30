@@ -2,7 +2,7 @@
 title: "Rate limits"
 description: "Plan-tiered request limits by endpoint cost tier, the 429 / Retry-After contract, session concurrency, and a recommended retry strategy."
 section: api
-group: "Reference"
+group: "Basics"
 order: 30
 type: reference
 llms: api

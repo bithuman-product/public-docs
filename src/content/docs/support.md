@@ -1,9 +1,9 @@
 ---
 title: "Support & community"
 description: "Where to get help, report a bug, and follow bitHuman releases."
-section: resources
-group: "Resources"
-order: 70
+section: overview
+group: "Help"
+order: 40
 type: reference
 llms: none
 ---

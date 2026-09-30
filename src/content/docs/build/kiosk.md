@@ -2,8 +2,8 @@
 title: "Kiosk on a Linux PC"
 description: "A live avatar full screen on a standard Linux PC with no GPU: the CLI renders it on the CPU, Chrome shows it in kiosk mode, and visitors talk to it."
 section: build
-group: "Recipes"
-order: 20
+group: "Apps"
+order: 30
 type: recipe
 llms: build
 time: "20 min"

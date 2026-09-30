@@ -2,7 +2,7 @@
 title: "Python"
 description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon), Linux and Windows, where it needs no GPU."
 section: platforms
-group: "Code & terminal"
+group: "Python"
 order: 10
 type: platform
 llms: platforms

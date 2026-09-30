@@ -2,7 +2,7 @@
 title: "API overview"
 description: "REST API for generating avatars, synthesizing voice, driving live sessions, and embedding agents — from any language."
 section: api
-group: "Start"
+group: "Basics"
 order: 0
 type: hub
 llms: api

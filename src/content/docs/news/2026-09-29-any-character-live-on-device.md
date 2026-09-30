@@ -1,15 +1,16 @@
 ---
 title: "Any character, live, rendered on the user's device"
 description: "Essence 2 and Expression 2 render on iPhone, iPad, Android, Mac, Linux and in a browser tab with WebGPU, and every configuration we publish renders faster than real time."
-section: resources
-group: "News"
-order: 20
+section: overview
+group: "Resources"
+order: 31
 type: guide
 llms: none
 searchTitle: "News: any character, live, rendered on the user's device"
 models: ["essence-2", "expression-2"]
 demo: "both"
 next: ["/performance", "/examples", "/start"]
+parent: /news
 ---
 
 Published 2026-09-29.

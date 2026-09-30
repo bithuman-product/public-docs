@@ -2,8 +2,8 @@
 title: "Windows"
 description: "Render Essence 2 and Expression 2 avatars on a Windows 11 PC (x86_64) from Python, on the CPU with no GPU. The CLI runs cloud sessions and MCP on Windows."
 section: platforms
-group: "Code & terminal"
-order: 15
+group: "Apps"
+order: 10
 type: platform
 llms: platforms
 searchTitle: "Windows: real-time avatars on a Windows PC, no GPU"

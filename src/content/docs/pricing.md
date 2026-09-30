@@ -1,9 +1,9 @@
 ---
 title: "Pricing and credits"
 description: "Credits pay for active session time, talking or idle, by the exact second. Rates per model and platform, creation costs, plans, offline licensing, and how to check your balance."
-section: deploy
-group: "Overview"
-order: 20
+section: overview
+group: "Pricing"
+order: 10
 type: guide
 llms: deploy
 ---

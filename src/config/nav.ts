@@ -6,79 +6,74 @@
 // groups a section's pages by `group` in GROUP_ORDER, then by `order`.
 
 export type SectionId =
-  | "start"
+  | "overview"
   | "platforms"
-  | "deploy"
   | "models"
   | "build"
-  | "api"
+  | "deploy"
   | "performance"
-  | "resources";
+  | "api";
 
-/** The sections, organized by the developer's question (start now, which
- *  platform, where it runs, which avatar, how to build X, what the endpoint
- *  takes, how fast, everything else). */
+/** The 7 tabs (docs v2 SPEC §3), organized by the developer's question: start
+ *  and look things up, which platform, which avatar, how to build X, where it
+ *  runs, how fast, what the endpoint takes. /build keeps its URL, labelled Guides. */
 export const SECTIONS: Record<SectionId, { label: string; home: string }> = {
-  start: { label: "Get started", home: "/start" },
+  overview: { label: "Overview", home: "/" },
   platforms: { label: "Platforms", home: "/platforms" },
-  deploy: { label: "Deploy", home: "/deploy" },
   models: { label: "Models", home: "/models" },
-  build: { label: "Build", home: "/build" },
-  api: { label: "API", home: "/api" },
+  build: { label: "Guides", home: "/build" },
+  deploy: { label: "Deploy", home: "/deploy" },
   performance: { label: "Performance", home: "/performance" },
-  resources: { label: "Resources", home: "/resources" },
+  api: { label: "API reference", home: "/api" },
 };
 
-/** Sidebar groups per section, in display order. A page's `group` must be one of these. */
+/** Sidebar groups per section, in display order. A page's `group` must be one of these.
+ *  A group holds 2–8 entries (scripts/check-nav-consistency.mjs); the few that hold
+ *  one until a later wave adds its pages are listed there with the reason. */
 export const GROUP_ORDER: Record<SectionId, string[]> = {
-  start: ["Get started"],
-  platforms: ["Apps", "Code & terminal", "Agents & APIs", "SDK reference"],
-  deploy: ["Overview", "Modes", "Hardware", "Use cases"],
+  overview: ["Get started", "Pricing", "Help", "Resources"],
+  platforms: ["Swift", "Android", "Flutter", "Web", "Python", "CLI", "LiveKit", "REST", "Apps"],
   models: ["Models", "Concepts"],
-  build: ["Create", "Recipes", "Examples"],
-  api: ["Start", "Agents", "Speech & video", "Live sessions", "Account", "Reference"],
+  build: ["Conversations", "Avatars", "Apps", "Examples"],
+  deploy: ["Where it renders", "Privacy & compliance", "Use cases"],
   performance: ["Performance"],
-  resources: ["Resources", "News", "Legal"],
+  api: ["Basics", "Agents", "Media", "Account", "Index"],
+};
+
+/** Groups that render closed until the reader is inside them (SPEC D4). */
+export const COLLAPSED_GROUPS: Partial<Record<SectionId, string[]>> = {
+  deploy: ["Use cases"],
 };
 
 export interface NavLink { label: string; href: string; external?: boolean; match?: string[] }
 
-/** Sidebar entries that are not markdown pages (the .astro pages), placed in
- *  a group by `order` like any page. Their label is the page's H1. */
-export const SIDEBAR_LINKS: Partial<Record<SectionId, { group: string; label: string; href: string; order: number }[]>> = {
-  start: [
+/** Sidebar entries that are not markdown pages (the .astro pages and outside
+ *  links), placed in a group by `order` like any page. Their label is the page's H1. */
+export const SIDEBAR_LINKS: Partial<Record<SectionId, { group: string; label: string; href: string; order: number; external?: boolean }[]>> = {
+  overview: [
     { group: "Get started", label: "Quickstart", href: "/start", order: 10 },
-    { group: "Get started", label: "Choose your platform", href: "/platforms", order: 30 },
+    { group: "Get started", label: "Choose a platform", href: "/platforms", order: 30 },
+    { group: "Help", label: "Status", href: "https://status.bithuman.ai", order: 90, external: true },
   ],
   api: [
-    { group: "Reference", label: "API reference", href: "/api/reference", order: 10 },
+    { group: "Index", label: "API reference", href: "/api/reference", order: 10 },
+    { group: "Index", label: "OpenAPI", href: "/api/openapi.yaml", order: 20, external: true },
   ],
 };
 
-/** The header, left to right. `match` lists the other path prefixes a section owns. */
+/** The header's tab row, left to right. `match` lists the other path prefixes a tab owns. */
 export const TOP_NAV: NavLink[] = [
-  { label: "Get started", href: "/start" },
+  { label: "Overview", href: "/", match: ["/start", "/pricing", "/resources", "/downloads", "/changelog", "/news", "/support", "/legal"] },
   { label: "Platforms", href: "/platforms" },
-  { label: "Deploy", href: "/deploy", match: ["/pricing"] },
   { label: "Models", href: "/models" },
-  { label: "Build", href: "/build", match: ["/examples"] },
-  { label: "API", href: "/api" },
+  { label: "Guides", href: "/build", match: ["/examples"] },
+  { label: "Deploy", href: "/deploy" },
   { label: "Performance", href: "/performance" },
+  { label: "API reference", href: "/api" },
 ];
 
-/** The header's Resources menu, and the Resources hub's cards. */
-export const RESOURCES_MENU: NavLink[] = [
-  { label: "Downloads & versions", href: "/downloads" },
-  { label: "Changelog", href: "/changelog" },
-  { label: "News", href: "/news" },
-  { label: "Pricing and credits", href: "/pricing" },
-  { label: "Troubleshooting", href: "/resources/troubleshooting" },
-  { label: "FAQ", href: "/resources/faq" },
-  { label: "Glossary", href: "/resources/glossary" },
-  { label: "Support & community", href: "/support" },
-  { label: "For AI agents", href: "/resources/agents" },
-  { label: "Status", href: "https://status.bithuman.ai", external: true },
-];
+/** Parents whose children their hub lists instead of the sidebar (news posts). */
+export const HUB_LISTED: string[] = ["/news"];
 
 export const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
 

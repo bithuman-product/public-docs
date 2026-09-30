@@ -2,8 +2,8 @@
 title: "Website widget"
 description: "Add a floating, talking avatar to any website with one script tag: the floating widget or the chat widget, every option, React and Next.js, and your own persona and model with no server."
 section: build
-group: "Recipes"
-order: 12
+group: "Apps"
+order: 10
 type: recipe
 llms: build
 time: "5 min"

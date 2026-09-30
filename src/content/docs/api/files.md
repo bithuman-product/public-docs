@@ -2,8 +2,8 @@
 title: "Files"
 description: "Upload images, video, audio, and documents by URL or base64. Files are auto-organized by type and returned as CDN URLs."
 section: api
-group: "Agents"
-order: 30
+group: "Media"
+order: 40
 type: endpoint
 llms: api
 ---
