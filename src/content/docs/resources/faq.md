@@ -69,6 +69,18 @@ The [credit calculator](/pricing) turns your minutes into credits and a plan.
 
 Real-time usage bills active session time, talking or idle, to the second. End sessions you are not using. The Video API bills whole minutes of output ([Pricing](/pricing)).
 
+### Is there a one-time fee to create an avatar?
+
+Creating your own avatar is a one-time 500 credits for Essence 2 or 2,000 credits for Expression 2, and takes about 2 to 2.5 hours. A failed creation is refunded automatically. After that, sessions bill active session time at the rates above.
+
+### Do you offer annual or enterprise agreements?
+
+Yes. Enterprise customers can choose a flat annual price that covers a committed volume. The SDK still reports usage against that volume, so a phone app needs a network connection during a session. Further discounts are available with an annual commitment and for larger commitments. Start from the published [plans](/pricing), then [contact sales](https://www.bithuman.ai/enterprise?topic=annual-agreement#contact).
+
+### Can I ship a white-label app?
+
+Yes. Apps built with the bitHuman SDKs can be fully white-label: no bitHuman branding is required in your app, including App Store apps.
+
 ## Connectivity and data
 
 ### Does it work offline on a phone?
