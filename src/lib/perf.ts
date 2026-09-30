@@ -5,7 +5,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { formatMultiple } from "./format-multiple.ts";
-import { NO_GPU } from "../data/perf-groups.ts";
+import { NO_GPU, HIDDEN_ROWS } from "../data/perf-groups.ts";
 
 export type PerfModel = "essence-2" | "expression-2";
 export const PERF_MODELS: { id: PerfModel; name: string }[] = [
@@ -44,8 +44,12 @@ export function perfRow(id: string): PerfRowData {
   const r = perfData().rows.find((x) => x.id === id);
   if (!r) throw new Error(`performance.json has no row "${id}"`);
   if (!r.published) throw new Error(`performance.json row "${id}" is not published`);
+  if (HIDDEN_ROWS.includes(id)) throw new Error(`performance.json row "${id}" is hidden (src/data/perf-groups.ts HIDDEN_ROWS)`);
   return r;
 }
+
+/** The rows the site draws: published, and not in HIDDEN_ROWS. */
+export const shownRows = (): PerfRowData[] => perfData().rows.filter((r) => r.published && !HIDDEN_ROWS.includes(r.id));
 
 export const noGpu = (id: string) => NO_GPU.includes(id);
 

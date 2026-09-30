@@ -39,15 +39,16 @@ export const SOFTWARE_ID = "https://www.bithuman.ai/#software";
  *  platform's /start panel lists under "needs" (the Mac panel: Apple silicon;
  *  Intel Macs are not supported). When any of these is gone the build fails,
  *  so the metadata cannot keep a platform or a looser requirement the pages
- *  dropped. Windows joined on 2026-09-29, with its own page and a measured
- *  python-windows row (the Python package renders on a Windows PC's CPU). */
+ *  dropped. Windows joined on 2026-09-29 with its own page; its measured
+ *  python-windows row is hidden (owner ruling 2026-09-30, until the Windows
+ *  release ships: src/data/perf-groups.ts HIDDEN_ROWS), so it names no row. */
 const RUNS_ON: { os: string; page: string; row?: string }[] = [
   { os: "iOS", page: "ios", row: "iphone-15" },
   { os: "iPadOS", page: "ios" },
   { os: "Android", page: "android", row: "android-s25plus" },
   { os: "macOS (Apple silicon)", page: "macos", row: "macos-sdk" },
   { os: "Linux", page: "cli", row: "linux-cpu" },
-  { os: "Windows", page: "windows", row: "python-windows" },
+  { os: "Windows", page: "windows" },
   { os: "Web browser", page: "web", row: "web" },
 ];
 

@@ -105,7 +105,7 @@ python-macos
 ## Performance
 
 ```perf
-python-linux python-macos python-windows
+python-linux python-macos
 ```
 
 A finished `render` logs its own rate on the `bithuman` logger at INFO.
