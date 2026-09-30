@@ -108,7 +108,8 @@ const speed = (title: string) => {
 <style>
   /* ---- hero ---- */
   .hero { padding-block: var(--s-12) var(--s-8); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: var(--s-12); align-items: center; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: var(--s-12); align-items: start; }
+  .hero-copy { padding-top: var(--s-24); }
   .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
   .hero .lede { margin-top: var(--s-4); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 46ch; }
   .hero-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; }
@@ -139,6 +140,7 @@ const speed = (title: string) => {
   @media (max-width: 1100px) { .tiles { --cols: 4; } .modes { --cols: 2; } }
   @media (max-width: 1000px) {
     .hero-grid { grid-template-columns: 1fr; gap: var(--s-8); }
+    .hero-copy { padding-top: 0; }
   }
   @media (max-width: 768px) {
     .tiles { --cols: 2; }
