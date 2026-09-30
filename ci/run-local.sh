@@ -115,6 +115,10 @@ add default 0 built:served-markup           "need_dist && node scripts/check-ser
 # docs v2 (SPEC §4, §8): anchor coverage enforced from W3 (100% required); boilerplate report-only until W4
 add default 0 built:anchor-coverage         "need_dist && node scripts/check-anchor-coverage.mjs --selftest && node scripts/check-anchor-coverage.mjs"
 add default 0 built:boilerplate             "need_dist && node scripts/check-boilerplate.mjs --selftest && node scripts/check-boilerplate.mjs"
+# docs v2 W7 (SPEC "W7 POLISH" 2–4): subtitles 6–14 words, hub H2s on the rendered page, hub twins' headings
+add default 0 built:subtitles               "need_dist && node scripts/check-subtitles.mjs --selftest && node scripts/check-subtitles.mjs"
+add default 0 built:page-budget-rendered    "need_dist && node scripts/check-page-budget.mjs --built"
+add default 0 built:hub-twins               "need_dist && node scripts/check-hub-twins.mjs --selftest && node scripts/check-hub-twins.mjs"
 add default 1 built:noise-audit             "need_dist && node scripts/noise-audit.mjs"
 
 # page-quality.yml (Lighthouse on the built site; needs Chrome). Capped like every

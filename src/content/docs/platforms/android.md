@@ -1,6 +1,6 @@
 ---
 title: "Android"
-description: "The Android SDK renders Essence 2 and Expression 2 on Android phones, from one Maven Central dependency."
+description: "Render Essence 2 and Expression 2 on Android phones, from Maven Central."
 section: platforms
 group: "Android"
 order: 10
@@ -22,20 +22,11 @@ moved:
   troubleshooting: /platforms/android/troubleshooting
 ---
 
-<div class="lead">
-<div class="lead-text">
+After the one-time model download, the only network traffic is usage reporting. Why on the device: [On the device](/deploy/on-device).
 
-Both models render on the phone: you feed 16 kHz mono speech in and pull picture frames out. After the one-time model download, the only network traffic is usage reporting. Each model is one Maven Central dependency.
+## Before you start
 
-Why render on the device: [On the device](/deploy/on-device).
-
-</div>
-
-```figure
-android-essence-2 eager
-```
-
-</div>
+You feed 16 kHz mono speech in and pull picture frames out. Each model is one Maven Central dependency.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -46,8 +37,6 @@ android-essence-2 eager
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | 2.8 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
 | **Worked example** | [Android Expression 2](/examples/android-expression-2) | [Android Essence 2](/examples/android-essence-2) |
-
-## Before you start
 
 - **JDK 17, Gradle 8.11 or newer and Android Gradle Plugin 8.7 or newer.**
 - **A physical arm64 phone.** Emulators cannot load the engines.
@@ -167,6 +156,14 @@ fun render(context: Context, pcm16le: ByteArray, show: (ByteBuffer, Int, Int) ->
 ```
 
 Frame size belongs to the identity (portrait 1080×1920, landscape 1920×1080 or 1280×720). Read `avatar.width` and `avatar.height`; do not hard-code them.
+
+<div class="fig-end">
+
+```figure
+android-essence-2
+```
+
+</div>
 
 ## Performance
 

@@ -1,6 +1,6 @@
 ---
 title: "Rate limits"
-description: "Plan-tiered request limits by endpoint cost tier, the 429 / Retry-After contract, session concurrency, and a recommended retry strategy."
+description: "Request limits per plan and tier, the 429 contract, and a retry strategy."
 section: api
 group: "Basics"
 order: 30

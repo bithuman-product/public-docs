@@ -1,6 +1,6 @@
 ---
 title: "Errors"
-description: "The bitHuman API error format, HTTP status codes, and the full error-code catalog with resolution steps."
+description: "The error format, HTTP status codes and every error code, with fixes."
 section: api
 group: "Basics"
 order: 20

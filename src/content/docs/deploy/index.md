@@ -1,6 +1,6 @@
 ---
 title: "Deployment options"
-description: "The avatar renders in one of four places. Pick the one that matches where your users are and what may leave their device."
+description: "Where the avatar renders: pick the mode that fits your users and data."
 section: deploy
 group: "Where it renders"
 order: 0

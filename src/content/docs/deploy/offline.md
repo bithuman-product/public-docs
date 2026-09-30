@@ -1,6 +1,6 @@
 ---
 title: "Fully offline"
-description: "Real-time avatars that run completely locally, off the internet, on Linux and macOS computers, for Business and Enterprise clients."
+description: "Real-time avatars that run completely locally, off the internet."
 section: deploy
 group: "Where it renders"
 order: 50

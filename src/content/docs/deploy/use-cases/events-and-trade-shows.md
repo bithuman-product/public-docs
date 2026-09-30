@@ -1,6 +1,6 @@
 ---
 title: "Events and trade shows"
-description: "Run an avatar on a show floor with unreliable Wi-Fi: a Linux PC with no GPU, the local conversation brain, a setup checklist, and fully offline for halls with no internet."
+description: "Run an avatar on a show floor, even with unreliable Wi-Fi."
 section: deploy
 group: "Use cases"
 order: 30

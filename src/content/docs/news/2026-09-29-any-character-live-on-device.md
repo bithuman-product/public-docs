@@ -1,6 +1,6 @@
 ---
 title: "Any character, live, rendered on the user's device"
-description: "Essence 2 and Expression 2 render on iPhone, iPad, Android, Mac, Linux and in a browser tab with WebGPU, and every configuration we publish renders faster than real time."
+description: "Essence 2 and Expression 2 render on phones, Macs, Linux and in the browser."
 section: overview
 group: "Resources"
 order: 31
@@ -8,7 +8,6 @@ type: guide
 llms: none
 searchTitle: "News: any character, live, rendered on the user's device"
 models: ["essence-2", "expression-2"]
-demo: "both"
 next: ["/performance", "/examples", "/start"]
 parent: /news
 ---
@@ -51,7 +50,7 @@ Ways to build: the Swift package (iOS, iPadOS, macOS), the Android SDK (Maven Ce
 
 The bitHuman CLI includes an MCP server: `claude mcp add bithuman -- bithuman mcp`. Setup for Claude, Cursor and other MCP clients: [Claude & Cursor (MCP)](/build/mcp).
 
-Sample avatars you can try without an account: Essence 2 `sofia-ramirez` and Expression 2 `wise-pup`. Start one at the top of this page, or pick your platform in the [quickstart](/start).
+Sample avatars you can try without an account: Essence 2 `sofia-ramirez` and Expression 2 `wise-pup`. Talk to one in the [quickstart](/start).
 
 ## Price
 

@@ -1,6 +1,6 @@
 ---
 title: "REST API"
-description: "Call bitHuman from any backend over HTTPS: check your API secret, speak with text to speech, create your own agent, drive a live session and render a talking video."
+description: "Call bitHuman from any backend over HTTPS with your API secret."
 section: platforms
 group: "REST"
 order: 10
@@ -11,7 +11,7 @@ next: ["/api/agents", "/api/video", "/api/reference"]
 availability: creator
 ---
 
-The REST API creates and manages agents, speaks with text to speech, pushes lines into live sessions and renders talking videos. Every call is HTTPS with your API secret in a header, from any language that can make a request.
+The REST API creates agents, speaks with text to speech, drives live sessions and renders talking videos, from any language.
 
 ## Before you start
 

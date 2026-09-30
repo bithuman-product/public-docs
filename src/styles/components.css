@@ -203,9 +203,13 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .prose .lead > figure.fig { margin: 0; }
 .prose .lead .why { margin: var(--s-4) 0 0; padding: var(--s-4); }
 .prose .lead .why ul { grid-template-columns: 1fr; gap: var(--s-3); }
+/* W7: a quickstart's capture sits at the end of "First frame" (what you get), so the first step starts within the first screen */
+.prose .fig-end { width: 212px; max-width: 100%; margin: var(--s-5) 0; }
+.prose .fig-end > figure.fig { margin: 0; }
 @media (max-width: 760px) {
   .prose .lead { grid-template-columns: 1fr; gap: var(--s-4); }
   .prose .lead > figure.fig { max-width: 240px; margin-inline: auto; }
+  .prose .fig-end { width: 240px; margin-inline: auto; }
 }
 
 /* Docs v2 W5 endpoint sections (src/markdown/rehype-endpoints.mjs): the METHOD

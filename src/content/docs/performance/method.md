@@ -1,8 +1,8 @@
 ---
 title: "How we measure"
-description: "How the Essence 2 and Expression 2 frame rates are measured, which releases they were measured on, memory per render, time to a finished video, and the raw data."
+description: "How the frame rates are measured, on which releases, with the raw data."
 section: performance
-group: "Performance"
+group: "Speed"
 order: 10
 type: generated
 llms: start

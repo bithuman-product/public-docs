@@ -1,6 +1,6 @@
 ---
 title: "macOS"
-description: "Render Essence 2 and Expression 2 on a Mac with Apple silicon, in a Mac app or from a terminal, with the same package as iPhone and iPad."
+description: "Render Essence 2 and Expression 2 on a Mac with Apple silicon."
 section: platforms
 group: "Swift"
 order: 20
@@ -22,22 +22,13 @@ moved:
   reference: /platforms/swift/reference
 ---
 
-<div class="lead">
-<div class="lead-text">
-
-The same Swift package that runs on iPhone and iPad renders the avatar on a Mac with Apple silicon: in a Mac app, or in a command-line tool with `swift run`. No device, provisioning profile or entitlement is needed to try it from a terminal.
-
-Why render on the device: [On the device](/deploy/on-device).
-
-</div>
-
-```figure
-macos-expression-2 eager
-```
-
-</div>
+The iPhone and iPad Swift package, in a Mac app or from a terminal with `swift run`.
 
 ## Before you start
+
+No device, provisioning profile or entitlement is needed to try it from a terminal.
+
+Why render on the device: [On the device](/deploy/on-device).
 
 | You need | Expression 2 | Essence 2 |
 |---|---|---|
@@ -112,6 +103,14 @@ while idleTicks < 100 {
     if got { idleTicks = 0 } else { idleTicks += 1; usleep(50_000) }
 }
 ```
+
+<div class="fig-end">
+
+```figure
+macos-expression-2
+```
+
+</div>
 
 ## Performance
 

@@ -1,6 +1,6 @@
 ---
 title: "Python"
-description: "Render Essence 2 and Expression 2 avatars from Python: open an avatar, push audio, get frames, on macOS (Apple silicon), Linux and Windows, where it needs no GPU."
+description: "Render Essence 2 and Expression 2 avatars from your own Python code."
 section: platforms
 group: "Python"
 order: 10
@@ -27,10 +27,11 @@ moved:
   troubleshooting: /platforms/python/troubleshooting
 ---
 
-<div class="lead">
-<div class="lead-text">
+A file in and frames out, or a live stream of audio in and frames out, on your own machine.
 
-The `bithuman` package renders avatars in your own Python code on your own machine: a file in and frames out, or a live stream of audio in and frames out. To run an avatar without code, use the [CLI](/platforms/cli).
+## Before you start
+
+To run an avatar without code, use the [CLI](/platforms/cli).
 
 > **Note:** On Linux and Windows, Python renders both models on the CPU alone, no GPU. On macOS it renders on Apple silicon. Windows has its own page: [Windows](/platforms/windows). See [CPU only (no GPU)](/deploy/cpu).
 
@@ -39,16 +40,6 @@ The `bithuman` package renders avatars in your own Python code on your own machi
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Install** | `pip install "bithuman[expression-2]"` | included in the same install |
 | **Frames** | RGB `numpy` arrays, `(height, width, 3)` `uint8` | the same |
-
-</div>
-
-```figure
-python-macos eager
-```
-
-</div>
-
-## Before you start
 
 | You need | Check |
 |---|---|
@@ -102,6 +93,14 @@ import bithuman
 bithuman.open("sofia-ramirez.imx").render("speech.wav", out_mp4="out.mp4")
 # → out.mp4: 1080×1920 with the speech, 15.2 s
 ```
+
+<div class="fig-end">
+
+```figure
+python-macos
+```
+
+</div>
 
 ## Performance
 

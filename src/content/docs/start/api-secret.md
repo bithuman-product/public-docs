@@ -1,6 +1,6 @@
 ---
 title: "Your API secret"
-description: "The one credential for every bitHuman surface: where to get it, where each platform reads it, and what a shipped app holds."
+description: "The one credential for every bitHuman surface, and where each platform reads it."
 section: overview
 group: "Get started"
 order: 20

@@ -30,7 +30,7 @@ const speed = (title: string) => {
     <div class="container hero-grid">
       <div class="hero-copy">
         <h1 id="home-title">{LANDING.title}</h1>
-        <p class="lede">{LANDING.line}</p>
+        <p class="lede" data-subtitle><span class="brand-line">{LANDING.line.split(/(?<=\.) /)[0]}</span> {LANDING.line.split(/(?<=\.) /).slice(1).join(" ")}</p>
         <div class="hero-cta">
           <Button href="/start" size="lg">Quickstart</Button>
           <Button href={API_SECRET_URL} variant="secondary" size="lg">Get your API secret</Button>
@@ -107,13 +107,20 @@ const speed = (title: string) => {
 
 <style>
   /* ---- hero ---- */
+  /* W7: the landing's columns share the header's width, so the hero's left edge sits under the logo */
+  .container { max-width: var(--container-wide); }
   .hero { padding-block: var(--s-12) var(--s-8); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: var(--s-12); align-items: start; }
-  .hero-copy { padding-top: var(--s-24); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: var(--s-12); align-items: center; }
+  .hero-copy { padding-bottom: var(--s-12); }
   .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
   .hero .lede { margin-top: var(--s-4); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 46ch; }
   .hero-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; }
   .hero-demo { scroll-margin-top: calc(var(--nav-h) + var(--s-4)); }
+  /* W7: on a wide screen the brand line stands on its own line and the lede reads larger; phones keep the 28 px H1 */
+  @media (min-width: 1001px) {
+    .hero .lede { font-size: var(--fh-lg); line-height: var(--lh-18); max-width: 44ch; }
+    .hero .brand-line { display: block; color: var(--color-text); }
+  }
 
   /* ---- bands ---- */
   .band { padding-block: var(--s-8); }

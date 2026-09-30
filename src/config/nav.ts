@@ -36,7 +36,7 @@ export const GROUP_ORDER: Record<SectionId, string[]> = {
   models: ["Models", "Concepts"],
   build: ["Conversations", "Avatars", "Apps", "Examples"],
   deploy: ["Where it renders", "Privacy & compliance", "Use cases"],
-  performance: ["Performance"],
+  performance: ["Speed"],
   api: ["Basics", "Agents", "Media", "Account", "Index"],
 };
 

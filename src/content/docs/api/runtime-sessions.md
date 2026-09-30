@@ -1,6 +1,6 @@
 ---
 title: "Runtime sessions"
-description: "List live avatar sessions, read a session transcript, terminate a session, or revoke every runtime key at once."
+description: "List live sessions, read a transcript, end a session, or revoke every runtime key."
 section: api
 group: "Agents"
 order: 20

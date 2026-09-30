@@ -1,6 +1,6 @@
 ---
 title: "Companion app"
-description: "An AI companion in your iPhone, iPad or Android app: a photoreal Essence 2 avatar that renders on the phone and speaks the replies your own voice stack produces."
+description: "An AI companion in your iPhone, iPad or Android app, rendered on the phone."
 section: build
 group: "Apps"
 order: 20

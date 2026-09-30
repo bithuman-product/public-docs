@@ -1,6 +1,6 @@
 ---
 title: "First generation"
-description: "Essence 1 and Expression 1, bitHuman's first-generation avatar models: what each one is, where it runs, and what its file contains. Both are maintained; new work starts on Essence 2 or Expression 2."
+description: "Essence 1 and Expression 1: what each is, where it runs, and its file."
 section: models
 group: "Models"
 order: 40

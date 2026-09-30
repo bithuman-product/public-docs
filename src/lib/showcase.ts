@@ -59,7 +59,7 @@ function card(e: Example, i: number): string {
   const c = CAPTURES[e.capture];
   return `<li class="gal-item" data-where="${e.where.join(" ")}" data-models="${e.models.join(" ")}" data-platform="${e.platform}">` +
     `<article class="card gal-card"><div class="gal-stage" data-fig>${mediaHtml(e.capture, { eager: i === 0, sizes: "180px", sound: false })}</div>` +
-    `<div class="card-body"><span class="gal-head"><span class="card-title"><h2><a class="gal-link" href="${e.href}">${esc(e.title)}</a></h2></span>` +
+    `<div class="card-body"><span class="gal-head"><span class="card-title"><span class="gal-title"><a class="gal-link" href="${e.href}">${esc(e.title)}</a></span></span>` +
     `<span class="gal-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>${esc(e.time)}</span></span>` +
     `<span class="card-line">${esc(e.line)}</span>` +
     `<span class="card-chips">${chips(e)}</span>` +

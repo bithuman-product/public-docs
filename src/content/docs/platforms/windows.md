@@ -1,6 +1,6 @@
 ---
 title: "Windows"
-description: "Render Essence 2 and Expression 2 avatars on a Windows 11 PC (x86_64) from Python, on the CPU with no GPU. The CLI runs cloud sessions and MCP on Windows."
+description: "Render Essence 2 and Expression 2 on a Windows 11 PC, with no GPU."
 section: platforms
 group: "Apps"
 order: 10
@@ -16,21 +16,17 @@ claims: ["S2", "S3", "S4", "S7", "S10"]
 next: ["/platforms/python", "/platforms/python/reference", "/deploy/cpu"]
 ---
 
-<div class="lead">
-<div class="lead-text">
+The `bithuman` Python package: a file in and frames or an MP4 out, or a live stream in and frames out.
 
-On Windows, the `bithuman` Python package renders avatars on your own PC: a file in and frames or an MP4 out, or a live stream of audio in and frames out. Both models run on the CPU alone, with no GPU and no WSL. The [CLI](/platforms/cli) on Windows runs cloud sessions and MCP.
+## Before you start
+
+Both models run on the CPU alone, with no GPU and no WSL. The [CLI](/platforms/cli) on Windows runs cloud sessions and MCP.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Install** | `pip install "bithuman[expression-2]"` | included in the same install |
 | **Frames** | RGB `numpy` arrays, `(height, width, 3)` `uint8` | the same |
-
-</div>
-</div>
-
-## Before you start
 
 | You need | Check |
 |---|---|

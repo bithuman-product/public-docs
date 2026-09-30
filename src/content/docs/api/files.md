@@ -1,6 +1,6 @@
 ---
 title: "Files"
-description: "Upload images, video, audio, and documents by URL or base64. Files are auto-organized by type and returned as CDN URLs."
+description: "Upload images, video, audio and documents by URL or base64."
 section: api
 group: "Media"
 order: 40

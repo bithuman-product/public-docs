@@ -1,6 +1,6 @@
 ---
 title: "Flutter"
-description: "The Flutter plugin renders Essence 2 and Expression 2 on Android phones, inside a Flutter app."
+description: "The Flutter plugin renders Essence 2 and Expression 2 on Android phones."
 section: platforms
 group: "Flutter"
 order: 10
@@ -22,17 +22,17 @@ moved:
   troubleshooting: /platforms/flutter/troubleshooting
 ---
 
-One Flutter dependency gives your app an avatar widget. On Android the plugin runs the same engines as the [Android SDK](/platforms/android), so the avatar renders on the phone: 16 kHz mono speech goes in, and a lip-synced picture comes out as a Flutter `Texture`.
+One Flutter dependency gives your app an avatar widget. Why on the device: [On the device](/deploy/on-device).
 
-Why render on the device: [On the device](/deploy/on-device).
+## Before you start
+
+On Android the plugin runs the same engines as the [Android SDK](/platforms/android), so the avatar renders on the phone: 16 kHz mono speech goes in, and a lip-synced picture comes out as a Flutter `Texture`.
 
 | Platform | What the plugin does |
 |---|---|
 | **Android** (arm64-v8a, a physical device) | renders Essence 2 and Expression 2 on the phone; the engines resolve from Maven Central, and the example app builds from a clone |
 | **iOS** (16 or newer) | builds from the published tag after the plugin's bootstrap step. For an iPhone or iPad app that renders on the device, use the [Swift package](/platforms/ios) |
 | **macOS** (13 or newer, Apple silicon) | builds from the published tag after the bootstrap step and two Homebrew libraries. For a Mac app, the [Swift package](/platforms/macos) is the documented path |
-
-## Before you start
 
 | You need | Notes |
 |---|---|

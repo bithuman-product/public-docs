@@ -1,6 +1,6 @@
 ---
 title: "Essence 2"
-description: "Essence 2 renders a photoreal person from one portrait: the identity's own footage, lip-synced live, on the device or in the bitHuman cloud."
+description: "Essence 2 renders a photoreal person from one portrait, live."
 section: models
 group: "Models"
 order: 10

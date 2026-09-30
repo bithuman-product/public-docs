@@ -1,6 +1,6 @@
 ---
 title: "Ready-made avatars"
-description: "Try a sample avatar in your browser with no account, or render it with the CLI."
+description: "Try a sample avatar in your browser with no account, or with the CLI."
 section: build
 group: "Examples"
 order: 30

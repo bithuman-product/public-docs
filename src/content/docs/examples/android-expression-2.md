@@ -1,6 +1,6 @@
 ---
 title: "Android Expression 2"
-description: "A complete Kotlin app that renders a talking Expression 2 avatar on an Android phone: clone it, add your API secret, build and run."
+description: "A complete Kotlin app with a talking Expression 2 avatar on an Android phone."
 section: build
 group: "Examples"
 order: 40

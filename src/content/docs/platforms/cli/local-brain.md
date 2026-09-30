@@ -1,6 +1,6 @@
 ---
 title: "Local conversation brain"
-description: "The CLI's local conversation brain: speech recognition, the language model and the voice run on your Mac or Linux machine with one environment variable (BITHUMAN_LOCAL=1). Audio and transcripts stay on the machine."
+description: "Run speech recognition, the language model and the voice on your own machine."
 section: platforms
 group: "CLI"
 order: 30

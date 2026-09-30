@@ -23,20 +23,11 @@ moved:
   reference: /platforms/swift/reference
 ---
 
-<div class="lead">
-<div class="lead-text">
+The avatar renders inside your app, with no render server. Why on the device: [On the device](/deploy/on-device).
 
-One Swift package carries both models. The avatar renders inside your app on the iPhone or iPad: you feed 16 kHz mono speech in and take lip-synced frames out, with no render server. The same package builds [Mac apps](/platforms/macos).
+## Before you start
 
-Why render on the device: [On the device](/deploy/on-device).
-
-</div>
-
-```figure
-ios-expression-2 eager
-```
-
-</div>
+You feed 16 kHz mono speech in and take lip-synced frames out. The same package builds [Mac apps](/platforms/macos).
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -46,8 +37,6 @@ ios-expression-2 eager
 | **Credential** | an [API secret](/start/api-secret), Creator plan or higher | an API secret, Creator plan or higher |
 | **First-run download** | about 370 MB (avatar and shared engine) | about 250 MB (avatar and engine resources) |
 | **Worked example** | [iOS Expression 2](/examples/ios-expression-2) | [iOS Essence 2](/examples/ios-essence-2) |
-
-## Before you start
 
 - **Xcode 26 or newer** and an Apple Developer team.
 - **A physical iPhone or iPad** for device builds. Essence 2 does not run in the Simulator; Expression 2 does.
@@ -155,6 +144,14 @@ engine.shutdown()
 </details>
 
 The C interface for C, C++ and plugins (`Essence2`) is on the [Swift reference](/platforms/swift/reference#essence-2-c).
+
+<div class="fig-end">
+
+```figure
+ios-expression-2
+```
+
+</div>
 
 ## Performance
 

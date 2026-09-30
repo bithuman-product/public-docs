@@ -82,7 +82,7 @@ Every docs page gets, from `DocLayout`: a breadcrumb, the H1 (= the sidebar labe
 | Field | Use |
 |---|---|
 | `title` | the H1 and the sidebar label; there is no separate label [check-nav-consistency] |
-| `description` | the lede, one sentence, with the words developers type |
+| `description` | the lede (subtitle), one sentence of 6–14 words, with the words developers type (`scripts/check-subtitles.mjs`) |
 | `section`, `group`, `order` | where it sits: `section` is a header item, `group` one of its `GROUP_ORDER` groups in `src/config/nav.ts` [check-nav-consistency] |
 | `type` | the template below [check-page-template] |
 | `availability` | `creator` · `business-enterprise` · `enterprise`, shown as a plan chip |
@@ -101,7 +101,7 @@ H2 names are stable anchors. A section that does not apply is omitted, never wri
 
 | Type | H2 sections, in order (required in bold) |
 |---|---|
-| `platform` | (the lead: what you get, a real capture, the why-on-device box on device pages, the model comparison table) → Before you start → Install → **Authenticate** → **First frame** → Complete example → **Integrate into your app** → Platform notes → Performance → **Troubleshooting** → **Reference** |
+| `platform` | (the lead: ONE short line, with a link to /deploy/on-device on device pages; the first step starts within 400 px at 1440) → Before you start (the model comparison table opens it: decision W7, 2026-09-30, `scripts/check-mobile-sdk-arrival.mjs`) → Install → **Authenticate** → **First frame** (ends with the real capture) → Complete example → **Integrate into your app** → Platform notes → Performance → **Troubleshooting** → **Reference** |
 | `recipe` | What you'll build (the outcome beside a real capture) → **Steps** (each `### ` a step with an ```` ```expected ```` check) → How it works (a diagram) → Make it your own → **Troubleshooting** → Next. `time:` in the frontmatter is the chip "20 min". |
 | `concept` | a one-sentence definition, a diagram first, 3–5 key ideas, In code, Where it runs, Related |
 | `endpoint` | summary and method chips → Authentication → per operation: Request → Example (curl, Python, Node) → Response → Errors → Related guide |
