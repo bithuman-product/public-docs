@@ -117,6 +117,11 @@ function text(html) {
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, " ")
+    // ★<wbr> is a line-break OPPORTUNITY, not a character: the reader sees and
+    // copies `BITHUMAN_API_SECRET` whole. The table renderer splits long code
+    // tokens with it (2026-09-30), so mapping it to a space broke every literal
+    // in a table cell into words and no carrier could match its own sentence.
+    .replace(/<wbr\s*\/?>/gi, "")
     .replace(/<[^>]+>/g, " ")
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ")
@@ -203,8 +208,21 @@ async function fetchLive(origin) {
 
 const corpus = LIVE
   ? await fetchLive(ORIGIN)
-  : readdirSync(DIR).filter(f => f.endsWith(".html")).sort()
-      .map(f => [f, readFileSync(`${DIR}/${f}`, "utf8")]);
+  : htmlUnder(DIR).map(f => [f, readFileSync(`${DIR}/${f}`, "utf8")]);
+// A directory of fetched pages, or a built dist/ (pre-merge: ci/run-local.sh
+// `built:served-vocabulary`), walked recursively. pagefind is the search index.
+function htmlUnder(root) {
+  const out = [];
+  const walk = (rel) => {
+    for (const e of readdirSync(rel ? `${root}/${rel}` : root, { withFileTypes: true })) {
+      const r = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isDirectory()) { if (e.name !== "pagefind") walk(r); }
+      else if (e.name.endsWith(".html")) out.push(r);
+    }
+  };
+  walk("");
+  return out.sort();
+}
 if (!corpus.length) { console.error("CANNOT MEASURE: empty corpus"); process.exit(2); }
 // ★DOMAIN PROJECTION FOR THE FENCE, not an exclusion. The sibling excuses a
 // frozen-verbatim name inside a ``` code fence — a command a developer types or

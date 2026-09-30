@@ -251,8 +251,10 @@ const CARRIERS = [
   // this one is now the former.
   { why: "§G: the wheel EXTRA `bithuman[tessera]` — REMOVED from the wheel in 2.11.6 (2026-09-20). The spelling stays permitted because the pages that announce its removal must be able to name it; it is no longer a live pip coordinate",
     re: /bithuman\[tessera\]|`tessera` extra/i },
-  { why: "§G: BITHUMAN_TESSERA_* env names a customer sets in their own launcher; the reader takes BOTH spellings and never drops the frozen one",
-    re: /BITHUMAN_TESSERA_[A-Z_]+/ },
+  // ★CARRIER REMOVED 2026-09-30: the BITHUMAN_TESSERA_* variables are internal
+  // engine tuning a customer never sets (the defaults are the fast path), so the
+  // code name has no carrier left in env-var form. check-internal-vocabulary.mjs
+  // grades that spelling as `internal-env`, with no carrier and no marker.
   { why: "§G: exported CamelCase identifiers a customer binds by name — OfflineTesseraRenderer, TesseraOfflineError, Swift TesseraBorrow/TesseraStream, Kotlin attachTesseraBorrow",
     re: /\b[A-Za-z]*Tessera[A-Za-z]+\b/ },
   // ★MOVED DOWN 2026-09-07 (same reason as the four below): `grep tessera` —
