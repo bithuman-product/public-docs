@@ -54,7 +54,7 @@ A public agent needs no credential. For a private agent, your server mints an [e
 </html>
 ```
 
-Expected: the avatar appears, asks for the microphone, and answers when you speak. Keep the `*` in `allow`, or the microphone is blocked. To try it without a page, open [https://www.bithuman.ai/embed/A23WJF0199](https://www.bithuman.ai/embed/A23WJF0199).
+Expected: the avatar's picture with **Tap to talk**. Select it, allow the microphone, and the avatar greets you and answers when you speak. Keep the `*` in `allow`, or the microphone is blocked. To try it without a page, open [https://www.bithuman.ai/embed/A23WJF0199](https://www.bithuman.ai/embed/A23WJF0199).
 
 <div class="fig-end">
 

@@ -62,9 +62,9 @@ The secret is stored in `~/.bithuman/config` (mode `0600`) and named `cli@<hostn
 | `--host` | `127.0.0.1` | Bind address. `0.0.0.0` also needs `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
 | `--port` | `8088` | HTTP port |
 
-`run` starts everything a session needs: a local `livekit-server` (it must be on `PATH`) and the conversation brain. A file runs locally: Expression 2 (`.avatar` or `.imx`), Essence 2 and Essence 1 (`.imx`). An Essence 2 or Expression 2 agent code opens a cloud session. Expression 1 is cloud-only.
+`run` starts everything a session needs: a local `livekit-server` (it must be on `PATH`) and the conversation brain. A sample name or a file renders on this machine, billed at the self-hosted rate: Expression 2 (`.avatar` or `.imx`), Essence 2 and Essence 1 (`.imx`). An Essence 2 or Expression 2 agent code opens a session in the bitHuman cloud, billed at the cloud rate ([pricing](/pricing)). Expression 1 is cloud-only.
 
-The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 350 MB on disk). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([local conversation brain](/platforms/cli/local-brain)).
+The conversation brain: signed in, `run` uses the managed brain and installs it into `~/.cache/bithuman/brain-venv` on first use (about 380 MB on disk). `OPENAI_API_KEY` selects OpenAI Realtime instead, and `BITHUMAN_LOCAL=1` runs it on your hardware ([local conversation brain](/platforms/cli/local-brain)).
 
 ## bithuman render
 
@@ -150,7 +150,7 @@ Checks versions, host, memory, credential, brain and cache sizes. Exits 0 only w
 | `~/.cache/bithuman/run` | Session state and logs |
 | `~/.cache/bithuman/brain-venv` | The conversation brain |
 | `~/.cache/bithuman/bundles` | Unpacked avatars (about the size of each avatar again) |
-| `~/.bithuman/engines` | Render engines, including the Essence 2 audio encoder (about 66 MB) |
+| `~/.bithuman/engines` | Render engines, including the Essence 2 audio encoder (about 440 MB on Linux) |
 | `~/.cache/huggingface`, `~/.cache/supertonic` | Local conversation brain weights |
 
 `bithuman doctor` prints each size. Deleting `~/.cache/bithuman` is safe.

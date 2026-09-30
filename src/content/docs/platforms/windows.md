@@ -83,7 +83,7 @@ The Python API is the same on Windows as on macOS and Linux: `AsyncBithuman` tak
 
 ## Platform notes
 
-- The first Essence 2 render downloads a shared audio encoder (about 377 MB, plus about 70 MB for streaming) to `%USERPROFILE%\.bithuman\deps`, once.
+- The first Essence 2 render downloads a shared audio encoder (about 66 MB) to `%USERPROFILE%\.bithuman\deps`, once.
 - `BITHUMAN_CACHE_DIR` moves the download cache from `%USERPROFILE%\.cache\bithuman`.
 - `python -m bithuman render <AGENT_CODE> <audio>` downloads your own agent's model by code and renders it.
 

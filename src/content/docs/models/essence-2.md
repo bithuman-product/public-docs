@@ -31,9 +31,12 @@ How it is created, served and kept moving while idle: [How it works](/models/how
 - **Always-on displays** — kiosks, lobby screens and 24/7 assistants.
 - **On your own hardware** — every SDK platform runs it.
 
-For a stylized character, or a scene generated from one photo, choose
-[Expression 2](/models/expression-2). The side-by-side is on
-[Models](/models).
+Essence 2 needs a clear, real human face: a cartoon, animal, robot or
+creature, or a photo with no face found, is refused with
+`422 MODEL_SUBJECT_MISMATCH` before anything is charged. For a stylized
+character, or a scene generated from one photo, choose
+[Expression 2](/models/expression-2). See
+[Choosing a model](/models#choosing-a-model).
 
 ## Where it runs
 

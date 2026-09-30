@@ -179,5 +179,6 @@ For a private agent, or your own layout, use the web embed in an `<iframe>` with
 | Nothing appears, and the browser console says `agentUrl is required` | Pass `agentUrl` to `init`. |
 | The microphone never activates | Serve the page over HTTPS, or `http://localhost` while you build. |
 | The frame shows `Embedding is disabled for this agent` | Turn Anonymous Share back on in the agent's sharing settings. |
+| The frame shows `Agent not found` | The agent code is wrong: copy it from the agent's Deploy & Share dialog. |
 | The frame shows a browser error page | Remove the `Cross-Origin-Embedder-Policy` header from your page. |
 | The console says the widget is already initialized | Call `init` once per page. |

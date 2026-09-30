@@ -194,7 +194,7 @@ function modelMatrix(arg: string, mode: Mode): string {
  *  its availability, which matches MATRIX (Essence 1 has no phone build;
  *  Expression 1 renders only in the bitHuman cloud). */
 const V1_LINE: Record<string, string> = {
-  "essence-1": "First generation. On your own computers or in the bitHuman cloud, not on phones.",
+  "essence-1": "First generation. On your own computers, in the bitHuman cloud or in a browser tab; not on phones.",
   "expression-1": "First generation. In the bitHuman cloud only.",
 };
 const MODEL_TAGS = ["New", "Hot"];

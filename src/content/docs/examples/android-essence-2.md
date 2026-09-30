@@ -50,7 +50,7 @@ adb shell am start -n com.example.e2hello/.MainActivity
 adb push ../../python/quickstart/speech.wav /storage/emulated/0/Android/data/com.example.e2hello/files/speech.wav && adb shell am start -S -n com.example.e2hello/.MainActivity
 ```
 
-The first launch creates the app's files folder and says that `speech.wav` is missing; the push fills it and the restart renders. Any 16 kHz mono 16-bit WAV works.
+The first launch creates the app's files folder and says that `speech.wav` is missing; the push fills it and the restart renders. Any 16 kHz mono 16-bit WAV works, such as the [16 kHz sample clip](/samples/speech-16k.wav). The 24 kHz `/samples/speech.wav` is refused (`need 16 kHz mono 16-bit PCM`).
 
 ## Expected output
 
@@ -122,7 +122,7 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 ## Make it your own
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) with `"model": "essence-2"`, then pass its agent code to `fetch`; the secret you set with `Essence2Credential.set` downloads it.
-- **Live speech:** feed 16 kHz mono 16-bit audio as it arrives and pull frames at 25 fps; call `endOfAudio()` at the end of each reply and `idle(buffer)` between replies.
+- **Live speech:** feed 16 kHz mono 16-bit audio as it arrives and pull frames at 25 fps; call `endOfAudio()` at the end of each reply and `idle(buffer)` between replies. For the microphone, declare and request `RECORD_AUDIO` first ([Build an Android app](/platforms/android/app#integrate-into-your-app)).
 - **Ship it:** the secret in `BuildConfig` can be read out of the APK. A real app fetches it from your backend at startup and passes it to `Essence2Credential.set`.
 - **Zero-copy frames (essence2-android 0.7.0 and newer):** `useHardwareBuffers()` switches delivery to zero-copy: `pullHardwareBuffer()` and `idleHardwareBuffer()` return an `Essence2HardwareFrame` whose RGBA `HardwareBuffer` your renderer samples directly. Close each frame after presenting it. `pull(ByteBuffer)` is unchanged, and nothing changes until you call `useHardwareBuffers()` ([Android API](/platforms/android/reference)).
 
@@ -144,6 +144,7 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 | `UnsatisfiedLinkError` | run on a physical arm64 phone, not an emulator |
 | The build refuses the JDK | use JDK 17 (`java -version`) |
 | The app says `speech.wav` is missing | run the `adb push` line, then restart the app |
+| `need 16 kHz mono 16-bit PCM; speech.wav is 24000 Hz, 1 ch, 16-bit` | the WAV is not 16 kHz | push the [16 kHz sample clip](/samples/speech-16k.wav), or convert yours: `ffmpeg -i in.wav -ac 1 -ar 16000 -sample_fmt s16 speech.wav` |
 
 More on [Android: Troubleshooting](/platforms/android/troubleshooting).
 

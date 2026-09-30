@@ -119,7 +119,7 @@ Talking video, adding a model to an agent and knowledge bases have no tool; use 
 | No bithuman tools in the client | `bithuman` is not on the client's `PATH` | use the full path to the binary in the config, then restart the client |
 | `validate_api_secret` returns `valid: false` | no or wrong credential | `bithuman login`, or set `BITHUMAN_API_SECRET` in the config |
 | A created agent uses a first-generation model | `model` was not passed | ask for `essence-2` or `expression-2` explicitly |
-| `422` when creating an Essence 2 agent | the image is not a photoreal person | use a photo, or choose Expression 2 |
+| `422 MODEL_SUBJECT_MISMATCH` when creating an agent | the subject is not a real person, or no face was found; every model but Expression 2 needs one | choose Expression 2 ([Choosing a model](/models#choosing-a-model)) |
 
 ## Next
 

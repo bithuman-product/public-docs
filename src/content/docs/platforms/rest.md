@@ -19,6 +19,8 @@ The REST API creates agents, speaks with text to speech, drives live sessions an
 - `curl`, or any HTTP client.
 - Credits for anything beyond a check: creating an agent is a one-time charge ([pricing](/pricing#creation--one-time-credits)).
 
+Your first own agent takes time: about 2–2.5 hours for `essence-2` or `expression-2`, or minutes for `expression-1` with a real person's portrait. The sample avatars, such as `A23WJF0199`, work in the [web embed](/platforms/web) and as downloads, but `/v1/agent/{code}`, `/speak` and talking video need an agent you own.
+
 To try an avatar with no account first, use the [web embed](/platforms/web).
 
 ## Authenticate
@@ -88,7 +90,7 @@ Open `https://www.bithuman.ai/embed/<agent_id>` and talk to your agent. While th
 ### Make it your own
 
 - **A face of your own:** add `"image": "https://…/portrait.jpg"` to the JSON in `generate-agent.sh`.
-- **A photoreal person:** `BITHUMAN_MODEL=essence-2`, or `auto` to let the platform choose.
+- **A photoreal person:** `BITHUMAN_MODEL=essence-2`, or `auto` to let the platform choose. Every model except Expression 2 needs a real human face ([Choosing a model](/models#choosing-a-model)).
 - **A video instead of a live session:** [`POST /v1/video/generate`](/api/video) renders your agent saying a line to an MP4.
 - **Other languages:** [`api/rest-api/python`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api/python) has the same calls in Python.
 
@@ -96,7 +98,7 @@ Open `https://www.bithuman.ai/embed/<agent_id>` and talk to your agent. While th
 
 ### Create your own agent
 
-Creation is a one-time charge ([pricing](/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Always send `model`.
+Creation is a one-time charge ([pricing](/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Always send `model`: `essence-2` for a real person, `expression-2` for any character ([Choosing a model](/models#choosing-a-model)).
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -150,6 +152,8 @@ Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `vide
 | `402 INSUFFICIENT_BALANCE` | the balance is below the creation cost | [top up](https://www.bithuman.ai/billing#credits) |
 | `validate.sh` prints `"valid": false` | the secret is wrong or revoked | create a new one |
 | The status stays at `lip_sync` for a long time | that is the training step (about 2 hours) | keep polling |
+| `422 MODEL_SUBJECT_MISMATCH` | the model needs a real human face; the image or prompt is a character, or has no face | use `expression-2`, or `auto`; nothing was charged |
+| `404` for `A23WJF0199` on `/v1/agent/…` | sample avatars only embed and download | create an agent of your own |
 | `404` from `speak.sh` or `/v1/agent/{code}/speak` | the agent is not yours, or it has no live session | the message says which; open its embed page first |
 
 All error codes: [Errors](/api/errors).

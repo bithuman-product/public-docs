@@ -19,7 +19,7 @@ Every REST call carries your API secret in the `api-secret` header. The same sec
 
 ## POST /v1/validate
 
-Checks the secret in the `api-secret` header. Always returns `200`; read `valid`.
+Checks the secret in the `api-secret` header. Always returns `200`; read `valid`. A request with no header, or with the secret in `Authorization: Bearer` instead of `api-secret`, also answers `200 {"valid": false}`, not `401`.
 
 ### Example
 
@@ -47,7 +47,7 @@ Exchanges the API secret for a short-lived runtime token that authorizes renderi
 ```bash
 curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"agent_code": "A78WKV4515"}'
+  -d '{"agent_code": "'"$BITHUMAN_AGENT_CODE"'"}'
 ```
 
 Sent with `mode`, the same endpoint starts a cloud avatar in your LiveKit room instead: [Cloud avatar without the plugin](/platforms/livekit/cloud-avatar).
@@ -59,7 +59,7 @@ Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one ag
 ```bash
 curl -X POST https://api.bithuman.ai/v1/runtime-tokens/mint \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"agent_code": "A78WKV4515", "scope": "livekit-cloud", "room_name": "your-room", "livekit_url": "wss://your-project.livekit.cloud"}'
+  -d '{"agent_code": "'"$BITHUMAN_AGENT_CODE"'", "scope": "livekit-cloud", "room_name": "your-room", "livekit_url": "wss://your-project.livekit.cloud"}'
 ```
 
 ## Keep the secret safe
@@ -76,7 +76,7 @@ Create the new secret, move your services to it, then revoke the old one under [
 
 | Status | Code | Cause | Fix |
 |---|---|---|---|
-| `401` | `MISSING_AUTH` | no `api-secret` header | send the header on every request |
+| `401` | `MISSING_AUTH` | no `api-secret` header (`/v1/validate` answers `valid: false` instead) | send the header on every request |
 | `401` | `UNAUTHORIZED` | the secret is invalid, or a revoked secret on a REST endpoint | check it with `/v1/validate`; create a new one |
 | `403` | `RUNTIME_SUSPENDED` | a revoked secret on a token endpoint (`/v1/runtime-tokens/*`, `/v1/embed-tokens/request`) | create a new secret and move your services to it |
 | `403` | `RUNTIME_SUSPENDED` | runtime access is suspended for the account; the message says so | contact support |

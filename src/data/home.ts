@@ -68,7 +68,7 @@ export const MODELS: ModelCard[] = [
  *  its availability, matching src/data/models.ts MATRIX: Essence 1 has no phone
  *  build; Expression 1 renders only in the bitHuman cloud. */
 export const MODELS_V1: { title: string; line: string; href: string }[] = [
-  { title: "Essence 1", line: "First generation. On your own computers or in the bitHuman cloud, not on phones.", href: "/models/first-generation" },
+  { title: "Essence 1", line: "First generation. On your own computers, in the bitHuman cloud or in a browser tab; not on phones.", href: "/models/first-generation" },
   { title: "Expression 1", line: "First generation. In the bitHuman cloud only.", href: "/models/first-generation" },
 ];
 

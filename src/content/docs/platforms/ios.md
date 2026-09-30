@@ -39,7 +39,7 @@ You feed 16 kHz mono speech in and take lip-synced frames out. The same package 
 | **Worked example** | [iOS Expression 2](/examples/ios-expression-2) | [iOS Essence 2](/examples/ios-essence-2) |
 
 - **Xcode 26 or newer** and an Apple Developer team.
-- **A physical iPhone or iPad** for device builds. Essence 2 does not run in the Simulator; Expression 2 does.
+- **A physical iPhone or iPad** for device builds. Essence 2 does not run in the Simulator: use a physical device. Expression 2 does run in the Simulator.
 - **Essence 1** is not available on phones or in the Swift package: use Essence 2 or Expression 2 on devices ([First generation](/models/first-generation)).
 
 ## Install
@@ -47,6 +47,8 @@ You feed 16 kHz mono speech in and take lip-synced frames out. The same package 
 ```partial
 swift-install
 ```
+
+The package lives in the `homebrew-bithuman` repository, so its package identity is `homebrew-bithuman`; the name is expected. The Simulator slices are arm64 only: for a `generic/platform=iOS Simulator` or other command-line build, set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in your target's build settings.
 
 ## Authenticate
 
@@ -101,7 +103,7 @@ engine.feed(samples)   // [Float], 16 kHz mono
 engine.flushTail()     // end of the reply
 for await frame in engine.frames(audioClock: { played() }) {
     show(frame.bgr, frame.width, frame.height)                        // B, G, R bytes
-    if frame.audioTime == 0 { player.scheduleBuffer(reply); player.play() }   // the reply's first frame: start its audio
+    if frame.audioTime == 0 { player.scheduleBuffer(reply, completionHandler: nil); player.play() }   // the reply's first frame: start its audio
     if frame.endsReply { break }                                      // the reply is over; idle frames follow
 }
 ```
@@ -128,7 +130,7 @@ engine.flushTail()                                                // that is the
 for await frame in engine.frames(following: player) {
     show(frame.bgr, frame.width, frame.height)                    // B, G, R bytes, width * height * 3
     if frame.audioTime == 0 {                                     // the reply's first speech frame:
-        player.stop(); player.scheduleBuffer(reply); player.play()  // start its audio now
+        player.stop(); player.scheduleBuffer(reply, completionHandler: nil); player.play()  // start its audio now
     }
     if frame.endsReply { break }                                  // the reply is over; idle frames follow
 }

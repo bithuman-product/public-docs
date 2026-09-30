@@ -17,7 +17,7 @@ Base URL `https://api.bithuman.ai`. Authenticate with an existing `api-secret`. 
 in the path is your own account id — get it from [`GET /v1/me`](/api/billing#account-status).
 
 Set it once in your shell before the examples below — with `$USER_ID` unset the
-paths collapse to `/v2//…` and the API answers `404 {"detail":"Not Found"}`:
+paths collapse to `/v2//…` and the API answers `404 NOT_FOUND`:
 
 ```bash
 export USER_ID=$(curl -s https://api.bithuman.ai/v1/me \
@@ -48,7 +48,7 @@ listed in plaintext later.
 { "alias": "prod-server", "secret": "k7m2p9x4…Sn3Q8vT1w…aC8e" }
 ```
 
-Errors (body `{"detail": "…"}`): `409` alias already exists · `403` the `user_id` in the path is not yours · `404` account not found.
+Errors (the [standard envelope](/api/errors#error-response-format)): `409` alias already exists · `403` the `user_id` in the path is not yours · `404` account not found.
 
 ## List API secrets
 

@@ -48,13 +48,17 @@ in the background.
 | `name` | string | no | Display name; defaults to the URL host. |
 | `sync_freq` | string | no | Re-sync cadence: `never` (default), `daily`, `weekly`, `monthly`. |
 
+Upload a file:
+
 ```bash
-# Upload a file
 curl -X POST https://api.bithuman.ai/v1/knowledge/files \
   -H "api-secret: $ORG_API_SECRET" \
   -F "file=@handbook.pdf" -F "name=Employee Handbook"
+```
 
-# Or ingest a URL
+Or ingest a URL:
+
+```bash
 curl -X POST https://api.bithuman.ai/v1/knowledge/files \
   -H "api-secret: $ORG_API_SECRET" -H "content-type: application/json" \
   -d '{"url":"https://example.com/help","name":"Help Center","sync_freq":"weekly"}'

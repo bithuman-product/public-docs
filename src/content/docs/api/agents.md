@@ -13,17 +13,19 @@ moved:
 
 An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/platforms/web), the SDKs, [talking video](/api/video) and live sessions. Creation and model adds cost credits per model ([pricing](/pricing)); everything else on this page is free.
 
+The sample avatars (such as `A23WJF0199`, `wise-pup`) only [download](#download-an-agents-model); every other call on this page needs an agent you own, and returns `404` for a sample.
+
 To add knowledge to a live session, see [Knowledge](/api/knowledge#inject-knowledge); every operation is also in the [API reference index](/api/reference).
 
 ## Generate an agent
 
-Starts an asynchronous creation and returns an `agent_id` at once. Credits are reserved at submit and refunded automatically if creation fails.
+Starts an asynchronous creation and returns an `agent_id` at once. Credits are reserved at submit and refunded automatically if creation fails. Pick the model from the subject: a real person → `essence-2`; a cartoon, animal, robot or any other character → `expression-2` ([Choosing a model](/models#choosing-a-model)).
 
 ### Request
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `model` | string | always send it | `essence-2` (a photoreal person), `expression-2` (any character), `auto` (the platform picks from the image), `essence-1` or `expression-1`. Omitted, the API still creates an `expression-1` agent and warns (`MODEL_DEFAULT_DEPRECATED`); **from 2026-12-26 `model` is required**, and the bare names `essence` and `expression` (and the `version` field) are refused with a `400` naming the replacement. |
+| `model` | string | always send it | `essence-2` (a photoreal person), `expression-2` (any character), `auto` (the platform picks from the image), `essence-1` or `expression-1` (both need a real person). Omitted, the API still creates an `expression-1` agent and warns (`MODEL_DEFAULT_DEPRECATED`), so a character is refused with `422`: send `expression-2` or `auto` for one; **from 2026-12-26 `model` is required**, and the bare names `essence` and `expression` (and the `version` field) are refused with a `400` naming the replacement. |
 | `image` | string | no | Portrait URL (publicly fetchable) or base64. Used as a reference; a portrait is generated from `prompt` when omitted |
 | `prompt` | string | no | System prompt and personality |
 | `audio` | string | no | Voice sample URL or base64, for voice cloning |
@@ -66,20 +68,20 @@ print(resp.json())
 ### Notes
 
 - Creation takes minutes for `essence-1` and `expression-1`, and about 2–2.5 hours for `essence-2` and `expression-2`. Set your polling timeout per model.
-- `essence-2` needs a photoreal person: another subject returns `422 MODEL_SUBJECT_MISMATCH` before anything is charged. An `essence-2` creation or add also checks the photo's face before charging: a face too small in frame, or several similar-sized faces, returns `422 IMAGE_FACE_UNSUITABLE` — upload a closer photo of one person. `auto` routes people to `essence-2` and everything else to `expression-2`.
+- Every model except `expression-2` needs a clear, real human face. For `essence-2`, `essence-1` or `expression-1`, a cartoon, stylized character, animal, robot or creature in the photo or prompt, or a photo with no face found, returns `422 MODEL_SUBJECT_MISMATCH` before anything is charged; the message tells you to use Expression 2. An `essence-2` creation or add also checks the photo's face before charging: a face too small in frame, or several similar-sized faces, returns `422 IMAGE_FACE_UNSUITABLE` — upload a closer photo of one person. `auto` routes people to `essence-2` and everything else to `expression-2`.
 - A `200` does not mean the image was fetched. An unreachable `image` fails the creation a few seconds later (refunded); poll [status](#poll-status) to confirm. Creation is image-only: a `video` field returns `400 VIDEO_INPUT_NOT_SUPPORTED`.
 - At most two `essence-2` creations run at once per account; a third fails at once with a capacity message and no charge.
 
 ## Poll status
 
-Reports a creation's progress. Poll every 5 seconds until `status` is `ready` or `failed`; every other value is intermediate.
+Reports a creation's progress. Poll every 5 seconds until `status` is `ready` or `failed`; every other value is intermediate. The response is the agent's full record, the same as [Get an agent](#get-an-agent); the fields below are the ones to poll.
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"
 ```
 
 ```json
-{"success": true, "data": {"agent_id": "A80HVD8577", "status": "ready", "progress": 1.0, "current_step": "done", "error_message": null, "model_url": "https://…", "supported_models": ["expression-2"], "model_status": {"expression-2": {"state": "ready", "reason": null}}, "name": "Museum Guide"}}
+{"success": true, "data": {"agent_id": "A80HVD8577", "status": "ready", "progress": 1.0, "current_step": "done", "error_message": null, "supported_models": ["expression-2"], "model_status": {"expression-2": {"state": "ready", "reason": null}}, "name": "Museum Guide"}}
 ```
 
 | `current_step` | Progress | Stage |
@@ -113,6 +115,7 @@ def wait_until_ready(agent_id, timeout_s=3 * 3600):
 
 - `supported_models` lists the models the agent can be launched as, spelled as `model` values you can send back.
 - `model_status` gives each requested model's state (`pending`, `ready`, `failed`). Models never requested are absent.
+- For second-generation models `model_url` is a storage reference, not a link: fetch the file with [Download an agent's model](#download-an-agents-model).
 - The downloadable model file is published shortly after `ready`; until then the [download](#download-an-agents-model) returns `404 MODEL_ARTIFACT_NOT_READY`. Retry.
 
 ## Get an agent
@@ -129,7 +132,7 @@ curl https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITHUMAN_API_S
 
 ## List your agents
 
-Lists your agents, newest first. Query: `limit` (default 20, max 100), `offset`, `status` (for example `ready`). Items are summaries (`code`, `name`, `model`, `status`, `supported_models`, `created_at` and a few more); read the full record with [Get an agent](#get-an-agent). Deleted agents appear with `status: "deleted"`.
+Lists your agents, newest first. Query: `limit` (default 20, max 100), `offset`, `status` (for example `ready`). Items are summaries (`code`, `name`, `model`, `status`, `supported_models`, `created_at` and a few more); read the full record with [Get an agent](#get-an-agent). Deleted agents appear with `status: "deleted"`. Older agents can also show `completed`, `success` or `unknown`; read `supported_models` to see what they can launch as.
 
 ```bash
 curl "https://api.bithuman.ai/v1/agents?status=ready&limit=20" -H "api-secret: $BITHUMAN_API_SECRET"
@@ -141,7 +144,7 @@ curl "https://api.bithuman.ai/v1/agents?status=ready&limit=20" -H "api-secret: $
 
 ## Update an agent
 
-Changes the `system_prompt`, the voice-provider selection (`providers`, see [Voice providers](/api/providers)), or both. Send at least one, or the call returns `400 MISSING_PARAM`. The name is generated and cannot be set. The voice cannot be set here: change it in the bitHuman app ([Voices](/build/voices#change-the-voice)).
+`POST /v1/agent/{code}` (not `PATCH`, which returns `404`) changes the `system_prompt`, the voice-provider selection (`providers`, see [Voice providers](/api/providers)), or both. Send at least one, or the call returns `400 MISSING_PARAM`. The name is generated and cannot be set. The voice cannot be set here: change it in the bitHuman app ([Voices](/build/voices#change-the-voice)).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577 \
@@ -171,10 +174,10 @@ Adds a model to a `ready` agent without re-creating it; the body is `{"model": "
 
 | `model` | Needs | Time | Credits |
 |---|---|---|---|
-| `expression-1` | a stored image and voice | immediate | free |
+| `expression-1` | a stored image and voice, of a real person | immediate | free |
 | `expression-2` | a stored image | about 2–2.5 h | 2000 |
 | `essence-2` | a stored identity video and a photoreal person | about 2–2.5 h | 500 |
-| `essence-1` | a stored image or identity video | 10–20 min | 250 |
+| `essence-1` | a stored image or identity video, of a real person | 10–20 min | 250 |
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/models \
@@ -186,7 +189,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/models \
 {"success": true, "agent_id": "A80HVD8577", "model": "essence-2", "status": "processing", "supported_models": ["expression-2"]}
 ```
 
-Poll [status](#poll-status) until `model_status["essence-2"].state` is `ready` or `failed`. The top-level `status` stays `ready` during an add. A failed add is refunded, and its `reason` says why. Errors: `409 AGENT_NOT_READY`, `422 MODEL_PREREQUISITE_MISSING`, `422 MODEL_SUBJECT_MISMATCH`.
+Poll [status](#poll-status) until `model_status["essence-2"].state` is `ready` or `failed`. The top-level `status` stays `ready` during an add. A failed add is refunded, and its `reason` says why. Errors: `409 AGENT_NOT_READY`, `422 MODEL_PREREQUISITE_MISSING`, `422 MODEL_SUBJECT_MISMATCH` (an `essence-2`, `essence-1` or `expression-1` add for an agent that isn't a real person; nothing is charged, see [Choosing a model](/models#choosing-a-model)).
 
 ## Download an agent's model
 

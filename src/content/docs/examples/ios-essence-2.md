@@ -132,8 +132,9 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 | The avatar moves but never speaks | resolve Swift package **2.18.0** or newer (*File → Packages → Update to Latest Package Versions*) |
 | The link fails naming a newer minimum OS | set Minimum Deployments to **iOS 26.0** |
 | `no such module 'Essence2Kit'` | attach the `Essence2Kit` product to the app target |
+| `Unable to find module dependency: 'Essence2Kit'`, or a missing `mlx-swift_Cmlx.bundle`, on a fresh clone | the committed Xcode project is out of date: run `xcodegen generate` in the example folder (`brew install xcodegen`), then open the project again |
 | `ld` warns *"built for newer 'iOS' version (26.0)"* once per object | expected; the build is good |
-| It builds for the Simulator and crashes there | run on a physical device |
+| It fails in the Simulator | Essence 2 does not run in the Simulator: run on a physical device |
 
 More on [Apple: Troubleshooting](/platforms/swift/troubleshooting#ios).
 

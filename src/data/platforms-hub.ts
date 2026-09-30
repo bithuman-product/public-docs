@@ -9,6 +9,8 @@ export const PLATFORM_REFERENCE: Record<string, { title: string; href: string }>
   ios: { title: "Swift reference", href: "/platforms/swift/reference" },
   macos: { title: "Swift reference", href: "/platforms/swift/reference" },
   android: { title: "Android reference", href: "/platforms/android/reference" },
+  flutter: { title: "Flutter reference", href: "/platforms/flutter/app#reference" },
+  web: { title: "Web reference", href: "/platforms/web/app#reference" },
   python: { title: "Python reference", href: "/platforms/python/reference" },
   cli: { title: "CLI reference", href: "/platforms/cli/reference" },
   rest: { title: "API reference", href: "/api/reference" },

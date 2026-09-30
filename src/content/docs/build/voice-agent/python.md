@@ -32,7 +32,7 @@ In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass it explic
 
 ## With Python
 
-A plain [LiveKit Agents](https://docs.livekit.io/agents/) program: you run `livekit-server` (1.9.12 or newer; check with `livekit-server --version`), and the avatar renders inside `agent.py`. Use Python 3.10–3.14. The CLI checks its `livekit-server` version for you.
+A plain [LiveKit Agents](https://docs.livekit.io/agents/) program: you run `livekit-server` (1.9.12 or newer for this worker; check with `livekit-server --version`), and the avatar renders inside `agent.py`. Use Python 3.10–3.14. The CLI checks its `livekit-server` version for you.
 
 ```bash
 # 1. LiveKit server
@@ -42,14 +42,15 @@ curl -sSL https://get.livekit.io | bash           # Linux (Ubuntu 24.04 also: su
 # 2. The example
 git clone https://github.com/bithuman-product/bithuman-examples
 cd bithuman-examples/python/self-host
-python3.13 -m venv .venv && . .venv/bin/activate  # Ubuntu 24.04: python3.12
+python3 --version                                 # needs 3.10–3.14
+python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 
 # 3. Keys: in .env, never on the command line
 cp .env.example .env                              # fill BITHUMAN_MASTER_SECRET and OPENAI_API_KEY
 
 # 4. Run, in two terminals
-livekit-server --dev                              # terminal 1
+livekit-server --dev --config livekit.yaml        # terminal 1
 python agent.py dev                               # terminal 2
 ```
 
@@ -80,6 +81,8 @@ async def entrypoint(ctx: JobContext):
         agent=Agent(instructions=os.getenv("BITHUMAN_INSTRUCTIONS", "You are a friendly assistant. Keep answers short.")),
         room=ctx.room, room_options=RoomOptions(audio_output=False, close_on_disconnect=False))
 ```
+
+`BITHUMAN_AVATAR` in `.env` picks the avatar (a sample name such as `wise-pup`, an agent code or a file; default `wise-pup`); `agent.py` downloads it and sets `BITHUMAN_MODEL_PATH`.
 
 Swap the `RealtimeModel` for any LiveKit speech-to-text, LLM and text-to-speech plugins; the avatar lines stay the same.
 

@@ -37,7 +37,7 @@ next: ["/platforms/cli/troubleshooting", "/platforms/cli/reference", "/platforms
 ## Platform notes
 
 - Essence 1 avatars work with `run` only; for a file use [Python](/platforms/python) or the [video API](/api/video). Expression 1 runs on the [cloud API](/api).
-- The first Essence 2 render on a machine downloads a shared audio encoder (about 66 MB) to `~/.bithuman/engines/essence-2/` once.
+- The first Essence 2 render on a machine downloads a shared audio encoder (about 440 MB on Linux) to `~/.bithuman/engines/essence-2/` once.
 - Intel Macs have no binary. On Windows (not code-signed; [Downloads](/downloads)) the CLI renders in the cloud; to render on the PC, use [Python on Windows](/platforms/windows).
 
 ## Reference

@@ -30,7 +30,7 @@ Account | /api/billing | Credits, API secrets, organizations and your own provid
 
 ## How agents are identified
 
-Every endpoint names an agent by its agent code, such as `A80HVD8577`. The `{code}`, `{agent_code}` and `{agent_id}` parameters all take it.
+An agent is named by its code (`A80HVD8577`). Request bodies call it `agent_id` (creation, embed tokens, gestures) or `agent_code` (video, runtime tokens), never both.
 
 ## Status and versioning
 

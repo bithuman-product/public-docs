@@ -47,7 +47,6 @@ To run an avatar without code, use the [CLI](/platforms/cli).
 | macOS 14+ on Apple silicon, Linux x86_64 or Linux arm64, or [Windows 11 x86_64](/platforms/windows) | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
 | An API secret | [Your API secret](/start/api-secret) |
 | About 1 GB of disk (570 MB package, 118–190 MB per avatar) | `df -h .` |
-| `ffmpeg` on `PATH`, for MP4 output only | `ffmpeg -version` |
 
 ## Install
 
@@ -80,9 +79,9 @@ print(len(frames), "frames of", frames[0].shape)
 # → 300 frames of (720, 416, 3)
 ```
 
-`render` takes a path to any audio file `ffmpeg` reads, or already-decoded 16 kHz mono audio (`int16` or `float32` arrays, or raw 16-bit bytes). Frames are RGB; OpenCV expects BGR, so write one with `cv2.imwrite("frame.png", image[:, :, ::-1])`. The same call opens Essence 2 and Essence 1 `.imx` files.
+`render` takes a path to an audio file (WAV, MP3 and the other common formats), or already-decoded 16 kHz mono audio (`int16` or `float32` arrays, or raw 16-bit bytes). Frames are RGB; OpenCV expects BGR, so write one with `cv2.imwrite("frame.png", image[:, :, ::-1])`. The same call opens Essence 2 and Essence 1 `.imx` files.
 
-To write an MP4 instead, pass `out_mp4=` to the same `render` (any model, needs `ffmpeg`); it returns the number of frames written. Download the `sofia-ramirez` Essence 2 sample first:
+To write an MP4 instead, pass `out_mp4=` to the same `render` (any model, no `ffmpeg` needed); it returns the number of frames written. Download the `sofia-ramirez` Essence 2 sample first:
 
 ```bash
 curl -fL -o sofia-ramirez.imx "https://api.bithuman.ai/v1/agent/A52DHS2219/model/download?model=essence-2"
