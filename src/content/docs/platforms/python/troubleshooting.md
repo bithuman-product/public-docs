@@ -17,6 +17,7 @@ llms: build
 | `NotAuthorised`: *no credential was supplied* (first frame) or *no API secret was found* (`open`) | no secret in this shell | `export BITHUMAN_API_SECRET=…`; nothing is rendered or written |
 | `NotAuthorised` at `open`: *that API secret was not accepted* | the secret was rejected; from 2026-10-12, a Free account | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys); on Free, [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
 | An MP4 with sound and no picture | a refused render through the deprecated `render_offline` leaves the audio track | render with `bithuman.open(path).render(audio, out_mp4=...)`, which refuses before it writes anything; check the frame count it returns |
+| Many `Removing initializer` warnings and short bracketed diagnostic lines during an Essence 2 render | diagnostic output from the runtime | expected; the render is unaffected |
 | Frames look blue | frames are RGB and your display wants BGR | `image[:, :, ::-1]` |
 | Raw audio plays slow and long | decoded audio must be 16 kHz mono | pass a file path, or resample to 16 kHz |
 | `404 NOT_FOUND` downloading a model | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |

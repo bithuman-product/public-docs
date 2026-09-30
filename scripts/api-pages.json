@@ -14,7 +14,12 @@
     "Voice": "/api/text-to-speech",
     "Webhooks": "/api/webhooks",
     "Self-hosting": "/api/runtime-sessions",
-    "Status": "/api/errors"
+    "Status": "/api/errors",
+    "API secrets": "/api/api-keys",
+    "Providers": "/api/providers",
+    "Runtime sessions": "/api/runtime-sessions",
+    "Knowledge": "/api/knowledge",
+    "Realtime": "/api/realtime"
   },
   "operations": {
     "validateApiSecret": { "page": "/api/authentication", "slug": "post-v1validate" },
@@ -56,6 +61,23 @@
     "listWebhookDeliveries": { "page": "/api/webhooks", "slug": "list-delivery-attempts", "generated": true },
     "validateSelfHostedKey": { "page": "/api/runtime-sessions", "slug": "live-key-check-for-a-self-hosted-runtime", "generated": true },
     "postMeterBeat": { "page": "/api/runtime-sessions", "slug": "report-usage-from-a-self-hosted-session", "generated": true },
+    "createApiSecret": { "page": "/api/api-keys", "slug": "create-an-api-secret" },
+    "listApiSecrets": { "page": "/api/api-keys", "slug": "list-api-secrets" },
+    "revealApiSecret": { "page": "/api/api-keys", "slug": "reveal-an-api-secret" },
+    "deleteApiSecret": { "page": "/api/api-keys", "slug": "delete-an-api-secret" },
+    "getProviders": { "page": "/api/providers", "slug": "get-provider-config" },
+    "updateProviders": { "page": "/api/providers", "slug": "update-provider-config" },
+    "listRuntimeSessions": { "page": "/api/runtime-sessions", "slug": "list-sessions" },
+    "getRuntimeSessionMessages": { "page": "/api/runtime-sessions", "slug": "read-a-transcript" },
+    "endCloudAvatarSession": { "page": "/api/runtime-sessions", "slug": "end-a-cloud-avatar-session" },
+    "getCloudAvatarSession": { "page": "/api/runtime-sessions", "slug": "read-a-cloud-avatar-session" },
+    "terminateRuntimeSession": { "page": "/api/runtime-sessions", "slug": "terminate-a-session" },
+    "revokeAllRuntimeKeys": { "page": "/api/runtime-sessions", "slug": "revoke-all-keys" },
+    "ingestKnowledgeFile": { "page": "/api/knowledge", "slug": "ingest-a-file-or-url" },
+    "createKnowledgeBase": { "page": "/api/knowledge", "slug": "create-a-knowledge-base" },
+    "listKnowledgeBases": { "page": "/api/knowledge", "slug": "list-knowledge-bases" },
+    "rebuildKnowledgeBase": { "page": "/api/knowledge", "slug": "rebuild-a-knowledge-base" },
+    "realtimeConnect": { "page": "/api/realtime", "slug": "webrtc" },
     "getReadiness": { "page": "/api/errors", "slug": "api-readiness", "generated": true }
   }
 }

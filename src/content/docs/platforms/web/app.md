@@ -20,8 +20,9 @@ Add parameters to the URL:
 | `rendering_mode` | `browser`, `avatar` | Long form of `render=local`; `avatar` renders in the tab and lip-syncs the visitor's own microphone, with no conversation |
 | `greetingLang` | a language code, for example `es` | Language of the first greeting |
 | `greetingMsg` | text | The first thing the avatar says |
+| `model` | `essence-2`, `expression-2`, `essence-1`, `expression-1` | Pins the model for this session; it must be in the agent's `supported_models`. Without it, the agent's own model |
 
-A private agent also takes `token`, and a session can pin its model with `model`; both are on [Embedding](/api/embedding). Other parameters are ignored.
+A private agent also takes `token` ([Embedding](/api/embedding)). Other parameters are ignored.
 
 ### React and other frameworks
 
@@ -79,15 +80,15 @@ Save this as `index.html`:
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8765/` and allow the microphone.
+Open `http://127.0.0.1:8765/`. Any free port works: if 8765 is taken, pick another and open that one.
 
 ### Expected output
 
-The avatar greets you within a few seconds. Speak, or type into the **Type or speak…** box, and it answers out loud with its lips in sync. The red button ends the session.
+The avatar's picture with **Tap to talk**. Select it and allow the microphone: the avatar greets you within a few seconds. Speak, or type into the **Type or speak…** box, and it answers out loud with its lips in sync. The red button ends the session.
 
 ### How it works
 
-The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a real-time session: your microphone audio goes to the agent, and the agent's voice and video come back. `allow="microphone *"` lets the iframe ask for the microphone; without the `*` the browser blocks it. URL parameters are on [Web](/platforms/web); session events on [Embedding](/api/embedding).
+The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a real-time session: your microphone audio goes to the agent, and the agent's voice and video come back. `allow="microphone *"` lets the iframe ask for the microphone; without the `*` the browser blocks it. URL parameters are [above](#integrate-into-your-app); session events on [Embedding](/api/embedding).
 
 ### Make it your own
 
@@ -97,11 +98,12 @@ The iframe loads the hosted viewer for agent `A23WJF0199`. The viewer opens a re
 
 ## Platform notes
 
-- Expression 1 avatars render in the cloud only.
+- Expression 1 avatars render in the cloud only. For an agent whose own model is Expression 1, add `model=` with another model it supports to render in the tab.
 - The in-tab render works for Essence 1, Expression 2, and Essence 2 avatars that have a browser build.
+- The first `render=local` visit on a device streams from the cloud while the tab checks the GPU and downloads the web bundle; later visits render in the tab.
 
 ## Reference
 
 - [Embedding](/api/embedding): embed tokens, sizing and private agents.
 - [LiveKit](/platforms/livekit): your own UI over a cloud-rendered avatar.
-- Examples: [Next.js UI](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) · [Gradio](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web).
+- Examples that need your own LiveKit server and a Python agent (not web embeds): [Next.js front end for a LiveKit agent](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/nextjs-ui) · [Gradio, a Python app that also needs an OpenAI key](https://github.com/bithuman-product/bithuman-examples/tree/main/integrations/gradio-web).

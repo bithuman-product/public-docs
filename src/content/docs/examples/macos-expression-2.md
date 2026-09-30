@@ -19,7 +19,7 @@ The shortest native Apple path: a command-line tool that opens an avatar, feeds 
 
 | You need | Notes |
 |---|---|
-| A Mac with Apple silicon on macOS 15.6 or newer, with Xcode 26 or newer | the built tool runs on macOS 13 or newer |
+| A Mac with Apple silicon on macOS 15.6 or newer, with Xcode 26 or newer | Xcode 26 needs macOS 15.6; the package declares macOS 13, but its engine library is built for macOS 14 |
 | About 800 MB of disk | about 370 MB of downloads (avatar + shared engine), plus the folder the engine unpacks them into |
 | An [API secret](/start/api-secret) | the engine bills session time, talking or idle |
 
@@ -53,7 +53,7 @@ audio: 325451 samples, 20.34 s
 generated 407 frames in … s (… FPS, …x real time) -> out/first-frame.png
 ```
 
-407 frames for 20.34 seconds of audio is 20 fps. The first run prepares the engine for your Mac; keep `Model/staged/` and later runs start faster. The link step prints about ten `unable to open object file` warnings that name a folder on another machine. They are harmless.
+407 frames for 20.34 seconds of audio is 20 fps. The first run prepares the engine for your Mac; keep `Model/staged/` and later runs start faster. The link step prints `ld: warning: … libengine_core.a(engine_core.o) was built for newer 'macOS' version (14.0) than being linked (13.0)`, and the run prints per-chunk log lines between the three lines above. Both are harmless.
 
 ## How it works
 

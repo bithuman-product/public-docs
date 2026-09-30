@@ -11,6 +11,8 @@ artifacts: ["expression2_android", "essence2_android"]
 
 How to use these classes in an app is on [Android](/platforms/android). Signatures are Kotlin; `name: Type = …` has a default.
 
+Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expression2`. The Essence 2 names in `ai.bithuman.essence2` are Kotlin type aliases of classes in `ai.bithuman.elevate`, the package that stack traces and logcat show; for example `Essence2MeteringRefused` is `ai.bithuman.elevate.MeteringRefused`. Java code imports the `ai.bithuman.elevate` classes.
+
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 

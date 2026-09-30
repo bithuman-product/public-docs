@@ -26,7 +26,7 @@ export BITHUMAN_API_SECRET="<your API secret>"
 
 ## Synthesize speech
 
-Returns audio bytes (a WAV by default).
+Returns a 16-bit mono WAV at 44.1 kHz. The Swift and Android SDKs take 16 kHz audio: resample before you feed it to them.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/tts \
@@ -58,7 +58,7 @@ with open("voice.wav", "wb") as f:
 | `voice` | string | Built-in voice id (`M1`–`M5`, `F1`–`F5`). Defaults to `M1`. |
 | `voice_code` | string | A designed-voice handle (see [Voice codes](#voice-codes)). Takes precedence over `voice`. |
 | `axes` | object | Inline tuning — see [Tuning a voice](#tuning-a-voice). Ignored when `voice_code` is set. |
-| `language` | string | ISO-2 code. Call `GET /v1/voices` for the current list of languages. Defaults to `en`. |
+| `language` | string | ISO-2 code: `en`, `ko`, `ja`, `ar`, `bg`, `cs`, `da`, `de`, `el`, `es`, `et`, `fi`, `fr`, `hi`, `hr`, `hu`, `id`, `it`, `lt`, `lv`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `tr`, `uk` or `vi`. Another value returns `400 VALIDATION_ERROR` listing the codes. Defaults to `en`. |
 | `total_steps` | integer | Quality vs. speed: `5` fast, `8` balanced (default), `12` highest. |
 | `speed` | number | Playback rate, `0.7`–`2.0`. Defaults to `1.05`. |
 
@@ -114,7 +114,7 @@ curl -X POST https://api.bithuman.ai/v1/tts \
   --output voice.wav
 ```
 
-A voice code is a UUID (e.g. `f8fb5feb-8a19-435c-89e5-a286a03565ec`). The
+A voice code is a UUID (e.g. `00000000-0000-4000-8000-000000000000`). The
 endpoint expands it to the underlying voice + tuning, so your integration only
 ever references the code — re-tune the voice in the playground without touching
 your code path. An unknown or revoked `voice_code` returns
@@ -133,14 +133,20 @@ curl -sN -X POST https://api.bithuman.ai/v1/tts \
   | ffplay -autoexit -nodisp -i -
 ```
 
-For sentence-by-sentence streaming of length-prefixed PCM frames (lowest
-latency for long text), set `"stream": true`.
+For sentence-by-sentence streaming (lowest latency for long text), set
+`"stream": true`. The response is `audio/pcm; rate=44100; framing=len32be`:
+each frame is a 4-byte big-endian length followed by that many bytes of 16-bit
+mono PCM at 44.1 kHz, and a zero-length frame ends the stream.
 
 ## OpenAI-compatible endpoint
 
-Already calling OpenAI's TTS? Point existing clients at
-`POST /v1/audio/speech` — swap the base URL to `https://api.bithuman.ai/v1` and
-the auth header to `api-secret`.
+`POST /v1/audio/speech` accepts OpenAI's speech request body: `model`,
+`input` and `voice`, where `voice` is a bitHuman voice (`M1`–`M5`, `F1`–`F5`),
+not an OpenAI voice name such as `alloy`. Authenticate with the `api-secret`
+header; `Authorization: Bearer` returns `401`. The output is WAV only: a
+`response_format` of `mp3` returns `400`. With an OpenAI SDK, set the base URL
+to `https://api.bithuman.ai/v1` and send the secret as a default
+`api-secret` header.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/audio/speech \
@@ -150,7 +156,9 @@ curl -X POST https://api.bithuman.ai/v1/audio/speech \
 
 ## Errors
 
-`401` means a missing or invalid `api-secret`; `400` is a malformed body; `404`
-(`VOICE_NOT_FOUND`) means the `voice_code` doesn't resolve to a known voice;
+`401` means a missing or invalid `api-secret`; `400` is a malformed body or an
+unsupported `language`; `404 VOICE_NOT_FOUND` means the `voice_code` doesn't
+resolve to a known voice, and `404 NOT_FOUND` means the built-in `voice` isn't
+one of `M1`–`M5`, `F1`–`F5`;
 `503` means the queue is briefly full — retry with backoff. See
 [Errors](/api/errors).

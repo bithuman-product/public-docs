@@ -42,11 +42,12 @@ Files are kept in the app's Caches directory under their sha256, so a second cal
 
 ### On a Mac
 
-The Swift API is the same on the Mac as on iPhone and iPad: feed 16 kHz mono audio, take frames on your player's clock, end and interrupt replies. The whole table is on [iOS & iPadOS](#integrate-into-your-app); every entry point is on the [Swift reference](/platforms/swift/reference).
+The Swift API is the same on the Mac as on iPhone and iPad: feed 16 kHz mono audio, take frames on your player's clock, end and interrupt replies. The whole table is [above](#integrate-into-your-app); every entry point is on the [Swift reference](/platforms/swift/reference).
 
 On a Mac:
 
 - **Files:** add the `.imx` files and engine resources to the app bundle. A sandboxed app reads only its bundle and container.
+- **App Sandbox:** tick **Outgoing Connections (Client)** so the engine can check your secret, and **Audio Input** (`com.apple.security.device.audio-input`) if the app uses the microphone.
 - **Quitting:** call `Essence2Engine.quiesceAll()` from `applicationWillTerminate`.
 
 ## Complete example
@@ -61,7 +62,7 @@ Two SwiftUI apps you can clone and run on an iPhone or iPad, each with a microph
 ## Platform notes
 
 - **Your own MLX:** Essence 2 contains no MLX. Link your own `mlx-swift` (`MLX`, `MLXNN`) in the same target, also with `-ObjC` or `-all_load`; nothing to embed.
-- **Simulator:** simulator slices are arm64 only; pass `ARCHS=arm64`. Essence 2 does not run in the Simulator (`be_essence2_create` returns `-2`); Expression 2 does.
+- **Simulator:** simulator slices are arm64 only; pass `ARCHS=arm64`, or set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in the target. Essence 2 does not run in the Simulator: use a physical device. Expression 2 does run in the Simulator.
 - **Privacy strings:** add `NSMicrophoneUsageDescription` to hear the user.
 - **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
 

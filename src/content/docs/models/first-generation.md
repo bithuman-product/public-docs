@@ -17,6 +17,9 @@ Both first-generation models are maintained, not deprecated. For new work, start
 | **Renders** | a pre-built identity from an `.imx` file | facial motion generated from a portrait at runtime |
 | **Where it runs** | the bitHuman cloud; Python and the CLI on macOS and Linux; the browser (`render=local`) | the bitHuman cloud only |
 | **`model` value** | `essence-1` | `expression-1` |
+| **Subject** | a real person's face | a real person's face |
+
+Both need a clear photo of a real human face. A cartoon, animal, robot or creature, or a photo with no face found, is refused with `422 MODEL_SUBJECT_MISMATCH` before anything is charged; for a character, use [Expression 2](/models/expression-2). See [Choosing a model](/models#choosing-a-model).
 
 ## Essence 1
 

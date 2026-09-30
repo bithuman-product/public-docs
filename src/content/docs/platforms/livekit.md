@@ -43,12 +43,16 @@ Either way, the plugin serves the agent's own model, Essence 2 or Expression 2.
 ## Install
 
 ```bash
-pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv
+pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv
 ```
+
+`bithuman[expression-2]` lets the worker open Expression 2 files with `model_path=`; a cloud avatar does not need it.
 
 ## Authenticate
 
-In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass a minted token. For a cloud avatar, the worker mints a one-hour token that can start only this agent's avatar in this room (`POST /v1/runtime-tokens/mint` with `"scope": "livekit-cloud"`), as in the worker below. The plugin's PyPI page, which LiveKit maintains, sets `BITHUMAN_API_SECRET` instead; for a cloud avatar, use the minted token shown here.
+In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass a minted token. For a cloud avatar, the worker mints a one-hour token that can start only this agent's avatar in this room (`POST /v1/runtime-tokens/mint` with `"scope": "livekit-cloud"`), as in the worker below. Pass the minted token as `api_secret=`: for a cloud avatar the plugin requires `api_secret` (`api_token=` is not used for cloud avatars).
+
+> **Warning:** Without `api_secret=`, the plugin reads `BITHUMAN_API_SECRET` from the environment and copies it into the avatar's participant attributes, which everyone in the room can read. Keep `BITHUMAN_API_SECRET` unset in the worker, whatever the plugin's PyPI page says.
 
 ```bash
 export BITHUMAN_MASTER_SECRET="<your API secret>"

@@ -78,7 +78,7 @@ python local-avatar.py
 
 ### Expected output
 
-A window titled **bitHuman avatar** opens and the avatar speaks the bundled `speech.wav`. The first run downloads the sample avatar (about 150 MB). To write an MP4 instead of opening a window, run `python -m bithuman ~/.cache/bithuman/models/A52DHS2219.imx speech.wav`.
+A window titled **bitHuman avatar** opens and the avatar speaks the bundled `speech.wav`. The first run downloads the sample avatar (about 150 MB). To write an MP4 instead of opening a window, run `python -m bithuman render sofia-ramirez speech.wav`: it downloads the `sofia-ramirez` sample and writes `sofia-ramirez.mp4`.
 
 ### Make it your own
 
@@ -90,10 +90,10 @@ A window titled **bitHuman avatar** opens and the avatar speaks the bundled `spe
 
 ## Platform notes
 
-- The first Essence 2 render downloads a shared audio encoder (about 377 MB, plus about 70 MB for streaming) to `~/.bithuman/deps`, once.
+- The first Essence 2 render downloads a shared audio encoder (about 66 MB) to `~/.bithuman/deps`, once.
 - `BITHUMAN_CACHE_DIR` moves the download cache from `~/.cache/bithuman`.
 - `python -m bithuman render <AGENT_CODE> <audio>` downloads your own agent's model by code and renders it.
-- A process with no API secret opens the file and refuses at the first frame; a rejected secret refuses at `open`.
+- A process with no API secret, or with a rejected one, refuses at `open` with `NotAuthorised`.
 
 ## Reference
 

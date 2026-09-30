@@ -23,7 +23,7 @@ What each term means here, and the page that owns it.
 | **Essence 2 Max** | Essence 2 Max is available on the Enterprise plan only. Contact sales to enable it. [Models](/models) |
 | **Essence 1, Expression 1** (`essence-1`, `expression-1`) | The first generation of the models. [First generation](/models/first-generation) |
 | **Agent** | An avatar together with its persona, voice and knowledge, created in the bitHuman app or with the [Agents API](/api/agents). |
-| **Agent code** | The identifier of an agent, for example `A23WJF0199`. [Agent codes](/models/avatar-file#agent-codes) |
+| **Agent code** | The identifier of an agent, for example `A23WJF0199`. Request fields name it `agent_id` or `agent_code`, and examples read it from `BITHUMAN_AGENT_ID` or `BITHUMAN_AGENT_CODE`: all take the same code. [Agent codes](/models/avatar-file#agent-codes) |
 | **Sample avatars** | Public agents anyone can use without an account: `sofia-ramirez` (Essence 2) and `wise-pup` (Expression 2). [Showcase list](https://api.bithuman.ai/v1/models/showcase) |
 | **Avatar file** (`.imx`) | One agent's model files in one container, downloaded once and rendered on your hardware. [The avatar file](/models/avatar-file) |
 | **Persona** | The agent's system prompt: who it is and how it answers. [Persona](/build/persona) |

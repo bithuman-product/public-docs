@@ -26,7 +26,7 @@ The [cloud example](https://github.com/bithuman-product/bithuman-examples/tree/m
 
 - The mint call is one per session. The token starts that session only; it expires after an hour, and a session that runs longer continues.
 - `livekit_url` in the mint call must be the URL the plugin connects to (`LIVEKIT_URL`, unless you pass `livekit_url=` to `AvatarSession.start()`).
-- If you run your own LiveKit server, use `livekit-server` 1.9.12 or newer. With older servers, browsers leave and rejoin the room every 15 s, and the video stalls each time.
+- If you run your own LiveKit server for your own worker, use `livekit-server` 1.9.12 or newer (`bithuman run` needs 1.13 or newer). With older servers, browsers leave and rejoin the room every 15 s, and the video stalls each time.
 
 ## Reference
 

@@ -40,7 +40,7 @@ android-essence-2 eager
 
 ## Steps
 
-The code in each step is from two example apps that bithuman-examples builds in CI: [iOS Essence 2](/examples/ios-essence-2) (Swift) and [Android Essence 2](/examples/android-essence-2) (Kotlin); the resample converter is one you add to your app. Expression 2, for a character instead of a person, has the same shape.
+The code in each step is from two example apps in bithuman-examples: [iOS Essence 2](/examples/ios-essence-2) (Swift) and [Android Essence 2](/examples/android-essence-2) (Kotlin); the resample converter is one you add to your app. Expression 2, for a character instead of a person, has the same shape.
 
 ### Pick the avatar
 

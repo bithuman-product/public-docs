@@ -25,6 +25,8 @@ In a live conversation, keep one avatar open and stream into it.
 | Check the session | `Expression2Exception` from `create` or `pull` | `Essence2MeteringRefused` from `pull`/`idle`; `checkRender()` throws `Essence2RenderFailed` if the engine stopped |
 | Close it | `close()` | `close()` |
 
+To feed the microphone, declare `<uses-permission android:name="android.permission.RECORD_AUDIO"/>` in your manifest and ask for it at runtime (`ActivityResultContracts.RequestPermission`) before you start `AudioRecord`; without it the buffers are silent. The SDKs need only `INTERNET`, which their AARs merge in for you.
+
 Resample 24 kHz speech (OpenAI Realtime's) to 16 kHz, and close the avatar when the app leaves the screen: [Companion app](/build/companion-app#resample-speech-to-16-khz).
 
 After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.

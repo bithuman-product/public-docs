@@ -33,7 +33,7 @@ No device, provisioning profile or entitlement is needed to try it from a termin
 | You need | Expression 2 | Essence 2 |
 |---|---|---|
 | **A Mac** | Apple silicon, macOS 13 or newer | Apple silicon M3 or newer, macOS 26 or newer |
-| **Toolchain** | Xcode 26 or newer (to build) | the same |
+| **Toolchain** | Xcode 26 or newer (to build; Xcode 26 needs macOS 15.6 or newer) | the same |
 | **Credential** | an [API secret](/start/api-secret) (Creator plan or higher) | the same |
 | **Disk** | about 800 MB for the example: downloads plus the folder the engine unpacks them into | about 250 MB of downloads |
 
@@ -74,6 +74,8 @@ generated 407 frames in … s -> out/first-frame.png
 
 407 frames for 20.34 seconds of audio: one frame per 50 ms of speech. The first run prepares the engine for your Mac; keep `Model/staged/` and later runs start faster.
 
+The link step prints `ld: warning: … libengine_core.a(engine_core.o) was built for newer 'macOS' version (14.0) than being linked (13.0)`. The build still succeeds; running an Expression 2 tool on macOS 13 is not verified.
+
 </details>
 
 The core of `Sources/main.swift`:
@@ -103,6 +105,44 @@ while idleTicks < 100 {
     if got { idleTicks = 0 } else { idleTicks += 1; usleep(50_000) }
 }
 ```
+
+### Essence 2 on a Mac
+
+Essence 2 needs an M3 or newer Mac on macOS 26. The same `Essence2Kit` calls as on the iPhone render a file from a terminal tool: download the avatar in code, set `pacing = .unpaced`, and take the frames as fast as they render.
+
+```swift
+// excerpt: a terminal tool (swift run) with the Essence2Kit product;
+// samples is a 16 kHz mono clip as [Float].
+import Essence2Kit
+
+Essence2Credential.set(ProcessInfo.processInfo.environment["BITHUMAN_API_SECRET"] ?? "")
+let imxURL = try await Essence2Download.identity(agentCode: "A52DHS2219")   // sofia-ramirez
+let engine = try await Essence2Engine.create(identity: imxURL)            // waits until the engine is ready
+engine.pacing = .unpaced                     // a file render: frames as fast as they render
+
+engine.feed(samples)                         // [Float], 16 kHz mono
+engine.flushTail()                           // that is the whole reply
+var speech = 0
+for await frame in engine.frames() {
+    if frame.isSpeech { speech += 1 }        // frame.bgr: B, G, R bytes, width * height * 3
+    if frame.endsReply { break }             // the reply is over; idle frames follow
+}
+print("\(engine.width)x\(engine.height): \(speech) frames for \(Double(samples.count) / 16_000) s of audio")
+engine.shutdown()
+```
+
+<details class="expected">
+<summary>Expected result</summary>
+
+With the [15-second sample clip](/samples/speech-16k.wav):
+
+```text
+1080x1920: 375 frames for 14.997375 s of audio
+```
+
+25 frames a second at the avatar's own size. The first `create` downloads the avatar and the engine's runtime files, then keeps them in Caches and Application Support. The engine also prints its own diagnostic lines on stderr.
+
+</details>
 
 <div class="fig-end">
 

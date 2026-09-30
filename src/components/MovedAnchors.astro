@@ -8,15 +8,16 @@
 // scripts/check-anchor-coverage.mjs keeps the two in step. Not in the .md twin.
 interface Props {
   moved: Record<string, string>;
-  /** The landing and the hubs (src/data/hub-moved.json): the stubs stay for
-   *  screen readers and no-JS readers but take no room on the page. */
+  /** Kept for callers; every page now renders its stubs quietly: they stay for
+   *  screen readers and no-JS readers but take no room on the page (the script
+   *  already sends a reader on an old #id to the new place). */
   quiet?: boolean;
 }
-const { moved, quiet = false } = Astro.props;
+const { moved } = Astro.props;
 const rows = Object.entries(moved);
 ---
 {rows.length > 0 && (
-  <div class:list={["moved-stubs", { "sr-only": quiet }]} data-pagefind-ignore>
+  <div class="moved-stubs sr-only" data-pagefind-ignore>
     {rows.map(([id, to]) => <p id={id} class="moved-stub">This section moved: <a href={to}>{to.replace(/^\//, "docs.bithuman.ai/")}</a></p>)}
     <script is:inline data-moved={JSON.stringify(moved)}>(()=>{var m=JSON.parse(document.currentScript.dataset.moved),g=()=>{var t=m[decodeURIComponent(location.hash.slice(1))];t&&location.replace(t)};g();addEventListener("hashchange",g)})()</script>
   </div>

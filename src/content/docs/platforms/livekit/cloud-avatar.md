@@ -148,7 +148,7 @@ Photo sessions work on Expression 1 only. On every other model, the request is r
 | `403` | `PLAN_REQUIRED` | The model is not in your plan, or, from 2026-10-12, your account is on the Free plan. Nothing is launched or billed. |
 | `403` | `CONCURRENCY_LIMIT_REACHED` | The session would exceed your plan's concurrent sessions ([Rate limits](/api/rate-limits)). |
 | `404` | `NOT_FOUND` | No agent with this code that you can start. |
-| `409` | `VALIDATION_ERROR` | The agent can't be served as the requested model, or its own model isn't ready yet. |
+| `409` | `MODEL_NOT_GENERATED` · `AGENT_NOT_READY` | The agent can't be served as the requested model (it was never generated), or its own model isn't ready yet. |
 | `503` | `SERVICE_UNAVAILABLE` | No capacity right now, or a temporary failure. Retry after the `Retry-After` header. |
 
 All error codes are listed on [Errors](/api/errors).

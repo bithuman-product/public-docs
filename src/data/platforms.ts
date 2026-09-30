@@ -56,7 +56,7 @@ export const PLATFORMS: Platform[] = [
       code: `export BITHUMAN_API_SECRET="<your API secret>"
 curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
 # → {"valid":true}`,
-      expect: "Your API secret works. The API quickstart continues with speech, an agent and a talking video.",
+      expect: "Your API secret works. The API quickstart continues with speech, an agent and a talking video; your first Essence 2 or Expression 2 agent takes about 2–2.5 hours to create.",
     },
   },
   {
@@ -107,7 +107,7 @@ bithuman render wise-pup speech.wav -o out.mp4
   {
     id: "livekit", want: "Add a face to a LiveKit voice agent", use: "LiveKit", needs: "API secret",
     renders: "on your server (model_path) or in the bitHuman cloud", conversation: "your LiveKit agent", credential: "BITHUMAN_MASTER_SECRET on the worker; a minted token for a cloud avatar",
-    first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv', time: "10 min", docs: "/platforms/livekit", models: both,
+    first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv', time: "10 min", docs: "/platforms/livekit", models: both,
   },
   {
     id: "mcp", want: "Drive it from Claude or Cursor", use: "MCP server", needs: "sign-in",
@@ -284,7 +284,7 @@ export const QUICKSTART: Quickstart[] = [
     id: "livekit", plan: "creator", label: "LiveKit", title: "A face for your LiveKit voice agent", icon: "wave", time: "10 min",
     needs: ["A LiveKit project", "API secret"], models: TWO, renders: ["server", "cloud"],
     steps: [
-      { title: "Install", code: { lang: "bash", label: "Shell", code: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv' } },
+      { title: "Install", code: { lang: "bash", label: "Shell", code: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv' } },
       { title: "Set the credentials", code: { lang: "bash", label: "Shell", code: `export BITHUMAN_MASTER_SECRET="<your API secret>"\nexport BITHUMAN_AGENT_ID=${pup.code}\nexport LIVEKIT_URL=wss://your-project.livekit.cloud\nexport LIVEKIT_API_KEY=… LIVEKIT_API_SECRET=…\nexport OPENAI_API_KEY=…` } },
       { title: "Run the worker", code: { lang: "bash", label: "Shell", code: "python agent.py dev\n# → join the room from the LiveKit Agents Playground; the avatar appears and answers" }, text: "Copy `agent.py`, a complete worker, from the LiveKit page." },
     ],
@@ -298,7 +298,7 @@ export const QUICKSTART: Quickstart[] = [
       { title: "Check your API secret", code: { lang: "bash", label: "Shell", code: `${SECRET}\ncurl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"\n# → {"valid":true}` } },
       { title: "Make it speak", code: { lang: "bash", label: "Shell", code: `curl -s -X POST https://api.bithuman.ai/v1/tts \\\n  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \\\n  -d '{"text": "Hello from bitHuman.", "voice": "F1"}' --output hello.wav` } },
     ],
-    expect: { text: "{\"valid\":true}, then hello.wav. The API quickstart continues with an agent and a talking video." },
+    expect: { text: "{\"valid\":true}, then hello.wav. The API quickstart continues with an agent and a talking video; your first Essence 2 or Expression 2 agent takes about 2–2.5 hours to create." },
     next: { href: "/platforms/rest", label: "REST API" },
   },
   {

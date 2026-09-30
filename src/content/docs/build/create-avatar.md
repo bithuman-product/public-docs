@@ -31,7 +31,7 @@ creation
 | A character, animal, robot or illustration | `expression-2`: any subject |
 | Not sure | `auto`: people go to `essence-2`, everything else to `expression-2` |
 
-More on the difference: [Models](/models).
+Every model except Expression 2 needs a clear, real human face. A cartoon, animal, robot or creature, or a photo with no face found, gets `422 MODEL_SUBJECT_MISMATCH` before anything is charged. More on the difference: [Choosing a model](/models#choosing-a-model).
 
 ```expected
 One `model` value: `essence-2`, `expression-2` or `auto`.
@@ -47,7 +47,7 @@ One `model` value: `essence-2`, `expression-2` or `auto`.
 
 #### What makes a good photo
 
-One subject, in focus, facing the camera with a resting expression and the whole face visible (eyes, nose and mouth). Photos are not checked; these are the conditions the models are built for. For an animal, use a well-lit, front-facing photo with the face filling the frame.
+One subject, in focus, facing the camera with a resting expression and the whole face visible (eyes, nose and mouth). The photo is checked before anything is charged; the refusals are in [Troubleshooting](#troubleshooting). For an animal or character, use `expression-2` with a well-lit, front-facing photo and the face filling the frame.
 
 Without a voice sample, a voice is generated to match the persona. Without a prompt, a persona is generated from the image.
 
@@ -90,8 +90,8 @@ You create an agent once, with [`POST /v1/agent/generate`](/api/agents#generate-
 - **The input is one portrait image.** Essence 2 generates its identity video from it; Expression 2 trains straight from the photo. An uploaded image is treated as a reference and regenerated to a standard framing.
 - **Creation happens in the bitHuman cloud;** the finished avatar model then runs on your devices.
 - **Both second-generation models train on create.** Allow about 2 to 2.5 hours, and poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until the status is `ready` or `failed` (`success` is not terminal).
-- **Essence 2 needs a photorealistic human subject.** A stylized input is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead.
-- **Always send `model`.** An omitted `model` creates an Expression 1 agent; send `essence-2`, `expression-2` or `auto`.
+- **Every model except Expression 2 needs a real human face.** Essence 2, Essence 1 and Expression 1 refuse a cartoon, animal, robot or creature, or a photo with no face found, with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead. See [Choosing a model](/models#choosing-a-model).
+- **Always send `model`.** An omitted `model` creates an Expression 1 agent, which also needs a real human face; send `essence-2`, `expression-2` or `auto`.
 - **An existing agent can gain a model** with [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
 
 What creation costs is on [pricing](/pricing#creation--one-time-credits); request fields and failure modes are on the [Agents API](/api/agents).
@@ -113,7 +113,8 @@ What creation costs is on [pricing](/pricing#creation--one-time-credits); reques
 | `402 INSUFFICIENT_BALANCE` | not enough credits | [top up](https://www.bithuman.ai/billing#credits) (the error's `topup_url`) |
 | `403 PLAN_REQUIRED` | a Free account, which cannot create agents, or a model outside your plan | [choose a plan](https://www.bithuman.ai/pricing?from=docs) (the error's `upgrade_url`) |
 | `403 AGENT_LIMIT_REACHED` | your plan's agent limit; existing agents keep working | delete an agent, or [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
-| `422 MODEL_SUBJECT_MISMATCH` | `essence-2` for a subject that is not a photoreal person | use `expression-2` or `auto` |
+| `422 MODEL_SUBJECT_MISMATCH` | any model but `expression-2` for a subject that is not a real person, or no face found | use `expression-2` or `auto` |
+| `422 IMAGE_FACE_UNSUITABLE` | `essence-2` with a face too small in frame, or several faces | upload a closer photo of one person |
 | `failed` with an image error | the image URL is not publicly fetchable | host the image publicly and create again (the failed creation is refunded) |
 | The likeness is off | a side profile, several people or poor light | crop to one front-facing person in good light |
 | The voice sounds noisy | background noise or music in the sample | re-record in a quiet room |

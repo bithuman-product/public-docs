@@ -17,19 +17,12 @@ info:
     require an `api-secret` header.
     [Get an API secret →](https://www.bithuman.ai/developer/api-keys)
 
-    This machine-readable spec covers the core
-    agent / video / dynamics / files / pricing surface. Some developer
-    endpoint groups are documented in the markdown guides rather than
-    here: [API secrets](https://docs.bithuman.ai/api/api-keys)
-    (`/v2/{user}/api-secrets*`),
-    [runtime sessions](https://docs.bithuman.ai/api/runtime-sessions)
-    (`/v2/{user}/runtime-sessions*`, `/v1/runtime-sessions/{session_id}*`),
+    This machine-readable spec covers the developer surface. Two groups
+    are documented only in the markdown guides, not here:
     [organizations](https://docs.bithuman.ai/api/organizations)
-    (`/v2/organizations*`),
-    [providers](https://docs.bithuman.ai/api/providers)
-    (`/v2/{user}/providers`), and
-    [knowledge](https://docs.bithuman.ai/api/knowledge)
-    (`/v1/knowledge/*`). Purely internal / infrastructure routes —
+    (`/v2/organizations*`, `/v2/agents/{agent_code}/share-org`) and the
+    [Realtime WebSocket relay](https://docs.bithuman.ai/api/realtime)
+    (`wss://api.bithuman.ai/v1/realtime`). Purely internal / infrastructure routes —
     webhook receivers, `/func_*` generation internals, health/telemetry,
     and realtime session plumbing — are excluded entirely: they are not
     part of the public developer contract and may change without notice.
@@ -58,7 +51,9 @@ paths:
 
         Always returns HTTP 200. Inspect the `valid` field in the body
         to determine outcome — invalid or missing credentials yield
-        `{"valid": false}` rather than a 401.
+        `{"valid": false}` rather than a 401. The secret goes in the
+        `api-secret` header; a secret sent as `Authorization: Bearer` is
+        not read and also yields `{"valid": false}`.
       tags: [Authentication]
       responses:
         "200":
@@ -125,18 +120,20 @@ paths:
         guarantee, and individual runs can take longer: size timeouts in
         hours for the second-generation models.
 
-        **Picking the right family:** `essence-2` works best for
-        photorealistic human figures; `expression-2` works best for
-        cartoonish, stylized, animal, creature, or robot characters. Send
+        **Picking the right family** ([Choosing a model](https://docs.bithuman.ai/models#choosing-a-model)):
+        `essence-2` for a real person; `expression-2` for a cartoon,
+        stylized, animal, creature or robot character. Send
         `model: "auto"` to apply this rule automatically — the platform
         classifies your input and records the recommended model either way.
 
-        **Subject requirement (Essence 2):** `essence-2` requires a **photorealistic
-        human** subject. The input is classified before anything is billed; a
-        cartoon / animal / creature / robot input is rejected with
-        `422 MODEL_SUBJECT_MISMATCH` (nothing charged) — use `expression-2`
-        for those characters, or send `model: "auto"` to route
-        automatically.
+        **Subject requirement:** every model except `expression-2` needs a
+        clear, **real human face**: `essence-2`, `essence-1` and
+        `expression-1` (also when `model` is omitted). The input is
+        classified before anything is billed; a cartoon, stylized
+        character, animal, creature or robot, or a photo with no face
+        found, is rejected with `422 MODEL_SUBJECT_MISMATCH` (nothing
+        charged) — use `expression-2` for those characters, or send
+        `model: "auto"` to route automatically.
 
         Failures during generation surface as `status: "failed"` with an
         `error_message` on the status endpoint, and the creation credits
@@ -165,10 +162,11 @@ paths:
                     URL to a face image for avatar appearance. For the best
                     likeness use a photo with one clear figure, a neutral
                     expression, facing the camera, a relaxed pose, and no
-                    occlusion of the face. Essence 2 needs a photoreal person
-                    with the face clearly in frame; otherwise 422
-                    `MODEL_SUBJECT_MISMATCH` or `IMAGE_FACE_UNSUITABLE`, before
-                    any charge.
+                    occlusion of the face. Every model except Expression 2
+                    needs a real human face (otherwise 422
+                    `MODEL_SUBJECT_MISMATCH`), and Essence 2 needs the face
+                    clearly in frame (otherwise 422 `IMAGE_FACE_UNSUITABLE`),
+                    before any charge.
                   example: "https://example.com/face.jpg"
                 audio:
                   type: string
@@ -347,13 +345,14 @@ paths:
                     status_code: 403
         "422":
           description: >-
-            `MODEL_SUBJECT_MISMATCH` — an explicit Essence 2 creation
-            (`essence-2`) whose input
-            is not a photorealistic human subject. The classifier runs on the
-            image if provided, else the prompt, **before anything is billed**
-            and before any agent row is created. Use `expression-2` for
-            cartoon / animal / creature / robot subjects, or `model: "auto"`
-            (which never rejects — it routes instead). A classifier outage never
+            `MODEL_SUBJECT_MISMATCH` — a creation for a model that needs a
+            real human face (`essence-2`, `essence-1`, `expression-1`, or
+            `model` omitted) whose input is a cartoon, stylized character,
+            animal, creature or robot, or a photo with no face found. The
+            classifier runs on the image if provided, else the prompt,
+            **before anything is billed** and before any agent row is
+            created. Use `expression-2` for those subjects, or
+            `model: "auto"` (which never rejects — it routes instead). A classifier outage never
             blocks creation (the gate fails open). `IMAGE_FACE_UNSUITABLE` — an
             Essence 2 creation whose photo has a face too small in frame, or
             several similar-sized faces; upload a closer photo of one person.
@@ -365,7 +364,7 @@ paths:
               example:
                 error:
                   code: "MODEL_SUBJECT_MISMATCH"
-                  message: "essence-2 requires a photorealistic human subject; this image looks like a cartoon — use expression-2"
+                  message: "Essence 2 needs a clear, real human face, and this image looks like a cartoon or stylized character. Use Expression 2, which animates any character: cartoons, animals, robots and stylized art. Nothing was charged."
                   httpStatus: 422
                 status: "error"
                 status_code: 422
@@ -954,10 +953,10 @@ paths:
 
         | model | what happens | prerequisites | credits | time |
         |---|---|---|---|---|
-        | `expression-1` | **immediate enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice | **0** | immediate (this response) |
+        | `expression-1` | **immediate enablement** — the v1 engine drives the agent's existing image + voice at runtime; nothing is trained | stored image + voice + real-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | **0** | immediate (this response) |
         | `expression-2` | trains the per-identity Expression 2 model from the stored image | stored image | 2000 | the same training an `expression-2` creation runs — about 2–2.5 h (see [creation times](#operation/generateAgent)) |
         | `essence-2` | trains Essence 2 from the agent's stored identity video (generated internally at creation) | stored identity video (else `422`) + photorealistic-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 500 | the same training an `essence-2` creation runs — about 2–2.5 h (see [creation times](#operation/generateAgent)) |
-        | `essence-1` | builds the v1 `.imx` from the agent's stored identity video (or generates one internally from the stored image) | stored identity video or image | 250 | ~10–20 min |
+        | `essence-1` | builds the v1 `.imx` from the agent's stored identity video (or generates one internally from the stored image) | stored identity video or image + real-human subject (else `422 MODEL_SUBJECT_MISMATCH`) | 250 | ~10–20 min |
 
         Asynchronous adds return `status: "processing"` — poll
         [`GET /v1/agent/status/{agent_id}`](#tag/Agent-Generation/operation/getAgentStatus)
@@ -1033,9 +1032,10 @@ paths:
             model needs (e.g. `essence-2` needs the agent's stored identity
             video — generated internally by Essence creations, never
             uploaded), or
-            `MODEL_SUBJECT_MISMATCH` — the Essence 2 family requires a
-            photorealistic human subject and the stored image is a
-            cartoon/animal/creature/robot (use `expression-2`).
+            `MODEL_SUBJECT_MISMATCH` — `essence-2`, `essence-1` and
+            `expression-1` need a real human face, and the agent's subject is
+            a cartoon, stylized character, animal, creature or robot, or its
+            photo has no face found (use `expression-2`). Nothing is charged.
         "429":
           $ref: "#/components/responses/RateLimited"
         "503":
@@ -1921,7 +1921,7 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/embed-tokens/request \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_id": "A78WKV4515", "fingerprint": "<device-fingerprint>"}'
+              -d '{"agent_id": "A23WJF0199", "fingerprint": "<device-fingerprint>"}'
             # → data.token is a 1-hour JWT for the embed widget
       summary: Generate embed token
       description: Generate a JWT token for embedding an avatar on a website. Use this from your backend — never expose your API secret in frontend code.
@@ -1940,8 +1940,8 @@ paths:
               properties:
                 agent_id:
                   type: string
-                  description: Agent code (e.g. A78WKV4515)
-                  example: "A78WKV4515"
+                  description: Agent code (e.g. A23WJF0199)
+                  example: "A23WJF0199"
                 fingerprint:
                   type: string
                   description: Stable per-device hex string used for session tracking and per-visitor rate limiting. Required.
@@ -2087,8 +2087,8 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/runtime-tokens/mint \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_code": "A78WKV4515"}'
-            # → {"scoped_token": "...", "user_id": "...", "agent_code": "A78WKV4515", "expires_at": 1757280000}
+              -d '{"agent_code": "A80HVD8577"}'
+            # → {"scoped_token": "...", "user_id": "...", "agent_code": "A80HVD8577", "expires_at": 1757280000}
       summary: Mint a scoped runtime token for one agent
       description: |
         Exchange your API secret, **server-side**, for a 1-hour token bound to a
@@ -2128,7 +2128,7 @@ paths:
               properties:
                 agent_code:
                   type: string
-                  example: "A78WKV4515"
+                  example: "A80HVD8577"
                   description: The one agent this token may act for.
                 scope:
                   type: string
@@ -2158,7 +2158,7 @@ paths:
                 properties:
                   scoped_token: { type: string }
                   user_id: { type: string }
-                  agent_code: { type: string, example: "A78WKV4515" }
+                  agent_code: { type: string, example: "A80HVD8577" }
                   expires_at:
                     type: integer
                     description: Unix seconds; one hour from minting.
@@ -2177,7 +2177,7 @@ paths:
             curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
               -H "api-secret: $BITHUMAN_API_SECRET" \
               -H "content-type: application/json" \
-              -d '{"agent_code": "A78WKV4515"}'
+              -d '{"agent_code": "A80HVD8577"}'
             # → data.token is a short-lived runtime JWT the SDK uses to run a session
         - lang: shell
           label: cURL (start a cloud avatar)
@@ -2224,7 +2224,7 @@ paths:
                     agent_code:
                       type: string
                       description: Agent code the session runs (attribution + transcript).
-                      example: "A78WKV4515"
+                      example: "A80HVD8577"
                     billing_type:
                       type: string
                       description: Selects the model and pricing schedule for the session.
@@ -2916,11 +2916,16 @@ paths:
               --output hello.wav
       summary: Synthesize speech from text
       description: |
-        Generates audio (WAV or PCM) from a text prompt. Pick a built-in voice
+        Generates audio from a text prompt: a 16-bit mono WAV at 44.1 kHz, or,
+        with `stream: true`, `audio/pcm; rate=44100; framing=len32be` (each
+        frame a 4-byte big-endian length, then that many bytes of 16-bit
+        mono PCM; a zero-length frame ends the stream). Resample to 16 kHz
+        before feeding the Swift or Android SDKs. Pick a built-in voice
         (`M1`-`F5`), tune it inline with `axes`, or pass a `voice_code` from the
         [Voice Designer](https://www.bithuman.ai/voice). Supports 30+ languages,
         per-request quality / speed tuning, and optional sentence-by-sentence
-        streaming. An unknown `voice_code` returns `404 VOICE_NOT_FOUND`.
+        streaming. An unknown `voice_code` returns `404 VOICE_NOT_FOUND`; an
+        unknown built-in `voice` returns `404 NOT_FOUND`.
       tags: [Voice]
       requestBody:
         required: true
@@ -2946,7 +2951,7 @@ paths:
                     Expands server-side to a base voice + tuning, so you don't send `voice` / `axes`
                     yourself. A UUID references a saved voice; a `bv1_…` code self-encodes the config.
                     Takes precedence over `voice` when present.
-                  example: "f8fb5feb-8a19-435c-89e5-a286a03565ec"
+                  example: "00000000-0000-4000-8000-000000000000"
                 axes:
                   type: object
                   description: |
@@ -3060,10 +3065,13 @@ paths:
               --output speech.wav
       summary: OpenAI-compatible speech endpoint
       description: |
-        Drop-in compatible with OpenAI's `POST /v1/audio/speech`. Useful for
-        migrating existing OpenAI clients to bitHuman without code changes —
-        swap the base URL to `https://api.bithuman.ai/v1` and the auth
-        header to `api-secret`.
+        Accepts the request body of OpenAI's `POST /v1/audio/speech`
+        (`model`, `input`, `voice`). `voice` must be a bitHuman voice
+        (`M1`-`F5`); OpenAI voice names such as `alloy` return `404`.
+        Authenticate with the `api-secret` header — `Authorization: Bearer`
+        returns `401`, so with an OpenAI SDK set the base URL to
+        `https://api.bithuman.ai/v1` and add `api-secret` as a default
+        header. Output is WAV only; `response_format: "mp3"` returns `400`.
       tags: [Voice]
       requestBody:
         required: true
@@ -3770,6 +3778,626 @@ paths:
         "503":
           description: We cannot record right now. Retry.
 
+  /v2/{user_id}/api-secrets:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    post:
+      operationId: createApiSecret
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST "https://api.bithuman.ai/v2/$USER_ID/api-secrets" \
+              -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" \
+              -d '{"alias":"prod-server"}'
+      summary: Create an API secret
+      description: |
+        Creates an API secret on your account. The response is the **only**
+        one that returns the full secret: store it now. Send `{}` for an
+        auto-generated alias; a request with no body returns `400`.
+      tags: [API secrets]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alias:
+                  type: string
+                  description: A label for the API secret. Auto-generated (a timestamp) if omitted.
+                  example: "prod-server"
+      responses:
+        "200":
+          description: The new secret, returned once.
+          content:
+            application/json:
+              example: { "alias": "prod-server", "secret": "k7m2p9x4…Sn3Q8vT1w…aC8e" }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: "`FORBIDDEN` — the `user_id` in the path is not yours."
+        "404":
+          description: Account not found.
+        "409":
+          description: An API secret with this alias already exists.
+    get:
+      operationId: listApiSecrets
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v2/$USER_ID/api-secrets" -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: List API secrets
+      description: |
+        Your API secrets, masked. The raw secret is never returned here, only
+        `key_display`. `name`, `key` and `alias` all carry the alias label.
+      tags: [API secrets]
+      responses:
+        "200":
+          description: The masked list.
+          content:
+            application/json:
+              example:
+                user_id: "8f14e45f-…"
+                data:
+                  - { "alias": "prod-server", "name": "prod-server", "key_display": "k7m2p9x4••••••••••••••••••••aC8e", "created_at": "2026-07-15T15:30:45Z" }
+                total_count: 1
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: "`FORBIDDEN` — the `user_id` in the path is not yours."
+
+  /v2/{user_id}/api-secrets/{alias}/get-value:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+      - name: alias
+        in: path
+        required: true
+        schema: { type: string }
+        description: The API secret's alias.
+    get:
+      operationId: revealApiSecret
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v2/$USER_ID/api-secrets/prod-server/get-value" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: Reveal an API secret (console only)
+      description: |
+        Console-only: only the signed-in owner can reveal a stored secret, in
+        the console under Developer → API Secrets. Called with an API secret
+        it always returns `403 SECRET_REVEAL_CONSOLE_ONLY`, so one leaked
+        secret cannot read your others.
+      tags: [API secrets]
+      responses:
+        "403":
+          description: "`SECRET_REVEAL_CONSOLE_ONLY` — reveal it in the console, or create a new secret."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v2/{user_id}/api-secrets/{alias}:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+      - name: alias
+        in: path
+        required: true
+        schema: { type: string }
+        description: The API secret's alias.
+    delete:
+      operationId: deleteApiSecret
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X DELETE "https://api.bithuman.ai/v2/$USER_ID/api-secrets/prod-server" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: Delete an API secret
+      description: |
+        Removes an API secret and revokes it at the runtime at once. Only that
+        secret stops working; to stop every secret, use
+        `POST /v2/{user_id}/runtime/revoke-all`.
+      tags: [API secrets]
+      responses:
+        "200":
+          description: Deleted.
+          content:
+            application/json:
+              example: { "alias": "prod-server", "message": "API secret deleted successfully" }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No API secret with that alias.
+
+  /v2/{user_id}/providers:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    get:
+      operationId: getProviders
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v2/$USER_ID/providers" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: Get provider config
+      description: |
+        Your configured provider keys (BYOK). Sensitive keys are returned only
+        as `{present, hint, updated_at}`, never in full.
+      tags: [Providers]
+      responses:
+        "200":
+          description: The masked provider list.
+          content:
+            application/json:
+              example:
+                user_id: "3f9a…"
+                providers:
+                  entries:
+                    - id: "b7e1…"
+                      platform: "openai"
+                      label: "OpenAI"
+                      options: {}
+                      secrets:
+                        apiKey: { "present": true, "hint": "sk…4f2a", "updated_at": "2026-07-02T09:30:00Z" }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Account not found.
+    put:
+      operationId: updateProviders
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X PUT "https://api.bithuman.ai/v2/$USER_ID/providers" \
+              -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" \
+              -d '{"entries":[{"platform":"openai","label":"OpenAI","credentials":{"apiKey":"sk-…"}}]}'
+      summary: Update provider config
+      description: |
+        Replaces your provider list: `entries` is the **whole** list, and
+        `{"entries": []}` clears every provider. Existing entries are matched by
+        `id` and merged (unspecified credentials are kept); new entries get a
+        generated id. Returns the same masked shape as `GET`.
+      tags: [Providers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entries]
+              properties:
+                entries:
+                  type: array
+                  items:
+                    type: object
+                    required: [platform]
+                    properties:
+                      platform: { type: string, description: "Provider id, e.g. `openai`, `elevenlabs`, `cartesia`, `grok`." }
+                      id: { type: string, description: Existing entry id to update; omit to add a new one. }
+                      label: { type: string, description: Display name; defaults to the platform name. }
+                      credentials: { type: object, description: Key/value credentials. Sensitive keys are encrypted at rest. }
+                      options: { type: object, description: Per-capability configuration. }
+                      clearSecrets: { type: array, items: { type: string }, description: Sensitive credential keys to remove. }
+                      metadata: { type: object, description: Freeform metadata. }
+      responses:
+        "200":
+          description: The stored list, masked as in `GET`.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Account not found.
+        "500":
+          description: A storage failure.
+
+  /v2/{user_id}/runtime-sessions:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    get:
+      operationId: listRuntimeSessions
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions?window=live" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: List sessions
+      description: |
+        Your sessions plus live account KPIs (`active_count`,
+        `live_burn_rate_cr_per_min`, `credits_this_hour`, account-wide over the
+        last hour). A transient `500 UPSTREAM_ERROR` can be retried.
+      tags: [Runtime sessions]
+      parameters:
+        - name: window
+          in: query
+          schema: { type: string, enum: [all, live, recent], default: all }
+          description: "`live` (only running), `recent` (idle + ended), or `all`."
+        - name: kind
+          in: query
+          schema: { type: string, enum: [all, conversations, self_hosted], default: all }
+          description: "`conversations` (cloud), `self_hosted`, or `all`."
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+          description: Max sessions to return.
+      responses:
+        "200":
+          description: KPIs and the filtered session list.
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  active_count: 1
+                  live_burn_rate_cr_per_min: 4
+                  credits_this_hour: 52
+                  sessions:
+                    - { "id": "a3f1c8e2-…-9b02", "agent_code": "agent_greeter", "agent_name": "Greeter", "billing_type": "usage_essence_2_model_cloud", "key_alias": "prod-server", "room_name": "room_a3f1c8e2", "started": "2026-07-15T15:20:00Z", "last_seen": "2026-07-15T15:33:00Z", "minutes": 13.0, "credits": 52, "burn_rate_cr_per_min": 4, "status": "live", "has_transcript": true }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: "`FORBIDDEN` — the `user_id` in the path is not yours."
+
+  /v2/{user_id}/runtime-sessions/{session_id}/messages:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+      - $ref: "#/components/parameters/SessionId"
+    get:
+      operationId: getRuntimeSessionMessages
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions/a3f1c8e2-…/messages" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: Read a transcript
+      description: |
+        The conversation, oldest first. Only cloud voice and chat sessions
+        record a transcript; self-hosted sessions return `messages: []`.
+      tags: [Runtime sessions]
+      responses:
+        "200":
+          description: The transcript.
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  session_id: "a3f1c8e2-…"
+                  agent_code: "agent_greeter"
+                  started: "2026-07-15T15:20:00Z"
+                  ended: "2026-07-15T15:33:00Z"
+                  live: true
+                  messages:
+                    - { "timestamp": "2026-07-15T15:20:03Z", "role": "user", "message": "Hi there" }
+                    - { "timestamp": "2026-07-15T15:20:05Z", "role": "assistant", "message": "Hello! How can I help?" }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v2/{user_id}/runtime-sessions/{session_id}/terminate:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+      - $ref: "#/components/parameters/SessionId"
+    post:
+      operationId: terminateRuntimeSession
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions/a3f1c8e2-…/terminate" \
+              -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" -d '{}'
+      summary: Terminate a session
+      description: |
+        Stops **one** session; never touches an API secret. The session stops
+        counting toward your plan's concurrent sessions at once.
+      tags: [Runtime sessions]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Free-text stop reason.
+                  default: user-terminated
+      responses:
+        "200":
+          description: Terminated.
+          content:
+            application/json:
+              example:
+                success: true
+                data: { "session_id": "a3f1c8e2-…", "closed": true, "ended": true, "self_hosted": false, "note": "Session ended — the avatar disconnected and the conversation closed." }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No such session (or not yours).
+
+  /v2/{user_id}/runtime/revoke-all:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    post:
+      operationId: revokeAllRuntimeKeys
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime/revoke-all" \
+              -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" -d '{}'
+      summary: Revoke all runtime keys
+      description: |
+        The emergency stop: disables **every** runtime key on the account. Live
+        sessions stop within one refresh cycle (about 5 minutes). It does not
+        delete your API secrets; creating a new API secret clears the
+        suspension.
+      tags: [Runtime sessions]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Free-text reason.
+      responses:
+        "200":
+          description: Revoked.
+          content:
+            application/json:
+              example:
+                success: true
+                data: { "revoked": true, "effective_in_seconds": 320, "runtime_suspended": true, "note": "All runtime keys disabled. Creating a new API key restores runtime access." }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/runtime-sessions/{session_id}:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    get:
+      operationId: getCloudAvatarSession
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl "https://api.bithuman.ai/v1/runtime-sessions/$SESSION_ID" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: Read a cloud avatar session
+      description: |
+        A [cloud avatar](https://docs.bithuman.ai/platforms/livekit/cloud-avatar)
+        session you started: `status` (`starting`, `live` or `ended`), times,
+        `billed_seconds` and `credits` so far.
+      tags: [Runtime sessions]
+      responses:
+        "200":
+          description: The session.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No such session (or not yours).
+
+  /v1/runtime-sessions/{session_id}/end:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    post:
+      operationId: endCloudAvatarSession
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST "https://api.bithuman.ai/v1/runtime-sessions/$SESSION_ID/end" \
+              -H "api-secret: $BITHUMAN_API_SECRET"
+      summary: End a cloud avatar session
+      description: |
+        Ends a [cloud avatar](https://docs.bithuman.ai/platforms/livekit/cloud-avatar)
+        you started, by the `session_id` its start returned. No body. Billing
+        stops at this call and the concurrent-session slot frees at once.
+        Calling it again returns the same answer and bills nothing.
+      tags: [Runtime sessions]
+      responses:
+        "200":
+          description: Ended. When `ended` is `false`, `note` says when the avatar leaves the room.
+          content:
+            application/json:
+              example: { "session_id": "cs_4f1c…", "status": "ended", "agent_id": "A23KSG5258", "model": "essence-2", "room_name": "my-room", "started_at": "…", "ended_at": "…", "billed_seconds": 131.2, "credits": 9, "ended": true, "slot_released": true, "note": "Session ended: the avatar left the room and billing stopped." }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No such session (or not yours).
+
+  /v1/knowledge/files:
+    post:
+      operationId: ingestKnowledgeFile
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/knowledge/files \
+              -H "api-secret: $ORG_API_SECRET" -H "content-type: application/json" \
+              -d '{"url":"https://example.com/help","name":"Help Center","sync_freq":"weekly"}'
+      summary: Ingest a file or URL
+      description: |
+        Adds one source to your organization: an uploaded file
+        (`multipart/form-data`, fields `file` up to 100 MB and `name`) or a URL
+        to fetch (JSON). Returns the file row at status `uploaded`; conversion
+        runs in the background. Needs an organization API secret; a personal
+        secret returns `403`.
+      tags: [Knowledge]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { type: string, description: "A public `http(s)` URL to fetch and convert." }
+                name: { type: string, description: Display name; defaults to the URL host. }
+                sync_freq: { type: string, enum: [never, daily, weekly, monthly], default: never, description: Re-sync cadence. }
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary, description: The document bytes. Max 100 MB. }
+                name: { type: string, description: Display name; defaults to the uploaded filename. }
+      responses:
+        "201":
+          description: The file row.
+          content:
+            application/json:
+              example: { "id": "3f2b9c14-8a7e-4d21-9f10-2c5b6e0a11dd", "org_id": "org_9d1f", "file_name": "handbook.pdf", "ext": "pdf", "size_bytes": 428193, "status": "uploaded", "source_kind": "upload", "created_at": "2026-07-15T12:00:00Z" }
+        "403":
+          description: A personal API secret; use an organization API secret.
+        "413":
+          description: File over 100 MB.
+        "422":
+          description: Empty file, missing `file`/`url`, non-public URL, or bad `sync_freq`.
+
+  /v1/knowledge/kbs:
+    post:
+      operationId: createKnowledgeBase
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/knowledge/kbs \
+              -H "api-secret: $ORG_API_SECRET" -H "content-type: application/json" \
+              -d '{"name":"Support KB","file_ids":["3f2b9c14-8a7e-4d21-9f10-2c5b6e0a11dd"]}'
+      summary: Create a knowledge base
+      description: |
+        Creates a knowledge base and, by default, starts its first build.
+        `build_dispatched` is `true` only when `build` was `true`, files were
+        attached and the build queued.
+      tags: [Knowledge]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, description: KB name (1–120 chars). }
+                description: { type: string, description: Up to 2000 chars. }
+                file_ids: { type: array, items: { type: string }, description: "File `id`s to attach (your organization's own files)." }
+                build: { type: boolean, default: true, description: Build immediately after create. }
+      responses:
+        "201":
+          description: The KB row, plus `file_ids` and `build_dispatched`.
+          content:
+            application/json:
+              example: { "id": "b71e0a92-4c3d-4f88-8a01-9e2f4c6d7b10", "org_id": "org_9d1f", "name": "Support KB", "status": "stale", "content_rev": 1, "file_ids": ["3f2b9c14-8a7e-4d21-9f10-2c5b6e0a11dd"], "build_dispatched": true }
+        "403":
+          description: "A `file_id` isn't yours, or a personal API secret."
+        "404":
+          description: "A `file_id` doesn't exist."
+    get:
+      operationId: listKnowledgeBases
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl https://api.bithuman.ai/v1/knowledge/kbs -H "api-secret: $ORG_API_SECRET"
+      summary: List knowledge bases
+      description: The organization's knowledge bases, newest first, each with `agent_count` and `source_count`.
+      tags: [Knowledge]
+      responses:
+        "200":
+          description: The list.
+          content:
+            application/json:
+              example:
+                kbs:
+                  - { "id": "b71e0a92-4c3d-4f88-8a01-9e2f4c6d7b10", "name": "Support KB", "status": "ready", "content_rev": 2, "built_rev": 2, "artifact_url": "https://…/artifact.zip", "agent_count": 1, "source_count": 3 }
+                total: 1
+
+  /v1/knowledge/kbs/{kb_id}/rebuild:
+    parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema: { type: string }
+        description: The knowledge base id.
+    post:
+      operationId: rebuildKnowledgeBase
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/knowledge/kbs/b71e0a92-…/rebuild \
+              -H "api-secret: $ORG_API_SECRET"
+      summary: Rebuild a knowledge base
+      description: |
+        Re-indexes a knowledge base after its sources change. Returns the
+        queued build row; indexing runs in the background. Builds run one at a
+        time per account, up to 20 per day.
+      tags: [Knowledge]
+      responses:
+        "200":
+          description: The queued build.
+          content:
+            application/json:
+              example: { "id": "e5c9a1f7-0b44-4a6e-9c22-77d0b3e18a55", "kb_id": "b71e0a92-4c3d-4f88-8a01-9e2f4c6d7b10", "status": "queued", "started_at": "2026-07-15T12:10:00Z" }
+        "404":
+          description: Unknown knowledge base.
+        "409":
+          description: "`BUILD_IN_PROGRESS`, `BUILD_CONCURRENCY` or `BUILD_DAILY_CAP`."
+        "422":
+          description: "`KB_EMPTY` — no source files."
+
+  /v1/realtime/connect:
+    post:
+      operationId: realtimeConnect
+      x-codeSamples:
+        - lang: shell
+          label: cURL
+          source: |
+            curl -X POST https://api.bithuman.ai/v1/realtime/connect \
+              -H "api-secret: $BITHUMAN_API_SECRET" -H "content-type: application/json" \
+              -d '{"action": "hangup", "call": "<X-Bithuman-Call>"}'
+      summary: Start or end a WebRTC Realtime call
+      description: |
+        Starts a WebRTC voice call: send the SDP offer as the body
+        (`Content-Type: application/sdp`) with `?model=gpt-realtime-mini`; a
+        `201` carries the SDP answer, and the `X-Bithuman-Call` header names
+        the call. End it with a JSON body `{"action": "hangup", "call": …}` —
+        billing stops when you hang up. See
+        [Realtime](https://docs.bithuman.ai/api/realtime#webrtc).
+      tags: [Realtime]
+      parameters:
+        - name: model
+          in: query
+          schema: { type: string, example: gpt-realtime-mini }
+          description: The Realtime model, fixed for the call.
+      requestBody:
+        required: true
+        content:
+          application/sdp:
+            schema: { type: string, description: The SDP offer. }
+          application/json:
+            schema:
+              type: object
+              properties:
+                action: { type: string, enum: [hangup] }
+                call: { type: string, description: "The `X-Bithuman-Call` value from the start." }
+      responses:
+        "201":
+          description: The SDP answer (`application/sdp`).
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /readyz:
     get:
       operationId: getReadiness
@@ -3847,6 +4475,19 @@ components:
         hosted runtimes send it this way; the classic `api-secret` header works
         on the same routes.
 
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      required: true
+      schema: { type: string }
+      description: "Your own account id, from `GET /v1/me` (`data.user_id`). Another account's id returns `403 FORBIDDEN`."
+    SessionId:
+      name: session_id
+      in: path
+      required: true
+      schema: { type: string }
+      description: The session id.
   schemas:
     SelfHostError:
       type: object
@@ -4557,6 +5198,11 @@ x-tagGroups:
       - Billing
       - Account
       - Self-hosting
+      - API secrets
+      - Providers
+      - Runtime sessions
+      - Knowledge
+      - Realtime
       - Status
       - Webhooks
   - name: Resources
@@ -4655,6 +5301,16 @@ tags:
       The two routes a self-hosted or on-device runtime calls: check that its
       key is still live, and report the session time it served. See
       [Pricing](https://docs.bithuman.ai/pricing).
+  - name: API secrets
+    description: "Create, list and delete your account's API secrets: [https://docs.bithuman.ai/api/api-keys](https://docs.bithuman.ai/api/api-keys)."
+  - name: Providers
+    description: "Bring your own LLM, STT and TTS keys: [https://docs.bithuman.ai/api/providers](https://docs.bithuman.ai/api/providers)."
+  - name: Runtime sessions
+    description: "List live sessions, read a transcript, end or terminate a session, revoke every runtime key: [https://docs.bithuman.ai/api/runtime-sessions](https://docs.bithuman.ai/api/runtime-sessions)."
+  - name: Knowledge
+    description: "Ingest sources and build knowledge bases, with an organization API secret: [https://docs.bithuman.ai/api/knowledge](https://docs.bithuman.ai/api/knowledge)."
+  - name: Realtime
+    description: "OpenAI Realtime voice through bitHuman; the WebSocket relay is on [https://docs.bithuman.ai/api/realtime](https://docs.bithuman.ai/api/realtime)."
   - name: Status
     description: |
       Is the API currently refusing work? Unauthenticated, always HTTP 200 —

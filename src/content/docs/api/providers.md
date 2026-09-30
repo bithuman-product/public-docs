@@ -18,7 +18,7 @@ Base URL `https://api.bithuman.ai`. Authenticate with the `api-secret` header. T
 in the path is your account id — get it from [`GET /v1/me`](/api/billing#account-status).
 
 Set it once in your shell before the examples below — with `$USER_ID` unset the
-paths collapse to `/v2//…` and the API answers `404 {"detail":"Not Found"}`:
+paths collapse to `/v2//…` and the API answers `404 NOT_FOUND`:
 
 ```bash
 export USER_ID=$(curl -s https://api.bithuman.ai/v1/me \

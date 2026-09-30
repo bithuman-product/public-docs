@@ -80,7 +80,7 @@ curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/down
 ```
 
 ```bash tab="LiveKit"
-pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dotenv
+pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv
 # pass model_path="wise-pup.imx" to bithuman.AvatarSession: /build/voice-agent
 ```
 

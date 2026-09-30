@@ -18,7 +18,7 @@ Base URL `https://api.bithuman.ai`. Authenticate with your `api-secret`. The `{u
 path is your own account id — get it from [`GET /v1/me`](/api/billing#account-status).
 
 Set it once in your shell before the examples below — with `$USER_ID` unset the
-paths collapse to `/v2//…` and the API answers `404 {"detail":"Not Found"}`:
+paths collapse to `/v2//…` and the API answers `404 NOT_FOUND`:
 
 ```bash
 export USER_ID=$(curl -s https://api.bithuman.ai/v1/me \
@@ -131,6 +131,11 @@ bills nothing. Errors: `404` no such session (or not yours).
 
 `GET /v1/runtime-sessions/{session_id}` — `status` (`starting`, `live` or `ended`), times,
 `billed_seconds` and `credits` so far. Errors: `404` no such session (or not yours).
+
+```bash
+curl "https://api.bithuman.ai/v1/runtime-sessions/$SESSION_ID" \
+  -H "api-secret: $BITHUMAN_API_SECRET"
+```
 
 ## Terminate a session
 
