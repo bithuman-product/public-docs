@@ -10,19 +10,19 @@ export interface SideItem { href: string; label: string; order: number; external
 
 export const slugOf = (e: any) => "/" + e.id.replace(/\/index$/, "").replace(/\.md$/, "");
 
-export function sideLabel(title: string, group: string): string {
-  const pre = group + " ";
-  if (group && title.length > pre.length && title.toLowerCase().startsWith(pre.toLowerCase())) {
-    const rest = title.slice(pre.length);
-    return rest.charAt(0).toUpperCase() + rest.slice(1);
-  }
-  return title;
+export function sideLabel(title: string, group: string, type?: string): string {
+  if (!group || !title.toLowerCase().startsWith(group.toLowerCase())) return title;
+  // A platform's own page is its quickstart (SPEC §0): "Android", "REST API", "Web: embed and WebGPU".
+  if (type === "platform") return "Quickstart";
+  const rest = title.slice(group.length).replace(/^[:\s]+/, "");
+  if (!rest || !/^[\s:]/.test(title.slice(group.length))) return title;
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
 export function sidebarGroups(all: any[], section: SectionId): [string, SideItem[]][] {
   const pages = all.filter((e) => e.data.section === section && !e.data.draft);
   const byOrder = (a: SideItem, b: SideItem) => a.order - b.order || a.label.localeCompare(b.label);
-  const item = (e: any): SideItem => ({ href: slugOf(e), label: sideLabel(e.data.title, e.data.group || ""), order: e.data.order ?? 100, children: [] });
+  const item = (e: any): SideItem => ({ href: slugOf(e), label: sideLabel(e.data.title, e.data.group || "", e.data.type), order: e.data.order ?? 100, children: [] });
   return (GROUP_ORDER[section] ?? [])
     .map((g) => {
       const top: SideItem[] = [
