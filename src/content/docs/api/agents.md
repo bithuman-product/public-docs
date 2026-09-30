@@ -6,23 +6,14 @@ group: "Agents"
 order: 10
 type: endpoint
 llms: api
+moved:
+  inject-knowledge: "/api/knowledge#inject-knowledge"
+  errors: "/api/errors#agent-operations"
 ---
 
 An agent is an avatar (face, voice and persona) identified by a short code such as `A23WJF0199`. Create one, poll until it is `ready`, then use it everywhere: the [web embed](/platforms/web), the SDKs, [talking video](/api/video) and live sessions. Creation and model adds cost credits per model ([pricing](/pricing)); everything else on this page is free.
 
-| Method | Path | Purpose |
-|---|---|---|
-| `POST` | `/v1/agent/generate` | [Create an agent](#generate-an-agent) |
-| `GET` | `/v1/agent/status/{agent_id}` | [Poll creation](#poll-status) |
-| `GET` | `/v1/agent/{code}` | [Get an agent](#get-an-agent) |
-| `GET` | `/v1/agents` | [List your agents](#list-your-agents) |
-| `POST` | `/v1/agent/{code}` | [Update the prompt or providers](#update-an-agent) |
-| `DELETE` | `/v1/agent/{code}` | [Delete an agent](#delete-an-agent) |
-| `POST` | `/v1/agent/{code}/models` | [Add a model](#add-a-model-to-an-existing-agent) |
-| `GET` | `/v1/agent/{code}/model/download` | [Download the model file](#download-an-agents-model) |
-| `GET` | `/v1/agent/{code}/sessions` | [List live sessions](#list-an-agents-live-sessions) |
-| `POST` | `/v1/agent/{code}/speak` | [Speak in a live session](#make-an-agent-speak) |
-| `POST` | `/v1/agent/{code}/add-context` | [Add knowledge to a live session](#inject-knowledge) |
+To add knowledge to a live session, see [Knowledge](/api/knowledge#inject-knowledge); every operation is also in the [API reference index](/api/reference).
 
 ## Generate an agent
 
@@ -219,9 +210,23 @@ Name the output file yourself (`-o`). Add `?redirect=false` to get the URL as JS
 | `404` | `MODEL_ARTIFACT_NOT_READY` | published shortly after `ready`; retry |
 | `409` | `MODEL_NOT_GENERATED` | the agent does not have that model; [add it](#add-a-model-to-an-existing-agent) |
 
+## List the freely downloadable showcase models
+
+`GET /v1/models/showcase` lists the **Essence 2** and **Expression 2** showcase identities whose model weights anyone may download, with no api-secret and no account. Each entry's `url` is [Download an agent's model](#download-an-agents-model): a `302` to a 1-hour signed URL that costs the agent's owner **0 credits**. Being public in the gallery is not enough; an agent is listed only when its owner has authorised distribution of the weights.
+
+`bithuman list` and `bithuman pull` read this catalogue. `sha256` is empty for now and the CLI skips verification on an empty value; check `size` instead. Frame rates are on the [performance page](/performance). Throttled per IP; the reply is cached for 60 seconds.
+
+```bash
+curl https://api.bithuman.ai/v1/models/showcase
+```
+
+```json
+{"version": 2, "updated": "2026-09-10", "models": [{"slug": "bolt", "name": "Bolt", "model": "expression-2", "agent_code": "X03BOLT", "url": "https://api.bithuman.ai/v1/agent/X03BOLT/model/download?model=expression-2", "size": 198106157}]}
+```
+
 ## List an agent's live sessions
 
-`GET /v1/agent/{code}/sessions` lists the agent's open sessions. Use a `room_id` whose `deliverable` is `true` with [speak](#make-an-agent-speak) or [add-context](#inject-knowledge).
+`GET /v1/agent/{code}/sessions` lists the agent's open sessions. Use a `room_id` whose `deliverable` is `true` with [speak](#make-an-agent-speak) or [add-context](/api/knowledge#inject-knowledge).
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/A80HVD8577/sessions -H "api-secret: $BITHUMAN_API_SECRET"
@@ -244,36 +249,3 @@ curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/speak \
 ```json
 {"agent_code": "A80HVD8577", "delivered_to_rooms": 1, "rooms": ["room-A80HVD8577-x1y2"], "rooms_skipped": [], "rooms_failed": []}
 ```
-
-## Inject knowledge
-
-`POST /v1/agent/{code}/add-context` gives a live agent background knowledge (`"type": "add_context"`, the default) or a message to say (`"type": "speak"`). `room_id` targets one session. It needs a live session, like speak.
-
-```bash
-curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/add-context \
-  -H "Content-Type: application/json" -H "api-secret: $BITHUMAN_API_SECRET" \
-  -d '{"context": "The visitor is a member. Preferred name: Alex."}'
-```
-
-## Errors
-
-| Status | Code | When |
-|---|---|---|
-| `400` | `MISSING_PARAM` | an update with nothing to change |
-| `400` | `MODEL_NOT_DOWNLOADABLE` | downloading a model that has no file |
-| `400` | `VALIDATION_ERROR` | invalid body or `model`; the message lists accepted values |
-| `400` | `VIDEO_INPUT_NOT_SUPPORTED` | `video` in a creation request |
-| `401` | `UNAUTHORIZED` | missing or invalid `api-secret` |
-| `402` | `INSUFFICIENT_BALANCE` | not enough credits to create |
-| `403` | `PLAN_REQUIRED` | the model is not in your plan; the message names the plan |
-| `404` | `MODEL_ARTIFACT_NOT_READY` | the model file is not published yet; retry |
-| `404` | `NOT_FOUND` | unknown agent, or no live session for speak or add-context |
-| `409` | `AGENT_NOT_READY` | adding a model to an agent that is not `ready` |
-| `409` | `MODEL_NOT_GENERATED` | the agent does not have the requested model |
-| `410` | `AGENT_DELETED` / `AGENT_PURGED` | the agent was deleted; model download, gestures and talking video refuse it |
-| `422` | `MODEL_PREREQUISITE_MISSING` | the agent lacks an asset the model needs |
-| `422` | `IMAGE_FACE_UNSUITABLE` | the face is too small or there are several faces |
-| `422` | `MODEL_SUBJECT_MISMATCH` | `essence-2` for a subject that is not a photoreal person |
-| `503` | `MODEL_NOT_YET_AVAILABLE` | a model is paused for your account (not returned in normal operation) |
-
-All codes: [Errors](/api/errors).

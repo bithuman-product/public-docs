@@ -39,10 +39,11 @@ import { diagramHtml, diagramText } from "./diagrams.ts";
 import { dataflowExplorer } from "./dataflow-explorer.ts";
 import { resolvedHighlights, shortDate } from "./highlights.ts";
 import { TAGS, parseChangelog } from "./changelog.ts";
+import { endpointBlock } from "./endpoint-block.ts";
 
 export type Mode = "page" | "twin";
 export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator", "app-budget",
-  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected", "highlights", "changelog-filter"]);
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected", "highlights", "changelog-filter", "endpoint"]);
 /** Blocks drawn as HTML on the page (the rest become markdown). */
 export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator",
   "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "highlights", "changelog-filter"]);
@@ -51,6 +52,8 @@ export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matr
  *  body holds a fence of its own. */
 export const WRAP_BLOCKS: Record<string, [string, string]> = {
   expected: [`<details class="expected" open><summary>Expected</summary><div class="expected-body">`, `</div></details>`],
+  // an operation's H2 must stay a top-level heading (TOC, rehype-endpoints): no wrapper
+  endpoint: ["", ""],
 };
 /** Blocks that bring a script or styles to the page (DocLayout loads them only there). */
 export const WIDGET_BLOCKS: Record<string, string> = { "perf-explorer": "perf-explorer", "credit-calculator": "calculator", "model-matrix": "matrix-filter", "deploy-matrix": "matrix-filter",
@@ -456,6 +459,7 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "expected": return mode === "page" ? body : `Expected:\n\n${body.trim()}\n`;
     case "highlights": return highlightsBlock(mode);
     case "changelog-filter": return changelogFilter(mode);
+    case "endpoint": return endpointBlock(arg, mode);
     case "partial": {
       if (!/^[a-z0-9-]+$/.test(arg)) throw new Error(`\`\`\`partial: "${arg}" is not a partial name`);
       return readFileSync(join(process.cwd(), "src/partials", `${arg}.md`), "utf8").replace(/<!--[\s\S]*?-->\n?/g, "");

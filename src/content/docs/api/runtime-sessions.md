@@ -103,7 +103,7 @@ Only cloud voice/chat sessions record a transcript; self-hosted sessions return 
 
 ## End a cloud avatar session
 
-`POST /v1/runtime-sessions/{session_id}/end` — end a [cloud avatar](/api/cloud-avatar) you
+`POST /v1/runtime-sessions/{session_id}/end` — end a [cloud avatar](/platforms/livekit/cloud-avatar) you
 started. `session_id` is the `session_id` the start returned. No body.
 
 ```bash
@@ -155,7 +155,7 @@ curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime-sessions/a3f1c8e2-…/
 The session stops counting toward your plan's concurrent sessions at once. What else happens depends on where it runs:
 
 - A conversation on bitHuman's servers (the web embed, the bitHuman app): its room is closed and `ended` is `true`.
-- A [cloud avatar in your own LiveKit room](/api/cloud-avatar): billing stops, `ended` is `false`, and the avatar leaves at its next billing check, within about a minute. An `essence-1` avatar stays until you remove it or the room closes. Delete the room on your LiveKit server to end it at once.
+- A [cloud avatar in your own LiveKit room](/platforms/livekit/cloud-avatar): billing stops, `ended` is `false`, and the avatar leaves at its next billing check, within about a minute. An `essence-1` avatar stays until you remove it or the room closes. Delete the room on your LiveKit server to end it at once.
 - A self-hosted runtime: the activity record is closed; stop the process on your hardware.
 
 To find a cloud avatar's `session_id`, list sessions with `window=live&kind=conversations` and take the `id` whose `room_name` is your room. A cloud avatar you started can instead be [ended by the `session_id` its start returned](#end-a-cloud-avatar-session) (`cs_…`). Errors: `404` no such session (or not yours).
@@ -184,3 +184,11 @@ curl -X POST "https://api.bithuman.ai/v2/$USER_ID/runtime/revoke-all" \
 
 This does **not** delete your API secrets — it suspends runtime token issuance. It's self-recoverable:
 creating a new API secret clears the suspension.
+
+```endpoint
+validateSelfHostedKey
+```
+
+```endpoint
+postMeterBeat
+```

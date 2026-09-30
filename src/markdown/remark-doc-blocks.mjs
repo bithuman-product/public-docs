@@ -29,7 +29,7 @@ export default function remarkDocBlocks() {
           // a wrapped body (```expected) may hold fences and links of its own: walk it too
           walk(parsed);
           const [open, close] = WRAP_BLOCKS[child.lang] ?? [`<div class="doc-block doc-block-${child.lang}">`, "</div>"];
-          out.push({ type: "html", value: open }, ...parsed.children, { type: "html", value: close });
+          out.push(...(open ? [{ type: "html", value: open }] : []), ...parsed.children, ...(close ? [{ type: "html", value: close }] : []));
           continue;
         }
         walk(child);

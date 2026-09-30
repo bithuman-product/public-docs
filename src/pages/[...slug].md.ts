@@ -9,6 +9,7 @@ import { PERF_BAND } from "../data/perf-band";
 import { perfCell, perfRow, PERF_MODELS } from "../lib/perf";
 import versions from "../data/versions.json";
 import { apiSpec } from "../lib/openapi";
+import { apiPages } from "../lib/endpoint-block";
 import { explorerClaim } from "../lib/doc-blocks";
 import headline from "../partials/performance-headline.md?raw";
 import { resolvedHighlights } from "../lib/highlights";
@@ -54,11 +55,12 @@ function pathTable(): string {
 }
 
 // /api/reference's twin lists every operation (method, path, summary) with a
-// link to its anchor on the page, from the same parsed spec the page renders,
-// and points at the full contract.
+// link to the section of its resource page that documents it (scripts/api-pages.json,
+// docs v2 W5), from the same parsed spec the page renders, and points at the full contract.
 function endpointTable(): string {
+  const pages = apiPages();
   const rows = apiSpec().tags.flatMap((t) => t.operations.map((op) =>
-    `| ${op.method} | \`${op.path}\` | [${op.summary.replace(/\|/g, "\\|")}](${SITE}/api/reference#${op.id}) |`));
+    `| ${op.method} | \`${op.path}\` | [${op.summary.replace(/\|/g, "\\|")}](${SITE}${pages[op.id].page}#${pages[op.id].slug}) |`));
   if (rows.length < 10) throw new Error(`api/reference.md: read only ${rows.length} operations from the spec`);
   return `| Method | Path | What it does |\n|---|---|---|\n${rows.join("\n")}\n`;
 }

@@ -44,11 +44,23 @@ print(r.json())
 
 Exchanges the API secret for a short-lived runtime token that authorizes rendering for your account. The Python SDK and the LiveKit plugin call it for you and renew the token while a session runs; call it yourself only when you build your own runtime integration. A runtime token cannot create other tokens or call other endpoints.
 
-Sent with `mode`, the same endpoint starts a cloud avatar in your LiveKit room instead: [Cloud avatar without the plugin](/api/cloud-avatar).
+```bash
+curl -X POST https://api.bithuman.ai/v1/runtime-tokens/request \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"agent_code": "A78WKV4515"}'
+```
+
+Sent with `mode`, the same endpoint starts a cloud avatar in your LiveKit room instead: [Cloud avatar without the plugin](/platforms/livekit/cloud-avatar).
 
 ## POST /v1/runtime-tokens/mint
 
-Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. Send `room_name` and `livekit_url` to bind the LiveKit token to one room and server. The request and a complete worker are on [LiveKit](/platforms/livekit#authenticate).
+Mints a one-hour token for `"scope": "livekit-cloud"` that can only start one agent's avatar in one LiveKit room. Pass it to the LiveKit plugin instead of your secret, because the plugin writes its credential into room attributes every participant can read. Send `room_name` and `livekit_url` to bind the LiveKit token to one room and server. A complete worker is on [LiveKit](/platforms/livekit#authenticate).
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/runtime-tokens/mint \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"agent_code": "A78WKV4515", "scope": "livekit-cloud", "room_name": "your-room", "livekit_url": "wss://your-project.livekit.cloud"}'
+```
 
 ## Keep the secret safe
 

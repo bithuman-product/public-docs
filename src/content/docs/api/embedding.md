@@ -37,21 +37,12 @@ append it to the iframe URL.
 
 Every entry of `supported_models` in the mint response (and in `GET /v1/agent/status/{id}`) is a model name you can send back as `model` unchanged.
 
-```js
-// server: mint token (api-secret never reaches the browser)
-const visitorFingerprint = "3f9a2c1b8e7d4a6f0b21c4d5e6f70812"; // one stable id per visitor, persisted
-const res = await fetch("https://api.bithuman.ai/v1/embed-tokens/request", {
-  method: "POST",
-  headers: {
-    "api-secret": process.env.BITHUMAN_API_SECRET,
-    "content-type": "application/json",
-  },
-  body: JSON.stringify({
-    agent_id: process.env.BITHUMAN_AGENT_CODE, // your agent's code
-    fingerprint: visitorFingerprint,
-  }),
-});
-const { data: { token } } = await res.json();
+Call it from your server, so the API secret never reaches the browser; `data.token` goes on the iframe URL.
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/embed-tokens/request \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"agent_id": "A78WKV4515", "fingerprint": "3f9a2c1b8e7d4a6f0b21c4d5e6f70812"}'
 ```
 
 ### Response

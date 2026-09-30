@@ -43,6 +43,11 @@ const walk = (d) => readdirSync(d).flatMap((n) => {
 
 const decode = (s) => s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 
+// docs v2 W5: an API page's operationIds (scripts/api-pages.json) are searchable
+// words of that page, the way its HTML carries them beside each endpoint's H2
+const OPS_BY_PAGE = {};
+for (const [op, row] of Object.entries(JSON.parse(readFileSync(join(ROOT, "scripts/api-pages.json"), "utf8")).operations)) (OPS_BY_PAGE[row.page] ??= []).push(op);
+
 const docs = [];
 for (const f of walk(DIST).sort()) {
   const rel = "/" + relative(DIST, f).replace(/\\/g, "/").replace(/\.md$/, "");
@@ -59,7 +64,7 @@ for (const f of walk(DIST).sort()) {
   const searchTitle = decode(/data-pagefind-meta="title:([^"]+)"/.exec(html)?.[1] ?? "");
   const description = /\n\n> (.+)\n/.exec(md)?.[1] ?? "";
   const headings = [...md.replace(/^```[\s\S]*?^```/gm, "").matchAll(/^#{2,3} (.+)$/gm)].map((m) => m[1].trim());
-  docs.push({ id, url: head[2], title: head[1], ...(searchTitle && searchTitle !== head[1] ? { searchTitle } : {}), section, ...(weight !== 1 ? { weight } : {}), description, headings, markdown: md });
+  docs.push({ id, url: head[2], title: head[1], ...(searchTitle && searchTitle !== head[1] ? { searchTitle } : {}), section, ...(weight !== 1 ? { weight } : {}), description, headings, ...(OPS_BY_PAGE[id] ? { operations: OPS_BY_PAGE[id] } : {}), markdown: md });
 }
 if (docs.length < 60) { console.error(`gen-docs-index: only ${docs.length} markdown twins in ${DIST}; run astro build first`); process.exit(1); }
 

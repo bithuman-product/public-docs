@@ -207,3 +207,53 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
   .prose .lead { grid-template-columns: 1fr; gap: var(--s-4); }
   .prose .lead > figure.fig { max-width: 240px; margin-inline: auto; }
 }
+
+/* Docs v2 W5 endpoint sections (src/markdown/rehype-endpoints.mjs): the METHOD
+   pill, the path and the operationId under each operation's H2; at 1280 px and
+   wider the request and response code sits in a right column that stays in view. */
+.ep-m { display: inline-block; min-width: 3.2em; padding: 1px 7px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: var(--fs-12); font-weight: var(--fw-medium); letter-spacing: 0.02em; text-align: center; background: var(--color-surface-3); color: var(--color-text); }
+.ep-m-get { background: color-mix(in srgb, var(--green-500) 16%, transparent); }
+.ep-m-post { background: color-mix(in srgb, var(--blue-500) 16%, transparent); }
+.ep-m-put, .ep-m-patch { background: color-mix(in srgb, var(--amber-500) 20%, transparent); }
+.ep-m-delete { background: color-mix(in srgb, var(--red-500) 16%, transparent); }
+.prose .ep { scroll-margin-top: var(--nav-h); }
+.prose .ep + .ep, .prose .ep + h2 { margin-top: var(--s-3); padding-top: var(--s-5); border-top: 1px solid var(--color-border); }
+.prose .ep > h2 { margin-top: 0; margin-bottom: var(--s-2); }
+.prose .ep-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); margin: 0 0 var(--s-3); }
+.prose .ep-line .ep-path { padding: 0; background: none; border: 0; font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text); overflow-wrap: anywhere; }
+.prose .ep-line .ep-id { margin-left: auto; font-family: var(--font-mono); font-size: var(--ft-xs); color: var(--color-text-tertiary); text-decoration: none; scroll-margin-top: calc(var(--nav-h) + var(--s-12)); }
+.prose .ep-line .ep-id:hover { color: var(--color-text); }
+.prose .ep-doc, .prose .ep-code { min-width: 0; }
+.prose .ep-doc > :first-child, .prose .ep-code > :first-child { margin-top: 0; }
+.prose .ep-doc > :last-child { margin-bottom: 0; }
+/* an operation reads densely: tighter blocks, compact tables, names that do not break */
+.prose .ep-doc p, .prose .ep-doc ul, .prose .ep-doc ol { margin-block: var(--s-3); }
+.prose .ep-doc p, .prose .ep-doc li { line-height: 1.55; }
+.prose .ep-doc li { margin-block: var(--s-1); }
+.prose .ep-doc h3 { margin-top: var(--s-5); margin-bottom: var(--s-2); }
+.prose .ep-doc .table-wrap { margin-block: var(--s-3); }
+.prose .ep-doc table { font-size: var(--ft-sm); }
+.prose .ep-doc td { padding: 6px 10px; line-height: 1.45; }
+.prose .ep-doc td:first-child code { white-space: nowrap; }
+@media (min-width: 1280px) {
+  /* the page body reads in the text track, left-aligned; an endpoint section spans the full width */
+  .doc-ep .prose { grid-template-columns: [full-start text-start] minmax(0, var(--text-w)) [text-end] minmax(0, 1fr) [full-end]; }
+  .doc-ep .prose > .doc-body { grid-column: full; display: grid; grid-template-columns: inherit; }
+  .doc-ep .doc-body > * { grid-column: text; }
+  .doc-ep .doc-body > .ep, .doc-ep .doc-body > .table-wrap, .doc-ep .doc-body > .bh-wide { grid-column: full; }
+  /* the title and the METHOD + path share one line; everything else spans the section */
+  .prose .ep { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-4); align-items: baseline; }
+  .prose .ep > * { grid-column: 1 / -1; }
+  .prose .ep > h2 { grid-column: 1; margin-bottom: var(--s-3); }
+  .prose .ep > .ep-line { grid-column: 2; margin: 0 0 var(--s-3); }
+  .prose .ep-body:not(.ep-body-1) { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--s-6); align-items: start; }
+  .prose .ep-code { position: sticky; top: calc(var(--nav-h) + var(--s-4)); display: grid; gap: var(--s-2); }
+  .prose .ep-code > * { margin: 0; }
+  .prose .ep-code h3 { font-size: var(--ft-sm); font-weight: var(--fw-medium); line-height: 1.2; color: var(--color-text-secondary); }
+  .prose .ep-code pre { max-height: 220px; overflow: auto; padding: var(--s-3); padding-right: calc(var(--s-8) + var(--s-1)); font-size: var(--fs-12); line-height: 1.5; }
+  .prose .ep-code > .bh-code pre[data-language="json"] { max-height: 140px; }
+  .prose .ep-code .mdt-bar { margin-bottom: 6px; }
+  .prose .ep-code .mdt-tab { padding-block: var(--s-1); }
+  /* the card inside a tab panel keeps no margin of its own (it leaked 24 px above and below) */
+  .prose .ep-code .mdt-panel > *, .prose .ep-code .mdt-panel .bh-code, .prose .ep-code .mdt-panel pre { margin: 0; }
+}

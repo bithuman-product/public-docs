@@ -1,23 +1,29 @@
 ---
-// /api/reference: every operation in src/openapi/bithuman.yaml, rendered at
-// build time as one static page. No third-party script and nothing to run:
-// each operation has an anchor (its operationId), its parameters, request
-// body and responses, and curl, Python and Node samples generated from one
-// request definition (src/lib/openapi.ts). The site search indexes it, and the
-// same contract is served raw at /api/openapi.yaml for code generators.
+// /api/reference (docs v2 W5, SPEC §3, §5): the index of every operation in
+// src/openapi/bithuman.yaml. Each operation is documented once, on its resource
+// page (scripts/api-pages.json: the reviewed operation → page + H2 map), with
+// curl, Python and Node; this page lists them by tag and links there. Each row
+// keeps the operationId as its id and each tag keeps its old `tag/<slug>` id, so
+// an old link (/api/reference#getAgent) still lands on the right row without
+// JavaScript, and a one-line script sends the reader straight to the operation's
+// page. No third-party script. The same contract is served raw at
+// /api/openapi.yaml for code generators.
 import Base from "../../layouts/Base.astro";
-import { Code } from "astro:components";
-import ApiToc from "../../components/ApiToc.astro";
 import { hubMeta } from "../../config/hubs";
 import { SECTIONS } from "../../config/nav";
-import { apiSpec, mdHtml, type Operation } from "../../lib/openapi";
+import { apiSpec } from "../../lib/openapi";
+import { apiPages } from "../../lib/endpoint-block";
 
 const title = "API reference";
 const description = hubMeta("api/reference").description;
 const api = apiSpec();
-import { codeTheme } from "../../lib/code-theme.mjs";
-const statusKind = (s: string) => (s.startsWith("2") ? "ok" : s.startsWith("3") ? "redirect" : s.startsWith("4") ? "client" : "server");
-const lead = (op: Operation) => op.params.filter((p) => p.where !== "header" || !/^(api-secret|authorization)$/i.test(p.name));
+const pages = apiPages();
+const href = (id: string) => {
+  const r = pages[id];
+  if (!r) throw new Error(`/api/reference: ${id} is not in scripts/api-pages.json`);
+  return `${r.page}#${r.slug}`;
+};
+const jump = Object.fromEntries(api.tags.flatMap((t) => t.operations.map((op) => [op.id, href(op.id)])));
 const jsonLd = [{
   "@type": "TechArticle",
   "@id": "https://docs.bithuman.ai/api/reference#article",
@@ -25,192 +31,66 @@ const jsonLd = [{
   description,
   url: "https://docs.bithuman.ai/api/reference",
 }];
-const GUIDES = [
-  ["Organizations", "/api/organizations"], ["Providers", "/api/providers"], ["Runtime sessions", "/api/runtime-sessions"],
-  ["API secrets", "/api/api-keys"], ["Knowledge", "/api/knowledge"],
+const HAND = [
+  ["Organizations", "/api/organizations"], ["Providers", "/api/providers"], ["API secrets", "/api/api-keys"],
+  ["Rate limits", "/api/rate-limits"], ["Realtime", "/api/realtime"],
 ];
 ---
 
 <Base title={`${title} — bitHuman docs`} description={description} type="article" jsonLd={jsonLd} markdown="/api/reference.md">
-  <div class="ar">
-    <aside class="ar-side" data-pagefind-ignore>
-      <p class="ar-side-h">Endpoints <span class="ar-count">{api.count}</span></p>
-      <ApiToc tags={api.tags} label="Endpoints" />
-    </aside>
+  <div class="container ari" data-pagefind-weight="0.5" data-pagefind-filter={`section:${SECTIONS.api.label}`}>
+    <h1>API reference</h1>
+    <p class="ari-lede">{description}</p>
+    <ul class="ari-facts" role="list">
+      <li><span>Base URL</span><code>https://api.bithuman.ai</code></li>
+      <li><span>Authentication</span><span><code>api-secret: $BITHUMAN_API_SECRET</code> header · <a href="/api/authentication">Authentication</a></span></li>
+      <li><span>OpenAPI 3.1</span><span><a href="/api/openapi.yaml" download>openapi.yaml</a> for Postman, Insomnia or a generated client</span></li>
+    </ul>
+    <p class="ari-note">{api.count} operations. Each one is documented on its resource page with curl, Python and Node samples. Endpoints outside the OpenAPI spec have their own pages: {HAND.map(([t, h], i) => <Fragment>{i > 0 && " · "}<a href={h}>{t}</a></Fragment>)}.</p>
 
-    <div class="ar-main" data-pagefind-weight="0.5" data-pagefind-filter={`section:${SECTIONS.api.label}`}>
-      <nav class="ar-crumb" aria-label="Breadcrumb" data-pagefind-ignore><a href="/">Docs</a> <span aria-hidden="true">/</span> <a href="/api">API</a> <span aria-hidden="true">/</span> <span>Reference</span></nav>
-      <h1>API reference</h1>
-      <p class="ar-lede">{description}</p>
-      <ul class="ar-facts" role="list">
-        <li><span>Base URL</span><code>https://api.bithuman.ai</code></li>
-        <li><span>Authentication</span><span><code>api-secret: $BITHUMAN_API_SECRET</code> header · <a href="/api/authentication">Authentication</a></span></li>
-        <li><span>OpenAPI 3.1</span><span><a href="/api/openapi.yaml" download>openapi.yaml</a> for Postman, Insomnia or a generated client</span></li>
-      </ul>
-      <details class="ar-toc-m" data-pagefind-ignore>
-        <summary>Jump to an endpoint <span class="ar-count">{api.count}</span></summary>
-        <ApiToc tags={api.tags} label="Endpoints menu" />
-      </details>
-      <p class="ar-note">Every sample runs as pasted after <code>export BITHUMAN_API_SECRET=…</code>; pick curl, Python or Node once and every sample follows. The account endpoints under <code>/v2</code> and knowledge have their own pages: {GUIDES.map(([t, h], i) => <Fragment>{i > 0 && " · "}<a href={h}>{t}</a></Fragment>)}.</p>
-
-      {api.tags.map((t) => (
-        <section class="ar-tag" aria-labelledby={`tag/${t.slug}`}>
-          <h2 id={`tag/${t.slug}`}>{t.name}</h2>
-          {t.description && <div class="ar-desc" set:html={mdHtml(t.description)} />}
-          {t.operations.map((op) => (
-            <section class="ar-op" aria-labelledby={op.id}>
-              <h3 id={op.id}><span class={`ar-m ar-m-${op.method.toLowerCase()}`}>{op.method}</span> <code class="ar-path">{op.path}</code></h3>
-              <p class="ar-sum">{op.summary}{op.keyless && <span class="chip ar-chip">No API secret needed</span>}{op.deprecated && <span class="chip ar-chip">Deprecated</span>}</p>
-              <div class="ar-grid">
-                <div class="ar-doc">
-                  {op.description && <div class="ar-desc" set:html={mdHtml(op.description)} />}
-                  {lead(op).length > 0 && (
-                    <Fragment>
-                      <p class="ar-h">Parameters</p>
-                      <table class="ar-table">
-                        <thead><tr><th scope="col">Name</th><th scope="col">In</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
-                        <tbody>{lead(op).map((p) => (
-                          <tr><td><code>{p.where === "query" ? `${p.name}=` : p.name}</code>{p.required && <span class="ar-req">required</span>}</td><td>{p.where}</td><td>{p.type}</td><td set:html={mdHtml(p.description)} /></tr>
-                        ))}</tbody>
-                      </table>
-                    </Fragment>
-                  )}
-                  {op.body.length > 0 && (
-                    <Fragment>
-                      <p class="ar-h">Request body <span class="ar-ct">{op.bodyType}</span></p>
-                      <table class="ar-table">
-                        <thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
-                        <tbody>{op.body.map((f) => (
-                          <tr><td><code>{f.name}</code>{f.required && <span class="ar-req">required</span>}</td><td>{f.type}</td><td set:html={mdHtml(f.description)} /></tr>
-                        ))}</tbody>
-                      </table>
-                    </Fragment>
-                  )}
-                  <p class="ar-h">Responses</p>
-                  <ul class="ar-resp" role="list">
-                    {op.responses.map((r) => (
-                      <li><span class={`ar-s ar-s-${statusKind(r.status)}`}>{r.status}</span><div set:html={mdHtml(r.description)} /></li>
-                    ))}
-                  </ul>
-                </div>
-                <div class="ar-code">
-                  {op.samples.length > 1 ? (
-                    <div class="md-tabs" data-md-tabs data-tabs data-group="lang">
-                      <div class="mdt-bar" role="tablist" aria-label="Code examples">
-                        {op.samples.map((s, k) => (
-                          <button type="button" role="tab" class="mdt-tab" id={`${op.id}-t${k}`} aria-controls={`${op.id}-t${k}-p`} aria-selected={k === 0 ? "true" : "false"} tabindex={k === 0 ? 0 : -1} data-tab={s.label}>{s.label}</button>
-                        ))}
-                      </div>
-                      {op.samples.map((s, k) => (
-                        <div class:list={["mdt-panel", { active: k === 0 }]} role="tabpanel" id={`${op.id}-t${k}-p`} aria-labelledby={`${op.id}-t${k}`}>
-                          <p class="mdt-label">{s.label}</p>
-                          <Code code={s.code} lang={s.lang as any} theme={codeTheme as any} />
-                        </div>
-                      ))}
-                    </div>
-                  ) : op.samples.map((s) => <Code code={s.code} lang={s.lang as any} theme={codeTheme as any} />)}
-                  {op.responses.filter((r) => r.example).slice(0, 1).map((r) => (
-                    <div class="ar-example">
-                      <p class="ar-h">Response <span class={`ar-s ar-s-${statusKind(r.status)}`}>{r.status}</span></p>
-                      <Code code={r.example!} lang="json" theme={codeTheme as any} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p class="ar-id">Operation ID <code>{op.id}</code> · <a href={`#${op.id}`}>Link</a></p>
-            </section>
-          ))}
-        </section>
-      ))}
-    </div>
+    {api.tags.map((t) => (
+      <section class="ari-tag" aria-labelledby={`tag/${t.slug}`}>
+        <h2 id={`tag/${t.slug}`}>{t.name}</h2>
+        <table class="ari-table">
+          <thead><tr><th scope="col">Method</th><th scope="col">Path</th><th scope="col">Operation</th></tr></thead>
+          <tbody>{t.operations.map((op) => (
+            <tr id={op.id}>
+              <td><span class={`ep-m ep-m-${op.method.toLowerCase()}`}>{op.method}</span></td>
+              <td><code class="ari-path">{op.path}</code></td>
+              <td><a href={href(op.id)}>{op.summary}</a>{op.deprecated && <span class="chip ari-chip">Deprecated</span>}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </section>
+    ))}
   </div>
+  <script is:inline data-jump={JSON.stringify(jump)}>(()=>{var m=JSON.parse(document.currentScript.dataset.jump),g=()=>{var h=decodeURIComponent(location.hash.slice(1)),t=m[h.split("/").pop()];t&&location.replace(t)};g();addEventListener("hashchange",g)})()</script>
 </Base>
 
-<script>
-  import "../../scripts/tabs-sync";
-</script>
-
-<style is:global>
-  .ar { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s-10); max-width: var(--container-wide, 1400px); margin: 0 auto; padding: 0 var(--s-6); }
-  .ar-side { position: sticky; top: calc(var(--nav-h) + var(--s-4)); align-self: start; max-height: calc(100vh - var(--nav-h) - var(--s-8)); overflow-y: auto; padding: var(--s-6) 0 var(--s-8); font-size: var(--ft-sm); }
-  .ar-side-h, .ar-toc-m > summary { display: flex; align-items: center; gap: var(--s-2); margin: 0 0 var(--s-3); font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
-  .ar-count { padding: 0 6px; border-radius: var(--r-pill); background: var(--color-surface-2); color: var(--color-text-secondary); }
-  .ar-side .ar-toc-group + .ar-toc-group, .ar-toc-m .ar-toc-group + .ar-toc-group { margin-top: var(--s-4); }
-  .ar .ar-toc-tag { display: block; margin-bottom: var(--s-1); font-weight: var(--fw-medium); color: var(--color-text); }
-  .ar .ar-toc ul { list-style: none; margin: 0; padding: 0; }
-  .ar .ar-toc li a { display: flex; align-items: baseline; gap: var(--s-2); padding: 3px 0; color: var(--color-text-secondary); line-height: var(--lh-snug); }
-  .ar .ar-toc li a:hover { color: var(--color-text); }
-  .ar .ar-toc .ar-m { flex: none; width: 2.6rem; font-size: var(--fs-12); }
-  .ar-toc-m { display: none; margin-top: var(--s-4); padding: var(--s-3) var(--s-4); border: 1px solid var(--color-border); border-radius: var(--r-lg); font-size: var(--ft-sm); }
-  .ar-toc-m > summary { margin: 0; cursor: pointer; list-style: none; }
-  .ar-toc-m > summary::-webkit-details-marker { display: none; }
-  .ar-toc-m[open] > summary { margin-bottom: var(--s-3); }
-
-  .ar-main { min-width: 0; padding: var(--s-6) 0 var(--s-12); }
-  .ar-crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); }
-  .ar-crumb a { color: var(--color-text-tertiary); }
-  .ar-main h1 { margin-top: var(--s-3); font-size: var(--fh-2xl); letter-spacing: -0.02em; }
-  .ar-lede { margin-top: var(--s-3); max-width: 70ch; font-size: var(--ft-lg); color: var(--color-text-secondary); }
-  .ar-facts { display: grid; gap: var(--s-2); margin: var(--s-5) 0 0; padding: var(--s-4) var(--s-5); list-style: none; border: 1px solid var(--color-border); border-radius: var(--r-lg); background: var(--color-surface-2); font-size: var(--ft-sm); }
-  .ar-facts li { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--s-3); }
-  .ar-facts li > span:first-child { color: var(--color-text-tertiary); }
-  .ar-note { margin-top: var(--s-4); max-width: 80ch; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .ar-main code { font-family: var(--font-mono); font-size: var(--fs-14); overflow-wrap: anywhere; }
-  .ar-main a { color: var(--color-primary); font-weight: var(--fw-medium); }
-  /* A link inside running text is underlined, not told apart by colour alone. */
-  .ar-desc a, .ar-note a, .ar-table a, .ar-resp a, .ar-facts a { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--color-primary) 45%, transparent); text-underline-offset: 2px; }
-
-  .ar-tag { margin-top: var(--s-12); }
-  .ar-tag > h2 { padding-top: var(--s-4); border-top: 1px solid var(--color-border); font-size: var(--fh-lg); scroll-margin-top: calc(var(--nav-h) + var(--s-4)); }
-  .ar-desc { margin-top: var(--s-2); max-width: 75ch; font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .ar-desc p { margin: 0 0 var(--s-2); }
-  .ar-desc ul { margin: 0 0 var(--s-2); padding-left: 1.2rem; }
-  .ar-desc table { width: 100%; margin: var(--s-2) 0; border-collapse: collapse; font-size: var(--ft-xs); }
-  .ar-desc th, .ar-desc td { padding: 4px 8px 4px 0; border-bottom: 1px solid var(--color-border); text-align: left; vertical-align: top; }
-  .ar-desc pre { margin: var(--s-2) 0; padding: var(--s-3); overflow-x: auto; border-radius: var(--r-md); background: var(--color-code-bg); color: var(--color-code-text); font-size: var(--ft-xs); }
-
-  .ar-op { margin-top: var(--s-10); }
-  .ar-op > h3 { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); font-size: var(--ft-lg); scroll-margin-top: calc(var(--nav-h) + var(--s-4)); }
-  .ar-path { font-size: var(--ft-md) !important; font-weight: var(--fw-medium); color: var(--color-text); }
-  .ar-sum { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); margin-top: var(--s-1); font-weight: var(--fw-medium); color: var(--color-text); }
-  .ar-chip { font-weight: var(--fw-regular); }
-  .ar-m { display: inline-block; padding: 1px 7px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: var(--fs-12); font-weight: var(--fw-regular); letter-spacing: 0.02em; text-align: center; background: var(--color-surface-3); color: var(--color-text); }
-  .ar-m-get { background: color-mix(in srgb, var(--green-500) 16%, transparent); }
-  .ar-m-post { background: color-mix(in srgb, var(--blue-500) 16%, transparent); }
-  .ar-m-put, .ar-m-patch { background: color-mix(in srgb, var(--amber-500) 20%, transparent); }
-  .ar-m-delete { background: color-mix(in srgb, var(--red-500) 16%, transparent); }
-  .ar-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-6); margin-top: var(--s-3); align-items: start; }
-  .ar-doc, .ar-code { min-width: 0; }
-  .ar-code { position: sticky; top: calc(var(--nav-h) + var(--s-4)); display: grid; gap: var(--s-3); }
-  .ar-code pre { margin: 0; padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); border: 1px solid var(--color-border); font-size: var(--ft-xs); max-height: 420px; overflow: auto; }
-  .ar-code .md-tabs { margin: 0; }
-  .ar-h { display: flex; align-items: center; gap: var(--s-2); margin: var(--s-4) 0 var(--s-2); font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
-  .ar-example .ar-h { margin-top: 0; }
-  .ar-ct { text-transform: none; letter-spacing: 0; font-family: var(--font-mono); color: var(--color-text-secondary); }
-  .ar-table { width: 100%; border-collapse: collapse; font-size: var(--ft-sm); }
-  .ar-table th { padding: 0 var(--s-3) var(--s-1) 0; border-bottom: 1px solid var(--color-border-strong); text-align: left; font-size: var(--ft-xs); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
-  .ar-table td { padding: var(--s-2) var(--s-3) var(--s-2) 0; border-bottom: 1px solid var(--color-border); vertical-align: top; color: var(--color-text-secondary); }
-  .ar-table td:first-child { white-space: nowrap; color: var(--color-text); }
-  .ar-table td p { margin: 0; }
-  .ar-req { display: block; font-size: var(--ft-xs); color: var(--color-primary); }
-  .ar-resp { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-2); font-size: var(--ft-sm); color: var(--color-text-secondary); }
-  .ar-resp li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: var(--s-3); align-items: start; }
-  .ar-resp li p { margin: 0; }
-  .ar-s { display: inline-block; padding: 1px 6px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: var(--ft-xs); font-weight: var(--fw-regular); text-align: center; background: var(--color-surface-3); color: var(--color-text); }
-  .ar-s-ok { background: color-mix(in srgb, var(--green-500) 16%, transparent); }
-  .ar-s-client { background: color-mix(in srgb, var(--amber-500) 20%, transparent); }
-  .ar-s-server { background: color-mix(in srgb, var(--red-500) 16%, transparent); }
-  .ar-id { margin-top: var(--s-3); font-size: var(--ft-xs); color: var(--color-text-tertiary); }
-
-  @media (max-width: 1279px) { .ar-grid { grid-template-columns: minmax(0, 1fr); } .ar-code { position: static; } }
-  @media (max-width: 1023px) {
-    .ar { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 var(--s-4); }
-    .ar-side { display: none; }
-    .ar-toc-m { display: block; }
-    .ar-facts li { grid-template-columns: minmax(0, 1fr); gap: 0; }
-    .ar-table, .ar-table tbody, .ar-table tr, .ar-table td { display: block; }
-    .ar-table thead { display: none; }
-    .ar-table tr { padding: var(--s-2) 0; border-bottom: 1px solid var(--color-border); }
-    .ar-table td { padding: 2px 0; border: 0; }
+<style>
+  .ari { padding-block: var(--s-8) var(--s-12); max-width: 960px; }
+  .ari h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .ari-lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
+  .ari-facts { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; gap: var(--s-2); font-size: var(--ft-sm); }
+  .ari-facts li { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: var(--s-3); }
+  .ari-facts li > span:first-child { color: var(--color-text-tertiary); }
+  .ari-note { margin-top: var(--s-4); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .ari-tag { margin-top: var(--s-10); }
+  .ari-tag h2 { font-size: var(--fh-md, 1.25rem); scroll-margin-top: var(--nav-h); }
+  .ari-table { width: 100%; margin-top: var(--s-3); border-collapse: collapse; font-size: var(--ft-sm); }
+  .ari-table th { text-align: left; font-weight: var(--fw-medium); color: var(--color-text-tertiary); padding: var(--s-2) var(--s-3) var(--s-2) 0; border-bottom: 1px solid var(--color-border); }
+  .ari-table td { padding: var(--s-2) var(--s-3) var(--s-2) 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  .ari-table tr { scroll-margin-top: calc(var(--nav-h) + var(--s-4)); }
+  .ari-table tr:target { background: color-mix(in srgb, var(--color-primary) 8%, transparent); }
+  .ari-table th:first-child, .ari-table td:first-child { width: 5.5em; }
+  .ari-path { font-size: var(--ft-xs); overflow-wrap: anywhere; background: none; border: 0; padding: 0; }
+  .ari-chip { margin-left: var(--s-2); }
+  @media (max-width: 560px) {
+    .ari h1 { font-size: var(--fh-xl); }
+    .ari-facts li { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .ari-table thead { display: none; }
+    .ari-table tr { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-3); padding: var(--s-2) 0; border-bottom: 1px solid var(--color-border); }
+    .ari-table td { border: 0; padding: 0; width: auto !important; }
+    .ari-table td:last-child { grid-column: 1 / -1; margin-top: var(--s-1); }
   }
 </style>

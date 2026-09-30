@@ -36,24 +36,22 @@ transient: retry after `Retry-After` seconds when present, otherwise back off.
 
 ## HTTP status codes
 
-| Status | Meaning | Common cause |
+| Status | Meaning | [Codes](#error-codes) |
 |---|---|---|
-| `200` | Success | Request completed. |
-| `302` | Redirect | Not an error — [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) redirects to the artifact URL by default. |
-| `400` | Bad Request | Malformed JSON, missing required parameter (`MISSING_PARAM`), failed validation (`VALIDATION_ERROR`), or a request that can never succeed as posed (`MODEL_NOT_DOWNLOADABLE`). |
-| `401` | Unauthorized | Invalid `api-secret` (`UNAUTHORIZED`) or absent `api-secret` header (`MISSING_AUTH`). |
-| `402` | Payment Required | Not enough credits (`INSUFFICIENT_BALANCE`): top up at the error's `topup_url`. |
-| `403` | Forbidden | The credential is known but refused here: a [plan limit](#plan-and-credit-refusals) (`PLAN_REQUIRED`, `AGENT_LIMIT_REACHED`, `CONCURRENCY_LIMIT_REACHED`), a revoked secret on a token endpoint (`RUNTIME_SUSPENDED`), a session's length (`SESSION_DURATION_LIMIT`), or a secret's value read with an API secret (`SECRET_REVEAL_CONSOLE_ONLY`). |
-| `404` | Not Found | Agent, resource, or endpoint doesn't exist — or a model artifact not published to the download store yet (`MODEL_ARTIFACT_NOT_READY`, retryable). |
-| `410` | Gone | The agent was deleted (`AGENT_DELETED`, `AGENT_PURGED`). |
-| `409` | Conflict | The request is valid but the agent's **state** doesn't allow it yet (`MODEL_NOT_GENERATED`, `AGENT_NOT_READY`) — a state change (generate/add the model, wait for `ready`) fixes it. |
-| `413` | Payload Too Large | File exceeds the size limit. |
-| `415` | Unsupported Media Type | File type not supported. |
-| `422` | Unprocessable Entity | The request is well-formed but semantically incompatible with the target model (`MODEL_SUBJECT_MISMATCH`, `MODEL_PREREQUISITE_MISSING`) — change the input or asset, not the request syntax. |
-| `429` | Rate Limited | Too many requests — see [rate limits](/api/rate-limits). |
-| `500` | Internal Error | Server-side error — retry or contact support. |
-| `502` / `504` | Bad Gateway / Gateway Timeout | Transient. JSON from the API, HTML from the delivery network ([above](#502-and-504-may-not-be-json)). Retry after `Retry-After`. |
-| `503` | Service Unavailable | Temporarily unavailable or at capacity (`SERVICE_UNAVAILABLE`), or a model paused for your account (`MODEL_NOT_YET_AVAILABLE`). Retry after `Retry-After`, with backoff. |
+| `302` | Redirect, not an error | [Model download](/api/agents#download-an-agents-model) redirects to the artifact URL. |
+| `400` | Bad Request | `MISSING_PARAM`, `VALIDATION_ERROR`, `MODEL_NOT_DOWNLOADABLE` |
+| `401` | Unauthorized | `UNAUTHORIZED`, `MISSING_AUTH` |
+| `402` | Payment Required | `INSUFFICIENT_BALANCE` |
+| `403` | Forbidden | [Plan limits](#plan-and-credit-refusals), `RUNTIME_SUSPENDED`, `SESSION_DURATION_LIMIT`, `SECRET_REVEAL_CONSOLE_ONLY` |
+| `404` | Not Found | `NOT_FOUND`, `MODEL_ARTIFACT_NOT_READY` |
+| `409` | Conflict: agent not ready for it | `MODEL_NOT_GENERATED`, `AGENT_NOT_READY` |
+| `410` | Gone | `AGENT_DELETED`, `AGENT_PURGED` |
+| `413` / `415` | File too large / unsupported type | `FILE_TOO_LARGE`, `UNSUPPORTED_TYPE` |
+| `422` | Input doesn't fit the model | `MODEL_SUBJECT_MISMATCH`, `MODEL_PREREQUISITE_MISSING`, `IMAGE_FACE_UNSUITABLE` |
+| `429` | Rate Limited | `RATE_LIMITED` ([rate limits](/api/rate-limits)) |
+| `500` | Internal Error | Retry, or contact support. |
+| `502` / `504` | Bad Gateway / Gateway Timeout | Transient; may be HTML ([above](#502-and-504-may-not-be-json)). Retry after `Retry-After`. |
+| `503` | Service Unavailable | `SERVICE_UNAVAILABLE`, `MODEL_NOT_YET_AVAILABLE`. Retry after `Retry-After`, with backoff. |
 
 ## Error codes
 
@@ -87,7 +85,7 @@ Until 2026-10-12, a Free account's runtime-token and meter responses carry a `pl
 | `NOT_FOUND` | 404 | Returned both when no agent matches the code **and** when an agent has no active session for `/speak` / `/add-context`. Distinguish by the `message` string: `"Agent not found for code: <code>"` vs `"No active rooms found for agent <code>"`. |
 | `VALIDATION_ERROR` | 400 | Body failed schema validation. Include all required fields. |
 | `VIDEO_INPUT_NOT_SUPPORTED` | 400 | [Agent creation](/api/agents#generate-an-agent) with a `video` input. Creation is **image-only** for every model — provide a portrait `image`; bitHuman generates the 10-second identity video internally so it loops without a seam (first frame == last frame). Nothing is charged; never send `video`. |
-| `MISSING_PARAM` | 400 | A required parameter was not provided. |
+| `MISSING_PARAM` | 400 | A required parameter was not provided, or an agent update has nothing to change. |
 | `IMAGE_FACE_UNSUITABLE` | 422 | Essence 2 creation or add: the face is too small, missing, or one of several similar faces. Upload a closer waist-up or head-and-shoulders photo of one person. Nothing is charged. |
 | `AGENT_DELETED` / `AGENT_PURGED` | 410 | The agent was deleted; model download, gestures and talking video refuse it. Create a new agent. |
 
@@ -155,3 +153,7 @@ else:
 ```
 
 Retry `429` and `5xx` with exponential backoff and jitter ([rate limits](/api/rate-limits)). For a [plan or credit refusal](#plan-and-credit-refusals), follow its link field; fix the request for any other `4xx`.
+
+```endpoint
+getReadiness
+```

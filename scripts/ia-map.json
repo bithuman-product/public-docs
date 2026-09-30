@@ -232,7 +232,13 @@
    "action": "move"
   }
  ],
- "moves_2026_10": [],
+ "moves_2026_10": [
+  {
+   "old": "/api/cloud-avatar",
+   "new": "/platforms/livekit/cloud-avatar",
+   "action": "move"
+  }
+ ],
  "repoint": [
   {
    "source": "/macos",
