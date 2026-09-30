@@ -4,12 +4,14 @@
 // its id (the page path), URL, title, section, description, headings and the
 // twin's markdown, so `search` ranks and `fetch` returns exactly what /<page>.md
 // serves. The section and search weight are read off the page's HTML (the same
-// data-pagefind-* attributes site search uses); the instructions an agent gets
-// on connect are the "Instructions for AI agents" block of dist/llms.txt.
+// data-pagefind-* attributes site search uses). The instructions an agent gets
+// on connect are INSTRUCTIONS in src/lib/docs-mcp.mjs: what the server is, and
+// no agent rules (those stay in llms.txt and on the pages).
 //
 //   node scripts/gen-docs-index.mjs [--dist dist]
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
+import { INSTRUCTIONS as instructions } from "../src/lib/docs-mcp.mjs";
 
 const ROOT = join(import.meta.dirname, "..");
 const args = process.argv.slice(2);
@@ -67,13 +69,6 @@ for (const f of walk(DIST).sort()) {
   docs.push({ id, url: head[2], title: head[1], ...(searchTitle && searchTitle !== head[1] ? { searchTitle } : {}), section, ...(weight !== 1 ? { weight } : {}), description, headings, ...(OPS_BY_PAGE[id] ? { operations: OPS_BY_PAGE[id] } : {}), markdown: md });
 }
 if (docs.length < 60) { console.error(`gen-docs-index: only ${docs.length} markdown twins in ${DIST}; run astro build first`); process.exit(1); }
-
-const llms = readFileSync(join(DIST, "llms.txt"), "utf8");
-const block = /## Instructions for AI agents\n\n([\s\S]*?)\n\n## /.exec(llms)?.[1];
-if (!block) { console.error("gen-docs-index: dist/llms.txt has no 'Instructions for AI agents' block"); process.exit(1); }
-const instructions =
-  `bitHuman documentation (${SITE}). Use \`search\` to find pages and \`fetch\` to read one as markdown; ` +
-  `the index is ${SITE}/llms.txt.\n\n${block}`;
 
 const out = { generated: new Date().toISOString(), site: SITE, instructions, docs };
 writeFileSync(join(DIST, "docs-mcp-index.json"), JSON.stringify(out));
