@@ -98,7 +98,7 @@ What creation costs is on [pricing](/pricing#creation--one-time-credits); reques
 
 **Essence 2.** The platform generates the identity video from the image, then trains the identity. `ready` serves before it downloads: the downloadable file is published a little later; until then the download endpoint answers a retryable `404 MODEL_ARTIFACT_NOT_READY`.
 
-**Expression 2.** Without a portrait, the platform generates a portrait from your prompt first. It also generates the agent's 10-second idle clip and prepares a voice. An identity that needs more work gets more training, so up to 4 hours is normal. A run that fails is refunded; a completed creation is not, so a second `generate` is a second charge ([failure modes](/api/agents#errors)).
+**Expression 2.** Without a portrait, the platform generates a portrait from your prompt first. It also generates the agent's 10-second idle clip and prepares a voice. An identity that needs more work gets more training, so up to 4 hours is normal. A run that fails is refunded; a completed creation is not, so a second `generate` is a second charge ([failure modes](/api/errors#agent-operations)).
 
 ## Variations
 

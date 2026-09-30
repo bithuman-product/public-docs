@@ -204,3 +204,5 @@ testWebhook
 ```endpoint
 listWebhookDeliveries
 ```
+
+Every webhook operation is also listed in the [API reference index](/api/reference#tag/webhooks).

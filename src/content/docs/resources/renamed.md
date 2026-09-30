@@ -60,4 +60,4 @@ So a current Essence 2 bundle reports `engine: essence2-light`. The model is
 **Essence 2**, requested as `essence-2`: the engine id names the *loader family*,
 not the product, so the value is expected, not a mismatch.
 
-> **Warning** Never send an engine id to the API. `model` takes `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1`; any other value returns [`400 VALIDATION_ERROR`](/api/agents#errors).
+> **Warning** Never send an engine id to the API. `model` takes `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1`; any other value returns [`400 VALIDATION_ERROR`](/api/errors#agent-operations).

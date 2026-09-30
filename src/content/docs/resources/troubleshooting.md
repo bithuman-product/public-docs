@@ -28,7 +28,7 @@ Every platform and recipe page ends with a Troubleshooting table for its own pro
 
 | Task | Its Troubleshooting table |
 |---|---|
-| Create an avatar | [Create an avatar](/build/create-avatar#troubleshooting) · creation errors: [Agents API](/api/agents#errors) |
+| Create an avatar | [Create an avatar](/build/create-avatar#troubleshooting) · creation errors: [Errors](/api/errors#agent-operations) |
 | A voice agent | [Voice agent](#voice-agent) |
 | A companion app | [Companion app](/build/companion-app#troubleshooting) |
 | A kiosk | [Kiosk](/build/kiosk#troubleshooting) |
@@ -71,7 +71,7 @@ The avatar appears, moves while idle, and its lips follow the agent's speech. Fr
 | In a room with several agents, the avatar stays silent for one | the avatar follows the agent that called `AvatarSession.start()` | start the avatar from the agent it should speak for |
 | Creation stays at `lip_sync` for a long time | that is the training step for Essence 2 and Expression 2 (about 2–2.5 hours) | keep polling |
 
-Creation errors and their fixes are on [Agents](/api/agents#errors).
+Creation errors and their fixes are on [Errors](/api/errors#agent-operations).
 
 ### Plan and credit refusals
 
