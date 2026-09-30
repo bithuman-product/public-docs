@@ -41,6 +41,15 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### CLI 2.8.5 — 2026-09-30
+
+- **Fix:** if the startup credential check is lost in transit, or the service answers 5xx or 429, the CLI asks once more before it refuses. A 2xx, 401, 402 or 403 is never repeated.
+- **Fix:** a retried stop is billed once.
+- **Fix:** a 403 names what to do. A plan limit names the plan and links the plans page.
+- On a Mac, the Expression 2 render host checks your API secret and bills its own session. `bithuman run` and `bithuman render` still bill each session once.
+- **Security:** a release build ignores the meter's tuning settings.
+- **Action:** `brew upgrade bithuman-cli`, or re-run the installer.
+
 ### Swift package 2.19.2 · Flutter plugin 2.6.24 — 2026-09-30
 
 - **Security (iPhone, iPad and Mac):** the on-device meter in a release build now ignores its tuning settings, so usage is always billed the way the service defines it. Please update: `.package(url: …, from: "2.19.2")`, or pin `ref: flutter-plugin-v2.6.24` and re-run the plugin's `scripts/bootstrap.sh`.
