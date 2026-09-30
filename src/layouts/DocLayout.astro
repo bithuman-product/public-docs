@@ -74,9 +74,10 @@ const issueUrl = `https://github.com/bithuman-product/public-docs/issues/new?${n
   title: `Docs: ${data.title}`,
   body: `Page: https://docs.bithuman.ai/${currentPath.replace(/^\//, "")}\n\nWhat was missing or wrong:\n`,
 }).toString()}`;
+// The Overview tab's home is the docs home itself, so its pages skip a second "/" crumb.
 const crumbs = [
   { name: "Docs", item: "https://docs.bithuman.ai/" },
-  { name: meta.label, item: `https://docs.bithuman.ai${meta.home}` },
+  ...(meta.home === "/" ? [] : [{ name: meta.label, item: `https://docs.bithuman.ai${meta.home}` }]),
   { name: data.title, item: pageUrl },
 ];
 const jsonLd: Record<string, unknown>[] = [
