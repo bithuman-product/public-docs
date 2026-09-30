@@ -8,6 +8,13 @@
     "/deploy/offline": { "h2": true, "reason": "deploy-mode template (SPEC §5): 6 H2s, allowlisted" },
     "/pricing": { "h2": true, "reason": "SPEC §5 concept: /pricing is allowlisted (Serving, Creation, Talking video, Plans, #offline-licensing word for word, What is not billed, Next); Top-up and Connectivity are H3s with their ids" },
     "/platforms/cli": { "h2": true, "reason": "SPEC §3: Complete example and Expected output stay (cli-sample-output); 6 H2s, allowlisted" },
-    "/platforms/windows": { "h2": true, "reason": "the Windows/Apps lane owns this page and its split (SPEC §3 Apps, §11); it keeps the pre-W3 platform sections until then" }
+    "/platforms/windows": { "h2": true, "reason": "the Windows/Apps lane owns this page and its split (SPEC §3 Apps, §11); it keeps the pre-W3 platform sections until then" },
+    "/examples/android-essence-2": { "h2": true, "reason": "SPEC §1 budgets: example pages are Unchanged (their 10 H2s are the repo walkthrough the example-excerpts gate grades)" },
+    "/examples/android-expression-2": { "h2": true, "reason": "SPEC §1 budgets: example pages are Unchanged (their 10 H2s are the repo walkthrough the example-excerpts gate grades)" },
+    "/examples/ios-essence-2": { "h2": true, "reason": "SPEC §1 budgets: example pages are Unchanged (their 10 H2s are the repo walkthrough the example-excerpts gate grades)" },
+    "/examples/ios-expression-2": { "h2": true, "reason": "SPEC §1 budgets: example pages are Unchanged (their 10 H2s are the repo walkthrough the example-excerpts gate grades)" },
+    "/examples/macos-expression-2": { "h2": true, "reason": "SPEC §1 budgets: example pages are Unchanged (their 10 H2s are the repo walkthrough the example-excerpts gate grades)" },
+    "/performance": { "paragraph": true, "reason": "the long paragraph is generated inside a FLOORS block, which stays byte-identical in place (SPEC §0 Performance, D7)" },
+    "/performance/method": { "paragraph": true, "reason": "the long paragraph is the generated FLOORS:METHOD block, byte-identical in place (SPEC §0, D7)" }
   }
 }

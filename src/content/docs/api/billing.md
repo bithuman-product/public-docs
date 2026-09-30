@@ -161,7 +161,9 @@ curl "https://api.bithuman.ai/v1/usage?limit=50&start=2026-06-01T00:00:00Z" -H "
 
 The events are in `data`; `pagination` carries `limit`, `offset`, `total` and `has_more`.
 
-Each row carries `source` (how the charge happened: `chat`, `cloud`, `self_hosted`, `browser`, `offline_render`, `offline_pack`, `realtime_voice`, `video_api`, `creation`, `generation`, `refund`, `credit` or `other`), `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants: read it (or `source`) rather than parsing `pricing_code`, whose spellings never change. `activity_type` is deprecated: it leaves the response on 2026-12-26; read `source` instead.
+Each row carries `source` (how the charge happened: `chat`, `cloud`, `self_hosted`, `browser`, `offline_render`, `offline_pack`, `realtime_voice`, `video_api`, `creation`, `generation`, `refund`, `credit` or `other`), `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`.
+
+`credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants: read it (or `source`) rather than parsing `pricing_code`, whose spellings never change. `activity_type` is deprecated: it leaves the response on 2026-12-26; read `source` instead.
 
 A [talking-video render](/api/video) charges its maximum up front and refunds the difference, so every render, successful or not, writes a charge row and a `credit_refund_…` row. Only a refund equal to the whole charge means the render failed.
 

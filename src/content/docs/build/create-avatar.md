@@ -9,7 +9,7 @@ llms: build
 next: ["/build/persona", "/build/voices", "/models"]
 ---
 
-An avatar is a face, a voice and a personality, packaged as one agent with a short code. Use a [sample avatar](/examples#ready-made-avatars) to start, or create your own from one portrait.
+An avatar is a face, a voice and a personality, packaged as one agent with a short code. Use a [sample avatar](/examples/avatars) to start, or create your own from one portrait.
 
 ```diagram
 creation

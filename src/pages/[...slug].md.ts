@@ -4,15 +4,13 @@ import { twin, SITE } from "../lib/markdown-twin";
 import { hubMeta } from "../config/hubs";
 import { GROUP_ORDER, contactSalesUrl, type SectionId } from "../config/nav";
 import { PLATFORMS, PLATFORM_PAGES, QUICKSTART, firstFrame } from "../data/platforms";
-import { HERO, START_BUILDING, DEPLOYMENTS, CPU_NOTE, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
-import { PERF_BAND } from "../data/perf-band";
-import { perfCell, perfRow, PERF_MODELS } from "../lib/perf";
+import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
+import { headlineData } from "../lib/perf-headline";
 import versions from "../data/versions.json";
 import { apiSpec } from "../lib/openapi";
 import { apiPages, twinPills } from "../lib/endpoint-block";
 import { explorerClaim } from "../lib/doc-blocks";
 import headline from "../partials/performance-headline.md?raw";
-import { resolvedHighlights } from "../lib/highlights";
 
 // /<page>.md — every docs page as clean markdown, for AI agents and for the
 // "Copy page" button. Content pages serve their own source; the section hubs
@@ -123,19 +121,17 @@ export const GET: APIRoute = async ({ props }) => {
     const mdUrl = (href: string) => { const [path, hash] = href.split("#"); return `${SITE}${path}.md${hash ? `#${hash}` : ""}`; };
     const cards = (xs: { title: string; line: string; href: string; badge?: string; note?: string }[]) =>
       xs.map((c) => `- [${c.title}](${mdUrl(c.href)})${c.badge ? ` (${c.badge})` : ""}: ${c.line}${c.note ? ` ${c.note}` : ""}`).join("\n");
+    const speed = (title: string) => {
+      const row = (headlineData() ?? []).find((r) => r.model === title);
+      return row ? ` ${row.cells.map((c) => `${c.platform} ${c.multiple}`).join(" · ")} real time.` : "";
+    };
     return md(twin("bitHuman docs", "/", hubMeta("").description,
-      `# ${HERO.title}\n\n${HERO.line}\n\nQuickstart: ${SITE}/start.md · API reference: ${SITE}/api/reference.md\n\n` +
-      `## Start building\n\n${cards(START_BUILDING)}\n\nOne command per path: ${SITE}/start.md#choose-your-platform\n\n` +
-      `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n${CPU_NOTE.line}: [${CPU_NOTE.title}](${mdUrl(CPU_NOTE.href)}).\n\n` +
-      `## Runs everywhere\n\nMeasured times real time (seconds of avatar video rendered per second; 1.0× or more holds a live conversation). Every configuration and the method: ${SITE}/performance.md\n\n` +
-      PERF_BAND.map((f) => {
-        const x = (id: string) => PERF_MODELS.map((m) => `${m.name} ${perfCell(id, m.id)?.x ?? "—"}`).join(", ");
-        return `- [${f.title}](${mdUrl(f.href)}) (${perfRow(f.row).hardware}, ${f.where}): ${x(f.row)}${f.held ? `; held 10 min: ${x(f.held)}` : ""}`;
-      }).join("\n") + "\n\n" +
-      `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}`).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md\n\n` +
-      `## Build\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
-      `## What's new\n\n${resolvedHighlights().slice(0, 3).map((h) => `- [${h.title}](${mdUrl(h.href)}) (${h.entry.heading}): ${h.line}`).join("\n")}\n\nEvery release: ${SITE}/changelog.md · RSS: ${SITE}/changelog.xml\n\n` +
-      `## Sections\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) ([estimate](${SITE}/pricing/estimate.md)) · [Resources](${SITE}/resources.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
+      `${LANDING.line}\n\nQuickstart: ${SITE}/start.md · Get your API secret: https://www.bithuman.ai/developer/api-keys\n\n` +
+      `## Platforms\n\n${cards(START_BUILDING)}\n\n` +
+      `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}${speed(m.title)}`).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md\n\n` +
+      `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n` +
+      `## Start building\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
+      `## Sections\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) ([estimate](${SITE}/pricing/estimate.md)) · [Resources](${SITE}/resources.md) · [Changelog](${SITE}/changelog.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }
   if (hub === "start") {
     let body = `## Choose your platform\n\n${pathTable()}\n## Pick your platform and run it\n\nEach block runs as pasted after \`export BITHUMAN_API_SECRET=…\`.\n${quickstartMd()}`;

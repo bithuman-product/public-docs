@@ -5,9 +5,8 @@
 // Every card is one link and one short line. Longer text belongs on the page
 // the card links to. No frame rate, multiple or price is typed here: speed comes
 // from the generated headline (src/lib/perf-headline.ts), prices from /pricing.
-import { OFFLINE_LICENSE_SENTENCE, OFFLINE_LICENSE_TERMS } from "./offline";
 import { PLATFORM_PAGES } from "./platforms";
-import { DEPLOYMENTS as MODES, CPU_ONLY } from "./deployments";
+import { DEPLOYMENTS as MODES } from "./deployments";
 
 export interface HomeCard {
   title: string;
@@ -23,7 +22,14 @@ export interface HomeCard {
   wide?: boolean;
 }
 
-/** The promise under the H1 (docs spec §1.1). */
+/** The landing's head (docs v2 SPEC §6): the H1 names the site, one sentence
+ *  under it opens with the brand line (owner, 2026-09-30: "AI with character."). */
+export const LANDING = {
+  title: "bitHuman docs",
+  line: "AI with character. Real-time talking avatars from one portrait, rendered on the device or streamed from the bitHuman cloud.",
+};
+
+/** The product promise (the site JSON-LD description). */
 export const HERO = {
   title: "Real-time talking avatars that render on the device",
   line: "Turn one portrait into a lip-synced avatar. Render it on iPhone, iPad, Android, Mac, a Linux PC with no GPU or in a WebGPU browser, or stream it from the bitHuman cloud.",
@@ -32,16 +38,10 @@ export const HERO = {
 /** "Start building": one card per platform page. */
 export const START_BUILDING: HomeCard[] = PLATFORM_PAGES.map((p) => ({ title: p.title, line: p.line, href: p.href, icon: p.icon }));
 
-/** "Where it runs": the four deployment modes, each to its own page. The
- *  offline card quotes the approved sentence and spans the row. */
-export const DEPLOYMENTS: HomeCard[] = MODES.map((d) =>
-  d.id === "offline"
-    ? { title: d.name, line: OFFLINE_LICENSE_SENTENCE, note: OFFLINE_LICENSE_TERMS, href: d.href, icon: d.icon, badge: "Business & Enterprise", wide: true }
-    : { title: d.name, line: d.line, href: d.href, icon: d.icon });
-
-/** The note under the modes: CPU only (no GPU) is Your servers on a Linux PC
- *  with no GPU, not a fifth mode. */
-export const CPU_NOTE = { line: CPU_ONLY.line.replace(/\.$/, ""), title: CPU_ONLY.name, href: CPU_ONLY.href };
+/** "Where it runs": the four deployment modes, each to its own page, with the
+ *  short line from src/data/deployments.ts (docs v2 SPEC §6: the offline tile
+ *  uses the short line; the approved offline copy stays on the pages it links). */
+export const DEPLOYMENTS: HomeCard[] = MODES.map((d) => ({ title: d.name, line: d.line, href: d.href, icon: d.icon }));
 
 export interface ModelCard {
   title: string;
@@ -71,15 +71,4 @@ export const GUIDES: { title: string; line: string; href: string; icon: string }
   { title: "Voices", line: "Choose a voice, or bring your own provider.", href: "/build/voices", icon: "wave" },
   { title: "Claude & Cursor (MCP)", line: "Drive bitHuman from an AI assistant.", href: "/build/mcp", icon: "code" },
   { title: "Example gallery", line: "Complete apps to clone and run.", href: "/examples", icon: "grid" },
-];
-
-/** The resource row at the foot of the page. */
-export const RESOURCES: { title: string; href: string; icon: string }[] = [
-  { title: "API reference", href: "/api/reference", icon: "code" },
-  { title: "Pricing and credits", href: "/pricing", icon: "list" },
-  { title: "Downloads & versions", href: "/downloads", icon: "file" },
-  { title: "Changelog", href: "/changelog", icon: "list" },
-  { title: "FAQ", href: "/resources/faq", icon: "chat" },
-  { title: "For AI agents: llms.txt, MCP, skill", href: "/resources/agents", icon: "code" },
-  { title: "Support & community", href: "/support", icon: "chat" },
 ];

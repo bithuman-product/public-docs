@@ -119,7 +119,9 @@ curl -X POST "https://api.bithuman.ai/v1/runtime-sessions/$SESSION_ID/end" \
 ```
 
 Billing stops at the end call: the session is billed its active time up to that moment, and
-nothing after. Its concurrent-session slot frees at once. When `ended` is `true`, the avatar
+nothing after. Its concurrent-session slot frees at once.
+
+When `ended` is `true`, the avatar
 has left your room. When it is `false`, `note` says when it leaves: within about a minute, or,
 for an `essence-1` avatar, when you remove it or the room closes. Deleting the room removes it
 at once. Your LiveKit room is never deleted. Calling it again returns the same answer and

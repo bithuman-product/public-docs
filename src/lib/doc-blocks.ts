@@ -16,6 +16,8 @@
 //   ```credit-calculator     credits and dollars a month for a usage pattern (/pricing)
 //   ```app-budget            what an avatar costs inside an app, per mode (/pricing);
 //                            `example` for the one-user worked example alone
+//   ```cards                 hub cards, one per line: "Title | /href | one line" (docs v2
+//                            SPEC §2 Card); the twin gets one link line each
 //   ```partial               a shared passage from src/partials/<name>.md (the Swift
 //                            install and credential text iOS and macOS both carry)
 //
@@ -43,10 +45,10 @@ import { endpointBlock } from "./endpoint-block.ts";
 
 export type Mode = "page" | "twin";
 export const BLOCK_LANGS = new Set(["perf", "why-on-device", "model-matrix", "model-cards", "deploy-matrix", "dataflow", "price", "session-caps", "partial", "perf-explorer", "credit-calculator", "app-budget",
-  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected", "highlights", "changelog-filter", "endpoint"]);
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "expected", "highlights", "changelog-filter", "endpoint", "cards"]);
 /** Blocks drawn as HTML on the page (the rest become markdown). */
 export const HTML_BLOCKS = new Set(["why-on-device", "model-cards", "deploy-matrix", "perf-explorer", "credit-calculator",
-  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "highlights", "changelog-filter"]);
+  "figure", "example-gallery", "github-examples", "diagram", "dataflow-explorer", "highlights", "changelog-filter", "cards"]);
 /** Blocks whose body is markdown the page draws inside a wrapper (the twin
  *  keeps the markdown under a label). Written with four backticks when the
  *  body holds a fence of its own. */
@@ -434,6 +436,20 @@ function changelogFilter(mode: Mode): string {
     `</div><p class="cl-count" aria-live="polite" hidden></p>`;
 }
 
+/** Hub cards (docs v2 SPEC §2 Card): one per body line, "Title | /href | line". */
+function cardsBlock(arg: string, mode: Mode): string {
+  const cards = arg.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
+    const [title, href, line] = l.split("|").map((x) => x.trim());
+    if (!title || !href?.startsWith("/") || !line) throw new Error(`\`\`\`cards: "${l}" is not "Title | /href | line"`);
+    return { title, href, line };
+  });
+  if (mode === "twin") return cards.map((c) => `- [${c.title}](${c.href}): ${c.line}`).join("\n") + "\n";
+  const cols = cards.length % 3 === 0 ? 3 : 2;
+  return `<ul class="card-grid cols-${cols} hub-cards" role="list">` + cards.map((c) =>
+    `<li><a class="card card-link" href="${esc(c.href)}"><span class="card-body"><span class="card-title"><strong>${esc(c.title)}</strong></span>` +
+    `<span class="card-line">${esc(c.line)}</span></span></a></li>`).join("") + `</ul>`;
+}
+
 // ---------------------------------------------------------------- entry points
 /** The markdown for one block. `page` output may carry inline HTML chips. */
 export function blockMarkdown(lang: string, body: string, mode: Mode): string {
@@ -460,6 +476,7 @@ export function blockMarkdown(lang: string, body: string, mode: Mode): string {
     case "highlights": return highlightsBlock(mode);
     case "changelog-filter": return changelogFilter(mode);
     case "endpoint": return endpointBlock(arg, mode);
+    case "cards": return cardsBlock(arg, mode);
     case "partial": {
       if (!/^[a-z0-9-]+$/.test(arg)) throw new Error(`\`\`\`partial: "${arg}" is not a partial name`);
       return readFileSync(join(process.cwd(), "src/partials", `${arg}.md`), "utf8").replace(/<!--[\s\S]*?-->\n?/g, "");

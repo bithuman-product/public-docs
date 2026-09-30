@@ -282,7 +282,7 @@
   },
   {
    "source": "/showcase",
-   "new": "/examples"
+   "new": "/examples/avatars"
   },
   {
    "source": "/guides/self-host-local",
@@ -724,7 +724,7 @@
   },
   {
    "source": "/use-cases",
-   "destination": "/examples#ready-made-avatars"
+   "destination": "/examples/avatars"
   },
   {
    "source": "/api/voice",
@@ -1001,7 +1001,7 @@
   },
   {
    "source": "/showcase",
-   "destination": "/examples#ready-made-avatars"
+   "destination": "/examples/avatars"
   },
   {
    "source": "/concepts",
