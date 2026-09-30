@@ -63,6 +63,9 @@
 /* A token (a package, a flag, a slug) stays whole; a long path or address may
    still break, but only where a line would otherwise overflow. */
 .prose td a { overflow-wrap: break-word; }
+/* Code in a cell sits a step below the cell text, as monospace reads larger;
+   it also lets a dense table of identifiers fit without breaking one. */
+.prose table td code { font-size: var(--ft-xs); }
 .prose td code:not(.tok) { overflow-wrap: anywhere; }
 .prose td code.tok { white-space: nowrap; overflow-wrap: normal; }
 /* A wide table (four columns or more) tightens its cells and
