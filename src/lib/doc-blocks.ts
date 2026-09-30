@@ -69,7 +69,10 @@ const plans = () => (plansCache ??= readJson("src/data/plans.json"));
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 /** `code` in data strings → <code> in HTML. */
-const inlineHtml = (s: string) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+// A short token (<=24 chars, no spaces) is marked .tok, as rehype-table-labels
+// marks one in a markdown table, so it never breaks mid-word (W8).
+const inlineHtml = (s: string) =>
+  esc(s).replace(/`([^`]+)`/g, (_, t: string) => (t.length <= 24 && !/\s/.test(t) ? `<code class="tok">${t}</code>` : `<code>${t}</code>`));
 const cellMd = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
 const table = (head: string[], rows: string[][]) =>
   `| ${head.map(cellMd).join(" | ")} |\n|${head.map(() => "---").join("|")}|\n` + rows.map((r) => `| ${r.map(cellMd).join(" | ")} |`).join("\n") + "\n";
