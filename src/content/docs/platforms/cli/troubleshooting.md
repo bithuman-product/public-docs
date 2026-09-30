@@ -22,7 +22,7 @@ llms: build
 | `pull <CODE>` fails with `404 NOT_FOUND` | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
 | `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that kind | [add the model](/api/agents#add-a-model-to-an-existing-agent), or pass the `--model` it has |
 | `PUBLIC_BIND_REFUSED`, exit 2 | `--host 0.0.0.0` without consent | use a LAN address, or set `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
-| the installer says `The tarball for … may not be published` | GitHub is rate-limiting downloads from your network (HTTP 429) | wait five minutes, then run the installer again |
-| `bithuman doctor` exits 1 on a fresh install: `Agent worker ✗ not found` | the first `bithuman run` sets up the worker | run `bithuman run` once; the CLI needs no `pip install` |
-| many `Removing initializer` warnings and short bracketed diagnostic lines during an Essence 2 render | diagnostic output from the runtime | expected; the last line gives the frame count |
+| the installer says `The tarball for … may not be published` | GitHub is rate-limiting your network (HTTP 429) | wait five minutes and run it again |
+| `bithuman doctor` exits 1 on a fresh install: `Agent worker ✗ not found` | the first `bithuman run` sets up the worker | run `bithuman run` once |
+| many `Removing initializer` warnings and short bracketed diagnostic lines during an Essence 2 render | runtime diagnostics | expected |
 | the installer names your platform and stops | no binary for this platform | see Platform notes |
