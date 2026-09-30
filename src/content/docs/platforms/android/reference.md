@@ -16,7 +16,7 @@ Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expres
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.8.1` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.9.0` as published on Maven Central. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.essence2.*`.
 
