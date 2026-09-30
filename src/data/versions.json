@@ -46,8 +46,8 @@
       "name": "`ai.bithuman:expression2-android`",
       "platforms": "Android, arm64-v8a",
       "install": "implementation(\"ai.bithuman:expression2-android:{v}\")",
-      "registry": "Maven Central",
-      "registry_url": "https://central.sonatype.com/artifact/ai.bithuman/expression2-android",
+      "registry": "maven.bithuman.ai",
+      "registry_url": "https://maven.bithuman.ai/ai/bithuman/expression2-android/maven-metadata.xml",
       "docs": "/platforms/android"
     },
     {
@@ -55,8 +55,8 @@
       "name": "`ai.bithuman:essence2-android`",
       "platforms": "Android, arm64-v8a",
       "install": "implementation(\"ai.bithuman:essence2-android:{v}\")",
-      "registry": "Maven Central",
-      "registry_url": "https://central.sonatype.com/artifact/ai.bithuman/essence2-android",
+      "registry": "maven.bithuman.ai",
+      "registry_url": "https://maven.bithuman.ai/ai/bithuman/essence2-android/maven-metadata.xml",
       "docs": "/platforms/android"
     },
     {

@@ -30,7 +30,7 @@ On Android the plugin runs the same engines as the [Android SDK](/platforms/andr
 
 | Platform | What the plugin does |
 |---|---|
-| **Android** (arm64-v8a, a physical device) | renders Essence 2 and Expression 2 on the phone; the engines resolve from Maven Central, and the example app builds from a clone |
+| **Android** (arm64-v8a, a physical device) | renders Essence 2 and Expression 2 on the phone; the plugin declares the repository the engines come from, and the example app builds from a clone |
 | **iOS** (16 or newer) | builds from the published tag after the plugin's bootstrap step. For an iPhone or iPad app that renders on the device, use the [Swift package](/platforms/ios) |
 | **macOS** (13 or newer, Apple silicon) | builds from the published tag after the bootstrap step and two Homebrew libraries. For a Mac app, the [Swift package](/platforms/macos) is the documented path |
 
@@ -53,7 +53,7 @@ dependencies:
       ref: flutter-plugin-v2.6.25
 ```
 
-Then run `flutter pub get`. On Android, Gradle resolves `ai.bithuman:essence2-android` and `ai.bithuman:expression2-android` from Maven Central; nothing else to fetch.
+Then run `flutter pub get`. On Android, Gradle resolves `ai.bithuman:essence2-android` and `ai.bithuman:expression2-android` from the repository the plugin declares, so you add no repository yourself.
 
 For an iOS or macOS build, three more steps:
 

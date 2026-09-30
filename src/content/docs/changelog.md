@@ -41,6 +41,11 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### Android packages now come from maven.bithuman.ai — 2026-09-30
+
+- **Changed:** Android packages now come from maven.bithuman.ai, bitHuman's own Maven repository. New versions of `ai.bithuman:essence2-android` and `ai.bithuman:expression2-android` are published there; every earlier version is served there too and stays on Maven Central. The Flutter plugin declares the repository itself.
+- **Action:** add `https://maven.bithuman.ai` to `dependencyResolutionManagement.repositories` in `settings.gradle.kts`, as on the [Android page](/platforms/android#install). A Flutter app needs no change.
+
 ### Swift package 2.19.3 — 2026-09-30
 
 Tag `v2.19.3`.

@@ -200,6 +200,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { findBlocks, withoutBlocks } from "./floors-blocks.mjs";
+import { BITHUMAN_GROUP, artifactUrls } from "./maven-repo.mjs";
 
 const HERE = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const rootArg = process.argv.indexOf("--root");
@@ -999,7 +1000,8 @@ export async function grade(files, registry) {
 // So a refusal or an overload is retried with backoff, under a User-Agent that
 // says who is asking, and Maven is asked on a second Central hostname. If every
 // attempt still fails it is CANNOT CHECK, exit 2, never a pass. A 404 is an
-// answer and is not retried.
+// answer and is not retried. (Since 2026-09-30 ai.bithuman is asked of
+// maven.bithuman.ai alone: scripts/maven-repo.mjs.)
 const UA = "bithuman-public-docs-versions-check (+https://github.com/bithuman-product/public-docs)";
 const RETRY = new Set([403, 408, 429, 500, 502, 503, 504]);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -1033,12 +1035,14 @@ async function get(urls, headers = {}) {
 const liveRegistry = {
   tapTagsSeen: null,
   async latest(a) {
+    // ai.bithuman is served by maven.bithuman.ai, not Central (scripts/maven-repo.mjs):
+    // the pages resolve the group from there only, and Central gets no new versions.
     if (a.kind === "maven") {
       this._maven = this._maven || {};
       if (this._maven[a.id]) return this._maven[a.id];
-      const path = `maven2/ai/bithuman/${a.id}/maven-metadata.xml`;
-      const url = `https://repo1.maven.org/${path}`;
-      const xml = await (await get([url, `https://repo.maven.apache.org/${path}`])).text();
+      const urls = artifactUrls(BITHUMAN_GROUP, a.id).map((b) => `${b}/maven-metadata.xml`);
+      const url = urls[0];
+      const xml = await (await get(urls)).text();
       const release = /<release>([^<]+)<\/release>/.exec(xml)?.[1]?.trim();
       const versions = [...xml.matchAll(/<version>([^<]+)<\/version>/g)].map((m) => m[1].trim());
       if (!release && versions.length === 0) throw new CannotCheck(`${url}: no <release> and no <version>`);
@@ -1122,9 +1126,9 @@ const liveRegistry = {
     if (a.kind === "maven-pom") {
       const v = await this.latest({ id: a.of, kind: "maven" });
       if (!v) throw new CannotCheck(`ai.bithuman:${a.of}: no version to read a POM for`);
-      const path = `maven2/ai/bithuman/${a.of}/${v}/${a.of}-${v}.pom`;
-      const url = `https://repo1.maven.org/${path}`;
-      const xml = await (await get([url, `https://repo.maven.apache.org/${path}`])).text();
+      const urls = artifactUrls(BITHUMAN_GROUP, a.of).map((b) => `${b}/${v}/${a.of}-${v}.pom`);
+      const url = urls[0];
+      const xml = await (await get(urls)).text();
       if (!/<project[\s>]/.test(xml)) throw new CannotCheck(`${url}: not a POM`);
       const deps = new Map();
       for (const d of xml.matchAll(/<dependency>([\s\S]*?)<\/dependency>/g)) {

@@ -17,7 +17,7 @@ Short answers, each with the page that has the detail.
 
 ### Is there an iOS and Android SDK?
 
-Yes. The [Swift package](/platforms/ios) renders Essence 2 and Expression 2 on iPhone, iPad and [Mac](/platforms/macos). `essence2-android` and `expression2-android` on Maven Central render them on arm64 [Android](/platforms/android) phones, and the [Flutter plugin](/platforms/flutter) wraps them for Flutter apps on Android. Measured results for each device are on [Performance](/performance).
+Yes. The [Swift package](/platforms/ios) renders Essence 2 and Expression 2 on iPhone, iPad and [Mac](/platforms/macos). `essence2-android` and `expression2-android`, from bitHuman's Maven repository, render them on arm64 [Android](/platforms/android) phones, and the [Flutter plugin](/platforms/flutter) wraps them for Flutter apps on Android. Measured results for each device are on [Performance](/performance).
 
 ### Does the avatar render on the phone or in the cloud?
 

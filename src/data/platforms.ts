@@ -144,7 +144,7 @@ export const PLATFORM_PAGES: PlatformPage[] = [
   { id: "macos", title: "macOS", href: "/platforms/macos", icon: "laptop", group: "Apps",
     line: "The same Swift package in a Mac app, or from a terminal with swift run.", renders: ["device"], artifacts: ["swift"], time: "5 min" },
   { id: "android", title: "Android", href: "/platforms/android", icon: "android", group: "Apps",
-    line: "One Maven Central dependency. The avatar renders on the phone.", renders: ["device"], artifacts: ["expression2_android", "essence2_android"], time: "15 min" },
+    line: "One Gradle dependency. The avatar renders on the phone.", renders: ["device"], artifacts: ["expression2_android", "essence2_android"], time: "15 min" },
   { id: "flutter", title: "Flutter", href: "/platforms/flutter", icon: "flutter", group: "Apps",
     line: "One plugin for a Flutter app. The avatar renders on the phone.", renders: ["device"], artifacts: ["flutter_plugin"] },
   { id: "web", title: "Web", href: "/platforms/web", icon: "globe", group: "Apps",
@@ -240,7 +240,7 @@ export const QUICKSTART: Quickstart[] = [
     id: "android", plan: "creator", label: "Android", title: "An avatar inside your Android app", icon: "android", time: "15 min",
     needs: ["Physical device", "JDK 17", "API secret"], models: TWO, renders: ["device"],
     steps: [
-      { title: "Add the dependency", code: { lang: "kotlin", label: "build.gradle.kts", code: `// excerpt: app/build.gradle.kts; the full setup is on the Android page\nandroid {\n    defaultConfig { ndk { abiFilters += "arm64-v8a" } }\n    packaging { jniLibs { useLegacyPackaging = true } }   // required\n}\ndependencies {\n    implementation("ai.bithuman:expression2-android:${V.expression2_android}")\n}` } },
+      { title: "Add the repository and the dependency", code: { lang: "kotlin", label: "Gradle", code: `// excerpt: settings.gradle.kts and app/build.gradle.kts; the full setup is on the Android page\n// settings.gradle.kts\ndependencyResolutionManagement {\n    repositories {\n        google()\n        mavenCentral()\n        exclusiveContent {   // ai.bithuman resolves from bitHuman's repository only\n            forRepository { maven { url = uri("https://maven.bithuman.ai") } }\n            filter { includeGroup("ai.bithuman") }\n        }\n    }\n}\n// app/build.gradle.kts\nandroid {\n    defaultConfig { ndk { abiFilters += "arm64-v8a" } }\n    packaging { jniLibs { useLegacyPackaging = true } }   // required\n}\ndependencies {\n    implementation("ai.bithuman:expression2-android:${V.expression2_android}")\n}` } },
       { title: "Keep the API secret out of your source", text: "Put `bithumanApiSecret=…` in `~/.gradle/gradle.properties`; the Android page reads it into `BuildConfig`." },
       { title: "Feed audio, pull frames", code: { lang: "kotlin", label: "Kotlin", code: `// excerpt: off the main thread; pcm16k is 16 kHz mono float\nExpression2Credential.set(BuildConfig.BITHUMAN_API_SECRET)\nval model = Expression2ModelStore(context).fetch("${pup.code}")   // first run only\nExpression2Avatar.create(context, model, Expression2Options()).use { avatar ->\n    val frame = avatar.newFrameBitmap()\n    avatar.feed(pcm16k)\n    avatar.flushTail()\n    while (avatar.hasPendingTail || avatar.queuedFrames > 0) {\n        if (avatar.pull(frame) != null) show(frame) else Thread.sleep(10)\n    }\n}` } },
     ],
