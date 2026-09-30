@@ -16,8 +16,9 @@ Talk over the avatar and it stops mid-sentence, then listens: that is barge-in.
 
 ```python
 # excerpt: barge-in, in the event loop of conversation.py
-elif event.type == "input_audio_buffer.speech_started":   # the user started talking
-    runtime.interrupt()                                     # drop the rest of the reply
+elif event.type == "input_audio_buffer.speech_started":
+    # the user started talking: drop the rest of the reply
+    runtime.interrupt()
 ```
 
 - **On the device:** `interrupt()` in Swift and Flutter; `resetState(true)` for Expression 2 and `resetAudio()` for Essence 2 on Android ([Companion app](/build/companion-app#let-the-user-interrupt)).

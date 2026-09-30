@@ -18,7 +18,7 @@ moved:
 
 ## What it is
 
-The fewest moving parts: bitHuman renders the avatar in the cloud and streams its video and audio to a web page, an app or a LiveKit room. You provision no GPU and install nothing. The live demo above is this mode.
+The fewest moving parts: bitHuman renders the avatar in the cloud and streams its video and audio to a web page, an app or a LiveKit room. You provision no GPU and install nothing.
 
 Compare every mode: [Deployment options](/deploy#compare).
 
