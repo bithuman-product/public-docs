@@ -41,6 +41,12 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### Swift package 2.19.2 · Flutter plugin 2.6.24 — 2026-09-30
+
+- **Security (iPhone, iPad and Mac):** the on-device meter in a release build now ignores its tuning settings, so usage is always billed the way the service defines it. Please update: `.package(url: …, from: "2.19.2")`, or pin `ref: flutter-plugin-v2.6.24` and re-run the plugin's `scripts/bootstrap.sh`.
+- **Fix:** if the startup credential check is lost in transit, or the service answers 5xx or 429, the engine asks once more before it refuses the session. A 2xx, 401, 402 or 403 is never repeated.
+- Expression 2 is now 2.19.2 and Essence 2 is 1.15.1. The macOS engine core (1.0.1) is unchanged.
+
 ### `bithuman` 2.11.18 — 2026-09-29
 
 - **New:** `pip install bithuman` installs on Windows 11 (x86_64, Python 3.10–3.14). Essence 2 and Expression 2 avatars open and render on the machine as on macOS and Linux; Essence 1 renders in the cloud with the Video API. The wheel carries the Visual C++ runtime it needs.
