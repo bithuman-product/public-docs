@@ -81,7 +81,7 @@ The session is billed at the model's cloud rate for as long as it runs ([Pricing
 - You remove `bithuman-avatar-agent` from the room.
 - The room closes.
 
-An ended session stops counting toward your plan's [concurrent sessions](/api/rate-limits#session-concurrency) within 2 minutes of its end. To end a session and free its slot at once, [end it by its `session_id`](/api/runtime-sessions#end-a-cloud-avatar-session).
+An ended session stops counting toward your plan's [concurrent sessions](/api/rate-limits#session-concurrency) at once. To end a session yourself, [end it by its `session_id`](/api/runtime-sessions#end-a-cloud-avatar-session): billing stops and its slot frees at once. An Expression 1 avatar ended this way leaves your room within about a minute, unless you delete the room.
 
 ## Send the audio
 
