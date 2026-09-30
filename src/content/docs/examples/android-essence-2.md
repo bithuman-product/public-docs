@@ -100,10 +100,15 @@ Essence2Avatar.create(identity.dir).use { avatar ->
     avatar.feed(pcm)                      // 16-bit little-endian PCM bytes, as read
     avatar.endOfAudio()                   // "that is the whole utterance"
     // …
+    // pull() returns false until frames are ready, so poll. Stop after 5 s
+    // with no new frame — but give the FIRST frame longer (30 s): a cold
+    // first render on a slower phone can take more than a few seconds, and
+    // giving up before it arrives is a blank screen, not a result.
     var quietMs = 0
-    while (quietMs < 5_000) {             // 5 s with no frame at all = finished
+    while (quietMs < (if (out.isEmpty()) 30_000 else 5_000)) {
         frame.clear()
         if (avatar.pull(frame)) {         // true = a frame was written
+    // …
             quietMs = 0
             frame.rewind()
     // …

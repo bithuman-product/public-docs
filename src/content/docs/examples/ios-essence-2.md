@@ -88,14 +88,18 @@ private func startLoop(_ e: Essence2Engine) {
         for await f in frames {
             guard let self else { return }
             if f.audioTime == 0, let r = self.reply {
-                self.player.stop()
-                self.player.scheduleBuffer(r)
-                self.player.play()
+                self.startAudio(r)
             }
             if let cg = makeCGImage(bgr: f.bgr, f.width, f.height) {
                 self.sink.show(cg)
                 self.hasFrame = true
             }
+    // …
+private func startAudio(_ reply: AVAudioPCMBuffer) {
+    player.stop()
+    player.scheduleBuffer(reply, completionHandler: nil)
+    player.play()
+}
     // …
     e.feed(samples)
     e.flushTail()
