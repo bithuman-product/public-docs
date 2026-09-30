@@ -23,7 +23,7 @@ moved:
   reference: /platforms/swift/reference
 ---
 
-The avatar renders inside your app, with no render server. Why on the device: [On the device](/deploy/on-device).
+The avatar renders inside your app, with no render server. [Why on the device](/deploy/on-device).
 
 ## Before you start
 

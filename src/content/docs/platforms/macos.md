@@ -28,7 +28,7 @@ The iPhone and iPad Swift package, in a Mac app or from a terminal with `swift r
 
 No device, provisioning profile or entitlement is needed to try it from a terminal.
 
-Why render on the device: [On the device](/deploy/on-device).
+[Why render on the device](/deploy/on-device).
 
 | You need | Expression 2 | Essence 2 |
 |---|---|---|

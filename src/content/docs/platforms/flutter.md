@@ -22,7 +22,7 @@ moved:
   troubleshooting: /platforms/flutter/troubleshooting
 ---
 
-One Flutter dependency gives your app an avatar widget. Why on the device: [On the device](/deploy/on-device).
+One Flutter dependency gives your app an avatar widget. [Why on the device](/deploy/on-device).
 
 ## Before you start
 
