@@ -41,6 +41,13 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### CLI 2.8.6 — 2026-09-30
+
+Tag `cli-v2.8.6`.
+
+- **Essence 2 on Linux:** the mouth blends into the face without the visible edge that could show at the corners of the lips. Avatars get this as they are updated on bitHuman; `bithuman pull <CODE>` fetches the updated file. An avatar that has not been updated renders exactly as in 2.8.5.
+- **Action:** `brew upgrade bithuman-cli`, or re-run the installer.
+
 ### Flutter plugin 2.6.25 — 2026-09-30
 
 Tag `flutter-plugin-v2.6.25`.

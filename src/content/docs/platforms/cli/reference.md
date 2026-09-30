@@ -174,7 +174,7 @@ Colour appears only on an interactive terminal.
 `bithuman version --json`:
 
 ```json
-{"abi":7,"cli":"2.8.5","libessence":"2.11.18","build":{"target":"x86_64-unknown-linux-gnu","profile":"release"},"engine":{"platform":"linux","runtime":"litert","version":"1.0.2"},"schema_version":1}
+{"abi":7,"cli":"2.8.6","libessence":"2.11.19","build":{"target":"x86_64-unknown-linux-gnu","profile":"release"},"engine":{"platform":"linux","runtime":"litert","version":"1.0.2"},"schema_version":1}
 ```
 
 `bithuman account --json` (exit 77 with no credential; `--limit <N>`, default 10, sets how many recent charges to show):
