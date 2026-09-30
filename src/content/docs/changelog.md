@@ -41,6 +41,16 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### Flutter plugin 2.6.25 — 2026-09-30
+
+Tag `flutter-plugin-v2.6.25`.
+
+- **Fix:** a phone call (or Siri, an alarm, or another app taking the audio) now ends the realtime session on iOS and Android, so a paused call is no longer billed. Turn this off with `endOnAudioInterruption: false`.
+- **Fix:** a call stays on connected Bluetooth, wired or USB headsets (including AirPods) instead of being forced to the loudspeaker; the loudspeaker is used only when nothing is connected.
+- **Fix:** disposing an avatar is safe at any time, including mid-load, and a switched-away download can be cancelled (`BithumanAvatar.cancelLoad`); Android reports load progress (`BithumanAvatar.loadEvents`).
+- **Faster:** smoother Android rendering, a quicker reveal, and on iOS/macOS the avatar package is unpacked once instead of on every launch; opening and closing the mic no longer stalls the UI on Android.
+- **Action:** pin `ref: flutter-plugin-v2.6.25`.
+
 ### CLI 2.8.5 — 2026-09-30
 
 Tag `cli-v2.8.5`.
