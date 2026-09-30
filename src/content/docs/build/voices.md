@@ -17,11 +17,11 @@ llms: build
 
 You never *have* to bring a key. The default pipeline already speaks every language. Bring your own only when you want a specific premium voice or a provider's real-time engine.
 
-## Use the default (nothing to do)
+### Use the default (nothing to do)
 
 Open any agent's voice settings at [bithuman.ai](https://www.bithuman.ai/explore). The **bitHuman voice** section is marked *Included* — design a voice, clone one, or pick from the gallery. It's multilingual automatically, so there's no language toggle to manage.
 
-## Clone a voice
+### Clone a voice
 
 Cloning, designing and previewing voices is free.
 
@@ -62,7 +62,7 @@ Go to **Developer → Integrations**, add your provider, and paste that provider
 
 Back in the agent's voice settings, the premium providers you've connected unlock. Choose a voice; a provider you haven't connected stays locked with a shortcut to Integrations. Your selection runs that voice on your key.
 
-## Supported providers
+### Supported providers
 
 | Provider | Voices you can select | Real-time (speech-to-speech) |
 |----------|-----------------------|:---------------------------:|

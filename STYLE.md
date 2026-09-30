@@ -105,7 +105,7 @@ H2 names are stable anchors. A section that does not apply is omitted, never wri
 | `recipe` | What you'll build (the outcome beside a real capture) → **Steps** (each `### ` a step with an ```` ```expected ```` check) → How it works (a diagram) → Make it your own → **Troubleshooting** → Next. `time:` in the frontmatter is the chip "20 min". |
 | `concept` | a one-sentence definition, a diagram first, 3–5 key ideas, In code, Where it runs, Related |
 | `endpoint` | summary and method chips → Authentication → per operation: Request → Example (curl, Python, Node) → Response → Errors → Related guide |
-| `deploy` | **What it is** → **Where it renders** → **Models available here** → **Speed** → **Price** → **Limits** → First command → **Choosing between modes** |
+| `deploy` | **What it is** (links to /deploy#compare) → **Where it renders** → **Speed** → **Price** → **Limits** → First command |
 | `hub` | one line of purpose, the chooser or matrix, cards; no copy longer than 60 words outside the cards |
 | `example` | **Requirements** → Get the code → Set up the app → Set your API secret → **Run it** → **Expected output** → How it works → **The code that matters** (verbatim excerpts) → Make it your own → **Troubleshooting** → **Next** |
 

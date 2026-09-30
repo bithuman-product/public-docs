@@ -4,24 +4,33 @@ description: "Let Claude, Cursor and other MCP clients drive bitHuman as tools: 
 section: build
 group: "Apps"
 order: 50
-type: platform
+type: recipe
 llms: build
 artifacts: ["cli"]
+moved:
+  before-you-start: /build/mcp#what-youll-build
+  integrate-into-your-app: /build/mcp#make-it-your-own
+  platform-notes: /build/mcp#how-it-works
+  reference: /build/mcp#next
 ---
 
 `bithuman mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server built into the [CLI](/platforms/cli). An MCP client such as Claude Code, Claude Desktop or Cursor can then call bitHuman as tools: "make an avatar that explains our pricing, then give me an embed token" becomes a chain of tool calls.
+
+## What you'll build
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
 | **Create agents** | `generate_agent` with `model: "expression-2"` | `generate_agent` with `model: "essence-2"` |
 | **Render locally** | `render` tool | `render` tool |
 
-## Before you start
+You need:
 
 - The [CLI](/platforms/cli#install) on macOS (Apple silicon), Linux or Windows. In a hosted agent, call the [REST API](/api) directly.
 - An MCP client.
 
-## Install
+## Steps
+
+### Install
 
 The server is the CLI; there is nothing else to install.
 
@@ -30,11 +39,19 @@ curl -fsSL https://install.bithuman.ai | sh
 bithuman mcp tools      # prints the tool list and exits
 ```
 
-## Authenticate
+```expected
+`bithuman mcp tools` prints the tool list and exits.
+```
+
+### Authenticate
 
 Run `bithuman login` once, or set `BITHUMAN_API_SECRET` in the client's configuration. The server reads the same credential as the CLI and never logs it.
 
-## First frame
+```expected
+After `bithuman login`, `bithuman account` shows your plan and credit balance.
+```
+
+### First frame
 
 Register the server with your client.
 
@@ -54,7 +71,16 @@ If you have not run `bithuman login`, add `"env": {"BITHUMAN_API_SECRET": "<your
 
 Then ask: *"Use the bithuman tools to validate my API secret."* The client calls `validate_api_secret` and reports `{"valid": true}`.
 
-## Integrate into your app
+```expected
+The client reports `{"valid": true}` from `validate_api_secret`.
+```
+
+## How it works
+
+- Agent creation is asynchronous: a second-generation agent takes about 2–2.5 hours. Prices are on [pricing](/pricing).
+- Errors come back as structured objects with the HTTP status and a link to [Errors](/api/errors).
+
+## Make it your own
 
 Ask in plain language; the client chooses and chains the tools.
 
@@ -86,11 +112,6 @@ Ask in plain language; the client chooses and chains the tools.
 
 Talking video, adding a model to an agent and knowledge bases have no tool; use the [REST API](/api).
 
-## Platform notes
-
-- Agent creation is asynchronous: a second-generation agent takes about 2–2.5 hours. Prices are on [pricing](/pricing).
-- Errors come back as structured objects with the HTTP status and a link to [Errors](/api/errors).
-
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
@@ -100,7 +121,7 @@ Talking video, adding a model to an agent and knowledge bases have no tool; use 
 | A created agent uses a first-generation model | `model` was not passed | ask for `essence-2` or `expression-2` explicitly |
 | `422` when creating an Essence 2 agent | the image is not a photoreal person | use a photo, or choose Expression 2 |
 
-## Reference
+## Next
 
 - [CLI reference](/platforms/cli/reference#mcp-server)
 - [REST API](/api) and the [OpenAPI spec](/api/openapi.yaml)

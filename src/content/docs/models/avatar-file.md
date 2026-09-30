@@ -6,6 +6,8 @@ group: "Concepts"
 order: 20
 type: concept
 llms: models
+moved:
+  the-engine-value-is-a-legacy-name: /resources/renamed#the-engine-value-is-a-legacy-name
 ---
 
 ## What an `.imx` is
@@ -15,7 +17,9 @@ file of identity weights, textures and a manifest (model version, ABI, license)
 that an [engine](/models/how-it-works) reads to animate one specific face.
 Every model that renders on your own hardware uses it — a first-generation
 [Essence 1](/models/first-generation#essence-1) identity, an [Essence 2](/models/essence-2)
-identity, and an [Expression 2](/models/expression-2) identity. Every download is
+identity, and an [Expression 2](/models/expression-2) identity.
+
+Every download is
 named `<CODE>.imx`; older Expression 2 files may carry the legacy `.avatar`
 extension, which opens the same way. The same file opens on every on-device runtime — [Python](/platforms/python),
 [Swift](/platforms/ios) and the [CLI](/platforms/cli) — and `bithuman open` tells you which
@@ -31,7 +35,7 @@ model a file you were given holds.
 
 See [Building avatars](/build/create-avatar) for the full creation flow and media tips.
 
-## Agent codes
+### Agent codes
 
 The `.imx` is keyed by an **agent code** (e.g. `A23WJF0199`). The **cloud runtime and REST API** resolve an agent by its code — you don't ship a file. The **on-device SDKs open a local `.imx`** — the file you downloaded for that code — and the key comes from `BITHUMAN_API_SECRET` in the environment, checked at the first frame:
 
@@ -88,6 +92,10 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 
 Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/models/essence-2).
 
+### File-format stability
+
+The `.imx` format is **forward-compatible within a major version**. The first open unpacks the file into that cache, using about its size again on disk; later opens reuse it. Your file is never rewritten.
+
 ## Inspecting an `.imx`
 
 `bithuman open <file>` prints the container format, the model family
@@ -98,31 +106,7 @@ manifest. It reads the file on your own disk, so it needs no account and no netw
 bithuman open ~/.cache/bithuman/showcase/sofia-ramirez.imx
 ```
 
-### The `engine` value is a legacy name
-
-`bithuman open` reports an **`engine`** read from the container header (also
-`engine` in [`--json`](/platforms/cli/reference#json-output)), and the Python runtime quotes the same
-string verbatim in load errors — for example `backend loader for
-engine='essence2-light'`.
-
-**These engine ids are legacy names kept for compatibility.** They are the literal strings readers parse, spelled here exactly as you will see them:
-
-| `engine` in the header | The model you actually have |
-|---|---|
-| `essence1` | [Essence 1](/models/first-generation#essence-1) — also the value an older container with no header resolves to |
-| `essence2-light` | **[Essence 2](/models/essence-2)** — request it as `essence-2` |
-| `essence2-quality` | Essence 2 Max (Enterprise plan only) — not a model you can request on other plans; treat the file as **[Essence 2](/models/essence-2)** |
-| `expression2` | **[Expression 2](/models/expression-2)** — request it as `expression-2` |
-
-So a current Essence 2 bundle reports `engine: essence2-light`. The model is
-**Essence 2**, requested as `essence-2`: the engine id names the *loader family*,
-not the product, so the value is expected, not a mismatch.
-
-> **Warning** Never send an engine id to the API. `model` takes `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1`; any other value returns [`400 VALIDATION_ERROR`](/api/agents#errors).
-
-## File-format stability
-
-The `.imx` format is **forward-compatible within a major version**. The first open unpacks the file into that cache, using about its size again on disk; later opens reuse it. Your file is never rewritten.
+The `engine` value it prints is a legacy name: [what each one means](/resources/renamed#the-engine-value-is-a-legacy-name).
 
 ## Where to go next
 

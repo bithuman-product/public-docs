@@ -21,7 +21,9 @@ creation
 - A portrait image at a public URL (or create one from a prompt).
 - Optionally, a voice sample for cloning: 30 seconds or more of clean speech from one speaker. Longer clean samples are fine; the whole file is used.
 
-## 1. Choose a model
+## Steps
+
+### 1. Choose a model
 
 | You have | Use |
 |---|---|
@@ -31,7 +33,11 @@ creation
 
 More on the difference: [Models](/models).
 
-## 2. Pick the inputs
+```expected
+One `model` value: `essence-2`, `expression-2` or `auto`.
+```
+
+### 2. Pick the inputs
 
 | Input | Use for | Limits |
 |---|---|---|
@@ -39,13 +45,17 @@ More on the difference: [Models](/models).
 | Voice | voice cloning | 30 seconds or more of clean speech, one speaker, no music (MP3, WAV or M4A); the whole file is used |
 | Prompt | the personality | required when there is no image |
 
-### What makes a good photo
+#### What makes a good photo
 
 One subject, in focus, facing the camera with a resting expression and the whole face visible (eyes, nose and mouth). Photos are not checked; these are the conditions the models are built for. For an animal, use a well-lit, front-facing photo with the face filling the frame.
 
 Without a voice sample, a voice is generated to match the persona. Without a prompt, a persona is generated from the image.
 
-## 3. Create the agent
+```expected
+An image URL that opens in a browser without signing in, under 10 MB, plus a voice sample and a prompt if you have them.
+```
+
+### 3. Create the agent
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -55,13 +65,40 @@ curl -X POST https://api.bithuman.ai/v1/agent/generate \
 
 The response carries an `agent_id`. Creation takes about 2–2.5 hours for the second-generation models. You can also create an agent in the dashboard at [bithuman.ai](https://www.bithuman.ai/explore), which starts on Expression 2.
 
-## 4. Wait until it is ready
+````expected
+```json
+{"success": true, "message": "Agent generation started", "agent_id": "A80HVD8577", "status": "processing"}
+```
+````
+
+### 4. Wait until it is ready
 
 Poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) every few seconds until `status` is `ready` or `failed`.
+
+```expected
+`status` is `ready`: after about 2 to 2.5 hours, or up to 4 for an Expression 2 identity that needs more training.
+```
 
 ## Check it worked
 
 Open `https://www.bithuman.ai/embed/<agent_id>` in a browser and talk to it, or `bithuman run <agent_id>`.
+
+## How creation works
+
+You create an agent once, with [`POST /v1/agent/generate`](/api/agents#generate-an-agent) or in the bitHuman app, and serve it anywhere its model runs.
+
+- **The input is one portrait image.** Essence 2 generates its identity video from it; Expression 2 trains straight from the photo. An uploaded image is treated as a reference and regenerated to a standard framing.
+- **Creation happens in the bitHuman cloud;** the finished avatar model then runs on your devices.
+- **Both second-generation models train on create.** Allow about 2 to 2.5 hours, and poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until the status is `ready` or `failed` (`success` is not terminal).
+- **Essence 2 needs a photorealistic human subject.** A stylized input is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead.
+- **Always send `model`.** An omitted `model` creates an Expression 1 agent; send `essence-2`, `expression-2` or `auto`.
+- **An existing agent can gain a model** with [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
+
+What creation costs is on [pricing](/pricing#creation--one-time-credits); request fields and failure modes are on the [Agents API](/api/agents).
+
+**Essence 2.** The platform generates the identity video from the image, then trains the identity. `ready` serves before it downloads: the downloadable file is published a little later; until then the download endpoint answers a retryable `404 MODEL_ARTIFACT_NOT_READY`.
+
+**Expression 2.** Without a portrait, the platform generates a portrait from your prompt first. It also generates the agent's 10-second idle clip and prepares a voice. An identity that needs more work gets more training, so up to 4 hours is normal. A run that fails is refunded; a completed creation is not, so a second `generate` is a second charge ([failure modes](/api/agents#errors)).
 
 ## Variations
 

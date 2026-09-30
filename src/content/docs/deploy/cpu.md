@@ -13,11 +13,16 @@ needs: ["Linux x86_64 / arm64"]
 models: ["essence-2", "expression-2", "essence-1"]
 claims: ["S2", "S3", "S4", "S5", "S10", "S26"]
 next: ["/platforms/cli", "/platforms/python", "/deploy/offline"]
+moved:
+  models-available-here: /deploy#compare
+  choosing-between-modes: /deploy#compare
 ---
 
 ## What it is
 
 Essence 2 and Expression 2 render live on the processor of an ordinary Linux PC, with no graphics card: with the [CLI](/platforms/cli) or the [Python SDK](/platforms/python), on Linux x86_64 or arm64. It suits screens that run all day where a GPU is not practical: kiosks, lobby screens, and servers without GPUs. It is not a fifth mode: it is [Your servers](/deploy/self-hosted) on a PC with no GPU.
+
+Compare every mode: [Deployment options](/deploy#compare).
 
 ## Where it renders
 
@@ -30,12 +35,6 @@ topology cpu
 ```
 
 When the avatar renders on your hardware, its audio and video stay there. With the CLI's [local conversation brain](/platforms/cli/local-brain), speech recognition, the language model and the voice run on the machine too; the session still reports usage online.
-
-## Models available here
-
-```model-matrix
-place: cpu
-```
 
 ## Speed
 
@@ -79,10 +78,3 @@ with bithuman.open("wise-pup.imx") as a: print(sum(1 for _ in a.render("speech.w
 
 `bithuman run wise-pup` opens a live conversation instead of a file ([CLI](/platforms/cli#first-frame)).
 
-## Choosing between modes
-
-- **Off the internet, on Linux and macOS computers:** [Fully offline](/deploy/offline), for Business and Enterprise.
-- **On your own Macs, or Linux machines you already run:** [Your servers](/deploy/self-hosted).
-- **Inside an app on the phone or in the browser:** [On the device](/deploy/on-device).
-- **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
-- **All four side by side:** [Deployment options](/deploy).

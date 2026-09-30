@@ -133,7 +133,7 @@ export const GET: APIRoute = async ({ props }) => {
       `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}`).join("\n")}\n\n${MODELS_NOTE} ${SITE}/models.md\n\n` +
       `## Build\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
       `## What's new\n\n${resolvedHighlights().slice(0, 3).map((h) => `- [${h.title}](${mdUrl(h.href)}) (${h.entry.heading}): ${h.line}`).join("\n")}\n\nEvery release: ${SITE}/changelog.md · RSS: ${SITE}/changelog.xml\n\n` +
-      `## Sections\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) · [Resources](${SITE}/resources.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
+      `## Sections\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) ([estimate](${SITE}/pricing/estimate.md)) · [Resources](${SITE}/resources.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
   }
   if (hub === "start") {
     let body = `## Choose your platform\n\n${pathTable()}\n## Pick your platform and run it\n\nEach block runs as pasted after \`export BITHUMAN_API_SECRET=…\`.\n${quickstartMd()}`;

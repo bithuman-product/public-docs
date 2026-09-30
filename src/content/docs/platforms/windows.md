@@ -55,7 +55,7 @@ The package installs no command-line tool.
 
 ## Authenticate
 
-Set `BITHUMAN_API_SECRET` in the PowerShell window that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. See [Your API secret](/start/api-secret). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)). Downloading a sample avatar needs no account.
+Set `BITHUMAN_API_SECRET` in the PowerShell window that runs Python (`bithuman.open` reads it), or pass `api_secret=` to `AsyncBithuman.create()`. See [Your API secret](/start/api-secret). Cost: active session time, to the second ([pricing](/pricing)). Downloading a sample avatar needs no account.
 
 ## First frame
 

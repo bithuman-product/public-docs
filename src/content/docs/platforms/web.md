@@ -7,7 +7,6 @@ order: 10
 type: platform
 llms: apps
 searchTitle: "Web: embed a live avatar in any page"
-demo: "both"
 renders: ["cloud", "browser"]
 platforms: ["web"]
 models: ["essence-2", "expression-2"]

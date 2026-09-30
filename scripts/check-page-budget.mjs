@@ -42,7 +42,7 @@ export const TYPE_BUDGET = {
 };
 // types whose budget fails the build. Empty in W2a (report-only); W3 adds the
 // platform types, W4 guide/concept, W5 endpoint, W6 the rest.
-const FAIL_TYPES = new Set([]);
+const FAIL_TYPES = new Set(["platform-app", "quickstart", "guide", "concept"]);
 const PARA_WARN = 60, PARA_FAIL = 80, CALLOUTS_PAGE = 3;
 
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".md") ? [p] : []; });

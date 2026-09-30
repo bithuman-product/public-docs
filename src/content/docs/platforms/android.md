@@ -27,9 +27,7 @@ moved:
 
 Both models render on the phone: you feed 16 kHz mono speech in and pull picture frames out. After the one-time model download, the only network traffic is usage reporting. Each model is one Maven Central dependency.
 
-```why-on-device
-android
-```
+Why render on the device: [On the device](/deploy/on-device).
 
 </div>
 
@@ -101,7 +99,7 @@ implementation("ai.bithuman:expression2-android:0.5.2") {
 
 Pass your API secret ([create one](https://www.bithuman.ai/developer/api-keys)) in code before you download or create an avatar: `Expression2Credential.set(secret)` for Expression 2, `Essence2Credential.set(secret)` for Essence 2. That one call covers the download and the session. `Expression2Metering.apiSecret` and `Essence2Metering.apiSecret` still work but are deprecated. See [Your API secret](/start/api-secret).
 
-Credits pay for active session time, talking or idle, billed to the second ([pricing](/pricing)).
+Cost: active session time, to the second ([pricing](/pricing)).
 
 > **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only.
 

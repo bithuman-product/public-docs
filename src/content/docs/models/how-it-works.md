@@ -25,6 +25,28 @@ bitHuman is one portable engine with thin language bindings on top, and your app
 
 You integrate at the SDK layer. The engine is built into each SDK, so your app needs the bitHuman dependency and nothing else. To pick a platform, start at [Platforms](/platforms); which model runs where is on [Models](/models#where-each-model-runs).
 
+## Serving tiers
+
+Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)). In the bitHuman cloud, the service picks the hardware for each session; to benchmark one tier, see [pin a tier for a benchmark](/performance#pin-a-tier-for-a-benchmark); in production, let the service choose.
+
+## Idle and speaking behavior
+
+**Essence 2.** The identity video plays continuously and loops **forward-only**: at its last
+frame it wraps to the first, and it never plays in reverse. While idle it is
+pure playback of your footage; while talking, the animated face is rendered
+over the same frames.
+
+**Expression 2.** During silences the avatar plays its **10-second idle clip**, generated from the
+identity at creation, looping forward-only without a seam. When speech starts,
+the engine hands off to generated frames with a per-identity color match, so the
+two stay visually continuous; idle resumes only after sustained silence, not in
+pauses inside a sentence.
+
+**Speech onset.** The engine renders in fixed audio chunks; the moving idle
+clip covers the start of each reply.
+
+A running session bills talking and idle time alike ([pricing](/pricing)).
+
 ## What stays true across every surface
 
 - **One model file, every surface.** The same audio drives the same lip-sync on every SDK; pixels can differ slightly between hardware backends.

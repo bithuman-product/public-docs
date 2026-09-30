@@ -94,7 +94,7 @@ bithuman pull "$AGENT_CODE" --model essence-2   # when the agent has more than o
 
 ## bithuman open
 
-Succeeds, or refuses with one of four kinds: `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`. On success it prints the engine, the model and every member with its size. The `engine` value is a legacy identifier ([the engine value](/models/avatar-file#the-engine-value-is-a-legacy-name)), not a `model` value.
+Succeeds, or refuses with one of four kinds: `InvalidAvatar`, `NotSupported`, `NotAuthorised`, `Failed`. On success it prints the engine, the model and every member with its size. The `engine` value is a legacy identifier ([the engine value](/resources/renamed#the-engine-value-is-a-legacy-name)), not a `model` value.
 
 ## bithuman engine
 

@@ -17,12 +17,15 @@ const ROOT = join(import.meta.dirname, "..");
 const DIST = join(ROOT, "dist");
 const ALLOW = join(ROOT, "scripts/boilerplate-allowlist.json");
 const MIN_WORDS = 9, MAX_PAGES = 2;
-const FAIL = false; // docs v2 W2a: report-only (flips in W4)
+const FAIL = true; // docs v2 W4: the copies have one home each (report-only in W2a)
 
 /** prose sentences of one markdown twin, normalised */
 export function sentences(md) {
   const out = [];
   let inCode = false;
+  // A split platform's twin ends with a "Continue" bundle that inlines its app and
+  // troubleshooting pages (SPEC §7): those sentences belong to the pages it inlines.
+  md = md.replace(/\n## Continue\n[\s\S]*$/, "\n");
   for (const raw of md.replace(/^---\n[\s\S]*?\n---\n?/, "").split("\n")) {
     if (/^\s*(```|~~~)/.test(raw)) { inCode = !inCode; continue; }
     if (inCode || /^\s*(#|\||<)/.test(raw)) continue;
@@ -55,6 +58,7 @@ function selftest() {
   ok("a short sentence never fires", copies([["/a", "Short one here."], ["/b", "Short one here."], ["/c", "Short one here."]]).length === 0);
   ok("code is not prose", copies([["/a", "```\n" + long + "\n```"], ["/b", "```\n" + long + "\n```"], ["/c", "```\n" + long + "\n```"]]).length === 0);
   ok("an allowlisted partial passes", copies([["/a", long], ["/b", long], ["/c", long]], [{ match: "renders live on the device", reason: "x" }]).length === 0);
+  ok("a platform twin's Continue bundle is not a copy", copies([["/a", long], ["/b", "x\n\n## Continue\n\n" + long], ["/c", "y\n\n## Continue\n\n" + long]]).length === 0);
   ok("link syntax does not hide a copy", copies([["/a", long], ["/b", long.replace("device", "[device](/deploy)")], ["/c", long]]).length === 1);
   console.log(bad ? "selftest RED" : "selftest GREEN (every arm fired)");
   return bad ? 1 : 0;
@@ -67,7 +71,8 @@ function main() {
   const allow = existsSync(ALLOW) ? JSON.parse(readFileSync(ALLOW, "utf8")).allow : [];
   for (const a of allow) if (!a.reason || !a.match) { console.log(`::error::boilerplate-allowlist: every entry needs match and reason`); return 1; }
   const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".md") ? [p] : []; });
-  const pages = walk(DIST).filter((f) => !relative(DIST, f).startsWith("llms")).map((f) => ["/" + relative(DIST, f).replace(/\.md$/, "").replace(/^index$/, ""), readFileSync(f, "utf8")]);
+  // records (news posts, the changelog, legal notices) are exempt, as in every budget (SPEC §1)
+  const pages = walk(DIST).filter((f) => !relative(DIST, f).startsWith("llms") && !/^(news\/|changelog|legal\/)/.test(relative(DIST, f))).map((f) => ["/" + relative(DIST, f).replace(/\.md$/, "").replace(/^index$/, ""), readFileSync(f, "utf8")]);
   if (pages.length < 40) { console.log(`::error::read only ${pages.length} twins — the build moved`); return 2; }
   const found = copies(pages, allow);
   const report = argv.includes("--report");

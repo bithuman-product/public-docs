@@ -27,9 +27,7 @@ moved:
 
 The same Swift package that runs on iPhone and iPad renders the avatar on a Mac with Apple silicon: in a Mac app, or in a command-line tool with `swift run`. No device, provisioning profile or entitlement is needed to try it from a terminal.
 
-```why-on-device
-macos
-```
+Why render on the device: [On the device](/deploy/on-device).
 
 </div>
 

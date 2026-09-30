@@ -233,7 +233,7 @@ function main() {
   const spec = yaml.load(readFileSync(join(ROOT, "src/openapi/bithuman.yaml"), "utf8"));
   const faults = [
     ...gradePerformance(page("performance"), rows),
-    ...gradePricing(page("pricing")),
+    ...gradePricing(page("pricing/estimate")),
     ...gradeStart(page("start")),
     ...gradeModels(page("models"), PLACES),
     ...gradeDeploy(page("deploy"), DEPLOYMENTS),

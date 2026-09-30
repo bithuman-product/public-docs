@@ -12,6 +12,9 @@ renders: ["offline"]
 models: ["essence-2", "expression-2", "essence-1"]
 claims: ["S11", "S12", "S13", "S21"]
 next: ["/deploy/cpu", "/pricing", "/deploy"]
+moved:
+  models-available-here: /deploy#compare
+  choosing-between-modes: /deploy#compare
 ---
 
 ## What it is
@@ -23,6 +26,8 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Connectivity:** no required reconnection.
 
 Buy a pack in the console ([how](#first-command)), or [contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) for Enterprise terms.
+
+Compare every mode: [Deployment options](/deploy#compare).
 
 ## Where it renders
 
@@ -36,14 +41,6 @@ topology offline
 
 Creating the avatar from a portrait happens in the bitHuman cloud; the finished avatar model then runs on your machines.
 
-## Models available here
-
-```model-matrix
-place: offline
-```
-
-Essence 1 runs fully offline today on Linux (x86_64 and ARM64) and on macOS with Apple silicon. Essence 2 and Expression 2 run fully offline on Linux x86_64 (bitHuman 2.11.17 or later). On Linux, the Python package and the bitHuman CLI (2.8.4 or later) both run offline packs; on a Mac, the Python package. Expression 1 runs in the bitHuman cloud only.
-
 ## Speed
 
 An offline machine is a Linux PC or a Mac with Apple silicon. How fast each model renders on a Linux PC with no GPU is on [CPU only (no GPU)](/deploy/cpu#speed).
@@ -55,6 +52,8 @@ offline
 ```
 
 ## Limits
+
+Essence 1 runs fully offline today on Linux (x86_64 and ARM64) and on macOS with Apple silicon. Essence 2 and Expression 2 run fully offline on Linux x86_64 (bitHuman 2.11.17 or later). On Linux, the Python package and the bitHuman CLI (2.8.4 or later) both run offline packs; on a Mac, the Python package. Expression 1 runs in the bitHuman cloud only.
 
 - **Linux PCs and terminals, and Macs with Apple silicon** (the Python package, bitHuman 2.11.17 or later, on macOS). Phones and browsers stay online, and so do apps built on the Swift package: the Swift package, the Android SDK and the web embed check your credential when a session starts.
 - **Creation is online:** you create the avatar from a portrait in the bitHuman cloud before it runs offline.
@@ -79,13 +78,5 @@ Available today: **Essence 1** on Linux x86_64, Linux ARM64 and macOS (Apple sil
    This binds the pack to this machine and installs it; on a Mac it is sealed with the Mac's Secure Enclave. If the install step fails, `python -m bithuman pack redeem --file <pack>` retries it from the copy kept in `~/.bithuman/packs/`, with no connection and no second charge.
 3. **Prepare the machine once while online.** Render your avatar once before you disconnect (`python -m bithuman render <avatar> <audio>`), or with the CLI run `bithuman pull <avatar>`. This downloads the avatar and the engine files its model needs; a render is metered by the pack like any other.
 4. **Run offline.** The machine now renders with no network and no API secret until the pack's credits are spent. Credits are metered on the machine, at the self-hosted rate for active session time. It never has to reconnect.
-
-## Choosing between modes
-
-- **A Linux PC with a connection:** [CPU only (no GPU)](/deploy/cpu), on the Creator plan or higher.
-- **Your own machines, online:** [Your servers](/deploy/self-hosted).
-- **Inside an app on the phone or in the browser:** [On the device](/deploy/on-device).
-- **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
-- **All four side by side:** [Deployment options](/deploy).
 
 The overview to share with your team is on bithuman.ai: [offline AI avatars for kiosks and terminals](https://www.bithuman.ai/offline).

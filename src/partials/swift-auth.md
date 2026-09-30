@@ -3,4 +3,4 @@ The engines check an API secret when a session starts. Set `BITHUMAN_API_SECRET`
 
 The scheme's environment is for local builds. A shipped app fetches its secret from your backend and keeps it in the Keychain ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
 
-Credits pay for active session time, talking or idle, billed to the second ([pricing](/pricing)).
+Cost: active session time, to the second ([pricing](/pricing)).

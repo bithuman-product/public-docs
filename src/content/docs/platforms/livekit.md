@@ -28,7 +28,7 @@ moved:
 | **The avatar renders** | in the bitHuman cloud, in the US | inside your worker's process |
 | **Its audio and video** | are published into your room by bitHuman | stay on your machine until your worker publishes them |
 | **Price** | the cloud rate ([pricing](/pricing)) | the self-hosted rate |
-| **Guide** | this page | [Voice agent](/build/voice-agent#with-python) |
+| **Guide** | this page | [Voice agent](/build/voice-agent/python#with-python) |
 
 Either way, the plugin serves the agent's own model, Essence 2 or Expression 2.
 

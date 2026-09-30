@@ -20,7 +20,9 @@ Audio, transcripts and generated speech never leave the machine. The avatar sess
 - About 1 GB of disk and 1.5 GB of free memory.
 - `cmake` and a C++ compiler: `llama-cpp-python` builds from source (several minutes).
 
-## 1. Download an avatar and start the brain once
+## Steps
+
+### 1. Download an avatar and start the brain once
 
 ```bash
 bithuman pull sofia-ramirez
@@ -29,7 +31,7 @@ bithuman run sofia-ramirez      # press Ctrl-C once the URL prints
 
 The first `run` creates the brain's Python environment at `~/.cache/bithuman/brain-venv`.
 
-## 2. Install the local conversation brain into that environment
+### 2. Install the local conversation brain into that environment
 
 ```bash
 ~/.cache/bithuman/brain-venv/bin/python -m pip install \
@@ -38,14 +40,14 @@ The first `run` creates the brain's Python environment at `~/.cache/bithuman/bra
 
 Install into that interpreter, not your system Python: the brain runs from it, and Debian and Ubuntu refuse a system-wide `pip install`.
 
-## 3. Run it
+### 3. Run it
 
 ```bash
 BITHUMAN_LOCAL=1 bithuman run sofia-ramirez
 # → open the printed http://127.0.0.1:8088/<CODE> and talk
 ```
 
-## Check it worked
+### Check it worked
 
 `bithuman doctor` lists the brain packages and their versions once they import. The first local run downloads the brain models (about 860 MB) into `~/.cache/huggingface` and `~/.cache/supertonic`, once; later runs start in about a second.
 

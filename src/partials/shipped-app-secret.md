@@ -3,4 +3,4 @@ The Swift package and the Android SDK authenticate with your API secret, so ever
 
 - Fetch the secret from your backend when the app starts. Never compile it into a build you ship.
 - Give each app its own secret, so you can rotate one without touching the others ([API secrets](https://www.bithuman.ai/developer/api-keys)).
-- Watch your [balance](/pricing#check-your-balance), and rotate the secret at once if usage looks wrong.
+- Watch your [balance](/api/billing#check-credit-balance), and rotate the secret at once if usage looks wrong.

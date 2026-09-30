@@ -12,6 +12,9 @@ renders: ["server", "no-gpu"]
 models: ["essence-2", "expression-2", "essence-1"]
 claims: ["S2", "S3", "S4", "S5", "S6", "S7", "S9", "S10", "S26", "S31"]
 next: ["/platforms/cli", "/platforms/python", "/platforms/livekit"]
+moved:
+  models-available-here: /deploy#compare
+  choosing-between-modes: /deploy#compare
 ---
 
 ## What it is
@@ -24,6 +27,8 @@ The avatar renders on machines you run: a Mac with Apple silicon, or a Linux PC 
 | Frames or MP4 clips from your own code | [Python SDK](/platforms/python) | Essence 2, Expression 2, Essence 1 |
 | A voice agent in your own LiveKit rooms, rendered on your machine | [LiveKit plugin](/platforms/livekit) with `model_path=` ([guide](/build/voice-agent)) | Essence 2, Expression 2 |
 
+Compare every mode: [Deployment options](/deploy#compare).
+
 ## Where it renders
 
 ```dataflow
@@ -35,12 +40,6 @@ topology servers
 ```
 
 When the avatar renders on your hardware, its audio and video stay there. For the conversation, the CLI's [local conversation brain](/platforms/cli/local-brain) keeps speech recognition, the language model and the voice on the machine, or you bring any OpenAI-compatible language model, including one in your own network ([Providers](/api/providers)). Self-hosted sessions store no transcript at bitHuman.
-
-## Models available here
-
-```model-matrix
-place: servers
-```
 
 ## Speed
 
@@ -87,10 +86,3 @@ pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dote
 
 `out.mp4` is the `wise-pup` sample avatar speaking the 15-second sample. The CLI's `ffmpeg` and live-session setup is on [CLI](/platforms/cli#before-you-start).
 
-## Choosing between modes
-
-- **A Linux PC with no GPU:** [CPU only (no GPU)](/deploy/cpu).
-- **Inside an app on the phone, Mac or browser:** [On the device](/deploy/on-device).
-- **Nothing to run yourself:** [bitHuman cloud](/deploy/cloud).
-- **No internet at the site:** [Fully offline](/deploy/offline).
-- **All four side by side:** [Deployment options](/deploy).

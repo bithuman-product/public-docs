@@ -28,9 +28,7 @@ moved:
 
 One Swift package carries both models. The avatar renders inside your app on the iPhone or iPad: you feed 16 kHz mono speech in and take lip-synced frames out, with no render server. The same package builds [Mac apps](/platforms/macos).
 
-```why-on-device
-ios
-```
+Why render on the device: [On the device](/deploy/on-device).
 
 </div>
 
