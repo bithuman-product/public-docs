@@ -40,7 +40,7 @@ With the web embed or a cloud avatar, the session's audio and conversation reach
 
 ## Access and accounts
 
-Organization roles (owner, admin, member), an audit-log API, API-secret rotation with immediate revocation, and scoped runtime and embed tokens so browsers never hold your secret ([Data flows & privacy](/deploy/privacy#security-and-access)).
+Organization roles (owner, admin, member), an audit-log API, API-secret rotation with immediate revocation, and scoped runtime and embed tokens so browsers never hold your secret ([Data flows & privacy](/deploy/privacy/retention#security-and-access)).
 
 ## Agreements
 

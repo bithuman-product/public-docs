@@ -17,7 +17,9 @@ Gestures are an Essence 1 feature; Essence 2 and Expression 2 avatars have no ge
 - An Essence 1 agent of yours with gestures generated ([Gestures API](/api/dynamics)).
 - A LiveKit agent worker with the bitHuman plugin ([LiveKit](/platforms/livekit)).
 
-## 1. List the gesture names
+## Steps
+
+### 1. List the gesture names
 
 ```bash
 curl -s https://api.bithuman.ai/v1/dynamics/$AGENT_CODE -H "api-secret: $BITHUMAN_API_SECRET"
@@ -26,7 +28,11 @@ curl -s https://api.bithuman.ai/v1/dynamics/$AGENT_CODE -H "api-secret: $BITHUMA
 
 The keys of `gestures` are the names you play, for example `mini_wave_hello` or `clap_cheer`.
 
-## 2. Play one
+```expected
+A JSON body whose `gestures` object lists your gesture names, such as `mini_wave_hello`.
+```
+
+### 2. Play one
 
 Cloud avatar (`AvatarSession(avatar_id=…)`): send the avatar participant a `trigger_dynamics` call.
 
@@ -49,7 +55,11 @@ from bithuman import VideoControl
 await avatar.runtime.push(VideoControl(action="mini_wave_hello"))
 ```
 
-## 3. Wire it to your events
+```expected
+The cloud call returns `animation_triggered: true`, and the avatar plays the gesture.
+```
+
+### 3. Wire it to your events
 
 As an allow-listed tool, so the language model can ask for a gesture only from your set. This tool is for a self-hosted avatar (`AvatarSession(model_path=…)`). For a cloud avatar, put the `perform_rpc` call from step 2 in the tool body instead.
 
@@ -67,6 +77,10 @@ async def play_gesture(context: RunContext, gesture: str) -> str:
 ```
 
 Other triggers work the same way: a LiveKit data message, a participant event or a timer calls the same line.
+
+```expected
+Asked for a gesture from your set, the language model calls `play_gesture`, and the avatar plays it.
+```
 
 ## Check it worked
 

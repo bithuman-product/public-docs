@@ -8,6 +8,8 @@ type: platform-app
 llms: platforms
 claims: ["S2", "S3", "S4", "S7", "S10"]
 next: ["/platforms/python/troubleshooting", "/platforms/python/reference", "/platforms/python"]
+moved:
+  a-voice-agent-on-your-own-livekit-server: /build/voice-agent/python#a-voice-agent-on-your-own-livekit-server
 ---
 
 ## Integrate into your app
@@ -50,22 +52,7 @@ asyncio.run(main())
 | Idle between replies | keep reading `run()`: it yields idle frames when there is no speech |
 | Stop | `await avatar.shutdown()` in a `finally` (`stop()` keeps the model loaded) |
 
-### A voice agent on your own LiveKit server
-
-The [LiveKit plugin](/platforms/livekit) runs `AsyncBithuman` inside a LiveKit Agents worker: pass `model_path` and the avatar renders in the worker's own process, next to an OpenAI Realtime voice.
-
-```python
-# excerpt: python/self-host/agent.py (bithuman-examples)
-session = AgentSession(llm=openai.realtime.RealtimeModel(model="gpt-realtime-2.1-mini", voice="coral",
-    turn_detection=ServerVad(type="server_vad", silence_duration_ms=500)))   # end of turn after 0.5 s of silence
-avatar = bithuman.AvatarSession(model_path="wise-pup.imx",    # renders here
-                                api_secret=os.environ["BITHUMAN_MASTER_SECRET"])
-await avatar.start(session, room=ctx.room)
-await session.start(agent=Agent(instructions="You are a friendly assistant."),
-                    room=ctx.room, room_options=RoomOptions(audio_output=False))
-```
-
-In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET` and pass it explicitly ([LiveKit](/platforms/livekit#authenticate)). The runnable example with `livekit-server --dev` and a browser link: [Talk to an avatar on your machine](/build/voice-agent#with-python).
+A voice agent on your own LiveKit server: [Voice agent in Python](/build/voice-agent/python).
 
 ## Complete example
 

@@ -24,9 +24,7 @@ moved:
 
 One Flutter dependency gives your app an avatar widget. On Android the plugin runs the same engines as the [Android SDK](/platforms/android), so the avatar renders on the phone: 16 kHz mono speech goes in, and a lip-synced picture comes out as a Flutter `Texture`.
 
-```why-on-device
-flutter
-```
+Why render on the device: [On the device](/deploy/on-device).
 
 | Platform | What the plugin does |
 |---|---|
@@ -67,7 +65,7 @@ For an iOS or macOS build, three more steps:
 
 The engines check your API secret when an avatar loads: pass it to `BithumanAvatar.load(…, apiSecret:)`. The example app asks for it on first launch and keeps it in the Android Keystore, or you can pass `--dart-define=BITHUMAN_API_SECRET=…` when you build. A shipped app holds the secret on the device, so give each app its own secret that you can rotate or revoke ([API secrets](https://www.bithuman.ai/developer/api-keys)).
 
-Credits pay for active session time, talking or idle, billed to the second ([pricing](/pricing)).
+Cost: active session time, to the second ([pricing](/pricing)).
 
 ## First frame
 

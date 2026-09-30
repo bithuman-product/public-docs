@@ -593,12 +593,12 @@
     },
     {
       "source": "/examples/ai-conversation",
-      "destination": "/build/voice-agent#python-voice-conversation",
+      "destination": "/build/voice-agent/python#python-voice-conversation",
       "permanent": true
     },
     {
       "source": "/examples/ai-conversation/",
-      "destination": "/build/voice-agent#python-voice-conversation",
+      "destination": "/build/voice-agent/python#python-voice-conversation",
       "permanent": true
     },
     {

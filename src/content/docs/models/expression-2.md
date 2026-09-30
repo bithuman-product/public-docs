@@ -8,9 +8,12 @@ type: concept
 llms: models
 models: ["expression-2"]
 claims: ["S1", "S3", "S13", "S21", "S28"]
-demo: "expression-2"
 renders: ["device", "server", "cloud"]
 next: ["/platforms", "/build/create-avatar", "/models/essence-2"]
+moved:
+  how-creation-works: /build/create-avatar#how-creation-works
+  serving-tiers: /models/how-it-works#serving-tiers
+  idle-and-speaking-behavior: /models/how-it-works#idle-and-speaking-behavior
 ---
 
 ## What it is
@@ -24,6 +27,8 @@ animals, creatures, robots, and people.
 At creation the platform trains a **small model of your specific identity** from
 one photo. That per-identity model is what serves your sessions, and it is why
 creation takes a couple of hours.
+
+How it is created, served and kept moving while idle: [How it works](/models/how-it-works).
 
 ## When to choose it
 
@@ -49,35 +54,6 @@ The file you download from
 or `bithuman pull <CODE>` is labelled `<CODE>.imx`; `.avatar` is the legacy
 extension for the same container. How fast it renders on each device is on
 [performance](/performance).
-
-## How creation works
-
-Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
-and `model: "expression-2"`, or add `expression-2` to an existing agent with
-[`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
-
-- **The input is a portrait image**, of any subject. Without one, the platform
-  generates a portrait from your prompt first. It also generates the agent's
-  10-second idle clip and prepares a voice.
-- **Training takes about 2 to 2.5 hours;** an identity that needs more work gets more, so up to 4 hours is normal. Poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until `ready` or `failed`, or wait for the completion email.
-- **A run that fails is refunded;** a completed creation is not, so a second `generate` is a second charge ([failure modes](/api/agents#errors)).
-
-The creation cost is on [pricing](/pricing).
-
-## Serving tiers
-
-Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)). In the bitHuman cloud, the service picks the hardware for each session; to benchmark one tier, see [pin a tier for a benchmark](/performance#pin-a-tier-for-a-benchmark).
-
-## Idle and speaking behavior
-
-During silences the avatar plays its **10-second idle clip**, generated from the
-identity at creation, looping forward-only without a seam. When speech starts,
-the engine hands off to generated frames with a per-identity color match, so the
-two stay visually continuous; idle resumes only after sustained silence, not in
-pauses inside a sentence. A running session bills talking and idle time alike ([pricing](/pricing)).
-
-**Speech onset.** The engine renders in fixed audio chunks; the moving idle
-clip covers the start of each reply.
 
 ## Limits and expectations
 

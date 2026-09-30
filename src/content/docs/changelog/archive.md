@@ -45,7 +45,7 @@ parent: /changelog
 
 - Expression 2 creation adapts training per identity: every agent passes the
   same quality checks, and an identity that needs more work gets more training.
-  No action needed. See [Expression 2](/models/expression-2#how-creation-works).
+  No action needed. See [Expression 2](/build/create-avatar#how-creation-works).
 
 ### Agent creation is image-only (2026-07-10)
 
@@ -60,7 +60,7 @@ parent: /changelog
 
 - `essence-2` is the standard tier name — the former `essence-2-light` was
   consolidated into it on 2026-07-05 — and the premium tier is no longer offered
-  publicly. See [Naming & migration](/models#naming--migration).
+  publicly. See [Naming & migration](/models/first-generation#naming--migration).
 - Rates are unchanged. The model guide is at [/models/essence-2](/models/essence-2);
   the old `/concepts/essence-2-light` and `/concepts/essence-2-quality` URLs redirect.
 
@@ -116,7 +116,7 @@ parent: /changelog
 
 *Named as of today: the tiers then called **Essence 2 Light** and **Essence 2 Quality**
 are now `essence-2` and Essence 2 Max (Enterprise plan only) — see
-[Naming & migration](/models#naming--migration).*
+[Naming & migration](/models/first-generation#naming--migration).*
 
 - `model: "auto"` on [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
   routes a photorealistic person to `essence-2` and a cartoon, animal or

@@ -1,14 +1,18 @@
 ---
 title: "Pricing and credits"
-description: "Credits pay for active session time, talking or idle, by the exact second. Rates per model and platform, creation costs, plans, offline licensing, and how to check your balance."
+description: "Credits pay for active session time, talking or idle, by the exact second. Rates per model and platform, creation costs, plans, and offline licensing."
 section: overview
 group: "Pricing"
 order: 10
 type: guide
 llms: deploy
+moved:
+  estimate-a-month: /pricing/estimate#estimate-a-month
+  budget-an-app: /pricing/estimate#budget-an-app
+  check-your-balance: /api/billing#check-credit-balance
 ---
 
-Credits pay for the time an avatar session is running, talking or idle, billed by the exact second. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here.
+Credits pay for the time an avatar session is running, talking or idle, billed by the exact second. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here. To estimate a month or an app, use the [estimate](/pricing/estimate); your balance is on the [Billing API](/api/billing#check-credit-balance).
 
 ## Serving — credits per live minute
 
@@ -68,7 +72,9 @@ A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#ge
 
 ## Plans
 
-From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or higher; a Free account's API secret is then refused with `403 PLAN_REQUIRED`. Free accounts cannot create agents or buy credit top-ups. A Free account with top-up credits bought before 2026-09-27 keeps API and SDK access until those credits are spent; until the cutoff its `plan_notice` reads: "Free-plan API and SDK access ends on 2026-10-12; this account keeps it until the top-up credits it bought before 2026-09-27 are spent. Upgrade at https://www.bithuman.ai/pricing to keep it after that." Every response and its fix: [Plan and credit refusals](/api/errors#plan-and-credit-refusals). [Choose a plan](https://www.bithuman.ai/pricing?from=docs).
+From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or higher; a Free account's API secret is then refused with `403 PLAN_REQUIRED`. Free accounts cannot create agents or buy credit top-ups.
+
+A Free account with top-up credits bought before 2026-09-27 keeps API and SDK access until those credits are spent; until the cutoff its `plan_notice` reads: "Free-plan API and SDK access ends on 2026-10-12; this account keeps it until the top-up credits it bought before 2026-09-27 are spent. Upgrade at https://www.bithuman.ai/pricing to keep it after that." Every response and its fix: [Plan and credit refusals](/api/errors#plan-and-credit-refusals). [Choose a plan](https://www.bithuman.ai/pricing?from=docs).
 
 | Plan | Monthly | Yearly | Credits / month | Agents | Concurrent cloud sessions |
 |---|---|---|---|---|---|
@@ -86,19 +92,18 @@ Annual plans bill twelve months of credits up front.
 
 Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=pricing#contact) to enable it.
 
-## Estimate a month
+### Top-up credits
 
-Choose where the avatar renders, then how long sessions run. The estimate counts active session time, talking or idle, at the rates above.
+On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits) any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
 
-```credit-calculator
-```
+### Connectivity
 
-## Budget an app
-
-What an Essence 2 or Expression 2 avatar costs inside an iPhone, Android, Mac or web app, per minute of active session time. Creating your own avatar is a one-time cost ([Creation](#creation--one-time-credits)); the [companion app](/build/companion-app) recipe shows how to close the avatar when the app leaves the screen.
-
-```app-budget
-```
+| Situation | What happens |
+|---|---|
+| No API secret, or a rejected one, at the start | the session does not start |
+| No network when a session starts | the session does not start; retry when connected |
+| The network drops after the session started | the session continues for 5 minutes, then pauses until the connection returns; usage is reported when it does |
+| Credits run out | the session stops at the next usage report; [top up](https://www.bithuman.ai/billing#credits) to continue |
 
 ## Offline licensing
 
@@ -111,54 +116,6 @@ Offline license is only available to Business and Enterprise clients who want to
 - **File rendering:** `bithuman render` signs in online and needs no offline license; with an installed pack that covers the avatar, it renders with no network and spends the pack.
 
 [Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
-
-## Top-up credits
-
-On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits) any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.
-
-## Connectivity
-
-| Situation | What happens |
-|---|---|
-| No API secret, or a rejected one, at the start | the session does not start |
-| No network when a session starts | the session does not start; retry when connected |
-| The network drops after the session started | the session continues for 5 minutes, then pauses until the connection returns; usage is reported when it does |
-| Credits run out | the session stops at the next usage report; [top up](https://www.bithuman.ai/billing#credits) to continue |
-
-## Check your balance
-
-```bash
-curl https://api.bithuman.ai/v2/credit-summaries -H "api-secret: $BITHUMAN_API_SECRET"
-```
-
-```json
-{
-  "success": true,
-  "data": {
-    "user_id": "00000000-0000-0000-0000-000000000000",
-    "balance": 5240,
-    "plan_credits": 240,
-    "topup_credits": 5000,
-    "is_enterprise": false,
-    "minutes_estimate": {
-      "essence_2_cloud": 1310,
-      "essence_2_self_hosted": 2620,
-      "expression_2_cloud": 1310,
-      "expression_2_self_hosted": 2620,
-      "essence_1_cloud": 2620,
-      "essence_1_self_hosted": 5240,
-      "expression_1_cloud": 1310,
-      "voice_chat": 524,
-      "camera_chat": 174,
-      "essence_cloud": 2620,
-      "essence_self_hosted": 5240,
-      "expression_cloud": 1310
-    }
-  }
-}
-```
-
-Each `<model>_cloud` and `<model>_self_hosted` value is the balance divided by that rate. Ignore `expression_1_self_hosted` and `expression_self_hosted`: Expression 1 has no self-hosted mode. The unversioned `essence_*` and `expression_*` keys are the first-generation models; for Essence 2 read `essence_2_*`.
 
 ## What is not billed
 

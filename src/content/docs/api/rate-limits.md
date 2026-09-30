@@ -44,7 +44,7 @@ A session stops counting when it ends: the room closes, the last user leaves, or
 
 **Session length.** One continuous session can run up to 24 hours in the cloud and 7 days self-hosted. It then ends with `403 SESSION_DURATION_LIMIT`; start a new session to continue. For longer unattended installs (kiosks), [contact sales](https://www.bithuman.ai/enterprise?topic=api-rate-limits#contact).
 
-Sessions you render on your own hardware are limited only by your credits ([self-hosting](/deploy/self-hosted)). Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)).
+Sessions you render on your own hardware are limited only by your credits ([self-hosting](/deploy/self-hosted)). Cost: active session time, to the second ([pricing](/pricing)).
 
 ## Response headers
 

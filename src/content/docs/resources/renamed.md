@@ -10,7 +10,7 @@ searchTitle: "Renamed and retired names: old CLI flags, SDK and API names"
 next: ["/resources/glossary", "/platforms/cli/reference", "/changelog"]
 ---
 
-Older spellings you may still meet in scripts, code and saved links, and what to use now. Retired model names are on [Naming & migration](/models#naming--migration).
+Older spellings you may still meet in scripts, code and saved links, and what to use now. Retired model names are on [Naming & migration](/models/first-generation#naming--migration).
 
 ## Renamed in 2.7.3
 
@@ -31,7 +31,7 @@ The old spellings still work for now. Each prints one line on stderr naming what
 
 ## Older names
 
-The model names retired over time, the older file extensions and library names, and what each means today, are in one table: [Naming & migration](/models#naming--migration). The SDK and API names below are older spellings you may still meet:
+The model names retired over time, the older file extensions and library names, and what each means today, are in one table: [Naming & migration](/models/first-generation#naming--migration). The SDK and API names below are older spellings you may still meet:
 
 | Older name | What to use now |
 |---|---|
@@ -39,3 +39,25 @@ The model names retired over time, the older file extensions and library names, 
 | `POST /v1/realtime/ephemeral-token` (`ek_…` tokens) | Retired; connect through the [realtime relay](/api/realtime). |
 | `bithuman.offline`, `render_offline` | Deprecated; use `bithuman.open(path).render(audio, out_mp4=...)` ([Python](/platforms/python)). |
 | `bitHumanKit` | A legacy Swift package, not the current one; use the [Swift package](/platforms/ios) products `Expression2` and `Essence2Kit`. |
+
+## The `engine` value is a legacy name
+
+`bithuman open` reports an **`engine`** read from the container header (also
+`engine` in [`--json`](/platforms/cli/reference#json-output)), and the Python runtime quotes the same
+string verbatim in load errors — for example `backend loader for
+engine='essence2-light'`.
+
+**These engine ids are legacy names kept for compatibility.** They are the literal strings readers parse, spelled here exactly as you will see them:
+
+| `engine` in the header | The model you actually have |
+|---|---|
+| `essence1` | [Essence 1](/models/first-generation#essence-1) — also the value an older container with no header resolves to |
+| `essence2-light` | **[Essence 2](/models/essence-2)** — request it as `essence-2` |
+| `essence2-quality` | Essence 2 Max (Enterprise plan only) — not a model you can request on other plans; treat the file as **[Essence 2](/models/essence-2)** |
+| `expression2` | **[Expression 2](/models/expression-2)** — request it as `expression-2` |
+
+So a current Essence 2 bundle reports `engine: essence2-light`. The model is
+**Essence 2**, requested as `essence-2`: the engine id names the *loader family*,
+not the product, so the value is expected, not a mismatch.
+
+> **Warning** Never send an engine id to the API. `model` takes `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1`; any other value returns [`400 VALIDATION_ERROR`](/api/agents#errors).

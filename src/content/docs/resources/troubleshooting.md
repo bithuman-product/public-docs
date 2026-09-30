@@ -29,18 +29,20 @@ Every platform and recipe page ends with a Troubleshooting table for its own pro
 | Task | Its Troubleshooting table |
 |---|---|
 | Create an avatar | [Create an avatar](/build/create-avatar#troubleshooting) · creation errors: [Agents API](/api/agents#errors) |
-| A voice agent | [Voice agent](/build/voice-agent#troubleshooting) |
+| A voice agent | [Voice agent](#voice-agent) |
 | A companion app | [Companion app](/build/companion-app#troubleshooting) |
 | A kiosk | [Kiosk](/build/kiosk#troubleshooting) |
 | A talking video | [Talking video](/build/talking-video#troubleshooting) |
 | Persona and gestures | [Persona](/build/persona#troubleshooting) · [Gestures](/build/gestures#troubleshooting) |
 | Claude, Cursor and other MCP clients | [MCP server](/build/mcp#troubleshooting) |
 
-## Before you start
+## A live session
+
+### Before you start
 
 - An agent whose status is `ready` ([poll status](/api/agents#poll-status)).
 
-## 1. Connect
+### 1. Connect
 
 | Situation | Expect |
 |---|---|
@@ -49,11 +51,11 @@ Every platform and recipe page ends with a Troubleshooting table for its own pro
 
 If sessions keep failing to connect, check [status.bithuman.ai](https://status.bithuman.ai).
 
-## 2. Idle and speaking
+### 2. Idle and speaking
 
 During silence the avatar keeps moving: Expression 2 plays its idle clip and Essence 2 its identity video, both looping smoothly. When speech starts, the lips follow the audio; on Expression 2, the idle motion covers the start of each reply. A running session bills whether the avatar is talking or idle ([pricing](/pricing)); end sessions you are not using.
 
-## Check it worked
+### Check it worked
 
 The avatar appears, moves while idle, and its lips follow the agent's speech. Frozen frames or motion that looks reversed are faults: report them with the agent code and the time.
 
@@ -83,6 +85,26 @@ Every SDK and the CLI refuse a render or session the same way, with the service'
 | *as many agents as its plan allows*, or `403 AGENT_LIMIT_REACHED` | a new agent would pass the plan's agent limit; existing agents keep working | delete an agent, or [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
 | *no credits remaining* or *out of bitHuman credits* | no credits left (`402 INSUFFICIENT_BALANCE`) | [top up](https://www.bithuman.ai/billing#credits) on the Creator plan or higher |
 | *this account is suspended* | runtime access is suspended (`403 RUNTIME_SUSPENDED`) | [contact support](/support); a plan change does not clear it |
+
+## Voice agent
+
+The [voice agent](/build/voice-agent), with the CLI or the Python example.
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `bithuman run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run`` | The CLI needs livekit-server 1.13 or newer | `brew upgrade livekit` (macOS), or reinstall the CLI (Linux: its download includes one) |
+| The video stalls for 1–2 s every 15 s, or a LiveKit Meet tile goes black | `livekit-server` older than 1.9.12: the browser leaves and rejoins the room every 15 s | `brew upgrade livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux), then restart `livekit-server` |
+| `livekit-server not found` (exit 69) | LiveKit is not installed | `brew install livekit` (macOS) or `curl -sSL https://get.livekit.io \| bash` (Linux) |
+| The avatar never appears | No or invalid API secret | CLI: `bithuman login`. Python example: set `BITHUMAN_MASTER_SECRET` in `.env` |
+| The avatar never appears; the terminal shows `essence-2: ffmpeg not found` | Essence 2 unpacks its avatar with `ffmpeg` | `sudo apt install -y ffmpeg`, then run again |
+| The page says it could not connect | `livekit-server --dev` is not running | Start it, then click **Start** again |
+| Nothing happens after joining | `livekit-server --dev` or `agent.py` is not running | Start both, `livekit-server` first |
+| Another device on your network cannot join | `--dev` listens on `localhost` only | `livekit-server --dev --bind 0.0.0.0 --node-ip <your LAN IP>`; other browsers also need HTTPS for the microphone |
+| On a Mac, your own page with no microphone, on the same machine as the avatar, fails with `could not establish pc connection` | Chrome hides the machine's local addresses until the page has microphone permission | call `navigator.mediaDevices.getUserMedia({ audio: true })` before connecting, or open the page from another device |
+| `OSError: PortAudio library not found` | the system library is missing | `sudo apt install libportaudio2` (Debian, Ubuntu) |
+| `cv2.error: … The function is not implemented` | the headless OpenCV build won the install | `pip install --force-reinstall --no-deps opencv-python` |
+| `error: externally-managed-environment` | outside the virtualenv | `. .venv/bin/activate` |
+| No microphone input on macOS | the terminal has no microphone permission | System Settings → Privacy & Security → Microphone |
 
 ## Next
 

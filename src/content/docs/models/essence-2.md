@@ -8,9 +8,12 @@ type: concept
 llms: models
 models: ["essence-2"]
 claims: ["S1", "S3", "S13", "S21", "S28"]
-demo: "essence-2"
 renders: ["device", "server", "cloud"]
 next: ["/platforms", "/build/create-avatar", "/models/expression-2"]
+moved:
+  how-creation-works: /build/create-avatar#how-creation-works
+  serving-tiers: /models/how-it-works#serving-tiers
+  idle-and-speaking-behavior: /models/how-it-works#idle-and-speaking-behavior
 ---
 
 ## What it is
@@ -19,6 +22,8 @@ next: ["/platforms", "/build/create-avatar", "/models/expression-2"]
 1080p: the identity's own canvas, 1080×1920 portrait for a standard identity. From your portrait the platform generates a 10-second
 identity video; the model then animates lip-sync and expression over it live,
 with a sharp mouth and teeth taken from that video.
+
+How it is created, served and kept moving while idle: [How it works](/models/how-it-works).
 
 ## When to choose it
 
@@ -42,36 +47,6 @@ The file you download is `<CODE>.imx`, from
 [`GET /v1/agent/{code}/model/download?model=essence-2`](/api/agents#download-an-agents-model)
 or `bithuman pull <CODE> --model essence-2`. How fast it renders on each device
 is on [performance](/performance).
-
-## How creation works
-
-Create the agent with [`POST /v1/agent/generate`](/api/agents#generate-an-agent)
-and `model: "essence-2"`, or add `essence-2` to an existing agent with
-[`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
-
-- **The input is a portrait image** of a photorealistic human. A stylized or
-  non-human input is refused with
-  [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is
-  billed; `model: "auto"` routes it to Expression 2 instead.
-- **The platform generates the identity video** from the image, then trains the
-  identity. Poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status)
-  until `ready`; allow **about 2 to 2.5 hours**.
-- **`ready` serves before it downloads.** The downloadable file is published a
-  little later; until then the download endpoint answers a retryable
-  `404 MODEL_ARTIFACT_NOT_READY`.
-
-The creation cost is on [pricing](/pricing).
-
-## Serving tiers
-
-In the bitHuman cloud, the service picks the hardware for each session. To benchmark one tier, see [pin a tier for a benchmark](/performance#pin-a-tier-for-a-benchmark); in production, let the service choose.
-
-## Idle and speaking behavior
-
-The identity video plays continuously and loops **forward-only**: at its last
-frame it wraps to the first, and it never plays in reverse. While idle it is
-pure playback of your footage; while talking, the animated face is rendered
-over the same frames. A running session bills talking and idle time alike ([pricing](/pricing)).
 
 ## Limits and expectations
 

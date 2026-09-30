@@ -10,7 +10,7 @@ availability: creator
 next: ["/start", "/platforms", "/api/authentication"]
 ---
 
-One API secret works on every surface: the REST API, the CLI, Python, Apple, Android and LiveKit. Credits pay for session time, talking or idle, by the exact second ([pricing](/pricing)).
+One API secret works on every surface: the REST API, the CLI, Python, Apple, Android and LiveKit. Cost: active session time, to the second ([pricing](/pricing)).
 
 ## Get one
 

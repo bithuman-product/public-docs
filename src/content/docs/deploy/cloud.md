@@ -10,13 +10,17 @@ availability: "creator"
 renders: ["cloud"]
 models: ["essence-2", "expression-2", "essence-1", "expression-1"]
 claims: ["S14", "S15", "S20", "S25", "S26", "S31"]
-demo: "both"
 next: ["/platforms/web", "/platforms/rest", "/platforms/livekit"]
+moved:
+  models-available-here: /deploy#compare
+  choosing-between-modes: /deploy#compare
 ---
 
 ## What it is
 
 The fewest moving parts: bitHuman renders the avatar in the cloud and streams its video and audio to a web page, an app or a LiveKit room. You provision no GPU and install nothing. The live demo above is this mode.
+
+Compare every mode: [Deployment options](/deploy#compare).
 
 ## Where it renders
 
@@ -29,12 +33,6 @@ topology cloud
 ```
 
 A managed agent's conversation runs on bitHuman's voice service with your persona, or with the voice and language providers whose keys you connect ([Voices](/build/voices), [Providers](/api/providers)). Traffic is encrypted in transit: HTTPS, and WebRTC media over DTLS-SRTP.
-
-## Models available here
-
-```model-matrix
-place: cloud
-```
 
 ## Speed
 
@@ -76,10 +74,3 @@ pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dote
 
 Next steps: [Web](/platforms/web), [REST API](/platforms/rest), [LiveKit](/platforms/livekit), or [a cloud avatar in your own room without the plugin](/api/cloud-avatar).
 
-## Choosing between modes
-
-- **Keep audio and video on your own machines:** [Your servers](/deploy/self-hosted).
-- **Render inside your app on the phone, Mac or browser:** [On the device](/deploy/on-device).
-- **A Linux PC with no GPU:** [CPU only (no GPU)](/deploy/cpu).
-- **No internet at the site:** [Fully offline](/deploy/offline).
-- **All four side by side:** [Deployment options](/deploy).

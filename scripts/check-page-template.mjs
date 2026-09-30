@@ -43,8 +43,12 @@ export const TEMPLATES = {
   // E. Deploy mode (§3.3 E): what it is, where it renders and what reaches
   // bitHuman, the models, the speed, the price, the limits.
   deploy: {
-    order: ["What it is", "Where it renders", "Models available here", "Speed", "Price", "Limits", "First command", "Choosing between modes"],
-    required: ["What it is", "Where it renders", "Models available here", "Speed", "Price", "Limits", "Choosing between modes"],
+    // Docs v2 (SPEC §5, G3 v2, W4): "Models available here" and "Choosing between modes"
+    // left each mode page for the one #compare matrix on /deploy (gradeDeploy pins that each
+    // mode names its models there); a mode page links to it instead.
+    order: ["What it is", "Where it renders", "Speed", "Price", "Limits", "First command"],
+    required: ["What it is", "Where it renders", "Speed", "Price", "Limits"],
+    links: ["/deploy#compare"],
   },
   // Example (§3.3): the run, what you see, and "The code that matters" (the
   // core lines, verbatim from bithuman-examples: scripts/check-example-excerpts.mjs).
@@ -59,7 +63,6 @@ export const TEMPLATES = {
  *  check refuses an entry whose page already conforms. */
 export const EXCEPTIONS = {
   "src/content/docs/platforms/windows.md": "the Windows/Apps lane owns this page and its split (docs v2 SPEC §3 Apps, §11); it keeps the pre-W3 platform sections until then",
-  "src/content/docs/build/mcp.md": "docs v2 W4 (Guides): the MCP page takes the guide template there; it keeps the pre-W3 platform sections until then",
   "src/content/docs/platforms/rest.md": "docs v2 W5 (API): its Integrate, Troubleshooting and Reference move to the API pages (SPEC §4 rest# rows); /api/errors#handling-errors is built there",
 };
 
@@ -90,6 +93,7 @@ export function grade(text) {
   const t = TEMPLATES[fm.type];
   if (t) {
     for (const r of t.required) if (!h2.includes(r)) faults.push(`missing the "${r}" section`);
+    for (const l of t.links ?? []) if (!body.includes(`](${l})`)) faults.push(`no link to ${l}`);
     for (const h of h2) if (!t.order.includes(h)) faults.push(`"${h}" is not a ${fm.type} section (${t.order.join(" → ")})`);
     const known = h2.filter((h) => t.order.includes(h));
     for (let i = 1; i < known.length; i++) {
@@ -154,7 +158,8 @@ function selftest() {
   const pa = (h2s) => `---\ntype: platform-app\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}`;
   ok("an app page in order passes", grade(pa(["Integrate into your app", "Complete example", "Platform notes", "Reference"])).faults.length === 0);
   ok("an app page without Integrate fires", grade(pa(["Complete example", "Platform notes"])).faults.some((f) => f.includes("Integrate")));
-  ok("a deploy page missing Limits fires", grade(`---\ntype: deploy\n---\n## What it is\n\nx\n## Where it renders\n\nx\n## Models available here\n\nx\n## Speed\n\nx\n## Price\n\nx\n## Choosing between modes\n\nx\n`).faults.some((f) => f.includes("Limits")));
+  ok("a deploy page missing Limits fires", grade(`---\ntype: deploy\n---\n## What it is\n\n[c](/deploy#compare)\n## Where it renders\n\nx\n## Speed\n\nx\n## Price\n\nx\n`).faults.some((f) => f.includes("Limits")));
+  ok("a deploy page with no /deploy#compare link fires", grade(`---\ntype: deploy\n---\n## What it is\n\nx\n`).faults.some((f) => f.includes("/deploy#compare")));
   ok("a recipe without Steps fires", grade(`---\ntype: recipe\n---\n## How it works\n\nx\n## Troubleshooting\n\nx\n`).faults.some((f) => f.includes("Steps")));
   console.log(fails.length ? `selftest RED: ${fails.join(", ")}` : "selftest GREEN (every rule fired)");
   return fails.length ? 1 : 0;

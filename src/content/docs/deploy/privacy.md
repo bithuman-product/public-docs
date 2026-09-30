@@ -8,6 +8,10 @@ type: guide
 llms: deploy
 claims: ["S1", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S14", "S15", "S16", "S17", "S18", "S20", "S21", "S24", "S25", "S29", "S30"]
 next: ["/deploy", "/deploy/on-device", "/deploy/self-hosted"]
+moved:
+  security-and-access: /deploy/privacy/retention#security-and-access
+  retention-and-deletion: /deploy/privacy/retention#retention-and-deletion
+  your-content: /deploy/privacy/retention#your-content
 ---
 
 Two things decide what leaves your hardware: where the avatar **renders**, and where the conversation **runs**. This page answers both for each mode.
@@ -51,18 +55,4 @@ Self-hosted and on-device sessions check your credential when they start and rep
 
 Avatar creation from a portrait happens in the bitHuman cloud; the finished avatar model then runs on your devices. The portrait is uploaded for that step, in every mode.
 
-## Security and access
-
-- **In transit:** encrypted with HTTPS/TLS; WebRTC media uses DTLS-SRTP. Provider keys you connect are encrypted at rest.
-- **Access:** organization roles (owner, admin, member), an audit-log API, API-secret rotation with immediate revocation, and scoped runtime and embed tokens so browsers never hold your secret ([Organizations](/api/organizations), [API secrets](/api/api-keys)).
-- **Region:** avatars in the bitHuman cloud render in the US.
-
-The overview to share with your team is on bithuman.ai: [security and privacy](https://www.bithuman.ai/security).
-
-## Retention and deletion
-
-Deleting an agent deletes its records, including transcripts, and its model files ([Agents](/api/agents)).
-
-## Your content
-
-bitHuman's [privacy policy](https://www.bithuman.ai/legal/privacy) says: "We do not use your content to train our AI models unless you explicitly opt in." and "We do not sell your personal information." For the EU AI Act, see [our reading of Article 50](/legal/eu-ai-act).
+Security, retention and deletion, and how bitHuman treats your content: [Security and retention](/deploy/privacy/retention).

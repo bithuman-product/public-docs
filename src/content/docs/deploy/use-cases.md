@@ -21,8 +21,8 @@ Every use case runs the same avatar. What changes is where it renders, where the
 | iPhone, iPad, Mac and Android apps, including AI companions | on the device, with your own voice and language services | [Companion app](/build/companion-app) |
 | Websites | the bitHuman cloud, through the web embed or a widget | [Website widget](/build/website-widget) |
 
-When the avatar renders on your hardware, its audio and video stay there. When the avatar renders in your app on the device and you use your own voice and language services, bitHuman receives usage metering only, never audio, video or conversation text. With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab. Every mode, side by side: [Data flows & privacy](/deploy/privacy).
+What reaches bitHuman in every mode, side by side: [Data flows & privacy](/deploy/privacy).
 
 Overviews to share with your team, on bithuman.ai: [all use cases](https://www.bithuman.ai/use-cases), [banking and ATMs](https://www.bithuman.ai/use-cases/banking-atm), [healthcare](https://www.bithuman.ai/use-cases/healthcare), [trade shows and kiosks](https://www.bithuman.ai/use-cases/trade-shows-kiosks), [embedded devices](https://www.bithuman.ai/use-cases/embedded), [app developers](https://www.bithuman.ai/developers), [security and privacy](https://www.bithuman.ai/security) and [enterprise deployments](https://www.bithuman.ai/enterprise).
 
-Healthcare and financial-services deployments are set up under an enterprise agreement and review. [Contact sales](https://www.bithuman.ai/enterprise?topic=use-cases#contact) to start one.
+For healthcare and financial services: [contact sales](https://www.bithuman.ai/enterprise?topic=use-cases#contact).

@@ -30,11 +30,8 @@ const TYPES = new Set(["hub", "quickstart", "platform", "recipe", "concept", "en
 // wave adds its pages is named here with that wave; nothing else may.
 const GROUP_MIN = 2, GROUP_MAX = 8, GROUP_SIZE_FAILS = 1;
 const GROUP_SIZE_ALLOW = {
-  "overview / Pricing": "W4 adds /pricing/estimate",
   "platforms / REST": "SPEC §3: REST is one page (its sections point at the API reference tab)",
   "platforms / Apps": "reserved for the Windows/apps lane's split (SPEC §3)",
-  "build / Conversations": "W4 adds /build/voice-agent/python and /build/barge-in",
-  "deploy / Privacy & compliance": "W4 adds /deploy/privacy/retention",
 };
 const hubListed = [...((/export const HUB_LISTED[^=]*=\s*\[([^\]]*)\]/.exec(navSrc) || [])[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]);
 const groupCount = {};
