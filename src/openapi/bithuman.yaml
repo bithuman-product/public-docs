@@ -2202,7 +2202,7 @@ paths:
         photo), `livekit_url`, `livekit_token` and `room_name`. The avatar joins
         as `bithuman-avatar-agent` and lip-syncs the audio you stream to it. The
         token, audio and latency rules are on
-        [Cloud avatar without the plugin](https://docs.bithuman.ai/api/cloud-avatar).
+        [Cloud avatar without the plugin](https://docs.bithuman.ai/platforms/livekit/cloud-avatar).
 
 
         **`fingerprint` must be at least 32 characters** when you send it.

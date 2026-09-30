@@ -1,4 +1,5 @@
 ---
+import { endpointRoutes } from "../markdown/rehype-endpoints.mjs";
 import Base from "./Base.astro";
 import "../styles/prose.css";
 import { SECTIONS, COLLAPSED_GROUPS, type SectionId } from "../config/nav.ts";
@@ -42,6 +43,8 @@ const groups = sidebarGroups(all, section);
 const collapsed = COLLAPSED_GROUPS[section] ?? [];
 
 const currentPath = slugOf(entry);
+// an API resource page with endpoint sections (docs v2 W5): two columns, no outline rail
+const isEndpoints = endpointRoutes().has(currentPath);
 // "On this page" lists H2s only, at most 8 (H3 ids stay on the page).
 const toc = headings.filter((h) => h.depth === 2).slice(0, 8);
 
@@ -138,7 +141,7 @@ const weight = data.type === "changelog" ? "0.2" : (data.type === "reference" ||
   <nav class="drawer-side" slot="drawer" aria-label={meta.label}>
     <SideNav groups={groups} current={currentPath} collapsed={collapsed} label={meta.label} />
   </nav>
-  <div class="doc">
+  <div class:list={["doc", { "doc-ep": isEndpoints }]}>
     {/* sidebar: the current tab only */}
     <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>
       <nav class="side-inner" aria-label={meta.label}>
@@ -325,6 +328,13 @@ const weight = data.type === "changelog" ? "0.2" : (data.type === "reference" ||
   .toc-actions { margin-top: var(--s-6); }
   .doc-head-actions { display: none; }
 
+  /* endpoint pages (docs v2 W5): the code column takes the outline rail's place */
+  @media (min-width: 1280px) {
+    .doc.doc-ep { max-width: 1440px; grid-template-columns: var(--side-w) minmax(0, 1fr); }
+    .doc-ep .doc-toc { display: none; }
+    .doc-ep .doc-main { max-width: none; }
+    .doc-ep .doc-head-actions { display: block; }
+  }
   /* 1024–1279: no TOC; "Copy page" moves to the end of the page head */
   @media (max-width: 1279px) {
     .doc { grid-template-columns: var(--side-w) minmax(0, 1fr); }

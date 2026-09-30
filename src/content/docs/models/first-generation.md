@@ -51,7 +51,7 @@ It is a different engine from [Expression 2](/models/expression-2), not an earli
 
 In the bitHuman cloud only, on cloud GPUs. There is no CPU, Apple, Android or browser build. For an expressive model on a Mac, a phone or in a browser, use Expression 2.
 
-Cloud output is 512×512. Expression 1 can also animate a photo with no agent: see [Cloud avatar in your room](/api/cloud-avatar#a-photo-instead-of-an-agent).
+Cloud output is 512×512. Expression 1 can also animate a photo with no agent: see [Cloud avatar in your room](/platforms/livekit/cloud-avatar#a-photo-instead-of-an-agent).
 
 ### The Expression 1 file
 

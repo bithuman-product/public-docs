@@ -79,7 +79,8 @@ export function prepare(index) {
       title: counts(tokens(`${d.title} ${d.searchTitle || ""}`)),
       path: counts(tokens(d.id.replace(/\//g, " "))),
       description: counts(tokens(d.description || "")),
-      headings: counts(tokens((d.headings || []).join(" "))),
+      // an API page's operationIds count as headings (docs v2 W5, scripts/gen-docs-index.mjs)
+      headings: counts(tokens([...(d.headings || []), ...(d.operations || [])].join(" "))),
       body: counts(tokens(d.text)),
     },
     lower: { title: `${d.title} ${d.searchTitle || ""}`.toLowerCase(), text: d.text.toLowerCase() },

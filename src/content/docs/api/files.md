@@ -28,7 +28,7 @@ SVG is not accepted. An uploaded file is served from a public address, and a
 browser opening an SVG would run the script inside it as if it came from us;
 HTML and any text file carrying a script are refused for the same reason.
 
-## Method 1: URL upload
+### Method 1: URL upload
 
 Download a file from a publicly accessible URL.
 
@@ -48,7 +48,7 @@ curl -X POST https://api.bithuman.ai/v1/files/upload \
   -d '{"file_url": "https://example.com/presentation.pdf", "file_type": "auto"}'
 ```
 
-## Method 2: direct upload
+### Method 2: direct upload
 
 Upload base64-encoded file data directly.
 
@@ -73,7 +73,7 @@ resp = requests.post(
 print(resp.json())
 ```
 
-## Response
+### Response
 
 Both methods return the same shape:
 

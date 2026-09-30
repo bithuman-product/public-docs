@@ -6,6 +6,8 @@ group: "Basics"
 order: 40
 type: endpoint
 llms: api
+moved:
+  manage-webhooks: /api/webhooks#list-webhooks
 ---
 
 Agent generation and talking-video renders are asynchronous — agent creation takes
@@ -183,17 +185,22 @@ Two cases where `session_id` does not map one-to-one to a conversation:
 - **Test** sends `{"event_type": "test", "agent_id": "test_agent_123", ...}` with
   your headers plus `X-Test-Webhook: true`.
 
-## Manage webhooks
-
-```bash
-# Send a test ping to confirm reachability
-curl -X POST https://api.bithuman.ai/v1/webhooks/$WEBHOOK_ID/test -H "api-secret: $BITHUMAN_API_SECRET"
-
-# List
-curl https://api.bithuman.ai/v1/webhooks -H "api-secret: $BITHUMAN_API_SECRET"
-
-# Delete
-curl -X DELETE https://api.bithuman.ai/v1/webhooks/$WEBHOOK_ID -H "api-secret: $BITHUMAN_API_SECRET"
+```endpoint
+listWebhooks
 ```
 
-See the [API reference](/api/reference#tag/webhooks) for the full schema.
+```endpoint
+getWebhook
+```
+
+```endpoint
+deleteWebhook
+```
+
+```endpoint
+testWebhook
+```
+
+```endpoint
+listWebhookDeliveries
+```

@@ -11,7 +11,7 @@
 import { samplesFromCurl } from "../lib/curl-samples.mjs";
 
 const TAB = /\btab="([^"]+)"/;
-const isApiPage = (file) => /[\\/]src[\\/]content[\\/]docs[\\/]api[\\/]/.test(String(file?.path ?? file?.history?.[0] ?? ""));
+const isApiPage = (file) => /[\\/]src[\\/]content[\\/]docs[\\/](api[\\/]|platforms[\\/]livekit[\\/]cloud-avatar\.md)/.test(String(file?.path ?? file?.history?.[0] ?? ""));
 const fence = (lang, tab, value) => ({ type: "code", lang, meta: `tab="${tab}"`, value: value.replace(/\n$/, "") });
 
 export default function remarkApiSamples() {

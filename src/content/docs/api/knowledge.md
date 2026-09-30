@@ -163,6 +163,16 @@ Errors: `404` unknown KB · `422` `KB_EMPTY` (no source files) · `409` `BUILD_I
 (one already running on this KB — the request flags a rebuild-when-done), `BUILD_CONCURRENCY`
 (another build is running for the account), or `BUILD_DAILY_CAP` (20/day reached).
 
+## Inject knowledge
+
+`POST /v1/agent/{code}/add-context` gives a live agent background knowledge (`"type": "add_context"`, the default) or a message to say (`"type": "speak"`). `room_id` targets one session. It needs a live session, like [speak](/api/agents#make-an-agent-speak).
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/add-context \
+  -H "Content-Type: application/json" -H "api-secret: $BITHUMAN_API_SECRET" \
+  -d '{"context": "The visitor is a member. Preferred name: Alex."}'
+```
+
 ## Scope & limits
 
 The `/v1/knowledge` surface covers ingest → create → build → resync. Attaching a knowledge

@@ -94,6 +94,14 @@ curl -X POST https://api.bithuman.ai/v1/tts \
   --output voice.wav
 ```
 
+```endpoint
+listVoiceAxes
+```
+
+```endpoint
+previewTunedVoice
+```
+
 ## Voice codes
 
 Rather than hand-tuning axes, design a voice from a description in the
@@ -136,8 +144,13 @@ latency for long text), set `"stream": true`.
 
 Already calling OpenAI's TTS? Point existing clients at
 `POST /v1/audio/speech` — swap the base URL to `https://api.bithuman.ai/v1` and
-the auth header to `api-secret`. See the
-[API reference](/api/reference#tag/voice) for the full schema.
+the auth header to `api-secret`.
+
+```bash
+curl -X POST https://api.bithuman.ai/v1/audio/speech \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"model": "tts-1", "input": "Hello from bitHuman.", "voice": "M1"}' -o speech.wav
+```
 
 ## Errors
 

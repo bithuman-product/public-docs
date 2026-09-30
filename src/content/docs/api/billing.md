@@ -155,20 +155,11 @@ model** — read the key for the model you actually run:
 with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
 (ISO-8601 timestamps) and `agent_code`.
 
-```python
-import os
-import requests
-
-resp = requests.get(
-    "https://api.bithuman.ai/v1/usage",
-    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    params={"limit": 50, "start": "2026-06-01T00:00:00Z"},
-).json()
-
-for ev in resp["data"]:
-    print(ev["created_at"], ev["pricing_code"], ev["credits_change"])
-print(resp["pagination"])   # {limit, offset, total, has_more}
+```bash
+curl "https://api.bithuman.ai/v1/usage?limit=50&start=2026-06-01T00:00:00Z" -H "api-secret: $BITHUMAN_API_SECRET"
 ```
+
+The events are in `data`; `pagination` carries `limit`, `offset`, `total` and `has_more`.
 
 Each row carries `source` (how the charge happened: `chat`, `cloud`, `self_hosted`, `browser`, `offline_render`, `offline_pack`, `realtime_voice`, `video_api`, `creation`, `generation`, `refund`, `credit` or `other`), `activity_type`, `pricing_code`, `pricing_code_meaning`, `agent_code`, `credits_change`, `start_time`, `end_time` and `created_at`. `credits_change` is positive for charges and for grants alike: plan grants (`membership_…`) and top-ups add credits, and `credit_refund_…` rows return them. `pricing_code_meaning` decodes usage codes and is null for grants: read it (or `source`) rather than parsing `pricing_code`, whose spellings never change. `activity_type` is deprecated: it leaves the response on 2026-12-26; read `source` instead.
 

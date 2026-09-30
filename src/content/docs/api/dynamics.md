@@ -34,20 +34,10 @@ immediately with `processing`; use the GET endpoint to check completion.
 | `duration` | number | no | `5` | Duration of each motion in seconds. |
 | `model` | string | no | — | Leave it out. (`auto` and `seedance` are accepted and select the same gesture model.) |
 
-> **Note** The Python examples below use
-> [`requests`](https://pypi.org/project/requests/), which is not in the standard
-> library — `pip install requests` first, or use `curl` / `urllib` instead.
-
-```python
-import os
-import requests
-
-resp = requests.post(
-    "https://api.bithuman.ai/v1/dynamics/generate",
-    headers={"Content-Type": "application/json", "api-secret": os.environ["BITHUMAN_API_SECRET"]},
-    json={"agent_id": "A80HVD8577", "duration": 5},
-)
-print(resp.json())
+```bash
+curl -X POST https://api.bithuman.ai/v1/dynamics/generate \
+  -H "Content-Type: application/json" -H "api-secret: $BITHUMAN_API_SECRET" \
+  -d '{"agent_id": "A80HVD8577", "duration": 5}'
 ```
 
 ```json
@@ -67,19 +57,11 @@ motions (default), 5–10 s for extended animations.
 `GET /v1/dynamics/{agent_id}` — list the current dynamics configuration and
 available gestures for an agent.
 
-```python
-import os
-import requests
-
-agent_id = "A80HVD8577"
-resp = requests.get(
-    f"https://api.bithuman.ai/v1/dynamics/{agent_id}",
-    headers={"api-secret": os.environ["BITHUMAN_API_SECRET"]},
-)
-resp.raise_for_status()
-gestures = resp.json()["data"].get("gestures", {})
-print(list(gestures.keys()))
+```bash
+curl https://api.bithuman.ai/v1/dynamics/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"
 ```
+
+The gesture names are the keys of `data.gestures`.
 
 ```json
 {

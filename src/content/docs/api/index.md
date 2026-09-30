@@ -24,7 +24,7 @@ https://api.bithuman.ai
 
 All endpoints are relative to this URL and require an `api-secret` header.
 
-Every endpoint, with a live console: [API reference](/api/reference) (raw spec: https://docs.bithuman.ai/api/openapi.yaml).
+Every endpoint, one row each: [API reference](/api/reference) (raw spec: https://docs.bithuman.ai/api/openapi.yaml).
 [Get an API secret →](https://www.bithuman.ai/developer/api-keys)
 
 ## Authentication
@@ -87,13 +87,7 @@ the code).
 ## Next steps
 
 - [Quickstart](/platforms/rest) — make your first API call and drive a live agent.
-- [Authentication](/api/authentication) — get an API secret and runtime tokens.
 - [Models](/models) — the four models, where each runs, and which to pick.
-- [API reference](/api/reference) — the interactive reference for the core
-  endpoints (the OpenAPI file is at /api/openapi.yaml).
-- [Errors](/api/errors) and [Rate limits](/api/rate-limits) — the operational
-  contract.
-- [MCP server](/build/mcp) — call the common endpoints as tools from an AI agent.
 
 ## Status and versioning
 

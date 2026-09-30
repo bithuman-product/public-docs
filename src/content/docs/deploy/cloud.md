@@ -72,5 +72,5 @@ pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman python-dote
 # then pass avatar_id= to bithuman.AvatarSession: /platforms/livekit
 ```
 
-Next steps: [Web](/platforms/web), [REST API](/platforms/rest), [LiveKit](/platforms/livekit), or [a cloud avatar in your own room without the plugin](/api/cloud-avatar).
+Next steps: [Web](/platforms/web), [REST API](/platforms/rest), [LiveKit](/platforms/livekit), or [a cloud avatar in your own room without the plugin](/platforms/livekit/cloud-avatar).
 

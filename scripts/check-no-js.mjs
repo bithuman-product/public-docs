@@ -12,9 +12,11 @@
 //                   steps and "Next" link
 //   /models         the full model × place matrix, one row per place
 //   /deploy         all four deployment modes
-//   /api/reference  every operation in the OpenAPI spec, each with an anchor,
-//                   and curl, Python and Node samples where the spec's curl
-//                   converts; no third-party script
+//   /api/reference  the index: every operation in the OpenAPI spec is a row
+//                   (id = operationId) linking to the one resource page that
+//                   documents it (scripts/api-pages.json), where its endpoint
+//                   section names the path and has curl, Python and Node;
+//                   no third-party script
 //   /api/*          the request examples carry curl, Python and Node tabs, each
 //                   panel labelled for a reader with no script
 //   /examples       every example is a card with its poster and provenance
@@ -150,21 +152,38 @@ export function gradeRecipe(route, html) {
   return f;
 }
 
-export function gradeReference(html, spec) {
+/** Docs v2 W5: each OpenAPI operation is documented exactly once, on the resource page
+ *  scripts/api-pages.json names, in an endpoint section (src/markdown/rehype-endpoints.mjs)
+ *  that carries its operationId anchor, names its path and has curl, Python and Node tabs;
+ *  /api/reference is the index: one row per operation (id = operationId) linking there.
+ *  `pages` maps a route ("/api/agents") to its built HTML. */
+export function gradeReference(html, spec, map, pages) {
   const f = [];
   if (/<script\b[^>]*\bsrc=["']https?:\/\//i.test(html)) f.push("/api/reference: loads a third-party script");
+  const ids = new Set();
   for (const [path, item] of Object.entries(spec.paths ?? {})) {
     for (const m of ["get", "post", "put", "patch", "delete"]) {
       const op = item[m];
       if (!op) continue;
-      const i = html.indexOf(`id="${op.operationId}"`);
-      if (i < 0) { f.push(`/api/reference: ${m.toUpperCase()} ${path} (${op.operationId}) is not on the page`); continue; }
-      const sec = element(html, html.lastIndexOf("<section", i), "section");
-      if (!text(sec).includes(path)) f.push(`/api/reference: ${op.operationId} does not name its path`);
-      const curl = (op["x-codeSamples"] ?? []).find((c) => /curl/i.test(c.label ?? "") && !/\|/.test(c.source));
-      if (curl && !(sec.includes('data-tab="Python"') && sec.includes('data-tab="Node"'))) f.push(`/api/reference: ${op.operationId} has curl but no Python and Node samples`);
+      const id = op.operationId;
+      ids.add(id);
+      const row = map[id];
+      if (!row) { f.push(`scripts/api-pages.json: ${m.toUpperCase()} ${path} (${id}) has no page`); continue; }
+      const i = html.indexOf(`id="${id}"`);
+      if (i < 0) f.push(`/api/reference: ${m.toUpperCase()} ${path} (${id}) is not in the index`);
+      else if (!element(html, html.lastIndexOf("<tr", i), "tr").includes(`href="${row.page}#${row.slug}"`)) f.push(`/api/reference: ${id}'s row does not link to ${row.page}#${row.slug}`);
+      const homes = Object.entries(pages).filter(([, h]) => h.includes(`id="${id}"`)).map(([r]) => r);
+      if (homes.length !== 1 || homes[0] !== row.page) { f.push(`${id}: documented on ${homes.length ? homes.join(", ") : "no page"}, expected exactly once on ${row.page}`); continue; }
+      const page = pages[row.page];
+      const at = page.indexOf(`id="${id}"`);
+      const sec = element(page, page.lastIndexOf("<section", at), "section");
+      if (!/class="ep"/.test(sec.slice(0, 200))) { f.push(`${row.page}: ${id} is not in an endpoint section`); continue; }
+      if (!sec.includes(`id="${row.slug}"`)) f.push(`${row.page}: ${id}'s section is not the H2 #${row.slug}`);
+      if (!text(sec).includes(path)) f.push(`${row.page}: ${id} does not name its path ${path}`);
+      for (const t of ["curl", "Python", "Node"]) if (!sec.includes(`data-tab="${t}"`)) f.push(`${row.page}#${row.slug}: ${id} has no ${t} sample`);
     }
   }
+  for (const id of Object.keys(map)) if (!ids.has(id)) f.push(`scripts/api-pages.json: ${id} is not an operation of the OpenAPI spec`);
   return f;
 }
 
@@ -201,11 +220,16 @@ function selftest() {
   ok("a missing panel fires", gradeStart(eight.replace('id="qp-web"', 'id="qp-x"')).some((x) => x.includes("no quickstart panel")));
   ok("a missing Next fires", gradeStart(eight.replace('href="/platforms/web#first-frame"', 'href="#"')).some((x) => x.includes("no Next")));
   const spec = { paths: { "/v1/x": { post: { operationId: "doX", "x-codeSamples": [{ label: "cURL", source: "curl -X POST https://a.b/v1/x" }] } } } };
-  const ref = '<section class="ar-op"><h3 id="doX">POST /v1/x</h3><button data-tab="curl"></button><button data-tab="Python"></button><button data-tab="Node"></button></section>';
-  ok("a complete reference passes", gradeReference(ref, spec).length === 0);
-  ok("a missing operation fires", gradeReference("<p></p>", spec).some((x) => x.includes("is not on the page")));
-  ok("curl without Node fires", gradeReference(ref.replace('data-tab="Node"', 'data-tab="Go"'), spec).some((x) => x.includes("no Python and Node")));
-  ok("a third-party script fires", gradeReference(ref + '<script src="https://cdn.example/x.js"></script>', spec).some((x) => x.includes("third-party")));
+  const map = { doX: { page: "/api/x", slug: "do-x" } };
+  const ref = '<table><tr id="doX"><td>POST</td><td><a href="/api/x#do-x">Do X</a></td></tr></table>';
+  const sec = '<section class="ep" data-operation="doX"><h2 id="do-x">Do X</h2><p class="ep-line">POST <code>/v1/x</code> <a id="doX"></a></p><button data-tab="curl"></button><button data-tab="Python"></button><button data-tab="Node"></button></section>';
+  const pages = { "/api/x": sec, "/api/y": "<p></p>" };
+  ok("a complete reference passes", gradeReference(ref, spec, map, pages).length === 0);
+  ok("a missing index row fires", gradeReference("<p></p>", spec, map, pages).some((x) => x.includes("not in the index")));
+  ok("an unmapped operation fires", gradeReference(ref, spec, {}, pages).some((x) => x.includes("has no page")));
+  ok("an operation on two pages fires", gradeReference(ref, spec, map, { ...pages, "/api/y": sec }).some((x) => x.includes("exactly once")));
+  ok("curl without Node fires", gradeReference(ref, spec, map, { "/api/x": sec.replace('data-tab="Node"', 'data-tab="Go"') }).some((x) => x.includes("no Node")));
+  ok("a third-party script fires", gradeReference(ref + '<script src="https://cdn.example/x.js"></script>', spec, map, pages).some((x) => x.includes("third-party")));
   const api = '<div class="md-tabs" data-md-tabs><div class="mdt-bar"><button data-tab="curl"></button><button data-tab="Python"></button><button data-tab="Node"></button></div><div class="mdt-panel"><p class="mdt-label">curl</p></div></div>';
   ok("an API page with three labelled tabs passes", gradeApiPage("x", api).length === 0);
   ok("an API page without Node fires", gradeApiPage("x", api.replace('data-tab="Node"', "")).some((x) => x.includes("Node")));
@@ -237,7 +261,6 @@ function main() {
     ...gradeStart(page("start")),
     ...gradeModels(page("models"), PLACES),
     ...gradeDeploy(page("deploy"), DEPLOYMENTS),
-    ...gradeReference(page("api/reference"), spec),
     ...gradeGallery(page("examples"), EXAMPLES, provenanceLine),
     ...gradeDataflow(page("deploy/privacy"), FLOW_MODES, DATA_KINDS),
   ];
@@ -247,12 +270,16 @@ function main() {
     if (html.includes('class="walk"')) faults.push(...gradeRecipe(`/build/${d.name}`, html));
   }
   let withNode = 0;
-  for (const d of readdirSync(join(DIST, "api"), { withFileTypes: true })) {
-    if (!d.isDirectory() || d.name === "reference") continue;
-    const html = page(`api/${d.name}`);
+  // the /api resource pages, plus the one that moved to Platforms but stays API (SPEC §3)
+  const apiRoutes = readdirSync(join(DIST, "api"), { withFileTypes: true }).filter((d) => d.isDirectory() && d.name !== "reference").map((d) => `/api/${d.name}`);
+  apiRoutes.push("/platforms/livekit/cloud-avatar");
+  const apiHtml = Object.fromEntries(apiRoutes.map((r) => [r, page(r.slice(1))]));
+  for (const [route, html] of Object.entries(apiHtml)) {
     if (html.includes('data-tab="Node"')) withNode++;
-    faults.push(...gradeApiPage(`/api/${d.name}`, html));
+    faults.push(...gradeApiPage(route, html));
   }
+  const apiMap = JSON.parse(readFileSync(join(ROOT, "scripts/api-pages.json"), "utf8")).operations;
+  faults.push(...gradeReference(page("api/reference"), spec, apiMap, apiHtml));
   if (withNode < 10) faults.push(`only ${withNode} /api/* pages carry Node samples; the curl → Python → Node tabs went missing`);
   for (const f of faults) console.log(`::error::${f}`);
   const ops = Object.values(spec.paths).reduce((a, it) => a + ["get", "post", "put", "patch", "delete"].filter((m) => it[m]).length, 0);
