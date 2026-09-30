@@ -112,8 +112,8 @@ add default 0 built:jsonld-facts            "need_dist && node scripts/check-jso
 add default 0 built:discoverability         "need_dist && node scripts/check-discoverability.mjs"
 add default 0 built:llms-caps               "need_dist && node scripts/check-llms.mjs --full-max-kb 190 --section-max-kb 96"
 add default 0 built:served-markup           "need_dist && node scripts/check-served-markup.mjs --self-test && node scripts/check-served-markup.mjs"
-# docs v2 (SPEC §4, §8): report-only in W2a (anchor coverage flips in W3, boilerplate in W4)
-add default 0 built:anchor-coverage         "need_dist && node scripts/check-anchor-coverage.mjs --selftest && node scripts/check-anchor-coverage.mjs --report"
+# docs v2 (SPEC §4, §8): anchor coverage enforced from W3 (100% required); boilerplate report-only until W4
+add default 0 built:anchor-coverage         "need_dist && node scripts/check-anchor-coverage.mjs --selftest && node scripts/check-anchor-coverage.mjs"
 add default 0 built:boilerplate             "need_dist && node scripts/check-boilerplate.mjs --selftest && node scripts/check-boilerplate.mjs"
 add default 1 built:noise-audit             "need_dist && node scripts/noise-audit.mjs"
 
