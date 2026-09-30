@@ -18,7 +18,7 @@ llms: build
 | `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously, and Essence 2 hands out at most 25 a second | poll, or use `frames()` |
 | crash in `__cxa_finalize` when the app quits | `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all`) was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64`, or set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in the target |
-| `expression is 'async' but is not marked with 'await'` on `player.scheduleBuffer(reply)` | Xcode 26 also imports an `async` overload of `scheduleBuffer` | call `player.scheduleBuffer(reply, completionHandler: nil)` |
+| `expression is 'async' but is not marked with 'await'` on `player.scheduleBuffer(reply)` | Xcode 26 imports an `async` overload | call `player.scheduleBuffer(reply, completionHandler: nil)` |
 | Essence 2 fails in the Simulator | Essence 2 does not run in the Simulator | run on a physical iPhone or iPad |
 | `duplicate symbol` naming `MLX` at the final link, or Essence 2 memory rising in a long session | an older Swift package | raise `from:` to the version on [Downloads & versions](/downloads), then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
@@ -31,5 +31,5 @@ llms: build
 | `refusing to serve: no API secret was found` | no secret in this shell or scheme | `export BITHUMAN_API_SECRET=…`, or set it in the scheme |
 | *cannot reach bitHuman to verify your credential* in a Mac app | App Sandbox blocks outgoing connections | tick **Outgoing Connections (Client)** under App Sandbox |
 | `create` throws before `engine ready` | the model files are missing | run `./setup.sh` from the example folder, so `Model/` holds the three files |
-| The link step prints `ld: warning: … was built for newer 'macOS' version (14.0) than being linked (13.0)` | the Expression 2 engine library is built for macOS 14 | the build succeeds; running on macOS 13 is not verified |
+| The link step prints `ld: warning: … was built for newer 'macOS' version (14.0) than being linked (13.0)` | the Expression 2 engine library targets macOS 14 | expected; the build succeeds |
 | The first run is slow | the engine is prepared for this Mac once | keep `Model/staged/` between runs |

@@ -21,7 +21,7 @@ llms: build
 | Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |
 | `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |
 | `Unresolved reference 'MeteredDoorResolver'` | the resolver's public name is `Essence2MeteredDoorResolver` | you rarely need it: `Essence2Credential.set(secret)` covers downloads. To pass a secret explicitly: `import ai.bithuman.essence2.Essence2MeteredDoorResolver`, then `Essence2ModelStore(context, urlResolver = Essence2MeteredDoorResolver(secret))` |
-| Gradle stops with `What went wrong:` followed only by a Java version number (such as `25.0.4.1`) | Gradle 8.11 cannot run on that JDK | set `JAVA_HOME` to JDK 17 or 21 (Android Studio's bundled JBR works), then build again |
-| The session is refused although you set a secret | `BuildConfig.BITHUMAN_API_SECRET` is empty: the build read no `bithuman.apiSecret` in `local.properties` and no `BITHUMAN_API_SECRET` | set one of them, then rebuild the app |
-| `Unable to strip the following libraries, packaging them as they are` during the build | no NDK is installed to strip the engines' libraries | expected; the APK works |
+| Gradle stops with `What went wrong:` followed only by a Java version number (such as `25.0.4.1`) | Gradle 8.11 cannot run on that JDK | set `JAVA_HOME` to JDK 17 or 21 and build again |
+| The session is refused although you set a secret | `BuildConfig.BITHUMAN_API_SECRET` is empty | set `bithuman.apiSecret` in `local.properties` or `BITHUMAN_API_SECRET`, then rebuild |
+| `Unable to strip the following libraries, packaging them as they are` during the build | no NDK is installed | expected; the APK works |
 | `UnsatisfiedLinkError` on an emulator | the engines are `arm64-v8a` only | run on a physical arm64 handset |
