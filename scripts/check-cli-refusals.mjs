@@ -47,7 +47,7 @@
 
 import { writeFileSync, mkdtempSync, rmSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { tmpdir } from "node:os";
+import { tmpdir, homedir } from "node:os";
 import { execFileSync, spawnSync, spawn } from "node:child_process";
 import { createServer } from "node:net";
 
@@ -57,6 +57,26 @@ const UA = "bithuman-public-docs-cli-refusals (+https://github.com/bithuman-prod
 const SLUG = "marmalade"; // a showcase avatar: anonymous pull, no account, no charge
 
 class CannotCheck extends Error {}
+
+// ★THE SHOWCASE MODEL COMES FROM A SHARED, PERSISTENT CACHE; HOME STAYS EMPTY
+// (Supabase spend audit R03, 2026-09-30). This gate pulled the ~198 MB showcase
+// avatar into a throw-away dir on every run: with docs local CI running many times
+// a day that was ~60 full G06MARMALAD.avatar downloads/day (~12 GB/day of Supabase
+// egress, measured in the edge logs and traced to this pull). The CLI's `pull`
+// serves a cached file only after comparing it with the published object's length
+// (no body) and re-downloads on any difference, so a persistent BITHUMAN_CACHE_DIR
+// turns a repeat pull into a metadata read. The EMPTY HOME — the part of the
+// subject (no credential) — is unchanged: the cache holds one public showcase model.
+// Concurrent runs share it through a flock (Linux; elsewhere the pull runs as before).
+const MODEL_CACHE = process.env.BITHUMAN_TEST_MODEL_CACHE
+  || join(homedir(), ".cache", "bithuman-test-models");
+function pullArgv(bin) {
+  mkdirSync(MODEL_CACHE, { recursive: true });
+  const hasFlock = spawnSync("flock", ["--version"], { encoding: "utf8" }).status === 0;
+  return hasFlock
+    ? ["flock", ["-w", "900", join(MODEL_CACHE, ".pull.lock"), bin, "pull", SLUG, "--json"]]
+    : [bin, ["pull", SLUG, "--json"]];
+}
 
 async function get(url, headers = {}) {
   let last;
@@ -302,7 +322,8 @@ async function main() {
     let lastPull = "";
     for (let attempt = 0; attempt < 3 && !model; attempt++) {
       if (attempt) await new Promise((r) => setTimeout(r, 3000 * attempt));
-      const pull = drive(bin, home, ["pull", SLUG, "--json"]);
+      const [pbin, pargs] = pullArgv(bin);
+      const pull = drive(pbin, home, pargs, { BITHUMAN_CACHE_DIR: MODEL_CACHE });
       lastPull = pull.blob;
       const pm = /"path"\s*:\s*"([^"]+)"/.exec(pull.blob);
       if (pm) model = pm[1];   // the OUTER model — shadowing it here left every arm with undefined
