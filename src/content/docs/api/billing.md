@@ -14,7 +14,7 @@ bitHuman bills in **credits**: time in a live session, talking or idle, bills by
 
 ## Account status
 
-`GET /v1/me` returns your identity, plan and balance in one call: a good pre-flight check, and where to find your `user_id`.
+Returns your identity, plan and balance in one call: a good pre-flight check, and where to find your `user_id`.
 
 ```bash
 curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
@@ -41,7 +41,7 @@ curl https://api.bithuman.ai/v1/me -H "api-secret: $BITHUMAN_API_SECRET"
 
 ## Get the pricing schedule
 
-`GET /v1/pricing` returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with the `rounding` rule and `basis` in force. [Pricing & credits](/pricing) is generated from this response. The call needs the `api-secret` header; without one it returns `401 MISSING_AUTH`.
+Returns the credit schedule, so you can estimate a cost before a billable call. Creation is priced per model in `agent_generation.by_model`; live sessions per model in `realtime`, for the cloud (`hosted`) and for self-hosted and on-device (`self_hosted`), each with the `rounding` rule and `basis` in force. [Pricing & credits](/pricing) is generated from this response. The call needs the `api-secret` header; without one it returns `401 MISSING_AUTH`.
 
 ```bash
 curl https://api.bithuman.ai/v1/pricing \
@@ -87,7 +87,7 @@ curl https://api.bithuman.ai/v1/pricing \
 
 ## Check credit balance
 
-`GET /v2/credit-summaries` returns the live balance of the account that owns the `api-secret`, split into plan and top-up credits, with an estimate of the minutes each session type can afford. It is safe to call often. It only ever returns your own balance; a `user_id` parameter is ignored.
+Returns the live balance of the account that owns the `api-secret`, split into plan and top-up credits, with an estimate of the minutes each session type can afford. It is safe to call often. It only ever returns your own balance; a `user_id` parameter is ignored.
 
 ```bash
 # Your own balance — just your API secret:
@@ -151,7 +151,7 @@ model** — read the key for the model you actually run:
 
 ## Usage history
 
-`GET /v1/usage` returns your account's metered events, newest first. Paginate
+Returns your account's metered events, newest first. Paginate
 with `limit` (default 50, max 200) and `offset`; narrow with `start` / `end`
 (ISO-8601 timestamps) and `agent_code`.
 

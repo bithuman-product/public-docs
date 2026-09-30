@@ -24,7 +24,7 @@ Dynamics generation costs 250 credits.
 
 ## Generate dynamics
 
-`POST /v1/dynamics/generate` — generate movements for an agent. Returns
+Generate movements for an agent. Returns
 immediately with `processing`; use the GET endpoint to check completion.
 
 | Parameter | Type | Required | Default | Description |
@@ -54,7 +54,7 @@ motions (default), 5–10 s for extended animations.
 
 ## Get dynamics
 
-`GET /v1/dynamics/{agent_id}` — list the current dynamics configuration and
+List the current dynamics configuration and
 available gestures for an agent.
 
 ```bash
@@ -90,7 +90,7 @@ Before generation completes, `url` is `null` and `gestures` is an empty object.
 
 ## Update dynamics
 
-`PUT /v1/dynamics/{agent_id}` — update the dynamics configuration. After a
+Update the dynamics configuration. After a
 successful update, background-movements regeneration is automatically triggered.
 
 | Parameter | Type | Required | Description |

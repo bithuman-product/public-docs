@@ -10,7 +10,7 @@ llms: api
 
 ## Upload a file
 
-`POST /v1/files/upload` — upload a file for processing. Supports both URL
+Upload a file for processing. Supports both URL
 downloads and direct base64 uploads. Each file belongs to one category:
 
 | Category | Extensions |

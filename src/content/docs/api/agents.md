@@ -17,7 +17,7 @@ To add knowledge to a live session, see [Knowledge](/api/knowledge#inject-knowle
 
 ## Generate an agent
 
-`POST /v1/agent/generate` starts an asynchronous creation and returns an `agent_id` at once. Credits are reserved at submit and refunded automatically if creation fails.
+Starts an asynchronous creation and returns an `agent_id` at once. Credits are reserved at submit and refunded automatically if creation fails.
 
 ### Request
 
@@ -72,7 +72,7 @@ print(resp.json())
 
 ## Poll status
 
-`GET /v1/agent/status/{agent_id}` reports a creation's progress. Poll every 5 seconds until `status` is `ready` or `failed`; every other value is intermediate.
+Reports a creation's progress. Poll every 5 seconds until `status` is `ready` or `failed`; every other value is intermediate.
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/status/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"
@@ -117,7 +117,7 @@ def wait_until_ready(agent_id, timeout_s=3 * 3600):
 
 ## Get an agent
 
-`GET /v1/agent/{code}` returns the agent's full record: persona (`system_prompt`, `name`, `language`), `voice_id`, media URLs, creation state, `model` and `supported_models`.
+Returns the agent's full record: persona (`system_prompt`, `name`, `language`), `voice_id`, media URLs, creation state, `model` and `supported_models`.
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"
@@ -129,7 +129,7 @@ curl https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITHUMAN_API_S
 
 ## List your agents
 
-`GET /v1/agents` lists your agents, newest first. Query: `limit` (default 20, max 100), `offset`, `status` (for example `ready`). Items are summaries (`code`, `name`, `model`, `status`, `supported_models`, `created_at` and a few more); read the full record with [Get an agent](#get-an-agent). Deleted agents appear with `status: "deleted"`.
+Lists your agents, newest first. Query: `limit` (default 20, max 100), `offset`, `status` (for example `ready`). Items are summaries (`code`, `name`, `model`, `status`, `supported_models`, `created_at` and a few more); read the full record with [Get an agent](#get-an-agent). Deleted agents appear with `status: "deleted"`.
 
 ```bash
 curl "https://api.bithuman.ai/v1/agents?status=ready&limit=20" -H "api-secret: $BITHUMAN_API_SECRET"
@@ -141,7 +141,7 @@ curl "https://api.bithuman.ai/v1/agents?status=ready&limit=20" -H "api-secret: $
 
 ## Update an agent
 
-`POST /v1/agent/{code}` changes the `system_prompt`, the voice-provider selection (`providers`, see [Voice providers](/api/providers)), or both. Send at least one, or the call returns `400 MISSING_PARAM`. The name is generated and cannot be set. The voice cannot be set here: change it in the bitHuman app ([Voices](/build/voices#change-the-voice)).
+Changes the `system_prompt`, the voice-provider selection (`providers`, see [Voice providers](/api/providers)), or both. Send at least one, or the call returns `400 MISSING_PARAM`. The name is generated and cannot be set. The voice cannot be set here: change it in the bitHuman app ([Voices](/build/voices#change-the-voice)).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577 \
@@ -155,7 +155,7 @@ curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577 \
 
 ## Delete an agent
 
-`DELETE /v1/agent/{code}` deletes an agent you own. Usage history is kept. An unknown or unowned code returns `404`.
+Deletes an agent you own. Usage history is kept. An unknown or unowned code returns `404`.
 
 ```bash
 curl -X DELETE https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITHUMAN_API_SECRET"
@@ -167,7 +167,7 @@ curl -X DELETE https://api.bithuman.ai/v1/agent/A80HVD8577 -H "api-secret: $BITH
 
 ## Add a model to an existing agent
 
-`POST /v1/agent/{code}/models` with `{"model": "<model>"}` adds a model to a `ready` agent without re-creating it. Re-adding a model the agent has costs nothing, and a failed add is refunded.
+Adds a model to a `ready` agent without re-creating it; the body is `{"model": "<model>"}`. Re-adding a model the agent has costs nothing, and a failed add is refunded.
 
 | `model` | Needs | Time | Credits |
 |---|---|---|---|
@@ -190,7 +190,7 @@ Poll [status](#poll-status) until `model_status["essence-2"].state` is `ready` o
 
 ## Download an agent's model
 
-`GET /v1/agent/{code}/model/download` redirects (`302`) to the agent's model file, a `.imx` container, for the [SDKs](/platforms) and [CLI](/platforms/cli). Pass `?model=` to choose a model when the agent has several; the default is the model it was created with. Sample avatars download with no credential; your own agents need the `api-secret` header.
+Redirects (`302`) to the agent's model file, a `.imx` container, for the [SDKs](/platforms) and [CLI](/platforms/cli). Pass `?model=` to choose a model when the agent has several; the default is the model it was created with. Sample avatars download with no credential; your own agents need the `api-secret` header.
 
 ```bash
 curl -fL -o A80HVD8577.imx -H "api-secret: $BITHUMAN_API_SECRET" \
@@ -212,7 +212,7 @@ Name the output file yourself (`-o`). Add `?redirect=false` to get the URL as JS
 
 ## List the freely downloadable showcase models
 
-`GET /v1/models/showcase` lists the **Essence 2** and **Expression 2** showcase identities whose model weights anyone may download, with no api-secret and no account. Each entry's `url` is [Download an agent's model](#download-an-agents-model): a `302` to a 1-hour signed URL that costs the agent's owner **0 credits**. Being public in the gallery is not enough; an agent is listed only when its owner has authorised distribution of the weights.
+Lists the **Essence 2** and **Expression 2** showcase identities whose model weights anyone may download, with no api-secret and no account. Each entry's `url` is [Download an agent's model](#download-an-agents-model): a `302` to a 1-hour signed URL that costs the agent's owner **0 credits**. Being public in the gallery is not enough; an agent is listed only when its owner has authorised distribution of the weights.
 
 `bithuman list` and `bithuman pull` read this catalogue. `sha256` is empty for now and the CLI skips verification on an empty value; check `size` instead. Frame rates are on the [performance page](/performance). Throttled per IP; the reply is cached for 60 seconds.
 
@@ -226,7 +226,7 @@ curl https://api.bithuman.ai/v1/models/showcase
 
 ## List an agent's live sessions
 
-`GET /v1/agent/{code}/sessions` lists the agent's open sessions. Use a `room_id` whose `deliverable` is `true` with [speak](#make-an-agent-speak) or [add-context](/api/knowledge#inject-knowledge).
+Lists the agent's open sessions. Use a `room_id` whose `deliverable` is `true` with [speak](#make-an-agent-speak) or [add-context](/api/knowledge#inject-knowledge).
 
 ```bash
 curl https://api.bithuman.ai/v1/agent/A80HVD8577/sessions -H "api-secret: $BITHUMAN_API_SECRET"
@@ -238,7 +238,7 @@ curl https://api.bithuman.ai/v1/agent/A80HVD8577/sessions -H "api-secret: $BITHU
 
 ## Make an agent speak
 
-`POST /v1/agent/{code}/speak` makes the avatar say `message` in its live sessions: one session with `room_id`, or every deliverable session without it. With no live session it returns `404 NOT_FOUND`.
+Makes the avatar say `message` in its live sessions: one session with `room_id`, or every deliverable session without it. With no live session it returns `404 NOT_FOUND`.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/speak \

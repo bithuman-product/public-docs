@@ -69,3 +69,33 @@ export function endpointBlock(arg: string, mode: Mode): string {
   if (ex) out += `\`\`\`json\n${ex.example}\n\`\`\`\n`;
   return out;
 }
+
+/**
+ * The .md twin's counterpart of the HTML METHOD pill (rehype-endpoints): under each
+ * H2 of `route` that scripts/api-pages.json maps to an operation, a line with the
+ * method and path, unless the section already starts with it or is an ```endpoint
+ * fence (whose twin carries it). Headings are slugged in document order as Astro does.
+ */
+export async function twinPills(route: string, body: string): Promise<string> {
+  const rows = Object.entries(apiPages()).filter(([, r]) => r.page === route && !r.generated);
+  if (!rows.length) return body;
+  const bySlug = new Map(rows.map(([id, r]) => [r.slug, operation(id)]));
+  const { default: Slugger } = await import("github-slugger");
+  const slugger = new Slugger();
+  const lines = body.split("\n");
+  let fence = false;
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s*(```|~~~)/.test(lines[i])) fence = !fence;
+    const h = !fence && lines[i].match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);
+    if (!h) continue;
+    const slug = slugger.slug(h[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*_]/g, ""));
+    const op = h[1] === "##" ? bySlug.get(slug) : undefined;
+    if (!op) continue;
+    const pill = `\`${op.method.toUpperCase()} ${op.path}\``;
+    let j = i + 1;
+    while (j < lines.length && !lines[j].trim()) j++;
+    if (lines[j]?.startsWith(pill) || /^```endpoint/.test(lines[j] ?? "")) continue;
+    lines.splice(i + 1, 0, "", pill);
+  }
+  return lines.join("\n");
+}

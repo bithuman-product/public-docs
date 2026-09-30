@@ -2,6 +2,7 @@ import { getCollection } from "astro:content";
 import { inSidebarOrder } from "./sidebar-order";
 import { agentFacts, agentInstructions } from "../config/agent-facts";
 import { twin, SITE } from "./markdown-twin";
+import { twinPills } from "./endpoint-block";
 import { PLATFORMS } from "../data/platforms";
 import { contactSalesUrl } from "../config/nav";
 
@@ -121,7 +122,7 @@ function choosePath(): string {
 export async function sectionBody(s: LlmsSection): Promise<string> {
   let out = "";
   if (s.id === "start") out += `\n---\n\n${choosePath()}`;
-  for (const d of await sectionDocs(s)) out += `\n---\n\n${twin(d.data.title, `/${d.id}`, d.data.description, d.body ?? "")}`;
+  for (const d of await sectionDocs(s)) out += `\n---\n\n${twin(d.data.title, `/${d.id}`, d.data.description, await twinPills(`/${d.id}`, d.body ?? ""))}`;
   return out;
 }
 

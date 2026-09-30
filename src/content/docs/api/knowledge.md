@@ -165,7 +165,7 @@ Errors: `404` unknown KB · `422` `KB_EMPTY` (no source files) · `409` `BUILD_I
 
 ## Inject knowledge
 
-`POST /v1/agent/{code}/add-context` gives a live agent background knowledge (`"type": "add_context"`, the default) or a message to say (`"type": "speak"`). `room_id` targets one session. It needs a live session, like [speak](/api/agents#make-an-agent-speak).
+Gives a live agent background knowledge (`"type": "add_context"`, the default) or a message to say (`"type": "speak"`). `room_id` targets one session. It needs a live session, like [speak](/api/agents#make-an-agent-speak).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/agent/A80HVD8577/add-context \

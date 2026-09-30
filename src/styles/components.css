@@ -235,6 +235,7 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .prose .ep-doc table { font-size: var(--ft-sm); }
 .prose .ep-doc td { padding: 6px 10px; line-height: 1.45; }
 .prose .ep-doc td:first-child code { white-space: nowrap; }
+@media (min-width: 768px) { .prose td:first-child > code:only-child, .prose td:first-child > .td-v > code:only-child { white-space: nowrap; } } /* a one-token key cell (an event, a field) never breaks mid-word */
 @media (min-width: 1280px) {
   /* the page body reads in the text track, left-aligned; an endpoint section spans the full width */
   .doc-ep .prose { grid-template-columns: [full-start text-start] minmax(0, var(--text-w)) [text-end] minmax(0, 1fr) [full-end]; }
