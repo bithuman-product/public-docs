@@ -152,6 +152,16 @@
       "permanent": true
     },
     {
+      "source": "/api/cloud-avatar",
+      "destination": "/platforms/livekit/cloud-avatar",
+      "permanent": true
+    },
+    {
+      "source": "/api/cloud-avatar/",
+      "destination": "/platforms/livekit/cloud-avatar",
+      "permanent": true
+    },
+    {
       "source": "/api/overview",
       "destination": "/api",
       "permanent": true
