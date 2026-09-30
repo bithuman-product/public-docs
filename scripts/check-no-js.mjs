@@ -32,6 +32,7 @@ import yaml from "js-yaml";
 import { formatMultiple } from "../src/lib/format-multiple.ts";
 import { PLACES } from "../src/data/models.ts";
 import { DEPLOYMENTS } from "../src/data/deployments.ts";
+import { HIDDEN_ROWS } from "../src/data/perf-groups.ts";
 import { EXAMPLES, provenanceLine } from "../src/data/examples.ts";
 import { FLOW_MODES, DATA_KINDS } from "../src/data/dataflows.ts";
 
@@ -63,6 +64,8 @@ export function gradePerformance(html, rows) {
     const panel = element(ex, ex.lastIndexOf("<div", p), "div");
     for (const r of rows.filter((x) => x.published)) {
       const i = panel.indexOf(`data-row="${r.id}"`);
+      // A hidden row (perf-groups HIDDEN_ROWS, e.g. native Windows until its release) must NOT be drawn.
+      if (HIDDEN_ROWS.includes(r.id)) { if (i >= 0) f.push(`/performance: the ${m} panel draws the hidden row ${r.id}`); continue; }
       if (i < 0) { f.push(`/performance: the ${m} panel leaves out the published row ${r.id}`); continue; }
       const c = r.cells[m];
       if (!c) continue;
@@ -283,7 +286,7 @@ function main() {
   if (withNode < 10) faults.push(`only ${withNode} /api/* pages carry Node samples; the curl → Python → Node tabs went missing`);
   for (const f of faults) console.log(`::error::${f}`);
   const ops = Object.values(spec.paths).reduce((a, it) => a + ["get", "post", "put", "patch", "delete"].filter((m) => it[m]).length, 0);
-  console.log(`${faults.length ? "FAIL" : "OK"}: with JavaScript off, /performance draws ${rows.filter((r) => r.published).length} published rows per model, /start every picker platform, /api/reference ${ops} operations, ${withNode} /api pages carry curl, Python and Node`);
+  console.log(`${faults.length ? "FAIL" : "OK"}: with JavaScript off, /performance draws ${rows.filter((r) => r.published && !HIDDEN_ROWS.includes(r.id)).length} published rows per model, /start every picker platform, /api/reference ${ops} operations, ${withNode} /api pages carry curl, Python and Node`);
   return faults.length ? 1 : 0;
 }
 process.exit(main());
