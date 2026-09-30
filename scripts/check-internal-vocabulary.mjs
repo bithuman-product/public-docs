@@ -219,6 +219,19 @@ const BANNED = [
   // and dropped by the wheel; BITHUMAN_RUNTIME_TOKEN is read by nothing;
   // BITHUMAN_TOKEN is set nowhere. Telling a customer to set any of them is
   // telling them to set something that does nothing.
+  // ★ADDED 2026-09-30. The engine's internal tuning variables carry the
+  // retired internal code name (`BITHUMAN_TESSERA_DIRECTOR` and siblings). The
+  // defaults are the fast path, so a customer never sets one, and the code name
+  // must not reach a page (product rule: "tessera is internal code name and
+  // isn't needed"). It sat on /models/first-generation as a carrier until the
+  // SERVED gate caught it after a table renderer split the literal with <wbr>.
+  // Graded here, pre-merge, with no carrier and no marker that admits it. The
+  // name is not `tessera` (check-retired-model-names.mjs owns that word, M3);
+  // this entry owns the environment-variable spelling only.
+  { name: "internal-env", re: /\bBITHUMAN_TESSERA\w*/g,
+    fixture: "set BITHUMAN_TESSERA_DIRECTOR=0 and the other BITHUMAN_TESSERA_* variables in your launcher",
+    say: "an internal engine-tuning variable — the defaults are the fast path, so a " +
+         "customer never sets it. Delete the row or sentence" },
   { name: "token-env", re: /\bBITHUMAN_(?:API_TOKEN|RUNTIME_TOKEN|TOKEN)\b/g,
     fixture: "export BITHUMAN_RUNTIME_TOKEN=… before you start",
     say: "a runtime token or embed token is passed per call, never through the " +
@@ -293,8 +306,10 @@ const CARRIERS = [
     re: /"source"\s*:\s*"\/(?:(?:concepts|guides)\/[a-z0-9-]+|essence-2-max)\/?"/i },
   { why: "`be_runtime_tick_compose*` — exported C ABI entry points, resolved by the dynamic loader by exact name",
     re: /be_runtime_tick_compose\w*/i },
-  { why: "BITHUMAN_TESSERA_DIRECTOR — an env var a customer sets in their own launcher; the reader takes it by exact name",
-    re: /BITHUMAN_[A-Z_]*DIRECTOR\b/ },
+  // ★CARRIER REMOVED 2026-09-30: `BITHUMAN_TESSERA_DIRECTOR` is an internal
+  // engine-tuning variable, not a literal a customer types (its own row said
+  // "No — the defaults are the fast path"). It reached a served page, and the
+  // term is now graded by the `internal-env` pattern above instead.
   // ★CARRIER REMOVED 2026-09-14, and this note is the finding that removed it.
   // It excused the banned word `armed` on the strength of `[selfhost-meter]
   // metering armed for identity=…` being what the shipped binary PRINTS. It is

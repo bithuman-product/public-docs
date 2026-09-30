@@ -74,7 +74,10 @@ Essence 1 and Expression 1 are not available on phones or in the Swift package.
 
 ```kotlin tab="Android"
 // settings.gradle.kts, in dependencyResolutionManagement { repositories { … } }
-maven { url = uri("https://maven.bithuman.ai") }
+exclusiveContent {   // ai.bithuman resolves from bitHuman's repository only
+    forRepository { maven { url = uri("https://maven.bithuman.ai") } }
+    filter { includeGroup("ai.bithuman") }
+}
 // app/build.gradle.kts
 implementation("ai.bithuman:expression2-android:0.5.2")
 ```

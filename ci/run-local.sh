@@ -107,6 +107,7 @@ add default 0 built:example-excerpts        "need_dist && node scripts/check-exa
 add default 0 built:claims                  "need_dist && node scripts/check-claims.mjs"
 add default 0 built:offline-copy            "need_dist && node scripts/check-offline-copy.mjs"
 add default 0 built:internal-vocabulary     "need_dist && node scripts/check-internal-vocabulary.mjs"
+add default 0 built:served-vocabulary       "need_dist && node scripts/check-served-vocabulary.mjs scripts/check-internal-vocabulary.mjs dist"
 add default 0 built:perf-literals           "need_dist && node scripts/check-perf-literals.mjs"
 add default 0 built:jsonld-facts            "need_dist && node scripts/check-jsonld-facts.mjs --built"
 add default 0 built:discoverability         "need_dist && node scripts/check-discoverability.mjs"
