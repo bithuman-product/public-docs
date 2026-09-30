@@ -28,7 +28,7 @@
 // markdown (expandBlocks, called by src/lib/markdown-twin.ts).
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { perfRow, perfCell, rowName, noGpu, perfData, PERF_MODELS, type PerfRowData } from "./perf.ts";
+import { perfRow, perfCell, rowName, noGpu, shownRows, PERF_MODELS, type PerfRowData } from "./perf.ts";
 import { formatMultiple } from "./format-multiple.ts";
 import { calculate, planLine, fmtInt, fmtUsd, type CalcData, type CalcMode } from "./calculator.ts";
 import { PERF_GROUPS } from "../data/perf-groups.ts";
@@ -296,7 +296,7 @@ function sessionCaps(arg = ""): string {
  *  groups do not name yet is still drawn, under "More configurations", so the
  *  explorer never leaves a published measurement out. */
 export function explorerGroups(): { id: string; title: string; anchor: string; rows: PerfRowData[] }[] {
-  const published = perfData().rows.filter((r) => r.published);
+  const published = shownRows();
   const named = new Set(PERF_GROUPS.flatMap((g) => g.rows));
   const groups = PERF_GROUPS.map((g) => ({ id: g.id, title: g.title, anchor: g.anchor, rows: g.rows.map((id) => published.find((r) => r.id === id)).filter((r): r is PerfRowData => !!r) }));
   const rest = published.filter((r) => !named.has(r.id));
@@ -306,7 +306,7 @@ export function explorerGroups(): { id: string; title: string; anchor: string; r
 
 /** The explorer's claim, worded down when any published cell is under 1.0×. */
 export function explorerClaim(): string {
-  const cells = perfData().rows.filter((r) => r.published).flatMap((r) => PERF_MODELS.map((m) => r.cells[m.id]).filter((c): c is NonNullable<typeof c> => !!c));
+  const cells = shownRows().flatMap((r) => PERF_MODELS.map((m) => r.cells[m.id]).filter((c): c is NonNullable<typeof c> => !!c));
   const under = cells.filter((c) => c.x_realtime < 1).length;
   return under ? `${cells.length - under} of ${cells.length} published measurements render faster than real time.` : "Every configuration we publish renders faster than real time.";
 }

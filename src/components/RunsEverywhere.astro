@@ -8,13 +8,13 @@ import DeviceFrame from "./DeviceFrame.astro";
 import XrtChip from "./XrtChip.astro";
 import Icon from "./Icon.astro";
 import { PERF_BAND } from "../data/perf-band.ts";
-import { perfData, perfRow, perfCell, PERF_MODELS } from "../lib/perf.ts";
+import { perfData, perfRow, perfCell, shownRows, PERF_MODELS } from "../lib/perf.ts";
 
 interface Props { heading?: "h2" | "h3"; id?: string }
 const { heading = "h2", id = "runs-everywhere" } = Astro.props;
 const H = heading;
 const data = perfData();
-const published = data.rows.filter((r) => r.published);
+const published = shownRows();
 // The band's sentence is a claim; it is only made while every published cell holds it.
 const allRealtime = published.every((r) => Object.values(r.cells).every((c) => !c || c.x_realtime >= 1));
 const date = new Date(`${data.generated}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });

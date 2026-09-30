@@ -40,13 +40,14 @@ export function lede(md) {
 }
 
 /** Faults for one set of ids against the published rows. */
-export function gradeIds(ids, rows, where) {
+export function gradeIds(ids, rows, where, hidden = []) {
   const byId = new Map(rows.map((r) => [r.id, r]));
   const faults = [];
   for (const id of ids) {
     const r = byId.get(id);
     if (!r) faults.push(`${where}: "${id}" is not a row of performance.json`);
     else if (!r.published) faults.push(`${where}: "${id}" is not published in performance.json`);
+    else if (hidden.includes(id)) faults.push(`${where}: "${id}" is hidden (src/data/perf-groups.ts HIDDEN_ROWS)`);
   }
   return faults;
 }
@@ -60,6 +61,7 @@ function selftest() {
   ok("a published id passes", gradeIds(["a"], rows, "x").length === 0);
   ok("an unknown id fires", gradeIds(["zz"], rows, "x").length === 1);
   ok("an unpublished id fires", gradeIds(["b"], rows, "x").length === 1);
+  ok("a hidden id fires", gradeIds(["a"], rows, "x", ["a"]).length === 1);
   ok("a ```perf fence is read", perfFenceIds("x\n```perf\niphone-15 web\n```\n").join(",") === "iphone-15,web");
   ok("a lede with fps fires", FPS.test(lede('---\ndescription: "Renders at 25 fps on a phone."\n---\n')));
   ok("a lede in frames per second fires", FPS.test("plays 20 frames per second"));
@@ -76,11 +78,11 @@ async function main() {
   const faults = [];
 
   const { PERF_BAND } = await import(pathToFileURL(join(ROOT, "src/data/perf-band.ts")).href);
-  const { PERF_GROUPS, NO_GPU } = await import(pathToFileURL(join(ROOT, "src/data/perf-groups.ts")).href);
+  const { PERF_GROUPS, NO_GPU, HIDDEN_ROWS } = await import(pathToFileURL(join(ROOT, "src/data/perf-groups.ts")).href);
   const bandIds = PERF_BAND.flatMap((f) => [f.row, ...(f.held ? [f.held] : [])]);
-  faults.push(...gradeIds(bandIds, rows, "src/data/perf-band.ts"));
-  faults.push(...gradeIds(PERF_GROUPS.flatMap((g) => g.rows), rows, "src/data/perf-groups.ts PERF_GROUPS"));
-  faults.push(...gradeIds(NO_GPU, rows, "src/data/perf-groups.ts NO_GPU"));
+  faults.push(...gradeIds(bandIds, rows, "src/data/perf-band.ts", HIDDEN_ROWS));
+  faults.push(...gradeIds(PERF_GROUPS.flatMap((g) => g.rows), rows, "src/data/perf-groups.ts PERF_GROUPS", HIDDEN_ROWS));
+  faults.push(...gradeIds(NO_GPU, rows, "src/data/perf-groups.ts NO_GPU", HIDDEN_ROWS));
   if (PERF_BAND.some((f) => f.href.includes("#"))) faults.push("src/data/perf-band.ts: a band frame links to an anchor; link the page");
 
   let fences = 0, ledes = 0;
@@ -89,7 +91,7 @@ async function main() {
     const md = readFileSync(f, "utf8");
     const ids = perfFenceIds(md);
     fences += ids.length ? 1 : 0;
-    faults.push(...gradeIds(ids, rows, rel));
+    faults.push(...gradeIds(ids, rows, rel, HIDDEN_ROWS));
     if (/(^|\/)changelog(\/|\.md$)/.test(rel)) continue;
     ledes++;
     if (FPS.test(lede(md))) faults.push(`${rel}: the lede (description) states a frame rate; say × real time, or leave speed to /performance`);

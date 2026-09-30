@@ -87,14 +87,6 @@ The Python API is the same on Windows as on macOS and Linux: `AsyncBithuman` tak
 - `BITHUMAN_CACHE_DIR` moves the download cache from `%USERPROFILE%\.cache\bithuman`.
 - `python -m bithuman render <AGENT_CODE> <audio>` downloads your own agent's model by code and renders it.
 
-## Performance
-
-```perf
-python-windows
-```
-
-Measured in a Windows 11 virtual machine given 8 of the processor's 24 threads.
-
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
