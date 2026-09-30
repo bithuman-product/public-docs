@@ -9,7 +9,7 @@ llms: deploy
 parent: /pricing
 ---
 
-Every rate comes from [Pricing](/pricing); the estimates below count active session time, talking or idle.
+Every rate comes from [Pricing](/pricing).
 
 ## Estimate a month
 
