@@ -41,12 +41,15 @@ The docs are also an MCP server with two read-only tools: `search` finds pages, 
 
 | Client | Add it |
 |---|---|
+| Claude (claude.ai, desktop) | add **bitHuman docs** from the [Connectors Directory](https://claude.ai/directory/connectors/bithuman-docs) |
 | Claude Code | `claude mcp add --transport http bithuman-docs https://docs.bithuman.ai/docs-mcp` |
 | Cursor, VS Code and other clients | a remote (Streamable HTTP) server at `https://docs.bithuman.ai/docs-mcp` |
 
 ```json
 { "mcpServers": { "bithuman-docs": { "url": "https://docs.bithuman.ai/docs-mcp" } } }
 ```
+
+It is also on the [official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/ai.bithuman%2Fdocs/versions/latest) as `ai.bithuman/docs`.
 
 To drive bitHuman itself (create agents, render videos) from an MCP client, use the CLI's own server instead: [MCP server](/build/mcp).
 
