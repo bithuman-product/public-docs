@@ -22,7 +22,7 @@ moved:
   troubleshooting: /platforms/android/troubleshooting
 ---
 
-After the one-time model download, the only network traffic is usage reporting. Why on the device: [On the device](/deploy/on-device).
+After the one-time model download, the only network traffic is usage reporting. [Why on the device](/deploy/on-device).
 
 ## Before you start
 

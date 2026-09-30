@@ -36,7 +36,9 @@ let avatarURL = try await Expression2Download.avatar(agentCode: "A23WJF0199")   
 let imxURL = try await Essence2Download.identity(agentCode: "A52DHS2219")      // Essence 2
 ```
 
-Both return a local file to pass to `create`. They download the Apple build of the avatar, which is smaller than the full file, and refuse a file whose sha256 does not match. Files are kept in the app's Caches directory under their sha256, so a second call for the same avatar downloads nothing. Pass `directory:` to keep them somewhere else. The shared Expression 2 engine file is not an avatar; download it from the release as in [First frame](/platforms/ios#first-frame).
+Both return a local file to pass to `create`. They download the Apple build of the avatar, which is smaller than the full file, and refuse a file whose sha256 does not match.
+
+Files are kept in the app's Caches directory under their sha256, so a second call for the same avatar downloads nothing. Pass `directory:` to keep them somewhere else. The shared Expression 2 engine file is not an avatar; download it from the release as in [First frame](/platforms/ios#first-frame).
 
 ### On a Mac
 
