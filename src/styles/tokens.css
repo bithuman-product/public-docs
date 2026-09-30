@@ -38,6 +38,7 @@
   --fs-18: 1.125rem;
   --fs-22: 1.375rem;
   --fs-32: 2rem;
+  --fs-40: 2.5rem;
 
   --ft-xs: var(--fs-12);
   --ft-sm: var(--fs-14);
@@ -183,6 +184,12 @@
   --color-on-overlay: #ffffff;
   --color-scroll-shade: rgba(0, 0, 0, 0.13);
   --color-status-ok: #13804a;
+  /* W8: the New and Hot tags on the current models (owner, 2026-09-30) */
+  --color-tag-new-bg: #fdecec;
+  --color-tag-new-text: #b3202a;
+  --color-tag-hot-bg: #fff1e0;
+  --color-tag-hot-text: #a14a00;
+  --color-table-head: #f7f7f8;
   --color-status-warn: #b35c00;
   --color-status-down: #d32933;
 
@@ -270,6 +277,11 @@
     --color-scrim: rgba(0, 0, 0, 0.6);
     --color-scroll-shade: rgba(0, 0, 0, 0.5);
     --color-status-ok: #7ee2a8;
+    --color-tag-new-bg: #3a1618;
+    --color-tag-new-text: #ff9a9a;
+    --color-tag-hot-bg: #3a2610;
+    --color-tag-hot-text: #ffc078;
+    --color-table-head: #17171b;
     --color-status-warn: #aeaeba;
     --color-status-down: #ff6f6f;
   
@@ -352,6 +364,11 @@
   --color-scrim: rgba(0, 0, 0, 0.6);
   --color-scroll-shade: rgba(0, 0, 0, 0.5);
   --color-status-ok: #7ee2a8;
+  --color-tag-new-bg: #3a1618;
+  --color-tag-new-text: #ff9a9a;
+  --color-tag-hot-bg: #3a2610;
+  --color-tag-hot-text: #ffc078;
+  --color-table-head: #17171b;
   --color-status-warn: #aeaeba;
   --color-status-down: #ff6f6f;
 

@@ -82,6 +82,16 @@ a.card:hover { border-color: var(--color-border-strong); }
 }
 @media (prefers-reduced-motion: reduce) { .card, a.card:hover { transition: none; transform: none; } }
 
+/* ---- tag: "New" and "Hot" on the current models (owner, 2026-09-30) ---- */
+.tags { display: inline-flex; gap: var(--s-1); align-items: center; }
+.tag {
+  display: inline-block; padding: 2px var(--s-2); border-radius: var(--r-pill);
+  font-size: var(--ft-xs); line-height: var(--lh-12); font-weight: var(--fw-medium); letter-spacing: 0;
+  background: var(--color-surface-3); color: var(--color-text-secondary); white-space: nowrap;
+}
+.tag-new { background: var(--color-tag-new-bg); color: var(--color-tag-new-text); }
+.tag-hot { background: var(--color-tag-hot-bg); color: var(--color-tag-hot-text); }
+
 /* ---- chip ---- */
 .chip {
   display: inline-flex; align-items: center; gap: 0.3rem; max-width: 100%;
@@ -181,6 +191,10 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 /* ---- the model cards on /models (the ```model-cards block) ---- */
 .prose ul.model-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .model-cards .card-title strong { font-size: var(--ft-lg); }
+.prose ul.model-cards { gap: var(--s-4); }
+.model-cards .card.is-current { padding: var(--s-6); }
+.model-cards .card.is-first { padding: var(--s-4) var(--s-6); }
+.model-cards .is-first .card-title strong { font-size: var(--ft-md); }
 @media (max-width: 640px) { .prose ul.model-cards { grid-template-columns: 1fr; } }
 
 /* ---- the four deployment modes side by side, two by two (the ```deploy-matrix block) ---- */
@@ -238,8 +252,8 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .prose .ep-doc .table-wrap { margin-block: var(--s-3); }
 .prose .ep-doc table { font-size: var(--ft-sm); }
 .prose .ep-doc td { padding: 6px 10px; line-height: 1.45; }
-.prose .ep-doc td:first-child code { white-space: nowrap; }
-@media (min-width: 768px) { .prose td:first-child > code:only-child, .prose td:first-child > .td-v > code:only-child { white-space: nowrap; } } /* a one-token key cell (an event, a field) never breaks mid-word */
+.prose .ep-doc td:first-child code.tok { white-space: nowrap; }
+@media (min-width: 768px) { .prose td:first-child > code.tok:only-child, .prose td:first-child > .td-v > code.tok:only-child { white-space: nowrap; } } /* a one-token key cell (an event, a field) never breaks mid-word */
 @media (min-width: 1280px) {
   /* the page body reads in the text track, left-aligned; an endpoint section spans the full width */
   .doc-ep .prose { grid-template-columns: [full-start text-start] minmax(0, var(--text-w)) [text-end] minmax(0, 1fr) [full-end]; }

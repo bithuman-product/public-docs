@@ -1,0 +1,147 @@
+/* ============================== tables ==============================
+   One table style for every page (owner, 2026-09-30: "the tables throughout
+   all pages are not well formatted"). A table sits in a rounded hairline box:
+   a tinted header row, even cell padding, a hairline between rows, nothing
+   vertical. Words and tokens never break mid-word; a table too wide for its
+   column scrolls inside its box, never the page. Loaded on every page (hubs
+   draw tables too), so it is imported by global.css, not prose.css.
+   ==================================================================== */
+.table-wrap {
+  grid-column: full;
+  margin: var(--s-8) 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  background: var(--color-surface);
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ft-sm);
+  line-height: var(--lh-14);
+  /* Figures line up in a column instead of drifting by digit width. */
+  font-variant-numeric: tabular-nums;
+}
+.prose th {
+  padding: var(--s-3);
+  text-align: left;
+  font-size: var(--ft-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-table-head);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: bottom;
+}
+.prose td {
+  padding: var(--s-3);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+  line-height: var(--lh-14);
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+/* The box's inner edge: a little more room at the two outer columns. */
+.prose :is(th, td):first-child { padding-left: var(--s-4); }
+.prose :is(th, td):last-child { padding-right: var(--s-4); }
+/* Markdown's own column alignment, which an author style would otherwise win. */
+.prose th[align="right"], .prose td[align="right"] { text-align: right; }
+.prose th[align="center"], .prose td[align="center"] { text-align: center; }
+/* A figures column (rehype-table-labels.mjs marks it .num) right-aligns. */
+.prose th.num, .prose td.num { text-align: right; white-space: nowrap; }
+/* Figures columns stay tight to the right so a reader can run down them. */
+.prose th[align="right"] { width: 8.5rem; }
+/* The first column is the key a reader scans down: it reads a shade stronger
+   and keeps a floor width so a short key never breaks letter by letter. */
+.prose tbody td:first-child { font-weight: var(--fw-medium); color: var(--color-text); min-width: 6rem; }
+.prose tbody tr:last-child td { border-bottom: 0; }
+.prose tbody tr:hover td { background: var(--color-surface-2); }
+/* A cell that carries a status rather than a figure says so quietly. */
+.prose td.is-status { color: var(--color-text-tertiary); font-weight: var(--fw-regular); }
+/* A token (a package, a flag, a slug) stays whole; a long path or address may
+   still break, but only where a line would otherwise overflow. */
+.prose td a { overflow-wrap: break-word; }
+.prose td code:not(.tok) { overflow-wrap: anywhere; }
+.prose td code.tok { white-space: nowrap; }
+/* A wide table tightens its cells (four columns or more) and, at five or
+   more, lets a token break at its own hyphen rather than push the table sideways. */
+.prose table:has(th:nth-child(4)) :is(th, td) { padding-inline: var(--s-3); }
+.prose table:has(th:nth-child(4)) :is(th, td):first-child { padding-left: var(--s-3); }
+.prose table:has(th:nth-child(4)) :is(th, td):last-child { padding-right: var(--s-3); }
+.prose table:has(th:nth-child(4)) tbody td:first-child { min-width: 5.5rem; }
+.prose table:has(th:nth-child(5)) td code.tok { white-space: normal; }
+/* A table outside the text track (a hub) still gets the box. */
+.table-wrap > table { margin: 0; }
+
+/* The generated performance tables (src/markdown/rehype-perf-tables.mjs): one
+   cell per model, the frame rate then the multiple of real time as the same
+   chip the headline on the landing page carries. */
+.prose table.perf-table td:nth-child(2) { color: var(--color-text-secondary); }
+.prose table.perf-table td.perf-cell { white-space: nowrap; }
+.prose .perf-fps { display: inline-block; min-width: 4.3em; font-weight: var(--fw-medium); color: var(--color-text); }
+.prose .perf-x {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: var(--r-pill);
+  font-size: var(--ft-xs);
+  line-height: var(--lh-12);
+  background: var(--color-surface-3);
+  color: var(--color-text-secondary);
+}
+.prose .perf-x.is-rt { color: var(--color-text); }
+.prose .perf-x.is-below { color: var(--color-text-tertiary); }
+.prose td.perf-cell.is-dash { color: var(--color-text-tertiary); }
+/* The release line the emitter writes under a table is that table's caption. */
+.prose p.perf-caption { margin-top: calc(-1 * var(--s-3)); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+
+/* Too narrow for a grid: a table stops being one. Each row becomes a card of
+   labelled values, so nothing is clipped and nothing has to be dragged
+   sideways. The column names come from rehype-table-labels.mjs at build time,
+   so this reads correctly with nothing running. */
+@media (max-width: 700px) {
+  .table-wrap { overflow-x: visible; background: none; border: 0; border-radius: 0; }
+  .prose table, .prose tbody, .prose tr, .prose td { display: block; }
+  .prose thead { display: none; }
+  .prose tr {
+    margin-bottom: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-10);
+    background: var(--color-surface-2);
+  }
+  /* A two-column table reads as label/value rows between hairlines, not cards. */
+  .prose table:has(thead th:last-child:nth-child(2)) tr {
+    margin: 0;
+    padding: var(--s-2) 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    background: none;
+  }
+  .prose th, .prose td { background: none; }
+  .prose tbody tr:hover td { background: none; }
+  .prose tr:last-child { margin-bottom: 0; }
+  .prose td {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 34%) minmax(0, 1fr);
+    gap: var(--s-3);
+    padding: 0.3rem 0;
+    border: 0;
+    text-align: left;
+  }
+  .prose td:first-child, .prose td:last-child { padding-inline: 0; }
+  .prose td[align="right"], .prose td.num { text-align: left; }
+  .prose td:empty { display: none; }
+  .prose td code.tok { white-space: normal; }
+  /* A performance row's platform is the card's title rather than a labelled value. */
+  .prose table.perf-table td:first-child { display: block; padding-bottom: 0.45rem; font-size: var(--ft-md); }
+  .prose table.perf-table td:first-child::before { content: none; }
+  .prose td[data-label]::before {
+    content: attr(data-label);
+    font-size: var(--ft-xs);
+    line-height: var(--lh-12);
+    color: var(--color-text-tertiary);
+  }
+}

@@ -7,7 +7,7 @@ import LiveDemo from "../components/LiveDemo.astro";
 import MovedAnchors from "../components/MovedAnchors.astro";
 import HUB_MOVED from "../data/hub-moved.json";
 import { hubMeta } from "../config/hubs";
-import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
+import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_V1, MODELS_NOTE, GUIDES } from "../data/home";
 import { headlineData } from "../lib/perf-headline";
 
 // The front door (docs v2 SPEC §6): a head with two buttons and the live demo,
@@ -60,13 +60,16 @@ const speed = (title: string) => {
         <h2 id="models">Models</h2>
         <a class="band-more" href="/models">Compare models <Icon name="arrow" size={16} /></a>
       </div>
-      <ul class="card-grid cols-2" role="list">
+      <ul class="card-grid cols-2 models-now" role="list">
         {MODELS.map((m) => (
           <li>
-            <Card variant="model" href={m.href} title={m.title} line={m.line} note={speed(m.title)}
-              media={{ src: `${m.poster}-480.webp`, avif: `${m.poster}-480.avif`, width: 480, height: 600, alt: m.alt, sizes: "132px" }} />
+            <Card variant="model" href={m.href} title={m.title} line={m.line} note={speed(m.title)} tags={m.tags}
+              media={{ src: `${m.poster}-480.webp`, avif: `${m.poster}-480.avif`, width: 480, height: 600, alt: m.alt, sizes: "168px" }} />
           </li>
         ))}
+      </ul>
+      <ul class="card-grid cols-2 models-v1" role="list">
+        {MODELS_V1.map((m) => <li><Card href={m.href} title={m.title} line={m.line} /></li>)}
       </ul>
       <p class="band-foot">{MODELS_NOTE}</p>
     </div>
@@ -106,56 +109,74 @@ const speed = (title: string) => {
 </Base>
 
 <style>
-  /* ---- hero ---- */
-  /* W7: the landing's columns share the header's width, so the hero's left edge sits under the logo */
-  .container { max-width: var(--container-wide); }
-  .hero { padding-block: var(--s-12) var(--s-8); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: var(--s-12); align-items: center; }
-  .hero-copy { padding-bottom: var(--s-12); }
+  /* W8 (owner, 2026-09-30: "the left/right get separated so much"): the whole
+     landing sits in one centred column narrower than the header, and the hero's
+     text and demo sit side by side as one centred group, so nothing floats to
+     the far edges. Bigger cards, fewer words. */
+  .container { max-width: 1120px; }
+  .hero { padding-block: var(--s-16) var(--s-12); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 540px) minmax(0, 360px); justify-content: center; gap: var(--s-16); align-items: center; }
   .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
-  .hero .lede { margin-top: var(--s-4); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 46ch; }
+  .hero .lede { margin-top: var(--s-4); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 40ch; }
   .hero-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; }
   .hero-demo { scroll-margin-top: calc(var(--nav-h) + var(--s-4)); }
-  /* W7: on a wide screen the brand line stands on its own line and the lede reads larger; phones keep the 28 px H1 */
   @media (min-width: 1001px) {
-    .hero .lede { font-size: var(--fh-lg); line-height: var(--lh-18); max-width: 44ch; }
-    .hero .brand-line { display: block; color: var(--color-text); }
+    .hero h1 { font-size: var(--fs-40); line-height: 1.15; letter-spacing: -0.01em; }
+    .hero .lede { font-size: var(--fh-lg); line-height: var(--lh-18); }
+    .hero .brand-line { display: block; margin-bottom: var(--s-1); color: var(--color-text); }
   }
 
   /* ---- bands ---- */
-  .band { padding-block: var(--s-8); }
-  .band.last { padding-bottom: var(--s-16); }
+  .band { padding-block: var(--s-10); }
+  .band.last { padding-bottom: var(--s-24); }
+  .band-head { margin-bottom: var(--s-5); }
   .band-more :global(.icon) { transition: transform var(--t-fast) var(--ease); }
   .band-more:hover :global(.icon) { transform: translateX(2px); }
-  .band-foot { margin-top: var(--s-3); font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); }
+  .band-foot { margin-top: var(--s-4); font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); }
 
-  /* platform tiles: icon beside the name, five across */
-  .tiles { --cols: 5; }
-  .tiles :global(.card-platform) { display: flex; align-items: center; gap: var(--s-3); }
-  .tiles :global(.card-title h3) { font-size: var(--fs-14); line-height: var(--lh-14); font-weight: var(--fw-medium); margin: 0; }
+  /* platform tiles: a larger icon above the name, five across */
+  .tiles { --cols: 5; gap: var(--s-4); }
+  .tiles :global(.card-platform) { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--s-6); min-height: 112px; padding: var(--s-5) var(--s-5) var(--s-4); }
+  .tiles :global(.card-icon) { width: 28px; height: 28px; color: var(--color-text); }
+  .tiles :global(.card-icon svg) { width: 24px; height: 24px; }
+  .tiles :global(.card-title h3) { font-size: var(--fs-16); line-height: var(--lh-16); font-weight: var(--fw-medium); margin: 0; }
+
+  /* models: the current two large, with portraits; the first generation below, compact */
+  .models-now { gap: var(--s-5); }
+  .models-now :global(.card-model) { padding: var(--s-4); gap: var(--s-6); }
+  .models-now :global(.card-model .card-figure) { width: 168px; }
+  .models-now :global(.card-model .card-body) { gap: var(--s-3); }
+  .models-v1 { margin-top: var(--s-4); gap: var(--s-5); }
+  .models-v1 :global(.card) { padding: var(--s-4) var(--s-5); }
+
+  .modes { gap: var(--s-5); }
+  .modes :global(.card) { padding: var(--s-6); gap: var(--s-3); }
 
   /* start building: icon rows, two columns */
-  .rows { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-8); }
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-10); }
   .rows > li { border-top: 1px solid var(--color-border); }
-  .row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-3); align-items: start; padding-block: var(--s-4); color: var(--color-text); text-decoration: none; }
+  .row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-3); align-items: start; padding-block: var(--s-5); color: var(--color-text); text-decoration: none; }
   .row-icon { color: var(--color-text-secondary); padding-top: 2px; }
   .row-body { display: flex; flex-direction: column; gap: var(--s-1); }
   .row-title { font-size: var(--fs-16); line-height: var(--lh-16); font-weight: var(--fw-medium); }
   .row-line { font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); }
   .row:hover .row-title { text-decoration: underline; text-underline-offset: 3px; }
 
-  @media (max-width: 1100px) { .tiles { --cols: 4; } .modes { --cols: 2; } }
+  @media (max-width: 1100px) { .modes { --cols: 2; } }
   @media (max-width: 1000px) {
-    .hero-grid { grid-template-columns: 1fr; gap: var(--s-8); }
-    .hero-copy { padding-bottom: 0; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: var(--s-8); }
+    .hero-demo { max-width: 420px; }
   }
   @media (max-width: 768px) {
     .tiles { --cols: 2; }
     .rows { grid-template-columns: 1fr; }
+    .models-now :global(.card-model .card-figure) { width: 120px; }
   }
-  @media (max-width: 640px) { .modes { --cols: 1; } }
+  @media (max-width: 640px) { .modes { --cols: 1; } .models-v1 { --cols: 1; } }
   @media (max-width: 560px) {
     .hero { padding-block: var(--s-6) var(--s-6); }
     .band { padding-block: var(--s-6); }
+    .tiles :global(.card-platform) { min-height: 0; gap: var(--s-3); padding: var(--s-4); }
+    .models-now :global(.card-model .card-figure) { width: 88px; }
   }
 </style>

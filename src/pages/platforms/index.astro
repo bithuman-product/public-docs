@@ -43,19 +43,19 @@ const gid = (name: string) => `g-${name.replace(/\W+/g, "-").toLowerCase()}`;
     <section class="hub-group" aria-labelledby="support-matrix">
       <div class="band-head"><h2 id="support-matrix">Support matrix</h2></div>
       <div class="prose matrix">
-        <table>
+        <div class="table-wrap"><table>
           <thead><tr><th>Platform</th><th>Where it renders</th><th>First result</th><th>Reference</th></tr></thead>
           <tbody>
             {PLATFORM_PAGES.map((p) => (
               <tr>
-                <td><a href={p.href}>{p.title}</a></td>
-                <td>{p.renders.map((r) => RENDERS_LABEL[r]).join(" · ")}</td>
-                <td>{p.time ?? "—"}</td>
-                <td>{REFERENCE[p.id] ? <a href={REFERENCE[p.id].href}>{REFERENCE[p.id].title}</a> : "—"}</td>
+                <td data-label="Platform"><a href={p.href}>{p.title}</a></td>
+                <td data-label="Where it renders">{p.renders.map((r) => RENDERS_LABEL[r]).join(" · ")}</td>
+                <td data-label="First result">{p.time ?? "—"}</td>
+                <td data-label="Reference">{REFERENCE[p.id] ? <a href={REFERENCE[p.id].href}>{REFERENCE[p.id].title}</a> : "—"}</td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </section>
     <MovedAnchors moved={HUB_MOVED["/platforms"]} quiet />
@@ -63,11 +63,25 @@ const gid = (name: string) => `g-${name.replace(/\W+/g, "-").toLowerCase()}`;
 </Base>
 
 <style>
-  .hub { padding-block: var(--s-8) var(--s-12); }
+  /* W8 (owner, 2026-09-30: "proper margins, larger cards", the banner "placed
+     naturally"): one centred column like the landing; the banner is a rounded
+     panel under the title, the card grid a step larger. */
+  .hub { max-width: 1120px; padding-block: var(--s-10) var(--s-16); }
   .hub h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
   .lede { margin-top: var(--s-3); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 62ch; }
-  .banner { margin-top: var(--s-6); }
+  .banner { margin-top: var(--s-8); }
   .hub-group { margin-top: var(--s-12); }
+  .hub-group .band-head { margin-bottom: var(--s-5); }
+  .hub-group :global(.card-grid) { gap: var(--s-5); }
+  .hub-group :global(.card-platform) { padding: var(--s-6); gap: var(--s-3); min-height: 168px; }
+  .hub-group :global(.card-platform .card-icon) { width: 28px; height: 28px; color: var(--color-text); }
+  .hub-group :global(.card-platform .card-icon svg) { width: 24px; height: 24px; }
+  .hub-group :global(.card-platform .card-title h3) { font-size: var(--ft-lg); }
   .matrix { max-width: none; }
-  .matrix table { width: 100%; }
+  .matrix :global(.table-wrap) { margin: 0; }
+  @media (max-width: 560px) {
+    .hub { padding-block: var(--s-6) var(--s-12); }
+    .banner { margin-top: var(--s-6); }
+    .hub-group :global(.card-platform) { padding: var(--s-4); min-height: 0; }
+  }
 </style>
