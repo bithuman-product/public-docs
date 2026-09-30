@@ -10,7 +10,7 @@ llms: api
 
 ## Overview
 
-`POST /v1/video/generate` renders an MP4 of one of your agents speaking, from a **text** script (in the agent's voice) or a **hosted audio** file. Submit a job and poll for the URL, or pass [`wait: true`](#blocking-mode-wait-true) to get the MP4 in the response.
+Renders an MP4 of one of your agents speaking, from a **text** script (in the agent's voice) or a **hosted audio** file. Submit a job and poll for the URL, or pass [`wait: true`](#blocking-mode-wait-true) to get the MP4 in the response.
 
 `essence-2` renders at up to 1080p, `1080×1920` or `1920×1080` to match the source; `expression-2` renders at `416×720`.
 
@@ -87,7 +87,7 @@ Errors are returned at submit time, before any charge: `402 INSUFFICIENT_BALANCE
 
 ## Get talking-video status
 
-`GET /v1/video/{job_id}` — poll a render job.
+Poll a render job.
 
 ```bash
 curl https://api.bithuman.ai/v1/video/vid_3f9a2c1b8e7d4a6f0b21 -H "api-secret: $BITHUMAN_API_SECRET"

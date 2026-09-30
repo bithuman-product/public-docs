@@ -74,6 +74,17 @@ function partition(body) {
     while (m < units.length && units[m].nodes.every((x) => x.type === "text" && !x.value.trim())) m++;
     if (units[m]?.code) units[k].code = true;
   }
+  // an H3 whose whole subsection is code (e.g. "Text input" over a curl block) labels
+  // that code, so it moves too; otherwise it would sit empty in the text column
+  for (let k = 0; k < units.length; k++) {
+    if (units[k].code || !isEl(units[k].nodes[0], "h3")) continue;
+    let m = k + 1, hasCode = false, onlyCode = true;
+    for (; m < units.length && !heading(units[m].nodes[0]); m++) {
+      if (units[m].code) hasCode = true;
+      else if (!units[m].nodes.every((x) => x.type === "text" && !x.value.trim())) { onlyCode = false; break; }
+    }
+    if (hasCode && onlyCode) units[k].code = true;
+  }
   const doc = [], code = [];
   for (const u of units) (u.code ? code : doc).push(...u.nodes);
   return [doc, code];

@@ -26,9 +26,7 @@ export BITHUMAN_API_SECRET="<your API secret>"
 
 ## Synthesize speech
 
-`POST https://api.bithuman.ai/v1/tts` returns audio bytes (a WAV by default).
-
-**curl**
+Returns audio bytes (a WAV by default).
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/tts \
@@ -37,8 +35,6 @@ curl -X POST https://api.bithuman.ai/v1/tts \
   -d '{"text": "Hello from bitHuman.", "voice": "F1", "language": "en"}' \
   --output voice.wav
 ```
-
-**Python**
 
 ```python
 import os, requests
@@ -68,7 +64,7 @@ with open("voice.wav", "wb") as f:
 
 ## List voices
 
-`GET /v1/voices` returns the catalog — ten built-ins (`M1`–`M5`, `F1`–`F5`) plus
+Returns the catalog — ten built-ins (`M1`–`M5`, `F1`–`F5`) plus
 any custom voices.
 
 ```bash

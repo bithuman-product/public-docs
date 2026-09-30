@@ -9,7 +9,7 @@ import { PERF_BAND } from "../data/perf-band";
 import { perfCell, perfRow, PERF_MODELS } from "../lib/perf";
 import versions from "../data/versions.json";
 import { apiSpec } from "../lib/openapi";
-import { apiPages } from "../lib/endpoint-block";
+import { apiPages, twinPills } from "../lib/endpoint-block";
 import { explorerClaim } from "../lib/doc-blocks";
 import headline from "../partials/performance-headline.md?raw";
 import { resolvedHighlights } from "../lib/highlights";
@@ -116,7 +116,7 @@ export const GET: APIRoute = async ({ props }) => {
     const list = entry.data.type !== "hub" ? "" : kids.length
       ? `\n\n## Pages in this section\n\n${kids.map((d: any) => `- [${d.data.title}](${SITE}/${route(d.id)}.md): ${d.data.description}`).join("\n")}\n`
       : `\n\n## Pages in this section\n${await hubBody(entry.data.section)}`;
-    return md(twin(entry.data.title, `/${route(entry.id)}`, entry.data.description, (entry.body ?? "") + list) + await continueBlock(entry));
+    return md(twin(entry.data.title, `/${route(entry.id)}`, entry.data.description, await twinPills(`/${route(entry.id)}`, entry.body ?? "") + list) + await continueBlock(entry));
   }
   const V = versions.versions;
   if (hub === "index") {
