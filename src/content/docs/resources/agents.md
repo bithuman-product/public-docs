@@ -1,9 +1,9 @@
 ---
 title: "For AI agents"
 description: "Everything an AI agent needs to read these docs and build with bitHuman: llms.txt, markdown for every page, the docs MCP server, an installable skill, OpenAPI and the data files."
-section: resources
+section: overview
 group: "Resources"
-order: 80
+order: 40
 type: reference
 llms: linked
 searchTitle: "For AI agents: llms.txt, docs MCP server and agent skill"

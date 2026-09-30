@@ -9,6 +9,7 @@ llms: deploy
 searchTitle: "Banking and ATMs: avatars on branch screens, teller terminals and ATMs"
 claims: ["S3", "S4", "S5", "S6", "S7", "S9", "S10", "S19", "S20", "S21"]
 next: ["/deploy/cpu", "/build/kiosk", "/deploy/privacy"]
+parent: /deploy/use-cases
 ---
 
 An avatar on a branch screen, a teller terminal or an ATM greets customers, answers questions and walks them through a task. The avatar handles the conversation; card handling and transactions stay in your systems.

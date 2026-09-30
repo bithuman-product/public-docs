@@ -9,6 +9,7 @@ llms: deploy
 searchTitle: "Healthcare: avatars in clinics and hospitals, with patient data in your environment"
 claims: ["S4", "S5", "S6", "S7", "S9", "S14", "S15", "S17", "S18", "S19", "S21", "S24", "S30"]
 next: ["/deploy/privacy", "/deploy/self-hosted", "/platforms/cli/local-brain"]
+parent: /deploy/use-cases
 ---
 
 Check-in desks, wayfinding, visitor information and patient-education screens: an avatar that answers questions in a clinic or a hospital. This page shows where each kind of data goes, so your privacy and security teams can assess a deployment. bitHuman does not certify your deployment; your organization makes its own assessment.

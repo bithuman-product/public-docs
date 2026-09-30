@@ -2,7 +2,7 @@
 title: "Authentication"
 description: "Authenticate REST calls with the api-secret header, check a secret with /v1/validate, and use short-lived tokens where a secret must not go."
 section: api
-group: "Start"
+group: "Basics"
 order: 10
 type: endpoint
 llms: api

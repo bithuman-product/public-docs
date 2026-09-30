@@ -2,8 +2,8 @@
 title: "Cloud avatar in your room"
 description: "Start a bitHuman cloud avatar in your own LiveKit room with one REST call, then stream it your TTS audio. No LiveKit plugin or agent framework needed."
 section: api
-group: "Live sessions"
-order: 20
+group: "Agents"
+order: 50
 type: endpoint
 llms: api
 ---

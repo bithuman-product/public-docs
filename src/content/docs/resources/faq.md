@@ -1,9 +1,9 @@
 ---
 title: "FAQ"
 description: "Answers to the questions developers ask first: SDKs, where the avatar renders, the conversation, pricing, offline use and what reaches bitHuman."
-section: resources
-group: "Resources"
-order: 50
+section: overview
+group: "Help"
+order: 20
 type: reference
 llms: start
 searchTitle: "FAQ: frequently asked questions"

@@ -1,13 +1,15 @@
 ---
 title: "Glossary"
-description: "The words used across the bitHuman docs, what each one means, and the older names you may still meet in code, files and saved links."
-section: resources
-group: "Resources"
-order: 60
+description: "The words used across the bitHuman docs and what each one means."
+section: overview
+group: "Help"
+order: 30
 type: reference
 llms: start
-searchTitle: "Glossary: bitHuman terms and older names"
+searchTitle: "Glossary: bitHuman terms"
 next: ["/models", "/deploy", "/resources/faq"]
+moved:
+  older-names: /resources/renamed#older-names
 ---
 
 What each term means here, and the page that owns it.
@@ -53,17 +55,6 @@ What each term means here, and the page that owns it.
 | **Credits** | What usage is paid in. [Pricing and credits](/pricing) |
 | **Active session time** | What real-time usage bills: the time a session is open, talking or idle, to the second. [Pricing](/pricing) |
 | **Creator plan** | The plan API and SDK use requires, or a higher one. [Plans](/pricing) |
-
-## Older names
-
-The model names retired over time, the older file extensions and library names, and what each means today, are in one table: [Naming & migration](/models#naming--migration). The SDK and API names below are older spellings you may still meet:
-
-| Older name | What to use now |
-|---|---|
-| `BITHUMAN_API_KEY` | `BITHUMAN_API_SECRET`. The deprecated alias is still read, with a warning, until CLI 3.0 and bithuman 4.0. |
-| `POST /v1/realtime/ephemeral-token` (`ek_…` tokens) | Retired; connect through the [realtime relay](/api/realtime). |
-| `bithuman.offline`, `render_offline` | Deprecated; use `bithuman.open(path).render(audio, out_mp4=...)` ([Python](/platforms/python)). |
-| `bitHumanKit` | A legacy Swift package, not the current one; use the [Swift package](/platforms/ios) products `Expression2` and `Essence2Kit`. |
 
 ## Next
 

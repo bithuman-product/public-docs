@@ -2,8 +2,8 @@
 title: "Runtime sessions"
 description: "List live avatar sessions, read a session transcript, terminate a session, or revoke every runtime key at once."
 section: api
-group: "Live sessions"
-order: 50
+group: "Agents"
+order: 20
 type: endpoint
 llms: api
 ---

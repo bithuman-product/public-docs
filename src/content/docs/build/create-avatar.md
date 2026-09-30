@@ -2,7 +2,7 @@
 title: "Create your own avatar"
 description: "Turn a portrait, a voice sample and a prompt into your own avatar: what to upload, how to write the persona, and the API call."
 section: build
-group: "Create"
+group: "Avatars"
 order: 10
 type: guide
 llms: build

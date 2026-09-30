@@ -6,7 +6,8 @@ import Button from "./Button.astro";
 import Card from "./Card.astro";
 
 interface HubCard { title: string; desc: string; href: string; badge?: string; external?: boolean; }
-interface Group { label: string; line?: string; cards: HubCard[]; }
+/** `was`: the ids this group had under an older name (docs v2 W2b), kept so old links land here. */
+interface Group { label: string; line?: string; cards: HubCard[]; was?: string[]; }
 interface CTA { label: string; href: string; variant?: "primary" | "secondary"; external?: boolean; }
 interface Props {
   title: string;
@@ -32,6 +33,7 @@ const idOf = (s: string) => "g-" + s.replace(/\W+/g, "-").toLowerCase();
     )}
     {groups.map((g) => (
       <section class="hub-group" aria-labelledby={idOf(g.label)}>
+        {(g.was ?? []).map((id) => <span id={id} class="hub-was"></span>)}
         <div class="band-head">
           <h2 id={idOf(g.label)}>{g.label}</h2>
           {g.line && <p>{g.line}</p>}

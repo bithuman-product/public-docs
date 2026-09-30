@@ -20,7 +20,7 @@ export interface HubMeta {
   /** The page's own meta description, verbatim. */
   description: string;
   /** Collection section whose pages this hub lists, if it is a section hub. */
-  section?: "platforms" | "build" | "resources";
+  section?: "platforms" | "build" | "overview";
 }
 
 export const HUBS: HubMeta[] = [
@@ -55,7 +55,7 @@ export const HUBS: HubMeta[] = [
   {
     route: "build",
     file: "src/pages/build/index.astro",
-    name: "Build",
+    name: "Guides",
     description: "Create your own avatar, give it a persona and a voice, and follow recipes for a voice agent and for Claude and Cursor. Then browse the example gallery.",
     section: "build",
   },
@@ -63,8 +63,8 @@ export const HUBS: HubMeta[] = [
     route: "resources",
     file: "src/pages/resources/index.astro",
     name: "Resources",
-    description: "Downloads and versions, the changelog, pricing, troubleshooting, support, and machine-readable files for AI agents.",
-    section: "resources",
+    description: "Downloads and versions, the changelog, news, troubleshooting, support, legal, and machine-readable files for AI agents.",
+    section: "overview",
   },
 ];
 

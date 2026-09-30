@@ -2,8 +2,8 @@
 title: "Talking video"
 description: "Turn one audio file into an MP4 of your avatar speaking it: with the CLI or Python on your own machine, CPU only on Linux, or with one REST call to the bitHuman cloud."
 section: build
-group: "Recipes"
-order: 30
+group: "Apps"
+order: 40
 type: recipe
 llms: build
 time: "5 min"

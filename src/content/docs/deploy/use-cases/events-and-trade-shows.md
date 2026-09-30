@@ -9,6 +9,7 @@ llms: deploy
 searchTitle: "Events and trade shows: a booth avatar on unreliable Wi-Fi"
 claims: ["S3", "S4", "S6", "S10", "S20", "S21"]
 next: ["/build/kiosk", "/deploy/cpu", "/deploy/offline"]
+parent: /deploy/use-cases
 ---
 
 A booth avatar that greets visitors, answers questions about your product and hands them to your staff. It renders on a machine at the booth, so its video does not travel over the hall's network.

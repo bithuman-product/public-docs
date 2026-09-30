@@ -2,7 +2,7 @@
 title: "Errors"
 description: "The bitHuman API error format, HTTP status codes, and the full error-code catalog with resolution steps."
 section: api
-group: "Reference"
+group: "Basics"
 order: 20
 type: reference
 llms: api

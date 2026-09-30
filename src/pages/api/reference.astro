@@ -9,6 +9,7 @@ import Base from "../../layouts/Base.astro";
 import { Code } from "astro:components";
 import ApiToc from "../../components/ApiToc.astro";
 import { hubMeta } from "../../config/hubs";
+import { SECTIONS } from "../../config/nav";
 import { apiSpec, mdHtml, type Operation } from "../../lib/openapi";
 
 const title = "API reference";
@@ -37,7 +38,7 @@ const GUIDES = [
       <ApiToc tags={api.tags} label="Endpoints" />
     </aside>
 
-    <div class="ar-main" data-pagefind-weight="0.5" data-pagefind-filter="section:API">
+    <div class="ar-main" data-pagefind-weight="0.5" data-pagefind-filter={`section:${SECTIONS.api.label}`}>
       <nav class="ar-crumb" aria-label="Breadcrumb" data-pagefind-ignore><a href="/">Docs</a> <span aria-hidden="true">/</span> <a href="/api">API</a> <span aria-hidden="true">/</span> <span>Reference</span></nav>
       <h1>API reference</h1>
       <p class="ar-lede">{description}</p>

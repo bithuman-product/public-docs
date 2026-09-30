@@ -1,14 +1,15 @@
 ---
 title: "Faster than real time on every configuration we publish"
 description: "Measured speed for Essence 2 and Expression 2 on iPhone 15, Samsung Galaxy S25+, an Apple M4 Mac, a Linux PC with no GPU, Chrome with WebGPU and the bitHuman cloud."
-section: resources
-group: "News"
-order: 30
+section: overview
+group: "Resources"
+order: 32
 type: guide
 llms: none
 searchTitle: "News: Essence 2 and Expression 2 render faster than real time on the device"
 models: ["essence-2", "expression-2"]
 next: ["/performance", "/performance/method", "/deploy/on-device"]
+parent: /news
 ---
 
 Published 2026-09-29.

@@ -3,7 +3,7 @@ title: "Knowledge"
 description: "Ingest documents and URLs, build knowledge bases, and rebuild them — programmatically, with an organization API secret."
 section: api
 group: "Agents"
-order: 20
+order: 30
 type: endpoint
 llms: api
 ---

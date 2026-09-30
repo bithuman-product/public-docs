@@ -1,0 +1,36 @@
+---
+// One tab's sidebar (the desktop aside and the phone drawer render the same
+// list): group labels, then items; a page's children sit one level under it,
+// open only on its branch; a collapsed group (D4) opens when the reader is in it.
+import type { SideItem } from "../lib/sidebar";
+interface Props { groups: [string, SideItem[]][]; current: string; collapsed?: string[]; label: string }
+const { groups, current, collapsed = [], label } = Astro.props;
+const inBranch = (i: SideItem) => i.href === current || i.children.some((c) => c.href === current);
+---
+{groups.map(([g, list]) => {
+  const Items = list.map((i) => (
+    <li>
+      <a href={i.href} class:list={["side-link", { active: i.href === current }]} aria-current={i.href === current ? "page" : undefined} {...(i.external ? { rel: "noopener" } : {})}>
+        {i.label}{i.external && <span class="side-ext" aria-hidden="true"> ↗</span>}
+      </a>
+      {i.children.length > 0 && inBranch(i) && (
+        <ul class="side-sub">
+          {i.children.map((c) => (
+            <li><a href={c.href} class:list={["side-link", { active: c.href === current }]} aria-current={c.href === current ? "page" : undefined}>{c.label}</a></li>
+          ))}
+        </ul>
+      )}
+    </li>
+  ));
+  return collapsed.includes(g) ? (
+    <details class="side-group side-fold" open={list.some(inBranch)}>
+      <summary class="side-glabel">{g}</summary>
+      <ul>{Items}</ul>
+    </details>
+  ) : (
+    <div class="side-group">
+      {g && g !== label && <p class="side-glabel">{g}</p>}
+      <ul>{Items}</ul>
+    </div>
+  );
+})}

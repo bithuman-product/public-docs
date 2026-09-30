@@ -2,8 +2,8 @@
 title: "Gestures API"
 description: "Generate and manage conversational gesture animations — waves, nods, laughs, idle motions — for an avatar."
 section: api
-group: "Agents"
-order: 40
+group: "Media"
+order: 30
 type: endpoint
 llms: api
 ---

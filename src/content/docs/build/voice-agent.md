@@ -2,7 +2,7 @@
 title: "Voice agent"
 description: "A voice avatar on your own computer: LiveKit runs locally, OpenAI Realtime listens and speaks on your own key, and the bitHuman avatar renders on your CPU. One CLI command, or a short Python agent."
 section: build
-group: "Recipes"
+group: "Conversations"
 order: 10
 type: guide
 llms: build

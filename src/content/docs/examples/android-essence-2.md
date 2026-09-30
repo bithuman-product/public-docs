@@ -6,6 +6,7 @@ group: "Examples"
 order: 41
 type: example
 llms: linked
+parent: /examples
 ---
 
 ```figure

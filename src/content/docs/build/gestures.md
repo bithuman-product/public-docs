@@ -2,7 +2,7 @@
 title: "Gestures (Essence 1)"
 description: "Play a named gesture (wave, nod, clap) on an avatar exactly when your code asks, on a cloud avatar or a self-hosted one."
 section: build
-group: "Create"
+group: "Avatars"
 order: 40
 type: guide
 llms: build

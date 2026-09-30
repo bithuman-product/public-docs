@@ -130,6 +130,8 @@ async function linkedLines(sections: LlmsSection[]): Promise<string> {
   let out = "";
   for (const s of sections) for (const d of await sectionLinked(s)) out += `- ${d.data.title} — ${SITE}/${d.id}.md\n`;
   out += `- Examples: ${SITE}/examples.md · changelog: ${SITE}/changelog.md · API references: ${SITE}/platforms/cli/reference.md, ${SITE}/platforms/python/reference.md, ${SITE}/platforms/swift/reference.md, ${SITE}/platforms/android/reference.md\n`;
+  // The legacy names sit with the glossary: named in start.txt and the full file only.
+  if (sections.some((x) => x.id === "start")) out += `- Renamed and retired names: ${SITE}/resources/renamed.md\n`;
   return out;
 }
 

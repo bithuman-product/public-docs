@@ -1,7 +1,9 @@
 ---
 import Base from "./Base.astro";
 import "../styles/prose.css";
-import { SECTIONS, GROUP_ORDER, SIDEBAR_LINKS, type SectionId } from "../config/nav.ts";
+import { SECTIONS, COLLAPSED_GROUPS, type SectionId } from "../config/nav.ts";
+import { sidebarGroups, flatten, slugOf } from "../lib/sidebar";
+import SideNav from "../components/SideNav.astro";
 import { HUBS } from "../config/hubs";
 import { lastModified } from "../lib/git-lastmod";
 import PageActions from "../components/PageActions.astro";
@@ -35,26 +37,16 @@ const data = entry.data;
 const section: SectionId = data.section;
 const meta = SECTIONS[section] ?? { label: "Docs", home: "/" };
 
-// The sidebar: this section's pages plus its .astro pages (SIDEBAR_LINKS),
-// grouped in GROUP_ORDER, then by `order`. A page's label is its H1.
-const slugOf = (e: any) => "/" + e.id.replace(/\/index$/, "").replace(/\.md$/, "");
-type Item = { href: string; label: string; order: number };
-const items: (Item & { group: string })[] = [
-  ...all
-    .filter((e) => e.data.section === section && !e.data.draft)
-    .map((e) => ({ href: slugOf(e), label: e.data.title, order: e.data.order ?? 100, group: e.data.group || "" })),
-  ...(SIDEBAR_LINKS[section] ?? []),
-];
-const groups: [string, Item[]][] = (GROUP_ORDER[section] ?? [])
-  .map((g) => [g, items.filter((i) => i.group === g).sort((a, b) => a.order - b.order || a.label.localeCompare(b.label))] as [string, Item[]])
-  .filter(([, list]) => list.length > 0);
+// The sidebar: this tab's pages and links, grouped (src/lib/sidebar.ts).
+const groups = sidebarGroups(all, section);
+const collapsed = COLLAPSED_GROUPS[section] ?? [];
 
 const currentPath = slugOf(entry);
 // "On this page" lists H2s only, at most 8 (H3 ids stay on the page).
 const toc = headings.filter((h) => h.depth === 2).slice(0, 8);
 
 // sequential prev/next across the section (in sidebar display order)
-const flatNav = groups.flatMap(([, list]) => list);
+const flatNav = flatten(groups);
 const curIdx = flatNav.findIndex((i) => i.href === currentPath);
 const prevPage = curIdx > 0 ? flatNav[curIdx - 1] : null;
 const nextPage = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1] : null;
@@ -143,37 +135,13 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
 <Base title={`${data.searchTitle ?? data.title} — bitHuman docs`} description={data.description} type="article" jsonLd={jsonLd} markdown={`${currentPath}.md`}>
   {/* Below 768 px the section's pages sit in the header drawer, under the tabs. */}
   <nav class="drawer-side" slot="drawer" aria-label={meta.label}>
-    {groups.map(([g, list]) => (
-      <div class="side-group">
-        {g && g !== meta.label && <p class="side-glabel">{g}</p>}
-        <ul>
-          {list.map((i) => (
-            <li><a href={i.href} class:list={["side-link", { active: i.href === currentPath }]}>{i.label}</a></li>
-          ))}
-        </ul>
-      </div>
-    ))}
+    <SideNav groups={groups} current={currentPath} collapsed={collapsed} label={meta.label} />
   </nav>
   <div class="doc">
     {/* sidebar: the current tab only */}
     <aside class="doc-side" aria-label="Section pages" data-doc-side data-pagefind-ignore>
       <nav class="side-inner" aria-label={meta.label}>
-        {
-          groups.map(([g, list]) => (
-            <div class="side-group">
-              {g && <p class="side-glabel">{g}</p>}
-              <ul>
-                {list.map((i) => (
-                  <li>
-                    <a href={i.href} class:list={["side-link", { active: i.href === currentPath }]} aria-current={i.href === currentPath ? "page" : undefined}>
-                      {i.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
+        <SideNav groups={groups} current={currentPath} collapsed={collapsed} label="" />
       </nav>
     </aside>
 
@@ -300,17 +268,23 @@ const weight = data.type === "changelog" ? "0.2" : data.type === "reference" && 
   /* sidebar: group labels 14/500 text, items 14/400 text-2 in 32 px rows, the
      active item a surface-2 pill */
   .doc-side { position: sticky; top: var(--nav-h); max-height: calc(100vh - var(--nav-h)); overflow-y: auto; padding-block: var(--s-8); }
-  .side-group { margin-bottom: var(--s-6); }
-  .side-glabel { font-size: var(--ft-sm); font-weight: var(--fw-medium); line-height: var(--lh-14); color: var(--color-text); margin-bottom: var(--s-1); }
-  .side-group ul { list-style: none; padding: 0; margin: 0; }
-  .side-link { display: flex; align-items: center; min-height: 32px; padding: var(--s-1) var(--s-3); margin-left: calc(-1 * var(--s-3)); border-radius: var(--r-6); font-size: var(--ft-sm); line-height: var(--lh-14); color: var(--color-text-secondary); transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
-  .side-link:hover { color: var(--color-text); }
-  .side-link.active { color: var(--color-text); background: var(--color-surface-3); }
+  :global(.side-group) { margin-bottom: var(--s-6); }
+  :global(.side-glabel) { font-size: var(--ft-sm); font-weight: var(--fw-medium); line-height: var(--lh-14); color: var(--color-text); margin-bottom: var(--s-1); }
+  :global(.side-group ul) { list-style: none; padding: 0; margin: 0; }
+  :global(.side-link) { display: flex; align-items: center; min-height: 32px; padding: var(--s-1) var(--s-3); margin-left: calc(-1 * var(--s-3)); border-radius: var(--r-6); font-size: var(--ft-sm); line-height: var(--lh-14); color: var(--color-text-secondary); transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
+  :global(.side-link:hover) { color: var(--color-text); }
+  :global(.side-link.active) { color: var(--color-text); background: var(--color-surface-3); }
+  :global(.side-sub) { list-style: none; margin: 0 0 var(--s-1) var(--s-3) !important; padding-left: var(--s-3) !important; border-left: 1px solid var(--color-border); }
+  :global(.side-fold > summary) { cursor: pointer; list-style: none; }
+  :global(.side-fold > summary::-webkit-details-marker) { display: none; }
+  :global(.side-fold > summary::after) { content: " ▸"; color: var(--color-text-tertiary); }
+  :global(.side-fold[open] > summary::after) { content: " ▾"; }
+  :global(.side-ext) { color: var(--color-text-tertiary); }
   /* the drawer copy (below 768 px only) */
   .drawer-side { display: flex; flex-direction: column; }
-  .drawer-side .side-group { margin: 0; }
-  .drawer-side .side-group + .side-group { margin-top: var(--s-2); }
-  .drawer-side .side-link { margin-left: 0; padding-inline: var(--s-3); font-size: var(--ft-md); }
+  .drawer-side :global(.side-group) { margin: 0; }
+  .drawer-side :global(.side-group + .side-group) { margin-top: var(--s-2); }
+  .drawer-side :global(.side-link) { margin-left: 0; padding-inline: var(--s-3); font-size: var(--ft-md); }
   /* content */
   .doc-main { padding-block: var(--s-8) var(--s-12); min-width: 0; max-width: var(--wide-w); }
   /* the crumb sits in the prose text track, so it lines up with the H1 */

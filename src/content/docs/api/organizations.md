@@ -3,7 +3,7 @@ title: "Organizations"
 description: "Create a team, invite members, manage roles and org-scoped API secrets, and track per-member usage."
 section: api
 group: "Account"
-order: 20
+order: 30
 type: endpoint
 llms: api
 ---

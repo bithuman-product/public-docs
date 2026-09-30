@@ -3,7 +3,7 @@ import { GROUP_ORDER, type SectionId } from "../config/nav.ts";
 // The order the sidebar shows pages in — section, then group, then `order` —
 // so /llms.txt and /llms-full.txt read the way the site does.
 
-export const SECTION_ORDER: SectionId[] = ["start", "platforms", "deploy", "models", "build", "api", "performance", "resources"];
+export const SECTION_ORDER: SectionId[] = ["overview", "platforms", "models", "build", "deploy", "performance", "api"];
 
 /** The same order the sidebar shows: section, then group, then `order`. */
 export function inSidebarOrder(docs: any[]): any[] {

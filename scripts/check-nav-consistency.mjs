@@ -24,10 +24,34 @@ const routes = new Set();
 const TYPES = new Set(["hub", "quickstart", "platform", "recipe", "concept", "endpoint", "deploy", "guide", "reference", "example", "changelog", "generated", "legal",
   // docs v2 templates (SPEC §1, §5): the same list as src/content.config.ts
   "landing", "platform-app", "model", "troubleshooting", "catalogue", "record"]);
-// docs v2 (SPEC §8): a sidebar group holds 2–8 pages. Report-only until W2b lands
-// the 7-tab nav (two 1-page groups today); GROUP_SIZE_FAILS=1 then makes it a fault.
-const GROUP_MIN = 2, GROUP_MAX = 8, GROUP_SIZE_FAILS = 0;
+// docs v2 (SPEC §2, §8): a sidebar group holds 2–8 entries: its pages (a `parent:`
+// child included, except the posts a hub lists instead, HUB_LISTED) plus its
+// SIDEBAR_LINKS. A fault since W2b. A group that holds one entry until a later
+// wave adds its pages is named here with that wave; nothing else may.
+const GROUP_MIN = 2, GROUP_MAX = 8, GROUP_SIZE_FAILS = 1;
+const GROUP_SIZE_ALLOW = {
+  "overview / Pricing": "W4 adds /pricing/estimate",
+  "platforms / Flutter": "W3 adds /platforms/flutter/app and /troubleshooting",
+  "platforms / Web": "W3 adds /platforms/web/app, /webgpu and /troubleshooting",
+  "platforms / LiveKit": "W3 adds /platforms/livekit/app, /troubleshooting and the cloud-avatar move",
+  "platforms / REST": "SPEC §3: REST is one page (its sections point at the API reference tab)",
+  "platforms / Apps": "reserved for the Windows/apps lane's split (SPEC §3)",
+  "build / Conversations": "W4 adds /build/voice-agent/python and /build/barge-in",
+  "deploy / Privacy & compliance": "W4 adds /deploy/privacy/retention",
+};
+const hubListed = [...((/export const HUB_LISTED[^=]*=\s*\[([^\]]*)\]/.exec(navSrc) || [])[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]);
 const groupCount = {};
+// SIDEBAR_LINKS entries count toward their group (and an internal one must be a page)
+const sl = /export const SIDEBAR_LINKS[^=]*=\s*\{([\s\S]*?)\n\};/.exec(navSrc);
+if (!sl) { console.log("::error::cannot read SIDEBAR_LINKS from src/config/nav.ts"); process.exit(2); }
+const sideLinks = [];
+for (const b of sl[1].matchAll(/(\w+):\s*\[([\s\S]*?)\n\s*\]/g))
+  for (const m of b[2].matchAll(/group:\s*"([^"]+)",\s*label:\s*"[^"]+",\s*href:\s*"([^"]+)"/g)) {
+    sideLinks.push({ sec: b[1], grp: m[1], href: m[2] });
+    const key = `${b[1]} / ${m[1]}`;
+    groupCount[key] = (groupCount[key] || 0) + 1;
+    if (!groups[b[1]]?.includes(m[1])) fail.push(`SIDEBAR_LINKS: group "${m[1]}" is not a sidebar group of section "${b[1]}"`);
+  }
 const parents = [];
 const sectionOf = {};
 let pages = 0;
@@ -50,9 +74,9 @@ for (const f of walk(CONTENT)) {
   if (!/\]\(\/[^)\s]|href="\//.test(body) && !/^next:/m.test(fm)) fail.push(`${rel}: no link to another docs page`);
   const r = routeOf(CONTENT, f, md);
   const key = `${sec} / ${grp}`;
-  groupCount[key] = (groupCount[key] || 0) + 1;
-  sectionOf[r] = sec;
   const parent = get("parent");
+  if (!hubListed.includes(parent)) groupCount[key] = (groupCount[key] || 0) + 1;
+  sectionOf[r] = sec;
   if (parent !== undefined) parents.push({ rel, r, sec, parent });
   if (routes.has(r)) fail.push(`${rel}: route ${r} is served by two pages`);
   routes.add(r);
@@ -65,17 +89,24 @@ for (const { rel, r, sec, parent } of parents) {
   else if (!r.startsWith(parent + "/")) fail.push(`${rel}: parent ${parent} is not a URL prefix of ${r}`);
   else if (parents.some((p) => p.r === parent)) fail.push(`${rel}: parent ${parent} has a parent itself (one level only)`);
 }
-const groupWarn = Object.entries(groupCount).filter(([, n]) => n < GROUP_MIN || n > GROUP_MAX).map(([k, n]) => `group "${k}" holds ${n} page(s); a group holds ${GROUP_MIN}–${GROUP_MAX}`);
-for (const w of groupWarn) {
-  if (GROUP_SIZE_FAILS) fail.push(w);
-  else console.log(`::warning::${w} (report-only until W2b)`);
+const groupWarn = Object.entries(groupCount).filter(([, n]) => n < GROUP_MIN || n > GROUP_MAX);
+for (const [k, n] of groupWarn) {
+  const w = `group "${k}" holds ${n} entr${n === 1 ? "y" : "ies"}; a group holds ${GROUP_MIN}–${GROUP_MAX}`;
+  if (GROUP_SIZE_ALLOW[k] && n >= 1 && n < GROUP_MIN) console.log(`  allowed: ${w} — ${GROUP_SIZE_ALLOW[k]}`);
+  else if (GROUP_SIZE_FAILS) fail.push(w);
+  else console.log(`::warning::${w}`);
 }
+// an allowance that no longer applies is removed, never kept "just in case"
+for (const k of Object.keys(GROUP_SIZE_ALLOW)) if ((groupCount[k] ?? 0) >= GROUP_MIN) fail.push(`GROUP_SIZE_ALLOW names "${k}", which now holds ${groupCount[k]}; remove the allowance`);
+// every group of GROUP_ORDER has an entry (an empty group is a dead label)
+for (const [sec, gs] of Object.entries(groups)) for (const g of gs) if (!groupCount[`${sec} / ${g}`]) fail.push(`group "${sec} / ${g}" in GROUP_ORDER holds nothing`);
 const astroRoutes = new Set();
 const walkA = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walkA(p) : n.endsWith(".astro") ? [p] : []; });
 for (const f of walkA(join(ROOT, "src/pages"))) {
   const r = "/" + relative(join(ROOT, "src/pages"), f).replace(/\.astro$/, "").replace(/(^|\/)index$/, "");
   if (!r.includes("[")) astroRoutes.add(r === "/" ? "/" : r.replace(/\/$/, ""));
 }
+for (const l of sideLinks) if (l.href.startsWith("/") && !l.href.startsWith("/api/openapi") && !routes.has(l.href) && !astroRoutes.has(l.href)) fail.push(`SIDEBAR_LINKS: ${l.href} is not a page`);
 for (const [sec, home] of Object.entries(homes)) {
   if (!routes.has(home) && !astroRoutes.has(home)) fail.push(`section "${sec}" home ${home} is not a page`);
 }

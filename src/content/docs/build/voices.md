@@ -2,7 +2,7 @@
 title: "Voices"
 description: "Every agent speaks every language on bitHuman's built-in voice pipeline, included in the voice chat rate — or bring your own OpenAI, Grok, ElevenLabs, or Cartesia key for premium voices."
 section: build
-group: "Create"
+group: "Avatars"
 order: 30
 type: guide
 llms: build

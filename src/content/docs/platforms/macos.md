@@ -2,7 +2,7 @@
 title: "macOS"
 description: "Render Essence 2 and Expression 2 on a Mac with Apple silicon, in a Mac app or from a terminal, with the same package as iPhone and iPad."
 section: platforms
-group: "Apps"
+group: "Swift"
 order: 20
 type: platform
 llms: apps

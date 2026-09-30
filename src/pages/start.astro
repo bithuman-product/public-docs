@@ -5,14 +5,14 @@ import LiveDemo from "../components/LiveDemo.astro";
 import Availability from "../components/Availability.astro";
 import QuickstartPicker from "../components/QuickstartPicker.astro";
 import { hubMeta } from "../config/hubs";
-import { API_SECRET_URL } from "../config/nav";
+import { API_SECRET_URL, SECTIONS } from "../config/nav";
 import { explorerClaim } from "../lib/doc-blocks";
 
 const meta = hubMeta("start");
 ---
 
 <Base title="Quickstart — bitHuman docs" description={meta.description}>
-  <section class="s-hero" data-pagefind-filter="section:Get started">
+  <section class="s-hero" data-pagefind-filter={`section:${SECTIONS.overview.label}`}>
     <div class="container">
       <a class="crumb" href="/" data-pagefind-ignore>‹ Docs</a>
       <h1>Quickstart</h1>

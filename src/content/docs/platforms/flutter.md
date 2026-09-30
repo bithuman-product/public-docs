@@ -2,8 +2,8 @@
 title: "Flutter"
 description: "The Flutter plugin renders Essence 2 and Expression 2 on Android phones, inside a Flutter app."
 section: platforms
-group: "Apps"
-order: 40
+group: "Flutter"
+order: 10
 type: platform
 llms: apps
 searchTitle: "Flutter: the bitHuman Flutter plugin"

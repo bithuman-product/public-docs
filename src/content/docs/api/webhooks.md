@@ -2,7 +2,7 @@
 title: "Webhooks"
 description: "Receive signed event notifications when async work finishes — register an endpoint, verify the HMAC signature, and inspect delivery attempts."
 section: api
-group: "Live sessions"
+group: "Basics"
 order: 40
 type: endpoint
 llms: api

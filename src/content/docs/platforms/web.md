@@ -2,8 +2,8 @@
 title: "Web: embed and WebGPU"
 description: "Put a live, talking avatar on any web page with one iframe. It renders in the bitHuman cloud, or in the visitor's tab with WebGPU."
 section: platforms
-group: "Apps"
-order: 50
+group: "Web"
+order: 10
 type: platform
 llms: apps
 searchTitle: "Web: embed and WebGPU in the browser"

@@ -2,7 +2,7 @@
 title: "Fully offline"
 description: "Real-time avatars that run completely locally, off the internet, on Linux and macOS computers, for Business and Enterprise clients."
 section: deploy
-group: "Modes"
+group: "Where it renders"
 order: 50
 type: deploy
 llms: deploy

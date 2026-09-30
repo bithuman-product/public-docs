@@ -2,8 +2,8 @@
 title: "Companion app"
 description: "An AI companion in your iPhone, iPad or Android app: a photoreal Essence 2 avatar that renders on the phone and speaks the replies your own voice stack produces."
 section: build
-group: "Recipes"
-order: 15
+group: "Apps"
+order: 20
 type: recipe
 llms: build
 time: "45 min"

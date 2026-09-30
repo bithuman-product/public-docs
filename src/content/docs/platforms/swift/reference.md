@@ -2,8 +2,8 @@
 title: "Swift reference"
 description: "Every entry point in the Swift package: the Expression2 and Essence2Kit Swift APIs, the Essence2 C interface, credentials and return codes."
 section: platforms
-group: "SDK reference"
-order: 10
+group: "Swift"
+order: 50
 type: reference
 llms: linked
 artifacts: ["swift"]

@@ -1,9 +1,9 @@
 ---
 title: "Troubleshooting"
 description: "Where to fix a problem on each platform and recipe, what a working live session looks like, and the fixes for the common session errors."
-section: resources
-group: "Resources"
-order: 40
+section: overview
+group: "Help"
+order: 10
 type: guide
 llms: build
 ---

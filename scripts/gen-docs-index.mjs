@@ -17,7 +17,7 @@ const DIST = join(ROOT, args.includes("--dist") ? args[args.indexOf("--dist") + 
 const SITE = "https://docs.bithuman.ai";
 // A page whose HTML carries no section filter (a hub) takes the header item that owns
 // its first path segment, read from src/config/nav.ts TOP_NAV (href and `match`), so the
-// MCP sections follow the navigation; "/" takes the first item; anything else is Resources.
+// MCP sections follow the navigation; "/" takes the first item; anything else takes the first item too (Overview holds the resource pages).
 function sectionByPrefix() {
   const nav = readFileSync(join(ROOT, "src/config/nav.ts"), "utf8");
   const top = /export const TOP_NAV[^=]*=\s*\[([\s\S]*?)\n\];/.exec(nav)?.[1];
@@ -54,7 +54,7 @@ for (const f of walk(DIST).sort()) {
   const htmlPath = id === "/" ? join(DIST, "index.html") : join(DIST, id, "index.html");
   const html = existsSync(htmlPath) ? readFileSync(htmlPath, "utf8") : "";
   const section = decode(/data-pagefind-filter="section:([^"]+)"/.exec(html)?.[1] ?? "") ||
-    SECTION_BY_PREFIX[id.split("/")[1] ?? ""] || "Resources";
+    SECTION_BY_PREFIX[id.split("/")[1] ?? ""] || SECTION_BY_PREFIX[""];
   const weight = Number(/data-pagefind-weight="([\d.]+)"/.exec(html)?.[1] ?? 1);
   const searchTitle = decode(/data-pagefind-meta="title:([^"]+)"/.exec(html)?.[1] ?? "");
   const description = /\n\n> (.+)\n/.exec(md)?.[1] ?? "";
