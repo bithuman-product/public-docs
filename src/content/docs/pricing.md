@@ -84,7 +84,7 @@ A Free account with top-up credits bought before 2026-09-27 keeps API and SDK ac
 | **Enterprise** | $999 | $9,990 | 250,000 | unlimited | 200 |
 | **Custom** | [Contact sales](https://www.bithuman.ai/enterprise?topic=pricing#contact) | — | by agreement | by agreement | by agreement |
 
-Annual plans bill twelve months of credits up front.
+Annual plans bill twelve months of credits up front. When you switch to a cheaper plan, credits you've already paid for stay in your balance.
 
 - **Agents:** a creation over your plan's limit returns `403 AGENT_LIMIT_REACHED`, with an `upgrade_url`. Existing agents keep working.
 - **Concurrent sessions** limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED`, with an `upgrade_url` ([rate limits](/api/rate-limits#session-concurrency)). Self-hosted and on-device sessions are limited only by credits.
