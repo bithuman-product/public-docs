@@ -1,6 +1,6 @@
 ---
 title: "Android"
-description: "Render Essence 2 and Expression 2 on Android phones, from Maven Central."
+description: "Render Essence 2 and Expression 2 on Android phones, from bitHuman's Maven repository."
 section: platforms
 group: "Android"
 order: 10
@@ -26,7 +26,7 @@ After the one-time model download, the only network traffic is usage reporting. 
 
 ## Before you start
 
-You feed 16 kHz mono speech in and pull picture frames out. Each model is one Maven Central dependency.
+You feed 16 kHz mono speech in and pull picture frames out. Each model is one Gradle dependency, from bitHuman's Maven repository at `maven.bithuman.ai`.
 
 | Detail | Expression 2 | Essence 2 |
 |---|---|---|
@@ -44,7 +44,7 @@ You feed 16 kHz mono speech in and pull picture frames out. Each model is one Ma
 
 ## Install
 
-Add Maven Central, restrict the build to `arm64-v8a`, and turn on legacy packaging so the engines' native libraries are extracted to disk. The API secret reaches your code through `BuildConfig`.
+Add bitHuman's Maven repository for the `ai.bithuman` group, restrict the build to `arm64-v8a`, and turn on legacy packaging so the engines' native libraries are extracted to disk. The API secret reaches your code through `BuildConfig`.
 
 ```kotlin
 // settings.gradle.kts
@@ -52,6 +52,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        exclusiveContent {   // ai.bithuman resolves from bitHuman's repository only
+            forRepository { maven { url = uri("https://maven.bithuman.ai") } }
+            filter { includeGroup("ai.bithuman") }
+        }
     }
 }
 
@@ -75,6 +79,8 @@ dependencies {
 ```
 
 Put the secret in `~/.gradle/gradle.properties` as `bithumanApiSecret=…`, outside your source tree.
+
+The `dependencyResolutionManagement` block works unchanged in a Groovy `settings.gradle`. Only `ai.bithuman` comes from `maven.bithuman.ai`; the engines' own dependencies still come from `google()` and `mavenCentral()`.
 
 `expression2-android` brings the Qualcomm accelerator runtime with it (`com.qualcomm.qti:qnn-litert-delegate:2.49.0` and `com.qualcomm.qti:qnn-runtime:2.49.0`). To keep the APK small and render on the CPU instead, exclude it:
 

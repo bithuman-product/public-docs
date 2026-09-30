@@ -50,8 +50,10 @@
 // WHAT IT CHECKS, over src/content, src/pages and src/partials:
 //   R1  Gradle    every `implementation("<group>:<artifact>:<version>")` —
 //                 <version> must appear in that coordinate's maven-metadata.xml
-//                 on Maven Central. EVERY group, not only ours: see the note on
-//                 the extractor for what that widening was measured to add.
+//                 at the repository that serves the group: maven.bithuman.ai for
+//                 ai.bithuman (since 2026-09-30, scripts/maven-repo.mjs), Maven
+//                 Central for every other group. EVERY group, not only ours: see
+//                 the note on the extractor for what that widening was measured to add.
 //   R2  SwiftPM   every typed dependency on the tap, in a Swift manifest
 //                 (`.package(url: "…homebrew-bithuman…", from: "X")`) or an
 //                 XcodeGen spec (`url: …homebrew-bithuman.git` + `from: X`) —
@@ -184,6 +186,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { execFileSync } from "node:child_process";
+import { mavenBases } from "./maven-repo.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 // src/partials: passages a page includes with ```partial (the Swift install is one).
@@ -471,7 +474,8 @@ class RegistryUnreachable extends Error {}
 const liveRegistry = {
   async mavenVersions(coord) {
     const [group, artifact] = coord.split(":");
-    const url = `https://repo1.maven.org/maven2/${group.replace(/\./g, "/")}/${artifact}/maven-metadata.xml`;
+    // ai.bithuman → maven.bithuman.ai; any other group → Central (scripts/maven-repo.mjs).
+    const url = `${mavenBases(group)[0]}/${group.replace(/\./g, "/")}/${artifact}/maven-metadata.xml`;
     let res;
     try {
       res = await fetch(url, { redirect: "follow" });
@@ -1069,7 +1073,8 @@ if (failures.length) {
 }
 
 console.log(
-  `check-dependency-coordinates: OK — ${seen.maven} Gradle coordinate(s) resolve on Maven Central, ` +
+  `check-dependency-coordinates: OK — ${seen.maven} Gradle coordinate(s) resolve at the repository ` +
+    `that serves them (ai.bithuman: maven.bithuman.ai; the rest: Maven Central), ` +
     `${seen.tapVersion} tap pin(s) name a tag that exists, ${seen.tapProduct} attached SwiftPM ` +
     `product(s) are vended by the manifest at the tag those pins resolve to, ${seen.pypi} ` +
     `PyPI requirement(s) name a distribution, extras and a version PyPI actually serves, and ` +

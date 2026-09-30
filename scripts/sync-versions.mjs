@@ -7,8 +7,9 @@
 //   node scripts/sync-versions.mjs            check: exit 1 if any pin or generated block differs
 //   node scripts/sync-versions.mjs --write    rewrite every pin and block from versions.json
 //   node scripts/sync-versions.mjs --registries
-//                                             check versions.json itself against PyPI, Maven
-//                                             Central and the GitHub tags (exit 2 if unreachable)
+//                                             check versions.json itself against PyPI, bitHuman's
+//                                             Maven repository (maven.bithuman.ai, for the Android
+//                                             keys) and the GitHub tags (exit 2 if unreachable)
 //
 // A release bump is one edit to versions.json, then `--write`. Pins stay literal
 // in the markdown, so GitHub, the .md twins, llms-full.txt and the gates that
@@ -23,6 +24,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { BITHUMAN_GROUP, artifactUrls } from "./maven-repo.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const VJ = JSON.parse(readFileSync(join(ROOT, "src/data/versions.json"), "utf8"));
@@ -102,7 +104,12 @@ export function syncText(text) {
 
 async function registries() {
   const get = async (url, kind = "json") => {
-    const r = await fetch(url, { headers: { "User-Agent": "bithuman-docs-versions" } });
+    let r;
+    try {
+      r = await fetch(url, { headers: { "User-Agent": "bithuman-docs-versions" } });
+    } catch (e) {
+      throw new Error(`${url} → ${e.cause?.code ?? e.message}`);
+    }
     if (!r.ok) throw new Error(`${url} → ${r.status}`);
     return kind === "json" ? r.json() : r.text();
   };
@@ -124,7 +131,14 @@ async function registries() {
     for (let i = 0; i < 3; i++) if (pa[i] !== pb[i]) return pb[i] - pa[i];
     return 0;
   })[0];
-  const maven = async (a) => (await get(`https://repo1.maven.org/maven2/ai/bithuman/${a}/maven-metadata.xml`, "text")).match(/<release>([^<]+)<\/release>/)[1];
+  // The Android keys: maven.bithuman.ai serves ai.bithuman (scripts/maven-repo.mjs), and
+  // Central no longer receives new versions, so Central's <release> would read as stale.
+  const maven = async (a) => {
+    const url = `${artifactUrls(BITHUMAN_GROUP, a)[0]}/maven-metadata.xml`;
+    const m = (await get(url, "text")).match(/<release>([^<]+)<\/release>/);
+    if (!m) throw new Error(`${url} → no <release>`);
+    return m[1].trim();
+  };
   const tags = (await gh("tags")).map((t) => t.name);
   const releases = (await gh("releases")).filter((r) => !r.draft && !r.prerelease).map((r) => r.tag_name);
   const tagNewest = (prefix, list = tags) => newest(list.filter((t) => t.startsWith(prefix) && new RegExp(`^${prefix}${SEMVER}$`).test(t)).map((t) => t.slice(prefix.length)));

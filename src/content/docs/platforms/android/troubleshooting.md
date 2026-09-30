@@ -17,6 +17,7 @@ llms: build
 | The first Expression 2 `create()` after install is slow | the accelerator prepares the decoder once and keeps it; later launches reuse it | create on a background thread at app start; only the first launch after install pays it (and again after an SDK or OS update) |
 | Download refused with `401` | the avatar is private | set its owner's API secret with `Expression2Credential.set` or `Essence2Credential.set` |
 | `409 MODEL_NOT_GENERATED` on download | the agent has no model of that kind yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then retry |
+| `Could not find ai.bithuman:expression2-android:…` (or `essence2-android`) | bitHuman's Maven repository is not in the build's repositories | add the `exclusiveContent` block for `https://maven.bithuman.ai` to `settings.gradle.kts`, as in [Install](/platforms/android#install) |
 | Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |
 | `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |
 | `Unresolved reference 'MeteredDoorResolver'` | the resolver's public name is `Essence2MeteredDoorResolver` | you rarely need it: `Essence2Credential.set(secret)` covers downloads. To pass a secret explicitly: `import ai.bithuman.essence2.Essence2MeteredDoorResolver`, then `Essence2ModelStore(context, urlResolver = Essence2MeteredDoorResolver(secret))` |

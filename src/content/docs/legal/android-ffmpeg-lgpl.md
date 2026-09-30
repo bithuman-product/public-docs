@@ -29,6 +29,11 @@ materials. This page names `0.8.1`, the current release; the offer travels with
 every version, so every permanent AAR from `0.2.0` on names its own kit at the
 same shape of URL.
 
+New versions are published at bitHuman's Maven repository,
+`https://maven.bithuman.ai/ai/bithuman/essence2-android/<version>/`, with the kit
+beside the AAR in the same way (`essence2-android-<version>-relink.zip`). Versions
+already on Maven Central keep their kits there.
+
 ---
 
 ## Which artifact this applies to

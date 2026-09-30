@@ -29,8 +29,10 @@
 // see scripts/android-api-extract.java, which runs against the AAR.
 //
 // WHAT THIS TOOL DOES, for each artifact in ARTIFACTS
-//   1. Asks Maven Central's maven-metadata.xml for the `<release>` version.
-//   2. Downloads that exact .aar and verifies it against Central's own
+//   1. Asks the registry's maven-metadata.xml for the `<release>` version. The
+//      registry for ai.bithuman is maven.bithuman.ai since 2026-09-30 (it was
+//      Maven Central before; scripts/maven-repo.mjs).
+//   2. Downloads that exact .aar and verifies it against the registry's own
 //      .sha256 AND .sha512 sidecars before anything reads it.
 //   3. Runs the extractor (Java, three pinned and digest-verified jars).
 //   4. Writes scripts/android-surface.json: the artifact record plus the whole
@@ -74,6 +76,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { BITHUMAN_MAVEN, CENTRAL as CENTRAL_BASE } from "./maven-repo.mjs";
 
 export const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 export const RECORD_PATH = join(ROOT, "scripts/android-surface.json");
@@ -83,9 +86,15 @@ export const EXTRACTOR = join(ROOT, "scripts/android-api-extract.java");
 export const BEGIN = "<!-- ANDROIDAPI:BEGIN -->";
 export const END = "<!-- ANDROIDAPI:END -->";
 
-export const REGISTRY = "maven-central";
+// The registry the AARs are read from. A record keeps the registry it was READ from
+// (`artifact.registry`), and the page names that one, so a record taken from Central
+// before the switch still says Central until it is regenerated.
+export const REGISTRY = "maven.bithuman.ai";
+export const REGISTRY_BASE = BITHUMAN_MAVEN;
+export const REGISTRY_NAMES = { "maven-central": "Maven Central", "maven.bithuman.ai": "maven.bithuman.ai" };
 export const GROUP = "ai.bithuman";
-export const CENTRAL = "https://repo1.maven.org/maven2";
+// The extractor's own jars (TOOLS) are third-party and stay on Central.
+export const CENTRAL = CENTRAL_BASE;
 
 /** The artifacts this page describes, in page order. `product` is the name a
  *  reader knows the artifact by; the page never invents one. */
@@ -148,11 +157,12 @@ const sidecar = async (url) => {
   return t;
 };
 
-/** The newest published version of an artifact, and the digests Central
- *  publishes for its .aar. Cache-busted the way the version guard does it. */
+/** The newest published version of an artifact, and the digests the registry
+ *  publishes for its .aar. No cache-busting query: maven.bithuman.ai keeps
+ *  maven-metadata.xml at the edge for about 5 minutes and serves plain paths. */
 export async function newestRelease(id) {
-  const base = `${CENTRAL}/${GROUP.replace(/\./g, "/")}/${id}`;
-  const xml = await (await get(`${base}/maven-metadata.xml?cb=${Date.now()}`, { "Cache-Control": "no-cache" })).text();
+  const base = `${REGISTRY_BASE}/${GROUP.replace(/\./g, "/")}/${id}`;
+  const xml = await (await get(`${base}/maven-metadata.xml`, { "Cache-Control": "no-cache" })).text();
   const version = /<release>([^<]+)<\/release>/.exec(xml)?.[1]?.trim();
   if (!version || !SEMVER.test(version)) {
     throw new CannotCheck(`${base}/maven-metadata.xml: <release> is ${JSON.stringify(version)}`);
@@ -208,7 +218,7 @@ export async function ensureTools() {
  * digests of the exact bytes read.
  */
 export async function downloadAndExtract({ id, version, java = process.env.JAVA || "java" }) {
-  const base = `${CENTRAL}/${GROUP.replace(/\./g, "/")}/${id}/${version}`;
+  const base = `${REGISTRY_BASE}/${GROUP.replace(/\./g, "/")}/${id}/${version}`;
   const filename = `${id}-${version}.aar`;
   const dir = mkdtempSync(join(process.env.TMPDIR || tmpdir(), "androidapi-"));
   try {
@@ -219,9 +229,9 @@ export async function downloadAndExtract({ id, version, java = process.env.JAVA 
     const want512 = await sidecar(`${base}/${filename}.sha512`);
     if (sha256 !== want256 || sha512 !== want512) {
       throw new CannotCheck(
-        `the .aar downloaded is not what Central's sidecars describe:\n` +
-        `  file    ${filename}\n  sha256  central ${want256}\n          local   ${sha256}\n` +
-        `  sha512  central ${want512.slice(0, 32)}…\n          local   ${sha512.slice(0, 32)}…`);
+        `the .aar downloaded is not what ${REGISTRY}'s sidecars describe:\n` +
+        `  file    ${filename}\n  sha256  registry ${want256}\n          local    ${sha256}\n` +
+        `  sha512  registry ${want512.slice(0, 32)}…\n          local    ${sha512.slice(0, 32)}…`);
     }
     const aar = join(dir, filename);
     writeFileSync(aar, bytes);
@@ -488,7 +498,7 @@ export function renderRegion(record) {
 
     out.push(`## ${product}`);
     out.push("");
-    out.push(`Generated from \`${a.coordinate}:${a.version}\` as published on Maven Central. ` +
+    out.push(`Generated from \`${a.coordinate}:${a.version}\` as published on ${REGISTRY_NAMES[a.registry] ?? a.registry}. ` +
       `\`minSdk\` ${f.min_sdk ?? "—"}, ABIs ${f.abis.map(code).join(", ") || "none"}. ` +
       `Classes not listed here are internal and can change.`);
     out.push("");
