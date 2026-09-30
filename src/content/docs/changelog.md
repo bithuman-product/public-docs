@@ -43,6 +43,8 @@ The releases of September 2026 worth a look first.
 
 ### CLI 2.8.5 — 2026-09-30
 
+Tag `cli-v2.8.5`.
+
 - **Fix:** if the startup credential check is lost in transit, or the service answers 5xx or 429, the CLI asks once more before it refuses. A 2xx, 401, 402 or 403 is never repeated.
 - **Fix:** a retried stop is billed once.
 - **Fix:** a 403 names what to do. A plan limit names the plan and links the plans page.
