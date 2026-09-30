@@ -1,5 +1,5 @@
 ---
-title: "Render in the visitor's tab with WebGPU"
+title: "Render with WebGPU"
 searchTitle: "WebGPU: render the avatar in the visitor's tab"
 description: "Render the avatar in the visitor's browser tab with WebGPU."
 section: platforms
