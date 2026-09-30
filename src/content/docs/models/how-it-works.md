@@ -27,7 +27,7 @@ You integrate at the SDK layer. The engine is built into each SDK, so your app n
 
 ## Serving tiers
 
-Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)). In the bitHuman cloud, the service picks the hardware for each session; to benchmark one tier, see [pin a tier for a benchmark](/performance#pin-a-tier-for-a-benchmark); in production, let the service choose.
+Every published configuration, including a desktop CPU with no GPU, renders faster than real time ([performance](/performance)). In the bitHuman cloud, the service picks the hardware for each session; to benchmark one tier, see [pin a tier for a benchmark](/performance/method#pin-a-tier-for-a-benchmark); in production, let the service choose.
 
 ## Idle and speaking behavior
 

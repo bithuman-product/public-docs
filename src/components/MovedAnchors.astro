@@ -6,17 +6,23 @@
 // reader who arrives on the old #id straight to the new place. The rows are
 // generated from the anchor snapshot (scripts/anchors-moved.json) and
 // scripts/check-anchor-coverage.mjs keeps the two in step. Not in the .md twin.
-interface Props { moved: Record<string, string> }
-const { moved } = Astro.props;
+interface Props {
+  moved: Record<string, string>;
+  /** The landing and the hubs (src/data/hub-moved.json): the stubs stay for
+   *  screen readers and no-JS readers but take no room on the page. */
+  quiet?: boolean;
+}
+const { moved, quiet = false } = Astro.props;
 const rows = Object.entries(moved);
 ---
 {rows.length > 0 && (
-  <div class="moved-stubs" data-pagefind-ignore>
+  <div class:list={["moved-stubs", { "sr-only": quiet }]} data-pagefind-ignore>
     {rows.map(([id, to]) => <p id={id} class="moved-stub">This section moved: <a href={to}>{to.replace(/^\//, "docs.bithuman.ai/")}</a></p>)}
     <script is:inline data-moved={JSON.stringify(moved)}>(()=>{var m=JSON.parse(document.currentScript.dataset.moved),g=()=>{var t=m[decodeURIComponent(location.hash.slice(1))];t&&location.replace(t)};g();addEventListener("hashchange",g)})()</script>
   </div>
 )}
 <style>
   .moved-stubs { margin-top: 32px; }
+  .moved-stubs.sr-only { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .moved-stub { margin: 0 0 4px; font-size: var(--fs-14); color: var(--color-text-secondary); }
 </style>

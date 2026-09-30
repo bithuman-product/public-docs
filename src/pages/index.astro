@@ -3,39 +3,38 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Icon from "../components/Icon.astro";
 import Card from "../components/Card.astro";
-import Chip from "../components/Chip.astro";
 import LiveDemo from "../components/LiveDemo.astro";
-import RunsEverywhere from "../components/RunsEverywhere.astro";
-import WhatsNew from "../components/WhatsNew.astro";
+import MovedAnchors from "../components/MovedAnchors.astro";
+import HUB_MOVED from "../data/hub-moved.json";
 import { hubMeta } from "../config/hubs";
-import { HERO, START_BUILDING, DEPLOYMENTS, CPU_NOTE, MODELS, MODELS_NOTE, GUIDES, RESOURCES } from "../data/home";
-import { contactSalesUrl } from "../config/nav";
-import { versionLabel, type Artifact } from "../data/labels";
+import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_NOTE, GUIDES } from "../data/home";
+import { headlineData } from "../lib/perf-headline";
 
-// The front door: a live avatar, then the measured
-// proof, then where to click, as cards. Each card is one link and one line;
-// the detail lives on the page it opens. Speed comes from performance.json
-// only (the Runs everywhere band), as times real time, on-device first.
+// The front door (docs v2 SPEC §6): a head with two buttons and the live demo,
+// then four bands of tiles: Platforms, Models, Where it runs, Start building.
+// Every tile is one link; the detail lives on the page it opens. No chips, no
+// bullets, no version strip (versions live on /downloads). Speed on the model
+// cards is the generated headline (src/partials/performance-headline.md), as
+// times real time; nothing here types a number.
 const meta = hubMeta("");
-const STRIP: Artifact[] = ["swift", "expression2_android", "essence2_android", "python", "cli", "flutter_plugin"];
-
-const deployMain = DEPLOYMENTS.filter((d) => !d.wide);
-const deployWide = DEPLOYMENTS.filter((d) => d.wide);
+const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
+const headline = headlineData() ?? [];
+const speed = (title: string) => {
+  const row = headline.find((r) => r.model === title);
+  return row ? `${row.cells.map((c) => `${c.platform} ${c.multiple}`).join(" · ")} real time` : undefined;
+};
 ---
 
 <Base title="bitHuman Docs: real-time AI avatar SDK for iOS, Android, web and Linux" description={meta.description}>
   <section class="hero" aria-labelledby="home-title">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <h1 id="home-title">{HERO.title}</h1>
-        <p class="lede">{HERO.line}</p>
+        <h1 id="home-title">{LANDING.title}</h1>
+        <p class="lede">{LANDING.line}</p>
         <div class="hero-cta">
-          <Button href="/start" size="lg">Start in 2 minutes</Button>
-          <Button href="#demo" variant="secondary" size="lg">Talk to an avatar</Button>
+          <Button href="/start" size="lg">Quickstart</Button>
+          <Button href={API_SECRET_URL} variant="secondary" size="lg">Get your API secret</Button>
         </div>
-        <ul class="strip" aria-label="Current versions">
-          {STRIP.map((a) => <li><Chip kind="version" label={versionLabel(a)} href="/downloads" /></li>)}
-        </ul>
       </div>
       <div class="hero-demo" id="demo">
         <LiveDemo eager label="Talk to a live avatar" />
@@ -43,39 +42,15 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
     </div>
   </section>
 
-  <section class="band band-proof">
-    <div class="container">
-      <RunsEverywhere />
-    </div>
-  </section>
-
-  <section class="band" aria-labelledby="start-building">
+  <section class="band" aria-labelledby="platforms">
     <div class="container">
       <div class="band-head">
-        <h2 id="start-building">Start building</h2>
+        <h2 id="platforms">Platforms</h2>
         <a class="band-more" href="/platforms">All platforms <Icon name="arrow" size={16} /></a>
       </div>
-      <ul class="card-grid cols-3 compact" role="list">
-        {START_BUILDING.map((c) => <li><Card href={c.href} title={c.title} line={c.line} icon={c.icon} variant="platform" /></li>)}
+      <ul class="card-grid tiles" role="list">
+        {START_BUILDING.map((c) => <li><Card href={c.href} title={c.title} icon={c.icon} variant="platform" /></li>)}
       </ul>
-    </div>
-  </section>
-
-  <section class="band" aria-labelledby="where-it-runs">
-    <div class="container">
-      <div class="band-head">
-        <h2 id="where-it-runs">Where it runs</h2>
-        <a class="band-more" href="/deploy">Deployment options <Icon name="arrow" size={16} /></a>
-      </div>
-      <ul class="card-grid cols-3" role="list">
-        {deployMain.map((c) => <li><Card href={c.href} title={c.title} line={c.line} icon={c.icon} /></li>)}
-        {deployWide.map((c) => (
-          <li class="span-all">
-            <Card href={c.href} title={c.title} line={c.line} note={c.note} icon={c.icon} badge={c.badge} wide />
-          </li>
-        ))}
-      </ul>
-      <p class="band-foot">{CPU_NOTE.line}: <a href={CPU_NOTE.href}>{CPU_NOTE.title}</a>. Fully offline is bought in the console or through sales: <a href="/deploy/offline">Fully offline</a>.</p>
     </div>
   </section>
 
@@ -88,94 +63,90 @@ const deployWide = DEPLOYMENTS.filter((d) => d.wide);
       <ul class="card-grid cols-2" role="list">
         {MODELS.map((m) => (
           <li>
-            <Card variant="model" href={m.href} title={m.title} line={m.line}
+            <Card variant="model" href={m.href} title={m.title} line={m.line} note={speed(m.title)}
               media={{ src: `${m.poster}-480.webp`, avif: `${m.poster}-480.avif`, width: 480, height: 600, alt: m.alt, sizes: "132px" }} />
           </li>
         ))}
       </ul>
-      <div class="models-foot">
-        <p class="note">{MODELS_NOTE}</p>
-        <a class="band-more" href="/models/first-generation">First generation <Icon name="arrow" size={16} /></a>
-      </div>
+      <p class="band-foot">{MODELS_NOTE}</p>
     </div>
   </section>
 
-  <section class="band" aria-labelledby="build">
+  <section class="band" aria-labelledby="where-it-runs">
     <div class="container">
       <div class="band-head">
-        <h2 id="build">Build</h2>
-        <a class="band-more" href="/build">All recipes <Icon name="arrow" size={16} /></a>
+        <h2 id="where-it-runs">Where it runs</h2>
+        <a class="band-more" href="/deploy">Deployment options <Icon name="arrow" size={16} /></a>
       </div>
-      <ul class="card-grid cols-3 compact" role="list">
-        {GUIDES.map((g) => <li><Card href={g.href} title={g.title} line={g.line} icon={g.icon} variant="platform" /></li>)}
+      <ul class="card-grid cols-4 modes" role="list">
+        {DEPLOYMENTS.map((c) => <li><Card href={c.href} title={c.title} line={c.line} icon={c.icon} /></li>)}
       </ul>
     </div>
   </section>
 
-  <section class="band" aria-labelledby="whats-new">
+  <section class="band last" aria-labelledby="start-building">
     <div class="container">
-      <WhatsNew />
-    </div>
-  </section>
-
-  <section class="band last" aria-labelledby="resources">
-    <div class="container">
-      <h2 id="resources" class="band-title">Resources</h2>
-      <ul class="res" role="list">
-        {RESOURCES.map((r) => (
-          <li><a href={r.href}><Icon name={r.icon} size={18} />{r.title}</a></li>
+      <div class="band-head">
+        <h2 id="start-building">Start building</h2>
+        <a class="band-more" href="/build">All guides <Icon name="arrow" size={16} /></a>
+      </div>
+      <ul class="rows" role="list">
+        {GUIDES.map((g) => (
+          <li>
+            <a class="row" href={g.href}>
+              <span class="row-icon"><Icon name={g.icon} size={20} /></span>
+              <span class="row-body"><span class="row-title">{g.title}</span><span class="row-line">{g.line}</span></span>
+            </a>
+          </li>
         ))}
       </ul>
     </div>
   </section>
+  <MovedAnchors moved={HUB_MOVED["/"]} quiet />
 </Base>
 
 <style>
   /* ---- hero ---- */
-  .hero { padding-block: var(--s-8) var(--s-8); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: var(--s-12); align-items: center; }
-  .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -0.025em; max-width: 18ch; }
-  .hero .lede { margin-top: var(--s-5); font-size: var(--ft-xl); line-height: var(--lh-snug); color: var(--color-text-secondary); max-width: 46ch; }
+  .hero { padding-block: var(--s-12) var(--s-8); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: var(--s-12); align-items: center; }
+  .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
+  .hero .lede { margin-top: var(--s-4); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 46ch; }
   .hero-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; }
-  .strip { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2); }
   .hero-demo { scroll-margin-top: calc(var(--nav-h) + var(--s-4)); }
 
   /* ---- bands ---- */
   .band { padding-block: var(--s-8); }
-  .band.last { padding-bottom: var(--s-8); }
-  .band-title { font-size: var(--fh-lg); line-height: var(--lh-22); margin-bottom: var(--s-4); }
+  .band.last { padding-bottom: var(--s-16); }
   .band-more :global(.icon) { transition: transform var(--t-fast) var(--ease); }
   .band-more:hover :global(.icon) { transform: translateX(2px); }
-  .band-foot { margin-top: var(--s-3); font-size: var(--ft-sm); color: var(--color-text-secondary); }
+  .band-foot { margin-top: var(--s-3); font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); }
 
-  /* compact platform cards: icon beside the title */
-  .compact :global(.card-platform) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-3); align-items: start; }
+  /* platform tiles: icon beside the name, five across */
+  .tiles { --cols: 5; }
+  .tiles :global(.card-platform) { display: flex; align-items: center; gap: var(--s-3); }
+  .tiles :global(.card-title h3) { font-size: var(--fs-14); line-height: var(--lh-14); font-weight: var(--fw-medium); margin: 0; }
 
-  /* ---- models ---- */
-  .models-foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-2) var(--s-4); flex-wrap: wrap; margin-top: var(--s-4); }
-  .note { font-size: var(--ft-sm); color: var(--color-text-secondary); flex: 1 1 32rem; margin: 0; }
+  /* start building: icon rows, two columns */
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-8); }
+  .rows > li { border-top: 1px solid var(--color-border); }
+  .row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-3); align-items: start; padding-block: var(--s-4); color: var(--color-text); text-decoration: none; }
+  .row-icon { color: var(--color-text-secondary); padding-top: 2px; }
+  .row-body { display: flex; flex-direction: column; gap: var(--s-1); }
+  .row-title { font-size: var(--fs-16); line-height: var(--lh-16); font-weight: var(--fw-medium); }
+  .row-line { font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); }
+  .row:hover .row-title { text-decoration: underline; text-underline-offset: 3px; }
 
-  .band-proof { padding-top: var(--s-4); }
-
-  /* ---- resources ---- */
-  .res { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2); }
-  .res a {
-    display: inline-flex; align-items: center; gap: var(--s-2); padding: 0.5rem 0.9rem;
-    border: 1px solid var(--color-border); border-radius: var(--r-pill); background: var(--color-surface);
-    font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text);
-    transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
-  }
-  .res a :global(.icon) { color: var(--color-text-secondary); }
-  .res a:hover { border-color: var(--color-border-strong); color: var(--color-primary); }
-  .res a:hover :global(.icon) { color: var(--color-primary); }
-
+  @media (max-width: 1100px) { .tiles { --cols: 4; } .modes { --cols: 2; } }
   @media (max-width: 1000px) {
     .hero-grid { grid-template-columns: 1fr; gap: var(--s-8); }
-    .hero h1 { max-width: 20ch; }
   }
+  @media (max-width: 768px) {
+    .tiles { --cols: 2; }
+    .rows { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) { .modes { --cols: 1; } }
   @media (max-width: 560px) {
     .hero { padding-block: var(--s-6) var(--s-6); }
-    .hero .lede { font-size: var(--ft-lg); }
     .band { padding-block: var(--s-6); }
   }
 </style>

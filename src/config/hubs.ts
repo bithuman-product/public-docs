@@ -49,7 +49,7 @@ export const HUBS: HubMeta[] = [
     file: "src/pages/platforms/index.astro",
     name: "Platforms",
     description:
-      "Every platform bitHuman runs on: iOS & iPadOS, macOS, Android, Flutter, the web, Python, the CLI, LiveKit and the REST API, with where the avatar renders and the current version.",
+      "Every platform bitHuman runs on: iOS & iPadOS, macOS, Android, Flutter, the web, Python, the CLI, LiveKit and the REST API, with where the avatar renders and the time to a first result.",
     section: "platforms",
   },
   {

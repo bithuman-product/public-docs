@@ -30,6 +30,8 @@ export const QUERIES = [
   { q: "FAQ", top: "/resources/faq", wave: "W5" },
   { q: "llms.txt", top: "/resources/agents", wave: "W5" },
   { q: "troubleshooting", top: "/resources/troubleshooting", wave: "W5" },
+  { q: "ready-made avatars", top: "/examples/avatars", wave: "W6" },
+  { q: "pin a tier", top: "/performance/method", wave: "W6" },
   { q: "ATM", top: "/deploy/use-cases/banking-and-atms", wave: "W6" },
   { q: "healthcare", top: "/deploy/use-cases/healthcare", wave: "W6" },
   { q: "trade show", top: "/deploy/use-cases/events-and-trade-shows", wave: "W6" },

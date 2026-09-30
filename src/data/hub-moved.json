@@ -1,0 +1,14 @@
+{
+  "$comment": "Docs v2 (SPEC §4 mechanism A) for the Astro pages, which have no frontmatter: the ids that moved off the landing and the Platforms hub while the page stays. Each page draws <MovedAnchors quiet> from its row (a visually hidden stub link plus the jump); scripts/check-anchor-coverage.mjs reads this file beside the `moved:` frontmatter, and every row is also a row of scripts/anchors-moved.json.",
+  "/": {
+    "build": "/build",
+    "resources": "/resources",
+    "runs-everywhere": "/performance",
+    "whats-new": "/changelog"
+  },
+  "/platforms": {
+    "performance": "/performance",
+    "sdk-reference": "/platforms#support-matrix",
+    "your-stack": "/models/how-it-works#audio-in-frames-out"
+  }
+}

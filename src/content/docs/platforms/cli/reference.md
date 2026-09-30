@@ -111,7 +111,13 @@ bithuman pack redeem ./PACK.bhl # a saved pack, with no network
 bithuman pack status            # render-seconds left, one line per model
 ```
 
-`redeem` binds the pack to this machine and installs it. The signed pack is kept at `~/.bithuman/packs/<pack_id>.bhl` (mode `0600`) first, so a failed install is retried by passing that file. Afterwards `bithuman render` of an avatar the pack covers needs no network and no API secret until the pack is spent. From CLI 2.8.4 a pack covers Essence 2 and Expression 2 as well as Essence 1. `bithuman pull <CODE>` also fetches the engine files the avatar's model needs, so pull each avatar and redeem once while online; after that rendering needs no network. A spent pack, or one that is not for this machine, stops the render with exit 77 and says which; it never falls back to billing your account. A refusal names what to do (the plan, the platform, a pack already installed) and nothing is spent. Where the CLI's offline support has not opened yet, it says to use `python -m bithuman pack redeem` on the same machine. Plans and rates: [offline licensing](/pricing#offline-licensing).
+`redeem` binds the pack to this machine and installs it. The signed pack is kept at `~/.bithuman/packs/<pack_id>.bhl` (mode `0600`) first, so a failed install is retried by passing that file. Afterwards `bithuman render` of an avatar the pack covers needs no network and no API secret until the pack is spent. From CLI 2.8.4 a pack covers Essence 2 and Expression 2 as well as Essence 1.
+
+`bithuman pull <CODE>` also fetches the engine files the avatar's model needs, so pull each avatar and redeem once while online; after that rendering needs no network.
+
+A spent pack, or one that is not for this machine, stops the render with exit 77 and says which; it never falls back to billing your account. A refusal names what to do (the plan, the platform, a pack already installed) and nothing is spent.
+
+Where the CLI's offline support has not opened yet, it says to use `python -m bithuman pack redeem` on the same machine. Plans and rates: [offline licensing](/pricing#offline-licensing).
 
 ## bithuman doctor
 

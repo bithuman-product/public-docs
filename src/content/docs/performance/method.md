@@ -46,6 +46,25 @@ Seconds from starting the command to a finished MP4 of a 10-second clip, for the
 
 Later renders are not faster: the model files are already downloaded on the first run, so both columns measure the same work, within run-to-run variation.
 
+## Pin a tier for a benchmark
+
+To measure one tier, append `?model=` with a tier slug to the viewer or embed URL:
+
+```text
+https://www.bithuman.ai/embed/A23WJF0199?model=expression-2-apple
+```
+
+| Model | Tier slugs |
+|---|---|
+| `essence-2` | `essence-2-gpu` · `essence-2-apple` · `essence-2-cpu` |
+| `expression-2` | `expression-2-gpu` · `expression-2-apple` · `expression-2-cpu` |
+
+- **A recognized slug pins the session** to that tier: if the tier is unavailable, the session fails rather than playing elsewhere.
+- **An unrecognized slug is ignored** and the session plays as usual. If a pin seems to have no effect, check the spelling.
+- **To be told about a typo**, set the embed token's `model` field instead: an unknown value is refused with a `400` listing the accepted names when you [mint the token](/api/embedding#production-mint-a-token).
+
+In production, omit `?model=` and let the service choose.
+
 ## Raw data
 
 [performance.json](/performance.json) holds every published cell: frame rate, × real time, release, date, the speech clip it was measured on, and memory. The pages under [Performance](/performance) are generated from it.

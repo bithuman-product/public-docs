@@ -112,6 +112,9 @@ function frontmatterMoves() {
     else for (const l of blk[1].split("\n")) { const x = /^\s+"?([a-z0-9-]+)"?:\s*"?([^"\s]+)"?/.exec(l); if (x) rows[x[1]] = x[2]; }
     m.set(routeOf(CONTENT, f, md), rows);
   }
+  // the Astro pages (landing, Platforms hub) keep theirs in src/data/hub-moved.json
+  const hub = join(ROOT, "src/data/hub-moved.json");
+  if (existsSync(hub)) for (const [route, rows] of Object.entries(JSON.parse(readFileSync(hub, "utf8")))) if (route.startsWith("/")) m.set(route, rows);
   return m;
 }
 

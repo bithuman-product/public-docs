@@ -7,6 +7,8 @@ order: 0
 type: generated
 llms: start
 next: ["/performance/method", "/deploy", "/platforms"]
+moved:
+  pin-a-tier-for-a-benchmark: /performance/method#pin-a-tier-for-a-benchmark
 ---
 
 **× real time** is seconds of avatar video rendered per second, rounded down to one decimal: at 1.0× or more, an avatar holds a live conversation.
@@ -46,9 +48,14 @@ First a short burst on each phone, then one session held for 10 minutes.
 | Android | Samsung Galaxy S25+ | 52 | **2.0×** real time | 48 | **2.4×** real time |
 <!-- /FLOORS:TABLE -->
 
+<details class="releases">
+<summary>Releases measured</summary>
+
 <!-- FLOORS:RELEASES mobile -->
 Measured in September 2026 on Swift package 2.17.3, Swift package 2.18.0, essence2-android 0.7.0 and expression2-android 0.4.10.
 <!-- /FLOORS:RELEASES -->
+
+</details>
 
 - The first table is one render of a speech clip on a cool phone, as fast as the phone allows.
 - Some phone figures use a shorter speech clip than the other platforms; each cell's clip is in [performance.json](/performance.json).
@@ -82,9 +89,14 @@ These figures are for the avatar rendering in the visitor's own tab (`render=loc
 | Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7×** real time | 39 | **1.9×** real time |
 <!-- /FLOORS:TABLE -->
 
+<details class="releases">
+<summary>Releases measured</summary>
+
 <!-- FLOORS:RELEASES web -->
 Measured in September 2026 on the hosted web viewer.
 <!-- /FLOORS:RELEASES -->
+
+</details>
 
 - Each figure is the engine's render throughput with WebGPU in Chrome on an Apple M4, measured in an automated browser.
 - It is not the frame rate a visitor sees on the page, where the voice and the display share the browser with the engine.
@@ -107,9 +119,14 @@ Pick the row for the product you use: the CLI, Python and the Swift package rend
 | Windows · Python | Intel Core i7-13700F (x86_64), 8 threads | 30 | **1.2×** real time | 21 | **1.0×** real time |
 <!-- /FLOORS:TABLE -->
 
+<details class="releases">
+<summary>Releases measured</summary>
+
 <!-- FLOORS:RELEASES desktop -->
 Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13, bithuman 2.11.18 and Swift package 2.15.0.
 <!-- /FLOORS:RELEASES -->
+
+</details>
 
 - Each figure is one render of a reference speech clip, as fast as the machine allows, with nothing else running.
 - The macOS CLI Essence 2 figure was measured with `BITHUMAN_THREADS=8`; by default the CLI uses one thread per CPU it may use, up to 16. The Linux CLI uses default settings.
@@ -119,7 +136,7 @@ Memory per render is on [How we measure](/performance/method#memory). Setup for 
 
 ## Cloud
 
-By default the service picks the tier for each session; each row is one tier. To benchmark one tier you can pin it ([below](#pin-a-tier-for-a-benchmark)); in production, let the service choose.
+By default the service picks the tier for each session; each row is one tier. To benchmark one tier you can pin it ([pin a tier for a benchmark](/performance/method#pin-a-tier-for-a-benchmark)); in production, let the service choose.
 
 <!-- FLOORS:TABLE cloud -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |
@@ -129,29 +146,15 @@ By default the service picks the tier for each session; each row is one tier. To
 | Cloud API · CPU | x86 server CPU | 28 | **1.1×** real time | 27 | **1.3×** real time |
 <!-- /FLOORS:TABLE -->
 
+<details class="releases">
+<summary>Releases measured</summary>
+
 <!-- FLOORS:RELEASES cloud -->
 Measured in September 2026 on the cloud API.
 <!-- /FLOORS:RELEASES -->
 
+</details>
+
 - Each figure is how fast one finished video is delivered, including encoding the video file, on a server with no other sessions.
 - With other sessions on the same server, a session can render more slowly than shown.
 - A live conversation plays at the model's own rate, 25 fps for Essence 2 and 20 fps for Expression 2. Speed above that makes a video file finish sooner; it does not put more frames on screen.
-
-### Pin a tier for a benchmark
-
-To measure one tier, append `?model=` with a tier slug to the viewer or embed URL:
-
-```text
-https://www.bithuman.ai/embed/A23WJF0199?model=expression-2-apple
-```
-
-| Model | Tier slugs |
-|---|---|
-| `essence-2` | `essence-2-gpu` · `essence-2-apple` · `essence-2-cpu` |
-| `expression-2` | `expression-2-gpu` · `expression-2-apple` · `expression-2-cpu` |
-
-- **A recognized slug pins the session** to that tier: if the tier is unavailable, the session fails rather than playing elsewhere.
-- **An unrecognized slug is ignored** and the session plays as usual. If a pin seems to have no effect, check the spelling.
-- **To be told about a typo**, set the embed token's `model` field instead: an unknown value is refused with a `400` listing the accepted names when you [mint the token](/api/embedding#production-mint-a-token).
-
-In production, omit `?model=` and let the service choose.

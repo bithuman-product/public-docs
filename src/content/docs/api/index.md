@@ -6,92 +6,32 @@ group: "Basics"
 order: 0
 type: hub
 llms: api
+moved:
+  authentication: /api/authentication
+  next-steps: /platforms/rest
 ---
 
 ## What the API does
 
-The bitHuman API lets you create, manage, and drive avatar agents from any
-programming language. Reach for it when you don't need a native SDK — backends,
-CI scripts, or platforms where Python or Swift aren't a fit.
-
-Everything is plain HTTPS + JSON. One header authenticates every request.
+Plain HTTPS and JSON from any language, for backends and scripts where a native SDK does not fit. Every request carries your API secret in the `api-secret` header ([Authentication](/api/authentication)).
 
 ## Base URL
 
-```text
-https://api.bithuman.ai
-```
-
-All endpoints are relative to this URL and require an `api-secret` header.
-
-Every endpoint, one row each: [API reference](/api/reference) (raw spec: https://docs.bithuman.ai/api/openapi.yaml).
-[Get an API secret →](https://www.bithuman.ai/developer/api-keys)
-
-## Authentication
-
-Pass your API secret in the `api-secret` header on every request — the cheapest check is `/v1/validate`, which costs nothing:
-
-```bash
-curl -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
-# {"valid":true}
-```
-
-Treat the secret like a password — never commit it to source control and never
-embed it in client apps. For browser-side embeds, mint a short-lived token with
-the [embed token flow](/api/embedding) instead. See
-[Authentication](/api/authentication) for the full model.
+Every path on these pages is relative to `https://api.bithuman.ai`. Every endpoint, one row each: [API reference](/api/reference).
 
 ## What you can build
 
-- **Generate avatars** — turn a prompt, portrait, and voice sample into a new
-  agent. See [Agents](/api/agents).
-- **Synthesize voice** — text-to-speech in 30+ languages with 10 built-in
-  voices, plus an OpenAI-compatible drop-in. See [Text to Speech](/api/text-to-speech).
-- **Drive live sessions** — make a hosted agent speak or inject silent
-  knowledge into an active room. See [Agents](/api/agents).
-- **Add gestures** — generate and toggle conversational animations. See
-  [Gestures](/api/dynamics).
-- **Ground agents in your docs** — ingest files and URLs into knowledge bases from
-  code. See [Knowledge](/api/knowledge).
-- **Add real-time voice** — mint a browser client secret for OpenAI-Realtime
-  sessions. See [Realtime](/api/realtime).
-- **Bring your own keys** — use your own LLM/STT/TTS provider keys. See
-  [Providers](/api/providers).
-- **Render talking videos** — generate a finished mp4 of an agent speaking, from
-  a text script or hosted audio. See [Video API](/api/video).
-- **Embed in any page** — mint a token and drop an iframe. See
-  [Embedding](/api/embedding).
-- **Track credits** — read balance and per-mode minute estimates. See
-  [Billing](/api/billing).
-- **Manage keys & teams** — rotate [API secrets](/api/api-keys), watch
-  [runtime sessions](/api/runtime-sessions), and run
-  [organizations](/api/organizations) programmatically.
-- **Get notified** — register [webhooks](/api/webhooks) for signed
-  `agent.ready` / `agent.failed` and `video.completed` / `video.failed` events
-  instead of polling.
-- **Drive it from an AI agent** — the [MCP server](/build/mcp) (`bithuman mcp`)
-  exposes the common endpoints (agents, speech, gestures, files, embed tokens,
-  webhooks, balance) as tools for Claude, Cursor and other MCP clients.
+```cards
+Agents | /api/agents | Generate avatars, make them speak and ground them in your documents.
+Media | /api/video | Talking videos, text to speech, gestures and files.
+Embed and realtime | /api/embedding | An agent in any web page, or a Realtime voice session.
+Account | /api/billing | Credits, API secrets, organizations and your own provider keys.
+```
 
 ## How agents are identified
 
-Every endpoint identifies an agent by its **agent code** — a short string like
-`A80HVD8577`. You receive one when you [generate an agent](/api/agents), or find
-it in your [Library](https://www.bithuman.ai/#library) (click an agent to reveal
-the code).
-
-> **Note** Different endpoint paths use slightly different parameter names for
-> the same value: `{code}`, `{agent_code}`, or `{agent_id}`. They all expect the
-> same string — the agent code shown in your Library.
-
-## Next steps
-
-- [Quickstart](/platforms/rest) — make your first API call and drive a live agent.
-- [Models](/models) — the four models, where each runs, and which to pick.
+Every endpoint names an agent by its agent code, such as `A80HVD8577`. The `{code}`, `{agent_code}` and `{agent_id}` parameters all take it.
 
 ## Status and versioning
 
-Endpoints are stable and change additively. The `/v1` and `/v2` prefixes are
-part of each endpoint's path, not a version switch; use each path exactly as
-documented.
-Live API status is at [status.bithuman.ai](https://status.bithuman.ai).
+Endpoints change additively. `/v1` and `/v2` are part of each path, not a version switch. Live status: [status.bithuman.ai](https://status.bithuman.ai).

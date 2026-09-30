@@ -40,11 +40,19 @@ export const TYPE_BUDGET = {
   reference: "reference", generated: "reference", endpoint: "endpoint", example: "example", catalogue: "catalogue",
   changelog: "record", legal: "record", record: "record",
 };
-// types whose budget fails the build. Empty in W2a (report-only); W3 adds the
-// platform types, W4 guide/concept, W5 endpoint, W6 the rest.
-const FAIL_TYPES = new Set(["platform-app", "quickstart", "guide", "concept"]);
+// types whose budget fails the build. Empty in W2a (report-only); W3 added the
+// platform types, W4 guide/concept; W6 flips every type (records stay exempt by budget).
+const FAIL_TYPES = new Set(Object.keys(BUDGETS));
 const PARA_WARN = 60, PARA_FAIL = 80, CALLOUTS_PAGE = 3;
 
+// a fenced block whose language is a generated component (src/lib/doc-blocks.ts
+// BLOCK_LANGS: ```deploy-matrix, ```cards, ```example-gallery …) draws cards, tables or
+// widgets, not code a reader copies: it is not counted against the "0 code" of a hub
+const DOC_BLOCKS = (() => {
+  const src = existsSync(join(ROOT, "src/lib/doc-blocks.ts")) ? readFileSync(join(ROOT, "src/lib/doc-blocks.ts"), "utf8") : "";
+  const m = /BLOCK_LANGS = new Set\(\[([\s\S]*?)\]\)/.exec(src);
+  return new Set(m ? [...m[1].matchAll(/"([\w-]+)"/g)].map((x) => x[1]) : []);
+})();
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : n.endsWith(".md") ? [p] : []; });
 const words = (s) => (s.match(/[A-Za-z0-9][A-Za-z0-9'’.\-/]*/g) || []).length;
 
@@ -60,7 +68,7 @@ export function measure(md) {
   const endPara = () => { if (para) paras.push(para); para = 0; };
   for (const raw of lines) {
     const l = raw.trimEnd();
-    if (/^\s*(```|~~~)/.test(l)) { if (!inCode) code++; inCode = !inCode; endPara(); continue; }
+    if (/^\s*(```|~~~)/.test(l)) { if (!inCode && !DOC_BLOCKS.has((/^\s*(?:```|~~~)\s*([\w-]+)/.exec(l) || [])[1])) code++; inCode = !inCode; endPara(); continue; }
     if (inCode) continue;
     if (/^>/.test(l)) { if (!inCallout) callouts++; inCallout = true; endPara(); continue; }
     inCallout = false;
@@ -95,6 +103,21 @@ export function judge(m, allow = {}) {
   return { warn, fail };
 }
 
+// The Astro pages that are no markdown: the landing and the three drawn hubs,
+// graded from the build (docs v2 SPEC §1, §6). Prose = words in <p> inside <main>,
+// minus cards, tables, code, the live demo and the moved-anchor stubs; a bullet is
+// an <li> of a list that is not a card or tile list (role="list").
+export const BUILT_PAGES = { "/": "landing", "/platforms": "hub", "/build": "hub", "/resources": "hub" };
+export function measureHtml(html) {
+  let h = (/<main[\s\S]*<\/main>/.exec(html) || [html])[0];
+  const cut = (open, tag) => { for (let i = h.indexOf(open); i >= 0; i = h.indexOf(open)) { let depth = 0, j = i; const re = new RegExp(`<(/?)${tag}\\b[^>]*>`, "g"); re.lastIndex = i; for (let m; (m = re.exec(h));) { depth += m[1] ? -1 : 1; if (!depth) { j = re.lastIndex; break; } } if (j === i) break; h = h.slice(0, i) + h.slice(j); } };
+  cut("<section class=\"ld\"", "section");
+  h = h.replace(/<div class="moved-stubs[\s\S]*?<\/div>/g, "").replace(/<(script|style|pre|table|button|h[1-6])\b[\s\S]*?<\/\1>/g, "");
+  const paras = [...h.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((m) => words(m[1].replace(/<[^>]+>/g, " ")));
+  const bullets = [...h.matchAll(/<(ul|ol)\b(?![^>]*role="list")[^>]*>([\s\S]*?)<\/\1>/g)].reduce((n, m) => n + (m[2].match(/<li\b/g) || []).length, 0);
+  return { type: "", prose: paras.reduce((a, b) => a + b, 0), h2: (html.match(/<h2\b/g) || []).length, callouts: 0, bullets, code: 0, longest: Math.max(0, ...paras) };
+}
+
 function selftest() {
   let bad = 0;
   const ok = (name, cond) => { console.log(`  ${cond ? "PASS" : "FAIL"}  ${name}`); bad += cond ? 0 : 1; };
@@ -105,6 +128,10 @@ function selftest() {
   ok("a concept page over 900 words fails", judge(measure(page("concept", Array.from({ length: 20 }, () => para(50)).join("\n\n")))).fail.some((f) => f.startsWith("prose")));
   ok("an 81-word paragraph fails", judge(measure(page("concept", para(81)))).fail.some((f) => f.includes("paragraph")));
   ok("a 61-word paragraph warns", judge(measure(page("concept", para(61)))).warn.some((f) => f.includes("paragraph")));
+  ok("a component fence is not code on a hub", judge(measure(page("hub", "```deploy-matrix\n```\n"))).fail.length === 0);
+  ok("a bash fence on a hub fails", judge(measure(page("hub", "```bash\nls\n```\n"))).fail.some((f) => f.startsWith("code")));
+  ok("the landing's HTML: card lines and the demo are not prose", measureHtml('<main><h2>A</h2><p>one two</p><a class="card"><span class="card-line">x y z</span></a><section class="ld"><p>demo words here</p></section></main>').prose === 2);
+  ok("a plain list on the landing is bullets", judge({ ...measureHtml('<main><ul><li>a</li><li>b</li></ul><ul role="list"><li>c</li></ul></main>'), type: "landing" }).fail.some((f) => f.startsWith("bullets")));
   ok("a landing bullet fails", judge(measure(page("landing", "- one\n"))).fail.some((f) => f.startsWith("bullets")));
   ok("eight H2s on a quickstart fail", judge(measure(page("quickstart", "## a\n## b\n## c\n## d\n## e\n## f\n## g\n## h\n"))).fail.some((f) => f.startsWith("H2s")));
   ok("a second callout on a quickstart fails", judge(measure(page("quickstart", "> **Note:** a\n\ntext\n\n> **Note:** b\n"))).fail.some((f) => f.startsWith("callouts")));
@@ -135,6 +162,18 @@ function main() {
     if (hard && fail.length) failing++;
     for (const x of fail) console.log(`${hard ? "::error" : "::warning"} file=${relative(ROOT, f)}::${route} [${m.type}] ${x}`);
     if (report) for (const x of warn) console.log(`  note ${route} [${m.type}] ${x}`);
+  }
+  const dist = join(ROOT, "dist");
+  for (const [route, type] of Object.entries(existsSync(join(dist, "index.html")) ? BUILT_PAGES : {})) {
+    const f = join(dist, route.slice(1), "index.html");
+    if (!existsSync(f)) { console.log(`::error::${route} is not built`); failing++; continue; }
+    const m = { ...measureHtml(readFileSync(f, "utf8")), type };
+    const { warn, fail } = judge(m, allow[route] ?? {});
+    pages++; h2s.push(m.h2); warns += warn.length; fails += fail.length;
+    if (fail.length && !report) failing++;
+    for (const x of fail) console.log(`${report ? "::warning" : "::error"} file=dist${route === "/" ? "/" : route + "/"}index.html::${route} [${type}] ${x}`);
+    if (report) for (const x of warn) console.log(`  note ${route} [${type}] ${x}`);
+    if (route === "/") console.log(`landing: ${m.prose} prose words, ${m.h2} H2s, ${m.bullets} bullets`);
   }
   if (pages < 40) { console.log(`::error::read only ${pages} pages — the corpus moved`); return 2; }
   h2s.sort((a, b) => a - b);

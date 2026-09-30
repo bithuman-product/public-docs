@@ -2123,12 +2123,12 @@
     },
     {
       "source": "/showcase",
-      "destination": "/examples",
+      "destination": "/examples/avatars",
       "permanent": true
     },
     {
       "source": "/showcase/",
-      "destination": "/examples",
+      "destination": "/examples/avatars",
       "permanent": true
     },
     {
