@@ -43,7 +43,7 @@ Expected output:
   Opening your browser… (Ctrl-C to stop.)
 ```
 
-The first run downloads the avatar and sets up the voice agent, which takes a minute or two and needs Python 3.11 or newer. Allow the microphone and say "hi": the avatar answers, lip-synced, and stops when you talk over it. The voice settings are on [CLI](/platforms/cli#voice-settings).
+The first run downloads the avatar and sets up the voice agent, which takes a minute or two and needs Python 3.11 or newer. Allow the microphone and say "hi": the avatar answers, lip-synced, and stops when you talk over it. The voice settings are on [CLI](/platforms/cli/voice#voice-settings).
 
 ## With Python
 

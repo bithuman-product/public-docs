@@ -55,6 +55,9 @@ export const SIDEBAR_LINKS: Partial<Record<SectionId, { group: string; label: st
     { group: "Get started", label: "Choose a platform", href: "/platforms", order: 30 },
     { group: "Help", label: "Status", href: "https://status.bithuman.ai", order: 90, external: true },
   ],
+  platforms: [
+    { group: "Flutter", label: "Plugin source", href: "https://github.com/bithuman-product/homebrew-bithuman/tree/main/packages/flutter-plugin", order: 50, external: true },
+  ],
   api: [
     { group: "Index", label: "API reference", href: "/api/reference", order: 10 },
     { group: "Index", label: "OpenAPI", href: "/api/openapi.yaml", order: 20, external: true },

@@ -22,10 +22,18 @@ const DOCS = join(ROOT, "src/content/docs");
 export const TEMPLATES = {
   // A. Platform page (docs spec §3.3 A). A section that does not apply is
   // omitted (a web page has nothing to install), so Install is not required.
+  // Docs v2 (SPEC §5, G3 v2, W3): a platform's own page is its quickstart. Building it
+  // into an app, its troubleshooting and its reference are pages of their own; the
+  // CLI and REST quickstarts keep their Complete example (cli-sample-output).
   platform: {
     order: ["What you get", "Before you start", "Install", "Authenticate", "First frame", "Complete example",
-      "Integrate into your app", "Platform notes", "Performance", "Troubleshooting", "Reference", "Next"],
-    required: ["Authenticate", "First frame", "Integrate into your app", "Troubleshooting", "Reference"],
+      "Performance", "Next"],
+    required: ["Authenticate", "First frame"],
+  },
+  // Building it into an app (SPEC §5): what moved off the quickstart, in this order.
+  "platform-app": {
+    order: ["Integrate into your app", "Complete example", "Platform notes", "Reference", "Next"],
+    required: ["Integrate into your app"],
   },
   // B. Recipe (§3.3 B): the outcome, the steps with a check each, how it works.
   recipe: {
@@ -50,6 +58,9 @@ export const TEMPLATES = {
 /** Pages that do not follow their template yet. Each entry says why, and the
  *  check refuses an entry whose page already conforms. */
 export const EXCEPTIONS = {
+  "src/content/docs/platforms/windows.md": "the Windows/Apps lane owns this page and its split (docs v2 SPEC §3 Apps, §11); it keeps the pre-W3 platform sections until then",
+  "src/content/docs/build/mcp.md": "docs v2 W4 (Guides): the MCP page takes the guide template there; it keeps the pre-W3 platform sections until then",
+  "src/content/docs/platforms/rest.md": "docs v2 W5 (API): its Integrate, Troubleshooting and Reference move to the API pages (SPEC §4 rest# rows); /api/errors#handling-errors is built there",
 };
 
 const EXEMPT = /(^|\/)(legal\/|changelog(\/|\.md$))/;
@@ -137,8 +148,12 @@ function selftest() {
   ok("a 40-word callout fires", grade(callouts(1, 40)).faults.some((f) => f.includes("words")));
   ok("a pages without a template type is only graded on callouts", grade(`---\ntype: reference\n---\n## Anything\n`).faults.length === 0);
   const pf = (h2s) => `---\ntype: platform\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}`;
-  ok("a platform page with nothing to install passes", grade(pf(["Authenticate", "First frame", "Complete example", "Integrate into your app", "Troubleshooting", "Reference"])).faults.length === 0);
-  ok("a platform page missing First frame fires", grade(pf(["Authenticate", "Integrate into your app", "Troubleshooting", "Reference"])).faults.some((f) => f.includes("First frame")));
+  ok("a platform page with nothing to install passes", grade(pf(["Authenticate", "First frame", "Performance"])).faults.length === 0);
+  ok("a platform page missing First frame fires", grade(pf(["Authenticate", "Performance"])).faults.some((f) => f.includes("First frame")));
+  ok("a platform page that still carries its troubleshooting fires", grade(pf(["Authenticate", "First frame", "Troubleshooting"])).faults.some((f) => f.includes("Troubleshooting")));
+  const pa = (h2s) => `---\ntype: platform-app\n---\n${h2s.map((h) => `## ${h}\n\ntext\n`).join("\n")}`;
+  ok("an app page in order passes", grade(pa(["Integrate into your app", "Complete example", "Platform notes", "Reference"])).faults.length === 0);
+  ok("an app page without Integrate fires", grade(pa(["Complete example", "Platform notes"])).faults.some((f) => f.includes("Integrate")));
   ok("a deploy page missing Limits fires", grade(`---\ntype: deploy\n---\n## What it is\n\nx\n## Where it renders\n\nx\n## Models available here\n\nx\n## Speed\n\nx\n## Price\n\nx\n## Choosing between modes\n\nx\n`).faults.some((f) => f.includes("Limits")));
   ok("a recipe without Steps fires", grade(`---\ntype: recipe\n---\n## How it works\n\nx\n## Troubleshooting\n\nx\n`).faults.some((f) => f.includes("Steps")));
   console.log(fails.length ? `selftest RED: ${fails.join(", ")}` : "selftest GREEN (every rule fired)");

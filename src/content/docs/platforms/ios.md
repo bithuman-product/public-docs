@@ -13,7 +13,14 @@ artifacts: ["swift"]
 platforms: ["ios", "ipados"]
 models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S10", "S13", "S17", "S26", "S30", "S32"]
-next: ["/examples/ios-expression-2", "/examples/ios-essence-2", "/platforms/macos"]
+next: ["/platforms/swift/app", "/platforms/swift/troubleshooting", "/platforms/swift/reference"]
+moved:
+  integrate-into-your-app: /platforms/swift/app#integrate-into-your-app
+  download-an-avatar-in-the-app: /platforms/swift/app#download-an-avatar-in-the-app
+  complete-example: /platforms/swift/app#complete-example
+  platform-notes: /platforms/swift/app#platform-notes
+  troubleshooting: /platforms/swift/troubleshooting#ios
+  reference: /platforms/swift/reference
 ---
 
 <div class="lead">
@@ -70,7 +77,7 @@ curl -fLO "https://github.com/bithuman-product/homebrew-bithuman/releases/downlo
 curl -fL -o speech16k.wav "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2&member=demo_speech_16k.wav"
 ```
 
-Add them to your app, then render. The `mac` engine file is the right one for iPhone apps too. For Essence 2, download the avatar in the app with `Essence2Download` ([below](#download-an-avatar-in-the-app)).
+Add them to your app, then render. The `mac` engine file is the right one for iPhone apps too. For Essence 2, download the avatar in the app with `Essence2Download` ([Swift: Integrate into your app](/platforms/swift/app#download-an-avatar-in-the-app)).
 
 ```swift tab="Expression 2"
 // excerpt: inside your app. samples is the clip as [Float], 16 kHz mono;
@@ -151,75 +158,8 @@ engine.shutdown()
 
 The C interface for C, C++ and plugins (`Essence2`) is on the [Swift reference](/platforms/swift/reference#essence-2-c).
 
-## Complete example
-
-Two SwiftUI apps you can clone and run on an iPhone or iPad, each with a microphone button, idle motion and interruption:
-
-- [iOS Expression 2](/examples/ios-expression-2): the `wise-pup` sample avatar.
-- [iOS Essence 2](/examples/ios-essence-2): a photoreal Essence 2 avatar at full resolution.
-
-## Integrate into your app
-
-| Job | Expression 2 | Essence 2 |
-|---|---|---|
-| Audio in | 16 kHz mono `[Float]`: `feed(chunk)` as it arrives | the same |
-| Show frames | `frames(audioClock:)` on your player's clock, or `pull()`, which returns frames as soon as they render | `frames(following:)`, or `pull()` paced to 25 a second |
-| End of a reply | `flushTail()`; the first frame after it has `endsReply`, and `events()` reports `.replyEnded` | the same |
-| Start the reply's audio | with its first frame (`audioTime == 0`, or `events()` `.replyStarted`) | with its first speech frame; `frames(following: player)` keeps the picture on it |
-| Idle between replies | `frames()` keeps returning idle frames (`isSpeech == false`), or `engine.idle` | `frames()` / `pull()` keep returning idle frames |
-| Interrupt the reply | `interrupt()` | `interrupt()` |
-| Check the session | `meteringRefusal` | `meteringRefusal`, `runtimeFailure` |
-| Quit | `shutdown()` | `shutdown()`, then `Essence2Engine.quiesceAll()` from `applicationWillTerminate` |
-
-For file rendering, set `engine.pacing = .unpaced`: Essence 2 then hands out frames as fast as it renders them. If your audio does not go through an `AVAudioPlayerNode`, pass your own clock: `frames(audioClock: { secondsOfThisReplyPlayed })`.
-
-Resample 24 kHz speech (OpenAI Realtime's) to 16 kHz, and close the avatar when the app leaves the screen: [Companion app](/build/companion-app#resample-speech-to-16-khz).
-
-### Download an avatar in the app
-
-Your app can download an avatar file itself, with the secret you set in [Authenticate](#authenticate):
-
-```swift
-let avatarURL = try await Expression2Download.avatar(agentCode: "A23WJF0199")   // Expression 2
-let imxURL = try await Essence2Download.identity(agentCode: "A52DHS2219")      // Essence 2
-```
-
-Both return a local file to pass to `create`. They download the Apple build of the avatar, which is smaller than the full file, and refuse a file whose sha256 does not match. Files are kept in the app's Caches directory under their sha256, so a second call for the same avatar downloads nothing. Pass `directory:` to keep them somewhere else. The shared Expression 2 engine file is not an avatar; download it from the release as in [First frame](#first-frame).
-
-## Platform notes
-
-- **Your own MLX:** Essence 2 contains no MLX. Link your own `mlx-swift` (`MLX`, `MLXNN`) in the same target, also with `-ObjC` or `-all_load`; nothing to embed.
-- **Simulator:** simulator slices are arm64 only; pass `ARCHS=arm64`. Essence 2 does not run in the Simulator (`be_essence2_create` returns `-2`); Expression 2 does.
-- **Privacy strings:** add `NSMicrophoneUsageDescription` to hear the user.
-- **Check the version you resolved.** SwiftPM keeps what `Package.resolved` holds, so run `swift package update` after you raise `from:`, then read it back:
-
-  ```bash
-  grep -A3 homebrew-bithuman Package.resolved   # "version" must be the one on Downloads & versions
-  ```
-
 ## Performance
 
 ```perf
 iphone-15 iphone-15-sustained
 ```
-
-## Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `create` throws `meteringRefused` (C: `be_essence2_create` returns `-3`): *no API secret was found* | no secret | call `Essence2Credential.set` / `Expression2Credential.set`, or set `BITHUMAN_API_SECRET` in the scheme |
-| *the API secret was rejected* | revoked or mistyped secret; from 2026-10-12, a Free account | create a new one under [API secrets](https://www.bithuman.ai/developer/api-keys); on Free, [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
-| *cannot reach bitHuman to verify your credential* | no network at first contact | fix the network, then create again |
-| `pull()` keeps returning `nil` right after `feed()` | frames arrive asynchronously, and Essence 2 hands out at most 25 a second | poll, or use `frames()` |
-| crash in `__cxa_finalize` when the app quits | `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all`) was not called | call it from `applicationWillTerminate` |
-| `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64` |
-| `duplicate symbol` naming `MLX` at the final link, or Essence 2 memory rising in a long session | an older Swift package | raise `from:` to the version on [Downloads & versions](/downloads), then `swift package update` |
-| a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
-| `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |
-
-## Reference
-
-- [Swift reference](/platforms/swift/reference): every Swift and C entry point.
-- Examples: [iOS Expression 2](/examples/ios-expression-2) · [iOS Essence 2](/examples/ios-essence-2) · [macOS Expression 2](/examples/macos-expression-2).
-- Sample avatars: [Ready-made avatars](/examples#ready-made-avatars). Your own agent's model: [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) with your API secret.
-- [Changelog](/changelog) and [Downloads & versions](/downloads).

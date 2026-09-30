@@ -83,7 +83,7 @@ bithuman.open("wise-pup.imx").render("speech.wav", out_mp4="out.mp4")
 
 ## Integrate into your app
 
-The Python API is the same on Windows as on macOS and Linux: `AsyncBithuman` takes audio as it arrives and yields frames and audio at the model's rate, `interrupt()` stops a reply, and the [LiveKit plugin](/platforms/livekit) renders the avatar inside a LiveKit Agents worker. The code and the calls are in [Python: Integrate into your app](/platforms/python#integrate-into-your-app).
+The Python API is the same on Windows as on macOS and Linux: `AsyncBithuman` takes audio as it arrives and yields frames and audio at the model's rate, `interrupt()` stops a reply, and the [LiveKit plugin](/platforms/livekit) renders the avatar inside a LiveKit Agents worker. The code and the calls are in [Python: Integrate into your app](/platforms/python/app#integrate-into-your-app).
 
 ## Platform notes
 

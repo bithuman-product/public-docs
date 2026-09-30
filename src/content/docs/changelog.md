@@ -300,7 +300,7 @@ Essence 2 engine 1.13.0 · Expression 2 engine 2.7.0
 Essence 2 engine 1.12.1 · Expression 2 engine 2.7.0
 
 - **Fixed:** Expression 2 lip sync. The mouth moved about 65 ms ahead of the voice; it now lines up (about 15 ms). To do this, the first frame of each stream is shown twice; a stream still carries the same number of frames.
-- **New:** `Expression2Download.avatar(agentCode:)` and `Essence2Download.identity(agentCode:)` download an avatar file from your app. They fetch the smaller Apple build of the file, check its sha256 and keep it in the app's Caches, so a second call downloads nothing. See [Apple](/platforms/ios#download-an-avatar-in-the-app).
+- **New:** `Expression2Download.avatar(agentCode:)` and `Essence2Download.identity(agentCode:)` download an avatar file from your app. They fetch the smaller Apple build of the file, check its sha256 and keep it in the app's Caches, so a second call downloads nothing. See [Apple](/platforms/swift/app#download-an-avatar-in-the-app).
 - **Action:** set `from: "2.15.0"`, then `swift package update`.
 
 ### Flutter plugin 2.6.15 — 2026-09-24

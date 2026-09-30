@@ -224,7 +224,7 @@ The lips follow the reply's audio from its first word, and idle motion returns w
 
 ### Let the user interrupt
 
-When your speech recognition hears the user start talking over the avatar, stop your audio player and drop the rest of the reply: `interrupt()` in Swift, `resetAudio()` in Kotlin. Idle motion continues from the current frame. The full list of calls is under *Integrate into your app* on [iOS & iPadOS](/platforms/ios#integrate-into-your-app) and [Android](/platforms/android#integrate-into-your-app).
+When your speech recognition hears the user start talking over the avatar, stop your audio player and drop the rest of the reply: `interrupt()` in Swift, `resetAudio()` in Kotlin. Idle motion continues from the current frame. The full list of calls is under *Integrate into your app* on [iOS & iPadOS](/platforms/swift/app#integrate-into-your-app) and [Android](/platforms/android/app#integrate-into-your-app).
 
 ```expected
 The mouth stops with the voice, and the next reply starts cleanly.

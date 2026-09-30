@@ -803,12 +803,12 @@
     },
     {
       "source": "/examples/python",
-      "destination": "/platforms/python#complete-example",
+      "destination": "/platforms/python/app#complete-example",
       "permanent": true
     },
     {
       "source": "/examples/python/",
-      "destination": "/platforms/python#complete-example",
+      "destination": "/platforms/python/app#complete-example",
       "permanent": true
     },
     {
@@ -903,12 +903,12 @@
     },
     {
       "source": "/examples/web",
-      "destination": "/platforms/web#complete-example",
+      "destination": "/platforms/web/app#complete-example",
       "permanent": true
     },
     {
       "source": "/examples/web/",
-      "destination": "/platforms/web#complete-example",
+      "destination": "/platforms/web/app#complete-example",
       "permanent": true
     },
     {

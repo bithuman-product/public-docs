@@ -221,7 +221,7 @@ export const PUBLIC = {
     AsyncBithuman: {
       purpose: "The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. " +
         "Create it with `await AsyncBithuman.create(model_path=\"avatar.imx\", api_secret=None)`; " +
-        "the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/platforms/python#integrate-into-your-app).",
+        "the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/platforms/python/app#integrate-into-your-app).",
       methods: ["push_audio", "flush", "interrupt", "run", "stop", "shutdown", "get_first_frame"],
     },
     VideoFrame: { purpose: "One item from `AsyncBithuman.run()`: `has_image`, `bgr_image` (a BGR `numpy` array), `audio_chunk` and `frame_index`." },

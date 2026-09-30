@@ -81,6 +81,21 @@ function quickstartMd(): string {
   return out;
 }
 
+// Docs v2 (SPEC §7, W3): a platform's quickstart twin ends with "Continue", which
+// inlines its app and troubleshooting pages (named in its `next:`), so one fetch
+// still covers the whole platform. The only twin that is more than its page body;
+// the llms files inline each page once and never carry this block.
+async function continueBlock(entry: any): Promise<string> {
+  if (entry.data.type !== "platform") return "";
+  const next: string[] = entry.data.next ?? [];
+  const docs = await getCollection("docs", (e: any) => !e.data.draft && next.includes(`/${route(e.id)}`)
+    && (e.data.type === "platform-app" || e.data.type === "troubleshooting"));
+  if (!docs.length) return "";
+  docs.sort((a: any, b: any) => next.indexOf(`/${route(a.id)}`) - next.indexOf(`/${route(b.id)}`));
+  return `\n## Continue\n\nThe rest of this platform, inlined so one fetch covers it: ${docs.map((d: any) => `[${d.data.title}](${SITE}/${route(d.id)}.md)`).join(" · ")}.\n` +
+    docs.map((d: any) => `\n---\n\n${twin(d.data.title, `/${route(d.id)}`, d.data.description, d.body ?? "")}`).join("");
+}
+
 export async function getStaticPaths() {
   const docs = await getCollection("docs", (e: any) => !e.data.draft);
   const pages = docs.map((entry: any) => ({ params: { slug: route(entry.id) }, props: { entry } }));
@@ -99,7 +114,7 @@ export const GET: APIRoute = async ({ props }) => {
     const list = entry.data.type !== "hub" ? "" : kids.length
       ? `\n\n## Pages in this section\n\n${kids.map((d: any) => `- [${d.data.title}](${SITE}/${route(d.id)}.md): ${d.data.description}`).join("\n")}\n`
       : `\n\n## Pages in this section\n${await hubBody(entry.data.section)}`;
-    return md(twin(entry.data.title, `/${route(entry.id)}`, entry.data.description, (entry.body ?? "") + list));
+    return md(twin(entry.data.title, `/${route(entry.id)}`, entry.data.description, (entry.body ?? "") + list) + await continueBlock(entry));
   }
   const V = versions.versions;
   if (hub === "index") {

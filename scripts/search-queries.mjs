@@ -15,7 +15,7 @@ export const QUERIES = [
   { q: "offline", top: "/deploy/offline", wave: "W2" },
   { q: "CPU", top: "/deploy/cpu", wave: "W2" },
   { q: "no GPU", top: "/deploy/cpu", wave: "W2" },
-  { q: "WebGPU", top: "/platforms/web", wave: "W2" },
+  { q: "WebGPU", top: "/platforms/web/webgpu", wave: "W3" },
   { q: "kiosk", top: "/build/kiosk", wave: "W4" },
   { q: "companion", top: "/build/companion-app", wave: "W4" },
   { q: "barge-in", top: "/build/voice-agent", wave: "W4" },

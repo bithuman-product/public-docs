@@ -46,7 +46,7 @@ The SDKs take 16 kHz mono speech from any speech-recognition, language-model and
 4. Mark the end of each reply (`flushTail()`, `endOfAudio()`, `flush()`); between replies the avatar keeps moving on idle frames.
 5. On barge-in, interrupt the reply (`interrupt()`, `resetState(true)`, `resetAudio()`), then feed the next one.
 
-Each platform page's "Integrate into your app" table names the exact calls. A runnable voice agent: https://docs.bithuman.ai/build/voice-agent.md. A companion app: https://docs.bithuman.ai/build/companion-app.md.
+Each platform's app page names the exact calls: https://docs.bithuman.ai/platforms/swift/app.md, https://docs.bithuman.ai/platforms/android/app.md, https://docs.bithuman.ai/platforms/flutter/app.md, https://docs.bithuman.ai/platforms/web/app.md, https://docs.bithuman.ai/platforms/python/app.md, https://docs.bithuman.ai/platforms/livekit/app.md, https://docs.bithuman.ai/platforms/cli/voice.md. A platform page's `.md` twin ends with its app and troubleshooting pages inlined. A runnable voice agent: https://docs.bithuman.ai/build/voice-agent.md. A companion app: https://docs.bithuman.ai/build/companion-app.md.
 
 ## 4. Handle the secret
 
@@ -59,4 +59,4 @@ Get a secret: https://www.bithuman.ai/developer/api-keys. Details: https://docs.
 
 ## 5. Check it worked
 
-The avatar appears, moves while idle and its lips follow the speech. Real-time sessions bill active session time, talking or idle, to the second; end sessions you are not using. If something fails, read https://docs.bithuman.ai/resources/troubleshooting.md and the platform page's Troubleshooting table.
+The avatar appears, moves while idle and its lips follow the speech. Real-time sessions bill active session time, talking or idle, to the second; end sessions you are not using. If something fails, read https://docs.bithuman.ai/resources/troubleshooting.md and the platform's troubleshooting page (`/platforms/<platform>/troubleshooting.md`; Swift: `/platforms/swift/troubleshooting.md`).

@@ -212,7 +212,7 @@ export const QUICKSTART: Quickstart[] = [
       text: "A live avatar in your page that listens and answers.",
       media: { poster: `${pup.poster}-480.webp`, width: 480, height: 600, caption: `${pup.slug}, the ${pup.modelName} sample avatar this embed opens.` },
     },
-    next: { href: "/platforms/web", label: "Web: embed and WebGPU" },
+    next: { href: "/platforms/web", label: "Web embed" },
     note: "With the web embed the conversation runs on bitHuman's servers, including when the avatar renders in the tab.",
   },
   {

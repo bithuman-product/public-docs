@@ -201,7 +201,7 @@ const CLONE = `git clone ${REPO}.git`;
 export const EXAMPLES: Example[] = [
   {
     id: "web", title: "Web embed", line: "One iframe: a live avatar that listens and answers, on any page.",
-    href: "/platforms/web#complete-example", capture: "web-embed", platform: "web", models: ["essence-2", "expression-2"], where: ["cloud"],
+    href: "/platforms/web/app#complete-example", capture: "web-embed", platform: "web", models: ["essence-2", "expression-2"], where: ["cloud"],
     get: "one <iframe> tag", time: "1 min",
   },
   {
@@ -237,7 +237,7 @@ export const EXAMPLES: Example[] = [
   },
   {
     id: "python", title: "Python", line: "Open an avatar, play speech through it, watch it talk.",
-    href: "/platforms/python#complete-example", capture: "python-macos", platform: "python", models: ["essence-2", "expression-2"], where: ["servers"],
+    href: "/platforms/python/app#complete-example", capture: "python-macos", platform: "python", models: ["essence-2", "expression-2"], where: ["servers"],
     get: "pip install bithuman", time: "5 min",
   },
   {

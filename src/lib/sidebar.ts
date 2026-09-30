@@ -12,7 +12,7 @@ export const slugOf = (e: any) => "/" + e.id.replace(/\/index$/, "").replace(/\.
 
 export function sideLabel(title: string, group: string, type?: string): string {
   if (!group || !title.toLowerCase().startsWith(group.toLowerCase())) return title;
-  // A platform's own page is its quickstart (SPEC §0): "Android", "REST API", "Web: embed and WebGPU".
+  // A platform's own page is its quickstart (SPEC §0): "Android", "REST API", "Web embed".
   if (type === "platform") return "Quickstart";
   const rest = title.slice(group.length).replace(/^[:\s]+/, "");
   // Only a whole leading word goes, and never into a fragment ("Pricing and credits" stays).

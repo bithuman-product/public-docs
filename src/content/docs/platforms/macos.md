@@ -13,7 +13,13 @@ artifacts: ["swift"]
 platforms: ["macos"]
 models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S10", "S13", "S17", "S26", "S30"]
-next: ["/examples/macos-expression-2", "/platforms/ios", "/platforms/cli"]
+next: ["/platforms/swift/app", "/platforms/swift/troubleshooting", "/platforms/swift/reference"]
+moved:
+  integrate-into-your-app: /platforms/swift/app#integrate-into-your-app
+  complete-example: /platforms/swift/app#complete-example
+  platform-notes: /platforms/swift/app#platform-notes
+  troubleshooting: /platforms/swift/troubleshooting#macos
+  reference: /platforms/swift/reference
 ---
 
 <div class="lead">
@@ -109,42 +115,8 @@ while idleTicks < 100 {
 }
 ```
 
-## Complete example
-
-[macOS Expression 2](/examples/macos-expression-2) walks through the tool above: requirements, your own avatar and audio, and troubleshooting. For a window with a microphone button, the [iOS Expression 2 example](/examples/ios-expression-2) is the same engine in a SwiftUI app.
-
-## Integrate into your app
-
-The Swift API is the same on the Mac as on iPhone and iPad: feed 16 kHz mono audio, take frames on your player's clock, end and interrupt replies. The whole table is on [iOS & iPadOS](/platforms/ios#integrate-into-your-app); every entry point is on the [Swift reference](/platforms/swift/reference).
-
-On a Mac:
-
-- **Files:** add the `.imx` files and engine resources to the app bundle. A sandboxed app reads only its bundle and container.
-- **Quitting:** call `Essence2Engine.quiesceAll()` from `applicationWillTerminate`.
-
-## Platform notes
-
-- **Also on a Mac:** the [CLI](/platforms/cli) renders an avatar or runs a live conversation with no code, and [Python](/platforms/python) renders frames from your own scripts. Both run on Apple silicon.
-- **Intel Macs** are not supported.
-
 ## Performance
 
 ```perf
 macos-sdk macos-m4 python-macos
 ```
-
-## Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `refusing to serve: no API secret was found` | no secret in this shell or scheme | `export BITHUMAN_API_SECRET=…`, or set it in the scheme |
-| *cannot reach bitHuman to verify your credential* in a Mac app | App Sandbox blocks outgoing connections | tick **Outgoing Connections (Client)** under App Sandbox |
-| `create` throws before `engine ready` | the model files are missing | run `./setup.sh` from the example folder, so `Model/` holds the three files |
-| The link step prints about ten `unable to open object file` warnings naming a folder on another machine | debug paths recorded in the published binary | harmless; the tool runs |
-| The first run is slow | the engine is prepared for this Mac once | keep `Model/staged/` between runs |
-
-## Reference
-
-- [Swift reference](/platforms/swift/reference): every Swift and C entry point.
-- [macOS Expression 2 example](/examples/macos-expression-2) and its [source on GitHub](https://github.com/bithuman-product/bithuman-examples/tree/main/swift/macos-expression2).
-- [Changelog](/changelog) and [Downloads & versions](/downloads).

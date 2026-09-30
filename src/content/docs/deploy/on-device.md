@@ -86,7 +86,7 @@ BITHUMAN_API_SECRET="<your API secret>" swift run -c release MacOSExpression2
         style="width:100%;height:600px;border:0"></iframe>
 ```
 
-The whole first frame for each: [iOS & iPadOS](/platforms/ios#first-frame) · [Android](/platforms/android#first-frame) · [macOS](/platforms/macos#first-frame) · [Web](/platforms/web#render-in-the-visitors-tab-webgpu).
+The whole first frame for each: [iOS & iPadOS](/platforms/ios#first-frame) · [Android](/platforms/android#first-frame) · [macOS](/platforms/macos#first-frame) · [Web](/platforms/web/webgpu).
 
 ## Choosing between modes
 

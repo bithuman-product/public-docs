@@ -31,9 +31,6 @@ const TYPES = new Set(["hub", "quickstart", "platform", "recipe", "concept", "en
 const GROUP_MIN = 2, GROUP_MAX = 8, GROUP_SIZE_FAILS = 1;
 const GROUP_SIZE_ALLOW = {
   "overview / Pricing": "W4 adds /pricing/estimate",
-  "platforms / Flutter": "W3 adds /platforms/flutter/app and /troubleshooting",
-  "platforms / Web": "W3 adds /platforms/web/app, /webgpu and /troubleshooting",
-  "platforms / LiveKit": "W3 adds /platforms/livekit/app, /troubleshooting and the cloud-avatar move",
   "platforms / REST": "SPEC §3: REST is one page (its sections point at the API reference tab)",
   "platforms / Apps": "reserved for the Windows/apps lane's split (SPEC §3)",
   "build / Conversations": "W4 adds /build/voice-agent/python and /build/barge-in",

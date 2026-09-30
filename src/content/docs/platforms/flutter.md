@@ -13,7 +13,13 @@ artifacts: ["flutter_plugin"]
 platforms: ["flutter", "android"]
 models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S8", "S10", "S26", "S30", "S32"]
-next: ["/platforms/android", "/platforms/ios", "/deploy/on-device"]
+next: ["/platforms/flutter/app", "/platforms/flutter/troubleshooting"]
+moved:
+  integrate-into-your-app: /platforms/flutter/app#integrate-into-your-app
+  complete-example: /platforms/flutter/app#complete-example
+  platform-notes: /platforms/flutter/app#platform-notes
+  reference: /platforms/flutter/app#reference
+  troubleshooting: /platforms/flutter/troubleshooting
 ---
 
 One Flutter dependency gives your app an avatar widget. On Android the plugin runs the same engines as the [Android SDK](/platforms/android), so the avatar renders on the phone: 16 kHz mono speech goes in, and a lip-synced picture comes out as a Flutter `Texture`.
@@ -81,42 +87,6 @@ The app installs on the connected phone, asks for your API secret once, download
 
 </details>
 
-## Complete example
-
-The [`avatar_chat` app](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) is a complete voice conversation with idle motion and interruption, in one layout for every platform. From plugin 2.6.20 its voice session connects through bitHuman's [realtime relay](/api/realtime) with your API secret; no token is minted.
-
-## Integrate into your app
-
-The avatar is a `Texture` in your widget tree. On Android the first argument to `load` is the agent code:
-
-```dart
-// excerpt: app/avatar_chat/lib/main.dart (bithuman-examples)
-import 'package:bithuman/bithuman.dart';
-
-await BithumanAvatar.setExpression2AgentDir('A23WJF0199');
-final avatar = await BithumanAvatar.load('A23WJF0199', engine: 'expression2', apiSecret: secret);
-
-Texture(textureId: avatar.textureId);   // the avatar in your layout
-avatar.pushAudio(pcm);                   // Int16List, 16 kHz mono speech
-avatar.interrupt();                      // cut the current reply
-await avatar.dispose();                  // release the engine
-```
-
-| Job | Call |
-|---|---|
-| Show the avatar | `Texture(textureId: avatar.textureId)`; `frameWidth` and `frameHeight` give its size |
-| Stream speech | `pushAudio(Int16List)`, 16 kHz mono |
-| Know it is ready | `isReady`; audio pushed before it is dropped |
-| Interrupt the reply | `interrupt()` |
-| Stop | `dispose()` |
-| Pick the model | `engine: 'expression2'` or `engine: 'essence2'` |
-
-## Platform notes
-
-- **Two models in one app:** `essence2-android` needs `minSdk 29`; raise the app to 29.
-- **Your own voice pipeline:** any speech your stack produces works, as 16 kHz mono PCM through `pushAudio`.
-- **Versions:** each plugin tag fixes the Android SDK versions it uses. The current tag and its line are on [Downloads & versions](/downloads).
-
 ## Performance
 
 The plugin runs the Android SDK's own engines (the same native libraries), so the Android rows apply:
@@ -124,20 +94,3 @@ The plugin runs the Android SDK's own engines (the same native libraries), so th
 ```perf
 android-s25plus android-s25plus-sustained
 ```
-
-## Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `UnsatisfiedLinkError` on an emulator | the engines are `arm64-v8a` only | run on a physical arm64 phone |
-| The app shows a refusal and asks for a secret | no API secret, or a rejected one | enter a valid secret, or build with `--dart-define=BITHUMAN_API_SECRET=…` |
-| Manifest merge fails on `minSdk` | Essence 2 needs `minSdk 29` | raise the app to 29 |
-| `pod install` fails on iOS or macOS | the deployment target is below iOS 16 or macOS 13 | raise the Podfile platform and the Runner targets |
-| The iOS or macOS build cannot find the engines | the bootstrap step was skipped | run `scripts/bootstrap.sh` in the plugin's folder, then build again |
-| A macOS link error names `llama` or `onnxruntime` | the Homebrew libraries are missing | `brew install llama.cpp onnxruntime` |
-
-## Reference
-
-- [Android](/platforms/android): the engines under the plugin, their API and their settings.
-- [`avatar_chat` example](https://github.com/bithuman-product/bithuman-examples/tree/main/app/avatar_chat) and the [plugin source](https://github.com/bithuman-product/homebrew-bithuman/tree/main/packages/flutter-plugin).
-- [Changelog](/changelog) and [Downloads & versions](/downloads).

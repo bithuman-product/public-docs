@@ -119,7 +119,7 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 | The view stays empty and nothing throws | keep polling `pull()` while you feed; it returns `nil` between chunks |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the simulator slices are arm64 only: pick an iPhone simulator on an Apple silicon Mac, or add `ARCHS=arm64` |
 
-More on [Apple: Troubleshooting](/platforms/ios#troubleshooting).
+More on [Apple: Troubleshooting](/platforms/swift/troubleshooting#ios).
 
 ## Next
 
