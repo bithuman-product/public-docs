@@ -7,9 +7,22 @@
 // Plain JavaScript with no dependencies, so the Vercel function bundles it as is
 // and `node --test src/lib/docs-mcp.test.mjs` runs it against the built index.
 
-export const SERVER_INFO = { name: "bithuman-docs", title: "bitHuman docs", version: "1.0.0" };
-export const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 const SITE = "https://docs.bithuman.ai";
+// icons and websiteUrl are the 2025-11-25 Implementation fields; older clients ignore them.
+// public/ has no 512px icon yet, so the 128px favicon is the only one.
+export const SERVER_INFO = {
+  name: "bithuman-docs",
+  title: "bitHuman docs",
+  version: "1.0.0",
+  websiteUrl: `${SITE}/resources/agents#docs-mcp`,
+  icons: [{ src: `${SITE}/favicon.png`, mimeType: "image/png", sizes: ["128x128"] }],
+};
+// 2025-11-25 asks nothing more of a stateless, tools-only, JSON-response server.
+export const PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
+// What the server is, and nothing else: the agent rules live in llms.txt and on the pages.
+export const INSTRUCTIONS =
+  `bitHuman documentation (${SITE}). Use \`search\` to find pages and \`fetch\` to read one as markdown; ` +
+  `the index is ${SITE}/llms.txt.`;
 
 // The `section` filter takes the docs' tab labels and their earlier names, so a
 // client installed before a tab was renamed keeps getting results. Every name
@@ -40,7 +53,7 @@ export const TOOLS = [
       },
       required: ["query"],
     },
-    annotations: { readOnlyHint: true, openWorldHint: false },
+    annotations: { title: "Search the bitHuman docs", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   },
   {
     name: "fetch",
@@ -52,7 +65,7 @@ export const TOOLS = [
       properties: { id: { type: "string", description: "A page path (/platforms/python) or URL (https://docs.bithuman.ai/platforms/python)." } },
       required: ["id"],
     },
-    annotations: { readOnlyHint: true, openWorldHint: false },
+    annotations: { title: "Fetch a bitHuman docs page", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   },
 ];
 
@@ -87,7 +100,18 @@ export function prepare(index) {
   }; });
   const df = new Map();
   for (const d of docs) for (const w of new Set([...d.f.title.keys(), ...d.f.body.keys(), ...d.f.headings.keys()])) df.set(w, (df.get(w) || 0) + 1);
-  return { ...index, docs, df, byId: new Map(docs.map((d) => [d.id, d])) };
+  return { ...index, docs, df, byId: new Map(docs.map((d) => [d.id, d])), tools: toolsFor(docs) };
+}
+
+/** TOOLS with the `section` enum cut to names whose tab has pages in this index, so no value always finds nothing. */
+export function toolsFor(docs) {
+  const live = new Set(docs.map((d) => canonicalSection(d.section)));
+  return TOOLS.map((t) => {
+    const sec = t.inputSchema.properties.section;
+    if (!sec) return t;
+    const section = { ...sec, enum: sec.enum.filter((n) => live.has(canonicalSection(n))) };
+    return { ...t, inputSchema: { ...t.inputSchema, properties: { ...t.inputSchema.properties, section } } };
+  });
 }
 
 const WEIGHTS = { title: 12, path: 7, description: 4, headings: 3, body: 1 };
@@ -194,11 +218,11 @@ export function handleMessage(prepared, msg) {
         protocolVersion: PROTOCOL_VERSIONS.includes(asked) ? asked : PROTOCOL_VERSIONS[0],
         capabilities: { tools: { listChanged: false } },
         serverInfo: SERVER_INFO,
-        instructions: prepared.instructions || "",
+        instructions: INSTRUCTIONS,
       });
     }
     case "ping": return ok(id, {});
-    case "tools/list": return ok(id, { tools: TOOLS });
+    case "tools/list": return ok(id, { tools: prepared.tools ?? TOOLS });
     case "tools/call": {
       const r = callTool(prepared, params.name, params.arguments || {});
       return r ? ok(id, r) : err(id, -32602, `Unknown tool: ${params.name}`);
