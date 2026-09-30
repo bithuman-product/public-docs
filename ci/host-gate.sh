@@ -65,12 +65,15 @@
 #              lci_run <cmd...>               run a child WITHOUT the lock fds (a daemon a
 #                                             step leaves behind can't pin a slot)
 #              lci_offload_orinda <repo> <preflight-shell> <args...>   see --host orinda
+#                                             (chunked: <= 20-min holds, >= 10-min gaps)
 # CLI:         bash ci/host-gate.sh status    who holds what, and the queue, right now
 #
 # Knobs: LOCAL_CI_WAIT_S (default 7200; 0 = wait forever; run-local.sh --wait-timeout S)
 #        LOCAL_CI_SLOTS (2), LOCAL_CI_LOCK_DIR (~/_locks/local-ci), LOCAL_CI_POLL_S (60)
 #        LOCAL_CI_EXCL_YIELD_S (600), LOCAL_CI_EXCL_MAX_S (900; 0 = no warning),
 #        LOCAL_CI_EXCL_ENFORCE (0), LOCAL_CI_STALE_S (300)
+#        --host orinda: LOCAL_CI_OFFLOAD_MIN (20, max 20), LOCAL_CI_ORINDA_CHUNK_S (900),
+#        LOCAL_CI_ORINDA_GAP_S (600), LOCAL_CI_ORINDA_POLL_S (60), LOCAL_CI_ORINDA_LEASE_S (900)
 
 LCI_LOCK_DIR="${LOCAL_CI_LOCK_DIR:-$HOME/_locks/local-ci}"
 LCI_SLOTS="${LOCAL_CI_SLOTS:-2}"
@@ -494,43 +497,303 @@ lci_run() {
   else "$@"; fi
 }
 
-# --host orinda: run the whole suite on orinda, ONLY while orinda's measurement lock is
-# free. orinda's lock is ~/bin_mlock.sh there (a mkdir mutex ~/.measure_lock + a holder
-# record; orinda-ci GitHub runners take it SHARED under /run/orinda-ci-mlock/shared). We
-# `acquire` it (it refuses while a measurement holds it, while a DRAIN is pending, or while
-# a live shared CI hold exists), so no measurement starts under our suite, and release it
-# on exit. Never falls back to local silently: a refusal exits 75.
+# --host orinda (CHUNKED, 2026-09-30): run the suite on orinda in chunks, each only while
+# holding orinda's measurement lock (~/bin_mlock.sh there: a mkdir mutex ~/.measure_lock + a
+# holder record; orinda-ci runners take it SHARED under /run/orinda-ci-mlock/shared). orinda's
+# rule (10x Production, 09-30): releases and measurements share orinda, so one hold is <= 20
+# min and holds are >= 10 min apart (a 90-min whole-suite hold blocked a Windows wheel
+# release build). The steps come from the remote `ci/run-local.sh --list` (or the caller's
+# --only values) and run one at a time as `ci/run-local.sh --only <step> <other args>`.
+# A chunk: acquire the lock for LOCAL_CI_OFFLOAD_MIN (default and max 20) minutes (held by a
+# measurement, a pending DRAIN or another suite's tree lease = wait, polling every
+# LOCAL_CI_ORINDA_POLL_S (60), at most LOCAL_CI_WAIT_S per acquire, then exit 75); run steps
+# until the next one would start LOCAL_CI_ORINDA_CHUNK_S (900) into the chunk; release; wait
+# LOCAL_CI_ORINDA_GAP_S (600); repeat. A step longer than the hold is not killed (a WARNING
+# says so). Preflight and rsync run once per suite (the rsync in the first chunk).
+# ~/_local_ci/<repo> is shared by every offloaded suite of that repo, so the suite that
+# synced it holds a lease on it (.git/lci-owner, refreshed while the suite lives, stale
+# after LOCAL_CI_ORINDA_LEASE_S) and another suite waits; if the tree is re-synced by
+# someone else mid-suite, the suite stops (exit 75) and never grades those bytes.
+# One summary at the end in the usual `LOCAL CI PASS|FAIL sha=... steps=N` form (exit 0/1);
+# a preflight / lock / --list refusal exits 75 and never falls back to local.
+# EXIT/INT/TERM/HUP: stop the remote step, drop the lease, release the lock.
 #   lci_offload_orinda <repo> <remote preflight shell> <run-local args...>
+LCI_OR_SSH=(); LCI_OR_REPO=""; LCI_OR_LANE=""; LCI_OR_TMP=""; LCI_OR_WHY=""
+LCI_OR_HELD=0; LCI_OR_TREE=0; LCI_OR_PID=""; LCI_OR_SLEEP=""; LCI_OR_RC=0
+LCI_OR_POLL_S="${LOCAL_CI_ORINDA_POLL_S:-60}"; LCI_OR_LEASE_S="${LOCAL_CI_ORINDA_LEASE_S:-900}"
+
+# Remote scripts ($1.. = args, passed quoted). ACQ: lane repo mins why first lease.
+# shellcheck disable=SC2016  # expanded on the remote host, on purpose
+LCI_OR_ACQ='lane=$1 t=$HOME/_local_ci/$2/.git lease=$6 o="" a=0
+leased() {  # another live suite leases the tree
+  [ -f "$t/lci-owner" ] || return 1
+  o="$(head -n1 "$t/lci-owner")"; a=$(( $(date +%s) - $(stat -c %Y "$t/lci-owner") ))
+  [ "$o" != "$lane" ] && [ "$a" -lt "$lease" ]
+}
+if [ "$5" = 1 ] && leased; then echo "~/_local_ci/$2 is leased by another offloaded suite ($o, refreshed ${a}s ago)"; exit 3; fi
+st="$(~/bin_mlock.sh status 2>&1)"
+case "$st" in *"DRAIN requested by "*) d="${st#*DRAIN requested by }"; d="${d%% *}"
+  [ "$d" = "$lane" ] || { echo "a DRAIN is pending for $d (a measurement waits to start)"; exit 1; } ;; esac
+~/bin_mlock.sh acquire "$lane" "$3" "$4" || exit $?
+if [ "$5" = 1 ]; then
+  if leased; then
+    ~/bin_mlock.sh release "$lane" >/dev/null
+    echo "~/_local_ci/$2 is leased by another offloaded suite ($o, refreshed ${a}s ago)"; exit 3
+  fi
+elif [ "$(head -n1 "$t/lci-owner" 2>/dev/null)" = "$lane" ]; then touch -c "$t/lci-owner"
+else ~/bin_mlock.sh release "$lane" >/dev/null; echo "~/_local_ci/$2 was re-synced by someone else since the last chunk"; exit 4
+fi'
+# shellcheck disable=SC2016
+LCI_OR_REFRESH='[ "$(head -n1 "$HOME/_local_ci/$2/.git/lci-owner" 2>/dev/null)" = "$1" ] || exit 4
+touch -c "$HOME/_local_ci/$2/.git/lci-owner"'
+# STEP (login shell: uv/nvm live on the login PATH): lane repo step <run-local args...>
+# shellcheck disable=SC2016
+LCI_OR_STEP='lane=$1; cd "$HOME/_local_ci/$2" || exit 199; u=$3; shift 3
+[ "$(head -n1 .git/lci-owner 2>/dev/null)" = "$lane" ] || { echo "this suite no longer owns ~/_local_ci/$2"; exit 199; }
+ps -o pgid= -p $$ | tr -d " " >.git/lci-step.pgid
+( while sleep 60; do touch -c .git/lci-owner; done ) </dev/null >/dev/null 2>&1 &
+r=$!
+ci/run-local.sh --only "$u" "$@"; rc=$?
+kill "$r" 2>/dev/null; rm -f .git/lci-step.pgid; exit "$rc"'
+# BYE: lane repo tree held stepping
+# shellcheck disable=SC2016
+LCI_OR_BYE='t=$HOME/_local_ci/$2/.git
+if [ "$3" = 1 ] && [ "$(head -n1 "$t/lci-owner" 2>/dev/null)" = "$1" ]; then rm -f "$t/lci-owner"; fi
+if [ "$5" = 1 ] && p="$(cat "$t/lci-step.pgid" 2>/dev/null)" && [ "${p:-0}" -gt 1 ] 2>/dev/null; then
+  kill -TERM -- "-$p" 2>/dev/null
+  for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do kill -0 -- "-$p" 2>/dev/null || break; sleep 0.5; done
+  if kill -0 -- "-$p" 2>/dev/null; then echo "the remote step (pgid $p) is still stopping"; else echo "stopped the remote step"; fi
+fi
+if [ "$4" = 1 ]; then ~/bin_mlock.sh release "$1"; fi
+true'
+
+lci__or_sh() {  # <-c|-lc> <script> <args...>: run a bash script on the offload host
+  local fl="$1" s="$2" q="" a; shift 2
+  for a in "$@"; do q+=" $(printf %q "$a")"; done
+  "${LCI_OR_SSH[@]}" "bash $fl $(printf %q "$s") lci$q" </dev/null
+}
+
+lci__or_sleep() { sleep "$1" & LCI_OR_SLEEP=$!; wait "$LCI_OR_SLEEP" || true; LCI_OR_SLEEP=""; }
+
+lci__or_refresh() {  # keep our lease on the remote tree; 1 = the tree is not ours any more
+  local rc=0
+  lci__or_sh -c "$LCI_OR_REFRESH" "$LCI_OR_LANE" "$LCI_OR_REPO" >/dev/null 2>&1 || rc=$?
+  if [ "$rc" = 4 ]; then LCI_OR_WHY="the offload tree _local_ci/$LCI_OR_REPO was re-synced by someone else while this suite waited"; return 1; fi
+  return 0
+}
+
+lci__or_release() {
+  local out rc=0
+  # shellcheck disable=SC2016
+  out="$(lci__or_sh -c 'exec ~/bin_mlock.sh release "$1"' "$LCI_OR_LANE" 2>&1)" || rc=$?
+  if [ "$rc" = 255 ]; then lci__log "offload: releasing the lock failed (ssh), retrying before the next acquire: $out"; return 0; fi
+  LCI_OR_HELD=0; lci__log "$out"
+}
+
+# lci__or_acquire <first 0|1> <mins>: 0 = held; 1 = gave up (LCI_OR_WHY); exits 2 on a bad call.
+lci__or_acquire() {
+  local t0 out rc why="" said=0 now
+  t0="$(lci__now)"
+  while :; do
+    if [ "$LCI_OR_HELD" = 1 ]; then lci__or_release; fi   # an earlier release that failed
+    rc=0
+    out="$(lci__or_sh -c "$LCI_OR_ACQ" "$LCI_OR_LANE" "$LCI_OR_REPO" "$2" \
+      "local-ci $LCI_OR_REPO suite chunk from $(hostname -s) (<= $2 min, steps one at a time)" "$1" "$LCI_OR_LEASE_S" 2>&1)" || rc=$?
+    case "$rc" in
+      0) LCI_OR_HELD=1; lci__log "$out"; return 0 ;;
+      2) lci__log "offload: ~/bin_mlock.sh refused the call: $out"; exit 2 ;;
+      4) LCI_OR_WHY="$out"; return 1 ;;
+      255) out="ssh failed: $out" ;;
+    esac
+    now="$(lci__now)"
+    if [ "${out%%[0-9]*}" != "$why" ] || [ $(( now - said )) -ge 300 ]; then
+      why="${out%%[0-9]*}"; said="$now"
+      lci__log "offload: waiting for the measurement lock ($(( now - t0 ))s): ${out##*$'\n'}"
+    fi
+    if [ "$LCI_WAIT_S" != 0 ] && [ $(( now - t0 )) -ge "$LCI_WAIT_S" ]; then
+      LCI_OR_WHY="the measurement lock was not free for ${LCI_WAIT_S}s (LOCAL_CI_WAIT_S / --wait-timeout): ${out##*$'\n'}"
+      return 1
+    fi
+    if [ "$1" = 0 ]; then lci__or_refresh || return 1; fi   # keep our tree while we wait
+    lci__or_sleep "$LCI_OR_POLL_S"
+  done
+}
+
+lci__or_gap() {  # <seconds>: no hold, the tree lease kept fresh
+  local left="$1" s
+  while [ "$left" -gt 0 ]; do
+    s="$LCI_OR_POLL_S"; if [ "$left" -lt "$s" ]; then s="$left"; fi
+    lci__or_sleep "$s"; left=$(( left - s ))
+    lci__or_refresh || return 1
+  done
+}
+
+lci__or_step() {  # <step> <run-local args...>: LCI_OR_RC, output in $LCI_OR_TMP/out
+  local q="" a
+  for a in "$LCI_OR_LANE" "$LCI_OR_REPO" "$@"; do q+=" $(printf %q "$a")"; done
+  "${LCI_OR_SSH[@]}" "bash -lc $(printf %q "$LCI_OR_STEP") lci$q" </dev/null >"$LCI_OR_TMP/out" 2>&1 &
+  LCI_OR_PID=$!
+  LCI_OR_RC=0; wait "$LCI_OR_PID" || LCI_OR_RC=$?
+  LCI_OR_PID=""
+}
+
+lci__or_exit() {
+  set +e
+  local stepping=0
+  [ -z "$LCI_OR_SLEEP" ] || kill "$LCI_OR_SLEEP" 2>/dev/null
+  if [ -n "$LCI_OR_PID" ]; then stepping=1; kill "$LCI_OR_PID" 2>/dev/null; fi
+  if [ "$LCI_OR_TREE$LCI_OR_HELD$stepping" != 000 ]; then
+    lci__or_sh -c "$LCI_OR_BYE" "$LCI_OR_LANE" "$LCI_OR_REPO" "$LCI_OR_TREE" "$LCI_OR_HELD" "$stepping" 2>&1 \
+      | sed 's/^/[host-gate] offload exit: /' >&2
+    LCI_OR_TREE=0; LCI_OR_HELD=0
+  fi
+  [ -z "$LCI_OR_TMP" ] || rm -rf "$LCI_OR_TMP"
+}
+
+# lci__or_parse_list "<kinds>" < `ci/run-local.sh --list`: the runnable step names in list
+# order, one per line. Layouts: section headers (unindented, starting with '#' or ending in
+# ':') with indented steps, or one `<step> <kind...>` line per step. Kinds: default, full,
+# served; manual / implicit are skipped. Exit 1 (reason on stderr) on anything it cannot
+# place: an unknown section, a step line with no kind, a name with odd characters, a
+# `# <kind>: N` header whose N does not match, or no runnable step at all.
+lci__or_parse_list() {
+  awk -v want="$1" '
+    function kind(s) { s = tolower(s)
+      if (s ~ /manual|implicit/) return "skip"; if (s ~ /served/) return "served"
+      if (s ~ /full/) return "full"; if (s ~ /default|run by/) return "default"; return "" }
+    function bad(m) { if (!err) print "cannot parse --list line " NR ": " m > "/dev/stderr"; err = 1 }
+    function close_sec() { if (sec != "skip" && cnt_want != "" && cnt_want + 0 != cnt) bad("\"" head "\" announces " cnt_want " steps, lists " cnt) }
+    { sub(/\r$/, "") }
+    /^[ \t]*$/ { next }
+    /^[^ \t]/ && (/^#/ || /:[ \t]*$/) {
+      close_sec(); head = $0; sec = kind($0); hdr = 1; cnt = 0; cnt_want = ""
+      if (sec == "") bad("unknown section: " $0)
+      if (/^#.*:[ \t]*[0-9]+[ \t]*$/) cnt_want = $NF
+      next }
+    /^[ \t]/ { if (!hdr) next; cnt++; name = $1; k = sec }
+    /^[^ \t]/ { if (hdr) { bad("unindented line under a section: " $0); next }
+      name = $1; rest = $0; sub(/^[^ \t]+[ \t]*/, "", rest); k = kind(rest)
+      if (k == "") { bad("no kind for step: " $0); next } }
+    k == "skip" { next }
+    name !~ /^[A-Za-z0-9_][A-Za-z0-9_.:\/@+=,-]*$/ { bad("odd step name: " name); next }
+    index(want, " " k " ") && !(name in seen) { seen[name] = 1; print name; n++ }
+    END { close_sec(); if (!n && !err) { print "no runnable step in --list" > "/dev/stderr"; err = 1 }; exit err }'
+}
+
 lci_offload_orinda() {
   local repo="$1" pre="$2"; shift 2
-  local host="${LOCAL_CI_OFFLOAD_HOST:-orinda}" root lane mins="${LOCAL_CI_OFFLOAD_MIN:-90}" out rc q=""
+  local host="${LOCAL_CI_OFFLOAD_HOST:-orinda}" mins="${LOCAL_CI_OFFLOAD_MIN:-20}"
+  local chunk_s="${LOCAL_CI_ORINDA_CHUNK_S:-900}" gap_s="${LOCAL_CI_ORINDA_GAP_S:-600}"
+  local root sha out list="" want=" default " listmode=0 i=0 n=0 u v nm got bad ran t_chunk t_step dt
+  local chunks=0 nf=0 left=0 lost="" warn_s
+  local units=() fwd=() order=()
+  local -A res=() note=() known=()
+  case "$mins" in ''|*[!0-9]*|0) mins=20 ;; esac
+  if [ "$mins" -gt 20 ]; then lci__log "LOCAL_CI_OFFLOAD_MIN=$mins: orinda holds are <= 20 min; using 20"; mins=20; fi
+  warn_s="${LOCAL_CI_ORINDA_WARN_S:-$(( mins * 60 ))}"
   root="$(git rev-parse --show-toplevel)" || return 2
   [ -d "$root/.git" ] || { lci__log "--host $host needs a normal checkout (.git is not a directory here: worktree?)"; exit 2; }
-  lane="local-ci-$repo-$(hostname -s)-$$"
-  local ssh_=(ssh -o BatchMode=yes -o ConnectTimeout=10 "$host")
+  sha="$(git -C "$root" rev-parse HEAD)"
+  LCI_OR_REPO="$repo"; LCI_OR_LANE="local-ci-$repo-$(hostname -s)-$$"
+  LCI_OR_SSH=(ssh -o BatchMode=yes -o ConnectTimeout=10 "$host")
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --only) [ $# -ge 2 ] || { lci__log "--only needs a step name"; exit 2; }; units+=("$2"); shift ;;
+      --only=*) units+=("${1#--only=}") ;;
+      --full) want=" default full served "; fwd+=("$1") ;;
+      --served) want=" served "; fwd+=("$1") ;;
+      *) fwd+=("$1") ;;
+    esac
+    shift
+  done
+  [ ${#units[@]} -gt 0 ] || listmode=1
   lci__log "offload: toolchain preflight on $host"
-  if ! out="$("${ssh_[@]}" "bash -lc $(printf %q "$pre")" 2>&1)"; then
+  if ! out="$("${LCI_OR_SSH[@]}" "bash -lc $(printf %q "$pre")" </dev/null 2>&1)"; then
     lci__log "offload REFUSED: $host lacks the toolchain for $repo:"; printf '%s\n' "$out" | sed 's/^/    /' >&2
     lci__log "the default (local, gated) still works: rerun without --host"; exit 75
   fi
-  # shellcheck disable=SC2088  # the ~ expands on the remote host, on purpose
-  out="$("${ssh_[@]}" "~/bin_mlock.sh acquire $lane $mins $(printf %q "local-ci $repo suite offloaded from $(hostname -s)")" 2>&1)"; rc=$?
-  if [ $rc != 0 ]; then
-    lci__log "offload REFUSED: $host measurement lock is not free:"; printf '%s\n' "$out" | sed 's/^/    /' >&2
+  LCI_OR_TMP="$(mktemp -d "${TMPDIR:-/tmp}/lci-orinda.XXXXXX")" || exit 2
+  trap 'lci__or_exit' EXIT
+  trap 'exit 130' INT; trap 'exit 143' TERM; trap 'exit 129' HUP
+  while :; do
+    if ! lci__or_acquire "$(( chunks == 0 ))" "$mins"; then lost="$LCI_OR_WHY"; break; fi
+    chunks=$(( chunks + 1 )); t_chunk="$(lci__now)"; ran=0
+    if [ "$chunks" = 1 ]; then
+      "${LCI_OR_SSH[@]}" "mkdir -p ~/_local_ci/$repo" </dev/null || exit 2
+      rsync -a --delete --exclude node_modules --exclude /dist --exclude /ci/.logs --exclude /ci/.tmp \
+        --exclude .venv --exclude .astro -e "ssh -o BatchMode=yes" "$root/" "$host:_local_ci/$repo/" || exit 2
+      # shellcheck disable=SC2016
+      lci__or_sh -c 'printf "%s\n" "$1" >"$HOME/_local_ci/$2/.git/lci-owner"' "$LCI_OR_LANE" "$repo" || exit 2
+      LCI_OR_TREE=1
+      # the step list: the units to run (unless the caller gave --only), and every runnable
+      # name, so only real step names count in the per-step PASS/FAIL lines
+      out=""
+      if ! list="$("${LCI_OR_SSH[@]}" "bash -lc $(printf %q "cd ~/_local_ci/$repo && ci/run-local.sh --list")" </dev/null 2>&1)" \
+         || ! out="$(printf '%s\n' "$list" | lci__or_parse_list " default full served " 2>&1)" \
+         || { [ "$listmode" = 1 ] && ! out="$(printf '%s\n' "$list" | lci__or_parse_list "$want" 2>&1)"; }; then
+        lci__log "offload REFUSED: cannot parse the step list (ci/run-local.sh --list on $host); nothing ran:"
+        if [ "$out" != "$list" ]; then printf '%s\n' "$out" | tail -n 3 | sed 's/^/    /' >&2; fi
+        printf '%s\n' "$list" | tail -n 15 | sed 's/^/    | /' >&2
+        lci__log "the default (local, gated) still works: rerun without --host"; exit 75
+      fi
+      while IFS= read -r u; do known[$u]=1; done < <(printf '%s\n' "$list" | lci__or_parse_list " default full served ")
+      if [ "$listmode" = 1 ]; then mapfile -t units <<<"$out"; fi
+      n=${#units[@]}
+      lci__log "offload: $n step(s) on $host (sha $sha), one at a time, in chunks: lock <= ${mins} min, no step starts after ${chunk_s}s of a chunk, >= ${gap_s}s between chunks"
+    fi
+    while [ "$i" -lt "$n" ]; do
+      u="${units[$i]}"
+      if [ -n "${res[$u]+x}" ]; then i=$(( i + 1 )); continue; fi   # already ran (a prefix --only)
+      if [ "$ran" -gt 0 ] && [ $(( $(lci__now) - t_chunk )) -ge "$chunk_s" ]; then break; fi
+      t_step="$(lci__now)"
+      lci__or_step "$u" "${fwd[@]+"${fwd[@]}"}"
+      dt=$(( $(lci__now) - t_step ))
+      sed 's/^/  | /' "$LCI_OR_TMP/out"
+      if [ "$LCI_OR_RC" = 199 ]; then lost="$(tail -n1 "$LCI_OR_TMP/out")"; break 2; fi
+      got=0; bad=0
+      while read -r v nm _; do
+        case "$v" in PASS|FAIL) ;; *) continue ;; esac
+        if [ -z "$nm" ] || [ -z "${known[$nm]+x}" ]; then continue; fi   # a log line, not a step
+        if [ -z "${res[$nm]+x}" ]; then order+=("$nm"); fi
+        res[$nm]="$v"; got=1
+        if [ "$v" = FAIL ]; then bad=1; fi
+      done <"$LCI_OR_TMP/out"
+      if [ "$LCI_OR_RC" != 0 ] && [ "$bad" = 0 ]; then   # a non-zero exit is a failure, lines or not
+        if [ -z "${res[$u]+x}" ]; then order+=("$u"); fi
+        res[$u]=FAIL; note[$u]=" (exit $LCI_OR_RC on $host)"
+      elif [ "$got" = 0 ]; then
+        if [ -z "${res[$u]+x}" ]; then order+=("$u"); fi
+        res[$u]=PASS
+      fi
+      if [ "$dt" -gt "$warn_s" ]; then
+        lci__log "WARNING: step $u ran ${dt}s, longer than the ${mins}-min hold (orinda rule: holds <= 20 min); not killed"
+      fi
+      i=$(( i + 1 )); ran=$(( ran + 1 ))
+    done
+    lci__log "offload: chunk $chunks: $ran step(s), lock held $(( $(lci__now) - t_chunk ))s"
+    lci__or_release
+    [ "$i" -lt "$n" ] || break
+    lci__log "offload: $(( n - i )) step(s) left; next chunk after a ${gap_s}s gap"
+    if ! lci__or_gap "$gap_s"; then lost="$LCI_OR_WHY"; break; fi
+  done
+  if [ "$chunks" = 0 ]; then
+    lci__log "offload REFUSED: $lost"
     lci__log "the default (local, gated) still works: rerun without --host"; exit 75
   fi
-  lci__log "$out"
-  # shellcheck disable=SC2064
-  trap "${ssh_[*]} '~/bin_mlock.sh release $lane' >&2 || true" EXIT
-  trap 'exit 130' INT; trap 'exit 143' TERM
-  "${ssh_[@]}" "mkdir -p ~/_local_ci/$repo" || exit 2
-  rsync -a --delete --exclude node_modules --exclude /dist --exclude /ci/.logs --exclude /ci/.tmp \
-    --exclude .venv --exclude .astro -e "ssh -o BatchMode=yes" "$root/" "$host:_local_ci/$repo/" || exit 2
-  for a in "$@"; do q+=" $(printf %q "$a")"; done
-  lci__log "offload: running ci/run-local.sh$q on $host (sha $(git -C "$root" rev-parse HEAD))"
-  # a LOGIN shell, as in the preflight (uv/nvm live on the login PATH, not ssh's bare one)
-  "${ssh_[@]}" "bash -lc $(printf %q "cd ~/_local_ci/$repo && ci/run-local.sh$q")"; rc=$?
-  exit $rc
+  echo "----"
+  for u in "${order[@]+"${order[@]}"}"; do
+    echo "${res[$u]} $u${note[$u]:-}"
+    if [ "${res[$u]}" = FAIL ]; then nf=$(( nf + 1 )); fi
+  done
+  for (( ; i < n; i++ )); do
+    if [ -z "${res[${units[$i]}]+x}" ]; then left=$(( left + 1 )); fi
+  done
+  if [ -n "$lost" ]; then
+    lci__log "offload STOPPED after $chunks chunk(s): $lost"
+    echo "LOCAL CI FAIL sha=$sha steps=${#order[@]} failed=$nf not_run=$left host=$host chunks=$chunks"; exit 75
+  fi
+  if [ "$nf" = 0 ]; then echo "LOCAL CI PASS sha=$sha steps=${#order[@]} host=$host chunks=$chunks"; exit 0; fi
+  echo "LOCAL CI FAIL sha=$sha steps=${#order[@]} failed=$nf host=$host chunks=$chunks"; exit 1
 }
 
 # Direct execution: `bash ci/host-gate.sh status`
