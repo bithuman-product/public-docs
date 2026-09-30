@@ -41,6 +41,14 @@ The releases of September 2026 worth a look first.
 
 ## September 2026
 
+### Swift package 2.19.3 — 2026-09-30
+
+Tag `v2.19.3`.
+
+- **Essence 2 on iPhone, iPad and Mac:** the mouth blends into the face without the visible edge that could show at the corners of the lips, now also when the engine renders an avatar without its bundled Core ML model. Avatars get this as they are updated on bitHuman; an avatar that has not been updated renders exactly as in 2.19.2.
+- Essence 2 is now 1.15.2. Expression 2 (2.19.2) and the macOS engine core (1.0.1) are unchanged.
+- **Action:** `.package(url: …, from: "2.19.3")`.
+
 ### CLI 2.8.6 — 2026-09-30
 
 Tag `cli-v2.8.6`.
