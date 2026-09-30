@@ -15,7 +15,8 @@ export function sideLabel(title: string, group: string, type?: string): string {
   // A platform's own page is its quickstart (SPEC §0): "Android", "REST API", "Web: embed and WebGPU".
   if (type === "platform") return "Quickstart";
   const rest = title.slice(group.length).replace(/^[:\s]+/, "");
-  if (!rest || !/^[\s:]/.test(title.slice(group.length))) return title;
+  // Only a whole leading word goes, and never into a fragment ("Pricing and credits" stays).
+  if (!rest || !/^[\s:]/.test(title.slice(group.length)) || /^(and|or|&|for|of|in|on|with|to)\b/i.test(rest)) return title;
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
