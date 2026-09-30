@@ -1,6 +1,6 @@
 ---
 title: "iOS Essence 2"
-description: "A complete SwiftUI app that renders a photoreal Essence 2 avatar at full resolution on an iPhone or iPad, on the device: four files, one setup script."
+description: "A complete SwiftUI app with a photoreal Essence 2 avatar on iPhone or iPad."
 section: build
 group: "Examples"
 order: 21

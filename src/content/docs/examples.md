@@ -1,6 +1,6 @@
 ---
 title: "Example gallery"
-description: "Complete bitHuman apps you can run, each recorded on the device named under it: phones, a Mac, a Linux PC with no GPU and the web."
+description: "Complete apps you can run, each recorded on the device it names."
 section: build
 group: "Examples"
 order: 0

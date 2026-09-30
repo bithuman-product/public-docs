@@ -1,6 +1,6 @@
 ---
 title: "Create your own avatar"
-description: "Turn a portrait, a voice sample and a prompt into your own avatar: what to upload, how to write the persona, and the API call."
+description: "Turn a portrait, a voice sample and a prompt into your own avatar."
 section: build
 group: "Avatars"
 order: 10

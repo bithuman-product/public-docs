@@ -1,6 +1,6 @@
 ---
 title: "Changelog archive"
-description: "Release notes from July 2026 and earlier, one short summary per release. The current changelog is /changelog."
+description: "Release notes from July 2026 and earlier, one summary per release."
 section: overview
 group: "Resources"
 order: 21

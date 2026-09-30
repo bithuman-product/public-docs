@@ -1,6 +1,6 @@
 ---
 title: "API overview"
-description: "REST API for generating avatars, synthesizing voice, driving live sessions, and embedding agents — from any language."
+description: "REST API for avatars, voice, live sessions and embedding, from any language."
 section: api
 group: "Basics"
 order: 0

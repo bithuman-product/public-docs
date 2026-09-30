@@ -1,6 +1,6 @@
 ---
 title: "Changelog"
-description: "Release notes for every bitHuman artifact: CLI, Python, Swift package, Android, API and LiveKit plugin."
+description: "Release notes for every bitHuman SDK, the CLI, the API and plugins."
 section: overview
 group: "Resources"
 order: 20

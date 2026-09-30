@@ -1,6 +1,6 @@
 ---
 title: "Expression 2"
-description: "Expression 2 renders any character from one portrait: the whole scene generated live from the audio, on the device or in the bitHuman cloud."
+description: "Expression 2 renders any character from one portrait, live."
 section: models
 group: "Models"
 order: 20

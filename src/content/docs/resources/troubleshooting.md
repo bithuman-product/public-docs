@@ -1,6 +1,6 @@
 ---
 title: "Troubleshooting"
-description: "Where to fix a problem on each platform and recipe, what a working live session looks like, and the fixes for the common session errors."
+description: "Where to fix a problem on each platform, and the common session errors."
 section: overview
 group: "Help"
 order: 10

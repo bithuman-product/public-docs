@@ -1,6 +1,6 @@
 ---
 title: "The avatar file"
-description: "The self-contained .imx file every bitHuman avatar ships in — one container for Essence 1, Essence 2 and Expression 2 identities — where it comes from, how it's addressed by agent code, and how to inspect it."
+description: "The self-contained .imx file every bitHuman avatar ships in."
 section: models
 group: "Concepts"
 order: 20

@@ -1,6 +1,6 @@
 ---
 title: "Use cases"
-description: "Which deployment mode each use case starts from: banking and ATMs, healthcare, events and trade shows, kiosks, apps and AI companions, and websites."
+description: "Which deployment mode each use case starts from."
 section: deploy
 group: "Use cases"
 order: 0

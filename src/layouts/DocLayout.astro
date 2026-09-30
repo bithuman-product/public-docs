@@ -156,7 +156,7 @@ const weight = data.type === "changelog" ? "0.2" : (data.type === "reference" ||
         <a class="doc-back" href={meta.home} data-pagefind-ignore>‹ {meta.label}</a>
         <header class="doc-head">
           <h1 data-pagefind-meta={data.searchTitle ? `title:${data.searchTitle}` : undefined}>{data.title}</h1>
-          {data.description && <p class="doc-lede">{data.description}</p>}
+          {data.description && <p class="doc-lede" data-subtitle>{data.description}</p>}
           {metaItems.length > 0 && (
             <p class="doc-metaline" data-pagefind-ignore>
               {metaItems.map((m, i) => (

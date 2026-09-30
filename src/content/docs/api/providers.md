@@ -1,6 +1,6 @@
 ---
 title: "Providers (BYOK)"
-description: "Bring your own LLM, STT, and TTS provider keys — store them encrypted and have your agents use them."
+description: "Bring your own LLM, STT and TTS keys, stored encrypted, for your agents."
 section: api
 group: "Account"
 order: 40

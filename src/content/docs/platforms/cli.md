@@ -1,6 +1,6 @@
 ---
 title: "CLI"
-description: "Render an MP4 or run a live avatar from the terminal, on macOS (Apple silicon) and Linux (x86_64, arm64), with no code. On Linux it needs no GPU."
+description: "Render an MP4 or run a live avatar from the terminal, with no code."
 section: platforms
 group: "CLI"
 order: 10
@@ -21,10 +21,11 @@ moved:
   troubleshooting: /platforms/cli/troubleshooting
 ---
 
-<div class="lead">
-<div class="lead-text">
+One binary, no code: `bithuman run` opens a live conversation with an avatar in your browser.
 
-One binary, no code: `bithuman render` turns an audio file into a talking-avatar MP4, and `bithuman run` opens a live conversation with an avatar in your browser. It renders on your own machine. To program against the models instead, use [Python](/platforms/python).
+## Before you start
+
+`bithuman render` turns an audio file into a talking-avatar MP4. Both render on your own machine. To program against the models instead, use [Python](/platforms/python).
 
 > **Note:** On Linux, both models run live on the CPU alone, no GPU. See [CPU only (no GPU)](/deploy/cpu).
 
@@ -33,16 +34,6 @@ One binary, no code: `bithuman render` turns an audio file into a talking-avatar
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **`render` and `run`** | both | both |
 | **Download per avatar** | about 190 MB | 140–160 MB, plus a shared audio encoder (about 66 MB) once |
-
-</div>
-
-```figure
-cli-linux eager
-```
-
-</div>
-
-## Before you start
 
 | You need | For | Check |
 |---|---|---|
@@ -111,6 +102,14 @@ bithuman run wise-pup
 ```
 
 `render` accepts any audio format `ffmpeg` reads. `bithuman run` needs two more things from [Before you start](#before-you-start): `livekit-server` and Python. It starts a local `livekit-server` and the voice agent; the first run installs the agent, about 350 MB on disk, in one to two minutes.
+
+<div class="fig-end">
+
+```figure
+cli-linux
+```
+
+</div>
 
 ## Complete example
 

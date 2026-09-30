@@ -1,6 +1,6 @@
 ---
 title: "iOS Expression 2"
-description: "A complete SwiftUI app that renders a talking Expression 2 avatar on an iPhone or iPad, on the device: clone it, fetch the avatar, set your API secret, run."
+description: "A complete SwiftUI app with a talking Expression 2 avatar on iPhone or iPad."
 section: build
 group: "Examples"
 order: 20

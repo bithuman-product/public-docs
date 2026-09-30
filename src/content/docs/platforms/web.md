@@ -1,6 +1,6 @@
 ---
 title: "Web embed"
-description: "Put a live, talking avatar on any web page with one iframe. It renders in the bitHuman cloud, or in the visitor's tab with WebGPU."
+description: "Put a live, talking avatar on any web page with one iframe."
 section: platforms
 group: "Web"
 order: 10
@@ -28,24 +28,11 @@ moved:
   troubleshooting: /platforms/web/troubleshooting
 ---
 
-<div class="lead">
-<div class="lead-text">
-
-The web surface is one URL: `https://www.bithuman.ai/embed/<CODE>`. Put it in an `<iframe>` and the page gets a live avatar that listens and answers. By default the avatar renders in the bitHuman cloud and streams to the page; with `render=local` it renders in the visitor's tab with WebGPU. There is no npm package, no install and no secret in the browser.
-
-```why-on-device
-web
-```
-
-</div>
-
-```figure
-web-embed
-```
-
-</div>
+One URL in an `<iframe>`: no npm package, no install and no secret in the browser.
 
 ## Before you start
+
+The embed URL is `https://www.bithuman.ai/embed/<CODE>`, and the avatar listens and answers. By default it renders in the bitHuman cloud and streams to the page; with `render=local` it renders in the visitor's tab with WebGPU.
 
 - A current browser. For lip-sync rendered in the tab, a usable GPU ([render in the tab](/platforms/web/webgpu)).
 - An agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
@@ -68,6 +55,14 @@ A public agent needs no credential. For a private agent, your server mints an [e
 ```
 
 Expected: the avatar appears, asks for the microphone, and answers when you speak. Keep the `*` in `allow`, or the microphone is blocked. To try it without a page, open [https://www.bithuman.ai/embed/A23WJF0199](https://www.bithuman.ai/embed/A23WJF0199).
+
+<div class="fig-end">
+
+```figure
+web-embed
+```
+
+</div>
 
 ## Performance
 

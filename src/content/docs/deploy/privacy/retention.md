@@ -1,6 +1,6 @@
 ---
 title: "Security and retention"
-description: "See how data is protected, how long it is kept, and how it is deleted."
+description: "How data is protected, how long it is kept, and how it is deleted."
 section: deploy
 group: "Privacy & compliance"
 order: 11

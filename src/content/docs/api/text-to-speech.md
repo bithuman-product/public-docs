@@ -1,6 +1,6 @@
 ---
 title: "Text to speech"
-description: "Turn text into natural speech with bitHuman's real-time TTS — built-in voices, inline tuning, and shareable voice codes designed in the playground."
+description: "Turn text into speech with built-in voices, inline tuning and shareable voice codes."
 section: api
 group: "Media"
 order: 20

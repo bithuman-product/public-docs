@@ -1,6 +1,6 @@
 ---
 title: "Swift reference"
-description: "Every entry point in the Swift package: the Expression2 and Essence2Kit Swift APIs, the Essence2 C interface, credentials and return codes."
+description: "Every entry point in the Swift package, Swift and C, with return codes."
 section: platforms
 group: "Swift"
 order: 50

@@ -1,6 +1,6 @@
 ---
 title: "macOS Expression 2"
-description: "Render a talking Expression 2 avatar on a Mac from one Swift file: a speech WAV goes in, lip-synced frames come out, all on the machine."
+description: "A talking Expression 2 avatar on a Mac, from one Swift file."
 section: build
 group: "Examples"
 order: 30

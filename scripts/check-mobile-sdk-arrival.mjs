@@ -46,7 +46,8 @@
 // goes quietly short exactly when someone adds a model.
 //
 // WHAT "ABOVE THE FOLD" MEANS, MECHANICALLY: the page LEAD — everything between
-// the end of the frontmatter and the first `## ` heading — must carry one table
+// the end of the frontmatter and the first `## ` heading, plus a first section named
+// `## Before you start` (decision W7, 2026-09-30: see lead() below) — must carry one table
 // with a column per shipped model. Not a preference for tables: a reader
 // deciding between two engines is comparing them, and a comparison that makes
 // them scroll between two sections is the defect this file exists for.
@@ -252,7 +253,20 @@ function fences(md) {
   return out.join("\n");
 }
 
-/** Everything between the end of the frontmatter and the first `## ` heading. */
+/**
+ * The ARRIVAL REGION: everything between the end of the frontmatter and the first
+ * `## ` heading, plus the first section when it is the quickstart's `## Before you
+ * start` (up to the next `## `).
+ *
+ * DECISION, docs v2 W7 (2026-09-30, SPEC "W7 POLISH" item 1): the quickstart's
+ * first step must start within 400 px at 1440, and a lead table cannot sit above it
+ * and leave room. So the lead is ONE short line, and the model comparison opens
+ * the first section, "Before you start" — the facts a reader checks before
+ * installing (devices, dependency, credential, download). It still starts inside
+ * the first 1440×900 screen, so the arrival answers stay above the fold. Only that
+ * one section is accepted: a comparison pushed further down (## Install and below)
+ * is the 2026-09-21 defect again and still fires.
+ */
 function lead(md) {
   let body = md;
   if (body.startsWith("---")) {
@@ -260,7 +274,11 @@ function lead(md) {
     if (end !== -1) body = body.slice(body.indexOf("\n", end + 1) + 1);
   }
   const h2 = body.search(/^## /m);
-  return h2 === -1 ? body : body.slice(0, h2);
+  if (h2 === -1) return body;
+  const rest = body.slice(h2);
+  if (!/^## Before you start[ \t]*\n/.test(rest)) return body.slice(0, h2);
+  const next = rest.slice(3).search(/^## /m);
+  return body.slice(0, h2) + (next === -1 ? rest : rest.slice(0, next + 3));
 }
 
 function splitRow(line) {
@@ -529,7 +547,10 @@ function selftest() {
     ["R9 the Gradle rail with no dependency report", GOOD.replace(/\.\/gradlew[^\n]*/, "echo hello"), true],
     ["R9 the SwiftPM rail with no Package.resolved read-back", IOS_FIXED.replace(/grep -A3[^\n]*/, "echo hello"), true],
 
+    // W7 (2026-09-30): the comparison may open `## Before you start`, never later.
+    ["table moved under the second section (## Install) fires", GOOD.replace(/Lead sentence\.\n\n((?:\|[^\n]*\n)+)\n## Install\n/, "Lead sentence.\n\n## Before you start\n\n- a phone\n\n## Install\n\n$1\n"), true],
     ["GOOD fixture stays quiet", GOOD, false],
+    ["W7 the table opens ## Before you start, one line of lead", GOOD.replace(/Lead sentence\.\n\n((?:\|[^\n]*\n)+)\n## Install\n/, "Lead sentence.\n\n## Before you start\n\n$1\n- a phone\n\n## Install\n"), false],
     // The same iOS page with only that one sentence removed: R8 goes silent,
     // which is what makes the arm above a measurement and not a coincidence.
     ["R8 the ios.md fixture with the stale sentence removed", IOS_FIXED, false],

@@ -1,6 +1,6 @@
 ---
 title: "Talking video API"
-description: "Render a talking-video mp4 over REST — submit a text script or hosted audio, poll the async job, and receive a CDN URL. Per-minute billing, auto-refunded on failure."
+description: "Render a talking-video MP4 from a text script or hosted audio."
 section: api
 group: "Media"
 order: 10

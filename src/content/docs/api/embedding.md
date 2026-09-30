@@ -1,6 +1,6 @@
 ---
 title: "Embedding"
-description: "Mint short-lived JWT tokens from your backend and embed a talking avatar on any website via an iframe."
+description: "Mint short-lived tokens on your backend and embed an avatar in any website."
 section: api
 group: "Agents"
 order: 40

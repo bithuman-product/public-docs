@@ -1,6 +1,6 @@
 ---
 title: "Downloads & versions"
-description: "The current version and install line of every bitHuman artifact, the operating systems each one supports, and how to verify a download."
+description: "The current version and install line of every bitHuman artifact."
 section: overview
 group: "Resources"
 order: 10

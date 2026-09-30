@@ -1,6 +1,6 @@
 ---
 title: "Healthcare"
-description: "Configure bitHuman so patient audio, transcripts and video stay in your environment: rendering on your hardware, a local or private language model, and no transcript stored at bitHuman."
+description: "Keep patient audio, transcripts and video in your own environment."
 section: deploy
 group: "Use cases"
 order: 20

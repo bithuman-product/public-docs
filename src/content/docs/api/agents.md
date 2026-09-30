@@ -1,6 +1,6 @@
 ---
 title: "Agents"
-description: "Create an avatar agent from a portrait, poll until it is ready, then manage it, download its model, and make it speak in live sessions."
+description: "Create an avatar agent from a portrait, then manage it and make it speak."
 section: api
 group: "Agents"
 order: 10

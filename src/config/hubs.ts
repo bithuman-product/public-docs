@@ -42,28 +42,28 @@ export const HUBS: HubMeta[] = [
     file: "src/openapi/bithuman.yaml",
     name: "API reference",
     description:
-      "Every endpoint in the bitHuman OpenAPI spec: agents, voice, talking video, embedding, billing and webhooks. The same contract is served raw at /api/openapi.yaml.",
+      "Every endpoint in the bitHuman OpenAPI spec, grouped by resource.",
   },
   {
     route: "platforms",
     file: "src/pages/platforms/index.astro",
     name: "Platforms",
     description:
-      "Every platform bitHuman runs on: iOS & iPadOS, macOS, Android, Flutter, the web, Python, the CLI, LiveKit and the REST API, with where the avatar renders and the time to a first result.",
+      "Every platform bitHuman runs on, and where the avatar renders on each.",
     section: "platforms",
   },
   {
     route: "build",
     file: "src/pages/build/index.astro",
     name: "Guides",
-    description: "Create your own avatar, give it a persona and a voice, and follow recipes for a voice agent and for Claude and Cursor. Then browse the example gallery.",
+    description: "Create an avatar, give it a persona and a voice, then follow a recipe.",
     section: "build",
   },
   {
     route: "resources",
     file: "src/pages/resources/index.astro",
     name: "Resources",
-    description: "Downloads and versions, the changelog, news, troubleshooting, support, legal, and machine-readable files for AI agents.",
+    description: "Downloads, the changelog, news, help, legal and files for AI agents.",
     section: "overview",
   },
 ];

@@ -40,7 +40,7 @@ const HAND = [
 <Base title={`${title} — bitHuman docs`} description={description} type="article" jsonLd={jsonLd} markdown="/api/reference.md">
   <div class="container ari" data-pagefind-weight="0.5" data-pagefind-filter={`section:${SECTIONS.api.label}`}>
     <h1>API reference</h1>
-    <p class="ari-lede">{description}</p>
+    <p class="ari-lede" data-subtitle>{description}</p>
     <ul class="ari-facts" role="list">
       <li><span>Base URL</span><code>https://api.bithuman.ai</code></li>
       <li><span>Authentication</span><span><code>api-secret: $BITHUMAN_API_SECRET</code> header · <a href="/api/authentication">Authentication</a></span></li>
@@ -69,7 +69,7 @@ const HAND = [
 
 <style>
   .ari { padding-block: var(--s-8) var(--s-12); max-width: 960px; }
-  .ari h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .ari h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -0.02em; }
   .ari-lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
   .ari-facts { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; gap: var(--s-2); font-size: var(--ft-sm); }
   .ari-facts li { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: var(--s-3); }
@@ -86,7 +86,6 @@ const HAND = [
   .ari-path { font-size: var(--ft-xs); overflow-wrap: anywhere; background: none; border: 0; padding: 0; }
   .ari-chip { margin-left: var(--s-2); }
   @media (max-width: 560px) {
-    .ari h1 { font-size: var(--fh-xl); }
     .ari-facts li { grid-template-columns: minmax(0, 1fr); gap: 0; }
     .ari-table thead { display: none; }
     .ari-table tr { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-3); padding: var(--s-2) 0; border-bottom: 1px solid var(--color-border); }

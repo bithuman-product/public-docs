@@ -1,6 +1,6 @@
 ---
 title: "Talking video"
-description: "Turn one audio file into an MP4 of your avatar speaking it: with the CLI or Python on your own machine, CPU only on Linux, or with one REST call to the bitHuman cloud."
+description: "Turn one audio file into an MP4 of your avatar speaking it."
 section: build
 group: "Apps"
 order: 40

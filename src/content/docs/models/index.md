@@ -1,6 +1,6 @@
 ---
 title: "Compare models"
-description: "Essence 2 renders a photoreal person and Expression 2 any character, each from one portrait. Where each model renders, which to pick, and how an avatar is created."
+description: "Essence 2 renders a photoreal person; Expression 2 renders any character."
 section: models
 group: "Models"
 order: 0

@@ -25,7 +25,7 @@ const idOf = (s: string) => "g-" + s.replace(/\W+/g, "-").toLowerCase();
   <div class="container hub" data-pagefind-filter={section ? `section:${section}` : undefined}>
     <nav class="crumb" aria-label="Breadcrumb"><a href="/">Docs</a> <span aria-hidden="true">/</span> <span>{title}</span></nav>
     <h1>{title}</h1>
-    <p class="lede">{tagline}</p>
+    <p class="lede" data-subtitle>{tagline}</p>
     {ctas.length > 0 && (
       <div class="hub-cta">
         {ctas.map((c) => <Button href={c.href} variant={c.variant ?? "primary"} external={c.external}>{c.label}</Button>)}
@@ -51,9 +51,9 @@ const idOf = (s: string) => "g-" + s.replace(/\W+/g, "-").toLowerCase();
   .crumb { font-size: var(--ft-sm); color: var(--color-text-tertiary); margin-bottom: var(--s-3); }
   .crumb a { color: var(--color-text-tertiary); }
   .crumb a:hover { color: var(--color-primary); }
-  .hub h1 { font-size: var(--fh-2xl); letter-spacing: -0.02em; }
+  .hub h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -0.02em; }
   .lede { margin-top: var(--s-3); font-size: var(--ft-lg); color: var(--color-text-secondary); max-width: 62ch; }
   .hub-cta { display: flex; gap: var(--s-3); margin-top: var(--s-6); flex-wrap: wrap; }
   .hub-group { margin-top: var(--s-10); }
-  @media (max-width: 560px) { .hub h1 { font-size: var(--fh-xl); } }
+
 </style>

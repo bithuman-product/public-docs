@@ -1,6 +1,6 @@
 ---
 title: "News"
-description: "Announcements from bitHuman, newest first: the models, where they render and how fast, with an RSS feed."
+description: "Announcements from bitHuman, newest first, with an RSS feed."
 section: overview
 group: "Resources"
 order: 30

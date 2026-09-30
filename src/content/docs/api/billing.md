@@ -1,6 +1,6 @@
 ---
 title: "Billing & usage"
-description: "Read a user's live credit balance and per-mode minute estimates, and understand how credits are consumed."
+description: "Read a live credit balance and per-mode minute estimates."
 section: api
 group: "Account"
 order: 10

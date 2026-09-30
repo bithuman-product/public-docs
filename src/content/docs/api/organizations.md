@@ -1,6 +1,6 @@
 ---
 title: "Organizations"
-description: "Create a team, invite members, manage roles and org-scoped API secrets, and track per-member usage."
+description: "Create a team, invite members, manage roles and org-scoped API secrets."
 section: api
 group: "Account"
 order: 30

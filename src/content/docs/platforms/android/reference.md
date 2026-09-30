@@ -1,6 +1,6 @@
 ---
 title: "Android reference"
-description: "Every public class in essence2-android and expression2-android: Kotlin signatures and what each class is for."
+description: "Every public class in essence2-android and expression2-android, with Kotlin signatures."
 section: platforms
 group: "Android"
 order: 50

@@ -1,6 +1,6 @@
 ---
 title: "Persona"
-description: "Write the system prompt that gives an avatar its personality, with the CO-STAR framework and a worked example."
+description: "Write the system prompt that gives an avatar its personality."
 section: build
 group: "Avatars"
 order: 20

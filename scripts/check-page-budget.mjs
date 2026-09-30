@@ -10,6 +10,10 @@
 //   node scripts/check-page-budget.mjs            grade; fails only on FAIL_TYPES pages
 //   node scripts/check-page-budget.mjs --report   print every page over budget, exit 0
 //   node scripts/check-page-budget.mjs --selftest
+//   node scripts/check-page-budget.mjs --built    the H2 count of every hub and the landing,
+//                                                 read off the BUILT page (docs v2 W7, SPEC "W7
+//                                                 POLISH" 4): a hub's source can hold 1 H2 while a
+//                                                 generated block draws 10 (/examples before W7)
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { routeOf } from "./content-routes.mjs";
@@ -118,6 +122,35 @@ export function measureHtml(html) {
   return { type: "", prose: paras.reduce((a, b) => a + b, 0), h2: (html.match(/<h2\b/g) || []).length, callouts: 0, bullets, code: 0, longest: Math.max(0, ...paras) };
 }
 
+/** H2 elements inside <main> of a built page: what a reader sees, generated blocks included. */
+export const renderedH2 = (html) => (((/<main[\s\S]*<\/main>/.exec(html) || [html])[0]).match(/<h2\b/g) || []).length;
+
+/** --built: grade the H2 budget of every hub-type page (and the landing) on its rendered HTML. */
+function builtMain(allow) {
+  const dist = join(ROOT, "dist");
+  if (!existsSync(join(dist, "index.html"))) { console.log("::error::dist/ missing: build first"); return 2; }
+  const pages = { ...BUILT_PAGES };
+  for (const f of walk(CONTENT)) {
+    const md = readFileSync(f, "utf8");
+    if (/^draft:\s*true/m.test(md.slice(0, 2000))) continue;
+    const { type } = measure(md);
+    if (["hub", "landing"].includes(TYPE_BUDGET[type])) pages[routeOf(CONTENT, f, md)] = type;
+  }
+  let failing = 0, n = 0;
+  for (const [route, type] of Object.entries(pages).sort()) {
+    const file = join(dist, route.slice(1), "index.html");
+    if (!existsSync(file)) { console.log(`::error::${route} is not built`); failing++; continue; }
+    const h2 = renderedH2(readFileSync(file, "utf8"));
+    const [, max] = BUDGETS[TYPE_BUDGET[type]].h2;
+    n++;
+    if (h2 > max && !(allow[route] ?? {}).h2) { failing++; console.log(`::error file=dist${route === "/" ? "/" : route + "/"}index.html::${route} [${type}] ${h2} H2s in the rendered page > ${max}`); }
+    else console.log(`  ok ${route} [${type}] ${h2} rendered H2s (max ${max})`);
+  }
+  if (n < 6) { console.log(`::error::graded only ${n} hub pages — the corpus moved`); return 2; }
+  console.log(`page budget (built): ${n} hub and landing pages graded on their rendered H2s; ${failing} over`);
+  return failing ? 1 : 0;
+}
+
 function selftest() {
   let bad = 0;
   const ok = (name, cond) => { console.log(`  ${cond ? "PASS" : "FAIL"}  ${name}`); bad += cond ? 0 : 1; };
@@ -136,6 +169,9 @@ function selftest() {
   ok("eight H2s on a quickstart fail", judge(measure(page("quickstart", "## a\n## b\n## c\n## d\n## e\n## f\n## g\n## h\n"))).fail.some((f) => f.startsWith("H2s")));
   ok("a second callout on a quickstart fails", judge(measure(page("quickstart", "> **Note:** a\n\ntext\n\n> **Note:** b\n"))).fail.some((f) => f.startsWith("callouts")));
   ok("records are exempt", judge(measure(page("changelog", Array.from({ length: 40 }, () => para(90)).join("\n\n")))).fail.length === 0);
+  ok("rendered H2s: ten gallery cards drawn by a block count, though the source has one", renderedH2('<main><h2>More</h2>' + '<li><h2>card</h2></li>'.repeat(10) + '</main>') === 11);
+  ok("rendered H2s: cards as H3 do not count", renderedH2('<main><h2>More</h2>' + '<li><h3>card</h3></li>'.repeat(10) + '</main>') === 1);
+  ok("rendered H2s: the header outside <main> does not count", renderedH2('<header><h2>x</h2></header><main><h2>a</h2></main>') === 1);
   ok("an allowlist entry waives its budget", judge(measure(page("quickstart", "## a\n## b\n## c\n## d\n## e\n## f\n## g\n## h\n")), { h2: "reason" }).fail.length === 0);
   console.log(bad ? "selftest RED" : "selftest GREEN (every arm fired)");
   return bad ? 1 : 0;
@@ -147,6 +183,7 @@ function main() {
   const report = argv.includes("--report");
   const allow = existsSync(ALLOW) ? JSON.parse(readFileSync(ALLOW, "utf8")).pages ?? {} : {};
   for (const [r, a] of Object.entries(allow)) if (!a.reason) { console.log(`::error::page-budget-allowlist ${r}: every entry needs a reason`); return 1; }
+  if (argv.includes("--built")) return builtMain(allow);
   let pages = 0, fails = 0, warns = 0, failing = 0;
   const h2s = [];
   for (const f of walk(CONTENT).sort()) {

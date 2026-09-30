@@ -1,6 +1,6 @@
 ---
 title: "LiveKit"
-description: "Give a LiveKit voice agent a face with the bitHuman Python plugin: a cloud-rendered avatar in your room, or an avatar rendered on your own server."
+description: "Give a LiveKit voice agent a face with the bitHuman Python plugin."
 section: platforms
 group: "LiveKit"
 order: 10
@@ -20,7 +20,11 @@ moved:
   troubleshooting: /platforms/livekit/troubleshooting
 ---
 
-`livekit-plugins-bithuman` adds a bitHuman avatar to any LiveKit Agents worker, on LiveKit Cloud or your own LiveKit server. It is a Python plugin; there is no Node.js plugin. The avatar joins the room as a participant, in one of two ways:
+`livekit-plugins-bithuman` works on LiveKit Cloud or your own LiveKit server; the avatar joins the room as a participant.
+
+## Before you start
+
+It is a Python plugin; there is no Node.js plugin. The avatar renders in one of two ways:
 
 | | A bitHuman cloud avatar | The avatar on your server |
 |---|---|---|
@@ -31,8 +35,6 @@ moved:
 | **Guide** | this page | [Voice agent](/build/voice-agent/python#with-python) |
 
 Either way, the plugin serves the agent's own model, Essence 2 or Expression 2.
-
-## Before you start
 
 - Python 3.10–3.14 and a LiveKit project (its URL and credentials).
 - A bitHuman agent code: `A23WJF0199` (the `wise-pup` sample) or your own from [Agents](/api/agents).
@@ -76,7 +78,6 @@ from openai.types.realtime.realtime_audio_input_turn_detection import ServerVad
 
 load_dotenv()
 
-
 async def livekit_cloud_token(agent_code: str, room_name: str) -> str:
     """A one-hour token that can only start this agent's avatar in this room."""
     async with aiohttp.ClientSession() as http:
@@ -88,7 +89,6 @@ async def livekit_cloud_token(agent_code: str, room_name: str) -> str:
         ) as resp:
             resp.raise_for_status()
             return (await resp.json())["scoped_token"]
-
 
 async def entrypoint(ctx: JobContext):
     await ctx.connect()
@@ -113,7 +113,6 @@ async def entrypoint(ctx: JobContext):
         room=ctx.room,
         room_options=RoomOptions(audio_output=False),   # the avatar publishes the audio
     )
-
 
 if __name__ == "__main__":
     cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))

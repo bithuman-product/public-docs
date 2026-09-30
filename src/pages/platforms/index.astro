@@ -7,6 +7,7 @@ import { hubMeta } from "../../config/hubs";
 import { PLATFORM_PAGES } from "../../data/platforms";
 import { RENDERS_LABEL } from "../../data/labels";
 import HUB_MOVED from "../../data/hub-moved.json";
+import { PLATFORM_GROUPS, PLATFORM_REFERENCE } from "../../data/platforms-hub";
 
 // The Platforms hub (docs v2 SPEC §3, hub budget): the banner, a card per
 // platform page grouped the way the sidebar is, and one support matrix. Cards
@@ -14,26 +15,15 @@ import HUB_MOVED from "../../data/hub-moved.json";
 // result and the reference come from src/data/platforms.ts in the matrix.
 // Versions live on /downloads.
 const meta = hubMeta("platforms");
-const GROUPS = [
-  { name: "Apps", line: "The avatar renders inside your app, on the device." },
-  { name: "Code & terminal", line: "Render on your own Mac or Linux machine." },
-  { name: "Agents & APIs", line: "A face for a voice agent, or agents over HTTPS." },
-] as const;
-const REFERENCE: Record<string, { title: string; href: string }> = {
-  ios: { title: "Swift reference", href: "/platforms/swift/reference" },
-  macos: { title: "Swift reference", href: "/platforms/swift/reference" },
-  android: { title: "Android reference", href: "/platforms/android/reference" },
-  python: { title: "Python reference", href: "/platforms/python/reference" },
-  cli: { title: "CLI reference", href: "/platforms/cli/reference" },
-  rest: { title: "API reference", href: "/api/reference" },
-};
+const GROUPS = PLATFORM_GROUPS;
+const REFERENCE = PLATFORM_REFERENCE;
 const gid = (name: string) => `g-${name.replace(/\W+/g, "-").toLowerCase()}`;
 ---
 
 <Base title="Platforms — bitHuman docs" description={meta.description}>
   <div class="container hub" data-pagefind-filter="section:Platforms">
     <h1>Platforms</h1>
-    <p class="lede">{meta.description}</p>
+    <p class="lede" data-subtitle>{meta.description}</p>
     <div class="banner"><PlatformsBanner /></div>
 
     {GROUPS.map((g) => (

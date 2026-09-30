@@ -1,6 +1,6 @@
 ---
 title: "Python reference"
-description: "Every public class and function in the bithuman package: signatures, what each does, and the errors it raises."
+description: "Every public class and function in the bithuman package, with signatures."
 section: platforms
 group: "Python"
 order: 50

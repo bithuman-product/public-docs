@@ -26,7 +26,7 @@ export interface HomeCard {
  *  under it opens with the brand line (owner, 2026-09-30: "AI with character."). */
 export const LANDING = {
   title: "bitHuman docs",
-  line: "AI with character. Real-time talking avatars from one portrait, rendered on the device or streamed from the bitHuman cloud.",
+  line: "AI with character. Real-time talking avatars from one portrait.",
 };
 
 /** The product promise (the site JSON-LD description). */

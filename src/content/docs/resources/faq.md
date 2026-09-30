@@ -1,6 +1,6 @@
 ---
 title: "FAQ"
-description: "Answers to the questions developers ask first: SDKs, where the avatar renders, the conversation, pricing, offline use and what reaches bitHuman."
+description: "Answers to the questions developers ask first."
 section: overview
 group: "Help"
 order: 20

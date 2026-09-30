@@ -1,6 +1,6 @@
 ---
 title: "Webhooks"
-description: "Receive signed event notifications when async work finishes — register an endpoint, verify the HMAC signature, and inspect delivery attempts."
+description: "Receive signed notifications when async work finishes, and verify each signature."
 section: api
 group: "Basics"
 order: 40

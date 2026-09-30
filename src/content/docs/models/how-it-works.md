@@ -1,6 +1,6 @@
 ---
 title: "How it works"
-description: "How bitHuman is built: one portable engine, thin language SDKs on top, and your app on top of that. Push 16 kHz audio in, drain lip-synced frames out, the same way on every platform."
+description: "One portable engine, thin language SDKs, and your app on top."
 section: models
 group: "Concepts"
 order: 10

@@ -1,6 +1,6 @@
 ---
 title: "Pricing and credits"
-description: "Credits pay for active session time, talking or idle, by the exact second. Rates per model and platform, creation costs, plans, and offline licensing."
+description: "Every rate per model and platform, creation costs, plans and offline licensing."
 section: overview
 group: "Pricing"
 order: 10

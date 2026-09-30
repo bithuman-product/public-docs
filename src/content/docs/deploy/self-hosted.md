@@ -1,6 +1,6 @@
 ---
 title: "Your servers (self-hosted)"
-description: "Run the CLI, the Python SDK or the LiveKit plugin on your own Mac or Linux machines. When the avatar renders on your hardware, its audio and video stay there."
+description: "Run the CLI, Python SDK or LiveKit plugin on your own machines."
 section: deploy
 group: "Where it renders"
 order: 20

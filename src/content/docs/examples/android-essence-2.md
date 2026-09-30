@@ -1,6 +1,6 @@
 ---
 title: "Android Essence 2"
-description: "A complete Kotlin app that renders a talking photoreal Essence 2 avatar at full resolution on an Android phone: clone it, add your API secret, build and run."
+description: "A complete Kotlin app with a photoreal Essence 2 avatar on an Android phone."
 section: build
 group: "Examples"
 order: 41

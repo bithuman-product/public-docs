@@ -1,8 +1,8 @@
 ---
 title: "Performance"
-description: "How fast Essence 2 and Expression 2 render on iPhone, Android, a WebGPU browser, a Mac, a Linux PC with no GPU and the bitHuman cloud, in times real time, with the raw data as performance.json."
+description: "How fast Essence 2 and Expression 2 render on each platform."
 section: performance
-group: "Performance"
+group: "Speed"
 order: 0
 type: generated
 llms: start

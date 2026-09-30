@@ -32,7 +32,8 @@
   .gal-stage { flex: none; width: 128px; align-self: flex-start; }
   .gal-stage .fig-media { aspect-ratio: 9 / 16 !important; }
   .gal-card .card-body { padding: var(--s-1) var(--s-1) var(--s-1) 0; gap: var(--s-2); }
-  .prose .gal-card h2 { margin: 0; padding: 0; border: 0; font-size: var(--ft-md); line-height: var(--lh-snug); letter-spacing: -0.01em; }
+  /* W7: card titles are not headings, so the hub keeps its H2 budget in the rendered page and a valid heading order */
+  .prose .gal-card .gal-title { display: block; margin: 0; font-size: var(--ft-md); font-weight: var(--fw-bold); line-height: var(--lh-snug); letter-spacing: -0.01em; }
   .prose a.gal-link { color: var(--color-text); text-decoration: none; }
   .gal-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
   .gal-link:focus-visible { outline: none; }

@@ -1,6 +1,6 @@
 ---
 title: "Authentication"
-description: "Authenticate REST calls with the api-secret header, check a secret with /v1/validate, and use short-lived tokens where a secret must not go."
+description: "Authenticate with the api-secret header, check a secret, and use short-lived tokens."
 section: api
 group: "Basics"
 order: 10

@@ -1,6 +1,6 @@
 ---
 title: "Banking and ATMs"
-description: "Run an always-on avatar on a branch screen, teller terminal or ATM: the avatar handles the conversation, card handling and transactions stay in your systems. Hardware, data flows, operations and cost."
+description: "An always-on avatar on a branch screen, teller terminal or ATM."
 section: deploy
 group: "Use cases"
 order: 10
