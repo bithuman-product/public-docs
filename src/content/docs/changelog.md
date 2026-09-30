@@ -29,6 +29,7 @@ The releases of September 2026 worth a look first.
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
 | 2026-10-01 | REST API | bitHuman's text-to-speech service is retired: `POST /v1/tts`, `POST /v1/audio/speech`, `GET /v1/voices` and `/v1/studio/*` answer `410 ENDPOINT_RETIRED` | send your own audio (from any TTS provider or a recording) to the [talking video API](/build/talking-video); agent conversation voices and `/v1/agent/{code}/speak` are unchanged |
+| 2026-09-30 | essence2-android 0.9.0 | `Essence2Metering.basis` is ignored and always reads `"session"`: a file render bills its session time like any other session; `SelfHostMeter.BASIS_OUTPUT` no longer exists | delete any `basis = …` line; call `close()` right after the last frame of a file render |
 | 2026-09-27 | API | `POST /v1/realtime/ephemeral-token` is retired (`410 ENDPOINT_RETIRED`) | connect through the [Realtime relay](/api/realtime) (`wss://api.bithuman.ai/v1/realtime`) or `POST /v1/realtime/connect`; CLI 2.8.1+ already does |
 | 2026-09-24 | expression2-android 0.5.0 | `Expression2ModelStore.MODEL`, `CANON` and `IDLE` are no longer compile-time constants | read them at runtime; a `when` branch or annotation that used them as constants must change |
 | 2026-09-23 | Swift package 2.14.2 | `Expression2Engine.create` refuses without an API secret | call `Expression2Credential.set(_:)` or set `BITHUMAN_API_SECRET` |
@@ -67,6 +68,13 @@ Tag `v2.19.4`.
 - **Action:** `.package(url: …, from: "2.19.4")`.
 
 ## September 2026
+
+### essence2-android 0.9.0 — 2026-09-30
+
+- **Essence 2 on Android:** the mouth blends into the face without the visible edge that could show at the corners of the lips. Avatars get this as they are updated on bitHuman; an avatar that has not been updated renders exactly as in 0.8.1.
+- **Changed (billing):** every session bills its active session time, talking or idle, from its first frame to `close()`, file renders included. `Essence2Metering.basis` is ignored (deprecated). Idle frames shown before the first reply now start the session clock, as on iOS.
+- **Changed:** a refused session says why: the plan does not include SDK access (Creator plan or higher), the account's concurrent sessions are used up, the account is suspended, or it has no credits left.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.9.0")`. Delete any `Essence2Metering.basis = …` line, and close a file-render session right after its last frame.
 
 ### Android packages now come from maven.bithuman.ai — 2026-09-30
 
