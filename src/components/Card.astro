@@ -14,13 +14,15 @@ interface Props {
   media?: Media;
   chips?: string[];
   badge?: string;
+  /** Emphasis tags beside the title ("New", "Hot"), owner 2026-09-30 */
+  tags?: string[];
   note?: string;
   /** The heading level inside the card (the page's outline decides). */
   h?: 2 | 3 | 4;
   external?: boolean;
   wide?: boolean;
 }
-const { href, title, line, variant = "link", icon, media, chips = [], badge, note, h = 3, external = false, wide = false } = Astro.props;
+const { href, title, line, variant = "link", icon, media, chips = [], badge, tags = [], note, h = 3, external = false, wide = false } = Astro.props;
 const H = `h${h}` as "h2" | "h3" | "h4";
 ---
 <a class:list={["card", `card-${variant}`, { "card-wide": wide }]} href={href} {...(external ? { target: "_blank", rel: "noopener" } : {})}>
@@ -33,7 +35,7 @@ const H = `h${h}` as "h2" | "h3" | "h4";
   )}
   {icon && <span class="card-icon"><Icon name={icon} /></span>}
   <span class="card-body">
-    <span class="card-title"><H>{title}</H>{badge && <span class="chip chip-plan">{badge}</span>}</span>
+    <span class="card-title"><H>{title}</H>{badge && <span class="chip chip-plan">{badge}</span>}{tags.length > 0 && <span class="tags">{tags.map((t) => <span class={`tag tag-${t.toLowerCase()}`}>{t}</span>)}</span>}</span>
     {line && <span class="card-line">{line}</span>}
     {note && <span class="card-note">{note}</span>}
     <slot />

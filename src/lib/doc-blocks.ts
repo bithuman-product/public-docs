@@ -185,19 +185,29 @@ function modelMatrix(arg: string, mode: Mode): string {
   return filter + table(["Where", ...MODELS.map((m) => m.name)], rows) + foot;
 }
 
-/** The current generation as cards: what each renders, where, and its sample
- *  avatar (the live demo above them shows the portraits). */
+/** Every model as a card (owner, 2026-09-30: list all Essence and Expression
+ *  versions, with "New" and "Hot" on Essence 2 and Expression 2). The current
+ *  two come first with their sample avatar; the first generation follows with
+ *  its availability, which matches MATRIX (Essence 1 has no phone build;
+ *  Expression 1 renders only in the bitHuman cloud). */
+const V1_LINE: Record<string, string> = {
+  "essence-1": "First generation. On your own computers or in the bitHuman cloud, not on phones.",
+  "expression-1": "First generation. In the bitHuman cloud only.",
+};
+const MODEL_TAGS = ["New", "Hot"];
 function modelCards(mode: Mode): string {
-  const current = MODELS.filter((m) => m.generation === "current");
-  const chips = ["Renders on the device", "bitHuman cloud"];
-  if (mode === "twin") return current.map((m) => `- [${m.name}](${m.href}): ${m.renders} (${chips.join(", ")})`).join("\n") + "\n";
-  const card = (m: (typeof MODELS)[number]) => {
+  const line = (m: (typeof MODELS)[number]) => {
+    if (m.generation !== "current") return V1_LINE[m.id] ?? "First generation.";
     const demo = (DEMOS as Record<string, (typeof DEMOS)["essence-2"]>)[m.id];
-    return `<li><a class="card card-link" href="${m.href}"><span class="card-body"><span class="card-title"><strong>${esc(m.name)}</strong></span>` +
-      `<span class="card-line">${esc(m.renders[0].toUpperCase() + m.renders.slice(1))}.${demo ? ` Sample avatar: <code>${esc(demo.slug)}</code>.` : ""}</span>` +
-      `<span class="card-chips">${chips.map((c) => `<span class="chip">${esc(c)}</span>`).join("")}</span></span></a></li>`;
+    return `${m.renders[0].toUpperCase() + m.renders.slice(1)}.${demo ? ` Sample avatar: \`${demo.slug}\`.` : ""}`;
   };
-  return `<ul class="card-grid model-cards" role="list">${current.map(card).join("")}</ul>`;
+  if (mode === "twin") return MODELS.map((m) => `- [${m.name}](${m.href})${m.generation === "current" ? ` (${MODEL_TAGS.join(", ")})` : ""}: ${line(m)}`).join("\n") + "\n";
+  const card = (m: (typeof MODELS)[number]) => {
+    const tags = m.generation === "current" ? `<span class="tags">${MODEL_TAGS.map((t) => `<span class="tag tag-${t.toLowerCase()}">${t}</span>`).join("")}</span>` : "";
+    return `<li><a class="card card-link${m.generation === "current" ? " is-current" : " is-first"}" href="${m.href}"><span class="card-body"><span class="card-title"><strong>${esc(m.name)}</strong>${tags}</span>` +
+      `<span class="card-line">${inlineHtml(line(m))}</span></span></a></li>`;
+  };
+  return `<ul class="card-grid model-cards" role="list">${MODELS.map(card).join("")}</ul>`;
 }
 
 // ---------------------------------------------------------------- deployment modes

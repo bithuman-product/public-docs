@@ -4,6 +4,7 @@
 @import "./tokens.css";
 @import "./code.css";
 @import "./components.css";
+@import "./tables.css";
 
 *,
 *::before,

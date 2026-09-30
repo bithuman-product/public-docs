@@ -9,7 +9,7 @@
 // banner's 1400:391 frame, so a toggle does not move the page.
 const light = "/images/banner/bithuman-banner";
 const dark = "/images/banner/bithuman-banner-black";
-const sizes = "(max-width: 560px) calc(100vw - 32px), (max-width: 1200px) calc(100vw - 48px), 1152px";
+const sizes = "(max-width: 560px) calc(100vw - 64px), (max-width: 1000px) calc(100vw - 128px), 920px";
 ---
 
 <figure class="platforms-banner" data-pagefind-ignore>
@@ -24,12 +24,27 @@ const sizes = "(max-width: 560px) calc(100vw - 32px), (max-width: 1200px) calc(1
 </figure>
 
 <style>
-  .platforms-banner { margin: 0; }
-  .platforms-banner img {
-    display: block; width: 100%; height: auto; aspect-ratio: 1400 / 391;
-    object-fit: cover; object-position: 50% 50%; border-radius: var(--r-lg);
+  /* W8 (owner, 2026-09-30: the banner's placement read "strange and
+     unnatural"): the artwork sits in a soft rounded panel the width of the
+     content, so it reads as the page's header image rather than a picture
+     floating on white. The panel's tint shows through the artwork's own
+     white (light) or black (dark) ground via a blend mode. */
+  .platforms-banner {
+    margin: 0; padding: var(--s-6) var(--s-10);
+    border-radius: var(--r-media); background: var(--color-surface-2); overflow: hidden;
   }
+  .platforms-banner img {
+    display: block; width: 100%; max-width: 920px; margin-inline: auto; height: auto;
+    aspect-ratio: 1400 / 391; object-fit: contain; object-position: 50% 50%;
+  }
+  .hb-light img { mix-blend-mode: multiply; }
+  .hb-dark img { mix-blend-mode: screen; }
   .hb-dark { display: none; }
   :root[data-theme="dark"] .hb-light { display: none; }
   :root[data-theme="dark"] .hb-dark { display: block; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .hb-light { display: none; }
+    :root:not([data-theme="light"]) .hb-dark { display: block; }
+  }
+  @media (max-width: 560px) { .platforms-banner { padding: var(--s-4); border-radius: var(--r-lg); } }
 </style>

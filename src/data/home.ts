@@ -50,6 +50,8 @@ export interface ModelCard {
   /** Poster base path (4:5): <poster>-480.{avif,webp} */
   poster: string;
   alt: string;
+  /** Emphasis tags (owner, 2026-09-30: "New" and "Hot" on Essence 2 and Expression 2) */
+  tags?: string[];
 }
 
 /** "Models": the current generation, each shown with one of its public
@@ -57,11 +59,20 @@ export interface ModelCard {
  *  shows those, and the owner asked for variety over one repeated face
  *  (2026-09-29: "I don't like we repeat the same image for different cards"). */
 export const MODELS: ModelCard[] = [
-  { title: "Essence 2", line: "A photoreal person from one portrait.", href: "/models/essence-2", poster: "/images/cast/kwame-warm-museum-guide", alt: "Kwame, an Essence 2 avatar" },
-  { title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/models/expression-2", poster: "/images/cast/pip-the-red-panda-barista", alt: "Pip the red panda barista, an Expression 2 avatar" },
+  { title: "Essence 2", line: "A photoreal person from one portrait.", href: "/models/essence-2", poster: "/images/cast/kwame-warm-museum-guide", alt: "Kwame, an Essence 2 avatar", tags: ["New", "Hot"] },
+  { title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/models/expression-2", poster: "/images/cast/pip-the-red-panda-barista", alt: "Pip the red panda barista, an Expression 2 avatar", tags: ["New", "Hot"] },
 ];
 
-export const MODELS_NOTE = "Essence 2 Max is available on the Enterprise plan only. Essence 1 and Expression 1 are the first generation.";
+/** The first generation, listed beside the current models (owner, 2026-09-30:
+ *  "we should list all Essence versions and Expression versions"). Each line is
+ *  its availability, matching src/data/models.ts MATRIX: Essence 1 has no phone
+ *  build; Expression 1 renders only in the bitHuman cloud. */
+export const MODELS_V1: { title: string; line: string; href: string }[] = [
+  { title: "Essence 1", line: "First generation. On your own computers or in the bitHuman cloud, not on phones.", href: "/models/first-generation" },
+  { title: "Expression 1", line: "First generation. In the bitHuman cloud only.", href: "/models/first-generation" },
+];
+
+export const MODELS_NOTE = "Essence 2 Max is available on the Enterprise plan only.";
 
 /** "Build": recipes and the pages that make an avatar yours. */
 export const GUIDES: { title: string; line: string; href: string; icon: string }[] = [

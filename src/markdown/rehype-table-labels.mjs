@@ -32,11 +32,39 @@ const childrenNamed = (node, tagName) =>
 /** A figure, or a sentence standing in for one. */
 const isFigure = (t) => /^[0-9]+(\.[0-9]+)?$/.test(t.trim());
 
+/** A short token in a cell (a package, a flag, a slug) is marked so it never
+ *  breaks at its own hyphen; a long path or message may still wrap (W8). */
+function markTokens(node) {
+  for (const c of node.children ?? []) {
+    if (c.type !== "element") continue;
+    if (c.tagName === "code") {
+      const t = textOf(c);
+      if (t.length <= 24 && !/\s/.test(t)) (c.properties ??= {}).className = [...(c.properties.className ?? []), "tok"];
+    } else markTokens(c);
+  }
+}
+
 function labelCells(table) {
   const headRow = childrenNamed(childrenNamed(table, "thead")[0] ?? {}, "tr")[0];
   if (!headRow) return;
   const names = childrenNamed(headRow, "th").map((th) => textOf(th).trim());
   if (!names.some(Boolean)) return;
+
+  // W8: a column whose every body cell is a figure (4, 1440, 2.1×, 15%) is
+  // numeric and right-aligns, header included, so a reader can run down it.
+  const bodyRows = childrenNamed(table, "tbody").flatMap((b) => childrenNamed(b, "tr"));
+  const num = names.map((_, i) => bodyRows.length > 0 && bodyRows.every((r) => {
+    const c = childrenNamed(r, "td")[i];
+    return c && /^[$~]?[0-9][0-9,.]*\s?(×|%|x)?$/.test(textOf(c).trim());
+  }));
+  const addNum = (cell, i) => {
+    if (i === 0 || !num[i]) return;
+    const props = (cell.properties ??= {});
+    if (props.align) return;
+    props.className = [...(props.className ?? []), "num"];
+  };
+  childrenNamed(headRow, "th").forEach(addNum);
+  bodyRows.forEach((r) => childrenNamed(r, "td").forEach(addNum));
 
   for (const body of childrenNamed(table, "tbody")) {
     for (const row of childrenNamed(body, "tr")) {
@@ -53,6 +81,7 @@ function labelCells(table) {
         // used to scatter into three cells, its code in one and its words in
         // the next. One span holds the value together. On a wide screen the
         // span is inline and changes nothing.
+        markTokens(cell);
         if (cell.children?.length) {
           cell.children = [{ type: "element", tagName: "span", properties: { className: ["td-v"] }, children: cell.children }];
         }
