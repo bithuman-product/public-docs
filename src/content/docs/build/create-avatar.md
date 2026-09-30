@@ -31,7 +31,7 @@ creation
 | A character, animal, robot or illustration | `expression-2`: any subject |
 | Not sure | `auto`: people go to `essence-2`, everything else to `expression-2` |
 
-Every model except Expression 2 needs a clear, real human face. A cartoon, animal, robot or creature, or a photo with no face found, gets `422 MODEL_SUBJECT_MISMATCH` before anything is charged. More on the difference: [Choosing a model](/models#choosing-a-model).
+Every model except Expression 2 needs a clear, real human face: see [Choosing a model](/models#choosing-a-model).
 
 ```expected
 One `model` value: `essence-2`, `expression-2` or `auto`.
@@ -90,7 +90,7 @@ You create an agent once, with [`POST /v1/agent/generate`](/api/agents#generate-
 - **The input is one portrait image.** Essence 2 generates its identity video from it; Expression 2 trains straight from the photo. An uploaded image is treated as a reference and regenerated to a standard framing.
 - **Creation happens in the bitHuman cloud;** the finished avatar model then runs on your devices.
 - **Both second-generation models train on create.** Allow about 2 to 2.5 hours, and poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until the status is `ready` or `failed` (`success` is not terminal).
-- **Every model except Expression 2 needs a real human face.** Essence 2, Essence 1 and Expression 1 refuse a cartoon, animal, robot or creature, or a photo with no face found, with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead. See [Choosing a model](/models#choosing-a-model).
+- **Every model except Expression 2 needs a real human face.** Otherwise creation is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead.
 - **Always send `model`.** An omitted `model` creates an Expression 1 agent, which also needs a real human face; send `essence-2`, `expression-2` or `auto`.
 - **An existing agent can gain a model** with [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
 
