@@ -50,6 +50,7 @@
 .prose th[align="center"], .prose td[align="center"] { text-align: center; }
 /* A figures column (rehype-table-labels.mjs marks it .num) right-aligns. */
 .prose th.num, .prose td.num { text-align: right; white-space: nowrap; }
+.prose th.short { white-space: nowrap; }
 /* Figures columns stay tight to the right so a reader can run down them. */
 .prose th[align="right"] { width: 8.5rem; }
 /* The first column is the key a reader scans down: it reads a shade stronger
@@ -63,14 +64,14 @@
    still break, but only where a line would otherwise overflow. */
 .prose td a { overflow-wrap: break-word; }
 .prose td code:not(.tok) { overflow-wrap: anywhere; }
-.prose td code.tok { white-space: nowrap; }
-/* A wide table tightens its cells (four columns or more) and, at five or
-   more, lets a token break at its own hyphen rather than push the table sideways. */
+.prose td code.tok { white-space: nowrap; overflow-wrap: normal; }
+/* A wide table (four columns or more) tightens its cells and
+   lets a token break at its own hyphen rather than push the table sideways. */
 .prose table:has(th:nth-child(4)) :is(th, td) { padding-inline: var(--s-3); }
 .prose table:has(th:nth-child(4)) :is(th, td):first-child { padding-left: var(--s-3); }
 .prose table:has(th:nth-child(4)) :is(th, td):last-child { padding-right: var(--s-3); }
 .prose table:has(th:nth-child(4)) tbody td:first-child { min-width: 5.5rem; }
-.prose table:has(th:nth-child(5)) td code.tok { white-space: normal; }
+.prose table:has(th:nth-child(4)) td code.tok { white-space: normal; }
 /* A table outside the text track (a hub) still gets the box. */
 .table-wrap > table { margin: 0; }
 
@@ -134,7 +135,7 @@
   .prose td:first-child, .prose td:last-child { padding-inline: 0; }
   .prose td[align="right"], .prose td.num { text-align: left; }
   .prose td:empty { display: none; }
-  .prose td code.tok { white-space: normal; }
+  .prose td code.tok { white-space: normal; overflow-wrap: anywhere; }
   /* A performance row's platform is the card's title rather than a labelled value. */
   .prose table.perf-table td:first-child { display: block; padding-bottom: 0.45rem; font-size: var(--ft-md); }
   .prose table.perf-table td:first-child::before { content: none; }

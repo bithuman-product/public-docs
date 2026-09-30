@@ -40,6 +40,12 @@ function markTokens(node) {
     if (c.tagName === "code") {
       const t = textOf(c);
       if (t.length <= 24 && !/\s/.test(t)) (c.properties ??= {}).className = [...(c.properties.className ?? []), "tok"];
+      // A long identifier may break after its own separators (_ . : /) rather
+      // than letter by letter or by pushing the table sideways.
+      if (t.length > 14) {
+        c.children = (c.children ?? []).flatMap((k) => k.type !== "text" ? [k] :
+          k.value.split(/(?<=[_.:/])(?=.)/).flatMap((part, j) => (j ? [{ type: "element", tagName: "wbr", properties: {}, children: [] }] : []).concat({ type: "text", value: part })));
+      }
     } else markTokens(c);
   }
 }
@@ -64,6 +70,10 @@ function labelCells(table) {
     props.className = [...(props.className ?? []), "num"];
   };
   childrenNamed(headRow, "th").forEach(addNum);
+  // A short header ("Expression 1", "First result") stays on one line.
+  childrenNamed(headRow, "th").forEach((th, i) => {
+    if (names[i].length > 0 && names[i].length <= 14) (th.properties ??= {}).className = [...(th.properties.className ?? []), "short"];
+  });
   bodyRows.forEach((r) => childrenNamed(r, "td").forEach(addNum));
 
   for (const body of childrenNamed(table, "tbody")) {
