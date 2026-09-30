@@ -41,7 +41,7 @@ returns the frame iterator described below.
 
 ### AsyncBithuman
 
-The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. Create it with `await AsyncBithuman.create(model_path="avatar.imx", api_secret=None)`; the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/platforms/python#integrate-into-your-app).
+The streaming runtime: push audio as it arrives, read video frames with their audio, interrupt. Create it with `await AsyncBithuman.create(model_path="avatar.imx", api_secret=None)`; the secret defaults to `BITHUMAN_API_SECRET`. See [Integrate into your app](/platforms/python/app#integrate-into-your-app).
 
 **`push_audio(data: bytes, sample_rate: int, last_chunk: bool = True) -> None`**
 

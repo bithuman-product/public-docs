@@ -1069,7 +1069,7 @@ paths:
         | family | artifact |
         |---|---|
         | `essence-1` | `<code>.imx` (the portable IMX container) |
-        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the license with the cloud, so it needs a sign-in: https://docs.bithuman.ai/platforms/cli#platform-notes). |
+        | `essence-2` | `<CODE>.imx` — the standard Essence 2 artifact (unified IMX container; size is per identity — read `Content-Length` rather than assuming a figure; **licensed weights** — renders locally in the CLI, the Python SDK, the Android library and the Swift `Essence2` product, and the first local play checks the license with the cloud, so it needs a sign-in: https://docs.bithuman.ai/platforms/cli/voice#platform-notes). |
         | `expression-2` | `<code>.avatar` — the same container as `.imx` under a second name (a few early identities use an older format; `bithuman open` reports which) — runs locally on macOS (Apple Silicon) and Linux x86_64, or in the browser, and is also served on bitHuman's cloud |
         | `expression-1` | normally not downloadable (the shared v1 engine renders server-side from the agent's image) → `400 MODEL_NOT_DOWNLOADABLE`; an agent that went through the lip step owns a baked `<code>.imx` and is redirected to it like `essence-1` |
 

@@ -12,7 +12,13 @@ artifacts: ["cli"]
 platforms: ["cli"]
 models: ["essence-2", "expression-2"]
 claims: ["S2", "S3", "S4", "S6", "S10"]
-next: ["/build/voice-agent", "/platforms/cli/local-brain", "/deploy/cpu"]
+next: ["/platforms/cli/voice", "/platforms/cli/troubleshooting", "/platforms/cli/reference"]
+moved:
+  integrate-into-your-app: /platforms/cli/voice#integrate-into-your-app
+  voice-settings: /platforms/cli/voice#voice-settings
+  platform-notes: /platforms/cli/voice#platform-notes
+  reference: /platforms/cli/reference
+  troubleshooting: /platforms/cli/troubleshooting
 ---
 
 <div class="lead">
@@ -35,7 +41,6 @@ cli-linux eager
 ```
 
 </div>
-
 
 ## Before you start
 
@@ -140,63 +145,8 @@ bithuman render wise-pup speech.wav
 - **Scripts and CI:** add `--json` and branch on exit codes ([reference](/platforms/cli/reference#json-output)).
 - **A conversation instead of a clip:** `bithuman run wise-pup` — [Talk to an avatar on your machine](/build/voice-agent).
 
-## Integrate into your app
-
-| Job | Command |
-|---|---|
-| List the sample avatars | `bithuman list` (the same list as `https://api.bithuman.ai/v1/models/showcase`) |
-| Download one | `bithuman pull <slug>` prints the cached path; `--force` downloads again |
-| Download your own agent | `bithuman pull <AGENT_CODE> --model essence-2` (needs sign-in) |
-| Inspect an avatar | `bithuman open <avatar>` |
-| Render | `bithuman render <avatar> in.wav -o out.mp4` (a code or name is downloaded on first use) |
-| Serve a live session | `bithuman run <avatar>`; `--host <LAN address>` to expose it (`0.0.0.0` also needs `BITHUMAN_ALLOW_PUBLIC_BIND=1`) |
-| Talk with your own OpenAI key | `export OPENAI_API_KEY=…` before `bithuman run` ([voice settings](#voice-settings)) |
-| Run the brain on your own hardware | [local conversation brain](/platforms/cli/local-brain) |
-| Drive it from an AI agent | `bithuman mcp` ([MCP server](/build/mcp)) |
-| Script it | add `--json`: every failure prints one JSON object with a stable code, and the exit code is the contract ([reference](/platforms/cli/reference#exit-codes)) |
-
-### Voice settings
-
-`bithuman run` starts a voice agent on OpenAI Realtime ([the whole setup, and the same conversation in Python](/build/voice-agent)). Both settings are read from the environment:
-
-| Variable | Default | What it does |
-|---|---|---|
-| `OPENAI_API_KEY` | — | Your OpenAI key. Without it, the voice runs on your bitHuman account at the managed voice-chat rate, 10 credits per minute ([pricing](/pricing)). |
-| `BITHUMAN_INSTRUCTIONS` | a short assistant prompt | The agent's system prompt |
-
-## Platform notes
-
-- Essence 1 avatars work with `run` only; for a file use [Python](/platforms/python) or the [video API](/api/video). Expression 1 runs on the [cloud API](/api).
-- The first Essence 2 render on a machine downloads a shared audio encoder (about 66 MB) to `~/.bithuman/engines/essence-2/` once.
-- Intel Macs have no binary. On Windows (not code-signed; [Downloads](/downloads)) the CLI renders in the cloud; to render on the PC, use [Python on Windows](/platforms/windows).
-
 ## Performance
 
 ```perf
 linux-cpu macos-m4
 ```
-
-## Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `bithuman: command not found` | `~/.local/bin` is not on `PATH` | `export PATH="$HOME/.local/bin:$PATH"` |
-| `not signed in`, exit 77, nothing written | no credential | `bithuman login`, or set `BITHUMAN_API_SECRET` |
-| `your credential is invalid or expired` or `the API secret was rejected`, exit 77 | the secret was revoked or mistyped; from 2026-10-12, a Free account | `bithuman login` again, or create a new API secret; on Free, [choose a plan](https://www.bithuman.ai/pricing?from=docs) |
-| `bithuman login` prints `token exchange failed` or times out, exit 1 | the browser or device approval did not complete | run `bithuman login` (or `--device`) again |
-| `render` exits 69: `ffmpeg not found` | `ffmpeg` is not on `PATH` (common in scripts) | install it, or set `BITHUMAN_FFMPEG` to its path |
-| `run` with an Essence 2 avatar: no avatar in the page, and the terminal shows `essence-2: ffmpeg not found` | `ffmpeg` is not on `PATH` | `sudo apt install -y ffmpeg`, or set `BITHUMAN_FFMPEG` |
-| `run` says the `livekit-server` binary was not found | `livekit-server` is not installed | `brew install livekit` (macOS), or rerun the installer (Linux) |
-| `run` exits 69: `livekit-server 1.8.0 at …/livekit-server is too old for `bithuman run` (it needs 1.13 or newer)` | an old `livekit-server` found on `PATH` | `brew upgrade livekit` (macOS), or reinstall with `curl -fsSL https://install.bithuman.ai \| sh` (Linux) |
-| `SLUG_NOT_FOUND`, exit 66 | the slug is not in the sample list | `bithuman list` and copy a slug |
-| `pull <CODE>` fails with `404 NOT_FOUND` | not your agent and not a sample avatar | check the code under [your agents](/api/agents) |
-| `pull <CODE>` fails with `409 MODEL_NOT_GENERATED` | the agent has no model of that kind | [add the model](/api/agents#add-a-model-to-an-existing-agent), or pass the `--model` it has |
-| `PUBLIC_BIND_REFUSED`, exit 2 | `--host 0.0.0.0` without consent | use a LAN address, or set `BITHUMAN_ALLOW_PUBLIC_BIND=1` |
-| the installer names your platform and stops | no binary for this platform | see Platform notes |
-
-## Reference
-
-- [CLI reference](/platforms/cli/reference): every command, flag, exit code and environment variable.
-- [Local conversation brain](/platforms/cli/local-brain): run the conversation fully on your hardware.
-- [CLI example scripts](https://github.com/bithuman-product/bithuman-examples/tree/main/api/cli): live stream, offline render, REST.
-- [Changelog](/changelog) and [Downloads & versions](/downloads).

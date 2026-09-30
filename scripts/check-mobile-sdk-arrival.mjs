@@ -334,7 +334,7 @@ function gradePage(name, md) {
     miss(/\]\(\/examples\//, "R6 where the worked example is");
   }
 
-  if (found.length === 0 && !/\]\(https:\/\/www\.bithuman\.ai\/developer\/api-keys\)|\]\(\/api\/authentication\)/.test(md)) {
+  if (found.length === 0 && !/\]\(https:\/\/www\.bithuman\.ai\/developer\/api-keys\)|\]\(\/api\/authentication\)|\]\(\/start\/api-secret(?:#[\w-]+)?\)/.test(md)) {
     found.push(`${name}: R4 no page-wide link to where a credential comes from.`);
   }
 
@@ -616,7 +616,17 @@ function pages() {
   }
   return readdirSync(SDK)
     .filter((f) => f.endsWith(".md"))
-    .map((f) => [`platforms/${f}`, readFileSync(join(SDK, f), "utf8")]);
+    .map((f) => [`platforms/${f}`, readFileSync(join(SDK, f), "utf8") + appPage(f)]);
+}
+
+// Docs v2 W3 split each platform into a quickstart plus an app page (Apple:
+// one shared /platforms/swift/app). The arrival contract spans that family, so
+// the app page's text is graded with its quickstart (R9's read-back lives there).
+function appPage(f) {
+  const base = f.replace(/\.md$/, "");
+  const dir = base === "ios" || base === "macos" ? "swift" : base;
+  const p = join(SDK, dir, "app.md");
+  return existsSync(p) ? "\n\n" + readFileSync(p, "utf8").replace(/^---[\s\S]*?\n---\n/, "") : "";
 }
 
 if (process.argv.includes("--selftest")) selftest();

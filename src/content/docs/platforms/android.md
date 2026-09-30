@@ -13,7 +13,13 @@ artifacts: ["expression2_android", "essence2_android"]
 platforms: ["android"]
 models: ["essence-2", "expression-2"]
 claims: ["S1", "S2", "S8", "S10", "S13", "S26", "S30", "S32"]
-next: ["/examples/android-expression-2", "/examples/android-essence-2", "/platforms/flutter"]
+next: ["/platforms/android/app", "/platforms/android/troubleshooting", "/platforms/android/reference"]
+moved:
+  integrate-into-your-app: /platforms/android/app#integrate-into-your-app
+  complete-example: /platforms/android/app#complete-example
+  platform-notes: /platforms/android/app#platform-notes
+  reference: /platforms/android/reference
+  troubleshooting: /platforms/android/troubleshooting
 ---
 
 <div class="lead">
@@ -99,7 +105,7 @@ Credits pay for active session time, talking or idle, billed to the second ([pri
 
 > **Warning:** a `buildConfigField` compiles the secret into the APK, where anyone with the file can read it. Use it for local builds only.
 
-Every copy of a shipped app carries its secret, so treat it as exposed: fetch it from your backend at startup, give each app its own secret, and rotate it if usage looks wrong ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
+A shipped app fetches its secret from your backend ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
 
 ## First frame
 
@@ -164,73 +170,8 @@ fun render(context: Context, pcm16le: ByteArray, show: (ByteBuffer, Int, Int) ->
 
 Frame size belongs to the identity (portrait 1080×1920, landscape 1920×1080 or 1280×720). Read `avatar.width` and `avatar.height`; do not hard-code them.
 
-## Complete example
-
-Two apps you can clone and run on a phone, each with idle motion between replies:
-
-- [Android Expression 2](/examples/android-expression-2): the `wise-pup` sample avatar.
-- [Android Essence 2](/examples/android-essence-2): the `sofia-ramirez` sample avatar at full resolution.
-
-## Integrate into your app
-
-In a live conversation, keep one avatar open and stream into it.
-
-| Job | Expression 2 | Essence 2 |
-|---|---|---|
-| Audio in | 16 kHz mono `FloatArray`, −1 to 1 | 16 kHz mono 16-bit little-endian PCM `ByteArray` |
-| Stream audio as it arrives | `feed(chunk)` per chunk | `feed(chunk)` per chunk |
-| Show frames | `pull(bitmap)`, 20 a second | `pull(buffer)`, 25 a second |
-| End of a reply | `flushTail()` | `endOfAudio()` |
-| Idle between replies | `avatar.idleLoop?.next(bitmap)` | `idle(buffer)` |
-| Interrupt the reply | `resetState(true)` | `resetAudio()` |
-| Check the session | `Expression2Exception` from `create` or `pull` | `Essence2MeteringRefused` from `pull`/`idle`; `checkRender()` throws `Essence2RenderFailed` if the engine stopped |
-| Close it | `close()` | `close()` |
-
-Resample 24 kHz speech (OpenAI Realtime's) to 16 kHz, and close the avatar when the app leaves the screen: [Companion app](/build/companion-app#resample-speech-to-16-khz).
-
-After your API secret is accepted, a network loss does not stop the session for 5 minutes of rendered video. After that, render calls throw a retryable exception until the connection returns. Usage is reported to your account when it does.
-
-For a Flutter app, the [Flutter plugin](/platforms/flutter) wraps these engines.
-
-## Platform notes
-
-- **Release builds:** `isMinifyEnabled = true` needs nothing extra. Both AARs ship their own keep rules.
-- **Two models in one app:** `essence2-android` needs `minSdk 29`. Raise the app to 29, or put each model in its own module.
-- **Threads:** download and `create()` on a background thread. The first download is the size shown above, into app-private storage.
-- **Check the version you resolved:** Gradle keeps an exact version, so read it back when behaviour differs from this page.
-
-  ```bash
-  ./gradlew :app:dependencies --configuration releaseRuntimeClasspath | grep ai.bithuman
-  ```
-
-- **Private avatars:** an avatar you created downloads with the secret you set with `Expression2Credential.set` or `Essence2Credential.set`; there is nothing else to pass.
-
 ## Performance
 
 ```perf
 android-s25plus android-s25plus-sustained
 ```
-
-## Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `Expression2Exception` from `create()` naming the API secret | no secret set | call `Expression2Credential.set(secret)` before `fetch()` and `create()` |
-| `MeteringRefused` on the first Essence 2 `pull()` | no secret set | call `Essence2Credential.set(secret)` before `fetch()` and `create()` |
-| `Essence2StoreException` from `fetch()` | no secret was set when the store downloaded | call `Essence2Credential.set(secret)` before `fetch()` |
-| Expression 2 renders slowly; `acceleratorNote` says no `libQnnTFLiteDelegate.so` | the accelerator runtime was excluded, or legacy packaging is off | keep the dependency whole and set `useLegacyPackaging = true` |
-| The first Expression 2 `create()` after install is slow | the accelerator prepares the decoder once and keeps it; later launches reuse it | create on a background thread at app start; only the first launch after install pays it (and again after an SDK or OS update) |
-| Download refused with `401` | the avatar is private | set its owner's API secret with `Expression2Credential.set` or `Essence2Credential.set` |
-| `409 MODEL_NOT_GENERATED` on download | the agent has no model of that kind yet | [add the model](/api/agents#add-a-model-to-an-existing-agent), then retry |
-| Manifest merge fails on `minSdk` | `essence2-android` needs `minSdk 29` | raise the module to 29 |
-| `Unresolved reference: BuildConfig` | the Android Gradle Plugin turns `BuildConfig` off by default | add `buildFeatures { buildConfig = true }` |
-| `Unresolved reference 'MeteredDoorResolver'` | the resolver's public name is `Essence2MeteredDoorResolver` | you rarely need it: `Essence2Credential.set(secret)` covers downloads. To pass a secret explicitly: `import ai.bithuman.essence2.Essence2MeteredDoorResolver`, then `Essence2ModelStore(context, urlResolver = Essence2MeteredDoorResolver(secret))` |
-| `UnsatisfiedLinkError` on an emulator | the engines are `arm64-v8a` only | run on a physical arm64 handset |
-
-## Reference
-
-- [Android API reference](/platforms/android/reference): every public class in both AARs.
-- Examples: [Expression 2](/examples/android-expression-2) · [Essence 2](/examples/android-essence-2), complete apps you can clone.
-- [Flutter](/platforms/flutter): the Flutter plugin, built on these engines.
-- [Changelog](/changelog) and [Downloads & versions](/downloads).
-- FFmpeg in `essence2-android` is LGPL: [relink materials](/legal/android-ffmpeg-lgpl).

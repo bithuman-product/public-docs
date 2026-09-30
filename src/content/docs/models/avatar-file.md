@@ -83,7 +83,7 @@ with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-mode
 | Model | Artifact | What it is |
 |---|---|---|
 | [`essence-1`](/models/first-generation#essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/platforms/python) and the [CLI](/platforms/cli)'s `run`. |
-| [`essence-2`](/models/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/platforms/cli#platform-notes), the [Python SDK](/platforms/python), the [Android library](/platforms/android) and the Swift [`Essence2` product](/platforms/ios) — the first local play checks the license with the cloud, so it needs your sign-in. |
+| [`essence-2`](/models/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/platforms/cli/voice#platform-notes), the [Python SDK](/platforms/python), the [Android library](/platforms/android) and the Swift [`Essence2` product](/platforms/ios) — the first local play checks the license with the cloud, so it needs your sign-in. |
 | [`expression-2`](/models/expression-2) | `.imx` (older downloads: `.avatar`): the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/platforms/cli), [Python](/platforms/python), [Apple](/platforms/ios) and [Android](/platforms/android), or on the cloud. |
 
 Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/models/essence-2).

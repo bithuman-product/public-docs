@@ -14,14 +14,14 @@ Every platform and recipe page ends with a Troubleshooting table for its own pro
 
 | Platform | Its Troubleshooting table |
 |---|---|
-| iOS & iPadOS | [Swift package on iPhone and iPad](/platforms/ios#troubleshooting) |
-| macOS | [Swift package on the Mac](/platforms/macos#troubleshooting) |
-| Android | [Android SDK](/platforms/android#troubleshooting) |
-| Flutter | [Flutter plugin](/platforms/flutter#troubleshooting) |
-| Web | [Web embed](/platforms/web#troubleshooting) |
-| Python | [Python SDK](/platforms/python#troubleshooting) |
-| CLI | [CLI](/platforms/cli#troubleshooting) |
-| LiveKit | [LiveKit plugin](/platforms/livekit#troubleshooting) |
+| iOS & iPadOS | [Swift package on iPhone and iPad](/platforms/swift/troubleshooting#ios) |
+| macOS | [Swift package on the Mac](/platforms/swift/troubleshooting#macos) |
+| Android | [Android SDK](/platforms/android/troubleshooting) |
+| Flutter | [Flutter plugin](/platforms/flutter/troubleshooting) |
+| Web | [Web embed](/platforms/web/troubleshooting) |
+| Python | [Python SDK](/platforms/python/troubleshooting) |
+| CLI | [CLI](/platforms/cli/troubleshooting) |
+| LiveKit | [LiveKit plugin](/platforms/livekit/troubleshooting) |
 | REST API | [REST](/platforms/rest#troubleshooting) · every error code: [Errors](/api/errors) |
 
 ## By task

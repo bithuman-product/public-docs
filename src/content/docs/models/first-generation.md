@@ -28,7 +28,7 @@ In the bitHuman cloud, and on your own hardware through:
 
 - **Python**: `pip install bithuman` opens an Essence 1 `.imx` with no extra; see [Python](/platforms/python).
 - **The CLI**: `bithuman run` on macOS (Apple silicon) and Linux x86_64 and arm64; see [CLI](/platforms/cli). `render` does not take Essence 1: use the Python SDK or the [Talking video API](/api/video) for a file.
-- **The browser**: [`?render=local`](/platforms/web#integrate-into-your-app).
+- **The browser**: [`?render=local`](/platforms/web/app#integrate-into-your-app).
 
 Essence 1 is not in the Android SDK or the Swift package. On phones, use Essence 2 or Expression 2, or run Essence 1 from the cloud API, or from Python or the CLI on a desktop. The full matrix is on [Compare models](/models#where-each-model-runs).
 

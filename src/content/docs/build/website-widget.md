@@ -94,7 +94,7 @@ export function AvatarWidget({ code }: { code: string }) {
 }
 ```
 
-Render `<AvatarWidget code="A23WJF0199" />` once, in your root layout. In other React apps, add the two `<script>` tags to the page's HTML, or put the web embed in an `<iframe>` ([Web](/platforms/web#react-and-other-frameworks)).
+Render `<AvatarWidget code="A23WJF0199" />` once, in your root layout. In other React apps, add the two `<script>` tags to the page's HTML, or put the web embed in an `<iframe>` ([Web](/platforms/web/app#react-and-other-frameworks)).
 
 ```expected
 The widget's button appears on every page of the app. A second `init` call is ignored, so a re-render does not add a second widget.

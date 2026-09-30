@@ -95,7 +95,7 @@ parent: /changelog
 - In a room with several agents, the cloud avatar binds its audio to the agent
   that started the `AvatarSession` (via `lk.publish_on_behalf`), not the first
   agent it sees. Server-side; no upgrade needed. See
-  [LiveKit → Multiple agents](/platforms/livekit#integrate-into-your-app).
+  [LiveKit → Multiple agents](/platforms/livekit/app#integrate-into-your-app).
 
 ### `essence-2-light` consolidated into `essence-2`; force-tier slugs (2026-07-05)
 

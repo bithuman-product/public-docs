@@ -37,7 +37,7 @@ Yes. bitHuman provides the companion's face, rendered in real time on the phone,
 
 ### Can I use bitHuman in a React or Next.js app?
 
-Yes, with the iframe embed; there is no npm package. [Web](/platforms/web#react-and-other-frameworks) has the React snippet.
+Yes, with the iframe embed; there is no npm package. [Web](/platforms/web/app#react-and-other-frameworks) has the React snippet.
 
 ### Can I test on the iPhone Simulator or an Android emulator?
 
