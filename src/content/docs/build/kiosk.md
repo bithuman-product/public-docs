@@ -1,5 +1,6 @@
 ---
 title: "Kiosk on a Linux PC"
+searchTitle: "Kiosk on a Linux PC: run a talking avatar kiosk with no GPU"
 description: "A live, full-screen avatar on a standard Linux PC with no GPU."
 section: build
 group: "Apps"
@@ -16,6 +17,8 @@ claims: ["S3", "S4", "S10", "S11", "S20"]
 next: ["/deploy/cpu", "/platforms/cli", "/deploy/offline"]
 artifacts: ["cli"]
 ---
+
+To run a kiosk with no GPU, start the avatar with the bitHuman CLI and show it full screen in Chrome. Both models run live on a standard Linux PC with no GPU ([Performance](/performance#desktop)).
 
 ## What you'll build
 

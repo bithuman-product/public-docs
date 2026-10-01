@@ -1,5 +1,6 @@
 ---
 title: "LiveKit"
+searchTitle: "LiveKit: add a talking avatar to a LiveKit voice agent"
 description: "Give a LiveKit voice agent a face with the bitHuman Python plugin."
 section: platforms
 group: "LiveKit"
@@ -19,6 +20,8 @@ moved:
   reference: /platforms/livekit/app#reference
   troubleshooting: /platforms/livekit/troubleshooting
 ---
+
+To add a talking avatar to a LiveKit voice agent, install the `livekit-plugins-bithuman` Python plugin and start a `bithuman.AvatarSession` beside your agent's session. Pass `avatar_id=` to render the avatar in the bitHuman cloud, or `model_path=` to render it inside your worker; either way the avatar speaks the agent's replies with its lips in sync.
 
 `livekit-plugins-bithuman` works on LiveKit Cloud or your own LiveKit server; the avatar joins the room as a participant.
 

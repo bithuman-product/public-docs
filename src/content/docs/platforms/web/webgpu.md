@@ -1,6 +1,6 @@
 ---
 title: "Render with WebGPU"
-searchTitle: "WebGPU: render the avatar in the visitor's tab"
+searchTitle: "WebGPU: render an avatar in a browser tab"
 description: "Render the avatar in the visitor's browser tab with WebGPU."
 section: platforms
 group: "Web"
@@ -9,6 +9,8 @@ type: concept
 llms: apps
 claims: ["S1", "S2", "S29", "S17"]
 ---
+
+To render an avatar in a browser tab with WebGPU, add `render=local` to the web embed's URL. A browser without a usable GPU is switched to cloud rendering, so every visitor gets lip-sync. With the web embed, the conversation runs on bitHuman's servers, even when the avatar renders in the tab (`render=local`).
 
 `render=local` renders the avatar in the visitor's browser tab with WebGPU, for Expression 2, Essence 1, and Essence 2 avatars that have a browser build. Expression 1 always renders in the bitHuman cloud. It is off by default: without it, every session renders in the bitHuman cloud and streams to the page.
 

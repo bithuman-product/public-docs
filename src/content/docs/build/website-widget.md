@@ -1,5 +1,6 @@
 ---
 title: "Website widget"
+searchTitle: "Website widget: add a talking AI avatar to a website with one script tag"
 description: "Add a floating, talking avatar to any website with one script tag."
 section: build
 group: "Apps"
@@ -14,9 +15,11 @@ claims: ["S14", "S25", "S29"]
 next: ["/platforms/web", "/build/persona", "/api/embedding"]
 ---
 
+To add a talking AI avatar to a website, paste one `<script>` tag before `</body>`. It works on any page, in any framework, with no npm package and no server to run.
+
 ## What you'll build
 
-A talking avatar in the corner of your website. Visitors open it, allow the microphone and talk to it; it answers out loud with its lips in sync. One script tag adds it to any page, in any framework. There is no npm package and no server to run.
+A talking avatar in the corner of your website. Visitors open it, allow the microphone and talk to it; it answers out loud with its lips in sync.
 
 You need:
 
