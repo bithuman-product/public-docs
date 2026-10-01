@@ -68,6 +68,14 @@ Tag `flutter-plugin-v2.6.26`.
 - **Changed:** a refused session says why: the plan does not include SDK access (Creator plan or higher), the account's concurrent sessions are used up, the account is suspended, or it has no credits left.
 - **Action:** `implementation("ai.bithuman:essence2-android:0.9.0")`. Delete any `Essence2Metering.basis = …` line, and close a file-render session right after its last frame.
 
+### CLI 2.8.8 — 2026-10-01
+
+Tag `cli-v2.8.8`.
+
+- **Removed:** the `text_to_speech` and `list_voices` tools in `bithuman mcp`. They called bitHuman's text-to-speech service, which is [retired](#text-to-speech-service-retired--2026-10-01). Make the audio with any speech tool and pass it to `bithuman render` ([talking video](/build/talking-video)).
+- The bundled Essence 2 engine is now the one in `bithuman` 2.11.20 (`libessence 2.11.20`). Billing is unchanged from 2.8.7.
+- **Action:** `brew upgrade bithuman-cli`, or re-run the installer.
+
 ### Text-to-speech service retired — 2026-10-01
 
 - **Removed:** bitHuman's own text-to-speech service. `POST /v1/tts`, `POST /v1/audio/speech` (the OpenAI-compatible endpoint), `GET /v1/voices` and `/v1/studio/*` now answer `410 ENDPOINT_RETIRED`. The voice playground at www.bithuman.ai/voice redirects to the [talking video guide](/build/talking-video), and the `text_to_speech` and `list_voices` tools leave the MCP server in the next CLI release.
