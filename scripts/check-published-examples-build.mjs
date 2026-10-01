@@ -232,8 +232,8 @@ const MUTATIONS = {
   },
   ios: {
     file: "Sources/App.swift",
-    from: "Expression2Engine.create(modelPath:",
-    to: "Expression2Engine.createRenamedByTheSdk(modelPath:",
+    from: "Expression2Engine.create(avatarContainer:",
+    to: "Expression2Engine.createRenamedByTheSdk(avatarContainer:",
     token: "createRenamedByTheSdk",
     what: "the engine factory the page calls, renamed as the SDK might rename it",
   },
