@@ -296,9 +296,9 @@ export const QUICKSTART: Quickstart[] = [
     needs: ["API secret"], models: TWO, renders: ["cloud"],
     steps: [
       { title: "Check your API secret", code: { lang: "bash", label: "Shell", code: `${SECRET}\ncurl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"\n# → {"valid":true}` } },
-      { title: "Render a sample agent speaking your audio", code: { lang: "bash", label: "Shell", code: `curl -s -X POST https://api.bithuman.ai/v1/video/generate \\\n  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \\\n  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'\n# → {"success": true, "job_id": "vid_…", "status": "processing"}` } },
+      { title: "Render a sample agent speaking your audio", code: { lang: "bash", label: "Shell", code: `curl -s -X POST https://api.bithuman.ai/v1/video/generate \\\n  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \\\n  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}}'\n# → {"success": true, "job_id": "vid_…", "status": "processing"}` } },
     ],
-    expect: { text: "{\"valid\":true}, then a job_id: poll GET /v1/video/{job_id} until it is completed and open video_url, the wise-pup sample speaking 15 seconds of sample speech (4 credits). The API quickstart continues with an agent of your own." },
+    expect: { text: "{\"valid\":true}, then a job_id: poll GET /v1/video/{job_id} until it is completed and open video_url, the wise-pup sample speaking a 5-second sample clip (4 credits). The API quickstart continues with an agent of your own." },
     next: { href: "/platforms/rest", label: "REST API" },
   },
   {

@@ -37,12 +37,12 @@ Limits: up to **120 seconds** of output.
 
 ### Audio input
 
-Bring your own audio: a recording, or a WAV or MP3 from any text-to-speech tool, at a public URL. To try it, use the 15-second sample, `https://docs.bithuman.ai/samples/speech-16k.wav`.
+Bring your own audio: a recording, or a WAV or MP3 from any text-to-speech tool, at a public URL. To try it, use the 5-second sample, `https://docs.bithuman.ai/samples/speech-16k-short.wav`.
 
 ```bash
 curl -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"model": "expression-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'
+  -d '{"model": "expression-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}}'
 ```
 
 ```json
@@ -63,7 +63,7 @@ get the async `{ job_id }` to poll instead.
 ```bash
 curl -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"model": "essence-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}, "wait": true}'
+  -d '{"model": "essence-2", "agent_code": "'"$BITHUMAN_AGENT_CODE"'", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}, "wait": true}'
 ```
 
 ```json
