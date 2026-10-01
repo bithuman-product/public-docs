@@ -6,7 +6,7 @@ group: "Android"
 order: 10
 type: platform
 llms: apps
-searchTitle: "Android SDK (Kotlin): on-device talking avatars"
+searchTitle: "Android SDK (Kotlin): add an on-device talking character to an Android app"
 renders: ["device"]
 needs: ["Physical device", "API secret"]
 artifacts: ["expression2_android", "essence2_android"]
@@ -21,6 +21,8 @@ moved:
   reference: /platforms/android/reference
   troubleshooting: /platforms/android/troubleshooting
 ---
+
+To add a talking character to an Android app, add one Gradle dependency from bitHuman's Maven repository, pass in 16 kHz mono speech from your voice stack and draw the frames it returns. [Expression 2](/models/expression-2) renders any character from one portrait; it needs a physical `arm64-v8a` phone, not an emulator.
 
 After the one-time model download, the only network traffic is usage reporting. [Why on the device](/deploy/on-device).
 
