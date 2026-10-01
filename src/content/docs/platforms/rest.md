@@ -29,7 +29,7 @@ Send your API secret in the `api-secret` header on every call. `POST /v1/validat
 
 ## First frame
 
-Render the `wise-pup` sample speaking 15 seconds of hosted speech:
+Render the `wise-pup` sample speaking a 5-second hosted clip (16 kHz mono WAV):
 
 ```bash
 export BITHUMAN_API_SECRET="<your API secret>"
@@ -37,7 +37,7 @@ curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_AP
 # → {"valid":true}
 curl -s -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'
+  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}}'
 # → {"success": true, "job_id": "vid_…", "status": "processing"}
 curl -s https://api.bithuman.ai/v1/video/vid_… -H "api-secret: $BITHUMAN_API_SECRET"
 # → … "status": "completed", "video_url": "https://…mp4"
@@ -144,7 +144,7 @@ Open the page and talk to it. Keep the `*` in `allow`, or the microphone is bloc
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"agent_code": "A80HVD8577", "model": "expression-2", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'
+  -d '{"agent_code": "A80HVD8577", "model": "expression-2", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}}'
 ```
 
 Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `video_url` ([Talking video](/api/video)).

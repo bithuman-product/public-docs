@@ -2668,7 +2668,7 @@ paths:
               -d '{
                 "model": "essence-2",
                 "agent_code": "A95SXN5716",
-                "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}
+                "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}
               }'
             # → {"success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing"}
             # add "wait": true to block (≤ ~90 s) for the finished video_url
@@ -2743,7 +2743,7 @@ paths:
                     audio_url:
                       type: string
                       description: A public URL to a WAV or MP3 file.
-                      example: "https://docs.bithuman.ai/samples/speech-16k.wav"
+                      example: "https://docs.bithuman.ai/samples/speech-16k-short.wav"
       responses:
         "200":
           description: >-
