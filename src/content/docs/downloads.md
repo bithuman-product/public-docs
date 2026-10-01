@@ -16,7 +16,7 @@ Every bitHuman artifact at its current release. The same data is published as JS
 | Artifact | Version | Runs on | Install | Published at |
 |---|---|---|---|---|
 | [CLI](/platforms/cli) | **2.8.7** | macOS (Apple silicon), Linux x86_64 and arm64 | `curl -fsSL https://install.bithuman.ai \| sh` | [GitHub release cli-v2.8.7](https://github.com/bithuman-product/homebrew-bithuman/releases) |
-| [`bithuman` (Python)](/platforms/python) | **2.11.19** | Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64, Windows 11 x86_64 | `pip install "bithuman[expression-2]"` | [PyPI](https://pypi.org/project/bithuman/) |
+| [`bithuman` (Python)](/platforms/python) | **2.11.20** | Python 3.10–3.14 on macOS (Apple silicon), Linux x86_64 and arm64, Windows 11 x86_64 | `pip install "bithuman[expression-2]"` | [PyPI](https://pypi.org/project/bithuman/) |
 | [Swift package](/platforms/ios) | **2.19.4** (Essence 2 engine **1.15.2** · Expression 2 engine 2.19.2) | iOS, iPadOS and macOS on Apple silicon | `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git", from: "2.19.4")` | [GitHub tag v2.19.4](https://github.com/bithuman-product/homebrew-bithuman) |
 | [`ai.bithuman:expression2-android`](/platforms/android) | **0.5.2** | Android, arm64-v8a | `implementation("ai.bithuman:expression2-android:0.5.2")` | [maven.bithuman.ai](https://maven.bithuman.ai/ai/bithuman/expression2-android/maven-metadata.xml) |
 | [`ai.bithuman:essence2-android`](/platforms/android) | **0.9.0** | Android, arm64-v8a | `implementation("ai.bithuman:essence2-android:0.9.0")` | [maven.bithuman.ai](https://maven.bithuman.ai/ai/bithuman/essence2-android/maven-metadata.xml) |

@@ -43,6 +43,15 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### `bithuman` 2.11.20 — 2026-10-01
+
+- **Quieter console:** an Essence 2 render no longer prints the engine's diagnostic lines (`[le] …`, `[borrow] …`) or ONNX Runtime's initializer warnings. Set `BITHUMAN_DEBUG=1` to see them again. Warnings and refusals still print.
+- `render(audio, out_mp4=...)` and `python -m bithuman render` write as many frames as the audio lasts, like `bithuman render`: 375 frames for 15.0 s of Essence 2 audio, not 381. The frames after the audio ends are still rendered and metered as before; they are just not written.
+- Progress is shown only on a terminal. With `--json`, a failure is one JSON object on stderr in the CLI's shape (`{"error": {"kind", "code", "message", "command", "hint"}}`), with the same exit codes.
+- The 2.11 spelling `python -m bithuman <avatar> <audio>` is reported as deprecated (removed in 2.14.0).
+- On Apple silicon, Expression 2 renders through the render host that the `bithuman` CLI 2.8.7 ships.
+- **Action:** `pip install -U bithuman`.
+
 ### Flutter plugin 2.6.26 — 2026-10-01
 
 Tag `flutter-plugin-v2.6.26`.
