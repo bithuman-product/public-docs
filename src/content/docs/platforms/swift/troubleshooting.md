@@ -30,5 +30,4 @@ llms: troubleshooting
 | `refusing to serve: no API secret was found` | no secret in this shell or scheme | `export BITHUMAN_API_SECRET=…`, or set it in the scheme |
 | *cannot reach bitHuman to verify your credential* in a Mac app | App Sandbox blocks outgoing connections | tick **Outgoing Connections (Client)** under App Sandbox |
 | `create` throws before `engine ready` | the model files are missing | run `./setup.sh` from the example folder, so `Model/` holds the three files |
-| The link step prints `ld: warning: … was built for newer 'macOS' version (14.0) than being linked (13.0)` | the Expression 2 engine library targets macOS 14 | expected; the build succeeds |
 | The first run is slow | the engine is prepared for this Mac once | keep `Model/staged/` between runs |
