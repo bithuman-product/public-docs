@@ -7,7 +7,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { prepare, handleBody, handleMessage, normalizeId, tokens, TOOLS, SECTION_LABELS, SECTION_ALIASES, canonicalSection, toolsFor, SERVER_INFO, PROTOCOL_VERSIONS, INSTRUCTIONS } from "./docs-mcp.mjs";
+import { prepare, handleBody, handleMessage, normalizeId, urlHost, isForeignUrl, FOREIGN_URL_MESSAGE, tokens, TOOLS, SECTION_LABELS, SECTION_ALIASES, canonicalSection, toolsFor, SERVER_INFO, PROTOCOL_VERSIONS, INSTRUCTIONS } from "./docs-mcp.mjs";
 import { QUERIES } from "../../scripts/search-queries.mjs";
 
 const INDEX = join(import.meta.dirname, "../../dist/docs-mcp-index.json");
@@ -26,6 +26,35 @@ test("normalizeId accepts a path, a URL, a .md twin and the home page", () => {
   assert.equal(normalizeId("platforms/python/"), "/platforms/python");
   assert.equal(normalizeId("https://docs.bithuman.ai"), "/");
   assert.equal(normalizeId("/index.md"), "/");
+});
+
+test("isForeignUrl refuses every host but docs.bithuman.ai and leaves paths alone", () => {
+  for (const id of ["/platforms/livekit", "platforms/livekit", "/", "", "/no/such/page", "/index.md"]) {
+    assert.equal(urlHost(id), null, `${id} is a path`);
+    assert.equal(isForeignUrl(id), false, `${id} is a path`);
+  }
+  for (const id of ["https://docs.bithuman.ai/platforms/livekit", "http://docs.bithuman.ai", "HTTPS://DOCS.BITHUMAN.AI/platforms/livekit.md#x", "https://docs.bithuman.ai./", "//docs.bithuman.ai/platforms/livekit"]) {
+    assert.equal(isForeignUrl(id), false, `${id} is the docs`);
+  }
+  for (const id of ["https://example.com/", "https://example.com/platforms/livekit", "https://bithuman.ai/", "https://www.bithuman.ai/pricing", "https://www.docs.bithuman.ai/", "https://docs.bithuman.ai.example.com/", "https://docs.bithuman.ai@example.com/", "//example.com/", "ftp://docs.bithuman.ai/", "file:///etc/passwd", "javascript:alert(1)", "https://"]) {
+    assert.equal(isForeignUrl(id), true, `${id} is not the docs`);
+  }
+  assert.equal(normalizeId("//docs.bithuman.ai/platforms/livekit"), "/platforms/livekit");
+  assert.ok(!FOREIGN_URL_MESSAGE.includes("\n"), "one line");
+  assert.match(FOREIGN_URL_MESSAGE, /docs\.bithuman\.ai URL/);
+  assert.match(FOREIGN_URL_MESSAGE, /a path like \/platforms\/livekit/);
+});
+
+test("fetch refuses a URL outside docs.bithuman.ai, even with no index", () => {
+  const p = prepare({ docs: [{ id: "/", url: "https://docs.bithuman.ai", title: "Home", section: "Overview", markdown: "# Home" }] });
+  for (const id of ["https://example.com/", "https://example.com/platforms/livekit", "https://www.bithuman.ai/"]) {
+    const r = handleMessage(p, { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "fetch", arguments: { id } } }).result;
+    assert.equal(r.isError, true, `${id} is refused`);
+    assert.equal(r.content[0].text, FOREIGN_URL_MESSAGE);
+  }
+  const home = handleMessage(p, { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "fetch", arguments: { id: "https://docs.bithuman.ai/" } } }).result;
+  assert.equal(home.isError, undefined);
+  assert.equal(JSON.parse(home.content[0].text).id, "/");
 });
 
 test("the index was built", { skip: built ? false : "run npm run build first" }, () => {
@@ -95,6 +124,15 @@ test("fetch returns the page's markdown twin", { skip: !built }, () => {
   assert.equal(tool("fetch", { id: "/" }).id, "/");
   const missing = call("tools/call", { name: "fetch", arguments: { id: "/no/such/page" } }).result;
   assert.equal(missing.isError, true);
+  assert.match(missing.content[0].text, /^No docs page at \/no\/such\/page\./, "an unknown docs path keeps its not-found answer");
+  const missingUrl = call("tools/call", { name: "fetch", arguments: { id: "https://docs.bithuman.ai/no/such/page" } }).result;
+  assert.match(missingUrl.content[0].text, /^No docs page at \/no\/such\/page\./);
+  assert.equal(tool("fetch", { id: "/platforms/livekit" }).id, "/platforms/livekit");
+  assert.equal(tool("fetch", { id: "https://docs.bithuman.ai/platforms/livekit" }).id, "/platforms/livekit");
+  // found 2026-10-01: https://example.com/ used to come back as the docs home page
+  const foreign = call("tools/call", { name: "fetch", arguments: { id: "https://example.com/" } }).result;
+  assert.equal(foreign.isError, true);
+  assert.equal(foreign.content[0].text, FOREIGN_URL_MESSAGE);
 });
 
 test("initialize says what the server is and gives no agent rules", () => {
