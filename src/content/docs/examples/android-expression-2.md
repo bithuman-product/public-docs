@@ -47,10 +47,13 @@ bithuman.apiSecret=<your API secret>
 ```bash
 ./gradlew :app:assembleDebug && adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.example.x2hello/.MainActivity
-adb push ../../python/quickstart/speech.wav /storage/emulated/0/Android/data/com.example.x2hello/files/speech.wav && adb shell am start -S -n com.example.x2hello/.MainActivity
 ```
 
-The first launch creates the app's files folder and says that `speech.wav` is missing; the push fills it and the restart renders. Any 16 kHz mono 16-bit WAV works, such as the [16 kHz sample clip](/samples/speech-16k.wav). The 24 kHz `/samples/speech.wav` is refused (`need 16 kHz mono 16-bit PCM`).
+The first launch renders the 16 kHz clip bundled in the app. To use your own audio, push any 16-bit PCM WAV (the app converts it to 16 kHz mono) and restart:
+
+```bash
+adb push my.wav /storage/emulated/0/Android/data/com.example.x2hello/files/speech.wav && adb shell am start -S -n com.example.x2hello/.MainActivity
+```
 
 ## Expected output
 
@@ -117,7 +120,6 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 | `UnsatisfiedLinkError` | run on a physical arm64 phone, not an emulator |
 | The build refuses the JDK | use JDK 17 (`java -version`) |
 | The app says `speech.wav` is missing | run the `adb push` line, then restart the app |
-| `need 16 kHz mono 16-bit PCM; speech.wav is 24000 Hz, 1 ch, 16-bit` | the WAV is not 16 kHz | push the [16 kHz sample clip](/samples/speech-16k.wav), or convert yours: `ffmpeg -i in.wav -ac 1 -ar 16000 -sample_fmt s16 speech.wav` |
 
 More on [Android: Troubleshooting](/platforms/android/troubleshooting).
 
