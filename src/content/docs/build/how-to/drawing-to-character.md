@@ -1,6 +1,6 @@
 ---
 title: "Turn a drawing, mascot or pet photo into a talking character"
-description: "Create an Expression 2 avatar from one portrait of any character, then talk to it in a browser, on a website or in your app."
+description: "Turn one portrait of any character into an Expression 2 avatar that talks."
 section: build
 group: "How-to"
 order: 20

@@ -1,6 +1,6 @@
 ---
 title: "Put an animated character in an iPhone app"
-description: "Add the Swift package, open an Expression 2 avatar and feed it speech; the character renders on the iPhone."
+description: "Feed speech to the Swift package; the character renders on the iPhone."
 section: build
 group: "How-to"
 order: 10
