@@ -45,6 +45,8 @@ export const LINKED_ONLY = new Set([
   "api/dynamics", "api/files", "api/knowledge", "api/providers", "api/webhooks",
   "platforms/cli/local-brain",
   "performance/method", "resources/faq", "resources/glossary",
+  // a how-to restating create-avatar; /llms/build.txt names its .md twin (build.txt is at its cap)
+  "build/how-to/drawing-to-character",
 ]);
 
 export interface LlmsSection {

@@ -34,7 +34,7 @@ export const GROUP_ORDER: Record<SectionId, string[]> = {
   overview: ["Get started", "Pricing", "Help", "Resources"],
   platforms: ["Swift", "Android", "Flutter", "Web", "Python", "CLI", "LiveKit", "Pipecat", "REST", "Apps"],
   models: ["Models", "Concepts"],
-  build: ["Conversations", "Avatars", "Apps", "Examples"],
+  build: ["Conversations", "Avatars", "Apps", "How-to", "Examples"],
   deploy: ["Where it renders", "Privacy & compliance", "Use cases"],
   performance: ["Speed"],
   api: ["Basics", "Agents", "Media", "Account", "Index"],
