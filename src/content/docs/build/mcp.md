@@ -87,7 +87,6 @@ Ask in plain language; the client chooses and chains the tools.
 | Ask | Tools it calls |
 |---|---|
 | "Create an Expression 2 avatar from this image, wait until it is ready, and give me an embed token." | `generate_agent`, `get_agent_status`, `create_embed_token` |
-| "List the female voices and read this with F1." | `list_voices`, `text_to_speech` |
 | "What is my credit balance, and what did I spend this week?" | `get_credit_balance`, `get_usage` |
 | "Register a webhook at https://example.com/hooks and send it a test event." | `create_webhook`, `test_webhook` |
 | "Download wise-pup and render this WAV to an MP4." | `pull`, `render` |
@@ -101,7 +100,6 @@ Ask in plain language; the client chooses and chains the tools.
 | `validate_api_secret` | Check the API secret (free) |
 | `get_platform_status` | Service status from status.bithuman.ai |
 | `get_credit_balance`, `get_usage` | Balance, plan and usage history |
-| `list_voices`, `text_to_speech` | Voices, and speech saved as a WAV (free) |
 | `generate_agent`, `get_agent_status` | Create an agent from an image (spends credits; always pass `model`), then poll until `ready` or `failed` |
 | `get_agent`, `list_agents`, `update_agent_prompt`, `delete_agent` | Manage your agents |
 | `agent_speak`, `add_agent_context` | Make a live agent speak, or give it background knowledge |
@@ -110,7 +108,9 @@ Ask in plain language; the client chooses and chains the tools.
 | `upload_file` | Upload an asset and get a URL |
 | `create_webhook`, `list_webhooks`, `delete_webhook`, `test_webhook` | Webhooks |
 
-Talking video, adding a model to an agent and knowledge bases have no tool; use the [REST API](/api).
+There is no text-to-speech tool: bitHuman does not synthesize speech. Make a WAV with any TTS and pass it to `render`, or send it to the [talking-video API](/build/talking-video). CLI 2.8.7 and earlier still list `list_voices` and `text_to_speech`; both now return 410 `ENDPOINT_RETIRED`.
+
+The cloud talking-video API, adding a model to an agent and knowledge bases have no tool; use the [REST API](/api).
 
 ## Troubleshooting
 
