@@ -2,12 +2,12 @@
   "artifacts": [
     {
       "artifact": {
-        "registry": "maven-central",
+        "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.8.1",
-        "digest": "sha256:e04bec0cef42b245b505b6c146c5118e324f935d1725d79044d53ac1d3ebf587",
-        "filename": "essence2-android-0.8.1.aar",
-        "resolved_on": "2026-09-27"
+        "version": "0.9.0",
+        "digest": "sha256:d4ca08e38d2024d69b78cfafefa036ef28428d7cd9fa4cc15f2f8a11131d3cf8",
+        "filename": "essence2-android-0.9.0.aar",
+        "resolved_on": "2026-10-01"
       },
       "surface": {
         "artifact_facts": {
@@ -2713,8 +2713,9 @@
                 "mutable": true,
                 "jvm_getter": "getBasis()Ljava/lang/String;",
                 "jvm_setter": "setBasis(Ljava/lang/String;)V",
-                "jvm_field": "field basisLjava/lang/String;",
-                "loadable": true
+                "jvm_field": null,
+                "loadable": true,
+                "deprecated": "Ignored: every session, file renders included, bills active session time (wall-clock from its first delivered frame to close())."
               },
               {
                 "name": "enforce",
@@ -2850,47 +2851,8 @@
                   "static",
                   "synthetic"
                 ],
+                "deprecated": "Ignored: every session, file renders included, bills active session time (wall-clock from its first delivered frame to close()).",
                 "kind": "synthetic"
-              },
-              {
-                "name": "getBeatIntervalMsForTest$essence2_android_release",
-                "jvm": "getBeatIntervalMsForTest$essence2_android_release()Ljava/lang/Long;",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getBeatIntervalMsForTest$essence2_android_release$annotations",
-                "jvm": "getBeatIntervalMsForTest$essence2_android_release$annotations()V",
-                "access": [
-                  "public",
-                  "static",
-                  "synthetic"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getClock$essence2_android_release",
-                "jvm": "getClock$essence2_android_release()Lkotlin/jvm/functions/Function0;",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getClock$essence2_android_release$annotations",
-                "jvm": "getClock$essence2_android_release$annotations()V",
-                "access": [
-                  "public",
-                  "static",
-                  "synthetic"
-                ],
-                "kind": "internal"
               },
               {
                 "name": "getEnforce$annotations",
@@ -2975,46 +2937,6 @@
                 "kind": "synthetic"
               },
               {
-                "name": "getLogSink$essence2_android_release",
-                "jvm": "getLogSink$essence2_android_release()Lkotlin/jvm/functions/Function1;",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getLogSink$essence2_android_release$annotations",
-                "jvm": "getLogSink$essence2_android_release$annotations()V",
-                "access": [
-                  "public",
-                  "static",
-                  "synthetic"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getSinkFactory$essence2_android_release",
-                "jvm": "getSinkFactory$essence2_android_release()Lkotlin/jvm/functions/Function2;",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "getSinkFactory$essence2_android_release$annotations",
-                "jvm": "getSinkFactory$essence2_android_release$annotations()V",
-                "access": [
-                  "public",
-                  "static",
-                  "synthetic"
-                ],
-                "kind": "internal"
-              },
-              {
                 "name": "getStateDir$annotations",
                 "jvm": "getStateDir$annotations()V",
                 "access": [
@@ -3034,56 +2956,6 @@
                 ],
                 "deprecated": "The unmetered escape was removed in 0.5.7; this property is ignored.",
                 "kind": "synthetic"
-              },
-              {
-                "name": "resetForTest$essence2_android_release",
-                "jvm": "resetForTest$essence2_android_release()V",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setBeatIntervalMsForTest$essence2_android_release",
-                "jvm": "setBeatIntervalMsForTest$essence2_android_release(Ljava/lang/Long;)V",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setClock$essence2_android_release",
-                "jvm": "setClock$essence2_android_release(Lkotlin/jvm/functions/Function0;)V",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setLogSink$essence2_android_release",
-                "jvm": "setLogSink$essence2_android_release(Lkotlin/jvm/functions/Function1;)V",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
-              },
-              {
-                "name": "setSinkFactory$essence2_android_release",
-                "jvm": "setSinkFactory$essence2_android_release(Lkotlin/jvm/functions/Function2;)V",
-                "access": [
-                  "public",
-                  "static",
-                  "final"
-                ],
-                "kind": "internal"
               }
             ]
           },
@@ -4790,12 +4662,12 @@
     },
     {
       "artifact": {
-        "registry": "maven-central",
+        "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:expression2-android",
         "version": "0.5.2",
         "digest": "sha256:7415aad6c9b73cd8fb91a4f1aa34fbcc79010657c33120a77274bbf619161bcd",
         "filename": "expression2-android-0.5.2.aar",
-        "resolved_on": "2026-09-27"
+        "resolved_on": "2026-10-01"
       },
       "surface": {
         "artifact_facts": {
