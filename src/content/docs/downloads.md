@@ -21,7 +21,7 @@ Every bitHuman artifact at its current release. The same data is published as JS
 | [`ai.bithuman:expression2-android`](/platforms/android) | **0.5.2** | Android, arm64-v8a | `implementation("ai.bithuman:expression2-android:0.5.2")` | [maven.bithuman.ai](https://maven.bithuman.ai/ai/bithuman/expression2-android/maven-metadata.xml) |
 | [`ai.bithuman:essence2-android`](/platforms/android) | **0.9.0** | Android, arm64-v8a | `implementation("ai.bithuman:essence2-android:0.9.0")` | [maven.bithuman.ai](https://maven.bithuman.ai/ai/bithuman/essence2-android/maven-metadata.xml) |
 | [`livekit-plugins-bithuman`](/platforms/livekit) | **1.8.4** | Python 3.10–3.14 | `pip install livekit-plugins-bithuman` | [PyPI](https://pypi.org/project/livekit-plugins-bithuman/) |
-| [Flutter plugin](/platforms/flutter) | **2.6.26** | Android (arm64-v8a); iOS and macOS build from the published tag | `bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v2.6.26}}` | [GitHub tag flutter-plugin-v2.6.26](https://github.com/bithuman-product/homebrew-bithuman) |
+| [Flutter plugin](/platforms/flutter) | **2.6.27** | Android (arm64-v8a); iOS and macOS build from the published tag | `bithuman: {git: {url: https://github.com/bithuman-product/homebrew-bithuman.git, path: packages/flutter-plugin, ref: flutter-plugin-v2.6.27}}` | [GitHub tag flutter-plugin-v2.6.27](https://github.com/bithuman-product/homebrew-bithuman) |
 <!-- /VERSIONS:TABLE -->
 
 The web embed needs no install: one URL or one `<iframe>` ([Web](/platforms/web)). The MCP server ships inside the CLI as `bithuman mcp` ([MCP server](/build/mcp)). What changed in each release is in the [changelog](/changelog).
