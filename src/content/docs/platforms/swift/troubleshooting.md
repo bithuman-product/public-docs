@@ -19,7 +19,6 @@ llms: build
 | crash in `__cxa_finalize` when the app quits | `Essence2Engine.quiesceAll()` (C: `be_essence2_quiesce_all`) was not called | call it from `applicationWillTerminate` |
 | `unable to resolve module dependency: 'Expression2'` on a Simulator build | the default destination also builds x86_64 | add `ARCHS=arm64`, or set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in the target |
 | `expression is 'async' but is not marked with 'await'` on `player.scheduleBuffer(reply)` | Xcode 26 imports an `async` overload | call `player.scheduleBuffer(reply, completionHandler: nil)` |
-| Essence 2 fails in the Simulator | Essence 2 does not run in the Simulator | run on a physical iPhone or iPad |
 | `duplicate symbol` naming `MLX` at the final link, or Essence 2 memory rising in a long session | an older Swift package | raise `from:` to the version on [Downloads & versions](/downloads), then `swift package update` |
 | a link error naming `BithumanEngineProtocol` | that product was added beside `Expression2`, which already contains it | depend on `Expression2` only |
 | `401 MISSING_AUTH` downloading a model | the agent code and `model=` do not match a sample avatar | check the code, or send your API secret for your own agent |

@@ -119,7 +119,6 @@ The complete file is [on GitHub](https://github.com/bithuman-product/bithuman-ex
 | `Expression2Exception` from `create()` naming the API secret | set `bithuman.apiSecret` in `local.properties`, rebuild |
 | `UnsatisfiedLinkError` | run on a physical arm64 phone, not an emulator |
 | The build refuses the JDK | use JDK 17 (`java -version`) |
-| The app says `speech.wav` is missing | run the `adb push` line, then restart the app |
 
 More on [Android: Troubleshooting](/platforms/android/troubleshooting).
 
