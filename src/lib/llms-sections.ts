@@ -11,7 +11,7 @@ import { contactSalesUrl } from "../config/nav";
 // and the one-file text and the section files cannot disagree.
 //
 //   /llms/start.txt      the quickstart, the API secret, performance, FAQ, glossary
-//   /llms/platforms.txt  the code-and-terminal and agent platform pages (Python, CLI, Windows, LiveKit, REST)
+//   /llms/platforms.txt  the code-and-terminal and agent platform pages (Python, CLI, Windows, LiveKit, Pipecat, REST)
 //   /llms/apps.txt       the app platform pages (iOS & iPadOS, macOS, Android, Flutter, Web)
 //   /llms/deploy.txt     where it runs: the four deployment modes, CPU only, privacy, pricing
 //   /llms/models.txt     Essence 2, Expression 2, the first generation, how it works
@@ -67,7 +67,7 @@ export const LLMS_SECTIONS: LlmsSection[] = [
   },
   {
     id: "platforms", title: "Platforms", inFull: true,
-    summary: "Python, CLI, Windows, LiveKit, REST",
+    summary: "Python, CLI, Windows, LiveKit, Pipecat, REST",
     has: (d) => d.data.llms === "platforms",
   },
   {
@@ -105,7 +105,7 @@ export const LLMS_SECTIONS: LlmsSection[] = [
 export const sectionUrl = (id: string) => `${SITE}/llms/${id}.txt`;
 
 /** What /llms-full.txt inlines, in words (the sections marked inFull). */
-export const FULL_SCOPE = "getting started, the code, terminal and agent platform pages (Python, CLI, Windows, LiveKit, REST) and the REST API; the app platform pages are in /llms/apps.txt";
+export const FULL_SCOPE = "getting started, the code, terminal and agent platform pages (Python, CLI, Windows, LiveKit, Pipecat, REST) and the REST API; the app platform pages are in /llms/apps.txt";
 
 /** The pages a section inlines, in sidebar order. */
 export async function sectionDocs(s: LlmsSection): Promise<any[]> {

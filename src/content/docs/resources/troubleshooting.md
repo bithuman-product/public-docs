@@ -22,6 +22,7 @@ Every platform and recipe page ends with a Troubleshooting table for its own pro
 | Python | [Python SDK](/platforms/python/troubleshooting) |
 | CLI | [CLI](/platforms/cli/troubleshooting) |
 | LiveKit | [LiveKit plugin](/platforms/livekit/troubleshooting) |
+| Pipecat | [Pipecat service](/platforms/pipecat/troubleshooting) |
 | REST API | [REST](/platforms/rest#troubleshooting) · every error code: [Errors](/api/errors) |
 
 ## By task
