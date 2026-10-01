@@ -43,6 +43,15 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.26 — 2026-10-01
+
+Tag `flutter-plugin-v2.6.26`.
+
+- **Essence 2:** the mouth blends into the face without the visible edge that could show at the corners of the lips. Android gets it with `essence2-android` 0.9.0; on iOS and macOS it comes with the avatar files and Essence 2 1.15.2.
+- **Android:** the engines resolve from maven.bithuman.ai, which the plugin declares itself; a Flutter app adds no repository. Versions already on Maven Central keep resolving from Central.
+- **macOS:** an app built for macOS 13 links again (macOS engine core 1.0.2).
+- **Action:** pin `ref: flutter-plugin-v2.6.26`.
+
 ### essence2-android 0.9.0 — 2026-10-01
 
 - **Essence 2 on Android:** the mouth blends into the face without the visible edge that could show at the corners of the lips. Avatars get this as they are updated on bitHuman; an avatar that has not been updated renders exactly as in 0.8.1.
