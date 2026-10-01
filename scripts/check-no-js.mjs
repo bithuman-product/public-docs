@@ -301,10 +301,13 @@ function main() {
     ...gradeGallery(page("examples"), EXAMPLES, provenanceLine),
     ...gradeDataflow(page("deploy/privacy"), FLOW_MODES, DATA_KINDS),
   ];
-  for (const d of readdirSync(join(DIST, "build"), { withFileTypes: true })) {
-    if (!d.isDirectory()) continue;
-    const html = page(`build/${d.name}`);
-    if (html.includes('class="walk"')) faults.push(...gradeRecipe(`/build/${d.name}`, html));
+  // every built page under /build, one folder deep as well (/build/how-to/<page> has no index of its own)
+  const buildDirs = (rel) => readdirSync(join(DIST, rel), { withFileTypes: true }).filter((d) => d.isDirectory())
+    .flatMap((d) => [`${rel}/${d.name}`, ...(rel === "build" ? buildDirs(`${rel}/${d.name}`) : [])]);
+  for (const rel of buildDirs("build")) {
+    if (!existsSync(join(DIST, rel, "index.html"))) continue;
+    const html = page(rel);
+    if (html.includes('class="walk"')) faults.push(...gradeRecipe(`/${rel}`, html));
   }
   let withNode = 0;
   // the /api resource pages, plus the one that moved to Platforms but stays API (SPEC §3)
