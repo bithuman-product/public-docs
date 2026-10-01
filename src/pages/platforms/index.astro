@@ -8,6 +8,7 @@ import { PLATFORM_PAGES } from "../../data/platforms";
 import { RENDERS_LABEL } from "../../data/labels";
 import HUB_MOVED from "../../data/hub-moved.json";
 import { PLATFORM_GROUPS, PLATFORM_REFERENCE } from "../../data/platforms-hub";
+import { balancedCols } from "../../lib/grid";
 
 // The Platforms hub (docs v2 SPEC §3, hub budget): the banner, a card per
 // platform page grouped the way the sidebar is, and one support matrix. Cards
@@ -32,7 +33,7 @@ const gid = (name: string) => `g-${name.replace(/\W+/g, "-").toLowerCase()}`;
           <h2 id={gid(g.name)}>{g.name}</h2>
           <p>{g.line}</p>
         </div>
-        <ul class="card-grid cols-3" role="list">
+        <ul class={`card-grid cols-${balancedCols(PLATFORM_PAGES.filter((p) => p.group === g.name).length)}`} role="list">
           {PLATFORM_PAGES.filter((p) => p.group === g.name).map((p) => (
             <li><Card variant="platform" href={p.href} title={p.title} line={p.line} icon={p.icon} /></li>
           ))}

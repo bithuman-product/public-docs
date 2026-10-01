@@ -174,9 +174,12 @@
   --flow-egress: #0b5fc0;
   --chip-bg: #f7f7f8;
   --chip-border: #e6e6ea;
-  --bar: #3d4452;
-  --bar-2: #8a93a3;
-  --bar-cpu: #13804a;
+  /* chart marks (/performance, W9): calm slate bars on a faint track; CPU-only rows teal */
+  --bar: #4b5a78;
+  --bar-2: #a9b4c9;
+  --bar-cpu: #2b8466;
+  --bar-track: #eef0f4;
+  --bar-rule: #8a8a99;
   --color-scrim: rgba(10, 10, 14, 0.5);
   --color-media-bg: #0b0b0d;
   --color-bezel: #0e0e11;
@@ -272,9 +275,11 @@
     --flow-egress: #79c0ff;
     --chip-bg: #131316;
     --chip-border: #26262d;
-    --bar: #c7ccd6;
-    --bar-2: #6e7584;
-    --bar-cpu: #7ee2a8;
+    --bar: #9fb1d4;
+    --bar-2: #56627c;
+    --bar-cpu: #6fcfa6;
+    --bar-track: #1c1e25;
+    --bar-rule: #7a7a88;
     --color-scrim: rgba(0, 0, 0, 0.6);
     --color-scroll-shade: rgba(0, 0, 0, 0.5);
     --color-status-ok: #7ee2a8;
@@ -359,9 +364,11 @@
   --flow-egress: #79c0ff;
   --chip-bg: #131316;
   --chip-border: #26262d;
-  --bar: #c7ccd6;
-  --bar-2: #6e7584;
-  --bar-cpu: #7ee2a8;
+  --bar: #9fb1d4;
+  --bar-2: #56627c;
+  --bar-cpu: #6fcfa6;
+  --bar-track: #1c1e25;
+  --bar-rule: #7a7a88;
   --color-scrim: rgba(0, 0, 0, 0.6);
   --color-scroll-shade: rgba(0, 0, 0, 0.5);
   --color-status-ok: #7ee2a8;

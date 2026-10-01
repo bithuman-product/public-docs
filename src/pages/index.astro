@@ -10,13 +10,17 @@ import HUB_MOVED from "../data/hub-moved.json";
 import { hubMeta } from "../config/hubs";
 import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_V1, GUIDES } from "../data/home";
 import { headlineData } from "../lib/perf-headline";
+import { modelCardHtml } from "../lib/model-card";
+import { balancedCols } from "../lib/grid";
 
 // The front door (docs v2 SPEC §6): a head with two buttons and the live demo,
 // then four bands of tiles: Platforms, Models, Where it runs, Start building.
-// Every tile is one link; the detail lives on the page it opens. No chips, no
-// bullets, no version strip (versions live on /downloads). Speed on the model
-// cards is the generated headline (src/partials/performance-headline.md), as
-// times real time; nothing here types a number.
+// Every tile is one link; the detail lives on the page it opens. No version
+// strip (versions live on /downloads). The model cards (src/lib/model-card.ts)
+// carry an image, a line, highlights and "Runs on" (owner, 2026-10-01); their
+// one quiet speed line is the generated headline
+// (src/partials/performance-headline.md), as times real time; nothing here
+// types a number.
 const meta = hubMeta("");
 const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
 const headline = headlineData() ?? [];
@@ -24,6 +28,7 @@ const speed = (title: string) => {
   const row = headline.find((r) => r.model === title);
   return row ? `${row.cells.map((c) => `${c.platform} ${c.multiple}`).join(" · ")} real time` : undefined;
 };
+const tileCols = balancedCols(START_BUILDING.length);
 ---
 
 <Base title="bitHuman Docs: real-time AI avatar SDK for iOS, Android, web and Linux" description={meta.description}>
@@ -49,7 +54,7 @@ const speed = (title: string) => {
         <h2 id="platforms">Platforms</h2>
         <a class="band-more" href="/platforms">All platforms <Icon name="arrow" size={16} /></a>
       </div>
-      <ul class="card-grid tiles" role="list">
+      <ul class={`card-grid tiles cols-${tileCols}`} role="list">
         {START_BUILDING.map((c) => <li><Card href={c.href} title={c.title} icon={c.icon} variant="platform" /></li>)}
       </ul>
     </div>
@@ -61,16 +66,8 @@ const speed = (title: string) => {
         <h2 id="models">Models</h2>
         <a class="band-more" href="/models">Compare models <Icon name="arrow" size={16} /></a>
       </div>
-      <ul class="card-grid cols-2 models-now" role="list">
-        {MODELS.map((m) => (
-          <li>
-            <Card variant="model" href={m.href} title={m.title} line={m.line} note={speed(m.title)} tags={m.tags}
-              media={{ src: `${m.poster}-480.webp`, avif: `${m.poster}-480.avif`, width: 480, height: 600, alt: m.alt, sizes: "168px" }} />
-          </li>
-        ))}
-      </ul>
-      <ul class="card-grid cols-2 models-v1" role="list">
-        {MODELS_V1.map((m) => <li><Card href={m.href} title={m.title} line={m.line} /></li>)}
+      <ul class="card-grid cols-2 models" role="list">
+        {[...MODELS, ...MODELS_V1].map((m) => <li set:html={modelCardHtml(m, { note: speed(m.title) })} />)}
       </ul>
     </div>
   </section>
@@ -134,20 +131,16 @@ const speed = (title: string) => {
   .band-more :global(.icon) { transition: transform var(--t-fast) var(--ease); }
   .band-more:hover :global(.icon) { transform: translateX(2px); }
 
-  /* platform tiles: a larger icon above the name, five across */
-  .tiles { --cols: 5; gap: var(--s-4); }
+  /* platform tiles: a larger icon above the name, at most four across in
+     balanced rows (owner, 2026-10-01; src/lib/grid.ts) */
+  .tiles { gap: var(--s-4); }
   .tiles :global(.card-platform) { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--s-6); min-height: 112px; padding: var(--s-5) var(--s-5) var(--s-4); }
   .tiles :global(.card-icon) { width: 28px; height: 28px; color: var(--color-text); }
   .tiles :global(.card-icon svg) { width: 24px; height: 24px; }
   .tiles :global(.card-title h3) { font-size: var(--fs-16); line-height: var(--lh-16); font-weight: var(--fw-medium); margin: 0; }
 
-  /* models: the current two large, with portraits; the first generation below, compact */
-  .models-now { gap: var(--s-5); }
-  .models-now :global(.card-model) { padding: var(--s-4); gap: var(--s-6); }
-  .models-now :global(.card-model .card-figure) { width: 168px; }
-  .models-now :global(.card-model .card-body) { gap: var(--s-3); }
-  .models-v1 { margin-top: var(--s-4); gap: var(--s-5); }
-  .models-v1 :global(.card) { padding: var(--s-4) var(--s-5); }
+  /* models: four cards, two by two, each with its portrait (owner, 2026-10-01) */
+  .models { gap: var(--s-5); }
 
   .modes { gap: var(--s-5); }
   .modes :global(.card) { padding: var(--s-6); gap: var(--s-3); }
@@ -168,15 +161,13 @@ const speed = (title: string) => {
     .hero-demo { max-width: 420px; }
   }
   @media (max-width: 768px) {
-    .tiles { --cols: 2; }
     .rows { grid-template-columns: 1fr; }
-    .models-now :global(.card-model .card-figure) { width: 120px; }
+    .models { --cols: 1; }
   }
-  @media (max-width: 640px) { .modes { --cols: 1; } .models-v1 { --cols: 1; } }
+  @media (max-width: 640px) { .modes { --cols: 1; } .card-grid.tiles { --cols: 2; } }
   @media (max-width: 560px) {
     .hero { padding-block: var(--s-6) var(--s-6); }
     .band { padding-block: var(--s-6); }
     .tiles :global(.card-platform) { min-height: 0; gap: var(--s-3); padding: var(--s-4); }
-    .models-now :global(.card-model .card-figure) { width: 88px; }
   }
 </style>

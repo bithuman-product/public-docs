@@ -120,6 +120,7 @@ add default 0 built:boilerplate             "need_dist && node scripts/check-boi
 add default 0 built:subtitles               "need_dist && node scripts/check-subtitles.mjs --selftest && node scripts/check-subtitles.mjs"
 add default 0 built:page-budget-rendered    "need_dist && node scripts/check-page-budget.mjs --built"
 add default 0 built:hub-twins               "need_dist && node scripts/check-hub-twins.mjs --selftest && node scripts/check-hub-twins.mjs"
+add default 0 built:card-rows               "need_dist && node scripts/check-card-rows.mjs --selftest && node scripts/check-card-rows.mjs"
 add default 1 built:noise-audit             "need_dist && node scripts/noise-audit.mjs"
 
 # page-quality.yml (Lighthouse on the built site; needs Chrome). Capped like every
