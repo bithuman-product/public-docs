@@ -6,6 +6,8 @@ group: "Basics"
 order: 20
 type: reference
 llms: api
+moved:
+  text-to-speech: /api/errors#error-codes
 ---
 
 ## Error response format
@@ -140,13 +142,6 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 | `BUILD_IN_PROGRESS` | 409 | A build is already running on this knowledge base; the request is queued as a rebuild when it finishes. |
 | `BUILD_CONCURRENCY` | 409 | Another build is running for the account. Retry when it finishes. |
 | `BUILD_DAILY_CAP` | 409 | The account reached 20 builds today. Retry tomorrow. |
-
-### Text to speech
-
-| Code | HTTP | Resolution |
-|---|---|---|
-| `VOICE_NOT_FOUND` | 404 | Unknown or revoked `voice_code`. List voices with `GET /v1/voices`. |
-| `NOT_FOUND` | 404 | The built-in `voice` isn't one of `M1`–`M5`, `F1`–`F5` (`"voice not found: <id>"`). |
 
 The CLI's exit codes, such as `PUBLIC_BIND_REFUSED`, are on [CLI troubleshooting](/platforms/cli/troubleshooting).
 

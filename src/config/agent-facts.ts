@@ -55,7 +55,7 @@ export function agentKeyFacts(site: string): string {
     `## Key facts\n\n` +
     `- Credential: one API secret for every surface, from the environment as \`BITHUMAN_API_SECRET\`. REST header \`api-secret\`: REST endpoints do not read \`Authorization: Bearer\` (\`/v1/validate\` answers \`{"valid": false}\`); only the Realtime relay and the self-hosted runtime endpoints also take Bearer. Apps fetch it from your backend; never compile it in. Get one: ${API_SECRET_URL} · ${site}/start/api-secret.md\n` +
     `- Billing: credits pay for active session time, talking or idle, by the exact second; the Video API bills whole minutes of output (minimum 1). ${site}/pricing.md\n` +
-    `- Model names: Essence 2, Expression 2 in prose; \`essence-2\`, \`expression-2\` in code. Essence 1 and Expression 1 are the first generation. Essence 2 Max is available on the Enterprise plan only. Contact sales: ${contactSalesUrl("models")} · ${site}/models.md\n` +
+    `- Model names: Essence 2, Expression 2 in prose; \`essence-2\`, \`expression-2\` in code. Essence 1 and Expression 1 are the first generation. · ${site}/models.md\n` +
     `- Sample avatars (no account): Essence 2 \`sofia-ramirez\` (A52DHS2219), Expression 2 \`wise-pup\` (A23WJF0199). Sample audio: ${site}/samples/speech.wav (15 s, 24 kHz mono)\n` +
     `- Current versions: CLI ${V.cli} · bithuman (Python) ${V.python} · Swift package ${V.swift} · essence2-android ${V.essence2_android} · expression2-android ${V.expression2_android} · livekit-plugins-bithuman ${V.livekit_plugin}. ${site}/versions.json\n` +
     `- Python: use a venv (\`python3 -m venv .venv\`); Debian/Ubuntu's system Python refuses \`pip install\`.\n\n`

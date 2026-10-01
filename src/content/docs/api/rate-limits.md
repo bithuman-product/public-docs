@@ -23,7 +23,7 @@ Requests are limited **per account** (every API secret on the account shares the
 | Cost tier | Covers |
 |---|---|
 | **Generate** | heavy jobs: `POST /v1/agent/generate`, `POST /v1/dynamics/generate`, video generation; also `POST /v1/runtime-sessions/{session_id}/end` |
-| **Write** | every other `POST`, `PUT`, `PATCH`, `DELETE`, including `POST /v1/tts`, plus `GET /v1/agent/{code}/sessions` |
+| **Write** | every other `POST`, `PUT`, `PATCH`, `DELETE`, such as `POST /v1/agent/{code}/speak`, plus `GET /v1/agent/{code}/sessions` |
 | **Read** | other `GET` requests, such as `GET /v1/agent/status/*` and `GET /v2/credit-summaries` |
 
 A plan change reaches the limiter within about a minute; no new secret is needed. Over the limit, the API returns `429 RATE_LIMITED` with a `Retry-After` header and the standard [error envelope](/api/errors).
@@ -77,7 +77,7 @@ def call(method, url, max_retries=5, **kw):
     return resp
 ```
 
-Usage: `call("POST", "https://api.bithuman.ai/v1/tts", headers=h, json={...})`.
+Usage: `call("POST", "https://api.bithuman.ai/v1/video/generate", headers=h, json={...})`.
 
 ## Best practices
 

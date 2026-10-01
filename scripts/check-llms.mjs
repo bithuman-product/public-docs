@@ -2,7 +2,7 @@
 // G5 — THE AGENT LAYER. Run after `npm run build`:
 //   node scripts/check-llms.mjs [--dist dist] [--full-max-kb 160] [--section-max-kb 96]
 //
-// Fails when: /llms.txt is over 60 lines or 6 KB, names fps in its first 1,000
+// Fails when: /llms.txt is over INDEX_MAX_LINES lines or INDEX_MAX_BYTES, names fps in its first 1,000
 // characters, lacks the "Instructions for AI agents" heading or the verbatim
 // offline sentence; a docs.bithuman.ai URL in it
 // does not resolve in the build (or an #anchor it names is missing); a content
@@ -26,6 +26,13 @@ const arg = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] :
 const DIST = join(ROOT, arg("--dist", "dist"));
 const FULL_MAX = Number(arg("--full-max-kb", "160")) * 1024;
 const SECTION_MAX = Number(arg("--section-max-kb", "96")) * 1024;
+// /llms.txt caps. ★RAISED 2026-10-01 from 60 lines / 6 KB to 64 lines / 7 KB: the index
+// grows by construction (one "Start" line per platform, one speed row per published
+// configuration, one name per section file) and had reached 59/60 lines and 6,139/6,144 B,
+// so the next platform or section could not be listed. 7 KB is still one small fetch
+// (llmstxt.org sets no size); the per-section and llms-full caps are unchanged.
+const INDEX_MAX_LINES = 64;
+const INDEX_MAX_BYTES = 7168;
 const fail = [];
 
 if (!existsSync(join(DIST, "llms.txt"))) { console.log("::error::no dist/llms.txt — run npm run build first"); process.exit(2); }
@@ -50,8 +57,8 @@ if (!/^## Instructions for AI agents$/m.test(llms)) fail.push('llms.txt has no "
 }
 const full = readFileSync(join(DIST, "llms-full.txt"), "utf8");
 const lines = llms.trimEnd().split("\n").length;
-if (lines > 60) fail.push(`llms.txt has ${lines} lines (cap 60)`);
-if (Buffer.byteLength(llms) > 6144) fail.push(`llms.txt is ${Buffer.byteLength(llms)} B (cap 6144)`);
+if (lines > INDEX_MAX_LINES) fail.push(`llms.txt has ${lines} lines (cap ${INDEX_MAX_LINES})`);
+if (Buffer.byteLength(llms) > INDEX_MAX_BYTES) fail.push(`llms.txt is ${Buffer.byteLength(llms)} B (cap ${INDEX_MAX_BYTES})`);
 if (Buffer.byteLength(full) > FULL_MAX) fail.push(`llms-full.txt is ${(Buffer.byteLength(full) / 1024).toFixed(0)} KB (cap ${FULL_MAX / 1024} KB)`);
 
 // every site URL in llms.txt resolves in the build, anchors included
@@ -106,7 +113,7 @@ const linkedAll = sections.map((n) => secText[n]).join("\n");
 // section or type: every page names one; a section value means the page is inlined
 // in that file or listed there as linked-only; `linked` means some llms file names
 // the page (URL or .md twin); `none` is allowed only from this reasoned allowlist.
-const LLMS_VALUES = ["start", "platforms", "apps", "deploy", "models", "build", "api", "linked", "none"];
+const LLMS_VALUES = ["start", "platforms", "apps", "deploy", "models", "build", "troubleshooting", "api", "linked", "none"];
 const LLMS_NONE = {
   "/changelog": "a record of releases; agents read versions from /downloads and the key facts",
   "/changelog/archive": "older changelog entries, a record",
@@ -155,6 +162,6 @@ for (const [name, text] of [["llms.txt", llms], ["llms-full.txt", full], ...sect
 
 for (const f of fail) console.log(`::error::${f}`);
 const kb = (t) => (Buffer.byteLength(t) / 1024).toFixed(0);
-console.log(`G5: llms.txt ${lines}/60 lines, ${Buffer.byteLength(llms)}/6144 B, ${urls} URLs; llms-full.txt ${kb(full)}/${FULL_MAX / 1024} KB; ` +
+console.log(`G5: llms.txt ${lines}/${INDEX_MAX_LINES} lines, ${Buffer.byteLength(llms)}/${INDEX_MAX_BYTES} B, ${urls} URLs; llms-full.txt ${kb(full)}/${FULL_MAX / 1024} KB; ` +
   `sections ${sections.map((n) => `${n} ${kb(secText[n])}`).join(", ")} (cap ${SECTION_MAX / 1024} KB each), ${covered} pages covered; ${twins} markdown twins — ${fail.length ? `${fail.length} FAILED` : "ok"}`);
 process.exit(fail.length ? 1 : 0);

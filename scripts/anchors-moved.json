@@ -114,6 +114,23 @@
   "/pricing#budget-an-app": "/pricing/estimate#budget-an-app",
   "/pricing#check-your-balance": "/api/billing#check-credit-balance",
   "/pricing#estimate-a-month": "/pricing/estimate#estimate-a-month",
-  "/resources/glossary#older-names": "/resources/renamed#older-names"
+  "/resources/glossary#older-names": "/resources/renamed#older-names",
+  "/api/text-to-speech#authentication": "/api/video#audio-input",
+  "/api/text-to-speech#errors": "/api/video#audio-input",
+  "/api/text-to-speech#list-voices": "/api/video#audio-input",
+  "/api/text-to-speech#openai-compatible-endpoint": "/api/video#audio-input",
+  "/api/text-to-speech#request-fields": "/api/video#audio-input",
+  "/api/text-to-speech#stream-and-play-on-the-fly": "/api/video#audio-input",
+  "/api/text-to-speech#synthesize-speech": "/api/video#audio-input",
+  "/api/text-to-speech#tuning-a-voice": "/api/video#audio-input",
+  "/api/text-to-speech#voice-codes": "/api/video#audio-input",
+  "/api/errors#text-to-speech": "/api/errors#error-codes",
+  "/api/video#text-input": "/api/video#audio-input",
+  "/api/reference#listVoiceAxes": "/api/video#audio-input",
+  "/api/reference#listVoices": "/api/video#audio-input",
+  "/api/reference#openaiCompatSpeech": "/api/video#audio-input",
+  "/api/reference#previewTunedVoice": "/api/video#audio-input",
+  "/api/reference#synthesizeSpeech": "/api/video#audio-input",
+  "/api/reference#tag/voice": "/api/video#overview"
  }
 }

@@ -5,7 +5,7 @@ section: platforms
 group: "Swift"
 order: 40
 type: troubleshooting
-llms: build
+llms: troubleshooting
 ---
 
 ## iOS

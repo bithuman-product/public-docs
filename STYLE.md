@@ -146,7 +146,7 @@ A fenced block named for a block is drawn at build time from the data files (`sr
 
 The explorer, the calculator, the filter above a full ```` ```model-matrix ```` or ```` ```deploy-matrix ````, figures, the gallery, the data-flow explorer and a recipe's steps bring a small script, loaded only on the page that places them. With JavaScript off everything they draw still shows. [check-no-js, check-js-budget]
 
-Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is available on the Enterprise plan only." It has no page, card, matrix row or chip. [check-internal-vocabulary]
+Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is available on the Enterprise plan only.", once, on /models (owner, 2026-10-01: "should be off entirely and we only need to mention that it is available to enterprise users"). It has no page, card, matrix row, chip, enum value, pricing row, glossary entry or llms line. [check-internal-vocabulary]
 
 A home or hub card links a page, never an anchor on another page. [check-nav-consistency]
 

@@ -56,7 +56,7 @@ export const PLATFORMS: Platform[] = [
       code: `export BITHUMAN_API_SECRET="<your API secret>"
 curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
 # → {"valid":true}`,
-      expect: "Your API secret works. The API quickstart continues with speech, an agent and a talking video; your first Essence 2 or Expression 2 agent takes about 2–2.5 hours to create.",
+      expect: "Your API secret works. The API quickstart continues with a talking video of a sample agent speaking your audio, in minutes, then an agent of your own.",
     },
   },
   {
@@ -158,7 +158,7 @@ export const PLATFORM_PAGES: PlatformPage[] = [
   { id: "livekit", title: "LiveKit", href: "/platforms/livekit", icon: "wave", group: "Agents & APIs",
     line: "Give a LiveKit voice agent a face, rendered on your server or in the bitHuman cloud.", renders: ["server", "cloud"], artifacts: ["livekit_plugin"], time: "10 min" },
   { id: "rest", title: "REST API", href: "/platforms/rest", icon: "code", group: "Agents & APIs",
-    line: "Agents, speech, live sessions and talking video over HTTPS.", renders: ["cloud"], artifacts: [], time: "2 min" },
+    line: "Agents, live sessions and talking video over HTTPS.", renders: ["cloud"], artifacts: [], time: "2 min" },
 ];
 
 // ---------------------------------------------------------------- the quickstart picker
@@ -296,9 +296,9 @@ export const QUICKSTART: Quickstart[] = [
     needs: ["API secret"], models: TWO, renders: ["cloud"],
     steps: [
       { title: "Check your API secret", code: { lang: "bash", label: "Shell", code: `${SECRET}\ncurl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"\n# → {"valid":true}` } },
-      { title: "Make it speak", code: { lang: "bash", label: "Shell", code: `curl -s -X POST https://api.bithuman.ai/v1/tts \\\n  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \\\n  -d '{"text": "Hello from bitHuman.", "voice": "F1"}' --output hello.wav` } },
+      { title: "Render a sample agent speaking your audio", code: { lang: "bash", label: "Shell", code: `curl -s -X POST https://api.bithuman.ai/v1/video/generate \\\n  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \\\n  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'\n# → {"success": true, "job_id": "vid_…", "status": "processing"}` } },
     ],
-    expect: { text: "{\"valid\":true}, then hello.wav. The API quickstart continues with an agent and a talking video; your first Essence 2 or Expression 2 agent takes about 2–2.5 hours to create." },
+    expect: { text: "{\"valid\":true}, then a job_id: poll GET /v1/video/{job_id} until it is completed and open video_url, the wise-pup sample speaking 15 seconds of sample speech (4 credits). The API quickstart continues with an agent of your own." },
     next: { href: "/platforms/rest", label: "REST API" },
   },
   {

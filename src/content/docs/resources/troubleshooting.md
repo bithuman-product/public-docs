@@ -5,7 +5,7 @@ section: overview
 group: "Help"
 order: 10
 type: guide
-llms: build
+llms: troubleshooting
 ---
 
 Every platform and recipe page ends with a Troubleshooting table for its own problems; this page links them all, then covers the live session itself.

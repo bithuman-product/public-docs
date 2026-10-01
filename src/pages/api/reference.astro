@@ -13,6 +13,8 @@ import { hubMeta } from "../../config/hubs";
 import { SECTIONS } from "../../config/nav";
 import { apiSpec } from "../../lib/openapi";
 import { apiPages } from "../../lib/endpoint-block";
+import MovedAnchors from "../../components/MovedAnchors.astro";
+import HUB_MOVED from "../../data/hub-moved.json";
 
 const title = "API reference";
 const description = hubMeta("api/reference").description;
@@ -63,6 +65,7 @@ const HAND = [
         </table>
       </section>
     ))}
+    <MovedAnchors moved={HUB_MOVED["/api/reference"]} quiet />
   </div>
   <script is:inline data-jump={JSON.stringify(jump)}>(()=>{var m=JSON.parse(document.currentScript.dataset.jump),g=()=>{var h=decodeURIComponent(location.hash.slice(1)),t=m[h.split("/").pop()];t&&location.replace(t)};g();addEventListener("hashchange",g)})()</script>
 </Base>

@@ -254,7 +254,8 @@ const CARRIERS = [
   // ★THE ONE LINE THAT MAY NAME ESSENCE 2 MAX. a product rule removed it from public
   //  exposure, docs included; a later rule ("essence-2-max is only reserved for
   //  enterprise customers — make it clear") and his direct decision the same day admit ONE
-  //  sentence, on /models, /pricing and llms.txt. The name is carried only when
+  //  sentence; since 2026-10-01 (owner: "should be off entirely and we only need to mention
+  //  that it is available to enterprise users") it appears ONLY on /models (and so models.md). The name is carried only when
   //  the SAME sentence says "Enterprise plan only", so this is also the must-mark guard: any other
   //  mention of the name still fails. bithuman-models tools/check_taught_surface.py
   //  INTERNAL_ONLY_DOCS_CARRIERS holds the same pattern.

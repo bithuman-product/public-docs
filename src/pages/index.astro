@@ -8,7 +8,7 @@ import { FRONT_DOOR_DEMO } from "../data/demo";
 import MovedAnchors from "../components/MovedAnchors.astro";
 import HUB_MOVED from "../data/hub-moved.json";
 import { hubMeta } from "../config/hubs";
-import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_V1, MODELS_NOTE, GUIDES } from "../data/home";
+import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_V1, GUIDES } from "../data/home";
 import { headlineData } from "../lib/perf-headline";
 
 // The front door (docs v2 SPEC §6): a head with two buttons and the live demo,
@@ -72,7 +72,6 @@ const speed = (title: string) => {
       <ul class="card-grid cols-2 models-v1" role="list">
         {MODELS_V1.map((m) => <li><Card href={m.href} title={m.title} line={m.line} /></li>)}
       </ul>
-      <p class="band-foot">{MODELS_NOTE}</p>
     </div>
   </section>
 
@@ -134,7 +133,6 @@ const speed = (title: string) => {
   .band-head { margin-bottom: var(--s-5); }
   .band-more :global(.icon) { transition: transform var(--t-fast) var(--ease); }
   .band-more:hover :global(.icon) { transform: translateX(2px); }
-  .band-foot { margin-top: var(--s-4); font-size: var(--fs-14); line-height: var(--lh-14); color: var(--color-text-secondary); }
 
   /* platform tiles: a larger icon above the name, five across */
   .tiles { --cols: 5; gap: var(--s-4); }

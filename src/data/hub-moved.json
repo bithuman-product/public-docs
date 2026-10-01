@@ -1,5 +1,5 @@
 {
-  "$comment": "Docs v2 (SPEC §4 mechanism A) for the Astro pages, which have no frontmatter: the ids that moved off the landing and the Platforms hub while the page stays. Each page draws <MovedAnchors quiet> from its row (a visually hidden stub link plus the jump); scripts/check-anchor-coverage.mjs reads this file beside the `moved:` frontmatter, and every row is also a row of scripts/anchors-moved.json.",
+  "$comment": "Docs v2 (SPEC §4 mechanism A) for the Astro pages, which have no frontmatter: the ids that moved off the landing, the Platforms hub and the API reference while the page stays. Each page draws <MovedAnchors quiet> from its row (a visually hidden stub link plus the jump); scripts/check-anchor-coverage.mjs reads this file beside the `moved:` frontmatter, and every row is also a row of scripts/anchors-moved.json.",
   "/": {
     "build": "/build",
     "resources": "/resources",
@@ -10,5 +10,13 @@
     "performance": "/performance",
     "sdk-reference": "/platforms#support-matrix",
     "your-stack": "/models/how-it-works#audio-in-frames-out"
+  },
+  "/api/reference": {
+    "listVoiceAxes": "/api/video#audio-input",
+    "listVoices": "/api/video#audio-input",
+    "openaiCompatSpeech": "/api/video#audio-input",
+    "previewTunedVoice": "/api/video#audio-input",
+    "synthesizeSpeech": "/api/video#audio-input",
+    "tag/voice": "/api/video#overview"
   }
 }

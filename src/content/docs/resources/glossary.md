@@ -20,7 +20,6 @@ What each term means here, and the page that owns it.
 |---|---|
 | **Essence 2** (`essence-2`) | The model that renders a photoreal person from one portrait. [Essence 2](/models/essence-2) |
 | **Expression 2** (`expression-2`) | The model that renders any character from one portrait. [Expression 2](/models/expression-2) |
-| **Essence 2 Max** | Essence 2 Max is available on the Enterprise plan only. Contact sales to enable it. [Models](/models) |
 | **Essence 1, Expression 1** (`essence-1`, `expression-1`) | The first generation of the models. [First generation](/models/first-generation) |
 | **Agent** | An avatar together with its persona, voice and knowledge, created in the bitHuman app or with the [Agents API](/api/agents). |
 | **Agent code** | The identifier of an agent, for example `A23WJF0199`. Request fields name it `agent_id` or `agent_code`, and examples read it from `BITHUMAN_AGENT_ID` or `BITHUMAN_AGENT_CODE`: all take the same code. [Agent codes](/models/avatar-file#agent-codes) |

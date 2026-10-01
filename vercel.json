@@ -143,12 +143,12 @@
     },
     {
       "source": "/api-reference/voice",
-      "destination": "/api/text-to-speech",
+      "destination": "/api/video",
       "permanent": true
     },
     {
       "source": "/api-reference/voice/",
-      "destination": "/api/text-to-speech",
+      "destination": "/api/video",
       "permanent": true
     },
     {
@@ -182,13 +182,23 @@
       "permanent": true
     },
     {
+      "source": "/api/text-to-speech",
+      "destination": "/api/video",
+      "permanent": true
+    },
+    {
+      "source": "/api/text-to-speech/",
+      "destination": "/api/video",
+      "permanent": true
+    },
+    {
       "source": "/api/voice",
-      "destination": "/api/text-to-speech",
+      "destination": "/api/video",
       "permanent": true
     },
     {
       "source": "/api/voice/",
-      "destination": "/api/text-to-speech",
+      "destination": "/api/video",
       "permanent": true
     },
     {

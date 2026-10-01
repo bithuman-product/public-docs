@@ -57,7 +57,7 @@ const listing = ["llms.txt", "index.md", "start.md", "platforms.md", "deploy.md"
   .map((f) => readFileSync(join(DIST, f), "utf8"))
   .join("\n");
 const pageList = new Set(
-  [...listing.matchAll(/https:\/\/docs\.bithuman\.ai(\/[^)\s`#]*)/g)].map((m) => m[1].replace(/\.md$/, "").replace(/\/$/, "") || "/"),
+  [...listing.matchAll(/https:\/\/docs\.bithuman\.ai(\/[^)\s`#"']*)/g)].map((m) => m[1].replace(/\.md$/, "").replace(/\/$/, "") || "/"),
 );
 // /docs-mcp is served by a Vercel function (vercel.json rewrites), not a built file.
 const SERVED_BY_FUNCTION = new Set(["/docs-mcp"]);

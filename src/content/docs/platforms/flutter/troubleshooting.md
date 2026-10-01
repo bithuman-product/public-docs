@@ -5,7 +5,7 @@ section: platforms
 group: "Flutter"
 order: 40
 type: troubleshooting
-llms: build
+llms: troubleshooting
 ---
 
 | Symptom | Cause | Fix |

@@ -160,7 +160,7 @@ export const DIAGRAMS: Record<string, () => Diagram> = {
     desc: "Your app pushes 16 kHz mono speech into the bitHuman engine and pulls lip-synced frames out. The same engine sits inside the Swift package, the Android SDK, the Python SDK, the CLI and the web embed.",
     claims: ["S1", "S24"],
     groups: [
-      { label: "Speech in", rows: [{ title: "16 kHz mono audio", sub: "a microphone, text to speech or a WebRTC track" }] },
+      { label: "Speech in", rows: [{ title: "16 kHz mono audio", sub: "a microphone, a recording or a WebRTC track" }] },
       { label: "Inside every SDK", rows: [{ title: "The bitHuman engine", sub: "renders the avatar on the device, on your server or in the browser", tone: "accent" }] },
       { label: "Frames out", rows: [{ title: "Lip-synced video", sub: "at the model's own rate, drawn by your app" }] },
     ],

@@ -29,6 +29,8 @@ You need:
 
 Use the `wise-pup` sample (agent code `A23WJF0199`) while you build. For your own agent, keep **Anonymous Share** on in its sharing settings: the widgets open the agent's public link, and its sessions bill your account.
 
+**Sample agents end after 2 minutes.** bitHuman pays for sessions on its sample and showcase agents, such as `wise-pup`, so each one ends 120 seconds after the avatar appears (or 5 minutes after it starts, if the avatar never appears), with an end-of-demo card. Sessions on your own agent have no such limit and run until the visitor closes them.
+
 ```expected
 `https://bithuman.ai/A23WJF0199` opens the avatar in a browser tab.
 ```
@@ -182,3 +184,4 @@ For a private agent, or your own layout, use the web embed in an `<iframe>` with
 | The frame shows `Agent not found` | The agent code is wrong: copy it from the agent's Deploy & Share dialog. |
 | The frame shows a browser error page | Remove the `Cross-Origin-Embedder-Policy` header from your page. |
 | The console says the widget is already initialized | Call `init` once per page. |
+| The session ends after 2 minutes with *That's the end of this 2-minute demo* | the widget points at a bitHuman sample agent, whose sessions are capped at 120 seconds | point `agentUrl` at your own agent |
