@@ -40,6 +40,7 @@ You feed 16 kHz mono speech in and pull picture frames out. Each model is one Gr
 
 - **JDK 17, Gradle 8.11 or newer and Android Gradle Plugin 8.7 or newer.**
 - **A physical arm64 phone.** Emulators cannot load the engines.
+- **Frame rate depends on the phone.** Essence 2 plays at 25 frames a second, and the phone has to render at least that fast to keep up with live speech. A Galaxy S25+ renders about 52 frames a second (37 held for 10 minutes). Older chips can fall below real time: on a Galaxy Z Flip5 (Snapdragon 8 Gen 2) Essence 2 rendered about 14 to 24 frames a second, slowing as the phone warmed. Test on the phones your app targets.
 - **Essence 1** is not available on phones: use Essence 2 or Expression 2 on devices ([First generation](/models/first-generation)).
 
 ## Install

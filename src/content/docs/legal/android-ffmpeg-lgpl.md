@@ -14,13 +14,13 @@ llms: none
 > own advice about your own obligations.
 
 The essence-2 Android AAR links **FFmpeg 7.1 statically**. That triggers
-LGPL-2.1 **§6(a)**, and the materials that discharge it are published on Maven
-Central beside the AAR — no request to make, nobody to ask.
+LGPL-2.1 **§6(a)**, and the materials that discharge it are published beside the
+AAR, in the repository that serves it — no request to make, nobody to ask.
 
 **The offer:**
 
 ```text
-https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relink.zip
+https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relink.zip
 ```
 
 Same group, same artifact, same version as the AAR — classifier `relink`,
@@ -29,10 +29,10 @@ materials. This page names `0.9.0`, the current release; the offer travels with
 every version, so every permanent AAR from `0.2.0` on names its own kit at the
 same shape of URL.
 
-New versions are published at bitHuman's Maven repository,
-`https://maven.bithuman.ai/ai/bithuman/essence2-android/<version>/`, with the kit
-beside the AAR in the same way (`essence2-android-<version>-relink.zip`). Versions
-already on Maven Central keep their kits there.
+Versions from `0.9.0` on are published at bitHuman's Maven repository,
+`https://maven.bithuman.ai/ai/bithuman/essence2-android/<version>/`, and their NOTICE
+names the kit there (`essence2-android-<version>-relink.zip`, beside the AAR).
+Versions up to `0.8.1` name their kits on Maven Central and keep them there.
 
 ---
 
@@ -54,7 +54,7 @@ Measured, with the two AARs side by side — the second command is the control
 that makes the first mean something:
 
 ```bash
-curl -fsSL -o essence2.aar https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0.aar
+curl -fsSL -o essence2.aar https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0.aar
 curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.5.2/expression2-android-0.5.2.aar
 unzip -q -o essence2.aar    jni/arm64-v8a/lible_jni.so    -d e2
 unzip -q -o expression2.aar jni/arm64-v8a/libexpr2jni.so  -d x2
@@ -200,7 +200,7 @@ to relink has to be served with materials — which is what §6(a) asks for.
 Fifteen files in `0.9.0`. Fetch it and check the count yourself:
 
 ```bash
-curl -fsSL -o relink.zip https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relink.zip
+curl -fsSL -o relink.zip https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relink.zip
 unzip -Z1 relink.zip | grep -v '/$' | wc -l
 ```
 
@@ -282,13 +282,13 @@ silently matched everything would print the same reassuring numbers.
 in the shipped bytes, not on this page:
 
 ```bash
-unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip'
-curl -o /dev/null -s -w '%{http_code}\n' -L "$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://repo1[^ ]*relink.zip')"
-curl -o /dev/null -s -w '%{http_code}\n' -L "https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relinkX.zip"
+unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://[^ ]*relink.zip'
+curl -o /dev/null -s -w '%{http_code}\n' -L "$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://[^ ]*relink.zip')"
+curl -o /dev/null -s -w '%{http_code}\n' -L "https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relinkX.zip"
 ```
 
 ```text
-https://repo1.maven.org/maven2/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relink.zip
+https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.0/essence2-android-0.9.0-relink.zip
 200
 404
 rc=0
