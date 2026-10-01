@@ -43,7 +43,7 @@ transient: retry after `Retry-After` seconds when present, otherwise back off.
 | Status | Meaning | [Codes](#error-codes) |
 |---|---|---|
 | `302` | Redirect, not an error | [Model download](/api/agents#download-an-agents-model) redirects to the artifact URL. |
-| `400` | Bad Request | `MISSING_PARAM`, `VALIDATION_ERROR`, `MODEL_NOT_DOWNLOADABLE` |
+| `400` | Bad Request | `MISSING_PARAM`, `VALIDATION_ERROR`, `MODEL_NOT_DOWNLOADABLE`, `MODEL_NOT_OFFERED` |
 | `401` | Unauthorized | `UNAUTHORIZED`, `MISSING_AUTH` |
 | `402` | Payment Required | `INSUFFICIENT_BALANCE` |
 | `403` | Forbidden | [Plan limits](#plan-and-credit-refusals), `FORBIDDEN`, `RUNTIME_SUSPENDED`, `SESSION_DURATION_LIMIT`, `SECRET_REVEAL_CONSOLE_ONLY` |
@@ -110,6 +110,7 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 | `MODEL_SUBJECT_MISMATCH` | 422 | Every model except Expression 2 needs a clear, real human face. A creation or model add for `essence-2`, `essence-1` or `expression-1` (also when `model` is omitted) is refused when the photo or prompt is a cartoon, a stylized character, an animal, a robot or a creature, or when no face can be found in the photo — e.g. `"Expression 1 needs a clear, real human face, and this image looks like an animal. Use Expression 2, which animates any character: cartoons, animals, robots and stylized art. Nothing was charged."` Nothing is billed and no agent is created. Use `expression-2`, or `model: "auto"` to route automatically. See [Choosing a model](/models#choosing-a-model). |
 | `MODEL_PREREQUISITE_MISSING` | 422 | A [model add](/api/agents#add-a-model-to-an-existing-agent) needs a stored asset this agent doesn't have — a stored identity video for `essence-2` (generated internally by Essence creations, never uploaded), face image for `expression-2`, image + voice for `expression-1`, stored identity video or image for `essence-1`. Add the missing image/voice asset, then retry. |
 | `MODEL_NOT_DOWNLOADABLE` | 400 | [Model download](/api/agents#download-an-agents-model) for a family with no per-identity artifact — `expression-1` renders server-side from the agent's image. A `400` because no state change can fix it (unlike the 409s). |
+| `MODEL_NOT_OFFERED` | 400 | The request names a model that is not currently offered to any account; the `message` names it. Nothing is launched or charged, and no other model is used in its place. Pick one of the [models](/models). |
 | `MODEL_NOT_YET_AVAILABLE` | 503 | A model is paused for your account (not returned in normal operation). Nothing is charged; retry later or use another model. |
 | `MODEL_ARTIFACT_NOT_READY` | 404 | [Model download](/api/agents#download-an-agents-model) for a **supported** family whose artifact hasn't been published to the download store yet. Retryable — the message carries a per-family retry hint; poll on this code. |
 
