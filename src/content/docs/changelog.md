@@ -28,6 +28,7 @@ The releases of September 2026 worth a look first.
 | 2026-12-26 (announced 2026-09-27) | REST API | `POST /v1/agent/generate` requires `model`; the bare names `essence` / `expression` and the `version` field are refused with a `400` | send `essence-2`, `expression-2`, `auto`, `essence-1` or `expression-1` |
 | 2026-12-26 (announced 2026-09-27) | REST API | `GET /v1/usage` rows drop `activity_type` | read `source` (already in every row) or `pricing_code_meaning` |
 | 2026-12-26 at the earliest (announced 2026-09-27) | CLI 3.0, bithuman 4.0 | the deprecated alias `BITHUMAN_API_KEY` is no longer read; bithuman 4.0 also drops `bithuman.offline` (use `bithuman.open(path).render(audio, out_mp4=...)`), `token=` and the `AsyncAvatar` alias | rename to `BITHUMAN_API_SECRET`; each old name warns until then |
+| 2026-10-01 | REST API | bitHuman's text-to-speech service is retired: `POST /v1/tts`, `POST /v1/audio/speech`, `GET /v1/voices` and `/v1/studio/*` answer `410 ENDPOINT_RETIRED` | send your own audio (from any TTS provider or a recording) to the [talking video API](/build/talking-video); agent conversation voices and `/v1/agent/{code}/speak` are unchanged |
 | 2026-09-27 | API | `POST /v1/realtime/ephemeral-token` is retired (`410 ENDPOINT_RETIRED`) | connect through the [Realtime relay](/api/realtime) (`wss://api.bithuman.ai/v1/realtime`) or `POST /v1/realtime/connect`; CLI 2.8.1+ already does |
 | 2026-09-24 | expression2-android 0.5.0 | `Expression2ModelStore.MODEL`, `CANON` and `IDLE` are no longer compile-time constants | read them at runtime; a `when` branch or annotation that used them as constants must change |
 | 2026-09-23 | Swift package 2.14.2 | `Expression2Engine.create` refuses without an API secret | call `Expression2Credential.set(_:)` or set `BITHUMAN_API_SECRET` |
@@ -40,6 +41,12 @@ The releases of September 2026 worth a look first.
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
 ## October 2026
+
+### Text-to-speech service retired — 2026-10-01
+
+- **Removed:** bitHuman's own text-to-speech service. `POST /v1/tts`, `POST /v1/audio/speech` (the OpenAI-compatible endpoint), `GET /v1/voices` and `/v1/studio/*` now answer `410 ENDPOINT_RETIRED`. The voice playground at www.bithuman.ai/voice redirects to the [talking video guide](/build/talking-video), and the `text_to_speech` and `list_voices` tools leave the MCP server in the next CLI release.
+- **Unchanged:** an agent's conversation voice (its voice provider, voice cloning, [voices](/build/voices)) and `POST /v1/agent/{code}/speak`, which use third-party voice providers.
+- **Action:** if you called these endpoints, generate the audio with any TTS provider (or record it) and send it to the [talking video API](/build/talking-video). bitHuman renders the avatar from your audio.
 
 ### Swift package 2.19.4 — 2026-10-01
 
