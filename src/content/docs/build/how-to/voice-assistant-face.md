@@ -1,6 +1,6 @@
 ---
 title: "Give an app's voice assistant a face"
-description: "Pass your voice stack's speech, as 16 kHz mono, into the Swift or Android SDK and draw the lip-synced frames it returns."
+description: "Feed your assistant's speech to the SDK and draw the lip-synced frames."
 section: build
 group: "How-to"
 order: 30
@@ -68,7 +68,18 @@ Expression2Credential.set(ProcessInfo.processInfo.environment["BITHUMAN_API_SECR
 Expression2Credential.set(BuildConfig.BITHUMAN_API_SECRET)        // before fetch() and create()
 ```
 
-Keep the secret out of the app bundle you ship: fetch it from your backend at runtime ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
+On Android, `BuildConfig.BITHUMAN_API_SECRET` comes from your app's `build.gradle.kts` (set `BITHUMAN_API_SECRET` in the environment before you build, or read `local.properties` as on [the Android page](/platforms/android#install)):
+
+```kotlin
+android {
+    buildFeatures { buildConfig = true }
+    defaultConfig {
+        buildConfigField("String", "BITHUMAN_API_SECRET", "\"${System.getenv("BITHUMAN_API_SECRET") ?: ""}\"")
+    }
+}
+```
+
+That field compiles the secret into the APK, so use it for local builds only. Keep the secret out of the app bundle you ship: fetch it from your backend at runtime ([What a shipped app holds](/start/api-secret#what-a-shipped-app-holds)).
 
 ```expected
 No refusal when the avatar opens. Without a secret, opening it fails and says why.
