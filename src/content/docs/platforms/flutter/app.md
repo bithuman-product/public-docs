@@ -44,6 +44,7 @@ The [`avatar_chat` app](https://github.com/bithuman-product/bithuman-examples/tr
 
 - **Two models in one app:** `essence2-android` needs `minSdk 29`; raise the app to 29.
 - **Your own voice pipeline:** any speech your stack produces works, as 16 kHz mono PCM through `pushAudio`.
+- **Captions:** with the plugin's realtime session, show `spokenTranscriptStream` rather than `botTranscriptStream`. It releases the agent's words as they are heard, so the caption keeps pace with the voice; each event holds the reply's caption so far, and a cut reply ends with only the words heard (plugin 2.6.27 or newer).
 - **Versions:** each plugin tag fixes the Android SDK versions it uses. The current tag and its line are on [Downloads & versions](/downloads).
 
 ## Reference

@@ -43,6 +43,16 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.27 — 2026-10-01
+
+Tag `flutter-plugin-v2.6.27`.
+
+- **Captions:** `BithumanRealtimeSession.spokenTranscriptStream` releases the agent's words as they are heard, so a caption keeps pace with the voice instead of showing the whole reply at once. Each event holds the reply's caption so far; a reply cut by a barge-in or a typed turn ends with only the words heard. `botTranscriptStream` is unchanged. A custom `VoiceHost` gains one member, `speechPlayout`.
+- **Android:** closing the app with Back while an avatar is on screen no longer crashes it.
+- **iOS and macOS:** the plugin's privacy manifest declares the APIs it uses and ships inside the app.
+- **Release builds:** the words of a transcribed turn are no longer written to the device log.
+- **Action:** pin `ref: flutter-plugin-v2.6.27`; for captions, listen to `spokenTranscriptStream`.
+
 ### `bithuman` 2.11.20 — 2026-10-01
 
 - **Quieter console:** an Essence 2 render no longer prints the engine's per-session diagnostic lines or ONNX Runtime's initializer warnings. Set `BITHUMAN_DEBUG=1` to see them again. Warnings and refusals still print.
