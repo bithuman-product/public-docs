@@ -36,4 +36,5 @@ export const QUERIES = [
   { q: "healthcare", top: "/deploy/use-cases/healthcare", wave: "W6" },
   { q: "trade show", top: "/deploy/use-cases/events-and-trade-shows", wave: "W6" },
   { q: "widget", top: "/build/website-widget", wave: "W6" },
+  { q: "Pipecat", top: "/platforms/pipecat", wave: "W8" },
 ];

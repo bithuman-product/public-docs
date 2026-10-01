@@ -22,6 +22,7 @@ elif event.type == "input_audio_buffer.speech_started":
 ```
 
 - **On the device:** `interrupt()` in Swift and Flutter; `resetState(true)` for Expression 2 and `resetAudio()` for Essence 2 on Android ([Companion app](/build/companion-app#let-the-user-interrupt)).
+- **Pipecat:** `BitHumanVideoService` handles `InterruptionFrame`: the avatar drops the reply in flight and goes back to idle ([Pipecat](/platforms/pipecat/app#integrate-into-your-app)).
 - **A cloud avatar without the plugin:** perform the RPC `lk.clear_buffer` on the avatar ([Cloud avatar](/platforms/livekit/cloud-avatar)).
 
 Barge-in does not change billing: a session bills active session time, talking or idle, to the second.

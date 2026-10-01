@@ -110,6 +110,11 @@ bithuman render wise-pup speech.wav -o out.mp4
     first: 'pip install "livekit-agents[openai,silero]" livekit-plugins-bithuman "bithuman[expression-2]" python-dotenv', time: "10 min", docs: "/platforms/livekit", models: both,
   },
   {
+    id: "pipecat", want: "Add a face to a Pipecat voice bot", use: "Pipecat", needs: "API secret",
+    renders: "in your bot's process, on your own Mac or Linux machine", conversation: "your Pipecat pipeline", credential: "BITHUMAN_API_SECRET in the bot's environment",
+    first: 'pip install "pipecat-bithuman[expression-2]"', time: "10 min", docs: "/platforms/pipecat", models: both,
+  },
+  {
     id: "mcp", want: "Drive it from Claude or Cursor", use: "MCP server", needs: "sign-in",
     first: "claude mcp add bithuman -- bithuman mcp", time: "2 min", docs: "/build/mcp", models: both,
   },
@@ -157,6 +162,8 @@ export const PLATFORM_PAGES: PlatformPage[] = [
     line: "A live avatar or an MP4 from the terminal, on macOS or a Linux PC with no GPU.", renders: ["server", "no-gpu"], artifacts: ["cli"], time: "3 min" },
   { id: "livekit", title: "LiveKit", href: "/platforms/livekit", icon: "wave", group: "Agents & APIs",
     line: "Give a LiveKit voice agent a face, rendered on your server or in the bitHuman cloud.", renders: ["server", "cloud"], artifacts: ["livekit_plugin"], time: "10 min" },
+  { id: "pipecat", title: "Pipecat", href: "/platforms/pipecat", icon: "chat", group: "Agents & APIs",
+    line: "Give a Pipecat voice bot a face, rendered in the bot's own process.", renders: ["server", "no-gpu"], artifacts: [], time: "10 min" },
   { id: "rest", title: "REST API", href: "/platforms/rest", icon: "code", group: "Agents & APIs",
     line: "Agents, live sessions and talking video over HTTPS.", renders: ["cloud"], artifacts: [], time: "2 min" },
 ];

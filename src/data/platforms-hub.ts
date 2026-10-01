@@ -13,5 +13,6 @@ export const PLATFORM_REFERENCE: Record<string, { title: string; href: string }>
   web: { title: "Web reference", href: "/platforms/web/app#reference" },
   python: { title: "Python reference", href: "/platforms/python/reference" },
   cli: { title: "CLI reference", href: "/platforms/cli/reference" },
+  pipecat: { title: "Pipecat reference", href: "/platforms/pipecat/app#reference" },
   rest: { title: "API reference", href: "/api/reference" },
 };

@@ -30,4 +30,4 @@ When you ask for help, include the command you ran, the version (`bithuman --ver
 - **Doc fixes and examples**: open a pull request against the repository above that holds them. Small, focused changes are reviewed fastest.
 - **A new feature or flag**: open an issue with the use case before you write code.
 - **A new language SDK**: open an issue that names the language and what you want to build. The engine ships as a binary, so we build and support new bindings.
-- **A framework integration** (Pipecat, LangChain, and others): build it on a published SDK in the framework's own repository, then open an issue with the link and we will list it. The [LiveKit integration](/platforms/livekit) is the model to follow.
+- **A framework integration**: Pipecat has one, maintained by bitHuman: [`pipecat-bithuman`](/platforms/pipecat). For another framework (LangChain and others), build it on a published SDK in the framework's own repository, then open an issue with the link and we will list it. The [LiveKit integration](/platforms/livekit) is the model to follow.
