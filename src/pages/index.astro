@@ -4,6 +4,7 @@ import Button from "../components/Button.astro";
 import Icon from "../components/Icon.astro";
 import Card from "../components/Card.astro";
 import LiveDemo from "../components/LiveDemo.astro";
+import { FRONT_DOOR_DEMO } from "../data/demo";
 import MovedAnchors from "../components/MovedAnchors.astro";
 import HUB_MOVED from "../data/hub-moved.json";
 import { hubMeta } from "../config/hubs";
@@ -37,7 +38,7 @@ const speed = (title: string) => {
         </div>
       </div>
       <div class="hero-demo" id="demo">
-        <LiveDemo eager label="Talk to a live avatar" />
+        <LiveDemo models={FRONT_DOOR_DEMO} eager label="Talk to a live avatar" />
       </div>
     </div>
   </section>
