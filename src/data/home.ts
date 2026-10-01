@@ -7,6 +7,7 @@
 // from the generated headline (src/lib/perf-headline.ts), prices from /pricing.
 import { PLATFORM_PAGES } from "./platforms";
 import { DEPLOYMENTS as MODES } from "./deployments";
+import { MODEL_CARDS } from "../lib/model-card";
 
 export interface HomeCard {
   title: string;
@@ -43,34 +44,21 @@ export const START_BUILDING: HomeCard[] = PLATFORM_PAGES.map((p) => ({ title: p.
  *  uses the short line; the approved offline copy stays on the pages it links). */
 export const DEPLOYMENTS: HomeCard[] = MODES.map((d) => ({ title: d.name, line: d.line, href: d.href, icon: d.icon }));
 
-export interface ModelCard {
-  title: string;
-  line: string;
-  href: string;
-  /** Poster base path (4:5): <poster>-480.{avif,webp} */
-  poster: string;
-  alt: string;
-  /** Emphasis tags (owner, 2026-09-30: "New" and "Hot" on Essence 2 and Expression 2) */
-  tags?: string[];
-}
+export type { ModelCard } from "../lib/model-card";
 
-/** "Models": the current generation, each shown with one of its public
- *  showcase characters. Not the live demo's two samples: the hero above already
- *  shows those, and the owner asked for variety over one repeated face
- *  (2026-09-29: "I don't like we repeat the same image for different cards"). */
-export const MODELS: ModelCard[] = [
-  { title: "Essence 2", line: "A photoreal person from one portrait.", href: "/models/essence-2", poster: "/images/cast/kwame-warm-museum-guide", alt: "Kwame, an Essence 2 avatar", tags: ["New", "Hot"] },
-  { title: "Expression 2", line: "Any character from one portrait: stylized, animal, robot or human.", href: "/models/expression-2", poster: "/images/cast/pip-the-red-panda-barista", alt: "Pip the red panda barista, an Expression 2 avatar", tags: ["New", "Hot"] },
-];
+/** "Models": every model as a card (owner, 2026-10-01: each model shows an
+ *  image, a description, highlights and the devices it runs on, "rather than
+ *  just merely stating the performance number"). The text lives in
+ *  src/data/models.ts beside the page that states each fact; "Runs on" is its
+ *  matrix, never typed. The current generation carries a showcase character
+ *  other than the live demo's two samples (owner, 2026-09-29: "I don't like we
+ *  repeat the same image for different cards"); the first generation one of
+ *  the house showcase avatars of that model. */
+export const MODELS = MODEL_CARDS.filter((m) => m.generation === "current");
 
-/** The first generation, listed beside the current models (owner, 2026-09-30:
- *  "we should list all Essence versions and Expression versions"). Each line is
- *  its availability, matching src/data/models.ts MATRIX: Essence 1 has no phone
- *  build; Expression 1 renders only in the bitHuman cloud. */
-export const MODELS_V1: { title: string; line: string; href: string }[] = [
-  { title: "Essence 1", line: "First generation. On your own computers, in the bitHuman cloud or in a browser tab; not on phones.", href: "/models/first-generation" },
-  { title: "Expression 1", line: "First generation. In the bitHuman cloud only.", href: "/models/first-generation" },
-];
+/** The first generation (owner, 2026-09-30: "we should list all Essence
+ *  versions and Expression versions"). */
+export const MODELS_V1 = MODEL_CARDS.filter((m) => m.generation === "first");
 
 /** "Build": recipes and the pages that make an avatar yours. */
 export const GUIDES: { title: string; line: string; href: string; icon: string }[] = [

@@ -35,7 +35,7 @@ import { PERF_GROUPS } from "../data/perf-groups.ts";
 import { MODELS, PLACES, MATRIX, type ModelId, type PlaceId } from "../data/models.ts";
 import { DEPLOYMENTS, CPU_ONLY, deploymentById } from "../data/deployments.ts";
 import { DATAFLOWS, DEVICE_METERING_ONLY, type ModeId } from "../data/dataflows.ts";
-import { DEMOS } from "../data/demo.ts";
+import { MODEL_CARDS, modelCardHtml, modelCardMd } from "./model-card.ts";
 import { figureBlock, galleryBlock, githubBlock } from "./showcase.ts";
 import { diagramHtml, diagramText } from "./diagrams.ts";
 import { dataflowExplorer } from "./dataflow-explorer.ts";
@@ -189,28 +189,12 @@ function modelMatrix(arg: string, mode: Mode): string {
 }
 
 /** Every model as a card (owner, 2026-09-30: list all Essence and Expression
- *  versions, with "New" and "Hot" on Essence 2 and Expression 2). The current
- *  two come first with their sample avatar; the first generation follows with
- *  its availability, which matches MATRIX (Essence 1 has no phone build;
- *  Expression 1 renders only in the bitHuman cloud). */
-const V1_LINE: Record<string, string> = {
-  "essence-1": "First generation. On your own computers, in the bitHuman cloud or in a browser tab; not on phones.",
-  "expression-1": "First generation. In the bitHuman cloud only.",
-};
-const MODEL_TAGS = ["New", "Hot"];
+ *  versions, with "New" and "Hot" on Essence 2 and Expression 2; 2026-10-01:
+ *  each with an image, a description, highlights and the devices it runs on).
+ *  The same card as the landing's (src/lib/model-card.ts); "Runs on" is MATRIX. */
 function modelCards(mode: Mode): string {
-  const line = (m: (typeof MODELS)[number]) => {
-    if (m.generation !== "current") return V1_LINE[m.id] ?? "First generation.";
-    const demo = (DEMOS as Record<string, (typeof DEMOS)["essence-2"]>)[m.id];
-    return `${m.renders[0].toUpperCase() + m.renders.slice(1)}.${demo ? ` Sample avatar: \`${demo.slug}\`.` : ""}`;
-  };
-  if (mode === "twin") return MODELS.map((m) => `- [${m.name}](${m.href})${m.generation === "current" ? ` (${MODEL_TAGS.join(", ")})` : ""}: ${line(m)}`).join("\n") + "\n";
-  const card = (m: (typeof MODELS)[number]) => {
-    const tags = m.generation === "current" ? `<span class="tags">${MODEL_TAGS.map((t) => `<span class="tag tag-${t.toLowerCase()}">${t}</span>`).join("")}</span>` : "";
-    return `<li><a class="card card-link${m.generation === "current" ? " is-current" : " is-first"}" href="${m.href}"><span class="card-body"><span class="card-title"><strong>${esc(m.name)}</strong>${tags}</span>` +
-      `<span class="card-line">${inlineHtml(line(m))}</span></span></a></li>`;
-  };
-  return `<ul class="card-grid model-cards" role="list">${MODELS.map(card).join("")}</ul>`;
+  if (mode === "twin") return MODEL_CARDS.map((c) => modelCardMd(c, c.href)).join("\n") + "\n";
+  return `<ul class="card-grid model-cards" role="list">${MODEL_CARDS.map((c) => `<li>${modelCardHtml(c, { h: "strong" })}</li>`).join("")}</ul>`;
 }
 
 // ---------------------------------------------------------------- deployment modes
@@ -312,12 +296,14 @@ export function explorerClaim(): string {
 }
 
 const AXIS = 10; // the bars run 0–10×; a longer value is capped with its number shown
+const AXIS_TICKS = [1, 5, 10];
 
 function explorerRow(r: PerfRowData, model: (typeof PERF_MODELS)[number]): string {
   const c = r.cells[model.id];
   const cpu = noGpu(r.id);
-  const tags = [r.sustained ? `<span class="chip chip-tag">held 10 min</span>` : "", cpu ? `<span class="chip chip-tag pe-cpu">CPU only (no GPU)</span>` : ""].join("");
-  const head = `<th scope="row"><span class="pe-hw">${esc(r.hardware)}</span><span class="pe-sub">${esc(rowName(r.id))}</span>${tags}</th>`;
+  // W9: the tags read as quiet words on the configuration line, not pills
+  const tags = [r.sustained ? `<span class="pe-tag">held 10 min</span>` : "", cpu ? `<span class="pe-tag pe-cpu">CPU only (no GPU)</span>` : ""].join("");
+  const head = `<th scope="row"><span class="pe-hw">${esc(r.hardware)}</span><span class="pe-sub">${esc(rowName(r.id))}${tags}</span></th>`;
   if (!c) return `<tr class="pe-row${r.sustained ? " pe-held" : ""}" data-row="${esc(r.id)}">${head}<td><span class="xrt-none">—<span class="sr"> not measured</span></span></td></tr>`;
   const x = formatMultiple(c.x_realtime);
   const capped = c.x_realtime > AXIS;
@@ -336,8 +322,11 @@ function perfExplorer(mode: Mode): string {
   const models = PERF_MODELS.map((m, i) => `<button type="button" role="radio" aria-checked="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-model="${m.id}">${esc(m.name)}</button>`).join("");
   const panel = (m: (typeof PERF_MODELS)[number]) =>
     `<div class="pe-panel" data-model-panel="${m.id}"><p class="pe-mh">${esc(m.name)}</p>` +
-    groups.map((g) => `<table class="pe-table"><caption>${esc(g.title)}</caption>` +
-      `<thead class="sr"><tr><th scope="col">Configuration</th><th scope="col">${esc(m.name)}, × real time</th></tr></thead><tbody>` +
+    groups.map((g, gi) => `<table class="pe-table"><caption>${esc(g.title)}</caption><colgroup><col class="pe-c1"><col></colgroup>` +
+      // W9: the first table of a panel shows the scale (AXIS_TICKS) over its bars
+      `<thead${gi === 0 ? ` class="pe-head"` : ` class="sr"`}><tr><th scope="col"><span class="sr">Configuration</span></th><th scope="col"><span class="sr">${esc(m.name)}, × real time</span>` +
+      (gi === 0 ? `<span class="pe-axis" aria-hidden="true">${AXIS_TICKS.map((t) => `<span style="--t:${(t / AXIS).toFixed(2)}">${t}×</span>`).join("")}</span>` : "") +
+      `</th></tr></thead><tbody>` +
       g.rows.map((r) => explorerRow(r, m)).join("") + `</tbody></table>`).join("") + `</div>`;
   const count = groups.reduce((a, g) => a + g.rows.length, 0);
   return `<section class="pe" data-perf-explorer data-model="${PERF_MODELS[0].id}" aria-label="Performance explorer" data-pagefind-ignore>` +

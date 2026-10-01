@@ -79,19 +79,22 @@
    cell per model, the frame rate then the multiple of real time as the same
    chip the headline on the landing page carries. */
 .prose table.perf-table td:nth-child(2) { color: var(--color-text-secondary); }
-.prose table.perf-table td.perf-cell { white-space: nowrap; }
-.prose .perf-fps { display: inline-block; min-width: 4.3em; font-weight: var(--fw-medium); color: var(--color-text); }
+/* W9 (owner: "more beautiful and elegant"): the model columns are figures, so
+   they right-align; the frame rate is quiet and the multiple, the page's unit,
+   reads first, each in a fixed tabular width so a column lines up. No pills. */
+.prose table.perf-table th.perf-model, .prose table.perf-table td.perf-cell { text-align: right; white-space: nowrap; }
+.prose table.perf-table th.perf-model { width: 8.5rem; }
+.prose table.perf-table tbody td:first-child { white-space: nowrap; }
+.prose .perf-fps { display: inline-block; min-width: 4.6em; text-align: right; font-weight: var(--fw-regular); color: var(--color-text-secondary); }
 .prose .perf-x {
   display: inline-block;
-  margin-left: 0.4rem;
-  padding: 0.05rem 0.45rem;
-  border-radius: var(--r-pill);
-  font-size: var(--ft-xs);
-  line-height: var(--lh-12);
-  background: var(--color-surface-3);
-  color: var(--color-text-secondary);
+  min-width: 3.6em;
+  margin-left: 0.5rem;
+  text-align: right;
+  font-weight: var(--fw-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
 }
-.prose .perf-x.is-rt { color: var(--color-text); }
 .prose .perf-x.is-below { color: var(--color-text-tertiary); }
 .prose td.perf-cell.is-dash { color: var(--color-text-tertiary); }
 /* The release line the emitter writes under a table is that table's caption. */
@@ -139,6 +142,9 @@
   /* A performance row's platform is the card's title rather than a labelled value. */
   .prose table.perf-table td:first-child { display: block; padding-bottom: 0.45rem; font-size: var(--ft-md); }
   .prose table.perf-table td:first-child::before { content: none; }
+  .prose table.perf-table tbody td:first-child { white-space: normal; }
+  .prose table.perf-table td.perf-cell { text-align: left; }
+  .prose table.perf-table td.perf-cell .perf-fps { min-width: 0; text-align: left; }
   .prose td[data-label]::before {
     content: attr(data-label);
     font-size: var(--ft-xs);

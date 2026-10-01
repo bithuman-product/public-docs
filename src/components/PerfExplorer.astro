@@ -22,8 +22,8 @@
   .pe .pe-legend { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); margin: var(--s-3) 0 0; padding: 0; list-style: none; font-size: var(--ft-xs); line-height: var(--lh-snug); color: var(--color-text-secondary); }
   .pe .pe-legend li { margin: 0; padding: 0; }
   .pe .pe-legend li::before { content: none; }
-  .pe-key-line { display: inline-block; height: 12px; margin-right: 6px; border-left: 2px dashed var(--color-primary); vertical-align: -2px; }
-  .pe-key-cpu, .pe-key-held { display: inline-block; width: 12px; height: 10px; margin-right: 6px; border-radius: var(--r-hair); background: var(--bar-cpu); vertical-align: -1px; }
+  .pe-key-line { display: inline-block; height: 12px; margin-right: 6px; border-left: 1px dashed var(--bar-rule); vertical-align: -2px; }
+  .pe-key-cpu, .pe-key-held { display: inline-block; width: 14px; height: 6px; margin-right: 6px; border-radius: var(--r-pill); background: var(--bar-cpu); vertical-align: 1px; }
   .pe-key-held { background: repeating-linear-gradient(135deg, var(--bar) 0 3px, var(--bar-2) 3px 5px); }
   .js .pe:not([data-held]) .pe-leg-held { display: none; }
   .pe .pe-mh { margin: var(--s-6) 0 0; font-size: var(--ft-md); font-weight: var(--fw-medium); color: var(--color-text); }
@@ -32,24 +32,37 @@
   .js .pe[data-model="essence-2"] [data-model-panel="essence-2"],
   .js .pe[data-model="expression-2"] [data-model-panel="expression-2"] { display: block; }
   .js .pe:not([data-held]) .pe-held { display: none; }
-  .pe .pe-table { display: table; width: 100%; margin: var(--s-5) 0 0; border: 0; border-collapse: collapse; font-size: var(--ft-sm); }
-  .pe .pe-table caption { padding: 0 0 var(--s-1); text-align: left; font-size: var(--ft-xs); font-weight: var(--fw-regular);  color: var(--color-text-tertiary); }
+  .pe .pe-table { display: table; width: 100%; table-layout: fixed; margin: var(--s-6) 0 0; border: 0; border-collapse: collapse; font-size: var(--ft-sm); }
+  .pe .pe-table caption { padding: 0 0 var(--s-2); text-align: left; font-size: var(--ft-sm); font-weight: var(--fw-medium); color: var(--color-text-secondary); }
+  /* the scale over the first table's bars (AXIS_TICKS in src/lib/doc-blocks.ts) */
+  .pe .pe-head th { display: table-cell; padding: 0 0 var(--s-1); border: 0; background: none; }
+  .pe-axis { position: relative; display: block; height: 16px; margin-right: 4rem; font-size: var(--ft-xs); line-height: 16px; font-variant-numeric: tabular-nums; color: var(--color-text-tertiary); }
+  .pe-axis > span { position: absolute; left: calc(var(--t) * 100%); transform: translateX(-50%); }
   .pe .pe-table tr { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; }
-  .pe .pe-table tbody tr + tr { border-top: 1px solid var(--color-border); }
+  .pe .pe-table tbody tr + tr { border-top: 1px solid var(--grid-line); }
   .pe .pe-table tbody tr:hover td { background: none; }
-  .pe .pe-table th, .pe .pe-table td { display: table-cell; padding: var(--s-2) 0; border: 0; background: none; vertical-align: top; text-align: left; white-space: normal; text-transform: none; letter-spacing: 0; font-size: var(--ft-sm); font-weight: var(--fw-regular); color: var(--color-text); }
-  .pe .pe-table th { width: 36%; padding-right: var(--s-4); }
+  .pe .pe-table th, .pe .pe-table td { display: table-cell; padding: var(--s-3) 0; border: 0; background: none; vertical-align: top; text-align: left; white-space: normal; text-transform: none; letter-spacing: 0; font-size: var(--ft-sm); font-weight: var(--fw-regular); color: var(--color-text); }
+  /* every table of a panel shares one geometry, so the bars line up down the page */
+  .pe .pe-table .pe-c1 { width: 38%; }
+  .pe .pe-table th { padding-right: var(--s-5); }
+  .pe .pe-table thead th + th { padding-right: 0; }
   .pe-hw { display: block; font-weight: var(--fw-medium); color: var(--color-text); }
   .pe-sub { display: block; font-size: var(--ft-xs); color: var(--color-text-secondary); }
-  .pe .pe-table .chip-tag { margin: var(--s-1) var(--s-1) 0 0; }
-  .pe-bar { position: relative; display: flex; align-items: center; gap: var(--s-2); height: 24px; }
-  .pe-bar::before { content: ""; position: absolute; top: -3px; bottom: -3px; left: calc((100% - 4rem) / 10); border-left: 2px dashed var(--color-primary); z-index: 1; }
-  .pe-fill { flex: none; width: calc(var(--v) * (100% - 4rem)); min-width: 3px; height: 100%; border-radius: var(--r-sm); background: var(--bar); }
+  /* W9: a row's tags are quiet words on its configuration line, not pills */
+  .pe-tag { white-space: nowrap; color: var(--color-text-tertiary); }
+  .pe-tag::before { content: " · "; }
+  .pe-tag.pe-cpu { color: var(--bar-cpu); }
+  /* W9 (owner: "more beautiful and elegant"): a thin rounded bar on a faint
+     0–10× track, a hairline at 1.0× and the figure right after the bar */
+  .pe-bar { position: relative; display: flex; align-items: center; gap: var(--s-3); height: 20px; }
+  .pe-bar::after { content: ""; position: absolute; left: 0; top: 50%; width: calc(100% - 4rem); height: 8px; margin-top: -4px; border-radius: var(--r-pill); background: var(--bar-track); }
+  .pe-bar::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc((100% - 4rem) / 10); border-left: 1px dashed var(--bar-rule); z-index: 2; }
+  .pe-fill { position: relative; z-index: 1; flex: none; width: calc(var(--v) * (100% - 4rem)); min-width: 4px; height: 8px; border-radius: var(--r-pill); background: var(--bar); }
   .pe-nogpu .pe-fill { background: var(--bar-cpu); }
-  .pe-held .pe-fill { background: repeating-linear-gradient(135deg, var(--bar) 0 6px, var(--bar-2) 6px 10px); }
-  .pe-cap .pe-fill { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); }
-  .pe-below .pe-fill { background: var(--color-text-tertiary); }
-  .pe-x { font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--color-text); white-space: nowrap; }
+  .pe-held .pe-fill { background: repeating-linear-gradient(135deg, var(--bar) 0 5px, var(--bar-2) 5px 8px); }
+  .pe-cap .pe-fill { border-radius: var(--r-pill) 0 0 var(--r-pill); clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%); }
+  .pe-below .pe-fill { background: var(--bar-2); }
+  .pe-x { position: relative; z-index: 1; font-size: var(--ft-sm); font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--color-text); white-space: nowrap; }
   .pe .pe-d { margin: 2px 0 0; border: 0; border-radius: 0; background: none; font-size: var(--ft-xs); color: var(--color-text-secondary); }
   .pe .pe-d summary { display: inline-flex; width: fit-content; padding: 0; gap: 0.35rem; font-size: var(--ft-xs); font-weight: var(--fw-regular); color: var(--color-text-tertiary); }
   .pe .pe-d summary::before { width: 0.3rem; height: 0.3rem; }
@@ -62,5 +75,9 @@
     .pe .pe-table tr { display: grid; grid-template-columns: minmax(0, 1fr); padding: var(--s-2) 0; }
     .pe .pe-table th, .pe .pe-table td { display: block; width: auto; padding: 0; }
     .pe .pe-table td { margin-top: var(--s-2); }
+    .pe .pe-table colgroup { display: none; }
+    .pe .pe-head { display: block; }
+    .pe .pe-head tr { padding: 0; }
+    .pe .pe-head th:first-child { display: none; }
   }
 </style>

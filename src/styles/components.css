@@ -188,14 +188,30 @@ a.chip:hover { border-color: var(--color-border-strong); color: var(--color-text
 .why li strong { font-size: var(--ft-md); font-weight: var(--fw-medium); color: var(--color-text); }
 @media (max-width: 760px) { .why ul { grid-template-columns: 1fr; gap: var(--s-4); } }
 
-/* ---- the model cards on /models (the ```model-cards block) ---- */
-.prose ul.model-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.model-cards .card-title strong { font-size: var(--ft-lg); }
-.prose ul.model-cards { gap: var(--s-4); }
-.model-cards .card.is-current { padding: var(--s-6); }
-.model-cards .card.is-first { padding: var(--s-4) var(--s-6); }
-.model-cards .is-first .card-title strong { font-size: var(--ft-md); }
-@media (max-width: 640px) { .prose ul.model-cards { grid-template-columns: 1fr; } }
+/* ---- the model card (src/lib/model-card.ts): the landing and /models ----
+   Owner, 2026-10-01: an image, a description, highlights and where it runs
+   for every model; a speed figure, when shown, is one quiet line. */
+.mcard { align-items: flex-start; gap: var(--s-5); padding: var(--s-4); }
+.mcard .card-figure { width: 152px; align-self: flex-start; }
+.mcard .card-body { justify-content: flex-start; gap: var(--s-2); padding: var(--s-1) var(--s-2) var(--s-1) 0; }
+.mcard .card-title :is(h2, h3, strong) { font-size: var(--ft-xl); line-height: var(--lh-snug); }
+.mcard .card-line { font-size: var(--ft-sm); color: var(--color-text-secondary); }
+.mcard-points { display: flex; flex-direction: column; gap: 2px; margin-top: var(--s-1); }
+.mcard-point { position: relative; padding-left: var(--s-4); font-size: var(--ft-sm); line-height: var(--lh-14); color: var(--color-text); }
+.mcard-point::before { content: ""; position: absolute; left: 2px; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-tertiary); }
+.mcard-runs { display: block; margin-top: var(--s-2); padding-top: var(--s-2); border-top: 1px solid var(--color-border); font-size: var(--ft-xs); line-height: var(--lh-12); color: var(--color-text-secondary); }
+.mcard-runs-k { display: block; margin-bottom: 2px; font-weight: var(--fw-medium); color: var(--color-text); }
+.mcard-place { white-space: nowrap; }
+.mcard-sep { color: var(--color-text-tertiary); }
+.mcard-note { margin-top: var(--s-1); font-size: var(--ft-xs); line-height: var(--lh-12); font-variant-numeric: tabular-nums; color: var(--color-text-tertiary); }
+/* on /models (the ```model-cards block) the text column is narrow: one card a row */
+.prose ul.model-cards { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+.prose .mcard .card-figure { width: 128px; }
+@media (max-width: 560px) {
+  .mcard { gap: var(--s-3); padding: var(--s-3); }
+  .mcard .card-figure, .prose .mcard .card-figure { width: 96px; }
+  .mcard .card-title :is(h2, h3, strong) { font-size: var(--ft-lg); }
+}
 
 /* ---- the four deployment modes side by side, two by two (the ```deploy-matrix block) ---- */
 .prose ul.deploy-cards { list-style: none; margin: var(--s-5) 0 var(--s-3); padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }

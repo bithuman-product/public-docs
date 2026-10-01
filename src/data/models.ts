@@ -15,11 +15,21 @@ export interface Model {
   /** What it renders, in a few words */
   renders: string;
   generation: "current" | "first";
+  /** The card's one-line description (owner, 2026-10-01: highlights,
+   *  description and supported devices, not only a speed figure) */
+  line: string;
+  /** Two or three short facts, each stated on the model's own page */
+  highlights: string[];
+  /** Poster base path (4:5): <poster>-480.{avif,webp}, a house showcase avatar of this model */
+  poster: string;
+  alt: string;
 }
 
 export interface Place {
   id: PlaceId;
   name: string;
+  /** The name on a model card's "Runs on" line */
+  short: string;
   href: string;
 }
 
@@ -30,21 +40,37 @@ export interface Cell {
 }
 
 export const MODELS: Model[] = [
-  { id: "essence-2", name: "Essence 2", href: "/models/essence-2", renders: "a photoreal person from one portrait", generation: "current" },
-  { id: "expression-2", name: "Expression 2", href: "/models/expression-2", renders: "any character from one portrait", generation: "current" },
-  { id: "essence-1", name: "Essence 1", href: "/models/first-generation#essence-1", renders: "first generation, pre-rendered motion", generation: "first" },
-  { id: "expression-1", name: "Expression 1", href: "/models/first-generation#expression-1", renders: "first generation, animated from a portrait", generation: "first" },
+  { id: "essence-2", name: "Essence 2", href: "/models/essence-2", renders: "a photoreal person from one portrait", generation: "current",
+    line: "A photoreal person from one portrait, live.",
+    // /models/essence-2: "up to 1080p", "a sharp mouth and teeth taken from that video", "Always-on displays"
+    highlights: ["Photoreal, up to 1080p", "Sharp mouth and teeth", "Made for always-on kiosks and displays"],
+    poster: "/images/cast/kwame-warm-museum-guide", alt: "Kwame, an Essence 2 avatar" },
+  { id: "expression-2", name: "Expression 2", href: "/models/expression-2", renders: "any character from one portrait", generation: "current",
+    line: "Any character from one portrait: stylized, animal, robot or human.",
+    // /models/expression-2: "cartoons, animals, creatures, robots, and people", "synthesized each session", "one image is enough"
+    highlights: ["Cartoons, animals, robots and people", "Motion generated live from the audio", "One photo is enough"],
+    poster: "/images/cast/pip-the-red-panda-barista", alt: "Pip the red panda barista, an Expression 2 avatar" },
+  { id: "essence-1", name: "Essence 1", href: "/models/first-generation#essence-1", renders: "first generation, pre-rendered motion", generation: "first",
+    line: "First generation. A pre-built identity with its mouth matched to the audio in real time.",
+    // /models/first-generation#essence-1: "runs on a CPU, with no GPU", "patches the mouth in real time", "custom gestures"
+    highlights: ["Renders on a CPU, no GPU needed", "Lip-sync patched live over pre-rendered motion", "Custom gestures"],
+    poster: "/images/cast/productivity-strategist-dr-vega", alt: "Dr. Vega, an Essence 1 avatar" },
+  { id: "expression-1", name: "Expression 1", href: "/models/first-generation#expression-1", renders: "first generation, animated from a portrait", generation: "first",
+    line: "First generation. Animates a face from a portrait at runtime.",
+    // /models/first-generation#expression-1: "no per-identity build step", "on cloud GPUs", "512×512", "a photo with no agent"
+    highlights: ["No per-identity build step", "Renders on bitHuman cloud GPUs at 512×512", "Can animate a photo with no agent"],
+    poster: "/images/cast/storytelling-grandpa-leo", alt: "Grandpa Leo, an Expression 1 avatar" },
 ];
 
 export const PLACES: Place[] = [
-  { id: "ios", name: "iPhone and iPad", href: "/platforms/ios" },
-  { id: "mac", name: "Mac", href: "/platforms/macos" },
-  { id: "android", name: "Android", href: "/platforms/android" },
-  { id: "cpu", name: "Linux, no GPU", href: "/deploy/cpu" },
-  { id: "browser", name: "Browser (WebGPU)", href: "/platforms/web" },
-  { id: "servers", name: "Your servers", href: "/deploy/self-hosted" },
-  { id: "cloud", name: "bitHuman cloud", href: "/deploy/cloud" },
-  { id: "offline", name: "Fully offline", href: "/deploy/offline" },
+  { id: "ios", name: "iPhone and iPad", short: "iPhone & iPad", href: "/platforms/ios" },
+  { id: "mac", name: "Mac", short: "Mac", href: "/platforms/macos" },
+  { id: "android", name: "Android", short: "Android", href: "/platforms/android" },
+  { id: "cpu", name: "Linux, no GPU", short: "Linux (no GPU)", href: "/deploy/cpu" },
+  { id: "browser", name: "Browser (WebGPU)", short: "Browser", href: "/platforms/web" },
+  { id: "servers", name: "Your servers", short: "Your servers", href: "/deploy/self-hosted" },
+  { id: "cloud", name: "bitHuman cloud", short: "Cloud", href: "/deploy/cloud" },
+  { id: "offline", name: "Fully offline", short: "Offline", href: "/deploy/offline" },
 ];
 
 const no: Cell = { ok: false };
@@ -86,3 +112,7 @@ export const MATRIX: Record<ModelId, Record<PlaceId, Cell>> = {
     offline: no,
   },
 };
+
+/** Where a model runs, in matrix order: the places whose cell is available.
+ *  A model card's "Runs on" line is this, never typed by hand. */
+export const runsOn = (id: ModelId): Place[] => PLACES.filter((p) => MATRIX[id][p.id].ok);

@@ -7,6 +7,7 @@ import { PLATFORMS, PLATFORM_PAGES, QUICKSTART, firstFrame } from "../data/platf
 import { PLATFORM_GROUPS, PLATFORM_REFERENCE } from "../data/platforms-hub";
 import { RENDERS_LABEL } from "../data/labels";
 import { LANDING, START_BUILDING, DEPLOYMENTS, MODELS, MODELS_V1, GUIDES } from "../data/home";
+import { modelCardMd } from "../lib/model-card";
 import { headlineData } from "../lib/perf-headline";
 import versions from "../data/versions.json";
 import { apiSpec } from "../lib/openapi";
@@ -136,7 +137,7 @@ export const GET: APIRoute = async ({ props }) => {
     return md(twin("bitHuman docs", "/", hubMeta("").description,
       `${LANDING.line}\n\nQuickstart: ${SITE}/start.md · Get your API secret: https://www.bithuman.ai/developer/api-keys\n\n` +
       `## Platforms\n\n${cards(START_BUILDING)}\n\n` +
-      `## Models\n\n${MODELS.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}${speed(m.title)}`).join("\n")}\n${MODELS_V1.map((m) => `- [${m.title}](${mdUrl(m.href)}): ${m.line}`).join("\n")}\n\nAll models: ${SITE}/models.md\n\n` +
+      `## Models\n\n${[...MODELS, ...MODELS_V1].map((m) => modelCardMd(m, mdUrl(m.href), speed(m.title).trim())).join("\n")}\n\nAll models: ${SITE}/models.md\n\n` +
       `## Where it runs\n\n${cards(DEPLOYMENTS)}\n\n` +
       `## Start building\n\n${GUIDES.map((g) => `- [${g.title}](${mdUrl(g.href)}): ${g.line}`).join("\n")}\n\n` +
       `All sections:\n\n- Overview: [Quickstart](${SITE}/start.md) · [Pricing](${SITE}/pricing.md) ([estimate](${SITE}/pricing/estimate.md)) · [Resources](${SITE}/resources.md) · [Changelog](${SITE}/changelog.md)\n- [Platforms](${SITE}/platforms.md)\n- [Models](${SITE}/models.md)\n- [Guides](${SITE}/build.md)\n- [Deploy](${SITE}/deploy.md)\n- [Performance](${SITE}/performance.md)\n- [API reference](${SITE}/api.md)\n- [Legal: EU AI Act](${SITE}/legal/eu-ai-act.md) · [Android FFmpeg / LGPL](${SITE}/legal/android-ffmpeg-lgpl.md)\n`));
