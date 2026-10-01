@@ -32,7 +32,7 @@ Put `BitHumanVideoService` after your TTS service: the bot's speech goes in, and
 | Python 3.11–3.14 | `python3 --version` |
 | macOS 14+ on Apple silicon, or Linux x86_64 or arm64 (a PC with no GPU renders both models) | `python3 -c "import platform; print(platform.system(), platform.machine())"` |
 | An API secret | [Your API secret](/start/api-secret) |
-| `ffmpeg` and `git`, for the demo below | `ffmpeg -version` |
+| `ffmpeg` and `git`, for the demo below | `ffmpeg -version`, `git --version` |
 
 ## Install
 
