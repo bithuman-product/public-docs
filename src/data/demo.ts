@@ -29,6 +29,11 @@ export interface Demo {
   clip: { src?: string; poster: string; width: number; height: number; caption: string; captions?: string };
 }
 
+/** The front door's demo (/ and /start) opens on Expression 2, with Essence 2
+ *  one click away in the same toggle; its poster is the no-JS view too (owner,
+ *  2026-10-01). Other pages that show a demo keep their own order. */
+export const FRONT_DOOR_DEMO: DemoModel[] = ["expression-2", "essence-2"];
+
 /** The live session ends after this many seconds on screen. */
 export const DEMO_CAP_SECONDS = 180;
 

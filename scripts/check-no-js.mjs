@@ -10,6 +10,10 @@
 //   /pricing        the calculator's worked examples and its default result
 //   /start          the quickstart picker: every platform's panel, heading,
 //                   steps and "Next" link
+//   / and /start    the live demo opens on Expression 2 (FRONT_DOOR_DEMO,
+//                   owner 2026-10-01): its pick is checked, its poster is the
+//                   one shown (eager, high priority) and the button names it;
+//                   Essence 2 stays one click away in the same toggle
 //   /models         the full model × place matrix, one row per place
 //   /deploy         all four deployment modes
 //   /api/reference  the index: every operation in the OpenAPI spec is a row
@@ -35,6 +39,7 @@ import { DEPLOYMENTS } from "../src/data/deployments.ts";
 import { HIDDEN_ROWS } from "../src/data/perf-groups.ts";
 import { EXAMPLES, provenanceLine } from "../src/data/examples.ts";
 import { FLOW_MODES, DATA_KINDS } from "../src/data/dataflows.ts";
+import { DEMOS, FRONT_DOOR_DEMO } from "../src/data/demo.ts";
 
 const ROOT = join(import.meta.dirname, "..");
 const DIST = join(ROOT, "dist");
@@ -74,6 +79,26 @@ export function gradePerformance(html, rows) {
       if (!text(tr).includes(want)) f.push(`/performance: ${m} ${r.id} does not print ${want}`);
     }
   }
+  return f;
+}
+
+/** The front door's demo opens on FRONT_DOOR_DEMO[0], with the others in the same toggle. */
+export function gradeFrontDemo(route, html, order = FRONT_DOOR_DEMO) {
+  const at = html.indexOf("data-live-demo");
+  if (at < 0) return [`${route}: no live demo`];
+  const ld = element(html, html.lastIndexOf("<section", at), "section");
+  const f = [];
+  const first = DEMOS[order[0]];
+  const checked = [...ld.matchAll(/<button\b[^>]*\bdata-pick="([^"]+)"[^>]*>/g)].filter((m) => /aria-checked="true"/.test(m[0])).map((m) => m[1]);
+  if (checked.join() !== first.model) f.push(`${route}: the demo's checked model is ${checked.join(", ") || "none"}, not ${first.model}`);
+  for (const m of order.slice(1)) if (!ld.includes(`data-pick="${m}"`)) f.push(`${route}: ${m} is not in the demo's toggle`);
+  const shown = [...ld.matchAll(/<div\b[^>]*\bdata-poster="([^"]+)"[^>]*>/g)].filter((m) => !/\shidden(=|\s|>)/.test(m[0]));
+  if (shown.length !== 1 || shown[0][1] !== first.model) f.push(`${route}: the demo shows the ${shown.map((m) => m[1]).join(", ") || "no"} poster without JavaScript, not ${first.model}`);
+  else {
+    const img = (element(ld, shown[0].index, "div").match(/<img\b[^>]*>/) ?? [""])[0];
+    if (!img.includes(`${first.poster}-480.webp`) || !/loading="eager"/.test(img) || !/fetchpriority="high"/.test(img)) f.push(`${route}: the ${first.model} poster is not the eager, high-priority image`);
+  }
+  if (!text(ld).includes(`Talk to ${first.name}`)) f.push(`${route}: the demo's button does not say "Talk to ${first.name}"`);
   return f;
 }
 
@@ -222,6 +247,13 @@ function selftest() {
   ok("a panel without steps fires", gradeStart(eight.replace("<li>Paste</li>", "")).some((x) => x.includes("no steps")));
   ok("a missing panel fires", gradeStart(eight.replace('id="qp-web"', 'id="qp-x"')).some((x) => x.includes("no quickstart panel")));
   ok("a missing Next fires", gradeStart(eight.replace('href="/platforms/web#first-frame"', 'href="#"')).some((x) => x.includes("no Next")));
+  const pick = (m, on) => `<button type="button" role="radio" aria-checked="${on}" tabindex="${on ? 0 : -1}" data-pick="${m}">x</button>`;
+  const poster = (m, hide, eager) => `<div class="ld-poster" data-poster="${m}" data-name="n"${hide ? " hidden" : ""}><picture><img src="${DEMOS[m].poster}-480.webp" loading="${eager ? "eager" : "lazy"}"${eager ? ' fetchpriority="high"' : ""}></picture></div>`;
+  const demo = (a, b) => `<section class="ld" data-live-demo><div class="ld-switch">${pick(a, true)}${pick(b, false)}</div><div class="ld-stage">${poster(a, false, true)}${poster(b, true, false)}<button data-launch><span>Talk to ${DEMOS[a].name}</span></button></div></section>`;
+  ok("a front-door demo on Expression 2 passes", gradeFrontDemo("/", demo("expression-2", "essence-2")).length === 0);
+  ok("a front-door demo on Essence 2 fires", gradeFrontDemo("/", demo("essence-2", "expression-2")).length >= 3);
+  ok("a front door without Essence 2 in the toggle fires", gradeFrontDemo("/", demo("expression-2", "essence-2").replace('data-pick="essence-2"', 'data-pick="x"')).some((x) => x.includes("toggle")));
+  ok("a lazy front-door poster fires", gradeFrontDemo("/", demo("expression-2", "essence-2").replace('loading="eager"', 'loading="lazy"')).some((x) => x.includes("eager")));
   const spec = { paths: { "/v1/x": { post: { operationId: "doX", "x-codeSamples": [{ label: "cURL", source: "curl -X POST https://a.b/v1/x" }] } } } };
   const map = { doX: { page: "/api/x", slug: "do-x" } };
   const ref = '<table><tr id="doX"><td>POST</td><td><a href="/api/x#do-x">Do X</a></td></tr></table>';
@@ -262,6 +294,8 @@ function main() {
     ...gradePerformance(page("performance"), rows),
     ...gradePricing(page("pricing/estimate")),
     ...gradeStart(page("start")),
+    ...gradeFrontDemo("/", page("")),
+    ...gradeFrontDemo("/start", page("start")),
     ...gradeModels(page("models"), PLACES),
     ...gradeDeploy(page("deploy"), DEPLOYMENTS),
     ...gradeGallery(page("examples"), EXAMPLES, provenanceLine),
@@ -286,7 +320,7 @@ function main() {
   if (withNode < 10) faults.push(`only ${withNode} /api/* pages carry Node samples; the curl → Python → Node tabs went missing`);
   for (const f of faults) console.log(`::error::${f}`);
   const ops = Object.values(spec.paths).reduce((a, it) => a + ["get", "post", "put", "patch", "delete"].filter((m) => it[m]).length, 0);
-  console.log(`${faults.length ? "FAIL" : "OK"}: with JavaScript off, /performance draws ${rows.filter((r) => r.published && !HIDDEN_ROWS.includes(r.id)).length} published rows per model, /start every picker platform, /api/reference ${ops} operations, ${withNode} /api pages carry curl, Python and Node`);
+  console.log(`${faults.length ? "FAIL" : "OK"}: with JavaScript off, /performance draws ${rows.filter((r) => r.published && !HIDDEN_ROWS.includes(r.id)).length} published rows per model, /start every picker platform, / and /start open the demo on ${DEMOS[FRONT_DOOR_DEMO[0]].modelName}, /api/reference ${ops} operations, ${withNode} /api pages carry curl, Python and Node`);
   return faults.length ? 1 : 0;
 }
 process.exit(main());
