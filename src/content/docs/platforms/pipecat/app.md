@@ -46,7 +46,7 @@ transport = DailyTransport(
         audio_in_enabled=True,
         audio_out_enabled=True,
         video_out_enabled=True,
-        video_out_width=1280,
+        video_out_width=416,   # the wise-pup sample's frame size; the service logs yours
         video_out_height=720,
     ),
 )
@@ -71,7 +71,7 @@ async def on_left(transport, participant, reason):
     await worker.cancel()  # close the avatar: session time stops
 ```
 
-Run it from the repository, with the avatar file from [Pipecat](/platforms/pipecat#first-frame). `examples/bot.py` sets the transport to 1280×720, and `wise-pup` frames are 416×720, so set `video_out_width=416` in `bot.py` first; otherwise the transport stretches the picture to fit:
+Run it from the repository, with the avatar file from [Pipecat](/platforms/pipecat#first-frame). `examples/bot.py` sets the transport to the `wise-pup` frame size, 416×720; for another avatar, use the size the service logs on the first frame:
 
 ```bash
 pip install "pipecat-bithuman[expression-2]" "pipecat-ai[daily,deepgram,openai,cartesia,silero]"
