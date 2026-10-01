@@ -181,9 +181,8 @@ const BANNED = [
   // `essence_2_max_cloud` has no word boundary after `max` and must still fire.
   { name: "essence-2-max", re: /\bessence[-_ ]?2[-_ ]?max(?![a-z])/gi,
     fixture: "essence-2-max (rate key essence_2_max_cloud, spelled essence2max in one SDK, Essence 2 Max in prose) is GPU only",
-    say: "ENTERPRISE PLAN ONLY — the site names it in exactly one sentence, " +
-         "\"Essence 2 Max is available on the Enterprise plan only. Contact sales to " +
-         "enable it.\" (product rule). Anywhere else, name " +
+    say: "NOT CURRENTLY OFFERED — the site names it in exactly one sentence, " +
+         "\"Essence 2 Max is not currently offered.\" (product rule, 2026-10-01). Anywhere else, name " +
          "`essence-2` instead or delete the sentence: no enum, example, quickstart or rate row" },
   // PRODUCT RULE: "standardize API key names to avoid
   // confusion". The customer's credential is ONE noun, the **API secret**: the
@@ -259,8 +258,12 @@ const CARRIERS = [
   //  the SAME sentence says "Enterprise plan only", so this is also the must-mark guard: any other
   //  mention of the name still fails. bithuman-models tools/check_taught_surface.py
   //  INTERNAL_ONLY_DOCS_CARRIERS holds the same pattern.
-  { why: "the ruled Enterprise-only sentence for Essence 2 Max (product rule)",
-    re: /\bEssence 2 Max\b[^.\n]*\bEnterprise plan only\b/ },
+  // ★2026-10-01 (owner: "no need for active serving of essence-2-max at the moment"): the
+  //  ruled sentence is now "Essence 2 Max is not currently offered." — offered to nobody,
+  //  the Enterprise plan included. It replaced "Essence 2 Max is available on the
+  //  Enterprise plan only." (bithuman-models check_taught_surface grades its own docs only).
+  { why: "the ruled not-currently-offered sentence for Essence 2 Max (product rule)",
+    re: /\bEssence 2 Max is not currently offered\b/ },
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
   { why: "the ONE sentence on /models that retires the word ANE by naming it",
@@ -710,17 +713,18 @@ function selfTest() {
   T(`M2 no pattern fires on its legitimate near-twin${twinFails.length ? " — " + twinFails.join("; ") : ""}`,
     twinFails.length === 0);
 
-  // M2b — the Enterprise-only sentence is the ONLY carrier of Essence 2 Max: the ruled sentence
+  // M2b — the ruled sentence is the ONLY carrier of Essence 2 Max: the ruled sentence
   //       is carried, the name alone is not, and the marker in another sentence is not.
   {
     const e2max = BANNED.find((b) => b.name === "essence-2-max");
     const carried = (line) => CARRIERS.some((c) => c.re.test(line));
     const hits = (line) => { e2max.re.lastIndex = 0; return e2max.re.test(line); };
-    const ok = "Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=models#contact) to enable it.";
-    T("M2b the ruled Enterprise-only sentence carries Essence 2 Max; the bare name and a marker in another sentence do not",
+    const ok = "Essence 2 Max is not currently offered.";
+    T("M2b the ruled sentence carries Essence 2 Max; the bare name and a marker in another sentence do not",
       hits(ok) && carried(ok)
       && hits("Essence 2 Max renders at 1080p.") && !carried("Essence 2 Max renders at 1080p.")
-      && !carried("Essence 2 Max is fast. Enterprise plan only."));
+      && !carried("Essence 2 Max is fast. It is not currently offered.")
+      && !carried("Essence 2 Max is available on the Enterprise plan only."));
   }
 
   // M3 — the two checkers grade disjoint word sets.
@@ -764,7 +768,7 @@ function selfTest() {
     const html = (o) => `<head><script type="application/ld+json">${JSON.stringify({ "@graph": [o] })}</script></head>`;
     const nodes = (o) => jsonLdNodes(html(o)).map((node) => ({ page: "dist/x.html", type: "t", node }));
     const bad = gradeJsonLd(nodes({ "@type": "SoftwareApplication", featureList: ["Runs on the Apple plane", "the bank of mouth shapes"] }));
-    const carried = gradeJsonLd(nodes({ description: "Essence 2 Max is available on the Enterprise plan only." }));
+    const carried = gradeJsonLd(nodes({ description: "Essence 2 Max is not currently offered." }));
     const clean = gradeJsonLd(nodes({ description: "Realtime talking avatars from one portrait." }));
     T("M9 a mechanism word in a page's JSON-LD is reported; a carrier excuses its sentence; clean data passes",
       bad.violations.length === 2 && carried.violations.length === 0 && carried.carried === 1 && clean.violations.length === 0);

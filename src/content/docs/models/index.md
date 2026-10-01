@@ -22,7 +22,7 @@ Essence 2, Expression 2 and Essence 1 read an [`.imx` avatar file](/models/avata
 ```model-cards
 ```
 
-Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=models#contact) to enable it.
+Essence 2 Max is not currently offered.
 
 Essence 1 and Expression 1 are the [first generation](/models/first-generation). They stay supported, and nothing changes for agents that use them.
 
