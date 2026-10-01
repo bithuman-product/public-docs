@@ -53,7 +53,7 @@ engine='essence2-light'`.
 |---|---|
 | `essence1` | [Essence 1](/models/first-generation#essence-1) — also the value an older container with no header resolves to |
 | `essence2-light` | **[Essence 2](/models/essence-2)** — request it as `essence-2` |
-| `essence2-quality` | Essence 2 Max (Enterprise plan only) — not a model you can request on other plans; treat the file as **[Essence 2](/models/essence-2)** |
+| `essence2-quality` | a retired premium-tier name, not a model you can request; treat the file as **[Essence 2](/models/essence-2)** |
 | `expression2` | **[Expression 2](/models/expression-2)** — request it as `expression-2` |
 
 So a current Essence 2 bundle reports `engine: essence2-light`. The model is

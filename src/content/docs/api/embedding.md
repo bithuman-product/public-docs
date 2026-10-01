@@ -35,7 +35,7 @@ append it to the iframe URL.
 | `fingerprint` | string | yes | Stable per-visitor string (any format). Used for per-visitor rate limiting and — if you run your own LLM — sent to your endpoint as the OpenAI `user` field so you can tell whose call it is ([details](/api/providers#knowing-which-end-user-a-call-belongs-to)). Supply one value per end user and reuse it across their visits. |
 | `model` | string | no | Optional model name: `essence-1`, `expression-1`, `essence-2` or `expression-2`. To pin a serving tier see [Models](/performance/method#pin-a-tier-for-a-benchmark). A model outside your plan returns `403 PLAN_REQUIRED`. Validated **early**: the legacy bare names `essence` and `expression` are read as `essence-1` and `expression-1`; unknown values return `400` listing the accepted names; requesting a family the agent can't be launched as (missing from its `supported_models` — a trained model that doesn't exist yet) returns [`409 MODEL_NOT_GENERATED`](/api/errors#model-errors) instead of a failed session later. Omitted → the agent's own default model. |
 
-Essence 2 Max is available on the Enterprise plan only; other plans get `403 PLAN_REQUIRED`.
+A model outside your plan gets `403 PLAN_REQUIRED`.
 
 Every entry of `supported_models` in the mint response (and in `GET /v1/agent/status/{id}`) is a model name you can send back as `model` unchanged.
 

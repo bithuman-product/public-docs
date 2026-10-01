@@ -2,7 +2,7 @@
  "$comment": "Ruled partials that stay word for word on every carrier (SPEC §1 principle 2, §8 check-boilerplate). Each entry: a substring of the sentence and the reason. Never add an entry to make a copy go away; give the fact one home and link to it.",
  "allow": [
   { "match": "Offline license is only available to Business and Enterprise clients", "reason": "the offline copy: OFFLINE_LICENSE_SENTENCE in src/data/offline.ts, kept verbatim on every carrier by check-offline-copy" },
-  { "match": "Essence 2 Max is available on the Enterprise plan only", "reason": "the Essence 2 Max sentence stays word for word where it is today, no new mentions" },
+  { "match": "Essence 2 Max is available on the Enterprise plan only", "reason": "the Essence 2 Max sentence stays word for word, once, on /models only (owner 2026-10-01), no new mentions" },
   { "match": "Linux and macOS computers (Apple silicon); bought in the console or through sales", "reason": "the offline copy (second sentence of the tile line, src/data/offline.ts), verbatim on every carrier by check-offline-copy" },
   { "match": "bitHuman receives usage metering only, never audio, video or conversation text", "reason": "DEVICE_METERING_ONLY (src/data/dataflows.ts, claim S30): the qualifier every on-device privacy statement must carry, word for word, also in the JSON-LD" },
   { "match": "When the avatar renders on your hardware, its audio and video stay there", "reason": "the ```dataflow block's generated line for self-hosted modes (src/data/dataflows.ts): the privacy claim's qualifier, word for word per carrier" },

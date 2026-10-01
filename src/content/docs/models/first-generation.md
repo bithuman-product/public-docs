@@ -75,7 +75,7 @@ legacy names are still strings you read or type:
 | `essence`, `expression` | older `?model=` links and request bodies | Essence 1, Expression 1 | No — write `essence-1` / `expression-1` |
 | `essence2-light` | the `Engine:` line from `bithuman open` — a [legacy engine value](/resources/renamed#the-engine-value-is-a-legacy-name) | Essence 2 | No — read the `Family:` line |
 | `essence-2-light` | the retired tier name (the old Light tier) | Essence 2 | No — a request naming it gets a `400`; write `essence-2` |
-| `elevate`, `essence-2-quality` | retired names of the premium tier, now Essence 2 Max (Enterprise plan only) | a separate tier, not Essence 2 | No — a request naming them gets a `400` |
+| `elevate`, `essence-2-quality` | retired names of the premium tier, now Enterprise-only | a separate tier, not Essence 2 | No — a request naming them gets a `400` |
 | `embody` | a retired request spelling | Expression 2 | No — a request naming it gets a `400` naming `expression-2` |
 | `.lebundle.imx`, `.avatar` | older file extensions | an Essence 2 or Expression 2 model file | Only if you already have one; it opens as-is |
 | `[embody]` | the legacy prefix on log lines of the Apple `Expression2` engine | Expression 2 | Grep your logs for it |

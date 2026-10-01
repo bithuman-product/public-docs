@@ -143,7 +143,7 @@ bithuman render wise-pup speech.wav
 ### Make it your own
 
 - **Your own avatar:** create one with the [Agents API](/api/agents) (or on bitHuman), then `bithuman pull <AGENT_CODE>` and render it the same way.
-- **Your own words:** any audio file `ffmpeg` reads works as the second argument; generate speech with [Text to speech](/api/text-to-speech).
+- **Your own words:** any audio file `ffmpeg` reads works as the second argument: a recording, or a WAV or MP3 from any text-to-speech tool you use.
 - **A photoreal person:** `bithuman render sofia-ramirez speech.wav` renders Essence 2 (this avatar is 1080×1920 portrait).
 - **Scripts and CI:** add `--json` and branch on exit codes ([reference](/platforms/cli/reference#json-output)).
 - **A conversation instead of a clip:** `bithuman run wise-pup` — [Talk to an avatar on your machine](/build/voice-agent).

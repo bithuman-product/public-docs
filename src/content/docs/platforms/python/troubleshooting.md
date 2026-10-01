@@ -5,7 +5,7 @@ section: platforms
 group: "Python"
 order: 40
 type: troubleshooting
-llms: build
+llms: troubleshooting
 ---
 
 | Symptom | Cause | Fix |

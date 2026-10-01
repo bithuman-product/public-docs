@@ -24,7 +24,7 @@ export const QUERIES = [
   { q: "getShowcaseManifest", top: "/api/agents", wave: "W5" },
   { q: "downloadAgentModel", top: "/api/agents", wave: "W5" },
   { q: "listWebhookDeliveries", top: "/api/webhooks", wave: "W5" },
-  { q: "synthesizeSpeech", top: "/api/text-to-speech", wave: "W5" },
+  { q: "generateTalkingVideo", top: "/api/video", wave: "W5" },
   { q: "cloud avatar", top: "/platforms/livekit/cloud-avatar", wave: "W5" },
   { q: "glossary", top: "/resources/glossary", wave: "W5" },
   { q: "FAQ", top: "/resources/faq", wave: "W5" },

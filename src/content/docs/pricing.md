@@ -90,8 +90,6 @@ Annual plans bill twelve months of credits up front. When you switch to a cheape
 - **Concurrent sessions** limit live cloud sessions; a session over the limit is refused with `403 CONCURRENCY_LIMIT_REACHED`, with an `upgrade_url` ([rate limits](/api/rate-limits#session-concurrency)). Self-hosted and on-device sessions are limited only by credits.
 - **Creation costs credits:** a creation you cannot pay for returns [`402 INSUFFICIENT_BALANCE`](/api/errors#plan-and-credit-refusals), with a `topup_url`, and creates nothing.
 
-Essence 2 Max is available on the Enterprise plan only. [Contact sales](https://www.bithuman.ai/enterprise?topic=pricing#contact) to enable it.
-
 ### Top-up credits
 
 On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits) any time at **$1 = 100 credits**. Top-up credits never expire and are spent after plan credits.

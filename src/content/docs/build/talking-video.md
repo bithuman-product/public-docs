@@ -26,7 +26,7 @@ An MP4 of an avatar saying the words in an audio file, with the lips in sync. No
 
 You need:
 
-- an audio file of speech, or a script for the REST API;
+- an audio file of speech: a recording, or a WAV or MP3 from any text-to-speech tool;
 - an [API secret](/start/api-secret) on the Creator plan or higher;
 - for the CLI or Python: Linux (x86_64 or arm64) or a Mac with Apple silicon, and `ffmpeg`.
 
@@ -42,7 +42,7 @@ talking-video-linux eager
 
 ### Get the speech
 
-Any audio file `ffmpeg` reads works on your machine; the REST API takes a file at a public URL, or text in the agent's voice. This sample is 15 seconds of speech:
+Any audio file `ffmpeg` reads works on your machine; the REST API takes a file at a public URL. This sample is 15 seconds of speech:
 
 ```bash
 curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
@@ -101,7 +101,7 @@ The same engine renders a live conversation and a file: speech goes in and lip-s
 ## Make it your own
 
 - **Your avatar:** [create one](/build/create-avatar) from a portrait, then pass its agent code to `bithuman render`, or to the REST call as `agent_code`.
-- **Text instead of audio:** the REST API speaks a script in the agent's voice: `"input": {"type": "text", "text": "…"}` ([Talking video API](/api/video#text-input)).
+- **Your own words:** record them, or make a WAV or MP3 with any text-to-speech tool, then render that file ([Talking video API](/api/video#audio-input)).
 - **A batch:** loop over files with `bithuman render`; every run reuses the downloaded avatar.
 - **What it costs:** on your machine, file rendering bills the length of the video it writes at the self-hosted rate; the REST API bills per minute of output, rounded up ([Pricing](/pricing#talking-video--per-minute-of-output)).
 

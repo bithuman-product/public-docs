@@ -72,8 +72,6 @@ export const MODELS_V1: { title: string; line: string; href: string }[] = [
   { title: "Expression 1", line: "First generation. In the bitHuman cloud only.", href: "/models/first-generation" },
 ];
 
-export const MODELS_NOTE = "Essence 2 Max is available on the Enterprise plan only.";
-
 /** "Build": recipes and the pages that make an avatar yours. */
 export const GUIDES: { title: string; line: string; href: string; icon: string }[] = [
   { title: "Voice agent", line: "A talking avatar on your machine with the CLI or Python.", href: "/build/voice-agent", icon: "wave" },

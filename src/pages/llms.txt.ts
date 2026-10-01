@@ -11,7 +11,7 @@ import { SKILL_PATH, MCP_PATH } from "../lib/agent-layer";
 // per path, speed as × real time (from performance.json), and where the
 // markdown lives. Nothing is typed twice: versions.json, platforms.ts,
 // performance.json and the offline copy feed it. scripts/check-llms.mjs caps it
-// at 60 lines and 6 KB, checks every URL, and asserts the opener (no fps in the
+// at 64 lines and 7 KB (raised 2026-10-01, reason in that script), checks every URL, and asserts the opener (no fps in the
 // first 1,000 characters, the instructions heading, the approved offline copy).
 
 export const prerender = true;
@@ -42,8 +42,8 @@ export const GET: APIRoute = async () => {
   }
   out += `\n## Docs (markdown)\n\n`;
   out += `- Any page as markdown: add \`.md\` to its URL or send \`Accept: text/markdown\`. Speed: ${SITE}/performance/method.md\n`;
-  // One full URL, then the sibling file names: seven full URLs no longer fit the 6 KB
-  // cap once the app platforms got their own file (2026-09-28).
+  // One full URL, then the sibling file names: seven full URLs no longer fit the then
+  // 6 KB cap once the app platforms got their own file (2026-09-28).
   const [first, ...rest] = LLMS_SECTIONS;
   out += `- By section: ${sectionUrl(first.id)} and beside it ${rest.map((s) => `${s.id}.txt`).join(" · ")} (apps.txt: the app platforms) · start, platforms and api in one fetch: ${SITE}/llms-full.txt\n`;
   out += `- Docs MCP server: ${SITE}${MCP_PATH} · agent skill: ${SITE}${SKILL_PATH} · ${SITE}/resources/agents.md\n`;

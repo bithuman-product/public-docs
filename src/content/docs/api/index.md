@@ -23,7 +23,7 @@ Every path on these pages is relative to `https://api.bithuman.ai`. Every endpoi
 
 ```cards
 Agents | /api/agents | Generate avatars, make them speak and ground them in your documents.
-Media | /api/video | Talking videos, text to speech, gestures and files.
+Media | /api/video | Talking videos from your audio, gestures and files.
 Embed and realtime | /api/embedding | An agent in any web page, or a Realtime voice session.
 Account | /api/billing | Credits, API secrets, organizations and your own provider keys.
 ```

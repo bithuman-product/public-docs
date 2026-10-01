@@ -15,7 +15,8 @@ import { contactSalesUrl } from "../config/nav";
 //   /llms/apps.txt       the app platform pages (iOS & iPadOS, macOS, Android, Flutter, Web)
 //   /llms/deploy.txt     where it runs: the four deployment modes, CPU only, privacy, pricing
 //   /llms/models.txt     Essence 2, Expression 2, the first generation, how it works
-//   /llms/build.txt      the recipes and guides: avatars, personas, voices, gestures, MCP, troubleshooting
+//   /llms/build.txt      the recipes and guides: avatars, personas, voices, gestures, MCP
+//   /llms/troubleshooting.txt  every troubleshooting page: the site-wide one and one per platform
 //   /llms/api.txt        the REST API
 //   /llms-full.txt       start + platforms + api in one fetch; apps, deploy, models and build are linked
 //
@@ -23,6 +24,12 @@ import { contactSalesUrl } from "../config/nav";
 // 98,304-byte cap and /llms-full.txt 191,288 of 194,560, so a new platform page (Windows)
 // fit nowhere. The app pages (group "Apps" in PLATFORM_PAGES) moved to /llms/apps.txt,
 // linked from /llms-full.txt like deploy, models and build. No page left the agent layer.
+//
+// ★WHY TROUBLESHOOTING HAS ITS OWN FILE (2026-10-01): /llms/build.txt had reached 98,001 of
+// its 98,304-byte cap, so the next recipe paragraph fit nowhere. The eight troubleshooting
+// pages (the site-wide page and one per platform, ~19 KB) moved to /llms/troubleshooting.txt,
+// linked like build. The per-file cap stays 96 KB: one fetch an agent can hold. No page left
+// the agent layer.
 //
 // A page's section is its `llms:` frontmatter field, never its nav `section` or
 // `type`, so a navigation change cannot move a page in or out of the agent layer.
@@ -41,7 +48,7 @@ export const LINKED_ONLY = new Set([
 ]);
 
 export interface LlmsSection {
-  id: "start" | "platforms" | "apps" | "deploy" | "models" | "build" | "api";
+  id: "start" | "platforms" | "apps" | "deploy" | "models" | "build" | "troubleshooting" | "api";
   title: string;
   /** One line on what the file holds, shown in every index. */
   summary: string;
@@ -75,17 +82,22 @@ export const LLMS_SECTIONS: LlmsSection[] = [
   },
   {
     id: "models", title: "Models", inFull: false,
-    summary: "Essence 2, Expression 2, Essence 2 Max, the first generation, how it works",
+    summary: "Essence 2, Expression 2, the first generation, how it works",
     has: (d) => d.data.llms === "models",
   },
   {
     id: "build", title: "Build", inFull: false,
-    summary: "voice agent, companion app, kiosk, talking video, avatars, personas, voices, gestures, MCP, troubleshooting",
+    summary: "voice agent, companion app, kiosk, talking video, avatars, personas, voices, gestures, MCP",
     has: (d) => d.data.llms === "build",
   },
   {
+    id: "troubleshooting", title: "Troubleshooting", inFull: false,
+    summary: "symptoms and fixes, site-wide and for each platform",
+    has: (d) => d.data.llms === "troubleshooting",
+  },
+  {
     id: "api", title: "REST API", inFull: true,
-    summary: "agents, realtime, video, voice, embedding, errors, rate limits",
+    summary: "agents, realtime, video, embedding, errors, rate limits",
     has: (d) => d.data.llms === "api",
   },
 ];

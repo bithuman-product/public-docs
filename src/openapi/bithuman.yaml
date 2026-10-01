@@ -2668,13 +2668,13 @@ paths:
               -d '{
                 "model": "essence-2",
                 "agent_code": "A95SXN5716",
-                "input": {"type": "text", "text": "Hello, welcome to bitHuman."}
+                "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}
               }'
             # → {"success": true, "job_id": "vid_3f9a2c1b8e7d4a6f0b21", "status": "processing"}
             # add "wait": true to block (≤ ~90 s) for the finished video_url
       summary: Generate a talking video
       description: |
-        Render a talking-video (mp4) from **text** or **audio**, driven by one of
+        Render a talking-video (mp4) from **your audio**, driven by one of
         your agents.
 
         **Two modes:**
@@ -2687,16 +2687,14 @@ paths:
           response. If the render is still running at that cap you get the async
           response (`status: processing`) instead — just poll the `job_id`.
 
-        - **Text input** — the agent's own voice speaks your `text` (text → speech →
-          render). Pass `input.voice` to override the voice for this render.
-        - **Audio input** — your `audio_url` (a hosted WAV/MP3) drives the render
-          directly.
+        **Input:** your own audio. `audio_url` (a hosted WAV/MP3: a recording, or
+        the output of any text-to-speech tool) drives the render directly.
 
         The output is a public CDN URL. `essence-2` renders at
         **1080p** by default (1080×1920 portrait or 1920×1080 landscape, matching
         the source orientation and capped at the source's long side);
         `expression-2` renders at its native 416×720. Limits: max **120 seconds**
-        of output, max **5000 characters** of text.
+        of output.
       tags: [Video]
       parameters:
         - name: Idempotency-Key
@@ -2723,7 +2721,7 @@ paths:
                   example: "essence-2"
                 agent_code:
                   type: string
-                  description: An agent you own — provides the avatar identity (and, for text input, the default voice).
+                  description: An agent you own, or a public sample from `GET /v1/models/showcase` (audio input, a model in its `supported_models`) — provides the avatar identity.
                   example: "A95SXN5716"
                 wait:
                   type: boolean
@@ -2741,19 +2739,11 @@ paths:
                   properties:
                     type:
                       type: string
-                      enum: [text, audio]
-                    text:
-                      type: string
-                      maxLength: 5000
-                      description: Required when `type` is `text`. The script to speak.
-                      example: "Hello, welcome to bitHuman."
-                    voice:
-                      type: string
-                      description: Optional voice id override for text input. Defaults to the agent's own voice.
+                      enum: [audio]
                     audio_url:
                       type: string
-                      description: Required when `type` is `audio`. A public URL to a WAV or MP3 file.
-                      example: "https://example.com/speech.wav"
+                      description: A public URL to a WAV or MP3 file.
+                      example: "https://docs.bithuman.ai/samples/speech-16k.wav"
       responses:
         "200":
           description: >-
@@ -2899,330 +2889,6 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-        "429":
-          $ref: "#/components/responses/RateLimited"
-
-  /v1/tts:
-    post:
-      operationId: synthesizeSpeech
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl -X POST https://api.bithuman.ai/v1/tts \
-              -H "api-secret: $BITHUMAN_API_SECRET" \
-              -H "content-type: application/json" \
-              -d '{"text": "Hello from bitHuman.", "voice": "F1"}' \
-              --output hello.wav
-      summary: Synthesize speech from text
-      description: |
-        Generates audio from a text prompt: a 16-bit mono WAV at 44.1 kHz, or,
-        with `stream: true`, `audio/pcm; rate=44100; framing=len32be` (each
-        frame a 4-byte big-endian length, then that many bytes of 16-bit
-        mono PCM; a zero-length frame ends the stream). Resample to 16 kHz
-        before feeding the Swift or Android SDKs. Pick a built-in voice
-        (`M1`-`F5`), tune it inline with `axes`, or pass a `voice_code` from the
-        [Voice Designer](https://www.bithuman.ai/voice). Supports 30+ languages,
-        per-request quality / speed tuning, and optional sentence-by-sentence
-        streaming. An unknown `voice_code` returns `404 VOICE_NOT_FOUND`; an
-        unknown built-in `voice` returns `404 NOT_FOUND`.
-      tags: [Voice]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [text]
-              properties:
-                text:
-                  type: string
-                  description: Text to synthesize (any length; multi-sentence supported).
-                  example: "Hello from bitHuman."
-                voice:
-                  type: string
-                  description: Voice ID. Built-in voices are `M1`-`M5` (male) and `F1`-`F5` (female). List them with `GET /v1/voices`.
-                  default: "M1"
-                  example: "F1"
-                voice_code:
-                  type: string
-                  description: |
-                    A designed-voice handle from the [Voice Designer](https://www.bithuman.ai/voice).
-                    Expands server-side to a base voice + tuning, so you don't send `voice` / `axes`
-                    yourself. A UUID references a saved voice; a `bv1_…` code self-encodes the config.
-                    Takes precedence over `voice` when present.
-                  example: "00000000-0000-4000-8000-000000000000"
-                axes:
-                  type: object
-                  description: |
-                    Inline voice tuning — the same semantic axes as `GET /v1/studio/axes`
-                    (`gender`, `pitch`, `rate`, `brightness`). Offsets are small (roughly −0.3…0.3);
-                    `0` is neutral. Ignored when `voice_code` is supplied.
-                  additionalProperties:
-                    type: number
-                  example:
-                    gender: 0.1
-                    pitch: 0.05
-                    rate: -0.1
-                    brightness: 0.2
-                language:
-                  type: string
-                  description: ISO-2 language code. 30+ languages supported (the advertised count and the live server list don't always match exactly).
-                  default: "en"
-                  example: "en"
-                total_steps:
-                  type: integer
-                  minimum: 1
-                  maximum: 100
-                  default: 8
-                  description: Denoise step count. `5`=fast/lower quality, `8`=balanced, `12`=highest.
-                speed:
-                  type: number
-                  minimum: 0.7
-                  maximum: 2.0
-                  default: 1.05
-                  description: Playback rate.
-                format:
-                  type: string
-                  enum: [wav, pcm_s16le]
-                  default: wav
-                  description: Response audio format.
-                stream:
-                  type: boolean
-                  default: false
-                  description: If true, returns sentence-chunked length-prefixed PCM frames.
-      responses:
-        "200":
-          description: Audio bytes (WAV or PCM, per request `format`).
-          content:
-            audio/wav:
-              schema:
-                type: string
-                format: binary
-            audio/pcm:
-              schema:
-                type: string
-                format: binary
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          description: "`voice_code` did not resolve to a known voice (`VOICE_NOT_FOUND`)."
-        "429":
-          $ref: "#/components/responses/RateLimited"
-        "503":
-          description: Queue full / service overloaded. Retry with backoff.
-
-  /v1/voices:
-    get:
-      operationId: listVoices
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl https://api.bithuman.ai/v1/voices \
-              -H "api-secret: $BITHUMAN_API_SECRET"
-      summary: List available voices
-      description: Returns the catalog of built-in and custom voices.
-      tags: [Voice]
-      responses:
-        "200":
-          description: Voice catalog
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  voices:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: "F1"
-                        kind:
-                          type: string
-                          enum: [builtin, custom]
-                          example: "builtin"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "429":
-          $ref: "#/components/responses/RateLimited"
-
-  /v1/audio/speech:
-    post:
-      operationId: openaiCompatSpeech
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl -X POST https://api.bithuman.ai/v1/audio/speech \
-              -H "api-secret: $BITHUMAN_API_SECRET" \
-              -H "content-type: application/json" \
-              -d '{"model": "tts-1", "input": "Hello from bitHuman.", "voice": "M1"}' \
-              --output speech.wav
-      summary: OpenAI-compatible speech endpoint
-      description: |
-        Accepts the request body of OpenAI's `POST /v1/audio/speech`
-        (`model`, `input`, `voice`). `voice` must be a bitHuman voice
-        (`M1`-`F5`); OpenAI voice names such as `alloy` return `404`.
-        Authenticate with the `api-secret` header — `Authorization: Bearer`
-        returns `401`, so with an OpenAI SDK set the base URL to
-        `https://api.bithuman.ai/v1` and add `api-secret` as a default
-        header. Output is WAV only; `response_format: "mp3"` returns `400`.
-      tags: [Voice]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [input]
-              properties:
-                model:
-                  type: string
-                  description: Ignored — bitHuman uses its own TTS model. Pass `"tts-1"` for compatibility.
-                  example: "tts-1"
-                input:
-                  type: string
-                  description: Text to synthesize.
-                  example: "Hello from bitHuman."
-                voice:
-                  type: string
-                  description: bitHuman voice ID (`M1`-`F5`).
-                  default: "M1"
-                response_format:
-                  type: string
-                  enum: [wav]
-                  default: wav
-                speed:
-                  type: number
-                  minimum: 0.7
-                  maximum: 2.0
-                  default: 1.05
-      responses:
-        "200":
-          description: Audio bytes (WAV by default).
-          content:
-            audio/wav:
-              schema:
-                type: string
-                format: binary
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "429":
-          $ref: "#/components/responses/RateLimited"
-
-  /v1/studio/axes:
-    get:
-      operationId: listVoiceAxes
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl https://api.bithuman.ai/v1/studio/axes \
-              -H "api-secret: $BITHUMAN_API_SECRET"
-      summary: List voice-tuning semantic axes
-      description: |
-        Returns the available semantic axes (gender, pitch, rate, brightness)
-        plus how each built-in voice projects onto them and the suggested
-        slider range. Powers the Tune popover in the Voice Playground.
-      tags: [Voice]
-      responses:
-        "200":
-          description: Axis catalog
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  axes:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          example: "pitch"
-                        description:
-                          type: string
-                          example: "Pitch: − lower, + higher"
-                        suggested_min:
-                          type: number
-                          example: -0.28
-                        suggested_max:
-                          type: number
-                          example: 0.28
-                        anchor_projections:
-                          type: object
-                          additionalProperties:
-                            type: number
-                          description: Per-voice-ID projection onto this axis.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "429":
-          $ref: "#/components/responses/RateLimited"
-
-  /v1/studio/preview:
-    post:
-      operationId: previewTunedVoice
-      x-codeSamples:
-        - lang: shell
-          label: cURL
-          source: |
-            curl -X POST https://api.bithuman.ai/v1/studio/preview \
-              -H "api-secret: $BITHUMAN_API_SECRET" \
-              -H "content-type: application/json" \
-              -d '{"text": "Tuned voice preview.", "base_voice": "F1", "axes": {"pitch": 0.15}}' \
-              --output preview.wav
-      summary: Preview an axis-edited voice
-      description: |
-        Synthesize a one-off audio clip using a built-in voice edited along
-        the semantic axes returned by `GET /v1/studio/axes`. The edited voice
-        is ephemeral — it is NOT persisted in the voice catalog.
-      tags: [Voice]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [text, base_voice]
-              properties:
-                text:
-                  type: string
-                  example: "Tuned voice preview."
-                base_voice:
-                  type: string
-                  description: Built-in voice ID (`M1`-`F5`) to edit.
-                  example: "F1"
-                axes:
-                  type: object
-                  description: Optional map of axis-name → float value. Omit to preview the unedited base voice.
-                  additionalProperties:
-                    type: number
-                  example:
-                    pitch: 0.15
-                    brightness: -0.10
-                language:
-                  type: string
-                  default: "en"
-      responses:
-        "200":
-          description: Audio bytes (WAV).
-          content:
-            audio/wav:
-              schema:
-                type: string
-                format: binary
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
         "429":
           $ref: "#/components/responses/RateLimited"
 
@@ -5187,7 +4853,6 @@ x-tagGroups:
   - name: API reference
     tags:
       - Authentication
-      - Voice
       - Agent Generation
       - Agent Management
       - Agent Context
@@ -5277,13 +4942,6 @@ tags:
     description: "Help, Discord and the status page: [https://docs.bithuman.ai/support](https://docs.bithuman.ai/support)."
   - name: Authentication
     description: Verify API credentials with `POST /v1/validate`.
-  - name: Voice
-    description: |
-      Text-to-speech synthesis in 30+ languages with 10 built-in
-      voices, plus an OpenAI-compatible drop-in (`/v1/audio/speech`)
-      and a voice-tuning preview surface.
-
-      **Try it live:** [www.bithuman.ai/voice](https://www.bithuman.ai/voice).
   - name: Agent Generation
     description: Create new avatar agents from prompts, portraits, and voice samples.
   - name: Agent Management

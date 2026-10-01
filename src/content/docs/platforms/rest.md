@@ -11,15 +11,15 @@ next: ["/api/agents", "/api/video", "/api/reference"]
 availability: creator
 ---
 
-The REST API creates agents, speaks with text to speech, drives live sessions and renders talking videos, from any language.
+The REST API creates agents, drives live sessions and renders talking videos from your audio, from any language.
 
 ## Before you start
 
 - An [API secret](/start/api-secret). API use needs the Creator plan or higher.
 - `curl`, or any HTTP client.
-- Credits for anything beyond a check: creating an agent is a one-time charge ([pricing](/pricing#creation--one-time-credits)).
+- Credits for anything beyond a check: a talking video bills per minute of output ([pricing](/pricing#talking-video--per-minute-of-output)).
 
-Your first own agent takes time: about 2–2.5 hours for `essence-2` or `expression-2`, or minutes for `expression-1` with a real person's portrait. The sample avatars, such as `A23WJF0199`, work in the [web embed](/platforms/web) and as downloads, but `/v1/agent/{code}`, `/speak` and talking video need an agent you own.
+Start with a sample agent: any API secret can read the public samples, such as `A23WJF0199` (`wise-pup`), and render them speaking your audio, so your first talking video takes minutes. [`GET /v1/models/showcase`](https://api.bithuman.ai/v1/models/showcase) lists them; each one's `supported_models` says which `model` to pass. Then create an agent of your own.
 
 To try an avatar with no account first, use the [web embed](/platforms/web).
 
@@ -29,21 +29,25 @@ Send your API secret in the `api-secret` header on every call. `POST /v1/validat
 
 ## First frame
 
+Render the `wise-pup` sample speaking 15 seconds of hosted speech:
+
 ```bash
 export BITHUMAN_API_SECRET="<your API secret>"
 curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
 # → {"valid":true}
-curl -s -X POST https://api.bithuman.ai/v1/tts \
+curl -s -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"text": "Hello from bitHuman.", "voice": "F1"}' --output hello.wav
-# → hello.wav
+  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'
+# → {"success": true, "job_id": "vid_…", "status": "processing"}
+curl -s https://api.bithuman.ai/v1/video/vid_… -H "api-secret: $BITHUMAN_API_SECRET"
+# → … "status": "completed", "video_url": "https://…mp4"
 ```
 
-`/v1/validate` always returns `200`; read `valid`. Get an API secret under [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
+Poll until `status` is `completed`, then open `video_url`. The video costs 4 credits, billed to you; the sample's owner pays nothing. bitHuman renders the audio you bring: a recording, or a WAV or MP3 from any text-to-speech tool, at a public URL. On a sample, only audio input and the models in its `supported_models` work, and `/speak` is the owner's alone. Get an API secret under [Developer → API Secrets](https://www.bithuman.ai/developer/api-keys).
 
 ## Complete example
 
-Four shell scripts from the examples repository: check your secret, check your balance, create an agent from a prompt, then talk to it in the browser.
+Then make an agent of your own. Four shell scripts from the examples repository: check your secret, check your balance, create an agent from a prompt, then talk to it in the browser.
 
 ### Get the code
 
@@ -59,7 +63,7 @@ cd bithuman-examples/api/rest-api/curl
 BITHUMAN_MODEL=expression-2 ./generate-agent.sh "You are a friendly fitness coach."
 ```
 
-`validate.sh` and `check-credits.sh` spend nothing. `generate-agent.sh` spends one creation charge, then polls until the agent is ready (about 2 to 2.5 hours for a second-generation model; a failed creation is refunded).
+`validate.sh` and `check-credits.sh` spend nothing. `generate-agent.sh` spends one creation charge ([pricing](/pricing#creation--one-time-credits)), then polls until the agent is ready (about 2 to 2.5 hours for a second-generation model; a failed creation is refunded).
 
 ### Expected output
 
@@ -91,14 +95,14 @@ Open `https://www.bithuman.ai/embed/<agent_id>` and talk to your agent. While th
 
 - **A face of your own:** add `"image": "https://…/portrait.jpg"` to the JSON in `generate-agent.sh`.
 - **A photoreal person:** `BITHUMAN_MODEL=essence-2`, or `auto` to let the platform choose. Every model except Expression 2 needs a real human face ([Choosing a model](/models#choosing-a-model)).
-- **A video instead of a live session:** [`POST /v1/video/generate`](/api/video) renders your agent saying a line to an MP4.
+- **A video instead of a live session:** [`POST /v1/video/generate`](/api/video) renders your agent speaking your audio to an MP4.
 - **Other languages:** [`api/rest-api/python`](https://github.com/bithuman-product/bithuman-examples/tree/main/api/rest-api/python) has the same calls in Python.
 
 ## Integrate into your app
 
 ### Create your own agent
 
-Creation is a one-time charge ([pricing](/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Always send `model`: `essence-2` for a real person, `expression-2` for any character ([Choosing a model](/models#choosing-a-model)).
+Creation is a one-time charge ([pricing](/pricing#creation--one-time-credits)); a balance below the creation cost returns `402`. Your first own agent takes about 2–2.5 hours for `essence-2` or `expression-2`, or minutes for `expression-1` with a real person's portrait. Always send `model`: `essence-2` for a real person, `expression-2` for any character ([Choosing a model](/models#choosing-a-model)).
 
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/agent/generate \
@@ -140,7 +144,7 @@ Open the page and talk to it. Keep the `*` in `allow`, or the microphone is bloc
 ```bash
 curl -s -X POST https://api.bithuman.ai/v1/video/generate \
   -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
-  -d '{"agent_code": "A80HVD8577", "model": "expression-2", "input": {"type": "text", "text": "Welcome to our store."}}'
+  -d '{"agent_code": "A80HVD8577", "model": "expression-2", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k.wav"}}'
 ```
 
 Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `video_url` ([Talking video](/api/video)).
@@ -153,7 +157,9 @@ Poll `GET /v1/video/{job_id}` until `status` is `completed`, then download `vide
 | `validate.sh` prints `"valid": false` | the secret is wrong or revoked | create a new one |
 | The status stays at `lip_sync` for a long time | that is the training step (about 2 hours) | keep polling |
 | `422 MODEL_SUBJECT_MISMATCH` | the model needs a real human face; the image or prompt is a character, or has no face | use `expression-2`, or `auto`; nothing was charged |
-| `404` for `A23WJF0199` on `/v1/agent/…` | sample avatars only embed and download | create an agent of your own |
+| `404` for `A23WJF0199` on `/speak`, an update or a delete | on a sample, only reads and audio-input talking video are open to you | create an agent of your own |
+| `400 VALIDATION_ERROR` *renders from audio only* on a sample | samples render your audio, not text | send `"input": {"type": "audio", "audio_url": "…"}` |
+| `409 MODEL_NOT_GENERATED` on a sample | the `model` is not in the sample's `supported_models` | pass a model it lists (`wise-pup`: `expression-2`) |
 | `404` from `speak.sh` or `/v1/agent/{code}/speak` | the agent is not yours, or it has no live session | the message says which; open its embed page first |
 
 All error codes: [Errors](/api/errors).
@@ -161,4 +167,4 @@ All error codes: [Errors](/api/errors).
 ## Reference
 
 - [API reference](/api/reference): every endpoint, generated from the OpenAPI spec.
-- [Agents](/api/agents) · [Talking video API](/api/video) · [Text to speech](/api/text-to-speech) · [Embedding](/api/embedding) · [Errors](/api/errors)
+- [Agents](/api/agents) · [Talking video API](/api/video) · [Embedding](/api/embedding) · [Errors](/api/errors)

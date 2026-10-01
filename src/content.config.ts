@@ -27,7 +27,7 @@ const docs = defineCollection({
     // one of the /llms/<section>.txt files, `linked` (in no section file, but named by the
     // llms files as a URL or .md twin), or `none` (only from check-llms' reasoned allowlist).
     // It alone decides membership, so moving a page in the nav never moves it in the agent layer.
-    llms: z.enum(["start", "platforms", "apps", "deploy", "models", "build", "api", "linked", "none"]),
+    llms: z.enum(["start", "platforms", "apps", "deploy", "models", "build", "troubleshooting", "api", "linked", "none"]),
     // anchors that moved off this page while the page stays (docs v2 SPEC §4, mechanism A):
     // old id → its new home ("/platforms/swift/app#complete-example"). Rendered as a stub
     // line plus a jump (src/components/MovedAnchors.astro); scripts/anchors-moved.json is
@@ -44,7 +44,7 @@ const docs = defineCollection({
     renders: z.array(z.enum(["device", "browser", "server", "cloud", "offline", "no-gpu"])).optional(),
     // the platforms and models the page is about (search filters and chips)
     platforms: z.array(z.string()).optional(),
-    models: z.array(z.enum(["essence-2", "expression-2", "essence-2-max", "essence-1", "expression-1"])).optional(),
+    models: z.array(z.enum(["essence-2", "expression-2", "essence-1", "expression-1"])).optional(),
     // the PLAN_v2 SAFE claim ids the page makes (required on deploy and privacy pages)
     claims: z.array(z.string()).optional(),
     // what a reader needs, as chips under the H1 (the fixed "Needs" vocabulary, STYLE.md)

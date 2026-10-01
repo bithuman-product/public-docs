@@ -34,7 +34,7 @@ Starts an asynchronous creation and returns an `agent_id` at once. Credits are r
 | `transparency` | boolean | no | `true` generates on a green-screen background for chroma key |
 | `agent_id` | string | no | Leave it out; a fresh code is generated. If it names an agent you already own, that agent is regenerated in place (it returns to `processing`); another account's code returns `404` |
 
-Essence 2 Max is available on the Enterprise plan only; other plans get `403 PLAN_REQUIRED`. [Contact sales](https://www.bithuman.ai/enterprise?topic=api-agents#contact) to enable it.
+A model outside your plan gets `403 PLAN_REQUIRED`.
 
 Headers: `api-secret`, and optionally `Idempotency-Key`: a repeated request with the same key returns the first response and starts no second creation.
 

@@ -303,6 +303,10 @@
   {
    "source": "/sdk/mobile",
    "new": "/deploy/on-device"
+  },
+  {
+   "source": "/api/text-to-speech",
+   "new": "/api/video"
   }
  ],
  "short": [
