@@ -112,11 +112,11 @@ const speed = (title: string) => {
 <style>
   /* W8 (owner, 2026-09-30: "the left/right get separated so much"): the whole
      landing sits in one centred column narrower than the header; the hero's
-     text and demo fill that same column, so their edges line up with every
-     band below and nothing floats to the far edges. Bigger cards, fewer words. */
+     text and demo sit side by side as one centred pair with a fixed gap, so
+     nothing floats to the far edges. Bigger cards, fewer words. */
   .container { max-width: 1120px; }
   .hero { padding-block: var(--s-16) var(--s-12); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: var(--s-16); align-items: center; }
+  .hero-grid { display: grid; grid-template-columns: fit-content(32rem) minmax(0, 420px); justify-content: center; gap: var(--s-24); align-items: center; }
   .hero h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); }
   .hero .lede { margin-top: var(--s-4); font-size: var(--fs-18); line-height: var(--lh-18); color: var(--color-text-secondary); max-width: 40ch; }
   .hero-cta { display: flex; gap: var(--s-3); margin-top: var(--s-8); flex-wrap: wrap; }
