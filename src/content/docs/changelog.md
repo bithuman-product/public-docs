@@ -48,6 +48,16 @@ The releases of September 2026 worth a look first.
 - **Unchanged:** an agent's conversation voice (its voice provider, voice cloning, [voices](/build/voices)) and `POST /v1/agent/{code}/speak`, which use third-party voice providers.
 - **Action:** if you called these endpoints, generate the audio with any TTS provider (or record it) and send it to the [talking video API](/build/talking-video). bitHuman renders the avatar from your audio.
 
+### CLI 2.8.7 — 2026-10-01
+
+Tag `cli-v2.8.7`.
+
+- **Clearer:** `bithuman --help` and `bithuman run --help` no longer call the Wise Pup sample avatar free; every session bills your credits for active session time ([pricing](/pricing)). `run --help` says where a session renders: a showcase name or a file on your machine (self-hosted rate); an agent code on your machine when it can, otherwise on bitHuman cloud (cloud rate). The line that prints the session URL says which, and a local `--json` `session_started` event carries `"mode":"local"`.
+- **Fix:** `bithuman doctor` no longer reports a fresh install as not ready only because the agent worker is not set up yet (the first `bithuman run` sets it up). Its missing-encoder advice says to reinstall the CLI.
+- **Fix:** `bithuman render` on Linux names the encoder it uses (`libx264`).
+- The rendering engine and billing are unchanged from 2.8.6.
+- **Action:** `brew upgrade bithuman-cli`, or re-run the installer.
+
 ### Swift package 2.19.4 — 2026-10-01
 
 Tag `v2.19.4`.
