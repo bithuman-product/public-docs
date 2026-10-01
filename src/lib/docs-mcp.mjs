@@ -59,7 +59,7 @@ export const TOOLS = [
     name: "fetch",
     title: "Fetch a bitHuman docs page",
     description:
-      "Fetch one docs page as markdown by the id `search` returned (a path such as /platforms/python), or by its full URL.",
+      "Fetch one docs page as markdown by the id `search` returned (a path such as /platforms/python), or by its full docs.bithuman.ai URL.",
     inputSchema: {
       type: "object",
       properties: { id: { type: "string", description: "A page path (/platforms/python) or URL (https://docs.bithuman.ai/platforms/python)." } },
@@ -172,10 +172,30 @@ export function snippet(doc, query, width = 220) {
   return (start ? "…" : "") + text.slice(start, start + width).trim() + (start + width < text.length ? "…" : "");
 }
 
+const DOCS_HOST = new URL(SITE).hostname;
+/**
+ * The host an id names when it is a URL (`https://…`, any other scheme, or `//host/…`),
+ * or null for a path. A docs.bithuman.ai URL yields "docs.bithuman.ai"; a URL that does
+ * not parse yields "" (never a docs page). bithuman.ai and www.bithuman.ai are the
+ * website, not the docs, so they are foreign too.
+ */
+export function urlHost(id) {
+  const p = String(id || "").trim();
+  if (!/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(p)) return null;
+  try {
+    const u = new URL(p.startsWith("//") ? `https:${p}` : p);
+    return /^https?:$/.test(u.protocol) ? u.hostname.toLowerCase().replace(/\.$/, "") : "";
+  } catch { return ""; }
+}
+/** True when an id is a URL on some host other than docs.bithuman.ai. */
+export const isForeignUrl = (id) => { const h = urlHost(id); return h !== null && h !== DOCS_HOST; };
+export const FOREIGN_URL_MESSAGE =
+  `fetch reads bitHuman docs pages only: pass a ${DOCS_HOST} URL (${SITE}/platforms/livekit) or a path like /platforms/livekit.`;
+
 /** "/platforms/python", "https://docs.bithuman.ai/platforms/python.md#x" → "/platforms/python". */
 export function normalizeId(id) {
   let p = String(id || "").trim();
-  try { if (/^https?:\/\//i.test(p)) p = new URL(p).pathname; } catch { /* keep as typed */ }
+  try { if (/^(?:https?:)?\/\//i.test(p)) p = new URL(p.startsWith("//") ? `https:${p}` : p).pathname; } catch { /* keep as typed */ }
   p = p.split(/[?#]/)[0].replace(/\.md$/, "").replace(/\/+$/, "");
   if (!p.startsWith("/")) p = `/${p}`;
   return p === "/index" ? "/" : p || "/";
@@ -192,6 +212,8 @@ export function callTool(prepared, name, args = {}) {
     return text(JSON.stringify({ results }));
   }
   if (name === "fetch") {
+    // a URL elsewhere is refused, never reduced to its path (https://example.com/ is not the home page)
+    if (isForeignUrl(args.id)) return text(FOREIGN_URL_MESSAGE, true);
     const id = normalizeId(args.id);
     const doc = prepared.byId.get(id);
     if (!doc) return text(`No docs page at ${id}. Use \`search\` to find the page id.`, true);
