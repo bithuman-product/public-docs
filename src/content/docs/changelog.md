@@ -39,6 +39,16 @@ The releases of September 2026 worth a look first.
 | 2026-09-15 | essence2-android 0.5.7 | the `ElevateFrames` constructor (legacy `ai.bithuman.elevate` package, kept for compatibility) drops its execution-provider argument | delete that argument |
 | 2026-09-14 | CLI 2.6.19 | `bithuman auth …` removed | `bithuman login`, `logout`, `account`, `token` |
 
+## October 2026
+
+### Swift package 2.19.4 — 2026-10-01
+
+Tag `v2.19.4`.
+
+- **Mac apps on macOS 13:** the macOS engine core is now built for macOS 13, the package's declared minimum, so an `Expression2` Mac app built for macOS 13 links without the `built for newer 'macOS' version (14.0)` warning and runs there. (`Essence2Kit` and `Essence2` still need macOS 26.)
+- The macOS engine core is now 1.0.2. Essence 2 (1.15.2), Expression 2 (2.19.2) and everything on iPhone and iPad are unchanged.
+- **Action:** `.package(url: …, from: "2.19.4")`.
+
 ## September 2026
 
 ### Android packages now come from maven.bithuman.ai — 2026-09-30

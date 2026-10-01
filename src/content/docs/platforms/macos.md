@@ -74,8 +74,6 @@ generated 407 frames in … s -> out/first-frame.png
 
 407 frames for 20.34 seconds of audio: one frame per 50 ms of speech. The first run prepares the engine for your Mac; keep `Model/staged/` and later runs start faster.
 
-The link step prints `ld: warning: … libengine_core.a(engine_core.o) was built for newer 'macOS' version (14.0) than being linked (13.0)`. The build still succeeds; running an Expression 2 tool on macOS 13 is not verified.
-
 </details>
 
 The core of `Sources/main.swift`:
