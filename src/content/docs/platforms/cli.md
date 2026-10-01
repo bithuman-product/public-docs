@@ -68,7 +68,7 @@ Check the install:
 ```text
 $ bithuman --version
 libessence 2.11.19 ABI 7
-bithuman    2.8.6
+bithuman    2.8.7
 build       … x86_64-unknown-linux-gnu/release …
 engine      linux 1.0.2 …
 ```
