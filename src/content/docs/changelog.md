@@ -43,6 +43,16 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.30 — 2026-10-02
+
+Tag `flutter-plugin-v2.6.30`. Engines unchanged.
+
+- **iOS and macOS, Essence 2:** the character's voice no longer waits for the picture. It starts a moment after the reply's first frame and then plays without breaks, and each frame is shown as its sound is heard. On a slower device, the face may skip a frame; the voice does not stutter.
+- **iOS and macOS, Essence 2:** `BithumanAvatar.load(..., skipAhead: true)`, Android's option since 2.6.29, now also reaches Apple. It takes effect with the next Essence 2 engine for Apple. Off by default.
+- **`downloadAgentImx`:** fetches today's catalog. It follows the door's redirect to the file and takes `apiSecret:`. It downloads a gallery Essence 2 character without a key, and any character your key's account owns. A file it already has opens at once, and it is refreshed in the background when it changes.
+- **Android:** skip-ahead stays off by default; pass `skipAhead: true` to use it.
+- **Action:** pin `ref: flutter-plugin-v2.6.30`.
+
 ### Flutter plugin 2.6.29 — 2026-10-02
 
 Tag `flutter-plugin-v2.6.29`. Android Essence 2 engine: `essence2-android` 0.9.1.
