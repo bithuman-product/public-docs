@@ -20,12 +20,12 @@ AAR, in the repository that serves it — no request to make, nobody to ask.
 **The offer:**
 
 ```text
-https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.1/essence2-android-0.9.1-relink.zip
+https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.2/essence2-android-0.9.2-relink.zip
 ```
 
 Same group, same artifact, same version as the AAR — classifier `relink`,
 extension `zip`. Anyone who can download the library can download the
-materials. This page names `0.9.1`, the current release; the offer travels with
+materials. This page names `0.9.2`, the current release; the offer travels with
 every version, so every permanent AAR from `0.2.0` on names its own kit at the
 same shape of URL.
 
@@ -46,7 +46,7 @@ and no relink kit is published for it. That is correct, not a gap:
 
 | Coordinate | FFmpeg linked in? | Relink offer |
 |---|---|---|
-| `ai.bithuman:essence2-android:0.9.1` | **yes** — statically, into `lible_jni.so` | **published** (below); every version from `0.2.0` carries its own kit at the same shape of URL |
+| `ai.bithuman:essence2-android:0.9.2` | **yes** — statically, into `lible_jni.so` | **published** (below); every version from `0.2.0` carries its own kit at the same shape of URL |
 | `ai.bithuman:expression2-android:0.5.2` | no — it carries LiteRT (Apache-2.0) | none needed |
 | `ai.bithuman:sdk` 1.12.1 – 2.3.7 (deprecated) | **yes** — statically, into `libessence_jni.so` | **written offer**, §6(c) — [below](#aibithumansdk-deprecated--a-written-offer-6c) |
 
@@ -54,7 +54,7 @@ Measured, with the two AARs side by side — the second command is the control
 that makes the first mean something:
 
 ```bash
-curl -fsSL -o essence2.aar https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.1/essence2-android-0.9.1.aar
+curl -fsSL -o essence2.aar https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.2/essence2-android-0.9.2.aar
 curl -fsSL -o expression2.aar https://repo1.maven.org/maven2/ai/bithuman/expression2-android/0.5.2/expression2-android-0.5.2.aar
 unzip -q -o essence2.aar    jni/arm64-v8a/lible_jni.so    -d e2
 unzip -q -o expression2.aar jni/arm64-v8a/libexpr2jni.so  -d x2
@@ -69,7 +69,7 @@ rc=1
 ```
 
 The first count is the FFmpeg symbols **defined** inside the essence-2 library (622 in
-`0.9.1`); the second is zero, for the expression-2 one.
+`0.9.2`); the second is zero, for the expression-2 one.
 
 **The `rc=1` is the second `grep -c`, and it is the expected answer.** `grep`
 exits 1 when it matches nothing, so a count of zero and a non-zero exit are the
@@ -197,10 +197,10 @@ to relink has to be served with materials — which is what §6(a) asks for.
 
 ## What is in the kit
 
-Fifteen files in `0.9.1`. Fetch it and check the count yourself:
+Fifteen files in `0.9.2`. Fetch it and check the count yourself:
 
 ```bash
-curl -fsSL -o relink.zip https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.1/essence2-android-0.9.1-relink.zip
+curl -fsSL -o relink.zip https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.2/essence2-android-0.9.2-relink.zip
 unzip -Z1 relink.zip | grep -v '/$' | wc -l
 ```
 
@@ -210,7 +210,7 @@ rc=0
 ```
 
 ```text
-essence2-android-0.9.1-relink/
+essence2-android-0.9.2-relink/
 ├── MANIFEST.json                       machine-readable summary + sha256 of every file
 ├── NOTICE.txt                          the same NOTICE that ships inside the AAR
 ├── README.md
@@ -241,7 +241,7 @@ in the work" is the empty set — and you can check that rather than take it.
 
 ```bash
 mkdir -p rl && unzip -q -o relink.zip -d rl
-cd rl/essence2-android-0.9.1-relink/ffmpeg && sha256sum -c ffmpeg-7.1.tar.xz.sha256
+cd rl/essence2-android-0.9.2-relink/ffmpeg && sha256sum -c ffmpeg-7.1.tar.xz.sha256
 ```
 
 ```text
@@ -254,7 +254,7 @@ surface undefined.** This is what makes the relink possible: your FFmpeg
 supplies these, ours does not get baked in.
 
 ```bash
-cd rl/essence2-android-0.9.1-relink
+cd rl/essence2-android-0.9.2-relink
 nm --undefined-only objects/lible_jni_relink.a | awk '{print $NF}' | sort -u > undef.txt
 nm --defined-only   objects/lible_jni_relink.a | awk '{print $NF}' | sort -u > def.txt
 miss=0; dup=0
@@ -272,9 +272,9 @@ control fired
 rc=0
 ```
 
-Every symbol in the shipped list (31 in `0.9.1`) really is undefined in the archive,
+Every symbol in the shipped list (31 in `0.9.2`) really is undefined in the archive,
 none of them is defined by it, and the last line is the archive's member count
-(36 in `0.9.1`: one more object than 0.9.0, the skip-ahead playout clock). The
+(36 in `0.9.2`, as in 0.9.2). The
 `av_zzz_not_a_symbol` line is the negative control — without it, a `grep` that
 silently matched everything would print the same reassuring numbers.
 
@@ -284,11 +284,11 @@ in the shipped bytes, not on this page:
 ```bash
 unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://[^ ]*relink.zip'
 curl -o /dev/null -s -w '%{http_code}\n' -L "$(unzip -p essence2.aar META-INF/NOTICE.txt | grep -o 'https://[^ ]*relink.zip')"
-curl -o /dev/null -s -w '%{http_code}\n' -L "https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.1/essence2-android-0.9.1-relinkX.zip"
+curl -o /dev/null -s -w '%{http_code}\n' -L "https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.2/essence2-android-0.9.2-relinkX.zip"
 ```
 
 ```text
-https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.1/essence2-android-0.9.1-relink.zip
+https://maven.bithuman.ai/ai/bithuman/essence2-android/0.9.2/essence2-android-0.9.2-relink.zip
 200
 404
 rc=0
@@ -352,8 +352,8 @@ we want it: [hello@bithuman.ai](mailto:hello@bithuman.ai).
 | NDK | 28.0.13004108 |
 | Android API | 29 |
 | ABI | `arm64-v8a` |
-| FFmpeg symbols defined in `lible_jni.so` | 622 in `0.9.1` (the first command above prints it) |
-| FFmpeg symbols undefined in the relink archive | 31 in `0.9.1` (`verify/undefined_ffmpeg_symbols.txt`) |
+| FFmpeg symbols defined in `lible_jni.so` | 622 in `0.9.2` (the first command above prints it) |
+| FFmpeg symbols undefined in the relink archive | 31 in `0.9.2` (`verify/undefined_ffmpeg_symbols.txt`) |
 
 The other license texts travel inside the AAR too — `META-INF/licenses/`
 carries `ffmpeg-7.1-COPYING.LGPLv2.1.txt`, `highway-1.3.0-LICENSE.txt`,
