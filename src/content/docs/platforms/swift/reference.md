@@ -133,7 +133,7 @@ Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(in
 
 `create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`. `Essence2Download.identity` throws `.resourcesUnavailable` when the download is refused, fails, or does not match its sha256.
 
-From 2.20.0, `create` throws `.identityOutdated(path:agentCode:reason:)` for an avatar file published before the renderer its engine carries. It downloads a file that `Essence2Download` fetched once more by itself; download any other file again.
+`create` throws `.identityOutdated(path:agentCode:reason:)` for an avatar file published before the renderer its engine carries. It downloads a file that `Essence2Download` fetched once more by itself; download any other file again.
 
 ## Essence 2 (C)
 
