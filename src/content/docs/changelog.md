@@ -43,6 +43,13 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.32 — 2026-10-02
+
+Tag `flutter-plugin-v2.6.32`. Android Essence 2 engine: `essence2-android` 0.9.2.
+
+- **Android, Essence 2:** on a heat-throttled phone, characters keep moving more smoothly: the engine renders the character's 720p output and scales it up, then returns to full resolution once the phone cools. On a Galaxy Z Flip5 at its deepest throttle, about 75% of the frames the voice needs reached the screen, against 37% with the previous engine. No other change.
+- **Action:** pin `ref: flutter-plugin-v2.6.32`.
+
 ### Flutter plugin 2.6.31 — 2026-10-02
 
 Tag `flutter-plugin-v2.6.31`. iOS and macOS Essence 2 engine: `essence2-v1.15.3` (Swift package 2.20.0).
