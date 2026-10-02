@@ -129,8 +129,10 @@ const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.d
 // Under the lede the demo's poster is the largest thing on screen, so it loads eagerly
 // with high priority (a lazy image waits for layout and costs the page its LCP).
 const demoAtEnd = data.type === "hub";
-// A quickstart (each platform page) and a troubleshooting page end with "Stuck?" (#support on Discord).
-const stuck = data.type === "platform" || data.type === "troubleshooting";
+// A quickstart (each platform page) and a troubleshooting page (each platform's, and
+// /resources/troubleshooting, which is in the troubleshooting llms section) end with
+// "Stuck?" (#support on Discord).
+const stuck = data.type === "platform" || data.type === "troubleshooting" || data.llms === "troubleshooting";
 // Release notes are records and the generated references are lookups: both
 // searchable, but ranked below the pages a reader starts from.
 // An example page names its platform in its title ("iOS Expression 2"), so it
