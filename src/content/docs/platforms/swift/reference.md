@@ -131,13 +131,13 @@ static func Essence2Download.identity(   // download an avatar file; sha256-chec
 
 Every way of taking frames (`frames`, `nextFrame`, `pullFrame`, `pull`, `idle(into:)`) draws from the same engine and hands out at most 25 frames a second. A reply's first speech frame anchors its timeline: frame *k* is due *k*/25 s later, and a frame that would be shown a full frame late is skipped, so a reply never drifts from its audio.
 
-`create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`. `Essence2Download.identity` throws `.resourcesUnavailable` when the download is refused, fails, or does not match its sha256.
+`create` throws `Essence2KitError.meteringRefused(reason:)` when the API secret is missing or rejected, or when the service cannot be reached at the start. It throws `.identityUnreadable` for a file the engine cannot open, `.identityOutdated(path:agentCode:reason:)` for an avatar file published before the renderer this engine carries (a file `Essence2Download` fetched is fetched again once by `create` itself; download any other file again), `.resourcesUnavailable` when the runtime files cannot be fetched or fail their checksum, and `.notReady` after `readyTimeout`. `Essence2Download.identity` throws `.resourcesUnavailable` when the download is refused, fails, or does not match its sha256.
 
 ## Essence 2 (C)
 
 Audio is 16 kHz mono `int16`. Frames are packed `height * width * 3` bytes in B, G, R order. Nothing blocks except `be_essence2_quiesce_all`.
 
-The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.2 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.2) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
+The C library does not download its runtime files. Before `be_essence2_create`, put `w2v_ess_fp16_v1.onnx`, `audio_encoder_fp16_window_trunk.onnx` and `audio_encoder_fp16_window_head.onnx` from the [essence2-v1.15.3 release](https://github.com/bithuman-product/homebrew-bithuman/releases/tag/essence2-v1.15.3) at the root of your app bundle (in Xcode, add them as a group, not a folder reference), or next to the `.imx`. Without them the engine never becomes ready. In Swift, `Essence2Kit` fetches and checks these files for you.
 
 ### A minimal loop
 
@@ -168,6 +168,8 @@ for (;;) {                                             // once per display tick,
 be_essence2_destroy(h);
 ```
 
+If your app plays the voice itself, open it about 200 ms after the reply's first frame and show each frame as its sound is heard: this avoids gaps in the voice after an interruption and costs about 160 ms before the first word (measured on an iPhone 18 Pro). On a device that renders below real time, also call `be_essence2_set_playout_position` with the samples you have played, so late frames are skipped instead of freezing the face.
+
 ### Credentials
 
 | Function | Purpose |
@@ -196,6 +198,9 @@ be_essence2_destroy(h);
 | `be_essence2_reset(h)` | Interrupt: drops queued audio and frames | — |
 | `be_essence2_end_utterance(h)` | The reply's audio is complete: the rest renders and eases to rest now, not after 0.6 s without audio | `0`; `-1` bad handle |
 | `be_essence2_last_frame_kind(h)` | What the last pulled frame shows: `BE_ESSENCE2_FRAME_IDLE` (0), `_SPEECH` (1) or `_RAMP` (2, easing back to rest). A reply is over when an idle frame follows its speech | kind; `-1` before any frame |
+| `be_essence2_set_playout_position(h, int64_t samples16k)` | Optional, Swift package 2.20.0 and later. How many 16 kHz samples of the audio you pushed since the last `be_essence2_reset` you have played (keep counting across `be_essence2_end_utterance`; call it at least every 100 ms while speaking). Frames whose sound has already played are skipped instead of rendered late. Never calling it changes nothing; a value older than 1 s is ignored | `0`; `-1` bad handle |
+| `be_essence2_last_frame_index(h)` | The last pulled frame carries samples `[i * 640, (i + 1) * 640)` of that count | `i`; `-1` for an idle or easing frame |
+| `be_essence2_skipped_frames(h)` | Frames skipped because their sound had already played | count |
 
 ### Display and status
 
