@@ -43,6 +43,15 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.29 — 2026-10-02
+
+Tag `flutter-plugin-v2.6.29`. Android Essence 2 engine: `essence2-android` 0.9.1.
+
+- **Android, Essence 2:** characters keep moving while they talk on a phone that renders below real time; with 0.9.0 the face could freeze behind the voice. Optional, off by default: `BithumanAvatar.load(..., skipAhead: true)` tells the engine where the voice is, so a slow phone shows fewer frames, each in step with the voice.
+- **Errors:** new code `MODEL_REJECTED`. When the on-device engine refuses the model file, `BithumanAvatar.load` throws `BithumanModelRejected`, and a session on that avatar ends on `errorStream` the same way as `PAYWALL`. On iOS and macOS this replaces a still face that never became ready. Custom voice hosts: `VoiceHost` gains `modelRejections`.
+- **Android, Expression 2:** a reply's first words start sooner (faster voice start, Expression 2 only).
+- **Action:** pin `ref: flutter-plugin-v2.6.29`.
+
 ### essence2-android 0.9.1 — 2026-10-02
 
 - **The face keeps up with the voice on phones with little cores:** in an app, the Essence 2 renderer could end up on the phone's slower cores and fall behind its own voice, so the face held one pose while the avatar spoke (seen on a Galaxy Z Flip5). It now runs on the fast cores; on the Flip5 it renders 37–40 frames a second, up from 21–25.

@@ -10,7 +10,7 @@
     "essence2_android": "0.9.1",
     "expression2_android": "0.5.2",
     "livekit_plugin": "1.8.4",
-    "flutter_plugin": "2.6.28"
+    "flutter_plugin": "2.6.29"
   },
   "artifacts": [
     {
