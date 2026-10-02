@@ -5,6 +5,7 @@ import LiveDemo from "../components/LiveDemo.astro";
 import { FRONT_DOOR_DEMO } from "../data/demo";
 import Availability from "../components/Availability.astro";
 import QuickstartPicker from "../components/QuickstartPicker.astro";
+import Stuck from "../components/Stuck.astro";
 import { hubMeta } from "../config/hubs";
 import { API_SECRET_URL, SECTIONS } from "../config/nav";
 import { explorerClaim } from "../lib/doc-blocks";
@@ -43,6 +44,7 @@ const meta = hubMeta("start");
       <h2 id="choose-your-platform"><span class="step">3</span> Pick your platform</h2>
       <p class="s-intro">What are you building? The steps below run as pasted after you export your API secret, and end at that platform's first frame.</p>
       <QuickstartPicker />
+      <Stuck />
     </div>
   </section>
 

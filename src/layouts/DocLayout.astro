@@ -22,6 +22,7 @@ import { widgetsIn } from "../lib/doc-blocks";
 import ChangelogFilter from "../components/ChangelogFilter.astro";
 import MovedAnchors from "../components/MovedAnchors.astro";
 import { RENDERS_LABEL, PLAN_LABEL, versionLabel } from "../data/labels";
+import Stuck from "../components/Stuck.astro";
 
 interface Heading {
   depth: number;
@@ -128,6 +129,8 @@ const demoModels = data.demo === "both" ? ["essence-2", "expression-2"] : data.d
 // Under the lede the demo's poster is the largest thing on screen, so it loads eagerly
 // with high priority (a lazy image waits for layout and costs the page its LCP).
 const demoAtEnd = data.type === "hub";
+// A quickstart (each platform page) and a troubleshooting page end with "Stuck?" (#support on Discord).
+const stuck = data.type === "platform" || data.type === "troubleshooting";
 // Release notes are records and the generated references are lookups: both
 // searchable, but ranked below the pages a reader starts from.
 // An example page names its platform in its title ("iOS Expression 2"), so it
@@ -168,6 +171,7 @@ const weight = data.type === "changelog" ? "0.2" : (data.type === "reference" ||
         </header>
         {demoModels && !demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} eager /></div>}
         <div class="doc-body"><slot /></div>
+        {stuck && <Stuck />}
         {data.moved && <MovedAnchors moved={data.moved} />}
         {demoModels && demoAtEnd && <div class="doc-demo"><LiveDemo models={demoModels as any} /></div>}
       </div>
