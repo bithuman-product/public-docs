@@ -43,6 +43,12 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### essence2-android 0.9.1 — 2026-10-02
+
+- **The face keeps up with the voice on phones with little cores:** in an app, the Essence 2 renderer could end up on the phone's slower cores and fall behind its own voice, so the face held one pose while the avatar spoke (seen on a Galaxy Z Flip5). It now runs on the fast cores; on the Flip5 it renders 37–40 frames a second, up from 21–25.
+- **New, optional: `setPlayoutPosition(samples16k)`.** Tell the avatar how much of the current utterance's audio your app has sent to the speaker. When a phone cannot keep up (for example once it is warm), the avatar skips the frames whose audio has already played and shows the one that matches the voice, instead of falling behind. `lastFrameIndex` says which part of the audio a pulled frame belongs to, and `skippedFrames` counts the skips. Without the call, frames come out exactly as before.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.9.1")`.
+
 ### Flutter plugin 2.6.28 — 2026-10-01
 
 Tag `flutter-plugin-v2.6.28`.

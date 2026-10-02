@@ -4,10 +4,10 @@
       "artifact": {
         "registry": "maven.bithuman.ai",
         "coordinate": "ai.bithuman:essence2-android",
-        "version": "0.9.0",
-        "digest": "sha256:d4ca08e38d2024d69b78cfafefa036ef28428d7cd9fa4cc15f2f8a11131d3cf8",
-        "filename": "essence2-android-0.9.0.aar",
-        "resolved_on": "2026-10-01"
+        "version": "0.9.1",
+        "digest": "sha256:2b42713dd8fe154057763451548625885d3d7f59a385142e4301d626c78dbbc7",
+        "filename": "essence2-android-0.9.1.aar",
+        "resolved_on": "2026-10-02"
       },
       "surface": {
         "artifact_facts": {
@@ -2239,6 +2239,13 @@
                 "loadable": true
               },
               {
+                "name": "setPlayoutPosition",
+                "signature": "fun setPlayoutPosition(samples16k: Long)",
+                "suspend": false,
+                "jvm": "setPlayoutPosition(J)V",
+                "loadable": true
+              },
+              {
                 "name": "useHardwareBuffers",
                 "signature": "fun useHardwareBuffers(slots: Int = …)",
                 "suspend": false,
@@ -2252,6 +2259,24 @@
                 "signature": "val height: Int",
                 "mutable": false,
                 "jvm_getter": "getHeight()I",
+                "jvm_setter": null,
+                "jvm_field": null,
+                "loadable": true
+              },
+              {
+                "name": "lastFrameIndex",
+                "signature": "val lastFrameIndex: Long",
+                "mutable": false,
+                "jvm_getter": "getLastFrameIndex()J",
+                "jvm_setter": null,
+                "jvm_field": null,
+                "loadable": true
+              },
+              {
+                "name": "skippedFrames",
+                "signature": "val skippedFrames: Long",
+                "mutable": false,
+                "jvm_getter": "getSkippedFrames()J",
                 "jvm_setter": null,
                 "jvm_field": null,
                 "loadable": true
@@ -4667,7 +4692,7 @@
         "version": "0.5.2",
         "digest": "sha256:7415aad6c9b73cd8fb91a4f1aa34fbcc79010657c33120a77274bbf619161bcd",
         "filename": "expression2-android-0.5.2.aar",
-        "resolved_on": "2026-10-01"
+        "resolved_on": "2026-10-02"
       },
       "surface": {
         "artifact_facts": {

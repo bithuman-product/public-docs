@@ -16,7 +16,7 @@ Both SDKs are Kotlin-first. The Expression 2 classes live in `ai.bithuman.expres
 <!-- ANDROIDAPI:BEGIN -->
 ## Essence 2
 
-Generated from `ai.bithuman:essence2-android:0.9.0` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
+Generated from `ai.bithuman:essence2-android:0.9.1` as published on maven.bithuman.ai. `minSdk` 29, ABIs `arm64-v8a`. Classes not listed here are internal and can change.
 
 Import: `import ai.bithuman.essence2.*`.
 
@@ -41,6 +41,8 @@ Import: `import ai.bithuman.essence2.*`.
 ```kotlin
 class Essence2Avatar : AutoCloseable
     val height: Int
+    val lastFrameIndex: Long
+    val skippedFrames: Long
     val targetFrames: Int
     val width: Int
     fun available(): Int
@@ -55,6 +57,7 @@ class Essence2Avatar : AutoCloseable
     fun pull(dst: ByteBuffer): Boolean
     fun pullHardwareBuffer(): Essence2HardwareFrame?
     fun resetAudio(startFrame: Int = …, forward: Boolean = …, wrap: Boolean = …)
+    fun setPlayoutPosition(samples16k: Long)
     fun useHardwareBuffers(slots: Int = …)
     companion object
         const val W2V_MEMBER: String = "w2v_ess_fp16_v1.onnx"
