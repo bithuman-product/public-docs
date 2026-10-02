@@ -43,6 +43,15 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.31 — 2026-10-02
+
+Tag `flutter-plugin-v2.6.31`. iOS and macOS Essence 2 engine: `essence2-v1.15.3` (Swift package 2.20.0).
+
+- **iOS and macOS, Essence 2:** the default is again the presenter that releases each frame's 40 ms of voice when the frame is shown. A stall guard is new: when a display tick has no frame while the reply's voice is waiting, that tick's voice is released anyway and the picture catches up, so the voice never waits more than 40 ms. Measured on an iPhone 18 Pro: no voice gaps of 40 ms or more, and the voice within about 20 ms of the picture.
+- **iOS and macOS, Essence 2:** `BithumanAvatar.load(..., voiceClock: true)` opts in to 2.6.30's presenter. The voice starts 200 ms after the reply's first frame and plays on its own clock, and frames follow it. This corrects 2.6.30, where it was the default.
+- **iOS and macOS, Essence 2:** `skipAhead: true` now takes effect with the new engine, together with `voiceClock: true`. Off by default.
+- **Action:** pin `ref: flutter-plugin-v2.6.31`.
+
 ### Swift package 2.20.0 — 2026-10-02
 
 Tag `v2.20.0`.

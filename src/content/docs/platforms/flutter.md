@@ -50,7 +50,7 @@ dependencies:
     git:
       url: https://github.com/bithuman-product/homebrew-bithuman.git
       path: packages/flutter-plugin
-      ref: flutter-plugin-v2.6.30
+      ref: flutter-plugin-v2.6.31
 ```
 
 Then run `flutter pub get`. On Android, Gradle resolves `ai.bithuman:essence2-android` and `ai.bithuman:expression2-android` from the repository the plugin declares, so you add no repository yourself.
