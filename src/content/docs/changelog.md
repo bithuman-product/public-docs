@@ -43,6 +43,13 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.33 — 2026-10-02
+
+Tag `flutter-plugin-v2.6.33`.
+
+- **Android, Expression 2:** characters published without an idle clip no longer stay blank. The plugin shows a still frame of the character until its first reply, so it appears and can talk. iOS and macOS were not affected.
+- **Action:** pin `ref: flutter-plugin-v2.6.33`.
+
 ### Flutter plugin 2.6.32 — 2026-10-02
 
 Tag `flutter-plugin-v2.6.32`. Android Essence 2 engine: `essence2-android` 0.9.2.
