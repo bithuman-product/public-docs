@@ -43,6 +43,16 @@ The releases of September 2026 worth a look first.
 
 ## October 2026
 
+### Flutter plugin 2.6.28 — 2026-10-01
+
+Tag `flutter-plugin-v2.6.28`.
+
+- **The character's own voice no longer cuts it off:** on a loudspeaker, short bursts of the character's voice could reach the microphone and end its reply as if the person had spoken. While the character is heard, the session now sends the microphone on only when it is close in level to the voice heard and stays there for 200 ms. A person talking over the character still cuts in, about 100 ms later than before. The level is set per device and can be changed with `BithumanRealtimeSession(bargeFloorDb:)`.
+- **Android:** Essence 2 characters already on the phone open at once; the check for an update runs after the character is live, and an update is used from the next open.
+- **Errors:** `PAYWALL` (no Live minutes left) now ends the session on `errorStream`. After any such error, the session also turns the microphone and speaker off, ends the captions and closes its streams. Build a new session to try again.
+- **Captions:** when a reply is cut short, `spokenTranscriptStream` stops at the words that were spoken.
+- **Action:** pin `ref: flutter-plugin-v2.6.28`.
+
 ### Flutter plugin 2.6.27 — 2026-10-01
 
 Tag `flutter-plugin-v2.6.27`.
