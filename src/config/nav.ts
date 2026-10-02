@@ -84,12 +84,17 @@ export const API_SECRET_URL = "https://www.bithuman.ai/developer/api-keys";
 export const CONSOLE_URL = "https://www.bithuman.ai/developer";
 
 /** The footer's first row (one design everywhere); the second row is LEGAL_LINKS and the ©. */
+/** The bitHuman Discord. The docs site's own tracked invite (permanent, lands in
+ *  #start-here), so joins from the docs count apart from the website's. */
+export const DISCORD_URL = "https://discord.gg/99yuGCKGgR";
+
 export const FOOTER_LINKS: NavLink[] = [
   { label: "Status", href: "https://status.bithuman.ai", external: true },
   { label: "Changelog", href: "/changelog" },
   { label: "Downloads", href: "/downloads" },
   { label: "llms.txt", href: "/llms.txt" },
   { label: "GitHub", href: "https://github.com/bithuman-product", external: true },
+  { label: "Join the Discord", href: DISCORD_URL, external: true },
   { label: "bithuman.ai", href: "https://www.bithuman.ai", external: true },
 ];
 

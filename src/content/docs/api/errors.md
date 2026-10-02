@@ -130,7 +130,7 @@ The model-release surfaces — [creation](/api/agents#generate-an-agent),
 | `SESSION_DURATION_LIMIT` | 403 | One session ran past the maximum continuous length. Start a new session; your account is fine. |
 | `SERVICE_UNAVAILABLE` | 503 | A dependency is briefly unavailable or at capacity. Nothing was changed. Retry after `Retry-After` seconds, with backoff. |
 | `UPSTREAM_UNAVAILABLE` / `UPSTREAM_TIMEOUT` | 502 / 504 | Transient. Retry with backoff. |
-| `INTERNAL_ERROR` | 500 | Retry once. If persistent, report via [Discord](https://discord.gg/ES953n7bPA). |
+| `INTERNAL_ERROR` | 500 | Retry once. If persistent, report via [Discord](https://discord.gg/99yuGCKGgR). |
 | `UPSTREAM_ERROR` | 500 | A backing query failed or timed out (seen on [runtime sessions](/api/runtime-sessions)). Nothing was changed. Retry with backoff. |
 | `ENDPOINT_RETIRED` | 410 | The endpoint was removed; the message names its replacement. `POST /v1/realtime/ephemeral-token` answers it: connect through the [Realtime relay](/api/realtime). |
 | `MODEL_LOCKED` | — | A [Realtime relay](/api/realtime) `error` event: a `session.update` tried to change the model fixed at connect. Reconnect with the new `model`. |
