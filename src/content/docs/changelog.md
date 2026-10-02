@@ -49,7 +49,7 @@ Tag `v2.20.0`.
 
 - **Essence 2 on iPhone, iPad and Mac:** a new optional `be_essence2_set_playout_position` tells the engine how much of the voice you have played. On a device that renders below real time it skips frames whose sound has already played, so the face keeps moving in step with the voice instead of freezing. An app that does not call it renders exactly as with 2.19.4. Also new: `be_essence2_last_frame_index` and `be_essence2_skipped_frames`.
 - **Essence2Kit:** `create` names an avatar file published before the renderer this engine carries with the new error `Essence2KitError.identityOutdated`, and fetches a file that `Essence2Download` downloaded again once. Essence 2 1.15.3 still opens such files, so this does not apply yet.
-- **Playing the voice yourself:** open it about 200 ms after the reply's first frame. On an iPhone 18 Pro this removed gaps in the voice after an interruption and cost about 160 ms before the first word. The Flutter plugin already does this since 2.6.30.
+- **Playing the voice yourself:** Recommended: gate each frame's audio on its display (lowest latency). If your presenter is voice-clocked, open the voice ~200 ms after the first frame to avoid gaps after a barge-in.
 - Essence 2 is now 1.15.3. Expression 2 (2.19.2) and the macOS engine core (1.0.2) are unchanged.
 - **Action:** `.package(url: …, from: "2.20.0")`. If you `switch` over `Essence2KitError`, add a case for `.identityOutdated`.
 

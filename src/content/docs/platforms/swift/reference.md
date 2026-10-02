@@ -170,7 +170,7 @@ for (;;) {                                             // once per display tick,
 be_essence2_destroy(h);
 ```
 
-If your app plays the voice itself, open it about 200 ms after the reply's first frame and show each frame as its sound is heard: this avoids gaps in the voice after an interruption and costs about 160 ms before the first word (measured on an iPhone 18 Pro). On a device that renders below real time, also call `be_essence2_set_playout_position` with the samples you have played, so late frames are skipped instead of freezing the face.
+Recommended: gate each frame's audio on its display (lowest latency). If your presenter is voice-clocked, open the voice ~200 ms after the first frame to avoid gaps after a barge-in. On a device that renders below real time, also call `be_essence2_set_playout_position` with the samples you have played, so late frames are skipped instead of freezing the face.
 
 ### Credentials
 
