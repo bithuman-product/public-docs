@@ -14,7 +14,7 @@
       "name": "Creator",
       "monthly_usd": 20,
       "yearly_usd": 204,
-      "credits_per_month": 1800,
+      "credits_per_month": 2000,
       "agents": 7,
       "cloud_concurrent_sessions": 3
     },

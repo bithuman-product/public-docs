@@ -78,7 +78,7 @@ A Free account with top-up credits bought before 2026-09-27 keeps API and SDK ac
 
 | Plan | Monthly | Yearly | Credits / month | Agents | Concurrent cloud sessions |
 |---|---|---|---|---|---|
-| **Creator** | $20 | $204 | 1,800 | 7 | 3 |
+| **Creator** | $20 | $204 | 2,000 | 7 | 3 |
 | **Pro** | $99 | $1,010 | 10,000 | 40 | 10 |
 | **Business** | $299 | $2,990 | 50,000 | 200 | 50 |
 | **Enterprise** | $999 | $9,990 | 250,000 | unlimited | 200 |
