@@ -1,5 +1,7 @@
 # bitHuman developer docs
 
+[![Discord](https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/x3tMhJvX4X) Questions, demos and challenges: [join the bitHuman Discord](https://discord.gg/x3tMhJvX4X).
+
 Source for [docs.bithuman.ai](https://docs.bithuman.ai) — bitHuman's developer
 platform. A custom **Astro 6** site styled after
 [developers.openai.com](https://developers.openai.com/) (semantic design tokens,
