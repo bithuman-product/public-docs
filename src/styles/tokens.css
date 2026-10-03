@@ -196,6 +196,8 @@
   --color-table-head: #f7f7f8;
   --color-status-warn: #b35c00;
   --color-status-down: #d32933;
+  /* Discord's own blurple, for its mark only (header, footer, "Need help?") */
+  --color-discord: #5865f2;
 
   /* the older accent names now resolve to the neutral set (callouts are one style) */
   --blue-500: #5d5d6b;
@@ -290,6 +292,7 @@
     --color-table-head: #17171b;
     --color-status-warn: #aeaeba;
     --color-status-down: #ff6f6f;
+    --color-discord: #8c94ff;
   
     --blue-500: #aeaeba;
     --green-500: #7ee2a8;
@@ -379,6 +382,7 @@
   --color-table-head: #17171b;
   --color-status-warn: #aeaeba;
   --color-status-down: #ff6f6f;
+  --color-discord: #8c94ff;
 
   --blue-500: #aeaeba;
   --green-500: #7ee2a8;

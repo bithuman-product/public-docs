@@ -1,21 +1,30 @@
 ---
-// "Stuck?": one line on every quickstart (/start and each platform page) and
-// every troubleshooting page, sending a reader who is stuck to #support on the
-// bitHuman Discord (the docs' tracked invite, DISCORD_URL). DocLayout places it
-// after the page body by the page's `type`; /start places it under the picker.
-// It is chrome, not page copy: the markdown twins and the search index leave it out.
-// /start is not a prose page, so the callout carries its own link style (www's
-// .mk-link: an underline, so the link never relies on colour alone).
+// "Need help?": one warm line that sends a reader to the bitHuman Discord, the
+// community home (owner 2026-10-03: "emphasize Discord"). The one copy of the
+// line: every quickstart (/start and each platform page), every troubleshooting
+// page, the FAQ and Support & community place this component, never pasted text.
+// DocLayout places it by the page's `type`, or where the page's `help` says;
+// /start places it under the picker. DISCORD_URL is bithuman.ai/discord, the
+// tracked invite. It is chrome, not page copy: the markdown twins and the search
+// index leave it out. /start is not a prose page, so the callout carries its own
+// link style (www's .mk-link: an underline, so the link never relies on colour alone).
 import { DISCORD_URL } from "../config/nav";
+import DiscordMark from "./DiscordMark.astro";
+interface Props { at?: "top" | "end" }
+const { at = "end" } = Astro.props;
 ---
 
-<aside class="stuck" aria-label="Get help" data-pagefind-ignore>
-  <p><strong>Stuck?</strong> Ask in <a href={DISCORD_URL} rel="noopener">#support on Discord</a> with your platform and version.</p>
+<aside class:list={["stuck", { "stuck-top": at === "top" }]} aria-label="Get help on Discord" data-pagefind-ignore>
+  <DiscordMark size={22} class="stuck-mark" />
+  <p><strong>Need help?</strong> <a href={DISCORD_URL} rel="noopener">Join us on Discord</a>: the bitHuman team and other developers are glad to help. Tell us your platform and version.</p>
 </aside>
 
 <style>
-  /* the site's one neutral callout (prose.css blockquote) */
+  /* the site's one neutral callout (prose.css blockquote), led by the Discord mark */
   .stuck {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
     margin: var(--s-6) 0 0;
     padding: var(--s-4) var(--s-5);
     border: 1px solid var(--color-border);
@@ -23,6 +32,9 @@ import { DISCORD_URL } from "../config/nav";
     background: var(--color-surface-2);
     color: var(--color-text);
   }
+  /* above a page's body (Support & community): the space sits below it instead */
+  .stuck-top { margin: 0 0 var(--s-8); }
+  .stuck :global(.stuck-mark) { flex: none; color: var(--color-discord); }
   .stuck p { margin: 0; color: var(--color-text); }
   .stuck a {
     color: var(--color-primary);

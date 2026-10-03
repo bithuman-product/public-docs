@@ -1,7 +1,9 @@
 ---
 // The footer, one design everywhere: row 1 the site links (Status first, with
-// the live service dot), row 2 the legal links and the ©.
-import { FOOTER_LINKS, LEGAL_LINKS } from "../config/nav";
+// the live service dot; Discord, the community home, with its mark), row 2 the
+// legal links and the ©.
+import { FOOTER_LINKS, LEGAL_LINKS, DISCORD_URL } from "../config/nav";
+import DiscordMark from "./DiscordMark.astro";
 const year = 2026;
 ---
 
@@ -12,6 +14,7 @@ const year = 2026;
         FOOTER_LINKS.map((l) => (
           <a href={l.href} {...(l.external ? { rel: "noopener" } : {})} {...(l.href.startsWith("https://status.") ? { id: "bh-status", title: "Service status" } : {})}>
             {l.href.startsWith("https://status.") && <span class="status-dot" aria-hidden="true" />}
+            {l.href === DISCORD_URL && <DiscordMark size={16} class="footer-discord" />}
             {l.label}
           </a>
         ))
@@ -71,6 +74,7 @@ const year = 2026;
     transition: color var(--t-fast) var(--ease);
   }
   .footer-row a:hover { color: var(--color-text); }
+  .footer-row :global(.footer-discord) { color: var(--color-discord); flex: none; }
   .footer-legal { font-size: var(--ft-xs); }
   .footer-legal a, .footer-copy { color: var(--color-text-tertiary); }
   .footer-copy { margin-left: auto; }
