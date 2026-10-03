@@ -17,6 +17,7 @@ creation
 
 ## Before you start
 
+- **Time:** creation trains for about 2 hours, up to 4 for some Expression 2 avatars. Build with a [sample avatar](/examples/avatars) (`wise-pup`) meanwhile.
 - An [API secret](/start/api-secret) on the Creator plan or higher, and credits for the creation ([pricing](/pricing#creation--one-time-credits)).
 - A portrait image at a public URL (or create one from a prompt).
 - Optionally, a voice sample for cloning: 30 seconds or more of clean speech from one speaker. Longer clean samples are fine; the whole file is used.
@@ -85,20 +86,12 @@ Open `https://www.bithuman.ai/embed/<agent_id>` in a browser and talk to it, or 
 
 ## How creation works
 
-You create an agent once, with [`POST /v1/agent/generate`](/api/agents#generate-an-agent) or in the bitHuman app, and serve it anywhere its model runs.
+Creation runs once, in the bitHuman cloud; the finished avatar then runs anywhere its model runs. Always send `model`: an omitted `model` creates a first-generation Expression 1 agent.
 
-- **The input is one portrait image.** Essence 2 generates its identity video from it; Expression 2 trains straight from the photo. An uploaded image is treated as a reference and regenerated to a standard framing.
-- **Creation happens in the bitHuman cloud;** the finished avatar model then runs on your devices.
-- **Both second-generation models train on create.** Allow about 2 to 2.5 hours, and poll [`GET /v1/agent/status/{agent_id}`](/api/agents#poll-status) until the status is `ready` or `failed` (`success` is not terminal).
-- **Every model except Expression 2 needs a real human face.** Otherwise creation is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is billed; `auto` routes it to Expression 2 instead.
-- **Always send `model`.** An omitted `model` creates an Expression 1 agent, which also needs a real human face; send `essence-2`, `expression-2` or `auto`.
-- **An existing agent can gain a model** with [`POST /v1/agent/{code}/models`](/api/agents#add-a-model-to-an-existing-agent).
+- **Essence 2** generates a short video of the person from the portrait, then trains on it. `ready` serves at once; the downloadable file follows a little later (until then a download answers a retryable `404 MODEL_ARTIFACT_NOT_READY`).
+- **Expression 2** generates a portrait from your prompt when you send no image, plus an idle clip and a voice. A failed run is refunded; a completed one is not, so a second `generate` is a second charge.
 
-What creation costs is on [pricing](/pricing#creation--one-time-credits); request fields and failure modes are on the [Agents API](/api/agents).
-
-**Essence 2.** The platform generates the identity video from the image, then trains the identity. `ready` serves before it downloads: the downloadable file is published a little later; until then the download endpoint answers a retryable `404 MODEL_ARTIFACT_NOT_READY`.
-
-**Expression 2.** Without a portrait, the platform generates a portrait from your prompt first. It also generates the agent's 10-second idle clip and prepares a voice. An identity that needs more work gets more training, so up to 4 hours is normal. A run that fails is refunded; a completed creation is not, so a second `generate` is a second charge ([failure modes](/api/errors#agent-operations)).
+Request fields and every failure mode: [Agents API](/api/agents).
 
 ## Variations
 
@@ -118,7 +111,7 @@ What creation costs is on [pricing](/pricing#creation--one-time-credits); reques
 | `failed` with an image error | the image URL is not publicly fetchable | host the image publicly and create again (the failed creation is refunded) |
 | The likeness is off | a side profile, several people or poor light | crop to one front-facing person in good light |
 | The voice sounds noisy | background noise or music in the sample | re-record in a quiet room |
-| The live voice differs from the preview | the clone was not applied, or Realtime mode is on | [check the voice your agent uses](/build/voices#check-the-voice-your-agent-uses) |
+| The live voice differs from the preview | the clone was not applied, or Realtime mode (a provider's built-in voice) is on | [check the voice your agent uses](/build/voices#check-the-voice-your-agent-uses) |
 
 ## Next
 

@@ -24,6 +24,7 @@ Offline license is only available to Business and Enterprise clients who want to
 - **Plans:** Business & Enterprise.
 - **Billing:** credit-based, from 100,000 credits, metered on the machine.
 - **Connectivity:** no required reconnection.
+- **Pack:** prepaid offline credit, bound to one machine.
 
 Buy a pack in the console ([how](#first-command)), or [contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) for Enterprise terms.
 
@@ -55,14 +56,12 @@ offline
 
 Essence 1 runs fully offline today on Linux (x86_64 and ARM64) and on macOS with Apple silicon. Essence 2 and Expression 2 run fully offline on Linux x86_64 (bitHuman 2.11.17 or later). On Linux, the Python package and the bitHuman CLI (2.8.4 or later) both run offline packs; on a Mac, the Python package. Expression 1 runs in the bitHuman cloud only.
 
-- **Linux PCs and terminals, and Macs with Apple silicon** (the Python package, bitHuman 2.11.17 or later, on macOS). Phones and browsers stay online, and so do apps built on the Swift package: the Swift package, the Android SDK and the web embed check your credential when a session starts.
+- **Phones and browsers stay online:** the Swift package, the Android SDK and the web embed check your credential when a session starts.
 - **Creation is online:** you create the avatar from a portrait in the bitHuman cloud before it runs offline.
-- **One pack per process:** an engaged pack meters every avatar its process renders, so run each model (Essence 1, Essence 2, Expression 2) in its own process.
+- **One model per process:** a pack meters everything its process renders, so run each model (Essence 1, Essence 2, Expression 2) in its own process.
 - **File rendering:** without a pack, `bithuman render` and Python's `render()` sign in online and bill your account. With an installed pack that covers the avatar, they render with no network and no API secret, and spend the pack.
 
 ## First command
-
-Available today: **Essence 1** on Linux x86_64, Linux ARM64 and macOS (Apple silicon); **Essence 2 and Expression 2** on Linux x86_64 (bitHuman 2.11.17 or later).
 
 1. **Buy a pack** for the [offline license](/deploy/offline) in the console (**Developer → Offline licenses**), choosing the model and the platform it will run on. A pack is at least 100,000 credits at the self-hosted rate. You can cancel it for a full refund until a machine redeems it. Through the API: `POST /v1/offline/entitlements` with `"platform": "linux-x86_64"`, `"linux-aarch64"` or `"macos-arm64"`.
 2. **Redeem it once, on the machine that will run it**, while it is online, with your account's API secret and bitHuman 2.11.16 or later on Linux (2.11.17 or later on a Mac):

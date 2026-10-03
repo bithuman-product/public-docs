@@ -12,11 +12,11 @@ moved:
   check-your-balance: /api/billing#check-credit-balance
 ---
 
-Credits pay for the time an avatar session is running, talking or idle, billed by the exact second. Every platform (cloud, self-hosted and on-device) bills the same way, against your [API secret](/start/api-secret). This page is the one source for every price; other pages link here. To estimate a month or an app, use the [estimate](/pricing/estimate); your balance is on the [Billing API](/api/billing#check-credit-balance).
+Prices are in credits: **100 credits = $1**, so 4 credits a minute is about $0.04 a minute. Credits pay for the time an avatar [session](/models/how-it-works#key-terms) is running, talking or idle, billed by the exact second. Cloud, self-hosted and on-device all bill the same way, against your [API secret](/start/api-secret). To estimate a month or an app, use the [estimate](/pricing/estimate); your balance is on the [Billing API](/api/billing#check-credit-balance).
 
 ## Serving — credits per live minute
 
-The table and the billing rule under it are generated from [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) (`data.realtime`).
+The first table is the avatar-only rate per model; the second is the all-inclusive managed-agent rate (both defined below the tables). The tables are generated from [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) (`data.realtime`).
 
 <!-- PRICING:REALTIME -->
 | Model | Cloud | Self-hosted and on-device |
@@ -38,7 +38,12 @@ An avatar-only session (your own agent through the plugin or the API) that rende
 How live sessions are billed: active session time, talking or idle: exact seconds x rate / 60, rounded down per session with the remainder carried to your next session; no minimum.
 <!-- /PRICING:REALTIME -->
 
-A session bills while it is **running**, whether the avatar is talking or idle, to the exact second: seconds × rate ÷ 60, rounded down per session, with the fraction carried to your next session. A stopped or disconnected session accrues nothing. File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
+Two ways to pay for a live avatar:
+
+- **Avatar only:** you bring the conversation (your own speech-to-text, language model and voice, through an SDK, the plugin or the API) and pay only the model's rate in the first table.
+- **Managed agent:** bitHuman runs the whole conversation (listening, the replies, the voice) and the avatar, as in the web embed, for one all-inclusive rate in the second table.
+
+A session bills while it is **running**, whether the avatar is talking or idle, to the exact second. A stopped or disconnected session accrues nothing. File rendering (`bithuman render`, or `render()` in the Python SDK) bills the duration of the video it writes, at the self-hosted rate.
 
 Expression 1 (`expression-1`) runs in the bitHuman cloud only.
 
@@ -55,7 +60,7 @@ lifecycle
 | Create an agent: `expression-2` | 2000 |
 | Create an agent: `auto` | the routed model's rate (500 or 2000) |
 | [Add a model](/api/agents#add-a-model-to-an-existing-agent) to an agent | the same per-model rates; 0 for Expression 1 |
-| Generate gestures (dynamics) | 250 |
+| Generate gestures for an Essence 1 agent ([Gestures](/build/gestures)) | 250 |
 
 A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#get-the-pricing-schedule) returns this schedule as JSON; send your API secret in the `api-secret` header.
 
@@ -72,9 +77,7 @@ A failed creation is refunded automatically. [`GET /v1/pricing`](/api/billing#ge
 
 ## Plans
 
-From **2026-10-12** (00:00 UTC), API and SDK use requires the Creator plan or higher; a Free account's API secret is then refused with `403 PLAN_REQUIRED`. Free accounts cannot create agents or buy credit top-ups.
-
-A Free account with top-up credits bought before 2026-09-27 keeps API and SDK access until those credits are spent; until the cutoff its `plan_notice` reads: "Free-plan API and SDK access ends on 2026-10-12; this account keeps it until the top-up credits it bought before 2026-09-27 are spent. Upgrade at https://www.bithuman.ai/pricing to keep it after that." Every response and its fix: [Plan and credit refusals](/api/errors#plan-and-credit-refusals). [Choose a plan](https://www.bithuman.ai/pricing?from=docs).
+API and SDK use needs the Creator plan or higher: from **2026-10-12** (00:00 UTC) a Free account's API secret is refused with `403 PLAN_REQUIRED`. A Free account can try the sample avatars on bithuman.ai, but cannot create agents or buy credit top-ups. Every refusal and its fix: [Plan and credit refusals](/api/errors#plan-and-credit-refusals). [Choose a plan](https://www.bithuman.ai/pricing?from=docs).
 
 | Plan | Monthly | Yearly | Credits / month | Agents | Concurrent cloud sessions |
 |---|---|---|---|---|---|
@@ -107,11 +110,7 @@ On the Creator plan or higher, [top up](https://www.bithuman.ai/billing#credits)
 
 Offline license is only available to Business and Enterprise clients who want to run realtime avatars completely locally, off the internet — e.g. kiosks, trade shows, ATM machines, embedded screens. Linux and macOS computers (Apple silicon); bought in the console or through sales.
 
-- **Models:** Essence 1 on Linux (x86_64 and ARM64, bitHuman 2.11.16 or later) and on macOS with Apple silicon (2.11.17 or later); Essence 2 and Expression 2 on Linux x86_64 (2.11.17 or later), through the Python package, and on Linux through the bitHuman CLI (2.8.4 or later) too, available now: buy a pack in the console, then run `python -m bithuman pack redeem` once on the machine ([how](/deploy/offline#first-command)). Essence 2 and Expression 2 on other platforms come later.
-- **Credit-based:** from 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection.
-- **Creation is online:** you create the avatar from a portrait in the bitHuman cloud; the finished avatar model then runs on your machines.
-- **Not for phones:** the Swift package and the Android SDK stay online.
-- **File rendering:** `bithuman render` signs in online and needs no offline license; with an installed pack that covers the avatar, it renders with no network and spends the pack.
+Packs start at 100,000 credits, metered on the machine at the self-hosted rate, with no required reconnection. Which models run offline on which computers, and the setup: [Fully offline](/deploy/offline).
 
 [Contact sales](https://www.bithuman.ai/enterprise?topic=offline#contact) to arrange an offline license. Where it runs and what it covers: [Fully offline](/deploy/offline).
 

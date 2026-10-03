@@ -145,4 +145,4 @@ Put `shutdown()` in a `finally`. `AsyncBithuman` is not an async context manager
 
 `bithuman.tessera_offline` still imports as an alias of `bithuman.offline`.
 Its classes `OfflineTesseraRenderer` and `TesseraOfflineError` are `OfflineRenderer` and `OfflineRenderError` under older names.
-Use the new names; the full list is on [Naming & migration](/models/first-generation#naming--migration).
+Use the new names; the full list is on [Renamed and retired names](/resources/renamed#retired-model-and-file-names).

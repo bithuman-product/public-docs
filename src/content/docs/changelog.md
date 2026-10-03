@@ -98,7 +98,7 @@ Tag `flutter-plugin-v2.6.29`. Android Essence 2 engine: `essence2-android` 0.9.1
 ### essence2-android 0.9.2 — 2026-10-02
 
 - **Adaptive 720p while the device is thermally throttled:** when a phone has been busy for a while and caps its GPU, Essence 2 now renders the avatar's 720p output and scales it to the full-size frame, then returns to full resolution once the phone cools. The frames your app receives keep their size, so there is nothing to change in an app. It applies to avatars that publish a 720p output; their SDK download adds about 5 MB, verified like every other file, and an offline launch never needs it.
-- **Less GPU work per frame, same pixels:** the avatar renders faster on the GPU with byte-identical frames. On a Galaxy Z Flip5 that has been in calls for a few minutes, bitHuman Live shows about 70 % of the frames its voice needs at the deepest throttle, up from about a third, and a cool phone renders about 14 % faster.
+- **Less GPU work per frame, same pixels:** the avatar renders faster on the GPU and the frames look exactly the same. On a Galaxy Z Flip5 that has been in calls for a few minutes, bitHuman Live shows about 70 % of the frames its voice needs at the deepest throttle, up from about a third, and a cool phone renders about 14 % faster.
 - **New, optional: `Essence2Options(outputHeight = 720)`** opens a session at the avatar's 720p output when it publishes one (the default, `0`, is the full-size output).
 - **Action:** `implementation("ai.bithuman:essence2-android:0.9.2")`.
 

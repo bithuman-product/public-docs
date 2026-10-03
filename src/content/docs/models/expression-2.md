@@ -38,7 +38,7 @@ How it is created, served and kept moving while idle: [How it works](/models/how
   video.
 - **You only have a photo** — one image is enough.
 
-For a photorealistic person animated from their own footage, compare
+For a photorealistic person, compare
 [Essence 2](/models/essence-2). The side-by-side is on [Models](/models).
 
 ## Where it runs

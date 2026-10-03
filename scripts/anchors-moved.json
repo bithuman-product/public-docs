@@ -43,7 +43,7 @@
   "/deploy/self-hosted#models-available-here": "/deploy#compare",
   "/examples#ready-made-avatars": "/examples/avatars",
   "/models#how-creation-works": "/build/create-avatar#how-creation-works",
-  "/models#naming--migration": "/models/first-generation#naming--migration",
+  "/models#naming--migration": "/resources/renamed#retired-model-and-file-names",
   "/models#which-should-i-choose": "/models#choosing-a-model",
   "/models/avatar-file#the-engine-value-is-a-legacy-name": "/resources/renamed#the-engine-value-is-a-legacy-name",
   "/models/essence-2#how-creation-works": "/build/create-avatar#how-creation-works",
@@ -147,6 +147,9 @@
   "/platforms/cli#requirements": "/platforms/cli#before-you-start",
   "/platforms/cli#run-it": "/platforms/cli#run-your-first-avatar",
   "/platforms/cli#expected-output": "/platforms/cli#run-your-first-avatar",
-  "/models/how-it-works#serving-tiers": "/performance/method#pin-a-tier-for-a-benchmark"
+  "/models/how-it-works#serving-tiers": "/performance/method#pin-a-tier-for-a-benchmark",
+  "/models/first-generation#naming--migration": "/resources/renamed#retired-model-and-file-names",
+  "/models/avatar-file#caching-for-offline-use": "/models/avatar-file#download-an-avatar-file",
+  "/models/avatar-file#file-format-stability": "/models/avatar-file#disk-use-and-compatibility"
  }
 }

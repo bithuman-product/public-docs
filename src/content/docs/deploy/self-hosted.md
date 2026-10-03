@@ -77,6 +77,8 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install "bithuman[expression-2]"
 export BITHUMAN_API_SECRET="<your API secret>"
 curl -fL -o wise-pup.imx "https://api.bithuman.ai/v1/agent/A23WJF0199/model/download?model=expression-2"
+curl -fsSLo speech.wav https://docs.bithuman.ai/samples/speech.wav
+python -c 'import bithuman; bithuman.open("wise-pup.imx").render("speech.wav", out_mp4="out.mp4")'
 ```
 
 ```bash tab="LiveKit"

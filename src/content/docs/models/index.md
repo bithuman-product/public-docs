@@ -11,11 +11,11 @@ claims: ["S1", "S3", "S12", "S13", "S21", "S28"]
 next: ["/models/essence-2", "/models/expression-2", "/deploy"]
 moved:
   how-creation-works: /build/create-avatar#how-creation-works
-  naming--migration: /models/first-generation#naming--migration
+  naming--migration: /resources/renamed#retired-model-and-file-names
   which-should-i-choose: /models#choosing-a-model
 ---
 
-Essence 2, Expression 2 and Essence 1 read an [`.imx` avatar file](/models/avatar-file); Expression 1 renders from the agent's portrait in the cloud. Every model has the same shape: [push audio in, take lip-synced frames out](/models/how-it-works#audio-in-frames-out). The same agent works on every platform that runs its model.
+A bitHuman model turns speech audio into a lip-synced talking video of your avatar, live ([how it works](/models/how-it-works#audio-in-frames-out)). Pick by subject: a real person, Essence 2; anything else, Expression 2. The same agent works on every platform that runs its model; on your own hardware it renders from an [avatar file](/models/avatar-file) (`.imx`).
 
 ## The models
 
@@ -36,7 +36,7 @@ Pick the model from the subject:
 - **On a phone, a Mac or in a browser:** Essence 2 or Expression 2.
 - **Maintaining a first-generation agent:** keep it. Essence 1 runs on your own CPU; Expression 1 runs in the bitHuman cloud.
 
-Every model except Expression 2 needs a clear, real human face: Essence 2, Essence 1 and Expression 1. When the photo or prompt describes a cartoon, a stylized character, an animal, a robot or a creature, or no face can be found in the photo, creating or adding that model is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is charged. The message tells you to use Expression 2, which animates any subject.
+Every model except Expression 2 needs a clear, real human face; otherwise creation is refused with [`422 MODEL_SUBJECT_MISMATCH`](/api/errors#model-errors) before anything is charged.
 
 ## Where each model runs
 

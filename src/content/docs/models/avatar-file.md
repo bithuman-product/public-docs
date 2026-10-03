@@ -8,20 +8,20 @@ type: concept
 llms: models
 moved:
   the-engine-value-is-a-legacy-name: /resources/renamed#the-engine-value-is-a-legacy-name
+  caching-for-offline-use: /models/avatar-file#download-an-avatar-file
+  file-format-stability: /models/avatar-file#disk-use-and-compatibility
 ---
 
 ## What an `.imx` is
 
-An `.imx` file is the container a bitHuman avatar ships in: one self-contained
-file of identity weights, textures and a manifest (model version, ABI, license)
-that an [engine](/models/how-it-works) reads to animate one specific face.
+An `.imx` file is one avatar in one file: everything an [engine](/models/how-it-works)
+needs to animate one face, downloaded once and rendered on your own hardware.
 Every model that renders on your own hardware uses it — a first-generation
 [Essence 1](/models/first-generation#essence-1) identity, an [Essence 2](/models/essence-2)
 identity, and an [Expression 2](/models/expression-2) identity.
 
 Every download is
-named `<CODE>.imx`; older Expression 2 files may carry the legacy `.avatar`
-extension, which opens the same way. The same file opens on every on-device runtime — [Python](/platforms/python),
+named `<CODE>.imx`. The same file opens on every on-device runtime — [Python](/platforms/python),
 [Swift](/platforms/ios) and the [CLI](/platforms/cli) — and `bithuman open` tells you which
 model a file you were given holds.
 
@@ -42,18 +42,16 @@ The `.imx` is keyed by an **agent code** (e.g. `A23WJF0199`). The **cloud runtim
 ```python
 import bithuman
 
-with bithuman.open("A23WJF0199.imx") as avatar:   # the local file — required on-device
+with bithuman.open("wise-pup.imx") as avatar:     # the local file — required on-device
     for image in avatar.render("speech.wav"):      # (height, width, 3) uint8, RGB
         ...
 ```
 
-To get the file for a local run, download it by code or slug — `bithuman pull <CODE>` on macOS or Linux, or [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) — see [Caching for offline use](#caching-for-offline-use).
+To get the file for a local run, download it by code or slug — `bithuman pull <CODE>` on macOS or Linux, or [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model) — see [Download an avatar file](#download-an-avatar-file).
 
-> **Note** Use `agent_code`, never the deprecated `figure_id` — the old identifier returns a 400.
+## Download an avatar file
 
-## Caching for offline use
-
-You can also pull the file down and pass it by path. A showcase slug needs no
+Pull the file down and pass it by path. A showcase slug needs no
 account — `bithuman pull` downloads it anonymously:
 
 ```bash
@@ -84,15 +82,15 @@ Each model produces its own per-identity file in that container, downloaded
 with [`GET /v1/agent/{code}/model/download`](/api/agents#download-an-agents-model)
 (or `bithuman pull <code>`, with `--model` when the agent has more than one):
 
-| Model | Artifact | What it is |
-|---|---|---|
-| [`essence-1`](/models/first-generation#essence-1) | `.imx` | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/platforms/python) and the [CLI](/platforms/cli)'s `run`. |
-| [`essence-2`](/models/essence-2) | `.imx` | The Essence 2 bundle; size is per identity, so read `Content-Length`. Licensed weights; renders locally in the [CLI](/platforms/cli/voice#platform-notes), the [Python SDK](/platforms/python), the [Android library](/platforms/android) and the Swift [`Essence2` product](/platforms/ios) — the first local play checks the license with the cloud, so it needs your sign-in. |
-| [`expression-2`](/models/expression-2) | `.imx` (older downloads: `.avatar`): the same container under two names (a few early identities use an older format; `bithuman open` tells you which) | Renders locally in the [CLI](/platforms/cli), [Python](/platforms/python), [Apple](/platforms/ios) and [Android](/platforms/android), or on the cloud. |
+| Model | What it is |
+|---|---|
+| [`essence-1`](/models/first-generation#essence-1) | The first-generation identity — a pre-rendered base whose mouth is patched to the audio. Opens in the [Python SDK](/platforms/python) and the [CLI](/platforms/cli)'s `run`. |
+| [`essence-2`](/models/essence-2) | The Essence 2 file; its size varies per avatar. Renders locally in the [CLI](/platforms/cli/voice#platform-notes), the [Python SDK](/platforms/python), the [Android library](/platforms/android) and the Swift [`Essence2` product](/platforms/ios) — the first local play checks the license with the cloud, so it needs your sign-in. |
+| [`expression-2`](/models/expression-2) | The Expression 2 file. Renders locally in the [CLI](/platforms/cli), [Python](/platforms/python), [Apple](/platforms/ios) and [Android](/platforms/android), or on the cloud. |
 
-Older releases saved Essence 2 files as `<CODE>.lebundle.imx`, a legacy extension. Such a file keeps working and `bithuman open` reads it; today's downloads are named `<CODE>.imx`. The model is [`essence-2`](/models/essence-2).
+Older file extensions (`.lebundle.imx`, `.avatar`) still open: [Renamed and retired names](/resources/renamed#retired-model-and-file-names).
 
-### File-format stability
+### Disk use and compatibility
 
 The `.imx` format is **forward-compatible within a major version**. The first open unpacks the file into that cache, using about its size again on disk; later opens reuse it. Your file is never rewritten.
 

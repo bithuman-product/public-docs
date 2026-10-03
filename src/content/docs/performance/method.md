@@ -18,6 +18,8 @@ Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13, bit
 Frames per second from speech audio in to finished video frame out, for one avatar session, rendering as fast as the hardware allows on a reference speech clip. × real time is fps divided by the model's playback rate (Essence 2 25 fps, Expression 2 20 fps); at 1.0× or more the avatar keeps up with a live conversation. Every figure is re-measured at least every 30 days on the releases listed above. Raw records, including the clip, per-run dates and memory: [performance.json](/performance.json).
 <!-- /FLOORS:METHOD -->
 
+The macOS CLI Essence 2 figure was measured with `BITHUMAN_THREADS=8`; by default the CLI uses one thread per CPU it may use, up to 16. The Linux CLI uses default settings.
+
 ## Memory
 
 <!-- FLOORS:MEMORY -->
