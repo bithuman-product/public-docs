@@ -139,6 +139,7 @@ add default 0 perf:literals                 "node scripts/check-perf-literals.mj
 add default 0 versions:current              "node scripts/check-versions-current.mjs --selftest && node scripts/check-versions-current.mjs"
 add default 0 versions:registries           "GITHUB_TOKEN=\"\$GH_TOKEN\" node scripts/sync-versions.mjs --registries"
 add default 0 versions:pins                 "node scripts/sync-versions.mjs"
+add default 0 versions:example-pins         "node scripts/sync-versions.mjs --examples-selftest && GITHUB_TOKEN=\"\$GH_TOKEN\" node scripts/sync-versions.mjs --examples"
 
 # env-names-exist / cli-sample-output / cli-refusals / credential-claims (published bytes, empty HOME)
 add default 0 published:env-names-exist     "node scripts/check-env-names-exist.mjs --selftest && node scripts/check-env-names-exist.mjs"
