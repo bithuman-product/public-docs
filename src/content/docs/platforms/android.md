@@ -33,7 +33,7 @@ You feed 16 kHz mono speech in and pull picture frames out. Each model is one Gr
 |---|---|---|
 | **Renders** | [any character from one portrait](/models/expression-2) | [a photoreal person from one portrait](/models/essence-2) |
 | **Devices** | a physical `arm64-v8a` phone, `minSdk 26` | a physical `arm64-v8a` phone, `minSdk 29` |
-| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.2")` | `implementation("ai.bithuman:essence2-android:0.9.2")` |
+| **Dependency** | `implementation("ai.bithuman:expression2-android:0.5.2")` | `implementation("ai.bithuman:essence2-android:0.9.3")` |
 | **Credential** | an [API secret](/start/api-secret), Creator plan or higher | an API secret, Creator plan or higher |
 | **First-run download** | about 160 MB | 226–281 MB |
 | **Adds to your APK** | about 3 MB, plus a 70 MB accelerator runtime you can leave out | 12.1 MB |
@@ -84,7 +84,7 @@ android {
 }
 dependencies {
     implementation("ai.bithuman:expression2-android:0.5.2")
-    // or: implementation("ai.bithuman:essence2-android:0.9.2")
+    // or: implementation("ai.bithuman:essence2-android:0.9.3")
 }
 ```
 

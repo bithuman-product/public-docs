@@ -43,6 +43,15 @@ Recent releases worth a look first.
 
 ## October 2026
 
+### essence2-android 0.9.3 — 2026-10-03
+
+- **An avatar opens in about 3 seconds:** the SDK keeps the GPU programs it compiles for the phone and prepares the avatar's teeth data while your app checks its credential. In bitHuman Live on a Galaxy Z Flip5, opening an installed avatar took 6–11 s with 0.9.1 and 0.9.2 and takes 2.7–4.3 s with 0.9.3. The first open after the app is installed (or after a GPU driver update) still compiles those programs once, about 5 s.
+- **Opening an installed avatar no longer waits for the network:** `Essence2ModelStore` returns it at once and checks for an update in the background, at most once an hour per avatar.
+- **A first download is faster and survives interruptions:** it asks for the avatar's whole file list in one request, downloads four files at a time, resumes where it stopped after a network gap, and keeps going while the app is in the background. That continuation is a JobScheduler job: no foreground service and no notification. The SDK now declares `ACCESS_NETWORK_STATE`, a normal install-time permission, and a service only the system can bind (`BIND_JOB_SERVICE`).
+- **Avatars published before October 1 refresh themselves:** an installed avatar from before the mouth-corner fix is updated on the next fetch. A copy that cannot be updated (staged by hand) is refused with the fix: download the agent again.
+- **Less CPU per frame on a warm phone, same frames:** on a throttled Galaxy Z Flip5 the face's motion step takes about 9 % less CPU time per frame.
+- **Action:** `implementation("ai.bithuman:essence2-android:0.9.3")`.
+
 ### Flutter plugin 2.6.33 — 2026-10-02
 
 Tag `flutter-plugin-v2.6.33`.
