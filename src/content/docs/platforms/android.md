@@ -63,11 +63,9 @@ dependencyResolutionManagement {
 }
 
 // app/build.gradle.kts
-import java.util.Properties
-
 // bithuman.apiSecret=… in local.properties (git-ignored), or BITHUMAN_API_SECRET in the environment
 val bithumanApiSecret: String = run {
-    val props = Properties()
+    val props = java.util.Properties()   // fully qualified, so these lines can go anywhere in the file
     val f = rootProject.file("local.properties")
     if (f.isFile) f.inputStream().use { props.load(it) }
     props.getProperty("bithuman.apiSecret") ?: System.getenv("BITHUMAN_API_SECRET") ?: ""
