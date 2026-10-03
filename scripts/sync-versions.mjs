@@ -10,6 +10,12 @@
 //                                             check versions.json itself against PyPI, bitHuman's
 //                                             Maven repository (maven.bithuman.ai, for the Android
 //                                             keys) and the GitHub tags (exit 2 if unreachable)
+//   node scripts/sync-versions.mjs --examples [DIR] [--write]
+//                                             check the pins in bithuman-examples (a checkout at DIR,
+//                                             or $BITHUMAN_EXAMPLES_DIR; else main on GitHub, exit 2
+//                                             if unreachable): exit 1 when a pin LAGS versions.json.
+//                                             --write (checkout only) moves those pins, so a release
+//                                             run moves the examples with the docs.
 //
 // A release bump is one edit to versions.json, then `--write`. Pins stay literal
 // in the markdown, so GitHub, the .md twins, llms-full.txt and the gates that
@@ -44,6 +50,42 @@ export const PIN_FORMS = [
 ];
 
 const EXEMPT = [/^src\/content\/docs\/changelog/, /^src\/content\/docs\/legal\//];
+
+// The examples repository pins the same artifacts in two more forms: an xcodegen `project.yml`
+// (`url: …homebrew-bithuman.git` then `from: 2.20.1`, comment lines allowed between) and the
+// committed Xcode project (`minimumVersion = 2.20.1;` under the package's repositoryURL).
+export const EXAMPLE_FORMS = [
+  ...PIN_FORMS,
+  { key: "swift", re: new RegExp(String.raw`homebrew-bithuman(?:\.git)?[ \t]*\n(?:[ \t]*#[^\n]*\n)*[ \t]*from:[ \t]*"?(${SEMVER})"?`, "g") },
+  { key: "swift", re: new RegExp(String.raw`homebrew-bithuman(?:\.git)?";[^}]*?minimumVersion = (${SEMVER});`, "g") },
+];
+const EXAMPLES_REPO = "bithuman-product/bithuman-examples";
+/** Files of the examples repository that carry pins, and the trees that never do. */
+const EXAMPLE_FILE = /(\.(md|ya?ml|kts|gradle|swift|sh|pbxproj|toml)|requirements[^/]*\.txt)$/;
+const EXAMPLE_SKIP = /(^|\/)(\.git|node_modules|build|\.build|\.dart_tool|Pods|DerivedData|ci|scripts)(\/|$)/;
+
+const cmpSemver = (a, b) => {
+  const pa = a.split(".").map(Number), pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) if (pa[i] !== pb[i]) return pa[i] - pb[i];
+  return 0;
+};
+
+/** Every pin in one examples file: {key, have, want, lags}, and the text with lagging pins moved. */
+export function examplePins(text) {
+  const pins = [];
+  let out = text;
+  for (const { key, re } of EXAMPLE_FORMS) {
+    out = out.replace(re, (m, ver) => {
+      const want = V[key];
+      const lags = cmpSemver(ver, want) < 0;
+      pins.push({ key, have: ver, want, lags });
+      // the capture is the match's LAST version: a comment between `url:` and `from:` may name one too
+      const at = m.lastIndexOf(ver);
+      return lags ? m.slice(0, at) + want + m.slice(at + ver.length) : m;
+    });
+  }
+  return { pins, out };
+}
 const ROOTS = ["src/content", "src/pages", "src/components", "src/config", "src/partials", "src/layouts"];
 const EXT = /\.(md|mdx|astro|ts|mjs)$/;
 
@@ -161,6 +203,93 @@ async function registries() {
 }
 
 const args = process.argv.slice(2);
+
+/** The examples repository's pin files: [{rel, text, path?}] from a checkout, or from main on GitHub. */
+async function exampleFiles(dir) {
+  if (dir) {
+    const out = [];
+    const walkAll = (d) => {
+      for (const n of readdirSync(d)) {
+        const p = join(d, n), rel = relative(dir, p);
+        if (EXAMPLE_SKIP.test(rel)) continue;
+        if (statSync(p).isDirectory()) walkAll(p);
+        else if (EXAMPLE_FILE.test(n)) out.push({ rel, path: p, text: readFileSync(p, "utf8") });
+      }
+    };
+    walkAll(dir);
+    return out;
+  }
+  const h = { "User-Agent": "bithuman-docs-versions", Accept: "application/vnd.github+json" };
+  if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  const r = await fetch(`https://api.github.com/repos/${EXAMPLES_REPO}/git/trees/main?recursive=1`, { headers: h });
+  if (!r.ok) throw new Error(`github tree → ${r.status}`);
+  const tree = (await r.json()).tree.filter((t) => t.type === "blob" && !EXAMPLE_SKIP.test(t.path) && EXAMPLE_FILE.test(t.path));
+  const out = [];
+  for (const t of tree) {
+    const f = await fetch(`https://raw.githubusercontent.com/${EXAMPLES_REPO}/main/${t.path}`, { headers: { "User-Agent": h["User-Agent"] } });
+    if (!f.ok) throw new Error(`${t.path} → ${f.status}`);
+    out.push({ rel: t.path, text: await f.text() });
+  }
+  return out;
+}
+
+if (args.includes("--examples-selftest")) {
+  // every example pin form fires on a lagging pin, moves the right number, and passes a current one
+  const old = "0.0.1";
+  const cases = [
+    ["pubspec", `      ref: flutter-plugin-v${old}\n`, "flutter_plugin"],
+    ["gradle", `implementation("ai.bithuman:essence2-android:${old}")`, "essence2_android"],
+    ["Package.swift", `.package(url: "https://github.com/bithuman-product/homebrew-bithuman.git",\n    from: "${old}")`, "swift"],
+    ["project.yml", `    url: https://github.com/bithuman-product/homebrew-bithuman.git\n    # ${old} or newer\n    from: ${old}\n`, "swift"],
+    ["pbxproj", `repositoryURL = "https://github.com/bithuman-product/homebrew-bithuman.git";\n requirement = {\n kind = upToNextMajorVersion;\n minimumVersion = ${old};`, "swift"],
+    ["setup.sh", `REL=https://github.com/bithuman-product/homebrew-bithuman/releases/download/essence2-v${old}\n`, "essence2_engine"],
+  ];
+  let bad = 0;
+  for (const [name, text, key] of cases) {
+    const { pins, out } = examplePins(text);
+    const ok = pins.length === 1 && pins[0].key === key && pins[0].lags && examplePins(out).pins.every((p) => !p.lags)
+      && out.includes(V[key]);
+    if (!ok) bad++;
+    console.log(`${ok ? "ok  " : "FAIL"} ${name}: a lagging pin fires and --write moves it`);
+  }
+  const current = examplePins(`implementation("ai.bithuman:expression2-android:${V.expression2_android}")`).pins;
+  const okCurrent = current.length === 1 && !current[0].lags;
+  if (!okCurrent) bad++;
+  console.log(`${okCurrent ? "ok  " : "FAIL"} a current pin passes`);
+  process.exit(bad ? 1 : 0);
+}
+
+if (args.includes("--examples")) {
+  const i = args.indexOf("--examples");
+  const dirArg = args[i + 1] && !args[i + 1].startsWith("--") ? args[i + 1] : process.env.BITHUMAN_EXAMPLES_DIR;
+  const write = args.includes("--write");
+  if (write && !dirArg) { console.error("--examples --write needs a checkout (DIR or BITHUMAN_EXAMPLES_DIR)"); process.exit(64); }
+  let files;
+  try { files = await exampleFiles(dirArg); } catch (e) {
+    console.error(`UNREACHABLE: ${e.message} — this proves nothing, exit 2`);
+    process.exit(2);
+  }
+  let lag = 0, total = 0;
+  for (const f of files) {
+    const { pins, out } = examplePins(f.text);
+    total += pins.length;
+    for (const p of pins) {
+      if (p.lags) { lag++; console.log(`${write ? "wrote" : "LAGS "} ${f.rel}: ${p.key} ${p.have} → ${p.want}`); }
+      else if (p.have !== p.want) console.log(`ahead ${f.rel}: ${p.key} ${p.have} (versions.json ${p.want}; run --registries)`);
+    }
+    if (write && out !== f.text) writeFileSync(f.path, out);
+  }
+  const where = dirArg ? dirArg : `${EXAMPLES_REPO}@main`;
+  if (total < 5) { console.error(`found only ${total} pins in ${where} — the layout moved; refusing to pass`); process.exit(2); }
+  if (lag && !write) {
+    console.log(`\n${lag} example pin(s) behind src/data/versions.json in ${where}. Move them in bithuman-examples ` +
+      `(\`node scripts/sync-versions.mjs --examples <checkout> --write\`) in the same release run.`);
+    process.exit(1);
+  }
+  console.log(`${write ? "synced" : "ok"}: ${total} example pins in ${where}, ${lag} ${write ? "moved" : "behind"}`);
+  process.exit(0);
+}
+
 if (args.includes("--registries")) {
   let want;
   try { want = await registries(); } catch (e) {

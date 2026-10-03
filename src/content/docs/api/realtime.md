@@ -90,5 +90,13 @@ connection times out, usually 8–10 seconds later, and those seconds are billed
 - **Models:** a standard API secret uses `gpt-realtime-mini`; `gpt-realtime` needs an
   entitlement on your account (`403 PLAN_REQUIRED` otherwise; contact sales).
 - **Length:** one session lasts at most one hour.
+- **How a session ends on an error:** an `error` event with `type: bithuman_relay` names the
+  code, then the socket closes with code 1008: `INSUFFICIENT_BALANCE` (the credits ran out),
+  `FORBIDDEN` (bitHuman stopped the session) or `SESSION_DURATION_LIMIT` (the hour is up). Build a
+  new session; a retry of the same one does not help. The Flutter plugin reports these codes on
+  `errorStream` ([Flutter errors](/platforms/flutter/errors#voice-session)).
+- **`PAYWALL`:** bitHuman Live's refusal (HTTP 402) when an account has no minutes left: its
+  plan's credits, its free trial and its top-ups are spent. An API secret that runs out gets
+  `INSUFFICIENT_BALANCE` instead ([Errors](/api/errors#plan-and-credit-refusals)).
 - Other errors: `401` missing or invalid key · `503` the relay is at capacity (retry after the
   `Retry-After` seconds).

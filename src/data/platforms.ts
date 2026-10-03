@@ -256,11 +256,11 @@ export const QUICKSTART: Quickstart[] = [
   },
   {
     id: "flutter", plan: "creator", label: "Flutter", title: "An avatar inside your Flutter app", icon: "flutter",
-    needs: ["Physical device", "Flutter 3", "API secret"], models: TWO, renders: ["device"],
+    needs: ["Physical device", "Dart 3.11.5+", "API secret"], models: TWO, renders: ["device"],
     steps: [
       { title: "Clone the example app", code: { lang: "bash", label: "Shell", code: "git clone https://github.com/bithuman-product/bithuman-examples.git\ncd bithuman-examples/app/avatar_chat\nflutter pub get" } },
       { title: "Run it on your phone", code: { lang: "bash", label: "Shell", code: `flutter run --release --dart-define=AGENT_CODE=${pup.code}` } },
-      { title: "Add the plugin to your own app", code: { lang: "yaml", label: "pubspec.yaml", code: `dependencies:\n  bithuman:\n    git:\n      url: https://github.com/bithuman-product/homebrew-bithuman.git\n      path: packages/flutter-plugin\n      ref: flutter-plugin-v${V.flutter_plugin}` } },
+      { title: "Add the plugin to your own app", code: { lang: "yaml", label: "pubspec.yaml", code: `dependencies:\n  bithuman:\n    git:\n      url: https://github.com/bithuman-product/homebrew-bithuman.git\n      path: packages/flutter-plugin\n      ref: flutter-plugin-v${V.flutter_plugin}` }, text: "Then, in `android/app/build.gradle.kts`, set `minSdk = 29`, `ndk { abiFilters += \"arm64-v8a\" }` and `packaging { jniLibs { useLegacyPackaging = true } }`; the Flutter page's Install section shows the block." },
     ],
     expect: { text: "The app asks for your API secret once, downloads the avatar on first run and shows it idling full screen. Speak, or type a line, and it answers with its lips in sync." },
     next: { href: "/platforms/flutter", label: "Flutter" },

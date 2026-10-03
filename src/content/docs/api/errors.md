@@ -45,7 +45,7 @@ transient: retry after `Retry-After` seconds when present, otherwise back off.
 | `302` | Redirect, not an error | [Model download](/api/agents#download-an-agents-model) redirects to the artifact URL. |
 | `400` | Bad Request | `MISSING_PARAM`, `VALIDATION_ERROR`, `MODEL_NOT_DOWNLOADABLE`, `MODEL_NOT_OFFERED` |
 | `401` | Unauthorized | `UNAUTHORIZED`, `MISSING_AUTH` |
-| `402` | Payment Required | `INSUFFICIENT_BALANCE` |
+| `402` | Payment Required | `INSUFFICIENT_BALANCE`, `PAYWALL` |
 | `403` | Forbidden | [Plan limits](#plan-and-credit-refusals), `FORBIDDEN`, `RUNTIME_SUSPENDED`, `SESSION_DURATION_LIMIT`, `SECRET_REVEAL_CONSOLE_ONLY` |
 | `404` | Not Found | `NOT_FOUND`, `MODEL_ARTIFACT_NOT_READY`, `VOICE_NOT_FOUND` |
 | `409` | Conflict: agent not ready for it, or a build already running | `MODEL_NOT_GENERATED`, `AGENT_NOT_READY`, `BUILD_IN_PROGRESS`, `BUILD_CONCURRENCY`, `BUILD_DAILY_CAP` |
@@ -78,6 +78,7 @@ A plan or credit refusal names its fix in a link field of `error`: send the user
 | `AGENT_LIMIT_REACHED` | 403 | A new agent would pass your plan's agent limit (Creator 7, Pro 40, Business 200, Enterprise unlimited): "Your {Plan} plan includes {N} agents and you have {M}. Existing agents keep working; delete one or upgrade at https://www.bithuman.ai/pricing to create more." Link: `upgrade_url`. |
 | `CONCURRENCY_LIMIT_REACHED` | 403 | A new session would pass your plan's [concurrent cloud sessions](/api/rate-limits#session-concurrency); the message names the limit and how many are running. End a session or upgrade; live sessions are never cut off. An ended session frees its slot at once; to end one, [terminate it](/api/runtime-sessions#terminate-a-session). Link: `upgrade_url`, also in `details`. |
 | `INSUFFICIENT_BALANCE` | 402 | Not enough credits for this action. Top up (Creator plan or higher; on Free, choose a plan), then retry. Link: `topup_url`. |
+| `PAYWALL` | 402 | The account has no minutes left for a voice session: its plan's credits, its free trial and its top-ups are spent. bitHuman returns it for bitHuman Live sign-ins; an API secret that runs out of credits gets `INSUFFICIENT_BALANCE` instead. A retry does not help: choose a plan or top up, then start a new session. |
 | `ACCOUNT_SUSPENDED` | 403 | Your balance is too far below zero. Top up; contact support if it persists. No link. |
 | `RUNTIME_SUSPENDED` | 403 | A token endpoint refused the secret: it was revoked (create a new one), or runtime access is suspended (contact support). A plan change does not clear it. No link. |
 
@@ -144,7 +145,7 @@ Until 2026-10-12, a Free account's runtime-token and meter responses carry a `pl
 | `BUILD_CONCURRENCY` | 409 | Another build is running for the account. Retry when it finishes. |
 | `BUILD_DAILY_CAP` | 409 | The account reached 20 builds today. Retry tomorrow. |
 
-The CLI's exit codes, such as `PUBLIC_BIND_REFUSED`, are on [CLI troubleshooting](/platforms/cli/troubleshooting).
+The CLI's exit codes, such as `PUBLIC_BIND_REFUSED`, are on [CLI troubleshooting](/platforms/cli/troubleshooting). The Flutter plugin's codes, such as `MODEL_REJECTED`, are on [Flutter errors](/platforms/flutter/errors), and the Android SDK's refusals on [Android troubleshooting](/platforms/android/troubleshooting).
 
 ## Handling errors in Python
 

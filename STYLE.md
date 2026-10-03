@@ -57,7 +57,7 @@ The cloud Apple-silicon tier is "Apple". "ANE" survives ONLY inside slugs and id
 
 - Speed comes only from `public/performance.json` and the generated headline, through the generated tables and components (`RunsEverywhere`, `XrtChip`, the ```` ```perf ```` block). Never type a number. × real time is floored to one decimal by `src/lib/format-multiple.ts`. No frame rate on a card, a hub, a lede or the home page. [check-performance-floors, check-perf-literals, check-perf-render]
 - Prices come only from `src/data/pricing.json` (synced from `/v1/pricing`) and appear on `/pricing`. [check-billing-consistency, sync-pricing]
-- Versions come only from `src/data/versions.json`: edit it, then `node scripts/sync-versions.mjs --write`. [sync-versions, check-versions-current]
+- Versions come only from `src/data/versions.json`: edit it, then `node scripts/sync-versions.mjs --write`. The same release run moves the pins in bithuman-examples: `node scripts/sync-versions.mjs --examples <checkout> --write`, then a PR there; `--examples` fails while an example pin lags. [sync-versions, check-versions-current]
 - Units: "2.0× real time", "1.6 GB", "~160 MB download", "2–3 h" (en dash), "credits" (never "cr"), "credits/min".
 
 ## Code samples
