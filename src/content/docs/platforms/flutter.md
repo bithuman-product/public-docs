@@ -1,6 +1,6 @@
 ---
 title: "Flutter"
-description: "The Flutter plugin renders Essence 2 and Expression 2 on the device: Android phones, iPhone, iPad and Mac."
+description: "The Flutter plugin renders Essence 2 and Expression 2 on Android, iOS and macOS."
 section: platforms
 group: "Flutter"
 order: 10

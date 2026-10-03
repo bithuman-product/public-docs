@@ -1,6 +1,6 @@
 ---
 title: "Flutter errors"
-description: "The codes BithumanAvatar.load throws and the codes a voice session ends with, what each means and what to do."
+description: "What BithumanAvatar.load throws, why a voice session ends, and what to do."
 section: platforms
 group: "Flutter"
 order: 35
