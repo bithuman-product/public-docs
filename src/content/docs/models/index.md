@@ -22,7 +22,7 @@ A bitHuman model turns speech audio into a lip-synced talking video of your avat
 ```model-cards
 ```
 
-Essence 2 Max is not currently offered.
+Essence 2 Max is available only to Enterprise customers; it is not offered on other plans.
 
 Essence 1 and Expression 1 are the [first generation](/models/first-generation). They stay supported, and nothing changes for agents that use them.
 

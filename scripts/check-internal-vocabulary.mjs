@@ -181,9 +181,10 @@ const BANNED = [
   // `essence_2_max_cloud` has no word boundary after `max` and must still fire.
   { name: "essence-2-max", re: /\bessence[-_ ]?2[-_ ]?max(?![a-z])/gi,
     fixture: "essence-2-max (rate key essence_2_max_cloud, spelled essence2max in one SDK, Essence 2 Max in prose) is GPU only",
-    say: "NOT CURRENTLY OFFERED — the site names it in exactly one sentence, " +
-         "\"Essence 2 Max is not currently offered.\" (product rule, 2026-10-01). Anywhere else, name " +
-         "`essence-2` instead or delete the sentence: no enum, example, quickstart or rate row" },
+    say: "ENTERPRISE ONLY — the site names it in exactly one sentence, once, on /models: " +
+         "\"Essence 2 Max is available only to Enterprise customers; it is not offered on other " +
+         "plans.\" (owner, 2026-10-03). Anywhere else, name `essence-2` instead or delete the " +
+         "sentence: no enum, example, quickstart or rate row" },
   // PRODUCT RULE: "standardize API key names to avoid
   // confusion". The customer's credential is ONE noun, the **API secret**: the
   // variable every SDK reads is BITHUMAN_API_SECRET, the header is
@@ -259,11 +260,22 @@ const CARRIERS = [
   //  mention of the name still fails. bithuman-models tools/check_taught_surface.py
   //  INTERNAL_ONLY_DOCS_CARRIERS holds the same pattern.
   // ★2026-10-01 (owner: "no need for active serving of essence-2-max at the moment"): the
-  //  ruled sentence is now "Essence 2 Max is not currently offered." — offered to nobody,
-  //  the Enterprise plan included. It replaced "Essence 2 Max is available on the
-  //  Enterprise plan only." (bithuman-models check_taught_surface grades its own docs only).
-  { why: "the ruled not-currently-offered sentence for Essence 2 Max (product rule)",
-    re: /\bEssence 2 Max is not currently offered\b/ },
+  //  ruled sentence became "Essence 2 Max is not currently offered." (public-docs #501).
+  // ★2026-10-03 (owner: "essence-2-max is only offered to enterprise customers and is not
+  //  available otherwise"): the ruled sentence is now "Essence 2 Max is available only to
+  //  Enterprise customers; it is not offered on other plans." The 10-01 sentence is no
+  //  longer a carrier, so a page that still says it fails.
+  // ★SCOPED, not just keyed on the words. `onlyIn` lists the ONLY source files where the
+  //  sentence excuses the name: the /models page, and STYLE.md, which quotes the rule. The
+  //  same sentence pasted on any other page is reported like any other mention.
+  //  `servedOnly` is the same scope in the built and served domains: the /models page and
+  //  its JSON-LD. `requiredIn` makes the sentence MANDATORY there, exactly once, word for
+  //  word: dropping it from /models fails too, not only a copy elsewhere.
+  { why: "the ruled Enterprise-only sentence for Essence 2 Max, on /models only (owner, 2026-10-03)",
+    re: /\bEssence 2 Max is available only to Enterprise customers; it is not offered on other plans\b/,
+    onlyIn: ["src/content/docs/models/index.md", "STYLE.md"],
+    servedOnly: /^(?:\/|dist\/)?models\/(?:index\.html)?$/,
+    requiredIn: "src/content/docs/models/index.md" },
   { why: "STYLE.md line that names the retired word ANE to say where it may still appear (slugs only)",
     re: /"ANE" survives ONLY inside slugs and identifiers/ },
   { why: "the ONE sentence on /models that retires the word ANE by naming it",
@@ -360,6 +372,34 @@ const CARRIERS = [
     re: /Creating a new API key restores runtime access/ },
 ];
 
+// ── carrier scope ────────────────────────────────────────────────────────────
+// A carrier with `onlyIn` excuses its sentence only in those source files, and one
+// with `servedOnly` only on that built page; anywhere else the name in it is
+// reported like any other mention. A carrier with neither excuses its literal
+// wherever it appears (a command or env var a developer may type on any page).
+const carrierApplies = (c, rel) => !c.onlyIn || c.onlyIn.includes(rel);
+const carrierServes = (c, page) => !c.servedOnly || c.servedOnly.test(page);
+
+// ★A REQUIRED carrier: the ruled sentence must be on its page exactly once, as a
+// line of its own (the sentence and its full stop, nothing else on the line, so
+// no second claim can ride on the excused line). `read(rel)` returns the file's
+// text, or null when the file is not in the corpus — a moved page is a fault too.
+function requiredCarrierFaults(read) {
+  const faults = [];
+  for (const c of CARRIERS) {
+    if (!c.requiredIn) continue;
+    const text = read(c.requiredIn);
+    const lines = text == null ? [] : text.split("\n").filter((l) => c.re.test(l));
+    const alone = lines.filter((l) => l.trim().replace(c.re, "") === ".");
+    if (lines.length !== 1 || alone.length !== 1) faults.push(
+      `${c.requiredIn}: ${text == null ? "the page is not in the corpus" :
+        `the ruled sentence is on ${lines.length} line(s), ${alone.length} of them on a line of its own`}. ` +
+      `It must appear there exactly once, word for word, as its own line (${c.why}).`
+    );
+  }
+  return faults;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // scan
 // ─────────────────────────────────────────────────────────────────────────────
@@ -451,7 +491,7 @@ function gradeJsonLd(nodes) {
   for (const n of nodes) {
     for (const line of nodeText(n.node).split("\n")) {
       for (const h of scanText(line)) {
-        if (CARRIERS.some((c) => c.re.test(line))) { carried++; continue; }
+        if (CARRIERS.some((c) => carrierServes(c, n.page) && c.re.test(line))) { carried++; continue; }
         const b = BANNED.find((x) => x.name === h.name);
         violations.push(
           `${n.page} JSON-LD (${n.type}): internal vocabulary \`${h.found}\` [${h.name}] in ` +
@@ -517,11 +557,11 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
     lines.forEach((line, i) => {
       if (/\bavatars?\b/i.test(line)) controlHits++;
       for (const c of CARRIERS) {
-        if (c.re.test(line)) carrierPresent.set(c.why, carrierPresent.get(c.why) + 1);
+        if (carrierApplies(c, rel) && c.re.test(line)) carrierPresent.set(c.why, carrierPresent.get(c.why) + 1);
       }
       for (const h of scanText(line)) {
         perName.set(h.name, perName.get(h.name) + 1);
-        const carrier = CARRIERS.find((c) => c.re.test(line));
+        const carrier = CARRIERS.find((c) => carrierApplies(c, rel) && c.re.test(line));
         if (carrier) {
           carrierRescues.set(carrier.why, carrierRescues.get(carrier.why) + 1);
           carried++;
@@ -542,7 +582,7 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
     });
     for (const h of scanWrapped(lines.join("\n"))) {
       const pair = `${lines[h.line - 1] || ""} ${lines[h.line] || ""}`;
-      if (CARRIERS.some((c) => c.re.test(pair))) { carried++; continue; }
+      if (CARRIERS.some((c) => carrierApplies(c, rel) && c.re.test(pair))) { carried++; continue; }
       perName.set(h.name, perName.get(h.name) + 1);
       const b = BANNED.find((x) => x.name === h.name);
       violations.push(
@@ -552,6 +592,12 @@ function run({ verbose = true, root = ROOT, files = null } = {}) {
         `      → ${b.say}.`
       );
     }
+  }
+
+  // ── a required carrier is on its page (real run only: a synthetic corpus is not the site)
+  if (!files) {
+    for (const f of requiredCarrierFaults((rel) => corpus.includes(rel) ? readFileSync(root + rel, "utf8") : null))
+      violations.push(f);
   }
 
   // ── the built JSON-LD, on a real run once dist/ exists ──────────────────────
@@ -714,17 +760,39 @@ function selfTest() {
     twinFails.length === 0);
 
   // M2b — the ruled sentence is the ONLY carrier of Essence 2 Max: the ruled sentence
-  //       is carried, the name alone is not, and the marker in another sentence is not.
+  //       is carried on /models, the name alone is not, the marker in another sentence
+  //       is not, and neither earlier ruled sentence is any more.
+  const E2MAX_MODELS = "src/content/docs/models/index.md";
+  const E2MAX_OK = "Essence 2 Max is available only to Enterprise customers; it is not offered on other plans.";
+  const e2maxCarried = (rel, line) => CARRIERS.some((c) => carrierApplies(c, rel) && c.re.test(line));
   {
     const e2max = BANNED.find((b) => b.name === "essence-2-max");
-    const carried = (line) => CARRIERS.some((c) => c.re.test(line));
+    const carried = (line) => e2maxCarried(E2MAX_MODELS, line);
     const hits = (line) => { e2max.re.lastIndex = 0; return e2max.re.test(line); };
-    const ok = "Essence 2 Max is not currently offered.";
-    T("M2b the ruled sentence carries Essence 2 Max; the bare name and a marker in another sentence do not",
-      hits(ok) && carried(ok)
+    T("M2b the ruled sentence carries Essence 2 Max on /models; the bare name, a marker in another sentence and the retired sentences do not",
+      hits(E2MAX_OK) && carried(E2MAX_OK)
       && hits("Essence 2 Max renders at 1080p.") && !carried("Essence 2 Max renders at 1080p.")
-      && !carried("Essence 2 Max is fast. It is not currently offered.")
+      && !carried("Essence 2 Max is fast. It is available only to Enterprise customers; it is not offered on other plans.")
+      && hits("Essence 2 Max is not currently offered.") && !carried("Essence 2 Max is not currently offered.")
       && !carried("Essence 2 Max is available on the Enterprise plan only."));
+  }
+
+  // M2c — the ruled sentence is scoped and required: it excuses the name on /models
+  //       (and STYLE.md, which quotes the rule) and nowhere else, and /models must
+  //       carry it exactly once, on a line of its own.
+  {
+    const req = (text) => requiredCarrierFaults((rel) => rel === E2MAX_MODELS ? text : null).length;
+    const page = (...lines) => ["# Models", "", ...lines, ""].join("\n");
+    T("M2c the ruled sentence is refused off /models and required once, alone, on /models",
+      e2maxCarried(E2MAX_MODELS, E2MAX_OK) && e2maxCarried("STYLE.md", E2MAX_OK)
+      && !e2maxCarried("src/content/docs/pricing.md", E2MAX_OK)
+      && !e2maxCarried("src/data/models.ts", E2MAX_OK)
+      && req(page(E2MAX_OK)) === 0
+      && req(page("Essence 2 Max is not currently offered.")) === 1
+      && req(page("Pick a model.")) === 1
+      && req(page(E2MAX_OK, "", E2MAX_OK)) === 1
+      && req(page(`${E2MAX_OK} It renders at 1080p.`)) === 1
+      && req(null) === 1);
   }
 
   // M3 — the two checkers grade disjoint word sets.
@@ -766,12 +834,16 @@ function selfTest() {
   //      sentence, and a node with neither is clean.
   {
     const html = (o) => `<head><script type="application/ld+json">${JSON.stringify({ "@graph": [o] })}</script></head>`;
-    const nodes = (o) => jsonLdNodes(html(o)).map((node) => ({ page: "dist/x.html", type: "t", node }));
+    const nodes = (o, page = "dist/x.html") => jsonLdNodes(html(o)).map((node) => ({ page, type: "t", node }));
     const bad = gradeJsonLd(nodes({ "@type": "SoftwareApplication", featureList: ["Runs on the Apple plane", "the bank of mouth shapes"] }));
-    const carried = gradeJsonLd(nodes({ description: "Essence 2 Max is not currently offered." }));
+    const carried = gradeJsonLd(nodes({ description: "Run docker compose up in the folder." }));
+    const ruled = gradeJsonLd(nodes({ description: E2MAX_OK }, "dist/models/index.html"));
+    const elsewhere = gradeJsonLd(nodes({ description: E2MAX_OK }, "dist/pricing/index.html"));
     const clean = gradeJsonLd(nodes({ description: "Realtime talking avatars from one portrait." }));
-    T("M9 a mechanism word in a page's JSON-LD is reported; a carrier excuses its sentence; clean data passes",
-      bad.violations.length === 2 && carried.violations.length === 0 && carried.carried === 1 && clean.violations.length === 0);
+    T("M9 a mechanism word in a page's JSON-LD is reported; a carrier excuses its sentence (a scoped one only on its page); clean data passes",
+      bad.violations.length === 2 && carried.violations.length === 0 && carried.carried === 1
+      && ruled.violations.length === 0 && ruled.carried === 1 && elsewhere.violations.length === 1
+      && clean.violations.length === 0);
   }
 
   console.log(`self-test: ${arms} arms, ${fails} failed`);

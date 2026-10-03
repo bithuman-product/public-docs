@@ -143,6 +143,11 @@ function text(html) {
 function renderedCarrier(c) {
   return new RegExp(c.re.source.replace(/\\?`/g, "`?"), c.re.flags);
 }
+// ★PAGE SCOPE, lifted with the carrier. A carrier with `servedOnly` (the ruled
+// Essence 2 Max sentence: /models only) excuses its sentence on that page alone;
+// the same sentence on any other served page is a hit, as in the source guard.
+// `page` is a dist-relative file (`models/index.html`) or a live route (`/models/`).
+const carrierHere = (c, page) => !c.servedOnly || c.servedOnly.test(page);
 
 // ── the instrument must fire before it is trusted ────────────────────────────
 // Every pattern is run against its own fixture, wrapped in the SAME html->text
@@ -346,7 +351,7 @@ for (const [f, raw] of corpus) {
     let m;
     while ((m = re.exec(whole)) !== null) {
       const ctx = whole.slice(Math.max(0, m.index - 90), m.index + m[0].length + 90);
-      if (CARRIERS.some((c) => renderedCarrier(c).test(ctx))) { carrierMechanism++; continue; }
+      if (CARRIERS.some((c) => carrierHere(c, f) && renderedCarrier(c).test(ctx))) { carrierMechanism++; continue; }
       hits++; perWord[b.name] = (perWord[b.name] || 0) + 1;
       console.log(`HIT ${f} :: ${b.name} :: …${ctx.trim()}…`);
     }
@@ -387,7 +392,7 @@ for (const [f, raw] of corpus) {
         //  exactly one branch, so this total is what the buckets must add up to.
         frozenSeen++;
         // ORDER IS THE SIBLING'S: carrier, then fence, then marker, then date.
-        if (CARRIERS.some((c) => renderedCarrier(c).test(line))) { carrierFrozen++; continue; }
+        if (CARRIERS.some((c) => carrierHere(c, f) && renderedCarrier(c).test(line))) { carrierFrozen++; continue; }
         if (inPre) { fenced++; continue; }
         // The sibling's window, unchanged: up to CONTEXT lines either side,
         // stopping at a blank line so an unrelated neighbouring block cannot

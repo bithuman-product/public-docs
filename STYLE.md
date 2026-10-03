@@ -17,7 +17,7 @@ Rules for everything under `src/content/docs` and `src/pages`. Each rule is one 
 |---|---|
 | bitHuman | Bithuman, BitHuman |
 | Essence 2, Expression 2, Essence 1, Expression 1; in code `essence-2`, `expression-2`, `essence-1`, `expression-1` | e2, x2, elevate, embody, "light/quality" [check-retired-model-names] |
-| Essence 2 Max, only in the one sentence "Essence 2 Max is not currently offered." | any other mention [check-internal-vocabulary] |
+| Essence 2 Max, only in the one sentence "Essence 2 Max is available only to Enterprise customers; it is not offered on other plans." on /models | any other mention [check-internal-vocabulary] |
 | the Swift package (products `Expression2`, `Essence2Kit`, `Essence2`) | Apple SDK, Swift SDK, bitHumanKit |
 | the Android SDK (`essence2-android`, `expression2-android`); the Flutter plugin; the Python SDK (`bithuman`); the CLI; the LiveKit plugin | — |
 | the web embed; the bitHuman app (bithuman.ai) | dashboard, Studio, console, widget (mixed) |
@@ -146,7 +146,7 @@ A fenced block named for a block is drawn at build time from the data files (`sr
 
 The explorer, the calculator, the filter above a full ```` ```model-matrix ```` or ```` ```deploy-matrix ````, figures, the gallery, the data-flow explorer and a recipe's steps bring a small script, loaded only on the page that places them. With JavaScript off everything they draw still shows. [check-no-js, check-js-budget]
 
-Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is not currently offered.", once, on /models (owner, 2026-10-01: "should be off entirely"; later the same day: "no need for active serving of essence-2-max at the moment", so it is offered to nobody, the Enterprise plan included). It has no page, card, matrix row, chip, enum value, pricing row, glossary entry or llms line. [check-internal-vocabulary]
+Essence 2 Max is named only in the ruled sentence, "Essence 2 Max is available only to Enterprise customers; it is not offered on other plans.", once, on /models (owner, 2026-10-03: "essence-2-max is only offered to enterprise customers and is not available otherwise"). It has no page, card, matrix row, chip, enum value, pricing row, glossary entry or llms line. [check-internal-vocabulary]
 
 A home or hub card links a page, never an anchor on another page. [check-nav-consistency]
 
