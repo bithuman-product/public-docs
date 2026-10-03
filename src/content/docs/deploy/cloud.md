@@ -36,7 +36,7 @@ A managed agent's conversation runs on bitHuman's voice service with your person
 
 ## Speed
 
-The bitHuman cloud serves from several kinds of hardware; each is measured:
+bitHuman picks the server for each session, and every server type renders faster than real time:
 
 ```perf
 cloud-gpu apple-serve cloud-cpu
@@ -63,8 +63,10 @@ A session over your plan's limit is refused with `403 CONCURRENCY_LIMIT_REACHED`
 ```
 
 ```bash tab="REST API"
-curl -s -X POST https://api.bithuman.ai/v1/validate -H "api-secret: $BITHUMAN_API_SECRET"
-# → {"valid":true}
+curl -s -X POST https://api.bithuman.ai/v1/video/generate \
+  -H "api-secret: $BITHUMAN_API_SECRET" -H "Content-Type: application/json" \
+  -d '{"model": "expression-2", "agent_code": "A23WJF0199", "input": {"type": "audio", "audio_url": "https://docs.bithuman.ai/samples/speech-16k-short.wav"}}'
+# → {"success": true, "job_id": "vid_…", "status": "processing"}; poll GET /v1/video/{job_id} for video_url
 ```
 
 ```bash tab="LiveKit"

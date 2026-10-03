@@ -19,9 +19,10 @@ moved:
 ## What it is
 
 **Essence 2** (`essence-2`) renders a photoreal person from one portrait, up to
-1080p: the identity's own canvas, 1080×1920 portrait for a standard identity. From your portrait the platform generates a 10-second
-identity video; the model then animates lip-sync and expression over it live,
-with a sharp mouth and teeth taken from that video.
+1080×1920 (portrait). From your portrait the platform generates a 10-second
+video of that person; the model then animates lip-sync and expression over it live,
+with a sharp mouth and teeth taken from that video. Creating an Essence 2 avatar
+takes about 2 hours ([Create your own avatar](/build/create-avatar)).
 
 How it is created, served and kept moving while idle: [How it works](/models/how-it-works).
 
@@ -57,7 +58,7 @@ is on [performance](/performance).
   renders is on [performance](/performance).
 - **The downloadable file is about 140–160 MB**, varying per identity — read
   `Content-Length` rather than assuming a size.
-- **The identity is fixed at creation.** To change the face, create a new agent.
+- **The face is fixed at creation.** To change it, create a new agent.
 - **The first session on a new agent** can take longer to connect while the
   identity is provisioned; later sessions reuse it.
 - **Before training completes**, a launch that requests this model is refused

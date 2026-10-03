@@ -11,7 +11,7 @@ moved:
   pin-a-tier-for-a-benchmark: /performance/method#pin-a-tier-for-a-benchmark
 ---
 
-**× real time** is seconds of avatar video rendered per second, rounded down to one decimal: at 1.0× or more, an avatar holds a live conversation.
+Every row is at or above 1.0× real time: each model runs live on every listed device. **× real time** is seconds of avatar video rendered per second; higher means more headroom.
 
 ```perf-explorer
 ```
@@ -33,7 +33,7 @@ moved:
 | Web browser (WebGPU) | Chrome on Apple M4 | 43 | **1.7×** real time | 39 | **1.9×** real time |
 <!-- /FLOORS:TABLE -->
 
-Each figure is one avatar session rendering as fast as the hardware allows. On the cloud API the service picks the tier for each session; the three Cloud API rows show each tier.
+Each figure is one avatar session rendering as fast as the hardware allows.
 
 The sections below go platform by platform, on-device first. [How we measure](/performance/method) has the method, the releases measured, memory, the time to a finished video and the raw data.
 
@@ -129,14 +129,13 @@ Measured in September 2026 on CLI 2.8.1, bithuman 2.11.12, bithuman 2.11.13, bit
 </details>
 
 - Each figure is one render of a reference speech clip, as fast as the machine allows, with nothing else running.
-- The macOS CLI Essence 2 figure was measured with `BITHUMAN_THREADS=8`; by default the CLI uses one thread per CPU it may use, up to 16. The Linux CLI uses default settings.
 - Only these two machines are measured: an Apple M4 Mac and an Intel Core i7-13700F desktop. Other processors render at other rates.
 
 Memory per render is on [How we measure](/performance/method#memory). Setup for each product: [CLI](/platforms/cli), [Python](/platforms/python), [Apple](/platforms/ios).
 
 ## Cloud
 
-By default the service picks the tier for each session; each row is one tier. To benchmark one tier you can pin it ([pin a tier for a benchmark](/performance/method#pin-a-tier-for-a-benchmark)); in production, let the service choose.
+bitHuman picks the server for each session, and every server type renders faster than real time. Each row is one server type.
 
 <!-- FLOORS:TABLE cloud -->
 | Runs on | Hardware | Essence 2 fps | Essence 2 × real time | Expression 2 fps | Expression 2 × real time |

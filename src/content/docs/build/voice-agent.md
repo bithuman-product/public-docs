@@ -20,7 +20,7 @@ moved:
   troubleshooting: /resources/troubleshooting#voice-agent
 ---
 
-Everything except the voice model runs on your computer. LiveKit is the stock `livekit-server`, OpenAI Realtime listens, thinks and speaks on your own `OPENAI_API_KEY`, and the bitHuman avatar renders on your CPU — no GPU needed.
+Everything except the voice model runs on your computer. LiveKit is an open-source real-time audio and video server: the voice agent and the avatar join one of its rooms, and your browser joins too. Here it is the stock `livekit-server`, OpenAI Realtime listens, thinks and speaks on your own `OPENAI_API_KEY`, and the bitHuman avatar renders on your CPU — no GPU needed.
 
 The avatar name picks the model: `wise-pup` is Expression 2, `sofia-ramirez` is Essence 2, or pass your own agent code or avatar file. You need two secrets: your bitHuman API secret (both models refuse to render without it) and `OPENAI_API_KEY`.
 
@@ -72,7 +72,7 @@ The Python example reads these from `.env`:
 
 | Variable | Default | What it does |
 |---|---|---|
-| `BITHUMAN_MASTER_SECRET` | — | Your API secret, passed to the plugin explicitly. Rendering is metered on it. In a LiveKit worker, name the secret `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`; `agent.py` refuses to start while `BITHUMAN_API_SECRET` is set. |
+| `BITHUMAN_MASTER_SECRET` | — | Your API secret, passed to the plugin explicitly. Rendering is metered on it. It is named `BITHUMAN_MASTER_SECRET`, never `BITHUMAN_API_SECRET`, so the plugin cannot find it and copy it into the room; `agent.py` refuses to start while `BITHUMAN_API_SECRET` is set. |
 | `OPENAI_API_KEY` | — | Your OpenAI key. |
 | `BITHUMAN_AVATAR` | `wise-pup` | Which avatar ([table above](#pick-the-avatar)). |
 | `BITHUMAN_REALTIME_MODEL` | `gpt-realtime-2.1-mini` | The OpenAI Realtime model. |

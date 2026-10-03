@@ -81,7 +81,7 @@ A plan or credit refusal names its fix in a link field of `error`: send the user
 | `ACCOUNT_SUSPENDED` | 403 | Your balance is too far below zero. Top up; contact support if it persists. No link. |
 | `RUNTIME_SUSPENDED` | 403 | A token endpoint refused the secret: it was revoked (create a new one), or runtime access is suspended (contact support). A plan change does not clear it. No link. |
 
-Until 2026-10-12, a Free account's runtime-token and meter responses carry a `plan_notice` field and an `X-Bithuman-Plan-Notice` header: "Free-plan API and SDK access ends on 2026-10-12. Upgrade at https://www.bithuman.ai/pricing to keep it." A Free account that keeps access on top-up credits bought before 2026-09-27 gets its own wording ([Plans](/pricing#plans)). Show `plan_notice` as sent. [Choose a plan](https://www.bithuman.ai/pricing?from=docs) · [top up](https://www.bithuman.ai/billing#credits).
+Until 2026-10-12, a Free account's runtime-token and meter responses carry a `plan_notice` field and an `X-Bithuman-Plan-Notice` header: "Free-plan API and SDK access ends on 2026-10-12. Upgrade at https://www.bithuman.ai/pricing to keep it." A Free account with top-up credits bought before 2026-09-27 keeps access until those credits are spent, and its notice says so. Show `plan_notice` as sent. [Choose a plan](https://www.bithuman.ai/pricing?from=docs) · [top up](https://www.bithuman.ai/billing#credits).
 
 ### Agent operations
 
